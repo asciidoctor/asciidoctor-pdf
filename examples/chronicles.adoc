@@ -39,7 +39,7 @@ _Weak light from the hallway trickled across the theater, chased by a distant sc
 
 WARNING: Working with werewolves leads to howling and trying to train aggressive regular expressions with Pavlovian reinforcement.
 
-[#ravages]
+[[ravages]]
 == The Ravages of Writing
 
 Crystalline XML tags relentlessly bombarded the theater.
