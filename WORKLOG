@@ -2,6 +2,11 @@
 
 == TODO
 
+* add bench/ directory for the script to test the speed of the formatted text parser
+* start page numbering on page 1 (use /PageLabels reference to make i the title page number)
+** add this feature upstream to Prawn
+* add /PageMode /UseOutlines
+* what does fopub do to calculating scaling images? reduces width more
 * switch admonition blocks to font awesome icons
 * replace tabs with spaces in source code
 * cli arguments
@@ -40,6 +45,7 @@
 
 == Open Design Questions
 
+* remove/reduce padding above heading at start of page?
 * Should we stick to using Liberation Fonts 2.00.x by default?
 * Default line height?
 * Heading font family / size / color
