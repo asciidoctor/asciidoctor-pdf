@@ -598,26 +598,30 @@ class PDFRenderer < ::Prawn::Document
     else
       0.75 * bounds.width # TODO make me a theme setting
     end
+    height = nil
     position = ((node.attr 'align') || :left).to_sym
     case image_type
     when 'svg'
       svg IO.read(image_path), at: [0, cursor], width: width, position: position
     else
       begin
-      # FIXME temporary workaround to group caption & image
-      # Prawn doesn't provide access to rendered width and height before placing the
-      # image on the page
-      if node.title?
+        # FIXME temporary workaround to group caption & image
+        # Prawn doesn't provide access to rendered width and height before placing the
+        # image on the page
         image_obj, image_info = build_image_object node.image_uri image_path
         rendered_w, rendered_h = image_info.calc_image_dimensions width: width
-        if cursor < (rendered_h + @theme.caption_margin_inside + @theme.caption_margin_outside + @theme.base_line_height_length)
-          start_new_page
+        if rendered_h > bounds.top
+          rendered_h = height = bounds.top
         end
-        embed_image image_obj, image_info, width: width
-      else
-        image node.image_uri(image_path), width: width, position: position
-      end
-      #  image node.image_uri(image_path), width: width, position: position
+        if node.title?
+          caption_height = @theme.caption_margin_inside + @theme.caption_margin_outside + @theme.base_line_height_length
+          if bounds.top < (rendered_h + caption_height)
+            rendered_h = height = bounds.top - caption_height
+          elsif cursor < (rendered_h + caption_height)
+            start_new_page
+          end
+        end
+        embed_image image_obj, image_info, width: width, height: height
       rescue => e
         warn %(WARNING: #{e.message})
         return
