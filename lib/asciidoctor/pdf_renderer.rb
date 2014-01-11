@@ -908,7 +908,9 @@ class PDFRenderer < ::Prawn::Document
   # TODO make depth configurable
   def add_outline doc
     outline.define do
-      page title: doc.doctitle(sanitize: true), destination: (document.dest_top 1)
+      if (doctitle = (doc.doctitle sanitize: true))
+        page title: doctitle, destination: (document.dest_top 1)
+      end
       #page title: 'Table of Contents', destination: (document.dest_top toc_page_number)
       #page title: doc.attr('toc-title'), destination: (document.dest_top 2)
       # TODO only nest inside root note if doctype=article
@@ -946,23 +948,33 @@ class PDFRenderer < ::Prawn::Document
   end
 
   def self.build_document_options doc, theme, options = {}
+    docinfo = {}
+    # NOTE split this out to control order and handle missing data
+    docinfo[:Title] = ::PDF::Core::LiteralString.new((doc.doctitle sanitize: true) || 'Untitled')
+    if doc.attr? 'authors'
+      docinfo[:Author] = ::PDF::Core::LiteralString.new(doc.attr 'authors')
+    end
+    if doc.attr? 'subject'
+      docinfo[:Subject] = ::PDF::Core::LiteralString.new(doc.attr 'subject')
+    end
+    if doc.attr? 'keywords'
+      docinfo[:Keywords] = ::PDF::Core::LiteralString.new(doc.attr 'keywords')
+    end
+    if (doc.attr? 'producer')
+      docinfo[:Producer] = ::PDF::Core::LiteralString.new(doc.attr 'producer')
+    end
+    docinfo[:Creator] = ::PDF::Core::LiteralString.new(%(Prawn #{::Prawn::VERSION}))
+    docinfo[:Producer] ||= docinfo[:Author] || docinfo[:Creator]
+    docinfo[:ModDate] = docinfo[:CreationDate] = ::Time.now
+
     options = {
       margin: (theme.page_margin || 36),
       page_size: (theme.page_size || 'LETTER').upcase,
       page_layout: (theme.page_layout || :portrait).to_sym,
       #compress: true,
       #optimize_objects: true,
-      info: {
-        Title: (doc.doctitle sanitize: true),
-        Author: (doc.attr 'authors'),
-        Subject: (doc.attr 'subject'),
-        Keywords: (doc.attr 'keywords'),
-        Producer: (doc.attr 'producer') || (doc.attr 'authors'),
-        Creator: %(Prawn #{::Prawn::VERSION}),
-        ModDate: (time_now = ::Time.now),
-        CreationDate: time_now
-      }
-    }.update(options)
+      info: docinfo
+    }.merge(options)
     
     options[:skip_page_creation] = true
     options[:text_formatter] ||= ::Asciidoctor::Prawn::FormattedTextFormatter.new theme: theme
