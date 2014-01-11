@@ -33,7 +33,6 @@ In addition, it brings a fluent API and aggressive code re-use to the printable 
 To give you a picture, here's an example that shows how to use Prawn to create a basic PDF document.
 
 .Create a basic PDF document using Prawn
-
 [source,ruby]
 ----
 require 'prawn'
