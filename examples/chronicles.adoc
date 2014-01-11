@@ -1,0 +1,381 @@
+= The Dangerous and Thrilling Documentation Chronicles
+Kismet Chameleon; Lazarus het_Draeke
+v1.0, 2014-01-01: The first incarnation of {doctitle}
+:description: This story chronicles the inexplicable hazards and vicious beasts a +
+team must surmount and vanquish on the journey to finding their open source +
+project's true power.
+:toc:
+:source-highlighter: coderay
+:icons: font
+:wolper: http://en.wikipedia.org/wiki/Wolpertinger
+//:hardbreaks:
+
+{description}
+
+== It's a City Under Siege
+
+This journey begins one late Monday afternoon at http://www.devoxx.be/#/[Devoxx].
+Our team needs coffee, _desperately_, but none of us dare open the theater doors.
+
+To leave means *code dismemberment and certain death*.
+
+During the first conference workshop, a script-addicted warlock released a plague of Wolpertingers.
+
+// Block image
+
+.Wolpertinger, stuffed
+[.left.thumb]
+image::wolpertinger.jpg[Wolpertinger,width=100%,scaledwidth=45%]
+
+You may not be familiar with these {wolper}[ravenous beasts], but, trust us, they'll eat your shorts and suck the loops from your code.
+Since then, we'd been searching for the security crew's defensive operations manual.
+But we couldn't find it, and those DefOps werewolves still hadn't returned from their trusted building retreat at Bier Central.
+They'd left last night.
+Either they'd eaten each other, or they'd fallen victim to the Wolpertingers roaming the city streets.
+
+_Weak light from the hallway trickled across the theater, chased by a distant scream._
+
+// Admonition block
+
+WARNING: Working with werewolves leads to howling and trying to train aggressive regular expressions with Pavlovian reinforcement.
+
+[#ravages]
+== The Ravages of Writing
+
+Crystalline XML tags relentlessly bombarded the theater.
+
+// The syntax highlighted source code block.
+
+.XML tags
+[source,xml]
+----
+<author id="1">
+  <personname>
+    <firstname>Lazarus</firstname>
+    <surname>het Draeke</surname>
+  </personname>
+</author>
+----
+
+Despite the assault we were still attempting to draft an example of a defensive operation.
+
+// Example block with title.
+
+.DefOps Plan
+====
+Here's a sample defensive operation.
+
+OMG!
+Somebody please save us now!
+I want may mommy...and an extra-large double macchiato.
+====
+
+Unfortunaly, Lazarus and I had both come to the conclusion that we weren't going to get out of this without corrupted hardrives if we didn't locate caffeine within the next few hours.
+
+=== A Recipe for Potion
+
+This potion for a sample document contains the following ingredients, which are listed in a very random, chaotically nested order.
+
+* all the headings
+** syntax highlighted source code
+*** non-syntax highlighted source code or just a listing block
+* quote block
+** verse block
+*** table with some cell formatting
+**** sequential paragraphs
+***** admonition (at least one)
+*** bullet list with nesting
+** numbered list with nesting
+** definition list
+*** sidebar
+* example block
+** block image (no inline images)
+*** inline formatting in a paragraph
+**** two fresh Burdockian leaves
+***** They must be harvested by the light of the teal moons.
+
+Got square?
+
+[square]
+* one
+* two
+* three
+
+==== Searching for Burdockian
+
+.Steps for finding and preparing Burdockian leaves
+. Locate dusty botany
+.. Sneeze
+... Sneeze some more
+. Find section on Burdockian
+.. Review its characteristics
+... Take a picture of the diagram of its leaves
+.... Don't rip out the picture like a troglodyte
+..... Don't do it, I'm watching you
+. Put on your hiking boots
+. Freeze your butt off on the side of a mountain at midnight
+.. By the way, you can't see toes by the light of the teal moons.
+
+Let's start counting from 10.
+
+[start=10]
+. arabic (2)
+.. loweralpha (a)
+... lowerroman (i)
+... lowerroman (ii)
+... lowerroman (iii)
+... lowerroman (iv)
+.... upperalpha (A)
+. arabic (2)
+
+===== Are You Still Here?
+
+.Move, move, move!
+[CAUTION]
+====
+The Wolpertingers can smell your procrastination.
+It's not their fault you can't find your boots.
+====
+
+====== Sigh...
+
+TIP: Your boots are in your closet.
+
+== Dawn on the Plateau
+
+Lazarus was hanging from the bottom limb of a Burdockian tree, licking the bark.
+
+[quote, Mark Tobey]
+On pavements and the bark of trees I have found whole worlds.
+
+``If there are whole worlds on that bark, he just swallowed them.'' Kizmet replied.
+
+[verse,The documentation attorneys]
+____
+No bark was harmed in the making of this potion.
+    We're not so sure about a couple ants though.
+
+        Nor those worlds...
+
+     Crap, I smell an injunction.
+____
+
+We'd retrieved the leaves, but we'd obviously lost our minds in the process.
+
+[verse]
+Roses are +++<span style="color: #FF0000">red</span>+++.
+Violets are +++<span style="color: #0000FF">blue</span>+++__-ish__.
+
+== Words Seasoned with Power
+
+// Inline formatting in a paragraph
+
+_To tame_ the wild wolpertingers we needed to build a *charm*.
+But **u**ltimate victory could only be won if we divined the *_true name_* of the __war__lock.
+
+``What kind of charm?'' Lazarus asked. ``An odoriferous one or a mineral one?''
+Kizmet shrugged. ``The note from Olaf's desk says `wormwood and licorice,' but these could be normal groceries for werewolves.''
+
+``Well the H~2~O written on the security whiteboard could be part of a shopping list, but I don't think the local bodega also sells e = mc^2^.'' Lazarus replied.
+
+``Wait!'' Indigo plucked a small vial from her desk's top drawer and held it toward us.
+The vial's label read `+e = mc^2^+ +*_the scent of science_*+ +_smell like a genius_+'.
+
+=== Can I Get Some +Code+?
+
+Sure.
+Have a listing block.
+
+----
+This is an example of a listing block.
+The content inside is rendered as <pre> text.
+----
+
+But I'm not giving you any highlighting shazam just yet.
+
+.What is a listing block?
+****
+Like literal blocks, the content in listing blocks is displayed exactly as you entered it.
+Listing block content is rendered as +<pre>+ text.
+
+The +listing+ style is applied to an element, such as a paragraph, by setting the +listing+ attribute on that element.
+****
+
+Let's get our highlighting on!
+
+Install Prawn:
+
+ $ gem install prawn
+
+Create your first PDF document in Ruby!
+
+.Generates a basic PDF document using Prawn
+```ruby
+require 'prawn'
+
+Prawn::Document.generate 'output.pdf' do
+  text 'Hello, World!'
+end
+```
+
+How about some source code that styles code? So meta!
+
+```css
+code {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  white-space: nowrap !important;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+}
+```
+
+Where could we go without some Java?
+
+```java
+package org.javaee7.cdi.events;
+
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.event.Observes;
+import java.io.Serializable;
+
+/**
+ * @author The Duke
+ */
+@SessionScoped
+public class GreetingReceiver implements EventReceiver, Serializable {
+    private String greet = "Willkommen";
+
+    void receive(@Observes String greet) {
+        this.greet = greet;
+    }
+
+    @Override
+    public String getGreet() {
+        return greet;
+    }
+}
+```
+
+We already showed you an XML example in <<ravages>>.
+
+And I'll trade you a little table for some of that bark.
+
+[cols=3,frame=topbot,grid=rows]
+|===
+|Name of Column 1 |Name of Column 2 |Name of Column 3
+
+^m|Prefix the +{brvbar}+ with +{caret}+ to center content horizontally
+.<|Prefix the +{brvbar}+ with a +.+ and +<+ to align the content to the top of the cell
+>|Prefix the +{brvbar}+ with +>+ to align the content to the right horizontally
+
+3+^.^e|This content spans three columns (+3{plus}+) and is centered horizontally (+{caret}+) and vertically (+.{caret}+) within the cell.
+|===
+
+Wait.
+What?
+Where is this story going?
+
++<span>+:: an html tag that makes me crazy
+
+align:: something I never get going in the right direction.
+Also has to do with my poor verbal communication skills
+
+float::
+style::
+don't make me laugh
+
+Does anyone have the time?
+
+== Keeping It Together
+
+On this page we have nested ``keep together'' logic.
+The combined block will be shifted to the next page if there isn't room available on this one.
+
+[NOTE]
+.What happens if there is both a field and a method with the same name?
+====
+Back to the previous example, suppose that we have both a field and a method with the same name, as in:
+
+.Java class with a field and method that share the same name
+[source,java]
+----
+public class Foo {
+  public String bar;
+
+  public String bar() {
+    return bar;
+  }
+}
+----
+
+*Golo resolves methods first, fields last.*
+Hence, the following Golo code will resolve the +bar()+ method, not the +bar+ field:
+
+.Golo picks the method over the field with the same name
+----
+let foo = Foo()
+
+# Write the field
+foo: bar("baz")
+
+# Calls the bar() method
+println(foo: bar())
+----
+====
+
+<<<
+
+[discrete]
+= Heading 1 (Level 0)
+
+non-section content
+
+== Heading 2 (Level 1)
+
+section content
+
+=== Heading 3 (Level 2)
+
+section content
+
+==== Heading 4 (Level 3)
+
+section content
+
+===== Heading 5 (Level 4)
+
+section content
+
+====== Heading 6 (Level 5)
+
+section content
+
+---
+
+--
+content in an open block
+--
+
+<<<
+
+== Credits
+
+.Brought to you by OpenDevise
+[%header,cols="1,1s,1",grid=rows,frame=topbot]
+|===
+|Name
+|Title
+|Alias
+
+|Sarah White
+|President
+|http://twitter.com/carbonfray[@carbonfray]
+
+|Dan Allen
+|Vice President
+|http://twitter.com/mojavelinux[@mojavelinux]
+
+3+^.e|Powered by Open Source
+|===

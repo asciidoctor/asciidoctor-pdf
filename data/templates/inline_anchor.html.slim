@@ -1,0 +1,16 @@
+- case @type
+- when :xref
+  - refid = (attr :refid) || @target
+  - if (reftext = @text || (@document.references[:ids][refid]))
+    link anchor=refid =(reftext).tr_s "\n", ' '
+  - else
+    / hack for bibliography reference
+    / should be able to reenable once we parse inline destinations
+    |(see [#{refid}])
+- when :ref
+  /a id=@target
+- when :bibref
+  /a id=@target
+  |[#{@target}]
+- else
+  link href=@target class=role target=(attr :window) =@text

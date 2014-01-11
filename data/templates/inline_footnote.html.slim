@@ -1,0 +1,5 @@
+- if @type == :xref
+  span.footnoteref
+    | [<a class="footnote" href="#_footnote_#{attr :index}" title="View footnote.">#{attr :index}</a>]
+- else
+  | [#{@document.footnotes.find {|fn| fn.index == (attr :index) }.text}]

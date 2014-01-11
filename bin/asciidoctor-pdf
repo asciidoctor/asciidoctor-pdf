@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+asciidoc_file = ARGV[0] || %(README.adoc)
+unless (File.exist? asciidoc_file) && (File.readable? asciidoc_file)
+  warn %(ERROR: The specified file does not exist or cannot be read: #{asciidoc_file})
+  exit 1
+end
+
+$:.unshift File.join File.dirname(__FILE__), '..', 'lib'
+
+require 'ostruct'
+require 'asciidoctor'
+require 'asciidoctor/pdf_renderer'
+require 'asciidoctor/theme_loader'
+require 'tilt'
+require 'slim'
+
+DataDir = File.join File.dirname(__FILE__), '..', 'data'
+ThemesDir = File.join DataDir, 'themes'
+TemplatesDir = File.join DataDir, 'templates'
+
+theme_data = ::Asciidoctor::ThemeLoader.load_file File.join ThemesDir, 'default-theme.yml'
+#theme_data = ::Asciidoctor::ThemeLoader.load_file File.join ThemesDir, 'asciidoctor-theme.yml'
+
+file_rootname = ::Asciidoctor::Helpers.rootname File.basename asciidoc_file
+pdf_file = %(#{file_rootname}.pdf)
+options = {
+  safe: :safe,
+  template_dir: TemplatesDir,
+  attributes: %(idprefix=@)
+  #attributes: %(idprefix=@ source-highlighter=coderay)
+  #attributes: %(idprefix=@ listing-caption=Listing@)
+}
+
+doc = ::Asciidoctor.load_file asciidoc_file, options
+::Asciidoctor::PDFRenderer.render doc, pdf_file, theme_data

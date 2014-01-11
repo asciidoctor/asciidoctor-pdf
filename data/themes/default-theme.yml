@@ -1,0 +1,108 @@
+brand:
+  primary_color: 428BCA
+page:
+  #background: path/to/background/image.png
+  background_color: FFFFFF
+  layout: portrait
+  # 0.5", 0.67", 0.67", 0.67"
+  margin: [36, 48.24, 48.24]
+  size: Letter
+base:
+  font_color: 333333
+  font_family: LiberationSans
+  #font_size: 14
+  font_size: 11.2
+  #font_size: 10.5
+  font_size_large: round($base_font_size * 1.25)
+  font_size_small: round($base_font_size * 0.85)
+  font_style: normal
+  align: justify
+  #line_height_length: 20
+  line_height_length: 16
+  #line_height_length: 15
+  line_height: $base_line_height_length / $base_font_size
+  border_radius: 4
+  border_width: 0.5
+  border_color: EEEEEE
+vertical_rhythm: $base_line_height_length / 2
+horizontal_rhythm: $base_line_height_length
+link_font_color: $brand_primary_color
+heading:
+  font_color: $base_font_color
+  font_family: $base_font_family
+  font_size_h1: floor($base_font_size * 2.6)
+  font_size_h2: floor($base_font_size * 2.15)
+  font_size_h3: round($base_font_size * 1.7)
+  font_size_h4: $base_font_size_large
+  font_size_h5: $base_font_size
+  font_size_h6: $base_font_size_small
+  font_style: bold
+  line_height: 1.1
+  margin_top: $vertical_rhythm * 2
+  margin_bottom: $vertical_rhythm
+code:
+  font_color: $base_font_color
+  font_family: LiberationMono
+  font_size: floor($base_font_size * 0.9)
+  background_color: F5F5F5
+  border_color: CCCCCC
+  border_radius: $base_border_radius
+  border_width: 0.75
+  padding: 9.5
+literal:
+  font_family: $code_font_family
+  #font_color: C7254E
+  font_color: B12146
+blockquote:
+  font_color: $base_font_color
+  font_size: $base_font_size_large
+  border_width: 5
+  border_color: $base_border_color
+  cite_font_size: $base_font_size_small
+  cite_font_color: 999999
+sidebar:
+  border_color: FFFFFF
+  border_radius: $base_border_radius
+  border_width: $base_border_width
+  background_color: EEEEEE
+  title_font_color: $heading_font_color
+  title_font_family: $heading_font_family
+  title_font_size: $heading_font_size_h4
+  title_font_style: $heading_font_style
+  title_align: center
+example:
+  border_color: $base_border_color
+  border_radius: $base_border_radius
+  border_width: 0.75
+  background_color: transparent
+admonition:
+  border_color: $base_border_color
+  border_width: $base_border_width
+caption:
+  font_style: italic
+  align: left
+  margin_inside: $vertical_rhythm / 2
+  margin_outside: 0
+lead:
+  font_size: floor($base_line_height_length * 0.8)
+  line_height: 1.4
+abstract:
+  font_size: floor($base_line_height_length * 0.8)
+  font_color: 999999
+  font_style: italic
+horizontal_rule_color: $base_border_color
+definition_list:
+  term_font_style: italic
+  definition_indent: $horizontal_rhythm * 1.25
+outline_list:
+  indent: $horizontal_rhythm * 1.25
+table:
+  background_color: transparent
+  background_color_alt: F9F9F9
+  border_color: DDDDDD
+  border_width: $base_border_width
+  cell_padding: floor($base_line_height_length * 0.35)
+footer:
+  font_size: $base_font_size_small
+  font_color: $base_font_color
+  border_color: DDDDDD

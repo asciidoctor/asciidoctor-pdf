@@ -1,0 +1,60 @@
+= WORKLOG
+
+== TODO
+
+* switch admonition blocks to font awesome icons
+* replace tabs with spaces in source code
+* cli arguments
+** theme file
+** AsciiDoc attributes
+** output file
+** enable/disable writing pdfmarks file
+* section numbering
+* apply line height metrics for table content
+* image border
+* table footer
+* flesh out outline more
+* flesh out title page more
+** document subtitle
+** don't create title page for article doctype
+* chapter name in footer
+* implement toc and activate if toc is set on document (need to reorder pages)
+* callouts
+* footnotes
+* inline image
+* callbacks for title page, new part, new chapter, etc
+* split out render methods for chapter, part, section, etc
+* theme setting for code line height (currently using base_line_height)
+** in general, allow theme_font to set line_height
+* custom subs in verbatim blocks
+* captions/titles on all blocks that support them
+* shrink / squeeze source code to avoid wrapping
+* make font size and character spacing scaling of inline code part of theme
+* need to deal w/ situation if content in dry run is large than one page
+* might be able to avoid dry run for listing/literal in obvious cases
+
+* use treetop to parse and evaluate theme file
+* make source code highlighting theme configurable
+* wire in as custom renderer in Asciidoctor (requires that we make the renderer pluggable)
+* use or don't use pad method? check performance
+
+== Open Design Questions
+
+* Should we stick to using Liberation Fonts 2.00.x by default?
+* Default line height?
+* Heading font family / size / color
+* Should the heading sizes be calculated according to the default font size?
+* Page margins
+* Body indentation?
+* Size of masthead / footer
+* Line separating masthead / footer?
+* Separate title page
+* Start chapter on new page?
+* Special layout for chapter page?
+
+=== Open Theme Questions
+
+* keep or drop base_ prefix in theme?
+* does font_size_h* belong in headings section or base?
+* how should we define custom fonts and paths to them?
+* allow # in front of font color in theme file?

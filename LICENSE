@@ -1,0 +1,50 @@
+The MIT License
+
+Copyright (C) 2014 OpenDevise, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+Other licensed work
+-------------------
+
+- The Liberation(tm) Fonts 2.00.1, which are used by default, are licensed
+  under the SIL Open Font License, Version 1.1
+
+  http://scripts.sil.org/OFL
+  https://fedorahosted.org/liberation-fonts 
+
+- The RomanNumeral class, which is used for numbering of ordered lists, is
+  borrowed from the roman-numerals RubyGem and modified for the purpose of this
+  application. The original RomanNumerals class was written by Andrew Vos and
+  is licensed under the MIT License.
+
+  http://opensource.org/licenses/MIT
+  https://github.com/AndrewVos/roman-numerals
+
+- The PrawnCodeRayEncoder class, which is used for syntax highlighting source
+  code for use with Prawn, is borrowed from the Prawn project and modified for
+  the purpose of this application. The PrawnEncoder was written by Felipe Doria
+  and is licensed under the GPLv3 license.
+
+  http://www.gnu.org/licenses/gpl-3.0.html 
+  https://github.com/prawnpdf/prawn
+
+- The default theme is based on Bootstrap 3.0.3.
+
+  http://getbootstrap.com

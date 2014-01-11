@@ -1,0 +1,22 @@
+- unless @id.nil?
+  a id=@id
+- case @type
+- when :emphasis
+  em class=role =@text
+- when :strong
+  strong class=role =@text
+- when :monospaced
+  code class=role =@text
+- when :superscript
+  sup class=role =@text
+- when :subscript
+  sub class=role =@text
+- when :double
+  =role? ? %(<span class="#{role}">“#{@text}”</span>) : %(“#{@text}”)
+- when :single
+  =role? ? %(<span class="#{role}">‘#{@text}’</span>) : %(‘#{@text}’)
+- when :asciimath, :latexmath
+  - open, close = ::Asciidoctor::INLINE_MATH_DELIMITERS[@type]
+  |#{open}#{@text}#{close}
+- else
+  =role? ? %(<span class="#{role}">#{@text}</span>) : @text

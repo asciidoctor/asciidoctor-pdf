@@ -1,0 +1,46 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+   echo "Please supply a PDF file to optimize"
+   exit 1
+fi
+
+FILE=$1
+FILE_BASENAME=${FILE%.pdf}
+FILE_OPTIMIZED=$FILE_BASENAME-optimized.pdf
+FILE_PDFMARKS=
+if [ -f $FILE_BASENAME.pdfmarks ]; then
+  FILE_PDFMARKS=$FILE_BASENAME.pdfmarks
+fi
+DOWNSAMPLE_IMAGES=true
+IMAGE_DPI=150
+
+# /prepress defaults (see http://ghostscript.com/doc/current/Ps2pdf.htm)
+# -d{Color,Gray,Mono}ImageDownsampleType=/Bicubic
+# -dAutoFilter{Color,Gray}Images=true
+# -dOptimize=true
+# -dEmbedAllFonts=true
+# -dSubsetFonts=true
+# -dColorConversionStrategy=/LeaveColorUnchanged
+# -dUCRandBGInfo=/Preserve
+# -dCompressPages=true
+#
+# other unused settings
+# -r72
+#
+# for info about pdfmarks, see http://milan.kupcevic.net/ghostscript-ps-pdf
+
+gs -q -dNOPAUSE -dBATCH -dSAFER -dNOOUTERSAVE \
+  -sDEVICE=pdfwrite \
+  -dPDFSETTINGS=/prepress \
+  -dCannotEmbedFontPolicy=/Warning \
+  -dDownsampleColorImages=$DOWNSAMPLE_IMAGES \
+  -dColorImageResolution=$IMAGE_DPI \
+  -dDownsampleGrayImages=$DOWNSAMPLE_IMAGES \
+  -dGrayImageResolution=$IMAGE_DPI \
+  -dDownsampleMonoImages=$DOWNSAMPLE_IMAGES \
+  -dMonoImageResolution=$IMAGE_DPI \
+  -sOutputFile=$FILE_OPTIMIZED \
+  $FILE $FILE_PDFMARKS
+
+exit 0
