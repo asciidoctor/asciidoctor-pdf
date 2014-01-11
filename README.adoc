@@ -7,8 +7,9 @@ Dan Allen
 :project-issues-uri: https://github.com/opendevise/asciidoctor-pdf/issues
 :prawn-uri: http://prawn.majesticseacreature.com
 :rvm-uri: http://rvm.io
+:asciidoctor-uri: http://asciidoctor.org
 
-_Lo and behold_, a native (Ruby) PDF renderer for Asciidoctor based on {prawn-uri}[Prawn]! +
+_Lo and behold_, a native PDF renderer for AsciiDoc built with {asciidoctor-uri}[Asciidoctor] and {prawn-uri}[Prawn]! +
 _No more DocBook toolchain._ +
 _No more middleman._ +
 We're talking AsciiDoc direct to PDF!
