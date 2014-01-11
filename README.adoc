@@ -33,13 +33,14 @@ To give you a picture, here's an example that shows how to use Prawn to create a
 
 .Create a basic PDF document using Prawn
 
-```ruby
+[source,ruby]
+----
 require 'prawn'
 
 Prawn::Document.generate 'sample.pdf' do
   text 'Hello, PDF creation!'
 end
-```
+----
 
 It's that easy.
 And it's just the beginning.
