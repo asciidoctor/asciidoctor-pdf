@@ -164,7 +164,7 @@ class PDFRenderer < ::Prawn::Document
     if doc.attr? 'authors'
       prose doc.attr('authors'), align: :center, margin_bottom: @theme.vertical_rhythm / 2
     end
-    prose [(doc.attr? 'revnumber') ? %(v#{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact * ', ', align: :center
+    prose [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact * "\n", align: :center, margin_top: @theme.vertical_rhythm * 5, normalize: false
     start_new_page
 
     @list_numbers = []
