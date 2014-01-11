@@ -4,7 +4,7 @@ Doc Writer <doc@example.com>
 :source-highlighter: coderay
 :listing-caption: Listing
 
-A sample http://asciidoc.org[AsciiDoc] document.
+A simple http://asciidoc.org[AsciiDoc] document.
 
 == Introduction
 
@@ -21,7 +21,7 @@ Here's how you say ``Hello, World!'' in Prawn:
 ....
 require 'prawn'
 
-Prawn::Document.generate 'output.pdf' do
+Prawn::Document.generate 'example.pdf' do
   text 'Hello, World!'
 end
 ....

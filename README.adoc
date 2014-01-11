@@ -37,7 +37,7 @@ To give you a picture, here's an example that shows how to use Prawn to create a
 ----
 require 'prawn'
 
-Prawn::Document.generate 'sample.pdf' do
+Prawn::Document.generate 'example.pdf' do
   text 'Hello, PDF creation!'
 end
 ----
@@ -129,11 +129,11 @@ Then use the +bundle+ command to install the project dependencies:
 You're now ready to use {project-name}.
 Let's grab an AsciiDoc document to distill.
 
-=== Sample AsciiDoc document
+=== Example AsciiDoc document
 
-If you don't already have an AsciiDoc document, you can use the [file]_sample.adoc_ file found in the examples directory of this project.
+If you don't already have an AsciiDoc document, you can use the [file]_example.adoc_ file found in the examples directory of this project.
 
-.sample.adoc
+.example.adoc
 [source,asciidoc]
 ----
 = Document Title
@@ -142,7 +142,7 @@ Doc Writer <doc@example.com>
 :source-highlighter: coderay
 :listing-caption: Listing
 
-A sample http://asciidoc.org[AsciiDoc] document.
+A simple http://asciidoc.org[AsciiDoc] document.
 
 == Introduction
 
@@ -159,7 +159,7 @@ Here's how you say ``Hello, World!'' in Prawn:
 ....
 require 'prawn'
 
-Prawn::Document.generate 'sample.pdf' do
+Prawn::Document.generate 'example.pdf' do
   text 'Hello, World!'
 end
 ....
@@ -171,13 +171,13 @@ It's time to convert the AsciiDoc document direct to PDF.
 
 Converting to PDF is a simple as running the +generate-pdf+ script in the root of the project and passing our AsciiDoc document.
 
- $ ruby bin/asciidoctor-pdf sample.adoc
+ $ ruby bin/asciidoctor-pdf example.adoc
 
-When the script completes, you should see the file [file]_sample.pdf_ in the same directory.
+When the script completes, you should see the file [file]_example.pdf_ in the same directory.
 Open that file with a PDF viewer to see the result.
 
-.Sample PDF document rendered in a PDF viewer
-image::examples/sample-pdf-screenshot.png[Screenshot of PDF document,width=800,scaledwidth=100%]
+.Example PDF document rendered in a PDF viewer
+image::examples/example-pdf-screenshot.png[Screenshot of PDF document,width=800,scaledwidth=100%]
 
 You're also encouraged to try rendering this link:README.adoc[README] as well as the documents in the examples directory to see more of what {project-name} can do.
 Another good example is the https://github.com/cdi-spec/cdi/tree/master/spec[CDI Specification].
@@ -197,9 +197,9 @@ You must have Ghostscript installed to use it.
 
 Here's an example usage:
 
- $ ./bin/optimize-pdf sample.pdf
+ $ ./bin/optimize-pdf example.pdf
 
-The command will generate the file [file]_sample-optimized.pdf_ in the current directory.
+The command will generate the file [file]_example-optimized.pdf_ in the current directory.
 If a file is found with the extension +.pdfmarks+ and the same rootname as the input file, it is used to add metadata to the generated PDF document.
 This file is necessary to preserve the document metadata since Ghostscript will otherwise drop it.
 That's why Asciidoctor PDF always creates this file in addition to the PDF.
