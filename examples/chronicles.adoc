@@ -8,7 +8,7 @@ project's true power.
 :source-highlighter: coderay
 :icons: font
 :wolper: http://en.wikipedia.org/wiki/Wolpertinger
-//:hardbreaks:
+:listing-caption: Listing
 
 {description}
 
@@ -183,6 +183,7 @@ The vial's label read `+e = mc^2^+ +*_the scent of science_*+ +_smell like a gen
 
 === Can I Get Some +Code+?
 
+[%hardbreaks]
 Sure.
 Have a listing block.
 
@@ -207,7 +208,7 @@ Install Prawn:
 
  $ gem install prawn
 
-Create your first PDF document in Ruby!
+Then create your first PDF document in Ruby!
 
 .Generates a basic PDF document using Prawn
 ```ruby
