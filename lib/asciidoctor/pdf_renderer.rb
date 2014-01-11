@@ -171,8 +171,34 @@ class PDFRenderer < ::Prawn::Document
     @list_bullets = []
     render_children doc
 
-    add_page_numbers
+    #num_toc_pages = add_toc doc
+    #page_label_nums = [0, { P: ::PDF::Core::LiteralString.new('i') }]
+    ## TODO include all toc page numbers
+    ## TODO move to define_outline, only need labels for destination pages
+    #page_label_nums.concat [1, { P: ::PDF::Core::LiteralString.new('ii') }]
+    #page_num = 0
+    #(1 + num_toc_pages).upto(page_count - 1) do |i|
+    #  page_num += 1
+    #  page_label_nums.concat [i, { P: ::PDF::Core::LiteralString.new(page_num.to_s) }]
+    #end
+    #catalog = state.store.root.data
+    #catalog[:PageLabels] = state.store.ref Nums: page_label_nums
+
+    #add_page_numbers start: (num_toc_pages + 1 + 1)
+    add_page_numbers start: 2
     add_outline doc
+  end
+
+  # TODO flesh me out more, creating broken PDF
+  def move_page page_number, to_page_number
+    page_index = page_number - 1
+    to_page_index = to_page_number - 1
+
+    grabbed_page = state.pages.delete_at page_index
+    state.pages.insert to_page_index, grabbed_page
+
+    grabbed_ref = state.store.pages.data[:Kids].delete_at page_index
+    state.store.pages.data[:Kids].insert to_page_index, grabbed_ref
   end
 
   def render_section_node section
@@ -182,14 +208,14 @@ class PDFRenderer < ::Prawn::Document
       if cursor < (height_of sect_title) + @theme.heading_margin_top + @theme.heading_margin_bottom + @theme.base_line_height_length * 1.5
         start_new_page
       end
-      section.set_attr 'page_start', page_number
+      section.set_attr 'page_start', page_number - 1
       section.set_attr 'destination', (sect_destination = (dest_xyz 0, section.level == 0 ? page_height : y))
       add_dest section.id, sect_destination
       heading sect_title
     end
 
     render_section_content section
-    section.set_attr 'page_end', page_number
+    section.set_attr 'page_end', page_number - 1
   end
 
   def render_floating_title_node node
@@ -206,6 +232,7 @@ class PDFRenderer < ::Prawn::Document
     margin_top = (margin = (options.delete :margin)) || (options.delete :margin_top) || 0
     margin_bottom = margin || (options.delete :margin_bottom) || @theme.vertical_rhythm
     if (anchor = options.delete :anchor)
+      # FIXME won't work if inline_format is true; should instead pass through as attribute w/ link color set
       string = %(<link anchor="#{anchor}">#{string}</link>)
     end
     move_down margin_top
@@ -825,10 +852,46 @@ class PDFRenderer < ::Prawn::Document
     move_down @theme.VerticalRhythm
   end
 
+  def add_toc doc
+    start_new_page
+    toc_page_start = page_number
+    theme_font :heading, level: 2 do
+      heading doc.attr('toc-title')
+    end
+    line_metrics = calc_line_metrics @theme.base_line_height
+    dot_width = width_of '.'
+    doc.sections.each do |s1|
+      s1_title = s1.title
+      s1_page_num = (s1.attr 'page_start')
+      typeset_text %(<link anchor="#{s1.id}">#{s1_title}</link>), line_metrics, inline_format: true
+      move_up line_metrics.height
+      num_dots = ((bounds.width - (width_of %(#{s1_title} #{s1_page_num}), inline_format: true)) / dot_width).floor
+      typeset_text %(#{'.' * num_dots} #{s1_page_num}), line_metrics, align: :right
+      indent @theme.horizontal_rhythm do
+        s1.sections.each do |s2|
+          s2_title = s2.title
+          s2_page_num = (s2.attr 'page_start')
+          typeset_text %(<link anchor="#{s2.id}">#{s2_title}</link>), line_metrics, inline_format: true
+          move_up line_metrics.height
+          num_dots = ((bounds.width - (width_of %(#{s2_title} #{s2_page_num}), inline_format: true)) / dot_width).floor
+          typeset_text %(#{'.' * num_dots} #{s2_page_num}), line_metrics, align: :right
+        end
+      end
+    end
+    toc_page_end = page_number
+    num_toc_pages = toc_page_end - toc_page_start + 1
+    num_toc_pages.times do |i|
+      move_page (toc_page_start + i), (2 + i)
+    end
+
+    num_toc_pages
+  end
+
   # TODO clean me up!
-  def add_page_numbers
-    repeat (2..page_count), dynamic: true do
-      align = page_number % 2 == 0 ? :left : :right
+  def add_page_numbers options = {}
+    start = options[:start] || 1
+    repeat (start..page_count), dynamic: true do
+      align = (page_number - start) % 2 == 0 ? :left : :right
       theme_font :footer do
         save_graphics_state do
           line_width @theme.base_border_width
@@ -836,7 +899,7 @@ class PDFRenderer < ::Prawn::Document
           # FIXME calculate this in a less hacky way
           stroke_horizontal_line bounds.left, bounds.right, at: -bounds.absolute_bottom + @theme.vertical_rhythm * 2.5 + @theme.footer_font_size
         end
-        formatted_text_box [text: %(#{page_number}), color: @theme.footer_font_color], height: @theme.footer_font_size, character_spacing: 1, align: align, at: [0, @theme.footer_font_size - bounds.absolute_bottom + @theme.vertical_rhythm * 2]
+        formatted_text_box [text: %(#{page_number - (start - 1)}), color: @theme.footer_font_color], height: @theme.footer_font_size, character_spacing: 1, align: align, at: [0, @theme.footer_font_size - bounds.absolute_bottom + @theme.vertical_rhythm * 2]
       end
     end
   end
@@ -845,8 +908,9 @@ class PDFRenderer < ::Prawn::Document
   # TODO make depth configurable
   def add_outline doc
     outline.define do
-      page title: (doc.doctitle sanitize: true), destination: (document.dest_top 1)
+      page title: doc.doctitle(sanitize: true), destination: (document.dest_top 1)
       #page title: 'Table of Contents', destination: (document.dest_top toc_page_number)
+      #page title: doc.attr('toc-title'), destination: (document.dest_top 2)
       # TODO only nest inside root note if doctype=article
       #section((doc.doctitle sanitize: true), destination: (document.dest_top title_page_number)) do
         doc.sections.each do |s1|
