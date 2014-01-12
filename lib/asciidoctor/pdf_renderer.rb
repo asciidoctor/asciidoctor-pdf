@@ -169,36 +169,18 @@ class PDFRenderer < ::Prawn::Document
 
     @list_numbers = []
     @list_bullets = []
+
     render_children doc
 
-    #num_toc_pages = add_toc doc
-    #page_label_nums = [0, { P: ::PDF::Core::LiteralString.new('i') }]
-    ## TODO include all toc page numbers
-    ## TODO move to define_outline, only need labels for destination pages
-    #page_label_nums.concat [1, { P: ::PDF::Core::LiteralString.new('ii') }]
-    #page_num = 0
-    #(1 + num_toc_pages).upto(page_count - 1) do |i|
-    #  page_num += 1
-    #  page_label_nums.concat [i, { P: ::PDF::Core::LiteralString.new(page_num.to_s) }]
-    #end
-    #catalog = state.store.root.data
-    #catalog[:PageLabels] = state.store.ref Nums: page_label_nums
+    toc_page_nums = if doc.attr? 'toc'
+      add_toc doc
+    else
+      (0..-1)
+    end
 
-    #add_page_numbers start: (num_toc_pages + 1 + 1)
-    add_page_numbers start: 2
-    add_outline doc
-  end
+    add_page_numbers skip: (toc_page_nums.size + 1)
 
-  # TODO flesh me out more, creating broken PDF
-  def move_page page_number, to_page_number
-    page_index = page_number - 1
-    to_page_index = to_page_number - 1
-
-    grabbed_page = state.pages.delete_at page_index
-    state.pages.insert to_page_index, grabbed_page
-
-    grabbed_ref = state.store.pages.data[:Kids].delete_at page_index
-    state.store.pages.data[:Kids].insert to_page_index, grabbed_ref
+    add_outline doc, toc_page_nums
   end
 
   def render_section_node section
@@ -208,14 +190,14 @@ class PDFRenderer < ::Prawn::Document
       if cursor < (height_of sect_title) + @theme.heading_margin_top + @theme.heading_margin_bottom + @theme.base_line_height_length * 1.5
         start_new_page
       end
-      section.set_attr 'page_start', page_number - 1
+      section.set_attr 'page_start', page_number
       section.set_attr 'destination', (sect_destination = (dest_xyz 0, section.level == 0 ? page_height : y))
       add_dest section.id, sect_destination
       heading sect_title
     end
 
     render_section_content section
-    section.set_attr 'page_end', page_number - 1
+    section.set_attr 'page_end', page_number
   end
 
   def render_floating_title_node node
@@ -249,6 +231,7 @@ class PDFRenderer < ::Prawn::Document
     prose string, { normalize: false, align: :left }.merge(options)
   end
 
+  # QUESTION why doesn't heading set the font??
   def heading string, options = {}
     margin_top = options[:margin] || options[:margin_top] || @theme.heading_margin_top
     margin_bottom = options[:margin] || options[:margin_bottom] || @theme.heading_margin_bottom
@@ -637,15 +620,20 @@ class PDFRenderer < ::Prawn::Document
         # image on the page
         image_obj, image_info = build_image_object node.image_uri image_path
         rendered_w, rendered_h = image_info.calc_image_dimensions width: width
-        if rendered_h > bounds.top
-          rendered_h = height = bounds.top
+        caption_height = if node.title?
+          @theme.caption_margin_inside + @theme.caption_margin_outside + @theme.base_line_height_length
+        else
+          0
         end
-        if node.title?
-          caption_height = @theme.caption_margin_inside + @theme.caption_margin_outside + @theme.base_line_height_length
-          if bounds.top < (rendered_h + caption_height)
-            rendered_h = height = bounds.top - caption_height
-          elsif cursor < (rendered_h + caption_height)
-            start_new_page
+        if cursor < rendered_h + caption_height
+          start_new_page
+          if cursor < rendered_h + caption_height
+            height = (cursor - caption_height).floor
+            width = ((rendered_w * height) / rendered_h).floor
+            # FIXME workaround to fix Prawn not adding fill and stroke commands
+            # on page that only has an image; breakage occurs when line numbers are added
+            fill_color self.fill_color
+            stroke_color self.stroke_color
           end
         end
         embed_image image_obj, image_info, width: width, height: height
@@ -852,9 +840,9 @@ class PDFRenderer < ::Prawn::Document
     move_down @theme.VerticalRhythm
   end
 
-  def add_toc doc
+  def add_toc doc, toc_page_num = 2
+    go_to_page toc_page_num - 1
     start_new_page
-    toc_page_start = page_number
     theme_font :heading, level: 2 do
       heading doc.attr('toc-title')
     end
@@ -862,7 +850,7 @@ class PDFRenderer < ::Prawn::Document
     dot_width = width_of '.'
     doc.sections.each do |s1|
       s1_title = s1.title
-      s1_page_num = (s1.attr 'page_start')
+      s1_page_num = (s1.attr 'page_start') - 1
       typeset_text %(<link anchor="#{s1.id}">#{s1_title}</link>), line_metrics, inline_format: true
       move_up line_metrics.height
       num_dots = ((bounds.width - (width_of %(#{s1_title} #{s1_page_num}), inline_format: true)) / dot_width).floor
@@ -870,7 +858,7 @@ class PDFRenderer < ::Prawn::Document
       indent @theme.horizontal_rhythm do
         s1.sections.each do |s2|
           s2_title = s2.title
-          s2_page_num = (s2.attr 'page_start')
+          s2_page_num = (s2.attr 'page_start') - 1
           typeset_text %(<link anchor="#{s2.id}">#{s2_title}</link>), line_metrics, inline_format: true
           move_up line_metrics.height
           num_dots = ((bounds.width - (width_of %(#{s2_title} #{s2_page_num}), inline_format: true)) / dot_width).floor
@@ -878,20 +866,17 @@ class PDFRenderer < ::Prawn::Document
         end
       end
     end
-    toc_page_end = page_number
-    num_toc_pages = toc_page_end - toc_page_start + 1
-    num_toc_pages.times do |i|
-      move_page (toc_page_start + i), (2 + i)
-    end
-
-    num_toc_pages
+    toc_page_nums = (toc_page_num..page_number)
+    go_to_page page_count - 1
+    toc_page_nums
   end
 
   # TODO clean me up!
   def add_page_numbers options = {}
-    start = options[:start] || 1
+    skip = options[:skip] || 1
+    start = skip + 1
     repeat (start..page_count), dynamic: true do
-      align = (page_number - start) % 2 == 0 ? :left : :right
+      align = (page_number - skip).odd? ? :left : :right
       theme_font :footer do
         save_graphics_state do
           line_width @theme.base_border_width
@@ -899,33 +884,57 @@ class PDFRenderer < ::Prawn::Document
           # FIXME calculate this in a less hacky way
           stroke_horizontal_line bounds.left, bounds.right, at: -bounds.absolute_bottom + @theme.vertical_rhythm * 2.5 + @theme.footer_font_size
         end
-        formatted_text_box [text: %(#{page_number - (start - 1)}), color: @theme.footer_font_color], height: @theme.footer_font_size, character_spacing: 1, align: align, at: [0, @theme.footer_font_size - bounds.absolute_bottom + @theme.vertical_rhythm * 2]
+        formatted_text_box [text: %(#{page_number - skip}), color: @theme.footer_font_color], height: @theme.footer_font_size, character_spacing: 1, align: align, at: [0, @theme.footer_font_size - bounds.absolute_bottom + @theme.vertical_rhythm * 2]
       end
     end
   end
 
+  # FIXME we are accounting for always having 1 title page
   # TODO sanitize all titles
   # TODO make depth configurable
-  def add_outline doc
+  def add_outline doc, toc_page_nums = (0..-1)
+    front_matter_counter = RomanNumeral.new 0, :lower
+
+    page_num_labels = {}
+
+    # title page (i)
+    page_num_labels[0] = { P: ::PDF::Core::LiteralString.new(front_matter_counter.next!.to_s) }
+
+    # toc pages (ii..?)
+    toc_page_nums.each do
+      page_num_labels[front_matter_counter.to_i] = { P: ::PDF::Core::LiteralString.new(front_matter_counter.next!.to_s) }
+    end
+
+    # number of front matter pages aside from the document title to skip in page number index
+    numbering_offset = front_matter_counter.to_i - 1
+
     outline.define do
       if (doctitle = (doc.doctitle sanitize: true))
         page title: doctitle, destination: (document.dest_top 1)
       end
-      #page title: 'Table of Contents', destination: (document.dest_top toc_page_number)
-      #page title: doc.attr('toc-title'), destination: (document.dest_top 2)
+      if doc.attr? 'toc'
+        page title: doc.attr('toc-title'), destination: (document.dest_top toc_page_nums.first)
+      end
       # TODO only nest inside root note if doctype=article
       #section((doc.doctitle sanitize: true), destination: (document.dest_top title_page_number)) do
         doc.sections.each do |s1|
           # TODO sanitize should be integrated into the title method in Asciidoctor
           section document.sanitize(s1.title), { destination: (s1.attr 'destination') } do
+            sect1_page_num = (s1.attr 'page_start') - 1
+            page_num_labels[sect1_page_num + numbering_offset] = { P: ::PDF::Core::LiteralString.new(sect1_page_num.to_s) }
             s1.sections.each do |s2|
+              sect2_page_num = (s2.attr 'page_start') - 1
+              page_num_labels[sect2_page_num + numbering_offset] = { P: ::PDF::Core::LiteralString.new(sect2_page_num.to_s) }
               page title: document.sanitize(s2.title), destination: (s2.attr 'destination')
             end
           end
         end
       #end
     end
-    
+
+    catalog = state.store.root.data
+    catalog[:PageLabels] = state.store.ref Nums: page_num_labels.flatten
+    nil 
   end
 
   def generate_pdfmarks_file doc
