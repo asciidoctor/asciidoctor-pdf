@@ -1,6 +1,7 @@
 require 'prawn'
 require 'prawn-svg'
 require 'asciidoctor/prawn'
+require 'asciidoctor/ext/section'
 require 'roman_numeral'
 
 Prawn::Document.extensions << Asciidoctor::Prawn::Extensions
@@ -172,20 +173,21 @@ class PDFRenderer < ::Prawn::Document
 
     render_children doc
 
+    num_toc_levels = (doc.attr 'toclevels', 2).to_i
     toc_page_nums = if doc.attr? 'toc'
-      add_toc doc
+      add_toc doc, num_toc_levels
     else
       (0..-1)
     end
 
     add_page_numbers skip: (toc_page_nums.size + 1)
 
-    add_outline doc, toc_page_nums
+    add_outline doc, num_toc_levels, toc_page_nums
   end
 
   def render_section_node section
     theme_font :heading, level: (section.level + 1) do
-      sect_title = section.title
+      sect_title = section.numbered_title formal: true
       # FIXME someone hackish...need to sort out a cleaner approach here
       if cursor < (height_of sect_title) + @theme.heading_margin_top + @theme.heading_margin_bottom + @theme.base_line_height_length * 1.5
         start_new_page
@@ -840,7 +842,7 @@ class PDFRenderer < ::Prawn::Document
     move_down @theme.VerticalRhythm
   end
 
-  def add_toc doc, toc_page_num = 2
+  def add_toc doc, num_levels = 2, toc_page_num = 2
     go_to_page toc_page_num - 1
     start_new_page
     theme_font :heading, level: 2 do
@@ -848,27 +850,28 @@ class PDFRenderer < ::Prawn::Document
     end
     line_metrics = calc_line_metrics @theme.base_line_height
     dot_width = width_of '.'
-    doc.sections.each do |s1|
-      s1_title = s1.title
-      s1_page_num = (s1.attr 'page_start') - 1
-      typeset_text %(<link anchor="#{s1.id}">#{s1_title}</link>), line_metrics, inline_format: true
-      move_up line_metrics.height
-      num_dots = ((bounds.width - (width_of %(#{s1_title} #{s1_page_num}), inline_format: true)) / dot_width).floor
-      typeset_text %(#{'.' * num_dots} #{s1_page_num}), line_metrics, align: :right
-      indent @theme.horizontal_rhythm do
-        s1.sections.each do |s2|
-          s2_title = s2.title
-          s2_page_num = (s2.attr 'page_start') - 1
-          typeset_text %(<link anchor="#{s2.id}">#{s2_title}</link>), line_metrics, inline_format: true
-          move_up line_metrics.height
-          num_dots = ((bounds.width - (width_of %(#{s2_title} #{s2_page_num}), inline_format: true)) / dot_width).floor
-          typeset_text %(#{'.' * num_dots} #{s2_page_num}), line_metrics, align: :right
-        end
-      end
+    if num_levels > 0
+      toc_level doc.sections, num_levels, line_metrics, dot_width
     end
     toc_page_nums = (toc_page_num..page_number)
     go_to_page page_count - 1
     toc_page_nums
+  end
+
+  def toc_level sections, num_levels, line_metrics, dot_width
+    sections.each do |sec|
+      sec_title = sec.numbered_title
+      sec_page_num = (sec.attr 'page_start') - 1
+      typeset_text %(<link anchor="#{sec.id}">#{sec_title}</link>), line_metrics, inline_format: true
+      move_up line_metrics.height
+      num_dots = ((bounds.width - (width_of %(#{sec_title} #{sec_page_num}), inline_format: true)) / dot_width).floor
+      typeset_formatted_text [text: %(#{'.' * num_dots} #{sec_page_num}), anchor: sec.id], line_metrics, align: :right
+      if sec.level < num_levels
+        indent @theme.horizontal_rhythm do
+          toc_level sec.sections, num_levels, line_metrics, dot_width
+        end
+      end
+    end
   end
 
   # TODO clean me up!
@@ -889,10 +892,8 @@ class PDFRenderer < ::Prawn::Document
     end
   end
 
-  # FIXME we are accounting for always having 1 title page
-  # TODO sanitize all titles
-  # TODO make depth configurable
-  def add_outline doc, toc_page_nums = (0..-1)
+  # FIXME we are assuming we always have exactly one title page
+  def add_outline doc, num_levels = 2, toc_page_nums = (0..-1)
     front_matter_counter = RomanNumeral.new 0, :lower
 
     page_num_labels = {}
@@ -915,26 +916,30 @@ class PDFRenderer < ::Prawn::Document
       if doc.attr? 'toc'
         page title: doc.attr('toc-title'), destination: (document.dest_top toc_page_nums.first)
       end
-      # TODO only nest inside root note if doctype=article
-      #section((doc.doctitle sanitize: true), destination: (document.dest_top title_page_number)) do
-        doc.sections.each do |s1|
-          # TODO sanitize should be integrated into the title method in Asciidoctor
-          section document.sanitize(s1.title), { destination: (s1.attr 'destination') } do
-            sect1_page_num = (s1.attr 'page_start') - 1
-            page_num_labels[sect1_page_num + numbering_offset] = { P: ::PDF::Core::LiteralString.new(sect1_page_num.to_s) }
-            s1.sections.each do |s2|
-              sect2_page_num = (s2.attr 'page_start') - 1
-              page_num_labels[sect2_page_num + numbering_offset] = { P: ::PDF::Core::LiteralString.new(sect2_page_num.to_s) }
-              page title: document.sanitize(s2.title), destination: (s2.attr 'destination')
-            end
-          end
-        end
-      #end
+      # QUESTION any way to get outline_level to invoke in the context of the outline?
+      document.outline_level self, doc.sections, num_levels, page_num_labels, numbering_offset
     end
 
     catalog = state.store.root.data
     catalog[:PageLabels] = state.store.ref Nums: page_num_labels.flatten
-    nil 
+    nil
+  end
+
+  # TODO only nest inside root node if doctype=article
+  def outline_level outline, sections, num_levels, page_num_labels, numbering_offset
+    sections.each do |sec|
+      sec_title = sanitize(sec.numbered_title formal: true)
+      sec_destination = sec.attr 'destination'
+      sec_page_num = (sec.attr 'page_start') - 1
+      page_num_labels[sec_page_num + numbering_offset] = { P: ::PDF::Core::LiteralString.new(sec_page_num.to_s) }
+      if (subsections = sec.sections).empty? || sec.level == num_levels
+        outline.page title: sec_title, destination: sec_destination
+      elsif sec.level < num_levels + 1
+        outline.section sec_title, { destination: sec_destination } do
+          outline_level outline, subsections, num_levels, page_num_labels, numbering_offset
+        end
+      end
+    end
   end
 
   def generate_pdfmarks_file doc

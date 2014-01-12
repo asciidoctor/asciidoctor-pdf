@@ -9,6 +9,9 @@
 * what does fopub do to calculating scaling images? reduces width more
 * switch admonition blocks to font awesome icons
 * replace tabs with spaces in source code
+* preamble on separate page?
+* chapter on separate page for book doctype?
+* make default image scale width a theme setting
 * cli arguments
 ** theme file
 ** AsciiDoc attributes
@@ -37,6 +40,7 @@
 * make font size and character spacing scaling of inline code part of theme
 * need to deal w/ situation if content in dry run is large than one page
 * might be able to avoid dry run for listing/literal in obvious cases
+* index
 
 * use treetop to parse and evaluate theme file
 * make source code highlighting theme configurable
