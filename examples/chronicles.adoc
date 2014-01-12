@@ -4,7 +4,10 @@ v1.0, 2014-01-01: The first incarnation of {doctitle}
 :description: This story chronicles the inexplicable hazards and vicious beasts a +
 team must surmount and vanquish on the journey to finding their open source +
 project's true power.
+:doctype: book
 :toc:
+:toclevels: 3
+:numbered:
 :source-highlighter: coderay
 :icons: font
 :wolper: http://en.wikipedia.org/wiki/Wolpertinger
