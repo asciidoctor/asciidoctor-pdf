@@ -29,6 +29,12 @@ module Prawn
       page.margins[:right]
     end
 
+    # Returns whether the cursor is at the top of the page (i.e., margin box)
+    #
+    def at_page_top?
+      @y == @margin_box.absolute_top
+    end
+
     # Destinations
 
     # Generates a destination object that resolves to the top of the page

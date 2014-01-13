@@ -144,7 +144,7 @@ class PDFRenderer < ::Prawn::Document
   end
 
   def render_document_node doc
-    if (bg_color = @theme.page_background_color) && !(['transparent', 'FFFFFF'].include? bg_color)
+    if (bg_color = @theme.page_background_color) && !(['transparent', 'FFFFFF'].include? bg_color.to_s)
       on_page_create do
         canvas do
           fill_bounds bg_color
@@ -152,25 +152,13 @@ class PDFRenderer < ::Prawn::Document
       end
     end
 
-    start_new_page
-
-    font @theme.base_font_family, size: @theme.base_font_size
-
-    # FIXME move me to a title page method!
-    # only create title page if doctype=book!
-    theme_font :heading, level: 1 do
-      heading doc.doctitle, align: :center
-    end
-    move_down @theme.vertical_rhythm
-    if doc.attr? 'authors'
-      prose doc.attr('authors'), align: :center, margin_bottom: @theme.vertical_rhythm / 2
-    end
-    prose [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact * "\n", align: :center, margin_top: @theme.vertical_rhythm * 5, normalize: false
-    start_new_page
+    render_title_page doc
 
     @list_numbers = []
     @list_bullets = []
 
+    start_new_page
+    font @theme.base_font_family, size: @theme.base_font_size
     render_children doc
 
     num_toc_levels = (doc.attr 'toclevels', 2).to_i
@@ -185,12 +173,40 @@ class PDFRenderer < ::Prawn::Document
     add_outline doc, num_toc_levels, toc_page_nums
   end
 
+  def render_title_page doc
+    start_new_page
+
+    if doc.attr? 'title-logo'
+      move_down @theme.vertical_rhythm * 2
+      image_node = ::Asciidoctor::Block.new doc, :image, content_model: :empty
+      attrs = { 'target' => (doc.attr 'title-logo'), 'align' => 'center' }
+      image_node.update_attributes attrs
+      render_image_node image_node
+      move_down @theme.vertical_rhythm * 4
+    end
+
+    # only create title page if doctype=book!
+    theme_font :heading, level: 1 do
+      heading doc.doctitle, align: :center
+    end
+    move_down @theme.vertical_rhythm
+    if doc.attr? 'authors'
+      prose doc.attr('authors'), align: :center, margin_bottom: @theme.vertical_rhythm / 2
+    end
+    prose [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact * "\n", align: :center, margin_top: @theme.vertical_rhythm * 5, normalize: false
+  end
+
+  # TODO start new page if chapter
   def render_section_node section
     theme_font :heading, level: (section.level + 1) do
       sect_title = section.numbered_title formal: true
-      # FIXME someone hackish...need to sort out a cleaner approach here
-      if cursor < (height_of sect_title) + @theme.heading_margin_top + @theme.heading_margin_bottom + @theme.base_line_height_length * 1.5
-        start_new_page
+      unless at_page_top?
+        if section.chapter?
+          start_new_page
+        # FIXME someone hackish...need to sort out a cleaner approach here
+        elsif cursor < (height_of sect_title) + @theme.heading_margin_top + @theme.heading_margin_bottom + @theme.base_line_height_length * 1.5
+          start_new_page
+        end
       end
       section.set_attr 'page_start', page_number
       section.set_attr 'destination', (sect_destination = (dest_xyz 0, section.level == 0 ? page_height : y))
@@ -638,7 +654,7 @@ class PDFRenderer < ::Prawn::Document
             stroke_color self.stroke_color
           end
         end
-        embed_image image_obj, image_info, width: width, height: height
+        embed_image image_obj, image_info, width: width, height: height, position: position
       rescue => e
         warn %(WARNING: #{e.message})
         return

@@ -4,6 +4,7 @@ v1.0, 2014-01-01: The first incarnation of {doctitle}
 :description: This story chronicles the inexplicable hazards and vicious beasts a +
 team must surmount and vanquish on the journey to finding their open source +
 project's true power.
+:title-logo: sample-title-logo.jpg
 :doctype: book
 :toc:
 :toclevels: 3
@@ -28,7 +29,7 @@ During the first conference workshop, a script-addicted warlock released a plagu
 
 .Wolpertinger, stuffed
 [.left.thumb]
-image::wolpertinger.jpg[Wolpertinger,width=100%,scaledwidth=45%]
+image::wolpertinger.jpg[Wolpertinger,width=100%,scaledwidth=55%]
 
 You may not be familiar with these {wolper}[ravenous beasts], but, trust us, they'll eat your shorts and suck the loops from your code.
 Since then, we'd been searching for the security crew's defensive operations manual.
@@ -41,6 +42,12 @@ _Weak light from the hallway trickled across the theater, chased by a distant sc
 // Admonition block
 
 WARNING: Working with werewolves leads to howling and trying to train aggressive regular expressions with Pavlovian reinforcement.
+
+=== Rendezvous Point
+
+Come on, Bier Central.
+Did you have to ask?
+If you get there first, I'll take a http://www.sintbernardus.be/stbernardusabt12.php?l=en[St. Bernardus Abt 12].
 
 [[ravages]]
 == The Ravages of Writing
@@ -331,35 +338,42 @@ println(foo: bar())
 
 <<<
 
+Here's a preview of how each heading level is rendered.
+
 [discrete]
 = Heading 1 (Level 0)
 
-non-section content
+filler content
 
+[discrete]
 == Heading 2 (Level 1)
 
-section content
+filler content
 
+[discrete]
 === Heading 3 (Level 2)
 
-section content
+filler content
 
+[discrete]
 ==== Heading 4 (Level 3)
 
-section content
+filler content
 
+[discrete]
 ===== Heading 5 (Level 4)
 
-section content
+filler content
 
+[discrete]
 ====== Heading 6 (Level 5)
 
-section content
+filler content
 
 ---
 
 --
-content in an open block
+Here's some content inside an open block.
 --
 
 <<<

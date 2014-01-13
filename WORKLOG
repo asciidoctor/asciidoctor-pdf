@@ -5,12 +5,13 @@
 * add bench/ directory for the script to test the speed of the formatted text parser
 * start page numbering on page 1 (use /PageLabels reference to make i the title page number)
 ** add this feature upstream to Prawn
+* *report image only page w/ stamps corruption issue to Prawn*
 * add /PageMode /UseOutlines
 * what does fopub do to calculating scaling images? reduces width more
 * switch admonition blocks to font awesome icons
 * replace tabs with spaces in source code
 * preamble on separate page?
-* chapter on separate page for book doctype?
+* part on separate page for book doctype? (which other sections?)
 * make default image scale width a theme setting
 * cli arguments
 ** theme file
