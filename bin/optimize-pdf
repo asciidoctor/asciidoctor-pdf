@@ -1,15 +1,25 @@
 #!/bin/bash
 
+# Optimizes and compresses the specified PDF using Ghostscript (gs).
+#
+# [NOTE]
+# You need at least Ghostscript 9.10 in order for page labels defined in the
+# PDF to be preserved (e.g., front matter pages numbered using roman numerals).
+
 if [ -z $1 ]; then
    echo "Please supply a PDF file to optimize"
    exit 1
+fi
+
+if [ -z $GS ]; then
+  GS=gs
 fi
 
 FILE=$1
 FILE_BASENAME=${FILE%.pdf}
 FILE_OPTIMIZED=$FILE_BASENAME-optimized.pdf
 FILE_PDFMARKS=
-if [ -f $FILE_BASENAME.pdfmarks ]; then
+if [ -f "$FILE_BASENAME.pdfmarks" ]; then
   FILE_PDFMARKS=$FILE_BASENAME.pdfmarks
 fi
 DOWNSAMPLE_IMAGES=true
@@ -30,7 +40,7 @@ IMAGE_DPI=150
 #
 # for info about pdfmarks, see http://milan.kupcevic.net/ghostscript-ps-pdf
 
-gs -q -dNOPAUSE -dBATCH -dSAFER -dNOOUTERSAVE \
+"$GS" -q -dNOPAUSE -dBATCH -dSAFER -dNOOUTERSAVE \
   -sDEVICE=pdfwrite \
   -dPDFSETTINGS=/prepress \
   -dCannotEmbedFontPolicy=/Warning \
@@ -40,7 +50,7 @@ gs -q -dNOPAUSE -dBATCH -dSAFER -dNOOUTERSAVE \
   -dGrayImageResolution=$IMAGE_DPI \
   -dDownsampleMonoImages=$DOWNSAMPLE_IMAGES \
   -dMonoImageResolution=$IMAGE_DPI \
-  -sOutputFile=$FILE_OPTIMIZED \
-  $FILE $FILE_PDFMARKS
+  -sOutputFile="$FILE_OPTIMIZED" \
+  "$FILE" "$FILE_PDFMARKS"
 
 exit 0
