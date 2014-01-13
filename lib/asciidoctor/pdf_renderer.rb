@@ -938,6 +938,7 @@ class PDFRenderer < ::Prawn::Document
 
     catalog = state.store.root.data
     catalog[:PageLabels] = state.store.ref Nums: page_num_labels.flatten
+    catalog[:PageMode] = :UseOutlines
     nil
   end
 
