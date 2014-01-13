@@ -3,6 +3,14 @@ module Prawn
   module Extensions
     LineMetrics = ::Struct.new :leading, :shift, :height, :final_gap
 
+    # Core
+
+    # Retrieves the catalog reference data for the PDF.
+    #
+    def catalog
+      state.store.root
+    end
+
     # Measurements
 
     # Returns the width of the current page from edge-to-edge

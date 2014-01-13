@@ -171,6 +171,7 @@ class PDFRenderer < ::Prawn::Document
     add_page_numbers skip: (toc_page_nums.size + 1)
 
     add_outline doc, num_toc_levels, toc_page_nums
+    catalog.data[:ViewerPreferences] = [:FitWindow]
   end
 
   def render_title_page doc
@@ -936,9 +937,8 @@ class PDFRenderer < ::Prawn::Document
       document.outline_level self, doc.sections, num_levels, page_num_labels, numbering_offset
     end
 
-    catalog = state.store.root.data
-    catalog[:PageLabels] = state.store.ref Nums: page_num_labels.flatten
-    catalog[:PageMode] = :UseOutlines
+    catalog.data[:PageLabels] = state.store.ref Nums: page_num_labels.flatten
+    catalog.data[:PageMode] = :UseOutlines
     nil
   end
 
