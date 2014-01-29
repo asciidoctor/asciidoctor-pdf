@@ -168,7 +168,7 @@ class PDFRenderer < ::Prawn::Document
       (0..-1)
     end
 
-    add_page_numbers skip: (toc_page_nums.size + 1)
+    add_page_numbers skip: (toc_page_nums.to_a.size + 1)
 
     add_outline doc, num_toc_levels, toc_page_nums
     catalog.data[:ViewerPreferences] = [:FitWindow]
