@@ -37,4 +37,4 @@ options = {
 }
 
 doc = ::Asciidoctor.load_file asciidoc_file, options
-::Asciidoctor::PDFRenderer.render doc, pdf_file, theme_data
+::Asciidoctor::PdfRenderer.render doc, pdf_file, theme_data

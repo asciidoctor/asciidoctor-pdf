@@ -7,7 +7,7 @@ require 'roman_numeral'
 Prawn::Document.extensions << Asciidoctor::Prawn::Extensions
 
 module Asciidoctor
-class PDFRenderer < ::Prawn::Document
+class PdfRenderer < ::Prawn::Document
   include ::Prawn::Measurements
 
   def self.unicode_char number
