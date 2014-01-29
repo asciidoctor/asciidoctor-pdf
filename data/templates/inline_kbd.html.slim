@@ -1,0 +1,7 @@
+- if (keys = attr 'keys').size == 1
+  code=keys.first
+- else
+  - keys.each_with_index do |key, idx|
+    - unless idx.zero?
+      =<> '+'
+    code=key

@@ -1,0 +1,15 @@
+- menu = attr 'menu'
+- menuitem = attr 'menuitem'
+- if !(submenus = attr 'submenus').empty?
+  strong
+    =menu
+    =<> '|'
+    => submenus.map {|submenu| %(#{submenu} | ) }.join.chop
+    =menuitem
+- elsif !menuitem.nil?
+  strong
+    =menu
+    =<> '|'
+    =menuitem
+- else
+  strong=menu
