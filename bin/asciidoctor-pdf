@@ -1,5 +1,11 @@
 #!/usr/bin/env ruby
 
+attributes = %w(idprefix=@ listing-caption=Listing@)
+while ARGV[0] == '-a'
+  ARGV.shift
+  attributes << ARGV.shift
+end
+
 asciidoc_file = ARGV[0] || %(README.adoc)
 unless (File.exist? asciidoc_file) && (File.readable? asciidoc_file)
   warn %(ERROR: The specified file does not exist or cannot be read: #{asciidoc_file})
@@ -27,9 +33,7 @@ pdf_file = %(#{file_rootname}.pdf)
 options = {
   safe: :safe,
   template_dir: TemplatesDir,
-  attributes: %(idprefix=@)
-  #attributes: %(idprefix=@ source-highlighter=coderay)
-  #attributes: %(idprefix=@ listing-caption=Listing@)
+  attributes: attributes
 }
 
 doc = ::Asciidoctor.load_file asciidoc_file, options
