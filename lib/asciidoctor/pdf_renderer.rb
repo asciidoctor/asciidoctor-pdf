@@ -226,7 +226,13 @@ class PDFRenderer < ::Prawn::Document
   end
 
   def render_paragraph_node node
-    prose node.content
+    if node.has_role? 'lead'
+      theme_font :lead do
+        prose node.content
+      end
+    else
+      prose node.content
+    end
   end
 
   def prose string, options = {}
