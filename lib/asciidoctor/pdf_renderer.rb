@@ -102,11 +102,11 @@ class PdfRenderer < ::Prawn::Document
   end
 
   # TODO honor content model
-  def render_node_content node
+  def render_node_content node, options = {}
     if node.blocks?
       render_children node
     elsif (string = node.content)
-      prose string
+      prose string, options
     end
   end
 
@@ -129,14 +129,18 @@ class PdfRenderer < ::Prawn::Document
   def theme_font category, options = {}
     # QUESTION should we fallback to base_font_* or just leave current setting?
     family = @theme[%(#{category}_font_family)] || @theme.base_font_family
-    if (level = options[:level])
-      size = @theme[%(#{category}_font_size_h#{level})] || @theme.base_font_size
+    size = if (level = options[:level])
+      @theme[%(#{category}_font_size_h#{level})] || @theme.base_font_size
     else
-      size = @theme[%(#{category}_font_size)] || @theme.base_font_size
+      @theme[%(#{category}_font_size)] || @theme.base_font_size
     end
     style = (@theme[%(#{category}_font_style)] || :normal).to_sym
     prev_font_color = @font_color
-    @font_color = @theme[%(#{category}_font_color)] || prev_font_color
+    @font_color = if (level = options[:level])
+      @theme[%(#{category}_font_color_h#{level})] || @theme[%(#{category}_font_color)] || prev_font_color
+    else
+      @theme[%(#{category}_font_color)] || prev_font_color
+    end
     font family, size: size, style: style do
       yield
     end
