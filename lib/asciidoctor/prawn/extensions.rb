@@ -140,6 +140,41 @@ module Prawn
       LineMetrics.new leading, shift, line_height_length, final_gap
     end
 
+    # Parse the text into an array of fragments using the text formatter.
+    def parse_text string, options = {}
+      return [] if string.nil?
+
+      options = options.dup
+      if (format_option = options.delete :inline_format)
+        format_option = [] unless format_option.is_a? ::Array
+        fragments = self.text_formatter.format string, *format_option 
+      else
+        fragments = [{text: string}]
+      end
+
+      if (color = options.delete :color)
+        fragments.map do |fragment|
+          fragment[:color] ? fragment : fragment.merge(color: color)
+        end
+      else
+        fragments
+      end
+    end
+
+    # Performs the same work as text except that the first_line_options
+    # are applied to the first line of text renderered.
+    def text_with_formatted_first_line string, first_line_options, options
+      fragments = parse_text string, options
+      options = options.merge document: self
+      box = ::Prawn::Text::Formatted::Box.new fragments, (options.merge single_line: true, final_gap: true)
+      remaining_fragments = box.render dry_run: true
+      # FIXME merge more intelligently so as not to clobber other styles in set
+      fragments = fragments.map {|fragment| fragment.merge first_line_options }
+      fill_formatted_text_box fragments, (options.merge single_line: true, final_gap: true)
+      remaining_fragments = fill_formatted_text_box remaining_fragments, options
+      draw_remaining_formatted_text_on_new_pages remaining_fragments, options
+    end
+
     # Cursor
 
     # Short-circuits the call to the built-in move_up operation
@@ -234,17 +269,20 @@ module Prawn
     # color, stroke color and line width on the document are restored.
     #
     def fill_and_stroke_bounds f_color = fill_color, s_color = stroke_color, options = {}
+      no_fill = (f_color.nil? || f_color.to_s == 'transparent')
+      no_stroke = (s_color.nil? || s_color.to_s == 'transparent')
+      return if no_fill && no_stroke
       save_graphics_state do
         radius = options[:radius] || 0
 
         # fill
-        unless f_color.nil? || f_color.to_s == 'transparent'
+        unless no_fill
           fill_color f_color
           fill_rounded_rectangle bounds.top_left, bounds.width, bounds.height, radius
         end
 
         # stroke
-        unless s_color.nil? || s_color.to_s == 'transparent'
+        unless no_stroke
           stroke_color s_color
           line_width options[:line_width] || 0.5
           # FIXME think about best way to indicate dashed borders
@@ -308,9 +346,10 @@ module Prawn
     # Import the specified page into the current document.
     #
     def import_page file
+      prev_page_number = page_number
       state.compress = false # can't use compression if using template
       start_new_page_discretely template: file
-      go_to_page page_count
+      go_to_page prev_page_number + 1
     end
 
     # Create a new page for the specified image. If the
