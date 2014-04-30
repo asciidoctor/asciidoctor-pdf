@@ -6,6 +6,11 @@ while ARGV[0] == '-a'
   attributes << ARGV.shift
 end
 
+theme_file = if ARGV[0] == '--theme'
+  ARGV.shift
+  ARGV.shift
+end
+
 asciidoc_file = ARGV[0] || %(README.adoc)
 unless (File.exist? asciidoc_file) && (File.readable? asciidoc_file)
   warn %(ERROR: The specified file does not exist or cannot be read: #{asciidoc_file})
@@ -25,8 +30,9 @@ DataDir = File.join File.dirname(__FILE__), '..', 'data'
 ThemesDir = File.join DataDir, 'themes'
 TemplatesDir = File.join DataDir, 'templates'
 
-theme_data = ::Asciidoctor::ThemeLoader.load_file File.join ThemesDir, 'default-theme.yml'
+#theme_data = ::Asciidoctor::ThemeLoader.load_file File.join ThemesDir, 'default-theme.yml'
 #theme_data = ::Asciidoctor::ThemeLoader.load_file File.join ThemesDir, 'asciidoctor-theme.yml'
+theme_data = ::Asciidoctor::ThemeLoader.load_file(theme_file || (File.join ThemesDir, 'default-theme.yml'))
 
 file_rootname = ::Asciidoctor::Helpers.rootname File.basename asciidoc_file
 pdf_file = %(#{file_rootname}.pdf)
