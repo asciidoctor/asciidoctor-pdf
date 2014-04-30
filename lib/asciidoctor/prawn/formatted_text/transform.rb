@@ -136,12 +136,32 @@ class FormattedTextTransform
     when :del, :strikethrough
       styles << :strikethrough
     when :span
-      if !fragment[:color] && (value = attrs[:style]) && value.start_with?('color:')
-        if value.include?(';')
-          value = value.split(';').first
+      # span logic with normal style parsing
+      if (inline_styles = attrs[:style])
+        inline_styles.rstrip.chomp(';').split(';').each do |style|
+          pname, pvalue = style.split(':', 2)
+          case pname
+          when 'color'
+            fragment[:color] = pvalue.tr(' #', '') unless fragment[:color]
+          when 'font-weight'
+            if pvalue.lstrip == 'bold'
+              styles << :bold
+            end
+          when 'font-style'
+            if pvalue.lstrip == 'italic'
+              styles << :italic
+            end
+          end
         end
-        fragment[:color] = value[6..-1].tr(' #', '')
       end
+
+      # quicker span logic that only honors font color
+      #if !fragment[:color] && (value = attrs[:style]) && value.start_with?('color:')
+      #  if value.include?(';')
+      #    value = value.split(';').first
+      #  end
+      #  fragment[:color] = value[6..-1].tr(' #', '')
+      #end
     end
     #fragment.delete(:styles) if styles.empty?
     fragment
