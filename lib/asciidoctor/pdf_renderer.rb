@@ -615,8 +615,9 @@ class PdfRenderer < ::Prawn::Document
       indent @theme.horizontal_rhythm, @theme.horizontal_rhythm do
         if node.title?
           theme_font :sidebar_title do
+            move_up @theme.vertical_rhythm / 2 # WAT?
             # QUESTION should we allow margins to be customized?
-            heading node.title, margin: 0, align: @theme.sidebar_title_align.to_sym
+            heading node.title, align: @theme.sidebar_title_align.to_sym
           end
         else
           move_down @theme.vertical_rhythm / 2
