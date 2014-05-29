@@ -571,7 +571,7 @@ class PdfRenderer < ::Prawn::Document
           if box_height
             float do
               bounding_box [0, cursor], width: label_width + @theme.horizontal_rhythm, height: box_height do
-                prose label, valign: :center, style: :bold, line_height: 1
+                prose label, valign: :center, style: :bold, line_height: 1, final_gap: false
                 #line_metrics = calc_line_metrics @theme.base_line_height
                 #formatted_text_box [text: label],
                 #    at: [0, cursor - line_metrics.shift],
@@ -591,7 +591,7 @@ class PdfRenderer < ::Prawn::Document
               #move_up @theme.caption_margin_inside
             end
             render_node_content node
-            move_up 5 # FIXME wtf?
+            move_up @theme.vertical_rhythm
           end
         end
       #end
