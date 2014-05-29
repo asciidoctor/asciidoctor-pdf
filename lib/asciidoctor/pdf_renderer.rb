@@ -244,7 +244,7 @@ class PdfRenderer < ::Prawn::Document
       sect_title = section.numbered_title formal: true
       unless at_page_top? || options[:standalone]
         if section.chapter?
-          start_new_chapter
+          start_new_chapter section
         # FIXME someone hackish...need to sort out a cleaner approach here
         elsif cursor < (height_of sect_title) + @theme.heading_margin_top + @theme.heading_margin_bottom + @theme.base_line_height_length * 1.5
           start_new_page
@@ -369,7 +369,9 @@ class PdfRenderer < ::Prawn::Document
     move_down margin_bottom
   end
 
-  alias :start_new_chapter :start_new_page
+  def start_new_chapter section
+    start_new_page
+  end
 
   def chapter_title section, title_string
     heading title_string
@@ -591,6 +593,7 @@ class PdfRenderer < ::Prawn::Document
               #move_up @theme.caption_margin_inside
             end
             render_node_content node
+            # FIXME we need to move up to the content, not just vertical_rhythm
             move_up @theme.vertical_rhythm
           end
         end
