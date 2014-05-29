@@ -4,6 +4,7 @@ page:
   #background: path/to/background/image.png
   background_color: FFFFFF
   layout: portrait
+  # multiply inches by 72
   # 0.5", 0.67", 0.67", 0.67"
   margin: [36, 48.24, 48.24]
   size: Letter
@@ -44,11 +45,11 @@ code:
   font_color: $base_font_color
   font_family: LiberationMono
   font_size: floor($base_font_size * 0.9)
+  padding: [9.5, 9.5, 9.5, 9.5]
   background_color: F5F5F5
   border_color: CCCCCC
   border_radius: $base_border_radius
   border_width: 0.75
-  padding: 9.5
 literal:
   font_family: $code_font_family
   #font_color: C7254E
@@ -83,6 +84,9 @@ caption:
   align: left
   margin_inside: $vertical_rhythm / 2
   margin_outside: 0
+image:
+  align_default: left
+  scaled_width_default: 0.5
 lead:
   font_size: floor($base_line_height_length * 0.8)
   line_height: 1.4
@@ -90,6 +94,7 @@ abstract:
   font_size: floor($base_line_height_length * 0.8)
   font_color: 999999
   font_style: italic
+  indent: 0
 horizontal_rule_color: $base_border_color
 definition_list:
   term_font_style: italic
