@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-attributes = %w(idprefix=@ listing-caption=Listing@)
+attributes = %w(idprefix=@ listing-caption=Listing@ buildfor-editor)
 while ARGV[0] == '-a'
   ARGV.shift
   attributes << ARGV.shift
@@ -23,6 +23,7 @@ require 'ostruct'
 require 'asciidoctor'
 require 'asciidoctor/pdf_renderer'
 require 'asciidoctor/theme_loader'
+require 'asciidoctor-pdf/implicit_header_processor'
 require 'tilt'
 require 'slim'
 
@@ -30,11 +31,11 @@ DataDir = File.join File.dirname(__FILE__), '..', 'data'
 ThemesDir = File.join DataDir, 'themes'
 TemplatesDir = File.join DataDir, 'templates'
 
-#theme_data = ::Asciidoctor::ThemeLoader.load_file File.join ThemesDir, 'default-theme.yml'
-#theme_data = ::Asciidoctor::ThemeLoader.load_file File.join ThemesDir, 'asciidoctor-theme.yml'
-theme_data = ::Asciidoctor::ThemeLoader.load_file(theme_file || (File.join ThemesDir, 'default-theme.yml'))
+#theme_data = Asciidoctor::ThemeLoader.load_file File.join ThemesDir, 'default-theme.yml'
+#theme_data = Asciidoctor::ThemeLoader.load_file File.join ThemesDir, 'asciidoctor-theme.yml'
+theme_data = Asciidoctor::ThemeLoader.load_file(theme_file || (File.join ThemesDir, 'default-theme.yml'))
 
-file_rootname = ::Asciidoctor::Helpers.rootname File.basename asciidoc_file
+file_rootname = Asciidoctor::Helpers.rootname File.basename asciidoc_file
 pdf_file = %(#{file_rootname}.pdf)
 options = {
   safe: :safe,
@@ -42,5 +43,12 @@ options = {
   attributes: attributes
 }
 
-doc = ::Asciidoctor.load_file asciidoc_file, options
-::Asciidoctor::PdfRenderer.render doc, pdf_file, theme_data
+options[:extensions_registry] = Asciidoctor::Extensions.build_registry :pdf do
+  include_processor Asciidoctor::Pdf::ImplicitHeaderProcessor.new @document
+end
+
+workdir, asciidoc_file = File.split asciidoc_file
+Dir.chdir workdir
+
+doc = Asciidoctor.load_file asciidoc_file, options
+Asciidoctor::PdfRenderer.render doc, pdf_file, theme_data
