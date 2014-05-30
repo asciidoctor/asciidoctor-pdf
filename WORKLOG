@@ -2,6 +2,9 @@
 
 == TODO
 
+* TIP admonition broken in chronicles.adoc
+
+* "Incorrect number of arguments in 'SCN' command" happens when you add a stamp to an imported page
 * add bench/ directory for the script to test the speed of the formatted text parser
 * start page numbering on page 1 (use /PageLabels reference to make i the title page number)
 ** add this feature upstream to Prawn
