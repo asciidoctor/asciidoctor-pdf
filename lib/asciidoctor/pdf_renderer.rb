@@ -44,7 +44,7 @@ class PdfRenderer < ::Prawn::Document
     generate output_filename, options do
       @theme = theme
       @output_filename = output_filename
-      register_fonts
+      register_fonts doc.attr('scripts', 'latin')
       init_scratch_prototype
       @font_color = @theme.base_font_color
       render_document_node doc
@@ -59,28 +59,13 @@ class PdfRenderer < ::Prawn::Document
     ::File.join FONTS_DIR, font_file
   end
 
-  def register_fonts
-    # FIXME read from theme
-    register_font LiberationSans: {
-      normal: (font_path 'liberation_sans-normal.ttf'),
-      bold: (font_path 'liberation_sans-bold.ttf'),
-      italic: (font_path 'liberation_sans-italic.ttf'),
-      bold_italic: (font_path 'liberation_sans-bold_italic.ttf')
-    }
+  def register_fonts scripts = 'latin'
+    (@theme.font_catalog || {}).each do |key, font_styles|
+      register_font key => Hash[font_styles.map {|style, path| [style.to_sym, (font_path path)]}]
+    end
 
-    register_font LiberationMono: {
-      normal: (font_path 'liberation_mono-normal.ttf'),
-      bold: (font_path 'liberation_mono-bold.ttf'),
-      italic: (font_path 'liberation_mono-italic.ttf'),
-      bold_italic: (font_path 'liberation_mono-bold_italic.ttf')
-    }
-
-    #register_font FontAwesome: {
-    #  normal: (font_path 'fontawesome-webfont.ttf')
-    #}
-
-    #@fallback_fonts ||= []
-    #@fallback_fonts << 'LiberationSans'
+    #@fallback_fonts ||= (@theme.font_fallbacks || [])
+    @fallback_fonts ||= []
     default_kerning true
   end
 
@@ -647,7 +632,7 @@ class PdfRenderer < ::Prawn::Document
         end
       end
     end
-    move_down @theme.vertical_rhythm * 2
+    move_down @theme.vertical_rhythm * 1.5
   end
 
   def render_quote_node node

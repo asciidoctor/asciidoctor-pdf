@@ -1,31 +1,55 @@
+font:
+  catalog:
+    NotoSerif:
+      normal: notoserif-regular-latin.ttf
+      bold: notoserif-bold-latin.ttf
+      italic: notoserif-italic-latin.ttf
+      bold_italic: notoserif-bolditalic-latin.ttf
+    LiberationMono:
+      normal: liberationmono-regular-latin.ttf
+      bold: liberationmono-bold-latin.ttf
+      italic: liberationmono-italic-latin.ttf
+      bold_italic: liberationmono-bolditalic-latin.ttf
+    #Mplus1pMultilingual:
+    #  normal: mplus1p-regular-multilingual.ttf
+    #FontAwesome:
+    #  normal: fontawesome-regular.ttf
+  # FIXME using fallbacks breaks use of custom font styles
+  #fallbacks:
+  #  - Mplus1pMultilingual
 brand:
   primary_color: 428BCA
 page:
   #background: path/to/background/image.png
   background_color: FFFFFF
   layout: portrait
-  # multiply inches by 72
+  # multiply inches by 72 to get pt values
   # 0.5", 0.67", 0.67", 0.67"
   margin: [36, 48.24, 48.24]
   size: Letter
 base:
   font_color: 333333
-  font_family: LiberationSans
+  font_family: NotoSerif
+  # choose one of these font_size/line_height_length combinations
   #font_size: 14
-  font_size: 11.2
-  #font_size: 10.5
+  #line_height_length: 20
+  #font_size: 11.25
+  #line_height_length: 18
+  #font_size: 11.2
+  #line_height_length: 16
+  font_size: 10.5
+  line_height_length: 15
+  #font_size: 11.25
+  #line_height_length: 18
+  line_height: $base_line_height_length / $base_font_size
   font_size_large: round($base_font_size * 1.25)
   font_size_small: round($base_font_size * 0.85)
   font_style: normal
   align: justify
-  #line_height_length: 20
-  line_height_length: 16
-  #line_height_length: 15
-  line_height: $base_line_height_length / $base_font_size
   border_radius: 4
   border_width: 0.5
   border_color: EEEEEE
-vertical_rhythm: $base_line_height_length / 2
+vertical_rhythm: $base_line_height_length * 2 / 3
 horizontal_rhythm: $base_line_height_length
 link_font_color: $brand_primary_color
 heading:
@@ -38,8 +62,8 @@ heading:
   font_size_h5: $base_font_size
   font_size_h6: $base_font_size_small
   font_style: bold
-  line_height: 1.1
-  margin_top: $vertical_rhythm * 2
+  line_height: 1.4
+  margin_top: $vertical_rhythm / 2
   margin_bottom: $vertical_rhythm
 code:
   font_color: $base_font_color
@@ -91,7 +115,7 @@ lead:
   font_size: floor($base_line_height_length * 0.8)
   line_height: 1.4
 abstract:
-  font_size: floor($base_line_height_length * 0.8)
+  font_size: $lead_font_size
   font_color: 999999
   font_style: italic
   indent: 0
