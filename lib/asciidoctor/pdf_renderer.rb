@@ -337,7 +337,7 @@ class PdfRenderer < ::Prawn::Document
     #end
     text_fragments = text_formatter.format text_string, normalize: (normalize = (options.delete :normalize)) != false 
     text_fragments = text_fragments.map {|fragment|
-      fragment[:color] = @text_color unless fragment[:color]
+      fragment[:color] = @font_color unless fragment[:color]
       fragment
     }
     tbox = ::Prawn::Text::Formatted::Box.new text_fragments, at: [coordinates[:text_x], coordinates[:text_y]], width: coordinates[:text_width], height: coordinates[:text_height], final_gap: line_metrics.final_gap, leading: line_metrics.leading, align: text_align, document: self
