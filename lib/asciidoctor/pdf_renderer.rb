@@ -198,7 +198,7 @@ class PdfRenderer < ::Prawn::Document
       image_page front_cover_image, canvas: true
     end
 
-    return if doc.notitle
+    return if doc.noheader || doc.notitle
 
     start_new_page
 
