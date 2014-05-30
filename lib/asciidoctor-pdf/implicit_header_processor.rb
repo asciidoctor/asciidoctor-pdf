@@ -51,7 +51,8 @@ class ImplicitHeaderProcessor < ::Asciidoctor::Extensions::IncludeProcessor
   end
 
   def handles? target
-    target != 'bio.adoc' && ((target.end_with? '.adoc') || (target.end_with? '.asciidoc'))
+    # FIXME should not require this hack to skip processing bio
+    !(target.end_with? 'bio.adoc') && ((target.end_with? '.adoc') || (target.end_with? '.asciidoc'))
   end
 
   # FIXME this method shouldn't be required
