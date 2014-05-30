@@ -11,6 +11,16 @@ theme_file = if ARGV[0] == '--theme'
   ARGV.shift
 end
 
+require_lib = if ARGV[0] == '-r'
+  ARGV.shift
+  ARGV.shift
+end
+
+to_dir = if ARGV[0] == '-D'
+  ARGV.shift
+  ARGV.shift
+end
+
 asciidoc_file = ARGV[0] || %(README.adoc)
 unless (File.exist? asciidoc_file) && (File.readable? asciidoc_file)
   warn %(ERROR: The specified file does not exist or cannot be read: #{asciidoc_file})
@@ -26,6 +36,7 @@ require 'asciidoctor/theme_loader'
 require 'asciidoctor-pdf/implicit_header_processor'
 require 'tilt'
 require 'slim'
+require require_lib if require_lib
 
 DataDir = File.join File.dirname(__FILE__), '..', 'data'
 ThemesDir = File.join DataDir, 'themes'
@@ -37,6 +48,7 @@ theme_data = Asciidoctor::ThemeLoader.load_file(theme_file || (File.join ThemesD
 
 file_rootname = Asciidoctor::Helpers.rootname File.basename asciidoc_file
 pdf_file = %(#{file_rootname}.pdf)
+pdf_file = File.join to_dir, pdf_file if to_dir
 options = {
   safe: :safe,
   template_dir: TemplatesDir,
@@ -52,4 +64,5 @@ workdir, asciidoc_file = File.split asciidoc_file
 Dir.chdir workdir
 
 doc = Asciidoctor.load_file asciidoc_file, options
+doc.restore_attributes
 Asciidoctor::PdfRenderer.render doc, pdf_file, theme_data
