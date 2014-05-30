@@ -347,7 +347,7 @@ module Prawn
     #
     def import_page file
       prev_page_number = page_number
-      state.compress = false # can't use compression if using template
+      state.compress = false if state.compress # can't use compression if using template
       start_new_page_discretely template: file
       go_to_page prev_page_number + 1
     end
@@ -367,13 +367,24 @@ module Prawn
       go_to_page page_count
     end
 
+    # Perform an operation (such as creating a new page) without triggering the on_page_create callback
+    #
+    def perform_discretely
+      if (saved_callback = state.on_page_create_callback)
+        state.on_page_create_callback = nil
+        yield
+        state.on_page_create_callback = saved_callback
+      else
+        yield
+      end
+    end
+
     # Start a new page without triggering the on_page_create callback
     #
     def start_new_page_discretely options = {}
-      saved_callback = state.on_page_create_callback
-      state.on_page_create_callback = nil
-      start_new_page options
-      state.on_page_create_callback = saved_callback
+      perform_discretely do
+        start_new_page options
+      end
     end
 
     # Grouping
