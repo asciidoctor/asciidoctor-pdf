@@ -1,4 +1,5 @@
 require 'prawn'
+require 'prawn/templates'
 require 'prawn-svg'
 require 'asciidoctor/prawn'
 require 'asciidoctor/ext/section'
@@ -584,7 +585,7 @@ class PdfRenderer < ::Prawn::Document
         end
       #end
     end
-    move_down @theme.vertical_rhythm * 2
+    move_down @theme.vertical_rhythm * 1.5
   end
 
   def render_sidebar_node node
@@ -671,7 +672,7 @@ class PdfRenderer < ::Prawn::Document
         end
       end
     end
-    move_down @theme.vertical_rhythm * 2
+    move_down @theme.vertical_rhythm * 1.5
   end
 
   # FIXME use numbers from symbol font
@@ -863,7 +864,7 @@ class PdfRenderer < ::Prawn::Document
       end
       caption node, position: :bottom
     end
-    move_down @theme.vertical_rhythm * 2
+    move_down @theme.vertical_rhythm * 1.5
   end
 
   def render_literal_node node
@@ -1052,7 +1053,7 @@ class PdfRenderer < ::Prawn::Document
   def render_horizontal_rule_node node
     move_down @theme.vertical_rhythm
     stroke_horizontal_rule @theme.horizontal_rule_color
-    move_down @theme.vertical_rhythm * 2
+    move_down @theme.vertical_rhythm * 1.5
   end
 
   alias :render_thematic_break_node :render_horizontal_rule_node
