@@ -36,6 +36,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF files using
   #s.add_development_dependency 'rdoc', '~> 4.1.0'
 
   s.add_runtime_dependency 'asciidoctor', ['>= 1.5.0.preview.7', '< 1.6.0']
+  # FIXME coderay should be an optional dependency
   s.add_runtime_dependency 'coderay', '~> 1.1.0'
   s.add_runtime_dependency 'prawn', '1.0.0'
   s.add_runtime_dependency 'prawn-templates', '0.0.3'
@@ -44,5 +45,6 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF files using
   s.add_runtime_dependency 'tilt', '~> 2.0.0'
   s.add_runtime_dependency 'slim', '~> 2.0.2'
 
+  # FIXME make thread_safe a required dependency since we are using templates
   #s.add_runtime_dependency 'thread_safe', '~> 0.3.1'
 end
