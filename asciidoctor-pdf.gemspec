@@ -23,6 +23,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF files using
     s.files = Dir['**/*']
   end
 
+  # FIXME optimize-pdf is currently a shell script, so listing it here won't work
   s.executables = %w(asciidoctor-pdf optimize-pdf)
   s.test_files = s.files.grep(/^(?:test|spec|feature)\/.*$/)
   s.require_paths = %w(lib)
@@ -37,6 +38,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF files using
   s.add_runtime_dependency 'asciidoctor', ['>= 1.5.0.preview.7', '< 1.6.0']
   s.add_runtime_dependency 'coderay', '~> 1.1.0'
   s.add_runtime_dependency 'prawn', '1.0.0'
+  s.add_runtime_dependency 'prawn-templates', '0.0.3'
   s.add_runtime_dependency 'prawn-svg', '0.15.0.0'
   s.add_runtime_dependency 'treetop', '1.5.3'
   s.add_runtime_dependency 'tilt', '~> 2.0.0'
