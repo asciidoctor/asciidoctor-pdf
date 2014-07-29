@@ -3,32 +3,36 @@
 == TODO
 
 * TIP admonition broken in chronicles.adoc
-
 * "Incorrect number of arguments in 'SCN' command" happens when you add a stamp to an imported page
+* make page numbers and outline a document option
+* remove pdfmarks file after processing
+* fix shading on listing that spans more than one page
+  - in general, need to deal w/ situation if content in dry run is large than one page
+* shrink / squeeze source code to avoid wrapping
 * add bench/ directory for the script to test the speed of the formatted text parser
 * start page numbering on page 1 (use /PageLabels reference to make i the title page number)
-** add this feature upstream to Prawn
+  - add this feature upstream to Prawn
 * *report image only page w/ stamps corruption issue to Prawn*
 * add /PageMode /UseOutlines
-* what does fopub do to calculating scaling images? reduces width more
+* what does fopub do to calculate scaling images? reduces width more?
 * switch admonition blocks to font awesome icons
-* replace tabs with spaces in source code
+* replace tabs with spaces in source code (Asciidoctor core change?)
 * preamble on separate page?
 * part on separate page for book doctype? (which other sections?)
 * make default image scale width a theme setting
 * cli arguments
-** theme file
-** AsciiDoc attributes
-** output file
-** enable/disable writing pdfmarks file
+  - theme file
+  - AsciiDoc attributes (partially solved)
+  - output file
+  - enable/disable writing pdfmarks file
 * section numbering
 * apply line height metrics for table content
 * image border
 * table footer
 * flesh out outline more
 * flesh out title page more
-** document subtitle
-** don't create title page for article doctype
+  - document subtitle (partially solved)
+  - don't create title page for article doctype
 * chapter name in footer
 * implement toc and activate if toc is set on document (need to reorder pages)
 * callouts
@@ -37,10 +41,9 @@
 * callbacks for title page, new part, new chapter, etc
 * split out render methods for chapter, part, section, etc
 * theme setting for code line height (currently using base_line_height)
-** in general, allow theme_font to set line_height
+  - in general, allow theme_font to set line_height
 * custom subs in verbatim blocks
 * captions/titles on all blocks that support them
-* shrink / squeeze source code to avoid wrapping
 * make font size and character spacing scaling of inline code part of theme
 * need to deal w/ situation if content in dry run is large than one page
 * might be able to avoid dry run for listing/literal in obvious cases
@@ -54,7 +57,6 @@
 == Open Design Questions
 
 * remove/reduce padding above heading at start of page?
-* Should we stick to using Liberation Fonts 2.00.x by default?
 * Default line height?
 * Heading font family / size / color
 * Should the heading sizes be calculated according to the default font size?
