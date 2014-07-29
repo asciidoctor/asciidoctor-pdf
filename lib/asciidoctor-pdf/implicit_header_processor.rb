@@ -10,7 +10,7 @@ class ImplicitHeaderProcessor < ::Asciidoctor::Extensions::IncludeProcessor
     @document = document
   end
 
-  def process reader, target, attributes
+  def process doc, reader, target, attributes
     return reader unless File.exist? target
     ::File.open target, 'r' do |fd|
       # FIXME handle case where doc id is specified above title
