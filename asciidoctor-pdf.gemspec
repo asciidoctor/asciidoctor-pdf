@@ -42,6 +42,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF files using
   s.add_runtime_dependency 'prawn-templates', '0.0.3'
   s.add_runtime_dependency 'prawn-svg', '0.16.0'
   s.add_runtime_dependency 'slim', '~> 2.0.0'
+  s.add_runtime_dependency 'thread_safe', '0.3.4'
   s.add_runtime_dependency 'tilt', '~> 2.0.0'
   s.add_runtime_dependency 'treetop', '1.5.3'
 end
