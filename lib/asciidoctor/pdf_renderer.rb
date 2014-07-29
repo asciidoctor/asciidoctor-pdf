@@ -262,14 +262,31 @@ class PdfRenderer < ::Prawn::Document
     if (parent = node.parent).context == :section && node == parent.blocks[0] && parent.title == 'About the Author'
       # QUESTION look for headshot.jpg inside article directory?
       prose_around_image %(images/headshots/#{node.document.attr 'username'}.jpg), node.content, image_width: 75
-    elsif node.has_role? 'lead'
-      theme_font :lead do
-        prose node.content
-      end
     else
+      is_lead = false
       prose_options = {}
-      prose_options[:size] = @theme.base_font_size_small if node.has_role? 'signature'
-      prose node.content, prose_options
+      node.roles.each do |role|
+        case role
+        when 'text-left'
+          prose_options[:align] = :left
+        when 'text-right'
+          prose_options[:align] = :right
+        when 'text-justify'
+          prose_options[:align] = :justify
+        when 'lead'
+          is_lead = true
+        #when 'signature'
+        #  prose_options[:size] = @theme.base_font_size_small
+        end
+      end
+
+      if is_lead
+        theme_font :lead do
+          prose node.content, prose_options
+        end
+      else
+        prose node.content, prose_options
+      end
     end
   end
 
@@ -820,7 +837,6 @@ class PdfRenderer < ::Prawn::Document
     position = ((node.attr 'align') || @theme.image_align_default || :left).to_sym
     case image_type
     when 'svg'
-      svg_data = IO.read image_path
       keep_together do
         # HACK prawn-svg can't seem to center, so do it manually for now
         left = case position
@@ -831,7 +847,7 @@ class PdfRenderer < ::Prawn::Document
         when :center
           ((bounds.width - width) / 2.0).floor
         end
-        svg svg_data, at: [left, cursor], width: width, position: position
+        svg IO.read(image_path), at: [left, cursor], width: width, position: position
         caption node, position: :bottom
       end
     else
