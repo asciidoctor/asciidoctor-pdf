@@ -11,10 +11,12 @@ OpenDevise Inc.
 ifdef::env-github[]
 :notice-uri: link:NOTICE.adoc
 :license-uri: link:LICENSE.adoc
+:worklog-uri: link:WORKLOG.adoc
 endif::[]
 ifndef::env-github[]
 :notice-uri: {project-repo-uri}/blob/master/NOTICE.adoc
 :license-uri: {project-repo-uri}/blob/master/LICENSE.adoc
+:worklog-uri: {project-repo-uri}/blob/master/WORKLOG.adoc
 endif::[]
 
 _Lo and behold_, a native PDF renderer for AsciiDoc built with {asciidoctor-uri}[Asciidoctor] and {prawn-uri}[Prawn]! +
@@ -71,7 +73,7 @@ Picking up from there, {project-name} takes the pain out of creating printable d
 
 === Missing Features
 
-See link:WORKLOG[WORKLOG].
+See {worklog-uri}[WORKLOG].
 
 == Prerequisites
 
