@@ -1,3 +1,4 @@
+require_relative 'core_ext/array'
 require 'prawn'
 require 'prawn/templates'
 require 'prawn-svg'
