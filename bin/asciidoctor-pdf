@@ -21,6 +21,11 @@ to_dir = if ARGV[0] == '-D'
   ARGV.shift
 end
 
+base_dir = if ARGV[0] == '-B'
+  ARGV.shift
+  ARGV.shift
+end
+
 asciidoc_file = ARGV[0] || %(README.adoc)
 unless (File.exist? asciidoc_file) && (File.readable? asciidoc_file)
   warn %(ERROR: The specified file does not exist or cannot be read: #{asciidoc_file})
@@ -53,7 +58,8 @@ options = {
   safe: :safe,
   template_dir: TemplatesDir,
   header_footer: true,
-  attributes: attributes
+  attributes: attributes,
+  base_dir: base_dir
 }
 
 options[:extensions_registry] = Asciidoctor::Extensions.build_registry :pdf do
