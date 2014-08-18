@@ -1,6 +1,10 @@
 = Asciidoctor PDF: A native PDF renderer for AsciiDoc
 OpenDevise Inc.
+// Settings:
+:experimental:
+// Aliases:
 :project-name: Asciidoctor PDF
+// URIs:
 :project-handle: asciidoctor-pdf
 :project-uri: https://github.com/asciidoctor/asciidoctor-pdf
 :project-repo-uri: https://github.com/asciidoctor/asciidoctor-pdf
@@ -110,7 +114,7 @@ Next, change to the project directory:
 If you want to download a zip archive, click on the btn:[Download Zip] button on the right-hand side of the repository page on GitHub.
 Once the download finishes, extract the archive, open a console and change to that directory.
 
-TIP: Instead of working out of the {project-handle} directory, you can simply add the directory to your +PATH+ environment variable.
+TIP: Instead of working out of the {project-handle} directory, you can simply add the absolute path of the [path]_bin_ directory to your +PATH+ environment variable.
 
 We'll leverage the project configuration to install the necessary dependencies.
 
