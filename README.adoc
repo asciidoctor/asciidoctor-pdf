@@ -21,7 +21,7 @@ ifdef::env-github[:repo-base-uri: link:]
 _Lo and behold_, a native PDF converter for AsciiDoc built with {uri-asciidoctor}[Asciidoctor] and {uri-prawn}[Prawn]! +
 _No more DocBook toolchain._ +
 _No more middleman._ +
-We're talking AsciiDoc direct to PDF!
+We're talking AsciiDoc straight to PDF!
 
 .Project status
 CAUTION: {project-name} is currently _alpha_ software.
@@ -179,7 +179,7 @@ end
 ----
 ....
 
-It's time to convert the AsciiDoc document direct to PDF.
+It's time to convert the AsciiDoc document directly to PDF.
 
 === Convert AsciiDoc to PDF
 
