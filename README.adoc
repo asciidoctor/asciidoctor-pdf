@@ -243,5 +243,5 @@ Feel free to use the {uri-project-issues}[issue tracker] or http://discuss.ascii
 Copyright (C) 2014 OpenDevise Inc. and the Asciidoctor Project.
 Free use of this software is granted under the terms of the MIT License.
 
-For the full text of the license, see the {uri-license}[LICENSE.adoc] file.
-Refer to the {uri-notice}[NOTICE.adoc] file for information about third-party Open Source software in use.
+For the full text of the license, see the {uri-license}[LICENSE] file.
+Refer to the {uri-notice}[NOTICE] file for information about third-party Open Source software in use.
