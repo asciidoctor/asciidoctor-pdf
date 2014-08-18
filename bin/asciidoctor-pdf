@@ -1,5 +1,12 @@
 #!/usr/bin/env ruby
 
+if ARGV[0] == '--version' || (ARGV[0] == '-v' && ARGV.size == 1)
+  require_relative '../lib/asciidoctor-pdf/version'
+  puts %(Asciidoctor PDF #{Asciidoctor::Pdf::VERSION} [http://asciidoctor.org]
+Runtime Environment (#{RUBY_DESCRIPTION}))
+  exit 0
+end
+
 attributes = %w(idprefix=@ listing-caption=Listing@ buildfor-editor)
 while ARGV[0] == '-a'
   ARGV.shift
