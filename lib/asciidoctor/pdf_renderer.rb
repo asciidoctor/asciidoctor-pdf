@@ -58,7 +58,8 @@ class PdfRenderer < ::Prawn::Document
   end
 
   def font_path font_file
-    ::File.join FONTS_DIR, font_file
+    # resolve relative to built-in font dir unless path is absolute
+    ::File.absolute_path font_file, FONTS_DIR
   end
 
   def register_fonts scripts = 'latin'
