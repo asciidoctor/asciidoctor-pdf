@@ -2,6 +2,8 @@
 
 == TODO
 
+* "cmap format 14 is not supported" caused by sort operation in ttffunk (see https://groups.google.com/forum/#!topic/prawn-ruby/kpOcAtltQjE)
+* can get orphan conum if starts on last line of page
 * TIP admonition broken in chronicles.adoc
 * "Incorrect number of arguments in 'SCN' command" happens when you add a stamp to an imported page
 * make page numbers and outline a document option
