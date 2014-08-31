@@ -424,6 +424,7 @@ module Prawn
       scratch = get_scratch_document
       scratch.start_new_page
       original_y = scratch.y
+      original_page_number = scratch.page_number
       scratch.font font_family, style: font_style, size: font_size do
         scratch.instance_exec(&block)
       end
@@ -431,7 +432,12 @@ module Prawn
       #scratch.transaction do
       #  scratch.instance_exec(&block)
       #end
-      height_of_content = original_y - scratch.y
+      number_of_pages = scratch.page_number - original_page_number
+      if number_of_pages == 0
+         height_of_content = original_y - scratch.y
+      else
+         height_of_content = original_y + (bounds.height - scratch.y) + (bounds.height * (number_of_pages - 1))
+      end
       #scratch.render_file 'scratch.pdf'
       height_of_content
     end
