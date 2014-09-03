@@ -17,7 +17,7 @@
 # along with Prawn. If not, see <http://www.gnu.org/licenses/>.
 #
 # Copyright (C) Felipe Doria
-# Copyrigth (C) 2014 OpenDevise, Inc.
+# Copyright (C) 2014 OpenDevise Inc. and the Asciidoctor Project
 #
 ######################################################################
 

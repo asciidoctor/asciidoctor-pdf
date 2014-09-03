@@ -4,57 +4,62 @@ v1.0, 2014-01-01: The first incarnation of {doctitle}
 :description: This story chronicles the inexplicable hazards and vicious beasts a +
 team must surmount and vanquish on the journey to finding their open source +
 project's true power.
-:title-logo: sample-title-logo.jpg
 :doctype: book
+:title-logo: sample-title-logo.jpg
+// Settings:
+:compat-mode:
+:experimental:
+:icons: font
+:listing-caption: Listing
+:sectnums:
 :toc:
 :toclevels: 3
-:numbered:
-:source-highlighter: coderay
-:icons: font
-:wolper: http://en.wikipedia.org/wiki/Wolpertinger
-:listing-caption: Listing
+ifdef::backend-pdf[]
+:pagenums:
+:pygments-style: bw
+:source-highlighter: pygments
+endif::[]
+// URIs:
+:wolper-uri: http://en.wikipedia.org/wiki/Wolpertinger
 
+[abstract]
 {description}
 
 == It's a City Under Siege
 
 This journey begins one late Monday afternoon at http://www.devoxx.be/#/[Devoxx].
-Our team needs coffee, _desperately_, but none of us dare open the theater doors.
+Our team needs coffee, _desperately_, but none of us dare open the theater doors...
 
-To leave means *code dismemberment and certain death*.
+During the first workshop, a script-happy warlock inadvertently released a legion of Wolpertingers!
+To leave now would mean *code dismemberment and certain death*.
 
-During the first conference workshop, a script-addicted warlock released a plague of Wolpertingers.
-
-// Block image
+Behold, the horror!
 
 .Wolpertinger, stuffed
 [.left.thumb]
 image::wolpertinger.jpg[Wolpertinger,width=100%,scaledwidth=55%]
 
-You may not be familiar with these {wolper}[ravenous beasts], but, trust us, they'll eat your shorts and suck the loops from your code.
-Since then, we'd been searching for the security crew's defensive operations manual.
-But we couldn't find it, and those DefOps werewolves still hadn't returned from their trusted building retreat at Bier Central.
-They'd left last night.
-Either they'd eaten each other, or they'd fallen victim to the Wolpertingers roaming the city streets.
-
-_Weak light from the hallway trickled across the theater, chased by a distant scream._
-
-// Admonition block
+You may not be familiar with these {wolper-uri}[ravenous beasts].
+Trust us, they'll eat your shorts and suck loops from your code.
+In light of this danger, we've searched high and wide for the security crew's defensive operations manual.
+We can't find it and the DefOps{empty}footnote:[a portmanteau of “defensive” and “operations”] werewolves haven't returned from their rendezvous at Bier Central.
+They've either eaten each other or fallen victim to the Wolpertingers roaming the streets of Antwerp.
+Quick, hit kbd:[Ctrl,Alt,Backspace] or select menu:File[Quit] and let's bail out of here!
 
 WARNING: Working with werewolves leads to howling and trying to train aggressive regular expressions with Pavlovian reinforcement.
 
+_Weak light from the hallway trickled across the theater, chased by a distant scream._
+
 === Rendezvous Point
 
-Come on, Bier Central.
+Come on, _Bier Central_.
 Did you have to ask?
-If you get there first, I'll take a http://www.sintbernardus.be/stbernardusabt12.php?l=en[St. Bernardus Abt 12].
+If you beat me there, I'll take a http://www.sintbernardus.be/stbernardusabt12.php?l=en[St. Bernardus Abt 12].
 
 [[ravages]]
 == The Ravages of Writing
 
 Crystalline XML tags relentlessly bombarded the theater.
-
-// The syntax highlighted source code block.
 
 .XML tags
 [source,xml]
@@ -67,17 +72,15 @@ Crystalline XML tags relentlessly bombarded the theater.
 </author>
 ----
 
-Despite the assault we were still attempting to draft an example of a defensive operation.
-
-// Example block with title.
+Despite the assault, we were still attempting to draft an example of a defensive operation.
 
 .DefOps Plan
 ====
-Here's a sample defensive operation.
+Click btn:[Download Zip] to download the defensive operation plan bundle.
 
 OMG!
 Somebody please save us now!
-I want may mommy...and an extra-large double macchiato.
+I want my mum...and an extra-large double macchiato, please.
 ====
 
 Unfortunaly, Lazarus and I had both come to the conclusion that we weren't going to get out of this without corrupted hardrives if we didn't locate caffeine within the next few hours.
@@ -178,8 +181,6 @@ Violets are +++<span style="color: #0000FF">blue</span>+++__-ish__.
 
 == Words Seasoned with Power
 
-// Inline formatting in a paragraph
-
 _To tame_ the wild wolpertingers we needed to build a *charm*.
 But **u**ltimate victory could only be won if we divined the *_true name_* of the __war__lock.
 
@@ -189,7 +190,7 @@ Kizmet shrugged. ``The note from Olaf's desk says `wormwood and licorice,' but t
 ``Well the H~2~O written on the security whiteboard could be part of a shopping list, but I don't think the local bodega also sells e = mc^2^.'' Lazarus replied.
 
 ``Wait!'' Indigo plucked a small vial from her desk's top drawer and held it toward us.
-The vial's label read `+e = mc^2^+ +*_the scent of science_*+ +_smell like a genius_+'.
+The vial's label read `+e = mc^2^+ +*_the scent of science_*+ +_smells like a genius_+'.
 
 === Can I Get Some +Code+?
 
@@ -214,6 +215,8 @@ The +listing+ style is applied to an element, such as a paragraph, by setting th
 
 Let's get our highlighting on!
 
+<<<
+
 Install Prawn:
 
  $ gem install prawn
@@ -222,12 +225,15 @@ Then create your first PDF document in Ruby!
 
 .Generates a basic PDF document using Prawn
 ```ruby
-require 'prawn'
+require 'prawn' # <1>
 
-Prawn::Document.generate 'output.pdf' do
-  text 'Hello, World!'
+Prawn::Document.generate 'output.pdf' do # <3>
+  text 'Hello, World!' # <2>
 end
 ```
+<1> Imports Prawn library
+<2> Adds text “Hello, World!” to first page
+<3> Writes PDF to [file]_output.pdf_ after executing all statements
 
 How about some source code that styles code? So meta!
 
@@ -271,15 +277,15 @@ public class GreetingReceiver implements EventReceiver, Serializable {
 
 We already showed you an XML example in <<ravages>>.
 
-And I'll trade you a little table for some of that bark.
+I'll trade you a little table for some of that bark.
 
 [cols=3,frame=topbot,grid=rows]
 |===
 |Name of Column 1 |Name of Column 2 |Name of Column 3
 
-^m|Prefix the +{brvbar}+ with +{caret}+ to center content horizontally
-.<|Prefix the +{brvbar}+ with a +.+ and +<+ to align the content to the top of the cell
->|Prefix the +{brvbar}+ with +>+ to align the content to the right horizontally
+^m|Prefix the +{vbar}+ with +{caret}+ to center content horizontally
+.<|Prefix the +{vbar}+ with a +.+ and +<+ to align the content to the top of the cell
+>|Prefix the +{vbar}+ with +>+ to align the content to the right horizontally
 
 3+^.^e|This content spans three columns (+3{plus}+) and is centered horizontally (+{caret}+) and vertically (+.{caret}+) within the cell.
 |===
@@ -299,10 +305,34 @@ don't make me laugh
 
 Does anyone have the time?
 
+Tg lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborumj.
+
 == Keeping It Together
 
 On this page we have nested ``keep together'' logic.
 The combined block will be shifted to the next page if there isn't room available on this one.
+
+[verse]
+First,
+we
+need
+to
+waste
+several
+lines
+using
+a
+verse
+to
+push
+it
+to
+the
+breaking
+point.
 
 [NOTE]
 .What happens if there is both a field and a method with the same name?

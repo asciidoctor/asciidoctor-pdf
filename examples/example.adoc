@@ -14,14 +14,14 @@ A paragraph followed by a simple list with square bullets.
 * item 1
 * item 2
 
-Here's how you say ``Hello, World!'' in Prawn:
+Here's how you say "`Hello, World!`" in Prawn:
 
 .Create a basic PDF document using Prawn
 [source,ruby]
-....
+----
 require 'prawn'
 
 Prawn::Document.generate 'example.pdf' do
   text 'Hello, World!'
 end
-....
+----

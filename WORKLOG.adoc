@@ -2,59 +2,110 @@
 
 == TODO
 
-* "cmap format 14 is not supported" caused by sort operation in ttffunk (see https://groups.google.com/forum/#!topic/prawn-ruby/kpOcAtltQjE)
-* can get orphan conum if starts on last line of page
-* TIP admonition broken in chronicles.adoc
-* "Incorrect number of arguments in 'SCN' command" happens when you add a stamp to an imported page
-* make page numbers and outline a document option
-* remove pdfmarks file after processing
+.Remaining to publish 1.0.0.alpha.1
+* send pull request for issue-29
+
+//^
+
+* SVG image is getting cut off when at boundary of page
+* create proper default (Asciidoctor) theme
+* start number for conum in theme
+* implement compat lists (like in Asciidoctor EPUB3)
+* list bullet in ordered list needs to grow with length of number
+* document how the treetop parser is rebuilt
+* rewrite optimize-pdf using rghost
+* rework font so we can set actual height, calculate x_height internally (use 1em for spacings)
+* padding top and bottom on content affects height_of calculations (need to review)
+* enable fallback font
+* don't cutoff content in partintro
+* use padding from theme around admonition block content
+* use padding from theme around block quote content
+* add admonition_label_font_color to theme
+* remove remaining uses of vertical_rhythm and horizontal_rhythm
+* implement subtitle on title page
+* theme setting for code line height (currently using base_line_height)
+  - in general, allow theme_font to set line_height
+* print scratch.pdf file if verbose / trace mode is on in Asciidoctor
+* introduce setting to indent section content
+* design merge margin logic (like for admonition block)
+* use font awesome for admonition icons
+* rename default theme to docbook theme, make default the Asciidoctor theme (should we have a base theme?)
+* add callout subs when using CodeRay and when using color themes in Pygments
+* allow relative font size for inline code to be set (perhaps a percentage or em value? there are problems with this in arranger)
+* set defaults in ThemeLoader for required theme settings like prose_margin_top/bottom so we don't need fallbacks in code
+* implement orphan sentences for paragraph
+* apply line height metrics for table content
+  - figure out how to adjust line height for monospaced cell content
+  - figure out how to layout regular cell content to adjust for line height
+* document the typeset_text methods very clearly
 * fix shading on listing that spans more than one page
   - in general, need to deal w/ situation if content in dry run is large than one page
-* shrink / squeeze source code to avoid wrapping
+  - need to deal w/ situation if content in dry run is large than one page
+* move check for node.title? inside layout_caption
+* theme idea / tester: see sandbox/ebook-learn_version_control_with_git-SAMPLE.pdf
+
+* enable pagenums attribute by default (may require changes to how we handle attributes)
+* start page numbering on first page if no title page
+
+* implement quote style from default Asciidoctor stylesheet
+* reorg Prawn extensions (see prawn-table for example)
+* rename "theme" to "style"?
+* restrict custom theme path to jail (or load from load_path)
+* add Optimizer class; wire to cli
+* implement convert_toc
+* can get orphan conum if starts on last line of page (fixed already?)
+* only create title page if doctype=book
+
+* introduce method for start_initial_page?
+* honor font defs in SVG (to get M+ 1p)
+* callout matching in listing blocks is extremely fragile and doesn't handle two in one line
+* make outline a document option (perhaps "outline" like "toc")
+* remove pdfmarks file after optimizing
+* shrink / squeeze source code to avoid wrapping (see original impl in nfjsmag, also shrink_to_fit)
 * add bench/ directory for the script to test the speed of the formatted text parser
 * start page numbering on page 1 (use /PageLabels reference to make i the title page number)
   - add this feature upstream to Prawn
 * *report image only page w/ stamps corruption issue to Prawn*
 * add /PageMode /UseOutlines
 * what does fopub do to calculate scaling images? reduces width more?
-* switch admonition blocks to font awesome icons
 * replace tabs with spaces in source code (Asciidoctor core change?)
 * preamble on separate page?
 * part on separate page for book doctype? (which other sections?)
 * make default image scale width a theme setting
 * cli arguments
-  - theme file
-  - AsciiDoc attributes (partially solved)
-  - output file
+  - theme (pdf-style, pdf-stylesdir)
   - enable/disable writing pdfmarks file
+  - optimize-pdf
 * section numbering
-* apply line height metrics for table content
+* implement footnotes correctly
 * image border
 * table footer
 * flesh out outline more
 * flesh out title page more
   - document subtitle (partially solved)
-  - don't create title page for article doctype
+* don't create title page for article doctype
 * chapter name in footer
 * implement toc and activate if toc is set on document (need to reorder pages)
-* callouts
-* footnotes
 * inline image
 * callbacks for title page, new part, new chapter, etc
 * split out render methods for chapter, part, section, etc
-* theme setting for code line height (currently using base_line_height)
-  - in general, allow theme_font to set line_height
 * custom subs in verbatim blocks
 * captions/titles on all blocks that support them
 * make font size and character spacing scaling of inline code part of theme
-* need to deal w/ situation if content in dry run is large than one page
 * might be able to avoid dry run for listing/literal in obvious cases
-* index
+* implement index of index terms
+* bw theme for CodeRay to match output of Pygments bw
+* inline tabs should be replaced in layout_prose (etc) when normalize is enabled
 
 * use treetop to parse and evaluate theme file
-* make source code highlighting theme configurable
-* wire in as custom renderer in Asciidoctor (requires that we make the renderer pluggable)
+* make source code highlighting theme configurable (should be now, but has problems with conums)
 * use or don't use pad method? check performance
+
+== Documentation
+
+* control page numbering using pagenums attribute
+* "Incorrect number of arguments in 'SCN' command" happens when you add a stamp to an imported page
+* be mindful that layout_prose adds margin to bottom of content by default (important when working in a bounding box)
 
 == Open Design Questions
 

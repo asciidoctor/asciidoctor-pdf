@@ -4,13 +4,17 @@ class FormattedTextTransform
   def initialize(options = {})
     @merge_adjacent_text_nodes = options.fetch(:merge_adjacent_text_nodes, false)
     if (theme = options[:theme])
-      @monospaced_font_family = theme.literal_font_family
-      @monospaced_font_color = theme.literal_font_color
       @link_font_color = theme.link_font_color
+      @monospaced_font_color = theme.literal_font_color
+      @monospaced_font_family = theme.literal_font_family
+      @monospaced_font_size = theme.literal_font_size
+      #@monospaced_letter_spacing = theme.literal_letter_spacing
     else
-      @monospaced_font_family = 'Courier'
-      @monospaced_font_color = nil
       @link_font_color = '0000FF'
+      @monospaced_font_color = nil
+      @monospaced_font_family = 'Courier'
+      @monospaced_font_size = 0.9
+      #@monospaced_letter_spacing = -0.1
     end
   end
 
@@ -87,9 +91,12 @@ class FormattedTextTransform
       styles << :italic
     when :code
       fragment[:font] ||= @monospaced_font_family
-      # TODO pull relative size and character_spacing from theme
-      fragment[:size] ||= 0.9
-      fragment[:character_spacing] ||= -0.1
+      if @monospaced_font_size
+        fragment[:size] ||= @monospaced_font_size
+      end
+      #if @monospaced_letter_spacing
+      #  fragment[:character_spacing] ||= @monospaced_letter_spacing
+      #end
       if @monospaced_font_color
         fragment[:color] ||= @monospaced_font_color
       end
@@ -113,9 +120,9 @@ class FormattedTextTransform
       if !fragment[:size] && (value = attrs[:size])
         fragment[:size] = value.to_f
       end
-      if !fragment[:character_spacing] && (value = attrs[:character_spacing])
-        fragment[:character_spacing] = value.to_f
-      end
+      #if !fragment[:character_spacing] && (value = attrs[:character_spacing])
+      #  fragment[:character_spacing] = value.to_f
+      #end
     when :a, :link
       if !fragment[:anchor] && (value = attrs[:anchor])
         fragment[:anchor] = value
