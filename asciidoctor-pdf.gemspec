@@ -35,10 +35,11 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF files using
   s.add_development_dependency 'rake', '~> 10.0'
   #s.add_development_dependency 'rdoc', '~> 4.1.0'
 
-  s.add_runtime_dependency 'asciidoctor', ['>= 1.5.0.rc.2', '< 1.6.0']
+  s.add_runtime_dependency 'asciidoctor', '~> 1.5.0'
   # FIXME coderay should be an optional dependency
   s.add_runtime_dependency 'coderay', '1.1.0'
-  s.add_runtime_dependency 'prawn', '1.0.0'
+  s.add_runtime_dependency 'prawn', '1.2.1'
+  s.add_runtime_dependency 'prawn-table', '0.1.1'
   s.add_runtime_dependency 'prawn-templates', '0.0.3'
   s.add_runtime_dependency 'prawn-svg', '0.16.0'
   s.add_runtime_dependency 'slim', '~> 2.0.0'

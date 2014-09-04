@@ -1,7 +1,10 @@
 = Asciidoctor PDF: A _native_ PDF converter for AsciiDoc
 Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://github.com/graphitefriction[@graphitefriction]>
 // Settings:
+:compat-mode!:
 :experimental:
+:idprefix:
+:idseparator: -
 // Aliases:
 :project-name: Asciidoctor PDF
 :project-handle: asciidoctor-pdf
@@ -21,7 +24,7 @@ ifdef::env-github[:repo-base-uri: link:]
 _Lo and behold_, a native PDF converter for AsciiDoc built with {uri-asciidoctor}[Asciidoctor] and {uri-prawn}[Prawn]! +
 _No more DocBook toolchain._ +
 _No more middleman._ +
-We're talking AsciiDoc straight to PDF!
+It's just AsciiDoc straight to PDF!
 
 .Project status
 CAUTION: {project-name} is currently _alpha_ software.
@@ -91,9 +94,21 @@ We like RVM because it keeps the dependencies required by various projects isola
 
 == Getting Started
 
-The {project-name} project isn't yet published as a RubyGem itself, so you'll need to get the source code.
+The {project-name} project is published in pre-release on RubyGems.org.
+You can either install the pre-release version using the following command:
 
-=== Retrieve the project
+ $ gem install --pre asciidoctor-pdf
+
+Assuming all the required gems install properly, verify you can run the +asciidoctor-pdf+ script:
+
+ $ asciidoctor-pdf -v
+
+If you see the version of Asciidoctor PDF printed, you're ready to use {project-name}!
+
+Skip ahead to the <<example-asciidoc-document>> section to start putting {project-name} to use.
+Alternatively, you can follow the steps below to install the project from source.
+
+=== Retrieve the source code
 
 You can retrieve the {project-name} project in one of two ways:
 
@@ -112,7 +127,7 @@ Next, change to the project directory:
 
 ==== Option 2: Download the archive
 
-If you want to download a zip archive, click on the btn:[Download Zip] button on the right-hand side of the repository page on GitHub.
+If you want to download a zip archive, click the btn:[Download Zip] button on the right-hand side of the repository page on GitHub.
 Once the download finishes, extract the archive, open a console and change to that directory.
 
 TIP: Instead of working out of the {project-handle} directory, you can simply add the absolute path of the [path]_bin_ directory to your +PATH+ environment variable.
@@ -140,7 +155,8 @@ Assuming all the required gems install properly, verify you can run the +asciido
 
  $ ruby ./bin/asciidoctor-pdf -v
 
-If you see the version of Asciidoctor PDF printed, you're ready to use {project-name}.
+If you see the version of Asciidoctor PDF printed, you're ready to use {project-name}!
+
 Let's grab an AsciiDoc document to distill.
 
 === Example AsciiDoc document

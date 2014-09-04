@@ -1,3 +1,4 @@
+*.pdfmarks
 /_*/
 /Gemfile.lock
 /pkg/

@@ -1,22 +1,17 @@
-require 'asciidoctor'
 require 'asciidoctor/extensions'
 
 module Asciidoctor
 module Pdf
 # An include processor that skips the implicit author line below
-# the document title in documents which are included.
+# the document title within include documents.
 class ImplicitHeaderProcessor < ::Asciidoctor::Extensions::IncludeProcessor
-  def initialize document
-    @document = document
-  end
-
   def process doc, reader, target, attributes
     return reader unless File.exist? target
     ::File.open target, 'r' do |fd|
       # FIXME handle case where doc id is specified above title
       if (first_line = fd.readline) && (first_line.start_with? '= ')
-        # HACK reset counters for each article for Asciidoctor Editions
-        if (doc = @document).attr? 'env-editions'
+        # HACK reset counters for each article for Editions
+        if doc.attr? 'env', 'editions'
           doc.counters.each do |(counter_key, counter_val)|
             doc.attributes.delete counter_key
           end

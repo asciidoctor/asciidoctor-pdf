@@ -1,20 +1,29 @@
 require 'yaml'
 require 'ostruct'
-
-if RUBY_VERSION < '2'
-  class OpenStruct
-    def [] key
-      send key
-    end
-
-    def []= key, val
-      send %(#{key}=), val
-    end
-  end
-end
+require_relative 'core_ext/ostruct'
 
 module Asciidoctor
+module Pdf
 class ThemeLoader
+  DataDir = ::File.expand_path ::File.join(::File.dirname(__FILE__), '..', '..', 'data')
+  ThemesDir = ::File.join DataDir, 'themes'
+  FontsDir = ::File.join DataDir, 'fonts'
+
+  def self.resolve_theme_file theme_name = nil, theme_path = nil
+    theme_name ||= 'default'
+    # if .yml extension is given, assume it's a full file name
+    if theme_name.end_with? '.yml'
+      # FIXME restrict to jail!
+      theme_path ? (::File.join theme_path, theme_name) : theme_name
+    else
+      # QUESTION should we append '-theme.yml' or just '.yml'?
+      ::File.expand_path %(#{theme_name}-theme.yml), (theme_path || ThemesDir)
+    end
+  end
+
+  def self.load_theme theme_name = nil, theme_path = nil
+    load_file (resolve_theme_file theme_name, theme_path)
+  end
 
   def self.load_file filename
     theme_hash = YAML.load_file filename
@@ -37,8 +46,11 @@ class ThemeLoader
   private
 
   def evaluate expr, vars
-    if expr.kind_of? String
+    case expr
+    when String
       evaluate_math(expand_vars(expr, vars))
+    when Array
+      expr.map {|e| evaluate(e, vars) }
     else
       expr
     end
@@ -86,5 +98,6 @@ class ThemeLoader
       end
     end
   end
+end
 end
 end

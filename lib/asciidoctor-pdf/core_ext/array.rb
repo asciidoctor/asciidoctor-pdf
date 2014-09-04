@@ -1,5 +1,5 @@
 class Array
   def to_h
-    Hash[*self]
+    Hash[to_a]
   end unless respond_to? :to_h
 end
