@@ -2,11 +2,6 @@
 
 == TODO
 
-.Remaining to publish 1.0.0.alpha.1
-* send pull request for issue-29
-
-//^
-
 * SVG image is getting cut off when at boundary of page
 * create proper default (Asciidoctor) theme
 * start number for conum in theme
@@ -55,6 +50,7 @@
 * implement convert_toc
 * can get orphan conum if starts on last line of page (fixed already?)
 * only create title page if doctype=book
+* disable monospace color in headings
 
 * introduce method for start_initial_page?
 * honor font defs in SVG (to get M+ 1p)
