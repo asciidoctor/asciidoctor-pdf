@@ -5,12 +5,12 @@ Gem::Specification.new do |s|
   s.name = 'asciidoctor-pdf'
   s.version = Asciidoctor::Pdf::VERSION
 
-  s.summary = 'Converts AsciiDoc documents to PDF files using Prawn'
+  s.summary = 'Converts AsciiDoc documents to PDF using Prawn'
   s.description = <<-EOS
-An extension for Asciidoctor that converts AsciiDoc documents to PDF files using the Prawn PDF generator.
+An extension for Asciidoctor that converts AsciiDoc documents to PDF using the Prawn PDF library.
   EOS
 
-  s.author = 'OpenDevise Inc.'
+  s.authors = ['Dan Allen', 'Sarah White']
   s.email = 'dan@opendevise.io'
   s.homepage = 'https://github.com/asciidoctor/asciidoctor-pdf'
   s.license = 'MIT'
@@ -24,7 +24,8 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF files using
   end
 
   # FIXME optimize-pdf is currently a shell script, so listing it here won't work
-  s.executables = %w(asciidoctor-pdf optimize-pdf)
+  #s.executables = %w(asciidoctor-pdf optimize-pdf)
+  s.executables = %w(asciidoctor-pdf)
   s.test_files = s.files.grep(/^(?:test|spec|feature)\/.*$/)
   s.require_paths = %w(lib)
 
@@ -37,7 +38,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF files using
 
   s.add_runtime_dependency 'asciidoctor', '~> 1.5.0'
   # FIXME coderay should be an optional dependency
-  s.add_runtime_dependency 'coderay', '1.1.0'
+  #s.add_runtime_dependency 'coderay', '1.1.0'
   s.add_runtime_dependency 'prawn', '1.2.1'
   s.add_runtime_dependency 'prawn-table', '0.1.1'
   s.add_runtime_dependency 'prawn-templates', '0.0.3'
