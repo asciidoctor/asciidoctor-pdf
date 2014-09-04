@@ -1,3 +1,4 @@
+# encoding: UTF-8
 # TODO cleanup imports...decide what belongs in asciidoctor-pdf.rb
 require_relative 'core_ext/array'
 require 'prawn'
