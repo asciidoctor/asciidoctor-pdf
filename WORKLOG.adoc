@@ -2,6 +2,7 @@
 
 == TODO
 
+* refactor as Prawn view to avoid method name conflicts
 * SVG image is getting cut off when at boundary of page
 * create proper default (Asciidoctor) theme
 * start number for conum in theme
@@ -24,6 +25,7 @@
 * introduce setting to indent section content
 * design merge margin logic (like for admonition block)
 * use font awesome for admonition icons
+* support web fonts; use uri-cache to avoid redundant fetching
 * rename default theme to docbook theme, make default the Asciidoctor theme (should we have a base theme?)
 * add callout subs when using CodeRay and when using color themes in Pygments
 * allow relative font size for inline code to be set (perhaps a percentage or em value? there are problems with this in arranger)
