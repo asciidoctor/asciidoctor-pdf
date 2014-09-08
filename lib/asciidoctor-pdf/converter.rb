@@ -1095,12 +1095,16 @@ class Converter < ::Prawn::Document
       sect_title = sect.numbered_title
       sect_page_num = (sect.attr 'page_start') - 1
       # NOTE we do some cursor hacking so the dots don't affect vertical alignment
+      start_page_number = page_number
       start_cursor = cursor
       typeset_text %(<link anchor="#{sect.id}">#{sect_title}</link>), line_metrics, inline_format: true
+      end_page_number = page_number
       end_cursor = cursor
+      go_to_page start_page_number
       move_cursor_to start_cursor
       num_dots = ((bounds.width - (width_of %(#{sect_title} #{sect_page_num}), inline_format: true)) / dot_width).floor
       typeset_formatted_text [text: %(#{DotLeader * num_dots} #{sect_page_num}), anchor: sect.id], line_metrics, align: :right
+      go_to_page end_page_number
       move_cursor_to end_cursor
       if sect.level < num_levels
         indent @theme.horizontal_rhythm do
