@@ -1082,8 +1082,15 @@ class Converter < ::Prawn::Document
     end
     line_metrics = calc_line_metrics @theme.base_line_height
     dot_width = width_of DotLeader
+    start_page_number = page_number
     if num_levels > 0
       layout_toc_level doc.sections, num_levels, line_metrics, dot_width
+    end
+    end_page_number = page_number
+    if end_page_number > start_page_number
+      stroke_horizontal_rule
+      page_difference = end_page_number - start_page_number
+      $stderr.puts "number of pages in TOC: #{page_difference}"
     end
     toc_page_numbers = (toc_page_number..page_number)
     go_to_page page_count - 1
