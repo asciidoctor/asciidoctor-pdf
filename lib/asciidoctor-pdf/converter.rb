@@ -109,6 +109,11 @@ class Converter < ::Prawn::Document
     layout_title_page doc
 
     start_new_page
+    external_toc_size = 0
+    external_toc_size = doc.attr 'toc_lenght' if doc.attr 'toc_lenght'
+    external_toc_size.to_i.times do
+      start_new_page
+    end
     font @theme.base_font_family, size: @theme.base_font_size
     convert_content_for_block doc
 
