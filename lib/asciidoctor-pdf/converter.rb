@@ -1088,7 +1088,6 @@ class Converter < ::Prawn::Document
     end
     end_page_number = page_number
     if end_page_number > start_page_number
-      stroke_horizontal_rule
       page_difference = end_page_number - start_page_number
       $stderr.puts "number of pages in TOC: #{page_difference}"
     end
