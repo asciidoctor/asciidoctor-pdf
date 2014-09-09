@@ -2,6 +2,7 @@
 
 == TODO
 
+* nested keep_together logic is broken (e.g., example inside example, listing inside sidebar, etc)
 * refactor as Prawn view to avoid method name conflicts
 * SVG image is getting cut off when at boundary of page
 * create proper default (Asciidoctor) theme
