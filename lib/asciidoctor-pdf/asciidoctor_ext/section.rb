@@ -7,8 +7,9 @@ class Asciidoctor::Section
       elsif @numbered && !@caption && slevel <= (@document.attr 'sectnumlevels', 3).to_i
         @is_numbered = true
         @cached_numbered_title = %(#{sectnum} #{title})
+        @chapter_title = (@document.attr 'chapter-title') || 'Chapter'
         @cached_formal_numbered_title = if slevel == 1 && @document.doctype == 'book'
-          %(Chapter #{@cached_numbered_title})
+          %(#{@chapter_title} #{@cached_numbered_title})
         else
           @cached_numbered_title
         end
