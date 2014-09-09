@@ -501,7 +501,9 @@ module Extensions
     else
       started_new_page = false
     end
-    yield height_of_content, started_new_page
+    # HACK yield doesn't work here on JRuby (at least not when called from AsciidoctorJ)
+    #yield height_of_content, started_new_page
+    instance_exec(height_of_content, started_new_page, &block)
   end
 
   # Attempt to keep the objects generated in the block on the same page
