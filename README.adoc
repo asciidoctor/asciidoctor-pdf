@@ -98,6 +98,11 @@ The {project-name} project is published in pre-release on RubyGems.org.
 You can either install the pre-release version using the following command:
 
  $ gem install --pre asciidoctor-pdf
+ 
+If you want to syntax highlight source listings, you'll also want to install CodeRay or Pygments.
+To be safe, go ahead and install both gems:
+
+ $ gem install coderay pygments.rb
 
 Assuming all the required gems install properly, verify you can run the +asciidoctor-pdf+ script:
 
@@ -204,7 +209,10 @@ Converting to PDF is a simple as running the +./bin/asciidoctor-pdf+ script usin
  $ ruby ./bin/asciidoctor-pdf example.adoc
 
 When the script completes, you should see the file [file]_example.pdf_ in the same directory.
-Open that file with a PDF viewer to see the result.
+
+IMPORTANT: You'll need to the `coderay` gem installed to run this example since it uses the `source-highlighter` attribute with the value of `coderay`.
+
+Open the [file]_example.pdf_ file with a PDF viewer to see the result.
 
 .Example PDF document rendered in a PDF viewer
 image::examples/example-pdf-screenshot.png[Screenshot of PDF document,width=800,scaledwidth=100%]
