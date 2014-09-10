@@ -665,7 +665,16 @@ class Converter < ::Prawn::Document
       theme_font :code do
         if box_height
           float do
-            bounding_box [0, cursor], width: bounds.width, height: box_height - caption_height do
+            remove_caption = caption_height
+            while box_height > bounds.height
+              bounding_box [0, cursor], width: bounds.width, height: bounds.height - remove_caption do
+                theme_fill_and_stroke_bounds :code
+              end
+              box_height -= bounds.height
+              remove_caption = 0
+              start_new_page
+            end
+            bounding_box [0, cursor], width: bounds.width, height: box_height - remove_caption do
               theme_fill_and_stroke_bounds :code
             end
           end

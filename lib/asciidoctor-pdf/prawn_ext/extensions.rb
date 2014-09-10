@@ -481,10 +481,17 @@ module Extensions
     scratch = get_scratch_document
     scratch.start_new_page
     start_y = scratch.y
+    start_page_number = scratch.page_number
     scratch.font font_family, style: font_style, size: font_size do
       scratch.instance_exec(&block)
     end
-    start_y - scratch.y
+    number_of_pages = scratch.page_number - start_page_number
+    if number_of_pages == 0
+      start_y - scratch.y
+    else
+      start_y + (bounds.height - scratch.y) + (bounds.height * (number_of_pages - 1))
+    end
+
     #height_of_content = start_y - scratch.y
     #scratch.render_file 'scratch.pdf'
     #height_of_content
