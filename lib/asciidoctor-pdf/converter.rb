@@ -674,8 +674,18 @@ class Converter < ::Prawn::Document
       theme_font :code do
         if box_height
           float do
-            bounding_box [0, cursor], width: bounds.width, height: box_height - caption_height do
-              theme_fill_and_stroke_bounds :code
+            # FIXME don't use border / border radius at page boundaries
+            # TODO move this logic to theme_fill_and_stroke_bounds
+            remaining_height = box_height - caption_height
+            i = 0
+            while remaining_height > 0
+              start_new_page if i > 0
+              fill_height = [remaining_height, cursor].min
+              bounding_box [0, cursor], width: bounds.width, height: fill_height do
+                theme_fill_and_stroke_bounds :code
+              end
+              remaining_height -= fill_height
+              i += 1
             end
           end
         end

@@ -485,7 +485,8 @@ module Extensions
     scratch.font font_family, style: font_style, size: font_size do
       scratch.instance_exec(&block)
     end
-    [scratch.page_number - start_page_number, start_y - scratch.y]
+    whole_pages = scratch.page_number - start_page_number
+    [(whole_pages * bounds.height + (start_y - scratch.y)), whole_pages, (start_y - scratch.y)]
   end
 
   # Attempt to keep the objects generated in the block on the same page
@@ -493,8 +494,8 @@ module Extensions
   # TODO short-circuit nested usage
   def keep_together &block
     available_space = cursor
-    whole_pages, remainder = dry_run(&block)
-    if whole_pages > 0 || remainder > available_space
+    total_height, _whole_pages, _remainder = dry_run(&block)
+    if total_height > available_space
       start_new_page
       started_new_page = true
     else
@@ -503,7 +504,7 @@ module Extensions
     
     # HACK yield doesn't work here on JRuby (at least not when called from AsciidoctorJ)
     #yield remainder, started_new_page
-    instance_exec(remainder, started_new_page, &block)
+    instance_exec(total_height, started_new_page, &block)
   end
 
   # Attempt to keep the objects generated in the block on the same page
