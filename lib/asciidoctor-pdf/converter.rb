@@ -109,6 +109,11 @@ class Converter < ::Prawn::Document
     layout_title_page doc
 
     start_new_page
+    external_toc_size = 0
+    external_toc_size = doc.attr 'toc_lenght' if doc.attr 'toc_lenght'
+    external_toc_size.to_i.times do
+      start_new_page
+    end
     font @theme.base_font_family, size: @theme.base_font_size
     convert_content_for_block doc
 
@@ -1082,8 +1087,14 @@ class Converter < ::Prawn::Document
     end
     line_metrics = calc_line_metrics @theme.base_line_height
     dot_width = width_of DotLeader
+    start_page_number = page_number
     if num_levels > 0
       layout_toc_level doc.sections, num_levels, line_metrics, dot_width
+    end
+    end_page_number = page_number
+    if end_page_number > start_page_number
+      page_difference = end_page_number - start_page_number
+      $stderr.puts "number of pages in TOC: #{page_difference}"
     end
     toc_page_numbers = (toc_page_number..page_number)
     go_to_page page_count - 1
@@ -1095,12 +1106,16 @@ class Converter < ::Prawn::Document
       sect_title = sect.numbered_title
       sect_page_num = (sect.attr 'page_start') - 1
       # NOTE we do some cursor hacking so the dots don't affect vertical alignment
+      start_page_number = page_number
       start_cursor = cursor
       typeset_text %(<link anchor="#{sect.id}">#{sect_title}</link>), line_metrics, inline_format: true
+      end_page_number = page_number
       end_cursor = cursor
+      go_to_page start_page_number
       move_cursor_to start_cursor
       num_dots = ((bounds.width - (width_of %(#{sect_title} #{sect_page_num}), inline_format: true)) / dot_width).floor
       typeset_formatted_text [text: %(#{DotLeader * num_dots} #{sect_page_num}), anchor: sect.id], line_metrics, align: :right
+      go_to_page end_page_number
       move_cursor_to end_cursor
       if sect.level < num_levels
         indent @theme.horizontal_rhythm do
