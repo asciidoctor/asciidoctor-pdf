@@ -41,6 +41,7 @@
   - need to deal w/ situation if content in dry run is large than one page
 * move check for node.title? inside layout_caption
 * theme idea / tester: see sandbox/ebook-learn_version_control_with_git-SAMPLE.pdf
+* make alternating page title position optional (via theme?)
 
 * enable pagenums attribute by default (may require changes to how we handle attributes)
 * start page numbering on first page if no title page
@@ -106,7 +107,9 @@
 * "Incorrect number of arguments in 'SCN' command" happens when you add a stamp to an imported page
 * be mindful that layout_prose adds margin to bottom of content by default (important when working in a bounding box)
 
-== Open Design Questions
+== Open Questions
+
+== Design
 
 * remove/reduce padding above heading at start of page?
 * Default line height?
@@ -120,9 +123,13 @@
 * Start chapter on new page?
 * Special layout for chapter page?
 
-=== Open Theme Questions
+=== Theme
 
 * keep or drop base_ prefix in theme?
 * does font_size_h* belong in headings section or base?
 * how should we define custom fonts and paths to them?
 * allow # in front of font color in theme file?
+
+== Resources
+
+* https://code.google.com/p/origami-pdf/
