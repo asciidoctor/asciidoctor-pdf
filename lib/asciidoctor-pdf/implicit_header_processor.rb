@@ -57,3 +57,7 @@ class ImplicitHeaderProcessor < ::Asciidoctor::Extensions::IncludeProcessor
 end
 end
 end
+
+Asciidoctor::Extensions.register :pdf do
+  include_processor Asciidoctor::Pdf::ImplicitHeaderProcessor if @document.backend == 'pdf'
+end

@@ -8,13 +8,8 @@ require 'prawn/templates'
 require_relative 'prawn_ext'
 require_relative 'pdfmarks'
 require_relative 'asciidoctor_ext'
-require_relative 'implicit_header_processor'
 require_relative 'theme_loader'
 require_relative 'roman_numeral'
-
-Asciidoctor::Extensions.register :pdf do
-  include_processor Asciidoctor::Pdf::ImplicitHeaderProcessor if @document.backend == 'pdf'
-end
 
 module Asciidoctor
 module Pdf
