@@ -104,19 +104,33 @@ class Converter < ::Prawn::Document
     layout_title_page doc
 
     start_new_page
+
+    toc_start_page_num = page_number
+    num_toc_levels = (doc.attr 'toclevels', 2).to_i
+    if doc.attr? 'toc'
+      toc_page_nums = ()
+      dry_run do
+        toc_page_nums = layout_toc doc, num_toc_levels, 1
+      end
+      # reserve pages for the toc
+      toc_page_nums.each do
+        start_new_page
+      end
+    end
+
+    num_front_matter_pages = page_number - 1
     font @theme.base_font_family, size: @theme.base_font_size
     convert_content_for_block doc
 
-    num_toc_levels = (doc.attr 'toclevels', 2).to_i
     toc_page_nums = if doc.attr? 'toc'
-      layout_toc doc, num_toc_levels
+      layout_toc doc, num_toc_levels, toc_start_page_num, num_front_matter_pages
     else
       (0..-1)
     end
 
     # TODO enable pagenums by default (perhaps upstream?)
-    stamp_page_numbers skip: (toc_page_nums.to_a.size + 1) if doc.attr 'pagenums'
-    add_outline doc, num_toc_levels, toc_page_nums
+    stamp_page_numbers skip: num_front_matter_pages if doc.attr 'pagenums'
+    add_outline doc, num_toc_levels, toc_page_nums, num_front_matter_pages
     catalog.data[:ViewerPreferences] = [:FitWindow]
 
     layout_cover_page :back, doc
@@ -1069,42 +1083,44 @@ class Converter < ::Prawn::Document
     end
   end
 
-  def layout_toc doc, num_levels = 2, toc_page_number = 2
-    go_to_page toc_page_number - 1
-    start_new_page
+  def layout_toc doc, num_levels = 2, toc_page_number = 2, num_front_matter_pages = 0
+    go_to_page toc_page_number unless scratch? || page_number == toc_page_number
     theme_font :heading, level: 2 do
       layout_heading doc.attr('toc-title')
     end
     line_metrics = calc_line_metrics @theme.base_line_height
     dot_width = width_of DotLeader
     if num_levels > 0
-      layout_toc_level doc.sections, num_levels, line_metrics, dot_width
+      layout_toc_level doc.sections, num_levels, line_metrics, dot_width, num_front_matter_pages
     end
     toc_page_numbers = (toc_page_number..page_number)
-    go_to_page page_count - 1
+    go_to_page page_count - 1 unless scratch?
     toc_page_numbers
   end
 
-  def layout_toc_level sections, num_levels, line_metrics, dot_width
+  def layout_toc_level sections, num_levels, line_metrics, dot_width, num_front_matter_pages = 0
     sections.each do |sect|
       sect_title = sect.numbered_title
-      sect_page_num = (sect.attr 'page_start') - 1
       # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
       start_page_number = page_number
       start_cursor = cursor
       typeset_text %(<link anchor="#{sect.id}">#{sect_title}</link>), line_metrics, inline_format: true
-      end_page_number = page_number
-      end_cursor = cursor
-      # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
-      go_to_page start_page_number if start_page_number != end_page_number
-      move_cursor_to start_cursor
-      num_dots = ((bounds.width - (width_of %(#{sect_title} #{sect_page_num}), inline_format: true)) / dot_width).floor
-      typeset_formatted_text [text: %(#{DotLeader * num_dots} #{sect_page_num}), anchor: sect.id], line_metrics, align: :right
-      go_to_page end_page_number if start_page_number != end_page_number
-      move_cursor_to end_cursor
+      # we only write the label if this is a dry run
+      unless scratch?
+        end_page_number = page_number
+        end_cursor = cursor
+        # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
+        go_to_page start_page_number if start_page_number != end_page_number
+        move_cursor_to start_cursor
+        sect_page_num = (sect.attr 'page_start') - num_front_matter_pages
+        num_dots = ((bounds.width - (width_of %(#{sect_title} #{sect_page_num}), inline_format: true)) / dot_width).floor
+        typeset_formatted_text [text: %(#{DotLeader * num_dots} #{sect_page_num}), anchor: sect.id], line_metrics, align: :right
+        go_to_page end_page_number if start_page_number != end_page_number
+        move_cursor_to end_cursor
+      end
       if sect.level < num_levels
         indent @theme.horizontal_rhythm do
-          layout_toc_level sect.sections, num_levels, line_metrics, dot_width
+          layout_toc_level sect.sections, num_levels, line_metrics, dot_width, num_front_matter_pages
         end
       end
     end
@@ -1145,13 +1161,20 @@ class Converter < ::Prawn::Document
   end
 
   # FIXME we are assuming we always have exactly one title page
-  def add_outline doc, num_levels = 2, toc_page_nums = (0..-1)
+  def add_outline doc, num_levels = 2, toc_page_nums = (0..-1), num_front_matter_pages = 0
     front_matter_counter = RomanNumeral.new 0, :lower
 
     page_num_labels = {}
 
+    # FIXME account for cover page
+    # cover page (i)
+    #front_matter_counter.next!
+
     # title page (i)
-    page_num_labels[0] = { P: ::PDF::Core::LiteralString.new(front_matter_counter.next!.to_s) }
+    # TODO same conditional logic as in layout_title_page; consolidate
+    if doc.header? && !doc.noheader && !doc.notitle
+      page_num_labels[0] = { P: ::PDF::Core::LiteralString.new(front_matter_counter.next!.to_s) } 
+    end
 
     # toc pages (ii..?)
     toc_page_nums.each do
@@ -1173,7 +1196,7 @@ class Converter < ::Prawn::Document
       end
       #page title: 'Credits', destination: (document.dest_top toc_page_nums.first + 1)
       # QUESTION any way to get add_outline_level to invoke in the context of the outline?
-      document.add_outline_level self, doc.sections, num_levels, page_num_labels, numbering_offset
+      document.add_outline_level self, doc.sections, num_levels, page_num_labels, numbering_offset, num_front_matter_pages
     end
 
     catalog.data[:PageLabels] = state.store.ref Nums: page_num_labels.flatten
@@ -1182,17 +1205,17 @@ class Converter < ::Prawn::Document
   end
 
   # TODO only nest inside root node if doctype=article
-  def add_outline_level outline, sections, num_levels, page_num_labels, numbering_offset
+  def add_outline_level outline, sections, num_levels, page_num_labels, numbering_offset, num_front_matter_pages
     sections.each do |sect|
       sect_title = sanitize(sect.numbered_title formal: true)
       sect_destination = sect.attr 'destination'
-      sect_page_num = (sect.attr 'page_start') - 1
+      sect_page_num = (sect.attr 'page_start') - num_front_matter_pages
       page_num_labels[sect_page_num + numbering_offset] = { P: ::PDF::Core::LiteralString.new(sect_page_num.to_s) }
       if (subsections = sect.sections).empty? || sect.level == num_levels
         outline.page title: sect_title, destination: sect_destination
       elsif sect.level < num_levels + 1
         outline.section sect_title, { destination: sect_destination } do
-          add_outline_level outline, subsections, num_levels, page_num_labels, numbering_offset
+          add_outline_level outline, subsections, num_levels, page_num_labels, numbering_offset, num_front_matter_pages
         end
       end
     end

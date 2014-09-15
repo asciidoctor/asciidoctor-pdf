@@ -480,14 +480,12 @@ module Extensions
   def dry_run &block
     scratch = get_scratch_document
     scratch.start_new_page
+    start_page_number = scratch.page_number
     start_y = scratch.y
     scratch.font font_family, style: font_style, size: font_size do
       scratch.instance_exec(&block)
     end
-    start_y - scratch.y
-    #height_of_content = start_y - scratch.y
-    #scratch.render_file 'scratch.pdf'
-    #height_of_content
+    [scratch.page_number - start_page_number, start_y - scratch.y]
   end
 
   # Attempt to keep the objects generated in the block on the same page
@@ -495,15 +493,17 @@ module Extensions
   # TODO short-circuit nested usage
   def keep_together &block
     available_space = cursor
-    if (height_of_content = dry_run(&block)) > available_space
-      started_new_page = true
+    whole_pages, remainder = dry_run(&block)
+    if whole_pages > 0 || remainder > available_space
       start_new_page
+      started_new_page = true
     else
       started_new_page = false
     end
+    
     # HACK yield doesn't work here on JRuby (at least not when called from AsciidoctorJ)
-    #yield height_of_content, started_new_page
-    instance_exec(height_of_content, started_new_page, &block)
+    #yield remainder, started_new_page
+    instance_exec(remainder, started_new_page, &block)
   end
 
   # Attempt to keep the objects generated in the block on the same page
@@ -517,15 +517,20 @@ module Extensions
     end
   end
 
+=begin
   def run_with_trial &block
     available_space = cursor
-    if (height_of_content = dry_run(&block)) > available_space
+    whole_pages, remainder = dry_run(&block)
+    if whole_pages > 0 || remainder > available_space
       started_new_page = true
     else
       started_new_page = false
     end
-    yield height_of_content, started_new_page
+    # HACK yield doesn't work here on JRuby (at least not when called from AsciidoctorJ)
+    #yield remainder, started_new_page
+    instance_exec(remainder, started_new_page, &block)
   end
+=end
 end
 end
 end
