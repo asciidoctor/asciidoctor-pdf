@@ -13,13 +13,14 @@
 * rewrite optimize-pdf using rghost
 * rework font so we can set actual height, calculate x_height internally (use 1em for spacings)
 * padding top and bottom on content affects height_of calculations (need to review)
-* enable fallback font
+* enable fallback font (Golo guide has problem with License block)
 * don't cutoff content in partintro
 * use padding from theme around admonition block content
 * use padding from theme around block quote content
 * add admonition_label_font_color to theme
 * remove remaining uses of vertical_rhythm and horizontal_rhythm
 * implement subtitle on title page
+* treat title-logo like the front-cover-image and back-cover-image (parse image macro)
 * theme setting for code line height (currently using base_line_height)
   - in general, allow theme_font to set line_height
 * print scratch.pdf file if verbose / trace mode is on in Asciidoctor
@@ -42,6 +43,7 @@
 * move check for node.title? inside layout_caption
 * theme idea / tester: see sandbox/ebook-learn_version_control_with_git-SAMPLE.pdf
 * make alternating page title position optional (via theme?)
+* page numbers are off in Clojure Cookbook
 
 * enable pagenums attribute by default (may require changes to how we handle attributes)
 * start page numbering on first page if no title page
