@@ -150,7 +150,7 @@ class Converter < ::Prawn::Document
     pdf_opts = (build_pdf_options doc, theme)
     ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
     # QUESTION should ThemeLoader register fonts?
-    register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin')
+    register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
     @theme = theme
     @font_color = theme.base_font_color
     init_scratch_prototype
@@ -1238,9 +1238,9 @@ class Converter < ::Prawn::Document
     @pdfmarks.generate_file target if @pdfmarks
   end
 
-  def register_fonts font_catalog, scripts = 'latin'
+  def register_fonts font_catalog, scripts = 'latin', fonts_dir
     (font_catalog || {}).each do |key, font_styles|
-      register_font key => font_styles.map {|style, path| [style.to_sym, (font_path path)]}.to_h
+      register_font key => font_styles.map {|style, path| [style.to_sym, (font_path path, fonts_dir)]}.to_h
     end
 
     @fallback_fonts ||= []
@@ -1248,10 +1248,9 @@ class Converter < ::Prawn::Document
     default_kerning true
   end
 
-  # FIXME move to static method on ThemeLoader
-  def font_path font_file
+  def font_path font_file, fonts_dir
     # resolve relative to built-in font dir unless path is absolute
-    ::File.absolute_path font_file, ThemeLoader::FontsDir
+    ::File.absolute_path font_file, fonts_dir
   end
 
   def theme_fill_and_stroke_bounds category
