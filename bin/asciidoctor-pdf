@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require File.join File.dirname(__FILE__), '../lib/asciidoctor-pdf'
+require_relative '../lib/asciidoctor-pdf'
 require 'asciidoctor/cli'
 
 options = Asciidoctor::Cli::Options.new backend: 'pdf', header_footer: true
