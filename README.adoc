@@ -228,6 +228,10 @@ The layout and styling of the PDF is driven by a YAML configuration file.
 
 See the files [file]_default-theme.yml_ and [file]_asciidoctor-theme.yml_ found in the [file]_data/themes_ directory for examples.
 
+Specify the path to an alternate theme file with the `pdf-style` attribute:
+
+ $ ./bin/asciidoctor-pdf -a pdf-style='data/themes/asciidoctor-theme.yml' examples/example.adoc
+
 == Optional Scripts
 
 {project-name} also provides a shell script that invokes GhostScript (+gs+) to optimize and compress the generated PDF with minimal impact on quality.
