@@ -230,7 +230,7 @@ See the files [file]_default-theme.yml_ and [file]_asciidoctor-theme.yml_ found 
 
 Specify the path to an alternate theme file with the `pdf-style` attribute:
 
- $ ./bin/asciidoctor-pdf -a pdf-style='data/themes/asciidoctor-theme.yml' examples/example.adoc
+ $ ./bin/asciidoctor-pdf -a pdf-style='asciidoctor' examples/example.adoc
 
 == Optional Scripts
 
