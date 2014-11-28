@@ -24,7 +24,8 @@ if [ -f "$FILE_BASENAME.pdfmarks" ]; then
 fi
 DOWNSAMPLE_IMAGES=true
 if [ -z $IMAGE_DPI ]; then
-  IMAGE_DPI=150
+  #IMAGE_DPI=150
+  IMAGE_DPI=300
 fi
 
 # /prepress defaults (see http://ghostscript.com/doc/current/Ps2pdf.htm)
