@@ -2,8 +2,11 @@
 
 == TODO
 
+* prawn-svg should drop layer with display: none style
+* add note to README that Prawn will subset any fonts provided
 * nested keep_together logic is broken (e.g., example inside example, listing inside sidebar, etc)
-* refactor as Prawn view to avoid method name conflicts
+* look into single_line + shrink_to_fit in listings, perhaps other places
+* refactor as Prawn view to avoid method name conflicts (also see https://github.com/prawnpdf/prawn/issues/802)
 * SVG image is getting cut off when at boundary of page
 * create proper default (Asciidoctor) theme
 * start number for conum in theme
@@ -43,7 +46,8 @@
 * move check for node.title? inside layout_caption
 * theme idea / tester: see sandbox/ebook-learn_version_control_with_git-SAMPLE.pdf
 * make alternating page title position optional (via theme?)
-* page numbers are off in Clojure Cookbook
+* BUG: page numbers are off in Clojure Cookbook
+* image in header / banner (need to implement a masthead)
 
 * enable pagenums attribute by default (may require changes to how we handle attributes)
 * start page numbering on first page if no title page
@@ -86,7 +90,7 @@
 * flesh out title page more
   - document subtitle (partially solved)
 * don't create title page for article doctype
-* chapter name in footer
+* chapter name in footer (need a proper hook for writing to the footer; perhaps also template in theme for footer text)
 * implement toc and activate if toc is set on document (need to reorder pages)
 * inline image
 * callbacks for title page, new part, new chapter, etc
