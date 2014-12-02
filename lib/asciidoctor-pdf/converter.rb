@@ -652,12 +652,12 @@ class Converter < ::Prawn::Document
         if (lexer = ::Pygments::Lexer[(node.attr 'language')])
           pygments_config = { nowrap: true, noclasses: true, style: ((node.document.attr 'pygments-style') || 'pastie') }
           result = lexer.highlight(source_string, options: pygments_config)
-          result = result.gsub(/(?: <span style="font-style: italic">(?:\/\/|#) &lt;(?<num>\d+)&gt;<\/span>| &lt;(?<num>\d+)&gt;)$/) {
+          result = result.gsub(/(?<lead>^| )(?:<span style="font-style: italic">(?:\/\/|#) ?&lt;(?<num>\d+)&gt;<\/span>|&lt;(?<num>\d+)&gt;)$/) {
             # FIXME move \u2460 to constant (or theme setting)
             num = %(\u2460)
             (($~[:num]).to_i - 1).times { num = num.next }
             if (conum_color = @theme.conum_font_color)
-              %( <color rgb="#{conum_color}">#{num}</color>)
+              %(#{$~[:lead]}<color rgb="#{conum_color}">#{num}</color>)
             end
           }
           text_formatter.format result
