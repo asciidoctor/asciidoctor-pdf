@@ -153,6 +153,7 @@ class Converter < ::Prawn::Document
     register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
     @theme = theme
     @font_color = theme.base_font_color
+    @fallback_fonts = theme.font_fallbacks || []
     init_scratch_prototype
     self
   end
@@ -745,7 +746,7 @@ class Converter < ::Prawn::Document
         case cell.style
         when :emphasis
           cell_data[:font_style] = :italic
-        when :strong, :header  
+        when :strong, :header
           cell_data[:font_style] = :bold
         when :monospaced
           cell_data[:font] = @theme.literal_font_family
@@ -1183,7 +1184,7 @@ class Converter < ::Prawn::Document
     # title page (i)
     # TODO same conditional logic as in layout_title_page; consolidate
     if doc.header? && !doc.noheader && !doc.notitle
-      page_num_labels[0] = { P: ::PDF::Core::LiteralString.new(front_matter_counter.next!.to_s) } 
+      page_num_labels[0] = { P: ::PDF::Core::LiteralString.new(front_matter_counter.next!.to_s) }
     end
 
     # toc pages (ii..?)
@@ -1243,7 +1244,6 @@ class Converter < ::Prawn::Document
       register_font key => font_styles.map {|style, path| [style.to_sym, (font_path path, fonts_dir)]}.to_h
     end
 
-    @fallback_fonts ||= []
     # FIXME read kerning setting from theme!
     default_kerning true
   end
