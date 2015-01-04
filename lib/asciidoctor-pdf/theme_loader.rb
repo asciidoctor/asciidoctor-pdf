@@ -34,10 +34,10 @@ class ThemeLoader
     hash.inject(OpenStruct.new) do |s, (k, v)|
       if v.kind_of? Hash
         v.each do |k2, v2|
-          s[%(#{k}_#{k2})] = (k2.end_with? '_color') ? evaluate(v2, s).to_s : evaluate(v2, s)
+          s[%(#{k}_#{k2})] = (k2.end_with? '_color') ? to_hex(evaluate(v2, s)) : evaluate(v2, s)
         end
       else
-        s[k] = (k.end_with? '_color') ? evaluate(v, s).to_s : evaluate(v, s)
+        s[k] = (k.end_with? '_color') ? to_hex(evaluate(v, s)) : evaluate(v, s)
       end
       s
     end
@@ -97,6 +97,22 @@ class ThemeLoader
         float_val
       end
     end
+  end
+
+  def to_hex value
+    str = value.to_s
+    return str if str == 'transparent'
+    str = str[1..-1] if str.start_with? '#'
+    hex = case str.size
+    when 6
+      str
+    when 3
+      str.each_char.map {|it| it * 2 }.join 
+    else
+      # CAUTION: YAML will misinterpret values with leading zeros (e.g., 000011) that are not quoted (aside from 000000)
+      str[0..5].rjust(6, '0')
+    end
+    hex.upcase
   end
 end
 end
