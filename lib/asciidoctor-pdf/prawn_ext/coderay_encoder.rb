@@ -38,7 +38,6 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
   # Manni theme from Pygments
   COLORS = {
     default:           '333333',
-
     annotation:        '9999FF',
     attribute_name:    '4F9FCF',
     attribute_value:   'D44950',
@@ -49,14 +48,13 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
     constant:          '336600',
     directive:         '006699',
     doctype:           '009999',
-    instance_variable: '003333',
-    integer:           'FF6600',
     entity:            '999999',
     float:             'FF6600',
     function:          'CC00FF',
     important:         '9999FF',
     inline_delimiter:  'EF804F',
     instance_variable: '003333',
+    integer:           'FF6600',
     key:               '006699',
     keyword:           '006699',
     method:            'CC00FF',
