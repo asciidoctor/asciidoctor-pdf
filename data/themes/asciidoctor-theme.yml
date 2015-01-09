@@ -18,6 +18,9 @@ font:
       bold_italic: mplus1mn-bolditalic-ascii.ttf
     Mplus1pMultilingual:
       normal: mplus1p-regular-multilingual.ttf
+      bold: mplus1p-regular-multilingual.ttf
+      italic: mplus1p-regular-multilingual.ttf
+      bold_italic: mplus1p-regular-multilingual.ttf
     #FontAwesome:
     #  normal: fontawesome-regular.ttf
   fallbacks:
