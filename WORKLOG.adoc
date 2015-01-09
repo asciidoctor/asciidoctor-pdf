@@ -2,7 +2,9 @@
 
 == TODO
 
-* prawn-svg should drop layer with display: none style
+* cjk and/or multilingual support
+* remove pdfmarks file after optimizing
+* prawn-svg should drop layer with display: none style (issue filed, maybe fixed?)
 * add note to README that Prawn will subset any fonts provided
 * nested keep_together logic is broken (e.g., example inside example, listing inside sidebar, etc)
 * look into single_line + shrink_to_fit in listings, perhaps other places
@@ -66,7 +68,6 @@
 * honor font defs in SVG (to get M+ 1p)
 * callout matching in listing blocks is extremely fragile and doesn't handle two in one line
 * make outline a document option (perhaps "outline" like "toc")
-* remove pdfmarks file after optimizing
 * shrink / squeeze source code to avoid wrapping (see original impl in nfjsmag, also shrink_to_fit)
 * add bench/ directory for the script to test the speed of the formatted text parser
 * start page numbering on page 1 (use /PageLabels reference to make i the title page number)
