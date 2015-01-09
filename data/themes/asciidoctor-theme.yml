@@ -16,13 +16,13 @@ font:
       bold: mplus1mn-bold-ascii.ttf
       italic: mplus1mn-italic-ascii.ttf
       bold_italic: mplus1mn-bolditalic-ascii.ttf
-    #Mplus1pMultilingual:
-    #  normal: mplus1p-regular-multilingual.ttf
+    Mplus1pMultilingual:
+      normal: mplus1p-regular-multilingual.ttf
     #FontAwesome:
     #  normal: fontawesome-regular.ttf
-  # FIXME using fallbacks breaks use of custom font styles (fixed in Prawn 1.2.1!)
-  #fallbacks:
-  #  - Mplus1pMultilingual
+  fallbacks:
+    # NOTE M+ 1p doesn't support all CJK characters, but it at least has some coverage
+    - Mplus1pMultilingual
 brand:
   primary_color: 005498
 page:
