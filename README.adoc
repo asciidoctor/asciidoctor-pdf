@@ -265,6 +265,10 @@ To contribute code, simply fork the project on GitHub, hack away and send a pull
 
 Feel free to use the {uri-project-issues}[issue tracker] or http://discuss.asciidoctor.org[Asciidoctor mailing list] to provide feedback or suggestions in other ways.
 
+== Resources
+
+* https://groups.google.com/forum/#!msg/prawn-ruby/MbMsCx862iY/6ImCsvLGfVcJ[Discussion about image quality in PDFs]
+
 == Authors
 
 {project-name} was written by https://github.com/mojavelinux[Dan Allen] and https://github.com/graphitefriction[Sarah White] of OpenDevise Inc. on behalf of the Asciidoctor Project.
