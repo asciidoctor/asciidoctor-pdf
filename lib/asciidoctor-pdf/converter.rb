@@ -5,6 +5,7 @@ require 'prawn'
 require 'prawn-svg'
 require 'prawn/table'
 require 'prawn/templates'
+require 'prawn/icon'
 require_relative 'prawn_ext'
 require_relative 'pdfmarks'
 require_relative 'asciidoctor_ext'
@@ -24,6 +25,14 @@ class Converter < ::Prawn::Document
     [number].pack 'U*'
   end
 
+  Admonitions = {
+    'CAUTION'   => { key: 'fa-fire', color: 'BF3400' },
+    'IMPORTANT' => { key: 'fa-exclamation-circle', color: 'BF0000' },
+    'NOTE'      => { key: 'fa-info-circle', color: '19407C' },
+    'TIP'       => { key: 'fa-lightbulb-o', color: '111111' },
+    'WARNING'   => { key: 'fa-exclamation-triangle', color: 'BF6900' }
+  }
+
   IndentationRx = /^ +/
   TabSpaces = ' ' * 4
   NoBreakSpace = unicode_char 0x00a0
@@ -32,9 +41,6 @@ class Converter < ::Prawn::Document
   DotLeader = %(#{HairSpace}.)
   EmDash = unicode_char 0x2014
   LowercaseGreekA = unicode_char 0x03b1
-  AdmonitionIcons = {
-    note: (unicode_char 0xf0eb)
-  }
   Bullets = {
     disc: (unicode_char 0x2022),
     circle: (unicode_char 0x25e6),
@@ -296,8 +302,14 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
     keep_together do |box_height = nil|
       #theme_font :admonition do
+        icons = node.document.attributes['icons'] == 'font'
         label = node.caption.upcase
-        label_width = width_of label
+        if icons
+          label_width = bounds.width/12
+        else
+          label_width = width_of label
+        end
+        admonition = Admonitions[label]
         # FIXME use padding from theme
         indent @theme.horizontal_rhythm, @theme.horizontal_rhythm do
           if box_height
@@ -308,7 +320,11 @@ class Converter < ::Prawn::Document
                 stroke_vertical_rule @theme.admonition_border_color, at: bounds.width
                 # HACK make title in this location look right
                 label_margin_top = node.title? ? @theme.caption_margin_inside : 0
-                layout_prose label, valign: :center, style: :bold, line_height: 1, margin_top: label_margin_top, margin_bottom: 0
+                if icons
+                  icon admonition[:key], valign: :center, align: :center, color: admonition[:color], size: admonition_icon_size(node)
+                else
+                  layout_prose label, valign: :center, style: :bold, line_height: 1, margin_top: label_margin_top, margin_bottom: 0
+                end
               end
             end
           end
@@ -1135,6 +1151,13 @@ class Converter < ::Prawn::Document
         end
       end
     end
+  end
+
+  # Icons will not render properly if they are larger
+  # than the current bounds.height.
+  def admonition_icon_size(node, max_size = 26)
+    min_height = bounds.height.floor
+    min_height < max_size ? min_height : max_size
   end
 
   def stamp_page_numbers opts = {}
