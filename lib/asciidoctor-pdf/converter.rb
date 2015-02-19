@@ -311,12 +311,7 @@ class Converter < ::Prawn::Document
       #theme_font :admonition do
         icons = node.document.attributes['icons'] == 'font'
         label = node.caption.upcase
-        if icons
-          label_width = bounds.width/12
-        else
-          label_width = width_of label
-        end
-        admonition = Admonitions[label]
+        label_width = icons ? (bounds.width/12) : width_of(label)
         # FIXME use padding from theme
         indent @theme.horizontal_rhythm, @theme.horizontal_rhythm do
           if box_height
@@ -328,6 +323,7 @@ class Converter < ::Prawn::Document
                 # HACK make title in this location look right
                 label_margin_top = node.title? ? @theme.caption_margin_inside : 0
                 if icons
+                  admonition = Admonitions[label]
                   icon admonition[:key], valign: :center, align: :center, color: admonition[:color], size: admonition_icon_size(node)
                 else
                   layout_prose label, valign: :center, style: :bold, line_height: 1, margin_top: label_margin_top, margin_bottom: 0
