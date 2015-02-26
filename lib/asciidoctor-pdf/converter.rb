@@ -264,6 +264,7 @@ class Converter < ::Prawn::Document
 
   # TODO add prose around image logic (use role to add special logic for headshot)
   def convert_paragraph node
+    layout_caption node.title if node.title?
     is_lead = false
     prose_opts = {}
     node.roles.each do |role|
