@@ -156,17 +156,21 @@ Then use the `bundle` command to install the project dependencies:
 
  $ bundle
 
+NOTE: You need to call `bundle` from the project directory so that it can find the [file]_Gemfile_.
+
 Assuming all the required gems install properly, verify you can run the `asciidoctor-pdf` script using Ruby:
 
  $ ruby ./bin/asciidoctor-pdf -v
 
-If you see the version of Asciidoctor PDF printed, you're ready to use {project-name}! If you do get an error message and installed using Bundler, use
+If you see the version of Asciidoctor PDF printed, you're ready to use {project-name}!
+
+If you get an error message--and you're not using a Ruby manager like RVM--you may need to invoke the script through `bundle exec`:
 
  $ bundle exec ./bin/asciidoctor-pdf -v
- 
-to verify that you can use {project-name}. You need to call Bundler from the project directory so that it can find the [file]_Gemfile_.
 
-Let's grab an AsciiDoc document to distill.
+If this works, be sure to use `bundle exec` whenever invoking the `./bin/asciidoctor-pdf` script.
+
+Next, let's grab an AsciiDoc document to distill.
 
 === Example AsciiDoc document
 
