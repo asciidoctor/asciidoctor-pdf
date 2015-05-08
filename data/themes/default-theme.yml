@@ -173,8 +173,11 @@ description_list:
 outline_list:
   indent: $horizontal_rhythm * 1.25
 table:
+  head_font_color: 000000
+  head_background_color: FFFFFF
   background_color: transparent
-  background_color_alt: f9f9f9
+  background_color_row_even: FFFFFF
+  background_color_row_odd: FFFFFF
   border_color: dddddd
   border_width: $base_border_width
   # HACK accounting for line-height
