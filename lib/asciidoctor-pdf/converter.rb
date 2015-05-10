@@ -860,7 +860,8 @@ class Converter < ::Prawn::Document
       # NOTE we lookup text in converter because DocBook doesn't need this logic
       if (text = node.text || (node.document.references[:ids][refid] || %([#{refid}])))
         # FIXME shouldn't target be refid? logic seems confused here
-        %(<link anchor="#{target}">#{text}</link>)
+        _target = target.gsub(/^#/, '')
+        %(<link anchor="#{_target}">#{text}</link>)
       # FIXME hack for bibliography references
       # should be able to reenable once we parse inline destinations
       else
