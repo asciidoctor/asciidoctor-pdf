@@ -264,7 +264,6 @@ class Converter < ::Prawn::Document
 
   # TODO add prose around image logic (use role to add special logic for headshot)
   def convert_paragraph node
-    layout_caption node.title if node.title?
     is_lead = false
     prose_opts = {}
     node.roles.each do |role|
@@ -281,6 +280,10 @@ class Converter < ::Prawn::Document
       #  prose_opts[:size] = @theme.base_font_size_small
       end
     end
+
+    # TODO check if we're within one line of the bottom of the page
+    # and advance to the next page if so (similar to logic for section titles)
+    layout_caption node.title if node.title?
 
     if is_lead
       theme_font :lead do
