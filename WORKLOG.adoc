@@ -3,8 +3,8 @@
 == TODO
 
 * cjk and/or multilingual support
+* hardbreak in table cell results in extra endline (likely not normalizing cell content)
 * remove pdfmarks file after optimizing
-* prawn-svg should drop layer with display: none style (issue filed, maybe fixed?)
 * add note to README that Prawn will subset any fonts provided
 * nested keep_together logic is broken (e.g., example inside example, listing inside sidebar, etc)
 * look into single_line + shrink_to_fit in listings, perhaps other places
