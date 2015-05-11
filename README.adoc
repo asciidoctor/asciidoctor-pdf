@@ -5,21 +5,21 @@ Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://g
 :experimental:
 :idprefix:
 :idseparator: -
+ifdef::env-github[:relfileprefix: /blob/master]
 // Aliases:
 :project-name: Asciidoctor PDF
 :project-handle: asciidoctor-pdf
 // URIs:
 :uri-project: https://github.com/asciidoctor/asciidoctor-pdf
-:uri-project-repo: https://github.com/asciidoctor/asciidoctor-pdf
+:uri-project-repo: {uri-project}
 :uri-project-issues: {uri-project-repo}/issues
+:uri-project-list: http://discuss.asciidoctor.org
 :uri-prawn: http://prawn.majesticseacreature.com
 :uri-rvm: http://rvm.io
 :uri-asciidoctor: http://asciidoctor.org
-:repo-base-uri: {uri-project-repo}/blob/master/
-ifdef::env-github[:repo-base-uri: link:]
-:uri-notice: {repo-base-uri}NOTICE.adoc
-:uri-license: {repo-base-uri}LICENSE.adoc
-:uri-worklog: {repo-base-uri}WORKLOG.adoc
+
+:original-outfilesuffix: {outfilesuffix}
+:outfilesuffix: .adoc
 
 _Lo and behold_, a native PDF converter for AsciiDoc built with {uri-asciidoctor}[Asciidoctor] and {uri-prawn}[Prawn]! +
 _No more middleman._ +
@@ -28,9 +28,8 @@ It's AsciiDoc straight to PDF!
 
 [caption='Status']
 CAUTION: {project-name} is currently _alpha_ software.
-Use accordingly.
-Though the bulk of AsciiDoc content is converter, there's still work needed to fill in gaps where conversion is incomplete, incorrect or not implemented.
-Once it's ready, the project will be moved into the Asciidoctor organization on GitHub.
+While it handles most of the AsciiDoc content, there's still work needed to fill in gaps where conversion is incomplete, incorrect or not implemented.
+See the milestone v1.5.0 in the {uri-project-issues}[issue tracker] for details.
 
 == Prawn, the majestic PDF generator
 
@@ -43,7 +42,7 @@ More important, it's a hackable platform that offers both high level APIs for th
 With Prawn, you can write text, draw lines and shapes and place images _anywhere_ on the page and add as much color as you like.
 In addition, it brings a fluent API and aggressive code re-use to the printable document space.
 
-To give you a picture, here's an example that shows how to use Prawn to create a basic PDF document.
+Here's an example that demonstrates how to use Prawn to create a basic PDF document.
 
 .Create a basic PDF document using Prawn
 [source,ruby]
@@ -56,13 +55,14 @@ end
 ----
 
 It's that easy.
-And it's just the beginning.
+And that's just the beginning.
+Skip ahead to <<Getting started>> to start putting it use.
 
 *Prawn is the killer library for PDF generation* we've needed to close this critical gap in Asciidoctor.
 It absolutely takes the pain out of creating printable documents.
 Picking up from there, {project-name} takes the pain out of creating printable documents _from AsciiDoc_.
 
-== Notable Features
+== Notable features
 
 * Direct AsciiDoc to PDF conversion
 * Configuration-driven style and layout
@@ -74,9 +74,9 @@ Picking up from there, {project-name} takes the pain out of creating printable d
 * Orphan section titles avoided
 * Table border settings honored
 
-=== Missing Features
+=== Missing features
 
-See {uri-worklog}[WORKLOG].
+See <<WORKLOG.adoc#,WORKLOG>>.
 
 == Prerequisites
 
@@ -92,7 +92,7 @@ If you're using {uri-rvm}[RVM], we recommend creating a new gemset to work with 
 
 We like RVM because it keeps the dependencies required by various projects isolated.
 
-== Getting Started
+== Getting started
 
 The {project-name} project is published in pre-release on RubyGems.org.
 You can either install the pre-release version using the following command:
@@ -139,7 +139,7 @@ TIP: Instead of working out of the {project-handle} directory, you can simply ad
 
 We'll leverage the project configuration to install the necessary dependencies.
 
-=== Install the Dependencies
+=== Install the dependencies
 
 The dependencies needed to use {project-name} are defined in the [file]_Gemfile_ at the root of the project.
 We can use Bundler to install the dependencies for us.
@@ -243,7 +243,7 @@ Specify the path to an alternate theme file with the `pdf-style` attribute. For 
 To refer to a theme at another location you can use the `pdf-stylesdir` attribute to specify the location of themes.
 If the `pdf-style` value does not end in `.yml`, then the file name is calculated as `{pdf-style}-theme.yml` located in the `pdf-stylesdir` directory (which defaults to the built-in `data/themes` directory).
 
-== Optional Scripts
+== Optional scripts
 
 {project-name} also provides a shell script that invokes GhostScript (`gs`) to optimize and compress the generated PDF with minimal impact on quality.
 You must have Ghostscript installed to use it.
@@ -271,8 +271,9 @@ In the spirit of free software, _everyone_ is encouraged to help improve this pr
 
 To contribute code, simply fork the project on GitHub, hack away and send a pull request with your proposed changes.
 
-Feel free to use the {uri-project-issues}[issue tracker] or http://discuss.asciidoctor.org[Asciidoctor mailing list] to provide feedback or suggestions in other ways.
+Feel free to use the {uri-project-issues}[issue tracker] or {uri-project-list}[Asciidoctor mailing list] to provide feedback or suggestions in other ways.
 
+[[resources,Links]]
 == Resources
 
 * https://groups.google.com/forum/#!msg/prawn-ruby/MbMsCx862iY/6ImCsvLGfVcJ[Discussion about image quality in PDFs]
@@ -286,5 +287,8 @@ Feel free to use the {uri-project-issues}[issue tracker] or http://discuss.ascii
 Copyright (C) 2014 OpenDevise Inc. and the Asciidoctor Project.
 Free use of this software is granted under the terms of the MIT License.
 
-For the full text of the license, see the {uri-license}[LICENSE] file.
-Refer to the {uri-notice}[NOTICE] file for information about third-party Open Source software in use.
+For the full text of the license, see the <<LICENSE.adoc#,LICENSE>> file.
+Refer to the <<NOTICE.adoc#,NOTICE>> file for information about third-party Open Source software in use.
+
+// FIXME Asciidoctor should be using outfilesuffix defined in header
+:outfilesuffix: {original-outfilesuffix}
