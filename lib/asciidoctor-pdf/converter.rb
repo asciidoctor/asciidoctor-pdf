@@ -281,6 +281,10 @@ class Converter < ::Prawn::Document
       end
     end
 
+    # TODO check if we're within one line of the bottom of the page
+    # and advance to the next page if so (similar to logic for section titles)
+    layout_caption node.title if node.title?
+
     if is_lead
       theme_font :lead do
         layout_prose node.content, prose_opts
@@ -850,25 +854,7 @@ class Converter < ::Prawn::Document
   end
 
   def convert_inline_anchor node
-    target = node.target
     case node.type
-    when :xref
-      refid = (node.attr 'refid') || target
-      # NOTE we lookup text in converter because DocBook doesn't need this logic
-      if (text = node.text || (node.document.references[:ids][refid] || %([#{refid}])))
-        # FIXME shouldn't target be refid? logic seems confused here
-        %(<link anchor="#{target}">#{text}</link>)
-      # FIXME hack for bibliography references
-      # should be able to reenable once we parse inline destinations
-      else
-        %((see [#{refid}]))
-      end
-    when :ref
-      #%(<a id="#{target}"></a>)
-      ''
-    when :bibref
-      #%(<a id="#{target}"></a>[#{target}])
-      %([#{target}])
     when :link
       attrs = []
       #attrs << %( id="#{node.id}") if node.id
@@ -878,11 +864,39 @@ class Converter < ::Prawn::Document
       #attrs << %( title="#{node.attr 'title'}") if node.attr? 'title'
       attrs << %( target="#{node.attr 'window'}") if node.attr? 'window'
       if (node.document.attr? 'showlinks') && !(node.has_role? 'bare')
+        target = node.target
         # TODO cleanup look, perhaps put target in smaller text
         %(<link href="#{target}"#{attrs.join}>#{node.text}</a> (#{target}))
       else
         %(<link href="#{target}"#{attrs.join}>#{node.text}</a>)
       end
+    when :xref
+      target = node.target
+      # NOTE the presence of path indicates an inter-document xref
+      if (path = node.attr 'path', nil, false)
+        %(<link href="#{target}">#{node.text || path}</a>)
+      else
+        fragment = node.attr 'fragment', target, false
+        refid = node.attr 'refid', target, false
+        # NOTE we know the destination exists if it's found in the id table
+        if (reftext = node.document.references[:ids][refid])
+          %(<link anchor="#{fragment}">#{node.text || reftext}</link>)
+        else
+          source = $VERBOSE ? %( in source:\n#{node.parent.lines * "\n"}) : nil
+          warn %(asciidoctor: WARNING: reference '#{refid}' not found#{source})
+          %[(see #{node.text || %([#{refid}])})]
+        end
+      end
+    when :ref
+      # FIXME add destination to PDF document
+      #target = node.target
+      #%(<a id="#{target}"></a>)
+      ''
+    when :bibref
+      # FIXME add destination to PDF document
+      #target = node.target
+      #%(<a id="#{target}"></a>[#{target}])
+      %([#{node.target}])
     else
       warn %(asciidoctor: WARNING: unknown anchor type: #{node.type.inspect})
     end
@@ -999,7 +1013,11 @@ class Converter < ::Prawn::Document
       end
       # QUESTION should we go to page 1 when position == :front?
       go_to_page page_count if position == :back
-      image_page cover_image, canvas: true
+      if (::File.extname cover_image) == '.pdf'
+        import_page cover_image
+      else
+        image_page cover_image, canvas: true
+      end
     end
   end
 
