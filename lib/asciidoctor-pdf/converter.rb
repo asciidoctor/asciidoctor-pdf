@@ -1012,7 +1012,11 @@ class Converter < ::Prawn::Document
       end
       # QUESTION should we go to page 1 when position == :front?
       go_to_page page_count if position == :back
-      image_page cover_image, canvas: true
+      if (::File.extname cover_image) == '.pdf'
+        import_page cover_image
+      else
+        image_page cover_image, canvas: true
+      end
     end
   end
 
