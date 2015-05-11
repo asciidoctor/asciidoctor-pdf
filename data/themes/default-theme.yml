@@ -176,8 +176,8 @@ table:
   head_font_color: 000000
   head_background_color: FFFFFF
   background_color: transparent
-  background_color_row_even: FFFFFF
-  background_color_row_odd: FFFFFF
+  even_row_background_color: FFFFFF
+  odd_row_background_color: FFFFFF
   border_color: dddddd
   border_width: $base_border_width
   # HACK accounting for line-height

@@ -166,7 +166,10 @@ outline_list:
   indent: $horizontal_rhythm * 1.25
 table:
   background_color: transparent
-  background_color_alt: F9F9F9
+  head_background_color: F9F9F9
+  head_font_color: $base_font_color
+  even_row_background_color: F9F9F9
+  odd_row_background_color: transparent
   border_color: DDDDDD
   border_width: $base_border_width
   # HACK accounting for line-height

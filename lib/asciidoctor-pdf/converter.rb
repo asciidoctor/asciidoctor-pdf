@@ -153,7 +153,6 @@ class Converter < ::Prawn::Document
     register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
     @theme = theme
     @font_color = theme.base_font_color
-    @background_color = theme.page_background_color
     @fallback_fonts = theme.font_fallbacks || []
     init_scratch_prototype
     self
@@ -720,7 +719,7 @@ class Converter < ::Prawn::Document
         row_data << {
           content: cell.text,
           text_color: (@theme.table_head_font_color || @font_color),
-          background_color: (@theme.table_head_background_color || @background_color),
+          background_color: (@theme.table_head_background_color || theme.page_background_color),
           inline_format: true,
           font_style: :bold,
           colspan: cell.colspan || 1,
@@ -802,7 +801,7 @@ class Converter < ::Prawn::Document
         border_color: @theme.table_border_color
       },
       column_widths: column_widths,
-      row_colors: [@theme.table_background_color_row_even || @background_color, @theme.table_background_color_row_odd || @background_color]
+      row_colors: [@theme.table_background_color_row_even || @theme.page_background_color, @theme.table_background_color_row_odd || @theme.page_background_color]
     }
 
     theme_margin :block, :top
