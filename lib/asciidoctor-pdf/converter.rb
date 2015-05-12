@@ -714,6 +714,26 @@ class Converter < ::Prawn::Document
     num_cols = node.columns.size
     table_header = false
 
+    unless (page_bg_color = @theme.page_background_color) && page_bg_color != 'transparent'
+      page_bg_color = nil
+    end
+
+    unless (bg_color = @theme.table_background_color) && bg_color != 'transparent'
+      bg_color = page_bg_color
+    end
+
+    unless (head_bg_color = @theme.table_head_background_color) && head_bg_color != 'transparent'
+      head_bg_color = bg_color
+    end
+
+    unless (odd_row_bg_color = @theme.table_odd_row_background_color) && odd_row_bg_color != 'transparent'
+      odd_row_bg_color = bg_color
+    end
+
+    unless (even_row_bg_color = @theme.table_even_row_background_color) && even_row_bg_color != 'transparent'
+      even_row_bg_color = bg_color
+    end
+
     table_data = []
     node.rows[:head].each do |rows|
       table_header = true
@@ -723,7 +743,7 @@ class Converter < ::Prawn::Document
         row_data << {
           content: cell.text,
           text_color: (@theme.table_head_font_color || @font_color),
-          background_color: (@theme.table_head_background_color || theme.page_background_color),
+          background_color: head_bg_color,
           inline_format: true,
           font_style: :bold,
           colspan: cell.colspan || 1,
@@ -805,7 +825,7 @@ class Converter < ::Prawn::Document
         border_color: @theme.table_border_color
       },
       column_widths: column_widths,
-      row_colors: [@theme.table_background_color_row_even || @theme.page_background_color, @theme.table_background_color_row_odd || @theme.page_background_color]
+      row_colors: [odd_row_bg_color, even_row_bg_color]
     }
 
     theme_margin :block, :top
