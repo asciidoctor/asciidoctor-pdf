@@ -1,4 +1,4 @@
-require 'yaml'
+require 'safe_yaml/load'
 require 'ostruct'
 require_relative 'core_ext/ostruct'
 
@@ -26,13 +26,12 @@ class ThemeLoader
   end
 
   def self.load_file filename
-    theme_hash = YAML.load_file filename
-    self.new.load theme_hash
+    self.new.load (::SafeYAML.load_file filename)
   end
 
   def load hash
-    hash.inject(OpenStruct.new) do |s, (k, v)|
-      if v.kind_of? Hash
+    hash.inject(::OpenStruct.new) do |s, (k, v)|
+      if v.kind_of? ::Hash
         v.each do |k2, v2|
           s[%(#{k}_#{k2})] = (k2.end_with? '_color') ? to_hex(evaluate(v2, s)) : evaluate(v2, s)
         end
@@ -47,9 +46,9 @@ class ThemeLoader
 
   def evaluate expr, vars
     case expr
-    when String
+    when ::String
       evaluate_math(expand_vars(expr, vars))
-    when Array
+    when ::Array
       expr.map {|e| evaluate(e, vars) }
     else
       expr
@@ -69,7 +68,7 @@ class ThemeLoader
   end
   
   def evaluate_math expr
-    return expr unless expr.kind_of? String
+    return expr unless expr.kind_of? ::String
     original = expr
     while true
       result = expr.gsub(/(-?\d+(?:\.\d+)?) *([*\/]) *(-?\d+(?:\.\d+)?)/) { $1.to_f.send($2.to_sym, $3.to_f) }
