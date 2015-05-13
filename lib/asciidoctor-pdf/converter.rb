@@ -165,11 +165,51 @@ class Converter < ::Prawn::Document
       info: (build_pdf_info doc),
       margin: (theme.page_margin || 36),
       page_layout: (theme.page_layout || :portrait).to_sym,
-      page_size: (theme.page_size || 'LETTER'),
       skip_page_creation: true,
     }
 
-    pdf_opts[:page_size] = pdf_opts[:page_size].upcase if ::String === pdf_opts[:page_size]
+    if doc.attr? 'pdf-page-size'
+      page_size = ::YAML.safe_load(doc.attr 'pdf-page-size')
+    else
+      page_size = theme.page_size
+    end
+
+    pdf_opts[:page_size] = case page_size
+    when ::String
+      if ::PDF::Core::PageGeometry::SIZES.key?(page_size = page_size.upcase)
+        page_size
+      else
+        'LETTER'
+      end
+    when ::Array
+      page_size.fill(0..1) {|i| page_size[i] || 0 }.map {|d|
+        if ::Numeric === d
+          break if d == 0
+          d
+        elsif ::String === d && (m = /^(\d*(?:\.\d+)?)(in|mm|cm|pt)$/.match d)
+          val = m[1].to_f
+          val = case m[2]
+          when 'in'
+            val * 72
+          when 'mm'
+            val * (72 / 25.4)
+          when 'cm'
+            val * (720 / 25.4)
+          when 'pt'
+            val
+          end
+          # NOTE 4 is the max practical precision in PDFs
+          if (val = val.round 4) == (i_val = val.to_i)
+            val = i_val
+          end
+          val
+        else
+          break
+        end
+      }
+    end
+
+    pdf_opts[:page_size] ||= 'LETTER'
 
     # FIXME fix the namespace for FormattedTextFormatter
     pdf_opts[:text_formatter] ||= ::Asciidoctor::Prawn::FormattedTextFormatter.new theme: theme
