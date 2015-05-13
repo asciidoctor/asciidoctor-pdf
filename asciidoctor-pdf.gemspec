@@ -47,12 +47,18 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
 =======
   s.add_runtime_dependency 'prawn-svg', '0.18.0'
   s.add_runtime_dependency 'safe_yaml', '1.0.4'
-  s.add_runtime_dependency 'prawn-icon', '0.6.3'
+  s.add_runtime_dependency 'prawn-icon', '0.6.4'
 >>>>>>> Icon admonitions proof-of-concept. #15
 =======
   s.add_runtime_dependency 'prawn-svg', '0.16.0'
+<<<<<<< HEAD
   s.add_runtime_dependency 'safe_yaml', '1.0.4'
-  s.add_runtime_dependency 'prawn-icon', '0.6.3'
+  s.add_runtime_dependency 'prawn-icon', '0.6.4'
+>>>>>>> Update prawn/icon version.
+=======
+  s.add_runtime_dependency 'prawn-svg', '0.18.0'
+  s.add_runtime_dependency 'safe_yaml', '1.0.4'
+  s.add_runtime_dependency 'prawn-icon', '0.6.4'
 >>>>>>> Update prawn/icon version.
   s.add_runtime_dependency 'thread_safe', '0.3.4'
   s.add_runtime_dependency 'treetop', '1.5.3'
