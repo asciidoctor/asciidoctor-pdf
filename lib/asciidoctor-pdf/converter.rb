@@ -780,6 +780,7 @@ class Converter < ::Prawn::Document
       num_rows += 1
       row_data = []
       rows.each do |cell|
+        # TODO calculate and set line height (as :leading)
         cell_data = {
           content: cell.text,
           text_color: (@theme.table_body_font_color || @font_color),
@@ -795,7 +796,7 @@ class Converter < ::Prawn::Document
           cell_data[:font_style] = :italic
         when :strong, :header
           cell_data[:font_style] = :bold
-        when :monospaced
+        when :monospaced, :literal
           cell_data[:font] = @theme.literal_font_family
           if (size = @theme.literal_font_size)
             cell_data[:size] = size
@@ -803,7 +804,51 @@ class Converter < ::Prawn::Document
           if (color = @theme.literal_font_color)
             cell_data[:text_color] = color
           end
-        # TODO finish me
+          cell_data[:inline_format][0][:normalize] = false if cell.style == :literal
+        when :verse
+          cell_data[:inline_format][0][:normalize] = false
+        when :asciidoc
+          unless (cell_blocks = cell.inner_document.blocks).empty?
+            # TODO finish me
+            # TODO add warning about unhandled content
+            case (cell_block = cell_blocks[0]).context
+            when :image
+              cell_data = {
+                image: node.image_uri(cell_block.attr 'target'),
+                # QUESTION support scaledwidth and/or scale
+                image_width: (cell_block.attr? 'width') ? (cell_block.attr 'width').to_f : nil,
+                image_height: (cell_block.attr? 'height') ? (cell_block.attr 'height').to_f : nil,
+                # QUESTION support align on image as override of table cell?
+                position: (cell.attr 'halign').to_sym,
+                vposition: (cell.attr 'valign').to_sym,
+                colspan: cell.colspan || 1,
+                rowspan: cell.rowspan || 1
+              }
+              cell_data[:vposition] = :center if cell_data[:vposition] == :middle
+            when :paragraph
+              cell_data[:content] = cell_block.content
+              if (cell_block.role? 'lead') && (lead_font_size = @theme.lead_font_size)
+                cell_data[:size] = lead_font_size
+              end
+            when :literal, :listing
+              # TODO color cell background using literal/listing background color
+              cell_data[:content] = prepare_verbatim cell_block.content
+              cell_data[:inline_format] = false
+              cell_data[:font] = @theme.literal_font_family
+              if (size = @theme.literal_font_size)
+                cell_data[:size] = size
+              end
+              if (color = @theme.literal_font_color)
+                cell_data[:text_color] = color
+              end
+            when :quote, :verse
+              # TODO append attribution to content so it will render
+              cell_data[:content] = cell_block.content
+              cell_data[:inline_format][0][:normalize] = false if cell.style == :verse
+            else
+              cell_data[:inline_format] = false
+            end
+          end
         end
         row_data << cell_data
       end
