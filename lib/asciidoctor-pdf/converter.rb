@@ -771,6 +771,7 @@ class Converter < ::Prawn::Document
           align: (cell.attr 'halign').to_sym,
           valign: (cell.attr 'valign').to_sym
         }
+        cell_data[:valign] = :center if cell_data[:valign] == :middle
         case cell.style
         when :emphasis
           cell_data[:font_style] = :italic
