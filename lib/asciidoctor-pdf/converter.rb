@@ -765,7 +765,7 @@ class Converter < ::Prawn::Document
         cell_data = {
           content: cell.text,
           text_color: (@theme.table_body_font_color || @font_color),
-          inline_format: true,
+          inline_format: [{ normalize: true }],
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
           align: (cell.attr 'halign').to_sym,
