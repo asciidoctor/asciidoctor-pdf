@@ -165,9 +165,12 @@ class Converter < ::Prawn::Document
       info: (build_pdf_info doc),
       margin: (theme.page_margin || 36),
       page_layout: (theme.page_layout || :portrait).to_sym,
-      page_size: (theme.page_size || 'LETTER').upcase,
+      page_size: (theme.page_size || 'LETTER'),
       skip_page_creation: true,
     }
+
+    pdf_opts[:page_size] = pdf_opts[:page_size].upcase if ::String === pdf_opts[:page_size]
+
     # FIXME fix the namespace for FormattedTextFormatter
     pdf_opts[:text_formatter] ||= ::Asciidoctor::Prawn::FormattedTextFormatter.new theme: theme
     pdf_opts
