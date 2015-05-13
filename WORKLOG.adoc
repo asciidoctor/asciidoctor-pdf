@@ -2,8 +2,10 @@
 
 == TODO
 
+* utility to coerce the color value transparent to nil (better handling in general)
 * cjk and/or multilingual support
 * hardbreak in table cell results in extra endline (likely not normalizing cell content)
+* don't create new page if content overflows and we're on the first page
 * remove pdfmarks file after optimizing
 * add note to README that Prawn will subset any fonts provided
 * nested keep_together logic is broken (e.g., example inside example, listing inside sidebar, etc)
@@ -139,4 +141,5 @@
 
 == Resources
 
-* https://code.google.com/p/origami-pdf/
+* https://code.google.com/p/origami-pdf/[Origami PDF: A PDF inspection library]
+* https://github.com/a1ee9b/PrintPretty[A theme for PDF designed for printing]
