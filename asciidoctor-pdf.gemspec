@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 require File.expand_path('lib/asciidoctor-pdf/version', File.dirname(__FILE__))
 
-Gem::Specification.new do |s| 
+Gem::Specification.new do |s|
   s.name = 'asciidoctor-pdf'
   s.version = Asciidoctor::Pdf::VERSION
 
