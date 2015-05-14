@@ -309,9 +309,14 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
     icons = node.document.attr? 'icons', 'font'
     label = icons ? (node.attr 'name').to_sym : node.caption.upcase
+    shift_base = @theme.prose_margin_bottom || @theme.vertical_rhythm
+    #shift_top = icons ? (shift_base / 3.0) : 0
+    #shift_bottom = icons ? ((shift_base * 2) / 3.0) : shift_base
+    shift_top = shift_base / 3.0
+    shift_bottom = (shift_base * 2) / 3.0
     keep_together do |box_height = nil|
       #theme_font :admonition do
-        label_width = icons ? (bounds.width / 12) : (width_of label)
+        label_width = icons ? (bounds.width / 12.0) : (width_of label)
         # FIXME use padding from theme
         indent @theme.horizontal_rhythm, @theme.horizontal_rhythm do
           if box_height
@@ -332,10 +337,11 @@ class Converter < ::Prawn::Document
             end
           end
           indent label_width + @theme.horizontal_rhythm * 2 do
+            move_down shift_top
             layout_caption node.title if node.title?
             convert_content_for_block node
             # HACK compensate for margin bottom of admonition content
-            move_up(@theme.prose_margin_bottom || @theme.vertical_rhythm)
+            move_up shift_bottom
           end
         end
       #end
