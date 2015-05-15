@@ -486,6 +486,7 @@ class Converter < ::Prawn::Document
 
   def convert_olist node
     @list_numbers ||= []
+    # FIXME move list_number resolver to a method
     list_number = case node.style
     when 'arabic'
       '1'
@@ -514,6 +515,7 @@ class Converter < ::Prawn::Document
 
   # TODO implement checklist
   def convert_ulist node
+    # FIXME move bullet_type resolve logic to a method
     bullet_type = if (style = node.style)
       case style
       when 'bibliography'
@@ -755,12 +757,14 @@ class Converter < ::Prawn::Document
       even_row_bg_color = bg_color
     end
 
+    column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * bounds.width) / 100.0 }
+
     table_data = []
-    node.rows[:head].each do |rows|
+    node.rows[:head].each do |row|
       table_header = true
       num_rows += 1
       row_data = []
-      rows.each do |cell|
+      row.each do |cell|
         row_data << {
           content: cell.text,
           text_color: (@theme.table_head_font_color || @font_color),
@@ -776,11 +780,13 @@ class Converter < ::Prawn::Document
       table_data << row_data
     end
 
-    node.rows[:body].each do |rows|
+    cell_padding = @theme.table_cell_padding
+    p_top, p_right, p_bottom, p_left = (::Array === cell_padding) ? cell_padding : ([cell_padding] * 4)
+    node.rows[:body].each do |row|
       num_rows += 1
       row_data = []
-      rows.each do |cell|
-        # TODO calculate and set line height (as :leading)
+      row.each_with_index do |cell, idx|
+        # FIXME calculate and set line height (as :leading)
         cell_data = {
           content: cell.text,
           text_color: (@theme.table_body_font_color || @font_color),
@@ -788,9 +794,8 @@ class Converter < ::Prawn::Document
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
           align: (cell.attr 'halign').to_sym,
-          valign: (cell.attr 'valign').to_sym
+          valign: (valign = (cell.attr 'valign').to_sym) == :middle ? :center : valign
         }
-        cell_data[:valign] = :center if cell_data[:valign] == :middle
         case cell.style
         when :emphasis
           cell_data[:font_style] = :italic
@@ -804,49 +809,107 @@ class Converter < ::Prawn::Document
           if (color = @theme.literal_font_color)
             cell_data[:text_color] = color
           end
-          cell_data[:inline_format][0][:normalize] = false if cell.style == :literal
+          if cell.style == :literal
+            cell_data[:inline_format][0][:normalize] = false
+          end
         when :verse
           cell_data[:inline_format][0][:normalize] = false
         when :asciidoc
           unless (cell_blocks = cell.inner_document.blocks).empty?
-            # TODO finish me
-            # TODO add warning about unhandled content
-            case (cell_block = cell_blocks[0]).context
-            when :image
-              cell_data = {
-                image: node.image_uri(cell_block.attr 'target'),
-                # QUESTION support scaledwidth and/or scale
-                image_width: (cell_block.attr? 'width') ? (cell_block.attr 'width').to_f : nil,
-                image_height: (cell_block.attr? 'height') ? (cell_block.attr 'height').to_f : nil,
-                # QUESTION support align on image as override of table cell?
-                position: (cell.attr 'halign').to_sym,
-                vposition: (cell.attr 'valign').to_sym,
-                colspan: cell.colspan || 1,
-                rowspan: cell.rowspan || 1
-              }
-              cell_data[:vposition] = :center if cell_data[:vposition] == :middle
-            when :paragraph
-              cell_data[:content] = cell_block.content
-              if (cell_block.role? 'lead') && (lead_font_size = @theme.lead_font_size)
-                cell_data[:size] = lead_font_size
+            cell_data_list = []
+            cell_blocks.each do |cell_block|
+              cell_data_item = cell_data.dup
+              # QUESTION do we need to deal with valign?
+              [:content, :colspan, :rowspan].each {|k| cell_data_item.delete k }
+              # FIXME finish me (including sections and child content)
+              # FIXME refactor into proper Table::Cell subclass
+              case cell_block.context
+              when :image
+                cell_data_item = {
+                  image: node.image_uri(cell_block.attr 'target'),
+                  # QUESTION support scaledwidth and/or scale
+                  image_width: (cell_block.attr? 'width') ? (cell_block.attr 'width').to_f : nil,
+                  image_height: (cell_block.attr? 'height') ? (cell_block.attr 'height').to_f : nil,
+                  # QUESTION support align on image as override of table cell?
+                  position: cell_data[:align],
+                  vposition: cell_data[:valign],
+                  colspan: cell.colspan || 1,
+                  rowspan: cell.rowspan || 1
+                }
+              when :paragraph
+                cell_data_item[:content] = cell_block.content
+                cell_block.roles.each do |role|
+                  case role
+                  when 'text-left'
+                    cell_data_item[:align] = :left
+                  when 'text-right'
+                    cell_data_item[:align] = :right
+                  when 'lead'
+                    theme_font :lead do
+                      cell_data_item[:size] = font_size
+                    end
+                  end
+                end
+              when :ulist
+                cell_data_item[:content] = cell_block.items.map {|li|
+                  # FIXME use proper bullet type
+                  %(#{Bullets[:disc]} #{li.text})
+                } * '<br>'
+              when :olist
+                cnt = 0
+                cell_data_item[:content] = cell_block.items.map {|li|
+                  # FIXME use proper numbering type
+                  %(#{cnt += 1}. #{li.text})
+                } * '<br>'
+              when :literal, :listing
+                # FIXME color cell background using literal/listing background color
+                cell_data_item[:content] = prepare_verbatim cell_block.content
+                cell_data_item[:inline_format] = false
+                theme_font :code do
+                  cell_data_item[:font] = font_family
+                  cell_data_item[:size] = font_size
+                  cell_data_item[:text_color] = @font_color
+                end
+              when :admonition
+                # FIXME will break if content is compound
+                cell_data_item[:content] = %(#{(cell_block.attr 'name').upcase}: #{cell_block.content})
+              when :quote, :verse
+                # FIXME append attribution to content so it will render
+                cell_data_item[:content] = cell_block.content
+                if cell_block.context == :verse
+                  cell_data_item[:inline_format][0][:normalize] = false
+                end
+              when :floating_title
+                cell_data_item[:content] = cell_block.title
+                cell_data_item[:inline_format][0][:normalize] = false
+                # FIXME set leading and padding bottom
+                theme_font :heading, level: (cell_block.level + 1) do
+                  cell_data_item[:font] = font_family
+                  cell_data_item[:font_style] = font_style
+                  cell_data_item[:size] = font_size
+                  cell_data_item[:text_color] = @font_color
+                end
+              when :dlist
+                cell_data_item[:content] = cell_block.items.map {|terms, desc|
+                  terms_content = terms.map {|term| %(<b>#{term.text}</b>) } * '<br>'
+                  %(#{terms_content}<br>#{desc.text})
+                } * '<br>'
+              else
+                cell_data_item[:content] = cell_block.source
+                cell_data_item[:inline_format] = false
               end
-            when :literal, :listing
-              # TODO color cell background using literal/listing background color
-              cell_data[:content] = prepare_verbatim cell_block.content
-              cell_data[:inline_format] = false
-              cell_data[:font] = @theme.literal_font_family
-              if (size = @theme.literal_font_size)
-                cell_data[:size] = size
-              end
-              if (color = @theme.literal_font_color)
-                cell_data[:text_color] = color
-              end
-            when :quote, :verse
-              # TODO append attribution to content so it will render
-              cell_data[:content] = cell_block.content
-              cell_data[:inline_format][0][:normalize] = false if cell.style == :verse
+              cell_data_list << [cell_data_item]
+            end
+            if cell_data_list.size > 1
+              # FIXME set width and height to width and height of parent minus padding
+              cell_data = make_table cell_data_list, cell_style: {
+                # QUESTION what's the right spacing between cell content?
+                padding: [p_top, 0, 0, 0],
+                border_width: 0
+              }, width: (column_widths[idx] - p_left - p_right)
+              cell_data.cells[0, 0].padding = nil
             else
-              cell_data[:inline_format] = false
+              cell_data = cell_data_list[0][0]
             end
           end
         end
@@ -855,9 +918,7 @@ class Converter < ::Prawn::Document
       table_data << row_data
     end
 
-    # TODO support footer row
-
-    column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * bounds.width) / 100.0 }
+    # FIXME support footer row
 
     border = {}
     table_border_width = @theme.table_border_width
