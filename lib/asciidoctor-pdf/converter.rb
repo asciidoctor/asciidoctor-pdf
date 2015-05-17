@@ -915,11 +915,11 @@ class Converter < ::Prawn::Document
     when :xref
       target = node.target
       # NOTE the presence of path indicates an inter-document xref
-      if (path = node.attr 'path', nil, false)
+      if (path = node.attributes['path'])
         %(<link href="#{target}">#{node.text || path}</a>)
       else
-        fragment = node.attr 'fragment', target, false
-        refid = node.attr 'refid', target, false
+        fragment = node.attributes['fragment']
+        refid = node.attributes['refid']
         # NOTE we know the destination exists if it's found in the id table
         if (reftext = node.document.references[:ids][refid])
           %(<link anchor="#{fragment}">#{node.text || reftext}</link>)
