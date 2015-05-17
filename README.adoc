@@ -6,6 +6,8 @@ Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://g
 :idprefix:
 :idseparator: -
 ifdef::env-github[:relfileprefix: /blob/master]
+//:pdf-page-size: [8.25in, 11.69in]
+//:pdf-page-size: A4
 // Aliases:
 :project-name: Asciidoctor PDF
 :project-handle: asciidoctor-pdf
