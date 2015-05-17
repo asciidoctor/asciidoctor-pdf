@@ -5,8 +5,9 @@ require 'asciidoctor/cli'
 
 options = Asciidoctor::Cli::Options.new backend: 'pdf', header_footer: true
 # FIXME This is a really bizarre API. Please make me simpler.
-if (options.parse! ARGV) == 0
-  exit 0
+result = options.parse! ARGV
+if Integer === result
+  exit result
 else
   invoker = Asciidoctor::Cli::Invoker.new options
   GC.start
