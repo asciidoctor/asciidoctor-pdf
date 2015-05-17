@@ -634,8 +634,10 @@ class Converter < ::Prawn::Document
     #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
     target = node.attr 'target'
-    #if target.end_with? '.pdf'
-    #  import_page target
+    # FIXME API should provide a cleaner and clearer way to resolve image to system path
+    image_path = ::File.expand_path node.normalize_system_path(target, (node.document.attr 'imagesdir'))
+    #if image_path.end_with? '.pdf'
+    #  import_page image_path
     #  return
     #end
     if target.end_with? '.gif'
@@ -643,9 +645,7 @@ class Converter < ::Prawn::Document
       return
     end
 
-    # FIXME use normalize_path here!
-    image_path = File.join((node.attr 'docdir'), (node.attr 'imagesdir') || '', target)
-    # TODO extension should be an attribute on an image node
+    # TODO file extension should be an attribute on an image node
     image_type = File.extname(image_path)[1..-1]
     width = if node.attr? 'scaledwidth'
       ((node.attr 'scaledwidth').to_f / 100.0) * bounds.width
