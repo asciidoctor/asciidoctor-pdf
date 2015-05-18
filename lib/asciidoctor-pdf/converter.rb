@@ -946,27 +946,28 @@ class Converter < ::Prawn::Document
       #attrs << %( title="#{node.attr 'title'}") if node.attr? 'title'
       attrs << %( target="#{node.attr 'window'}") if node.attr? 'window'
       if (node.document.attr? 'showlinks') && !(node.has_role? 'bare')
-        target = node.target
-        # TODO cleanup look, perhaps put target in smaller text
-        %(<link href="#{target}"#{attrs.join}>#{node.text}</a> (#{target}))
+        # TODO allow style of visible link to be controlled by theme
+        %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> <font size="0.9"><em>(#{target})</em></font>)
       else
-        %(<link href="#{target}"#{attrs.join}>#{node.text}</a>)
+        %(<a href="#{node.target}"#{attrs.join}>#{node.text}</a>)
       end
     when :xref
       target = node.target
       # NOTE the presence of path indicates an inter-document xref
       if (path = node.attributes['path'])
-        %(<link href="#{target}">#{node.text || path}</a>)
+        # QUESTION should we use local instead of href here?
+        %(<a href="#{target}">#{node.text || path}</a>)
       else
-        fragment = node.attributes['fragment']
         refid = node.attributes['refid']
-        # NOTE we know the destination exists if it's found in the id table
+        # NOTE reference table is not comprehensive (we don't catalog all inline anchors)
         if (reftext = node.document.references[:ids][refid])
-          %(<link anchor="#{fragment}">#{node.text || reftext}</link>)
+          %(<a anchor="#{refid}">#{node.text || reftext}</a>)
         else
-          source = $VERBOSE ? %( in source:\n#{node.parent.lines * "\n"}) : nil
-          warn %(asciidoctor: WARNING: reference '#{refid}' not found#{source})
-          %[(see #{node.text || %([#{refid}])})]
+          # NOTE we don't catalog all inline anchors, so we can't warn here (maybe once conversion is complete)
+          #source = $VERBOSE ? %( in source:\n#{node.parent.lines * "\n"}) : nil
+          #warn %(asciidoctor: WARNING: reference '#{refid}' not found#{source})
+          #%[(see #{node.text || %([#{refid}])})]
+          %(<a anchor="#{refid}">#{node.text || "[#{refid}]"}</a>)
         end
       end
     when :ref
@@ -1135,9 +1136,9 @@ class Converter < ::Prawn::Document
     if (anchor = opts.delete :anchor)
       # FIXME won't work if inline_format is true; should instead pass through as attribute w/ link color set
       if (link_color = opts.delete :link_color)
-        string = %(<link anchor="#{anchor}"><color rgb="#{link_color}">#{string}</color></link>)
+        string = %(<a anchor="#{anchor}"><color rgb="#{link_color}">#{string}</color></a>)
       else
-        string = %(<link anchor="#{anchor}">#{string}</link>)
+        string = %(<a anchor="#{anchor}">#{string}</a>)
       end
     end
     if opts.delete :preserve
@@ -1216,7 +1217,7 @@ class Converter < ::Prawn::Document
       # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
       start_page_number = page_number
       start_cursor = cursor
-      typeset_text %(<link anchor="#{sect.id}">#{sect_title}</link>), line_metrics, inline_format: true
+      typeset_text %(<a anchor="#{sect.id}">#{sect_title}</a>), line_metrics, inline_format: true
       # we only write the label if this is a dry run
       unless scratch?
         end_page_number = page_number
