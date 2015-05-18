@@ -42,6 +42,7 @@ class Converter < ::Prawn::Document
   NoBreakSpace = unicode_char 0x00a0
   NarrowSpace = unicode_char 0x2009
   NarrowNoBreakSpace = unicode_char 0x202f
+  ZeroWidthSpace = unicode_char 0x200b
   HairSpace = unicode_char 0x200a
   DotLeader = %(.#{NarrowSpace})
   EmDash = unicode_char 0x2014
@@ -272,26 +273,29 @@ class Converter < ::Prawn::Document
         end
       end
       # QUESTION should we store page_start & destination in internal map?
+      # TODO ideally, this attribute should be pdf-page-start
       sect.set_attr 'page_start', page_number
-      dest_y = at_page_top? ? page_height : y
-      sect.set_attr 'destination', (sect_destination = (dest_xyz 0, dest_y))
       # NOTE auto-generate an anchor if one doesn't exist so TOC works
+      # QUESTION should we just assign the section this generated id?
       sect.set_attr 'anchor', (sect_anchor = sect.id || %(section-#{page_number}-#{dest_y.ceil}))
-      add_dest sect_anchor, sect_destination
+      add_dest_for_block sect, sect_anchor
       sect.chapter? ? (layout_chapter_title sect, title) : (layout_heading title)
     end
 
     convert_content_for_block sect
+    # TODO ideally, this attribute should be pdf-page-end
     sect.set_attr 'page_end', page_number
   end
 
   def convert_floating_title node
+    add_dest_for_block node if node.id
     theme_font :heading, level: (node.level + 1) do
       layout_heading node.title
     end
   end
 
   def convert_abstract node
+    add_dest_for_block node if node.id
     pad_box @theme.abstract_padding do
       theme_font :abstract do
         # FIXME control first_line_options using theme
@@ -329,6 +333,7 @@ class Converter < ::Prawn::Document
 
   # TODO add prose around image logic (use role to add special logic for headshot)
   def convert_paragraph node
+    add_dest_for_block node if node.id
     is_lead = false
     prose_opts = {}
     node.roles.each do |role|
@@ -361,6 +366,7 @@ class Converter < ::Prawn::Document
 
   # FIXME alignment of content is off
   def convert_admonition node
+    add_dest_for_block node if node.id
     #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
     icons = node.document.attr? 'icons', 'font'
@@ -407,6 +413,7 @@ class Converter < ::Prawn::Document
   end
 
   def convert_example node
+    add_dest_for_block node if node.id
     #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
     keep_together do |box_height = nil|
@@ -437,14 +444,17 @@ class Converter < ::Prawn::Document
       if node.blocks.size == 1 && node.blocks.first.style == 'abstract'
         convert_abstract node.blocks.first
       else
+        add_dest_for_block node if node.id
         convert_content_for_block node
       end
     else
+      add_dest_for_block node if node.id
       convert_content_for_block node
     end
   end
 
   def convert_quote_or_verse node
+    add_dest_for_block node if node.id
     border_width = @theme.blockquote_border_width
     #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
@@ -482,6 +492,7 @@ class Converter < ::Prawn::Document
   alias :convert_verse :convert_quote_or_verse
 
   def convert_sidebar node
+    add_dest_for_block node if node.id
     #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
     keep_together do |box_height = nil|
@@ -516,6 +527,7 @@ class Converter < ::Prawn::Document
         ![:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
       move_up ((@theme.block_margin_bottom || @theme.vertical_rhythm) * 0.5)
     end
+    add_dest_for_block node if node.id
     @list_numbers ||= []
     # FIXME move \u2460 to constant (or theme setting)
     # \u2460 = circled one, \u24f5 = double circled one, \u278b = negative circled one
@@ -551,6 +563,7 @@ class Converter < ::Prawn::Document
   end
 
   def convert_dlist node
+    add_dest_for_block node if node.id
     node.items.each do |terms, desc|
       terms = [*terms]
       # NOTE don't orphan the terms, allow for at least one line of content
@@ -568,6 +581,7 @@ class Converter < ::Prawn::Document
   end
 
   def convert_olist node
+    add_dest_for_block node if node.id
     @list_numbers ||= []
     list_number = case node.style
     when 'arabic'
@@ -597,6 +611,7 @@ class Converter < ::Prawn::Document
 
   # TODO implement checklist
   def convert_ulist node
+    add_dest_for_block node if node.id
     bullet_type = if (style = node.style)
       case style
       when 'bibliography'
@@ -689,6 +704,8 @@ class Converter < ::Prawn::Document
       warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target})
     end
 
+    add_dest_for_block node if node.id
+
     unless valid_image
       theme_margin :block, :top
       layout_prose %(#{node.attr 'alt'} | #{target}), normalize: false, margin: 0, single_line: true
@@ -763,6 +780,7 @@ class Converter < ::Prawn::Document
 
   # TODO shrink text if it's too wide to fit in the bounding box
   def convert_listing_or_literal node
+    add_dest_for_block node if node.id
     # HACK disable built-in syntax highlighter; must be done before calling node.content!
     if node.style == 'source' && ((subs = node.subs).include? :highlight)
       highlighter = node.document.attr 'source-highlighter'
@@ -901,6 +919,7 @@ class Converter < ::Prawn::Document
   end
 
   def convert_table node
+    add_dest_for_block node if node.id
     num_rows = 0
     num_cols = node.columns.size
     table_header = false
@@ -1086,11 +1105,11 @@ class Converter < ::Prawn::Document
         %(<a href="#{node.target}"#{attrs.join}>#{node.text}</a>)
       end
     when :xref
-      target = node.target
       # NOTE the presence of path indicates an inter-document xref
       if (path = node.attributes['path'])
-        # QUESTION should we use local instead of href here?
-        %(<a href="#{target}">#{node.text || path}</a>)
+        # NOTE we don't use local as that doesn't work on the web
+        # NOTE for the fragment to work in most viewers, it must be #page=<N>
+        %(<a href="#{node.target}">#{node.text || path}</a>)
       else
         refid = node.attributes['refid']
         # NOTE reference table is not comprehensive (we don't catalog all inline anchors)
@@ -1105,15 +1124,13 @@ class Converter < ::Prawn::Document
         end
       end
     when :ref
-      # FIXME add destination to PDF document
-      #target = node.target
-      #%(<a id="#{target}"></a>)
-      ''
+      # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
+      #%(<a name="#{node.target}"></a>)
+      %(<a name="#{node.target}">#{ZeroWidthSpace}</a>)
     when :bibref
-      # FIXME add destination to PDF document
-      #target = node.target
-      #%(<a id="#{target}"></a>[#{target}])
-      %([#{node.target}])
+      # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
+      #%(<a name="#{target = node.target}"></a>[#{target}])
+      %(<a name="#{target = node.target}">#{ZeroWidthSpace}</a>[#{target}])
     else
       warn %(asciidoctor: WARNING: unknown anchor type: #{node.type.inspect})
     end
@@ -1198,7 +1215,7 @@ class Converter < ::Prawn::Document
       quoted_text = %(#{open}#{node.text}#{close})
     end
 
-    node.id ? %(<a id="#{node.id}"></a>#{quoted_text}) : quoted_text
+    node.id ? %(<a name="#{node.id}">#{ZeroWidthSpace}</a>#{quoted_text}) : quoted_text
   end
 
   # FIXME only create title page if doctype=book!
@@ -1602,7 +1619,7 @@ class Converter < ::Prawn::Document
   def add_outline_level outline, sections, num_levels, page_num_labels, numbering_offset, num_front_matter_pages
     sections.each do |sect|
       sect_title = sanitize sect.numbered_title formal: true
-      sect_destination = sect.attr 'destination'
+      sect_destination = sect.attr 'pdf-destination'
       sect_page_num = (sect.attr 'page_start') - num_front_matter_pages
       page_num_labels[sect_page_num + numbering_offset] = { P: ::PDF::Core::LiteralString.new(sect_page_num.to_s) }
       if (subsections = sect.sections).empty? || sect.level == num_levels
@@ -1738,6 +1755,31 @@ class Converter < ::Prawn::Document
 
   def preserve_indentation string
     string.gsub(IndentationRx) { NoBreakSpace * $&.length }
+  end
+
+  # If an id is provided or the node passed as the first argument has an id,
+  # add a named destination to the document equivalent to the node id at the
+  # current y position. If the node does not have an id and an id is not
+  # specified, do nothing.
+  #
+  # If the node is a section, and the current y position is the top of the
+  # page, set the position equal to the page height to improve the navigation
+  # experience.
+  def add_dest_for_block node, id = nil
+    if !scratch? && (id ||= node.id)
+      # QUESTION should we set precise x value of destination or just 0?
+      dest_x = bounds.absolute_left.round 2
+      dest_x = 0 if dest_x <= left_margin
+      dest_y = if node.context == :section && at_page_top?
+        page_height
+      else
+        y
+      end
+      # TODO find a way to store only the ref of the destination; look it up when we need it
+      node.set_attr 'pdf-destination', (node_dest = (dest_xyz dest_x, dest_y))
+      add_dest id, node_dest
+    end
+    nil
   end
 
   # QUESTION is this method still necessary?
