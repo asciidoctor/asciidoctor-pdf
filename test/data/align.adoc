@@ -1,0 +1,15 @@
+= Align The Title: An awesome subtitle
+Writer #1, Writer #2
+v1.0.alpha.beta.what.this.version.is.exactly, 2015-05-19
+:imagesdir: images
+:pdf-page-size: A4
+:title-partition: :
+:title-align: right
+:title-margin-top: 500
+:revnumber-revdate-aligned:
+:authors-margin-bottom: 0
+:rev-margin-top: 10
+
+== a sub title
+
+with some text
