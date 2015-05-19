@@ -499,6 +499,7 @@ class Converter < ::Prawn::Document
     move_up ((@theme.block_margin_bottom || @theme.vertical_rhythm) * 0.5)
     @list_numbers ||= []
     # FIXME move \u2460 to constant (or theme setting)
+    # \u2460 = circled one, \u24f5 = double circled one, \u278b = negative circled one
     @list_numbers << %(\u2460)
     #stroke_horizontal_rule @theme.caption_border_bottom_color
     # HACK fudge spacing around colist a bit; each item is shifted up by this amount (see convert_list_item)
@@ -702,39 +703,48 @@ class Converter < ::Prawn::Document
     theme_margin :block, :bottom
   end
 
+  # TODO shrink text if it's too wide to fit in the bounding box
   def convert_listing_or_literal node
     # HACK disable built-in syntax highlighter; must be done before calling node.content!
     if (node.style == 'source')
-      node.subs.delete :highlight
+      # NOTE the source highlighter logic handles the callouts and highlight subs
+      subs = node.subs
+      subs.delete :callouts
+      subs.delete :highlight
     end
-    # FIXME highlighter freaks out about the non-breaking space characters
-    source_string = prepare_verbatim node.content
+    # FIXME source highlighter freaks out about the non-breaking space characters; does it?
+    source_string = preserve_indentation node.content
     source_chunks = if node.context == :listing && (node.attr? 'language') && (node.attr? 'source-highlighter')
       case node.attr 'source-highlighter'
       when 'coderay'
-        # FIXME use autoload here!
-        require_relative 'prawn_ext/coderay_encoder' unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
-        (::CodeRay.scan source_string, (node.attr 'language', 'text').to_sym).to_prawn
+        unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
+          # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
+          Helpers.require_library ::File.join(::File.dirname(__FILE__), 'prawn_ext/coderay_encoder'), 'coderay'
+        end
+        source_string, conum_mapping = extract_conums source_string
+        fragments = (::CodeRay.scan source_string, (node.attr 'language', 'text', false).to_sym).to_prawn
+        if conum_mapping
+          restore_conums fragments, conum_mapping if conum_mapping
+        else
+          fragments
+        end
       when 'pygments'
-        # FIXME use autoload here!
-        require 'pygments.rb' unless defined? ::Pygments
-        # FIXME if lexer is nil, we don't escape specialchars!
-        if (lexer = ::Pygments::Lexer[(node.attr 'language')])
-          pygments_config = { nowrap: true, noclasses: true, style: ((node.document.attr 'pygments-style') || 'pastie') }
-          result = lexer.highlight(source_string, options: pygments_config)
-          result = result.gsub(/(?<lead>^| )(?:<span style="font-style: italic">(?:\/\/|#) ?&lt;(?<num>\d+)&gt;<\/span>|&lt;(?<num>\d+)&gt;)$/) {
-            # FIXME move \u2460 to constant (or theme setting)
-            num = %(\u2460)
-            (($~[:num]).to_i - 1).times { num = num.next }
-            if (conum_color = @theme.conum_font_color)
-              %(#{$~[:lead]}<color rgb="#{conum_color}">#{num}</color>)
-            end
-          }
-          text_formatter.format result
+        Helpers.require_library 'pygments', 'pygments.rb'
+        source_string, conum_mapping = extract_conums source_string
+        lexer = ::Pygments::Lexer[node.attr 'language', nil, false] || ::Pygments::Lexer['text']
+        pygments_config = { nowrap: true, noclasses: true, style: (node.document.attr 'pygments-style') || 'pastie' }
+        result = lexer.highlight source_string, options: pygments_config
+        fragments = text_formatter.format result
+        if conum_mapping
+          restore_conums fragments, conum_mapping if conum_mapping
+        else
+          fragments
         end
       end
     end
-    source_chunks ||= [{ text: source_string }]
+
+    # QUESTION are there cases this include check misses?
+    source_chunks ||= (source_string.include? '<') ? (text_formatter.format source_string) : [{ text: source_string }]
 
     #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
@@ -773,6 +783,71 @@ class Converter < ::Prawn::Document
 
   alias :convert_listing :convert_listing_or_literal
   alias :convert_literal :convert_listing_or_literal
+
+  # Extract callout marks from string, indexed by 0-based line number
+  # Return an Array with the processed string as the first argument
+  # and the mapping of lines to conums as the second.
+  def extract_conums string
+    conum_mapping = {}
+    string = string.split(EOL).map.with_index {|line, line_num|
+      # FIXME we get extra spaces before numbers if more than one on a line
+      line.gsub(CalloutExtractRx) {
+        # honor the escape
+        if $1 == '\\'
+          $&.sub '\\', ''
+        else
+          (conum_mapping[line_num] ||= []) << $3.to_i
+          ''
+        end
+      }
+    } * EOL
+    conum_mapping = nil if conum_mapping.empty?
+    [string, conum_mapping]
+  end
+
+  # Restore the conums into the Array of formatted text fragments
+  def restore_conums fragments, conum_mapping
+    lines = []
+    line_num = 0
+    # reorganize the fragments into an array of lines
+    fragments.each do |fragment|
+      line = (lines[line_num] ||= [])
+      if (text = fragment[:text]) == EOL
+        line_num += 1
+      elsif text.include? EOL
+        text.split(EOL, -1).each_with_index do |line_in_fragment, idx|
+          line = (lines[line_num += 1] ||= []) unless idx == 0
+          line << fragment.merge(text: line_in_fragment) unless line_in_fragment.empty?
+        end
+      else
+        line << fragment
+      end
+    end
+    conum_color = @theme.conum_font_color
+    last_line_num = lines.size - 1
+    # append conums to appropriate lines, then flatten to an array of fragments
+    lines.flat_map.with_index do |line, line_num|
+      if (conums = conum_mapping.delete line_num)
+        conums = conums.map {|num| conum_glyph num }
+        # ensure there's at least one space between content and conum(s)
+        if line.size > 0 && (end_text = line.last[:text]) && !(end_text.end_with? ' ')
+          line.last[:text] = %(#{end_text} )
+        end
+        line << { text: (conums * ' '), color: conum_color }
+      end
+      line << { text: EOL } unless line_num == last_line_num
+      line
+    end
+  end
+
+  def conum_glyph number
+    # FIXME make starting glyph a constant and/or theme setting
+    # FIXME use lookup table for glyphs instead of relying on counting
+    # \u2460 = circled one, \u24f5 = double circled one, \u278b = negative circled one
+    glyph = %(\u2460)
+    (number - 1).times { glyph = glyph.next }
+    glyph
+  end
 
   def convert_table node
     num_rows = 0
@@ -995,6 +1070,14 @@ class Converter < ::Prawn::Document
 
   def convert_inline_button node
     %(<b>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</b>)
+  end
+
+  def convert_inline_callout node
+    if (conum_color = @theme.conum_font_color)
+      %(<color rgb="#{conum_color}">#{conum_glyph node.text.to_i}</color>)
+    else
+      node.text
+    end
   end
 
   def convert_inline_footnote node
@@ -1458,9 +1541,8 @@ class Converter < ::Prawn::Document
     (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + line_metrics.padding_bottom
   end
 
-  def prepare_verbatim string
-    string.gsub(BuiltInEntityCharsRx, BuiltInEntityChars)
-        .gsub(IndentationRx) { NoBreakSpace * $&.length }
+  def preserve_indentation string, opts = {}
+    string.gsub(IndentationRx) { NoBreakSpace * $&.length }
   end
 
   # Remove all HTML tags and resolve all entities in a string
