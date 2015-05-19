@@ -1114,7 +1114,7 @@ class Converter < ::Prawn::Document
     if doc.attr? 'title-partition'
       title = doc.doctitle partition: doc.attr('title-partition')
       theme_font :heading, level: 2 do
-      layout_heading title.main, align: title_page_align, line_height: @theme.heading_line_height * 1.2, normalize: false, margin_bottom: 0
+        layout_heading title.main, align: title_page_align, line_height: @theme.heading_line_height * 1.2, normalize: false, margin_bottom: 0
       end
       if title.subtitle
         theme_font :heading, level: 1 do
