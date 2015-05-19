@@ -5,4 +5,4 @@
 /.ruby-gemset
 /.ruby-version
 .idea
-tmp
+tmp/*.pdf
