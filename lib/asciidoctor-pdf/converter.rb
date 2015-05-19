@@ -1130,19 +1130,23 @@ class Converter < ::Prawn::Document
     # FIXME theme setting
     move_down @theme.vertical_rhythm
     if doc.attr? 'authors'
-      layout_prose doc.attr('authors'), align: title_page_align, margin_top: 0,
-          margin_bottom: (doc.attr?('authors-margin-bottom') ? doc.attr('authors-margin-bottom').to_f : @theme.vertical_rhythm / 2.0),
-          normalize: false
+      theme_font :authors do
+        layout_prose doc.attr('authors'), align: title_page_align, margin_top: 0,
+            margin_bottom: (doc.attr?('authors-margin-bottom') ? doc.attr('authors-margin-bottom').to_f : @theme.vertical_rhythm / 2.0),
+            normalize: false
+      end
     end
 
     rev_margin_top = doc.attr?('rev-margin-top') ? doc.attr('rev-margin-top').to_f : @theme.vertical_rhythm * 5
-    if doc.attr? 'revnumber-revdate-aligned'
-      layout_prose ((doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : '') + ' ' + (doc.attr 'revdate'),
-                   align: title_page_align,
-                   margin_top: rev_margin_top, margin_bottom: 0, normalize: false
-    else
-      layout_prose [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil,
-                    (doc.attr 'revdate')].compact * "\n", align: title_page_align, margin_top: rev_margin_top, margin_bottom: 0, normalize: false
+    theme_font :revisions do
+      if doc.attr? 'revnumber-revdate-aligned'
+        layout_prose ((doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : '') + ' ' + (doc.attr 'revdate'),
+                     align: title_page_align,
+                     margin_top: rev_margin_top, margin_bottom: 0, normalize: false
+      else
+        layout_prose [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil,
+                      (doc.attr 'revdate')].compact * "\n", align: title_page_align, margin_top: rev_margin_top, margin_bottom: 0, normalize: false
+      end
     end
   end
 
