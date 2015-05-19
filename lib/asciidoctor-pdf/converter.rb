@@ -1095,15 +1095,55 @@ class Converter < ::Prawn::Document
 
     # FIXME only create title page if doctype=book!
     # FIXME honor subtitle!
-    theme_font :heading, level: 1 do
-      layout_heading doc.doctitle, align: :center
+    title_page_align = :center
+    if doc.attr? 'title-align'
+      case doc.attr 'title-align'
+        when 'right'
+          title_page_align = :right
+        when 'left'
+          title_page_align = :left
+        else
+          title_page_align = :center
+      end
     end
+
+    if doc.attr? 'title-margin-top'
+      move_down doc.attr('title-margin-top').to_f
+    end
+
+    if doc.attr? 'title-partition'
+      title = doc.doctitle partition: doc.attr('title-partition')
+      theme_font :heading, level: 2 do
+      layout_heading title.main, align: title_page_align, line_height: @theme.heading_line_height * 1.2, normalize: false, margin_bottom: 0
+      end
+      if title.subtitle
+        theme_font :heading, level: 1 do
+          layout_heading title.subtitle, align: title_page_align, line_height: @theme.heading_line_height * 0.8, margin_top: 0, margin_bottom: 0
+        end
+      end
+    else
+      theme_font :heading, level: 1 do
+        layout_heading doc.doctitle, align: title_page_align
+      end
+    end
+
     # FIXME theme setting
     move_down @theme.vertical_rhythm
     if doc.attr? 'authors'
-      layout_prose doc.attr('authors'), align: :center, margin_top: 0, margin_bottom: @theme.vertical_rhythm / 2.0, normalize: false
+      layout_prose doc.attr('authors'), align: title_page_align, margin_top: 0,
+          margin_bottom: (doc.attr?('authors-margin-bottom') ? doc.attr('authors-margin-bottom').to_f : @theme.vertical_rhythm / 2.0),
+          normalize: false
     end
-    layout_prose [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact * "\n", align: :center, margin_top: @theme.vertical_rhythm * 5, margin_bottom: 0, normalize: false
+
+    rev_margin_top = doc.attr?('rev-margin-top') ? doc.attr('rev-margin-top').to_f : @theme.vertical_rhythm * 5
+    if doc.attr? 'revnumber-revdate-aligned'
+      layout_prose ((doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : '') + ' ' + (doc.attr 'revdate'),
+                   align: title_page_align,
+                   margin_top: rev_margin_top, margin_bottom: 0, normalize: false
+    else
+      layout_prose [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil,
+                    (doc.attr 'revdate')].compact * "\n", align: title_page_align, margin_top: rev_margin_top, margin_bottom: 0, normalize: false
+    end
   end
 
   def layout_cover_page position, doc
