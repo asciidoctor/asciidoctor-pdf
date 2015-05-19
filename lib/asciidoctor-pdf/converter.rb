@@ -1336,7 +1336,7 @@ class Converter < ::Prawn::Document
         end
       end
       if doc.attr? 'footer-logo'
-        width = doc.attr?('footer-logo-width') ? doc.attr('footer-logo-width') : 100
+        width = doc.attr?('footer-logo-width') ? doc.attr('footer-logo-width').to_f : 100
         padding_bottom = doc.attr?('footer-logo-padding') ? doc.attr('footer-logo-padding') : (-page.margins[:bottom] / 2.0) + 2
         image theme_image(doc, doc.attr('footer-logo')),
               :at => align == :left ? [bounds.right - width, padding_bottom] : [bounds.left, padding_bottom],
