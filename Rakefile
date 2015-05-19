@@ -29,7 +29,6 @@ begin
 rescue LoadError
 end
 
-=begin NOT CURRENTLY IN USE
 begin
   require 'rake/testtask'
   Rake::TestTask.new do |t|
@@ -37,14 +36,12 @@ begin
     t.pattern = 'test/**/*_test.rb'
     t.verbose = true
     t.warning = true
-    if RUBY_VERSION >= '2'
-      t.options = '--tty=no'
-    end
   end
   default_tasks << :test
 rescue LoadError
 end
 
+=begin NOT CURRENTLY IN USE
 begin
   require 'cucumber'
   require 'cucumber/rake/task'

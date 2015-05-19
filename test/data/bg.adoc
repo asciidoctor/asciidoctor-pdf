@@ -1,0 +1,10 @@
+= The Title
+A writer
+v1.0, 2015-05-19
+:imagesdir: images
+:pdf-page-size: A4
+:title-background: background.jpg
+
+== a sub title
+
+with some text

@@ -4,3 +4,5 @@
 /pkg/
 /.ruby-gemset
 /.ruby-version
+.idea
+tmp

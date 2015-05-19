@@ -36,6 +36,9 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   s.add_development_dependency 'rake', '~> 10.0'
   #s.add_development_dependency 'rdoc', '~> 4.1.0'
 
+  # tests
+  s.add_development_dependency 'pdf-reader', '~> 2.0.0'
+
   s.add_runtime_dependency 'asciidoctor', '~> 1.5.0'
   s.add_runtime_dependency 'prawn', '1.2.1'
   s.add_runtime_dependency 'prawn-table', '0.1.1'

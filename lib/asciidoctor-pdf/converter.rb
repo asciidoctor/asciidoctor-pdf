@@ -135,7 +135,7 @@ class Converter < ::Prawn::Document
     end
 
     # TODO enable pagenums by default (perhaps upstream?)
-    stamp_page_numbers skip: num_front_matter_pages if doc.attr 'pagenums'
+    stamp_page_numbers doc, skip: num_front_matter_pages if doc.attr 'pagenums'
     add_outline doc, num_toc_levels, toc_page_nums, num_front_matter_pages
     catalog.data[:ViewerPreferences] = [:FitWindow]
 
@@ -153,6 +153,11 @@ class Converter < ::Prawn::Document
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
     theme = ThemeLoader.load_theme doc.attr('pdf-style'), doc.attr('pdf-stylesdir')
+    if doc.attr? 'pdf-style-custom' # allow to redefine only a subset of a theme
+      theme_overrides = ThemeLoader.load_theme doc.attr('pdf-style-custom'), doc.attr('pdf-stylesdir-custom')
+      theme = theme.merge(theme_overrides)
+    end
+
     pdf_opts = (build_pdf_options doc, theme)
     ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
     # QUESTION should ThemeLoader register fonts?
@@ -175,15 +180,15 @@ class Converter < ::Prawn::Document
     }
 
     if doc.attr? 'pdf-page-size'
-      page_size = ::YAML.safe_load(doc.attr 'pdf-page-size')
+      @page_size = ::YAML.safe_load(doc.attr 'pdf-page-size')
     else
-      page_size = theme.page_size
+      @page_size = theme.page_size
     end
 
-    pdf_opts[:page_size] = case page_size
+    pdf_opts[:page_size] = case @page_size
     when ::String
-      if ::PDF::Core::PageGeometry::SIZES.key?(page_size = page_size.upcase)
-        page_size
+      if ::PDF::Core::PageGeometry::SIZES.key?(@page_size = @page_size.upcase)
+        @page_size
       else
         'LETTER'
       end
@@ -243,6 +248,10 @@ class Converter < ::Prawn::Document
     # FIXME use docdate attribute
     info[:ModDate] = info[:CreationDate] = ::Time.now
     info
+  end
+
+  def theme_image doc, image
+    File.join doc.base_dir, doc.attr('imagesdir') || '', image
   end
 
   def convert_section sect, opts = {}
@@ -1059,6 +1068,15 @@ class Converter < ::Prawn::Document
     return unless doc.header? && !doc.noheader && !doc.notitle
 
     start_new_page
+
+    # RMB: background
+    bg_img = doc.attr 'title-background'|| @theme.title_background
+    if bg_img
+      image theme_image(doc, bg_img),
+            :at => [-left_margin, ::PDF::Core::PageGeometry::SIZES[@page_size][1] - page.margins[:bottom]],
+            :fit => ::PDF::Core::PageGeometry::SIZES[@page_size]
+    end
+
     # IMPORTANT this is the first page created, so we need to set the base font
     font @theme.base_font_family, size: @theme.base_font_size
 
@@ -1246,7 +1264,7 @@ class Converter < ::Prawn::Document
     min_height < max_size ? min_height : max_size
   end
 
-  def stamp_page_numbers opts = {}
+  def stamp_page_numbers doc, opts = {}
     skip = opts[:skip] || 1
     start = skip + 1
     pattern = page_number_pattern
@@ -1272,6 +1290,13 @@ class Converter < ::Prawn::Document
             formatted_text_box [text: page_number_label, color: @theme.footer_font_color], at: [0, (page.margins[:bottom] / 2.0)], align: align
           end
         end
+      end
+      if doc.attr? 'footer-logo'
+        width = doc.attr?('footer-logo-width') ? doc.attr('footer-logo-width') : 100
+        padding_bottom = doc.attr?('footer-logo-padding') ? doc.attr('footer-logo-padding') : (-page.margins[:bottom] / 2.0) + 2
+        image theme_image(doc, doc.attr('footer-logo')),
+              :at => align == :left ? [bounds.right - width, padding_bottom] : [bounds.left, padding_bottom],
+              :width => width
       end
     end
   end
