@@ -52,6 +52,7 @@ class Converter < ::Prawn::Document
     '&amp;' => '&'
   }
   BuiltInEntityCharsRx = /(?:#{BuiltInEntityChars.keys * '|'})/
+  XmlOrBuiltInEntityCharsRx = /(?:#{BuiltInEntityChars.keys * '|'}|<)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
 
   def initialize backend, opts
@@ -706,45 +707,38 @@ class Converter < ::Prawn::Document
   # TODO shrink text if it's too wide to fit in the bounding box
   def convert_listing_or_literal node
     # HACK disable built-in syntax highlighter; must be done before calling node.content!
-    if (node.style == 'source')
-      # NOTE the source highlighter logic handles the callouts and highlight subs
-      subs = node.subs
+    if node.style == 'source' && ((subs = node.subs).include? :highlight)
+      highlighter = node.document.attr 'source-highlighter'
+      # NOTE the source highlighter logic below handles the callouts and highlight subs
+      # QUESTION should we restore subs after conversion?
       subs.delete :callouts
       subs.delete :highlight
+    else
+      highlighter = nil
     end
     # FIXME source highlighter freaks out about the non-breaking space characters; does it?
     source_string = preserve_indentation node.content
-    source_chunks = if node.context == :listing && (node.attr? 'language') && (node.attr? 'source-highlighter')
-      case node.attr 'source-highlighter'
-      when 'coderay'
-        unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
-          # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
-          Helpers.require_library ::File.join(::File.dirname(__FILE__), 'prawn_ext/coderay_encoder'), 'coderay'
-        end
-        source_string, conum_mapping = extract_conums source_string
-        fragments = (::CodeRay.scan source_string, (node.attr 'language', 'text', false).to_sym).to_prawn
-        if conum_mapping
-          restore_conums fragments, conum_mapping if conum_mapping
-        else
-          fragments
-        end
-      when 'pygments'
-        Helpers.require_library 'pygments', 'pygments.rb'
-        source_string, conum_mapping = extract_conums source_string
-        lexer = ::Pygments::Lexer[node.attr 'language', nil, false] || ::Pygments::Lexer['text']
-        pygments_config = { nowrap: true, noclasses: true, style: (node.document.attr 'pygments-style') || 'pastie' }
-        result = lexer.highlight source_string, options: pygments_config
-        fragments = text_formatter.format result
-        if conum_mapping
-          restore_conums fragments, conum_mapping if conum_mapping
-        else
-          fragments
-        end
+    source_chunks = case highlighter
+    when 'coderay'
+      unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
+        # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
+        Helpers.require_library ::File.join(::File.dirname(__FILE__), 'prawn_ext/coderay_encoder'), 'coderay'
       end
+      source_string, conum_mapping = extract_conums source_string
+      fragments = (::CodeRay.scan source_string, (node.attr 'language', 'text', false).to_sym).to_prawn
+      conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
+    when 'pygments'
+      Helpers.require_library 'pygments', 'pygments.rb'
+      source_string, conum_mapping = extract_conums source_string
+      lexer = ::Pygments::Lexer[node.attr 'language', 'text', false] || ::Pygments::Lexer['text']
+      pygments_config = { nowrap: true, noclasses: true, style: (node.document.attr 'pygments-style') || 'pastie' }
+      result = lexer.highlight source_string, options: pygments_config
+      fragments = text_formatter.format result
+      conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
+    else
+      # NOTE only format if we detect a need
+      (source_string =~ XmlOrBuiltInEntityCharsRx) ? (text_formatter.format source_string) : [{ text: source_string }]
     end
-
-    # QUESTION are there cases this include check misses?
-    source_chunks ||= (source_string.include? '<') ? (text_formatter.format source_string) : [{ text: source_string }]
 
     #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
