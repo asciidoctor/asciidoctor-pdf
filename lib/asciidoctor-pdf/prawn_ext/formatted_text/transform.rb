@@ -170,6 +170,7 @@ class FormattedTextTransform
       #  fragment[:color] = value[6..-1].tr(' #', '')
       #end
     end
+    # QUESTION should we remove styles if empty? Need test
     #fragment.delete(:styles) if styles.empty?
     fragment
   end
