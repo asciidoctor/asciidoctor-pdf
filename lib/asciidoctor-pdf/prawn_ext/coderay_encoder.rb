@@ -68,23 +68,25 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
     value:             '336600'
   }
 
-  def setup(options)
+  EOL = "\n"
+
+  def setup options
     super
     @out  = []
     @open = []
   end
 
-  def text_token(text, kind)
+  def text_token text, kind
     color = COLORS[kind] || COLORS[@open.last] || COLORS[:default]
     
-    @out << {:text => text, :color => color}
+    @out << (text == EOL ? { :text => text } : { :text => text, :color => color })
   end
 
-  def begin_group(kind)
+  def begin_group kind
     @open << kind
   end
 
-  def end_group(kind)
+  def end_group kind
     @open.pop
   end
 end
