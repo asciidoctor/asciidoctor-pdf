@@ -636,6 +636,10 @@ class Converter < ::Prawn::Document
     #  import_page target
     #  return
     #end
+    if target.end_with? '.gif'
+      warn %(asciidoctor: WARNING: GIF image format not supported; please convert #{target} to PNG)
+      return
+    end
 
     # FIXME use normalize_path here!
     image_path = File.join((node.attr 'docdir'), (node.attr 'imagesdir') || '', target)
@@ -689,7 +693,7 @@ class Converter < ::Prawn::Document
         end
         embed_image image_obj, image_info, width: width, height: height, position: position
       rescue => e
-        warn %(asciidoctor: WARNING: could not embed image; #{e.message})
+        warn %(asciidoctor: WARNING: could not embed image #{target}; #{e.message})
         return
       end
       layout_caption node, position: :bottom if node.title?
