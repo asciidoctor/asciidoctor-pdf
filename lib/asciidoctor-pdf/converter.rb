@@ -12,6 +12,8 @@ require_relative 'asciidoctor_ext'
 require_relative 'theme_loader'
 require_relative 'roman_numeral'
 
+autoload :Tempfile, 'tempfile'
+
 module Asciidoctor
 module Pdf
 class Converter < ::Prawn::Document
@@ -631,22 +633,21 @@ class Converter < ::Prawn::Document
   end
 
   def convert_image node
-    #move_down @theme.block_margin_top unless at_page_top?
-    theme_margin :block, :top
-    target = node.attr 'target'
-    #if target.end_with? '.pdf'
-    #  import_page target
-    #  return
-    #end
-    if target.end_with? '.gif'
+    if (target = node.attr 'target').end_with? '.gif'
       warn %(asciidoctor: WARNING: GIF image format not supported; please convert #{target} to PNG)
       return
+    #elsif image_path.end_with? '.pdf'
+    #  import_page image_path
+    #  return
     end
 
-    # FIXME use normalize_path here!
-    image_path = File.join((node.attr 'docdir'), (node.attr 'imagesdir') || '', target)
-    # TODO extension should be an attribute on an image node
-    image_type = File.extname(image_path)[1..-1]
+    # TODO file extension should be an attribute on an image node
+    image_type = ::File.extname(target)[1..-1].downcase
+    image_path = resolve_image_path node, target
+
+    theme_margin :block, :top
+
+    # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
     width = if node.attr? 'scaledwidth'
       ((node.attr 'scaledwidth').to_f / 100.0) * bounds.width
     elsif image_type == 'svg'
@@ -656,21 +657,20 @@ class Converter < ::Prawn::Document
     else
       bounds.width * (@theme.image_scaled_width_default || 0.75)
     end
-    height = nil
     position = ((node.attr 'align') || @theme.image_align_default || :left).to_sym
     case image_type
     when 'svg'
+      # NOTE prawn-svg can't position, so we have to do it manually (file issue?)
+      left = case position
+      when :left
+        0
+      when :right
+        bounds.width - width
+      when :center
+        ((bounds.width - width) / 2.0).floor
+      end
       keep_together do
-        # HACK prawn-svg can't seem to center, so do it manually for now
-        left = case position
-        when :left
-          0
-        when :right
-          bounds.width - width
-        when :center
-          ((bounds.width - width) / 2.0).floor
-        end
-        svg IO.read(image_path), at: [left, cursor], width: width, position: position
+        svg IO.read(image_path), at: [left, cursor], width: width
         layout_caption node, position: :bottom if node.title?
       end
     else
@@ -678,10 +678,11 @@ class Converter < ::Prawn::Document
         # FIXME temporary workaround to group caption & image
         # Prawn doesn't provide access to rendered width and height before placing the
         # image on the page
-        image_obj, image_info = build_image_object node.image_uri image_path
+        image_obj, image_info = build_image_object image_path
         rendered_w, rendered_h = image_info.calc_image_dimensions width: width
         caption_height = node.title? ?
             (@theme.caption_margin_inside + @theme.caption_margin_outside + @theme.base_line_height_length) : 0
+        height = nil
         if cursor < rendered_h + caption_height
           start_new_page
           if cursor < rendered_h + caption_height
@@ -700,8 +701,9 @@ class Converter < ::Prawn::Document
       end
       layout_caption node, position: :bottom if node.title?
     end
-    #move_down @theme.block_margin_bottom
     theme_margin :block, :bottom
+  ensure
+    unlink_tmp_file image_path
   end
 
   # TODO shrink text if it's too wide to fit in the bounding box
@@ -1173,7 +1175,7 @@ class Converter < ::Prawn::Document
     # TODO turn processing of attribute with inline image a utility function in Asciidoctor
     if (cover_image = (doc.attr %(#{position}-cover-image)))
       if cover_image =~ ImageAttributeValueRx
-        cover_image = %(#{resolve_imagesdir doc}#{$1})
+        cover_image = resolve_image_path doc, $1
       end
       # QUESTION should we go to page 1 when position == :front?
       go_to_page page_count if position == :back
@@ -1183,6 +1185,8 @@ class Converter < ::Prawn::Document
         image_page cover_image, canvas: true
       end
     end
+  ensure
+    unlink_tmp_file cover_image
   end
 
   # NOTE can't alias to start_new_page since methods have different arity
@@ -1549,10 +1553,56 @@ class Converter < ::Prawn::Document
         .strip
   end
 
+  # QUESTION is this method still necessary?
   def resolve_imagesdir doc
     @imagesdir ||= begin
       imagesdir = (doc.attr 'imagesdir', '.').chomp '/'
       imagesdir = imagesdir == '.' ? nil : %(#{imagesdir}/)
+    end
+  end
+
+  # Resolve the system path of the target image
+  #
+  # Resolve the system path of the target image, taking into account the
+  # imagesdir attribute. If the target is a URI and the allow-uri-read
+  # attribute is set on the document, read the file contents to a temporary
+  # file and return the path to the temporary file. When a temporary file
+  # is used, the file descriptor is assigned to the @tmp_file instance variable
+  # of the return string.
+  def resolve_image_path node, image_path = nil, image_type = nil
+    imagesdir = resolve_imagesdir(doc = node.document)
+    image_path ||= (node.attr 'target', nil, false)
+    image_type ||= ::File.extname(image_path)[1..-1]
+    # handle case when image is a URI
+    if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
+        (image_path = (node.normalize_web_path image_path, image_base_uri, false)))
+      unless doc.attr? 'allow-uri-read'
+        warn %(asciidoctor: WARNING: allow-uri-read is not enabled; cannot embed remote image: #{image_path}, )
+        return
+      end
+      if doc.attr? 'cache-uri'
+        Helpers.require_library 'open-uri/cached', 'open-uri-cached'
+      end
+      tmp_image = ::Tempfile.new ['image-', %(.#{image_type})]
+      tmp_image.binmode if (binary = image_type != 'svg')
+      tmp_image_path = tmp_image.path
+      tmp_image_path.instance_variable_set :@tmp_file, tmp_image
+      # FIXME enable uri caching with open-uri-cached
+      open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write(fd.read) }
+      tmp_image.close
+      tmp_image_path
+    # handle case when image is a local path
+    else
+      ::File.expand_path(node.normalize_system_path(image_path, imagesdir, nil, target_name: 'image'))
+    end
+  end
+
+  # QUESTION is there a better way to do this?
+  # I suppose we could have @tmp_files as an instance variable on converter instead
+  def unlink_tmp_file holder
+    if (tmp_file = (holder.instance_variable_get :@tmp_file))
+      tmp_file.unlink
+      holder.remove_instance_variable :@tmp_file
     end
   end
 
