@@ -2,6 +2,8 @@ module Asciidoctor
 module Prawn
 module Extensions
   include ::Prawn::Measurements
+  include ::Asciidoctor::Pdf::Sanitizer
+  include ::Asciidoctor::PdfCore::PdfObject
 
   # - :height is the height of a line
   # - :leading is spacing between adjacent lines

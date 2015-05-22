@@ -6,6 +6,8 @@ require 'prawn-svg'
 require 'prawn/table'
 require 'prawn/templates'
 require 'prawn/icon'
+require_relative 'pdf_core_ext'
+require_relative 'sanitizer'
 require_relative 'prawn_ext'
 require_relative 'pdfmarks'
 require_relative 'asciidoctor_ext'
@@ -48,13 +50,6 @@ class Converter < ::Prawn::Document
     circle: (unicode_char 0x25e6),
     square: (unicode_char 0x25aa)
   }
-  BuiltInEntityChars = {
-    '&lt;' => '<',
-    '&gt;' => '>',
-    '&amp;' => '&'
-  }
-  BuiltInEntityCharsRx = /(?:#{BuiltInEntityChars.keys * '|'})/
-  XmlOrBuiltInEntityCharsRx = /(?:#{BuiltInEntityChars.keys * '|'}|<)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
 
   def initialize backend, opts
@@ -77,7 +72,7 @@ class Converter < ::Prawn::Document
       warn %(asciidoctor: WARNING: conversion missing in backend #{@backend} for #{name})
     end
     # NOTE inline nodes generate pseudo-HTML strings; the remainder write directly to PDF object
-    (node.is_a? ::Asciidoctor::Inline) ? result : self
+    ::Asciidoctor::Inline === node ? result : self
   end
 
   def convert_content_for_block node, opts = {}
@@ -225,23 +220,25 @@ class Converter < ::Prawn::Document
     pdf_opts
   end
 
+  # TODO create helper method for creating literal PDF string
+  # FIXME PdfMarks should use the PDF info result
   def build_pdf_info doc
     info = {}
-    # TODO create helper method for creating literal PDF string
-    info[:Title] = ::PDF::Core::LiteralString.new(doc.doctitle sanitize: true, use_fallback: true)
+    # FIXME use sanitize: :plain_text once available
+    info[:Title] = str2pdfval sanitize(doc.doctitle use_fallback: true)
     if doc.attr? 'authors'
-      info[:Author] = ::PDF::Core::LiteralString.new(doc.attr 'authors')
+      info[:Author] = str2pdfval(doc.attr 'authors')
     end
     if doc.attr? 'subject'
-      info[:Subject] = ::PDF::Core::LiteralString.new(doc.attr 'subject')
+      info[:Subject] = str2pdfval(doc.attr 'subject')
     end
     if doc.attr? 'keywords'
-      info[:Keywords] = ::PDF::Core::LiteralString.new(doc.attr 'keywords')
+      info[:Keywords] = str2pdfval(doc.attr 'keywords')
     end
     if (doc.attr? 'publisher')
-      info[:Producer] = ::PDF::Core::LiteralString.new(doc.attr 'publisher')
+      info[:Producer] = str2pdfval(doc.attr 'publisher')
     end
-    info[:Creator] = ::PDF::Core::LiteralString.new %(Asciidoctor PDF #{::Asciidoctor::Pdf::VERSION}, based on Prawn #{::Prawn::VERSION})
+    info[:Creator] = str2pdfval %(Asciidoctor PDF #{::Asciidoctor::Pdf::VERSION}, based on Prawn #{::Prawn::VERSION})
     info[:Producer] ||= (info[:Author] || info[:Creator])
     # FIXME use docdate attribute
     info[:ModDate] = info[:CreationDate] = ::Time.now
@@ -670,7 +667,7 @@ class Converter < ::Prawn::Document
         ((bounds.width - width) / 2.0).floor
       end
       keep_together do
-        svg IO.read(image_path), at: [left, cursor], width: width
+        svg ::IO.read(image_path), at: [left, cursor], width: width
         layout_caption node, position: :bottom if node.title?
       end
     else
@@ -739,7 +736,7 @@ class Converter < ::Prawn::Document
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     else
       # NOTE only format if we detect a need
-      (source_string =~ XmlOrBuiltInEntityCharsRx) ? (text_formatter.format source_string) : [{ text: source_string }]
+      (source_string =~ BuiltInEntityCharOrTagRx) ? (text_formatter.format source_string) : [{ text: source_string }]
     end
 
     #move_down @theme.block_margin_top unless at_page_top?
@@ -1393,7 +1390,8 @@ class Converter < ::Prawn::Document
     numbering_offset = front_matter_counter.to_i - 1
 
     outline.define do
-      if (doctitle = (doc.doctitle sanitize: true, use_fallback: true))
+      # FIXME use sanitize: :plain_text once available
+      if (doctitle = document.sanitize(doc.doctitle use_fallback: true))
         page title: doctitle, destination: (document.dest_top 1)
       end
       if doc.attr? 'toc'
@@ -1412,7 +1410,7 @@ class Converter < ::Prawn::Document
   # TODO only nest inside root node if doctype=article
   def add_outline_level outline, sections, num_levels, page_num_labels, numbering_offset, num_front_matter_pages
     sections.each do |sect|
-      sect_title = sanitize(sect.numbered_title formal: true)
+      sect_title = sanitize sect.numbered_title formal: true
       sect_destination = sect.attr 'destination'
       sect_page_num = (sect.attr 'page_start') - num_front_matter_pages
       page_num_labels[sect_page_num + numbering_offset] = { P: ::PDF::Core::LiteralString.new(sect_page_num.to_s) }
@@ -1541,16 +1539,6 @@ class Converter < ::Prawn::Document
 
   def preserve_indentation string, opts = {}
     string.gsub(IndentationRx) { NoBreakSpace * $&.length }
-  end
-
-  # Remove all HTML tags and resolve all entities in a string
-  # FIXME add option to control escaping entities, or a filter mechanism in general
-  def sanitize string
-    string.gsub(/<[^>]+>/, '')
-        .gsub(/&#(\d{2,4});/) { [$1.to_i].pack('U*') }
-        .gsub('&lt;', '<').gsub('&gt;', '>').gsub('&amp;', '&')
-        .tr_s(' ', ' ')
-        .strip
   end
 
   # QUESTION is this method still necessary?
