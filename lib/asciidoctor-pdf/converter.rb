@@ -61,7 +61,7 @@ class Converter < ::Prawn::Document
     @list_bullets = []
   end
 
-  def convert node, name = nil
+  def convert node, name = nil, opts = {}
     method_name = %(convert_#{name ||= node.node_name})
     result = nil
     if respond_to? method_name
