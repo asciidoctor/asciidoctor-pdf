@@ -365,7 +365,7 @@ class Converter < ::Prawn::Document
                 # IMPORTANT the label must fit in the alotted space or it shows up on another page!
                 # QUESTION anyway to prevent text overflow in the case it doesn't fit?
                 stroke_vertical_rule @theme.admonition_border_color, at: bounds.width
-                # HACK make title in this location look right
+                # FIXME HACK make title in this location look right
                 label_margin_top = node.title? ? @theme.caption_margin_inside : 0
                 if icons
                   admon_icon_data = AdmonitionIcons[label]
@@ -380,7 +380,7 @@ class Converter < ::Prawn::Document
             move_down shift_top
             layout_caption node.title if node.title?
             convert_content_for_block node
-            # HACK compensate for margin bottom of admonition content
+            # FIXME HACK compensate for margin bottom of admonition content
             move_up shift_bottom
           end
         end
@@ -486,7 +486,7 @@ class Converter < ::Prawn::Document
         theme_font :sidebar do
           convert_content_for_block node
         end
-        # HACK compensate for margin bottom of sidebar content
+        # FIXME HACK compensate for margin bottom of sidebar content
         move_up(@theme.prose_margin_bottom || @theme.vertical_rhythm)
       end
     end
@@ -1266,7 +1266,7 @@ class Converter < ::Prawn::Document
       }.merge(opts)
       if position == :top && @theme.caption_border_bottom_color
         stroke_horizontal_rule @theme.caption_border_bottom_color
-        # HACK move down slightly so line isn't covered by filled area (half width of line)
+        # FIXME HACK move down slightly so line isn't covered by filled area (half width of line)
         move_down 0.25
       end
     end
