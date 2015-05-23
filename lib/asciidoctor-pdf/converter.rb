@@ -1223,10 +1223,10 @@ class Converter < ::Prawn::Document
         string = %(<a anchor="#{anchor}">#{string}</a>)
       end
     end
-    if opts.delete :preserve
-      # preserve leading space using non-breaking space chars
-      string = string.gsub(IndentationRx) { NoBreakSpace * $&.length }
-    end
+
+    # preserve leading space using non-breaking space chars
+    string = preserve_indentation string if opts.delete :preserve
+
     #move_down margin_top
     self.margin_top margin_top
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
@@ -1537,7 +1537,7 @@ class Converter < ::Prawn::Document
     (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + line_metrics.padding_bottom
   end
 
-  def preserve_indentation string, opts = {}
+  def preserve_indentation string
     string.gsub(IndentationRx) { NoBreakSpace * $&.length }
   end
 
