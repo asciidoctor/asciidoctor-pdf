@@ -631,15 +631,14 @@ class Converter < ::Prawn::Document
     marker_width = width_of marker
     start_position = -marker_width + -(width_of 'x')
     float do
-      bounding_box [-list_indent, cursor], width: marker_width do
-        label = case list_type
-        when :ulist
-          @list_bullets.last
-        when :olist
-          @list_numbers << (index = @list_numbers.pop).next
-          %(#{index}.)
-        end
-        layout_prose label, align: :right, normalize: false, inline_format: false, margin: 0
+      bounding_box [start_position, cursor], width: marker_width do
+        layout_prose marker,
+          align: :right,
+          normalize: false,
+          inline_format: false,
+          margin: 0,
+          character_spacing: -0.5,
+          single_line: true
       end
     end
 
