@@ -1002,7 +1002,6 @@ class Converter < ::Prawn::Document
   # deprecated
   alias :convert_horizontal_rule :convert_thematic_break
 
-  # NOTE can't alias to start_new_page since methods have different arity
   def convert_page_break node
     start_new_page unless at_page_top?
   end
