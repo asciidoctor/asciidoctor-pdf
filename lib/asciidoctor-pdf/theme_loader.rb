@@ -14,11 +14,16 @@ class ThemeLoader
     # if .yml extension is given, assume it's a full file name
     if theme_name.end_with? '.yml'
       # FIXME restrict to jail!
+      # QUESTION why are we not using expand_path in this case?
       theme_path ? (::File.join theme_path, theme_name) : theme_name
     else
       # QUESTION should we append '-theme.yml' or just '.yml'?
       ::File.expand_path %(#{theme_name}-theme.yml), (theme_path || ThemesDir)
     end
+  end
+
+  def self.resolve_theme_asset asset_path, theme_path = nil
+    ::File.expand_path asset_path, (theme_path || ThemesDir)
   end
 
   def self.load_theme theme_name = nil, theme_path = nil

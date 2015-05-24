@@ -318,6 +318,13 @@ module Extensions
     end
   end
 
+  # Fills the absolute bounding box with the specified fill color. Before
+  # returning from this method, the original fill color on the document is
+  # restored.
+  def fill_absolute_bounds f_color = fill_color
+    canvas { fill_bounds f_color }
+  end
+
   # Fills the current bounds using the specified fill color and strokes the
   # bounds using the specified stroke color. Sets the line with if specified
   # in the options. Before returning from this method, the original fill
