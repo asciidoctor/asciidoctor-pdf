@@ -68,15 +68,21 @@ class ThemeLoader
   end
   
   def evaluate_math expr
-    return expr unless expr.kind_of? ::String
+    return expr unless ::String === expr
     original = expr
+    # FIXME HACK turn a single negative number into an expression
+    if expr.start_with? '-'
+      expr = %(1 - #{expr[1..-1]})
+    end
     while true
+      # TODO move this regular expression to a constant
       result = expr.gsub(/(-?\d+(?:\.\d+)?) *([*\/]) *(-?\d+(?:\.\d+)?)/) { $1.to_f.send($2.to_sym, $3.to_f) }
       unchanged = (result == expr)
       expr = result
       break if unchanged
     end
     while true
+      # TODO move this regular expression to a constant
       result = expr.gsub(/(-?\d+(?:\.\d+)?) *([+\-]) *(-?\d+(?:\.\d+)?)/) { $1.to_f.send($2.to_sym, $3.to_f) }
       unchanged = (result == expr)
       expr = result
