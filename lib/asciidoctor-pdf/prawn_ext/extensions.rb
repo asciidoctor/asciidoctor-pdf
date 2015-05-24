@@ -309,13 +309,12 @@ module Extensions
   # Fills the current bounding box with the specified fill color. Before
   # returning from this method, the original fill color on the document is
   # restored.
-  #
   def fill_bounds f_color = fill_color
-    unless f_color.nil? || f_color.to_s == 'transparent'
-      original_fill_color = fill_color
+    if f_color && f_color != 'transparent'
+      prev_fill_color = fill_color
       fill_color f_color
       fill_rectangle bounds.top_left, bounds.width, bounds.height
-      fill_color original_fill_color
+      fill_color prev_fill_color
     end
   end
 
