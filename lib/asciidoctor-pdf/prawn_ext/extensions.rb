@@ -93,8 +93,8 @@ module Extensions
   # size to be specified as the second option.
   #
   def font name = nil, options = {}
-    if !name.nil? && ((size = options).is_a? ::Numeric)
-      options = { size: size }
+    if name && ::Numeric === options
+      options = { size: options }
     end
     super name, options
   end
@@ -122,10 +122,10 @@ module Extensions
       font font.options[:family], style: style do
         yield
       end
-    elsif style.nil?
-      font.options[:style] || :normal
-    else
+    elsif style
       font font.options[:family], style: style
+    else
+      font.options[:style] || :normal
     end
   end
 
