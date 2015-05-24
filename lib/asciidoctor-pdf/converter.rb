@@ -1153,7 +1153,7 @@ class Converter < ::Prawn::Document
       # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
       image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty
       attrs = { 'target' => (doc.attr 'title-logo'), 'align' => 'center' }
-      image.update_attributes attrs
+      image_block.update_attributes attrs
       convert_image image_block
       # FIXME theme setting
       move_down @theme.vertical_rhythm * 4
