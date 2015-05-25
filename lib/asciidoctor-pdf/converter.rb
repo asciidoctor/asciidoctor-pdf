@@ -95,6 +95,7 @@ class Converter < ::Prawn::Document
     init_pdf doc
     # data-uri doesn't apply to PDF, so explicitly disable (is there a better place?)
     doc.attributes.delete 'data-uri'
+    #assign_missing_section_ids doc
 
     on_page_create do
       # TODO implement as a watermark (on top)
@@ -274,7 +275,9 @@ class Converter < ::Prawn::Document
       sect.set_attr 'page_start', page_number
       dest_y = at_page_top? ? page_height : y
       sect.set_attr 'destination', (sect_destination = (dest_xyz 0, dest_y))
-      add_dest sect.id, sect_destination
+      # NOTE auto-generate an anchor if one doesn't exist so TOC works
+      sect.set_attr 'anchor', (sect_anchor = sect.id || %(section-#{page_number}-#{dest_y.ceil}))
+      add_dest sect_anchor, sect_destination
       sect.chapter? ? (layout_chapter_title sect, title) : (layout_heading title)
     end
 
@@ -1483,7 +1486,7 @@ class Converter < ::Prawn::Document
       # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
       start_page_number = page_number
       start_cursor = cursor
-      typeset_text %(<a anchor="#{sect.id}"><color rgb="#{toc_font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
+      typeset_text %(<a anchor="#{sect_anchor = (sect.attr 'anchor') || sect.id}"><color rgb="#{toc_font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
       # we only write the label if this is a dry run
       unless scratch?
         end_page_number = page_number
@@ -1496,7 +1499,7 @@ class Converter < ::Prawn::Document
         typeset_formatted_text [
           { text: (DotLeader * num_dots), color: toc_dot_color },
           { text: HairSpace },
-          { text: sect_page_num.to_s, anchor: sect.id, color: toc_font_color }], line_metrics, align: :right
+          { text: sect_page_num.to_s, anchor: sect_anchor, color: toc_font_color }], line_metrics, align: :right
         go_to_page end_page_number if start_page_number != end_page_number
         move_cursor_to end_cursor
       end
@@ -1810,6 +1813,17 @@ class Converter < ::Prawn::Document
   end
 
 =begin
+  def assign_missing_section_ids doc
+    unless doc.attr? 'sectids'
+      doc.attributes['sectids'] = ''
+      doc.find_by(context: :section).each do |sect|
+        unless sect.id
+          sect.document.register(:ids, [sect.id = sect.generate_id, (sect.attributes['reftext'] || sect.title)])
+        end
+      end
+    end
+  end
+
   def create_stamps
     create_stamp 'masthead' do
       canvas do
