@@ -1450,10 +1450,9 @@ class Converter < ::Prawn::Document
   end
 
   def theme_fill_and_stroke_bounds category
-    fill_and_stroke_bounds @theme[%(#{category}_background_color)], @theme[%(#{category}_border_color)], {
+    fill_and_stroke_bounds @theme[%(#{category}_background_color)], @theme[%(#{category}_border_color)],
       line_width: @theme[%(#{category}_border_width)],
       radius: @theme[%(#{category}_border_radius)]
-    }
   end
 
   # Insert a top margin space unless cursor is at the top of the page.
