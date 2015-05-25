@@ -495,17 +495,43 @@ class Converter < ::Prawn::Document
   end
 
   def convert_colist node
-    # HACK undo the margin below the listing
-    move_up ((@theme.block_margin_bottom || @theme.vertical_rhythm) * 0.5)
+    # HACK undo the margin below previous listing or literal block
+    unless at_page_top? || (self_idx = node.parent.blocks.index node) == 0 ||
+        ![:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
+      move_up ((@theme.block_margin_bottom || @theme.vertical_rhythm) * 0.5)
+    end
     @list_numbers ||= []
     # FIXME move \u2460 to constant (or theme setting)
     # \u2460 = circled one, \u24f5 = double circled one, \u278b = negative circled one
     @list_numbers << %(\u2460)
     #stroke_horizontal_rule @theme.caption_border_bottom_color
-    # HACK fudge spacing around colist a bit; each item is shifted up by this amount (see convert_list_item)
-    move_down ((@theme.prose_margin_bottom || @theme.vertical_rhythm) * 0.5)
-    convert_outline_list node
+    line_metrics = calc_line_metrics @theme.base_line_height
+    item_spacing_adjustment = (@theme.prose_margin_bottom || @theme.vertical_rhythm) * 0.5
+    node.items.each_with_index do |item, idx|
+      # FIXME HACK tighten items on colist
+      move_up item_spacing_adjustment unless idx == 0
+      # FIXME extract to an ensure_space (or similar) method; simplify
+      start_new_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
+      convert_colist_item item
+    end
     @list_numbers.pop
+  end
+
+  def convert_colist_item node
+    marker_width = width_of %(#{conum_glyph 1}x)
+
+    float do
+      bounding_box [0, cursor], width: marker_width do
+        @list_numbers << (index = @list_numbers.pop).next
+        theme_font :conum do
+          layout_prose index, align: :center, line_height: @theme.conum_line_height, inline_format: false, margin: 0
+        end
+      end
+    end
+
+    indent marker_width do
+      convert_content_for_list_item node
+    end
   end
 
   def convert_dlist node
@@ -578,45 +604,44 @@ class Converter < ::Prawn::Document
   end
 
   def convert_outline_list node
+    line_metrics = calc_line_metrics @theme.base_line_height
     indent @theme.outline_list_indent do
       node.items.each do |item|
-        convert_list_item item
+        # FIXME extract to an ensure_space (or similar) method; simplify
+        start_new_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
+        convert_outline_list_item item
       end
     end
     # NOTE children will provide the necessary bottom margin
   end
 
-  def convert_list_item node
-    # HACK quick hack to tighten items on colist
-    if node.parent.context == :colist
-      move_up ((@theme.prose_margin_bottom || @theme.vertical_rhythm) * 0.5)
+  def convert_outline_list_item node
+    # TODO move this to a draw_bullet (or draw_marker) method
+    marker = case (list_type = node.parent.context)
+    when :ulist
+      @list_bullets.last
+    when :olist
+      @list_numbers << (index = @list_numbers.pop).next
+      %(#{index}.)
+    else
+      warn %(asciidoctor: WARNING: unknown list type #{list_type.inspect})
+      Bullets[:disc]
     end
 
-    # NOTE we need at least one line of content, so move down if we don't have it
-    # FIXME extract ensure_space (or similar) method
-    start_new_page if cursor < @theme.base_line_height_length
-
-    # TODO move this to a draw_bullet method
+    marker_width = width_of marker
+    start_position = -marker_width + -(width_of 'x')
     float do
-      bounding_box [-@theme.outline_list_indent, cursor], width: @theme.outline_list_indent do
-        label = case node.parent.context
-        when :ulist
-          @list_bullets.last
-        when :olist
-          @list_numbers << (index = @list_numbers.pop).next
-          %(#{index}.)
-        when :colist
-          @list_numbers << (index = @list_numbers.pop).next
-          # FIXME cleaner way to do numbers in colist; need more room around number
-          theme_font :conum do
-            # QUESTION should this be align: :left or :center?
-            layout_prose index, align: :left, line_height: @theme.conum_line_height, inline_format: false, margin: 0
-          end
-          next # short circuit label
-        end
-        layout_prose label, align: :center, normalize: false, inline_format: false, margin: 0
+      bounding_box [start_position, cursor], width: marker_width do
+        layout_prose marker,
+          align: :right,
+          normalize: false,
+          inline_format: false,
+          margin: 0,
+          character_spacing: -0.5,
+          single_line: true
       end
     end
+
     convert_content_for_list_item node
   end
 
