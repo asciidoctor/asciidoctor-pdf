@@ -1,6 +1,8 @@
 module Asciidoctor
 module Prawn
 class FormattedTextTransform
+  #ZeroWidthSpace = [0x200b].pack 'U*'
+
   def initialize(options = {})
     @merge_adjacent_text_nodes = options.fetch(:merge_adjacent_text_nodes, false)
     if (theme = options[:theme])
@@ -34,12 +36,18 @@ class FormattedTextTransform
           end
           previous_fragment_is_text = true
         else
-          pcdata = node[:pcdata] || []
-          attributes = node[:attributes]
-          fragments << apply(pcdata).map {|fragment|
-            # decorate child fragments with styles from this element
-            build_fragment(fragment, tag_name, attributes)
-          } unless pcdata.size == 0
+          if (pcdata = node[:pcdata]) && pcdata.size > 0
+            attributes = node[:attributes]
+            fragments << apply(pcdata).map {|fragment|
+              # decorate child fragments with styles from this element
+              build_fragment(fragment, tag_name, attributes)
+            }
+          #else
+          #  # NOTE special case, handle an empty <a> element
+          #  if tag_name == :a
+          #    fragments << build_fragment({ text: ZeroWidthSpace }, tag_name, node[:attributes])
+          #  end
+          end
           previous_fragment_is_text = false
         end
       when :text, :entity
@@ -133,6 +141,10 @@ class FormattedTextTransform
       if !fragment[:local] && (value = attrs[:local])
         fragment[:local] = value
       end
+      if !fragment[:name] && (value = attrs[:name])
+        fragment[:name] = value
+        fragment[:callback] = InlineDestinationMarker
+      end
       fragment[:color] ||= @link_font_color
     when :sub
       styles << :subscript
@@ -173,6 +185,21 @@ class FormattedTextTransform
     # QUESTION should we remove styles if empty? Need test
     #fragment.delete(:styles) if styles.empty?
     fragment
+  end
+end
+
+module InlineDestinationMarker
+  module_function
+
+  def render_behind fragment
+    unless (pdf_doc = fragment.instance_variable_get :@document).scratch?
+      if (name = (fragment.instance_variable_get :@format_state)[:name])
+        # get precise position of the reference
+        dest_rect = fragment.absolute_bounding_box
+        # QUESTION should we set precise x value of destination or just 0?
+        pdf_doc.add_dest name, (pdf_doc.dest_xyz dest_rect.first, dest_rect.last)
+      end
+    end
   end
 end
 end
