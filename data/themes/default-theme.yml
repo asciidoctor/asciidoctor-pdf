@@ -160,7 +160,8 @@ caption:
 conum:
   font_family: Mplus1mn
   font_color: $literal_font_color
-  font_size: $code_font_size
+  font_size: $base_font_size
+  line_height: 1.35
 image:
   align_default: left
   scaled_width_default: 0.5
