@@ -1,23 +1,27 @@
 = WORKLOG
 
 * use Groovy language specification as case study to find corner cases
+  - perhaps progit2 as well; others?
 
 == TODO
 
-* utility method to get % offset of page as y value (option to constrain to bounds)
-* prevent title-logo-image from spilling to next page
-* make revision info delimiter configurable in theme
-* implement per-document title page background image (final fix for #134)
+* create utility method to get % offset of page as y value (option to constrain to bounds)
 
-* allow theme_font to set line_height (honor this setting from document)
+* **allow theme_font to set line_height** (honor this setting from document)
   - theme setting for code line height (currently using base_line_height)
+* implement convert_inline_indexterm (as noop; just to silence the warning)
+* use docdate attribute to set modification date on document (file issue)
+* more theme control over toc (font size, style, color per level)
+* prevent title-logo-image from spilling to next page (same with title content)
+* support font family and style for heading level
 * remove .to_s calls on color values now that theme normalizes them (perhaps should be a post-load theme procedure)
+  - do CMYK values work for colors? no, but we should support an array value
 * split prawn_ext/extensions.rb into individual modules and include them
-* code cleanups (constants and such)
+* code cleanups (regexps to constants, nil? checks and such)
+  - extract regex in ThemeLoader into constant
 * theme keys should be flatted to arbitrary depth
 * enable line above (or below?) title on title page (file issue)
 * quote all color values in reference themes
-* extract regex in ThemeLoader into constant
 * allow pdf-page-layout (portrait || landscape) to be set in document
 * attribute or role to control table shading (all, even, odd) (or call it striped like bootstrap?)
 * make conum glyphs configurable in theme (use reference table to resolve)
@@ -25,7 +29,7 @@
 * do we still need the converter hack in convert_content_for_block? (seems to be needed for admonitions)
 * avoid getting an empty last page (example: colist at bottom of page can cause this)
 * utility to coerce the color value transparent to nil (better handling in general)
-* cjk and/or multilingual support
+* CJK and/or multilingual support
 * description list term should keep together with content (file issue)
 * GhostScript Tiger SVG is reporting incorrect height when embedded (too much spacing below); bug in prawn-svg?
 * hardbreak in table cell results in extra endline (likely not normalizing cell content)
@@ -43,6 +47,7 @@
 * document how the treetop parser is rebuilt
 * rewrite optimize-pdf using rghost
   - add Optimizer class; wire to cli
+* use ImageMagick to uncompress PNG images before reading them (could also just document this)
 * rework font so we can set actual height, calculate x_height internally (use 1em for spacings)
 * padding top and bottom on content affects height_of calculations (need to review)
 * enable fallback font (Golo guide has problem with License block)
@@ -52,7 +57,8 @@
 * add admonition_label_font_color to theme
 * remove remaining uses of vertical_rhythm and horizontal_rhythm
 * implement subtitle on title page
-* treat title-logo like the front-cover-image and back-cover-image (parse image macro)
+* allow cover images to be specified by theme as a fallback
+* verify cover image exists; fail gracefully with warning
 * print scratch.pdf file if verbose / trace mode is on in Asciidoctor
 * introduce setting to indent section content
 * design merge margin logic (like for admonition block)
@@ -75,7 +81,6 @@
 * make alternating page title position optional (via theme?)
 * BUG: page numbers are off in Clojure Cookbook
 * image in header / banner (need to implement a masthead)
-* do CMYK values work for colors? no, but we should support an array value
 * fix passthrough placeholders that get caught up in syntax highlighting (see https://github.com/asciidoctor/asciidoctor/blob/master/test/blocks_test.rb#L2258-L2277)
 * we could eliminate some of the tags we're currently matching in the formatted text parser (e.g., link)
 * add Preamble to TOC
