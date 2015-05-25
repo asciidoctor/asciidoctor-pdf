@@ -667,17 +667,31 @@ class Converter < ::Prawn::Document
   end
 
   def convert_image node
-    if (target = node.attr 'target').end_with? '.gif'
-      warn %(asciidoctor: WARNING: GIF image format not supported; please convert #{target} to PNG)
-      return
-    #elsif image_path.end_with? '.pdf'
+    valid_image = true
+    target = node.attr 'target'
+    # TODO file extension should be an attribute on an image node
+    image_type = (::File.extname target)[1..-1].downcase
+
+    if image_type == 'gif'
+      valid_image = false
+      warn %(asciidoctor: WARNING: GIF image format not supported. Please convert the image #{target} to PNG.)
+    #elsif image_type == 'pdf'
     #  import_page image_path
     #  return
     end
 
-    # TODO file extension should be an attribute on an image node
-    image_type = ::File.extname(target)[1..-1].downcase
-    image_path = resolve_image_path node, target
+    unless (image_path = resolve_image_path node, target) && (::File.readable? image_path)
+      valid_image = false
+      warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target})
+    end
+
+    unless valid_image
+      theme_margin :block, :top
+      layout_prose %(#{node.attr 'alt'} | #{target}), normalize: false, margin: 0, single_line: true
+      layout_caption node, position: :bottom if node.title?
+      theme_margin :block, :bottom
+      return
+    end
 
     theme_margin :block, :top
 
@@ -703,9 +717,13 @@ class Converter < ::Prawn::Document
       when :center
         ((bounds.width - width) / 2.0).floor
       end
-      keep_together do
-        svg ::IO.read(image_path), at: [left, cursor], width: width
-        layout_caption node, position: :bottom if node.title?
+      begin
+        keep_together do
+          svg (::IO.read image_path), at: [left, cursor], width: width
+          layout_caption node, position: :bottom if node.title?
+        end
+      rescue => e
+        warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
       end
     else
       begin
@@ -730,8 +748,7 @@ class Converter < ::Prawn::Document
         end
         embed_image image_obj, image_info, width: width, height: height, position: position
       rescue => e
-        warn %(asciidoctor: WARNING: could not embed image #{target}; #{e.message})
-        return
+        warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
       end
       layout_caption node, position: :bottom if node.title?
     end
@@ -1191,16 +1208,16 @@ class Converter < ::Prawn::Document
         end
 
         # NOTE resolve image relative to its origin
-        if doc.attr? 'title-background-image'
-          bg_image = resolve_image_path doc, bg_image
+        resolved_bg_image = if doc.attr? 'title-background-image'
+          resolve_image_path doc, bg_image
         else
-          bg_image = ThemeLoader.resolve_theme_asset bg_image, (doc.attr 'pdf-stylesdir')
+          ThemeLoader.resolve_theme_asset bg_image, (doc.attr 'pdf-stylesdir')
         end
 
-        if ::File.readable? bg_image
-          @page_bg_image = bg_image
+        if resolved_bg_image && (::File.readable? resolved_bg_image)
+          @page_bg_image = resolved_bg_image
         else
-          warn %(asciidoctor: WARNING: title page background image #{bg_image} not found or readable)
+          warn %(asciidoctor: WARNING: title page background image #{resolved_bg_image || bg_image} not found or readable)
           bg_image = nil
         end
       end
@@ -1245,6 +1262,7 @@ class Converter < ::Prawn::Document
 
   def layout_cover_page position, doc
     # TODO turn processing of attribute with inline image a utility function in Asciidoctor
+    # FIXME verify cover_image exists!
     if (cover_image = (doc.attr %(#{position}-cover-image)))
       if cover_image =~ ImageAttributeValueRx
         cover_image = resolve_image_path doc, $1
@@ -1623,39 +1641,49 @@ class Converter < ::Prawn::Document
     end
   end
 
-  # Resolve the system path of the target image
+  # Resolve the system path of the specified image path.
   #
-  # Resolve the system path of the target image, taking into account the
-  # imagesdir attribute. If the target is a URI and the allow-uri-read
-  # attribute is set on the document, read the file contents to a temporary
-  # file and return the path to the temporary file. When a temporary file
-  # is used, the file descriptor is assigned to the @tmp_file instance variable
-  # of the return string.
+  # Resolve and normalize the absolute system path of the specified image,
+  # taking into account the imagesdir attribute. If an image path is not
+  # specified, the path is read from the target attribute of the specified
+  # document node.
+  #
+  # If the target is a URI and the allow-uri-read attribute is set on the
+  # document, read the file contents to a temporary file and return the path to
+  # the temporary file. If the target is a URI and the allow-uri-read attribute
+  # is not set, or the URI cannot be read, this method returns a nil value.
+  #
+  # When a temporary file is used, the file descriptor is assigned to the
+  # @tmp_file instance variable of the return string.
   def resolve_image_path node, image_path = nil, image_type = nil
     imagesdir = resolve_imagesdir(doc = node.document)
     image_path ||= (node.attr 'target', nil, false)
-    image_type ||= ::File.extname(image_path)[1..-1]
+    image_type ||= (::File.extname image_path)[1..-1]
     # handle case when image is a URI
     if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
         (image_path = (node.normalize_web_path image_path, image_base_uri, false)))
       unless doc.attr? 'allow-uri-read'
-        warn %(asciidoctor: WARNING: allow-uri-read is not enabled; cannot embed remote image: #{image_path}, )
+        warn %(asciidoctor: WARNING: allow-uri-read is not enabled; cannot embed remote image: #{image_path})
         return
       end
       if doc.attr? 'cache-uri'
-        Helpers.require_library 'open-uri/cached', 'open-uri-cached'
+        Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
       end
       tmp_image = ::Tempfile.new ['image-', %(.#{image_type})]
       tmp_image.binmode if (binary = image_type != 'svg')
-      tmp_image_path = tmp_image.path
-      tmp_image_path.instance_variable_set :@tmp_file, tmp_image
-      # FIXME enable uri caching with open-uri-cached
-      open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write(fd.read) }
-      tmp_image.close
+      begin
+        open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write(fd.read) }
+        tmp_image_path = tmp_image.path
+        tmp_image_path.instance_variable_set :@tmp_file, tmp_image
+      rescue
+        tmp_image_path = nil
+      ensure
+        tmp_image.close
+      end
       tmp_image_path
-    # handle case when image is a local path
+    # handle case when image is a local file
     else
-      ::File.expand_path(node.normalize_system_path(image_path, imagesdir, nil, target_name: 'image'))
+      ::File.expand_path(node.normalize_system_path image_path, imagesdir, nil, target_name: 'image')
     end
   end
 
