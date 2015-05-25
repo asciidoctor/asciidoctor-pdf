@@ -1141,6 +1141,10 @@ class Converter < ::Prawn::Document
     end
   end
 
+  def convert_inline_indexterm node
+    node.type == :visible ? node.text : nil
+  end
+
   def convert_inline_kbd node
     if (keys = node.attr 'keys').size == 1
       %(<code>#{keys[0]}</code>)

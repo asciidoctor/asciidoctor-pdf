@@ -9,7 +9,6 @@
 
 * **allow theme_font to set line_height** (honor this setting from document)
   - theme setting for code line height (currently using base_line_height)
-* implement convert_inline_indexterm (as noop; just to silence the warning)
 * use docdate attribute to set modification date on document (file issue)
 * more theme control over toc (font size, style, color per level)
 * prevent title-logo-image from spilling to next page (same with title content)
