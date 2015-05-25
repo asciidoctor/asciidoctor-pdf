@@ -503,7 +503,9 @@ module Extensions
   def keep_together &block
     available_space = cursor
     total_height, _whole_pages, _remainder = dry_run(&block)
-    if total_height > available_space
+    # NOTE technically, if we're at the page top, we don't even need to do the
+    # dry run, except several uses of this method rely on the calculated height
+    if total_height > available_space && !at_page_top?
       start_new_page
       started_new_page = true
     else
