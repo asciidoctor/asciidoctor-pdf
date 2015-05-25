@@ -82,6 +82,19 @@ heading:
   line_height: 1.2
   margin_top: $vertical_rhythm * 0.2
   margin_bottom: $vertical_rhythm * 0.8
+title_page:
+  align: right
+  title_top: 55%
+  title_font_size: $heading_font_size_h1
+  title_font_color: 999999
+  title_line_height: 0.9
+  subtitle_font_size: $heading_font_size_h3
+  subtitle_font_style: bold_italic
+  subtitle_line_height: 0.9
+  authors_margin_top: $base_font_size * 1.25
+  authors_font_size: $base_font_size_large
+  authors_font_color: 181818
+  revision_margin_top: $base_font_size * 1.25
 #prose:
 #  margin_top: 0
 #  margin_bottom: $vertical_rhythm 

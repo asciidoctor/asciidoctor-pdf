@@ -1193,6 +1193,7 @@ class Converter < ::Prawn::Document
     node.id ? %(<a id="#{node.id}"></a>#{quoted_text}) : quoted_text
   end
 
+  # FIXME only create title page if doctype=book!
   def layout_title_page doc
     return unless doc.header? && !doc.noheader && !doc.notitle
 
@@ -1234,30 +1235,85 @@ class Converter < ::Prawn::Document
     # IMPORTANT this is the first page created, so we need to set the base font
     font @theme.base_font_family, size: @theme.base_font_size
 
-    # TODO treat title-logo like front and back cover images
-    if doc.attr? 'title-logo'
-      # FIXME theme setting
-      move_down @theme.vertical_rhythm * 2
-      # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
-      image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty
-      attrs = { 'target' => (doc.attr 'title-logo'), 'align' => 'center' }
-      image_block.update_attributes attrs
-      convert_image image_block
-      # FIXME theme setting
-      move_down @theme.vertical_rhythm * 4
+    # QUESTION allow aligment per element on title page?
+    title_align = (@theme.title_page_align || :center).to_sym
+
+    # FIXME rework image handling once fix for #134 is merged
+    if (logo_image_path = (doc.attr 'title-logo-image', @theme.title_page_logo_image))
+      if logo_image_path =~ ImageAttributeValueRx
+        logo_image_path = $1
+        logo_image_attrs = ::Asciidoctor::AttributeList.new($2).parse(['alt', 'width', 'height'])
+      else
+        logo_image_attrs = {}
+      end
+      # HACK quick fix to resolve image path relative to theme
+      unless doc.attr? 'title-logo-image'
+        # FIXME use ThemeLoader.resolve_theme_asset once fix for #134 is merged
+        logo_image_path = ::File.expand_path logo_image_path, (doc.attr 'pdf-stylesdir', ThemeLoader::ThemesDir) 
+      end
+      logo_image_attrs['target'] = logo_image_path
+      logo_image_attrs['align'] ||= (@theme.title_page_logo_align || title_align.to_s)
+      logo_image_top = (logo_image_attrs['top'] || @theme.title_page_logo_top || '10%')
+      # FIXME delegate to method to convert page % to y value
+      logo_image_top = [(page_height - page_height * (logo_image_top.to_i / 100.0)), bounds.absolute_top].min
+      float do
+        @y = logo_image_top
+        # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
+        image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs
+        # FIXME prevent image from spilling to next page
+        convert_image image_block
+      end
     end
 
-    # FIXME only create title page if doctype=book!
-    # FIXME honor subtitle!
-    theme_font :heading, level: 1 do
-      layout_heading doc.doctitle, align: :center
+    # TODO prevent content from spilling to next page
+    theme_font :title_page do
+      doctitle = doc.doctitle partition: true
+      if (title_top = @theme.title_page_title_top)
+        # FIXME delegate to method to convert page % to y value
+        @y = [(page_height - page_height * (title_top.to_i / 100.0)), bounds.absolute_top].min
+      end
+      move_down (@theme.title_page_title_margin_top || 0)
+      theme_font :title_page_title do
+        layout_heading doctitle.main,
+          align: title_align,
+          margin: 0,
+          line_height: @theme.title_page_title_line_height
+      end
+      move_down (@theme.title_page_title_margin_bottom || 0)
+      if doctitle.subtitle
+        move_down (@theme.title_page_subtitle_margin_top || 0)
+        theme_font :title_page_subtitle do
+          layout_heading doctitle.subtitle,
+            align: title_align,
+            margin: 0,
+            line_height: @theme.title_page_subtitle_line_height
+        end
+        move_down (@theme.title_page_subtitle_margin_bottom || 0)
+      end
+      if doc.attr? 'authors'
+        move_down (@theme.title_page_authors_margin_top || 0)
+        theme_font :title_page_authors do
+          # TODO add support for author delimiter
+          layout_prose doc.attr('authors'),
+            align: title_align,
+            margin: 0,
+            normalize: false
+        end
+        move_down (@theme.title_page_authors_margin_bottom || 0)
+      end
+      revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact
+      unless revision_info.empty?
+        move_down (@theme.title_page_revision_margin_top || 0)
+        theme_font :title_page_revision do
+          revision_text = revision_info * (@theme.title_page_revision_delimiter || ', ')
+          layout_prose revision_text,
+            align: title_align,
+            margin: 0,
+            normalize: false
+        end
+        move_down (@theme.title_page_revision_margin_bottom || 0)
+      end
     end
-    # FIXME theme setting
-    move_down @theme.vertical_rhythm
-    if doc.attr? 'authors'
-      layout_prose doc.attr('authors'), align: :center, margin_top: 0, margin_bottom: @theme.vertical_rhythm / 2.0, normalize: false
-    end
-    layout_prose [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact * "\n", align: :center, margin_top: @theme.vertical_rhythm * 5, margin_bottom: 0, normalize: false
   end
 
   def layout_cover_page position, doc
@@ -1575,16 +1631,16 @@ class Converter < ::Prawn::Document
   end
 
   def theme_font category, opts = {}
-    # QUESTION should we fallback to base_font_* or just leave current setting?
-    family = @theme[%(#{category}_font_family)] || @theme.base_font_family
+    inherited_font = font_info
+    family = @theme[%(#{category}_font_family)] || inherited_font[:family]
 
     if (level = opts[:level])
       size = @theme[%(#{category}_font_size_h#{level})] || @theme.base_font_size
     else
-      size = @theme[%(#{category}_font_size)] || @theme.base_font_size
+      size = @theme[%(#{category}_font_size)] || inherited_font[:size]
     end
 
-    style = (@theme[%(#{category}_font_style)] || :normal).to_sym
+    style = (@theme[%(#{category}_font_style)] || inherited_font[:style]).to_sym
 
     if level
       color = @theme[%(#{category}_font_color_h#{level})] || @theme[%(#{category}_font_color)]
@@ -1592,16 +1648,11 @@ class Converter < ::Prawn::Document
       color = @theme[%(#{category}_font_color)]
     end
 
-    if color
-      prev_color = @font_color
-      @font_color = color
-    end
+    prev_color, @font_color = @font_color, color if color
     font family, size: size, style: style do
       yield
     end
-    if color
-      @font_color = prev_color
-    end
+    @font_color = prev_color if color
   end
 
   # TODO document me, esp the first line formatting functionality
