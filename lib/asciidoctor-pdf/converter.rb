@@ -95,12 +95,14 @@ class Converter < ::Prawn::Document
     # data-uri doesn't apply to PDF, so explicitly disable (is there a better place?)
     doc.attributes.delete 'data-uri'
 
-    # TODO implement page_background_image as alternative and/or page_watermark_image
-    if (bg_color = @theme.page_background_color) && !(['transparent', 'FFFFFF'].include? bg_color.to_s)
-      on_page_create do
-        canvas do
-          fill_bounds bg_color.to_s
-        end
+    on_page_create do
+      # TODO implement as a watermark (on top)
+      if @page_bg_image
+        # FIXME implement fitting and centering for SVG
+        # TODO implement image scaling (numeric value or "fit")
+        float { canvas { image @page_bg_image, position: :center, fit: [bounds.width, bounds.height] } }
+      elsif @page_bg_color
+        fill_absolute_bounds @page_bg_color
       end
     end
 
@@ -150,12 +152,22 @@ class Converter < ::Prawn::Document
 
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
-    theme = ThemeLoader.load_theme doc.attr('pdf-style'), doc.attr('pdf-stylesdir')
+    theme = ThemeLoader.load_theme doc.attr('pdf-style'), (stylesdir = (doc.attr 'pdf-stylesdir'))
     pdf_opts = (build_pdf_options doc, theme)
+    @theme = theme
     ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
     # QUESTION should ThemeLoader register fonts?
     register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
-    @theme = theme
+    if (bg_image = theme.page_background_image) && bg_image != 'none'
+      if ::File.readable?(bg_image = (ThemeLoader.resolve_theme_asset bg_image, stylesdir))
+        @page_bg_image = bg_image
+      else
+        warn %(asciidoctor: WARNING: page background image #{bg_image} not found or readable)
+      end
+    end
+    if ['FFFFFF', 'transparent'].include?(@page_bg_color = theme.page_background_color)
+      @page_bg_color = nil
+    end
     @font_color = theme.base_font_color
     @fallback_fonts = theme.font_fallbacks || []
     init_scratch_prototype
@@ -1167,7 +1179,41 @@ class Converter < ::Prawn::Document
   def layout_title_page doc
     return unless doc.header? && !doc.noheader && !doc.notitle
 
+    prev_bg_image = @page_bg_image
+    prev_bg_color = @page_bg_color
+    if (bg_image = (doc.attr 'title-background-image', @theme.title_page_background_image))
+      if bg_image == 'none'
+        @page_bg_image = nil
+      else
+        if bg_image =~ ImageAttributeValueRx
+          bg_image = $1
+          # QUESTION should we support width and height?
+        end
+
+        # NOTE resolve image relative to its origin
+        if doc.attr? 'title-background-image'
+          bg_image = resolve_image_path doc, bg_image
+        else
+          bg_image = ThemeLoader.resolve_theme_asset bg_image, (doc.attr 'pdf-stylesdir')
+        end
+
+        if ::File.readable? bg_image
+          @page_bg_image = bg_image
+        else
+          warn %(asciidoctor: WARNING: title page background image #{bg_image} not found or readable)
+          bg_image = nil
+        end
+      end
+    end
+    if !bg_image && (bg_color = @theme.title_page_background_color) && bg_color != 'transparent'
+      @page_bg_color = bg_color
+    else
+      bg_color = nil
+    end
     start_new_page
+    @page_bg_image = prev_bg_image if bg_image
+    @page_bg_color = prev_bg_color if bg_color
+
     # IMPORTANT this is the first page created, so we need to set the base font
     font @theme.base_font_family, size: @theme.base_font_size
 
