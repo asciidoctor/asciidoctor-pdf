@@ -232,7 +232,6 @@ class Converter < ::Prawn::Document
     pdf_opts
   end
 
-  # TODO create helper method for creating literal PDF string
   # FIXME PdfMarks should use the PDF info result
   def build_pdf_info doc
     info = {}
