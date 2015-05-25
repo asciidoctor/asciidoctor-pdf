@@ -11,6 +11,7 @@
   - theme setting for code line height (currently using base_line_height)
 * use docdate attribute to set modification date on document (file issue)
 * more theme control over toc (font size, style, color per level)
+* don't allow formatted text (e.g., monospace) in toc entries
 * prevent title-logo-image from spilling to next page (same with title content)
 * support font family and style for heading level
 * remove .to_s calls on color values now that theme normalizes them (perhaps should be a post-load theme procedure)
@@ -18,6 +19,7 @@
 * split prawn_ext/extensions.rb into individual modules and include them
 * code cleanups (regexps to constants, nil? checks and such)
   - extract regex in ThemeLoader into constant
+  - remove dead code dealing with margins
 * theme keys should be flatted to arbitrary depth
 * enable line above (or below?) title on title page (file issue)
 * quote all color values in reference themes
