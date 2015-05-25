@@ -66,6 +66,7 @@ vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
 link_font_color: $brand_primary_color
 heading:
+  #font_color: 181818
   font_color: $base_font_color
   font_family: $base_font_family
   # h1 is used for document title
@@ -90,7 +91,7 @@ title_page:
   title_line_height: 0.9
   subtitle_font_size: $heading_font_size_h3
   subtitle_font_style: bold_italic
-  subtitle_line_height: 0.9
+  subtitle_line_height: 1
   authors_margin_top: $base_font_size * 1.25
   authors_font_size: $base_font_size_large
   authors_font_color: 181818
@@ -197,6 +198,8 @@ table:
   border_width: $base_border_width
   # HACK accounting for line-height
   cell_padding: [3, 3, 6, 3]
+toc:
+  dot_leader_color: 999999
 footer:
   font_size: $base_font_size_small
   font_color: $base_font_color

@@ -40,9 +40,10 @@ class Converter < ::Prawn::Document
   IndentationRx = /^ +/
   TabSpaces = ' ' * 4
   NoBreakSpace = unicode_char 0x00a0
+  NarrowSpace = unicode_char 0x2009
   NarrowNoBreakSpace = unicode_char 0x202f
   HairSpace = unicode_char 0x200a
-  DotLeader = %(#{HairSpace}.)
+  DotLeader = %(.#{NarrowSpace})
   EmDash = unicode_char 0x2014
   LowercaseGreekA = unicode_char 0x03b1
   Bullets = {
@@ -168,7 +169,8 @@ class Converter < ::Prawn::Document
     if ['FFFFFF', 'transparent'].include?(@page_bg_color = theme.page_background_color)
       @page_bg_color = nil
     end
-    @font_color = theme.base_font_color
+    @text_transform = nil
+    @font_color = theme.base_font_color || '000000'
     @fallback_fonts = theme.font_fallbacks || []
     init_scratch_prototype
     self
@@ -1348,6 +1350,14 @@ class Converter < ::Prawn::Document
   def layout_heading string, opts = {}
     margin_top = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.heading_margin_top
     margin_bottom = margin || (opts.delete :margin_bottom) || @theme.heading_margin_bottom
+    if (transform = (opts.delete :text_transform) || @text_transform)
+      case transform.to_sym
+      when :uppercase
+        string = upcase_pcdata string
+      when :lowercase
+        string = string.downcase
+      end
+    end
     #move_down margin_top
     self.margin_top margin_top
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.heading_line_height), {
@@ -1363,6 +1373,16 @@ class Converter < ::Prawn::Document
   def layout_prose string, opts = {}
     margin_top = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.prose_margin_top || 0
     margin_bottom = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom || @theme.vertical_rhythm
+
+    if (transform = (opts.delete :text_transform) || @text_transform)
+      case transform.to_sym
+      when :uppercase
+        string = upcase_pcdata string
+      when :lowercase
+        string = string.downcase
+      end
+    end
+
     if (anchor = opts.delete :anchor)
       # FIXME won't work if inline_format is true; should instead pass through as attribute w/ link color set
       if (link_color = opts.delete :link_color)
@@ -1427,7 +1447,7 @@ class Converter < ::Prawn::Document
   end
 
   def layout_toc doc, num_levels = 2, toc_page_number = 2, num_front_matter_pages = 0
-    go_to_page toc_page_number unless scratch? || page_number == toc_page_number
+    go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
     theme_font :heading, level: 2 do
       layout_heading doc.attr('toc-title')
     end
@@ -1442,12 +1462,24 @@ class Converter < ::Prawn::Document
   end
 
   def layout_toc_level sections, num_levels, line_metrics, dot_width, num_front_matter_pages = 0
+    toc_font_color = @theme.toc_font_color || @font_color
+    toc_dot_color = @theme.toc_dot_leader_color
+    toc_text_transform = @theme.toc_text_transform
     sections.each do |sect|
       sect_title = sect.numbered_title
+      # QUESTION should we honor text transform used for heading?
+      if (transform = @theme[%(toc_text_transform_h#{sect.level + 1})] || toc_text_transform)
+        case transform.to_sym
+        when :uppercase
+          sect_title = upcase_pcdata sect_title
+        when :lowercase
+          sect_title = sect_title.downcase
+        end
+      end
       # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
       start_page_number = page_number
       start_cursor = cursor
-      typeset_text %(<a anchor="#{sect.id}">#{sect_title}</a>), line_metrics, inline_format: true
+      typeset_text %(<a anchor="#{sect.id}"><color rgb="#{toc_font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
       # we only write the label if this is a dry run
       unless scratch?
         end_page_number = page_number
@@ -1456,12 +1488,16 @@ class Converter < ::Prawn::Document
         go_to_page start_page_number if start_page_number != end_page_number
         move_cursor_to start_cursor
         sect_page_num = (sect.attr 'page_start') - num_front_matter_pages
-        num_dots = ((bounds.width - (width_of %(#{sect_title} #{sect_page_num}), inline_format: true)) / dot_width).floor
-        typeset_formatted_text [text: %(#{DotLeader * num_dots} #{sect_page_num}), anchor: sect.id], line_metrics, align: :right
+        num_dots = ((bounds.width - (width_of %(#{sect_title}#{HairSpace}#{sect_page_num}), inline_format: true)) / dot_width).floor
+        typeset_formatted_text [
+          { text: (DotLeader * num_dots), color: toc_dot_color },
+          { text: HairSpace },
+          { text: sect_page_num.to_s, anchor: sect.id, color: toc_font_color }], line_metrics, align: :right
         go_to_page end_page_number if start_page_number != end_page_number
         move_cursor_to end_cursor
       end
       if sect.level < num_levels
+        # FIXME make this a theme setting (or use indentation of outline list)
         indent @theme.horizontal_rhythm do
           layout_toc_level sect.sections, num_levels, line_metrics, dot_width, num_front_matter_pages
         end
@@ -1631,14 +1667,17 @@ class Converter < ::Prawn::Document
 
   def theme_font category, opts = {}
     inherited_font = font_info
+
+    # QUESTION why don't we support per-level font family for headings?
     family = @theme[%(#{category}_font_family)] || inherited_font[:family]
 
     if (level = opts[:level])
-      size = @theme[%(#{category}_font_size_h#{level})] || @theme.base_font_size
+      size = @theme[%(#{category}_font_size_h#{level})] || @theme[%(#{category}_font_size)] || @theme.base_font_size
     else
       size = @theme[%(#{category}_font_size)] || inherited_font[:size]
     end
 
+    # QUESTION why don't we support per-level font style for headings?
     style = (@theme[%(#{category}_font_style)] || inherited_font[:style]).to_sym
 
     if level
@@ -1647,11 +1686,22 @@ class Converter < ::Prawn::Document
       color = @theme[%(#{category}_font_color)]
     end
 
+    # NOTE global text_transform is not currently supported
+    if level
+      transform = @theme[%(#{category}_text_transform_h#{level})] || @theme[%(#{category}_text_transform)]
+    else
+      transform = @theme[%(#{category}_text_transform)]
+    end
+
     prev_color, @font_color = @font_color, color if color
+    prev_transform, @text_transform = @text_transform, transform if transform
+
     font family, size: size, style: style do
       yield
     end
+
     @font_color = prev_color if color
+    @text_transform = prev_transform if transform
   end
 
   # TODO document me, esp the first line formatting functionality

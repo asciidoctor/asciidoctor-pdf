@@ -10,6 +10,7 @@ module Sanitizer
   BuiltInEntityCharOrTagRx = /(?:#{BuiltInEntityChars.keys * '|'}|<)/
   NumericCharRefRx = /&#(\d{2,4});/
   XmlSanitizeRx = /<[^>]+>/
+  SegmentPcdataRx = /(?:(&[a-z]+;|<[^>]+>)|([^&<]+))/
 
   # Strip leading, trailing and repeating whitespace, remove XML tags and
   # resolve all entities in the specified string.
@@ -22,6 +23,14 @@ module Sanitizer
         .tr_s(' ', ' ')
         .gsub(NumericCharRefRx) { [$1.to_i].pack('U*') }
         .gsub(BuiltInEntityCharRx, BuiltInEntityChars)
+  end
+
+  def upcase_pcdata string
+    if BuiltInEntityCharOrTagRx =~ string
+      string.gsub(SegmentPcdataRx) { $2 ? $2.upcase : $1 }
+    else
+      string.upcase
+    end
   end
 end
 end
