@@ -411,7 +411,7 @@ Here's some content inside an open block.
 == Credits
 
 .Brought to you by OpenDevise
-[%header,cols="1,1s,1",grid=rows,frame=topbot]
+[%header%footer,cols="1,1s,1",grid=rows,frame=topbot]
 |===
 |Name
 |Title

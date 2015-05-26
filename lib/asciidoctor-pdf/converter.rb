@@ -973,11 +973,12 @@ class Converter < ::Prawn::Document
     table_data = []
     node.rows[:head].each do |rows|
       table_header = true
+      head_transform = theme.table_head_text_transform
       num_rows += 1
       row_data = []
       rows.each do |cell|
         row_data << {
-          content: cell.text,
+          content: (head_transform ? (transform_text cell.text, head_transform) : cell.text),
           inline_format: [{ normalize: true }],
           background_color: head_bg_color,
           text_color: (theme.table_head_font_color || theme.table_font_color || @font_color),
@@ -1097,10 +1098,15 @@ class Converter < ::Prawn::Document
       unless node.rows[:foot].empty?
         foot_row = row(num_rows - 1)
         foot_row.background_color = foot_bg_color
+        # FIXME find a way to do this when defining the cells
         foot_row.text_color = theme.table_foot_font_color if theme.table_foot_font_color
         foot_row.size = theme.table_foot_font_size if theme.table_foot_font_size
         foot_row.font = theme.table_foot_font_family if theme.table_foot_font_family
         foot_row.font_style = theme.table_foot_font_style.to_sym if theme.table_foot_font_style
+        # HACK we should do this transformation when creating the cell
+        #if (foot_transform = theme.table_foot_text_transform)
+        #  foot_row.each {|c| c.content = (transform_text c.content, foot_transform) if c.content }
+        #end
       end
     end
     theme_margin :block, :bottom
@@ -1408,12 +1414,7 @@ class Converter < ::Prawn::Document
     margin_top = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.heading_margin_top
     margin_bottom = margin || (opts.delete :margin_bottom) || @theme.heading_margin_bottom
     if (transform = (opts.delete :text_transform) || @text_transform)
-      case transform.to_sym
-      when :uppercase
-        string = upcase_pcdata string
-      when :lowercase
-        string = string.downcase
-      end
+      string = transform_text string, transform
     end
     #move_down margin_top
     self.margin_top margin_top
@@ -1430,16 +1431,9 @@ class Converter < ::Prawn::Document
   def layout_prose string, opts = {}
     margin_top = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.prose_margin_top || 0
     margin_bottom = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom || @theme.vertical_rhythm
-
     if (transform = (opts.delete :text_transform) || @text_transform)
-      case transform.to_sym
-      when :uppercase
-        string = upcase_pcdata string
-      when :lowercase
-        string = string.downcase
-      end
+      string = transform_text string, transform
     end
-
     if (anchor = opts.delete :anchor)
       # FIXME won't work if inline_format is true; should instead pass through as attribute w/ link color set
       if (link_color = opts.delete :link_color)
@@ -1448,10 +1442,8 @@ class Converter < ::Prawn::Document
         string = %(<a anchor="#{anchor}">#{string}</a>)
       end
     end
-
     # preserve leading space using non-breaking space chars
     string = preserve_indentation string if opts.delete :preserve
-
     #move_down margin_top
     self.margin_top margin_top
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
@@ -1524,14 +1516,8 @@ class Converter < ::Prawn::Document
     toc_text_transform = @theme.toc_text_transform
     sections.each do |sect|
       sect_title = sect.numbered_title
-      # QUESTION should we honor text transform used for heading?
       if (transform = @theme[%(toc_text_transform_h#{sect.level + 1})] || toc_text_transform)
-        case transform.to_sym
-        when :uppercase
-          sect_title = upcase_pcdata sect_title
-        when :lowercase
-          sect_title = sect_title.downcase
-        end
+        sect_title = transform_text sect_title, transform
       end
       # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
       start_page_number = page_number

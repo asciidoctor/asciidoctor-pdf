@@ -5,7 +5,6 @@
 
 == TODO
 
-* text_transform for table head row (and probably body and foot too)
 * comb list and file issues
 
 * create utility method to get % offset of page as y value (option to constrain to bounds)
@@ -32,6 +31,7 @@
 * theme keys should be flatted to arbitrary depth
 * enable line above (or below?) title on title page (file issue)
 * quote all color values in reference themes
+* text_transform for table foot row
 * file upstream issue for Prawn to warn if it can't resolve a glpyh (or monkeypatch it)
 * make use of shrink_to_fit where appropriate
 * support web fonts; use uri-cache to avoid redundant fetching
@@ -159,6 +159,11 @@
 * control page numbering using pagenums attribute
 * "Incorrect number of arguments in 'SCN' command" happens when you add a stamp to an imported page
 * be mindful that layout_prose adds margin to bottom of content by default (important when working in a bounding box)
+
+== Usage Optimizations
+
+* uncompress PNG files
+* avoid the fallback font if possible (use full fonts in your theme)
 
 == Open Questions
 

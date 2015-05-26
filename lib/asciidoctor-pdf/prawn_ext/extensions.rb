@@ -216,6 +216,22 @@ module Extensions
     end
   end
 
+  # Apply the text transform to the specified text.
+  #
+  # Supported transform values are "uppercase" or "lowercase" (passed as either
+  # a String or a Symbol). When the uppercase transform is applied to the text,
+  # it correctly uppercases visible text while leaving markup and named
+  # character entities unchanged.
+  #
+  def transform_text text, transform
+    case transform
+    when :uppercase, 'uppercase'
+      upcase_pcdata text
+    when :lowercase, 'lowercase'
+      text.downcase
+    end
+  end
+
   # Cursor
 
   # Short-circuits the call to the built-in move_up operation
