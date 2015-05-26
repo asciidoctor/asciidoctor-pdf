@@ -739,8 +739,16 @@ class Converter < ::Prawn::Document
         ((bounds.width - width) / 2.0).floor
       end
       begin
-        keep_together do
-          svg (::IO.read image_path), at: [left, cursor], width: width
+        img_data = ::IO.read image_path
+        keep_together do |box_height = nil|
+          if box_height && (link = node.attr 'link')
+            result = svg img_data, at: [left, cursor], width: width
+            link_annotation [(abs_left = left + bounds.absolute_left), y, (abs_left + width), (y + result[:height])],
+              Border: [0, 0, 0],
+              A: { Type: :Action, S: :URI, URI: (str2pdfval link) }
+          else
+            svg img_data, at: [left, cursor], width: width
+          end
           layout_caption node, position: :bottom if node.title?
         end
       rescue => e
@@ -751,8 +759,10 @@ class Converter < ::Prawn::Document
         # FIXME temporary workaround to group caption & image
         # Prawn doesn't provide access to rendered width and height before placing the
         # image on the page
+        # FIXME this code really needs to be better organized!
         image_obj, image_info = build_image_object image_path
         rendered_w, rendered_h = image_info.calc_image_dimensions width: width
+        # TODO move this calculation into a method
         caption_height = node.title? ?
             (@theme.caption_margin_inside + @theme.caption_margin_outside + @theme.base_line_height_length) : 0
         height = nil
@@ -767,7 +777,17 @@ class Converter < ::Prawn::Document
             stroke_color self.stroke_color
           end
         end
+        if (link = node.attr 'link')
+          actual_w, actual_h = [(width || rendered_w), (height || rendered_h)]
+          img_x, img_y = image_position actual_w, actual_h, position: position
+          link_box = [img_x, (img_y - actual_h), img_x + actual_w, img_y]
+        end
         embed_image image_obj, image_info, width: width, height: height, position: position
+        if link
+          link_annotation link_box,
+            Border: [0, 0, 0],
+            A: { Type: :Action, S: :URI, URI: (str2pdfval link) }
+        end
       rescue => e
         warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
       end
