@@ -5,12 +5,6 @@ font:
       bold: notoserif-bold-latin.ttf
       italic: notoserif-italic-latin.ttf
       bold_italic: notoserif-bolditalic-latin.ttf
-    # NOTE currently, callout numbers don't work with LiberationMono
-    #LiberationMono:
-    #  normal: liberationmono-regular-latin.ttf
-    #  bold: liberationmono-bold-latin.ttf
-    #  italic: liberationmono-italic-latin.ttf
-    #  bold_italic: liberationmono-bolditalic-latin.ttf
     Mplus1mn:
       normal: mplus1mn-regular-ascii-conums.ttf
       bold: mplus1mn-bold-ascii.ttf
@@ -21,10 +15,9 @@ font:
       bold: mplus1p-regular-multilingual.ttf
       italic: mplus1p-regular-multilingual.ttf
       bold_italic: mplus1p-regular-multilingual.ttf
-    #FontAwesome:
-    #  normal: fontawesome-regular.ttf
   fallbacks:
     # NOTE M+ 1p doesn't support all CJK characters, but it at least has some coverage
+    # NOTE M+ 1p provides the arrows for ->, <-, => and <=
     - Mplus1pMultilingual
 brand:
   primary_color: 428bca
