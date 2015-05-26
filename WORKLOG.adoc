@@ -5,24 +5,36 @@
 
 == TODO
 
+* text_transform for table head row (and probably body and foot too)
+* comb list and file issues
+
 * create utility method to get % offset of page as y value (option to constrain to bounds)
 
+* document converter assignment in convert_content_for_block method
+* file issue to import PDF page using block image macro
 * **allow theme_font to set line_height** (honor this setting from document)
   - theme setting for code line height (currently using base_line_height)
+* show we put an entry for doctitle in the outline if notitle is set? (need to test these edge cases)
 * use docdate attribute to set modification date on document (file issue)
 * more theme control over toc (font size, style, color per level)
 * don't allow formatted text (e.g., monospace) in toc entries
 * prevent title-logo-image from spilling to next page (same with title content)
 * support font family and style for heading level
+* document what each keep_together is doing / expects
 * remove .to_s calls on color values now that theme normalizes them (perhaps should be a post-load theme procedure)
   - do CMYK values work for colors? no, but we should support an array value
 * split prawn_ext/extensions.rb into individual modules and include them
 * code cleanups (regexps to constants, nil? checks and such)
+  - fix the background color mess in convert_table
   - extract regex in ThemeLoader into constant
   - remove dead code dealing with margins
+  - remove unused theme / font files
 * theme keys should be flatted to arbitrary depth
 * enable line above (or below?) title on title page (file issue)
 * quote all color values in reference themes
+* file upstream issue for Prawn to warn if it can't resolve a glpyh (or monkeypatch it)
+* make use of shrink_to_fit where appropriate
+* support web fonts; use uri-cache to avoid redundant fetching
 * allow pdf-page-layout (portrait || landscape) to be set in document
 * attribute or role to control table shading (all, even, odd) (or call it striped like bootstrap?)
 * make conum glyphs configurable in theme (use reference table to resolve)
@@ -51,7 +63,7 @@
 * use ImageMagick to uncompress PNG images before reading them (could also just document this)
 * rework font so we can set actual height, calculate x_height internally (use 1em for spacings)
 * padding top and bottom on content affects height_of calculations (need to review)
-* enable fallback font (Golo guide has problem with License block)
+* code font needs to support more than just ascii (Golo license block is an example)
 * don't cutoff content in partintro
 * use padding from theme around admonition block content
 * use padding from theme around block quote content
@@ -60,11 +72,10 @@
 * implement subtitle on title page
 * allow cover images to be specified by theme as a fallback
 * verify cover image exists; fail gracefully with warning
+* using fallback fonts significantly slows down Prawn because it checks every letter every time (see https://github.com/prawnpdf/prawn/blob/master/lib/prawn/text/formatted/box.rb#L427-L434)
 * print scratch.pdf file if verbose / trace mode is on in Asciidoctor
 * introduce setting to indent section content
 * design merge margin logic (like for admonition block)
-* use font awesome for admonition icons
-* support web fonts; use uri-cache to avoid redundant fetching
 * rename default theme to docbook theme, make default the Asciidoctor theme (should we have a base theme?)
 * add callout subs when using CodeRay and when using color themes in Pygments
 * allow relative font size for inline code to be set (perhaps a percentage or em value? there are problems with this in arranger)
