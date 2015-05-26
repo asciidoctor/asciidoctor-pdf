@@ -187,6 +187,7 @@ table:
   #head_font_color: $base_font_color
   even_row_background_color: f9f9f9
   #odd_row_background_color: <hex value>
+  foot_background_color: f0f0f0
   border_color: dddddd
   border_width: $base_border_width
   # HACK accounting for line-height
