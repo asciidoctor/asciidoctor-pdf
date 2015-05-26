@@ -923,25 +923,30 @@ class Converter < ::Prawn::Document
     num_rows = 0
     num_cols = node.columns.size
     table_header = false
+    theme = @theme
 
     # FIXME this is a mess!
-    unless (page_bg_color = @theme.page_background_color) && page_bg_color != 'transparent'
+    unless (page_bg_color = theme.page_background_color) && page_bg_color != 'transparent'
       page_bg_color = nil
     end
 
-    unless (bg_color = @theme.table_background_color) && bg_color != 'transparent'
+    unless (bg_color = theme.table_background_color) && bg_color != 'transparent'
       bg_color = page_bg_color
     end
 
-    unless (head_bg_color = @theme.table_head_background_color) && head_bg_color != 'transparent'
+    unless (head_bg_color = theme.table_head_background_color) && head_bg_color != 'transparent'
       head_bg_color = bg_color
     end
 
-    unless (odd_row_bg_color = @theme.table_odd_row_background_color) && odd_row_bg_color != 'transparent'
+    unless (foot_bg_color = theme.table_foot_background_color) && foot_bg_color != 'transparent'
+      foot_bg_color = bg_color
+    end
+
+    unless (odd_row_bg_color = theme.table_odd_row_background_color) && odd_row_bg_color != 'transparent'
       odd_row_bg_color = bg_color
     end
 
-    unless (even_row_bg_color = @theme.table_even_row_background_color) && even_row_bg_color != 'transparent'
+    unless (even_row_bg_color = theme.table_even_row_background_color) && even_row_bg_color != 'transparent'
       even_row_bg_color = bg_color
     end
 
@@ -955,10 +960,10 @@ class Converter < ::Prawn::Document
           content: cell.text,
           inline_format: [{ normalize: true }],
           background_color: head_bg_color,
-          text_color: (@theme.table_head_font_color || @theme.table_font_color || @font_color),
-          size: (@theme.table_head_font_size || @theme.table_font_size),
-          font: (@theme.table_head_font_family || @theme.table_font_family),
-          font_style: (@theme.table_head_font_style || :bold).to_sym,
+          text_color: (theme.table_head_font_color || theme.table_font_color || @font_color),
+          size: (theme.table_head_font_size || theme.table_font_size),
+          font: (theme.table_head_font_family || theme.table_font_family),
+          font_style: (theme.table_head_font_style || :bold).to_sym,
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
           align: (cell.attr 'halign').to_sym,
@@ -968,16 +973,16 @@ class Converter < ::Prawn::Document
       table_data << row_data
     end
 
-    node.rows[:body].each do |rows|
+    (node.rows[:body] + node.rows[:foot]).each do |rows|
       num_rows += 1
       row_data = []
       rows.each do |cell|
         cell_data = {
           content: cell.text,
           inline_format: [{ normalize: true }],
-          text_color: (@theme.table_body_font_color || @font_color),
-          size: @theme.table_font_size,
-          font: @theme.table_font_family,
+          text_color: (theme.table_body_font_color || @font_color),
+          size: theme.table_font_size,
+          font: theme.table_font_family,
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
           align: (cell.attr 'halign').to_sym,
@@ -990,11 +995,11 @@ class Converter < ::Prawn::Document
         when :strong, :header
           cell_data[:font_style] = :bold
         when :monospaced
-          cell_data[:font] = @theme.literal_font_family
-          if (size = @theme.literal_font_size)
+          cell_data[:font] = theme.literal_font_family
+          if (size = theme.literal_font_size)
             cell_data[:size] = size
           end
-          if (color = @theme.literal_font_color)
+          if (color = theme.literal_font_color)
             cell_data[:text_color] = color
           end
         # TODO finish me
@@ -1004,12 +1009,10 @@ class Converter < ::Prawn::Document
       table_data << row_data
     end
 
-    # TODO support footer row
-
     column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * bounds.width) / 100.0 }
 
     border = {}
-    table_border_width = @theme.table_border_width
+    table_border_width = theme.table_border_width
     [:top, :bottom, :left, :right, :cols, :rows].each {|edge| border[edge] = table_border_width }
 
     frame = (node.attr 'frame') || 'all'
@@ -1036,9 +1039,9 @@ class Converter < ::Prawn::Document
     table_settings = {
       header: table_header,
       cell_style: {
-        padding: @theme.table_cell_padding,
+        padding: theme.table_cell_padding,
         border_width: 0,
-        border_color: @theme.table_border_color
+        border_color: theme.table_border_color
       },
       column_widths: column_widths,
       row_colors: [odd_row_bg_color, even_row_bg_color]
@@ -1068,6 +1071,16 @@ class Converter < ::Prawn::Document
         rows(num_rows - 1).border_bottom_width = border[:bottom]
         # left edge of table
         columns(0).border_left_width = border[:left]
+      end
+
+      # QUESTION should cell padding be configurable for foot row cells?
+      unless node.rows[:foot].empty?
+        foot_row = row(num_rows - 1)
+        foot_row.background_color = foot_bg_color
+        foot_row.text_color = theme.table_foot_font_color if theme.table_foot_font_color
+        foot_row.size = theme.table_foot_font_size if theme.table_foot_font_size
+        foot_row.font = theme.table_foot_font_family if theme.table_foot_font_family
+        foot_row.font_style = theme.table_foot_font_style.to_sym if theme.table_foot_font_style
       end
     end
     theme_margin :block, :bottom
