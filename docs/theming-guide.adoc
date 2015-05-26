@@ -385,7 +385,7 @@ The names of the built-in fonts (for general-purpose text) are as follows:
 |Helvetica
 |sans-serif
 
-|Times-Romain
+|Times-Roman
 |serif
 
 |Courier
@@ -540,7 +540,644 @@ It's best to select fonts that have all the characters you need.
 
 == Keys
 
-PENDING
+TBW
+
+=== Page
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|page_background_color
+|<<colors,color>>
+|background_color: ffffff
+
+|page_layout
+|portrait, landscape
+|layout: portrait
+
+|page_margin
+|<<measurement-units,measurement>>, <<values,measurement array [1,4]>>
+|margin: [0.5in, 0.67in, 0.67in, 0.67in]
+
+|page_size
+|named size, <<measurement-units,measurement array [1,2]>>
+|size: Letter
+|===
+
+=== Base
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|base_font_color
+|<<colors,color>>
+|font_color: #333333
+
+|base_font_family
+|<<fonts,font family name>>
+|font_family: NotoSerif
+
+|base_font_size
+|<<values,number>>
+|font_size: 10.5
+
+|base_line_height_length
+|<<values,number>>
+|line_height_length: 12
+
+|base_line_height
+|<<values,number>>
+|line_height: 1.14
+
+|base_font_size_large
+|<<values,number>>
+|font_size_large: 13
+
+|base_font_size_small
+|<<values,number>>
+|font_size_small: 9
+
+|base_font_style
+|normal, italic, bold, bold_italic
+|font_style: normal
+
+|base_align
+|left, center, right, justify
+|align: justify
+
+|base_border_radius
+|<<values,number>>
+|border_radius: 4
+
+|base_border_width
+|<<values,number>>
+|border_width: 0.5
+
+|base_border_color
+|<<colors,color>>
+|border_color: eee
+|===
+
+=== Vertical and Horizontal Rhythm
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|vertical_rhythm
+|<<values,number>>
+|vertical_rhythm: 12
+
+|horizontal_rhythm
+|<<values,number>>
+|horizontal_rhythm: 12
+|===
+
+=== Link
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|link_font_color
+|<<colors,color>>
+|font_color: 428BCA
+
+|link_font_family
+|<<fonts,font family name>>
+|font_family: Roboto
+
+|link_font_size
+|<<values,number>>
+|font_size: 9
+
+|link_font_style
+|normal, italic, bold, bold_italic
+|font_style: normal
+|===
+
+=== Literal Inline
+
+The literal key is used for inline monospaced text in prose and table cells.
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|literal_font_color
+|<<colors,color>>
+|font_color: B12146
+
+|literal_font_family
+|<<fonts,font family name>>
+|font_family: Mplus1mn
+
+|literal_font_size
+|<<values,number>>
+|font_size: 12
+
+|literal_font_style
+|normal, italic, bold, bold_italic
+|font_style: bold
+|===
+
+=== Heading
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|heading_font_color
+|<<colors,color>>
+|font_color: 333333
+
+|heading_h<n>_font_color
+|<<colors,color>>
+|h2_font_color: [0, 99%, 100%, 0]
+
+|heading_font_family
+|<<fonts,font family name>>
+|font_family: NotoSerif
+
+|heading_h<n>_font_family
+|<<fonts,font family name>>
+|h4_font_family: Roboto
+
+|heading_font_size
+|<<values,number>>
+|font_size: 9
+
+|heading_h<n>_font_size
+|<<values,number>>
+|h6_font_size: round($base_font_size * 1.7)
+
+|heading_font_style
+|normal, italic, bold, bold_italic
+|font_style: bold
+
+|heading_h<n>_font_style
+|normal, italic, bold, bold_italic
+|h3_font_style: bold_italic
+
+|heading_line_height
+|<<values,number>>
+|line_height: 1.2
+
+|heading_margin_top
+|<<measurement-units,measurement>>
+|margin_top: $vertical_rhythm * 0.2
+
+|heading_margin_bottom
+|<<measurement-units,measurement>>
+|margin_bottom: 9.600
+|===
+
+=== Title Page
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|title_page_align
+|left, center, right, justify
+|align: right
+
+|title_page_title_top
+|percentage
+|title_top: 55%
+
+|title_page_title_font_size
+|<<values,number>>
+|title_font_size: 27
+
+|title_page_title_font_color
+|<<colors,color>>
+|title_font_color: 999999
+
+|title_page_title_line_height
+|<<values,number>>
+|title_line_height: 0.9
+
+|title_page_subtitle_font_size
+|<<values,number>>
+|subtitle_font_size: 18
+
+|title_page_subtitle_font_style
+|normal, italic, bold, bold_italic
+|subtitle_font_style: bold_italic
+
+|title_page_subtitle_line_height
+|<<values,number>>
+|subtitle_line_height: 1
+
+|title_page_authors_margin_top
+|<<measurement-units,measurement>>
+|authors_margin_top: 13.125
+
+|title_page_authors_font_size
+|<<values,number>>
+|authors_font_size: $base_font_size_large
+
+|title_page_authors_font_color
+|<<colors,color>>
+|authors_font_color: 181818
+
+|title_page_revision_margin_top
+|<<measurement-units,measurement>>
+|revision_margin_top: 13.125
+|===
+
+=== Block
+
+// Blocks include admonition, example, quote, verse, sidebar, image, listing, literal, and table.
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|block_padding
+|<<measurement-units,measurement>>, <<values,measurement array [1,4]>>
+|padding: [12, 15, 12, 15]
+
+|block_margin_top
+|<<measurement-units,measurement>>
+|margin_top: 0
+
+|block_margin_bottom
+|<<measurement-units,measurement>>
+|margin_bottom: 1
+|===
+
+=== Caption
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|caption_font_color
+|<<colors,color>>
+|font_color: 333333
+
+|caption_font_family
+|<<fonts,font family name>>
+|font_family: Mplus1mn
+
+|caption_font_size
+|<<values,number>>
+|font_size: 11
+
+|caption_font_style
+|normal, italic, bold, bold_italic
+|font_style: italic
+
+|caption_align
+|left, center, right, justify
+|align: left
+
+|caption_margin_inside
+|<<measurement-units,measurement>>
+|margin_inside: 3
+
+|caption_margin_outside
+|<<measurement-units,measurement>>
+|margin_outside: 0
+|===
+
+=== Code
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|code_font_color
+|<<colors,color>>
+|font_color: 333333
+
+|code_font_family
+|<<fonts,font family name>>
+|font_family: Mplus1mn
+
+|code_font_size
+|<<values,number>>
+|font_size: 11
+
+|code_font_style
+|normal, italic, bold, bold_italic
+|font_style: italic
+
+|code_padding
+|<<measurement-units,measurement>>, <<values,measurement array [1,4]>>
+|padding: 11
+
+|code_line_height
+|<<values,number>>
+|line_height: 1.25
+
+|code_background_color
+|<<colors,color>>
+|background_color: F5F5F5
+
+|code_border_color
+|<<colors,color>>
+|border_color: CCCCCC
+
+|code_border_radius
+|<<values,number>>
+|border_radius: 4
+
+|code_border_width
+|<<values,number>>
+|border_width: 0.75
+|===
+
+=== Blockquote
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|blockquote_font_color
+|<<colors,color>>
+|font_color: 333333
+
+|blockquote_font_family
+|<<fonts,font family name>>
+|font_family: Notoserif
+
+|blockquote_font_size
+|<<values,number>>
+|font_size: 13
+
+|blockquote_font_style
+|normal, italic, bold, bold_italic
+|font_style: bold
+
+|blockquote_border_width
+|<<values,number>>
+|border_width: 5
+
+|blockquote_border_color
+|<<colors,color>>
+|border_color: EEEEEE
+
+|blockquote_cite_font_size
+|<<values,number>>
+|cite_font_size: 9
+
+|blockquote_cite_font_color
+|<<colors,color>>
+|cite_font_color: 999999
+
+|blockquote_cite_font_family
+|<<fonts,font family name>>
+|cite_font_family: Notoserif
+
+|blockquote_cite_font_style
+|normal, italic, bold, bold_italic
+|cite_font_style: bold
+
+|===
+
+=== Sidebar
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|sidebar_border_color
+|<<colors,color>>
+|border_color: FFFFFF
+
+|sidebar_border_radius
+|<<values,number>>
+|border_radius: 4
+
+|sidebar_border_width
+|<<values,number>>
+|border_width: 0.5
+
+|sidebar_background_color
+|<<colors,color>>
+|background_color: EEEEEE
+
+|sidebar_title_font_color
+|<<colors,color>>
+|title_font_color: 333333
+
+|sidebar_title_font_family
+|<<fonts,font family name>>
+|title_font_family: NotoSerif
+
+|sidebar_title_font_size
+|<<values,number>>
+|title_font_size: 13
+
+|sidebar_title_font_style
+|normal, italic, bold, bold_italic
+|title_font_style: bold
+
+|sidebar_title_align
+|left, center, right, justify
+|title_align: center
+|===
+
+=== Example
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|example_border_color
+|<<colors,color>>
+|border_color: EEEEEE
+
+|example_border_radius
+|<<values,number>>
+|border_radius: 4
+
+|example_border_width
+|<<values,number>>
+|border_width: 0.75
+
+|example_background_color
+|<<colors,color>>
+|background_color: transparent
+|===
+
+=== Admonition
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|admonition_border_color
+|<<colors,color>>
+|border_color: EEEEEE
+
+|admonition_border_width
+|<<values,number>>
+|border_width: 0.5
+|===
+
+=== Image
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|image_align_default
+|left, center, right, justify
+|align_default: left
+|===
+
+=== Lead
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|lead_font_size
+|<<values,number>>
+|font_size: 13
+
+|lead_line_height
+|<<values,number>>
+|line_height: 1.4
+|===
+
+=== Abstract
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|abstract_font_color
+|<<colors,color>>
+|font_color: 5C6266
+
+|abstract_font_size
+|<<values,number>>
+|font_size: 13
+
+|abstract_line_height
+|<<values,number>>
+|line_height: 1.4
+
+|abstract_font_style
+|normal, italic, bold, bold_italic
+|font_style: italic
+|===
+
+=== Thematic Break
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|thematic_break_border_color
+|<<colors,color>>
+|border_colorL EEEEEE
+
+|thematic_break_margin_top
+|<<measurement-units,measurement>>
+|margin_top: 6
+
+|thematic_break_margin_bottom
+|<<measurement-units,measurement>>
+|margin_bottom: 18
+|===
+
+=== Description list
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|description_list_term_font_style
+|normal, italic, bold, bold_italic
+|term_font_style: italic
+
+|description_list_description_indent
+|<<values,number>>
+|description_indent: 15
+|===
+
+
+=== Outline list
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|outline_list_indent
+|<<values,number>>
+|list_indent: 15
+|===
+
+=== Table
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|table_background_color
+|<<colors,color>>
+|background_color: FFFFFF
+
+|table_even_row_background_color
+|<<colors,color>>
+|even_row_background_color: F9F9F9
+
+|table_foot_background_color
+|<<colors,color>>
+|foot_background_color: F0F0F0
+
+|table_border_color
+|<<colors,color>>
+|border_color: DDDDDD
+
+|table_border_width
+|<<values,number>>
+|border_width: 0.5
+
+|table_cell_padding
+|<<measurement-units,measurement>>, <<values,measurement array [1,4]>>
+|cell_padding: [3, 3, 6, 3]
+|===
+
+[[key-toc]]
+=== Table of Contents
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|toc_dot_leader_color
+|<<colors,color>>
+|dot_leader_color: 999999
+|===
+
+[[key-footer]]
+=== Footer
+
+[cols="1d,1d,2m"]
+|===
+|Key |Value Type |Example
+
+|footer_font_size
+|<<values,number>>
+|font_size: 9
+
+|footer_font_color
+|<<colors,color>>
+|font_color: 333333
+
+|footer_border_color
+|<<colors,color>>
+|border_color: DDDDDD
+|===
 
 == Applying a Theme
 
