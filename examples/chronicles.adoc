@@ -33,7 +33,7 @@ Our team needs coffee, _desperately_, but none of us dare open the theater doors
 During the first workshop, a script-happy warlock inadvertently released a legion of Wolpertingers!
 To leave now would mean *code dismemberment and certain death*.
 
-Behold, the horror!
+Behold -> the horror!
 
 .Wolpertinger, stuffed
 [.left.thumb]
