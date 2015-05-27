@@ -6,9 +6,9 @@ module PdfObject
   #--
   # QUESTION mixin to String and NilClass as to_pdf_value?
   def str2pdfval string
-    begin
+    if string && string.ascii_only?
       ::PDF::Core::LiteralString.new(string.encode ::Encoding::ASCII_8BIT)
-    rescue
+    else
       string
     end
   end

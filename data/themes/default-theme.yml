@@ -19,17 +19,22 @@ font:
     # NOTE M+ 1p doesn't support all CJK characters, but it at least has some coverage
     # NOTE M+ 1p provides the arrows for ->, <-, => and <=
     - Mplus1pMultilingual
-brand:
-  primary_color: 428bca
 page:
   background_color: ffffff
   layout: portrait
-  # multiply inches by 72 to get pt values
-  margin: [0.5 * 72, 0.67 * 72, 0.67 * 72, 0.67 * 72]
+  # NOTE multiply inches by 72 to get pt values
+  #margin: [0.5 * 72, 0.67 * 72, 0.67 * 72, 0.67 * 72]
+  margin: [0.5in, 0.67in, 0.67in, 0.67in]
   # size can be a named size (e.g., A4) or custom dimensions (e.g., [8.25in, 11.69in])
   size: Letter
 base:
+  # color as hex string (leading # is optional)
   font_color: 333333
+  # color as RGB array
+  #font_color: [51, 51, 51]
+  # color as CMYK array (approximated)
+  #font_color: [0, 0, 0, 0.92]
+  #font_color: [0, 0, 0, 92%]
   font_family: NotoSerif
   # choose one of these font_size/line_height_length combinations
   #font_size: 14
@@ -57,19 +62,24 @@ base:
 # correct line height for NotoSerif metrics
 vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
-link_font_color: $brand_primary_color
+link:
+  font_color: 428bca
+# literal is currently used for inline monospaced in prose and table cells
+literal:
+  font_color: b12146
+  font_family: Mplus1mn
 heading:
   #font_color: 181818
   font_color: $base_font_color
   font_family: $base_font_family
-  # h1 is used for document title
-  font_size_h1: floor($base_font_size * 2.6)
-  # h2 is used for chapter title
-  font_size_h2: floor($base_font_size * 2.15)
-  font_size_h3: round($base_font_size * 1.7)
-  font_size_h4: $base_font_size_large
-  font_size_h5: $base_font_size
-  font_size_h6: $base_font_size_small
+  # h1 is used for part titles
+  h1_font_size: floor($base_font_size * 2.6)
+  # h2 is used for chapter titles
+  h2_font_size: floor($base_font_size * 2.15)
+  h3_font_size: round($base_font_size * 1.7)
+  h4_font_size: $base_font_size_large
+  h5_font_size: $base_font_size
+  h6_font_size: $base_font_size_small
   font_style: bold
   #line_height: 1.4
   # correct line height for NotoSerif metrics
@@ -79,10 +89,10 @@ heading:
 title_page:
   align: right
   title_top: 55%
-  title_font_size: $heading_font_size_h1
+  title_font_size: $heading_h1_font_size
   title_font_color: 999999
   title_line_height: 0.9
-  subtitle_font_size: $heading_font_size_h3
+  subtitle_font_size: $heading_h3_font_size
   subtitle_font_style: bold_italic
   subtitle_line_height: 1
   authors_margin_top: $base_font_size * 1.25
@@ -97,6 +107,12 @@ block:
   #margin_bottom: $vertical_rhythm
   padding: [$vertical_rhythm, $vertical_rhythm * 1.25, $vertical_rhythm, $vertical_rhythm * 1.25]
 # code is used for source blocks (perhaps change to source or listing?)
+caption:
+  font_style: italic
+  align: left
+  # FIXME perhaps set line_height instead of / in addition to margins?
+  margin_inside: $vertical_rhythm * 0.25
+  margin_outside: 0
 code:
   font_color: $base_font_color
   #font_family: LiberationMono
@@ -106,7 +122,7 @@ code:
   # LiberationMono carries extra gap below line
   #padding: [10, 10, 7.5, 10]
   #line_height: 1.45
-  font_family: Mplus1mn
+  font_family: $literal_font_family
   font_size: ceil($base_font_size)
   #padding: [$base_font_size, $code_font_size, $base_font_size, $code_font_size]
   padding: $code_font_size
@@ -115,11 +131,6 @@ code:
   border_color: cccccc
   border_radius: $base_border_radius
   border_width: 0.75
-# literal is currently used for inline monospaced in prose and table cells
-literal:
-  #font_color: c7254e
-  font_color: b12146
-  font_family: $code_font_family
 blockquote:
   font_color: $base_font_color
   font_size: $base_font_size_large
@@ -134,7 +145,7 @@ sidebar:
   background_color: eeeeee
   title_font_color: $heading_font_color
   title_font_family: $heading_font_family
-  title_font_size: $heading_font_size_h4
+  title_font_size: $heading_h4_font_size
   title_font_style: $heading_font_style
   title_align: center
 example:
@@ -145,17 +156,11 @@ example:
 admonition:
   border_color: $base_border_color
   border_width: $base_border_width
-caption:
-  font_style: italic
-  align: left
-  # FIXME perhaps set line_height instead of / in addition to margins?
-  margin_inside: $vertical_rhythm * 0.25
-  margin_outside: 0
 conum:
   font_family: Mplus1mn
   font_color: $literal_font_color
   font_size: $base_font_size
-  line_height: 1.35
+  line_height: 4 / 3
 image:
   align_default: left
   scaled_width_default: 0.5

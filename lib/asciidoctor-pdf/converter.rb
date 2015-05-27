@@ -156,8 +156,8 @@ class Converter < ::Prawn::Document
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
     theme = ThemeLoader.load_theme doc.attr('pdf-style'), (stylesdir = (doc.attr 'pdf-stylesdir'))
-    pdf_opts = (build_pdf_options doc, theme)
     @theme = theme
+    pdf_opts = (build_pdf_options doc, theme)
     ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
     # QUESTION should ThemeLoader register fonts?
     register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
@@ -1185,6 +1185,7 @@ class Converter < ::Prawn::Document
 
   def convert_inline_callout node
     if (conum_color = @theme.conum_font_color)
+      # NOTE CMYK value gets flattened here, but is restored by formatted text parser
       %(<color rgb="#{conum_color}">#{conum_glyph node.text.to_i}</color>)
     else
       node.text
@@ -1196,6 +1197,7 @@ class Converter < ::Prawn::Document
       #text = node.document.footnotes.find {|fn| fn.index == index }.text
       %( [#{node.text}])
     elsif node.type == :xref
+      # NOTE footnote reference not found
       %( <color rgb="FF0000">[#{node.text}]</color>)
     end
   end
@@ -1437,6 +1439,7 @@ class Converter < ::Prawn::Document
     if (anchor = opts.delete :anchor)
       # FIXME won't work if inline_format is true; should instead pass through as attribute w/ link color set
       if (link_color = opts.delete :link_color)
+        # NOTE CMYK value gets flattened here, but is restored by formatted text parser
         string = %(<a anchor="#{anchor}"><color rgb="#{link_color}">#{string}</color></a>)
       else
         string = %(<a anchor="#{anchor}">#{string}</a>)
@@ -1516,12 +1519,13 @@ class Converter < ::Prawn::Document
     toc_text_transform = @theme.toc_text_transform
     sections.each do |sect|
       sect_title = sect.numbered_title
-      if (transform = @theme[%(toc_text_transform_h#{sect.level + 1})] || toc_text_transform)
+      if (transform = @theme[%(toc_h#{sect.level + 1}_text_transform)] || toc_text_transform)
         sect_title = transform_text sect_title, transform
       end
       # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
       start_page_number = page_number
       start_cursor = cursor
+      # NOTE CMYK value gets flattened here, but is restored by formatted text parser
       typeset_text %(<a anchor="#{sect_anchor = (sect.attr 'anchor') || sect.id}"><color rgb="#{toc_font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
       # we only write the label if this is a dry run
       unless scratch?
@@ -1709,32 +1713,24 @@ class Converter < ::Prawn::Document
   end
 
   def theme_font category, opts = {}
-    inherited_font = font_info
-
-    # QUESTION why don't we support per-level font family for headings?
-    family = @theme[%(#{category}_font_family)] || inherited_font[:family]
-
     if (level = opts[:level])
-      size = @theme[%(#{category}_font_size_h#{level})] || @theme[%(#{category}_font_size)] || @theme.base_font_size
+      family = @theme[%(#{category}_h#{level}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family
+      size = @theme[%(#{category}_h#{level}_font_size)] || @theme[%(#{category}_font_size)] || @theme.base_font_size
+      style = @theme[%(#{category}_h#{level}_font_style)] || @theme[%(#{category}_font_style)]
+      color = @theme[%(#{category}_h#{level}_font_color)] || @theme[%(#{category}_font_color)]
+      # NOTE global text_transform is not currently supported
+      transform = @theme[%(#{category}_h#{level}_text_transform)] || @theme[%(#{category}_text_transform)]
     else
+      inherited_font = font_info
+      family = @theme[%(#{category}_font_family)] || inherited_font[:family]
       size = @theme[%(#{category}_font_size)] || inherited_font[:size]
-    end
-
-    # QUESTION why don't we support per-level font style for headings?
-    style = (@theme[%(#{category}_font_style)] || inherited_font[:style]).to_sym
-
-    if level
-      color = @theme[%(#{category}_font_color_h#{level})] || @theme[%(#{category}_font_color)]
-    else
+      style = @theme[%(#{category}_font_style)] || inherited_font[:style]
       color = @theme[%(#{category}_font_color)]
-    end
-
-    # NOTE global text_transform is not currently supported
-    if level
-      transform = @theme[%(#{category}_text_transform_h#{level})] || @theme[%(#{category}_text_transform)]
-    else
+      # NOTE global text_transform is not currently supported
       transform = @theme[%(#{category}_text_transform)]
     end
+
+    style = style.to_sym if style
 
     prev_color, @font_color = @font_color, color if color
     prev_transform, @text_transform = @text_transform, transform if transform

@@ -67,12 +67,12 @@ link_font_color: $brand_primary_color
 heading:
   font_color: BA3925
   font_family: $base_font_family
-  font_size_h1: floor($base_font_size * 2.6)
-  font_size_h2: floor($base_font_size * 2.15)
-  font_size_h3: round($base_font_size * 1.7)
-  font_size_h4: $base_font_size_large
-  font_size_h5: $base_font_size
-  font_size_h6: $base_font_size_small
+  h1_font_size: floor($base_font_size * 2.6)
+  h2_font_size: floor($base_font_size * 2.15)
+  h3_font_size: round($base_font_size * 1.7)
+  h4_font_size: $base_font_size_large
+  h5_font_size: $base_font_size
+  h6_font_size: $base_font_size_small
   font_style: bold
   #line_height: 1.4
   # correct line height for NotoSerif metrics
@@ -119,7 +119,7 @@ sidebar:
   background_color: F2F2F2
   title_font_color: 7A2518
   title_font_family: $heading_font_family
-  title_font_size: $heading_font_size_h4
+  title_font_size: $heading_h4_font_size
   title_font_style: normal
   title_align: left
 example:

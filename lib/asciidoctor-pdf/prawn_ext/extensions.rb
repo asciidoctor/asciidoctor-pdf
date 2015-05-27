@@ -347,8 +347,8 @@ module Extensions
   # color, stroke color and line width on the document are restored.
   #
   def fill_and_stroke_bounds f_color = fill_color, s_color = stroke_color, options = {}
-    no_fill = (f_color.nil? || f_color.to_s == 'transparent')
-    no_stroke = (s_color.nil? || s_color.to_s == 'transparent')
+    no_fill = !f_color || f_color == 'transparent'
+    no_stroke = !s_color || s_color == 'transparent'
     return if no_fill && no_stroke
     save_graphics_state do
       radius = options[:radius] || 0
