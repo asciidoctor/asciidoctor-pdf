@@ -155,7 +155,7 @@ conum:
   font_family: Mplus1mn
   font_color: $literal_font_color
   font_size: $base_font_size
-  line_height: 1.35
+  line_height: 4 / 3
 image:
   align_default: left
   scaled_width_default: 0.5
