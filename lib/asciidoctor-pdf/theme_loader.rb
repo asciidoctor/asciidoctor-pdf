@@ -77,10 +77,23 @@ class ThemeLoader
   def evaluate_math expr
     return expr unless ::String === expr
     original = expr
-    # FIXME HACK turn a single negative number into an expression
-    if expr.start_with? '-'
-      expr = %(1 - #{expr[1..-1]})
-    end
+    # FIXME quick HACK to turn a single negative number into an expression
+    expr = %(1 - #{expr[1..-1]}) if expr.start_with?('-')
+    # expand measurement values (e.g., 0.5in)
+    expr = expr.gsub(/(?<=^| |\()(\d+(?:\.\d+)?)(in|mm|cm|pt)(?=$| |\))/) {
+      val = $1.to_f
+      case $2
+      when 'in'
+        val = val * 72
+      when 'mm'
+        val = val * (72 / 25.4)
+      when 'cm'
+        val = val * (720 / 25.4)
+      # default is pt
+      end
+      # QUESTION should we round the value?
+      val
+    }
     while true
       # TODO move this regular expression to a constant
       result = expr.gsub(/(-?\d+(?:\.\d+)?) *([*\/]) *(-?\d+(?:\.\d+)?)/) { $1.to_f.send($2.to_sym, $3.to_f) }
