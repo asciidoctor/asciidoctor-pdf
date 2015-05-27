@@ -22,7 +22,7 @@ font:
 page:
   background_color: ffffff
   layout: portrait
-  # multiply inches by 72 to get pt values
+  # NOTE multiply inches by 72 to get pt values
   #margin: [0.5 * 72, 0.67 * 72, 0.67 * 72, 0.67 * 72]
   margin: [0.5in, 0.67in, 0.67in, 0.67in]
   # size can be a named size (e.g., A4) or custom dimensions (e.g., [8.25in, 11.69in])
@@ -62,7 +62,12 @@ base:
 # correct line height for NotoSerif metrics
 vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
-link_font_color: 428bca
+link:
+  font_color: 428bca
+# literal is currently used for inline monospaced in prose and table cells
+literal:
+  font_color: b12146
+  font_family: Mplus1mn
 heading:
   #font_color: 181818
   font_color: $base_font_color
@@ -102,6 +107,12 @@ block:
   #margin_bottom: $vertical_rhythm
   padding: [$vertical_rhythm, $vertical_rhythm * 1.25, $vertical_rhythm, $vertical_rhythm * 1.25]
 # code is used for source blocks (perhaps change to source or listing?)
+caption:
+  font_style: italic
+  align: left
+  # FIXME perhaps set line_height instead of / in addition to margins?
+  margin_inside: $vertical_rhythm * 0.25
+  margin_outside: 0
 code:
   font_color: $base_font_color
   #font_family: LiberationMono
@@ -111,7 +122,7 @@ code:
   # LiberationMono carries extra gap below line
   #padding: [10, 10, 7.5, 10]
   #line_height: 1.45
-  font_family: Mplus1mn
+  font_family: $literal_font_family
   font_size: ceil($base_font_size)
   #padding: [$base_font_size, $code_font_size, $base_font_size, $code_font_size]
   padding: $code_font_size
@@ -120,11 +131,6 @@ code:
   border_color: cccccc
   border_radius: $base_border_radius
   border_width: 0.75
-# literal is currently used for inline monospaced in prose and table cells
-literal:
-  #font_color: c7254e
-  font_color: b12146
-  font_family: $code_font_family
 blockquote:
   font_color: $base_font_color
   font_size: $base_font_size_large
@@ -150,12 +156,6 @@ example:
 admonition:
   border_color: $base_border_color
   border_width: $base_border_width
-caption:
-  font_style: italic
-  align: left
-  # FIXME perhaps set line_height instead of / in addition to margins?
-  margin_inside: $vertical_rhythm * 0.25
-  margin_outside: 0
 conum:
   font_family: Mplus1mn
   font_color: $literal_font_color
