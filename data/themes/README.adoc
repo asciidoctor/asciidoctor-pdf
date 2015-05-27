@@ -16,7 +16,19 @@ Pull from base and cascade down, general settings for things like blocks then mo
 
 === Variables and Math
 
-Own keys, Variables are absolute, must already be defined to be used
+Own keys
+
+.Rules
+* variables are absolute
+* must already be defined to be used
+* Values less than 1 must have a leading 0 before the decimal point (e.g. 0.9).
+* Mathmatical operators must be surrounded by a single space on each side (e.g. 2 * 2)
+* Mathmatical operators are `+, -, /, *`
+* Measurements are supported (in, cm, mm, pt (optional))
+* Three functions
+** ceil(<value>)
+** floor(<value>)
+** round(<value>)
 
 == Base Theme Settings
 
@@ -76,11 +88,39 @@ These keys must have a value set or the parser won't work
 
 == Colors
 
-Use hex
+Use hex (with or without hash, CMKY, transparent)
 
 == Fonts
 
-Use family name
+Where fonts can be set:
+
+|===
+|Key Name |Type |Values
+
+|font_family
+|built in or registered
+|
+
+|font_size
+|measurement
+|
+
+|font_color
+|color
+|
+
+|font_style
+|constant
+|bold, italic, bold_italic, normal
+
+|text_transform
+|constant
+|uppercase, lowercase, none, doesn't work for body or for foot table cells
+
+|line_height (sometimes)
+|number (scale value)
+|
+|===
 
 == Spacings
 
