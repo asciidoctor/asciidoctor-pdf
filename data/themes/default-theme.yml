@@ -61,14 +61,14 @@ heading:
   #font_color: 181818
   font_color: $base_font_color
   font_family: $base_font_family
-  # h1 is used for document title
-  font_size_h1: floor($base_font_size * 2.6)
-  # h2 is used for chapter title
-  font_size_h2: floor($base_font_size * 2.15)
-  font_size_h3: round($base_font_size * 1.7)
-  font_size_h4: $base_font_size_large
-  font_size_h5: $base_font_size
-  font_size_h6: $base_font_size_small
+  # h1 is used for part titles
+  h1_font_size: floor($base_font_size * 2.6)
+  # h2 is used for chapter titles
+  h2_font_size: floor($base_font_size * 2.15)
+  h3_font_size: round($base_font_size * 1.7)
+  h4_font_size: $base_font_size_large
+  h5_font_size: $base_font_size
+  h6_font_size: $base_font_size_small
   font_style: bold
   #line_height: 1.4
   # correct line height for NotoSerif metrics
@@ -78,10 +78,10 @@ heading:
 title_page:
   align: right
   title_top: 55%
-  title_font_size: $heading_font_size_h1
+  title_font_size: $heading_h1_font_size
   title_font_color: 999999
   title_line_height: 0.9
-  subtitle_font_size: $heading_font_size_h3
+  subtitle_font_size: $heading_h3_font_size
   subtitle_font_style: bold_italic
   subtitle_line_height: 1
   authors_margin_top: $base_font_size * 1.25
@@ -133,7 +133,7 @@ sidebar:
   background_color: eeeeee
   title_font_color: $heading_font_color
   title_font_family: $heading_font_family
-  title_font_size: $heading_font_size_h4
+  title_font_size: $heading_h4_font_size
   title_font_style: $heading_font_style
   title_align: center
 example:
