@@ -1709,32 +1709,24 @@ class Converter < ::Prawn::Document
   end
 
   def theme_font category, opts = {}
-    inherited_font = font_info
-
-    # QUESTION why don't we support per-level font family for headings?
-    family = @theme[%(#{category}_font_family)] || inherited_font[:family]
-
     if (level = opts[:level])
+      family = @theme[%(#{category}_h#{level}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family
       size = @theme[%(#{category}_h#{level}_font_size)] || @theme[%(#{category}_font_size)] || @theme.base_font_size
-    else
-      size = @theme[%(#{category}_font_size)] || inherited_font[:size]
-    end
-
-    # QUESTION why don't we support per-level font style for headings?
-    style = (@theme[%(#{category}_font_style)] || inherited_font[:style]).to_sym
-
-    if level
+      style = @theme[%(#{category}_h#{level}_font_style)] || @theme[%(#{category}_font_style)]
       color = @theme[%(#{category}_h#{level}_font_color)] || @theme[%(#{category}_font_color)]
-    else
-      color = @theme[%(#{category}_font_color)]
-    end
-
-    # NOTE global text_transform is not currently supported
-    if level
+      # NOTE global text_transform is not currently supported
       transform = @theme[%(#{category}_h#{level}_text_transform)] || @theme[%(#{category}_text_transform)]
     else
+      inherited_font = font_info
+      family = @theme[%(#{category}_font_family)] || inherited_font[:family]
+      size = @theme[%(#{category}_font_size)] || inherited_font[:size]
+      style = @theme[%(#{category}_font_style)] || inherited_font[:style]
+      color = @theme[%(#{category}_font_color)]
+      # NOTE global text_transform is not currently supported
       transform = @theme[%(#{category}_text_transform)]
     end
+
+    style = style.to_sym if style
 
     prev_color, @font_color = @font_color, color if color
     prev_transform, @text_transform = @text_transform, transform if transform
