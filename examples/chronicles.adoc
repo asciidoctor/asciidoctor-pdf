@@ -16,7 +16,7 @@ project's true power.
 :toclevels: 3
 ifdef::backend-pdf[]
 :pagenums:
-:pygments-style: bw
+:pygments-style: tango
 :source-highlighter: pygments
 endif::[]
 // URIs:
@@ -340,7 +340,8 @@ point.
 Back to the previous example, suppose that we have both a field and a method with the same name, as in:
 
 .Java class with a field and method that share the same name
-[source,java]
+//FIXME source highlighting not working inside the admonition block
+//[source,java]
 ----
 public class Foo {
   public String bar;
@@ -355,15 +356,17 @@ public class Foo {
 Hence, the following Golo code will resolve the +bar()+ method, not the +bar+ field:
 
 .Golo picks the method over the field with the same name
+//FIXME source highlighting not working inside the admonition block
+//[source,golo]
 ----
 let foo = Foo()
 
-# Write the field
-foo: bar("baz")
+foo: bar("baz") # <1>
 
-# Calls the bar() method
-println(foo: bar())
+println(foo: bar()) # <2>
 ----
+<1> Writes the field
+<2> Calls the `bar()` method
 ====
 
 <<<
