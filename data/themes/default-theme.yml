@@ -28,7 +28,13 @@ page:
   # size can be a named size (e.g., A4) or custom dimensions (e.g., [8.25in, 11.69in])
   size: Letter
 base:
+  # color as hex string (leading # is optional)
   font_color: 333333
+  # color as RGB array
+  #font_color: [51, 51, 51]
+  # color as CMYK array (approximated)
+  #font_color: [0, 0, 0, 0.92]
+  #font_color: [0, 0, 0, 92%]
   font_family: NotoSerif
   # choose one of these font_size/line_height_length combinations
   #font_size: 14

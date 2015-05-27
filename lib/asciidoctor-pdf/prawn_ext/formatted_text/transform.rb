@@ -51,6 +51,7 @@ class FormattedTextTransform
           previous_fragment_is_text = false
         end
       when :text, :entity
+        # TODO could avoid this redundant type check by splitting :text and :entity cases
         node_text = if node_type == :text
           node[:value]
         elsif node_type == :entity
@@ -111,12 +112,25 @@ class FormattedTextTransform
     when :color
       if !fragment[:color]
         if (rgb = attrs[:rgb])
-          if rgb[0] == '#'
-            rgb = rgb[1..-1]
+          case rgb.chr
+          when '#'
+            fragment[:color] = rgb[1..-1]
+          when '['
+            # treat value as CMYK array (e.g., "[50, 100, 0, 0]")
+            fragment[:color] = rgb[1..-1].chomp(']').split(', ').map(&:to_i)
+            # ...or we could honor an rgb array too
+            #case (vals = rgb[1..-1].chomp(']').split(', ')).size
+            #when 4
+            #  fragment[:color] = vals.map(&:to_i)
+            #when 3
+            #  fragment[:color] = vals.map {|e| '%02X' % e.to_i }.join
+            #end
+          else
+            fragment[:color] = rgb
           end
-          fragment[:color] = rgb
+        # QUESTION should we even support r,g,b and c,m,y,k as individual values?
         elsif (r = attrs[:r]) && (g = attrs[:g]) && (b = attrs[:b])
-          fragment[:color] = [r, g, b].map {|e| '%02x' % e.to_i }.join
+          fragment[:color] = [r, g, b].map {|e| '%02X' % e.to_i }.join
         elsif (c = attrs[:c]) && (m = attrs[:m]) && (y = attrs[:y]) && (k = attrs[:k])
           fragment[:color] = [c.to_i, m.to_i, y.to_i, k.to_i]
         end

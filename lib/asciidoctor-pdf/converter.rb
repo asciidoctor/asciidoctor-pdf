@@ -1185,6 +1185,7 @@ class Converter < ::Prawn::Document
 
   def convert_inline_callout node
     if (conum_color = @theme.conum_font_color)
+      # NOTE CMYK value gets flattened here, but is restored by formatted text parser
       %(<color rgb="#{conum_color}">#{conum_glyph node.text.to_i}</color>)
     else
       node.text
@@ -1196,6 +1197,7 @@ class Converter < ::Prawn::Document
       #text = node.document.footnotes.find {|fn| fn.index == index }.text
       %( [#{node.text}])
     elsif node.type == :xref
+      # NOTE footnote reference not found
       %( <color rgb="FF0000">[#{node.text}]</color>)
     end
   end
@@ -1437,6 +1439,7 @@ class Converter < ::Prawn::Document
     if (anchor = opts.delete :anchor)
       # FIXME won't work if inline_format is true; should instead pass through as attribute w/ link color set
       if (link_color = opts.delete :link_color)
+        # NOTE CMYK value gets flattened here, but is restored by formatted text parser
         string = %(<a anchor="#{anchor}"><color rgb="#{link_color}">#{string}</color></a>)
       else
         string = %(<a anchor="#{anchor}">#{string}</a>)
@@ -1522,6 +1525,7 @@ class Converter < ::Prawn::Document
       # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
       start_page_number = page_number
       start_cursor = cursor
+      # NOTE CMYK value gets flattened here, but is restored by formatted text parser
       typeset_text %(<a anchor="#{sect_anchor = (sect.attr 'anchor') || sect.id}"><color rgb="#{toc_font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
       # we only write the label if this is a dry run
       unless scratch?
