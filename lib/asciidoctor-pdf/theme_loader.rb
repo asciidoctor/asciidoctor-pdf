@@ -8,6 +8,7 @@ class ThemeLoader
   DataDir = ::File.expand_path ::File.join(::File.dirname(__FILE__), '..', '..', 'data')
   ThemesDir = ::File.join DataDir, 'themes'
   FontsDir = ::File.join DataDir, 'fonts'
+  HexColorValueRx = /_color: (?<quote>"|'|)#?(?<value>[A-Za-z0-9]{3,6})\k<quote>$/
 
   def self.resolve_theme_file theme_name = nil, theme_path = nil
     theme_name ||= 'default'
@@ -31,7 +32,8 @@ class ThemeLoader
   end
 
   def self.load_file filename
-    self.new.load (::SafeYAML.load_file filename)
+    data = ::IO.read(filename).each_line.map {|l| l.sub(HexColorValueRx, '_color: \'\k<value>\'') }.join
+    self.new.load(::SafeYAML.load(data))
   end
 
   def load hash
@@ -112,7 +114,6 @@ class ThemeLoader
   def to_hex value
     str = value.to_s
     return str if str == 'transparent'
-    str = str[1..-1] if str.start_with? '#'
     hex = case str.size
     when 6
       str
