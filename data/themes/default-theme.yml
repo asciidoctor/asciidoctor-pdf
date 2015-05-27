@@ -19,8 +19,6 @@ font:
     # NOTE M+ 1p doesn't support all CJK characters, but it at least has some coverage
     # NOTE M+ 1p provides the arrows for ->, <-, => and <=
     - Mplus1pMultilingual
-brand:
-  primary_color: 428bca
 page:
   background_color: ffffff
   layout: portrait
@@ -58,7 +56,7 @@ base:
 # correct line height for NotoSerif metrics
 vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
-link_font_color: $brand_primary_color
+link_font_color: 428bca
 heading:
   #font_color: 181818
   font_color: $base_font_color
