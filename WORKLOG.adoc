@@ -10,6 +10,8 @@
 * create utility method to get % offset of page as y value (option to constrain to bounds)
 
 * document converter assignment in convert_content_for_block method
+* support transparency for colors
+* support generic color (or value) attribute in formatted text parser instead of specific color systems (rgb, cmyk)
 * file issue to import PDF page using block image macro
 * **allow theme_font to set line_height** (honor this setting from document)
   - theme setting for code line height (currently using base_line_height)
