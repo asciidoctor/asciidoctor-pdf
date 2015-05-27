@@ -25,7 +25,8 @@ page:
   background_color: ffffff
   layout: portrait
   # multiply inches by 72 to get pt values
-  margin: [0.5 * 72, 0.67 * 72, 0.67 * 72, 0.67 * 72]
+  #margin: [0.5 * 72, 0.67 * 72, 0.67 * 72, 0.67 * 72]
+  margin: [0.5in, 0.67in, 0.67in, 0.67in]
   # size can be a named size (e.g., A4) or custom dimensions (e.g., [8.25in, 11.69in])
   size: Letter
 base:
