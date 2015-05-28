@@ -1,0 +1,547 @@
+= Asciidoctor PDF Theming Guide
+Dan Allen <https://github.com/mojavelinux>
+:toc: preamble
+:icons: font
+:idprefix:
+:idseparator: -
+:window: _blank
+
+////
+Topics remaining to document:
+* additional fonts provided by Asciidoctor PDF
+* images
+* title page layout
+* title image
+* title page background image
+* keys
+* how to apply the theme
+////
+
+The theming system in Asciidoctor PDF is used to control the layout and styling of the PDF file that Asciidoctor PDF generates from AsciiDoc.
+The theme is driven by a YAML-based configuration file.
+This document explains how the theming system works, how to define a custom theme and how to enable the theme when running Asciidoctor PDF.
+
+== Language Overview
+
+The theme language in Asciidoctor PDF is based on the http://en.wikipedia.org/wiki/YAML[YAML] data format and incorporates many concepts from CSS and SASS.
+Therefore, if you have a background in web design, the theme language should be immediately familiar to you.
+
+Like CSS, themes have both selectors and properties, but only a fraction of what CSS supports.
+Unlike CSS, all selectors are implicit (e.g., `heading`), so you customize the theme primarily by manipulating pre-defined property values (e.g., `font_color`).
+
+A theme (or style) is described in a YAML-based data format and stored in a dedicated theme file.
+YAML is a human-friendly data format that resembles CSS and helps to describe the theme.
+The theme language adds some extra features to YAML, such as variables, basic math and color values.
+These enhancements will be explained in detail in later sections.
+
+The theme file must be named _<name>-theme.yml_, where `<name>` is the name of the theme.
+
+Here's an example of a basic theme file:
+
+.basic-theme.yml
+[source,yaml]
+----
+page:
+  layout: portrait
+  margin: [0.75in, 1in, 0.75in, 1in]
+  size: Letter
+base:
+  font_color: #333333
+  font_family: Times-Roman
+  font_size: 12
+  line_height_length: 17
+  line_height: $base_line_height_length / $base_font_size
+vertical_rhythm: $base_line_height_length
+heading:
+  font_color: #262626
+  font_size: 17
+  font_style: bold
+  line_height: 1.2
+  margin_bottom: $vertical_rhythm
+link:
+  font_color: #002FA7
+----
+
+When creating a new theme, you only have to define the keys you want to override from the base theme.
+The converter uses the information from this map to help construct the PDF.
+All the available keys are documented in <<keys>>.
+
+Keys may be nested to an arbitrary depth to eliminate redundant prefixes (an approach inspired by SASS).
+Once the theme is loaded, all keys are flattened into a single map of qualified keys.
+Nesting is simply a shorthand way of organizing the keys.
+In the end, a theme is just a map of key/value pairs.
+
+Nested keys are adjoined to their parent key with an underscore (`_`).
+This means the selector part (e.g., `link`) is combined with the property name (e.g., `font_color`) into a single, qualified key (e.g., `link_font_color`).
+
+For example, let's assume we want to set the base (i.e., global) font size and color.
+These keys may be written longhand:
+
+[source,yaml]
+----
+base_font_color: #333333
+base_font_family: Times-Roman
+base_font_size: 12
+----
+
+Or, to avoid having to type the prefix `base_` multiple times, the keys may be written hierarchically:
+
+[source,yaml]
+----
+base:
+  font_color: #333333
+  font_family: Times-Roman
+  font_size: 12
+----
+
+Or even:
+
+[source,yaml]
+----
+base:
+  font:
+    color: #333333
+    family: Times-Roman
+    size: 12
+----
+
+Each level of nesting must be indented by twice the amount of indentation of the parent level.
+Also note the placement of the colon after each key name.
+
+== Values
+
+The value of a key may be one of the following types:
+
+* String
+  - Font family name (e.g., Roboto)
+  - Font style (normal, bold, italic, bold_italic)
+  - Alignment (left, center, right, justify)
+  - Color as hex string (e.g., #ffffff)
+  - Image path
+* Number (integer or float) with optional units
+* Array
+  - Color as RGB array (e.g., [51, 51, 51])
+  - Color CMYK array (e.g., [50, 100, 0, 0])
+  - Margin (e.g., [1in, 1in, 1in, 1in])
+  - Padding (e.g., [1in, 1in, 1in, 1in])
+* Variable reference (e.g., $base_font_color)
+* Math expression
+
+Note that keys almost always require a value of a specific type, as documented in <<keys>>.
+
+=== Inheritance
+
+Like CSS, inheritance is a key feature in the Asciidoctor PDF theme language.
+For many of the properties, if a key is not specified, the key inherits the value applied to the parent content in the content hierarchy.
+This behavior saves you from having to explicitly specify properties unless you want to override the inherited value.
+
+The following keys are inherited:
+
+* font_family
+* font_color
+* font_size
+* font_style
+* line_height (currently some exceptions)
+* text_transform (only for headings)
+* margin_bottom (falls back to $vertical_rhythm)
+
+.Heading Inheritance
+****
+Headings are special in that they inherit starting from a specific heading level (e.g., `heading_font_size_h2`) to the heading category (e.g., `heading_font_size`) and then directly to the base value (e.g., `base_font_size`), skipping any enclosing context.
+****
+
+=== Variables
+
+To save you from having to type the same value in your theme over and over, or to allow you to base one value on another, the theme language supports variables.
+Variables consist of the key name preceded by a dollar (`$`) (e.g., `$base_font_size`).
+Any qualified key that has already been defined can be referenced in the value of another key.
+(As soon as the key is assigned, it's available to be used as a variable).
+
+For example, once the following line is processed,
+
+[source,yaml]
+----
+base:
+  font_color: #333333
+----
+
+the variable `$base_font_color` will be available for use in subsequent lines and will resolve to `#333333`.
+
+Let's say you want to make the font color of the sidebar title the same as the heading font color.
+Just assign the value `$heading_font_color` to the `$sidebar_title_font_color`.
+
+[source,yaml]
+----
+heading:
+  font_color: #191919
+sidebar:
+  title:
+    font_color: $heading_font_color
+----
+
+You can also use variables in math expressions to use one value to build another.
+This is commonly done to set font sizes proportionally.
+It also makes it easy to test different values very quickly.
+
+[source,yaml]
+----
+base:
+  font_size: 12
+  font_size_large: $base_font_size * 1.25
+  font_size_small: $base_font_size * 0.85
+----
+
+We'll cover more about math expressions in the next section.
+
+=== Math Expressions & Functions
+
+The theme language supports basic math operations to support calculated values.
+The following table lists the supported operations and the corresponding operator for each.
+
+[%header%autowidth]
+|===
+|Operation |Operator
+
+|multiply
+|*
+
+|divide
+|/
+
+|add
+|+
+
+|subtract
+|-
+|===
+
+NOTE: Like programming languages, multiple and divide take precedence over add and subtract.
+
+The operator must always be surrounded by a space on either side.
+Here's an example of a math expression with fixed values.
+
+[source,yaml]
+----
+conum:
+  line_height: 4 / 3
+----
+
+Variables may be used in place of numbers anywhere in the expression:
+
+[source,yaml]
+----
+base:
+  font_size: 12
+  font_size_large: $base_font_size * 1.25
+----
+
+Values used in a math expression are automatically coerced to a float value before the operation.
+If the result of the expression is an integer, the value is coerced to an integer afterwards.
+
+IMPORTANT: Numeric values less than 1 must have a 0 before the decimal point (e.g., 0.85).
+
+The theme language also supports several functions for rounding the result of a math expression.
+The following functions may be used if they surround the whole value or expression for a key.
+
+round(...):: Rounds the number to the nearest half integer.
+floor(...):: Rounds the number up to the next integer.
+ceil(...):: Rounds the number down the previous integer.
+
+You might use these functions in font size calculations so that you get more exact values.
+
+[source,yaml]
+----
+base:
+  font_size: 12.5
+  font_size_large: ceil($base_font_size * 1.25)
+----
+
+=== Measurement Units
+
+Several of the keys require a value in points (pt), the unit of measure for the PDF canvas.
+A point is defined as 1/72 of an inch.
+However, us humans like to think in real world units like inches (in), centimeters (cm) or millimeters (mm).
+You can let the theme to this conversion for you automatically by adding a unit notation next to any number.
+
+The following units are supported:
+
+[%header%autowidth]
+|===
+|Unit |Suffix
+
+|Inches
+|in
+
+|Centimeter
+|cm
+
+|Millimeter
+|mm
+
+|Points
+|pt
+|===
+
+Here's an example of how you can use inches to define the page margins:
+
+[source,yaml]
+----
+page:
+  margin: [0.75in, 1in, 0.75in, 1in]
+----
+
+=== Colors
+
+The theme language supports color values in three formats:
+
+Hex:: A string of 3 or 6 characters with an optional leading `#`.
+RGB:: An array of numeric values ranging from 0 to 255.
+CMYK:: An array of numeric values ranging from 0 to 1 or from 0% to 100%.
+
+==== Hex
+
+The hex color value is likely most familiar to web developers.
+The value must be either 3 or 6 characters (case insensitive) with an optional leading hash (`#`).
+
+The following are all equivalent values for the color red:
+
+[%autowidth,cols=4]
+|===
+|f00
+|#f00
+|ff0000
+|#ff0000
+|F00
+|#F00
+|FF0000
+|#FF0000
+|===
+
+Here's how a hex color value appears in the theme file:
+
+[source,yaml]
+----
+base:
+  font_color: #ff0000
+----
+
+==== RGB
+
+An RGB array value must be three numbers between 0 and 255.
+The values must be separated by commas and be surrounded by square brackets.
+
+NOTE: An RGB array is automatically converted to a hex string internally, so there's no difference between ff0000 and [255, 0, 0].
+
+Here's how to specify the color red in RGB:
+
+* [255, 0, 0]
+
+Here's how a RGB color value appears in the theme file:
+
+[source,yaml]
+----
+base:
+  font_color: [255, 0, 0]
+----
+
+==== CMYK
+
+A CMYK array value must be four numbers ranging from 0 and 1 or from 0% to 100%.
+The values must be separated by commas and be surrounded by square brackets.
+
+Unlike the RGB array, the CMYK array _is not_ converted to a hex string internally.
+PDF has native support for CMYK colors, so you can preserve the original color values in the final PDF.
+
+Here's how to specify the color red in CMYK:
+
+* [0, 0.99, 1, 0]
+* [0, 99%, 100%, 0]
+
+Here's how a CMYK color value appears in the theme file:
+
+[source,yaml]
+----
+base:
+  font_color: [0, 0.99, 1, 0]
+----
+
+=== Images
+
+PENDING
+
+== Fonts
+
+You can select from built-in PDF fonts or custom fonts loaded from TrueType font (TTF) files.
+If you want to use custom fonts, you must first declare them in your theme file.
+
+=== Built-in Fonts
+
+The names of the built-in fonts (for general-purpose text) are as follows:
+
+[%header%autowidth]
+|===
+|Font Name |Font Family
+
+|Helvetica
+|sans-serif
+
+|Times-Romain
+|serif
+
+|Courier
+|monospace
+|===
+
+Using a built-in font requires no additional files.
+You can use the key anywhere a `font_family` property is accepted in the theme file.
+For example:
+
+[source,yaml]
+----
+base:
+  font_family: Times-Roman
+----
+
+However, when you use a built-in font, the characters that you use in your document are limited to the WINANSI (http://en.wikipedia.org/wiki/Windows-1252[Windows-1252]) code set.
+WINANSI includes most of the characters needed for writing in Western languages (English, French, Spanish, etc).
+For anything outside of that, PDF is BYOF (Bring Your Own Font).
+
+Even though the built-in fonts require the content to be encoded in WINANSI, _you still type your AsciiDoc document in UTF-8_.
+Asciidoctor PDF encodes the content into WINANSI when building the PDF.
+Any characters in your AsciiDoc document that cannot be encoded will be replaced with an underscore (`_`).
+
+=== Custom Fonts
+
+The limited character set of WINANSI, or the bland look of the built-in fonts, may motivate you to load your own font.
+Custom fonts can enhance the look of your PDF theme substantially.
+
+To start, you need to find a collection of TTF file of the font you want to use.
+A collection typically consists of all four styles of a font:
+
+* normal
+* italic
+* bold
+* bold_italic
+
+You need all four styles to support AsciiDoc content properly.
+_Asciidoctor PDF cannot italicize a font that is not italic like a browser can._
+
+Once you've obtained the TTF files, put them into a directory in your project where you want to store the fonts.
+It's recommended that you name them consistently so it's easier to type the names in the theme file.
+
+Let's assume the name of the font is https://github.com/google/roboto/tree/master/out/RobotoTTF[Roboto].
+Name the files as follows:
+
+* roboto-normal.ttf (_originally Roboto-Regular.ttf_)
+* roboto-italic.ttf (_originally Roboto-Italic.ttf_)
+* roboto-bold.ttf (_originally Roboto-Bold.ttf_)
+* roboto-bold_italic.ttf (_originally Roboto-BoldItalic.ttf_)
+
+Next, declare the font under the `font_catalog` key at the top of your theme file, giving it a unique key (e.g., `Roboto`).
+
+[source,yaml]
+----
+font:
+  catalog:
+    Roboto:
+      normal: roboto-normal.ttf
+      italic: roboto-italic.ttf
+      bold: roboto-bold.ttf
+      bold_italic: roboto-bold_italic.ttf
+----
+
+You can use the key you gave to the font in the font catalog anywhere a `font_family` property is accepted in the theme file.
+For instance, to use the Roboto font for all headings, you'd use:
+
+[source,yaml]
+----
+heading:
+  font_family: Roboto
+----
+
+When you execute Asciidoctor PDF, you need to specify the directory where the fonts reside using the `pdf-fontsdir` attribute:
+
+ $ asciidoctor-pdf -a pdf-style=basic-theme.yml -a pdf-fontsdir=path/to/fonts document.adoc
+
+WARNING: Currently, all fonts referenced by the theme need to be present in the directory specified by the `pdf-fontsdir` attribute.
+
+You can add any number of fonts to the catalog.
+Each font must be assigned a unique key, as shown here:
+
+[source,yaml]
+----
+font:
+  catalog:
+    Roboto:
+      normal: roboto-normal.ttf
+      italic: roboto-italic.ttf
+      bold: roboto-bold.ttf
+      bold_italic: roboto-bold_italic.ttf
+    RobotoLight:
+      normal: roboto-light-normal.ttf
+      italic: roboto-light-italic.ttf
+      bold: roboto-light-bold.ttf
+      bold_italic: roboto-light-bold_italic.ttf
+----
+
+=== Fallback fonts
+
+If one of your fonts is missing a character that is used in a document, such as special symbols, you can tell Asciidoctor PDF to retrieve the character from a fallback font.
+You only need to specify one fallback font...typically one that has a full set of symbols.
+
+Like with other custom fonts, you first need to declare the fallback font.
+Let's choose https://android.googlesource.com/platform/frameworks/base/+/master/data/fonts/[Droid Sans Fallback].
+You can map all the styles to a single font file (since bold and italic don't usually make sense for symbols).
+
+[source,yaml]
+----
+font:
+  catalog:
+    Roboto:
+      normal: roboto-normal.ttf
+      italic: roboto-italic.ttf
+      bold: roboto-bold.ttf
+      bold_italic: roboto-bold_italic.ttf
+    DroidSansFallback:
+      normal: droid-sans-fallback.ttf
+      italic: droid-sans-fallback.ttf
+      bold: droid-sans-fallback.ttf
+      bold_italic: droid-sans-fallback.ttf
+----
+
+Next, assign the key to the `fallbacks` key under the `font_catalog` key.
+Be sure to surround the key name in square brackets as shown below.
+
+[source,yaml]
+----
+font:
+  catalog:
+    Roboto:
+      normal: roboto-normal.ttf
+      italic: roboto-italic.ttf
+      bold: roboto-bold.ttf
+      bold_italic: roboto-bold_italic.ttf
+    DroidSansFallback:
+      normal: droid-sans-fallback.ttf
+      italic: droid-sans-fallback.ttf
+      bold: droid-sans-fallback.ttf
+      bold_italic: droid-sans-fallback.ttf
+  fallbacks: [DroidSansFallback]
+----
+
+TIP: If you are using more than one fallback font, separate each key name by a comma.
+
+That's it!
+Now you're covered.
+You don't need to reference the fallback font anywhere else in your theme file to use it.
+
+CAUTION: Using a fallback font does slow down PDF generation slightly.
+It's best to select fonts that have all the characters you need.
+
+== Keys
+
+PENDING
+
+== Applying a Theme
+
+PENDING

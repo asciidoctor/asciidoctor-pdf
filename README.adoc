@@ -235,10 +235,12 @@ The pain of the DocBook toolchain should be melting away about now.
 == Themes
 
 The layout and styling of the PDF is driven by a YAML configuration file.
+To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theme Guide>>.
 
-See the files [file]_default-theme.yml_ and [file]_asciidoctor-theme.yml_ found in the [file]_data/themes_ directory for examples.
+You can use the built-in theme files, [file]_default-theme.yml_ and [file]_asciidoctor-theme.yml_, found in the [file]_data/themes_ directory, as examples.
 
-Specify the path to an alternate theme file with the `pdf-style` attribute. For example to use the built-in _asciidoctor_ theme:
+Specify the path to an alternate theme file with the `pdf-style` attribute.
+For example to use the built-in _asciidoctor_ theme:
 
  $ ./bin/asciidoctor-pdf -a pdf-style=asciidoctor examples/example.adoc
  
