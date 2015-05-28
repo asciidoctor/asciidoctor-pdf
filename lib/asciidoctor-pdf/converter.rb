@@ -173,7 +173,7 @@ class Converter < ::Prawn::Document
     end
     @text_transform = nil
     @font_color = theme.base_font_color || '000000'
-    @fallback_fonts = theme.font_fallbacks || []
+    @fallback_fonts = [*theme.font_fallbacks]
     init_scratch_prototype
     self
   end
