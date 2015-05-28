@@ -455,7 +455,7 @@ class Converter < ::Prawn::Document
 
   def convert_quote_or_verse node
     add_dest_for_block node if node.id
-    border_width = @theme.blockquote_border_width
+    border_width = @theme.blockquote_border_width || 0
     #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
     keep_together do |box_height = nil|
