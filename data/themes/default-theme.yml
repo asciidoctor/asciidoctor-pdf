@@ -185,7 +185,9 @@ description_list:
   term_font_style: italic
   description_indent: $horizontal_rhythm * 1.25
 outline_list:
-  indent: $horizontal_rhythm * 1.25
+  indent: $horizontal_rhythm * 1.5
+  # NOTE item_spacing applies to list items that do not have complex content
+  item_spacing: $vertical_rhythm / 2
 table:
   background_color: ffffff
   #head_background_color: <hex value>
