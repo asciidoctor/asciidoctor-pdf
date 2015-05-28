@@ -109,6 +109,8 @@ class ThemeLoader
         val = val * (72 / 25.4)
       when 'cm'
         val = val * (720 / 25.4)
+      #when '%'
+      #  val = val / 100.0
       # default is pt
       end
       # QUESTION should we round the value?
