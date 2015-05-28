@@ -1431,8 +1431,8 @@ class Converter < ::Prawn::Document
 
   # NOTE inline_format is true by default
   def layout_prose string, opts = {}
-    margin_top = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.prose_margin_top || 0
-    margin_bottom = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom || @theme.vertical_rhythm
+    top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.prose_margin_top || 0
+    bottom_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom || @theme.vertical_rhythm
     if (transform = (opts.delete :text_transform) || @text_transform)
       string = transform_text string, transform
     end
@@ -1447,16 +1447,14 @@ class Converter < ::Prawn::Document
     end
     # preserve leading space using non-breaking space chars
     string = preserve_indentation string if opts.delete :preserve
-    #move_down margin_top
-    self.margin_top margin_top
+    margin_top top_margin
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
       color: @font_color,
       # NOTE normalize makes endlines soft (replaces "\n" with ' ')
       inline_format: [{ normalize: (opts.delete :normalize) != false }],
       align: (@theme.base_align || :justify).to_sym
     }.merge(opts)
-    #move_down margin_bottom
-    self.margin_bottom margin_bottom
+    margin_bottom bottom_margin
   end
 
   # Render the caption and return the height of the rendered content
