@@ -53,18 +53,22 @@ class ThemeLoader
 
   def load hash
     hash.inject(::OpenStruct.new) do |data, (key, val)|
-      if ::Hash === val
-        val.each do |key2, val2|
-          data[%(#{key}_#{key2})] = key2.end_with?('_color') ? to_color(evaluate(val2, data)) : evaluate(val2, data)
-        end
-      else
-        data[key] = key.end_with?('_color') ? to_color(evaluate(val, data)) : evaluate(val, data)
-      end
-      data
+      process_entry(key, val, data)
     end
   end
 
   private
+
+  def process_entry key, val, data
+    if key != 'font_catalog' && ::Hash === val
+      val.each do |key2, val2|
+        process_entry(%(#{key}_#{key2}), val2, data)
+      end
+    else
+      data[key] = key.end_with?('_color') ? to_color(evaluate(val, data)) : evaluate(val, data)
+    end
+    data
+  end
 
   def evaluate expr, vars
     case expr
