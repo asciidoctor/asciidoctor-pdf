@@ -5,12 +5,19 @@
 
 == TODO
 
-* comb list and file issues
-
-* create utility method to get % offset of page as y value (option to constrain to bounds)
-
 * source highlighting (with Pygments) not working inside an admonition block (see chronicles.adoc)
   - don't source highlight in dry run
+* need dedicated theme styles for paragraph spacings, etc
+* can't put margin top on chapter (chapter_top?)
+* implement first-line indent for paragraphs (seems like conflict w/ our text formatter)
+  - option to not indent first paragraph in section
+  - if you indent, perhaps drop the margin between paragraphs?
+* don't indent and draw line next to quote block unless width > 0 or color != transparent
+* subtitles for chapters
+* part titles need their own page and styling
+* add color calculation functions in theme file (like in SASS)
+* remove asciidoctor-theme.yml until we're ready to recreate it
+* create utility method to get % offset of page as y value (option to constrain to bounds)
 * document converter assignment in convert_content_for_block method
 * support transparency for colors
 * support generic color (or value) attribute in formatted text parser instead of specific color systems (rgb, cmyk)
@@ -24,15 +31,13 @@
 * prevent title-logo-image from spilling to next page (same with title content)
 * support font family and style for heading level
 * document what each keep_together is doing / expects
-* remove .to_s calls on color values now that theme normalizes them (perhaps should be a post-load theme procedure)
-  - do CMYK values work for colors? no, but we should support an array value
 * split prawn_ext/extensions.rb into individual modules and include them
 * code cleanups (regexps to constants, nil? checks and such)
   - fix the background color mess in convert_table
   - extract regex in ThemeLoader into constant
   - remove dead code dealing with margins
   - remove unused theme / font files
-* theme keys should be flatted to arbitrary depth
+  - decide how we want to format theme_loader.rb (should be consistent)
 * enable line above (or below?) title on title page (file issue)
 * text_transform for table foot row
 * file upstream issue for Prawn to warn if it can't resolve a glpyh (or monkeypatch it)
@@ -99,6 +104,7 @@
 * we could eliminate some of the tags we're currently matching in the formatted text parser (e.g., link)
 * add Preamble to TOC
 * NOTE prawn-svg supports loading from a URI
+* should we support % as a unit in theme (divides by 100 and sets float value)?
 
 * enable pagenums attribute by default (may require changes to how we handle attributes)
 * start page numbering on first page if no title page
@@ -147,6 +153,7 @@
 * custom subs in verbatim blocks
 * captions/titles on all blocks that support them
 * make font size and character spacing scaling of inline code part of theme
+* customizable character spacing
 * might be able to avoid dry run for listing/literal in obvious cases
 * implement index of index terms
 * bw theme for CodeRay to match output of Pygments bw
@@ -171,12 +178,12 @@
 
 == Design
 
-* remove/reduce padding above heading at start of page?
+* remove/reduce padding above heading when it appears at the start of a page?
 * Default line height?
-* Heading font family / size / color
 * Should the heading sizes be calculated according to the default font size?
 * Page margins
 * Body indentation?
+  - recto / verso indentation?
 * Size of masthead / footer
 * Line separating masthead / footer?
 * Separate title page
@@ -186,9 +193,6 @@
 === Theme
 
 * keep or drop base_ prefix in theme?
-* does font_size_h* belong in headings section or base?
-* how should we define custom fonts and paths to them?
-* allow # in front of font color in theme file?
 
 == Resources
 
