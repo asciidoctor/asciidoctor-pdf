@@ -36,14 +36,30 @@ module Extensions
 
   # Returns the width of the left margin for the current page
   #
-  def left_margin
+  def page_margin_left
     page.margins[:left]
   end
+  # deprecated
+  alias :left_margin :page_margin_left
 
   # Returns the width of the right margin for the current page
   #
-  def right_margin
+  def page_margin_right
     page.margins[:right]
+  end
+  # deprecated
+  alias :right_margin :page_margin_right
+
+  # Returns the width of the top margin for the current page
+  #
+  def page_margin_top
+    page.margins[:top]
+  end
+
+  # Returns the width of the bottom margin for the current page
+  #
+  def page_margin_bottom
+    page.margins[:bottom]
   end
 
   # Returns whether the cursor is at the top of the page (i.e., margin box)

@@ -37,6 +37,8 @@ class Converter < ::Prawn::Document
     warning:   { key: 'fa-exclamation-triangle', color: 'BF6900' }
   }
 
+  Alignments = [:left, :center, :right]
+
   IndentationRx = /^ +/
   TabSpaces = ' ' * 4
   NoBreakSpace = unicode_char 0x00a0
@@ -137,8 +139,11 @@ class Converter < ::Prawn::Document
       (0..-1)
     end
 
-    # TODO enable pagenums by default (perhaps upstream?)
-    stamp_page_numbers skip: num_front_matter_pages if doc.attr 'pagenums'
+    # TODO enable pagenums by default
+    if doc.attr? 'pagenums'
+      layout_running_content :header, doc, skip: num_front_matter_pages
+      layout_running_content :footer, doc, skip: num_front_matter_pages
+    end
     add_outline doc, num_toc_levels, toc_page_nums, num_front_matter_pages
     catalog.data[:ViewerPreferences] = [:FitWindow]
 
@@ -168,12 +173,13 @@ class Converter < ::Prawn::Document
         warn %(asciidoctor: WARNING: page background image #{bg_image} not found or readable)
       end
     end
+    @fallback_fonts = [*theme.font_fallbacks]
     if ['FFFFFF', 'transparent'].include?(@page_bg_color = theme.page_background_color)
       @page_bg_color = nil
     end
-    @text_transform = nil
     @font_color = theme.base_font_color || '000000'
-    @fallback_fonts = [*theme.font_fallbacks]
+    @text_transform = nil
+    @stamps = {}
     init_scratch_prototype
     self
   end
@@ -1326,14 +1332,14 @@ class Converter < ::Prawn::Document
     if (logo_image_path = (doc.attr 'title-logo-image', @theme.title_page_logo_image))
       if logo_image_path =~ ImageAttributeValueRx
         logo_image_path = $1
-        logo_image_attrs = ::Asciidoctor::AttributeList.new($2).parse(['alt', 'width', 'height'])
+        logo_image_attrs = AttributeList.new($2).parse(['alt', 'width', 'height'])
       else
         logo_image_attrs = {}
       end
       # HACK quick fix to resolve image path relative to theme
       unless doc.attr? 'title-logo-image'
         # FIXME use ThemeLoader.resolve_theme_asset once fix for #134 is merged
-        logo_image_path = ::File.expand_path logo_image_path, (doc.attr 'pdf-stylesdir', ThemeLoader::ThemesDir) 
+        logo_image_path = ::File.expand_path logo_image_path, (doc.attr 'pdf-stylesdir', ThemeLoader::ThemesDir)
       end
       logo_image_attrs['target'] = logo_image_path
       logo_image_attrs['align'] ||= (@theme.title_page_logo_align || title_align.to_s)
@@ -1575,38 +1581,191 @@ class Converter < ::Prawn::Document
     min_height < max_size ? min_height : max_size
   end
 
-  def stamp_page_numbers opts = {}
+  # TODO delegate to layout_page_header and layout_page_footer per page
+  def layout_running_content position, doc, opts = {}
+    # QUESTION should we short-circuit if setting not specified and if so, which setting?
+    return unless (position == :header && @theme.header_height) || (position == :footer && @theme.footer_height)
     skip = opts[:skip] || 1
     start = skip + 1
-    pattern = page_number_pattern
-    repeat (start..page_count), dynamic: true do
-      # don't stamp pages which are imported / inserts
-      next if page.imported_page?
-      case (align = (page_number - skip).odd? ? :left : :right)
-      when :left
-        page_number_label = pattern[:left] % [page_number - skip]
-      when :right
-        page_number_label = pattern[:right] % [page_number - skip]
+    num_pages = page_count - skip
+
+    # FIXME probably need to treat doctypes differently
+    sections = doc.find_by(context: :section) {|sect| sect.level < 3 }
+
+    # index chapters and sections by the visual page number on which they start
+    chapter_start_pages = {}
+    section_start_pages = {}
+    sections.each do |sect|
+      if sect.chapter?
+        chapter_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
+      else
+        section_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
       end
-      theme_font :footer do
+    end
+
+    # index chapters and sections by the visual page number on which they appear
+    chapters_by_page = {}
+    sections_by_page = {}
+    last_chap = (doc.attr 'preface-title') || 'Preface'
+    last_sect = nil
+    (1..num_pages).each do |num|
+      if (chap = chapter_start_pages[num])
+        last_chap = chap
+      end
+      if (sect = section_start_pages[num])
+        last_sect = sect
+      elsif chap
+        last_sect = nil
+      end
+      chapters_by_page[num] = last_chap
+      sections_by_page[num] = last_sect
+    end
+
+    doctitle = doc.doctitle partition: true
+    # NOTE set doctitle again so it's properly escaped
+    doc.set_attr 'doctitle', doctitle.combined
+    doc.set_attr 'document-title', doctitle.main
+    doc.set_attr 'document-subtitle', doctitle.subtitle
+    doc.set_attr 'page-count', num_pages
+
+    # TODO move this to a method so it can be reused; cache results
+    content_dict = [:recto, :verso].inject({}) do |acc, side|
+      side_content = {}
+      Alignments.each do |align|
+        if (val = @theme[%(#{position}_#{side}_content_#{align})])
+          if ImageAttributeValueRx =~ val &&
+              ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
+            attrs = AttributeList.new($2).parse
+            attrs['width'] = attrs['width'].to_f if attrs['width']
+            side_content[align] = { path: path, width: attrs['width'] }
+          else
+            side_content[align] ||= val
+          end
+        end
+      end
+      if (acc[side] = side_content).empty? && @theme[%(footer_#{side}_content)] != 'none'
+        # NOTE set fallbacks if not explicitly disabled
+        case side
+        when :recto
+          acc[side] = { right: '{page-number}' }
+        when :verso
+          acc[side] = { left: '{page-number}' }
+        end
+      end
+      acc
+    end
+
+    # QUESTION should we support footer_line_height?
+    #trim_line_metrics = calc_line_metrics @theme.base_line_height
+    trim_line_metrics = calc_line_metrics
+    if position == :header
+      trim_top = page_height
+      # NOTE height is required atm
+      trim_height = @theme.header_height || page_margin_top
+      trim_padding = @theme.header_padding || [0, 0, 0, 0]
+      trim_content_height = trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top
+      trim_left = page_margin_left
+      trim_width = page_width - trim_left - page_margin_right
+      trim_font_color = @theme.header_font_color
+      trim_bg_color = @theme.header_background_color
+      trim_border_width = @theme.header_border_width || @theme.base_border_width
+      trim_border_color = @theme.header_border_color
+      trim_valign = (@theme.header_valign || :center).to_sym
+      trim_img_valign = @theme.header_image_valign || trim_valign
+    else
+      # NOTE height is required atm
+      trim_top = trim_height = @theme.footer_height || page_margin_bottom
+      trim_padding = @theme.footer_padding || [0, 0, 0, 0]
+      trim_content_height = trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top
+      trim_left = page_margin_left
+      trim_width = page_width - trim_left - page_margin_right
+      trim_font_color = @theme.footer_font_color
+      trim_bg_color = @theme.footer_background_color
+      trim_border_width = @theme.footer_border_width || @theme.base_border_width
+      trim_border_color = @theme.footer_border_color
+      trim_valign = (@theme.footer_valign || :center).to_sym
+      trim_img_valign = @theme.footer_image_valign || trim_valign
+    end
+
+    trim_stamp = %(#{position})
+    trim_content_left = trim_left + trim_padding[3]
+    trim_content_width = trim_width - trim_padding[3] - trim_padding[1]
+    # NOTE FFFFFF is meaningful value for background and border, so don't scrap it
+    trim_bg_color = nil if trim_bg_color == 'transparent'
+    trim_border_color = nil if trim_border_color == 'transparent' || trim_border_width == 0
+    if ['top', 'center', 'bottom'].include? trim_img_valign
+      trim_img_valign = trim_img_valign.to_sym
+    end
+
+    if trim_bg_color || trim_border_color
+      create_stamp trim_stamp do
         canvas do
-          if @theme.footer_border_color && @theme.footer_border_color != 'transparent'
-            save_graphics_state do
-              line_width @theme.base_border_width
-              stroke_color @theme.footer_border_color
-              stroke_horizontal_line left_margin, bounds.width - right_margin, at: (page.margins[:bottom] / 2.0 + @theme.vertical_rhythm / 2.0)
+          if trim_bg_color
+            bounding_box [0, trim_top], width: bounds.width, height: trim_height do
+              fill_bounds trim_bg_color
+              if trim_border_color
+                # TODO stroke_horizontal_rule should support :at
+                move_down bounds.height if position == :header
+                stroke_horizontal_rule trim_border_color, line_width: trim_border_width
+              end
+            end
+          else
+            bounding_box [trim_left, trim_top], width: trim_width, height: trim_height do
+              # TODO stroke_horizontal_rule should support :at
+              move_down bounds.height if position == :header
+              stroke_horizontal_rule trim_border_color, line_width: trim_border_width
+              move_up bounds.height if position == :header
             end
           end
-          indent left_margin, right_margin do
-            formatted_text_box [text: page_number_label, color: @theme.footer_font_color], at: [0, (page.margins[:bottom] / 2.0)], align: align
+        end
+      end
+      @stamps[position] = true
+    end
+
+    repeat (start..page_count), dynamic: true do
+      # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
+      next if page.imported_page?
+      visual_pgnum = page_number - skip
+      # FIXME we need to have a content setting for chapter pages
+      content_by_alignment = content_dict[side = visual_pgnum.odd? ? :recto : :verso]
+      doc.set_attr 'page-number', visual_pgnum
+      # TODO populate chapter-number
+      # TODO populate numbered and unnumbered chapter and section titles
+      doc.set_attr 'chapter-title', (chapters_by_page[visual_pgnum] || '')
+      doc.set_attr 'section-title', (sections_by_page[visual_pgnum] || '')
+      doc.set_attr 'section-or-chapter-title', (sections_by_page[visual_pgnum] || chapters_by_page[visual_pgnum] || '')
+
+      stamp trim_stamp if @stamps[position]
+
+      theme_font position do
+        canvas do
+          bounding_box [trim_content_left, trim_top], width: trim_content_width, height: trim_height do
+            Alignments.each do |align|
+              # FIXME we need to have a content setting for chapter pages
+              case (content = content_by_alignment[align])
+              when ::Hash
+                # FIXME prevent image from overflowing the page
+                float do
+                  # FIXME padding doesn't work when vposition is specified; how will padding bottom work?
+                  #move_down trim_padding[0]
+                  image content[:path], vposition: trim_img_valign, position: align, width: content[:width]
+                end
+              when ::String
+                content = (content == '{page-number}' ? %(#{visual_pgnum}) : (doc.apply_subs content))
+                formatted_text_box parse_text(content, color: trim_font_color, inline_format: true),
+                  at: [0, trim_content_height + trim_padding[2]],
+                  height: trim_content_height,
+                  align: align,
+                  valign: trim_valign,
+                  leading: trim_line_metrics.leading,
+                  final_gap: false,
+                  overflow: :truncate
+              end
+            end
           end
         end
       end
     end
-  end
-
-  def page_number_pattern
-    { left: '%s', right: '%s' }
   end
 
   # FIXME we are assuming we always have exactly one title page
@@ -1800,7 +1959,7 @@ class Converter < ::Prawn::Document
     if !scratch? && (id ||= node.id)
       # QUESTION should we set precise x value of destination or just 0?
       dest_x = bounds.absolute_left.round 2
-      dest_x = 0 if dest_x <= left_margin
+      dest_x = 0 if dest_x <= page_margin_left
       dest_y = if node.context == :section && at_page_top?
         page_height
       else
