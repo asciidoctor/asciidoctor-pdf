@@ -8,6 +8,7 @@ Dan Allen <https://github.com/mojavelinux>
 
 ////
 Topics remaining to document:
+* transparent color
 * additional fonts provided by Asciidoctor PDF
 * images
 * title page layout
