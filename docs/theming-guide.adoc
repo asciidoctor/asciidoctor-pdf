@@ -1,6 +1,6 @@
 = Asciidoctor PDF Theming Guide
 Dan Allen <https://github.com/mojavelinux>
-:toc: preamble
+:toc: macro
 :icons: font
 :idprefix:
 :idseparator: -
@@ -22,6 +22,8 @@ The theming system in Asciidoctor PDF is used to control the layout and styling 
 The theme is driven by a YAML-based configuration file.
 This document explains how the theming system works, how to define a custom theme and how to enable the theme when running Asciidoctor PDF.
 
+toc::[]
+
 == Language Overview
 
 The theme language in Asciidoctor PDF is based on the http://en.wikipedia.org/wiki/YAML[YAML] data format and incorporates many concepts from CSS and SASS.
@@ -32,7 +34,7 @@ Unlike CSS, all selectors are implicit (e.g., `heading`), so you customize the t
 
 A theme (or style) is described in a YAML-based data format and stored in a dedicated theme file.
 YAML is a human-friendly data format that resembles CSS and helps to describe the theme.
-The theme language adds some extra features to YAML, such as variables, basic math and color values.
+The theme language adds some extra features to YAML, such as variables, basic math, measurements and color values.
 These enhancements will be explained in detail in later sections.
 
 The theme file must be named _<name>-theme.yml_, where `<name>` is the name of the theme.
@@ -262,7 +264,7 @@ base:
 Several of the keys require a value in points (pt), the unit of measure for the PDF canvas.
 A point is defined as 1/72 of an inch.
 However, us humans like to think in real world units like inches (in), centimeters (cm) or millimeters (mm).
-You can let the theme to this conversion for you automatically by adding a unit notation next to any number.
+You can let the theme do this conversion for you automatically by adding a unit notation next to any number.
 
 The following units are supported:
 
@@ -328,7 +330,7 @@ base:
 
 ==== RGB
 
-An RGB array value must be three numbers between 0 and 255.
+An RGB array value must be three numbers ranging from 0 to 255.
 The values must be separated by commas and be surrounded by square brackets.
 
 NOTE: An RGB array is automatically converted to a hex string internally, so there's no difference between ff0000 and [255, 0, 0].
