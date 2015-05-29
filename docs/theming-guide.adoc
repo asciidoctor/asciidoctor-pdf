@@ -426,7 +426,7 @@ A collection typically consists of all four styles of a font:
 * bold
 * bold_italic
 
-You need all four styles to support AsciiDoc content properly.
+You'll need all four styles to support AsciiDoc content properly.
 _Asciidoctor PDF cannot italicize a font that is not italic like a browser can._
 
 Once you've obtained the TTF files, put them into a directory in your project where you want to store the fonts.
@@ -1115,8 +1115,12 @@ The literal key is used for inline monospaced text in prose and table cells.
 |Key |Value Type |Example
 
 |outline_list_indent
-|<<values,number>>
-|list_indent: 15
+|<<measurement-units,measurement>>
+|list_indent: 40
+
+|item_spacing
+|<<measurement-units,measurement>>
+|list_indent: 4
 |===
 
 === Table
