@@ -166,8 +166,11 @@ class ThemeLoader
           end
           (e == (int_e = e.to_i)) ? int_e : e
         }
-        if value == [0, 0, 0, 0]
+        case value
+        when [0, 0, 0, 0]
           return HexColorValue.new('FFFFFF')
+        when [100, 100, 100, 100]
+          return HexColorValue.new('000000')
         else
           value.extend CmykColorValue
           return value
