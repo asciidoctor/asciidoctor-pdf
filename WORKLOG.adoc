@@ -5,10 +5,23 @@
 
 == TODO
 
+* running content
+  - numbered and unnumbered chapter and section titles
+  - chapter and section number (easily solved by previous)
+  - margin left/right
+  - background color
+  - padding left/right
+  - support header layout in addition to footer
+* theming guide
+  - document transparent color
+  - document how to load theme (with special attention to fonts & images)
 * source highlighting (with Pygments) not working inside an admonition block (see chronicles.adoc)
-  - don't source highlight in dry run
+  - *don't need to run source highlighter in dry run*
 * need dedicated theme styles for paragraph spacings, etc
 * can't put margin top on chapter (chapter_top?)
+* allow margin top and bottom to be set for lists (applies to outer-most list)
+* allow spacing between nested lists levels be configured in theme
+* recto/verso indentation (on body?)
 * implement first-line indent for paragraphs (seems like conflict w/ our text formatter)
   - option to not indent first paragraph in section
   - if you indent, perhaps drop the margin between paragraphs?
@@ -117,6 +130,8 @@
 * can get orphan conum if starts on last line of page (fixed already?)
 * only create title page if doctype=book
 * disable monospace color in headings
+* add source language to upper-left corner of listing block
+* italic text in a line of text styled as bold in the theme loses its bold style
 
 * introduce method for start_initial_page?
 * honor font defs in SVG (to get M+ 1p)
