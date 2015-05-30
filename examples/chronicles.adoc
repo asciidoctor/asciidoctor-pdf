@@ -141,6 +141,25 @@ Let's start counting from 10.
 .... upperalpha (A)
 . arabic (2)
 
+How about a list with some terms?
+
+* Fruits
+
+Apple::
+The round fruit of a tree of the rose family, which typically has thin red or green skin and crisp flesh.
+Yes, I said _flesh_.
+
+Pear::
+A yellowish- or brownish-green edible fruit that is typically narrow at the stalk and wider toward the base, with sweet, slightly gritty flesh.
+More flesh.
+Mmmmm.
+
+* Vegetables
+
+Carrot::
+A tapering orange-colored root eaten as a vegetable.
+Beware, it's a favorite of the Wolpertinger.
+
 ===== Are You Still Here?
 
 .Move, move, move!

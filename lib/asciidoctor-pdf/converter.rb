@@ -523,9 +523,13 @@ class Converter < ::Prawn::Document
 
   def convert_colist node
     # HACK undo the margin below previous listing or literal block
+    # TODO allow this to be set using colist_margin_top
     unless at_page_top? || (self_idx = node.parent.blocks.index node) == 0 ||
         ![:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
-      move_up ((@theme.block_margin_bottom || @theme.vertical_rhythm) * 0.5)
+      move_up ((@theme.block_margin_bottom || @theme.vertical_rhythm) / 2.0)
+      # or we could do...
+      #move_up (@theme.block_margin_bottom || @theme.vertical_rhythm)
+      #move_down (@theme.caption_margin_inside * 2)
     end
     add_dest_for_block node if node.id
     @list_numbers ||= []
@@ -534,15 +538,15 @@ class Converter < ::Prawn::Document
     @list_numbers << %(\u2460)
     #stroke_horizontal_rule @theme.caption_border_bottom_color
     line_metrics = calc_line_metrics @theme.base_line_height
-    item_spacing_adjustment = (@theme.prose_margin_bottom || @theme.vertical_rhythm) * 0.5
     node.items.each_with_index do |item, idx|
-      # FIXME HACK tighten items on colist
-      move_up item_spacing_adjustment unless idx == 0
       # FIXME extract to an ensure_space (or similar) method; simplify
       start_new_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
       convert_colist_item item
     end
     @list_numbers.pop
+    # correct bottom margin of last item
+    list_margin_bottom = @theme.prose_margin_bottom || @theme.vertical_rhythm
+    margin_bottom (list_margin_bottom - (@theme.outline_list_item_spacing || (list_margin_bottom / 2.0)))
   end
 
   def convert_colist_item node
@@ -558,7 +562,8 @@ class Converter < ::Prawn::Document
     end
 
     indent marker_width do
-      convert_content_for_list_item node
+      convert_content_for_list_item node,
+        margin_bottom: (@theme.outline_list_item_spacing || ((@theme.prose_margin_bottom || @theme.vertical_rhythm) / 2.0))
     end
   end
 
@@ -636,17 +641,26 @@ class Converter < ::Prawn::Document
 
   def convert_outline_list node
     line_metrics = calc_line_metrics @theme.base_line_height
+    complex = false
+    # ...or if we want to give all items in the list the same treatment
+    #complex = node.items.find(&:complex?) ? true : false
     indent @theme.outline_list_indent do
       node.items.each do |item|
         # FIXME extract to an ensure_space (or similar) method; simplify
         start_new_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
-        convert_outline_list_item item
+        convert_outline_list_item item, item.complex?
       end
     end
-    # NOTE children will provide the necessary bottom margin
+    # NOTE Children will provide the necessary bottom margin if last item is complex.
+    # However, don't leave gap at the bottom of a nested list
+    unless complex || (::Asciidoctor::List === node.parent && node.parent.outline?)
+      # correct bottom margin of last item
+      list_margin_bottom = @theme.prose_margin_bottom || @theme.vertical_rhythm
+      margin_bottom(list_margin_bottom - (@theme.outline_list_item_spacing || (list_margin_bottom / 2.0)))
+    end
   end
 
-  def convert_outline_list_item node
+  def convert_outline_list_item node, complex = false
     # TODO move this to a draw_bullet (or draw_marker) method
     marker = case (list_type = node.parent.context)
     when :ulist
@@ -673,12 +687,16 @@ class Converter < ::Prawn::Document
       end
     end
 
-    convert_content_for_list_item node
+    if complex
+      convert_content_for_list_item node
+    else
+      convert_content_for_list_item node,
+        margin_bottom: (@theme.outline_list_item_spacing || ((@theme.prose_margin_bottom || @theme.vertical_rhythm) / 2.0))
+    end
   end
 
-  def convert_content_for_list_item node
+  def convert_content_for_list_item node, opts = {}
     if node.text?
-      opts = {}
       opts[:align] = :left if node.parent.style == 'bibliography'
       layout_prose node.text, opts
     end
