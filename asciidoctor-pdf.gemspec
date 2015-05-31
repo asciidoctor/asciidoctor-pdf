@@ -18,7 +18,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   s.required_ruby_version = '>= 1.9'
 
   begin
-    s.files = `git ls-files -z -- */* {README.adoc,LICENSE.adoc,NOTICE.adoc,Rakefile}`.split "\0"
+    s.files = `git ls-files -z -- {bin,data,docs,lib}/* {README.adoc,LICENSE.adoc,NOTICE.adoc,Rakefile}`.split "\0"
   rescue
     s.files = Dir['**/*']
   end
