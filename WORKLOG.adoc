@@ -5,18 +5,23 @@
 
 == TODO
 
-* running content
-  - numbered and unnumbered chapter and section titles
-  - chapter and section number (easily solved by previous)
-  - margin left/right
-  - background color
-  - padding left/right
-  - support header layout in addition to footer
-* theming guide
-  - document transparent color
-  - document how to load theme (with special attention to fonts & images)
 * source highlighting (with Pygments) not working inside an admonition block (see chronicles.adoc)
   - *don't need to run source highlighter in dry run*
+* toc
+  - make dot leader style separate from title / number
+* running content
+  - side margins (allow override, default to content margins)
+  - numbered and unnumbered chapter and section titles (file issue)
+  - chapter and section number (easily solved by previous)
+  - separate running content for chapter page (by default uses normal content)
+* support !include in theme file
+* theming guide
+  - document arbitrary keys (such as brand colors)
+  - document transparent color
+  - document unicode values
+  - document how to load theme (with special attention to fonts & images)
+  - positional meanings of array items
+* dedicated style for top/bottom margin of outline list
 * need dedicated theme styles for paragraph spacings, etc
 * can't put margin top on chapter (chapter_top?)
 * allow margin top and bottom to be set for lists (applies to outer-most list)
@@ -160,7 +165,6 @@
 * flesh out title page more
   - document subtitle (partially solved)
 * don't create title page for article doctype
-* chapter name in footer (need a proper hook for writing to the footer; perhaps also template in theme for footer text)
 * implement toc and activate if toc is set on document (need to reorder pages)
 * inline image
 * callbacks for title page, new part, new chapter, etc
