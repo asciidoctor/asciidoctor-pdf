@@ -1470,7 +1470,7 @@ class Converter < ::Prawn::Document
       color: @font_color,
       # NOTE normalize makes endlines soft (replaces "\n" with ' ')
       inline_format: [{ normalize: (opts.delete :normalize) != false }],
-      align: (@theme.base_align || :justify).to_sym
+      align: (@theme.base_align || :left).to_sym
     }.merge(opts)
     margin_bottom bottom_margin
   end
