@@ -7,6 +7,8 @@
 
 * source highlighting (with Pygments) not working inside an admonition block (see chronicles.adoc)
   - *don't need to run source highlighter in dry run*
+* getting a line wrap break before comma if preceding word is emphasized (problem in Prawn wrapping)
+* don't create blank page first page if content overflows and we're on the first page (already fixed?)
 * toc
   - make dot leader style separate from title / number
 * running content
@@ -21,6 +23,11 @@
   - document unicode values
   - document how to load theme (with special attention to fonts & images)
   - positional meanings of array items
+* images
+  - multiple image width by 0.75 to get point value
+  - should we use native size of image by default? (after multiplying by 0.75)
+* implement stem support
+* rethink how we are handling line heights for fonts, then document carefully
 * dedicated style for top/bottom margin of outline list
 * need dedicated theme styles for paragraph spacings, etc
 * can't put margin top on chapter (chapter_top?)
@@ -95,7 +102,7 @@
 * use padding from theme around block quote content
 * add admonition_label_font_color to theme
 * remove remaining uses of vertical_rhythm and horizontal_rhythm
-* implement subtitle on title page
+* honor safe mode rules
 * allow cover images to be specified by theme as a fallback
 * verify cover image exists; fail gracefully with warning
 * using fallback fonts significantly slows down Prawn because it checks every letter every time (see https://github.com/prawnpdf/prawn/blob/master/lib/prawn/text/formatted/box.rb#L427-L434)
@@ -117,7 +124,6 @@
 * theme idea / tester: see sandbox/ebook-learn_version_control_with_git-SAMPLE.pdf
 * make alternating page title position optional (via theme?)
 * BUG: page numbers are off in Clojure Cookbook
-* image in header / banner (need to implement a masthead)
 * fix passthrough placeholders that get caught up in syntax highlighting (see https://github.com/asciidoctor/asciidoctor/blob/master/test/blocks_test.rb#L2258-L2277)
 * we could eliminate some of the tags we're currently matching in the formatted text parser (e.g., link)
 * add Preamble to TOC
