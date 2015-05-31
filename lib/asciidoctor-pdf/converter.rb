@@ -29,6 +29,9 @@ class Converter < ::Prawn::Document
     [number].pack 'U*'
   end
 
+  # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
+  CodeRayRequirePath = ::File.join((::File.dirname __FILE__), 'prawn_ext/coderay_encoder')
+
   AdmonitionIcons = {
     caution:   { key: 'fa-fire', color: 'BF3400' },
     important: { key: 'fa-exclamation-circle', color: 'BF0000' },
@@ -36,9 +39,7 @@ class Converter < ::Prawn::Document
     tip:       { key: 'fa-lightbulb-o', color: '111111' },
     warning:   { key: 'fa-exclamation-triangle', color: 'BF6900' }
   }
-
   Alignments = [:left, :center, :right]
-
   IndentationRx = /^ +/
   TabSpaces = ' ' * 4
   NoBreakSpace = unicode_char 0x00a0
@@ -826,28 +827,27 @@ class Converter < ::Prawn::Document
   def convert_listing_or_literal node
     add_dest_for_block node if node.id
     # HACK disable built-in syntax highlighter; must be done before calling node.content!
-    if node.style == 'source' && ((subs = node.subs).include? :highlight)
+    # NOTE the highlight sub is only set for coderay and pygments
+    if node.style == 'source' && !scratch? && ((subs = node.subs).include? :highlight)
       highlighter = node.document.attr 'source-highlighter'
       # NOTE the source highlighter logic below handles the callouts and highlight subs
-      # QUESTION should we restore subs after conversion?
+      prev_subs = subs.dup
       subs.delete :callouts
       subs.delete :highlight
     else
       highlighter = nil
+      prev_subs = nil
     end
     # FIXME source highlighter freaks out about the non-breaking space characters; does it?
     source_string = preserve_indentation node.content
     source_chunks = case highlighter
     when 'coderay'
-      unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
-        # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
-        Helpers.require_library ::File.join(::File.dirname(__FILE__), 'prawn_ext/coderay_encoder'), 'coderay'
-      end
+      Helpers.require_library CodeRayRequirePath, 'coderay' unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
       source_string, conum_mapping = extract_conums source_string
       fragments = (::CodeRay.scan source_string, (node.attr 'language', 'text', false).to_sym).to_prawn
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     when 'pygments'
-      Helpers.require_library 'pygments', 'pygments.rb'
+      Helpers.require_library 'pygments', 'pygments.rb' unless defined? ::Pygments
       source_string, conum_mapping = extract_conums source_string
       lexer = ::Pygments::Lexer[node.attr 'language', 'text', false] || ::Pygments::Lexer['text']
       pygments_config = { nowrap: true, noclasses: true, style: (node.document.attr 'pygments-style') || 'pastie' }
@@ -858,6 +858,8 @@ class Converter < ::Prawn::Document
       # NOTE only format if we detect a need
       (source_string =~ BuiltInEntityCharOrTagRx) ? (text_formatter.format source_string) : [{ text: source_string }]
     end
+
+    node.subs.replace prev_subs if prev_subs
 
     #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
