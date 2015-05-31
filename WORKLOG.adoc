@@ -87,7 +87,6 @@
 * refactor as Prawn view to avoid method name conflicts (also see https://github.com/prawnpdf/prawn/issues/802)
 * make CodeRay theme colors configurable (in theme?)
 * create proper default (Asciidoctor) theme
-* implement compat lists (like in Asciidoctor EPUB3)
 * list bullet in ordered list needs to grow with length of number
 * document how the treetop parser is rebuilt
 * rewrite optimize-pdf using rghost
