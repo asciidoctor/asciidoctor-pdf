@@ -22,7 +22,7 @@ begin
   require 'rdoc/task'
   Rake::RDocTask.new do |t|
     t.rdoc_dir = 'rdoc'
-    t.title = %(Asciidoctor EPUB3 #{Asciidoctor::Pdf::VERSION})
+    t.title = %(Asciidoctor PDF #{Asciidoctor::Pdf::VERSION})
     t.main = %(README.adoc)
     t.rdoc_files.include 'README.adoc', 'LICENSE.adoc', 'NOTICE.adoc', 'lib/**/*.rb', 'bin/**/*'
   end
