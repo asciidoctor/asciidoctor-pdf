@@ -359,8 +359,7 @@ point.
 Back to the previous example, suppose that we have both a field and a method with the same name, as in:
 
 .Java class with a field and method that share the same name
-//FIXME source highlighting not working inside the admonition block
-//[source,java]
+[source,java]
 ----
 public class Foo {
   public String bar;
@@ -375,8 +374,7 @@ public class Foo {
 Hence, the following Golo code will resolve the +bar()+ method, not the +bar+ field:
 
 .Golo picks the method over the field with the same name
-//FIXME source highlighting not working inside the admonition block
-//[source,golo]
+[source,golo]
 ----
 let foo = Foo()
 
