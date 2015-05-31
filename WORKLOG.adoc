@@ -5,8 +5,13 @@
 
 == TODO
 
-* source highlighting (with Pygments) not working inside an admonition block (see chronicles.adoc)
-  - *don't need to run source highlighter in dry run*
+* theming guide
+  - mention that font_style and font_weight are combined as font_style
+  - document arbitrary keys (such as brand colors)
+  - document transparent color
+  - document unicode values
+  - document how to load theme (with special attention to fonts & images)
+  - positional meanings of array items
 * getting a line wrap break before comma if preceding word is emphasized (problem in Prawn wrapping)
 * don't create blank page first page if content overflows and we're on the first page (already fixed?)
 * toc
@@ -16,13 +21,7 @@
   - numbered and unnumbered chapter and section titles (file issue)
   - chapter and section number (easily solved by previous)
   - separate running content for chapter page (by default uses normal content)
-* support !include in theme file
-* theming guide
-  - document arbitrary keys (such as brand colors)
-  - document transparent color
-  - document unicode values
-  - document how to load theme (with special attention to fonts & images)
-  - positional meanings of array items
+* support !include in theme file (file issue)
 * images
   - multiple image width by 0.75 to get point value
   - should we use native size of image by default? (after multiplying by 0.75)
@@ -193,6 +192,7 @@
 * control page numbering using pagenums attribute
 * "Incorrect number of arguments in 'SCN' command" happens when you add a stamp to an imported page
 * be mindful that layout_prose adds margin to bottom of content by default (important when working in a bounding box)
+* ttfunk does not support ligatures (e.g., fi -> ﬁ); we could do this manually in post_replacements
 
 == Usage Optimizations
 
@@ -217,7 +217,7 @@
 
 === Theme
 
-* keep or drop base_ prefix in theme?
+* keep or drop base_ prefix in theme? I think we should keep it because it provides context elsewhere in the document (e.g. $base_font_size vs $font_size)
 
 == Resources
 
