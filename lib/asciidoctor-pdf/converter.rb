@@ -55,6 +55,8 @@ class Converter < ::Prawn::Document
     circle: (unicode_char 0x25e6),
     square: (unicode_char 0x25aa)
   }
+  # CalloutExtractRx synced from /lib/asciidoctor.rb of Asciidoctor core
+  CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2>(?=(?: ?\\?<!?\2\d+\2>)*$)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
 
   def initialize backend, opts
