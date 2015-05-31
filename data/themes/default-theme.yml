@@ -224,9 +224,11 @@ footer:
   # * {section-title}
   # * {section-or-chapter-title}
   recto_content:
-    right: '{section-or-chapter-title} | {page-number}'
+    #right: '{section-or-chapter-title} | {page-number}'
     #right: '{document-title} | {page-number}'
+    right: '{page-number}'
     #center: '{page-number}'
   verso_content:
-    left: '{page-number} | {chapter-title}'
+    #left: '{page-number} | {chapter-title}'
+    left: '{page-number}'
     #center: '{page-number}'
