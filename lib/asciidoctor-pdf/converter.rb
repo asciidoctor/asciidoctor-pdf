@@ -46,7 +46,7 @@ class Converter < ::Prawn::Document
   NarrowNoBreakSpace = unicode_char 0x202f
   ZeroWidthSpace = unicode_char 0x200b
   HairSpace = unicode_char 0x200a
-  DotLeader = %(.#{NarrowSpace})
+  DotLeaderDefault = %(. )
   EmDash = unicode_char 0x2014
   LowercaseGreekA = unicode_char 0x03b1
   Bullets = {
@@ -1525,9 +1525,14 @@ class Converter < ::Prawn::Document
     theme_font :heading, level: 2 do
       layout_heading doc.attr('toc-title')
     end
-    line_metrics = calc_line_metrics @theme.base_line_height
-    dot_width = width_of DotLeader
+    # QUESTION shouldn't we skip this whole method if num_levels == 0?
     if num_levels > 0
+      theme_margin :toc, :top
+      line_metrics = calc_line_metrics @theme.toc_line_height || @theme.base_line_height
+      dot_width = nil
+      theme_font :toc do
+        dot_width = width_of(@theme.toc_dot_leader_content || DotLeaderDefault)
+      end
       layout_toc_level doc.sections, num_levels, line_metrics, dot_width, num_front_matter_pages
     end
     toc_page_numbers = (toc_page_number..page_number)
@@ -1536,38 +1541,35 @@ class Converter < ::Prawn::Document
   end
 
   def layout_toc_level sections, num_levels, line_metrics, dot_width, num_front_matter_pages = 0
-    toc_font_color = @theme.toc_font_color || @font_color
     toc_dot_color = @theme.toc_dot_leader_color
-    toc_text_transform = @theme.toc_text_transform
     sections.each do |sect|
-      sect_title = sect.numbered_title
-      if (transform = @theme[%(toc_h#{sect.level + 1}_text_transform)] || toc_text_transform)
-        sect_title = transform_text sect_title, transform
-      end
-      # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
-      start_page_number = page_number
-      start_cursor = cursor
-      # NOTE CMYK value gets flattened here, but is restored by formatted text parser
-      typeset_text %(<a anchor="#{sect_anchor = (sect.attr 'anchor') || sect.id}"><color rgb="#{toc_font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
-      # we only write the label if this is a dry run
-      unless scratch?
-        end_page_number = page_number
-        end_cursor = cursor
-        # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
-        go_to_page start_page_number if start_page_number != end_page_number
-        move_cursor_to start_cursor
-        sect_page_num = (sect.attr 'page_start') - num_front_matter_pages
-        num_dots = ((bounds.width - (width_of %(#{sect_title}#{HairSpace}#{sect_page_num}), inline_format: true)) / dot_width).floor
-        typeset_formatted_text [
-          { text: (DotLeader * num_dots), color: toc_dot_color },
-          { text: HairSpace },
-          { text: sect_page_num.to_s, anchor: sect_anchor, color: toc_font_color }], line_metrics, align: :right
-        go_to_page end_page_number if start_page_number != end_page_number
-        move_cursor_to end_cursor
+      theme_font :toc, level: (sect.level + 1) do
+        sect_title = @text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title
+        # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
+        start_page_number = page_number
+        start_cursor = cursor
+        # NOTE CMYK value gets flattened here, but is restored by formatted text parser
+        # FIXME use layout_prose
+        typeset_text %(<a anchor="#{sect_anchor = (sect.attr 'anchor') || sect.id}"><color rgb="#{@font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
+        # we only write the label if this is a dry run
+        unless scratch?
+          end_page_number = page_number
+          end_cursor = cursor
+          # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
+          go_to_page start_page_number if start_page_number != end_page_number
+          move_cursor_to start_cursor
+          sect_page_num = (sect.attr 'page_start') - num_front_matter_pages
+          # FIXME this calculation will be wrong if a style is set per level
+          num_dots = ((bounds.width - (width_of %(#{sect_title}#{HairSpace * 2}#{sect_page_num}), inline_format: true)) / dot_width).floor
+          typeset_formatted_text [
+            { text: %(#{(@theme.toc_dot_leader_content || DotLeaderDefault) * num_dots}#{HairSpace}), color: toc_dot_color },
+            { text: sect_page_num.to_s, anchor: sect_anchor, color: @font_color }], line_metrics, align: :right
+          go_to_page end_page_number if start_page_number != end_page_number
+          move_cursor_to end_cursor
+        end
       end
       if sect.level < num_levels
-        # FIXME make this a theme setting (or use indentation of outline list)
-        indent @theme.horizontal_rhythm do
+        indent(@theme.toc_indent || @theme.outline_list_indent) do
           layout_toc_level sect.sections, num_levels, line_metrics, dot_width, num_front_matter_pages
         end
       end

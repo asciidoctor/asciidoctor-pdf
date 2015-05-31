@@ -63,6 +63,8 @@ heading:
   margin_bottom: $vertical_rhythm
 link:
   font_color: #002FA7
+outline_list:
+  indent: $base_font_size * 1.5
 ----
 
 When creating a new theme, you only have to define the keys you want to override from the base theme.
@@ -1118,9 +1120,9 @@ The literal key is used for inline monospaced text in prose and table cells.
 |<<measurement-units,measurement>>
 |list_indent: 40
 
-|item_spacing
+|outline_list_item_spacing
 |<<measurement-units,measurement>>
-|list_indent: 4
+|item_spacing: 4
 |===
 
 === Table
@@ -1161,9 +1163,45 @@ The literal key is used for inline monospaced text in prose and table cells.
 |===
 |Key |Value Type |Example
 
+|toc_dot_leader_content
+|double-quoted string
+|dot_leader_content: ". "
+
 |toc_dot_leader_color
 |<<colors,color>>
 |dot_leader_color: 999999
+
+|toc_font_color
+|<<colors,color>>
+|font_color: 333333
+
+|toc_h<n>_font_color
+|<<colors,color>>
+|h3_font_color: 999999
+
+|toc_font_family
+|<<fonts,font family name>>
+|font_family: NotoSerif
+
+|toc_font_size
+|<<values,number>>
+|font_size: 9
+
+|toc_font_style
+|normal, italic, bold, bold_italic
+|font_style: bold
+
+|toc_line_height
+|number
+|line_height: 1.5
+
+|toc_indent
+|<<measurement-units,measurement>>
+|indent: 20
+
+|toc_margin_top
+|<<measurement-units,measurement>>
+|indent: 20
 |===
 
 === Running Header & Footer
