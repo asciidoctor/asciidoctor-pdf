@@ -1561,10 +1561,13 @@ class Converter < ::Prawn::Document
           go_to_page start_page_number if start_page_number != end_page_number
           move_cursor_to start_cursor
           sect_page_num = (sect.attr 'page_start') - num_front_matter_pages
+          spacer_width = (width_of NoBreakSpace) * 0.75
           # FIXME this calculation will be wrong if a style is set per level
-          num_dots = ((bounds.width - (width_of %(#{sect_title}#{HairSpace * 2}#{sect_page_num}), inline_format: true)) / dot_width).floor
+          num_dots = ((bounds.width - (width_of %(#{sect_title}#{sect_page_num}), inline_format: true) - spacer_width) / dot_width).floor
+          # FIXME dots don't line up if width of page numbers differ
           typeset_formatted_text [
-            { text: %(#{(@theme.toc_dot_leader_content || DotLeaderDefault) * num_dots}#{HairSpace}), color: toc_dot_color },
+            { text: %(#{(@theme.toc_dot_leader_content || DotLeaderDefault) * num_dots}), color: toc_dot_color },
+            { text: NoBreakSpace, size: (@font_size * 0.5) },
             { text: sect_page_num.to_s, anchor: sect_anchor, color: @font_color }], line_metrics, align: :right
           go_to_page end_page_number if start_page_number != end_page_number
           move_cursor_to end_cursor
