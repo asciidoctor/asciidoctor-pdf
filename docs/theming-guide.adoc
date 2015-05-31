@@ -560,11 +560,11 @@ TBW
 |layout: portrait
 
 |page_margin
-|<<measurement-units,measurement>>, <<values,measurement array [1,4]>>
+|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
 |margin: [0.5in, 0.67in, 0.67in, 0.67in]
 
 |page_size
-|named size, <<measurement-units,measurement array [1,2]>>
+|named size, <<measurement-units,measurement array [2]>>
 |size: Letter
 |===
 
@@ -801,7 +801,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 |Key |Value Type |Example
 
 |block_padding
-|<<measurement-units,measurement>>, <<values,measurement array [1,4]>>
+|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
 |padding: [12, 15, 12, 15]
 
 |block_margin_top
@@ -871,7 +871,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 |font_style: italic
 
 |code_padding
-|<<measurement-units,measurement>>, <<values,measurement array [1,4]>>
+|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
 |padding: 11
 
 |code_line_height
@@ -1150,7 +1150,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 |border_width: 0.5
 
 |table_cell_padding
-|<<measurement-units,measurement>>, <<values,measurement array [1,4]>>
+|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
 |cell_padding: [3, 3, 6, 3]
 |===
 
@@ -1166,25 +1166,140 @@ The literal key is used for inline monospaced text in prose and table cells.
 |dot_leader_color: 999999
 |===
 
-[[key-footer]]
-=== Footer
+=== Running Header & Footer
 
-[cols="1d,1d,2m"]
+[cols="3,5,5m"]
 |===
 |Key |Value Type |Example
 
-|footer_font_size
+|header_background_color
+|<<colors,color>>
+|background_color: EEEEEE
+
+|header_border_color
+|<<colors,color>>
+|border_color: DDDDDD
+
+|header_border_width
+|<<measurement-units,measurement>>
+|border_width: 0.25
+
+|header_font_color
+|<<colors,color>>
+|font_color: 333333
+
+|header_font_family
+|<<fonts,font family name>>
+|font_family: NotoSerif
+
+|header_font_size
 |<<values,number>>
 |font_size: 9
+
+|header_font_style
+|normal, italic, bold, bold_italic
+|font_style: italic
+
+|header_height
+|<<measurement-units,measurement>>
+|height: 0.75in
+
+|header_padding
+|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
+|padding: [0, 3, 0, 3]
+
+|header_image_valign
+|top, center, bottom, <<measurement-units,measurement>>
+|image_valign: 4
+
+|header_valign
+|top, center, bottom
+|valign: center
+
+|header_<side>_content_<align>*
+|quoted string
+v|`recto_content:
+  right: '\{page-number}'`
+
+|footer_background_color
+|<<colors,color>>
+|background_color: EEEEEE
+
+|footer_border_color
+|<<colors,color>>
+|border_color: DDDDDD
+
+|footer_border_width
+|<<measurement-units,measurement>>
+|border_width: 0.25
 
 |footer_font_color
 |<<colors,color>>
 |font_color: 333333
 
-|footer_border_color
-|<<colors,color>>
-|border_color: DDDDDD
+|footer_font_family
+|<<fonts,font family name>>
+|font_family: NotoSerif
+
+|footer_font_size
+|<<values,number>>
+|font_size: 9
+
+|footer_font_style
+|normal, italic, bold, bold_italic
+|font_style: italic
+
+|footer_height
+|<<measurement-units,measurement>>
+|height: 0.75in
+
+|footer_padding
+|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
+|padding: [0, 3, 0, 3]
+
+|footer_image_valign
+|top, center, bottom, <<measurement-units,measurement>>
+|image_valign: 4
+
+|footer_valign
+|top, center, bottom
+|valign: top
+
+|footer_<side>_content_<align>*
+|quoted string
+v|`recto_content:
+  center: '\{page-number}'`
 |===
+
+{asterisk} `<side>` can be `recto` (odd pages) or `verso` (even pages).
+`<align>` can be `left`, `center` or `right`.
+
+IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
+
+NOTE: The background color spans the width of the page.
+When a background color is specified, the border also spans the width of the page.
+
+In addition to the document-level attributes defined in the AsciiDoc document, the following attributes are available when defining the content keys in the footer:
+
+* page-count
+* page-number
+* document-title
+* document-subtitle
+* chapter-title
+* section-title
+* section-or-chapter-title
+
+For example:
+
+[source,yaml]
+----
+footer:
+  height: 0.75in
+  recto_content:
+    right: '{section-or-chapter-title} | {page-number}'
+  verso_content:
+    left: '{page-number} | {chapter-title}'
+----
 
 == Applying a Theme
 

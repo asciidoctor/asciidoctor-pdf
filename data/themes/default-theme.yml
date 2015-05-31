@@ -201,7 +201,29 @@ table:
   cell_padding: [3, 3, 6, 3]
 toc:
   dot_leader_color: 999999
+# NOTE In addition to footer, header is also supported
 footer:
   font_size: $base_font_size_small
   font_color: $base_font_color
+  # NOTE if background_color is set, background and border will span width of page
   border_color: dddddd
+  border_width: 0.25
+  height: $base_line_height_length * 2.5
+  padding: [$base_line_height_length / 2, 1, 0, 1]
+  valign: top
+  #image_valign: <alignment> or <number>
+  # additional attributes for content:
+  # * {page-count}
+  # * {page-number}
+  # * {document-title}
+  # * {document-subtitle}
+  # * {chapter-title}
+  # * {section-title}
+  # * {section-or-chapter-title}
+  recto_content:
+    right: '{section-or-chapter-title} | {page-number}'
+    #right: '{document-title} | {page-number}'
+    #center: '{page-number}'
+  verso_content:
+    left: '{page-number} | {chapter-title}'
+    #center: '{page-number}'
