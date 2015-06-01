@@ -688,6 +688,7 @@ class Converter < ::Prawn::Document
       bounding_box [start_position, cursor], width: marker_width do
         layout_prose marker,
           align: :right,
+          color: (@theme.outline_list_marker_font_color || @font_color),
           normalize: false,
           inline_format: false,
           margin: 0,
@@ -1545,7 +1546,7 @@ class Converter < ::Prawn::Document
   end
 
   def layout_toc_level sections, num_levels, line_metrics, dot_width, num_front_matter_pages = 0
-    toc_dot_color = @theme.toc_dot_leader_color
+    toc_dot_color = @theme.toc_dot_leader_font_color || @theme.toc_font_color || @font_color
     sections.each do |sect|
       theme_font :toc, level: (sect.level + 1) do
         sect_title = @text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title
