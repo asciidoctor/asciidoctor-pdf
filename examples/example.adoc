@@ -3,6 +3,8 @@ Doc Writer <doc@example.com>
 :doctype: book
 :source-highlighter: coderay
 :listing-caption: Listing
+// Uncomment next line to set page size (default is Letter)
+//:pdf-page-size: A4
 
 A simple http://asciidoc.org[AsciiDoc] document.
 
