@@ -1,4 +1,4 @@
-= Asciidoctor PDF: A _native_ PDF converter for AsciiDoc
+= Asciidoctor PDF: A native PDF converter for AsciiDoc
 Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://github.com/graphitefriction[@graphitefriction]>
 // Settings:
 :compat-mode!:
