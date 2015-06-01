@@ -691,6 +691,7 @@ class Converter < ::Prawn::Document
       bounding_box [start_position, cursor], width: marker_width do
         layout_prose marker,
           align: :right,
+          color: (@theme.outline_list_marker_font_color || @font_color),
           normalize: false,
           inline_format: false,
           margin: 0,
@@ -891,7 +892,7 @@ class Converter < ::Prawn::Document
         end
 
         pad_box @theme.code_padding do
-          typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height), color: @theme.code_font_color
+          typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height), color: (@theme.code_font_color || @font_color)
         end
       end
     end
@@ -953,7 +954,7 @@ class Converter < ::Prawn::Document
         if line.size > 0 && (end_text = line.last[:text]) && !(end_text.end_with? ' ')
           line.last[:text] = %(#{end_text} )
         end
-        line << { text: (conums * ' '), color: conum_color }
+        line << conum_color ? { text: (conums * ' '), color: conum_color } : { text: (conums * ' ') }
       end
       line << { text: EOL } unless line_num == last_line_num
       line
@@ -1219,7 +1220,7 @@ class Converter < ::Prawn::Document
       # NOTE CMYK value gets flattened here, but is restored by formatted text parser
       %(<color rgb="#{conum_color}">#{conum_glyph node.text.to_i}</color>)
     else
-      node.text
+      conum_glyph node.text.to_i
     end
   end
 
@@ -1548,7 +1549,7 @@ class Converter < ::Prawn::Document
   end
 
   def layout_toc_level sections, num_levels, line_metrics, dot_width, num_front_matter_pages = 0
-    toc_dot_color = @theme.toc_dot_leader_color
+    toc_dot_color = @theme.toc_dot_leader_font_color || @theme.toc_font_color || @font_color
     sections.each do |sect|
       theme_font :toc, level: (sect.level + 1) do
         sect_title = @text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title
@@ -1678,7 +1679,7 @@ class Converter < ::Prawn::Document
       trim_content_height = trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top
       trim_left = page_margin_left
       trim_width = page_width - trim_left - page_margin_right
-      trim_font_color = @theme.header_font_color
+      trim_font_color = @theme.header_font_color || @font_color
       trim_bg_color = @theme.header_background_color
       trim_border_width = @theme.header_border_width || @theme.base_border_width
       trim_border_color = @theme.header_border_color
@@ -1691,7 +1692,7 @@ class Converter < ::Prawn::Document
       trim_content_height = trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top
       trim_left = page_margin_left
       trim_width = page_width - trim_left - page_margin_right
-      trim_font_color = @theme.footer_font_color
+      trim_font_color = @theme.footer_font_color || @font_color
       trim_bg_color = @theme.footer_background_color
       trim_border_width = @theme.footer_border_width || @theme.base_border_width
       trim_border_color = @theme.footer_border_color
