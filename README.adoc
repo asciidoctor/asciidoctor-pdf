@@ -5,6 +5,8 @@ Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://g
 :experimental:
 :idprefix:
 :idseparator: -
+:icons: font
+:pagenums:
 ifdef::env-github[:relfileprefix: /blob/master]
 ifdef::env-browser[:toc: preamble]
 //:pdf-page-size: [8.25in, 11.69in]
@@ -38,7 +40,7 @@ See the milestone v1.5.0 in the {uri-project-issues}[issue tracker] for details.
 == Prawn, the majestic PDF generator
 
 {uri-project}[{project-name}] is made possible by an amazing Ruby Gem named Prawn.
-And what a Gem it is!
+And what a gem it is!
 
 {uri-prawn}[Prawn] is a nimble PDF writer for Ruby.
 More important, it's a hackable platform that offers both high level APIs for the most common needs and low level APIs for bending the document model to accomodate special circumstances.
@@ -64,7 +66,7 @@ Skip ahead to <<Getting started>> to start putting it use.
 
 Prawn is the _killer library_ for PDF generation we've needed to close this critical gap in Asciidoctor.
 It absolutely takes the pain out of creating printable documents.
-Picking up from there, {project-name} takes the pain out of creating printable documents _from AsciiDoc_.
+Picking up from there, {project-name} takes the pain out of creating PDF documents _from AsciiDoc_.
 
 == Features
 
@@ -73,11 +75,11 @@ Picking up from there, {project-name} takes the pain out of creating printable d
 * Direct AsciiDoc to PDF conversion
 * <<docs/theming-guide.adoc#,Configuration-driven style and layout>>
 * PDF document outline (i.e., bookmarks)
+* Table of contents page(s)
 * Document metadata (title, authors, subject, keywords, etc)
 * Internal cross reference links
 * Syntax highlighting with CodeRay or Pygments
 * Page numbering
-* Table of contents
 * Customizable running content (header and footer)
 * “Keep together” blocks (i.e., page breaks avoided in certain block content)
 * Orphan section titles avoided
@@ -91,21 +93,21 @@ See <<WORKLOG.adoc#,WORKLOG>>.
 
 == Prerequisites
 
-All that's needed is Ruby 1.9.3 or better (2.2.1 recommended) and a few Ruby Gems, which we explain how to install in the next section.
+All that's needed is Ruby (1.9.3 or better; 2.2.x recommended) and a few Ruby Gems, which we explain how to install in the next section.
 
 To check you have Ruby available, use the `ruby` command to query the version installed:
 
  $ ruby --version
 
-If you're using {uri-rvm}[RVM], we recommend creating a new gemset to work with Asciidoctor and {project-name}:
+If you're using {uri-rvm}[RVM], we recommend creating a new gemset to work with {project-name}:
 
- $ rvm use 2.2.1@asciidoctor-pdf --create
+ $ rvm use 2.2@asciidoctor-pdf --create
 
 We like RVM because it keeps the dependencies required by various projects isolated.
 
 == Getting started
 
-You can get {project-name} by <<installing-the-published-gem,installing the published gem>> or <<development,running the code from source>>.
+You can get {project-name} by <<install-the-published-gem,installing the published gem>> or <<development,running the code from source>>.
 
 === Install the published gem
 
@@ -123,46 +125,23 @@ Assuming all the required gems install properly, verify you can run the `asciido
 
  $ asciidoctor-pdf -v
 
-If you see the version of Asciidoctor PDF printed, you're ready to use {project-name}.
+If you see the version of {project-name} printed, you're ready to use {project-name}.
 Let's grab an AsciiDoc document to distill and start putting {project-name} to use!
 
 === An example AsciiDoc document
 
 If you don't already have an AsciiDoc document, you can use the [file]_example.adoc_ file found in the examples directory of this project.
 
+ifeval::[{safe-mode-level} >= 20]
+See <<examples/example.adoc#,example.adoc>>.
+endif::[]
+ifeval::[{safe-mode-level} < 20]
 .example.adoc
 [source,asciidoc]
 ....
-= Document Title
-Doc Writer <doc@example.com>
-:doctype: book
-:source-highlighter: coderay
-:listing-caption: Listing
-// Uncomment next line to change page size (default is Letter)
-//:pdf-page-size: A4
-
-A simple http://asciidoc.org[AsciiDoc] document.
-
-== Introduction
-
-A paragraph followed by a simple list with square bullets.
-
-[square]
-* item 1
-* item 2
-
-Here's how you say "`Hello, World!`" in Prawn:
-
-.Create a basic PDF document using Prawn
-[source,ruby]
-----
-require 'prawn'
-
-Prawn::Document.generate 'example.pdf' do
-  text 'Hello, World!'
-end
-----
+include::examples/example.adoc[]
 ....
+endif::[]
 
 It's time to convert the AsciiDoc document directly to PDF.
 
@@ -220,7 +199,7 @@ Also, you should only consider using it if the file size of the original PDF is 
 
 If a file is found with the extension `.pdfmarks` and the same rootname as the input file, it is used to add metadata to the generated PDF document.
 This file is necessary to preserve the document metadata since Ghostscript will otherwise drop it.
-That's why Asciidoctor PDF always creates this file in addition to the PDF.
+That's why {project-name} always creates this file in addition to the PDF.
 
 == Contributing
 
@@ -284,7 +263,7 @@ Assuming all the required gems install properly, verify you can run the `asciido
 
  $ ruby ./bin/asciidoctor-pdf -v
 
-If you see the version of Asciidoctor PDF printed, you're ready to use {project-name}!
+If you see the version of {project-name} printed, you're ready to use {project-name}!
 
 If you get an error message--and you're not using a Ruby manager like RVM--you may need to invoke the script through `bundle exec`:
 
