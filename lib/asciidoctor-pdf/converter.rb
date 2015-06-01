@@ -1217,7 +1217,7 @@ class Converter < ::Prawn::Document
       # NOTE CMYK value gets flattened here, but is restored by formatted text parser
       %(<color rgb="#{conum_color}">#{conum_glyph node.text.to_i}</color>)
     else
-      node.text
+      conum_glyph node.text.to_i
     end
   end
 
