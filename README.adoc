@@ -62,7 +62,7 @@ end
 
 It's that easy.
 And that's just the beginning.
-Skip ahead to <<Getting started>> to start putting it use.
+Skip ahead to <<getting-started,Getting started>> to start putting it use.
 
 Prawn is the _killer library_ for PDF generation we've needed to close this critical gap in Asciidoctor.
 It absolutely takes the pain out of creating printable documents.
@@ -160,7 +160,7 @@ Open the [file]_example.pdf_ file with a PDF viewer to see the result.
 .Example PDF document rendered in a PDF viewer
 image::examples/example-pdf-screenshot.png[Screenshot of PDF document,width=800,scaledwidth=100%]
 
-You're also encouraged to try converting this <<README#,README>> as well as the documents in the link:{relfileprefix}examples/[examples directory] to see more of what {project-name} can do.
+You're also encouraged to try converting this <<README#,README>> as well as the documents in the examples directory to see more of what {project-name} can do.
 
 The pain of the DocBook toolchain should be melting away about now.
 
