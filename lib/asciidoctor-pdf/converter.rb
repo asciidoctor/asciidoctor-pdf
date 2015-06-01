@@ -533,12 +533,15 @@ class Converter < ::Prawn::Document
   def convert_colist node
     # HACK undo the margin below previous listing or literal block
     # TODO allow this to be set using colist_margin_top
-    unless at_page_top? || (self_idx = node.parent.blocks.index node) == 0 ||
-        ![:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
-      move_up ((@theme.block_margin_bottom || @theme.vertical_rhythm) / 2.0)
-      # or we could do...
-      #move_up (@theme.block_margin_bottom || @theme.vertical_rhythm)
-      #move_down (@theme.caption_margin_inside * 2)
+    unless at_page_top?
+      # NOTE this logic won't work for a colist nested inside a list item until Asciidoctor 1.5.3
+      if (self_idx = node.parent.blocks.index node) && self_idx > 0 &&
+          [:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
+        move_up ((@theme.block_margin_bottom || @theme.vertical_rhythm) / 2.0)
+        # or we could do...
+        #move_up (@theme.block_margin_bottom || @theme.vertical_rhythm)
+        #move_down (@theme.caption_margin_inside * 2)
+      end
     end
     add_dest_for_block node if node.id
     @list_numbers ||= []
