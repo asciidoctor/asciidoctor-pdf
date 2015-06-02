@@ -954,7 +954,7 @@ class Converter < ::Prawn::Document
         if line.size > 0 && (end_text = line.last[:text]) && !(end_text.end_with? ' ')
           line.last[:text] = %(#{end_text} )
         end
-        line << conum_color ? { text: (conums * ' '), color: conum_color } : { text: (conums * ' ') }
+        line << (conum_color ? { text: (conums * ' '), color: conum_color } : { text: (conums * ' ') })
       end
       line << { text: EOL } unless line_num == last_line_num
       line
