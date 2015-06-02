@@ -1348,6 +1348,8 @@ There are three AsciiDoc attributes that tell Asciidoctor PDF how to locate and 
 
 pdf-stylesdir:: The directory where the theme file is located.
 _Specifying an absolute path is recommended._
++
+If you use images in your theme, image paths are resolved relative to this directory.
 
 pdf-style:: The name of the YAML theme file to load.
 If the name ends with `.yml`, it's assumed to be the complete name of a file.
@@ -1378,12 +1380,14 @@ If all goes well, Asciidoctor PDF should run without an error or warning.
 
 NOTE: You only need to specify the `pdf-fontsdir` if you are using custom fonts in your theme.
 
-Alternatively, you can skip setting the `pdf-stylesdir` attribute and just pass the absolute path of your theme file to the `pdf-style` attribute.
+You can skip setting the `pdf-stylesdir` attribute and just pass the absolute path of your theme file to the `pdf-style` attribute.
 
  $ asciidoctor-pdf -a pdf-style=resources/themes/basic-theme.yml -a pdf-fontsdir=resources/fonts
 
+However, in this case, image paths in your theme won't be resolved properly.
+
 Paths are resolved relative to the current directory.
-However, in the future, this may be changed so that paths are resolved relative to the base directory (typically the document's directory).
+However, in the future, this may change so that paths are resolved relative to the base directory (typically the document's directory).
 Therefore, it's recommend that you specify absolute paths for now to future-proof your configuration.
 
-If you use images in your theme, the image paths are resolved relative to the theme file.
+  $ asciidoctor-pdf -a pdf-stylesdir=/path/to/resources/themes -a pdf-style=basic -a pdf-fontsdir=/path/to/resources/fonts
