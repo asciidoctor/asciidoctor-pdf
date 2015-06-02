@@ -24,7 +24,7 @@ This document explains how the theming system works, how to define a custom them
 
 toc::[]
 
-== Language Overview
+== Language overview
 
 The theme language in Asciidoctor PDF is based on the http://en.wikipedia.org/wiki/YAML[YAML] data format and incorporates many concepts from CSS and SASS.
 Therefore, if you have a background in web design, the theme language should be immediately familiar to you.
@@ -123,7 +123,7 @@ The value of a key may be one of the following types:
   - Alignment (left, center, right, justify)
   - Color as hex string (e.g., #ffffff)
   - Image path
-* Number (integer or float) with optional units
+* Number (integer or float) with optional units (default unit is points)
 * Array
   - Color as RGB array (e.g., [51, 51, 51])
   - Color CMYK array (e.g., [50, 100, 0, 0])
@@ -138,7 +138,7 @@ Note that keys almost always require a value of a specific type, as documented i
 
 Like CSS, inheritance is a key feature in the Asciidoctor PDF theme language.
 For many of the properties, if a key is not specified, the key inherits the value applied to the parent content in the content hierarchy.
-This behavior saves you from having to explicitly specify properties unless you want to override the inherited value.
+This behavior saves you from having to specify properties unless you want to override the inherited value.
 
 The following keys are inherited:
 
@@ -160,7 +160,7 @@ Headings are special in that they inherit starting from a specific heading level
 To save you from having to type the same value in your theme over and over, or to allow you to base one value on another, the theme language supports variables.
 Variables consist of the key name preceded by a dollar (`$`) (e.g., `$base_font_size`).
 Any qualified key that has already been defined can be referenced in the value of another key.
-(As soon as the key is assigned, it's available to be used as a variable).
+(In order words, as soon as the key is assigned, it's available to be used as a variable).
 
 For example, once the following line is processed,
 
@@ -198,7 +198,7 @@ base:
 
 We'll cover more about math expressions in the next section.
 
-=== Math Expressions & Functions
+=== Math expressions & functions
 
 The theme language supports basic math operations to support calculated values.
 The following table lists the supported operations and the corresponding operator for each.
@@ -261,7 +261,7 @@ base:
   font_size_large: ceil($base_font_size * 1.25)
 ----
 
-=== Measurement Units
+=== Measurement units
 
 Several of the keys require a value in points (pt), the unit of measure for the PDF canvas.
 A point is defined as 1/72 of an inch.
@@ -379,7 +379,7 @@ PENDING
 You can select from built-in PDF fonts or custom fonts loaded from TrueType font (TTF) files.
 If you want to use custom fonts, you must first declare them in your theme file.
 
-=== Built-in Fonts
+=== Built-in fonts
 
 The names of the built-in fonts (for general-purpose text) are as follows:
 
@@ -415,7 +415,7 @@ Even though the built-in fonts require the content to be encoded in WINANSI, _yo
 Asciidoctor PDF encodes the content into WINANSI when building the PDF.
 Any characters in your AsciiDoc document that cannot be encoded will be replaced with an underscore (`_`).
 
-=== Custom Fonts
+=== Custom fonts
 
 The limited character set of WINANSI, or the bland look of the built-in fonts, may motivate you to load your own font.
 Custom fonts can enhance the look of your PDF theme substantially.
@@ -625,7 +625,7 @@ TBW
 |border_color: eee
 |===
 
-=== Vertical and Horizontal Rhythm
+=== Vertical and horizontal rhythm
 
 [cols="1d,1d,2m"]
 |===
@@ -663,7 +663,7 @@ TBW
 |font_style: normal
 |===
 
-=== Literal Inline
+=== Literal inline
 
 The literal key is used for inline monospaced text in prose and table cells.
 
@@ -739,7 +739,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 |margin_bottom: 9.600
 |===
 
-=== Title Page
+=== Title page
 
 [cols="1d,1d,2m"]
 |===
@@ -1075,7 +1075,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 |font_style: italic
 |===
 
-=== Thematic Break
+=== Thematic break
 
 [cols="1d,1d,2m"]
 |===
@@ -1157,7 +1157,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 |===
 
 [[key-toc]]
-=== Table of Contents
+=== Table of contents
 
 [cols="1d,1d,2m"]
 |===
@@ -1204,7 +1204,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 |indent: 20
 |===
 
-=== Running Header & Footer
+=== Running header & footer
 
 [cols="3,5,5m"]
 |===
@@ -1339,6 +1339,51 @@ footer:
     left: '{page-number} | {chapter-title}'
 ----
 
-== Applying a Theme
+== Applying your theme
 
-PENDING
+After creating a theme, you'll need to tell Asciidoctor PDF where to find it.
+This is done using AsciiDoc attributes.
+
+There are three AsciiDoc attributes that tell Asciidoctor PDF how to locate and apply your theme.
+
+pdf-stylesdir:: The directory where the theme file is located.
+_Specifying an absolute path is recommended._
+
+pdf-style:: The name of the YAML theme file to load.
+If the name ends with `.yml`, it's assumed to be the complete name of a file.
+Otherwise, `-theme.yml` is appended to the name to make the file name (i.e., `<name>-theme.yml`).
+
+pdf-fontsdir:: The directory where the fonts used by your theme, if any, are located.
+_Specifying an absolute path is recommended._
+
+Let's assume that you've put your theme files inside a directory named `resources` with the following layout:
+
+....
+document.adoc
+resources/
+  themes/
+    basic-theme.yml
+  fonts/
+    roboto-normal.ttf
+    roboto-italic.ttf
+    roboto-bold.ttf
+    roboto-bold_italic.ttf
+....
+
+Here's how you'd load your theme when calling Asciidoctor PDF:
+
+ $ asciidoctor-pdf -a pdf-stylesdir=resources/themes -a pdf-style=basic -a pdf-fontsdir=resources/fonts
+
+If all goes well, Asciidoctor PDF should run without an error or warning.
+
+NOTE: You only need to specify the `pdf-fontsdir` if you are using custom fonts in your theme.
+
+Alternatively, you can skip setting the `pdf-stylesdir` attribute and just pass the absolute path of your theme file to the `pdf-style` attribute.
+
+ $ asciidoctor-pdf -a pdf-style=resources/themes/basic-theme.yml -a pdf-fontsdir=resources/fonts
+
+Paths are resolved relative to the current directory.
+However, in the future, this may be changed so that paths are resolved relative to the base directory (typically the document's directory).
+Therefore, it's recommend that you specify absolute paths for now to future-proof your configuration.
+
+If you use images in your theme, the image paths are resolved relative to the theme file.
