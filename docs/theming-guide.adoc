@@ -29,8 +29,22 @@ toc::[]
 The theme language in Asciidoctor PDF is based on the http://en.wikipedia.org/wiki/YAML[YAML] data format and incorporates many concepts from CSS and SASS.
 Therefore, if you have a background in web design, the theme language should be immediately familiar to you.
 
-Like CSS, themes have both selectors and properties, but only a fraction of what CSS supports.
-Unlike CSS, all selectors are implicit (e.g., `heading`), so you customize the theme primarily by manipulating pre-defined property values (e.g., `font_color`).
+Like CSS, themes have both selectors and properties.
+Selectors are the component you want to style.
+The properties are the style elements of that component that can be styled.
+All selector names are implicit (e.g., `heading`), so you customize the theme primarily by manipulating pre-defined property values (e.g., `font_size`).
+
+[NOTE]
+====
+The theme language in Asciidoctor PDF supports a limited subset of the properties from CSS.
+Some of these properties have different names from those found in CSS.
+
+Instead of separate properties for font weight and font style, the theme language combines these as the `font_style` property (allowing values "normal", "bold", "italic" and "bold_italic").
+
+The `text_align` property from CSS is the `align` property in the theme language.
+
+The `color` property from CSS is the `font_color` property in the theme language.
+====
 
 A theme (or style) is described in a YAML-based data format and stored in a dedicated theme file.
 YAML is a human-friendly data format that resembles CSS and helps to describe the theme.
@@ -67,8 +81,8 @@ outline_list:
   indent: $base_font_size * 1.5
 ----
 
-When creating a new theme, you only have to define the keys you want to override from the base theme.
-The converter uses the information from this map to help construct the PDF.
+When creating a new theme, you only have to define the keys you want to override from the base theme (PENDING, see https://github.com/asciidoctor/asciidoctor-pdf/issues/132[#132]).
+The converter uses the information from the theme map to help construct the PDF.
 All the available keys are documented in <<keys>>.
 
 Keys may be nested to an arbitrary depth to eliminate redundant prefixes (an approach inspired by SASS).
@@ -196,7 +210,31 @@ base:
   font_size_small: $base_font_size * 0.85
 ----
 
-We'll cover more about math expressions in the next section.
+We'll cover more about math expressions later.
+
+==== Custom variables
+
+You can define arbitrary key names to make custom variables.
+This is one way to group reusable values at the top of your theme file.
+If you are going to do this, it's recommended that you organize the keys under a custom namespace, such as `brand`.
+
+For instance, here's how you can define your (very patriotic) brand colors:
+
+[source,yaml]
+----
+brand:
+  red: #E0162B
+  white: #FFFFFF
+  blue: #0052A5
+----
+
+You can now use these custom variables later in the theme file:
+
+[source,yaml]
+----
+base:
+  font_color: $brand_blue
+----
 
 === Math expressions & functions
 
@@ -300,6 +338,8 @@ page:
 The theme language supports color values in three formats:
 
 Hex:: A string of 3 or 6 characters with an optional leading `#`.
++
+The special value `transparent` indicates that a color should not be used.
 RGB:: An array of numeric values ranging from 0 to 255.
 CMYK:: An array of numeric values ranging from 0 to 1 or from 0% to 100%.
 
@@ -328,6 +368,14 @@ Here's how a hex color value appears in the theme file:
 ----
 base:
   font_color: #ff0000
+----
+
+It's also possible to specify no color by assigning the special value `transparent` as shown here:
+
+[source,yaml]
+----
+base:
+  background_color: transparent
 ----
 
 ==== RGB
