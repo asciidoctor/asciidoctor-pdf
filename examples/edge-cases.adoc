@@ -58,3 +58,21 @@ Line 48
 Line 49
 Line 50
 ----
+
+<<<
+
+. Step X
++
+----
+puts "Hello, World!" <1>
+----
+<1> Prints "Hello, World!" to the console
+
+//^
+
+Step X::
++
+----
+puts "Hello, World!" <1>
+----
+<1> Prints "Hello, World!" to the console
