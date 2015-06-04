@@ -8,14 +8,9 @@ Dan Allen <https://github.com/mojavelinux>
 
 ////
 Topics remaining to document:
-* transparent color
-* additional fonts provided by Asciidoctor PDF
-* images
-* title page layout
-* title image
-* title page background image
-* keys
-* how to apply the theme
+* line height and line height length (and what that all means)
+* title page layout / title page images (logo & background)
+* document that unicode escape sequences can be used inside double-quoted strings
 ////
 
 The theming system in Asciidoctor PDF is used to control the layout and styling of the PDF file that Asciidoctor PDF generates from AsciiDoc.
@@ -333,6 +328,13 @@ page:
   margin: [0.75in, 1in, 0.75in, 1in]
 ----
 
+The order of elements in a measurement array is the same as it is in CSS:
+
+. top
+. right
+. bottom
+. left
+
 === Colors
 
 The theme language supports color values in three formats:
@@ -420,11 +422,44 @@ base:
 
 === Images
 
-PENDING
+An image is specified either as a bare image path or as an inline image macro as found in the AsciiDoc syntax.
+Images are currently resolved relative to the value of the `pdf-stylesdir` attribute.
+
+The following image types (and corresponding file extensions) are supported:
+
+* PNG (.png)
+* JPEG (.jpg)
+* SVG (.svg)
+
+CAUTION: The GIF format (.gif) is not supported.
+
+Here's how an image is specified in the theme file as a bare image path:
+
+[source,yaml]
+----
+title_page:
+  background_image: title-cover.png
+----
+
+Here's how the image is specified using the inline image macro:
+
+[source,yaml]
+----
+title_page:
+  background_image: image:title-cover.png[]
+----
+
+Like in the AsciiDoc syntax, the inline image macro allows you to supply set the width of the image and the alignment:
+
+[source,yaml]
+----
+title_page:
+  logo_image: image:logo.png[width=250,align=center] 
+----
 
 == Fonts
 
-You can select from built-in PDF fonts or custom fonts loaded from TrueType font (TTF) files.
+You can select from <<built-in-fonts,built-in PDF fonts>>, <<bundled-fonts,fonts bundled with Asciidoctor PDF>> or <<custom-fonts,custom fonts>> loaded from TrueType font (TTF) files.
 If you want to use custom fonts, you must first declare them in your theme file.
 
 === Built-in fonts
@@ -462,6 +497,29 @@ For anything outside of that, PDF is BYOF (Bring Your Own Font).
 Even though the built-in fonts require the content to be encoded in WINANSI, _you still type your AsciiDoc document in UTF-8_.
 Asciidoctor PDF encodes the content into WINANSI when building the PDF.
 Any characters in your AsciiDoc document that cannot be encoded will be replaced with an underscore (`_`).
+
+=== Bundled fonts
+
+Asciidoctor PDF bundles several fonts that are used in the default theme.
+You can also use these fonts in your custom theme.
+These fonts provide more characters than the built-in PDF fonts, but still only a subset of UTF-8.
+
+The family name of the fonts bundled with Asciidoctor PDF are as follows:
+
+http://www.google.com/get/noto/#/family/noto-serif[NotoSerif]::
+A serif font that can be styled as normal, italic, bold or bold_italic.
+
+http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1mn[Mplus1mn]::
+A monospaced font that maps different thicknesses to the styles normal, italic, bold and bold_italic.
+Also provides the circuled numbers used in callouts.
+
+http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1p[Mplus1pMultilingual]::
+A sans-serif font that provides a very complete set of Unicode glyphs.
+Cannot be styled as italic, bold or bold_italic.
+Useful as a fallback font.
+
+CAUTION: At the time of this writing, you cannot use the bundled fonts if you define your own custom fonts.
+This limitation may be lifted in the future.
 
 === Custom fonts
 
@@ -614,7 +672,7 @@ TBW
 |margin: [0.5in, 0.67in, 0.67in, 0.67in]
 
 |page_size
-|named size, <<measurement-units,measurement array [2]>>
+|named size, <<measurement-units,measurement array [width, height]>>
 |size: Letter
 |===
 
