@@ -15,7 +15,7 @@ module FormattedText
     if node_cache[:text].has_key?(index)
       cached = node_cache[:text][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:text][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
@@ -39,7 +39,7 @@ module FormattedText
     if node_cache[:complex].has_key?(index)
       cached = node_cache[:complex][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:complex][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
@@ -50,14 +50,17 @@ module FormattedText
       i1 = index
       r2 = _nt_cdata
       if r2
+        r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
         r1 = r2
       else
         r3 = _nt_element
         if r3
+          r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
           r1 = r3
         else
           r4 = _nt_entity
           if r4
+            r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
             r1 = r4
           else
             @index = i1
@@ -105,7 +108,7 @@ module FormattedText
     if node_cache[:element].has_key?(index)
       cached = node_cache[:element][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:element][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
@@ -114,6 +117,7 @@ module FormattedText
     i0 = index
     r1 = _nt_empty_element
     if r1
+      r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
       r0 = r1
     else
       i2, s2 = index, []
@@ -136,6 +140,7 @@ module FormattedText
         r2 = nil
       end
       if r2
+        r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
         r0 = r2
       else
         @index = i0
@@ -165,16 +170,16 @@ module FormattedText
     if node_cache[:empty_element].has_key?(index)
       cached = node_cache[:empty_element][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:empty_element][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
     end
 
     i0, s0 = index, []
-    if has_terminal?('<br', false, index)
-      r1 = instantiate_node(SyntaxNode,input, index...(index + 3))
-      @index += 3
+    if (match_len = has_terminal?('<br', false, index))
+      r1 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+      @index += match_len
     else
       terminal_parse_failure('<br')
       r1 = nil
@@ -190,9 +195,9 @@ module FormattedText
       end
       s3 << r4
       if r4
-        if has_terminal?('/', false, index)
-          r6 = instantiate_node(SyntaxNode,input, index...(index + 1))
-          @index += 1
+        if (match_len = has_terminal?('/', false, index))
+          r6 = true
+          @index += match_len
         else
           terminal_parse_failure('/')
           r6 = nil
@@ -213,9 +218,9 @@ module FormattedText
       end
       s0 << r2
       if r2
-        if has_terminal?('>', false, index)
-          r7 = instantiate_node(SyntaxNode,input, index...(index + 1))
-          @index += 1
+        if (match_len = has_terminal?('>', false, index))
+          r7 = true
+          @index += match_len
         else
           terminal_parse_failure('>')
           r7 = nil
@@ -263,16 +268,16 @@ module FormattedText
     if node_cache[:start_tag].has_key?(index)
       cached = node_cache[:start_tag][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:start_tag][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
     end
 
     i0, s0 = index, []
-    if has_terminal?('<', false, index)
-      r1 = instantiate_node(SyntaxNode,input, index...(index + 1))
-      @index += 1
+    if (match_len = has_terminal?('<', false, index))
+      r1 = true
+      @index += match_len
     else
       terminal_parse_failure('<')
       r1 = nil
@@ -285,9 +290,9 @@ module FormattedText
         r3 = _nt_attributes
         s0 << r3
         if r3
-          if has_terminal?('>', false, index)
-            r4 = instantiate_node(SyntaxNode,input, index...(index + 1))
-            @index += 1
+          if (match_len = has_terminal?('>', false, index))
+            r4 = true
+            @index += match_len
           else
             terminal_parse_failure('>')
             r4 = nil
@@ -315,165 +320,192 @@ module FormattedText
     if node_cache[:tag_name].has_key?(index)
       cached = node_cache[:tag_name][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:tag_name][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
     end
 
     i0 = index
-    if has_terminal?('a', false, index)
-      r1 = instantiate_node(SyntaxNode,input, index...(index + 1))
-      @index += 1
+    if (match_len = has_terminal?('a', false, index))
+      r1 = true
+      @index += match_len
     else
       terminal_parse_failure('a')
       r1 = nil
     end
     if r1
+      r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
       r0 = r1
     else
-      if has_terminal?('b', false, index)
-        r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
-        @index += 1
+      if (match_len = has_terminal?('b', false, index))
+        r2 = true
+        @index += match_len
       else
         terminal_parse_failure('b')
         r2 = nil
       end
       if r2
+        r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
         r0 = r2
       else
-        if has_terminal?('code', false, index)
-          r3 = instantiate_node(SyntaxNode,input, index...(index + 4))
-          @index += 4
+        if (match_len = has_terminal?('code', false, index))
+          r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+          @index += match_len
         else
           terminal_parse_failure('code')
           r3 = nil
         end
         if r3
+          r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
           r0 = r3
         else
-          if has_terminal?('color', false, index)
-            r4 = instantiate_node(SyntaxNode,input, index...(index + 5))
-            @index += 5
+          if (match_len = has_terminal?('color', false, index))
+            r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+            @index += match_len
           else
             terminal_parse_failure('color')
             r4 = nil
           end
           if r4
+            r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
             r0 = r4
           else
-            if has_terminal?('del', false, index)
-              r5 = instantiate_node(SyntaxNode,input, index...(index + 3))
-              @index += 3
+            if (match_len = has_terminal?('del', false, index))
+              r5 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+              @index += match_len
             else
               terminal_parse_failure('del')
               r5 = nil
             end
             if r5
+              r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
               r0 = r5
             else
-              if has_terminal?('em', false, index)
-                r6 = instantiate_node(SyntaxNode,input, index...(index + 2))
-                @index += 2
+              if (match_len = has_terminal?('em', false, index))
+                r6 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                @index += match_len
               else
                 terminal_parse_failure('em')
                 r6 = nil
               end
               if r6
+                r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
                 r0 = r6
               else
-                if has_terminal?('font', false, index)
-                  r7 = instantiate_node(SyntaxNode,input, index...(index + 4))
-                  @index += 4
+                if (match_len = has_terminal?('font', false, index))
+                  r7 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                  @index += match_len
                 else
                   terminal_parse_failure('font')
                   r7 = nil
                 end
                 if r7
+                  r7 = SyntaxNode.new(input, (index-1)...index) if r7 == true
                   r0 = r7
                 else
-                  if has_terminal?('i', false, index)
-                    r8 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                    @index += 1
+                  if (match_len = has_terminal?('i', false, index))
+                    r8 = true
+                    @index += match_len
                   else
                     terminal_parse_failure('i')
                     r8 = nil
                   end
                   if r8
+                    r8 = SyntaxNode.new(input, (index-1)...index) if r8 == true
                     r0 = r8
                   else
-                    if has_terminal?('link', false, index)
-                      r9 = instantiate_node(SyntaxNode,input, index...(index + 4))
-                      @index += 4
+                    if (match_len = has_terminal?('icon', false, index))
+                      r9 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                      @index += match_len
                     else
-                      terminal_parse_failure('link')
+                      terminal_parse_failure('icon')
                       r9 = nil
                     end
                     if r9
+                      r9 = SyntaxNode.new(input, (index-1)...index) if r9 == true
                       r0 = r9
                     else
-                      if has_terminal?('span', false, index)
-                        r10 = instantiate_node(SyntaxNode,input, index...(index + 4))
-                        @index += 4
+                      if (match_len = has_terminal?('link', false, index))
+                        r10 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                        @index += match_len
                       else
-                        terminal_parse_failure('span')
+                        terminal_parse_failure('link')
                         r10 = nil
                       end
                       if r10
+                        r10 = SyntaxNode.new(input, (index-1)...index) if r10 == true
                         r0 = r10
                       else
-                        if has_terminal?('strikethrough', false, index)
-                          r11 = instantiate_node(SyntaxNode,input, index...(index + 13))
-                          @index += 13
+                        if (match_len = has_terminal?('span', false, index))
+                          r11 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                          @index += match_len
                         else
-                          terminal_parse_failure('strikethrough')
+                          terminal_parse_failure('span')
                           r11 = nil
                         end
                         if r11
+                          r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
                           r0 = r11
                         else
-                          if has_terminal?('strong', false, index)
-                            r12 = instantiate_node(SyntaxNode,input, index...(index + 6))
-                            @index += 6
+                          if (match_len = has_terminal?('strikethrough', false, index))
+                            r12 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                            @index += match_len
                           else
-                            terminal_parse_failure('strong')
+                            terminal_parse_failure('strikethrough')
                             r12 = nil
                           end
                           if r12
+                            r12 = SyntaxNode.new(input, (index-1)...index) if r12 == true
                             r0 = r12
                           else
-                            if has_terminal?('sub', false, index)
-                              r13 = instantiate_node(SyntaxNode,input, index...(index + 3))
-                              @index += 3
+                            if (match_len = has_terminal?('strong', false, index))
+                              r13 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                              @index += match_len
                             else
-                              terminal_parse_failure('sub')
+                              terminal_parse_failure('strong')
                               r13 = nil
                             end
                             if r13
+                              r13 = SyntaxNode.new(input, (index-1)...index) if r13 == true
                               r0 = r13
                             else
-                              if has_terminal?('sup', false, index)
-                                r14 = instantiate_node(SyntaxNode,input, index...(index + 3))
-                                @index += 3
+                              if (match_len = has_terminal?('sub', false, index))
+                                r14 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                                @index += match_len
                               else
-                                terminal_parse_failure('sup')
+                                terminal_parse_failure('sub')
                                 r14 = nil
                               end
                               if r14
+                                r14 = SyntaxNode.new(input, (index-1)...index) if r14 == true
                                 r0 = r14
                               else
-                                if has_terminal?('u', false, index)
-                                  r15 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                                  @index += 1
+                                if (match_len = has_terminal?('sup', false, index))
+                                  r15 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                                  @index += match_len
                                 else
-                                  terminal_parse_failure('u')
+                                  terminal_parse_failure('sup')
                                   r15 = nil
                                 end
                                 if r15
+                                  r15 = SyntaxNode.new(input, (index-1)...index) if r15 == true
                                   r0 = r15
                                 else
-                                  @index = i0
-                                  r0 = nil
+                                  if (match_len = has_terminal?('u', false, index))
+                                    r16 = true
+                                    @index += match_len
+                                  else
+                                    terminal_parse_failure('u')
+                                    r16 = nil
+                                  end
+                                  if r16
+                                    r16 = SyntaxNode.new(input, (index-1)...index) if r16 == true
+                                    r0 = r16
+                                  else
+                                    @index = i0
+                                    r0 = nil
+                                  end
                                 end
                               end
                             end
@@ -511,7 +543,7 @@ module FormattedText
     if node_cache[:attributes].has_key?(index)
       cached = node_cache[:attributes][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:attributes][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
@@ -552,7 +584,7 @@ module FormattedText
     if node_cache[:attribute].has_key?(index)
       cached = node_cache[:attribute][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:attribute][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
@@ -564,10 +596,11 @@ module FormattedText
     if r1
       s2, i2 = [], index
       loop do
-        if has_terminal?('\G[a-z_]', true, index)
+        if has_terminal?(@regexps[gr = '\A[a-z_]'] ||= Regexp.new(gr), :regexp, index)
           r3 = true
           @index += 1
         else
+          terminal_parse_failure('[a-z_]')
           r3 = nil
         end
         if r3
@@ -584,18 +617,18 @@ module FormattedText
       end
       s0 << r2
       if r2
-        if has_terminal?('=', false, index)
-          r4 = instantiate_node(SyntaxNode,input, index...(index + 1))
-          @index += 1
+        if (match_len = has_terminal?('=', false, index))
+          r4 = true
+          @index += match_len
         else
           terminal_parse_failure('=')
           r4 = nil
         end
         s0 << r4
         if r4
-          if has_terminal?('"', false, index)
-            r5 = instantiate_node(SyntaxNode,input, index...(index + 1))
-            @index += 1
+          if (match_len = has_terminal?('"', false, index))
+            r5 = true
+            @index += match_len
           else
             terminal_parse_failure('"')
             r5 = nil
@@ -604,10 +637,11 @@ module FormattedText
           if r5
             s6, i6 = [], index
             loop do
-              if has_terminal?('\G[^"]', true, index)
+              if has_terminal?(@regexps[gr = '\A[^"]'] ||= Regexp.new(gr), :regexp, index)
                 r7 = true
                 @index += 1
               else
+                terminal_parse_failure('[^"]')
                 r7 = nil
               end
               if r7
@@ -619,9 +653,9 @@ module FormattedText
             r6 = instantiate_node(SyntaxNode,input, i6...index, s6)
             s0 << r6
             if r6
-              if has_terminal?('"', false, index)
-                r8 = instantiate_node(SyntaxNode,input, index...(index + 1))
-                @index += 1
+              if (match_len = has_terminal?('"', false, index))
+                r8 = true
+                @index += match_len
               else
                 terminal_parse_failure('"')
                 r8 = nil
@@ -664,16 +698,16 @@ module FormattedText
     if node_cache[:end_tag].has_key?(index)
       cached = node_cache[:end_tag][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:end_tag][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
     end
 
     i0, s0 = index, []
-    if has_terminal?('</', false, index)
-      r1 = instantiate_node(SyntaxNode,input, index...(index + 2))
-      @index += 2
+    if (match_len = has_terminal?('</', false, index))
+      r1 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+      @index += match_len
     else
       terminal_parse_failure('</')
       r1 = nil
@@ -683,9 +717,9 @@ module FormattedText
       r2 = _nt_tag_name
       s0 << r2
       if r2
-        if has_terminal?('>', false, index)
-          r3 = instantiate_node(SyntaxNode,input, index...(index + 1))
-          @index += 1
+        if (match_len = has_terminal?('>', false, index))
+          r3 = true
+          @index += match_len
         else
           terminal_parse_failure('>')
           r3 = nil
@@ -718,7 +752,7 @@ module FormattedText
     if node_cache[:cdata].has_key?(index)
       cached = node_cache[:cdata][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:cdata][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
@@ -726,10 +760,11 @@ module FormattedText
 
     s0, i0 = [], index
     loop do
-      if has_terminal?('\G[^<&]', true, index)
+      if has_terminal?(@regexps[gr = '\A[^<&]'] ||= Regexp.new(gr), :regexp, index)
         r1 = true
         @index += 1
       else
+        terminal_parse_failure('[^<&]')
         r1 = nil
       end
       if r1
@@ -775,16 +810,16 @@ module FormattedText
     if node_cache[:entity].has_key?(index)
       cached = node_cache[:entity][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:entity][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
     end
 
     i0, s0 = index, []
-    if has_terminal?('&', false, index)
-      r1 = instantiate_node(SyntaxNode,input, index...(index + 1))
-      @index += 1
+    if (match_len = has_terminal?('&', false, index))
+      r1 = true
+      @index += match_len
     else
       terminal_parse_failure('&')
       r1 = nil
@@ -793,9 +828,9 @@ module FormattedText
     if r1
       i2 = index
       i3, s3 = index, []
-      if has_terminal?('#', false, index)
-        r4 = instantiate_node(SyntaxNode,input, index...(index + 1))
-        @index += 1
+      if (match_len = has_terminal?('#', false, index))
+        r4 = true
+        @index += match_len
       else
         terminal_parse_failure('#')
         r4 = nil
@@ -813,10 +848,12 @@ module FormattedText
         r3 = nil
       end
       if r3
+        r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
         r2 = r3
       else
         r6 = _nt_entity_name
         if r6
+          r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
           r2 = r6
         else
           @index = i2
@@ -825,9 +862,9 @@ module FormattedText
       end
       s0 << r2
       if r2
-        if has_terminal?(';', false, index)
-          r7 = instantiate_node(SyntaxNode,input, index...(index + 1))
-          @index += 1
+        if (match_len = has_terminal?(';', false, index))
+          r7 = true
+          @index += match_len
         else
           terminal_parse_failure(';')
           r7 = nil
@@ -854,7 +891,7 @@ module FormattedText
     if node_cache[:entity_number].has_key?(index)
       cached = node_cache[:entity_number][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:entity_number][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
@@ -862,10 +899,11 @@ module FormattedText
 
     s0, i0 = [], index
     loop do
-      if has_terminal?('\G[0-9]', true, index)
+      if has_terminal?(@regexps[gr = '\A[0-9]'] ||= Regexp.new(gr), :regexp, index)
         r1 = true
         @index += 1
       else
+        terminal_parse_failure('[0-9]')
         r1 = nil
       end
       if r1
@@ -894,61 +932,66 @@ module FormattedText
     if node_cache[:entity_name].has_key?(index)
       cached = node_cache[:entity_name][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:entity_name][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
     end
 
     i0 = index
-    if has_terminal?('amp', false, index)
-      r1 = instantiate_node(SyntaxNode,input, index...(index + 3))
-      @index += 3
+    if (match_len = has_terminal?('amp', false, index))
+      r1 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+      @index += match_len
     else
       terminal_parse_failure('amp')
       r1 = nil
     end
     if r1
+      r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
       r0 = r1
     else
-      if has_terminal?('apos', false, index)
-        r2 = instantiate_node(SyntaxNode,input, index...(index + 4))
-        @index += 4
+      if (match_len = has_terminal?('apos', false, index))
+        r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+        @index += match_len
       else
         terminal_parse_failure('apos')
         r2 = nil
       end
       if r2
+        r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
         r0 = r2
       else
-        if has_terminal?('gt', false, index)
-          r3 = instantiate_node(SyntaxNode,input, index...(index + 2))
-          @index += 2
+        if (match_len = has_terminal?('gt', false, index))
+          r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+          @index += match_len
         else
           terminal_parse_failure('gt')
           r3 = nil
         end
         if r3
+          r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
           r0 = r3
         else
-          if has_terminal?('lt', false, index)
-            r4 = instantiate_node(SyntaxNode,input, index...(index + 2))
-            @index += 2
+          if (match_len = has_terminal?('lt', false, index))
+            r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+            @index += match_len
           else
             terminal_parse_failure('lt')
             r4 = nil
           end
           if r4
+            r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
             r0 = r4
           else
-            if has_terminal?('quot', false, index)
-              r5 = instantiate_node(SyntaxNode,input, index...(index + 4))
-              @index += 4
+            if (match_len = has_terminal?('quot', false, index))
+              r5 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+              @index += match_len
             else
               terminal_parse_failure('quot')
               r5 = nil
             end
             if r5
+              r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
               r0 = r5
             else
               @index = i0
@@ -969,7 +1012,7 @@ module FormattedText
     if node_cache[:spaces].has_key?(index)
       cached = node_cache[:spaces][index]
       if cached
-        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:spaces][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
@@ -977,9 +1020,9 @@ module FormattedText
 
     s0, i0 = [], index
     loop do
-      if has_terminal?(' ', false, index)
-        r1 = instantiate_node(SyntaxNode,input, index...(index + 1))
-        @index += 1
+      if (match_len = has_terminal?(' ', false, index))
+        r1 = true
+        @index += match_len
       else
         terminal_parse_failure(' ')
         r1 = nil
