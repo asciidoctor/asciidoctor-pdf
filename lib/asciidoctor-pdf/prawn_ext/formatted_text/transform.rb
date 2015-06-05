@@ -140,7 +140,11 @@ class FormattedTextTransform
         fragment[:font] = value
       end
       if !fragment[:size] && (value = attrs[:size])
-        fragment[:size] = value.to_f
+        if (f_value = value.to_f) == value
+          fragment[:size] = f_value
+        elsif value != '1em'
+          fragment[:size] = value
+        end
       end
       #if !fragment[:character_spacing] && (value = attrs[:character_spacing])
       #  fragment[:character_spacing] = value.to_f

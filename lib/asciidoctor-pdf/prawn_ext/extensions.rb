@@ -154,17 +154,22 @@ module Extensions
   # QUESTION should we round the result?
   def font_size points = nil
     return @font_size unless points
-    #if points.is_a? String
-    #  # QUESTION should we round?
-    #  points = (@font_size * (points.chop.to_f / 100.0)).round
-    #  warn points
-    #elsif points <= 1
-    #  points = (@font_size * points)
-    #end
-    if points <= 1
-      points = (@font_size * points)
+    if points == 1
+      super @font_size
+    elsif String === points
+      if points.end_with? 'rem'
+        super (@theme.base_font_size * points.to_f)
+      elsif points.end_with? 'em'
+        super (@font_size * points.to_f)
+      elsif points.end_with? '%'
+        super (@font_size * (points.to_f / 100.0))
+      end
+    # FIXME HACK assume em value
+    elsif points < 1
+      super (@font_size * points)
+    else
+      super points
     end
-    super points
   end
 
   def calc_line_metrics line_height = 1, font = self.font, font_size = self.font_size
