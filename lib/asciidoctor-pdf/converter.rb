@@ -55,6 +55,7 @@ class Converter < ::Prawn::Document
     circle: (unicode_char 0x25e6),
     square: (unicode_char 0x25aa)
   }
+  IconSets = ['fa', 'fi', 'octicon', 'pf']
   # CalloutExtractRx synced from /lib/asciidoctor.rb of Asciidoctor core
   CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2>(?=(?: ?\\?<!?\2\d+\2>)*$)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
@@ -1233,6 +1234,37 @@ class Converter < ::Prawn::Document
     elsif node.type == :xref
       # NOTE footnote reference not found
       %( <color rgb="FF0000">[#{node.text}]</color>)
+    end
+  end
+
+  def convert_inline_image node
+    if node.type == 'icon'
+      if node.document.attr? 'icons', 'font'
+        if (icon_name = node.target).include? '@'
+          icon_name, icon_set = icon_name.split '@', 2
+        else
+          icon_set = node.attr 'set', (node.document.attr 'icon-set', 'fa')
+        end
+        icon_set = 'fa' unless IconSets.include? icon_set
+        if node.attr? 'size'
+          size = (size = (node.attr 'size')) == 'lg' ? '1.3333em' : (size.sub 'x', 'em')
+          size_attr = %( size="#{size}")
+        else
+          size_attr = nil
+        end
+        @icon_font_data ||= ::Prawn::Icon::FontData.load self, icon_set
+        begin
+          # TODO support rotate and flip attributes; support fw (full-width) size
+          %(<font name="#{icon_set}"#{size_attr}>#{@icon_font_data.unicode icon_name}</font>)
+        rescue
+          warn %(asciidoctor: WARNING: #{icon_name} is not a valid icon name in the #{icon_set} icon set)
+          %([#{node.attr 'alt'}])
+        end
+      else
+        %([#{node.attr 'alt'}])
+      end
+    else
+      warn %(asciidoctor: WARNING: conversion missing in backend #{@backend} for inline_image)
     end
   end
 
