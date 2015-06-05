@@ -353,6 +353,8 @@ class Converter < ::Prawn::Document
         prose_opts[:align] = :right
       when 'text-justify'
         prose_opts[:align] = :justify
+      when 'text-center'
+        prose_opts[:align] = :center
       when 'lead'
         is_lead = true
       #when 'signature'
