@@ -95,10 +95,11 @@ module Extensions
   #
   # Example:
   #
-  #  register_font GillSans: {
-  #    normal: 'assets/fonts/GillSans.ttf',
-  #    bold: 'assets/fonts/GillSans-Bold.ttf',
-  #    italic: 'assets/fonts/GillSans-Italic.ttf',
+  #  register_font Roboto: {
+  #    normal: 'fonts/roboto-normal.ttf',
+  #    italic: 'fonts/roboto-italic.ttf',
+  #    bold: 'fonts/roboto-bold.ttf',
+  #    bold_italic: 'fonts/roboto-bold_italic.ttf'
   #  }
   #  
   def register_font data
