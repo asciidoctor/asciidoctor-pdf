@@ -1469,19 +1469,17 @@ You can add an image to the running header or footer using the AsciiDoc inline i
 Note that the image must be the whole value for a given position (left, center or right).
 It cannot be combined with text.
 
-Here's an example of how to use an image in the running footer.
+Here's an example of how to use an image in the running header (which also applies for the footer).
 
 [source,yaml]
 ----
-footer:
+header:
   height: 0.75in
   image_valign: 2 # <1>
   recto_content:
-    left: image:footer-logo.png[width=80]
-    right: '{page-number}'
+    center: image:footer-logo.png[width=80]
   verso_content:
-    left: $footer_recto_content_right
-    right: $footer_recto_content_left
+    center: $footer_recto_content_center
 ----
 <1> You can use the `footer_valign` attribute to slighly nudge the image up or down.
 
