@@ -655,7 +655,7 @@ TBW
 
 === Page
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -678,7 +678,7 @@ TBW
 
 === Base
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -733,7 +733,7 @@ TBW
 
 === Vertical and horizontal rhythm
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -748,7 +748,7 @@ TBW
 
 === Link
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -773,7 +773,7 @@ TBW
 
 The literal key is used for inline monospaced text in prose and table cells.
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -796,7 +796,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Heading
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -804,31 +804,31 @@ The literal key is used for inline monospaced text in prose and table cells.
 |<<colors,color>>
 |font_color: 333333
 
-|heading_h<n>_font_color
-|<<colors,color>>
-|h2_font_color: [0, 99%, 100%, 0]
-
 |heading_font_family
 |<<fonts,font family name>>
 |font_family: NotoSerif
-
-|heading_h<n>_font_family
-|<<fonts,font family name>>
-|h4_font_family: Roboto
 
 |heading_font_size
 |<<values,number>>
 |font_size: 9
 
-|heading_h<n>_font_size
-|<<values,number>>
-|h6_font_size: round($base_font_size * 1.7)
-
 |heading_font_style
 |normal, italic, bold, bold_italic
 |font_style: bold
 
-|heading_h<n>_font_style
+|heading_h<n>_font_color^[1]^
+|<<colors,color>>
+|h2_font_color: [0, 99%, 100%, 0]
+
+|heading_h<n>_font_family^[1]^
+|<<fonts,font family name>>
+|h4_font_family: Roboto
+
+|heading_h<n>_font_size^[1]^
+|<<values,number>>
+|h6_font_size: round($base_font_size * 1.7)
+
+|heading_h<n>_font_style^[1]^
 |normal, italic, bold, bold_italic
 |h3_font_style: bold_italic
 
@@ -845,9 +845,11 @@ The literal key is used for inline monospaced text in prose and table cells.
 |margin_bottom: 9.600
 |===
 
+^[1]^ `<n>` may be a number ranging from 1 to 6, representing each of the six heading levels.
+
 === Title page
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -902,9 +904,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Block
 
-// Blocks include admonition, example, quote, verse, sidebar, image, listing, literal, and table.
-
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -921,9 +921,27 @@ The literal key is used for inline monospaced text in prose and table cells.
 |margin_bottom: 1
 |===
 
+Block styles are applied to the following block types:
+
+[cols="1a,1a,1a", grid=none, frame=none]
+|===
+|
+* admonition
+* example
+* quote
+|
+* verse
+* sidebar
+* image
+|
+* listing
+* literal
+* table
+|===
+
 === Caption
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -958,7 +976,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Code
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1005,7 +1023,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Blockquote
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1053,7 +1071,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Sidebar
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1096,7 +1114,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Example
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1119,7 +1137,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Admonition
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1134,7 +1152,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Image
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1145,7 +1163,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Lead
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1160,7 +1178,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Abstract
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1183,7 +1201,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Thematic break
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1202,7 +1220,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Description list
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1218,7 +1236,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Outline list
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1233,7 +1251,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Table
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1265,7 +1283,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 [[key-toc]]
 === Table of contents
 
-[cols="1d,1d,2m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1312,7 +1330,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 === Running header & footer
 
-[cols="3,5,5m"]
+[cols="3,3,5m"]
 |===
 |Key |Value Type |Example
 
@@ -1360,10 +1378,9 @@ The literal key is used for inline monospaced text in prose and table cells.
 |top, center, bottom
 |valign: center
 
-|header_<side>_content_<align>*
+|header_<side>_content_<align>^[1]^
 |quoted string
-v|`recto_content:
-  right: '\{page-number}'`
+|right: '\{page-number}'
 
 |footer_background_color
 |<<colors,color>>
@@ -1409,13 +1426,12 @@ v|`recto_content:
 |top, center, bottom
 |valign: top
 
-|footer_<side>_content_<align>*
+|footer_<side>_content_<align>^[1]^
 |quoted string
-v|`recto_content:
-  center: '\{page-number}'`
+|center: '\{page-number}'
 |===
 
-{asterisk} `<side>` can be `recto` (odd pages) or `verso` (even pages).
+^[1]^ `<side>` can be `recto` (odd pages) or `verso` (even pages).
 `<align>` can be `left`, `center` or `right`.
 
 IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
