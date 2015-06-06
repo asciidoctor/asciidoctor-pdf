@@ -1423,6 +1423,8 @@ IMPORTANT: You must define a height for the running header or footer, respective
 NOTE: The background color spans the width of the page.
 When a background color is specified, the border also spans the width of the page.
 
+==== Implicit attributes
+
 In addition to the document-level attributes defined in the AsciiDoc document, the following attributes are available when defining the content keys in the footer:
 
 * page-count
@@ -1433,7 +1435,7 @@ In addition to the document-level attributes defined in the AsciiDoc document, t
 * section-title
 * section-or-chapter-title
 
-For example:
+Here's an example that shows how these attributes can be used in the running footer:
 
 [source,yaml]
 ----
@@ -1444,6 +1446,32 @@ footer:
   verso_content:
     left: '{page-number} | {chapter-title}'
 ----
+
+==== Images
+
+You can add an image to the running header or footer using the AsciiDoc inline image syntax.
+Note that the image must be the whole value for a given position (left, center or right).
+It cannot be combined with text.
+
+Here's an example of how to use an image in the running footer.
+
+[source,yaml]
+----
+footer:
+  height: 0.75in
+  image_valign: 2 # <1>
+  recto_content:
+    left: image:footer-logo.png[width=80]
+    right: '{page-number}'
+  verso_content:
+    left: $footer_recto_content_right
+    right: $footer_recto_content_left
+----
+<1> You can use the `footer_valign` attribute to slighly nudge the image up or down.
+
+CAUTION: The image must fit in the allotted space for the running header or footer.
+Otherwise, you will run into layout issues.
+Adjust the width attribute accordingly.
 
 == Applying your theme
 
