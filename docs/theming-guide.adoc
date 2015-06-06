@@ -1479,7 +1479,7 @@ header:
   recto_content:
     center: image:footer-logo.png[width=80]
   verso_content:
-    center: $footer_recto_content_center
+    center: $header_recto_content_center
 ----
 <1> You can use the `footer_valign` attribute to slighly nudge the image up or down.
 
