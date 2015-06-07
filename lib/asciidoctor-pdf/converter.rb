@@ -1158,6 +1158,11 @@ class Converter < ::Prawn::Document
   # deprecated
   alias :convert_horizontal_rule :convert_thematic_break
 
+  # NOTE manual placement not yet possible, so return nil
+  def convert_toc node
+    nil
+  end
+
   def convert_page_break node
     start_new_page unless at_page_top?
   end
