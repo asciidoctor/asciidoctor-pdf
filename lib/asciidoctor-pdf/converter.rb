@@ -56,6 +56,9 @@ class Converter < ::Prawn::Document
     square: (unicode_char 0x25aa)
   }
   IconSets = ['fa', 'fi', 'octicon', 'pf']
+  MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|pt|)'
+  MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|pt|)$/
+  PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
   # CalloutExtractRx synced from /lib/asciidoctor.rb of Asciidoctor core
   CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2>(?=(?: ?\\?<!?\2\d+\2>)*$)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
@@ -198,14 +201,24 @@ class Converter < ::Prawn::Document
       skip_page_creation: true,
     }
 
-    if doc.attr? 'pdf-page-size'
-      page_size = ::YAML.safe_load(doc.attr 'pdf-page-size')
+    if (doc.attr? 'pdf-page-size') && (m = PageSizeRx.match(doc.attr 'pdf-page-size'))
+      # e.g, [8.5in, 11in]
+      if m[1]
+        page_size = [m[1], m[2]]
+      # e.g, 8.5in x 11in
+      elsif m[3]
+        page_size = [m[3], m[4]]
+      # e.g, A4
+      else
+        page_size = m[0].upcase
+      end
     else
       page_size = theme.page_size
     end
 
     pdf_opts[:page_size] = case page_size
     when ::String
+      # TODO extract helper method
       if ::PDF::Core::PageGeometry::SIZES.key?(page_size = page_size.upcase)
         page_size
       else
@@ -216,8 +229,9 @@ class Converter < ::Prawn::Document
         if ::Numeric === d
           break if d == 0
           d
-        elsif ::String === d && (m = /^(\d*(?:\.\d+)?)(in|mm|cm|pt)$/.match d)
+        elsif ::String === d && (m = (MeasurementPartsRx.match d))
           val = m[1].to_f
+          # TODO delegate to a pt calculation method
           val = case m[2]
           when 'in'
             val * 72
@@ -225,7 +239,7 @@ class Converter < ::Prawn::Document
             val * (72 / 25.4)
           when 'cm'
             val * (720 / 25.4)
-          when 'pt'
+          else # pt or unitless
             val
           end
           # NOTE 4 is the max practical precision in PDFs
@@ -241,7 +255,7 @@ class Converter < ::Prawn::Document
 
     pdf_opts[:page_size] ||= 'LETTER'
 
-    # FIXME fix the namespace for FormattedTextFormatter
+    # FIXME change namespace of FormattedTextFormatter to ::Asciidoctor::Pdf (or deeper)
     pdf_opts[:text_formatter] ||= ::Asciidoctor::Prawn::FormattedTextFormatter.new theme: theme
     pdf_opts
   end
