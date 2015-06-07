@@ -746,6 +746,9 @@ TBW
 |horizontal_rhythm: 12
 |===
 
+NOTE: Vertical and horizontal rhythm are used for vertical and horizontal spacing, respectively, when there a specific theme key is not defined for a certain purpose.
+These keys predated the CSS-style theme system and are planned to be phased out.
+
 === Link
 
 [cols="3,3,5m"]
