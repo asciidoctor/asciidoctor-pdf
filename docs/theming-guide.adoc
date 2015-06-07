@@ -694,11 +694,11 @@ TBW
 |<<values,number>>
 |font_size: 10.5
 
-|base_line_height_length
+|base_line_height_length^[1]^
 |<<values,number>>
 |line_height_length: 12
 
-|base_line_height
+|base_line_height^[1]^
 |<<values,number>>
 |line_height: 1.14
 
@@ -730,6 +730,9 @@ TBW
 |<<colors,color>>
 |border_color: eee
 |===
+
+^[1]^ You should set either `line_height` or `line_height_length` and derive the value of the other using a calculation since these are correlated values.
+For instance, if you set `line_height_length`, then use `line_height: $base_line_height_length / $base_font_size` to define the line height.
 
 === Vertical and horizontal rhythm
 
