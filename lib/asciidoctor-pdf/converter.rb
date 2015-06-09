@@ -2069,7 +2069,9 @@ class Converter < ::Prawn::Document
     if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
         (image_path = (node.normalize_web_path image_path, image_base_uri, false)))
       unless doc.attr? 'allow-uri-read'
-        warn %(asciidoctor: WARNING: allow-uri-read is not enabled; cannot embed remote image: #{image_path})
+        unless scratch?
+          warn %(asciidoctor: WARNING: allow-uri-read is not enabled; cannot embed remote image: #{image_path})
+        end
         return
       end
       if doc.attr? 'cache-uri'
