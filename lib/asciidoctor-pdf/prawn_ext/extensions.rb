@@ -163,6 +163,8 @@ module Extensions
         super (@font_size * points.to_f)
       elsif points.end_with? '%'
         super (@font_size * (points.to_f / 100.0))
+      else
+        super points.to_f
       end
     # FIXME HACK assume em value
     elsif points < 1
