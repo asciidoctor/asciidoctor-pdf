@@ -1898,7 +1898,8 @@ class Converter < ::Prawn::Document
 
   def write pdf_doc, target
     pdf_doc.render_file target
-    #@prototype.render_file 'scratch.pdf'
+    # write scratch document if debug is enabled (or perhaps DEBUG_STEPS env)
+    #get_scratch_document.render_file 'scratch.pdf'
     # QUESTION restore attributes first?
     @pdfmarks.generate_file target if @pdfmarks
   end
