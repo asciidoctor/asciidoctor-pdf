@@ -127,7 +127,7 @@ module Extensions
   # Retrieves the current font info (family, style, size) as a Hash
   #
   def font_info
-    { family: font.options[:family], style: font.options[:style] || :normal, size: @font_size }
+    { family: font.options[:family], style: (font.options[:style] || :normal), size: @font_size }
   end
 
   # Sets the font style for the scope of the block to which this method
