@@ -1,6 +1,7 @@
 module Asciidoctor
-module Prawn
-class FormattedTextTransform
+module Pdf
+module FormattedText
+class Transform
   #ZeroWidthSpace = [0x200b].pack 'U*'
 
   def initialize(options = {})
@@ -94,9 +95,11 @@ class FormattedTextTransform
     #return { text: fragment } if tag_name.nil?
     styles = (fragment[:styles] ||= ::Set.new)
     case tag_name
-    when :b, :strong
+    #when :b, :strong
+    when :strong
       styles << :bold
-    when :i, :em
+    #when :i, :em
+    when :em
       styles << :italic
     when :code
       fragment[:font] ||= @monospaced_font_family
@@ -140,7 +143,7 @@ class FormattedTextTransform
         fragment[:font] = value
       end
       if !fragment[:size] && (value = attrs[:size])
-        if (f_value = value.to_f) == value
+        if %(#{f_value = value.to_f}) == value || %(#{value.to_i}) == value
           fragment[:size] = f_value
         elsif value != '1em'
           fragment[:size] = value
@@ -149,7 +152,8 @@ class FormattedTextTransform
       #if !fragment[:character_spacing] && (value = attrs[:character_spacing])
       #  fragment[:character_spacing] = value.to_f
       #end
-    when :a, :link
+    #when :a, :link
+    when :a
       if !fragment[:anchor] && (value = attrs[:anchor])
         fragment[:anchor] = value
       end
@@ -168,9 +172,10 @@ class FormattedTextTransform
       styles << :subscript
     when :sup
       styles << :superscript
-    when :u
-      styles << :underline
-    when :del, :strikethrough
+    #when :u
+    #  styles << :underline
+    #when :del, :strikethrough
+    when :del
       styles << :strikethrough
     when :span
       # span logic with normal style parsing
@@ -199,26 +204,20 @@ class FormattedTextTransform
       #  end
       #  fragment[:color] = value[6..-1].tr(' #', '')
       #end
+    when :img
+      fragment[:image_path] = attrs[:src]
+      fragment[:image_tmp] = (attrs[:tmp] == 'true')
+      fragment[:text] = attrs[:alt]
+      if (img_w = attrs[:width])
+        fragment[:image_width] = img_w.to_f
+      end
+      fragment[:callback] = InlineImageRenderer
     end
     # QUESTION should we remove styles if empty? Need test
     #fragment.delete(:styles) if styles.empty?
     fragment
   end
 end
-
-module InlineDestinationMarker
-  module_function
-
-  def render_behind fragment
-    unless (pdf_doc = fragment.instance_variable_get :@document).scratch?
-      if (name = (fragment.instance_variable_get :@format_state)[:name])
-        # get precise position of the reference
-        dest_rect = fragment.absolute_bounding_box
-        # QUESTION should we set precise x value of destination or just 0?
-        pdf_doc.add_dest name, (pdf_doc.dest_xyz dest_rect.first, dest_rect.last)
-      end
-    end
-  end
 end
 end
 end

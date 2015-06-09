@@ -9,6 +9,7 @@ require 'prawn/icon'
 require_relative 'pdf_core_ext'
 require_relative 'sanitizer'
 require_relative 'prawn_ext'
+require_relative 'formatted_text'
 require_relative 'pdfmarks'
 require_relative 'asciidoctor_ext'
 require_relative 'theme_loader'
@@ -260,8 +261,7 @@ class Converter < ::Prawn::Document
 
     pdf_opts[:page_size] = (page_size || 'LETTER')
 
-    # FIXME change namespace of FormattedTextFormatter to ::Asciidoctor::Pdf (or deeper)
-    pdf_opts[:text_formatter] ||= ::Asciidoctor::Prawn::FormattedTextFormatter.new theme: theme
+    pdf_opts[:text_formatter] ||= FormattedText::Formatter.new theme: theme
     pdf_opts
   end
 
@@ -750,7 +750,7 @@ class Converter < ::Prawn::Document
 
     if image_type == 'gif'
       valid_image = false
-      warn %(asciidoctor: WARNING: GIF image format not supported. Please convert the image #{target} to PNG.)
+      warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.)
     #elsif image_type == 'pdf'
     #  import_page image_path
     #  return
@@ -1256,7 +1256,7 @@ class Converter < ::Prawn::Document
   end
 
   def convert_inline_button node
-    %(<b>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</b>)
+    %(<strong>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</strong>)
   end
 
   def convert_inline_callout node
@@ -1305,7 +1305,25 @@ class Converter < ::Prawn::Document
         %([#{node.attr 'alt'}])
       end
     else
-      warn %(asciidoctor: WARNING: conversion missing in backend #{@backend} for inline_image)
+      target = node.target
+      # TODO file extension should be an attribute on an image node
+      image_type = (::File.extname target)[1..-1].downcase
+      valid = true
+      if image_type == 'gif'
+        warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
+        valid = false
+      end
+      unless (image_path = resolve_image_path node, target) && (::File.readable? image_path)
+        warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
+        valid = false
+      end
+      if valid
+        width_attr = (node.attr? 'width') ? %( width="#{node.attr 'width'}") : nil
+        # FIXME change parser to accept short img tag
+        %(<img src="#{image_path}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{image_path.instance_variable_defined? :@tmp_file}">#{ZWSP}</img>)
+      else
+        node.attr 'alt'
+      end
     end
   end
 
