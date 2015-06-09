@@ -519,10 +519,10 @@ module Extensions
     end
   end
 
-  def is_scratch?
-    !!state.store.info.data[:Scratch]
+  def scratch?
+    (@_label ||= (state.store.info.data[:Scratch] ? :scratch : :primary)) == :scratch
   end
-  alias :scratch? :is_scratch?
+  alias :is_scratch? :scratch?
 
   # TODO document me
   def dry_run &block
