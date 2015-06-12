@@ -55,6 +55,11 @@ class Converter < ::Prawn::Document
     circle: (unicode_char 0x25e6),
     square: (unicode_char 0x25aa)
   }
+  # NOTE Default theme font uses ballot boxes from FontAwesome
+  BallotBox = {
+    checked: (unicode_char 0x2611),
+    unchecked: (unicode_char 0x2610)
+  }
   IconSets = ['fa', 'fi', 'octicon', 'pf']
   MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|pt|)'
   MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|pt|)$/
@@ -643,27 +648,30 @@ class Converter < ::Prawn::Document
     @list_numbers.pop
   end
 
-  # TODO implement checklist
   def convert_ulist node
     add_dest_for_block node if node.id
-    bullet_type = if (style = node.style)
-      case style
-      when 'bibliography'
-        :square
-      else
-        style.to_sym
-      end
+    if node.option? 'checklist'
+      @list_bullets << :checkbox
     else
-      case (node.level % 3)
-      when 1
-        :disc
-      when 2
-        :circle
-      when 0
-        :square
+      bullet_type = if (style = node.style)
+        case style
+        when 'bibliography'
+          :square
+        else
+          style.to_sym
+        end
+      else
+        case (node.level % 3)
+        when 1
+          :disc
+        when 2
+          :circle
+        when 0
+          :square
+        end
       end
+      @list_bullets << Bullets[bullet_type]
     end
-    @list_bullets << Bullets[bullet_type]
     convert_outline_list node
     @list_bullets.pop
   end
@@ -691,29 +699,39 @@ class Converter < ::Prawn::Document
 
   def convert_outline_list_item node, complex = false
     # TODO move this to a draw_bullet (or draw_marker) method
-    marker = case (list_type = node.parent.context)
+    case (list_type = node.parent.context)
     when :ulist
-      @list_bullets.last
+      marker = @list_bullets.last
+      if marker == :checkbox
+        if node.attr? 'checkbox'
+          marker = BallotBox[(node.attr? 'checked') ? :checked : :unchecked]
+        else
+          # QUESTION should we remove marker indent in this case?
+          marker = nil
+        end
+      end
     when :olist
       @list_numbers << (index = @list_numbers.pop).next
-      %(#{index}.)
+      marker = %(#{index}.)
     else
       warn %(asciidoctor: WARNING: unknown list type #{list_type.inspect})
-      Bullets[:disc]
+      marker = Bullets[:disc]
     end
 
-    marker_width = width_of marker
-    start_position = -marker_width + -(width_of 'x')
-    float do
-      bounding_box [start_position, cursor], width: marker_width do
-        layout_prose marker,
-          align: :right,
-          color: (@theme.outline_list_marker_font_color || @font_color),
-          normalize: false,
-          inline_format: false,
-          margin: 0,
-          character_spacing: -0.5,
-          single_line: true
+    if marker
+      marker_width = width_of marker
+      start_position = -marker_width + -(width_of 'x')
+      float do
+        bounding_box [start_position, cursor], width: marker_width do
+          layout_prose marker,
+            align: :right,
+            color: (@theme.outline_list_marker_font_color || @font_color),
+            normalize: false,
+            inline_format: false,
+            margin: 0,
+            character_spacing: -0.5,
+            single_line: true
+        end
       end
     end
 
