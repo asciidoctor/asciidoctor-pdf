@@ -1,6 +1,6 @@
 # encoding: UTF-8
 # TODO cleanup imports...decide what belongs in asciidoctor-pdf.rb
-require_relative 'core_ext/array'
+require_relative 'core_ext'
 require 'prawn'
 require 'prawn-svg'
 require 'prawn/table'
@@ -67,6 +67,7 @@ class Converter < ::Prawn::Document
   # CalloutExtractRx synced from /lib/asciidoctor.rb of Asciidoctor core
   CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2>(?=(?: ?\\?<!?\2\d+\2>)*$)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
+  LineScanRx = /\n|.+/
 
   def initialize backend, opts
     super
@@ -864,7 +865,7 @@ class Converter < ::Prawn::Document
     unlink_tmp_file image_path
   end
 
-  # TODO shrink text if it's too wide to fit in the bounding box
+  # QUESTION can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
   def convert_listing_or_literal node
     add_dest_for_block node if node.id
     # HACK disable built-in syntax highlighter; must be done before calling node.content!
@@ -873,13 +874,11 @@ class Converter < ::Prawn::Document
       highlighter = node.document.attr 'source-highlighter'
       # NOTE the source highlighter logic below handles the callouts and highlight subs
       prev_subs = subs.dup
-      subs.delete :callouts
-      subs.delete :highlight
+      subs.delete_all :highlight, :callouts
     else
       highlighter = nil
       prev_subs = nil
     end
-    # FIXME source highlighter freaks out about the non-breaking space characters; does it?
     source_string = preserve_indentation node.content
     source_chunks = case highlighter
     when 'coderay'
@@ -897,13 +896,23 @@ class Converter < ::Prawn::Document
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     else
       # NOTE only format if we detect a need
-      (source_string =~ BuiltInEntityCharOrTagRx) ? (text_formatter.format source_string) : [{ text: source_string }]
+      if source_string =~ BuiltInEntityCharOrTagRx
+        text_formatter.format source_string
+      else
+        [{ text: source_string }]
+      end
     end
 
     node.subs.replace prev_subs if prev_subs
 
     #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
+
+    if (node.option? 'autofit') || (node.document.attr? 'autofit-option')
+      adjusted_font_size = theme_font_size_autofit source_chunks, :code
+    else
+      adjusted_font_size = nil
+    end
 
     keep_together do |box_height = nil|
       caption_height = node.title? ? (layout_caption node) : 0
@@ -927,7 +936,9 @@ class Converter < ::Prawn::Document
         end
 
         pad_box @theme.code_padding do
-          typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height), color: (@theme.code_font_color || @font_color)
+          typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height),
+              color: (@theme.code_font_color || @font_color),
+              size: adjusted_font_size
         end
       end
     end
@@ -962,6 +973,9 @@ class Converter < ::Prawn::Document
   end
 
   # Restore the conums into the Array of formatted text fragments
+  #--
+  # QUESTION can this be done more efficiently?
+  # QUESTION can we reuse arrange_fragments_by_line?
   def restore_conums fragments, conum_mapping
     lines = []
     line_num = 0
@@ -2002,6 +2016,73 @@ class Converter < ::Prawn::Document
 
     @font_color = prev_color if color
     @text_transform = prev_transform if transform
+  end
+
+  # Calculate the font size (down to the minimum font size) that would allow
+  # all the specified fragments to fit in the available width without wrapping lines.
+  #
+  # Return the calculated font size if an adjustment is necessary or nil if no
+  # font size adjustment is necessary.
+  def theme_font_size_autofit fragments, category
+    arranger = arrange_fragments_by_line fragments
+    adjusted_font_size = nil
+    theme_font category do
+      # NOTE finalizing the line here generates fragments using current font settings
+      arranger.finalize_line
+      actual_width = width_of_fragments arranger.fragments
+      unless ::Array === (padding = @theme[%(#{category}_padding)])
+        padding = [padding] * 4
+      end
+      bounds.add_left_padding(p_left = padding[3] || 0)
+      bounds.add_right_padding(p_right = padding[1] || 0)
+      if actual_width > bounds.width
+        adjusted_font_size = ((bounds.width * font_size).to_f / actual_width).with_precision 4
+        if (min = @theme[%(#{category}_font_size_min)] || @theme.base_font_size_min) && adjusted_font_size < min
+          adjusted_font_size = min
+        end
+      end
+      bounds.subtract_left_padding p_left
+      bounds.subtract_right_padding p_right
+    end
+    adjusted_font_size
+  end
+
+  # Arrange fragments by line in an arranger and return an unfinalized arranger.
+  #
+  # Finalizing the arranger is deferred since it must be done in the context of
+  # the global font settings you want applied to each fragment.
+  def arrange_fragments_by_line fragments, opts = {}
+    arranger = ::Prawn::Text::Formatted::Arranger.new self
+    by_line = arranger.consumed = []
+    fragments.each do |fragment|
+      if (txt = fragment[:text]) == EOL
+        by_line << fragment
+      elsif txt.include? EOL
+        txt.scan(LineScanRx) do |line|
+          by_line << fragment.merge(text: line)
+        end
+      else
+        by_line << fragment
+      end
+    end
+    arranger
+  end
+
+  # Calculate the width that is needed to print all the
+  # fragments without wrapping any lines.
+  #
+  # This method assumes endlines are represented as discrete entries in the
+  # fragments array.
+  def width_of_fragments fragments
+    line_widths = [0]
+    fragments.each do |fragment|
+      if fragment.text == EOL
+        line_widths << 0
+      else
+        line_widths[-1] += fragment.width
+      end
+    end
+    line_widths.max
   end
 
   # TODO document me, esp the first line formatting functionality
