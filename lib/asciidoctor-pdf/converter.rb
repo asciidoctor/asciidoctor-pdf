@@ -130,7 +130,7 @@ class Converter < ::Prawn::Document
 
     toc_start_page_num = page_number
     num_toc_levels = (doc.attr 'toclevels', 2).to_i
-    if doc.attr? 'toc'
+    if (include_toc = doc.attr? 'toc')
       toc_page_nums = ()
       dry_run do
         toc_page_nums = layout_toc doc, num_toc_levels, 1
@@ -145,7 +145,7 @@ class Converter < ::Prawn::Document
     font @theme.base_font_family, size: @theme.base_font_size
     convert_content_for_block doc
 
-    toc_page_nums = if doc.attr? 'toc'
+    toc_page_nums = if include_toc
       layout_toc doc, num_toc_levels, toc_start_page_num, num_front_matter_pages
     else
       (0..-1)
