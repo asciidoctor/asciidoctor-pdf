@@ -28,10 +28,22 @@ module Extensions
     page.dimensions[2]
   end
 
+  # Returns the effective (writable) width of the page
+  #
+  def effective_page_width
+    reference_bounds.width
+  end
+
   # Returns the height of the current page from edge-to-edge
   #
   def page_height
     page.dimensions[3]
+  end
+
+  # Returns the effective (writable) height of the page
+  #
+  def effective_page_height
+    reference_bounds.height
   end
 
   # Returns the width of the left margin for the current page
@@ -545,7 +557,7 @@ module Extensions
     total_height, _whole_pages, _remainder = dry_run(&block)
     # NOTE technically, if we're at the page top, we don't even need to do the
     # dry run, except several uses of this method rely on the calculated height
-    if total_height > available_space && !at_page_top?
+    if total_height > available_space && !at_page_top? && total_height <= effective_page_height
       start_new_page
       started_new_page = true
     else
