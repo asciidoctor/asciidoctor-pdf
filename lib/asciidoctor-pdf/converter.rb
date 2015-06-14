@@ -920,15 +920,33 @@ class Converter < ::Prawn::Document
       theme_font :code do
         if box_height
           float do
-            # FIXME don't use border / border radius at page boundaries
-            # TODO move this logic to theme_fill_and_stroke_bounds
+            # TODO move the multi-page logic to theme_fill_and_stroke_bounds
+            unless (b_width = @theme.code_border_width || 0) == 0
+              b_radius = (@theme.code_border_radius || 0) + b_width
+              bg_color = @theme.code_background_color || @page_bg_color || 'FFFFFF'
+            end
             remaining_height = box_height - caption_height
             i = 0
             while remaining_height > 0
-              start_new_page if i > 0
+              start_new_page if (new_page_started = i > 0)
               fill_height = [remaining_height, cursor].min
               bounding_box [0, cursor], width: bounds.width, height: fill_height do
                 theme_fill_and_stroke_bounds :code
+                unless b_width == 0
+                  if new_page_started
+                    indent b_radius, b_radius do
+                      # dashed line to indicate continuation from previous page
+                      stroke_horizontal_rule bg_color, line_width: b_width, line_style: :dashed
+                    end
+                  end
+                  if remaining_height > fill_height
+                    move_down fill_height
+                    indent b_radius, b_radius do
+                      # dashed line to indicate continuation on next page
+                      stroke_horizontal_rule bg_color, line_width: b_width, line_style: :dashed
+                    end
+                  end
+                end
               end
               remaining_height -= fill_height
               i += 1
