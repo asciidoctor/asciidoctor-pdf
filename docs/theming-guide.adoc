@@ -35,11 +35,10 @@ All selector names are implicit (e.g., `heading`), so you customize the theme pr
 The theme language in Asciidoctor PDF supports a limited subset of the properties from CSS.
 Some of these properties have different names from those found in CSS.
 
-Instead of separate properties for font weight and font style, the theme language combines these as the `font_style` property (allowing values "normal", "bold", "italic" and "bold_italic").
-
-The `text_align` property from CSS is the `align` property in the theme language.
-
-The `color` property from CSS is the `font_color` property in the theme language.
+* Underscores (`_`) can be used in place of hyphens (`-`) for all property names in the theme language.
+* Instead of separate properties for font weight and font style, the theme language combines these settings in the `font_style` property (allowed values: `normal`, `bold`, `italic` and `bold_italic`).
+* The `text_align` property from CSS is the `align` property in the theme language.
+* The `color` property from CSS is the `font_color` property in the theme language.
 ====
 
 A theme (or style) is described in a YAML-based data format and stored in a dedicated theme file.
