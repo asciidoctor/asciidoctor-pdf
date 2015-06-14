@@ -1486,9 +1486,9 @@ footer:
     left: '*{page-number}* | {chapter-title}'
 ----
 
-TIP: You can also use most AsciiDoc inline formatting in the values of these keys.
+TIP: You can use most AsciiDoc inline formatting in the values of these keys.
 For instance, to make the text bold, surround it in asterisks (as shown above).
-(One exception to this rule are inline images, which are described in the next section).
+One exception to this rule are inline images, which are described in the next section.
 
 ==== Images
 
