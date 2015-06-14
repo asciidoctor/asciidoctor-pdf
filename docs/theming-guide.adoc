@@ -868,6 +868,18 @@ The literal key is used for inline monospaced text in prose and table cells.
 |left, center, right, justify
 |align: right
 
+|title_page_logo_align
+|left, center, right
+|logo_align: right
+
+|title_page_logo_image
+|inline image macro
+|+logo_image: image:logo.png[scaledwidth=25%]+
+
+|title_page_logo_top
+|percentage
+|logo_top: 25%
+
 |title_page_title_top
 |percentage
 |title_top: 55%
