@@ -8,6 +8,7 @@ Dan Allen <https://github.com/mojavelinux>
 
 ////
 Topics remaining to document:
+* document which attributes can be set in document (pdf-page-size, front-cover-image, back-cover-image, etc)
 * line height and line height length (and what that all means)
 * title page layout / title page images (logo & background)
 * document that unicode escape sequences can be used inside double-quoted strings
@@ -662,6 +663,10 @@ TBW
 |page_background_color
 |<<colors,color>>
 |background_color: ffffff
+
+|page_background_image
+|path (relative to pdf-stylesdir)
+|background_image: watermark.jpg
 
 |page_layout
 |portrait, landscape
