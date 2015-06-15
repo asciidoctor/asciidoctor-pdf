@@ -8,7 +8,7 @@ class ThemeLoader
   DataDir = ::File.expand_path(::File.join(::File.dirname(__FILE__), '..', '..', 'data'))
   ThemesDir = ::File.join(DataDir, 'themes')
   FontsDir = ::File.join(DataDir, 'fonts')
-  HexColorValueRx = /_color: (?<quote>"|'|)#?(?<value>[A-Za-z0-9]{3,6})\k<quote>$/
+  HexColorValueRx = /[_-]color: (?<quote>"|'|)#?(?<value>[A-Za-z0-9]{3,6})\k<quote>$/
 
   module ColorValue; end
 
@@ -62,7 +62,7 @@ class ThemeLoader
   def process_entry key, val, data
     if key != 'font_catalog' && ::Hash === val
       val.each do |key2, val2|
-        process_entry(%(#{key}_#{key2}), val2, data)
+        process_entry(%(#{key}_#{key2.tr '-', '_'}), val2, data)
       end
     else
       data[key] = key.end_with?('_color') ? to_color(evaluate(val, data)) : evaluate(val, data)
