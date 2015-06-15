@@ -449,9 +449,26 @@ module Extensions
   #
   def stroke_horizontal_rule s_color = stroke_color, options = {}
     save_graphics_state do
-      line_width options[:line_width] || 0.5
+      line_width(s_width = options[:line_width] || 0.5)
       stroke_color s_color
-      stroke_horizontal_line bounds.left, bounds.right
+      case (options[:line_style] || :solid)
+      when :solid
+        stroke_horizontal_line bounds.left, bounds.right
+      when :double
+        move_up s_width * 1.5
+        stroke_horizontal_line bounds.left, bounds.right
+        move_down s_width * 3
+        stroke_horizontal_line bounds.left, bounds.right
+        move_up s_width * 1.5
+      when :dashed
+        dash s_width * 3
+        stroke_horizontal_line bounds.left, bounds.right
+        undash
+      when :dotted
+        dash s_width
+        stroke_horizontal_line bounds.left, bounds.right
+        undash
+      end
     end
   end
 
