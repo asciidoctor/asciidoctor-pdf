@@ -14,7 +14,6 @@
 * allow title page image "bottom" to be set instead of "top" (mutually exclusive)
 
 * pass macro doesn't work in source block when macro subs and highlighting are both enabled
-* don't need to handle pdf-page-size parsing when value is pulled from theme (parsing is already done)
 * bind image_registry between scratch and main document so we don't process the same image more than once
   - need to do some testing
 * title is being rendered 3 times (maybe one for scratch?); explain why in comments if normal
@@ -95,7 +94,6 @@
 * CJK and/or multilingual support
 * description list term should keep together with content (file issue)
 * hardbreak in table cell results in extra endline (likely not normalizing cell content)
-* parse pdf-page-size syntax 8.5in x 11in (or optional square brackets)
 * remove pdfmarks file after optimizing
 * add note to README that Prawn will subset any fonts provided
 * look into single_line + shrink_to_fit in listings, perhaps other places

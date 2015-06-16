@@ -207,35 +207,36 @@ class Converter < ::Prawn::Document
       skip_page_creation: true,
     }
 
-    if (doc.attr? 'pdf-page-size') && (m = PageSizeRx.match(doc.attr 'pdf-page-size'))
+    page_size = if (doc.attr? 'pdf-page-size') && (m = PageSizeRx.match(doc.attr 'pdf-page-size'))
       # e.g, [8.5in, 11in]
       if m[1]
-        page_size = [m[1], m[2]]
+        [m[1], m[2]]
       # e.g, 8.5in x 11in
       elsif m[3]
-        page_size = [m[3], m[4]]
+        [m[3], m[4]]
       # e.g, A4
       else
-        page_size = m[0].upcase
+        m[0]
       end
     else
-      page_size = theme.page_size
+      theme.page_size
     end
 
-    pdf_opts[:page_size] = case page_size
+    page_size = case page_size
     when ::String
-      # TODO extract helper method
+      # TODO extract helper method to check for named page size
       if ::PDF::Core::PageGeometry::SIZES.key?(page_size = page_size.upcase)
         page_size
-      else
-        'LETTER'
       end
     when ::Array
-      page_size.fill(0..1) {|i| page_size[i] || 0 }.map {|d|
-        if ::Numeric === d
-          break if d == 0
-          d
-        elsif ::String === d && (m = (MeasurementPartsRx.match d))
+      unless page_size.size == 2
+        page_size = page_size[0..1].fill(0..1) {|i| page_size[i] || 0}
+      end
+      page_size.map do |dim|
+        if ::Numeric === dim
+          # dimension cannot be less than 0
+          dim > 0 ? dim : break
+        elsif ::String === dim && (m = (MeasurementPartsRx.match dim))
           val = m[1].to_f
           # TODO delegate to a pt calculation method
           val = case m[2]
@@ -256,10 +257,10 @@ class Converter < ::Prawn::Document
         else
           break
         end
-      }
+      end
     end
 
-    pdf_opts[:page_size] ||= 'LETTER'
+    pdf_opts[:page_size] = (page_size || 'LETTER')
 
     # FIXME change namespace of FormattedTextFormatter to ::Asciidoctor::Pdf (or deeper)
     pdf_opts[:text_formatter] ||= ::Asciidoctor::Prawn::FormattedTextFormatter.new theme: theme
