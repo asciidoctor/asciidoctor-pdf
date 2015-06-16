@@ -661,14 +661,15 @@ TBW
 
 |page_background_color
 |<<colors,color>>
-|background_color: ffffff
+|background_color: #ffffff
 
 |page_background_image
 |path (relative to pdf-stylesdir)
 |background_image: watermark.jpg
 
 |page_layout
-|portrait, landscape
+|portrait, landscape +
+(default: portrait)
 |layout: portrait
 
 |page_margin
@@ -732,7 +733,7 @@ TBW
 
 |base_border_color
 |<<colors,color>>
-|border_color: eee
+|border_color: #eeeeee
 |===
 
 ^[1]^ You should set either `line_height` or `line_height_length` and derive the value of the other using a calculation since these are correlated values.
@@ -764,7 +765,7 @@ These keys predated the CSS-style theme system and are planned to be phased out.
 
 |link_font_color
 |<<colors,color>>
-|font_color: 428BCA
+|font_color: #428bca
 
 |link_font_family
 |<<fonts,font family name>>
@@ -789,7 +790,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 |literal_font_color
 |<<colors,color>>
-|font_color: B12146
+|font_color: #b12146
 
 |literal_font_family
 |<<fonts,font family name>>
@@ -812,7 +813,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 |heading_font_color
 |<<colors,color>>
-|font_color: 333333
+|font_color: #333333
 
 |heading_font_family
 |<<fonts,font family name>>
@@ -889,7 +890,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 |title_page_title_font_color
 |<<colors,color>>
-|title_font_color: 999999
+|title_font_color: #999999
 
 |title_page_title_line_height
 |<<values,number>>
@@ -917,7 +918,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 |title_page_authors_font_color
 |<<colors,color>>
-|authors_font_color: 181818
+|authors_font_color: #181818
 
 |title_page_revision_margin_top
 |<<measurement-units,measurement>>
@@ -969,7 +970,7 @@ Block styles are applied to the following block types:
 
 |caption_font_color
 |<<colors,color>>
-|font_color: 333333
+|font_color: #333333
 
 |caption_font_family
 |<<fonts,font family name>>
@@ -1004,7 +1005,7 @@ Block styles are applied to the following block types:
 
 |code_font_color
 |<<colors,color>>
-|font_color: 333333
+|font_color: #333333
 
 |code_font_family
 |<<fonts,font family name>>
@@ -1028,11 +1029,11 @@ Block styles are applied to the following block types:
 
 |code_background_color
 |<<colors,color>>
-|background_color: F5F5F5
+|background_color: #f5f5f5
 
 |code_border_color
 |<<colors,color>>
-|border_color: CCCCCC
+|border_color: #cccccc
 
 |code_border_radius
 |<<values,number>>
@@ -1051,7 +1052,7 @@ Block styles are applied to the following block types:
 
 |blockquote_font_color
 |<<colors,color>>
-|font_color: 333333
+|font_color: #333333
 
 |blockquote_font_family
 |<<fonts,font family name>>
@@ -1071,7 +1072,7 @@ Block styles are applied to the following block types:
 
 |blockquote_border_color
 |<<colors,color>>
-|border_color: EEEEEE
+|border_color: #eeeeee
 
 |blockquote_cite_font_size
 |<<values,number>>
@@ -1079,7 +1080,7 @@ Block styles are applied to the following block types:
 
 |blockquote_cite_font_color
 |<<colors,color>>
-|cite_font_color: 999999
+|cite_font_color: #999999
 
 |blockquote_cite_font_family
 |<<fonts,font family name>>
@@ -1099,7 +1100,7 @@ Block styles are applied to the following block types:
 
 |sidebar_border_color
 |<<colors,color>>
-|border_color: FFFFFF
+|border_color: #ffffff
 
 |sidebar_border_radius
 |<<values,number>>
@@ -1111,11 +1112,11 @@ Block styles are applied to the following block types:
 
 |sidebar_background_color
 |<<colors,color>>
-|background_color: EEEEEE
+|background_color: #eeeeee
 
 |sidebar_title_font_color
 |<<colors,color>>
-|title_font_color: 333333
+|title_font_color: #333333
 
 |sidebar_title_font_family
 |<<fonts,font family name>>
@@ -1142,7 +1143,7 @@ Block styles are applied to the following block types:
 
 |example_border_color
 |<<colors,color>>
-|border_color: EEEEEE
+|border_color: #eeeeee
 
 |example_border_radius
 |<<values,number>>
@@ -1154,7 +1155,7 @@ Block styles are applied to the following block types:
 
 |example_background_color
 |<<colors,color>>
-|background_color: transparent
+|background_color: #fffef7
 |===
 
 === Admonition
@@ -1165,7 +1166,7 @@ Block styles are applied to the following block types:
 
 |admonition_border_color
 |<<colors,color>>
-|border_color: EEEEEE
+|border_color: #eeeeee
 
 |admonition_border_width
 |<<values,number>>
@@ -1206,7 +1207,7 @@ Block styles are applied to the following block types:
 
 |abstract_font_color
 |<<colors,color>>
-|font_color: 5C6266
+|font_color: #5c6266
 
 |abstract_font_size
 |<<values,number>>
@@ -1229,7 +1230,16 @@ Block styles are applied to the following block types:
 
 |thematic_break_border_color
 |<<colors,color>>
-|border_colorL EEEEEE
+|border_color: #eeeeee
+
+|thematic_break_border_style
+|solid, double, dashed, dotted +
+(default: solid)
+|border_style: dashed
+
+|thematic_break_border_width
+|<<measurement-units,measurement>>
+|border_width: 0.5
 
 |thematic_break_margin_top
 |<<measurement-units,measurement>>
@@ -1279,19 +1289,19 @@ Block styles are applied to the following block types:
 
 |table_background_color
 |<<colors,color>>
-|background_color: FFFFFF
+|background_color: #ffffff
 
 |table_even_row_background_color
 |<<colors,color>>
-|even_row_background_color: F9F9F9
+|even_row_background_color: #f9f9f9
 
 |table_foot_background_color
 |<<colors,color>>
-|foot_background_color: F0F0F0
+|foot_background_color: #f0f0f0
 
 |table_border_color
 |<<colors,color>>
-|border_color: DDDDDD
+|border_color: #dddddd
 
 |table_border_width
 |<<values,number>>
@@ -1315,15 +1325,15 @@ Block styles are applied to the following block types:
 
 |toc_dot_leader_color
 |<<colors,color>>
-|dot_leader_color: 999999
+|dot_leader_color: #999999
 
 |toc_font_color
 |<<colors,color>>
-|font_color: 333333
+|font_color: #333333
 
 |toc_h<n>_font_color
 |<<colors,color>>
-|h3_font_color: 999999
+|h3_font_color: #999999
 
 |toc_font_family
 |<<fonts,font family name>>
@@ -1358,11 +1368,16 @@ Block styles are applied to the following block types:
 
 |header_background_color
 |<<colors,color>>
-|background_color: EEEEEE
+|background_color: #eeeeee
 
 |header_border_color
 |<<colors,color>>
-|border_color: DDDDDD
+|border_color: #dddddd
+
+|header_border_style
+|solid, double, dashed, dotted +
+(default: solid)
+|border_style: dashed
 
 |header_border_width
 |<<measurement-units,measurement>>
@@ -1370,7 +1385,7 @@ Block styles are applied to the following block types:
 
 |header_font_color
 |<<colors,color>>
-|font_color: 333333
+|font_color: #333333
 
 |header_font_family
 |<<fonts,font family name>>
@@ -1406,11 +1421,16 @@ Block styles are applied to the following block types:
 
 |footer_background_color
 |<<colors,color>>
-|background_color: EEEEEE
+|background_color: #eeeeee
 
 |footer_border_color
 |<<colors,color>>
-|border_color: DDDDDD
+|border_color: #dddddd
+
+|footer_border_style
+|solid, double, dashed, dotted +
+(default: solid)
+|border_style: dashed
 
 |footer_border_width
 |<<measurement-units,measurement>>
@@ -1418,7 +1438,7 @@ Block styles are applied to the following block types:
 
 |footer_font_color
 |<<colors,color>>
-|font_color: 333333
+|font_color: #333333
 
 |footer_font_family
 |<<fonts,font family name>>

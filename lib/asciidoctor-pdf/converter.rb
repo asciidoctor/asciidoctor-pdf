@@ -609,7 +609,7 @@ class Converter < ::Prawn::Document
       # FIXME extract ensure_space (or similar) method
       start_new_page if cursor < @theme.base_line_height_length * (terms.size + 1)
       terms.each do |term|
-        layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: (@theme.vertical_rhythm / 3.0), align: :left
+        layout_prose term.text, style: (@theme.description_list_term_font_style || :normal).to_sym, margin_top: 0, margin_bottom: (@theme.vertical_rhythm / 3.0), align: :left
       end
       if desc
         indent @theme.description_list_description_indent do
@@ -1182,7 +1182,7 @@ class Converter < ::Prawn::Document
   def convert_thematic_break node
     #move_down @theme.thematic_break_margin_top
     theme_margin :thematic_break, :top
-    stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width
+    stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width, line_style: (@theme.thematic_break_border_style || :solid).to_sym
     #move_down @theme.thematic_break_margin_bottom
     theme_margin :thematic_break, :bottom
   end
@@ -1753,6 +1753,7 @@ class Converter < ::Prawn::Document
       trim_font_color = @theme.header_font_color || @font_color
       trim_bg_color = @theme.header_background_color
       trim_border_width = @theme.header_border_width || @theme.base_border_width
+      trim_border_style = (@theme.header_border_style || :solid).to_sym
       trim_border_color = @theme.header_border_color
       trim_valign = (@theme.header_valign || :center).to_sym
       trim_img_valign = @theme.header_image_valign || trim_valign
@@ -1766,6 +1767,7 @@ class Converter < ::Prawn::Document
       trim_font_color = @theme.footer_font_color || @font_color
       trim_bg_color = @theme.footer_background_color
       trim_border_width = @theme.footer_border_width || @theme.base_border_width
+      trim_border_style = (@theme.footer_border_style || :solid).to_sym
       trim_border_color = @theme.footer_border_color
       trim_valign = (@theme.footer_valign || :center).to_sym
       trim_img_valign = @theme.footer_image_valign || trim_valign
@@ -1790,15 +1792,14 @@ class Converter < ::Prawn::Document
               if trim_border_color
                 # TODO stroke_horizontal_rule should support :at
                 move_down bounds.height if position == :header
-                stroke_horizontal_rule trim_border_color, line_width: trim_border_width
+                stroke_horizontal_rule trim_border_color, line_width: trim_border_width, line_style: trim_border_style
               end
             end
           else
             bounding_box [trim_left, trim_top], width: trim_width, height: trim_height do
               # TODO stroke_horizontal_rule should support :at
               move_down bounds.height if position == :header
-              stroke_horizontal_rule trim_border_color, line_width: trim_border_width
-              move_up bounds.height if position == :header
+              stroke_horizontal_rule trim_border_color, line_width: trim_border_width, line_style: trim_border_style
             end
           end
         end
