@@ -2,8 +2,8 @@
 Kismet Caméléon; Lazarus het_Draeke
 v1.0, 2014-01-01: The first incarnation of {doctitle}
 :description: This story chronicles the inexplicable hazards and vicious beasts a +
-team must surmount and vanquish on the journey to finding their open source +
-project's true power.
+team must conquer and vanquish on their journey to discovering open source's true +
+power.
 :doctype: book
 :title-logo-image: image:sample-title-logo.jpg[scaledwidth=50%,align=center]
 // Settings:
