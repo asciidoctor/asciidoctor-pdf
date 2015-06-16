@@ -1656,6 +1656,7 @@ class Converter < ::Prawn::Document
           spacer_width = (width_of NoBreakSpace) * 0.75
           # FIXME this calculation will be wrong if a style is set per level
           num_dots = ((bounds.width - (width_of %(#{sect_title}#{sect_page_num}), inline_format: true) - spacer_width) / dot_width).floor
+          num_dots = 0 if num_dots < 0
           # FIXME dots don't line up if width of page numbers differ
           typeset_formatted_text [
             { text: %(#{(@theme.toc_dot_leader_content || DotLeaderDefault) * num_dots}), color: toc_dot_color },
