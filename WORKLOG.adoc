@@ -5,15 +5,34 @@
 
 == TODO
 
-* theming guide
-  - mention that font_style and font_weight are combined as font_style
-  - document arbitrary keys (such as brand colors)
-  - document transparent color
-  - document unicode values
-  - document how to load theme (with special attention to fonts & images)
-  - positional meanings of array items
+* recognize inline image syntax in page_background_image key
+* allow front cover and back cover image to be defined in theme; document in theming-guide
+* keep caption with table (check for sufficient space)
+* allow caption placement for table to be configurable (top vs bottom)
+* allow valign to be set on image block (vertical center in page for things like slides)
+* separate theme control for listing vs literal block (and maybe source too)
+* allow title page image "bottom" to be set instead of "top" (mutually exclusive)
+
+* pass macro doesn't work in source block when macro subs and highlighting are both enabled
+* don't need to handle pdf-page-size parsing when value is pulled from theme (parsing is already done)
+* bind image_registry between scratch and main document so we don't process the same image more than once
+  - need to do some testing
+* title is being rendered 3 times (maybe one for scratch?); explain why in comments if normal
+* finish docs/theming-guide.adoc
+  - continue working on json schema for theme; try to generate keys section from it
+* rethink how we're handling line heights for fonts, then document carefully
+  - look closer at line_height and line_height_length and see if we need to document other details
+* implement first-line indent for paragraphs (seems like conflict w/ our text formatter)
+  - option to not indent first paragraph in section
+  - if you indent, perhaps drop the margin between paragraphs?
+* GhostScript Tiger SVG is reporting incorrect height when embedded (too much spacing below)
+  - Reported as https://github.com/mogest/prawn-svg/issues/55 (resolved in prawn-svg 0.20.0)
+* add index support
+* add entry to TOC for preamble/preface
+* allow text alignment of prose to be set in document
+* don't issue warnings on scratch document
+* rake release seems messed up (tagging the wrong commit)
 * getting a line wrap break before comma if preceding word is emphasized (problem in Prawn wrapping)
-* don't create blank page first page if content overflows and we're on the first page (already fixed?)
 * toc
   - make dot leader style separate from title / number
 * running content
@@ -21,68 +40,64 @@
   - numbered and unnumbered chapter and section titles (file issue)
   - chapter and section number (easily solved by previous)
   - separate running content for chapter page (by default uses normal content)
+* should we rename base_ to body_ to make it more familiar to CSS developers?
 * support !include in theme file (file issue)
+* margin per heading level (see https://github.com/asciidoctor/asciidoctor-pdf/issues/176)
+* add cover page example to chronicles so people see how to use it
 * images
-  - multiple image width by 0.75 to get point value
+  - multiple image width by 0.75 to get point value (including in running header and footer)
   - should we use native size of image by default? (after multiplying by 0.75)
+* don't orphan a single line of paragraph (send it with a buddy line)
 * implement stem support
-* rethink how we are handling line heights for fonts, then document carefully
+* add delete_all (or delete_each) method to Array to delete multiple keys
+* fail gracefully if theme file cannot be found
 * dedicated style for top/bottom margin of outline list
+  - allow margin top and bottom to be set for lists (applies to outer-most list)
+  - allow spacing between nested lists levels be configured in theme
 * need dedicated theme styles for paragraph spacings, etc
 * can't put margin top on chapter (chapter_top?)
-* allow margin top and bottom to be set for lists (applies to outer-most list)
-* allow spacing between nested lists levels be configured in theme
 * recto/verso indentation (on body?)
-* implement first-line indent for paragraphs (seems like conflict w/ our text formatter)
-  - option to not indent first paragraph in section
-  - if you indent, perhaps drop the margin between paragraphs?
 * don't indent and draw line next to quote block unless width > 0 or color != transparent
 * subtitles for chapters
 * part titles need their own page and styling
 * add color calculation functions in theme file (like in SASS)
-* remove asciidoctor-theme.yml until we're ready to recreate it
 * create utility method to get % offset of page as y value (option to constrain to bounds)
 * document converter assignment in convert_content_for_block method
 * support transparency for colors
 * support generic color (or value) attribute in formatted text parser instead of specific color systems (rgb, cmyk)
 * file issue to import PDF page using block image macro
+  - add pdf page import support to the image block macro (file issue)
 * **allow theme_font to set line_height** (honor this setting from document)
   - theme setting for code line height (currently using base_line_height)
-* show we put an entry for doctitle in the outline if notitle is set? (need to test these edge cases)
+* should we put an entry for doctitle in the outline if notitle is set? (need to test these edge cases)
 * use docdate attribute to set modification date on document (file issue)
 * more theme control over toc (font size, style, color per level)
 * don't allow formatted text (e.g., monospace) in toc entries
 * prevent title-logo-image from spilling to next page (same with title content)
-* support font family and style for heading level
 * document what each keep_together is doing / expects
-* split prawn_ext/extensions.rb into individual modules and include them
+  - keep_together really needs to pick up the inherited horizontal bounds or else measurement is inaccurate
 * code cleanups (regexps to constants, nil? checks and such)
   - fix the background color mess in convert_table
   - extract regex in ThemeLoader into constant
   - remove dead code dealing with margins
-  - remove unused theme / font files
   - decide how we want to format theme_loader.rb (should be consistent)
+  - split prawn_ext/extensions into individual files based on function
 * enable line above (or below?) title on title page (file issue)
-* text_transform for table foot row
+* enable text_transform for table foot row
 * file upstream issue for Prawn to warn if it can't resolve a glpyh (or monkeypatch it)
-* make use of shrink_to_fit where appropriate
 * support web fonts; use uri-cache to avoid redundant fetching
 * allow pdf-page-layout (portrait || landscape) to be set in document
 * attribute or role to control table shading (all, even, odd) (or call it striped like bootstrap?)
 * make conum glyphs configurable in theme (use reference table to resolve)
-* add pdf page import support to the image block macro (file issue)
 * do we still need the converter hack in convert_content_for_block? (seems to be needed for admonitions)
 * avoid getting an empty last page (example: colist at bottom of page can cause this)
 * utility to coerce the color value transparent to nil (better handling in general)
 * CJK and/or multilingual support
 * description list term should keep together with content (file issue)
-* GhostScript Tiger SVG is reporting incorrect height when embedded (too much spacing below); bug in prawn-svg?
 * hardbreak in table cell results in extra endline (likely not normalizing cell content)
-* don't create new page if content overflows and we're on the first page
 * parse pdf-page-size syntax 8.5in x 11in (or optional square brackets)
 * remove pdfmarks file after optimizing
 * add note to README that Prawn will subset any fonts provided
-* nested keep_together logic is broken (e.g., example inside example, listing inside sidebar, etc)
 * look into single_line + shrink_to_fit in listings, perhaps other places
 * refactor as Prawn view to avoid method name conflicts (also see https://github.com/prawnpdf/prawn/issues/802)
 * make CodeRay theme colors configurable (in theme?)
@@ -115,9 +130,6 @@
   - figure out how to adjust line height for monospaced cell content
   - figure out how to layout regular cell content to adjust for line height
 * document the typeset_text methods very clearly
-* fix shading on listing that spans more than one page
-  - in general, need to deal w/ situation if content in dry run is large than one page
-  - need to deal w/ situation if content in dry run is large than one page
 * move check for node.title? inside layout_caption
 * theme idea / tester: see sandbox/ebook-learn_version_control_with_git-SAMPLE.pdf
 * make alternating page title position optional (via theme?)
@@ -126,25 +138,24 @@
 * we could eliminate some of the tags we're currently matching in the formatted text parser (e.g., link)
 * add Preamble to TOC
 * NOTE prawn-svg supports loading from a URI
+* honor font defs in SVG (to get M+ 1p); prawn-svg supports loading fonts; need to pass fonts to prawn-svg
 * should we support % as a unit in theme (divides by 100 and sets float value)?
+* disable monospace color in headings
+* add source language to upper-left corner of listing block
 
 * enable pagenums attribute by default (may require changes to how we handle attributes)
 * start page numbering on first page if no title page
 
 * implement quote style from default Asciidoctor stylesheet
-* reorg Prawn extensions (see prawn-table for example)
+* reorganize Prawn extensions (see prawn-table for example)
 * rename "theme" to "style"?
 * restrict custom theme path to jail (or load from load_path)
 * implement convert_toc
 * can get orphan conum if starts on last line of page (fixed already?)
 * only create title page if doctype=book
-* disable monospace color in headings
-* add source language to upper-left corner of listing block
 * italic text in a line of text styled as bold in the theme loses its bold style
 
 * introduce method for start_initial_page?
-* honor font defs in SVG (to get M+ 1p)
-* callout matching in listing blocks is extremely fragile and doesn't handle two in one line
 * make outline a document option (perhaps "outline" like "toc")
 * shrink / squeeze source code to avoid wrapping (see original impl in nfjsmag, also shrink_to_fit)
 * add bench/ directory for the script to test the speed of the formatted text parser
@@ -192,6 +203,10 @@
 * "Incorrect number of arguments in 'SCN' command" happens when you add a stamp to an imported page
 * be mindful that layout_prose adds margin to bottom of content by default (important when working in a bounding box)
 * ttfunk does not support ligatures (e.g., fi -> ﬁ); we could do this manually in post_replacements
+
+== Potential Optimizations
+
+* if autofit is set on a listing/literal block that has conums, we are splitting fragments by line twice
 
 == Usage Optimizations
 
