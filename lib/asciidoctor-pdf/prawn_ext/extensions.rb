@@ -186,6 +186,16 @@ module Extensions
     end
   end
 
+  def resolve_font_style styles
+    if styles.include? :bold
+      (styles.include? :italic) ? :bold_italic : :bold
+    elsif styles.include? :italic
+      :italic
+    else
+      :normal
+    end
+  end
+
   def calc_line_metrics line_height = 1, font = self.font, font_size = self.font_size
     line_height_length = line_height * font_size
     leading = line_height_length - font_size
@@ -231,36 +241,37 @@ module Extensions
   end
 
   # Performs the same work as text except that the first_line_opts
-  # are applied to the first line of text renderered.
+  # are applied to the first line of text renderered. It's necessary
+  # to use low-level APIs in this method so that we only style the
+  # first line and not the remaining lines (which is the default
+  # behavior in Prawn).
   def text_with_formatted_first_line string, first_line_opts, opts
     color = opts.delete :color
-    first_line_color = (first_line_opts.delete :color) || color
     fragments = parse_text string, opts
-    # NOTE the low-level APIs we're using don't recognize the :styles option; must resolve
-    if (styles = first_line_opts.delete :styles)
-      first_line_opts[:style] = if styles.include? :bold
-        (styles.include? :italic) ? :bold_italic : :bold
-      elsif styles.include? :italic
-        :italic
-      else
-        :normal
-      end
+    # NOTE the low-level APIs we're using don't recognize the :styles option, so we must resolve
+    if (styles = opts.delete :styles)
+      opts[:style] = resolve_font_style styles
     end
+    if (first_line_styles = first_line_opts.delete :styles)
+      first_line_opts[:style] = resolve_font_style first_line_styles
+    end
+    first_line_color = (first_line_opts.delete :color) || color
     opts = opts.merge document: self
-    # QUESTION should we merge more carefully here?
-    first_line_opts = opts.merge(first_line_opts).merge(single_line: true)
+    # QUESTION should we merge more carefully here? (hand-select keys?)
+    first_line_opts = opts.merge(first_line_opts).merge single_line: true
     box = ::Prawn::Text::Formatted::Box.new fragments, first_line_opts
+    # NOTE get remaining_fragments before we add color to fragments on first line
     remaining_fragments = box.render dry_run: true
     # NOTE color must be applied per-fragment
     if first_line_color
       fragments.each {|fragment| fragment[:color] ||= first_line_color}
     end
     fill_formatted_text_box fragments, first_line_opts
-    # NOTE color must be applied per-fragment
-    if color
-      remaining_fragments.each {|fragment| fragment[:color] ||= color }
-    end
     unless remaining_fragments.empty?
+      # NOTE color must be applied per-fragment
+      if color
+        remaining_fragments.each {|fragment| fragment[:color] ||= color }
+      end
       # as of Prawn 1.2.1, we have to handle the line gap after the first line manually
       move_down opts[:leading]
       remaining_fragments = fill_formatted_text_box remaining_fragments, opts
