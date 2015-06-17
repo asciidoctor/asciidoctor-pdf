@@ -411,7 +411,7 @@ module Extensions
   #
   def fill_and_stroke_bounds f_color = fill_color, s_color = stroke_color, options = {}
     no_fill = !f_color || f_color == 'transparent'
-    no_stroke = !s_color || s_color == 'transparent'
+    no_stroke = !s_color || s_color == 'transparent' || options[:line_width] == 0
     return if no_fill && no_stroke
     save_graphics_state do
       radius = options[:radius] || 0
@@ -425,7 +425,7 @@ module Extensions
       # stroke
       unless no_stroke
         stroke_color s_color
-        line_width options[:line_width] || 0.5
+        line_width(options[:line_width] || 0.5)
         # FIXME think about best way to indicate dashed borders
         #if options.has_key? :dash_width
         #  dash options[:dash_width], space: options[:dash_space] || 1
