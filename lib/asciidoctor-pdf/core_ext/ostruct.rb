@@ -6,4 +6,4 @@ class OpenStruct
   def []= key, val
     send %(#{key}=), val
   end unless respond_to? :[]=
-end if RUBY_VERSION < '2.0.0'
+end

@@ -1,3 +1,5 @@
 require_relative 'core_ext/array'
 require_relative 'core_ext/numeric'
-#require_relative 'core_ext/ostruct'
+if RUBY_ENGINE == 'rbx'
+  require_relative 'core_ext/ostruct'
+end
