@@ -1015,8 +1015,8 @@ class Converter < ::Prawn::Document
     conum_color = @theme.conum_font_color
     last_line_num = lines.size - 1
     # append conums to appropriate lines, then flatten to an array of fragments
-    lines.flat_map.with_index do |line, line_num|
-      if (conums = conum_mapping.delete line_num)
+    lines.flat_map.with_index do |line, cur_line_num|
+      if (conums = conum_mapping.delete cur_line_num)
         conums = conums.map {|num| conum_glyph num }
         # ensure there's at least one space between content and conum(s)
         if line.size > 0 && (end_text = line.last[:text]) && !(end_text.end_with? ' ')
@@ -1024,7 +1024,7 @@ class Converter < ::Prawn::Document
         end
         line << (conum_color ? { text: (conums * ' '), color: conum_color } : { text: (conums * ' ') })
       end
-      line << { text: EOL } unless line_num == last_line_num
+      line << { text: EOL } unless cur_line_num == last_line_num
       line
     end
   end
@@ -1300,10 +1300,10 @@ class Converter < ::Prawn::Document
   def convert_inline_footnote node
     if (index = node.attr 'index')
       #text = node.document.footnotes.find {|fn| fn.index == index }.text
-      %( [#{node.text}])
+      %(<sup>[#{index}: #{node.text}]</sup>)
     elsif node.type == :xref
       # NOTE footnote reference not found
-      %( <color rgb="FF0000">[#{node.text}]</color>)
+      %(<sup><color rgb="FF0000">[#{node.text}]</color></sup>)
     end
   end
 
@@ -1846,7 +1846,7 @@ class Converter < ::Prawn::Document
       next if page.imported_page?
       visual_pgnum = page_number - skip
       # FIXME we need to have a content setting for chapter pages
-      content_by_alignment = content_dict[side = visual_pgnum.odd? ? :recto : :verso]
+      content_by_alignment = content_dict[visual_pgnum.odd? ? :recto : :verso]
       doc.set_attr 'page-number', visual_pgnum
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
