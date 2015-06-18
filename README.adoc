@@ -39,7 +39,7 @@ See the milestone v1.5.0 in the {uri-project-issues}[issue tracker] for details.
 
 == Prawn, the majestic PDF generator
 
-{uri-project}[{project-name}] is made possible by an amazing Ruby Gem named Prawn.
+{uri-project}[{project-name}] is made possible by an amazing Ruby gem named Prawn.
 And what a gem it is!
 
 {uri-prawn}[Prawn] is a nimble PDF writer for Ruby.
@@ -93,7 +93,17 @@ See <<WORKLOG.adoc#,WORKLOG>>.
 
 == Prerequisites
 
-All that's needed is Ruby (1.9.3 or better; 2.2.x recommended) and a few Ruby Gems, which we explain how to install in the next section.
+All that's needed is Ruby (1.9.3 or above; 2.2.x recommended) and a few Ruby gems, which we explain how to install in the next section.
+
+[WARNING]
+====
+Prawn 2.0.0 and above requires Ruby >= 2.0.0 at installation (though it still works with Ruby 1.9.3 once you get beyond installation).
+If you need to use Asciidoctor PDF with Ruby 1.9.3, you must first install Prawn 1.3.0 using:
+
+  $ gem install prawn --version 1.3.0
+
+You can then proceed with installation of Asciidoctor PDF.
+====
 
 To check you have Ruby available, use the `ruby` command to query the version installed:
 

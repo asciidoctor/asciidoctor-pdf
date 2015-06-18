@@ -462,7 +462,7 @@ title_page:
 You can select from <<built-in-fonts,built-in PDF fonts>>, <<bundled-fonts,fonts bundled with Asciidoctor PDF>> or <<custom-fonts,custom fonts>> loaded from TrueType font (TTF) files.
 If you want to use custom fonts, you must first declare them in your theme file.
 
-=== Built-in fonts
+=== Built-in (AFM) fonts
 
 The names of the built-in fonts (for general-purpose text) are as follows:
 
@@ -490,13 +490,20 @@ base:
   font_family: Times-Roman
 ----
 
-However, when you use a built-in font, the characters that you use in your document are limited to the WINANSI (http://en.wikipedia.org/wiki/Windows-1252[Windows-1252]) code set.
+However, when you use a built-in font, the characters that you use in your document are limited to the characters in the WINANSI (http://en.wikipedia.org/wiki/Windows-1252[Windows-1252]) code set.
 WINANSI includes most of the characters needed for writing in Western languages (English, French, Spanish, etc).
 For anything outside of that, PDF is BYOF (Bring Your Own Font).
 
 Even though the built-in fonts require the content to be encoded in WINANSI, _you still type your AsciiDoc document in UTF-8_.
 Asciidoctor PDF encodes the content into WINANSI when building the PDF.
-Any characters in your AsciiDoc document that cannot be encoded will be replaced with an underscore (`_`).
+
+.WINANSI encoding behavior
+****
+If you're using Prawn 1.3.0 with one of the built-in fonts, any characters in your AsciiDoc document that cannot be encoded to WINANSI will be replaced with an underscore glyph (`_`).
+If you're using Prawn 2.0.0 or above with one of the built-in fonts, if your AsciiDoc document contains a character that cannot be encoded to WINANSI, a warning will be issued and conversion will halt.
+
+For more information about how Prawn handles character encodings for built-in fonts, see https://github.com/prawnpdf/prawn/blob/master/CHANGELOG.md#vastly-improved-handling-of-encodings-for-pdf-built-in-afm-fonts[this note in the Prawn CHANGELOG].
+****
 
 === Bundled fonts
 

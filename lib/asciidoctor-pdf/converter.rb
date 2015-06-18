@@ -122,7 +122,7 @@ class Converter < ::Prawn::Document
       elsif @page_bg_color && @page_bg_color != 'FFFFFF'
         fill_absolute_bounds @page_bg_color
       end
-    end
+    end if respond_to? :on_page_create
 
     layout_cover_page :front, doc
     layout_title_page doc
