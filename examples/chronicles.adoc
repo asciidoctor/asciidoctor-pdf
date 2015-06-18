@@ -274,27 +274,56 @@ Naturally, some autosizing is necessary.
 ----
 package org.javaee7.cdi.events;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.event.Observes;
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.ws.rs.*;
 
 /**
+ * This session-scoped bean receives greeting strings from the event bus
+ * and provides access to the collection of these greetings via a REST API.
+ *
  * @author The Duke
+ * @since 1.0
  */
 @SessionScoped
-public class GreetingReceiver implements EventReceiver, java.io.Serializable {
-    private List<String> greetings = new ArrayList<String>();
+public class GreetingReceiver implements EventReceiver, Serializable {
+
+    private List<String> greetings;
+
+    @PostConstruct
+    void init() {
+        this.greetings = new ArrayList<String>();
+    }
 
     void receive(@Observes String greet) {
         this.greetings.add(greet);
     }
 
-    @GET @Produces("application/json")
+    @GET
+    @Produces("application/json")
     public List<String> listAll(@QueryParam("start") Integer start, @QueryParam("max") Integer max) {
-        // TODO implement filtering by start and max
-        this.greetings;
+        int numGreetings = this.greetings.size();
+
+        if (numGreetings == 0 || max == 0) {
+            return Collections.<String>emptyList();
+        }
+
+        if (start == null) {
+            start = 0;
+        }
+
+        if (max == null) {
+            max = numGreetings;
+        }
+
+        return this.greetings.subList(start, Math.min(max + start, numGreetings));
     }
+
 }
 ----
 
