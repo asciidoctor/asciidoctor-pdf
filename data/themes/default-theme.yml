@@ -140,7 +140,7 @@ blockquote:
   cite_font_size: $base_font_size_small
   cite_font_color: 999999
 sidebar:
-  border_color: ffffff
+  border_color: $page_background_color
   border_radius: $base_border_radius
   border_width: $base_border_width
   background_color: eeeeee
@@ -191,7 +191,7 @@ outline_list:
   item_spacing: $vertical_rhythm / 2
   #marker_font_color: 404040
 table:
-  background_color: ffffff
+  background_color: $page_background_color
   #head_background_color: <hex value>
   #head_font_color: $base_font_color
   even_row_background_color: f9f9f9
