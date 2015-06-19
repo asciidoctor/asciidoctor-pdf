@@ -5,6 +5,7 @@
 
 == TODO
 
+* rename example to basic-example and chronicles to chronicles-example
 * recognize inline image syntax in page_background_image key
 * allow front cover and back cover image to be defined in theme; document in theming-guide
 * keep caption with table (check for sufficient space)
@@ -48,7 +49,6 @@
   - should we use native size of image by default? (after multiplying by 0.75)
 * don't orphan a single line of paragraph (send it with a buddy line)
 * implement stem support
-* add delete_all (or delete_each) method to Array to delete multiple keys
 * fail gracefully if theme file cannot be found
 * dedicated style for top/bottom margin of outline list
   - allow margin top and bottom to be set for lists (applies to outer-most list)
@@ -116,7 +116,8 @@
 * honor safe mode rules
 * allow cover images to be specified by theme as a fallback
 * verify cover image exists; fail gracefully with warning
-* using fallback fonts significantly slows down Prawn because it checks every letter every time (see https://github.com/prawnpdf/prawn/blob/master/lib/prawn/text/formatted/box.rb#L427-L434)
+* stop using fallback fonts in default theme (instead, bundle a fuller font)
+  - using fallback fonts significantly slows down Prawn because it checks every letter every time (see https://github.com/prawnpdf/prawn/blob/master/lib/prawn/text/formatted/box.rb#L427-L434)
 * print scratch.pdf file if verbose / trace mode is on in Asciidoctor
 * introduce setting to indent section content
 * design merge margin logic (like for admonition block)
