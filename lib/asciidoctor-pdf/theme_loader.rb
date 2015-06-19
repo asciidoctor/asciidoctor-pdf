@@ -6,10 +6,18 @@ module Asciidoctor
 module Pdf
 class ThemeLoader
   DataDir = ::File.expand_path(::File.join(::File.dirname(__FILE__), '..', '..', 'data'))
-  ThemesDir = ::File.join(DataDir, 'themes')
-  FontsDir = ::File.join(DataDir, 'fonts')
-  HexColorValueRx = /[_-]color: (?<quote>"|'|)#?(?<value>[A-Za-z0-9]{3,6})\k<quote>$/
+  ThemesDir = ::File.join DataDir, 'themes'
+  FontsDir = ::File.join DataDir, 'fonts'
 
+  VariableRx = /\$([a-z0-9_]+)/
+  LoneVariableRx = /^\$([a-z0-9_]+)$/
+  HexColorValueRx = /[_-]color: (?<quote>"|'|)#?(?<value>[A-Za-z0-9]{3,6})\k<quote>$/
+  MeasurementValueRx = /(?<=^| |\()(\d+(?:\.\d+)?)(in|mm|cm|pt)(?=$| |\))/
+  MultiplyDivideOpRx = /(-?\d+(?:\.\d+)?) *([*\/]) *(-?\d+(?:\.\d+)?)/
+  AddSubtractOpRx = /(-?\d+(?:\.\d+)?) *([+\-]) *(-?\d+(?:\.\d+)?)/
+  PrecisionFuncRx = /^(round|floor|ceil)\(/
+
+  # TODO implement white? & black? methods
   module ColorValue; end
 
   class HexColorValue < String
@@ -28,7 +36,7 @@ class ThemeLoader
   def self.resolve_theme_file theme_name = nil, theme_path = nil
     theme_name ||= 'default'
     # if .yml extension is given, assume it's a full file name
-    if theme_name.end_with?('.yml')
+    if (theme_name.end_with? '.yml')
       # FIXME restrict to jail!
       # QUESTION why are we not using expand_path in this case?
       theme_path ? ::File.join(theme_path, theme_name) : theme_name
@@ -43,17 +51,17 @@ class ThemeLoader
   end
 
   def self.load_theme theme_name = nil, theme_path = nil
-    load_file(resolve_theme_file(theme_name, theme_path))
+    load_file(resolve_theme_file theme_name, theme_path)
   end
 
   def self.load_file filename
-    data = ::IO.read(filename).each_line.map {|l| l.sub(HexColorValueRx, '_color: \'\k<value>\'') }.join
-    self.new.load(::SafeYAML.load(data))
+    data = ::IO.read(filename).each_line.map {|l| l.sub HexColorValueRx, '_color: \'\k<value>\'' }.join
+    self.new.load(::SafeYAML.load data)
   end
 
   def load hash
     hash.inject(::OpenStruct.new) do |data, (key, val)|
-      process_entry(key, val, data)
+      process_entry key, val, data
     end
   end
 
@@ -62,10 +70,10 @@ class ThemeLoader
   def process_entry key, val, data
     if key != 'font_catalog' && ::Hash === val
       val.each do |key2, val2|
-        process_entry(%(#{key}_#{key2.tr '-', '_'}), val2, data)
+        process_entry %(#{key}_#{key2.tr '-', '_'}), val2, data
       end
     else
-      data[key] = key.end_with?('_color') ? to_color(evaluate(val, data)) : evaluate(val, data)
+      data[key] = (key.end_with? '_color') ? to_color(evaluate val, data) : (evaluate val, data)
     end
     data
   end
@@ -73,9 +81,9 @@ class ThemeLoader
   def evaluate expr, vars
     case expr
     when ::String
-      evaluate_math(expand_vars(expr, vars))
+      evaluate_math(expand_vars expr, vars)
     when ::Array
-      expr.map {|e| evaluate(e, vars) }
+      expr.map {|e| evaluate e, vars }
     else
       expr
     end
@@ -83,11 +91,11 @@ class ThemeLoader
   
   # NOTE we assume expr is a String
   def expand_vars expr, vars
-    if (idx = expr.index('$'))
-      if idx == 0 && expr.match(/^\$([a-z0-9_]+)$/)
+    if (idx = (expr.index '$'))
+      if idx == 0 && LoneVariableRx =~ expr
         vars[$1]
       else
-        expr.gsub(/\$([a-z0-9_]+)/) { vars[$1] }
+        expr.gsub(VariableRx) { vars[$1] }
       end
     else
       expr
@@ -98,9 +106,9 @@ class ThemeLoader
     return expr if !(::String === expr) || ColorValue === expr
     original = expr
     # FIXME quick HACK to turn a single negative number into an expression
-    expr = %(1 - #{expr[1..-1]}) if expr.start_with?('-')
+    expr = %(1 - #{expr[1..-1]}) if expr.start_with? '-'
     # expand measurement values (e.g., 0.5in)
-    expr = expr.gsub(/(?<=^| |\()(\d+(?:\.\d+)?)(in|mm|cm|pt)(?=$| |\))/) {
+    expr = expr.gsub(MeasurementValueRx) {
       val = $1.to_f
       case $2
       when 'in'
@@ -117,23 +125,21 @@ class ThemeLoader
       val
     }
     while true
-      # TODO move this regular expression to a constant
-      result = expr.gsub(/(-?\d+(?:\.\d+)?) *([*\/]) *(-?\d+(?:\.\d+)?)/) { $1.to_f.send($2.to_sym, $3.to_f) }
+      result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
       unchanged = (result == expr)
       expr = result
       break if unchanged
     end
     while true
-      # TODO move this regular expression to a constant
-      result = expr.gsub(/(-?\d+(?:\.\d+)?) *([+\-]) *(-?\d+(?:\.\d+)?)/) { $1.to_f.send($2.to_sym, $3.to_f) }
+      result = expr.gsub(AddSubtractOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
       unchanged = (result == expr)
       expr = result
       break if unchanged
     end
-    if expr.end_with?(')') && expr.match(/^(round|floor|ceil)\(/)
+    if (expr.end_with? ')') && PrecisionFuncRx =~ expr
       op = $1
       offset = op.length + 1
-      expr = expr[offset...-1].to_f.send(op.to_sym)
+      expr = expr[offset...-1].to_f.send op.to_sym
     end
     if expr == original
       original
@@ -150,34 +156,34 @@ class ThemeLoader
     when ::String
       if value == 'transparent'
         # FIXME should we have a TransparentColorValue class?
-        return HexColorValue.new(value)
+        return HexColorValue.new value
       elsif value.size == 6
-        return HexColorValue.new(value.upcase)
+        return HexColorValue.new value.upcase
       end
     when ::Array
       case value.size
       # CMYK value
       when 4
-        value = value.map {|e|
+        value = value.map do |e|
           if ::Numeric === e
             e = e * 100.0 unless e > 1
           else
             e = e.to_s.chomp('%').to_f
           end
-          (e == (int_e = e.to_i)) ? int_e : e
-        }
+          e == (int_e = e.to_i) ? int_e : e
+        end
         case value
         when [0, 0, 0, 0]
-          return HexColorValue.new('FFFFFF')
+          return HexColorValue.new 'FFFFFF'
         when [100, 100, 100, 100]
-          return HexColorValue.new('000000')
+          return HexColorValue.new '000000'
         else
           value.extend CmykColorValue
           return value
         end
       # RGB value
       when 3
-        return HexColorValue.new(value.map {|e| '%02X' % e}.join)
+        return HexColorValue.new value.map {|e| '%02X' % e}.join
       # Nonsense array value; flatten to string
       else
         value = value.join
@@ -194,9 +200,9 @@ class ThemeLoader
       value.each_char.map {|c| c * 2 }.join
     else
       # truncate or pad with leading zeros (e.g., ff -> 0000ff)
-      value[0..5].rjust(6, '0')
+      value[0..5].rjust 6, '0'
     end
-    HexColorValue.new(value.upcase)
+    HexColorValue.new value.upcase
   end
 end
 end
