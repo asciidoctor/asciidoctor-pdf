@@ -101,7 +101,7 @@ class Converter < ::Prawn::Document
     if node.blocks?
       node.content
     elsif node.content_model != :compound && (string = node.content)
-      # TODO this content could be catched on repeat invocations!
+      # TODO this content could be cached on repeat invocations!
       layout_prose string, opts
     end
     node.document.instance_variable_set :@converter, prev_converter if prev_converter
@@ -119,7 +119,7 @@ class Converter < ::Prawn::Document
         # FIXME implement fitting and centering for SVG
         # TODO implement image scaling (numeric value or "fit")
         float { canvas { image @page_bg_image, position: :center, fit: [bounds.width, bounds.height] } }
-      elsif @page_bg_color
+      elsif @page_bg_color && @page_bg_color != 'FFFFFF'
         fill_absolute_bounds @page_bg_color
       end
     end
@@ -136,7 +136,7 @@ class Converter < ::Prawn::Document
       dry_run do
         toc_page_nums = layout_toc doc, num_toc_levels, 1
       end
-      # reserve pages for the toc
+      # NOTE reserve pages for the toc
       toc_page_nums.each do
         start_new_page
       end
@@ -187,9 +187,7 @@ class Converter < ::Prawn::Document
       end
     end
     @fallback_fonts = [*theme.font_fallbacks]
-    if ['FFFFFF', 'transparent'].include?(@page_bg_color = theme.page_background_color)
-      @page_bg_color = nil
-    end
+    @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
     @font_color = theme.base_font_color || '000000'
     @text_transform = nil
     @stamps = {}
@@ -350,7 +348,6 @@ class Converter < ::Prawn::Document
       end
     end
     # QUESTION should we be adding margin below the abstract??
-    #move_down @theme.block_margin_bottom
     #theme_margin :block, :bottom
   end
 
@@ -400,7 +397,6 @@ class Converter < ::Prawn::Document
   # FIXME alignment of content is off
   def convert_admonition node
     add_dest_for_block node if node.id
-    #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
     icons = node.document.attr? 'icons', 'font'
     label = icons ? (node.attr 'name').to_sym : node.caption.upcase
@@ -441,13 +437,11 @@ class Converter < ::Prawn::Document
         end
       #end
     end
-    #move_down @theme.block_margin_bottom
     theme_margin :block, :bottom
   end
 
   def convert_example node
     add_dest_for_block node if node.id
-    #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
     keep_together do |box_height = nil|
       caption_height = node.title? ? (layout_caption node) : 0
@@ -464,7 +458,6 @@ class Converter < ::Prawn::Document
         end
       end
     end
-    #move_down @theme.block_margin_bottom
     theme_margin :block, :bottom
   end
 
@@ -489,7 +482,6 @@ class Converter < ::Prawn::Document
   def convert_quote_or_verse node
     add_dest_for_block node if node.id
     border_width = @theme.blockquote_border_width || 0
-    #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
     keep_together do |box_height = nil|
       start_cursor = cursor
@@ -517,7 +509,6 @@ class Converter < ::Prawn::Document
         end
       end
     end
-    #move_down @theme.block_margin_bottom
     theme_margin :block, :bottom
   end
 
@@ -526,7 +517,6 @@ class Converter < ::Prawn::Document
 
   def convert_sidebar node
     add_dest_for_block node if node.id
-    #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
     keep_together do |box_height = nil|
       if box_height
@@ -550,7 +540,6 @@ class Converter < ::Prawn::Document
         move_up(@theme.prose_margin_bottom || @theme.vertical_rhythm)
       end
     end
-    #move_down @theme.block_margin_bottom
     theme_margin :block, :bottom
   end
 
@@ -906,7 +895,6 @@ class Converter < ::Prawn::Document
 
     node.subs.replace prev_subs if prev_subs
 
-    #move_down @theme.block_margin_top unless at_page_top?
     theme_margin :block, :top
 
     if (node.option? 'autofit') || (node.document.attr? 'autofit-option')
@@ -923,7 +911,7 @@ class Converter < ::Prawn::Document
             # TODO move the multi-page logic to theme_fill_and_stroke_bounds
             unless (b_width = @theme.code_border_width || 0) == 0
               b_radius = (@theme.code_border_radius || 0) + b_width
-              bg_color = @theme.code_background_color || @page_bg_color || 'FFFFFF'
+              bg_color = @theme.code_background_color || @page_bg_color
             end
             remaining_height = box_height - caption_height
             i = 0
@@ -963,7 +951,6 @@ class Converter < ::Prawn::Document
     end
     stroke_horizontal_rule @theme.caption_border_bottom_color if node.title? && @theme.caption_border_bottom_color
 
-    #move_down @theme.block_margin_bottom
     theme_margin :block, :bottom
   end
 
@@ -1045,30 +1032,16 @@ class Converter < ::Prawn::Document
     table_header = false
     theme = @theme
 
-    # FIXME this is a mess!
-    unless (page_bg_color = theme.page_background_color) && page_bg_color != 'transparent'
-      page_bg_color = nil
+    # NOTE use an explicit white background if no background color is set and table is nested inside a block
+    if (tbl_bg_color = resolve_theme_color :table_background_color, @page_bg_color)
+      tbl_bg_color = nil if tbl_bg_color == 'FFFFFF' && node.parent.context == :section
+    else
+      tbl_bg_color = 'FFFFFF' unless node.parent.context == :section
     end
-
-    unless (bg_color = theme.table_background_color) && bg_color != 'transparent'
-      bg_color = page_bg_color
-    end
-
-    unless (head_bg_color = theme.table_head_background_color) && head_bg_color != 'transparent'
-      head_bg_color = bg_color
-    end
-
-    unless (foot_bg_color = theme.table_foot_background_color) && foot_bg_color != 'transparent'
-      foot_bg_color = bg_color
-    end
-
-    unless (odd_row_bg_color = theme.table_odd_row_background_color) && odd_row_bg_color != 'transparent'
-      odd_row_bg_color = bg_color
-    end
-
-    unless (even_row_bg_color = theme.table_even_row_background_color) && even_row_bg_color != 'transparent'
-      even_row_bg_color = bg_color
-    end
+    head_bg_color = resolve_theme_color :table_head_background_color, tbl_bg_color
+    foot_bg_color = resolve_theme_color :table_foot_background_color, tbl_bg_color
+    odd_row_bg_color = resolve_theme_color :table_odd_row_background_color, tbl_bg_color
+    even_row_bg_color = resolve_theme_color :table_even_row_background_color, tbl_bg_color
 
     table_data = []
     node.rows[:head].each do |rows|
@@ -1213,10 +1186,8 @@ class Converter < ::Prawn::Document
   end
 
   def convert_thematic_break node
-    #move_down @theme.thematic_break_margin_top
     theme_margin :thematic_break, :top
     stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width, line_style: (@theme.thematic_break_border_style || :solid).to_sym
-    #move_down @theme.thematic_break_margin_bottom
     theme_margin :thematic_break, :bottom
   end
 
@@ -1425,7 +1396,7 @@ class Converter < ::Prawn::Document
         end
       end
     end
-    if !bg_image && (bg_color = @theme.title_page_background_color) && bg_color != 'transparent'
+    if !bg_image && (bg_color = resolve_theme_color :title_page_background_color)
       @page_bg_color = bg_color
     else
       bg_color = nil
@@ -1549,26 +1520,24 @@ class Converter < ::Prawn::Document
 
   # QUESTION why doesn't layout_heading set the font??
   def layout_heading string, opts = {}
-    margin_top = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.heading_margin_top
-    margin_bottom = margin || (opts.delete :margin_bottom) || @theme.heading_margin_bottom
+    top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.heading_margin_top
+    bot_margin = margin || (opts.delete :margin_bottom) || @theme.heading_margin_bottom
     if (transform = (opts.delete :text_transform) || @text_transform)
       string = transform_text string, transform
     end
-    #move_down margin_top
-    self.margin_top margin_top
+    margin_top top_margin
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.heading_line_height), {
       color: @font_color,
       inline_format: true,
       align: :left
     }.merge(opts)
-    #move_down margin_bottom
-    self.margin_bottom margin_bottom
+    margin_bottom bot_margin
   end
 
   # NOTE inline_format is true by default
   def layout_prose string, opts = {}
     top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.prose_margin_top || 0
-    bottom_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom || @theme.vertical_rhythm
+    bot_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom || @theme.vertical_rhythm
     if (transform = (opts.delete :text_transform) || @text_transform)
       string = transform_text string, transform
     end
@@ -1590,7 +1559,7 @@ class Converter < ::Prawn::Document
       inline_format: [{ normalize: (opts.delete :normalize) != false }],
       align: (@theme.base_align || :left).to_sym
     }.merge(opts)
-    margin_bottom bottom_margin
+    margin_bottom bot_margin
   end
 
   # Render the caption and return the height of the rendered content
@@ -1785,10 +1754,10 @@ class Converter < ::Prawn::Document
       trim_left = page_margin_left
       trim_width = page_width - trim_left - page_margin_right
       trim_font_color = @theme.header_font_color || @font_color
-      trim_bg_color = @theme.header_background_color
+      trim_bg_color = resolve_theme_color :header_background_color
       trim_border_width = @theme.header_border_width || @theme.base_border_width
       trim_border_style = (@theme.header_border_style || :solid).to_sym
-      trim_border_color = @theme.header_border_color
+      trim_border_color = resolve_theme_color :header_border_color
       trim_valign = (@theme.header_valign || :center).to_sym
       trim_img_valign = @theme.header_image_valign || trim_valign
     else
@@ -1799,10 +1768,10 @@ class Converter < ::Prawn::Document
       trim_left = page_margin_left
       trim_width = page_width - trim_left - page_margin_right
       trim_font_color = @theme.footer_font_color || @font_color
-      trim_bg_color = @theme.footer_background_color
+      trim_bg_color = resolve_theme_color :footer_background_color
       trim_border_width = @theme.footer_border_width || @theme.base_border_width
       trim_border_style = (@theme.footer_border_style || :solid).to_sym
-      trim_border_color = @theme.footer_border_color
+      trim_border_color = resolve_theme_color :footer_border_color
       trim_valign = (@theme.footer_valign || :center).to_sym
       trim_img_valign = @theme.footer_image_valign || trim_valign
     end
@@ -1810,9 +1779,7 @@ class Converter < ::Prawn::Document
     trim_stamp = %(#{position})
     trim_content_left = trim_left + trim_padding[3]
     trim_content_width = trim_width - trim_padding[3] - trim_padding[1]
-    # NOTE FFFFFF is meaningful value for background and border, so don't scrap it
-    trim_bg_color = nil if trim_bg_color == 'transparent'
-    trim_border_color = nil if trim_border_color == 'transparent' || trim_border_width == 0
+    trim_border_color = nil if trim_border_width == 0
     if ['top', 'center', 'bottom'].include? trim_img_valign
       trim_img_valign = trim_img_valign.to_sym
     end
@@ -1969,6 +1936,16 @@ class Converter < ::Prawn::Document
   def font_path font_file, fonts_dir
     # resolve relative to built-in font dir unless path is absolute
     ::File.absolute_path font_file, fonts_dir
+  end
+
+  # QUESTION should we pass a category as an argument?
+  # QUESTION should we make this a method on the theme ostruct? (e.g., @theme.resolve_color key, fallback)
+  def resolve_theme_color key, fallback_color = nil
+    if (color = @theme[key.to_s]) && color != 'transparent'
+      color
+    else
+      fallback_color
+    end
   end
 
   def theme_fill_and_stroke_bounds category
@@ -2243,22 +2220,6 @@ class Converter < ::Prawn::Document
         end
       end
     end
-  end
-
-  def create_stamps
-    create_stamp 'masthead' do
-      canvas do
-        save_graphics_state do
-          stroke_color '000000'
-          x_margin = mm2pt 20
-          y_margin = mm2pt 15
-          stroke_horizontal_line x_margin, bounds.right - x_margin, at: bounds.top - y_margin
-          stroke_horizontal_line x_margin, bounds.right - x_margin, at: y_margin
-        end
-      end
-    end
-
-    @stamps_initialized = true
   end
 =end
 end
