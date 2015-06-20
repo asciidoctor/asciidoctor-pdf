@@ -4,12 +4,12 @@ module InlineImageArranger
   ImagePlaceholderChar = '.'
   begin
     require 'thread_safe' unless defined? ::ThreadSafe
-    CalculatedFragmentWidths = ::ThreadSafe::Cache.new
+    PlaceholderWidthCache = ::ThreadSafe::Cache.new
   rescue
-    CalculatedFragmentWidths = {}
+    PlaceholderWidthCache = {}
   end
 
-  if RUBY_MIN_VERSION_2
+  if ::RUBY_MIN_VERSION_2
     def wrap fragments
       arrange_images fragments
       super
@@ -27,12 +27,25 @@ module InlineImageArranger
     end
   end
 
+  # This method iterates over the fragments that represent inline images and
+  # prepares the image data to be embedded into the document.
+  #
+  # This method populates the image_width, image_height, image_obj and
+  # image_info (PNG only) keys on the fragment. The text is replaced with
+  # placeholder text that will be used to reserve enough room in the line to
+  # fit the image.
+  #
+  # The image height is scaled down to 75% of the specified width (px to pt
+  # conversion). If the image height is more than 1.5x the height of the
+  # surrounding line of text, the font size and line metrics of the fragment
+  # are modified to fit the image in the line.
+  #
+  # If this is the scratch document, the image renderer callback is removed so
+  # that the image is not embedded.
   def arrange_images fragments
     doc = @document
     scratch = doc.scratch?
     fragments.select {|f| f.key? :image_path }.each do |fragment|
-      spacer_w = width_of_fragment fragment.merge(text: ImagePlaceholderChar), doc
-
       if (image_w = fragment[:image_width])
         image_w *= 0.75
       end
@@ -62,49 +75,40 @@ module InlineImageArranger
         fragment[:image_info] = image_info
       end
 
+      spacer_w = nil
+      doc.fragment_font fragment do
+        # NOTE if image height exceeds line height by more than 1.5x, increase the line height
+        # HACK we could really use a nicer API from Prawn here; this is an ugly hack
+        if (f_height = fragment[:image_height]) > ((line_font = doc.font).height * 1.5)
+          fragment[:ascender] = f_height
+          fragment[:descender] = line_font.descender
+          doc.font_size(fragment[:size] = f_height * (doc.font_size / line_font.height))
+          fragment[:increased_line_height] = true
+        end
+
+        unless (spacer_w = PlaceholderWidthCache[f_info = doc.font_info])
+          spacer_w = PlaceholderWidthCache[f_info] = doc.width_of ImagePlaceholderChar
+        end
+      end
+
       # NOTE make room for the image by repeating the image placeholder character
       # TODO could use character spacing as an alternative to repeating characters
+      # HACK we could use a nicer API from Prawn here to reserve width in a line
       fragment[:text] = ImagePlaceholderChar * (fragment[:image_width] / spacer_w).ceil
 
-      # NOTE skip rendering image in scratch document (may have to rethink if image is allowed to change line height)
+      # NOTE skip rendering image in scratch document
       if scratch
         fragment.delete :callback
         fragment.delete :image_obj
         fragment.delete :image_info
-        # TODO move unlink to an ensure clause in case reading images fails
+        # FIXME move unlink to an ensure clause in case reading images fails
         ::File.unlink image_path if fragment[:image_tmp]
       end
     end
   end
-
-  # Calculate the width of the specified fragment's text, taking into account
-  # font family, size and style.
-  #--
-  # FIXME move method to Prawn::Document via extension (dropping doc argument)
-  def width_of_fragment fragment, doc
-    f_info = doc.font_info
-    f_family = fragment[:font] || f_info[:family]
-    f_size = fragment[:size] || f_info[:size]
-    f_style = if (f_styles = fragment[:styles]).include? :bold
-      (f_styles.include? :italic) ? :bold_italic : :bold
-    elsif f_styles.include? :italic
-      :italic
-    else
-      :normal
-    end
-    f_text = fragment[:text]
-    f_key = [f_family, f_size, f_style, f_text]
-    if (fragment_w = CalculatedFragmentWidths[f_key])
-      return fragment_w
-    end
-    doc.font f_family, size: f_size, style: f_style do
-      fragment_w = doc.width_of f_text
-    end
-    CalculatedFragmentWidths[f_key] = fragment_w
-  end
 end
 
-if RUBY_MIN_VERSION_2
+if ::RUBY_MIN_VERSION_2
   ::Prawn::Text::Formatted::Box.prepend InlineImageArranger
 else
   ::Prawn::Text::Formatted::Box.extensions << InlineImageArranger

@@ -2,13 +2,28 @@ module Asciidoctor::Pdf::FormattedText
 module InlineImageRenderer
   module_function
 
-  # render_behind is called before the text is printed
-  # this handler is only used on the main document (not the scratch document)
+  # This method embeds the image object in this fragment into the document
+  # in place of the text that was previously used to reserve space for
+  # the image in the line.
+  #
+  # If the image height is less than 1.5x the height of the surrounding text,
+  # it is centered vertically in the line. If the image height is greater, then
+  # the image is aligned to the bottom of the text.
+  #
+  # Note that render_behind is called before the text is printed.
+  #
+  # This handler is only used on the main document (not the scratch document).
+  #
   def render_behind fragment
     pdf = fragment.document
     data = fragment.format_state
-    # QUESTION what if image height is more than fragment height?
-    image_top = fragment.top - ((fragment.height - data[:image_height]) / 2.0)
+    image_top = if data.key? :increased_line_height
+      # align image to bottom of line
+      fragment.bottom + data[:image_height]
+    else
+      # center image in line
+      fragment.top - ((fragment.height - data[:image_height]) / 2.0)
+    end
     image_left = fragment.left + ((fragment.width - data[:image_width]) / 2.0)
     case data[:image_type]
     when 'svg'
