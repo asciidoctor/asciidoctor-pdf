@@ -2,9 +2,8 @@ module Asciidoctor::Pdf::FormattedText
 module InlineImageRenderer
   module_function
 
-  # This method embeds the image object in this fragment into the document
-  # in place of the text that was previously used to reserve space for
-  # the image in the line.
+  # Embeds the image object in this fragment into the document in place of the
+  # text that was previously used to reserve space for the image in the line.
   #
   # If the image height is less than 1.5x the height of the surrounding text,
   # it is centered vertically in the line. If the image height is greater, then
