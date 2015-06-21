@@ -25,8 +25,6 @@
 * implement first-line indent for paragraphs (seems like conflict w/ our text formatter)
   - option to not indent first paragraph in section
   - if you indent, perhaps drop the margin between paragraphs?
-* GhostScript Tiger SVG is reporting incorrect height when embedded (too much spacing below)
-  - Reported as https://github.com/mogest/prawn-svg/issues/55 (resolved in prawn-svg 0.20.0)
 * add index support
 * add entry to TOC for preamble/preface
 * allow text alignment of prose to be set in document
@@ -136,7 +134,7 @@
 * fix passthrough placeholders that get caught up in syntax highlighting (see https://github.com/asciidoctor/asciidoctor/blob/master/test/blocks_test.rb#L2258-L2277)
 * we could eliminate some of the tags we're currently matching in the formatted text parser (e.g., link)
 * add Preamble to TOC
-* NOTE prawn-svg supports loading from a URI
+* NOTE prawn-svg supports loading from a URI (only applies to embedded images)
 * honor font defs in SVG (to get M+ 1p); prawn-svg supports loading fonts; need to pass fonts to prawn-svg
 * should we support % as a unit in theme (divides by 100 and sets float value)?
 * disable monospace color in headings
