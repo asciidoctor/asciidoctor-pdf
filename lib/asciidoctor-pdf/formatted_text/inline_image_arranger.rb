@@ -54,8 +54,7 @@ module InlineImageArranger
         image_path = fragment[:image_path]
 
         # TODO make helper method to calculate width and height of image
-        case (fragment[:image_type] = (::File.extname image_path)[1..-1].downcase)
-        when 'svg'
+        if fragment[:image_type] == 'svg'
           svg_obj = ::Prawn::Svg::Interface.new (::IO.read image_path), doc, at: doc.bounds.top_left, width: image_w
           if image_w
             fragment[:image_width] = svg_obj.document.sizing.output_width

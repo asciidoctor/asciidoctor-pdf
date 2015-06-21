@@ -69,6 +69,7 @@ class Transform
             attributes = node[:attributes]
             fragment = {
               image_path: attributes[:src],
+              image_type: attributes[:type],
               image_tmp: (attributes[:tmp] == 'true'),
               text: attributes[:alt],
               callback: InlineImageRenderer

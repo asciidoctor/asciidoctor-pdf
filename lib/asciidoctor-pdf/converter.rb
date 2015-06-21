@@ -1,11 +1,11 @@
 # encoding: UTF-8
 # TODO cleanup imports...decide what belongs in asciidoctor-pdf.rb
-require_relative 'core_ext'
 require 'prawn'
 require 'prawn-svg'
 require 'prawn/table'
 require 'prawn/templates'
 require 'prawn/icon'
+require_relative 'core_ext'
 require_relative 'pdf_core_ext'
 require_relative 'temporary_path'
 require_relative 'sanitizer'
@@ -744,10 +744,9 @@ class Converter < ::Prawn::Document
   end
 
   def convert_image node
+    node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
     valid_image = true
-    target = node.attr 'target'
-    # TODO file extension should be an attribute on an image node
-    image_type = (::File.extname target)[1..-1].downcase
+    target, image_type = node.target_with_image_type
 
     if image_type == 'gif'
       valid_image = false
@@ -1306,9 +1305,8 @@ class Converter < ::Prawn::Document
         %([#{node.attr 'alt'}])
       end
     else
-      target = node.target
-      # TODO file extension should be an attribute on an image node
-      image_type = (::File.extname target)[1..-1].downcase
+      node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
+      target, image_type = node.target_with_image_type
       valid = true
       if image_type == 'gif'
         warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
@@ -1516,7 +1514,7 @@ class Converter < ::Prawn::Document
       end
       # QUESTION should we go to page 1 when position == :front?
       go_to_page page_count if position == :back
-      if (::File.extname cover_image) == '.pdf'
+      if cover_image.downcase.end_with? '.pdf'
         import_page cover_image
       else
         image_page cover_image, canvas: true
@@ -2178,7 +2176,7 @@ class Converter < ::Prawn::Document
   def resolve_image_path node, image_path = nil, image_type = nil
     imagesdir = resolve_imagesdir(doc = node.document)
     image_path ||= (node.attr 'target', nil, false)
-    image_type ||= (::File.extname image_path)[1..-1]
+    image_type ||= ::Asciidoctor::Image.image_type image_path
     # handle case when image is a URI
     if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
         (image_path = (node.normalize_web_path image_path, image_base_uri, false)))
