@@ -17,7 +17,8 @@ power.
 ifdef::backend-pdf[]
 :pagenums:
 :pygments-style: tango
-:source-highlighter: pygments
+//:source-highlighter: pygments
+:source-highlighter: coderay
 endif::[]
 // URIs:
 :wolper-uri: http://en.wikipedia.org/wiki/Wolpertinger
