@@ -7,6 +7,7 @@ require 'prawn/table'
 require 'prawn/templates'
 require 'prawn/icon'
 require_relative 'pdf_core_ext'
+require_relative 'temporary_path'
 require_relative 'sanitizer'
 require_relative 'prawn_ext'
 require_relative 'formatted_text'
@@ -1319,8 +1320,7 @@ class Converter < ::Prawn::Document
       end
       if valid
         width_attr = (node.attr? 'width') ? %( width="#{node.attr 'width'}") : nil
-        # FIXME change parser to accept short img tag
-        %(<img src="#{image_path}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{image_path.instance_variable_defined? :@tmp_file}">)
+        %(<img src="#{image_path}" type="#{image_type}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{TemporaryPath === image_path}">)
       else
         node.attr 'alt'
       end
@@ -2174,8 +2174,7 @@ class Converter < ::Prawn::Document
   # the temporary file. If the target is a URI and the allow-uri-read attribute
   # is not set, or the URI cannot be read, this method returns a nil value.
   #
-  # When a temporary file is used, the file descriptor is assigned to the
-  # @tmp_file instance variable of the return string.
+  # When a temporary file is used, the TemporaryPath type is mixed into the path string.
   def resolve_image_path node, image_path = nil, image_type = nil
     imagesdir = resolve_imagesdir(doc = node.document)
     image_path ||= (node.attr 'target', nil, false)
@@ -2197,7 +2196,7 @@ class Converter < ::Prawn::Document
       begin
         open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write(fd.read) }
         tmp_image_path = tmp_image.path
-        tmp_image_path.instance_variable_set :@tmp_file, tmp_image
+        tmp_image_path.extend TemporaryPath
       rescue
         tmp_image_path = nil
       ensure
@@ -2212,11 +2211,9 @@ class Converter < ::Prawn::Document
 
   # QUESTION is there a better way to do this?
   # I suppose we could have @tmp_files as an instance variable on converter instead
-  def unlink_tmp_file holder
-    if (tmp_file = (holder.instance_variable_get :@tmp_file))
-      tmp_file.unlink
-      holder.remove_instance_variable :@tmp_file
-    end
+  # It might be sufficient to delete temporary files once per conversion
+  def unlink_tmp_file path
+    path.unlink if TemporaryPath === path
   end
 
   # QUESTION move to prawn/extensions.rb?
