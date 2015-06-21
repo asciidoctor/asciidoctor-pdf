@@ -2,10 +2,18 @@ module Asciidoctor
 module Pdf
 module FormattedText
 class Transform
+  EOL = "\n"
+  NamedEntityTable = {
+    :lt => '<',
+    :gt => '>',
+    :amp => '&',
+    :quot => '"',
+    :apos => '\''
+  }
   #ZeroWidthSpace = [0x200b].pack 'U*'
 
   def initialize(options = {})
-    @merge_adjacent_text_nodes = options.fetch(:merge_adjacent_text_nodes, false)
+    @merge_adjacent_text_nodes = options[:merge_adjacent_text_nodes]
     if (theme = options[:theme])
       @link_font_color = theme.link_font_color
       @monospaced_font_color = theme.literal_font_color
@@ -21,69 +29,78 @@ class Transform
     end
   end
 
-  # FIXME might want to pass styles downwards rather than decorating on way up
+  # FIXME pass styles downwards to child elements rather than decorating on way out of hierarchy
   def apply(parsed)
     fragments = []
     previous_fragment_is_text = false
-    # NOTE using inject is slower than a manual loop
+    # NOTE we use each since using inject is slower than a manual loop
     parsed.each {|node|
-      case (node_type = node[:type])
+      case node[:type]
       when :element
-        if (tag_name = node[:name]) == :br
-          if @merge_adjacent_text_nodes && previous_fragment_is_text
-            fragments << { text: %(#{fragments.pop[:text]}\n) }
-          else
-            fragments << { text: "\n" }
-          end
-          previous_fragment_is_text = true
-        else
-          if (pcdata = node[:pcdata]) && pcdata.size > 0
+        # case 1: non-void element
+        if (pcdata = node[:pcdata])
+          if pcdata.size > 0
+            tag_name = node[:name]
             attributes = node[:attributes]
             fragments << apply(pcdata).map {|fragment|
               # decorate child fragments with styles from this element
               build_fragment(fragment, tag_name, attributes)
             }
+            previous_fragment_is_text = false
+          # NOTE skip element if it has no children
           #else
-          #  # NOTE special case, handle an empty <a> element
-          #  if tag_name == :a
+          #  # NOTE handle an empty anchor element (i.e., <a ...></a>)
+          #  if (tag_name = node[:name]) == :a
           #    fragments << build_fragment({ text: ZeroWidthSpace }, tag_name, node[:attributes])
+          #    previous_fragment_is_text = false
           #  end
           end
-          previous_fragment_is_text = false
-        end
-      when :text, :entity
-        # TODO could avoid this redundant type check by splitting :text and :entity cases
-        node_text = if node_type == :text
-          node[:value]
-        elsif node_type == :entity
-          if (entity_name = node[:name])
-            case entity_name
-            when :lt
-              '<'
-            when :gt
-              '>'
-            when :amp
-              '&'
-            when :quot
-              '"'
-            when :apos
-              '\''
+        # case 2: void element
+        else
+          case node[:name]
+          when :br
+            if @merge_adjacent_text_nodes && previous_fragment_is_text
+              fragments << { text: %(#{fragments.pop[:text]}#{EOL}) }
+            else
+              fragments << { text: EOL }
             end
-          else
-            [node[:number]].pack('U*')
-            # afm fonts do not include a thin space glyph
-            # set fallback_fonts to allow glyph to be resolved
-            #if (node_number = node[:number]) == 8201
-            #  ' '
-            #else
-            #  [node_number].pack('U*')
-            #end
+            previous_fragment_is_text = true
+          when :img
+            attributes = node[:attributes]
+            fragment = {
+              image_path: attributes[:src],
+              image_tmp: (attributes[:tmp] == 'true'),
+              text: attributes[:alt],
+              callback: InlineImageRenderer
+            }
+            if (img_w = attributes[:width])
+              fragment[:image_width] = img_w.to_f
+            end
+            fragments << fragment
+            previous_fragment_is_text = false
           end
         end
+      when :text
+        text = node[:value]
+        # NOTE the remaining logic is shared with :entity
         if @merge_adjacent_text_nodes && previous_fragment_is_text
-          fragments << { text: %(#{fragments.pop[:text]}#{node_text}) }
+          fragments << { text: %(#{fragments.pop[:text]}#{text}) }
         else
-          fragments << { text: node_text }
+          fragments << { text: text }
+        end
+        previous_fragment_is_text = true
+      when :entity
+        if (name = node[:name])
+          text = NamedEntityTable[name]
+        else
+          # NOTE AFM fonts do not include a thin space glyph; set fallback_fonts to allow glyph to be resolved
+          text = [node[:number]].pack('U*')
+        end
+        # NOTE the remaining logic is shared with :text
+        if @merge_adjacent_text_nodes && previous_fragment_is_text
+          fragments << { text: %(#{fragments.pop[:text]}#{text}) }
+        else
+          fragments << { text: text }
         end
         previous_fragment_is_text = true
       end
@@ -92,13 +109,12 @@ class Transform
   end
 
   def build_fragment(fragment, tag_name = nil, attrs = {})
-    #return { text: fragment } if tag_name.nil?
+    # QUESTION should we short-circuit if tag_name is nil?
+    #return { text: fragment } unless tag_name
     styles = (fragment[:styles] ||= ::Set.new)
     case tag_name
-    #when :b, :strong
     when :strong
       styles << :bold
-    #when :i, :em
     when :em
       styles << :italic
     when :code
@@ -143,6 +159,7 @@ class Transform
         fragment[:font] = value
       end
       if !fragment[:size] && (value = attrs[:size])
+        # FIXME can we make this comparison more robust / accurate?
         if %(#{f_value = value.to_f}) == value || %(#{value.to_i}) == value
           fragment[:size] = f_value
         elsif value != '1em'
@@ -152,7 +169,6 @@ class Transform
       #if !fragment[:character_spacing] && (value = attrs[:character_spacing])
       #  fragment[:character_spacing] = value.to_f
       #end
-    #when :a, :link
     when :a
       if !fragment[:anchor] && (value = attrs[:anchor])
         fragment[:anchor] = value
@@ -174,7 +190,6 @@ class Transform
       styles << :superscript
     #when :u
     #  styles << :underline
-    #when :del, :strikethrough
     when :del
       styles << :strikethrough
     when :span
@@ -204,14 +219,6 @@ class Transform
       #  end
       #  fragment[:color] = value[6..-1].tr(' #', '')
       #end
-    when :img
-      fragment[:image_path] = attrs[:src]
-      fragment[:image_tmp] = (attrs[:tmp] == 'true')
-      fragment[:text] = attrs[:alt]
-      if (img_w = attrs[:width])
-        fragment[:image_width] = img_w.to_f
-      end
-      fragment[:callback] = InlineImageRenderer
     end
     # QUESTION should we remove styles if empty? Need test
     #fragment.delete(:styles) if styles.empty?

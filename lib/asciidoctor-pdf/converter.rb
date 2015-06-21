@@ -1320,7 +1320,7 @@ class Converter < ::Prawn::Document
       if valid
         width_attr = (node.attr? 'width') ? %( width="#{node.attr 'width'}") : nil
         # FIXME change parser to accept short img tag
-        %(<img src="#{image_path}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{image_path.instance_variable_defined? :@tmp_file}">#{ZWSP}</img>)
+        %(<img src="#{image_path}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{image_path.instance_variable_defined? :@tmp_file}">)
       else
         node.attr 'alt'
       end

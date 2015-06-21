@@ -99,7 +99,7 @@ module Markup
   end
 
   module Element1
-    # NOTE content only applies to non-empty element
+    # NOTE content only applies to non-void elements (second part of rule)
     def content
       { type: :element, name: (tag_element = elements[0]).name.to_sym, attributes: tag_element.attributes, pcdata: elements[1].content }
     end
@@ -117,7 +117,7 @@ module Markup
     end
 
     i0 = index
-    r1 = _nt_empty_element
+    r1 = _nt_void_element
     if r1
       r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
       r0 = r1
@@ -155,91 +155,107 @@ module Markup
     r0
   end
 
-  module EmptyElement0
+  module VoidElement0
   end
 
-  module EmptyElement1
+  module VoidElement1
+    def void_tag_name
+      elements[1]
+    end
+
+    def attributes
+      elements[2]
+    end
+
   end
 
-  module EmptyElement2
+  module VoidElement2
     def content
-      { type: :element, name: :br, attributes: {} }
+      { type: :element, name: elements[1].text_value.to_sym, attributes: elements[2].content }
     end
   end
 
-  def _nt_empty_element
+  def _nt_void_element
     start_index = index
-    if node_cache[:empty_element].has_key?(index)
-      cached = node_cache[:empty_element][index]
+    if node_cache[:void_element].has_key?(index)
+      cached = node_cache[:void_element][index]
       if cached
-        node_cache[:empty_element][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:void_element][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
     end
 
     i0, s0 = index, []
-    if (match_len = has_terminal?('<br', false, index))
-      r1 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+    if (match_len = has_terminal?('<', false, index))
+      r1 = true
       @index += match_len
     else
-      terminal_parse_failure('<br')
+      terminal_parse_failure('<')
       r1 = nil
     end
     s0 << r1
     if r1
-      i3, s3 = index, []
-      r5 = _nt_spaces
-      if r5
-        r4 = r5
-      else
-        r4 = instantiate_node(SyntaxNode,input, index...index)
-      end
-      s3 << r4
-      if r4
-        if (match_len = has_terminal?('/', false, index))
-          r6 = true
-          @index += match_len
-        else
-          terminal_parse_failure('/')
-          r6 = nil
-        end
-        s3 << r6
-      end
-      if s3.last
-        r3 = instantiate_node(SyntaxNode,input, i3...index, s3)
-        r3.extend(EmptyElement0)
-      else
-        @index = i3
-        r3 = nil
-      end
-      if r3
-        r2 = r3
-      else
-        r2 = instantiate_node(SyntaxNode,input, index...index)
-      end
+      r2 = _nt_void_tag_name
       s0 << r2
       if r2
-        if (match_len = has_terminal?('>', false, index))
-          r7 = true
-          @index += match_len
-        else
-          terminal_parse_failure('>')
-          r7 = nil
+        r3 = _nt_attributes
+        s0 << r3
+        if r3
+          i5, s5 = index, []
+          r7 = _nt_spaces
+          if r7
+            r6 = r7
+          else
+            r6 = instantiate_node(SyntaxNode,input, index...index)
+          end
+          s5 << r6
+          if r6
+            if (match_len = has_terminal?('/', false, index))
+              r8 = true
+              @index += match_len
+            else
+              terminal_parse_failure('/')
+              r8 = nil
+            end
+            s5 << r8
+          end
+          if s5.last
+            r5 = instantiate_node(SyntaxNode,input, i5...index, s5)
+            r5.extend(VoidElement0)
+          else
+            @index = i5
+            r5 = nil
+          end
+          if r5
+            r4 = r5
+          else
+            r4 = instantiate_node(SyntaxNode,input, index...index)
+          end
+          s0 << r4
+          if r4
+            if (match_len = has_terminal?('>', false, index))
+              r9 = true
+              @index += match_len
+            else
+              terminal_parse_failure('>')
+              r9 = nil
+            end
+            s0 << r9
+          end
         end
-        s0 << r7
       end
     end
     if s0.last
       r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
-      r0.extend(EmptyElement1)
-      r0.extend(EmptyElement2)
+      r0.extend(VoidElement1)
+      r0.extend(VoidElement2)
     else
       @index = i0
       r0 = nil
     end
 
-    node_cache[:empty_element][start_index] = r0
+    node_cache[:void_element][start_index] = r0
 
     r0
   end
@@ -395,64 +411,52 @@ module Markup
                 r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
                 r0 = r6
               else
-                if (match_len = has_terminal?('img', false, index))
+                if (match_len = has_terminal?('span', false, index))
                   r7 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                   @index += match_len
                 else
-                  terminal_parse_failure('img')
+                  terminal_parse_failure('span')
                   r7 = nil
                 end
                 if r7
                   r7 = SyntaxNode.new(input, (index-1)...index) if r7 == true
                   r0 = r7
                 else
-                  if (match_len = has_terminal?('span', false, index))
+                  if (match_len = has_terminal?('strong', false, index))
                     r8 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                     @index += match_len
                   else
-                    terminal_parse_failure('span')
+                    terminal_parse_failure('strong')
                     r8 = nil
                   end
                   if r8
                     r8 = SyntaxNode.new(input, (index-1)...index) if r8 == true
                     r0 = r8
                   else
-                    if (match_len = has_terminal?('strong', false, index))
+                    if (match_len = has_terminal?('sub', false, index))
                       r9 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                       @index += match_len
                     else
-                      terminal_parse_failure('strong')
+                      terminal_parse_failure('sub')
                       r9 = nil
                     end
                     if r9
                       r9 = SyntaxNode.new(input, (index-1)...index) if r9 == true
                       r0 = r9
                     else
-                      if (match_len = has_terminal?('sub', false, index))
+                      if (match_len = has_terminal?('sup', false, index))
                         r10 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                         @index += match_len
                       else
-                        terminal_parse_failure('sub')
+                        terminal_parse_failure('sup')
                         r10 = nil
                       end
                       if r10
                         r10 = SyntaxNode.new(input, (index-1)...index) if r10 == true
                         r0 = r10
                       else
-                        if (match_len = has_terminal?('sup', false, index))
-                          r11 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                          @index += match_len
-                        else
-                          terminal_parse_failure('sup')
-                          r11 = nil
-                        end
-                        if r11
-                          r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
-                          r0 = r11
-                        else
-                          @index = i0
-                          r0 = nil
-                        end
+                        @index = i0
+                        r0 = nil
                       end
                     end
                   end
@@ -465,6 +469,50 @@ module Markup
     end
 
     node_cache[:tag_name][start_index] = r0
+
+    r0
+  end
+
+  def _nt_void_tag_name
+    start_index = index
+    if node_cache[:void_tag_name].has_key?(index)
+      cached = node_cache[:void_tag_name][index]
+      if cached
+        node_cache[:void_tag_name][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        @index = cached.interval.end
+      end
+      return cached
+    end
+
+    i0 = index
+    if (match_len = has_terminal?('br', false, index))
+      r1 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+      @index += match_len
+    else
+      terminal_parse_failure('br')
+      r1 = nil
+    end
+    if r1
+      r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
+      r0 = r1
+    else
+      if (match_len = has_terminal?('img', false, index))
+        r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+        @index += match_len
+      else
+        terminal_parse_failure('img')
+        r2 = nil
+      end
+      if r2
+        r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
+        r0 = r2
+      else
+        @index = i0
+        r0 = nil
+      end
+    end
+
+    node_cache[:void_tag_name][start_index] = r0
 
     r0
   end
