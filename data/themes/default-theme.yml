@@ -1,16 +1,16 @@
 font:
   catalog:
-    NotoSerif:
+    Noto Serif:
       normal: notoserif-regular-latin.ttf
       bold: notoserif-bold-latin.ttf
       italic: notoserif-italic-latin.ttf
       bold_italic: notoserif-bolditalic-latin.ttf
-    Mplus1mn:
+    M+ 1mn:
       normal: mplus1mn-regular-ascii-conums.ttf
       bold: mplus1mn-bold-ascii.ttf
       italic: mplus1mn-italic-ascii.ttf
       bold_italic: mplus1mn-bolditalic-ascii.ttf
-    Mplus1pMultilingual:
+    M+ 1p Fallback:
       normal: mplus1p-regular-multilingual.ttf
       bold: mplus1p-regular-multilingual.ttf
       italic: mplus1p-regular-multilingual.ttf
@@ -18,7 +18,7 @@ font:
   fallbacks:
     # NOTE M+ 1p doesn't support all CJK characters, but it at least has some coverage
     # NOTE M+ 1p provides the arrows for ->, <-, => and <=
-    - Mplus1pMultilingual
+    - M+ 1p Fallback
 page:
   background_color: ffffff
   layout: portrait
@@ -35,7 +35,7 @@ base:
   # color as CMYK array (approximated)
   #font_color: [0, 0, 0, 0.92]
   #font_color: [0, 0, 0, 92%]
-  font_family: NotoSerif
+  font_family: Noto Serif
   # choose one of these font_size/line_height_length combinations
   #font_size: 14
   #line_height_length: 20
@@ -45,7 +45,7 @@ base:
   #line_height_length: 16
   font_size: 10.5
   #line_height_length: 15
-  # correct line height for NotoSerif metrics
+  # correct line height for Noto Serif metrics
   line_height_length: 12
   #font_size: 11.25
   #line_height_length: 18
@@ -60,7 +60,7 @@ base:
   border_color: eeeeee
 # FIXME vertical_rhythm is weird; we should think in terms of ems
 #vertical_rhythm: $base_line_height_length * 2 / 3
-# correct line height for NotoSerif metrics
+# correct line height for Noto Serif metrics
 vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
 link:
@@ -68,7 +68,7 @@ link:
 # literal is currently used for inline monospaced in prose and table cells
 literal:
   font_color: b12146
-  font_family: Mplus1mn
+  font_family: M+ 1mn
 heading:
   #font_color: 181818
   font_color: $base_font_color
@@ -83,7 +83,7 @@ heading:
   h6_font_size: $base_font_size_small
   font_style: bold
   #line_height: 1.4
-  # correct line height for NotoSerif metrics
+  # correct line height for Noto Serif metrics
   line_height: 1.2
   margin_top: $vertical_rhythm * 0.2
   margin_bottom: $vertical_rhythm * 0.8
@@ -116,7 +116,7 @@ caption:
   margin_outside: 0
 code:
   font_color: $base_font_color
-  #font_family: LiberationMono
+  #font_family: Liberation Mono
   #font_size: floor($base_font_size * 0.9)
   #font_size: 10
   #padding: [9.5, 9.5, 9.5, 9.5]
@@ -158,7 +158,7 @@ admonition:
   border_color: $base_border_color
   border_width: $base_border_width
 conum:
-  font_family: Mplus1mn
+  font_family: M+ 1mn
   font_color: $literal_font_color
   font_size: $base_font_size
   line_height: 4 / 3

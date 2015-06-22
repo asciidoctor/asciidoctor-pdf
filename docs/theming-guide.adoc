@@ -513,14 +513,14 @@ These fonts provide more characters than the built-in PDF fonts, but still only 
 
 The family name of the fonts bundled with Asciidoctor PDF are as follows:
 
-http://www.google.com/get/noto/#/family/noto-serif[NotoSerif]::
+http://www.google.com/get/noto/#/family/noto-serif[Noto Serif]::
 A serif font that can be styled as normal, italic, bold or bold_italic.
 
-http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1mn[Mplus1mn]::
+http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1mn[M+ 1mn]::
 A monospaced font that maps different thicknesses to the styles normal, italic, bold and bold_italic.
 Also provides the circuled numbers used in callouts.
 
-http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1p[Mplus1pMultilingual]::
+http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1p[M+ 1p Fallback]::
 A sans-serif font that provides a very complete set of Unicode glyphs.
 Cannot be styled as italic, bold or bold_italic.
 Useful as a fallback font.
@@ -595,12 +595,16 @@ font:
       italic: roboto-italic.ttf
       bold: roboto-bold.ttf
       bold_italic: roboto-bold_italic.ttf
-    RobotoLight:
+    Roboto Light:
       normal: roboto-light-normal.ttf
       italic: roboto-light-italic.ttf
       bold: roboto-light-bold.ttf
       bold_italic: roboto-light-bold_italic.ttf
 ----
+
+TIP: Text in SVGs will use the font catalog from your theme.
+We recommend that you match the font key to the name of the font seen by the operating system.
+This will allow you to use the same font names (aka families) in both your graphics program and Asciidoctor PDF.
 
 === Fallback fonts
 
@@ -700,7 +704,7 @@ TBW
 
 |base_font_family
 |<<fonts,font family name>>
-|font_family: NotoSerif
+|font_family: Noto Serif
 
 |base_font_size
 |<<values,number>>
@@ -801,7 +805,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 |literal_font_family
 |<<fonts,font family name>>
-|font_family: Mplus1mn
+|font_family: M+ 1mn
 
 |literal_font_size
 |<<values,number>>
@@ -824,7 +828,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 |heading_font_family
 |<<fonts,font family name>>
-|font_family: NotoSerif
+|font_family: Noto Serif
 
 |heading_font_size
 |<<values,number>>
@@ -981,7 +985,7 @@ Block styles are applied to the following block types:
 
 |caption_font_family
 |<<fonts,font family name>>
-|font_family: Mplus1mn
+|font_family: M+ 1mn
 
 |caption_font_size
 |<<values,number>>
@@ -1016,7 +1020,7 @@ Block styles are applied to the following block types:
 
 |code_font_family
 |<<fonts,font family name>>
-|font_family: Mplus1mn
+|font_family: M+ 1mn
 
 |code_font_size
 |<<values,number>>
@@ -1063,7 +1067,7 @@ Block styles are applied to the following block types:
 
 |blockquote_font_family
 |<<fonts,font family name>>
-|font_family: Notoserif
+|font_family: Noto Serif
 
 |blockquote_font_size
 |<<values,number>>
@@ -1091,7 +1095,7 @@ Block styles are applied to the following block types:
 
 |blockquote_cite_font_family
 |<<fonts,font family name>>
-|cite_font_family: Notoserif
+|cite_font_family: Noto Serif
 
 |blockquote_cite_font_style
 |normal, italic, bold, bold_italic
@@ -1127,7 +1131,7 @@ Block styles are applied to the following block types:
 
 |sidebar_title_font_family
 |<<fonts,font family name>>
-|title_font_family: NotoSerif
+|title_font_family: Noto Serif
 
 |sidebar_title_font_size
 |<<values,number>>
@@ -1344,7 +1348,7 @@ Block styles are applied to the following block types:
 
 |toc_font_family
 |<<fonts,font family name>>
-|font_family: NotoSerif
+|font_family: Noto Serif
 
 |toc_font_size
 |<<values,number>>
@@ -1396,7 +1400,7 @@ Block styles are applied to the following block types:
 
 |header_font_family
 |<<fonts,font family name>>
-|font_family: NotoSerif
+|font_family: Noto Serif
 
 |header_font_size
 |<<values,number>>
@@ -1449,7 +1453,7 @@ Block styles are applied to the following block types:
 
 |footer_font_family
 |<<fonts,font family name>>
-|font_family: NotoSerif
+|font_family: Noto Serif
 
 |footer_font_size
 |<<values,number>>
