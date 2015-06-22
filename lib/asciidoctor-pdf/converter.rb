@@ -1279,6 +1279,7 @@ class Converter < ::Prawn::Document
   end
 
   def convert_inline_image node
+    img = nil
     if node.type == 'icon'
       if node.document.attr? 'icons', 'font'
         if (icon_name = node.target).include? '@'
@@ -1296,13 +1297,10 @@ class Converter < ::Prawn::Document
         @icon_font_data ||= ::Prawn::Icon::FontData.load self, icon_set
         begin
           # TODO support rotate and flip attributes; support fw (full-width) size
-          %(<font name="#{icon_set}"#{size_attr}>#{@icon_font_data.unicode icon_name}</font>)
+          img = %(<font name="#{icon_set}"#{size_attr}>#{@icon_font_data.unicode icon_name}</font>)
         rescue
           warn %(asciidoctor: WARNING: #{icon_name} is not a valid icon name in the #{icon_set} icon set)
-          %([#{node.attr 'alt'}])
         end
-      else
-        %([#{node.attr 'alt'}])
       end
     else
       node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
@@ -1318,11 +1316,11 @@ class Converter < ::Prawn::Document
       end
       if valid
         width_attr = (node.attr? 'width') ? %( width="#{node.attr 'width'}") : nil
-        %(<img src="#{image_path}" type="#{image_type}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{TemporaryPath === image_path}">)
-      else
-        node.attr 'alt'
+        img = %(<img src="#{image_path}" type="#{image_type}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{TemporaryPath === image_path}">)
       end
     end
+    img ||= %([#{node.attr 'alt'}])
+    (node.attr? 'link') ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
   end
 
   def convert_inline_indexterm node
