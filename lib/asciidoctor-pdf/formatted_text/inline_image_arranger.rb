@@ -116,7 +116,9 @@ module InlineImageArranger
 end
 
 if ::RUBY_MIN_VERSION_2
-  ::Prawn::Text::Formatted::Box.prepend InlineImageArranger
+  class ::Prawn::Text::Formatted::Box
+    prepend InlineImageArranger
+  end
 else
   ::Prawn::Text::Formatted::Box.extensions << InlineImageArranger
 end

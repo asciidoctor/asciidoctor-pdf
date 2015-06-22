@@ -22,14 +22,15 @@ module Fragment
   end
 end
 
-if ::RUBY_MIN_VERSION_2
-  ::Prawn::Text::Formatted::Fragment.prepend Fragment
-else
-  # NOTE it's necessary to first remove the accessor methods we are replacing
-  ::Prawn::Text::Formatted::Fragment.__send__ :remove_method, :ascender=
-  ::Prawn::Text::Formatted::Fragment.__send__ :remove_method, :descender=
-  # NOTE we use __send__ since :include wasn't public until Ruby 2.0
-  ::Prawn::Text::Formatted::Fragment.__send__ :include, Fragment
+class ::Prawn::Text::Formatted::Fragment
+  if ::RUBY_MIN_VERSION_2
+    prepend Fragment
+  else
+    # NOTE it's necessary to remove the accessor methods or else they won't get replaced
+    remove_method :ascender=
+    remove_method :descender=
+    include Fragment
+  end
 end
 end
 end
