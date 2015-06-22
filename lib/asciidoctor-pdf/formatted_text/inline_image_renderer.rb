@@ -16,8 +16,8 @@ module InlineImageRenderer
   def render_behind fragment
     pdf = fragment.document
     data = fragment.format_state
-    image_top = if data.key? :increased_line_height
-      # align image to bottom of line
+    image_top = if data.key? :line_height_increased
+      # align image to bottom of line (differs from fragment.top by descender value)
       fragment.bottom + data[:image_height]
     else
       # center image in line

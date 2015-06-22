@@ -42,16 +42,19 @@ module InlineImageArranger
   #
   # If this is the scratch document, the image renderer callback is removed so
   # that the image is not embedded.
+  #
+  # This method is called each time the set of fragments overflow to another
+  # page, so it's necessary to short-circuit if that case is detected.
   def arrange_images fragments
     doc = @document
     scratch = doc.scratch?
-    fragments.select {|f| f.key? :image_path }.each do |fragment|
+    fragments.select {|f| (f.key? :image_path) && !(f.key? :image_obj) }.each do |fragment|
       begin
+        image_path = fragment[:image_path]
+
         if (image_w = fragment[:image_width])
           image_w *= 0.75
         end
-
-        image_path = fragment[:image_path]
 
         # TODO make helper method to calculate width and height of image
         if fragment[:image_type] == 'svg'
@@ -85,7 +88,7 @@ module InlineImageArranger
             fragment[:ascender] = f_height
             fragment[:descender] = line_font.descender
             doc.font_size(fragment[:size] = f_height * (doc.font_size / line_font.height))
-            fragment[:increased_line_height] = true
+            fragment[:line_height_increased] = true
           end
 
           unless (spacer_w = PlaceholderWidthCache[f_info = doc.font_info])
