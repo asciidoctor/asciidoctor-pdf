@@ -5,6 +5,7 @@
 
 == TODO
 
+* upgrade Treetop
 * rename example to basic-example and chronicles to chronicles-example
 * recognize inline image syntax in page_background_image key
 * allow front cover and back cover image to be defined in theme; document in theming-guide
@@ -14,6 +15,9 @@
 * separate theme control for listing vs literal block (and maybe source too)
 * allow title page image "bottom" to be set instead of "top" (mutually exclusive)
 
+* scale block images like inline images
+* rewrite optimize-pdf using rghost
+  - add Optimizer class; wire to cli
 * pass macro doesn't work in source block when macro subs and highlighting are both enabled
 * bind image_registry between scratch and main document so we don't process the same image more than once
   - need to do some testing
@@ -27,6 +31,7 @@
   - if you indent, perhaps drop the margin between paragraphs?
 * add index support
 * add entry to TOC for preamble/preface
+* can we create fragments in converter instead of using the formatted text parser?
 * allow text alignment of prose to be set in document
 * don't issue warnings on scratch document
 * rake release seems messed up (tagging the wrong commit)
@@ -100,8 +105,6 @@
 * create proper default (Asciidoctor) theme
 * list bullet in ordered list needs to grow with length of number
 * document how the treetop parser is rebuilt
-* rewrite optimize-pdf using rghost
-  - add Optimizer class; wire to cli
 * use ImageMagick to uncompress PNG images before reading them (could also just document this)
 * rework font so we can set actual height, calculate x_height internally (use 1em for spacings)
 * padding top and bottom on content affects height_of calculations (need to review)
@@ -209,6 +212,7 @@
 
 * uncompress PNG files
 * avoid the fallback font if possible (use full fonts in your theme)
+* font families used in SVGs must match keys in the font catalog
 
 == Open Questions
 
