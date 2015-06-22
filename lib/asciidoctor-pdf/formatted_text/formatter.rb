@@ -1,16 +1,12 @@
-require 'treetop'
-require 'set'
-require_relative 'parser'
-require_relative 'transform'
-
 module Asciidoctor
-module Prawn
-class FormattedTextFormatter
+module Pdf
+module FormattedText
+class Formatter
   FormattingSnifferPattern = /[<&]/
 
   def initialize options = {}
-    @parser = FormattedTextParser.new
-    @transform = FormattedTextTransform.new merge_adjacent_text_nodes: true, theme: options[:theme]
+    @parser = MarkupParser.new
+    @transform = Transform.new merge_adjacent_text_nodes: true, theme: options[:theme]
   end
 
   def format string, *args
@@ -24,6 +20,7 @@ class FormattedTextFormatter
       @transform.apply(parsed.content)
     end
   end
+end
 end
 end
 end

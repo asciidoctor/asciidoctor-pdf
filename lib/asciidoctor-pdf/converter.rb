@@ -1,14 +1,16 @@
 # encoding: UTF-8
 # TODO cleanup imports...decide what belongs in asciidoctor-pdf.rb
-require_relative 'core_ext'
 require 'prawn'
 require 'prawn-svg'
 require 'prawn/table'
 require 'prawn/templates'
 require 'prawn/icon'
+require_relative 'core_ext'
 require_relative 'pdf_core_ext'
+require_relative 'temporary_path'
 require_relative 'sanitizer'
 require_relative 'prawn_ext'
+require_relative 'formatted_text'
 require_relative 'pdfmarks'
 require_relative 'asciidoctor_ext'
 require_relative 'theme_loader'
@@ -260,8 +262,7 @@ class Converter < ::Prawn::Document
 
     pdf_opts[:page_size] = (page_size || 'LETTER')
 
-    # FIXME change namespace of FormattedTextFormatter to ::Asciidoctor::Pdf (or deeper)
-    pdf_opts[:text_formatter] ||= ::Asciidoctor::Prawn::FormattedTextFormatter.new theme: theme
+    pdf_opts[:text_formatter] ||= FormattedText::Formatter.new theme: theme
     pdf_opts
   end
 
@@ -743,14 +744,13 @@ class Converter < ::Prawn::Document
   end
 
   def convert_image node
+    node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
     valid_image = true
-    target = node.attr 'target'
-    # TODO file extension should be an attribute on an image node
-    image_type = (::File.extname target)[1..-1].downcase
+    target, image_type = node.target_with_image_type
 
     if image_type == 'gif'
       valid_image = false
-      warn %(asciidoctor: WARNING: GIF image format not supported. Please convert the image #{target} to PNG.)
+      warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.)
     #elsif image_type == 'pdf'
     #  import_page image_path
     #  return
@@ -1256,7 +1256,7 @@ class Converter < ::Prawn::Document
   end
 
   def convert_inline_button node
-    %(<b>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</b>)
+    %(<strong>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</strong>)
   end
 
   def convert_inline_callout node
@@ -1305,7 +1305,23 @@ class Converter < ::Prawn::Document
         %([#{node.attr 'alt'}])
       end
     else
-      warn %(asciidoctor: WARNING: conversion missing in backend #{@backend} for inline_image)
+      node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
+      target, image_type = node.target_with_image_type
+      valid = true
+      if image_type == 'gif'
+        warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
+        valid = false
+      end
+      unless (image_path = resolve_image_path node, target) && (::File.readable? image_path)
+        warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
+        valid = false
+      end
+      if valid
+        width_attr = (node.attr? 'width') ? %( width="#{node.attr 'width'}") : nil
+        %(<img src="#{image_path}" type="#{image_type}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{TemporaryPath === image_path}">)
+      else
+        node.attr 'alt'
+      end
     end
   end
 
@@ -1498,7 +1514,7 @@ class Converter < ::Prawn::Document
       end
       # QUESTION should we go to page 1 when position == :front?
       go_to_page page_count if position == :back
-      if (::File.extname cover_image) == '.pdf'
+      if cover_image.downcase.end_with? '.pdf'
         import_page cover_image
       else
         image_page cover_image, canvas: true
@@ -2156,12 +2172,11 @@ class Converter < ::Prawn::Document
   # the temporary file. If the target is a URI and the allow-uri-read attribute
   # is not set, or the URI cannot be read, this method returns a nil value.
   #
-  # When a temporary file is used, the file descriptor is assigned to the
-  # @tmp_file instance variable of the return string.
+  # When a temporary file is used, the TemporaryPath type is mixed into the path string.
   def resolve_image_path node, image_path = nil, image_type = nil
     imagesdir = resolve_imagesdir(doc = node.document)
     image_path ||= (node.attr 'target', nil, false)
-    image_type ||= (::File.extname image_path)[1..-1]
+    image_type ||= ::Asciidoctor::Image.image_type image_path
     # handle case when image is a URI
     if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
         (image_path = (node.normalize_web_path image_path, image_base_uri, false)))
@@ -2179,7 +2194,7 @@ class Converter < ::Prawn::Document
       begin
         open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write(fd.read) }
         tmp_image_path = tmp_image.path
-        tmp_image_path.instance_variable_set :@tmp_file, tmp_image
+        tmp_image_path.extend TemporaryPath
       rescue
         tmp_image_path = nil
       ensure
@@ -2194,11 +2209,9 @@ class Converter < ::Prawn::Document
 
   # QUESTION is there a better way to do this?
   # I suppose we could have @tmp_files as an instance variable on converter instead
-  def unlink_tmp_file holder
-    if (tmp_file = (holder.instance_variable_get :@tmp_file))
-      tmp_file.unlink
-      holder.remove_instance_variable :@tmp_file
-    end
+  # It might be sufficient to delete temporary files once per conversion
+  def unlink_tmp_file path
+    path.unlink if TemporaryPath === path
   end
 
   # QUESTION move to prawn/extensions.rb?

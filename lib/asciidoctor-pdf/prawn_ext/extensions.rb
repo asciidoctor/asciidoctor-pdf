@@ -196,6 +196,34 @@ module Extensions
     end
   end
 
+  # Apply the font settings (family, size, styles and character spacing) from
+  # the fragment to the document, then yield to the block.
+  #
+  # The original font settings are restored before this method returns.
+  #
+  def fragment_font fragment
+    f_info = font_info
+    f_family = fragment[:font] || f_info[:family]
+    f_size = fragment[:size] || f_info[:size]
+    if (f_styles = fragment[:styles])
+      f_style = resolve_font_style f_styles
+    else
+      f_style = :normal
+    end
+
+    if (c_spacing = fragment[:character_spacing])
+      character_spacing c_spacing do
+        font f_family, size: f_size, style: f_style do
+          yield
+        end
+      end
+    else
+      font f_family, size: f_size, style: f_style do
+        yield
+      end
+    end
+  end
+
   def calc_line_metrics line_height = 1, font = self.font, font_size = self.font_size
     line_height_length = line_height * font_size
     leading = line_height_length - font_size
@@ -207,7 +235,7 @@ module Extensions
 
 =begin
   # these line metrics attempted to figure out a correction based on the reported height and the font_size
-  # however, it only works for some fonts, and breaks down for fonts like NotoSerif
+  # however, it only works for some fonts, and breaks down for fonts like Noto Serif
   def calc_line_metrics line_height = 1, font = self.font, font_size = self.font_size
     line_height_length = font_size * line_height
     line_gap = line_height_length - font_size
