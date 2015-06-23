@@ -109,6 +109,7 @@ class ThemeLoader
     expr = %(1 - #{expr[1..-1]}) if expr.start_with? '-'
     # expand measurement values (e.g., 0.5in)
     expr = expr.gsub(MeasurementValueRx) {
+      # TODO extract to_pt method and use it here
       val = $1.to_f
       case $2
       when 'in'
