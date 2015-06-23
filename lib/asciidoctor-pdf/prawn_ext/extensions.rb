@@ -613,10 +613,14 @@ module Extensions
     scratch = get_scratch_document
     scratch.start_new_page
     start_page_number = scratch.page_number
+    # QUESTION is it enough to just set the padding or do we need to clone the bounds?
+    default_bounds = scratch.bounds
+    scratch.bounds = bounds.deep_copy.tap {|b| b.instance_variable_set :@document, scratch }
     start_y = scratch.y
     scratch.font font_family, style: font_style, size: font_size do
       scratch.instance_exec(&block)
     end
+    scratch.bounds = default_bounds
     whole_pages = scratch.page_number - start_page_number
     [(whole_pages * bounds.height + (start_y - scratch.y)), whole_pages, (start_y - scratch.y)]
   end
