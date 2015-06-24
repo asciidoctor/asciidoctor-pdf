@@ -7,7 +7,6 @@
 
 * convert image width to points for images on title page and in running header and footer; add support for pdfwidth
 * upgrade Treetop
-* rename example to basic-example and chronicles to chronicles-example
 * recognize inline image syntax in page_background_image key
 * allow front cover and back cover image to be defined in theme; document in theming-guide
 * keep caption with table (check for sufficient space)
