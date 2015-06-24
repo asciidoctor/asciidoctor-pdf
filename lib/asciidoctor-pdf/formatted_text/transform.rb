@@ -34,7 +34,7 @@ class Transform
     fragments = []
     previous_fragment_is_text = false
     # NOTE we use each since using inject is slower than a manual loop
-    parsed.each {|node|
+    parsed.each do |node|
       case node[:type]
       when :element
         # case 1: non-void element
@@ -42,10 +42,10 @@ class Transform
           if pcdata.size > 0
             tag_name = node[:name]
             attributes = node[:attributes]
-            fragments << apply(pcdata).map {|fragment|
+            fragments << apply(pcdata).map do |fragment|
               # decorate child fragments with styles from this element
               build_fragment(fragment, tag_name, attributes)
-            }
+            end
             previous_fragment_is_text = false
           # NOTE skip element if it has no children
           #else
@@ -105,13 +105,11 @@ class Transform
         end
         previous_fragment_is_text = true
       end
-    }
+    end
     fragments.flatten
   end
 
-  def build_fragment(fragment, tag_name = nil, attrs = {})
-    # QUESTION should we short-circuit if tag_name is nil?
-    #return { text: fragment } unless tag_name
+  def build_fragment(fragment, tag_name, attrs = {})
     styles = (fragment[:styles] ||= ::Set.new)
     case tag_name
     when :strong
@@ -221,8 +219,7 @@ class Transform
       #  fragment[:color] = value[6..-1].tr(' #', '')
       #end
     end
-    # QUESTION should we remove styles if empty? Need test
-    #fragment.delete(:styles) if styles.empty?
+    fragment.delete(:styles) if styles.empty?
     fragment
   end
 end
