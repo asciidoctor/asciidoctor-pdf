@@ -8,13 +8,14 @@ default_tasks = []
 begin
   require 'bundler/gem_tasks'
 
+  # Enhance the release task to create an explicit commit for the release
+  #Rake::Task[:release].enhance [:commit_release]
+
+  # NOTE you don't need to push after updating version and committing locally
   task :commit_release do
     Bundler::GemHelper.new.send :guard_clean
     sh %(git commit --allow-empty -a -m 'Release #{Asciidoctor::Pdf::VERSION}')
   end
-
-  # Enhance the release task to create an explicit commit for the release
-  Rake::Task[:release].enhance [:commit_release]
 rescue LoadError
 end
 
