@@ -5,6 +5,7 @@
 
 == TODO
 
+* convert image width to points for images on title page and in running header and footer; add support for pdfwidth
 * upgrade Treetop
 * rename example to basic-example and chronicles to chronicles-example
 * recognize inline image syntax in page_background_image key
@@ -15,9 +16,9 @@
 * separate theme control for listing vs literal block (and maybe source too)
 * allow title page image "bottom" to be set instead of "top" (mutually exclusive)
 
-* scale block images like inline images
 * rewrite optimize-pdf using rghost
   - add Optimizer class; wire to cli
+* layout SVG without using keep_together (since we know all the dimensions)
 * pass macro doesn't work in source block when macro subs and highlighting are both enabled
 * bind image_registry between scratch and main document so we don't process the same image more than once
   - need to do some testing
@@ -47,12 +48,10 @@
 * support !include in theme file (file issue)
 * margin per heading level (see https://github.com/asciidoctor/asciidoctor-pdf/issues/176)
 * add cover page example to chronicles so people see how to use it
-* images
-  - multiple image width by 0.75 to get point value (including in running header and footer)
-  - should we use native size of image by default? (after multiplying by 0.75)
 * don't orphan a single line of paragraph (send it with a buddy line)
 * implement stem support
 * fail gracefully if theme file cannot be found
+* expose theme variable on document (attr_reader?)
 * dedicated style for top/bottom margin of outline list
   - allow margin top and bottom to be set for lists (applies to outer-most list)
   - allow spacing between nested lists levels be configured in theme
@@ -88,7 +87,9 @@
 * enable text_transform for table foot row
 * file upstream issue for Prawn to warn if it can't resolve a glpyh (or monkeypatch it)
 * support web fonts; use uri-cache to avoid redundant fetching
+* align caption to match alignment of block image
 * allow pdf-page-layout (portrait || landscape) to be set in document
+* allow pdf-page-margin to be set in document
 * attribute or role to control table shading (all, even, odd) (or call it striped like bootstrap?)
 * make conum glyphs configurable in theme (use reference table to resolve)
 * do we still need the converter hack in convert_content_for_block? (seems to be needed for admonitions)
@@ -103,7 +104,6 @@
 * refactor as Prawn view to avoid method name conflicts (also see https://github.com/prawnpdf/prawn/issues/802)
 * make CodeRay theme colors configurable (in theme?)
 * create proper default (Asciidoctor) theme
-* list bullet in ordered list needs to grow with length of number
 * document how the treetop parser is rebuilt
 * use ImageMagick to uncompress PNG images before reading them (could also just document this)
 * rework font so we can set actual height, calculate x_height internally (use 1em for spacings)
