@@ -1700,11 +1700,13 @@ class Converter < ::Prawn::Document
     # index chapters and sections by the visual page number on which they start
     chapter_start_pages = {}
     section_start_pages = {}
-    sections.each do |sect|
-      if sect.chapter?
-        chapter_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
-      else
-        section_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
+    unless sections.nil?
+      sections.each do |sect|
+        if sect.chapter?
+          chapter_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
+        else
+          section_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
+        end
       end
     end
 
@@ -1727,10 +1729,12 @@ class Converter < ::Prawn::Document
     end
 
     doctitle = doc.doctitle partition: true
-    # NOTE set doctitle again so it's properly escaped
-    doc.set_attr 'doctitle', doctitle.combined
-    doc.set_attr 'document-title', doctitle.main
-    doc.set_attr 'document-subtitle', doctitle.subtitle
+    unless doctitle.nil?
+      # NOTE set doctitle again so it's properly escaped
+      doc.set_attr 'doctitle', doctitle.combined
+      doc.set_attr 'document-title', doctitle.main
+      doc.set_attr 'document-subtitle', doctitle.subtitle
+    end
     doc.set_attr 'page-count', num_pages
 
     # TODO move this to a method so it can be reused; cache results
