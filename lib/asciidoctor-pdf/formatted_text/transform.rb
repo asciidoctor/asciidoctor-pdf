@@ -175,9 +175,9 @@ class Transform
       if !fragment[:link] && (value = attrs[:href])
         fragment[:link] = value
       end
-      if !fragment[:local] && (value = attrs[:local])
-        fragment[:local] = value
-      end
+      #if !fragment[:local] && (value = attrs[:local])
+      #  fragment[:local] = value
+      #end
       if !fragment[:name] && (value = attrs[:name])
         fragment[:name] = value
         fragment[:callback] = InlineDestinationMarker
