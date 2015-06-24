@@ -1,3 +1,5 @@
+Prawn::Font::AFM.instance_variable_set :@hide_m17n_warning, true
+
 module Asciidoctor
 module Prawn
 module Extensions
