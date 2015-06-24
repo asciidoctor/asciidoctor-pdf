@@ -37,7 +37,6 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   #s.add_development_dependency 'rdoc', '~> 4.1.0'
 
   s.add_runtime_dependency 'asciidoctor', '~> 1.5.0'
-  #s.add_runtime_dependency 'prawn', '2.0.1'
   # Prawn 2.x requires Ruby 2.x, so cast a wider net
   s.add_runtime_dependency 'prawn', '>= 1.3.0', '< 3.0.0'
   s.add_runtime_dependency 'prawn-table', '0.2.1'
@@ -45,6 +44,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   s.add_runtime_dependency 'prawn-svg', '0.20.0'
   s.add_runtime_dependency 'prawn-icon', '0.6.4'
   s.add_runtime_dependency 'safe_yaml', '1.0.4'
-  s.add_runtime_dependency 'thread_safe', '0.3.4'
+  s.add_runtime_dependency 'thread_safe', '0.3.5'
+  # For our usage, treetop 1.6.2 is slower than 1.5.3
   s.add_runtime_dependency 'treetop', '1.5.3'
 end
