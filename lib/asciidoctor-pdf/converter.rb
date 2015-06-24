@@ -237,19 +237,9 @@ class Converter < ::Prawn::Document
           # dimension cannot be less than 0
           dim > 0 ? dim : break
         elsif ::String === dim && (m = (MeasurementPartsRx.match dim))
-          val = m[1].to_f
-          # TODO delegate to a pt calculation method
-          val = case m[2]
-          when 'in'
-            val * 72
-          when 'mm'
-            val * (72 / 25.4)
-          when 'cm'
-            val * (720 / 25.4)
-          else # pt or unitless
-            val
-          end
+          val = to_pt m[1].to_f, m[2]
           # NOTE 4 is the max practical precision in PDFs
+          # QUESTION should we make rounding a feature of the to_pt method?
           if (val = val.round 4) == (i_val = val.to_i)
             val = i_val
           end
@@ -761,11 +751,22 @@ class Converter < ::Prawn::Document
       warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target})
     end
 
+    # QUESTION if we advance to new page, shouldn't dest point there too?
     add_dest_for_block node if node.id
+    position = ((node.attr 'align') || @theme.image_align || :left).to_sym
 
     unless valid_image
       theme_margin :block, :top
-      layout_prose %(#{node.attr 'alt'} | #{target}), normalize: false, margin: 0, single_line: true
+      if (link = node.attr 'link')
+        alt_text = %(<a href="#{link}">[#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}]</a> | <em>#{target}</em>)
+      else
+        alt_text = %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
+      end
+      layout_prose alt_text,
+          normalize: false,
+          margin: 0,
+          single_line: true,
+          align: position
       layout_caption node, position: :bottom if node.title?
       theme_margin :block, :bottom
       return
@@ -774,37 +775,35 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
 
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
-    width = if node.attr? 'scaledwidth'
-      ((node.attr 'scaledwidth').to_f / 100.0) * bounds.width
-    elsif image_type == 'svg'
-      bounds.width
+    # NOTE height values are basically ignored (image is scaled proportionally based on width)
+    width = if node.attr? 'pdfwidth'
+      if (pdfwidth = node.attr 'pdfwidth').end_with? '%'
+        (pdfwidth.to_f / 100) * bounds.width
+      else
+        str_to_pt pdfwidth
+      end
+    elsif node.attr? 'scaledwidth'
+      ((node.attr 'scaledwidth').to_f / 100) * bounds.width
     elsif node.attr? 'width'
-      (node.attr 'width').to_f
-    else
-      bounds.width * (@theme.image_scaled_width_default || 0.75)
+      # NOTE width is in pixels, so scale by 75%; restrict to max width of bounds.width
+      [bounds.width, (node.attr 'width').to_f * 0.75].min
     end
-    position = ((node.attr 'align') || @theme.image_align_default || :left).to_sym
+
     case image_type
     when 'svg'
-      # NOTE prawn-svg can't position, so we have to do it manually (file issue?)
-      left = case position
-      when :left
-        0
-      when :right
-        bounds.width - width
-      when :center
-        ((bounds.width - width) / 2.0).floor
-      end
       begin
-        img_data = ::IO.read image_path
+        svg_obj = ::Prawn::Svg::Interface.new (::IO.read image_path), self, position: position, width: width
+        actual_w = svg_obj.document.sizing.output_width
+        actual_h = svg_obj.document.sizing.output_height
+        rel_left = { left: 0, right: (bounds.width - actual_w), center: ((bounds.width - actual_w) / 2.0) }[position]
+        # TODO layout SVG without using keep_together (since we know the dimensions already); always render caption
         keep_together do |box_height = nil|
+          svg_obj.instance_variable_set :@prawn, self
+          svg_obj.draw
           if box_height && (link = node.attr 'link')
-            result = svg img_data, at: [left, cursor], width: width
-            link_annotation [(abs_left = left + bounds.absolute_left), y, (abs_left + width), (y + result[:height])],
-              Border: [0, 0, 0],
-              A: { Type: :Action, S: :URI, URI: (str2pdfval link) }
-          else
-            svg img_data, at: [left, cursor], width: width
+            link_annotation [(abs_left = rel_left + bounds.absolute_left), y, (abs_left + actual_w), (y + actual_h)],
+                Border: [0, 0, 0],
+                A: { Type: :Action, S: :URI, URI: (str2pdfval link) }
           end
           layout_caption node, position: :bottom if node.title?
         end
@@ -814,32 +813,37 @@ class Converter < ::Prawn::Document
     else
       begin
         # FIXME temporary workaround to group caption & image
-        # Prawn doesn't provide access to rendered width and height before placing the
-        # image on the page
+        # Prawn doesn't provide access to rendered width & height before placing image on page
         # FIXME this code really needs to be better organized!
         image_obj, image_info = build_image_object image_path
-        rendered_w, rendered_h = image_info.calc_image_dimensions width: width
+        if width
+          rendered_w, rendered_h = image_info.calc_image_dimensions width: width
+        else
+          # NOTE native size is in pixels, so scale by 75%; restrict to max width of bounds.width
+          rendered_w = [bounds.width, image_info.width * 0.75].min
+          rendered_h = (rendered_w * image_info.height) / image_info.width
+        end
         # TODO move this calculation into a method
         caption_height = node.title? ?
             (@theme.caption_margin_inside + @theme.caption_margin_outside + @theme.base_line_height_length) : 0
-        height = nil
-        if cursor < rendered_h + caption_height
-          start_new_page
-          if cursor < rendered_h + caption_height
-            height = (cursor - caption_height).floor
-            width = ((rendered_w * height) / rendered_h).floor
+        if rendered_h > (available_height = cursor - caption_height)
+          start_new_page unless at_page_top?
+          # NOTE shrink image so it fits on a single page
+          if rendered_h > (available_height = cursor - caption_height)
+            rendered_w = (rendered_w * available_height) / rendered_h
+            rendered_h = available_height
             # FIXME workaround to fix Prawn not adding fill and stroke commands
             # on page that only has an image; breakage occurs when line numbers are added
             fill_color self.fill_color
             stroke_color self.stroke_color
           end
         end
+        # NOTE must calculate link position before embedding to get proper boundaries
         if (link = node.attr 'link')
-          actual_w, actual_h = [(width || rendered_w), (height || rendered_h)]
-          img_x, img_y = image_position actual_w, actual_h, position: position
-          link_box = [img_x, (img_y - actual_h), img_x + actual_w, img_y]
+          img_x, img_y = image_position rendered_w, rendered_h, position: position
+          link_box = [img_x, (img_y - rendered_h), (img_x + rendered_w), img_y]
         end
-        embed_image image_obj, image_info, width: width, height: height, position: position
+        embed_image image_obj, image_info, width: rendered_w, position: position
         if link
           link_annotation link_box,
             Border: [0, 0, 0],

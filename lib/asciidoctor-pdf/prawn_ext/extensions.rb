@@ -5,6 +5,8 @@ module Extensions
   include ::Asciidoctor::Pdf::Sanitizer
   include ::Asciidoctor::PdfCore::PdfObject
 
+  MeasurementValueRx = /(\d+|\d*\.\d+)(in|mm|cm|px|pt)?$/
+
   # - :height is the height of a line
   # - :leading is spacing between adjacent lines
   # - :padding_top is half line spacing, plus any line_gap in the font
@@ -78,6 +80,37 @@ module Extensions
   #
   def at_page_top?
     @y == @margin_box.absolute_top
+  end
+
+  # Converts the specified float value to a pt value from the
+  # specified unit of measurement (e.g., in, cm, mm, etc).
+  def to_pt num, units
+    case units
+    when nil, 'pt'
+      num
+    when 'in'
+      num * 72
+    when 'mm'
+      num * (72 / 25.4)
+    when 'cm'
+      num * (720 / 25.4)
+    when 'px'
+      num * 0.75
+    end
+  end
+
+  # Convert the specified string value to a pt value from the
+  # specified unit of measurement (e.g., in, cm, mm, etc).
+  #
+  # Examples:
+  #
+  #  0.5in => 36.0
+  #  100px => 75.0
+  #
+  def str_to_pt val
+    if MeasurementValueRx =~ val
+      to_pt $1.to_f, $2
+    end
   end
 
   # Destinations
