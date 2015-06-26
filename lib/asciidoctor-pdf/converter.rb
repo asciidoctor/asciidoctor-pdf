@@ -1695,18 +1695,16 @@ class Converter < ::Prawn::Document
     num_pages = page_count - skip
 
     # FIXME probably need to treat doctypes differently
-    sections = doc.find_by(context: :section) {|sect| sect.level < 3 }
+    sections = doc.find_by(context: :section) {|sect| sect.level < 3 } || []
 
     # index chapters and sections by the visual page number on which they start
     chapter_start_pages = {}
     section_start_pages = {}
-    unless sections.nil?
-      sections.each do |sect|
-        if sect.chapter?
-          chapter_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
-        else
-          section_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
-        end
+    sections.each do |sect|
+      if sect.chapter?
+        chapter_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
+      else
+        section_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
       end
     end
 
@@ -1728,13 +1726,11 @@ class Converter < ::Prawn::Document
       sections_by_page[num] = last_sect
     end
 
-    doctitle = doc.doctitle partition: true
-    unless doctitle.nil?
-      # NOTE set doctitle again so it's properly escaped
-      doc.set_attr 'doctitle', doctitle.combined
-      doc.set_attr 'document-title', doctitle.main
-      doc.set_attr 'document-subtitle', doctitle.subtitle
-    end
+    doctitle = doc.doctitle partition: true, use_fallback: true
+    # NOTE set doctitle again so it's properly escaped
+    doc.set_attr 'doctitle', doctitle.combined
+    doc.set_attr 'document-title', doctitle.main
+    doc.set_attr 'document-subtitle', doctitle.subtitle
     doc.set_attr 'page-count', num_pages
 
     # TODO move this to a method so it can be reused; cache results
