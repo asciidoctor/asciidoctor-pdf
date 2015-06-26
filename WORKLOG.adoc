@@ -7,9 +7,12 @@
 
 * file issue for prawn to support spacer fragments with fixed width / height and no text (or text is ignored in calculations)
 * file issue that prawn-svg messes with the cursor (need to explain how)
+* redo milestones so that issues are recorded against alpha releases
+* document limitations in README (such as no linear gradients in SVG, embedded images in SVG must be URL or inlined, etc)
 
 * convert image width to points for images on title page and in running header and footer; add support for pdfwidth (#221)
-* upgrade Treetop
+* if width is specified in SVG, but not in image macro, the image is not scaled down to bounds.width
+* rework pull request for source line numbers (combine with restore conum logic if conums are enabled)
 * recognize inline image syntax in page_background_image key (#222)
 * allow front cover and back cover image to be defined in theme; document in theming-guide
 * keep caption with table (check for sufficient space)
