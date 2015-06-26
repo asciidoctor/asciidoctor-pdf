@@ -38,7 +38,7 @@ Behold -> the horror!
 
 .Wolpertinger, stuffed
 [.left.thumb]
-image::wolpertinger.jpg[Wolpertinger,width=100%,scaledwidth=55%,link=http://en.wikipedia.org/wiki/Wolpertinger]
+image::wolpertinger.jpg[Wolpertinger,pdfwidth=50%,link=http://en.wikipedia.org/wiki/Wolpertinger]
 
 You may not be familiar with these {wolper-uri}[ravenous beasts].
 Trust us, they'll eat your shorts and suck loops from your code.
