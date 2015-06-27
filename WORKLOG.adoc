@@ -5,14 +5,20 @@
 
 == TODO
 
+* layout SVG without using keep_together (since we know all the dimensions)
+  - fix SVG to a single page (check height + caption height)
+
 * file issue for prawn to support spacer fragments with fixed width / height and no text (or text is ignored in calculations)
 * file issue that prawn-svg messes with the cursor (need to explain how)
 * redo milestones so that issues are recorded against alpha releases
 * document limitations in README (such as no linear gradients in SVG, embedded images in SVG must be URL or inlined, etc)
+* document all permutations of image sizing
 
+* verse has problems with wrapping if line is long
+* table column header is wrapping by char
 * convert image width to points for images on title page and in running header and footer; add support for pdfwidth (#221)
-* if width is specified in SVG, but not in image macro, the image is not scaled down to bounds.width
 * rework pull request for source line numbers (combine with restore conum logic if conums are enabled)
+  - also combine with the preserve_space logic
 * recognize inline image syntax in page_background_image key (#222)
 * allow front cover and back cover image to be defined in theme; document in theming-guide
 * keep caption with table (check for sufficient space)
@@ -23,7 +29,6 @@
 
 * rewrite optimize-pdf using rghost
   - add Optimizer class; wire to cli
-* layout SVG without using keep_together (since we know all the dimensions)
 * what do we do if the image type cannot be resolved from file extension (i.e., when target is a URL)?
 * pass macro doesn't work in source block when macro subs and highlighting are both enabled (#180)
 * enable cache_images option for prawn-svg (#223)
