@@ -1287,10 +1287,10 @@ class Converter < ::Prawn::Document
   def convert_inline_footnote node
     if (index = node.attr 'index')
       #text = node.document.footnotes.find {|fn| fn.index == index }.text
-      %(<sup>[#{index}: #{node.text}]</sup>)
+      %( <color rgb="#999999">[#{index}: #{node.text}]</color>)
     elsif node.type == :xref
       # NOTE footnote reference not found
-      %(<sup><color rgb="FF0000">[#{node.text}]</color></sup>)
+      %( <color rgb="FF0000">[#{node.text}]</color>)
     end
   end
 
