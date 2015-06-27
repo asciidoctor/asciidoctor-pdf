@@ -776,6 +776,7 @@ class Converter < ::Prawn::Document
 
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
     # NOTE height values are basically ignored (image is scaled proportionally based on width)
+    # QUESTION should we enforce positive numbers?
     width = if node.attr? 'pdfwidth'
       if (pdfwidth = node.attr 'pdfwidth').end_with? '%'
         (pdfwidth.to_f / 100) * bounds.width
@@ -785,23 +786,34 @@ class Converter < ::Prawn::Document
     elsif node.attr? 'scaledwidth'
       ((node.attr 'scaledwidth').to_f / 100) * bounds.width
     elsif node.attr? 'width'
-      # NOTE width is in pixels, so scale by 75%; restrict to max width of bounds.width
+      # QUESTION should we honor percentage width value?
+      # NOTE scale width by 75% to convert px to pt; restrict width to bounds.width
       [bounds.width, (node.attr 'width').to_f * 0.75].min
     end
 
     case image_type
     when 'svg'
       begin
-        svg_obj = ::Prawn::Svg::Interface.new (::IO.read image_path), self, position: position, width: width
-        actual_w = svg_obj.document.sizing.output_width
-        actual_h = svg_obj.document.sizing.output_height
-        rel_left = { left: 0, right: (bounds.width - actual_w), center: ((bounds.width - actual_w) / 2.0) }[position]
+        svg_data = ::IO.read image_path
+        svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: width
+        svg_size = svg_obj.document.sizing
+        rendered_w = svg_size.output_width
+        if !width && (svg_obj.document.root.attributes.key? 'width')
+          # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
+          if (adjusted_w = [bounds.width, rendered_w * 0.75].min) != rendered_w
+            # FIXME would be nice to have a resize/recalculate method; instead, just reconstruct
+            svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: (rendered_w = adjusted_w)
+            svg_size = svg_obj.document.sizing
+          end
+        end
+        # TODO shrink image to fit on a single page if height exceeds page height
+        rendered_h = svg_size.output_height
         # TODO layout SVG without using keep_together (since we know the dimensions already); always render caption
         keep_together do |box_height = nil|
           svg_obj.instance_variable_set :@prawn, self
           svg_obj.draw
           if box_height && (link = node.attr 'link')
-            link_annotation [(abs_left = rel_left + bounds.absolute_left), y, (abs_left + actual_w), (y + actual_h)],
+            link_annotation [(abs_left = svg_obj.position[0] + bounds.absolute_left), y, (abs_left + rendered_w), (y + rendered_h)],
                 Border: [0, 0, 0],
                 A: { Type: :Action, S: :URI, URI: (str2pdfval link) }
           end
@@ -819,7 +831,7 @@ class Converter < ::Prawn::Document
         if width
           rendered_w, rendered_h = image_info.calc_image_dimensions width: width
         else
-          # NOTE native size is in pixels, so scale by 75%; restrict to max width of bounds.width
+          # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
           rendered_w = [bounds.width, image_info.width * 0.75].min
           rendered_h = (rendered_w * image_info.height) / image_info.width
         end
@@ -828,7 +840,7 @@ class Converter < ::Prawn::Document
             (@theme.caption_margin_inside + @theme.caption_margin_outside + @theme.base_line_height_length) : 0
         if rendered_h > (available_height = cursor - caption_height)
           start_new_page unless at_page_top?
-          # NOTE shrink image so it fits on a single page
+          # NOTE shrink image so it fits on a single page if height exceeds page height
           if rendered_h > (available_height = cursor - caption_height)
             rendered_w = (rendered_w * available_height) / rendered_h
             rendered_h = available_height
