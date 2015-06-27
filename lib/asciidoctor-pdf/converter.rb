@@ -34,6 +34,7 @@ class Converter < ::Prawn::Document
   # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
   CodeRayRequirePath = ::File.join((::File.dirname __FILE__), 'prawn_ext/coderay_encoder')
 
+  AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
   AdmonitionIcons = {
     caution:   { key: 'fa-fire', color: 'BF3400' },
     important: { key: 'fa-exclamation-circle', color: 'BF0000' },
@@ -42,14 +43,19 @@ class Converter < ::Prawn::Document
     warning:   { key: 'fa-exclamation-triangle', color: 'BF6900' }
   }
   Alignments = [:left, :center, :right]
-  IndentationRx = /^ +/
-  TabSpaces = ' ' * 4
+  EOL = %(\n)
+  TAB = %(\t)
+  InnerIndent = %(\n )
+  IndentGuard = %(\u200b)
+  GuardedInnerIndent = %(\n\u200b )
+  TabRx = /\t/
+  TabIndentRx = /^\t+/
   NoBreakSpace = unicode_char 0x00a0
   NarrowSpace = unicode_char 0x2009
   NarrowNoBreakSpace = unicode_char 0x202f
   ZeroWidthSpace = unicode_char 0x200b
   HairSpace = unicode_char 0x200a
-  DotLeaderDefault = %(. )
+  DotLeaderDefault = '. '
   EmDash = unicode_char 0x2014
   LowercaseGreekA = unicode_char 0x03b1
   Bullets = {
@@ -78,6 +84,9 @@ class Converter < ::Prawn::Document
     #htmlsyntax 'xml'
     @list_numbers = []
     @list_bullets = []
+    @capabilities = {
+      expands_tabs: (::Asciidoctor::VERSION.start_with? '1.5.3.') || AsciidoctorVersion >= (::Gem::Version.create '1.5.3')
+    }
   end
 
   def convert node, name = nil, opts = {}
@@ -487,7 +496,8 @@ class Converter < ::Prawn::Document
           if node.context == :quote
             convert_content_for_block node
           else # verse
-            layout_prose node.content, preserve: true, normalize: false, align: :left
+            content = preserve_indentation node.content, (node.attr 'tabsize')
+            layout_prose content, normalize: false, align: :left
           end
         end
         theme_font :blockquote_cite do
@@ -882,11 +892,12 @@ class Converter < ::Prawn::Document
       # NOTE the source highlighter logic below handles the callouts and highlight subs
       prev_subs = subs.dup
       subs.delete_all :highlight, :callouts
+      source_string = preserve_indentation node.content, (node.attr 'tabsize'), false
     else
       highlighter = nil
       prev_subs = nil
+      source_string = preserve_indentation node.content, (node.attr 'tabsize')
     end
-    source_string = preserve_indentation node.content
     source_chunks = case highlighter
     when 'coderay'
       Helpers.require_library CodeRayRequirePath, 'coderay' unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
@@ -899,7 +910,7 @@ class Converter < ::Prawn::Document
       lexer = ::Pygments::Lexer[node.attr 'language', 'text', false] || ::Pygments::Lexer['text']
       pygments_config = { nowrap: true, noclasses: true, style: (node.document.attr 'pygments-style') || 'pastie' }
       result = lexer.highlight source_string, options: pygments_config
-      fragments = text_formatter.format result
+      fragments = guard_indentation text_formatter.format result
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     else
       # NOTE only format if we detect a need
@@ -1040,6 +1051,18 @@ class Converter < ::Prawn::Document
     glyph = %(\u2460)
     (number - 1).times { glyph = glyph.next }
     glyph
+  end
+
+  # Adds guards to preserve indentation
+  def guard_indentation fragments 
+    start_of_line = true
+    fragments.each do |fragment|
+      next if (text = fragment[:text]).empty?
+      text.prepend IndentGuard if start_of_line && (text.start_with? ' ')
+      text.gsub! InnerIndent, GuardedInnerIndent if text.include? InnerIndent
+      start_of_line = text.end_with? EOL
+    end
+    fragments
   end
 
   def convert_table node
@@ -1582,8 +1605,6 @@ class Converter < ::Prawn::Document
         string = %(<a anchor="#{anchor}">#{string}</a>)
       end
     end
-    # preserve leading space using non-breaking space chars
-    string = preserve_indentation string if opts.delete :preserve
     margin_top top_margin
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
       color: @font_color,
@@ -2141,8 +2162,60 @@ class Converter < ::Prawn::Document
     (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + line_metrics.padding_bottom
   end
 
-  def preserve_indentation string
-    string.gsub(IndentationRx) { NoBreakSpace * $&.length }
+  def preserve_indentation string, tab_size = nil, guard_indent = true
+    return '' unless string
+    # expand tabs if they aren't already expanded, even if explicitly disabled
+    # NOTE Asciidoctor >= 1.5.3 already replaces tabs if tabsize attribute is positive
+    if ((tab_size = tab_size.to_i) < 1 || !@capabilities[:expands_tabs]) && (string.include? TAB)
+      # Asciidoctor <= 1.5.2 already does tab replacement in some cases, so be consistent about tab size
+      full_tab_space = ' ' * (tab_size = 4)
+      result = []
+      string.each_line do |line|
+        if line.start_with? TAB
+          # NOTE '+' operator is faster than interpolation in this case
+          if guard_indent
+            line.sub!(TabIndentRx) {|tabs| IndentGuard + full_tab_space * tabs.length }
+          else
+            line.sub!(TabIndentRx) {|tabs| full_tab_space * tabs.length }
+          end
+          leading_space = false
+        # QUESTION should we check for EOL first?
+        elsif line == EOL
+          result << line
+          next
+        else
+          leading_space = guard_indent && (line.start_with? ' ')
+        end
+
+        if line.include? TAB
+          # keep track of how many spaces were added to adjust offset in match data
+          spaces_added = 0
+          line.gsub!(TabRx) {
+            # calculate how many spaces this tab represents, then replace tab with spaces
+            if (offset = ($~.begin 0) + spaces_added) % tab_size == 0
+              spaces_added += (tab_size - 1)
+              full_tab_space
+            else
+              unless (spaces = tab_size - offset % tab_size) == 1
+                spaces_added += (spaces - 1)
+              end
+              ' ' * spaces
+            end
+          }
+        end
+
+        # NOTE we save time by adding indent guard per line while performing tab expansion
+        result << IndentGuard if leading_space
+        result << line
+      end
+      result.join
+    else
+      if guard_indent
+        string.prepend IndentGuard if string.start_with? ' '
+        string.gsub! InnerIndent, GuardedInnerIndent if string.include? InnerIndent
+      end
+      string
+    end
   end
 
   # If an id is provided or the node passed as the first argument has an id,
