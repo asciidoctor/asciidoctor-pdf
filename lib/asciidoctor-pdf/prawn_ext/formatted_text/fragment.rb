@@ -23,7 +23,7 @@ module Fragment
 end
 
 class ::Prawn::Text::Formatted::Fragment
-  if ::RUBY_MIN_VERSION_2
+  if respond_to? :prepend
     prepend Fragment
   else
     # NOTE it's necessary to remove the accessor methods or else they won't get replaced

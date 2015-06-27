@@ -9,7 +9,7 @@ module InlineImageArranger
     PlaceholderWidthCache = {}
   end
 
-  if ::RUBY_MIN_VERSION_2
+  if respond_to? :prepend
     def wrap fragments
       arrange_images fragments
       super
@@ -115,7 +115,7 @@ module InlineImageArranger
   end
 end
 
-if ::RUBY_MIN_VERSION_2
+if respond_to? :prepend
   class ::Prawn::Text::Formatted::Box
     prepend InlineImageArranger
   end
