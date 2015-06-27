@@ -762,11 +762,7 @@ class Converter < ::Prawn::Document
       else
         alt_text = %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
       end
-      layout_prose alt_text,
-          normalize: false,
-          margin: 0,
-          single_line: true,
-          align: position
+      layout_prose alt_text, normalize: false, margin: 0, single_line: true, align: position
       layout_caption node, position: :bottom if node.title?
       theme_margin :block, :bottom
       return
