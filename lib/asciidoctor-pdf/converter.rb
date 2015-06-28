@@ -148,6 +148,11 @@ class Converter < ::Prawn::Document
     font @theme.base_font_family, size: @theme.base_font_size
     convert_content_for_block doc
 
+    # if we are at the page top, assume we didn't write anything to the page
+    if at_page_top? # or use low-level check: page.content.stream.length == 2
+      delete_page
+    end
+
     toc_page_nums = if include_toc
       layout_toc doc, num_toc_levels, toc_start_page_num, num_front_matter_pages
     else
@@ -1211,6 +1216,7 @@ class Converter < ::Prawn::Document
     nil
   end
 
+  # NOTE to insert sequential page breaks, you must put {nbsp} between page breaks
   def convert_page_break node
     start_new_page unless at_page_top?
   end
@@ -1996,10 +2002,12 @@ class Converter < ::Prawn::Document
   # Start a new page if y value is greater than remaining space on page.
   def margin y, position
     unless y == 0 || at_page_top?
-      if cursor <= y
-        @margin_box.move_past_bottom
-      else
+      if cursor > y
         move_down y
+      else
+        # go to the next page
+        # NOTE we don't use `move_down cursor` because we often have to check at_page_top?
+        @margin_box.move_past_bottom
       end
     end
   end
@@ -2007,7 +2015,7 @@ class Converter < ::Prawn::Document
   # Lookup margin for theme element and position, then delegate to margin method.
   # If the margin value is not found, assume 0 for position = :top and $vertical_rhythm for position = :bottom.
   def theme_margin category, position
-    margin(@theme[%(#{category}_margin_#{position})] || (position == :bottom ? @theme.vertical_rhythm : 0), position)
+    margin (@theme[%(#{category}_margin_#{position})] || (position == :bottom ? @theme.vertical_rhythm : 0)), position
   end
 
   def theme_font category, opts = {}
