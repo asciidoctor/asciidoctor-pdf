@@ -194,30 +194,29 @@ class Transform
     when :span
       # span logic with normal style parsing
       if (inline_styles = attrs[:style])
-        inline_styles.rstrip.chomp(';').split(';').each do |style|
+        # NOTE for our purposes, spaces inside the style attribute are superfluous
+        # NOTE split will ignore record after trailing ;
+        inline_styles.tr(' ', '').split(';').each do |style|
           pname, pvalue = style.split(':', 2)
           case pname
           when 'color'
-            fragment[:color] = pvalue.tr(' #', '') unless fragment[:color]
+            unless fragment[:color]
+              pvalue = pvalue[1..-1] if pvalue.start_with? '#'
+              #pvalue = pvalue.each_char.map {|c| c * 2 }.join if pvalue.size == 3
+              fragment[:color] = pvalue
+            end
           when 'font-weight'
-            if pvalue.lstrip == 'bold'
+            if pvalue == 'bold'
               styles << :bold
             end
           when 'font-style'
-            if pvalue.lstrip == 'italic'
+            if pvalue == 'italic'
               styles << :italic
             end
+          # TODO text-transform
           end
         end
       end
-
-      # quicker span logic that only honors font color
-      #if !fragment[:color] && (value = attrs[:style]) && value.start_with?('color:')
-      #  if value.include?(';')
-      #    value = value.split(';').first
-      #  end
-      #  fragment[:color] = value[6..-1].tr(' #', '')
-      #end
     end
     fragment.delete(:styles) if styles.empty?
     fragment
