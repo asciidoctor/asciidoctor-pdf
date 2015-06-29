@@ -32,7 +32,8 @@ class Converter < ::Prawn::Document
   end
 
   # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
-  CodeRayRequirePath = ::File.join((::File.dirname __FILE__), 'prawn_ext/coderay_encoder')
+  CodeRayRequirePath = ::File.join (::File.dirname __FILE__), 'prawn_ext/coderay_encoder'
+  RougeRequirePath = ::File.join (::File.dirname __FILE__), 'rouge_ext'
 
   AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
   AdmonitionIcons = {
@@ -46,8 +47,10 @@ class Converter < ::Prawn::Document
   EOL = %(\n)
   TAB = %(\t)
   InnerIndent = %(\n )
-  IndentGuard = %(\u200b)
-  GuardedInnerIndent = %(\n\u200b )
+  # a no-break space is used to replace a leading space to prevent Prawn from trimming indentation
+  # a leading zero-width space can't be used as it gets dropped when calculating the line width
+  GuardedIndent = %(\u00a0)
+  GuardedInnerIndent = %(\n\u00a0)
   TabRx = /\t/
   TabIndentRx = /^\t+/
   NoBreakSpace = unicode_char 0x00a0
@@ -68,7 +71,7 @@ class Converter < ::Prawn::Document
     checked: (unicode_char 0x2611),
     unchecked: (unicode_char 0x2610)
   }
-  IconSets = ['fa', 'fi', 'octicon', 'pf']
+  IconSets = ['fa', 'fi', 'octicon', 'pf'].to_set
   MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|pt|)'
   MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|pt|)$/
   PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
@@ -76,6 +79,7 @@ class Converter < ::Prawn::Document
   CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2>(?=(?: ?\\?<!?\2\d+\2>)*$)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
   LineScanRx = /\n|.+/
+  SourceHighlighters = ['coderay', 'pygments', 'rouge'].to_set
 
   def initialize backend, opts
     super
@@ -885,19 +889,40 @@ class Converter < ::Prawn::Document
   # QUESTION can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
   def convert_listing_or_literal node
     add_dest_for_block node if node.id
+
     # HACK disable built-in syntax highlighter; must be done before calling node.content!
-    # NOTE the highlight sub is only set for coderay and pygments
-    if node.style == 'source' && !scratch? && ((subs = node.subs).include? :highlight)
-      highlighter = node.document.attr 'source-highlighter'
-      # NOTE the source highlighter logic below handles the callouts and highlight subs
-      prev_subs = subs.dup
-      subs.delete_all :highlight, :callouts
-      source_string = preserve_indentation node.content, (node.attr 'tabsize'), false
+    if node.style == 'source' && node.attributes['language'] &&
+        (highlighter = node.document.attributes['source-highlighter']) &&
+        (SourceHighlighters.include? highlighter)
+      prev_subs = (subs = node.subs).dup
+      # NOTE the highlight sub is only set for coderay and pygments atm
+      highlight_idx = subs.index :highlight
+      # NOTE scratch? here only applies if listing block is nested inside another block
+      if scratch?
+        highlighter = nil
+        if highlight_idx
+          # switch the :highlight sub back to :specialcharacters
+          subs[highlight_idx] = :specialcharacters
+        else
+          prev_subs = nil
+        end
+        source_string = preserve_indentation node.content, (node.attr 'tabsize')
+      else
+        # NOTE the source highlighter logic below handles the callouts and highlight subs
+        if highlight_idx
+          subs.delete_all :highlight, :callouts
+        else
+          subs.delete_all :specialcharacters, :callouts
+        end
+        # the indent guard will be added by the source highlighter logic
+        source_string = preserve_indentation node.content, (node.attr 'tabsize'), false
+      end
     else
       highlighter = nil
       prev_subs = nil
       source_string = preserve_indentation node.content, (node.attr 'tabsize')
     end
+
     source_chunks = case highlighter
     when 'coderay'
       Helpers.require_library CodeRayRequirePath, 'coderay' unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
@@ -906,14 +931,22 @@ class Converter < ::Prawn::Document
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     when 'pygments'
       Helpers.require_library 'pygments', 'pygments.rb' unless defined? ::Pygments
-      source_string, conum_mapping = extract_conums source_string
       lexer = ::Pygments::Lexer[node.attr 'language', 'text', false] || ::Pygments::Lexer['text']
       pygments_config = { nowrap: true, noclasses: true, style: (node.document.attr 'pygments-style') || 'pastie' }
+      source_string, conum_mapping = extract_conums source_string
       result = lexer.highlight source_string, options: pygments_config
       fragments = guard_indentation text_formatter.format result
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
+    when 'rouge'
+      Helpers.require_library RougeRequirePath, 'rouge' unless defined? ::Rouge::Formatters::Prawn
+      lexer = ::Rouge::Lexer.find(node.attr 'language', 'text', false) || ::Rouge::Lexers::PlainText
+      formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'))
+      source_string, conum_mapping = extract_conums source_string
+      # NOTE trailing endline is added to address https://github.com/jneen/rouge/issues/279
+      fragments = formatter.format (lexer.lex %(#{source_string}#{EOL})), line_numbers: (node.attr? 'linenums')
+      conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     else
-      # NOTE only format if we detect a need
+      # NOTE only format if we detect a need (callouts or inline formatting)
       if source_string =~ BuiltInEntityCharOrTagRx
         text_formatter.format source_string
       else
@@ -1021,7 +1054,7 @@ class Converter < ::Prawn::Document
       elsif text.include? EOL
         text.split(EOL, -1).each_with_index do |line_in_fragment, idx|
           line = (lines[line_num += 1] ||= []) unless idx == 0
-          line << fragment.merge(text: line_in_fragment) unless line_in_fragment.empty?
+          line << (fragment.merge text: line_in_fragment) unless line_in_fragment.empty?
         end
       else
         line << fragment
@@ -1058,7 +1091,7 @@ class Converter < ::Prawn::Document
     start_of_line = true
     fragments.each do |fragment|
       next if (text = fragment[:text]).empty?
-      text.prepend IndentGuard if start_of_line && (text.start_with? ' ')
+      text[0] = GuardedIndent if start_of_line && (text.start_with? ' ')
       text.gsub! InnerIndent, GuardedInnerIndent if text.include? InnerIndent
       start_of_line = text.end_with? EOL
     end
@@ -2083,22 +2116,20 @@ class Converter < ::Prawn::Document
     arranger = arrange_fragments_by_line fragments
     adjusted_font_size = nil
     theme_font category do
-      # NOTE finalizing the line here generates fragments using current font settings
+      # NOTE finalizing the line here generates fragments & calculates their widths using the current font settings
+      # CAUTION it also removes zero-width spaces
       arranger.finalize_line
       actual_width = width_of_fragments arranger.fragments
       unless ::Array === (padding = @theme[%(#{category}_padding)])
         padding = [padding] * 4
       end
-      bounds.add_left_padding(p_left = padding[3] || 0)
-      bounds.add_right_padding(p_right = padding[1] || 0)
-      if actual_width > bounds.width
-        adjusted_font_size = ((bounds.width * font_size).to_f / actual_width).with_precision 4
+      available_width = bounds.width - (padding[3] || 0) - (padding[1] || 0)
+      if actual_width > available_width
+        adjusted_font_size = ((available_width * font_size).to_f / actual_width).with_precision 4
         if (min = @theme[%(#{category}_font_size_min)] || @theme.base_font_size_min) && adjusted_font_size < min
           adjusted_font_size = min
         end
       end
-      bounds.subtract_left_padding p_left
-      bounds.subtract_right_padding p_right
     end
     adjusted_font_size
   end
@@ -2115,7 +2146,7 @@ class Converter < ::Prawn::Document
         by_line << fragment
       elsif txt.include? EOL
         txt.scan(LineScanRx) do |line|
-          by_line << fragment.merge(text: line)
+          by_line << (line == EOL ? { text: EOL } : (fragment.merge text: line))
         end
       else
         by_line << fragment
@@ -2178,7 +2209,7 @@ class Converter < ::Prawn::Document
         if line.start_with? TAB
           # NOTE '+' operator is faster than interpolation in this case
           if guard_indent
-            line.sub!(TabIndentRx) {|tabs| IndentGuard + full_tab_space * tabs.length }
+            line.sub!(TabIndentRx) {|tabs| GuardedIndent + (full_tab_space * tabs.length).chop! }
           else
             line.sub!(TabIndentRx) {|tabs| full_tab_space * tabs.length }
           end
@@ -2209,13 +2240,13 @@ class Converter < ::Prawn::Document
         end
 
         # NOTE we save time by adding indent guard per line while performing tab expansion
-        result << IndentGuard if leading_space
+        line[0] = GuardedIndent if leading_space
         result << line
       end
       result.join
     else
       if guard_indent
-        string.prepend IndentGuard if string.start_with? ' '
+        string[0] = GuardedIndent if string.start_with? ' '
         string.gsub! InnerIndent, GuardedInnerIndent if string.include? InnerIndent
       end
       string
