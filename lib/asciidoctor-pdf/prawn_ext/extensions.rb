@@ -588,7 +588,11 @@ module Extensions
   def import_page file
     prev_page_number = page_number
     state.compress = false if state.compress # can't use compression if using template
+    prev_text_rendering_mode = @text_rendering_mode
+    # NOTE use functionality provided by prawn-templates
     start_new_page_discretely template: file
+    # prawn-templates sets text_rendering_mode to :unknown, which breaks running content; revert
+    @text_rendering_mode = prev_text_rendering_mode
     go_to_page prev_page_number + 1
   end
 
@@ -604,6 +608,7 @@ module Extensions
     else
       image file, fit: [bounds.width, bounds.height]
     end
+    # FIXME shouldn't this be `go_to_page prev_page_number + 1`?
     go_to_page page_count
   end
 
