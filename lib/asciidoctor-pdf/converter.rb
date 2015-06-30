@@ -1049,14 +1049,18 @@ class Converter < ::Prawn::Document
     table_header = false
     theme = @theme
 
-    # NOTE use an explicit white background if no background color is set and table is nested inside a block
-    if (tbl_bg_color = resolve_theme_color :table_background_color, @page_bg_color)
-      tbl_bg_color = nil if tbl_bg_color == 'FFFFFF' && node.parent.context == :section
-    else
-      tbl_bg_color = 'FFFFFF' unless node.parent.context == :section
-    end
+    tbl_bg_color = resolve_theme_color :table_background_color
+    # QUESTION should we fallback to page background color? (which is never transparent)
+    #tbl_bg_color = resolve_theme_color :table_background_color, @page_bg_color
+    # ...and if so, should we try to be helpful and use @page_bg_color for tables nested in blocks?
+    #unless tbl_bg_color
+    #  tbl_bg_color = @page_bg_color unless [:section, :document].include? node.parent.context
+    #end
+
+    # NOTE we must emulate the table bg color by using it as a fallback value
     head_bg_color = resolve_theme_color :table_head_background_color, tbl_bg_color
     foot_bg_color = resolve_theme_color :table_foot_background_color, tbl_bg_color
+    # WARNING if table bg color and one of the row colors is nil, color from the other row will bleed through on rowspans
     odd_row_bg_color = resolve_theme_color :table_odd_row_background_color, tbl_bg_color
     even_row_bg_color = resolve_theme_color :table_even_row_background_color, tbl_bg_color
 
