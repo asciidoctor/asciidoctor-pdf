@@ -68,18 +68,38 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
     value:             '336600'
   }
 
-  EOL = "\n"
+  EOL = %(\n)
+  InnerIndent = %(\n )
+  # \u200b is zero-width space
+  IndentGuard = %(\u200b)
+  GuardedInnerIndent = %(\n\u200b )
 
   def setup options
     super
     @out  = []
     @open = []
+    # NOTE tracks whether text token begins at the start of a line
+    @start_of_line = true
   end
 
   def text_token text, kind
-    color = COLORS[kind] || COLORS[@open.last] || COLORS[:default]
-    
-    @out << (text == EOL ? { :text => text } : { :text => text, :color => color })
+    if text == EOL
+      @out << { text: text }
+      @start_of_line = true
+    else
+      # NOTE add guard character to prevent Prawn from trimming indentation
+      text.prepend IndentGuard if @start_of_line && (text.start_with? ' ')
+      text.gsub! InnerIndent, GuardedInnerIndent if text.include? InnerIndent
+
+      # NOTE this optimization assumes we don't support/use background colors
+      if text.rstrip.empty?
+        @out << { text: text }
+      else
+        # QUESTION should we default to no color?
+        @out << { text: text, color: (COLORS[kind] || COLORS[@open.last] || COLORS[:default]) }
+      end
+      @start_of_line = text.end_with? EOL
+    end
   end
 
   def begin_group kind
