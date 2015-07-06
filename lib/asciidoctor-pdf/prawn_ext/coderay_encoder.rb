@@ -69,10 +69,10 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
   }
 
   EOL = %(\n)
+  NoBreakSpace = %(\u00a0)
   InnerIndent = %(\n )
-  # \u200b is zero-width space
-  IndentGuard = %(\u200b)
-  GuardedInnerIndent = %(\n\u200b )
+  GuardedIndent = %(\u00a0)
+  GuardedInnerIndent = %(\n\u00a0)
 
   def setup options
     super
@@ -88,7 +88,7 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
       @start_of_line = true
     else
       # NOTE add guard character to prevent Prawn from trimming indentation
-      text.prepend IndentGuard if @start_of_line && (text.start_with? ' ')
+      text[0] = GuardedIndent if @start_of_line && (text.start_with? ' ')
       text.gsub! InnerIndent, GuardedInnerIndent if text.include? InnerIndent
 
       # NOTE this optimization assumes we don't support/use background colors
