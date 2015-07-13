@@ -215,8 +215,8 @@ footer:
   border_width: 0.25
   height: $base_line_height_length * 2.5
   padding: [$base_line_height_length / 2, 1, 0, 1]
-  valign: top
-  #image_valign: <alignment> or <number>
+  vertical_align: top
+  #image_vertical_align: <alignment> or <number>
   # additional attributes for content:
   # * {page-count}
   # * {page-number}

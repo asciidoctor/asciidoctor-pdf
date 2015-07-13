@@ -1422,13 +1422,13 @@ Block styles are applied to the following block types:
 |<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
 |padding: [0, 3, 0, 3]
 
-|header_image_valign
-|top, center, bottom, <<measurement-units,measurement>>
-|image_valign: 4
+|header_image_vertical_align
+|top, middle, bottom, <<measurement-units,measurement>>
+|image_vertical_align: 4
 
-|header_valign
-|top, center, bottom
-|valign: center
+|header_vertical_align
+|top, middle, bottom
+|vertical_align: center
 
 |header_<side>_content_<align>^[1]^
 |quoted string
@@ -1475,13 +1475,13 @@ Block styles are applied to the following block types:
 |<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
 |padding: [0, 3, 0, 3]
 
-|footer_image_valign
-|top, center, bottom, <<measurement-units,measurement>>
-|image_valign: 4
+|footer_image_vertical_align
+|top, middle, bottom, <<measurement-units,measurement>>
+|image_vertical_align: 4
 
-|footer_valign
-|top, center, bottom
-|valign: top
+|footer_vertical_align
+|top, middle, bottom
+|vertical_align: top
 
 |footer_<side>_content_<align>^[1]^
 |quoted string
@@ -1554,13 +1554,13 @@ Here's an example of how to use an image in the running header (which also appli
 ----
 header:
   height: 0.75in
-  image_valign: 2 # <1>
+  image_vertical_align: 2 # <1>
   recto_content:
     center: image:footer-logo.png[width=80]
   verso_content:
     center: $header_recto_content_center
 ----
-<1> You can use the `footer_valign` attribute to slighly nudge the image up or down.
+<1> You can use the `footer_vertical_align` attribute to slighly nudge the image up or down.
 
 CAUTION: The image must fit in the allotted space for the running header or footer.
 Otherwise, you will run into layout issues.

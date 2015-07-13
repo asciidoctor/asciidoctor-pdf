@@ -1849,8 +1849,8 @@ class Converter < ::Prawn::Document
       trim_border_width = @theme.header_border_width || @theme.base_border_width
       trim_border_style = (@theme.header_border_style || :solid).to_sym
       trim_border_color = resolve_theme_color :header_border_color
-      trim_valign = (@theme.header_valign || :center).to_sym
-      trim_img_valign = @theme.header_image_valign || trim_valign
+      trim_valign = (@theme.header_vertical_align || :middle).to_sym
+      trim_img_valign = @theme.header_image_vertical_align
     else
       # NOTE height is required atm
       trim_top = trim_height = @theme.footer_height || page_margin_bottom
@@ -1863,15 +1863,21 @@ class Converter < ::Prawn::Document
       trim_border_width = @theme.footer_border_width || @theme.base_border_width
       trim_border_style = (@theme.footer_border_style || :solid).to_sym
       trim_border_color = resolve_theme_color :footer_border_color
-      trim_valign = (@theme.footer_valign || :center).to_sym
-      trim_img_valign = @theme.footer_image_valign || trim_valign
+      trim_valign = (@theme.footer_vertical_align || :middle).to_sym
+      trim_img_valign = @theme.footer_image_vertical_align
     end
 
     trim_stamp = %(#{position})
     trim_content_left = trim_left + trim_padding[3]
     trim_content_width = trim_width - trim_padding[3] - trim_padding[1]
     trim_border_color = nil if trim_border_width == 0
-    if ['top', 'center', 'bottom'].include? trim_img_valign
+    trim_valign == :center if trim_valign == :middle
+    case trim_img_valign
+    when nil
+      trim_img_valign = trim_valign
+    when 'middle'
+      trim_img_valign = :center
+    when 'top', 'center', 'bottom'
       trim_img_valign = trim_img_valign.to_sym
     end
 
