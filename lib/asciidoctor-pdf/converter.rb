@@ -128,12 +128,13 @@ class Converter < ::Prawn::Document
     doc.attributes.delete 'data-uri'
     #assign_missing_section_ids doc
 
+    # NOTE the on_page_create callback is called within a float context
     on_page_create do
       # TODO implement as a watermark (on top)
       if @page_bg_image
         # FIXME implement fitting and centering for SVG
         # TODO implement image scaling (numeric value or "fit")
-        float { canvas { image @page_bg_image, position: :center, fit: [bounds.width, bounds.height] } }
+        canvas { image @page_bg_image, position: :center, fit: [bounds.width, bounds.height] }
       elsif @page_bg_color && @page_bg_color != 'FFFFFF'
         fill_absolute_bounds @page_bg_color
       end

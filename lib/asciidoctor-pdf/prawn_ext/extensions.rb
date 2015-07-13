@@ -616,8 +616,10 @@ module Extensions
   #
   def perform_discretely
     if (saved_callback = state.on_page_create_callback)
+      # equivalent to calling `on_page_create`
       state.on_page_create_callback = nil
       yield
+      # equivalent to calling `on_page_create &saved_callback`
       state.on_page_create_callback = saved_callback
     else
       yield
