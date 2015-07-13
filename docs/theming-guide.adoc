@@ -1520,6 +1520,24 @@ footer:
     left: '*{page-number}* | {chapter-title}'
 ----
 
+You can split the content value across multiple lines using YAML's multiline string syntax.
+In this case, the single quotes around the string are not necessary.
+To force a hard line break in the output, add [x-]+{space}{plus}+ to the end of the line in normal AsciiDoc fashion.
+
+[source,yaml]
+----
+footer:
+  height: 0.75in
+  recto_content:
+    right: |
+      Section Title - Page Number +
+      {section-or-chapter-title} - {page-number}
+  verso_content:
+    left: |
+      Page Number - Chapter Title +
+      {page-number} - {chapter-title}
+----
+
 TIP: You can use most AsciiDoc inline formatting in the values of these keys.
 For instance, to make the text bold, surround it in asterisks (as shown above).
 One exception to this rule are inline images, which are described in the next section.

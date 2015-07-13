@@ -1130,7 +1130,7 @@ class Converter < ::Prawn::Document
       rows.each do |cell|
         row_data << {
           content: (head_transform ? (transform_text cell.text, head_transform) : cell.text),
-          inline_format: [{ normalize: true }],
+          inline_format: [normalize: true],
           background_color: head_bg_color,
           text_color: (theme.table_head_font_color || theme.table_font_color || @font_color),
           size: (theme.table_head_font_size || theme.table_font_size),
@@ -1151,7 +1151,7 @@ class Converter < ::Prawn::Document
       rows.each do |cell|
         cell_data = {
           content: cell.text,
-          inline_format: [{ normalize: true }],
+          inline_format: [normalize: true],
           text_color: (theme.table_body_font_color || @font_color),
           size: theme.table_font_size,
           font: theme.table_font_family,
@@ -1647,7 +1647,7 @@ class Converter < ::Prawn::Document
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
       color: @font_color,
       # NOTE normalize makes endlines soft (replaces "\n" with ' ')
-      inline_format: [{ normalize: (opts.delete :normalize) != false }],
+      inline_format: [normalize: (opts.delete :normalize) != false],
       align: (@theme.base_align || :left).to_sym
     }.merge(opts)
     margin_bottom bot_margin
@@ -1929,7 +1929,7 @@ class Converter < ::Prawn::Document
                 end
               when ::String
                 content = (content == '{page-number}' ? %(#{visual_pgnum}) : (doc.apply_subs content))
-                formatted_text_box parse_text(content, color: trim_font_color, inline_format: true),
+                formatted_text_box parse_text(content, color: trim_font_color, inline_format: [normalize: true]),
                   at: [0, trim_content_height + trim_padding[2]],
                   height: trim_content_height,
                   align: align,
