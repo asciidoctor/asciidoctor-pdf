@@ -1871,7 +1871,7 @@ class Converter < ::Prawn::Document
     trim_content_left = trim_left + trim_padding[3]
     trim_content_width = trim_width - trim_padding[3] - trim_padding[1]
     trim_border_color = nil if trim_border_width == 0
-    trim_valign == :center if trim_valign == :middle
+    trim_valign = :center if trim_valign == :middle
     case trim_img_valign
     when nil
       trim_img_valign = trim_valign
