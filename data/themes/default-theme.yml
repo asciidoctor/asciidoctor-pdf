@@ -107,13 +107,13 @@ block:
   #margin_top: 0
   #margin_bottom: $vertical_rhythm
   padding: [$vertical_rhythm, $vertical_rhythm * 1.25, $vertical_rhythm, $vertical_rhythm * 1.25]
-# code is used for source blocks (perhaps change to source or listing?)
 caption:
   font_style: italic
   align: left
   # FIXME perhaps set line_height instead of / in addition to margins?
   margin_inside: $vertical_rhythm * 0.25
   margin_outside: 0
+# code is used for source blocks (perhaps change to source or listing?)
 code:
   font_color: $base_font_color
   #font_family: Liberation Mono
