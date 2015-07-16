@@ -145,19 +145,6 @@ class Converter < ::Prawn::Document
 
     start_new_page
 
-    toc_start_page_num = page_number
-    num_toc_levels = (doc.attr 'toclevels', 2).to_i
-    if (include_toc = doc.attr? 'toc')
-      toc_page_nums = ()
-      dry_run do
-        toc_page_nums = layout_toc doc, num_toc_levels, 1
-      end
-      # NOTE reserve pages for the toc
-      toc_page_nums.each do
-        start_new_page
-      end
-    end
-
     num_front_matter_pages = page_number - 1
     font @theme.base_font_family, size: @theme.base_font_size
     convert_content_for_block doc
@@ -167,10 +154,25 @@ class Converter < ::Prawn::Document
       delete_page
     end
 
-    toc_page_nums = if include_toc
-      layout_toc doc, num_toc_levels, toc_start_page_num, num_front_matter_pages
+    if doc.attr? 'toc'
+      toc_start = (doc.attr 'toc-start', 2).to_i
+      num_toc_levels = (doc.attr 'toclevels', 2).to_i
+      num_front_matter_pages = toc_start - 1
+      toc_page_nums = ()
+      dry_run do
+        toc_page_nums = layout_toc doc, num_toc_levels, page_number
+      end
+
+      # NOTE reserve pages for the toc
+      go_to_page toc_start - 1
+      toc_page_nums.each do
+        start_new_page
+      end
+
+      toc_offset = toc_page_nums.begin - toc_page_nums.end + toc_start - 2
+      toc_page_nums = layout_toc doc, num_toc_levels, toc_start, toc_offset
     else
-      (0..-1)
+      toc_page_nums = (0..-1)
     end
 
     # TODO enable pagenums by default
