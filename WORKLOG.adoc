@@ -5,15 +5,24 @@
 
 == TODO
 
+* removed scaled width default for image in theme
+* convert "-" in variable name to underscore
+* allow "content" in place of recto_content & verso_content for running header/footer
+* allow dynamic background image with page number in path
+* allow image to span width of page (role=canvas, role=canvas-x or role=canvas-y); if role is canvas or canvas-y, then it does not consume height
+* allow valign value to be a number (requires change to Prawn)
 * layout SVG without using keep_together (since we know all the dimensions)
   - fix SVG to a single page (check height + caption height)
 
+* file issue for prawn to preserve space (even w/ guards, spaces don't preserve over wrapped lines)
+  - if this is fixed, we can remove all the guard indent code
 * file issue for prawn to support spacer fragments with fixed width / height and no text (or text is ignored in calculations)
 * file issue that prawn-svg messes with the cursor (need to explain how)
 * redo milestones so that issues are recorded against alpha releases
 * document limitations in README (such as no linear gradients in SVG, embedded images in SVG must be URL or inlined, etc)
 * document all permutations of image sizing
 
+* get rid of unicode_char method, just use \u strings
 * verse has problems with wrapping if line is long
 * table column header is wrapping by char
 * convert image width to points for images on title page and in running header and footer; add support for pdfwidth (#221)
@@ -226,8 +235,9 @@
 
 == Usage Optimizations
 
-* uncompress PNG files
-* avoid the fallback font if possible (use full fonts in your theme)
+* uncompress PNG files to avoid slow zlib inflating step in Prawn
+* flatten PNGs (remove alpha channel) since it messes up font rendering on the page in Adobe Acrobat Reader (need to verify)
+* avoid the fallback font if possible (use full fonts in your theme) because it checks for *every* glyph
 * font families used in SVGs must match keys in the font catalog
 
 == Open Questions
