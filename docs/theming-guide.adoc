@@ -1418,6 +1418,11 @@ Block styles are applied to the following block types:
 |<<measurement-units,measurement>>
 |height: 0.75in
 
+|header_line_height
+|<<values,number>> +
+(default: $base_line_height)
+|height: 1.2
+
 |header_padding
 |<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
 |padding: [0, 3, 0, 3]
@@ -1471,6 +1476,11 @@ Block styles are applied to the following block types:
 |<<measurement-units,measurement>>
 |height: 0.75in
 
+|footer_line_height
+|<<values,number>> +
+(default: $base_line_height)
+|height: 1.2
+
 |footer_padding
 |<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
 |padding: [0, 3, 0, 3]
@@ -1514,6 +1524,7 @@ Here's an example that shows how these attributes can be used in the running foo
 ----
 footer:
   height: 0.75in
+  line_height: 1
   recto_content:
     right: '{section-or-chapter-title} | *{page-number}*'
   verso_content:
@@ -1528,6 +1539,7 @@ To force a hard line break in the output, add [x-]+{space}{plus}+ to the end of 
 ----
 footer:
   height: 0.75in
+  line_height: 1.2
   recto_content:
     right: |
       Section Title - Page Number +

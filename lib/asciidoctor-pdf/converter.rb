@@ -1833,15 +1833,12 @@ class Converter < ::Prawn::Document
       acc
     end
 
-    # QUESTION should we support footer_line_height?
-    #trim_line_metrics = calc_line_metrics @theme.base_line_height
-    trim_line_metrics = calc_line_metrics
     if position == :header
+      trim_line_metrics = calc_line_metrics(@theme.header_line_height || @theme.base_line_height)
       trim_top = page_height
       # NOTE height is required atm
       trim_height = @theme.header_height || page_margin_top
       trim_padding = @theme.header_padding || [0, 0, 0, 0]
-      trim_content_height = trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top
       trim_left = page_margin_left
       trim_width = page_width - trim_left - page_margin_right
       trim_font_color = @theme.header_font_color || @font_color
@@ -1852,10 +1849,10 @@ class Converter < ::Prawn::Document
       trim_valign = (@theme.header_vertical_align || :middle).to_sym
       trim_img_valign = @theme.header_image_vertical_align
     else
+      trim_line_metrics = calc_line_metrics(@theme.footer_line_height || @theme.base_line_height)
       # NOTE height is required atm
       trim_top = trim_height = @theme.footer_height || page_margin_bottom
       trim_padding = @theme.footer_padding || [0, 0, 0, 0]
-      trim_content_height = trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top
       trim_left = page_margin_left
       trim_width = page_width - trim_left - page_margin_right
       trim_font_color = @theme.footer_font_color || @font_color
@@ -1869,6 +1866,7 @@ class Converter < ::Prawn::Document
 
     trim_stamp = %(#{position})
     trim_content_left = trim_left + trim_padding[3]
+    trim_content_height = trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom
     trim_content_width = trim_width - trim_padding[3] - trim_padding[1]
     trim_border_color = nil if trim_border_width == 0
     trim_valign = :center if trim_valign == :middle
@@ -1927,16 +1925,24 @@ class Converter < ::Prawn::Document
               # FIXME we need to have a content setting for chapter pages
               case (content = content_by_alignment[align])
               when ::Hash
-                # FIXME prevent image from overflowing the page
-                float do
-                  # FIXME padding doesn't work when vposition is specified; how will padding bottom work?
-                  #move_down trim_padding[0]
-                  image content[:path], vposition: trim_img_valign, position: align, width: content[:width]
+                # NOTE image placement respects padding; use negative image_vertical_align value to revert
+                if (trim_v_padding = trim_padding[0] + trim_padding[2]) > 0
+                  bounding_box [0, cursor - trim_padding[0]], width: bounds.width, height: (bounds.height - trim_v_padding) do
+                    # FIXME prevent image from overflowing the page
+                    float do
+                      image content[:path], vposition: trim_img_valign, position: align, width: content[:width]
+                    end
+                  end
+                else
+                  # FIXME prevent image from overflowing the page
+                  float do
+                    image content[:path], vposition: trim_img_valign, position: align, width: content[:width]
+                  end
                 end
               when ::String
                 content = (content == '{page-number}' ? %(#{visual_pgnum}) : (doc.apply_subs content))
                 formatted_text_box parse_text(content, color: trim_font_color, inline_format: [normalize: true]),
-                  at: [0, trim_content_height + trim_padding[2]],
+                  at: [0, trim_content_height + trim_padding[2] + trim_line_metrics.padding_bottom],
                   height: trim_content_height,
                   align: align,
                   valign: trim_valign,
