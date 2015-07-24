@@ -1181,8 +1181,6 @@ class Converter < ::Prawn::Document
       table_data << row_data
     end
 
-    column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * bounds.width) / 100.0 }
-
     border = {}
     table_border_width = theme.table_border_width
     [:top, :bottom, :left, :right, :cols, :rows].each {|edge| border[edge] = table_border_width }
@@ -1206,6 +1204,13 @@ class Converter < ::Prawn::Document
       border[:top] = border[:bottom] = 0
     when 'none'
       border[:top] = border[:right] = border[:bottom] = border[:left] = 0
+    end
+
+    if node.option? 'autowidth'
+      column_widths = []
+    else
+      table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
+      column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
     end
 
     table_settings = {
