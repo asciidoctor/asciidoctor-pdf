@@ -1114,10 +1114,9 @@ class Converter < ::Prawn::Document
     #  tbl_bg_color = @page_bg_color unless [:section, :document].include? node.parent.context
     #end
 
-    # NOTE we must emulate the table bg color by using it as a fallback value
+    # NOTE emulate table bg color by using it as a fallback value for each element
     head_bg_color = resolve_theme_color :table_head_background_color, tbl_bg_color
     foot_bg_color = resolve_theme_color :table_foot_background_color, tbl_bg_color
-    # WARNING if table bg color and one of the row colors is nil, color from the other row will bleed through on rowspans
     odd_row_bg_color = resolve_theme_color :table_odd_row_background_color, tbl_bg_color
     even_row_bg_color = resolve_theme_color :table_even_row_background_color, tbl_bg_color
 
