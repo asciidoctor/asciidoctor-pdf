@@ -1306,6 +1306,10 @@ Block styles are applied to the following block types:
 |<<colors,color>>
 |background_color: #ffffff
 
+|table_head_background_color
+|<<colors,color>>
+|background_color: #f0f0f0
+
 |table_even_row_background_color
 |<<colors,color>>
 |even_row_background_color: #f9f9f9
@@ -1313,6 +1317,30 @@ Block styles are applied to the following block types:
 |table_foot_background_color
 |<<colors,color>>
 |foot_background_color: #f0f0f0
+
+|table_header_cell_align
+|left, center, right
+|align: center
+
+|table_header_cell_background_color
+|<<colors,color>>
+|background_color: #f0f0f0
+
+|table_header_cell_font_color
+|<<colors,color>>
+|font_color: #1a1a1a
+
+|table_header_cell_font_family
+|<<fonts,font family name>>
+|font_family: Noto Sans
+
+|table_header_cell_font_size
+|<<values,number>>
+|font_size: 12
+
+|table_header_cell_font_style
+|normal, italic, bold, bold_italic
+|font_style: italic
 
 |table_border_color
 |<<colors,color>>
