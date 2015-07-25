@@ -1163,8 +1163,29 @@ class Converter < ::Prawn::Document
         case cell.style
         when :emphasis
           cell_data[:font_style] = :italic
-        when :strong, :header
+        when :strong
           cell_data[:font_style] = :bold
+        when :header
+          unless defined? header_cell_data
+            header_cell_data = {}
+            {
+              'align' => :align,
+              'font_color' => :text_color,
+              'font_family' => :font,
+              'font_size' => :size,
+              'font_style' => :font_style
+            }.each do |theme_key, key|
+              if (val = theme[%(table_header_cell_#{theme_key})])
+                header_cell_data[key] = val
+              end
+            end
+            header_cell_data[:font_style] ||= :bold
+            if (val = resolve_theme_color :table_header_cell_background_color)
+              header_cell_data[:background_color] = val
+            end
+          end
+
+          cell_data.update header_cell_data unless header_cell_data.empty?
         when :monospaced
           cell_data[:font] = theme.literal_font_family
           if (size = theme.literal_font_size)
