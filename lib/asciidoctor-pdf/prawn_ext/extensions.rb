@@ -84,6 +84,23 @@ module Extensions
     @y == @margin_box.absolute_top
   end
 
+  # Returns whether the current page is empty (no content is written).
+  # If at least one page has not yet been created, returns false.
+  #
+  def empty_page?
+    # if we are at the page top, assume we didn't write anything to the page
+    #at_page_top?
+    # ...or use low-level check (initial value is "q\n")
+    (page.content.stream || []).length <= 2 && page_number > 0
+  end
+  alias :page_is_empty? :empty_page?
+
+  # Returns whether the current page is the last page in the document.
+  #
+  def last_page?
+    page_number == page_count
+  end
+
   # Converts the specified float value to a pt value from the
   # specified unit of measurement (e.g., in, cm, mm, etc).
   def to_pt num, units
@@ -586,14 +603,23 @@ module Extensions
   # Import the specified page into the current document.
   #
   def import_page file
-    prev_page_number = page_number
+    prev_page_layout = page.layout
+    prev_page_size = page.size
     state.compress = false if state.compress # can't use compression if using template
     prev_text_rendering_mode = @text_rendering_mode
     # NOTE use functionality provided by prawn-templates
     start_new_page_discretely template: file
     # prawn-templates sets text_rendering_mode to :unknown, which breaks running content; revert
     @text_rendering_mode = prev_text_rendering_mode
-    go_to_page prev_page_number + 1
+    if last_page?
+      # NOTE set page size & layout explicitly in case imported page differs
+      # I'm not sure it's right to start a new page here, but unfortunately there's no other
+      # way atm to prevent the size & layout of the imported page from affecting subsequent pages
+      start_new_page size: prev_page_size, layout: prev_page_layout
+    else
+      go_to_page page_number + 1
+    end
+    nil
   end
 
   # Create a new page for the specified image. If the
@@ -610,6 +636,7 @@ module Extensions
     end
     # FIXME shouldn't this be `go_to_page prev_page_number + 1`?
     go_to_page page_count
+    nil
   end
 
   # Perform an operation (such as creating a new page) without triggering the on_page_create callback
@@ -625,6 +652,14 @@ module Extensions
       yield
     end
   end
+
+  #def advance_or_start_new_page options = {}
+  #  if last_page?
+  #    start_new_page options
+  #  else
+  #    go_to_page page_number + 1
+  #  end
+  #end
 
   # Start a new page without triggering the on_page_create callback
   #
