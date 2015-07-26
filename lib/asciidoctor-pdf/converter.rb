@@ -143,7 +143,8 @@ class Converter < ::Prawn::Document
     layout_cover_page :front, doc
     layout_title_page doc
 
-    start_new_page
+    # NOTE a new page will already be started if the cover image is a PDF
+    start_new_page unless page_is_empty?
 
     toc_start_page_num = page_number
     num_toc_levels = (doc.attr 'toclevels', 2).to_i
@@ -162,10 +163,8 @@ class Converter < ::Prawn::Document
     font @theme.base_font_family, size: @theme.base_font_size
     convert_content_for_block doc
 
-    # if we are at the page top, assume we didn't write anything to the page
-    if at_page_top? # or use low-level check: page.content.stream.length == 2
-      delete_page
-    end
+    # NOTE delete orphaned page (a page was created but there was no additional content)
+    delete_page if page_is_empty?
 
     toc_page_nums = if include_toc
       layout_toc doc, num_toc_levels, toc_start_page_num, num_front_matter_pages
@@ -197,6 +196,8 @@ class Converter < ::Prawn::Document
     theme = ThemeLoader.load_theme doc.attr('pdf-style'), (stylesdir = (doc.attr 'pdf-stylesdir'))
     @theme = theme
     pdf_opts = (build_pdf_options doc, theme)
+    # QUESTION should we preserve page options (otherwise, not readily available)
+    #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
     ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
     # QUESTION should ThemeLoader register fonts?
     register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
@@ -761,15 +762,15 @@ class Converter < ::Prawn::Document
     if image_type == 'gif'
       valid_image = false
       warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.)
-    #elsif image_type == 'pdf'
-    #  import_page image_path
-    #  return
     end
 
     unless (image_path = resolve_image_path node, target) && (::File.readable? image_path)
       valid_image = false
       warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target})
     end
+
+    # NOTE import_page automatically advances to next page afterwards
+    return import_page image_path if image_type == 'pdf'
 
     # QUESTION if we advance to new page, shouldn't dest point there too?
     add_dest_for_block node if node.id
@@ -1519,7 +1520,8 @@ class Converter < ::Prawn::Document
     else
       bg_color = nil
     end
-    start_new_page
+    # NOTE a new page will already be started if the cover image is a PDF
+    start_new_page unless page_is_empty?
     @page_bg_image = prev_bg_image if bg_image
     @page_bg_color = prev_bg_color if bg_color
 
@@ -1617,6 +1619,7 @@ class Converter < ::Prawn::Document
       # QUESTION should we go to page 1 when position == :front?
       go_to_page page_count if position == :back
       if cover_image.downcase.end_with? '.pdf'
+        # NOTE import_page automatically advances to next page afterwards
         import_page cover_image
       else
         image_page cover_image, canvas: true
@@ -1905,6 +1908,9 @@ class Converter < ::Prawn::Document
     end
 
     if trim_bg_color || trim_border_color
+      # NOTE switch to first content page so stamp will get created properly (can't create on imported page)
+      prev_page_number = page_number
+      go_to_page start
       create_stamp trim_stamp do
         canvas do
           if trim_bg_color
@@ -1926,6 +1932,7 @@ class Converter < ::Prawn::Document
         end
       end
       @stamps[position] = true
+      go_to_page prev_page_number
     end
 
     repeat (start..page_count), dynamic: true do
