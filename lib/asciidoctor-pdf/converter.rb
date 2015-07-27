@@ -154,9 +154,10 @@ class Converter < ::Prawn::Document
       delete_page
     end
 
+    num_toc_levels = (doc.attr 'toclevels', 2).to_i
+
     if doc.attr? 'toc'
       toc_start = (doc.attr 'toc-start', 2).to_i
-      num_toc_levels = (doc.attr 'toclevels', 2).to_i
       num_front_matter_pages = toc_start - 1
       toc_page_nums = ()
       dry_run do
