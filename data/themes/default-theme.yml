@@ -1,23 +1,25 @@
 font:
   catalog:
+    # Noto Serif supports Latin, Latin-1 Supplement, Latin Extended-A, Greek, Cyrillic, Vietnamese & an assortment of symbols
     Noto Serif:
-      normal: notoserif-regular-latin.ttf
-      bold: notoserif-bold-latin.ttf
-      italic: notoserif-italic-latin.ttf
-      bold_italic: notoserif-bolditalic-latin.ttf
+      normal: notoserif-regular-subset.ttf
+      bold: notoserif-bold-subset.ttf
+      italic: notoserif-italic-subset.ttf
+      bold_italic: notoserif-bold_italic-subset.ttf
+    # M+ 1mn supports ASCII and the circled numbers used for conums
     M+ 1mn:
       normal: mplus1mn-regular-ascii-conums.ttf
       bold: mplus1mn-bold-ascii.ttf
       italic: mplus1mn-italic-ascii.ttf
-      bold_italic: mplus1mn-bolditalic-ascii.ttf
+      bold_italic: mplus1mn-bold_italic-ascii.ttf
+    # M+ 1p supports Latin, Latin-1 Supplement, Latin Extended, Greek, Cyrillic, Vietnamese, Japanese & an assortment of symbols
+    # It also provides arrows for ->, <-, => and <= replacements in case these glyphs are missing from font
     M+ 1p Fallback:
-      normal: mplus1p-regular-multilingual.ttf
-      bold: mplus1p-regular-multilingual.ttf
-      italic: mplus1p-regular-multilingual.ttf
-      bold_italic: mplus1p-regular-multilingual.ttf
+      normal: mplus1p-regular-fallback.ttf
+      bold: mplus1p-regular-fallback.ttf
+      italic: mplus1p-regular-fallback.ttf
+      bold_italic: mplus1p-regular-fallback.ttf
   fallbacks:
-    # NOTE M+ 1p doesn't support all CJK characters, but it at least has some coverage
-    # NOTE M+ 1p provides the arrows for ->, <-, => and <=
     - M+ 1p Fallback
 page:
   background_color: ffffff
