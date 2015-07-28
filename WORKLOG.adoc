@@ -6,7 +6,7 @@
 == TODO
 
 * removed scaled width default for image in theme
-* convert "-" in variable name to underscore
+* convert "-" in variable name in theme to underscore
 * allow "content" in place of recto_content & verso_content for running header/footer
 * allow dynamic background image with page number in path
 * allow image to span width of page (role=canvas, role=canvas-x or role=canvas-y); if role is canvas or canvas-y, then it does not consume height
@@ -14,6 +14,11 @@
 * layout SVG without using keep_together (since we know all the dimensions)
   - fix SVG to a single page (check height + caption height)
 
+* document that palette-based transparent in PNGs is not supported
+* document in theming guide what must be done to prepare fonts (old-style 'kern' table, optionally subset) (file issue!)
+* create document that explains how built-in fonts are generated and what subsets are selected
+* add broader character range to monospace font so we can drop fallback font by default
+  - consider having a fallback for prose and fallback for literal
 * file issue for prawn to preserve space (even w/ guards, spaces don't preserve over wrapped lines)
   - if this is fixed, we can remove all the guard indent code
 * file issue for prawn to support spacer fragments with fixed width / height and no text (or text is ignored in calculations)
@@ -264,3 +269,4 @@
 
 * https://code.google.com/p/origami-pdf/[Origami PDF: A PDF inspection library]
 * https://github.com/a1ee9b/PrintPretty[A theme for PDF designed for printing]
+* http://randomtextgenerator.com[Random Text Generator, supports multiple languages]
