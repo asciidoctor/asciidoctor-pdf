@@ -2052,11 +2052,18 @@ class Converter < ::Prawn::Document
   end
 
   def write pdf_doc, target
-    pdf_doc.render_file target
+    if target.respond_to? :write
+      require_relative 'core_ext/quantifiable_stdout' unless defined? ::QuantifiableStdout
+      target = ::QuantifiableStdout.new STDOUT if target == STDOUT
+      pdf_doc.render target
+    else
+      pdf_doc.render_file target
+      # QUESTION restore attributes first?
+      @pdfmarks.generate_file target if @pdfmarks
+    end
     # write scratch document if debug is enabled (or perhaps DEBUG_STEPS env)
     #get_scratch_document.render_file 'scratch.pdf'
-    # QUESTION restore attributes first?
-    @pdfmarks.generate_file target if @pdfmarks
+    nil
   end
 
   def register_fonts font_catalog, scripts = 'latin', fonts_dir
