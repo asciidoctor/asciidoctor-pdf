@@ -5,7 +5,6 @@ v1.0, 2014-01-01: The first incarnation of {doctitle}
 team must conquer and vanquish on their journey to discovering open source's true +
 power.
 :doctype: book
-:title-logo-image: image:sample-title-logo.jpg[scaledwidth=50%,align=center]
 // Settings:
 :compat-mode:
 :experimental:
@@ -15,7 +14,7 @@ power.
 :toc:
 :toclevels: 3
 ifdef::backend-pdf[]
-:pagenums:
+:title-logo-image: image:sample-title-logo.jpg[scaledwidth=50%,align=center]
 :pygments-style: tango
 //:source-highlighter: pygments
 :source-highlighter: coderay

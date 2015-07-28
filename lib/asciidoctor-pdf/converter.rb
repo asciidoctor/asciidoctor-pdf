@@ -126,6 +126,10 @@ class Converter < ::Prawn::Document
     init_pdf doc
     # data-uri doesn't apply to PDF, so explicitly disable (is there a better place?)
     doc.attributes.delete 'data-uri'
+    # set default value for pagenums if not otherwise set
+    unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
+      doc.attributes['pagenums'] = ''
+    end
     #assign_missing_section_ids doc
 
     # NOTE the on_page_create callback is called within a float context
@@ -172,11 +176,9 @@ class Converter < ::Prawn::Document
       (0..-1)
     end
 
-    # TODO enable pagenums by default
-    if doc.attr? 'pagenums'
-      layout_running_content :header, doc, skip: num_front_matter_pages
-      layout_running_content :footer, doc, skip: num_front_matter_pages
-    end
+    layout_running_content :header, doc, skip: num_front_matter_pages unless doc.noheader
+    layout_running_content :footer, doc, skip: num_front_matter_pages unless doc.nofooter
+
     add_outline doc, num_toc_levels, toc_page_nums, num_front_matter_pages
     catalog.data[:ViewerPreferences] = [:FitWindow]
 
@@ -1849,8 +1851,8 @@ class Converter < ::Prawn::Document
           end
         end
       end
+      # NOTE set fallbacks if not explicitly disabled
       if (acc[side] = side_content).empty? && @theme[%(footer_#{side}_content)] != 'none'
-        # NOTE set fallbacks if not explicitly disabled
         case side
         when :recto
           acc[side] = { right: '{page-number}' }
@@ -1892,7 +1894,7 @@ class Converter < ::Prawn::Document
       trim_img_valign = @theme.footer_image_vertical_align
     end
 
-    trim_stamp = %(#{position})
+    trim_stamp = position.to_s
     trim_content_left = trim_left + trim_padding[3]
     trim_content_height = trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom
     trim_content_width = trim_width - trim_padding[3] - trim_padding[1]
@@ -1935,15 +1937,17 @@ class Converter < ::Prawn::Document
       go_to_page prev_page_number
     end
 
+    pagenums_enabled = doc.attr? 'pagenums'
     repeat (start..page_count), dynamic: true do
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
       visual_pgnum = page_number - skip
       # FIXME we need to have a content setting for chapter pages
       content_by_alignment = content_dict[visual_pgnum.odd? ? :recto : :verso]
-      doc.set_attr 'page-number', visual_pgnum
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
+      # FIXME leave page-number attribute unset once we filter lines with unresolved attributes (see below)
+      doc.set_attr 'page-number', (pagenums_enabled ? visual_pgnum : '')
       doc.set_attr 'chapter-title', (chapters_by_page[visual_pgnum] || '')
       doc.set_attr 'section-title', (sections_by_page[visual_pgnum] || '')
       doc.set_attr 'section-or-chapter-title', (sections_by_page[visual_pgnum] || chapters_by_page[visual_pgnum] || '')
@@ -1972,7 +1976,12 @@ class Converter < ::Prawn::Document
                   end
                 end
               when ::String
-                content = (content == '{page-number}' ? %(#{visual_pgnum}) : (doc.apply_subs content))
+                if content == '{page-number}'
+                  content = pagenums_enabled ? visual_pgnum.to_s : nil
+                else
+                  # FIXME drop lines with unresolved attributes
+                  content = doc.apply_subs content
+                end
                 formatted_text_box parse_text(content, color: trim_font_color, inline_format: [normalize: true]),
                   at: [0, trim_content_height + trim_padding[2] + trim_line_metrics.padding_bottom],
                   height: trim_content_height,
