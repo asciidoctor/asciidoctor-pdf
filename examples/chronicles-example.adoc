@@ -14,7 +14,7 @@ power.
 :toc:
 :toclevels: 3
 ifdef::backend-pdf[]
-:title-logo-image: image:sample-title-logo.jpg[scaledwidth=50%,align=center]
+:title-logo-image: image:sample-title-logo.jpg[pdfwidth=4.25in,align=center]
 :pygments-style: tango
 //:source-highlighter: pygments
 :source-highlighter: coderay
