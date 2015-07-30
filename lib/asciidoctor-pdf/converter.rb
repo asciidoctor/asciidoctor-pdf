@@ -793,22 +793,9 @@ class Converter < ::Prawn::Document
 
     theme_margin :block, :top
 
+    # NOTE image is scaled proportionally based on width (height is ignored)
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
-    # NOTE height values are basically ignored (image is scaled proportionally based on width)
-    # QUESTION should we enforce positive numbers?
-    width = if node.attr? 'pdfwidth'
-      if (pdfwidth = node.attr 'pdfwidth').end_with? '%'
-        (pdfwidth.to_f / 100) * bounds.width
-      else
-        str_to_pt pdfwidth
-      end
-    elsif node.attr? 'scaledwidth'
-      ((node.attr 'scaledwidth').to_f / 100) * bounds.width
-    elsif node.attr? 'width'
-      # QUESTION should we honor percentage width value?
-      # NOTE scale width by 75% to convert px to pt; restrict width to bounds.width
-      [bounds.width, (node.attr 'width').to_f * 0.75].min
-    end
+    width = resolve_explicit_width node.attributes, bounds.width
 
     case image_type
     when 'svg'
@@ -843,9 +830,9 @@ class Converter < ::Prawn::Document
       end
     else
       begin
-        # FIXME temporary workaround to group caption & image
-        # Prawn doesn't provide access to rendered width & height before placing image on page
         # FIXME this code really needs to be better organized!
+        # FIXME temporary workaround to group caption & image
+        # NOTE use low-level API to access intrinsic dimensions; build_image_object caches image data previously loaded
         image_obj, image_info = build_image_object image_path
         if width
           rendered_w, rendered_h = image_info.calc_image_dimensions width: width
@@ -1489,7 +1476,7 @@ class Converter < ::Prawn::Document
 
   # FIXME only create title page if doctype=book!
   def layout_title_page doc
-    return unless doc.header? && !doc.noheader && !doc.notitle
+    return unless doc.header? && !doc.notitle
 
     prev_bg_image = @page_bg_image
     prev_bg_color = @page_bg_color
@@ -1497,7 +1484,7 @@ class Converter < ::Prawn::Document
       if bg_image == 'none'
         @page_bg_image = nil
       else
-        if bg_image =~ ImageAttributeValueRx
+        if (bg_image.include? ':') && bg_image =~ ImageAttributeValueRx
           bg_image = $1
           # QUESTION should we support width and height?
         end
@@ -1533,18 +1520,17 @@ class Converter < ::Prawn::Document
     # QUESTION allow aligment per element on title page?
     title_align = (@theme.title_page_align || :center).to_sym
 
-    # FIXME rework image handling once fix for #134 is merged
+    # TODO disallow .pdf as image type
     if (logo_image_path = (doc.attr 'title-logo-image', @theme.title_page_logo_image))
-      if logo_image_path =~ ImageAttributeValueRx
+      if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
         logo_image_path = $1
-        logo_image_attrs = AttributeList.new($2).parse(['alt', 'width', 'height'])
+        logo_image_attrs = (AttributeList.new $2).parse ['alt', 'width', 'height']
       else
         logo_image_attrs = {}
       end
       # HACK quick fix to resolve image path relative to theme
       unless doc.attr? 'title-logo-image'
-        # FIXME use ThemeLoader.resolve_theme_asset once fix for #134 is merged
-        logo_image_path = ::File.expand_path logo_image_path, (doc.attr 'pdf-stylesdir', ThemeLoader::ThemesDir)
+        logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, (doc.attr 'pdf-stylesdir')
       end
       logo_image_attrs['target'] = logo_image_path
       logo_image_attrs['align'] ||= (@theme.title_page_logo_align || title_align.to_s)
@@ -1556,6 +1542,7 @@ class Converter < ::Prawn::Document
         # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
         image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs
         # FIXME prevent image from spilling to next page
+        # QUESTION should we shave off margin top/bottom?
         convert_image image_block
       end
     end
@@ -1615,7 +1602,7 @@ class Converter < ::Prawn::Document
     # TODO turn processing of attribute with inline image a utility function in Asciidoctor
     # FIXME verify cover_image exists!
     if (cover_image = (doc.attr %(#{position}-cover-image)))
-      if cover_image =~ ImageAttributeValueRx
+      if (cover_image.include? ':') && cover_image =~ ImageAttributeValueRx
         cover_image = resolve_image_path doc, $1
       end
       # QUESTION should we go to page 1 when position == :front?
@@ -1836,30 +1823,36 @@ class Converter < ::Prawn::Document
     doc.set_attr 'document-subtitle', doctitle.subtitle
     doc.set_attr 'page-count', num_pages
 
+    fallback_footer_content = {
+      recto: { right: '{page-number}' },
+      verso: { left: '{page-number}' }
+    }
     # TODO move this to a method so it can be reused; cache results
     content_dict = [:recto, :verso].inject({}) do |acc, side|
       side_content = {}
       Alignments.each do |align|
         if (val = @theme[%(#{position}_#{side}_content_#{align})])
-          if ImageAttributeValueRx =~ val &&
+          # TODO support image URL (using resolve_image_path)
+          if (val.include? ':') && val =~ ImageAttributeValueRx &&
               ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
-            attrs = AttributeList.new($2).parse
-            attrs['width'] = attrs['width'].to_f if attrs['width']
-            side_content[align] = { path: path, width: attrs['width'] }
+            attrs = (AttributeList.new $2).parse
+            width = resolve_explicit_width attrs, bounds.width
+            # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
+            unless width
+              width = [bounds.width, (intrinsic_image_dimensions path)[:width] * 0.75].min
+            end
+            side_content[align] = { path: path, width: width }
           else
-            side_content[align] ||= val
+            side_content[align] = val
           end
         end
       end
       # NOTE set fallbacks if not explicitly disabled
-      if (acc[side] = side_content).empty? && @theme[%(footer_#{side}_content)] != 'none'
-        case side
-        when :recto
-          acc[side] = { right: '{page-number}' }
-        when :verso
-          acc[side] = { left: '{page-number}' }
-        end
+      if side_content.empty? && position == :footer && @theme[%(footer_#{side}_content)] != 'none'
+        side_content = fallback_footer_content[side]
       end
+
+      acc[side] = side_content
       acc
     end
 
@@ -1962,17 +1955,14 @@ class Converter < ::Prawn::Document
               case (content = content_by_alignment[align])
               when ::Hash
                 # NOTE image placement respects padding; use negative image_vertical_align value to revert
-                if (trim_v_padding = trim_padding[0] + trim_padding[2]) > 0
-                  bounding_box [0, cursor - trim_padding[0]], width: bounds.width, height: (bounds.height - trim_v_padding) do
-                    # FIXME prevent image from overflowing the page
-                    float do
-                      image content[:path], vposition: trim_img_valign, position: align, width: content[:width]
-                    end
-                  end
-                else
-                  # FIXME prevent image from overflowing the page
+                trim_v_padding = trim_padding[0] + trim_padding[2]
+                # NOTE bounding_box is redundant if trim_v_padding is 0
+                bounding_box [0, cursor - trim_padding[0]], width: bounds.width, height: (bounds.height - trim_v_padding) do
+                  # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                   float do
-                    image content[:path], vposition: trim_img_valign, position: align, width: content[:width]
+                    #image content[:path], vposition: trim_img_valign, position: align, width: content[:width]
+                    # NOTE use :fit to prevent image from overflowing page (at the cost of scaling it)
+                    image content[:path], vposition: trim_img_valign, position: align, fit: [content[:width], bounds.height]
                   end
                 end
               when ::String
@@ -2010,7 +2000,7 @@ class Converter < ::Prawn::Document
 
     # title page (i)
     # TODO same conditional logic as in layout_title_page; consolidate
-    if doc.header? && !doc.noheader && !doc.notitle
+    if doc.header? && !doc.notitle
       page_num_labels[0] = { P: ::PDF::Core::LiteralString.new(front_matter_counter.next!.to_s) }
     end
 
@@ -2391,6 +2381,31 @@ class Converter < ::Prawn::Document
     # handle case when image is a local file
     else
       ::File.expand_path(node.normalize_system_path image_path, imagesdir, nil, target_name: 'image')
+    end
+  end
+
+  # Resolves the explicit width as a PDF pt value, if specified.
+  #
+  # Resolves the explicit width, first considering the pdfwidth attribute, then
+  # the scaledwidth attribute and finally the width attribute. If the specified
+  # value is in pixels, the value is scaled by 75% to perform approximate
+  # CSS px to PDF pt conversion. If the resolved width is larger than the
+  # max_width, the max_width value is returned.
+  #--
+  # QUESTION should we enforce positive result?
+  def resolve_explicit_width attrs, max_width = bounds.width
+    if attrs.key? 'pdfwidth'
+      if (pdfwidth = attrs['pdfwidth']).end_with? '%'
+        (pdfwidth.to_f / 100) * max_width
+      else
+        str_to_pt pdfwidth
+      end
+    elsif attrs.key? 'scaledwidth'
+      (attrs['scaledwidth'].to_f / 100) * max_width
+    elsif attrs.key? 'width'
+      # QUESTION should we honor percentage width value?
+      # NOTE scale width down 75% to convert px to pt; restrict width to bounds.width
+      [max_width, attrs['width'].to_f * 0.75].min
     end
   end
 

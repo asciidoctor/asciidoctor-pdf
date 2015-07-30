@@ -940,6 +940,8 @@ The literal key is used for inline monospaced text in prose and table cells.
 |revision_margin_top: 13.125
 |===
 
+TIP: The title page can be disabled from the document by setting the `notitle` attribute in the document header.
+
 === Block
 
 [cols="3,3,5m"]
@@ -1530,6 +1532,10 @@ Block styles are applied to the following block types:
 `<align>` can be `left`, `center` or `right`.
 
 IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
+
+TIP: The running header and footer can be disabled from the document by setting the `noheader` and the `nofooter` attributes, respectively, in the document header.
+
+NOTE: If content is not specified for the running footer, the page number (i.e., `+{page-number}+`) will be shown on the left side on verso pages and the right side on recto pages.
 
 NOTE: The background color spans the width of the page.
 When a background color is specified, the border also spans the width of the page.
