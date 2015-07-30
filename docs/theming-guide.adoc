@@ -679,8 +679,8 @@ TBW
 |background_color: #ffffff
 
 |page_background_image
-|path (relative to pdf-stylesdir)
-|background_image: watermark.jpg
+|path (absolute or relative to pdf-stylesdir)
+|background_image: \image:watermark.png[]
 
 |page_layout
 |portrait, landscape +
@@ -883,13 +883,21 @@ The literal key is used for inline monospaced text in prose and table cells.
 |left, center, right, justify
 |align: right
 
+|title_page_background_color
+|<<colors,color>>
+|background_color: #eaeaea
+
+|title_page_background_image
+|path (absolute or relative to pdf-stylesdir)
+|background_image: \image:title.png[]
+
 |title_page_logo_align
 |left, center, right
 |logo_align: right
 
 |title_page_logo_image
 |inline image macro
-|+logo_image: image:logo.png[scaledwidth=25%]+
+|logo_image: \image:logo.png[scaledwidth=25%]
 
 |title_page_logo_top
 |percentage
