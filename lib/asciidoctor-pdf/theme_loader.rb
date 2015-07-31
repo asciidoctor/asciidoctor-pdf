@@ -8,6 +8,8 @@ class ThemeLoader
   DataDir = ::File.expand_path(::File.join(::File.dirname(__FILE__), '..', '..', 'data'))
   ThemesDir = ::File.join DataDir, 'themes'
   FontsDir = ::File.join DataDir, 'fonts'
+  DefaultThemePath = ::File.expand_path 'default-theme.yml', ThemesDir
+  BaseThemePath = ::File.expand_path 'base-theme.yml', ThemesDir
 
   VariableRx = /\$([a-z0-9_]+)/
   LoneVariableRx = /^\$([a-z0-9_]+)$/
@@ -39,30 +41,46 @@ class ThemeLoader
     if (theme_name.end_with? '.yml')
       # FIXME restrict to jail!
       # QUESTION why are we not using expand_path in this case?
-      theme_path ? ::File.join(theme_path, theme_name) : theme_name
+      theme_path ? (::File.join theme_path, theme_name) : theme_name
     else
       # QUESTION should we append '-theme.yml' or just '.yml'?
-      ::File.expand_path(%(#{theme_name}-theme.yml), (theme_path || ThemesDir))
+      ::File.expand_path %(#{theme_name}-theme.yml), (theme_path || ThemesDir)
     end
   end
 
   def self.resolve_theme_asset asset_path, theme_path = nil
-    ::File.expand_path(asset_path, (theme_path || ThemesDir))
+    ::File.expand_path asset_path, (theme_path || ThemesDir)
   end
 
-  def self.load_theme theme_name = nil, theme_path = nil
-    load_file(resolve_theme_file theme_name, theme_path)
+  # NOTE base theme is loaded "as is" (no post-processing)
+  def self.load_base_theme
+    ::OpenStruct.new(::SafeYAML.load_file BaseThemePath)
   end
 
-  def self.load_file filename
-    data = ::IO.read(filename).each_line.map {|l| l.sub HexColorValueRx, '_color: \'\k<value>\'' }.join
-    self.new.load(::SafeYAML.load data)
-  end
-
-  def load hash
-    hash.inject(::OpenStruct.new) do |data, (key, val)|
-      process_entry key, val, data
+  def self.load_theme theme_name = nil, theme_path = nil, opts = {}
+    if (theme_file = resolve_theme_file theme_name, theme_path) == BaseThemePath ||
+        (theme_file != DefaultThemePath && (opts.fetch :apply_base_theme, true))
+      theme_data = load_base_theme
+    else
+      theme_data = nil
     end
+
+    if theme_file == BaseThemePath
+      theme_data
+    else
+      # QUESTION should we do any post-load calculations or defaults?
+      load_file theme_file, theme_data
+    end
+  end
+
+  def self.load_file filename, theme_data = nil
+    raw_data = (::IO.read filename).each_line.map {|l| l.sub HexColorValueRx, '_color: \'\k<value>\'' }.join
+    self.new.load((::SafeYAML.load raw_data), theme_data)
+  end
+
+  def load hash, theme_data = nil
+    theme_data ||= ::OpenStruct.new
+    hash.inject(theme_data) {|data, (key, val)| process_entry key, val, data }
   end
 
   private
@@ -92,7 +110,7 @@ class ThemeLoader
   # NOTE we assume expr is a String
   def expand_vars expr, vars
     if (idx = (expr.index '$'))
-      if idx == 0 && LoneVariableRx =~ expr
+      if idx == 0 && expr =~ LoneVariableRx
         vars[$1]
       else
         expr.gsub(VariableRx) { vars[$1] }
@@ -137,7 +155,7 @@ class ThemeLoader
       expr = result
       break if unchanged
     end
-    if (expr.end_with? ')') && PrecisionFuncRx =~ expr
+    if (expr.end_with? ')') && expr =~ PrecisionFuncRx
       op = $1
       offset = op.length + 1
       expr = expr[offset...-1].to_f.send op.to_sym

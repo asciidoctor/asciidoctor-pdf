@@ -76,13 +76,9 @@ outline_list:
   indent: $base_font_size * 1.5
 ----
 
-When creating a new theme, you only have to define the keys you want to override from the base theme.
+When creating a new theme, you only have to define the keys you want to override from the base theme, which is loaded prior to loading your custom theme.
 The converter uses the information from the theme map to help construct the PDF.
 All the available keys are documented in <<keys>>.
-
-IMPORTANT: Until https://github.com/asciidoctor/asciidoctor-pdf/issues/132[issue #132] is resolved, you must specify all required keys.
-Missing required keys will cause the processor to crash.
-The best approach is to start from the https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml[default theme file] and modify it to suit your needs.
 
 Keys may be nested to an arbitrary depth to eliminate redundant prefixes (an approach inspired by SASS).
 Once the theme is loaded, all keys are flattened into a single map of qualified keys.
@@ -1204,9 +1200,9 @@ Block styles are applied to the following block types:
 |===
 |Key |Value Type |Example
 
-|image_align_default
-|left, center, right, justify
-|align_default: left
+|image_align
+|left, center, right
+|align: left
 |===
 
 === Lead

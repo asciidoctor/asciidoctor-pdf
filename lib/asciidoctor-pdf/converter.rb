@@ -209,7 +209,7 @@ class Converter < ::Prawn::Document
     end
     @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
     @fallback_fonts = [*theme.font_fallbacks]
-    @font_color = theme.base_font_color || '000000'
+    @font_color = theme.base_font_color
     @text_transform = nil
     @stamps = {}
     init_scratch_prototype
@@ -221,8 +221,8 @@ class Converter < ::Prawn::Document
       #compress: true,
       #optimize_objects: true,
       info: (build_pdf_info doc),
-      margin: (theme.page_margin || 36),
-      page_layout: (theme.page_layout || :portrait).to_sym,
+      margin: theme.page_margin,
+      page_layout: theme.page_layout.to_sym,
       skip_page_creation: true,
     }
 
@@ -410,7 +410,7 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
     icons = node.document.attr? 'icons', 'font'
     label = icons ? (node.attr 'name').to_sym : node.caption.upcase
-    shift_base = @theme.prose_margin_bottom || @theme.vertical_rhythm
+    shift_base = @theme.prose_margin_bottom
     #shift_top = icons ? (shift_base / 3.0) : 0
     #shift_bottom = icons ? ((shift_base * 2) / 3.0) : shift_base
     shift_top = shift_base / 3.0
@@ -491,7 +491,7 @@ class Converter < ::Prawn::Document
 
   def convert_quote_or_verse node
     add_dest_for_block node if node.id
-    border_width = @theme.blockquote_border_width || 0
+    border_width = @theme.blockquote_border_width
     theme_margin :block, :top
     keep_together do |box_height = nil|
       start_cursor = cursor
@@ -548,7 +548,7 @@ class Converter < ::Prawn::Document
           convert_content_for_block node
         end
         # FIXME HACK compensate for margin bottom of sidebar content
-        move_up(@theme.prose_margin_bottom || @theme.vertical_rhythm)
+        move_up @theme.prose_margin_bottom
       end
     end
     theme_margin :block, :bottom
@@ -561,10 +561,10 @@ class Converter < ::Prawn::Document
       # NOTE this logic won't work for a colist nested inside a list item until Asciidoctor 1.5.3
       if (self_idx = node.parent.blocks.index node) && self_idx > 0 &&
           [:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
-        move_up ((@theme.block_margin_bottom || @theme.vertical_rhythm) / 2.0)
+        move_up @theme.block_margin_bottom / 2.0
         # or we could do...
-        #move_up (@theme.block_margin_bottom || @theme.vertical_rhythm)
-        #move_down (@theme.caption_margin_inside * 2)
+        #move_up @theme.block_margin_bottom
+        #move_down @theme.caption_margin_inside * 2
       end
     end
     add_dest_for_block node if node.id
@@ -581,8 +581,8 @@ class Converter < ::Prawn::Document
     end
     @list_numbers.pop
     # correct bottom margin of last item
-    list_margin_bottom = @theme.prose_margin_bottom || @theme.vertical_rhythm
-    margin_bottom (list_margin_bottom - (@theme.outline_list_item_spacing || (list_margin_bottom / 2.0)))
+    list_margin_bottom = @theme.prose_margin_bottom
+    margin_bottom list_margin_bottom - @theme.outline_list_item_spacing
   end
 
   def convert_colist_item node
@@ -599,7 +599,7 @@ class Converter < ::Prawn::Document
 
     indent marker_width do
       convert_content_for_list_item node,
-        margin_bottom: (@theme.outline_list_item_spacing || ((@theme.prose_margin_bottom || @theme.vertical_rhythm) / 2.0))
+        margin_bottom: @theme.outline_list_item_spacing
     end
   end
 
@@ -611,7 +611,7 @@ class Converter < ::Prawn::Document
       # FIXME extract ensure_space (or similar) method
       start_new_page if cursor < @theme.base_line_height_length * (terms.size + 1)
       terms.each do |term|
-        layout_prose term.text, style: (@theme.description_list_term_font_style || :normal).to_sym, margin_top: 0, margin_bottom: (@theme.vertical_rhythm / 3.0), align: :left
+        layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: (@theme.vertical_rhythm / 3.0), align: :left
       end
       if desc
         indent @theme.description_list_description_indent do
@@ -694,8 +694,8 @@ class Converter < ::Prawn::Document
     # However, don't leave gap at the bottom of a nested list
     unless complex || (::Asciidoctor::List === node.parent && node.parent.outline?)
       # correct bottom margin of last item
-      list_margin_bottom = @theme.prose_margin_bottom || @theme.vertical_rhythm
-      margin_bottom(list_margin_bottom - (@theme.outline_list_item_spacing || (list_margin_bottom / 2.0)))
+      list_margin_bottom = @theme.prose_margin_bottom
+      margin_bottom list_margin_bottom - @theme.outline_list_item_spacing
     end
   end
 
@@ -741,7 +741,7 @@ class Converter < ::Prawn::Document
       convert_content_for_list_item node
     else
       convert_content_for_list_item node,
-        margin_bottom: (@theme.outline_list_item_spacing || ((@theme.prose_margin_bottom || @theme.vertical_rhythm) / 2.0))
+        margin_bottom: @theme.outline_list_item_spacing
     end
   end
 
@@ -773,7 +773,7 @@ class Converter < ::Prawn::Document
 
     # QUESTION if we advance to new page, shouldn't dest point there too?
     add_dest_for_block node if node.id
-    position = ((node.attr 'align') || @theme.image_align || :left).to_sym
+    position = ((node.attr 'align') || @theme.image_align).to_sym
 
     unless valid_image
       theme_margin :block, :top
@@ -993,6 +993,7 @@ class Converter < ::Prawn::Document
 
         pad_box @theme.code_padding do
           typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height),
+              # QUESTION should we require the code_font_color to be set?
               color: (@theme.code_font_color || @font_color),
               size: adjusted_font_size
         end
@@ -1121,7 +1122,7 @@ class Converter < ::Prawn::Document
           text_color: (theme.table_head_font_color || theme.table_font_color || @font_color),
           size: (theme.table_head_font_size || theme.table_font_size),
           font: (theme.table_head_font_family || theme.table_font_family),
-          font_style: (theme.table_head_font_style || :bold).to_sym,
+          font_style: theme.table_head_font_style.to_sym,
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
           align: (cell.attr 'halign').to_sym,
@@ -1277,7 +1278,7 @@ class Converter < ::Prawn::Document
 
   def convert_thematic_break node
     theme_margin :thematic_break, :top
-    stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width, line_style: (@theme.thematic_break_border_style || :solid).to_sym
+    stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width, line_style: @theme.thematic_break_border_style.to_sym
     theme_margin :thematic_break, :bottom
   end
 
@@ -1493,7 +1494,7 @@ class Converter < ::Prawn::Document
     font @theme.base_font_family, size: @theme.base_font_size
 
     # QUESTION allow aligment per element on title page?
-    title_align = (@theme.title_page_align || :center).to_sym
+    title_align = @theme.title_page_align.to_sym
 
     # TODO disallow .pdf as image type
     if (logo_image_path = (doc.attr 'title-logo-image', @theme.title_page_logo_image))
@@ -1509,7 +1510,7 @@ class Converter < ::Prawn::Document
       end
       logo_image_attrs['target'] = logo_image_path
       logo_image_attrs['align'] ||= (@theme.title_page_logo_align || title_align.to_s)
-      logo_image_top = (logo_image_attrs['top'] || @theme.title_page_logo_top || '10%')
+      logo_image_top = (logo_image_attrs['top'] || @theme.title_page_logo_top)
       # FIXME delegate to method to convert page % to y value
       logo_image_top = [(page_height - page_height * (logo_image_top.to_i / 100.0)), bounds.absolute_top].min
       float do
@@ -1621,8 +1622,8 @@ class Converter < ::Prawn::Document
 
   # NOTE inline_format is true by default
   def layout_prose string, opts = {}
-    top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.prose_margin_top || 0
-    bot_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom || @theme.vertical_rhythm
+    top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.prose_margin_top
+    bot_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom
     if (transform = (opts.delete :text_transform) || @text_transform)
       string = transform_text string, transform
     end
@@ -1640,7 +1641,7 @@ class Converter < ::Prawn::Document
       color: @font_color,
       # NOTE normalize makes endlines soft (replaces "\n" with ' ')
       inline_format: [normalize: (opts.delete :normalize) != false],
-      align: (@theme.base_align || :left).to_sym
+      align: @theme.base_align.to_sym
     }.merge(opts)
     margin_bottom bot_margin
   end
@@ -1667,7 +1668,7 @@ class Converter < ::Prawn::Document
       layout_prose string, {
         margin_top: margin[:top],
         margin_bottom: margin[:bottom],
-        align: (@theme.caption_align || :left).to_sym,
+        align: @theme.caption_align.to_sym,
         normalize: false
       }.merge(opts)
       if position == :top && @theme.caption_border_bottom_color
@@ -1692,7 +1693,7 @@ class Converter < ::Prawn::Document
     # QUESTION shouldn't we skip this whole method if num_levels == 0?
     if num_levels > 0
       theme_margin :toc, :top
-      line_metrics = calc_line_metrics @theme.toc_line_height || @theme.base_line_height
+      line_metrics = calc_line_metrics @theme.toc_line_height
       dot_width = nil
       theme_font :toc do
         dot_width = width_of(@theme.toc_dot_leader_content || DotLeaderDefault)
@@ -1730,6 +1731,7 @@ class Converter < ::Prawn::Document
           # FIXME dots don't line up if width of page numbers differ
           typeset_formatted_text [
             { text: %(#{(@theme.toc_dot_leader_content || DotLeaderDefault) * num_dots}), color: toc_dot_color },
+            # FIXME this spacing doesn't always work out
             { text: NoBreakSpace, size: (@font_size * 0.5) },
             { text: sect_page_num.to_s, anchor: sect_anchor, color: @font_color }], line_metrics, align: :right
           go_to_page end_page_number if start_page_number != end_page_number
@@ -1737,7 +1739,7 @@ class Converter < ::Prawn::Document
         end
       end
       if sect.level < num_levels
-        indent(@theme.toc_indent || @theme.outline_list_indent) do
+        indent @theme.toc_indent do
           layout_toc_level sect.sections, num_levels, line_metrics, dot_width, num_front_matter_pages
         end
       end

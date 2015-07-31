@@ -24,12 +24,10 @@ font:
 page:
   background_color: ffffff
   layout: portrait
-  # NOTE multiply inches by 72 to get pt values
-  #margin: [0.5 * 72, 0.67 * 72, 0.67 * 72, 0.67 * 72]
   margin: [0.5in, 0.67in, 0.67in, 0.67in]
-  # size can be a named size (e.g., A4) or custom dimensions (e.g., [8.25in, 11.69in])
-  size: Letter
+  size: LETTER
 base:
+  align: justify
   # color as hex string (leading # is optional)
   font_color: 333333
   # color as RGB array
@@ -56,13 +54,12 @@ base:
   font_size_small: round($base_font_size * 0.85)
   font_size_min: $base_font_size * 0.75
   font_style: normal
-  align: justify
+  border_color: eeeeee
   border_radius: 4
   border_width: 0.5
-  border_color: eeeeee
 # FIXME vertical_rhythm is weird; we should think in terms of ems
 #vertical_rhythm: $base_line_height_length * 2 / 3
-# correct line height for Noto Serif metrics
+# correct line height for Noto Serif metrics (comes with built-in line height)
 vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
 link:
@@ -75,6 +72,7 @@ heading:
   #font_color: 181818
   font_color: $base_font_color
   font_family: $base_font_family
+  font_style: bold
   # h1 is used for part titles
   h1_font_size: floor($base_font_size * 2.6)
   # h2 is used for chapter titles
@@ -83,105 +81,101 @@ heading:
   h4_font_size: $base_font_size_large
   h5_font_size: $base_font_size
   h6_font_size: $base_font_size_small
-  font_style: bold
   #line_height: 1.4
-  # correct line height for Noto Serif metrics
+  # correct line height for Noto Serif metrics (comes with built-in line height)
   line_height: 1.2
   margin_top: $vertical_rhythm * 0.2
   margin_bottom: $vertical_rhythm * 0.8
 title_page:
   align: right
-  title_top: 55%
-  title_font_size: $heading_h1_font_size
-  title_font_color: 999999
-  title_line_height: 0.9
-  subtitle_font_size: $heading_h3_font_size
-  subtitle_font_style: bold_italic
-  subtitle_line_height: 1
-  authors_margin_top: $base_font_size * 1.25
-  authors_font_size: $base_font_size_large
-  authors_font_color: 181818
-  revision_margin_top: $base_font_size * 1.25
-#prose:
-#  margin_top: 0
-#  margin_bottom: $vertical_rhythm 
+  logo:
+    top: 10%
+  title:
+    top: 55%
+    font_size: $heading_h1_font_size
+    font_color: 999999
+    line_height: 0.9
+  subtitle:
+    font_size: $heading_h3_font_size
+    font_style: bold_italic
+    line_height: 1
+  authors:
+    margin_top: $base_font_size * 1.25
+    font_size: $base_font_size_large
+    font_color: 181818
+  revision:
+    margin_top: $base_font_size * 1.25
 block:
-  #margin_top: 0
-  #margin_bottom: $vertical_rhythm
+  margin_top: 0
+  margin_bottom: $vertical_rhythm
+  # NOTE currently block_padding _is_ the sidebar padding
   padding: [$vertical_rhythm, $vertical_rhythm * 1.25, $vertical_rhythm, $vertical_rhythm * 1.25]
 caption:
-  font_style: italic
   align: left
+  font_style: italic
   # FIXME perhaps set line_height instead of / in addition to margins?
-  margin_inside: $vertical_rhythm * 0.25
+  margin_inside: $vertical_rhythm / 3
+  #margin_inside: $vertical_rhythm / 4
   margin_outside: 0
+lead:
+  font_size: $base_font_size_large
+  line_height: 1.4
+abstract:
+  font_color: 5c6266
+  font_size: $lead_font_size
+  line_height: $lead_line_height
+  font_style: italic
+admonition:
+  border_color: $base_border_color
+  border_width: $base_border_width
+blockquote:
+  font_color: $base_font_color
+  font_size: $base_font_size_large
+  border_color: $base_border_color
+  border_width: 5
+  cite_font_size: $base_font_size_small
+  cite_font_color: 999999
 # code is used for source blocks (perhaps change to source or listing?)
 code:
   font_color: $base_font_color
-  #font_family: Liberation Mono
-  #font_size: floor($base_font_size * 0.9)
-  #font_size: 10
-  #padding: [9.5, 9.5, 9.5, 9.5]
-  # LiberationMono carries extra gap below line
-  #padding: [10, 10, 7.5, 10]
-  #line_height: 1.45
   font_family: $literal_font_family
   font_size: ceil($base_font_size)
-  #padding: [$base_font_size, $code_font_size, $base_font_size, $code_font_size]
   padding: $code_font_size
   line_height: 1.25
   background_color: f5f5f5
   border_color: cccccc
   border_radius: $base_border_radius
   border_width: 0.75
-blockquote:
-  font_color: $base_font_color
-  font_size: $base_font_size_large
-  border_width: 5
-  border_color: $base_border_color
-  cite_font_size: $base_font_size_small
-  cite_font_color: 999999
-sidebar:
-  border_color: $page_background_color
-  border_radius: $base_border_radius
-  border_width: $base_border_width
-  background_color: eeeeee
-  title_font_color: $heading_font_color
-  title_font_family: $heading_font_family
-  title_font_size: $heading_h4_font_size
-  title_font_style: $heading_font_style
-  title_align: center
-example:
-  border_color: $base_border_color
-  border_radius: $base_border_radius
-  border_width: 0.75
-  background_color: transparent
-admonition:
-  border_color: $base_border_color
-  border_width: $base_border_width
 conum:
   font_family: M+ 1mn
   font_color: $literal_font_color
   font_size: $base_font_size
   line_height: 4 / 3
+example:
+  border_color: $base_border_color
+  border_radius: $base_border_radius
+  border_width: 0.75
+  background_color: transparent
 image:
-  align_default: left
-  scaled_width_default: 0.5
-lead:
-  # QUESTION what about $base_font_size_large?
-  #font_size: floor($base_line_height_length * 0.8)
-  #font_size: floor($base_font_size * 1.15)
-  #line_height: 1.3
-  font_size: $base_font_size_large
-  line_height: 1.4
-abstract:
-  #font_color: 404040
-  font_color: 5c6266
-  font_size: $lead_font_size
-  line_height: $lead_line_height
-  font_style: italic
+  align: left
+prose:
+  margin_top: 0
+  margin_bottom: $vertical_rhythm
+sidebar:
+  border_color: $page_background_color
+  border_radius: $base_border_radius
+  border_width: $base_border_width
+  background_color: eeeeee
+  title:
+    align: center
+    font_color: $heading_font_color
+    font_family: $heading_font_family
+    font_size: $heading_h4_font_size
+    font_style: $heading_font_style
 thematic_break:
   border_color: $base_border_color
+  border_style: solid
+  border_width: $base_border_width
   margin_top: $vertical_rhythm * 0.5
   margin_bottom: $vertical_rhythm * 1.5
 description_list:
@@ -196,6 +190,7 @@ table:
   background_color: $page_background_color
   #head_background_color: <hex value>
   #head_font_color: $base_font_color
+  head_font_style: bold
   even_row_background_color: f9f9f9
   #odd_row_background_color: <hex value>
   foot_background_color: f0f0f0
@@ -204,9 +199,9 @@ table:
   # HACK accounting for line-height
   cell_padding: [3, 3, 6, 3]
 toc:
-  indent: $horizontal_rhythm
   dot_leader_color: dddddd
-  #dot_leader_content: ". "
+  #dot_leader_content: '. '
+  indent: $horizontal_rhythm
   line_height: 1.4
 # NOTE In addition to footer, header is also supported
 footer:
