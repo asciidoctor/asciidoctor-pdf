@@ -203,15 +203,12 @@ class Converter < ::Prawn::Document
     ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
     # QUESTION should ThemeLoader register fonts?
     register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
-    if (bg_image = theme.page_background_image) && bg_image != 'none'
-      if ::File.readable?(bg_image = (ThemeLoader.resolve_theme_asset bg_image, stylesdir))
-        @page_bg_image = bg_image
-      else
-        warn %(asciidoctor: WARNING: page background image #{bg_image} not found or readable)
-      end
+    @page_bg_image = nil
+    if (bg_image = resolve_background_image doc, theme, 'page-background-image')
+      @page_bg_image = (bg_image == 'none' ? nil : bg_image)
     end
-    @fallback_fonts = [*theme.font_fallbacks]
     @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
+    @fallback_fonts = [*theme.font_fallbacks]
     @font_color = theme.base_font_color || '000000'
     @text_transform = nil
     @stamps = {}
@@ -1480,34 +1477,12 @@ class Converter < ::Prawn::Document
 
     prev_bg_image = @page_bg_image
     prev_bg_color = @page_bg_color
-    if (bg_image = (doc.attr 'title-background-image', @theme.title_page_background_image))
-      if bg_image == 'none'
-        @page_bg_image = nil
-      else
-        if (bg_image.include? ':') && bg_image =~ ImageAttributeValueRx
-          bg_image = $1
-          # QUESTION should we support width and height?
-        end
 
-        # NOTE resolve image relative to its origin
-        resolved_bg_image = if doc.attr? 'title-background-image'
-          resolve_image_path doc, bg_image
-        else
-          ThemeLoader.resolve_theme_asset bg_image, (doc.attr 'pdf-stylesdir')
-        end
-
-        if resolved_bg_image && (::File.readable? resolved_bg_image)
-          @page_bg_image = resolved_bg_image
-        else
-          warn %(asciidoctor: WARNING: title page background image #{resolved_bg_image || bg_image} not found or readable)
-          bg_image = nil
-        end
-      end
+    if (bg_image = resolve_background_image doc, @theme, 'title-page-background-image')
+      @page_bg_image = (bg_image == 'none' ? nil : bg_image)
     end
-    if !bg_image && (bg_color = resolve_theme_color :title_page_background_color)
+    if (bg_color = resolve_theme_color :title_page_background_color)
       @page_bg_color = bg_color
-    else
-      bg_color = nil
     end
     # NOTE a new page will already be started if the cover image is a PDF
     start_new_page unless page_is_empty?
@@ -2381,6 +2356,32 @@ class Converter < ::Prawn::Document
     # handle case when image is a local file
     else
       ::File.expand_path(node.normalize_system_path image_path, imagesdir, nil, target_name: 'image')
+    end
+  end
+
+  # Resolve the path to the background image either from a document attribute or theme key.
+  #
+  # Returns The string "none" if the background image value is none, otherwise the resolved
+  # path to the image. If neither the document attribute or theme key are specified, or
+  # the image path cannot be resolved, return nil.
+  def resolve_background_image doc, theme, key
+    if (bg_image = (doc_attr_val = (doc.attr key)) || theme[(key.tr '-', '_').to_sym])
+      return bg_image if bg_image == 'none'
+
+      if (bg_image.include? ':') && bg_image =~ ImageAttributeValueRx
+        # QUESTION should we support width and height in this case?
+        bg_image = $1
+      end
+
+      if (bg_image = doc_attr_val ? (resolve_image_path doc, bg_image) :
+          (ThemeLoader.resolve_theme_asset bg_image, (doc.attr 'pdf-stylesdir')))
+        if ::File.readable? bg_image
+          bg_image
+        else
+          warn %(asciidoctor: WARNING: #{key.tr '-', ' '} #{bg_image} not found or readable)
+          nil
+        end
+      end
     end
   end
 
