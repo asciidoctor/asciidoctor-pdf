@@ -5,35 +5,37 @@
 
 == TODO
 
-* removed scaled width default for image in theme
-* convert "-" in variable name in theme to underscore
+* convert "-" in variable name in theme to underscore (e.g., $base-font-size)
+* apply calculated theme values after loading?
 * allow "content" in place of recto_content & verso_content for running header/footer
-* allow dynamic background image with page number in path
 * allow image to span width of page (role=canvas, role=canvas-x or role=canvas-y); if role is canvas or canvas-y, then it does not consume height
 * allow valign value to be a number (requires change to Prawn)
 * layout SVG without using keep_together (since we know all the dimensions)
   - fix SVG to a single page (check height + caption height)
+* allow background color to be set for heading
 
+* allow font size in theme to be specified in em or %
+* allow dynamic background image with page number in path
+* running header/footer covers content (perhaps just a limitation that needs to be documented)
 * document that palette-based transparent in PNGs is not supported
-* document in theming guide what must be done to prepare fonts (old-style 'kern' table, optionally subset) (file issue!)
 * create document that explains how built-in fonts are generated and what subsets are selected
-* add broader character range to monospace font so we can drop fallback font by default
+  - document in theming guide what must be done to prepare fonts (old-style 'kern' table, optionally subset) (file issue!)
+* add broader character range to monospace font so we can drop fallback font by default (#282)
   - consider having a fallback for prose and fallback for literal
 * file issue for prawn to preserve space (even w/ guards, spaces don't preserve over wrapped lines)
   - if this is fixed, we can remove all the guard indent code
 * file issue for prawn to support spacer fragments with fixed width / height and no text (or text is ignored in calculations)
 * file issue that prawn-svg messes with the cursor (need to explain how)
-* redo milestones so that issues are recorded against alpha releases
-* document limitations in README (such as no linear gradients in SVG, embedded images in SVG must be URL or inlined, etc)
+* document limitations in README (such as no linear gradients in SVG, embedded images in SVG must be URL or inlined, PNGs must be flattened, etc)
 * document all permutations of image sizing
+* set vposition on title page logo image explicitly to avoid page overrun?
 
-* get rid of unicode_char method, just use \u strings
 * verse has problems with wrapping if line is long
-* table column header is wrapping by char
-* convert image width to points for images on title page and in running header and footer; add support for pdfwidth (#221)
+* allow default kerning to be set using theme
+* table column header is wrapping by char (verify?)
+* implement margin collapsing (between blocks)
 * rework pull request for source line numbers (combine with restore conum logic if conums are enabled)
   - also combine with the preserve_space logic
-* recognize inline image syntax in page_background_image key (#222)
 * allow front cover and back cover image to be defined in theme; document in theming-guide
 * keep caption with table (check for sufficient space)
 * allow caption placement for table to be configurable (top vs bottom)
@@ -87,6 +89,7 @@
   - allow spacing between nested lists levels be configured in theme
 * need dedicated theme styles for paragraph spacings, etc
 * can't put margin top on chapter (chapter_top?)
+  - chapter / heading background color
 * recto/verso indentation (on body?)
 * don't indent and draw line next to quote block unless width > 0 or color != transparent
 * subtitles for chapters
@@ -94,24 +97,18 @@
 * add color calculation functions in theme file (like in SASS)
 * create utility method to get % offset of page as y value (option to constrain to bounds)
 * document converter assignment in convert_content_for_block method
-* support transparency for colors
+* support transparency for colors (this is now supported by resolve_theme_color)
 * support generic color (or value) attribute in formatted text parser instead of specific color systems (rgb, cmyk)
-* file issue to import PDF page using block image macro
-  - add pdf page import support to the image block macro (file issue)
 * **allow theme_font to set line_height** (honor this setting from document)
   - theme setting for code line height (currently using base_line_height)
 * should we put an entry for doctitle in the outline if notitle is set? (need to test these edge cases)
 * use docdate attribute to set modification date on document (file issue)
-* more theme control over toc (font size, style, color per level)
+* add more theme control over toc (font size, style, color per level)
 * don't allow formatted text (e.g., monospace) in toc entries
 * prevent title-logo-image from spilling to next page (same with title content)
 * document what each keep_together is doing / expects
   - keep_together really needs to pick up the inherited horizontal bounds or else measurement is inaccurate
 * code cleanups (regexps to constants, nil? checks and such)
-  - fix the background color mess in convert_table
-  - extract regex in ThemeLoader into constant
-  - remove dead code dealing with margins
-  - decide how we want to format theme_loader.rb (should be consistent)
   - split prawn_ext/extensions into individual files based on function
 * enable line above (or below?) title on title page (file issue)
 * enable text_transform for table foot row
@@ -132,7 +129,7 @@
 * add note to README that Prawn will subset any fonts provided
 * look into single_line + shrink_to_fit in listings, perhaps other places
 * refactor as Prawn view to avoid method name conflicts (also see https://github.com/prawnpdf/prawn/issues/802)
-* make CodeRay theme colors configurable (in theme?)
+* make CodeRay theme colors configurable (in theme?) (now that we have Rouge, this may be obsolete)
 * create proper default (Asciidoctor) theme
 * document how the treetop parser is rebuilt
 * use ImageMagick to uncompress PNG images before reading them (could also just document this)
@@ -140,10 +137,9 @@
 * padding top and bottom on content affects height_of calculations (need to review)
 * code font needs to support more than just ascii (Golo license block is an example)
 * don't cutoff content in partintro
-* use padding from theme around admonition block content
-* use padding from theme around block quote content
+* admonition styles are one big hack; need to be organized and based on theme
 * add admonition_label_font_color to theme
-* remove remaining uses of vertical_rhythm and horizontal_rhythm
+* autofit logic not working with Courier (still overrunning line)
 * honor safe mode rules
 * allow cover images to be specified by theme as a fallback
 * verify cover image exists; fail gracefully with warning
@@ -151,7 +147,6 @@
   - using fallback fonts significantly slows down Prawn because it checks every letter every time (see https://github.com/prawnpdf/prawn/blob/master/lib/prawn/text/formatted/box.rb#L427-L434)
 * print scratch.pdf file if verbose / trace mode is on in Asciidoctor
 * introduce setting to indent section content
-* design merge margin logic (like for admonition block)
 * rename default theme to docbook theme, make default the Asciidoctor theme (should we have a base theme?)
 * allow relative font size for inline code to be set (perhaps a percentage or em value? there are problems with this in arranger)
 * set defaults in ThemeLoader for required theme settings like prose_margin_top/bottom so we don't need fallbacks in code
@@ -233,6 +228,10 @@
 * "Incorrect number of arguments in 'SCN' command" happens when you add a stamp to an imported page
 * be mindful that layout_prose adds margin to bottom of content by default (important when working in a bounding box)
 * ttfunk does not support ligatures (e.g., fi -> ﬁ); we could do this manually in post_replacements
+
+== API notes
+
+* if we set the vposition to a numeric value, it skips the overrun check that happens internally
 
 == Potential Optimizations
 
