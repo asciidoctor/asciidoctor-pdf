@@ -107,12 +107,18 @@ This potion for a sample document contains the following ingredients, which are 
 **** two fresh Burdockian leaves
 ***** They must be harvested by the light of the teal moons.
 
-Got square?
+Are you square?
 
 [square]
 * one
 * two
 * three
+
+TODO?
+
+* [x] Done
+* [ ] Next
+* Who's counting?
 
 ==== Searching for Burdockian
 

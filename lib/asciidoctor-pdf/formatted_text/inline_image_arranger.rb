@@ -1,6 +1,6 @@
 module Asciidoctor::Pdf::FormattedText
 module InlineImageArranger
-  #ImagePlaceholderChar = [0x00a0].pack 'U*'
+  #ImagePlaceholderChar = %(\u00a0)
   ImagePlaceholderChar = '.'
   begin
     require 'thread_safe' unless defined? ::ThreadSafe

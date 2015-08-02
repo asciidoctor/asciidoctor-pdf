@@ -10,7 +10,7 @@ class Transform
     :quot => '"',
     :apos => '\''
   }
-  #ZeroWidthSpace = [0x200b].pack 'U*'
+  #ZeroWidthSpace = %(\u200b)
 
   def initialize(options = {})
     @merge_adjacent_text_nodes = options[:merge_adjacent_text_nodes]
@@ -105,7 +105,7 @@ class Transform
         if (name = node[:name])
           text = NamedEntityTable[name]
         else
-          # NOTE AFM fonts do not include a thin space glyph; set fallback_fonts to allow glyph to be resolved
+          # FIXME AFM fonts do not include a thin space glyph; set fallback_fonts to allow glyph to be resolved
           text = [node[:number]].pack('U*')
         end
         # NOTE the remaining logic is shared with :text

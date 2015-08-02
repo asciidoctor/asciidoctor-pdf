@@ -27,10 +27,6 @@ class Converter < ::Prawn::Document
 
   register_for 'pdf'
 
-  def self.unicode_char number
-    [number].pack 'U*'
-  end
-
   # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
   CodeRayRequirePath = ::File.join (::File.dirname __FILE__), 'prawn_ext/coderay_encoder'
   RougeRequirePath = ::File.join (::File.dirname __FILE__), 'rouge_ext'
@@ -53,23 +49,23 @@ class Converter < ::Prawn::Document
   GuardedInnerIndent = %(\n\u00a0)
   TabRx = /\t/
   TabIndentRx = /^\t+/
-  NoBreakSpace = unicode_char 0x00a0
-  NarrowSpace = unicode_char 0x2009
-  NarrowNoBreakSpace = unicode_char 0x202f
-  ZeroWidthSpace = unicode_char 0x200b
-  HairSpace = unicode_char 0x200a
+  NoBreakSpace = %(\u00a0)
+  NarrowSpace = %(\u2009)
+  NarrowNoBreakSpace = %(\u202f)
+  ZeroWidthSpace = %(\u200b)
+  HairSpace = %(\u200a)
   DotLeaderDefault = '. '
-  EmDash = unicode_char 0x2014
-  LowercaseGreekA = unicode_char 0x03b1
+  EmDash = %(\u2014)
+  LowercaseGreekA = %(\u03b1)
   Bullets = {
-    disc: (unicode_char 0x2022),
-    circle: (unicode_char 0x25e6),
-    square: (unicode_char 0x25aa)
+    disc: %(\u2022),
+    circle: %(\u25e6),
+    square: %(\u25aa)
   }
   # NOTE Default theme font uses ballot boxes from FontAwesome
   BallotBox = {
-    checked: (unicode_char 0x2611),
-    unchecked: (unicode_char 0x2610)
+    checked: %(\u2611),
+    unchecked: %(\u2610)
   }
   IconSets = ['fa', 'fi', 'octicon', 'pf'].to_set
   MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|pt|)'
