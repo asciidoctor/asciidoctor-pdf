@@ -19,12 +19,23 @@ class Transform
       @monospaced_font_color = theme.literal_font_color
       @monospaced_font_family = theme.literal_font_family
       @monospaced_font_size = theme.literal_font_size
+      case theme.literal_font_style
+      when 'bold'
+        @monospaced_font_style = [:bold]
+      when 'italic'
+        @monospaced_font_style = [:italic]
+      when 'bold_italic'
+        @monospaced_font_style = [:bold, :italic]
+      else
+        @monospaced_font_style = nil
+      end
       #@monospaced_letter_spacing = theme.literal_letter_spacing
     else
       @link_font_color = '0000FF'
       @monospaced_font_color = nil
       @monospaced_font_family = 'Courier'
       @monospaced_font_size = 0.9
+      @monospaced_font_style = nil
       #@monospaced_letter_spacing = -0.1
     end
   end
@@ -126,6 +137,9 @@ class Transform
       #end
       if @monospaced_font_color
         fragment[:color] ||= @monospaced_font_color
+      end
+      if @monospaced_font_style
+        styles.merge @monospaced_font_style
       end
     when :color
       if !fragment[:color]
