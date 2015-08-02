@@ -62,6 +62,8 @@ base:
 # correct line height for Noto Serif metrics (comes with built-in line height)
 vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
+# QUESTION should vertical_spacing be block_spacing instead?
+vertical_spacing: $vertical_rhythm
 link:
   font_color: 428bca
 # literal is currently used for inline monospaced in prose and table cells
@@ -108,8 +110,6 @@ title_page:
 block:
   margin_top: 0
   margin_bottom: $vertical_rhythm
-  # NOTE currently block_padding _is_ the sidebar padding
-  padding: [$vertical_rhythm, $vertical_rhythm * 1.25, $vertical_rhythm, $vertical_rhythm * 1.25]
 caption:
   align: left
   font_style: italic
@@ -128,11 +128,13 @@ abstract:
 admonition:
   border_color: $base_border_color
   border_width: $base_border_width
+  padding: [0, $horizontal_rhythm, 0, $horizontal_rhythm]
 blockquote:
   font_color: $base_font_color
   font_size: $base_font_size_large
   border_color: $base_border_color
   border_width: 5
+  padding: [$vertical_rhythm / 2, $horizontal_rhythm, $vertical_rhythm / -2, $horizontal_rhythm + $blockquote_border_width / 2]
   cite_font_size: $base_font_size_small
   cite_font_color: 999999
 # code is used for source blocks (perhaps change to source or listing?)
@@ -156,6 +158,8 @@ example:
   border_radius: $base_border_radius
   border_width: 0.75
   background_color: transparent
+  # FIXME reenable margin bottom once margin collapsing is implemented
+  padding: [$vertical_rhythm, $horizontal_rhythm, 0, $horizontal_rhythm]
 image:
   align: left
 prose:
@@ -166,6 +170,8 @@ sidebar:
   border_radius: $base_border_radius
   border_width: $base_border_width
   background_color: eeeeee
+  # FIXME reenable margin bottom once margin collapsing is implemented
+  padding: [$vertical_rhythm, $vertical_rhythm * 1.25, 0, $vertical_rhythm * 1.25]
   title:
     align: center
     font_color: $heading_font_color
@@ -180,6 +186,7 @@ thematic_break:
   margin_bottom: $vertical_rhythm * 1.5
 description_list:
   term_font_style: italic
+  term_spacing: $vertical_rhythm / 4
   description_indent: $horizontal_rhythm * 1.25
 outline_list:
   indent: $horizontal_rhythm * 1.5

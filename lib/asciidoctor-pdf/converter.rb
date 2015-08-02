@@ -410,6 +410,7 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
     icons = node.document.attr? 'icons', 'font'
     label = icons ? (node.attr 'name').to_sym : node.caption.upcase
+    # FIXME this shift stuff is a real hack until we have proper margin collapsing
     shift_base = @theme.prose_margin_bottom
     #shift_top = icons ? (shift_base / 3.0) : 0
     #shift_bottom = icons ? ((shift_base * 2) / 3.0) : shift_base
@@ -417,12 +418,16 @@ class Converter < ::Prawn::Document
     shift_bottom = (shift_base * 2) / 3.0
     keep_together do |box_height = nil|
       #theme_font :admonition do
+        # FIXME this is a fudge calculation for the icon width
         label_width = icons ? (bounds.width / 12.0) : (width_of label)
-        # FIXME use padding from theme
-        indent @theme.horizontal_rhythm, @theme.horizontal_rhythm do
+        abs_left = bounds.absolute_left
+        abs_right = bounds.absolute_right
+        pad_box @theme.admonition_padding do
+          left_padding = bounds.absolute_left - abs_left
+          right_padding = abs_right - bounds.absolute_right
           if box_height
             float do
-              bounding_box [0, cursor], width: label_width + @theme.horizontal_rhythm, height: box_height do
+              bounding_box [0, cursor], width: label_width + right_padding, height: box_height do
                 # IMPORTANT the label must fit in the alotted space or it shows up on another page!
                 # QUESTION anyway to prevent text overflow in the case it doesn't fit?
                 stroke_vertical_rule @theme.admonition_border_color, at: bounds.width
@@ -437,7 +442,7 @@ class Converter < ::Prawn::Document
               end
             end
           end
-          indent label_width + @theme.horizontal_rhythm * 2 do
+          indent label_width + left_padding + right_padding do
             move_down shift_top
             layout_caption node.title if node.title?
             convert_content_for_block node
@@ -462,7 +467,7 @@ class Converter < ::Prawn::Document
           end
         end
       end
-      pad_box [@theme.vertical_rhythm, @theme.horizontal_rhythm, 0, @theme.horizontal_rhythm] do
+      pad_box @theme.example_padding do
         theme_font :example do
           convert_content_for_block node
         end
@@ -495,8 +500,7 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
     keep_together do |box_height = nil|
       start_cursor = cursor
-      # FIXME use padding from theme
-      pad_box [@theme.vertical_rhythm / 2.0, @theme.horizontal_rhythm, -(@theme.vertical_rhythm / 2.0), @theme.horizontal_rhythm + border_width / 2.0] do
+      pad_box @theme.blockquote_padding do
         theme_font :blockquote do
           if node.context == :quote
             convert_content_for_block node
@@ -537,7 +541,7 @@ class Converter < ::Prawn::Document
           end
         end
       end
-      pad_box @theme.block_padding do
+      pad_box @theme.sidebar_padding do
         if node.title?
           theme_font :sidebar_title do
             # QUESTION should we allow margins of sidebar title to be customized?
@@ -547,8 +551,6 @@ class Converter < ::Prawn::Document
         theme_font :sidebar do
           convert_content_for_block node
         end
-        # FIXME HACK compensate for margin bottom of sidebar content
-        move_up @theme.prose_margin_bottom
       end
     end
     theme_margin :block, :bottom
@@ -611,7 +613,7 @@ class Converter < ::Prawn::Document
       # FIXME extract ensure_space (or similar) method
       start_new_page if cursor < @theme.base_line_height_length * (terms.size + 1)
       terms.each do |term|
-        layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: (@theme.vertical_rhythm / 3.0), align: :left
+        layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
       end
       if desc
         indent @theme.description_list_description_indent do
@@ -2099,9 +2101,11 @@ class Converter < ::Prawn::Document
   end
 
   # Lookup margin for theme element and position, then delegate to margin method.
-  # If the margin value is not found, assume 0 for position = :top and $vertical_rhythm for position = :bottom.
+  # If margin value is not found, assume:
+  # - 0 when position = :top
+  # - @theme.vertical_spacing when position = :bottom
   def theme_margin category, position
-    margin (@theme[%(#{category}_margin_#{position})] || (position == :bottom ? @theme.vertical_rhythm : 0)), position
+    margin (@theme[%(#{category}_margin_#{position})] || (position == :bottom ? @theme.vertical_spacing : 0)), position
   end
 
   def theme_font category, opts = {}
