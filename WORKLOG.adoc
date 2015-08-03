@@ -13,6 +13,7 @@
 * layout SVG without using keep_together (since we know all the dimensions)
   - fix SVG to a single page (check height + caption height)
 * allow background color to be set for heading
+* allow border to be set around block image
 
 * allow font size in theme to be specified in em or %
 * allow dynamic background image with page number in path
@@ -199,7 +200,6 @@
   - optimize-pdf
 * section numbering
 * implement footnotes correctly
-* image border
 * table footer
 * flesh out outline more
 * flesh out title page more
