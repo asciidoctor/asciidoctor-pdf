@@ -1544,9 +1544,10 @@ NOTE: If content is not specified for the running footer, the page number (i.e.,
 NOTE: The background color spans the width of the page.
 When a background color is specified, the border also spans the width of the page.
 
-==== Implicit attributes
+==== Attribute references
 
-In addition to the document-level attributes defined in the AsciiDoc document, the following attributes are available when defining the content keys in the footer:
+You can use _any_ attribute defined in your AsciiDoc document in the content of the running header and footer.
+In addition, the following attributes are also available when defining the content keys in the footer:
 
 * page-count
 * page-number
@@ -1556,10 +1557,17 @@ In addition to the document-level attributes defined in the AsciiDoc document, t
 * section-title
 * section-or-chapter-title
 
-Here's an example that shows how these attributes can be used in the running footer:
+Here's an example that shows how attributes can be used in the running footer:
 
 [source,yaml]
 ----
+header:
+  height: 0.75in
+  line_height: 1
+  recto_content:
+    center: 'v{revnumber}, {docdate}'
+  verso_content:
+    center: $header_recto_content
 footer:
   height: 0.75in
   line_height: 1
