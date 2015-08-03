@@ -120,9 +120,17 @@ You can install the published gem using the following command:
 
  $ gem install --pre asciidoctor-pdf
  
-If you want to syntax highlight source listings, you'll also want to install CodeRay (or Pygments).
+If you want to syntax highlight source listings, you'll also want to install CodeRay, Rouge or Pygments.
+Choose one (or more) of the following:
 
+.CodeRay
  $ gem install coderay
+
+.Rouge
+ $ gem install rouge
+
+.Pygments
+ $ gem install pygments.rb
 
 Assuming all the required gems install properly, verify you can run the `asciidoctor-pdf` script:
 
