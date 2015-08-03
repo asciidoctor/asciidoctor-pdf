@@ -27,6 +27,7 @@ class Pdfmarks
   end
 
   def generate_file pdf_file
+    # QUESTION should we use the extension pdfmeta to be more clear?
     ::IO.write %(#{pdf_file}marks), generate
   end
 end

@@ -179,9 +179,6 @@ class Converter < ::Prawn::Document
     catalog.data[:ViewerPreferences] = [:FitWindow]
 
     layout_cover_page :back, doc
-
-    # NOTE we have to init pdfmarks here while we have a reference to the doc
-    @pdfmarks = Pdfmarks.new doc
   end
 
   # NOTE embedded only makes sense if perhaps we are building
@@ -208,6 +205,8 @@ class Converter < ::Prawn::Document
     @font_color = theme.base_font_color
     @text_transform = nil
     @stamps = {}
+    # NOTE we have to init pdfmarks here while we have a reference to the doc
+    @pdfmarks = (doc.attr? 'pdfmarks') ? (Pdfmarks.new doc) : nil
     init_scratch_prototype
     self
   end
