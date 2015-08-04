@@ -7,7 +7,7 @@ Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://g
 :idseparator: -
 :icons: font
 :pagenums:
-ifdef::env-github[:relfileprefix: /blob/master]
+//ifdef::env-github[:relfileprefix: /blob/master/]
 ifdef::env-browser[:toc: preamble]
 //:pdf-page-size: [8.25in, 11.69in]
 //:pdf-page-size: A4
