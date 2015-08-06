@@ -40,6 +40,7 @@ class Converter < ::Prawn::Document
     warning:   { key: 'fa-exclamation-triangle', color: 'BF6900' }
   }
   Alignments = [:left, :center, :right]
+  AlignmentNames = ['left', 'center', 'right']
   EOL = %(\n)
   TAB = %(\t)
   InnerIndent = %(\n )
@@ -846,6 +847,7 @@ class Converter < ::Prawn::Document
             rendered_h = available_height
             # FIXME workaround to fix Prawn not adding fill and stroke commands
             # on page that only has an image; breakage occurs when line numbers are added
+            # NOTE this no longer seems to be an issue
             fill_color self.fill_color
             stroke_color self.stroke_color
           end
@@ -1218,8 +1220,16 @@ class Converter < ::Prawn::Document
       column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
     end
 
+    if ((position = node.attr 'align') && (AlignmentNames.include? position)) ||
+        (position = (node.roles & AlignmentNames).last)
+      position = position.to_sym
+    else
+      position = :left
+    end
+
     table_settings = {
       header: table_header,
+      position: position,
       cell_style: {
         padding: theme.table_cell_padding,
         border_width: 0,
