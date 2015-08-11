@@ -177,7 +177,10 @@ class Converter < ::Prawn::Document
     layout_running_content :footer, doc, skip: num_front_matter_pages unless doc.nofooter
 
     add_outline doc, num_toc_levels, toc_page_nums, num_front_matter_pages
-    catalog.data[:ViewerPreferences] = [:FitWindow]
+    # TODO allow document (or theme) to override initial view magnification
+    # NOTE add 1 to page height to force initial scroll to 0; a nil value also seems to work
+    catalog.data[:OpenAction] = dest_fit_horizontally (page_height + 1), state.pages[0] if state.pages.size > 0
+    catalog.data[:ViewerPreferences] = { DisplayDocTitle: true }
 
     layout_cover_page :back, doc
   end
