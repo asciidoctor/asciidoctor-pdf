@@ -1220,7 +1220,8 @@ class Converter < ::Prawn::Document
       column_widths = []
     else
       table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
-      column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
+      even_column_pct = 100.0 / node.columns.size
+      column_widths = node.columns.map {|col| ((col.attr 'colpcwidth', even_column_pct) * table_width) / 100.0 }
     end
 
     if ((position = node.attr 'align') && (AlignmentNames.include? position)) ||
