@@ -606,6 +606,11 @@ class Converter < ::Prawn::Document
 
   def convert_dlist node
     add_dest_for_block node if node.id
+
+    # TODO check if we're within one line of the bottom of the page
+    # and advance to the next page if so (similar to logic for section titles)
+    layout_caption node.title if node.title?
+
     node.items.each do |terms, desc|
       terms = [*terms]
       # NOTE don't orphan the terms, allow for at least one line of content
@@ -680,6 +685,10 @@ class Converter < ::Prawn::Document
   end
 
   def convert_outline_list node
+    # TODO check if we're within one line of the bottom of the page
+    # and advance to the next page if so (similar to logic for section titles)
+    layout_caption node.title if node.title?
+
     line_metrics = calc_line_metrics @theme.base_line_height
     complex = false
     # ...or if we want to give all items in the list the same treatment
