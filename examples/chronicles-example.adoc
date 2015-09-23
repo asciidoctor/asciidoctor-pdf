@@ -89,6 +89,7 @@ Unfortunaly, Lazarus and I had both come to the conclusion that we weren't going
 
 This potion for a sample document contains the following ingredients, which are listed in a very random, chaotically nested order.
 
+.Ingredients for Potion that Demystifies Documents
 * all the headings
 ** syntax highlighted source code
 *** non-syntax highlighted source code or just a listing block
