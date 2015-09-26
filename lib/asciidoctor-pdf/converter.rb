@@ -173,8 +173,10 @@ class Converter < ::Prawn::Document
       (0..-1)
     end
 
-    layout_running_content :header, doc, skip: num_front_matter_pages unless doc.noheader
-    layout_running_content :footer, doc, skip: num_front_matter_pages unless doc.nofooter
+    if page_count > num_front_matter_pages
+      layout_running_content :header, doc, skip: num_front_matter_pages unless doc.noheader
+      layout_running_content :footer, doc, skip: num_front_matter_pages unless doc.nofooter
+    end
 
     add_outline doc, num_toc_levels, toc_page_nums, num_front_matter_pages
     # TODO allow document (or theme) to override initial view magnification
