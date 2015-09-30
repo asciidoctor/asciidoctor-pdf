@@ -43,7 +43,7 @@ See the milestone v1.5.0 in the {uri-project-issues}[issue tracker] for details.
 And what a gem it is!
 
 {uri-prawn}[Prawn] is a nimble PDF writer for Ruby.
-More important, it's a hackable platform that offers both high level APIs for the most common needs and low level APIs for bending the document model to accomodate special circumstances.
+More important, it's a hackable platform that offers both high level APIs for the most common needs and low level APIs for bending the document model to accommodate special circumstances.
 
 With Prawn, you can write text, draw lines and shapes and place images _anywhere_ on the page and add as much color as you like.
 In addition, it brings a fluent API and aggressive code re-use to the printable document space.
