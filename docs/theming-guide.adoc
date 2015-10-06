@@ -459,7 +459,7 @@ title_page:
 
 == Fonts
 
-You can select from <<built-in-fonts,built-in PDF fonts>>, <<bundled-fonts,fonts bundled with Asciidoctor PDF>> or <<custom-fonts,custom fonts>> loaded from TrueType font (TTF) files.
+You can select from <<built-in-afm-fonts,built-in PDF fonts>>, <<bundled-fonts,fonts bundled with Asciidoctor PDF>> or <<custom-fonts,custom fonts>> loaded from TrueType font (TTF) files.
 If you want to use custom fonts, you must first declare them in your theme file.
 
 === Built-in (AFM) fonts
