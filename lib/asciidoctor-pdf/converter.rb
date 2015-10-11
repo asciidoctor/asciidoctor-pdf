@@ -1782,10 +1782,14 @@ class Converter < ::Prawn::Document
   end
 
   def admonition_icon_data key
-    @theme.admonition_icons[key].tap do |data|
-      AdmonitionIcons[key].each do |k, v|
-        data[k] ||= v
+    if @theme.admonition_icons && @theme.admonition_icons[key]
+      @theme.admonition_icons[key].tap do |data|
+        AdmonitionIcons[key].each do |k, v|
+          data[k] ||= v
+        end
       end
+    else
+      AdmonitionIcons[key]
     end
   end
 
