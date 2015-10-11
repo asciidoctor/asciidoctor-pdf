@@ -86,7 +86,9 @@ class ThemeLoader
   private
 
   def process_entry key, val, data
-    if key != 'font_catalog' && ::Hash === val
+    if key == "admonition_icons"
+      data[key] = symbolize_keys val
+    elsif key != 'font_catalog' && ::Hash === val
       val.each do |key2, val2|
         process_entry %(#{key}_#{key2.tr '-', '_'}), val2, data
       end
@@ -106,7 +108,7 @@ class ThemeLoader
       expr
     end
   end
-  
+
   # NOTE we assume expr is a String
   def expand_vars expr, vars
     if (idx = (expr.index '$'))
@@ -119,7 +121,7 @@ class ThemeLoader
       expr
     end
   end
-  
+
   def evaluate_math expr
     return expr if !(::String === expr) || ColorValue === expr
     original = expr
@@ -222,6 +224,18 @@ class ThemeLoader
       value[0..5].rjust 6, '0'
     end
     HexColorValue.new value.upcase
+  end
+
+  def symbolize_keys hash
+    hash.inject({}) do |data, (k, v)|
+      data.tap do |i|
+        if v.is_a? Hash
+          i[k.to_sym] = symbolize_keys v
+        else
+          i[k.to_sym] = v
+        end
+      end
+    end
   end
 end
 end

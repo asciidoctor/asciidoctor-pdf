@@ -33,11 +33,11 @@ class Converter < ::Prawn::Document
 
   AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
   AdmonitionIcons = {
-    caution:   { key: 'fa-fire', color: 'BF3400' },
-    important: { key: 'fa-exclamation-circle', color: 'BF0000' },
-    note:      { key: 'fa-info-circle', color: '19407C' },
-    tip:       { key: 'fa-lightbulb-o', color: '111111' },
-    warning:   { key: 'fa-exclamation-triangle', color: 'BF6900' }
+    caution:   { key: 'fa-fire', color: 'BF3400', size: 24 },
+    important: { key: 'fa-exclamation-circle', color: 'BF0000', size: 24 },
+    note:      { key: 'fa-info-circle', color: '19407C', size: 24 },
+    tip:       { key: 'fa-lightbulb-o', color: '111111', size: 24 },
+    warning:   { key: 'fa-exclamation-triangle', color: 'BF6900', size: 24 }
   }
   Alignments = [:left, :center, :right]
   AlignmentNames = ['left', 'center', 'right']
@@ -435,8 +435,14 @@ class Converter < ::Prawn::Document
                 # FIXME HACK make title in this location look right
                 label_margin_top = node.title? ? @theme.caption_margin_inside : 0
                 if icons
-                  admon_icon_data = AdmonitionIcons[label]
-                  icon admon_icon_data[:key], valign: :center, align: :center, color: admon_icon_data[:color], size: (admonition_icon_size node)
+                  admon_icon_data = admonition_icon_data label
+                  opts = {
+                    valign: :center,
+                    align: :center,
+                    color: admon_icon_data[:color],
+                    size: (admonition_icon_size node, admon_icon_data[:size])
+                  }
+                  icon admon_icon_data[:key], opts
                 else
                   layout_prose label, valign: :center, style: :bold, line_height: 1, margin_top: label_margin_top, margin_bottom: 0
                 end
@@ -1089,7 +1095,7 @@ class Converter < ::Prawn::Document
   end
 
   # Adds guards to preserve indentation
-  def guard_indentation fragments 
+  def guard_indentation fragments
     start_of_line = true
     fragments.each do |fragment|
       next if (text = fragment[:text]).empty?
@@ -1773,6 +1779,14 @@ class Converter < ::Prawn::Document
   def admonition_icon_size node, max_size = 24
     min_height = bounds.height.floor
     min_height < max_size ? min_height : max_size
+  end
+
+  def admonition_icon_data key
+    @theme.admonition_icons[key].tap do |data|
+      AdmonitionIcons[key].each do |k, v|
+        data[k] ||= v
+      end
+    end
   end
 
   # TODO delegate to layout_page_header and layout_page_footer per page
