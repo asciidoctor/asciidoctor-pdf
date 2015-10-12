@@ -602,7 +602,10 @@ module Extensions
 
   # Import the specified page into the current document.
   #
-  def import_page file
+  # By default, advance to the subsequent page, creating one if necessary.
+  # This behavior can be disabled by passing the option `advance: false`.
+  #
+  def import_page file, opts = {}
     prev_page_layout = page.layout
     prev_page_size = page.size
     state.compress = false if state.compress # can't use compression if using template
@@ -611,13 +614,15 @@ module Extensions
     start_new_page_discretely template: file
     # prawn-templates sets text_rendering_mode to :unknown, which breaks running content; revert
     @text_rendering_mode = prev_text_rendering_mode
-    if last_page?
-      # NOTE set page size & layout explicitly in case imported page differs
-      # I'm not sure it's right to start a new page here, but unfortunately there's no other
-      # way atm to prevent the size & layout of the imported page from affecting subsequent pages
-      start_new_page size: prev_page_size, layout: prev_page_layout
-    else
-      go_to_page page_number + 1
+    if opts.fetch :advance, true
+      if last_page?
+        # NOTE set page size & layout explicitly in case imported page differs
+        # I'm not sure it's right to start a new page here, but unfortunately there's no other
+        # way atm to prevent the size & layout of the imported page from affecting subsequent pages
+        start_new_page size: prev_page_size, layout: prev_page_layout
+      else
+        go_to_page page_number + 1
+      end
     end
     nil
   end

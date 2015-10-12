@@ -1607,7 +1607,7 @@ class Converter < ::Prawn::Document
       go_to_page page_count if position == :back
       if cover_image.downcase.end_with? '.pdf'
         # NOTE import_page automatically advances to next page afterwards
-        import_page cover_image
+        import_page cover_image, advance: position != :back
       else
         image_page cover_image, canvas: true
       end
