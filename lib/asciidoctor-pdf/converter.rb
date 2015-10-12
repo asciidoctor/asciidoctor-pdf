@@ -1709,6 +1709,7 @@ class Converter < ::Prawn::Document
 
   def layout_toc doc, num_levels = 2, toc_page_number = 2, num_front_matter_pages = 0
     go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
+    start_page_number = page_number
     theme_font :heading, level: 2 do
       layout_heading doc.attr('toc-title')
     end
@@ -1722,7 +1723,8 @@ class Converter < ::Prawn::Document
       end
       layout_toc_level doc.sections, num_levels, line_metrics, dot_width, num_front_matter_pages
     end
-    toc_page_numbers = (toc_page_number..page_number)
+    # NOTE range must be calculated relative to toc_page_number; absolute page number in scratch document is arbitrary
+    toc_page_numbers = (toc_page_number..(toc_page_number + (page_number - start_page_number)))
     go_to_page page_count - 1 unless scratch?
     toc_page_numbers
   end
