@@ -86,8 +86,11 @@ class ThemeLoader
   private
 
   def process_entry key, val, data
-    if key == "admonition_icons"
-      data[key] = symbolize_keys val
+    if key.start_with? 'admonition_icon_'
+      data[key] = (val || {}).map do |(key2, val2)|
+        static_val2 = evaluate val2, data
+        [key2.to_sym, (key2.end_with? '_color') ? to_color(static_val2) : static_val2]
+      end.to_h
     elsif key != 'font_catalog' && ::Hash === val
       val.each do |key2, val2|
         process_entry %(#{key}_#{key2.tr '-', '_'}), val2, data
@@ -224,18 +227,6 @@ class ThemeLoader
       value[0..5].rjust 6, '0'
     end
     HexColorValue.new value.upcase
-  end
-
-  def symbolize_keys hash
-    hash.inject({}) do |data, (k, v)|
-      data.tap do |i|
-        if v.is_a? Hash
-          i[k.to_sym] = symbolize_keys v
-        else
-          i[k.to_sym] = v
-        end
-      end
-    end
   end
 end
 end
