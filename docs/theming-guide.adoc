@@ -1192,7 +1192,24 @@ Block styles are applied to the following block types:
 |admonition_border_width
 |<<values,number>>
 |border_width: 0.5
+
+|admonition_icon_<name>_name^[1]^
+|string^[2]^
+|admonition_icon_tip_name: fa-fire
+
+|admonition_icon_<name>_stroke_color
+|<<colors,color>>
+|admonition_icon_tip_stroke_color: ff0000
+
+|admonition_icon_<name>_size
+|<<values,number>> +
+(default: 24)
+|admonition_icon_tip_size: 24
 |===
+
+^[1]^ `<name>` can be `note`, `tip`, `warning`, `important` or `caution`. +
+^[2]^ See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository] for a list of valid names.
+The prefix (e.g., `fa-`) determines which font set to use.
 
 === Image
 
