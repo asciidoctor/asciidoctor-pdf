@@ -33,11 +33,11 @@ class Converter < ::Prawn::Document
 
   AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
   AdmonitionIcons = {
-    caution:   { key: 'fa-fire', color: 'BF3400' },
-    important: { key: 'fa-exclamation-circle', color: 'BF0000' },
-    note:      { key: 'fa-info-circle', color: '19407C' },
-    tip:       { key: 'fa-lightbulb-o', color: '111111' },
-    warning:   { key: 'fa-exclamation-triangle', color: 'BF6900' }
+    caution:   { name: 'fa-fire', stroke_color: 'BF3400', size: 24 },
+    important: { name: 'fa-exclamation-circle', stroke_color: 'BF0000', size: 24 },
+    note:      { name: 'fa-info-circle', stroke_color: '19407C', size: 24 },
+    tip:       { name: 'fa-lightbulb-o', stroke_color: '111111', size: 24 },
+    warning:   { name: 'fa-exclamation-triangle', stroke_color: 'BF6900', size: 24 }
   }
   Alignments = [:left, :center, :right]
   AlignmentNames = ['left', 'center', 'right']
@@ -435,8 +435,13 @@ class Converter < ::Prawn::Document
                 # FIXME HACK make title in this location look right
                 label_margin_top = node.title? ? @theme.caption_margin_inside : 0
                 if icons
-                  admon_icon_data = AdmonitionIcons[label]
-                  icon admon_icon_data[:key], valign: :center, align: :center, color: admon_icon_data[:color], size: (admonition_icon_size node)
+                  icon_data = admonition_icon_data label
+                  icon icon_data[:name], {
+                    valign: :center,
+                    align: :center,
+                    color: icon_data[:stroke_color],
+                    size: (fit_icon_size node, icon_data[:size])
+                  }
                 else
                   layout_prose label, valign: :center, style: :bold, line_height: 1, margin_top: label_margin_top, margin_bottom: 0
                 end
@@ -1089,7 +1094,7 @@ class Converter < ::Prawn::Document
   end
 
   # Adds guards to preserve indentation
-  def guard_indentation fragments 
+  def guard_indentation fragments
     start_of_line = true
     fragments.each do |fragment|
       next if (text = fragment[:text]).empty?
@@ -1770,9 +1775,16 @@ class Converter < ::Prawn::Document
 
   # Reduce icon size to fit inside bounds.height. Icons will not render
   # properly if they are larger than the current bounds.height.
-  def admonition_icon_size node, max_size = 24
-    min_height = bounds.height.floor
-    min_height < max_size ? min_height : max_size
+  def fit_icon_size node, max_size = 24
+    (min_height = bounds.height.floor) < max_size ? min_height : max_size
+  end
+
+  def admonition_icon_data key
+    if (icon_data = @theme[%(admonition_icon_#{key})])
+      AdmonitionIcons[key].merge icon_data
+    else
+      AdmonitionIcons[key]
+    end
   end
 
   # TODO delegate to layout_page_header and layout_page_footer per page
