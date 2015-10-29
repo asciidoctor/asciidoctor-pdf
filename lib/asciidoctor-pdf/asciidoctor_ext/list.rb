@@ -5,5 +5,5 @@ class Asciidoctor::List
   # Return true if this list is an outline list. Otherwise, return false.
   def outline?
     @context == :ulist || @context == :olist
-  end
+  end unless respond_to? :outline?
 end
