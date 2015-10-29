@@ -1135,6 +1135,14 @@ Block styles are applied to the following block types:
 |<<colors,color>>
 |background_color: #eeeeee
 
+|sidebar_padding
+|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
+|padding: [12, 15, 12, 15]
+
+|sidebar_title_align
+|left, center, right, justify
+|title_align: center
+
 |sidebar_title_font_color
 |<<colors,color>>
 |title_font_color: #333333
@@ -1150,10 +1158,6 @@ Block styles are applied to the following block types:
 |sidebar_title_font_style
 |normal, italic, bold, bold_italic
 |title_font_style: bold
-
-|sidebar_title_align
-|left, center, right, justify
-|title_align: center
 |===
 
 === Example
