@@ -1137,7 +1137,7 @@ Block styles are applied to the following block types:
 
 |sidebar_padding
 |<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
-|padding: [12, 15, 12, 15]
+|padding: [12, 15, 0, 15]
 
 |sidebar_title_align
 |left, center, right, justify
