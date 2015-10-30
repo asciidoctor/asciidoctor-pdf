@@ -86,7 +86,8 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
     if text == EOL
       @out << { text: text }
       @start_of_line = true
-    else
+    # NOTE text is nil and kind is :error when CodeRay ends parsing on an error
+    elsif text
       # NOTE add guard character to prevent Prawn from trimming indentation
       text[0] = GuardedIndent if @start_of_line && (text.start_with? ' ')
       text.gsub! InnerIndent, GuardedInnerIndent if text.include? InnerIndent
