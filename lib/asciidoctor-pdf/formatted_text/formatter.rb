@@ -7,7 +7,7 @@ class Formatter
 
   def initialize options = {}
     @parser = MarkupParser.new
-    @transform = Transform.new merge_adjacent_text_nodes: true, theme: options[:theme]
+    @transform = Transform.new merge_adjacent_text_nodes: true, theme: options[:theme], doc: options[:doc]
   end
 
   def format string, *args

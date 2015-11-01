@@ -270,7 +270,7 @@ class Converter < ::Prawn::Document
 
     pdf_opts[:page_size] = (page_size || 'A4')
 
-    pdf_opts[:text_formatter] ||= FormattedText::Formatter.new theme: theme
+    pdf_opts[:text_formatter] ||= FormattedText::Formatter.new theme: theme, doc: self
     pdf_opts
   end
 

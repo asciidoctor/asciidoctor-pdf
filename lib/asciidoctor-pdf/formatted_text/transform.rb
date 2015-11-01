@@ -14,6 +14,7 @@ class Transform
 
   def initialize(options = {})
     @merge_adjacent_text_nodes = options[:merge_adjacent_text_nodes]
+    @doc = options[:doc]
     if (theme = options[:theme])
       @link_font_color = theme.link_font_color
       @monospaced_font_color = theme.literal_font_color
@@ -38,6 +39,8 @@ class Transform
       @monospaced_font_style = nil
       #@monospaced_letter_spacing = -0.1
     end
+    @backgrounds = {}
+    @overline = nil
   end
 
   # FIXME pass styles downwards to child elements rather than decorating on way out of hierarchy
@@ -118,6 +121,30 @@ class Transform
       end
     end
     fragments.flatten
+  end
+
+  class BackgroundCallback
+    def initialize(options)
+      @color = options[:color]
+      @document = options[:document]
+    end
+    def render_behind(fragment)
+      original_color = @document.fill_color
+      @document.fill_color = @color
+      @document.fill_rectangle(fragment.top_left,
+                               fragment.width,
+                               fragment.height)
+      @document.fill_color = original_color
+    end
+  end
+
+  class OverlineCallback
+    def initialize(options)
+      @document = options[:document]
+    end
+    def render_in_front(fragment)
+      @document.stroke_line ([fragment.top_left, fragment.top_right])
+    end
   end
 
   def build_fragment(fragment, tag_name, attrs = {})
@@ -232,6 +259,49 @@ class Transform
         end
       end
     end
+
+    colors = {
+      white: 'ffffff', silver: 'c0c0c0', gray: '808080', black: '000000',
+      red: 'ff0000', maroon: '800000', yellow: 'ffff00', olive: '808000',
+      lime: '00ff00', green: '008000', aqua: '00ffff', teal: '008080',
+      blue: '0000ff', navy: '000080', fuchsia: 'ff00ff', purple: '800080'
+    }
+    attrs.each do |key,value|
+      if key == :class
+        value.split.each do |field|
+          case field
+          when 'underline'
+            styles << :underline
+          when 'line-through'
+            styles << :strikethrough
+          when 'big'
+            fragment[:size] = @doc.font_size * 1.3
+          when 'small'
+            fragment[:size] = @doc.font_size * 0.9
+          when 'overline'
+            @overline ||= OverlineCallback.new(:document => @doc)
+            fragment[:callback] ||= []
+            fragment[:callback].push @overline
+          else
+            lcfield = field.downcase.to_sym
+            if colors[lcfield] && !fragment[:color]
+              fragment[:color] = colors[lcfield]
+            else
+              m = field.match(/(.*)-background/)
+              if (m)
+                bgcol = colors[m[1].downcase.to_sym]
+                if !@backgrounds[bgcol]
+                  @backgrounds[bgcol] = BackgroundCallback.new(:color => bgcol, :document => @doc)
+                end
+                fragment[:callback] ||= []
+                fragment[:callback].push @backgrounds[bgcol]
+              end
+            end
+          end
+        end
+      end
+    end
+
     fragment.delete(:styles) if styles.empty?
     fragment
   end
