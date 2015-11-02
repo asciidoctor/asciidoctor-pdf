@@ -5,7 +5,12 @@
 
 == TODO
 
+* upgrade prawn-svg to 0.22.1 (keep in mind minimum Ruby version is 2.0)
+* test Rouge upgrade (should address workaround we have in encoder)
+* prawn-gmagick (fixes PNG transparency issue); don't fail-fast on gif if gem is detected
+* document pdfwidth in themeing guide (currently no mention of it)
 * convert "-" in variable name in theme to underscore (e.g., $base-font-size)
+* document missing keys in theming guide for 1.5.0.beta.1
 * apply calculated theme values after loading?
 * allow "content" in place of recto_content & verso_content for running header/footer
 * allow image to span width of page (role=canvas, role=canvas-x or role=canvas-y); if role is canvas or canvas-y, then it does not consume height
@@ -14,7 +19,14 @@
   - fix SVG to a single page (check height + caption height)
 * allow background color to be set for heading
 * allow border to be set around block image
+* switch wolpertinger to howling wolf mouse
+* support arbitrary numeric entities (convert to unicode)
+* add brief mention in theming guide that deeper customizations can be achieved by extending the converter
+* allow alignment of list to be set separately from base align (and perhaps a hint in document)
 
+* *margin per heading level* (see https://github.com/asciidoctor/asciidoctor-pdf/issues/176)
+* document how to override the Ruby code to get custom styling in the theming guide
+* convenience method to check if there's enough room for another line on page
 * allow font size in theme to be specified in em or %
 * allow dynamic background image with page number in path
 * running header/footer covers content (perhaps just a limitation that needs to be documented)
@@ -79,7 +91,6 @@
   - separate running content for chapter page (by default uses normal content)
 * should we rename base_ to body_ to make it more familiar to CSS developers?
 * support !include in theme file (file issue)
-* margin per heading level (see https://github.com/asciidoctor/asciidoctor-pdf/issues/176)
 * add cover page example to chronicles so people see how to use it
 * don't orphan a single line of paragraph (send it with a buddy line)
 * implement stem support
@@ -269,3 +280,5 @@
 * https://code.google.com/p/origami-pdf/[Origami PDF: A PDF inspection library]
 * https://github.com/a1ee9b/PrintPretty[A theme for PDF designed for printing]
 * http://randomtextgenerator.com[Random Text Generator, supports multiple languages]
+* http://clagnut.com/blog/2380[List of pangrams]
+  - http://www.camcc.org/_media/reading-group/qianziwen-en.pdf[1,000 character classic (Chinese)]
