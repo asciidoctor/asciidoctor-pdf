@@ -83,7 +83,7 @@ Picking up from there, {project-name} takes the pain out of creating PDF documen
 * “Keep together” blocks (i.e., page breaks avoided in certain block content)
 * Orphan section titles avoided
 * Table border settings honored
-* Font-based icons (currently admonition blocks only)
+* Font-based icons
 * Custom fonts
 
 === Missing features
