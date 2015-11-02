@@ -1,7 +1,7 @@
 = Asciidoctor PDF
 OpenDevise Inc.; Asciidoctor Project
 
-Copyright (C) 2014 OpenDevise Inc. and the Asciidoctor Project.
+Copyright (C) 2014-2015 OpenDevise Inc. and the Asciidoctor Project.
 
 Please visit the Asciidoctor project site for more information:
 
@@ -71,6 +71,6 @@ PrawnCodeRayEncoder class::
   - https://github.com/prawnpdf/prawn
 
 Bootstrap (v3.0.3)::
-  The default theme is based on Bootstrap 3.0.3.
+  The default theme is inspired by Bootstrap 3.0.3.
 
   - http://getbootstrap.com
