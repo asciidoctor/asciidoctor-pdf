@@ -6,15 +6,16 @@ Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://g
 :idprefix:
 :idseparator: -
 :icons: font
+ifdef::env-github,env-browser[:outfilesuffix: .adoc]
 :pagenums:
-//ifdef::env-github[:relfileprefix: /blob/master/]
-ifdef::env-browser[:toc: preamble]
 //:pdf-page-size: [8.25in, 11.69in]
 //:pdf-page-size: A4
+ifdef::env-browser[:toc: preamble]
 // Aliases:
 :project-name: Asciidoctor PDF
 :project-handle: asciidoctor-pdf
 // URIs:
+//ifdef::env-github[:relfileprefix: /blob/master/]
 :uri-project: https://github.com/asciidoctor/asciidoctor-pdf
 :uri-project-repo: {uri-project}
 :uri-project-issues: {uri-project-repo}/issues
@@ -23,9 +24,6 @@ ifdef::env-browser[:toc: preamble]
 :uri-rvm: http://rvm.io
 :uri-asciidoctor: http://asciidoctor.org
 
-// NOTE Until Asciidoctor 1.5.3, it's necessary to set outfilesuffix after header and restore it at the end of the document (see last line)
-:original-outfilesuffix: {outfilesuffix}
-:outfilesuffix: .adoc
 _Lo and behold_, a native PDF converter for AsciiDoc built with {uri-asciidoctor}[Asciidoctor] and {uri-prawn}[Prawn]! +
 _No more middleman._ +
 _No more DocBook toolchain._ +
@@ -358,6 +356,3 @@ Free use of this software is granted under the terms of the MIT License.
 
 For the full text of the license, see the <<LICENSE.adoc#,LICENSE>> file.
 Refer to the <<NOTICE.adoc#,NOTICE>> file for information about third-party Open Source software in use.
-
-// FIXME Asciidoctor should be using outfilesuffix defined in header
-:outfilesuffix: {original-outfilesuffix}
