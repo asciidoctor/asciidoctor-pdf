@@ -815,14 +815,14 @@ class Converter < ::Prawn::Document
     when 'svg'
       begin
         svg_data = ::IO.read image_path
-        svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: width
+        svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: width, fallback_font_name: default_svg_font
         svg_size = svg_obj.document.sizing
         rendered_w = svg_size.output_width
         if !width && (svg_obj.document.root.attributes.key? 'width')
           # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
           if (adjusted_w = [bounds.width, rendered_w * 0.75].min) != rendered_w
             # FIXME would be nice to have a resize/recalculate method; instead, just reconstruct
-            svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: (rendered_w = adjusted_w)
+            svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: (rendered_w = adjusted_w), fallback_font_name: default_svg_font
             svg_size = svg_obj.document.sizing
           end
         end
@@ -2090,6 +2090,10 @@ class Converter < ::Prawn::Document
   def font_path font_file, fonts_dir
     # resolve relative to built-in font dir unless path is absolute
     ::File.absolute_path font_file, fonts_dir
+  end
+
+  def default_svg_font
+    @theme.svg_font_family || @theme.base_font_family
   end
 
   # QUESTION should we pass a category as an argument?
