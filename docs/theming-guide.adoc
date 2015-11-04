@@ -1578,7 +1578,9 @@ In addition, the following attributes are also available when defining the conte
 * section-title
 * section-or-chapter-title
 
-Here's an example that shows how attributes can be used in the running footer:
+You can also built-in AsciiDoc text replacements like `+(C)+` or numeric character references like `+&#169;+`.
+
+Here's an example that shows how attributes and replacements can be used in the running footer:
 
 [source,yaml]
 ----
@@ -1586,7 +1588,7 @@ header:
   height: 0.75in
   line_height: 1
   recto_content:
-    center: 'v{revnumber}, {docdate}'
+    center: '(C) ACME -- v{revnumber}, {docdate}'
   verso_content:
     center: $header_recto_content
 footer:
