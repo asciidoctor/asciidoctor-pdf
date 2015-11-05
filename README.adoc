@@ -173,6 +173,9 @@ This command is just a shorthand way of running:
 
  $ asciidoctor -r asciidoctor-pdf -b pdf basic-example.adoc
 
+The `asciidoctor-pdf` command just saves you from having to remember all those flags.
+That's why we created it.
+
 When the script completes, you should see the file [file]_basic-example.pdf_ in the same directory.
 Open the [file]_basic-example.pdf_ file with a PDF viewer to see the result.
 
