@@ -284,7 +284,7 @@ class Transform
             fragment[:callback].push @overline
           else
             lcfield = field.downcase.to_sym
-            if @colors[lcfield] && !fragment[:color]
+            if @colors[lcfield]
               fragment[:color] = @colors[lcfield]
             else
               m = field.match(/(.*)-background/)
