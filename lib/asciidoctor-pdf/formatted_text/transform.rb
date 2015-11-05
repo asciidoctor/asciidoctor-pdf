@@ -41,6 +41,12 @@ class Transform
     end
     @backgrounds = {}
     @overline = nil
+    @colors = {
+      white: 'ffffff', silver: 'c0c0c0', gray: '808080', black: '000000',
+      red: 'ff0000', maroon: '800000', yellow: 'ffff00', olive: '808000',
+      lime: '00ff00', green: '008000', aqua: '00ffff', teal: '008080',
+      blue: '0000ff', navy: '000080', fuchsia: 'ff00ff', purple: '800080'
+    }
   end
 
   # FIXME pass styles downwards to child elements rather than decorating on way out of hierarchy
@@ -260,12 +266,6 @@ class Transform
       end
     end
 
-    colors = {
-      white: 'ffffff', silver: 'c0c0c0', gray: '808080', black: '000000',
-      red: 'ff0000', maroon: '800000', yellow: 'ffff00', olive: '808000',
-      lime: '00ff00', green: '008000', aqua: '00ffff', teal: '008080',
-      blue: '0000ff', navy: '000080', fuchsia: 'ff00ff', purple: '800080'
-    }
     attrs.each do |key,value|
       if key == :class
         value.split.each do |field|
@@ -284,12 +284,12 @@ class Transform
             fragment[:callback].push @overline
           else
             lcfield = field.downcase.to_sym
-            if colors[lcfield] && !fragment[:color]
-              fragment[:color] = colors[lcfield]
+            if @colors[lcfield] && !fragment[:color]
+              fragment[:color] = @colors[lcfield]
             else
               m = field.match(/(.*)-background/)
               if (m)
-                bgcol = colors[m[1].downcase.to_sym]
+                bgcol = @colors[m[1].downcase.to_sym]
                 if !@backgrounds[bgcol]
                   @backgrounds[bgcol] = BackgroundCallback.new(:color => bgcol, :document => @doc)
                 end
