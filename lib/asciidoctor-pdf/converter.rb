@@ -194,7 +194,7 @@ class Converter < ::Prawn::Document
 
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
-    theme = ThemeLoader.load_theme doc.attr('pdf-style'), (stylesdir = (doc.attr 'pdf-stylesdir'))
+    theme = ThemeLoader.load_theme doc.attr('pdf-style'), doc.attr('pdf-stylesdir')
     @theme = theme
     pdf_opts = (build_pdf_options doc, theme)
     # QUESTION should we preserve page options (otherwise, not readily available)
