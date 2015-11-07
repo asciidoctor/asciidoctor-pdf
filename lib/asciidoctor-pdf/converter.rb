@@ -1209,7 +1209,9 @@ class Converter < ::Prawn::Document
 
     border = {}
     table_border_width = theme.table_border_width
-    [:top, :bottom, :left, :right, :cols, :rows].each {|edge| border[edge] = table_border_width }
+    [:top, :bottom, :left, :right].each {|edge| border[edge] = table_border_width }
+    # set the inner borders
+    [:cols, :rows].each {|edge| border[edge] = theme.table_border_inner_width }
 
     frame = (node.attr 'frame') || 'all'
     grid = (node.attr 'grid') || 'all'
@@ -1253,7 +1255,9 @@ class Converter < ::Prawn::Document
       cell_style: {
         padding: theme.table_cell_padding,
         border_width: 0,
-        border_color: theme.table_border_color
+        # we set the default border_color as the inner border color.
+        # the correct border_color will be set later
+        border_color: theme.table_border_inner_color
       },
       column_widths: column_widths,
       row_colors: [odd_row_bg_color, even_row_bg_color]
@@ -1275,14 +1279,18 @@ class Converter < ::Prawn::Document
           rows(0).border_bottom_width = 1.5
         end
 
-        # top edge of table
+        # top edge of table. set the border here
         rows(0).border_top_width = border[:top]
-        # right edge of table
+        rows(0).border_top_color = theme.table_border_color
+        # right edge of table. set the border here
         columns(num_cols - 1).border_right_width = border[:right]
-        # bottom edge of table
+        columns(num_cols - 1).border_right_color = theme.table_border_color
+        # bottom edge of table. set the border here
         rows(num_rows - 1).border_bottom_width = border[:bottom]
-        # left edge of table
+        rows(num_rows - 1).border_bottom_color = theme.table_border_color
+        # left edge of table. set the border here
         columns(0).border_left_width = border[:left]
+        columns(0).border_left_color = theme.table_border_color
       end
 
       # QUESTION should cell padding be configurable for foot row cells?
