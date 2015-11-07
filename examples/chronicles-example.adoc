@@ -85,7 +85,7 @@ I want my mum...and an extra-large double macchiato, please.
 
 Unfortunaly, Lazarus and I had both come to the conclusion that we weren't going to get out of this without corrupted hardrives if we didn't locate caffeine within the next few hours.
 
-=== A Recipe for Potion
+=== A Recipe for Potion That Will Ensure You Win the Hearts of Developers
 
 This potion for a sample document contains the following ingredients, which are listed in a very random, chaotically nested order.
 

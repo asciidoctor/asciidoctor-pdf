@@ -85,9 +85,9 @@ heading:
   h6_font_size: $base_font_size_small
   #line_height: 1.4
   # correct line height for Noto Serif metrics (comes with built-in line height)
-  line_height: 1.2
-  margin_top: $vertical_rhythm * 0.2
-  margin_bottom: $vertical_rhythm * 0.8
+  line_height: 1
+  margin_top: $vertical_rhythm * 0.4
+  margin_bottom: $vertical_rhythm * 0.9
 title_page:
   align: right
   logo:
