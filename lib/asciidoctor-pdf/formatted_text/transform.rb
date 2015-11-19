@@ -41,6 +41,7 @@ class Transform
     end
     @backgrounds = {}
     @overline = nil
+    @kbd = nil
     @colors = {
       white: 'ffffff', silver: 'c0c0c0', gray: '808080', black: '000000',
       red: 'ff0000', maroon: '800000', yellow: 'ffff00', olive: '808000',
@@ -150,6 +151,24 @@ class Transform
     end
     def render_in_front(fragment)
       @document.stroke_line ([fragment.top_left, fragment.top_right])
+    end
+  end
+
+  class KbdCallback
+    def initialize(options)
+      @document = options[:document]
+    end
+    def render_behind(fragment)
+      original_fill_color = @document.fill_color
+      original_stroke_color = @document.stroke_color
+      @document.stroke_color = 'e1dbc9';
+      @document.fill_color = 'f5f1de';
+      @document.fill_rounded_rectangle fragment.top_left, fragment.width,
+                                         fragment.height, fragment.height / 4
+      @document.stroke_rounded_rectangle fragment.top_left, fragment.width,
+                                         fragment.height, fragment.height / 4
+      @document.fill_color = original_fill_color;
+      @document.stroke_color = original_stroke_color;
     end
   end
 
@@ -264,6 +283,10 @@ class Transform
           end
         end
       end
+    when :kbd
+      @kbd ||= KbdCallback.new(:document => @doc)
+      fragment[:callback] ||= []
+            fragment[:callback].push @kbd
     end
 
     attrs.each do |key,value|

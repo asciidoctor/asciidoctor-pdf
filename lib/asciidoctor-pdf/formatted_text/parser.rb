@@ -191,7 +191,7 @@ module Markup
       r1 = true
       @index += match_len
     else
-      terminal_parse_failure('<')
+      terminal_parse_failure('\'<\'')
       r1 = nil
     end
     s0 << r1
@@ -215,7 +215,7 @@ module Markup
               r8 = true
               @index += match_len
             else
-              terminal_parse_failure('/')
+              terminal_parse_failure('\'/\'')
               r8 = nil
             end
             s5 << r8
@@ -238,7 +238,7 @@ module Markup
               r9 = true
               @index += match_len
             else
-              terminal_parse_failure('>')
+              terminal_parse_failure('\'>\'')
               r9 = nil
             end
             s0 << r9
@@ -297,7 +297,7 @@ module Markup
       r1 = true
       @index += match_len
     else
-      terminal_parse_failure('<')
+      terminal_parse_failure('\'<\'')
       r1 = nil
     end
     s0 << r1
@@ -312,7 +312,7 @@ module Markup
             r4 = true
             @index += match_len
           else
-            terminal_parse_failure('>')
+            terminal_parse_failure('\'>\'')
             r4 = nil
           end
           s0 << r4
@@ -349,7 +349,7 @@ module Markup
       r1 = true
       @index += match_len
     else
-      terminal_parse_failure('a')
+      terminal_parse_failure('\'a\'')
       r1 = nil
     end
     if r1
@@ -360,7 +360,7 @@ module Markup
         r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
         @index += match_len
       else
-        terminal_parse_failure('code')
+        terminal_parse_failure('\'code\'')
         r2 = nil
       end
       if r2
@@ -371,7 +371,7 @@ module Markup
           r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
           @index += match_len
         else
-          terminal_parse_failure('color')
+          terminal_parse_failure('\'color\'')
           r3 = nil
         end
         if r3
@@ -382,7 +382,7 @@ module Markup
             r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
             @index += match_len
           else
-            terminal_parse_failure('del')
+            terminal_parse_failure('\'del\'')
             r4 = nil
           end
           if r4
@@ -393,7 +393,7 @@ module Markup
               r5 = instantiate_node(SyntaxNode,input, index...(index + match_len))
               @index += match_len
             else
-              terminal_parse_failure('em')
+              terminal_parse_failure('\'em\'')
               r5 = nil
             end
             if r5
@@ -404,7 +404,7 @@ module Markup
                 r6 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                 @index += match_len
               else
-                terminal_parse_failure('font')
+                terminal_parse_failure('\'font\'')
                 r6 = nil
               end
               if r6
@@ -415,7 +415,7 @@ module Markup
                   r7 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                   @index += match_len
                 else
-                  terminal_parse_failure('span')
+                  terminal_parse_failure('\'span\'')
                   r7 = nil
                 end
                 if r7
@@ -426,7 +426,7 @@ module Markup
                     r8 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                     @index += match_len
                   else
-                    terminal_parse_failure('strong')
+                    terminal_parse_failure('\'strong\'')
                     r8 = nil
                   end
                   if r8
@@ -437,7 +437,7 @@ module Markup
                       r9 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                       @index += match_len
                     else
-                      terminal_parse_failure('sub')
+                      terminal_parse_failure('\'sub\'')
                       r9 = nil
                     end
                     if r9
@@ -448,15 +448,27 @@ module Markup
                         r10 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                         @index += match_len
                       else
-                        terminal_parse_failure('sup')
+                        terminal_parse_failure('\'sup\'')
                         r10 = nil
                       end
                       if r10
                         r10 = SyntaxNode.new(input, (index-1)...index) if r10 == true
                         r0 = r10
                       else
-                        @index = i0
-                        r0 = nil
+                        if (match_len = has_terminal?('kbd', false, index))
+                          r11 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                          @index += match_len
+                        else
+                          terminal_parse_failure('\'kbd\'')
+                          r11 = nil
+                        end
+                        if r11
+                          r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
+                          r0 = r11
+                        else
+                          @index = i0
+                          r0 = nil
+                        end
                       end
                     end
                   end
@@ -489,7 +501,7 @@ module Markup
       r1 = instantiate_node(SyntaxNode,input, index...(index + match_len))
       @index += match_len
     else
-      terminal_parse_failure('br')
+      terminal_parse_failure('\'br\'')
       r1 = nil
     end
     if r1
@@ -500,7 +512,7 @@ module Markup
         r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
         @index += match_len
       else
-        terminal_parse_failure('img')
+        terminal_parse_failure('\'img\'')
         r2 = nil
       end
       if r2
@@ -611,7 +623,7 @@ module Markup
           r4 = true
           @index += match_len
         else
-          terminal_parse_failure('=')
+          terminal_parse_failure('\'=\'')
           r4 = nil
         end
         s0 << r4
@@ -620,7 +632,7 @@ module Markup
             r5 = true
             @index += match_len
           else
-            terminal_parse_failure('"')
+            terminal_parse_failure('\'"\'')
             r5 = nil
           end
           s0 << r5
@@ -647,7 +659,7 @@ module Markup
                 r8 = true
                 @index += match_len
               else
-                terminal_parse_failure('"')
+                terminal_parse_failure('\'"\'')
                 r8 = nil
               end
               s0 << r8
@@ -699,7 +711,7 @@ module Markup
       r1 = instantiate_node(SyntaxNode,input, index...(index + match_len))
       @index += match_len
     else
-      terminal_parse_failure('</')
+      terminal_parse_failure('\'</\'')
       r1 = nil
     end
     s0 << r1
@@ -711,7 +723,7 @@ module Markup
           r3 = true
           @index += match_len
         else
-          terminal_parse_failure('>')
+          terminal_parse_failure('\'>\'')
           r3 = nil
         end
         s0 << r3
@@ -811,7 +823,7 @@ module Markup
       r1 = true
       @index += match_len
     else
-      terminal_parse_failure('&')
+      terminal_parse_failure('\'&\'')
       r1 = nil
     end
     s0 << r1
@@ -822,7 +834,7 @@ module Markup
         r4 = true
         @index += match_len
       else
-        terminal_parse_failure('#')
+        terminal_parse_failure('\'#\'')
         r4 = nil
       end
       s3 << r4
@@ -856,7 +868,7 @@ module Markup
           r7 = true
           @index += match_len
         else
-          terminal_parse_failure(';')
+          terminal_parse_failure('\';\'')
           r7 = nil
         end
         s0 << r7
@@ -909,6 +921,9 @@ module Markup
       @index = i0
       r0 = nil
     else
+      if s0.size < 4
+        terminal_failures.pop
+      end
       r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
     end
 
@@ -933,7 +948,7 @@ module Markup
       r1 = instantiate_node(SyntaxNode,input, index...(index + match_len))
       @index += match_len
     else
-      terminal_parse_failure('amp')
+      terminal_parse_failure('\'amp\'')
       r1 = nil
     end
     if r1
@@ -944,7 +959,7 @@ module Markup
         r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
         @index += match_len
       else
-        terminal_parse_failure('apos')
+        terminal_parse_failure('\'apos\'')
         r2 = nil
       end
       if r2
@@ -955,7 +970,7 @@ module Markup
           r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
           @index += match_len
         else
-          terminal_parse_failure('gt')
+          terminal_parse_failure('\'gt\'')
           r3 = nil
         end
         if r3
@@ -966,7 +981,7 @@ module Markup
             r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
             @index += match_len
           else
-            terminal_parse_failure('lt')
+            terminal_parse_failure('\'lt\'')
             r4 = nil
           end
           if r4
@@ -977,7 +992,7 @@ module Markup
               r5 = instantiate_node(SyntaxNode,input, index...(index + match_len))
               @index += match_len
             else
-              terminal_parse_failure('quot')
+              terminal_parse_failure('\'quot\'')
               r5 = nil
             end
             if r5
@@ -1014,7 +1029,7 @@ module Markup
         r1 = true
         @index += match_len
       else
-        terminal_parse_failure(' ')
+        terminal_parse_failure('\' \'')
         r1 = nil
       end
       if r1

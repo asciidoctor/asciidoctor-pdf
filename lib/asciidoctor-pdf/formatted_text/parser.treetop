@@ -51,7 +51,7 @@ grammar Markup
     # QUESTION faster to do regex?
     # QUESTION can we cut stuff we aren't using? what about supporting hr?
     #'a' / 'b' / 'code' / 'color' / 'del' / 'em' / 'font' / 'i' / 'img' / 'link' / 'span' / 'strikethrough' / 'strong' / 'sub' / 'sup' / 'u'
-    'a' / 'code' / 'color' / 'del' / 'em' / 'font' / 'span' / 'strong' / 'sub' / 'sup'
+    'a' / 'code' / 'color' / 'del' / 'em' / 'font' / 'span' / 'strong' / 'sub' / 'sup' / 'kbd'
   end
 
   rule void_tag_name

@@ -1452,9 +1452,11 @@ class Converter < ::Prawn::Document
 
   def convert_inline_kbd node
     if (keys = node.attr 'keys').size == 1
-      %(<code>#{keys[0]}</code>)
+      #%(<code>#{keys[0]}</code>)
+      %(<kbd>#{keys[0]}</kbd>)
     else
-      keys.map {|key| %(<code>#{key}</code>+) }.join.chop
+      #keys.map {|key| %(<code>#{key}</code>+) }.join.chop
+      keys.map {|key| %(<kbd>#{key}</kbd>+) }.join.chop
     end
   end
 
