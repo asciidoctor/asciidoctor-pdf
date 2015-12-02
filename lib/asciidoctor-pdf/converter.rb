@@ -1413,10 +1413,9 @@ class Converter < ::Prawn::Document
         else
           size_attr = nil
         end
-        @icon_font_data ||= ::Prawn::Icon::FontData.load self, icon_set
         begin
           # TODO support rotate and flip attributes; support fw (full-width) size
-          img = %(<font name="#{icon_set}"#{size_attr}>#{@icon_font_data.unicode icon_name}</font>)
+          img = %(<font name="#{icon_set}"#{size_attr}>#{::Prawn::Icon::FontData.load(self, icon_set).unicode icon_name}</font>)
         rescue
           warn %(asciidoctor: WARNING: #{icon_name} is not a valid icon name in the #{icon_set} icon set)
         end
