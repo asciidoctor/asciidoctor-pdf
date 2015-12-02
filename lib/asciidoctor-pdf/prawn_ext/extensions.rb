@@ -1,5 +1,7 @@
 Prawn::Font::AFM.instance_variable_set :@hide_m17n_warning, true
 
+require 'prawn/icon'
+
 module Asciidoctor
 module Prawn
 module Extensions
@@ -7,6 +9,7 @@ module Extensions
   include ::Asciidoctor::Pdf::Sanitizer
   include ::Asciidoctor::PdfCore::PdfObject
 
+  IconSets = ['fa', 'fi', 'octicon', 'pf'].to_set
   MeasurementValueRx = /(\d+|\d*\.\d+)(in|mm|cm|px|pt)?$/
 
   # - :height is the height of a line
@@ -171,11 +174,13 @@ module Extensions
   end
 
   # Enhances the built-in font method to allow the font
-  # size to be specified as the second option.
+  # size to be specified as the second option and to
+  # lazily load font-based icons.
   #
   def font name = nil, options = {}
-    if name && ::Numeric === options
-      options = { size: options }
+    if name
+      ::Prawn::Icon::FontData.load self, name if IconSets.include? name
+      options = { size: options } if ::Numeric === options
     end
     super name, options
   end

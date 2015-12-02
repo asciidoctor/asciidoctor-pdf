@@ -4,7 +4,6 @@ require 'prawn'
 require 'prawn-svg'
 require 'prawn/table'
 require 'prawn/templates'
-require 'prawn/icon'
 require_relative 'core_ext'
 require_relative 'pdf_core_ext'
 require_relative 'temporary_path'
@@ -68,7 +67,6 @@ class Converter < ::Prawn::Document
     checked: %(\u2611),
     unchecked: %(\u2610)
   }
-  IconSets = ['fa', 'fi', 'octicon', 'pf'].to_set
   MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|pt|)'
   MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|pt|)$/
   PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
