@@ -129,6 +129,11 @@ admonition:
   border_color: $base_border_color
   border_width: $base_border_width
   padding: [0, $horizontal_rhythm, 0, $horizontal_rhythm]
+#  icon:
+#    tip:
+#      name: fa-lightbulb-o
+#      stroke_color: 111111
+#      size: 24
 blockquote:
   font_color: $base_font_color
   font_size: $base_font_size_large
