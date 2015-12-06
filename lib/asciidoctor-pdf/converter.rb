@@ -1783,7 +1783,7 @@ class Converter < ::Prawn::Document
 
   def admonition_icon_data key
     if (icon_data = @theme[%(admonition_icon_#{key})])
-      AdmonitionIcons[key].merge icon_data
+      (AdmonitionIcons[key] || {}).merge icon_data
     else
       AdmonitionIcons[key]
     end
