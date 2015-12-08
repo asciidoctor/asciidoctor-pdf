@@ -2347,9 +2347,10 @@ class Converter < ::Prawn::Document
 
   # QUESTION is this method still necessary?
   def resolve_imagesdir doc
-    @imagesdir ||= begin
-      imagesdir = (doc.attr 'imagesdir', '.').chomp '/'
-      imagesdir = imagesdir == '.' ? nil : %(#{imagesdir}/)
+    if (imagesdir = doc.attr 'imagesdir').nil_or_empty? || (imagesdir = imagesdir.chomp '/') == '.'
+      nil
+    else
+      %(#{imagesdir}/)
     end
   end
 
