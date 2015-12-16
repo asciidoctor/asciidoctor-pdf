@@ -159,7 +159,7 @@ class Converter < ::Prawn::Document
     end
 
     num_front_matter_pages = page_number - 1
-    font @theme.base_font_family, size: @theme.base_font_size
+    font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
     convert_content_for_block doc
 
     # NOTE delete orphaned page (a page was created but there was no additional content)
