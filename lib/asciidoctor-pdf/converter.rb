@@ -1236,6 +1236,10 @@ class Converter < ::Prawn::Document
       table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
       even_column_pct = 100.0 / node.columns.size
       column_widths = node.columns.map {|col| ((col.attr 'colpcwidth', even_column_pct) * table_width) / 100.0 }
+      # NOTE Asciidoctor core doesn't always add colpcwidth values up to 100%
+      unless column_widths.empty? || (width_delta = table_width - column_widths.reduce(:+)).zero?
+        column_widths[-1] += width_delta
+      end
     end
 
     if ((position = node.attr 'align') && (AlignmentNames.include? position)) ||
