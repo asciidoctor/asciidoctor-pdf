@@ -5,7 +5,7 @@ page_background_color: 'FFFFFF'
 page_layout: portrait
 # 36 is equivalent to 0.5in
 page_margin: 36
-page_size: LETTER
+page_size: A4
 base_align: left
 #base_font_color: '333333'
 base_font_color: '000000'

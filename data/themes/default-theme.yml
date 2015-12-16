@@ -25,7 +25,7 @@ page:
   background_color: ffffff
   layout: portrait
   margin: [0.5in, 0.67in, 0.67in, 0.67in]
-  size: LETTER
+  size: A4
 base:
   align: justify
   # color as hex string (leading # is optional)
