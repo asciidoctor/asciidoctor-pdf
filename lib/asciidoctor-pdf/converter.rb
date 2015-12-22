@@ -336,8 +336,14 @@ class Converter < ::Prawn::Document
     add_dest_for_block node if node.id
     pad_box @theme.abstract_padding do
       theme_font :abstract do
-        # FIXME control first_line_options using theme
-        prose_opts = { line_height: @theme.abstract_line_height, first_line_options: { styles: [font_style, :bold] } }
+        prose_opts = { line_height: @theme.abstract_line_height }
+        # FIXME control more first_line_options using theme
+        if (first_line_font_style = @theme.abstract_first_line_font_style)
+          first_line_font_style = first_line_font_style.to_sym
+          if ( first_line_font_style != font_style)
+            prose_opts[:first_line_options] = { styles: [font_style, first_line_font_style] }
+          end
+        end
         # FIXME make this cleaner!!
         if node.blocks?
           node.blocks.each do |child|

@@ -125,6 +125,7 @@ abstract:
   font_size: $lead_font_size
   line_height: $lead_line_height
   font_style: italic
+  first_line_font_style: bold
 admonition:
   border_color: $base_border_color
   border_width: $base_border_width
