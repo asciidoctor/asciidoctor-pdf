@@ -338,11 +338,8 @@ class Converter < ::Prawn::Document
       theme_font :abstract do
         prose_opts = { line_height: @theme.abstract_line_height }
         # FIXME control more first_line_options using theme
-        if (first_line_font_style = @theme.abstract_first_line_font_style)
-          first_line_font_style = first_line_font_style.to_sym
-          if ( first_line_font_style != font_style)
-            prose_opts[:first_line_options] = { styles: [font_style, first_line_font_style] }
-          end
+        if (line1_font_style = @theme.abstract_first_line_font_style) && line1_font_style.to_sym != font_style
+          prose_opts[:first_line_options] = { styles: [font_style, line1_font_style.to_sym] }
         end
         # FIXME make this cleaner!!
         if node.blocks?
