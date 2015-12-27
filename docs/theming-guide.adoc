@@ -218,9 +218,9 @@ For instance, here's how you can define your (very patriotic) brand colors:
 [source,yaml]
 ----
 brand:
-  red: #E0162B
-  white: #FFFFFF
-  blue: #0052A5
+  red_color: #E0162B
+  white_color: #FFFFFF
+  blue_color: #0052A5
 ----
 
 You can now use these custom variables later in the theme file:
@@ -228,8 +228,14 @@ You can now use these custom variables later in the theme file:
 [source,yaml]
 ----
 base:
-  font_color: $brand_blue
+  font_color: $brand_blue_color
 ----
+
+IMPORTANT: You must include the suffix `_color` in the key name for colors.
+Using this convention allows the the theme loader to preprocess hex values that begin with `#` correctly.
+This preprocessing step is necessary since `#` is the comment character in YAML.
+The value would otherwise be erased.
+Only key names that end in the suffix `_color` receive this treatment.
 
 === Math expressions & functions
 
