@@ -13,7 +13,7 @@ class ThemeLoader
 
   VariableRx = /\$([a-z0-9_]+)/
   LoneVariableRx = /^\$([a-z0-9_]+)$/
-  HexColorValueRx = /[_-]color: (?<quote>"|'|)#?(?<value>[A-Za-z0-9]{3,6})\k<quote>$/
+  HexColorEntryRx = /^(?<k>[[:blank:]]*[[:graph:]]+): +(?<q>["']?)#?(?<v>\w{3,6})\k<q> *(?:#.*)?$/
   MeasurementValueRx = /(?<=^| |\()(\d+(?:\.\d+)?)(in|mm|cm|pt)(?=$| |\))/
   MultiplyDivideOpRx = /(-?\d+(?:\.\d+)?) *([*\/]) *(-?\d+(?:\.\d+)?)/
   AddSubtractOpRx = /(-?\d+(?:\.\d+)?) *([+\-]) *(-?\d+(?:\.\d+)?)/
@@ -74,7 +74,7 @@ class ThemeLoader
   end
 
   def self.load_file filename, theme_data = nil
-    raw_data = (::IO.read filename).each_line.map {|l| l.sub HexColorValueRx, '_color: \'\k<value>\'' }.join
+    raw_data = (::IO.read filename).each_line.map {|l| l.sub HexColorEntryRx, '\k<k>: \'\k<v>\'' }.join
     self.new.load((::SafeYAML.load raw_data), theme_data)
   end
 
