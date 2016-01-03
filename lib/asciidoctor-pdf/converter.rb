@@ -294,7 +294,7 @@ class Converter < ::Prawn::Document
     info[:Creator] = str2pdfval %(Asciidoctor PDF #{::Asciidoctor::Pdf::VERSION}, based on Prawn #{::Prawn::VERSION})
     info[:Producer] ||= (info[:Author] || info[:Creator])
     # FIXME use docdate attribute
-    info[:ModDate] = info[:CreationDate] = ::Time.now
+    info[:ModDate] = info[:CreationDate] = ::Time.now unless doc.attr? 'reproducible'
     info
   end
 
