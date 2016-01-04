@@ -79,6 +79,7 @@ Picking up from there, {project-name} takes the pain out of creating PDF documen
 * Page numbering
 * Customizable running content (header and footer)
 * “Keep together” blocks (i.e., page breaks avoided in certain block content)
+* Autofit verbatim blocks (as permitted by base_font_size_min setting)
 * Orphan section titles avoided
 * Table border settings honored
 * Font-based icons
