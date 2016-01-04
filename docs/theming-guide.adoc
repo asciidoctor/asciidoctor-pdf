@@ -746,6 +746,10 @@ For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file
 |<<values,number>>
 |font_size_small: 9
 
+|base_font_size_min
+|<<values,number>>
+|font_size_small: 6
+
 |base_font_style
 |normal, italic, bold, bold_italic
 |font_style: normal
