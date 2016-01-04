@@ -102,7 +102,7 @@ If you need to use Asciidoctor PDF with Ruby 1.9.3, you must first install Prawn
 You can then proceed with installation of Asciidoctor PDF.
 ====
 
-To check you have Ruby available, use the `ruby` command to query the version installed:
+To check if you have Ruby available, use the `ruby` command to query the version installed:
 
  $ ruby --version
 
@@ -112,10 +112,10 @@ You can get {project-name} by <<install-the-published-gem,installing the publish
 
 === Install the published gem
 
-{project-name} is published in pre-release on RubyGems.org.
+{project-name} is published as a pre-release on RubyGems.org.
 You can install the published gem using the following command:
 
- $ gem install --pre asciidoctor-pdf
+ $ gem install asciidoctor-pdf --pre
  
 If you want to syntax highlight source listings, you'll also want to install CodeRay, Rouge or Pygments.
 Choose one (or more) of the following:
@@ -129,7 +129,7 @@ Choose one (or more) of the following:
 .Pygments
  $ gem install pygments.rb
  
-You then activate syntax highlighting for a given document by adding the following attribute to the document header (CodeRay shown):
+You then activate syntax highlighting for a given document by adding the `source-highlighter` attribute to the document header (CodeRay shown):
 
 [source,asciidoc]
 ----
@@ -288,7 +288,7 @@ You can retrieve the source of {project-name} in one of two ways:
 
 ==== Option 1: Fetch using git clone
 
-If you want to clone the git repository, simply copy the {uri-project-repo}[GitHub repository URL] and pass it to `git clone` command:
+If you want to clone the git repository, simply copy the {uri-project-repo}[GitHub repository URL] and pass it to the `git clone` command:
 
  $ git clone https://github.com/asciidoctor/asciidoctor-pdf
 
@@ -316,7 +316,7 @@ We like RVM because it keeps the dependencies required by various projects isola
 The dependencies needed to use {project-name} are defined in the [file]_Gemfile_ at the root of the project.
 We can use Bundler to install the dependencies for us.
 
-To check you have Bundler available, use the `bundle` command to query the version installed:
+To check you have Bundler available, use the `bundle` command to query the installed version:
 
  $ bundle --version
 
