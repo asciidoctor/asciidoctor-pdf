@@ -5,6 +5,7 @@
 
 == TODO
 
+* replace explicit char ranges with classes in regexp (e.g., [[:word:]] or \w)
 * upgrade prawn-svg to 0.22.1 (keep in mind minimum Ruby version is 2.0)
 * test Rouge upgrade (should address workaround we have in encoder)
 * prawn-gmagick (fixes PNG transparency issue); don't fail-fast on gif if gem is detected
@@ -23,6 +24,10 @@
 * support arbitrary numeric entities (convert to unicode)
 * add brief mention in theming guide that deeper customizations can be achieved by extending the converter
 * allow alignment of list to be set separately from base align (and perhaps a hint in document)
+* due to order of loading, getting warnings when redefining methods in Asciidoctor core
+* prawn-pdfimage https://github.com/packetmonkey/prawn-pdfimage
+* rename ThemeLoader to ThemeReader?
+* document autofit option on verbatim blocks
 
 * *margin per heading level* (see https://github.com/asciidoctor/asciidoctor-pdf/issues/176)
 * document how to override the Ruby code to get custom styling in the theming guide
@@ -55,6 +60,7 @@
 * allow valign to be set on image block (vertical center in page for things like slides)
 * separate theme control for listing vs literal block (and maybe source too)
 * allow title page image "bottom" to be set instead of "top" (mutually exclusive)
+* rtl (see ./sandbox/rtl/ folder)
 
 * rewrite optimize-pdf using rghost
   - add Optimizer class; wire to cli
