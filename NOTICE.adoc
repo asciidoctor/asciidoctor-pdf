@@ -1,7 +1,7 @@
 = Asciidoctor PDF
 OpenDevise Inc.; Asciidoctor Project
 
-Copyright (C) 2014-2015 OpenDevise Inc. and the Asciidoctor Project.
+Copyright (C) 2014-2016 OpenDevise Inc. and the Asciidoctor Project.
 
 Please visit the Asciidoctor project site for more information:
 
