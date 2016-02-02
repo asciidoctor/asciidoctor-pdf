@@ -1607,7 +1607,7 @@ In addition, the following attributes are also available when defining the conte
 * section-title
 * section-or-chapter-title
 
-You can also built-in AsciiDoc text replacements like `+(C)+` or numeric character references like `+&#169;+`.
+You can also built-in AsciiDoc text replacements like `+(C)+`, numeric character references like `+&#169;+` and inline formatting (e.g., bold, italic, monospace).
 
 Here's an example that shows how attributes and replacements can be used in the running footer:
 
