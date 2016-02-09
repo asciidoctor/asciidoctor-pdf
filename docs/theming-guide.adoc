@@ -703,7 +703,7 @@ TBW
 |margin: [0.5in, 0.67in, 0.67in, 0.67in]
 
 |page_size
-|named size, <<measurement-units,measurement array [width, height]>>
+|https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[named size^], <<measurement-units,measurement array [width, height]>>
 |size: Letter
 |===
 
