@@ -477,6 +477,11 @@ title_page:
 You can select from <<built-in-afm-fonts,built-in PDF fonts>>, <<bundled-fonts,fonts bundled with Asciidoctor PDF>> or <<custom-fonts,custom fonts>> loaded from TrueType font (TTF) files.
 If you want to use custom fonts, you must first declare them in your theme file.
 
+IMPORTANT: Asciidoctor has no challenge working with Unicode.
+In fact, it prefers Unicode and considers the whole range.
+However, once you convert to PDF, you have to meet the font requirements of PDF in order to preserve Unicode characters.
+There's nothing Asciidoctor can do to convince PDF to work without the right fonts in play.
+
 === Built-in (AFM) fonts
 
 The names of the built-in fonts (for general-purpose text) are as follows:
