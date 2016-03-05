@@ -1733,3 +1733,9 @@ However, in the future, this may change so that paths are resolved relative to t
 Therefore, it's recommend that you specify absolute paths for now to future-proof your configuration.
 
   $ asciidoctor-pdf -a pdf-stylesdir=/path/to/resources/themes -a pdf-style=basic -a pdf-fontsdir=/path/to/resources/fonts
+
+////
+== Resources (for extending Asciidoctor PDF)
+
+* http://www.sitepoint.com/hackable-pdf-typesetting-in-ruby-with-prawn[Hackable PDF typesetting in Ruby with Prawn]
+////
