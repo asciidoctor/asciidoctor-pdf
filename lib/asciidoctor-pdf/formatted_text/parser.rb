@@ -901,7 +901,7 @@ module Markup
       else
         break
       end
-      if s0.size == 4
+      if s0.size == 5
         break
       end
     end
