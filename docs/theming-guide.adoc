@@ -1734,6 +1734,12 @@ Therefore, it's recommend that you specify absolute paths for now to future-proo
 
   $ asciidoctor-pdf -a pdf-stylesdir=/path/to/resources/themes -a pdf-style=basic -a pdf-fontsdir=/path/to/resources/fonts
 
+As usual, you can also use build tools like Maven and Gradle to build a themed PDF.
+The only thing you need to add to an existing build is the attributes mentioned above.
+
+* https://github.com/asciidoctor/asciidoctor-maven-examples/tree/master/asciidoctor-pdf-with-theme-example[Maven Example]
+* https://github.com/asciidoctor/asciidoctor-gradle-examples/tree/master/asciidoc-to-pdf-with-theme-example[Gradle Example]
+
 ////
 == Resources (for extending Asciidoctor PDF)
 
