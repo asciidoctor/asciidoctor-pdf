@@ -17,6 +17,7 @@ Topics remaining to document:
 The theming system in Asciidoctor PDF is used to control the layout and styling of the PDF file that Asciidoctor PDF generates from AsciiDoc.
 The theme is driven by a YAML-based configuration file.
 This document explains how the theming system works, how to define a custom theme and how to enable the theme when running Asciidoctor PDF.
+Please note if you are using a custom theme, you are expected to override some of these sections below (in particular fonts, otherwise PDF fonts will be used).
 
 toc::[]
 
