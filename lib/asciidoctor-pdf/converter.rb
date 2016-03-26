@@ -817,8 +817,7 @@ class Converter < ::Prawn::Document
       begin
         svg_data = ::IO.read image_path
         svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: width, fallback_font_name: default_svg_font
-        svg_size = svg_obj.document.sizing
-        rendered_w = svg_size.output_width
+        rendered_w = (svg_size = svg_obj.document.sizing).output_width
         if !width && (svg_obj.document.root.attributes.key? 'width')
           # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
           if (adjusted_w = [bounds.width, rendered_w * 0.75].min) != rendered_w
