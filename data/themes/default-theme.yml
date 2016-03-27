@@ -25,6 +25,9 @@ page:
   background_color: ffffff
   layout: portrait
   margin: [0.5in, 0.67in, 0.67in, 0.67in]
+  # margin_inner and margin_outer keys are used for recto/verso print margins when media=press
+  margin_inner: 0.75in
+  margin_outer: 0.59in
   size: A4
 base:
   align: justify

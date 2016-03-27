@@ -41,6 +41,7 @@ class Converter < ::Prawn::Document
   AlignmentNames = ['left', 'center', 'right']
   AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
   ColumnPlacements = [:left, :center, :right]
+  PageSides = [:recto, :verso]
   LF = %(\n)
   DoubleLF = %(\n\n)
   TAB = %(\t)
@@ -133,8 +134,13 @@ class Converter < ::Prawn::Document
     end
     #assign_missing_section_ids doc
 
-    # NOTE the on_page_create callback is called within a float context
+    # NOTE on_page_create is called within a float context
+    # NOTE on_page_create is not called for imported pages, front and back cover pages, and other image pages
     on_page_create do
+      # NOTE we assume here that physical page number reflects page side
+      if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_side]) != page_margin
+        set_page_margin next_page_margin
+      end
       # TODO implement as a watermark (on top)
       if @page_bg_image
         # FIXME implement fitting and centering for SVG
@@ -151,18 +157,18 @@ class Converter < ::Prawn::Document
     # NOTE a new page will already be started if the cover image is a PDF
     start_new_page unless page_is_empty?
 
-    toc_start_page_num = page_number
     num_toc_levels = (doc.attr 'toclevels', 2).to_i
     if (include_toc = doc.attr? 'toc')
-      toc_page_nums = ()
-      dry_run do
-        toc_page_nums = layout_toc doc, num_toc_levels, 1
-      end
-      # NOTE reserve pages for the toc
-      toc_page_nums.each do
-        start_new_page
-      end
+      start_new_page if @ppbook && verso_page?
+      toc_page_nums = page_number
+      dry_run { toc_page_nums = layout_toc doc, num_toc_levels, toc_page_nums }
+      # NOTE reserve pages for the toc; leaves cursor on page after last page in toc
+      toc_page_nums.each { start_new_page }
     end
+
+    # FIXME only apply to book doctype once title and toc are moved to start page when using article doctype
+    #start_new_page if @ppbook && verso_page?
+    start_new_page if @media == 'prepress' && verso_page?
 
     num_front_matter_pages = page_number - 1
     font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
@@ -174,11 +180,7 @@ class Converter < ::Prawn::Document
     # QUESTION should we delete page if document is empty? (leaving no pages?)
     delete_page if page_is_empty? && page_count > 1
 
-    toc_page_nums = if include_toc
-      layout_toc doc, num_toc_levels, toc_start_page_num, num_front_matter_pages
-    else
-      (0..-1)
-    end
+    toc_page_nums = include_toc ? (layout_toc doc, num_toc_levels, toc_page_nums.first, num_front_matter_pages) : []
 
     if page_count > num_front_matter_pages
       layout_running_content :header, doc, skip: num_front_matter_pages unless doc.noheader
@@ -201,17 +203,32 @@ class Converter < ::Prawn::Document
 
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
-    theme = ThemeLoader.load_theme((doc.attr 'pdf-style'), (doc.attr 'pdf-stylesdir'))
-    @theme = theme
+    @theme = theme = ThemeLoader.load_theme((doc.attr 'pdf-style'), (doc.attr 'pdf-stylesdir'))
     pdf_opts = build_pdf_options doc, theme
     # QUESTION should page options be preserved (otherwise, not readily available)
     #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
     ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
+    @page_margin_by_side = { recto: page_margin, verso: page_margin }
+    if (@media = doc.attr 'media', 'screen') == 'prepress'
+      @ppbook = doc.doctype == 'book'
+      page_margin_recto = @page_margin_by_side[:recto]
+      if (page_margin_outer = theme.page_margin_outer)
+        page_margin_recto[1] = @page_margin_by_side[:verso][3] = page_margin_outer
+      end
+      if (page_margin_inner = theme.page_margin_inner)
+        page_margin_recto[3] = @page_margin_by_side[:verso][1] = page_margin_inner
+      end
+      # NOTE prepare scratch document to use page margin from recto side
+      set_page_margin page_margin_recto unless page_margin_recto == page_margin
+    else
+      @ppbook = false
+    end
     # QUESTION should ThemeLoader register fonts?
     register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
-    @page_bg_image = nil
-    if (bg_image = resolve_background_image doc, theme, 'page-background-image')
-      @page_bg_image = (bg_image == 'none' ? nil : bg_image)
+    if (bg_image = resolve_background_image doc, theme, 'page-background-image') && bg_image != 'none'
+      @page_bg_image = bg_image
+    else
+      @page_bg_image = nil
     end
     @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
     @fallback_fonts = [*theme.font_fallbacks]
@@ -325,10 +342,10 @@ class Converter < ::Prawn::Document
         start_new_page unless at_page_top? || cursor > (height_of title) + @theme.heading_margin_top + @theme.heading_margin_bottom + (@theme.base_line_height_length * 1.5)
       end
       # QUESTION should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
-      sect.set_attr 'pdf-page-start', (start_page_num = page_number)
+      sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
       # QUESTION should we just assign the section this generated id?
       # NOTE section must have pdf-anchor in order to be listed in the TOC
-      sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_page_num}-#{y.ceil}))
+      sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_pgnum}-#{y.ceil}))
       add_dest_for_block sect, sect_anchor
       if type == :part
         layout_part_title sect, title, align: align
@@ -1438,7 +1455,7 @@ class Converter < ::Prawn::Document
       end
       #attrs << %( title="#{node.attr 'title'}") if node.attr? 'title'
       attrs << %( target="#{node.attr 'window'}") if node.attr? 'window', nil, false
-      if (((doc = node.document).attr? 'media', 'print') || (doc.attr? 'show-link-uri')) && !(node.has_role? 'bare')
+      if (@media != 'screen' || (node.document.attr? 'show-link-uri')) && !(node.has_role? 'bare')
         # TODO allow style of visible link to be controlled by theme
         %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> <font size="0.9em">[#{target}]</font>)
       else
@@ -1625,6 +1642,7 @@ class Converter < ::Prawn::Document
     end
     # NOTE a new page will already be started if the cover image is a PDF
     start_new_page unless page_is_empty?
+    start_new_page if @ppbook && verso_page?
     @page_bg_image = prev_bg_image if bg_image
     @page_bg_color = prev_bg_color if bg_color
 
@@ -1729,10 +1747,9 @@ class Converter < ::Prawn::Document
       if (cover_image.include? ':') && cover_image =~ ImageAttributeValueRx
         cover_image = resolve_image_path doc, $1
       end
-      # QUESTION should we go to page 1 when face == :front?
       go_to_page page_count if face == :back
       if cover_image.downcase.end_with? '.pdf'
-        # NOTE import_page automatically advances to next page afterwards
+        # NOTE import_page automatically advances to next page afterwards (can we change this behavior?)
         import_page cover_image, advance: face != :back
       else
         image_page cover_image, canvas: true
@@ -1847,6 +1864,7 @@ class Converter < ::Prawn::Document
     end
   end
 
+  # NOTE num_front_matter_pages is not used during a dry run
   def layout_toc doc, num_levels = 2, toc_page_number = 2, num_front_matter_pages = 0
     go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
     start_page_number = page_number
@@ -1887,17 +1905,17 @@ class Converter < ::Prawn::Document
           # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
           go_to_page start_page_number if start_page_number != end_page_number
           move_cursor_to start_cursor
-          sect_page_num = (sect.attr 'pdf-page-start') - num_front_matter_pages
+          sect_explicit_pgnum = (sect.attr 'pdf-page-start') - num_front_matter_pages
           spacer_width = (width_of NoBreakSpace) * 0.75
           # FIXME this calculation will be wrong if a style is set per level
-          num_dots = ((bounds.width - (width_of %(#{sect_title}#{sect_page_num}), inline_format: true) - spacer_width) / dot_width).floor
+          num_dots = ((bounds.width - (width_of %(#{sect_title}#{sect_explicit_pgnum}), inline_format: true) - spacer_width) / dot_width).floor
           num_dots = 0 if num_dots < 0
           # FIXME dots don't line up if width of page numbers differ
           typeset_formatted_text [
             { text: %(#{(@theme.toc_dot_leader_content || DotLeaderDefault) * num_dots}), color: toc_dot_color },
             # FIXME this spacing doesn't always work out; should we use graphics instead?
             { text: NoBreakSpace, size: (@font_size * 0.5) },
-            { text: sect_page_num.to_s, anchor: sect_anchor, color: @font_color }], line_metrics, align: :right
+            { text: sect_explicit_pgnum.to_s, anchor: sect_anchor, color: @font_color }], line_metrics, align: :right
           go_to_page end_page_number if start_page_number != end_page_number
           move_cursor_to end_cursor
         end
@@ -1972,7 +1990,7 @@ class Converter < ::Prawn::Document
     doc.set_attr 'page-count', num_pages
 
     # TODO move this to a method so it can be reused; cache results
-    content_dict = [:recto, :verso].inject({}) do |acc, side|
+    content_dict = PageSides.inject({}) do |acc, side|
       side_content = {}
       ColumnPlacements.each do |placement|
         if (val = @theme[%(#{position}_#{side}_#{placement}_content)])
@@ -2006,8 +2024,6 @@ class Converter < ::Prawn::Document
       # NOTE height is required atm
       trim_height = @theme.header_height || page_margin_top
       trim_padding = @theme.header_padding || [0, 0, 0, 0]
-      trim_left = page_margin_left
-      trim_width = page_width - trim_left - page_margin_right
       trim_bg_color = resolve_theme_color :header_background_color
       trim_border_width = @theme.header_border_width || @theme.base_border_width
       trim_border_style = (@theme.header_border_style || :solid).to_sym
@@ -2019,8 +2035,6 @@ class Converter < ::Prawn::Document
       # NOTE height is required atm
       trim_top = trim_height = @theme.footer_height || page_margin_bottom
       trim_padding = @theme.footer_padding || [0, 0, 0, 0]
-      trim_left = page_margin_left
-      trim_width = page_width - trim_left - page_margin_right
       trim_bg_color = resolve_theme_color :footer_background_color
       trim_border_width = @theme.footer_border_width || @theme.base_border_width
       trim_border_style = (@theme.footer_border_style || :solid).to_sym
@@ -2029,10 +2043,27 @@ class Converter < ::Prawn::Document
       trim_img_valign = @theme.footer_image_vertical_align
     end
 
-    trim_stamp = position.to_s
-    trim_content_left = trim_left + trim_padding[3]
+    trim_stamp_name = {
+      recto: %(#{position}_recto),
+      verso: %(#{position}_verso)
+    }
+    trim_left = {
+      recto: @page_margin_by_side[:recto][3],
+      verso: @page_margin_by_side[:verso][3]
+    }
+    trim_width = {
+      recto: page_width - trim_left[:recto] - @page_margin_by_side[:recto][1],
+      verso: page_width - trim_left[:verso] - @page_margin_by_side[:verso][1]
+    }
+    trim_content_left = {
+      recto: trim_left[:recto] + trim_padding[3],
+      verso: trim_left[:verso] + trim_padding[3]
+    }
+    trim_content_width = {
+      recto: trim_width[:recto] - trim_padding[3] - trim_padding[1],
+      verso: trim_width[:verso] - trim_padding[3] - trim_padding[1]
+    }
     trim_content_height = trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom
-    trim_content_width = trim_width - trim_padding[3] - trim_padding[1]
     trim_border_color = nil if trim_border_width == 0
     trim_valign = :center if trim_valign == :middle
     case trim_img_valign
@@ -2044,7 +2075,8 @@ class Converter < ::Prawn::Document
       trim_img_valign = trim_img_valign.to_sym
     end
 
-    colspec_dict = [:recto, :verso].inject({}) do |acc, side|
+    colspec_dict = PageSides.inject({}) do |acc, side|
+      side_trim_content_width = trim_content_width[side]
       if (custom_colspecs = @theme[%(#{position}_#{side}_columns)])
         colspecs = %w(<40% =20% >40%)
         (custom_colspecs.tr ',', ' ').split[0..2].each_with_index {|c, idx| colspecs[idx] = c }
@@ -2059,8 +2091,8 @@ class Converter < ::Prawn::Document
             pcwidth = spec.to_f
           end
           # QUESTION should we allow the columns to overlap (capping width at 100%)?
-          if (w = trim_content_width * (pcwidth / 100.0)) + cml_width > trim_content_width
-            w = trim_content_width - cml_width
+          if (w = side_trim_content_width * (pcwidth / 100.0)) + cml_width > side_trim_content_width
+            w = side_trim_content_width - cml_width
           end
           cml_width += w
           [col, { align: alignment, width: w, x: 0 }]
@@ -2069,9 +2101,9 @@ class Converter < ::Prawn::Document
         acc[side] = side_colspecs
       else
         acc[side] = {
-          left: { align: :left, width: trim_content_width, x: 0 },
-          center: { align: :center, width: trim_content_width, x: 0 },
-          right: { align: :right, width: trim_content_width, x: 0 }
+          left: { align: :left, width: side_trim_content_width, x: 0 },
+          center: { align: :center, width: side_trim_content_width, x: 0 },
+          right: { align: :right, width: side_trim_content_width, x: 0 }
         }
       end
       acc
@@ -2081,22 +2113,24 @@ class Converter < ::Prawn::Document
       # NOTE switch to first content page so stamp will get created properly (can't create on imported page)
       prev_page_number = page_number
       go_to_page start
-      create_stamp trim_stamp do
-        canvas do
-          if trim_bg_color
-            bounding_box [0, trim_top], width: bounds.width, height: trim_height do
-              fill_bounds trim_bg_color
-              if trim_border_color
+      PageSides.each do |side|
+        create_stamp trim_stamp_name[side] do
+          canvas do
+            if trim_bg_color
+              bounding_box [0, trim_top], width: bounds.width, height: trim_height do
+                fill_bounds trim_bg_color
+                if trim_border_color
+                  # TODO stroke_horizontal_rule should support :at
+                  move_down bounds.height if position == :header
+                  stroke_horizontal_rule trim_border_color, line_width: trim_border_width, line_style: trim_border_style
+                end
+              end
+            else
+              bounding_box [trim_left[side], trim_top], width: trim_width[side], height: trim_height do
                 # TODO stroke_horizontal_rule should support :at
                 move_down bounds.height if position == :header
                 stroke_horizontal_rule trim_border_color, line_width: trim_border_width, line_style: trim_border_style
               end
-            end
-          else
-            bounding_box [trim_left, trim_top], width: trim_width, height: trim_height do
-              # TODO stroke_horizontal_rule should support :at
-              move_down bounds.height if position == :header
-              stroke_horizontal_rule trim_border_color, line_width: trim_border_width, line_style: trim_border_style
             end
           end
         end
@@ -2110,23 +2144,25 @@ class Converter < ::Prawn::Document
     repeat (start..page_count), dynamic: true do
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
-      visual_pgnum = page_number - skip
+      explicit_pgnum = page_number - skip
+      # QUESTION should we respect physical page number or just look at the content page number?
+      side = page_side explicit_pgnum
       # FIXME we need to have a content setting for chapter pages
-      content_by_placement = content_dict[side = visual_pgnum.odd? ? :recto : :verso]
+      content_by_placement = content_dict[side]
       colspec_by_placement = colspec_dict[side]
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
       # FIXME leave page-number attribute unset once we filter lines with unresolved attributes (see below)
-      doc.set_attr 'page-number', (pagenums_enabled ? visual_pgnum : '')
-      doc.set_attr 'chapter-title', (chapters_by_page[visual_pgnum] || '')
-      doc.set_attr 'section-title', (sections_by_page[visual_pgnum] || '')
-      doc.set_attr 'section-or-chapter-title', (sections_by_page[visual_pgnum] || chapters_by_page[visual_pgnum] || '')
+      doc.set_attr 'page-number', (pagenums_enabled ? explicit_pgnum : '')
+      doc.set_attr 'chapter-title', (chapters_by_page[explicit_pgnum] || '')
+      doc.set_attr 'section-title', (sections_by_page[explicit_pgnum] || '')
+      doc.set_attr 'section-or-chapter-title', (sections_by_page[explicit_pgnum] || chapters_by_page[explicit_pgnum] || '')
 
-      stamp trim_stamp if @stamps[position]
+      stamp trim_stamp_name[side] if @stamps[position]
 
       theme_font position do
         canvas do
-          bounding_box [trim_content_left, trim_top], width: trim_content_width, height: trim_height do
+          bounding_box [trim_content_left[side], trim_top], width: trim_content_width[side], height: trim_height do
             ColumnPlacements.each do |placement|
               next unless (content = content_by_placement[placement])
               next unless (colspec = colspec_by_placement[placement])[:width] > 0
@@ -2146,7 +2182,7 @@ class Converter < ::Prawn::Document
                 end
               when ::String
                 if content == '{page-number}'
-                  content = pagenums_enabled ? visual_pgnum.to_s : nil
+                  content = pagenums_enabled ? explicit_pgnum.to_s : nil
                 else
                   # FIXME get apply_subs to handle drop-line w/o a warning
                   doc.set_attr 'attribute-missing', 'skip' unless attribute_missing_doc == 'skip'
@@ -2176,44 +2212,26 @@ class Converter < ::Prawn::Document
     nil
   end
 
-  # FIXME we are assuming we always have exactly one title page
-  def add_outline doc, num_levels = 2, toc_page_nums = (0..-1), num_front_matter_pages = 0
+  def add_outline doc, num_levels = 2, toc_page_nums = [], num_front_matter_pages = 0
     front_matter_counter = RomanNumeral.new 0, :lower
-
     page_num_labels = {}
 
-    # FIXME account for cover page
-    # cover page (i)
-    #front_matter_counter.next!
-
-    # title page (i)
-    # TODO same conditional logic as in layout_title_page; consolidate
-    if doc.header? && !doc.notitle
-      page_num_labels[0] = { P: ::PDF::Core::LiteralString.new(front_matter_counter.next!.to_s) }
-    end
-
-    # toc pages (ii..?)
-    toc_page_nums.each do
+    num_front_matter_pages.times do
       page_num_labels[front_matter_counter.to_i] = { P: ::PDF::Core::LiteralString.new(front_matter_counter.next!.to_s) }
     end
 
-    # credits page
-    #page_num_labels[front_matter_counter.to_i] = { P: ::PDF::Core::LiteralString.new(front_matter_counter.next!.to_s) }
-
-    # number of front matter pages aside from the document title to skip in page number index
-    numbering_offset = front_matter_counter.to_i - 1
+    # placeholder for first page of content, in case it's not the destination of an outline entry
+    page_num_labels[front_matter_counter.to_i] = { P: ::PDF::Core::LiteralString.new('1') }
 
     outline.define do
       # FIXME use sanitize: :plain_text once available
       if (doctitle = document.sanitize(doc.doctitle use_fallback: true))
+        # FIXME link to title page if there's a cover page (skip cover page and ensuing blank page)
         page title: doctitle, destination: (document.dest_top 1)
       end
-      if doc.attr? 'toc'
-        page title: (doc.attr 'toc-title'), destination: (document.dest_top toc_page_nums.first)
-      end
-      #page title: 'Credits', destination: (document.dest_top toc_page_nums.first + 1)
+      page title: (doc.attr 'toc-title'), destination: (document.dest_top toc_page_nums.first) if toc_page_nums.first
       # QUESTION any way to get add_outline_level to invoke in the context of the outline?
-      document.add_outline_level self, doc.sections, num_levels, page_num_labels, numbering_offset, num_front_matter_pages
+      document.add_outline_level self, doc.sections, num_levels, page_num_labels, num_front_matter_pages
     end
 
     catalog.data[:PageLabels] = state.store.ref Nums: page_num_labels.flatten
@@ -2222,17 +2240,17 @@ class Converter < ::Prawn::Document
   end
 
   # TODO only nest inside root node if doctype=article
-  def add_outline_level outline, sections, num_levels, page_num_labels, numbering_offset, num_front_matter_pages
+  def add_outline_level outline, sections, num_levels, page_num_labels, num_front_matter_pages
     sections.each do |sect|
       sect_title = sanitize sect.numbered_title formal: true
       sect_destination = sect.attr 'pdf-destination'
-      sect_page_num = (sect.attr 'pdf-page-start') - num_front_matter_pages
-      page_num_labels[sect_page_num + numbering_offset] = { P: ::PDF::Core::LiteralString.new(sect_page_num.to_s) }
+      sect_explicit_pgnum = (sect_pgnum = sect.attr 'pdf-page-start') - num_front_matter_pages
+      page_num_labels[sect_pgnum - 1] = { P: ::PDF::Core::LiteralString.new(sect_explicit_pgnum.to_s) }
       if (subsections = sect.sections).empty? || sect.level == num_levels
         outline.page title: sect_title, destination: sect_destination
       elsif sect.level < num_levels + 1
         outline.section sect_title, { destination: sect_destination } do
-          add_outline_level outline, subsections, num_levels, page_num_labels, numbering_offset, num_front_matter_pages
+          add_outline_level outline, subsections, num_levels, page_num_labels, num_front_matter_pages
         end
       end
     end
@@ -2666,7 +2684,7 @@ class Converter < ::Prawn::Document
     # IMPORTANT don't set font before using Marshal, it causes serialization to fail
     @prototype = ::Marshal.load ::Marshal.dump self
     @prototype.state.store.info.data[:Scratch] = true
-    # we're now starting a new page each time, so no need to do it here
+    # NOTE we're now starting a new page each time, so no need to do it here
     #@prototype.start_new_page if @prototype.page_number == 0
   end
 

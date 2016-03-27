@@ -788,6 +788,16 @@ See <<Title Page>> for details.
 |page:
   margin: [0.5in, 0.67in, 1in, 0.67in]
 
+|margin_inner^[3]^
+|<<measurement-units,Measurement>>
+|page:
+  margin_inner: 0.75in
+
+|margin_outer^[3]^
+|<<measurement-units,Measurement>>
+|page:
+  margin_outer: 0.59in
+
 |size
 |https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width,height]>> +
 (default: A4)
@@ -800,6 +810,8 @@ This limitation is due to a bug in Prawn 1.3.1.
 The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgrade that is waiting on AsciidoctorJ to migrate to JRuby 9000).
 For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
 . Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
+. The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin_inner and margin_outer values.
+These margins and used when the document attribute `media` has the value `prepress`.
 
 === Base
 
@@ -2350,7 +2362,7 @@ The keys in this category control the arrangement and style of running header an
 |===
 
 . The background color spans the width of the page, as does the border when a background color is specified.
-. `<side>` can be `recto` (right-hand, odd pages) or `verso` (left-hand, even pages).
+. `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
 . `<placement>` can be `left`, `center` or `right`.
 
 IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
@@ -2533,16 +2545,20 @@ These settings override equivalent keys defined in the theme file, where applica
 |inline image macro (target is relative to `imagesdir`; can be image or PDF file)
 |+:front-cover-image: image:front-cover.pdf[]+
 
+|media
+|screen {vbar} print {vbar} prepress
+|:media: prepress
+
 |pagenums^[2]^
 |flag (default: _set_)
 |:pagenums:
 
 //|pdf-page-layout
-//|portrait, landscape
+//|portrait {vbar} landscape
 //|:pdf-page-layout: landscape
 
 |pdf-page-size
-|https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[named size^], <<measurement-units,measurement dimensions>> (width x height)
+|https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width, height]>>
 |:pdf-page-size: 6in x 9in
 
 |title-logo-image
@@ -2553,6 +2569,55 @@ These settings override equivalent keys defined in the theme file, where applica
 . `<face>` can be `front` or `back`.
 . Controls whether the `page-number` attribute is accessible to the running header and footer content specified in the theme file.
 Use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively, from the document.
+
+== Publishing Mode
+
+Asciidoctor PDF supports the following features to accommodate publishing:
+
+* Double-sided (mirror) page margins
+* Facing pages
+
+These features are activated when you set the `media` attribute to `prepress` in the header of your AsciiDoc document, the CLI, or the API.
+The following sections describe the behaviors this setting enables.
+
+=== Double-Sided Page Margins
+
+The page margins for the recto (right-hand, odd-numbered) and verso (left-hand, even-numbered) pages are automatically calculated by replacing the side margins in the value of the `page_margin` key with the value of the `page_margin_inner` and `page_margin_outer` keys.
+
+For example, let's assume you've defined the following settings in your theme:
+
+[source,yaml]
+----
+margin: [0.5in, 0.67in, 0.67in, 0.67in]
+margin_inner: 0.75in
+margin_outer: 0.59in
+----
+
+The page margins for the recto and verso pages will be as follows:
+
+recto page margin:: [0.5in, *0.59in*, 0.67in, *0.75in*]
+verso page margin:: [0.5in, *0.75in*, 0.67in, *0.59in*]
+
+The page margins alternate between recto and verso.
+The first page in the document is a recto page.
+
+=== Facing Pages
+
+If a document uses the book doctype, a blank page will be inserted, if necessary, to ensure the following pages are recto-facing pages:
+
+* Title page
+* Table of contents
+* First page of body content
+
+Other facing pages may be added in the future.
+
+For documents that use the article doctype, Asciidoctor PDF incorrectly places the document title and table of contents on their own pages, respectively.
+This can result in the page numbering and the page facing to be out of sync.
+As a workaround, Asciidoctor PDF inserts a blank page, if necessary, to ensure the following pages are recto-facing pages:
+
+* First page of body content
+
+You can check on the status of this defect by following https://github.com/asciidoctor/asciidoctor-pdf/issues/95[issue #95].
 
 ////
 == Resources for Extending Asciidoctor PDF

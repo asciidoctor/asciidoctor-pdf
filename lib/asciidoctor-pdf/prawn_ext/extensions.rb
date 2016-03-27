@@ -11,6 +11,7 @@ module Extensions
 
   IconSets = ['fa', 'fi', 'octicon', 'pf'].to_set
   MeasurementValueRx = /(\d+|\d*\.\d+)(in|mm|cm|px|pt)?$/
+  InitialPageContent = %(q\n)
 
   # - :height is the height of a line
   # - :leading is spacing between adjacent lines
@@ -53,6 +54,20 @@ module Extensions
     reference_bounds.height
   end
 
+  # Set the margins for the current page.
+  #
+  def set_page_margin margin
+    # FIXME is there a cleaner way to set margins? does it make sense to override create_new_page?
+    apply_margin_options margin: margin
+    generate_margin_box
+  end
+
+  # Returns the margins for the current page as a 4 element array (top, right, bottom, left)
+  #
+  def page_margin
+    [page.margins[:top], page.margins[:right], page.margins[:bottom], page.margins[:left]]
+  end
+
   # Returns the width of the left margin for the current page
   #
   def page_margin_left
@@ -93,20 +108,38 @@ module Extensions
     page.dimensions[2] - bounds.absolute_right
   end
 
-  # Returns whether the cursor is at the top of the page (i.e., margin box)
+  # Returns the side the current page is facing, :recto or :verso.
+  #
+  def page_side pgnum = nil
+    (recto_page? pgnum) ? :recto : :verso
+  end
+
+  # Returns whether the page is a recto page.
+  #
+  def recto_page? pgnum = nil
+    (pgnum || page_number).odd?
+  end
+
+  # Returns whether the page is a verso page.
+  #
+  def verso_page? pgnum = nil
+    (pgnum || page_number).even?
+  end
+
+  # Returns whether the cursor is at the top of the page (i.e., margin box).
   #
   def at_page_top?
     @y == @margin_box.absolute_top
   end
 
-  # Returns whether the current page is empty (no content is written).
-  # If at least one page has not yet been created, returns false.
+  # Returns whether the current page is empty (i.e., no content has been written).
+  # Returns false if a page has not yet been created.
   #
   def empty_page?
     # if we are at the page top, assume we didn't write anything to the page
     #at_page_top?
-    # ...or use low-level check (initial value is "q\n")
-    (page.content.stream || []).length <= 2 && page_number > 0
+    # ...or use more robust, low-level check (initial value of content is "q\n")
+    page_number > 0 && page.content.stream.filtered_stream == InitialPageContent
   end
   alias :page_is_empty? :empty_page?
 
@@ -799,7 +832,7 @@ module Extensions
 =begin
   def run_with_trial &block
     available_space = cursor
-    whole_pages, remainder = dry_run(&block)
+    total_height, whole_pages, remainder = dry_run(&block)
     if whole_pages > 0 || remainder > available_space
       started_new_page = true
     else
