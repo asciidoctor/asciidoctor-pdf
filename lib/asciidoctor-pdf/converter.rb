@@ -939,6 +939,12 @@ class Converter < ::Prawn::Document
       Helpers.require_library 'pygments', 'pygments.rb' unless defined? ::Pygments
       lexer = ::Pygments::Lexer[node.attr 'language', 'text', false] || ::Pygments::Lexer['text']
       pygments_config = { nowrap: true, noclasses: true, style: (node.document.attr 'pygments-style') || 'pastie' }
+      # TODO enable once we support background color on spans
+      #if node.attr? 'highlight', nil, false
+      #  unless (hl_lines = node.resolve_lines_to_highlight(node.attr 'highlight', nil, false)).empty?
+      #    pygments_config[:hl_lines] = hl_lines * ' '
+      #  end
+      #end
       source_string, conum_mapping = extract_conums source_string
       result = lexer.highlight source_string, options: pygments_config
       fragments = guard_indentation text_formatter.format result
