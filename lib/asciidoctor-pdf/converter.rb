@@ -816,13 +816,13 @@ class Converter < ::Prawn::Document
     when 'svg'
       begin
         svg_data = ::IO.read image_path
-        svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: width, fallback_font_name: default_svg_font
+        svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: width, fallback_font_name: default_svg_font, enable_file_requests_with_root: File.dirname(image_path)
         rendered_w = (svg_size = svg_obj.document.sizing).output_width
         if !width && (svg_obj.document.root.attributes.key? 'width')
           # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
           if (adjusted_w = [bounds.width, rendered_w * 0.75].min) != rendered_w
             # FIXME would be nice to have a resize/recalculate method; instead, just reconstruct
-            svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: (rendered_w = adjusted_w), fallback_font_name: default_svg_font
+            svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: (rendered_w = adjusted_w), fallback_font_name: default_svg_font, enable_file_requests_with_root: File.dirname(image_path)
             svg_size = svg_obj.document.sizing
           end
         end
