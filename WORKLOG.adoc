@@ -5,6 +5,18 @@
 
 == TODO
 
+* recto/verso margins
+  - account differences in top/bottom margins on recto/verso pages in running header/footer
+  - dry runs need to reflect current recto/verso margins; situation can get complex if they differ
+  - get import_page to stop adding an extra page
+  - blank page after title page if media=print
+
+* allow top as alternative to margin_top for all elements on title page
+* add feature to number bullets according to section number
+* swallowing exceptions! (any use of e.message in a string is dangerous)
+* allow ordered list marker to be prefixed by section number (a global setting?)
+* conum not aligned vertically with callout text (perhaps too small?)
+* table should expand to 100% if "spread" role is set
 * replace explicit char ranges with classes in regexp (e.g., [[:word:]] or \w)
 * upgrade prawn-svg to 0.22.1 (keep in mind minimum Ruby version is 2.0)
 * test Rouge upgrade (should address workaround we have in encoder)
@@ -28,6 +40,8 @@
 * prawn-pdfimage https://github.com/packetmonkey/prawn-pdfimage
 * rename ThemeLoader to ThemeReader?
 * document autofit option on verbatim blocks
+* document how to extend the converter, use Prawn
+* using tabs instead of spaces for source code indentation allows leading whitespace to be preserved when copying
 
 * *margin per heading level* (see https://github.com/asciidoctor/asciidoctor-pdf/issues/176)
 * document how to override the Ruby code to get custom styling in the theming guide
@@ -55,6 +69,7 @@
 * rework pull request for source line numbers (combine with restore conum logic if conums are enabled)
   - also combine with the preserve_space logic
 * allow front cover and back cover image to be defined in theme; document in theming-guide
+* should we shorted the keys to front-cover and back-cover (since image is implied?)
 * keep caption with table (check for sufficient space)
 * allow caption placement for table to be configurable (top vs bottom)
 * allow valign to be set on image block (vertical center in page for things like slides)
@@ -102,6 +117,7 @@
 * implement stem support
 * fail gracefully if theme file cannot be found
 * expose theme variable on document (attr_reader?)
+* nested unordered list items should use different marker
 * dedicated style for top/bottom margin of outline list
   - allow margin top and bottom to be set for lists (applies to outer-most list)
   - allow spacing between nested lists levels be configured in theme
@@ -288,3 +304,4 @@
 * http://randomtextgenerator.com[Random Text Generator, supports multiple languages]
 * http://clagnut.com/blog/2380[List of pangrams]
   - http://www.camcc.org/_media/reading-group/qianziwen-en.pdf[1,000 character classic (Chinese)]
+* pdf2svg can convert the PDF file into an SVG (one SVG per page)
