@@ -315,7 +315,7 @@ class Converter < ::Prawn::Document
       sect.set_attr 'page_start', page_number
       # NOTE auto-generate an anchor if one doesn't exist so TOC works
       # QUESTION should we just assign the section this generated id?
-      sect.set_attr 'anchor', (sect_anchor = sect.id || %(section-#{page_number}-#{dest_y.ceil}))
+      sect.set_attr 'anchor', (sect_anchor = sect.id || %(__autoid-#{page_number}-#{y.ceil}))
       add_dest_for_block sect, sect_anchor
       sect.chapter? ? (layout_chapter_title sect, title) : (layout_heading title)
     end
