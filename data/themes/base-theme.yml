@@ -81,8 +81,6 @@ sidebar_title_align: center
 sidebar_title_font_style: bold
 table_border_color: '000000'
 table_border_width: 0.5
-table_border_inner_width: 0.5
-table_border_inner_color: '000000'
 table_cell_padding: 2
 table_head_font_style: bold
 thematic_break_border_color: 'EEEEEE'
