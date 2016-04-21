@@ -1412,6 +1412,16 @@ The prefix (e.g., `fa-`) determines which font set to use.
 |<<values,number>>
 |border_width: 0.5
 
+|table_grid_color
+|<<colors,color>> +
+(default: value of table_border_color)
+|grid_color: #eeeeee
+
+|table_grid_width
+|<<values,number>> +
+(default: value of table_grid_color)
+|grid_width: 0.5
+
 |table_cell_padding
 |<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
 |cell_padding: [3, 3, 6, 3]
