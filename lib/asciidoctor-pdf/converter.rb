@@ -1214,8 +1214,11 @@ class Converter < ::Prawn::Document
     end
 
     border = {}
+    table_border_color = theme.table_border_color
     table_border_width = theme.table_border_width
-    [:top, :bottom, :left, :right, :cols, :rows].each {|edge| border[edge] = table_border_width }
+    table_grid_width = theme.table_grid_width || theme.table_border_width
+    [:top, :bottom, :left, :right].each {|edge| border[edge] = table_border_width }
+    [:cols, :rows].each {|edge| border[edge] = table_grid_width }
 
     frame = (node.attr 'frame') || 'all'
     grid = (node.attr 'grid') || 'all'
@@ -1263,7 +1266,8 @@ class Converter < ::Prawn::Document
       cell_style: {
         padding: theme.table_cell_padding,
         border_width: 0,
-        border_color: theme.table_border_color
+        # NOTE the border color of edges is set later
+        border_color: theme.table_grid_color || theme.table_border_color
       },
       column_widths: column_widths,
       row_colors: [odd_row_bg_color, even_row_bg_color]
@@ -1275,6 +1279,7 @@ class Converter < ::Prawn::Document
     table table_data, table_settings do
       if grid == 'none' && frame == 'none'
         if table_header
+          # FIXME allow header border bottom width to be set by theme
           rows(0).border_bottom_width = 1.5
         end
       else
@@ -1282,17 +1287,33 @@ class Converter < ::Prawn::Document
         cells.border_width = [border[:rows], border[:cols], border[:rows], border[:cols]]
 
         if table_header
+          # FIXME allow header border bottom width to be set by theme
           rows(0).border_bottom_width = 1.5
+          # QUESTION should we use the table border color for the bottom border color of the header row?
+          #rows(0).border_bottom_color = table_border_color
+          #rows(1).border_top_width = 0 if row_length > 1
         end
 
         # top edge of table
-        rows(0).border_top_width = border[:top]
+        rows(0).tap do |r|
+          r.border_top_width = border[:top]
+          r.border_top_color = table_border_color
+        end
         # right edge of table
-        columns(num_cols - 1).border_right_width = border[:right]
+        columns(num_cols - 1).tap do |r|
+          r.border_right_width = border[:right]
+          r.border_right_color = table_border_color
+        end
         # bottom edge of table
-        rows(num_rows - 1).border_bottom_width = border[:bottom]
+        rows(num_rows - 1).tap do |r|
+          r.border_bottom_width = border[:bottom]
+          r.border_bottom_color = table_border_color
+        end
         # left edge of table
-        columns(0).border_left_width = border[:left]
+        columns(0).tap do |r|
+          r.border_left_width = border[:left]
+          r.border_left_color = table_border_color
+        end
       end
 
       # QUESTION should cell padding be configurable for foot row cells?
