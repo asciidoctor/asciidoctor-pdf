@@ -1999,10 +1999,10 @@ class Converter < ::Prawn::Document
               when ::Hash
                 # NOTE image placement respects padding; use negative image_vertical_align value to revert
                 trim_v_padding = trim_padding[0] + trim_padding[2]
-                # NOTE bounding_box is redundant if trim_v_padding is 0
-                bounding_box [0, cursor - trim_padding[0]], width: bounds.width, height: (bounds.height - trim_v_padding) do
-                  # NOTE float ensures cursor position is restored and returns us to current page if we overrun
-                  float do
+                # NOTE float ensures cursor position is restored and returns us to current page if we overrun
+                float do
+                  # NOTE bounding_box is redundant if trim_v_padding is 0
+                  bounding_box [0, cursor - trim_padding[0]], width: bounds.width, height: (bounds.height - trim_v_padding) do
                     #image content[:path], vposition: trim_img_valign, position: align, width: content[:width]
                     # NOTE use :fit to prevent image from overflowing page (at the cost of scaling it)
                     image content[:path], vposition: trim_img_valign, position: align, fit: [content[:width], bounds.height]
