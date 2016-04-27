@@ -917,61 +917,117 @@ The literal key is used for inline monospaced text in prose and table cells.
 |path (absolute or relative to pdf-stylesdir)
 |+background_image: image:title.png[]+
 
+|title_page_font_color
+|<<colors,color>>
+|font_color: #333333
+
+|title_page_font_family
+|<<fonts,font family name>>
+|font_family: Noto Serif
+
+|title_page_font_size
+|<<values,number>>
+|font_size: $base_font_size_large
+
+|title_page_font_style
+|normal, italic, bold, bold_italic
+|font_style: bold
+
 |title_page_logo_align
 |left, center, right
 |logo_align: right
 
 |title_page_logo_image
 |inline image macro
-|+logo_image: image:logo.png[scaledwidth=25%]+
+|+logo_image: image:logo.png[pdfwidth=25%]+
 
 |title_page_logo_top
 |percentage
 |logo_top: 25%
 
-|title_page_title_top
-|percentage
-|title_top: 55%
+|title_page_title_font_color
+|<<colors,color>>
+|font_color: #999999
+
+|title_page_title_font_family
+|<<fonts,font family name>>
+|font_family: Noto Serif
 
 |title_page_title_font_size
 |<<values,number>>
-|title_font_size: 27
+|font_size: $heading_h1_font_size
 
-|title_page_title_font_color
-|<<colors,color>>
-|title_font_color: #999999
+|title_page_title_font_style
+|normal, italic, bold, bold_italic
+|font_style: bold
 
 |title_page_title_line_height
 |<<values,number>>
-|title_line_height: 0.9
+|line_height: 0.9
+
+|title_page_title_top
+|percentage
+|top: 55%
+
+|title_page_subtitle_font_color
+|<<colors,color>>
+|font_color: #181818
+
+|title_page_subtitle_font_family
+|<<fonts,font family name>>
+|font_family: Noto Serif
 
 |title_page_subtitle_font_size
 |<<values,number>>
-|subtitle_font_size: 18
+|font_size: $heading_h3_font_size
 
 |title_page_subtitle_font_style
 |normal, italic, bold, bold_italic
-|subtitle_font_style: bold_italic
+|font_style: bold_italic
 
 |title_page_subtitle_line_height
 |<<values,number>>
-|subtitle_line_height: 1
-
-|title_page_authors_margin_top
-|<<measurement-units,measurement>>
-|authors_margin_top: 13.125
-
-|title_page_authors_font_size
-|<<values,number>>
-|authors_font_size: $base_font_size_large
+|line_height: 1
 
 |title_page_authors_font_color
 |<<colors,color>>
-|authors_font_color: #181818
+|font_color: #181818
+
+|title_page_authors_font_family
+|<<fonts,font family name>>
+|font_family: Noto Serif
+
+|title_page_authors_font_size
+|<<values,number>>
+|font_size: $base_font_size_large
+
+|title_page_authors_font_style
+|normal, italic, bold, bold_italic
+|font_style: bold_italic
+
+|title_page_authors_margin_top
+|<<measurement-units,measurement>>
+|margin_top: 13.125
+
+|title_page_revision_font_color
+|<<colors,color>>
+|font_color: #181818
+
+|title_page_revision_font_family
+|<<fonts,font family name>>
+|font_family: Noto Serif
+
+|title_page_revision_font_size
+|<<values,number>>
+|font_size: $base_font_size_small
+
+|title_page_revision_font_style
+|normal, italic, bold, bold_italic
+|font_style: bold
 
 |title_page_revision_margin_top
 |<<measurement-units,measurement>>
-|revision_margin_top: 13.125
+|margin_top: 13.125
 |===
 
 TIP: The title page can be disabled from the document by setting the `notitle` attribute in the document header.
