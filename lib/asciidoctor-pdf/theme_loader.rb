@@ -14,7 +14,7 @@ class ThemeLoader
   VariableRx = /\$([a-z0-9_]+)/
   LoneVariableRx = /^\$([a-z0-9_]+)$/
   HexColorEntryRx = /^(?<k>[[:blank:]]*[[:graph:]]+): +(?<q>["']?)#?(?<v>\w{3,6})\k<q> *(?:#.*)?$/
-  MeasurementValueRx = /(?<=^| |\()(\d+(?:\.\d+)?)(in|mm|cm|pt)(?=$| |\))/
+  MeasurementValueRx = /(?<=^| |\()(-?\d+(?:\.\d+)?)(in|mm|cm|pt)(?=$| |\))/
   MultiplyDivideOpRx = /(-?\d+(?:\.\d+)?) *([*\/]) *(-?\d+(?:\.\d+)?)/
   AddSubtractOpRx = /(-?\d+(?:\.\d+)?) *([+\-]) *(-?\d+(?:\.\d+)?)/
   PrecisionFuncRx = /^(round|floor|ceil)\(/
@@ -128,25 +128,22 @@ class ThemeLoader
   def evaluate_math expr
     return expr if !(::String === expr) || ColorValue === expr
     original = expr
-    # FIXME quick HACK to turn a single negative number into an expression
-    expr = %(1 - #{expr[1..-1]}) if expr.start_with? '-'
     # expand measurement values (e.g., 0.5in)
+    # QUESTION should we round the value? perhaps leave that to the precision functions
+    # NOTE leave % as a string; handled by converter for now
     expr = expr.gsub(MeasurementValueRx) {
       # TODO extract to_pt method and use it here
       val = $1.to_f
       case $2
       when 'in'
-        val = val * 72
+        val * 72
       when 'mm'
-        val = val * (72 / 25.4)
+        val * (72 / 25.4)
       when 'cm'
-        val = val * (720 / 25.4)
-      #when '%'
-      #  val = val / 100.0
-      # default is pt
+        val * (720 / 25.4)
+      else
+        val # default unit is pt
       end
-      # QUESTION should we round the value?
-      val
     }
     while true
       result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
