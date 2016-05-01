@@ -15,6 +15,9 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 :window: _blank
+// Aliases:
+:conum-guard-yaml: #
+ifndef::icons[:conum-guard-yaml: # #]
 
 ////
 Topics remaining to document:
@@ -228,12 +231,12 @@ If you are going to do this, it's recommended that you organize the keys under a
 
 For instance, here's how you can define your brand colors:
 
-[source,yaml]
+[source,yaml,subs=attributes+]
 ----
 brand:
-  primary: #E0162B # <1>
-  secondary: '#FFFFFF' # <2>
-  alert: '0052A5' # <3>
+  primary: #E0162B {conum-guard-yaml} <1>
+  secondary: '#FFFFFF' {conum-guard-yaml} <2>
+  alert: '0052A5' {conum-guard-yaml} <3>
 ----
 <1> To align with CSS, you may add a `+#+` in front of the hex color value.
 A YAML preprocessor is used to ensure the value is not treated as a comment as it would normally be the case in YAML.
@@ -1745,11 +1748,11 @@ It cannot be combined with text.
 
 Here's an example of how to use an image in the running header (which also applies for the footer).
 
-[source,yaml]
+[source,yaml,subs=attributes+]
 ----
 header:
   height: 0.75in
-  image_vertical_align: 2 # <1>
+  image_vertical_align: 2 {conum-guard-yaml} <1>
   recto_content:
     center: image:footer-logo.png[width=80]
   verso_content:
