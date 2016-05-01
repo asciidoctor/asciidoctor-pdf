@@ -1569,7 +1569,7 @@ class Converter < ::Prawn::Document
       logo_image_attrs['align'] ||= (@theme.title_page_logo_align || title_align.to_s)
       logo_image_top = (logo_image_attrs['top'] || @theme.title_page_logo_top)
       # FIXME delegate to method to convert page % to y value
-      logo_image_top = [(page_height - page_height * (logo_image_top.to_i / 100.0)), bounds.absolute_top].min
+      logo_image_top = [(page_height - page_height * (logo_image_top.to_f / 100.0)), bounds.absolute_top].min
       float do
         @y = logo_image_top
         # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
@@ -1585,7 +1585,7 @@ class Converter < ::Prawn::Document
       doctitle = doc.doctitle partition: true
       if (title_top = @theme.title_page_title_top)
         # FIXME delegate to method to convert page % to y value
-        @y = [(page_height - page_height * (title_top.to_i / 100.0)), bounds.absolute_top].min
+        @y = [(page_height - page_height * (title_top.to_f / 100.0)), bounds.absolute_top].min
       end
       move_down (@theme.title_page_title_margin_top || 0)
       theme_font :title_page_title do
