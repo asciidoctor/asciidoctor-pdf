@@ -1,9 +1,19 @@
 = Asciidoctor PDF Theming Guide
-Dan Allen <https://github.com/mojavelinux>
-:toc: macro
-:icons: font
+Dan Allen <https://github.com/mojavelinux[@mojavelinux]>
+// Settings:
 :idprefix:
 :idseparator: -
+:toc: preamble
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:outfilesuffix: .adoc
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
 :window: _blank
 
 ////
