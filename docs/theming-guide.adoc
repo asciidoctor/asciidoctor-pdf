@@ -18,16 +18,18 @@ endif::[]
 
 ////
 Topics remaining to document:
-* document which attributes can be set in document (pdf-page-size, front-cover-image, back-cover-image, etc)
+* document which attributes can be set in document (pdf-page-size, front-cover-image, back-cover-image, etc) (issue #428)
 * line height and line height length (and what that all means)
 * title page layout / title page images (logo & background)
 * document that unicode escape sequences can be used inside double-quoted strings
 ////
 
-The theming system in Asciidoctor PDF is used to control the layout and styling of the PDF file that Asciidoctor PDF generates from AsciiDoc.
-The theme is driven by a YAML-based configuration file.
-This document explains how the theming system works, how to define a custom theme and how to enable the theme when running Asciidoctor PDF.
-Please note if you are using a custom theme, you are expected to override some of these sections below (in particular fonts, otherwise PDF fonts will be used).
+[.lead]
+The theming system in Asciidoctor PDF is used to control the layout and styling of the PDF file Asciidoctor PDF generates from AsciiDoc.
+This document describes how the theming system works, how to define a custom theme in YAML and how to activate the theme when running Asciidoctor PDF.
+
+IMPORTANT: If you're using a custom theme, you're expected to override some of keys described in the sections below, in particular fonts.
+If you don't define your own fonts, the built-in PDF fonts will be used.
 
 toc::[]
 
@@ -1672,7 +1674,7 @@ IMPORTANT: You must define a height for the running header or footer, respective
 
 TIP: The running header and footer can be disabled from the document by setting the `noheader` and the `nofooter` attributes, respectively, in the document header.
 
-NOTE: If content is not specified for the running footer, the page number (i.e., `+{page-number}+`) will be shown on the left side on verso pages and the right side on recto pages.
+NOTE: If content is not specified for the running footer, the page number (i.e., `\{page-number}`) will be shown on the left side on verso pages and the right side on recto pages.
 
 NOTE: The background color spans the width of the page.
 When a background color is specified, the border also spans the width of the page.
@@ -1714,7 +1716,7 @@ footer:
 
 You can split the content value across multiple lines using YAML's multiline string syntax.
 In this case, the single quotes around the string are not necessary.
-To force a hard line break in the output, add [x-]+{space}{plus}+ to the end of the line in normal AsciiDoc fashion.
+To force a hard line break in the output, add `{sp}+` to the end of the line in normal AsciiDoc fashion.
 
 [source,yaml]
 ----
