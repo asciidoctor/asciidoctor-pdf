@@ -240,6 +240,8 @@ base:
 === Math expressions & functions
 
 The theme language supports basic math operations to support calculated values.
+Like programming languages, multiple and divide take precedence over add and subtract.
+
 The following table lists the supported operations and the corresponding operator for each.
 
 [%header%autowidth]
@@ -259,9 +261,8 @@ The following table lists the supported operations and the corresponding operato
 |-
 |===
 
-NOTE: Like programming languages, multiple and divide take precedence over add and subtract.
+IMPORTANT: The operator must always be surrounded by a space on either side (e.g., `2 + 2`).
 
-The operator must always be surrounded by a space on either side.
 Here's an example of a math expression with fixed values.
 
 [source,yaml]
