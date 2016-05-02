@@ -276,7 +276,7 @@ The following table lists the supported operations and the corresponding operato
 |-
 |===
 
-IMPORTANT: The operator must always be surrounded by a space on either side (e.g., `2 + 2`).
+IMPORTANT: The operator must always be surrounded by a space on either side (e.g., 2 + 2 and not 2+2).
 
 Here's an example of a math expression with fixed values.
 
