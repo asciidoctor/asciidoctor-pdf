@@ -86,17 +86,23 @@ class ThemeLoader
   private
 
   def process_entry key, val, data
-    if key.start_with? 'admonition_icon_'
+    if key.start_with? 'font_'
+      data[key] = val
+    elsif key.start_with? 'admonition_icon_'
       data[key] = (val || {}).map do |(key2, val2)|
-        static_val2 = evaluate val2, data
-        [key2.to_sym, (key2.end_with? '_color') ? to_color(static_val2) : static_val2]
+        [key2.to_sym, (key2.end_with? '_color') ? to_color(evaluate val2, data) : (evaluate val2, data)]
       end.to_h
-    elsif key != 'font_catalog' && ::Hash === val
+    elsif ::Hash === val
       val.each do |key2, val2|
         process_entry %(#{key}_#{key2.tr '-', '_'}), val2, data
       end
+    elsif key.end_with? '_color'
+      # QUESTION do we need to evaluate_math in this case?
+      data[key] = to_color(evaluate val, data)
+    elsif %(#{key.chomp '_'}_).include? '_content_'
+      data[key] = expand_vars val, data
     else
-      data[key] = (key.end_with? '_color') ? to_color(evaluate val, data) : (evaluate val, data)
+      data[key] = evaluate val, data
     end
     data
   end
