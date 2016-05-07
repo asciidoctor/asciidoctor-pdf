@@ -3,7 +3,7 @@ module Pdf
 module FormattedText
 class Formatter
   FormattingSnifferPattern = /[<&]/
-  EOL = "\n"
+  WHITESPACE = " \t\n"
 
   def initialize options = {}
     @parser = MarkupParser.new
@@ -12,7 +12,7 @@ class Formatter
 
   def format string, *args
     options = args[0] || {}
-    string = string.tr_s(EOL, ' ') if options[:normalize]
+    string = string.tr_s(WHITESPACE, ' ') if options[:normalize]
     return [text: string] unless string.match(FormattingSnifferPattern)
     if (parsed = @parser.parse(string))
       @transform.apply(parsed.content)
