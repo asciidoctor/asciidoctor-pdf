@@ -93,6 +93,10 @@ See <<WORKLOG.adoc#,WORKLOG>>.
 
 All that's needed is Ruby (1.9.3 or above; 2.2.x recommended) and a few Ruby gems, which we explain how to install in the next section.
 
+To check if you have Ruby available, use the `ruby` command to query the version installed:
+
+ $ ruby --version
+
 [WARNING]
 ====
 Prawn 2.0.0 and above requires Ruby >= 2.0.0 at installation (though it still works with Ruby 1.9.3 once you get beyond installation).
@@ -103,9 +107,18 @@ If you need to use Asciidoctor PDF with Ruby 1.9.3, you must first install Prawn
 You can then proceed with installation of Asciidoctor PDF.
 ====
 
-To check if you have Ruby available, use the `ruby` command to query the version installed:
+=== System encoding
 
- $ ruby --version
+Asciidoctor assumes you're using UTF-8 encoding.
+To minimize encoding problems, make sure the default encoding of your system is set to UTF-8.
+
+If you're using a non-English Windows environment, the default encoding of your system may not be UTF-8.
+As a result, you may get an `Encoding::UndefinedConversionError` or other encoding issues when invoking Asciidoctor.
+To solve these problems, we recommend at least changing the active code page in your console to UTF-8.
+
+ chcp 65001
+
+Once you make this change, all your Unicode headaches will be behind you.
 
 == Getting started
 
