@@ -1707,7 +1707,7 @@ header:
   recto_content:
     center: '(C) ACME -- v{revnumber}, {docdate}'
   verso_content:
-    center: $header_recto_content
+    center: $header_recto_content_center
 footer:
   height: 0.75in
   line_height: 1
