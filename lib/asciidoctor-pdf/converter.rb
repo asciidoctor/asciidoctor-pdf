@@ -299,9 +299,9 @@ class Converter < ::Prawn::Document
   end
 
   def convert_section sect, opts = {}
-    heading_level = sect.level + 1
-    theme_font :heading, level: heading_level do
+    theme_font :heading, level: (h_level = sect.level + 1) do
       title = sect.numbered_title formal: true
+      align = (@theme[%(heading_h#{h_level}_align)] || @theme.heading_align || :left).to_sym
       unless at_page_top?
         if sect.chapter?
           start_new_chapter sect
@@ -317,7 +317,7 @@ class Converter < ::Prawn::Document
       # QUESTION should we just assign the section this generated id?
       sect.set_attr 'anchor', (sect_anchor = sect.id || %(__autoid-#{page_number}-#{y.ceil}))
       add_dest_for_block sect, sect_anchor
-      sect.chapter? ? (layout_chapter_title sect, title) : (layout_heading title)
+      sect.chapter? ? (layout_chapter_title sect, title, align: align) : (layout_heading title, align: align)
     end
 
     convert_content_for_block sect
@@ -327,8 +327,9 @@ class Converter < ::Prawn::Document
 
   def convert_floating_title node
     add_dest_for_block node if node.id
-    theme_font :heading, level: (node.level + 1) do
-      layout_heading node.title
+    # QUESTION should we decouple styles from section titles?
+    theme_font :heading, level: (h_level = node.level + 1) do
+      layout_heading node.title, align: (@theme[%(heading_h#{h_level}_align)] || @theme.heading_align || :left).to_sym
     end
   end
 
@@ -1657,8 +1658,8 @@ class Converter < ::Prawn::Document
     start_new_page
   end
 
-  def layout_chapter_title node, title
-    layout_heading title
+  def layout_chapter_title node, title, opts = {}
+    layout_heading title, opts
   end
 
   # QUESTION why doesn't layout_heading set the font??
@@ -1746,7 +1747,7 @@ class Converter < ::Prawn::Document
     go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
     start_page_number = page_number
     theme_font :heading, level: 2 do
-      layout_heading doc.attr('toc-title')
+      layout_heading doc.attr('toc-title'), align: (@theme.toc_title_align || :left).to_sym
     end
     # QUESTION shouldn't we skip this whole method if num_levels == 0?
     if num_levels > 0
