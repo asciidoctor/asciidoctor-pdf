@@ -868,6 +868,10 @@ The literal key is used for inline monospaced text in prose and table cells.
 |===
 |Key |Value Type |Example
 
+|heading_align
+|left, center, right, justify
+|align: center
+
 |heading_font_color
 |<<colors,color>>
 |font_color: #333333
@@ -883,6 +887,10 @@ The literal key is used for inline monospaced text in prose and table cells.
 |heading_font_style
 |normal, italic, bold, bold_italic
 |font_style: bold
+
+|heading_h<n>_align^[1]^
+|left, center, right, justify
+|h2_align: center
 
 |heading_h<n>_font_color^[1]^
 |<<colors,color>>
@@ -1545,6 +1553,10 @@ The prefix (e.g., `fa-`) determines which font set to use.
 |toc_margin_top
 |<<measurement-units,measurement>>
 |indent: 20
+
+|toc_title_align
+|left, center, right, justify
+|align: center
 |===
 
 === Running header & footer
