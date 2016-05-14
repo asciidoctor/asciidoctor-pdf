@@ -699,7 +699,7 @@ It's best to select fonts that have all the characters you need.
 
 == Keys
 
-TBW
+// TODO write an intro
 
 === Page
 
@@ -1834,6 +1834,49 @@ The only thing you need to add to an existing build is the attributes mentioned 
 
 * https://github.com/asciidoctor/asciidoctor-maven-examples/tree/master/asciidoctor-pdf-with-theme-example[Maven Example]
 * https://github.com/asciidoctor/asciidoctor-gradle-examples/tree/master/asciidoc-to-pdf-with-theme-example[Gradle Example]
+
+== Theme-related document attributes
+
+There are various settings in the theme you control using document attributes.
+These settings override equivalent keys defined in the theme file, where applicable.
+
+[cols="2,3,6m"]
+|===
+|Attribute |Value Type |Example
+
+|autofit-option
+|flag (default: _not set_)
+|:autofit-option:
+
+|chapter-label
+|string (default: Chapter)
+|:chapter-label: Chapter
+
+|<face>-cover-image
+|inline image macro (target is relative to `imagesdir`; can be image or PDF file)
+|+:front-cover-image: image:front-cover.pdf[]+
+
+|pagenums^[2]^
+|flag (default: _set_)
+|:pagenums:
+
+//|pdf-page-layout
+//|portrait, landscape
+//|:pdf-page-layout: landscape
+
+|pdf-page-size
+|https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[named size^], <<measurement-units,measurement dimensions>> (width x height)
+|:pdf-page-size: 6in x 9in
+
+|title-logo-image
+|inline image macro (path is relative to `imagesdir`; can be image or PDF file)
+|+:title-logo-image: image:logo.png[top=25%, align=center, pdfwidth=0.5in]+
+|===
+
+^[1]^ `<face>` can be `front` or `back`.
+
+^[2]^ Controls whether the `page-number` attribute is accessible to the running header and footer content specified in the theme file.
+Use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively, from the document.
 
 ////
 == Resources (for extending Asciidoctor PDF)
