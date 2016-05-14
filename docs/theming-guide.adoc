@@ -703,7 +703,8 @@ This section lists all the keys that are available when creating a custom theme.
 The keys are organized by category.
 Each category represents a common prefix under which the keys are typically nested.
 
-TIP: While the keys can be partioned and nested wherever an underscore (`_`) appears in the name, this nested structure is flatted when the theme is loaded.
+TIP: Keys can be partioned and nested wherever an underscore (`_`) appears in the name.
+This nested structure is flatted when the theme is loaded.
 
 When creating a theme, all keys are optional.
 You only have to assign values to keys you want to customize.
