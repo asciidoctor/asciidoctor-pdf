@@ -716,36 +716,35 @@ This category controls the size, margins and background of each page canvas.
 
 Prefix:: `page_`
 
-[cols="3,3,5l"]
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
 |background_color^[1]^
-|<<colors,color>> +
+|<<colors,Color>> +
 (default: #ffffff)
 |page:
   background_color: #fefefe
 
 |background_image^[1]^
-|inline image macro +
-(target is absolute or relative to the `pdf-stylesdir` attribute)
+|Inline image macro^[2]^ +
 |page:
-  background_image: +image:watermark.png[]+
+  background_image: +image:page-bg.png[]+
 
 |layout
-|portrait, landscape +
+|Keyword: portrait {vbar} landscape +
 (default: portrait)
 |page:
   layout: landscape
 
 |margin
-|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>> +
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
 (default: 36)
 |page:
-  margin: [0.5in, 0.67in, 0.67in, 0.67in]
+  margin: [0.5in, 0.67in, 1in, 0.67in]
 
 |size
-|https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[named size^], <<measurement-units,measurement array [width, height]>> +
+|https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width, height]>> +
 (default: A4)
 |page:
   size: Letter
@@ -755,86 +754,117 @@ Prefix:: `page_`
 This limitation is due to a bug in Prawn 1.3.1.
 The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgrade that is waiting on AsciidoctorJ to migrate to JRuby 9000).
 For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
+. Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
 
 === Base
 
-[cols="3,3,5m"]
+This category provides generic theme settings that are often reused throughout the theme file.
+
+Prefix:: `base_`
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|base_font_color
-|<<colors,color>>
-|font_color: #333333
+|font_color
+|<<colors,Color>> +
+(default: #000000)
+|base:
+  font_color: #333333
 
-|base_font_family
-|<<fonts,font family name>>
-|font_family: Noto Serif
+|font_family
+|<<fonts,Font family name>> +
+(default: Helvetica)
+|base:
+  font_family: Noto Serif
 
-|base_font_size
-|<<values,number>>
-|font_size: 10.5
+|font_size
+|<<values,Number>> +
+(default: 12)
+|base:
+  font_size: 10.5
 
-|base_line_height_length^[1]^
-|<<values,number>>
-|line_height_length: 12
+|line_height_length^[1]^
+|<<values,Number>> +
+(default: 13.8)
+|base:
+  line_height_length: 12
 
-|base_line_height^[1]^
-|<<values,number>>
-|line_height: 1.14
+|line_height^[1]^
+|<<values,Number>> +
+(default: 1.15)
+|base:
+  line_height: >
+    $base_line_height_length /
+    $base_font_size
 
-|base_font_size_large
-|<<values,number>>
-|font_size_large: 13
+|font_size_large
+|<<values,Number>>
+|base:
+  font_size_large: 13
 
-|base_font_size_small
-|<<values,number>>
-|font_size_small: 9
+|font_size_small
+|<<values,Number>>
+|base:
+  font_size_small: 9
 
-|base_font_size_min
-|<<values,number>>
-|font_size_small: 6
+|font_size_min
+|<<values,Number>> +
+(default: 9)
+|base:
+  font_size_small: 6
 
-|base_font_style
-|normal, italic, bold, bold_italic
-|font_style: normal
+|font_style
+|Keyword: normal {vbar} italic {vbar} bold {vbar} bold_italic +
+(default: normal)
+|base:
+  font_style: normal
 
-|base_align
-|left, center, right, justify
-|align: justify
+|align
+|Keyword: left {vbar} center {vbar} right {vbar} justify +
+(default: left)
+|base:
+  align: justify
 
-|base_border_radius
-|<<values,number>>
-|border_radius: 4
+|border_radius
+|<<values,Number>>
+|base:
+  border_radius: 4
 
-|base_border_width
-|<<values,number>>
-|border_width: 0.5
+|border_width
+|<<values,Number>> +
+(default: 0.5)
+|base:
+  border_width: 0.5
 
-|base_border_color
-|<<colors,color>>
-|border_color: #eeeeee
+|border_color
+|<<colors,Color>> +
+(default: #eeeeee)
+|base:
+  border_color: #eeeeee
 |===
 
-. You should set either `line_height` or `line_height_length` and derive the value of the other using a calculation since these are correlated values.
-For instance, if you set `line_height_length`, then use `line_height: $base_line_height_length / $base_font_size` to define the line height.
+. You should set one of `line_height` or `line_height_length`, then derive the value of the other using a calculation as these are correlated values.
+For instance, if you set `line_height_length`, then use `$base_line_height_length / $base_font_size` as the value of `line_height`.
 
-=== Vertical and horizontal rhythm
+=== Vertical spacing
 
-[cols="3,3,5m"]
+This category controls the general spacing between elements where a more specific setting is not designated.
+
+Prefix:: n/a
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|vertical_rhythm
-|<<values,number>>
-|vertical_rhythm: 12
-
-|horizontal_rhythm
-|<<values,number>>
-|horizontal_rhythm: 12
+|vertical_spacing
+|<<values,Number>> +
+(default: 12)
+|vertical_spacing: 10
 |===
 
-NOTE: Vertical and horizontal rhythm are used for vertical and horizontal spacing, respectively, when there a specific theme key is not defined for a certain purpose.
-These keys predated the CSS-style theme system and are planned to be phased out.
+//NOTE: Vertical and horizontal rhythm are used for vertical and horizontal spacing, respectively, when there a specific theme key is not defined for a certain purpose.
+//These keys predated the CSS-style theme system and are planned to be phased out.
 
 === Link
 
