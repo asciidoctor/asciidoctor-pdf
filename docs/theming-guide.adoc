@@ -723,35 +723,31 @@ Prefix:: `page_`
 |background_color^[1]^
 |<<colors,color>> +
 (default: #ffffff)
-|
-page:
+|page:
   background_color: #fefefe
 
 |background_image^[1]^
-|inline image macro (target is absolute or relative to pdf-stylesdir)
-|
-page:
+|inline image macro +
+(target is absolute or relative to the `pdf-stylesdir` attribute)
+|page:
   background_image: +image:watermark.png[]+
 
 |layout
 |portrait, landscape +
 (default: portrait)
-|
-page:
+|page:
   layout: landscape
 
 |margin
 |<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>> +
 (default: 36)
-|
-page:
+|page:
   margin: [0.5in, 0.67in, 0.67in, 0.67in]
 
 |size
 |https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[named size^], <<measurement-units,measurement array [width, height]>> +
 (default: A4)
-|
-page:
+|page:
   size: Letter
 |===
 
