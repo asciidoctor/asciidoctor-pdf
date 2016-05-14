@@ -79,13 +79,13 @@ base:
   font_size: 12
   line_height_length: 17
   line_height: $base_line_height_length / $base_font_size
-vertical_rhythm: $base_line_height_length
+vertical_spacing: $base_line_height_length
 heading:
   font_color: #262626
   font_size: 17
   font_style: bold
   line_height: 1.2
-  margin_bottom: $vertical_rhythm
+  margin_bottom: $vertical_spacing
 link:
   font_color: #002FA7
 outline_list:
@@ -173,7 +173,7 @@ The following keys are inherited:
 * font_style
 * line_height (currently some exceptions)
 * text_transform (only for headings)
-* margin_bottom (falls back to $vertical_rhythm)
+* margin_bottom (falls back to $vertical_spacing)
 
 .Heading Inheritance
 ****
@@ -863,9 +863,6 @@ Prefix:: n/a
 |vertical_spacing: 10
 |===
 
-//NOTE: Vertical and horizontal rhythm are used for vertical and horizontal spacing, respectively, when there a specific theme key is not defined for a certain purpose.
-//These keys predated the CSS-style theme system and are planned to be phased out.
-
 === Link
 
 [cols="3,3,5m"]
@@ -966,7 +963,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 |heading_margin_top
 |<<measurement-units,measurement>>
-|margin_top: $vertical_rhythm * 0.2
+|margin_top: $vertical_spacing * 0.2
 
 |heading_margin_bottom
 |<<measurement-units,measurement>>
