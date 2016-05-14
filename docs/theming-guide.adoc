@@ -700,43 +700,59 @@ It's best to select fonts that have all the characters you need.
 == Keys
 
 This section lists all the keys that are available when creating a custom theme.
-The converter uses the values of these keys to control how most elements are arranged and styled in the PDF.
+The keys are organized by category.
+Each category represents a common prefix under which the keys are typically nested.
+
+TIP: While the keys can be partioned and nested wherever an underscore (`_`) appears in the name, this nested structure is flatted when the theme is loaded.
 
 When creating a theme, all keys are optional.
 You only have to assign values to keys you want to customize.
 Any required keys are assigned by the base theme.
-
-TIP: While the keys can be nested whereever an underscore appears in the name, this nested structure is flatted when the theme is loaded.
+The converter uses the values of these keys to control how most elements are arranged and styled in the PDF.
 
 === Page
 
-[cols="3,3,5m"]
+This category controls the size, margins and background of each page canvas.
+
+Prefix:: `page_`
+
+[cols="3,3,5l"]
 |===
 |Key |Value Type |Example
 
-|page_background_color^[1]^
+|background_color^[1]^
 |<<colors,color>>
-|background_color: #ffffff
+|
+page:
+  background_color: #ffffff
 
-|page_background_image^[1]^
-|path (absolute or relative to pdf-stylesdir)
-|+background_image: image:watermark.png[]+
+|background_image^[1]^
+|inline image macro (target is absolute or relative to pdf-stylesdir)
+|
+page:
+  background_image: +image:watermark.png[]+
 
-|page_layout
+|layout
 |portrait, landscape +
 (default: portrait)
-|layout: portrait
+|
+page:
+  layout: portrait
 
-|page_margin
+|margin
 |<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
-|margin: [0.5in, 0.67in, 0.67in, 0.67in]
+|
+page:
+  margin: [0.5in, 0.67in, 0.67in, 0.67in]
 
-|page_size
+|size
 |https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[named size^], <<measurement-units,measurement array [width, height]>>
-|size: Letter
+|
+page:
+  size: Letter
 |===
 
-^[1]^ Page background colors and images do not currently work when using AsciidoctorJ PDF.
+^[1]^ Page backgrounds do not currently work when using AsciidoctorJ PDF.
 This limitation is due to a bug in Prawn 1.3.1.
 The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgrade that is waiting on AsciidoctorJ to migrate to JRuby 9000).
 For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
