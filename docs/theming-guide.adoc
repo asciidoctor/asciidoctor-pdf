@@ -751,7 +751,7 @@ Prefix:: `page_`
   size: Letter
 |===
 
-^[1]^ Page backgrounds do not currently work when using AsciidoctorJ PDF.
+. Page backgrounds do not currently work when using AsciidoctorJ PDF.
 This limitation is due to a bug in Prawn 1.3.1.
 The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgrade that is waiting on AsciidoctorJ to migrate to JRuby 9000).
 For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
@@ -815,7 +815,7 @@ For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file
 |border_color: #eeeeee
 |===
 
-^[1]^ You should set either `line_height` or `line_height_length` and derive the value of the other using a calculation since these are correlated values.
+. You should set either `line_height` or `line_height_length` and derive the value of the other using a calculation since these are correlated values.
 For instance, if you set `line_height_length`, then use `line_height: $base_line_height_length / $base_font_size` to define the line height.
 
 === Vertical and horizontal rhythm
@@ -943,7 +943,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 |margin_bottom: 9.600
 |===
 
-^[1]^ `<n>` may be a number ranging from 1 to 6, representing each of the six heading levels.
+. `<n>` may be a number ranging from 1 to 6, representing each of the six heading levels.
 
 === Title page
 
@@ -1078,7 +1078,7 @@ The literal key is used for inline monospaced text in prose and table cells.
 
 TIP: The title page can be disabled from the document by setting the `notitle` attribute in the document header.
 
-^[1]^ Background colors and images do not currently work when using AsciidoctorJ PDF.
+. Page backgrounds do not currently work when using AsciidoctorJ PDF.
 This limitation is due to a bug in Prawn 1.3.1.
 The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgrade that is waiting on AsciidoctorJ to migrate to JRuby 9000).
 For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
@@ -1348,8 +1348,8 @@ Block styles are applied to the following block types:
 |admonition_icon_tip_size: 24
 |===
 
-^[1]^ `<name>` can be `note`, `tip`, `warning`, `important` or `caution`. +
-^[2]^ See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository] for a list of valid names.
+. `<name>` can be `note`, `tip`, `warning`, `important` or `caution`. +
+. See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository] for a list of valid names.
 The prefix (e.g., `fa-`) determines which font set to use.
 
 === Image
@@ -1704,7 +1704,7 @@ The prefix (e.g., `fa-`) determines which font set to use.
 |center: '\{page-number}'
 |===
 
-^[1]^ `<side>` can be `recto` (odd pages) or `verso` (even pages).
+. `<side>` can be `recto` (odd pages) or `verso` (even pages).
 `<align>` can be `left`, `center` or `right`.
 
 IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
@@ -1895,9 +1895,8 @@ These settings override equivalent keys defined in the theme file, where applica
 |+:title-logo-image: image:logo.png[top=25%, align=center, pdfwidth=0.5in]+
 |===
 
-^[1]^ `<face>` can be `front` or `back`.
-
-^[2]^ Controls whether the `page-number` attribute is accessible to the running header and footer content specified in the theme file.
+. `<face>` can be `front` or `back`.
+. Controls whether the `page-number` attribute is accessible to the running header and footer content specified in the theme file.
 Use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively, from the document.
 
 ////
