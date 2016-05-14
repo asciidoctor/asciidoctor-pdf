@@ -699,7 +699,14 @@ It's best to select fonts that have all the characters you need.
 
 == Keys
 
-// TODO write an intro
+This section lists all the keys that are available when creating a custom theme.
+The converter uses the values of these keys to control how most elements are arranged and styled in the PDF.
+
+When creating a theme, all keys are optional.
+You only have to assign values to keys you want to customize.
+Any required keys are assigned by the base theme.
+
+TIP: While the keys can be nested whereever an underscore appears in the name, this nested structure is flatted when the theme is loaded.
 
 === Page
 
