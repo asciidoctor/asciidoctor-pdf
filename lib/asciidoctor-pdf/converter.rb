@@ -2180,6 +2180,7 @@ class Converter < ::Prawn::Document
   def theme_font category, opts = {}
     if (level = opts[:level])
       family = @theme[%(#{category}_h#{level}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family
+      # FIXME technically the size fallback isn't necessary since the base theme assigns sizes to all levels
       size = @theme[%(#{category}_h#{level}_font_size)] || @theme[%(#{category}_font_size)] || @theme.base_font_size
       style = @theme[%(#{category}_h#{level}_font_style)] || @theme[%(#{category}_font_style)]
       color = @theme[%(#{category}_h#{level}_font_color)] || @theme[%(#{category}_font_color)]
