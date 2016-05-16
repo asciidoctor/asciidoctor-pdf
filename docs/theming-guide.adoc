@@ -740,13 +740,13 @@ The keys in this category control the size, margins and background of each page 
   layout: landscape
 
 |margin
-|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: 36)
 |page:
   margin: [0.5in, 0.67in, 1in, 0.67in]
 
 |size
-|https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width, height]>> +
+|https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width,height]>> +
 (default: A4)
 |page:
   size: Letter
@@ -1242,7 +1242,7 @@ The keys in this category control the spacing around block elements when a more 
 3+|*Key Prefix:* block
 
 //|padding
-//|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>>
+//|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>>
 //|block:
 //  padding: [12, 15, 12, 15]
 
@@ -1389,7 +1389,7 @@ The keys in this category are used to control the style of literal, listing and 
   line_height: 1.25
 
 |padding
-|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: 9)
 |code:
   padding: 11
@@ -1438,7 +1438,7 @@ The keys in this category control the arrangement and style of quote blocks.
   font_style: bold
 
 |padding
-|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: [6, 12, -6, 14])
 |blockquote:
   padding: [5, 10, -5, 12]
@@ -1502,7 +1502,7 @@ The keys in this category control the arrangement and style of sidebar blocks.
   border_width: 0.5
 
 |padding
-|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: [12, 12, 0, 12])
 |sidebar:
   padding: [12, 15, 0, 15]
@@ -1599,7 +1599,7 @@ The keys in this category control the arrangement and style of admonition blocks
   border_width: 0.5
 
 |padding
-|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: [0, 12, 0, 12])
 |admonition:
   padding: [0, 12, 0, 12]
@@ -1705,7 +1705,7 @@ The keys in this category control the arrangement and style of the abstract.
   line_height: 1.4
 
 |padding
-|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: 0)
 |abstract:
   padding: [0, 12, 0, 12]
@@ -1948,7 +1948,7 @@ The keys in this category control the arrangement and style of tables and table 
 3+|*Key Prefix:* table_cell
 
 |padding
-|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: 2)
 |table:
   cell:
@@ -2140,7 +2140,7 @@ TIP: You can disable the running header and footer by setting the `noheader` and
   line_height: 1.2
 
 |padding
-|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>>
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>>
 |header:
   padding: [0, 3, 0, 3]
 
@@ -2215,7 +2215,7 @@ TIP: You can disable the running header and footer by setting the `noheader` and
   line_height: 1.2
 
 |padding
-|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>>
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>>
 |footer:
   padding: [0, 3, 0, 3]
 
