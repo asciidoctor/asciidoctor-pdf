@@ -717,6 +717,9 @@ This nested structure is flatted when the theme is loaded.
 
 The keys in this category control the size, margins and background of each page (i.e., canvas).
 
+NOTE: The background of the title page can be styled independently.
+See <<Title page>> for details.
+
 [cols="3,4,5l"]
 |===
 |Key |Value Type |Example
