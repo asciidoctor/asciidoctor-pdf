@@ -1828,6 +1828,22 @@ The keys in this category control the arrangement and style of tables and table 
 |table:
   border_width: 0.5
 
+|font_color
+|<<colors,Color>> +
+(default: $base_font_color)
+|table:
+  font_color: #333333
+
+|font_family
+|<<fonts,Font family name>>
+|table:
+  font_family: Helvetica
+
+|font_size
+|<<values,Number>>
+|table:
+  font_size: 9.5
+
 |grid_color
 |<<colors,Color>> +
 (default: $table_border_color)
@@ -1836,17 +1852,39 @@ The keys in this category control the arrangement and style of tables and table 
 
 |grid_width
 |<<values,Number>> +
-(default: $table_grid_color)
+(default: $table_border_width)
 |table:
   grid_width: 0.5
 
 3+|*Key Prefix:* table_head
 
 |background_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: $table_background_color)
 |table:
   head:
     background_color: #f0f0f0
+
+|font_color
+|<<colors,Color>> +
+(default: $table_font_color)
+|table:
+  head:
+    font_color: #333333
+
+|font_family
+|<<fonts,Font family name>> +
+(default: $table_font_family)
+|table:
+  head:
+    font_family: Noto Serif
+
+|font_size
+|<<values,Number>> +
+(default: $table_font_size)
+|table:
+  head:
+    font_size: 10
 
 |font_style
 |normal {vbar} italic {vbar} bold {vbar} bold_italic +
@@ -1855,13 +1893,49 @@ The keys in this category control the arrangement and style of tables and table 
   head:
     font_style: normal
 
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|table:
+  head:
+    text_transform: uppercase
+
 3+|*Key Prefix:* table_foot
 
 |background_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: $table_background_color)
 |table:
   foot:
     background_color: #f0f0f0
+
+|font_color
+|<<colors,Color>> +
+(default: $table_font_color)
+|table:
+  foot:
+    font_color: #333333
+
+|font_family
+|<<fonts,Font family name>> +
+(default: $table_font_family)
+|table:
+  foot:
+    font_family: Noto Serif
+
+|font_size
+|<<values,Number>> +
+(default: $table_font_size)
+|table:
+  foot:
+    font_size: 10
+
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+(default: normal)
+|table:
+  foot:
+    font_style: italic
 
 3+|*Key Prefix:* table_odd_row
 
