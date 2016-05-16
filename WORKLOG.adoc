@@ -11,19 +11,26 @@
   - get import_page to stop adding an extra page
   - blank page after title page if media=print
 
-* allow top as alternative to margin_top for all elements on title page
-* add feature to number bullets according to section number
+* document missing keys in theming guide for 1.5.0.beta.1 (table seems to missing some)
+* enable key table_font_style
+* check that color of table edges set to table_grid_color??
+* create value type for font style and font alignment for theming guide
+* force encoding of theme to UTF-8 (particularly for keys related to content)
+* be more consistent with how examples are shown in theming-guide.adoc (do we show last segment only?)
+* document theme-related AsciiDoc attributes in theming-guide (#428)
+* allow top as alternative to margin_top for all elements on title page (#431)
+* add feature to number bullets according to section number (needed for OpenDevise agreement)
 * swallowing exceptions! (any use of e.message in a string is dangerous)
 * allow ordered list marker to be prefixed by section number (a global setting?)
 * conum not aligned vertically with callout text (perhaps too small?)
+* decouple theme settings for section titles and discrete headings
 * table should expand to 100% if "spread" role is set
 * replace explicit char ranges with classes in regexp (e.g., [[:word:]] or \w)
-* upgrade prawn-svg to 0.22.1 (keep in mind minimum Ruby version is 2.0)
 * test Rouge upgrade (should address workaround we have in encoder)
+* devise a way to specify a value as a string literal (variable replacement only) in theme
 * prawn-gmagick (fixes PNG transparency issue); don't fail-fast on gif if gem is detected
 * document pdfwidth in themeing guide (currently no mention of it)
 * convert "-" in variable name in theme to underscore (e.g., $base-font-size)
-* document missing keys in theming guide for 1.5.0.beta.1
 * apply calculated theme values after loading?
 * allow "content" in place of recto_content & verso_content for running header/footer
 * allow image to span width of page (role=canvas, role=canvas-x or role=canvas-y); if role is canvas or canvas-y, then it does not consume height
@@ -279,7 +286,7 @@
 
 == Open Questions
 
-== Design
+=== Design
 
 * remove/reduce padding above heading when it appears at the start of a page?
 * Default line height?
@@ -297,6 +304,10 @@
 
 * keep or drop base_ prefix in theme? I think we should keep it because it provides context elsewhere in the document (e.g. $base_font_size vs $font_size)
 
+== Notes
+
+* "section title" is the semantic element; "heading" is the structural element
+
 == Resources
 
 * https://code.google.com/p/origami-pdf/[Origami PDF: A PDF inspection library]
@@ -305,3 +316,4 @@
 * http://clagnut.com/blog/2380[List of pangrams]
   - http://www.camcc.org/_media/reading-group/qianziwen-en.pdf[1,000 character classic (Chinese)]
 * pdf2svg can convert the PDF file into an SVG (one SVG per page)
+* https://blog.codeship.com/build-math-evaluation-engine[How to Build a Simple Math Evaluation Engine]
