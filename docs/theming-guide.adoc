@@ -700,17 +700,18 @@ It's best to select fonts that have all the characters you need.
 == Keys
 
 This section lists all the keys that are available when creating a custom theme.
-The keys are organized by category.
+The converter uses the values of these keys to control how most elements are arranged and styled in the PDF.
+
+NOTE: When creating a theme, all keys are optional.
+You only have to assign values to keys you want to customize.
+Any required keys are assigned by the base theme.
+
+The keys in this section are organized by category.
 Each category represents a common prefix under which the keys are typically nested.
 The default values are those assigned by the base theme (not the default theme).
 
 TIP: Keys can be partioned and nested wherever an underscore (`_`) appears in the name.
 This nested structure is flatted when the theme is loaded.
-
-When creating a theme, all keys are optional.
-You only have to assign values to keys you want to customize.
-Any required keys are assigned by the base theme.
-The converter uses the values of these keys to control how most elements are arranged and styled in the PDF.
 
 === Page
 
@@ -761,7 +762,8 @@ For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file
 
 === Base
 
-The keys in this category provide generic theme settings that are often reused as variables throughout the theme file.
+The keys in this category provide generic theme settings and are often referenced throughout the theme file as variables.
+It's common to define additional keys in this category (e.g., `base_border_radius`) that serve as custom variables to help keep your theme DRY.
 
 [cols="3,4,5l"]
 |===
