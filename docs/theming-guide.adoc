@@ -702,6 +702,7 @@ It's best to select fonts that have all the characters you need.
 This section lists all the keys that are available when creating a custom theme.
 The keys are organized by category.
 Each category represents a common prefix under which the keys are typically nested.
+The default values are those assigned by the base theme (not the default theme).
 
 TIP: Keys can be partioned and nested wherever an underscore (`_`) appears in the name.
 This nested structure is flatted when the theme is loaded.
@@ -713,13 +714,13 @@ The converter uses the values of these keys to control how most elements are arr
 
 === Page
 
-This category controls the size, margins and background of each page canvas.
-
-Prefix:: `page_`
+The keys in this category control the size, margins and background of each page canvas.
 
 [cols="3,4,5l"]
 |===
 |Key |Value Type |Example
+
+3+|*Key Prefix:* page
 
 |background_color^[1]^
 |<<colors,Color>> +
@@ -728,12 +729,12 @@ Prefix:: `page_`
   background_color: #fefefe
 
 |background_image^[1]^
-|Inline image macro^[2]^ +
+|Inline image macro^[2]^
 |page:
   background_image: +image:page-bg.png[]+
 
 |layout
-|Keyword: portrait {vbar} landscape +
+|portrait {vbar} landscape +
 (default: portrait)
 |page:
   layout: landscape
@@ -759,13 +760,19 @@ For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file
 
 === Base
 
-This category provides generic theme settings that are often reused throughout the theme file.
-
-Prefix:: `base_`
+The keys in this category provide generic theme settings that are often reused as variables throughout the theme file.
 
 [cols="3,4,5l"]
 |===
 |Key |Value Type |Example
+
+3+|*Key Prefix:* base
+
+|align
+|left {vbar} center {vbar} right {vbar} justify +
+(default: left)
+|base:
+  align: justify
 
 |font_color
 |<<colors,Color>> +
@@ -785,20 +792,6 @@ Prefix:: `base_`
 |base:
   font_size: 10.5
 
-|line_height_length^[1]^
-|<<values,Number>> +
-(default: 13.8)
-|base:
-  line_height_length: 12
-
-|line_height^[1]^
-|<<values,Number>> +
-(default: 1.15)
-|base:
-  line_height: >
-    $base_line_height_length /
-    $base_font_size
-
 |font_size_large
 |<<values,Number>>
 |base:
@@ -816,16 +809,24 @@ Prefix:: `base_`
   font_size_small: 6
 
 |font_style
-|Keyword: normal {vbar} italic {vbar} bold {vbar} bold_italic +
+|normal {vbar} italic {vbar} bold {vbar} bold_italic +
 (default: normal)
 |base:
   font_style: normal
 
-|align
-|Keyword: left {vbar} center {vbar} right {vbar} justify +
-(default: left)
+|line_height_length^[1]^
+|<<values,Number>> +
+(default: 13.8)
 |base:
-  align: justify
+  line_height_length: 12
+
+|line_height^[1]^
+|<<values,Number>> +
+(default: 1.15)
+|base:
+  line_height: >
+    $base_line_height_length /
+    $base_font_size
 
 |border_radius
 |<<values,Number>>
@@ -850,9 +851,7 @@ For instance, if you set `line_height_length`, then use `$base_line_height_lengt
 
 === Vertical spacing
 
-This category controls the general spacing between elements where a more specific setting is not designated.
-
-Prefix:: n/a
+The keys in this category control the general spacing between elements where a more specific setting is not designated.
 
 [cols="3,4,5l"]
 |===
@@ -866,268 +865,398 @@ Prefix:: n/a
 
 === Link
 
-[cols="3,3,5m"]
+The keys in this category are used to style hyperlink text.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|link_font_color
-|<<colors,color>>
-|font_color: #428bca
+3+|*Key Prefix:* link
 
-|link_font_family
-|<<fonts,font family name>>
-|font_family: Roboto
+|font_color
+|<<colors,Color>> +
+(default: #0000ee)
+|link:
+  font_color: #428bca
 
-|link_font_size
-|<<values,number>>
-|font_size: 9
+|font_family
+|<<fonts,Font family name>>
+|link:
+  font_family: Roboto
 
-|link_font_style
-|normal, italic, bold, bold_italic
-|font_style: normal
+|font_size
+|<<values,Number>>
+|link:
+  font_size: 9
+
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|link:
+  font_style: normal
 |===
 
 === Literal inline
 
-The literal key is used for inline monospaced text in prose and table cells.
+The keys in this category are used for inline monospaced text in prose and table cells.
 
-[cols="3,3,5m"]
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|literal_font_color
-|<<colors,color>>
-|font_color: #b12146
+3+|*Key Prefix:* literal
 
-|literal_font_family
-|<<fonts,font family name>>
-|font_family: M+ 1mn
+|font_color
+|<<colors,Color>>
+|literal:
+  font_color: #b12146
 
-|literal_font_size
-|<<values,number>>
-|font_size: 12
+|font_family
+|<<fonts,Font family name>> +
+(default: Courier)
+|literal:
+  font_family: M+ 1mn
 
-|literal_font_style
-|normal, italic, bold, bold_italic
-|font_style: bold
+|font_size
+|<<values,Number>>
+|literal:
+  font_size: 12
+
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|literal:
+  font_style: bold
 |===
 
 === Heading
 
-[cols="3,3,5m"]
+The keys in this category control the style of headings, including titles for parts, chapters, sections and the table of contents, as well as discrete headings.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|heading_align
-|left, center, right, justify
-|align: center
+3+|*Key Prefix:* heading
 
-|heading_font_color
-|<<colors,color>>
-|font_color: #333333
+|align
+|left {vbar} center {vbar} right {vbar} justify
+|heading:
+  align: center
 
-|heading_font_family
-|<<fonts,font family name>>
-|font_family: Noto Serif
+|font_color
+|<<colors,Color>>
+|heading:
+  font_color: #333333
 
-|heading_font_size
-|<<values,number>>
-|font_size: 9
+|font_family
+|<<fonts,Font family name>>
+|heading:
+  font_family: Noto Serif
 
-|heading_font_style
-|normal, italic, bold, bold_italic
-|font_style: bold
+|font_size
+|<<values,Number>>
+|heading:
+  font_size: 9
 
-|heading_h<n>_align^[1]^
-|left, center, right, justify
-|h2_align: center
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+(default: bold)
+|heading:
+  font_style: bold
 
-|heading_h<n>_font_color^[1]^
-|<<colors,color>>
-|h2_font_color: [0, 99%, 100%, 0]
+|line_height
+|<<values,Number>> +
+(default: 1.15)
+|heading:
+  line_height: 1.2
 
-|heading_h<n>_font_family^[1]^
-|<<fonts,font family name>>
-|h4_font_family: Roboto
+|margin_top
+|<<measurement-units,Measurement>> +
+(default: 4)
+|heading:
+  margin_top: $vertical_spacing * 0.2
 
-|heading_h<n>_font_size^[1]^
-|<<values,number>>
-|h6_font_size: round($base_font_size * 1.7)
+|margin_bottom
+|<<measurement-units,Measurement>> +
+(default: 12)
+|heading:
+  margin_bottom: 9.6
 
-|heading_h<n>_font_style^[1]^
-|normal, italic, bold, bold_italic
-|h3_font_style: bold_italic
+3+|*Key Prefix:* heading_h<n>^[1]^
 
-|heading_line_height
-|<<values,number>>
-|line_height: 1.2
+|align
+|left {vbar} center {vbar} right {vbar} justify
+|heading:
+  h2_align: center
 
-|heading_margin_top
-|<<measurement-units,measurement>>
-|margin_top: $vertical_spacing * 0.2
+|font_color
+|<<colors,Color>>
+|heading:
+  h2_font_color: [0, 99%, 100%, 0]
 
-|heading_margin_bottom
-|<<measurement-units,measurement>>
-|margin_bottom: 9.600
+|font_family
+|<<fonts,Font family name>>
+|heading:
+  h4_font_family: Roboto
+
+|font_size
+|<<values,Number>>
+|heading:
+  h6_font_size: $base_font_size * 1.7
+
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|heading:
+  h3_font_style: bold_italic
 |===
 
-. `<n>` may be a number ranging from 1 to 6, representing each of the six heading levels.
+. `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
 
 === Title page
 
-[cols="3,3,5m"]
+The keys in this category control the style of the title page as well as the arrangement and style of the elements on it.
+
+TIP: The title page can be disabled from the document by setting the `notitle` attribute in the document header.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|title_page_align
-|left, center, right, justify
-|align: right
+3+|*Key Prefix:* title_page
 
-|title_page_background_color^[1]^
-|<<colors,color>>
-|background_color: #eaeaea
+|align
+|left {vbar} center {vbar} right {vbar} justify +
+(default: center)
+|title_page:
+  align: right
 
-|title_page_background_image^[1]^
-|path (absolute or relative to pdf-stylesdir)
-|+background_image: image:title.png[]+
+|background_color^[1]^
+|<<colors,Color>>
+|title_page:
+  background_color: #eaeaea
 
-|title_page_font_color
-|<<colors,color>>
-|font_color: #333333
+|background_image^[1]^
+|Inline image macro^[2]^
+|title_page:
+  +background_image: image:title.png[]+
 
-|title_page_font_family
-|<<fonts,font family name>>
-|font_family: Noto Serif
+|font_color
+|<<colors,Color>>
+|title_page:
+  font_color: #333333
 
-|title_page_font_size
-|<<values,number>>
-|font_size: $base_font_size_large
+|font_family
+|<<fonts,Font family name>>
+|title_page:
+  font_family: Noto Serif
 
-|title_page_font_style
-|normal, italic, bold, bold_italic
-|font_style: bold
+|font_size
+|<<values,Number>>
+|title_page:
+  font_size: $base_font_size_large
 
-|title_page_logo_align
-|left, center, right
-|logo_align: right
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|title_page:
+  font_style: bold
 
-|title_page_logo_image
-|inline image macro
-|+logo_image: image:logo.png[pdfwidth=25%]+
+|line_height
+|<<values,Number>> +
+(default: 1.15)
+|title_page:
+  line_height: 1
 
-|title_page_logo_top
-|percentage
-|logo_top: 25%
+3+|*Key Prefix:* title_page_logo
 
-|title_page_title_font_color
-|<<colors,color>>
-|font_color: #999999
+|align
+|left {vbar} center {vbar} right
+|title_page:
+  logo:
+    align: right
 
-|title_page_title_font_family
-|<<fonts,font family name>>
-|font_family: Noto Serif
+|image
+|Inline image macro^[2]^
+|title_page:
+  logo:
+    +image: image:logo.png[pdfwidth=25%]+
 
-|title_page_title_font_size
-|<<values,number>>
-|font_size: $heading_h1_font_size
+|top
+|Percentage +
+(default: 10%)
+|title_page:
+  logo:
+    top: 25%
 
-|title_page_title_font_style
-|normal, italic, bold, bold_italic
-|font_style: bold
+3+|*Key Prefix:* title_page_title
 
-|title_page_title_line_height
-|<<values,number>>
-|line_height: 0.9
+|font_color
+|<<colors,Color>>
+|title_page:
+  title:
+    font_color: #999999
 
-|title_page_title_top
-|percentage
-|top: 55%
+|font_family
+|<<fonts,Font family name>>
+|title_page:
+  title:
+    font_family: Noto Serif
 
-|title_page_subtitle_font_color
-|<<colors,color>>
-|font_color: #181818
+|font_size
+|<<values,Number>> +
+(default: 18)
+|title_page:
+  title:
+    font_size: $heading_h1_font_size
 
-|title_page_subtitle_font_family
-|<<fonts,font family name>>
-|font_family: Noto Serif
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|title_page:
+  title:
+    font_style: bold
 
-|title_page_subtitle_font_size
-|<<values,number>>
-|font_size: $heading_h3_font_size
+|line_height
+|<<values,Number>>
+|title_page:
+  title:
+    line_height: 0.9
 
-|title_page_subtitle_font_style
-|normal, italic, bold, bold_italic
-|font_style: bold_italic
+|top
+|Percentage +
+(default: 40%)
+|title_page:
+  title:
+    top: 55%
 
-|title_page_subtitle_line_height
-|<<values,number>>
-|line_height: 1
+3+|*Key Prefix:* title_page_subtitle
 
-|title_page_authors_font_color
-|<<colors,color>>
-|font_color: #181818
+|font_color
+|<<colors,Color>>
+|title_page:
+  subtitle:
+    font_color: #181818
 
-|title_page_authors_font_family
-|<<fonts,font family name>>
-|font_family: Noto Serif
+|font_family
+|<<fonts,Font family name>>
+|title_page:
+  subtitle:
+    font_family: Noto Serif
 
-|title_page_authors_font_size
-|<<values,number>>
-|font_size: $base_font_size_large
+|font_size
+|<<values,Number>> +
+(default: 14)
+|title_page:
+  subtitle:
+    font_size: $heading_h3_font_size
 
-|title_page_authors_font_style
-|normal, italic, bold, bold_italic
-|font_style: bold_italic
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|title_page:
+  subtitle:
+    font_style: bold_italic
 
-|title_page_authors_margin_top
-|<<measurement-units,measurement>>
-|margin_top: 13.125
+|line_height
+|<<values,Number>>
+|title_page:
+  subtitle:
+    line_height: 1
 
-|title_page_revision_font_color
-|<<colors,color>>
-|font_color: #181818
+3+|*Key Prefix:* title_page_authors
 
-|title_page_revision_font_family
-|<<fonts,font family name>>
-|font_family: Noto Serif
+|font_color
+|<<colors,Color>>
+|title_page:
+  authors:
+    font_color: #181818
 
-|title_page_revision_font_size
-|<<values,number>>
-|font_size: $base_font_size_small
+|font_family
+|<<fonts,Font family name>>
+|title_page:
+  authors:
+    font_family: Noto Serif
 
-|title_page_revision_font_style
-|normal, italic, bold, bold_italic
-|font_style: bold
+|font_size
+|<<values,Number>>
+|title_page:
+  authors:
+    font_size: $base_font_size_large
 
-|title_page_revision_margin_top
-|<<measurement-units,measurement>>
-|margin_top: 13.125
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|title_page:
+  authors:
+    font_style: bold_italic
+
+|margin_top
+|<<measurement-units,Measurement>> +
+(default: 12)
+|title_page:
+  authors:
+    margin_top: 13.125
+
+3+|*Key Prefix:* title_page_revision
+
+|font_color
+|<<colors,Color>>
+|title_page:
+  revision:
+    font_color: #181818
+
+|font_family
+|<<fonts,Font family name>>
+|title_page:
+  revision:
+    font_family: Noto Serif
+
+|font_size
+|<<values,Number>>
+|title_page:
+  revision:
+    font_size: $base_font_size_small
+
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|title_page:
+  revision:
+    font_style: bold
+
+|margin_top
+|<<measurement-units,Measurement>>
+|title_page:
+  revision:
+    margin_top: 13.125
 |===
-
-TIP: The title page can be disabled from the document by setting the `notitle` attribute in the document header.
 
 . Page backgrounds do not currently work when using AsciidoctorJ PDF.
 This limitation is due to a bug in Prawn 1.3.1.
 The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgrade that is waiting on AsciidoctorJ to migrate to JRuby 9000).
 For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
+. Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
 
 === Block
 
-[cols="3,3,5m"]
+The keys in this category control the spacing around block elements when a more specific setting is not designated.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|block_padding
-|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
-|padding: [12, 15, 12, 15]
+3+|*Key Prefix:* block
 
-|block_margin_top
-|<<measurement-units,measurement>>
-|margin_top: 0
+//|padding
+//|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>>
+//|block:
+//  padding: [12, 15, 12, 15]
 
-|block_margin_bottom
-|<<measurement-units,measurement>>
-|margin_bottom: 1
+|margin_top
+|<<measurement-units,Measurement>> +
+(default: 0)
+|block:
+  margin_top: 6
+
+|margin_bottom
+|<<measurement-units,Measurement>> +
+(default: 12)
+|block:
+  margin_bottom: 6
 |===
 
 Block styles are applied to the following block types:
@@ -1150,230 +1279,353 @@ Block styles are applied to the following block types:
 
 === Caption
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement and style of block captions.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|caption_font_color
-|<<colors,color>>
-|font_color: #333333
+3+|*Key Prefix:* caption
 
-|caption_font_family
-|<<fonts,font family name>>
-|font_family: M+ 1mn
+|align
+|left {vbar} center {vbar} right {vbar} justify +
+(default: left)
+|caption:
+  align: left
 
-|caption_font_size
-|<<values,number>>
-|font_size: 11
+|font_color
+|<<colors,Color>>
+|caption:
+  font_color: #333333
 
-|caption_font_style
-|normal, italic, bold, bold_italic
-|font_style: italic
+|font_family
+|<<fonts,Font family name>>
+|caption:
+  font_family: M+ 1mn
 
-|caption_align
-|left, center, right, justify
-|align: left
+|font_size
+|<<values,Number>>
+|caption:
+  font_size: 11
 
-|caption_margin_inside
-|<<measurement-units,measurement>>
-|margin_inside: 3
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+(default: italic)
+|caption:
+  font_style: italic
 
-|caption_margin_outside
-|<<measurement-units,measurement>>
-|margin_outside: 0
+|margin_inside
+|<<measurement-units,Measurement>> +
+(default: 4)
+|caption:
+  margin_inside: 3
+
+|margin_outside
+|<<measurement-units,Measurement>> +
+(default: 0)
+|caption:
+  margin_outside: 0
 |===
 
 === Code
 
-[cols="3,3,5m"]
+The keys in this category are used to control the style of literal, listing and source blocks.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|code_font_color
-|<<colors,color>>
-|font_color: #333333
+3+|*Key Prefix:* code
 
-|code_font_family
-|<<fonts,font family name>>
-|font_family: M+ 1mn
+|background_color
+|<<colors,Color>>
+|code:
+  background_color: #f5f5f5
 
-|code_font_size
-|<<values,number>>
-|font_size: 11
+|border_color
+|<<colors,Color>> +
+(default: #eeeeee)
+|code:
+  border_color: #cccccc
 
-|code_font_style
-|normal, italic, bold, bold_italic
-|font_style: italic
+|border_radius
+|<<values,Number>> +
+(default: 0)
+|code:
+  border_radius: 4
 
-|code_padding
-|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
-|padding: 11
+|border_width
+|<<values,Number>> +
+(default: 0.5)
+|code:
+  border_width: 0.75
 
-|code_line_height
-|<<values,number>>
-|line_height: 1.25
+|font_color
+|<<colors,Color>>
+|code:
+  font_color: #333333
 
-|code_background_color
-|<<colors,color>>
-|background_color: #f5f5f5
+|font_family
+|<<fonts,Font family name>> +
+(default: Courier)
+|code:
+  font_family: M+ 1mn
 
-|code_border_color
-|<<colors,color>>
-|border_color: #cccccc
+|font_size
+|<<values,Number>> +
+(default: 10.5)
+|code:
+  font_size: 11
 
-|code_border_radius
-|<<values,number>>
-|border_radius: 4
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|code:
+  font_style: italic
 
-|code_border_width
-|<<values,number>>
-|border_width: 0.75
+|line_height
+|<<values,Number>> +
+(default: 1.2)
+|code:
+  line_height: 1.25
+
+|padding
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+(default: 9)
+|code:
+  padding: 11
 |===
 
 === Blockquote
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement and style of quote blocks.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|blockquote_font_color
-|<<colors,color>>
-|font_color: #333333
+3+|*Key Prefix:* blockquote
 
-|blockquote_font_family
-|<<fonts,font family name>>
-|font_family: Noto Serif
+|border_width
+|<<values,Number>> +
+(default: 4)
+|blockquote:
+  border_width: 5
 
-|blockquote_font_size
-|<<values,number>>
-|font_size: 13
+|border_color
+|<<colors,Color>> +
+(default: #eeeeee)
+|blockquote:
+  border_color: #eeeeee
 
-|blockquote_font_style
-|normal, italic, bold, bold_italic
-|font_style: bold
+|font_color
+|<<colors,Color>>
+|blockquote:
+  font_color: #333333
 
-|blockquote_border_width
-|<<values,number>>
-|border_width: 5
+|font_family
+|<<fonts,Font family name>>
+|blockquote:
+  font_family: Noto Serif
 
-|blockquote_border_color
-|<<colors,color>>
-|border_color: #eeeeee
+|font_size
+|<<values,Number>>
+|blockquote:
+  font_size: 13
 
-|blockquote_cite_font_size
-|<<values,number>>
-|cite_font_size: 9
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|blockquote:
+  font_style: bold
 
-|blockquote_cite_font_color
-|<<colors,color>>
-|cite_font_color: #999999
+|padding
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+(default: [6, 12, -6, 14])
+|blockquote:
+  padding: [5, 10, -5, 12]
 
-|blockquote_cite_font_family
-|<<fonts,font family name>>
-|cite_font_family: Noto Serif
+3+|*Key Prefix:* blockquote_cite
 
-|blockquote_cite_font_style
-|normal, italic, bold, bold_italic
-|cite_font_style: bold
+|font_size
+|<<values,Number>>
+|blockquote:
+  cite:
+    font_size: 9
 
+|font_color
+|<<colors,Color>>
+|blockquote:
+  cite:
+    font_color: #999999
+
+|font_family
+|<<fonts,Font family name>>
+|blockquote:
+  cite:
+    font_family: Noto Serif
+
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|blockquote:
+  cite:
+    font_style: bold
 |===
 
 === Sidebar
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement and style of sidebar blocks.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|sidebar_border_color
-|<<colors,color>>
-|border_color: #ffffff
+3+|*Key Prefix:* sidebar
 
-|sidebar_border_radius
-|<<values,number>>
-|border_radius: 4
+|background_color
+|<<colors,Color>> +
+(default: #eeeeee)
+|sidebar:
+  background_color: #eeeeee
 
-|sidebar_border_width
-|<<values,number>>
-|border_width: 0.5
+|border_color
+|<<colors,Color>>
+|sidebar:
+  border_color: #ffffff
 
-|sidebar_background_color
-|<<colors,color>>
-|background_color: #eeeeee
+|border_radius
+|<<values,Number>>
+|sidebar:
+  border_radius: 4
 
-|sidebar_padding
-|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
-|padding: [12, 15, 0, 15]
+|border_width
+|<<values,Number>>
+|sidebar:
+  border_width: 0.5
 
-|sidebar_title_align
-|left, center, right, justify
-|title_align: center
+|padding
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+(default: [12, 12, 0, 12])
+|sidebar:
+  padding: [12, 15, 0, 15]
 
-|sidebar_title_font_color
-|<<colors,color>>
-|title_font_color: #333333
+3+|*Key Prefix:* sidebar_title
 
-|sidebar_title_font_family
-|<<fonts,font family name>>
-|title_font_family: Noto Serif
+|align
+|left {vbar} center {vbar} right {vbar} justify +
+(default: center)
+|sidebar:
+  title:
+    align: center
 
-|sidebar_title_font_size
-|<<values,number>>
-|title_font_size: 13
+|font_color
+|<<colors,Color>>
+|sidebar:
+  title:
+    font_color: #333333
 
-|sidebar_title_font_style
-|normal, italic, bold, bold_italic
-|title_font_style: bold
+|font_family
+|<<fonts,Font family name>>
+|sidebar:
+  title:
+    font_family: Noto Serif
+
+|font_size
+|<<values,Number>>
+|sidebar:
+  title:
+    font_size: 13
+
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+(default: bold)
+|sidebar:
+  title:
+    font_style: bold
 |===
 
 === Example
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement and style of example blocks.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|example_border_color
-|<<colors,color>>
-|border_color: #eeeeee
+3+|*Key Prefix:* example
 
-|example_border_radius
-|<<values,number>>
-|border_radius: 4
+|background_color
+|<<colors,Color>>
+|example:
+  background_color: #fffef7
 
-|example_border_width
-|<<values,number>>
-|border_width: 0.75
+|border_color
+|<<colors,Color>> +
+(default: #eeeeee)
+|example:
+  border_color: #eeeeee
 
-|example_background_color
-|<<colors,color>>
-|background_color: #fffef7
+|border_radius
+|<<values,Number>> +
+(default: 0)
+|example:
+  border_radius: 4
+
+|border_width
+|<<values,Number>> +
+(default: 0.5)
+|example:
+  border_width: 0.75
 |===
 
 === Admonition
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement and style of admonition blocks and the icon used for each admonition type.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|admonition_border_color
-|<<colors,color>>
-|border_color: #eeeeee
+3+|*Key Prefix:* admonition
 
-|admonition_border_width
-|<<values,number>>
-|border_width: 0.5
+|border_color
+|<<colors,Color>> +
+(default: #eeeeee)
+|admonition:
+  border_color: #eeeeee
 
-|admonition_icon_<name>_name^[1]^
-|string^[2]^
-|admonition_icon_tip_name: fa-fire
+|border_width
+|<<values,Number>> +
+(default: 0.5)
+|admonition:
+  border_width: 0.5
 
-|admonition_icon_<name>_stroke_color
-|<<colors,color>>
-|admonition_icon_tip_stroke_color: ff0000
+|padding
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+(default: [0, 12, 0, 12])
+|admonition:
+  padding: [0, 12, 0, 12]
 
-|admonition_icon_<name>_size
-|<<values,number>> +
+3+|*Key Prefix:* admonition_icon
+
+|<name>_name^[1]^
+|String^[2]^
+|admonition:
+  icon:
+    tip:
+      name: fa-fire
+
+|<name>_stroke_color^[1]^
+|<<colors,Color>>
+|admonition:
+  icon:
+    tip:
+      stroke_color: ff0000
+
+|<name>_size^[1]^
+|<<values,Number>> +
 (default: 24)
-|admonition_icon_tip_size: 24
+|admonition:
+  icon:
+    tip:size: 24
 |===
 
 . `<name>` can be `note`, `tip`, `warning`, `important` or `caution`. +
@@ -1382,358 +1634,542 @@ The prefix (e.g., `fa-`) determines which font set to use.
 
 === Image
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement of block images.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|image_align
-|left, center, right
-|align: left
+3+|*Key Prefix:* image
+
+|align
+|left {vbar} center {vbar} right +
+(default: left)
+|image:
+  align: left
 |===
 
 === Lead
 
-[cols="3,3,5m"]
+The keys in this category control the styling of lead paragraphs.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|lead_font_size
-|<<values,number>>
-|font_size: 13
+3+|*Key Prefix:* lead
 
-|lead_line_height
-|<<values,number>>
-|line_height: 1.4
+|font_size
+|<<values,Number>> +
+(default: 13.5)
+|lead:
+  font_size: 13
+
+|line_height
+|<<values,Number>> +
+(default: 1.4)
+|lead:
+  line_height: 1.4
 |===
 
 === Abstract
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement and style of the abstract.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|abstract_font_color
-|<<colors,color>>
-|font_color: #5c6266
+3+|*Key Prefix:* abstract
 
-|abstract_font_size
-|<<values,number>>
-|font_size: 13
+|font_color
+|<<colors,Color>>
+|abstract:
+  font_color: #5c6266
 
-|abstract_line_height
-|<<values,number>>
-|line_height: 1.4
+|font_size
+|<<values,Number>> +
+(default: 13.5)
+|abstract:
+  font_size: 13
 
-|abstract_font_style
-|normal, italic, bold, bold_italic
-|font_style: italic
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|abstract:
+  font_style: italic
+
+|line_height
+|<<values,Number>> +
+(default: 1.4)
+|abstract:
+  line_height: 1.4
+
+|padding
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+(default: 0)
+|abstract:
+  padding: [0, 12, 0, 12]
 |===
 
 === Thematic break
 
-[cols="3,3,5m"]
+The keys in this category control the style of thematic breaks (aka horizontal rules).
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|thematic_break_border_color
-|<<colors,color>>
-|border_color: #eeeeee
+3+|*Key Prefix:* thematic_break
 
-|thematic_break_border_style
-|solid, double, dashed, dotted +
+|border_color
+|<<colors,Color>> +
+(default: #eeeeee)
+|thematic_break:
+  border_color: #eeeeee
+
+|border_style
+|solid {vbar} double {vbar} dashed {vbar} dotted +
 (default: solid)
-|border_style: dashed
+|thematic_break:
+  border_style: dashed
 
-|thematic_break_border_width
-|<<measurement-units,measurement>>
-|border_width: 0.5
+|border_width
+|<<measurement-units,Measurement>> +
+(default: 0.5)
+|thematic_break:
+  border_width: 0.5
 
-|thematic_break_margin_top
-|<<measurement-units,measurement>>
-|margin_top: 6
+|margin_top
+|<<measurement-units,Measurement>>
+|thematic_break:
+  margin_top: 6
 
-|thematic_break_margin_bottom
-|<<measurement-units,measurement>>
-|margin_bottom: 18
+|margin_bottom
+|<<measurement-units,Measurement>>
+|thematic_break:
+  margin_bottom: 18
 |===
 
 === Description list
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement and style of definition list items (terms and descriptions).
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|description_list_term_font_style
-|normal, italic, bold, bold_italic
-|term_font_style: italic
+3+|*Key Prefix:* description_list
 
-|description_list_description_indent
-|<<values,number>>
-|description_indent: 15
+|term_font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|description_list:
+  term_font_style: italic
+
+|term_spacing
+|<<measurement-units,Measurement>> +
+(default: 4)
+|description_list:
+  term_spacing: 5
+
+|description_indent
+|<<values,Number>> +
+(default: 30)
+|description_list:
+  description_indent: 15
 |===
-
 
 === Outline list
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement and style of outline list items.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|outline_list_indent
-|<<measurement-units,measurement>>
-|list_indent: 40
+3+|*Key Prefix:* outline_list
 
-|outline_list_item_spacing
-|<<measurement-units,measurement>>
-|item_spacing: 4
+|indent
+|<<measurement-units,Measurement>> +
+(default: 30)
+|outline_list:
+  indent: 40
+
+|item_spacing
+|<<measurement-units,Measurement>> +
+(default: 6)
+|outline_list:
+  item_spacing: 4
 |===
 
 === Table
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement and style of tables and table cells.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|table_background_color
-|<<colors,color>>
-|background_color: #ffffff
+3+|*Key Prefix:* table
 
-|table_head_background_color
-|<<colors,color>>
-|background_color: #f0f0f0
+|background_color
+|<<colors,Color>>
+|table:
+  background_color: #ffffff
 
-|table_even_row_background_color
-|<<colors,color>>
-|even_row_background_color: #f9f9f9
+|border_color
+|<<colors,Color>> +
+(default: #000000)
+|table:
+  border_color: #dddddd
 
-|table_foot_background_color
-|<<colors,color>>
-|foot_background_color: #f0f0f0
+|border_width
+|<<values,Number>> +
+(default: 0.5)
+|table:
+  border_width: 0.5
 
-|table_header_cell_align
-|left, center, right
-|align: center
+|grid_color
+|<<colors,Color>> +
+(default: $table_border_color)
+|table:
+  grid_color: #eeeeee
 
-|table_header_cell_background_color
-|<<colors,color>>
-|background_color: #f0f0f0
+|grid_width
+|<<values,Number>> +
+(default: $table_grid_color)
+|table:
+  grid_width: 0.5
 
-|table_header_cell_font_color
-|<<colors,color>>
-|font_color: #1a1a1a
+3+|*Key Prefix:* table_head
 
-|table_header_cell_font_family
-|<<fonts,font family name>>
-|font_family: Noto Sans
+|background_color
+|<<colors,Color>>
+|table:
+  head:
+    background_color: #f0f0f0
 
-|table_header_cell_font_size
-|<<values,number>>
-|font_size: 12
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+(default: bold)
+|table:
+  head:
+    font_style: normal
 
-|table_header_cell_font_style
-|normal, italic, bold, bold_italic
-|font_style: italic
+3+|*Key Prefix:* table_foot
 
-|table_border_color
-|<<colors,color>>
-|border_color: #dddddd
+|background_color
+|<<colors,Color>>
+|table:
+  foot:
+    background_color: #f0f0f0
 
-|table_border_width
-|<<values,number>>
-|border_width: 0.5
+3+|*Key Prefix:* table_odd_row
 
-|table_grid_color
-|<<colors,color>> +
-(default: value of table_border_color)
-|grid_color: #eeeeee
+|background_color
+|<<colors,Color>>
+|table:
+  odd_row:
+    background_color: #ffffff
 
-|table_grid_width
-|<<values,number>> +
-(default: value of table_grid_color)
-|grid_width: 0.5
+3+|*Key Prefix:* table_even_row
 
-|table_cell_padding
-|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
-|cell_padding: [3, 3, 6, 3]
+|background_color
+|<<colors,Color>>
+|table:
+  even_row:
+    background_color: #f9f9f9
+
+3+|*Key Prefix:* table_cell
+
+|padding
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>> +
+(default: 2)
+|table:
+  cell:
+    padding: [3, 3, 6, 3]
+
+3+|*Key Prefix:* table_header_cell
+
+|align
+|left {vbar} center {vbar} right
+|table:
+  header_cell:
+    align: center
+
+|background_color
+|<<colors,Color>>
+|table:
+  header_cell:
+    background_color: #f0f0f0
+
+|font_color
+|<<colors,Color>>
+|table:
+  header_cell:
+    font_color: #1a1a1a
+
+|font_family
+|<<fonts,Font family name>>
+|table:
+  header_cell: 
+    font_family: Noto Sans
+
+|font_size
+|<<values,Number>>
+|table:
+  header_cell:
+    font_size: 12
+
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|table:
+  header_cell:
+    font_style: italic
 |===
 
 [[key-toc]]
 === Table of contents
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement and style of the table of contents.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|toc_dot_leader_content
-|double-quoted string
-|dot_leader_content: ". "
+3+|*Key Prefix:* toc
 
-|toc_dot_leader_color
-|<<colors,color>>
-|dot_leader_color: #999999
+|font_color
+|<<colors,Color>>
+|toc:
+  font_color: #333333
 
-|toc_font_color
-|<<colors,color>>
-|font_color: #333333
+|font_family
+|<<fonts,Font family name>>
+|toc:
+  font_family: Noto Serif
 
-|toc_h<n>_font_color
-|<<colors,color>>
-|h3_font_color: #999999
+|font_size
+|<<values,Number>>
+|toc:
+  font_size: 9
 
-|toc_font_family
-|<<fonts,font family name>>
-|font_family: Noto Serif
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|toc:
+  font_style: bold
 
-|toc_font_size
-|<<values,number>>
-|font_size: 9
+|line_height
+|<<values,Number>> +
+(default: 1.4)
+|toc:
+  line_height: 1.5
 
-|toc_font_style
-|normal, italic, bold, bold_italic
-|font_style: bold
+|indent
+|<<measurement-units,Measurement>> +
+(default: 15)
+|toc:
+  indent: 20
 
-|toc_line_height
-|number
-|line_height: 1.5
+|margin_top
+|<<measurement-units,Measurement>>
+|toc:
+  margin_top: 0
 
-|toc_indent
-|<<measurement-units,measurement>>
-|indent: 20
+3+|*Key Prefix:* toc_h<n>^[1]^
 
-|toc_margin_top
-|<<measurement-units,measurement>>
-|indent: 20
+|font_color
+|<<colors,Color>>
+|toc:
+  h3_font_color: #999999
 
-|toc_title_align
-|left, center, right, justify
-|align: center
+3+|*Key Prefix:* toc_title
+
+|align
+|left {vbar} center {vbar} right {vbar} justify
+|toc:
+  title:
+    align: center
+
+3+|*Key Prefix:* toc_dot_leader
+
+|content
+|Quoted string
+|toc:
+  dot_leader:
+    content: ". "
+
+|color
+|<<colors,Color>>
+|toc:
+  dot_leader:
+    color: #999999
 |===
+
+. `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
 
 === Running header & footer
 
-[cols="3,3,5m"]
+The keys in this category control the arrangement and style of running header and footer content.
+
+TIP: You can disable the running header and footer by setting the `noheader` and `nofooter` attributes in your document, respectively.
+
+[cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-|header_background_color
-|<<colors,color>>
-|background_color: #eeeeee
+3+|*Key Prefix:* header
 
-|header_border_color
-|<<colors,color>>
-|border_color: #dddddd
+|background_color
+|<<colors,Color>>
+|header:
+  background_color: #eeeeee
 
-|header_border_style
-|solid, double, dashed, dotted +
+|border_color
+|<<colors,Color>>
+|header:
+  border_color: #dddddd
+
+|border_style
+|solid {vbar} double {vbar} dashed {vbar} dotted +
 (default: solid)
-|border_style: dashed
+|header:
+  border_style: dashed
 
-|header_border_width
-|<<measurement-units,measurement>>
-|border_width: 0.25
+|border_width
+|<<measurement-units,Measurement>>
+|header:
+  border_width: 0.25
 
-|header_font_color
-|<<colors,color>>
-|font_color: #333333
+|font_color
+|<<colors,Color>>
+|header:
+  font_color: #333333
 
-|header_font_family
-|<<fonts,font family name>>
-|font_family: Noto Serif
+|font_family
+|<<fonts,Font family name>>
+|header:
+  font_family: Noto Serif
 
-|header_font_size
-|<<values,number>>
-|font_size: 9
+|font_size
+|<<values,Number>>
+|header:
+  font_size: 9
 
-|header_font_style
-|normal, italic, bold, bold_italic
-|font_style: italic
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|header:
+  font_style: italic
 
-|header_height
-|<<measurement-units,measurement>>
-|height: 0.75in
+|height
+|<<measurement-units,Measurement>>
+|header:
+  height: 0.75in
 
-|header_line_height
-|<<values,number>> +
+|line_height
+|<<values,Number>> +
 (default: $base_line_height)
-|height: 1.2
+|header:
+  line_height: 1.2
 
-|header_padding
-|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
-|padding: [0, 3, 0, 3]
+|padding
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>>
+|header:
+  padding: [0, 3, 0, 3]
 
-|header_image_vertical_align
-|top, middle, bottom, <<measurement-units,measurement>>
-|image_vertical_align: 4
+|image_vertical_align
+|top {vbar} middle {vbar} bottom {vbar} <<measurement-units,Measurement>>
+|header:
+  image_vertical_align: 4
 
-|header_vertical_align
-|top, middle, bottom
-|vertical_align: center
+|vertical_align
+|top {vbar} middle {vbar} bottom
+|header:
+  vertical_align: center
 
-|header_<side>_content_<align>^[1]^
-|quoted string
-|right: '\{page-number}'
+|<face>_content_<position>^[1]^
+|Quoted string
+|header:
+  recto_content:
+    left: '\{page-number}'
 
-|footer_background_color
-|<<colors,color>>
-|background_color: #eeeeee
+3+|*Key Prefix:* footer
 
-|footer_border_color
-|<<colors,color>>
-|border_color: #dddddd
+|background_color
+|<<colors,Color>>
+|footer:
+  background_color: #eeeeee
 
-|footer_border_style
-|solid, double, dashed, dotted +
+|border_color
+|<<colors,Color>>
+|footer:
+  border_color: #dddddd
+
+|border_style
+|solid {vbar} double {vbar} dashed {vbar} dotted +
 (default: solid)
-|border_style: dashed
+|footer:
+  border_style: dashed
 
-|footer_border_width
-|<<measurement-units,measurement>>
-|border_width: 0.25
+|border_width
+|<<measurement-units,Measurement>>
+|footer:
+  border_width: 0.25
 
-|footer_font_color
-|<<colors,color>>
-|font_color: #333333
+|font_color
+|<<colors,Color>>
+|footer:
+  font_color: #333333
 
-|footer_font_family
-|<<fonts,font family name>>
-|font_family: Noto Serif
+|font_family
+|<<fonts,Font family name>>
+|footer:
+  font_family: Noto Serif
 
-|footer_font_size
-|<<values,number>>
-|font_size: 9
+|font_size
+|<<values,Number>>
+|footer:
+  font_size: 9
 
-|footer_font_style
-|normal, italic, bold, bold_italic
-|font_style: italic
+|font_style
+|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|footer:
+  font_style: italic
 
-|footer_height
-|<<measurement-units,measurement>>
-|height: 0.75in
+|height
+|<<measurement-units,Measurement>>
+|footer:
+  height: 0.75in
 
-|footer_line_height
-|<<values,number>> +
+|line_height
+|<<values,Number>> +
 (default: $base_line_height)
-|height: 1.2
+|footer:
+  line_height: 1.2
 
-|footer_padding
-|<<measurement-units,measurement>>, <<measurement-units,measurement array [4]>>
-|padding: [0, 3, 0, 3]
+|padding
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top, right, bottom, left]>>
+|footer:
+  padding: [0, 3, 0, 3]
 
-|footer_image_vertical_align
-|top, middle, bottom, <<measurement-units,measurement>>
-|image_vertical_align: 4
+|image_vertical_align
+|top {vbar} middle {vbar} bottom {vbar} <<measurement-units,Measurement>>
+|footer:
+  image_vertical_align: 4
 
-|footer_vertical_align
-|top, middle, bottom
-|vertical_align: top
+|vertical_align
+|top {vbar} middle {vbar} bottom
+|footer:
+  vertical_align: top
 
-|footer_<side>_content_<align>^[1]^
-|quoted string
-|center: '\{page-number}'
+|<face>_content_<position>^[1]^
+|Quoted string
+|footer:
+  verso_content:
+    center: '\{page-number}'
 |===
 
-. `<side>` can be `recto` (odd pages) or `verso` (even pages).
-`<align>` can be `left`, `center` or `right`.
+. `<face>` can be `recto` (odd pages) or `verso` (even pages).
+`<position>` can be `left`, `center` or `right`.
 
 IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
 
