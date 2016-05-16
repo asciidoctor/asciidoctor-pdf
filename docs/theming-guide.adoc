@@ -729,7 +729,8 @@ The keys in this category control the size, margins and background of each page 
   background_color: #fefefe
 
 |background_image^[1]^
-|Inline image macro^[2]^
+|Inline image macro^[2]^ +
+(default: none)
 |page:
   background_image: +image:page-bg.png[]+
 
@@ -792,21 +793,22 @@ The keys in this category provide generic theme settings that are often reused a
 |base:
   font_size: 10.5
 
-|font_size_large
-|<<values,Number>>
-|base:
-  font_size_large: 13
-
-|font_size_small
-|<<values,Number>>
-|base:
-  font_size_small: 9
+// font_size_large and font_size_small aren't official keys
+//|font_size_large
+//|<<values,Number>>
+//|base:
+//  font_size_large: 13
+//
+//|font_size_small
+//|<<values,Number>>
+//|base:
+//  font_size_small: 9
 
 |font_size_min
 |<<values,Number>> +
 (default: 9)
 |base:
-  font_size_small: 6
+  font_size_min: 6
 
 |font_style
 |normal {vbar} italic {vbar} bold {vbar} bold_italic +
@@ -828,10 +830,11 @@ The keys in this category provide generic theme settings that are often reused a
     $base_line_height_length /
     $base_font_size
 
-|border_radius
-|<<values,Number>>
-|base:
-  border_radius: 4
+// border_radius is not an official key
+//|border_radius
+//|<<values,Number>>
+//|base:
+//  border_radius: 4
 
 |border_width
 |<<values,Number>> +
@@ -879,20 +882,21 @@ The keys in this category are used to style hyperlink text.
 |link:
   font_color: #428bca
 
-|font_family
-|<<fonts,Font family name>>
-|link:
-  font_family: Roboto
-
-|font_size
-|<<values,Number>>
-|link:
-  font_size: 9
-
-|font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
-|link:
-  font_style: normal
+// font_family, font_size and font_style not yet implemented
+//|font_family
+//|<<fonts,Font family name>>
+//|link:
+//  font_family: Roboto
+//
+//|font_size
+//|<<values,Number>>
+//|link:
+//  font_size: 9
+//
+//|font_style
+//|normal {vbar} italic {vbar} bold {vbar} bold_italic
+//|link:
+//  font_style: normal
 |===
 
 === Literal inline
@@ -929,7 +933,7 @@ The keys in this category are used for inline monospaced text in prose and table
 
 === Heading
 
-The keys in this category control the style of headings, including titles for parts, chapters, sections and the table of contents, as well as discrete headings.
+The keys in this category control the style of most headings, including part titles, chapter titles, sections titles, the table of contents title and discrete headings.
 
 [cols="3,4,5l"]
 |===
@@ -938,24 +942,28 @@ The keys in this category control the style of headings, including titles for pa
 3+|*Key Prefix:* heading
 
 |align
-|left {vbar} center {vbar} right {vbar} justify
+|left {vbar} center {vbar} right {vbar} justify +
+(default: left)
 |heading:
   align: center
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: $base_font_color)
 |heading:
-  font_color: #333333
+  font_color: #222222
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: $base_font_family)
 |heading:
   font_family: Noto Serif
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: $base_font_size)
 |heading:
-  font_size: 9
+  font_size: 18
 
 |font_style
 |normal {vbar} italic {vbar} bold {vbar} bold_italic +
@@ -981,32 +989,49 @@ The keys in this category control the style of headings, including titles for pa
 |heading:
   margin_bottom: 9.6
 
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|heading:
+  text_transform: uppercase
+
 3+|*Key Prefix:* heading_h<n>^[1]^
 
 |align
-|left {vbar} center {vbar} right {vbar} justify
+|left {vbar} center {vbar} right {vbar} justify +
+(default: $heading_align)
 |heading:
   h2_align: center
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: $heading_font_color)
 |heading:
   h2_font_color: [0, 99%, 100%, 0]
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: $heading_font_family)
 |heading:
   h4_font_family: Roboto
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: h1=24; h2=18; h3=16; h4=14; h5=12; h6=10)
 |heading:
   h6_font_size: $base_font_size * 1.7
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+(default: $heading_font_style)
 |heading:
   h3_font_style: bold_italic
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: $heading_text_transform)
+|heading:
+  text_transform: lowercase
 |===
 
 . `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
@@ -2050,10 +2075,11 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   h3_font_color: #999999
 
-3+|*Key Prefix:* toc_title
+3+|*Key Prefix:* toc_title^[2]^
 
 |align
-|left {vbar} center {vbar} right {vbar} justify
+|left {vbar} center {vbar} right {vbar} justify +
+(default: left)
 |toc:
   title:
     align: center
@@ -2074,6 +2100,7 @@ The keys in this category control the arrangement and style of the table of cont
 |===
 
 . `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
+. The `toc_title` keys inherit from level-2 heading styles, except where noted.
 
 === Running header & footer
 
