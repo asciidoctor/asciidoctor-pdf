@@ -1937,15 +1937,7 @@ The keys in this category control the arrangement and style of tables and table 
   foot:
     font_style: italic
 
-3+|*Key Prefix:* table_odd_row
-
-|background_color
-|<<colors,Color>>
-|table:
-  odd_row:
-    background_color: #ffffff
-
-3+|*Key Prefix:* table_even_row
+3+|*Key Prefix:* table_<parity>_row^[1]^
 
 |background_color
 |<<colors,Color>>
@@ -2000,6 +1992,8 @@ The keys in this category control the arrangement and style of tables and table 
   header_cell:
     font_style: italic
 |===
+
+. `<parity>` can be `odd` (odd rows) or `even` (even rows).
 
 [[key-toc]]
 === Table of contents
