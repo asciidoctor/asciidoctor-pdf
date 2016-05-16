@@ -1164,7 +1164,7 @@ class Converter < ::Prawn::Document
         cell_data = {
           content: cell.text,
           inline_format: [normalize: true],
-          text_color: (theme.table_body_font_color || @font_color),
+          text_color: (theme.table_font_color || @font_color),
           size: theme.table_font_size,
           font: theme.table_font_family,
           colspan: cell.colspan || 1,
