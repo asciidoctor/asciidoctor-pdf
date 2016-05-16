@@ -715,7 +715,7 @@ This nested structure is flatted when the theme is loaded.
 
 === Page
 
-The keys in this category control the size, margins and background of each page canvas.
+The keys in this category control the size, margins and background of each page (i.e., canvas).
 
 [cols="3,4,5l"]
 |===
