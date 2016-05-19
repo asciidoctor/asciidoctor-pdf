@@ -2112,7 +2112,7 @@ The keys in this category control the arrangement and style of the table of cont
 
 The keys in this category control the arrangement and style of running header and footer content.
 
-TIP: You can disable the running header and footer by setting the `noheader` and `nofooter` attributes in your document, respectively.
+TIP: If you defined running header and footer content in your theme, you can still disable this content per document by setting the `noheader` and `nofooter` document attributes, respectively.
 
 [cols="3,4,5l"]
 |===
