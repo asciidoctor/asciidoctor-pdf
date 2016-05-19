@@ -2107,6 +2107,7 @@ The keys in this category control the arrangement and style of the table of cont
 . `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
 . The `toc_title` keys inherit from level-2 heading styles, except where noted.
 
+[#running-content]
 === Running header & footer
 
 The keys in this category control the arrangement and style of running header and footer content.
