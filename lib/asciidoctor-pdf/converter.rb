@@ -1488,9 +1488,9 @@ class Converter < ::Prawn::Document
   def convert_inline_menu node
     menu = node.attr 'menu'
     if !(submenus = node.attr 'submenus').empty?
-      %(<strong>#{[menu, *submenus, (node.attr 'menuitem')] * ' | '}</strong>)
+      %(<strong>#{[menu, *submenus, (node.attr 'menuitem')] * ' %(\u2192) '}</strong>)
     elsif (menuitem = node.attr 'menuitem')
-      %(<strong>#{menu} | #{menuitem}</strong>)
+      %(<strong>#{menu} %(\u2192) #{menuitem}</strong>)
     else
       %(<strong>#{menu}</strong>)
     end
