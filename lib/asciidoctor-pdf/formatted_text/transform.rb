@@ -3,13 +3,14 @@ module Pdf
 module FormattedText
 class Transform
   EOL = "\n"
-  NamedEntityTable = {
-    :lt => '<',
-    :gt => '>',
-    :amp => '&',
-    :quot => '"',
-    :apos => '\''
+  CharEntityTable = {
+    lt: '<',
+    gt: '>',
+    amp: '&',
+    quot: '"',
+    apos: '\''
   }
+  CharRefRx = /&(?:#([0-9]{2,5})|(#{CharEntityTable.keys * '|'}));/
   #ZeroWidthSpace = %(\u200b)
 
   def initialize(options = {})
@@ -103,7 +104,7 @@ class Transform
         previous_fragment_is_text = true
       when :entity
         if (name = node[:name])
-          text = NamedEntityTable[name]
+          text = CharEntityTable[name]
         else
           # FIXME AFM fonts do not include a thin space glyph; set fallback_fonts to allow glyph to be resolved
           text = [node[:number]].pack('U*')
@@ -183,15 +184,15 @@ class Transform
       #  fragment[:character_spacing] = value.to_f
       #end
     when :a
+      # QUESTION shouldn't anchor, link and name be mutually exclusive?
       if !fragment[:anchor] && (value = attrs[:anchor])
         fragment[:anchor] = value
       end
       if !fragment[:link] && (value = attrs[:href])
-        fragment[:link] = value
+        fragment[:link] = (value.include? '&') ? value.gsub(CharRefRx) {
+          $2 ? CharEntityTable[$2.to_sym] : [$1.to_i].pack('U*')
+        } : value
       end
-      #if !fragment[:local] && (value = attrs[:local])
-      #  fragment[:local] = value
-      #end
       if !fragment[:name] && (value = attrs[:name])
         fragment[:name] = value
         fragment[:callback] = InlineDestinationMarker
