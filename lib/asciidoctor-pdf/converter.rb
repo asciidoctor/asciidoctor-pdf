@@ -1487,10 +1487,11 @@ class Converter < ::Prawn::Document
 
   def convert_inline_menu node
     menu = node.attr 'menu'
+    caret = @theme.menu_caret_content || %( \u203a )
     if !(submenus = node.attr 'submenus').empty?
-      %(<strong>#{[menu, *submenus, (node.attr 'menuitem')] * ' | '}</strong>)
+      %(<strong>#{[menu, *submenus, (node.attr 'menuitem')] * caret}</strong>)
     elsif (menuitem = node.attr 'menuitem')
-      %(<strong>#{menu} | #{menuitem}</strong>)
+      %(<strong>#{menu}#{caret}#{menuitem}</strong>)
     else
       %(<strong>#{menu}</strong>)
     end
