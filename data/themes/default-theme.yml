@@ -71,6 +71,8 @@ literal:
   font_color: b12146
   font_family: M+ 1mn
 menu_caret_content: " <font size=\"1.15em\"><color rgb=\"b12146\">\u203a</color></font> "
+button:
+  background_color: e7e7e7
 heading:
   #font_color: 181818
   font_color: $base_font_color
