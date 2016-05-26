@@ -148,6 +148,10 @@ The value of a key may be one of the following types:
   - Alignment (left, center, right, justify)
   - Color as hex string (e.g., #ffffff)
   - Image path
+* Null (clears any previously assigned value)
+  - _empty_ (i.e., no value specified)
+  - null
+  - ~
 * Number (integer or float) with optional units (default unit is points)
 * Array
   - Color as RGB array (e.g., [51, 51, 51])
@@ -177,7 +181,8 @@ The following keys are inherited:
 
 .Heading Inheritance
 ****
-Headings are special in that they inherit starting from a specific heading level (e.g., `heading_font_size_h2`) to the heading category (e.g., `heading_font_size`) and then directly to the base value (e.g., `base_font_size`), skipping any enclosing context.
+Headings inherit starting from a specific heading level (e.g., `heading_h2_font_size`), then to the heading category (e.g., `heading_font_size`), then directly to the base value (e.g., `base_font_size`).
+Any setting from an enclosing context, such as a sidebar, is skipped.
 ****
 
 === Variables
@@ -1020,7 +1025,7 @@ The keys in this category control the style of most headings, including part tit
 |heading:
   h4_font_family: Roboto
 
-|font_size
+|font_size^[1]^
 |<<values,Number>> +
 (default: h1=24; h2=18; h3=16; h4=14; h5=12; h6=10)
 |heading:
@@ -1040,6 +1045,8 @@ The keys in this category control the style of most headings, including part tit
 |===
 
 . `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
+. A font size is assigned to each heading level by the base theme.
+If you want the font size of a specific level to be inherited, you must assign the value `null` (or `~` for short).
 
 === Title page
 
