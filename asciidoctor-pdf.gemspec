@@ -17,11 +17,12 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
 
   s.required_ruby_version = '>= 1.9'
 
-  begin
-    s.files = `git ls-files -z -- {bin,data,docs,lib}/* {README.adoc,LICENSE.adoc,NOTICE.adoc,Rakefile}`.split "\0"
+  files = begin
+    IO.popen('git ls-files -z') {|io| io.read }.split "\0"
   rescue
-    s.files = Dir['**/*']
+    Dir['**/*']
   end
+  s.files = files.grep(/^(?:(?:bin|data|docs|lib)\/.+|Rakefile|(?:README|LICENSE|NOTICE)\.adoc)$/)
 
   # FIXME optimize-pdf is currently a shell script, so listing it here won't work
   #s.executables = %w(asciidoctor-pdf optimize-pdf)
