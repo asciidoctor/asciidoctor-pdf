@@ -2385,7 +2385,7 @@ class Converter < ::Prawn::Document
     if (imagesdir = doc.attr 'imagesdir').nil_or_empty? || (imagesdir = imagesdir.chomp '/') == '.'
       nil
     else
-      %(#{imagesdir}/)
+      imagesdir
     end
   end
 
@@ -2408,7 +2408,7 @@ class Converter < ::Prawn::Document
     image_type ||= ::Asciidoctor::Image.image_type image_path
     # handle case when image is a URI
     if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
-        (image_path = (node.normalize_web_path image_path, image_base_uri, false)))
+        (image_path = (node.normalize_web_path image_path, imagesdir, false)))
       unless doc.attr? 'allow-uri-read'
         unless scratch?
           warn %(asciidoctor: WARNING: allow-uri-read is not enabled; cannot embed remote image: #{image_path})
@@ -2417,6 +2417,8 @@ class Converter < ::Prawn::Document
       end
       if doc.attr? 'cache-uri'
         Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
+      else
+        ::OpenURI
       end
       tmp_image = ::Tempfile.new ['image-', %(.#{image_type})]
       tmp_image.binmode if (binary = image_type != 'svg')
