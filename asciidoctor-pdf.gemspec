@@ -35,10 +35,10 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   s.rdoc_options = ['--charset=UTF-8', '--title="Asciidoctor PDF"', '--main=README.adoc', '-ri']
   s.extra_rdoc_files = ['README.adoc', 'LICENSE.adoc', 'NOTICE.adoc']
 
-  s.add_development_dependency 'rake', '~> 10.0'
+  s.add_development_dependency 'rake'
   #s.add_development_dependency 'rdoc', '~> 4.1.0'
 
-  s.add_runtime_dependency 'asciidoctor', '~> 1.5.0'
+  s.add_runtime_dependency 'asciidoctor', '>= 1.5.0'
   # Prawn 2.x requires Ruby 2.x, so cast a wider net
   s.add_runtime_dependency 'prawn', '>= 1.3.0', '< 3.0.0'
   s.add_runtime_dependency 'prawn-table', '0.2.2'
