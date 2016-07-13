@@ -18,21 +18,22 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   s.required_ruby_version = '>= 1.9.3'
 
   files = begin
-    IO.popen('git ls-files -z') {|io| io.read }.split "\0"
+    output = IO.popen('git ls-files -z', err: File::NULL) {|io| io.read }.split %(\0)
+    $?.success? ? output : Dir['**/*']
   rescue
     Dir['**/*']
   end
-  s.files = files.grep(/^(?:(?:bin|data|docs|lib)\/.+|Rakefile|(?:README|LICENSE|NOTICE)\.adoc)$/)
-
+  s.files = files.grep /^(?:(?:data|docs|lib)\/.+|Gemfile|Rakefile|(?:LICENSE|NOTICE|README)\.adoc|#{s.name}\.gemspec)$/
   # FIXME optimize-pdf is currently a shell script, so listing it here won't work
-  #s.executables = %w(asciidoctor-pdf optimize-pdf)
-  s.executables = %w(asciidoctor-pdf)
-  s.test_files = s.files.grep(/^(?:test|spec|feature)\/.*$/)
-  s.require_paths = %w(lib)
+  #s.executables = ['asciidoctor-pdf', 'optimize-pdf']
+  s.executables = ['asciidoctor-pdf']
+  s.test_files = files.grep /^(?:test|spec|feature)\/.*$/
+
+  s.require_paths = ['lib']
 
   s.has_rdoc = true
-  s.rdoc_options = %(--charset=UTF-8 --title="Asciidoctor PDF" --main=README.adoc -ri)
-  s.extra_rdoc_files = %w(README.adoc LICENSE.adoc NOTICE.adoc)
+  s.rdoc_options = ['--charset=UTF-8', '--title="Asciidoctor PDF"', '--main=README.adoc', '-ri']
+  s.extra_rdoc_files = ['README.adoc', 'LICENSE.adoc', 'NOTICE.adoc']
 
   s.add_development_dependency 'rake', '~> 10.0'
   #s.add_development_dependency 'rdoc', '~> 4.1.0'
