@@ -15,7 +15,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   s.homepage = 'https://github.com/asciidoctor/asciidoctor-pdf'
   s.license = 'MIT'
 
-  s.required_ruby_version = '>= 1.9'
+  s.required_ruby_version = '>= 1.9.3'
 
   files = begin
     IO.popen('git ls-files -z') {|io| io.read }.split "\0"
