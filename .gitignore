@@ -2,6 +2,7 @@
 /_*/
 /Gemfile.lock
 /pkg/
+/.bundle/
 /.ruby-gemset
 /.ruby-version
-/.idea
+/.idea/
