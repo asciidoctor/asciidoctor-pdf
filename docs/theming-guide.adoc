@@ -36,7 +36,7 @@ If you don't define your own fonts, the built-in PDF fonts will be used.
 
 toc::[]
 
-== Language overview
+== Language Overview
 
 The theme language in Asciidoctor PDF is based on the http://en.wikipedia.org/wiki/YAML[YAML] data format and incorporates many concepts from CSS and SASS.
 Therefore, if you have a background in web design, the theme language should be immediately familiar to you.
@@ -228,7 +228,7 @@ base:
 
 We'll cover more about math expressions later.
 
-==== Custom variables
+==== Custom Variables
 
 You can define arbitrary key names to make custom variables.
 This is one way to group reusable values at the top of your theme file.
@@ -257,7 +257,7 @@ base:
   font_color: $brand_primary
 ----
 
-=== Math expressions & functions
+=== Math Expressions & Functions
 
 The theme language supports basic math operations to support calculated values.
 Like programming languages, multiple and divide take precedence over add and subtract.
@@ -321,7 +321,7 @@ base:
   font_size_large: ceil($base_font_size * 1.25)
 ----
 
-=== Measurement units
+=== Measurement Units
 
 Several of the keys require a value in points (pt), the unit of measure for the PDF canvas.
 A point is defined as 1/72 of an inch.
@@ -504,7 +504,7 @@ In fact, it prefers Unicode and considers the whole range.
 However, once you convert to PDF, you have to meet the font requirements of PDF in order to preserve Unicode characters.
 There's nothing Asciidoctor can do to convince PDF to work without the right fonts in play.
 
-=== Built-in (AFM) fonts
+=== Built-In (AFM) Fonts
 
 The names of the built-in fonts (for general-purpose text) are as follows:
 
@@ -539,7 +539,7 @@ For anything outside of that, PDF is BYOF (Bring Your Own Font).
 Even though the built-in fonts require the content to be encoded in WINANSI, _you still type your AsciiDoc document in UTF-8_.
 Asciidoctor PDF encodes the content into WINANSI when building the PDF.
 
-.WINANSI encoding behavior
+.WINANSI Encoding Behavior
 ****
 If you're using Prawn 1.3.0 with one of the built-in fonts, any characters in your AsciiDoc document that cannot be encoded to WINANSI will be replaced with an underscore glyph (`_`).
 If you're using Prawn 2.0.0 or above with one of the built-in fonts, if your AsciiDoc document contains a character that cannot be encoded to WINANSI, a warning will be issued and conversion will halt.
@@ -547,7 +547,7 @@ If you're using Prawn 2.0.0 or above with one of the built-in fonts, if your Asc
 For more information about how Prawn handles character encodings for built-in fonts, see https://github.com/prawnpdf/prawn/blob/master/CHANGELOG.md#vastly-improved-handling-of-encodings-for-pdf-built-in-afm-fonts[this note in the Prawn CHANGELOG].
 ****
 
-=== Bundled fonts
+=== Bundled Fonts
 
 Asciidoctor PDF bundles several fonts that are used in the default theme.
 You can also use these fonts in your custom theme.
@@ -570,7 +570,7 @@ Useful as a fallback font.
 CAUTION: At the time of this writing, you cannot use the bundled fonts if you define your own custom fonts.
 This limitation may be lifted in the future.
 
-=== Custom fonts
+=== Custom Fonts
 
 The limited character set of WINANSI, or the bland look of the built-in fonts, may motivate you to load your own font.
 Custom fonts can enhance the look of your PDF theme substantially.
@@ -648,7 +648,7 @@ TIP: Text in SVGs will use the font catalog from your theme.
 We recommend that you match the font key to the name of the font seen by the operating system.
 This will allow you to use the same font names (aka families) in both your graphics program and Asciidoctor PDF.
 
-=== Fallback fonts
+=== Fallback Fonts
 
 If one of your fonts is missing a character that is used in a document, such as special symbols, you can tell Asciidoctor PDF to retrieve the character from a fallback font.
 You only need to specify one fallback font...typically one that has a full set of symbols.
@@ -723,7 +723,7 @@ This nested structure is flatted when the theme is loaded.
 The keys in this category control the size, margins and background of each page (i.e., canvas).
 
 NOTE: The background of the title page can be styled independently.
-See <<Title page>> for details.
+See <<Title Page>> for details.
 
 [cols="3,4,5l"]
 |===
@@ -862,7 +862,7 @@ It's common to define additional keys in this category (e.g., `base_border_radiu
 . You should set one of `line_height` or `line_height_length`, then derive the value of the other using a calculation as these are correlated values.
 For instance, if you set `line_height_length`, then use `$base_line_height_length / $base_font_size` as the value of `line_height`.
 
-=== Vertical spacing
+=== Vertical Spacing
 
 The keys in this category control the general spacing between elements where a more specific setting is not designated.
 
@@ -909,7 +909,7 @@ The keys in this category are used to style hyperlink text.
 //  font_style: normal
 |===
 
-=== Literal inline
+=== Literal (Inline)
 
 The keys in this category are used for inline monospaced text in prose and table cells.
 
@@ -1048,7 +1048,7 @@ The keys in this category control the style of most headings, including part tit
 . A font size is assigned to each heading level by the base theme.
 If you want the font size of a specific level to be inherited, you must assign the value `null` (or `~` for short).
 
-=== Title page
+=== Title Page
 
 The keys in this category control the style of the title page as well as the arrangement and style of the elements on it.
 
@@ -1748,7 +1748,7 @@ The keys in this category control the arrangement and style of the abstract.
   padding: [0, 12, 0, 12]
 |===
 
-=== Thematic break
+=== Thematic Break
 
 The keys in this category control the style of thematic breaks (aka horizontal rules).
 
@@ -1787,7 +1787,7 @@ The keys in this category control the style of thematic breaks (aka horizontal r
   margin_bottom: 18
 |===
 
-=== Description list
+=== Description List
 
 The keys in this category control the arrangement and style of definition list items (terms and descriptions).
 
@@ -1815,7 +1815,7 @@ The keys in this category control the arrangement and style of definition list i
   description_indent: 15
 |===
 
-=== Outline list
+=== Outline List
 
 The keys in this category control the arrangement and style of outline list items.
 
@@ -2033,7 +2033,7 @@ The keys in this category control the arrangement and style of tables and table 
 . `<parity>` can be `odd` (odd rows) or `even` (even rows).
 
 [[key-toc]]
-=== Table of contents
+=== Table of Contents
 
 The keys in this category control the arrangement and style of the table of contents.
 
@@ -2115,7 +2115,7 @@ The keys in this category control the arrangement and style of the table of cont
 . The `toc_title` keys inherit from level-2 heading styles, except where noted.
 
 [#running-content]
-=== Running header & footer
+=== Running Header & Footer
 
 The keys in this category control the arrangement and style of running header and footer content.
 
@@ -2288,7 +2288,7 @@ NOTE: If content is not specified for the running footer, the page number (i.e.,
 NOTE: The background color spans the width of the page.
 When a background color is specified, the border also spans the width of the page.
 
-==== Attribute references
+==== Attribute References
 
 You can use _any_ attribute defined in your AsciiDoc document in the content of the running header and footer.
 In addition, the following attributes are also available when defining the content keys in the footer:
@@ -2370,7 +2370,7 @@ CAUTION: The image must fit in the allotted space for the running header or foot
 Otherwise, you will run into layout issues.
 Adjust the width attribute accordingly.
 
-== Applying your theme
+== Applying Your Theme
 
 After creating a theme, you'll need to tell Asciidoctor PDF where to find it.
 This is done using AsciiDoc attributes.
@@ -2429,7 +2429,7 @@ The only thing you need to add to an existing build is the attributes mentioned 
 * https://github.com/asciidoctor/asciidoctor-maven-examples/tree/master/asciidoctor-pdf-with-theme-example[Maven Example]
 * https://github.com/asciidoctor/asciidoctor-gradle-examples/tree/master/asciidoc-to-pdf-with-theme-example[Gradle Example]
 
-== Theme-related document attributes
+== Theme-Related Document Attributes
 
 There are various settings in the theme you control using document attributes.
 These settings override equivalent keys defined in the theme file, where applicable.
@@ -2472,7 +2472,7 @@ These settings override equivalent keys defined in the theme file, where applica
 Use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively, from the document.
 
 ////
-== Resources (for extending Asciidoctor PDF)
+== Resources for Extending Asciidoctor PDF
 
 * http://www.sitepoint.com/hackable-pdf-typesetting-in-ruby-with-prawn[Hackable PDF typesetting in Ruby with Prawn]
 ////
