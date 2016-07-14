@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 require File.expand_path('lib/asciidoctor-pdf/version', File.dirname(__FILE__))
+require 'open3' unless defined? Open3
 
 Gem::Specification.new do |s|
   s.name = 'asciidoctor-pdf'
@@ -18,8 +19,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   s.required_ruby_version = '>= 1.9.3'
 
   files = begin
-    output = IO.popen('git ls-files -z', err: File::NULL) {|io| io.read }.split %(\0)
-    $?.success? ? output : Dir['**/*']
+    (result = Open3.popen3('git ls-files -z') {|_, out| out.read }.split %(\0)).empty? ? Dir['**/*'] : result
   rescue
     Dir['**/*']
   end
