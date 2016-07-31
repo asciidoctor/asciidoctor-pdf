@@ -108,8 +108,8 @@ grammar Markup
   end
 
   rule entity_number
-    # FIXME change max to 6 once supported by Asciidoctor core
-    [0-9] 2..5
+    # NOTE 6 decimals only supported in Asciidoctor 1.5.5 and up
+    [0-9] 2..6
   end
 
   rule entity_name
