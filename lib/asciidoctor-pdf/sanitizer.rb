@@ -8,7 +8,7 @@ module Sanitizer
   }
   BuiltInEntityCharRx = /(?:#{BuiltInEntityChars.keys * '|'})/
   BuiltInEntityCharOrTagRx = /(?:#{BuiltInEntityChars.keys * '|'}|<)/
-  NumericCharRefRx = /&#(\d{2,4});/
+  NumericCharRefRx = /&#(\d{2,6});/
   XmlSanitizeRx = /<[^>]+>/
   SegmentPcdataRx = /(?:(&[a-z]+;|<[^>]+>)|([^&<]+))/
 

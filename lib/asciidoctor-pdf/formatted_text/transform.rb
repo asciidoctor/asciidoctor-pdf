@@ -10,7 +10,7 @@ class Transform
     quot: '"',
     apos: '\''
   }
-  CharRefRx = /&(?:#([0-9]{2,5})|(#{CharEntityTable.keys * '|'}));/
+  CharRefRx = /&(?:#(\d{2,6})|(#{CharEntityTable.keys * '|'}));/
   #ZeroWidthSpace = %(\u200b)
 
   def initialize(options = {})
