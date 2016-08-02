@@ -81,6 +81,18 @@ module Extensions
     page.margins[:bottom]
   end
 
+  # Returns the total left margin (to the page edge) for the current bounds.
+  #
+  def bounds_margin_left
+    bounds.absolute_left
+  end
+
+  # Returns the total right margin (to the page edge) for the current bounds.
+  #
+  def bounds_margin_right
+    page.dimensions[2] - bounds.absolute_right
+  end
+
   # Returns whether the cursor is at the top of the page (i.e., margin box)
   #
   def at_page_top?
@@ -456,11 +468,13 @@ module Extensions
     #end
   end
 
-  # Stretch the current bounds to the left and right edges of the current page.
+  # Stretch the current bounds to the left and right edges of the current page
+  # while yielding the specified block if the verdict argument is true.
+  # Otherwise, simply yield the specified block.
   #
-  def use_page_width_if verdict
+  def span_page_width_if verdict
     if verdict
-      indent(-bounds.absolute_left, bounds.absolute_right - page_width) do
+      indent -bounds_margin_left, -bounds_margin_right do
         yield
       end
     else
