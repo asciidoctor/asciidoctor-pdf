@@ -206,7 +206,7 @@ The layout and styling of the PDF is driven by a YAML configuration file.
 To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theme Guide>>.
 You can use the built-in theme files, which you can find in the [file]_data/themes_ directory, as examples.
 
-== Font-based Icons
+== Font-based icons
 
 You can use icons in your PDF document using any of the following icon sets:
 
@@ -257,6 +257,54 @@ You can enable use of fonts during PDF generation (instead of in the document he
 
 Icon-based fonts are handled by the `prawn-icon` gem.
 To find a complete list of available icons, consult the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon] repository.
+
+== Image scaling
+
+Since PDF is a fixed-width canvas, you almost always need to specify an image width to get the image to fit properly on the page.
+There are four ways to specify the width of the image, listed here in order of precedence:
+
+[cols="1s,3d"]
+|===
+|Attribute{nbsp}Name | Description
+
+|pdfwidth
+|The display width of the image as an absolute size (e.g., 2in), percentage of the content width (e.g., 75%), or percentage of the page width (e.g., 100vw).
+_Intended to be used for the PDF converter only._
+
+|scaledwidth
+|The display width of the image as a percentage of the content width (e.g., 75%).
+_Intended to be used for print output such as PDF._
+
+|width
+|The unitless display width of the image (assumed to be pixels), typically matching the intrinsic width of the image.
+If the width exceeds the content width, the image is scaled down to the content width.
+
+|_unspecified_
+|If you don't specify one of the width attributes, the intrinsic width of the image is used (the px value is multiplied by 75% to convert to pt) unless the width exceeds the content width, in which case the image is scaled down to the content width.
+|===
+
+The sizing is always controlled by the width (explicit or intrinsic) and the size of the image is scaled proporationally.
+The height of the image is ignored by the PDF converter, with one exception.
+If the height of the image exceeds the height of the page, the image is scaled down to fit on a single page.
+
+=== pdfwidth attribute
+
+The pdfwidth attribute is the recommended way to set the image size for the PDF output.
+This attribute is provided for two reasons.
+First, the fixed-width canvas often calls for a width that is distinct from other output formats, such as HTML.
+Second, this attribute allows the width to be expressed using a variety of units.
+
+The pdfwidth attribute supports the following units:
+
+* pt (default)
+* in
+* mm
+* cm
+* px
+* % (percentage of content width)
+* vw (percentage of page width)
+
+In all cases, the width is converted to pt.
 
 == Optional scripts
 
