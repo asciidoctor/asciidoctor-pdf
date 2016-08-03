@@ -1374,9 +1374,9 @@ class Converter < ::Prawn::Document
       end
       #attrs << %( title="#{node.attr 'title'}") if node.attr? 'title'
       attrs << %( target="#{node.attr 'window'}") if node.attr? 'window'
-      if (node.document.attr? 'showlinks') && !(node.has_role? 'bare')
+      if (((doc = node.document).attr? 'media', 'print') || (doc.attr? 'show-link-uri')) && !(node.has_role? 'bare')
         # TODO allow style of visible link to be controlled by theme
-        %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> <font size="0.9"><em>(#{target})</em></font>)
+        %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> <font size="0.9em">[#{target}]</font>)
       else
         %(<a href="#{node.target}"#{attrs.join}>#{node.text}</a>)
       end
