@@ -5,15 +5,29 @@
 
 == TODO
 
+* document show-link-uri in table on asciidoctor.org
+
 * recto/verso margins
   - account differences in top/bottom margins on recto/verso pages in running header/footer
   - dry runs need to reflect current recto/verso margins; situation can get complex if they differ
   - get import_page to stop adding an extra page
   - blank page after title page if media=print
 
-* document missing keys in theming guide for 1.5.0.beta.1 (table seems to missing some)
-* enable key table_font_style
+* examine uses of attr/attr? and ensure we only inherit when desired
+* log warning with reason when remote image can't be read
+* inline images: allow built-in font family names for SVG to be remapped
+* inline images: should we be passing absolute image path in tag or something relative (or even a lookup id?)?
+* document missing keys in theming guide for 1.5.0.beta.1
+  - missing text_transform in some places
+* support the reversed option on ordered lists (see https://github.com/asciidoctor/asciidoctor/issues/1830)
+* large image runs into running footer (doesn't bottom margin need to be aligned with running footer height?)
+* should str_to_pt helper handle % and vw units?
+* enable/implement key table_font_style
+* allow style of visible link to be controlled by theme
 * check that color of table edges set to table_grid_color??
+* shouldn't the default align for headings be $base_align??
+* should not wrap at formatting mark unless it is at a break opportunity
+* rename :entity to :charref in text parser
 * create value type for font style and font alignment for theming guide
 * force encoding of theme to UTF-8 (particularly for keys related to content)
 * be more consistent with how examples are shown in theming-guide.adoc (do we show last segment only?)
@@ -45,10 +59,12 @@
 * allow alignment of list to be set separately from base align (and perhaps a hint in document)
 * due to order of loading, getting warnings when redefining methods in Asciidoctor core
 * prawn-pdfimage https://github.com/packetmonkey/prawn-pdfimage
-* rename ThemeLoader to ThemeReader?
+* rename ThemeLoader to ThemeReader (or ThemeManager)?
 * document autofit option on verbatim blocks
 * document how to extend the converter, use Prawn
 * using tabs instead of spaces for source code indentation allows leading whitespace to be preserved when copying
+  - is this always the case?
+* normalize step leaves space after endline (i.e., `\n `) at a hard line break (doesn't seem to affect flow)
 
 * *margin per heading level* (see https://github.com/asciidoctor/asciidoctor-pdf/issues/176)
 * document how to override the Ruby code to get custom styling in the theming guide
