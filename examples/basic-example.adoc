@@ -1,10 +1,11 @@
 = Document Title
 Doc Writer <doc@example.com>
 :doctype: book
-:source-highlighter: coderay
+//:source-highlighter: coderay
+:source-highlighter: rouge
 :listing-caption: Listing
-// Uncomment next line to set page size (default is Letter)
-//:pdf-page-size: A4
+// Uncomment next line to set page size (default is A4)
+//:pdf-page-size: Legal
 
 A simple http://asciidoc.org[AsciiDoc] document.
 
