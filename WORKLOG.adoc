@@ -14,6 +14,7 @@
   - blank page after title page if media=print
 
 * examine uses of attr/attr? and ensure we only inherit when desired
+* submit pastie theme for Rouge upstream
 * log warning with reason when remote image can't be read
 * inline images: allow built-in font family names for SVG to be remapped
 * inline images: should we be passing absolute image path in tag or something relative (or even a lookup id?)?
