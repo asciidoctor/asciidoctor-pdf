@@ -23,7 +23,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   rescue
     Dir['**/*']
   end
-  s.files = files.grep /^(?:(?:data|docs|lib)\/.+|Gemfile|Rakefile|(?:LICENSE|NOTICE|README)\.adoc|#{s.name}\.gemspec)$/
+  s.files = files.grep /^(?:(?:data|docs|lib)\/.+|Gemfile|Rakefile|(?:CHANGELOG|LICENSE|NOTICE|README)\.adoc|#{s.name}\.gemspec)$/
   # FIXME optimize-pdf is currently a shell script, so listing it here won't work
   #s.executables = ['asciidoctor-pdf', 'optimize-pdf']
   s.executables = ['asciidoctor-pdf']
@@ -33,7 +33,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
 
   s.has_rdoc = true
   s.rdoc_options = ['--charset=UTF-8', '--title="Asciidoctor PDF"', '--main=README.adoc', '-ri']
-  s.extra_rdoc_files = ['README.adoc', 'LICENSE.adoc', 'NOTICE.adoc']
+  s.extra_rdoc_files = ['CHANGELOG.adoc', 'LICENSE.adoc', 'NOTICE.adoc', 'README.adoc']
 
   s.add_development_dependency 'rake'
   #s.add_development_dependency 'rdoc', '~> 4.1.0'
