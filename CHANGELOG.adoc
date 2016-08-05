@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== 1.5.0.alpha.12 (unreleased)
+== 1.5.0.alpha.12 (2016-08-05) - @mojavelinux
 
 * Fix incompatibility with Rouge 2 source highlighter (#471)
 * Declare rouge gem in Gemfile for use with examples
