@@ -5,6 +5,40 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== 1.5.0.alpha.12 (unreleased)
+
+* Fix incompatibility with Rouge 2 source highlighter (#471)
+* Declare rouge gem in Gemfile for use with examples
+* Add option to make URLs visible in printed PDF using show-link-uri or media=print attributes (#435, #463)
+* Document options for scaling an image (#453)
+* Add support for images to span width of page (#424)
+* Fix embedding of remote images; fix case when imagesdir is a URI (#467)
+* Collapse non-significant whitespace (#465)
+* Document how to inherit font size for a given heading level (#460)
+* Decode character references in link URIs (#448)
+* Use arrow as caret for menu path instead of pipe (#441)
+* Document theme-related AsciiDoc attributes in theming guide (#428)
+* Section title alignment should be customizable via theme (#343)
+* Collapse all whitespace when normalizing (#355)
+* Require space on either side of math operator to avoid interpretting dates as math equations (#429)
+* Allow specifying a font style for a title on the title page (#423)
+* Fix Prawn SVG to support arrow heads on lines (#75)
+* Upgrade prawn-svg to 0.25.1
+* Upgrade prawn-icon to 1.1.0
+* Fix rendering of two images in header or footer (#421)
+* Allow table grid color and width to be controlled by theme (@ntfc)
+* Fix undefined local variable or method `dest_y' when adding auto-generated anchor to section (#419)
+* SVG files that include image elements are not rendered correctly improvement (@AlexanderZobkov) (#414)
+* Fix Prawn SVG to support currentColor keyword (#407)
+* Parser should recognize up to 6 digit character references (#404)
+* Properly convert a negative measurement value in theme
+* Coerce percentage value to float instead of integer in theme
+* Set minimum required Ruby version to 1.9.3 instead of 1.9
+* Use title capitalization for section titles in theming guide
+* Update and reorganize keys in theming guide; document numerous keys previous missing
+* Add hints to theming guide about how to apply styles when using Maven or Gradle (@fwilhe)
+* Fix gemspec to collect files when project is not a git repository or git is not available
+
 == 1.5.0.alpha.11 (2016-01-05) - @mojavelinux
 
 * Allow font style for first line of abstract to be controlled by theme (@nawroth) (#378)
