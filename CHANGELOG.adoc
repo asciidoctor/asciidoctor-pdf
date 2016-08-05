@@ -1,0 +1,227 @@
+= {project-name} Changelog
+:project-name: Asciidoctor PDF
+:uri-repo: https://github.com/asciidoctor/asciidoctor-pdf
+
+This document provides a high-level view of the changes to the {project-name} by release.
+For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
+
+== 1.5.0.alpha.11 (2016-01-05) - @mojavelinux
+
+* Allow font style for first line of abstract to be controlled by theme (@nawroth) (#378)
+* Add option to make builds reproducible (@bk2204) (#338)
+* Set default page size to A4 (@stephenhay) (#319)
+* Preprocess all hex color values (#381)
+* Add note about preprocessing hex color values to theming guide (#381)
+* Honor base font style (#373)
+* Don't fail to delete tmp file (#369)
+* Lazy load icon fonts if detected (#364)
+* Reduce heading line height in default theme (#351)
+* Set default (fallback) SVG font from theme (#210)
+* Expand last column to fit width of table (#372)
+* Don't cache resolved imagesdir attribute value
+* Use fallback when merging icon data
+* Defer to built-in caching in prawn-icon
+* Document replacements and numeric character refs in header/footer content
+* Document base_font_size_min setting in theming guide
+* Document that page background colors & images do not currently work in AsciidoctorJ PDF
+* Use failproof relative require logic in bin script
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.11[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.11[git tag]
+
+== 1.5.0.alpha.10 (2015-11-01) - @mojavelinux
+
+* Allow admonition icon to be customized by theme (#121) (@jessedoyle)
+* Update to prawn-icon 1.0.0 (#335) (@jessedoyle)
+* Only generate the pdfmarks file if the pdfmarks attribute is set
+* Honor table alignment (via align attribute or role) (#299)
+* Use Hash for ViewerPreferences; set initial magnification (#303)
+* Handle case when colpcwidth is unspecified (#314)
+* Show title for lists (olist, ulist, dlist) (#316)
+* Don't attempt to add running content if document has no content pages
+* Correctly calculate toc page range (#322)
+* Don't insert blank page after back cover (#328)
+* Document theme key that sets sidebar padding (#344)
+* Handle case when CodeRay passes nil text to text_token
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.10[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.10[git tag]
+
+== 1.5.0.alpha.9 (2015-08-02) - @mojavelinux
+
+* Apply point conversion to image widths (#221)
+* Restore missing glyphs in Noto Serif font; adds support for Cyrillic languages (#72, #99)
+* Add support for the Rouge source highlighter (#247)
+* Fix parsing of style attribute in inline markup when it contains spaces; fixes Pygments highlighting
+* Expand tabs to spaces in source document (#236)
+* Scale down SVG if width is wider than page (#242)
+* Load a base theme with defaults for required keys (#132)
+* Enable PDF page import using block image macro (#177)
+* Restore method in PDF::Core needed to import PDF page (#237)
+* Restore text rendering mode after PDF import (#251)
+* Support writing to STDOUT and other IO objects (#254)
+* Enable pagenums by default; allow noheader & nofooter to control running header/footer (#205)
+* Implement explicit table width, including autowidth (#258)
+* Handle conversion to windows-1252 more gracefully when using built-in (AFM) fonts (#290)
+* Disable warning if using a built-in (AFM) font
+* Remove use of rhythm theme keys from converter (#289)
+* Allow font_style to be set on literal text (#291)
+* Parse inline image macro value of page_background_image (#222)
+* Allow theme to control header cells in table body (#272)
+* Make line height in running header/footer configurable (#274)
+* Normalize text content in running header/footer (#266)
+* Modify vertical alignment setting for running header/footer (#264)
+* Use table background color, even if white; upgrade to Prawn Table 0.2.2 (#214)
+* Delete trailing content page if empty (#147)
+* Fix dry run calculation of block height...again (#215)
+* Move footnotes to inline in a lighter shade
+* Fix for JRuby 1.7 running in 2.0 mode
+* Upgrade Prawn SVG to 0.21.0; fixes most badge SVGs
+* Upgrade thread_safe gem
+* Prevent crash if doc has no sections (@abatalev)
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.9[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.9[git tag]
+
+== 1.5.0.alpha.8 (2015-06-23) - @mojavelinux
+
+* Support inline images (#9)
+* Support link attribute on inline images (#209)
+* Support inline icon macro (#97)
+* Allow fine-grained control over image width (#76)
+* Size conversion not yet applied to images on title page or in running header/footer
+* Enable checklists (#181)
+* Fix block height calculation when content is indented by propagating bounds to scratch document (#215)
+* Don't insert page break before content whose height exceeds a single page (#183)
+* Dash border of literal/listing block at page boundary when broken across pages (#190)
+* Don't crash if toc entry is too long (#200)
+* Add missing methods on OpenStruct to fix Rubinius compatibility (#81)
+* Autofit font size in listing & literal blocks if autofit option is specified (#185)
+* Support border style (e.g., double, dashed, dotted) (#196)
+* Allow font color of outline list marker to be set by theme (#170)
+* Allow use of hyphen in property names in the theme (#193)
+* Only include table of contents if toc attribute is defined in header (#187)
+* Improve parsing of pdf-page-size attribute
+* Handle case in colist converter when previous block isn't found (#173)
+* Print Asciidoctor PDF version in CLI output
+* Upgrade Prawn (< 3.0.0, >= 1.3.0) (#68)
+* Upgrade Prawn SVG to 0.20.0
+* Document gem installation in README (#112)
+* Perform code cleanups (#195)
+* Silence warning about toc block macro
+* Add -example suffix to example file names
+* Use CodeRay as syntax highlighter in examples (#207)
+* Use proper font names in default them to support custom fonts in SVGs
+* Rework parser to parse void elements
+* Apply first line formatting correctly (no dropped words)
+* Add support for text-center role on paragraphs
+* Update theming guide
+* Fix cross references in README
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.8[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.8[git tag]
+
+== 1.5.0.alpha.7 (2015-05-31) - @mojavelinux
+
+* Add support for font-based icons (Jesse Doyle) (#15)
+* Enable font fallback support (Rei)
+* Support single value for font_fallbacks key in theme
+* Reenable M+ 1p as the fallback font
+* Add option to specify the background color for even table rows (Tord Heimdal) (#104)
+* Add block title for paragraphs (David Gamba) (#67)
+* Allow custom page size setting (Otavio Salvador) (#84)
+* Fix xref to sections (#56)
+* Fix xrefs to non-section content (#110)
+* Allow theme to control layout of title page (#135)
+* Allow theme to control style of table of contents (#167)
+* Allow running header & footer content to be customized (#89)
+* Tighten spacing between list items, make value configurable (#92)
+* Support CMYK color values (#155)
+* Add support for measurement values in theme (#156)
+* Name per-level heading theme keys consistently (e.g., heading_h<n>_font_size) (#157)
+* Preprocess theme data to allow # in front of hex colors (#158)
+* Support linkable images (#51)
+* Render table footer row (#123)
+* Don't crash if sectids attribute is disabled (#70)
+* Support text transform in theme (uppercase / lowercase) (#138)
+* Keep together shouldn't create blank pages (#150)
+* Properly resolve image target as system path (#87)
+* Show warning when image cannot be read (#148)
+* Allow page background image to be specified (#134)
+* Support PDF format as cover page (#113)
+* Accomodate numbered list with large numbers (#91)
+* Position list marker correctly (#140)
+* Allow theme to set font size & family of table cells (#139)
+* Unencode character entities in document title (#136)
+* Process callouts in listing & literal blocks (#31)
+* Use :center to vertically align table cell (#118)
+* Normalize endlines in table cell text (#116)
+* Support setting page size via attribute (#65)
+* Remove unused fonts; update version of NotoSerif font license file
+* Remove Asciidoctor theme until we're ready to fully implement
+* Restore source highlighting when nested inside block
+* Allow keys in theme to be nested to an arbitrary depth
+* Assign width to border for blockquote if not specified in theme
+* Add support for font family and style per heading level
+* Implement basic converter for inline_indexterm
+* Coerce negative values in theme if they slip through
+* Use preserve_indentation in layout_prose
+* Support remote images
+* Add warning about unsupported gif format
+* Abort cli if option parsing returns exit code
+* Use SafeYAML to load theme files
+* Handle transparent value for table background colors
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.7[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.7[git tag]
+
+== 1.5.0.alpha.6 (2014-11-28) - @mojavelinux
+
+* Add pdf-fontsdir attributes to redefine fonts directory (andrey)
+* Use require_relative to load Asciidoctor PDF in asciidoctor-pdf script (Ryan Bigg)
+* Add example for specifying theme file (Leif Gruenwoldt) (#61)
+* Add thread_safe gem to remove warning when registering converter
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.6[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.6[git tag]
+
+== 1.5.0.alpha.5 (2014-09-15) - @mojavelinux
+
+* Allow chapter label to be controlled using the `chapter-label` attribute (#47)
+* Prevent toc from overflowing content (#35)
+* Fix page numbering for various permutations of front matter
+* Don't activate implicit header include processor by default (#48, #25)
+* Draw box around listings and literal blocks than span more than one page (#11)
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.5[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.5[git tag]
+
+== 1.5.0.alpha.4 (2014-09-09) - @mojavelinux
+
+* Fix yield statement so Asciidoctor PDF can be used with JRuby
+* Document that the coderay gem must be installed to run the examples (#42)
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.4[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.4[git tag]
+
+== 1.5.0.alpha.3 (2014-09-08) - @mojavelinux
+
+* Remove unnecessary dependencies (tilt, slim, thread_safe)
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.3[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.3[git tag]
+
+== 1.5.0.alpha.2 (2014-09-05) - @mojavelinux
+
+* Add magic encoding header to source file so Asciidoctor PDF can be used with Ruby 1.9.3 (#33, #36)
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.2[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.2[git tag]
+
+== 1.5.0.alpha.1 (2014-09-04) - @mojavelinux
+
+* Rewrite as proper Asciidoctor converter (#29)
+* Initial pre-release
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.1[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.1[git tag]
