@@ -837,7 +837,8 @@ class Converter < ::Prawn::Document
           # TODO layout SVG without using keep_together (since we know the dimensions already); always render caption
           keep_together do |box_height = nil|
             svg_obj.instance_variable_set :@prawn, self
-            svg_obj.draw
+            # NOTE wrap call to draw method in save_font to workaround mogest/prawn-svg#80
+            save_font { svg_obj.draw }
             if box_height && (link = node.attr 'link')
               link_annotation [(abs_left = svg_obj.position[0] + bounds.absolute_left), y, (abs_left + rendered_w), (y + rendered_h)],
                   Border: [0, 0, 0],
