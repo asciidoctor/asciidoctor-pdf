@@ -192,7 +192,7 @@ class Converter < ::Prawn::Document
 
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
-    theme = ThemeLoader.load_theme doc.attr('pdf-style'), doc.attr('pdf-stylesdir')
+    theme = ThemeLoader.load_theme((doc.attr 'pdf-style'), (doc.attr 'pdf-stylesdir'))
     @theme = theme
     pdf_opts = (build_pdf_options doc, theme)
     # QUESTION should we preserve page options (otherwise, not readily available)
@@ -517,9 +517,9 @@ class Converter < ::Prawn::Document
             layout_prose content, normalize: false, align: :left
           end
         end
-        theme_font :blockquote_cite do
-          if node.attr? 'attribution'
-            layout_prose %(#{EmDash} #{[(node.attr 'attribution'), (node.attr 'citetitle')].compact * ', '}), align: :left, normalize: false
+        if node.attr? 'attribution', nil, false
+          theme_font :blockquote_cite do
+            layout_prose %(#{EmDash} #{[(node.attr 'attribution'), (node.attr 'citetitle', nil, false)].compact * ', '}), align: :left, normalize: false
           end
         end
       end
@@ -724,8 +724,8 @@ class Converter < ::Prawn::Document
     when :ulist
       marker = @list_bullets.last
       if marker == :checkbox
-        if node.attr? 'checkbox'
-          marker = BallotBox[(node.attr? 'checked') ? :checked : :unchecked]
+        if node.attr? 'checkbox', nil, false
+          marker = BallotBox[(node.attr? 'checked', nil, false) ? :checked : :unchecked]
         else
           # QUESTION should we remove marker indent in this case?
           marker = nil
@@ -792,11 +792,11 @@ class Converter < ::Prawn::Document
 
     # QUESTION if we advance to new page, shouldn't dest point there too?
     add_dest_for_block node if node.id
-    position = ((node.attr 'align') || @theme.image_align).to_sym
+    position = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
 
     unless valid_image
       theme_margin :block, :top
-      if (link = node.attr 'link')
+      if (link = node.attr 'link', nil, false)
         alt_text = %(<a href="#{link}">[#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}]</a> | <em>#{target}</em>)
       else
         alt_text = %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
@@ -811,7 +811,7 @@ class Converter < ::Prawn::Document
 
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
     width = resolve_explicit_width node.attributes, bounds.width
-    if (width_relative_to_page = (node.attr? 'pdfwidth') && ((node.attr 'pdfwidth').end_with? 'vw'))
+    if (width_relative_to_page = (node.attr? 'pdfwidth', nil, false) && ((node.attr 'pdfwidth').end_with? 'vw'))
       overflow = [bounds_margin_left, bounds_margin_right]
     else
       overflow = 0
@@ -839,7 +839,7 @@ class Converter < ::Prawn::Document
             svg_obj.instance_variable_set :@prawn, self
             # NOTE wrap call to draw method in save_font to workaround mogest/prawn-svg#80
             save_font { svg_obj.draw }
-            if box_height && (link = node.attr 'link')
+            if box_height && (link = node.attr 'link', nil, false)
               link_annotation [(abs_left = svg_obj.position[0] + bounds.absolute_left), y, (abs_left + rendered_w), (y + rendered_h)],
                   Border: [0, 0, 0],
                   A: { Type: :Action, S: :URI, URI: (str2pdfval link) }
@@ -881,7 +881,7 @@ class Converter < ::Prawn::Document
             end
           end
           # NOTE must calculate link position before embedding to get proper boundaries
-          if (link = node.attr 'link')
+          if (link = node.attr 'link', nil, false)
             img_x, img_y = image_position rendered_w, rendered_h, position: position
             link_box = [img_x, (img_y - rendered_h), (img_x + rendered_w), img_y]
           end
@@ -1161,8 +1161,8 @@ class Converter < ::Prawn::Document
           font_style: theme.table_head_font_style.to_sym,
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
-          align: (cell.attr 'halign').to_sym,
-          valign: (cell.attr 'valign').to_sym
+          align: (cell.attr 'halign', nil, false).to_sym,
+          valign: (cell.attr 'valign', nil, false).to_sym
         }
       end
       table_data << row_data
@@ -1180,8 +1180,8 @@ class Converter < ::Prawn::Document
           font: theme.table_font_family,
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
-          align: (cell.attr 'halign').to_sym,
-          valign: (cell.attr 'valign').to_sym
+          align: (cell.attr 'halign', nil, false).to_sym,
+          valign: (cell.attr 'valign', nil, false).to_sym
         }
         cell_data[:valign] = :center if cell_data[:valign] == :middle
         case cell.style
@@ -1232,24 +1232,25 @@ class Converter < ::Prawn::Document
     [:top, :bottom, :left, :right].each {|edge| border[edge] = table_border_width }
     [:cols, :rows].each {|edge| border[edge] = table_grid_width }
 
-    frame = (node.attr 'frame') || 'all'
-    grid = (node.attr 'grid') || 'all'
-
-    case grid
+    case (grid = node.attr 'grid', 'all', false)
+    when 'all'
+      # keep inner borders
     when 'cols'
       border[:rows] = 0
     when 'rows'
       border[:cols] = 0
-    when 'none'
+    else # none
       border[:rows] = border[:cols] = 0
     end
 
-    case frame
+    case (frame = node.attr 'frame', 'all', false)
+    when 'all'
+      # keep outer borders
     when 'topbot'
       border[:left] = border[:right] = 0
     when 'sides'
       border[:top] = border[:bottom] = 0
-    when 'none'
+    else # none
       border[:top] = border[:right] = border[:bottom] = border[:left] = 0
     end
 
@@ -1257,15 +1258,14 @@ class Converter < ::Prawn::Document
       column_widths = []
     else
       table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
-      even_column_pct = 100.0 / node.columns.size
-      column_widths = node.columns.map {|col| ((col.attr 'colpcwidth', even_column_pct) * table_width) / 100.0 }
-      # NOTE Asciidoctor core doesn't always add colpcwidth values up to 100%
+      column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
+      # NOTE until Asciidoctor 1.5.4, colpcwidth values didn't always add up to 100%; use last column to compensate
       unless column_widths.empty? || (width_delta = table_width - column_widths.reduce(:+)).zero?
         column_widths[-1] += width_delta
       end
     end
 
-    if ((position = node.attr 'align') && (AlignmentNames.include? position)) ||
+    if ((position = node.attr 'align', nil, false) && (AlignmentNames.include? position)) ||
         (position = (node.roles & AlignmentNames).last)
       position = position.to_sym
     else
@@ -1374,7 +1374,7 @@ class Converter < ::Prawn::Document
         attrs << %( class="#{role}")
       end
       #attrs << %( title="#{node.attr 'title'}") if node.attr? 'title'
-      attrs << %( target="#{node.attr 'window'}") if node.attr? 'window'
+      attrs << %( target="#{node.attr 'window'}") if node.attr? 'window', nil, false
       if (((doc = node.document).attr? 'media', 'print') || (doc.attr? 'show-link-uri')) && !(node.has_role? 'bare')
         # TODO allow style of visible link to be controlled by theme
         %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> <font size="0.9em">[#{target}]</font>)
@@ -1447,10 +1447,10 @@ class Converter < ::Prawn::Document
         if (icon_name = node.target).include? '@'
           icon_name, icon_set = icon_name.split '@', 2
         else
-          icon_set = node.attr 'set', (node.document.attr 'icon-set', 'fa')
+          icon_set = node.attr 'set', (node.document.attr 'icon-set', 'fa'), false
         end
         icon_set = 'fa' unless IconSets.include? icon_set
-        if node.attr? 'size'
+        if node.attr? 'size', nil, false
           size = (size = (node.attr 'size')) == 'lg' ? '1.3333em' : (size.sub 'x', 'em')
           size_attr = %( size="#{size}")
         else
@@ -1476,12 +1476,12 @@ class Converter < ::Prawn::Document
         valid = false
       end
       if valid
-        width_attr = (node.attr? 'width') ? %( width="#{node.attr 'width'}") : nil
+        width_attr = (node.attr? 'width', nil, false) ? %( width="#{node.attr 'width'}") : nil
         img = %(<img src="#{image_path}" type="#{image_type}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{TemporaryPath === image_path}">)
       end
     end
     img ||= %([#{node.attr 'alt'}])
-    (node.attr? 'link') ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
+    (node.attr? 'link', nil, false) ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
   end
 
   def convert_inline_indexterm node
@@ -1622,10 +1622,10 @@ class Converter < ::Prawn::Document
         move_down (@theme.title_page_authors_margin_top || 0)
         theme_font :title_page_authors do
           # TODO add support for author delimiter
-          layout_prose doc.attr('authors'),
+          layout_prose((doc.attr 'authors'),
             align: title_align,
             margin: 0,
-            normalize: false
+            normalize: false)
         end
         move_down (@theme.title_page_authors_margin_bottom || 0)
       end
@@ -1759,7 +1759,7 @@ class Converter < ::Prawn::Document
     go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
     start_page_number = page_number
     theme_font :heading, level: 2 do
-      layout_heading doc.attr('toc-title'), align: (@theme.toc_title_align || :left).to_sym
+      layout_heading((doc.attr 'toc-title'), align: (@theme.toc_title_align || :left).to_sym)
     end
     # QUESTION shouldn't we skip this whole method if num_levels == 0?
     if num_levels > 0
@@ -1787,7 +1787,7 @@ class Converter < ::Prawn::Document
         start_cursor = cursor
         # NOTE CMYK value gets flattened here, but is restored by formatted text parser
         # FIXME use layout_prose
-        typeset_text %(<a anchor="#{sect_anchor = (sect.attr 'anchor') || sect.id}"><color rgb="#{@font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
+        typeset_text %(<a anchor="#{sect_anchor = (sect.attr 'anchor', nil, false) || sect.id}"><color rgb="#{@font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
         # we only write the label if this is a dry run
         unless scratch?
           end_page_number = page_number
@@ -2077,7 +2077,7 @@ class Converter < ::Prawn::Document
         page title: doctitle, destination: (document.dest_top 1)
       end
       if doc.attr? 'toc'
-        page title: doc.attr('toc-title'), destination: (document.dest_top toc_page_nums.first)
+        page title: (doc.attr 'toc-title'), destination: (document.dest_top toc_page_nums.first)
       end
       #page title: 'Credits', destination: (document.dest_top toc_page_nums.first + 1)
       # QUESTION any way to get add_outline_level to invoke in the context of the outline?
@@ -2415,7 +2415,7 @@ class Converter < ::Prawn::Document
   # When a temporary file is used, the TemporaryPath type is mixed into the path string.
   def resolve_image_path node, image_path = nil, image_type = nil
     imagesdir = resolve_imagesdir(doc = node.document)
-    image_path ||= (node.attr 'target', nil, false)
+    image_path ||= node.attr 'target'
     image_type ||= ::Asciidoctor::Image.image_type image_path
     # handle case when image is a URI
     if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
