@@ -657,8 +657,9 @@ class Converter < ::Prawn::Document
     else
       '1'
     end
-    if (skip = (node.attr 'start', 1).to_i - 1) > 0
-      skip.times { list_number = list_number.next  }
+    # TODO support start values < 1 (issue #498)
+    if (start = ((node.attr 'start', nil, false) || ((node.option? 'reversed') ? node.items.size : 1)).to_i) > 1
+      (start - 1).times { list_number = list_number.next  }
     end
     @list_numbers << list_number
     convert_outline_list node
@@ -732,7 +733,8 @@ class Converter < ::Prawn::Document
         end
       end
     when :olist
-      @list_numbers << (index = @list_numbers.pop).next
+      dir = (node.parent.option? 'reversed') ? :pred : :next
+      @list_numbers << ((index = @list_numbers.pop).public_send dir)
       marker = %(#{index}.)
     else
       warn %(asciidoctor: WARNING: unknown list type #{list_type.inspect})

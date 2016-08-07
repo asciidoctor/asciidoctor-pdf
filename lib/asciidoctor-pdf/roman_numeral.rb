@@ -62,7 +62,10 @@ class RomanNumeral
   end
 
   def to_r
-    roman = RomanNumeral.int_to_roman @integer_value
+    if (int = @integer_value) < 1
+      return int.to_s
+    end
+    roman = RomanNumeral.int_to_roman int
     @letter_case == :lower ? roman.downcase : roman
   end
 
@@ -79,15 +82,19 @@ class RomanNumeral
     self
   end
 
+  def pred
+    RomanNumeral.new @integer_value - 1, @letter_case
+  end
+
   def self.int_to_roman value
-    result = ''
+    result = []
     BaseDigits.keys.reverse.each do |ival|
       while value >= ival
         value -= ival 
-        result += BaseDigits[ival]
+        result << BaseDigits[ival]
       end
     end
-    result
+    result.join
   end
 
   def self.roman_to_int value
