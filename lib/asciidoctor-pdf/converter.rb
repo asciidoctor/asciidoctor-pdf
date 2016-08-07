@@ -313,9 +313,15 @@ class Converter < ::Prawn::Document
       # QUESTION should we store page_start & destination in internal map?
       # TODO ideally, this attribute should be pdf-page-start
       sect.set_attr 'page_start', page_number
-      # NOTE auto-generate an anchor if one doesn't exist so TOC works
       # QUESTION should we just assign the section this generated id?
-      sect.set_attr 'anchor', (sect_anchor = sect.id || %(__autoid-#{page_number}-#{y.ceil}))
+      if (sect_anchor = sect.id)
+        # NOTE encode anchor in hex if it contains characters outside the ASCII range
+        sect_anchor = %(0x#{::PDF::Core.string_to_hex sect_anchor}) unless sect_anchor.ascii_only?
+      else
+        # NOTE auto-generate an anchor if one doesn't exist so TOC works
+        sect_anchor = %(__autoid-#{page_number}-#{y.ceil})
+      end
+      sect.set_attr 'anchor', sect_anchor
       add_dest_for_block sect, sect_anchor
       sect.chapter? ? (layout_chapter_title sect, title, align: align) : (layout_heading title, align: align)
     end
@@ -1391,15 +1397,17 @@ class Converter < ::Prawn::Document
         %(<a href="#{node.target}">#{node.text || path}</a>)
       else
         refid = node.attributes['refid']
+        # NOTE encode anchor in hex if it contains characters outside the ASCII range
+        anchor = refid.ascii_only? ? refid : %(0x#{::PDF::Core.string_to_hex refid})
         # NOTE reference table is not comprehensive (we don't catalog all inline anchors)
         if (reftext = node.document.references[:ids][refid])
-          %(<a anchor="#{refid}">#{node.text || reftext}</a>)
+          %(<a anchor="#{anchor}">#{node.text || reftext}</a>)
         else
           # NOTE we don't catalog all inline anchors, so we can't warn here (maybe once conversion is complete)
           #source = $VERBOSE ? %( in source:\n#{node.parent.lines * "\n"}) : nil
           #warn %(asciidoctor: WARNING: reference '#{refid}' not found#{source})
           #%[(see #{node.text || %([#{refid}])})]
-          %(<a anchor="#{refid}">#{node.text || "[#{refid}]"}</a>)
+          %(<a anchor="#{anchor}">#{node.text || "[#{refid}]"}</a>)
         end
       end
     when :ref
