@@ -1541,6 +1541,7 @@ class Converter < ::Prawn::Document
       quoted_text = %(#{open}#{node.text}#{close})
     end
 
+    # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
     node.id ? %(<a name="#{node.id}">#{ZeroWidthSpace}</a>#{quoted_text}) : quoted_text
   end
 
