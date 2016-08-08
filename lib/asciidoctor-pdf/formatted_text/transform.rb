@@ -11,7 +11,7 @@ class Transform
     apos: '\''
   }
   CharRefRx = /&(?:#(\d{2,6})|(#{CharEntityTable.keys * '|'}));/
-  #ZeroWidthSpace = %(\u200b)
+  ZeroWidthSpace = %(\u200b)
 
   def initialize(options = {})
     @merge_adjacent_text_nodes = options[:merge_adjacent_text_nodes]
@@ -194,6 +194,8 @@ class Transform
         } : value
       end
       if !fragment[:name] && (value = attrs[:name])
+        # NOTE ZeroWidthSpace is used as placeholder text for an empty <a> element
+        fragment[:text] = '' if fragment[:text] == ZeroWidthSpace
         fragment[:name] = value
         fragment[:callback] = InlineDestinationMarker
       end
