@@ -58,7 +58,7 @@ class Prawn < Formatter
       # NOTE drop orphaned linenum fragment (due to trailing endline in source)
       fragments.pop if (last_fragment = fragments[-1]) && last_fragment[:linenum]
       # NOTE pad numbers that have less digits than the largest line number
-      if (linenum_w = (linenum / 10) + 1) > 1
+      if (linenum_w = linenum.to_s.size) > 1
         # NOTE extra column is the trailing space after the line number
         linenum_w += 1
         fragments.each do |fragment|
