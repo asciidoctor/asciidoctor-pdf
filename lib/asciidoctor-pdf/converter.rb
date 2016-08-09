@@ -419,6 +419,21 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
     icons = node.document.attr? 'icons', 'font'
     label = icons ? (node.attr 'name').to_sym : node.caption.upcase
+    
+    valid_own_icon = false
+    if !icons        
+        iconsdir = node.attr 'iconsdir'
+        iconname = node.attr 'icon'
+        if iconname.nil? or iconname.blank?
+            iconname = (node.attr 'name')+ ".png"
+        end
+        valid_own_icon = true
+        unless (image_path = resolve_image_path node, iconname, nil, true) && (::File.readable? iconsdir)
+            warn %(asciidoctor: WARNING: image to embed not found or not readable: #{iconsdir || iconname}) unless scratch?
+            valid_own_icon = false
+        end                 
+    end
+    
     # FIXME this shift stuff is a real hack until we have proper margin collapsing
     shift_base = @theme.prose_margin_bottom
     #shift_top = icons ? (shift_base / 3.0) : 0
@@ -428,7 +443,7 @@ class Converter < ::Prawn::Document
     keep_together do |box_height = nil|
       #theme_font :admonition do
         # FIXME this is a fudge calculation for the icon width
-        label_width = icons ? (bounds.width / 12.0) : (width_of label)
+        label_width = (icons or valid_own_icon) ? (bounds.width / 12.0) : (width_of label)
         abs_left = bounds.absolute_left
         abs_right = bounds.absolute_right
         pad_box @theme.admonition_padding do
@@ -451,7 +466,19 @@ class Converter < ::Prawn::Document
                     size: (fit_icon_size node, icon_data[:size])
                   }
                 else
-                  layout_prose label, valign: :center, style: :bold, line_height: 1, margin_top: label_margin_top, margin_bottom: 0
+                  if valid_own_icon                                                
+                        begin                           
+                            img = %(<img src="#{image_path}" >)
+                            image_obj, image_info = build_image_object image_path                            
+                            rendered_w = [bounds.width, image_info.width * 0.75].min                            
+                            rendered_h = (rendered_w * image_info.height) / image_info.width                                                       
+                            embed_image image_obj, image_info, width: rendered_w                            
+                        rescue => e
+                            warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
+                        end                           
+                    else
+                      layout_prose label, valign: :center, style: :bold, line_height: 1, margin_top: label_margin_top, margin_bottom: 0
+                    end
                 end
               end
             end
@@ -2410,6 +2437,14 @@ class Converter < ::Prawn::Document
       imagesdir
     end
   end
+  
+  def resolve_iconsdir doc
+    if (iconsdir = doc.attr 'iconsdir').nil_or_empty? || (iconsdir = iconsdir.chomp '/') == '.'
+      nil
+    else
+      %(#{iconsdir}/)
+    end
+  end
 
   # Resolve the system path of the specified image path.
   #
@@ -2424,8 +2459,15 @@ class Converter < ::Prawn::Document
   # is not set, or the URI cannot be read, this method returns a nil value.
   #
   # When a temporary file is used, the TemporaryPath type is mixed into the path string.
-  def resolve_image_path node, image_path = nil, image_type = nil
-    imagesdir = resolve_imagesdir(doc = node.document)
+  def resolve_image_path node, image_path = nil, image_type = nil, icon = false
+    if icon
+        img_dir = resolve_iconsdir(doc = node.document)
+        if img_dir.nil? or img_dir.blank?
+            img_dir = resolve_imagesdir(doc = node.document)
+        end
+    else
+        img_dir = resolve_imagesdir(doc = node.document)
+    end if
     image_path ||= node.attr 'target'
     image_type ||= ::Asciidoctor::Image.image_type image_path
     # handle case when image is a URI
