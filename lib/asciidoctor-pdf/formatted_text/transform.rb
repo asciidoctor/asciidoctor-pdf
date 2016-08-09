@@ -15,12 +15,12 @@ class Transform
 
   def initialize(options = {})
     @merge_adjacent_text_nodes = options[:merge_adjacent_text_nodes]
-    if (@theme = options[:theme])
-      @link_font_color = @theme.link_font_color
-      @monospaced_font_color = @theme.literal_font_color
-      @monospaced_font_family = @theme.literal_font_family
-      @monospaced_font_size = @theme.literal_font_size
-      case @theme.literal_font_style
+    if (theme = options[:theme])
+      @link_font_color = theme.link_font_color
+      @monospaced_font_color = theme.literal_font_color
+      @monospaced_font_family = theme.literal_font_family
+      @monospaced_font_size = theme.literal_font_size
+      case theme.literal_font_style
       when 'bold'
         @monospaced_font_style = [:bold]
       when 'italic'
@@ -209,21 +209,6 @@ class Transform
     when :del
       styles << :strikethrough
     when :span
-        if (!attrs[:class].nil? and attrs[:class] != '')
-          pvalue = attrs[:class]
-          if pvalue.start_with? '#'
-              # hexa color code
-              pvalue = pvalue[1..-1] 
-          else
-              # color name -> get color code in the theme file (yaml)             
-              # (I deliberately add suffix _color)
-              pvalue = @theme[%(#{pvalue}_color)]
-              if pvalue.nil? or pvalue == ''
-                  pvalue = '000000'
-              end
-          end
-          fragment[:color] = pvalue           
-      end
       # span logic with normal style parsing
       if (inline_styles = attrs[:style])
         # NOTE for our purposes, spaces inside the style attribute are superfluous
