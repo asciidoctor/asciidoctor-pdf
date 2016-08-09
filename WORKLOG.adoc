@@ -13,22 +13,28 @@
   - get import_page to stop adding an extra page
   - blank page after title page if media=print
 
-* examine uses of attr/attr? and ensure we only inherit when desired
+* use .zero? instead of == 0
+* rename EOL to LF
+* multiple conums on a single line causes first conum to be shifted for each conum
+* FILE ISSUE: support negative start value for list (#498)
+  - need to count negative numbers in correct direction
+* add reversed list to chronicles-example.adoc
 * submit pastie theme for Rouge upstream
+* wrapped lines in source listing should be indented to account for line number gutter
+* add sample SVG to chronicles-example.adoc
 * log warning with reason when remote image can't be read
 * inline images: allow built-in font family names for SVG to be remapped
 * inline images: should we be passing absolute image path in tag or something relative (or even a lookup id?)?
 * document missing keys in theming guide for 1.5.0.beta.1
   - missing text_transform in some places
-* support the reversed option on ordered lists (see https://github.com/asciidoctor/asciidoctor/issues/1830)
+* support zero-leading integers (use dedicated type like w/ roman numerals) in reversed order lists
 * large image runs into running footer (doesn't bottom margin need to be aligned with running footer height?)
 * should str_to_pt helper handle % and vw units?
 * enable/implement key table_font_style
-* allow style of visible link to be controlled by theme
+* allow style of visible link to be controlled by theme (similar to what we do in the manpage converter)
 * check that color of table edges set to table_grid_color??
 * shouldn't the default align for headings be $base_align??
 * should not wrap at formatting mark unless it is at a break opportunity
-* rename :entity to :charref in text parser
 * create value type for font style and font alignment for theming guide
 * force encoding of theme to UTF-8 (particularly for keys related to content)
 * be more consistent with how examples are shown in theming-guide.adoc (do we show last segment only?)
@@ -234,7 +240,6 @@
 * rename "theme" to "style"?
 * restrict custom theme path to jail (or load from load_path)
 * implement convert_toc
-* can get orphan conum if starts on last line of page (fixed already?)
 * only create title page if doctype=book
 * italic text in a line of text styled as bold in the theme loses its bold style
 
