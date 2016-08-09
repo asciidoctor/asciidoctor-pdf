@@ -41,6 +41,7 @@ class Converter < ::Prawn::Document
   Alignments = [:left, :center, :right]
   AlignmentNames = ['left', 'center', 'right']
   EOL = %(\n)
+  EOL_FRAGMENT = { text: EOL }
   TAB = %(\t)
   InnerIndent = %(\n )
   # a no-break space is used to replace a leading space to prevent Prawn from trimming indentation
@@ -958,7 +959,7 @@ class Converter < ::Prawn::Document
     when 'pygments'
       Helpers.require_library 'pygments', 'pygments.rb' unless defined? ::Pygments
       lexer = ::Pygments::Lexer[node.attr 'language', 'text', false] || ::Pygments::Lexer['text']
-      pygments_config = { nowrap: true, noclasses: true, style: (node.document.attr 'pygments-style') || 'pastie' }
+      pygments_config = { nowrap: true, noclasses: true, stripnl: false, style: (node.document.attr 'pygments-style') || 'pastie' }
       # TODO enable once we support background color on spans
       #if node.attr? 'highlight', nil, false
       #  unless (hl_lines = node.resolve_lines_to_highlight(node.attr 'highlight', nil, false)).empty?
@@ -966,9 +967,11 @@ class Converter < ::Prawn::Document
       #  end
       #end
       source_string, conum_mapping = extract_conums source_string
+      # NOTE pygments.rb strips trailing whitespace; preserve it in case there are conums on last line
+      num_trailing_spaces = source_string.size - (source_string = source_string.rstrip).size if conum_mapping
       result = lexer.highlight source_string, options: pygments_config
       fragments = guard_indentation text_formatter.format result
-      conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
+      conum_mapping ? (restore_conums fragments, conum_mapping, num_trailing_spaces) : fragments
     when 'rouge'
       Helpers.require_library RougeRequirePath, 'rouge' unless defined? ::Rouge::Formatters::Prawn
       lexer = ::Rouge::Lexer.find(node.attr 'language', 'text', false) || ::Rouge::Lexers::PlainText
@@ -976,6 +979,8 @@ class Converter < ::Prawn::Document
       source_string, conum_mapping = extract_conums source_string
       # NOTE trailing endline is added to address https://github.com/jneen/rouge/issues/279
       fragments = formatter.format (lexer.lex %(#{source_string}#{EOL})), line_numbers: (node.attr? 'linenums')
+      # NOTE cleanup trailing endline (handled in rouge_ext/formatters/prawn instead)
+      #fragments.last[:text] == EOL ? fragments.pop : fragments.last[:text].chop!
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     else
       # NOTE only format if we detect a need (callouts or inline formatting)
@@ -1076,7 +1081,7 @@ class Converter < ::Prawn::Document
   #--
   # QUESTION can this be done more efficiently?
   # QUESTION can we reuse arrange_fragments_by_line?
-  def restore_conums fragments, conum_mapping
+  def restore_conums fragments, conum_mapping, num_trailing_spaces = 0
     lines = []
     line_num = 0
     # reorganize the fragments into an array of lines
@@ -1097,15 +1102,13 @@ class Converter < ::Prawn::Document
     last_line_num = lines.size - 1
     # append conums to appropriate lines, then flatten to an array of fragments
     lines.flat_map.with_index do |line, cur_line_num|
+      last_line = cur_line_num == last_line_num
       if (conums = conum_mapping.delete cur_line_num)
-        conums = conums.map {|num| conum_glyph num }
-        # ensure there's at least one space between content and conum(s)
-        if line.size > 0 && (end_text = line.last[:text]) && !(end_text.end_with? ' ')
-          line.last[:text] = %(#{end_text} )
-        end
-        line << (conum_color ? { text: (conums * ' '), color: conum_color } : { text: (conums * ' ') })
+        line << { text: ' ' * num_trailing_spaces } if last_line && num_trailing_spaces.nonzero?
+        conum_text = conums.map {|num| conum_glyph num } * ' '
+        line << (conum_color ? { text: conum_text, color: conum_color } : { text: conum_text })
       end
-      line << { text: EOL } unless cur_line_num == last_line_num
+      line << EOL_FRAGMENT unless last_line
       line
     end
   end
@@ -2270,7 +2273,7 @@ class Converter < ::Prawn::Document
         by_line << fragment
       elsif txt.include? EOL
         txt.scan(LineScanRx) do |line|
-          by_line << (line == EOL ? { text: EOL } : (fragment.merge text: line))
+          by_line << (line == EOL ? EOL_FRAGMENT : (fragment.merge text: line))
         end
       else
         by_line << fragment
