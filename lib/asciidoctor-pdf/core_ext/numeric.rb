@@ -7,5 +7,5 @@ class Numeric
     else
       self.truncate
     end
-  end unless respond_to? :with_precision
+  end unless method_defined? :with_precision
 end
