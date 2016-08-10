@@ -852,7 +852,7 @@ class Converter < ::Prawn::Document
                   Border: [0, 0, 0],
                   A: { Type: :Action, S: :URI, URI: (str2pdfval link) }
             end
-            indent *overflow do
+            indent(*overflow) do
               layout_caption node, position: :bottom
             end if node.title?
           end
@@ -902,7 +902,7 @@ class Converter < ::Prawn::Document
         rescue => e
           warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
         end
-        indent *overflow do
+        indent(*overflow) do
           layout_caption node, position: :bottom
         end if node.title?
       end

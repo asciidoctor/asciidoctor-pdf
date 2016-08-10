@@ -23,11 +23,11 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   rescue
     Dir['**/*']
   end
-  s.files = files.grep /^(?:(?:data|docs|lib)\/.+|Gemfile|Rakefile|(?:CHANGELOG|LICENSE|NOTICE|README)\.adoc|#{s.name}\.gemspec)$/
+  s.files = files.grep %r/^(?:(?:data|docs|lib)\/.+|Gemfile|Rakefile|(?:CHANGELOG|LICENSE|NOTICE|README)\.adoc|#{s.name}\.gemspec)$/
   # FIXME optimize-pdf is currently a shell script, so listing it here won't work
   #s.executables = ['asciidoctor-pdf', 'optimize-pdf']
   s.executables = ['asciidoctor-pdf']
-  s.test_files = files.grep /^(?:test|spec|feature)\/.*$/
+  s.test_files = files.grep %r/^(?:test|spec|feature)\/.*$/
 
   s.require_paths = ['lib']
 

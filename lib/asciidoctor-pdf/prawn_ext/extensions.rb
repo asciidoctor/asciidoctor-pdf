@@ -474,7 +474,7 @@ module Extensions
   #
   def span_page_width_if verdict
     if verdict
-      indent -bounds_margin_left, -bounds_margin_right do
+      indent(-bounds_margin_left, -bounds_margin_right) do
         yield
       end
     else

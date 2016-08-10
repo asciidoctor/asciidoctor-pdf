@@ -16,7 +16,7 @@ class Page
     @content = document.ref({})
     dictionary.data[:Contents] << document.state.store[@content]
     document.renderer.open_graphics_state
-  end unless respond_to? :new_content_stream
+  end unless method_defined? :new_content_stream
 end
 end
 end
