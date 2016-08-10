@@ -5,7 +5,7 @@ module Formatters
 class Prawn < Formatter
   tag 'prawn'
 
-  EOL = %(\n)
+  LF = %(\n)
   NoBreakSpace = %(\u00a0)
   InnerIndent = %(\n )
   GuardedIndent = %(\u00a0)
@@ -39,15 +39,15 @@ class Prawn < Formatter
       fragments = []
       fragments << (create_linenum_fragment linenum += 1)
       tokens.each do |tok, val|
-        if val == EOL
-          fragments << { text: EOL }
+        if val == LF
+          fragments << { text: LF }
           fragments << (create_linenum_fragment linenum += 1)
-        elsif val.include? EOL
+        elsif val.include? LF
           base_fragment = create_fragment tok, val
           val.each_line do |line|
             fragments << (base_fragment.merge text: line)
             # NOTE append linenum fragment if there's a next line; only works if source doesn't have trailing endline
-            if line.end_with? EOL
+            if line.end_with? LF
               fragments << (create_linenum_fragment linenum += 1)
             end
           end
@@ -70,13 +70,13 @@ class Prawn < Formatter
       start_of_line = true
       tokens.map do |tok, val|
         # match one or more consecutive endlines
-        if val == EOL || (val == (EOL * val.length))
+        if val == LF || (val == (LF * val.length))
           start_of_line = true
           { text: val }
         else
           val[0] = GuardedIndent if start_of_line && (val.start_with? ' ')
           val.gsub! InnerIndent, GuardedInnerIndent if val.include? InnerIndent
-          start_of_line = val.end_with? EOL
+          start_of_line = val.end_with? LF
           # NOTE this optimization assumes we don't support/use background colors
           val.rstrip.empty? ? { text: val } : (create_fragment tok, val)
         end
@@ -85,7 +85,7 @@ class Prawn < Formatter
     end
   end
 
-  # TODO method could still be optimized (for instance, check if val is EOL or empty)
+  # TODO method could still be optimized (for instance, check if val is LF or empty)
   def create_fragment tok, val = nil
     fragment = val ? { text: val } : {}
     if (style_rules = @theme.style_for tok)

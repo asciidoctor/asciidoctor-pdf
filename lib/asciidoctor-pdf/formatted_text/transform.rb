@@ -2,7 +2,7 @@ module Asciidoctor
 module Pdf
 module FormattedText
 class Transform
-  EOL = "\n"
+  LF = %(\n)
   CharEntityTable = {
     lt: '<',
     gt: '>',
@@ -72,9 +72,9 @@ class Transform
           case node[:name]
           when :br
             if @merge_adjacent_text_nodes && previous_fragment_is_text
-              fragments << { text: %(#{fragments.pop[:text]}#{EOL}) }
+              fragments << { text: %(#{fragments.pop[:text]}#{LF}) }
             else
-              fragments << { text: EOL }
+              fragments << { text: LF }
             end
             previous_fragment_is_text = true
           when :img

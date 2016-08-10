@@ -40,8 +40,7 @@ class Converter < ::Prawn::Document
   }
   Alignments = [:left, :center, :right]
   AlignmentNames = ['left', 'center', 'right']
-  EOL = %(\n)
-  EOL_FRAGMENT = { text: EOL }
+  LF = %(\n)
   TAB = %(\t)
   InnerIndent = %(\n )
   # a no-break space is used to replace a leading space to prevent Prawn from trimming indentation
@@ -978,9 +977,9 @@ class Converter < ::Prawn::Document
       formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'))
       source_string, conum_mapping = extract_conums source_string
       # NOTE trailing endline is added to address https://github.com/jneen/rouge/issues/279
-      fragments = formatter.format (lexer.lex %(#{source_string}#{EOL})), line_numbers: (node.attr? 'linenums')
+      fragments = formatter.format (lexer.lex %(#{source_string}#{LF})), line_numbers: (node.attr? 'linenums')
       # NOTE cleanup trailing endline (handled in rouge_ext/formatters/prawn instead)
-      #fragments.last[:text] == EOL ? fragments.pop : fragments.last[:text].chop!
+      #fragments.last[:text] == LF ? fragments.pop : fragments.last[:text].chop!
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     else
       # NOTE only format if we detect a need (callouts or inline formatting)
@@ -1061,7 +1060,7 @@ class Converter < ::Prawn::Document
   # and the mapping of lines to conums as the second.
   def extract_conums string
     conum_mapping = {}
-    string = string.split(EOL).map.with_index {|line, line_num|
+    string = string.split(LF).map.with_index {|line, line_num|
       # FIXME we get extra spaces before numbers if more than one on a line
       line.gsub(CalloutExtractRx) {
         # honor the escape
@@ -1072,7 +1071,7 @@ class Converter < ::Prawn::Document
           ''
         end
       }
-    } * EOL
+    } * LF
     conum_mapping = nil if conum_mapping.empty?
     [string, conum_mapping]
   end
@@ -1087,10 +1086,10 @@ class Converter < ::Prawn::Document
     # reorganize the fragments into an array of lines
     fragments.each do |fragment|
       line = (lines[line_num] ||= [])
-      if (text = fragment[:text]) == EOL
+      if (text = fragment[:text]) == LF
         line_num += 1
-      elsif text.include? EOL
-        text.split(EOL, -1).each_with_index do |line_in_fragment, idx|
+      elsif text.include? LF
+        text.split(LF, -1).each_with_index do |line_in_fragment, idx|
           line = (lines[line_num += 1] ||= []) unless idx == 0
           line << (fragment.merge text: line_in_fragment) unless line_in_fragment.empty?
         end
@@ -1108,7 +1107,7 @@ class Converter < ::Prawn::Document
         conum_text = conums.map {|num| conum_glyph num } * ' '
         line << (conum_color ? { text: conum_text, color: conum_color } : { text: conum_text })
       end
-      line << EOL_FRAGMENT unless last_line
+      line << { text: LF } unless last_line
       line
     end
   end
@@ -1129,7 +1128,7 @@ class Converter < ::Prawn::Document
       next if (text = fragment[:text]).empty?
       text[0] = GuardedIndent if start_of_line && (text.start_with? ' ')
       text.gsub! InnerIndent, GuardedInnerIndent if text.include? InnerIndent
-      start_of_line = text.end_with? EOL
+      start_of_line = text.end_with? LF
     end
     fragments
   end
@@ -2269,11 +2268,11 @@ class Converter < ::Prawn::Document
     arranger = ::Prawn::Text::Formatted::Arranger.new self
     by_line = arranger.consumed = []
     fragments.each do |fragment|
-      if (txt = fragment[:text]) == EOL
+      if (txt = fragment[:text]) == LF
         by_line << fragment
-      elsif txt.include? EOL
+      elsif txt.include? LF
         txt.scan(LineScanRx) do |line|
-          by_line << (line == EOL ? EOL_FRAGMENT : (fragment.merge text: line))
+          by_line << (line == LF ? { text: LF } : (fragment.merge text: line))
         end
       else
         by_line << fragment
@@ -2290,7 +2289,7 @@ class Converter < ::Prawn::Document
   def width_of_fragments fragments
     line_widths = [0]
     fragments.each do |fragment|
-      if fragment.text == EOL
+      if fragment.text == LF
         line_widths << 0
       else
         line_widths[-1] += fragment.width
@@ -2341,8 +2340,8 @@ class Converter < ::Prawn::Document
             line.sub!(TabIndentRx) {|tabs| full_tab_space * tabs.length }
           end
           leading_space = false
-        # QUESTION should we check for EOL first?
-        elsif line == EOL
+        # QUESTION should we check for LF first?
+        elsif line == LF
           result << line
           next
         else

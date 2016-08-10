@@ -68,7 +68,7 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
     value:             '336600'
   }
 
-  EOL = %(\n)
+  LF = %(\n)
   NoBreakSpace = %(\u00a0)
   InnerIndent = %(\n )
   GuardedIndent = %(\u00a0)
@@ -83,7 +83,7 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
   end
 
   def text_token text, kind
-    if text == EOL
+    if text == LF
       @out << { text: text }
       @start_of_line = true
     # NOTE text is nil and kind is :error when CodeRay ends parsing on an error
@@ -99,7 +99,7 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
         # QUESTION should we default to no color?
         @out << { text: text, color: (COLORS[kind] || COLORS[@open.last] || COLORS[:default]) }
       end
-      @start_of_line = text.end_with? EOL
+      @start_of_line = text.end_with? LF
     end
   end
 
