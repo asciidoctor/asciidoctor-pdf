@@ -2467,7 +2467,7 @@ class Converter < ::Prawn::Document
         end
     else
         img_dir = resolve_imagesdir(doc = node.document)
-    end if
+    end
     image_path ||= (node.attr 'target', nil, false)
     image_type ||= ::Asciidoctor::Image.image_type image_path
     # handle case when image is a URI
