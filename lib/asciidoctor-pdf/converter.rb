@@ -71,7 +71,7 @@ class Converter < ::Prawn::Document
   MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|pt|)$/
   PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
   # CalloutExtractRx synced from /lib/asciidoctor.rb of Asciidoctor core
-  CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2>(?=(?: ?\\?<!?\2\d+\2>)*$)/
+  CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2> ?(?=(?:\\?<!?\2\d+\2> ?)*$)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
   LineScanRx = /\n|.+/
   SourceHighlighters = ['coderay', 'pygments', 'rouge'].to_set
@@ -1062,15 +1062,19 @@ class Converter < ::Prawn::Document
     conum_mapping = {}
     string = string.split(LF).map.with_index {|line, line_num|
       # FIXME we get extra spaces before numbers if more than one on a line
-      line.gsub(CalloutExtractRx) {
-        # honor the escape
-        if $1 == '\\'
-          $&.sub '\\', ''
-        else
-          (conum_mapping[line_num] ||= []) << $3.to_i
-          ''
-        end
-      }
+      if line.include? '<'
+        line.gsub(CalloutExtractRx) {
+          # honor the escape
+          if $1 == '\\'
+            $&.sub '\\', ''
+          else
+            (conum_mapping[line_num] ||= []) << $3.to_i
+            ''
+          end
+        }
+      else
+        line
+      end
     } * LF
     conum_mapping = nil if conum_mapping.empty?
     [string, conum_mapping]
