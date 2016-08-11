@@ -2471,8 +2471,8 @@ class Converter < ::Prawn::Document
     image_path ||= (node.attr 'target', nil, false)
     image_type ||= ::Asciidoctor::Image.image_type image_path
     # handle case when image is a URI
-    if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
-        (image_path = (node.normalize_web_path image_path, imagesdir, false)))
+    if (node.is_uri? image_path) || (img_dir && (node.is_uri? img_dir) &&
+        (image_path = (node.normalize_web_path image_path, img_dir, false)))
       unless doc.attr? 'allow-uri-read'
         unless scratch?
           warn %(asciidoctor: WARNING: allow-uri-read is not enabled; cannot embed remote image: #{image_path})
@@ -2498,7 +2498,7 @@ class Converter < ::Prawn::Document
       tmp_image_path
     # handle case when image is a local file
     else
-      ::File.expand_path(node.normalize_system_path image_path, imagesdir, nil, target_name: 'image')
+      ::File.expand_path(node.normalize_system_path image_path, img_dir, nil, target_name: 'image')
     end
   end
 
