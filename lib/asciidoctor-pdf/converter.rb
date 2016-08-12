@@ -1296,9 +1296,19 @@ class Converter < ::Prawn::Document
     }
 
     theme_margin :block, :top
-    layout_caption node if node.title?
 
     table table_data, table_settings do
+      if node.title? && (pdf_doc = @pdf)
+        # QUESTION should we confine width of title to width of table?
+        if position == :left || (excess = pdf_doc.bounds.width - width).zero?
+          pdf_doc.layout_caption node
+        else
+          pdf_doc.indent excess * (position == :center ? 0.5 : 1) do
+            pdf_doc.layout_caption node
+          end
+        end
+      end
+
       if grid == 'none' && frame == 'none'
         if table_header
           # FIXME allow header border bottom width to be set by theme
