@@ -306,6 +306,15 @@ The pdfwidth attribute supports the following units:
 
 In all cases, the width is converted to pt.
 
+=== Inline image sizing
+
+Inline images are handled different than block images.
+In particular, inline images do not support sizing using the pdfwidth attribute.
+
+Here's how an inline image is sized.
+The image height is scaled down to 75% of the specified width (px to pt conversion).
+If the image height is more than 1.5x the height of the surrounding line of text, the font size and line metrics of the fragment are modified to fit the image in the line.
+
 == Optional scripts
 
 {project-name} also provides a shell script that invokes GhostScript (`gs`) to optimize and compress the generated PDF with minimal impact on quality.
