@@ -1139,7 +1139,8 @@ class Converter < ::Prawn::Document
 
   def convert_table node
     add_dest_for_block node if node.id
-    num_rows = 0
+    # TODO we could skip a lot of the logic below when num_rows.zero?
+    num_rows = node.attr 'rowcount'
     num_cols = node.columns.size
     table_header = false
     theme = @theme
@@ -1162,7 +1163,6 @@ class Converter < ::Prawn::Document
     node.rows[:head].each do |rows|
       table_header = true
       head_transform = theme.table_head_text_transform
-      num_rows += 1
       row_data = []
       rows.each do |cell|
         row_data << {
@@ -1183,7 +1183,6 @@ class Converter < ::Prawn::Document
     end
 
     (node.rows[:body] + node.rows[:foot]).each do |rows|
-      num_rows += 1
       row_data = []
       rows.each do |cell|
         cell_data = {
@@ -1238,6 +1237,8 @@ class Converter < ::Prawn::Document
       end
       table_data << row_data
     end
+
+    table_data = [[{ content: '' }]] if table_data.empty?
 
     border = {}
     table_border_color = theme.table_border_color
