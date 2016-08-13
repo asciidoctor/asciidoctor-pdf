@@ -992,13 +992,10 @@ class Converter < ::Prawn::Document
 
     node.subs.replace prev_subs if prev_subs
 
-    theme_margin :block, :top
+    adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ?
+        (theme_font_size_autofit source_chunks, :code) : nil
 
-    if (node.option? 'autofit') || (node.document.attr? 'autofit-option')
-      adjusted_font_size = theme_font_size_autofit source_chunks, :code
-    else
-      adjusted_font_size = nil
-    end
+    theme_margin :block, :top
 
     keep_together do |box_height = nil|
       caption_height = node.title? ? (layout_caption node) : 0
@@ -1018,12 +1015,10 @@ class Converter < ::Prawn::Document
               bounding_box [0, cursor], width: bounds.width, height: fill_height do
                 theme_fill_and_stroke_bounds :code
                 unless b_width == 0
-                  if new_page_started
-                    indent b_radius, b_radius do
-                      # dashed line to indicate continuation from previous page
-                      stroke_horizontal_rule bg_color, line_width: b_width, line_style: :dashed
-                    end
-                  end
+                  indent b_radius, b_radius do
+                    # dashed line to indicate continuation from previous page
+                    stroke_horizontal_rule bg_color, line_width: b_width, line_style: :dashed
+                  end if new_page_started
                   if remaining_height > fill_height
                     move_down fill_height
                     indent b_radius, b_radius do
