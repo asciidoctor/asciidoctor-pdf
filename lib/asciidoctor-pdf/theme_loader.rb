@@ -14,7 +14,7 @@ class ThemeLoader
   VariableRx = /\$([a-z0-9_]+)/
   LoneVariableRx = /^\$([a-z0-9_]+)$/
   HexColorEntryRx = /^(?<k>[[:blank:]]*[[:graph:]]+): +(?!null$)(?<q>["']?)#?(?<v>\w{3,6})\k<q> *(?:#.*)?$/
-  MeasurementValueRx = /(?<=^| |\()(-?\d+(?:\.\d+)?)(in|mm|cm|pt)(?=$| |\))/
+  MeasurementValueRx = /(?<=^| |\()(-?\d+(?:\.\d+)?)(in|mm|cm|pt|px)(?=$| |\))/
   MultiplyDivideOpRx = /(-?\d+(?:\.\d+)?) +([*\/]) +(-?\d+(?:\.\d+)?)/
   AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+\-]) +(-?\d+(?:\.\d+)?)/
   PrecisionFuncRx = /^(round|floor|ceil)\(/
@@ -147,6 +147,8 @@ class ThemeLoader
         val * (72 / 25.4)
       when 'cm'
         val * (720 / 25.4)
+      when 'px'
+        val * 0.75
       else
         val # default unit is pt
       end
