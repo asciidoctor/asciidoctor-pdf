@@ -1684,7 +1684,15 @@ The keys in this category control the arrangement of block images.
 (default: left)
 |image:
   align: left
+
+|width^[1]^
+|<<measurement-units,Measurement>>
+|image:
+  width: 100%
 |===
+
+. Only applies to block images.
+If specified, this value takes precedence over the value of the `width` attribute on the image macro, but not over the value of the `pdfwidth` attribute.
 
 === Lead
 

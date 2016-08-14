@@ -75,6 +75,7 @@ class Converter < ::Prawn::Document
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
   LineScanRx = /\n|.+/
   SourceHighlighters = ['coderay', 'pygments', 'rouge'].to_set
+  ViewportWidth = ::Module.new
 
   def initialize backend, opts
     super
@@ -818,8 +819,9 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
 
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
-    width = resolve_explicit_width node.attributes, bounds.width
-    if (width_relative_to_page = (node.attr? 'pdfwidth', nil, false) && ((node.attr 'pdfwidth').end_with? 'vw'))
+    width = resolve_explicit_width node.attributes, bounds.width, support_vw: true, use_fallback: true
+    if (width_relative_to_page = ViewportWidth === width)
+      width = (width.to_f / 100) * page_width
       overflow = [bounds_margin_left, bounds_margin_right]
     else
       overflow = 0
@@ -2507,20 +2509,28 @@ class Converter < ::Prawn::Document
   # max_width, the max_width value is returned.
   #--
   # QUESTION should we enforce positive result?
-  def resolve_explicit_width attrs, max_width = bounds.width
+  def resolve_explicit_width attrs, max_width = bounds.width, opts = {}
     if attrs.key? 'pdfwidth'
-      if (pdfwidth = attrs['pdfwidth']).end_with? '%'
-        (pdfwidth.to_f / 100) * max_width
-      elsif pdfwidth.end_with? 'vw'
-        (pdfwidth.to_f / 100) * page_width
+      if (width = attrs['pdfwidth']).end_with? '%'
+        (width.to_f / 100) * max_width
+      elsif opts[:support_vw] && (width.end_with? 'vw')
+        (width.chomp 'vw').extend ViewportWidth
       else
-        str_to_pt pdfwidth
+        str_to_pt width
       end
     elsif attrs.key? 'scaledwidth'
       (attrs['scaledwidth'].to_f / 100) * max_width
+    elsif opts[:use_fallback] && (width = @theme.image_width)
+      if width.end_with? '%'
+        (width.to_f / 100) * max_width
+      elsif opts[:support_vw] && (width.end_with? 'vw')
+        (width.chomp 'vw').extend ViewportWidth
+      else
+        str_to_pt width
+      end
     elsif attrs.key? 'width'
       # QUESTION should we honor percentage width value?
-      # NOTE scale width down 75% to convert px to pt; restrict width to bounds.width
+      # NOTE scale width down 75% to convert px to pt; restrict width to max width
       [max_width, attrs['width'].to_f * 0.75].min
     end
   end
