@@ -119,17 +119,21 @@ module Extensions
   # Converts the specified float value to a pt value from the
   # specified unit of measurement (e.g., in, cm, mm, etc).
   def to_pt num, units
-    case units
-    when nil, 'pt'
+    if units.nil_or_empty?
       num
-    when 'in'
-      num * 72
-    when 'mm'
-      num * (72 / 25.4)
-    when 'cm'
-      num * (720 / 25.4)
-    when 'px'
-      num * 0.75
+    else
+      case units
+      when 'pt'
+        num
+      when 'in'
+        num * 72
+      when 'mm'
+        num * (72 / 25.4)
+      when 'cm'
+        num * (720 / 25.4)
+      when 'px'
+        num * 0.75
+      end
     end
   end
 
