@@ -67,8 +67,8 @@ class Converter < ::Prawn::Document
     checked: %(\u2611),
     unchecked: %(\u2610)
   }
-  MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|pt|)'
-  MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|pt|)$/
+  MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|pt)?'
+  MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|pt)?$/
   PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
   # CalloutExtractRx synced from /lib/asciidoctor.rb of Asciidoctor core
   CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2> ?(?=(?:\\?<!?\2\d+\2> ?)*$)/
