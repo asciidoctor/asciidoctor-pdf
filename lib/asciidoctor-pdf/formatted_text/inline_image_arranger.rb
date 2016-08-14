@@ -69,7 +69,7 @@ module InlineImageArranger
           fragment[:image_obj] = svg_obj
         else
           # TODO cache image info based on path (Prawn cached based on SHA1 of content)
-          image_obj, image_info = doc.build_image_object image_path
+          image_obj, image_info = ::File.open(image_path, 'rb') {|fd| doc.build_image_object fd }
           if image_w
             fragment[:image_width], fragment[:image_height] = image_info.calc_image_dimensions width: image_w
           else

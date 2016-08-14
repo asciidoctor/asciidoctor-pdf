@@ -864,7 +864,7 @@ class Converter < ::Prawn::Document
           # FIXME this code really needs to be better organized!
           # FIXME temporary workaround to group caption & image
           # NOTE use low-level API to access intrinsic dimensions; build_image_object caches image data previously loaded
-          image_obj, image_info = build_image_object image_path
+          image_obj, image_info = ::File.open(image_path, 'rb') {|fd| build_image_object fd }
           if width
             rendered_w, rendered_h = image_info.calc_image_dimensions width: width
           else
@@ -1688,7 +1688,7 @@ class Converter < ::Prawn::Document
       end
     end
   ensure
-    unlink_tmp_file cover_image
+    unlink_tmp_file cover_image if cover_image
   end
 
   # NOTE can't alias to start_new_page since methods have different arity
@@ -2535,6 +2535,8 @@ class Converter < ::Prawn::Document
   # NOTE Ruby 1.9 will sometimes delete a tmp file before the process exits
   def unlink_tmp_file path
     path.unlink if TemporaryPath === path && path.exist?
+  rescue => e
+    warn %(asciidoctor: WARNING: could not delete temporary image: #{path}; #{e.message})
   end
 
   # QUESTION move to prawn/extensions.rb?

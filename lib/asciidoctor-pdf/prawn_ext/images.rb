@@ -30,7 +30,7 @@ module Images
       { width: img_size.output_width, height: img_size.output_height }
     else
       # NOTE build_image_object caches image data previously loaded
-      _, img_size = build_image_object path
+      _, img_size = ::File.open(path, 'rb') {|fd| build_image_object fd }
       { width: img_size.width, height: img_size.height }
     end
   end
