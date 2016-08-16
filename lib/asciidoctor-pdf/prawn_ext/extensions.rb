@@ -747,10 +747,12 @@ module Extensions
     scratch.font font_family, style: font_style, size: font_size do
       scratch.instance_exec(&block)
     end
+    # NOTE don't count excess if cursor exceeds writable area (due to padding)
+    partial_page_height = [effective_page_height, start_y - scratch.y].min
     scratch.bounds.subtract_left_padding left_padding if left_padding > 0
     scratch.bounds.subtract_right_padding right_padding if right_padding > 0
     whole_pages = scratch.page_number - start_page_number
-    [(whole_pages * bounds.height + (start_y - scratch.y)), whole_pages, (start_y - scratch.y)]
+    [(whole_pages * bounds.height + partial_page_height), whole_pages, partial_page_height]
   end
 
   # Attempt to keep the objects generated in the block on the same page
