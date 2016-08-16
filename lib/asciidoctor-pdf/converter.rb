@@ -1107,7 +1107,7 @@ class Converter < ::Prawn::Document
     lines.flat_map.with_index do |line, cur_line_num|
       last_line = cur_line_num == last_line_num
       if (conums = conum_mapping.delete cur_line_num)
-        line << { text: ' ' * num_trailing_spaces } if last_line && num_trailing_spaces.nonzero?
+        line << { text: ' ' * num_trailing_spaces } if last_line && num_trailing_spaces > 0
         conum_text = conums.map {|num| conum_glyph num } * ' '
         line << (conum_color ? { text: conum_text, color: conum_color } : { text: conum_text })
       end
@@ -1139,7 +1139,7 @@ class Converter < ::Prawn::Document
 
   def convert_table node
     add_dest_for_block node if node.id
-    # TODO we could skip a lot of the logic below when num_rows.zero?
+    # TODO we could skip a lot of the logic below when num_rows == 0
     num_rows = node.attr 'rowcount'
     num_cols = node.columns.size
     table_header = false
@@ -1275,7 +1275,7 @@ class Converter < ::Prawn::Document
       table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
       column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
       # NOTE until Asciidoctor 1.5.4, colpcwidth values didn't always add up to 100%; use last column to compensate
-      unless column_widths.empty? || (width_delta = table_width - column_widths.reduce(:+)).zero?
+      unless column_widths.empty? || (width_delta = table_width - column_widths.reduce(:+)) == 0
         column_widths[-1] += width_delta
       end
     end
@@ -1305,7 +1305,7 @@ class Converter < ::Prawn::Document
     table table_data, table_settings do
       if node.title? && (pdf_doc = @pdf)
         # QUESTION should we confine width of title to width of table?
-        if position == :left || (excess = pdf_doc.bounds.width - width).zero?
+        if position == :left || (excess = pdf_doc.bounds.width - width) == 0
           pdf_doc.layout_caption node
         else
           pdf_doc.indent excess * (position == :center ? 0.5 : 1) do
