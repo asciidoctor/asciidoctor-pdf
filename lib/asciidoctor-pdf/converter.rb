@@ -471,7 +471,13 @@ class Converter < ::Prawn::Document
                             img = %(<img src="#{image_path}" >)
                             image_obj, image_info = build_image_object image_path                            
                             rendered_w = [bounds.width, image_info.width * 0.75].min                            
-                            rendered_h = (rendered_w * image_info.height) / image_info.width                                                       
+                            rendered_h = (rendered_w * image_info.height) / image_info.width     
+                            # If rendered_h > box_height then the icon will be misplaced in the PDF document
+                            if rendered_h > box_height
+                              ratio = box_height / rendered_h
+                              rendered_w = ratio * rendered_w
+                              rendered_h = box_height
+                            end  
                             embed_image image_obj, image_info, width: rendered_w                            
                         rescue => e
                             warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
