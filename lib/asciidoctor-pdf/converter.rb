@@ -1605,9 +1605,14 @@ class Converter < ::Prawn::Document
       end
       logo_image_attrs['target'] = logo_image_path
       logo_image_attrs['align'] ||= (@theme.title_page_logo_align || title_align.to_s)
-      logo_image_top = (logo_image_attrs['top'] || @theme.title_page_logo_top)
+      # QUESTION should we allow theme to turn logo image off?
+      logo_image_top = logo_image_attrs['top'] || @theme.title_page_logo_top || '10%'
       # FIXME delegate to method to convert page % to y value
-      logo_image_top = [(page_height - page_height * (logo_image_top.to_f / 100.0)), bounds.absolute_top].min
+      if logo_image_top.end_with? 'vh'
+        logo_image_top = page_height - page_height * logo_image_top.to_f / 100.0
+      else
+        logo_image_top = bounds.absolute_top - effective_page_height * logo_image_top.to_f / 100.0
+      end
       float do
         @y = logo_image_top
         # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
@@ -1622,8 +1627,13 @@ class Converter < ::Prawn::Document
     theme_font :title_page do
       doctitle = doc.doctitle partition: true
       if (title_top = @theme.title_page_title_top)
+        if title_top.end_with? 'vh'
+          title_top = page_height - page_height * title_top.to_f / 100.0
+        else
+          title_top = bounds.absolute_top - effective_page_height * title_top.to_f / 100.0
+        end
         # FIXME delegate to method to convert page % to y value
-        @y = [(page_height - page_height * (title_top.to_f / 100.0)), bounds.absolute_top].min
+        @y = title_top
       end
       move_down (@theme.title_page_title_margin_top || 0)
       theme_font :title_page_title do
