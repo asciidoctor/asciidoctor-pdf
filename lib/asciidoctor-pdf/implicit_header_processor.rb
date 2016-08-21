@@ -12,7 +12,7 @@ class ImplicitHeaderProcessor < ::Asciidoctor::Extensions::IncludeProcessor
       if (first_line = fd.readline) && (first_line.start_with? '= ')
         # HACK reset counters for each article for Editions
         if doc.attr? 'env', 'editions'
-          doc.counters.each do |(counter_key, counter_val)|
+          doc.counters.each do |counter_key, counter_val|
             doc.attributes.delete counter_key
           end
           doc.counters.clear
