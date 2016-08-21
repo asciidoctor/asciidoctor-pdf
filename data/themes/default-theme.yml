@@ -237,11 +237,13 @@ footer:
   # * {chapter-title}
   # * {section-title}
   # * {section-or-chapter-title}
+  #recto_columns: "<50%,0%,>50%"
   recto_content:
     #right: '{section-or-chapter-title} | {page-number}'
     #right: '{document-title} | {page-number}'
     right: '{page-number}'
     #center: '{page-number}'
+  #verso_columns: "<50%,0%,>50%"
   verso_content:
     #left: '{page-number} | {chapter-title}'
     left: '{page-number}'
