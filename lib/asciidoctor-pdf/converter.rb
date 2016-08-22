@@ -164,7 +164,8 @@ class Converter < ::Prawn::Document
     convert_content_for_block doc
 
     # NOTE delete orphaned page (a page was created but there was no additional content)
-    delete_page if page_is_empty?
+    # QUESTION should we delete page if document is empty? (leaving no pages?)
+    delete_page if page_is_empty? && page_count > 1
 
     toc_page_nums = if include_toc
       layout_toc doc, num_toc_levels, toc_start_page_num, num_front_matter_pages
