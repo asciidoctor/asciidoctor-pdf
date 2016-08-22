@@ -5,7 +5,7 @@ Doc Writer <doc@example.com>
 :source-highlighter: rouge
 :listing-caption: Listing
 // Uncomment next line to set page size (default is A4)
-//:pdf-page-size: Legal
+//:pdf-page-size: Letter
 
 A simple http://asciidoc.org[AsciiDoc] document.
 

@@ -1,28 +1,41 @@
 = Asciidoctor PDF: A native PDF converter for AsciiDoc
 Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://github.com/graphitefriction[@graphitefriction]>
 // Settings:
-:compat-mode!:
 :experimental:
 :idprefix:
 :idseparator: -
-:icons: font
-ifdef::env-github,env-browser[:outfilesuffix: .adoc]
-:pagenums:
-//:pdf-page-size: [8.25in, 11.69in]
-//:pdf-page-size: A4
-ifdef::env-browser[:toc: preamble]
+ifndef::env-github[:icons: font]
+ifdef::env-github,env-browser[]
+:toc: macro
+:toclevels: 1
+endif::[]
+ifdef::env-github[]
+:status:
+:outfilesuffix: .adoc
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
 // Aliases:
 :project-name: Asciidoctor PDF
 :project-handle: asciidoctor-pdf
 // URIs:
-//ifdef::env-github[:relfileprefix: /blob/master/]
+:uri-asciidoctor: http://asciidoctor.org
+:uri-gem: http://rubygems.org/gems/asciidoctor-pdf
 :uri-project: https://github.com/asciidoctor/asciidoctor-pdf
 :uri-project-repo: {uri-project}
 :uri-project-issues: {uri-project-repo}/issues
 :uri-project-list: http://discuss.asciidoctor.org
 :uri-prawn: http://prawn.majesticseacreature.com
 :uri-rvm: http://rvm.io
-:uri-asciidoctor: http://asciidoctor.org
+
+ifdef::status[]
+image:https://img.shields.io/gem/v/asciidoctor-pdf.svg[Latest Release, link={uri-gem}]
+image:https://img.shields.io/badge/license-MIT-blue.svg[MIT License, link=#copyright]
+endif::[]
 
 _Lo and behold_, a native PDF converter for AsciiDoc built with {uri-asciidoctor}[Asciidoctor] and {uri-prawn}[Prawn]! +
 _No more middleman._ +
@@ -34,7 +47,9 @@ CAUTION: {project-name} is currently _alpha_ software.
 While the converter handles most AsciiDoc content, there's still work needed to fill in gaps where conversion is incomplete, incorrect or not implemented.
 See the milestone v1.5.0 in the {uri-project-issues}[issue tracker] for details.
 
-== Prawn, the majestic PDF generator
+toc::[]
+
+== Prawn, the Majestic PDF Generator
 
 {uri-project}[{project-name}] is made possible by an amazing Ruby gem named Prawn.
 And what a gem it is!
@@ -67,7 +82,7 @@ Picking up from there, {project-name} takes the pain out of creating PDF documen
 
 == Features
 
-=== Notable features
+=== Notable Features
 
 * Direct AsciiDoc to PDF conversion
 * <<docs/theming-guide.adoc#,Configuration-driven style and layout>>
@@ -85,7 +100,7 @@ Picking up from there, {project-name} takes the pain out of creating PDF documen
 * Font-based icons
 * Custom fonts
 
-=== Missing features
+=== Missing Features
 
 See <<WORKLOG.adoc#,WORKLOG>>.
 
@@ -107,7 +122,7 @@ If you need to use Asciidoctor PDF with Ruby 1.9.3, you must first install Prawn
 You can then proceed with installation of Asciidoctor PDF.
 ====
 
-=== System encoding
+=== System Encoding
 
 Asciidoctor assumes you're using UTF-8 encoding.
 To minimize encoding problems, make sure the default encoding of your system is set to UTF-8.
@@ -120,11 +135,11 @@ To solve these problems, we recommend at least changing the active code page in 
 
 Once you make this change, all your Unicode headaches will be behind you.
 
-== Getting started
+== Getting Started
 
 You can get {project-name} by <<install-the-published-gem,installing the published gem>> or <<development,running the code from source>>.
 
-=== Install the published gem
+=== Install the Published Gem
 
 {project-name} is published as a pre-release on RubyGems.org.
 You can install the published gem using the following command:
@@ -158,7 +173,7 @@ If you see the version of {project-name} printed, you're ready to use {project-n
 
 Let's grab an AsciiDoc document to distill and start putting {project-name} to use!
 
-=== An example AsciiDoc document
+=== An Example AsciiDoc Document
 
 If you don't already have an AsciiDoc document, you can use the [file]_basic-example.adoc_ file found in the examples directory of this project.
 
@@ -206,7 +221,7 @@ The layout and styling of the PDF is driven by a YAML configuration file.
 To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theme Guide>>.
 You can use the built-in theme files, which you can find in the [file]_data/themes_ directory, as examples.
 
-== Font-based icons
+== Font-Based Icons
 
 You can use icons in your PDF document using any of the following icon sets:
 
@@ -258,7 +273,7 @@ You can enable use of fonts during PDF generation (instead of in the document he
 Icon-based fonts are handled by the `prawn-icon` gem.
 To find a complete list of available icons, consult the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon] repository.
 
-== Image scaling
+== Image Scaling
 
 Since PDF is a fixed-width canvas, you almost always need to specify an image width to get the image to fit properly on the page.
 There are four ways to specify the width of the image, listed here in order of precedence:
@@ -287,7 +302,7 @@ The sizing is always controlled by the width (explicit or intrinsic) and the siz
 The height of the image is ignored by the PDF converter, with one exception.
 If the height of the image exceeds the height of the page, the image is scaled down to fit on a single page.
 
-=== pdfwidth attribute
+=== Using the pdfwidth Attribute
 
 The pdfwidth attribute is the recommended way to set the image size for the PDF output.
 This attribute is provided for two reasons.
@@ -306,7 +321,7 @@ The pdfwidth attribute supports the following units:
 
 In all cases, the width is converted to pt.
 
-=== Inline image sizing
+=== Inline Image Sizing
 
 Inline images are handled different than block images.
 In particular, inline images do not support sizing using the pdfwidth attribute.
@@ -315,7 +330,7 @@ Here's how an inline image is sized.
 The image height is scaled down to 75% of the specified width (px to pt conversion).
 If the image height is more than 1.5x the height of the surrounding line of text, the font size and line metrics of the fragment are modified to fit the image in the line.
 
-== Optional scripts
+== Optional Scripts
 
 {project-name} also provides a shell script that invokes GhostScript (`gs`) to optimize and compress the generated PDF with minimal impact on quality.
 You must have Ghostscript installed to use it.
@@ -350,14 +365,14 @@ Feel free to use the {uri-project-issues}[issue tracker] or {uri-project-list}[A
 To help develop {project-name}, or to simply use the development version, you need to get the source from GitHub.
 Follow the instructions below to learn how to clone the source and run it from your local copy.
 
-=== Retrieve the source code
+=== Retrieve the Source Code
 
 You can retrieve the source of {project-name} in one of two ways:
 
 . Clone the git repository
 . Download a zip archive of the repository
 
-==== Option 1: Fetch using git clone
+==== Option 1: Fetch Using Git
 
 If you want to clone the git repository, simply copy the {uri-project-repo}[GitHub repository URL] and pass it to the `git clone` command:
 
@@ -367,7 +382,7 @@ Next, change to the project directory:
 
  $ cd asciidoctor-pdf
 
-==== Option 2: Download the archive
+==== Option 2: Download the Archive
 
 If you want to download a zip archive, click the btn:[Download Zip] button on the right-hand side of the repository page on GitHub.
 Once the download finishes, extract the archive, open a console and change to that directory.
@@ -376,7 +391,7 @@ TIP: Instead of working out of the {project-handle} directory, you can simply ad
 
 We'll leverage the project configuration to install the necessary dependencies.
 
-=== Install dependencies
+=== Install Dependencies
 
 If you're using {uri-rvm}[RVM], we recommend creating a new gemset to work with {project-name}:
 
