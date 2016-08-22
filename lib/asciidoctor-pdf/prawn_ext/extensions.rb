@@ -620,7 +620,12 @@ module Extensions
     pdf_store.pages.data[:Kids].pop
     pdf_store.pages.data[:Count] -= 1
     state.pages.pop
-    go_to_page(pg - 1)
+    if pg > 1
+      go_to_page pg - 1
+    else
+      @page_number = 0
+      state.page = nil
+    end
   end
 
   # Import the specified page into the current document.
