@@ -1924,7 +1924,7 @@ class Converter < ::Prawn::Document
     content_dict = [:recto, :verso].inject({}) do |acc, side|
       side_content = {}
       Alignments.each do |align|
-        if (val = @theme[%(#{position}_#{side}_content_#{align})])
+        if (val = @theme[%(#{position}_#{side}_#{align}_content)])
           # TODO support image URL (using resolve_image_path)
           if (val.include? ':') && val =~ ImageAttributeValueRx &&
               ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))

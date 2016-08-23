@@ -68,7 +68,6 @@ class ThemeLoader
     if theme_file == BaseThemePath
       theme_data
     else
-      # QUESTION should we do any post-load calculations or defaults?
       load_file theme_file, theme_data
     end
   end
@@ -80,7 +79,17 @@ class ThemeLoader
 
   def load hash, theme_data = nil
     theme_data ||= ::OpenStruct.new
-    hash.inject(theme_data) {|data, (key, val)| process_entry key, val, data }
+    theme_data = hash.inject(theme_data) {|data, (key, val)| process_entry key, val, data }
+    # NOTE remap legacy running content keys (e.g., header_recto_content_left => header_recto_left_content)
+    %w(header_recto header_verso footer_recto footer_verso).each do |position_face|
+      %w(left center right).each do |align|
+        if (val = theme_data.delete %(#{position_face}_content_#{align}))
+          theme_data[%(#{position_face}_#{align}_content)] = val
+        end
+      end
+    end
+    # QUESTION should we do any other post-load calculations or defaults?
+    theme_data
   end
 
   private
