@@ -196,8 +196,8 @@ class Converter < ::Prawn::Document
   def init_pdf doc
     theme = ThemeLoader.load_theme((doc.attr 'pdf-style'), (doc.attr 'pdf-stylesdir'))
     @theme = theme
-    pdf_opts = (build_pdf_options doc, theme)
-    # QUESTION should we preserve page options (otherwise, not readily available)
+    pdf_opts = build_pdf_options doc, theme
+    # QUESTION should page options be preserved (otherwise, not readily available)
     #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
     ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
     # QUESTION should ThemeLoader register fonts?
