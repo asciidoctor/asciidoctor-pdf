@@ -237,12 +237,18 @@ footer:
   # * {chapter-title}
   # * {section-title}
   # * {section-or-chapter-title}
-  recto_content:
-    #right: '{section-or-chapter-title} | {page-number}'
-    #right: '{document-title} | {page-number}'
-    right: '{page-number}'
-    #center: '{page-number}'
-  verso_content:
-    #left: '{page-number} | {chapter-title}'
-    left: '{page-number}'
-    #center: '{page-number}'
+  recto:
+    #columns: "<50%,0%,>50%"
+    right:
+      content: '{page-number}'
+      #content: '{section-or-chapter-title} | {page-number}'
+      #content: '{document-title} | {page-number}'
+    #center:
+    #  content: '{page-number}'
+  verso:
+    #columns: "<50%,0%,>50%"
+    left:
+      content: '{page-number}'
+      #content: '{page-number} | {chapter-title}'
+    #center:
+    #  content: '{page-number}'

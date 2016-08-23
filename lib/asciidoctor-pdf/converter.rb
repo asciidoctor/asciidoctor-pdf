@@ -40,6 +40,7 @@ class Converter < ::Prawn::Document
   }
   Alignments = [:left, :center, :right]
   AlignmentNames = ['left', 'center', 'right']
+  AlignmentByChar = { '<' => :left, '=' => :center, '>' => :right }
   LF = %(\n)
   TAB = %(\t)
   InnerIndent = %(\n )
@@ -1923,7 +1924,7 @@ class Converter < ::Prawn::Document
     content_dict = [:recto, :verso].inject({}) do |acc, side|
       side_content = {}
       Alignments.each do |align|
-        if (val = @theme[%(#{position}_#{side}_content_#{align})])
+        if (val = @theme[%(#{position}_#{side}_#{align}_content)])
           # TODO support image URL (using resolve_image_path)
           if (val.include? ':') && val =~ ImageAttributeValueRx &&
               ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
@@ -1994,6 +1995,39 @@ class Converter < ::Prawn::Document
       trim_img_valign = trim_img_valign.to_sym
     end
 
+    colspec_dict = [:recto, :verso].inject({}) do |acc, side|
+      if (custom_colspecs = @theme[%(#{position}_#{side}_columns)])
+        colspecs = %w(<40% =20% >40%)
+        (custom_colspecs.tr ',', ' ').split[0..2].each_with_index {|c, idx| colspecs[idx] = c }
+        colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
+        cml_width = 0
+        side_colspecs = colspecs.map {|col, spec|
+          if (alignment_char = spec.chr).to_i.to_s != alignment_char
+            alignment = AlignmentByChar[alignment_char] || :left
+            pcwidth = spec[1..-1].to_f
+          else
+            alignment = :left
+            pcwidth = spec.to_f
+          end
+          # QUESTION should we allow the columns to overlap (capping width at 100%)?
+          if (w = trim_content_width * (pcwidth / 100.0)) + cml_width > trim_content_width
+            w = trim_content_width - cml_width
+          end
+          cml_width += w
+          [col, { align: alignment, width: w, x: 0 }]
+        }.to_h
+        side_colspecs[:right][:x] = (side_colspecs[:center][:x] = side_colspecs[:left][:width]) + side_colspecs[:center][:width]
+        acc[side] = side_colspecs
+      else
+        acc[side] = {
+          left: { align: :left, width: trim_content_width, x: 0 },
+          center: { align: :center, width: trim_content_width, x: 0 },
+          right: { align: :right, width: trim_content_width, x: 0 }
+        }
+      end
+      acc
+    end
+
     if trim_bg_color || trim_border_color
       # NOTE switch to first content page so stamp will get created properly (can't create on imported page)
       prev_page_number = page_number
@@ -2029,6 +2063,7 @@ class Converter < ::Prawn::Document
       visual_pgnum = page_number - skip
       # FIXME we need to have a content setting for chapter pages
       content_by_alignment = content_dict[visual_pgnum.odd? ? :recto : :verso]
+      colspec_by_alignment = colspec_dict[visual_pgnum.odd? ? :recto : :verso]
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
       # FIXME leave page-number attribute unset once we filter lines with unresolved attributes (see below)
@@ -2043,18 +2078,20 @@ class Converter < ::Prawn::Document
         canvas do
           bounding_box [trim_content_left, trim_top], width: trim_content_width, height: trim_height do
             Alignments.each do |align|
+              next unless (content = content_by_alignment[align])
+              next unless (colspec = colspec_by_alignment[align])[:width] > 0
               # FIXME we need to have a content setting for chapter pages
-              case (content = content_by_alignment[align])
+              case content
               when ::Hash
                 # NOTE image placement respects padding; use negative image_vertical_align value to revert
                 trim_v_padding = trim_padding[0] + trim_padding[2]
                 # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                 float do
                   # NOTE bounding_box is redundant if trim_v_padding is 0
-                  bounding_box [0, cursor - trim_padding[0]], width: bounds.width, height: (bounds.height - trim_v_padding) do
+                  bounding_box [colspec[:x], cursor - trim_padding[0]], width: colspec[:width], height: (bounds.height - trim_v_padding) do
                     #image content[:path], vposition: trim_img_valign, position: align, width: content[:width]
                     # NOTE use :fit to prevent image from overflowing page (at the cost of scaling it)
-                    image content[:path], vposition: trim_img_valign, position: align, fit: [content[:width], bounds.height]
+                    image content[:path], vposition: trim_img_valign, position: colspec[:align], fit: [content[:width], bounds.height]
                   end
                 end
               when ::String
@@ -2065,9 +2102,10 @@ class Converter < ::Prawn::Document
                   content = doc.apply_subs content
                 end
                 formatted_text_box parse_text(content, color: trim_font_color, inline_format: [normalize: true]),
-                  at: [0, trim_content_height + trim_padding[2] + trim_line_metrics.padding_bottom],
+                  at: [colspec[:x], trim_content_height + trim_padding[2] + trim_line_metrics.padding_bottom],
+                  width: colspec[:width],
                   height: trim_content_height,
-                  align: align,
+                  align: colspec[:align],
                   valign: trim_valign,
                   leading: trim_line_metrics.leading,
                   final_gap: false,

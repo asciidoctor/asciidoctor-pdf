@@ -2202,7 +2202,13 @@ TIP: If you defined running header and footer content in your theme, you can sti
 |header:
   vertical_align: center
 
-|<face>_content_<position>^[1]^
+|<face>_columns^[1]^
+|Column specs triple +
+(default: none)
+|header:
+  recto_columns: <25% =50% >25%
+
+|<face>_content_<position>^[1,2]^
 |Quoted string
 |header:
   recto_content:
@@ -2277,7 +2283,13 @@ TIP: If you defined running header and footer content in your theme, you can sti
 |footer:
   vertical_align: top
 
-|<face>_content_<position>^[1]^
+|<face>_columns^[1]^
+|Column specs triple +
+(default: none)
+|footer:
+  verso_columns: <50% 0% <50%
+
+|<face>_content_<position>^[1,2]^
 |Quoted string
 |footer:
   verso_content:
@@ -2285,7 +2297,7 @@ TIP: If you defined running header and footer content in your theme, you can sti
 |===
 
 . `<face>` can be `recto` (odd pages) or `verso` (even pages).
-`<position>` can be `left`, `center` or `right`.
+. `<position>` can be `left`, `center` or `right`.
 
 IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
 
