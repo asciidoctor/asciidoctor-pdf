@@ -1957,7 +1957,6 @@ class Converter < ::Prawn::Document
       trim_padding = @theme.header_padding || [0, 0, 0, 0]
       trim_left = page_margin_left
       trim_width = page_width - trim_left - page_margin_right
-      trim_font_color = @theme.header_font_color || @font_color
       trim_bg_color = resolve_theme_color :header_background_color
       trim_border_width = @theme.header_border_width || @theme.base_border_width
       trim_border_style = (@theme.header_border_style || :solid).to_sym
@@ -1971,7 +1970,6 @@ class Converter < ::Prawn::Document
       trim_padding = @theme.footer_padding || [0, 0, 0, 0]
       trim_left = page_margin_left
       trim_width = page_width - trim_left - page_margin_right
-      trim_font_color = @theme.footer_font_color || @font_color
       trim_bg_color = resolve_theme_color :footer_background_color
       trim_border_width = @theme.footer_border_width || @theme.base_border_width
       trim_border_style = (@theme.footer_border_style || :solid).to_sym
@@ -2101,7 +2099,7 @@ class Converter < ::Prawn::Document
                   # FIXME drop lines with unresolved attributes
                   content = doc.apply_subs content
                 end
-                formatted_text_box parse_text(content, color: trim_font_color, inline_format: [normalize: true]),
+                formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
                   at: [colspec[:x], trim_content_height + trim_padding[2] + trim_line_metrics.padding_bottom],
                   width: colspec[:width],
                   height: trim_content_height,
@@ -2281,12 +2279,10 @@ class Converter < ::Prawn::Document
       transform = @theme[%(#{category}_text_transform)]
     end
 
-    style = style.to_sym if style
-
     prev_color, @font_color = @font_color, color if color
     prev_transform, @text_transform = @text_transform, transform if transform
 
-    font family, size: size, style: style do
+    font family, size: size, style: (style && style.to_sym) do
       yield
     end
 
