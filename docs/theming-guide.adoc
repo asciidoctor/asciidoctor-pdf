@@ -1052,7 +1052,7 @@ If you want the font size of a specific level to be inherited, you must assign t
 
 The keys in this category control the style of the title page as well as the arrangement and style of the elements on it.
 
-TIP: The title page can be disabled from the document by setting the `notitle` attribute in the document header.
+TIP: The title page can be disabled from the document by setting the `notitle` attribute in the AsciiDoc document header.
 
 [cols="3,4,5l"]
 |===
@@ -2202,13 +2202,13 @@ TIP: If you defined running header and footer content in your theme, you can sti
 |header:
   vertical_align: center
 
-|<face>_columns^[1]^
+|<side>_columns^[1]^
 |Column specs triple +
 (default: none)
 |header:
   recto_columns: <25% =50% >25%
 
-|<face>_content_<position>^[1,2]^
+|<side>_content_<placement>^[1,2]^
 |Quoted string
 |header:
   recto_content:
@@ -2283,27 +2283,28 @@ TIP: If you defined running header and footer content in your theme, you can sti
 |footer:
   vertical_align: top
 
-|<face>_columns^[1]^
+|<side>_columns^[1]^
 |Column specs triple +
 (default: none)
 |footer:
   verso_columns: <50% 0% <50%
 
-|<face>_content_<position>^[1,2]^
+|<side>_content_<placement>^[1,2]^
 |Quoted string
 |footer:
   verso_content:
     center: '\{page-number}'
 |===
 
-. `<face>` can be `recto` (odd pages) or `verso` (even pages).
-. `<position>` can be `left`, `center` or `right`.
+. `<side>` can be `recto` (right-hand, odd pages) or `verso` (left-hand, even pages).
+. `<placement>` can be `left`, `center` or `right`.
 
 IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
 
 TIP: The running header and footer can be disabled from the document by setting the `noheader` and the `nofooter` attributes, respectively, in the document header.
 
 NOTE: If content is not specified for the running footer, the page number (i.e., `\{page-number}`) will be shown on the left side on verso pages and the right side on recto pages.
+You can disable this behavior by defining the attribute `nofooter` in the AsciiDoc document header or by defining the key `footer_<side>_content: none` in the theme.
 
 NOTE: The background color spans the width of the page.
 When a background color is specified, the border also spans the width of the page.

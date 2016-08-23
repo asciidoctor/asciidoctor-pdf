@@ -1916,10 +1916,6 @@ class Converter < ::Prawn::Document
     doc.set_attr 'document-subtitle', doctitle.subtitle
     doc.set_attr 'page-count', num_pages
 
-    fallback_footer_content = {
-      recto: { right: '{page-number}' },
-      verso: { left: '{page-number}' }
-    }
     # TODO move this to a method so it can be reused; cache results
     content_dict = [:recto, :verso].inject({}) do |acc, side|
       side_content = {}
@@ -1942,7 +1938,7 @@ class Converter < ::Prawn::Document
       end
       # NOTE set fallbacks if not explicitly disabled
       if side_content.empty? && position == :footer && @theme[%(footer_#{side}_content)] != 'none'
-        side_content = fallback_footer_content[side]
+        side_content = { side == :recto ? :right : :left => '{page-number}' }
       end
 
       acc[side] = side_content
