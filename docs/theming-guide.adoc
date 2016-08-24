@@ -2127,15 +2127,13 @@ The keys in this category control the arrangement and style of the table of cont
 
 The keys in this category control the arrangement and style of running header and footer content.
 
-TIP: If you defined running header and footer content in your theme, you can still disable this content per document by setting the `noheader` and `nofooter` document attributes, respectively.
-
 [cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
 3+|*Key Prefix:* header
 
-|background_color
+|background_color^[1]^
 |<<colors,Color>>
 |header:
   background_color: #eeeeee
@@ -2202,21 +2200,23 @@ TIP: If you defined running header and footer content in your theme, you can sti
 |header:
   vertical_align: center
 
-|<side>_columns^[1]^
+|<side>_columns^[2]^
 |Column specs triple +
 (default: none)
 |header:
-  recto_columns: <25% =50% >25%
+  recto:
+    columns: <25% =50% >25%
 
-|<side>_content_<placement>^[1,2]^
+|<side>_<placement>_content^[2,3]^
 |Quoted string
 |header:
-  recto_content:
-    left: '\{page-number}'
+  recto:
+    left:
+      content: '\{page-number}'
 
 3+|*Key Prefix:* footer
 
-|background_color
+|background_color^[1]^
 |<<colors,Color>>
 |footer:
   background_color: #eeeeee
@@ -2283,31 +2283,34 @@ TIP: If you defined running header and footer content in your theme, you can sti
 |footer:
   vertical_align: top
 
-|<side>_columns^[1]^
+|<side>_columns^[2]^
 |Column specs triple +
 (default: none)
 |footer:
-  verso_columns: <50% 0% <50%
+  verso:
+    columns: <50% 0% <50%
 
-|<side>_content_<placement>^[1,2]^
+|<side>_<placement>_content^[2,3]^
 |Quoted string
 |footer:
-  verso_content:
-    center: '\{page-number}'
+  verso:
+    center:
+      content: '\{page-number}'
 |===
 
+. The background color spans the width of the page, as does the border when a background color is specified.
 . `<side>` can be `recto` (right-hand, odd pages) or `verso` (left-hand, even pages).
 . `<placement>` can be `left`, `center` or `right`.
 
 IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
 
-TIP: The running header and footer can be disabled from the document by setting the `noheader` and the `nofooter` attributes, respectively, in the document header.
+If you define running header and footer content in your theme, you can still disable this content per document by setting the `noheader` and `nofooter` attributes in the AsciiDoc document header, respectively.
 
-NOTE: If content is not specified for the running footer, the page number (i.e., `\{page-number}`) will be shown on the left side on verso pages and the right side on recto pages.
+If content is not specified for the running footer, the page number (i.e., `\{page-number}`) is shown on the left on verso pages and the right on recto pages.
 You can disable this behavior by defining the attribute `nofooter` in the AsciiDoc document header or by defining the key `footer_<side>_content: none` in the theme.
 
-NOTE: The background color spans the width of the page.
-When a background color is specified, the border also spans the width of the page.
+TIP: Although not listed in the table above, you can control the font settings used for running content for each column placement on each page side (e.g., `footer_<side>_<placement>_font_color`).
+For example, you can set the font color used for the right-hand column on recto pages by setting `footer_recto_right_font_color: 6CC644`.
 
 ==== Attribute References
 
@@ -2331,17 +2334,21 @@ Here's an example that shows how attributes and replacements can be used in the 
 header:
   height: 0.75in
   line_height: 1
-  recto_content:
-    center: '(C) ACME -- v{revnumber}, {docdate}'
-  verso_content:
-    center: $header_recto_content_center
+  recto:
+    center:
+      content: '(C) ACME -- v{revnumber}, {docdate}'
+  verso:
+    center:
+      content: $header_recto_center_content
 footer:
   height: 0.75in
   line_height: 1
-  recto_content:
-    right: '{section-or-chapter-title} | *{page-number}*'
-  verso_content:
-    left: '*{page-number}* | {chapter-title}'
+  recto:
+    right:
+      content: '{section-or-chapter-title} | *{page-number}*'
+  verso:
+    left:
+      content: '*{page-number}* | {chapter-title}'
 ----
 
 You can split the content value across multiple lines using YAML's multiline string syntax.
@@ -2353,14 +2360,16 @@ To force a hard line break in the output, add `{sp}+` to the end of the line in 
 footer:
   height: 0.75in
   line_height: 1.2
-  recto_content:
-    right: |
-      Section Title - Page Number +
-      {section-or-chapter-title} - {page-number}
-  verso_content:
-    left: |
-      Page Number - Chapter Title +
-      {page-number} - {chapter-title}
+  recto:
+    right:
+      content: |
+        Section Title - Page Number +
+        {section-or-chapter-title} - {page-number}
+  verso:
+    left:
+      content: |
+        Page Number - Chapter Title +
+        {page-number} - {chapter-title}
 ----
 
 TIP: You can use most AsciiDoc inline formatting in the values of these keys.
@@ -2380,10 +2389,12 @@ Here's an example of how to use an image in the running header (which also appli
 header:
   height: 0.75in
   image_vertical_align: 2 {conum-guard-yaml} <1>
-  recto_content:
-    center: image:footer-logo.png[width=80]
-  verso_content:
-    center: $header_recto_content_center
+  recto:
+    center:
+      content: image:footer-logo.png[width=80]
+  verso:
+    center:
+      content: $header_recto_center_content
 ----
 <1> You can use the `footer_vertical_align` attribute to slighly nudge the image up or down.
 

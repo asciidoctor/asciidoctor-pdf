@@ -2056,8 +2056,8 @@ class Converter < ::Prawn::Document
       next if page.imported_page?
       visual_pgnum = page_number - skip
       # FIXME we need to have a content setting for chapter pages
-      content_by_alignment = content_dict[visual_pgnum.odd? ? :recto : :verso]
-      colspec_by_alignment = colspec_dict[visual_pgnum.odd? ? :recto : :verso]
+      content_by_alignment = content_dict[side = visual_pgnum.odd? ? :recto : :verso]
+      colspec_by_alignment = colspec_dict[side]
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
       # FIXME leave page-number attribute unset once we filter lines with unresolved attributes (see below)
@@ -2092,18 +2092,19 @@ class Converter < ::Prawn::Document
                 if content == '{page-number}'
                   content = pagenums_enabled ? visual_pgnum.to_s : nil
                 else
-                  # FIXME drop lines with unresolved attributes
-                  content = doc.apply_subs content
+                  content = doc.apply_subs content # TODO drop lines with unresolved attributes
                 end
-                formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
-                  at: [colspec[:x], trim_content_height + trim_padding[2] + trim_line_metrics.padding_bottom],
-                  width: colspec[:width],
-                  height: trim_content_height,
-                  align: colspec[:align],
-                  valign: trim_valign,
-                  leading: trim_line_metrics.leading,
-                  final_gap: false,
-                  overflow: :truncate
+                theme_font %(#{position}_#{side}_#{align}) do
+                  formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
+                    at: [colspec[:x], trim_content_height + trim_padding[2] + trim_line_metrics.padding_bottom],
+                    width: colspec[:width],
+                    height: trim_content_height,
+                    align: colspec[:align],
+                    valign: trim_valign,
+                    leading: trim_line_metrics.leading,
+                    final_gap: false,
+                    overflow: :truncate
+                end
               end
             end
           end
