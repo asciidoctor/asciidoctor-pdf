@@ -38,9 +38,9 @@ class Converter < ::Prawn::Document
     tip:       { name: 'fa-lightbulb-o', stroke_color: '111111', size: 24 },
     warning:   { name: 'fa-exclamation-triangle', stroke_color: 'BF6900', size: 24 }
   }
-  Alignments = [:left, :center, :right]
   AlignmentNames = ['left', 'center', 'right']
-  AlignmentByChar = { '<' => :left, '=' => :center, '>' => :right }
+  AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
+  ColumnPlacements = [:left, :center, :right]
   LF = %(\n)
   TAB = %(\t)
   InnerIndent = %(\n )
@@ -1919,8 +1919,8 @@ class Converter < ::Prawn::Document
     # TODO move this to a method so it can be reused; cache results
     content_dict = [:recto, :verso].inject({}) do |acc, side|
       side_content = {}
-      Alignments.each do |align|
-        if (val = @theme[%(#{position}_#{side}_#{align}_content)])
+      ColumnPlacements.each do |placement|
+        if (val = @theme[%(#{position}_#{side}_#{placement}_content)])
           # TODO support image URL (using resolve_image_path)
           if (val.include? ':') && val =~ ImageAttributeValueRx &&
               ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
@@ -1930,9 +1930,9 @@ class Converter < ::Prawn::Document
             unless width
               width = [bounds.width, (intrinsic_image_dimensions path)[:width] * 0.75].min
             end
-            side_content[align] = { path: path, width: width }
+            side_content[placement] = { path: path, width: width }
           else
-            side_content[align] = val
+            side_content[placement] = val
           end
         end
       end
@@ -1997,7 +1997,7 @@ class Converter < ::Prawn::Document
         cml_width = 0
         side_colspecs = colspecs.map {|col, spec|
           if (alignment_char = spec.chr).to_i.to_s != alignment_char
-            alignment = AlignmentByChar[alignment_char] || :left
+            alignment = AlignmentTable[alignment_char] || :left
             pcwidth = spec[1..-1].to_f
           else
             alignment = :left
@@ -2056,8 +2056,8 @@ class Converter < ::Prawn::Document
       next if page.imported_page?
       visual_pgnum = page_number - skip
       # FIXME we need to have a content setting for chapter pages
-      content_by_alignment = content_dict[side = visual_pgnum.odd? ? :recto : :verso]
-      colspec_by_alignment = colspec_dict[side]
+      content_by_placement = content_dict[side = visual_pgnum.odd? ? :recto : :verso]
+      colspec_by_placement = colspec_dict[side]
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
       # FIXME leave page-number attribute unset once we filter lines with unresolved attributes (see below)
@@ -2071,19 +2071,19 @@ class Converter < ::Prawn::Document
       theme_font position do
         canvas do
           bounding_box [trim_content_left, trim_top], width: trim_content_width, height: trim_height do
-            Alignments.each do |align|
-              next unless (content = content_by_alignment[align])
-              next unless (colspec = colspec_by_alignment[align])[:width] > 0
+            ColumnPlacements.each do |placement|
+              next unless (content = content_by_placement[placement])
+              next unless (colspec = colspec_by_placement[placement])[:width] > 0
               # FIXME we need to have a content setting for chapter pages
               case content
               when ::Hash
-                # NOTE image placement respects padding; use negative image_vertical_align value to revert
+                # NOTE image position respects padding; use negative image_vertical_align value to revert
                 trim_v_padding = trim_padding[0] + trim_padding[2]
                 # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                 float do
                   # NOTE bounding_box is redundant if trim_v_padding is 0
                   bounding_box [colspec[:x], cursor - trim_padding[0]], width: colspec[:width], height: (bounds.height - trim_v_padding) do
-                    #image content[:path], vposition: trim_img_valign, position: align, width: content[:width]
+                    #image content[:path], vposition: trim_img_valign, position: colspec[:align], width: content[:width]
                     # NOTE use :fit to prevent image from overflowing page (at the cost of scaling it)
                     image content[:path], vposition: trim_img_valign, position: colspec[:align], fit: [content[:width], bounds.height]
                   end
@@ -2094,7 +2094,7 @@ class Converter < ::Prawn::Document
                 else
                   content = doc.apply_subs content # TODO drop lines with unresolved attributes
                 end
-                theme_font %(#{position}_#{side}_#{align}) do
+                theme_font %(#{position}_#{side}_#{placement}) do
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
                     at: [colspec[:x], trim_content_height + trim_padding[2] + trim_line_metrics.padding_bottom],
                     width: colspec[:width],
