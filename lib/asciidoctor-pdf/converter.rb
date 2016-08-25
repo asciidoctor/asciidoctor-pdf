@@ -1269,6 +1269,8 @@ class Converter < ::Prawn::Document
     end
 
     if node.option? 'autowidth'
+      table_width = (node.attr? 'width', nil, false) ? bounds.width * ((node.attr 'tablepcwidth') / 100.0) :
+          ((node.has_role? 'spread') ? bounds.width : nil)
       column_widths = []
     else
       table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
@@ -1295,6 +1297,7 @@ class Converter < ::Prawn::Document
         # NOTE the border color of edges is set later
         border_color: theme.table_grid_color || theme.table_border_color
       },
+      width: table_width,
       column_widths: column_widths,
       row_colors: [odd_row_bg_color, even_row_bg_color]
     }
