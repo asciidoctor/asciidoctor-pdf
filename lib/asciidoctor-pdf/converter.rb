@@ -162,6 +162,8 @@ class Converter < ::Prawn::Document
 
     num_front_matter_pages = page_number - 1
     font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
+    doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
+    add_dest_for_block doc, doc_anchor
     convert_content_for_block doc
 
     # NOTE delete orphaned page (a page was created but there was no additional content)
@@ -315,16 +317,10 @@ class Converter < ::Prawn::Document
       end
       # QUESTION should we store page_start & destination in internal map?
       # TODO ideally, this attribute should be pdf-page-start
-      sect.set_attr 'page_start', page_number
+      sect.set_attr 'page_start', (start_page_num = page_number)
       # QUESTION should we just assign the section this generated id?
-      if (sect_anchor = sect.id)
-        # NOTE encode anchor in hex if it contains characters outside the ASCII range
-        sect_anchor = %(0x#{::PDF::Core.string_to_hex sect_anchor}) unless sect_anchor.ascii_only?
-      else
-        # NOTE auto-generate an anchor if one doesn't exist so TOC works
-        sect_anchor = %(__autoid-#{page_number}-#{y.ceil})
-      end
-      sect.set_attr 'anchor', sect_anchor
+      # NOTE section must have pdf-anchor in order to be listed in the TOC
+      sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_page_num}-#{y.ceil}))
       add_dest_for_block sect, sect_anchor
       sect.chapter? ? (layout_chapter_title sect, title, align: align) : (layout_heading title, align: align)
     end
@@ -1409,24 +1405,26 @@ class Converter < ::Prawn::Document
         %(<a href="#{node.target}"#{attrs.join}>#{node.text}</a>)
       end
     when :xref
-      # NOTE the presence of path indicates an inter-document xref
-      if (path = node.attributes['path'])
+      # NOTE non-nil path indicates this is an inter-document xref that's not included in current document
+      if (path = node.attr 'path', nil, false)
         # NOTE we don't use local as that doesn't work on the web
-        # NOTE for the fragment to work in most viewers, it must be #page=<N>
+        # NOTE for the fragment to work in most viewers, it must be #page=<N> <= document this!
         %(<a href="#{node.target}">#{node.text || path}</a>)
       else
-        refid = node.attributes['refid']
-        # NOTE encode anchor in hex if it contains characters outside the ASCII range
-        anchor = refid.ascii_only? ? refid : %(0x#{::PDF::Core.string_to_hex refid})
-        # NOTE reference table is not comprehensive (we don't catalog all inline anchors)
-        if (reftext = node.document.references[:ids][refid])
-          %(<a anchor="#{anchor}">#{node.text || reftext}</a>)
+        if (refid = node.attr 'refid', nil, false)
+          anchor = derive_anchor_from_id refid
+          # NOTE reference table is not comprehensive (we don't yet catalog all inline anchors)
+          if (reftext = node.document.references[:ids][refid])
+            %(<a anchor="#{anchor}">#{node.text || reftext}</a>)
+          else
+            # NOTE we don't yet catalog all inline anchors, so we can't warn here (maybe after conversion is complete)
+            #source = $VERBOSE ? %( in source:\n#{node.parent.lines * "\n"}) : nil
+            #warn %(asciidoctor: WARNING: reference '#{refid}' not found#{source})
+            #%[(see #{node.text || %([#{refid}])})]
+            %(<a anchor="#{anchor}">#{node.text || "[#{refid}]"}</a>)
+          end
         else
-          # NOTE we don't catalog all inline anchors, so we can't warn here (maybe once conversion is complete)
-          #source = $VERBOSE ? %( in source:\n#{node.parent.lines * "\n"}) : nil
-          #warn %(asciidoctor: WARNING: reference '#{refid}' not found#{source})
-          #%[(see #{node.text || %([#{refid}])})]
-          %(<a anchor="#{anchor}">#{node.text || "[#{refid}]"}</a>)
+          %(<a anchor="#{node.document.attr 'pdf-anchor'}">#{node.text || '[^top]'}</a>)
         end
       end
     when :ref
@@ -1827,7 +1825,7 @@ class Converter < ::Prawn::Document
         start_cursor = cursor
         # NOTE CMYK value gets flattened here, but is restored by formatted text parser
         # FIXME use layout_prose
-        typeset_text %(<a anchor="#{sect_anchor = (sect.attr 'anchor', nil, false) || sect.id}"><color rgb="#{@font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
+        typeset_text %(<a anchor="#{sect_anchor = sect.attr 'pdf-anchor'}"><color rgb="#{@font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
         # we only write the label if this is a dry run
         unless scratch?
           end_page_number = page_number
@@ -2436,6 +2434,17 @@ class Converter < ::Prawn::Document
     end
   end
 
+  # Derive a PDF-safe, ASCII-only anchor name from the given value.
+  # Encodes value into hex if it contains characters outside the ASCII range.
+  # If value is nil, derive an anchor name from the default_value, if given.
+  def derive_anchor_from_id value, default_value = nil
+    if value
+      value.ascii_only? ? value : %(0x#{::PDF::Core.string_to_hex value}) 
+    elsif default_value
+      %(__anchor-#{default_value})
+    end
+  end
+
   # If an id is provided or the node passed as the first argument has an id,
   # add a named destination to the document equivalent to the node id at the
   # current y position. If the node does not have an id and an id is not
@@ -2449,7 +2458,7 @@ class Converter < ::Prawn::Document
       # QUESTION should we set precise x value of destination or just 0?
       dest_x = bounds.absolute_left.round 2
       dest_x = 0 if dest_x <= page_margin_left
-      dest_y = if node.context == :section && at_page_top?
+      dest_y = if at_page_top? && (node.context == :section || node.context == :document)
         page_height
       else
         y
@@ -2600,6 +2609,7 @@ class Converter < ::Prawn::Document
   end
 
 =begin
+  # TODO could assign pdf-anchor attributes here too
   def assign_missing_section_ids doc
     unless doc.attr? 'sectids'
       doc.attributes['sectids'] = ''
