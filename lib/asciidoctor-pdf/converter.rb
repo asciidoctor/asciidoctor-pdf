@@ -315,9 +315,8 @@ class Converter < ::Prawn::Document
           start_new_page
         end
       end
-      # QUESTION should we store page_start & destination in internal map?
-      # TODO ideally, this attribute should be pdf-page-start
-      sect.set_attr 'page_start', (start_page_num = page_number)
+      # QUESTION should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
+      sect.set_attr 'pdf-page-start', (start_page_num = page_number)
       # QUESTION should we just assign the section this generated id?
       # NOTE section must have pdf-anchor in order to be listed in the TOC
       sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_page_num}-#{y.ceil}))
@@ -327,7 +326,7 @@ class Converter < ::Prawn::Document
 
     convert_content_for_block sect
     # TODO ideally, this attribute should be pdf-page-end
-    sect.set_attr 'page_end', page_number
+    sect.set_attr 'pdf-page-end', page_number
   end
 
   def convert_floating_title node
@@ -1010,7 +1009,7 @@ class Converter < ::Prawn::Document
             remaining_height = box_height - caption_height
             i = 0
             while remaining_height > 0
-              start_new_page if (new_page_started = i > 0)
+              start_new_page if (started_new_page = i > 0)
               fill_height = [remaining_height, cursor].min
               bounding_box [0, cursor], width: bounds.width, height: fill_height do
                 theme_fill_and_stroke_bounds :code
@@ -1018,7 +1017,7 @@ class Converter < ::Prawn::Document
                   indent b_radius, b_radius do
                     # dashed line to indicate continuation from previous page
                     stroke_horizontal_rule bg_color, line_width: b_width, line_style: :dashed
-                  end if new_page_started
+                  end if started_new_page
                   if remaining_height > fill_height
                     move_down fill_height
                     indent b_radius, b_radius do
@@ -1833,7 +1832,7 @@ class Converter < ::Prawn::Document
           # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
           go_to_page start_page_number if start_page_number != end_page_number
           move_cursor_to start_cursor
-          sect_page_num = (sect.attr 'page_start') - num_front_matter_pages
+          sect_page_num = (sect.attr 'pdf-page-start') - num_front_matter_pages
           spacer_width = (width_of NoBreakSpace) * 0.75
           # FIXME this calculation will be wrong if a style is set per level
           num_dots = ((bounds.width - (width_of %(#{sect_title}#{sect_page_num}), inline_format: true) - spacer_width) / dot_width).floor
@@ -1886,9 +1885,9 @@ class Converter < ::Prawn::Document
     section_start_pages = {}
     sections.each do |sect|
       if sect.chapter?
-        chapter_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
+        chapter_start_pages[(sect.attr 'pdf-page-start').to_i - skip] ||= (sect.numbered_title formal: true)
       else
-        section_start_pages[(sect.attr 'page_start').to_i - skip] ||= (sect.numbered_title formal: true)
+        section_start_pages[(sect.attr 'pdf-page-start').to_i - skip] ||= (sect.numbered_title formal: true)
       end
     end
 
@@ -2164,7 +2163,7 @@ class Converter < ::Prawn::Document
     sections.each do |sect|
       sect_title = sanitize sect.numbered_title formal: true
       sect_destination = sect.attr 'pdf-destination'
-      sect_page_num = (sect.attr 'page_start') - num_front_matter_pages
+      sect_page_num = (sect.attr 'pdf-page-start') - num_front_matter_pages
       page_num_labels[sect_page_num + numbering_offset] = { P: ::PDF::Core::LiteralString.new(sect_page_num.to_s) }
       if (subsections = sect.sections).empty? || sect.level == num_levels
         outline.page title: sect_title, destination: sect_destination
