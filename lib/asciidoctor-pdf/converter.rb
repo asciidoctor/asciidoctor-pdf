@@ -307,13 +307,11 @@ class Converter < ::Prawn::Document
     theme_font :heading, level: (h_level = sect.level + 1) do
       title = sect.numbered_title formal: true
       align = (@theme[%(heading_h#{h_level}_align)] || @theme.heading_align || :left).to_sym
-      unless at_page_top?
-        if sect.chapter?
-          start_new_chapter sect
+      if (is_chapter = sect.chapter?)
+        start_new_chapter sect
+      else
         # FIXME smarter calculation here!!
-        elsif cursor < (height_of title) + @theme.heading_margin_top + @theme.heading_margin_bottom + @theme.base_line_height_length * 1.5
-          start_new_page
-        end
+        start_new_page unless at_page_top? || cursor > (height_of title) + @theme.heading_margin_top + @theme.heading_margin_bottom + (@theme.base_line_height_length * 1.5)
       end
       # QUESTION should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
       sect.set_attr 'pdf-page-start', (start_page_num = page_number)
@@ -321,7 +319,7 @@ class Converter < ::Prawn::Document
       # NOTE section must have pdf-anchor in order to be listed in the TOC
       sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_page_num}-#{y.ceil}))
       add_dest_for_block sect, sect_anchor
-      sect.chapter? ? (layout_chapter_title sect, title, align: align) : (layout_heading title, align: align)
+      is_chapter ? (layout_chapter_title sect, title, align: align) : (layout_heading title, align: align)
     end
 
     convert_content_for_block sect
@@ -1701,10 +1699,8 @@ class Converter < ::Prawn::Document
     unlink_tmp_file cover_image if cover_image
   end
 
-  # NOTE can't alias to start_new_page since methods have different arity
-  # NOTE only called if not at page top
   def start_new_chapter section
-    start_new_page
+    start_new_page unless at_page_top?
   end
 
   def layout_chapter_title node, title, opts = {}
