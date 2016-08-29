@@ -68,6 +68,7 @@ class Converter < ::Prawn::Document
     checked: %(\u2611),
     unchecked: %(\u2610)
   }
+  SimpleAttributeRefRx = /(?<!\\)\{\w+(?:[\-]\w+)*\}/
   MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|pt|px)?'
   MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|pt|px)?$/
   PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
@@ -2047,6 +2048,7 @@ class Converter < ::Prawn::Document
     end
 
     pagenums_enabled = doc.attr? 'pagenums'
+    attribute_missing_doc = doc.attr 'attribute-missing'
     repeat (start..page_count), dynamic: true do
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
@@ -2088,7 +2090,13 @@ class Converter < ::Prawn::Document
                 if content == '{page-number}'
                   content = pagenums_enabled ? visual_pgnum.to_s : nil
                 else
-                  content = doc.apply_subs content # TODO drop lines with unresolved attributes
+                  # FIXME get apply_subs to handle drop-line w/o a warning
+                  doc.set_attr 'attribute-missing', 'skip' unless attribute_missing_doc == 'skip'
+                  if (content = doc.apply_subs content).include? '{'
+                    # NOTE must use &#123; in place of {, not \{, to escape attribute reference
+                    content = content.split(LF).delete_if {|line| SimpleAttributeRefRx =~ line } * LF
+                  end
+                  doc.set_attr 'attribute-missing', attribute_missing_doc unless attribute_missing_doc == 'skip'
                 end
                 theme_font %(#{position}_#{side}_#{placement}) do
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
@@ -2107,6 +2115,7 @@ class Converter < ::Prawn::Document
         end
       end
     end
+    nil
   end
 
   # FIXME we are assuming we always have exactly one title page
