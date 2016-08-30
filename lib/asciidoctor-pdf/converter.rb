@@ -611,8 +611,7 @@ class Converter < ::Prawn::Document
     end
 
     indent marker_width do
-      convert_content_for_list_item node,
-        margin_bottom: @theme.outline_list_item_spacing
+      convert_content_for_list_item node, margin_bottom: @theme.outline_list_item_spacing
     end
   end
 
@@ -764,8 +763,7 @@ class Converter < ::Prawn::Document
     if complex
       convert_content_for_list_item node
     else
-      convert_content_for_list_item node,
-        margin_bottom: @theme.outline_list_item_spacing
+      convert_content_for_list_item node, margin_bottom: @theme.outline_list_item_spacing
     end
   end
 
