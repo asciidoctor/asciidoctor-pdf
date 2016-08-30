@@ -135,19 +135,26 @@ TODO?
 ..... Don't do it, I'm watching you
 . Put on your hiking boots
 . Freeze your butt off on the side of a mountain at midnight
-.. By the way, you can't see toes by the light of the teal moons.
 
-Let's start counting from 10.
+Let's skip a few steps and start counting from 10.
 
 [start=10]
-. arabic (2)
+. arabic (10)
 .. loweralpha (a)
 ... lowerroman (i)
 ... lowerroman (ii)
 ... lowerroman (iii)
-... lowerroman (iv)
 .... upperalpha (A)
-. arabic (2)
+. arabic (11)
+
+It's time for a top 5 list, made using the `reversed` option on an ordered list!
+
+[%reversed]
+. Stone Imperial Russian Stout
+. Pliny the Elder
+. Chimay Grande Réserve (Blue)
+. St. Bernardus Abt 12
+. Westvleteren 12 (XII)
 
 How about a list with some terms?
 
@@ -165,7 +172,7 @@ Mmmmm.
 * Vegetables
 
 Carrot::
-A tapering orange-colored root eaten as a vegetable.
+An orange-colored root eaten as a vegetable.
 Beware, it's a favorite of the Wolpertinger.
 
 ===== Are You Still Here?
