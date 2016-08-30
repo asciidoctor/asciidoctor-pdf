@@ -5,20 +5,25 @@
 
 == TODO
 
-* document show-link-uri in table on asciidoctor.org
-
 * recto/verso margins
   - account differences in top/bottom margins on recto/verso pages in running header/footer
   - dry runs need to reflect current recto/verso margins; situation can get complex if they differ
   - get import_page to stop adding an extra page
   - blank page after title page if media=print
 
-* use .zero? instead of == 0
-* rename EOL to LF
-* multiple conums on a single line causes first conum to be shifted for each conum
-* FILE ISSUE: support negative start value for list (#498)
+* REGRESSION: we're getting a lot of extra space between a nested list item and the next item in the parent list
+* introduce object to store/organize running content data and specs
+* QUESTION: should theme font handle hierarchical keys (either explicitly or implicitly) 
+* QUESTION: should we set pdf-anchor attribute on every node that has an id?
+* need to support .canvas role on image so it isn't shrunk to fit inside top/bottom margins
+  - perhaps .canvas, .canvas-x, .canvas-y
+* FILE ISSUE: when split source listing, add top padding to bounding box (or is it the line metrics top?)
+* stroke and fill multi-page sidebar block (#259) and example block (#362)
+* document vw measurement unit in theming guide (make it clear it only applies in certain cases)
+* might be better to organize fragments of source chunks by lines (and pass that around) to simplify post-processing
+* when using single_line: true on formatted_text, it's necessary to reapply our padding top/bottom from line metrics
+* support negative start value for list (#498)
   - need to count negative numbers in correct direction
-* add reversed list to chronicles-example.adoc
 * submit pastie theme for Rouge upstream
 * wrapped lines in source listing should be indented to account for line number gutter
 * add sample SVG to chronicles-example.adoc
@@ -44,6 +49,7 @@
 * swallowing exceptions! (any use of e.message in a string is dangerous)
 * allow ordered list marker to be prefixed by section number (a global setting?)
 * conum not aligned vertically with callout text (perhaps too small?)
+* conum should never wrap (push it into the text if necessary)
 * decouple theme settings for section titles and discrete headings
 * table should expand to 100% if "spread" role is set
 * replace explicit char ranges with classes in regexp (e.g., [[:word:]] or \w)
@@ -55,6 +61,7 @@
 * apply calculated theme values after loading?
 * allow "content" in place of recto_content & verso_content for running header/footer
 * allow image to span width of page (role=canvas, role=canvas-x or role=canvas-y); if role is canvas or canvas-y, then it does not consume height
+  - partially addressed by vw units
 * allow valign value to be a number (requires change to Prawn)
 * layout SVG without using keep_together (since we know all the dimensions)
   - fix SVG to a single page (check height + caption height)
@@ -92,14 +99,18 @@
 * document all permutations of image sizing
 * set vposition on title page logo image explicitly to avoid page overrun?
 
+* allow pdf-page-layout (portrait || landscape) to be set in document
+* allow pdf-page-margin to be set in document
 * verse has problems with wrapping if line is long
+* allow links to be underlined (theme setting)
 * allow default kerning to be set using theme
+* keep line comment in front of callout number to aid copying?
 * table column header is wrapping by char (verify?)
 * implement margin collapsing (between blocks)
 * rework pull request for source line numbers (combine with restore conum logic if conums are enabled)
   - also combine with the preserve_space logic
 * allow front cover and back cover image to be defined in theme; document in theming-guide
-* should we shorted the keys to front-cover and back-cover (since image is implied?)
+* should we shorten the keys to front-cover and back-cover (since image is implied?)
 * keep caption with table (check for sufficient space)
 * allow caption placement for table to be configurable (top vs bottom)
 * allow valign to be set on image block (vertical center in page for things like slides)
@@ -179,12 +190,9 @@
 * file upstream issue for Prawn to warn if it can't resolve a glpyh (or monkeypatch it)
 * support web fonts; use uri-cache to avoid redundant fetching
 * align caption to match alignment of block image
-* allow pdf-page-layout (portrait || landscape) to be set in document
-* allow pdf-page-margin to be set in document
 * attribute or role to control table shading (all, even, odd) (or call it striped like bootstrap?)
 * make conum glyphs configurable in theme (use reference table to resolve)
 * do we still need the converter hack in convert_content_for_block? (seems to be needed for admonitions)
-* avoid getting an empty last page (example: colist at bottom of page can cause this)
 * utility to coerce the color value transparent to nil (better handling in general)
 * CJK and/or multilingual support
 * description list term should keep together with content (file issue)
@@ -298,6 +306,7 @@
 == Potential Optimizations
 
 * if autofit is set on a listing/literal block that has conums, we are splitting fragments by line twice
+* comparing > 0 is slightly faster than == 0 (for cases when we can swap the logic)
 
 == Usage Optimizations
 
