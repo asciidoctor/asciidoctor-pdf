@@ -713,8 +713,8 @@ class Converter < ::Prawn::Document
       end
     end
     # NOTE Children will provide the necessary bottom margin if last item is complex.
-    # However, don't leave gap at the bottom of a nested list
-    unless complex || (::Asciidoctor::List === node.parent && node.parent.outline?)
+    # However, don't leave gap at the bottom if list is nested in an outline list
+    unless complex || (node.nested? && node.parent.parent.outline?)
       # correct bottom margin of last item
       list_margin_bottom = @theme.prose_margin_bottom
       margin_bottom list_margin_bottom - @theme.outline_list_item_spacing
