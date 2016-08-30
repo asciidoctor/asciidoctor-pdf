@@ -11,6 +11,6 @@ class Asciidoctor::ListItem
   #
   # Return true if the list item contains no blocks or it contains a nested outline list. Otherwise, return false.
   def simple?
-    @blocks.empty? || (@blocks.size == 1 && ::Asciidoctor::List === (blk = @blocks[0]) && blk.outline?)
+    @blocks.empty? || (@blocks.size == 1 && Asciidoctor::List === (blk = @blocks[0]) && blk.outline?)
   end unless method_defined? :simple?
 end
