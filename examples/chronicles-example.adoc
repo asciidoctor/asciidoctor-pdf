@@ -144,6 +144,7 @@ Let's skip a few steps and start counting from 10.
 ... lowerroman (i)
 ... lowerroman (ii)
 ... lowerroman (iii)
+... lowerroman (iv)
 .... upperalpha (A)
 . arabic (11)
 
