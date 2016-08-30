@@ -98,7 +98,7 @@ This potion for a sample document contains the following ingredients, which are 
 ** verse block
 *** table with some cell formatting
 **** sequential paragraphs
-***** admonition (at least one)
+***** admonition blocks, but use them sparingly
 *** bullet list with nesting
 ** numbered list with nesting
 ** definition list
