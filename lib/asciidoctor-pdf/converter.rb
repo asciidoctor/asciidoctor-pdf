@@ -458,7 +458,7 @@ class Converter < ::Prawn::Document
             layout_caption node.title if node.title?
             convert_content_for_block node
             # FIXME HACK compensate for margin bottom of admonition content
-            move_up shift_bottom
+            move_up shift_bottom unless at_page_top?
           end
         end
       #end
