@@ -747,7 +747,7 @@ class Converter < ::Prawn::Document
       marker_width = width_of marker
       start_position = -marker_width + -(width_of 'x')
       float do
-        bounding_box [start_position, cursor], width: marker_width do
+        flow_bounding_box start_position, width: marker_width do
           layout_prose marker,
             align: :right,
             color: (@theme.outline_list_marker_font_color || @font_color),

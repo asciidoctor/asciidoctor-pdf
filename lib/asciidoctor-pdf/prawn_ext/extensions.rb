@@ -486,6 +486,20 @@ module Extensions
     end
   end
 
+  # A flowing version of the bounding_box. If the content runs to another page, the cursor starts
+  # at the top of the page instead of the original cursor position. Similar to span, except
+  # you can specify an absolute left position and pass additional options through to bounding_box.
+  #
+  def flow_bounding_box left = 0, opts = {}
+    original_y = self.y
+    canvas do
+      bounding_box [margin_box.absolute_left + left, margin_box.absolute_top], opts do
+        self.y = original_y
+        yield
+      end
+    end
+  end
+
   # Graphics
 
   # Fills the current bounding box with the specified fill color. Before
