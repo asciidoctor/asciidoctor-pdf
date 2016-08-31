@@ -21,6 +21,6 @@ class Asciidoctor::Section
   end unless method_defined? :numbered_title
 
   def chapter?
-    @document.doctype == 'book' && @level == 1 || (@special && @level == 0)
+    @document.doctype == 'book' && (@level == 1 || (@special && @level == 0))
   end
 end
