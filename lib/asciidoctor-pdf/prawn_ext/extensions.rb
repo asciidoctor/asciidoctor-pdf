@@ -162,15 +162,6 @@ module Extensions
     dest_xyz 0, page_height, nil, (page_num ? state.pages[page_num - 1] : page)
   end
 
-  # Text
-
-=begin
-  # Draws a disc bullet as float text
-  def draw_bullet
-    float { text '•' }
-  end
-=end
-
   # Fonts
 
   # Registers a new custom font described in the data parameter

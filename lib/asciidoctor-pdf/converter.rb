@@ -670,6 +670,7 @@ class Converter < ::Prawn::Document
 
   def convert_ulist node
     add_dest_for_block node if node.id
+    # TODO move bullet_type to method on List (or helper method)
     if node.option? 'checklist'
       @list_bullets << :checkbox
     else
@@ -681,12 +682,12 @@ class Converter < ::Prawn::Document
           style.to_sym
         end
       else
-        case (node.level % 3)
+        case node.outline_level
         when 1
           :disc
         when 2
           :circle
-        when 0
+        else
           :square
         end
       end
