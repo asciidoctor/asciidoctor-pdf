@@ -106,7 +106,7 @@ See <<WORKLOG.adoc#,WORKLOG>>.
 
 == Prerequisites
 
-All that's needed is Ruby (1.9.3 or above; 2.2.x recommended) and a few Ruby gems, which we explain how to install in the next section.
+All that's needed is Ruby (1.9.3 or above; 2.3.x recommended) and a few Ruby gems, which we explain how to install in the next section.
 
 To check if you have Ruby available, use the `ruby` command to query the version installed:
 
@@ -395,7 +395,7 @@ We'll leverage the project configuration to install the necessary dependencies.
 
 If you're using {uri-rvm}[RVM], we recommend creating a new gemset to work with {project-name}:
 
- $ rvm use 2.2@asciidoctor-pdf --create
+ $ rvm use 2.3@asciidoctor-pdf --create
 
 We like RVM because it keeps the dependencies required by various projects isolated.
 
@@ -417,10 +417,6 @@ Then use the `bundle` command to install the project dependencies:
 NOTE: You need to call `bundle` from the project directory so that it can find the [file]_Gemfile_.
 
 Assuming all the required gems install properly, verify you can run the `asciidoctor-pdf` script using Ruby:
-
- $ ruby ./bin/asciidoctor-pdf -v
-
-or
 
  $ bundle exec ./bin/asciidoctor-pdf -v
 
