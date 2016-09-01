@@ -423,13 +423,10 @@ class Converter < ::Prawn::Document
     valid_own_icon = false
     if !icons        
         iconsdir = node.attr 'iconsdir'
-        iconname = node.attr 'icon'
-        if iconname.nil? or iconname.blank?
-            iconname = (node.attr 'name')+ ".png"
-        end
         valid_own_icon = true
-        unless (image_path = resolve_image_path node, iconname, nil, true) && (::File.readable? iconsdir)
-            warn %(asciidoctor: WARNING: image to embed not found or not readable: #{iconsdir || iconname}) unless scratch?
+        image_path = node.icon_uri node.attr 'name'
+        unless (image_path) && (::File.readable? iconsdir)
+            warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path}) unless scratch?
             valid_own_icon = false
         end                 
     end
@@ -2444,14 +2441,6 @@ class Converter < ::Prawn::Document
     end
   end
   
-  def resolve_iconsdir doc
-    if (iconsdir = doc.attr 'iconsdir').nil_or_empty? || (iconsdir = iconsdir.chomp '/') == '.'
-      nil
-    else
-      %(#{iconsdir}/)
-    end
-  end
-
   # Resolve the system path of the specified image path.
   #
   # Resolve and normalize the absolute system path of the specified image,
@@ -2465,20 +2454,13 @@ class Converter < ::Prawn::Document
   # is not set, or the URI cannot be read, this method returns a nil value.
   #
   # When a temporary file is used, the TemporaryPath type is mixed into the path string.
-  def resolve_image_path node, image_path = nil, image_type = nil, icon = false
-    if icon
-        img_dir = resolve_iconsdir(doc = node.document)
-        if img_dir.nil? or img_dir.blank?
-            img_dir = resolve_imagesdir(doc = node.document)
-        end
-    else
-        img_dir = resolve_imagesdir(doc = node.document)
-    end
-    image_path ||= (node.attr 'target', nil, false)
+  def resolve_image_path node, image_path = nil, image_type = nil
+    imagesdir = resolve_imagesdir(doc = node.document)
+    image_path ||= node.attr 'target'
     image_type ||= ::Asciidoctor::Image.image_type image_path
     # handle case when image is a URI
-    if (node.is_uri? image_path) || (img_dir && (node.is_uri? img_dir) &&
-        (image_path = (node.normalize_web_path image_path, img_dir, false)))
+    if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
+        (image_path = (node.normalize_web_path image_path, imagesdir, false)))
       unless doc.attr? 'allow-uri-read'
         unless scratch?
           warn %(asciidoctor: WARNING: allow-uri-read is not enabled; cannot embed remote image: #{image_path})
@@ -2504,7 +2486,7 @@ class Converter < ::Prawn::Document
       tmp_image_path
     # handle case when image is a local file
     else
-      ::File.expand_path(node.normalize_system_path image_path, img_dir, nil, target_name: 'image')
+      ::File.expand_path(node.normalize_system_path image_path, imagesdir, nil, target_name: 'image')
     end
   end
 
