@@ -39,11 +39,12 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   #s.add_development_dependency 'rdoc', '~> 4.1.0'
 
   s.add_runtime_dependency 'asciidoctor', '>= 1.5.0'
-  # Prawn 2.x requires Ruby 2.x, so cast a wider net
+  # Prawn >= 2.0.0 requires Ruby >= 2.0.0, so we must cast a wider net to support Ruby 1.9.3
   s.add_runtime_dependency 'prawn', '>= 1.3.0', '< 3.0.0'
   s.add_runtime_dependency 'prawn-table', '0.2.2'
   s.add_runtime_dependency 'prawn-templates', '0.0.3'
-  s.add_runtime_dependency 'prawn-svg', '0.25.1'
+  # Prawn SVG >= 0.22.1 requires Ruby >= 2.0.0, so we must cast a wider net to support Ruby 1.9.3
+  s.add_runtime_dependency 'prawn-svg', '>= 0.21.0'
   s.add_runtime_dependency 'prawn-icon', '1.1.0'
   s.add_runtime_dependency 'safe_yaml', '~> 1.0.4'
   s.add_runtime_dependency 'thread_safe', '~> 0.3.5'
