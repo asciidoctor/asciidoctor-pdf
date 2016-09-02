@@ -308,8 +308,15 @@ class Converter < ::Prawn::Document
     theme_font :heading, level: (h_level = sect.level + 1) do
       title = sect.numbered_title formal: true
       align = (@theme[%(heading_h#{h_level}_align)] || @theme.heading_align || :left).to_sym
-      if (is_chapter = sect.chapter?)
-        start_new_chapter sect
+      type = nil
+      if sect.part_or_chapter?
+        if sect.chapter?
+          type = :chapter
+          start_new_chapter sect
+        else
+          type = :part
+          start_new_part sect
+        end
       else
         # FIXME smarter calculation here!!
         start_new_page unless at_page_top? || cursor > (height_of title) + @theme.heading_margin_top + @theme.heading_margin_bottom + (@theme.base_line_height_length * 1.5)
@@ -320,7 +327,13 @@ class Converter < ::Prawn::Document
       # NOTE section must have pdf-anchor in order to be listed in the TOC
       sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_page_num}-#{y.ceil}))
       add_dest_for_block sect, sect_anchor
-      is_chapter ? (layout_chapter_title sect, title, align: align) : (layout_heading title, align: align)
+      if type == :part
+        layout_part_title sect, title, align: align
+      elsif type == :chapter
+        layout_chapter_title sect, title, align: align
+      else
+        layout_heading title, align: align
+      end
     end
 
     convert_content_for_block sect
@@ -492,7 +505,6 @@ class Converter < ::Prawn::Document
     when 'abstract'
       convert_abstract node
     when 'partintro'
-      # FIXME cuts off any content beyond first paragraph!!
       if node.blocks.size == 1 && node.blocks.first.style == 'abstract'
         convert_abstract node.blocks.first
       else
@@ -1698,7 +1710,7 @@ class Converter < ::Prawn::Document
     unlink_tmp_file cover_image if cover_image
   end
 
-  def start_new_chapter section
+  def start_new_chapter chapter
     start_new_page unless at_page_top?
   end
 
@@ -1706,7 +1718,11 @@ class Converter < ::Prawn::Document
     layout_heading title, opts
   end
 
+  alias :start_new_part :start_new_chapter
+  alias :layout_part_title :layout_chapter_title
+
   # QUESTION why doesn't layout_heading set the font??
+  # QUESTION why doesn't layout_heading accept a node?
   def layout_heading string, opts = {}
     top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.heading_margin_top
     bot_margin = margin || (opts.delete :margin_bottom) || @theme.heading_margin_bottom
