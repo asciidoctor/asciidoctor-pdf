@@ -1322,16 +1322,18 @@ class Converter < ::Prawn::Document
       end
     end
 
-    if ((position = node.attr 'align', nil, false) && (AlignmentNames.include? position)) ||
-        (position = (node.roles & AlignmentNames).last)
-      position = position.to_sym
+    if ((alignment = node.attr 'align', nil, false) && (AlignmentNames.include? alignment)) ||
+        (alignment = (node.roles & AlignmentNames).last)
+      alignment = alignment.to_sym
     else
-      position = :left
+      alignment = :left
     end
+
+    caption_side = (theme.table_caption_side || :top).to_sym
 
     table_settings = {
       header: table_header,
-      position: position,
+      position: alignment,
       cell_style: {
         padding: theme.table_cell_padding,
         border_width: 0,
@@ -1346,17 +1348,9 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
 
     table table_data, table_settings do
-      if node.title? && (pdf_doc = @pdf)
-        # QUESTION should we confine width of title to width of table?
-        if position == :left || (excess = pdf_doc.bounds.width - width) == 0
-          pdf_doc.layout_caption node
-        else
-          pdf_doc.indent excess * (position == :center ? 0.5 : 1) do
-            pdf_doc.layout_caption node
-          end
-        end
-      end
-
+      # NOTE capture resolved table width
+      table_width = width
+      @pdf.layout_table_caption node, table_width, alignment if node.title? && caption_side == :top
       if grid == 'none' && frame == 'none'
         if table_header
           # FIXME allow header border bottom width to be set by theme
@@ -1411,6 +1405,7 @@ class Converter < ::Prawn::Document
         #end
       end
     end
+    layout_table_caption node, table_width, alignment, :bottom if node.title? && caption_side == :bottom
     theme_margin :block, :bottom
   end
 
@@ -1837,6 +1832,18 @@ class Converter < ::Prawn::Document
       mark[:cursor] + (bounds.top - cursor)
     else
       mark[:cursor] - cursor
+    end
+  end
+
+  # Render the caption for a table and return the height of the rendered content
+  def layout_table_caption node, width, alignment = :left, position = :top
+    # QUESTION should we confine width of title to width of table?
+    if alignment == :left || (excess = bounds.width - width) == 0
+      layout_caption node, position: position
+    else
+      indent excess * (alignment == :center ? 0.5 : 1) do
+        layout_caption node, position: position
+      end
     end
   end
 
