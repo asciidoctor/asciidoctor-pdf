@@ -1176,7 +1176,7 @@ class Converter < ::Prawn::Document
           text_color: (theme.table_head_font_color || theme.table_font_color || @font_color),
           size: (theme.table_head_font_size || theme.table_font_size),
           font: (theme.table_head_font_family || theme.table_font_family),
-          font_style: theme.table_head_font_style.to_sym,
+          font_style: (val = theme.table_head_font_style || theme.table_font_style) ? val.to_sym : nil,
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
           align: (cell.attr 'halign', nil, false).to_sym,
@@ -1235,7 +1235,10 @@ class Converter < ::Prawn::Document
           if (color = theme.literal_font_color)
             cell_data[:text_color] = color
           end
-        # TODO finish me
+        when :asciidoc, :literal, :verse
+          # TODO finish me
+        else
+          cell_data[:font_style] = (val = theme.table_font_style) ? val.to_sym : nil
         end
         row_data << cell_data
       end

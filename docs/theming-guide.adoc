@@ -1890,7 +1890,8 @@ The keys in this category control the arrangement and style of tables and table 
 3+|*Key Prefix:* table
 
 |background_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: transparent)
 |table:
   background_color: #ffffff
 
@@ -1908,19 +1909,27 @@ The keys in this category control the arrangement and style of tables and table 
 
 |font_color
 |<<colors,Color>> +
-(default: $base_font_color)
+(default: _inherit_)
 |table:
   font_color: #333333
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |table:
   font_family: Helvetica
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |table:
   font_size: 9.5
+
+|font_style
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|table:
+  font_style: italic
 
 |grid_color
 |<<colors,Color>> +
@@ -2018,7 +2027,8 @@ The keys in this category control the arrangement and style of tables and table 
 3+|*Key Prefix:* table_<parity>_row^[1]^
 
 |background_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: $table_background_color)
 |table:
   even_row:
     background_color: #f9f9f9
