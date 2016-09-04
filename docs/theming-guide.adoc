@@ -362,6 +362,18 @@ The order of elements in a measurement array is the same as it is in CSS:
 . bottom
 . left
 
+=== Font Styles
+
+In most cases, whereever you can specify a custom font family, you can also specify a font style.
+These two settings are combined to locate which font to select.
+
+The following font styles are recognized:
+
+* normal (no style)
+* italic
+* bold
+* bold_italic
+
 === Colors
 
 The theme language supports color values in three formats:
@@ -821,7 +833,7 @@ It's common to define additional keys in this category (e.g., `base_border_radiu
   font_size_min: 6
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+|<<font-styles,Font style>> +
 (default: normal)
 |base:
   font_style: normal
@@ -904,7 +916,7 @@ The keys in this category are used to style hyperlink text.
 //  font_size: 9
 //
 //|font_style
-//|normal {vbar} italic {vbar} bold {vbar} bold_italic
+//|<<font-styles,Font style>>
 //|link:
 //  font_style: normal
 |===
@@ -936,7 +948,7 @@ The keys in this category are used for inline monospaced text in prose and table
   font_size: 12
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |literal:
   font_style: bold
 |===
@@ -976,7 +988,7 @@ The keys in this category control the style of most headings, including part tit
   font_size: 18
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+|<<font-styles,Font style>> +
 (default: bold)
 |heading:
   font_style: bold
@@ -1032,7 +1044,7 @@ The keys in this category control the style of most headings, including part tit
   h6_font_size: $base_font_size * 1.7
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+|<<font-styles,Font style>> +
 (default: $heading_font_style)
 |heading:
   h3_font_style: bold_italic
@@ -1092,7 +1104,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   font_size: $base_font_size_large
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |title_page:
   font_style: bold
 
@@ -1145,7 +1157,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     font_size: $heading_h1_font_size
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |title_page:
   title:
     font_style: bold
@@ -1185,7 +1197,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     font_size: $heading_h3_font_size
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |title_page:
   subtitle:
     font_style: bold_italic
@@ -1217,7 +1229,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     font_size: $base_font_size_large
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |title_page:
   authors:
     font_style: bold_italic
@@ -1250,7 +1262,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     font_size: $base_font_size_small
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |title_page:
   revision:
     font_style: bold
@@ -1346,7 +1358,7 @@ The keys in this category control the arrangement and style of block captions.
   font_size: 11
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+|<<font-styles,Font style>> +
 (default: italic)
 |caption:
   font_style: italic
@@ -1415,7 +1427,7 @@ The keys in this category are used to control the style of literal, listing and 
   font_size: 11
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>> +
 |code:
   font_style: italic
 
@@ -1470,7 +1482,7 @@ The keys in this category control the arrangement and style of quote blocks.
   font_size: 13
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |blockquote:
   font_style: bold
 
@@ -1501,7 +1513,7 @@ The keys in this category control the arrangement and style of quote blocks.
     font_family: Noto Serif
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |blockquote:
   cite:
     font_style: bold
@@ -1572,7 +1584,7 @@ The keys in this category control the arrangement and style of sidebar blocks.
     font_size: 13
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+|<<font-styles,Font style>> +
 (default: bold)
 |sidebar:
   title:
@@ -1739,7 +1751,7 @@ The keys in this category control the arrangement and style of the abstract.
   font_size: 13
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |abstract:
   font_style: italic
 
@@ -1806,7 +1818,7 @@ The keys in this category control the arrangement and style of definition list i
 3+|*Key Prefix:* description_list
 
 |term_font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |description_list:
   term_font_style: italic
 
@@ -1932,7 +1944,7 @@ The keys in this category control the arrangement and style of tables and table 
     font_size: 10
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+|<<font-styles,Font style>> +
 (default: bold)
 |table:
   head:
@@ -1976,7 +1988,7 @@ The keys in this category control the arrangement and style of tables and table 
     font_size: 10
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic +
+|<<font-styles,Font style>> +
 (default: normal)
 |table:
   foot:
@@ -2032,7 +2044,7 @@ The keys in this category control the arrangement and style of tables and table 
     font_size: 12
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |table:
   header_cell:
     font_style: italic
@@ -2067,7 +2079,7 @@ The keys in this category control the arrangement and style of the table of cont
   font_size: 9
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |toc:
   font_style: bold
 
@@ -2170,7 +2182,7 @@ The keys in this category control the arrangement and style of running header an
   font_size: 9
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |header:
   font_style: italic
 
@@ -2253,7 +2265,7 @@ The keys in this category control the arrangement and style of running header an
   font_size: 9
 
 |font_style
-|normal {vbar} italic {vbar} bold {vbar} bold_italic
+|<<font-styles,Font style>>
 |footer:
   font_style: italic
 
