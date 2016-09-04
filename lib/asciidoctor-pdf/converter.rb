@@ -1208,19 +1208,19 @@ class Converter < ::Prawn::Document
           cell_data[:font_style] = :bold
         when :header
           unless defined? header_cell_data
-            header_cell_data = {}
-            {
-              'align' => :align,
-              'font_color' => :text_color,
-              'font_family' => :font,
-              'font_size' => :size,
-              'font_style' => :font_style
-            }.each do |theme_key, key|
+            header_cell_data = { font_style: :bold }
+            [
+              # QUESTION should we honor alignment set by col/cell spec? how can we tell?
+              ['align', :align, true],
+              ['font_color', :text_color, false],
+              ['font_family', :font, false],
+              ['font_size', :size, false],
+              ['font_style', :font_style, true]
+            ].each do |(theme_key, data_key, symbol_value)|
               if (val = theme[%(table_header_cell_#{theme_key})])
-                header_cell_data[key] = val
+                header_cell_data[data_key] = symbol_value ? val.to_sym : val
               end
             end
-            header_cell_data[:font_style] ||= :bold
             if (val = resolve_theme_color :table_header_cell_background_color)
               header_cell_data[:background_color] = val
             end
