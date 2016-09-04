@@ -362,6 +362,27 @@ The order of elements in a measurement array is the same as it is in CSS:
 . bottom
 . left
 
+=== Alignments
+
+The align subkey is used to align text and images within the parent container.
+
+==== Text Alignments
+
+Text can be aligned as follows:
+
+* left
+* center
+* right
+* justify (stretched to each edge)
+
+==== Image Alignments
+
+Images can be aligned as follows:
+
+* left
+* center
+* right
+
 === Font Styles
 
 In most cases, whereever you can specify a custom font family, you can also specify a font style.
@@ -792,7 +813,7 @@ It's common to define additional keys in this category (e.g., `base_border_radiu
 3+|*Key Prefix:* base
 
 |align
-|left {vbar} center {vbar} right {vbar} justify +
+|<<text-alignments,Text alignment>> +
 (default: left)
 |base:
   align: justify
@@ -964,7 +985,7 @@ The keys in this category control the style of most headings, including part tit
 3+|*Key Prefix:* heading
 
 |align
-|left {vbar} center {vbar} right {vbar} justify +
+|<<text-alignments,Text alignment>> +
 (default: left)
 |heading:
   align: center
@@ -1020,7 +1041,7 @@ The keys in this category control the style of most headings, including part tit
 3+|*Key Prefix:* heading_h<n>^[1]^
 
 |align
-|left {vbar} center {vbar} right {vbar} justify +
+|<<text-alignments,Text alignment>> +
 (default: $heading_align)
 |heading:
   h2_align: center
@@ -1073,7 +1094,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 3+|*Key Prefix:* title_page
 
 |align
-|left {vbar} center {vbar} right {vbar} justify +
+|<<text-alignments,Text alignment>> +
 (default: center)
 |title_page:
   align: right
@@ -1117,7 +1138,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 3+|*Key Prefix:* title_page_logo
 
 |align
-|left {vbar} center {vbar} right
+|<<image-alignments,Image alignment>> +
 |title_page:
   logo:
     align: right
@@ -1337,7 +1358,7 @@ The keys in this category control the arrangement and style of block captions.
 3+|*Key Prefix:* caption
 
 |align
-|left {vbar} center {vbar} right {vbar} justify +
+|<<text-alignments,Text alignment>> +
 (default: left)
 |caption:
   align: left
@@ -1559,7 +1580,7 @@ The keys in this category control the arrangement and style of sidebar blocks.
 3+|*Key Prefix:* sidebar_title
 
 |align
-|left {vbar} center {vbar} right {vbar} justify +
+|<<text-alignments,Text alignment>> +
 (default: center)
 |sidebar:
   title:
@@ -1692,7 +1713,7 @@ The keys in this category control the arrangement of block images.
 3+|*Key Prefix:* image
 
 |align
-|left {vbar} center {vbar} right +
+|<<image-alignments,Image alignment>> +
 (default: left)
 |image:
   align: left
@@ -2014,7 +2035,7 @@ The keys in this category control the arrangement and style of tables and table 
 3+|*Key Prefix:* table_header_cell
 
 |align
-|left {vbar} center {vbar} right
+|<<text-alignments,Text alignment>>
 |table:
   header_cell:
     align: center
@@ -2110,7 +2131,7 @@ The keys in this category control the arrangement and style of the table of cont
 3+|*Key Prefix:* toc_title^[2]^
 
 |align
-|left {vbar} center {vbar} right {vbar} justify +
+|<<text-alignments,Text alignment>> +
 (default: left)
 |toc:
   title:
