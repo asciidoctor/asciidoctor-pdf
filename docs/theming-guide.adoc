@@ -1695,7 +1695,8 @@ The keys in this category control the arrangement and style of admonition blocks
 (default: 24)
 |admonition:
   icon:
-    tip:size: 24
+    tip:
+      size: 24
 |===
 
 . `<name>` can be `note`, `tip`, `warning`, `important` or `caution`. +
