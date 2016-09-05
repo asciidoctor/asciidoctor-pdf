@@ -1674,32 +1674,33 @@ The keys in this category control the arrangement and style of admonition blocks
 |admonition:
   padding: [0, 12, 0, 12]
 
-3+|*Key Prefix:* admonition_icon
+3+|*Key Prefix:* admonition_icon_<name>^[1]^
 
-|<name>_name^[1]^
+|name
 |String^[2]^
 |admonition:
   icon:
     tip:
       name: fa-fire
 
-|<name>_stroke_color^[1]^
+|stroke_color
 |<<colors,Color>>
 |admonition:
   icon:
-    tip:
+    important:
       stroke_color: ff0000
 
-|<name>_size^[1]^
+|size
 |<<values,Number>> +
 (default: 24)
 |admonition:
   icon:
-    tip:
+    note:
       size: 24
 |===
 
-. `<name>` can be `note`, `tip`, `warning`, `important` or `caution`. +
+. `<name>` can be `note`, `tip`, `warning`, `important`, or `caution`.
+The subkeys in this category cannot be flattened (e.g., `tip_name: fa-lightbulb-o` is not valid syntax).
 . See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository] for a list of valid names.
 The prefix (e.g., `fa-`) determines which font set to use.
 
