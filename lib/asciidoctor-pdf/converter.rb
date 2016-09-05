@@ -798,7 +798,7 @@ class Converter < ::Prawn::Document
       warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.)
     end
 
-    unless (image_path = resolve_image_path node, target) && (::File.readable? image_path)
+    unless (image_path = resolve_image_path node, target, image_type) && (::File.readable? image_path)
       valid_image = false
       warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target})
     end
@@ -1510,7 +1510,7 @@ class Converter < ::Prawn::Document
         warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
         valid = false
       end
-      unless (image_path = resolve_image_path node, target) && (::File.readable? image_path)
+      unless (image_path = resolve_image_path node, target, image_type) && (::File.readable? image_path)
         warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
         valid = false
       end
@@ -2517,7 +2517,7 @@ class Converter < ::Prawn::Document
   def resolve_image_path node, image_path = nil, image_type = nil
     imagesdir = resolve_imagesdir(doc = node.document)
     image_path ||= node.attr 'target'
-    image_type ||= ::Asciidoctor::Image.image_type image_path
+    image_type ||= ((node.attr 'format', nil, false) || (::Asciidoctor::Image.image_type image_path))
     # handle case when image is a URI
     if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
         (image_path = (node.normalize_web_path image_path, imagesdir, false)))
@@ -2532,7 +2532,7 @@ class Converter < ::Prawn::Document
       else
         ::OpenURI
       end
-      tmp_image = ::Tempfile.new ['image-', %(.#{image_type})]
+      tmp_image = ::Tempfile.new ['image-', %(.#{image_type || 'jpg'})]
       tmp_image.binmode if (binary = image_type != 'svg')
       begin
         open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write(fd.read) }
@@ -2560,7 +2560,7 @@ class Converter < ::Prawn::Document
       return bg_image if bg_image == 'none'
 
       if (bg_image.include? ':') && bg_image =~ ImageAttributeValueRx
-        # QUESTION should we support width and height in this case?
+        # QUESTION should we support width, height, and format in this case?
         bg_image = $1
       end
 
