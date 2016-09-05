@@ -791,20 +791,20 @@ class Converter < ::Prawn::Document
   def convert_image node
     node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
     valid_image = true
-    target, image_type = node.target_with_image_type
+    target, image_format = node.target_and_format
 
-    if image_type == 'gif'
+    if image_format == 'gif'
       valid_image = false
       warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.)
     end
 
-    unless (image_path = resolve_image_path node, target, image_type) && (::File.readable? image_path)
+    unless (image_path = resolve_image_path node, target, image_format) && (::File.readable? image_path)
       valid_image = false
       warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target})
     end
 
     # NOTE import_page automatically advances to next page afterwards
-    return import_page image_path if image_type == 'pdf'
+    return import_page image_path if image_format == 'pdf'
 
     # QUESTION if we advance to new page, shouldn't dest point there too?
     add_dest_for_block node if node.id
@@ -835,7 +835,7 @@ class Converter < ::Prawn::Document
     end
 
     span_page_width_if width_relative_to_page do
-      case image_type
+      case image_format
       when 'svg'
         begin
           svg_data = ::IO.read image_path
@@ -1504,19 +1504,19 @@ class Converter < ::Prawn::Document
       end
     else
       node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
-      target, image_type = node.target_with_image_type
+      target, image_format = node.target_and_format
       valid = true
-      if image_type == 'gif'
+      if image_format == 'gif'
         warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
         valid = false
       end
-      unless (image_path = resolve_image_path node, target, image_type) && (::File.readable? image_path)
+      unless (image_path = resolve_image_path node, target, image_format) && (::File.readable? image_path)
         warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
         valid = false
       end
       if valid
         width_attr = (node.attr? 'width', nil, false) ? %( width="#{node.attr 'width'}") : nil
-        img = %(<img src="#{image_path}" type="#{image_type}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{TemporaryPath === image_path}">)
+        img = %(<img src="#{image_path}" format="#{image_format}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{TemporaryPath === image_path}">)
       end
     end
     img ||= %([#{node.attr 'alt'}])
@@ -2514,10 +2514,10 @@ class Converter < ::Prawn::Document
   # is not set, or the URI cannot be read, this method returns a nil value.
   #
   # When a temporary file is used, the TemporaryPath type is mixed into the path string.
-  def resolve_image_path node, image_path = nil, image_type = nil
+  def resolve_image_path node, image_path = nil, image_format = nil
     imagesdir = resolve_imagesdir(doc = node.document)
     image_path ||= node.attr 'target'
-    image_type ||= ((node.attr 'format', nil, false) || (::Asciidoctor::Image.image_type image_path))
+    image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node : nil)
     # handle case when image is a URI
     if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
         (image_path = (node.normalize_web_path image_path, imagesdir, false)))
@@ -2532,8 +2532,8 @@ class Converter < ::Prawn::Document
       else
         ::OpenURI
       end
-      tmp_image = ::Tempfile.new ['image-', %(.#{image_type || 'jpg'})]
-      tmp_image.binmode if (binary = image_type != 'svg')
+      tmp_image = ::Tempfile.new ['image-', image_format && %(.#{image_format})]
+      tmp_image.binmode if (binary = image_format != 'svg')
       begin
         open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write(fd.read) }
         tmp_image_path = tmp_image.path

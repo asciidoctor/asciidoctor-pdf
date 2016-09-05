@@ -24,7 +24,7 @@ module InlineImageRenderer
       fragment.top - ((fragment.height - data[:image_height]) / 2.0)
     end
     image_left = fragment.left + ((fragment.width - data[:image_width]) / 2.0)
-    case data[:image_type]
+    case data[:image_format]
     when 'svg'
       # prawn-svg messes with the cursor; use float as a workaround
       pdf.float do
