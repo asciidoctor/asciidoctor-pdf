@@ -821,7 +821,7 @@ class Converter < ::Prawn::Document
         alt_text = %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
       end
       layout_prose alt_text, normalize: false, margin: 0, single_line: true, align: position
-      layout_caption node, position: :bottom if node.title?
+      layout_caption node, side: :bottom if node.title?
       theme_margin :block, :bottom
       return
     end
@@ -865,7 +865,7 @@ class Converter < ::Prawn::Document
                   A: { Type: :Action, S: :URI, URI: (str2pdfval link) }
             end
             indent(*overflow) do
-              layout_caption node, position: :bottom
+              layout_caption node, side: :bottom
             end if node.title?
           end
         rescue => e
@@ -915,7 +915,7 @@ class Converter < ::Prawn::Document
           warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
         end
         indent(*overflow) do
-          layout_caption node, position: :bottom
+          layout_caption node, side: :bottom
         end if node.title?
       end
     end
@@ -1810,7 +1810,7 @@ class Converter < ::Prawn::Document
       return 0
     end
     theme_font :caption do
-      if (position = (opts.delete :position) || :top) == :top
+      if (side = (opts.delete :side) || :top) == :top
         margin = { top: @theme.caption_margin_outside, bottom: @theme.caption_margin_inside }
       else
         margin = { top: @theme.caption_margin_inside, bottom: @theme.caption_margin_outside }
@@ -1821,7 +1821,7 @@ class Converter < ::Prawn::Document
         align: @theme.caption_align.to_sym,
         normalize: false
       }.merge(opts)
-      if position == :top && @theme.caption_border_bottom_color
+      if side == :top && @theme.caption_border_bottom_color
         stroke_horizontal_rule @theme.caption_border_bottom_color
         # FIXME HACK move down slightly so line isn't covered by filled area (half width of line)
         move_down 0.25
@@ -1836,13 +1836,13 @@ class Converter < ::Prawn::Document
   end
 
   # Render the caption for a table and return the height of the rendered content
-  def layout_table_caption node, width, alignment = :left, position = :top
+  def layout_table_caption node, width, alignment = :left, side = :top
     # QUESTION should we confine width of title to width of table?
     if alignment == :left || (excess = bounds.width - width) == 0
-      layout_caption node, position: position
+      layout_caption node, side: side
     else
       indent excess * (alignment == :center ? 0.5 : 1) do
-        layout_caption node, position: position
+        layout_caption node, side: side
       end
     end
   end
@@ -2299,9 +2299,9 @@ class Converter < ::Prawn::Document
     margin y, :bottom
   end
 
-  # Insert a margin space of type position unless cursor is at the top of the page.
+  # Insert a margin space at the specified side unless cursor is at the top of the page.
   # Start a new page if y value is greater than remaining space on page.
-  def margin y, position
+  def margin y, side
     unless y == 0 || at_page_top?
       if cursor > y
         move_down y
@@ -2313,12 +2313,12 @@ class Converter < ::Prawn::Document
     end
   end
 
-  # Lookup margin for theme element and position, then delegate to margin method.
+  # Lookup margin for theme element and side, then delegate to margin method.
   # If margin value is not found, assume:
-  # - 0 when position = :top
-  # - @theme.vertical_spacing when position = :bottom
-  def theme_margin category, position
-    margin (@theme[%(#{category}_margin_#{position})] || (position == :bottom ? @theme.vertical_spacing : 0)), position
+  # - 0 when side == :top
+  # - @theme.vertical_spacing when side == :bottom
+  def theme_margin category, side
+    margin (@theme[%(#{category}_margin_#{side})] || (side == :bottom ? @theme.vertical_spacing : 0)), side
   end
 
   def theme_font category, opts = {}
