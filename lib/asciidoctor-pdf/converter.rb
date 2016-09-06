@@ -234,7 +234,6 @@ class Converter < ::Prawn::Document
     @fallback_fonts = [*theme.font_fallbacks]
     @font_color = theme.base_font_color
     @text_transform = nil
-    @stamps = {}
     # NOTE we have to init pdfmarks here while we have a reference to the doc
     @pdfmarks = (doc.attr? 'pdfmarks') ? (Pdfmarks.new doc) : nil
     init_scratch_prototype
@@ -1943,9 +1942,9 @@ class Converter < ::Prawn::Document
   end
 
   # TODO delegate to layout_page_header and layout_page_footer per page
-  def layout_running_content position, doc, opts = {}
+  def layout_running_content periphery, doc, opts = {}
     # QUESTION should we short-circuit if setting not specified and if so, which setting?
-    return unless (position == :header && @theme.header_height) || (position == :footer && @theme.footer_height)
+    return unless (periphery == :header && @theme.header_height) || (periphery == :footer && @theme.footer_height)
     skip = opts[:skip] || 1
     start = skip + 1
     num_pages = page_count - skip
@@ -1993,7 +1992,7 @@ class Converter < ::Prawn::Document
     content_dict = PageSides.inject({}) do |acc, side|
       side_content = {}
       ColumnPlacements.each do |placement|
-        if (val = @theme[%(#{position}_#{side}_#{placement}_content)])
+        if (val = @theme[%(#{periphery}_#{side}_#{placement}_content)])
           # TODO support image URL (using resolve_image_path)
           if (val.include? ':') && val =~ ImageAttributeValueRx &&
               ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
@@ -2010,7 +2009,7 @@ class Converter < ::Prawn::Document
         end
       end
       # NOTE set fallbacks if not explicitly disabled
-      if side_content.empty? && position == :footer && @theme[%(footer_#{side}_content)] != 'none'
+      if side_content.empty? && periphery == :footer && @theme[%(footer_#{side}_content)] != 'none'
         side_content = { side == :recto ? :right : :left => '{page-number}' }
       end
 
@@ -2018,7 +2017,7 @@ class Converter < ::Prawn::Document
       acc
     end
 
-    if position == :header
+    if periphery == :header
       trim_line_metrics = calc_line_metrics(@theme.header_line_height || @theme.base_line_height)
       trim_top = page_height
       # NOTE height is required atm
@@ -2044,8 +2043,8 @@ class Converter < ::Prawn::Document
     end
 
     trim_stamp_name = {
-      recto: %(#{position}_recto),
-      verso: %(#{position}_verso)
+      recto: %(#{periphery}_recto),
+      verso: %(#{periphery}_verso)
     }
     trim_left = {
       recto: @page_margin_by_side[:recto][3],
@@ -2077,7 +2076,7 @@ class Converter < ::Prawn::Document
 
     colspec_dict = PageSides.inject({}) do |acc, side|
       side_trim_content_width = trim_content_width[side]
-      if (custom_colspecs = @theme[%(#{position}_#{side}_columns)])
+      if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)])
         colspecs = %w(<40% =20% >40%)
         (custom_colspecs.tr ',', ' ').split[0..2].each_with_index {|c, idx| colspecs[idx] = c }
         colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
@@ -2109,6 +2108,7 @@ class Converter < ::Prawn::Document
       acc
     end
 
+    stamps = {}
     if trim_bg_color || trim_border_color
       # NOTE switch to first content page so stamp will get created properly (can't create on imported page)
       prev_page_number = page_number
@@ -2121,21 +2121,21 @@ class Converter < ::Prawn::Document
                 fill_bounds trim_bg_color
                 if trim_border_color
                   # TODO stroke_horizontal_rule should support :at
-                  move_down bounds.height if position == :header
+                  move_down bounds.height if periphery == :header
                   stroke_horizontal_rule trim_border_color, line_width: trim_border_width, line_style: trim_border_style
                 end
               end
             else
               bounding_box [trim_left[side], trim_top], width: trim_width[side], height: trim_height do
                 # TODO stroke_horizontal_rule should support :at
-                move_down bounds.height if position == :header
+                move_down bounds.height if periphery == :header
                 stroke_horizontal_rule trim_border_color, line_width: trim_border_width, line_style: trim_border_style
               end
             end
           end
         end
       end
-      @stamps[position] = true
+      stamps[periphery] = true
       go_to_page prev_page_number
     end
 
@@ -2158,9 +2158,9 @@ class Converter < ::Prawn::Document
       doc.set_attr 'section-title', (sections_by_page[explicit_pgnum] || '')
       doc.set_attr 'section-or-chapter-title', (sections_by_page[explicit_pgnum] || chapters_by_page[explicit_pgnum] || '')
 
-      stamp trim_stamp_name[side] if @stamps[position]
+      stamp trim_stamp_name[side] if stamps[periphery]
 
-      theme_font position do
+      theme_font periphery do
         canvas do
           bounding_box [trim_content_left[side], trim_top], width: trim_content_width[side], height: trim_height do
             ColumnPlacements.each do |placement|
@@ -2169,7 +2169,7 @@ class Converter < ::Prawn::Document
               # FIXME we need to have a content setting for chapter pages
               case content
               when ::Hash
-                # NOTE image position respects padding; use negative image_vertical_align value to revert
+                # NOTE image vposition respects padding; use negative image_vertical_align value to revert
                 trim_v_padding = trim_padding[0] + trim_padding[2]
                 # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                 float do
@@ -2192,7 +2192,7 @@ class Converter < ::Prawn::Document
                   end
                   doc.set_attr 'attribute-missing', attribute_missing_doc unless attribute_missing_doc == 'skip'
                 end
-                theme_font %(#{position}_#{side}_#{placement}) do
+                theme_font %(#{periphery}_#{side}_#{placement}) do
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
                     at: [colspec[:x], trim_content_height + trim_padding[2] + trim_line_metrics.padding_bottom],
                     width: colspec[:width],
