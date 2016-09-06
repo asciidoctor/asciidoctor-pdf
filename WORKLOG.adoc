@@ -5,47 +5,58 @@
 
 == TODO
 
-* recto/verso margins
-  - account differences in top/bottom margins on recto/verso pages in running header/footer
-  - dry runs need to reflect current recto/verso margins; situation can get complex if they differ
-  - get import_page to stop adding an extra page
-  - blank page after title page if media=print
-
-* REGRESSION: we're getting a lot of extra space between a nested list item and the next item in the parent list
+* SIMPLE: use literal cell style for theme-related document attributes section of theming guide
+* dry_run should start at cursor of main document (or as option); total height calculation would need to be revised
+  - this should fix height calculation when content is split over a page break (leaving small amount of excess)
+* FILE ISSUE: prevent import_page from adding an extra page; leaves blank page when placing two inserts in a row
+  - have import_page first delete current page if page is empty
+* FILE ISSUE: if the image type cannot be resolved from file extension (e.g., when target is a URL), honor format attribute like core
+* SIMPLE: add warning that AsciiDoc table cell content is not supported; print as raw source
+* cache stateless cell data resolved from theme (don't need to recalc each time; at least per table)
+* autowidth on table doesn't work for multi-line content (width based on normalized value)
+* table logic: does the layout_table_caption have to be inside the table block? can we pre-calculate the actual width for the caption? does the table offer a callback we can use to keep the caption on the same page as the table?
+* FILE ISSUE: enable/implement key table_font_style
 * introduce object to store/organize running content data and specs
-* QUESTION: should theme font handle hierarchical keys (either explicitly or implicitly) 
 * QUESTION: should we set pdf-anchor attribute on every node that has an id?
+* QUESTION: should theme font handle hierarchical keys (either explicitly or implicitly)
 * need to support .canvas role on image so it isn't shrunk to fit inside top/bottom margins
   - perhaps .canvas, .canvas-x, .canvas-y
 * FILE ISSUE: when split source listing, add top padding to bounding box (or is it the line metrics top?)
+* prawn-gmagick (fixes PNG transparency issue, adds gif support); don't fail-fast on gif if gem is detected
+  - https://github.com/packetmonkey/prawn-gmagick
 * stroke and fill multi-page sidebar block (#259) and example block (#362)
-* document vw measurement unit in theming guide (make it clear it only applies in certain cases)
+* support URL images in running content
+* support explicit image format for cover page image and page background image
+* support pdfwidth for inline image
+* SIMPLE: add defaults for table_header_cell in theming guide, including when a key inherits by default
+* rewrite optimize-pdf using rghost (#535) (also see #21 and #22)
+  - add Optimizer class; wire to cli (separate issue?)
+* add feature to number bullets according to section number (needed for OpenDevise agreement)
+* allow caption placement for table to be configurable (top vs bottom) (#531)
+* should we use the term "column" instead of "placement" in running content
+* outline should link to title page if there's a cover page (skip cover page and ensuing blank page)
+* document how to test / use a PR
+* SIMPLE: document vw/vh measurement units in theming guide (make it clear it only applies in certain cases)
 * might be better to organize fragments of source chunks by lines (and pass that around) to simplify post-processing
-* when using single_line: true on formatted_text, it's necessary to reapply our padding top/bottom from line metrics
+* NOTE: when using `single_line: true` on formatted_text, it's necessary to reapply our padding top/bottom from line metrics
 * support negative start value for list (#498)
   - need to count negative numbers in correct direction
-* submit pastie theme for Rouge upstream
-* wrapped lines in source listing should be indented to account for line number gutter
-* add sample SVG to chronicles-example.adoc
-* log warning with reason when remote image can't be read
+* SIMPLE: submit pastie theme for Rouge upstream
+* the nested? method on list isn't checking if nested inside a block inside a list
+* wrapped lines in source listing should be indented to account for line number gutter (#504)
+* add sample SVG to content of chronicles-example.adoc (we do already use one for title page)
 * inline images: allow built-in font family names for SVG to be remapped
 * inline images: should we be passing absolute image path in tag or something relative (or even a lookup id?)?
-* document missing keys in theming guide for 1.5.0.beta.1
-  - missing text_transform in some places
+* SIMPLE: missing text_transform in some places in theming guide
 * support zero-leading integers (use dedicated type like w/ roman numerals) in reversed order lists
 * large image runs into running footer (doesn't bottom margin need to be aligned with running footer height?)
 * should str_to_pt helper handle % and vw units?
-* enable/implement key table_font_style
 * allow style of visible link to be controlled by theme (similar to what we do in the manpage converter)
 * check that color of table edges set to table_grid_color??
 * shouldn't the default align for headings be $base_align??
 * should not wrap at formatting mark unless it is at a break opportunity
-* create value type for font style and font alignment for theming guide
-* force encoding of theme to UTF-8 (particularly for keys related to content)
 * be more consistent with how examples are shown in theming-guide.adoc (do we show last segment only?)
-* document theme-related AsciiDoc attributes in theming-guide (#428)
 * allow top as alternative to margin_top for all elements on title page (#431)
-* add feature to number bullets according to section number (needed for OpenDevise agreement)
 * swallowing exceptions! (any use of e.message in a string is dangerous)
 * allow ordered list marker to be prefixed by section number (a global setting?)
 * conum not aligned vertically with callout text (perhaps too small?)
@@ -55,7 +66,6 @@
 * replace explicit char ranges with classes in regexp (e.g., [[:word:]] or \w)
 * test Rouge upgrade (should address workaround we have in encoder)
 * devise a way to specify a value as a string literal (variable replacement only) in theme
-* prawn-gmagick (fixes PNG transparency issue); don't fail-fast on gif if gem is detected
 * document pdfwidth in themeing guide (currently no mention of it)
 * convert "-" in variable name in theme to underscore (e.g., $base-font-size)
 * apply calculated theme values after loading?
@@ -111,22 +121,18 @@
   - also combine with the preserve_space logic
 * allow front cover and back cover image to be defined in theme; document in theming-guide
 * should we shorten the keys to front-cover and back-cover (since image is implied?)
-* keep caption with table (check for sufficient space)
-* allow caption placement for table to be configurable (top vs bottom)
+* keep caption with table (check for sufficient space); only for top placement since bottom placement is much harder
 * allow valign to be set on image block (vertical center in page for things like slides)
 * separate theme control for listing vs literal block (and maybe source too)
 * allow title page image "bottom" to be set instead of "top" (mutually exclusive)
 * rtl (see ./sandbox/rtl/ folder)
 
-* rewrite optimize-pdf using rghost
-  - add Optimizer class; wire to cli
-* what do we do if the image type cannot be resolved from file extension (i.e., when target is a URL)?
 * pass macro doesn't work in source block when macro subs and highlighting are both enabled (#180)
 * enable cache_images option for prawn-svg (#223)
 * bind image_registry between scratch and main document so we don't process the same image more than once
   - need to do some testing
 * show SVG warnings if debug (or trace) is on
-* prawn SVG doesn't support relative paths for nested images (must be http, https or data) (update README)
+* a nested image with a relative path in an SVG is resolved relative to the SVG source file (document in README)
 * clean temporary files once per conversion? (file issue)
 * clear font paths in SVG interface so it doesn't scan system? (since it's not portable anyway)
 * title is being rendered 3 times (maybe one for scratch?); explain why in comments if normal
@@ -158,7 +164,6 @@
 * implement stem support
 * fail gracefully if theme file cannot be found
 * expose theme variable on document (attr_reader?)
-* nested unordered list items should use different marker
 * dedicated style for top/bottom margin of outline list
   - allow margin top and bottom to be set for lists (applies to outer-most list)
   - allow spacing between nested lists levels be configured in theme
@@ -289,7 +294,7 @@
 * inline tabs should be replaced in layout_prose (etc) when normalize is enabled
 
 * use treetop to parse and evaluate theme file
-* make source code highlighting theme configurable (should be now, but has problems with conums)
+* make source code highlighting theme configurable (should be now, but has problems with conums); still?
 * use or don't use pad method? check performance
 
 == Documentation
@@ -299,9 +304,13 @@
 * be mindful that layout_prose adds margin to bottom of content by default (important when working in a bounding box)
 * ttfunk does not support ligatures (e.g., fi -> ﬁ); we could do this manually in post_replacements
 
-== API notes
+== Notes
 
-* if we set the vposition to a numeric value, it skips the overrun check that happens internally
+* we always leave cursor on start of page we're about to write on; certain checks rely on this fact
+* "section title" is the semantic element; "heading" is the structural element
+* /PageLabels/Nums must have entry for every page in front matter, even if a blank page
+  - in fact, must account for every page or else numbering lags behind when scrolling document
+* if we set the vposition on image to a numeric value, it skips the overrun check that happens internally
 
 == Potential Optimizations
 
@@ -316,6 +325,11 @@
 * font families used in SVGs must match keys in the font catalog
 
 == Open Questions
+
+== Implementation
+
+* should we read SVG file using UTF-8 encoding; REXML seems to handle encoding
+* can we leverage before_rendering_page callback on table?
 
 === Design
 
@@ -334,10 +348,6 @@
 === Theme
 
 * keep or drop base_ prefix in theme? I think we should keep it because it provides context elsewhere in the document (e.g. $base_font_size vs $font_size)
-
-== Notes
-
-* "section title" is the semantic element; "heading" is the structural element
 
 == Resources
 
