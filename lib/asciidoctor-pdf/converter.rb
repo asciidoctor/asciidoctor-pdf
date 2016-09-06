@@ -1242,7 +1242,7 @@ class Converter < ::Prawn::Document
           #cell_data[:leading] = (calc_line_metrics theme.base_line_height).leading
         when :literal
           # FIXME core should not substitute in this case
-          cell_data[:content] = cell.instance_variable_get :@text
+          cell_data[:content] = preserve_indentation((cell.instance_variable_get :@text), (node.document.attr 'tabsize'))
           cell_data[:inline_format] = false
           # QUESTION should we use literal_font_*, code_font_*, or introduce another category?
           cell_data[:font] = theme.code_font_family
@@ -1255,7 +1255,7 @@ class Converter < ::Prawn::Document
           # TODO need to also add top and bottom padding from line metrics
           #cell_data[:leading] = (calc_line_metrics theme.code_line_height).leading
         when :verse
-          cell_data[:content] = cell.text
+          cell_data[:content] = preserve_indentation cell.text, (node.document.attr 'tabsize')
           cell_data[:inline_format] = true
         when :asciidoc
           # TODO finish me
