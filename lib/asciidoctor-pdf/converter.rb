@@ -42,6 +42,7 @@ class Converter < ::Prawn::Document
   AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
   ColumnPlacements = [:left, :center, :right]
   LF = %(\n)
+  DoubleLF = %(\n\n)
   TAB = %(\t)
   InnerIndent = %(\n )
   # a no-break space is used to replace a leading space to prevent Prawn from trimming indentation
@@ -76,6 +77,8 @@ class Converter < ::Prawn::Document
   CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2> ?(?=(?:\\?<!?\2\d+\2> ?)*$)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
   LineScanRx = /\n|.+/
+  BlankLineRx = /\n[[:blank:]]*\n/
+  WhitespaceChars = %( \t\n)
   SourceHighlighters = ['coderay', 'pygments', 'rouge'].to_set
   ViewportWidth = ::Module.new
 
@@ -1190,17 +1193,14 @@ class Converter < ::Prawn::Document
       row_data = []
       rows.each do |cell|
         cell_data = {
-          content: cell.text,
-          inline_format: [normalize: true],
           text_color: (theme.table_font_color || @font_color),
           size: theme.table_font_size,
           font: theme.table_font_family,
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
           align: (cell.attr 'halign', nil, false).to_sym,
-          valign: (cell.attr 'valign', nil, false).to_sym
+          valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym
         }
-        cell_data[:valign] = :center if cell_data[:valign] == :middle
         case cell.style
         when :emphasis
           cell_data[:font_style] = :italic
@@ -1208,7 +1208,7 @@ class Converter < ::Prawn::Document
           cell_data[:font_style] = :bold
         when :header
           unless defined? header_cell_data
-            header_cell_data = { font_style: :bold }
+            header_cell_data = {}
             [
               # QUESTION should we honor alignment set by col/cell spec? how can we tell?
               ['align', :align, true],
@@ -1221,6 +1221,9 @@ class Converter < ::Prawn::Document
                 header_cell_data[data_key] = symbol_value ? val.to_sym : val
               end
             end
+            unless (header_cell_data.key? :font_style) || !(val = theme.table_head_font_style)
+              header_cell_data[:font_style] = val.to_sym
+            end
             if (val = resolve_theme_color :table_header_cell_background_color)
               header_cell_data[:background_color] = val
             end
@@ -1229,16 +1232,46 @@ class Converter < ::Prawn::Document
           cell_data.update header_cell_data unless header_cell_data.empty?
         when :monospaced
           cell_data[:font] = theme.literal_font_family
-          if (size = theme.literal_font_size)
-            cell_data[:size] = size
+          if (val = theme.literal_font_size)
+            cell_data[:size] = val
           end
-          if (color = theme.literal_font_color)
-            cell_data[:text_color] = color
+          if (val = theme.literal_font_color)
+            cell_data[:text_color] = val
           end
-        when :asciidoc, :literal, :verse
+          # TODO need to also add top and bottom padding from line metrics
+          #cell_data[:leading] = (calc_line_metrics theme.base_line_height).leading
+        when :literal
+          # FIXME core should not substitute in this case
+          cell_data[:content] = cell.instance_variable_get :@text
+          cell_data[:inline_format] = false
+          # QUESTION should we use literal_font_*, code_font_*, or introduce another category?
+          cell_data[:font] = theme.code_font_family
+          if (val = theme.code_font_size)
+            cell_data[:size] = val
+          end
+          if (val = theme.code_font_color)
+            cell_data[:text_color] = val
+          end
+          # TODO need to also add top and bottom padding from line metrics
+          #cell_data[:leading] = (calc_line_metrics theme.code_line_height).leading
+        when :verse
+          cell_data[:content] = cell.text
+          cell_data[:inline_format] = true
+        when :asciidoc
           # TODO finish me
         else
           cell_data[:font_style] = (val = theme.table_font_style) ? val.to_sym : nil
+        end
+        unless cell_data.key? :content
+          # NOTE effectively the same as calling cell.content
+          # TODO hard breaks not quite the same result as separate paragraphs; need custom cell impl
+          if (cell_text = cell.text).include? LF
+            cell_data[:content] = cell_text.split(BlankLineRx).map {|l| l.tr_s(WhitespaceChars, ' ') }.join(DoubleLF)
+            cell_data[:inline_format] = true
+          else
+            cell_data[:content] = cell_text
+            cell_data[:inline_format] = [normalize: true]
+          end
         end
         row_data << cell_data
       end
