@@ -811,7 +811,7 @@ class Converter < ::Prawn::Document
 
     # QUESTION if we advance to new page, shouldn't dest point there too?
     add_dest_for_block node if node.id
-    position = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
+    alignment = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
 
     unless valid_image
       theme_margin :block, :top
@@ -820,7 +820,7 @@ class Converter < ::Prawn::Document
       else
         alt_text = %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
       end
-      layout_prose alt_text, normalize: false, margin: 0, single_line: true, align: position
+      layout_prose alt_text, normalize: false, margin: 0, single_line: true, align: alignment
       layout_caption node, side: :bottom if node.title?
       theme_margin :block, :bottom
       return
@@ -842,13 +842,13 @@ class Converter < ::Prawn::Document
       when 'svg'
         begin
           svg_data = ::IO.read image_path
-          svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: width, fallback_font_name: default_svg_font, enable_file_requests_with_root: (::File.dirname image_path)
+          svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: alignment, width: width, fallback_font_name: default_svg_font, enable_file_requests_with_root: (::File.dirname image_path)
           rendered_w = (svg_size = svg_obj.document.sizing).output_width
           if !width && (svg_obj.document.root.attributes.key? 'width')
             # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
             if (adjusted_w = [bounds.width, rendered_w * 0.75].min) != rendered_w
               # FIXME would be nice to have a resize/recalculate method; instead, just reconstruct
-              svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: position, width: (rendered_w = adjusted_w), fallback_font_name: default_svg_font, enable_file_requests_with_root: (::File.dirname image_path)
+              svg_obj = ::Prawn::Svg::Interface.new svg_data, self, position: alignment, width: (rendered_w = adjusted_w), fallback_font_name: default_svg_font, enable_file_requests_with_root: (::File.dirname image_path)
               svg_size = svg_obj.document.sizing
             end
           end
@@ -902,10 +902,10 @@ class Converter < ::Prawn::Document
           end
           # NOTE must calculate link position before embedding to get proper boundaries
           if (link = node.attr 'link', nil, false)
-            img_x, img_y = image_position rendered_w, rendered_h, position: position
+            img_x, img_y = image_position rendered_w, rendered_h, position: alignment
             link_box = [img_x, (img_y - rendered_h), (img_x + rendered_w), img_y]
           end
-          embed_image image_obj, image_info, width: rendered_w, position: position
+          embed_image image_obj, image_info, width: rendered_w, position: alignment
           if link
             link_annotation link_box,
               Border: [0, 0, 0],
