@@ -1722,18 +1722,18 @@ class Converter < ::Prawn::Document
     end
   end
 
-  def layout_cover_page position, doc
+  def layout_cover_page face, doc
     # TODO turn processing of attribute with inline image a utility function in Asciidoctor
     # FIXME verify cover_image exists!
-    if (cover_image = (doc.attr %(#{position}-cover-image)))
+    if (cover_image = (doc.attr %(#{face}-cover-image)))
       if (cover_image.include? ':') && cover_image =~ ImageAttributeValueRx
         cover_image = resolve_image_path doc, $1
       end
-      # QUESTION should we go to page 1 when position == :front?
-      go_to_page page_count if position == :back
+      # QUESTION should we go to page 1 when face == :front?
+      go_to_page page_count if face == :back
       if cover_image.downcase.end_with? '.pdf'
         # NOTE import_page automatically advances to next page afterwards
-        import_page cover_image, advance: position != :back
+        import_page cover_image, advance: face != :back
       else
         image_page cover_image, canvas: true
       end
