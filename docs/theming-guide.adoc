@@ -18,6 +18,7 @@ endif::[]
 // Aliases:
 :conum-guard-yaml: #
 ifndef::icons[:conum-guard-yaml: # #]
+ifdef::backend-pdf[:conum-guard-yaml: # #]
 
 ////
 Topics remaining to document:
@@ -264,7 +265,7 @@ Like programming languages, multiple and divide take precedence over add and sub
 
 The following table lists the supported operations and the corresponding operator for each.
 
-[%header%autowidth]
+[width=25%]
 |===
 |Operation |Operator
 
@@ -330,7 +331,7 @@ You can let the theme do this conversion for you automatically by adding a unit 
 
 The following units are supported:
 
-[%header%autowidth]
+[width=25%]
 |===
 |Unit |Suffix
 
@@ -419,17 +420,16 @@ Regardless, we recommend that you always use either a leading `+#+` or surroundi
 
 The following are all equivalent values for the color red:
 
-[%autowidth,cols=4]
+[cols="8*m"]
 |===
-|#f00
-|'f00'
 |#ff0000
-|'ff0000'
-
-|#F00
-|'F00'
 |#FF0000
+|'ff0000'
 |'FF0000'
+|#f00
+|#F00
+|'f00'
+|'F00'
 |===
 
 Here's how a hex color value appears in the theme file:
@@ -541,7 +541,7 @@ There's nothing Asciidoctor can do to convince PDF to work without the right fon
 
 The names of the built-in fonts (for general-purpose text) are as follows:
 
-[%header%autowidth]
+[width=33.33%]
 |===
 |Font Name |Font Family
 
@@ -811,7 +811,7 @@ The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgr
 For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
 . Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
 . The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin_inner and margin_outer values.
-These margins and used when the document attribute `media` has the value `prepress`.
+These margins and used when the value `prepress` is assigned to the `media` document attribute.
 
 === Base
 
@@ -1343,7 +1343,7 @@ The keys in this category control the spacing around block elements when a more 
 
 Block styles are applied to the following block types:
 
-[cols="1a,1a,1a", grid=none, frame=none]
+[cols="3*a",grid=none,frame=none]
 |===
 |
 * admonition
@@ -2529,12 +2529,12 @@ The only thing you need to add to an existing build is the attributes mentioned 
 There are various settings in the theme you control using document attributes.
 These settings override equivalent keys defined in the theme file, where applicable.
 
-[cols="2,3,6m"]
+[cols="2,3,6l"]
 |===
 |Attribute |Value Type |Example
 
 |autofit-option
-|flag (default: _not set_)
+|flag (default: _off_)
 |:autofit-option:
 
 |chapter-label
@@ -2550,7 +2550,7 @@ These settings override equivalent keys defined in the theme file, where applica
 |:media: prepress
 
 |pagenums^[2]^
-|flag (default: _set_)
+|flag (default: _on_)
 |:pagenums:
 
 //|pdf-page-layout
@@ -2572,28 +2572,29 @@ Use the `noheader` and `nofooter` attributes to disable the running header and f
 
 == Publishing Mode
 
-Asciidoctor PDF supports the following features to accommodate publishing:
+Asciidoctor PDF provides the following features to assist with publishing:
 
 * Double-sided (mirror) page margins
-* Facing pages
+* Automatic facing pages
 
-These features are activated when you set the `media` attribute to `prepress` in the header of your AsciiDoc document, the CLI, or the API.
-The following sections describe the behaviors this setting enables.
+These features are activated when you set the `media` attribute to `prepress` in the header of your AsciiDoc document or from the CLI or API.
+The following sections describe the behaviors that this setting activates.
 
 === Double-Sided Page Margins
 
-The page margins for the recto (right-hand, odd-numbered) and verso (left-hand, even-numbered) pages are automatically calculated by replacing the side margins in the value of the `page_margin` key with the value of the `page_margin_inner` and `page_margin_outer` keys.
+The page margins for the recto (right-hand, odd-numbered) and verso (left-hand, even-numbered) pages are automatically calculated by replacing the side page margins with the values of the `page_margin_inner` and `page_margin_outer` keys.
 
 For example, let's assume you've defined the following settings in your theme:
 
 [source,yaml]
 ----
-margin: [0.5in, 0.67in, 0.67in, 0.67in]
-margin_inner: 0.75in
-margin_outer: 0.59in
+page:
+  margin: [0.5in, 0.67in, 0.67in, 0.67in]
+  margin_inner: 0.75in
+  margin_outer: 0.59in
 ----
 
-The page margins for the recto and verso pages will be as follows:
+The page margins for the recto and verso pages will be resolved as follows:
 
 recto page margin:: [0.5in, *0.59in*, 0.67in, *0.75in*]
 verso page margin:: [0.5in, *0.75in*, 0.67in, *0.59in*]
@@ -2601,7 +2602,7 @@ verso page margin:: [0.5in, *0.75in*, 0.67in, *0.59in*]
 The page margins alternate between recto and verso.
 The first page in the document is a recto page.
 
-=== Facing Pages
+=== Automatic Facing Pages
 
 If a document uses the book doctype, a blank page will be inserted, if necessary, to ensure the following pages are recto-facing pages:
 
@@ -2611,11 +2612,9 @@ If a document uses the book doctype, a blank page will be inserted, if necessary
 
 Other facing pages may be added in the future.
 
-For documents that use the article doctype, Asciidoctor PDF incorrectly places the document title and table of contents on their own pages, respectively.
+For documents that use the article doctype, Asciidoctor PDF incorrectly places the document title and table of contents on their own pages.
 This can result in the page numbering and the page facing to be out of sync.
-As a workaround, Asciidoctor PDF inserts a blank page, if necessary, to ensure the following pages are recto-facing pages:
-
-* First page of body content
+As a workaround, Asciidoctor PDF inserts a blank page, if necessary, to ensure the first page of body content is a recto-facing page.
 
 You can check on the status of this defect by following https://github.com/asciidoctor/asciidoctor-pdf/issues/95[issue #95].
 
