@@ -88,6 +88,7 @@ class ThemeLoader
         end
       end
     end
+    theme_data.base_align ||= 'left'
     # QUESTION should we do any other post-load calculations or defaults?
     theme_data
   end

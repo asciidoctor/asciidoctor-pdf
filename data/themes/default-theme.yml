@@ -72,6 +72,7 @@ literal:
   font_family: M+ 1mn
 menu_caret_content: " <font size=\"1.15em\"><color rgb=\"b12146\">\u203a</color></font> "
 heading:
+  align: left
   #font_color: 181818
   font_color: $base_font_color
   font_family: $base_font_family

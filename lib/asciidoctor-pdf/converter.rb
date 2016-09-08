@@ -308,9 +308,9 @@ class Converter < ::Prawn::Document
   end
 
   def convert_section sect, opts = {}
-    theme_font :heading, level: (h_level = sect.level + 1) do
+    theme_font :heading, level: (hlevel = sect.level + 1) do
       title = sect.numbered_title formal: true
-      align = (@theme[%(heading_h#{h_level}_align)] || @theme.heading_align || :left).to_sym
+      align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @theme.base_align).to_sym
       type = nil
       if sect.part_or_chapter?
         if sect.chapter?
@@ -347,8 +347,8 @@ class Converter < ::Prawn::Document
   def convert_floating_title node
     add_dest_for_block node if node.id
     # QUESTION should we decouple styles from section titles?
-    theme_font :heading, level: (h_level = node.level + 1) do
-      layout_heading node.title, align: (@theme[%(heading_h#{h_level}_align)] || @theme.heading_align || :left).to_sym
+    theme_font :heading, level: (hlevel = node.level + 1) do
+      layout_heading node.title, align: (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @theme.base_align).to_sym
     end
   end
 
@@ -571,7 +571,7 @@ class Converter < ::Prawn::Document
         if node.title?
           theme_font :sidebar_title do
             # QUESTION should we allow margins of sidebar title to be customized?
-            layout_heading node.title, align: @theme.sidebar_title_align.to_sym, margin_top: 0
+            layout_heading node.title, align: (@theme.sidebar_title_align || @theme.base_align).to_sym, margin_top: 0
           end
         end
         theme_font :sidebar do
@@ -1632,7 +1632,7 @@ class Converter < ::Prawn::Document
     font @theme.base_font_family, size: @theme.base_font_size
 
     # QUESTION allow aligment per element on title page?
-    title_align = @theme.title_page_align.to_sym
+    title_align = (@theme.title_page_align || @theme.base_align).to_sym
 
     # TODO disallow .pdf as image type
     if (logo_image_path = (doc.attr 'title-logo-image', @theme.title_page_logo_image))
@@ -1765,7 +1765,7 @@ class Converter < ::Prawn::Document
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.heading_line_height), {
       color: @font_color,
       inline_format: true,
-      align: :left
+      align: @theme.base_align.to_sym
     }.merge(opts)
     margin_bottom bot_margin
   end
@@ -1818,7 +1818,7 @@ class Converter < ::Prawn::Document
       layout_prose string, {
         margin_top: margin[:top],
         margin_bottom: margin[:bottom],
-        align: @theme.caption_align.to_sym,
+        align: (@theme.caption_align || @theme.base_align).to_sym,
         normalize: false
       }.merge(opts)
       if side == :top && @theme.caption_border_bottom_color
@@ -1851,7 +1851,7 @@ class Converter < ::Prawn::Document
     go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
     start_page_number = page_number
     theme_font :heading, level: 2 do
-      layout_heading((doc.attr 'toc-title'), align: (@theme.toc_title_align || :left).to_sym)
+      layout_heading((doc.attr 'toc-title'), align: (@theme.toc_title_align || @theme.base_align).to_sym)
     end
     # QUESTION shouldn't we skip this whole method if num_levels == 0?
     if num_levels > 0
@@ -1895,7 +1895,7 @@ class Converter < ::Prawn::Document
           # FIXME dots don't line up if width of page numbers differ
           typeset_formatted_text [
             { text: %(#{(@theme.toc_dot_leader_content || DotLeaderDefault) * num_dots}), color: toc_dot_color },
-            # FIXME this spacing doesn't always work out
+            # FIXME this spacing doesn't always work out; should we use graphics instead?
             { text: NoBreakSpace, size: (@font_size * 0.5) },
             { text: sect_page_num.to_s, anchor: sect_anchor, color: @font_color }], line_metrics, align: :right
           go_to_page end_page_number if start_page_number != end_page_number
