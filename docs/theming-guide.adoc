@@ -94,8 +94,19 @@ outline_list:
 ----
 
 When creating a new theme, you only have to define the keys you want to override from the base theme, which is loaded prior to loading your custom theme.
-The converter uses the information from the theme map to help construct the PDF.
 All the available keys are documented in <<keys>>.
+The converter uses the information from the theme map to help construct the PDF.
+
+[TIP]
+====
+Instead of creating a theme from scratch, another option is to download the https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml[default-theme.yml] file from the source repository.
+Save the file using a unique name (e.g., _custom-theme.yml_) and start hacking on it.
+
+Alternatively, you can snag the file from your local installation using the following command:
+
+ $ ASCIIDOCTOR_PDF_DIR=`gem contents asciidoctor-pdf --show-install-dir`;\
+   cp "$ASCIIDOCTOR_PDF_DIR/data/themes/default-theme.yml" custom-theme.yml
+====
 
 Keys may be nested to an arbitrary depth to eliminate redundant prefixes (an approach inspired by SASS).
 Once the theme is loaded, all keys are flattened into a single map of qualified keys.
