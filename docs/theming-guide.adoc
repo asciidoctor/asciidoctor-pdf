@@ -147,7 +147,7 @@ base:
     size: 12
 ----
 
-Each level of nesting must be indented by twice the amount of indentation of the parent level.
+Each level of nesting must be indented by two more spaces of indentation than the parent level.
 Also note the placement of the colon after each key name.
 
 == Values
