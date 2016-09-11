@@ -109,6 +109,18 @@
     },
     "base_font_size_small": {
       "type": "number"
+    },
+    "footnote_reference_font_color": {
+      "$ref": "#/definitions/color",
+      "default": "#999999"
+    },
+    "footnote_marker_font_color": {
+      "$ref": "#/definitions/color",
+      "default": "#999999"
+    },
+    "footnote_text_font_color": {
+      "$ref": "#/definitions/color",
+      "default": "#999999"
     }
   }
 }

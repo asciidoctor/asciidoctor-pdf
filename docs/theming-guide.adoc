@@ -1420,6 +1420,32 @@ The keys in this category control the arrangement and style of block captions.
   margin_outside: 0
 |===
 
+=== Footnotes
+
+This category covers the color of footnotes.
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|*Key Prefix:* footnote
+
+|reference_font_color
+|<<colors,Color>>
+|caption:
+  reference_font_color: #000000
+
+|marker_font_color
+|<<colors,Color>>
+|caption:
+  marker_font_color: #999999
+
+|text_font_color
+|<<fonts,Font family name>>
+|caption:
+  text_font_color: #555555
+|===
+
 === Code
 
 The keys in this category are used to control the style of literal, listing and source blocks.
