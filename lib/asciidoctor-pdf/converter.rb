@@ -1526,9 +1526,13 @@ class Converter < ::Prawn::Document
   end
 
   def convert_inline_footnote node
+    ref_color = @theme.footnote_reference_font_color
+    mark_color = @theme.footnote_marker_font_color
+    text_color = @theme.footnote_text_font_color
     if (index = node.attr 'index')
       #text = node.document.footnotes.find {|fn| fn.index == index }.text
-      %( <color rgb="#999999">[#{index}: #{node.text}]</color>)
+      %( <color rgb="#{mark_color}">[</color><color rgb="#{ref_color}">#{index}</color><color rgb="#{mark_color}">:</color>
+         <color rgb="#{text_color}">#{node.text}</color><color rgb="#{mark_color}">]</color>)
     elsif node.type == :xref
       # NOTE footnote reference not found
       %( <color rgb="FF0000">[#{node.text}]</color>)

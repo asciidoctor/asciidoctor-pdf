@@ -45,6 +45,9 @@ description_list_term_font_style: normal
 description_list_term_spacing: 4
 block_margin_top: 0
 block_margin_bottom: 12
+footnote_reference_font_color: '999999'
+footnote_marker_font_color: '999999'
+footnote_text_font_color: '999999'
 caption_align: left
 caption_font_style: italic
 caption_margin_inside: 4
