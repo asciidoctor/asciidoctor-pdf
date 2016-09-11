@@ -26,13 +26,10 @@ module InlineImageRenderer
     image_left = fragment.left + ((fragment.width - data[:image_width]) / 2.0)
     case data[:image_format]
     when 'svg'
+      (image_obj = data[:image_obj]).options[:at] = [image_left, image_top]
       # NOTE prawn-svg messes with the cursor; use float to workaround
-      # NOTE wrap call to draw in save_font to workaround mogest/prawn-svg#80 (fixed in prawn-svg > 0.25.1)
-      pdf.save_font do
-        pdf.float do
-          data[:image_obj].tap {|obj| obj.options[:at] = [image_left, image_top] }.draw
-        end
-      end
+      # NOTE prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
+      pdf.float { image_obj.draw }
     else
       pdf.embed_image data[:image_obj], data[:image_info], at: [image_left, image_top], width: data[:image_width]
     end
