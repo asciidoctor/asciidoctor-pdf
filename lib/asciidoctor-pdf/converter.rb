@@ -807,7 +807,7 @@ class Converter < ::Prawn::Document
     convert_content_for_block node
   end
 
-  def convert_image node
+  def convert_image node, opts = {}
     node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
     valid_image = true
     target, image_format = node.target_and_format
@@ -817,7 +817,8 @@ class Converter < ::Prawn::Document
       warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.)
     end
 
-    unless (image_path = resolve_image_path node, target, image_format) && (::File.readable? image_path)
+    unless (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format) &&
+        (::File.readable? image_path)
       valid_image = false
       warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target})
     end
@@ -1565,7 +1566,7 @@ class Converter < ::Prawn::Document
         warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
         valid = false
       end
-      unless (image_path = resolve_image_path node, target, image_format) && (::File.readable? image_path)
+      unless (image_path = resolve_image_path node, target, true, image_format) && (::File.readable? image_path)
         warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
         valid = false
       end
@@ -1667,8 +1668,10 @@ class Converter < ::Prawn::Document
       if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
         logo_image_path = $1
         logo_image_attrs = (AttributeList.new $2).parse ['alt', 'width', 'height']
+        relative_to_imagesdir = true
       else
         logo_image_attrs = {}
+        relative_to_imagesdir = false
       end
       # HACK quick fix to resolve image path relative to theme
       unless doc.attr? 'title-logo-image'
@@ -1690,7 +1693,7 @@ class Converter < ::Prawn::Document
         image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs
         # FIXME prevent image from spilling to next page
         # QUESTION should we shave off margin top/bottom?
-        convert_image image_block
+        convert_image image_block, relative_to_imagesdir: relative_to_imagesdir
       end
     end
 
@@ -1755,8 +1758,12 @@ class Converter < ::Prawn::Document
     # FIXME verify cover_image exists!
     if (cover_image = (doc.attr %(#{face}-cover-image)))
       if (cover_image.include? ':') && cover_image =~ ImageAttributeValueRx
+        # TODO support explicit image format
         cover_image = resolve_image_path doc, $1
+      else
+        cover_image = resolve_image_path doc, cover_image, false
       end
+
       go_to_page page_count if face == :back
       if cover_image.downcase.end_with? '.pdf'
         # NOTE import_page automatically advances to next page afterwards (can we change this behavior?)
@@ -2583,8 +2590,9 @@ class Converter < ::Prawn::Document
   # is not set, or the URI cannot be read, this method returns a nil value.
   #
   # When a temporary file is used, the TemporaryPath type is mixed into the path string.
-  def resolve_image_path node, image_path = nil, image_format = nil
-    imagesdir = resolve_imagesdir(doc = node.document)
+  def resolve_image_path node, image_path = nil, relative_to_imagesdir = true, image_format = nil
+    doc = node.document
+    imagesdir = relative_to_imagesdir ? (resolve_imagesdir doc) : nil
     image_path ||= node.attr 'target'
     image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node : nil)
     # handle case when image is a URI
@@ -2629,16 +2637,20 @@ class Converter < ::Prawn::Document
       return bg_image if bg_image == 'none'
 
       if (bg_image.include? ':') && bg_image =~ ImageAttributeValueRx
-        # QUESTION should we support width, height, and format in this case?
+        # QUESTION should we support width and height in this case?
+        # TODO support explicit format
         bg_image = $1
+        relative_to_imagesdir = true
+      else
+        relative_to_imagesdir = false
       end
 
-      if (bg_image = doc_attr_val ? (resolve_image_path doc, bg_image) :
+      if (bg_image = doc_attr_val ? (resolve_image_path doc, bg_image, relative_to_imagesdir) :
           (ThemeLoader.resolve_theme_asset bg_image, (doc.attr 'pdf-stylesdir')))
         if ::File.readable? bg_image
           bg_image
         else
-          warn %(asciidoctor: WARNING: #{key.tr '-', ' '} #{bg_image} not found or readable)
+          warn %(asciidoctor: WARNING: #{key.tr '-', ' '} not found or readable: #{bg_image})
           nil
         end
       end
