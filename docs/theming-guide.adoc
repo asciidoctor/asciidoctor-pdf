@@ -717,8 +717,9 @@ font:
       bold_italic: droid-sans-fallback.ttf
 ----
 
-Next, assign the key to the `fallbacks` key under the `font_catalog` key.
-Be sure to surround the key name in square brackets as shown below.
+Next, add the key name to the `fallbacks` key under the `font_catalog` key.
+The `fallbacks` key accepts an array of values, meaning you can specify more than one fallback font.
+However, we recommend using a single fallback font, if possible, as shown here:
 
 [source,yaml]
 ----
@@ -734,10 +735,11 @@ font:
       italic: droid-sans-fallback.ttf
       bold: droid-sans-fallback.ttf
       bold_italic: droid-sans-fallback.ttf
-  fallbacks: [DroidSansFallback]
+  fallbacks:
+    - DroidSansFallback
 ----
 
-TIP: If you are using more than one fallback font, separate each key name by a comma.
+TIP: If you are using more than one fallback font, add additional lines to the `fallbacks` key.
 
 That's it!
 Now you're covered.
