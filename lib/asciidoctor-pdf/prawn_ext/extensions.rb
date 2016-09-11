@@ -1,7 +1,7 @@
 Prawn::Font::AFM.instance_variable_set :@hide_m17n_warning, true
 
 require 'prawn/icon'
-Prawn::Document.extensions.delete Prawn::Icon::Interface
+#Prawn::Document.extensions.delete Prawn::Icon::Interface
 
 module Asciidoctor
 module Prawn
