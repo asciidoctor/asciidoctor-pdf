@@ -1466,7 +1466,9 @@ class Converter < ::Prawn::Document
       end
       #attrs << %( title="#{node.attr 'title'}") if node.attr? 'title'
       attrs << %( target="#{node.attr 'window'}") if node.attr? 'window', nil, false
-      if (@media != 'screen' || (node.document.attr? 'show-link-uri')) && !(node.has_role? 'bare')
+      # NOTE @media may not be initialized if method is called before convert phase
+      if ((@media ||= node.document.attr 'media', 'screen') != 'screen' || (node.document.attr? 'show-link-uri')) &&
+          !(node.has_role? 'bare')
         # TODO allow style of visible link to be controlled by theme
         %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> <font size="0.9em">[#{target}]</font>)
       else
