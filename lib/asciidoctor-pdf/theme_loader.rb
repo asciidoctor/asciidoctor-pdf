@@ -79,6 +79,7 @@ class ThemeLoader
 
   def load hash, theme_data = nil
     theme_data ||= ::OpenStruct.new
+    return theme_data unless ::Hash === hash
     hash.inject(theme_data) {|data, (key, val)| process_entry key, val, data }
     # NOTE remap legacy running content keys (e.g., header_recto_content_left => header_recto_left_content)
     %w(header_recto header_verso footer_recto footer_verso).each do |periphery_face|
