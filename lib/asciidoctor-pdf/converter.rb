@@ -542,6 +542,8 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
     keep_together do |box_height = nil|
       start_cursor = cursor
+      start_page_number = @page_number
+
       pad_box @theme.blockquote_padding do
         theme_font :blockquote do
           if node.context == :quote
@@ -557,12 +559,45 @@ class Converter < ::Prawn::Document
           end
         end
       end
+
+      end_cursor = cursor
+      end_page_number = @page_number
+
       if box_height
         # QUESTION should we use bounding_box + stroke_vertical_rule instead?
-        save_graphics_state do
-          stroke_color @theme.blockquote_border_color
-          line_width border_width
-          stroke_vertical_line cursor, start_cursor, at: border_width / 2.0
+        if start_page_number == end_page_number
+          save_graphics_state do
+            stroke_color @theme.blockquote_border_color
+            line_width border_width
+            stroke_vertical_line end_cursor, start_cursor, at: border_width / 2.0
+          end
+        else
+          # draw stroke at first page containing box
+          repeat(start_page_number..start_page_number) do
+            save_graphics_state do
+              stroke_color @theme.blockquote_border_color
+              line_width border_width
+              stroke_vertical_line start_cursor, 0, at: border_width / 2.0
+            end
+          end
+
+          # draw stroke along entire page for intermediate pages
+          repeat((start_page_number + 1)..(end_page_number - 1)) do
+            save_graphics_state do
+              stroke_color @theme.blockquote_border_color
+              line_width border_width
+              stroke_vertical_line @margin_box.height, 0, at: border_width / 2.0
+            end
+          end
+
+          # draw stroke at last page containing box
+          repeat(end_page_number..end_page_number) do
+            save_graphics_state do
+              stroke_color @theme.blockquote_border_color
+              line_width border_width
+              stroke_vertical_line @margin_box.height, end_cursor, at: border_width / 2.0
+            end
+          end
         end
       end
     end
