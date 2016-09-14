@@ -337,7 +337,9 @@ base:
 
 Several of the keys require a value in points (pt), the unit of measure for the PDF canvas.
 A point is defined as 1/72 of an inch.
-However, us humans like to think in real world units like inches (in), centimeters (cm) or millimeters (mm).
+If you specify a number without any units, the units defaults to pt.
+
+However, us humans like to think in real world units like inches (in), centimeters (cm), or millimeters (mm).
 You can let the theme do this conversion for you automatically by adding a unit notation next to any number.
 
 The following units are supported:
@@ -356,8 +358,11 @@ The following units are supported:
 |mm
 
 |Points
-|pt
+|pt (default)
 |===
+
+IMPORTANT: Numbers with more than two digits should be written as a float (e.g., 100.0), a math expression (e.g, 1 * 100), or with a unit (e.g., 100pt).
+Otherwise, the value may be misinterpreted as a hex color (e.g., '100') and could cause the converter to crash.
 
 Here's an example of how you can use inches to define the page margins:
 
