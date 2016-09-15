@@ -5,6 +5,68 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== 1.5.0.alpha.13 (unreleased)
+
+* Add support for double-sided (recto/verso) margins when media=prepress attribute is set (#383)
+* Add non-breaking hyphen glyph to built-in fonts so its intended behavior is honored (#462)
+* Add page break before a book part (#329)
+* Allow running (header/footer) content to be arrange in columns (#449)
+* Prevent the SVG from modifying the document font (#494)
+* Encode anchors in hex that contain characters outside of ASCII range (#481, #301)
+* Clear the placeholder text used for an anchor to fix CannotFit error in table cell (#447)
+* Size the line number gutter correctly (accounting for width of largest line number) (#402)
+* Allow theme to specify default value for pdfwidth attribute on image (#455)
+* Fix front matter page numbering by adding page labels for all front matter pages in outline (#458)
+* Allow image type to be specified explicitly using format attribute on image macro (#540)
+* Add support for literal and verse table cell styles
+* Preserve indentation in literal and verse table cells
+* Preserve paragraph breaks in normal table cells
+* Honor value of width attribute even when autowidth option is set on table (#519)
+* Allow font properties to be set per element in running content (#454)
+* Align table title to left edge of table, regardless of table alignment (#469)
+* Add support for reversed option on ordered list (#491)
+* Don't drop whitespace in front of conum on final line of source block (#470)
+* Add more control over position of elements on title page, including support for vw units (#418)
+* Allow table caption position/side to be controlled by theme (#531)
+* Use base_align setting from theme as default alignment for headings
+* Resolve bare image-related attribute values relative to base_dir
+* Only allow Prawn SVG to fetch remote images if the allow-uri-read attribute is set (#548)
+* Introduce page_margin_inner and page_margin_outer keys to theme
+* Start title page, toc, and main content on recto page when media=prepress and doctype=book
+* Allow default font style for table to be set via theme (table_font_style)
+* Use correct default bullet per nested unordered list level (#529)
+* Call start_new_part at start of each book part
+* Delegate to layout_part_title method to layout part title
+* Don't match a special section as a chapter unless the doctype is book
+* Fix list marker placement when list item touches bottom of page
+* Eliminate excessive spacing between list items that contain nested lists
+* Drop lines in running (header/footer) content with unresolved attributes (#522)
+* Ensure start_new_chapter is always executed at a chapter transition (#524)
+* Add support for root xref (e.g., &lt;&lt;included-doc#&gt;&gt;) (#521)
+* Prevent block from spilling to next page if there's no more content (#361)
+* Add support for px units to pdf-page-size attribute
+* Fix parsing error when value of pdf-page-size attribute is unitless
+* Don't crash if table is empty (#480)
+* Don't crash when deleting last remaining page; don't delete last page if empty
+* Don't orphan space between conums when extracting from verbatim block (#506)
+* Properly scope attr and attr? lookups
+* Rename internal page_start and page_end attributes to pdf-page-start and pdf-page-end, respectively
+* Fix settings for table header cell
+* Read theme file with UTF-8 encoding (#533)
+* Allow temporary image file to be deleted on Windows (#425)
+* Don't crash if theme file is empty (#551)
+* Don't crash if cover image can't be read; warn instead
+* Clarify in theming guide how to write numbers with 3 or more digits (#555)
+* Document how inline images are sized
+* Document how to disable default footer from theme
+* Update explanation of WINANSI encoding behavior in theming guide
+* Restore support for Ruby 1.9.3 (#528)
+* Upgrade prawn-icon to 1.1.1
+* Upgrade prawn-svg to 0.25.2 (by way of looser version range)
+* Fix Ruby warnings
+* Document in README how image paths are resolved
+* Configure README for better preview on GitHub
+
 == 1.5.0.alpha.12 (2016-08-05) - @mojavelinux
 
 * Fix incompatibility with Rouge 2 source highlighter (#471)
