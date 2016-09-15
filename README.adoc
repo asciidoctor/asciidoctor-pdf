@@ -275,6 +275,16 @@ You can enable use of fonts during PDF generation (instead of in the document he
 Icon-based fonts are handled by the `prawn-icon` gem.
 To find a complete list of available icons, consult the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon] repository.
 
+== Image Paths
+
+Images are resolved relative to the value of the `imagesdir` attribute at the time the converter is run.
+This is effectively the same as how the built-in HTML converter works when the `data-uri` attribute is set.
+The `imagesdir` is blank by default, which means images are resolved relative to the input document.
+
+If the image is an SVG, and the SVG includes a nested raster image (png or jpg) with a relative path, that path is resolved relative to the directory that contains the SVG.
+
+The converter will refuse to include an image if the target is a URI unless the `allow-uri-read` attribute is enabled via the CLI or API.
+
 == Image Scaling
 
 Since PDF is a fixed-width canvas, you almost always need to specify an image width to get the image to fit properly on the page.
