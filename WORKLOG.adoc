@@ -5,43 +5,65 @@
 
 == TODO
 
-* don't crash if theme data is empty
-* don't crash if cover image does not exist; fail gracefully with warning
-* file issue in prawn-svg not to move cursor (maybe an option?)
+.1.5.0.alpha.13
+* ensure book chapters and parts start on recto page when @ppbook (using start_new_chapter / start_new_page methods?)
+  - need a way to add excludes
+* should we use the term "column" instead of "placement" in running content
+
+//--
+* generate fonts without PS Glyph Names to reduce file size (waiting PR #550 to be marged)
+  - create script that can generate fonts entirely from original font source
+* FIXME if a page is left empty, writing running content on it causes ghostscript to report an error
+  - problem is no color space is set; can call update_colors to fix
+  - maybe have a skip_page helper?
+  - doesn't yet apply since we don't yet insert blank pages in content
+* SIMPLE: document vw/vh measurement units in theming guide (make it clear it only applies in certain cases)
+* SIMPLE: in theming guide, emphasize not using the fallback font when working with very large documents; explain that default theme uses a fallback font
+* rework resolve_image_path API so it's more logical; override based on type of first argument; document as option
+* document how to test / use a PR
+  - see https://github.com/asciidoctor/asciidoctor-pdf/issues/462#issuecomment-246200953
+* FILE ISSUE break printed URIs at each forward slash (and perhaps at ? and & too)
+* add empty? method to Page (instead of page_empty? on document)
+* SIMPLE: add warning that AsciiDoc table cell content is not supported; print as raw source
+* implicit width of inline image calculated incorrectly (see sandbox/issue-494)
+* FILE ISSUE in prawn-svg not to move cursor (maybe an option?)
 * FILE ISSUE: prevent import_page from adding an extra page; leaves blank page when placing two inserts in a row
   - have import_page first delete current page if page is empty
 * autowidth causes cells in header row to break word (wraps by char to fit; does not expand table)
 * dry_run should start at cursor of main document (or as option); total height calculation would need to be revised
   - this should fix height calculation when content is split over a page break (leaving small amount of excess)
-* FILE ISSUE: if the image type cannot be resolved from file extension (e.g., when target is a URL), honor format attribute like core
-* SIMPLE: add warning that AsciiDoc table cell content is not supported; print as raw source
+* allow height of inline image to be set to line height (perhaps 1em?)
+* add support for format attribute on image macro to image-related attributes such as title-page-background-image
+  - support explicit image format for cover page image and page background image
+* need some sort of post_construct method for converter that receives document
+  - monkeypatch?
+* backport resize method from prawn-svg and use it in converter
+* create document that explains how built-in fonts are generated and what subsets are selected
+  - I need instructions for myself so I know how to update/modify the fonts
+  - document in theming guide what must be done to prepare fonts (old-style 'kern' table, optionally subset) (file issue!)
+* consider supporting icon tag in parser to simplify how inline icons are stored; simpler use of passthrough content
 * cache stateless cell data resolved from theme (don't need to recalc each time; at least per table)
-* autowidth on table doesn't work for multi-line content (width based on normalized value)
+* autowidth on table doesn't work for multi-line content (prawn-table bases width calculation on normalized value)
 * table logic: does the layout_table_caption have to be inside the table block? can we pre-calculate the actual width for the caption? does the table offer a callback we can use to keep the caption on the same page as the table?
-* FILE ISSUE: enable/implement key table_font_style
-* SIMPLE: in theming guide, emphasize not using the fallback font when working with very large documents; explain that default theme uses a fallback font
 * introduce object to store/organize running content data and specs
 * QUESTION: should we set pdf-anchor attribute on every node that has an id?
+  - isn't it required for cross references to work?
 * QUESTION: should theme font handle hierarchical keys (either explicitly or implicitly)
 * need to support .canvas role on image so it isn't shrunk to fit inside top/bottom margins
   - perhaps .canvas, .canvas-x, .canvas-y
 * SIMPLE: missing text_transform in some places in theming guide
 * FILE ISSUE: when split source listing, add top padding to bounding box (or is it the line metrics top?)
   - perhaps this has to do with the a miscalculation in dry run when not starting from same y position?
-* prawn-gmagick (fixes PNG transparency issue, adds gif support); don't fail-fast on gif if gem is detected
+* test prawn-gmagick (fixes PNG transparency issue, adds gif support); don't fail-fast on gif if gem is detected
   - https://github.com/packetmonkey/prawn-gmagick
-* stroke and fill multi-page sidebar block (#259) and example block (#362)
+* stroke and fill multi-page sidebar block (#259), quote/verse block (#270), and example block (#362)
 * support URL images in running content
-* support explicit image format for cover page image and page background image
 * support pdfwidth for inline image
 * SIMPLE: add defaults for table_header_cell in theming guide, including when a key inherits by default
 * rewrite optimize-pdf using rghost (#535) (also see #21 and #22)
   - add Optimizer class; wire to cli (separate issue?)
-* add feature to number bullets according to section number (needed for OpenDevise agreement)
-* should we use the term "column" instead of "placement" in running content
+* add feature to number bullets according to section number (needed for OpenDevise agreements)
 * outline should link to title page if there's a cover page (skip cover page and ensuing blank page)
-* document how to test / use a PR
-* SIMPLE: document vw/vh measurement units in theming guide (make it clear it only applies in certain cases)
 * might be better to organize fragments of source chunks by lines (and pass that around) to simplify post-processing
 * support negative start value for list (#498)
   - need to count negative numbers in correct direction
@@ -58,6 +80,8 @@
 * check that color of table edges set to table_grid_color??
 * shouldn't the default align for headings be $base_align??
 * should not wrap at formatting mark unless it is at a break opportunity
+  - the problem here is that Prawn is allowing breaks at the boundaries of text fragments; it should only look at the contents
+  - FILE ISSUE in Prawn!
 * be more consistent with how examples are shown in theming-guide.adoc (do we show last segment only?)
 * allow top as alternative to margin_top for all elements on title page (#431)
 * swallowing exceptions! (any use of e.message in a string is dangerous)
@@ -101,8 +125,6 @@
 * allow dynamic background image with page number in path
 * running header/footer covers content (perhaps just a limitation that needs to be documented)
 * document that palette-based transparent in PNGs is not supported
-* create document that explains how built-in fonts are generated and what subsets are selected
-  - document in theming guide what must be done to prepare fonts (old-style 'kern' table, optionally subset) (file issue!)
 * add broader character range to monospace font so we can drop fallback font by default (#282)
   - consider having a fallback for prose and fallback for literal
 * file issue for prawn to preserve space (even w/ guards, spaces don't preserve over wrapped lines)
@@ -136,7 +158,6 @@
 * bind image_registry between scratch and main document so we don't process the same image more than once
   - need to do some testing
 * show SVG warnings if debug (or trace) is on
-* a nested image with a relative path in an SVG is resolved relative to the SVG source file (document in README)
 * clean temporary files once per conversion? (file issue)
 * clear font paths in SVG interface so it doesn't scan system? (since it's not portable anyway)
 * title is being rendered 3 times (maybe one for scratch?); explain why in comments if normal
@@ -319,6 +340,7 @@
 * /PageLabels/Nums must have entry for every page in front matter, even if a blank page
   - in fact, must account for every page or else numbering lags behind when scrolling document
 * if we set the vposition on image to a numeric value, it skips the overrun check that happens internally
+* any instance variables referenced by converter methods for inline nodes could get accessed before the converter for document is called
 
 == Potential Optimizations
 
@@ -366,3 +388,4 @@
   - http://www.camcc.org/_media/reading-group/qianziwen-en.pdf[1,000 character classic (Chinese)]
 * pdf2svg can convert the PDF file into an SVG (one SVG per page)
 * https://blog.codeship.com/build-math-evaluation-engine[How to Build a Simple Math Evaluation Engine]
+* http://blog.typekit.com/2011/11/03/optimizing-fonts-for-the-web-unicode-values-glyph-set-underlines-and-strike-through/[Optimizing Fonts for the Web]
