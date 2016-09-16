@@ -33,7 +33,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Resolve bare image-related attribute values relative to base_dir
 * Only allow Prawn SVG to fetch remote images if the allow-uri-read attribute is set (#548)
 * Introduce page_margin_inner and page_margin_outer keys to theme
-* Start title page, toc, and main content on recto page when media=prepress and doctype=book
+* Start title page, toc, main content, parts, and chapters on recto page when media=prepress and doctype=book
 * Allow default font style for table to be set via theme (table_font_style)
 * Use correct default bullet per nested unordered list level (#529)
 * Call start_new_part at start of each book part
@@ -68,6 +68,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Fix Ruby warnings
 * Document in README how image paths are resolved
 * Configure README for better preview on GitHub
+* Update chronicles example to modern AsciiDoc syntax; update content
 
 == 1.5.0.alpha.12 (2016-08-05) - @mojavelinux
 
