@@ -224,7 +224,7 @@ Kizmet shrugged. "`The note from Olaf's desk says '`wormwood and licorice,`' but
 "`Well the H~2~O written on the security whiteboard could be part of a shopping list, but I don't think the local bodega also sells e = mc^2^,`" Lazarus replied.
 
 "`Wait!`" Indigo plucked a small vial from her desk's top drawer and held it toward us.
-The vial's label read '``e = mc^2^ *_the scent of science_* _smells like a genius_``'.
+The vial's label read '```e = mc^2^ *_the scent of science_* _smells like a genius_```'.
 
 === Can I Get Some `Code`?
 
