@@ -355,7 +355,7 @@ I'll trade you a little table for some of that bark.
 .<|Prefix the +{vbar}+ with a +.+ and +<+ to align the content to the top of the cell
 >|Prefix the +{vbar}+ with +>+ to align the content to the right horizontally
 
-3+^.^e|This content spans three columns (+3{plus}+) and is centered horizontally (+{caret}+) and vertically (+.{caret}+) within the cell.
+3+^.^e|This content spans all three columns (+3{plus}+) and is centered both horizontally (+{caret}+) and vertically (+.{caret}+) within the cell.
 |===
 
 Wait.
