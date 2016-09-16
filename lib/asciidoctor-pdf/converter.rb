@@ -538,9 +538,11 @@ class Converter < ::Prawn::Document
 
   def convert_quote_or_verse node
     add_dest_for_block node if node.id
-    border_width = @theme.blockquote_border_width
     theme_margin :block, :top
+    b_width = @theme.blockquote_border_width
+    b_color = @theme.blockquote_border_color
     keep_together do |box_height = nil|
+      start_page_number = page_number
       start_cursor = cursor
       pad_box @theme.blockquote_padding do
         theme_font :blockquote do
@@ -557,12 +559,24 @@ class Converter < ::Prawn::Document
           end
         end
       end
+      # FIXME we want to draw graphics before content, but box_height is not reliable when spanning pages
       if box_height
-        # QUESTION should we use bounding_box + stroke_vertical_rule instead?
-        save_graphics_state do
-          stroke_color @theme.blockquote_border_color
-          line_width border_width
-          stroke_vertical_line cursor, start_cursor, at: border_width / 2.0
+        page_spread = (end_page_number = page_number) - start_page_number + 1
+        end_cursor = cursor
+        go_to_page start_page_number
+        move_cursor_to start_cursor
+        page_spread.times do |i|
+          if i == 0
+            y_draw = cursor
+            b_height = page_spread > 1 ? y_draw : (y_draw - end_cursor)
+          else
+            bounds.move_past_bottom
+            y_draw = cursor
+            b_height = page_spread - 1 == i ? (y_draw - end_cursor) : y_draw
+          end
+          bounding_box [0, y_draw], width: bounds.width, height: b_height do
+            stroke_vertical_rule b_color, line_width: b_width, at: b_width / 2.0
+          end
         end
       end
     end
