@@ -86,19 +86,21 @@ Picking up from there, {project-name} takes the pain out of creating PDF documen
 
 * Direct AsciiDoc to PDF conversion
 * <<docs/theming-guide.adoc#,Configuration-driven style and layout>>
+* SVG support
 * PDF document outline (i.e., bookmarks)
 * Table of contents page(s)
 * Document metadata (title, authors, subject, keywords, etc)
 * Internal cross reference links
-* Syntax highlighting with CodeRay or Pygments
+* Syntax highlighting with Rouge, Pygments, or CodeRay
 * Page numbering
 * Customizable running content (header and footer)
 * “Keep together” blocks (i.e., page breaks avoided in certain block content)
+* Orphaned section titles avoided
 * Autofit verbatim blocks (as permitted by base_font_size_min setting)
-* Orphan section titles avoided
 * Table border settings honored
 * Font-based icons
-* Custom fonts
+* Custom (TTF) fonts
+* Double-sided printing mode (margins alternate on recto and verso pages)
 
 === Missing Features
 
