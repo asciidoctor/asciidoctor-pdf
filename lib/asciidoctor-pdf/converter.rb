@@ -823,17 +823,16 @@ class Converter < ::Prawn::Document
 
   def convert_image node, opts = {}
     node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
-    valid_image = true
     target, image_format = node.target_and_format
 
     if image_format == 'gif'
-      warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.)
+      warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
       valid_image = false
-    end
-
-    unless (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format) &&
+    elsif (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format) &&
         (::File.readable? image_path)
-      warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target})
+      valid_image = true
+    else
+      warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
       valid_image = false
     end
 
