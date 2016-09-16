@@ -836,8 +836,11 @@ class Converter < ::Prawn::Document
       valid_image = false
     end
 
-    # NOTE import_page automatically advances to next page afterwards
-    return import_page image_path if image_format == 'pdf'
+    if image_format == 'pdf'
+      # NOTE import_page automatically advances to next page afterwards
+      import_page image_path if valid_image
+      return
+    end
 
     # QUESTION if we advance to new page, shouldn't dest point there too?
     add_dest_for_block node if node.id
