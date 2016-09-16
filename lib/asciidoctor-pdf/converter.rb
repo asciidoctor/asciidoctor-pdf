@@ -827,14 +827,14 @@ class Converter < ::Prawn::Document
     target, image_format = node.target_and_format
 
     if image_format == 'gif'
-      valid_image = false
       warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.)
+      valid_image = false
     end
 
     unless (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format) &&
         (::File.readable? image_path)
-      valid_image = false
       warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target})
+      valid_image = false
     end
 
     # NOTE import_page automatically advances to next page afterwards
@@ -1551,48 +1551,50 @@ class Converter < ::Prawn::Document
     end
   end
 
-  def convert_inline_image node
-    img = nil
-    if node.type == 'icon'
-      if node.document.attr? 'icons', 'font'
-        if (icon_name = node.target).include? '@'
-          icon_name, icon_set = icon_name.split '@', 2
-        else
-          icon_set = node.attr 'set', (node.document.attr 'icon-set', 'fa'), false
-        end
-        icon_set = 'fa' unless IconSets.include? icon_set
-        if node.attr? 'size', nil, false
-          size = (size = (node.attr 'size')) == 'lg' ? '1.3333em' : (size.sub 'x', 'em')
-          size_attr = %( size="#{size}")
-        else
-          size_attr = nil
-        end
-        begin
-          # TODO support rotate and flip attributes; support fw (full-width) size
-          img = %(<font name="#{icon_set}"#{size_attr}>#{::Prawn::Icon::FontData.load(self, icon_set).unicode icon_name}</font>)
-        rescue
-          warn %(asciidoctor: WARNING: #{icon_name} is not a valid icon name in the #{icon_set} icon set)
-        end
+  def convert_inline_icon node
+    if node.document.attr? 'icons', 'font'
+      if (icon_name = node.target).include? '@'
+        icon_name, icon_set = icon_name.split '@', 2
+      else
+        icon_set = node.attr 'set', (node.document.attr 'icon-set', 'fa'), false
       end
+      icon_set = 'fa' unless IconSets.include? icon_set
+      if node.attr? 'size', nil, false
+        size = (size = (node.attr 'size')) == 'lg' ? '1.3333em' : (size.sub 'x', 'em')
+        size_attr = %( size="#{size}")
+      else
+        size_attr = nil
+      end
+      begin
+        # TODO support rotate and flip attributes; support fw (full-width) size
+        %(<font name="#{icon_set}"#{size_attr}>#{::Prawn::Icon::FontData.load(self, icon_set).unicode icon_name}</font>)
+      rescue
+        warn %(asciidoctor: WARNING: #{icon_name} is not a valid icon name in the #{icon_set} icon set)
+        %([#{node.attr 'alt'}])
+      end
+    else
+      %([#{node.attr 'alt'}])
+    end
+  end
+
+  def convert_inline_image node
+    if node.type == 'icon'
+      convert_inline_icon node
     else
       node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
       target, image_format = node.target_and_format
-      valid = true
       if image_format == 'gif'
         warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
-        valid = false
-      end
-      unless (image_path = resolve_image_path node, target, true, image_format) && (::File.readable? image_path)
-        warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
-        valid = false
-      end
-      if valid
+        img = %([#{node.attr 'alt'}])
+      elsif (image_path = resolve_image_path node, target, true, image_format) && (::File.readable? image_path)
         width_attr = (node.attr? 'width', nil, false) ? %( width="#{node.attr 'width'}") : nil
         img = %(<img src="#{image_path}" format="#{image_format}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{TemporaryPath === image_path}">)
+      else
+        warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
+        img = %([#{node.attr 'alt'}])
       end
+      (node.attr? 'link', nil, false) ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
     end
-    img ||= %([#{node.attr 'alt'}])
-    (node.attr? 'link', nil, false) ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
   end
 
   def convert_inline_indexterm node
