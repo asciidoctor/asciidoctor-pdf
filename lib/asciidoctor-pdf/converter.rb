@@ -356,7 +356,6 @@ class Converter < ::Prawn::Document
     end
 
     convert_content_for_block sect
-    # TODO ideally, this attribute should be pdf-page-end
     sect.set_attr 'pdf-page-end', page_number
   end
 
@@ -1801,6 +1800,7 @@ class Converter < ::Prawn::Document
 
   def start_new_chapter chapter
     start_new_page unless at_page_top?
+    # TODO must call update_colors before advancing to next page if start_new_page is called in layout_chapter_title
     start_new_page if @ppbook && verso_page? && !(chapter.option? 'nonfacing')
   end
 
