@@ -12,6 +12,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Add page break before a book part (#329)
 * Allow running (header/footer) content to be arrange in columns (#449)
 * Prevent the SVG from modifying the document font (#494)
+* Implement decorative border for multipage quote and verse blocks (#270, #557, #558)
 * Encode anchors in hex that contain characters outside of ASCII range (#481, #301)
 * Clear the placeholder text used for an anchor to fix CannotFit error in table cell (#447)
 * Size the line number gutter correctly (accounting for width of largest line number) (#402)
@@ -52,6 +53,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Properly scope attr and attr? lookups
 * Rename internal page_start and page_end attributes to pdf-page-start and pdf-page-end, respectively
 * Fix settings for table header cell
+* Fix padding around content of quote block in default theme
 * Read theme file with UTF-8 encoding (#533)
 * Allow temporary image file to be deleted on Windows (#425)
 * Don't crash if theme file is empty (#551)
@@ -61,8 +63,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Document how to disable default footer from theme
 * Update explanation of WINANSI encoding behavior in theming guide
 * Restore support for Ruby 1.9.3 (#528)
-* Upgrade prawn-icon to 1.1.1
-* Upgrade prawn-svg to 0.25.2 (by way of looser version range)
+* Upgrade prawn-icon to 1.2.0 (which upgrades Font Awesome to 4.6.3)
+* Upgrade prawn-svg to 0.25.2 (by way of more lenient version range)
 * Fix Ruby warnings
 * Document in README how image paths are resolved
 * Configure README for better preview on GitHub
