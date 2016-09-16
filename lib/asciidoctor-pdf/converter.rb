@@ -1485,7 +1485,7 @@ class Converter < ::Prawn::Document
       if ((@media ||= node.document.attr 'media', 'screen') != 'screen' || (node.document.attr? 'show-link-uri')) &&
           !(node.has_role? 'bare')
         # TODO allow style of visible link to be controlled by theme
-        %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> <font size="0.9em">[#{target}]</font>)
+        %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> [<font size="0.85em">#{target}</font>])
       else
         %(<a href="#{node.target}"#{attrs.join}>#{node.text}</a>)
       end
