@@ -1,12 +1,11 @@
 = The Dangerous & _Thrilling_ Documentation Chronicles: Based on True Events
 Kismet Caméléon; Lazarus het_Draeke
 v1.0, 2014-01-01: The first incarnation of The Documentation Chronicles.
-:description: This story chronicles the inexplicable hazards and vicious beasts a +
-team must conquer and vanquish on their journey to discovering open source's true +
+:description: This story chronicles the inexplicable hazards and vicious beasts a \
+team must conquer and vanquish on their journey to discovering open source's true \
 power.
 :doctype: book
 // Settings:
-:compat-mode:
 :experimental:
 :icons: font
 :listing-caption: Listing
@@ -28,7 +27,7 @@ endif::[]
 
 == It's a City Under Siege
 
-This journey begins one late Monday afternoon at http://www.devoxx.be/#/[Devoxx].
+This journey begins one late Monday afternoon at http://www.devoxx.be[Devoxx].
 Our team needs coffee, _desperately_, but none of us dare open the theater doors...
 
 During the first workshop, a script-happy warlock inadvertently released a legion of Wolpertingers!
@@ -57,7 +56,7 @@ Come on, _Bier Central_.
 Did you have to ask?
 If you beat me there, I'll take a http://www.sintbernardus.be/stbernardusabt12.php?l=en[St. Bernardus Abt 12].
 
-[[ravages]]
+[#ravages]
 == The Ravages of Writing
 
 Crystalline XML tags relentlessly bombarded the theater.
@@ -116,7 +115,7 @@ Are you square?
 * two
 * three
 
-TODO?
+What is there to do?
 
 * [x] Done
 * [ ] Next
@@ -193,10 +192,10 @@ TIP: Your boots are in your closet.
 
 Lazarus was hanging from the bottom limb of a Burdockian tree, licking the bark.
 
-[quote, Mark Tobey]
+[quote,Mark Tobey]
 On pavements and the bark of trees I have found whole worlds.
 
-``If there are whole worlds on that bark, he just swallowed them.'' Kizmet replied.
+"`If there are whole worlds on that bark, he just swallowed them,`" Kizmet replied.
 
 [verse,The documentation attorneys]
 ____
@@ -219,15 +218,15 @@ Violets are +++<span style="color: #0000FF">blue</span>+++__-ish__.
 _To tame_ the wild wolpertingers we needed to build a *charm*.
 But **u**ltimate victory could only be won if we divined the *_true name_* of the __war__lock.
 
-``What kind of charm?'' Lazarus asked. ``An odoriferous one or a mineral one?''
-Kizmet shrugged. ``The note from Olaf's desk says `wormwood and licorice,' but these could be normal groceries for werewolves.''
+"`What kind of charm?`" Lazarus asked. "`An odoriferous one or a mineral one?`"
+Kizmet shrugged. "`The note from Olaf's desk says '`wormwood and licorice,`' but these could be normal groceries for werewolves.`"
 
-``Well the H~2~O written on the security whiteboard could be part of a shopping list, but I don't think the local bodega also sells e = mc^2^.'' Lazarus replied.
+"`Well the H~2~O written on the security whiteboard could be part of a shopping list, but I don't think the local bodega also sells e = mc^2^,`" Lazarus replied.
 
-``Wait!'' Indigo plucked a small vial from her desk's top drawer and held it toward us.
-The vial's label read `+e = mc^2^+ +*_the scent of science_*+ +_smells like a genius_+'.
+"`Wait!`" Indigo plucked a small vial from her desk's top drawer and held it toward us.
+The vial's label read '``e = mc^2^ *_the scent of science_* _smells like a genius_``'.
 
-=== Can I Get Some +Code+?
+=== Can I Get Some `Code`?
 
 [%hardbreaks]
 Sure.
@@ -243,9 +242,9 @@ But I'm not giving you any highlighting shazam just yet.
 .What is a listing block?
 ****
 Like literal blocks, the content in listing blocks is displayed exactly as you entered it.
-Listing block content is rendered as +<pre>+ text.
+Listing block content is rendered as `<pre>` text.
 
-The +listing+ style is applied to an element, such as a paragraph, by setting the +listing+ attribute on that element.
+The `listing` style is applied to an element, such as a paragraph, by setting the `listing` attribute on that element.
 ****
 
 Let's get our highlighting on!
@@ -351,18 +350,18 @@ I'll trade you a little table for some of that bark.
 |===
 |Name of Column 1 |Name of Column 2 |Name of Column 3
 
-^m|Prefix the +{vbar}+ with +{caret}+ to center content horizontally
-.<|Prefix the +{vbar}+ with a +.+ and +<+ to align the content to the top of the cell
->|Prefix the +{vbar}+ with +>+ to align the content to the right horizontally
+^m|Prefix the `{vbar}` with `{caret}` to center content horizontally
+.<|Prefix the `{vbar}` with a `.` and `<` to align the content to the top of the cell
+>|Prefix the `{vbar}` with `>` to align the content to the right horizontally
 
-3+^.^e|This content spans all three columns (+3{plus}+) and is centered both horizontally (+{caret}+) and vertically (+.{caret}+) within the cell.
+3+^.^e|This content spans all three columns (`3{plus}`) and is centered both horizontally (`{caret}`) and vertically (`.{caret}`) within the cell.
 |===
 
 Wait.
 What?
 Where is this story going?
 
-+<span>+:: an html tag that makes me crazy
+`<span>`:: an html tag that makes me crazy
 
 align:: something I never get going in the right direction.
 Also has to do with my poor verbal communication skills
@@ -380,7 +379,7 @@ Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deseru
 
 == Keeping It Together
 
-On this page we have nested ``keep together'' logic.
+On this page we have nested "`keep together`" logic.
 The combined block will be shifted to the next page if there isn't room available on this one.
 
 [verse]
@@ -422,7 +421,7 @@ public class Foo {
 ----
 
 *Golo resolves methods first, fields last.*
-Hence, the following Golo code will resolve the +bar()+ method, not the +bar+ field:
+Hence, the following Golo code will resolve the `bar()` method, not the `bar` field:
 
 .Golo picks the method over the field with the same name
 [source,golo]
