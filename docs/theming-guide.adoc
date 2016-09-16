@@ -148,7 +148,7 @@ base:
 ----
 
 Each level of nesting must be indented by two more spaces of indentation than the parent level.
-Also note the placement of the colon after each key name.
+Also note the presence of the colon after each key name.
 
 == Values
 
@@ -2288,7 +2288,7 @@ The keys in this category control the arrangement and style of running header an
   recto:
     columns: <25% =50% >25%
 
-|<side>_<placement>_content^[2,3]^
+|<side>_<position>_content^[2,3]^
 |Quoted string
 |header:
   recto:
@@ -2371,7 +2371,7 @@ The keys in this category control the arrangement and style of running header an
   verso:
     columns: <50% 0% <50%
 
-|<side>_<placement>_content^[2,3]^
+|<side>_<position>_content^[2,3]^
 |Quoted string
 |footer:
   verso:
@@ -2381,7 +2381,7 @@ The keys in this category control the arrangement and style of running header an
 
 . The background color spans the width of the page, as does the border when a background color is specified.
 . `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
-. `<placement>` can be `left`, `center` or `right`.
+. `<position>` can be `left`, `center` or `right`.
 
 IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
 
@@ -2390,7 +2390,7 @@ If you define running header and footer content in your theme, you can still dis
 If content is not specified for the running footer, the page number (i.e., `\{page-number}`) is shown on the left on verso pages and the right on recto pages.
 You can disable this behavior by defining the attribute `nofooter` in the AsciiDoc document header or by defining the key `footer_<side>_content: none` in the theme.
 
-TIP: Although not listed in the table above, you can control the font settings used for running content for each column placement on each page side (e.g., `footer_<side>_<placement>_font_color`).
+TIP: Although not listed in the table above, you can control the font settings used for running content for each column position on each page side (e.g., `footer_<side>_<position>_font_color`).
 For example, you can set the font color used for the right-hand column on recto pages by setting `footer_recto_right_font_color: 6CC644`.
 
 ==== Attribute References

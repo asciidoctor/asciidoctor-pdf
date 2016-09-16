@@ -40,7 +40,7 @@ class Converter < ::Prawn::Document
   }
   AlignmentNames = ['left', 'center', 'right']
   AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
-  ColumnPlacements = [:left, :center, :right]
+  ColumnPositions = [:left, :center, :right]
   PageSides = [:recto, :verso]
   LF = %(\n)
   DoubleLF = %(\n\n)
@@ -2028,8 +2028,8 @@ class Converter < ::Prawn::Document
     # TODO move this to a method so it can be reused; cache results
     content_dict = PageSides.inject({}) do |acc, side|
       side_content = {}
-      ColumnPlacements.each do |placement|
-        if (val = @theme[%(#{periphery}_#{side}_#{placement}_content)])
+      ColumnPositions.each do |position|
+        if (val = @theme[%(#{periphery}_#{side}_#{position}_content)])
           # TODO support image URL (using resolve_image_path)
           if (val.include? ':') && val =~ ImageAttributeValueRx &&
               ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
@@ -2039,9 +2039,9 @@ class Converter < ::Prawn::Document
             unless width
               width = [bounds.width, (intrinsic_image_dimensions path)[:width] * 0.75].min
             end
-            side_content[placement] = { path: path, width: width }
+            side_content[position] = { path: path, width: width }
           else
-            side_content[placement] = val
+            side_content[position] = val
           end
         end
       end
@@ -2185,8 +2185,8 @@ class Converter < ::Prawn::Document
       # QUESTION should we respect physical page number or just look at the content page number?
       side = page_side explicit_pgnum
       # FIXME we need to have a content setting for chapter pages
-      content_by_placement = content_dict[side]
-      colspec_by_placement = colspec_dict[side]
+      content_by_position = content_dict[side]
+      colspec_by_position = colspec_dict[side]
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
       # FIXME leave page-number attribute unset once we filter lines with unresolved attributes (see below)
@@ -2200,9 +2200,9 @@ class Converter < ::Prawn::Document
       theme_font periphery do
         canvas do
           bounding_box [trim_content_left[side], trim_top], width: trim_content_width[side], height: trim_height do
-            ColumnPlacements.each do |placement|
-              next unless (content = content_by_placement[placement])
-              next unless (colspec = colspec_by_placement[placement])[:width] > 0
+            ColumnPositions.each do |position|
+              next unless (content = content_by_position[position])
+              next unless (colspec = colspec_by_position[position])[:width] > 0
               # FIXME we need to have a content setting for chapter pages
               case content
               when ::Hash
@@ -2229,7 +2229,7 @@ class Converter < ::Prawn::Document
                   end
                   doc.set_attr 'attribute-missing', attribute_missing_doc unless attribute_missing_doc == 'skip'
                 end
-                theme_font %(#{periphery}_#{side}_#{placement}) do
+                theme_font %(#{periphery}_#{side}_#{position}) do
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
                     at: [colspec[:x], trim_content_height + trim_padding[2] + trim_line_metrics.padding_bottom],
                     width: colspec[:width],
