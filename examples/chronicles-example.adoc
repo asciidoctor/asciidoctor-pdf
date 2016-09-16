@@ -481,8 +481,8 @@ Here's some content inside an open block.
 
 == Credits
 
-.Brought to you by OpenDevise
-[%header%footer,cols="1,1s,1",grid=rows,frame=topbot,width=70%]
+.Brought to you with icon:heart[] by OpenDevise
+[%header%footer,cols="1,1s,1",grid=rows,frame=topbot,width=70%,caption=]
 |===
 |Name
 |Title
