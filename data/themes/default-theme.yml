@@ -145,7 +145,7 @@ blockquote:
   font_size: $base_font_size_large
   border_color: $base_border_color
   border_width: 5
-  padding: [$vertical_rhythm / 2, $horizontal_rhythm, $vertical_rhythm / -2, $horizontal_rhythm + $blockquote_border_width / 2]
+  padding: [0, $horizontal_rhythm, $block_margin_bottom * -0.75, $horizontal_rhythm + $blockquote_border_width / 2]
   cite_font_size: $base_font_size_small
   cite_font_color: 999999
 # code is used for source blocks (perhaps change to source or listing?)
@@ -174,8 +174,8 @@ example:
 image:
   align: left
 prose:
-  margin_top: 0
-  margin_bottom: $vertical_rhythm
+  margin_top: $block_margin_top
+  margin_bottom: $block_margin_bottom
 sidebar:
   border_color: $page_background_color
   border_radius: $base_border_radius
