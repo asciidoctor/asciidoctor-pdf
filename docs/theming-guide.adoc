@@ -2627,6 +2627,7 @@ If a document uses the book doctype, a blank page will be inserted, if necessary
 * Title page
 * Table of contents
 * First page of body content
+* Parts and chapters (except those which have the nonfacing option set)
 
 Other facing pages may be added in the future.
 

@@ -477,12 +477,11 @@ filler content
 Here's some content inside an open block.
 --
 
-<<<
-
+[appendix]
 == Credits
 
 .Brought to you with icon:heart[] by OpenDevise
-[%header%footer,cols="1,1s,1",grid=rows,frame=topbot,width=70%,caption=]
+[%header%footer,cols="2,2s,3",grid=rows,frame=topbot,width=75%,caption=]
 |===
 |Name
 |Title

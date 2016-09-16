@@ -1801,6 +1801,7 @@ class Converter < ::Prawn::Document
 
   def start_new_chapter chapter
     start_new_page unless at_page_top?
+    start_new_page if @ppbook && verso_page? && !(chapter.option? 'nonfacing')
   end
 
   def layout_chapter_title node, title, opts = {}
