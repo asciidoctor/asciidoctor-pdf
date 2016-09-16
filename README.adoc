@@ -344,6 +344,12 @@ Here's how an inline image is sized.
 The image height is scaled down to 75% of the specified width (px to pt conversion).
 If the image height is more than 1.5x the height of the surrounding line of text, the font size and line metrics of the fragment are modified to fit the image in the line.
 
+== Printing
+
+To print a range of pages as labeled in the document, you need to add the number of front matter pages (the pages labeled with a roman numeral) to the printed page number(s).
+The print dialog doesn't understand the page numbers labels.
+Instead, it only considers the physical pages.
+
 == Optional Scripts
 
 {project-name} also provides a shell script that invokes GhostScript (`gs`) to optimize and compress the generated PDF with minimal impact on quality.
