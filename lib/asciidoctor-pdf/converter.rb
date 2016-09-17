@@ -826,28 +826,26 @@ class Converter < ::Prawn::Document
 
     if image_format == 'gif'
       warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
-      image_path = nil
-      valid_image = false
+      image_path = false
     elsif (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format) &&
         (::File.readable? image_path)
-      valid_image = true
+      # NOTE import_page automatically advances to next page afterwards
+      # QUESTION should we add destination to top of imported page?
+      return import_page image_path if image_format == 'pdf'
     else
       warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
-      valid_image = false
-    end
-
-    if image_format == 'pdf'
-      # NOTE import_page automatically advances to next page afterwards
-      import_page image_path if valid_image
-      return
+      image_path = false
+      # QUESTION should we use alt text in this case?
+      return if image_format == 'pdf'
     end
 
     # QUESTION if we advance to new page, shouldn't dest point there too?
     add_dest_for_block node if node.id
     alignment = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
 
-    unless valid_image
-      theme_margin :block, :top
+    theme_margin :block, :top
+
+    unless image_path
       if (link = node.attr 'link', nil, false)
         alt_text = %(<a href="#{link}">[#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}]</a> | <em>#{target}</em>)
       else
@@ -858,8 +856,6 @@ class Converter < ::Prawn::Document
       theme_margin :block, :bottom
       return
     end
-
-    theme_margin :block, :top
 
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
     width = resolve_explicit_width node.attributes, bounds.width, support_vw: true, use_fallback: true
