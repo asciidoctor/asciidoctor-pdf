@@ -826,6 +826,7 @@ class Converter < ::Prawn::Document
 
     if image_format == 'gif'
       warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
+      image_path = nil
       valid_image = false
     elsif (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format) &&
         (::File.readable? image_path)
@@ -964,7 +965,7 @@ class Converter < ::Prawn::Document
     end
     theme_margin :block, :bottom
   ensure
-    unlink_tmp_file image_path
+    unlink_tmp_file image_path if image_path
   end
 
   # QUESTION can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
