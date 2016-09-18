@@ -289,8 +289,8 @@ The converter will refuse to include an image if the target is a URI unless the 
 
 == Image Scaling
 
-Since PDF is a fixed-width canvas, you almost always need to specify an image width to get the image to fit properly on the page.
-There are four ways to specify the width of the image, listed here in order of precedence:
+Since PDF is a fixed-width canvas, you almost always need to specify a width to get the image to fit properly on the page.
+There are five ways to specify the width of an image, listed here in order of precedence:
 
 [cols="1s,3d"]
 |===
@@ -304,17 +304,21 @@ _Intended to be used for the PDF converter only._
 |The display width of the image as a percentage of the content width (e.g., 75%).
 _Intended to be used for print output such as PDF._
 
+|image_width key from theme
+|Accepts the same values as pdfwidth.
+_Only applies to block images._
+
 |width
 |The unitless display width of the image (assumed to be pixels), typically matching the intrinsic width of the image.
 If the width exceeds the content width, the image is scaled down to the content width.
 
 |_unspecified_
-|If you don't specify one of the width attributes, the intrinsic width of the image is used (the px value is multiplied by 75% to convert to pt) unless the width exceeds the content width, in which case the image is scaled down to the content width.
+|If you don't specify one of the aforementioned width settings, the intrinsic width of the image is used (the px value is multiplied by 75% to convert to pt) unless the width exceeds the content width, in which case the image is scaled down to the content width.
 |===
 
-The sizing is always controlled by the width (explicit or intrinsic) and the size of the image is scaled proporationally.
-The height of the image is ignored by the PDF converter, with one exception.
-If the height of the image exceeds the height of the page, the image is scaled down to fit on a single page.
+The image is always sized according to the explicit or intrinsic width and its height is scaled proporationally.
+The height of the image is ignored by the PDF converter unless the height of the image exceeds the content height of the page.
+In this case, the image is scaled down to fit on a single page.
 
 === Using the pdfwidth Attribute
 
@@ -334,6 +338,16 @@ The pdfwidth attribute supports the following units:
 * vw (percentage of page width)
 
 In all cases, the width is converted to pt.
+
+=== Specifying a default pdfwidth
+
+If you want to scale all block images that don't have a pdfwidth (or scaledwidth) attribute the same, assign a value to the image_width key in your theme.
+
+[source,yaml]
+----
+image:
+  width: 100%
+----
 
 === Inline Image Sizing
 

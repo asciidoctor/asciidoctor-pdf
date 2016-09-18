@@ -177,7 +177,7 @@ Note that keys almost always require a value of a specific type, as documented i
 
 === Inheritance
 
-Like CSS, inheritance is a key feature in the Asciidoctor PDF theme language.
+Like CSS, inheritance is a principle feature in the Asciidoctor PDF theme language.
 For many of the properties, if a key is not specified, the key inherits the value applied to the parent content in the content hierarchy.
 This behavior saves you from having to specify properties unless you want to override the inherited value.
 
