@@ -14,7 +14,6 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Prevent the SVG from modifying the document font (#494)
 * Implement decorative border for multipage quote and verse blocks (#270, #557, #558)
 * Encode anchors in hex that contain characters outside of ASCII range (#481, #301)
-* Clear the placeholder text used for an anchor to fix CannotFit error in table cell (#447)
 * Size the line number gutter correctly (accounting for width of largest line number) (#402)
 * Allow theme to specify default value for pdfwidth attribute on image (#455)
 * Fix front matter page numbering by adding page labels for all front matter pages in outline (#458)
