@@ -1943,17 +1943,17 @@ class Converter < ::Prawn::Document
           # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
           go_to_page start_page_number if start_page_number != end_page_number
           move_cursor_to start_cursor
-          sect_explicit_pgnum = (sect.attr 'pdf-page-start') - num_front_matter_pages
+          sect_pgnum_label = (sect.attr 'pdf-page-start') - num_front_matter_pages
           spacer_width = (width_of NoBreakSpace) * 0.75
           # FIXME this calculation will be wrong if a style is set per level
-          num_dots = ((bounds.width - (width_of %(#{sect_title}#{sect_explicit_pgnum}), inline_format: true) - spacer_width) / dot_width).floor
+          num_dots = ((bounds.width - (width_of %(#{sect_title}#{sect_pgnum_label}), inline_format: true) - spacer_width) / dot_width).floor
           num_dots = 0 if num_dots < 0
           # FIXME dots don't line up if width of page numbers differ
           typeset_formatted_text [
             { text: %(#{(@theme.toc_dot_leader_content || DotLeaderDefault) * num_dots}), color: toc_dot_color },
             # FIXME this spacing doesn't always work out; should we use graphics instead?
             { text: NoBreakSpace, size: (@font_size * 0.5) },
-            { text: sect_explicit_pgnum.to_s, anchor: sect_anchor, color: @font_color }], line_metrics, align: :right
+            { text: sect_pgnum_label.to_s, anchor: sect_anchor, color: @font_color }], line_metrics, align: :right
           go_to_page end_page_number if start_page_number != end_page_number
           move_cursor_to end_cursor
         end
@@ -2183,19 +2183,19 @@ class Converter < ::Prawn::Document
     repeat (start..page_count), dynamic: true do
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
-      explicit_pgnum = page_number - skip
+      pgnum_label = page_number - skip
       # QUESTION should we respect physical page number or just look at the content page number?
-      side = page_side explicit_pgnum
+      side = page_side pgnum_label
       # FIXME we need to have a content setting for chapter pages
       content_by_position = content_dict[side]
       colspec_by_position = colspec_dict[side]
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
       # FIXME leave page-number attribute unset once we filter lines with unresolved attributes (see below)
-      doc.set_attr 'page-number', (pagenums_enabled ? explicit_pgnum : '')
-      doc.set_attr 'chapter-title', (chapters_by_page[explicit_pgnum] || '')
-      doc.set_attr 'section-title', (sections_by_page[explicit_pgnum] || '')
-      doc.set_attr 'section-or-chapter-title', (sections_by_page[explicit_pgnum] || chapters_by_page[explicit_pgnum] || '')
+      doc.set_attr 'page-number', (pagenums_enabled ? pgnum_label : '')
+      doc.set_attr 'chapter-title', (chapters_by_page[pgnum_label] || '')
+      doc.set_attr 'section-title', (sections_by_page[pgnum_label] || '')
+      doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum_label] || chapters_by_page[pgnum_label] || '')
 
       stamp trim_stamp_name[side] if stamps[periphery]
 
@@ -2221,7 +2221,7 @@ class Converter < ::Prawn::Document
                 end
               when ::String
                 if content == '{page-number}'
-                  content = pagenums_enabled ? explicit_pgnum.to_s : nil
+                  content = pagenums_enabled ? pgnum_label.to_s : nil
                 else
                   # FIXME get apply_subs to handle drop-line w/o a warning
                   doc.set_attr 'attribute-missing', 'skip' unless attribute_missing_doc == 'skip'
@@ -2283,8 +2283,8 @@ class Converter < ::Prawn::Document
     sections.each do |sect|
       sect_title = sanitize sect.numbered_title formal: true
       sect_destination = sect.attr 'pdf-destination'
-      sect_explicit_pgnum = (sect_pgnum = sect.attr 'pdf-page-start') - num_front_matter_pages
-      page_num_labels[sect_pgnum - 1] = { P: ::PDF::Core::LiteralString.new(sect_explicit_pgnum.to_s) }
+      sect_pgnum_label = (sect_pgnum = sect.attr 'pdf-page-start') - num_front_matter_pages
+      page_num_labels[sect_pgnum - 1] = { P: ::PDF::Core::LiteralString.new(sect_pgnum_label.to_s) }
       if (subsections = sect.sections).empty? || sect.level == num_levels
         outline.page title: sect_title, destination: sect_destination
       elsif sect.level < num_levels + 1
