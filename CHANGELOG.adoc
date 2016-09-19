@@ -7,7 +7,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == 1.5.0.alpha.13 (2016-09-19) - @mojavelinux
 
-* Add support for double-sided (recto/verso) margins when media=prepress attribute is set (#383)
+* Add support for mirror (recto/verso) margins and facing pages when media=prepress
 * Add non-breaking hyphen glyph to built-in fonts so its intended behavior is honored (#462)
 * Add page break before a book part (#329)
 * Allow running (header/footer) content to be arranged in columns (#449)
