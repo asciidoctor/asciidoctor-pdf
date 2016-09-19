@@ -5,34 +5,39 @@
 
 == TODO
 
-.1.5.0.alpha.13
-* ensure book chapters and parts start on recto page when @ppbook (using start_new_chapter / start_new_page methods?)
-  - need a way to add excludes
-* should we use the term "column" instead of "placement" in running content
-
-//--
+* use <a id=""></a> instead of <a name=""></a> for anchor point in formatted text
+  - benchmark to see if it's faster to use empty or non-empty element in parser
+* rename "convert_context_for_" since it can collide with existing blocks
+* rework resolve_image_path API so it's more logical; override based on type of first argument; document as option
+* implicit width of inline image calculated incorrectly (see sandbox/issue-494)
+* QUESTION should we report full image path of gif in warning message?
+* QUESTION should we add destination to top of imported PDF page?
+  - import page should accept id as section, optional argument
+* leading (line height) isn't applied when content is split across pages
 * generate fonts without PS Glyph Names to reduce file size (waiting PR #550 to be marged)
   - create script that can generate fonts entirely from original font source
-* FIXME if a page is left empty, writing running content on it causes ghostscript to report an error
-  - problem is no color space is set; can call update_colors to fix
-  - maybe have a skip_page helper?
-  - doesn't yet apply since we don't yet insert blank pages in content
+* if start_new_page is called at end of layout_chapter_title, and media=prepress, ghostscript reports an error
+  - problem is no color space is set; can fix by calling update_colors before advancing to recto page in start_new_chapter
+  - maybe introduce a skip_page helper to combine these operations?
 * SIMPLE: document vw/vh measurement units in theming guide (make it clear it only applies in certain cases)
 * SIMPLE: in theming guide, emphasize not using the fallback font when working with very large documents; explain that default theme uses a fallback font
-* rework resolve_image_path API so it's more logical; override based on type of first argument; document as option
 * document how to test / use a PR
   - see https://github.com/asciidoctor/asciidoctor-pdf/issues/462#issuecomment-246200953
 * FILE ISSUE break printed URIs at each forward slash (and perhaps at ? and & too)
 * add empty? method to Page (instead of page_empty? on document)
 * SIMPLE: add warning that AsciiDoc table cell content is not supported; print as raw source
-* implicit width of inline image calculated incorrectly (see sandbox/issue-494)
 * FILE ISSUE in prawn-svg not to move cursor (maybe an option?)
 * FILE ISSUE: prevent import_page from adding an extra page; leaves blank page when placing two inserts in a row
   - have import_page first delete current page if page is empty
+* FILE ISSUE in prawn: go_to_page should accept second argument that is cursor position
 * autowidth causes cells in header row to break word (wraps by char to fit; does not expand table)
-* dry_run should start at cursor of main document (or as option); total height calculation would need to be revised
+* UNRESOLVED: dry_run should start at cursor of main document (or as option); total height calculation would need to be revised
+  - box_height isn't currently accurate when it spans more than one page
   - this should fix height calculation when content is split over a page break (leaving small amount of excess)
+  - however, if cursor is advanced to fit content on page, then that excess will cause box_height to be too large
+  - life would be simpler if Prawn allowed us to draw graphics at bottom layer
 * allow height of inline image to be set to line height (perhaps 1em?)
+* space around inline anchors/index entries doesn't get collapsed by text formatter
 * add support for format attribute on image macro to image-related attributes such as title-page-background-image
   - support explicit image format for cover page image and page background image
 * need some sort of post_construct method for converter that receives document
@@ -341,6 +346,11 @@
   - in fact, must account for every page or else numbering lags behind when scrolling document
 * if we set the vposition on image to a numeric value, it skips the overrun check that happens internally
 * any instance variables referenced by converter methods for inline nodes could get accessed before the converter for document is called
+* Evince throws warning when printing PDF if & is used in document title; but this is valid according to the PDF specification
+* Prawn drops fragments with empty text (hence the need to use zero-width space)
+  - analyze_glyphs_for_fallback_font_support drops fragments with empty text
+  - later on, initialize_wrap drops fragment with empty text
+* use term "page number label" to refer to the visible, printed page number (not the implicit page number)
 
 == Potential Optimizations
 
@@ -358,8 +368,9 @@
 
 == Implementation
 
-* should we read SVG file using UTF-8 encoding; REXML seems to handle encoding
+* should we read SVG file using UTF-8 encoding; or does REXML handle encoding?
 * can we leverage before_rendering_page callback on table?
+* should we use move_past_bottom in some places instead of start_new_page?
 
 === Design
 
