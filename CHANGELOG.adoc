@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== 1.5.0.alpha.13 (unreleased)
+== 1.5.0.alpha.13 (2016-09-19) - @mojavelinux
 
 * Add support for double-sided (recto/verso) margins when media=prepress attribute is set (#383)
 * Add non-breaking hyphen glyph to built-in fonts so its intended behavior is honored (#462)
@@ -15,7 +15,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Implement decorative border for multipage quote and verse blocks (#270, #557, #558)
 * Encode anchors in hex that contain characters outside of ASCII range (#481, #301)
 * Size the line number gutter correctly (accounting for width of largest line number) (#402)
-* Allow theme to specify default value for pdfwidth attribute on image (#455)
+* Allow theme to specify default value for pdfwidth attribute on image and document in README (#455)
 * Fix front matter page numbering by adding page labels for all front matter pages in outline (#458)
 * Allow image type to be specified explicitly using format attribute on image macro (#540)
 * Add support for literal and verse table cell styles
