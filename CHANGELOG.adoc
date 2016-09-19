@@ -10,7 +10,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Add support for double-sided (recto/verso) margins when media=prepress attribute is set (#383)
 * Add non-breaking hyphen glyph to built-in fonts so its intended behavior is honored (#462)
 * Add page break before a book part (#329)
-* Allow running (header/footer) content to be arrange in columns (#449)
+* Allow running (header/footer) content to be arranged in columns (#449)
+* Allow font properties to be set per element in running content (#454)
 * Prevent the SVG from modifying the document font (#494)
 * Implement decorative border for multipage quote and verse blocks (#270, #557, #558)
 * Encode anchors in hex that contain characters outside of ASCII range (#481, #301)
@@ -22,7 +23,6 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Preserve indentation in literal and verse table cells
 * Preserve paragraph breaks in normal table cells
 * Honor value of width attribute even when autowidth option is set on table (#519)
-* Allow font properties to be set per element in running content (#454)
 * Align table title to left edge of table, regardless of table alignment (#469)
 * Add support for reversed option on ordered list (#491)
 * Don't drop whitespace in front of conum on final line of source block (#470)
