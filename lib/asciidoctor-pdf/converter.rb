@@ -2363,9 +2363,8 @@ class Converter < ::Prawn::Document
       if cursor > y
         move_down y
       else
-        # go to the next page
-        # NOTE we don't use `move_down cursor` because we often have to check at_page_top?
-        @margin_box.move_past_bottom
+        # set cursor at top of next page
+        reference_bounds.move_past_bottom
       end
     end
   end
