@@ -38,6 +38,8 @@ module Extensions
 
   # Returns the effective (writable) width of the page
   #
+  # If inside a fixed-height bounding box, returns height of box.
+  #
   def effective_page_width
     reference_bounds.width
   end
@@ -49,6 +51,8 @@ module Extensions
   end
 
   # Returns the effective (writable) height of the page
+  #
+  # If inside a fixed-height bounding box, returns width of box.
   #
   def effective_page_height
     reference_bounds.height
