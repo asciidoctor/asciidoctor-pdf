@@ -478,12 +478,18 @@ module Extensions
       # TODO implement shorthand combinations like in CSS
       p_top, p_right, p_bottom, p_left = (padding.is_a? ::Array) ? padding : ([padding] * 4)
       begin
-        # inlined logic
+        # logic is intentionally inlined
         move_down p_top
         bounds.add_left_padding p_left
         bounds.add_right_padding p_right
         yield
-        move_down p_bottom
+        # NOTE support negative bottom padding for use with quote block
+        if p_bottom < 0
+          # QUESTION should we return to previous page if top of page is reached?
+          p_bottom < cursor - reference_bounds.top ? (move_cursor_to reference_bounds.top) : (move_down p_bottom)
+        else
+          p_bottom < cursor ? (move_down p_bottom) : reference_bounds.move_past_bottom
+        end
       ensure
         bounds.subtract_left_padding p_left
         bounds.subtract_right_padding p_right
