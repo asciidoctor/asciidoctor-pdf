@@ -559,6 +559,7 @@ class Converter < ::Prawn::Document
         end
       end
       # FIXME we want to draw graphics before content, but box_height is not reliable when spanning pages
+      # FIXME border may run too long if block terminates at bottom of page
       if box_height
         page_spread = (end_page_number = page_number) - start_page_number + 1
         end_cursor = cursor
@@ -573,9 +574,10 @@ class Converter < ::Prawn::Document
             y_draw = cursor
             b_height = page_spread - 1 == i ? (y_draw - end_cursor) : y_draw
           end
+          # NOTE b_height is 0 when block terminates at bottom of page
           bounding_box [0, y_draw], width: bounds.width, height: b_height do
             stroke_vertical_rule b_color, line_width: b_width, at: b_width / 2.0
-          end
+          end unless b_height == 0
         end
       end
     end
