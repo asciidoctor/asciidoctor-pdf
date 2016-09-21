@@ -2571,9 +2571,9 @@ These settings override equivalent keys defined in the theme file, where applica
 |flag (default: _on_)
 |:pagenums:
 
-//|pdf-page-layout
-//|portrait {vbar} landscape
-//|:pdf-page-layout: landscape
+|pdf-page-layout
+|portrait {vbar} landscape
+|:pdf-page-layout: landscape
 
 |pdf-page-size
 |https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width, height]>>
