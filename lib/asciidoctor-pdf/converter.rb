@@ -246,7 +246,7 @@ class Converter < ::Prawn::Document
       #optimize_objects: true,
       info: (build_pdf_info doc),
       margin: theme.page_margin,
-      page_layout: theme.page_layout.to_sym,
+      page_layout: ((doc.attr 'pdf-page-layout') || theme.page_layout).to_sym,
       skip_page_creation: true,
     }
 
