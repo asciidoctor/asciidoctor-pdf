@@ -543,6 +543,7 @@ class Converter < ::Prawn::Document
     keep_together do |box_height = nil|
       start_page_number = page_number
       start_cursor = cursor
+      caption_height = node.title? ? (layout_caption node) : 0
       pad_box @theme.blockquote_padding do
         theme_font :blockquote do
           if node.context == :quote
@@ -573,6 +574,16 @@ class Converter < ::Prawn::Document
             bounds.move_past_bottom
             y_draw = cursor
             b_height = page_spread - 1 == i ? (y_draw - end_cursor) : y_draw
+          end
+          # NOTE skip past caption if present
+          if caption_height > 0
+            if caption_height > cursor
+              caption_height -= cursor
+              next # keep skipping, caption is on next page
+            end
+            y_draw -= caption_height
+            b_height -= caption_height
+            caption_height = 0
           end
           # NOTE b_height is 0 when block terminates at bottom of page
           bounding_box [0, y_draw], width: bounds.width, height: b_height do
