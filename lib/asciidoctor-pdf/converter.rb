@@ -1,6 +1,10 @@
 # encoding: UTF-8
 # TODO cleanup imports...decide what belongs in asciidoctor-pdf.rb
 require 'prawn'
+begin
+  require 'prawn/gmagick'
+rescue LoadError
+end unless defined? GMagick::Image
 require 'prawn-svg'
 require 'prawn/table'
 require 'prawn/templates'
@@ -837,8 +841,8 @@ class Converter < ::Prawn::Document
     node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
     target, image_format = node.target_and_format
 
-    if image_format == 'gif'
-      warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
+    if image_format == 'gif' && !(defined? ::GMagick::Image)
+      warn %(asciidoctor: WARNING: GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
       image_path = false
     elsif (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format) &&
         (::File.readable? image_path)
@@ -1594,8 +1598,8 @@ class Converter < ::Prawn::Document
     else
       node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
       target, image_format = node.target_and_format
-      if image_format == 'gif'
-        warn %(asciidoctor: WARNING: GIF image format not supported. Please convert #{target} to PNG.) unless scratch?
+      if image_format == 'gif' && !(defined? ::GMagick::Image)
+        warn %(asciidoctor: WARNING: GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
         img = %([#{node.attr 'alt'}])
       elsif (image_path = resolve_image_path node, target, true, image_format) && (::File.readable? image_path)
         width_attr = (node.attr? 'width', nil, false) ? %( width="#{node.attr 'width'}") : nil
