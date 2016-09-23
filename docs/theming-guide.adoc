@@ -2193,11 +2193,11 @@ The keys in this category control the arrangement and style of the table of cont
   dot_leader:
     content: ". "
 
-|color
+|font_color
 |<<colors,Color>>
 |toc:
   dot_leader:
-    color: #999999
+    font_color: #999999
 |===
 
 . `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
