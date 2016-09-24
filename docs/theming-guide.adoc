@@ -2557,17 +2557,22 @@ These settings override equivalent keys defined in the theme file, where applica
 
 |chapter-label
 |string (default: Chapter)
-|:chapter-label: Chapter
+|:chapter-label: Chapitre
 
-|<face>-cover-image
-|inline image macro (target is relative to `imagesdir`; can be image or PDF file)
+|<face>-cover-image^[1]^
+|path^[2]^ {vbar} image macro^[3]^ +
+(format can be image or PDF)
 |+:front-cover-image: image:front-cover.pdf[]+
 
 |media
 |screen {vbar} print {vbar} prepress
 |:media: prepress
 
-|pagenums^[2]^
+|page-background-image
+|path^[2]^ {vbar} image macro^[3]^
+|+:page-background-image: image:bg.jpg[]+
+
+|pagenums^[4]^
 |flag (default: _on_)
 |:pagenums:
 
@@ -2580,11 +2585,17 @@ These settings override equivalent keys defined in the theme file, where applica
 |:pdf-page-size: 6in x 9in
 
 |title-logo-image
-|inline image macro (path is relative to `imagesdir`; can be image or PDF file)
+|path^[2]^ {vbar} image macro^[3]^
 |+:title-logo-image: image:logo.png[top=25%, align=center, pdfwidth=0.5in]+
+
+|title-page-background-image
+|path^[2]^ {vbar} image macro^[3]^
+|+:title-page-background-image: image:title-bg.jpg[]+
 |===
 
 . `<face>` can be `front` or `back`.
+. The path is resolved relative to base_dir.
+. The target of the image macro is resolved relative to `imagesdir`.
 . Controls whether the `page-number` attribute is accessible to the running header and footer content specified in the theme file.
 Use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively, from the document.
 
