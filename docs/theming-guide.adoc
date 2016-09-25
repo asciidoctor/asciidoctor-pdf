@@ -1819,6 +1819,40 @@ The keys in this category control the arrangement and style of the abstract.
 (default: 0)
 |abstract:
   padding: [0, 12, 0, 12]
+
+3+|*Key Prefix:* abstract_title
+
+|align
+|<<text-alignments,Text alignment>> +
+(default: center)
+|sidebar:
+  title:
+    align: center
+
+|font_color
+|<<colors,Color>>
+|sidebar:
+  title:
+    font_color: #333333
+
+|font_family
+|<<fonts,Font family name>>
+|sidebar:
+  title:
+    font_family: Noto Serif
+
+|font_size
+|<<values,Number>>
+|sidebar:
+  title:
+    font_size: 13
+
+|font_style
+|<<font-styles,Font style>> +
+(default: bold)
+|sidebar:
+  title:
+    font_style: bold
 |===
 
 === Thematic Break

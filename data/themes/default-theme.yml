@@ -131,6 +131,12 @@ abstract:
   line_height: $lead_line_height
   font_style: italic
   first_line_font_style: bold
+  title:
+    align: center
+    font_color: $heading_font_color
+    font_family: $heading_font_family
+    font_size: $heading_h4_font_size
+    font_style: $heading_font_style
 admonition:
   border_color: $base_border_color
   border_width: $base_border_width

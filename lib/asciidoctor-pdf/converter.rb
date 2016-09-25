@@ -374,6 +374,11 @@ class Converter < ::Prawn::Document
   def convert_abstract node
     add_dest_for_block node if node.id
     pad_box @theme.abstract_padding do
+      if node.title?
+        theme_font :abstract_title do
+          layout_heading node.title, align: (@theme.abstract_title_align || @theme.base_align).to_sym
+        end
+      end
       theme_font :abstract do
         prose_opts = { line_height: @theme.abstract_line_height }
         # FIXME control more first_line_options using theme
