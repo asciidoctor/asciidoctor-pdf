@@ -523,18 +523,15 @@ class Converter < ::Prawn::Document
   end
 
   def convert_open node
-    case node.style
-    when 'abstract'
+    if node.style == 'abstract'
       convert_abstract node
-    when 'partintro'
-      if node.blocks.size == 1 && node.blocks.first.style == 'abstract'
-        convert_abstract node.blocks.first
-      else
-        add_dest_for_block node if node.id
-        convert_content_for_block node
-      end
+    elsif node.style == 'partintro' && node.blocks.size == 1 && node.blocks.first.style == 'abstract'
+      # TODO process block title and id
+      # TODO process abstract child even when partintro has multiple blocks
+      convert_abstract node.blocks.first
     else
       add_dest_for_block node if node.id
+      layout_caption node.title if node.title?
       convert_content_for_block node
     end
   end
