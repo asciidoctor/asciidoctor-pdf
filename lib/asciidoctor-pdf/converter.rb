@@ -1335,7 +1335,7 @@ class Converter < ::Prawn::Document
     table_data = [[{ content: '' }]] if table_data.empty?
 
     border = {}
-    table_border_color = theme.table_border_color
+    table_border_color = theme.table_border_color || table_grid_color || theme.base_border_color
     table_border_width = theme.table_border_width
     table_grid_width = theme.table_grid_width || theme.table_border_width
     [:top, :bottom, :left, :right].each {|edge| border[edge] = table_border_width }
@@ -1392,7 +1392,7 @@ class Converter < ::Prawn::Document
         padding: theme.table_cell_padding,
         border_width: 0,
         # NOTE the border color of edges is set later
-        border_color: theme.table_grid_color || theme.table_border_color
+        border_color: theme.table_grid_color || theme.table_border_color || theme.base_border_color
       },
       width: table_width,
       column_widths: column_widths,
