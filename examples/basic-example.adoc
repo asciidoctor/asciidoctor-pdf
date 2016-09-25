@@ -1,6 +1,7 @@
 = Document Title
 Doc Writer <doc@example.com>
 :doctype: book
+:reproducible:
 //:source-highlighter: coderay
 :source-highlighter: rouge
 :listing-caption: Listing

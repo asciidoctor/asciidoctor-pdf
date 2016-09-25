@@ -7,6 +7,7 @@ Open Source.
 :doctype: book
 // Settings:
 :experimental:
+:reproducible:
 :icons: font
 :listing-caption: Listing
 :sectnums:
