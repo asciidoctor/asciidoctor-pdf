@@ -184,20 +184,20 @@ class Transform
       #  fragment[:character_spacing] = value.to_f
       #end
     when :a
-      # QUESTION shouldn't anchor, link and name be mutually exclusive?
-      if !fragment[:anchor] && (value = attrs[:anchor])
-        fragment[:anchor] = value
-      end
-      if !fragment[:link] && (value = attrs[:href])
-        fragment[:link] = (value.include? '&') ? value.gsub(CharRefRx) {
-          $2 ? CharEntityTable[$2.to_sym] : [$1.to_i].pack('U*')
-        } : value
-      end
-      if !fragment[:name] && (value = attrs[:name])
-        # NOTE ZeroWidthSpace is used as placeholder text so Prawn doesn't drop fragment
-        #fragment[:text] = ZeroWidthSpace
-        fragment[:name] = value
-        fragment[:callback] = InlineDestinationMarker
+      # a element can have no attributes; short-circuit if that's the case
+      unless attrs.empty?
+        # NOTE href, anchor, and name are mutually exclusive; nesting not supported
+        if (value = attrs[:anchor])
+          fragment[:anchor] = value
+        elsif (value = attrs[:href])
+          fragment[:link] = (value.include? ';') ? value.gsub(CharRefRx) {
+            $2 ? CharEntityTable[$2.to_sym] : ([$1.to_i].pack 'U*')
+          } : value
+        elsif (value = attrs[:name])
+          # NOTE ZeroWidthSpace is used as placeholder text so Prawn doesn't drop fragment
+          fragment[:name] = value
+          fragment[:callback] = InlineDestinationMarker
+        end
       end
       fragment[:color] ||= @link_font_color
     when :sub
