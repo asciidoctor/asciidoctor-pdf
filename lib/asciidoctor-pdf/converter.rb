@@ -1944,19 +1944,23 @@ class Converter < ::Prawn::Document
     sections.each do |sect|
       theme_font :toc, level: (sect.level + 1) do
         sect_title = @text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title
-        # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
-        start_page_number = page_number
-        start_cursor = cursor
-        # NOTE CMYK value gets flattened here, but is restored by formatted text parser
-        # FIXME use layout_prose
-        typeset_text %(<a anchor="#{sect_anchor = sect.attr 'pdf-anchor'}"><color rgb="#{@font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
-        # we only write the label if this is a dry run
-        unless scratch?
+        if scratch?
+          # FIXME use layout_prose
+          # NOTE must wrap title in empty anchor element in case links are styled with different font family / size
+          typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true
+        else
+          # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
+          start_page_number = page_number
+          start_cursor = cursor
+          # FIXME use layout_prose
+          # NOTE CMYK value gets flattened here, but is restored by formatted text parser
+          typeset_text %(<a anchor="#{sect_anchor = sect.attr 'pdf-anchor'}"><color rgb="#{@font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
           end_page_number = page_number
           end_cursor = cursor
           # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
           go_to_page start_page_number if start_page_number != end_page_number
           move_cursor_to start_cursor
+          # NOTE only write the label if this is not a dry run
           sect_pgnum_label = (sect.attr 'pdf-page-start') - num_front_matter_pages
           spacer_width = (width_of NoBreakSpace) * 0.75
           # FIXME this calculation will be wrong if a style is set per level
