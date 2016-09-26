@@ -410,10 +410,11 @@ module Extensions
 
   # Apply the text transform to the specified text.
   #
-  # Supported transform values are "uppercase" or "lowercase" (passed as either
-  # a String or a Symbol). When the uppercase transform is applied to the text,
-  # it correctly uppercases visible text while leaving markup and named
-  # character entities unchanged.
+  # Supported transform values are "uppercase", "lowercase", or "none" (passed
+  # as either a String or a Symbol). When the uppercase transform is applied to
+  # the text, it correctly uppercases visible text while leaving markup and
+  # named character entities unchanged. The none transform returns the text
+  # unmodified.
   #
   def transform_text text, transform
     case transform
@@ -421,6 +422,8 @@ module Extensions
       upcase_pcdata text
     when :lowercase, 'lowercase'
       text.downcase
+    else
+      text
     end
   end
 

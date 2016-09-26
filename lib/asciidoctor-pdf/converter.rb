@@ -1228,7 +1228,9 @@ class Converter < ::Prawn::Document
     table_data = []
     node.rows[:head].each do |rows|
       table_header = true
-      head_transform = theme.table_head_text_transform
+      if (head_transform = theme.table_head_text_transform)
+        head_transform = nil if head_transform == 'none'
+      end
       row_data = []
       rows.each do |cell|
         row_data << {
@@ -1459,7 +1461,7 @@ class Converter < ::Prawn::Document
         foot_row.font = theme.table_foot_font_family if theme.table_foot_font_family
         foot_row.font_style = theme.table_foot_font_style.to_sym if theme.table_foot_font_style
         # HACK we should do this transformation when creating the cell
-        #if (foot_transform = theme.table_foot_text_transform)
+        #if (foot_transform = theme.table_foot_text_transform) && foot_transform != 'none'
         #  foot_row.each {|c| c.content = (transform_text c.content, foot_transform) if c.content }
         #end
       end
@@ -1832,7 +1834,7 @@ class Converter < ::Prawn::Document
   def layout_heading string, opts = {}
     top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.heading_margin_top
     bot_margin = margin || (opts.delete :margin_bottom) || @theme.heading_margin_bottom
-    if (transform = (opts.delete :text_transform) || @text_transform)
+    if (transform = (opts.delete :text_transform) || @text_transform) && transform != 'none'
       string = transform_text string, transform
     end
     margin_top top_margin
@@ -1848,7 +1850,7 @@ class Converter < ::Prawn::Document
   def layout_prose string, opts = {}
     top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.prose_margin_top
     bot_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom
-    if (transform = (opts.delete :text_transform) || @text_transform)
+    if (transform = (opts.delete :text_transform) || @text_transform) && transform != 'none'
       string = transform_text string, transform
     end
     if (anchor = opts.delete :anchor)
@@ -1948,7 +1950,10 @@ class Converter < ::Prawn::Document
     toc_dot_color = @theme.toc_dot_leader_font_color || @theme.toc_font_color || @font_color
     sections.each do |sect|
       theme_font :toc, level: (sect.level + 1) do
-        sect_title = @text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title
+        sect_title = sect.numbered_title
+        if (transform = @text_transform) && transform != 'none'
+          sect_title = transform_text sect_title, transform
+        end
         if scratch?
           # FIXME use layout_prose
           # NOTE must wrap title in empty anchor element in case links are styled with different font family / size
