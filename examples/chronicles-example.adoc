@@ -483,9 +483,7 @@ Here's some content inside an open block.
 .Brought to you with icon:heart[] by OpenDevise
 [%header%footer,cols="2,2s,3",grid=rows,frame=topbot,width=75%,caption=]
 |===
-|Name
-|Title
-|Alias
+|Name |Title |Alias
 
 |Sarah White
 |President
