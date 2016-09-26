@@ -52,6 +52,8 @@ caption_margin_outside: 0
 abstract_font_size: 13.5
 abstract_line_height: 1.4
 abstract_padding: 0
+abstract_title_align: center
+abstract_title_font_style: bold
 admonition_border_color: 'EEEEEE'
 admonition_border_width: 0.5
 admonition_padding: [0, 12, 0, 12]
