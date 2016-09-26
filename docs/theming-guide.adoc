@@ -187,9 +187,9 @@ The following keys are inherited:
 * font_color
 * font_size
 * font_style
+* text_transform
 * line_height (currently some exceptions)
-* text_transform (only for headings)
-* margin_bottom (falls back to $vertical_spacing)
+* margin_bottom (if not specified, defaults to $vertical_spacing)
 
 .Heading Inheritance
 ****
@@ -848,6 +848,24 @@ It's common to define additional keys in this category (e.g., `base_border_radiu
 |base:
   align: justify
 
+|border_color
+|<<colors,Color>> +
+(default: #eeeeee)
+|base:
+  border_color: #eeeeee
+
+// border_radius is variable, not an official key
+//|border_radius
+//|<<values,Number>>
+//|base:
+//  border_radius: 4
+
+|border_width
+|<<values,Number>> +
+(default: 0.5)
+|base:
+  border_width: 0.5
+
 |font_color
 |<<colors,Color>> +
 (default: #000000)
@@ -866,16 +884,11 @@ It's common to define additional keys in this category (e.g., `base_border_radiu
 |base:
   font_size: 10.5
 
-// font_size_large and font_size_small aren't official keys
+// font_size_large is a variable, not an official key
 //|font_size_large
 //|<<values,Number>>
 //|base:
 //  font_size_large: 13
-//
-//|font_size_small
-//|<<values,Number>>
-//|base:
-//  font_size_small: 9
 
 |font_size_min
 |<<values,Number>> +
@@ -883,45 +896,41 @@ It's common to define additional keys in this category (e.g., `base_border_radiu
 |base:
   font_size_min: 6
 
+// font_size_small is a variable, not an official key
+//|font_size_small
+//|<<values,Number>>
+//|base:
+//  font_size_small: 9
+
 |font_style
 |<<font-styles,Font style>> +
 (default: normal)
 |base:
   font_style: normal
 
-|line_height_length^[1]^
+|text_transform^[1]^
+|none +
+(default: none)
+|(n/a)
+
+|line_height_length^[2]^
 |<<values,Number>> +
 (default: 13.8)
 |base:
   line_height_length: 12
 
-|line_height^[1]^
+|line_height^[2]^
 |<<values,Number>> +
 (default: 1.15)
 |base:
   line_height: >
     $base_line_height_length /
     $base_font_size
-
-// border_radius is not an official key
-//|border_radius
-//|<<values,Number>>
-//|base:
-//  border_radius: 4
-
-|border_width
-|<<values,Number>> +
-(default: 0.5)
-|base:
-  border_width: 0.5
-
-|border_color
-|<<colors,Color>> +
-(default: #eeeeee)
-|base:
-  border_color: #eeeeee
 |===
 
+. The `text_transform` key cannot be set globally.
+Therefore, this key should not be used.
+The value of `none` is implicit and is documented here for completeness.
 . You should set one of `line_height` or `line_height_length`, then derive the value of the other using a calculation as these are correlated values.
 For instance, if you set `line_height_length`, then use `$base_line_height_length / $base_font_size` as the value of `line_height`.
 
@@ -983,7 +992,8 @@ The keys in this category are used for inline monospaced text in prose and table
 3+|*Key Prefix:* literal
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |literal:
   font_color: #b12146
 
@@ -994,12 +1004,14 @@ The keys in this category are used for inline monospaced text in prose and table
   font_family: M+ 1mn
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |literal:
   font_size: 12
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: normal)
 |literal:
   font_style: bold
 |===
@@ -1044,6 +1056,12 @@ The keys in this category control the style of most headings, including part tit
 |heading:
   font_style: bold
 
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|heading:
+  text_transform: uppercase
+
 |line_height
 |<<values,Number>> +
 (default: 1.15)
@@ -1061,12 +1079,6 @@ The keys in this category control the style of most headings, including part tit
 (default: 12)
 |heading:
   margin_bottom: 9.6
-
-|text_transform
-|none {vbar} uppercase {vbar} lowercase +
-(default: none)
-|heading:
-  text_transform: uppercase
 
 3+|*Key Prefix:* heading_h<n>^[1]^
 
@@ -1090,7 +1102,7 @@ The keys in this category control the style of most headings, including part tit
 
 |font_size^[1]^
 |<<values,Number>> +
-(default: h1=24; h2=18; h3=16; h4=14; h5=12; h6=10)
+(default: <1>=24; <2>=18; <3>=16; <4>=14; <5>=12; <6>=10)
 |heading:
   h6_font_size: $base_font_size * 1.7
 
@@ -1152,12 +1164,18 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 |font_size
 |<<values,Number>>
 |title_page:
-  font_size: $base_font_size_large
+  font_size: 13
 
 |font_style
 |<<font-styles,Font style>>
 |title_page:
   font_style: bold
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|title_page:
+  text_transform: uppercase
 
 |line_height
 |<<values,Number>> +
@@ -1213,6 +1231,13 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   title:
     font_style: bold
 
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|title_page:
+  title:
+    text_transform: uppercase
+
 |line_height
 |<<values,Number>>
 |title_page:
@@ -1253,6 +1278,13 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   subtitle:
     font_style: bold_italic
 
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|title_page:
+  subtitle:
+    text_transform: uppercase
+
 |line_height
 |<<values,Number>>
 |title_page:
@@ -1277,13 +1309,20 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 |<<values,Number>>
 |title_page:
   authors:
-    font_size: $base_font_size_large
+    font_size: 13
 
 |font_style
 |<<font-styles,Font style>>
 |title_page:
   authors:
     font_style: bold_italic
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|title_page:
+  authors:
+    text_transform: uppercase
 
 |margin_top
 |<<measurement-units,Measurement>> +
@@ -1317,6 +1356,13 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 |title_page:
   revision:
     font_style: bold
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|title_page:
+  revision:
+    text_transform: uppercase
 
 |margin_top
 |<<measurement-units,Measurement>>
@@ -1413,6 +1459,12 @@ The keys in this category control the arrangement and style of block captions.
 (default: italic)
 |caption:
   font_style: italic
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|caption:
+  text_transform: uppercase
 
 |margin_inside
 |<<measurement-units,Measurement>> +
@@ -1537,6 +1589,12 @@ The keys in this category control the arrangement and style of quote blocks.
 |blockquote:
   font_style: bold
 
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|blockquote:
+  text_transform: uppercase
+
 |padding
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: [6, 12, -6, 14])
@@ -1568,6 +1626,13 @@ The keys in this category control the arrangement and style of quote blocks.
 |blockquote:
   cite:
     font_style: bold
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|blockquote:
+  cite:
+    text_transform: uppercase
 |===
 
 === Sidebar
@@ -1600,6 +1665,30 @@ The keys in this category control the arrangement and style of sidebar blocks.
 |<<values,Number>>
 |sidebar:
   border_width: 0.5
+
+|font_color
+|<<colors,Color>> +
+(default: _inherit_)
+|sidebar:
+  font_color: #262626
+
+|font_family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|sidebar:
+  font_family: M+ 1p
+
+|font_size
+|<<values,Number>> +
+(default: _inherit_)
+|sidebar:
+  font_size: 13
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: _inherit_)
+|sidebar:
+  text_transform: uppercase
 
 |padding
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
@@ -1640,6 +1729,13 @@ The keys in this category control the arrangement and style of sidebar blocks.
 |sidebar:
   title:
     font_style: bold
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|sidebar:
+  title:
+    text_transform: uppercase
 |===
 
 === Example
@@ -1674,6 +1770,42 @@ The keys in this category control the arrangement and style of example blocks.
 (default: 0.5)
 |example:
   border_width: 0.75
+
+|font_color
+|<<colors,Color>> +
+(default: _inherit_)
+|example:
+  font_color: #262626
+
+|font_family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|example:
+  font_family: M+ 1p
+
+|font_size
+|<<values,Number>> +
+(default: _inherit_)
+|example:
+  font_size: 13
+
+|font_style
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|example:
+  font_style: italic
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: _inherit_)
+|example:
+  text_transform: uppercase
+
+|padding
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
+(default: [12, 12, 0, 12])
+|example:
+  padding: [15, 15, 0, 15]
 |===
 
 === Admonition
@@ -1769,11 +1901,35 @@ The keys in this category control the styling of lead paragraphs.
 
 3+|*Key Prefix:* lead
 
+|font_color
+|<<colors,Color>> +
+(default: $base_font_color)
+|lead:
+  font_color: #262626
+
+|font_family
+|<<fonts,Font family name>> +
+(default: $base_font_family)
+|lead:
+  font_family: M+ 1p
+
 |font_size
 |<<values,Number>> +
 (default: 13.5)
 |lead:
   font_size: 13
+
+|font_style
+|<<font-styles,Font style>> +
+(default: $base_font_style)
+|lead:
+  font_style: bold
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|lead:
+  text_transform: uppercase
 
 |line_height
 |<<values,Number>> +
@@ -1793,7 +1949,8 @@ The keys in this category control the arrangement and style of the abstract.
 3+|*Key Prefix:* abstract
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: $base_font_color)
 |abstract:
   font_color: #5c6266
 
@@ -1804,9 +1961,16 @@ The keys in this category control the arrangement and style of the abstract.
   font_size: 13
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: $base_font_style)
 |abstract:
   font_style: italic
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|abstract:
+  text_transform: uppercase
 
 |line_height
 |<<values,Number>> +
@@ -1825,34 +1989,44 @@ The keys in this category control the arrangement and style of the abstract.
 |align
 |<<text-alignments,Text alignment>> +
 (default: center)
-|sidebar:
+|abstract:
   title:
     align: center
 
 |font_color
-|<<colors,Color>>
-|sidebar:
+|<<colors,Color>> +
+(default: $base_font_color)
+|abstract:
   title:
     font_color: #333333
 
 |font_family
-|<<fonts,Font family name>>
-|sidebar:
+|<<fonts,Font family name>> +
+(default: $base_font_family)
+|abstract:
   title:
     font_family: Noto Serif
 
 |font_size
-|<<values,Number>>
-|sidebar:
+|<<values,Number>> +
+(default: $base_font_size)
+|abstract:
   title:
     font_size: 13
 
 |font_style
 |<<font-styles,Font style>> +
 (default: bold)
-|sidebar:
+|abstract:
   title:
     font_style: bold
+
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|abstract:
+  title:
+    text_transform: uppercase
 |===
 
 === Thematic Break
@@ -2186,6 +2360,12 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   font_style: bold
 
+|text_transform
+|none {vbar} uppercase {vbar} lowercase +
+(default: none)
+|toc:
+  text_transform: uppercase
+
 |line_height
 |<<values,Number>> +
 (default: 1.4)
@@ -2424,7 +2604,7 @@ If you define running header and footer content in your theme, you can still dis
 If content is not specified for the running footer, the page number (i.e., `\{page-number}`) is shown on the left on verso pages and the right on recto pages.
 You can disable this behavior by defining the attribute `nofooter` in the AsciiDoc document header or by defining the key `footer_<side>_content: none` in the theme.
 
-TIP: Although not listed in the table above, you can control the font settings used for running content for each column position on each page side (e.g., `footer_<side>_<position>_font_color`).
+TIP: Although not listed in the table above, you can control the font properties used for running content for each column position on each page side (e.g., `footer_<side>_<position>_font_color`).
 For example, you can set the font color used for the right-hand column on recto pages by setting `footer_recto_right_font_color: 6CC644`.
 
 ==== Attribute References
