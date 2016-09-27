@@ -209,9 +209,9 @@ description_list:
   description_indent: $horizontal_rhythm * 1.25
 outline_list:
   indent: $horizontal_rhythm * 1.5
-  # NOTE item_spacing applies to list items that do not have complex content
-  item_spacing: $vertical_rhythm / 2
   #marker_font_color: 404040
+  # NOTE outline_list_item_spacing applies to list items that do not have complex content
+  item_spacing: $vertical_rhythm / 2
 table:
   background_color: $page_background_color
   #head_background_color: <hex value>
@@ -229,7 +229,7 @@ toc:
   #dot_leader_content: '. '
   indent: $horizontal_rhythm
   line_height: 1.4
-# NOTE In addition to footer, header is also supported
+# NOTE in addition to footer, header is also supported
 footer:
   font_size: $base_font_size_small
   # NOTE if background_color is set, background and border will span width of page
