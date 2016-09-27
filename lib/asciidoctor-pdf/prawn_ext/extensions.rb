@@ -419,9 +419,9 @@ module Extensions
   def transform_text text, transform
     case transform
     when :uppercase, 'uppercase'
-      upcase_pcdata text
+      uppercase_pcdata text
     when :lowercase, 'lowercase'
-      text.downcase
+      lowercase_mb text
     else
       text
     end

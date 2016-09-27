@@ -160,6 +160,7 @@ The value of a key may be one of the following types:
   - Alignment (left, center, right, justify)
   - Color as hex string (e.g., #ffffff)
   - Image path
+  - Enumerated type (where specified)
 * Null (clears any previously assigned value)
   - _empty_ (i.e., no value specified)
   - null
@@ -411,6 +412,19 @@ The following font styles are recognized:
 * italic
 * bold
 * bold_italic
+
+=== Text Transforms
+
+Many places where font properties can be specified, a case transformation can be applied to the text.
+The following transforms are recognized:
+
+* uppercase
+* lowercase
+* none (clears an inherited value)
+
+CAUTION: If the text contains multibyte characters (such as an accented character), and you're using Ruby < 2.4, then you must also install either the `activesupport` or `unicode` gem in order for the multibyte characters to be transformed.
+
+// Additional transforms, such as capitalize, may be added in the future.
 
 === Colors
 
@@ -1057,7 +1071,7 @@ The keys in this category control the style of most headings, including part tit
   font_style: bold
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |heading:
   text_transform: uppercase
@@ -1113,7 +1127,7 @@ The keys in this category control the style of most headings, including part tit
   h3_font_style: bold_italic
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: $heading_text_transform)
 |heading:
   text_transform: lowercase
@@ -1172,7 +1186,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   font_style: bold
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |title_page:
   text_transform: uppercase
@@ -1232,7 +1246,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     font_style: bold
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |title_page:
   title:
@@ -1279,7 +1293,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     font_style: bold_italic
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |title_page:
   subtitle:
@@ -1318,7 +1332,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     font_style: bold_italic
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |title_page:
   authors:
@@ -1358,7 +1372,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     font_style: bold
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |title_page:
   revision:
@@ -1485,7 +1499,7 @@ The keys in this category control the arrangement and style of block captions.
   font_style: italic
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |caption:
   text_transform: uppercase
@@ -1614,7 +1628,7 @@ The keys in this category control the arrangement and style of quote blocks.
   font_style: bold
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |blockquote:
   text_transform: uppercase
@@ -1652,7 +1666,7 @@ The keys in this category control the arrangement and style of quote blocks.
     font_style: bold
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |blockquote:
   cite:
@@ -1709,7 +1723,7 @@ The keys in this category control the arrangement and style of sidebar blocks.
   font_size: 13
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: _inherit_)
 |sidebar:
   text_transform: uppercase
@@ -1755,7 +1769,7 @@ The keys in this category control the arrangement and style of sidebar blocks.
     font_style: bold
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |sidebar:
   title:
@@ -1820,7 +1834,7 @@ The keys in this category control the arrangement and style of example blocks.
   font_style: italic
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: _inherit_)
 |example:
   text_transform: uppercase
@@ -1950,7 +1964,7 @@ The keys in this category control the styling of lead paragraphs.
   font_style: bold
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |lead:
   text_transform: uppercase
@@ -1991,7 +2005,7 @@ The keys in this category control the arrangement and style of the abstract.
   font_style: italic
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |abstract:
   text_transform: uppercase
@@ -2046,7 +2060,7 @@ The keys in this category control the arrangement and style of the abstract.
     font_style: bold
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |abstract:
   title:
@@ -2259,7 +2273,7 @@ The keys in this category control the arrangement and style of tables and table 
     font_style: normal
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |table:
   head:
@@ -2393,7 +2407,7 @@ The keys in this category control the arrangement and style of the table of cont
   font_style: bold
 
 |text_transform
-|none {vbar} uppercase {vbar} lowercase +
+|<<text-transforms,Text transform>> +
 (default: none)
 |toc:
   text_transform: uppercase
