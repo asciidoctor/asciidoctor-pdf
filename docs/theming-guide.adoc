@@ -1377,6 +1377,30 @@ The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgr
 For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
 . Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
 
+=== Prose
+
+The keys in this category control the spacing around paragraphs (paragraph blocks, paragraph content of a block, and other prose content).
+Typically, all the margin is placed on the bottom.
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|*Key Prefix:* prose
+
+|margin_top
+|<<measurement-units,Measurement>> +
+(default: 0)
+|prose:
+  margin_top: 0
+
+|margin_bottom
+|<<measurement-units,Measurement>> +
+(default: 12)
+|prose:
+  margin_bottom: $vertical_spacing
+|===
+
 === Block
 
 The keys in this category control the spacing around block elements when a more specific setting is not designated.
