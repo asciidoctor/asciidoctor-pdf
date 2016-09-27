@@ -2141,7 +2141,15 @@ The keys in this category control the arrangement and style of outline list item
 (default: 6)
 |outline_list:
   item_spacing: 4
+
+|marker_font_color^[1]^
+|<<colors,Color>> +
+(default: _inherit_)
+|outline_list:
+  marker_font_color: #3c763d 
 |===
+
+. Controls the color of the bullet glyph that marks items in unordered lists and the number for items in ordered lists.
 
 === Table
 
