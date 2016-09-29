@@ -804,7 +804,7 @@ See <<Title Page>> for details.
 
 |background_image^[1]^
 |Inline image macro^[2]^ +
-(default: none)
+(default: _unset_)
 |page:
   background_image: +image:page-bg.png[]+
 
@@ -821,12 +821,14 @@ See <<Title Page>> for details.
   margin: [0.5in, 0.67in, 1in, 0.67in]
 
 |margin_inner^[3]^
-|<<measurement-units,Measurement>>
+|<<measurement-units,Measurement>> +
+(default: 48)
 |page:
   margin_inner: 0.75in
 
 |margin_outer^[3]^
-|<<measurement-units,Measurement>>
+|<<measurement-units,Measurement>> +
+(default: 24)
 |page:
   margin_outer: 0.59in
 
@@ -1042,13 +1044,13 @@ The keys in this category control the style of most headings, including part tit
 
 |align
 |<<text-alignments,Text alignment>> +
-(default: left)
+(default: $base_align)
 |heading:
   align: center
 
 |font_color
 |<<colors,Color>> +
-(default: $base_font_color)
+(default: _inherit_)
 |heading:
   font_color: #222222
 
@@ -1058,11 +1060,12 @@ The keys in this category control the style of most headings, including part tit
 |heading:
   font_family: Noto Serif
 
-|font_size
-|<<values,Number>> +
-(default: $base_font_size)
-|heading:
-  font_size: 18
+// NOTE: heading_font_size is overridden by h<n>_font_size in base theme
+//|font_size
+//|<<values,Number>> +
+//(default: $base_font_size)
+//|heading:
+//  font_size: 18
 
 |font_style
 |<<font-styles,Font style>> +
@@ -1072,7 +1075,7 @@ The keys in this category control the style of most headings, including part tit
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |heading:
   text_transform: uppercase
 
@@ -1187,7 +1190,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |title_page:
   text_transform: uppercase
 
@@ -1247,7 +1250,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |title_page:
   title:
     text_transform: uppercase
@@ -1294,7 +1297,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |title_page:
   subtitle:
     text_transform: uppercase
@@ -1333,7 +1336,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |title_page:
   authors:
     text_transform: uppercase
@@ -1373,7 +1376,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |title_page:
   revision:
     text_transform: uppercase
@@ -1478,17 +1481,20 @@ The keys in this category control the arrangement and style of block captions.
   align: left
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |caption:
   font_color: #333333
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |caption:
   font_family: M+ 1mn
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |caption:
   font_size: 11
 
@@ -1500,7 +1506,7 @@ The keys in this category control the arrangement and style of block captions.
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |caption:
   text_transform: uppercase
 
@@ -1528,7 +1534,8 @@ The keys in this category are used to control the style of literal, listing and 
 3+|*Key Prefix:* code
 
 |background_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _not set_)
 |code:
   background_color: #f5f5f5
 
@@ -1540,7 +1547,7 @@ The keys in this category are used to control the style of literal, listing and 
 
 |border_radius
 |<<values,Number>> +
-(default: 0)
+(default: _not set_)
 |code:
   border_radius: 4
 
@@ -1551,7 +1558,8 @@ The keys in this category are used to control the style of literal, listing and 
   border_width: 0.75
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |code:
   font_color: #333333
 
@@ -1569,6 +1577,7 @@ The keys in this category are used to control the style of literal, listing and 
 
 |font_style
 |<<font-styles,Font style>> +
+(default: _inherit_)
 |code:
   font_style: italic
 
@@ -1595,41 +1604,45 @@ The keys in this category control the arrangement and style of quote blocks.
 
 3+|*Key Prefix:* blockquote
 
-|border_width
+|border_width^[1]^
 |<<values,Number>> +
 (default: 4)
 |blockquote:
   border_width: 5
 
-|border_color
+|border_color^[1]^
 |<<colors,Color>> +
 (default: #eeeeee)
 |blockquote:
   border_color: #eeeeee
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |blockquote:
   font_color: #333333
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |blockquote:
   font_family: Noto Serif
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |blockquote:
   font_size: 13
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: _inherit_)
 |blockquote:
   font_style: bold
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |blockquote:
   text_transform: uppercase
 
@@ -1642,36 +1655,42 @@ The keys in this category control the arrangement and style of quote blocks.
 3+|*Key Prefix:* blockquote_cite
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |blockquote:
   cite:
     font_size: 9
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |blockquote:
   cite:
     font_color: #999999
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |blockquote:
   cite:
     font_family: Noto Serif
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: _inherit_)
 |blockquote:
   cite:
     font_style: bold
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |blockquote:
   cite:
     text_transform: uppercase
 |===
+
+. Only applies to the left side.
 
 === Sidebar
 
@@ -1690,17 +1709,20 @@ The keys in this category control the arrangement and style of sidebar blocks.
   background_color: #eeeeee
 
 |border_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _not set_)
 |sidebar:
   border_color: #ffffff
 
 |border_radius
-|<<values,Number>>
+|<<values,Number>> +
+(default: _not set_)
 |sidebar:
   border_radius: 4
 
 |border_width
-|<<values,Number>>
+|<<values,Number>> +
+(default: _not set_)
 |sidebar:
   border_width: 0.5
 
@@ -1744,19 +1766,22 @@ The keys in this category control the arrangement and style of sidebar blocks.
     align: center
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |sidebar:
   title:
     font_color: #333333
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |sidebar:
   title:
     font_family: Noto Serif
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |sidebar:
   title:
     font_size: 13
@@ -1770,7 +1795,7 @@ The keys in this category control the arrangement and style of sidebar blocks.
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |sidebar:
   title:
     text_transform: uppercase
@@ -1787,7 +1812,8 @@ The keys in this category control the arrangement and style of example blocks.
 3+|*Key Prefix:* example
 
 |background_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _not set_)
 |example:
   background_color: #fffef7
 
@@ -1799,7 +1825,7 @@ The keys in this category control the arrangement and style of example blocks.
 
 |border_radius
 |<<values,Number>> +
-(default: 0)
+(default: _not set_)
 |example:
   border_radius: 4
 
@@ -1921,7 +1947,8 @@ The keys in this category control the arrangement of block images.
   align: left
 
 |width^[1]^
-|<<measurement-units,Measurement>>
+|<<measurement-units,Measurement>> +
+(default: _not set_)
 |image:
   width: 100%
 |===
@@ -1941,13 +1968,13 @@ The keys in this category control the styling of lead paragraphs.
 
 |font_color
 |<<colors,Color>> +
-(default: $base_font_color)
+(default: _inherit_)
 |lead:
   font_color: #262626
 
 |font_family
 |<<fonts,Font family name>> +
-(default: $base_font_family)
+(default: _inherit_)
 |lead:
   font_family: M+ 1p
 
@@ -1959,13 +1986,13 @@ The keys in this category control the styling of lead paragraphs.
 
 |font_style
 |<<font-styles,Font style>> +
-(default: $base_font_style)
+(default: _inherit_)
 |lead:
   font_style: bold
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |lead:
   text_transform: uppercase
 
@@ -2006,7 +2033,7 @@ The keys in this category control the arrangement and style of the abstract.
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: $base_text_transform)
 |abstract:
   text_transform: uppercase
 
@@ -2061,7 +2088,7 @@ The keys in this category control the arrangement and style of the abstract.
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: $base_text_transform)
 |abstract:
   title:
     text_transform: uppercase
@@ -2096,12 +2123,14 @@ The keys in this category control the style of thematic breaks (aka horizontal r
   border_width: 0.5
 
 |margin_top
-|<<measurement-units,Measurement>>
+|<<measurement-units,Measurement>> +
+(default: 0)
 |thematic_break:
   margin_top: 6
 
 |margin_bottom
-|<<measurement-units,Measurement>>
+|<<measurement-units,Measurement>> +
+(default: $vertical_spacing)
 |thematic_break:
   margin_bottom: 18
 |===
@@ -2274,7 +2303,7 @@ The keys in this category control the arrangement and style of tables and table 
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |table:
   head:
     text_transform: uppercase
@@ -2408,7 +2437,7 @@ The keys in this category control the arrangement and style of the table of cont
 
 |text_transform
 |<<text-transforms,Text transform>> +
-(default: none)
+(default: _inherit_)
 |toc:
   text_transform: uppercase
 
@@ -2543,7 +2572,7 @@ The keys in this category control the arrangement and style of running header an
 
 |<side>_columns^[2]^
 |Column specs triple +
-(default: none)
+(default: _not set_)
 |header:
   recto:
     columns: <25% =50% >25%
@@ -2626,7 +2655,7 @@ The keys in this category control the arrangement and style of running header an
 
 |<side>_columns^[2]^
 |Column specs triple +
-(default: none)
+(default: _not set_)
 |footer:
   verso:
     columns: <50% 0% <50%
