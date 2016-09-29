@@ -1853,14 +1853,9 @@ class Converter < ::Prawn::Document
     if (transform = (opts.delete :text_transform) || @text_transform) && transform != 'none'
       string = transform_text string, transform
     end
+    # QUESTION should we remove support for anchor option? it doesn't seem to be used
     if (anchor = opts.delete :anchor)
-      # FIXME won't work if inline_format is true; should instead pass through as attribute w/ link color set
-      if (link_color = opts.delete :link_color)
-        # NOTE CMYK value gets flattened here, but is restored by formatted text parser
-        string = %(<a anchor="#{anchor}"><color rgb="#{link_color}">#{string}</color></a>)
-      else
-        string = %(<a anchor="#{anchor}">#{string}</a>)
-      end
+      string = %(<a anchor="#{anchor}">#{string}</a>)
     end
     margin_top top_margin
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
