@@ -21,26 +21,29 @@ ifdef::backend-pdf[]
 //:pygments-style: tango
 endif::[]
 // URIs:
-:wolper-uri: http://en.wikipedia.org/wiki/Wolpertinger
+:uri-devoxx: https://devoxx.be
+:uri-devoxx-top-talks: https://www.youtube.com/watch?v=1OpAgZvYXLQ&list=PLRsbF2sD7JVq7fv1GZGORShSUIae1ZAPy&index=&#49;
+:uri-stbernardusabt12: http://www.sintbernardus.be/stbernardusabt12.php?l=en
+:uri-wolpertinger: http://en.wikipedia.org/wiki/Wolpertinger
 
 [abstract]
 {description}
 
 == It's a City Under Siege
 
-This journey begins one late Monday afternoon at http://www.devoxx.be[Devoxx].
+This journey begins one late Monday afternoon at {uri-devoxx}[Devoxx].
 Our team needs coffee, _desperately_, but none of us dare open the theater doors...
 
-During the first workshop, a script-happy warlock inadvertently released a legion of Wolpertingers!
+During the {uri-devoxx-top-talks}[opening university session], a script-happy warlock inadvertently released a legion of Wolpertingers!
 To leave now would mean *code dismemberment and certain death*.
 
 Behold -> the horror!
 
 .Wolpertinger, stuffed
 [.left.thumb]
-image::wolpertinger.jpg[Wolpertinger,pdfwidth=50%,link=http://en.wikipedia.org/wiki/Wolpertinger]
+image::wolpertinger.jpg[Wolpertinger,pdfwidth=50%,link={uri-wolpertinger}]
 
-You may not be familiar with these {wolper-uri}[ravenous beasts].
+You may not be familiar with these {uri-wolpertinger}[ravenous beasts].
 Trust us, they'll eat your shorts and suck loops from your code.
 In light of this danger, we've searched high and wide for the security crew's defensive operations manual.
 We can't find it and the DefOps{empty}footnote:[a portmanteau of “defensive” and “operations”] werewolves haven't returned from their rendezvous at Bier Central.
@@ -55,7 +58,7 @@ _Weak light from the hallway trickled across the theater, chased by a distant sc
 
 Come on, [#bier-central]_Bier Central_.
 Did you have to ask?
-If you beat me there, I'll take a http://www.sintbernardus.be/stbernardusabt12.php?l=en[St. Bernardus Abt 12].
+If you beat me there, I'll take a {uri-stbernardusabt12}[St. Bernardus Abt 12].
 
 [#ravages]
 == The Ravages of Writing
