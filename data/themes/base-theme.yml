@@ -59,6 +59,8 @@ abstract_title_font_style: bold
 admonition_border_color: 'EEEEEE'
 admonition_border_width: 0.5
 admonition_padding: [0, 12, 0, 12]
+admonition_label_font_style: bold
+admonition_label_text_transform: uppercase
 blockquote_border_color: 'EEEEEE'
 blockquote_border_width: 4
 blockquote_padding: [6, 12, -6, 14]
