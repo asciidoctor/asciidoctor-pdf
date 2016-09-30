@@ -1744,6 +1744,12 @@ The keys in this category control the arrangement and style of sidebar blocks.
 |sidebar:
   font_size: 13
 
+|font_style
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|sidebar:
+  font_style: italic
+
 |text_transform
 |<<text-transforms,Text transform>> +
 (default: _inherit_)
