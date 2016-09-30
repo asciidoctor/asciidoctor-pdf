@@ -482,11 +482,15 @@ class Converter < ::Prawn::Document
                 label_margin_top = node.title? ? @theme.caption_margin_inside : 0
                 if icons
                   icon_data = admonition_icon_data label
+                  icon_size = fit_icon_to_bounds icon_data[:size]
+                  # NOTE Prawn's vcenter is not reliable, so calculate it manually
+                  vcenter_pos = (box_height - icon_size) * 0.5
+                  move_down vcenter_pos if vcenter_pos > 0
                   icon icon_data[:name], {
-                    valign: :center,
+                    valign: :top,
                     align: :center,
                     color: icon_data[:stroke_color],
-                    size: (fit_icon_size node, icon_data[:size])
+                    size: icon_size
                   }
                 else
                   layout_prose label, valign: :center, style: :bold, line_height: 1, margin_top: label_margin_top, margin_bottom: 0
@@ -2007,10 +2011,10 @@ class Converter < ::Prawn::Document
     end
   end
 
-  # Reduce icon size to fit inside bounds.height. Icons will not render
+  # Reduce icon height to fit inside bounds.height. Icons will not render
   # properly if they are larger than the current bounds.height.
-  def fit_icon_size node, max_size = 24
-    (min_height = bounds.height.floor) < max_size ? min_height : max_size
+  def fit_icon_to_bounds preferred_size = 24
+    (max_height = bounds.height) < preferred_size ? max_height : preferred_size
   end
 
   def admonition_icon_data key
