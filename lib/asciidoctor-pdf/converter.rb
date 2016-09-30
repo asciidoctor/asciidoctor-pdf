@@ -1319,6 +1319,10 @@ class Converter < ::Prawn::Document
           cell_data[:content] = preserve_indentation cell.text, (node.document.attr 'tabsize')
           cell_data[:inline_format] = true
         when :asciidoc
+          unless defined? @asciidoc_cell_warning
+            @asciidoc_cell_warning = true
+            warn 'asciidoctor: WARNING: The \'a\' (AsciiDoc) table cell style is not supported by this converter. The source of these cells will be treated as paragraph content.'
+          end
           # TODO finish me
         else
           cell_data[:font_style] = (val = theme.table_font_style) ? val.to_sym : nil
