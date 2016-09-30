@@ -457,6 +457,18 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
     icons = node.document.attr? 'icons', 'font'
     label = icons ? (node.attr 'name').to_sym : node.caption.upcase
+    
+    valid_own_icon = false
+    if !icons        
+        iconsdir = node.attr 'iconsdir'
+        valid_own_icon = true
+        image_path = node.icon_uri node.attr 'name'
+        unless (image_path) && (::File.readable? iconsdir)
+            warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path}) unless scratch?
+            valid_own_icon = false
+        end                 
+    end
+    
     # FIXME this shift stuff is a real hack until we have proper margin collapsing
     shift_base = @theme.prose_margin_bottom
     #shift_top = icons ? (shift_base / 3.0) : 0
@@ -466,7 +478,7 @@ class Converter < ::Prawn::Document
     keep_together do |box_height = nil|
       #theme_font :admonition do
         # FIXME this is a fudge calculation for the icon width
-        label_width = icons ? (bounds.width / 12.0) : (width_of label)
+        label_width = (icons or valid_own_icon) ? (bounds.width / 12.0) : (width_of label)
         abs_left = bounds.absolute_left
         abs_right = bounds.absolute_right
         pad_box @theme.admonition_padding do
@@ -493,7 +505,25 @@ class Converter < ::Prawn::Document
                     size: icon_size
                   }
                 else
-                  layout_prose label, valign: :center, style: :bold, line_height: 1, margin_top: label_margin_top, margin_bottom: 0
+                  if valid_own_icon                                                
+                        begin                           
+                            img = %(<img src="#{image_path}" >)
+                            image_obj, image_info = build_image_object image_path                            
+                            rendered_w = [bounds.width, image_info.width * 0.75].min                            
+                            rendered_h = (rendered_w * image_info.height) / image_info.width     
+                            # If rendered_h > box_height then the icon will be misplaced in the PDF document
+                            if rendered_h > box_height
+                              ratio = box_height / rendered_h
+                              rendered_w = ratio * rendered_w
+                              rendered_h = box_height
+                            end  
+                            embed_image image_obj, image_info, width: rendered_w                            
+                        rescue => e
+                            warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
+                        end                           
+                    else
+                      layout_prose label, valign: :center, style: :bold, line_height: 1, margin_top: label_margin_top, margin_bottom: 0
+                    end
                 end
               end
             end
@@ -2641,7 +2671,7 @@ class Converter < ::Prawn::Document
       imagesdir
     end
   end
-
+  
   # Resolve the system path of the specified image path.
   #
   # Resolve and normalize the absolute system path of the specified image. If
