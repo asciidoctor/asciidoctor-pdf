@@ -19,6 +19,7 @@ require_relative 'asciidoctor_ext'
 require_relative 'theme_loader'
 require_relative 'roman_numeral'
 
+autoload :StringIO, 'stringio'
 autoload :Tempfile, 'tempfile'
 
 module Asciidoctor
@@ -846,6 +847,8 @@ class Converter < ::Prawn::Document
     if image_format == 'gif' && !(defined? ::GMagick::Image)
       warn %(asciidoctor: WARNING: GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
       image_path = false
+    elsif ::Base64 === target
+      image_path = target
     elsif (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format) &&
         (::File.readable? image_path)
       # NOTE import_page automatically advances to next page afterwards
@@ -889,14 +892,20 @@ class Converter < ::Prawn::Document
       case image_format
       when 'svg'
         begin
-          svg_data = ::IO.read image_path
+          if ::Base64 === image_path
+            svg_data = ::Base64.decode64 image_path
+            file_request_root = false
+          else
+            svg_data = ::IO.read image_path
+            file_request_root = ::File.dirname image_path
+          end
           svg_obj = ::Prawn::Svg::Interface.new svg_data, self,
               position: alignment,
               width: width,
               fallback_font_name: (fallback_font_name = default_svg_font),
               enable_web_requests: (enable_web_requests = node.document.attr? 'allow-uri-read'),
               # TODO enforce jail in safe mode
-              enable_file_requests_with_root: (file_request_root = ::File.dirname image_path)
+              enable_file_requests_with_root: file_request_root
           rendered_w = (svg_size = svg_obj.document.sizing).output_width
           if !width && (svg_obj.document.root.attributes.key? 'width')
             # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
@@ -933,9 +942,12 @@ class Converter < ::Prawn::Document
       else
         begin
           # FIXME this code really needs to be better organized!
-          # FIXME temporary workaround to group caption & image
           # NOTE use low-level API to access intrinsic dimensions; build_image_object caches image data previously loaded
-          image_obj, image_info = ::File.open(image_path, 'rb') {|fd| build_image_object fd }
+          if ::Base64 === image_path
+            image_obj, image_info = ::StringIO.open((::Base64.decode64 image_path), 'rb') {|fd| build_image_object fd }
+          else
+            image_obj, image_info = ::File.open(image_path, 'rb') {|fd| build_image_object fd }
+          end
           if width
             rendered_w, rendered_h = image_info.calc_image_dimensions width: width
           else
@@ -946,6 +958,7 @@ class Converter < ::Prawn::Document
           # TODO move this calculation into a method
           caption_height = node.title? ?
               (@theme.caption_margin_inside + @theme.caption_margin_outside + @theme.base_line_height_length) : 0
+          # FIXME temporary workaround to group caption & image
           if rendered_h > (available_height = cursor - caption_height)
             start_new_page unless at_page_top?
             # NOTE shrink image so it fits on a single page if height exceeds page height
@@ -1609,6 +1622,7 @@ class Converter < ::Prawn::Document
       if image_format == 'gif' && !(defined? ::GMagick::Image)
         warn %(asciidoctor: WARNING: GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
         img = %([#{node.attr 'alt'}])
+      # NOTE an image with a data URI is handled using a temporary file
       elsif (image_path = resolve_image_path node, target, true, image_format) && (::File.readable? image_path)
         width_attr = (node.attr? 'width', nil, false) ? %( width="#{node.attr 'width'}") : nil
         img = %(<img src="#{image_path}" format="#{image_format}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{TemporaryPath === image_path}">)
@@ -2642,8 +2656,20 @@ class Converter < ::Prawn::Document
     imagesdir = relative_to_imagesdir ? (resolve_imagesdir doc) : nil
     image_path ||= node.attr 'target'
     image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node : nil)
+    # NOTE currently used for inline images
+    if ::Base64 === image_path
+      tmp_image = ::Tempfile.new ['image-', image_format && %(.#{image_format})]
+      tmp_image.binmode unless image_format == 'svg'
+      begin
+        tmp_image.write(::Base64.decode64 image_path)
+        tmp_image.path.extend TemporaryPath
+      rescue
+        nil
+      ensure
+        tmp_image.close
+      end
     # handle case when image is a URI
-    if (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
+    elsif (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
         (image_path = (node.normalize_web_path image_path, imagesdir, false)))
       unless doc.attr? 'allow-uri-read'
         warn %(asciidoctor: WARNING: allow-uri-read is not enabled; cannot embed remote image: #{image_path}) unless scratch?
@@ -2657,15 +2683,13 @@ class Converter < ::Prawn::Document
       tmp_image = ::Tempfile.new ['image-', image_format && %(.#{image_format})]
       tmp_image.binmode if (binary = image_format != 'svg')
       begin
-        open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write(fd.read) }
-        tmp_image_path = tmp_image.path
-        tmp_image_path.extend TemporaryPath
+        open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
+        tmp_image.path.extend TemporaryPath
       rescue
-        tmp_image_path = nil
+        nil
       ensure
         tmp_image.close
       end
-      tmp_image_path
     # handle case when image is a local file
     else
       ::File.expand_path(node.normalize_system_path image_path, imagesdir, nil, target_name: 'image')
