@@ -2956,6 +2956,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |flag (default: _unset_)
 |:pdfmark:
 
+|text-alignment^[6]^
+|<<text-alignments,Text alignment>>
+|:text-alignment: left
+
 |title-logo-image
 |path^[2]^ {vbar} image macro^[3]^
 |+:title-logo-image: image:logo.png[top=25%, align=center, pdfwidth=0.5in]+
@@ -2971,6 +2975,9 @@ These settings override equivalent keys defined in the theme file, where applica
 . Controls whether the `page-number` attribute is accessible to the running header and footer content specified in the theme file.
 Use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively, from the document.
 . Enables generation of the http://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark] file, which contains metadata that is fed to Ghostscript when optimizing the PDF file.
+. _(Experimental)_ The `text-alignment` document attribute is intended as a simple way to toggle text justification.
+The value of this attribute overrides the `base_align` key set by the theme.
+For more fine-grained control, you should customize using the theme.
 
 == Publishing Mode
 
