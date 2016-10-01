@@ -1888,17 +1888,23 @@ The keys in this category control the arrangement and style of admonition blocks
 
 3+|*Key Prefix:* admonition
 
-|border_color
+|column_rule_color
 |<<colors,Color>> +
 (default: #eeeeee)
 |admonition:
-  border_color: #eeeeee
+  column_rule_color: #aa0000
 
-|border_width
+|column_rule_style
+|solid {vbar} double {vbar} dashed {vbar} dotted +
+(default: solid)
+|admonition:
+  column_rule_style: double
+
+|column_rule_width
 |<<values,Number>> +
 (default: 0.5)
 |admonition:
-  border_width: 0.5
+  column_rule_width: 0.5
 
 |padding
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +

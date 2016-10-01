@@ -490,19 +490,24 @@ class Converter < ::Prawn::Document
           if box_height
             float do
               bounding_box [0, cursor], width: label_width + right_padding, height: box_height do
-                stroke_vertical_rule @theme.admonition_border_color, at: bounds.width
+                if (rule_color = @theme.admonition_column_rule_color) &&
+                    (rule_width = @theme.admonition_column_rule_width || @theme.base_border_width) && rule_width > 0
+                  stroke_vertical_rule rule_color,
+                      at: bounds.width,
+                      line_style: (@theme.admonition_column_rule_style || :solid).to_sym,
+                      line_width: rule_width
+                end
                 if icons
                   icon_data = admonition_icon_data label
                   icon_size = fit_icon_to_bounds icon_data[:size]
                   # NOTE Prawn's vcenter is not reliable, so calculate it manually
                   vcenter_pos = (box_height - icon_size) * 0.5
                   move_down vcenter_pos if vcenter_pos > 0
-                  icon icon_data[:name], {
-                    valign: :top,
-                    align: :center,
-                    color: icon_data[:stroke_color],
-                    size: icon_size
-                  }
+                  icon icon_data[:name],
+                      valign: :top,
+                      align: :center,
+                      color: icon_data[:stroke_color],
+                      size: icon_size
                 else
                   # IMPORTANT the label must fit in the alotted space or it shows up on another page!
                   # QUESTION anyway to prevent text overflow in the case it doesn't fit?
