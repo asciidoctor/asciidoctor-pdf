@@ -619,9 +619,24 @@ module Extensions
   #
   def stroke_vertical_rule s_color = stroke_color, options = {}
     save_graphics_state do
-      line_width options[:line_width] || 0.5
+      l_at = options[:at] || 0
+      line_width(l_width = options[:line_width] || 0.5)
       stroke_color s_color
-      stroke_vertical_line bounds.bottom, bounds.top, at: (options[:at] || 0)
+      case (options[:line_style] || :solid)
+      when :solid
+        stroke_vertical_line bounds.bottom, bounds.top, at: l_at
+      when :double
+        stroke_vertical_line bounds.bottom, bounds.top, at: (l_at - l_width)
+        stroke_vertical_line bounds.bottom, bounds.top, at: (l_at + l_width)
+      when :dashed
+        dash l_width * 4
+        stroke_vertical_line bounds.bottom, bounds.top, at: l_at
+        undash
+      when :dotted
+        dash l_width
+        stroke_vertical_line bounds.bottom, bounds.top, at: l_at
+        undash
+      end
     end
   end
 
