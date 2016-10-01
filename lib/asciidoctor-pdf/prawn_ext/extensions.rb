@@ -617,54 +617,54 @@ module Extensions
   # can be specified using the line_width option. The horizontal (x)
   # position can be specified using the at option.
   #
-  def stroke_vertical_rule s_color = stroke_color, options = {}
+  def stroke_vertical_rule rule_color = stroke_color, options = {}
+    rule_x = options[:at] || 0
+    rule_y_from = bounds.top
+    rule_y_to = bounds.bottom
+    rule_style = options[:line_style]
+    rule_width = options[:line_width] || 0.5
     save_graphics_state do
-      l_at = options[:at] || 0
-      line_width(l_width = options[:line_width] || 0.5)
-      stroke_color s_color
-      case (options[:line_style] || :solid)
-      when :solid
-        stroke_vertical_line bounds.bottom, bounds.top, at: l_at
-      when :double
-        stroke_vertical_line bounds.bottom, bounds.top, at: (l_at - l_width)
-        stroke_vertical_line bounds.bottom, bounds.top, at: (l_at + l_width)
+      line_width rule_width
+      stroke_color rule_color
+      case rule_style
       when :dashed
-        dash l_width * 4
-        stroke_vertical_line bounds.bottom, bounds.top, at: l_at
-        undash
+        dash rule_width * 4
       when :dotted
-        dash l_width
-        stroke_vertical_line bounds.bottom, bounds.top, at: l_at
-        undash
-      end
+        dash rule_width
+      when :double
+        stroke_vertical_line rule_y_from, rule_y_to, at: (rule_x - rule_width)
+        rule_x += rule_width
+      end if rule_style
+      stroke_vertical_line rule_y_from, rule_y_to, at: rule_x
     end
   end
 
   # Strokes a horizontal line using the current bounds. The width of the line
   # can be specified using the line_width option.
   #
-  def stroke_horizontal_rule s_color = stroke_color, options = {}
+  def stroke_horizontal_rule rule_color = stroke_color, options = {}
+    rule_style = options[:line_style]
+    rule_width = options[:line_width] || 0.5
+    rule_x_start = bounds.left
+    rule_x_end = bounds.right
+    rule_inked = false
     save_graphics_state do
-      line_width(l_width = options[:line_width] || 0.5)
-      stroke_color s_color
-      case (options[:line_style] || :solid)
-      when :solid
-        stroke_horizontal_line bounds.left, bounds.right
-      when :double
-        move_up l_width * 1.5
-        stroke_horizontal_line bounds.left, bounds.right
-        move_down l_width * 3
-        stroke_horizontal_line bounds.left, bounds.right
-        move_up l_width * 1.5
+      line_width rule_width
+      stroke_color rule_color
+      case rule_style
       when :dashed
-        dash l_width * 4
-        stroke_horizontal_line bounds.left, bounds.right
-        undash
+        dash rule_width * 4
       when :dotted
-        dash l_width
-        stroke_horizontal_line bounds.left, bounds.right
-        undash
-      end
+        dash rule_width
+      when :double
+        move_up rule_width
+        stroke_horizontal_line rule_x_start, rule_x_end
+        move_down rule_width * 2
+        stroke_horizontal_line rule_x_start, rule_x_end
+        move_up rule_width
+        rule_inked = true
+      end if rule_style
+      stroke_horizontal_line rule_x_start, rule_x_end unless rule_inked
     end
   end
 
