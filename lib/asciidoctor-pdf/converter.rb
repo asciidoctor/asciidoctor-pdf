@@ -455,22 +455,33 @@ class Converter < ::Prawn::Document
     end
   end
 
-  # FIXME alignment of content is off
   def convert_admonition node
     add_dest_for_block node if node.id
     theme_margin :block, :top
-    icons = node.document.attr? 'icons', 'font'
-    label = icons ? (node.attr 'name').to_sym : node.caption.upcase
+    type = node.attr 'name'
+    if (icons = node.document.attr? 'icons', 'font')
+      label = type.to_sym
+      # FIXME this is a fudge calculation for the icon width
+      label_width = bounds.width / 12.0
+      label_height = nil
+    else
+      label = node.caption
+      theme_font :admonition_label do
+        theme_font %(admonition_label_#{type}) do
+          if (transform = @text_transform) && transform != 'none'
+            label = transform_text label, transform
+          end
+          label_width = width_of label
+          label_height = height_of_typeset_text label, line_height: 1
+        end
+      end
+    end
     # FIXME this shift stuff is a real hack until we have proper margin collapsing
     shift_base = @theme.prose_margin_bottom
-    #shift_top = icons ? (shift_base / 3.0) : 0
-    #shift_bottom = icons ? ((shift_base * 2) / 3.0) : shift_base
     shift_top = shift_base / 3.0
     shift_bottom = (shift_base * 2) / 3.0
     keep_together do |box_height = nil|
       #theme_font :admonition do
-        # FIXME this is a fudge calculation for the icon width
-        label_width = icons ? (bounds.width / 12.0) : (width_of label)
         abs_left = bounds.absolute_left
         abs_right = bounds.absolute_right
         pad_box @theme.admonition_padding do
@@ -479,11 +490,7 @@ class Converter < ::Prawn::Document
           if box_height
             float do
               bounding_box [0, cursor], width: label_width + right_padding, height: box_height do
-                # IMPORTANT the label must fit in the alotted space or it shows up on another page!
-                # QUESTION anyway to prevent text overflow in the case it doesn't fit?
                 stroke_vertical_rule @theme.admonition_border_color, at: bounds.width
-                # FIXME HACK make title in this location look right
-                label_margin_top = node.title? ? @theme.caption_margin_inside : 0
                 if icons
                   icon_data = admonition_icon_data label
                   icon_size = fit_icon_to_bounds icon_data[:size]
@@ -497,7 +504,17 @@ class Converter < ::Prawn::Document
                     size: icon_size
                   }
                 else
-                  layout_prose label, valign: :center, style: :bold, line_height: 1, margin_top: label_margin_top, margin_bottom: 0
+                  # IMPORTANT the label must fit in the alotted space or it shows up on another page!
+                  # QUESTION anyway to prevent text overflow in the case it doesn't fit?
+                  theme_font :admonition_label do
+                    theme_font %(admonition_label_#{type}) do
+                      # NOTE Prawn's vcenter is not reliable, so calculate it manually
+                      vcenter_pos = (box_height - label_height) * 0.5
+                      move_down vcenter_pos if vcenter_pos > 0
+                      @text_transform = nil # already applied to label
+                      layout_prose label, align: :left, valign: :top, line_height: 1, margin: 0, inline_format: false
+                    end
+                  end
                 end
               end
             end

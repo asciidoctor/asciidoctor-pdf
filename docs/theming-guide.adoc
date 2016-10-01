@@ -1906,6 +1906,43 @@ The keys in this category control the arrangement and style of admonition blocks
 |admonition:
   padding: [0, 12, 0, 12]
 
+3+|*Key Prefix:* admonition_label, admonition_label_<name>^[1]^
+
+|font_color
+|<<colors,Color>> +
+(default: _inherit_)
+|admonition:
+  label:
+    font_color: #262626
+
+|font_family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|admonition:
+  label:
+    font_family: M+ 1p
+
+|font_size
+|<<values,Number>> +
+(default: _inherit_)
+|admonition:
+  label:
+    font_size: 12
+
+|font_style
+|<<font-styles,Font style>> +
+(default: bold)
+|admonition:
+  label:
+    font_style: bold_italic
+
+|text_transform
+|<<text-transforms,Text transform>> +
+(default: uppercase)
+|admonition:
+  label:
+    text_transform: lowercase
+
 3+|*Key Prefix:* admonition_icon_<name>^[1]^
 
 |name
@@ -1932,7 +1969,7 @@ The keys in this category control the arrangement and style of admonition blocks
 |===
 
 . `<name>` can be `note`, `tip`, `warning`, `important`, or `caution`.
-The subkeys in this category cannot be flattened (e.g., `tip_name: fa-lightbulb-o` is not valid syntax).
+The subkeys in the icon category cannot be flattened (e.g., `tip_name: fa-lightbulb-o` is not valid syntax).
 . See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository] for a list of valid names.
 The prefix (e.g., `fa-`) determines which font set to use.
 

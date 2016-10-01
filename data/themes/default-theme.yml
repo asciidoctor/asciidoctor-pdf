@@ -142,6 +142,9 @@ admonition:
   border_color: $base_border_color
   border_width: $base_border_width
   padding: [0, $horizontal_rhythm, 0, $horizontal_rhythm]
+  label:
+    text_transform: uppercase
+    font_style: bold
 #  icon:
 #    tip:
 #      name: fa-lightbulb-o
