@@ -1906,6 +1906,36 @@ The keys in this category control the arrangement and style of admonition blocks
 |admonition:
   column_rule_width: 0.5
 
+|font_color
+|<<colors,Color>> +
+(default: _inherit_)
+|admonition:
+  font_color: #999999
+
+|font_family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|admonition:
+  font_family: Noto Sans
+
+|font_size
+|<<values,Number>> +
+(default: _inherit_)
+|admonition:
+  font_size: $base_font_size_large
+
+|font_style
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|admonition:
+  font_style: italic
+
+|text_transform
+|<<text-transforms,Text transform>> +
+(default: _inherit_)
+|admonition:
+  text_transform: none
+
 |padding
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: [0, 12, 0, 12])
