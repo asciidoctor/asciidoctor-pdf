@@ -9,7 +9,7 @@ require 'prawn-svg'
 require 'prawn/table'
 require 'prawn/templates'
 require_relative 'core_ext'
-require_relative 'pdf_core_ext'
+require_relative 'pdf-core_ext'
 require_relative 'temporary_path'
 require_relative 'sanitizer'
 require_relative 'prawn_ext'
@@ -308,20 +308,20 @@ class Converter < ::Prawn::Document
   def build_pdf_info doc
     info = {}
     # FIXME use sanitize: :plain_text once available
-    info[:Title] = str2pdfval sanitize(doc.doctitle use_fallback: true)
+    info[:Title] = sanitize(doc.doctitle use_fallback: true).as_pdf
     if doc.attr? 'authors'
-      info[:Author] = str2pdfval(doc.attr 'authors')
+      info[:Author] = (doc.attr 'authors').as_pdf
     end
     if doc.attr? 'subject'
-      info[:Subject] = str2pdfval(doc.attr 'subject')
+      info[:Subject] = (doc.attr 'subject').as_pdf
     end
     if doc.attr? 'keywords'
-      info[:Keywords] = str2pdfval(doc.attr 'keywords')
+      info[:Keywords] = (doc.attr 'keywords').as_pdf
     end
     if (doc.attr? 'publisher')
-      info[:Producer] = str2pdfval(doc.attr 'publisher')
+      info[:Producer] = (doc.attr 'publisher').as_pdf
     end
-    info[:Creator] = str2pdfval %(Asciidoctor PDF #{::Asciidoctor::Pdf::VERSION}, based on Prawn #{::Prawn::VERSION})
+    info[:Creator] = %(Asciidoctor PDF #{::Asciidoctor::Pdf::VERSION}, based on Prawn #{::Prawn::VERSION}).as_pdf
     info[:Producer] ||= (info[:Author] || info[:Creator])
     unless doc.attr? 'reproducible'
       # NOTE since we don't track the creation date of the input file, we map the ModDate header to the last modified
@@ -960,7 +960,7 @@ class Converter < ::Prawn::Document
             if box_height && (link = node.attr 'link', nil, false)
               link_annotation [(abs_left = svg_obj.position[0] + bounds.absolute_left), y, (abs_left + rendered_w), (y + rendered_h)],
                   Border: [0, 0, 0],
-                  A: { Type: :Action, S: :URI, URI: (str2pdfval link) }
+                  A: { Type: :Action, S: :URI, URI: link.as_pdf }
             end
             indent(*overflow) do
               layout_caption node, side: :bottom
@@ -1011,7 +1011,7 @@ class Converter < ::Prawn::Document
           if link
             link_annotation link_box,
               Border: [0, 0, 0],
-              A: { Type: :Action, S: :URI, URI: (str2pdfval link) }
+              A: { Type: :Action, S: :URI, URI: link.as_pdf }
           end
         rescue => e
           warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})

@@ -7,7 +7,6 @@ module Prawn
 module Extensions
   include ::Prawn::Measurements
   include ::Asciidoctor::Pdf::Sanitizer
-  include ::Asciidoctor::PdfCore::PdfObject
 
   IconSets = ['fa', 'fi', 'octicon', 'pf'].to_set
   MeasurementValueRx = /(\d+|\d*\.\d+)(in|mm|cm|px|pt)?$/

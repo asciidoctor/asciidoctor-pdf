@@ -2,25 +2,23 @@ module Asciidoctor
 module Pdf
 class Pdfmark
   include ::Asciidoctor::Pdf::Sanitizer
-  include ::Asciidoctor::PdfCore::PdfObject
 
   def initialize doc
     @doc = doc
   end
 
   def generate
-    current_datetime = ::DateTime.now.strftime '%Y%m%d%H%M%S'
     doc = @doc
     # FIXME use sanitize: :plain_text once available
     content = <<-EOS
-[ /Title #{str2pdfobj sanitize(doc.doctitle use_fallback: true)}
-  /Author #{str2pdfobj(doc.attr 'authors')}
-  /Subject #{str2pdfobj(doc.attr 'subject')}
-  /Keywords #{str2pdfobj(doc.attr 'keywords')}
-  /ModDate (D:#{current_datetime})
-  /CreationDate (D:#{current_datetime})
+[ /Title #{sanitize(doc.doctitle use_fallback: true).to_pdf}
+  /Author #{(doc.attr 'authors').to_pdf}
+  /Subject #{(doc.attr 'subject').to_pdf}
+  /Keywords #{(doc.attr 'keywords').to_pdf}
+  /ModDate #{date = ::Time.now.to_pdf}
+  /CreationDate #{date}
   /Creator (Asciidoctor PDF #{::Asciidoctor::Pdf::VERSION}, based on Prawn #{::Prawn::VERSION})
-  /Producer #{str2pdfobj(doc.attr 'publisher')}
+  /Producer #{(doc.attr 'publisher').to_pdf}
   /DOCINFO pdfmark
     EOS
     content
