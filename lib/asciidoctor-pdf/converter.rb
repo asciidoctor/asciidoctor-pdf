@@ -481,58 +481,58 @@ class Converter < ::Prawn::Document
     shift_top = shift_base / 3.0
     shift_bottom = (shift_base * 2) / 3.0
     keep_together do |box_height = nil|
-      #theme_font :admonition do
-        abs_left = bounds.absolute_left
-        abs_right = bounds.absolute_right
-        pad_box @theme.admonition_padding do
-          left_padding = bounds.absolute_left - abs_left
-          right_padding = abs_right - bounds.absolute_right
-          if box_height
-            float do
-              bounding_box [0, cursor], width: label_width + right_padding, height: box_height do
-                if (rule_color = @theme.admonition_column_rule_color) &&
-                    (rule_width = @theme.admonition_column_rule_width || @theme.base_border_width) && rule_width > 0
-                  stroke_vertical_rule rule_color,
-                      at: bounds.width,
-                      line_style: (@theme.admonition_column_rule_style || :solid).to_sym,
-                      line_width: rule_width
-                end
-                if icons
-                  icon_data = admonition_icon_data label
-                  icon_size = fit_icon_to_bounds icon_data[:size]
-                  # NOTE Prawn's vcenter is not reliable, so calculate it manually
-                  vcenter_pos = (box_height - icon_size) * 0.5
-                  move_down vcenter_pos if vcenter_pos > 0
-                  icon icon_data[:name],
-                      valign: :top,
-                      align: :center,
-                      color: icon_data[:stroke_color],
-                      size: icon_size
-                else
-                  # IMPORTANT the label must fit in the alotted space or it shows up on another page!
-                  # QUESTION anyway to prevent text overflow in the case it doesn't fit?
-                  theme_font :admonition_label do
-                    theme_font %(admonition_label_#{type}) do
-                      # NOTE Prawn's vcenter is not reliable, so calculate it manually
-                      vcenter_pos = (box_height - label_height) * 0.5
-                      move_down vcenter_pos if vcenter_pos > 0
-                      @text_transform = nil # already applied to label
-                      layout_prose label, align: :left, valign: :top, line_height: 1, margin: 0, inline_format: false
-                    end
+      abs_left = bounds.absolute_left
+      abs_right = bounds.absolute_right
+      pad_box @theme.admonition_padding do
+        left_padding = bounds.absolute_left - abs_left
+        right_padding = abs_right - bounds.absolute_right
+        if box_height
+          float do
+            bounding_box [0, cursor], width: label_width + right_padding, height: box_height do
+              if (rule_color = @theme.admonition_column_rule_color) &&
+                  (rule_width = @theme.admonition_column_rule_width || @theme.base_border_width) && rule_width > 0
+                stroke_vertical_rule rule_color,
+                    at: bounds.width,
+                    line_style: (@theme.admonition_column_rule_style || :solid).to_sym,
+                    line_width: rule_width
+              end
+              if icons
+                icon_data = admonition_icon_data label
+                icon_size = fit_icon_to_bounds icon_data[:size]
+                # NOTE Prawn's vcenter is not reliable, so calculate it manually
+                vcenter_pos = (box_height - icon_size) * 0.5
+                move_down vcenter_pos if vcenter_pos > 0
+                icon icon_data[:name],
+                    valign: :top,
+                    align: :center,
+                    color: icon_data[:stroke_color],
+                    size: icon_size
+              else
+                # IMPORTANT the label must fit in the alotted space or it shows up on another page!
+                # QUESTION anyway to prevent text overflow in the case it doesn't fit?
+                theme_font :admonition_label do
+                  theme_font %(admonition_label_#{type}) do
+                    # NOTE Prawn's vcenter is not reliable, so calculate it manually
+                    vcenter_pos = (box_height - label_height) * 0.5
+                    move_down vcenter_pos if vcenter_pos > 0
+                    @text_transform = nil # already applied to label
+                    layout_prose label, align: :left, valign: :top, line_height: 1, margin: 0, inline_format: false
                   end
                 end
               end
             end
           end
-          indent label_width + left_padding + right_padding do
-            move_down shift_top
-            layout_caption node.title if node.title?
-            convert_content_for_block node
-            # FIXME HACK compensate for margin bottom of admonition content
-            move_up shift_bottom unless at_page_top?
-          end
         end
-      #end
+        indent label_width + left_padding + right_padding do
+          move_down shift_top
+          layout_caption node.title if node.title?
+          theme_font :admonition do
+            convert_content_for_block node
+          end
+          # FIXME HACK compensate for margin bottom of admonition content
+          move_up shift_bottom unless at_page_top?
+        end
+      end
     end
     theme_margin :block, :bottom
   end
