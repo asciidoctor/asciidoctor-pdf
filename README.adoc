@@ -382,7 +382,7 @@ IMPORTANT: The `optimize-pdf` script relies on Ghostscript >= 9.10.
 Otherwise, it may actually make the PDF larger.
 Also, you should only consider using it if the file size of the original PDF is > 5MB.
 
-If a file is found with the extension `.pdfmarks` and the same rootname as the input file, it is used to add metadata to the generated PDF document.
+If a file is found with the extension `.pdfmark` and the same rootname as the input file, it is used to add metadata to the generated PDF document.
 This file is necessary to preserve the document metadata since Ghostscript will otherwise drop it.
 That's why {project-name} always creates this file in addition to the PDF.
 

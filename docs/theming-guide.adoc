@@ -2890,7 +2890,7 @@ These settings override equivalent keys defined in the theme file, where applica
 |Attribute |Value Type |Example
 
 |autofit-option
-|flag (default: _off_)
+|flag (default: _unset_)
 |:autofit-option:
 
 |chapter-label
@@ -2911,7 +2911,7 @@ These settings override equivalent keys defined in the theme file, where applica
 |+:page-background-image: image:bg.jpg[]+
 
 |pagenums^[4]^
-|flag (default: _on_)
+|flag (default: _set_)
 |:pagenums:
 
 |pdf-page-layout
@@ -2921,6 +2921,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |pdf-page-size
 |https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width, height]>>
 |:pdf-page-size: 6in x 9in
+
+|pdfmark^[5]^
+|flag (default: _unset_)
+|:pdfmark:
 
 |title-logo-image
 |path^[2]^ {vbar} image macro^[3]^
@@ -2936,6 +2940,7 @@ These settings override equivalent keys defined in the theme file, where applica
 . The target of the image macro is resolved relative to `imagesdir`.
 . Controls whether the `page-number` attribute is accessible to the running header and footer content specified in the theme file.
 Use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively, from the document.
+. Enables generation of the http://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark] file, which contains metadata that is fed to Ghostscript when optimizing the PDF file.
 
 == Publishing Mode
 

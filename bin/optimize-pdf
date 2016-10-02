@@ -18,9 +18,9 @@ fi
 FILE=$1
 FILE_BASENAME=${FILE%.pdf}
 FILE_OPTIMIZED=$FILE_BASENAME-optimized.pdf
-FILE_PDFMARKS=
-if [ -f "$FILE_BASENAME.pdfmarks" ]; then
-  FILE_PDFMARKS="$FILE_BASENAME.pdfmarks"
+FILE_PDFMARK=
+if [ -f "$FILE_BASENAME.pdfmark" ]; then
+  FILE_PDFMARK="$FILE_BASENAME.pdfmark"
 fi
 DOWNSAMPLE_IMAGES=true
 if [ -z $IMAGE_DPI ]; then
@@ -59,6 +59,6 @@ fi
   -dDownsampleMonoImages=$DOWNSAMPLE_IMAGES \
   -dMonoImageResolution=$IMAGE_DPI \
   -sOutputFile="$FILE_OPTIMIZED" \
-  "$FILE" $FILE_PDFMARKS
+  "$FILE" $FILE_PDFMARK
 
 exit 0

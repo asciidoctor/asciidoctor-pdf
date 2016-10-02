@@ -14,7 +14,7 @@ require_relative 'temporary_path'
 require_relative 'sanitizer'
 require_relative 'prawn_ext'
 require_relative 'formatted_text'
-require_relative 'pdfmarks'
+require_relative 'pdfmark'
 require_relative 'asciidoctor_ext'
 require_relative 'theme_loader'
 require_relative 'roman_numeral'
@@ -239,8 +239,8 @@ class Converter < ::Prawn::Document
     @fallback_fonts = [*theme.font_fallbacks]
     @font_color = theme.base_font_color
     @text_transform = nil
-    # NOTE we have to init pdfmarks here while we have a reference to the doc
-    @pdfmarks = (doc.attr? 'pdfmarks') ? (Pdfmarks.new doc) : nil
+    # NOTE we have to init Pdfmark class here while we have reference to the doc
+    @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
     init_scratch_prototype
     self
   end
@@ -2374,7 +2374,7 @@ class Converter < ::Prawn::Document
     else
       pdf_doc.render_file target
       # QUESTION restore attributes first?
-      @pdfmarks.generate_file target if @pdfmarks
+      @pdfmark.generate_file target if @pdfmark
     end
     # write scratch document if debug is enabled (or perhaps DEBUG_STEPS env)
     #get_scratch_document.render_file 'scratch.pdf'

@@ -1,6 +1,6 @@
 module Asciidoctor
 module Pdf
-class Pdfmarks
+class Pdfmark
   include ::Asciidoctor::Pdf::Sanitizer
   include ::Asciidoctor::PdfCore::PdfObject
 
@@ -28,7 +28,7 @@ class Pdfmarks
 
   def generate_file pdf_file
     # QUESTION should we use the extension pdfmeta to be more clear?
-    ::IO.write %(#{pdf_file}marks), generate
+    ::IO.write %(#{pdf_file}mark), generate
   end
 end
 end
