@@ -2076,7 +2076,7 @@ class Converter < ::Prawn::Document
     # index chapters and sections by the visual page number on which they appear
     chapters_by_page = {}
     sections_by_page = {}
-    last_chap = (doc.attr 'preface-title') || 'Preface'
+    last_chap = doc.doctype == 'book' ? (doc.attr 'preface-title', 'Preface') : nil
     last_sect = nil
     (1..num_pages).each do |num|
       if (chap = chapter_start_pages[num])
