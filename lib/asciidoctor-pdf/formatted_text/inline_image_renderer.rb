@@ -1,5 +1,6 @@
 module Asciidoctor::Pdf::FormattedText
 module InlineImageRenderer
+  TemporaryPath = ::Asciidoctor::Pdf::TemporaryPath
   module_function
 
   # Embeds the image object in this fragment into the document in place of the
@@ -39,7 +40,7 @@ module InlineImageRenderer
     # prevent any text from being written
     fragment.conceal
   ensure
-    ::File.unlink data[:image_path] if data[:image_tmp]
+    ::File.unlink data[:image_path] if TemporaryPath === data[:image_path] && data[:image_path].exist?
   end
 end
 end

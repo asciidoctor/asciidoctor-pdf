@@ -80,9 +80,8 @@ class Transform
           when :img
             attributes = node[:attributes]
             fragment = {
-              image_path: attributes[:src],
+              image_path: attributes[:tmp] == 'true' ? (attributes[:src].extend TemporaryPath) : attributes[:src],
               image_format: attributes[:format],
-              image_tmp: (attributes[:tmp] == 'true'),
               text: attributes[:alt],
               callback: InlineImageRenderer
             }

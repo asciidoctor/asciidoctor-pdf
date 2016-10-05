@@ -8,6 +8,7 @@ module InlineImageArranger
   rescue
     PlaceholderWidthCache = {}
   end
+  TemporaryPath = ::Asciidoctor::Pdf::TemporaryPath
 
   if respond_to? :prepend
     def wrap fragments
@@ -107,8 +108,8 @@ module InlineImageArranger
           fragment.delete :callback
           fragment.delete :image_obj
           fragment.delete :image_info
-          # NOTE in main document, tmp image path is unlinked by renderer
-          ::File.unlink image_path if fragment[:image_tmp]
+          # NOTE in main document, temporary image path is unlinked by renderer
+          ::File.unlink image_path if TemporaryPath === image_path && image_path.exist?
         end
       end
     end
