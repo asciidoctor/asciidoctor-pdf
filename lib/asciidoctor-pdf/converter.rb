@@ -43,7 +43,8 @@ class Converter < ::Prawn::Document
     tip:       { name: 'fa-lightbulb-o', stroke_color: '111111', size: 24 },
     warning:   { name: 'fa-exclamation-triangle', stroke_color: 'BF6900', size: 24 }
   }
-  AlignmentNames = ['left', 'center', 'right']
+  TextAlignmentNames = ['left', 'center', 'right', 'justify']
+  BlockAlignmentNames = ['left', 'center', 'right']
   AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
   ColumnPositions = [:left, :center, :right]
   PageSides = [:recto, :verso]
@@ -238,6 +239,7 @@ class Converter < ::Prawn::Document
     @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
     @fallback_fonts = [*theme.font_fallbacks]
     @font_color = theme.base_font_color
+    @base_align = (align = doc.attr 'text-alignment') && (TextAlignmentNames.include? align) ? align : theme.base_align
     @text_transform = nil
     # NOTE we have to init Pdfmark class here while we have reference to the doc
     @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
@@ -335,7 +337,7 @@ class Converter < ::Prawn::Document
   def convert_section sect, opts = {}
     theme_font :heading, level: (hlevel = sect.level + 1) do
       title = sect.numbered_title formal: true
-      align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @theme.base_align).to_sym
+      align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
       type = nil
       if sect.part_or_chapter?
         if sect.chapter?
@@ -372,7 +374,7 @@ class Converter < ::Prawn::Document
     add_dest_for_block node if node.id
     # QUESTION should we decouple styles from section titles?
     theme_font :heading, level: (hlevel = node.level + 1) do
-      layout_heading node.title, align: (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @theme.base_align).to_sym
+      layout_heading node.title, align: (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
     end
   end
 
@@ -381,7 +383,7 @@ class Converter < ::Prawn::Document
     pad_box @theme.abstract_padding do
       if node.title?
         theme_font :abstract_title do
-          layout_heading node.title, align: (@theme.abstract_title_align || @theme.base_align).to_sym
+          layout_heading node.title, align: (@theme.abstract_title_align || @base_align).to_sym
         end
       end
       theme_font :abstract do
@@ -650,7 +652,7 @@ class Converter < ::Prawn::Document
         if node.title?
           theme_font :sidebar_title do
             # QUESTION should we allow margins of sidebar title to be customized?
-            layout_heading node.title, align: (@theme.sidebar_title_align || @theme.base_align).to_sym, margin_top: 0
+            layout_heading node.title, align: (@theme.sidebar_title_align || @base_align).to_sym, margin_top: 0
           end
         end
         theme_font :sidebar do
@@ -1430,8 +1432,8 @@ class Converter < ::Prawn::Document
       end
     end
 
-    if ((alignment = node.attr 'align', nil, false) && (AlignmentNames.include? alignment)) ||
-        (alignment = (node.roles & AlignmentNames).last)
+    if ((alignment = node.attr 'align', nil, false) && (BlockAlignmentNames.include? alignment)) ||
+        (alignment = (node.roles & BlockAlignmentNames).last)
       alignment = alignment.to_sym
     else
       alignment = :left
@@ -1745,8 +1747,8 @@ class Converter < ::Prawn::Document
     # IMPORTANT this is the first page created, so we need to set the base font
     font @theme.base_font_family, size: @theme.base_font_size
 
-    # QUESTION allow aligment per element on title page?
-    title_align = (@theme.title_page_align || @theme.base_align).to_sym
+    # QUESTION allow alignment per element on title page?
+    title_align = (@theme.title_page_align || @base_align).to_sym
 
     # TODO disallow .pdf as image type
     if (logo_image_path = (doc.attr 'title-logo-image', @theme.title_page_logo_image))
@@ -1889,7 +1891,7 @@ class Converter < ::Prawn::Document
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.heading_line_height), {
       color: @font_color,
       inline_format: true,
-      align: @theme.base_align.to_sym
+      align: @base_align.to_sym
     }.merge(opts)
     margin_bottom bot_margin
   end
@@ -1910,7 +1912,7 @@ class Converter < ::Prawn::Document
       color: @font_color,
       # NOTE normalize makes endlines soft (replaces "\n" with ' ')
       inline_format: [normalize: (opts.delete :normalize) != false],
-      align: @theme.base_align.to_sym
+      align: @base_align.to_sym
     }.merge(opts)
     margin_bottom bot_margin
   end
@@ -1937,7 +1939,7 @@ class Converter < ::Prawn::Document
       layout_prose string, {
         margin_top: margin[:top],
         margin_bottom: margin[:bottom],
-        align: (@theme.caption_align || @theme.base_align).to_sym,
+        align: (@theme.caption_align || @base_align).to_sym,
         normalize: false
       }.merge(opts)
       if side == :top && @theme.caption_border_bottom_color
@@ -1971,7 +1973,7 @@ class Converter < ::Prawn::Document
     go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
     start_page_number = page_number
     theme_font :heading, level: 2 do
-      layout_heading((doc.attr 'toc-title'), align: (@theme.toc_title_align || @theme.base_align).to_sym)
+      layout_heading((doc.attr 'toc-title'), align: (@theme.toc_title_align || @base_align).to_sym)
     end
     # QUESTION shouldn't we skip this whole method if num_levels == 0?
     if num_levels > 0
