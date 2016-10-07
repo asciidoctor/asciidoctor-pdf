@@ -1388,7 +1388,14 @@ class Converter < ::Prawn::Document
       table_data << row_data
     end
 
-    table_data = [[{ content: '' }]] if table_data.empty?
+    # NOTE Prawn aborts if table data is empty, so ensure there's at least one row
+    if table_data.empty?
+      empty_row = []
+      node.columns.each do
+        empty_row << { content: '' }
+      end
+      table_data = [empty_row]
+    end
 
     border = {}
     table_border_color = theme.table_border_color || table_grid_color || theme.base_border_color
