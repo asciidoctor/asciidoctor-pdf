@@ -2228,10 +2228,9 @@ class Converter < ::Prawn::Document
     end
 
     stamps = {}
-    if trim_bg_color || trim_border_color
-      # NOTE switch to first content page so stamp will get created properly (can't create on imported page)
+    if (trim_bg_color || trim_border_color) && (stamp_page_index = state.pages.index {|p| !p.imported_page? })
       prev_page_number = page_number
-      go_to_page start
+      go_to_page stamp_page_index + 1
       PageSides.each do |side|
         create_stamp trim_stamp_name[side] do
           canvas do
