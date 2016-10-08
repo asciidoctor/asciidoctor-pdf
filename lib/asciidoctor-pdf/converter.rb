@@ -885,7 +885,7 @@ class Converter < ::Prawn::Document
         (::File.readable? image_path)
       # NOTE import_page automatically advances to next page afterwards
       # QUESTION should we add destination to top of imported page?
-      return import_page image_path if image_format == 'pdf'
+      return import_page image_path, replace: page_is_empty? if image_format == 'pdf'
     else
       warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
       image_path = false
