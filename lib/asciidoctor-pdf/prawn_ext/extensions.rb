@@ -703,6 +703,7 @@ module Extensions
     prev_page_size = page.size
     state.compress = false if state.compress # can't use compression if using template
     prev_text_rendering_mode = @text_rendering_mode
+    delete_page if opts[:replace]
     # NOTE use functionality provided by prawn-templates
     start_new_page_discretely template: file
     # prawn-templates sets text_rendering_mode to :unknown, which breaks running content; revert

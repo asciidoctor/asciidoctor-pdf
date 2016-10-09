@@ -885,7 +885,7 @@ class Converter < ::Prawn::Document
         (::File.readable? image_path)
       # NOTE import_page automatically advances to next page afterwards
       # QUESTION should we add destination to top of imported page?
-      return import_page image_path if image_format == 'pdf'
+      return import_page image_path, replace: page_is_empty? if image_format == 'pdf'
     else
       warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
       image_path = false
@@ -2228,10 +2228,9 @@ class Converter < ::Prawn::Document
     end
 
     stamps = {}
-    if trim_bg_color || trim_border_color
-      # NOTE switch to first content page so stamp will get created properly (can't create on imported page)
+    if (trim_bg_color || trim_border_color) && (stamp_page_index = state.pages.index {|p| !p.imported_page? })
       prev_page_number = page_number
-      go_to_page start
+      go_to_page stamp_page_index + 1
       PageSides.each do |side|
         create_stamp trim_stamp_name[side] do
           canvas do
