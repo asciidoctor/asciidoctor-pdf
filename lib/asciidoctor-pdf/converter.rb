@@ -503,11 +503,15 @@ class Converter < ::Prawn::Document
               if icons
                 icon_data = admonition_icon_data label
                 icon_size = fit_icon_to_bounds icon_data[:size]
-                # NOTE Prawn's vcenter is not reliable, so calculate it manually
-                vcenter_pos = (box_height - icon_size) * 0.5
-                move_down vcenter_pos if vcenter_pos > 0
+                if (valign = (@theme.admonition_label_vertical_align || :middle).to_sym) == :middle
+                  valign = :top
+                  # NOTE Prawn's vcenter is not reliable, so calculate it manually
+                  if (vcenter_pos = (box_height - icon_size) * 0.5) > 0
+                    move_down vcenter_pos
+                  end
+                end
                 icon icon_data[:name],
-                    valign: :top,
+                    valign: valign,
                     align: :center,
                     color: icon_data[:stroke_color],
                     size: icon_size
@@ -516,11 +520,15 @@ class Converter < ::Prawn::Document
                 # QUESTION anyway to prevent text overflow in the case it doesn't fit?
                 theme_font :admonition_label do
                   theme_font %(admonition_label_#{type}) do
-                    # NOTE Prawn's vcenter is not reliable, so calculate it manually
-                    vcenter_pos = (box_height - label_height) * 0.5
-                    move_down vcenter_pos if vcenter_pos > 0
+                    if (valign = (@theme.admonition_label_vertical_align || :middle).to_sym) == :middle
+                      valign = :top
+                      # NOTE Prawn's vcenter is not reliable, so calculate it manually
+                      if (vcenter_pos = (box_height - label_height) * 0.5) > 0
+                        move_down vcenter_pos
+                      end
+                    end
                     @text_transform = nil # already applied to label
-                    layout_prose label, align: :left, valign: :top, line_height: 1, margin: 0, inline_format: false
+                    layout_prose label, align: :left, valign: valign, line_height: 1, margin: 0, inline_format: false
                   end
                 end
               end

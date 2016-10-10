@@ -1942,6 +1942,12 @@ The keys in this category control the arrangement and style of admonition blocks
 |admonition:
   padding: [0, 12, 0, 12]
 
+|label_vertical_align
+|top {vbar} middle {vbar} bottom
+|admonition:
+  label:
+    vertical_align: top
+
 3+|*Key Prefix:* admonition_label, admonition_label_<name>^[1]^
 
 |font_color
