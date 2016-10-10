@@ -2065,8 +2065,12 @@ class Converter < ::Prawn::Document
     # QUESTION should we short-circuit if setting not specified and if so, which setting?
     return unless (periphery == :header && @theme.header_height) || (periphery == :footer && @theme.footer_height)
     skip = opts[:skip] || 1
-    start = skip + 1
+    # NOTE find and advance to first non-imported content page to use as model page
+    return unless (content_start_page = state.pages[skip..-1].index {|p| !p.imported_page? })
+    content_start_page += (skip + 1)
     num_pages = page_count - skip
+    prev_page_number = page_number
+    go_to_page content_start_page
 
     # FIXME probably need to treat doctypes differently
     sections = doc.find_by(context: :section) {|sect| sect.level < 3 } || []
@@ -2228,9 +2232,7 @@ class Converter < ::Prawn::Document
     end
 
     stamps = {}
-    if (trim_bg_color || trim_border_color) && (stamp_page_index = state.pages.index {|p| !p.imported_page? })
-      prev_page_number = page_number
-      go_to_page stamp_page_index + 1
+    if trim_bg_color || trim_border_color
       PageSides.each do |side|
         create_stamp trim_stamp_name[side] do
           canvas do
@@ -2254,12 +2256,11 @@ class Converter < ::Prawn::Document
         end
       end
       stamps[periphery] = true
-      go_to_page prev_page_number
     end
 
     pagenums_enabled = doc.attr? 'pagenums'
     attribute_missing_doc = doc.attr 'attribute-missing'
-    repeat (start..page_count), dynamic: true do
+    repeat (content_start_page..page_count), dynamic: true do
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
       pgnum_label = page_number - skip
@@ -2327,6 +2328,8 @@ class Converter < ::Prawn::Document
         end
       end
     end
+
+    go_to_page prev_page_number
     nil
   end
 
