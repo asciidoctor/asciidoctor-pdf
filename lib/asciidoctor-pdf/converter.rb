@@ -6,6 +6,8 @@ begin
 rescue LoadError
 end unless defined? GMagick::Image
 require 'prawn-svg'
+# NOTE disable system fonts since they're non-portable
+Prawn::Svg::Interface.font_path.clear
 require 'prawn/table'
 require 'prawn/templates'
 require_relative 'core_ext'
