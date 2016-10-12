@@ -595,7 +595,7 @@ base:
   font_family: Times-Roman
 ----
 
-However, when you use a built-in font, the characters that you use in your document are limited to the characters in the WINANSI (http://en.wikipedia.org/wiki/Windows-1252[Windows-1252]) code set.
+However, when you use a built-in font, the characters you can use in your document are limited to the characters in the WINANSI (http://en.wikipedia.org/wiki/Windows-1252[Windows-1252]) code set.
 WINANSI includes most of the characters needed for writing in Western languages (English, French, Spanish, etc).
 For anything outside of that, PDF is BYOF (Bring Your Own Font).
 
@@ -604,8 +604,12 @@ Asciidoctor PDF encodes the content into WINANSI when building the PDF.
 
 .WINANSI Encoding Behavior
 ****
-When using the built-in PDF (AFM) fonts on a block of content in your AsciiDoc document, any character that cannot be encoded to WINANSI will be replaced with a logic "not" glyph (`&#172;`) and a warning will be issued.
-(This behavior is slighly different from the default behavior in Prawn).
+When using the built-in PDF (AFM) fonts on a block of content in your AsciiDoc document, any character that cannot be encoded to WINANSI is replaced with a logic "`not`" glyph (`&#172;`) and you'll see the following warning in your console:
+
+ The following text could not be fully converted to the Windows-1252 character set:
+ | <glyph>
+
+This behavior differs from the default behavior in Prawn.
 
 For more information about how Prawn handles character encodings for built-in fonts, see https://github.com/prawnpdf/prawn/blob/master/CHANGELOG.md#vastly-improved-handling-of-encodings-for-pdf-built-in-afm-fonts[this note in the Prawn CHANGELOG].
 ****
