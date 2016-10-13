@@ -2747,7 +2747,7 @@ The keys in this category control the arrangement and style of running header an
 (default: _not set_)
 |footer:
   verso:
-    columns: <50% 0% <50%
+    columns: <50% =0% <50%
 
 |<side>_<position>_content^[2,3]^
 |Quoted string

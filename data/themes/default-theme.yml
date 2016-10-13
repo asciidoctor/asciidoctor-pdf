@@ -252,7 +252,7 @@ footer:
   # * {section-title}
   # * {section-or-chapter-title}
   recto:
-    #columns: "<50%,=0%,>50%"
+    #columns: "<50% =0% >50%"
     right:
       content: '{page-number}'
       #content: '{section-or-chapter-title} | {page-number}'
@@ -260,7 +260,7 @@ footer:
     #center:
     #  content: '{page-number}'
   verso:
-    #columns: "<50%,=0%,>50%"
+    #columns: $footer_recto_columns
     left:
       content: '{page-number}'
       #content: '{page-number} | {chapter-title}'

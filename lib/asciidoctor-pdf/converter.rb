@@ -2209,26 +2209,29 @@ class Converter < ::Prawn::Document
 
     colspec_dict = PageSides.inject({}) do |acc, side|
       side_trim_content_width = trim_content_width[side]
-      if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)])
-        colspecs = %w(<40% =20% >40%)
-        (custom_colspecs.tr ',', ' ').split[0..2].each_with_index {|c, idx| colspecs[idx] = c }
-        colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
-        cml_width = 0
+      if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)].to_s)
+        case (colspecs = (custom_colspecs.tr ',', ' ').split[0..2]).size
+        when 3
+          colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
+        when 2
+          colspecs = { left: colspecs[0], center: '0', right: colspecs[1] }
+        when 0, 1
+          colspecs = { left: '0', center: colspecs[0] || '100', right: '0' }
+        end
+        tot_width = 0
         side_colspecs = colspecs.map {|col, spec|
           if (alignment_char = spec.chr).to_i.to_s != alignment_char
             alignment = AlignmentTable[alignment_char] || :left
-            pcwidth = spec[1..-1].to_f
+            rel_width = spec[1..-1].to_f
           else
             alignment = :left
-            pcwidth = spec.to_f
+            rel_width = spec.to_f
           end
-          # QUESTION should we allow the columns to overlap (capping width at 100%)?
-          if (w = side_trim_content_width * (pcwidth / 100.0)) + cml_width > side_trim_content_width
-            w = side_trim_content_width - cml_width
-          end
-          cml_width += w
-          [col, { align: alignment, width: w, x: 0 }]
+          tot_width += rel_width
+          [col, { align: alignment, width: rel_width, x: 0 }]
         }.to_h
+        # QUESTION should we allow the columns to overlap (capping width at 100%)?
+        side_colspecs.each {|side, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
         side_colspecs[:right][:x] = (side_colspecs[:center][:x] = side_colspecs[:left][:width]) + side_colspecs[:center][:width]
         acc[side] = side_colspecs
       else
