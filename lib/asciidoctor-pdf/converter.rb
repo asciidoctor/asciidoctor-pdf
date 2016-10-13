@@ -2209,8 +2209,8 @@ class Converter < ::Prawn::Document
 
     colspec_dict = PageSides.inject({}) do |acc, side|
       side_trim_content_width = trim_content_width[side]
-      if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)].to_s)
-        case (colspecs = (custom_colspecs.tr ',', ' ').split[0..2]).size
+      if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)])
+        case (colspecs = (custom_colspecs.to_s.tr ',', ' ').split[0..2]).size
         when 3
           colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
         when 2
