@@ -349,18 +349,25 @@ The following units are supported:
 |===
 |Unit |Suffix
 
-|Inches
-|in
-
 |Centimeter
 |cm
+
+|Inches
+|in
 
 |Millimeter
 |mm
 
+|Percentage^[1]^
+|%, vw, or vh
+
 |Points
 |pt (default)
 |===
+
+. A percentage with the % unit is calculated relative to the width or height of the content area.
+Viewport-relative percentages (vw or vh units) are calculated as a percentage of the page width or height, respectively.
+Currently, percentage units can only be used for placing elements on the title page or for setting the width of a block image.
 
 IMPORTANT: Numbers with more than two digits should be written as a float (e.g., 100.0), a math expression (e.g, 1 * 100), or with a unit (e.g., 100pt).
 Otherwise, the value may be misinterpreted as a hex color (e.g., '100') and could cause the converter to crash.
