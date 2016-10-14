@@ -102,6 +102,9 @@ module InlineImageArranger
         # HACK we could use a nicer API from Prawn here to reserve width in a line
         fragment[:text] = ImagePlaceholderChar * (fragment[:image_width] / spacer_w).ceil
         #fragment[:width] = fragment[:image_width]
+      rescue => e
+        warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
+        scratch = true # delegate to cleanup logic in ensure block
       ensure
         # NOTE skip rendering image in scratch document
         if scratch
