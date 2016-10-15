@@ -65,7 +65,7 @@ class Converter < ::Prawn::Document
   NarrowNoBreakSpace = %(\u202f)
   ZeroWidthSpace = %(\u200b)
   HairSpace = %(\u200a)
-  DotLeaderDefault = '. '
+  DotLeaderTextDefault = '. '
   EmDash = %(\u2014)
   LowercaseGreekA = %(\u03b1)
   Bullets = {
@@ -1996,11 +1996,12 @@ class Converter < ::Prawn::Document
     if num_levels > 0
       theme_margin :toc, :top
       line_metrics = calc_line_metrics @theme.toc_line_height
-      dot_width = nil
-      theme_font :toc do
-        dot_width = width_of(@theme.toc_dot_leader_content || DotLeaderDefault)
+      dot_leader = { text: @theme.toc_dot_leader_content || DotLeaderTextDefault }
+      dot_leader[:width] = theme_font :toc do
+        dot_leader[:color] = @theme.toc_dot_leader_font_color || @font_color
+        width_of dot_leader[:text]
       end
-      layout_toc_level doc.sections, num_levels, line_metrics, dot_width, num_front_matter_pages
+      layout_toc_level doc.sections, num_levels, line_metrics, dot_leader, num_front_matter_pages
     end
     # NOTE range must be calculated relative to toc_page_number; absolute page number in scratch document is arbitrary
     toc_page_numbers = (toc_page_number..(toc_page_number + (page_number - start_page_number)))
@@ -2008,19 +2009,27 @@ class Converter < ::Prawn::Document
     toc_page_numbers
   end
 
-  def layout_toc_level sections, num_levels, line_metrics, dot_width, num_front_matter_pages = 0
-    toc_dot_color = @theme.toc_dot_leader_font_color || @theme.toc_font_color || @font_color
+  def layout_toc_level sections, num_levels, line_metrics, dot_leader, num_front_matter_pages = 0
+    # NOTE font options aren't always reliable, so store size separately
+    toc_font_info = theme_font :toc do
+      { font: font, size: @font_size }
+    end
     sections.each do |sect|
       theme_font :toc, level: (sect.level + 1) do
         sect_title = sect.numbered_title
         if (transform = @text_transform) && transform != 'none'
           sect_title = transform_text sect_title, transform
         end
+        # NOTE only write section title (excluding dots and page number) if this is a dry run
         if scratch?
           # FIXME use layout_prose
           # NOTE must wrap title in empty anchor element in case links are styled with different font family / size
           typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true
         else
+          pgnum_label = ((sect.attr 'pdf-page-start') - num_front_matter_pages).to_s
+          pgnum_label_font_fragment = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
+          pgnum_label_width = width_of pgnum_label
+          sect_title_width = width_of sect_title, inline_format: true
           # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
           start_page_number = page_number
           start_cursor = cursor
@@ -2032,27 +2041,25 @@ class Converter < ::Prawn::Document
           # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
           go_to_page start_page_number if start_page_number != end_page_number
           move_cursor_to start_cursor
-          # NOTE only write the label if this is not a dry run
-          sect_pgnum_label = (sect.attr 'pdf-page-start') - num_front_matter_pages
-          spacer_width = (width_of NoBreakSpace) * 0.75
-          # FIXME this calculation will be wrong if a style is set per level
-          num_dots = ((bounds.width - (width_of %(#{sect_title}#{sect_pgnum_label}), inline_format: true) - spacer_width) / dot_width).floor
-          num_dots = 0 if num_dots < 0
-          # FIXME dots don't line up if width of page numbers differ
-          typeset_formatted_text [
-            { text: %(#{(@theme.toc_dot_leader_content || DotLeaderDefault) * num_dots}), color: toc_dot_color },
-            # FIXME this spacing doesn't always work out; should we use graphics instead?
-            { text: NoBreakSpace, size: (@font_size * 0.5) },
-            { text: sect_pgnum_label.to_s, anchor: sect_anchor, color: @font_color }], line_metrics, align: :right
+          save_font do
+            # NOTE use same font for dots throughout toc
+            set_font toc_font_info[:font], toc_font_info[:size]
+            spacer_width = width_of NoBreakSpace, size: (@font_size * 0.5)
+            num_dots = ((bounds.width - sect_title_width - spacer_width - pgnum_label_width) / dot_leader[:width]).floor
+            # FIXME dots don't line up in columns if width of page numbers differ
+            typeset_formatted_text [
+                { text: (dot_leader[:text] * (num_dots < 0 ? 0 : num_dots)), color: dot_leader[:color] },
+                { text: NoBreakSpace, size: @font_size * 0.5 },
+                { text: pgnum_label, anchor: sect_anchor }.merge(pgnum_label_font_fragment)
+              ], line_metrics, align: :right
+          end
           go_to_page end_page_number if start_page_number != end_page_number
           move_cursor_to end_cursor
         end
       end
-      if sect.level < num_levels
-        indent @theme.toc_indent do
-          layout_toc_level sect.sections, num_levels, line_metrics, dot_width, num_front_matter_pages
-        end
-      end
+      indent @theme.toc_indent do
+        layout_toc_level sect.sections, num_levels, line_metrics, dot_leader, num_front_matter_pages
+      end if sect.level < num_levels
     end
   end
 
@@ -2378,8 +2385,8 @@ class Converter < ::Prawn::Document
     sections.each do |sect|
       sect_title = sanitize sect.numbered_title formal: true
       sect_destination = sect.attr 'pdf-destination'
-      sect_pgnum_label = (sect_pgnum = sect.attr 'pdf-page-start') - num_front_matter_pages
-      page_num_labels[sect_pgnum - 1] = { P: ::PDF::Core::LiteralString.new(sect_pgnum_label.to_s) }
+      pgnum_label = (pgnum = sect.attr 'pdf-page-start') - num_front_matter_pages
+      page_num_labels[pgnum - 1] = { P: ::PDF::Core::LiteralString.new(pgnum_label.to_s) }
       if (subsections = sect.sections).empty? || sect.level == num_levels
         outline.page title: sect_title, destination: sect_destination
       elsif sect.level < num_levels + 1
@@ -2473,6 +2480,8 @@ class Converter < ::Prawn::Document
   end
 
   def theme_font category, opts = {}
+    result = nil
+    # TODO inheriting from generic category should be an option
     if (level = opts[:level])
       family = @theme[%(#{category}_h#{level}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family
       size = @theme[%(#{category}_h#{level}_font_size)] || @theme[%(#{category}_font_size)] || @theme.base_font_size
@@ -2494,11 +2503,12 @@ class Converter < ::Prawn::Document
     prev_transform, @text_transform = @text_transform, transform if transform
 
     font family, size: size, style: (style && style.to_sym) do
-      yield
+      result = yield
     end
 
     @font_color = prev_color if color
     @text_transform = prev_transform if transform
+    result
   end
 
   # Calculate the font size (down to the minimum font size) that would allow
@@ -2508,7 +2518,6 @@ class Converter < ::Prawn::Document
   # font size adjustment is necessary.
   def theme_font_size_autofit fragments, category
     arranger = arrange_fragments_by_line fragments
-    adjusted_font_size = nil
     theme_font category do
       # NOTE finalizing the line here generates fragments & calculates their widths using the current font settings
       # CAUTION it also removes zero-width spaces
@@ -2521,11 +2530,14 @@ class Converter < ::Prawn::Document
       if actual_width > available_width
         adjusted_font_size = ((available_width * font_size).to_f / actual_width).with_precision 4
         if (min = @theme[%(#{category}_font_size_min)] || @theme.base_font_size_min) && adjusted_font_size < min
-          adjusted_font_size = min
+          min
+        else
+          adjusted_font_size
         end
+      else
+        nil
       end
     end
-    adjusted_font_size
   end
 
   # Arrange fragments by line in an arranger and return an unfinalized arranger.
