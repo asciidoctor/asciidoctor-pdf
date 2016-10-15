@@ -228,7 +228,7 @@ table:
   # HACK accounting for line-height
   cell_padding: [3, 3, 6, 3]
 toc:
-  dot_leader_color: dddddd
+  dot_leader_font_color: dddddd
   #dot_leader_content: '. '
   indent: $horizontal_rhythm
   line_height: 1.4
