@@ -2130,12 +2130,11 @@ class Converter < ::Prawn::Document
           if (val.include? ':') && val =~ ImageAttributeValueRx &&
               ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
             attrs = (AttributeList.new $2).parse
-            width = resolve_explicit_width attrs, bounds.width
-            # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
-            unless width
-              width = [bounds.width, (intrinsic_image_dimensions path)[:width] * 0.75].min
+            unless (width = resolve_explicit_width attrs, bounds.width)
+              # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
+              width = (intrinsic_image_dimensions path)[:width] * 0.75
             end
-            side_content[position] = { path: path, width: width }
+            side_content[position] = { path: path, width: width, fit: (attrs.key? 'contain-option') }
           else
             side_content[position] = val
           end
@@ -2307,9 +2306,12 @@ class Converter < ::Prawn::Document
                 float do
                   # NOTE bounding_box is redundant if trim_v_padding is 0
                   bounding_box [colspec[:x], cursor - trim_padding[0]], width: colspec[:width], height: (bounds.height - trim_v_padding) do
-                    #image content[:path], vposition: trim_img_valign, position: colspec[:align], width: content[:width]
-                    # NOTE use :fit to prevent image from overflowing page (at the cost of scaling it)
-                    image content[:path], vposition: trim_img_valign, position: colspec[:align], fit: [content[:width], bounds.height]
+                    if content[:fit]
+                      # NOTE use :fit to prevent image from overflowing page (at the cost of scaling it)
+                      image content[:path], vposition: trim_img_valign, position: colspec[:align], fit: [content[:width], bounds.height]
+                    else
+                      image content[:path], vposition: trim_img_valign, position: colspec[:align], width: content[:width]
+                    end
                   end
                 end
               when ::String
