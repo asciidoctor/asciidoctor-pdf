@@ -1992,15 +1992,21 @@ class Converter < ::Prawn::Document
     theme_font :heading, level: 2 do
       layout_heading((doc.attr 'toc-title'), align: (@theme.toc_title_align || @base_align).to_sym)
     end
-    # QUESTION shouldn't we skip this whole method if num_levels == 0?
+    # QUESTION should we skip this whole method if num_levels == 0?
     if num_levels > 0
-      theme_margin :toc, :top
-      line_metrics = calc_line_metrics @theme.toc_line_height
-      dot_leader = { text: @theme.toc_dot_leader_content || DotLeaderTextDefault }
-      dot_leader[:width] = theme_font :toc do
-        dot_leader[:color] = @theme.toc_dot_leader_font_color || @font_color
-        width_of dot_leader[:text]
+      dot_leader = theme_font :toc do
+        {
+          color: @theme.toc_dot_leader_font_color || @font_color,
+          levels: ((dot_leader_l = @theme.toc_dot_leader_levels) == 'none' ? ::Set.new :
+              (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (1..num_levels).to_set)),
+          spacer: { text: NoBreakSpace, size: @font_size * 0.5 },
+          spacer_width: (width_of NoBreakSpace, size: @font_size * 0.5),
+          text: (dot_leader_w = @theme.toc_dot_leader_content || DotLeaderTextDefault),
+          width: (width_of dot_leader_w)
+        }
       end
+      line_metrics = calc_line_metrics @theme.toc_line_height
+      theme_margin :toc, :top
       layout_toc_level doc.sections, num_levels, line_metrics, dot_leader, num_front_matter_pages
     end
     # NOTE range must be calculated relative to toc_page_number; absolute page number in scratch document is arbitrary
@@ -2027,33 +2033,35 @@ class Converter < ::Prawn::Document
           typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true
         else
           pgnum_label = ((sect.attr 'pdf-page-start') - num_front_matter_pages).to_s
-          pgnum_label_font_fragment = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
-          pgnum_label_width = width_of pgnum_label
-          sect_title_width = width_of sect_title, inline_format: true
-          # NOTE we do some cursor hacking here so the dots don't affect vertical alignment
           start_page_number = page_number
           start_cursor = cursor
-          # FIXME use layout_prose
           # NOTE CMYK value gets flattened here, but is restored by formatted text parser
+          # FIXME use layout_prose
           typeset_text %(<a anchor="#{sect_anchor = sect.attr 'pdf-anchor'}"><color rgb="#{@font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
           end_page_number = page_number
           end_cursor = cursor
           # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
           go_to_page start_page_number if start_page_number != end_page_number
           move_cursor_to start_cursor
-          save_font do
-            # NOTE use same font for dots throughout toc
-            set_font toc_font_info[:font], toc_font_info[:size]
-            spacer_width = width_of NoBreakSpace, size: (@font_size * 0.5)
-            num_dots = ((bounds.width - sect_title_width - spacer_width - pgnum_label_width) / dot_leader[:width]).floor
-            # FIXME dots don't line up in columns if width of page numbers differ
-            typeset_formatted_text [
-                { text: (dot_leader[:text] * (num_dots < 0 ? 0 : num_dots)), color: dot_leader[:color] },
-                { text: NoBreakSpace, size: @font_size * 0.5 },
-                { text: pgnum_label, anchor: sect_anchor }.merge(pgnum_label_font_fragment)
-              ], line_metrics, align: :right
+          if dot_leader[:levels].include? sect.level
+            pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
+            pgnum_label_width = width_of pgnum_label
+            sect_title_width = width_of sect_title, inline_format: true
+            save_font do
+              # NOTE the same font is used for dot leaders throughout toc
+              set_font toc_font_info[:font], toc_font_info[:size]
+              num_dots = ((bounds.width - sect_title_width - dot_leader[:spacer_width] - pgnum_label_width) / dot_leader[:width]).floor
+              # FIXME dots don't line up in columns if width of page numbers differ
+              typeset_formatted_text [
+                  { text: (dot_leader[:text] * (num_dots < 0 ? 0 : num_dots)), color: dot_leader[:color] },
+                  dot_leader[:spacer],
+                  { text: pgnum_label, anchor: sect_anchor }.merge(pgnum_label_font_settings)
+                ], line_metrics, align: :right
+            end
+          else
+            typeset_formatted_text [{ text: pgnum_label, anchor: sect_anchor }], line_metrics, align: :right
           end
-          go_to_page end_page_number if start_page_number != end_page_number
+          go_to_page end_page_number if page_number != end_page_number
           move_cursor_to end_cursor
         end
       end

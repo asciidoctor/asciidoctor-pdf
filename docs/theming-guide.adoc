@@ -2583,11 +2583,21 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   dot_leader:
     font_color: #999999
+
+|levels^[4]^
+|all {vbar} none {vbar} Integers (space-separated) +
+(default: all)
+|toc:
+  dot_leader:
+    levels: 2 3
 |===
 
 . `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
 . The `toc_title` keys inherit from level-2 heading styles, except where noted.
 . The dot leader inherits all other font properties from the root `toc` category.
+. 0-based levels (e.g., part = 0, chapter = 1).
+Dot leaders are only shown for the specified levels.
+If value is not specified, dot leaders are shown for all levels.
 
 [#running-content]
 === Running Header & Footer
