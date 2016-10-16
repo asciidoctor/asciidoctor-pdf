@@ -296,6 +296,17 @@ module Extensions
     end
   end
 
+  # Retreives the collection of font styles from the given font style key,
+  # which defaults to the current font style.
+  #
+  def font_styles style = font_style
+    if style
+      style == :bold_italic ? [:bold, :italic] : [style]
+    else
+      []
+    end
+  end
+
   # Apply the font settings (family, size, styles and character spacing) from
   # the fragment to the document, then yield to the block.
   #
