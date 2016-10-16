@@ -2578,7 +2578,7 @@ The keys in this category control the arrangement and style of the table of cont
   dot_leader:
     content: ". "
 
-|font_color
+|font_color^[3]^
 |<<colors,Color>>
 |toc:
   dot_leader:
@@ -2587,6 +2587,7 @@ The keys in this category control the arrangement and style of the table of cont
 
 . `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
 . The `toc_title` keys inherit from level-2 heading styles, except where noted.
+. The dot leader inherits all other font properties from the root `toc` category.
 
 [#running-content]
 === Running Header & Footer
