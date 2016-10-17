@@ -991,21 +991,29 @@ The keys in this category are used to style hyperlink text.
 |link:
   font_color: #428bca
 
-// font_family, font_size and font_style not yet implemented
-//|font_family
-//|<<fonts,Font family name>>
-//|link:
-//  font_family: Roboto
-//
-//|font_size
-//|<<values,Number>>
-//|link:
-//  font_size: 9
-//
-//|font_style
-//|<<font-styles,Font style>>
-//|link:
-//  font_style: normal
+|font_family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|link:
+  font_family: Roboto
+
+|font_size
+|<<values,Number>> +
+(default: _inherit_)
+|link:
+  font_size: 9
+
+|font_style
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|link:
+  font_style: italic
+
+|text_decoration
+|underline {vbar} line-through +
+(default: _not set_)
+|link:
+  text_decoration: underline
 |===
 
 === Literal (Inline)
@@ -1038,7 +1046,7 @@ The keys in this category are used for inline monospaced text in prose and table
 
 |font_style
 |<<font-styles,Font style>> +
-(default: normal)
+(default: _inherit_)
 |literal:
   font_style: bold
 |===

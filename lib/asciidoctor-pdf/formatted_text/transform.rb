@@ -11,33 +11,28 @@ class Transform
     apos: '\''
   }
   CharRefRx = /&(?:#(\d{2,6})|(#{CharEntityTable.keys * '|'}));/
+  TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
   #ZeroWidthSpace = %(\u200b)
 
   def initialize(options = {})
     @merge_adjacent_text_nodes = options[:merge_adjacent_text_nodes]
+    # TODO add support for letter spacing
     if (theme = options[:theme])
-      @link_font_color = theme.link_font_color
-      @monospaced_font_color = theme.literal_font_color
-      @monospaced_font_family = theme.literal_font_family
-      @monospaced_font_size = theme.literal_font_size
-      case theme.literal_font_style
-      when 'bold'
-        @monospaced_font_style = [:bold]
-      when 'italic'
-        @monospaced_font_style = [:italic]
-      when 'bold_italic'
-        @monospaced_font_style = [:bold, :italic]
-      else
-        @monospaced_font_style = nil
-      end
-      #@monospaced_letter_spacing = theme.literal_letter_spacing
+      @link_font_settings = {
+        color: theme.link_font_color,
+        font: theme.link_font_family,
+        size: theme.link_font_size,
+        styles: (to_styles theme.link_font_style, theme.link_text_decoration)
+      }.select! {|_, val| val }
+      @monospaced_font_settings = {
+        color: theme.literal_font_color,
+        font: theme.literal_font_family,
+        size: theme.literal_font_size,
+        styles: (to_styles theme.literal_font_style)
+      }.select! {|_, val| val }
     else
-      @link_font_color = '0000FF'
-      @monospaced_font_color = nil
-      @monospaced_font_family = 'Courier'
-      @monospaced_font_size = 0.9
-      @monospaced_font_style = nil
-      #@monospaced_letter_spacing = -0.1
+      @link_font_settings = { color: '0000FF' }
+      @monospaced_font_settings = { font: 'Courier', size: 0.9 }
     end
   end
 
@@ -128,18 +123,9 @@ class Transform
     when :em
       styles << :italic
     when :code
-      fragment[:font] ||= @monospaced_font_family
-      if @monospaced_font_size
-        fragment[:size] ||= @monospaced_font_size
-      end
-      #if @monospaced_letter_spacing
-      #  fragment[:character_spacing] ||= @monospaced_letter_spacing
-      #end
-      if @monospaced_font_color
-        fragment[:color] ||= @monospaced_font_color
-      end
-      if @monospaced_font_style
-        styles.merge @monospaced_font_style
+      # NOTE prefer old value, except for styles, which should be combined
+      fragment.update @monospaced_font_settings do |key, old_val, new_val|
+        key == :styles ? (old_val.merge new_val) : old_val
       end
     when :color
       if !fragment[:color]
@@ -198,7 +184,10 @@ class Transform
           fragment[:callback] = InlineDestinationMarker
         end
       end
-      fragment[:color] ||= @link_font_color
+      # NOTE prefer old value, except for styles, which should be combined
+      fragment.update @link_font_settings do |key, old_val, new_val|
+        key == :styles ? (old_val.merge new_val) : old_val
+      end
     when :sub
       styles << :subscript
     when :sup
@@ -236,6 +225,25 @@ class Transform
     end
     fragment.delete(:styles) if styles.empty?
     fragment
+  end
+
+  def to_styles font_style, text_decoration = nil
+    styles = case font_style
+    when 'bold'
+      [:bold].to_set
+    when 'italic'
+      [:italic].to_set
+    when 'bold_italic'
+      [:bold, :italic].to_set
+    else
+      nil
+    end
+
+    if (style = TextDecorationTable[text_decoration])
+      styles ? (styles << style) : [style].to_set
+    else
+      styles
+    end
   end
 end
 end
