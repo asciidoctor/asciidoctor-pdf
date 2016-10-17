@@ -1920,7 +1920,7 @@ class Converter < ::Prawn::Document
     if (transform = (opts.delete :text_transform) || @text_transform) && transform != 'none'
       string = transform_text string, transform
     end
-    # QUESTION should we remove support for anchor option? it doesn't seem to be used
+    # NOTE used by extensions; ensures linked text gets formatted using the link styles
     if (anchor = opts.delete :anchor)
       string = %(<a anchor="#{anchor}">#{string}</a>)
     end
