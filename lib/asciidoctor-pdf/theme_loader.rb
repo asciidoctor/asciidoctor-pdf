@@ -111,7 +111,7 @@ class ThemeLoader
       # QUESTION do we need to evaluate_math in this case?
       data[key] = to_color(evaluate val, data)
     elsif %(#{key.chomp '_'}_).include? '_content_'
-      data[key] = expand_vars val, data
+      data[key] = expand_vars val.to_s, data
     else
       data[key] = evaluate val, data
     end
@@ -230,7 +230,7 @@ class ThemeLoader
       end
     else
       # Unknown type; coerce to a string
-      value = %(#{value})
+      value = value.to_s
     end
     value = case value.size
     when 6
