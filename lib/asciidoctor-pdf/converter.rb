@@ -1995,12 +1995,14 @@ class Converter < ::Prawn::Document
     # QUESTION should we skip this whole method if num_levels == 0?
     if num_levels > 0
       dot_leader = theme_font :toc do
+        font_style(dot_leader_font_style = (@theme.toc_dot_leader_font_style || :normal).to_sym)
         {
-          color: @theme.toc_dot_leader_font_color || @font_color,
+          font_color: @theme.toc_dot_leader_font_color || @font_color,
           levels: ((dot_leader_l = @theme.toc_dot_leader_levels) == 'none' ? ::Set.new :
               (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (1..num_levels).to_set)),
           spacer: { text: NoBreakSpace, size: @font_size * 0.5 },
           spacer_width: (width_of NoBreakSpace, size: @font_size * 0.5),
+          font_style: dot_leader_font_style,
           text: (dot_leader_w = @theme.toc_dot_leader_content || DotLeaderTextDefault),
           width: (width_of dot_leader_w)
         }
@@ -2022,10 +2024,8 @@ class Converter < ::Prawn::Document
     end
     sections.each do |sect|
       theme_font :toc, level: (sect.level + 1) do
-        sect_title = sect.numbered_title
-        if (transform = @text_transform) && transform != 'none'
-          sect_title = transform_text sect_title, transform
-        end
+        sect_title = (transform = @text_transform) && transform != 'none' ?
+            (transform_text sect.numbered_title, transform) : sect.numbered_title
         # NOTE only write section title (excluding dots and page number) if this is a dry run
         if scratch?
           # FIXME use layout_prose
@@ -2035,9 +2035,19 @@ class Converter < ::Prawn::Document
           pgnum_label = ((sect.attr 'pdf-page-start') - num_front_matter_pages).to_s
           start_page_number = page_number
           start_cursor = cursor
-          # NOTE CMYK value gets flattened here, but is restored by formatted text parser
-          # FIXME use layout_prose
-          typeset_text %(<a anchor="#{sect_anchor = sect.attr 'pdf-anchor'}"><color rgb="#{@font_color}">#{sect_title}</color></a>), line_metrics, inline_format: true
+          # NOTE use low-level text formatter to add anchor overlay without styling text as link & force color
+          sect_title_format_override = {
+            anchor: (sect_anchor = sect.attr 'pdf-anchor'),
+            color: @font_color,
+            styles: ((@theme[%(toc_h#{sect.level + 1}_text_decoration)] || @theme.toc_text_decoration) == 'underline' ?
+                (font_styles << :underline) : font_styles)
+          }
+          (sect_title_fragments = text_formatter.format sect_title).each do |fragment|
+            fragment.update sect_title_format_override do |key, old_val, new_val|
+              key == :styles ? (old_val.merge new_val) : new_val
+            end
+          end
+          typeset_formatted_text sect_title_fragments, line_metrics
           end_page_number = page_number
           end_cursor = cursor
           # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
@@ -2050,10 +2060,11 @@ class Converter < ::Prawn::Document
             save_font do
               # NOTE the same font is used for dot leaders throughout toc
               set_font toc_font_info[:font], toc_font_info[:size]
+              font_style dot_leader[:font_style]
               num_dots = ((bounds.width - sect_title_width - dot_leader[:spacer_width] - pgnum_label_width) / dot_leader[:width]).floor
               # FIXME dots don't line up in columns if width of page numbers differ
               typeset_formatted_text [
-                  { text: (dot_leader[:text] * (num_dots < 0 ? 0 : num_dots)), color: dot_leader[:color] },
+                  { text: (dot_leader[:text] * (num_dots < 0 ? 0 : num_dots)), color: dot_leader[:font_color] },
                   dot_leader[:spacer],
                   { text: pgnum_label, anchor: sect_anchor }.merge(pgnum_label_font_settings)
                 ], line_metrics, align: :right

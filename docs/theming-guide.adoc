@@ -1010,8 +1010,8 @@ The keys in this category are used to style hyperlink text.
   font_style: italic
 
 |text_decoration
-|underline {vbar} line-through +
-(default: _not set_)
+|none {vbar} underline {vbar} line-through +
+(default: none)
 |link:
   text_decoration: underline
 |===
@@ -2539,6 +2539,12 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   font_style: bold
 
+|text_decoration
+|none {vbar} underline +
+(default: none)
+|toc:
+  text_decoration: underline
+
 |text_transform
 |<<text-transforms,Text transform>> +
 (default: _inherit_)
@@ -2565,9 +2571,40 @@ The keys in this category control the arrangement and style of the table of cont
 3+|*Key Prefix:* toc_h<n>^[1]^
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |toc:
   h3_font_color: #999999
+
+|font_family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|toc:
+  font_family: Noto Serif
+
+|font_size
+|<<values,Number>> +
+(default: _inherit_)
+|toc:
+  font_size: 9
+
+|font_style
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|toc:
+  font_style: italic
+
+|text_decoration
+|none {vbar} underline +
+(default: _inherit_)
+|toc:
+  text_decoration: none
+
+|text_transform
+|<<text-transforms,Text transform>> +
+(default: _inherit_)
+|toc:
+  text_transform: uppercase
 
 3+|*Key Prefix:* toc_title^[2]^
 
@@ -2587,10 +2624,18 @@ The keys in this category control the arrangement and style of the table of cont
     content: ". "
 
 |font_color^[3]^
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |toc:
   dot_leader:
     font_color: #999999
+
+|font_style^[3]^
+|<<font-styles,Font style>> +
+(default: normal)
+|toc:
+  dot_leader:
+    font_style: bold
 
 |levels^[4]^
 |all {vbar} none {vbar} Integers (space-separated) +
@@ -2602,7 +2647,7 @@ The keys in this category control the arrangement and style of the table of cont
 
 . `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
 . The `toc_title` keys inherit from level-2 heading styles, except where noted.
-. The dot leader inherits all other font properties from the root `toc` category.
+. The dot leader inherits all font properties except `font_style` from the root `toc` category.
 . 0-based levels (e.g., part = 0, chapter = 1).
 Dot leaders are only shown for the specified levels.
 If value is not specified, dot leaders are shown for all levels.
