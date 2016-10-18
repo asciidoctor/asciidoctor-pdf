@@ -228,10 +228,12 @@ table:
   # HACK accounting for line-height
   cell_padding: [3, 3, 6, 3]
 toc:
-  dot_leader_font_color: a9a9a9
-  #dot_leader_content: '. '
   indent: $horizontal_rhythm
   line_height: 1.4
+  dot_leader:
+    #content: ". "
+    font_color: a9a9a9
+    #levels: 2 3
 # NOTE in addition to footer, header is also supported
 footer:
   font_size: $base_font_size_small
