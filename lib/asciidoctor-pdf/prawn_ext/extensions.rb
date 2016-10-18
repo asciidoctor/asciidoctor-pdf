@@ -301,9 +301,9 @@ module Extensions
   #
   def font_styles style = font_style
     if style
-      style == :bold_italic ? [:bold, :italic] : [style]
+      style == :bold_italic ? [:bold, :italic].to_set : [style].to_set
     else
-      []
+      ::Set.new
     end
   end
 

@@ -2421,8 +2421,8 @@ class Converter < ::Prawn::Document
   end
 
   def register_fonts font_catalog, scripts = 'latin', fonts_dir
-    (font_catalog || {}).each do |key, font_styles|
-      register_font key => font_styles.map {|style, path| [style.to_sym, (font_path path, fonts_dir)]}.to_h
+    (font_catalog || {}).each do |key, styles|
+      register_font key => styles.map {|style, path| [style.to_sym, (font_path path, fonts_dir)]}.to_h
     end
 
     # FIXME read kerning setting from theme!
