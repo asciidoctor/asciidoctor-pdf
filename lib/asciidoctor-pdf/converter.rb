@@ -1995,16 +1995,20 @@ class Converter < ::Prawn::Document
     # QUESTION should we skip this whole method if num_levels == 0?
     if num_levels > 0
       dot_leader = theme_font :toc do
-        font_style(dot_leader_font_style = (@theme.toc_dot_leader_font_style || :normal).to_sym)
+        # TODO we could simplify by using nested theme_font :toc_dot_leader
+        if (dot_leader_font_style = (@theme.toc_dot_leader_font_style || :normal).to_sym) != font_style
+          font_style dot_leader_font_style
+        end
         {
           font_color: @theme.toc_dot_leader_font_color || @font_color,
+          font_style: dot_leader_font_style,
           levels: ((dot_leader_l = @theme.toc_dot_leader_levels) == 'none' ? ::Set.new :
               (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (1..num_levels).to_set)),
-          spacer: { text: NoBreakSpace, size: @font_size * 0.5 },
-          spacer_width: (width_of NoBreakSpace, size: @font_size * 0.5),
-          font_style: dot_leader_font_style,
-          text: (dot_leader_w = @theme.toc_dot_leader_content || DotLeaderTextDefault),
-          width: (width_of dot_leader_w)
+          text: (dot_leader_text = @theme.toc_dot_leader_content || DotLeaderTextDefault),
+          width: dot_leader_text.empty? ? 0 : (width_of dot_leader_text),
+          # TODO spacer gives a little bit of room between dots and page number
+          spacer: { text: NoBreakSpace, size: (spacer_font_size = @font_size * 0.25) },
+          spacer_width: (width_of NoBreakSpace, size: spacer_font_size)
         }
       end
       line_metrics = calc_line_metrics @theme.toc_line_height
@@ -2053,7 +2057,7 @@ class Converter < ::Prawn::Document
           # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
           go_to_page start_page_number if start_page_number != end_page_number
           move_cursor_to start_cursor
-          if dot_leader[:levels].include? sect.level
+          if dot_leader[:width] > 0 && (dot_leader[:levels].include? sect.level)
             pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
             pgnum_label_width = width_of pgnum_label
             sect_title_width = width_of sect_title, inline_format: true
