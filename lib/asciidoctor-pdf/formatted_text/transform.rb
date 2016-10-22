@@ -169,9 +169,10 @@ class Transform
       #  fragment[:character_spacing] = value.to_f
       #end
     when :a
-      # a element can have no attributes; short-circuit if that's the case
+      visible = true
+      # a element can have no attributes, so short-circuit if that's the case
       unless attrs.empty?
-        # NOTE href, anchor, and name are mutually exclusive; nesting not supported
+        # NOTE href, anchor, and name are mutually exclusive; nesting is not supported
         if (value = attrs[:anchor])
           fragment[:anchor] = value
         elsif (value = attrs[:href])
@@ -179,15 +180,16 @@ class Transform
             $2 ? CharEntityTable[$2.to_sym] : ([$1.to_i].pack 'U*')
           } : value
         elsif (value = attrs[:name])
-          # NOTE ZeroWidthSpace is used as placeholder text so Prawn doesn't drop fragment
+          # NOTE text is ZeroWidthSpace, which is used as a placeholder so Prawn doesn't drop fragment
           fragment[:name] = value
           fragment[:callback] = InlineDestinationMarker
+          visible = false
         end
       end
       # NOTE prefer old value, except for styles, which should be combined
       fragment.update @link_font_settings do |key, old_val, new_val|
         key == :styles ? (old_val.merge new_val) : old_val
-      end
+      end if visible
     when :sub
       styles << :subscript
     when :sup
