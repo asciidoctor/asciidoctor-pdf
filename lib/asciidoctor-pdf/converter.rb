@@ -85,6 +85,9 @@ class Converter < ::Prawn::Document
   # CalloutExtractRx synced from /lib/asciidoctor.rb of Asciidoctor core
   CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2> ?(?=(?:\\?<!?\2\d+\2> ?)*$)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
+  UriBreakCharsRx = /(?:\/|\?|&amp;|#)(?!$)/
+  UriBreakCharRepl = %(\\&#{ZeroWidthSpace})
+  UriSchemeBoundaryRx = /(?<=:\/\/)/
   LineScanRx = /\n|.+/
   BlankLineRx = /\n[[:blank:]]*\n/
   WhitespaceChars = %( \t\n)
@@ -1565,11 +1568,14 @@ class Converter < ::Prawn::Document
       end
       #attrs << %( title="#{node.attr 'title'}") if node.attr? 'title'
       attrs << %( target="#{node.attr 'window'}") if node.attr? 'window', nil, false
+      if (role = node.attr 'role', nil, false) && (role == 'bare' || ((role.split ' ').include? 'bare'))
+        # QUESTION should we insert breakable chars into URI when building fragment instead?
+        %(<a href="#{node.target}"#{attrs.join}>#{breakable_uri node.text}</a>)
       # NOTE @media may not be initialized if method is called before convert phase
-      if ((@media ||= node.document.attr 'media', 'screen') != 'screen' || (node.document.attr? 'show-link-uri')) &&
-          !(node.has_role? 'bare')
-        # TODO allow style of visible link to be controlled by theme
-        %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> [<font size="0.85em">#{target}</font>])
+      elsif (@media ||= node.document.attr 'media', 'screen') != 'screen' || (node.document.attr? 'show-link-uri')
+        # QUESTION should we insert breakable chars into URI when building fragment instead?
+        # TODO allow style of printed link to be controlled by theme
+        %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> [<font size="0.85em">#{breakable_uri target}</font>])
       else
         %(<a href="#{node.target}"#{attrs.join}>#{node.text}</a>)
       end
@@ -2858,6 +2864,15 @@ class Converter < ::Prawn::Document
     path.unlink if TemporaryPath === path && path.exist?
   rescue => e
     warn %(asciidoctor: WARNING: could not delete temporary image: #{path}; #{e.message})
+  end
+
+  # NOTE assume URL is escaped (i.e., contains character references such as &amp;)
+  def breakable_uri uri
+    scheme, address = uri.split UriSchemeBoundaryRx, 2
+    address, scheme = scheme, address unless address
+    address = address.gsub UriBreakCharsRx, UriBreakCharRepl
+    address.slice! -2 if address[-2] == ZeroWidthSpace
+    %(#{scheme}#{address})
   end
 
   # QUESTION move to prawn/extensions.rb?
