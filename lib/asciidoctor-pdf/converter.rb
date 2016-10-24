@@ -20,6 +20,7 @@ require_relative 'pdfmark'
 require_relative 'asciidoctor_ext'
 require_relative 'theme_loader'
 require_relative 'roman_numeral'
+require_relative 'index_catalog'
 
 autoload :StringIO, 'stringio'
 autoload :Tempfile, 'tempfile'
@@ -181,7 +182,7 @@ class Converter < ::Prawn::Document
     #start_new_page if @ppbook && verso_page?
     start_new_page if @media == 'prepress' && verso_page?
 
-    num_front_matter_pages = page_number - 1
+    doc.set_attr 'pdf-pagenum-offset', (num_front_matter_pages = page_number - 1)
     font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
     doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
     add_dest_for_block doc, doc_anchor
@@ -246,6 +247,7 @@ class Converter < ::Prawn::Document
     @font_color = theme.base_font_color
     @base_align = (align = doc.attr 'text-alignment') && (TextAlignmentNames.include? align) ? align : theme.base_align
     @text_transform = nil
+    @index = IndexCatalog.new
     # NOTE we have to init Pdfmark class here while we have reference to the doc
     @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
     init_scratch_prototype
@@ -371,7 +373,7 @@ class Converter < ::Prawn::Document
       end
     end
 
-    convert_content_for_block sect
+    sect.special && sect.sectname == 'index' ? (convert_index_section sect) : (convert_content_for_block sect)
     sect.set_attr 'pdf-page-end', page_number
   end
 
@@ -1558,6 +1560,52 @@ class Converter < ::Prawn::Document
     start_new_page unless at_page_top?
   end
 
+  def convert_index_section node
+    unless @index.empty?
+      space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
+      column_box [0, cursor], columns: 2, width: bounds.width do
+        @index.categories.each do |category|
+          # NOTE cursor method always returns 0 inside column_box; breaks reference_bounds.move_past_bottom
+          bounds.move_past_bottom if space_needed_for_category > y - reference_bounds.absolute_bottom
+          layout_prose category.name,
+            align: :left,
+            inline_format: false,
+            margin_top: 0,
+            margin_bottom: @theme.description_list_term_spacing,
+            style: @theme.description_list_term_font_style.to_sym
+          category.terms.each do |term|
+            convert_index_list_item term
+          end
+          if @theme.prose_margin_bottom > y - reference_bounds.absolute_bottom
+            bounds.move_past_bottom
+          else
+            move_down @theme.prose_margin_bottom
+          end
+        end
+      end
+    end
+    nil
+  end
+
+  def convert_index_list_item term
+    text = term.name
+    unless term.container?
+      if @media == 'screen'
+        pagenums = term.dests.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
+      else
+        pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| dest[:page].to_s }
+      end
+      text = %(#{text}, #{pagenums * ', '})
+    end
+    layout_prose text, align: :left, margin: 0
+
+    term.subterms.each do |subterm|
+      indent @theme.description_list_description_indent do
+        convert_index_list_item subterm
+      end
+    end unless term.leaf?
+  end
+
   def convert_inline_anchor node
     case node.type
     when :link
@@ -1690,7 +1738,24 @@ class Converter < ::Prawn::Document
   end
 
   def convert_inline_indexterm node
-    node.type == :visible ? node.text : nil
+    # NOTE indexterms not supported if text gets substituted before PDF is initialized
+    return '' unless instance_variable_defined? :@index
+    if scratch?
+      node.type == :visible ? node.text : ''
+    else
+      dest = {
+        anchor: (anchor_name = %(__term-#{node.object_id})),
+        page: page_number - (node.document.attr 'pdf-pagenum-offset', 0)
+      }
+      anchor = %(<a name="#{anchor_name}">#{ZeroWidthSpace}</a>)
+      if node.type == :visible
+        @index.store_primary_term((visible_term = node.text), dest)
+        %(#{anchor}#{visible_term})
+      else
+        @index.store_term((node.attr 'terms'), dest)
+        anchor
+      end
+    end
   end
 
   def convert_inline_kbd node
@@ -2476,23 +2541,24 @@ class Converter < ::Prawn::Document
   end
 
   # Insert a top margin space unless cursor is at the top of the page.
-  # Start a new page if y value is greater than remaining space on page.
-  def margin_top y
-    margin y, :top
+  # Start a new page if n value is greater than remaining space on page.
+  def margin_top n
+    margin n, :top
   end
 
   # Insert a bottom margin space unless cursor is at the top of the page (not likely).
-  # Start a new page if y value is greater than remaining space on page.
-  def margin_bottom y
-    margin y, :bottom
+  # Start a new page if n value is greater than remaining space on page.
+  def margin_bottom n
+    margin n, :bottom
   end
 
   # Insert a margin space at the specified side unless cursor is at the top of the page.
-  # Start a new page if y value is greater than remaining space on page.
-  def margin y, side
-    unless y == 0 || at_page_top?
-      if cursor > y
-        move_down y
+  # Start a new page if n value is greater than remaining space on page.
+  def margin n, side
+    unless n == 0 || at_page_top?
+      # NOTE use low-level cursor calculation to workaround cursor bug in column_box context
+      if y - reference_bounds.absolute_bottom > n
+        move_down n
       else
         # set cursor at top of next page
         reference_bounds.move_past_bottom
