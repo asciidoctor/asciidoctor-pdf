@@ -68,6 +68,7 @@ class Converter < ::Prawn::Document
   HairSpace = %(\u200a)
   DotLeaderTextDefault = '. '
   EmDash = %(\u2014)
+  RightPointer = %(\u25ba)
   LowercaseGreekA = %(\u03b1)
   Bullets = {
     disc: %(\u2022),
@@ -1041,6 +1042,17 @@ class Converter < ::Prawn::Document
     theme_margin :block, :bottom
   ensure
     unlink_tmp_file image_path if image_path
+  end
+
+  def convert_audio node
+    add_dest_for_block node if node.id
+    theme_margin :block, :top
+    audio_path = node.media_uri(node.attr 'target')
+    play_symbol = (node.document.attr? 'icons', 'font') ?
+        %(<font name="fa">#{::Prawn::Icon::FontData.load(self, 'fa').unicode 'play'}</font>) : RightPointer
+    layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a>), normalize: false, margin: 0, single_line: true
+    layout_caption node, side: :bottom if node.title?
+    theme_margin :block, :bottom
   end
 
   # QUESTION can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
