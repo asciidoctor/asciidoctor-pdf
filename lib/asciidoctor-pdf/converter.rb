@@ -66,6 +66,7 @@ class Converter < ::Prawn::Document
   NarrowNoBreakSpace = %(\u202f)
   ZeroWidthSpace = %(\u200b)
   HairSpace = %(\u200a)
+  DummyText = %(\u0000)
   DotLeaderTextDefault = '. '
   EmDash = %(\u2014)
   RightPointer = %(\u25ba)
@@ -1664,12 +1665,10 @@ class Converter < ::Prawn::Document
       end
     when :ref
       # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
-      #%(<a name="#{node.target}"></a>)
-      %(<a name="#{node.target}">#{ZeroWidthSpace}</a>)
+      %(<a name="#{node.target}">#{DummyText}</a>)
     when :bibref
       # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
-      #%(<a name="#{target = node.target}"></a>[#{target}])
-      %(<a name="#{target = node.target}">#{ZeroWidthSpace}</a>[#{target}])
+      %(<a name="#{target = node.target}">#{DummyText}</a>[#{target}])
     else
       warn %(asciidoctor: WARNING: unknown anchor type: #{node.type.inspect})
     end
@@ -1759,7 +1758,7 @@ class Converter < ::Prawn::Document
         anchor: (anchor_name = %(__term-#{node.object_id})),
         page: page_number - (node.document.attr 'pdf-pagenum-offset', 0)
       }
-      anchor = %(<a name="#{anchor_name}">#{ZeroWidthSpace}</a>)
+      anchor = %(<a name="#{anchor_name}">#{DummyText}</a>)
       if node.type == :visible
         @index.store_primary_term((visible_term = node.text), dest)
         %(#{anchor}#{visible_term})
@@ -1822,7 +1821,7 @@ class Converter < ::Prawn::Document
     end
 
     # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
-    node.id ? %(<a name="#{node.id}">#{ZeroWidthSpace}</a>#{quoted_text}) : quoted_text
+    node.id ? %(<a name="#{node.id}">#{DummyText}</a>#{quoted_text}) : quoted_text
   end
 
   # FIXME only create title page if doctype=book!

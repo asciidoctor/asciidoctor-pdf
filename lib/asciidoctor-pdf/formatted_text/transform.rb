@@ -12,7 +12,7 @@ class Transform
   }
   CharRefRx = /&(?:#(\d{2,6})|(#{CharEntityTable.keys * '|'}));/
   TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
-  #ZeroWidthSpace = %(\u200b)
+  #DummyText = %(\u0000)
 
   def initialize(options = {})
     @merge_adjacent_text_nodes = options[:merge_adjacent_text_nodes]
@@ -58,7 +58,7 @@ class Transform
           #else
           #  # NOTE handle an empty anchor element (i.e., <a ...></a>)
           #  if (tag_name = node[:name]) == :a
-          #    fragments << build_fragment({ text: ZeroWidthSpace }, tag_name, node[:attributes])
+          #    fragments << build_fragment({ text: DummyText }, tag_name, node[:attributes])
           #    previous_fragment_is_text = false
           #  end
           end
@@ -180,7 +180,7 @@ class Transform
             $2 ? CharEntityTable[$2.to_sym] : ([$1.to_i].pack 'U*')
           } : value
         elsif (value = attrs[:name])
-          # NOTE text is ZeroWidthSpace, which is used as a placeholder so Prawn doesn't drop fragment
+          # NOTE text is null character, which is used as placeholder text so Prawn doesn't drop fragment
           fragment[:name] = value
           fragment[:callback] = InlineDestinationMarker
           visible = false
