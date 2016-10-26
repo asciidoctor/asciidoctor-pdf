@@ -2462,12 +2462,14 @@ class Converter < ::Prawn::Document
     front_matter_counter = RomanNumeral.new 0, :lower
     page_num_labels = {}
 
-    num_front_matter_pages.times do
-      page_num_labels[front_matter_counter.to_i] = { P: ::PDF::Core::LiteralString.new(front_matter_counter.next!.to_s) }
+    num_front_matter_pages.times do |n|
+      page_num_labels[n] = { P: (::PDF::Core::LiteralString.new front_matter_counter.next!.to_s) }
     end
 
-    # placeholder for first page of content, in case it's not the destination of an outline entry
-    page_num_labels[front_matter_counter.to_i] = { P: ::PDF::Core::LiteralString.new('1') }
+    # add labels for each content page in case the page has no matching entry in the outline
+    (num_front_matter_pages..(page_count - 1)).each_with_index do |n, i|
+      page_num_labels[n] = { P: (::PDF::Core::LiteralString.new %(#{i + 1})) }
+    end
 
     outline.define do
       # FIXME use sanitize: :plain_text once available
@@ -2491,6 +2493,7 @@ class Converter < ::Prawn::Document
       sect_title = sanitize sect.numbered_title formal: true
       sect_destination = sect.attr 'pdf-destination'
       pgnum_label = (pgnum = sect.attr 'pdf-page-start') - num_front_matter_pages
+      # QUESTION do we even need this assignment anymore?
       page_num_labels[pgnum - 1] = { P: ::PDF::Core::LiteralString.new(pgnum_label.to_s) }
       if (subsections = sect.sections).empty? || sect.level == num_levels
         outline.page title: sect_title, destination: sect_destination
