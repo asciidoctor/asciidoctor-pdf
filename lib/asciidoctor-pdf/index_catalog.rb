@@ -1,7 +1,11 @@
 module Asciidoctor; module Pdf
   class IndexCatalog
+    attr_accessor :start_page_number
+
     def initialize
       @categories = {}
+      @start_page_number = 1
+      @dests = {}
     end
   
     def store_term names, dest = nil
@@ -15,14 +19,17 @@ module Asciidoctor; module Pdf
     end
   
     def store_primary_term name, dest = nil
+      store_dest dest if dest
       (init_category name.chr.upcase).store_term name, dest
     end
   
     def store_secondary_term primary_name, secondary_name, dest = nil
+      store_dest dest if dest
       (store_primary_term primary_name).store_term secondary_name, dest
     end
   
     def store_tertiary_term primary_name, secondary_name, tertiary_name, dest = nil
+      store_dest dest if dest
       (store_secondary_term primary_name, secondary_name).store_term tertiary_name, dest
     end
   
@@ -32,6 +39,16 @@ module Asciidoctor; module Pdf
   
     def find_category name
       @categories[name]
+    end
+
+    def store_dest dest
+      @dests[dest[:anchor]] = dest
+    end
+
+    def link_dest_to_page anchor, physical_page_number
+      if (dest = @dests[anchor])
+        dest[:page] = physical_page_number - (@start_page_number - 1)
+      end
     end
   
     def empty?
@@ -87,11 +104,11 @@ module Asciidoctor; module Pdf
     end
   
     def dests
-      @dests.sort {|a, b| a[:page] <=> b[:page] }
+      @dests.select {|d| d.key? :page }.sort {|a, b| a[:page] <=> b[:page] }
     end
   
     def container?
-      @dests.empty?
+      @dests.empty? || @dests.none? {|d| d.key? :page }
     end
   
     def leaf?

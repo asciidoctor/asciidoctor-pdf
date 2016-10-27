@@ -184,7 +184,7 @@ class Converter < ::Prawn::Document
     #start_new_page if @ppbook && verso_page?
     start_new_page if @media == 'prepress' && verso_page?
 
-    doc.set_attr 'pdf-pagenum-offset', (num_front_matter_pages = page_number - 1)
+    num_front_matter_pages = (@index.start_page_number = page_number) - 1
     font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
     doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
     add_dest_for_block doc, doc_anchor
@@ -1755,10 +1755,10 @@ class Converter < ::Prawn::Document
       node.type == :visible ? node.text : ''
     else
       dest = {
-        anchor: (anchor_name = %(__term-#{node.object_id})),
-        page: page_number - (node.document.attr 'pdf-pagenum-offset', 0)
+        anchor: (anchor_name = %(__indexterm-#{node.object_id}))
+        # NOTE page number is added in InlineDestinationMarker
       }
-      anchor = %(<a name="#{anchor_name}">#{DummyText}</a>)
+      anchor = %(<a name="#{anchor_name}" type="indexterm">#{DummyText}</a>)
       if node.type == :visible
         @index.store_primary_term((visible_term = node.text), dest)
         %(#{anchor}#{visible_term})
