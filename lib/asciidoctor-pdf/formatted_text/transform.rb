@@ -182,6 +182,9 @@ class Transform
         elsif (value = attrs[:name])
           # NOTE text is null character, which is used as placeholder text so Prawn doesn't drop fragment
           fragment[:name] = value
+          if (type = attrs[:type])
+            fragment[:type] = type.to_sym
+          end
           fragment[:callback] = InlineDestinationMarker
           visible = false
         end
