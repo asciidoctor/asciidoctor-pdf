@@ -2466,7 +2466,7 @@ class Converter < ::Prawn::Document
       pagenum_labels[n] = { P: (::PDF::Core::LiteralString.new front_matter_counter.next!.to_s) }
     end
 
-    # add labels for each content page in case the page has no matching entry in the outline
+    # add labels for each content page, which is required for reader's page navigator to work correctly
     (num_front_matter_pages..(page_count - 1)).each_with_index do |n, i|
       pagenum_labels[n] = { P: (::PDF::Core::LiteralString.new %(#{i + 1})) }
     end
@@ -2479,7 +2479,7 @@ class Converter < ::Prawn::Document
       end
       page title: (doc.attr 'toc-title'), destination: (document.dest_top toc_page_nums.first) if toc_page_nums.first
       # QUESTION any way to get add_outline_level to invoke in the context of the outline?
-      document.add_outline_level self, doc.sections, num_levels, pagenum_labels, num_front_matter_pages
+      document.add_outline_level self, doc.sections, num_levels
     end
 
     catalog.data[:PageLabels] = state.store.ref Nums: pagenum_labels.flatten
@@ -2487,19 +2487,16 @@ class Converter < ::Prawn::Document
     nil
   end
 
-  # TODO only nest inside root node if doctype=article
-  def add_outline_level outline, sections, num_levels, pagenum_labels, num_front_matter_pages
+  # FIXME only nest inside root node if doctype=article
+  def add_outline_level outline, sections, num_levels
     sections.each do |sect|
       sect_title = sanitize sect.numbered_title formal: true
       sect_destination = sect.attr 'pdf-destination'
-      pgnum_label = (pgnum = sect.attr 'pdf-page-start') - num_front_matter_pages
-      # QUESTION do we even need this assignment anymore?
-      pagenum_labels[pgnum - 1] = { P: ::PDF::Core::LiteralString.new(pgnum_label.to_s) }
       if (subsections = sect.sections).empty? || sect.level == num_levels
         outline.page title: sect_title, destination: sect_destination
       elsif sect.level < num_levels + 1
         outline.section sect_title, { destination: sect_destination } do
-          add_outline_level outline, subsections, num_levels, pagenum_labels, num_front_matter_pages
+          add_outline_level outline, subsections, num_levels
         end
       end
     end
