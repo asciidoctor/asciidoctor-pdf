@@ -2928,9 +2928,10 @@ header:
 ----
 <1> You can use the `footer_vertical_align` attribute to slighly nudge the image up or down.
 
-CAUTION: The image must fit in the allotted space for the running header or footer.
+CAUTION: By default, the image must fit in the allotted space for the running header or footer.
 Otherwise, you will run into layout issues.
-Adjust the width attribute accordingly.
+Adjust the width attribute accordingly using the `pdfwidth` attribute.
+Alternatively, you can set the `fit` attribute to `scale-down` (e.g., `fit=scale-down`) to reduce the image size to fit in the available space or `contain` (e.g., `fit=contain`) to resize the image to the maximum size that will fit.
 
 == Applying Your Theme
 
