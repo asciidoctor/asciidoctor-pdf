@@ -11,7 +11,6 @@ module Images
   def image file, opts = {}
     # FIXME handle case when SVG is a File or IO object
     if ::String === file && (file.downcase.end_with? '.svg')
-      opts[:at] ||= bounds.top_left
       opts[:fallback_font_name] ||= default_svg_font if respond_to? :default_svg_font
       svg (::IO.read file), opts
     else

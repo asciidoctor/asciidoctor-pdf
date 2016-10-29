@@ -446,6 +446,13 @@ module Extensions
     super unless n == 0
   end
 
+  # Override built-in move_text_position method to prevent Prawn from advancing
+  # to next page if image doesn't fit before rendering image.
+  #--
+  # NOTE could use :at option when calling image/embed_image instead
+  def move_text_position h
+  end
+
   # Short-circuits the call to the built-in move_down operation
   # when n is 0.
   #

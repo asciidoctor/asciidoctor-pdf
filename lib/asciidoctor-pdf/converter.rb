@@ -959,7 +959,7 @@ class Converter < ::Prawn::Document
           if !width && (svg_obj.document.root.attributes.key? 'width')
             # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
             if (adjusted_w = [bounds.width, rendered_w * 0.75].min) != rendered_w
-              # FIXME would be nice to have a resize method (available as of prawn-svg 0.25.2); for now, just reconstruct
+              # FIXME use new resize method (available as of prawn-svg 0.25.2); reconstruct manually for now
               svg_obj = ::Prawn::Svg::Interface.new svg_data, self,
                   position: alignment,
                   width: (rendered_w = adjusted_w),
@@ -1026,12 +1026,15 @@ class Converter < ::Prawn::Document
             img_x, img_y = image_position rendered_w, rendered_h, position: alignment
             link_box = [img_x, (img_y - rendered_h), (img_x + rendered_w), img_y]
           end
+          image_top = cursor
           embed_image image_obj, image_info, width: rendered_w, position: alignment
           if link
             link_annotation link_box,
               Border: [0, 0, 0],
               A: { Type: :Action, S: :URI, URI: link.as_pdf }
           end
+          # NOTE Asciidoctor disables automatic advancement of cursor for images, so handle it manually
+          move_down rendered_h if cursor == image_top
         rescue => e
           warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
         end
@@ -2232,35 +2235,8 @@ class Converter < ::Prawn::Document
     doc.set_attr 'document-title', doctitle.main
     doc.set_attr 'document-subtitle', doctitle.subtitle
     doc.set_attr 'page-count', num_pages
-
-    # TODO move this to a method so it can be reused; cache results
-    content_dict = PageSides.inject({}) do |acc, side|
-      side_content = {}
-      ColumnPositions.each do |position|
-        if (val = @theme[%(#{periphery}_#{side}_#{position}_content)])
-          # TODO support image URL (using resolve_image_path)
-          if (val.include? ':') && val =~ ImageAttributeValueRx &&
-              ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
-            attrs = (AttributeList.new $2).parse
-            width = resolve_explicit_width attrs, bounds.width
-            # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
-            unless width
-              width = [bounds.width, (intrinsic_image_dimensions path)[:width] * 0.75].min
-            end
-            side_content[position] = { path: path, width: width }
-          else
-            side_content[position] = val
-          end
-        end
-      end
-      # NOTE set fallbacks if not explicitly disabled
-      if side_content.empty? && periphery == :footer && @theme[%(footer_#{side}_content)] != 'none'
-        side_content = { side == :recto ? :right : :left => '{page-number}' }
-      end
-
-      acc[side] = side_content
-      acc
-    end
+    allow_uri_read = doc.attr? 'allow-uri-read'
+    svg_fallback_font = default_svg_font
 
     if periphery == :header
       trim_line_metrics = calc_line_metrics(@theme.header_line_height || @theme.base_line_height)
@@ -2356,6 +2332,40 @@ class Converter < ::Prawn::Document
       acc
     end
 
+    # TODO move this to a method so it can be reused; cache results
+    content_dict = PageSides.inject({}) do |acc, side|
+      side_content = {}
+      ColumnPositions.each do |position|
+        if (val = @theme[%(#{periphery}_#{side}_#{position}_content)])
+          # TODO support image URL (using resolve_image_path)
+          if (val.include? ':') && val =~ ImageAttributeValueRx &&
+              ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
+            attrs = (AttributeList.new $2).parse
+            col_width = colspec_dict[side][position][:width]
+            if (fit = attrs['fit']) == 'contain'
+              width = col_width
+            else
+              unless (width = resolve_explicit_width attrs, col_width)
+                # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
+                width = (intrinsic_image_dimensions path)[:width] * 0.75
+              end
+              width = col_width if fit == 'scale-down' && width > col_width
+            end
+            side_content[position] = { path: path, width: width, fit: !!fit }
+          else
+            side_content[position] = val
+          end
+        end
+      end
+      # NOTE set fallbacks if not explicitly disabled
+      if side_content.empty? && periphery == :footer && @theme[%(footer_#{side}_content)] != 'none'
+        side_content = { side == :recto ? :right : :left => '{page-number}' }
+      end
+
+      acc[side] = side_content
+      acc
+    end
+
     stamps = {}
     if trim_bg_color || trim_border_color
       PageSides.each do |side|
@@ -2419,9 +2429,33 @@ class Converter < ::Prawn::Document
                 float do
                   # NOTE bounding_box is redundant if trim_v_padding is 0
                   bounding_box [colspec[:x], cursor - trim_padding[0]], width: colspec[:width], height: (bounds.height - trim_v_padding) do
-                    #image content[:path], vposition: trim_img_valign, position: colspec[:align], width: content[:width]
-                    # NOTE use :fit to prevent image from overflowing page (at the cost of scaling it)
-                    image content[:path], vposition: trim_img_valign, position: colspec[:align], fit: [content[:width], bounds.height]
+                    if (img_path = content[:path]).downcase.end_with? '.svg'
+                      svg_data = ::IO.read img_path
+                      svg_opts = {
+                        position: colspec[:align],
+                        vposition: trim_img_valign,
+                        width: content[:width],
+                        # TODO enforce jail in safe mode
+                        enable_file_requests_with_root: (::File.dirname img_path),
+                        enable_web_requests: allow_uri_read,
+                        fallback_font_name: svg_fallback_font
+                      }
+                      svg_obj = ::Prawn::Svg::Interface.new svg_data, self, svg_opts
+                      # FIXME use new resize method (available as of prawn-svg 0.25.2); reconstruct manually for now
+                      if content[:fit] && (rendered_h = svg_obj.document.sizing.output_height) > bounds.height
+                        svg_opts[:width] *= bounds.height / rendered_h
+                        svg_obj = ::Prawn::Svg::Interface.new svg_data, self, svg_opts
+                      end
+                      svg_obj.draw
+                    else
+                      img_opts = { position: colspec[:align], vposition: trim_img_valign }
+                      if content[:fit]
+                        img_opts[:fit] = [content[:width], bounds.height]
+                      else
+                        img_opts[:width] = content[:width]
+                      end
+                      image img_path, img_opts
+                    end
                   end
                 end
               when ::String
