@@ -34,6 +34,7 @@ module Asciidoctor; module Pdf
     end
   
     def init_category name
+      name = '@' if (ord = name.ord) < 65 || ord > 90
       @categories[name] ||= (IndexTermCategory.new name)
     end
   
