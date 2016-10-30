@@ -1611,7 +1611,7 @@ class Converter < ::Prawn::Document
       else
         pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| dest[:page].to_s }
       end
-      text = %(#{text}, #{pagenums * ', '})
+      text = %(#{escape_xml text}, #{pagenums * ', '})
     end
     layout_prose text, align: :left, margin: 0
 
@@ -1763,10 +1763,10 @@ class Converter < ::Prawn::Document
       }
       anchor = %(<a name="#{anchor_name}" type="indexterm">#{DummyText}</a>)
       if node.type == :visible
-        @index.store_primary_term((visible_term = node.text), dest)
+        @index.store_primary_term(sanitize(visible_term = node.text), dest)
         %(#{anchor}#{visible_term})
       else
-        @index.store_term((node.attr 'terms'), dest)
+        @index.store_term((node.attr 'terms').map {|term| sanitize term }, dest)
         anchor
       end
     end
