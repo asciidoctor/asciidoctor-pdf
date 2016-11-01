@@ -2454,7 +2454,11 @@ class Converter < ::Prawn::Document
                       else
                         img_opts[:width] = content[:width]
                       end
-                      image img_path, img_opts
+                      begin
+                        image img_path, img_opts
+                      rescue => e
+                        warn %(asciidoctor: WARNING: could not embed image in running content: #{img_path}; #{e.message})
+                      end
                     end
                   end
                 end
