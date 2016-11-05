@@ -424,11 +424,11 @@ class Converter < ::Prawn::Document
   end
 
   def convert_preamble node
-    # FIXME should only use lead for first paragraph
-    # add lead role to first paragraph then delegate to convert_content_for_block
-    theme_font :lead do
-      convert_content_for_block node
+    # TODO find_by needs to support a depth argument
+    if (first_p = (node.find_by context: :paragraph)[0]) && first_p.parent == node
+      first_p.add_role 'lead'
     end
+    convert_content_for_block node
   end
 
   # TODO add prose around image logic (use role to add special logic for headshot)
