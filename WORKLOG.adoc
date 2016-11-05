@@ -6,13 +6,15 @@
 == TODO
 
 * backport resize method from prawn-svg and use it in converter (now in two places)
-* document fit attribute for images in running content in theming guide (or README)
 * rework resolve_image_path API so it's more logical; override based on type of first argument; document as option
-* rename inherited_align to text_align? (and base_align to base_text_align?)
 * rename text-alignment attribute to text-align? (change is within alpha.14, so still a chance to change)
+* report cursor / bounding box bug in column_box
+* introduce theme keys for styling index
+* index term that wraps should have a hanging indent (#645)
+* rename inherited_align to text_align? (and base_align to base_text_align?)
 
-* implement index of index terms (#386)
-  - introduce model object
+* allow front cover and back cover image to be defined in theme as fallback; document in theming-guide
+* FILE ISSUE only nest document outline inside root node if doctype=article
 * don't crash if image in running content is an unsupported format
 * support image URL (using resolve_image_path) in running content (what about data-uri?)
 * numbering for appendix subsections is not correct; should be A.1, A.2 (#627)
@@ -21,14 +23,14 @@
 * BUG: http://asciidoctor.org[Asciidoctor] surrounded by smart quotes doesn't get translated to a link (as it should)
 * FILE ISSUE draw border for quote/verse block on right if text is aligned to the right
 * Prawn should not move cursor before placing image if image exceeds height of bounding box
-  - workaround now by overriding move_text_position
+  - ^ workaround in place by overriding move_text_position
 * part title / number (#597)
   - upper roman numeral
   - add part-label, fallback to Part (e.g., Part I)
   - only use roman numeral in toc
 * support equal column widths in header/footer as "columns: 3*" (with optional leading alignment)
 * support padding for each column in running header/footer
-* should we move files under asciidoctor/pdf and use asciidoctor-pdf as the alias?
+* should we move files under asciidoctor/pdf and use asciidoctor-pdf as the alias? (#262)
 * consider moving RomanNumeral into a gem named roman_numeral
 * should vertical alignment of admonition icon/label should respect padding on content? have it's own padding?
 * allow general settings for admonition icon to be set using admonition_icon key prefix (e.g., admonition_icon_size)
@@ -44,9 +46,6 @@
   - header/footer
 * SIMPLE: mark required keys (assume keys are optional by default)
   - required keys can never have a null value; most are set by base theme
-* SIMPLE: document vw/vh measurement units in theming guide (make it clear it only applies in certain cases)
-* SIMPLE: in theming guide, recommend not using the fallback font when working with very large documents
-  - explain that default theme uses a fallback font
 * allow font properties to be set for normal paragraph separate from base (need to think about inheritence)
 * allow alignment of list to be set separately from base align (and perhaps a hint in document) (#182)
 * FIXME: stop using fallback fonts in default theme (instead, bundle a fuller font)
@@ -83,7 +82,6 @@
 * document how to test / use a PR
   - see https://github.com/asciidoctor/asciidoctor-pdf/issues/462#issuecomment-246200953
   - clearer instructions for how to test local development version (using rake install)
-* break printed URIs at each forward slash (and perhaps at ? and & too) (#563)
 * allow font size of dot_leader to be specified (some risk if it exceeds size of entries)
 * add empty? method to Page (instead of page_empty? on document)
 * FILE ISSUE: add option to svg method to not move cursor (in prawn-svg)
@@ -128,6 +126,7 @@
   - add Optimizer class; wire to cli (separate issue?)
 * add feature to number bullets according to section number (needed for OpenDevise agreements)
 * outline should link to title page if there's a cover page (skip cover page and ensuing blank page)
+* don't allow title page content to jump to next page
 * might be better to organize fragments of source chunks by lines (and pass that around) to simplify post-processing
 * support negative start value for list (#498)
   - need to count negative numbers in correct direction
@@ -187,6 +186,7 @@
 * document that palette-based transparent in PNGs is not supported in older version of Prawn
 * FILE ISSUE: for prawn to preserve space (even w/ guards, spaces don't preserve over wrapped lines)
   - if this is fixed, we can remove all the guard indent code
+  - we also have a problem that soft hyphens in wrapped content get dropped
 * FILE ISSUE: for prawn to support spacer fragments with fixed width / height and no text (or text is ignored in calculations)
   - needed for arranging inline objects
 * document limitations in README (such as no linear gradients in SVG, etc)
@@ -197,7 +197,6 @@
 * keep line comment in front of callout number to aid copying?
 * rework pull request for source line numbers (combine with restore conum logic if conums are enabled)
   - also combine with the preserve_space logic
-* allow front cover and back cover image to be defined in theme as fallback; document in theming-guide
 * should we shorten the keys to front-cover and back-cover (since image is implied?)
 * keep caption with table (check for sufficient space); only for top placement since bottom placement is much harder
 * allow valign to be set on image block (vertical center in page for things like slides)
@@ -358,6 +357,7 @@
 * rename align to text_align?
 * QUESTION should bullets be on right if list alignment is right (what about center?)
 * QUESTION should we resolve font-based icons globally, in init_pdf?
+* if alt text for inline image is empty string, image is not written
 
 * use treetop to parse and evaluate theme file
 * use or don't use pad method? check performance
@@ -395,14 +395,22 @@
 * use term "page number label" to refer to the visible, printed page number (not the implicit page number)
 * vertical alignment of text doesn't work properly in Prawn; better to calculate alignment manually, if possible
 
+== Prawn Wishlist
+
+* fragment should be able to specify it's own width
+
 == Known Issues
 
+* when paragraph text runs to another page, all zero-width spaces and soft hyphens have been removed from the text; this means word breaks don't work and callbacks for placeholder text aren't called
 * inline image at start of the line is slighly shifted to the right due to the fact that it's placed in the center of the reserved fragment width; perhaps we are adding this padding
 
 == Potential Optimizations
 
 * if autofit is set on a listing/literal block that has conums, we are splitting fragments by line twice
 * comparing > 0 is slightly faster than == 0 (for cases when we can swap the logic)
+* could define rx constants on demand, such as:
+
+  self.class.const_set :UriSchemeBoundaryRx, /(?<=:\/\/)/ unless self.class.const_defined? :UriSchemeBoundaryRx, false
 
 == Usage Optimizations
 
