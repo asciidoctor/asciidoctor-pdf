@@ -1615,6 +1615,51 @@ The keys in this category are used to control the style of literal, listing and 
   padding: 11
 |===
 
+=== Conum
+
+The keys in this category are used to control the style of callout numbers (conums) inside verbatim blocks and in callout lists (colists).
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|*Key Prefix:* conum
+
+|font_color
+|<<colors,Color>> +
+(default: _inherit_)
+|conum:
+  font_color: #b12146
+
+|font_family^[1,2]^
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|conum:
+  font_family: M+ 1mn
+
+|font_size^[2]^
+|<<values,Number>> +
+(default: _inherit_)
+|conum:
+  font_size: $base_font_size
+
+|font_style^[2]^
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|conum:
+  font_style: normal
+
+|line_height^[2]^
+|<<values,Number>> +
+(default: 1.15)
+|conum:
+  line_height: 4 / 3
+|===
+
+. Currently, the font must contain the circle numbers starting at glyph U+2460.
+. font_family, font_size, font_style, and line_height are only used for markers in a colist.
+These properties are inherited for conums inside a verbatim block.
+
 === Blockquote
 
 The keys in this category control the arrangement and style of quote blocks.
