@@ -2336,7 +2336,7 @@ class Converter < ::Prawn::Document
     content_dict = PageSides.inject({}) do |acc, side|
       side_content = {}
       ColumnPositions.each do |position|
-        if (val = @theme[%(#{periphery}_#{side}_#{position}_content)])
+        unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
           # TODO support image URL (using resolve_image_path)
           if (val.include? ':') && val =~ ImageAttributeValueRx &&
               ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
