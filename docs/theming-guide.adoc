@@ -3147,7 +3147,11 @@ If a document uses the book doctype, a blank page will be inserted, if necessary
 * Title page
 * Table of contents
 * First page of body content
-* Parts and chapters (except those which have the nonfacing option set)
+* Parts and chapters
+
+It is possible to mark parts and chapters with a nonfacing option. 
+In this case no automatic facing pages will be created. 
+For this add [%nonfacing] before a title.
 
 Other facing pages may be added in the future.
 
