@@ -3149,11 +3149,19 @@ If a document uses the book doctype, a blank page will be inserted, if necessary
 * First page of body content
 * Parts and chapters
 
-It is possible to mark parts and chapters with a nonfacing option. 
-In this case no automatic facing pages will be created. 
-For this add [%nonfacing] before a title.
-
 Other facing pages may be added in the future.
+
+It's possible to disable the automatic facing feature for a given part or chapter.
+This can be done by adding the nonfacing option to the section node.
+When the nonfacing option is present, the part or chapter title will be placed on the following page.
+
+[source,asciidoc]
+----
+[%nonfacing]
+= Minor Chapter
+
+content
+----
 
 For documents that use the article doctype, Asciidoctor PDF incorrectly places the document title and table of contents on their own pages.
 This can result in the page numbering and the page facing to be out of sync.
