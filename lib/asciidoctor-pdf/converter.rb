@@ -2406,8 +2406,7 @@ class Converter < ::Prawn::Document
       colspec_by_position = colspec_dict[side]
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
-      # FIXME leave page-number attribute unset once we filter lines with unresolved attributes (see below)
-      doc.set_attr 'page-number', (pagenums_enabled ? pgnum_label : '')
+      doc.set_attr 'page-number', pgnum_label.to_s if pagenums_enabled
       doc.set_attr 'chapter-title', (chapters_by_page[pgnum_label] || '')
       doc.set_attr 'section-title', (sections_by_page[pgnum_label] || '')
       doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum_label] || chapters_by_page[pgnum_label] || '')
@@ -2463,6 +2462,7 @@ class Converter < ::Prawn::Document
                   end
                 end
               when ::String
+                # NOTE minor optimization
                 if content == '{page-number}'
                   content = pagenums_enabled ? pgnum_label.to_s : nil
                 else
