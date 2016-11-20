@@ -1608,6 +1608,11 @@ The keys in this category are used to control the style of literal, listing and 
 |code:
   line_height: 1.25
 
+|line_gap
+|<<values,Number>>
+|code:
+  line_gap: 3.8
+
 |padding
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: 9)

@@ -5,6 +5,8 @@ module Formatters
 class Prawn < Formatter
   tag 'prawn'
 
+  Tokens = ::Rouge::Token::Tokens
+
   LF = %(\n)
   NoBreakSpace = %(\u00a0)
   InnerIndent = %(\n )
@@ -24,7 +26,12 @@ class Prawn < Formatter
     end
     @theme = theme
     @normalized_colors = {}
-    @linenum_fragment_base = (create_fragment Token['Generic.Lineno']).merge linenum: true
+    @background_colorizer = BackgroundColorizer.new line_gap: opts[:line_gap]
+    @linenum_fragment_base = (create_fragment Tokens::Generic::Lineno).merge linenum: true
+  end
+
+  def background_color
+    @background_color ||= normalize_color((@theme.style_for Tokens::Text).bg)
   end
 
   # Override format method so fragments don't get flatted to a string
@@ -44,13 +51,13 @@ class Prawn < Formatter
           fragments << { text: LF }
           fragments << (create_linenum_fragment linenum += 1)
         elsif val.include? LF
+          # NOTE we assume if the fragment ends in a line feed, the intention was to match a line-oriented form
+          line_oriented = val.end_with? LF
           base_fragment = create_fragment tok, val
           val.each_line do |line|
-            fragments << (base_fragment.merge text: line)
+            fragments << (line_oriented ? (base_fragment.merge text: line, line_oriented: true) : (base_fragment.merge text: line))
             # NOTE append linenum fragment if there's a next line; only works if source doesn't have trailing endline
-            if line.end_with? LF
-              fragments << (create_linenum_fragment linenum += 1)
-            end
+            fragments << (create_linenum_fragment linenum += 1) if line.end_with? LF
           end
         else
           fragments << (create_fragment tok, val)
@@ -77,9 +84,12 @@ class Prawn < Formatter
         else
           val[0] = GuardedIndent if start_of_line && (val.start_with? ' ')
           val.gsub! InnerIndent, GuardedInnerIndent if val.include? InnerIndent
-          start_of_line = val.end_with? LF
-          # NOTE this optimization assumes we don't support/use background colors
-          val.rstrip.empty? ? { text: val } : (create_fragment tok, val)
+          # QUESTION do we need the call to create_fragment if val contains only spaces? consider bg
+          #fragment = create_fragment tok, val
+          fragment = val.rstrip.empty? ? { text: val } : (create_fragment tok, val)
+          # NOTE we assume if the fragment ends in a line feed, the intention was to match a line-oriented form
+          fragment[:line_oriented] = true if (start_of_line = val.end_with? LF)
+          fragment
         end
       end
       # QUESTION should we strip trailing newline?
@@ -90,7 +100,12 @@ class Prawn < Formatter
   def create_fragment tok, val = nil
     fragment = val ? { text: val } : {}
     if (style_rules = @theme.style_for tok)
-      # TODO support background color
+      if (bg = normalize_color style_rules.bg) && bg != @background_color
+        fragment[:background_color] = bg
+        fragment[:callback] = @background_colorizer
+        fragment[:inline_block] = true if style_rules[:inline_block]
+        fragment[:extend] = true if style_rules[:extend]
+      end
       if (fg = normalize_color style_rules.fg)
         fragment[:color] = fg
       end
@@ -123,6 +138,23 @@ class Prawn < Formatter
       normalized = normalized.each_char.map {|c| c * 2 }.join if normalized.size == 3
       @normalized_colors[raw] = normalized
     end
+  end
+end
+
+class BackgroundColorizer
+  def initialize opts = {}
+    @line_gap = opts[:line_gap] || 0
+  end
+
+  def render_behind fragment
+    pdf = fragment.document
+    data = fragment.format_state
+    prev_fill_color = pdf.fill_color
+    pdf.fill_color data[:background_color]
+    v_gap = data[:inline_block] ? @line_gap : 0
+    fragment_width = data[:line_oriented] && data[:extend] ? (pdf.bounds.width - fragment.left) : fragment.width
+    pdf.fill_rectangle [fragment.left, fragment.top + v_gap * 0.5], fragment_width, (fragment.height + v_gap)
+    pdf.fill_color prev_fill_color
   end
 end
 end
