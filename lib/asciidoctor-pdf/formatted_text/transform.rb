@@ -207,20 +207,40 @@ class Transform
         # NOTE for our purposes, spaces inside the style attribute are superfluous
         # NOTE split will ignore record after trailing ;
         inline_styles.tr(' ', '').split(';').each do |style|
-          pname, pvalue = style.split(':', 2)
+          pname, pval = style.split(':', 2)
           case pname
+          when 'background-color'
+            unless fragment[:background_color]
+              pval = pval[1..-1] if pval.start_with? '#'
+              #pval = pval.each_char.map {|c| c * 2 }.join if pval.size == 3
+              fragment[:background_color] = pval
+              fragment[:callback] = TextBackgroundFiller
+            end
+          when 'border-color'
+            unless fragment[:border_color]
+              pval = pval[1..-1] if pval.start_with? '#'
+              #pval = pval.each_char.map {|c| c * 2 }.join if pval.size == 3
+              fragment[:border_color] = pval
+            end
+          when 'border-radius'
+            fragment[:border_radius] = pval.to_f unless fragment[:border_radius]
+          when 'border-width'
+            unless fragment[:border_width]
+              fragment[:border_width] = pval
+              fragment[:callback] = TextBackgroundFiller
+            end
           when 'color'
             unless fragment[:color]
-              pvalue = pvalue[1..-1] if pvalue.start_with? '#'
-              #pvalue = pvalue.each_char.map {|c| c * 2 }.join if pvalue.size == 3
-              fragment[:color] = pvalue
+              pval = pval[1..-1] if pval.start_with? '#'
+              #pval = pval.each_char.map {|c| c * 2 }.join if pval.size == 3
+              fragment[:color] = pval
             end
           when 'font-weight'
-            if pvalue == 'bold'
+            if pval == 'bold'
               styles << :bold
             end
           when 'font-style'
-            if pvalue == 'italic'
+            if pval == 'italic'
               styles << :italic
             end
           # TODO text-transform

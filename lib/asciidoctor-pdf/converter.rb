@@ -1681,8 +1681,43 @@ class Converter < ::Prawn::Document
     %(#{node.text}<br>)
   end
 
+  # QUESTION should theming be done here or in FormattedText::Transform?
+  # TODO allow padding to be set
   def convert_inline_button node
-    %(<strong>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</strong>)
+    btn_content = (btn_content = @theme.button_content) ? (btn_content.sub '%s', node.text) : node.text
+    btn_styles = []
+    if (btn_background_color = @theme.button_background_color)
+      btn_styles << %(background-color: #{btn_background_color})
+    end
+    if (btn_border_width = @theme.button_border_width)
+      btn_styles << %(border-color: #{@theme.button_border_color || @theme.base_border_color})
+      btn_styles << %(border-width: #{btn_border_width})
+    end
+    if (btn_background_color || btn_border_width) && (btn_border_radius = @theme.button_border_radius)
+      btn_styles << %(border-radius: #{btn_border_radius})
+    end
+    if (btn_font_color = @theme.button_font_color)
+      btn_styles << %(color: #{btn_font_color})
+    end
+    if (btn_font_size = @theme.button_font_size)
+      if (btn_font_family = @theme.button_font_family)
+        btn_content = %(<font name="#{btn_font_family}" size="#{btn_font_size}">#{btn_content}</font>)
+      else
+        btn_content = %(<font size="#{btn_font_size}">#{btn_content}</font>)
+      end
+    elsif (btn_font_family = @theme.button_font_family)
+      btn_content = %(<font name="#{btn_font_family}">#{btn_content}</font>)
+    end
+    case @theme.button_font_style
+    when 'bold'
+      btn_styles << 'font-weight: bold'
+    when 'italic'
+      btn_styles << 'font-style: italic'
+    when 'bold_italic'
+      btn_styles << 'font-weight: bold'
+      btn_styles << 'font-style: italic'
+    end
+    btn_styles.empty? ? btn_content : %(<span style="#{btn_styles * '; '}">#{btn_content}</span>)
   end
 
   def convert_inline_callout node
