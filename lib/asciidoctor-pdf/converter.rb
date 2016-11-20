@@ -1054,9 +1054,56 @@ class Converter < ::Prawn::Document
     audio_path = node.media_uri(node.attr 'target')
     play_symbol = (node.document.attr? 'icons', 'font') ?
         %(<font name="fa">#{::Prawn::Icon::FontData.load(self, 'fa').unicode 'play'}</font>) : RightPointer
-    layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a>), normalize: false, margin: 0, single_line: true
+    layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0, single_line: true
     layout_caption node, side: :bottom if node.title?
     theme_margin :block, :bottom
+  end
+
+  def convert_video node
+    case (poster = node.attr 'poster', nil, false)
+    when 'youtube'
+      video_path = %(https://www.youtube.com/watch?v=#{video_id = node.attr 'target'})
+      # see http://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api
+      poster = (node.document.attr? 'allow-uri-read') ? %(https://img.youtube.com/vi/#{video_id}/maxresdefault.jpg) : nil
+      type = 'YouTube video'
+    when 'vimeo'
+      video_path = %(https://vimeo.com/#{video_id = node.attr 'target'})
+      if node.document.attr? 'allow-uri-read'
+        if node.document.attr? 'cache-uri'
+          Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
+        else
+          ::OpenURI
+        end
+        poster = open(%(http://vimeo.com/api/v2/video/#{video_id}.xml), 'r') do |f|
+          (/<thumbnail_large>(.*?)<\/thumbnail_large>/.match f.read)[1]
+        end
+      else
+        poster = nil
+      end
+      type = 'Vimeo video'
+    else
+      video_path = node.media_uri(node.attr 'target')
+      type = 'video'
+    end
+
+    if poster.nil_or_empty?
+      add_dest_for_block node if node.id
+      theme_margin :block, :top
+      play_symbol = (node.document.attr? 'icons', 'font') ?
+          %(<font name="fa">#{::Prawn::Icon::FontData.load(self, 'fa').unicode 'play'}</font>) : RightPointer
+      layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{video_path}">#{video_path}</a> <em>(#{type})</em>), normalize: false, margin: 0, single_line: true
+      layout_caption node, side: :bottom if node.title?
+      theme_margin :block, :bottom
+    else
+      original_attributes = node.attributes.dup
+      begin
+        node.update_attributes 'target' => poster, 'link' => video_path
+        #node.set_attr 'pdfwidth', '100%' unless (node.attr? 'width') || (node.attr? 'pdfwidth')
+        convert_image node
+      ensure
+        node.attributes.replace original_attributes
+      end
+    end
   end
 
   # QUESTION can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
