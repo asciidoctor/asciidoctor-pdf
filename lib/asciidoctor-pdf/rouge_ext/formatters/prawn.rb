@@ -13,6 +13,7 @@ class Prawn < Formatter
   BoldStyle = [:bold].to_set
   ItalicStyle = [:italic].to_set
   BoldItalicStyle = [:bold, :italic].to_set
+  UnderlineStyle = [:underline].to_set
 
   def initialize opts = {}
     unless ::Rouge::Theme === (theme = opts[:theme])
@@ -94,9 +95,16 @@ class Prawn < Formatter
         fragment[:color] = fg
       end
       if style_rules[:bold]
-        fragment[:styles] = style_rules[:italic] ? BoldItalicStyle : BoldStyle
+        fragment[:styles] = style_rules[:italic] ? BoldItalicStyle.dup : BoldStyle.dup
       elsif style_rules[:italic]
-        fragment[:styles] = ItalicStyle
+        fragment[:styles] = ItalicStyle.dup
+      end
+      if style_rules[:underline]
+        if fragment.key? :styles
+          fragment[:styles] << UnderlineStyle.first
+        else
+          fragment[:styles] = UnderlineStyle.dup
+        end
       end
     end
     fragment
