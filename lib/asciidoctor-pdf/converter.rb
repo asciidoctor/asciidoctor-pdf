@@ -2245,33 +2245,52 @@ class Converter < ::Prawn::Document
     go_to_page content_start_page
 
     # FIXME probably need to treat doctypes differently
-    sections = doc.find_by(context: :section) {|sect| sect.level < 3 } || []
+    is_book = doc.doctype == 'book'
+    header = doc.header? ? doc.header : nil
+    sections = doc.find_by(context: :section) {|sect| sect.level < 3 && sect != header } || []
 
-    # index chapters and sections by the visual page number on which they start
+    # FIXME we need a proper model for all this page counting
+    # index parts, chapters and sections by the visual page number on which they start
+    part_start_pages = {}
     chapter_start_pages = {}
     section_start_pages = {}
     sections.each do |sect|
-      if sect.chapter?
-        chapter_start_pages[(sect.attr 'pdf-page-start').to_i - skip] ||= (sect.numbered_title formal: true)
+      if is_book && ((sect_is_part = sect.part?) || sect.chapter?)
+        if sect_is_part
+          part_start_pages[(sect.attr 'pdf-page-start').to_i - skip] ||= (sect.numbered_title formal: true)
+        else
+          chapter_start_pages[(sect.attr 'pdf-page-start').to_i - skip] ||= (sect.numbered_title formal: true)
+          if sect.sectname == 'appendix' && !part_start_pages.empty?
+            # FIXME need a better way to indicate that part has ended
+            part_start_pages[(sect.attr 'pdf-page-start').to_i - skip] = ''
+          end
+        end
       else
         section_start_pages[(sect.attr 'pdf-page-start').to_i - skip] ||= (sect.numbered_title formal: true)
       end
     end
 
-    # index chapters and sections by the visual page number on which they appear
+    # index parts, chapters, and sections by the visual page number on which they appear
+    parts_by_page = {}
     chapters_by_page = {}
     sections_by_page = {}
-    last_chap = doc.doctype == 'book' ? (doc.attr 'preface-title', 'Preface') : nil
+    # QUESTION should the default part be the doctitle?
+    last_part = nil
+    last_chap = is_book ? (doc.attr 'preface-title', 'Preface') : nil
     last_sect = nil
     (1..num_pages).each do |num|
+      if (part = part_start_pages[num])
+        last_part = part
+      end
       if (chap = chapter_start_pages[num])
         last_chap = chap
       end
       if (sect = section_start_pages[num])
         last_sect = sect
-      elsif chap
+      elsif part || chap
         last_sect = nil
       end
+      parts_by_page[num] = last_part
       chapters_by_page[num] = last_chap
       sections_by_page[num] = last_sect
     end
@@ -2454,6 +2473,8 @@ class Converter < ::Prawn::Document
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
       doc.set_attr 'page-number', pgnum_label.to_s if pagenums_enabled
+      # QUESTION should the fallback value be nil instead of empty string? or should we remove attribute if no value?
+      doc.set_attr 'part-title', (parts_by_page[pgnum_label] || '')
       doc.set_attr 'chapter-title', (chapters_by_page[pgnum_label] || '')
       doc.set_attr 'section-title', (sections_by_page[pgnum_label] || '')
       doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum_label] || chapters_by_page[pgnum_label] || '')
