@@ -1,6 +1,6 @@
 module Rouge
   module Themes
-    # A Rouge theme that matches the pastie style from Pygments.
+    # A port of the pastie style from Pygments.
     # See https://bitbucket.org/birkenfeld/pygments-main/src/default/pygments/styles/pastie.py
     class Pastie < CSSTheme
       name 'pastie' 
@@ -37,9 +37,9 @@ module Rouge
       style Str::Interpol,             fg: '#3333bb', bg: '#fff0f0'
       style Str::Other,                fg: '#22bb22', bg: '#f0fff0'
       #style Str::Regex,               fg: '#008800', bg: '#fff0ff'
+      # The background color on regex really doesn't look good, so let's drop it
       style Str::Regex,                fg: '#008800'
-      #style Str::Symbol,              fg: '#aa6600', bg: '#fff0f0'
-      style Str::Symbol,               fg: '#aa6600'
+      style Str::Symbol,               fg: '#aa6600', bg: '#fff0f0'
 
       style Name::Attribute,           fg: '#336699'
       style Name::Builtin,             fg: '#003388'
@@ -49,6 +49,7 @@ module Rouge
       style Name::Exception,           fg: '#bb0066', bold: true
       style Name::Function,            fg: '#0066bb', bold: true
       #style Name::Label,              fg: '#336699', italic: true
+      # Name::Label is used for built-in CSS properties in Rouge, so let's drop italics
       style Name::Label,               fg: '#336699'
       style Name::Namespace,           fg: '#bb0066', bold: true
       style Name::Property,            fg: '#336699', bold: true
