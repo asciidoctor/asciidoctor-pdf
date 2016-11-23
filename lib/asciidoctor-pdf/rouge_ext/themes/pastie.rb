@@ -61,7 +61,6 @@ module Rouge
       style Operator::Word,            fg: '#008800'
 
       style Text,                      {}
-      style Text::Whitespace,          fg: '#bbbbbb'
     end
   end
 end
