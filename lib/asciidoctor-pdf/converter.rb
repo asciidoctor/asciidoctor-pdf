@@ -1143,6 +1143,8 @@ class Converter < ::Prawn::Document
       source_string = preserve_indentation node.content, (node.attr 'tabsize')
     end
 
+    bg_color_override = nil
+
     source_chunks = case highlighter
     when 'coderay'
       Helpers.require_library CodeRayRequirePath, 'coderay' unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
@@ -1168,7 +1170,9 @@ class Converter < ::Prawn::Document
     when 'rouge'
       Helpers.require_library RougeRequirePath, 'rouge' unless defined? ::Rouge::Formatters::Prawn
       lexer = ::Rouge::Lexer.find(node.attr 'language', 'text', false) || ::Rouge::Lexers::PlainText
-      formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'))
+      formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap)
+      # QUESTION what about border color?
+      bg_color_override = formatter.background_color
       source_string, conum_mapping = extract_conums source_string
       # NOTE trailing endline is added to address https://github.com/jneen/rouge/issues/279
       fragments = formatter.format (lexer.lex %(#{source_string}#{LF})), line_numbers: (node.attr? 'linenums')
@@ -1199,7 +1203,7 @@ class Converter < ::Prawn::Document
             # TODO move the multi-page logic to theme_fill_and_stroke_bounds
             unless (b_width = @theme.code_border_width || 0) == 0
               b_radius = (@theme.code_border_radius || 0) + b_width
-              bg_color = @theme.code_background_color || @page_bg_color
+              b_gap_color = bg_color_override || @theme.code_background_color || @page_bg_color
             end
             remaining_height = box_height - caption_height
             i = 0
@@ -1207,17 +1211,17 @@ class Converter < ::Prawn::Document
               start_new_page if (started_new_page = i > 0)
               fill_height = [remaining_height, cursor].min
               bounding_box [0, cursor], width: bounds.width, height: fill_height do
-                theme_fill_and_stroke_bounds :code
+                theme_fill_and_stroke_bounds :code, background_color: bg_color_override
                 unless b_width == 0
                   indent b_radius, b_radius do
                     # dashed line to indicate continuation from previous page
-                    stroke_horizontal_rule bg_color, line_width: b_width, line_style: :dashed
+                    stroke_horizontal_rule b_gap_color, line_width: b_width, line_style: :dashed
                   end if started_new_page
                   if remaining_height > fill_height
                     move_down fill_height
                     indent b_radius, b_radius do
                       # dashed line to indicate continuation on next page
-                      stroke_horizontal_rule bg_color, line_width: b_width, line_style: :dashed
+                      stroke_horizontal_rule b_gap_color, line_width: b_width, line_style: :dashed
                     end
                   end
                 end
@@ -2651,10 +2655,11 @@ class Converter < ::Prawn::Document
     end
   end
 
-  def theme_fill_and_stroke_bounds category
-    fill_and_stroke_bounds @theme[%(#{category}_background_color)], @theme[%(#{category}_border_color)],
-      line_width: @theme[%(#{category}_border_width)],
-      radius: @theme[%(#{category}_border_radius)]
+  def theme_fill_and_stroke_bounds category, opts = {}
+    background_color = opts[:background_color] || @theme[%(#{category}_background_color)]
+    fill_and_stroke_bounds background_color, @theme[%(#{category}_border_color)],
+        line_width: @theme[%(#{category}_border_width)],
+        radius: @theme[%(#{category}_border_radius)]
   end
 
   # Insert a top margin space unless cursor is at the top of the page.
