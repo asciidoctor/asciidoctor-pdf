@@ -5,6 +5,10 @@
 
 == TODO
 
+* document how to make and load a custom Rouge theme in theming guide
+* make sure any state is cleared after conversion, including attributes assigned
+* highlighting of CSS w/ rouge seems messed up; don't recognize keywords
+* implement line number offset in source listing (rouge)
 * use background color from pygments theme for source block
 * what should we set as the border color if the source highlighting theme has a background color?
 * height of listing block not calculated correctly when string of contiguous characters exceeds length of line
@@ -42,7 +46,7 @@
 * should vertical alignment of admonition icon/label should respect padding on content? have it's own padding?
 * allow general settings for admonition icon to be set using admonition_icon key prefix (e.g., admonition_icon_size)
 * allow alignment to be set on discrete heading using role
-* SIMPLE: submit pastie theme for Rouge upstream
+* submit pastie theme for Rouge upstream (PR sent, see https://github.com/jneen/rouge/pull/576)
 * SIMPLE: document autofit option on verbatim blocks (in README?)
 * SIMPLE: fill in missing defaults in theming guide
   - title_page
