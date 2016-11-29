@@ -3187,6 +3187,8 @@ The name of the Ruby class doesn't matter, though it's customary to name it acco
 .rouge_themes/custom.rb
 [source,ruby]
 ----
+require 'rouge' unless defined? ::Rouge.version
+
 module Rouge; module Themes
   class Custom < CSSTheme
     name 'custom'
