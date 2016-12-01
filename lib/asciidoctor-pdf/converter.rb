@@ -958,7 +958,7 @@ class Converter < ::Prawn::Document
           rendered_w = (svg_size = svg_obj.document.sizing).output_width
           if !width && (svg_obj.document.root.attributes.key? 'width')
             # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
-            if (adjusted_w = [bounds.width, rendered_w * 0.75].min) != rendered_w
+            if (adjusted_w = [bounds.width, (to_pt rendered_w, 'px')].min) != rendered_w
               # FIXME use new resize method (available as of prawn-svg 0.25.2); reconstruct manually for now
               svg_obj = ::Prawn::Svg::Interface.new svg_data, self,
                   position: alignment,
@@ -1001,7 +1001,7 @@ class Converter < ::Prawn::Document
             rendered_w, rendered_h = image_info.calc_image_dimensions width: width
           else
             # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
-            rendered_w = [bounds.width, image_info.width * 0.75].min
+            rendered_w = [bounds.width, (to_pt image_info.width, 'px')].min
             rendered_h = (rendered_w * image_info.height) / image_info.width
           end
           # TODO move this calculation into a method
@@ -2417,7 +2417,7 @@ class Converter < ::Prawn::Document
             else
               unless (width = resolve_explicit_width attrs, col_width)
                 # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
-                width = (intrinsic_image_dimensions path)[:width] * 0.75
+                width = to_pt intrinsic_image_dimensions(path)[:width], 'px'
               end
               width = col_width if fit == 'scale-down' && width > col_width
             end
@@ -3044,8 +3044,7 @@ class Converter < ::Prawn::Document
       end
     elsif attrs.key? 'width'
       # QUESTION should we honor percentage width value?
-      # NOTE scale width down 75% to convert px to pt; restrict width to max width
-      [max_width, attrs['width'].to_f * 0.75].min
+      [max_width, (to_pt attrs['width'].to_f, 'px')].min
     end
   end
 

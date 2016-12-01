@@ -54,7 +54,7 @@ module InlineImageArranger
         image_path = fragment[:image_path]
 
         if (image_w = fragment[:image_width])
-          image_w *= 0.75
+          image_w = doc.to_pt image_w, 'px'
         end
 
         # TODO make helper method to calculate width and height of image
@@ -64,8 +64,9 @@ module InlineImageArranger
             fragment[:image_width] = svg_obj.document.sizing.output_width
             fragment[:image_height] = svg_obj.document.sizing.output_height
           else
-            fragment[:image_width] = svg_obj.document.sizing.output_width * 0.75
-            fragment[:image_height] = svg_obj.document.sizing.output_height * 0.75
+            # NOTE convert intrinsic dimensions to points
+            fragment[:image_width] = doc.to_pt svg_obj.document.sizing.output_width, 'px'
+            fragment[:image_height] = doc.to_pt svg_obj.document.sizing.output_height, 'px'
           end
           fragment[:image_obj] = svg_obj
         else
@@ -74,8 +75,9 @@ module InlineImageArranger
           if image_w
             fragment[:image_width], fragment[:image_height] = image_info.calc_image_dimensions width: image_w
           else
-            fragment[:image_width] = image_info.width * 0.75
-            fragment[:image_height] = image_info.height * 0.75
+            # NOTE convert intrinsic dimensions to points
+            fragment[:image_width] = doc.to_pt image_info.width, 'px'
+            fragment[:image_height] = doc.to_pt image_info.height, 'px'
           end
           fragment[:image_obj] = image_obj
           fragment[:image_info] = image_info
