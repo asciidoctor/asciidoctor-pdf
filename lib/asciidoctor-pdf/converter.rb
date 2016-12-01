@@ -82,8 +82,8 @@ class Converter < ::Prawn::Document
     unchecked: %(\u2610)
   }
   SimpleAttributeRefRx = /(?<!\\)\{\w+(?:[\-]\w+)*\}/
-  MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|pt|px)?'
-  MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|pt|px)?$/
+  MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'
+  MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|p[txc])?$/
   PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
   # CalloutExtractRx synced from /lib/asciidoctor.rb of Asciidoctor core
   CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2> ?(?=(?:\\?<!?\2\d+\2> ?)*$)/
@@ -3028,7 +3028,12 @@ class Converter < ::Prawn::Document
         str_to_pt width
       end
     elsif attrs.key? 'scaledwidth'
-      (attrs['scaledwidth'].to_f / 100) * max_width
+      # NOTE the parser automatically appends % if value is unitless
+      if (width = attrs['scaledwidth']).end_with? '%'
+        (width.to_f / 100) * max_width
+      else
+        str_to_pt width
+      end
     elsif opts[:use_fallback] && (width = @theme.image_width)
       if width.end_with? '%'
         (width.to_f / 100) * max_width

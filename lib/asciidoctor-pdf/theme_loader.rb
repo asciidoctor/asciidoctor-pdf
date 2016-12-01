@@ -14,7 +14,7 @@ class ThemeLoader
   VariableRx = /\$([a-z0-9_]+)/
   LoneVariableRx = /^\$([a-z0-9_]+)$/
   HexColorEntryRx = /^(?<k>[[:blank:]]*[[:graph:]]+): +(?!null$)(?<q>["']?)#?(?<v>\w{3,6})\k<q> *(?:#.*)?$/
-  MeasurementValueRx = /(?<=^| |\()(-?\d+(?:\.\d+)?)(in|mm|cm|pt|px)(?=$| |\))/
+  MeasurementValueRx = /(?<=^| |\()(-?\d+(?:\.\d+)?)(in|mm|cm|p[txc])(?=$| |\))/
   MultiplyDivideOpRx = /(-?\d+(?:\.\d+)?) +([*\/]) +(-?\d+(?:\.\d+)?)/
   AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+\-]) +(-?\d+(?:\.\d+)?)/
   PrecisionFuncRx = /^(round|floor|ceil)\(/
@@ -149,7 +149,7 @@ class ThemeLoader
     # QUESTION should we round the value? perhaps leave that to the precision functions
     # NOTE leave % as a string; handled by converter for now
     expr = expr.gsub(MeasurementValueRx) {
-      # TODO extract to_pt method and use it here
+      # FIXME use to_pt method from Prawn extensions
       val = $1.to_f
       case $2
       when 'in'
@@ -159,7 +159,10 @@ class ThemeLoader
       when 'cm'
         val * (720 / 25.4)
       when 'px'
+        # assuming canvas of 96 dpi
         val * 0.75
+      when 'pc'
+        val * 12
       else
         val # default unit is pt
       end
