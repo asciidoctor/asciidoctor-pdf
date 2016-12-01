@@ -53,8 +53,12 @@ module InlineImageArranger
       begin
         image_path = fragment[:image_path]
 
-        if (image_w = fragment[:image_width])
-          image_w = doc.to_pt image_w, 'px'
+        # only attempt to resolve an unresolved String value
+        if ::String === (image_w = fragment[:image_width])
+          image_w = [
+            (available_w = doc.bounds.width),
+            (image_w.end_with? '%') ? (image_w.to_f / 100 * available_w) : image_w.to_f
+          ].min
         end
 
         # TODO make helper method to calculate width and height of image
