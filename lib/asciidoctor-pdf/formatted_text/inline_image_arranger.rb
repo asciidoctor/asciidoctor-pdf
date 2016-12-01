@@ -111,8 +111,9 @@ module InlineImageArranger
         # NOTE skip rendering image in scratch document
         if scratch
           fragment.delete :callback
-          fragment.delete :image_obj
           fragment.delete :image_info
+          # NOTE retain key to indicate we've visited this fragment already
+          fragment[:image_obj] = nil
           # NOTE in main document, temporary image path is unlinked by renderer
           ::File.unlink image_path if TemporaryPath === image_path && image_path.exist?
         end
