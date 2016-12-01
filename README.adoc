@@ -298,10 +298,13 @@ There are five ways to specify the width of an image, listed here in order of pr
 
 |pdfwidth
 |The display width of the image as an absolute size (e.g., 2in), percentage of the content area width (e.g., 75%), or percentage of the page width (e.g., 100vw).
+If a unit of measurement is not specified (or not recognized), pt (points) is assumed.
 _Intended to be used for the PDF converter only._
 
 |scaledwidth
-|The display width of the image as a percentage of the content area width (e.g., 75%).
+|The display width of the image as an absolute size (e.g., 2in) or percentage of the content area width (e.g., 75%).
+If a unit of measurement is not specified, % (percentage) is assumed.
+If a unit of measurement is recognized, pt (points) is assumed.
 _Intended to be used for print output such as PDF._
 
 |image_width key from theme
@@ -313,14 +316,14 @@ _Only applies to block images._
 If the width exceeds the content area width, the image is scaled down to the content area width.
 
 |_unspecified_
-|If you don't specify one of the aforementioned width settings, the intrinsic width of the image is used (the px value is multiplied by 75% to convert to pt) unless the width exceeds the content area width, in which case the image is scaled down to the content area width.
+|If you don't specify one of the aforementioned width settings, the intrinsic width of the image is used (the px value is multiplied by 75% to convert to pt, assuming canvas is 96 dpi) unless the width exceeds the content area width, in which case the image is scaled down to the content area width.
 |===
 
 The image is always sized according to the explicit or intrinsic width and its height is scaled proporationally.
 The height of the image is ignored by the PDF converter unless the height of the image exceeds the content height of the page.
 In this case, the image is scaled down to fit on a single page.
 
-Images within running content also support the `fit` attribute.
+Images in running content also support the `fit` attribute.
 If the value of this attribute is `contain`, the image size is increased or decreased to fill the available space while preserving its aspect ratio.
 If the value of this attribute is `scaled-down`, the image size is first resolved in the normal way, then scaled down further to fit within the available space, if necessary.
 
@@ -338,14 +341,15 @@ The pdfwidth attribute supports the following units:
 * cm
 * mm
 * px
+* pc
 * vw (percentage of page width)
 * % (percentage of content area width)
 
 In all cases, the width is converted to pt.
 
-=== Specifying a default pdfwidth
+=== Specifying a default width
 
-If you want to scale all block images that don't have a pdfwidth (or scaledwidth) attribute the same, assign a value to the image_width key in your theme.
+If you want to scale all block images that don't have a pdfwidth or scaledwidth attribute specified, assign a value to the image_width key in your theme.
 
 [source,yaml]
 ----
@@ -359,7 +363,7 @@ Inline images are handled different than block images.
 In particular, inline images do not support sizing using the pdfwidth attribute.
 
 Here's how an inline image is sized.
-The image height is scaled down to 75% of the specified width (px to pt conversion).
+The image height is scaled down to 75% of the specified width (px to pt conversion, assuming canvas is 96 dpi).
 If the image height is more than 1.5x the height of the surrounding line of text, the font size and line metrics of the fragment are modified to fit the image in the line.
 
 == Printing
