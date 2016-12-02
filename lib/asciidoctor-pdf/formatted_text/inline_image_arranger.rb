@@ -66,23 +66,21 @@ module InlineImageArranger
         if fragment[:image_format] == 'svg'
           svg_data = ::IO.read image_path
           svg_obj = ::Prawn::Svg::Interface.new svg_data, doc,
-              at: (bounds_top_left = doc.bounds.top_left),
+              at: doc.bounds.top_left,
               width: image_w,
               fallback_font_name: doc.default_svg_font
+          svg_size = svg_obj.document.sizing
           if image_w
-            fragment[:image_width] = svg_obj.document.sizing.output_width
-            fragment[:image_height] = svg_obj.document.sizing.output_height
+            fragment[:image_width] = svg_size.output_width
+            fragment[:image_height] = svg_size.output_height
           else
-            # NOTE convert intrinsic dimensions to points
-            if (fragment[:image_width] = doc.to_pt svg_obj.document.sizing.output_width, 'px') > available_w
-              svg_obj = ::Prawn::Svg::Interface.new svg_data, doc,
-                  at: bounds_top_left,
-                  width: available_w,
-                  fallback_font_name: doc.default_svg_font
-              fragment[:image_width] = svg_obj.document.sizing.output_width
-              fragment[:image_height] = svg_obj.document.sizing.output_height
+            # NOTE convert intrinsic dimensions to points; constrain to content width
+            if (fragment[:image_width] = doc.to_pt svg_size.output_width, 'px') > available_w
+              svg_size = svg_obj.resize width: available_w
+              fragment[:image_width] = svg_size.output_width
+              fragment[:image_height] = svg_size.output_height
             else
-              fragment[:image_height] = doc.to_pt svg_obj.document.sizing.output_height, 'px'
+              fragment[:image_height] = doc.to_pt svg_size.output_height, 'px'
             end
           end
           fragment[:image_obj] = svg_obj
