@@ -1792,7 +1792,7 @@ class Converter < ::Prawn::Document
         img = %([#{node.attr 'alt'}])
       # NOTE an image with a data URI is handled using a temporary file
       elsif (image_path = resolve_image_path node, target, true, image_format) && (::File.readable? image_path)
-        width_attr = (node.attr? 'width', nil, false) ? %( width="#{node.attr 'width'}") : nil
+        width_attr = (width = preresolve_explicit_width node.attributes) ? %( width="#{width}") : nil
         img = %(<img src="#{image_path}" format="#{image_format}" alt="#{node.attr 'alt'}"#{width_attr} tmp="#{TemporaryPath === image_path}">)
       else
         warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
@@ -3009,6 +3009,22 @@ class Converter < ::Prawn::Document
     end
   end
 
+  # Resolves the explicit width as a PDF pt value if the value is specified in
+  # absolute units, but defers resolving a percentage value until later.
+  #
+  # See resolve_explicit_width method for details about which attributes are considered.
+  def preresolve_explicit_width attrs
+    if attrs.key? 'pdfwidth'
+      ((width = attrs['pdfwidth']).end_with? '%') ? width : (str_to_pt width)
+    elsif attrs.key? 'scaledwidth'
+      # NOTE the parser automatically appends % if value is unitless
+      ((width = attrs['scaledwidth']).end_with? '%') ? width : (str_to_pt width)
+    elsif attrs.key? 'width'
+      # QUESTION should we honor percentage width value?
+      to_pt attrs['width'].to_f, 'px'
+    end
+  end
+
   # Resolves the explicit width as a PDF pt value, if specified.
   #
   # Resolves the explicit width, first considering the pdfwidth attribute, then
@@ -3019,6 +3035,7 @@ class Converter < ::Prawn::Document
   #--
   # QUESTION should we enforce positive result?
   def resolve_explicit_width attrs, max_width = bounds.width, opts = {}
+    # QUESTION should we restrict width to max_width for pdfwidth?
     if attrs.key? 'pdfwidth'
       if (width = attrs['pdfwidth']).end_with? '%'
         (width.to_f / 100) * max_width

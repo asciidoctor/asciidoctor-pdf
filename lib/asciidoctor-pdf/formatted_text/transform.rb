@@ -81,7 +81,7 @@ class Transform
               callback: InlineImageRenderer
             }
             if (img_w = attributes[:width])
-              fragment[:image_width] = img_w.to_f
+              fragment[:image_width] = img_w
             end
             fragments << fragment
             previous_fragment_is_text = false

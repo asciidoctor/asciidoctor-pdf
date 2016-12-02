@@ -359,12 +359,12 @@ image:
 
 === Inline Image Sizing
 
-Inline images are handled different than block images.
-In particular, inline images do not support sizing using the pdfwidth attribute.
+Inline images can be sized in mostly the same way as block images (using the pdfwidth, scaledwidth or width attributes).
+However, the maximum width of an inline image is always constrained to the width of the content area.
 
-Here's how an inline image is sized.
-The image height is scaled down to 75% of the specified width (px to pt conversion, assuming canvas is 96 dpi).
-If the image height is more than 1.5x the height of the surrounding line of text, the font size and line metrics of the fragment are modified to fit the image in the line.
+If the resolved image height is more than 1.5x the height of the line of text, the font size and line metrics of the fragment are modified to fit the image in the line.
+
+Inline images do not support a default width controlled from the theme.
 
 == Printing
 
