@@ -5,16 +5,18 @@
 
 == TODO
 
-* document how to make and load a custom Rouge theme in theming guide
+* fix duplicate inline image rendering by ensuring the spacer does not exceed the available width (#388)
+  - indicate we are doing a full-line width image so we can align image to left of fragment instead of center
+  - see if we can use character spacing to fine-tune reserved space
+* use to_pt method in theme_loader (#677)
+* what should we set as the border color if the source highlighting theme has a background color?
+* UPSTREAM: highlighting of CSS w/ rouge seems messed up; don't recognize keywords
 * make sure any state is cleared after conversion, including attributes assigned
-* highlighting of CSS w/ rouge seems messed up; don't recognize keywords
 * implement line number offset in source listing (rouge)
 * use background color from pygments theme for source block
-* what should we set as the border color if the source highlighting theme has a background color?
 * height of listing block not calculated correctly when string of contiguous characters exceeds length of line
   - put listing block with very long line inside of sidebar; see that sidebar height is incorrect (too large)
   - is this because source highlighting is not done in scratch document?
-* backport resize method from prawn-svg and use it in converter (now in two places)
 * rework resolve_image_path API so it's more logical; override based on type of first argument; document as option
 * rename text-alignment attribute to text-align? (change is within alpha.14, so still a chance to change)
 * report cursor / bounding box bug in column_box
@@ -22,6 +24,9 @@
 * index term that wraps should have a hanging indent (#645)
 * rename inherited_align to text_align? (and base_align to base_text_align?)
 * make sure any state is cleared after conversion, including attributes assigned
+* FILE ISSUE: add support for file root / web requests for inline SVGs
+* when removing callout numbers, also remove the leading space so we don't mess up the highlighter
+* should dpi be configurable?
 
 * allow front cover and back cover image to be defined in theme as fallback; document in theming-guide
 * keep together lines of a colist item?
