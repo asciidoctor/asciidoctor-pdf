@@ -5,9 +5,7 @@ begin
   require 'prawn/gmagick'
 rescue LoadError
 end unless defined? GMagick::Image
-require 'prawn-svg'
-# NOTE disable system fonts since they're non-portable
-Prawn::Svg::Interface.font_path.clear
+require_relative 'prawn-svg_ext'
 require 'prawn/table'
 require 'prawn/templates'
 require_relative 'core_ext'
@@ -951,22 +949,15 @@ class Converter < ::Prawn::Document
           svg_obj = ::Prawn::Svg::Interface.new svg_data, self,
               position: alignment,
               width: width,
-              fallback_font_name: (fallback_font_name = default_svg_font),
-              enable_web_requests: (enable_web_requests = node.document.attr? 'allow-uri-read'),
+              fallback_font_name: default_svg_font,
+              enable_web_requests: (node.document.attr? 'allow-uri-read'),
               # TODO enforce jail in safe mode
               enable_file_requests_with_root: file_request_root
           rendered_w = (svg_size = svg_obj.document.sizing).output_width
           if !width && (svg_obj.document.root.attributes.key? 'width')
             # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
             if (adjusted_w = [bounds.width, (to_pt rendered_w, 'px')].min) != rendered_w
-              # FIXME use new resize method (available as of prawn-svg 0.25.2); reconstruct manually for now
-              svg_obj = ::Prawn::Svg::Interface.new svg_data, self,
-                  position: alignment,
-                  width: (rendered_w = adjusted_w),
-                  fallback_font_name: fallback_font_name,
-                  enable_web_requests: enable_web_requests,
-                  enable_file_requests_with_root: file_request_root
-              svg_size = svg_obj.document.sizing
+              svg_size = svg_obj.resize width: (rendered_w = adjusted_w)
             end
           end
           # TODO shrink image to fit on a single page if height exceeds page height
@@ -2502,20 +2493,16 @@ class Converter < ::Prawn::Document
                   bounding_box [colspec[:x], cursor - trim_padding[0]], width: colspec[:width], height: (bounds.height - trim_v_padding) do
                     if (img_path = content[:path]).downcase.end_with? '.svg'
                       svg_data = ::IO.read img_path
-                      svg_opts = {
-                        position: colspec[:align],
-                        vposition: trim_img_valign,
-                        width: content[:width],
-                        # TODO enforce jail in safe mode
-                        enable_file_requests_with_root: (::File.dirname img_path),
-                        enable_web_requests: allow_uri_read,
-                        fallback_font_name: svg_fallback_font
-                      }
-                      svg_obj = ::Prawn::Svg::Interface.new svg_data, self, svg_opts
-                      # FIXME use new resize method (available as of prawn-svg 0.25.2); reconstruct manually for now
-                      if content[:fit] && (rendered_h = svg_obj.document.sizing.output_height) > bounds.height
-                        svg_opts[:width] *= bounds.height / rendered_h
-                        svg_obj = ::Prawn::Svg::Interface.new svg_data, self, svg_opts
+                      svg_obj = ::Prawn::Svg::Interface.new svg_data, self,
+                          position: colspec[:align],
+                          vposition: trim_img_valign,
+                          width: content[:width],
+                          # TODO enforce jail in safe mode
+                          enable_file_requests_with_root: (::File.dirname img_path),
+                          enable_web_requests: allow_uri_read,
+                          fallback_font_name: svg_fallback_font
+                      if content[:fit] && svg_obj.document.sizing.output_height > (available_h = bounds.height)
+                        svg_obj.resize height: available_h
                       end
                       svg_obj.draw
                     else
