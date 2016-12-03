@@ -5,11 +5,10 @@ require 'prawn/icon'
 module Asciidoctor
 module Prawn
 module Extensions
-  include ::Prawn::Measurements
+  include ::Asciidoctor::Pdf::Measurements
   include ::Asciidoctor::Pdf::Sanitizer
 
   IconSets = ['fa', 'fi', 'octicon', 'pf'].to_set
-  MeasurementValueRx = /(\d+|\d*\.\d+)(in|mm|cm|p[txc])?$/
   InitialPageContent = %(q\n)
 
   # - :height is the height of a line
@@ -150,44 +149,6 @@ module Extensions
   #
   def last_page?
     page_number == page_count
-  end
-
-  # Converts the specified float value to a pt value from the
-  # specified unit of measurement (e.g., in, cm, mm, etc).
-  def to_pt num, units
-    if units.nil_or_empty?
-      num
-    else
-      case units
-      when 'pt'
-        num
-      when 'in'
-        num * 72
-      when 'mm'
-        num * (72 / 25.4)
-      when 'cm'
-        num * (720 / 25.4)
-      when 'px'
-        # assuming canvas of 96 dpi
-        num * 0.75
-      when 'pc'
-        num * 12
-      end
-    end
-  end
-
-  # Convert the specified string value to a pt value from the
-  # specified unit of measurement (e.g., in, cm, mm, etc).
-  # If the unit of measurement is not recognized, assume pt.
-  #
-  # Examples:
-  #
-  #  0.5in => 36.0
-  #  100px => 75.0
-  #  72blah => 72.0
-  #
-  def str_to_pt val
-    MeasurementValueRx =~ val ? (to_pt $1.to_f, $2) : val.to_f
   end
 
   # Destinations

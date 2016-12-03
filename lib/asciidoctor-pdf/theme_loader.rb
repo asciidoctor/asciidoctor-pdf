@@ -1,10 +1,13 @@
 require 'safe_yaml/load'
 require 'ostruct'
 require_relative 'core_ext/ostruct'
+require_relative 'measurements'
 
 module Asciidoctor
 module Pdf
 class ThemeLoader
+  include ::Asciidoctor::Pdf::Measurements
+
   DataDir = ::File.expand_path(::File.join(::File.dirname(__FILE__), '..', '..', 'data'))
   ThemesDir = ::File.join DataDir, 'themes'
   FontsDir = ::File.join DataDir, 'fonts'
@@ -144,29 +147,10 @@ class ThemeLoader
 
   def evaluate_math expr
     return expr if !(::String === expr) || ColorValue === expr
-    original = expr
-    # expand measurement values (e.g., 0.5in)
+    # resolve measurement values (e.g., 0.5in => 36)
     # QUESTION should we round the value? perhaps leave that to the precision functions
     # NOTE leave % as a string; handled by converter for now
-    expr = expr.gsub(MeasurementValueRx) {
-      # FIXME use to_pt method from Prawn extensions
-      val = $1.to_f
-      case $2
-      when 'in'
-        val * 72
-      when 'mm'
-        val * (72 / 25.4)
-      when 'cm'
-        val * (720 / 25.4)
-      when 'px'
-        # assuming canvas of 96 dpi
-        val * 0.75
-      when 'pc'
-        val * 12
-      else
-        val # default unit is pt
-      end
-    }
+    expr = resolve_measurement_values(original = expr)
     while true
       result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
       unchanged = (result == expr)

@@ -1,5 +1,7 @@
 module Asciidoctor::Pdf::FormattedText
 module InlineImageArranger
+  include ::Asciidoctor::Pdf::Measurements
+
   #ImagePlaceholderChar = %(\u00a0)
   ImagePlaceholderChar = '.'
   begin
@@ -75,12 +77,12 @@ module InlineImageArranger
             fragment[:image_height] = svg_size.output_height
           else
             # NOTE convert intrinsic dimensions to points; constrain to content width
-            if (fragment[:image_width] = doc.to_pt svg_size.output_width, 'px') > available_w
+            if (fragment[:image_width] = to_pt svg_size.output_width, :px) > available_w
               svg_size = svg_obj.resize width: available_w
               fragment[:image_width] = svg_size.output_width
               fragment[:image_height] = svg_size.output_height
             else
-              fragment[:image_height] = doc.to_pt svg_size.output_height, 'px'
+              fragment[:image_height] = to_pt svg_size.output_height, :px
             end
           end
           fragment[:image_obj] = svg_obj
@@ -91,10 +93,10 @@ module InlineImageArranger
             fragment[:image_width], fragment[:image_height] = image_info.calc_image_dimensions width: image_w
           else
             # NOTE convert intrinsic dimensions to points
-            if (fragment[:image_width] = doc.to_pt image_info.width, 'px') > available_w
+            if (fragment[:image_width] = to_pt image_info.width, :px) > available_w
               fragment[:image_width], fragment[:image_height] = image_info.calc_image_dimensions width: available_w
             else
-              fragment[:image_height] = doc.to_pt image_info.height, 'px'
+              fragment[:image_height] = to_pt image_info.height, :px
             end
           end
           fragment[:image_obj] = image_obj
