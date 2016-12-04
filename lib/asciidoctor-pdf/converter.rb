@@ -11,6 +11,7 @@ require 'prawn/templates'
 require_relative 'core_ext'
 require_relative 'pdf-core_ext'
 require_relative 'temporary_path'
+require_relative 'measurements'
 require_relative 'sanitizer'
 require_relative 'prawn_ext'
 require_relative 'formatted_text'
@@ -956,7 +957,7 @@ class Converter < ::Prawn::Document
           rendered_w = (svg_size = svg_obj.document.sizing).output_width
           if !width && (svg_obj.document.root.attributes.key? 'width')
             # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
-            if (adjusted_w = [bounds.width, (to_pt rendered_w, 'px')].min) != rendered_w
+            if (adjusted_w = [bounds.width, (to_pt rendered_w, :px)].min) != rendered_w
               svg_size = svg_obj.resize width: (rendered_w = adjusted_w)
             end
           end
@@ -992,7 +993,7 @@ class Converter < ::Prawn::Document
             rendered_w, rendered_h = image_info.calc_image_dimensions width: width
           else
             # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
-            rendered_w = [bounds.width, (to_pt image_info.width, 'px')].min
+            rendered_w = [bounds.width, (to_pt image_info.width, :px)].min
             rendered_h = (rendered_w * image_info.height) / image_info.width
           end
           # TODO move this calculation into a method
@@ -2408,7 +2409,7 @@ class Converter < ::Prawn::Document
             else
               unless (width = resolve_explicit_width attrs, col_width)
                 # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
-                width = to_pt intrinsic_image_dimensions(path)[:width], 'px'
+                width = to_pt intrinsic_image_dimensions(path)[:width], :px
               end
               width = col_width if fit == 'scale-down' && width > col_width
             end
@@ -3008,7 +3009,7 @@ class Converter < ::Prawn::Document
       ((width = attrs['scaledwidth']).end_with? '%') ? width : (str_to_pt width)
     elsif attrs.key? 'width'
       # QUESTION should we honor percentage width value?
-      to_pt attrs['width'].to_f, 'px'
+      to_pt attrs['width'].to_f, :px
     end
   end
 
@@ -3048,7 +3049,7 @@ class Converter < ::Prawn::Document
       end
     elsif attrs.key? 'width'
       # QUESTION should we honor percentage width value?
-      [max_width, (to_pt attrs['width'].to_f, 'px')].min
+      [max_width, (to_pt attrs['width'].to_f, :px)].min
     end
   end
 
