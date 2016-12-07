@@ -122,7 +122,9 @@ module InlineImageArranger
         # NOTE make room for the image by repeating the image placeholder character
         # TODO could use character spacing as an alternative to repeating characters
         # HACK we could use a nicer API from Prawn here to reserve width in a line
-        fragment[:text] = ImagePlaceholderChar * (fragment[:image_width] / spacer_w).ceil
+        spacer_cnt = (fragment[:image_width] / spacer_w).ceil
+        spacer_cnt -= 1 if spacer_cnt * spacer_w > available_width
+        fragment[:text] = ImagePlaceholderChar * spacer_cnt
         #fragment[:width] = fragment[:image_width]
       rescue => e
         warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
