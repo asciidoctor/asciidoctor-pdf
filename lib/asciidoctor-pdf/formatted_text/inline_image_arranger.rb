@@ -97,7 +97,7 @@ module InlineImageArranger
         spacer_w = nil
         doc.fragment_font fragment do
           # NOTE if image height exceeds line height by more than 1.5x, increase the line height
-          # HACK we could really use a nicer API from Prawn here; this is an ugly hack
+          # FIXME we could really use a nicer API from Prawn here; this is an ugly hack
           if (f_height = fragment[:image_height]) > ((line_font = doc.font).height * 1.5)
             fragment[:ascender] = f_height
             fragment[:descender] = line_font.descender
@@ -110,12 +110,17 @@ module InlineImageArranger
           end
         end
 
-        # NOTE make room for the image by repeating the image placeholder character
-        # TODO could use character spacing as an alternative to repeating characters
-        # HACK we could use a nicer API from Prawn here to reserve width in a line
-        spacer_cnt = (fragment[:image_width] / spacer_w).ceil
-        spacer_cnt -= 1 if spacer_cnt * spacer_w > available_width
-        fragment[:text] = ImagePlaceholderChar * spacer_cnt
+        # NOTE make room for image by repeating image placeholder character, using character spacing to fine-tune
+        # NOTE image_width is constrained to available_w, so we don't have to check for overflow
+        spacer_cnt, remainder = fragment[:image_width].divmod spacer_w
+        if spacer_cnt > 0
+          fragment[:text] = ImagePlaceholderChar * spacer_cnt
+          fragment[:character_spacing] = remainder.fdiv spacer_cnt if remainder > 0
+        else
+          fragment[:text] = ImagePlaceholderChar
+          fragment[:character_spacing] = -(spacer_w - remainder)
+        end
+        # TODO we could use a nicer API from Prawn here that lets us reserve a fragment width without text
         #fragment[:width] = fragment[:image_width]
       rescue => e
         warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
