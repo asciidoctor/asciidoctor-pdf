@@ -2733,7 +2733,7 @@ class Converter < ::Prawn::Document
       end
       available_width = bounds.width - (padding[3] || 0) - (padding[1] || 0)
       if actual_width > available_width
-        adjusted_font_size = ((available_width * font_size).to_f / actual_width).with_precision 4
+        adjusted_font_size = ((available_width * font_size).to_f / actual_width).truncate_to_precision 4
         if (min = @theme[%(#{category}_font_size_min)] || @theme.base_font_size_min) && adjusted_font_size < min
           min
         else
