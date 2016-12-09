@@ -1,6 +1,10 @@
 source 'https://rubygems.org'
 
-gem 'prawn', '1.3.0' if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.0.0')
+if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.0.0')
+  gem 'addressable', '2.4.0'
+  gem 'prawn', '1.3.0'
+  gem 'prawn-svg', '0.21.0'
+end
 
 # Look in asciidoctor-pdf.gemspec for runtime and development dependencies
 gemspec
