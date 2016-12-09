@@ -66,28 +66,19 @@ module InlineImageArranger
 
         # TODO make helper method to calculate width and height of image
         if fragment[:image_format] == 'svg'
-          svg_data = ::IO.read image_path
-          svg_obj = ::Prawn::Svg::Interface.new svg_data, doc,
+          svg_obj = ::Prawn::Svg::Interface.new ::IO.read(image_path), doc,
               at: doc.bounds.top_left,
               width: image_w,
               fallback_font_name: doc.default_svg_font
-          svg_size = svg_obj.document.sizing
-          if image_w
-            fragment[:image_width] = svg_size.output_width
-            fragment[:image_height] = svg_size.output_height
-          else
+          svg_size = image_w ? svg_obj.document.sizing :
             # NOTE convert intrinsic dimensions to points; constrain to content width
-            if (fragment[:image_width] = to_pt svg_size.output_width, :px) > available_w
-              svg_size = svg_obj.resize width: available_w
-              fragment[:image_width] = svg_size.output_width
-              fragment[:image_height] = svg_size.output_height
-            else
-              fragment[:image_height] = to_pt svg_size.output_height, :px
-            end
-          end
+            (svg_obj.resize width: [(to_pt svg_obj.document.sizing.output_width, :px), available_w].min)
+          fragment[:image_width] = svg_size.output_width
+          fragment[:image_height] = svg_size.output_height
           fragment[:image_obj] = svg_obj
         else
           # TODO cache image info based on path (Prawn caches based on SHA1 of content)
+          # NOTE image_obj is constrained to image_width by renderer
           image_obj, image_info = ::File.open(image_path, 'rb') {|fd| doc.build_image_object fd }
           if image_w
             fragment[:image_width], fragment[:image_height] = image_info.calc_image_dimensions width: image_w
