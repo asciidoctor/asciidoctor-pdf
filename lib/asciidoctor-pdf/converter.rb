@@ -295,13 +295,8 @@ class Converter < ::Prawn::Document
           # dimension cannot be less than 0
           dim > 0 ? dim : break
         elsif ::String === dim && (m = (MeasurementPartsRx.match dim))
-          val = to_pt m[1].to_f, m[2]
-          # NOTE 4 is the max practical precision in PDFs
-          # QUESTION should we make rounding a feature of the to_pt method?
-          if (val = val.round 4) == (i_val = val.to_i)
-            val = i_val
-          end
-          val
+          # NOTE truncate to max precision retained by PDF::Core
+          (to_pt m[1].to_f, m[2]).truncate_to_precision 4
         else
           break
         end
@@ -2881,18 +2876,16 @@ class Converter < ::Prawn::Document
   # specified, do nothing.
   #
   # If the node is a section, and the current y position is the top of the
-  # page, set the position equal to the page height to improve the navigation
+  # page, set the y position equal to the page height to improve the navigation
+  # experience. If the current x position is at or inside the left margin, set
+  # the x position equal to 0 (left edge of page) to improve the navigation
   # experience.
   def add_dest_for_block node, id = nil
     if !scratch? && (id ||= node.id)
-      # QUESTION should we set precise x value of destination or just 0?
-      dest_x = bounds.absolute_left.round 2
+      dest_x = bounds.absolute_left.truncate_to_precision 4
+      # QUESTION when content is aligned to left margin, should we keep precise x value or just use 0?
       dest_x = 0 if dest_x <= page_margin_left
-      dest_y = if at_page_top? && (node.context == :section || node.context == :document)
-        page_height
-      else
-        y
-      end
+      dest_y = at_page_top? && (node.context == :section || node.context == :document) ? page_height : y
       # TODO find a way to store only the ref of the destination; look it up when we need it
       node.set_attr 'pdf-destination', (node_dest = (dest_xyz dest_x, dest_y))
       add_dest id, node_dest
