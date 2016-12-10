@@ -904,7 +904,7 @@ class Converter < ::Prawn::Document
       return if image_format == 'pdf'
     end
 
-    # QUESTION if we advance to new page, shouldn't dest point there too?
+    # FIXME if we advance to new page, shouldn't dest point there instead?
     add_dest_for_block node if node.id
     alignment = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
 
@@ -961,6 +961,9 @@ class Converter < ::Prawn::Document
           # TODO layout SVG without using keep_together (since we know the dimensions already); always render caption
           keep_together do |box_height = nil|
             svg_obj.instance_variable_set :@prawn, self
+            # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
+            # breakage occurs when running content (stamps) are added
+            update_colors if box_height && graphic_state.color_space.empty?
             # NOTE prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
             svg_obj.draw
             if box_height && (link = node.attr 'link', nil, false)
@@ -996,16 +999,12 @@ class Converter < ::Prawn::Document
               (@theme.caption_margin_inside + @theme.caption_margin_outside + @theme.base_line_height_length) : 0
           # FIXME temporary workaround to group caption & image
           if rendered_h > (available_height = cursor - caption_height)
+            # QUESTION should we skip starting new page if image doesn't fit on whole page?
             start_new_page unless at_page_top?
             # NOTE shrink image so it fits on a single page if height exceeds page height
             if rendered_h > (available_height = cursor - caption_height)
               rendered_w = (rendered_w * available_height) / rendered_h
               rendered_h = available_height
-              # FIXME workaround to fix Prawn not adding fill and stroke commands
-              # on page that only has an image; breakage occurs when line numbers are added
-              # NOTE this no longer seems to be an issue
-              fill_color self.fill_color
-              stroke_color self.stroke_color
             end
           end
           # NOTE must calculate link position before embedding to get proper boundaries
@@ -1014,6 +1013,9 @@ class Converter < ::Prawn::Document
             link_box = [img_x, (img_y - rendered_h), (img_x + rendered_w), img_y]
           end
           image_top = cursor
+          # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
+          # breakage occurs when running content (stamps) are added
+          update_colors if graphic_state.color_space.empty?
           embed_image image_obj, image_info, width: rendered_w, position: alignment
           if link
             link_annotation link_box,
