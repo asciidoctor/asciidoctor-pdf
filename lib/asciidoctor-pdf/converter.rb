@@ -904,8 +904,6 @@ class Converter < ::Prawn::Document
       return if image_format == 'pdf'
     end
 
-    # FIXME if we advance to new page, shouldn't dest point there instead?
-    add_dest_for_block node if node.id
     alignment = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
 
     theme_margin :block, :top
@@ -961,9 +959,12 @@ class Converter < ::Prawn::Document
           # TODO layout SVG without using keep_together (since we know the dimensions already); always render caption
           keep_together do |box_height = nil|
             svg_obj.instance_variable_set :@prawn, self
-            # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
-            # breakage occurs when running content (stamps) are added
-            update_colors if box_height && graphic_state.color_space.empty?
+            if box_height
+              add_dest_for_block node if node.id
+              # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
+              # breakage occurs when running content (stamps) are added
+              update_colors if graphic_state.color_space.empty?
+            end
             # NOTE prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
             svg_obj.draw
             if box_height && (link = node.attr 'link', nil, false)
@@ -1013,6 +1014,7 @@ class Converter < ::Prawn::Document
             link_box = [img_x, (img_y - rendered_h), (img_x + rendered_w), img_y]
           end
           image_top = cursor
+          add_dest_for_block node if node.id
           # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
           # breakage occurs when running content (stamps) are added
           update_colors if graphic_state.color_space.empty?
