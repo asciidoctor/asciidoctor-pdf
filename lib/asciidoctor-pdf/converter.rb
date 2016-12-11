@@ -899,9 +899,9 @@ class Converter < ::Prawn::Document
       return import_page image_path, replace: page_is_empty? if image_format == 'pdf'
     else
       warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
-      image_path = false
       # QUESTION should we use alt text in this case?
       return if image_format == 'pdf'
+      image_path = false
     end
 
     alignment = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
@@ -909,11 +909,9 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
 
     unless image_path
-      if (link = node.attr 'link', nil, false)
-        alt_text = %(<a href="#{link}">[#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}]</a> | <em>#{target}</em>)
-      else
-        alt_text = %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
-      end
+      alt_text = (link = node.attr 'link', nil, false) ?
+          %(<a href="#{link}">[#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}]</a> | <em>#{target}</em>) :
+          %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
       layout_prose alt_text, normalize: false, margin: 0, single_line: true, align: alignment
       layout_caption node, side: :bottom if node.title?
       theme_margin :block, :bottom
@@ -930,8 +928,7 @@ class Converter < ::Prawn::Document
     end
 
     span_page_width_if width_relative_to_page do
-      case image_format
-      when 'svg'
+      if image_format == 'svg'
         begin
           if ::Base64 === image_path
             svg_data = ::Base64.decode64 image_path
@@ -968,9 +965,8 @@ class Converter < ::Prawn::Document
             # NOTE prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
             svg_obj.draw
             if box_height && (link = node.attr 'link', nil, false)
-              link_annotation [(abs_left = svg_obj.position[0] + bounds.absolute_left), y, (abs_left + rendered_w), (y + rendered_h)],
-                  Border: [0, 0, 0],
-                  A: { Type: :Action, S: :URI, URI: link.as_pdf }
+              link_box = [(abs_left = svg_obj.position[0] + bounds.absolute_left), y, (abs_left + rendered_w), (y + rendered_h)]
+              link_annotation link_box, Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: link.as_pdf }
             end
             indent(*overflow) do
               layout_caption node, side: :bottom
@@ -983,11 +979,9 @@ class Converter < ::Prawn::Document
         begin
           # FIXME this code really needs to be better organized!
           # NOTE use low-level API to access intrinsic dimensions; build_image_object caches image data previously loaded
-          if ::Base64 === image_path
-            image_obj, image_info = ::StringIO.open((::Base64.decode64 image_path), 'rb') {|fd| build_image_object fd }
-          else
-            image_obj, image_info = ::File.open(image_path, 'rb') {|fd| build_image_object fd }
-          end
+          image_obj, image_info = ::Base64 === image_path ?
+              ::StringIO.open((::Base64.decode64 image_path), 'rb') {|fd| build_image_object fd } :
+              ::File.open(image_path, 'rb') {|fd| build_image_object fd }
           if width
             rendered_w, rendered_h = image_info.calc_image_dimensions width: width
           else
@@ -1019,11 +1013,7 @@ class Converter < ::Prawn::Document
           # breakage occurs when running content (stamps) are added
           update_colors if graphic_state.color_space.empty?
           embed_image image_obj, image_info, width: rendered_w, position: alignment
-          if link
-            link_annotation link_box,
-              Border: [0, 0, 0],
-              A: { Type: :Action, S: :URI, URI: link.as_pdf }
-          end
+          link_annotation link_box, Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: link.as_pdf } if link
           # NOTE Asciidoctor disables automatic advancement of cursor for images, so handle it manually
           move_down rendered_h if cursor == image_top
         rescue => e
