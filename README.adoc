@@ -360,12 +360,16 @@ image:
 
 === Inline Image Sizing
 
-Inline images can be sized in mostly the same way as block images (using the pdfwidth, scaledwidth or width attributes).
-However, the maximum width of an inline image is always constrained to the width of the content area.
+Inline images can be sized in much the same way as block images (using the pdfwidth, scaledwidth or width attributes), with the following exceptions:
 
-If the resolved image height is more than 1.5x the height of the line of text, the font size and line metrics of the fragment are modified to fit the image in the line.
+* The viewport width unit (i.e., vw) is not recognized in this context.
+* The image will be scaled down, if necessary, to fit the width of the content area.
+* Inline images do not support a default width controlled from the theme.
 
-Inline images do not support a default width controlled from the theme.
+If the resolved height of the image is less than or equal to 1.5 times the line height, the image won't disrupt the line height and is centered vertically in the line.
+This is done to maximize the use of available space.
+Once the resolved height exceeds this amount, the height of the line is increased (by increasing the font size of the invisible placeholder text) to accomodate the image.
+In this case, the surrounding text will be aligned to the bottom of the image.
 
 == Printing
 
