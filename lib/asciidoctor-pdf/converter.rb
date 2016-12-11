@@ -920,16 +920,12 @@ class Converter < ::Prawn::Document
 
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
     width = resolve_explicit_width node.attributes, bounds.width, support_vw: true, use_fallback: true
-    if (width_relative_to_page = ViewportWidth === width)
-      width = (width.to_f / 100) * page_width
-      overflow = [bounds_margin_left, bounds_margin_right]
-    else
-      overflow = 0
-    end
+    # TODO add `to_pt page_width` method to ViewportWidth type
+    width = (width.to_f / 100) * page_width if (width_relative_to_page = ViewportWidth === width)
 
-    span_page_width_if width_relative_to_page do
-      if image_format == 'svg'
-        begin
+    begin
+      span_page_width_if width_relative_to_page do
+        if image_format == 'svg'
           if ::Base64 === image_path
             svg_data = ::Base64.decode64 image_path
             file_request_root = false
@@ -968,15 +964,8 @@ class Converter < ::Prawn::Document
               link_box = [(abs_left = svg_obj.position[0] + bounds.absolute_left), y, (abs_left + rendered_w), (y + rendered_h)]
               link_annotation link_box, Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: link.as_pdf }
             end
-            indent(*overflow) do
-              layout_caption node, side: :bottom
-            end if node.title?
           end
-        rescue => e
-          warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
-        end
-      else
-        begin
+        else
           # FIXME this code really needs to be better organized!
           # NOTE use low-level API to access intrinsic dimensions; build_image_object caches image data previously loaded
           image_obj, image_info = ::Base64 === image_path ?
@@ -1016,14 +1005,13 @@ class Converter < ::Prawn::Document
           link_annotation link_box, Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: link.as_pdf } if link
           # NOTE Asciidoctor disables automatic advancement of cursor for images, so handle it manually
           move_down rendered_h if cursor == image_top
-        rescue => e
-          warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
         end
-        indent(*overflow) do
-          layout_caption node, side: :bottom
-        end if node.title?
       end
+    rescue => e
+      # QUESTION should we show alt text when image fails to embed?
+      warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
     end
+    layout_caption node, side: :bottom if node.title?
     theme_margin :block, :bottom
   ensure
     unlink_tmp_file image_path if image_path
