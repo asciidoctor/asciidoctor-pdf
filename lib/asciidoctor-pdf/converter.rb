@@ -908,6 +908,7 @@ class Converter < ::Prawn::Document
 
     theme_margin :block, :top
 
+    # TODO move to layout_alt_text helper method
     unless image_path
       alt_text = (link = node.attr 'link', nil, false) ?
           %(<a href="#{link}">[#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}]</a> | <em>#{target}</em>) :
@@ -918,8 +919,16 @@ class Converter < ::Prawn::Document
       return
     end
 
+    # TODO move this calculation into a method, such as layout_caption node, side: :bottom, dry_run: true
+    caption_h = 0
+    dry_run do
+      move_down 0.0001 # hack to force top margin to be applied
+      # NOTE we assume caption fits on a single page, which seems reasonable
+      caption_h = layout_caption node, side: :bottom
+    end if node.title?
+
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
-    width = resolve_explicit_width node.attributes, bounds.width, support_vw: true, use_fallback: true
+    width = resolve_explicit_width node.attributes, (available_w = bounds.width), support_vw: true, use_fallback: true
     # TODO add `to_pt page_width` method to ViewportWidth type
     width = (width.to_f / 100) * page_width if (width_relative_to_page = ViewportWidth === width)
 
@@ -942,28 +951,31 @@ class Converter < ::Prawn::Document
               enable_file_requests_with_root: file_request_root
           rendered_w = (svg_size = svg_obj.document.sizing).output_width
           if !width && (svg_obj.document.root.attributes.key? 'width')
-            # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
-            if (adjusted_w = [bounds.width, (to_pt rendered_w, :px)].min) != rendered_w
+            # NOTE scale native width & height by 75% to convert px to pt; restrict width to available width
+            if (adjusted_w = [available_w, (to_pt rendered_w, :px)].min) != rendered_w
               svg_size = svg_obj.resize width: (rendered_w = adjusted_w)
             end
           end
-          # TODO shrink image to fit on a single page if height exceeds page height
-          rendered_h = svg_size.output_height
-          # TODO layout SVG without using keep_together (since we know the dimensions already); always render caption
-          keep_together do |box_height = nil|
-            svg_obj.instance_variable_set :@prawn, self
-            if box_height
-              add_dest_for_block node if node.id
-              # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
-              # breakage occurs when running content (stamps) are added
-              update_colors if graphic_state.color_space.empty?
+          # NOTE shrink image so it fits within available space; group image & caption
+          if (rendered_h = svg_size.output_height) > (available_h = cursor - caption_h)
+            if at_page_top?
+              rendered_w = (rendered_w * available_h) / rendered_h
+            else
+              start_new_page
+              rendered_w = (rendered_w * (available_h = cursor - caption_h)) / rendered_h
             end
-            # NOTE prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
-            svg_obj.draw
-            if box_height && (link = node.attr 'link', nil, false)
-              link_box = [(abs_left = svg_obj.position[0] + bounds.absolute_left), y, (abs_left + rendered_w), (y + rendered_h)]
-              link_annotation link_box, Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: link.as_pdf }
-            end
+            rendered_h = (svg_size = svg_obj.resize width: rendered_w).output_height
+          end
+          add_dest_for_block node if node.id
+          # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
+          # breakage occurs when running content (stamps) are added to page
+          update_colors if graphic_state.color_space.empty?
+          # NOTE prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
+          # NOTE cursor advanced automatically
+          svg_obj.draw
+          if (link = node.attr 'link', nil, false)
+            link_box = [(abs_left = svg_obj.position[0] + bounds.absolute_left), y, (abs_left + rendered_w), (y + rendered_h)]
+            link_annotation link_box, Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: link.as_pdf }
           end
         else
           # FIXME this code really needs to be better organized!
@@ -974,22 +986,19 @@ class Converter < ::Prawn::Document
           if width
             rendered_w, rendered_h = image_info.calc_image_dimensions width: width
           else
-            # NOTE scale native width & height by 75% to convert px to pt; restrict width to bounds.width
-            rendered_w = [bounds.width, (to_pt image_info.width, :px)].min
+            # NOTE scale native width & height by 75% to convert px to pt; restrict width to available width
+            rendered_w = [available_w, (to_pt image_info.width, :px)].min
             rendered_h = (rendered_w * image_info.height) / image_info.width
           end
-          # TODO move this calculation into a method
-          caption_height = node.title? ?
-              (@theme.caption_margin_inside + @theme.caption_margin_outside + @theme.base_line_height_length) : 0
-          # FIXME temporary workaround to group caption & image
-          if rendered_h > (available_height = cursor - caption_height)
-            # QUESTION should we skip starting new page if image doesn't fit on whole page?
-            start_new_page unless at_page_top?
-            # NOTE shrink image so it fits on a single page if height exceeds page height
-            if rendered_h > (available_height = cursor - caption_height)
-              rendered_w = (rendered_w * available_height) / rendered_h
-              rendered_h = available_height
+          # NOTE shrink image so it fits within available space; group image & caption
+          if rendered_h > (available_h = cursor - caption_h)
+            if at_page_top?
+              rendered_w = (rendered_w * available_h) / rendered_h
+            else
+              start_new_page
+              rendered_w = (rendered_w * (available_h = cursor - caption_h)) / rendered_h
             end
+            rendered_h = available_h
           end
           # NOTE must calculate link position before embedding to get proper boundaries
           if (link = node.attr 'link', nil, false)
@@ -999,11 +1008,11 @@ class Converter < ::Prawn::Document
           image_top = cursor
           add_dest_for_block node if node.id
           # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
-          # breakage occurs when running content (stamps) are added
+          # breakage occurs when running content (stamps) are added to page
           update_colors if graphic_state.color_space.empty?
           embed_image image_obj, image_info, width: rendered_w, position: alignment
           link_annotation link_box, Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: link.as_pdf } if link
-          # NOTE Asciidoctor disables automatic advancement of cursor for images, so handle it manually
+          # NOTE Asciidoctor disables automatic advancement of cursor for raster images, so move cursor manually
           move_down rendered_h if cursor == image_top
         end
       end
