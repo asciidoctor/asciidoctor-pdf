@@ -45,8 +45,8 @@ class Transform
       case node[:type]
       when :element
         # case 1: non-void element
-        if (pcdata = node[:pcdata])
-          if pcdata.size > 0
+        if node.key?(:pcdata)
+          unless (pcdata = node[:pcdata]).empty?
             tag_name = node[:name]
             attributes = node[:attributes]
             # NOTE decorate child fragments with styles from this element
@@ -196,31 +196,28 @@ class Transform
     when :del
       styles << :strikethrough
     when :span
-      # span logic with normal style parsing
-      if (inline_styles = attrs[:style])
-        # NOTE for our purposes, spaces inside the style attribute are superfluous
-        # NOTE split will ignore record after trailing ;
-        inline_styles.tr(' ', '').split(';').each do |style|
-          pname, pvalue = style.split(':', 2)
-          case pname
-          when 'color'
-            unless fragment[:color]
-              pvalue = pvalue[1..-1] if pvalue.start_with? '#'
-              #pvalue = pvalue.each_char.map {|c| c * 2 }.join if pvalue.size == 3
-              fragment[:color] = pvalue
-            end
-          when 'font-weight'
-            if pvalue == 'bold'
-              styles << :bold
-            end
-          when 'font-style'
-            if pvalue == 'italic'
-              styles << :italic
-            end
-          # TODO text-transform
+      # NOTE for our purposes, spaces inside the style attribute are superfluous
+      # NOTE split will ignore record after trailing ;
+      attrs[:style].tr(' ', '').split(';').each do |style|
+        pname, pvalue = style.split(':', 2)
+        case pname
+        when 'color'
+          unless fragment[:color]
+            pvalue = pvalue[1..-1] if pvalue.start_with?('#')
+            #pvalue = pvalue.each_char.map {|c| c * 2 }.join if pvalue.size == 3
+            fragment[:color] = pvalue
           end
+        when 'font-weight'
+          if pvalue == 'bold'
+            styles << :bold
+          end
+        when 'font-style'
+          if pvalue == 'italic'
+            styles << :italic
+          end
+        # TODO text-transform
         end
-      end
+      end if attrs.key?(:style)
     end
     fragment.delete(:styles) if styles.empty?
     fragment
