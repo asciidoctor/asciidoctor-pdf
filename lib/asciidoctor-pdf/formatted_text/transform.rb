@@ -16,19 +16,19 @@ class Transform
 
   def initialize(options = {})
     @merge_adjacent_text_nodes = options[:merge_adjacent_text_nodes]
-    # TODO add support for letter spacing
+    # TODO add support for character spacing
     if (theme = options[:theme])
       @link_font_settings = {
         color: theme.link_font_color,
         font: theme.link_font_family,
         size: theme.link_font_size,
-        styles: (to_styles theme.link_font_style, theme.link_text_decoration)
+        styles: to_styles(theme.link_font_style, theme.link_text_decoration)
       }.select! {|_, val| val }
       @monospaced_font_settings = {
         color: theme.literal_font_color,
         font: theme.literal_font_family,
         size: theme.literal_font_size,
-        styles: (to_styles theme.literal_font_style)
+        styles: to_styles(theme.literal_font_style)
       }.select! {|_, val| val }
     else
       @link_font_settings = { color: '0000FF' }
@@ -49,10 +49,8 @@ class Transform
           if pcdata.size > 0
             tag_name = node[:name]
             attributes = node[:attributes]
-            fragments << apply(pcdata).map do |fragment|
-              # decorate child fragments with styles from this element
-              build_fragment(fragment, tag_name, attributes)
-            end
+            # NOTE decorate child fragments with styles from this element
+            fragments << apply(pcdata).map {|fragment| build_fragment(fragment, tag_name, attributes) }
             previous_fragment_is_text = false
           # NOTE skip element if it has no children
           #else
@@ -75,7 +73,7 @@ class Transform
           when :img
             attributes = node[:attributes]
             fragment = {
-              image_path: attributes[:tmp] == 'true' ? (attributes[:src].extend TemporaryPath) : attributes[:src],
+              image_path: attributes[:tmp] == 'true' ? attributes[:src].extend(TemporaryPath) : attributes[:src],
               image_format: attributes[:format],
               text: attributes[:alt],
               callback: InlineImageRenderer
@@ -124,9 +122,7 @@ class Transform
       styles << :italic
     when :code
       # NOTE prefer old value, except for styles, which should be combined
-      fragment.update @monospaced_font_settings do |key, old_val, new_val|
-        key == :styles ? (old_val.merge new_val) : old_val
-      end
+      fragment.update(@monospaced_font_settings) {|k, old_v, new_v| k == :styles ? old_v.merge(new_v) : old_v }
     when :color
       if !fragment[:color]
         if (rgb = attrs[:rgb])
@@ -176,8 +172,8 @@ class Transform
         if (value = attrs[:anchor])
           fragment[:anchor] = value
         elsif (value = attrs[:href])
-          fragment[:link] = (value.include? ';') ? value.gsub(CharRefRx) {
-            $2 ? CharEntityTable[$2.to_sym] : ([$1.to_i].pack 'U*')
+          fragment[:link] = value.include?(';') ? value.gsub(CharRefRx) {
+            $2 ? CharEntityTable[$2.to_sym] : [$1.to_i].pack('U*')
           } : value
         elsif (value = attrs[:name])
           # NOTE text is null character, which is used as placeholder text so Prawn doesn't drop fragment
@@ -190,9 +186,7 @@ class Transform
         end
       end
       # NOTE prefer old value, except for styles, which should be combined
-      fragment.update @link_font_settings do |key, old_val, new_val|
-        key == :styles ? (old_val.merge new_val) : old_val
-      end if visible
+      fragment.update(@link_font_settings) {|k, old_v, new_v| k == :styles ? old_v.merge(new_v) : old_v } if visible
     when :sub
       styles << :subscript
     when :sup
@@ -232,18 +226,17 @@ class Transform
     fragment
   end
 
-  def to_styles font_style, text_decoration = nil
-    styles = case font_style
+  def to_styles(font_style, text_decoration = nil)
+    case font_style
     when 'bold'
-      [:bold].to_set
+      styles = [:bold].to_set
     when 'italic'
-      [:italic].to_set
+      styles = [:italic].to_set
     when 'bold_italic'
-      [:bold, :italic].to_set
+      styles = [:bold, :italic].to_set
     else
-      nil
+      styles = nil
     end
-
     if (style = TextDecorationTable[text_decoration])
       styles ? (styles << style) : [style].to_set
     else
