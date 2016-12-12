@@ -191,8 +191,6 @@ class Transform
       styles << :subscript
     when :sup
       styles << :superscript
-    #when :u
-    #  styles << :underline
     when :del
       styles << :strikethrough
     when :span
@@ -218,6 +216,15 @@ class Transform
         end
       end if attrs.key?(:style)
     end
+    # TODO we could limit to select tags, but doesn't seem to really affect performance
+    attrs[:class].split.each do |class_name|
+      case class_name
+      when 'underline'
+        styles << :underline
+      when 'line-through'
+        styles << :strikethrough
+      end
+    end if attrs.key?(:class)
     fragment.delete(:styles) if styles.empty?
     fragment
   end
