@@ -371,6 +371,43 @@ This is done to maximize the use of available space.
 Once the resolved height exceeds this amount, the height of the line is increased (by increasing the font size of the invisible placeholder text) to accomodate the image.
 In this case, the surrounding text will be aligned to the bottom of the image.
 
+== Autofitting Text
+
+Verbatim blocks often have long lines that don't fit within the fixed width of the PDF canvas.
+And unlike on the web, the PDF reader cannot scroll horizontally to reveal the overflow text.
+Therefore, the long lines are forced to wrap.
+Wrapped lines can make the verbatim blocks hard to read or even cause confusion.
+
+To help address this problem, Asciidoctor PDF provides the `autofit` option on all verbatim (i.e., literal, listing and source) blocks to attempt to fit the text within the available width.
+When the `autofit` option is enabled, Asciidoctor PDF will decrease the font size until the longest line fits without wrapping.
+
+CAUTION: The font size will not be decreased beyond the value of the `base_font_size_min` key specified in the PDF theme.
+If that threshold is reached, lines may still wrap.
+
+Here's an example of the autofit option enabled on a source block:
+
+[source,asciidoc]
+....
+[source%autofit,java]
+----
+@SessionScoped
+public class WidgetRepository {
+    @GET
+    @Produces("application/json")
+    public List<String> listAll(@QueryParam("start") Integer start, @QueryParam("max") Integer max) {
+        ...
+    }
+}
+----
+....
+
+If you want to enable the autofit option globally, set the `autofit-option` document attribute in the document header (or somewhere before the relevant blocks):
+
+[source,asciidoc]
+----
+:autofit-option:
+----
+
 == Printing Pages
 
 The print dialog doesn't understand the page numbers labels (which appear in the running content).
