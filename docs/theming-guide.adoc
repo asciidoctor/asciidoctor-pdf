@@ -1180,7 +1180,8 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   align: right
 
 |background_color^[1]^
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |title_page:
   background_color: #eaeaea
 
@@ -1190,22 +1191,26 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   +background_image: image:title.png[]+
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |title_page:
   font_color: #333333
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |title_page:
   font_family: Noto Serif
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |title_page:
   font_size: 13
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: _inherit_)
 |title_page:
   font_style: bold
 
@@ -1225,6 +1230,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 
 |align
 |<<image-alignments,Image alignment>> +
+(default: _inherit_)
 |title_page:
   logo:
     align: right
@@ -1236,7 +1242,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     +image: image:logo.png[pdfwidth=25%]+
 
 |top
-|Percentage +
+|Percentage^[3]^ +
 (default: 10%)
 |title_page:
   logo:
@@ -1245,13 +1251,15 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 3+|*Key Prefix:* title_page_title
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |title_page:
   title:
     font_color: #999999
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |title_page:
   title:
     font_family: Noto Serif
@@ -1264,7 +1272,8 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     font_size: $heading_h1_font_size
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: _inherit_)
 |title_page:
   title:
     font_style: bold
@@ -1277,28 +1286,45 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     text_transform: uppercase
 
 |line_height
-|<<values,Number>>
+|<<values,Number>> +
+(default: $heading_line_height)
 |title_page:
   title:
     line_height: 0.9
 
 |top
-|Percentage +
+|Percentage^[3]^ +
 (default: 40%)
 |title_page:
   title:
     top: 55%
 
+|margin_top
+|<<measurement-units,Measurement>> +
+(default: 0)
+|title_page:
+  title:
+    margin_top: 13.125
+
+|margin_bottom
+|<<measurement-units,Measurement>> +
+(default: 0)
+|title_page:
+  title:
+    margin_bottom: 5
+
 3+|*Key Prefix:* title_page_subtitle
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |title_page:
   subtitle:
     font_color: #181818
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |title_page:
   subtitle:
     font_family: Noto Serif
@@ -1311,7 +1337,8 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     font_size: $heading_h3_font_size
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: _inherit_)
 |title_page:
   subtitle:
     font_style: bold_italic
@@ -1324,33 +1351,52 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     text_transform: uppercase
 
 |line_height
-|<<values,Number>>
+|<<values,Number>> +
+(default: $heading_line_height)
 |title_page:
   subtitle:
     line_height: 1
 
+|margin_top
+|<<measurement-units,Measurement>> +
+(default: 0)
+|title_page:
+  subtitle:
+    margin_top: 13.125
+
+|margin_bottom
+|<<measurement-units,Measurement>> +
+(default: 0)
+|title_page:
+  subtitle:
+    margin_bottom: 5
+
 3+|*Key Prefix:* title_page_authors
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |title_page:
   authors:
     font_color: #181818
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |title_page:
   authors:
     font_family: Noto Serif
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |title_page:
   authors:
     font_size: 13
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: _inherit_)
 |title_page:
   authors:
     font_style: bold_italic
@@ -1369,28 +1415,46 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   authors:
     margin_top: 13.125
 
+|margin_bottom
+|<<measurement-units,Measurement>> +
+(default: 0)
+|title_page:
+  authors:
+    margin_bottom: 5
+
 3+|*Key Prefix:* title_page_revision
 
+|delimiter
+|Quoted string +
+(default: ', ')
+|title_page:
+  revision:
+    delimiter: ': '
+
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |title_page:
   revision:
     font_color: #181818
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |title_page:
   revision:
     font_family: Noto Serif
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |title_page:
   revision:
     font_size: $base_font_size_small
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: _inherit_)
 |title_page:
   revision:
     font_style: bold
@@ -1403,10 +1467,18 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     text_transform: uppercase
 
 |margin_top
-|<<measurement-units,Measurement>>
+|<<measurement-units,Measurement>> +
+(default: 0)
 |title_page:
   revision:
     margin_top: 13.125
+
+|margin_bottom
+|<<measurement-units,Measurement>> +
+(default: 0)
+|title_page:
+  revision:
+    margin_bottom: 5
 |===
 
 . Page backgrounds do not currently work when using AsciidoctorJ PDF.
@@ -1414,6 +1486,7 @@ This limitation is due to a bug in Prawn 1.3.1.
 The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgrade that is waiting on AsciidoctorJ to migrate to JRuby 9000).
 For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
 . Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
+. Percentage unit can be % (relative to content height) or vh (relative to page height).
 
 === Prose
 
