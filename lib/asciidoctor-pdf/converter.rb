@@ -1710,8 +1710,16 @@ class Converter < ::Prawn::Document
     %(#{node.text}<br>)
   end
 
-  def convert_inline_button node
-    %(<strong>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</strong>)
+ def convert_inline_button node
+    button_bg_color = resolve_theme_color :button_background_color
+    if (button_bg_color)
+      # TODO use the button_bg_color to set the background of the node.text. Maybe similar to the following?
+      #%( <background-color> rgb=#{button_bg_color}><strong>[#{node.text}]</color></background-color>)
+      # Remove the following line once the TODO is fixed
+      %(<strong>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</strong>)
+    else
+      %(<strong>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</strong>)
+    end
   end
 
   def convert_inline_callout node
