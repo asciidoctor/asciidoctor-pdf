@@ -196,8 +196,7 @@ class Transform
     when :del
       styles << :strikethrough
     when :span
-      # NOTE for our purposes, spaces inside the style attribute are superfluous
-      # NOTE split will ignore record after trailing ;
+      # NOTE spaces in style attribute value are superfluous, for our purpose; split drops record after trailing ;
       attrs[:style].tr(' ', '').split(';').each do |style|
         pname, pvalue = style.split(':', 2)
         case pname
