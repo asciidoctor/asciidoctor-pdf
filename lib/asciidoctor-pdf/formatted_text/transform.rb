@@ -143,10 +143,10 @@ class Transform
             fragment[:color] = rgb
           end
         # QUESTION should we even support r,g,b and c,m,y,k as individual values?
-        elsif (r = attrs[:r]) && (g = attrs[:g]) && (b = attrs[:b])
-          fragment[:color] = [r, g, b].map {|e| '%02X' % e.to_i }.join
-        elsif (c = attrs[:c]) && (m = attrs[:m]) && (y = attrs[:y]) && (k = attrs[:k])
-          fragment[:color] = [c.to_i, m.to_i, y.to_i, k.to_i]
+        elsif (r_val = attrs[:r]) && (g_val = attrs[:g]) && (b_val = attrs[:b])
+          fragment[:color] = [r_val, g_val, b_val].map {|e| '%02X' % e.to_i }.join
+        elsif (c_val = attrs[:c]) && (m_val = attrs[:m]) && (y_val = attrs[:y]) && (k_val = attrs[:k])
+          fragment[:color] = [c_val.to_i, m_val.to_i, y_val.to_i, k_val.to_i]
         end
       end
     when :font

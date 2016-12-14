@@ -2368,7 +2368,7 @@ class Converter < ::Prawn::Document
           [col, { align: alignment, width: rel_width, x: 0 }]
         }.to_h
         # QUESTION should we allow the columns to overlap (capping width at 100%)?
-        side_colspecs.each {|side, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
+        side_colspecs.each {|_, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
         side_colspecs[:right][:x] = (side_colspecs[:center][:x] = side_colspecs[:left][:width]) + side_colspecs[:center][:width]
         acc[side] = side_colspecs
       else
@@ -3053,7 +3053,7 @@ class Converter < ::Prawn::Document
     scheme, address = uri.split UriSchemeBoundaryRx, 2
     address, scheme = scheme, address unless address
     address = address.gsub UriBreakCharsRx, UriBreakCharRepl
-    address.slice! -2 if address[-2] == ZeroWidthSpace
+    address.slice!(-2) if address[-2] == ZeroWidthSpace
     %(#{scheme}#{address})
   end
 
