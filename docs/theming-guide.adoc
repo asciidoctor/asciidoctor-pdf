@@ -2495,6 +2495,13 @@ The keys in this category control the arrangement and style of tables and table 
 
 3+|*Key Prefix:* table_head
 
+//|align
+//|<<text-alignments,Text alignment>> +
+//(default: _inherit_)
+//|table:
+//  head:
+//    align: center
+
 |background_color
 |<<colors,Color>> +
 (default: $table_background_color)
@@ -2594,41 +2601,54 @@ The keys in this category control the arrangement and style of tables and table 
 
 3+|*Key Prefix:* table_header_cell
 
-|align
-|<<text-alignments,Text alignment>>
-|table:
-  header_cell:
-    align: center
+//|align
+//|<<text-alignments,Text alignment>> +
+//(default: $table_head_align)
+//|table:
+//  header_cell:
+//    align: center
 
 |background_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: $table_head_background_color)
 |table:
   header_cell:
     background_color: #f0f0f0
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: $table_head_font_color)
 |table:
   header_cell:
     font_color: #1a1a1a
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: $table_head_font_family)
 |table:
   header_cell: 
     font_family: Noto Sans
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: $table_head_font_size)
 |table:
   header_cell:
     font_size: 12
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: $table_head_font_style)
 |table:
   header_cell:
     font_style: italic
+
+//|text_transform
+//|<<text-transforms,Text transform>> +
+//(default: $table_head_text_transform)
+//|table:
+//  header_cell:
+//    text_transform: uppercase
 |===
 
 . `<parity>` can be `odd` (odd rows) or `even` (even rows).

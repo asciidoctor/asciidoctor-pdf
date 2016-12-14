@@ -1376,21 +1376,19 @@ class Converter < ::Prawn::Document
           unless defined? header_cell_data
             header_cell_data = {}
             [
+              # TODO honor text_transform key
               # QUESTION should we honor alignment set by col/cell spec? how can we tell?
-              ['align', :align, true],
+              #['align', :align, true],
               ['font_color', :text_color, false],
               ['font_family', :font, false],
               ['font_size', :size, false],
               ['font_style', :font_style, true]
             ].each do |(theme_key, data_key, symbol_value)|
-              if (val = theme[%(table_header_cell_#{theme_key})])
+              if (val = theme[%(table_header_cell_#{theme_key})] || theme[%(table_head_#{theme_key})])
                 header_cell_data[data_key] = symbol_value ? val.to_sym : val
               end
             end
-            unless (header_cell_data.key? :font_style) || !(val = theme.table_head_font_style)
-              header_cell_data[:font_style] = val.to_sym
-            end
-            if (val = resolve_theme_color :table_header_cell_background_color)
+            if (val = resolve_theme_color :table_header_cell_background_color, head_bg_color)
               header_cell_data[:background_color] = val
             end
           end
