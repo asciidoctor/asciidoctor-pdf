@@ -1373,6 +1373,13 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 
 3+|*Key Prefix:* title_page_authors
 
+|delimiter
+|Quoted string +
+(default: ', ')
+|title_page:
+  revision:
+    delimiter: '; '
+
 |font_color
 |<<colors,Color>> +
 (default: _inherit_)

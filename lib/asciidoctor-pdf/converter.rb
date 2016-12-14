@@ -1945,20 +1945,23 @@ class Converter < ::Prawn::Document
       end
       if doc.attr? 'authors'
         move_down (@theme.title_page_authors_margin_top || 0)
+        # TODO provide an API in core to get authors as an array
+        authors = (1..(doc.attr 'authorcount', 1).to_i).map {|idx|
+          doc.attr(idx == 1 ? 'author' : %(author_#{idx}))
+        } * (@theme.title_page_authors_delimiter || ', ')
         theme_font :title_page_authors do
-          # TODO add support for author delimiter
-          layout_prose((doc.attr 'authors'),
+          layout_prose authors,
             align: title_align,
             margin: 0,
-            normalize: false)
+            normalize: false
         end
         move_down (@theme.title_page_authors_margin_bottom || 0)
       end
       revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact
       unless revision_info.empty?
         move_down (@theme.title_page_revision_margin_top || 0)
+        revision_text = revision_info * (@theme.title_page_revision_delimiter || ', ')
         theme_font :title_page_revision do
-          revision_text = revision_info * (@theme.title_page_revision_delimiter || ', ')
           layout_prose revision_text,
             align: title_align,
             margin: 0,
