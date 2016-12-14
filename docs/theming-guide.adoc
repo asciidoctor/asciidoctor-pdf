@@ -2382,7 +2382,8 @@ The keys in this category control the arrangement and style of definition list i
 3+|*Key Prefix:* description_list
 
 |term_font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: normal)
 |description_list:
   term_font_style: italic
 
@@ -2672,22 +2673,27 @@ The keys in this category control the arrangement and style of the table of cont
 3+|*Key Prefix:* toc
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |toc:
   font_color: #333333
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |toc:
   font_family: Noto Serif
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |toc:
   font_size: 9
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+// QUESTION why is the default not inherited?
+(default: normal)
 |toc:
   font_style: bold
 
@@ -2716,7 +2722,8 @@ The keys in this category control the arrangement and style of the table of cont
   indent: 20
 
 |margin_top
-|<<measurement-units,Measurement>>
+|<<measurement-units,Measurement>> +
+(default: 0)
 |toc:
   margin_top: 0
 
@@ -2770,7 +2777,8 @@ The keys in this category control the arrangement and style of the table of cont
 3+|*Key Prefix:* toc_dot_leader
 
 |content
-|Quoted string
+|Quoted string +
+(default: '. ')
 |toc:
   dot_leader:
     content: ". "
