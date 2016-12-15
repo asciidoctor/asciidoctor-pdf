@@ -986,12 +986,11 @@ class Converter < ::Prawn::Document
           end
           # NOTE shrink image so it fits within available space; group image & caption
           if (rendered_h = svg_size.output_height) > (available_h = cursor - caption_h)
-            if at_page_top?
-              rendered_w = (rendered_w * available_h) / rendered_h
-            else
+            unless at_page_top?
               start_new_page
-              rendered_w = (rendered_w * (available_h = cursor - caption_h)) / rendered_h
+              available_h = cursor - caption_h
             end
+            rendered_w *= available_h / rendered_h
             rendered_h = (svg_size = svg_obj.resize width: rendered_w).output_height
           end
           add_dest_for_block node if node.id
@@ -1016,16 +1015,15 @@ class Converter < ::Prawn::Document
           else
             # NOTE scale native width & height by 75% to convert px to pt; restrict width to available width
             rendered_w = [available_w, (to_pt image_info.width, :px)].min
-            rendered_h = (rendered_w * image_info.height) / image_info.width
+            rendered_h = rendered_w * (image_info.height.fdiv image_info.width)
           end
           # NOTE shrink image so it fits within available space; group image & caption
           if rendered_h > (available_h = cursor - caption_h)
-            if at_page_top?
-              rendered_w = (rendered_w * available_h) / rendered_h
-            else
+            unless at_page_top?
               start_new_page
-              rendered_w = (rendered_w * (available_h = cursor - caption_h)) / rendered_h
+              available_h = cursor - caption_h
             end
+            rendered_w *= available_h / rendered_h
             rendered_h = available_h
           end
           # NOTE must calculate link position before embedding to get proper boundaries
