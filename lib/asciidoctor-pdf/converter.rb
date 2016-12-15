@@ -464,12 +464,22 @@ class Converter < ::Prawn::Document
     add_dest_for_block node if node.id
     theme_margin :block, :top
     type = node.attr 'name'
-    if (icons = node.document.attr? 'icons', 'font')
+    icons = (node.document.attr? 'icons') ? (node.document.attr 'icons') : false
+    if icons == 'font' && !(node.attr? 'icon', nil, false)
       label = type.to_sym
       # FIXME this is a fudge calculation for the icon width
       label_width = bounds.width / 12.0
       label_height = nil
+    # NOTE icon_uri will consider icon attribute on node first, then type
+    elsif icons && ::File.readable?(icon_path = (node.icon_uri type))
+      icons = true
+      # FIXME this is a fudge calculation for the icon width
+      label_width = bounds.width / 12.0
     else
+      if icons
+        icons = false
+        warn %(asciidoctor: WARNING: admonition icon image not found or not readable: #{icon_path}) unless scratch?
+      end
       label = node.caption
       theme_font :admonition_label do
         theme_font %(admonition_label_#{type}) do
@@ -501,7 +511,7 @@ class Converter < ::Prawn::Document
                     line_style: (@theme.admonition_column_rule_style || :solid).to_sym,
                     line_width: rule_width
               end
-              if icons
+              if icons == 'font'
                 icon_data = admonition_icon_data label
                 icon_size = fit_icon_to_bounds icon_data[:size]
                 if (valign = (@theme.admonition_label_vertical_align || :middle).to_sym) == :middle
@@ -516,6 +526,24 @@ class Converter < ::Prawn::Document
                     align: :center,
                     color: icon_data[:stroke_color],
                     size: icon_size
+              elsif icons
+                begin
+                  image_obj, image_info = build_image_object icon_path
+                  icon_aspect_ratio = image_info.width.fdiv image_info.height
+                  # TODO make icon width configurable by theme
+                  icon_width = [(to_pt image_info.width, :px), label_width].min
+                  if (icon_height = icon_width * (1 / icon_aspect_ratio)) > box_height
+                    icon_width *= box_height / icon_height
+                    icon_height = box_height
+                  end
+                  if (vposition = (@theme.admonition_label_vertical_align || :middle).to_sym) == :middle
+                    vposition = :center
+                  end
+                  embed_image image_obj, image_info, width: icon_width, position: :center, vposition: vposition
+                rescue => e
+                  # QUESTION should we show the label in this case?
+                  warn %(asciidoctor: WARNING: could not embed admonition icon image: #{icon_path}; #{e.message})
+                end
               else
                 # IMPORTANT the label must fit in the alotted space or it shows up on another page!
                 # QUESTION anyway to prevent text overflow in the case it doesn't fit?
@@ -2856,7 +2884,7 @@ class Converter < ::Prawn::Document
   # If value is nil, derive an anchor name from the default_value, if given.
   def derive_anchor_from_id value, default_value = nil
     if value
-      value.ascii_only? ? value : %(0x#{::PDF::Core.string_to_hex value}) 
+      value.ascii_only? ? value : %(0x#{::PDF::Core.string_to_hex value})
     elsif default_value
       %(__anchor-#{default_value})
     end
