@@ -2843,12 +2843,14 @@ The keys in this category control the arrangement and style of running header an
 3+|*Key Prefix:* header
 
 |background_color^[1]^
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _not set_)
 |header:
   background_color: #eeeeee
 
 |border_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _not set_)
 |header:
   border_color: #dddddd
 
@@ -2859,32 +2861,38 @@ The keys in this category control the arrangement and style of running header an
   border_style: dashed
 
 |border_width
-|<<measurement-units,Measurement>>
+|<<measurement-units,Measurement>> +
+(default: $base_border_width)
 |header:
   border_width: 0.25
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |header:
   font_color: #333333
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |header:
   font_family: Noto Serif
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |header:
   font_size: 9
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: _inherit_)
 |header:
   font_style: italic
 
-|height
-|<<measurement-units,Measurement>>
+|height^[2]^
+|<<measurement-units,Measurement>> +
+(default: _not set_)
 |header:
   height: 0.75in
 
@@ -2895,28 +2903,31 @@ The keys in this category control the arrangement and style of running header an
   line_height: 1.2
 
 |padding
-|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>>
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
+(default: 0)
 |header:
   padding: [0, 3, 0, 3]
 
 |image_vertical_align
-|top {vbar} middle {vbar} bottom {vbar} <<measurement-units,Measurement>>
+|top {vbar} middle {vbar} bottom {vbar} <<measurement-units,Measurement>> +
+(default: _not set_)
 |header:
   image_vertical_align: 4
 
 |vertical_align
-|top {vbar} middle {vbar} bottom
+|top {vbar} middle {vbar} bottom +
+(default: middle)
 |header:
   vertical_align: center
 
-|<side>_columns^[2]^
+|<side>_columns^[3]^
 |Column specs triple +
 (default: _not set_)
 |header:
   recto:
     columns: <25% =50% >25%
 
-|<side>_<position>_content^[2,3]^
+|<side>_<position>_content^[3,4]^
 |Quoted string
 |header:
   recto:
@@ -2927,11 +2938,13 @@ The keys in this category control the arrangement and style of running header an
 
 |background_color^[1]^
 |<<colors,Color>>
+(default: _not set_)
 |footer:
   background_color: #eeeeee
 
 |border_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _not set_)
 |footer:
   border_color: #dddddd
 
@@ -2942,32 +2955,38 @@ The keys in this category control the arrangement and style of running header an
   border_style: dashed
 
 |border_width
-|<<measurement-units,Measurement>>
+|<<measurement-units,Measurement>> +
+(default: $base_border_width)
 |footer:
   border_width: 0.25
 
 |font_color
-|<<colors,Color>>
+|<<colors,Color>> +
+(default: _inherit_)
 |footer:
   font_color: #333333
 
 |font_family
-|<<fonts,Font family name>>
+|<<fonts,Font family name>> +
+(default: _inherit_)
 |footer:
   font_family: Noto Serif
 
 |font_size
-|<<values,Number>>
+|<<values,Number>> +
+(default: _inherit_)
 |footer:
   font_size: 9
 
 |font_style
-|<<font-styles,Font style>>
+|<<font-styles,Font style>> +
+(default: _inherit_)
 |footer:
   font_style: italic
 
-|height
-|<<measurement-units,Measurement>>
+|height^[2]^
+|<<measurement-units,Measurement>> +
+(default: _not set_)
 |footer:
   height: 0.75in
 
@@ -2978,36 +2997,39 @@ The keys in this category control the arrangement and style of running header an
   line_height: 1.2
 
 |padding
-|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>>
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
+(default: 0)
 |footer:
   padding: [0, 3, 0, 3]
 
 |image_vertical_align
-|top {vbar} middle {vbar} bottom {vbar} <<measurement-units,Measurement>>
+|top {vbar} middle {vbar} bottom {vbar} <<measurement-units,Measurement>> +
+(default: _not set_)
 |footer:
   image_vertical_align: 4
 
 |vertical_align
-|top {vbar} middle {vbar} bottom
+|top {vbar} middle {vbar} bottom +
+(default: middle)
 |footer:
   vertical_align: top
 
-|<side>_columns^[2]^
+|<side>_columns^[3]^
 |Column specs triple +
 (default: _not set_)
 |footer:
   verso:
     columns: <50% =0% <50%
 
-|<side>_<position>_content^[2,3]^
+|<side>_<position>_content^[3,4]^
 |Quoted string
 |footer:
   verso:
     center:
       content: '\{page-number}'
 |===
-
 . The background color spans the width of the page, as does the border when a background color is specified.
+. If the height is not set, the running content on this periphery is disabled.
 . `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
 . `<position>` can be `left`, `center` or `right`.
 
