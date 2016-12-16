@@ -3029,7 +3029,7 @@ The keys in this category control the arrangement and style of running header an
       content: '\{page-number}'
 |===
 . The background color spans the width of the page, as does the border when a background color is specified.
-. If the height is not set, the running content on this periphery is disabled.
+. If the height is not set, the running content at this periphery is disabled.
 . `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
 . `<position>` can be `left`, `center` or `right`.
 
