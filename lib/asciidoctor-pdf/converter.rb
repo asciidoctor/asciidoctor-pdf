@@ -464,30 +464,36 @@ class Converter < ::Prawn::Document
     add_dest_for_block node if node.id
     theme_margin :block, :top
     type = node.attr 'name'
+    label_align = (@theme.admonition_label_align || :center).to_sym
+    # TODO allow vertical_align to be a number
+    if (label_valign = (@theme.admonition_label_vertical_align || :middle).to_sym) == :middle
+      label_valign = :center
+    end
+    if (label_min_width = @theme.admonition_label_min_width)
+      label_min_width = label_min_width.to_f
+    end
     icons = (node.document.attr? 'icons') ? (node.document.attr 'icons') : false
     if icons == 'font' && !(node.attr? 'icon', nil, false)
-      label = type.to_sym
-      # FIXME this is a fudge calculation for the icon width
-      label_width = bounds.width / 12.0
-      label_height = nil
+      icon_data = admonition_icon_data(label_text = type.to_sym)
+      label_width = label_min_width ? label_min_width : (icon_data[:size] * 1.5)
     # NOTE icon_uri will consider icon attribute on node first, then type
     elsif icons && ::File.readable?(icon_path = (node.icon_uri type))
       icons = true
-      # FIXME this is a fudge calculation for the icon width
-      label_width = bounds.width / 12.0
+      # TODO introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
+      label_width = label_min_width ? label_min_width : 36.0
     else
       if icons
         icons = false
         warn %(asciidoctor: WARNING: admonition icon image not found or not readable: #{icon_path}) unless scratch?
       end
-      label = node.caption
+      label_text = node.caption
       theme_font :admonition_label do
         theme_font %(admonition_label_#{type}) do
           if (transform = @text_transform) && transform != 'none'
-            label = transform_text label, transform
+            label_text = transform_text label_text, transform
           end
-          label_width = width_of label
-          label_height = height_of_typeset_text label, line_height: 1
+          label_width = width_of label_text
+          label_width = label_min_width if label_min_width && label_min_width > label_width
         end
       end
     end
@@ -502,44 +508,45 @@ class Converter < ::Prawn::Document
         left_padding = bounds.absolute_left - abs_left
         right_padding = abs_right - bounds.absolute_right
         if box_height
-          float do
-            bounding_box [0, cursor], width: label_width + right_padding, height: box_height do
-              if (rule_color = @theme.admonition_column_rule_color) &&
-                  (rule_width = @theme.admonition_column_rule_width || @theme.base_border_width) && rule_width > 0
+          if (rule_color = @theme.admonition_column_rule_color) &&
+              (rule_width = @theme.admonition_column_rule_width || @theme.base_border_width) && rule_width > 0
+            float do
+              bounding_box [0, cursor], width: label_width + right_padding, height: box_height do
                 stroke_vertical_rule rule_color,
                     at: bounds.width,
                     line_style: (@theme.admonition_column_rule_style || :solid).to_sym,
                     line_width: rule_width
               end
+            end
+          end
+          float do
+            bounding_box [0, cursor], width: label_width, height: box_height do
               if icons == 'font'
-                icon_data = admonition_icon_data label
+                # FIXME we're assume icon is a square
                 icon_size = fit_icon_to_bounds icon_data[:size]
-                if (valign = (@theme.admonition_label_vertical_align || :middle).to_sym) == :middle
-                  valign = :top
-                  # NOTE Prawn's vcenter is not reliable, so calculate it manually
+                # NOTE Prawn's vertical center is not reliable, so calculate it manually
+                if label_valign == :center
+                  label_valign = :top
                   if (vcenter_pos = (box_height - icon_size) * 0.5) > 0
                     move_down vcenter_pos
                   end
                 end
                 icon icon_data[:name],
-                    valign: valign,
-                    align: :center,
+                    valign: label_valign,
+                    align: label_align,
                     color: icon_data[:stroke_color],
                     size: icon_size
               elsif icons
                 begin
                   image_obj, image_info = build_image_object icon_path
                   icon_aspect_ratio = image_info.width.fdiv image_info.height
-                  # TODO make icon width configurable by theme
+                  # NOTE don't scale image up if smaller than label_width
                   icon_width = [(to_pt image_info.width, :px), label_width].min
                   if (icon_height = icon_width * (1 / icon_aspect_ratio)) > box_height
                     icon_width *= box_height / icon_height
                     icon_height = box_height
                   end
-                  if (vposition = (@theme.admonition_label_vertical_align || :middle).to_sym) == :middle
-                    vposition = :center
-                  end
-                  embed_image image_obj, image_info, width: icon_width, position: :center, vposition: vposition
+                  embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
                 rescue => e
                   # QUESTION should we show the label in this case?
                   warn %(asciidoctor: WARNING: could not embed admonition icon image: #{icon_path}; #{e.message})
@@ -549,15 +556,20 @@ class Converter < ::Prawn::Document
                 # QUESTION anyway to prevent text overflow in the case it doesn't fit?
                 theme_font :admonition_label do
                   theme_font %(admonition_label_#{type}) do
-                    if (valign = (@theme.admonition_label_vertical_align || :middle).to_sym) == :middle
-                      valign = :top
-                      # NOTE Prawn's vcenter is not reliable, so calculate it manually
-                      if (vcenter_pos = (box_height - label_height) * 0.5) > 0
+                    # NOTE Prawn's vertical center is not reliable, so calculate it manually
+                    if label_valign == :center
+                      label_valign = :top
+                      if (vcenter_pos = (box_height - (height_of_typeset_text label_text, line_height: 1)) * 0.5) > 0
                         move_down vcenter_pos
                       end
                     end
                     @text_transform = nil # already applied to label
-                    layout_prose label, align: :left, valign: valign, line_height: 1, margin: 0, inline_format: false
+                    layout_prose label_text,
+                        align: label_align,
+                        valign: label_valign,
+                        line_height: 1,
+                        margin: 0,
+                        inline_format: false
                   end
                 end
               end

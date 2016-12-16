@@ -2093,6 +2093,29 @@ The keys in this category control the arrangement and style of admonition blocks
 |admonition:
   padding: [0, 12, 0, 12]
 
+3+|*Key Prefix:* admonition_label
+
+|align
+|<<text-alignments,Text alignment>> +
+(default: center)
+|admonition:
+  label:
+    align: center
+
+|min_width
+|<<measurement-units,Measurement>> +
+(default: _not set_)
+|admonition:
+  label:
+    min_width: 48
+
+|vertical_align
+|top {vbar} middle {vbar} bottom +
+(default: middle)
+|admonition:
+  label:
+    vertical_align: top
+
 3+|*Key Prefix:* admonition_label, admonition_label_<name>^[1]^
 
 |font_color
@@ -2129,13 +2152,6 @@ The keys in this category control the arrangement and style of admonition blocks
 |admonition:
   label:
     text_transform: lowercase
-
-|vertical_align
-|top {vbar} middle {vbar} bottom +
-(default: middle)
-|admonition:
-  label:
-    vertical_align: top
 
 3+|*Key Prefix:* admonition_icon_<name>^[1]^
 
