@@ -99,9 +99,13 @@ module InlineImageArranger
           # NOTE if image height exceeds line height by more than 1.5x, increase the line height
           # FIXME we could really use a nicer API from Prawn here; this is an ugly hack
           if (f_height = fragment[:image_height]) > ((line_font = doc.font).height * 1.5)
-            fragment[:ascender] = f_height
-            fragment[:descender] = line_font.descender
+            # align with descender (equivalent to vertical-align: bottom in CSS)
+            fragment[:ascender] = f_height - (fragment[:descender] = line_font.descender)
             doc.font_size(fragment[:size] = f_height * (doc.font_size / line_font.height))
+            # align with baseline (roughly equivalent to vertical-align: baseline in CSS)
+            #fragment[:ascender] = f_height
+            #fragment[:descender] = 0
+            #doc.font_size(fragment[:size] = (f_height + line_font.descender) * (doc.font_size / line_font.height))
             fragment[:line_height_increased] = true
           end
 
