@@ -94,7 +94,7 @@ outline_list:
 ----
 
 When creating a new theme, you only have to define the keys you want to override from the base theme, which is loaded prior to loading your custom theme.
-All the available keys are documented in <<keys>>.
+All the available keys are documented in <<Keys>>.
 The converter uses the information from the theme map to help construct the PDF.
 
 [TIP]
@@ -174,7 +174,7 @@ The value of a key may be one of the following types:
 * Variable reference (e.g., $base_font_color)
 * Math expression
 
-Note that keys almost always require a value of a specific type, as documented in <<keys>>.
+Note that keys almost always require a value of a specific type, as documented in <<Keys>>.
 
 === Inheritance
 
@@ -797,6 +797,7 @@ When creating a theme, all keys are optional.
 Required keys are provided by the base theme.
 Therefore, you only have to assign values to keys you want to customize.
 
+[#keys-page]
 === Page
 
 The keys in this category control the size, margins and background of each page (i.e., canvas).
@@ -808,7 +809,7 @@ See <<Title Page>> for details.
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* page
+3+|[#key-prefix-page]*Key Prefix:* <<key-prefix-page,page>>
 
 |background_color^[1]^
 |<<colors,Color>> +
@@ -861,6 +862,7 @@ For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file
 . The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin_inner and margin_outer values.
 These margins and used when the value `prepress` is assigned to the `media` document attribute.
 
+[#keys-base]
 === Base
 
 The keys in this category provide generic theme settings and are often referenced throughout the theme file as variables.
@@ -870,7 +872,7 @@ It's common to define additional keys in this category (e.g., `base_border_radiu
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* base
+3+|[#key-prefix-base]*Key Prefix:* <<key-prefix-base,base>>
 
 |align
 |<<text-alignments,Text alignment>> +
@@ -964,6 +966,7 @@ The value of `none` is implicit and is documented here for completeness.
 . You should set one of `line_height` or `line_height_length`, then derive the value of the other using a calculation as these are correlated values.
 For instance, if you set `line_height_length`, then use `$base_line_height_length / $base_font_size` as the value of `line_height`.
 
+[#keys-vertical-spacing]
 === Vertical Spacing
 
 The keys in this category control the general spacing between elements where a more specific setting is not designated.
@@ -978,6 +981,7 @@ The keys in this category control the general spacing between elements where a m
 |vertical_spacing: 10
 |===
 
+[#keys-link]
 === Link
 
 The keys in this category are used to style hyperlink text.
@@ -986,7 +990,7 @@ The keys in this category are used to style hyperlink text.
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* link
+3+|[#key-prefix-link]*Key Prefix:* <<key-prefix-link,link>>
 
 |font_color
 |<<colors,Color>> +
@@ -1019,7 +1023,8 @@ The keys in this category are used to style hyperlink text.
   text_decoration: underline
 |===
 
-=== Literal (Inline)
+[#keys-literal]
+=== (Inline) Literal
 
 The keys in this category are used for inline monospaced text in prose and table cells.
 
@@ -1027,7 +1032,7 @@ The keys in this category are used for inline monospaced text in prose and table
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* literal
+3+|[#key-prefix-literal]*Key Prefix:* <<key-prefix-literal,literal>>
 
 |font_color
 |<<colors,Color>> +
@@ -1054,6 +1059,7 @@ The keys in this category are used for inline monospaced text in prose and table
   font_style: bold
 |===
 
+[#keys-heading]
 === Heading
 
 The keys in this category control the style of most headings, including part titles, chapter titles, sections titles, the table of contents title and discrete headings.
@@ -1062,7 +1068,7 @@ The keys in this category control the style of most headings, including part tit
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* heading
+3+|[#key-prefix-heading]*Key Prefix:* <<key-prefix-heading,heading>>
 
 |align
 |<<text-alignments,Text alignment>> +
@@ -1119,7 +1125,7 @@ The keys in this category control the style of most headings, including part tit
 |heading:
   margin_bottom: 9.6
 
-3+|*Key Prefix:* heading_h<n>^[1]^
+3+|[#key-prefix-heading-level]*Key Prefix:* <<key-prefix-heading-level,heading_h<n> >>^[1]^
 
 |align
 |<<text-alignments,Text alignment>> +
@@ -1162,6 +1168,7 @@ The keys in this category control the style of most headings, including part tit
 . A font size is assigned to each heading level by the base theme.
 If you want the font size of a specific level to be inherited, you must assign the value `null` (or `~` for short).
 
+[#keys-title-page]
 === Title Page
 
 The keys in this category control the style of the title page as well as the arrangement and style of the elements on it.
@@ -1172,7 +1179,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* title_page
+3+|[#key-prefix-title-page]*Key Prefix:* <<key-prefix-title-page,title_page>>
 
 |align
 |<<text-alignments,Text alignment>> +
@@ -1227,7 +1234,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 |title_page:
   line_height: 1
 
-3+|*Key Prefix:* title_page_logo
+3+|[#key-prefix-title-page-logo]*Key Prefix:* <<key-prefix-title-page-logo,title_page_logo>>
 
 |align
 |<<image-alignments,Image alignment>> +
@@ -1249,7 +1256,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   logo:
     top: 25%
 
-3+|*Key Prefix:* title_page_title
+3+|[#key-prefix-title-page-title]*Key Prefix:* <<key-prefix-title-page-title,title_page_title>>
 
 |font_color
 |<<colors,Color>> +
@@ -1314,7 +1321,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   title:
     margin_bottom: 5
 
-3+|*Key Prefix:* title_page_subtitle
+3+|[#key-prefix-title-page-subtitle]*Key Prefix:* <<key-prefix-title-page-subtitle,title_page_subtitle>>
 
 |font_color
 |<<colors,Color>> +
@@ -1372,7 +1379,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   subtitle:
     margin_bottom: 5
 
-3+|*Key Prefix:* title_page_authors
+3+|[#key-prefix-authors]*Key Prefix:* <<key-prefix-authors,title_page_authors>>
 
 |delimiter
 |Quoted string +
@@ -1430,7 +1437,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   authors:
     margin_bottom: 5
 
-3+|*Key Prefix:* title_page_revision
+3+|[#key-prefix-revision]*Key Prefix:* <<key-prefix-revision,title_page_revision>>
 
 |delimiter
 |Quoted string +
@@ -1496,6 +1503,7 @@ For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file
 . Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
 . Percentage unit can be % (relative to content height) or vh (relative to page height).
 
+[#keys-prose]
 === Prose
 
 The keys in this category control the spacing around paragraphs (paragraph blocks, paragraph content of a block, and other prose content).
@@ -1505,7 +1513,7 @@ Typically, all the margin is placed on the bottom.
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* prose
+3+|[#key-prefix-prose]*Key Prefix:* <<key-prefix-prose,prose>>
 
 |margin_top
 |<<measurement-units,Measurement>> +
@@ -1520,6 +1528,7 @@ Typically, all the margin is placed on the bottom.
   margin_bottom: $vertical_spacing
 |===
 
+[#keys-block]
 === Block
 
 The keys in this category control the spacing around block elements when a more specific setting is not designated.
@@ -1528,7 +1537,7 @@ The keys in this category control the spacing around block elements when a more 
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* block
+3+|[#key-prefix-block]*Key Prefix:* <<key-prefix-block,block>>
 
 //|padding
 //|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>>
@@ -1566,6 +1575,7 @@ Block styles are applied to the following block types:
 * table
 |===
 
+[#keys-caption]
 === Caption
 
 The keys in this category control the arrangement and style of block captions.
@@ -1574,7 +1584,7 @@ The keys in this category control the arrangement and style of block captions.
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* caption
+3+|[#key-prefix-caption]*Key Prefix:* <<key-prefix-caption,caption>>
 
 |align
 |<<text-alignments,Text alignment>> +
@@ -1625,6 +1635,7 @@ The keys in this category control the arrangement and style of block captions.
   margin_outside: 0
 |===
 
+[#keys-code]
 === Code
 
 The keys in this category are used to control the style of literal, listing and source blocks.
@@ -1633,7 +1644,7 @@ The keys in this category are used to control the style of literal, listing and 
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* code
+3+|[#key-prefix-code]*Key Prefix:* <<key-prefix-code,code>>
 
 |background_color
 |<<colors,Color>> +
@@ -1701,7 +1712,8 @@ The keys in this category are used to control the style of literal, listing and 
   padding: 11
 |===
 
-=== Conum
+[#keys-callout-numbers]
+=== Callout Numbers
 
 The keys in this category are used to control the style of callout numbers (conums) inside verbatim blocks and in callout lists (colists).
 
@@ -1709,7 +1721,7 @@ The keys in this category are used to control the style of callout numbers (conu
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* conum
+3+|[#key-prefix-conum]*Key Prefix:* <<key-prefix-conum,conum>>
 
 |font_color
 |<<colors,Color>> +
@@ -1746,6 +1758,7 @@ The keys in this category are used to control the style of callout numbers (conu
 . font_family, font_size, font_style, and line_height are only used for markers in a colist.
 These properties are inherited for conums inside a verbatim block.
 
+[#keys-blockquote]
 === Blockquote
 
 The keys in this category control the arrangement and style of quote blocks.
@@ -1754,7 +1767,7 @@ The keys in this category control the arrangement and style of quote blocks.
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* blockquote
+3+|[#key-prefix-blockquote]*Key Prefix:* <<key-prefix-blockquote,blockquote>>
 
 |border_width^[1]^
 |<<values,Number>> +
@@ -1804,7 +1817,7 @@ The keys in this category control the arrangement and style of quote blocks.
 |blockquote:
   padding: [5, 10, -5, 12]
 
-3+|*Key Prefix:* blockquote_cite
+3+|[#key-prefix-blockquote-cite]*Key Prefix:* <<key-prefix-blockquote-cite,blockquote_cite>>
 
 |font_size
 |<<values,Number>> +
@@ -1844,6 +1857,7 @@ The keys in this category control the arrangement and style of quote blocks.
 
 . Only applies to the left side.
 
+[#keys-sidebar]
 === Sidebar
 
 The keys in this category control the arrangement and style of sidebar blocks.
@@ -1852,7 +1866,7 @@ The keys in this category control the arrangement and style of sidebar blocks.
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* sidebar
+3+|[#key-prefix-sidebar]*Key Prefix:* <<key-prefix-sidebar,sidebar>>
 
 |background_color
 |<<colors,Color>> +
@@ -1914,7 +1928,7 @@ The keys in this category control the arrangement and style of sidebar blocks.
 |sidebar:
   padding: [12, 15, 0, 15]
 
-3+|*Key Prefix:* sidebar_title
+3+|[#key-prefix-sidebar-title]*Key Prefix:* <<key-prefix-sidebar-title,sidebar_title>>
 
 |align
 |<<text-alignments,Text alignment>> +
@@ -1959,6 +1973,7 @@ The keys in this category control the arrangement and style of sidebar blocks.
     text_transform: uppercase
 |===
 
+[#keys-example]
 === Example
 
 The keys in this category control the arrangement and style of example blocks.
@@ -1967,7 +1982,7 @@ The keys in this category control the arrangement and style of example blocks.
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* example
+3+|[#key-prefix-example]*Key Prefix:* <<key-prefix-example,example>>
 
 |background_color
 |<<colors,Color>> +
@@ -2030,6 +2045,7 @@ The keys in this category control the arrangement and style of example blocks.
   padding: [15, 15, 0, 15]
 |===
 
+[#keys-admonition]
 === Admonition
 
 The keys in this category control the arrangement and style of admonition blocks and the icon used for each admonition type.
@@ -2038,7 +2054,7 @@ The keys in this category control the arrangement and style of admonition blocks
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* admonition
+3+|[#key-prefix-admonition]*Key Prefix:* <<key-prefix-admonition,admonition>>
 
 |column_rule_color
 |<<colors,Color>> +
@@ -2094,7 +2110,7 @@ The keys in this category control the arrangement and style of admonition blocks
 |admonition:
   padding: [0, 12, 0, 12]
 
-3+|*Key Prefix:* admonition_label
+3+|[#key-prefix-admonition-label]*Key Prefix:* <<key-prefix-admonition-label,admonition_label>>
 
 |align
 |<<text-alignments,Text alignment>> +
@@ -2154,7 +2170,7 @@ The keys in this category control the arrangement and style of admonition blocks
   label:
     text_transform: lowercase
 
-3+|*Key Prefix:* admonition_icon_<name>^[1]^
+3+|[#key-prefix-admonition-icon]*Key Prefix:* <<key-prefix-admonition-icon,admonition_icon_<name> >>^[1]^
 
 |name
 |String^[2]^
@@ -2186,6 +2202,7 @@ The subkeys in the icon category cannot be flattened (e.g., `tip_name: fa-lightb
 See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository] for a list of valid icon names.
 The prefix (e.g., `fa-`) determines which font set to use.
 
+[#keys-image]
 === Image
 
 The keys in this category control the arrangement of block images.
@@ -2194,7 +2211,7 @@ The keys in this category control the arrangement of block images.
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* image
+3+|[#key-prefix-image]*Key Prefix:* <<key-prefix-image,image>>
 
 |align
 |<<image-alignments,Image alignment>> +
@@ -2212,6 +2229,7 @@ The keys in this category control the arrangement of block images.
 . Only applies to block images.
 If specified, this value takes precedence over the value of the `width` attribute on the image macro, but not over the value of the `pdfwidth` attribute.
 
+[#keys-lead]
 === Lead
 
 The keys in this category control the styling of lead paragraphs.
@@ -2220,7 +2238,7 @@ The keys in this category control the styling of lead paragraphs.
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* lead
+3+|[#key-prefix-lead]*Key Prefix:* <<key-prefix-lead,lead>>
 
 |font_color
 |<<colors,Color>> +
@@ -2259,6 +2277,7 @@ The keys in this category control the styling of lead paragraphs.
   line_height: 1.4
 |===
 
+[#keys-abstract]
 === Abstract
 
 The keys in this category control the arrangement and style of the abstract.
@@ -2267,7 +2286,7 @@ The keys in this category control the arrangement and style of the abstract.
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* abstract
+3+|[#key-prefix-abstract]*Key Prefix:* <<key-prefix-abstract,abstract>>
 
 |font_color
 |<<colors,Color>> +
@@ -2305,7 +2324,7 @@ The keys in this category control the arrangement and style of the abstract.
 |abstract:
   padding: [0, 12, 0, 12]
 
-3+|*Key Prefix:* abstract_title
+3+|[#key-prefix-abstract-title]*Key Prefix:* <<key-prefix-abstract-title,abstract_title>>
 
 |align
 |<<text-alignments,Text alignment>> +
@@ -2350,6 +2369,7 @@ The keys in this category control the arrangement and style of the abstract.
     text_transform: uppercase
 |===
 
+[#keys-thematic-break]
 === Thematic Break
 
 The keys in this category control the style of thematic breaks (aka horizontal rules).
@@ -2358,7 +2378,7 @@ The keys in this category control the style of thematic breaks (aka horizontal r
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* thematic_break
+3+|[#key-prefix-thematic-break]*Key Prefix:* <<key-prefix-thematic-break,thematic_break>>
 
 |border_color
 |<<colors,Color>> +
@@ -2391,6 +2411,7 @@ The keys in this category control the style of thematic breaks (aka horizontal r
   margin_bottom: 18
 |===
 
+[#keys-description-list]
 === Description List
 
 The keys in this category control the arrangement and style of definition list items (terms and descriptions).
@@ -2399,7 +2420,7 @@ The keys in this category control the arrangement and style of definition list i
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* description_list
+3+|[#key-prefix-description-list]*Key Prefix:* <<key-prefix-description-list,description_list>>
 
 |term_font_style
 |<<font-styles,Font style>> +
@@ -2420,6 +2441,7 @@ The keys in this category control the arrangement and style of definition list i
   description_indent: 15
 |===
 
+[#keys-outline-list]
 === Outline List
 
 The keys in this category control the arrangement and style of outline list items.
@@ -2428,7 +2450,7 @@ The keys in this category control the arrangement and style of outline list item
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* outline_list
+3+|[#key-prefix-outline-list]*Key Prefix:* <<key-prefix-outline-list,outline_list>>
 
 |indent
 |<<measurement-units,Measurement>> +
@@ -2451,6 +2473,7 @@ The keys in this category control the arrangement and style of outline list item
 
 . Controls the color of the bullet glyph that marks items in unordered lists and the number for items in ordered lists.
 
+[#keys-table]
 === Table
 
 The keys in this category control the arrangement and style of tables and table cells.
@@ -2459,7 +2482,7 @@ The keys in this category control the arrangement and style of tables and table 
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* table
+3+|[#key-prefix-table]*Key Prefix:* <<key-prefix-table,table>>
 
 |background_color
 |<<colors,Color>> +
@@ -2521,7 +2544,7 @@ The keys in this category control the arrangement and style of tables and table 
 |table:
   grid_width: 0.5
 
-3+|*Key Prefix:* table_head
+3+|[#key-prefix-table-head]*Key Prefix:* <<key-prefix-table-head,table_head>>
 
 //|align
 //|<<text-alignments,Text alignment>> +
@@ -2572,7 +2595,7 @@ The keys in this category control the arrangement and style of tables and table 
   head:
     text_transform: uppercase
 
-3+|*Key Prefix:* table_foot
+3+|[#key-prefix-table-foot]*Key Prefix:* <<key-prefix-table-foot,table_foot>>
 
 |background_color
 |<<colors,Color>> +
@@ -2609,7 +2632,7 @@ The keys in this category control the arrangement and style of tables and table 
   foot:
     font_style: italic
 
-3+|*Key Prefix:* table_<parity>_row^[1]^
+3+|[#key-prefix-table-row]*Key Prefix:* <<key-prefix-table-row,table_<parity>_row>>^[1]^
 
 |background_color
 |<<colors,Color>> +
@@ -2618,7 +2641,7 @@ The keys in this category control the arrangement and style of tables and table 
   even_row:
     background_color: #f9f9f9
 
-3+|*Key Prefix:* table_cell
+3+|[#key-prefix-table-cell]*Key Prefix:* <<key-prefix-table-cell,table_cell>>
 
 |padding
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
@@ -2627,7 +2650,7 @@ The keys in this category control the arrangement and style of tables and table 
   cell:
     padding: [3, 3, 6, 3]
 
-3+|*Key Prefix:* table_header_cell
+3+|[#key-prefix-table-header-cell]*Key Prefix:* <<key-prefix-table-header-cell,table_header_cell>>
 
 //|align
 //|<<text-alignments,Text alignment>> +
@@ -2681,8 +2704,8 @@ The keys in this category control the arrangement and style of tables and table 
 
 . `<parity>` can be `odd` (odd rows) or `even` (even rows).
 
-[[key-toc]]
-=== Table of Contents
+[#keys-table-of-contents]
+=== Table of Contents (TOC)
 
 The keys in this category control the arrangement and style of the table of contents.
 
@@ -2690,7 +2713,7 @@ The keys in this category control the arrangement and style of the table of cont
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* toc
+3+|[#key-prefix-toc]*Key Prefix:* <<key-prefix-toc,toc>>
 
 |font_color
 |<<colors,Color>> +
@@ -2747,7 +2770,7 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   margin_top: 0
 
-3+|*Key Prefix:* toc_h<n>^[1]^
+3+|[#key-prefix-toc-level]*Key Prefix:* <<key-prefix-toc-level,toc_h<n> >>^[1]^
 
 |font_color
 |<<colors,Color>> +
@@ -2785,7 +2808,7 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   text_transform: uppercase
 
-3+|*Key Prefix:* toc_title^[2]^
+3+|[#key-prefix-toc-title]*Key Prefix:* <<key-prefix-toc-title,toc_title>>^[2]^
 
 |align
 |<<text-alignments,Text alignment>> +
@@ -2794,7 +2817,7 @@ The keys in this category control the arrangement and style of the table of cont
   title:
     align: center
 
-3+|*Key Prefix:* toc_dot_leader
+3+|[#key-prefix-toc-dot-leader]*Key Prefix:* <<key-prefix-toc-dot-leader,toc_dot_leader>>
 
 |content
 |Quoted string +
@@ -2832,7 +2855,7 @@ The keys in this category control the arrangement and style of the table of cont
 Dot leaders are only shown for the specified levels.
 If value is not specified, dot leaders are shown for all levels.
 
-[#running-content]
+[#keys-running-content]
 === Running Content (Header & Footer)
 
 The keys in this category control the arrangement and style of running header and footer content.
@@ -2841,7 +2864,7 @@ The keys in this category control the arrangement and style of running header an
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* header
+3+|[#key-prefix-header]*Key Prefix:* <<key-prefix-header,header>>
 
 |background_color^[1]^
 |<<colors,Color>> +
@@ -2935,7 +2958,7 @@ The keys in this category control the arrangement and style of running header an
     left:
       content: '\{page-number}'
 
-3+|*Key Prefix:* footer
+3+|[#key-prefix-footer]*Key Prefix:* <<key-prefix-footer,footer>>
 
 |background_color^[1]^
 |<<colors,Color>>
