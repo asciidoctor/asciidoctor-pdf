@@ -227,8 +227,7 @@ table:
   foot_background_color: f0f0f0
   border_color: dddddd
   border_width: $base_border_width
-  # HACK accounting for line-height
-  cell_padding: [3, 3, 6, 3]
+  cell_padding: 3
 toc:
   indent: $horizontal_rhythm
   line_height: 1.4

@@ -1,0 +1,2 @@
+require 'prawn/table' unless defined? Prawn::Table::VERSION
+require_relative 'prawn-table_ext/cell/text'
