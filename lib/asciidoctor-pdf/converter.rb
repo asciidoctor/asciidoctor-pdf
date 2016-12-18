@@ -1388,7 +1388,7 @@ class Converter < ::Prawn::Document
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
           align: (cell.attr 'halign', nil, false).to_sym,
-          valign: (cell.attr 'valign', nil, false).to_sym
+          valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym
         }
       end
       table_data << row_data
