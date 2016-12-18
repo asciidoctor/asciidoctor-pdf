@@ -510,8 +510,10 @@ module Extensions
   #
   def flow_bounding_box left = 0, opts = {}
     original_y = self.y
+    # QUESTION should preserving original_x be an option?
+    original_x = bounds.absolute_left - margin_box.absolute_left
     canvas do
-      bounding_box [margin_box.absolute_left + left, margin_box.absolute_top], opts do
+      bounding_box [margin_box.absolute_left + original_x + left, margin_box.absolute_top], opts do
         self.y = original_y
         yield
       end
