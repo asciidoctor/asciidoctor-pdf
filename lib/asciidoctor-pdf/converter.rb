@@ -6,7 +6,7 @@ begin
 rescue LoadError
 end unless defined? GMagick::Image
 require_relative 'prawn-svg_ext'
-require 'prawn/table'
+require_relative 'prawn-table_ext'
 require 'prawn/templates'
 require_relative 'core_ext'
 require_relative 'pdf-core_ext'
