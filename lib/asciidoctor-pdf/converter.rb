@@ -788,6 +788,7 @@ class Converter < ::Prawn::Document
   def convert_olist node
     add_dest_for_block node if node.id
     @list_numbers ||= []
+    # TODO move list_number resolve to a method
     list_number = case node.style
     when 'arabic'
       '1'
