@@ -1370,13 +1370,13 @@ class Converter < ::Prawn::Document
     even_row_bg_color = resolve_theme_color :table_even_row_background_color, tbl_bg_color
 
     table_data = []
-    node.rows[:head].each do |rows|
+    node.rows[:head].each do |row|
       table_header = true
       if (head_transform = theme.table_head_text_transform)
         head_transform = nil if head_transform == 'none'
       end
       row_data = []
-      rows.each do |cell|
+      row.each do |cell|
         row_data << {
           content: (head_transform ? (transform_text cell.text, head_transform) : cell.text),
           inline_format: [normalize: true],
@@ -1394,9 +1394,9 @@ class Converter < ::Prawn::Document
       table_data << row_data
     end
 
-    (node.rows[:body] + node.rows[:foot]).each do |rows|
+    (node.rows[:body] + node.rows[:foot]).each do |row|
       row_data = []
-      rows.each do |cell|
+      row.each do |cell|
         cell_data = {
           text_color: (theme.table_font_color || @font_color),
           size: theme.table_font_size,
@@ -1431,7 +1431,6 @@ class Converter < ::Prawn::Document
               header_cell_data[:background_color] = val
             end
           end
-
           cell_data.update header_cell_data unless header_cell_data.empty?
         when :monospaced
           cell_data[:font] = theme.literal_font_family
