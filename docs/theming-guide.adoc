@@ -1758,6 +1758,24 @@ The keys in this category are used to control the style of callout numbers (conu
 . font_family, font_size, font_style, and line_height are only used for markers in a colist.
 These properties are inherited for conums inside a verbatim block.
 
+[#keys-menu]
+=== Menu
+
+The keys in this category apply to the menu label (generated from the inline menu macro).
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-menu]*Key Prefix:* <<key-prefix-menu,menu>>
+
+|caret_content
+|Quoted string +
+(default: ' \u203a ')
+|menu:
+  caret_content: ' > '
+|===
+
 [#keys-blockquote]
 === Blockquote
 
