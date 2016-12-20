@@ -161,6 +161,7 @@ The value of a key may be one of the following types:
   - Color as hex string (e.g., #ffffff)
   - Image path
   - Enumerated type (where specified)
+  - Text content (where specified)
 * Null (clears any previously assigned value)
   - _empty_ (i.e., no value specified)
   - null
@@ -563,6 +564,29 @@ Like in the AsciiDoc syntax, the inline image macro allows you to supply set the
 title_page:
   logo_image: image:logo.png[width=250,align=center] 
 ----
+
+=== Quoted String
+
+Some of the keys accept a quoted string as text content.
+The final segment of these keys is always named `content`.
+
+A content key accepts a string value.
+It's usually best to quote the string or use the http://symfony.com/doc/current/components/yaml/yaml_format.html#strings[YAML multi-line string syntax].
+
+Text content may be formatted using a subset of inline HTML.
+You can use the well-known elements such as `<strong>`, `<em>`, `<code>`, `<a>`, `<sub>`, `<sup>`, `<del>`, and `<span>`.
+The `<span>` element supports the `style` attribute, which you can use to specify the `color`, `font-weight`, and `font-style` CSS properties.
+You can also use the `rgb` attribute on the `<color>` element to change the color or the `name` and `size` attributes on the `<font>` element to change the font properties.
+If you need to add an underline or strikethrough decoration to the text, you can assign the `underline` or `line-through` to the `class` attribute on any aforementioned element.
+
+Here's an example of using formatting in the content of the menu caret:
+
+[source,yaml]
+----
+menu_caret_content: " <font size=\"1.15em\"><color rgb=\"#b12146\">\u203a</color></font> "
+----
+
+Additionally, normal substitutions are applied to the value of content keys for <<Running Content (Header & Footer),running content>>, so you can use most AsciiDoc inline formatting (e.g., `+*strong*+` or `+{attribute-name}+`) in the values of those keys.
 
 == Fonts
 
@@ -1382,7 +1406,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 3+|[#key-prefix-authors]*Key Prefix:* <<key-prefix-authors,title_page_authors>>
 
 |delimiter
-|Quoted string +
+|<<quoted-string,Quoted string>> +
 (default: ', ')
 |title_page:
   revision:
@@ -1440,7 +1464,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 3+|[#key-prefix-revision]*Key Prefix:* <<key-prefix-revision,title_page_revision>>
 
 |delimiter
-|Quoted string +
+|<<quoted-string,Quoted string>> +
 (default: ', ')
 |title_page:
   revision:
@@ -1770,7 +1794,7 @@ The keys in this category apply to the menu label (generated from the inline men
 3+|[#key-prefix-menu]*Key Prefix:* <<key-prefix-menu,menu>>
 
 |caret_content
-|Quoted string +
+|<<quoted-string,Quoted string>> +
 (default: ' \u203a ')
 |menu:
   caret_content: ' > '
@@ -2838,7 +2862,7 @@ The keys in this category control the arrangement and style of the table of cont
 3+|[#key-prefix-toc-dot-leader]*Key Prefix:* <<key-prefix-toc-dot-leader,toc_dot_leader>>
 
 |content
-|Quoted string +
+|<<quoted-string,Quoted string>> +
 (default: '. ')
 |toc:
   dot_leader:
@@ -2970,7 +2994,7 @@ The keys in this category control the arrangement and style of running header an
     columns: <25% =50% >25%
 
 |<side>_<position>_content^[3,4]^
-|Quoted string
+|<<quoted-string,Quoted string>>
 |header:
   recto:
     left:
@@ -3064,7 +3088,7 @@ The keys in this category control the arrangement and style of running header an
     columns: <50% =0% <50%
 
 |<side>_<position>_content^[3,4]^
-|Quoted string
+|<<quoted-string,Quoted string>>
 |footer:
   verso:
     center:
