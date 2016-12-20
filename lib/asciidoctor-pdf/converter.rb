@@ -1003,8 +1003,10 @@ class Converter < ::Prawn::Document
               start_new_page
               available_h = cursor - caption_h
             end
-            rendered_w *= available_h / rendered_h
-            rendered_h = (svg_size = svg_obj.resize width: rendered_w).output_height
+            if rendered_h > available_h
+              rendered_w *= available_h / rendered_h
+              rendered_h = (svg_size = svg_obj.resize width: rendered_w).output_height
+            end
           end
           add_dest_for_block node if node.id
           # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
@@ -1036,8 +1038,10 @@ class Converter < ::Prawn::Document
               start_new_page
               available_h = cursor - caption_h
             end
-            rendered_w *= available_h / rendered_h
-            rendered_h = available_h
+            if rendered_h > available_h
+              rendered_w *= available_h / rendered_h
+              rendered_h = available_h
+            end
           end
           # NOTE must calculate link position before embedding to get proper boundaries
           if (link = node.attr 'link', nil, false)
