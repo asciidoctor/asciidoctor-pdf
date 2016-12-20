@@ -1460,16 +1460,14 @@ class Converter < ::Prawn::Document
           cell_data[:content] = preserve_indentation cell.text, (node.document.attr 'tabsize')
           cell_data[:inline_format] = true
         when :asciidoc
-          unless defined? @asciidoc_cell_warning
-            @asciidoc_cell_warning = true
-            warn 'asciidoctor: WARNING: The \'a\' (AsciiDoc) table cell style is not supported by this converter. The source of these cells will be treated as paragraph content.'
-          end
-          # TODO finish me
+          asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self,
+              (cell_data.merge content: cell.inner_document, font_style: (val = theme.table_font_style) ? val.to_sym : nil)
+          cell_data = { content: asciidoc_cell }
         else
           cell_data[:font_style] = (val = theme.table_font_style) ? val.to_sym : nil
         end
         unless cell_data.key? :content
-          # NOTE effectively the same as calling cell.content
+          # NOTE effectively the same as calling cell.content (should we use that instead?)
           # TODO hard breaks not quite the same result as separate paragraphs; need custom cell impl
           if (cell_text = cell.text).include? LF
             cell_data[:content] = cell_text.split(BlankLineRx).map {|l| l.tr_s(WhitespaceChars, ' ') }.join(DoubleLF)
@@ -1561,7 +1559,7 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
 
     table table_data, table_settings do
-      # NOTE capture resolved table width
+      # NOTE call width to capture resolved table width
       table_width = width
       @pdf.layout_table_caption node, table_width, alignment if node.title? && caption_side == :top
       if grid == 'none' && frame == 'none'
