@@ -5,15 +5,36 @@
 
 == TODO
 
-* fix duplicate inline image rendering by ensuring the spacer does not exceed the available width (#388)
-  - indicate we are doing a full-line width image so we can align image to left of fragment instead of center
-  - see if we can use character spacing to fine-tune reserved space
-* use to_pt method in theme_loader (#677)
+* QUESTION should we show keys with hyphens instead of underscores in theming guide?
+
+* AsciiDoc table cell leaves padding below last block
+* go ahead and add separate padding control to label in admonition block; default to padding on content if not specified
+* M+ 1mn box drawings have width of 1000 instead of 500, so they don't draw box correctly (see https://github.com/prawnpdf/prawn/issues/1002)
+  - looks like we're going to have to patch the font to draw the box lines correctly in a 500x860 space
+  - might want to file this upstream
+* rewrite optimize-pdf using rghost (#535) (also see #21 and #22)
+  - prototype implemented!
+  - add Optimizer class; wire to cli (separate issue?)
+  - we could recommend using HexaPDF with some sample code in README, but we can't integrate it since it's AGPL
+* should we defer image dimension assignments to calc_image_dimensions for raster images (similar to resize from Prawn SVG)
+* we could support the big and small roles on phrase by mapping to base_font_size_large and base_font_size_small
+* print alt text if an error is caught when attempting to embed an image (#693)
+  - add layout_alt_text helper method
+* restrict inline image to height of page (#700)
+* FILE ISSUE: allow height of inline image to be set to line height (perhaps 1em?)
+* should we drop "font" handler in formatted text transform?
+* don't crash if image in running content is an unsupported format
+* add support for file root / web requests for inline SVGs (#683)
+  - also, disable file requests when safe mode is secure
+* FILE ISSUE: only nest document outline inside root node if doctype=article
 * what should we set as the border color if the source highlighting theme has a background color?
+* use fdiv instead of forcing numeric to float
 * UPSTREAM: highlighting of CSS w/ rouge seems messed up; don't recognize keywords
+  - compare with pygments
 * make sure any state is cleared after conversion, including attributes assigned
+* implement text_transform key for table_header_cell (in body)
 * implement line number offset in source listing (rouge)
-* use background color from pygments theme for source block
+* implement line highlighting in rouge (#681)
 * height of listing block not calculated correctly when string of contiguous characters exceeds length of line
   - put listing block with very long line inside of sidebar; see that sidebar height is incorrect (too large)
   - is this because source highlighting is not done in scratch document?
@@ -24,18 +45,32 @@
 * index term that wraps should have a hanging indent (#645)
 * rename inherited_align to text_align? (and base_align to base_text_align?)
 * make sure any state is cleared after conversion, including attributes assigned
-* FILE ISSUE: add support for file root / web requests for inline SVGs
 * when removing callout numbers, also remove the leading space so we don't mess up the highlighter
-* should dpi be configurable?
+  - in particular, messing up highlighting for apache conf file
+* make dpi configurable (controls the px to pt conversion)
+* should we make :px the default units in to_pt? or require explicit units?
+* use background color from pygments theme for source block
+* block anchors should be positioned on same page as content if content is forced to new page
+  - call theme_margin <type>, :top first
+  - theme_margin should return distance moved (0 if advanced to new page)
+  - pass effective margin as optional argument to add_dest_for_block to adjust placement
+  - already handled for block images
+* QUESTION: should we skip starting new page if image doesn't fit on whole page?
+* consider using unlink on creation for tmpfile; see http://ruby-doc.org/stdlib-1.9.3/libdoc/tempfile/rdoc/Tempfile.html#method-i-unlink
+* might be faster to not use TextDecorationTable lookup in to_styles (though it's only called once)
+* if icon is specified, font-based icons are enabled, and value doesn't end in file extension, assume custom icon name
+  ^ for core
+* look into using close! on tmp file, which will safely unlink
+* justify does not work in normal table cell (and does not inherit from base)
+* support horizontal alignment of AsciiDoc table cell content (need to handle explicitly)
+  - only relevant when using subtable since it must have width < cell width
 
+* -v doesn't turn on warnings soon enough to catch warnings in Asciidoctor/Asciidoctor PDF
 * allow front cover and back cover image to be defined in theme as fallback; document in theming-guide
 * keep together lines of a colist item?
-* FILE ISSUE only nest document outline inside root node if doctype=article
-* don't crash if image in running content is an unsupported format
 * support image URL (using resolve_image_path) in running content (what about data-uri?)
 * numbering for appendix subsections is not correct; should be A.1, A.2 (#627)
   - seems like an issue in core too
-* BUG: implicit width of inline image (SVG only?) calculated incorrectly (see sandbox/issue-494)
 * BUG: http://asciidoctor.org[Asciidoctor] surrounded by smart quotes doesn't get translated to a link (as it should)
 * FILE ISSUE draw border for quote/verse block on right if text is aligned to the right
 * Prawn should not move cursor before placing image if image exceeds height of bounding box
@@ -52,15 +87,7 @@
 * allow general settings for admonition icon to be set using admonition_icon key prefix (e.g., admonition_icon_size)
 * allow alignment to be set on discrete heading using role
 * submit pastie theme for Rouge upstream (PR sent, see https://github.com/jneen/rouge/pull/576)
-* SIMPLE: document autofit option on verbatim blocks (in README?)
-* SIMPLE: fill in missing defaults in theming guide
-  - title_page
-  - toc
-  - table_header_cell
-  - admonition_icon_<name>_stroke_color
-  - description_list_term_font_style
-  - header/footer
-* SIMPLE: mark required keys (assume keys are optional by default)
+* SIMPLE: mark required theme keys (assume keys are optional by default)
   - required keys can never have a null value; most are set by base theme
 * allow font properties to be set for normal paragraph separate from base (need to think about inheritence)
 * allow alignment of list to be set separately from base align (and perhaps a hint in document) (#182)
@@ -100,16 +127,14 @@
   - clearer instructions for how to test local development version (using rake install)
 * allow font size of dot_leader to be specified (some risk if it exceeds size of entries)
 * add empty? method to Page (instead of page_empty? on document)
-* FILE ISSUE: add option to svg method to not move cursor (in prawn-svg)
-* FILE ISSUE: in prawn: go_to_page should accept second argument that is cursor position
+* UPSTREAM: add option to svg method to not move cursor (in prawn-svg)
+* UPSTREAM: in prawn: go_to_page should accept second argument that is cursor position (can we patch?)
 * UNRESOLVED: dry_run should start at cursor of main document (or as option); total height calculation would need to be revised
   - box_height isn't currently accurate when it spans more than one page
   - this should fix height calculation when content is split over a page break (leaving small amount of excess)
   - make sure at least one line can be written when code is split or else jump to next page
   - however, if cursor is advanced to fit content on page, then that excess will cause box_height to be too large
   - life would be simpler if Prawn allowed us to draw graphics at bottom layer
-* support pdfwidth for inline image (#620)
-* allow height of inline image to be set to line height (perhaps 1em?)
 * space around inline anchors/index entries doesn't get collapsed by text formatter
 * add support for format attribute on image macro to image-related attributes such as title-page-background-image
   - support explicit image format for cover page image and page background image
@@ -136,12 +161,8 @@
 * FILE ISSUE: when split source listing, add top padding to bounding box (or is it the line metrics top?)
   - perhaps this has to do with the a miscalculation in dry run when not starting from same y position?
   - separate theme control for listing vs literal block (and maybe source too)
-* should we print alt text if an error is caught when attempting to embed an image?
 * stroke and fill multi-page sidebar block (#259) and example block (#362)
 * support URL images in running content (need to delegate to resolve_image_path)
-* rewrite optimize-pdf using rghost (#535) (also see #21 and #22)
-  - add Optimizer class; wire to cli (separate issue?)
-  - we could recommend using HexaPDF with some sample code in README, but we can't integrate it since it's AGPL
 * add feature to number bullets according to section number (needed for OpenDevise agreements)
 * outline should link to title page if there's a cover page (skip cover page and ensuing blank page)
 * don't allow title page content to jump to next page
@@ -369,6 +390,7 @@
 * allow character spacing to be controlled by theme
 * might be able to avoid dry run for listing/literal in obvious cases; engineering estimate
 * allow pdf-page-margin to be set in document
+  - intended primarily for image slideshows
   - this is slighly more complicated now that we have mirror margins; perhaps can't set those from document?
 * use `module Asciidoctor; module PDF; module FormattedText` convention to simplify indentation
 * introduce code style guide (like in Jekyll AsciiDoc); perhaps make this a shared file in the Asciidoctor ecosystem?
@@ -377,7 +399,7 @@
 * rename align to text_align?
 * QUESTION should bullets be on right if list alignment is right (what about center?)
 * QUESTION should we resolve font-based icons globally, in init_pdf?
-* if alt text for inline image is empty string, image is not written
+* FILE ISSUE if alt text for inline image is empty string, image is not written
 
 * use treetop to parse and evaluate theme file
 * use or don't use pad method? check performance
@@ -387,9 +409,9 @@
 
 * add a test suite
 * refactor as Prawn View
-* add support for AsciiDoc table cell content by writing custom Table::Cell implementation
-* add support for nested tables by writing custom Table::Cell implementation
 * add support for footnotes (as article or chapter endnotes)
+* add support for nested tables by writing custom Table::Cell implementation
+* pass styles downwards to child elements in formatted text transform instead of decorating on way out of hierarchy
 * rework text handling in Prawn to support line height natively
 * margin collapsing (like CSS)
 
@@ -398,6 +420,13 @@
 * "Incorrect number of arguments in 'SCN' command" happens when you add a stamp to an imported page
 * be mindful that layout_prose adds margin to bottom of content by default (important when working in a bounding box)
 * ttfunk does not support ligatures (e.g., fi -> ﬁ); we could do this manually in post_replacements
+
+== Questions
+
+* should we calculate column widths before cell data so we can pass width to AsciiDoc table cell?
+* should we ensure natural_content_width is called first (by calling it explicitly)?
+  - seems by calling width on table in convert_table, this isn't necessary
+* should width for AsciiDoc cell when autowidth is set default to even distribution (accounting for colspan?)
 
 == Notes
 
