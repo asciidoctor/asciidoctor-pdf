@@ -843,7 +843,7 @@ See <<Title Page>> for details.
 
 |background_image^[1]^
 |Inline image macro^[2]^ +
-(default: _unset_)
+(default: _not set_)
 |page:
   background_image: +image:page-bg.png[]+
 
@@ -967,7 +967,8 @@ It's common to define additional keys in this category (e.g., `base_border_radiu
 |text_transform^[1]^
 |none +
 (default: none)
-|(n/a)
+|base:
+  text_transform: none
 
 |line_height_length^[2]^
 |<<values,Number>> +
@@ -1218,7 +1219,8 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   background_color: #eaeaea
 
 |background_image^[1]^
-|Inline image macro^[2]^
+|Inline image macro^[2]^ +
+(default: _not set_)
 |title_page:
   +background_image: image:title.png[]+
 
@@ -1268,7 +1270,8 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     align: right
 
 |image
-|Inline image macro^[2]^
+|Inline image macro^[2]^ +
+(default: _not set_)
 |title_page:
   logo:
     +image: image:logo.png[pdfwidth=25%]+
@@ -1724,8 +1727,9 @@ The keys in this category are used to control the style of literal, listing and 
 |code:
   line_height: 1.25
 
-|line_gap
-|<<values,Number>>
+|line_gap^[1]^
+|<<values,Number>> +
+(default: 0)
 |code:
   line_gap: 3.8
 
@@ -1735,6 +1739,7 @@ The keys in this category are used to control the style of literal, listing and 
 |code:
   padding: 11
 |===
+. The line_gap is used to tune the height of the background color applied to a span of block text highlighted using Rouge.
 
 [#keys-callout-numbers]
 === Callout Numbers
@@ -2215,7 +2220,8 @@ The keys in this category control the arrangement and style of admonition blocks
 3+|[#key-prefix-admonition-icon]*Key Prefix:* <<key-prefix-admonition-icon,admonition_icon_<name> >>^[1]^
 
 |name
-|String^[2]^
+|<icon set>-<icon name>^[2]^ +
+(default: _not set_)
 |admonition:
   icon:
     tip:
@@ -2223,7 +2229,7 @@ The keys in this category control the arrangement and style of admonition blocks
 
 |stroke_color
 |<<colors,Color>> +
-(default: _varies_)
+(default: caution=#bf3400; important=#bf0000; note=#19407c; tip=#111111; warning=#bf6900)
 |admonition:
   icon:
     important:
@@ -2994,7 +3000,8 @@ The keys in this category control the arrangement and style of running header an
     columns: <25% =50% >25%
 
 |<side>_<position>_content^[3,4]^
-|<<quoted-string,Quoted string>>
+|<<quoted-string,Quoted string>> +
+(default: '\{page-number}')
 |header:
   recto:
     left:
@@ -3003,7 +3010,7 @@ The keys in this category control the arrangement and style of running header an
 3+|[#key-prefix-footer]*Key Prefix:* <<key-prefix-footer,footer>>
 
 |background_color^[1]^
-|<<colors,Color>>
+|<<colors,Color>> +
 (default: _not set_)
 |footer:
   background_color: #eeeeee
@@ -3088,7 +3095,8 @@ The keys in this category control the arrangement and style of running header an
     columns: <50% =0% <50%
 
 |<side>_<position>_content^[3,4]^
-|<<quoted-string,Quoted string>>
+|<<quoted-string,Quoted string>> +
+(default: '\{page-number}')
 |footer:
   verso:
     center:
@@ -3269,7 +3277,7 @@ These settings override equivalent keys defined in the theme file, where applica
 |Attribute |Value Type |Example
 
 |autofit-option
-|flag (default: _unset_)
+|flag (default: _not set_)
 |:autofit-option:
 
 |chapter-label
@@ -3302,7 +3310,7 @@ These settings override equivalent keys defined in the theme file, where applica
 |:pdf-page-size: 6in x 9in
 
 |pdfmark^[5]^
-|flag (default: _unset_)
+|flag (default: _not set_)
 |:pdfmark:
 
 |text-alignment^[6]^
