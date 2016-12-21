@@ -2270,26 +2270,31 @@ class Converter < ::Prawn::Document
     # FIXME probably need to treat doctypes differently
     is_book = doc.doctype == 'book'
     header = doc.header? ? doc.header : nil
+    # TODO make this section threshold configurable (perhaps in theme?)
     sections = doc.find_by(context: :section) {|sect| sect.level < 3 && sect != header } || []
 
     # FIXME we need a proper model for all this page counting
+    # FIXME we make a big assumption that part & chapter start on new pages
     # index parts, chapters and sections by the visual page number on which they start
     part_start_pages = {}
     chapter_start_pages = {}
     section_start_pages = {}
+    trailing_section_start_pages = {}
     sections.each do |sect|
+      page_num = (sect.attr 'pdf-page-start').to_i - skip
       if is_book && ((sect_is_part = sect.part?) || sect.chapter?)
         if sect_is_part
-          part_start_pages[(sect.attr 'pdf-page-start').to_i - skip] ||= (sect.numbered_title formal: true)
+          part_start_pages[page_num] ||= (sect.numbered_title formal: true)
         else
-          chapter_start_pages[(sect.attr 'pdf-page-start').to_i - skip] ||= (sect.numbered_title formal: true)
+          chapter_start_pages[page_num] ||= (sect.numbered_title formal: true)
           if sect.sectname == 'appendix' && !part_start_pages.empty?
             # FIXME need a better way to indicate that part has ended
-            part_start_pages[(sect.attr 'pdf-page-start').to_i - skip] = ''
+            part_start_pages[page_num] = ''
           end
         end
       else
-        section_start_pages[(sect.attr 'pdf-page-start').to_i - skip] ||= (sect.numbered_title formal: true)
+        sect_title = trailing_section_start_pages[page_num] = sect.numbered_title formal: true
+        section_start_pages[page_num] ||= sect_title
       end
     end
 
@@ -2301,6 +2306,7 @@ class Converter < ::Prawn::Document
     last_part = nil
     last_chap = is_book ? (doc.attr 'preface-title', 'Preface') : nil
     last_sect = nil
+    sect_search_threshold = 1
     (1..num_pages).each do |num|
       if (part = part_start_pages[num])
         last_part = part
@@ -2311,7 +2317,16 @@ class Converter < ::Prawn::Document
       if (sect = section_start_pages[num])
         last_sect = sect
       elsif part || chap
+        sect_search_threshold = num
         last_sect = nil
+      # NOTE we didn't find a section on this page; look back to find last section started
+      elsif last_sect
+        ((sect_search_threshold)..(num - 1)).reverse_each do |prev|
+          if (sect = trailing_section_start_pages[prev])
+            last_sect = sect
+            break
+          end
+        end
       end
       parts_by_page[num] = last_part
       chapters_by_page[num] = last_chap
