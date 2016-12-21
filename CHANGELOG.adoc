@@ -47,7 +47,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Add support for px units to pdf-page-size attribute
 * Fix parsing error when value of pdf-page-size attribute is unitless
 * Don't crash if table is empty (#480)
-* Don't crash when deleting last remaining page; don't delete last page if empty
+* Don't crash when deleting last remaining page; don't delete last page if empty (#317)
 * Don't orphan space between conums when extracting from verbatim block (#506)
 * Properly scope attr and attr? lookups
 * Rename internal page_start and page_end attributes to pdf-page-start and pdf-page-end, respectively
