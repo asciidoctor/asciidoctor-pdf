@@ -992,7 +992,7 @@ class Converter < ::Prawn::Document
               enable_file_requests_with_root: file_request_root
           rendered_w = (svg_size = svg_obj.document.sizing).output_width
           if !width && (svg_obj.document.root.attributes.key? 'width')
-            # NOTE scale native width & height by 75% to convert px to pt; restrict width to available width
+            # NOTE scale native width & height from px to pt and restrict width to available width
             if (adjusted_w = [available_w, (to_pt rendered_w, :px)].min) != rendered_w
               svg_size = svg_obj.resize width: (rendered_w = adjusted_w)
             end
@@ -1025,13 +1025,8 @@ class Converter < ::Prawn::Document
           image_obj, image_info = ::Base64 === image_path ?
               ::StringIO.open((::Base64.decode64 image_path), 'rb') {|fd| build_image_object fd } :
               ::File.open(image_path, 'rb') {|fd| build_image_object fd }
-          if width
-            rendered_w, rendered_h = image_info.calc_image_dimensions width: width
-          else
-            # NOTE scale native width & height by 75% to convert px to pt; restrict width to available width
-            rendered_w = [available_w, (to_pt image_info.width, :px)].min
-            rendered_h = rendered_w * (image_info.height.fdiv image_info.width)
-          end
+          # NOTE if width is not specified, scale native width & height from px to pt and restrict width to available width
+          rendered_w, rendered_h = image_info.calc_image_dimensions width: (width || [available_w, (to_pt image_info.width, :px)].min)
           # NOTE shrink image so it fits within available space; group image & caption
           if rendered_h > (available_h = cursor - caption_h)
             unless at_page_top?
