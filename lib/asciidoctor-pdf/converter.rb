@@ -927,6 +927,7 @@ class Converter < ::Prawn::Document
   def convert_image node, opts = {}
     node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
     target, image_format = node.target_and_format
+    pinned = opts[:pinned]
 
     if image_format == 'gif' && !(defined? ::GMagick::Image)
       warn %(asciidoctor: WARNING: GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
@@ -947,7 +948,7 @@ class Converter < ::Prawn::Document
 
     alignment = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
 
-    theme_margin :block, :top
+    theme_margin :block, :top unless pinned
 
     # TODO move to layout_alt_text helper method
     unless image_path
@@ -956,7 +957,7 @@ class Converter < ::Prawn::Document
           %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
       layout_prose alt_text, normalize: false, margin: 0, single_line: true, align: alignment
       layout_caption node, side: :bottom if node.title?
-      theme_margin :block, :bottom
+      theme_margin :block, :bottom unless pinned
       return
     end
 
@@ -999,7 +1000,7 @@ class Converter < ::Prawn::Document
           end
           # NOTE shrink image so it fits within available space; group image & caption
           if (rendered_h = svg_size.output_height) > (available_h = cursor - caption_h)
-            unless at_page_top?
+            unless pinned || at_page_top?
               start_new_page
               available_h = cursor - caption_h
             end
@@ -1029,7 +1030,7 @@ class Converter < ::Prawn::Document
           rendered_w, rendered_h = image_info.calc_image_dimensions width: (width || [available_w, (to_pt image_info.width, :px)].min)
           # NOTE shrink image so it fits within available space; group image & caption
           if rendered_h > (available_h = cursor - caption_h)
-            unless at_page_top?
+            unless pinned || at_page_top?
               start_new_page
               available_h = cursor - caption_h
             end
@@ -1048,7 +1049,8 @@ class Converter < ::Prawn::Document
           # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
           # breakage occurs when running content (stamps) are added to page
           update_colors if graphic_state.color_space.empty?
-          embed_image image_obj, image_info, width: rendered_w, position: alignment
+          # NOTE specify both width and height to avoid recalculation
+          embed_image image_obj, image_info, width: rendered_w, height: rendered_h, position: alignment
           link_annotation link_box, Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: link.as_pdf } if link
           # NOTE Asciidoctor disables automatic advancement of cursor for raster images, so move cursor manually
           move_down rendered_h if cursor == image_top
@@ -1059,7 +1061,7 @@ class Converter < ::Prawn::Document
       warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
     end
     layout_caption node, side: :bottom if node.title?
-    theme_margin :block, :bottom
+    theme_margin :block, :bottom unless pinned
   ensure
     unlink_tmp_file image_path if image_path
   end
@@ -1938,14 +1940,12 @@ class Converter < ::Prawn::Document
       else
         logo_image_top = bounds.absolute_top - effective_page_height * logo_image_top.to_f / 100.0
       end
-      float do
-        @y = logo_image_top
-        # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
-        image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs
-        # FIXME prevent image from spilling to next page
-        # QUESTION should we shave off margin top/bottom?
-        convert_image image_block, relative_to_imagesdir: relative_to_imagesdir
-      end
+      initial_y, @y = @y, logo_image_top
+      # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
+      image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs
+      # NOTE pinned option keeps image on same page
+      convert_image image_block, relative_to_imagesdir: relative_to_imagesdir, pinned: true
+      @y = initial_y
     end
 
     # TODO prevent content from spilling to next page
