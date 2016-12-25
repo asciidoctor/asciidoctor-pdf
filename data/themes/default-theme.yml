@@ -181,7 +181,7 @@ example:
   border_color: $base_border_color
   border_radius: $base_border_radius
   border_width: 0.75
-  background_color: transparent
+  background_color: ffffff
   # FIXME reenable padding bottom once margin collapsing is implemented
   padding: [$vertical_rhythm, $horizontal_rhythm, 0, $horizontal_rhythm]
 image:
