@@ -927,7 +927,6 @@ class Converter < ::Prawn::Document
   def convert_image node, opts = {}
     node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
     target, image_format = node.target_and_format
-    pinned = opts[:pinned]
 
     if image_format == 'gif' && !(defined? ::GMagick::Image)
       warn %(asciidoctor: WARNING: GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
@@ -946,20 +945,9 @@ class Converter < ::Prawn::Document
       image_path = false
     end
 
-    alignment = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
+    theme_margin :block, :top unless (pinned = opts[:pinned])
 
-    theme_margin :block, :top unless pinned
-
-    # TODO move to layout_alt_text helper method
-    unless image_path
-      alt_text = (link = node.attr 'link', nil, false) ?
-          %(<a href="#{link}">[#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}]</a> | <em>#{target}</em>) :
-          %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
-      layout_prose alt_text, normalize: false, margin: 0, single_line: true, align: alignment
-      layout_caption node, side: :bottom if node.title?
-      theme_margin :block, :bottom unless pinned
-      return
-    end
+    return on_image_error :missing, node, target, opts unless image_path
 
     # TODO move this calculation into a method, such as layout_caption node, side: :bottom, dry_run: true
     caption_h = 0
@@ -973,6 +961,8 @@ class Converter < ::Prawn::Document
     width = resolve_explicit_width node.attributes, (available_w = bounds.width), support_vw: true, use_fallback: true
     # TODO add `to_pt page_width` method to ViewportWidth type
     width = (width.to_f / 100) * page_width if (width_relative_to_page = ViewportWidth === width)
+
+    alignment = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
 
     begin
       span_page_width_if width_relative_to_page do
@@ -1064,6 +1054,20 @@ class Converter < ::Prawn::Document
     theme_margin :block, :bottom unless pinned
   ensure
     unlink_tmp_file image_path if image_path
+  end
+
+  def on_image_error reason, node, target, opts = {}
+    alt_text = (link = node.attr 'link', nil, false) ?
+        %(<a href="#{link}">[#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}]</a> | <em>#{target}</em>) :
+        %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
+    layout_prose alt_text,
+        align: ((node.attr 'align', nil, false) || @theme.image_align).to_sym,
+        margin: 0,
+        normalize: false,
+        single_line: true
+    layout_caption node, side: :bottom if node.title?
+    theme_margin :block, :bottom unless opts[:pinned]
+    nil
   end
 
   def convert_audio node
