@@ -995,8 +995,7 @@ class Converter < ::Prawn::Document
               available_h = cursor - caption_h
             end
             if rendered_h > available_h
-              rendered_w *= available_h / rendered_h
-              rendered_h = (svg_size = svg_obj.resize width: rendered_w).output_height
+              rendered_w = (svg_size = svg_obj.resize height: (rendered_h = available_h)).output_width
             end
           end
           add_dest_for_block node if node.id
@@ -1025,8 +1024,7 @@ class Converter < ::Prawn::Document
               available_h = cursor - caption_h
             end
             if rendered_h > available_h
-              rendered_w *= available_h / rendered_h
-              rendered_h = available_h
+              rendered_w, rendered_h = image_info.calc_image_dimensions height: (rendered_h = available_h)
             end
           end
           # NOTE must calculate link position before embedding to get proper boundaries
