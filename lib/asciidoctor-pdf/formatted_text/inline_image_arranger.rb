@@ -50,9 +50,10 @@ module InlineImageArranger
   # page, so it's necessary to short-circuit if that case is detected.
   def arrange_images fragments
     doc = @document
-    available_w = doc.bounds.width
-    scratch = doc.scratch?
+    available_w = scratch = nil
     fragments.select {|f| (f.key? :image_path) && !(f.key? :image_obj) }.each do |fragment|
+      available_w ||= doc.bounds.width
+      scratch = doc.scratch? if scratch.nil?
       drop = scratch
       begin
         image_path = fragment[:image_path]
