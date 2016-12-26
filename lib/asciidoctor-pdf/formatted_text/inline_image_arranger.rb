@@ -53,6 +53,7 @@ module InlineImageArranger
     available_w = doc.bounds.width
     scratch = doc.scratch?
     fragments.select {|f| (f.key? :image_path) && !(f.key? :image_obj) }.each do |fragment|
+      drop = scratch
       begin
         image_path = fragment[:image_path]
 
@@ -125,10 +126,10 @@ module InlineImageArranger
         #fragment[:width] = fragment[:image_width]
       rescue => e
         warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
-        scratch = true # delegate to cleanup logic in ensure block
+        drop = true # delegate to cleanup logic in ensure block
       ensure
-        # NOTE skip rendering image in scratch document
-        if scratch
+        # NOTE skip rendering image in scratch document or if image can't be loaded
+        if drop
           fragment.delete :callback
           fragment.delete :image_info
           # NOTE retain key to indicate we've visited this fragment already
