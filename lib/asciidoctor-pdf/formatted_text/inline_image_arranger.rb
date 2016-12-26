@@ -58,10 +58,7 @@ module InlineImageArranger
 
         # NOTE only attempt to convert an unresolved String value
         if ::String === (image_w = fragment[:image_width])
-          image_w = [
-            available_w,
-            (image_w.end_with? '%') ? (image_w.to_f / 100 * available_w) : image_w.to_f
-          ].min
+          image_w = [available_w, (image_w.end_with? '%') ? (image_w.to_f / 100 * available_w) : image_w.to_f].min
         end
 
         # TODO make helper method to calculate width and height of image
