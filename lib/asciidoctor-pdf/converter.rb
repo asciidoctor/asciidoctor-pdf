@@ -1058,8 +1058,8 @@ class Converter < ::Prawn::Document
   def on_image_error reason, node, target, opts = {}
     warn opts[:message] if opts.key? :message
     alt_text = (link = node.attr 'link', nil, false) ?
-        %(<a href="#{link}">[#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}]</a> | <em>#{target}</em>) :
-        %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
+        %(<a href="#{link}">[#{node.attr 'alt'}]</a> | <em>#{target}</em>) :
+        %([#{node.attr 'alt'}] | <em>#{target}</em>)
     layout_prose alt_text,
         align: ((node.attr 'align', nil, false) || @theme.image_align).to_sym,
         margin: 0,
