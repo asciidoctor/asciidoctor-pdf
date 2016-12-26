@@ -1046,17 +1046,17 @@ class Converter < ::Prawn::Document
           move_down rendered_h if cursor == image_top
         end
       end
+      layout_caption node, side: :bottom if node.title?
+      theme_margin :block, :bottom unless pinned
     rescue => e
-      # QUESTION should we show alt text when image fails to embed?
-      warn %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message})
+      on_image_error :exception, node, target, (opts.merge message: %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message}))
     end
-    layout_caption node, side: :bottom if node.title?
-    theme_margin :block, :bottom unless pinned
   ensure
     unlink_tmp_file image_path if image_path
   end
 
   def on_image_error reason, node, target, opts = {}
+    warn opts[:message] if opts.key? :message
     alt_text = (link = node.attr 'link', nil, false) ?
         %(<a href="#{link}">[#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}]</a> | <em>#{target}</em>) :
         %([#{NoBreakSpace}#{node.attr 'alt'}#{NoBreakSpace}] | <em>#{target}</em>)
