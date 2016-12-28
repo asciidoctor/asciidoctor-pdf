@@ -363,13 +363,14 @@ image:
 Inline images can be sized in much the same way as block images (using the pdfwidth, scaledwidth or width attributes), with the following exceptions:
 
 * The viewport width unit (i.e., vw) is not recognized in this context.
-* The image will be scaled down, if necessary, to fit the width of the content area.
-* Inline images do not support a default width controlled from the theme.
+* The image will be scaled down, if necessary, to fit the width and height of the content area.
+* Inline images do not currently support a default width controlled from the theme.
 
 If the resolved height of the image is less than or equal to 1.5 times the line height, the image won't disrupt the line height and is centered vertically in the line.
 This is done to maximize the use of available space.
 Once the resolved height exceeds this amount, the height of the line is increased (by increasing the font size of the invisible placeholder text) to accomodate the image.
 In this case, the surrounding text will be aligned to the bottom of the image.
+If the image height exceeds the height of the page, the image will be scaled down to fit on a single page (this may cause the image to advance to the subsequent page).
 
 == Autofitting Text
 
