@@ -2856,14 +2856,49 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   text_transform: uppercase
 
-3+|[#key-prefix-toc-title]*Key Prefix:* <<key-prefix-toc-title,toc_title>>^[2]^
+3+|[#key-prefix-toc-title]*Key Prefix:* <<key-prefix-toc-title,toc_title>>
 
 |align
 |<<text-alignments,Text alignment>> +
-(default: left)
+(default: $heading_h2_align)
 |toc:
   title:
-    align: center
+    align: right
+
+|font_color
+|<<colors,Color>> +
+(default: $heading_h2_font_color)
+|toc:
+  title:
+    font_color: #aa0000
+
+|font_family
+|<<fonts,Font family name>> +
+(default: $heading_h2_font_family)
+|toc:
+  title:
+    font_family: Noto Serif
+
+|font_size
+|<<values,Number>> +
+(default: $heading_h2_font_size)
+|toc:
+  title:
+    font_size: 18
+
+|font_style
+|<<font-styles,Font style>> +
+(default: $heading_h2_font_style)
+|toc:
+  title:
+    font_style: bold_italic
+
+|text_transform
+|<<text-transforms,Text transform>> +
+(default: $heading_h2_text_transform)
+|sidebar:
+  title:
+    text_transform: uppercase
 
 3+|[#key-prefix-toc-dot-leader]*Key Prefix:* <<key-prefix-toc-dot-leader,toc_dot_leader>>
 
@@ -2874,21 +2909,21 @@ The keys in this category control the arrangement and style of the table of cont
   dot_leader:
     content: ". "
 
-|font_color^[3]^
+|font_color^[2]^
 |<<colors,Color>> +
 (default: _inherit_)
 |toc:
   dot_leader:
     font_color: #999999
 
-|font_style^[3]^
+|font_style^[2]^
 |<<font-styles,Font style>> +
 (default: normal)
 |toc:
   dot_leader:
     font_style: bold
 
-|levels^[4]^
+|levels^[3]^
 |all {vbar} none {vbar} Integers (space-separated) +
 (default: all)
 |toc:
@@ -2897,7 +2932,6 @@ The keys in this category control the arrangement and style of the table of cont
 |===
 
 . `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
-. The `toc_title` keys inherit from level-2 heading styles, except where noted.
 . The dot leader inherits all font properties except `font_style` from the root `toc` category.
 . 0-based levels (e.g., part = 0, chapter = 1).
 Dot leaders are only shown for the specified levels.
