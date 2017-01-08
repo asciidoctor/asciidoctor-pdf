@@ -2142,7 +2142,10 @@ class Converter < ::Prawn::Document
     go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
     start_page_number = page_number
     theme_font :heading, level: 2 do
-      layout_heading((doc.attr 'toc-title'), align: (@theme.toc_title_align || @base_align).to_sym)
+      theme_font :toc_title do
+        toc_title_align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
+        layout_heading((doc.attr 'toc-title'), align: toc_title_align)
+      end
     end
     # QUESTION should we skip this whole method if num_levels == 0?
     if num_levels > 0
