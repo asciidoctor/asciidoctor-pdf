@@ -2451,7 +2451,8 @@ class Converter < ::Prawn::Document
             else
               unless (width = resolve_explicit_width attrs, col_width)
                 # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
-                width = to_pt intrinsic_image_dimensions(path)[:width], :px
+                # NOTE failure message will be reported later when image is rendered
+                width = (to_pt intrinsic_image_dimensions(path)[:width], :px) rescue 0
               end
               width = col_width if fit == 'scale-down' && width > col_width
             end
@@ -2534,32 +2535,32 @@ class Converter < ::Prawn::Document
                 float do
                   # NOTE bounding_box is redundant if trim_v_padding is 0
                   bounding_box [colspec[:x], cursor - trim_padding[0]], width: colspec[:width], height: (bounds.height - trim_v_padding) do
-                    if (img_path = content[:path]).downcase.end_with? '.svg'
-                      svg_data = ::IO.read img_path
-                      svg_obj = ::Prawn::Svg::Interface.new svg_data, self,
-                          position: colspec[:align],
-                          vposition: trim_img_valign,
-                          width: content[:width],
-                          # TODO enforce jail in safe mode
-                          enable_file_requests_with_root: (::File.dirname img_path),
-                          enable_web_requests: allow_uri_read,
-                          fallback_font_name: svg_fallback_font
-                      if content[:fit] && svg_obj.document.sizing.output_height > (available_h = bounds.height)
-                        svg_obj.resize height: available_h
-                      end
-                      svg_obj.draw
-                    else
-                      img_opts = { position: colspec[:align], vposition: trim_img_valign }
-                      if content[:fit]
-                        img_opts[:fit] = [content[:width], bounds.height]
+                    begin
+                      if (img_path = content[:path]).downcase.end_with? '.svg'
+                        svg_data = ::IO.read img_path
+                        svg_obj = ::Prawn::Svg::Interface.new svg_data, self,
+                            position: colspec[:align],
+                            vposition: trim_img_valign,
+                            width: content[:width],
+                            # TODO enforce jail in safe mode
+                            enable_file_requests_with_root: (::File.dirname img_path),
+                            enable_web_requests: allow_uri_read,
+                            fallback_font_name: svg_fallback_font
+                        if content[:fit] && svg_obj.document.sizing.output_height > (available_h = bounds.height)
+                          svg_obj.resize height: available_h
+                        end
+                        svg_obj.draw
                       else
-                        img_opts[:width] = content[:width]
-                      end
-                      begin
+                        img_opts = { position: colspec[:align], vposition: trim_img_valign }
+                        if content[:fit]
+                          img_opts[:fit] = [content[:width], bounds.height]
+                        else
+                          img_opts[:width] = content[:width]
+                        end
                         image img_path, img_opts
-                      rescue => e
-                        warn %(asciidoctor: WARNING: could not embed image in running content: #{img_path}; #{e.message})
                       end
+                    rescue => e
+                      warn %(asciidoctor: WARNING: could not embed image in running content: #{img_path}; #{e.message})
                     end
                   end
                 end
