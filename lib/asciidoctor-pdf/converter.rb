@@ -338,6 +338,12 @@ class Converter < ::Prawn::Document
   end
 
   def convert_section sect, opts = {}
+    if sect.special && sect.sectname == 'abstract'
+      # HACK cheat a bit to hide this section from TOC; TOC should filter these sections
+      sect.context = :open
+      return convert_abstract sect
+    end
+
     theme_font :heading, level: (hlevel = sect.level + 1) do
       title = sect.numbered_title formal: true
       align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
