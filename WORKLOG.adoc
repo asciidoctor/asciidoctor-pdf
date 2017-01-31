@@ -6,9 +6,22 @@
 == TODO
 
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
+* add red/green diff background to rouge custom theme example in theming guide
 
-* AsciiDoc table cell leaves padding below last block
-* go ahead and add separate padding control to label in admonition block; default to padding on content if not specified
+* add separate padding control for label in admonition block; use default to padding on content if not specified
+* attribute or role to control table shading (all, even, odd) (or call it striped like bootstrap?) (#724)
+* list preface in TOC (#732)
+* warn if image in running content can't be found (#731)
+* FILE ISSUE: only report failure to embed image in running content once
+* allow vertical_align to be numeric in running content
+  - Prawn formatted_text_box doesn't support a numeric value for :valign; need to add upstream (or patch)
+* allow color and string template to be specified for alt text (#730)
+* part/chapter/section start pages are calculated twice, once for each running content; should be shared
+* if image fails to load, could draw a box with an X in it to indicate it's broken
+* enable fit=scale-down (or fit=contain) for title logo image; otherwise, just let it get clipped (will require passing at option to embed_image to prevent page from advancing)
+* make section depth for section-title attribute in running content configurable (#726)
+* add ability to set watermark_image which goes on top of each (non-imported) page instead of bottom (#727)
+* AsciiDoc table cell leaves padding below last block (due to no margin collapsing)
 * M+ 1mn box drawings have width of 1000 instead of 500, so they don't draw box correctly (see https://github.com/prawnpdf/prawn/issues/1002)
   - looks like we're going to have to patch the font to draw the box lines correctly in a 500x860 space
   - might want to file this upstream
@@ -16,21 +29,20 @@
   - prototype implemented!
   - add Optimizer class; wire to cli (separate issue?)
   - we could recommend using HexaPDF with some sample code in README, but we can't integrate it since it's AGPL
-* should we defer image dimension assignments to calc_image_dimensions for raster images (similar to resize from Prawn SVG)
+* QUESTION: should we defer image dimension assignments to calc_image_dimensions for raster images (similar to resize from Prawn SVG)
+* passing align to layout_heading leads to ugly code
 * we could support the big and small roles on phrase by mapping to base_font_size_large and base_font_size_small
-* print alt text if an error is caught when attempting to embed an image (#693)
-  - add layout_alt_text helper method
-* restrict inline image to height of page (#700)
-* FILE ISSUE: allow height of inline image to be set to line height (perhaps 1em?)
-* should we drop "font" handler in formatted text transform?
-* don't crash if image in running content is an unsupported format
+* allow height of inline image to be set to line height (perhaps 1em?) (#711)
+* should we drop "<font>" handler in formatted text transform?
 * add support for file root / web requests for inline SVGs (#683)
   - also, disable file requests when safe mode is secure
-* FILE ISSUE: only nest document outline inside root node if doctype=article
+* FILE ISSUE: support transparent background colors (e.g, #f5f5f580)
+  - might have to switch to rgb, rgba, cmyk, cmyka instead of arrays; or 2D array?
 * what should we set as the border color if the source highlighting theme has a background color?
 * use fdiv instead of forcing numeric to float
 * UPSTREAM: highlighting of CSS w/ rouge seems messed up; don't recognize keywords
   - compare with pygments
+  - rouge also incorrectly identifies an endline in a schemaLocation attribute as an error
 * make sure any state is cleared after conversion, including attributes assigned
 * implement text_transform key for table_header_cell (in body)
 * implement line number offset in source listing (rouge)
@@ -72,7 +84,7 @@
 * numbering for appendix subsections is not correct; should be A.1, A.2 (#627)
   - seems like an issue in core too
 * BUG: http://asciidoctor.org[Asciidoctor] surrounded by smart quotes doesn't get translated to a link (as it should)
-* FILE ISSUE draw border for quote/verse block on right if text is aligned to the right
+* FILE ISSUE: draw border for quote/verse block on right if text is aligned to the right
 * Prawn should not move cursor before placing image if image exceeds height of bounding box
   - ^ workaround in place by overriding move_text_position
 * part title / number (#597)
@@ -151,6 +163,7 @@
 * cache stateless cell data resolved from theme (don't need to recalc each time; at least per table)
 * FILE ISSUE: autowidth on table doesn't work for multi-line content (prawn-table bases width calculation on normalized value)
   - table ends up being stretched even though it doesn't need to be
+  - I don't know a way to determine how much width a block of rendered content occupies
 * table logic: does the layout_table_caption have to be inside the table block? can we pre-calculate the actual width for the caption? does the table offer a callback we can use to keep the caption on the same page as the table?
 * introduce object to store/organize running content data and specs
 * QUESTION: should theme font handle hierarchical keys (either explicitly or implicitly)
@@ -323,9 +336,6 @@
 * file upstream issue for Prawn to warn if it can't resolve a glpyh (or monkeypatch it)
 * support web fonts; use uri-cache to avoid redundant fetching
 * align caption to match alignment of block image
-* FILE ISSUE: attribute or role to control table shading (all, even, odd) (or call it striped like bootstrap?)
-  - e.g., [.striped]
-  - currently controlled by theme
 * make conum glyphs configurable in theme (use reference table to resolve)
 * CJK and/or multilingual support (see https://github.com/chloerei/asciidoctor-pdf-cjk)
   - document this in the README
@@ -356,8 +366,6 @@
 * theme idea / tester: see sandbox/ebook-learn_version_control_with_git-SAMPLE.pdf
 * make alternating page title position optional (via theme?)
 * fix passthrough placeholders that get caught up in syntax highlighting (see https://github.com/asciidoctor/asciidoctor/blob/master/test/blocks_test.rb#L2258-L2277)
-* FILE ISSUE list Preamble in TOC
-  - perhaps only if it has a title? or should we use a default title if one isn't specified?
 * honor font defs in SVG (to get M+ 1p); prawn-svg supports loading fonts; need to pass fonts to prawn-svg
 * should we support % as a unit in theme (divides by 100 and sets float value)?
 * disable monospace font color (and family?) in headings
@@ -410,10 +418,11 @@
 * add a test suite
 * refactor as Prawn View
 * add support for footnotes (as article or chapter endnotes)
-* add support for nested tables by writing custom Table::Cell implementation
 * pass styles downwards to child elements in formatted text transform instead of decorating on way out of hierarchy
 * rework text handling in Prawn to support line height natively
 * margin collapsing (like CSS)
+* use proper model to handle the page number to current part/chapter/section mapping in running content
+* cleanup/reorganize imports in lib/asciidoctor/converter.rb
 
 == Documentation
 
@@ -443,6 +452,15 @@
   - later on, initialize_wrap drops fragment with empty text
 * use term "page number label" to refer to the visible, printed page number (not the implicit page number)
 * vertical alignment of text doesn't work properly in Prawn; better to calculate alignment manually, if possible
+
+== Snippets
+
+Report error eagerly if can't read image in running content:
+
+```
+warn %(asciidoctor: WARNING: could not embed image in running content: #{path}; #{e.message})
+side_content[position] = %([#{attrs['alt'] || (::File.basename path, (::File.extname path)).tr('_-', ' ')}]
+```
 
 == Prawn Wishlist
 
