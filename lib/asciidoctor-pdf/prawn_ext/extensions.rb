@@ -460,7 +460,7 @@ module Extensions
   def pad_box padding
     if padding
       # TODO implement shorthand combinations like in CSS
-      p_top, p_right, p_bottom, p_left = (padding.is_a? ::Array) ? padding : ([padding] * 4)
+      p_top, p_right, p_bottom, p_left = ::Array === padding ? padding : (::Array.new 4, padding)
       begin
         # logic is intentionally inlined
         move_down p_top

@@ -2778,7 +2778,7 @@ class Converter < ::Prawn::Document
       arranger.finalize_line
       actual_width = width_of_fragments arranger.fragments
       unless ::Array === (padding = @theme[%(#{category}_padding)])
-        padding = [padding] * 4
+        padding = ::Array.new 4, padding
       end
       available_width = bounds.width - (padding[3] || 0) - (padding[1] || 0)
       if actual_width > available_width
