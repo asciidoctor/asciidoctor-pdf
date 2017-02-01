@@ -503,21 +503,23 @@ class Converter < ::Prawn::Document
         end
       end
     end
+    unless ::Array === (cpad = @theme.admonition_padding)
+      cpad = ::Array.new 4, cpad
+    end
+    unless ::Array === (lpad = @theme.admonition_label_padding || cpad)
+      lpad = ::Array.new 4, lpad
+    end
     # FIXME this shift stuff is a real hack until we have proper margin collapsing
     shift_base = @theme.prose_margin_bottom
     shift_top = shift_base / 3.0
     shift_bottom = (shift_base * 2) / 3.0
     keep_together do |box_height = nil|
-      abs_left = bounds.absolute_left
-      abs_right = bounds.absolute_right
-      pad_box @theme.admonition_padding do
-        left_padding = bounds.absolute_left - abs_left
-        right_padding = abs_right - bounds.absolute_right
+      pad_box [0, cpad[1], 0, lpad[3]] do
         if box_height
           if (rule_color = @theme.admonition_column_rule_color) &&
               (rule_width = @theme.admonition_column_rule_width || @theme.base_border_width) && rule_width > 0
             float do
-              bounding_box [0, cursor], width: label_width + right_padding, height: box_height do
+              bounding_box [0, cursor], width: label_width + lpad[1], height: box_height do
                 stroke_vertical_rule rule_color,
                     at: bounds.width,
                     line_style: (@theme.admonition_column_rule_style || :solid).to_sym,
@@ -582,7 +584,7 @@ class Converter < ::Prawn::Document
             end
           end
         end
-        indent label_width + left_padding + right_padding do
+        pad_box [cpad[0], 0, cpad[2], label_width + lpad[1] + cpad[3]] do
           move_down shift_top
           layout_caption node.title if node.title?
           theme_font :admonition do
