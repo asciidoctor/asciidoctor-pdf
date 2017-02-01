@@ -328,7 +328,7 @@ module Extensions
 
     options = options.dup
     if (format_option = options.delete :inline_format)
-      format_option = [] unless format_option.is_a? ::Array
+      format_option = [] unless ::Array === format_option
       fragments = self.text_formatter.format string, *format_option 
     else
       fragments = [{text: string}]

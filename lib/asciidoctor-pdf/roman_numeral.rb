@@ -48,7 +48,7 @@ class RomanNumeral
 
   def initialize initial_value, letter_case = nil
     initial_value ||= 1
-    if initial_value.is_a? ::Integer
+    if ::Integer === initial_value
       @integer_value = initial_value
     else
       @integer_value = RomanNumeral.roman_to_int initial_value
