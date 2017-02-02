@@ -94,6 +94,7 @@ class Converter < ::Prawn::Document
   BlankLineRx = /\n[[:blank:]]*\n/
   WhitespaceChars = %( \t\n)
   SourceHighlighters = ['coderay', 'pygments', 'rouge'].to_set
+  PygmentsBgColorRx = /^\.highlight +{ *background: *#([^;]+);/
   ViewportWidth = ::Module.new
 
   def initialize backend, opts
@@ -1182,13 +1183,28 @@ class Converter < ::Prawn::Document
     when 'pygments'
       Helpers.require_library 'pygments', 'pygments.rb' unless defined? ::Pygments
       lexer = ::Pygments::Lexer[node.attr 'language', 'text', false] || ::Pygments::Lexer['text']
-      pygments_config = { nowrap: true, noclasses: true, stripnl: false, style: (node.document.attr 'pygments-style') || 'pastie' }
+      pygments_config = {
+        nowrap: true,
+        noclasses: true,
+        stripnl: false,
+        style: style = (node.document.attr 'pygments-style') || 'pastie'
+      }
       # TODO enable once we support background color on spans
       #if node.attr? 'highlight', nil, false
       #  unless (hl_lines = node.resolve_lines_to_highlight(node.attr 'highlight', nil, false)).empty?
       #    pygments_config[:hl_lines] = hl_lines * ' '
       #  end
       #end
+      # QUESTION should we treat white background as inherit?
+      # QUESTION allow border color to be set by theme for highlighted block?
+      if (node.document.attr? 'pygments-bgcolor')
+        bg_color_override = node.document.attr 'pygments-bgcolor'
+      elsif style == 'pastie'
+        node.document.set_attr 'pygments-bgcolor', (bg_color_override = nil)
+      else
+        node.document.set_attr 'pygments-bgcolor',
+            (bg_color_override = PygmentsBgColorRx =~ (::Pygments.css '.highlight', style: style) ? $1 : nil)
+      end
       source_string, conum_mapping = extract_conums source_string
       # NOTE pygments.rb strips trailing whitespace; preserve it in case there are conums on last line
       num_trailing_spaces = source_string.size - (source_string = source_string.rstrip).size if conum_mapping
@@ -1199,7 +1215,7 @@ class Converter < ::Prawn::Document
       Helpers.require_library RougeRequirePath, 'rouge' unless defined? ::Rouge::Formatters::Prawn
       lexer = ::Rouge::Lexer.find(node.attr 'language', 'text', false) || ::Rouge::Lexers::PlainText
       formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap)
-      # QUESTION what about border color?
+      # QUESTION allow border color to be set by theme for highlighted block?
       bg_color_override = formatter.background_color
       source_string, conum_mapping = extract_conums source_string
       # NOTE trailing endline is added to address https://github.com/jneen/rouge/issues/279
