@@ -430,7 +430,18 @@ The following transforms are recognized:
 * lowercase
 * none (clears an inherited value)
 
-CAUTION: If the text contains multibyte characters (such as an accented character), and you're using Ruby < 2.4, then you must also install either the `activesupport` or `unicode` gem in order for the multibyte characters to be transformed.
+[CAUTION#transform-unicode-letters]
+====
+Since Ruby 2.4, Ruby has built-in support for transforming the case of any letter defined by Unicode.
+
+If you're using Ruby < 2.4, and the text you want to transform contains characters beyond the Basic Latin character set (e.g., an accented character), you must install either the `activesupport` or the `unicode` gem in order for those characters to be transformed.
+
+ $ gem install activesupport
+
+or
+
+ $ gem install unicode
+====
 
 // Additional transforms, such as capitalize, may be added in the future.
 
