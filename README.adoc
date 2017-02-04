@@ -449,7 +449,7 @@ If you want to enable the autofit option globally, set the `autofit-option` docu
 :autofit-option:
 ----
 
-== Printing Pages
+== Printing Page Ranges
 
 The print dialog doesn't understand the page numbers labels (which appear in the running content).
 Instead, it only considers physical pages.
