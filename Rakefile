@@ -7,6 +7,7 @@ default_tasks = []
 
 begin
   require 'bundler/gem_tasks'
+  default_tasks << :build
 
   # Enhance the release task to create an explicit commit for the release
   #Rake::Task[:release].enhance [:commit_release]
