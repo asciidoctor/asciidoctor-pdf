@@ -31,6 +31,7 @@ endif::[]
 :uri-project-list: http://discuss.asciidoctor.org
 :uri-prawn: http://prawn.majesticseacreature.com
 :uri-prawn-svg: https://github.com/mogest/prawn-svg
+:uri-asciidoctor-mathematical: https://github.com/asciidoctor/asciidoctor-mathematical
 :uri-rvm: http://rvm.io
 
 ifdef::status[]
@@ -411,6 +412,54 @@ The diagrams will be generated using Noto Serif as the default font, and Asciido
 
 The bottom line is this:
 If you're using fonts in your SVG, and you want those fonts to be preserved, those fonts must be defined in the Asciidoctor PDF theme file.
+
+== STEM Support
+
+Unlike the built-in HTML converter, Asciidoctor PDF does not provide native support for STEM blocks and inline macros.
+That's because Asciidoctor core doesn't actually process STEM equations.
+In the HTML output, Asciidoctor relies on the JavaScript-based MathJax library to parse and render the equations in the browser.
+All the HTML converter does is wrap the equations so MathJax is able to find them.
+
+In order to insert a rendered equation into the PDF, the toolchain has to parse the equations and convert them to a format the PDF writer (Prawn) can understand.
+That typically means converting to an image.
+
+The recommended solution is an extension named Asciidoctor Mathematical, which we'll cover here.
+Another solution still under development uses Mathoid to convert STEM equations to images.
+Mathoid is a library that invokes MathJax using a headless browser.
+That prototype can be found in the https://github.com/asciidoctor/asciidoctor-extensions-lab#extension-catalog[Asciidoctor extensions lab].
+
+=== Asciidoctor Mathematical
+
+{uri-asciidoctor-mathematical}[Asciidoctor Mathematical] is an extension for Asciidoctor that provides alternate processing of STEM blocks and inline macros.
+After the document has been parsed, the extension locates all the STEM blocks and inline macros, converts the equations to images using Mathematical, then replaces them with image nodes.
+Conversion then proceeds as normal.
+
+Asciidoctor Mathematical is a Ruby gem that uses native extensions.
+It has a few system prerequisities which limit installation to Linux and OSX.
+Please refer to the {uri-asciidoctor-mathematical}#installation[installation section] in the Asciidoctor Mathematical README to learn how to install it.
+
+Once Asciidoctor Mathematical is installed, you just need to enable it when invoking Asciidoctor PDF using the `-r` flag:
+
+ $ asciidoctor-pdf -r asciidoctor-mathematical sample.adoc
+
+If you're invoking Asciidoctor via the API, all you need to do is require the gem before invoking Asciidoctor:
+
+[source,ruby]
+----
+require 'asciidoctor-mathematical'
+
+Asciidoctor.convert_file 'sample.adoc', safe: :safe
+----
+
+CAUTION: Asciidoctor Mathematical does not currently process STEM blocks and inline macros inside AsciiDoc table cells or STEM inline macros in normal table cells.
+You can track the progress of these improvements by following {uri-asciidoctor-mathematical}/issues/20[issue #20] and {uri-asciidoctor-mathematical}/issues/19[issue #19], respectively.
+
+To get the best quality equations, and the maximize speed of conversion, we recommend configuring Asciidoctor Mathematical to convert equations to SVG.
+You control this setting using the `mathematical-format` AsciiDoc attribute:
+
+ $ asciidoctor-pdf -r asciidoctor-mathematical -a mathematical-format=svg sample.adoc
+
+Refer to the {uri-asciidoctor-mathematical}#readme[README] for Asciidoctor Mathematical to learn about additional settings and options.
 
 == Autofitting Text
 
