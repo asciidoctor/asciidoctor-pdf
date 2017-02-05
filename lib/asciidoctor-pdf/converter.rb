@@ -148,6 +148,21 @@ class Converter < ::Prawn::Document
     end
     #assign_missing_section_ids doc
 
+    # promote anonymous preface (defined using preamble block) to preface section
+    # FIXME this should be done in core
+    if doc.doctype == 'book' && (blk_0 = doc.blocks[0]) && blk_0.context == :preamble &&
+        blk_0.title? && blk_0.blocks[0].style != 'abstract' && (blk_1 = doc.blocks[1]) && blk_1.context == :section
+      preface = Section.new doc, blk_1.level, false, attributes: { 1 => 'preface', 'style' => 'preface' }
+      preface.special = true
+      preface.sectname = 'preface'
+      preface.title = doc.attr 'preface-title', 'Preface'
+      # QUESTION should ID be generated from raw or converted title? core is not clear about this
+      preface.id = preface.generate_id
+      preface.blocks.replace blk_0.blocks.map {|b| b.parent = preface; b }
+      doc.blocks[0] = preface
+      blk_0 = blk_1 = preface = nil
+    end
+
     # NOTE on_page_create is called within a float context
     # NOTE on_page_create is not called for imported pages, front and back cover pages, and other image pages
     on_page_create do
@@ -2328,6 +2343,7 @@ class Converter < ::Prawn::Document
     sections_by_page = {}
     # QUESTION should the default part be the doctitle?
     last_part = nil
+    # QUESTION should we enforce that the preamble is preface?
     last_chap = is_book ? (doc.attr 'preface-title', 'Preface') : nil
     last_sect = nil
     sect_search_threshold = 1
