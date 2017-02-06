@@ -12,16 +12,16 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * make header cell in body inherit styles from table head (#239)
 * don't crash if table is empty and cols are explicitly set (#610)
 * fix vertical centering for cells in table head row
-* implement converter for index (PR #386)
+* implement converter for index (#386)
 * record page number for index term when writing anchor (#639)
 * support the underline and line-through roles on phrases (#339)
 * allow printed URI to break at break opportunities (#563)
 * don't drop subsequent images after inline image fails to load
-* show alt text when image fails to embed (#693)
 * don't crash if inline image is an unsupported format; issue warning instead (#587)
-* always show image caption even if image fails to embed
+* show alt text when image fails to embed (#693)
+* always show block image caption even if image fails to embed
 * delegate to method to handle missing image
-* permit use of gif image format if prawn-gmagick is available (#573)
+* permit use of GIF image format if prawn-gmagick is available (#573)
 * add support for image macros that have a data URI target (#318)
 * don't crash if format of image in running content is unrecognized
 * only fit image within bounds of running content if contain option is set
