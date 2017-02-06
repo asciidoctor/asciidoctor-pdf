@@ -89,7 +89,7 @@ Picking up from there, {project-name} takes the pain out of creating PDF documen
 === Notable Features
 
 * Direct AsciiDoc to PDF conversion
-* <<docs/theming-guide.adoc#,Configuration-driven style and layout>>
+* <<docs/theming-guide#,Configuration-driven style and layout>>
 * SVG support
 * PDF document outline (i.e., bookmarks)
 * Table of contents page(s)
@@ -108,7 +108,7 @@ Picking up from there, {project-name} takes the pain out of creating PDF documen
 
 === Missing Features
 
-See <<WORKLOG.adoc#,WORKLOG>>.
+See <<WORKLOG#,WORKLOG>>.
 
 == Prerequisites
 
@@ -187,7 +187,7 @@ Let's grab an AsciiDoc document to distill and start putting {project-name} to u
 If you don't already have an AsciiDoc document, you can use the [file]_basic-example.adoc_ file found in the examples directory of this project.
 
 ifeval::[{safe-mode-level} >= 20]
-See <<examples/basic-example.adoc#,basic-example.adoc>>.
+See <<examples/basic-example#,basic-example.adoc>>.
 endif::[]
 ifeval::[{safe-mode-level} < 20]
 .basic-example.adoc
@@ -227,7 +227,7 @@ The pain of the DocBook toolchain should be melting away about now.
 == Themes
 
 The layout and styling of the PDF is driven by a YAML configuration file.
-To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theme Guide>>.
+To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide#,Asciidoctor PDF Theme Guide>>.
 You can use the built-in theme files, which you can find in the [file]_data/themes_ directory, as examples.
 
 == Font-Based Icons
@@ -288,7 +288,7 @@ Images are resolved relative to the value of the `imagesdir` attribute at the ti
 This is effectively the same as how the built-in HTML converter works when the `data-uri` attribute is set.
 The `imagesdir` is blank by default, which means images are resolved relative to the input document.
 
-If the image is an SVG, and the SVG includes a nested raster image (png or jpg) with a relative path, that path is resolved relative to the directory that contains the SVG.
+If the image is an SVG, and the SVG includes a nested raster image (PNG or JPG) with a relative path, that path is resolved relative to the directory that contains the SVG.
 
 The converter will refuse to include an image if the target is a URI unless the `allow-uri-read` attribute is enabled via the CLI or API.
 
@@ -324,7 +324,7 @@ If the width exceeds the content area width, the image is scaled down to the con
 |If you don't specify one of the aforementioned width settings, the intrinsic width of the image is used (the px value is multiplied by 75% to convert to pt, assuming canvas is 96 dpi) unless the width exceeds the content area width, in which case the image is scaled down to the content area width.
 |===
 
-The image is always sized according to the explicit or intrinsic width and its height is scaled proporationally.
+The image is always sized according to the explicit or intrinsic width and its height is scaled proportionally.
 The height of the image is ignored by the PDF converter unless the height of the image exceeds the content height of the page.
 In this case, the image is scaled down to fit on a single page.
 
@@ -372,7 +372,7 @@ Inline images can be sized in much the same way as block images (using the pdfwi
 
 If the resolved height of the image is less than or equal to 1.5 times the line height, the image won't disrupt the line height and is centered vertically in the line.
 This is done to maximize the use of available space.
-Once the resolved height exceeds this amount, the height of the line is increased (by increasing the font size of the invisible placeholder text) to accomodate the image.
+Once the resolved height exceeds this amount, the height of the line is increased (by increasing the font size of the invisible placeholder text) to accommodate the image.
 In this case, the surrounding text will be aligned to the bottom of the image.
 If the image height exceeds the height of the page, the image will be scaled down to fit on a single page (this may cause the image to advance to the subsequent page).
 
@@ -389,7 +389,7 @@ The result becomes indistinguishable from other PDF objects.
 What that means for text is that any font family used for text in the SVG _must_ be registered in the Asciidoctor PDF theme file (and thus with Prawn).
 Otherwise, Prawn will fallback to using the closest matching built-in (afm) font from PDF (e.g., sans-serif becomes Helvetica).
 Recall that afm fonts only support basic Latin.
-As we like to say, PDF is <<docs/theming-guide.adoc#built-in-afm-fonts,bring your own font>>.
+As we like to say, PDF is <<docs/theming-guide#built-in-afm-fonts,bring your own font>>.
 
 If you're using Asciidoctor Diagram to generate SVGs to embed in the PDF, you likely need to specify the default font the diagramming tool uses.
 Let's assume you are making a plantuml diagram.
@@ -455,7 +455,7 @@ After the document has been parsed, the extension locates all the STEM blocks an
 Conversion then proceeds as normal.
 
 Asciidoctor Mathematical is a Ruby gem that uses native extensions.
-It has a few system prerequisities which limit installation to Linux and OSX.
+It has a few system prerequisites which limit installation to Linux and OSX.
 Please refer to the {uri-asciidoctor-mathematical}#installation[installation section] in the Asciidoctor Mathematical README to learn how to install it.
 
 Once Asciidoctor Mathematical is installed, you just need to enable it when invoking Asciidoctor PDF using the `-r` flag:
@@ -636,5 +636,5 @@ For best results, be sure to always use `bundle exec` whenever invoking the `./b
 Copyright (C) 2014-2016 OpenDevise Inc. and the Asciidoctor Project.
 Free use of this software is granted under the terms of the MIT License.
 
-For the full text of the license, see the <<LICENSE.adoc#,LICENSE>> file.
-Refer to the <<NOTICE.adoc#,NOTICE>> file for information about third-party Open Source software in use.
+For the full text of the license, see the <<LICENSE#,LICENSE>> file.
+Refer to the <<NOTICE#,NOTICE>> file for information about third-party Open Source software in use.
