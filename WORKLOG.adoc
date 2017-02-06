@@ -5,12 +5,12 @@
 
 == TODO
 
-* QUESTION should we show keys with hyphens instead of underscores in theming guide?
-* add red/green diff background to rouge custom theme example in theming guide
+* start the README with a proper introduction to Asciidoctor PDF (and not so focused on Prawn)
+* setup asciidoctor-mathoid project, then mention it in the STEM support section
 
-* add separate padding control for label in admonition block; use default to padding on content if not specified
+* QUESTION should we show keys with hyphens instead of underscores in theming guide?
+
 * attribute or role to control table shading (all, even, odd) (or call it striped like bootstrap?) (#724)
-* list preface in TOC (#732)
 * warn if image in running content can't be found (#731)
 * FILE ISSUE: only report failure to embed image in running content once
 * allow vertical_align to be numeric in running content
@@ -22,6 +22,7 @@
 * make section depth for section-title attribute in running content configurable (#726)
 * add ability to set watermark_image which goes on top of each (non-imported) page instead of bottom (#727)
 * AsciiDoc table cell leaves padding below last block (due to no margin collapsing)
+* don't show table of contents if empty
 * M+ 1mn box drawings have width of 1000 instead of 500, so they don't draw box correctly (see https://github.com/prawnpdf/prawn/issues/1002)
   - looks like we're going to have to patch the font to draw the box lines correctly in a 500x860 space
   - might want to file this upstream
@@ -36,7 +37,7 @@
 * should we drop "<font>" handler in formatted text transform?
 * add support for file root / web requests for inline SVGs (#683)
   - also, disable file requests when safe mode is secure
-* FILE ISSUE: support transparent background colors (e.g, #f5f5f580)
+* FILE ISSUE: support transparent background colors (e.g, f5f5f580)
   - might have to switch to rgb, rgba, cmyk, cmyka instead of arrays; or 2D array?
 * what should we set as the border color if the source highlighting theme has a background color?
 * use fdiv instead of forcing numeric to float
@@ -62,6 +63,7 @@
 * make dpi configurable (controls the px to pt conversion)
 * should we make :px the default units in to_pt? or require explicit units?
 * use background color from pygments theme for source block
+* cache background color of source highlighting theme (esp for pygments)
 * block anchors should be positioned on same page as content if content is forced to new page
   - call theme_margin <type>, :top first
   - theme_margin should return distance moved (0 if advanced to new page)
@@ -107,10 +109,6 @@
   - using fallback fonts significantly slows down Prawn because it checks every letter every time (see https://github.com/prawnpdf/prawn/blob/master/lib/prawn/text/formatted/box.rb#L427-L434)
   - add broader character range to monospace font so we can drop fallback font by default (#282)
   - consider having a fallback for prose and fallback for literal
-* SIMPLE: recommend use of prawn-gmagick in README
-  - https://github.com/packetmonkey/prawn-gmagick
-  - must install GraphicsMagick-devel on Fedora
-  - or use ImageMagick (or GraphicsMagick) to uncompress PNG images before reading them
 * use <a id=""></a> instead of <a name=""></a> for anchor point in formatted text
   - benchmark to see if it's faster to use empty or non-empty element in parser
 * text decoration should be supported as part of theme_font
@@ -291,8 +289,6 @@
   - need to find a good cover page
 * don't orphan a single line of paragraph (send it with a buddy line)
   - implement orphan sentences for paragraph
-* implement stem support
-  - see asciidoctor-mathematical and asciidoctor-mathoid
 * fail gracefully if theme file cannot be found
   - report it can't be found (should we fallback to default theme?)
 * expose theme variable on document (using attr_reader?)
