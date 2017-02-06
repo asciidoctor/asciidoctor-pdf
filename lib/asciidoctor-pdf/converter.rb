@@ -2268,7 +2268,7 @@ class Converter < ::Prawn::Document
                 ], line_metrics, align: :right
             end
           else
-            typeset_formatted_text [{ text: pgnum_label, anchor: sect_anchor }], line_metrics, align: :right
+            typeset_formatted_text [{ text: pgnum_label, color: @font_color, anchor: sect_anchor }], line_metrics, align: :right
           end
           go_to_page end_page_number if page_number != end_page_number
           move_cursor_to end_cursor
