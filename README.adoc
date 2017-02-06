@@ -155,23 +155,23 @@ You can install the published gem using the following command:
 
  $ gem install asciidoctor-pdf --pre
  
-If you want to syntax highlight source listings, you'll also want to install CodeRay, Rouge or Pygments.
+If you want to syntax highlight source listings, you'll also want to install Rouge, Pygments, or CodeRay.
 Choose one (or more) of the following:
 
-.CodeRay
- $ gem install coderay
-
-.Rouge
+.Rouge (preferred)
  $ gem install rouge
 
 .Pygments
  $ gem install pygments.rb
- 
-You then activate syntax highlighting for a given document by adding the `source-highlighter` attribute to the document header (CodeRay shown):
+
+.CodeRay
+ $ gem install coderay
+
+You then activate syntax highlighting for a given document by adding the `source-highlighter` attribute to the document header (Rouge shown):
 
 [source,asciidoc]
 ----
-:source-highlighter: coderay 
+:source-highlighter: rouge 
 ----
 
 Assuming all the required gems install properly, verify you can run the `asciidoctor-pdf` script:
