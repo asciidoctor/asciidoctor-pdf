@@ -12,7 +12,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   EOS
 
   s.authors = ['Dan Allen', 'Sarah White']
-  s.email = 'dan@opendevise.io'
+  s.email = 'dan@opendevise.com'
   s.homepage = 'https://github.com/asciidoctor/asciidoctor-pdf'
   s.license = 'MIT'
 
@@ -23,7 +23,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   rescue
     Dir['**/*']
   end
-  s.files = files.grep %r/^(?:(?:data|docs|lib)\/.+|Gemfile|Rakefile|(?:CHANGELOG|LICENSE|NOTICE|README)\.adoc|#{s.name}\.gemspec)$/
+  s.files = files.grep %r/^(?:(?:data|lib)\/.+|docs\/theming-guide\.adoc|Gemfile|Rakefile|(?:CHANGELOG|LICENSE|NOTICE|README)\.adoc|#{s.name}\.gemspec)$/
   # FIXME optimize-pdf is currently a shell script, so listing it here won't work
   #s.executables = ['asciidoctor-pdf', 'optimize-pdf']
   s.executables = ['asciidoctor-pdf']

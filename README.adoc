@@ -1,5 +1,6 @@
 = Asciidoctor PDF: A native PDF converter for AsciiDoc
 Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://github.com/graphitefriction[@graphitefriction]>
+v1.5.0.alpha.14, 2017-02-05
 // Settings:
 :experimental:
 :idprefix:
@@ -633,7 +634,7 @@ For best results, be sure to always use `bundle exec` whenever invoking the `./b
 
 == Copyright
 
-Copyright (C) 2014-2016 OpenDevise Inc. and the Asciidoctor Project.
+Copyright (C) 2014-2017 OpenDevise Inc. and the Asciidoctor Project.
 Free use of this software is granted under the terms of the MIT License.
 
 For the full text of the license, see the <<LICENSE#,LICENSE>> file.

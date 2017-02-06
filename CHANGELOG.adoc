@@ -5,6 +5,127 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== 1.5.0.alpha.14 (2017-02-05) - @mojavelinux
+
+* add support for AsciiDoc table cells (including nested tables) (#6)
+* patch text cell to remove cursor advancement
+* make header cell in body inherit styles from table head (#239)
+* don't crash if table is empty and cols are explicitly set (#610)
+* fix vertical centering for cells in table head row
+* implement converter for index (PR #386)
+* record page number for index term when writing anchor (#639)
+* support the underline and line-through roles on phrases (#339)
+* allow printed URI to break at break opportunities (#563)
+* don't drop subsequent images after inline image fails to load
+* show alt text when image fails to embed (#693)
+* don't crash if inline image is an unsupported format; issue warning instead (#587)
+* always show image caption even if image fails to embed
+* delegate to method to handle missing image
+* permit use of gif image format if prawn-gmagick is available (#573)
+* add support for image macros that have a data URI target (#318)
+* don't crash if format of image in running content is unrecognized
+* only fit image within bounds of running content if contain option is set
+* document fit attribute for image in running content
+* fix alignment for SVG image in running content
+* keep block image with caption (#690)
+* place destination for block image on same page as image
+* set color space when block image occurs on page by itself (#688)
+* resize SVG to fit page (#691)
+* backport resize method from prawn-svg and use it
+* disable system font scan in Prawn SVG
+* use character spacing to fine-tune width of placeholder for inline image (#686)
+* fix duplicate inline image rendering (@fap-) (#388)
+* constrain inline image to width of bounds
+* add support for pdfwidth to inline images (@fap-) (#620)
+* honor pdfwidth attribute for image in running content (#625)
+* add support for absolute measurement units to scaledwidth attribute (#674)
+* resize inline SVG without an explicit width (#684)
+* resize inline image to fit within content height (#700)
+* calculate height of inline image correctly in table cell (#295)
+* fix bug in calculation when image overflows page (#708)
+* simplify calculation of rendered width and height of images
+* add square brackets around alt text for inline image
+* don't surround alt text of block image with non-breaking spaces
+* specify width & height when embedding (inline) raster image to avoid recalc
+* resize title logo image to keep on page (#714)
+* don't leave blank page when importing PDF page (#614)
+* fix running content dimensions (#616)
+* introduce document attribute to control default text alignment (#396)
+* allow setting a default columns spec for running content on both recto and verso pages; set if not defined
+* show example of center column alignment in default theme
+* map dynamic section-title attribute in running content to current section if page has no section (#709)
+* assign dynamic part-title attribute for use in running content (#596)
+* don't set dynamic chapter-title attribute in running content for preface unless doctype is book
+* assign page number label to each page (#641)
+* don't set dynamic page-number attribute in running content of pagenums is disabled
+* allow toc title properties to be controlled by theme (#701)
+* use correct number of dots when font style is applied to toc level (#621)
+* allow theme to control which toc levels have dot leaders; default to 2-3 (#631)
+* set font color of page number for parts in toc
+* don't crash when toc dot leader is empty string
+* list preface with title in table of contents (#732)
+* allow theme to apply text decoration to link text (#567)
+* allow page layout to be controlled from document (#565)
+* don't crash if image in running content fails to embed (#728)
+* treat abstract section as abstract block (#703)
+* set example block background to white by default
+* add support for background colors when highlighting code with Rouge
+* add support underline style for token in Rouge theme (#665)
+* drop background colors on strings in rouge pastie theme
+* add support for image-based icons (#479) (@JBR69)
+* preliminary support for vertical alignment of admonition icon/label
+* allow side padding on admonition label to be controlled separately from admonition content
+* add more control over vertical rule in admonition block (#601)
+* allow theme to control font properties for admonition content (#592)
+* only add lead role to first paragraph of preamble (#654)
+* display poster image for video with link to video URI (#287)
+* add link to audio file (#475)
+* don't drop anchor within text that overruns page (#638)
+* display title for abstract (#582)
+* display title for open block (#577)
+* display block title on quote and verse blocks (#416)
+* don't draw border for quote/verse block on empty page or if border width is 0
+* allow delimiter between author names on title page to be configured in theme
+* coerce resolved value of content key in theme to String (#653)
+* honor background color from Pygments theme
+* set default inner/outer margins in base theme
+* document missing glyph encoding warning in theming guide; minor rewording
+* document how to configure fonts in SVG images (#739)
+* document how to use Asciidoctor Mathematical to enable STEM support (#45)
+* transform text containing multibyte characters (#363)
+* document in theming guide how to transform unicode letters with Ruby < 2.4
+* show unmodified text if text_transform is none (#584)
+* make performance optimization to formatted text transform
+* use reference_bounds instead of @margin_box to move past bottom
+* handle negative bottom padding properly at page boundary
+* use value of docdatetime & localdatetime attributes in PDF info (#590)
+* use truncate_to_precision instead of round to truncate floats; map to native method in Ruby >= 2.4
+* upgrade prawn-svg dependency to 0.26.x
+* upgrade prawn-icon to 1.3.0
+* document in the README how to use the autofit option on verbatim blocks
+* clarify in README how inline image are sized
+* clarify instructions in README about how to specify a page number range for printing
+* document in theming guide how to define and apply a custom Rouge theme
+* rename pdfmarks to pdfmarks; document pdfmark attribute in theming guide
+* describe the quoted string value type in the theming guide
+* add self-referencing anchor to each key prefix in theming guide
+* document nonfacing option for sections (@jnerlich)
+* fix documentation for toc_dot_leader_font_color in theming guide (@davidgamba)
+* document that dot leader inherits font properties from toc category
+* fill in missing defaults for keys in theming guide
+* rewrite intro to Keys section in theming guide
+* add keys for prose, menu, and conum categories to theming guide
+* document outline_list_marker_font_color key in theming guide
+* refactor measurement value helpers into module (#677)
+* add reproducible flag to examples
+* add inline ref and corresponding xref to chronicles example
+* fix Ruby warnings
+* update instructions and Gemfile config to use with Ruby 1.9.3
+* configure build as the default rake task
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.14[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.14[git tag]
+
 == 1.5.0.alpha.13 (2016-09-19) - @mojavelinux
 
 * Add support for mirror (recto/verso) margins and facing pages when media=prepress
@@ -69,6 +190,9 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Configure README for better preview on GitHub
 * Update chronicles example to modern AsciiDoc syntax; update content
 
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.13[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.13[git tag]
+
 == 1.5.0.alpha.12 (2016-08-05) - @mojavelinux
 
 * Fix incompatibility with Rouge 2 source highlighter (#471)
@@ -102,6 +226,9 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * Update and reorganize keys in theming guide; document numerous keys previous missing
 * Add hints to theming guide about how to apply styles when using Maven or Gradle (@fwilhe)
 * Fix gemspec to collect files when project is not a git repository or git is not available
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.12[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.12[git tag]
 
 == 1.5.0.alpha.11 (2016-01-05) - @mojavelinux
 
