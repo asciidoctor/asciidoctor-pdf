@@ -222,8 +222,8 @@ table:
   #head_background_color: <hex value>
   #head_font_color: $base_font_color
   head_font_style: bold
-  even_row_background_color: f9f9f9
-  #odd_row_background_color: <hex value>
+  #body_background_color: <hex value>
+  body_stripe_background_color: f9f9f9
   foot_background_color: f0f0f0
   border_color: dddddd
   border_width: $base_border_width

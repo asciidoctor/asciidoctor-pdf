@@ -1408,8 +1408,12 @@ class Converter < ::Prawn::Document
     # NOTE emulate table bg color by using it as a fallback value for each element
     head_bg_color = resolve_theme_color :table_head_background_color, tbl_bg_color
     foot_bg_color = resolve_theme_color :table_foot_background_color, tbl_bg_color
-    odd_row_bg_color = resolve_theme_color :table_odd_row_background_color, tbl_bg_color
-    even_row_bg_color = resolve_theme_color :table_even_row_background_color, tbl_bg_color
+    body_bg_color = resolve_theme_color :table_body_background_color,
+        # table_odd_row_background_color is deprecated
+        (resolve_theme_color :table_odd_row_background_color, tbl_bg_color)
+    body_stripe_bg_color = resolve_theme_color :table_body_stripe_background_color,
+        # table_even_row_background_color is deprecated
+        (resolve_theme_color :table_even_row_background_color, tbl_bg_color)
 
     table_data = []
     node.rows[:head].each do |row|
@@ -1594,9 +1598,20 @@ class Converter < ::Prawn::Document
         border_color: theme.table_grid_color || theme.table_border_color || theme.base_border_color
       },
       width: table_width,
-      column_widths: column_widths,
-      row_colors: [odd_row_bg_color, even_row_bg_color]
+      column_widths: column_widths
     }
+
+    # QUESTION should we support nth; should we support sequence of roles?
+    case (stripe = node.attr 'stripe', 'even', false)
+    when 'all'
+      table_settings[:row_colors] = [body_stripe_bg_color]
+    when 'even'
+      table_settings[:row_colors] = [body_bg_color, body_stripe_bg_color]
+    when 'odd'
+      table_settings[:row_colors] = [body_stripe_bg_color, body_bg_color]
+    else # none
+      table_settings[:row_colors] = [body_bg_color]
+    end
 
     theme_margin :block, :top
 
