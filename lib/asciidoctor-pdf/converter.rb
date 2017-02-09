@@ -187,7 +187,7 @@ class Converter < ::Prawn::Document
     start_new_page unless page_is_empty?
 
     num_toc_levels = (doc.attr 'toclevels', 2).to_i
-    if (include_toc = doc.attr? 'toc')
+    if (insert_toc = (doc.attr? 'toc') && doc.sections?)
       start_new_page if @ppbook && verso_page?
       toc_page_nums = page_number
       dry_run { toc_page_nums = layout_toc doc, num_toc_levels, toc_page_nums }
@@ -209,7 +209,7 @@ class Converter < ::Prawn::Document
     # QUESTION should we delete page if document is empty? (leaving no pages?)
     delete_page if page_is_empty? && page_count > 1
 
-    toc_page_nums = include_toc ? (layout_toc doc, num_toc_levels, toc_page_nums.first, num_front_matter_pages) : []
+    toc_page_nums = insert_toc ? (layout_toc doc, num_toc_levels, toc_page_nums.first, num_front_matter_pages) : []
 
     if page_count > num_front_matter_pages
       layout_running_content :header, doc, skip: num_front_matter_pages unless doc.noheader
