@@ -2688,11 +2688,11 @@ class Converter < ::Prawn::Document
     sections.each do |sect|
       sect_title = sanitize sect.numbered_title formal: true
       sect_destination = sect.attr 'pdf-destination'
-      if (subsections = sect.sections).empty? || sect.level == num_levels
+      if (level = sect.level) == num_levels || !sect.sections?
         outline.page title: sect_title, destination: sect_destination
-      elsif sect.level < num_levels + 1
+      elsif level <= num_levels
         outline.section sect_title, { destination: sect_destination } do
-          add_outline_level outline, subsections, num_levels
+          add_outline_level outline, sect.sections, num_levels
         end
       end
     end
