@@ -734,6 +734,11 @@ When you execute Asciidoctor PDF, you need to specify the directory where the fo
 
 WARNING: Currently, all fonts referenced by the theme need to be present in the directory specified by the `pdf-fontsdir` attribute.
 
+When Asciidoctor PDF creates the PDF, it only embeds the glyphs from the font that are needed to render the characters present in the document.
+In other words, Asciidoctor PDF automatically subsets the font.
+However, if you're storing the fonts in a repository, you may want to subset the font (for instance, by using FontForge) to reduce the space the font occupies in that storage.
+This is simply a personal preference.
+
 You can add any number of fonts to the catalog.
 Each font must be assigned a unique key, as shown here:
 
