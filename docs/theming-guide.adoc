@@ -32,8 +32,8 @@ Topics remaining to document:
 The theming system in Asciidoctor PDF is used to control the layout and styling of the PDF file Asciidoctor PDF generates from AsciiDoc.
 This document describes how the theming system works, how to define a custom theme in YAML and how to activate the theme when running Asciidoctor PDF.
 
-IMPORTANT: If you're using a custom theme, you're expected to override some of keys described in the sections below, in particular fonts.
-If you don't define your own fonts, the built-in PDF fonts will be used.
+IMPORTANT: If you're using a custom theme, you're expected to bring your own fonts or declare the fonts from the default theme.
+If you don't declare your own fonts, the built-in PDF (afm) fonts will be used, which only support WINANSI characters (similar to Basic Latin).
 
 toc::[]
 
@@ -412,7 +412,7 @@ Images can be aligned as follows:
 === Font Styles
 
 In most cases, whereever you can specify a custom font family, you can also specify a font style.
-These two settings are combined to locate which font to select.
+These two settings are combined to locate the font to use.
 
 The following font styles are recognized:
 
@@ -605,9 +605,9 @@ You can select from <<built-in-afm-fonts,built-in PDF fonts>>, <<bundled-fonts,f
 If you want to use custom fonts, you must first declare them in your theme file.
 
 IMPORTANT: Asciidoctor has no challenge working with Unicode.
-In fact, it prefers Unicode and considers the whole range.
+In fact, it prefers Unicode and considers the entire range.
 However, once you convert to PDF, you have to meet the font requirements of PDF in order to preserve Unicode characters.
-There's nothing Asciidoctor can do to convince PDF to work without the right fonts in play.
+There's nothing Asciidoctor can do to convince PDF to work with extended characters without the right fonts in play.
 
 === Built-In (AFM) Fonts
 
@@ -658,9 +658,9 @@ For more information about how Prawn handles character encodings for built-in fo
 
 === Bundled Fonts
 
-Asciidoctor PDF bundles several fonts that are used in the default theme.
-You can also use these fonts in your custom theme.
-These fonts provide more characters than the built-in PDF fonts, but still only a subset of UTF-8.
+Asciidoctor PDF bundles several fonts that are used by the default theme.
+You can also use these fonts in your custom theme by simply declaring them.
+These fonts provide more characters than the built-in PDF fonts, but still only a subset of UTF-8 (to reduce the size of the gem).
 
 The family name of the fonts bundled with Asciidoctor PDF are as follows:
 
@@ -674,9 +674,9 @@ Also provides the circuled numbers used in callouts.
 http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1p[M+ 1p Fallback]::
 A sans-serif font that provides a very complete set of Unicode glyphs.
 Cannot be styled as italic, bold or bold_italic.
-Useful as a fallback font.
+Used as the fallback font.
 
-CAUTION: At the time of this writing, you cannot use the bundled fonts if you define your own custom fonts.
+CAUTION: At the time of this writing, you cannot use the bundled fonts if you change the value of the `pdf-fontsdir` attribute (and thus define your own custom fonts).
 This limitation may be lifted in the future.
 
 === Custom Fonts
@@ -693,7 +693,7 @@ A collection typically consists of all four styles of a font:
 * bold_italic
 
 You'll need all four styles to support AsciiDoc content properly.
-_Asciidoctor PDF cannot italicize a font that is not italic like a browser can._
+_Asciidoctor PDF cannot italicize a font dynamically like a browser can, so you need the italic style._
 
 Once you've obtained the TTF files, put them into a directory in your project where you want to store the fonts.
 It's recommended that you name them consistently so it's easier to type the names in the theme file.
@@ -719,7 +719,7 @@ font:
       bold_italic: roboto-bold_italic.ttf
 ----
 
-You can use the key you gave to the font in the font catalog anywhere a `font_family` property is accepted in the theme file.
+You can use the key that you assign to the font in the font catalog anywhere the `font_family` property is accepted in the theme file.
 For instance, to use the Roboto font for all headings, you'd use:
 
 [source,yaml]
