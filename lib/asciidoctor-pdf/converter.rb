@@ -1444,6 +1444,7 @@ class Converter < ::Prawn::Document
       table_data << row_data
     end
 
+    header_cell_data = nil
     (node.rows[:body] + node.rows[:foot]).each do |row|
       row_data = []
       row.each do |cell|
@@ -1462,7 +1463,7 @@ class Converter < ::Prawn::Document
         when :strong
           cell_data[:font_style] = :bold
         when :header
-          unless defined? header_cell_data
+          unless header_cell_data
             header_cell_data = {}
             [
               # TODO honor text_transform key
