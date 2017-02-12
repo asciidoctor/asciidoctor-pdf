@@ -212,8 +212,12 @@ class Converter < ::Prawn::Document
     toc_page_nums = insert_toc ? (layout_toc doc, num_toc_levels, toc_page_nums.first, num_front_matter_pages) : []
 
     if page_count > num_front_matter_pages
-      layout_running_content :header, doc, skip: num_front_matter_pages unless doc.noheader
-      layout_running_content :footer, doc, skip: num_front_matter_pages unless doc.nofooter
+      unless doc.noheader || @theme.header_height.to_f.zero?
+        layout_running_content :header, doc, skip: num_front_matter_pages
+      end
+      unless doc.nofooter || @theme.footer_height.to_f.zero?
+        layout_running_content :footer, doc, skip: num_front_matter_pages
+      end
     end
 
     add_outline doc, num_toc_levels, toc_page_nums, num_front_matter_pages
@@ -2311,8 +2315,6 @@ class Converter < ::Prawn::Document
 
   # TODO delegate to layout_page_header and layout_page_footer per page
   def layout_running_content periphery, doc, opts = {}
-    # QUESTION should we short-circuit if setting not specified and if so, which setting?
-    return unless (periphery == :header && @theme.header_height) || (periphery == :footer && @theme.footer_height)
     skip = opts[:skip] || 1
     # NOTE find and advance to first non-imported content page to use as model page
     return unless (content_start_page = state.pages[skip..-1].index {|p| !p.imported_page? })
