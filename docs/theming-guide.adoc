@@ -2765,12 +2765,12 @@ The keys in this category control the arrangement and style of tables and table 
   header_cell:
     font_style: italic
 
-//|text_transform
-//|<<text-transforms,Text transform>> +
-//(default: $table_head_text_transform)
-//|table:
-//  header_cell:
-//    text_transform: uppercase
+|text_transform
+|<<text-transforms,Text transform>> +
+(default: $table_head_text_transform)
+|table:
+  header_cell:
+    text_transform: uppercase
 |===
 
 . `<parity>` can be `odd` (odd rows) or `even` (even rows).
