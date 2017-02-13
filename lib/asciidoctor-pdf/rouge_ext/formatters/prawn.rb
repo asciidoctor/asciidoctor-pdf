@@ -42,8 +42,11 @@ class Prawn < Formatter
 
   def stream tokens, opts = {}
     if opts[:line_numbers]
-      # TODO implement line number start (offset)
-      linenum = 0
+      if (linenum = opts[:start_line]) > 0
+        linenum -= 1
+      else
+        linenum = 0
+      end
       fragments = []
       fragments << (create_linenum_fragment linenum += 1)
       tokens.each do |tok, val|

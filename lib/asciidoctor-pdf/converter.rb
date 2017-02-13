@@ -1238,7 +1238,9 @@ class Converter < ::Prawn::Document
       bg_color_override = formatter.background_color
       source_string, conum_mapping = extract_conums source_string
       # NOTE trailing endline is added to address https://github.com/jneen/rouge/issues/279
-      fragments = formatter.format (lexer.lex %(#{source_string}#{LF})), line_numbers: (node.attr? 'linenums')
+      fragments = formatter.format (lexer.lex %(#{source_string}#{LF})),
+          line_numbers: (node.attr? 'linenums'),
+          start_line: (node.attr 'start').to_i
       # NOTE cleanup trailing endline (handled in rouge_ext/formatters/prawn instead)
       #fragments.last[:text] == LF ? fragments.pop : fragments.last[:text].chop!
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
