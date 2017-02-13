@@ -1444,7 +1444,7 @@ class Converter < ::Prawn::Document
       table_data << row_data
     end
 
-    header_cell_data = nil
+    header_cell_data_cache = nil
     (node.rows[:body] + node.rows[:foot]).each do |row|
       row_data = []
       row.each do |cell|
@@ -1457,30 +1457,34 @@ class Converter < ::Prawn::Document
           align: (cell.attr 'halign', nil, false).to_sym,
           valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym
         }
+        cell_transform = nil
         case cell.style
         when :emphasis
           cell_data[:font_style] = :italic
         when :strong
           cell_data[:font_style] = :bold
         when :header
-          unless header_cell_data
-            header_cell_data = {}
+          unless header_cell_data_cache
+            header_cell_data_cache = {}
             [
-              # TODO honor text_transform key
-              # QUESTION should we honor alignment set by col/cell spec? how can we tell?
-              #['align', :align, true],
+              #['align', :align, true], # QUESTION should we honor alignment set by col/cell spec? how can we tell?
               ['font_color', :text_color, false],
               ['font_family', :font, false],
               ['font_size', :size, false],
-              ['font_style', :font_style, true]
+              ['font_style', :font_style, true],
+              ['text_transform', :text_transform, true]
             ].each do |(theme_key, data_key, symbol_value)|
               if (val = theme[%(table_header_cell_#{theme_key})] || theme[%(table_head_#{theme_key})])
-                header_cell_data[data_key] = symbol_value ? val.to_sym : val
+                header_cell_data_cache[data_key] = symbol_value ? val.to_sym : val
               end
             end
             if (val = resolve_theme_color :table_header_cell_background_color, head_bg_color)
-              header_cell_data[:background_color] = val
+              header_cell_data_cache[:background_color] = val
             end
+          end
+          header_cell_data = header_cell_data_cache.dup
+          if (cell_transform = header_cell_data.delete :text_transform) == 'none'
+            cell_transform = nil
           end
           cell_data.update header_cell_data unless header_cell_data.empty?
         when :monospaced
@@ -1518,10 +1522,10 @@ class Converter < ::Prawn::Document
           cell_data[:font_style] = (val = theme.table_font_style) ? val.to_sym : nil
         end
         unless cell_data.key? :content
-          # NOTE effectively the same as calling cell.content (should we use that instead?)
-          # TODO hard breaks not quite the same result as separate paragraphs; need custom cell impl
-          if (cell_text = cell.text).include? LF
-            cell_data[:content] = cell_text.split(BlankLineRx).map {|l| l.tr_s(WhitespaceChars, ' ') }.join(DoubleLF)
+          if (cell_text = cell_transform ? (transform_text cell.text, cell_transform) : cell.text).include? LF
+            # NOTE effectively the same as calling cell.content (should we use that instead?)
+            # FIXME hard breaks not quite the same result as separate paragraphs; need custom cell impl here
+            cell_data[:content] = (cell_text.split BlankLineRx).map {|l| l.tr_s WhitespaceChars, ' ' }.join DoubleLF
             cell_data[:inline_format] = true
           else
             cell_data[:content] = cell_text
