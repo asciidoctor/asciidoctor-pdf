@@ -8,16 +8,21 @@
 
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
 
+* fix theming guide regarding table striping
+
 * part/chapter/section start pages are calculated twice, once for each running content; should be shared
-* SIMPLE: add note to README that Prawn will dynamically subset any fonts provided
+ ** probably need to introduce a model object to hold the cache
 * UPSTREAM: highlighting of CSS w/ rouge seems messed up; don't recognize keywords
  ** compare with pygments
  ** rouge also incorrectly identifies an endline in a schemaLocation attribute as an error
+* FIXME: stop using fallback fonts in default theme (instead, bundle a fuller font)
+ ** using fallback fonts significantly slows down Prawn because it checks every letter every time (see https://github.com/prawnpdf/prawn/blob/master/lib/prawn/text/formatted/box.rb#L427-L434)
+ ** add broader character range to monospace font so we can drop fallback font by default (#282)
+ ** consider having a fallback for prose and fallback for literal
 * should we drop "<font>" handler in formatted text transform?
-* FILE ISSUE: implement text_transform key for table_header_cell (in body)
 * implement text transform for running content (#702)
-* FILE ISSUE: implement line number offset in source listing (rouge)
- ** shouldn't this be fixed in core at the same time?
+* implement start line number in source listing (rouge) (#752)
+ ** shouldn't this be fixed in core at the same time? (core #1742)
 * implement line highlighting in rouge (#681)
 * only nest outline inside of root if doctype=article (still valid?)
 * warn if image in running content can't be found (#731)
@@ -45,8 +50,10 @@
  ** also, disable file requests when safe mode is secure
 * FILE ISSUE: support transparent background colors (e.g, f5f5f580)
  ** might have to switch to rgb, rgba, cmyk, cmyka instead of arrays; or 2D array?
+* need custom cell impl to handle paragraph breaks in table cell properly
 * what should we set as the border color if the source highlighting theme has a background color?
 * use fdiv instead of forcing numeric to float
+* use the keyword "normal" instead of "regular" to refer to the non-styled font file
 * make sure any state is cleared after conversion, including attributes assigned
 * height of listing block not calculated correctly when string of contiguous characters exceeds length of line
  ** put listing block with very long line inside of sidebar; see that sidebar height is incorrect (too large)
@@ -78,6 +85,7 @@
 * support horizontal alignment of AsciiDoc table cell content (need to handle explicitly)
  ** only relevant when using subtable since it must have width < cell width
 
+* format code to align with project standards
 * -v doesn't turn on warnings soon enough to catch warnings in Asciidoctor/Asciidoctor PDF
  ** might need to look ahead at arguments
 * allow front cover and back cover image to be defined in theme as fallback; document in theming-guide
@@ -105,10 +113,6 @@
  ** required keys can never have a null value; most are set by base theme
 * allow font properties to be set for normal paragraph separate from base (need to think about inheritence)
 * allow alignment of list to be set separately from base align (and perhaps a hint in document) (#182)
-* FIXME: stop using fallback fonts in default theme (instead, bundle a fuller font)
- ** using fallback fonts significantly slows down Prawn because it checks every letter every time (see https://github.com/prawnpdf/prawn/blob/master/lib/prawn/text/formatted/box.rb#L427-L434)
- ** add broader character range to monospace font so we can drop fallback font by default (#282)
- ** consider having a fallback for prose and fallback for literal
 * use <a id=""></a> instead of <a name=""></a> for anchor point in formatted text
  ** benchmark to see if it's faster to use empty or non-empty element in parser
 * text decoration should be supported as part of theme_font
@@ -323,7 +327,6 @@
  ** document this in the README
 * description list term should keep together with content (file issue)
 * allow font properties to be set for lists (description_list, outline_list)
-* hardbreak in table cell results in extra endline (likely not normalizing cell content)
 * remove pdfmarks file after optimizing
 * look into single_line + shrink_to_fit in listings, perhaps other places
 * refactor as Prawn view to avoid method name conflicts (also see https://github.com/prawnpdf/prawn/issues/802)
