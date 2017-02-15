@@ -1234,13 +1234,12 @@ class Converter < ::Prawn::Document
       Helpers.require_library RougeRequirePath, 'rouge' unless defined? ::Rouge::Formatters::Prawn
       lexer = ::Rouge::Lexer.find(node.attr 'language', 'text', false) || ::Rouge::Lexers::PlainText
       formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap)
+      formatter_opts = (node.attr? 'linenums') ? { line_numbers: true, start_line: (node.attr 'start').to_i } : {}
       # QUESTION allow border color to be set by theme for highlighted block?
       bg_color_override = formatter.background_color
       source_string, conum_mapping = extract_conums source_string
       # NOTE trailing endline is added to address https://github.com/jneen/rouge/issues/279
-      fragments = formatter.format (lexer.lex %(#{source_string}#{LF})),
-          line_numbers: (node.attr? 'linenums'),
-          start_line: (node.attr 'start').to_i
+      fragments = formatter.format (lexer.lex %(#{source_string}#{LF})), formatter_opts
       # NOTE cleanup trailing endline (handled in rouge_ext/formatters/prawn instead)
       #fragments.last[:text] == LF ? fragments.pop : fragments.last[:text].chop!
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
