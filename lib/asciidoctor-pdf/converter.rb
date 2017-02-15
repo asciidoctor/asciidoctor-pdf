@@ -1201,7 +1201,7 @@ class Converter < ::Prawn::Document
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     when 'pygments'
       Helpers.require_library 'pygments', 'pygments.rb' unless defined? ::Pygments
-      lexer = ::Pygments::Lexer[node.attr 'language', 'text', false] || ::Pygments::Lexer['text']
+      lexer = ::Pygments::Lexer.find_by_alias(node.attr 'language', 'text', false) || ::Pygments::Lexer['text']
       pygments_config = {
         nowrap: true,
         noclasses: true,
