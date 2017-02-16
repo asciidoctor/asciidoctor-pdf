@@ -1,5 +1,6 @@
 class Prawn::Table::Cell::Text
   # Override draw_content method to drop cursor advancement
+  remove_method :draw_content
   def draw_content
     with_font do
       with_text_color do
