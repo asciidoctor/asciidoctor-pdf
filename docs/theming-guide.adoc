@@ -2666,6 +2666,22 @@ The keys in this category control the arrangement and style of tables and table 
   head:
     text_transform: uppercase
 
+3+|[#key-prefix-table-body]*Key Prefix:* <<key-prefix-table-body,table_body>>
+
+|background_color
+|<<colors,Color>> +
+(default: $table_background_color)
+|table:
+  body:
+    background_color: #fdfdfd
+
+|stripe_background_color^[1]^
+|<<colors,Color>> +
+(default: #eeeeee)
+|table:
+  body:
+    stripe_background_color: #efefef
+
 3+|[#key-prefix-table-foot]*Key Prefix:* <<key-prefix-table-foot,table_foot>>
 
 |background_color
@@ -2703,14 +2719,15 @@ The keys in this category control the arrangement and style of tables and table 
   foot:
     font_style: italic
 
-3+|[#key-prefix-table-row]*Key Prefix:* <<key-prefix-table-row,table_<parity>_row>>^[1]^
-
-|background_color
-|<<colors,Color>> +
-(default: $table_background_color)
-|table:
-  even_row:
-    background_color: #f9f9f9
+//deprecated
+//3+|[#key-prefix-table-row]*Key Prefix:* <<key-prefix-table-row,table_<parity>_row>>^[1]^
+//
+//|background_color
+//|<<colors,Color>> +
+//(default: $table_background_color)
+//|table:
+//  even_row:
+//    background_color: #f9f9f9
 
 3+|[#key-prefix-table-cell]*Key Prefix:* <<key-prefix-table-cell,table_cell>>
 
@@ -2772,8 +2789,8 @@ The keys in this category control the arrangement and style of tables and table 
   header_cell:
     text_transform: uppercase
 |===
-
-. `<parity>` can be `odd` (odd rows) or `even` (even rows).
+. Applied to even rows by default; controlled using `stripe` attribute (even, odd, all, none) on table.
+//. `<parity>` can be `odd` (odd rows) or `even` (even rows).
 
 [#keys-table-of-contents]
 === Table of Contents (TOC)
