@@ -1197,7 +1197,13 @@ class Converter < ::Prawn::Document
     when 'coderay'
       Helpers.require_library CodeRayRequirePath, 'coderay' unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
       source_string, conum_mapping = extract_conums source_string
-      fragments = (::CodeRay.scan source_string, (node.attr 'language', 'text', false).to_sym).to_prawn
+      srclang = node.attr 'language', 'text', false
+      begin
+        ::CodeRay::Scanners[(srclang = (srclang.start_with? 'html+') ? srclang[5..-1].to_sym : srclang.to_sym)]
+      rescue ::ArgumentError
+        srclang = :text
+      end
+      fragments = (::CodeRay.scan source_string, srclang).to_prawn
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     when 'pygments'
       Helpers.require_library 'pygments', 'pygments.rb' unless defined? ::Pygments
