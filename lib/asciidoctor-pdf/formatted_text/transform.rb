@@ -199,10 +199,19 @@ class Transform
         pname, pvalue = style.split(':', 2)
         case pname
         when 'color'
+          # QUESTION should we check whether the value is a valid hex color?
           unless fragment[:color]
-            pvalue = pvalue[1..-1] if pvalue.start_with?('#')
-            #pvalue = pvalue.each_char.map {|c| c * 2 }.join if pvalue.size == 3
-            fragment[:color] = pvalue
+            case pvalue.size
+            when 6
+              fragment[:color] = pvalue
+            when 7
+              fragment[:color] = pvalue.slice(1, 6) if pvalue.start_with?('#')
+            # QUESTION should we support the 3 character form?
+            #when 3
+            #  fragment[:color] = pvalue.each_char.map {|c| c * 2 }.join
+            #when 4
+            #  fragment[:color] = pvalue.slice(1, 3).each_char.map {|c| c * 2 }.join if pvalue.start_with?('#')
+            end
           end
         when 'font-weight'
           if pvalue == 'bold'
