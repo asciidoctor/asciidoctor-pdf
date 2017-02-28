@@ -1742,14 +1742,14 @@ class Converter < ::Prawn::Document
   end
 
   def convert_index_list_item term
-    text = term.name
+    text = escape_xml term.name
     unless term.container?
       if @media == 'screen'
         pagenums = term.dests.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
       else
         pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| dest[:page].to_s }
       end
-      text = %(#{escape_xml text}, #{pagenums * ', '})
+      text = %(#{text}, #{pagenums * ', '})
     end
     layout_prose text, align: :left, margin: 0
 
