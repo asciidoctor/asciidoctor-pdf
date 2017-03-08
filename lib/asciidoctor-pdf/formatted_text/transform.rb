@@ -201,7 +201,7 @@ class Transform
         when 'color'
           # QUESTION should we check whether the value is a valid hex color?
           unless fragment[:color]
-            case pvalue.size
+            case pvalue.length
             when 6
               fragment[:color] = pvalue
             when 7

@@ -184,11 +184,11 @@ class ThemeLoader
       if value == 'transparent'
         # FIXME should we have a TransparentColorValue class?
         return HexColorValue.new value
-      elsif value.size == 6
+      elsif value.length == 6
         return HexColorValue.new value.upcase
       end
     when ::Array
-      case value.size
+      case value.length
       # CMYK value
       when 4
         value = value.map do |e|
@@ -219,7 +219,7 @@ class ThemeLoader
       # Unknown type; coerce to a string
       value = value.to_s
     end
-    value = case value.size
+    value = case value.length
     when 6
       value
     when 3

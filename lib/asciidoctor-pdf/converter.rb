@@ -1233,7 +1233,7 @@ class Converter < ::Prawn::Document
       end
       source_string, conum_mapping = extract_conums source_string
       # NOTE pygments.rb strips trailing whitespace; preserve it in case there are conums on last line
-      num_trailing_spaces = source_string.size - (source_string = source_string.rstrip).size if conum_mapping
+      num_trailing_spaces = source_string.length - (source_string = source_string.rstrip).length if conum_mapping
       result = lexer.highlight source_string, options: lexer_opts
       fragments = guard_indentation text_formatter.format result
       conum_mapping ? (restore_conums fragments, conum_mapping, num_trailing_spaces) : fragments
@@ -2932,11 +2932,11 @@ class Converter < ::Prawn::Document
       result = []
       string.each_line do |line|
         if line.start_with? TAB
-          # NOTE '+' operator is faster than interpolation in this case
           if guard_indent
-            line.sub!(TabIndentRx) {|tabs| GuardedIndent + (full_tab_space * tabs.length).chop! }
+            # NOTE '+' operator is faster than interpolation
+            line.sub!(TabIndentRx) { GuardedIndent + (full_tab_space * $&.length).chop! }
           else
-            line.sub!(TabIndentRx) {|tabs| full_tab_space * tabs.length }
+            line.sub!(TabIndentRx) { full_tab_space * $&.length }
           end
           leading_space = false
         # QUESTION should we check for LF first?

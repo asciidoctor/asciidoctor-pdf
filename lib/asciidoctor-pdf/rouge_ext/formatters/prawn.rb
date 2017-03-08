@@ -69,7 +69,7 @@ class Prawn < Formatter
       # NOTE drop orphaned linenum fragment (due to trailing endline in source)
       fragments.pop if (last_fragment = fragments[-1]) && last_fragment[:linenum]
       # NOTE pad numbers that have less digits than the largest line number
-      if (linenum_w = linenum.to_s.size) > 1
+      if (linenum_w = linenum.to_s.length) > 1
         # NOTE extra column is the trailing space after the line number
         linenum_w += 1
         fragments.each do |fragment|
@@ -138,7 +138,7 @@ class Prawn < Formatter
       normalized
     else
       normalized = (raw.start_with? '#') ? raw[1..-1] : raw
-      normalized = normalized.each_char.map {|c| c * 2 }.join if normalized.size == 3
+      normalized = normalized.each_char.map {|c| c * 2 }.join if normalized.length == 3
       @normalized_colors[raw] = normalized
     end
   end
