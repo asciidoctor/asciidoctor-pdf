@@ -1647,11 +1647,11 @@ class Converter < ::Prawn::Document
         cells.border_width = [border[:rows], border[:cols], border[:rows], border[:cols]]
 
         if table_header
-          # FIXME allow header border bottom width to be set by theme
-          rows(0).border_bottom_width = 1.5
+          # FIXME allow header border bottom width / style to be set by theme
+          rows(0).border_bottom_width = 1.25
+          rows(1).border_top_width = 1.25 if row_length > 1
           # QUESTION should we use the table border color for the bottom border color of the header row?
           #rows(0).border_bottom_color = table_border_color
-          #rows(1).border_top_width = 0 if row_length > 1
         end
 
         # top edge of table
