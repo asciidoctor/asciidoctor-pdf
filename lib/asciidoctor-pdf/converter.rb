@@ -1555,33 +1555,36 @@ class Converter < ::Prawn::Document
       table_data = [empty_row]
     end
 
-    border = {}
-    table_border_color = theme.table_border_color || table_grid_color || theme.base_border_color
+    border_width = {}
+    table_border_color = theme.table_border_color || theme.table_grid_color || theme.base_border_color
+    table_border_style = (theme.table_border_style || :solid).to_sym
     table_border_width = theme.table_border_width
+    [:top, :bottom, :left, :right].each {|edge| border_width[edge] = table_border_width }
+    table_grid_color = theme.table_grid_color || table_border_color
+    table_grid_style = (theme.table_grid_style || table_border_style).to_sym
     table_grid_width = theme.table_grid_width || theme.table_border_width
-    [:top, :bottom, :left, :right].each {|edge| border[edge] = table_border_width }
-    [:cols, :rows].each {|edge| border[edge] = table_grid_width }
+    [:cols, :rows].each {|edge| border_width[edge] = table_grid_width }
 
     case (grid = node.attr 'grid', 'all', false)
     when 'all'
       # keep inner borders
     when 'cols'
-      border[:rows] = 0
+      border_width[:rows] = 0
     when 'rows'
-      border[:cols] = 0
+      border_width[:cols] = 0
     else # none
-      border[:rows] = border[:cols] = 0
+      border_width[:rows] = border_width[:cols] = 0
     end
 
     case (frame = node.attr 'frame', 'all', false)
     when 'all'
       # keep outer borders
     when 'topbot'
-      border[:left] = border[:right] = 0
+      border_width[:left] = border_width[:right] = 0
     when 'sides'
-      border[:top] = border[:bottom] = 0
+      border_width[:top] = border_width[:bottom] = 0
     else # none
-      border[:top] = border[:right] = border[:bottom] = border[:left] = 0
+      border_width[:top] = border_width[:right] = border_width[:bottom] = border_width[:left] = 0
     end
 
     if node.option? 'autowidth'
@@ -1610,10 +1613,12 @@ class Converter < ::Prawn::Document
       header: table_header,
       position: alignment,
       cell_style: {
-        padding: theme.table_cell_padding,
+        # NOTE the border color and style of the outer frame is set later
+        border_color: table_grid_color,
+        border_lines: [table_grid_style],
+        # NOTE the border width is set later
         border_width: 0,
-        # NOTE the border color of edges is set later
-        border_color: theme.table_grid_color || theme.table_border_color || theme.base_border_color
+        padding: theme.table_cell_padding
       },
       width: table_width,
       column_widths: column_widths
@@ -1639,40 +1644,46 @@ class Converter < ::Prawn::Document
       @pdf.layout_table_caption node, table_width, alignment if node.title? && caption_side == :top
       if grid == 'none' && frame == 'none'
         if table_header
-          # FIXME allow header border bottom width to be set by theme
-          rows(0).border_bottom_width = 1.5
+          # FIXME allow header border bottom width and style to be set by theme
+          rows(0).tap do |r|
+            r.border_bottom_line, r.border_bottom_width = :solid, 1.25
+            # QUESTION should we use the table border color for the bottom border color of the header row?
+            #r.border_bottom_color, r.border_bottom_line, r.border_bottom_width = table_border_color, :solid, 1.25
+          end
         end
       else
         # apply the grid setting first across all cells
-        cells.border_width = [border[:rows], border[:cols], border[:rows], border[:cols]]
+        cells.border_width = [border_width[:rows], border_width[:cols], border_width[:rows], border_width[:cols]]
 
         if table_header
-          # FIXME allow header border bottom width / style to be set by theme
-          rows(0).border_bottom_width = 1.25
-          rows(1).border_top_width = 1.25 if row_length > 1
-          # QUESTION should we use the table border color for the bottom border color of the header row?
-          #rows(0).border_bottom_color = table_border_color
+          # FIXME allow header border bottom width and style to be set by theme
+          rows(0).tap do |r|
+            r.border_bottom_line, r.border_bottom_width = :solid, 1.25
+            # QUESTION should we use the table border color for the bottom border color of the header row?
+            #r.border_bottom_color, r.border_bottom_line, r.border_bottom_width = table_border_color, :solid, 1.25
+          end
+          rows(1).tap do |r|
+            r.border_top_line, r.border_top_width = :solid, 1.25
+            # QUESTION should we use the table border color for the top border color of the first row?
+            #r.border_top_color, r.border_top_line, r.border_top_width = table_border_color, :solid, 1.25
+          end if num_rows > 1
         end
 
         # top edge of table
         rows(0).tap do |r|
-          r.border_top_width = border[:top]
-          r.border_top_color = table_border_color
+          r.border_top_color, r.border_top_line, r.border_top_width = table_border_color, table_border_style, border_width[:top]
         end
         # right edge of table
         columns(num_cols - 1).tap do |r|
-          r.border_right_width = border[:right]
-          r.border_right_color = table_border_color
+          r.border_right_color, r.border_right_line, r.border_right_width = table_border_color, table_border_style, border_width[:right]
         end
         # bottom edge of table
         rows(num_rows - 1).tap do |r|
-          r.border_bottom_width = border[:bottom]
-          r.border_bottom_color = table_border_color
+          r.border_bottom_color, r.border_bottom_line, r.border_bottom_width = table_border_color, table_border_style, border_width[:bottom]
         end
         # left edge of table
         columns(0).tap do |r|
-          r.border_left_width = border[:left]
-          r.border_left_color = table_border_color
+          r.border_left_color, r.border_left_line, r.border_left_width = table_border_color, table_border_style, border_width[:left]
         end
       end
 

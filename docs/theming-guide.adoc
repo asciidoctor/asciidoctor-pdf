@@ -2567,6 +2567,12 @@ The keys in this category control the arrangement and style of tables and table 
 |table:
   border_color: #dddddd
 
+|border_style
+|solid {vbar} dashed {vbar} dotted +
+(default: solid)
+|table:
+  border_style: solid
+
 |border_width
 |<<values,Number>> +
 (default: 0.5)
@@ -2608,6 +2614,12 @@ The keys in this category control the arrangement and style of tables and table 
 (default: $table_border_color)
 |table:
   grid_color: #eeeeee
+
+|grid_style
+|solid {vbar} dashed {vbar} dotted +
+(default: solid)
+|table:
+  grid_style: dashed
 
 |grid_width
 |<<values,Number>> +
