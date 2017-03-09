@@ -332,6 +332,9 @@ Images in running content also support the `fit` attribute.
 If the value of this attribute is `contain`, the image size is increased or decreased to fill the available space while preserving its aspect ratio.
 If the value of this attribute is `scaled-down`, the image size is first resolved in the normal way, then scaled down further to fit within the available space, if necessary.
 
+Page background images are automatically scaled to fit the bounds of the page.
+Any explicit sizing is ignored for those images.
+
 === Using the pdfwidth Attribute
 
 The pdfwidth attribute is the recommended way to set the image size for the PDF output.
