@@ -597,6 +597,8 @@ Here's an example of using formatting in the content of the menu caret:
 menu_caret_content: " <font size=\"1.15em\"><color rgb=\"#b12146\">\u203a</color></font> "
 ----
 
+NOTE: The string must be double quoted in order to use a Unicode escape code like `\u203a`.
+
 Additionally, normal substitutions are applied to the value of content keys for <<Running Content (Header & Footer),running content>>, so you can use most AsciiDoc inline formatting (e.g., `+*strong*+` or `+{attribute-name}+`) in the values of those keys.
 
 == Fonts
@@ -1820,7 +1822,7 @@ The keys in this category apply to the menu label (generated from the inline men
 
 |caret_content
 |<<quoted-string,Quoted string>> +
-(default: ' \u203a ')
+(default: " \u203a ")
 |menu:
   caret_content: ' > '
 |===
