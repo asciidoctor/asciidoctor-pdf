@@ -129,6 +129,11 @@ Therefore, to use Asciidoctor PDF with Ruby 1.9.3, you must first explicitly ins
     gem install prawn-svg --version 0.21.0
 
 You can then proceed with installation of Asciidoctor PDF on Ruby 1.9.3.
+
+For all other versions of Ruby, you have to install Prawn 2.1.0.
+The latest release of Prawn is not compatible with the latest release of Asciidoctor PDF (or its own dependencies, for that matter).
+
+  $ gem install prawn --version 2.1.0
 ====
 
 === System Encoding
@@ -151,7 +156,9 @@ You can get {project-name} by <<install-the-published-gem,installing the publish
 === Install the Published Gem
 
 {project-name} is published as a pre-release on RubyGems.org.
-You can install the published gem using the following command:
+First, make sure you have install Prawn as explained in the <<Prerequisites,prerequisites>>.
+
+Then, you can install the published gem using the following command:
 
  $ gem install asciidoctor-pdf --pre
  
