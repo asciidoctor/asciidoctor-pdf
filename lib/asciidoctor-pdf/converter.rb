@@ -7,7 +7,7 @@ rescue LoadError
 end unless defined? GMagick::Image
 require_relative 'prawn-svg_ext'
 require_relative 'prawn-table_ext'
-require 'prawn/templates'
+require_relative 'prawn-templates_ext'
 require_relative 'core_ext'
 require_relative 'pdf-core_ext'
 require_relative 'temporary_path'
@@ -1831,7 +1831,9 @@ class Converter < ::Prawn::Document
   end
 
   def convert_inline_button node
-    %(<strong>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</strong>)
+    # NOTE ttfunk 1.5.0 chokes when we use NarrowNoBreakSpace
+    #%(<strong>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</strong>)
+    %(<strong>[#{NoBreakSpace}#{node.text}#{NoBreakSpace}]</strong>)
   end
 
   def convert_inline_callout node
