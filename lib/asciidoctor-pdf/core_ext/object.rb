@@ -1,6 +1,6 @@
 class Object
   # Convert the object to a serialized PDF object.
   def to_pdf
-    ::PDF::Core::PdfObject self
+    ::PDF::Core.pdf_object self
   end
 end

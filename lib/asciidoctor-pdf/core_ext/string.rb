@@ -21,6 +21,6 @@ class String
   # Convert the string to a serialized PDF object. If the string can be encoded as ASCII-8BIT, first convert it to a PDF
   # LiteralString object.
   def to_pdf
-    ::PDF::Core::PdfObject as_pdf
+    ::PDF::Core.pdf_object as_pdf
   end
 end
