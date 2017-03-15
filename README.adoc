@@ -237,6 +237,28 @@ The layout and styling of the PDF is driven by a YAML configuration file.
 To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide#,Asciidoctor PDF Theme Guide>>.
 You can use the built-in theme files, which you can find in the [file]_data/themes_ directory, as examples.
 
+=== Support for Non-Latin Languages
+
+Asciidoctor can process the full range of characters in the UTF-8 character set.
+That means you can write your document in any language, save the file with UTF-8 encoding, and expect Asciidoctor to convert the text properly. 
+However, you may notice that certain characters for certain languages, such as Chinese, are missing in the PDF.
+Read on to find out why and how to address it.
+
+If you're writing in a non-Latin language, you need to use a dedicated theme that provides the necessary fonts.
+For example, to produce a PDF from a document written in a CJK language such as Chinese, you need to use a CJK theme.
+You can get such a theme by installing the `asciidoctor-pdf-cjk-kai_gen_gothic` gem.
+See the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project for detailed instructions.
+
+Using a dedicated theme is necessary because PDF is a "`bring your own font`" kind of system.
+In other words, the font you provide must provide glyphs for all the characters.
+There's no one font that supports all the worlds languages (though some, like Noto Serif, certainly come close). 
+Even if there were such a font, bundling that font with the main gem would make the package enormous.
+It would also severely limit the style choices in the default theme, which targets Latin-based languages.
+
+Therefore, we're taking the strategy of creating separate dedicated theme gems that target each language family, such as CJK.
+The base theme for CJK languages is provided by the https://github.com/chloerei/asciidoctor-pdf-cjk[asciidoctro-pdf-cjk] project and a concrete implementation provided by the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project that's based on the kai_gen_gothic font.
+Of course, you're free to follow this model and create your own theme gem that uses fonts of your choice.
+
 == Font-Based Icons
 
 You can use icons in your PDF document using any of the following icon sets:
