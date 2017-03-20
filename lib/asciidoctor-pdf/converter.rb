@@ -73,7 +73,8 @@ class Converter < ::Prawn::Document
   Bullets = {
     disc: %(\u2022),
     circle: %(\u25e6),
-    square: %(\u25aa)
+    square: %(\u25aa),
+    none: ''
   }
   # NOTE Default theme font uses ballot boxes from FontAwesome
   BallotBox = {
@@ -854,8 +855,15 @@ class Converter < ::Prawn::Document
         case style
         when 'bibliography'
           :square
+        when 'unstyled', 'no-bullet'
+          nil
         else
-          style.to_sym
+          if Bullets.key?(candidate = style.to_sym)
+            candidate 
+          else
+            warn %(asciidoctor: WARNING: unknown unordered list style: #{candidate})
+            :disc
+          end
         end
       else
         case node.outline_level
@@ -882,7 +890,18 @@ class Converter < ::Prawn::Document
     complex = false
     # ...or if we want to give all items in the list the same treatment
     #complex = node.items.find(&:complex?) ? true : false
-    indent @theme.outline_list_indent do
+    if node.context == :ulist && !@list_bullets[-1]
+      if node.style == 'unstyled'
+        # unstyled takes away all indentation
+        list_indent = 0
+      elsif (list_indent = @theme.outline_list_indent) > 0
+        # no-bullet aligns text with left-hand side of bullet position (as though there's no bullet)
+        list_indent = [list_indent - (width_of %(\u2022x)), 0].max
+      end
+    else
+      list_indent = @theme.outline_list_indent
+    end
+    indent list_indent do
       node.items.each do |item|
         # FIXME extract to an ensure_space (or similar) method; simplify
         start_new_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
@@ -902,7 +921,7 @@ class Converter < ::Prawn::Document
     # TODO move this to a draw_bullet (or draw_marker) method
     case (list_type = node.parent.context)
     when :ulist
-      marker = @list_bullets.last
+      marker = @list_bullets[-1]
       if marker == :checkbox
         if node.attr? 'checkbox', nil, false
           marker = BallotBox[(node.attr? 'checked', nil, false) ? :checked : :unchecked]
