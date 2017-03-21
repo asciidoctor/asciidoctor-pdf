@@ -727,8 +727,15 @@ class Converter < ::Prawn::Document
     keep_together do |box_height = nil|
       if box_height
         float do
-          bounding_box [0, cursor], width: bounds.width, height: box_height do
-            theme_fill_and_stroke_bounds :sidebar
+          initial_page, remaining_height = true, box_height
+          while remaining_height > 0
+            start_new_page unless initial_page
+            fragment_height = [(available_height = cursor), remaining_height].min
+            bounding_box [0, available_height], width: bounds.width, height: fragment_height do
+              theme_fill_and_stroke_bounds :sidebar
+            end
+            remaining_height -= fragment_height
+            initial_page = false
           end
         end
       end
