@@ -42,7 +42,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   # Prawn >= 2.0.0 requires Ruby >= 2.0.0, so we must cast a wider net to support Ruby 1.9.3
   s.add_runtime_dependency 'prawn', '>= 1.3.0', '< 2.3.0'
   s.add_runtime_dependency 'prawn-table', '0.2.2'
-  s.add_runtime_dependency 'prawn-templates', '0.0.4'
+  s.add_runtime_dependency 'prawn-templates', '0.0.5'
   # Prawn SVG >= 0.22.1 requires Ruby >= 2.0.0, so we must cast a wider net to support Ruby 1.9.3
   s.add_runtime_dependency 'prawn-svg', '>= 0.21.0', '< 0.27.0'
   s.add_runtime_dependency 'prawn-icon', '1.3.0'
