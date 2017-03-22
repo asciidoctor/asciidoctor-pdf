@@ -97,7 +97,7 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
         @out << { text: text }
       else
         # QUESTION should we default to no color?
-        @out << { text: text, color: (COLORS[kind] || COLORS[@open.last] || COLORS[:default]) }
+        @out << { text: text, color: (COLORS[kind] || COLORS[@open[-1]] || COLORS[:default]) }
       end
       @start_of_line = text.end_with? LF
     end

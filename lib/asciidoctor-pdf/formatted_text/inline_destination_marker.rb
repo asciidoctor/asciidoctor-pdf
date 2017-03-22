@@ -11,7 +11,7 @@ module InlineDestinationMarker
         end
         # get precise position of the reference (x, y)
         dest_rect = fragment.absolute_bounding_box
-        pdf.add_dest name, (pdf.dest_xyz dest_rect.first, dest_rect.last)
+        pdf.add_dest name, (pdf.dest_xyz dest_rect[0], dest_rect[-1])
         # prevent any text from being written
         fragment.conceal
       end

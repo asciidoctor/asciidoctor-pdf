@@ -119,7 +119,7 @@ class Prawn < Formatter
       end
       if style_rules[:underline]
         if fragment.key? :styles
-          fragment[:styles] << UnderlineStyle.first
+          fragment[:styles] << UnderlineStyle[0]
         else
           fragment[:styles] = UnderlineStyle.dup
         end

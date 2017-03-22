@@ -643,10 +643,10 @@ class Converter < ::Prawn::Document
   def convert_open node
     if node.style == 'abstract'
       convert_abstract node
-    elsif node.style == 'partintro' && node.blocks.size == 1 && node.blocks.first.style == 'abstract'
+    elsif node.style == 'partintro' && node.blocks.size == 1 && node.blocks[0].style == 'abstract'
       # TODO process block title and id
       # TODO process abstract child even when partintro has multiple blocks
-      convert_abstract node.blocks.first
+      convert_abstract node.blocks[0]
     else
       add_dest_for_block node if node.id
       layout_caption node.title if node.title?
@@ -1268,7 +1268,7 @@ class Converter < ::Prawn::Document
       # NOTE trailing endline is added to address https://github.com/jneen/rouge/issues/279
       fragments = formatter.format (lexer.lex %(#{source_string}#{LF}), lexer_opts), formatter_opts
       # NOTE cleanup trailing endline (handled in rouge_ext/formatters/prawn instead)
-      #fragments.last[:text] == LF ? fragments.pop : fragments.last[:text].chop!
+      #fragments[-1][:text] == LF ? fragments.pop : fragments[-1][:text].chop!
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     else
       # NOTE only format if we detect a need (callouts or inline formatting)
@@ -1620,7 +1620,7 @@ class Converter < ::Prawn::Document
     end
 
     if ((alignment = node.attr 'align', nil, false) && (BlockAlignmentNames.include? alignment)) ||
-        (alignment = (node.roles & BlockAlignmentNames).last)
+        (alignment = (node.roles & BlockAlignmentNames)[-1])
       alignment = alignment.to_sym
     else
       alignment = :left
@@ -2721,7 +2721,7 @@ class Converter < ::Prawn::Document
         # FIXME link to title page if there's a cover page (skip cover page and ensuing blank page)
         page title: doctitle, destination: (document.dest_top 1)
       end
-      page title: (doc.attr 'toc-title'), destination: (document.dest_top toc_page_nums.first) if toc_page_nums.first
+      page title: (doc.attr 'toc-title'), destination: (document.dest_top toc_page_nums.first) unless toc_page_nums.none?
       # QUESTION any way to get add_outline_level to invoke in the context of the outline?
       document.add_outline_level self, doc.sections, num_levels
     end
