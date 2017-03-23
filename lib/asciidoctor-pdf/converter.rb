@@ -2262,7 +2262,7 @@ class Converter < ::Prawn::Document
           font_color: @theme.toc_dot_leader_font_color || @font_color,
           font_style: dot_leader_font_style,
           levels: ((dot_leader_l = @theme.toc_dot_leader_levels) == 'none' ? ::Set.new :
-              (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (1..num_levels).to_set)),
+              (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (0..num_levels).to_set)),
           text: (dot_leader_text = @theme.toc_dot_leader_content || DotLeaderTextDefault),
           width: dot_leader_text.empty? ? 0 : (width_of dot_leader_text),
           # TODO spacer gives a little bit of room between dots and page number
