@@ -43,7 +43,7 @@ title_page_authors_margin_top: 12
 outline_list_indent: 30
 outline_list_item_spacing: 6
 description_list_description_indent: 30
-description_list_term_font_style: normal
+description_list_term_font_style: bold
 description_list_term_spacing: 4
 block_margin_top: 0
 block_margin_bottom: 12
