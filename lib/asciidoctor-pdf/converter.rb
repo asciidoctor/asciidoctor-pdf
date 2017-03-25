@@ -717,28 +717,68 @@ class Converter < ::Prawn::Document
   alias :convert_quote :convert_quote_or_verse
   alias :convert_verse :convert_quote_or_verse
 
+  def convert_contents_sidebar node
+    pad_box @theme.sidebar_padding do
+      if node.title?
+        theme_font :sidebar_title do
+          # QUESTION should we allow margins of sidebar title to be customized?
+          layout_heading node.title, align: (@theme.sidebar_title_align || @theme.base_align).to_sym, margin_top: 0
+        end
+      end
+      theme_font :sidebar do
+        convert_content_for_block node
+      end
+    end
+  end
+
   def convert_sidebar node
     add_dest_for_block node if node.id
     theme_margin :block, :top
     keep_together do |box_height = nil|
-      if box_height
-        float do
-          bounding_box [0, cursor], width: bounds.width, height: box_height do
-            theme_fill_and_stroke_bounds :sidebar
+      # FIXME? Have to draw graphics once before content to get accurate box_height.
+      # This is overwritten by the theme_fill_and_stroke_bounds command, so
+      # needs drawing twice.
+      # Unfortunately the text is physically in the document twice, so when
+      # searching for text it will be found in the same position twice.
+      # This is not great, but better than it just not working.
+      # A better fix would be to pre-calc the page and y offset by using the
+      # "dry_run" attribute to the pdf render command, but that requires
+      # more invasive changes to asciidoctor-pdf's rendering backend.
+
+      # Save state, then draw the box once to get the new y offset and position.
+      start_page_number = page_number
+      start_cursor = end_cursor = cursor
+      save_graphics_state do
+        convert_contents_sidebar node
+        end_cursor = cursor
+      end
+
+      # Go back to the start and draw the background box.
+      go_to_page start_page_number
+      move_cursor_to start_cursor
+      save_graphics_state do
+        if box_height
+          page_spread = (end_page_number = page_number) - start_page_number + 1
+          page_spread.times do |i|
+            if i == 0
+              y_draw = cursor
+              b_height = page_spread > 1 ? y_draw : (y_draw - end_cursor)
+            else
+              bounds.move_past_bottom
+              y_draw = cursor
+              b_height = page_spread - 1 == i ? (y_draw - end_cursor) : y_draw
+            end
+            bounding_box [0, y_draw], width: bounds.width, height: b_height do
+              theme_fill_and_stroke_bounds :sidebar
+            end
           end
         end
       end
-      pad_box @theme.sidebar_padding do
-        if node.title?
-          theme_font :sidebar_title do
-            # QUESTION should we allow margins of sidebar title to be customized?
-            layout_heading node.title, align: (@theme.sidebar_title_align || @base_align).to_sym, margin_top: 0
-          end
-        end
-        theme_font :sidebar do
-          convert_content_for_block node
-        end
-      end
+
+      # Go back to the start and draw the text (again)
+      go_to_page start_page_number
+      move_cursor_to start_cursor
+      convert_contents_sidebar node
     end
     theme_margin :block, :bottom
   end
