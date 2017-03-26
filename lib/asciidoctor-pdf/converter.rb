@@ -1,6 +1,7 @@
 # encoding: UTF-8
 # TODO cleanup imports...decide what belongs in asciidoctor-pdf.rb
 require 'prawn'
+require_relative 'ttfunk_ext'
 begin
   require 'prawn/gmagick'
 rescue LoadError
@@ -1850,9 +1851,8 @@ class Converter < ::Prawn::Document
   end
 
   def convert_inline_button node
-    # NOTE ttfunk 1.5.0 chokes when we use NarrowNoBreakSpace
-    #%(<strong>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</strong>)
-    %(<strong>[#{NoBreakSpace}#{node.text}#{NoBreakSpace}]</strong>)
+    %(<strong>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</strong>)
+    #%(<strong>[#{NoBreakSpace}#{node.text}#{NoBreakSpace}]</strong>)
   end
 
   def convert_inline_callout node
