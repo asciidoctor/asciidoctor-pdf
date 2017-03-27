@@ -8,8 +8,13 @@
 
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
 
-* fix theming guide regarding table striping
-
+* toclevels=0 should show parts only (to be consistent with HTML); currently shows nothing (#783)
+* define sum on core_ext/array to optimize for Ruby 2.4
+* allow border bottom of table header row to be set by theme
+* implement SVG fit for background image (#765)
+* vertically center background image by default (yes?)
+* stroke and fill multi-page sidebar block (#259) and example block (#362)
+ ** see PR
 * part/chapter/section start pages are calculated twice, once for each running content; should be shared
  ** probably need to introduce a model object to hold the cache
 * UPSTREAM: highlighting of CSS w/ rouge seems messed up; don't recognize keywords
@@ -20,10 +25,13 @@
  ** add broader character range to monospace font so we can drop fallback font by default (#282)
  ** consider having a fallback for prose and fallback for literal
 * should we drop "<font>" handler in formatted text transform?
+* FILE ISSUE: ttfunk 1.5.0 chokes on narrow no-break space char \u202f
 * implement text transform for running content (#702)
 * implement start line number in source listing (rouge) (#752)
  ** shouldn't this be fixed in core at the same time? (core #1742)
 * implement line highlighting in rouge (#681)
+* remove hack to add trailing endline to source for rouge
+* should we allow the template/format of the line number in the source listing to be controlled using a sprintf template?
 * only nest outline inside of root if doctype=article (still valid?)
 * warn if image in running content can't be found (#731)
  ** only report failure to embed image in running content once
@@ -153,6 +161,7 @@
 * space around inline anchors/index entries doesn't get collapsed by text formatter
 * add support for format attribute on image macro to image-related attributes such as title-page-background-image
  ** support explicit image format for cover page image and page background image
+* allow background image to be sized and positioned using attributes
 * introduce abstract-title attribute to complement preface-title?
 * need some sort of post_construct method for converter that receives document
  ** inline convert methods can get called before init_pdf
@@ -166,6 +175,7 @@
 * FILE ISSUE: autowidth on table doesn't work for multi-line content (prawn-table bases width calculation on normalized value)
  ** table ends up being stretched even though it doesn't need to be
  ** I don't know a way to determine how much width a block of rendered content occupies
+ ** see https://github.com/prawnpdf/prawn-table/issues/73
 * table logic: does the layout_table_caption have to be inside the table block? can we pre-calculate the actual width for the caption? does the table offer a callback we can use to keep the caption on the same page as the table?
 * introduce object to store/organize running content data and specs
 * QUESTION: should theme font handle hierarchical keys (either explicitly or implicitly)
@@ -176,9 +186,9 @@
 * FILE ISSUE: when split source listing, add top padding to bounding box (or is it the line metrics top?)
  ** perhaps this has to do with the a miscalculation in dry run when not starting from same y position?
  ** separate theme control for listing vs literal block (and maybe source too)
-* stroke and fill multi-page sidebar block (#259) and example block (#362)
 * support URL images in running content (need to delegate to resolve_image_path)
 * add feature to number bullets according to section number (needed for OpenDevise agreements)
+ ** allow ordered list marker to be prefixed by section number (a global setting?)
 * outline should link to title page if there's a cover page (skip cover page and ensuing blank page)
 * don't allow title page content to jump to next page
 * might be better to organize fragments of source chunks by lines (and pass that around) to simplify post-processing
@@ -203,7 +213,6 @@
  ** the problem here is that Prawn is allowing breaks at the boundaries of text fragments; it should only look at the contents
 * allow top as alternative to margin_top for all elements on title page (#431)
 * swallowing exceptions! (any use of e.message in a string is dangerous)
-* allow ordered list marker to be prefixed by section number (a global setting?)
 * conum not aligned vertically with callout text (perhaps too small?)
 * conum should never wrap (push it into the text if necessary)
 * decouple theme settings for section titles and discrete headings
@@ -216,7 +225,7 @@
 * be more specific in theming guide as to where prose_margin_top and prose_margin_bottom apply
 * allow valign value to be a number (requires change to Prawn)
 * allow background color to be set for chapter / heading
-* allow border to be set around block image
+* allow border to be set around block image (#767)
 * file issue in prawn to dispatch to image handler for images it doesn't know about
 * add brief mention in theming guide that deeper customizations can be achieved by extending the converter
  ** see sandbox/asciidoctor_pdf_extensions.rb
@@ -324,7 +333,6 @@
 * align caption to match alignment of block image
 * make conum glyphs configurable in theme (use reference table to resolve)
 * CJK and/or multilingual support (see https://github.com/chloerei/asciidoctor-pdf-cjk)
- ** document this in the README
 * description list term should keep together with content (file issue)
 * allow font properties to be set for lists (description_list, outline_list)
 * remove pdfmarks file after optimizing
@@ -437,6 +445,7 @@
  ** later on, initialize_wrap drops fragment with empty text
 * use term "page number label" to refer to the visible, printed page number (not the implicit page number)
 * vertical alignment of text doesn't work properly in Prawn; better to calculate alignment manually, if possible
+* width_of_string returns a value from the font horizontal metrics map even if glyph is not present in font
 
 == Snippets
 
