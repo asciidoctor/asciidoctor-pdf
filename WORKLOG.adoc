@@ -8,6 +8,9 @@
 
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
 
+* look where else we should be using advance_page instead of start_new_page
+ ** once we fix nested keep_together blocks, we'll need to use advance_page instead of start_new_page
+* nested keep_together blocks are broken; perhaps because we are using the same scratch document?
 * toclevels=0 should show parts only (to be consistent with HTML); currently shows nothing (#783)
 * define sum on core_ext/array to optimize for Ruby 2.4
 * allow border bottom of table header row to be set by theme
@@ -66,6 +69,7 @@
 * height of listing block not calculated correctly when string of contiguous characters exceeds length of line
  ** put listing block with very long line inside of sidebar; see that sidebar height is incorrect (too large)
  ** is this because source highlighting is not done in scratch document?
+* add line swell when drawing dashed line on listing block
 * rework resolve_image_path API so it's more logical; override based on type of first argument; document as option
 * rename text-alignment attribute to text-align? (change is within alpha.14, so still a chance to change)
 * report cursor / bounding box bug in column_box
@@ -132,7 +136,9 @@
  .. if less than one page, return calculation (similar to what we do now)
  .. if greater than one page, clear on_page_create; move to y offset of original and start dry run again; fix calculation
  .. (if not keeping together, we can skip 1 and 2)
-* rename "convert_content_for_" since it can collide with existing blocks
+ .. might be able to avoid dry run for listing/literal in obvious cases; engineering estimate
+* lines in a paragraph that splits across a page doesn't have proper line height shift
+* rename "convert_content_for_" since it can collide with existing blocks; don't start with "convert_"
 * don't orphan block title (make sure anchor stays with start of block)
 * QUESTION should we report full image path of gif in warning message when prawn-gmagick is not available?
 * QUESTION should we add destination to top of imported PDF page?
@@ -184,8 +190,8 @@
  ** allow image to span width of page (role=canvas, role=canvas-x or role=canvas-y); if role is canvas or canvas-y, then it does not consume height
  ** partially addressed by vw units
 * FILE ISSUE: when split source listing, add top padding to bounding box (or is it the line metrics top?)
- ** perhaps this has to do with the a miscalculation in dry run when not starting from same y position?
- ** separate theme control for listing vs literal block (and maybe source too)
+ ** actually, this has to do with the a miscalculation in dry run when not starting from same y position
+* stroke and fill multi-page sidebar block (#259) and example block (#362)
 * support URL images in running content (need to delegate to resolve_image_path)
 * add feature to number bullets according to section number (needed for OpenDevise agreements)
  ** allow ordered list marker to be prefixed by section number (a global setting?)
@@ -217,6 +223,7 @@
 * conum should never wrap (push it into the text if necessary)
 * decouple theme settings for section titles and discrete headings
 * decouple listing/literal/source theme settings; currently all under code
+ ** separate theme control for listing vs literal block (and maybe source too)
 * replace explicit char ranges with classes in regexp (e.g., [[:word:]] or \w)
 * devise a way to specify a value as a string literal (variable replacement only) in theme
 * apply calculated theme values after loading?
@@ -362,7 +369,7 @@
 * honor font defs in SVG (to get M+ 1p); prawn-svg supports loading fonts; need to pass fonts to prawn-svg
 * should we support % as a unit in theme (divides by 100 and sets float value)?
 * disable monospace font color (and family?) in headings
-* add source language to upper-left corner of listing block
+* add source language to upper-right corner of listing block
 * implement quote style from default Asciidoctor stylesheet
 * reorganize Prawn extensions (see prawn-table for example)
 * rename "theme" to "style"?
@@ -390,7 +397,6 @@
 * don't create title page for article doctype (#95, #105)
  ** only create title page if doctype=book
 * allow character spacing to be controlled by theme
-* might be able to avoid dry run for listing/literal in obvious cases; engineering estimate
 * allow pdf-page-margin to be set in document
  ** intended primarily for image slideshows
  ** this is slighly more complicated now that we have mirror margins; perhaps can't set those from document?
