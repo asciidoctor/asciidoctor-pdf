@@ -546,7 +546,7 @@ class Converter < ::Prawn::Document
           if (transform = @text_transform) && transform != 'none'
             label_text = transform_text label_text, transform
           end
-          label_width = width_of label_text
+          label_width = rendered_width_of_string label_text
           label_width = label_min_width if label_min_width && label_min_width > label_width
         end
       end
@@ -802,13 +802,15 @@ class Converter < ::Prawn::Document
   end
 
   def convert_colist_item node
-    marker_width = width_of %(#{conum_glyph 1}x)
-
-    float do
-      bounding_box [0, cursor], width: marker_width do
-        @list_numbers << (index = @list_numbers.pop).next
-        theme_font :conum do
-          layout_prose index, align: :center, line_height: @theme.conum_line_height, inline_format: false, margin: 0
+    marker_width = nil
+    theme_font :conum do
+      marker_width = rendered_width_of_string %(#{conum_glyph 1}x)
+      float do
+        bounding_box [0, cursor], width: marker_width do
+          @list_numbers << (index = @list_numbers.pop).next
+          theme_font :conum do
+            layout_prose index, align: :center, line_height: @theme.conum_line_height, inline_format: false, margin: 0
+          end
         end
       end
     end
@@ -923,7 +925,7 @@ class Converter < ::Prawn::Document
         list_indent = 0
       elsif (list_indent = @theme.outline_list_indent) > 0
         # no-bullet aligns text with left-hand side of bullet position (as though there's no bullet)
-        list_indent = [list_indent - (width_of %(\u2022x)), 0].max
+        list_indent = [list_indent - (rendered_width_of_string %(\u2022x)), 0].max
       end
     else
       list_indent = @theme.outline_list_indent
@@ -967,8 +969,8 @@ class Converter < ::Prawn::Document
     end
 
     if marker
-      marker_width = width_of marker
-      start_position = -marker_width + -(width_of 'x')
+      marker_width = rendered_width_of_string marker
+      start_position = -marker_width + -(rendered_width_of_char 'x')
       float do
         flow_bounding_box start_position, width: marker_width do
           layout_prose marker,
@@ -2290,10 +2292,10 @@ class Converter < ::Prawn::Document
           levels: ((dot_leader_l = @theme.toc_dot_leader_levels) == 'none' ? ::Set.new :
               (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (0..num_levels).to_set)),
           text: (dot_leader_text = @theme.toc_dot_leader_content || DotLeaderTextDefault),
-          width: dot_leader_text.empty? ? 0 : (width_of dot_leader_text),
+          width: dot_leader_text.empty? ? 0 : (rendered_width_of_string dot_leader_text),
           # TODO spacer gives a little bit of room between dots and page number
           spacer: { text: NoBreakSpace, size: (spacer_font_size = @font_size * 0.25) },
-          spacer_width: (width_of NoBreakSpace, size: spacer_font_size)
+          spacer_width: (rendered_width_of_char NoBreakSpace, size: spacer_font_size)
         }
       end
       line_metrics = calc_line_metrics @theme.toc_line_height
@@ -2344,7 +2346,8 @@ class Converter < ::Prawn::Document
           move_cursor_to start_cursor
           if dot_leader[:width] > 0 && (dot_leader[:levels].include? sect.level)
             pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
-            pgnum_label_width = width_of pgnum_label
+            pgnum_label_width = rendered_width_of_string pgnum_label
+            # WARNING width_of is not accurate if string must use characters from fallback font
             sect_title_width = width_of sect_title, inline_format: true
             save_font do
               # NOTE the same font is used for dot leaders throughout toc
@@ -2953,6 +2956,32 @@ class Converter < ::Prawn::Document
       end
     end
     line_widths.max
+  end
+
+  # Compute the rendered width of a string, taking fallback fonts into account
+  def rendered_width_of_string str, opts = {}
+    if str.length == 1
+      rendered_width_of_char str, opts
+    elsif (chars = str.each_char).all? {|char| font.glyph_present? char }
+      width_of_string str, opts
+    else
+      char_widths = chars.map {|char| rendered_width_of_char char, opts }
+      char_widths.reduce(&:+) + (char_widths.length * character_spacing)
+    end
+  end
+
+  # Compute the rendered width of a char, taking fallback fonts into account
+  def rendered_width_of_char char, opts = {}
+    if @fallback_fonts.empty? || (font.glyph_present? char)
+      width_of_string char, opts
+    else
+      @fallback_fonts.each do |fallback_font|
+        font fallback_font do
+          return width_of_string char, opts if font.glyph_present? char
+        end
+      end
+      width_of_string char, opts
+    end
   end
 
   # TODO document me, esp the first line formatting functionality
