@@ -749,9 +749,47 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
     keep_together do |box_height = nil|
       if box_height
+        # FIXME due to the calculation error logged in #789, we must advance page even when content is split across pages
+        advance_page if box_height > cursor && !at_page_top?
         float do
-          bounding_box [0, cursor], width: bounds.width, height: box_height do
-            theme_fill_and_stroke_bounds :sidebar
+          # TODO move the multi-page logic to theme_fill_and_stroke_bounds
+          if (b_width = @theme.sidebar_border_width || 0) > 0 && (b_color = @theme.sidebar_border_color)
+            if b_color == @page_bg_color # let page background cut into sidebar background
+              b_gap_color, b_shift = @page_bg_color, b_width
+            elsif (b_gap_color = @theme.sidebar_background_color) && b_gap_color != b_color
+              b_shift = 0
+            else # let page background cut into border
+              b_gap_color, b_shift = @page_bg_color, 0
+            end
+          else # let page background cut into sidebar background
+            b_width = 0.5 if b_width == 0
+            b_shift, b_gap_color = b_width * 0.5, @page_bg_color
+          end
+          b_radius = (@theme.sidebar_border_radius || 0) + b_width
+          initial_page, remaining_height = true, box_height
+          while remaining_height > 0
+            advance_page unless initial_page
+            fragment_height = [(available_height = cursor), remaining_height].min
+            bounding_box [0, available_height], width: bounds.width, height: fragment_height do
+              theme_fill_and_stroke_bounds :sidebar
+              unless b_width == 0
+                indent b_radius, b_radius do
+                  move_down b_shift
+                  # dashed line to indicate continuation from previous page; swell line to cover background
+                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
+                  move_up b_shift
+                end unless initial_page
+                if remaining_height > fragment_height
+                  move_down fragment_height - b_shift
+                  indent b_radius, b_radius do
+                    # dashed line to indicate continuation to next page; swell line to cover background
+                    stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
+                  end
+                end
+              end
+            end
+            remaining_height -= fragment_height
+            initial_page = false
           end
         end
       end
@@ -792,7 +830,7 @@ class Converter < ::Prawn::Document
     line_metrics = calc_line_metrics @theme.base_line_height
     node.items.each_with_index do |item, idx|
       # FIXME extract to an ensure_space (or similar) method; simplify
-      start_new_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
+      advance_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
       convert_colist_item item
     end
     @list_numbers.pop
@@ -831,7 +869,7 @@ class Converter < ::Prawn::Document
       terms = [*terms]
       # NOTE don't orphan the terms, allow for at least one line of content
       # FIXME extract ensure_space (or similar) method
-      start_new_page if cursor < @theme.base_line_height_length * (terms.size + 1)
+      advance_page if cursor < @theme.base_line_height_length * (terms.size + 1)
       terms.each do |term|
         layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
       end
@@ -933,7 +971,7 @@ class Converter < ::Prawn::Document
     indent list_indent do
       node.items.each do |item|
         # FIXME extract to an ensure_space (or similar) method; simplify
-        start_new_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
+        advance_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
         convert_outline_list_item item, item.complex?
       end
     end
@@ -1067,7 +1105,7 @@ class Converter < ::Prawn::Document
           # NOTE shrink image so it fits within available space; group image & caption
           if (rendered_h = svg_size.output_height) > (available_h = cursor - caption_h)
             unless pinned || at_page_top?
-              start_new_page
+              advance_page
               available_h = cursor - caption_h
             end
             if rendered_h > available_h
@@ -1096,7 +1134,7 @@ class Converter < ::Prawn::Document
           # NOTE shrink image so it fits within available space; group image & caption
           if rendered_h > (available_h = cursor - caption_h)
             unless pinned || at_page_top?
-              start_new_page
+              advance_page
               available_h = cursor - caption_h
             end
             if rendered_h > available_h
@@ -1770,7 +1808,7 @@ class Converter < ::Prawn::Document
 
   # NOTE to insert sequential page breaks, you must put {nbsp} between page breaks
   def convert_page_break node
-    start_new_page unless at_page_top?
+    advance_page unless at_page_top?
   end
 
   def convert_index_section node

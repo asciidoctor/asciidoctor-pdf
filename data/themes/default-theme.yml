@@ -190,10 +190,10 @@ prose:
   margin_top: $block_margin_top
   margin_bottom: $block_margin_bottom
 sidebar:
-  border_color: $page_background_color
+  background_color: eeeeee
+  border_color: e1e1e1
   border_radius: $base_border_radius
   border_width: $base_border_width
-  background_color: eeeeee
   # FIXME reenable padding bottom once margin collapsing is implemented
   padding: [$vertical_rhythm, $vertical_rhythm * 1.25, 0, $vertical_rhythm * 1.25]
   title:
