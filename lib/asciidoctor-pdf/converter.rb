@@ -279,6 +279,29 @@ class Converter < ::Prawn::Document
   end
 
   def build_pdf_options doc, theme
+    case (page_margin = (doc.attr 'pdf-page-margin') || theme.page_margin)
+    when ::String
+      if page_margin.empty?
+        page_margin = nil
+      elsif (page_margin.start_with? '[') && (page_margin.end_with? ']')
+        if (page_margin = page_margin[1...-1].rstrip).empty?
+          page_margin = [0]
+        else
+          if (page_margin = page_margin.split ',', -1).length > 4
+            page_margin = page_margin[0..3]
+          end
+          page_margin = page_margin.map {|v| str_to_pt v.rstrip }
+        end
+      else
+        page_margin = [(str_to_pt page_margin)]
+      end
+    when ::Array
+      page_margin = page_margin[0..3] if page_margin.length > 4
+      page_margin = page_margin.map {|v| ::Numeric === v ? v : (str_to_pt v.to_s) }
+    else
+      page_margin = nil
+    end
+
     page_size = if (doc.attr? 'pdf-page-size') && (m = PageSizeRx.match(doc.attr 'pdf-page-size'))
       # e.g, [8.5in, 11in]
       if m[1]
@@ -325,10 +348,10 @@ class Converter < ::Prawn::Document
     {
       #compress: true,
       #optimize_objects: true,
-      info: (build_pdf_info doc),
-      margin: theme.page_margin,
+      margin: (page_margin || 36),
       page_size: (page_size || 'A4'),
       page_layout: (page_layout || :portrait),
+      info: (build_pdf_info doc),
       skip_page_creation: true,
       text_formatter: (FormattedText::Formatter.new theme: theme)
     }

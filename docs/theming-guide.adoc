@@ -22,7 +22,6 @@ ifdef::backend-pdf[:conum-guard-yaml: # #]
 
 ////
 Topics remaining to document:
-* document which attributes can be set in document (pdf-page-size, front-cover-image, back-cover-image, etc) (issue #428)
 * line height and line height length (and what that all means)
 * title page layout / title page images (logo & background)
 * document that unicode escape sequences can be used inside double-quoted strings
@@ -3396,6 +3395,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |pdf-page-layout
 |portrait {vbar} landscape
 |:pdf-page-layout: landscape
+
+|pdf-page-margin
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>>
+|:pdf-page-margin: [1in, 0.5in]
 
 |pdf-page-size
 |https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width, height]>>
