@@ -727,12 +727,41 @@ class Converter < ::Prawn::Document
     keep_together do |box_height = nil|
       if box_height
         float do
+          # TODO move the multi-page logic to theme_fill_and_stroke_bounds
+          if (b_width = @theme.sidebar_border_width || 0) > 0 && (b_color = @theme.sidebar_border_color)
+            if b_color == @page_bg_color # let page background cut into sidebar background
+              b_gap_color, b_shift = @page_bg_color, b_width
+            elsif (b_gap_color = @theme.sidebar_background_color) && b_gap_color != b_color
+              b_shift = 0
+            else # let page background cut into border
+              b_gap_color, b_shift = @page_bg_color, 0
+            end
+          else # let page background cut into sidebar background
+            b_width = 0.5 if b_width == 0
+            b_shift, b_gap_color = b_width * 0.5, @page_bg_color
+          end
+          b_radius = (@theme.sidebar_border_radius || 0) + b_width
           initial_page, remaining_height = true, box_height
           while remaining_height > 0
             start_new_page unless initial_page
             fragment_height = [(available_height = cursor), remaining_height].min
             bounding_box [0, available_height], width: bounds.width, height: fragment_height do
               theme_fill_and_stroke_bounds :sidebar
+              unless b_width == 0
+                indent b_radius, b_radius do
+                  move_down b_shift
+                  # dashed line to indicate continuation from previous page; swell line to cover background
+                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
+                  move_up b_shift
+                end unless initial_page
+                if remaining_height > fragment_height
+                  move_down fragment_height - b_shift
+                  indent b_radius, b_radius do
+                    # dashed line to indicate continuation to next page; swell line to cover background
+                    stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
+                  end
+                end
+              end
             end
             remaining_height -= fragment_height
             initial_page = false
