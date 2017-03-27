@@ -8,7 +8,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == 1.5.0.alpha.15 (2017-03-27) - @mojavelinux
 
 * fix compatibility with Prawn 2.2.0 (#775)
-* add workaround for TTFunk bug when font table has empty data
+* add workaround for TTFunk bug when font table has empty data (#619, #651)
 * take fallback font into account when calculating width of string (#651)
 * fill and stroke bounds of sidebar across all pages (#259) (@TobiasHector)
 * allow page margin to be set using pdf-page-margin attribute (#749)
