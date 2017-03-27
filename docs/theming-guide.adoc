@@ -2806,7 +2806,7 @@ The keys in this category control the arrangement and style of tables and table 
   header_cell:
     text_transform: uppercase
 |===
-. Applied to even rows by default; controlled using `stripe` attribute (even, odd, all, none) on table.
+. Applied to even rows by default; controlled using `stripes` attribute (even, odd, all, none) on table.
 //. `<parity>` can be `odd` (odd rows) or `even` (even rows).
 
 [#keys-table-of-contents]
