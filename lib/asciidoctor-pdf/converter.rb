@@ -726,6 +726,8 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
     keep_together do |box_height = nil|
       if box_height
+        # FIXME due to the calculation error logged in #789, we must advance page even when content is split across pages
+        advance_page if box_height > cursor && !at_page_top?
         float do
           # TODO move the multi-page logic to theme_fill_and_stroke_bounds
           if (b_width = @theme.sidebar_border_width || 0) > 0 && (b_color = @theme.sidebar_border_color)
@@ -743,7 +745,7 @@ class Converter < ::Prawn::Document
           b_radius = (@theme.sidebar_border_radius || 0) + b_width
           initial_page, remaining_height = true, box_height
           while remaining_height > 0
-            start_new_page unless initial_page
+            advance_page unless initial_page
             fragment_height = [(available_height = cursor), remaining_height].min
             bounding_box [0, available_height], width: bounds.width, height: fragment_height do
               theme_fill_and_stroke_bounds :sidebar
