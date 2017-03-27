@@ -50,6 +50,7 @@ class Converter < ::Prawn::Document
   BlockAlignmentNames = ['left', 'center', 'right']
   AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
   ColumnPositions = [:left, :center, :right]
+  PageLayouts = [:portrait, :landscape]
   PageSides = [:recto, :verso]
   LF = %(\n)
   DoubleLF = %(\n\n)
@@ -278,15 +279,6 @@ class Converter < ::Prawn::Document
   end
 
   def build_pdf_options doc, theme
-    pdf_opts = {
-      #compress: true,
-      #optimize_objects: true,
-      info: (build_pdf_info doc),
-      margin: theme.page_margin,
-      page_layout: ((doc.attr 'pdf-page-layout') || theme.page_layout).to_sym,
-      skip_page_creation: true,
-    }
-
     page_size = if (doc.attr? 'pdf-page-size') && (m = PageSizeRx.match(doc.attr 'pdf-page-size'))
       # e.g, [8.5in, 11in]
       if m[1]
@@ -325,10 +317,21 @@ class Converter < ::Prawn::Document
       end
     end
 
-    pdf_opts[:page_size] = (page_size || 'A4')
+    if (page_layout = (doc.attr 'pdf-page-layout') || theme.page_layout).nil_or_empty? ||
+        !(PageLayouts.include?(page_layout = page_layout.to_sym))
+      page_layout = nil
+    end
 
-    pdf_opts[:text_formatter] ||= FormattedText::Formatter.new theme: theme
-    pdf_opts
+    {
+      #compress: true,
+      #optimize_objects: true,
+      info: (build_pdf_info doc),
+      margin: theme.page_margin,
+      page_size: (page_size || 'A4'),
+      page_layout: (page_layout || :portrait),
+      skip_page_creation: true,
+      text_formatter: (FormattedText::Formatter.new theme: theme)
+    }
   end
 
   # FIXME PdfMarks should use the PDF info result
