@@ -736,13 +736,12 @@ module Extensions
     end
   end
 
-  #def advance_or_start_new_page options = {}
-  #  if last_page?
-  #    start_new_page options
-  #  else
-  #    go_to_page page_number + 1
-  #  end
-  #end
+  # This method is a smarter version of start_new_page. It calls start_new_page
+  # if the current page is the last page of the document. Otherwise, it simply
+  # advances to the next existing page.
+  def advance_page
+    last_page? ? start_new_page : (go_to_page page_number + 1)
+  end
 
   # Start a new page without triggering the on_page_create callback
   #
