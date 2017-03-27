@@ -1,5 +1,5 @@
 module Asciidoctor
 module Pdf
-  VERSION = '1.5.0.alpha.15.dev'
+  VERSION = '1.5.0.alpha.15'
 end
 end

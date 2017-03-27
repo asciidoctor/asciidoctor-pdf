@@ -5,6 +5,37 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== 1.5.0.alpha.15 (2017-03-27) - @mojavelinux
+
+* fix compatibility with Prawn 2.2.0 (#775)
+* add workaround for TTFunk bug when font table has empty data
+* take fallback font into account when calculating width of string (#651)
+* fill and stroke bounds of sidebar across all pages (#259) (@TobiasHector)
+* allow page margin to be set using pdf-page-margin attribute (#749)
+* implement none, no-bullet and unstyled unordered list styles
+* add dots to all levels in TOC if toc_dot_leader_levels is all
+* use bold style for description list term by default (#776)
+* always escape index term text (#761)
+* don't crash if color value on text span is invalid
+* implement start line number for source listing (Rouge) (#752)
+* enable "start inline" option when highlighting PHP (#755)
+* persuade CodeRay to handle html+ source languages
+* introduce stripes attribute to table to control zebra-striping (#724)
+* allow theme to set style of table border and grid (#766)
+* allow theme to set text transform on header cell in table body (#750)
+* set top border width of first body row to match bottom border width of header row
+* don't add TOC if empty (#747)
+* optimize code that generates outline level
+* don't recalculate header_cell_data for each row
+* use slightly more efficient way to find Pygments lexer
+* upgrade rouge to 2.0.7
+* upgrade prawn-templates to 0.0.5
+* revise information in theming guide pertaining to custom fonts
+* document in README how to get full support for CJK languages
+* document in theming guide that Asciidoctor PDF subsets font when embedding
+* document that background images are scaled to fit bounds of page
+* add note in theming guide about using double quoted strings
+
 == 1.5.0.alpha.14 (2017-02-05) - @mojavelinux
 
 * add support for AsciiDoc table cells (including nested tables) (#6)

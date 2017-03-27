@@ -1,5 +1,6 @@
 = Asciidoctor PDF: A native PDF converter for AsciiDoc
 Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://github.com/graphitefriction[@graphitefriction]>
+v1.5.0.alpha.15, 2017-03-27
 // Settings:
 :experimental:
 :idprefix:
@@ -131,10 +132,8 @@ Therefore, to use Asciidoctor PDF with Ruby 1.9.3, you must first explicitly ins
 
 You can then proceed with installation of Asciidoctor PDF on Ruby 1.9.3.
 
-For all other versions of Ruby, you have to install Prawn 2.1.0.
-The latest release of Prawn is not compatible with the latest release of Asciidoctor PDF (or its own dependencies, for that matter).
-
-  $ gem install prawn --version 2.1.0
+For all other versions of Ruby, you can simply install the Asciidoctor PDF gem.
+It will transitively install all required dependencies.
 ====
 
 === System Encoding
@@ -157,8 +156,7 @@ You can get {project-name} by <<install-the-published-gem,installing the publish
 === Install the Published Gem
 
 {project-name} is published as a pre-release on RubyGems.org.
-First, make sure you have install Prawn as explained in the <<Prerequisites,prerequisites>>.
-
+First, make sure you have satisfied the <<Prerequisites,prerequisites>>.
 Then, you can install the published gem using the following command:
 
  $ gem install asciidoctor-pdf --pre
