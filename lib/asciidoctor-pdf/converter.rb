@@ -66,7 +66,6 @@ class Converter < ::Prawn::Document
   NarrowSpace = %(\u2009)
   NarrowNoBreakSpace = %(\u202f)
   ZeroWidthSpace = %(\u200b)
-  HairSpace = %(\u200a)
   DummyText = %(\u0000)
   DotLeaderTextDefault = '. '
   EmDash = %(\u2014)
