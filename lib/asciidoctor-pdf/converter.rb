@@ -279,6 +279,11 @@ class Converter < ::Prawn::Document
 
   def build_pdf_options doc, theme
     case (page_margin = (doc.attr 'pdf-page-margin') || theme.page_margin)
+    when ::Array
+      page_margin = page_margin[0..3] if page_margin.length > 4
+      page_margin = page_margin.map {|v| ::Numeric === v ? v : (str_to_pt v.to_s) }
+    when ::Numeric
+      page_margin = [page_margin]
     when ::String
       if page_margin.empty?
         page_margin = nil
@@ -294,11 +299,6 @@ class Converter < ::Prawn::Document
       else
         page_margin = [(str_to_pt page_margin)]
       end
-    when ::Array
-      page_margin = page_margin[0..3] if page_margin.length > 4
-      page_margin = page_margin.map {|v| ::Numeric === v ? v : (str_to_pt v.to_s) }
-    when ::Numeric
-      page_margin = [page_margin]
     else
       page_margin = nil
     end
