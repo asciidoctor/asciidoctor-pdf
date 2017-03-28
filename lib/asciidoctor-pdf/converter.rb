@@ -297,6 +297,8 @@ class Converter < ::Prawn::Document
     when ::Array
       page_margin = page_margin[0..3] if page_margin.length > 4
       page_margin = page_margin.map {|v| ::Numeric === v ? v : (str_to_pt v.to_s) }
+    when ::Numeric
+      page_margin = [page_margin]
     else
       page_margin = nil
     end
