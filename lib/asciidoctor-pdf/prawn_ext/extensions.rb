@@ -785,6 +785,7 @@ module Extensions
   # TODO document me
   def dry_run &block
     scratch = get_scratch_document
+    # QUESTION should we use scratch.advance_page instead?
     scratch.start_new_page
     start_page_number = scratch.page_number
     start_y = scratch.y
@@ -815,7 +816,7 @@ module Extensions
     # NOTE technically, if we're at the page top, we don't even need to do the
     # dry run, except several uses of this method rely on the calculated height
     if total_height > available_space && !at_page_top? && total_height <= effective_page_height
-      start_new_page
+      advance_page
       started_new_page = true
     else
       started_new_page = false

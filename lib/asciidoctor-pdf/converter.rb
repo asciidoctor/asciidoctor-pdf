@@ -1367,7 +1367,7 @@ class Converter < ::Prawn::Document
             remaining_height = box_height - caption_height
             i = 0
             while remaining_height > 0
-              start_new_page if (started_new_page = i > 0)
+              advance_page if (started_new_page = i > 0)
               fill_height = [remaining_height, cursor].min
               bounding_box [0, cursor], width: bounds.width, height: fill_height do
                 theme_fill_and_stroke_bounds :code, background_color: bg_color_override
