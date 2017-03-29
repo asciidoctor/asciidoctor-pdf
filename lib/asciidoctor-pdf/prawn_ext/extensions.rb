@@ -693,14 +693,10 @@ module Extensions
     # prawn-templates sets text_rendering_mode to :unknown, which breaks running content; revert
     @text_rendering_mode = prev_text_rendering_mode
     if opts.fetch :advance, true
-      if last_page?
-        # NOTE set page size & layout explicitly in case imported page differs
-        # I'm not sure it's right to start a new page here, but unfortunately there's no other
-        # way atm to prevent the size & layout of the imported page from affecting subsequent pages
-        start_new_page size: prev_page_size, layout: prev_page_layout
-      else
-        go_to_page page_number + 1
-      end
+      # NOTE set page size & layout explicitly in case imported page differs
+      # I'm not sure it's right to start a new page here, but unfortunately there's no other
+      # way atm to prevent the size & layout of the imported page from affecting subsequent pages
+      advance_page size: prev_page_size, layout: prev_page_layout
     end
     nil
   end
@@ -739,8 +735,8 @@ module Extensions
   # This method is a smarter version of start_new_page. It calls start_new_page
   # if the current page is the last page of the document. Otherwise, it simply
   # advances to the next existing page.
-  def advance_page
-    last_page? ? start_new_page : (go_to_page page_number + 1)
+  def advance_page opts = {}
+    last_page? ? (start_new_page opts) : (go_to_page page_number + 1)
   end
 
   # Start a new page without triggering the on_page_create callback
