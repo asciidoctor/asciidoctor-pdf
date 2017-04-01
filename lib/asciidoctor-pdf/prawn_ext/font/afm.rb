@@ -1,4 +1,12 @@
 class Prawn::Font::AFM
+  FALLBACK_CHARS = {
+    %(\u200b) => '',
+    %(\u202f) => %(\u00a0),
+    %(\u2009) => ' ',
+    %(\u25e6) => '-',
+    %(\u25aa) => %(\u00b7)
+  }
+
   undef_method :normalize_encoding
 
   # Patch normalize_encoding method to handle conversion more gracefully.
@@ -7,7 +15,7 @@ class Prawn::Font::AFM
   # replaced with the logic "not" symbol and a warning is issued identifying
   # the text that cannot be converted.
   def normalize_encoding text
-    text.encode 'windows-1252'
+    text.encode 'windows-1252', fallback: FALLBACK_CHARS
   rescue ::Encoding::UndefinedConversionError
     warn 'The following text could not be fully converted to the Windows-1252 character set:'
     warn %(#{text.gsub(/^/, '| ').rstrip})
