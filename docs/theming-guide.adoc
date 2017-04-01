@@ -650,9 +650,9 @@ Asciidoctor PDF encodes the content into WINANSI when building the PDF.
 When using the built-in PDF (AFM) fonts on a block of content in your AsciiDoc document, any character that cannot be encoded to WINANSI is replaced with a logic "`not`" glyph (`&#172;`) and you'll see the following warning in your console:
 
  The following text could not be fully converted to the Windows-1252 character set:
- | <glyph>
+ | <string with unknown glyph>
 
-This behavior differs from the default behavior in Prawn.
+This behavior differs from the default behavior in Prawn, which simply crashes.
 
 For more information about how Prawn handles character encodings for built-in fonts, see https://github.com/prawnpdf/prawn/blob/master/CHANGELOG.md#vastly-improved-handling-of-encodings-for-pdf-built-in-afm-fonts[this note in the Prawn CHANGELOG].
 ****
@@ -765,8 +765,11 @@ This will allow you to use the same font names (aka families) in both your graph
 
 === Fallback Fonts
 
-If one of your fonts is missing a character that is used in a document, such as special symbols, you can tell Asciidoctor PDF to retrieve the character from a fallback font.
-You only need to specify one fallback font...typically one that has a full set of symbols.
+If a TrueType font is missing a character needed to render the document, such as a special symbol, you can have Asciidoctor PDF look for the character in a fallback font.
+You only need to specify a single fallback font, typically one that provides a full set of symbols.
+
+IMPORTANT: The fallback font is only used when the primary font is a TrueType font (i.e., TTF, DFont, TTC).
+Any glyph missing from an AFM font is simply replaced with the "`not`" glyph (`&#172;`).
 
 CAUTION: Using the fallback font slows down PDF generation slightly because it has to analyze every single character.
 It's use is not recommended for large documents.
@@ -817,9 +820,18 @@ font:
 
 TIP: If you are using more than one fallback font, add additional lines to the `fallbacks` key.
 
+Of course, make sure you've configured your theme to use your custom font:
+
+[source,yaml]
+----
+base:
+  font_family: Roboto
+----
+
 That's it!
 Now you're covered.
-You don't need to reference the fallback font anywhere else in your theme file to use it.
+If your custom font is missing a glyph, Asciidoctor PDF will look in your fallback font.
+You don't need to reference the fallback font anywhere else in your theme file.
 
 == Keys
 
