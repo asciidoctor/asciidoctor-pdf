@@ -2900,7 +2900,8 @@ class Converter < ::Prawn::Document
   def theme_font category, opts = {}
     result = nil
     # TODO inheriting from generic category should be an option
-    if (level = opts[:level])
+    if opts.key? :level
+      level = opts[:level]
       family = @theme[%(#{category}_h#{level}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family
       size = @theme[%(#{category}_h#{level}_font_size)] || @theme[%(#{category}_font_size)] || @theme.base_font_size
       style = @theme[%(#{category}_h#{level}_font_style)] || @theme[%(#{category}_font_style)]
@@ -3305,6 +3306,7 @@ class Converter < ::Prawn::Document
     scheme, address = uri.split UriSchemeBoundaryRx, 2
     address, scheme = scheme, address unless address
     address = address.gsub UriBreakCharsRx, UriBreakCharRepl
+    # NOTE require at least two characters after a break
     address.slice!(-2) if address[-2] == ZeroWidthSpace
     %(#{scheme}#{address})
   end
