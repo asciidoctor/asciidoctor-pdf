@@ -8,18 +8,26 @@
 
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
 
+* prawn-svg upgrade broke sizing of title logo image; perhaps others
+* document how to install Asciidoctor PDF for Ruby 2.0.0 (since Prawn now requires 2.1.0)
+* split out the background fill from PR 664 into a separate PR to merge sooner
+* apply logic for convert_sidebar to convert_example
+* implement SVG fit for background image (#765)
+* vertical centering in table cell w/ Noto Serif is off
+* import generate-font-subsets.pe script from Asciidoctor EPUB3; rename to generate-bundled-fonts.pe
+* if we assume that any block except a paragraph will "unfloat", we might be able to implement floating images; just mark the "jump to point" for any block that isn't a paragraph, restrict the width and write
+* have some sort of threshold for how close we get to bottom of page before advancing when starting new block
 * look where else we should be using advance_page instead of start_new_page
- ** once we fix nested keep_together blocks, we'll need to use advance_page instead of start_new_page
-* nested keep_together blocks are broken; perhaps because we are using the same scratch document?
+ ** do we really need advance_page when drawing background? isn't that always forging a new page?
 * toclevels=0 should show parts only (to be consistent with HTML); currently shows nothing (#783)
 * define sum on core_ext/array to optimize for Ruby 2.4
 * allow border bottom of table header row to be set by theme
-* implement SVG fit for background image (#765)
 * vertically center background image by default (yes?)
 * stroke and fill multi-page sidebar block (#259) and example block (#362)
  ** see PR
 * part/chapter/section start pages are calculated twice, once for each running content; should be shared
  ** probably need to introduce a model object to hold the cache
+* line height in TOC is too small if heading only contains monospaced text
 * UPSTREAM: highlighting of CSS w/ rouge seems messed up; don't recognize keywords
  ** compare with pygments
  ** rouge also incorrectly identifies an endline in a schemaLocation attribute as an error
@@ -27,8 +35,9 @@
  ** using fallback fonts significantly slows down Prawn because it checks every letter every time (see https://github.com/prawnpdf/prawn/blob/master/lib/prawn/text/formatted/box.rb#L427-L434)
  ** add broader character range to monospace font so we can drop fallback font by default (#282)
  ** consider having a fallback for prose and fallback for literal
+* transform table cell text inside correct font context (allows us to check the current font, such as in breakable_uri)
 * should we drop "<font>" handler in formatted text transform?
-* FILE ISSUE: ttfunk 1.5.0 chokes on narrow no-break space char \u202f
+* ttfunk 1.5.0 chokes on narrow no-break space char \u202f (patch applied; https://github.com/prawnpdf/ttfunk/issues/39)
 * implement text transform for running content (#702)
 * implement start line number in source listing (rouge) (#752)
  ** shouldn't this be fixed in core at the same time? (core #1742)
@@ -43,6 +52,7 @@
 * allow color and string template to be specified for alt text (#730)
 * if image fails to load, could draw a box with an X in it to indicate it's broken
 * enable fit=scale-down (or fit=contain) for title logo image; otherwise, just let it get clipped (will require passing at option to embed_image to prevent page from advancing)
+* add option to force margin (to apply even when at top of page)
 * make section depth for section-title attribute in running content configurable (#726)
 * add ability to set watermark_image which goes on top of each (non-imported) page instead of bottom (#727)
 * AsciiDoc table cell leaves padding below last block (due to no margin collapsing)
@@ -372,7 +382,7 @@
 * add source language to upper-right corner of listing block
 * implement quote style from default Asciidoctor stylesheet
 * reorganize Prawn extensions (see prawn-table for example)
-* rename "theme" to "style"?
+* rename "theme" to "style"? (or allow both?)
 * restrict custom theme path to jail (or load from load_path)
 * enforce jail on SVG option enable_file_requests_with_root
 * implement convert_toc
@@ -452,6 +462,7 @@
 * use term "page number label" to refer to the visible, printed page number (not the implicit page number)
 * vertical alignment of text doesn't work properly in Prawn; better to calculate alignment manually, if possible
 * width_of_string returns a value from the font horizontal metrics map even if glyph is not present in font
+* check for AFM font using: theme_font :link { font.unicode? }
 
 == Snippets
 
@@ -465,6 +476,7 @@ side_content[position] = %([#{attrs['alt'] || (::File.basename path, (::File.ext
 == Prawn Wishlist
 
 * fragment should be able to specify it's own width
+* test string with include? before gsub (for example, stripping zero-width spaces)
 
 == Known Issues
 
