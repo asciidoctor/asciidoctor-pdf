@@ -453,8 +453,9 @@ To perform this work, Asciidoctor delegates to the underlying libraries.
 {uri-prawn-svg}[prawn-svg] brings support for SVG images.
 Without any additional libraries, those are the only supported image file formats.
 
-If you need support for additional file formats, such as GIF or TIFF, you must install the {uri-prawn-gmagick}[prawn-gmagick] Ruby gem.
-prawn-gmagick is an extension for Prawn based on {uri-graphicsmagick}[GraphicsMagick] and brings supports all the formats recognized by that library.
+If you need support for additional image formats, such as GIF, TIFF, or interlaced PNG--and you don't want to convert those images to a supported format--you must install the {uri-prawn-gmagick}[prawn-gmagick] Ruby gem.
+prawn-gmagick is an extension for Prawn based on {uri-graphicsmagick}[GraphicsMagick] that adds support for all the image formats recognized by that library.
+prawn-gmagick has the added benefit of significantly reducing the time it takes to generate a PDF containing a lot of images.
 
 The prawn-gmagick gem uses native extensions to compile against GraphicsMagick.
 This system prerequisite limits installation to Linux and OSX.
