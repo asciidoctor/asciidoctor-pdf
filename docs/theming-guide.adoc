@@ -201,9 +201,13 @@ Any setting from an enclosing context, such as a sidebar, is skipped.
 === Variables
 
 To save you from having to type the same value in your theme over and over, or to allow you to base one value on another, the theme language supports variables.
-Variables consist of the key name preceded by a dollar (`$`) (e.g., `$base_font_size`).
+Variables consist of the key name preceded by a dollar sign (`$`) (e.g., `$base_font_size`).
 Any qualified key that has already been defined can be referenced in the value of another key.
 (In order words, as soon as the key is assigned, it's available to be used as a variable).
+
+IMPORTANT: Variables are defined from top to bottom (i.e., in document order).
+Therefore, a variable must be defined before it is referenced.
+In other words, the path the variable refers to must be *above* the usage of that variable.
 
 For example, once the following line is processed,
 
@@ -836,24 +840,27 @@ You don't need to reference the fallback font anywhere else in your theme file.
 == Keys
 
 This section lists all the keys that are available when creating a custom theme.
-The keys in this section are organized by category.
+The keys are organized by category.
 Each category represents a common prefix under which the keys are typically nested.
 
-TIP: Keys can be partioned and nested wherever an underscore (`_`) appears in the name.
-This nested structure is flatted when the theme is loaded.
+TIP: Keys can be nested wherever an underscore (`_`) appears in the name.
+This nested structure is for organizational purposes only.
+All keys are flatted when the theme is loaded (e.g., `align` nested under `base` becomes `base_align`).
 
 The converter uses the values of these keys to control how most elements are arranged and styled in the PDF.
 The default values listed in this section get inherited from the https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/base-theme.yml[base theme].
-(The https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml[default theme], which also inherits from the base theme, has a different set of values not shown in this guide).
+
+IMPORTANT: The https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml[default theme] has a different set of values which are not shown in this guide.
 
 When creating a theme, all keys are optional.
 Required keys are provided by the base theme.
-Therefore, you only have to assign values to keys you want to customize.
+Therefore, you only have to declare keys that you want to override.
 
 [#keys-page]
 === Page
 
 The keys in this category control the size, margins and background of each page (i.e., canvas).
+We recommended that you define this category before all other categories.
 
 NOTE: The background of the title page can be styled independently.
 See <<Title Page>> for details.
@@ -921,7 +928,9 @@ These margins and used when the value `prepress` is assigned to the `media` docu
 === Base
 
 The keys in this category provide generic theme settings and are often referenced throughout the theme file as variables.
-It's common to define additional keys in this category (e.g., `base_border_radius`) that serve as custom variables to help keep your theme DRY.
+We recommended that you define this category after the page category and before all other categories.
+
+NOTE: While it's common to define additional keys in this category (e.g., `base_border_radius`) to keep your theme DRY, we recommend using <<Custom Variables,custom variables>> instead.
 
 [cols="3,4,5l"]
 |===
