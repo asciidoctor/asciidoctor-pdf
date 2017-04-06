@@ -135,9 +135,21 @@ class ThemeLoader
   def expand_vars expr, vars
     if (idx = (expr.index '$'))
       if idx == 0 && expr =~ LoneVariableRx
-        vars[$1]
+        if vars.respond_to? $1
+          vars[$1]
+        else
+          warn %(asciidoctor: WARNING: unknown variable reference in PDF theme: $#{$1})
+          expr
+        end
       else
-        expr.gsub(VariableRx) { vars[$1] }
+        expr.gsub(VariableRx) {
+          if vars.respond_to? $1
+            vars[$1]
+          else
+            warn %(asciidoctor: WARNING: unknown variable reference in PDF theme: $#{$1})
+            $&
+          end
+        }
       end
     else
       expr
