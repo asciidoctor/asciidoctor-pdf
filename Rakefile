@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('lib/asciidoctor-pdf/version', File.dirname(__FILE__))
+require_relative 'lib/asciidoctor-pdf/version'
 
 require 'rake/clean'
 
