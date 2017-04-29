@@ -36,6 +36,9 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * document that background images are scaled to fit bounds of page
 * add note in theming guide about using double quoted strings
 
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.15[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.15[git tag]
+
 == 1.5.0.alpha.14 (2017-02-05) - @mojavelinux
 
 * add support for AsciiDoc table cells (including nested tables) (#6)
