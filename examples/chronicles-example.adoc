@@ -279,6 +279,7 @@ How about some source code that styles code? So meta!
 code {
   padding: 2px 4px;
   font-size: 90%;
+  font-weight: normal;
   color: #c7254e;
   white-space: nowrap !important;
   background-color: #f9f2f4;
