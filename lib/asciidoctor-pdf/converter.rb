@@ -2668,12 +2668,12 @@ class Converter < ::Prawn::Document
 
     pagenums_enabled = doc.attr? 'pagenums'
     attribute_missing_doc = doc.attr 'attribute-missing'
+    consider_physical_page_number = doc.attr?('physical-page-numbers')
     repeat((content_start_page..page_count), dynamic: true) do
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
       pgnum_label = page_number - skip
-      # QUESTION should we respect physical page number or just look at the content page number?
-      side = page_side pgnum_label
+      side = consider_physical_page_number ? page_side(page_number) : page_side(pgnum_label)
       # FIXME we need to have a content setting for chapter pages
       content_by_position = content_dict[side]
       colspec_by_position = colspec_dict[side]
