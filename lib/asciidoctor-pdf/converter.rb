@@ -3149,10 +3149,10 @@ class Converter < ::Prawn::Document
 
   # Resolve the system path of the specified image path.
   #
-  # Resolve and normalize the absolute system path of the specified image. If
-  # the image_path argument is not specified, the path is read from the target
-  # attribute of the specified document node. Resolve the path relative to the
-  # imagesdir if the relative_to_imagesdir option is specified (default: true).
+  # Resolve and normalize the absolute system path of the specified image,
+  # taking into account the imagesdir attribute. If an image path is not
+  # specified, the path is read from the target attribute of the specified
+  # document node.
   #
   # If the target is a URI and the allow-uri-read attribute is set on the
   # document, read the file contents to a temporary file and return the path to
