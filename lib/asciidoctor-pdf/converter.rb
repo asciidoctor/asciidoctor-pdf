@@ -1595,7 +1595,7 @@ class Converter < ::Prawn::Document
         when :literal
           # FIXME core should not substitute in this case
           cell_data[:content] = preserve_indentation((cell.instance_variable_get :@text), (node.document.attr 'tabsize'))
-          cell_data[:inline_format] = false
+          # NOTE the absence of the inline_format option implies it's disabled
           # QUESTION should we use literal_font_*, code_font_*, or introduce another category?
           cell_data[:font] = theme.code_font_family
           if (val = theme.code_font_size)
