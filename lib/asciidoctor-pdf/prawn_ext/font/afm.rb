@@ -7,7 +7,7 @@ class Prawn::Font::AFM
     %(\u25aa) => %(\u00b7)
   }
 
-  undef_method :normalize_encoding
+  remove_method :normalize_encoding
 
   # Patch normalize_encoding method to handle conversion more gracefully.
   #
