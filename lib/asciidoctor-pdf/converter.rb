@@ -1880,26 +1880,24 @@ class Converter < ::Prawn::Document
       end
     when :xref
       # NOTE non-nil path indicates this is an inter-document xref that's not included in current document
-      if (path = node.attr 'path', nil, false)
+      if (path = node.attributes['path'])
         # NOTE we don't use local as that doesn't work on the web
         # NOTE for the fragment to work in most viewers, it must be #page=<N> <= document this!
         %(<a href="#{node.target}">#{node.text || path}</a>)
-      else
-        if (refid = node.attr 'refid', nil, false)
-          anchor = derive_anchor_from_id refid
-          # NOTE reference table is not comprehensive (we don't yet catalog all inline anchors)
-          if (reftext = node.document.references[:ids][refid])
-            %(<a anchor="#{anchor}">#{node.text || reftext}</a>)
+      elsif (refid = node.attributes['refid'])
+        unless (text = node.text)
+          if (refs = node.document.references[:refs])
+            if ::Asciidoctor::AbstractNode === (ref = refs[refid])
+              text = ref.xreftext((@xrefstyle ||= (node.document.attr 'xrefstyle')))
+            end
           else
-            # NOTE we don't yet catalog all inline anchors, so we can't warn here (maybe after conversion is complete)
-            #source = $VERBOSE ? %( in source:\n#{node.parent.lines * "\n"}) : nil
-            #warn %(asciidoctor: WARNING: reference '#{refid}' not found#{source})
-            #%[(see #{node.text || %([#{refid}])})]
-            %(<a anchor="#{anchor}">#{node.text || "[#{refid}]"}</a>)
+            # Asciidoctor < 1.5.6
+            text = node.document.references[:ids][refid]
           end
-        else
-          %(<a anchor="#{node.document.attr 'pdf-anchor'}">#{node.text || '[^top]'}</a>)
         end
+        %(<a anchor="#{derive_anchor_from_id refid}">#{text || "[#{refid}]"}</a>)
+      else
+        %(<a anchor="#{node.document.attr 'pdf-anchor'}">#{node.text || '[^top]'}</a>)
       end
     when :ref
       # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
