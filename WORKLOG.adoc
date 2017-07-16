@@ -5,17 +5,33 @@
 * fix labels in issue tracker to match other projects; in particular, enhancement should be green.
 * start the README with a proper introduction to Asciidoctor PDF (and not so focused on Prawn)
 * setup asciidoctor-mathoid project, then mention it in the STEM support section
-
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
 
-* prawn-svg upgrade broke sizing of title logo image; perhaps others
+.1.5.0.alpha.16
+* support unnumbered and no-bullet style on ordered list
+ ** see https://github.com/asciidoctor/asciidoctor/pull/2286
+* fix warnings in Ruby 1.9.3
+* remove hack to add trailing endline to source for rouge (now fixed in rouge)
+ ** set minimum rouge version
 * document how to install Asciidoctor PDF for Ruby 2.0.0 (since Prawn now requires 2.1.0)
+
+//-
+* should we reroute String#downcase if unicode gem is loaded? this is required for natural cross references; or should we just document workaround?
+* if sourcemap is enabled, error messages should include whatever line information is available
+* CRITICAL: prawn-svg upgrade broke sizing of title logo image; blocking release
+ ** see https://github.com/mogest/prawn-svg/issues/96
+* Prawn reports unknown blank font if family is valid but style is invalid (see https://github.com/prawnpdf/prawn/issues/1022)
+* catch UnsupportedImageType and issue warning that suggests using prawn-gmagick; see sandbox/interlaced.png
+* something like prawn-gmagick in Java env
+* look for image in imagesoutdir if set and the image cannot otherwise be resolved
+* in follow-up to #271, mention that images are resolved at the time of conversion; thus, they need to be located where the converter can find them; that often means setting imagesdir to an absolute path
 * split out the background fill from PR 664 into a separate PR to merge sooner
 * apply logic for convert_sidebar to convert_example
 * implement SVG fit for background image (#765)
-* vertical centering in table cell w/ Noto Serif is off
+* vertical centering in table cell w/ Noto Serif is off (set align to vertical center for a single-line cell)
 * import generate-font-subsets.pe script from Asciidoctor EPUB3; rename to generate-bundled-fonts.pe
 * if we assume that any block except a paragraph will "unfloat", we might be able to implement floating images; just mark the "jump to point" for any block that isn't a paragraph, restrict the width and write
+* update the theme-schema.json (or remove it)
 * have some sort of threshold for how close we get to bottom of page before advancing when starting new block
 * look where else we should be using advance_page instead of start_new_page
  ** do we really need advance_page when drawing background? isn't that always forging a new page?
@@ -23,14 +39,14 @@
 * define sum on core_ext/array to optimize for Ruby 2.4
 * allow border bottom of table header row to be set by theme
 * vertically center background image by default (yes?)
+* add link to jump back to origin of bibref from bibliography (effectively a back link)
 * stroke and fill multi-page sidebar block (#259) and example block (#362)
  ** see PR
 * part/chapter/section start pages are calculated twice, once for each running content; should be shared
  ** probably need to introduce a model object to hold the cache
 * line height in TOC is too small if heading only contains monospaced text
-* UPSTREAM: highlighting of CSS w/ rouge seems messed up; don't recognize keywords
- ** compare with pygments
- ** rouge also incorrectly identifies an endline in a schemaLocation attribute as an error
+* UPSTREAM: rouge treats a CSS property as a Name::Label instead of a Keyword (see https://github.com/jneen/rouge/issues/665)
+* UPSTREAM: rouge incorrectly identifies an endline in a schemaLocation attribute in XML as an error (see https://github.com/jneen/rouge/issues/663) (PR sent)
 * FIXME: stop using fallback fonts in default theme (instead, bundle a fuller font)
  ** using fallback fonts significantly slows down Prawn because it checks every letter every time (see https://github.com/prawnpdf/prawn/blob/master/lib/prawn/text/formatted/box.rb#L427-L434)
  ** add broader character range to monospace font so we can drop fallback font by default (#282)
@@ -39,10 +55,7 @@
 * should we drop "<font>" handler in formatted text transform?
 * ttfunk 1.5.0 chokes on narrow no-break space char \u202f (patch applied; https://github.com/prawnpdf/ttfunk/issues/39)
 * implement text transform for running content (#702)
-* implement start line number in source listing (rouge) (#752)
- ** shouldn't this be fixed in core at the same time? (core #1742)
 * implement line highlighting in rouge (#681)
-* remove hack to add trailing endline to source for rouge
 * should we allow the template/format of the line number in the source listing to be controlled using a sprintf template?
 * only nest outline inside of root if doctype=article (still valid?)
 * warn if image in running content can't be found (#731)
