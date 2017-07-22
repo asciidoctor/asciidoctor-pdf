@@ -779,6 +779,8 @@ module Extensions
 
   def scratch?
     (@_label ||= (state.store.info.data[:Scratch] ? :scratch : :primary)) == :scratch
+  rescue
+    false # NOTE this method may get called before the state is initialized
   end
   alias :is_scratch? :scratch?
 
