@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-require_relative 'lib/asciidoctor-pdf/version'
+require File.expand_path '../lib/asciidoctor-pdf/version', __FILE__
 require 'open3' unless defined? Open3
 
 Gem::Specification.new do |s|
