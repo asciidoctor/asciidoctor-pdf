@@ -1,0 +1,18 @@
+sudo: false
+git:
+  depth: 1
+language: ruby
+cache: bundler
+bundler_args: --path=.bundle/gems
+rvm:
+- &release_ruby 2.4.1
+- 1.9.3
+script: bundle exec gem which prawn
+deploy:
+  provider: rubygems
+  on:
+    tags: true
+    repo: asciidoctor/asciidoctor-pdf
+    rvm: *release_ruby
+  api_key:
+    secure: gdLXMRnmNCosfN0k67yayUw/3tQOhIGwgG92kaTHqa1xCOfH8XjWVBQycfalzQ3HZWc2rYO+gAAJeodo3gz4eo2k3pO7F0SuL+mMaNZljK25Ewnl4wIwHLncXiUIIERteOrWWUwIfo6h6kUpvZlkx9oYrOD956U9kxvdkPqHeWo=
