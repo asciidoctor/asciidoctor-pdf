@@ -120,19 +120,29 @@ To check if you have Ruby available, use the `ruby` command to query the version
 
 [WARNING]
 ====
-By default, Asciidoctor PDF selects the latest version of Prawn to install.
-Since version 2.0.0, Prawn requires Ruby >= 2.0.0 during installation (though it may still work with Ruby 1.9.3 if you get past installation).
-Therefore, to use Asciidoctor PDF with Ruby 1.9.3, you must first explicitly install the following dependencies, including Prawn 1.3.0:
+By default, Asciidoctor PDF automatically installs the latest version of Prawn if you don't already have Prawn installed.
+This will fail on older versions of Ruby.
+To workaround, you need to install certain dependencies first.
 
-  $ gem install prawn --version 1.3.0
-    gem install addressable --version 2.4.0
-    gem install prawn-svg --version 0.21.0
-    gem install prawn-templates --version 0.0.3
+Starting with Prawn 2.0.0, Prawn requires Ruby >= 2.0.0 during installation.
+Therefore, to use Asciidoctor PDF with Ruby 1.9.3, you must first explicitly install the following dependencies to lock the versions:
+
+ $ gem install prawn --version 1.3.0
+   gem install addressable --version 2.4.0
+   gem install prawn-svg --version 0.21.0
+   gem install prawn-templates --version 0.0.3
 
 You can then proceed with installation of Asciidoctor PDF on Ruby 1.9.3.
 
+Starting with Prawn 2.2.0, Prawn requires Ruby >= 2.1.0 during installation.
+Therefore, to use Asciidoctor PDF with Ruby 2.0.0, you must first explicitly install the following dependencies to lock the versions:
+
+ $ gem install prawn --version 2.1.0
+   gem install prawn-svg --version 0.26.0
+   gem install prawn-templates --version 0.0.4
+
 For all other versions of Ruby, you can simply install the Asciidoctor PDF gem.
-It will transitively install all required dependencies.
+It will transitively install the required dependencies.
 ====
 
 === System Encoding

@@ -6,6 +6,8 @@ cache: bundler
 bundler_args: --path=.bundle/gems
 rvm:
 - &release_ruby 2.4.1
+- 2.1.10
+- 2.0.0
 - 1.9.3
 script: bundle exec gem which prawn
 deploy:
