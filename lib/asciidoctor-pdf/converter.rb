@@ -386,7 +386,7 @@ class Converter < ::Prawn::Document
   end
 
   def convert_section sect, opts = {}
-    if sect.special && sect.sectname == 'abstract'
+    if sect.sectname == 'abstract'
       # HACK cheat a bit to hide this section from TOC; TOC should filter these sections
       sect.context = :open
       return convert_abstract sect
@@ -423,7 +423,7 @@ class Converter < ::Prawn::Document
       end
     end
 
-    sect.special && sect.sectname == 'index' ? (convert_index_section sect) : (convert_content_for_block sect)
+    sect.sectname == 'index' ? (convert_index_section sect) : (convert_content_for_block sect)
     sect.set_attr 'pdf-page-end', page_number
   end
 
