@@ -8,12 +8,13 @@
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
 
 .1.5.0.alpha.16
+* fix warnings in Ruby 1.9.3 (see warnings.txt)
+
+.1.5.0.alpha.17
 * support unnumbered and no-bullet style on ordered list
  ** see https://github.com/asciidoctor/asciidoctor/pull/2286
-* fix warnings in Ruby 1.9.3
 * remove hack to add trailing endline to source for rouge (now fixed in rouge)
  ** set minimum rouge version
-* document how to install Asciidoctor PDF for Ruby 2.0.0 (since Prawn now requires 2.1.0)
 
 //-
 * should we reroute String#downcase if unicode gem is loaded? this is required for natural cross references; or should we just document workaround?
