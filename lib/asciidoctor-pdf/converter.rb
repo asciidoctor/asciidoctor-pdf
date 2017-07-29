@@ -35,8 +35,8 @@ class Converter < ::Prawn::Document
   register_for 'pdf'
 
   # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
-  CodeRayRequirePath = ::File.join (::File.dirname __FILE__), 'prawn_ext/coderay_encoder'
-  RougeRequirePath = ::File.join (::File.dirname __FILE__), 'rouge_ext'
+  CodeRayRequirePath = ::File.join((::File.dirname __FILE__), 'prawn_ext/coderay_encoder')
+  RougeRequirePath = ::File.join((::File.dirname __FILE__), 'rouge_ext')
 
   AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
   AdmonitionIcons = {
@@ -224,7 +224,7 @@ class Converter < ::Prawn::Document
     add_outline doc, num_toc_levels, toc_page_nums, num_front_matter_pages
     # TODO allow document (or theme) to override initial view magnification
     # NOTE add 1 to page height to force initial scroll to 0; a nil value also seems to work
-    catalog.data[:OpenAction] = dest_fit_horizontally (page_height + 1), state.pages[0] if state.pages.size > 0
+    catalog.data[:OpenAction] = dest_fit_horizontally((page_height + 1), state.pages[0]) if state.pages.size > 0
     catalog.data[:ViewerPreferences] = { DisplayDocTitle: true }
 
     layout_cover_page :back, doc
@@ -1333,7 +1333,7 @@ class Converter < ::Prawn::Document
       bg_color_override = formatter.background_color
       source_string, conum_mapping = extract_conums source_string
       # NOTE trailing endline is added to address https://github.com/jneen/rouge/issues/279
-      fragments = formatter.format (lexer.lex %(#{source_string}#{LF}), lexer_opts), formatter_opts
+      fragments = formatter.format((lexer.lex %(#{source_string}#{LF}), lexer_opts), formatter_opts)
       # NOTE cleanup trailing endline (handled in rouge_ext/formatters/prawn instead)
       #fragments[-1][:text] == LF ? fragments.pop : fragments[-1][:text].chop!
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
@@ -2130,26 +2130,26 @@ class Converter < ::Prawn::Document
         # FIXME delegate to method to convert page % to y value
         @y = title_top
       end
-      move_down (@theme.title_page_title_margin_top || 0)
+      move_down(@theme.title_page_title_margin_top || 0)
       theme_font :title_page_title do
         layout_heading doctitle.main,
           align: title_align,
           margin: 0,
           line_height: @theme.title_page_title_line_height
       end
-      move_down (@theme.title_page_title_margin_bottom || 0)
+      move_down(@theme.title_page_title_margin_bottom || 0)
       if doctitle.subtitle
-        move_down (@theme.title_page_subtitle_margin_top || 0)
+        move_down(@theme.title_page_subtitle_margin_top || 0)
         theme_font :title_page_subtitle do
           layout_heading doctitle.subtitle,
             align: title_align,
             margin: 0,
             line_height: @theme.title_page_subtitle_line_height
         end
-        move_down (@theme.title_page_subtitle_margin_bottom || 0)
+        move_down(@theme.title_page_subtitle_margin_bottom || 0)
       end
       if doc.attr? 'authors'
-        move_down (@theme.title_page_authors_margin_top || 0)
+        move_down(@theme.title_page_authors_margin_top || 0)
         # TODO provide an API in core to get authors as an array
         authors = (1..(doc.attr 'authorcount', 1).to_i).map {|idx|
           doc.attr(idx == 1 ? 'author' : %(author_#{idx}))
@@ -2160,11 +2160,11 @@ class Converter < ::Prawn::Document
             margin: 0,
             normalize: false
         end
-        move_down (@theme.title_page_authors_margin_bottom || 0)
+        move_down(@theme.title_page_authors_margin_bottom || 0)
       end
       revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact
       unless revision_info.empty?
-        move_down (@theme.title_page_revision_margin_top || 0)
+        move_down(@theme.title_page_revision_margin_top || 0)
         revision_text = revision_info * (@theme.title_page_revision_delimiter || ', ')
         theme_font :title_page_revision do
           layout_prose revision_text,
@@ -2172,7 +2172,7 @@ class Converter < ::Prawn::Document
             margin: 0,
             normalize: false
         end
-        move_down (@theme.title_page_revision_margin_bottom || 0)
+        move_down(@theme.title_page_revision_margin_bottom || 0)
       end
     end
   end
@@ -2668,7 +2668,7 @@ class Converter < ::Prawn::Document
 
     pagenums_enabled = doc.attr? 'pagenums'
     attribute_missing_doc = doc.attr 'attribute-missing'
-    repeat (content_start_page..page_count), dynamic: true do
+    repeat((content_start_page..page_count), dynamic: true) do
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
       pgnum_label = page_number - skip
@@ -2892,7 +2892,7 @@ class Converter < ::Prawn::Document
   # - 0 when side == :top
   # - @theme.vertical_spacing when side == :bottom
   def theme_margin category, side
-    margin (@theme[%(#{category}_margin_#{side})] || (side == :bottom ? @theme.vertical_spacing : 0)), side
+    margin((@theme[%(#{category}_margin_#{side})] || (side == :bottom ? @theme.vertical_spacing : 0)), side)
   end
 
   def theme_font category, opts = {}

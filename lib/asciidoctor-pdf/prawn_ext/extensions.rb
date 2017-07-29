@@ -234,17 +234,17 @@ module Extensions
       super @font_size
     elsif String === points
       if points.end_with? 'rem'
-        super (@theme.base_font_size * points.to_f)
+        super(@theme.base_font_size * points.to_f)
       elsif points.end_with? 'em'
-        super (@font_size * points.to_f)
+        super(@font_size * points.to_f)
       elsif points.end_with? '%'
-        super (@font_size * (points.to_f / 100.0))
+        super(@font_size * (points.to_f / 100.0))
       else
         super points.to_f
       end
     # FIXME HACK assume em value
     elsif points < 1
-      super (@font_size * points)
+      super(@font_size * points)
     else
       super points
     end
