@@ -3,14 +3,11 @@
 == TODO
 
 * fix labels in issue tracker to match other projects; in particular, enhancement should be green.
-* start the README with a proper introduction to Asciidoctor PDF (and not so focused on Prawn)
 * setup asciidoctor-mathoid project, then mention it in the STEM support section
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
 
-.1.5.0.alpha.16
-* fix warnings in Ruby 1.9.3 (see warnings.txt)
-
 .1.5.0.alpha.17
+* start the README with a proper introduction to Asciidoctor PDF (and not so focused on Prawn)
 * support unnumbered and no-bullet style on ordered list
  ** see https://github.com/asciidoctor/asciidoctor/pull/2286
 * remove hack to add trailing endline to source for rouge (now fixed in rouge)
