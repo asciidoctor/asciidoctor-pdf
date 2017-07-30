@@ -3493,14 +3493,14 @@ The first page in the document is a recto page.
 
 === Automatic Facing Pages
 
-If a document uses the book doctype, a blank page will be inserted, if necessary, to ensure the following pages are recto-facing pages:
+When converting the book doctype using the prepress media setting, a blank page will be inserted when necessary to ensure the following elements start on a recto page:
 
 * Title page
 * Table of contents
-* First page of body content
+* First page of body
 * Parts and chapters
 
-Other facing pages may be added in the future.
+Other "`facing`" pages may be added in the future.
 
 It's possible to disable the automatic facing feature for a given part or chapter.
 This can be done by adding the nonfacing option to the section node.
