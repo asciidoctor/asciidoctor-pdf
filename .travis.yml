@@ -17,4 +17,4 @@ deploy:
     repo: asciidoctor/asciidoctor-pdf
     rvm: *release_ruby
   api_key:
-    secure: gdLXMRnmNCosfN0k67yayUw/3tQOhIGwgG92kaTHqa1xCOfH8XjWVBQycfalzQ3HZWc2rYO+gAAJeodo3gz4eo2k3pO7F0SuL+mMaNZljK25Ewnl4wIwHLncXiUIIERteOrWWUwIfo6h6kUpvZlkx9oYrOD956U9kxvdkPqHeWo=
+    secure: bzAbFi7YT7bb/5gAePjw11Ghzbh+tOqMlL1Xn+o5pyseSNRDB5tDcocL0fbAcHkSBzaC/36m2apvdt0xmNYCmRLJyZtCS6lQtzW5j9hUXfCDnf8HmX0o785TtlUwk6qNqwd9v0GZGK58hts44K3mHtK/we9+5ucp3EhmP8l4MWE=
