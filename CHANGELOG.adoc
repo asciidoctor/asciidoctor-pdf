@@ -5,6 +5,33 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+* add support for xrefstyle attribute (#464)
+* allow page side to be based on physical page number and/or be inverted (#813) (@fap-)
+* fix layout error caused by nested keep together blocks (#791)
+* upgrade prawn-svg to allow generic font names to be mapped in SVG (#777)
+* upgrade prawn-svg to fix issue with dotted lines (#741)
+* upgrade prawn-svg to enable linear gradients (#228)
+* don't attempt to parse text in literal cell (#816)
+* warn if theme variable cannot be resolved; don't replace (#801)
+* number appendix subsections based on appendix number when doctype is book (#627)
+* don't add break hints to URI when using AFM font (#795)
+* add rescue check for scratch document when state is not initialized
+* allow page margin to be a single number; fixes regression introduced by #749
+* check for margin as array, then as numeric, then as string
+* extend version range for prawn-templates (#803)
+* add missing part-title attribute to theming guide (#827)
+* clarify in theming guide that variables are defined in document order
+* clarify that the fallback font is only used when the primary font is a TrueType font
+* add more information about prawn-gmagick to README
+* fix warnings and incompatibility when using Ruby 1.9.3
+* document in README how to install Asciidoctor PDF on Ruby 2.0.0
+* enable Travis CI; configure CI-based deployment to RubyGems.org
+
+{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.16[issues resolved] |
+{uri-repo}/releases/tag/v1.5.0.alpha.16[git tag]
+
 == 1.5.0.alpha.15 (2017-03-27) - @mojavelinux
 
 * fix compatibility with Prawn 2.2.0 (#775)
