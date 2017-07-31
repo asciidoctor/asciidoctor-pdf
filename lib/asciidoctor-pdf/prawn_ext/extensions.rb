@@ -112,8 +112,12 @@ module Extensions
 
   # Returns the side the current page is facing, :recto or :verso.
   #
-  def page_side pgnum = nil
-    (recto_page? pgnum) ? :recto : :verso
+  def page_side pgnum = nil, invert = nil
+    if invert
+      (recto_page? pgnum) ? :verso : :recto
+    else
+      (recto_page? pgnum) ? :recto : :verso
+    end
   end
 
   # Returns whether the page is a recto page.
