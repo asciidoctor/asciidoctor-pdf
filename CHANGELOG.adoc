@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 1.5.0.alpha.16 (2017-07-30) - @mojavelinux
 
 * add support for xrefstyle attribute (#464)
 * allow page side to be based on physical page number and/or be inverted (#813) (@fap-)
