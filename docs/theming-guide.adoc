@@ -3217,6 +3217,7 @@ The keys in this category control the arrangement and style of running header an
 . The background color spans the width of the page, as does the border when a background color is specified.
 . If the height is not set, the running content at this periphery is disabled.
 . `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
+Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
 . `<position>` can be `left`, `center` or `right`.
 
 IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
@@ -3425,6 +3426,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |pdf-page-size
 |https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width, height]>>
 |:pdf-page-size: 6in x 9in
+
+|pdf-folio-placement
+|virtual {vbar} virtual-inverted {vbar} physical {vbar} physical-inverted
+|:pdf-folio-placement: physical
 
 |pdfmark^[6]^
 |flag (default: _not set_)

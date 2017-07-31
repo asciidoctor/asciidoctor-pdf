@@ -167,7 +167,7 @@ class Converter < ::Prawn::Document
     # NOTE on_page_create is called within a float context
     # NOTE on_page_create is not called for imported pages, front and back cover pages, and other image pages
     on_page_create do
-      # NOTE we assume here that physical page number reflects page side
+      # NOTE we assume in prepress that physical page number reflects page side
       if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_side]) != page_margin
         set_page_margin next_page_margin
       end
@@ -2668,15 +2668,23 @@ class Converter < ::Prawn::Document
 
     pagenums_enabled = doc.attr? 'pagenums'
     attribute_missing_doc = doc.attr 'attribute-missing'
-    consider_physical_page_number = doc.attr?('physical-page-numbers')
+    case @media == 'prepress' ? 'physical' : (doc.attr 'pdf-folio-placement')
+    when 'physical'
+      folio_basis, invert_folio = :physical, false
+    when 'physical-inverted'
+      folio_basis, invert_folio = :physical, true
+    when 'virtual-inverted'
+      folio_basis, invert_folio = :virtual, true
+    else
+      folio_basis, invert_folio = :virtual, false
+    end
     repeat((content_start_page..page_count), dynamic: true) do
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
       pgnum_label = page_number - skip
-      side = consider_physical_page_number ? page_side(page_number) : page_side(pgnum_label)
+      side = page_side((folio_basis == :physical ? page_number : pgnum_label), invert_folio)
       # FIXME we need to have a content setting for chapter pages
-      content_by_position = content_dict[side]
-      colspec_by_position = colspec_dict[side]
+      content_by_position, colspec_by_position = content_dict[side], colspec_dict[side]
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
       doc.set_attr 'page-number', pgnum_label.to_s if pagenums_enabled
