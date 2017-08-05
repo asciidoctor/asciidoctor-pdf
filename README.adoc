@@ -568,6 +568,25 @@ Therefore, to print a range of pages as they are labeled in the document, you ne
 For example, if you only want to print the first 5 pages labeled with a page number (e.g., 1-5), and there are 2 pages before the page labeled as page 1, you need to add 2 to both numbers in the range, giving you a physical page range of 3-7.
 That's the range you need to enter into the print dialog.
 
+== Index Catalog
+
+Asciidoctor PDF supports generating an index catalog that itemizes all index terms defined in the document, allowing the reader to navigate the document by keyword.
+
+To get Asciidoctor PDF to generate an index, simply add an level-1 section flagged with the `index` style near the end of your document.
+The converter will automatically populate the catalog with the list of index terms in the document, organized by first letter.
+
+[source,asciidoc]
+----
+[index]
+= Index
+----
+
+You can use any text you want for the title of the section.
+The only restriction is that no index terms may be defined below this section.
+
+NOTE: Although the catalog is generated automatically, you have to mark the index terms manually.
+However, you could use an extension, such as a TreeProcessor, to automatically mark index terms.
+
 == Optional Scripts
 
 {project-name} also provides a shell script that invokes GhostScript (`gs`) to optimize and compress the generated PDF with minimal impact on quality.
