@@ -31,8 +31,12 @@ Topics remaining to document:
 The theming system in Asciidoctor PDF is used to control the layout and styling of the PDF file Asciidoctor PDF generates from AsciiDoc.
 This document describes how the theming system works, how to define a custom theme in YAML and how to activate the theme when running Asciidoctor PDF.
 
-IMPORTANT: If you're using a custom theme, you're expected to bring your own fonts or declare the fonts from the default theme.
-If you don't declare your own fonts, the built-in PDF (afm) fonts will be used, which only support WINANSI characters (similar to Basic Latin).
+IMPORTANT: If you're creating a custom theme, you're expected to supply your own fonts.
+But we recognize that can be a major obstacle when you're starting out.
+Therefore, your other option is to simply redeclare the fonts from the https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml[default theme] in the <<Custom Fonts,font catalog>>.
+Asciidoctor PDF will then resolve the fonts that are bundled with the gem.
+If you don't declare your own fonts, the <<Built-In (AFM) Fonts,built-in AFM fonts>> will be used instead.
+However, since AFM fonts only support WINANSI characters (which is similar to Basic Latin), using them will likely result in missing functionality and warnings.
 
 toc::[]
 
