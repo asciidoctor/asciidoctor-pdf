@@ -1547,6 +1547,7 @@ class Converter < ::Prawn::Document
           text_color: (theme.table_font_color || @font_color),
           size: theme.table_font_size,
           font: theme.table_font_family,
+          leading: theme.table_leading,
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
           align: (cell.attr 'halign', nil, false).to_sym,
