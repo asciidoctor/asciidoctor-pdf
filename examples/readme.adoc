@@ -1,0 +1,11 @@
+= Examples
+
+this folder contains example files. 
+
+== Themeing example
+
+To process the theming example with the development version:
+
+----
+bundle exec ./bin/asciidoctor-pdf -a pdf-stylesdir=examples/ -a pdf-style=example examples/table-example.adoc
+----

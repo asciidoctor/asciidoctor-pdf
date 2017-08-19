@@ -1,0 +1,70 @@
+= Document Title
+Doc Writer <doc@example.com>
+:doctype: book
+:reproducible:
+//:source-highlighter: coderay
+:source-highlighter: rouge
+:listing-caption: Listing
+// Uncomment next line to set page size (default is A4)
+//:pdf-page-size: Letter
+
+A simple http://asciidoc.org[AsciiDoc] document.
+
+== Introduction
+
+A paragraph followed by a simple list with square bullets.
+
+Asciidoctor has no challenge working with Unicode. In fact, it prefers Unicode and considers the entire range. However, once you convert to PDF, you have to meet the font requirements of PDF in order to preserve Unicode characters. There’s nothing Asciidoctor can do to convince PDF to work with extended characters without the right fonts in play. 
+
+[square]
+* item 1
+* item 2
+
+Here's how you say "`Hello, World!`" in Prawn:
+
+.Create a basic PDF document using Prawn
+[source,ruby]
+----
+require 'prawn'
+
+Prawn::Document.generate 'example.pdf' do
+  text 'Hello, World!'
+end
+----
+
+
+== Work packages
+
+
+|===
+2+| package | description | estimation |-
+
+
+.2+|Definition of APIs
+| Clarification with boundary systems
+| -
+| 3 days
+| -
+
+| Clarification and documentation about web service API
+| -
+| 3 days
+| -
+
+| a
+| simple
+| line
+| for
+| demo
+
+
+|*sum*
+| -
+| -
+|999 days
+| -
+|
+
+|===
+
+

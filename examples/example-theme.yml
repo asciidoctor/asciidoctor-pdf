@@ -1,0 +1,42 @@
+page:
+  layout: portrait
+  margin: [1.5in, 1in, 1.5in, 1in]
+  size: A4
+
+base:
+  font_size: 11
+  line_height_length: 17
+  line_height: $base_line_height_length / $base_font_size
+
+vertical_rhythm: $base_line_height_length
+
+heading:
+  font_color: #262626
+  font_size: 17
+  font_style: bold
+  line_height: 1.2
+  margin_bottom: $vertical_rhythm
+
+outline_list:
+  indent: $base_font_size * 1.5
+
+footer:
+  height: 1.75in
+  line_height: 1.2
+  font:
+    color: [112, 113, 114]
+    size: 8
+  recto_content:
+    right: '{page-number} / {page-count}'
+  verso_content:
+    right: $footer_recto_content_right
+
+table:
+  head_font_color: [190, 20, 50]
+  border:
+    color: [190, 20, 50]
+    width: 0.1
+  font_size: 9
+  leading: 6
+  cell_padding: [5, 5, 8, 5]
+  
