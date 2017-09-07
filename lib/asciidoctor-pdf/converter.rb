@@ -1550,14 +1550,17 @@ class Converter < ::Prawn::Document
           colspan: cell.colspan || 1,
           rowspan: cell.rowspan || 1,
           align: (cell.attr 'halign', nil, false).to_sym,
-          valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym
+          valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym,
+          padding: theme.table_cell_padding
         }
         cell_transform = nil
         case cell.style
         when :emphasis
           cell_data[:font_style] = :italic
+          cell_line_metrics = calc_line_metrics theme.base_line_height
         when :strong
           cell_data[:font_style] = :bold
+          cell_line_metrics = calc_line_metrics theme.base_line_height
         when :header
           unless header_cell_data_cache
             header_cell_data_cache = {}
@@ -1582,6 +1585,7 @@ class Converter < ::Prawn::Document
             cell_transform = nil
           end
           cell_data.update header_cell_data unless header_cell_data.empty?
+          cell_line_metrics = calc_line_metrics theme.base_line_height
         when :monospaced
           cell_data[:font] = theme.literal_font_family
           if (val = theme.literal_font_size)
@@ -1590,8 +1594,7 @@ class Converter < ::Prawn::Document
           if (val = theme.literal_font_color)
             cell_data[:text_color] = val
           end
-          # TODO need to also add top and bottom padding from line metrics
-          #cell_data[:leading] = (calc_line_metrics theme.base_line_height).leading
+          cell_line_metrics = calc_line_metrics theme.base_line_height
         when :literal
           # FIXME core should not substitute in this case
           cell_data[:content] = preserve_indentation((cell.instance_variable_get :@text), (node.document.attr 'tabsize'))
@@ -1604,17 +1607,28 @@ class Converter < ::Prawn::Document
           if (val = theme.code_font_color)
             cell_data[:text_color] = val
           end
-          # TODO need to also add top and bottom padding from line metrics
-          #cell_data[:leading] = (calc_line_metrics theme.code_line_height).leading
+          cell_line_metrics = calc_line_metrics theme.code_line_height
         when :verse
           cell_data[:content] = preserve_indentation cell.text, (node.document.attr 'tabsize')
           cell_data[:inline_format] = true
+          cell_line_metrics = calc_line_metrics theme.base_line_height
         when :asciidoc
           asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self,
               (cell_data.merge content: cell.inner_document, font_style: (val = theme.table_font_style) ? val.to_sym : nil)
           cell_data = { content: asciidoc_cell }
         else
           cell_data[:font_style] = (val = theme.table_font_style) ? val.to_sym : nil
+          cell_line_metrics = calc_line_metrics theme.base_line_height
+        end
+        if cell_line_metrics
+          unless ::Array === (cell_padding = cell_data[:padding]) && cell_padding.size == 4
+            cell_padding = cell_data[:padding] = inflate_padding cell_padding
+          end
+          cell_padding[0] += cell_line_metrics.padding_top
+          cell_padding[2] += cell_line_metrics.padding_bottom
+          cell_data[:leading] = cell_line_metrics.leading
+          # TODO patch prawn-table to pass through final_gap option
+          #cell_data[:final_gap] = cell_line_metrics.final_gap
         end
         unless cell_data.key? :content
           if (cell_text = cell_transform ? (transform_text cell.text, cell_transform) : cell.text).include? LF
@@ -1703,8 +1717,7 @@ class Converter < ::Prawn::Document
         border_color: table_grid_color,
         border_lines: [table_grid_style],
         # NOTE the border width is set later
-        border_width: 0,
-        padding: theme.table_cell_padding
+        border_width: 0
       },
       width: table_width,
       column_widths: column_widths

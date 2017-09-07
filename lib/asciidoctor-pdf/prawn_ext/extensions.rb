@@ -494,6 +494,21 @@ module Extensions
     #end
   end
 
+  # TODO memoize the result
+  def inflate_padding padding
+    padding = [*(padding || 0)].slice 0, 4
+    case padding.size
+    when 1
+      [padding[0], padding[0], padding[0], padding[0]]
+    when 2
+      [padding[0], padding[1], padding[0], padding[1]]
+    when 3
+      [padding[0], padding[1], padding[2], padding[1]]
+    else
+      padding
+    end
+  end
+
   # Stretch the current bounds to the left and right edges of the current page
   # while yielding the specified block if the verdict argument is true.
   # Otherwise, simply yield the specified block.
