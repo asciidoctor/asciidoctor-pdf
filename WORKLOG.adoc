@@ -7,11 +7,14 @@
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
 
 .1.5.0.alpha.17
+* test suite
 * start the README with a proper introduction to Asciidoctor PDF (and not so focused on Prawn)
 * support unnumbered and no-bullet style on ordered list
  ** see https://github.com/asciidoctor/asciidoctor/pull/2286
 * remove hack to add trailing endline to source for rouge (now fixed in rouge)
  ** set minimum rouge version
+* implement SVG fit for background image (#765)
+* add helper to expand value into 4 coordinates (top, right, bottom, left)
 
 //-
 * should we reroute String#downcase if unicode gem is loaded? this is required for natural cross references; or should we just document workaround?
@@ -25,7 +28,6 @@
 * in follow-up to #271, mention that images are resolved at the time of conversion; thus, they need to be located where the converter can find them; that often means setting imagesdir to an absolute path
 * split out the background fill from PR 664 into a separate PR to merge sooner
 * apply logic for convert_sidebar to convert_example
-* implement SVG fit for background image (#765)
 * vertical centering in table cell w/ Noto Serif is off (set align to vertical center for a single-line cell)
 * import generate-font-subsets.pe script from Asciidoctor EPUB3; rename to generate-bundled-fonts.pe
 * if we assume that any block except a paragraph will "unfloat", we might be able to implement floating images; just mark the "jump to point" for any block that isn't a paragraph, restrict the width and write
