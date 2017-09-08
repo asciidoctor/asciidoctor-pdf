@@ -567,6 +567,8 @@ title_page:
   background_image: title-cover.png
 ----
 
+In this case, the image is resolved relative to theme directory.
+
 Here's how the image is specified using the inline image macro:
 
 [source,yaml]
@@ -574,6 +576,9 @@ Here's how the image is specified using the inline image macro:
 title_page:
   background_image: image:title-cover.png[]
 ----
+
+In this case, the image is resolved relative to the value of the `imagesdir` attribute.
+Wrapping the value in the image macro sends a hint to the converter to resolve it just like other images.
 
 Like in the AsciiDoc syntax, the inline image macro allows you to supply set the width of the image and the alignment:
 
@@ -3455,6 +3460,7 @@ These settings override equivalent keys defined in the theme file, where applica
 . `<face>` can be `front` or `back`.
 . The path is resolved relative to base_dir.
 . The target of the image macro is resolved relative to `imagesdir`.
+If the image macro syntax is not used, the value is resolved relative to the base directory, which defaults to the document directory.
 . Page background images are automatically scaled to fit within the bounds of the page.
 +
 NOTE: Page backgrounds do not currently work when using AsciidoctorJ PDF.
