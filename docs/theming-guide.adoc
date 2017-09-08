@@ -885,7 +885,7 @@ See <<Title Page>> for details.
 |Inline image macro^[2]^ +
 (default: _not set_)
 |page:
-  background_image: +image:page-bg.png[]+
+  background_image: image:page-bg.png[]
 
 |layout
 |portrait {vbar} landscape +
@@ -1266,7 +1266,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 |Inline image macro^[2]^ +
 (default: _not set_)
 |title_page:
-  +background_image: image:title.png[]+
+  background_image: image:title.png[]
 
 |font_color
 |<<colors,Color>> +
@@ -1318,7 +1318,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 (default: _not set_)
 |title_page:
   logo:
-    +image: image:logo.png[pdfwidth=25%]+
+    image: image:logo.png[pdfwidth=25%]
 
 |top
 |Percentage^[3]^ +
@@ -3405,7 +3405,7 @@ These settings override equivalent keys defined in the theme file, where applica
 |<face>-cover-image^[1]^
 |path^[2]^ {vbar} image macro^[3]^ +
 (format can be image or PDF)
-|+:front-cover-image: image:front-cover.pdf[]+
+|:front-cover-image: image:front-cover.pdf[]
 
 |media
 |screen {vbar} print {vbar} prepress
@@ -3413,7 +3413,7 @@ These settings override equivalent keys defined in the theme file, where applica
 
 |page-background-image^[4]^
 |path^[2]^ {vbar} image macro^[3]^
-|+:page-background-image: image:bg.jpg[]+
+|:page-background-image: image:bg.jpg[]
 
 |pagenums^[5]^
 |flag (default: _set_)
@@ -3445,11 +3445,11 @@ These settings override equivalent keys defined in the theme file, where applica
 
 |title-logo-image
 |path^[2]^ {vbar} image macro^[3]^
-|+:title-logo-image: image:logo.png[top=25%, align=center, pdfwidth=0.5in]+
+|:title-logo-image: image:logo.png[top=25%, align=center, pdfwidth=0.5in]
 
 |title-page-background-image
 |path^[2]^ {vbar} image macro^[3]^
-|+:title-page-background-image: image:title-bg.jpg[]+
+|:title-page-background-image: image:title-bg.jpg[]
 |===
 
 . `<face>` can be `front` or `back`.
