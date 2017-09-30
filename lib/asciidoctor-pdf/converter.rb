@@ -1332,8 +1332,7 @@ class Converter < ::Prawn::Document
       # QUESTION allow border color to be set by theme for highlighted block?
       bg_color_override = formatter.background_color
       source_string, conum_mapping = extract_conums source_string
-      # NOTE trailing endline is added to address https://github.com/jneen/rouge/issues/279
-      fragments = formatter.format((lexer.lex %(#{source_string}#{LF}), lexer_opts), formatter_opts)
+      fragments = formatter.format((lexer.lex source_string, lexer_opts), formatter_opts)
       # NOTE cleanup trailing endline (handled in rouge_ext/formatters/prawn instead)
       #fragments[-1][:text] == LF ? fragments.pop : fragments[-1][:text].chop!
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
