@@ -1,5 +1,7 @@
 module Asciidoctor; module Pdf
   class IndexCatalog
+    LeadingAlphaRx = /^[[:alpha:]]/
+
     attr_accessor :start_page_number
 
     def initialize
@@ -34,7 +36,7 @@ module Asciidoctor; module Pdf
     end
   
     def init_category name
-      name = '@' if (ord = name.ord) < 65 || ord > 90
+      name = '@' unless LeadingAlphaRx =~ name
       @categories[name] ||= (IndexTermCategory.new name)
     end
   
