@@ -15,7 +15,7 @@ if (ruby_version = Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.1.0')
 end
 
 group :examples do
-  gem 'rouge', '2.0.7'
+  gem 'rouge', '2.2.1'
   # Add unicode (preferred) or activesupport to transform case of text containing multibyte chars on Ruby < 2.4
   #gem 'activesupport', '4.2.7.1' if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
   #gem 'unicode' if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
