@@ -871,7 +871,18 @@ class Converter < ::Prawn::Document
       # FIXME extract ensure_space (or similar) method
       advance_page if cursor < @theme.base_line_height_length * (terms.size + 1)
       terms.each do |term|
-        layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
+        # FIXME layout_prose should pass style downward when parsing formatted text
+        #layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
+        term_text = term.text
+        case @theme.description_list_term_font_style.to_sym
+        when :bold
+          term_text = %(<strong>#{term_text}</strong>)
+        when :italic
+          term_text = %(<em>#{term_text}</em>)
+        when :bold_italic
+          term_text = %(<strong><em>#{term_text}</em></strong>)
+        end
+        layout_prose term_text, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
       end
       if desc
         indent @theme.description_list_description_indent do
