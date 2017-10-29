@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-if File.exist?(asciidoctor_pdf = (File.expand_path '../../lib/asciidoctor-pdf', __FILE__))
+if File.file?(asciidoctor_pdf = (File.expand_path '../../lib/asciidoctor-pdf.rb', __FILE__))
   require asciidoctor_pdf
 else
   require 'asciidoctor-pdf'
