@@ -6,6 +6,12 @@ class Prawn < Formatter
   tag 'prawn'
 
   Tokens = ::Rouge::Token::Tokens
+  LineOrientedTokens = [
+    ::Rouge::Token::Tokens::Generic::Inserted,
+    ::Rouge::Token::Tokens::Generic::Deleted,
+    ::Rouge::Token::Tokens::Generic::Heading,
+    ::Rouge::Token::Tokens::Generic::Subheading
+  ]
 
   LF = %(\n)
   NoBreakSpace = %(\u00a0)
@@ -106,8 +112,13 @@ class Prawn < Formatter
       if (bg = normalize_color style_rules.bg) && bg != @background_color
         fragment[:background_color] = bg
         fragment[:callback] = @background_colorizer
-        fragment[:inline_block] = true if style_rules[:inline_block]
-        fragment[:extend] = true if style_rules[:extend]
+        if LineOrientedTokens.include? tok
+          fragment[:inline_block] = true unless style_rules[:inline_block] == false
+          fragment[:extend] = true unless style_rules[:extend] == false
+        else
+          fragment[:inline_block] = true if style_rules[:inline_block]
+          fragment[:extend] = true if style_rules[:extend]
+        end
       end
       if (fg = normalize_color style_rules.fg)
         fragment[:color] = fg

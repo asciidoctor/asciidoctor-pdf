@@ -17,8 +17,8 @@ module Rouge
       style Generic::Heading,          fg: '#333333'
       style Generic::Subheading,       fg: '#666666'
 
-      style Generic::Deleted,          fg: '#000000', bg: '#ffdddd', inline_block: true, extend: true
-      style Generic::Inserted,         fg: '#000000', bg: '#ddffdd', inline_block: true, extend: true
+      style Generic::Deleted,          fg: '#000000', bg: '#ffdddd'
+      style Generic::Inserted,         fg: '#000000', bg: '#ddffdd'
 
       style Generic::Emph,             italic: true
       style Generic::Strong,           bold: true
