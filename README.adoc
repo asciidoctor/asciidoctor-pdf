@@ -512,9 +512,6 @@ require 'asciidoctor-mathematical'
 Asciidoctor.convert_file 'sample.adoc', safe: :safe
 ----
 
-CAUTION: Asciidoctor Mathematical does not currently process STEM blocks and inline macros inside AsciiDoc table cells or STEM inline macros in normal table cells.
-You can track the progress of these improvements by following {uri-asciidoctor-mathematical}/issues/20[issue #20] and {uri-asciidoctor-mathematical}/issues/19[issue #19], respectively.
-
 To get the best quality equations, and the maximize speed of conversion, we recommend configuring Asciidoctor Mathematical to convert equations to SVG.
 You control this setting using the `mathematical-format` AsciiDoc attribute:
 
