@@ -41,6 +41,13 @@ image:https://img.shields.io/gem/v/asciidoctor-pdf.svg[Latest Release, link={uri
 image:https://img.shields.io/badge/license-MIT-blue.svg[MIT License, link=#copyright]
 endif::[]
 
+ifdef::env-site[]
+Asciidoctor PDF is a native PDF converter for AsciiDoc.
+It bypasses the requirement of generating an interim format such as DocBook, Apache FO, or LaTeX.
+Instead, you can use it to convert directly from AsciiDoc to PDF.
+Its aim is to take the pain out of creating PDF documents from AsciiDoc.
+endif::[]
+ifndef::env-site[]
 _Lo and behold_, a native PDF converter for AsciiDoc built with {uri-asciidoctor}[Asciidoctor] and {uri-prawn}[Prawn]! +
 _No more middleman._ +
 _No more DocBook toolchain._ +
@@ -83,10 +90,9 @@ Skip ahead to <<getting-started,Getting started>> to start putting it use.
 Prawn is the _killer library_ for PDF generation we've needed to close this critical gap in Asciidoctor.
 It absolutely takes the pain out of creating printable documents.
 Picking up from there, {project-name} takes the pain out of creating PDF documents _from AsciiDoc_.
+endif::[]
 
-== Features
-
-=== Notable Features
+== Highlights
 
 * Direct AsciiDoc to PDF conversion
 * <<docs/theming-guide#,Configuration-driven style and layout>>
@@ -105,10 +111,6 @@ Picking up from there, {project-name} takes the pain out of creating PDF documen
 * Font-based icons
 * Custom (TTF) fonts
 * Double-sided printing mode (margins alternate on recto and verso pages)
-
-=== Missing Features
-
-See <<WORKLOG#,WORKLOG>>.
 
 == Prerequisites
 
@@ -160,7 +162,8 @@ Once you make this change, all your Unicode headaches will be behind you.
 
 == Getting Started
 
-You can get {project-name} by <<install-the-published-gem,installing the published gem>> or <<development,running the code from source>>.
+You can get {project-name} by <<install-the-published-gem,installing the published gem>>.
+ifndef::env-site[You can also <<development,run the code from source>> if you want to use a development version or participate in development.]
 
 === Install the Published Gem
 
@@ -199,7 +202,7 @@ Let's grab an AsciiDoc document to distill and start putting {project-name} to u
 
 === An Example AsciiDoc Document
 
-If you don't already have an AsciiDoc document, you can use the [file]_basic-example.adoc_ file found in the examples directory of this project.
+If you don't already have an AsciiDoc document, you can use the <<examples/basic-example#,basic-example.adoc>> file found in the examples directory of this project.
 
 ifeval::[{safe-mode-level} >= 20]
 See <<examples/basic-example#,basic-example.adoc>>.
@@ -229,13 +232,15 @@ This command is just a shorthand way of running:
 The `asciidoctor-pdf` command just saves you from having to remember all those flags.
 That's why we created it.
 
-When the script completes, you should see the file [file]_basic-example.pdf_ in the same directory.
-Open the [file]_basic-example.pdf_ file with a PDF viewer to see the result.
+When the script completes, you should see the file [.path]_basic-example.pdf_ in the same directory.
+Open the [.path]_basic-example.pdf_ file with a PDF viewer to see the result.
 
 .Example PDF document rendered in a PDF viewer
 image::examples/example-pdf-screenshot.png[Screenshot of PDF document,width=800,scaledwidth=100%]
 
+ifndef::env-site[]
 You're also encouraged to try converting this <<README#,README>> as well as the documents in the examples directory to see more of what {project-name} can do.
+endif::[]
 
 The pain of the DocBook toolchain should be melting away about now.
 
@@ -243,7 +248,7 @@ The pain of the DocBook toolchain should be melting away about now.
 
 The layout and styling of the PDF is driven by a YAML configuration file.
 To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide#,Asciidoctor PDF Theme Guide>>.
-You can use the built-in theme files, which you can find in the [file]_data/themes_ directory, as examples.
+You can use the built-in theme files, which you can find in the [.path]_data/themes_ directory, as examples.
 
 === Support for Non-Latin Languages
 
@@ -593,7 +598,7 @@ Here's an example usage:
 
  $ ./bin/optimize-pdf basic-example.pdf
 
-The command will generate the file [file]_example-optimized.pdf_ in the current directory.
+The command will generate the file [.path]_example-optimized.pdf_ in the current directory.
 
 WARNING: The `optimize-pdf` script currently requires a Bash shell (Linux, OSX, etc).
 We plan to rewrite the script in Ruby so it works across platforms (see https://github.com/asciidoctor/asciidoctor-pdf/issues/1[issue #1])
@@ -606,6 +611,7 @@ If a file is found with the extension `.pdfmark` and the same rootname as the in
 This file is necessary to preserve the document metadata since Ghostscript will otherwise drop it.
 That's why {project-name} always creates this file in addition to the PDF.
 
+ifndef::env-site[]
 == Contributing
 
 In the spirit of free software, _everyone_ is encouraged to help improve this project.
@@ -653,7 +659,7 @@ If you're using {uri-rvm}[RVM], we recommend creating a new gemset to work with 
 
 We like RVM because it keeps the dependencies required by various projects isolated.
 
-The dependencies needed to use {project-name} are defined in the [file]_Gemfile_ at the root of the project.
+The dependencies needed to use {project-name} are defined in the [.path]_Gemfile_ at the root of the project.
 We can use Bundler to install the dependencies for us.
 
 To check you have Bundler available, use the `bundle` command to query the installed version:
@@ -668,7 +674,7 @@ Then use the `bundle` command to install the project dependencies:
 
  $ bundle
 
-NOTE: You need to call `bundle` from the project directory so that it can find the [file]_Gemfile_.
+NOTE: You need to call `bundle` from the project directory so that it can find the [.path]_Gemfile_.
 
 Assuming all the required gems install properly, verify you can run the `asciidoctor-pdf` script using Ruby:
 
@@ -678,6 +684,7 @@ If you see the version of {project-name} printed, you're ready to use {project-n
 
 CAUTION: If you get an error message--and you're not using a Ruby manager like RVM--you may need to invoke the script through `bundle exec`:
 For best results, be sure to always use `bundle exec` whenever invoking the `./bin/asciidoctor-pdf` script in development mode.
+endif::[]
 
 [[resources,Links]]
 == Resources
