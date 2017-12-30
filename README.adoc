@@ -524,6 +524,13 @@ You control this setting using the `mathematical-format` AsciiDoc attribute:
 
 Refer to the {uri-asciidoctor-mathematical}#readme[README] for Asciidoctor Mathematical to learn about additional settings and options.
 
+== Shaded Blocks and Performance
+
+Certain blocks are rendered with a shaded background, such as verbatim (listing, literal, and source), sidebar, and example blocks.
+In order to calculate the dimensions of the shaded region, Asciidoctor PDF has to "`dry run`" the block to determine how many pages it consumes.
+While this strategy has a low impact when processing shorter blocks, it can drastically deteriorate performance when processing a block that spans dozens of pages.
+As a general rule of thumb, you should avoid using shaded blocks which span more than a handful of pages.
+
 == Autofitting Text
 
 Verbatim blocks often have long lines that don't fit within the fixed width of the PDF canvas.
