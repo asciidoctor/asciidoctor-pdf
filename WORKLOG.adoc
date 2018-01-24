@@ -2,17 +2,20 @@
 
 == TODO
 
+* add bw / grayscale theme for rouge
 * fix labels in issue tracker to match other projects; in particular, enhancement should be green.
 * setup asciidoctor-mathoid project, then mention it in the STEM support section
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
+* add preamble to toc
 
 .1.5.0.alpha.17
+* don't need to use symbols with alias
+* document rouge-style in README (already in theming guide, but gets buried)
+* pass current styles downwards when parsing formatted text (see https://github.com/asciidoctor/asciidoctor-pdf/issues/854)
 * test suite
 * start the README with a proper introduction to Asciidoctor PDF (and not so focused on Prawn)
 * support unnumbered and no-bullet style on ordered list
  ** see https://github.com/asciidoctor/asciidoctor/pull/2286
-* remove hack to add trailing endline to source for rouge (now fixed in rouge)
- ** set minimum rouge version
 * implement SVG fit for background image (#765)
 * add helper to expand value into 4 coordinates (top, right, bottom, left)
 
@@ -24,6 +27,7 @@
 * Prawn reports unknown blank font if family is valid but style is invalid (see https://github.com/prawnpdf/prawn/issues/1022)
 * catch UnsupportedImageType and issue warning that suggests using prawn-gmagick; see sandbox/interlaced.png
 * something like prawn-gmagick in Java env
+ ** look into https://github.com/jcupitt/ruby-vips for faster image processing (might solve our JRuby issue)
 * look for image in imagesoutdir if set and the image cannot otherwise be resolved
 * in follow-up to #271, mention that images are resolved at the time of conversion; thus, they need to be located where the converter can find them; that often means setting imagesdir to an absolute path
 * split out the background fill from PR 664 into a separate PR to merge sooner
@@ -46,7 +50,6 @@
  ** probably need to introduce a model object to hold the cache
 * line height in TOC is too small if heading only contains monospaced text
 * UPSTREAM: rouge treats a CSS property as a Name::Label instead of a Keyword (see https://github.com/jneen/rouge/issues/665)
-* UPSTREAM: rouge incorrectly identifies an endline in a schemaLocation attribute in XML as an error (see https://github.com/jneen/rouge/issues/663) (PR sent)
 * FIXME: stop using fallback fonts in default theme (instead, bundle a fuller font)
  ** using fallback fonts significantly slows down Prawn because it checks every letter every time (see https://github.com/prawnpdf/prawn/blob/master/lib/prawn/text/formatted/box.rb#L427-L434)
  ** add broader character range to monospace font so we can drop fallback font by default (#282)
@@ -143,7 +146,6 @@
 * should vertical alignment of admonition icon/label should respect padding on content? have it's own padding?
 * allow general settings for admonition icon to be set using admonition_icon key prefix (e.g., admonition_icon_size)
 * allow alignment to be set on discrete heading using role
-* submit pastie theme for Rouge upstream (PR sent, see https://github.com/jneen/rouge/pull/576)
 * SIMPLE: mark required theme keys (assume keys are optional by default)
  ** required keys can never have a null value; most are set by base theme
 * allow font properties to be set for normal paragraph separate from base (need to think about inheritence)
