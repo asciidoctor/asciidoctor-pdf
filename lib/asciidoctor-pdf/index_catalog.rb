@@ -99,7 +99,7 @@ module Asciidoctor; module Pdf
       @dests = ::Set.new
     end
   
-    alias :subterms :terms
+    alias subterms terms
   
     def add_dest dest
       @dests << dest

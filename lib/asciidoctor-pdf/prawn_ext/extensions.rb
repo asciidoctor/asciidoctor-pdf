@@ -76,7 +76,7 @@ module Extensions
     page.margins[:left]
   end
   # deprecated
-  alias :left_margin :page_margin_left
+  alias left_margin page_margin_left
 
   # Returns the width of the right margin for the current page
   #
@@ -84,7 +84,7 @@ module Extensions
     page.margins[:right]
   end
   # deprecated
-  alias :right_margin :page_margin_right
+  alias right_margin page_margin_right
 
   # Returns the width of the top margin for the current page
   #
@@ -147,7 +147,7 @@ module Extensions
     # ...or use more robust, low-level check (initial value of content is "q\n")
     page_number > 0 && page.content.stream.filtered_stream == InitialPageContent
   end
-  alias :page_is_empty? :empty_page?
+  alias page_is_empty? empty_page?
 
   # Returns whether the current page is the last page in the document.
   #
@@ -202,7 +202,7 @@ module Extensions
     font.options[:family]
   end
 
-  alias :font_name :font_family
+  alias font_name font_family
 
   # Retrieves the current font info (family, style, size) as a Hash
   #
@@ -801,7 +801,7 @@ module Extensions
   rescue
     false # NOTE this method may get called before the state is initialized
   end
-  alias :is_scratch? :scratch?
+  alias is_scratch? scratch?
 
   # TODO document me
   def dry_run &block

@@ -233,7 +233,7 @@ class Converter < ::Prawn::Document
   # NOTE embedded only makes sense if perhaps we are building
   # on an existing Prawn::Document instance; for now, just treat
   # it the same as a full document.
-  alias :convert_embedded :convert_document
+  alias convert_embedded convert_document
 
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
@@ -741,8 +741,8 @@ class Converter < ::Prawn::Document
     theme_margin :block, :bottom
   end
 
-  alias :convert_quote :convert_quote_or_verse
-  alias :convert_verse :convert_quote_or_verse
+  alias convert_quote convert_quote_or_verse
+  alias convert_verse convert_quote_or_verse
 
   def convert_sidebar node
     add_dest_for_block node if node.id
@@ -1413,8 +1413,8 @@ class Converter < ::Prawn::Document
     theme_margin :block, :bottom
   end
 
-  alias :convert_listing :convert_listing_or_literal
-  alias :convert_literal :convert_listing_or_literal
+  alias convert_listing convert_listing_or_literal
+  alias convert_literal convert_listing_or_literal
 
   # Extract callout marks from string, indexed by 0-based line number
   # Return an Array with the processed string as the first argument
@@ -1822,7 +1822,7 @@ class Converter < ::Prawn::Document
   end
 
   # deprecated
-  alias :convert_horizontal_rule :convert_thematic_break
+  alias convert_horizontal_rule convert_thematic_break
 
   # NOTE manual placement not yet possible, so return nil
   def convert_toc node
@@ -2236,8 +2236,8 @@ class Converter < ::Prawn::Document
     layout_heading title, opts
   end
 
-  alias :start_new_part :start_new_chapter
-  alias :layout_part_title :layout_chapter_title
+  alias start_new_part start_new_chapter
+  alias layout_part_title layout_chapter_title
 
   # QUESTION why doesn't layout_heading set the font??
   # QUESTION why doesn't layout_heading accept a node?

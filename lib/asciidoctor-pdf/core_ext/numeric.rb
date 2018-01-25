@@ -10,6 +10,6 @@ class Numeric
     end
   else
     # use native method in Ruby >= 2.4
-    alias :truncate_to_precision :truncate
+    alias truncate_to_precision truncate
   end unless method_defined? :truncate_to_precision
 end
