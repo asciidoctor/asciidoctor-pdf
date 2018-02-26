@@ -279,7 +279,7 @@ You can use icons in your PDF document using any of the following icon sets:
 * *fa* - https://fortawesome.github.io/Font-Awesome/[Font Awesome^] (default)
 * *octicon* - https://octicons.github.com/[Octicons^]
 * *fi* - http://zurb.com/playground/foundation-icon-fonts-3[Foundation Icons^]
-* *pf* - http://paymentfont.io/[Payment font^]
+* *pf* - https://paymentfont.com/[Payment font^]
 
 You can enable font-based icons by setting the following attribute in the header of your document:
 
