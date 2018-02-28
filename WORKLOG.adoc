@@ -9,7 +9,6 @@
 * add preamble to toc
 
 .1.5.0.alpha.17
-* don't need to use symbols with alias
 * document rouge-style in README (already in theming guide, but gets buried)
 * pass current styles downwards when parsing formatted text (see https://github.com/asciidoctor/asciidoctor-pdf/issues/854)
 * test suite
