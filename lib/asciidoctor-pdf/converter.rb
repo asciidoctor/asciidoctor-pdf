@@ -444,7 +444,7 @@ class Converter < ::Prawn::Document
         end
       end
       theme_font :abstract do
-        prose_opts = { line_height: @theme.abstract_line_height }
+        prose_opts = { line_height: @theme.abstract_line_height, align: (@theme.abstract_align || @base_align).to_sym }
         # FIXME control more first_line_options using theme
         if (line1_font_style = @theme.abstract_first_line_font_style) && line1_font_style.to_sym != font_style
           prose_opts[:first_line_options] = { styles: [font_style, line1_font_style.to_sym] }
