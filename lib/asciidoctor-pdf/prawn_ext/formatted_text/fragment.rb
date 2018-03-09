@@ -20,6 +20,14 @@ module Fragment
   def descender= val
     @descender = (format_state.key? :descender) ? format_state[:descender] : val
   end
+
+  def width
+    if (val = format_state[:width])
+      (val.end_with? 'em') ? val.to_f * @document.font_size : val
+    else
+      super
+    end
+  end
 end
 
 class ::Prawn::Text::Formatted::Fragment
@@ -29,6 +37,7 @@ class ::Prawn::Text::Formatted::Fragment
     # NOTE it's necessary to remove the accessor methods or else they won't get replaced
     remove_method :ascender=
     remove_method :descender=
+    remove_method :width=
     include Fragment
   end
 end

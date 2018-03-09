@@ -161,6 +161,13 @@ class Transform
           fragment[:size] = value
         end
       end
+      if (value = attrs[:width])
+        fragment[:width] = value
+        if (value = attrs[:align])
+          fragment[:align] = value.to_sym
+          fragment[:callback] = InlineTextAligner
+        end
+      end
       #if !fragment[:character_spacing] && (value = attrs[:character_spacing])
       #  fragment[:character_spacing] = value.to_f
       #end
