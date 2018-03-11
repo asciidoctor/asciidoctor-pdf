@@ -1970,13 +1970,19 @@ class Converter < ::Prawn::Document
       end
       icon_set = 'fa' unless IconSets.include? icon_set
       if node.attr? 'size', nil, false
-        size = (size = (node.attr 'size')) == 'lg' ? '1.3333em' : (size.sub 'x', 'em')
-        size_attr = %( size="#{size}")
+        case (size = node.attr 'size')
+        when 'lg'
+          size_attr = %( size="1.333em")
+        when 'fw'
+          size_attr = %( width="1em" align="center")
+        else
+          size_attr = %( size="#{size.sub 'x', 'em'}")
+        end
       else
         size_attr = nil
       end
       begin
-        # TODO support rotate and flip attributes; support fw (full-width) size
+        # TODO support rotate and flip attributes
         %(<font name="#{icon_set}"#{size_attr}>#{::Prawn::Icon::FontData.load(self, icon_set).unicode icon_name}</font>)
       rescue
         warn %(asciidoctor: WARNING: #{icon_name} is not a valid icon name in the #{icon_set} icon set)
