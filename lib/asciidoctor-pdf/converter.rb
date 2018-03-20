@@ -1331,7 +1331,8 @@ class Converter < ::Prawn::Document
       source_string, conum_mapping = extract_conums source_string
       # NOTE pygments.rb strips trailing whitespace; preserve it in case there are conums on last line
       num_trailing_spaces = source_string.length - (source_string = source_string.rstrip).length if conum_mapping
-      result = lexer.highlight source_string, options: lexer_opts
+      # NOTE highlight can return nil if something goes wrong; fallback to encoded source string if this happens
+      result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
       fragments = guard_indentation text_formatter.format result
       conum_mapping ? (restore_conums fragments, conum_mapping, num_trailing_spaces) : fragments
     when 'rouge'
