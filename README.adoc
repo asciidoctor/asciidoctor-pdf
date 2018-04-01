@@ -29,7 +29,7 @@ endif::[]
 :uri-project-repo: {uri-project}
 :uri-project-issues: {uri-project-repo}/issues
 :uri-project-list: http://discuss.asciidoctor.org
-:uri-prawn: http://prawn.majesticseacreature.com
+:uri-prawn: http://prawnpdf.org
 :uri-prawn-gmagick: https://github.com/packetmonkey/prawn-gmagick
 :uri-prawn-svg: https://github.com/mogest/prawn-svg
 :uri-asciidoctor-mathematical: https://github.com/asciidoctor/asciidoctor-mathematical
