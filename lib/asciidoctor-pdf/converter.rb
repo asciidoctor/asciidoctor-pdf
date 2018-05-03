@@ -1690,7 +1690,7 @@ class Converter < ::Prawn::Document
     case (frame = node.attr 'frame', 'all', false)
     when 'all'
       # keep outer borders
-    when 'topbot'
+    when 'topbot', 'ends'
       border_width[:left] = border_width[:right] = 0
     when 'sides'
       border_width[:top] = border_width[:bottom] = 0
