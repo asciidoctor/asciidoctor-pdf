@@ -23,7 +23,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 # Copyright (c) 2011 Andrew Vos
-# Copyright (c) 2014 OpenDevice, Inc.
+# Copyright (c) 2014 OpenDevise, Inc.
 #
 ########################################################################
 
