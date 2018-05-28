@@ -2522,6 +2522,8 @@ class Converter < ::Prawn::Document
       if is_book && ((sect_is_part = sect.part?) || sect.chapter?)
         if sect_is_part
           part_start_pages[page_num] ||= (sect.numbered_title formal: true)
+          chapter_start_pages[page_num] = ''
+          section_start_pages[page_num] = ''
         else
           chapter_start_pages[page_num] ||= (sect.numbered_title formal: true)
           if sect.sectname == 'appendix' && !part_start_pages.empty?
