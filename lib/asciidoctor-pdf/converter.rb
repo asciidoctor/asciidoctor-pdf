@@ -2326,7 +2326,7 @@ class Converter < ::Prawn::Document
   # Render the caption for a table and return the height of the rendered content
   def layout_table_caption node, width, alignment = :left, side = :top
     # QUESTION should we confine width of title to width of table?
-    if alignment == :left || (excess = bounds.width - width) == 0
+    if [:left, :center].include?(alignment) || (excess = bounds.width - width) == 0
       layout_caption node, side: side
     else
       indent excess * (alignment == :center ? 0.5 : 1) do
