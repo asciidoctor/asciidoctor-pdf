@@ -31,7 +31,7 @@ endif::[]
 
 == It's a City Under Siege
 
-This journey begins one late Monday afternoon at {uri-devoxx}[Devoxx].
+This journey begins one late Monday afternoon at {uri-devoxx}[((Devoxx))].
 Our team needs coffee, _desperately_, but none of us dare open the theater doors...
 
 During the {uri-devoxx-top-talks}[opening university session], a script-happy warlock inadvertently released a legion of Wolpertingers!
@@ -43,11 +43,13 @@ Behold -> the horror!
 [.left.thumb]
 image::wolpertinger.jpg[Wolpertinger,pdfwidth=50%,link={uri-wolpertinger}]
 
+(((Wolpertinger)))
+(((Ravenous Beast,Wolpertinger)))
 You may not be familiar with these {uri-wolpertinger}[ravenous beasts].
 Trust us, they'll eat your shorts and suck loops from your code.
 In light of this danger, we've searched high and wide for the security crew's defensive operations manual.
 We can't find it and the DefOps{empty}footnote:[a portmanteau of “defensive” and “operations”] werewolves haven't returned from their rendezvous at Bier Central.
-They've either eaten each other or fallen victim to the Wolpertingers roaming the streets of Antwerp.
+They've either eaten each other or fallen victim to the Wolpertingers roaming the streets of ((Antwerp)).
 Quick, hit kbd:[Ctrl,Alt,Backspace] or select menu:File[Quit] and let's bail out of here!
 
 WARNING: Working with werewolves leads to howling and trying to train aggressive regular expressions with Pavlovian reinforcement.
@@ -251,7 +253,7 @@ Listing block content is rendered as `<pre>` text.
 The `listing` style is applied to an element, such as a paragraph, by setting the `listing` attribute on that element.
 ****
 
-Let's get our highlighting on!
+Let's get our ((highlighting)) on!
 
 <<<
 
@@ -499,3 +501,6 @@ Here's some content inside an open block.
 
 3+^.e|Powered by Open Source
 |===
+
+[index]
+== Index
