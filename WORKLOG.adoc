@@ -2,13 +2,14 @@
 
 == TODO
 
-* add bw / grayscale theme for rouge
+* add bw / grayscale theme for rouge (upstream?)
 * fix labels in issue tracker to match other projects; in particular, enhancement should be green.
 * setup asciidoctor-mathoid project, then mention it in the STEM support section
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
 * add preamble to toc
 
 .1.5.0.alpha.17
+* switch to new logging subsystem (and verify we can use --failure-level option)
 * document rouge-style in README (already in theming guide, but gets buried)
 * pass current styles downwards when parsing formatted text (see https://github.com/asciidoctor/asciidoctor-pdf/issues/854)
 * test suite
@@ -19,6 +20,9 @@
 * add helper to expand value into 4 coordinates (top, right, bottom, left)
 
 //-
+* not honoring align in abstract
+* don't style paragraph after abstract paragraph as lead (right?)
+* be able to control padding per column in footer
 * should we reroute String#downcase if unicode gem is loaded? this is required for natural cross references; or should we just document workaround?
 * if sourcemap is enabled, error messages should include whatever line information is available
 * CRITICAL: prawn-svg upgrade broke sizing of title logo image; blocking release
