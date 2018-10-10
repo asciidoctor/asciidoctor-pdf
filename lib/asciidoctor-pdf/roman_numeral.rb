@@ -88,7 +88,7 @@ class RomanNumeral
 
   def self.int_to_roman value
     result = []
-    BaseDigits.keys.reverse.each do |ival|
+    BaseDigits.keys.reverse_each do |ival|
       while value >= ival
         value -= ival 
         result << BaseDigits[ival]
@@ -100,7 +100,7 @@ class RomanNumeral
   def self.roman_to_int value
     value = value.upcase
     result = 0
-    BaseDigits.values.reverse.each do |rval|
+    BaseDigits.values.reverse_each do |rval|
       while value.start_with? rval
         offset = rval.length
         value = value[offset..offset]
