@@ -3341,9 +3341,11 @@ class Converter < ::Prawn::Document
   def breakable_uri uri
     scheme, address = uri.split UriSchemeBoundaryRx, 2
     address, scheme = scheme, address unless address
-    address = address.gsub UriBreakCharsRx, UriBreakCharRepl
-    # NOTE require at least two characters after a break
-    address.slice!(-2) if address[-2] == ZeroWidthSpace
+    unless address.nil_or_empty?
+      address = address.gsub UriBreakCharsRx, UriBreakCharRepl
+      # NOTE require at least two characters after a break
+      address.slice!(-2) if address[-2] == ZeroWidthSpace
+    end
     %(#{scheme}#{address})
   end
 
