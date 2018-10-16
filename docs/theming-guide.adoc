@@ -1461,7 +1461,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 |<<quoted-string,Quoted string>> +
 (default: ', ')
 |title_page:
-  revision:
+  authors:
     delimiter: '; '
 
 |font_color
