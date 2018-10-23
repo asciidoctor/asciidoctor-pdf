@@ -40,7 +40,7 @@ module InlineImageRenderer
     # prevent any text from being written
     fragment.conceal
   ensure
-    ::File.unlink data[:image_path] if TemporaryPath === data[:image_path] && data[:image_path].exist?
+    data[:image_path].unlink if TemporaryPath === data[:image_path] && data[:image_path].exist?
   end
 end
 end
