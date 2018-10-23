@@ -370,6 +370,9 @@ The image is always sized according to the explicit or intrinsic width and its h
 The height of the image is ignored by the PDF converter unless the height of the image exceeds the content height of the page.
 In this case, the image is scaled down to fit on a single page.
 
+If you want a block image to align to the boundaries of the page (not the content margin), specify the `align-to-page` option (e.g., `opts="align-to-page"`).
+This is most useful when using vw units because you can make the image cover the entire width of the page.
+
 Images in running content also support the `fit` attribute.
 If the value of this attribute is `contain`, the image size is increased or decreased to fill the available space while preserving its aspect ratio.
 If the value of this attribute is `scaled-down`, the image size is first resolved in the normal way, then scaled down further to fit within the available space, if necessary.

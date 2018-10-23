@@ -1085,12 +1085,13 @@ class Converter < ::Prawn::Document
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
     width = resolve_explicit_width node.attributes, (available_w = bounds.width), support_vw: true, use_fallback: true
     # TODO add `to_pt page_width` method to ViewportWidth type
-    width = (width.to_f / 100) * page_width if (width_relative_to_page = ViewportWidth === width)
+    width = (width.to_f / 100) * page_width if ViewportWidth === width
 
     alignment = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
+    align_to_page = node.option? 'align-to-page'
 
     begin
-      span_page_width_if width_relative_to_page do
+      span_page_width_if align_to_page do
         if image_format == 'svg'
           if ::Base64 === image_path
             svg_data = ::Base64.decode64 image_path
