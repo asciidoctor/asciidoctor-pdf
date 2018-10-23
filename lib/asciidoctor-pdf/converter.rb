@@ -23,7 +23,7 @@ require_relative 'roman_numeral'
 require_relative 'index_catalog'
 
 autoload :StringIO, 'stringio'
-autoload :Tempfile, 'tempfile'
+autoload :Tempfile, ::File.join((::File.dirname __FILE__), 'core_ext/tempfile')
 
 module Asciidoctor
 module Pdf
@@ -228,6 +228,7 @@ class Converter < ::Prawn::Document
     catalog.data[:ViewerPreferences] = { DisplayDocTitle: true }
 
     layout_cover_page :back, doc
+    nil
   end
 
   # NOTE embedded only makes sense if perhaps we are building
@@ -3203,7 +3204,7 @@ class Converter < ::Prawn::Document
     image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node : nil)
     # NOTE currently used for inline images
     if ::Base64 === image_path
-      tmp_image = ::Tempfile.new ['image-', image_format && %(.#{image_format})]
+      tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
       tmp_image.binmode unless image_format == 'svg'
       begin
         tmp_image.write(::Base64.decode64 image_path)
@@ -3225,7 +3226,7 @@ class Converter < ::Prawn::Document
       else
         ::OpenURI
       end
-      tmp_image = ::Tempfile.new ['image-', image_format && %(.#{image_format})]
+      tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
       tmp_image.binmode if (binary = image_format != 'svg')
       begin
         open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
