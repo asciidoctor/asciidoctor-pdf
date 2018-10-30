@@ -49,6 +49,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   s.add_runtime_dependency 'prawn-icon', '1.4.0'
   s.add_runtime_dependency 'safe_yaml', '~> 1.0.4'
   s.add_runtime_dependency 'thread_safe', '~> 0.3.6'
+  s.add_runtime_dependency 'concurrent-ruby', '~> 1.0.5'
   # For our usage, treetop 1.6.2 is slower than 1.5.3
   s.add_runtime_dependency 'treetop', '1.5.3'
 end
