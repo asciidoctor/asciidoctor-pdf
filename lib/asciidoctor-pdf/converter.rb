@@ -528,7 +528,6 @@ class Converter < ::Prawn::Document
       label_min_width = label_min_width.to_f
     end
     icons = (node.document.attr? 'icons') ? (node.document.attr 'icons') : false
-    icontype = (node.document.attr? 'icontype') ? (node.document.attr 'icontype') : 'png'
     if icons == 'font' && !(node.attr? 'icon', nil, false)
       icon_data = admonition_icon_data(label_text = type.to_sym)
       label_width = label_min_width ? label_min_width : (icon_data[:size] * 1.5)
@@ -595,20 +594,21 @@ class Converter < ::Prawn::Document
                     color: icon_data[:stroke_color],
                     size: icon_size
               elsif icons
-                if icontype == 'svg'
+                if icon_path.end_with? '.svg'
                   begin
-                    svg_data = ::IO.read icon_path
-                    file_request_root = ::File.dirname icon_path
-                    svg_obj = ::Prawn::Svg::Interface.new svg_data, self,
-	                                                  position: label_align,
-                                                          vposition: label_valign,
-                                                          width: label_width,
-                                                          height: box_height,
-                                                          fallback_font_name: default_svg_font,
-                                                          enable_web_requests: (node.document.attr? 'allow-uri-read'),
-                                                          enable_file_requests_with_root: file_request_root
-                    icon_width = (svg_size = svg_obj.document.sizing).output_width
-                    icon_height = svg_size.output_height
+                    svg_obj = ::Prawn::Svg::Interface.new ::IO.read(icon_path), self,
+	                    position: label_align,
+                        vposition: label_valign,
+                        width: label_width,
+                        height: box_height,
+                        fallback_font_name: default_svg_font,
+                        enable_web_requests: (node.document.attr? 'allow-uri-read'),
+                        enable_file_requests_with_root: (::File.dirname icon_path)
+                    if (icon_height = (svg_size = svg_obj.document.sizing).output_height) > box_height
+                      icon_width = (svg_obj.resize height: (icon_height = box_height)).output_width
+                    else
+                      icon_width = svg_size.output_width
+                    end
                     svg_obj.draw
                   rescue => e
                     warn %(asciidoctor: WARNING: could not embed admonition icon image: #{icon_path}; #{e.message})
