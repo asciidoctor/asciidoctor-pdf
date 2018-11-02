@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# encoding: utf-8
 # TODO cleanup imports...decide what belongs in asciidoctor-pdf.rb
 require 'prawn'
 require_relative 'ttfunk_ext'
@@ -594,19 +594,40 @@ class Converter < ::Prawn::Document
                     color: icon_data[:stroke_color],
                     size: icon_size
               elsif icons
-                begin
-                  image_obj, image_info = build_image_object icon_path
-                  icon_aspect_ratio = image_info.width.fdiv image_info.height
-                  # NOTE don't scale image up if smaller than label_width
-                  icon_width = [(to_pt image_info.width, :px), label_width].min
-                  if (icon_height = icon_width * (1 / icon_aspect_ratio)) > box_height
-                    icon_width *= box_height / icon_height
-                    icon_height = box_height
+                if icon_path.end_with? '.svg'
+                  begin
+                    svg_obj = ::Prawn::Svg::Interface.new ::IO.read(icon_path), self,
+	                    position: label_align,
+                        vposition: label_valign,
+                        width: label_width,
+                        height: box_height,
+                        fallback_font_name: default_svg_font,
+                        enable_web_requests: (node.document.attr? 'allow-uri-read'),
+                        enable_file_requests_with_root: (::File.dirname icon_path)
+                    if (icon_height = (svg_size = svg_obj.document.sizing).output_height) > box_height
+                      icon_width = (svg_obj.resize height: (icon_height = box_height)).output_width
+                    else
+                      icon_width = svg_size.output_width
+                    end
+                    svg_obj.draw
+                  rescue => e
+                    warn %(asciidoctor: WARNING: could not embed admonition icon image: #{icon_path}; #{e.message})
                   end
-                  embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
-                rescue => e
-                  # QUESTION should we show the label in this case?
-                  warn %(asciidoctor: WARNING: could not embed admonition icon image: #{icon_path}; #{e.message})
+                else
+                  begin
+                    image_obj, image_info = build_image_object icon_path
+                    icon_aspect_ratio = image_info.width.fdiv image_info.height
+                    # NOTE don't scale image up if smaller than label_width
+                    icon_width = [(to_pt image_info.width, :px), label_width].min
+                    if (icon_height = icon_width * (1 / icon_aspect_ratio)) > box_height
+                      icon_width *= box_height / icon_height
+                      icon_height = box_height
+                    end
+                    embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
+                  rescue => e
+                    # QUESTION should we show the label in this case?
+                    warn %(asciidoctor: WARNING: could not embed admonition icon image: #{icon_path}; #{e.message})
+                  end
                 end
               else
                 # IMPORTANT the label must fit in the alotted space or it shows up on another page!
