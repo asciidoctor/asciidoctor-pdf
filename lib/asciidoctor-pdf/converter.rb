@@ -1951,7 +1951,9 @@ class Converter < ::Prawn::Document
       %(<a name="#{node.target}">#{DummyText}</a>)
     when :bibref
       # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
-      %(<a name="#{target = node.target}">#{DummyText}</a>[#{target}])
+      # NOTE technically node.text should be node.reftext, but subs have already been applied to text
+      # NOTE check reftext? for compatibility with Asciidoctor <= 1.5.5
+      %(<a name="#{node.target}">#{DummyText}</a>#{node.reftext? ? node.text : "[#{node.target}]"})
     else
       warn %(asciidoctor: WARNING: unknown anchor type: #{node.type.inspect})
     end
