@@ -416,11 +416,11 @@ class Converter < ::Prawn::Document
       sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_pgnum}-#{y.ceil}))
       add_dest_for_block sect, sect_anchor
       if type == :part
-        layout_part_title sect, title, align: align
+        layout_part_title sect, title, align: align, level: hlevel
       elsif type == :chapter
-        layout_chapter_title sect, title, align: align
+        layout_chapter_title sect, title, align: align, level: hlevel
       else
-        layout_heading title, align: align
+        layout_heading title, align: align, level: hlevel
       end
     end
 
@@ -432,7 +432,7 @@ class Converter < ::Prawn::Document
     add_dest_for_block node if node.id
     # QUESTION should we decouple styles from section titles?
     theme_font :heading, level: (hlevel = node.level + 1) do
-      layout_heading node.title, align: (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
+      layout_heading node.title, align: (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym, level: hlevel
     end
   end
 
@@ -2272,13 +2272,13 @@ class Converter < ::Prawn::Document
   # QUESTION why doesn't layout_heading set the font??
   # QUESTION why doesn't layout_heading accept a node?
   def layout_heading string, opts = {}
-    top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.heading_margin_top
-    bot_margin = margin || (opts.delete :margin_bottom) || @theme.heading_margin_bottom
+    top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme[%(heading_h#{opts[:level]}_margin_top)] || @theme.heading_margin_top
+    bot_margin = margin || (opts.delete :margin_bottom) || @theme[%(heading_h#{opts[:level]}_margin_bottom)] || @theme.heading_margin_bottom
     if (transform = (opts.delete :text_transform) || @text_transform) && transform != 'none'
       string = transform_text string, transform
     end
     margin_top top_margin
-    typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.heading_line_height), {
+    typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme[%(heading_h#{opts[:level]}_line_height)] || @theme.heading_line_height), {
       color: @font_color,
       inline_format: true,
       align: @base_align.to_sym
