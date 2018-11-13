@@ -114,7 +114,7 @@ endif::[]
 
 == Prerequisites
 
-All that's needed is Ruby (1.9.3 or above; 2.3.x recommended) and a few Ruby gems, which we explain how to install in the next section.
+All that's needed is Ruby (1.9.3 or above, though 2.3.x or above is recommended) and a few Ruby gems, which we explain how to install in the next section.
 
 To check if you have Ruby available, use the `ruby` command to query the version installed:
 
@@ -667,7 +667,7 @@ We'll leverage the project configuration to install the necessary dependencies.
 
 If you're using {uri-rvm}[RVM], we recommend creating a new gemset to work with {project-name}:
 
- $ rvm use 2.3@asciidoctor-pdf --create
+ $ rvm use 2.5@asciidoctor-pdf --create
 
 We like RVM because it keeps the dependencies required by various projects isolated.
 
