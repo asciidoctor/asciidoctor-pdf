@@ -25,12 +25,14 @@ module Fragment
     if (val = format_state[:width])
       (val.end_with? 'em') ? val.to_f * @document.font_size : val
     else
-      super
+      super_width
     end
   end
 end
 
 class ::Prawn::Text::Formatted::Fragment
+  # FIXME switch to super after dropping Ruby 1.9.3
+  alias_method :super_width, :width
   if respond_to? :prepend
     prepend Fragment
   else
