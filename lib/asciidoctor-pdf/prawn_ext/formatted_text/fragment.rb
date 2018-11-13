@@ -37,7 +37,7 @@ class ::Prawn::Text::Formatted::Fragment
     # NOTE it's necessary to remove the accessor methods or else they won't get replaced
     remove_method :ascender=
     remove_method :descender=
-    remove_method :width=
+    remove_method :width
     include Fragment
   end
 end
