@@ -703,6 +703,31 @@ You can use the application to convert a document as follows:
 
 endif::[]
 
+=== Test a Pull Request
+
+To test a pull request (PR), you first need to fetch the branch that contains the change and switch to it.
+The steps below are covered in detail in the https://help.github.com/articles/checking-out-pull-requests-locally[GitHub help].
+
+Let's assume you want to test PR 955.
+Here's how you fetch and switch to it:
+
+ $ git fetch origin pull/955/head:pr-955-review
+   git checkout pr-955-review
+
+IMPORTANT: Make sure you replace the number with the number of the PR you want to test.
+
+In case any dependencies have changed, you should run the `bundle` command again:
+
+ $ bundle
+
+Now you can run the application as modified by the PR:
+
+ $ bundle exec asciidoctor-pdf /path/to/sample.adoc
+
+To switch back to master, just type:
+
+ $ git checkout master
+
 [[resources,Links]]
 == Resources
 
