@@ -271,7 +271,7 @@ Even if there were such a font, bundling that font with the main gem would make 
 It would also severely limit the style choices in the default theme, which targets Latin-based languages.
 
 Therefore, we're taking the strategy of creating separate dedicated theme gems that target each language family, such as CJK.
-The base theme for CJK languages is provided by the https://github.com/chloerei/asciidoctor-pdf-cjk[asciidoctro-pdf-cjk] project and a concrete implementation provided by the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project that's based on the kai_gen_gothic font.
+The base theme for CJK languages is provided by the https://github.com/chloerei/asciidoctor-pdf-cjk[asciidoctor-pdf-cjk] project and a concrete implementation provided by the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project that's based on the kai_gen_gothic font.
 Of course, you're free to follow this model and create your own theme gem that uses fonts of your choice.
 
 == Font-Based Icons
