@@ -5,6 +5,34 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+* allow additional style properties to be set per heading level (#176) (@billybooth)
+* set line spacing for non-AsciiDoc table cells (#296)
+* consider all scripts when looking for leading alpha characters in index (#853)
+* remove unprocessed passthroughs in literal cells
+* apply font style from theme to formatted text description list term (#854)
+* prevent tempfile for remote image from being deleted before it's used (#947)
+* handle case when uri to make breakable is empty (#936)
+* add support for frame=ends as alternative to frame=topbot on table
+* allow text alignment to be set for abstract (#893)
+* add support for reftext for bibliography entry (#864)
+* add support for fw (full-width) icons (#890)
+* decouple vw units with alignment (#948)
+* add align-to-page option for block images (#948)
+* add support for SVG admonition icons (#828) (@keith-packard)
+* rename pastie theme for rouge to asciidoctor_pdf_default
+* add support for line numbers in source listings (#224)
+* guard against pygments returning nil (#884)
+* only look for the start attribute on the code block itself when highlighting with rouge
+* apply block styling to background for line-oriented tokens in rouge by default
+* remove correct width method when overloading Prawn::Text::Formatted::Fragment
+* avoid call to super in prepended module to fix Ruby 1.9.3
+* look for correct file to require in bin script
+* upgrade prawn-icon from 1.3.0 to 1.4.0
+* upgrade rouge to 2.2.1 
+* add concurrent-ruby to runtime dependencies for compatiblity w/ Asciidoctor 1.5.8
+
 == 1.5.0.alpha.16 (2017-07-30) - @mojavelinux
 
 * add support for xrefstyle attribute (#464)
