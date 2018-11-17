@@ -46,7 +46,8 @@ class Converter < ::Prawn::Document
     tip:       { name: 'fa-lightbulb-o', stroke_color: '111111', size: 24 },
     warning:   { name: 'fa-exclamation-triangle', stroke_color: 'BF6900', size: 24 }
   }
-  TextAlignmentNames = ['left', 'center', 'right', 'justify']
+  TextAlignmentNames = ['justify', 'left', 'center', 'right']
+  TextAlignmentRoles = ['text-justify', 'text-left', 'text-center', 'text-right']
   BlockAlignmentNames = ['left', 'center', 'right']
   AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
   ColumnPositions = [:left, :center, :right]
@@ -483,23 +484,10 @@ class Converter < ::Prawn::Document
   # TODO add prose around image logic (use role to add special logic for headshot)
   def convert_paragraph node
     add_dest_for_block node if node.id
-    lead = false
     prose_opts = {}
-    node.roles.each do |role|
-      case role
-      when 'text-left'
-        prose_opts[:align] = :left
-      when 'text-right'
-        prose_opts[:align] = :right
-      when 'text-justify'
-        prose_opts[:align] = :justify
-      when 'text-center'
-        prose_opts[:align] = :center
-      when 'lead'
-        lead = true
-      #when 'signature'
-      #  prose_opts[:size] = @theme.base_font_size_small
-      end
+    lead = (roles = node.roles).include? 'lead'
+    if (align = resolve_alignment_from_role roles)
+      prose_opts[:align] = align
     end
 
     # TODO check if we're within one line of the bottom of the page
@@ -986,6 +974,16 @@ class Converter < ::Prawn::Document
     # and advance to the next page if so (similar to logic for section titles)
     layout_caption node.title if node.title?
 
+    opts = {}
+    if (align = resolve_alignment_from_role node.roles)
+      opts[:align] = align
+    elsif node.style == 'bibliography'
+      opts[:align] = :left
+    elsif (align = @theme.outline_list_text_align)
+      # NOTE theme setting only affects alignment of list text (not nested blocks)
+      opts[:align] = align.to_sym
+    end
+
     line_metrics = calc_line_metrics @theme.base_line_height
     complex = false
     # ...or if we want to give all items in the list the same treatment
@@ -1005,7 +1003,7 @@ class Converter < ::Prawn::Document
       node.items.each do |item|
         # FIXME extract to an ensure_space (or similar) method; simplify
         advance_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
-        convert_outline_list_item item, item.complex?
+        convert_outline_list_item item, item.complex?, opts
       end
     end
     # NOTE Children will provide the necessary bottom margin if last item is complex.
@@ -1017,7 +1015,7 @@ class Converter < ::Prawn::Document
     end
   end
 
-  def convert_outline_list_item node, complex = false
+  def convert_outline_list_item node, complex = false, opts = {}
     # TODO move this to a draw_bullet (or draw_marker) method
     case (list_type = node.parent.context)
     when :ulist
@@ -1057,17 +1055,14 @@ class Converter < ::Prawn::Document
     end
 
     if complex
-      convert_content_for_list_item node
+      convert_content_for_list_item node, opts
     else
-      convert_content_for_list_item node, margin_bottom: @theme.outline_list_item_spacing
+      convert_content_for_list_item node, (opts.merge margin_bottom: @theme.outline_list_item_spacing)
     end
   end
 
   def convert_content_for_list_item node, opts = {}
-    if node.text?
-      opts[:align] = :left if node.parent.style == 'bibliography'
-      layout_prose node.text, opts
-    end
+    layout_prose node.text, opts if node.text?
     convert_content_for_block node
   end
 
@@ -3208,6 +3203,14 @@ class Converter < ::Prawn::Document
       add_dest id, node_dest
     end
     nil
+  end
+
+  def resolve_alignment_from_role roles
+    if (align_role = roles.reverse.find {|r| TextAlignmentRoles.include? r })
+      align_role[5..-1].to_sym
+    else
+      nil
+    end
   end
 
   # QUESTION is this method still necessary?
