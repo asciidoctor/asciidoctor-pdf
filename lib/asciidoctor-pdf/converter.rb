@@ -959,7 +959,7 @@ class Converter < ::Prawn::Document
           nil
         else
           if Bullets.key?(candidate = style.to_sym)
-            candidate 
+            candidate
           else
             warn %(asciidoctor: WARNING: unknown unordered list style: #{candidate})
             :disc
@@ -1356,8 +1356,14 @@ class Converter < ::Prawn::Document
       num_trailing_spaces = source_string.length - (source_string = source_string.rstrip).length if conum_mapping
       # NOTE highlight can return nil if something goes wrong; fallback to encoded source string if this happens
       result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
-      fragments = guard_indentation text_formatter.format result
-      conum_mapping ? (restore_conums fragments, conum_mapping, num_trailing_spaces) : fragments
+      if (linenums = node.attr? 'linenums')
+        linenums = (node.attr 'start', 1, false).to_i
+        @theme.code_linenum_font_color ||= '999999'
+        conum_mapping ||= {}
+      end
+      fragments = text_formatter.format result
+      fragments = restore_conums fragments, conum_mapping, num_trailing_spaces, linenums if conum_mapping
+      fragments = guard_indentation fragments
     when 'rouge'
       Helpers.require_library RougeRequirePath, 'rouge' unless defined? ::Rouge::Formatters::Prawn
       lexer = ::Rouge::Lexer.find(node.attr 'language', 'text', false) || ::Rouge::Lexers::PlainText
@@ -1469,7 +1475,7 @@ class Converter < ::Prawn::Document
   #--
   # QUESTION can this be done more efficiently?
   # QUESTION can we reuse arrange_fragments_by_line?
-  def restore_conums fragments, conum_mapping, num_trailing_spaces = 0
+  def restore_conums fragments, conum_mapping, num_trailing_spaces = 0, linenums = nil
     lines = []
     line_num = 0
     # reorganize the fragments into an array of lines
@@ -1488,9 +1494,14 @@ class Converter < ::Prawn::Document
     end
     conum_color = @theme.conum_font_color
     last_line_num = lines.size - 1
+    if linenums
+      pad_size = (last_line_num + 1).to_s.length
+      linenum_color = @theme.code_linenum_font_color
+    end
     # append conums to appropriate lines, then flatten to an array of fragments
     lines.flat_map.with_index do |line, cur_line_num|
       last_line = cur_line_num == last_line_num
+      line.unshift text: %(#{(cur_line_num + linenums).to_s.rjust pad_size} ), color: linenum_color if linenums
       if (conums = conum_mapping.delete cur_line_num)
         line << { text: ' ' * num_trailing_spaces } if last_line && num_trailing_spaces > 0
         conum_text = conums.map {|num| conum_glyph num } * ' '
