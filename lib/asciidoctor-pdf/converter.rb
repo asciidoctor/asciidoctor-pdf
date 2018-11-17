@@ -483,7 +483,7 @@ class Converter < ::Prawn::Document
   # TODO add prose around image logic (use role to add special logic for headshot)
   def convert_paragraph node
     add_dest_for_block node if node.id
-    is_lead = false
+    lead = false
     prose_opts = {}
     node.roles.each do |role|
       case role
@@ -496,7 +496,7 @@ class Converter < ::Prawn::Document
       when 'text-center'
         prose_opts[:align] = :center
       when 'lead'
-        is_lead = true
+        lead = true
       #when 'signature'
       #  prose_opts[:size] = @theme.base_font_size_small
       end
@@ -506,7 +506,7 @@ class Converter < ::Prawn::Document
     # and advance to the next page if so (similar to logic for section titles)
     layout_caption node.title if node.title?
 
-    if is_lead
+    if lead
       theme_font :lead do
         layout_prose node.content, prose_opts
       end
