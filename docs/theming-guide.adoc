@@ -2585,9 +2585,16 @@ The keys in this category control the arrangement and style of outline list item
 (default: _inherit_)
 |outline_list:
   marker_font_color: #3c763d 
+
+|text_align^[2]^
+|<<text-alignments,Text alignment>> +
+(default: $base_align)
+|outline_list:
+  text_align: left
 |===
 
 . Controls the color of the bullet glyph that marks items in unordered lists and the number for items in ordered lists.
+. Controls the alignment of the list text only, not nested content (blocks or lists).
 
 [#keys-table]
 === Table
