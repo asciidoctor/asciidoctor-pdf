@@ -29,6 +29,12 @@ module Asciidoctor
 module Pdf
 class Converter < ::Prawn::Document
   include ::Asciidoctor::Converter
+  if defined? ::Asciidoctor::Logging
+    include ::Asciidoctor::Logging
+  else
+    require_relative 'asciidoctor_ext/logging_shim'
+    include ::Asciidoctor::LoggingShim
+  end
   include ::Asciidoctor::Writer
   include ::Asciidoctor::Prawn::Extensions
 
@@ -119,7 +125,7 @@ class Converter < ::Prawn::Document
       result = send method_name, node
     else
       # TODO delegate to convert_method_missing
-      warn %(asciidoctor: WARNING: conversion missing in backend #{@backend} for #{name})
+      logger.warn %(conversion missing in backend #{@backend} for #{name})
     end
     # NOTE inline nodes generate pseudo-HTML strings; the remainder write directly to PDF object
     ::Asciidoctor::Inline === node ? result : self
@@ -527,7 +533,7 @@ class Converter < ::Prawn::Document
     else
       if icons
         icons = false
-        warn %(asciidoctor: WARNING: admonition icon image not found or not readable: #{icon_path}) unless scratch?
+        logger.warn %(admonition icon image not found or not readable: #{icon_path}) unless scratch?
       end
       label_text = node.caption
       theme_font :admonition_label do
@@ -599,7 +605,7 @@ class Converter < ::Prawn::Document
                     end
                     svg_obj.draw
                   rescue => e
-                    warn %(asciidoctor: WARNING: could not embed admonition icon image: #{icon_path}; #{e.message})
+                    logger.warn %(could not embed admonition icon image: #{icon_path}; #{e.message})
                   end
                 else
                   begin
@@ -614,7 +620,7 @@ class Converter < ::Prawn::Document
                     embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
                   rescue => e
                     # QUESTION should we show the label in this case?
-                    warn %(asciidoctor: WARNING: could not embed admonition icon image: #{icon_path}; #{e.message})
+                    logger.warn %(could not embed admonition icon image: #{icon_path}; #{e.message})
                   end
                 end
               else
@@ -949,7 +955,7 @@ class Converter < ::Prawn::Document
           if Bullets.key?(candidate = style.to_sym)
             candidate
           else
-            warn %(asciidoctor: WARNING: unknown unordered list style: #{candidate})
+            logger.warn %(unknown unordered list style: #{candidate})
             :disc
           end
         end
@@ -1033,7 +1039,7 @@ class Converter < ::Prawn::Document
       @list_numbers << ((index = @list_numbers.pop).public_send dir)
       marker = %(#{index}.)
     else
-      warn %(asciidoctor: WARNING: unknown list type #{list_type.inspect})
+      logger.warn %(unknown list type #{list_type.inspect})
       marker = Bullets[:disc]
     end
 
@@ -1071,7 +1077,7 @@ class Converter < ::Prawn::Document
     target, image_format = node.target_and_format
 
     if image_format == 'gif' && !(defined? ::GMagick::Image)
-      warn %(asciidoctor: WARNING: GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
+      logger.warn %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
       image_path = false
     elsif ::Base64 === target
       image_path = target
@@ -1081,7 +1087,7 @@ class Converter < ::Prawn::Document
       # QUESTION should we add destination to top of imported page?
       return import_page image_path, replace: page_is_empty? if image_format == 'pdf'
     else
-      warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
+      logger.warn %(image to embed not found or not readable: #{image_path || target}) unless scratch?
       # QUESTION should we use alt text in this case?
       return if image_format == 'pdf'
       image_path = false
@@ -1190,14 +1196,14 @@ class Converter < ::Prawn::Document
       layout_caption node, side: :bottom if node.title?
       theme_margin :block, :bottom unless pinned
     rescue => e
-      on_image_error :exception, node, target, (opts.merge message: %(asciidoctor: WARNING: could not embed image: #{image_path}; #{e.message}))
+      on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{e.message}))
     end
   ensure
     unlink_tmp_file image_path if image_path
   end
 
   def on_image_error reason, node, target, opts = {}
-    warn opts[:message] if opts.key? :message
+    logger.warn opts[:message] if opts.key? :message
     alt_text = (link = node.attr 'link', nil, false) ?
         %(<a href="#{link}">[#{node.attr 'alt'}]</a> | <em>#{target}</em>) :
         %([#{node.attr 'alt'}] | <em>#{target}</em>)
@@ -1961,7 +1967,7 @@ class Converter < ::Prawn::Document
       # NOTE check reftext? for compatibility with Asciidoctor <= 1.5.5
       %(<a name="#{node.target}">#{DummyText}</a>#{node.reftext? ? node.text : "[#{node.target}]"})
     else
-      warn %(asciidoctor: WARNING: unknown anchor type: #{node.type.inspect})
+      logger.warn %(unknown anchor type: #{node.type.inspect})
     end
   end
 
@@ -2017,7 +2023,7 @@ class Converter < ::Prawn::Document
         # TODO support rotate and flip attributes
         %(<font name="#{icon_set}"#{size_attr}>#{::Prawn::Icon::FontData.load(self, icon_set).unicode icon_name}</font>)
       rescue
-        warn %(asciidoctor: WARNING: #{icon_name} is not a valid icon name in the #{icon_set} icon set)
+        logger.warn %(#{icon_name} is not a valid icon name in the #{icon_set} icon set)
         %([#{node.attr 'alt'}])
       end
     else
@@ -2032,14 +2038,14 @@ class Converter < ::Prawn::Document
       node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
       target, image_format = node.target_and_format
       if image_format == 'gif' && !(defined? ::GMagick::Image)
-        warn %(asciidoctor: WARNING: GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
+        logger.warn %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
         img = %([#{node.attr 'alt'}])
       # NOTE an image with a data URI is handled using a temporary file
       elsif (image_path = resolve_image_path node, target, true, image_format) && (::File.readable? image_path)
         width_attr = (width = preresolve_explicit_width node.attributes) ? %( width="#{width}") : nil
         img = %(<img src="#{image_path}" format="#{image_format}" alt="[#{node.attr 'alt'}]"#{width_attr} tmp="#{TemporaryPath === image_path}">)
       else
-        warn %(asciidoctor: WARNING: image to embed not found or not readable: #{image_path || target}) unless scratch?
+        logger.warn %(image to embed not found or not readable: #{image_path || target}) unless scratch?
         img = %([#{node.attr 'alt'}])
       end
       (node.attr? 'link', nil, false) ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
@@ -2257,7 +2263,7 @@ class Converter < ::Prawn::Document
           image_page cover_image, canvas: true
         end
       else
-        warn %(asciidoctor: WARNING: #{face} cover image not found or readable: #{cover_image})
+        logger.warn %(#{face} cover image not found or readable: #{cover_image})
       end
     end
   ensure
@@ -2797,7 +2803,7 @@ class Converter < ::Prawn::Document
                         image img_path, img_opts
                       end
                     rescue => e
-                      warn %(asciidoctor: WARNING: could not embed image in running content: #{img_path}; #{e.message})
+                      logger.warn %(could not embed image in running content: #{img_path}; #{e.message})
                     end
                   end
                 end
@@ -3256,7 +3262,7 @@ class Converter < ::Prawn::Document
     elsif (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
         (image_path = (node.normalize_web_path image_path, imagesdir, false)))
       unless doc.attr? 'allow-uri-read'
-        warn %(asciidoctor: WARNING: allow-uri-read is not enabled; cannot embed remote image: #{image_path}) unless scratch?
+        logger.warn %(allow-uri-read is not enabled; cannot embed remote image: #{image_path}) unless scratch?
         return
       end
       if doc.attr? 'cache-uri'
@@ -3303,7 +3309,7 @@ class Converter < ::Prawn::Document
         if ::File.readable? bg_image
           bg_image
         else
-          warn %(asciidoctor: WARNING: #{key.tr '-', ' '} not found or readable: #{bg_image})
+          logger.warn %(#{key.tr '-', ' '} not found or readable: #{bg_image})
           nil
         end
       end
@@ -3373,7 +3379,7 @@ class Converter < ::Prawn::Document
   def unlink_tmp_file path
     path.unlink if TemporaryPath === path && path.exist?
   rescue => e
-    warn %(asciidoctor: WARNING: could not delete temporary image: #{path}; #{e.message})
+    logger.warn %(could not delete temporary image: #{path}; #{e.message})
   end
 
   # NOTE assume URL is escaped (i.e., contains character references such as &amp;)
