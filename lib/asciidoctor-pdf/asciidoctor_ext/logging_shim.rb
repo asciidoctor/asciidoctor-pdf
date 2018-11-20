@@ -2,7 +2,11 @@ module Asciidoctor
   class StubLogger
     class << self
       def warn message
-        super %(asciidoctor: WARNING: #{message})
+        ::Kernel.warn %(asciidoctor: WARNING: #{message})
+      end
+
+      def error message
+        ::Kernel.warn %(asciidoctor: ERROR: #{message})
       end
     end
   end

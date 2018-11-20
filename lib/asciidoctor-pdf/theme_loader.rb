@@ -7,6 +7,11 @@ module Asciidoctor
 module Pdf
 class ThemeLoader
   include ::Asciidoctor::Pdf::Measurements
+  if defined? ::Asciidoctor::Logging
+    include ::Asciidoctor::Logging
+  else
+    include ::Asciidoctor::LoggingShim
+  end
 
   DataDir = ::File.expand_path(::File.join(::File.dirname(__FILE__), '..', '..', 'data'))
   ThemesDir = ::File.join DataDir, 'themes'
@@ -138,7 +143,7 @@ class ThemeLoader
         if vars.respond_to? $1
           vars[$1]
         else
-          warn %(asciidoctor: WARNING: unknown variable reference in PDF theme: $#{$1})
+          logger.warn %(unknown variable reference in PDF theme: $#{$1})
           expr
         end
       else
@@ -146,7 +151,7 @@ class ThemeLoader
           if vars.respond_to? $1
             vars[$1]
           else
-            warn %(asciidoctor: WARNING: unknown variable reference in PDF theme: $#{$1})
+            logger.warn %(unknown variable reference in PDF theme: $#{$1})
             $&
           end
         }

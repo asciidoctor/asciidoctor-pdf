@@ -791,7 +791,7 @@ module Extensions
       # TODO set scratch number on scratch document
       scratch
     else
-      warn 'asciidoctor: WARNING: no scratch prototype available; instantiating fresh scratch document'
+      logger.warn 'no scratch prototype available; instantiating fresh scratch document'
       ::Prawn::Document.new
     end
   end

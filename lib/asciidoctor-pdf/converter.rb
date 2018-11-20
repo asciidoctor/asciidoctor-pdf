@@ -32,7 +32,6 @@ class Converter < ::Prawn::Document
   if defined? ::Asciidoctor::Logging
     include ::Asciidoctor::Logging
   else
-    require_relative 'asciidoctor_ext/logging_shim'
     include ::Asciidoctor::LoggingShim
   end
   include ::Asciidoctor::Writer

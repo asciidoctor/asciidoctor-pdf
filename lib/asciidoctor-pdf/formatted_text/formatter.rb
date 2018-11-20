@@ -2,6 +2,12 @@ module Asciidoctor
 module Pdf
 module FormattedText
 class Formatter
+  if defined? ::Asciidoctor::Logging
+    include ::Asciidoctor::Logging
+  else
+    include ::Asciidoctor::LoggingShim
+  end
+
   FormattingSnifferPattern = /[<&]/
   WHITESPACE = " \t\n"
 
@@ -17,7 +23,7 @@ class Formatter
     if (parsed = @parser.parse(string))
       @transform.apply(parsed.content)
     else
-      warn %(Failed to parse formatted text: #{string})
+      logger.error %(failed to parse formatted text: #{string})
       [text: string]
     end
   end
