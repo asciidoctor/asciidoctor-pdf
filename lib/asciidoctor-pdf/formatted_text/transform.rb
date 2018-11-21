@@ -3,6 +3,7 @@ module Pdf
 module FormattedText
 class Transform
   LF = %(\n)
+  ZeroWidthSpace = %(\u200b)
   CharEntityTable = {
     lt: '<',
     gt: '>',
@@ -75,7 +76,8 @@ class Transform
             fragment = {
               image_path: attributes[:tmp] == 'true' ? attributes[:src].extend(TemporaryPath) : attributes[:src],
               image_format: attributes[:format],
-              text: attributes[:alt],
+              # a zero-width space in the text will cause the image to be duplicated
+              text: (attributes[:alt].delete ZeroWidthSpace),
               callback: InlineImageRenderer
             }
             if (img_w = attributes[:width])
