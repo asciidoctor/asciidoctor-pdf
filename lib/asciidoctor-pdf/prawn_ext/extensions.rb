@@ -190,8 +190,11 @@ module Extensions
   #
   def font name = nil, options = {}
     if name
-      ::Prawn::Icon::FontData.load self, name if IconSets.include? name
       options = { size: options } if ::Numeric === options
+      if IconSets.include? name
+        ::Prawn::Icon::FontData.load self, name
+        options = options.reject {|k| k == :style } if options.key? :style
+      end
     end
     super name, options
   end

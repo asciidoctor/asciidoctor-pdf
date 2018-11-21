@@ -28,6 +28,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * guard against pygments returning nil (#884)
 * only look for the start attribute on the code block itself when highlighting with rouge
 * apply block styling to background for line-oriented tokens in rouge by default
+* ignore style when resolving icon font (#956)
 * remove correct width method when overloading Prawn::Text::Formatted::Fragment
 * remove ZWSP from alt text of image to prevent fragment from being duplicated (#958)
 * avoid call to super in prepended module to fix Ruby 1.9.3
