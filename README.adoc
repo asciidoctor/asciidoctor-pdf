@@ -336,6 +336,9 @@ If the image is an SVG, and the SVG includes a nested raster image (PNG or JPG) 
 
 The converter will refuse to include an image if the target is a URI unless the `allow-uri-read` attribute is enabled via the CLI or API.
 
+If the image is an SVG and that SVG links to another image, the linked image will be resolved using the same rules as the original image.
+However, note that a width and height must be specified on the linked image or else the SVG library will fail to process it.
+
 == Image Scaling
 
 Since PDF is a fixed-width canvas, you almost always need to specify a width to get the image to fit properly on the page.
