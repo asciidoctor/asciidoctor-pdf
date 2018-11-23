@@ -244,7 +244,7 @@ class Converter < ::Prawn::Document
 
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
-    @theme = theme = ThemeLoader.load_theme((doc.attr 'pdf-style'), (doc.attr 'pdf-stylesdir'))
+    theme = load_theme doc
     pdf_opts = build_pdf_options doc, theme
     # QUESTION should page options be preserved (otherwise, not readily available)
     #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
@@ -281,6 +281,10 @@ class Converter < ::Prawn::Document
     @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
     init_scratch_prototype
     self
+  end
+
+  def load_theme doc
+    @theme ||= ThemeLoader.load_theme((doc.attr 'pdf-style'), (doc.attr 'pdf-stylesdir'))
   end
 
   def build_pdf_options doc, theme
@@ -2082,7 +2086,7 @@ class Converter < ::Prawn::Document
 
   def convert_inline_menu node
     menu = node.attr 'menu'
-    caret = @theme.menu_caret_content || %( \u203a )
+    caret = (load_theme node.document).menu_caret_content || %( \u203a )
     if !(submenus = node.attr 'submenus').empty?
       %(<strong>#{[menu, *submenus, (node.attr 'menuitem')] * caret}</strong>)
     elsif (menuitem = node.attr 'menuitem')
