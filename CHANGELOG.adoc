@@ -25,6 +25,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add support for SVG admonition icons (#828) (@keith-packard)
 * rename pastie theme for rouge to asciidoctor_pdf_default
 * add support for line numbers in source listings (#224)
+* ensure callout number ends up on same page as item text (#914)
 * guard against pygments returning nil (#884)
 * only look for the start attribute on the code block itself when highlighting with rouge
 * apply block styling to background for line-oriented tokens in rouge by default

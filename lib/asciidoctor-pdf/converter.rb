@@ -845,7 +845,7 @@ class Converter < ::Prawn::Document
     line_metrics = calc_line_metrics @theme.base_line_height
     node.items.each_with_index do |item, idx|
       # FIXME extract to an ensure_space (or similar) method; simplify
-      advance_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
+      advance_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top) + 1
       convert_colist_item item
     end
     @list_numbers.pop
