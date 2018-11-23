@@ -3112,7 +3112,7 @@ The keys in this category control the arrangement and style of running header an
 |header:
   line_height: 1.2
 
-|padding
+|padding^[3]^
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: 0)
 |header:
@@ -3130,14 +3130,14 @@ The keys in this category control the arrangement and style of running header an
 |header:
   vertical_align: center
 
-|<side>_columns^[3]^
+|<side>_columns^[4]^
 |Column specs triple +
 (default: _not set_)
 |header:
   recto:
     columns: <25% =50% >25%
 
-|<side>_<position>_content^[3,4]^
+|<side>_<position>_content^[4,5]^
 |<<quoted-string,Quoted string>> +
 (default: '\{page-number}')
 |header:
@@ -3207,7 +3207,7 @@ The keys in this category control the arrangement and style of running header an
 |footer:
   line_height: 1.2
 
-|padding
+|padding^[3]^
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: 0)
 |footer:
@@ -3225,14 +3225,14 @@ The keys in this category control the arrangement and style of running header an
 |footer:
   vertical_align: top
 
-|<side>_columns^[3]^
+|<side>_columns^[4]^
 |Column specs triple +
 (default: _not set_)
 |footer:
   verso:
     columns: <50% =0% <50%
 
-|<side>_<position>_content^[3,4]^
+|<side>_<position>_content^[4,5]^
 |<<quoted-string,Quoted string>> +
 (default: '\{page-number}')
 |footer:
@@ -3242,6 +3242,7 @@ The keys in this category control the arrangement and style of running header an
 |===
 . The background color spans the width of the page, as does the border when a background color is specified.
 . If the height is not set, the running content at this periphery is disabled.
+. If the side padding is negative, the content will bleed into the margin of the page.
 . `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
 . `<position>` can be `left`, `center` or `right`.
