@@ -2548,15 +2548,17 @@ class Converter < ::Prawn::Document
     (1..num_pages).each do |num|
       if (part = part_start_pages[num])
         last_part = part
+        last_chap = nil
+        last_sect = nil
       end
       if (chap = chapter_start_pages[num])
         last_chap = chap
+        last_sect = nil
       end
       if (sect = section_start_pages[num])
         last_sect = sect
       elsif part || chap
         sect_search_threshold = num
-        last_sect = nil
       # NOTE we didn't find a section on this page; look back to find last section started
       elsif last_sect
         ((sect_search_threshold)..(num - 1)).reverse_each do |prev|
