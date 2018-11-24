@@ -151,6 +151,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * map dynamic section-title attribute in running content to current section if page has no section (#709)
 * assign dynamic part-title attribute for use in running content (#596)
 * don't set dynamic chapter-title attribute in running content for preface unless doctype is book
+* clear section and chapter title in running content when part changes (#910, #879)
+* clear section title in running content when chapter changes (#910)
 * assign page number label to each page (#641)
 * don't set dynamic page-number attribute in running content of pagenums is disabled
 * allow toc title properties to be controlled by theme (#701)
