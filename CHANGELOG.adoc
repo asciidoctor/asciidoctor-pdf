@@ -32,6 +32,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * fix crash when menu macro is used in a section or block title (#934)
 * only look for the start attribute on the code block itself when highlighting with rouge
 * apply block styling to background for line-oriented tokens in rouge by default
+* detect pagenum ranges in index when media is print or prepress (#906)
 * ignore style when resolving icon font (#956, #874)
 * remove correct width method when overloading Prawn::Text::Formatted::Fragment
 * remove ZWSP from alt text of image to prevent fragment from being duplicated (#958)

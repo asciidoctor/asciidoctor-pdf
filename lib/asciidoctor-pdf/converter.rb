@@ -1906,7 +1906,7 @@ class Converter < ::Prawn::Document
       if @media == 'screen'
         pagenums = term.dests.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
       else
-        pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| dest[:page].to_s }
+        pagenums = consolidate_ranges term.dests.uniq {|dest| dest[:page] }.map {|dest| dest[:page].to_s }
       end
       text = %(#{text}, #{pagenums * ', '})
     end
@@ -3397,6 +3397,23 @@ class Converter < ::Prawn::Document
       address.slice!(-2) if address[-2] == ZeroWidthSpace
     end
     %(#{scheme}#{address})
+  end
+
+  def consolidate_ranges nums
+    if nums.size > 1
+      prev = nil
+      nums.inject([]) {|accum, num|
+        if prev && (prev.to_i + 1) == num.to_i
+          accum[-1][1] = num
+        else
+          accum << [num]
+        end
+        prev = num
+        accum
+      }.map {|range| range.join '-' }
+    else
+      nums
+    end
   end
 
   # QUESTION move to prawn/extensions.rb?
