@@ -25,7 +25,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add support for SVG admonition icons (#828) (@keith-packard)
 * rename pastie theme for rouge to asciidoctor_pdf_default
 * add support for line numbers in source listings (#224)
-* add word joiner character to built-in Noto Serif font (#877)
+* add U+2060 (word joiner) character to built-in Noto Serif font and fallback font (#877)
+* add U+202F (narrow no-break space) character to fallback font (#807)
 * ensure callout number ends up on same page as item text (#914)
 * guard against pygments returning nil (#884)
 * fix crash when menu macro is used in a section or block title (#934)
