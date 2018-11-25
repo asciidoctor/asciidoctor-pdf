@@ -709,7 +709,7 @@ This limitation may be lifted in the future.
 The limited character set of WINANSI, or the bland look of the built-in fonts, may motivate you to load your own font.
 Custom fonts can enhance the look of your PDF theme substantially.
 
-To start, you need to find a collection of TTF file of the font you want to use.
+To start, you need to find a TTF file collection for the font you want to use.
 A collection typically consists of all four styles of a font:
 
 * normal
