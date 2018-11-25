@@ -2444,7 +2444,10 @@ class Converter < ::Prawn::Document
               key == :styles ? (old_val.merge new_val) : new_val
             end
           end
-          typeset_formatted_text sect_title_fragments, line_metrics
+          pgnum_label_width = rendered_width_of_string pgnum_label
+          indent 0, pgnum_label_width do
+            typeset_formatted_text sect_title_fragments, line_metrics
+          end
           end_page_number = page_number
           end_cursor = cursor
           # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
@@ -2452,7 +2455,6 @@ class Converter < ::Prawn::Document
           move_cursor_to start_cursor
           if dot_leader[:width] > 0 && (dot_leader[:levels].include? sect.level)
             pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
-            pgnum_label_width = rendered_width_of_string pgnum_label
             # WARNING width_of is not accurate if string must use characters from fallback font
             sect_title_width = width_of sect_title, inline_format: true
             save_font do

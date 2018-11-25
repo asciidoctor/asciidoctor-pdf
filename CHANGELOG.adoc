@@ -18,6 +18,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * use new logging subsystem, if available; otherwise, use shim
 * allow alignment of list text to be controlled using roles (#182)
 * allow text alignment to be set for abstract (#893)
+* prevent text from overlapping page number in TOC (#839)
 * add support for reftext for bibliography entry (#864)
 * add support for fw (full-width) icons (#890)
 * decouple vw units with alignment (#948)
