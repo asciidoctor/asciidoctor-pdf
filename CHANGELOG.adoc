@@ -166,6 +166,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * don't crash if image in running content fails to embed (#728)
 * treat abstract section as abstract block (#703)
 * set example block background to white by default
+* automatically wire unspecified code and conum font family to literal font family
 * add support for background colors when highlighting code with Rouge
 * add support underline style for token in Rouge theme (#665)
 * drop background colors on strings in rouge pastie theme

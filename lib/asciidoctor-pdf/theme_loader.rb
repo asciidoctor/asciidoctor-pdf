@@ -68,15 +68,9 @@ class ThemeLoader
     if (theme_file = resolve_theme_file theme_name, theme_path) == BaseThemePath ||
         (theme_file != DefaultThemePath && (opts.fetch :apply_base_theme, true))
       theme_data = load_base_theme
-    else
-      theme_data = nil
     end
 
-    if theme_file == BaseThemePath
-      theme_data
-    else
-      load_file theme_file, theme_data
-    end
+    theme_file == BaseThemePath ? theme_data : (load_file theme_file, theme_data)
   end
 
   def self.load_file filename, theme_data = nil
@@ -87,6 +81,8 @@ class ThemeLoader
   def load hash, theme_data = nil
     theme_data ||= ::OpenStruct.new
     return theme_data unless ::Hash === hash
+    base_code_font_family = theme_data.delete 'code_font_family'
+    base_conum_font_family = theme_data.delete 'conum_font_family'
     hash.inject(theme_data) {|data, (key, val)| process_entry key, val, data }
     # NOTE remap legacy running content keys (e.g., header_recto_content_left => header_recto_left_content)
     %w(header_recto header_verso footer_recto footer_verso).each do |periphery_face|
@@ -97,6 +93,8 @@ class ThemeLoader
       end
     end
     theme_data.base_align ||= 'left'
+    theme_data.code_font_family ||= (theme_data.literal_font_family || base_code_font_family)
+    theme_data.conum_font_family ||= (theme_data.literal_font_family || base_conum_font_family)
     # QUESTION should we do any other post-load calculations or defaults?
     theme_data
   end
