@@ -35,8 +35,9 @@ IMPORTANT: If you're creating a custom theme, you're expected to supply your own
 But we recognize that can be a major obstacle when you're starting out.
 Therefore, your other option is to simply redeclare the fonts from the https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml[default theme] in the <<Custom Fonts,font catalog>>.
 Asciidoctor PDF will then resolve the fonts that are bundled with the gem.
-If you don't declare your own fonts, the <<Built-In (AFM) Fonts,built-in AFM fonts>> will be used instead.
-However, since AFM fonts only support WINANSI characters (which is similar to Basic Latin), using them will likely result in missing functionality and warnings.
+
+WARNING: If you don't declare your own fonts, the built-In (AFM) Fonts declared in https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/base-theme.yml[base theme] will be used instead.
+However, since AFM fonts only support WINANSI characters (which is similar to Basic Latin), using them will result in missing functionality and warnings. See <<built-in-afm-fonts,Built-In (AFM) Fonts>> section to know more about limitations.
 
 toc::[]
 
@@ -99,6 +100,12 @@ outline_list:
 When creating a new theme, you only have to define the keys you want to override from the base theme, which is loaded prior to loading your custom theme.
 All the available keys are documented in <<Keys>>.
 The converter uses the information from the theme map to help construct the PDF.
+
+
+[WARNING]
+====
+If you start a new theme form scratch, be sure to provide a TrueType font familly for all base text sections (`base`, `literal`, `code`). Base theme only use built-in AFM fonts and some glyphs like callout numbers will be missing.
+====
 
 [TIP]
 ====
@@ -651,12 +658,15 @@ base:
   font_family: Times-Roman
 ----
 
+
 However, when you use a built-in font, the characters you can use in your document are limited to the characters in the WINANSI (http://en.wikipedia.org/wiki/Windows-1252[Windows-1252]) code set.
 WINANSI includes most of the characters needed for writing in Western languages (English, French, Spanish, etc).
 For anything outside of that, PDF is BYOF (Bring Your Own Font).
 
 Even though the built-in fonts require the content to be encoded in WINANSI, _you still type your AsciiDoc document in UTF-8_.
 Asciidoctor PDF encodes the content into WINANSI when building the PDF.
+
+CAUTION: Built-in fonts do not fallback to <<fallback-fonts,fallback fonts>>, you must use TrueType font for that.
 
 .WINANSI Encoding Behavior
 ****
@@ -667,8 +677,11 @@ When using the built-in PDF (AFM) fonts on a block of content in your AsciiDoc d
 
 This behavior differs from the default behavior in Prawn, which simply crashes.
 
+To prevent this warning, you need to provide a TrueType font when using caracters outside the WINANSI set (callout numbers for example).
+
 For more information about how Prawn handles character encodings for built-in fonts, see https://github.com/prawnpdf/prawn/blob/master/CHANGELOG.md#vastly-improved-handling-of-encodings-for-pdf-built-in-afm-fonts[this note in the Prawn CHANGELOG].
 ****
+
 
 === Bundled Fonts
 
@@ -862,7 +875,7 @@ The default values listed in this section get inherited from the https://github.
 IMPORTANT: The https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml[default theme] has a different set of values which are not shown in this guide.
 
 When creating a theme, all keys are optional.
-Required keys are provided by the base theme.
+Required keys are provided by the *base* theme.
 Therefore, you only have to declare keys that you want to override.
 
 [#keys-page]
