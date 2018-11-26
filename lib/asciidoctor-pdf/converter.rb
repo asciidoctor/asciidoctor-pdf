@@ -972,7 +972,7 @@ class Converter < ::Prawn::Document
           :square
         end
       end
-      @list_bullets << Bullets[bullet_type]
+      @list_bullets << bullet_type
     end
     convert_outline_list node
     @list_bullets.pop
@@ -1026,39 +1026,52 @@ class Converter < ::Prawn::Document
 
   def convert_outline_list_item node, complex = false, opts = {}
     # TODO move this to a draw_bullet (or draw_marker) method
+    marker_style = {}
+    marker_style[:font_color] = @theme.outline_list_marker_font_color || @font_color
+    marker_style[:font_family] = font_family
+    marker_style[:font_size] = font_size
+    marker_style[:line_height] = @theme.base_line_height
     case (list_type = node.parent.context)
     when :ulist
-      marker = @list_bullets[-1]
-      if marker == :checkbox
+      marker_type = @list_bullets[-1]
+      if marker_type == :checkbox
+        # QUESTION should we remove marker indent if not a checkbox?
         if node.attr? 'checkbox', nil, false
-          marker = BallotBox[(node.attr? 'checked', nil, false) ? :checked : :unchecked]
-        else
-          # QUESTION should we remove marker indent in this case?
-          marker = nil
+          marker_type = (node.attr? 'checked', nil, false) ? :checked : :unchecked
+          marker = @theme[%(ulist_marker_#{marker_type}_content)] || BallotBox[marker_type]
         end
+      else
+        marker = @theme[%(ulist_marker_#{marker_type}_content)] || Bullets[marker_type]
       end
+      [:font_color, :font_family, :font_size, :line_height].each do |prop|
+        marker_style[prop] = @theme[%(ulist_marker_#{marker_type}_#{prop})] || @theme[%(ulist_marker_#{prop})] || marker_style[prop]
+      end if marker
     when :olist
       dir = (node.parent.option? 'reversed') ? :pred : :next
       @list_numbers << ((index = @list_numbers.pop).public_send dir)
       marker = %(#{index}.)
     else
       logger.warn %(unknown list type #{list_type.inspect})
-      marker = Bullets[:disc]
+      marker = @theme.ulist_marker_disc_content || Bullets[:disc]
     end
 
     if marker
-      marker_width = rendered_width_of_string marker
-      start_position = -marker_width + -(rendered_width_of_char 'x')
-      float do
-        flow_bounding_box start_position, width: marker_width do
-          layout_prose marker,
-            align: :right,
-            color: (@theme.outline_list_marker_font_color || @font_color),
-            normalize: false,
-            inline_format: false,
-            margin: 0,
-            character_spacing: -0.5,
-            single_line: true
+      marker_gap = rendered_width_of_char 'x'
+      font marker_style[:font_family], size: marker_style[:font_size] do
+        marker_width = rendered_width_of_string marker
+        start_position = -marker_width + -marker_gap
+        float do
+          flow_bounding_box start_position, width: marker_width do
+            layout_prose marker,
+              align: :right,
+              character_spacing: -0.5,
+              color: marker_style[:font_color],
+              inline_format: false,
+              line_height: marker_style[:line_height],
+              margin: 0,
+              normalize: false,
+              single_line: true
+          end
         end
       end
     end
