@@ -24,6 +24,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add align-to-page option for block images (#948)
 * add support for SVG admonition icons (#828) (@keith-packard)
 * rename pastie theme for rouge to asciidoctor_pdf_default
+* reset top margin of index columns when overflowing to new page (#929)
 * add support for line numbers in source listings (#224)
 * add U+2060 (word joiner) character to built-in Noto Serif font and fallback font (#877)
 * add U+202F (narrow no-break space) character to fallback font (#807)

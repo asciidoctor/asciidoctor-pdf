@@ -1876,7 +1876,7 @@ class Converter < ::Prawn::Document
   def convert_index_section node
     unless @index.empty?
       space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
-      column_box [0, cursor], columns: 2, width: bounds.width do
+      column_box [0, cursor], columns: 2, width: bounds.width, reflow_margins: true do
         @index.categories.each do |category|
           # NOTE cursor method always returns 0 inside column_box; breaks reference_bounds.move_past_bottom
           bounds.move_past_bottom if space_needed_for_category > y - reference_bounds.absolute_bottom
