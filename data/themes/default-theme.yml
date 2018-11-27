@@ -80,7 +80,7 @@ heading:
   font_color: $base_font_color
   font_family: $base_font_family
   font_style: bold
-  # h1 is used for part titles (book doctype only)
+  # h1 is used for part titles (book doctype) or the doctitle (article doctype)
   h1_font_size: floor($base_font_size * 2.6)
   # h2 is used for chapter titles (book doctype only)
   h2_font_size: floor($base_font_size * 2.15)
