@@ -39,6 +39,10 @@ module Sanitizer
     string.gsub InverseBuiltInEntityCharRx, InverseBuiltInEntityChars
   end
 
+  def encode_quotes string
+    (string.include? '"') ? (string.gsub '"', '&quot;') : string
+  end
+
   def uppercase_pcdata string
     if BuiltInEntityCharOrTagRx =~ string
       string.gsub(SegmentPcdataRx) { $2 ? (uppercase_mb $2) : $1 }
