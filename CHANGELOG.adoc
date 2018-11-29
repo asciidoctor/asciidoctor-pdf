@@ -30,6 +30,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add U+202F (narrow no-break space) character to fallback font (#807)
 * ensure callout number ends up on same page as item text (#914)
 * guard against pygments returning nil (#884)
+* encode quotes in alt text of inline image (#977)
 * fix crash when menu macro is used in a section or block title (#934)
 * only look for the start attribute on the code block itself when highlighting with rouge
 * apply block styling to background for line-oriented tokens in rouge by default
