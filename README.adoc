@@ -252,6 +252,14 @@ The layout and styling of the PDF is driven by a YAML configuration file.
 To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide#,Asciidoctor PDF Theme Guide>>.
 You can use the built-in theme files, which you can find in the [.path]_data/themes_ directory, as examples.
 
+If you've enabled a source highlighter, you can control the style (aka theme) it applies to source blocks using the `coderay-style`, `pygments-style`, and `rouge-style` attributes, respectively.
+For example, to configure Rouge to use the built-in monokai theme, run Asciidoctor PDF as follows:
+
+ $ asciidoctor-pdf -a rouge-style=monokai basic-example.adoc
+
+It's possible to develop your own theme for Rouge.
+Refer to the <<docs/theming-guide#,Asciidoctor PDF Theme Guide>> for details.
+
 === Support for Non-Latin Languages
 
 Asciidoctor can process the full range of characters in the UTF-8 character set.
