@@ -191,11 +191,11 @@ class Converter < ::Prawn::Document
     layout_title_page doc
 
     # NOTE a new page will already be started if the cover image is a PDF
-    start_new_page unless page_is_empty?
+    start_new_page if is_title_new_page
 
     num_toc_levels = (doc.attr 'toclevels', 2).to_i
     if (insert_toc = (doc.attr? 'toc') && doc.sections?)
-      start_new_page if @ppbook && verso_page?
+      start_new_page if is_verso_new_page
       toc_page_nums = page_number
       dry_run { toc_page_nums = layout_toc doc, num_toc_levels, toc_page_nums }
       # NOTE reserve pages for the toc; leaves cursor on page after last page in toc
@@ -203,8 +203,8 @@ class Converter < ::Prawn::Document
     end
 
     # FIXME only apply to book doctype once title and toc are moved to start page when using article doctype
-    #start_new_page if @ppbook && verso_page?
-    start_new_page if @media == 'prepress' && verso_page?
+    #start_new_page if is_verso_new_page
+    start_new_page if @media == 'prepress' && is_verso_new_page
 
     num_front_matter_pages = (@index.start_page_number = page_number) - 1
     font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
@@ -250,6 +250,7 @@ class Converter < ::Prawn::Document
     #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
     ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
     @page_margin_by_side = { recto: page_margin, verso: page_margin }
+    @pparticle = doc.doctype == 'article'
     if (@media = doc.attr 'media', 'screen') == 'prepress'
       @ppbook = doc.doctype == 'book'
       page_margin_recto = @page_margin_by_side[:recto]
@@ -2158,8 +2159,8 @@ class Converter < ::Prawn::Document
       @page_bg_color = bg_color
     end
     # NOTE a new page will already be started if the cover image is a PDF
-    start_new_page unless page_is_empty?
-    start_new_page if @ppbook && verso_page?
+    start_new_page unless page_count > 0
+    start_new_page if is_verso_new_page
     @page_bg_image = prev_bg_image if bg_image
     @page_bg_color = prev_bg_color if bg_color
 
@@ -2167,7 +2168,7 @@ class Converter < ::Prawn::Document
     font @theme.base_font_family, size: @theme.base_font_size
 
     # QUESTION allow alignment per element on title page?
-    title_align = (@theme.title_page_align || @base_align).to_sym
+    title_align = get_title_align
 
     # TODO disallow .pdf as image type
     if (logo_image_path = (doc.attr 'title-logo-image', @theme.title_page_logo_image))
@@ -2260,6 +2261,18 @@ class Converter < ::Prawn::Document
     end
   end
 
+  def is_title_new_page
+    !@pparticle && !page_is_empty?
+  end
+
+  def is_verso_new_page
+    @ppbook && verso_page?
+  end
+
+  def get_title_align
+    (@theme.title_page_align || (@pparticle ? (@theme.heading_h1_align || @theme.heading_align) : nil) || @base_align).to_sym
+  end
+
   def layout_cover_page face, doc
     # TODO turn processing of attribute with inline image a utility function in Asciidoctor
     if (cover_image = (doc.attr %(#{face}-cover-image)))
@@ -2289,7 +2302,7 @@ class Converter < ::Prawn::Document
   def start_new_chapter chapter
     start_new_page unless at_page_top?
     # TODO must call update_colors before advancing to next page if start_new_page is called in layout_chapter_title
-    start_new_page if @ppbook && verso_page? && !(chapter.option? 'nonfacing')
+    start_new_page if is_verso_new_page && !(chapter.option? 'nonfacing')
   end
 
   def layout_chapter_title node, title, opts = {}
