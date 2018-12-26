@@ -187,8 +187,7 @@ class Converter < ::Prawn::Document
       end
     end if respond_to? :on_page_create
 
-    layout_cover_page :front, doc
-    layout_title_page doc
+    layout_title doc
 
     # NOTE a new page will already be started if the cover image is a PDF
     start_new_page unless page_is_empty?
@@ -197,9 +196,15 @@ class Converter < ::Prawn::Document
     if (insert_toc = (doc.attr? 'toc') && doc.sections?)
       start_new_page if @ppbook && verso_page?
       toc_page_nums = page_number
-      dry_run { toc_page_nums = layout_toc doc, num_toc_levels, toc_page_nums }
+      toc_y = 0
+      dry_run {
+        toc_page_nums = layout_toc doc, num_toc_levels, toc_page_nums
+        toc_y = @y
+      }
       # NOTE reserve pages for the toc; leaves cursor on page after last page in toc
-      toc_page_nums.each { start_new_page }
+      Range.new(toc_page_nums.first, toc_page_nums.last - 1).each { start_new_page }
+      @y = toc_y
+      start_new_page if is_toc_new_page
     end
 
     # FIXME only apply to book doctype once title and toc are moved to start page when using article doctype
@@ -2144,6 +2149,12 @@ class Converter < ::Prawn::Document
     node.id ? %(<a name="#{node.id}">#{DummyText}</a>#{quoted_text}) : quoted_text
   end
 
+  def layout_title doc
+    layout_cover_page :front, doc
+    layout_title_page doc
+    # TODO add here everything else that should precede the TOC
+  end
+
   # FIXME only create title page if doctype=book!
   def layout_title_page doc
     return unless doc.header? && !doc.notitle
@@ -2392,10 +2403,10 @@ class Converter < ::Prawn::Document
   def layout_toc doc, num_levels = 2, toc_page_number = 2, num_front_matter_pages = 0
     go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
     start_page_number = page_number
+    toc_init_pos doc unless is_toc_new_page
     theme_font :heading, level: 2 do
       theme_font :toc_title do
-        toc_title_align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
-        layout_heading((doc.attr 'toc-title'), align: toc_title_align)
+        layout_heading((doc.attr 'toc-title'), align: get_toc_title_align)
       end
     end
     # QUESTION should we skip this whole method if num_levels == 0?
@@ -2493,6 +2504,23 @@ class Converter < ::Prawn::Document
         layout_toc_level sect.sections, num_levels, line_metrics, dot_leader, num_front_matter_pages
       end if sect.level < num_levels
     end
+  end
+
+  def is_toc_new_page
+    !@pparticle
+  end
+
+  def toc_init_pos doc
+    y1 = 0
+    dry_run {
+      layout_title doc
+      y1 = @y
+    }
+    @y = y1
+  end
+
+  def get_toc_title_align
+    (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
   end
 
   # Reduce icon height to fit inside bounds.height. Icons will not render
