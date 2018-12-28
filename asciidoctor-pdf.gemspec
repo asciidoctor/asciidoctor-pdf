@@ -31,10 +31,6 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
 
   s.require_paths = ['lib']
 
-  s.has_rdoc = true
-  s.rdoc_options = ['--charset=UTF-8', '--title="Asciidoctor PDF"', '--main=README.adoc', '-ri']
-  s.extra_rdoc_files = ['CHANGELOG.adoc', 'LICENSE.adoc', 'NOTICE.adoc', 'README.adoc']
-
   s.add_development_dependency 'rake'
   #s.add_development_dependency 'rdoc', '~> 4.1.0'
 
