@@ -20,3 +20,7 @@ group :examples do
   #gem 'activesupport', '4.2.7.1' if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
   #gem 'unicode' if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
 end
+
+group :docs do
+  gem 'yard'
+end
