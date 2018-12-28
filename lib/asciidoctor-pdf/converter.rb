@@ -188,7 +188,7 @@ class Converter < ::Prawn::Document
     end if respond_to? :on_page_create
 
     layout_cover_page :front, doc
-    layout_title_page doc
+    layout_title_page doc if doc.doctype == 'book' || (doc.attr? 'title-page')
 
     # NOTE a new page will already be started if the cover image is a PDF
     start_new_page unless page_is_empty?
@@ -210,6 +210,12 @@ class Converter < ::Prawn::Document
     font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
     doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
     add_dest_for_block doc, doc_anchor
+    unless doc.doctype == 'book' || (doc.attr? 'title-page')
+      theme_font :heading, level: 1 do
+        align = (@theme.heading_h1_align || (doc.doctype == 'book' ? @theme.heading_align : :center) || @base_align).to_sym
+        layout_heading doc.doctitle, align: align, level: 1
+      end
+    end
     convert_content_for_block doc
 
     # NOTE delete orphaned page (a page was created but there was no additional content)

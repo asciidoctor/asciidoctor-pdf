@@ -3569,6 +3569,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |path^[2]^ {vbar} image macro^[3]^
 |:title-logo-image: image:logo.png[top=25%, align=center, pdfwidth=0.5in]
 
+|title-page
+|flag (default: _not set_)
+|:title-page:
+
 |title-page-background-image
 |path^[2]^ {vbar} image macro^[3]^
 |:title-page-background-image: image:title-bg.jpg[]
