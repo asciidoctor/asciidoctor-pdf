@@ -31,8 +31,7 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
 
   s.require_paths = ['lib']
 
-  s.add_development_dependency 'rake'
-  #s.add_development_dependency 'rdoc', '~> 4.1.0'
+  s.add_development_dependency 'rake', '~> 12.3.2'
 
   s.add_runtime_dependency 'asciidoctor', '>= 1.5.0'
   # prawn >= 2.0.0 requires Ruby >= 2.0.0, so we must cast a wider net to support Ruby 1.9.3
