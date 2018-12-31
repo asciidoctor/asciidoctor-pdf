@@ -2,18 +2,16 @@
 
 == TODO
 
-* allow prose alignment to be set
-* should text alignment on list inherit to nested lists?
-
 * add bw / grayscale theme for rouge (upstream?)
 * fix labels in issue tracker to match other projects; in particular, enhancement should be green.
 * setup asciidoctor-mathoid project, then mention it in the STEM support section
 * QUESTION should we show keys with hyphens instead of underscores in theming guide?
-* add preamble to toc
 
-.1.5.0.alpha.17
-* switch to new logging subsystem (and verify we can use --failure-level option)
-* document rouge-style in README (already in theming guide, but gets buried)
+.1.5.0.alpha.18
+* footnote logic: if putting the footnote on the page causes the content with the footnote reference to bump to the next page, the footnote simply follows the text to that page
+* allow prose alignment to be set
+* should text alignment on list inherit to nested lists?
+* add preamble to toc
 * pass current styles downwards when parsing formatted text (see https://github.com/asciidoctor/asciidoctor-pdf/issues/854)
 * test suite
 * start the README with a proper introduction to Asciidoctor PDF (and not so focused on Prawn)
