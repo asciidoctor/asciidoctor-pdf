@@ -27,6 +27,30 @@ class Formatter
       [text: string]
     end
   end
+
+  # Code from prawn/text/formatted/parser.rb
+  def array_paragraphs(array)
+    paragraphs = []
+    paragraph = []
+    previous_string = "\n"
+    scan_pattern = /[^\n]+|\n/
+    array.each do |hash|
+      hash[:text].scan(scan_pattern).each do |string|
+        if string == "\n"
+          if previous_string == "\n"
+            paragraph << hash.dup.merge(text: "\n")
+          end
+          paragraphs << paragraph unless paragraph.empty?
+          paragraph = []
+        else
+          paragraph << hash.dup.merge(text: string)
+        end
+        previous_string = string
+      end
+    end
+    paragraphs << paragraph unless paragraph.empty?
+    paragraphs
+  end
 end
 end
 end

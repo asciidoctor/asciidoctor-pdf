@@ -189,6 +189,8 @@ image:
 prose:
   margin_top: $block_margin_top
   margin_bottom: $block_margin_bottom
+paragraph:
+  text_indent: 0
 sidebar:
   background_color: eeeeee
   border_color: e1e1e1
