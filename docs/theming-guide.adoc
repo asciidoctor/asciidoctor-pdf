@@ -2621,28 +2621,28 @@ The keys in this category control the arrangement and style of unordered list it
 |font_family
 |<<fonts,Font family name>> +
 (default: _inherit_)
-|ulist
+|ulist:
   marker:
     font_family: Noto Serif
 
 |font_size
 |<<values,Number>> +
 (default: _inherit_)
-|ulist
+|ulist:
   marker:
     font_size: 9
 
 |font_color
 |<<colors,Color>> +
 (default: $outline_list_marker_font_color)
-|ulist
+|ulist:
   marker:
     font_color: #cccccc
 
 |line_height
 |<<values,Number>> +
 (default: $base_line_height)
-|ulist
+|ulist:
   marker:
     line_height: 1.5
 |===
@@ -2655,7 +2655,7 @@ The keys in this category control the arrangement and style of unordered list it
 
 |content
 |<<quoted-string,Quoted string>>
-|ulist
+|ulist:
   marker:
     disc:
       content: "\uf140"
@@ -2663,7 +2663,7 @@ The keys in this category control the arrangement and style of unordered list it
 |font_family
 |<<fonts,Font family name>> +
 (default: _inherit_)
-|ulist
+|ulist:
   marker:
     disc:
       font_family: fa
@@ -2671,7 +2671,7 @@ The keys in this category control the arrangement and style of unordered list it
 |font_size
 |<<values,Number>> +
 (default: _inherit_)
-|ulist
+|ulist:
   marker:
     disc:
       font_size: 9
@@ -2679,7 +2679,7 @@ The keys in this category control the arrangement and style of unordered list it
 |font_color
 |<<colors,Color>> +
 (default: _inherit_)
-|ulist
+|ulist:
   marker:
     disc:
       font_color: #ff0000
@@ -2687,7 +2687,7 @@ The keys in this category control the arrangement and style of unordered list it
 |line_height
 |<<values,Number>> +
 (default: _inherit_)
-|ulist
+|ulist:
   marker:
     disc:
       line_height: 2
