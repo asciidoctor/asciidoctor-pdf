@@ -11,8 +11,8 @@ require 'tempfile'
 # https://github.com/ruby/ruby/blob/ruby_2_5/lib/tempfile.rb and
 # https://github.com/ruby/ruby/blob/ruby_2_5/lib/tmpdir.rb, respectively.
 
-class Tempfile
-  if RUBY_VERSION < '2.1.0'
+if RUBY_VERSION < '2.1.0'
+  class Tempfile
     FILE_SEPARATORS = %(#{::File::SEPARATOR}#{::File::ALT_SEPARATOR})
 
     def self.create basename = '', tmpdir = nil, options = {}
