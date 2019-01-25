@@ -58,7 +58,7 @@ _Weak light from the hallway trickled across the theater, chased by a distant sc
 
 === Rendezvous Point
 
-Come on, [#bier-central]_Bier Central_.
+Come on, [[bier-central,Bier Central]].
 Did you have to ask?
 If you beat me there, I'll take a {uri-stbernardusabt12}[St. Bernardus Abt 12].
 
