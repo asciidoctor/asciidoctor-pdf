@@ -107,8 +107,9 @@ class Converter < ::Prawn::Document
   def initialize backend, opts
     super
     basebackend 'html'
+    filetype 'pdf'
+    htmlsyntax 'html'
     outfilesuffix '.pdf'
-    #htmlsyntax 'xml'
     @list_numbers = []
     @list_bullets = []
     @capabilities = {
