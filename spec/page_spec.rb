@@ -98,6 +98,33 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       EOS
       (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 72.0, 757.926]
     end
+
+    it 'should change the margin if the layout changes' do
+      pdf = to_pdf <<~'EOS', analyze: :text
+      portrait-1
+
+      <<<
+
+      portrait-2
+
+      [.landscape]
+      <<<
+
+      landscape-1
+
+      <<<
+
+      landscape-2
+      EOS
+      (expect pdf.positions[0]).to eql [48.24, 793.926]
+      (expect pdf.positions[1]).to eql [541.009, 14.388]
+      (expect pdf.positions[2]).to eql [48.24, 793.926]
+      (expect pdf.positions[3]).to eql [49.24, 14.388]
+      (expect pdf.positions[4]).to eql [48.24, 547.316]
+      (expect pdf.positions[5]).to eql [787.619, 14.388]
+      (expect pdf.positions[6]).to eql [48.24, 547.316]
+      (expect pdf.positions[7]).to eql [49.24, 14.388]
+    end
   end
 
   context 'Background' do
