@@ -2,6 +2,7 @@
 
 == TODO
 
+* auto-numbered callouts in source blocks
 * add bw / grayscale theme for rouge (upstream?)
 * fix labels in issue tracker to match other projects; in particular, enhancement should be green.
 * setup asciidoctor-mathoid project, then mention it in the STEM support section
@@ -19,6 +20,7 @@
  ** see https://github.com/asciidoctor/asciidoctor/pull/2286
 * implement SVG fit for background image (#765)
 * add helper to expand value into 4 coordinates (top, right, bottom, left)
+* could use mask function to back up fields temporarily (used in prawn table)
 
 //-
 * not honoring align in abstract
