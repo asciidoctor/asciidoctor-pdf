@@ -238,7 +238,7 @@ When the script completes, you should see the file [.path]_basic-example.pdf_ in
 Open the [.path]_basic-example.pdf_ file with a PDF viewer to see the result.
 
 .Example PDF document rendered in a PDF viewer
-image::examples/example-pdf-screenshot.png[Screenshot of PDF document,width=800,scaledwidth=100%]
+image::examples/example-pdf-screenshot.png[Screenshot of PDF document,width=850,467,scaledwidth=100%]
 
 ifndef::env-site[]
 You're also encouraged to try converting this <<README#,README>> as well as the documents in the examples directory to see more of what {project-name} can do.
