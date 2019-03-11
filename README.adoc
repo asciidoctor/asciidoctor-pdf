@@ -778,7 +778,7 @@ To switch back to master, just type:
 
 == Copyright
 
-Copyright (C) 2014-2018 OpenDevise Inc. and the Asciidoctor Project.
+Copyright (C) 2014-2019 OpenDevise Inc. and the Asciidoctor Project.
 Free use of this software is granted under the terms of the MIT License.
 
 For the full text of the license, see the <<LICENSE#,LICENSE>> file.
