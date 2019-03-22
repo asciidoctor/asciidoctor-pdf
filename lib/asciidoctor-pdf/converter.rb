@@ -111,6 +111,7 @@ class Converter < ::Prawn::Document
     outfilesuffix '.pdf'
     @list_numbers = []
     @list_bullets = []
+    @footnotes = []
     @capabilities = {
       expands_tabs: (::Asciidoctor::VERSION.start_with? '1.5.3.') || AsciidoctorVersion >= (::Gem::Version.create '1.5.3')
     }
@@ -217,6 +218,7 @@ class Converter < ::Prawn::Document
       end
     end
     convert_content_for_block doc
+    append_footnotes doc
 
     # NOTE delete orphaned page (a page was created but there was no additional content)
     # QUESTION should we delete page if document is empty? (leaving no pages?)
@@ -2014,10 +2016,30 @@ class Converter < ::Prawn::Document
   def convert_inline_footnote node
     if (index = node.attr 'index')
       #text = node.document.footnotes.find {|fn| fn.index == index }.text
-      %( <color rgb="#999999">[#{index}: #{node.text}]</color>)
+      @footnotes[index] = node.text
+      %(<a name="__ftnref-#{index}">#{DummyText}</a><sup>[<a anchor="__ftn-#{index}">#{index}</a>]</sup>)
     elsif node.type == :xref
       # NOTE footnote reference not found
       %( <color rgb="FF0000">[#{node.text}]</color>)
+    end
+  end
+
+  def append_footnotes doc
+    if @footnotes.length > 0
+      if doc.attr? 'ftn-newpage'
+        start_new_page
+      end
+      theme_font :heading, level: 2 do
+        ftn_title = (doc.attr 'ftn-title') || "Footnotes"
+        align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
+        layout_heading ftn_title, align: align, level: 2
+      end
+      @footnotes.each_with_index do |v, i|
+        if v != nil
+          ftn = %(<a name="__ftn-#{i}">#{DummyText}</a>[<a anchor="__ftnref-#{i}">#{i}</a>] #{v})
+          layout_prose ftn
+        end
+      end
     end
   end
 
