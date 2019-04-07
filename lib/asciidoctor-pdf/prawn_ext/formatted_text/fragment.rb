@@ -3,7 +3,7 @@ module Prawn
 module FormattedText
 module Fragment
   attr_reader :document
-  
+
   # Prevent fragment from being written by discarding the text.
   def conceal
     @text = ''

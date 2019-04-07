@@ -179,7 +179,7 @@ module Extensions
   #    bold: 'fonts/roboto-bold.ttf',
   #    bold_italic: 'fonts/roboto-bold_italic.ttf'
   #  }
-  #  
+  #
   def register_font data
     font_families.update data.inject({}) {|accum, (key, val)| accum[key.to_s] = val; accum }
   end
@@ -214,7 +214,7 @@ module Extensions
   end
 
   # Sets the font style for the scope of the block to which this method
-  # yields. If the style is nil and no block is given, return the current 
+  # yields. If the style is nil and no block is given, return the current
   # font style.
   #
   def font_style style = nil
@@ -336,7 +336,7 @@ module Extensions
     options = options.dup
     if (format_option = options.delete :inline_format)
       format_option = [] unless ::Array === format_option
-      fragments = self.text_formatter.format string, *format_option 
+      fragments = self.text_formatter.format string, *format_option
     else
       fragments = [{text: string}]
     end
@@ -845,7 +845,7 @@ module Extensions
     else
       started_new_page = false
     end
-    
+
     # HACK yield doesn't work here on JRuby (at least not when called from AsciidoctorJ)
     #yield remainder, started_new_page
     instance_exec(total_height, started_new_page, &block)

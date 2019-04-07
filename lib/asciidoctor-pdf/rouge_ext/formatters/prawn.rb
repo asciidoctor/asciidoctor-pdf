@@ -1,6 +1,6 @@
 module Rouge
 module Formatters
-# Transforms a token stream into an array of 
+# Transforms a token stream into an array of
 # formatted text fragments for use with Prawn.
 class Prawn < Formatter
   tag 'prawn'
