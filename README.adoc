@@ -172,7 +172,7 @@ First, make sure you have satisfied the <<Prerequisites,prerequisites>>.
 Then, you can install the published gem using the following command:
 
  $ gem install asciidoctor-pdf --pre
- 
+
 If you want to syntax highlight source listings, you'll also want to install Rouge, Pygments, or CodeRay.
 Choose one (or more) of the following:
 
@@ -189,7 +189,7 @@ You then activate syntax highlighting for a given document by adding the `source
 
 [source,asciidoc]
 ----
-:source-highlighter: rouge 
+:source-highlighter: rouge
 ----
 
 === Run the Application
@@ -263,7 +263,7 @@ Refer to the <<docs/theming-guide#,Asciidoctor PDF Theme Guide>> for details.
 === Support for Non-Latin Languages
 
 Asciidoctor can process the full range of characters in the UTF-8 character set.
-That means you can write your document in any language, save the file with UTF-8 encoding, and expect Asciidoctor to convert the text properly. 
+That means you can write your document in any language, save the file with UTF-8 encoding, and expect Asciidoctor to convert the text properly.
 However, you may notice that certain characters for certain languages, such as Chinese, are missing in the PDF.
 Read on to find out why and how to address it.
 
@@ -274,7 +274,7 @@ See the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoct
 
 Using a dedicated theme is necessary because PDF is a "`bring your own font`" kind of system.
 In other words, the font you provide must provide glyphs for all the characters.
-There's no one font that supports all the worlds languages (though some, like Noto Serif, certainly come close). 
+There's no one font that supports all the worlds languages (though some, like Noto Serif, certainly come close).
 Even if there were such a font, bundling that font with the main gem would make the package enormous.
 It would also severely limit the style choices in the default theme, which targets Latin-based languages.
 
