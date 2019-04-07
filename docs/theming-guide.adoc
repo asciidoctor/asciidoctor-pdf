@@ -590,7 +590,7 @@ Like in the AsciiDoc syntax, the inline image macro allows you to supply set the
 [source,yaml]
 ----
 title_page:
-  logo_image: image:logo.png[width=250,align=center] 
+  logo_image: image:logo.png[width=250,align=center]
 ----
 
 === Quoted String
@@ -2595,7 +2595,7 @@ The keys in this category control the arrangement and style of outline list item
 |<<colors,Color>> +
 (default: _inherit_)
 |outline_list:
-  marker_font_color: #3c763d 
+  marker_font_color: #3c763d
 
 |text_align^[2]^
 |<<text-alignments,Text alignment>> +
@@ -2928,7 +2928,7 @@ The keys in this category control the arrangement and style of tables and table 
 |<<fonts,Font family name>> +
 (default: $table_head_font_family)
 |table:
-  header_cell: 
+  header_cell:
     font_family: Noto Sans
 
 |font_size
