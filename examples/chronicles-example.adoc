@@ -58,7 +58,7 @@ _Weak light from the hallway trickled across the theater, chased by a distant sc
 
 === Rendezvous Point
 
-Come on, [[bier-central,Bier Central]].
+Come on, [[bier-central,Bier Central]]_Bier Central_, of course!
 Did you have to ask?
 If you beat me there, I'll take a {uri-stbernardusabt12}[St. Bernardus Abt 12].
 
@@ -349,7 +349,7 @@ public class GreetingReceiver implements EventReceiver, Serializable {
 }
 ----
 
-We already showed you an XML example in <<ravages>>, a language we often rant about over beers at <<bier-central,Bier Central>>.
+We already showed you an XML example in <<ravages>>, a language we often rant about over beers at <<bier-central>>.
 
 I'll trade you a little table for some of that bark.
 

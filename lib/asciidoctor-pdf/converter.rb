@@ -1982,12 +1982,14 @@ class Converter < ::Prawn::Document
       end
     when :ref
       # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
-      %(<a name="#{node.target}">#{DummyText}</a>)
+      # NOTE id is used instead of target starting in Asciidoctor 2.0.0
+      %(<a name="#{node.target || node.id}">#{DummyText}</a>)
     when :bibref
       # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
       # NOTE technically node.text should be node.reftext, but subs have already been applied to text
       # NOTE check reftext? for compatibility with Asciidoctor <= 1.5.5
-      %(<a name="#{node.target}">#{DummyText}</a>#{node.reftext? ? node.text : "[#{node.target}]"})
+      # NOTE id is used instead of target starting in Asciidoctor 2.0.0
+      %(<a name="#{node.target || node.id}">#{DummyText}</a>#{(reftext = node.reftext) ? reftext : "[#{node.target || node.id}]"})
     else
       logger.warn %(unknown anchor type: #{node.type.inspect})
     end
