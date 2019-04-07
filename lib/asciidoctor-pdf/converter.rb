@@ -210,7 +210,7 @@ class Converter < ::Prawn::Document
     font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
     doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
     add_dest_for_block doc, doc_anchor
-    unless doc.doctype == 'book' || (doc.attr? 'title-page')
+    unless doc.doctype == 'book' || (doc.attr? 'title-page') || !doc.header? || doc.notitle
       theme_font :heading, level: 1 do
         align = (@theme.heading_h1_align || (doc.doctype == 'book' ? @theme.heading_align : :center) || @base_align).to_sym
         layout_heading doc.doctitle, align: align, level: 1
@@ -2152,7 +2152,6 @@ class Converter < ::Prawn::Document
     node.id ? %(<a name="#{node.id}">#{DummyText}</a>#{quoted_text}) : quoted_text
   end
 
-  # FIXME only create title page if doctype=book!
   def layout_title_page doc
     return unless doc.header? && !doc.notitle
 
