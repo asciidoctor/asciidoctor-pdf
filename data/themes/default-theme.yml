@@ -235,6 +235,9 @@ toc:
     #content: ". "
     font_color: a9a9a9
     #levels: 2 3
+footnotes:
+  font_size: round($base_font_size * 0.75)
+  item_spacing: $outline_list_item_spacing / 2
 # NOTE in addition to footer, header is also supported
 footer:
   font_size: $base_font_size_small

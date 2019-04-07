@@ -12,6 +12,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * upgrade prawn-svg to 0.29.1; resolves numerous SVG rendering issues (#886, #430)
 * allow running content (header and footer) to be enabled on title and toc pages; controlled by running_content_start_at property in theme (#606)
 * upgrade to FontAwesome 5; introduce the fas, far, and fab icon sets, now preferred over fa; drop support for octicons (#891) (@jessedoyle)
+* place footnotes at end of chapters in books or end of document otherwise (#85) (@bcourtine)
 * allow additional style properties to be set per heading level (#176) (@billybooth)
 * add support for hexadecimal character references (#486)
 * set line spacing for non-AsciiDoc table cells (#296)

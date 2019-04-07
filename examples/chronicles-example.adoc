@@ -48,11 +48,11 @@ image::wolpertinger.jpg[Wolpertinger,pdfwidth=50%,link={uri-wolpertinger}]
 You may not be familiar with these {uri-wolpertinger}[ravenous beasts].
 Trust us, they'll eat your shorts and suck loops from your code.
 In light of this danger, we've searched high and wide for the security crew's defensive operations manual.
-We can't find it and the DefOps{empty}footnote:[a portmanteau of “defensive” and “operations”] werewolves haven't returned from their rendezvous at Bier Central.
+We can't find it and the DefOps{empty}footnote:defops[DefOps is a portmanteau of "`defensive`" and "`operations`".] werewolves haven't returned from their rendezvous at Bier Central.
 They've either eaten each other or fallen victim to the Wolpertingers roaming the streets of ((Antwerp)).
 Quick, hit kbd:[Ctrl,Alt,Backspace] or select menu:File[Quit] and let's bail out of here!
 
-WARNING: Working with werewolves leads to howling and trying to train aggressive regular expressions with Pavlovian reinforcement.
+WARNING: Working with DefOps{empty}footnote:defops[] werewolves leads to howling and trying to train aggressive regular expressions with Pavlovian reinforcement.
 
 _Weak light from the hallway trickled across the theater, chased by a distant scream._
 
@@ -79,7 +79,7 @@ Crystalline XML tags relentlessly bombarded the theater.
 </author>
 ----
 
-Despite the assault, we were still attempting to draft an example of a defensive operation.
+Despite the assault, we continued our pursuit to draft a DefOps{empty}footnote:defops[] plan.
 
 .DefOps Plan
 ====

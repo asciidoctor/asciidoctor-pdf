@@ -12,7 +12,7 @@ A simple http://asciidoc.org[AsciiDoc] document.
 
 == Introduction
 
-A paragraph followed by a simple list with square bullets.
+A paragraph followed by an unordered list{empty}footnote:[AsciiDoc supports unordered, ordered, and description lists.] with square bullets.footnote:[You may choose from square, disc, and circle for the bullet style.]
 
 [square]
 * item 1
@@ -29,3 +29,7 @@ Prawn::Document.generate 'example.pdf' do
   text 'Hello, World!'
 end
 ----
+
+== Conclusion
+
+That's all, folks!
