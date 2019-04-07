@@ -10,7 +10,7 @@ class Prawn::Table::Cell
 
     @pdf.mask(:line_width, :stroke_color) do
       @borders.each do |border|
-        idx = { :top => 0, :right => 1, :bottom => 2, :left => 3 }[border]
+        idx = { top: 0, right: 1, bottom: 2, left: 3 }[border]
         border_color = @border_colors[idx]
         border_width = @border_widths[idx]
         border_line  = @border_lines[idx]
@@ -36,7 +36,7 @@ class Prawn::Table::Cell
         when :dashed
           @pdf.dash border_width * 4
         when :dotted
-          @pdf.dash border_width, :space => border_width * 2
+          @pdf.dash border_width, space: border_width * 2
         when :solid
           # normal line style
         else

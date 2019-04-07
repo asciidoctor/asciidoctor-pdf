@@ -613,8 +613,8 @@ class Converter < ::Prawn::Document
                       icon_width = svg_size.output_width
                     end
                     svg_obj.draw
-                  rescue => e
-                    logger.warn %(could not embed admonition icon image: #{icon_path}; #{e.message})
+                  rescue
+                    logger.warn %(could not embed admonition icon image: #{icon_path}; #{$!.message})
                   end
                 else
                   begin
@@ -627,9 +627,9 @@ class Converter < ::Prawn::Document
                       icon_height = box_height
                     end
                     embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
-                  rescue => e
+                  rescue
                     # QUESTION should we show the label in this case?
-                    logger.warn %(could not embed admonition icon image: #{icon_path}; #{e.message})
+                    logger.warn %(could not embed admonition icon image: #{icon_path}; #{$!.message})
                   end
                 end
               else
@@ -1217,8 +1217,8 @@ class Converter < ::Prawn::Document
       end
       layout_caption node, side: :bottom if node.title?
       theme_margin :block, :bottom unless pinned
-    rescue => e
-      on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{e.message}))
+    rescue
+      on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{$!.message}))
     end
   ensure
     unlink_tmp_file image_path if image_path
@@ -2830,8 +2830,8 @@ class Converter < ::Prawn::Document
                         end
                         image img_path, img_opts
                       end
-                    rescue => e
-                      logger.warn %(could not embed image in running content: #{img_path}; #{e.message})
+                    rescue
+                      logger.warn %(could not embed image in running content: #{img_path}; #{$!.message})
                     end
                   end
                 end
@@ -3406,8 +3406,8 @@ class Converter < ::Prawn::Document
   # NOTE Ruby 1.9 will sometimes delete a tmp file before the process exits
   def unlink_tmp_file path
     path.unlink if TemporaryPath === path && path.exist?
-  rescue => e
-    logger.warn %(could not delete temporary image: #{path}; #{e.message})
+  rescue
+    logger.warn %(could not delete temporary image: #{path}; #{$!.message})
   end
 
   # NOTE assume URL is escaped (i.e., contains character references such as &amp;)

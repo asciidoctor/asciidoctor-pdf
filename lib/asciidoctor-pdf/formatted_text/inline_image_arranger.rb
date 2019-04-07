@@ -149,8 +149,8 @@ module InlineImageArranger
         #fragment[:image_width] = fragment[:width] = image_w
         fragment[:image_width] = image_w
         fragment[:image_height] = image_h
-      rescue => e
-        logger.warn %(could not embed image: #{image_path}; #{e.message})
+      rescue
+        logger.warn %(could not embed image: #{image_path}; #{$!.message})
         drop = true # delegate to cleanup logic in ensure block
       ensure
         # NOTE skip rendering image in scratch document or if image can't be loaded
