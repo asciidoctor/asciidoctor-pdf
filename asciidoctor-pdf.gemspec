@@ -47,7 +47,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'safe_yaml', '~> 1.0.0'
   s.add_runtime_dependency 'thread_safe', '~> 0.3.0'
   s.add_runtime_dependency 'concurrent-ruby', '~> 1.0.0'
-  # For our usage, treetop 1.6.2 is slower than 1.5.3
+  # For our usage, treetop 1.6 is slower than treetop 1.5
   s.add_runtime_dependency 'treetop', '1.5.3'
 
   s.add_development_dependency 'rake', '~> 12.3.0'
