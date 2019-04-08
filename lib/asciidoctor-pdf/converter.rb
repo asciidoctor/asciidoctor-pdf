@@ -22,7 +22,7 @@ require_relative 'roman_numeral'
 require_relative 'index_catalog'
 
 autoload :StringIO, 'stringio'
-autoload :Tempfile, ::File.join((::File.dirname __FILE__), 'core_ext/tempfile')
+autoload :Tempfile, 'tempfile'
 
 module Asciidoctor
 module Pdf
@@ -350,7 +350,7 @@ class Converter < ::Prawn::Document
           dim > 0 ? dim : break
         elsif ::String === dim && (m = (MeasurementPartsRx.match dim))
           # NOTE truncate to max precision retained by PDF::Core
-          (to_pt m[1].to_f, m[2]).truncate_to_precision 4
+          (to_pt m[1].to_f, m[2]).truncate 4
         else
           break
         end
@@ -3048,7 +3048,7 @@ class Converter < ::Prawn::Document
       end
       available_width = bounds.width - (padding[3] || 0) - (padding[1] || 0)
       if actual_width > available_width
-        adjusted_font_size = ((available_width * font_size).to_f / actual_width).truncate_to_precision 4
+        adjusted_font_size = ((available_width * font_size).to_f / actual_width).truncate 4
         if (min = @theme[%(#{category}_font_size_min)] || @theme.base_font_size_min) && adjusted_font_size < min
           min
         else
@@ -3228,7 +3228,7 @@ class Converter < ::Prawn::Document
   # experience.
   def add_dest_for_block node, id = nil
     if !scratch? && (id ||= node.id)
-      dest_x = bounds.absolute_left.truncate_to_precision 4
+      dest_x = bounds.absolute_left.truncate 4
       # QUESTION when content is aligned to left margin, should we keep precise x value or just use 0?
       dest_x = 0 if dest_x <= page_margin_left
       dest_y = at_page_top? && (node.context == :section || node.context == :document) ? page_height : y

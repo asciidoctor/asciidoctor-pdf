@@ -1,37 +1,39 @@
-# -*- encoding: utf-8 -*-
-require File.expand_path '../lib/asciidoctor-pdf/version', __FILE__
-require 'open3' unless defined? Open3
+begin
+  require_relative 'lib/asciidoctor-pdf/version'
+rescue LoadError
+  require 'asciidoctor-pdf/version'
+end
 
 Gem::Specification.new do |s|
   s.name = 'asciidoctor-pdf'
   s.version = Asciidoctor::Pdf::VERSION
-
-  s.summary = 'Converts AsciiDoc documents to PDF using Prawn'
-  s.description = <<-EOS
-An extension for Asciidoctor that converts AsciiDoc documents to PDF using the Prawn PDF library.
-  EOS
-
+  s.summary = 'Converts AsciiDoc documents to PDF using Asciidoctor and Prawn'
+  s.description = 'An extension for Asciidoctor that converts AsciiDoc documents to PDF using the Prawn PDF library.'
   s.authors = ['Dan Allen', 'Sarah White']
   s.email = 'dan@opendevise.com'
-  s.homepage = 'https://github.com/asciidoctor/asciidoctor-pdf'
+  s.homepage = 'https://asciidoctor.org/docs/asciidoctor-pdf'
   s.license = 'MIT'
+  # NOTE required ruby version is informational only; it's not enforced since it can't be overridden and can cause builds to break
+  #s.required_ruby_version = '>= 2.3.0'
+  s.metadata = {
+    'bug_tracker_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/issues',
+    'changelog_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/blob/master/CHANGELOG.adoc',
+    'mailing_list_uri' => 'http://discuss.asciidoctor.org',
+    'source_code_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf'
+  }
 
-  s.required_ruby_version = '>= 1.9.3'
-
-  files = begin
-    (result = Open3.popen3('git ls-files -z') {|_, out| out.read }.split %(\0)).empty? ? Dir['**/*'] : result
+  # NOTE the logic to build the list of files is designed to produce a usable package even when the git command is not available
+  begin
+    files = (result = `git ls-files -z`.split ?\0).empty? ? Dir['**/*'] : result
   rescue
-    Dir['**/*']
+    files = Dir['**/*']
   end
-  s.files = files.grep %r/^(?:(?:data|lib)\/.+|docs\/theming-guide\.adoc|Gemfile|Rakefile|(?:CHANGELOG|LICENSE|NOTICE|README)\.adoc|#{s.name}\.gemspec)$/
+  s.files = files.grep %r/^(?:(?:data|lib)\/.+|docs\/theming-guide\.adoc|(?:CHANGELOG|LICENSE|NOTICE|README)\.adoc|\.yardopts|#{s.name}\.gemspec)$/
   # FIXME optimize-pdf is currently a shell script, so listing it here won't work
-  #s.executables = ['asciidoctor-pdf', 'optimize-pdf']
+  #s.executables = (files.grep %r/^bin\//).map {|f| File.basename f }
   s.executables = ['asciidoctor-pdf']
-  s.test_files = files.grep %r/^(?:test|spec|feature)\/.*$/
-
   s.require_paths = ['lib']
-
-  s.add_development_dependency 'rake', '~> 12.3.2'
+  #s.test_files = files.grep %r/^(?:test|spec|feature)\/.*$/
 
   s.add_runtime_dependency 'asciidoctor', '>= 1.5.0'
   # prawn >= 2.0.0 requires Ruby >= 2.0.0, so we must cast a wider net to support Ruby 1.9.3
@@ -47,4 +49,6 @@ An extension for Asciidoctor that converts AsciiDoc documents to PDF using the P
   s.add_runtime_dependency 'concurrent-ruby', '~> 1.0.5'
   # For our usage, treetop 1.6.2 is slower than 1.5.3
   s.add_runtime_dependency 'treetop', '1.5.3'
+
+  s.add_development_dependency 'rake', '~> 12.3.2'
 end

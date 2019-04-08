@@ -1,15 +1,25 @@
-class Numeric
-  if (instance_method :truncate).arity == 0
-    def truncate_to_precision precision
-      if (precision = precision.to_i) > 0
-        factor = 10 ** precision
-        (self * factor).truncate.fdiv factor
+# NOTE remove once minimum required Ruby version is at least 2.4
+# NOTE use `send :prepend` to be nice to Ruby 2.0
+Float.send :prepend, (Module.new do
+  def truncate *args
+    if args.length == 1
+      if (precision = Integer args.shift) == 0
+        super
+      elsif precision > 0
+        precision_factor = 10.0 ** precision
+        (self * precision_factor).to_i / precision_factor
       else
-        truncate
+        precision_factor = 10 ** precision.abs
+        (self / precision_factor).to_i * precision_factor
       end
+    else
+      super
     end
-  else
-    # use native method in Ruby >= 2.4
-    alias truncate_to_precision truncate
-  end unless method_defined? :truncate_to_precision
-end
+  end
+end) if (Float.instance_method :truncate).arity == 0
+
+Integer.send :prepend, (Module.new do
+  def truncate *args
+    super()
+  end
+end) if (Integer.instance_method :truncate).arity == 0
