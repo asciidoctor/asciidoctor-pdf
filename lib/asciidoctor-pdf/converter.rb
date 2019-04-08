@@ -1079,6 +1079,12 @@ class Converter < ::Prawn::Document
     end
 
     if marker
+      if marker_style[:font_family] == 'fa'
+        logger.info { 'deprecated fa icon set found in theme; use fas, far, or fab instead' }
+        marker_style[:font_family] = FontAwesomeIconSets.find do |candidate|
+          (::Prawn::Icon::FontData.load self, candidate).yaml[candidate].value? marker
+        end || 'fas'
+      end
       marker_gap = rendered_width_of_char 'x'
       font marker_style[:font_family], size: marker_style[:font_size] do
         marker_width = rendered_width_of_string marker
@@ -1260,7 +1266,7 @@ class Converter < ::Prawn::Document
     add_dest_for_block node if node.id
     theme_margin :block, :top
     audio_path = node.media_uri(node.attr 'target')
-    play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{make_icon('fas-play').unicode}</font>) : RightPointer
+    play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(::Prawn::Icon::FontData.load self, 'fas').unicode 'play'}</font>) : RightPointer
     layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0, single_line: true
     layout_caption node, side: :bottom if node.title?
     theme_margin :block, :bottom
@@ -1296,7 +1302,7 @@ class Converter < ::Prawn::Document
     if poster.nil_or_empty?
       add_dest_for_block node if node.id
       theme_margin :block, :top
-      play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{make_icon('fas-play').unicode}</font>) : RightPointer
+      play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(::Prawn::Icon::FontData.load self, 'fas').unicode 'play'}</font>) : RightPointer
       layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{video_path}">#{video_path}</a> <em>(#{type})</em>), normalize: false, margin: 0, single_line: true
       layout_caption node, side: :bottom if node.title?
       theme_margin :block, :bottom
@@ -2043,9 +2049,9 @@ class Converter < ::Prawn::Document
       if (icon_name = node.target).include? '@'
         icon_name, icon_set = icon_name.split '@', 2
       else
-        icon_set = node.attr 'set', (node.document.attr 'icon-set', 'fas'), false
+        icon_set = node.attr 'set', (node.document.attr 'icon-set', 'fa'), false
       end
-      icon_set = 'fas' unless IconSets.include? icon_set
+      icon_set = 'fa' unless IconSets.include? icon_set
       if node.attr? 'size', nil, false
         case (size = node.attr 'size')
         when 'lg'
@@ -2056,13 +2062,25 @@ class Converter < ::Prawn::Document
           size_attr = %( size="#{size.sub 'x', 'em'}")
         end
       else
-        size_attr = nil
+        size_attr = ''
       end
       begin
+        if icon_set == 'fa'
+          font_data = nil
+          resolved_icon_set = FontAwesomeIconSets.find do |candidate|
+            (font_data = ::Prawn::Icon::FontData.load self, candidate).unicode icon_name rescue nil
+          end
+          if resolved_icon_set
+            icon_set = resolved_icon_set
+            logger.info { %(#{icon_name} icon found in deprecated fa icon set; use #{icon_set} icon set instead) }
+          else
+            raise
+          end
+        else
+          font_data = ::Prawn::Icon::FontData.load self, icon_set
+        end
         # TODO support rotate and flip attributes
-        key = [icon_set, icon_name].join('-')
-        data = make_icon(key).format_hash
-        %(<font name="#{data[:font]}"#{size_attr}>#{data[:content]}</font>)
+        %(<font name="#{icon_set}"#{size_attr}>#{font_data.unicode icon_name}</font>)
       rescue
         logger.warn %(#{icon_name} is not a valid icon name in the #{icon_set} icon set)
         %([#{node.attr 'alt'}])

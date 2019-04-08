@@ -2666,7 +2666,7 @@ The keys in this category control the arrangement and style of unordered list it
 |ulist:
   marker:
     disc:
-      font_family: fa
+      font_family: fas
 
 |font_size
 |<<values,Number>> +
