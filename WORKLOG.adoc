@@ -2,19 +2,24 @@
 
 == TODO
 
-* auto-numbered callouts in source blocks
-* add bw / grayscale theme for rouge (upstream?)
-* fix labels in issue tracker to match other projects; in particular, enhancement should be green.
-* setup asciidoctor-mathoid project, then mention it in the STEM support section
-* QUESTION should we show keys with hyphens instead of underscores in theming guide?
+.1.5.0.alpha.17
+* (#85, PR sent) footnotes as chapter endnotes
+* (#891, PR available) FontAwesome 5 upgrade
+ ** in what case do we need to lazy load the icon font in the font method?
+* (#606, PR available) running content on toc and title pages
+* does upgrading prawn-svg fix some issues? need to retest
+* (maybe) (#191, PR available) text indent for first line of paragraph
+* (maybe) add preamble to toc
+* (maybe) test suite
+* hexadecimal character refs
+ ** should we go ahead and add nbsp too?
 
 .1.5.0.alpha.18
 * footnote logic: if putting the footnote on the page causes the content with the footnote reference to bump to the next page, the footnote simply follows the text to that page
+* setup asciidoctor-mathoid project, then mention it in the STEM support section
 * allow prose alignment to be set
 * should text alignment on list inherit to nested lists?
-* add preamble to toc
 * pass current styles downwards when parsing formatted text (see https://github.com/asciidoctor/asciidoctor-pdf/issues/854)
-* test suite
 * start the README with a proper introduction to Asciidoctor PDF (and not so focused on Prawn)
 * support unnumbered and no-bullet style on ordered list
  ** see https://github.com/asciidoctor/asciidoctor/pull/2286
@@ -23,6 +28,7 @@
 * could use mask function to back up fields temporarily (used in prawn table)
 
 //-
+* QUESTION should we show keys with hyphens instead of underscores in theming guide?
 * not honoring align in abstract
 * don't style paragraph after abstract paragraph as lead (right?)
 * be able to control padding per column in footer
@@ -314,7 +320,7 @@
 * rethink how we're handling line heights for fonts, then document carefully
  ** look closer at line_height and line_height_length and see if we need to document other details
  ** allow line height to be set in more places (such as the prose for admonition, example, sidebar, etc)
-* implement first-line indent for paragraphs (seems like conflict w/ our text formatter)
+* (#191) implement first-line indent for paragraphs (seems like conflict w/ our text formatter)
  ** option to not indent first paragraph in section
  ** add indent/noindent options
  ** if you indent, perhaps drop the margin between paragraphs?
