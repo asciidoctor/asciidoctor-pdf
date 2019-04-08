@@ -8,7 +8,7 @@ grammar Markup
   end
 
   rule complex
-    (cdata / element / entity)* {
+    (cdata / element / charref)* {
       def content
         elements.map {|e| e.content }
       end
@@ -95,24 +95,31 @@ grammar Markup
     }
   end
 
-  rule entity
-    '&' ('#' entity_number / entity_name) ';' {
+  rule charref
+    '&' ('#' character_decimal / '#x' character_hex / character_name) ';' {
       def content
-        if (entity_value = elements[1]).terminal?
-          { type: :entity, name: entity_value.text_value.to_sym }
+        if (ref_data = elements[1]).terminal?
+          { type: :charref, reference_type: :name, value: ref_data.text_value.to_sym }
+        elsif ref_data.elements[0].text_value == '#'
+          { type: :charref, reference_type: :decimal, value: ref_data.elements[1].text_value.to_i }
         else
-          { type: :entity, number: entity_value.elements[1].text_value.to_i }
+          { type: :charref, reference_type: :hex, value: ref_data.elements[1].text_value }
         end
       end
     }
   end
 
-  rule entity_number
+  rule character_decimal
     # NOTE 6 decimals only supported in Asciidoctor 1.5.5 and up
     [0-9] 2..6
   end
 
-  rule entity_name
+  rule character_hex
+    # NOTE 5 hexadecimals only supported in Asciidoctor 1.5.5 and up
+    [0-9a-f] 2..5
+  end
+
+  rule character_name
     'amp' / 'apos' / 'gt' / 'lt' / 'quot'
   end
 

@@ -88,22 +88,22 @@ class Transform
           end
         end
       when :text
-        text = node[:value]
-        # NOTE the remaining logic is shared with :entity
         if @merge_adjacent_text_nodes && previous_fragment_is_text
-          fragments << { text: %(#{fragments.pop[:text]}#{text}) }
+          fragments << { text: %(#{fragments.pop[:text]}#{node[:value]}) }
         else
-          fragments << { text: text }
+          fragments << { text: node[:value] }
         end
         previous_fragment_is_text = true
-      when :entity
-        if (name = node[:name])
-          text = CharEntityTable[name]
+      when :charref
+        if (ref_type = node[:reference_type]) == :name
+          text = CharEntityTable[node[:value]]
+        elsif ref_type == :decimal
+          # FIXME AFM fonts do not include a thin space glyph; set fallback_fonts to allow glyph to be resolved
+          text = [node[:value]].pack('U1')
         else
           # FIXME AFM fonts do not include a thin space glyph; set fallback_fonts to allow glyph to be resolved
-          text = [node[:number]].pack('U*')
+          text = [(node[:value].to_i 16)].pack('U1')
         end
-        # NOTE the remaining logic is shared with :text
         if @merge_adjacent_text_nodes && previous_fragment_is_text
           fragments << { text: %(#{fragments.pop[:text]}#{text}) }
         else
@@ -182,7 +182,7 @@ class Transform
           fragment[:anchor] = value
         elsif (value = attrs[:href])
           fragment[:link] = value.include?(';') ? value.gsub(CharRefRx) {
-            $2 ? CharEntityTable[$2.to_sym] : [$1.to_i].pack('U*')
+            $2 ? CharEntityTable[$2.to_sym] : [$1.to_i].pack('U1')
           } : value
         elsif (value = attrs[:name])
           # NOTE text is null character, which is used as placeholder text so Prawn doesn't drop fragment
