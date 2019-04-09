@@ -206,16 +206,33 @@ class Converter < ::Prawn::Document
     #start_new_page if @ppbook && verso_page?
     start_new_page if @media == 'prepress' && verso_page?
 
-    num_front_matter_pages = (@index.start_page_number = page_number) - 1
+    body_start_page_number = page_number
+
+    if doc.doctype == 'book' || (doc.attr? 'title-page')
+      # NOTE start running content from title or toc, if specified (default: body)
+      if @theme.running_content_start_at == 'title'
+        num_front_matter_pages = 0
+      elsif insert_toc && @theme.running_content_start_at == 'toc'
+        num_front_matter_pages = 1
+      else # body
+        num_front_matter_pages = body_start_page_number - 1
+      end
+    else
+      num_front_matter_pages = body_start_page_number - 1
+    end
+
+    @index.start_page_number = num_front_matter_pages + 1
     font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
     doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
     add_dest_for_block doc, doc_anchor
+
     unless doc.doctype == 'book' || (doc.attr? 'title-page') || !doc.header? || doc.notitle
       theme_font :heading, level: 1 do
         align = (@theme.heading_h1_align || (doc.doctype == 'book' ? @theme.heading_align : :center) || @base_align).to_sym
         layout_heading doc.doctitle, align: align, level: 1
       end
     end
+
     convert_content_for_block doc
 
     # NOTE delete orphaned page (a page was created but there was no additional content)
@@ -224,7 +241,7 @@ class Converter < ::Prawn::Document
 
     toc_page_nums = insert_toc ? (layout_toc doc, num_toc_levels, toc_page_nums.first, num_front_matter_pages) : []
 
-    if page_count > num_front_matter_pages
+    unless page_count < body_start_page_number
       unless doc.noheader || @theme.header_height.to_f.zero?
         layout_running_content :header, doc, skip: num_front_matter_pages
       end
