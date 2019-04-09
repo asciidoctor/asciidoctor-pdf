@@ -35,19 +35,17 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   #s.test_files = files.grep %r/^(?:test|spec|feature)\/.*$/
 
-  s.add_runtime_dependency 'asciidoctor', '>= 1.5.0'
-  # prawn >= 2.0.0 requires Ruby >= 2.0.0, so we must cast a wider net to support Ruby 1.9.3
-  s.add_runtime_dependency 'prawn', '>= 1.3.0', '< 2.3.0'
-  s.add_runtime_dependency 'prawn-table', '0.2.2'
-  # prawn-templates >= 0.0.5 requires prawn >= 2.2.0, so we must cast a wider net to support Ruby 1.9.3
-  s.add_runtime_dependency 'prawn-templates', '>= 0.0.3', '<= 0.1.1'
+  s.add_runtime_dependency 'asciidoctor', '>= 1.5.0', '< 3.0.0'
+  s.add_runtime_dependency 'prawn', '~> 2.2.0'
+  s.add_runtime_dependency 'prawn-table', '~> 0.2.0'
+  s.add_runtime_dependency 'prawn-templates', '~> 0.1.0'
   s.add_runtime_dependency 'prawn-svg', '~> 0.29.0'
   s.add_runtime_dependency 'prawn-icon', '1.4.0'
   s.add_runtime_dependency 'safe_yaml', '~> 1.0.0'
   s.add_runtime_dependency 'thread_safe', '~> 0.3.0'
-  s.add_runtime_dependency 'concurrent-ruby', '~> 1.0.0'
+  s.add_runtime_dependency 'concurrent-ruby', '~> 1.1.0'
   # For our usage, treetop 1.6 is slower than treetop 1.5
-  s.add_runtime_dependency 'treetop', '1.5.3'
+  s.add_runtime_dependency 'treetop', '~> 1.5.0'
 
   s.add_development_dependency 'rake', '~> 12.3.0'
 end

@@ -7,7 +7,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
-* drop support for Ruby < 2.3
+* drop support for Ruby < 2.3 (and installation will fail for Ruby < 2.1)
+* switch to tilde dependency versions (flexible patch number) instead of ranges
 * upgrade prawn-svg to 0.29.1; resolves numerous SVG rendering issues (#886, #430)
 * allow additional style properties to be set per heading level (#176) (@billybooth)
 * set line spacing for non-AsciiDoc table cells (#296)
