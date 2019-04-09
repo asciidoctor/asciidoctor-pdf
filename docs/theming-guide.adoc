@@ -3149,6 +3149,13 @@ The keys in this category control the arrangement and style of running header an
 |===
 |Key |Value Type |Example
 
+3+|[#key-prefix-running_content]*Key Prefix:* <<key-prefix-running_content,running_content>>
+|start_at
+|title {vbar} toc {vbar} body +
+(default: body)
+|running_content:
+  start_at: toc
+
 3+|[#key-prefix-header]*Key Prefix:* <<key-prefix-header,header>>
 
 |background_color^[1]^
