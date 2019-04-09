@@ -22,7 +22,7 @@ ifdef::backend-pdf[]
 endif::[]
 // URIs:
 :uri-devoxx: https://devoxx.be
-:uri-devoxx-top-talks: https://www.youtube.com/watch?v=1OpAgZvYXLQ&list=PLRsbF2sD7JVq7fv1GZGORShSUIae1ZAPy&index=&#49;
+:uri-devoxx-top-talks: https://www.youtube.com/watch?v=1OpAgZvYXLQ&list=PLRsbF2sD7JVq7fv1GZGORShSUIae1ZAPy&index=1
 :uri-stbernardusabt12: http://www.sintbernardus.be/stbernardusabt12.php?l=en
 :uri-wolpertinger: http://en.wikipedia.org/wiki/Wolpertinger
 
