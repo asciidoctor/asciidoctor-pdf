@@ -16,22 +16,9 @@ module InlineImageArranger
   end
   TemporaryPath = ::Asciidoctor::Pdf::TemporaryPath
 
-  if respond_to? :prepend
-    def wrap fragments
-      arrange_images fragments
-      super
-    end
-  else
-    class << self
-      def extended base
-        base.class.__send__ :alias_method, :_initial_wrap, :wrap
-      end
-    end
-
-    def wrap fragments
-      arrange_images fragments
-      _initial_wrap fragments
-    end
+  def wrap fragments
+    arrange_images fragments
+    super
   end
 
   # Iterates over the fragments that represent inline images and prepares the
@@ -167,11 +154,5 @@ module InlineImageArranger
   end
 end
 
-if respond_to? :prepend
-  class ::Prawn::Text::Formatted::Box
-    prepend InlineImageArranger
-  end
-else
-  ::Prawn::Text::Formatted::Box.extensions << InlineImageArranger
-end
+::Prawn::Text::Formatted::Box.prepend InlineImageArranger
 end
