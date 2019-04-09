@@ -9,8 +9,8 @@ module InlineImageArranger
 
   ImagePlaceholderChar = '.'
   begin
-    require 'thread_safe' unless defined? ::ThreadSafe
-    PlaceholderWidthCache = ::ThreadSafe::Cache.new
+    require 'concurrent/map' unless defined? ::Concurrent::Map
+    PlaceholderWidthCache = ::Concurrent::Map.new
   rescue
     PlaceholderWidthCache = {}
   end
