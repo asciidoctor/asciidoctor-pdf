@@ -5,7 +5,7 @@ class String
       %(#{(Integer self) - 1})
     rescue ::ArgumentError
       # chars (upper alpha, lower alpha, lower greek)
-      ([65, 97, 945].include? ord) ? '0' : ([ord - 1].pack 'U*')
+      ([65, 97, 945].include? ord) ? '0' : ([ord - 1].pack 'U1')
     end
   end unless method_defined? :pred
 

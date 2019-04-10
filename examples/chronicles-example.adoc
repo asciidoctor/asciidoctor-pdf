@@ -60,7 +60,8 @@ _Weak light from the hallway trickled across the theater, chased by a distant sc
 
 Come on, [[bier-central,Bier Central]]_Bier Central_, of course!
 Did you have to ask?
-If you beat me there, I'll take a {uri-stbernardusabt12}[St. Bernardus Abt 12].
+If you beat me there, order me a {uri-stbernardusabt12}[St. Bernardus Abt 12].
+Here's some &#x20ac;.
 
 [#ravages]
 == The Ravages of Writing
@@ -499,7 +500,7 @@ Here's some content inside an open block.
 |Vice President
 |http://twitter.com/mojavelinux[@mojavelinux]
 
-3+^.e|Powered by Open Source
+3+^.e|Powered by Open Source(TM)
 |===
 
 [index]

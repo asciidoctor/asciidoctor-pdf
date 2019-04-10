@@ -1,26 +1,29 @@
-begin
-  require 'unicode' unless defined? Unicode::VERSION
-rescue LoadError
+unless RUBY_VERSION >= '2.4'
   begin
-    require 'active_support/multibyte' unless defined? ActiveSupport::Multibyte
-  rescue LoadError; end
+    require 'unicode' unless defined? Unicode::VERSION
+  rescue LoadError
+    begin
+      require 'active_support/multibyte' unless defined? ActiveSupport::Multibyte
+    rescue LoadError; end
+  end
 end
 
 module Asciidoctor
 module Pdf
 module Sanitizer
-  BuiltInEntityChars = {
-    '&lt;' => '<',
-    '&gt;' => '>',
-    '&amp;' => '&'
+  XmlSpecialChars = {
+    '&lt;' => ?<,
+    '&gt;' => ?>,
+    '&amp;' => ?&,
   }
-  BuiltInEntityCharRx = /(?:#{BuiltInEntityChars.keys * '|'})/
-  BuiltInEntityCharOrTagRx = /(?:#{BuiltInEntityChars.keys * '|'}|<)/
-  InverseBuiltInEntityChars = BuiltInEntityChars.invert
-  InverseBuiltInEntityCharRx = /[#{InverseBuiltInEntityChars.keys.join}]/
-  NumericCharRefRx = /&#(\d{2,6});/
+  XmlSpecialCharsRx = /(?:#{XmlSpecialChars.keys * '|'})/
+  InverseXmlSpecialChars = XmlSpecialChars.invert
+  InverseXmlSpecialCharsRx = /[#{InverseXmlSpecialChars.keys.join}]/
+  BuiltInNamedEntities = XmlSpecialChars.merge '&apos;' => ?', '&quot;' => ?"
   XmlSanitizeRx = /<[^>]+>/
-  SegmentPcdataRx = /(?:(&[a-z]+;|<[^>]+>)|([^&<]+))/
+  XmlMarkupRx = /&#?[a-z\d]+;|</
+  CharRefRx = /&(?:([a-z][a-z]+\d{0,2})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
+  SiftPcdataRx = /(&#?[a-z\d]+;|<[^>]+>)|([^&<]+)/
 
   # Strip leading, trailing and repeating whitespace, remove XML tags and
   # resolve all entities in the specified string.
@@ -31,12 +34,11 @@ module Sanitizer
     string.strip
         .gsub(XmlSanitizeRx, '')
         .tr_s(' ', ' ')
-        .gsub(NumericCharRefRx) { [$1.to_i].pack('U*') }
-        .gsub(BuiltInEntityCharRx, BuiltInEntityChars)
+        .gsub(CharRefRx) { $1 ? BuiltInNamedEntities[$1] : [$2 ? $2.to_i : ($3.to_i 16)].pack('U1') }
   end
 
   def escape_xml string
-    string.gsub InverseBuiltInEntityCharRx, InverseBuiltInEntityChars
+    string.gsub InverseXmlSpecialCharsRx, InverseXmlSpecialChars
   end
 
   def encode_quotes string
@@ -44,8 +46,8 @@ module Sanitizer
   end
 
   def uppercase_pcdata string
-    if BuiltInEntityCharOrTagRx =~ string
-      string.gsub(SegmentPcdataRx) { $2 ? (uppercase_mb $2) : $1 }
+    if XmlMarkupRx.match? string
+      string.gsub(SiftPcdataRx) { $2 ? (uppercase_mb $2) : $1 }
     else
       uppercase_mb string
     end

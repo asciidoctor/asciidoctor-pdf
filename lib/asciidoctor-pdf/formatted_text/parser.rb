@@ -60,7 +60,7 @@ module Markup
           r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
           r1 = r3
         else
-          r4 = _nt_entity
+          r4 = _nt_charref
           if r4
             r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
             r1 = r4
@@ -776,31 +776,39 @@ module Markup
     r0
   end
 
-  module Entity0
-    def entity_number
+  module Charref0
+    def character_decimal
       elements[1]
     end
   end
 
-  module Entity1
+  module Charref1
+    def character_hex
+      elements[1]
+    end
   end
 
-  module Entity2
+  module Charref2
+  end
+
+  module Charref3
     def content
-      if (entity_value = elements[1]).terminal?
-        { type: :entity, name: entity_value.text_value.to_sym }
+      if (ref_data = elements[1]).terminal?
+        { type: :charref, reference_type: :name, value: ref_data.text_value.to_sym }
+      elsif ref_data.elements[0].text_value == '#'
+        { type: :charref, reference_type: :decimal, value: ref_data.elements[1].text_value.to_i }
       else
-        { type: :entity, number: entity_value.elements[1].text_value.to_i }
+        { type: :charref, reference_type: :hex, value: ref_data.elements[1].text_value }
       end
     end
   end
 
-  def _nt_entity
+  def _nt_charref
     start_index = index
-    if node_cache[:entity].has_key?(index)
-      cached = node_cache[:entity][index]
+    if node_cache[:charref].has_key?(index)
+      cached = node_cache[:charref][index]
       if cached
-        node_cache[:entity][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:charref][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
@@ -827,12 +835,12 @@ module Markup
       end
       s3 << r4
       if r4
-        r5 = _nt_entity_number
+        r5 = _nt_character_decimal
         s3 << r5
       end
       if s3.last
         r3 = instantiate_node(SyntaxNode,input, i3...index, s3)
-        r3.extend(Entity0)
+        r3.extend(Charref0)
       else
         @index = i3
         r3 = nil
@@ -841,47 +849,72 @@ module Markup
         r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
         r2 = r3
       else
-        r6 = _nt_entity_name
+        i6, s6 = index, []
+        if (match_len = has_terminal?('#x', false, index))
+          r7 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+          @index += match_len
+        else
+          terminal_parse_failure('#x')
+          r7 = nil
+        end
+        s6 << r7
+        if r7
+          r8 = _nt_character_hex
+          s6 << r8
+        end
+        if s6.last
+          r6 = instantiate_node(SyntaxNode,input, i6...index, s6)
+          r6.extend(Charref1)
+        else
+          @index = i6
+          r6 = nil
+        end
         if r6
           r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
           r2 = r6
         else
-          @index = i2
-          r2 = nil
+          r9 = _nt_character_name
+          if r9
+            r9 = SyntaxNode.new(input, (index-1)...index) if r9 == true
+            r2 = r9
+          else
+            @index = i2
+            r2 = nil
+          end
         end
       end
       s0 << r2
       if r2
         if (match_len = has_terminal?(';', false, index))
-          r7 = true
+          r10 = true
           @index += match_len
         else
           terminal_parse_failure(';')
-          r7 = nil
+          r10 = nil
         end
-        s0 << r7
+        s0 << r10
       end
     end
     if s0.last
       r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
-      r0.extend(Entity1)
-      r0.extend(Entity2)
+      r0.extend(Charref2)
+      r0.extend(Charref3)
     else
       @index = i0
       r0 = nil
     end
 
-    node_cache[:entity][start_index] = r0
+    node_cache[:charref][start_index] = r0
 
     r0
   end
 
-  def _nt_entity_number
+  def _nt_character_decimal
     start_index = index
-    if node_cache[:entity_number].has_key?(index)
-      cached = node_cache[:entity_number][index]
+    if node_cache[:character_decimal].has_key?(index)
+      cached = node_cache[:character_decimal][index]
       if cached
-        node_cache[:entity_number][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:character_decimal][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
@@ -912,17 +945,58 @@ module Markup
       r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
     end
 
-    node_cache[:entity_number][start_index] = r0
+    node_cache[:character_decimal][start_index] = r0
 
     r0
   end
 
-  def _nt_entity_name
+  def _nt_character_hex
     start_index = index
-    if node_cache[:entity_name].has_key?(index)
-      cached = node_cache[:entity_name][index]
+    if node_cache[:character_hex].has_key?(index)
+      cached = node_cache[:character_hex][index]
       if cached
-        node_cache[:entity_name][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        node_cache[:character_hex][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        @index = cached.interval.end
+      end
+      return cached
+    end
+
+    s0, i0 = [], index
+    loop do
+      if has_terminal?(@regexps[gr = '\A[0-9a-f]'] ||= Regexp.new(gr), :regexp, index)
+        r1 = true
+        @index += 1
+      else
+        terminal_parse_failure('[0-9a-f]')
+        r1 = nil
+      end
+      if r1
+        s0 << r1
+      else
+        break
+      end
+      if s0.size == 5
+        break
+      end
+    end
+    if s0.size < 2
+      @index = i0
+      r0 = nil
+    else
+      r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+    end
+
+    node_cache[:character_hex][start_index] = r0
+
+    r0
+  end
+
+  def _nt_character_name
+    start_index = index
+    if node_cache[:character_name].has_key?(index)
+      cached = node_cache[:character_name][index]
+      if cached
+        node_cache[:character_name][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
         @index = cached.interval.end
       end
       return cached
@@ -992,7 +1066,7 @@ module Markup
       end
     end
 
-    node_cache[:entity_name][start_index] = r0
+    node_cache[:character_name][start_index] = r0
 
     r0
   end

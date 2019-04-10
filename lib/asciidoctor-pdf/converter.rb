@@ -1419,7 +1419,7 @@ class Converter < ::Prawn::Document
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     else
       # NOTE only format if we detect a need (callouts or inline formatting)
-      if source_string =~ BuiltInEntityCharOrTagRx
+      if XmlMarkupRx.match? source_string
         text_formatter.format source_string
       else
         [{ text: source_string }]
