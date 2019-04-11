@@ -51,6 +51,7 @@ fi
 "$GS" -q -dNOPAUSE -dBATCH -dSAFER -dNOOUTERSAVE \
   -sDEVICE=pdfwrite \
   -dPDFSETTINGS=/prepress \
+  -dPrinted=false \
   -dCannotEmbedFontPolicy=/Warning \
   -dDownsampleColorImages=$DOWNSAMPLE_IMAGES \
   -dColorImageResolution=$IMAGE_DPI \
