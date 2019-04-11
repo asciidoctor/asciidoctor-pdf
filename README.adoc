@@ -262,8 +262,9 @@ Of course, you're free to follow this model and create your own theme gem that u
 
 You can use icons in your PDF document using any of the following icon sets:
 
-* *fa* - https://fortawesome.github.io/Font-Awesome/[Font Awesome^] (default)
-* *octicon* - https://octicons.github.com/[Octicons^]
+* *fas* - https://fontawesome.com/icons?d=gallery&s=solid[Font Awesome - Solid^] (default)
+* *fab* - https://fontawesome.com/icons?d=gallery&s=brands[Font Awesome - Brands^]
+* *far* - https://fontawesome.com/icons?d=gallery&s=regular[Font Awesome - Regular^]
 * *fi* - http://zurb.com/playground/foundation-icon-fonts-3[Foundation Icons^]
 * *pf* - https://paymentfont.com/[Payment font^]
 
@@ -305,7 +306,7 @@ icon:android[size=40em]
 
 You can enable use of fonts during PDF generation (instead of in the document header) by passing the `icons` attribute to the `asciidoctor-pdf` command.
 
- $ asciidoctor-pdf -a icons=font -a icon-set=octicon sample.adoc
+ $ asciidoctor-pdf -a icons=font -a icon-set=pf sample.adoc
 
 Icon-based fonts are handled by the `prawn-icon` gem.
 To find a complete list of available icons, consult the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon] repository.

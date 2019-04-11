@@ -44,11 +44,11 @@ class Converter < ::Prawn::Document
 
   AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
   AdmonitionIcons = {
-    caution:   { name: 'fa-fire', stroke_color: 'BF3400', size: 24 },
-    important: { name: 'fa-exclamation-circle', stroke_color: 'BF0000', size: 24 },
-    note:      { name: 'fa-info-circle', stroke_color: '19407C', size: 24 },
-    tip:       { name: 'fa-lightbulb-o', stroke_color: '111111', size: 24 },
-    warning:   { name: 'fa-exclamation-triangle', stroke_color: 'BF6900', size: 24 }
+    caution:   { name: 'fas-fire', stroke_color: 'BF3400', size: 24 },
+    important: { name: 'fas-exclamation-circle', stroke_color: 'BF0000', size: 24 },
+    note:      { name: 'fas-info-circle', stroke_color: '19407C', size: 24 },
+    tip:       { name: 'far-lightbulb', stroke_color: '111111', size: 24 },
+    warning:   { name: 'fas-exclamation-triangle', stroke_color: 'BF6900', size: 24 }
   }
   TextAlignmentNames = ['justify', 'left', 'center', 'right']
   TextAlignmentRoles = ['text-justify', 'text-left', 'text-center', 'text-right']
@@ -1260,8 +1260,7 @@ class Converter < ::Prawn::Document
     add_dest_for_block node if node.id
     theme_margin :block, :top
     audio_path = node.media_uri(node.attr 'target')
-    play_symbol = (node.document.attr? 'icons', 'font') ?
-        %(<font name="fa">#{::Prawn::Icon::FontData.load(self, 'fa').unicode 'play'}</font>) : RightPointer
+    play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{make_icon('fas-play').unicode}</font>) : RightPointer
     layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0, single_line: true
     layout_caption node, side: :bottom if node.title?
     theme_margin :block, :bottom
@@ -1297,8 +1296,7 @@ class Converter < ::Prawn::Document
     if poster.nil_or_empty?
       add_dest_for_block node if node.id
       theme_margin :block, :top
-      play_symbol = (node.document.attr? 'icons', 'font') ?
-          %(<font name="fa">#{::Prawn::Icon::FontData.load(self, 'fa').unicode 'play'}</font>) : RightPointer
+      play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{make_icon('fas-play').unicode}</font>) : RightPointer
       layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{video_path}">#{video_path}</a> <em>(#{type})</em>), normalize: false, margin: 0, single_line: true
       layout_caption node, side: :bottom if node.title?
       theme_margin :block, :bottom
@@ -2045,9 +2043,9 @@ class Converter < ::Prawn::Document
       if (icon_name = node.target).include? '@'
         icon_name, icon_set = icon_name.split '@', 2
       else
-        icon_set = node.attr 'set', (node.document.attr 'icon-set', 'fa'), false
+        icon_set = node.attr 'set', (node.document.attr 'icon-set', 'fas'), false
       end
-      icon_set = 'fa' unless IconSets.include? icon_set
+      icon_set = 'fas' unless IconSets.include? icon_set
       if node.attr? 'size', nil, false
         case (size = node.attr 'size')
         when 'lg'
@@ -2062,7 +2060,9 @@ class Converter < ::Prawn::Document
       end
       begin
         # TODO support rotate and flip attributes
-        %(<font name="#{icon_set}"#{size_attr}>#{::Prawn::Icon::FontData.load(self, icon_set).unicode icon_name}</font>)
+        key = [icon_set, icon_name].join('-')
+        data = make_icon(key).format_hash
+        %(<font name="#{data[:font]}"#{size_attr}>#{data[:content]}</font>)
       rescue
         logger.warn %(#{icon_name} is not a valid icon name in the #{icon_set} icon set)
         %([#{node.attr 'alt'}])

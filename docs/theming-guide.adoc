@@ -2303,7 +2303,7 @@ The keys in this category control the arrangement and style of admonition blocks
 |admonition:
   icon:
     tip:
-      name: fa-fire
+      name: fas-fire
 
 |stroke_color
 |<<colors,Color>> +
@@ -2324,10 +2324,10 @@ The keys in this category control the arrangement and style of admonition blocks
 
 . The top and bottom padding values are ignored on admonition_label_padding.
 . `<name>` can be `note`, `tip`, `warning`, `important`, or `caution`.
-The subkeys in the icon category cannot be flattened (e.g., `tip_name: fa-lightbulb-o` is not valid syntax).
+The subkeys in the icon category cannot be flattened (e.g., `tip_name: far-lightbulb` is not valid syntax).
 . Required.
 See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository] for a list of valid icon names.
-The prefix (e.g., `fa-`) determines which font set to use.
+The prefix (e.g., `fas-`) determines which font set to use.
 
 [#keys-image]
 === Image

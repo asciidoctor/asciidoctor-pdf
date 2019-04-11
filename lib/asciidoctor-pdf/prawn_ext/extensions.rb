@@ -8,7 +8,7 @@ module Extensions
   include ::Asciidoctor::Pdf::Measurements
   include ::Asciidoctor::Pdf::Sanitizer
 
-  IconSets = ['fa', 'fi', 'octicon', 'pf'].to_set
+  IconSets = ['fa', 'fab', 'far', 'fas', 'fi', 'pf'].to_set
   InitialPageContent = %(q\n)
 
   # - :height is the height of a line
