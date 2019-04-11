@@ -1,6 +1,6 @@
 module Asciidoctor; module Pdf
   class IndexCatalog
-    LeadingAlphaRx = /^[[:alpha:]]/
+    LeadingAlphaRx = /^[[:alpha:]]/u
 
     attr_accessor :start_page_number
 
