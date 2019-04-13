@@ -235,6 +235,9 @@ class Converter < ::Prawn::Document
 
     convert_content_for_block doc
 
+    # NOTE for a book, these are leftover footnotes; for an article this is everything
+    layout_footnotes doc
+
     # NOTE delete orphaned page (a page was created but there was no additional content)
     # QUESTION should we delete page if document is empty? (leaving no pages?)
     delete_page if page_is_empty? && page_count > 1
@@ -299,6 +302,7 @@ class Converter < ::Prawn::Document
     @font_color = theme.base_font_color
     @base_align = (align = doc.attr 'text-alignment') && (TextAlignmentNames.include? align) ? align : theme.base_align
     @text_transform = nil
+    @footnotes = []
     @index = IndexCatalog.new
     # NOTE we have to init Pdfmark class here while we have reference to the doc
     @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
@@ -426,10 +430,10 @@ class Converter < ::Prawn::Document
       return convert_abstract sect
     end
 
+    type = nil
     theme_font :heading, level: (hlevel = sect.level + 1) do
       title = sect.numbered_title formal: true
       align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
-      type = nil
       if sect.part_or_chapter?
         if sect.chapter?
           type = :chapter
@@ -458,7 +462,24 @@ class Converter < ::Prawn::Document
     end
 
     sect.sectname == 'index' ? (convert_index_section sect) : (convert_content_for_block sect)
+    layout_footnotes sect if type == :chapter
     sect.set_attr 'pdf-page-end', page_number
+  end
+
+  # QUESTION if a footnote ref appears in a separate chapter, should the footnote def be duplicated?
+  def layout_footnotes node
+    return if (fns = (doc = node.document).footnotes - @footnotes).empty?
+    theme_margin :footnotes, :top
+    theme_font :footnotes do
+      # FIXME layout_caption resets the theme font for footnotes
+      (title = doc.attr 'footnotes-title') && (layout_caption title)
+      item_spacing = @theme.footnotes_item_spacing || 0
+      fns.each do |fn|
+        layout_prose %(<a name="_footnotedef_#{index = fn.index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{index}</a>] #{fn.text}), margin_bottom: item_spacing
+      end
+      @footnotes += fns
+    end
+    nil
   end
 
   def convert_floating_title node
@@ -2033,9 +2054,9 @@ class Converter < ::Prawn::Document
   end
 
   def convert_inline_footnote node
-    if (index = node.attr 'index')
-      #text = node.document.footnotes.find {|fn| fn.index == index }.text
-      %( <color rgb="#999999">[#{index}: #{node.text}]</color>)
+    if (index = node.attr 'index') && (node.document.footnotes.find {|fn| fn.index == index })
+      anchor = node.type == :xref ? '' : %(<a name="_footnoteref_#{index}">#{DummyText}</a>)
+      %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{index}</a>]</sup>)
     elsif node.type == :xref
       # NOTE footnote reference not found
       %( <color rgb="FF0000">[#{node.text}]</color>)
@@ -2376,7 +2397,6 @@ class Converter < ::Prawn::Document
   end
 
   # Render the caption and return the height of the rendered content
-  # QUESTION should layout_caption check for title? and return 0 if false?
   # TODO allow margin to be zeroed
   def layout_caption subject, opts = {}
     mark = { cursor: cursor, page_number: page_number }
@@ -2384,7 +2404,11 @@ class Converter < ::Prawn::Document
     when ::String
       string = subject
     when ::Asciidoctor::AbstractBlock
-      string = subject.title? ? subject.captioned_title : nil
+      if subject.title?
+        string = subject.captioned_title
+      else
+        return 0
+      end
     else
       return 0
     end
