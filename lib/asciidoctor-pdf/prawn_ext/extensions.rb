@@ -309,6 +309,10 @@ module Extensions
     end
   end
 
+  def icon_font_data family
+    ::Prawn::Icon::FontData.load self, family
+  end
+
   def calc_line_metrics line_height = 1, font = self.font, font_size = self.font_size
     line_height_length = line_height * font_size
     leading = line_height_length - font_size
