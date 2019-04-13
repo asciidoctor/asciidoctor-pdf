@@ -2,13 +2,16 @@ Prawn::Font::AFM.instance_variable_set :@hide_m17n_warning, true
 
 require 'prawn/icon'
 
+Prawn::Icon::Compatibility.send :prepend, (::Module.new { def warning *args; end })
+
 module Asciidoctor
 module Prawn
 module Extensions
   include ::Asciidoctor::Pdf::Measurements
   include ::Asciidoctor::Pdf::Sanitizer
 
-  IconSets = ['fa', 'fi', 'octicon', 'pf'].to_set
+  FontAwesomeIconSets = %w(fab far fas)
+  IconSets = %w(fab far fas fi pf).to_set
   InitialPageContent = %(q\n)
 
   # - :height is the height of a line
@@ -304,6 +307,10 @@ module Extensions
         yield
       end
     end
+  end
+
+  def icon_font_data family
+    ::Prawn::Icon::FontData.load self, family
   end
 
   def calc_line_metrics line_height = 1, font = self.font, font_size = self.font_size

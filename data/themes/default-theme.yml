@@ -144,7 +144,7 @@ admonition:
   padding: [0, $horizontal_rhythm, 0, $horizontal_rhythm]
   #icon:
   #  tip:
-  #    name: fa-lightbulb-o
+  #    name: far-lightbulb
   #    stroke_color: 111111
   #    size: 24
   label:
