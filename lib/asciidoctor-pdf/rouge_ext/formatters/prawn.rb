@@ -13,11 +13,11 @@ class Prawn < Formatter
     ::Rouge::Token::Tokens::Generic::Subheading
   ]
 
-  LF = %(\n)
-  NoBreakSpace = %(\u00a0)
-  InnerIndent = %(\n )
-  GuardedIndent = %(\u00a0)
-  GuardedInnerIndent = %(\n\u00a0)
+  LF = ?\n
+  NoBreakSpace = ?\u00a0
+  InnerIndent = %(#{LF} )
+  GuardedIndent = NoBreakSpace
+  GuardedInnerIndent = %(#{LF}#{NoBreakSpace})
   BoldStyle = [:bold].to_set
   ItalicStyle = [:italic].to_set
   BoldItalicStyle = [:bold, :italic].to_set
