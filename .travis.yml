@@ -12,7 +12,9 @@ rvm:
 - 2.3.8
 - jruby-9.2.6.0
 - jruby-9.1.17.0
-script: bundle exec asciidoctor-pdf -o test.pdf examples/chronicles-example.adoc
+script:
+- bundle exec rake spec
+- bundle exec asciidoctor-pdf -o test.pdf examples/chronicles-example.adoc
 deploy:
   provider: rubygems
   gem: asciidoctor-pdf
