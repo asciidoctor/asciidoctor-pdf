@@ -19,7 +19,13 @@ module Sanitizer
   XmlSpecialCharsRx = /(?:#{XmlSpecialChars.keys * '|'})/
   InverseXmlSpecialChars = XmlSpecialChars.invert
   InverseXmlSpecialCharsRx = /[#{InverseXmlSpecialChars.keys.join}]/
-  BuiltInNamedEntities = XmlSpecialChars.merge '&apos;' => ?', '&quot;' => ?"
+  BuiltInNamedEntities = {
+    'lt' => ?<,
+    'gt' => ?>,
+    'amp' => ?&,
+    'apos' => ?',
+    'quot' => ?",
+  }
   XmlSanitizeRx = /<[^>]+>/
   XmlMarkupRx = /&#?[a-z\d]+;|</
   CharRefRx = /&(?:([a-z][a-z]+\d{0,2})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
