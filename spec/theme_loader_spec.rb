@@ -23,7 +23,7 @@ describe Asciidoctor::Pdf::ThemeLoader do
 
   context 'interpolation' do
     it 'should interpolate key with variable value' do
-      theme_data = SafeYAML.load <<~"EOS"
+      theme_data = SafeYAML.load <<~EOS
       brand:
         blue: '0000FF'
       base:
