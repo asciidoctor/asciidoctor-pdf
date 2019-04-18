@@ -20,7 +20,7 @@ font:
       italic: mplus1p-regular-fallback.ttf
       bold_italic: mplus1p-regular-fallback.ttf
   fallbacks:
-    - M+ 1p Fallback
+  - M+ 1p Fallback
 page:
   background_color: ffffff
   layout: portrait
