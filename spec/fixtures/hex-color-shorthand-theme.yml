@@ -1,0 +1,3 @@
+# this is a line comment
+base: # this is a trailing line comment
+  font_color: #222222
