@@ -74,7 +74,7 @@ class ThemeLoader
   end
 
   def self.load_file filename, theme_data = nil
-    raw_data = (::IO.read filename, encoding: ::Encoding::UTF_8).each_line.map {|l| l.sub HexColorEntryRx, '\k<k>: \'\k<v>\'' }.join
+    raw_data = (::File.read filename, encoding: ::Encoding::UTF_8).each_line.map {|l| l.sub HexColorEntryRx, '\k<k>: \'\k<v>\'' }.join
     self.new.load((::SafeYAML.load raw_data), theme_data)
   end
 

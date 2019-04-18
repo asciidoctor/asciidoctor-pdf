@@ -12,7 +12,7 @@ module Images
     # FIXME handle case when SVG is a File or IO object
     if ::String === file && (file.downcase.end_with? '.svg')
       opts[:fallback_font_name] ||= default_svg_font if respond_to? :default_svg_font
-      svg((::IO.read file), opts)
+      svg((::File.read file), opts)
     else
       _initial_image file, opts
     end
@@ -24,7 +24,7 @@ module Images
   # intrinsic width and height values (in pixels)
   def intrinsic_image_dimensions path
     if path.end_with? '.svg'
-      img_obj = ::Prawn::Svg::Interface.new ::IO.read(path), self, {}
+      img_obj = ::Prawn::Svg::Interface.new ::File.read(path), self, {}
       img_size = img_obj.document.sizing
       { width: img_size.output_width, height: img_size.output_height }
     else
