@@ -22,6 +22,10 @@ describe Asciidoctor::Pdf::ThemeLoader do
       theme_data = SafeYAML.load <<~EOS
       page:
         size: A4
+      base:
+        font:
+          family: Times-Roman
+        border-width: 0.5
       admonition:
         label:
           font_style: bold
@@ -29,7 +33,35 @@ describe Asciidoctor::Pdf::ThemeLoader do
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme).to respond_to :page_size
+      (expect theme).to respond_to :base_font_family
+      (expect theme).to respond_to :base_border_width
       (expect theme).to respond_to :admonition_label_font_style
+    end
+
+    it 'should ensure required keys are set' do
+      theme_data = SafeYAML.load <<~EOS
+      literal:
+        font_family: Courier
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.base_align).to eql 'left'
+      (expect theme.code_font_family).to eql 'Courier'
+      (expect theme.conum_font_family).to eql 'Courier'
+    end
+
+    it 'should not overwrite required keys with default values if already set' do
+      theme_data = SafeYAML.load <<~EOS
+      base:
+        align: justify
+      code:
+        font_family: M+ 1mn
+      conum:
+        font_family: M+ 1mn
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.base_align).to eql 'justify'
+      (expect theme.code_font_family).to eql 'M+ 1mn'
+      (expect theme.conum_font_family).to eql 'M+ 1mn'
     end
   end
 
@@ -74,8 +106,13 @@ describe Asciidoctor::Pdf::ThemeLoader do
       (expect theme.base_font_family).to eql 'Times-Roman'
     end
 
-    it 'should load specified path that ends with .yml without resolving' do
+    it 'should load specified file ending with .yml if path is not given' do
       theme = subject.load_theme fixture_file 'custom-theme.yml'
+      (expect theme.base_font_family).to eql 'Times-Roman'
+    end
+
+    it 'should load specified file ending with .yml from specified path' do
+      theme = subject.load_theme 'custom-theme.yml', fixtures_dir
       (expect theme.base_font_family).to eql 'Times-Roman'
     end
   end
@@ -222,6 +259,23 @@ describe Asciidoctor::Pdf::ThemeLoader do
     it 'should allow hex color values to be written with # prefix' do
       theme = subject.load_theme 'hex-color-shorthand', fixtures_dir
       (expect theme.base_font_color).to eql '222222'
+    end
+
+    it 'should coerce content key to a string' do
+      theme_data = SafeYAML.load <<~EOS
+      vars:
+        foo: bar
+      footer:
+        recto:
+          left:
+            content: $vars_foo
+          right:
+            content: 10
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.footer_recto_left_content).to eql 'bar'
+      (expect theme.footer_recto_right_content).to be_a ::String
+      (expect theme.footer_recto_right_content).to eql '10'
     end
   end
 end

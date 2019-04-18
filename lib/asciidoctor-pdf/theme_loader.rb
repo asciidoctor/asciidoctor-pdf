@@ -44,7 +44,7 @@ class ThemeLoader
 
   def self.resolve_theme_file theme_name = nil, theme_path = nil
     theme_name ||= 'default'
-    # if .yml extension is given, assume it's a full file name
+    # if .yml extension is given, don't append -theme.yml
     if (theme_name.end_with? '.yml')
       # FIXME restrict to jail!
       # QUESTION why are we not using expand_path in this case?
