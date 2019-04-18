@@ -656,6 +656,8 @@ ifndef::env-site[]
 In the spirit of free software, _everyone_ is encouraged to help improve this project.
 
 To contribute code, simply fork the project on GitHub, hack away and send a pull request with your proposed changes.
+*All pull requests must include tests that verify the code change.*
+If a pull request is missing tests, it will not be merged.
 
 Feel free to use the {uri-project-issues}[issue tracker] or {uri-project-list}[Asciidoctor mailing list] to provide feedback or suggestions in other ways.
 
@@ -715,7 +717,35 @@ Then use the `bundle` command to install the project dependencies:
 
 NOTE: You need to call `bundle` from the project directory so that it can find the [.path]_Gemfile_.
 
-=== Run the Application
+=== Run the Tests
+
+Tests are written using RSpec.
+To run the tests, simply invoke rspec via bundler.
+
+ $ bundle exec rspec
+
+If you want to see the name of each test that is run, add the `-fd` option:
+
+ $ bundle exec rspec -fd
+
+You can also use the provided Rake task (note the name difference):
+
+ $ bundle exec rake spec
+
+Running tests using `rspec` directly gives you the advantage of being able to specify additional options.
+
+To run a single test, you can filter by the name of the test.
+For example, to run all tests that pertain to failures, use:
+
+ $ bundle exec rspec -e fail -fd
+
+You can also run all tests in a given file by passing the file's path to rspec:
+
+ $ bundle exec rspec -fd spec/toc_spec.rb
+
+For a full list of options that rspec provides, run `rspec -h`.
+
+=== Run the Application (optional)
 
 Like with Bundler, you have to run the application from the project directory.
 Assuming all the required gems install properly, verify you can run the `asciidoctor-pdf` script using Ruby:
