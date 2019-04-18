@@ -1929,14 +1929,19 @@ class Converter < ::Prawn::Document
 
   # NOTE to insert sequential page breaks, you must put {nbsp} between page breaks
   def convert_page_break node
-    opts = {}
-    # Detect if a page layout change was a role of the page break.
-    page_layout = resolve_layout_from_node node
-    opts = {
-              layout: (page_layout || page.layout),
-           }
-
-    advance_page opts unless at_page_top?
+    unless at_page_top?
+      if (page_layout = node.attr 'page-layout').nil_or_empty?
+        if node.role? && (page_layout = (node.roles.map(&:to_sym) & PageLayouts)[-1])
+          advance_page layout: page_layout
+        else
+          advance_page
+        end
+      elsif PageLayouts.include?(page_layout = page_layout.to_sym)
+        advance_page layout: page_layout
+      else
+        advance_page
+      end
+    end
   end
 
   def convert_index_section node
@@ -3305,18 +3310,6 @@ class Converter < ::Prawn::Document
       align_role[5..-1].to_sym
     else
       nil
-    end
-  end
-
-  def resolve_layout_from_node node
-    if (layout = node.attributes['page-layout']).nil_or_empty? || !(PageLayouts.include?(layout = layout.to_sym))
-      if (layout = node.roles.reverse.find {|r| PageLayouts.include? r.to_sym })
-        layout.to_sym
-      else
-        nil
-      end
-    else
-      layout.to_sym
     end
   end
 
