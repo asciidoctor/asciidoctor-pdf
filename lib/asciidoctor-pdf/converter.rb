@@ -1929,7 +1929,19 @@ class Converter < ::Prawn::Document
 
   # NOTE to insert sequential page breaks, you must put {nbsp} between page breaks
   def convert_page_break node
-    advance_page unless at_page_top?
+    unless at_page_top?
+      if (page_layout = node.attr 'page-layout').nil_or_empty?
+        if node.role? && (page_layout = (node.roles.map(&:to_sym) & PageLayouts)[-1])
+          advance_page layout: page_layout
+        else
+          advance_page
+        end
+      elsif PageLayouts.include?(page_layout = page_layout.to_sym)
+        advance_page layout: page_layout
+      else
+        advance_page
+      end
+    end
   end
 
   def convert_index_section node

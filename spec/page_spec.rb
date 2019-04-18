@@ -69,6 +69,34 @@ describe 'Asciidoctor::Pdf::Converter - Page' do
       (expect pdf.pages.size).to eql 1
       (expect pdf.pages[0][:size][0]).to be > pdf.pages[0][:size][1]
     end
+
+    it 'should change layout if page break specifies page-layout attribute' do
+      pdf = to_pdf <<~'EOS', attributes: 'nofooter', analyze: :text
+      portrait
+
+      [page-layout=landscape]
+      <<<
+
+      landscape
+      EOS
+      (expect pdf.strings).to eql ['portrait', 'landscape']
+      (expect pdf.positions[0]).to eql [48.24, 793.926]
+      (expect pdf.positions[1]).to eql [48.24, 547.316]
+    end
+
+    it 'should change layout if page break specifies layout role' do
+      pdf = to_pdf <<~'EOS', attributes: 'nofooter', analyze: :text
+      portrait
+
+      [.landscape]
+      <<<
+
+      landscape
+      EOS
+      (expect pdf.strings).to eql ['portrait', 'landscape']
+      (expect pdf.positions[0]).to eql [48.24, 793.926]
+      (expect pdf.positions[1]).to eql [48.24, 547.316]
+    end
   end
 
   context 'Margin' do
