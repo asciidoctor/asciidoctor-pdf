@@ -188,27 +188,51 @@ class Converter < ::Prawn::Document
     end if respond_to? :on_page_create
 
     layout_cover_page :front, doc
-    layout_title_page doc if doc.doctype == 'book' || (doc.attr? 'title-page')
+    if (insert_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
+      layout_title_page doc
+      # NOTE a new page will already be started if the cover image is a PDF
+      start_new_page unless page_is_empty?
+    else
+      # NOTE a new page will already be started if the cover image is a PDF
+      start_new_page unless page_is_empty?
+      body_start_page_number = page_number
+      if doc.header? && !doc.notitle
+        theme_font :heading, level: 1 do
+          align = (@theme.heading_h1_align || (doc.doctype == 'book' ? @theme.heading_align : :center) || @base_align).to_sym
+          layout_heading doc.doctitle, align: align, level: 1
+        end
+        toc_start = @y
+      end
+    end
 
-    # NOTE a new page will already be started if the cover image is a PDF
-    start_new_page unless page_is_empty?
+    # NOTE font must be set before toc dry run to ensure dry run size is accurate
+    font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
 
     num_toc_levels = (doc.attr 'toclevels', 2).to_i
     if (insert_toc = (doc.attr? 'toc') && doc.sections?)
       start_new_page if @ppbook && verso_page?
       toc_page_nums = page_number
-      dry_run { toc_page_nums = layout_toc doc, num_toc_levels, toc_page_nums }
+      toc_end = nil
+      dry_run do
+        toc_page_nums = layout_toc doc, num_toc_levels, toc_page_nums, 0, toc_start
+        move_down @theme.block_margin_bottom unless insert_title_page
+        toc_end = @y
+      end
       # NOTE reserve pages for the toc; leaves cursor on page after last page in toc
-      toc_page_nums.each { start_new_page }
+      if insert_title_page
+        toc_page_nums.each { start_new_page }
+      else
+        (toc_page_nums.first...toc_page_nums.last).each { start_new_page }
+        @y = toc_end
+      end
     end
 
     # FIXME only apply to book doctype once title and toc are moved to start page when using article doctype
     #start_new_page if @ppbook && verso_page?
     start_new_page if @media == 'prepress' && verso_page?
 
-    body_start_page_number = page_number
-
-    if doc.doctype == 'book' || (doc.attr? 'title-page')
+    if insert_title_page
+      body_start_page_number = page_number
       # NOTE start running content from title or toc, if specified (default: body)
       if @theme.running_content_start_at == 'title'
         num_front_matter_pages = 0
@@ -222,16 +246,8 @@ class Converter < ::Prawn::Document
     end
 
     @index.start_page_number = num_front_matter_pages + 1
-    font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
     doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
     add_dest_for_block doc, doc_anchor
-
-    unless doc.doctype == 'book' || (doc.attr? 'title-page') || !doc.header? || doc.notitle
-      theme_font :heading, level: 1 do
-        align = (@theme.heading_h1_align || (doc.doctype == 'book' ? @theme.heading_align : :center) || @base_align).to_sym
-        layout_heading doc.doctitle, align: align, level: 1
-      end
-    end
 
     convert_content_for_block doc
 
@@ -242,7 +258,7 @@ class Converter < ::Prawn::Document
     # QUESTION should we delete page if document is empty? (leaving no pages?)
     delete_page if page_is_empty? && page_count > 1
 
-    toc_page_nums = insert_toc ? (layout_toc doc, num_toc_levels, toc_page_nums.first, num_front_matter_pages) : []
+    toc_page_nums = insert_toc ? (layout_toc doc, num_toc_levels, toc_page_nums.first, num_front_matter_pages, toc_start) : []
 
     unless page_count < body_start_page_number
       unless doc.noheader || @theme.header_height.to_f.zero?
@@ -2463,9 +2479,10 @@ class Converter < ::Prawn::Document
   end
 
   # NOTE num_front_matter_pages is not used during a dry run
-  def layout_toc doc, num_levels = 2, toc_page_number = 2, num_front_matter_pages = 0
+  def layout_toc doc, num_levels = 2, toc_page_number = 2, num_front_matter_pages = 0, start_at = nil
     go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
     start_page_number = page_number
+    @y = start_at if start_at
     theme_font :heading, level: 2 do
       theme_font :toc_title do
         toc_title_align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
