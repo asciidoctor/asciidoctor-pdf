@@ -37,13 +37,29 @@ RSpec.configure do |config|
     analyze ? ((analyze == :text ? PDF::Inspector::Text : PDF::Inspector::Page).analyze pdf_io) : (PDF::Reader.new pdf_io)
   end
 
+  def get_names pdf
+    catalog = (objects = pdf.objects)[objects.trailer[:Root]]
+    Hash[*objects[objects[catalog[:Names]][:Dests]][:Names]]
+  end
+
+  def get_page_size pdf, page_num
+    catalog = (objects = pdf.objects)[objects.trailer[:Root]]
+    objects[objects[catalog[:Pages]][:Kids][page_num - 1]][:MediaBox].slice 2, 2
+  end
+
+  def get_page_num pdf, page
+    catalog = (objects = pdf.objects)[objects.trailer[:Root]]
+    page_idx = objects[catalog[:Pages]][:Kids].index page
+    page_idx ? (page_idx + 1) : nil
+  end
+
   def with_memory_logger level = nil
     old_logger = Asciidoctor::LoggerManager.logger
-    memory_logger = Asciidoctor::MemoryLogger.new
-    memory_logger.level = level if level
+    logger = Asciidoctor::MemoryLogger.new
+    logger.level = level if level
     begin
-      Asciidoctor::LoggerManager.logger = memory_logger
-      yield memory_logger
+      Asciidoctor::LoggerManager.logger = logger
+      yield logger
     ensure
       Asciidoctor::LoggerManager.logger = old_logger
     end
