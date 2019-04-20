@@ -35,10 +35,10 @@ describe 'Asciidoctor::Pdf::Converter - Document Title' do
 
       pdf = to_pdf input, analyze: true
       (expect pdf.pages.size).to eql 1
-      pp1_strings = pdf.pages[0][:strings]
-      (expect pp1_strings).to include 'Document Title'
-      (expect pp1_strings).to include 'body'
-      (expect pp1_strings.index 'Document Title').to be < (pp1_strings.index 'body')
+      p1_strings = pdf.pages[0][:strings]
+      (expect p1_strings).to include 'Document Title'
+      (expect p1_strings).to include 'body'
+      (expect p1_strings.index 'Document Title').to be < (p1_strings.index 'body')
       pdf = to_pdf input, analyze: :text
       (expect pdf.positions[0][0]).to be > pdf.positions[1][0]
     end
