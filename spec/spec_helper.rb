@@ -2,6 +2,16 @@ require 'asciidoctor-pdf'
 require 'pathname'
 require 'pdf/inspector'
 
+PDF::Reader.prepend(Module.new do
+  def catalog
+    root
+  end
+
+  def outlines
+    objects[catalog[:Outlines]]
+  end
+end)
+
 RSpec.configure do |config|
   config.before :suite do
     FileUtils.mkdir_p output_dir
@@ -37,20 +47,38 @@ RSpec.configure do |config|
     analyze ? ((analyze == :text ? PDF::Inspector::Text : PDF::Inspector::Page).analyze pdf_io) : (PDF::Reader.new pdf_io)
   end
 
+  def extract_outline pdf, list = pdf.outlines
+    result = []
+    objects = pdf.objects
+    pages = pdf.pages
+    entry = list[:First]
+    while entry
+      entry = objects[entry]
+      title = (((title = entry[:Title]).slice 2, title.size).unpack 'n*').pack 'U*'
+      dest = entry[:Dest]
+      dest_page_object = objects[dest[0]]
+      dest_page = pdf.pages.find {|candidate| candidate.page_object == dest_page_object }
+      top = dest_page.attributes[:MediaBox][3] == dest[3]
+      children = entry[:Count] > 0 ? (extract_outline pdf, entry) : []
+      result << { title: title, dest: { pagenum: dest_page.number, x: dest[2], y: dest[3], top: top }, children: children }
+      entry = entry[:Next]
+    end
+    result
+  end
+
   def get_names pdf
-    catalog = (objects = pdf.objects)[objects.trailer[:Root]]
-    Hash[*objects[objects[catalog[:Names]][:Dests]][:Names]]
+    objects = pdf.objects
+    Hash[*objects[objects[pdf.catalog[:Names]][:Dests]][:Names]]
   end
 
   def get_page_size pdf, page_num
-    catalog = (objects = pdf.objects)[objects.trailer[:Root]]
-    objects[objects[catalog[:Pages]][:Kids][page_num - 1]][:MediaBox].slice 2, 2
+    (pdf.page page_num).attributes[:MediaBox].slice 2, 2
   end
 
-  def get_page_num pdf, page
-    catalog = (objects = pdf.objects)[objects.trailer[:Root]]
-    page_idx = objects[catalog[:Pages]][:Kids].index page
-    page_idx ? (page_idx + 1) : nil
+  def get_page_number pdf, page
+    page = pdf.objects[page] if PDF::Reader::Reference === page
+    found = pdf.pages.find {|candidate| candidate.page_object == page }
+    found ? found.number : nil
   end
 
   def with_memory_logger level = nil

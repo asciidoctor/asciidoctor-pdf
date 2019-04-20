@@ -11,7 +11,7 @@ describe 'Asciidoctor::Pdf::Converter - Dests' do
     names = get_names pdf
     (expect names).to have_key '__anchor-top'
     top_dest = pdf.objects[names['__anchor-top']]
-    top_page_num = get_page_num pdf, top_dest[0]
+    top_page_num = get_page_number pdf, top_dest[0]
     top_y = top_dest[3]
     (expect top_page_num).to eql 2
     _, page_height = get_page_size pdf, top_page_num
