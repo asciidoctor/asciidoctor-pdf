@@ -45,6 +45,7 @@ RSpec.configure do |config|
     text: PDF::Inspector::Text,
     page: PDF::Inspector::Page,
     rect: PDF::Inspector::Graphics::Rectangle,
+    line: PDF::Inspector::Graphics::Line,
   }).default = PDF::Inspector::Page
 
   def to_pdf input, opts = {}
