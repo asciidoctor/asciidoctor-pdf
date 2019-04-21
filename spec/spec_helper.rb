@@ -3,6 +3,10 @@ require 'pathname'
 require 'pdf/inspector'
 
 PDF::Reader.prepend(Module.new do
+  def source
+    objects.instance_variable_get :@io
+  end
+
   def catalog
     root
   end
@@ -37,6 +41,12 @@ RSpec.configure do |config|
     File.join output_dir, path
   end
 
+  (PDF_INSPECTOR_CLASS = {
+    text: PDF::Inspector::Text,
+    page: PDF::Inspector::Page,
+    rect: PDF::Inspector::Graphics::Rectangle,
+  }).default = PDF::Inspector::Page
+
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
     if Pathname === input
@@ -45,7 +55,7 @@ RSpec.configure do |config|
     else
       pdf_io = StringIO.new (Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, standalone: true)).render
     end
-    analyze ? ((analyze == :text ? PDF::Inspector::Text : PDF::Inspector::Page).analyze pdf_io) : (PDF::Reader.new pdf_io)
+    analyze ? (PDF_INSPECTOR_CLASS[analyze].analyze pdf_io) : (PDF::Reader.new pdf_io)
   end
 
   def extract_outline pdf, list = pdf.outlines
