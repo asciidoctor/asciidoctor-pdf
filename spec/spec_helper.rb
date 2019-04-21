@@ -16,6 +16,17 @@ PDF::Reader.prepend(Module.new do
   end
 end)
 
+PDF::Inspector::Text.prepend(Module.new do
+  def page= page
+    @page_number = page.number
+    super
+  end
+
+  def move_text_position tx, ty
+    @positions << [tx, ty, @page_number]
+  end
+end)
+
 RSpec.configure do |config|
   config.before :suite do
     FileUtils.mkdir_p output_dir
