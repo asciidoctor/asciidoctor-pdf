@@ -1848,7 +1848,7 @@ class Converter < ::Prawn::Document
     }
 
     # QUESTION should we support nth; should we support sequence of roles?
-    case node.attr 'stripes', 'even', false
+    case node.attr 'stripes', nil, 'table-stripes'
     when 'all'
       table_settings[:row_colors] = [body_stripe_bg_color]
     when 'even'
