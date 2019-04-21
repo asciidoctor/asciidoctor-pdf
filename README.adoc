@@ -656,8 +656,8 @@ ifndef::env-site[]
 In the spirit of free software, _everyone_ is encouraged to help improve this project.
 
 To contribute code, simply fork the project on GitHub, hack away and send a pull request with your proposed changes.
-*All pull requests must include tests that verify the code change.*
-If a pull request is missing tests, it will not be merged.
+*All pull requests must include a) tests that verify the code change and b) an entry in the CHANGELOG.adoc file to document what changed.*
+If a pull request is missing tests or a CHANGELOG entry, *it will not be merged*.
 
 Feel free to use the {uri-project-issues}[issue tracker] or {uri-project-list}[Asciidoctor mailing list] to provide feedback or suggestions in other ways.
 
