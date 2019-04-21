@@ -1789,7 +1789,7 @@ class Converter < ::Prawn::Document
     table_grid_width = theme.table_grid_width || theme.table_border_width
     [:cols, :rows].each {|edge| border_width[edge] = table_grid_width }
 
-    case (grid = node.attr 'grid', 'all', false)
+    case (grid = node.attr 'grid', 'all', 'table-grid')
     when 'all'
       # keep inner borders
     when 'cols'
@@ -1800,7 +1800,7 @@ class Converter < ::Prawn::Document
       border_width[:rows] = border_width[:cols] = 0
     end
 
-    case (frame = node.attr 'frame', 'all', false)
+    case (frame = node.attr 'frame', 'all', 'table-frame')
     when 'all'
       # keep outer borders
     when 'topbot', 'ends'
