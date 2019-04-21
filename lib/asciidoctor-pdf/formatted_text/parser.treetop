@@ -120,7 +120,7 @@ grammar Markup
   end
 
   rule character_name
-    'amp' / 'apos' / 'gt' / 'lt' / 'quot'
+    'amp' / 'apos' / 'gt' / 'lt' / 'nbsp' / 'quot'
   end
 
   rule spaces

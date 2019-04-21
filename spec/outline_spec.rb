@@ -54,9 +54,9 @@ describe 'Asciidoctor::Pdf::Converter - Outline' do
 
   it 'should decode character references in titles' do
     pdf = to_pdf <<~'EOS', doctype: 'book'
-    = ACME(TM) Catalog <&#8470; 1>
+    = ACME(TM) Catalog <&#8470;&nbsp;1>
 
-    == Paper Clips &#x2116; 4
+    == Paper Clips &#x2116;&nbsp;4
     EOS
 
     outline = extract_outline pdf

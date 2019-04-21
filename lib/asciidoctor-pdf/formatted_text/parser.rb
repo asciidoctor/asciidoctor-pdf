@@ -1047,19 +1047,31 @@ module Markup
             r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
             r0 = r4
           else
-            if (match_len = has_terminal?('quot', false, index))
+            if (match_len = has_terminal?('nbsp', false, index))
               r5 = instantiate_node(SyntaxNode,input, index...(index + match_len))
               @index += match_len
             else
-              terminal_parse_failure('quot')
+              terminal_parse_failure('nbsp')
               r5 = nil
             end
             if r5
               r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
               r0 = r5
             else
-              @index = i0
-              r0 = nil
+              if (match_len = has_terminal?('quot', false, index))
+                r6 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                @index += match_len
+              else
+                terminal_parse_failure('quot')
+                r6 = nil
+              end
+              if r6
+                r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
+                r0 = r6
+              else
+                @index = i0
+                r0 = nil
+              end
             end
           end
         end

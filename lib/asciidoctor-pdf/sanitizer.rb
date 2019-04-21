@@ -16,16 +16,17 @@ module Sanitizer
     '&gt;' => ?>,
     '&amp;' => ?&,
   }
-  XmlSpecialCharsRx = /(?:#{XmlSpecialChars.keys * '|'})/
+  XmlSpecialCharsRx = /(?:#{XmlSpecialChars.keys * ?|})/
   InverseXmlSpecialChars = XmlSpecialChars.invert
   InverseXmlSpecialCharsRx = /[#{InverseXmlSpecialChars.keys.join}]/
-  BuiltInNamedEntities = {
-    'lt' => ?<,
-    'gt' => ?>,
+  (BuiltInNamedEntities = {
     'amp' => ?&,
     'apos' => ?',
+    'gt' => ?>,
+    'lt' => ?<,
+    'nbsp' => ' ',
     'quot' => ?",
-  }
+  }).default = ??
   XmlSanitizeRx = /<[^>]+>/
   XmlMarkupRx = /&#?[a-z\d]+;|</
   CharRefRx = /&(?:([a-z][a-z]+\d{0,2})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
@@ -48,7 +49,7 @@ module Sanitizer
   end
 
   def encode_quotes string
-    (string.include? '"') ? (string.gsub '"', '&quot;') : string
+    (string.include? ?") ? (string.gsub ?", '&quot;') : string
   end
 
   def uppercase_pcdata string

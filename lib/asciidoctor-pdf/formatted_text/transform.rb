@@ -2,18 +2,19 @@ module Asciidoctor
 module Pdf
 module FormattedText
 class Transform
-  LF = %(\n)
-  ZeroWidthSpace = %(\u200b)
+  LF = ?\n
+  ZeroWidthSpace = ?\u200b
   CharEntityTable = {
-    lt: '<',
-    gt: '>',
-    amp: '&',
-    quot: '"',
-    apos: '\''
+    amp: ?&,
+    apos: ?',
+    gt: ?>,
+    lt: ?<,
+    nbsp: ?\u00a0,
+    quot: ?",
   }
-  CharRefRx = /&(?:#(\d{2,6})|(#{CharEntityTable.keys * '|'}));/
+  CharRefRx = /&(?:(#{CharEntityTable.keys * ?|})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
   TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
-  #DummyText = %(\u0000)
+  #DummyText = ?\u0000
 
   def initialize(options = {})
     @merge_adjacent_text_nodes = options[:merge_adjacent_text_nodes]
@@ -182,7 +183,7 @@ class Transform
           fragment[:anchor] = value
         elsif (value = attrs[:href])
           fragment[:link] = value.include?(';') ? value.gsub(CharRefRx) {
-            $2 ? CharEntityTable[$2.to_sym] : [$1.to_i].pack('U1')
+            $1 ? CharEntityTable[$1.to_sym] : [$2 ? $2.to_i : ($3.to_i 16)].pack('U1')
           } : value
         elsif (value = attrs[:name])
           # NOTE text is null character, which is used as placeholder text so Prawn doesn't drop fragment
