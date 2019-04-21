@@ -37,6 +37,7 @@ endif::[]
 :uri-graphicsmagick: http://www.graphicsmagick.org
 
 ifdef::status[]
+image:https://img.shields.io/travis/asciidoctor/asciidoctor-pdf/master.svg[Build Status (Travis CI),link=https://travis-ci.org/asciidoctor/asciidoctor-pdf]
 image:https://img.shields.io/gem/v/asciidoctor-pdf.svg[Latest Release, link={uri-gem}]
 image:https://img.shields.io/badge/license-MIT-blue.svg[MIT License, link=#copyright]
 endif::[]
