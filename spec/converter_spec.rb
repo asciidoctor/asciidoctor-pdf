@@ -28,7 +28,7 @@ describe Asciidoctor::Pdf::Converter do
       (expect pdf.page_count).to be > 0
     end
 
-    it 'should ignore data-uri if set' do
+    it 'should ignore data-uri attribute if set' do
       doc = Asciidoctor.load <<~'EOS', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
       :data-uri:
 
