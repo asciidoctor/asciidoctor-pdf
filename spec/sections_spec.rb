@@ -4,7 +4,6 @@ describe 'Asciidoctor::Pdf::Converter - Sections' do
   it 'should apply font size according to section level' do
     pdf = to_pdf <<~'EOS', analyze: :text
     = Document Title
-    :nofooter:
 
     == Level 1
 

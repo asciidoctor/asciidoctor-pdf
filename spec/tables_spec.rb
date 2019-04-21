@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::Pdf::Converter - Tables' do
   it 'should not fail to fit text in cell' do
-    pdf = to_pdf <<~'EOS', attributes: 'nofooter', analyze: :text
+    pdf = to_pdf <<~'EOS', analyze: :text
     |===
     |Aaaaa Bbbbb Ccccc |*{zwsp}* Aaaaa_Bbbbb_Ccccc |Aaaaa_Bbbbb_Ccccc |Aaaaa_Bbbbb_Ccccc |A
     |===

@@ -71,7 +71,7 @@ describe 'Asciidoctor::Pdf::Converter - Page' do
     end
 
     it 'should change layout if page break specifies page-layout attribute' do
-      pdf = to_pdf <<~'EOS', attributes: 'nofooter', analyze: :text
+      pdf = to_pdf <<~'EOS', analyze: :text
       portrait
 
       [page-layout=landscape]
@@ -85,7 +85,7 @@ describe 'Asciidoctor::Pdf::Converter - Page' do
     end
 
     it 'should change layout if page break specifies layout role' do
-      pdf = to_pdf <<~'EOS', attributes: 'nofooter', analyze: :text
+      pdf = to_pdf <<~'EOS', analyze: :text
       portrait
 
       [.landscape]

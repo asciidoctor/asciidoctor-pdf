@@ -49,6 +49,7 @@ RSpec.configure do |config|
 
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
+    opts[:attributes] = 'nofooter' unless opts.key? :attributes
     if Pathname === input
       opts[:to_dir] = output_dir unless opts.key? :to_dir
       pdf_io = (Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)).attr 'outfile'

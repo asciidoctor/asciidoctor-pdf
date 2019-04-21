@@ -94,7 +94,6 @@ describe 'Asciidoctor::Pdf::Converter - TOC' do
       input = <<~EOS
       = Document Title
       :toc:
-      :nofooter:
 
       Preamble
 
@@ -132,7 +131,6 @@ describe 'Asciidoctor::Pdf::Converter - TOC' do
       input = <<~EOS
       = Document Title
       :toc:
-      :nofooter:
 
       #{sections.join}
       EOS
