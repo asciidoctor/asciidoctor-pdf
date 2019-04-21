@@ -40,7 +40,7 @@ RSpec.configure do |config|
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
     if Pathname === input
-      opts[:to_dir] ||= output_dir
+      opts[:to_dir] = output_dir unless opts.key? :to_dir
       pdf_io = (Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)).attr 'outfile'
     else
       pdf_io = StringIO.new (Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, standalone: true)).render
