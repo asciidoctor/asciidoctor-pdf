@@ -198,8 +198,7 @@ class Converter < ::Prawn::Document
       body_start_page_number = page_number
       if doc.header? && !doc.notitle
         theme_font :heading, level: 1 do
-          align = (@theme.heading_h1_align || (doc.doctype == 'book' ? @theme.heading_align : :center) || @base_align).to_sym
-          layout_heading doc.doctitle, align: align, level: 1
+          layout_heading doc.doctitle, align: (@theme.heading_h1_align || :center).to_sym, level: 1
         end
         toc_start = @y
       end
