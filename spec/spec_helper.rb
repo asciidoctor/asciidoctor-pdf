@@ -121,6 +121,9 @@ RSpec.configure do |config|
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
     opts[:attributes] = 'nofooter' unless opts.key? :attributes
+    if (theme_overrides = opts.delete :theme_overrides)
+      opts[:pdf_theme] = Asciidoctor::Pdf::ThemeLoader.load_theme.tap {|theme| theme_overrides.each {|k, v| theme[k] = v } }
+    end
     if Pathname === input
       opts[:to_dir] = output_dir unless opts.key? :to_dir
       pdf_io = (Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)).attr 'outfile'

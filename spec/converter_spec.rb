@@ -38,5 +38,14 @@ describe Asciidoctor::Pdf::Converter do
       doc.convert
       (expect doc.attr? 'data-uri').to be false
     end
+
+    it 'should use theme passed in through :pdf_theme option' do
+      theme = Asciidoctor::Pdf::ThemeLoader.load_theme 'custom', fixtures_dir
+      pdf = Asciidoctor.convert <<~'EOS', backend: 'pdf', pdf_theme: theme
+      content
+      EOS
+
+      (expect pdf.instance_variable_get :@theme).to be theme
+    end
   end
 end
