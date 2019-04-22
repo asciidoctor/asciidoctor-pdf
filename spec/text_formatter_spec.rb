@@ -57,52 +57,51 @@ describe Asciidoctor::Pdf::FormattedText::Formatter do
   context 'integration' do
     it 'should format constrained strong phrase' do
       pdf = to_pdf '*strong*', analyze: :text
-      (expect pdf.strings).to eql ['strong']
-      (expect pdf.font_settings[0][:name]).to end_with 'NotoSerif-Bold'
+      (expect pdf.text[0].values_at :string, :font_name).to eql ['strong', 'NotoSerif-Bold']
     end
 
     it 'should format unconstrained strong phrase' do
       pdf = to_pdf '**super**nova', analyze: :text
-      (expect pdf.strings).to eql ['super', 'nova']
-      (expect pdf.font_settings[0][:name]).to end_with 'NotoSerif-Bold'
+      (expect pdf.text[0].values_at :string, :font_name).to eql ['super', 'NotoSerif-Bold']
+      (expect pdf.text[1].values_at :string, :font_name).to eql ['nova', 'NotoSerif']
     end
 
     it 'should format constrained emphasis phrase' do
       pdf = to_pdf '_emphasis_', analyze: :text
-      (expect pdf.strings).to eql ['emphasis']
-      (expect pdf.font_settings[0][:name]).to end_with 'NotoSerif-Italic'
+      (expect pdf.text[0].values_at :string, :font_name).to eql ['emphasis', 'NotoSerif-Italic']
     end
 
     it 'should format unconstrained emphasis phrase' do
       pdf = to_pdf '__un__cool', analyze: :text
-      (expect pdf.strings).to eql ['un', 'cool']
-      (expect pdf.font_settings[0][:name]).to end_with 'NotoSerif-Italic'
+      (expect pdf.text[0].values_at :string, :font_name).to eql ['un', 'NotoSerif-Italic']
+      (expect pdf.text[1].values_at :string, :font_name).to eql ['cool', 'NotoSerif']
     end
 
     it 'should format constrained monospace phrase' do
       pdf = to_pdf '`monospace`', analyze: :text
-      (expect pdf.strings).to eql ['monospace']
-      (expect pdf.font_settings[0][:name]).to end_with 'mplus1mn-regular'
+      (expect pdf.text[0].values_at :string, :font_name).to eql ['monospace', 'mplus1mn-regular']
     end
 
     it 'should format unconstrained monospace phrase' do
       pdf = to_pdf '``install``ed', analyze: :text
-      (expect pdf.strings).to eql ['install', 'ed']
-      (expect pdf.font_settings[0][:name]).to end_with 'mplus1mn-regular'
+      (expect pdf.text[0].values_at :string, :font_name).to eql ['install', 'mplus1mn-regular']
+      (expect pdf.text[1].values_at :string, :font_name).to eql ['ed', 'NotoSerif']
     end
 
     it 'should format superscript phrase' do
       pdf = to_pdf 'x^2^', analyze: :text
       (expect pdf.strings).to eql ['x', '2']
-      (expect pdf.font_settings[0][:size]).to be > pdf.font_settings[1][:size]
-      (expect pdf.positions[0][1]).to be < pdf.positions[1][1]
+      text = pdf.text
+      (expect text[0][:font_size]).to be > text[1][:font_size]
+      (expect text[0][:y]).to be < text[1][:y]
     end
 
     it 'should format subscript phrase' do
       pdf = to_pdf 'O~2~', analyze: :text
       (expect pdf.strings).to eql ['O', '2']
-      (expect pdf.font_settings[0][:size]).to be > pdf.font_settings[1][:size]
-      (expect pdf.positions[0][1]).to be > pdf.positions[1][1]
+      text = pdf.text
+      (expect text[0][:font_size]).to be > text[1][:font_size]
+      (expect text[0][:y]).to be > text[1][:y]
     end
   end
 end

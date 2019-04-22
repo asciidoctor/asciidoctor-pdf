@@ -27,6 +27,65 @@ PDF::Inspector::Text.prepend(Module.new do
   end
 end)
 
+class PDFTextInspector < PDF::Inspector
+  attr_accessor :text
+
+  def initialize
+    @color = nil
+    @cursor = nil
+    @fonts = {}
+    @text = []
+  end
+
+  def strings
+    @text.map {|it| it[:string] }
+  end
+
+  def page= page
+    @page_number = page.number
+    @state = PDF::Reader::PageState.new page
+    page.fonts.each do |label, stream|
+      base_font = stream[:BaseFont].to_s
+      base_font = (base_font.partition '+')[-1] if base_font.include? '+'
+      @fonts[label] = base_font
+    end
+  end
+
+  def set_text_font_and_size *params
+    @state.set_text_font_and_size(*params)
+    @font_settings = { name: @fonts[params[0]], size: params[1], color: @color }
+  end
+
+  def set_color_for_stroking_and_special *params
+    @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
+  end
+
+  def move_text_position x, y
+    @cursor = { page_number: @page_number, x: x, y: y }
+  end
+
+  def show_text_with_positioning chunks
+    show_text chunks.reject {|candidate| Numeric === candidate }.join, true
+  end
+
+  def show_text text, kerned = false
+    string = @state.current_font.to_utf8 text
+    if @cursor
+      accum = @cursor
+      accum[:font_name] = @font_settings[:name]
+      accum[:font_size] = @font_settings[:size]
+      accum[:font_color] = @font_settings[:color]
+      accum[:string] = string
+      @text << accum
+      @cursor = nil
+    else
+      accum = @text[-1]
+      accum[:string] += string
+    end
+    accum[:kerned] ||= kerned
+  end
+end
+
 RSpec.configure do |config|
   config.before :suite do
     FileUtils.mkdir_p output_dir
@@ -53,7 +112,7 @@ RSpec.configure do |config|
   end
 
   (PDF_INSPECTOR_CLASS = {
-    text: PDF::Inspector::Text,
+    text: PDFTextInspector,
     page: PDF::Inspector::Page,
     rect: PDF::Inspector::Graphics::Rectangle,
     line: PDF::Inspector::Graphics::Line,

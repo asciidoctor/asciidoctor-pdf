@@ -53,21 +53,21 @@ describe 'Asciidoctor::Pdf::Converter - Page' do
 
   context 'Layout' do
     it 'should use layout specified in theme by default' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS'
       content
       EOS
       (expect pdf.pages.size).to eql 1
-      (expect pdf.pages[0][:size][0]).to be < pdf.pages[0][:size][1]
+      (expect pdf.pages[0].orientation).to eql 'portrait'
     end
 
     it 'should use layout specified by pdf-page-layout attribute' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS'
       :pdf-page-layout: landscape
 
       content
       EOS
       (expect pdf.pages.size).to eql 1
-      (expect pdf.pages[0][:size][0]).to be > pdf.pages[0][:size][1]
+      (expect pdf.pages[0].orientation).to eql 'landscape'
     end
 
     it 'should change layout if page break specifies page-layout attribute' do
@@ -79,9 +79,11 @@ describe 'Asciidoctor::Pdf::Converter - Page' do
 
       landscape
       EOS
-      (expect pdf.strings).to eql ['portrait', 'landscape']
-      (expect pdf.positions[0]).to eql [48.24, 793.926, 1]
-      (expect pdf.positions[1]).to eql [48.24, 547.316, 2]
+
+      text = pdf.text
+      (expect text.size).to eql 2
+      (expect text[0].values_at :string, :page_number, :x, :y).to eq ['portrait', 1, 48.24, 793.926]
+      (expect text[1].values_at :string, :page_number, :x, :y).to eq ['landscape', 2, 48.24, 547.316]
     end
 
     it 'should change layout if page break specifies layout role' do
@@ -93,9 +95,11 @@ describe 'Asciidoctor::Pdf::Converter - Page' do
 
       landscape
       EOS
-      (expect pdf.strings).to eql ['portrait', 'landscape']
-      (expect pdf.positions[0]).to eql [48.24, 793.926, 1]
-      (expect pdf.positions[1]).to eql [48.24, 547.316, 2]
+
+      text = pdf.text
+      (expect text.size).to eql 2
+      (expect text[0].values_at :string, :page_number, :x, :y).to eq ['portrait', 1, 48.24, 793.926]
+      (expect text[1].values_at :string, :page_number, :x, :y).to eq ['landscape', 2, 48.24, 547.316]
     end
   end
 
@@ -104,7 +108,7 @@ describe 'Asciidoctor::Pdf::Converter - Page' do
       pdf = to_pdf <<~'EOS', analyze: :text
       content
       EOS
-      (expect pdf.positions[0]).to eql [48.24, 793.926, 1]
+      (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 48.24, 793.926]
     end
 
     it 'should use the margin specified by the pdf-page-margin attribute as array' do
@@ -113,7 +117,7 @@ describe 'Asciidoctor::Pdf::Converter - Page' do
 
       content
       EOS
-      (expect pdf.positions[0]).to eql [0.0, 829.926, 1]
+      (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 0.0, 829.926]
     end
 
     it 'should use the margin specified by the pdf-page-margin attribute as string' do
@@ -122,7 +126,7 @@ describe 'Asciidoctor::Pdf::Converter - Page' do
 
       content
       EOS
-      (expect pdf.positions[0]).to eql [72.0, 757.926, 1]
+      (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 72.0, 757.926]
     end
   end
 end

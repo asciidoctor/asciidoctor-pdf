@@ -12,24 +12,22 @@ describe 'Asciidoctor::Pdf::Converter - Footnotes' do
     Yada yada yada.
     EOS
 
-    strings = pdf.strings
-    positions = pdf.positions
-    font_settings = pdf.font_settings
+    strings, text = pdf.strings, pdf.text
     (expect (strings.slice 2, 3).join).to eql '[1]'
     # superscript
-    (expect positions[3][1]).to be > positions[2][1]
+    (expect text[2][:y]).to be > text[1][:y]
+    (expect text[2][:font_size]).to be < text[1][:font_size]
+    (expect text[3][:font_color]).to eql '428BCA'
     # superscript group
-    (expect (positions.slice 3, 3).map {|p| p[1] }.uniq.size).to be 1
-    (expect (font_settings.slice 2, 3).map {|f| f[:size] }.uniq.size).to be 1
-    (expect font_settings[2][:size]).to be < font_settings[1][:size]
+    (expect (text.slice 2, 3).map {|it| [it[:y], it[:font_size]] }.uniq.size).to be 1
     # footnote item
     (expect (strings.slice 6, 3).join).to eql '[1] More about that thing.'
-    (expect positions[8][1]).to be < positions[6][1]
-    (expect positions[8][2]).to eql 1
-    (expect (positions.slice 8, 3).map {|p| p[1] }.uniq.size).to eql 1
-    (expect font_settings[6][:size]).to eql 8
+    (expect text[6][:y]).to be < text[5][:y]
+    (expect text[6][:page_number]).to eql 1
+    (expect text[6][:font_size]).to eql 8
+    (expect (text.slice 6, 3).map {|it| [it[:y], it[:font_size]] }.uniq.size).to eql 1
     # next chapter
-    (expect positions[11][2]).to eql 2
+    (expect text[9][:page_number]).to eql 2
   end
 
   it 'should place footnotes at the end of document when doctype is not book' do
@@ -45,20 +43,19 @@ describe 'Asciidoctor::Pdf::Converter - Footnotes' do
     Yada yada yada.
     EOS
 
-    strings = pdf.strings
-    positions = pdf.positions
-    font_settings = pdf.font_settings
+    strings, text = pdf.strings, pdf.text
     (expect (strings.slice 2, 3).join).to eql '[1]'
     # superscript
-    (expect positions[3][1]).to be > positions[2][1]
+    (expect text[2][:y]).to be > text[1][:y]
+    (expect text[2][:font_size]).to be < text[1][:font_size]
+    (expect text[3][:font_color]).to eql '428BCA'
     # superscript group
-    (expect (positions.slice 3, 3).map {|p| p[1] }.uniq.size).to be 1
-    (expect (font_settings.slice 2, 3).map {|f| f[:size] }.uniq.size).to be 1
-    (expect font_settings[2][:size]).to be < font_settings[1][:size]
+    (expect (text.slice 2, 3).map {|it| [it[:y], it[:font_size]] }.uniq.size).to be 1
+    (expect text[2][:font_size]).to be < text[1][:font_size]
     # footnote item
     (expect strings.index 'Section B').to be < (strings.index '] More about that thing.')
     (expect (strings.slice -3, 3).join).to eql '[1] More about that thing.'
-    (expect positions[-1][2]).to eql 2
-    (expect font_settings[-1][:size]).to eql 8
+    (expect text[-1][:page_number]).to eql 2
+    (expect text[-1][:font_size]).to eql 8
   end
 end

@@ -27,20 +27,20 @@ describe 'Asciidoctor::Pdf::Converter - Document Title' do
 
   context 'article' do
     it 'should place document title centered on first page of content' do
-      input = <<~'EOS'
+      pdf = to_pdf <<~'EOS', analyze: :text
       = Document Title
 
       body
       EOS
 
-      pdf = to_pdf input, analyze: true
-      (expect pdf.pages.size).to eql 1
-      p1_strings = pdf.pages[0][:strings]
-      (expect p1_strings).to include 'Document Title'
-      (expect p1_strings).to include 'body'
-      (expect p1_strings.index 'Document Title').to be < (p1_strings.index 'body')
-      pdf = to_pdf input, analyze: :text
-      (expect pdf.positions[0][0]).to be > pdf.positions[1][0]
+      text = pdf.text
+      doctitle_text = text.find {|candidate| candidate[:string] == 'Document Title' }
+      body_text = text.find {|candidate| candidate[:string] == 'body' }
+      (expect doctitle_text).not_to be_nil
+      (expect doctitle_text[:page_number]).to be 1
+      (expect body_text).not_to be_nil
+      (expect body_text[:page_number]).to be 1
+      (expect doctitle_text[:y]).to be > body_text[:y]
     end
 
     it 'should place document title on title page if title-page attribute is set' do

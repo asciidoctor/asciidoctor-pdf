@@ -114,16 +114,16 @@ describe 'Asciidoctor::Pdf::Converter - TOC' do
       (expect pdf.pages[0][:strings]).to include 'Table of Contents'
       (expect pdf.pages[0][:strings].count 'Introduction').to eql 2
       pdf = to_pdf input, analyze: :text
-      strings, positions = pdf.strings, pdf.positions
+      strings, text = pdf.strings, pdf.text
       idx_doctitle = strings.index 'Document Title'
       idx_toc_title = strings.index 'Table of Contents'
       idx_toc_bottom = strings.index '2'
       idx_content_top = strings.index 'Preamble'
-      (expect positions[idx_doctitle][1]).to be > positions[idx_toc_title][1]
-      (expect positions[idx_toc_title][1]).to be > positions[idx_content_top][1]
-      (expect positions[idx_toc_bottom][1]).to be > positions[idx_content_top][1]
+      (expect text[idx_doctitle][:y]).to be > text[idx_toc_title][:y]
+      (expect text[idx_toc_title][:y]).to be > text[idx_content_top][:y]
+      (expect text[idx_toc_bottom][:y]).to be > text[idx_content_top][:y]
       # NOTE assert there's no excess gap between end of toc and start of content
-      (expect positions[idx_toc_bottom][1] - positions[idx_content_top][1]).to be < 35
+      (expect text[idx_toc_bottom][:y] - text[idx_content_top][:y]).to be < 35
     end
 
     it 'should reserve enough pages for toc if it spans more than one page' do
@@ -142,18 +142,18 @@ describe 'Asciidoctor::Pdf::Converter - TOC' do
       (expect pdf.pages[1][:strings]).to include 'Section 40'
       (expect pdf.pages[1][:strings]).to include 'Section 1'
       pdf = to_pdf input, analyze: :text
-      strings, positions, font_metrics = pdf.strings, pdf.positions, pdf.font_settings
+      text = pdf.text
       idx_toc_bottom = nil
       idx_content_top = nil
-      strings.each_with_index do |candidate, idx|
-        idx_toc_bottom = idx if candidate == 'Section 40' && font_metrics[idx][:size] == 10.5
+      text.each_with_index do |candidate, idx|
+        idx_toc_bottom = idx if candidate[:string] == 'Section 40' && candidate[:font_size] == 10.5
       end
-      strings.each_with_index do |candidate, idx|
-        idx_content_top = idx if candidate == 'Section 1' && font_metrics[idx][:size] == 22
+      text.each_with_index do |candidate, idx|
+        idx_content_top = idx if candidate[:string] == 'Section 1' && candidate[:font_size] == 22
       end
-      (expect positions[idx_toc_bottom][1]).to be > positions[idx_content_top][1]
+      (expect text[idx_toc_bottom][:y]).to be > text[idx_content_top][:y]
       # NOTE assert there's no excess gap between end of toc and start of content
-      (expect positions[idx_toc_bottom][1] - positions[idx_content_top][1]).to be < 50
+      (expect text[idx_toc_bottom][:y] - text[idx_content_top][:y]).to be < 50
     end
 
     it 'should insert toc between title page and first page of body when toc and title-page are set' do

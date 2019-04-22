@@ -13,7 +13,8 @@ describe 'Asciidoctor::Pdf::Converter - Sections' do
 
     == Back To Level 1
     EOS
+
     (expect pdf.strings).to eql ['Document Title', 'Level 1', 'Level 2', 'section content', 'Back To Level 1']
-    (expect pdf.font_settings.map {|it| it[:size] }).to eql [27, 22, 18, 10.5, 22]
+    (expect pdf.text.map {|it| it[:font_size] }).to eql [27, 22, 18, 10.5, 22]
   end
 end

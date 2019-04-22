@@ -19,9 +19,10 @@ describe 'Asciidoctor::Pdf::Converter - Images' do
       (expect pdf.rectangles[0][:height]).to eql 200.0
 
       pdf = to_pdf input, attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }, analyze: :text
-      (expect pdf.strings.size).to eql 1
-      (expect pdf.strings[0]).to eql 'after'
-      (expect pdf.positions[0][1]).to eql 176.036
+      text = pdf.text
+      (expect text.size).to eql 1
+      (expect text[0][:string]).to eql 'after'
+      (expect text[0][:y]).to eql 176.036
     end
 
     it 'should not leave gap around constrained SVG that specifies viewBox but no width' do
@@ -41,9 +42,10 @@ describe 'Asciidoctor::Pdf::Converter - Images' do
       (expect pdf.rectangles[0][:height]).to eql 200.0
 
       pdf = to_pdf input, attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }, analyze: :text
-      (expect pdf.strings.size).to eql 1
-      (expect pdf.strings[0]).to eql 'after'
-      (expect pdf.positions[0][1]).to eql 276.036
+      text = pdf.text
+      (expect text.size).to eql 1
+      (expect text[0][:string]).to eql 'after'
+      (expect text[0][:y]).to eql 276.036
     end
   end
 end
