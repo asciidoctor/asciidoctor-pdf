@@ -1,4 +1,5 @@
 require 'asciidoctor/pdf'
+require 'chunky_png'
 require 'pathname'
 require 'pdf/inspector'
 
@@ -82,7 +83,7 @@ class EnhancedPDFTextInspector < PDF::Inspector
   def page= page
     @pages << { size: (page.attributes[:MediaBox].slice 2, 2), text: [] }
     @page_number = page.number
-    @state = PDF::Reader::PageState.new page
+    @state = ::PDF::Reader::PageState.new page
     page.fonts.each do |label, stream|
       base_font = stream[:BaseFont].to_s
       base_font = (base_font.partition '+')[-1] if base_font.include? '+'
@@ -104,7 +105,7 @@ class EnhancedPDFTextInspector < PDF::Inspector
   end
 
   def show_text_with_positioning chunks
-    show_text chunks.reject {|candidate| Numeric === candidate }.join, true
+    show_text chunks.reject {|candidate| ::Numeric === candidate }.join, true
   end
 
   def show_text text, kerned = false
@@ -171,9 +172,6 @@ RSpec.configure do |config|
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
     opts[:attributes] = 'nofooter' unless opts.key? :attributes
-    if (theme_overrides = opts.delete :theme_overrides)
-      opts[:pdf_theme] = Asciidoctor::PDF::ThemeLoader.load_theme.tap {|theme| theme_overrides.each {|k, v| theme[k] = v } }
-    end
     if Pathname === input
       opts[:to_dir] = output_dir unless opts.key? :to_dir
       pdf_io = (Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)).attr 'outfile'
@@ -182,6 +180,20 @@ RSpec.configure do |config|
       pdf_io = StringIO.new (Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, header_footer: true)).render
     end
     analyze ? (PDF_INSPECTOR_CLASS[analyze].analyze pdf_io) : (PDF::Reader.new pdf_io)
+  end
+
+  def to_pdf_file input, output_filename, opts = {}
+    opts[:to_file] = (to_file = File.join output_dir, output_filename)
+    if Pathname === input
+      Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)
+    else
+      Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, header_footer: true)
+    end
+    to_file
+  end
+
+  def build_pdf_theme overrides = {}
+    Asciidoctor::Pdf::ThemeLoader.load_theme.tap {|theme| overrides.each {|k, v| theme[k] = v } }
   end
 
   def extract_outline pdf, list = pdf.outlines
@@ -244,4 +256,47 @@ RSpec.configure do |config|
       end
     end
   end
+
+  def compute_image_differences reference, actual, difference = nil
+    diff = []
+    images = [(ChunkyPNG::Image.from_file reference), (ChunkyPNG::Image.from_file actual)]
+
+    images.first.height.times do |y|
+      images.first.row(y).each_with_index do |pixel, x|
+        diff << [x,y] unless pixel == images.last[x,y]
+      end
+    end
+
+    if diff.length > 0 && difference
+      x, y = diff.map{|xy| xy[0] }, diff.map {|xy| xy[1] }
+      images.last.rect x.min, y.min, x.max, y.max, (ChunkyPNG::Color.rgb 0, 255, 0)
+      images.last.save difference
+    end
+
+    diff.length
+  end
+end
+
+RSpec::Matchers.define :visually_match do |reference_filename|
+  reference_path = File.join __dir__, 'reference', reference_filename
+  match do |actual_path|
+    return false unless File.exist? reference_path
+    images_output_dir = output_file 'visual-comparison-workdir'
+    Dir.mkdir images_output_dir unless Dir.exist? images_output_dir
+    output_basename = File.join images_output_dir, (File.basename actual_path, '.pdf')
+    system 'pdftocairo', '-png', actual_path, %(#{output_basename}-actual)
+    system 'pdftocairo', '-png', reference_path, %(#{output_basename}-reference)
+
+    pixels = 0
+    Dir[%(#{output_basename}-reference-*.png)].each do |reference_page_filename|
+      actual_page_filename = reference_page_filename.sub %(#{output_basename}-reference), %(#{output_basename}-actual)
+      difference_page_filename = reference_page_filename.sub %(#{output_basename}-reference), %(#{output_basename}-diff)
+      next if FileUtils.compare_file reference_page_filename, actual_page_filename
+      pixels += compute_image_differences actual_page_filename, reference_page_filename, difference_page_filename
+    end
+
+    pixels == 0
+  end
+
+  failure_message {|actual_path| %(expected #{actual_path} to be visually identical to #{reference_path}) }
 end

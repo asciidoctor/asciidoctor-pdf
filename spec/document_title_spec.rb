@@ -41,7 +41,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
 
       theme_overrides = { title_page_align: 'left' }
 
-      pdf = to_pdf input, doctype: :book, theme_overrides: theme_overrides, analyze: true
+      pdf = to_pdf input, doctype: :book, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
 
       expected_x = (pdf.find_text page_number: 1).map {|it| it[:x] + 10 }
 
@@ -51,7 +51,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
         title_page_authors_margin_left: 10,
         title_page_revision_margin_left: 10
 
-      pdf = to_pdf input, doctype: :book, theme_overrides: theme_overrides, analyze: true
+      pdf = to_pdf input, doctype: :book, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
 
       actual_x = (pdf.find_text page_number: 1).map {|it| it[:x] }
       (expect actual_x).to eql expected_x
@@ -77,7 +77,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
         title_page_revision_margin_right: 10,
       }
 
-      pdf = to_pdf input, doctype: :book, theme_overrides: theme_overrides, analyze: true
+      pdf = to_pdf input, doctype: :book, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
 
       actual_x = (pdf.find_text page_number: 1).map {|it| it[:x] }
       (expect actual_x).to eql expected_x
@@ -102,7 +102,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'should align document title according to value of heading_h1_align theme key' do
-      pdf = to_pdf <<~'EOS', theme_overrides: { heading_h1_align: :left }, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: (build_pdf_theme heading_h1_align: :left), analyze: true
       = Document Title
 
       body

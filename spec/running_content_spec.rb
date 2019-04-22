@@ -49,7 +49,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   it 'should start running content at title page if running_content_start_at key is title' do
     theme_overrides = { running_content_start_at: 'title' }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: {}, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
     = Document Title
     :doctype: book
     :toc:
@@ -71,7 +71,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   it 'should start running content at toc page if running_content_start_at key is toc' do
     theme_overrides = { running_content_start_at: 'toc' }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: {}, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
     = Document Title
     :doctype: book
     :toc:
@@ -93,7 +93,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   it 'should start running content at body if running_content_start_at key is toc and toc is disabled' do
     theme_overrides = { running_content_start_at: 'toc' }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: {}, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
     = Document Title
     :doctype: book
 
@@ -114,7 +114,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   it 'should start page numbering at title page if page_numbering_start_at is title' do
     theme_overrides = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: {}, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
     = Document Title
     :doctype: book
     :toc:
@@ -136,7 +136,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   it 'should start page numbering at toc page if page_numbering_start_at is toc' do
     theme_overrides = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: {}, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
     = Document Title
     :doctype: book
     :toc:
@@ -156,7 +156,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   end
 
   it 'should expand footer padding from single value' do
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: {}, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: {}, analyze: true
     = Document Title
 
     first page
@@ -181,7 +181,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       header_verso_right_content: '({document-title})'
     }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: {}, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
     = Document Title
     :doctype: book
 
@@ -213,7 +213,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       header_verso_right_content: '({document-title})'
     }
 
-    pdf = to_pdf <<~'EOS', attributes: 'noheader', theme_overrides: theme_overrides, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: 'noheader', pdf_theme: (build_pdf_theme theme_overrides), analyze: true
     = Document Title
     :doctype: book
 
@@ -233,7 +233,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       header_verso_left_content: '{page-number}'
     }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: {}, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
     = Document Title
     :nofooter:
 
@@ -257,7 +257,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       footer_verso_left_content: '{chapter-title}',
     }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: {}, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
     = Document Title
     :doctype: book
     :toc:
@@ -272,5 +272,20 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     expected_running_content_by_page = { 1 => 'Document Title', 2 => 'Table of Contents', 3 => 'Preface', 4 => 'Chapter 1' }
     running_content_by_page = (pdf.find_text y: 14.388).reduce({}) {|accum, text| accum[text[:page_number]] = text[:string]; accum }
     (expect running_content_by_page).to eql expected_running_content_by_page
+  end
+
+  it 'should draw background color across whole periphery region', integration: true do
+    pdf_theme = build_pdf_theme \
+      header_background_color: '009246',
+      header_border_width: 0,
+      footer_background_color: 'CE2B37',
+      footer_border_width: 0,
+      header_height: 160,
+      footer_height: 160,
+      page_margin: [160, 48, 160, 48]
+
+    to_file = to_pdf_file 'Hello world', 'running-content-background-colors.pdf', pdf_theme: pdf_theme
+
+    (expect to_file).to visually_match 'running-content-background-colors.pdf'
   end
 end
