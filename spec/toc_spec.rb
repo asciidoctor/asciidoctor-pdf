@@ -37,6 +37,40 @@ describe 'Asciidoctor::Pdf::Converter - TOC' do
       (expect pdf.pages[2][:strings]).to include 'Introduction'
     end
 
+    it 'should only include preface in toc if preface-title is set' do
+      input = <<~'EOS'
+      = Document Title
+
+      [preface]
+      This is the preface.
+
+      == Chapter 1
+
+      And away we go!
+      EOS
+
+      ['toc', %(toc preface-title=Preface)].each do |attrs|
+        pdf = to_pdf input, doctype: 'book', attributes: attrs, analyze: true
+        (expect pdf.pages.size).to eql 4
+        (expect pdf.pages[0][:strings]).to include 'Document Title'
+        (expect pdf.pages[1][:strings]).to include 'Table of Contents'
+        if attrs.include? 'preface-title'
+          (expect pdf.pages[1][:strings]).to include 'Preface'
+          (expect pdf.pages[1][:strings]).to include '1'
+        else
+          (expect pdf.pages[1][:strings]).not_to include 'Preface'
+          (expect pdf.pages[1][:strings]).not_to include '1'
+        end
+        (expect pdf.pages[1][:strings]).to include 'Chapter 1'
+        (expect pdf.pages[1][:strings]).to include '2'
+        if attrs.include? 'preface-title'
+          (expect pdf.pages[2][:strings]).to include 'Preface'
+        end
+        (expect pdf.pages[2][:strings]).to include 'This is the preface.'
+        (expect pdf.pages[3][:strings]).to include 'Chapter 1'
+      end
+    end
+
     it 'should output toc with depth specified by toclevels' do
       pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
       = Document Title
