@@ -29,12 +29,14 @@ end)
 
 class PDFTextInspector < PDF::Inspector
   attr_accessor :text
+  attr_accessor :pages
 
   def initialize
     @color = nil
     @cursor = nil
     @fonts = {}
     @text = []
+    @pages = []
   end
 
   def strings
@@ -42,6 +44,7 @@ class PDFTextInspector < PDF::Inspector
   end
 
   def page= page
+    @pages << { size: (page.attributes[:MediaBox].slice 2, 2) }
     @page_number = page.number
     @state = PDF::Reader::PageState.new page
     page.fonts.each do |label, stream|
