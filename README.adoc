@@ -610,6 +610,21 @@ Therefore, to print a range of pages as they are labeled in the document, you ne
 For example, if you only want to print the first 5 pages labeled with a page number (e.g., 1-5), and there are 2 pages before the page labeled as page 1, you need to add 2 to both numbers in the range, giving you a physical page range of 3-7.
 That's the range you need to enter into the print dialog.
 
+== Table of Contents
+
+The table of contents (TOC) is not included by default.
+The TOC is only included if the `toc` attribute is set on the document.
+
+The placement of the table of contents is fixed, and thus the value of the `toc` attribute is effectively ignored in this backend.
+For documents that have the book doctype, the TOC is inserted using discrete pages between the title page and the first page of content.
+For all other doctypes (unless the `title-page` attribute is set), the TOC is inserted in the flow of text in between the document title and the first block of content.
+
+While the table of contents is not included by default, the PDF outline is always included.
+The `toclevels` attribute controls the depth of both the TOC and the PDF outline (regardless of whether the TOC is enabled).
+
+NOTE: If a document that has the book doctype includes a preface, an entry for the preface is only included in the TOC if the `preface-title` is assigned a value (e.g., `preface-title=Preface`).
+This value is used as the heading of the preface and as the text of the entry in the TOC.
+
 == Index Catalog
 
 Asciidoctor PDF supports generating an index catalog that itemizes all index terms defined in the document, allowing the reader to navigate the document by keyword.
