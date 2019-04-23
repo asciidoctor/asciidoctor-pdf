@@ -300,7 +300,7 @@ class Converter < ::Prawn::Document
       if (page_margin_inner = theme.page_margin_inner)
         page_margin_recto[3] = @page_margin_by_side[:verso][1] = page_margin_inner
       end
-      # NOTE prepare scratch document to use page margin from recto side
+      # NOTE prepare scratch document to use page margin from recto side (which has same width as verso side)
       set_page_margin page_margin_recto unless page_margin_recto == page_margin
     else
       @ppbook = false
