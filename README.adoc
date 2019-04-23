@@ -22,6 +22,8 @@ endif::[]
 // Aliases:
 :project-name: Asciidoctor PDF
 :project-handle: asciidoctor-pdf
+// Variables:
+:release-version: 1.5.0.alpha.16
 // URIs:
 :uri-asciidoctor: http://asciidoctor.org
 :uri-gem: http://rubygems.org/gems/asciidoctor-pdf
