@@ -248,6 +248,8 @@ class Converter < ::Prawn::Document
     doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
     add_dest_for_block doc, doc_anchor
 
+    convert_section generate_manname_section doc if doc.doctype == 'manpage' && (doc.attr? 'manpurpose')
+
     convert_content_for_block doc
 
     # NOTE for a book, these are leftover footnotes; for an article this is everything
@@ -2421,6 +2423,19 @@ class Converter < ::Prawn::Document
       align: @base_align.to_sym
     }.merge(opts)
     margin_bottom bot_margin
+  end
+
+  def generate_manname_section node
+    title = node.attr 'manname-title', 'Name'
+    if (next_section = node.sections[0]) && (next_section_title = next_section.title) == next_section_title.upcase
+      title = title.upcase
+    end
+    sect = Section.new node, 1
+    sect.sectname = 'section'
+    sect.id = node.attr 'manname-id'
+    sect.title = title
+    sect << (Block.new sect, :paragraph, source: %(#{node.attr 'manname'} - #{node.attr 'manpurpose'}))
+    sect
   end
 
   # Render the caption and return the height of the rendered content

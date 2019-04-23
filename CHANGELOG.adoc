@@ -24,6 +24,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * consider all scripts when looking for leading alpha characters in index (#853)
 * don't create title page for article doctype unless title-page attribute is set (#105)
 * don't show article title if notitle attribute is set (#998)
+* generate name section for manpage doctype automatically (#882)
 * remove unprocessed passthroughs in literal cells
 * apply font style from theme to formatted text description list term (#854)
 * prevent tempfile for remote image from being deleted before it's used (#947)
