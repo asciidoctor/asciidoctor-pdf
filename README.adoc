@@ -1,5 +1,6 @@
 = Asciidoctor PDF: A native PDF converter for AsciiDoc
 Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://github.com/graphitefriction[@graphitefriction]>
+v1.5.0.alpha.17, 2019-04-23
 // Settings:
 :experimental:
 :idprefix:
@@ -23,7 +24,7 @@ endif::[]
 :project-name: Asciidoctor PDF
 :project-handle: asciidoctor-pdf
 // Variables:
-:release-version: 1.5.0.alpha.16
+:release-version: 1.5.0.alpha.17
 // URIs:
 :uri-asciidoctor: http://asciidoctor.org
 :uri-gem: http://rubygems.org/gems/asciidoctor-pdf
