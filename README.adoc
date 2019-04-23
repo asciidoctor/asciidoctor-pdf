@@ -155,7 +155,7 @@ Then, you can install the published gem using the following command:
 If you want to syntax highlight source listings, you'll also want to install Rouge, Pygments, or CodeRay.
 Choose one (or more) of the following:
 
-.Rouge (preferred, minimum version: 1.11.1)
+.Rouge (preferred, minimum version: 2.0.0)
  $ gem install rouge
 
 .Pygments
