@@ -109,6 +109,10 @@ class Converter < ::Prawn::Document
     filetype 'pdf'
     htmlsyntax 'html'
     outfilesuffix '.pdf'
+    if (doc = opts[:document])
+      # NOTE enabling data-uri forces Asciidoctor Diagram to produce absolute image paths
+      doc.attributes['data-uri'] = ((doc.instance_variable_get :@attribute_overrides) || {})['data-uri'] = ''
+    end
     @list_numbers = []
     @list_bullets = []
     @capabilities = {
@@ -147,8 +151,6 @@ class Converter < ::Prawn::Document
 
   def convert_document doc
     init_pdf doc
-    # data-uri doesn't apply to PDF, so explicitly disable (is there a better place?)
-    doc.attributes.delete 'data-uri'
     # set default value for pagenums if not otherwise set
     unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
       doc.attributes['pagenums'] = ''
@@ -585,7 +587,10 @@ class Converter < ::Prawn::Document
     if (label_min_width = @theme.admonition_label_min_width)
       label_min_width = label_min_width.to_f
     end
-    icons = (node.document.attr? 'icons') ? (node.document.attr 'icons') : false
+    icons = ((doc = node.document).attr? 'icons') ? (doc.attr 'icons') : false
+    if (data_uri_enabled = doc.attr? 'data-uri')
+      doc.remove_attr 'data-uri'
+    end
     if icons == 'font' && !(node.attr? 'icon', nil, false)
       icon_data = admonition_icon_data(label_text = type.to_sym)
       label_width = label_min_width ? label_min_width : (icon_data[:size] * 1.5)
@@ -610,6 +615,7 @@ class Converter < ::Prawn::Document
         end
       end
     end
+    doc.set_attr 'data-uri', '' if data_uri_enabled
     unless ::Array === (cpad = @theme.admonition_padding)
       cpad = ::Array.new 4, cpad
     end
@@ -660,7 +666,7 @@ class Converter < ::Prawn::Document
                         width: label_width,
                         height: box_height,
                         fallback_font_name: default_svg_font,
-                        enable_web_requests: (node.document.attr? 'allow-uri-read'),
+                        enable_web_requests: (doc.attr? 'allow-uri-read'),
                         enable_file_requests_with_root: (::File.dirname icon_path)
                     if (icon_height = (svg_size = svg_obj.document.sizing).output_height) > box_height
                       icon_width = (svg_obj.resize height: (icon_height = box_height)).output_width

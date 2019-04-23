@@ -28,15 +28,24 @@ describe Asciidoctor::Pdf::Converter do
       (expect pdf.page_count).to be > 0
     end
 
-    it 'should ignore data-uri attribute if set' do
+    it 'should ensure data-uri attribute is set' do
       doc = Asciidoctor.load <<~'EOS', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
-      :data-uri:
+      image::logo.png[]
+      EOS
+      (expect doc.attr? 'data-uri').to be true
+      doc.convert
+      (expect doc.attr? 'data-uri').to be true
+    end
+
+    it 'should ignore data-uri attribute entry in document' do
+      doc = Asciidoctor.load <<~'EOS', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
+      :!data-uri:
 
       image::logo.png[]
       EOS
-      (expect doc.attr? 'data-uri', '').to be true
+      (expect doc.attr? 'data-uri').to be true
       doc.convert
-      (expect doc.attr? 'data-uri').to be false
+      (expect doc.attr? 'data-uri').to be true
     end
 
     it 'should use theme passed in through :pdf_theme option' do
