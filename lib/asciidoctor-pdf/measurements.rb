@@ -1,4 +1,4 @@
-module Asciidoctor; module Pdf
+module Asciidoctor; module PDF
   module Measurements
     MeasurementValueRx = /(\d+|\d*\.\d+)(in|mm|cm|p[txc])?$/
     InsetMeasurementValueRx = /(?<=^| |\()(-?\d+(?:\.\d+)?)(in|mm|cm|p[txc])(?=$| |\))/

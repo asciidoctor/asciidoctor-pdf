@@ -1,7 +1,7 @@
 require 'asciidoctor/extensions'
 
 module Asciidoctor
-module Pdf
+module PDF
 # An include processor that skips the implicit author line below
 # the document title within include documents.
 class ImplicitHeaderProcessor < ::Asciidoctor::Extensions::IncludeProcessor
@@ -59,5 +59,5 @@ end
 end
 
 Asciidoctor::Extensions.register :pdf do
-  include_processor Asciidoctor::Pdf::ImplicitHeaderProcessor if @document.backend == 'pdf'
+  include_processor Asciidoctor::PDF::ImplicitHeaderProcessor if @document.backend == 'pdf'
 end

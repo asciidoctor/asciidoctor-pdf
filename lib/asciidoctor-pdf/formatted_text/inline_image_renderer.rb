@@ -1,6 +1,6 @@
-module Asciidoctor::Pdf::FormattedText
+module Asciidoctor::PDF::FormattedText
 module InlineImageRenderer
-  TemporaryPath = ::Asciidoctor::Pdf::TemporaryPath
+  TemporaryPath = ::Asciidoctor::PDF::TemporaryPath
   module_function
 
   # Embeds the image object in this fragment into the document in place of the

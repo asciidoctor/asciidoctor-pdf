@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::Pdf::Converter - Document Title' do
+describe 'Asciidoctor::PDF::Converter - Document Title' do
   context 'book' do
     it 'should place document title on title page for doctype book' do
       pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :text

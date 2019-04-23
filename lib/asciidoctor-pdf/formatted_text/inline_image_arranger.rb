@@ -1,6 +1,6 @@
-module Asciidoctor::Pdf::FormattedText
+module Asciidoctor::PDF::FormattedText
 module InlineImageArranger
-  include ::Asciidoctor::Pdf::Measurements
+  include ::Asciidoctor::PDF::Measurements
   if defined? ::Asciidoctor::Logging
     include ::Asciidoctor::Logging
   else
@@ -14,7 +14,7 @@ module InlineImageArranger
   rescue
     PlaceholderWidthCache = {}
   end
-  TemporaryPath = ::Asciidoctor::Pdf::TemporaryPath
+  TemporaryPath = ::Asciidoctor::PDF::TemporaryPath
 
   def wrap fragments
     arrange_images fragments

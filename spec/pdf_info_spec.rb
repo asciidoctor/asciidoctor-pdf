@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::Pdf::Converter - PDF Info' do
+describe 'Asciidoctor::PDF::Converter - PDF Info' do
   context 'compliance' do
     it 'should generate a PDF 1.3-compatible document' do
       (expect (to_pdf 'hello').pdf_version).to eq 1.3
@@ -11,7 +11,7 @@ describe 'Asciidoctor::Pdf::Converter - PDF Info' do
     it 'should include Asciidoctor PDF and Prawn versions in Creator field' do
       creator = (to_pdf 'hello').info[:Creator]
       (expect creator).to_not be_nil
-      (expect creator).to include %(Asciidoctor PDF #{Asciidoctor::Pdf::VERSION})
+      (expect creator).to include %(Asciidoctor PDF #{Asciidoctor::PDF::VERSION})
       (expect creator).to include %(Prawn #{Prawn::VERSION})
     end
 

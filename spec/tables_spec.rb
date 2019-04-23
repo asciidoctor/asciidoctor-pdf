@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::Pdf::Converter - Tables' do
+describe 'Asciidoctor::PDF::Converter - Tables' do
   it 'should apply frame all and grid all by default' do
     pdf = to_pdf <<~'EOS', analyze: :line
     |===

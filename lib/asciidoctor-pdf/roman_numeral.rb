@@ -28,7 +28,7 @@
 ########################################################################
 
 module Asciidoctor
-module Pdf
+module PDF
 class RomanNumeral
   BaseDigits = {
     1    => 'I',

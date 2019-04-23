@@ -1,5 +1,5 @@
 module Asciidoctor
-module Pdf
+module PDF
 module TemporaryPath
   def unlink
     ::File.unlink self

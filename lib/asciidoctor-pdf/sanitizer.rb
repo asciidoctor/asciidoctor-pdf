@@ -9,7 +9,7 @@ unless RUBY_VERSION >= '2.4'
 end
 
 module Asciidoctor
-module Pdf
+module PDF
 module Sanitizer
   XmlSpecialChars = {
     '&lt;' => ?<,

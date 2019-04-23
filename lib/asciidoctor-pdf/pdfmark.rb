@@ -1,7 +1,7 @@
 module Asciidoctor
-module Pdf
+module PDF
 class Pdfmark
-  include ::Asciidoctor::Pdf::Sanitizer
+  include ::Asciidoctor::PDF::Sanitizer
 
   def initialize doc
     @doc = doc
@@ -17,7 +17,7 @@ class Pdfmark
       /Keywords #{(doc.attr 'keywords').to_pdf}
       /ModDate #{date = ::Time.now.to_pdf}
       /CreationDate #{date}
-      /Creator (Asciidoctor PDF #{::Asciidoctor::Pdf::VERSION}, based on Prawn #{::Prawn::VERSION})
+      /Creator (Asciidoctor PDF #{::Asciidoctor::PDF::VERSION}, based on Prawn #{::Prawn::VERSION})
       /Producer #{(doc.attr 'publisher').to_pdf}
       /DOCINFO pdfmark
     EOS

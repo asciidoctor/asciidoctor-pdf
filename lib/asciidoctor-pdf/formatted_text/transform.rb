@@ -1,5 +1,5 @@
 module Asciidoctor
-module Pdf
+module PDF
 module FormattedText
 class Transform
   LF = ?\n

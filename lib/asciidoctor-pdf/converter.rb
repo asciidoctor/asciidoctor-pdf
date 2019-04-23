@@ -25,7 +25,7 @@ autoload :StringIO, 'stringio'
 autoload :Tempfile, 'tempfile'
 
 module Asciidoctor
-module Pdf
+module PDF
 class Converter < ::Prawn::Document
   include ::Asciidoctor::Converter
   if defined? ::Asciidoctor::Logging
@@ -414,7 +414,7 @@ class Converter < ::Prawn::Document
     }
   end
 
-  # FIXME PdfMarks should use the PDF info result
+  # FIXME Pdfmark should use the PDF info result
   def build_pdf_info doc
     info = {}
     # FIXME use sanitize: :plain_text once available
@@ -431,7 +431,7 @@ class Converter < ::Prawn::Document
     if (doc.attr? 'publisher')
       info[:Producer] = (doc.attr 'publisher').as_pdf
     end
-    info[:Creator] = %(Asciidoctor PDF #{::Asciidoctor::Pdf::VERSION}, based on Prawn #{::Prawn::VERSION}).as_pdf
+    info[:Creator] = %(Asciidoctor PDF #{::Asciidoctor::PDF::VERSION}, based on Prawn #{::Prawn::VERSION}).as_pdf
     info[:Producer] ||= (info[:Author] || info[:Creator])
     unless doc.attr? 'reproducible'
       # NOTE since we don't track the creation date of the input file, we map the ModDate header to the last modified
@@ -3566,4 +3566,5 @@ class Converter < ::Prawn::Document
 =end
 end
 end
+Pdf = PDF unless const_defined? :Pdf, false
 end
