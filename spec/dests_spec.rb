@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::Pdf::Converter - Dests' do
+describe 'Asciidoctor::PDF::Converter - Dests' do
   it 'should define a dest named __anchor-top at top of the first body page' do
     pdf = to_pdf <<~'EOS', doctype: 'book'
     = Document Title

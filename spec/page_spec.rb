@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::Pdf::Converter - Page' do
+describe 'Asciidoctor::PDF::Converter - Page' do
   context 'Size' do
     it 'should set page size specified by theme by default' do
       pdf = to_pdf <<~'EOS', analyze: true

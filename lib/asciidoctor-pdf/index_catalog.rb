@@ -1,4 +1,4 @@
-module Asciidoctor; module Pdf
+module Asciidoctor; module PDF
   class IndexCatalog
     LeadingAlphaRx = /^\p{Alpha}/
 

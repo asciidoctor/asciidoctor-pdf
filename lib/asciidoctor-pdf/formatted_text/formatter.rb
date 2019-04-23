@@ -1,5 +1,5 @@
 module Asciidoctor
-module Pdf
+module PDF
 module FormattedText
 class Formatter
   if defined? ::Asciidoctor::Logging

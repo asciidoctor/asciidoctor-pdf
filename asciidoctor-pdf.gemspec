@@ -1,12 +1,12 @@
 begin
-  require_relative 'lib/asciidoctor-pdf/version'
+  require_relative 'lib/asciidoctor/pdf/version'
 rescue LoadError
-  require 'asciidoctor-pdf/version'
+  require 'asciidoctor/pdf/version'
 end
 
 Gem::Specification.new do |s|
   s.name = 'asciidoctor-pdf'
-  s.version = Asciidoctor::Pdf::VERSION
+  s.version = Asciidoctor::PDF::VERSION
   s.summary = 'Converts AsciiDoc documents to PDF using Asciidoctor and Prawn'
   s.description = 'An extension for Asciidoctor that converts AsciiDoc documents to PDF using the Prawn PDF library.'
   s.authors = ['Dan Allen', 'Sarah White']

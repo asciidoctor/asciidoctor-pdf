@@ -1,6 +1,6 @@
-module Asciidoctor::Pdf::FormattedText
+module Asciidoctor::PDF::FormattedText
 module InlineImageArranger
-  include ::Asciidoctor::Pdf::Measurements
+  include ::Asciidoctor::PDF::Measurements
   if defined? ::Asciidoctor::Logging
     include ::Asciidoctor::Logging
   else
@@ -14,7 +14,7 @@ module InlineImageArranger
   rescue
     PlaceholderWidthCache = {}
   end
-  TemporaryPath = ::Asciidoctor::Pdf::TemporaryPath
+  TemporaryPath = ::Asciidoctor::PDF::TemporaryPath
 
   def wrap fragments
     arrange_images fragments
@@ -63,7 +63,7 @@ module InlineImageArranger
 
         # TODO make helper method to calculate width and height of image
         if fragment[:image_format] == 'svg'
-          svg_obj = ::Prawn::Svg::Interface.new ::File.read(image_path), doc,
+          svg_obj = ::Prawn::SVG::Interface.new ::File.read(image_path), doc,
               at: doc.bounds.top_left,
               width: image_w,
               fallback_font_name: doc.default_svg_font

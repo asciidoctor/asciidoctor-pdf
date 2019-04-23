@@ -1,9 +1,18 @@
 require_relative 'spec_helper'
 
-describe Asciidoctor::Pdf::Converter do
+describe Asciidoctor::PDF::Converter do
+  context 'legacy module name' do
+    it 'should map Asciidoctor::Pdf module to Asciidoctor::PDF' do
+      (expect Asciidoctor::Pdf).to be Asciidoctor::PDF
+      (expect Asciidoctor::Pdf::VERSION).to be Asciidoctor::PDF::VERSION
+      (expect Asciidoctor::Pdf::Converter).to be Asciidoctor::PDF::Converter
+      (expect Asciidoctor::Pdf::ThemeLoader).to be Asciidoctor::PDF::ThemeLoader
+    end
+  end
+
   context '.register_for' do
     it 'should self register to handle pdf backend' do
-      (expect Asciidoctor::Converter.for 'pdf').to be Asciidoctor::Pdf::Converter
+      (expect Asciidoctor::Converter.for 'pdf').to be Asciidoctor::PDF::Converter
     end
 
     it 'should convert AsciiDoc string to PDF object when backend is pdf' do
@@ -49,7 +58,7 @@ describe Asciidoctor::Pdf::Converter do
     end
 
     it 'should use theme passed in through :pdf_theme option' do
-      theme = Asciidoctor::Pdf::ThemeLoader.load_theme 'custom', fixtures_dir
+      theme = Asciidoctor::PDF::ThemeLoader.load_theme 'custom', fixtures_dir
       pdf = Asciidoctor.convert <<~'EOS', backend: 'pdf', pdf_theme: theme
       content
       EOS

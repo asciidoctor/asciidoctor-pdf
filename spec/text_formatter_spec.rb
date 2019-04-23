@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe Asciidoctor::Pdf::FormattedText::Formatter do
+describe Asciidoctor::PDF::FormattedText::Formatter do
   context 'HTML markup' do
     it 'should format strong text' do
       output = subject.format '<strong>strong</strong>'

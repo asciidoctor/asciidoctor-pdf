@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::Pdf::Converter - Running Content' do
+describe 'Asciidoctor::PDF::Converter - Running Content' do
   it 'should show virtual page numbers in footer by default' do
     pdf = to_pdf <<~'EOS', attributes: {}, analyze: :text
     = Document Title

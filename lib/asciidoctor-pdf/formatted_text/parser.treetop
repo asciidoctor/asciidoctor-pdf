@@ -1,6 +1,6 @@
 # regenerate parser.rb using `tt parser.treetop`
 module Asciidoctor
-module Pdf
+module PDF
 module FormattedText
 grammar Markup
   rule text

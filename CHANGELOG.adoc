@@ -8,6 +8,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == Unreleased
 
 * drop support for Ruby < 2.3 (and installation will fail for Ruby < 2.1)
+* add asciidoctor/pdf and asciidoctor/pdf/version require aliases (#262)
+* rename module to Asciidoctor::PDF and define Asciidoctor::Pdf alias for backwards compatibility (#262)
 * switch to tilde dependency versions (flexible patch number) instead of ranges
 * upgrade prawn-svg to 0.29.1; resolves numerous SVG rendering issues (#886, #430)
 * drop support for Rouge < 2

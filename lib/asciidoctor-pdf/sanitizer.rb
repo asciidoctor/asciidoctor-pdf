@@ -9,16 +9,16 @@ unless RUBY_VERSION >= '2.4'
 end
 
 module Asciidoctor
-module Pdf
+module PDF
 module Sanitizer
-  XmlSpecialChars = {
+  XMLSpecialChars = {
     '&lt;' => ?<,
     '&gt;' => ?>,
     '&amp;' => ?&,
   }
-  XmlSpecialCharsRx = /(?:#{XmlSpecialChars.keys * ?|})/
-  InverseXmlSpecialChars = XmlSpecialChars.invert
-  InverseXmlSpecialCharsRx = /[#{InverseXmlSpecialChars.keys.join}]/
+  XMLSpecialCharsRx = /(?:#{XMLSpecialChars.keys * ?|})/
+  InverseXMLSpecialChars = XMLSpecialChars.invert
+  InverseXMLSpecialCharsRx = /[#{InverseXMLSpecialChars.keys.join}]/
   (BuiltInNamedEntities = {
     'amp' => ?&,
     'apos' => ?',
@@ -27,10 +27,10 @@ module Sanitizer
     'nbsp' => ' ',
     'quot' => ?",
   }).default = ??
-  XmlSanitizeRx = /<[^>]+>/
-  XmlMarkupRx = /&#?[a-z\d]+;|</
+  SanitizeXMLRx = /<[^>]+>/
+  XMLMarkupRx = /&#?[a-z\d]+;|</
   CharRefRx = /&(?:([a-z][a-z]+\d{0,2})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
-  SiftPcdataRx = /(&#?[a-z\d]+;|<[^>]+>)|([^&<]+)/
+  SiftPCDATARx = /(&#?[a-z\d]+;|<[^>]+>)|([^&<]+)/
 
   # Strip leading, trailing and repeating whitespace, remove XML tags and
   # resolve all entities in the specified string.
@@ -39,13 +39,13 @@ module Sanitizer
   # FIXME add option to control escaping entities, or a filter mechanism in general
   def sanitize string
     string.strip
-        .gsub(XmlSanitizeRx, '')
+        .gsub(SanitizeXMLRx, '')
         .tr_s(' ', ' ')
         .gsub(CharRefRx) { $1 ? BuiltInNamedEntities[$1] : [$2 ? $2.to_i : ($3.to_i 16)].pack('U1') }
   end
 
   def escape_xml string
-    string.gsub InverseXmlSpecialCharsRx, InverseXmlSpecialChars
+    string.gsub InverseXMLSpecialCharsRx, InverseXMLSpecialChars
   end
 
   def encode_quotes string
@@ -53,8 +53,8 @@ module Sanitizer
   end
 
   def uppercase_pcdata string
-    if XmlMarkupRx.match? string
-      string.gsub(SiftPcdataRx) { $2 ? (uppercase_mb $2) : $1 }
+    if XMLMarkupRx.match? string
+      string.gsub(SiftPCDATARx) { $2 ? (uppercase_mb $2) : $1 }
     else
       uppercase_mb string
     end

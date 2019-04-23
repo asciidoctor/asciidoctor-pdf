@@ -1,4 +1,4 @@
-module Asciidoctor::Pdf::FormattedText
+module Asciidoctor::PDF::FormattedText
 module InlineDestinationMarker
   module_function
 

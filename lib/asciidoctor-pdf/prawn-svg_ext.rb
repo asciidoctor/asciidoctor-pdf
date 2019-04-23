@@ -1,4 +1,4 @@
-require 'prawn-svg' unless defined? Prawn::Svg::VERSION
+require 'prawn-svg' unless defined? Prawn::SVG::Interface
 require_relative 'prawn-svg_ext/interface'
 # NOTE disable system fonts since they're non-portable
-Prawn::Svg::Interface.font_path.clear
+Prawn::SVG::Interface.font_path.clear

@@ -26,7 +26,7 @@ class Prawn < Formatter
   def initialize opts = {}
     unless ::Rouge::Theme === (theme = opts[:theme])
       unless theme && (theme = ::Rouge::Theme.find theme)
-        theme = ::Rouge::Themes::AsciidoctorPdfDefault
+        theme = ::Rouge::Themes::AsciidoctorPDFDefault
       end
       theme = theme.new
     end

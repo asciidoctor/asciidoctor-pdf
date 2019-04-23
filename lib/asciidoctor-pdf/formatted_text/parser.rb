@@ -3,7 +3,7 @@
 
 
 module Asciidoctor
-module Pdf
+module PDF
 module FormattedText
 module Markup
   include Treetop::Runtime

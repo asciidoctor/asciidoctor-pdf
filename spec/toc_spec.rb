@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::Pdf::Converter - TOC' do
+describe 'Asciidoctor::PDF::Converter - TOC' do
   context 'book' do
     it 'should not generate toc by default' do
       pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true

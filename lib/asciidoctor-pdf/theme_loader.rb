@@ -4,9 +4,9 @@ require_relative 'core_ext/ostruct'
 require_relative 'measurements'
 
 module Asciidoctor
-module Pdf
+module PDF
 class ThemeLoader
-  include ::Asciidoctor::Pdf::Measurements
+  include ::Asciidoctor::PDF::Measurements
   if defined? ::Asciidoctor::Logging
     include ::Asciidoctor::Logging
   else

@@ -7,8 +7,8 @@ Prawn::Icon::Compatibility.send :prepend, (::Module.new { def warning *args; end
 module Asciidoctor
 module Prawn
 module Extensions
-  include ::Asciidoctor::Pdf::Measurements
-  include ::Asciidoctor::Pdf::Sanitizer
+  include ::Asciidoctor::PDF::Measurements
+  include ::Asciidoctor::PDF::Sanitizer
 
   FontAwesomeIconSets = %w(fab far fas)
   IconSets = %w(fab far fas fi pf).to_set

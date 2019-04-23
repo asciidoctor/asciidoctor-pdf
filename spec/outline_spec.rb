@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::Pdf::Converter - Outline' do
+describe 'Asciidoctor::PDF::Converter - Outline' do
   it 'should create an outline to navigate the document structure' do
     pdf = to_pdf <<~'EOS', doctype: 'book'
     = Document Title

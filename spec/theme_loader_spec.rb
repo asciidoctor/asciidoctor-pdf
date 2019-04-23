@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe Asciidoctor::Pdf::ThemeLoader do
+describe Asciidoctor::PDF::ThemeLoader do
   subject { described_class }
 
   context '#load' do

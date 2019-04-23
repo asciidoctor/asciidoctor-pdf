@@ -1,4 +1,4 @@
-module Prawn; module Svg
+module Prawn; module SVG
   class Interface
     def resize opts = {}
       sizing = document.sizing
@@ -7,4 +7,4 @@ module Prawn; module Svg
       sizing.calculate
     end
   end
-end; end unless Prawn::Svg::Interface.method_defined? :resize
+end; end unless Prawn::SVG::Interface.method_defined? :resize
