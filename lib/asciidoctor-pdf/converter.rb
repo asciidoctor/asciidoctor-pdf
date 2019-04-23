@@ -660,7 +660,7 @@ class Converter < ::Prawn::Document
               elsif icons
                 if icon_path.end_with? '.svg'
                   begin
-                    svg_obj = ::Prawn::Svg::Interface.new ::File.read(icon_path), self,
+                    svg_obj = ::Prawn::SVG::Interface.new ::File.read(icon_path), self,
 	                    position: label_align,
                         vposition: label_valign,
                         width: label_width,
@@ -1210,7 +1210,7 @@ class Converter < ::Prawn::Document
             svg_data = ::File.read image_path
             file_request_root = ::File.dirname image_path
           end
-          svg_obj = ::Prawn::Svg::Interface.new svg_data, self,
+          svg_obj = ::Prawn::SVG::Interface.new svg_data, self,
               position: alignment,
               width: width,
               fallback_font_name: default_svg_font,
@@ -1465,11 +1465,7 @@ class Converter < ::Prawn::Document
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     else
       # NOTE only format if we detect a need (callouts or inline formatting)
-      if XmlMarkupRx.match? source_string
-        text_formatter.format source_string
-      else
-        [{ text: source_string }]
-      end
+      (XMLMarkupRx.match? source_string) ? (text_formatter.format source_string) : [{ text: source_string }]
     end
 
     node.subs.replace prev_subs if prev_subs
@@ -2912,7 +2908,7 @@ class Converter < ::Prawn::Document
                     begin
                       if (img_path = content[:path]).downcase.end_with? '.svg'
                         svg_data = ::File.read img_path
-                        svg_obj = ::Prawn::Svg::Interface.new svg_data, self,
+                        svg_obj = ::Prawn::SVG::Interface.new svg_data, self,
                             position: colspec[:align],
                             vposition: trim_img_valign,
                             width: content[:width],
