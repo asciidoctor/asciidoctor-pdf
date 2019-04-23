@@ -1,4 +1,4 @@
-require 'asciidoctor-pdf'
+require 'asciidoctor/pdf'
 require 'pathname'
 require 'pdf/inspector'
 

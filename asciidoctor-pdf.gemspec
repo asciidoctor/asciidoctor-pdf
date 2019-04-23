@@ -1,7 +1,7 @@
 begin
-  require_relative 'lib/asciidoctor-pdf/version'
+  require_relative 'lib/asciidoctor/pdf/version'
 rescue LoadError
-  require 'asciidoctor-pdf/version'
+  require 'asciidoctor/pdf/version'
 end
 
 Gem::Specification.new do |s|
