@@ -81,6 +81,7 @@ describe Asciidoctor::Pdf::ThemeLoader do
       (expect theme).to be_an OpenStruct
       (expect theme.base_font_family).to eql 'Helvetica'
       (expect theme.heading_font_family).to be_nil
+      (expect theme).to eql subject.load_base_theme
     end
 
     it 'should load default theme if no arguments are given' do
