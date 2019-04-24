@@ -56,7 +56,7 @@ describe 'Asciidoctor::PDF::Converter - Tables' do
     EOS
 
     (expect pdf.points.size).to eql 16
-  end
+  end if asciidoctor_2_or_better?
 
   it 'should not fail to fit text in cell' do
     pdf = to_pdf <<~'EOS', analyze: :text

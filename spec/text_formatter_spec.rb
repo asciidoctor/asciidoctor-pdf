@@ -32,9 +32,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     it 'should ignore unknown named entities' do
       with_memory_logger do |logger|
         output = subject.format '&dagger;'
-        (expect logger.messages.size).to eql 1
-        (expect logger.messages[0][:severity]).to eql :ERROR
-        (expect logger.messages[0][:message]).to include 'failed to parse formatted text'
+        if logger
+          (expect logger.messages.size).to eql 1
+          (expect logger.messages[0][:severity]).to eql :ERROR
+          (expect logger.messages[0][:message]).to include 'failed to parse formatted text'
+        end
         (expect output.size).to eql 1
         (expect output[0][:text]).to eql '&dagger;'
       end

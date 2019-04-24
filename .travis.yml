@@ -9,9 +9,13 @@ rvm:
 - &release_ruby 2.6.2
 - 2.5.5
 - 2.4.5
-- 2.3.8
+- &oldest_ruby 2.3.8
 - jruby-9.2.7.0
 - jruby-9.1.17.0
+matrix:
+  include:
+  - rvm: *oldest_ruby
+    env: ASCIIDOCTOR_VERSION=1.5.3
 script:
 - bundle exec rake spec
 - bundle exec asciidoctor-pdf -o test.pdf examples/chronicles-example.adoc

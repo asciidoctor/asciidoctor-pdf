@@ -12,7 +12,8 @@ describe Asciidoctor::PDF::Converter do
 
   context '.register_for' do
     it 'should self register to handle pdf backend' do
-      (expect Asciidoctor::Converter.for 'pdf').to be Asciidoctor::PDF::Converter
+      registered = asciidoctor_2_or_better? ? (Asciidoctor::Converter.for 'pdf') : (Asciidoctor::Converter::Factory.resolve 'pdf')
+      (expect registered).to be Asciidoctor::PDF::Converter
     end
 
     it 'should convert AsciiDoc string to PDF object when backend is pdf' do
@@ -44,7 +45,7 @@ describe Asciidoctor::PDF::Converter do
       (expect doc.attr? 'data-uri').to be true
       doc.convert
       (expect doc.attr? 'data-uri').to be true
-    end
+    end if asciidoctor_2_or_better?
 
     it 'should ignore data-uri attribute entry in document' do
       doc = Asciidoctor.load <<~'EOS', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
@@ -55,7 +56,7 @@ describe Asciidoctor::PDF::Converter do
       (expect doc.attr? 'data-uri').to be true
       doc.convert
       (expect doc.attr? 'data-uri').to be true
-    end
+    end if asciidoctor_2_or_better?
 
     it 'should use theme passed in through :pdf_theme option' do
       theme = Asciidoctor::PDF::ThemeLoader.load_theme 'custom', fixtures_dir
