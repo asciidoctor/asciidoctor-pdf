@@ -359,19 +359,19 @@ class Converter < ::Prawn::Document
       page_margin = nil
     end
 
-    page_size = if (doc.attr? 'pdf-page-size') && (m = PageSizeRx.match(doc.attr 'pdf-page-size'))
+    if (doc.attr? 'pdf-page-size') && PageSizeRx =~ (doc.attr 'pdf-page-size')
       # e.g, [8.5in, 11in]
-      if m[1]
-        [m[1], m[2]]
+      if $1
+        page_size = [$1, $2]
       # e.g, 8.5in x 11in
-      elsif m[3]
-        [m[3], m[4]]
+      elsif $3
+        page_size = [$3, $4]
       # e.g, A4
       else
-        m[0]
+        page_size = $&
       end
     else
-      theme.page_size
+      page_size = theme.page_size
     end
 
     page_size = case page_size
@@ -388,9 +388,9 @@ class Converter < ::Prawn::Document
         if ::Numeric === dim
           # dimension cannot be less than 0
           dim > 0 ? dim : break
-        elsif ::String === dim && (m = (MeasurementPartsRx.match dim))
+        elsif ::String === dim && MeasurementPartsRx =~ dim
           # NOTE truncate to max precision retained by PDF::Core
-          (to_pt m[1].to_f, m[2]).truncate 4
+          (to_pt $1.to_f, $2).truncate 4
         else
           break
         end
@@ -1330,10 +1330,8 @@ class Converter < ::Prawn::Document
           ::OpenURI
         end
         poster = open(%(http://vimeo.com/api/v2/video/#{video_id}.xml), 'r') do |f|
-          (/<thumbnail_large>(.*?)<\/thumbnail_large>/.match f.read)[1]
+          /<thumbnail_large>(.*?)<\/thumbnail_large>/ =~ f.read && $1
         end
-      else
-        poster = nil
       end
       type = 'Vimeo video'
     else
@@ -2943,7 +2941,7 @@ class Converter < ::Prawn::Document
                   doc.set_attr 'attribute-missing', 'skip' unless attribute_missing_doc == 'skip'
                   if (content = doc.apply_subs content).include? '{'
                     # NOTE must use &#123; in place of {, not \{, to escape attribute reference
-                    content = content.split(LF).delete_if {|line| SimpleAttributeRefRx =~ line } * LF
+                    content = content.split(LF).delete_if {|line| SimpleAttributeRefRx.match? line } * LF
                   end
                   doc.set_attr 'attribute-missing', attribute_missing_doc unless attribute_missing_doc == 'skip'
                 end

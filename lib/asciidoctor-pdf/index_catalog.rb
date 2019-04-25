@@ -36,8 +36,8 @@ module Asciidoctor; module PDF
     end
 
     def init_category name
-      name = '@' unless LeadingAlphaRx =~ name
-      @categories[name] ||= (IndexTermCategory.new name)
+      name = '@' unless LeadingAlphaRx.match? name
+      @categories[name] ||= IndexTermCategory.new name
     end
 
     def find_category name

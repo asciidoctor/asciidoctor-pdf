@@ -48,7 +48,7 @@ module Asciidoctor; module PDF
 
     # Resolve measurement values in the string to PDF points.
     def resolve_measurement_values str
-      if MeasurementValueHintRx =~ str
+      if MeasurementValueHintRx.match? str
         str.gsub(InsetMeasurementValueRx) { to_pt $1.to_f, $2 }
       else
         str

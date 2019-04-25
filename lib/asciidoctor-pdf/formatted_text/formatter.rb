@@ -19,7 +19,7 @@ class Formatter
   def format string, *args
     options = args[0] || {}
     string = string.tr_s(WHITESPACE, ' ') if options[:normalize]
-    return [text: string] unless string.match(FormattingSnifferPattern)
+    return [text: string] unless FormattingSnifferPattern.match? string
     if (parsed = @parser.parse(string))
       @transform.apply(parsed.content)
     else
