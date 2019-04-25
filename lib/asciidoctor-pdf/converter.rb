@@ -164,6 +164,7 @@ class Converter < ::Prawn::Document
       preface = Section.new doc, blk_1.level, false, attributes: { 1 => 'preface', 'style' => 'preface' }
       preface.special = true
       preface.sectname = 'preface'
+      # NOTE the premable will only have a title if preface-title is set, so this fallback is redundant
       preface.title = doc.attr 'preface-title', 'Preface'
       # QUESTION should ID be generated from raw or converted title? core is not clear about this
       preface.id = preface.generate_id
