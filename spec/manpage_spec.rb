@@ -22,14 +22,15 @@ describe 'Asciidoctor::Pdf::Converter - Manpage' do
     *-v*:: Prints the version.
     EOS
 
+    expected_name_title = asciidoctor_1_5_7_or_better? ? 'Name' : '1. NAME'
     text = pdf.text
-    name_title_text = text.find {|candidate| candidate[:string] == 'Name' }
+    name_title_text = text.find {|candidate| candidate[:string] == expected_name_title }
     (expect name_title_text).not_to be_nil
     (expect name_title_text[:font_size]).to eql 22
     name_body_text = text.find {|candidate| candidate[:string] == 'cmd - does stuff' }
     (expect name_body_text).not_to be_nil
     (expect name_body_text[:font_size]).to eql 10.5
-    (expect text.index {|candidate| candidate[:string] == 'Synopsis' }).to be > (text.index {|candidate| candidate[:string] == 'Name' })
+    (expect text.index {|candidate| candidate[:string] == 'Synopsis' }).to be > (text.index {|candidate| candidate[:string] == expected_name_title })
   end
 
   it 'should uppercase title of name section if other sections are uppercase' do
@@ -57,5 +58,5 @@ describe 'Asciidoctor::Pdf::Converter - Manpage' do
     name_title_text = text.find {|candidate| candidate[:string] == 'NAME' }
     (expect name_title_text).not_to be_nil
     (expect name_title_text[:font_size]).to eql 22
-  end
+  end if asciidoctor_1_5_7_or_better?
 end

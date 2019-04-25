@@ -98,6 +98,14 @@ RSpec.configure do |config|
     FileUtils.rm_r output_dir, force: true, secure: true
   end
 
+  def asciidoctor_2_or_better?
+    defined? Asciidoctor::Converter.for
+  end
+
+  def asciidoctor_1_5_7_or_better?
+    defined? Asciidoctor::LoggerManager
+  end
+
   def fixtures_dir
     File.join __dir__, 'fixtures'
   end
@@ -131,7 +139,8 @@ RSpec.configure do |config|
       opts[:to_dir] = output_dir unless opts.key? :to_dir
       pdf_io = (Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)).attr 'outfile'
     else
-      pdf_io = StringIO.new (Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, standalone: true)).render
+      # NOTE use header_footer for compatibility with Asciidoctor < 2
+      pdf_io = StringIO.new (Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, header_footer: true)).render
     end
     analyze ? (PDF_INSPECTOR_CLASS[analyze].analyze pdf_io) : (PDF::Reader.new pdf_io)
   end
@@ -171,14 +180,24 @@ RSpec.configure do |config|
   end
 
   def with_memory_logger level = nil
-    old_logger = Asciidoctor::LoggerManager.logger
-    logger = Asciidoctor::MemoryLogger.new
-    logger.level = level if level
-    begin
-      Asciidoctor::LoggerManager.logger = logger
-      yield logger
-    ensure
-      Asciidoctor::LoggerManager.logger = old_logger
+    if asciidoctor_1_5_7_or_better?
+      old_logger = Asciidoctor::LoggerManager.logger
+      logger = Asciidoctor::MemoryLogger.new
+      logger.level = level if level
+      begin
+        Asciidoctor::LoggerManager.logger = logger
+        yield logger
+      ensure
+        Asciidoctor::LoggerManager.logger = old_logger
+      end
+    else
+      old_stderr = $stderr
+      $stderr = StringIO.new
+      begin
+        yield
+      ensure
+        $stderr = old_stderr
+      end
     end
   end
 end
