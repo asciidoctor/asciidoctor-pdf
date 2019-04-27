@@ -23,14 +23,13 @@ describe 'Asciidoctor::Pdf::Converter - Manpage' do
     EOS
 
     expected_name_title = asciidoctor_1_5_7_or_better? ? 'Name' : '1. NAME'
-    text = pdf.text
-    name_title_text = text.find {|candidate| candidate[:string] == expected_name_title }
+    name_title_text = (pdf.find_text expected_name_title)[0]
     (expect name_title_text).not_to be_nil
     (expect name_title_text[:font_size]).to eql 22
-    name_body_text = text.find {|candidate| candidate[:string] == 'cmd - does stuff' }
+    name_body_text = (pdf.find_text 'cmd - does stuff')[0]
     (expect name_body_text).not_to be_nil
     (expect name_body_text[:font_size]).to eql 10.5
-    (expect text.index {|candidate| candidate[:string] == 'Synopsis' }).to be > (text.index {|candidate| candidate[:string] == expected_name_title })
+    (expect (pdf.find_text font_size: 22).map {|it| it[:string] }).to eql %w(Name Synopsis Options)
   end
 
   it 'should uppercase title of name section if other sections are uppercase' do
@@ -54,8 +53,7 @@ describe 'Asciidoctor::Pdf::Converter - Manpage' do
     *-v*:: Prints the version.
     EOS
 
-    text = pdf.text
-    name_title_text = text.find {|candidate| candidate[:string] == 'NAME' }
+    name_title_text = (pdf.find_text 'NAME')[0]
     (expect name_title_text).not_to be_nil
     (expect name_title_text[:font_size]).to eql 22
   end if asciidoctor_1_5_7_or_better?

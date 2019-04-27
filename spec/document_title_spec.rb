@@ -37,11 +37,10 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       body
       EOS
 
-      text = pdf.text
-      doctitle_text = text.find {|candidate| candidate[:string] == 'Document Title' }
-      body_text = text.find {|candidate| candidate[:string] == 'body' }
+      doctitle_text = (pdf.find_text 'Document Title')[0]
       (expect doctitle_text).not_to be_nil
       (expect doctitle_text[:page_number]).to be 1
+      body_text = (pdf.find_text 'body')[0]
       (expect body_text).not_to be_nil
       (expect body_text[:page_number]).to be 1
       (expect doctitle_text[:y]).to be > body_text[:y]
@@ -54,9 +53,9 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       body
       EOS
 
-      doctitle_text = pdf.text.find {|candidate| candidate[:string] == 'Document Title' }
-      body_text = pdf.text.find {|candidate| candidate[:string] == 'body' }
+      doctitle_text = (pdf.find_text 'Document Title')[0]
       (expect doctitle_text).not_to be_nil
+      body_text = (pdf.find_text 'body')[0]
       (expect body_text).not_to be_nil
       (expect doctitle_text[:x]).to eql body_text[:x]
     end
