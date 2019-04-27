@@ -14,8 +14,37 @@ describe 'Asciidoctor::PDF::Converter - Sections' do
     == Back To Level 1
     EOS
 
-    (expect pdf.strings).to eql ['Document Title', 'Level 1', 'Level 2', 'section content', 'Back To Level 1']
-    (expect pdf.text.map {|it| it[:font_size] }).to eql [27, 22, 18, 10.5, 22]
+    expected_text = [
+      ['Document Title', 27],
+      ['Level 1', 22],
+      ['Level 2', 18],
+      ['section content', 10.5],
+      ['Back To Level 1', 22],
+    ]
+    (expect pdf.text.map {|it| it.values_at :string, :font_size }).to eql expected_text
+  end
+
+  it 'should render section titles in bold by default' do
+    pdf = to_pdf <<~'EOS', analyze: :text
+    = Document Title
+
+    == Level 1
+
+    === Level 2
+
+    section content
+
+    == Back To Level 1
+    EOS
+
+    expected_text = [
+      ['Document Title', 'NotoSerif-Bold'],
+      ['Level 1', 'NotoSerif-Bold'],
+      ['Level 2', 'NotoSerif-Bold'],
+      ['section content', 'NotoSerif'],
+      ['Back To Level 1', 'NotoSerif-Bold'],
+    ]
+    (expect pdf.text.map {|it| it.values_at :string, :font_name }).to eql expected_text
   end
 
   it 'should promote anonymous preface in book doctype to preface section if preface-title attribute is set' do
