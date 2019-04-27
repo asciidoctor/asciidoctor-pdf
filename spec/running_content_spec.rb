@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Running Content' do
-  it 'should show virtual page numbers in footer by default' do
+  it 'should add running footer showing virtual page number starting at body by default' do
     pdf = to_pdf <<~'EOS', attributes: {}, analyze: :text
     = Document Title
     :doctype: book
@@ -50,7 +50,92 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect page_numbers_text).to be_empty
   end
 
-  it 'should add header if header key is set in theme' do
+  it 'should start running content at title page if running_content_start_at key is set to title in theme' do
+    theme_overrides = { running_content_start_at: 'title' }
+
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: :text
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == First Chapter
+
+    == Second Chapter
+
+    == Third Chapter
+    EOS
+
+    pdf.text.reduce({}) {|accum, text|
+      (accum[text[:page_number]] ||= []) << text
+      accum
+    }.each do |page_number, texts|
+      last_text = texts[-1]
+      (expect last_text).not_to be_nil
+      (expect page_number.to_s).to eql last_text[:string]
+      (expect last_text[:y]).to eql 14.388
+    end
+  end
+
+  it 'should start running content at toc page if running_content_start_at key is set to toc in theme' do
+    theme_overrides = { running_content_start_at: 'toc' }
+
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: :text
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == First Chapter
+
+    == Second Chapter
+
+    == Third Chapter
+    EOS
+
+    pdf.text.reduce({}) {|accum, text|
+      (accum[text[:page_number]] ||= []) << text
+      accum
+    }.each do |page_number, texts|
+      if page_number == 1
+        (expect texts.size).to eql 1
+      else
+        last_text = texts[-1]
+        (expect last_text).not_to be_nil
+        (expect page_number.pred.to_s).to eql last_text[:string]
+        (expect last_text[:y]).to eql 14.388
+      end
+    end
+  end
+
+  it 'should start running content at body if running_content_start_at key is set to toc in theme and toc is disabled' do
+    theme_overrides = { running_content_start_at: 'toc' }
+
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: :text
+    = Document Title
+    :doctype: book
+
+    == First Chapter
+
+    == Second Chapter
+
+    == Third Chapter
+    EOS
+
+    pdf.text.reduce({}) {|accum, text|
+      (accum[text[:page_number]] ||= []) << text
+      accum
+    }.each do |page_number, texts|
+      if page_number == 1
+        (expect texts.size).to eql 1
+      else
+        last_text = texts[-1]
+        (expect last_text).not_to be_nil
+        (expect page_number.pred.to_s).to eql last_text[:string]
+        (expect last_text[:y]).to eql 14.388
+      end
+    end
+  end
+
+  it 'should add running header starting at body if header key is set in theme' do
     theme_overrides = {
       header_font_size: 9,
       header_height: 30,
