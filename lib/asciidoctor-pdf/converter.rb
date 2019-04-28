@@ -2504,8 +2504,8 @@ class Converter < ::Prawn::Document
         layout_heading((doc.attr 'toc-title'), align: toc_title_align)
       end
     end
-    # QUESTION should we skip this whole method if num_levels == 0?
-    if num_levels > 0
+    # QUESTION should we skip this whole method if num_levels < 0?
+    unless num_levels < 0
       dot_leader = theme_font :toc do
         # TODO we could simplify by using nested theme_font :toc_dot_leader
         if (dot_leader_font_style = (@theme.toc_dot_leader_font_style || :normal).to_sym) != font_style

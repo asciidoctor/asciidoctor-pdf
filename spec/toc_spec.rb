@@ -92,6 +92,28 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[2][:strings]).to include 'Level 1'
     end
 
+    it 'should only show parts in toc if toclevels attribute is 0' do
+      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+      = Document Title
+      :toc:
+      :toclevels: 0
+
+      = Part One
+
+      == Chapter A
+
+      = Part Two
+
+      == Chapter B
+      EOS
+      (expect pdf.pages.size).to eql 6
+      (expect pdf.pages[1][:strings]).to include 'Table of Contents'
+      (expect pdf.pages[1][:strings]).to include 'Part One'
+      (expect pdf.pages[1][:strings]).to include 'Part Two'
+      (expect pdf.pages[1][:strings]).not_to include 'Chapter A'
+      (expect pdf.pages[1][:strings]).not_to include 'Chapter B'
+    end
+
     it 'should reserve enough pages for toc if it spans more than one page' do
       sections = (1..40).map {|num| %(\n\n=== Section #{num}) }
       pdf = to_pdf <<~EOS, doctype: 'book', analyze: true
