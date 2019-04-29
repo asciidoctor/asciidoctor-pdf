@@ -39,6 +39,26 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline[3][:children].size).to eql 0
   end
 
+  it 'should limit outline depth according to value of toclevels attribute' do
+    pdf = to_pdf <<~'EOS', doctype: 'book'
+    = Document Title
+    :toclevels: 1
+
+    == First Chapter
+
+    === Chapter Section
+
+    == Middle Chapter
+
+    == Last Chapter
+    EOS
+
+    outline = extract_outline pdf
+    (expect outline.size).to eql 4
+    (expect outline[1][:title]).to eq 'First Chapter'
+    (expect outline[1][:children]).to be_empty
+  end
+
   it 'should sanitize titles' do
     pdf = to_pdf <<~'EOS', doctype: 'book'
     = _Document_ *Title*
