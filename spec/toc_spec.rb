@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - TOC' do
   context 'book' do
     it 'should not generate toc by default' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :text
       = Document Title
 
       == Introduction
@@ -13,12 +13,11 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Conclusion
       EOS
       (expect pdf.pages.size).to eql 4
-      strings = pdf.pages.inject([]) {|accum, page| accum.concat page[:strings]; accum }
-      (expect strings).not_to include 'Table of Contents'
+      (expect pdf.find_text 'Table of Contents').to be_empty
     end
 
     it 'should insert toc between title page and first page of body when toc is set' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :text
       = Document Title
       :toc:
 
@@ -29,12 +28,12 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Conclusion
       EOS
       (expect pdf.pages.size).to eql 5
-      (expect pdf.pages[0][:strings]).to include 'Document Title'
-      (expect pdf.pages[1][:strings]).to include 'Table of Contents'
-      (expect pdf.pages[1][:strings]).to include '1'
-      (expect pdf.pages[1][:strings]).to include '2'
-      (expect pdf.pages[1][:strings]).to include '3'
-      (expect pdf.pages[2][:strings]).to include 'Introduction'
+      (expect pdf.find_text string: 'Document Title', page_number: 1).not_to be_empty
+      (expect pdf.find_text string: 'Table of Contents', page_number: 2).not_to be_empty
+      (expect pdf.find_text string: '1', page_number: 2).not_to be_empty
+      (expect pdf.find_text string: '2', page_number: 2).not_to be_empty
+      (expect pdf.find_text string: '3', page_number: 2).not_to be_empty
+      (expect pdf.find_text string: 'Introduction', page_number: 3).not_to be_empty
     end
 
     it 'should only include preface in toc if preface-title is set' do
@@ -131,7 +130,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
   context 'article' do
     it 'should not generate toc by default' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS', analyze: :text
       = Document Title
 
       == Introduction
@@ -141,8 +140,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Conclusion
       EOS
       (expect pdf.pages.size).to eql 1
-      strings = pdf.pages.inject([]) {|accum, page| accum.concat page[:strings]; accum }
-      (expect strings).not_to include 'Table of Contents'
+      (expect pdf.find_text 'Table of Contents').to be_empty
     end
 
     it 'should insert toc between document title and content when toc is set' do
@@ -165,21 +163,19 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       #{lorem}
       EOS
-      pdf = to_pdf input, analyze: true
-      (expect pdf.pages.size).to eql 2
-      (expect pdf.pages[0][:strings]).to include 'Table of Contents'
-      (expect pdf.pages[0][:strings].count 'Introduction').to eql 2
       pdf = to_pdf input, analyze: :text
-      strings, text = pdf.strings, pdf.text
-      idx_doctitle = strings.index 'Document Title'
-      idx_toc_title = strings.index 'Table of Contents'
-      idx_toc_bottom = strings.index '2'
-      idx_content_top = strings.index 'Preamble'
-      (expect text[idx_doctitle][:y]).to be > text[idx_toc_title][:y]
-      (expect text[idx_toc_title][:y]).to be > text[idx_content_top][:y]
-      (expect text[idx_toc_bottom][:y]).to be > text[idx_content_top][:y]
+      (expect pdf.pages.size).to eql 2
+      (expect (pdf.find_text string: 'Table of Contents', page_number: 1).size).to eql 1
+      (expect (pdf.find_text string: 'Introduction', page_number: 1).size).to eql 2
+      doctitle_text = (pdf.find_text 'Document Title')[0]
+      toc_title_text = (pdf.find_text 'Table of Contents')[0]
+      toc_bottom_text = (pdf.find_text '2')[0]
+      content_top_text = (pdf.find_text 'Preamble')[0]
+      (expect doctitle_text[:y]).to be > toc_title_text[:y]
+      (expect toc_title_text[:y]).to be > content_top_text[:y]
+      (expect toc_bottom_text[:y]).to be > content_top_text[:y]
       # NOTE assert there's no excess gap between end of toc and start of content
-      (expect text[idx_toc_bottom][:y] - text[idx_content_top][:y]).to be < 35
+      (expect toc_bottom_text[:y] - content_top_text[:y]).to be < 35
     end
 
     it 'should reserve enough pages for toc if it spans more than one page' do

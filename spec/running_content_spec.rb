@@ -61,7 +61,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     == Third Chapter
     EOS
 
-    pdf.text.reduce({}) {|accum, text|
+    pdf.text.inject({}) {|accum, text|
       (accum[text[:page_number]] ||= []) << text
       accum
     }.each do |page_number, texts|
@@ -87,7 +87,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     == Third Chapter
     EOS
 
-    pdf.text.reduce({}) {|accum, text|
+    pdf.text.inject({}) {|accum, text|
       (accum[text[:page_number]] ||= []) << text
       accum
     }.each do |page_number, texts|
@@ -116,7 +116,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     == Third Chapter
     EOS
 
-    pdf.text.reduce({}) {|accum, text|
+    pdf.text.inject({}) {|accum, text|
       (accum[text[:page_number]] ||= []) << text
       accum
     }.each do |page_number, texts|

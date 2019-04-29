@@ -54,7 +54,7 @@ class PDFTextInspector < PDF::Inspector
   end
 
   def page= page
-    @pages << { size: (page.attributes[:MediaBox].slice 2, 2) }
+    @pages << { size: (page.attributes[:MediaBox].slice 2, 2), text: [] }
     @page_number = page.number
     @state = PDF::Reader::PageState.new page
     page.fonts.each do |label, stream|
@@ -85,15 +85,16 @@ class PDFTextInspector < PDF::Inspector
     string = @state.current_font.to_utf8 text
     if @cursor
       accum = @cursor
+      accum[:order] = @text.size + 1
       accum[:font_name] = @font_settings[:name]
       accum[:font_size] = @font_settings[:size]
       accum[:font_color] = @font_settings[:color]
       accum[:string] = string
       @text << accum
+      @pages[-1][:text] << accum
       @cursor = nil
     else
-      accum = @text[-1]
-      accum[:string] += string
+      (accum = @text[-1])[:string] += string
     end
     accum[:kerned] ||= kerned
   end

@@ -12,9 +12,11 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect pdf.pages.size).to eql 2
       text = pdf.text
       (expect text.size).to eql 2
-      (expect text[0][:string]).to eql 'Document Title'
-      (expect text[0][:font_size]).to eql 27
-      (expect text[1][:string]).to eql 'body'
+      (expect pdf.pages[0][:text].size).to eql 1
+      doctitle_text = pdf.pages[0][:text][0]
+      (expect doctitle_text[:string]).to eql 'Document Title'
+      (expect doctitle_text[:font_size]).to eql 27
+      (expect pdf.pages[1][:text].size).to eql 1
     end
 
     it 'should not include title page if notitle attribute is set' do
