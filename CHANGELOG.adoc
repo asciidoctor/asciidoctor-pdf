@@ -39,8 +39,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * handle case when uri to make breakable is empty (#936)
 * add support for frame=ends as alternative to frame=topbot on table
 * allow table frame and grid to be set globally using the table-frame and table-grid attributes (#822)
-* disable table stripes by default
-* allow table stripes to be enabled globally using table-stripes attribute
+* disable table stripes by default (#1049)
+* allow table stripes to be enabled globally using table-stripes attribute (#1049)
 * use new logging subsystem, if available; otherwise, use shim (#905)
 * allow alignment of list text to be controlled using roles (#182)
 * allow text alignment to be set for abstract (#893)
