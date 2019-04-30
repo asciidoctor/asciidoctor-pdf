@@ -67,4 +67,50 @@ describe 'Asciidoctor::PDF::Converter - Tables' do
     (expect pdf.strings.index 'Aaaaa Bbbbb').to eql 0
     (expect pdf.strings.index 'Ccccc').to eql 1
   end
+
+  it 'should not break words in head row when autowidth option is set' do
+    pdf = to_pdf <<~'EOS', analyze: :text
+    [%autowidth]
+    |===
+    |Operation |Operator
+    
+    |add
+    |+
+    
+    |subtract
+    |-
+    
+    |multiply
+    |*
+    
+    |divide
+    |/
+    |===
+    EOS
+
+    (expect pdf.find_text 'Operation').not_to be_empty
+    (expect pdf.find_text 'Operator').not_to be_empty
+  end
+
+  it 'should not break words in body rows when autowidth option is set' do
+    pdf = to_pdf <<~'EOS', analyze: :text
+    [%autowidth]
+    |===
+    |Op
+    
+    |add
+    
+    |subtract
+    
+    |multiply
+    
+    |divide
+    |===
+    EOS
+
+    (expect pdf.find_text 'add').not_to be_empty
+    (expect pdf.find_text 'subtract').not_to be_empty
+    (expect pdf.find_text 'multiply').not_to be_empty
+    (expect pdf.find_text 'divide').not_to be_empty
+  end
 end
