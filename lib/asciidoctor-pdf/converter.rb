@@ -628,6 +628,7 @@ class Converter < ::Prawn::Document
     shift_top = shift_base / 3.0
     shift_bottom = (shift_base * 2) / 3.0
     keep_together do |box_height = nil|
+      push_scratch doc if scratch?
       pad_box [0, cpad[1], 0, lpad[3]] do
         if box_height
           if (rule_color = @theme.admonition_column_rule_color) &&
@@ -729,6 +730,7 @@ class Converter < ::Prawn::Document
           move_up shift_bottom unless at_page_top?
         end
       end
+      pop_scratch doc if scratch?
     end
     theme_margin :block, :bottom
   end
@@ -737,6 +739,7 @@ class Converter < ::Prawn::Document
     add_dest_for_block node if node.id
     theme_margin :block, :top
     keep_together do |box_height = nil|
+      push_scratch node.document if scratch?
       caption_height = node.title? ? (layout_caption node) : 0
       if box_height
         float do
@@ -750,6 +753,7 @@ class Converter < ::Prawn::Document
           convert_content_for_block node
         end
       end
+      pop_scratch node.document if scratch?
     end
     theme_margin :block, :bottom
   end
@@ -774,6 +778,7 @@ class Converter < ::Prawn::Document
     b_width = @theme.blockquote_border_width
     b_color = @theme.blockquote_border_color
     keep_together do |box_height = nil|
+      push_scratch node.document if scratch?
       start_page_number = page_number
       start_cursor = cursor
       caption_height = node.title? ? (layout_caption node) : 0
@@ -824,6 +829,7 @@ class Converter < ::Prawn::Document
           end unless b_height == 0
         end
       end
+      pop_scratch node.document if scratch?
     end
     theme_margin :block, :bottom
   end
@@ -835,6 +841,7 @@ class Converter < ::Prawn::Document
     add_dest_for_block node if node.id
     theme_margin :block, :top
     keep_together do |box_height = nil|
+      push_scratch node.document if scratch?
       if box_height
         # FIXME due to the calculation error logged in #789, we must advance page even when content is split across pages
         advance_page if box_height > cursor && !at_page_top?
@@ -891,6 +898,7 @@ class Converter < ::Prawn::Document
           convert_content_for_block node
         end
       end
+      pop_scratch node.document if scratch?
     end
     theme_margin :block, :bottom
   end
@@ -2037,13 +2045,13 @@ class Converter < ::Prawn::Document
         %(<a href="#{node.target}">#{node.text || path}</a>)
       elsif (refid = node.attributes['refid'])
         unless (text = node.text)
-          if (refs = node.document.references[:refs])
+          if (refs = node.document.catalog[:refs])
             if ::Asciidoctor::AbstractNode === (ref = refs[refid])
               text = ref.xreftext((@xrefstyle ||= (node.document.attr 'xrefstyle')))
             end
           else
             # Asciidoctor < 1.5.6
-            text = node.document.references[:ids][refid]
+            text = node.document.catalog[:ids][refid]
           end
         end
         %(<a anchor="#{derive_anchor_from_id refid}">#{text || "[#{refid}]"}</a>)
@@ -3539,11 +3547,30 @@ class Converter < ::Prawn::Document
 
   # QUESTION move to prawn/extensions.rb?
   def init_scratch_prototype
+    @save_state = nil
+    @scratch_depth = 0
     # IMPORTANT don't set font before using Marshal, it causes serialization to fail
     @prototype = ::Marshal.load ::Marshal.dump self
     @prototype.state.store.info.data[:Scratch] = true
     # NOTE we're now starting a new page each time, so no need to do it here
     #@prototype.start_new_page if @prototype.page_number == 0
+  end
+
+  def push_scratch doc
+    if (@scratch_depth += 1) == 1
+      @save_state = {
+        catalog: {}.tap {|accum| doc.catalog.each {|k, v| accum[k] = v.dup } },
+        attributes: doc.attributes.dup,
+      }
+    end
+  end
+
+  def pop_scratch doc
+    if (@scratch_depth -= 1) == 0
+      doc.catalog.replace @save_state[:catalog]
+      doc.attributes.replace @save_state[:attributes]
+      @save_state = nil
+    end
   end
 
 =begin
