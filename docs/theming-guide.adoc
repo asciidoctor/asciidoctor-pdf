@@ -2955,6 +2955,56 @@ The keys in this category control the arrangement and style of tables and table 
 . Applied to even rows by default; controlled using `stripes` attribute (even, odd, all, none) on table.
 //. `<parity>` can be `odd` (odd rows) or `even` (even rows).
 
+[#keys-footnotes]
+=== Footnotes
+
+The keys in this catagory control the style the list of footnotes at the end of the chapter (book) or document (otherwise).
+If the `footnotes-title` attribute is specified, it is styled as a block caption.
+The styling of the links is controlled by the global link styles.
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-footnotes]*Key Prefix:* <<key-prefix-footnotes,footnotes>>
+
+|font_color
+|<<colors,Color>> +
+(default: $base_font_color)
+|footnotes:
+  font_color: #cccccc
+
+|font_size
+|<<values,Number>> +
+(default: 8)
+|footnotes:
+  font_size: 6
+
+|font_style
+|<<font-styles,Font style>> +
+(default: $base_font_style)
+|footnotes:
+  font_style: italic
+
+|item_spacing
+|<<measurement-units,Measurement>> +
+(default: 3)
+|footnotes:
+  item_spacing: 5
+
+|margin_top
+|<<measurement-units,Measurement>> +
+(default: 0)
+|footnotes:
+  margin_top: 10
+
+|text_transform
+|<<text-transforms,Text transform>> +
+(default: _inherit_)
+|footnotes:
+  text_transform: lowercase
+|===
+
 [#keys-table-of-contents]
 === Table of Contents (TOC)
 
