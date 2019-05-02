@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Page' do
   context 'Size' do
     it 'should set page size specified by theme by default' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS', analyze: :page
       content
       EOS
       (expect pdf.pages.size).to eql 1
@@ -11,7 +11,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should set page size specified by pdf-page-size attribute using predefined name' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: Letter
 
       content
@@ -21,7 +21,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should set page size specified by pdf-page-size attribute using dimension array in pt' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: [600, 800]
 
       content
@@ -31,7 +31,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should set page size specified by pdf-page-size attribute using dimension array in in' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: [8.5in, 11in]
 
       content
@@ -41,7 +41,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should set page size specified by pdf-page-size attribute using dimension string in in' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: 8.5in x 11in
 
       content
@@ -71,7 +71,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should change layout if page break specifies page-layout attribute' do
-      pdf = to_pdf <<~'EOS', analyze: :text
+      pdf = to_pdf <<~'EOS', analyze: true
       portrait
 
       [page-layout=landscape]
@@ -87,7 +87,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should change layout if page break specifies layout role' do
-      pdf = to_pdf <<~'EOS', analyze: :text
+      pdf = to_pdf <<~'EOS', analyze: true
       portrait
 
       [.landscape]
@@ -105,14 +105,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
   context 'Margin' do
     it 'should use the margin specified in theme by default' do
-      pdf = to_pdf <<~'EOS', analyze: :text
+      pdf = to_pdf <<~'EOS', analyze: true
       content
       EOS
       (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 48.24, 793.926]
     end
 
     it 'should use the margin specified by the pdf-page-margin attribute as array' do
-      pdf = to_pdf <<~'EOS', analyze: :text
+      pdf = to_pdf <<~'EOS', analyze: true
       :pdf-page-margin: [0, 0, 0, 0]
 
       content
@@ -121,7 +121,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should use the margin specified by the pdf-page-margin attribute as string' do
-      pdf = to_pdf <<~'EOS', analyze: :text
+      pdf = to_pdf <<~'EOS', analyze: true
       :pdf-page-margin: 1in
 
       content

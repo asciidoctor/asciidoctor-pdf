@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Running Content' do
   it 'should add running footer showing virtual page number starting at body by default' do
-    pdf = to_pdf <<~'EOS', attributes: {}, analyze: :text
+    pdf = to_pdf <<~'EOS', attributes: {}, analyze: true
     = Document Title
     :doctype: book
 
@@ -36,7 +36,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   end
 
   it 'should not add running footer if nofooter attribute is set' do
-    pdf = to_pdf <<~'EOS', attributes: 'nofooter', analyze: :text
+    pdf = to_pdf <<~'EOS', attributes: 'nofooter', analyze: true
     = Document Title
     :doctype: book
 
@@ -49,7 +49,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   it 'should start running content at title page if running_content_start_at key is set to title in theme' do
     theme_overrides = { running_content_start_at: 'title' }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: :text
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
     = Document Title
     :doctype: book
     :toc:
@@ -75,7 +75,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   it 'should start running content at toc page if running_content_start_at key is set to toc in theme' do
     theme_overrides = { running_content_start_at: 'toc' }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: :text
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
     = Document Title
     :doctype: book
     :toc:
@@ -105,7 +105,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   it 'should start running content at body if running_content_start_at key is set to toc in theme and toc is disabled' do
     theme_overrides = { running_content_start_at: 'toc' }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: :text
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
     = Document Title
     :doctype: book
 
@@ -141,7 +141,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       header_verso_right_content: '({document-title})'
     }
 
-    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: :text
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
     = Document Title
     :doctype: book
 
@@ -174,7 +174,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       header_verso_right_content: '({document-title})'
     }
 
-    pdf = to_pdf <<~'EOS', attributes: 'noheader', analyze: :text
+    pdf = to_pdf <<~'EOS', attributes: 'noheader', analyze: true
     = Document Title
     :doctype: book
 

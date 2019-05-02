@@ -18,7 +18,7 @@ describe 'Asciidoctor::PDF::Converter - Images' do
       (expect pdf.rectangles[0][:width]).to eql 200.0
       (expect pdf.rectangles[0][:height]).to eql 200.0
 
-      pdf = to_pdf input, attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }, analyze: :text
+      pdf = to_pdf input, attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }, analyze: true
       text = pdf.text
       (expect text.size).to eql 1
       (expect text[0][:string]).to eql 'after'
@@ -41,7 +41,7 @@ describe 'Asciidoctor::PDF::Converter - Images' do
       (expect pdf.rectangles[0][:width]).to eql 200.0
       (expect pdf.rectangles[0][:height]).to eql 200.0
 
-      pdf = to_pdf input, attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }, analyze: :text
+      pdf = to_pdf input, attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }, analyze: true
       text = pdf.text
       (expect text.size).to eql 1
       (expect text[0][:string]).to eql 'after'

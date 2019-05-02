@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Document Title' do
   context 'book' do
     it 'should place document title on title page for doctype book' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :text
+      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
       = Document Title
 
       body
@@ -20,7 +20,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'should not include title page if notitle attribute is set' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :page
       = Document Title
       :notitle:
 
@@ -33,7 +33,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
 
   context 'article' do
     it 'should center document title at top of first page of content' do
-      pdf = to_pdf <<~'EOS', analyze: :text
+      pdf = to_pdf <<~'EOS', analyze: true
       = Document Title
 
       body
@@ -49,7 +49,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'should align document title according to value of heading_h1_align theme key' do
-      pdf = to_pdf <<~'EOS', theme_overrides: { heading_h1_align: :left }, analyze: :text
+      pdf = to_pdf <<~'EOS', theme_overrides: { heading_h1_align: :left }, analyze: true
       = Document Title
 
       body
@@ -63,7 +63,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'should place document title on title page if title-page attribute is set' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS', analyze: :page
       = Document Title
       :title-page:
 
@@ -75,7 +75,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'should not include document title if notitle attribute is set' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS', analyze: :page
       = Document Title
       :notitle:
 

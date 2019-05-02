@@ -138,7 +138,7 @@ RSpec.configure do |config|
     page: PDF::Inspector::Page,
     rect: PDF::Inspector::Graphics::Rectangle,
     line: PDF::Inspector::Graphics::Line,
-  }).default = PDF::Inspector::Page
+  }).default = PDFTextInspector
 
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze

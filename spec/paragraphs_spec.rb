@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Paragraphs' do
   it 'should normalize whitespace' do
-    pdf = to_pdf <<~EOS, analyze: :text
+    pdf = to_pdf <<~EOS, analyze: true
     He's  a  real  nowhere  man,
     Sitting in his nowhere land,
     Making all his nowhere plans\tfor nobody.

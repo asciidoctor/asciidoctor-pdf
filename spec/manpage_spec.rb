@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::Pdf::Converter - Manpage' do
   it 'should generate name section automatically' do
-    pdf = to_pdf <<~'EOS', doctype: 'manpage', analyze: :text
+    pdf = to_pdf <<~'EOS', doctype: 'manpage', analyze: true
     = cmd(1)
     Author Name
     v1.0.0
@@ -33,7 +33,7 @@ describe 'Asciidoctor::Pdf::Converter - Manpage' do
   end
 
   it 'should uppercase title of name section if other sections are uppercase' do
-    pdf = to_pdf <<~'EOS', doctype: 'manpage', analyze: :text
+    pdf = to_pdf <<~'EOS', doctype: 'manpage', analyze: true
     = cmd(1)
     Author Name
     v1.0.0

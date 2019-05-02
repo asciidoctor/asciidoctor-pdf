@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Sections' do
   it 'should apply font size according to section level' do
-    pdf = to_pdf <<~'EOS', analyze: :text
+    pdf = to_pdf <<~'EOS', analyze: true
     = Document Title
 
     == Level 1
@@ -25,7 +25,7 @@ describe 'Asciidoctor::PDF::Converter - Sections' do
   end
 
   it 'should render section titles in bold by default' do
-    pdf = to_pdf <<~'EOS', analyze: :text
+    pdf = to_pdf <<~'EOS', analyze: true
     = Document Title
 
     == Level 1
@@ -65,7 +65,7 @@ describe 'Asciidoctor::PDF::Converter - Sections' do
     (expect names.keys).to include '_prelude'
     (expect pdf.objects[names['_prelude']][3]).to eql (get_page_size pdf, 2)[1]
 
-    text = (to_pdf input, analyze: :text).text
+    text = (to_pdf input, analyze: true).text
     (expect text[1][:string]).to eql 'Prelude'
     (expect text[1][:font_size]).to eql 22
     (expect text[2][:string]).to eql 'anonymous preface'

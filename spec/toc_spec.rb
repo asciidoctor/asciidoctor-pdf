@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - TOC' do
   context 'book' do
     it 'should not generate toc by default' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :text
+      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
       = Document Title
 
       == Introduction
@@ -17,7 +17,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should insert toc between title page and first page of body when toc is set' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :text
+      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
       = Document Title
       :toc:
 
@@ -49,7 +49,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       EOS
 
       ['toc', %(toc preface-title=Preface)].each do |attrs|
-        pdf = to_pdf input, doctype: 'book', attributes: attrs, analyze: true
+        pdf = to_pdf input, doctype: 'book', attributes: attrs, analyze: :page
         (expect pdf.pages.size).to eql 4
         (expect pdf.pages[0][:strings]).to include 'Document Title'
         (expect pdf.pages[1][:strings]).to include 'Table of Contents'
@@ -71,7 +71,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should output toc with depth specified by toclevels' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :page
       = Document Title
       :toc:
       :toclevels: 1
@@ -92,7 +92,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should only show parts in toc if toclevels attribute is 0' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :page
       = Document Title
       :toc:
       :toclevels: 0
@@ -115,7 +115,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should reserve enough pages for toc if it spans more than one page' do
       sections = (1..40).map {|num| %(\n\n=== Section #{num}) }
-      pdf = to_pdf <<~EOS, doctype: 'book', analyze: true
+      pdf = to_pdf <<~EOS, doctype: 'book', analyze: :page
       = Document Title
       :toc:
 
@@ -130,7 +130,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
   context 'article' do
     it 'should not generate toc by default' do
-      pdf = to_pdf <<~'EOS', analyze: :text
+      pdf = to_pdf <<~'EOS', analyze: true
       = Document Title
 
       == Introduction
@@ -163,7 +163,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       #{lorem}
       EOS
-      pdf = to_pdf input, analyze: :text
+      pdf = to_pdf input, analyze: true
       (expect pdf.pages.size).to eql 2
       (expect (pdf.find_text string: 'Table of Contents', page_number: 1).size).to eql 1
       (expect (pdf.find_text string: 'Introduction', page_number: 1).size).to eql 2
@@ -186,14 +186,14 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       #{sections.join}
       EOS
-      pdf = to_pdf input, analyze: true
+      pdf = to_pdf input, analyze: :page
       (expect pdf.pages.size).to eql 4
       (expect pdf.pages[0][:strings]).to include 'Document Title'
       (expect pdf.pages[0][:strings]).to include 'Table of Contents'
       (expect pdf.pages[0][:strings]).not_to include 'Section 40'
       (expect pdf.pages[1][:strings]).to include 'Section 40'
       (expect pdf.pages[1][:strings]).to include 'Section 1'
-      pdf = to_pdf input, analyze: :text
+      pdf = to_pdf input, analyze: true
       text = pdf.text
       idx_toc_bottom = nil
       idx_content_top = nil
@@ -209,7 +209,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should insert toc between title page and first page of body when toc and title-page are set' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS', analyze: :page
       = Document Title
       :toc:
       :title-page:

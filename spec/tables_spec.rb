@@ -59,7 +59,7 @@ describe 'Asciidoctor::PDF::Converter - Tables' do
   end if asciidoctor_2_or_better?
 
   it 'should not fail to fit text in cell' do
-    pdf = to_pdf <<~'EOS', analyze: :text
+    pdf = to_pdf <<~'EOS', analyze: true
     |===
     |Aaaaa Bbbbb Ccccc |*{zwsp}* Aaaaa_Bbbbb_Ccccc |Aaaaa_Bbbbb_Ccccc |Aaaaa_Bbbbb_Ccccc |A
     |===
@@ -69,7 +69,7 @@ describe 'Asciidoctor::PDF::Converter - Tables' do
   end
 
   it 'should not break words in head row when autowidth option is set' do
-    pdf = to_pdf <<~'EOS', analyze: :text
+    pdf = to_pdf <<~'EOS', analyze: true
     [%autowidth]
     |===
     |Operation |Operator
@@ -93,7 +93,7 @@ describe 'Asciidoctor::PDF::Converter - Tables' do
   end
 
   it 'should not break words in body rows when autowidth option is set' do
-    pdf = to_pdf <<~'EOS', analyze: :text
+    pdf = to_pdf <<~'EOS', analyze: true
     [%autowidth]
     |===
     |Op
