@@ -58,4 +58,25 @@ describe 'Asciidoctor::PDF::Converter - Footnotes' do
     (expect text[-1][:page_number]).to eql 2
     (expect text[-1][:font_size]).to eql 8
   end
+
+  it 'should not duplicate footnotes that are included in keep together content' do
+    pdf = to_pdf <<~'EOS', analyze: :text
+    ****
+    ____
+    Make it rain.footnote:[money]
+    ____
+    ****
+
+    Make it snow.footnote:[dollar bills]
+    EOS
+
+    combined_text = pdf.strings.join
+    (expect combined_text).to include 'Make it rain.[1]'
+    (expect combined_text).to include '[1] money'
+    (expect combined_text).to include 'Make it snow.[2]'
+    (expect combined_text).to include '[2] dollar bills'
+    (expect (combined_text.scan '[1]').length).to eql 2
+    (expect (combined_text.scan '[2]').length).to eql 2
+    (expect (combined_text.scan '[3]').length).to eql 0
+  end
 end
