@@ -27,7 +27,7 @@ PDF::Inspector::Text.prepend(Module.new do
   end
 end)
 
-class PDFTextInspector < PDF::Inspector
+class CustomPDFTextInspector < PDF::Inspector
   attr_accessor :text
   attr_accessor :pages
 
@@ -134,11 +134,11 @@ RSpec.configure do |config|
   end
 
   (PDF_INSPECTOR_CLASS = {
-    text: PDFTextInspector,
+    text: CustomPDFTextInspector,
     page: PDF::Inspector::Page,
     rect: PDF::Inspector::Graphics::Rectangle,
     line: PDF::Inspector::Graphics::Line,
-  }).default = PDFTextInspector
+  }).default = CustomPDFTextInspector
 
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
