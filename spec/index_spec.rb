@@ -10,7 +10,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   end
 
   it 'should add the index entries the section with the index style' do
-    pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
 
     == Chapter About Cats
@@ -51,7 +51,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   end
 
   it 'should not automatically promote nested index terms' do
-    pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
 
     == Big Cats
@@ -80,7 +80,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   end
 
   it 'should group index entries that start with symbol under symbol category' do
-    pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
 
     == Symbols
@@ -102,7 +102,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   end
 
   it 'should not put letters outside of ASCII charset in symbol category' do
-    pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
 
     == Unicode Party
@@ -125,7 +125,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   end
 
   it 'should not combine range if same index entry occurs on sequential pages when media is screen' do
-    pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
 
     == First Chapter
@@ -148,7 +148,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   end
 
   it 'should combine range if same index entry occurs on sequential pages when media is not screen' do
-    pdf = to_pdf <<~'EOS', doctype: 'book', attributes: { 'media' => 'print', 'nofooter' => '' }, analyze: true
+    pdf = to_pdf <<~'EOS', doctype: :book, attributes: { 'media' => 'print', 'nofooter' => '' }, analyze: true
     = Document Title
 
     == First Chapter

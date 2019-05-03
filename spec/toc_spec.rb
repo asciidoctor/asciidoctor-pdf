@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - TOC' do
   context 'book' do
     it 'should not generate toc by default' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
       = Document Title
 
       == Introduction
@@ -17,7 +17,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should insert toc between title page and first page of body when toc is set' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
       = Document Title
       :toc:
 
@@ -49,7 +49,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       EOS
 
       ['toc', %(toc preface-title=Preface)].each do |attrs|
-        pdf = to_pdf input, doctype: 'book', attributes: attrs, analyze: :page
+        pdf = to_pdf input, doctype: :book, attributes: attrs, analyze: :page
         (expect pdf.pages.size).to eql 4
         (expect pdf.pages[0][:strings]).to include 'Document Title'
         (expect pdf.pages[1][:strings]).to include 'Table of Contents'
@@ -71,7 +71,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should output toc with depth specified by toclevels' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :page
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
       = Document Title
       :toc:
       :toclevels: 1
@@ -92,7 +92,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should only show parts in toc if toclevels attribute is 0' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :page
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
       = Document Title
       :toc:
       :toclevels: 0
@@ -115,7 +115,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should reserve enough pages for toc if it spans more than one page' do
       sections = (1..40).map {|num| %(\n\n=== Section #{num}) }
-      pdf = to_pdf <<~EOS, doctype: 'book', analyze: :page
+      pdf = to_pdf <<~EOS, doctype: :book, analyze: :page
       = Document Title
       :toc:
 

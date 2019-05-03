@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Footnotes' do
   it 'should place footnotes at the end of each chapter when doctype is book' do
-    pdf = to_pdf <<~'EOS', doctype: 'book', attributes: 'notitle nofooter', analyze: true
+    pdf = to_pdf <<~'EOS', doctype: :book, attributes: 'notitle nofooter', analyze: true
     == Chapter A
 
     About this thing.footnote:[More about that thing.] And so on.

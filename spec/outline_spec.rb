@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Outline' do
   it 'should create an outline to navigate the document structure' do
-    pdf = to_pdf <<~'EOS', doctype: 'book'
+    pdf = to_pdf <<~'EOS', doctype: :book
     = Document Title
 
     == First Chapter
@@ -40,7 +40,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
   end
 
   it 'should limit outline depth according to value of toclevels attribute' do
-    pdf = to_pdf <<~'EOS', doctype: 'book'
+    pdf = to_pdf <<~'EOS', doctype: :book
     = Document Title
     :toclevels: 1
 
@@ -60,7 +60,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
   end
 
   it 'should sanitize titles' do
-    pdf = to_pdf <<~'EOS', doctype: 'book'
+    pdf = to_pdf <<~'EOS', doctype: :book
     = _Document_ *Title*
 
     == _First_ *Chapter*
@@ -73,7 +73,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
   end
 
   it 'should decode character references in titles' do
-    pdf = to_pdf <<~'EOS', doctype: 'book'
+    pdf = to_pdf <<~'EOS', doctype: :book
     = ACME(TM) Catalog <&#8470;&nbsp;1>
 
     == Paper Clips &#x2116;&nbsp;4

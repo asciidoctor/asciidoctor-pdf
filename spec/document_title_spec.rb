@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Document Title' do
   context 'book' do
     it 'should place document title on title page for doctype book' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
       = Document Title
 
       body
@@ -20,7 +20,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'should not include title page if notitle attribute is set' do
-      pdf = to_pdf <<~'EOS', doctype: 'book', analyze: :page
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
       = Document Title
       :notitle:
 
