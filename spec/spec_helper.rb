@@ -49,8 +49,18 @@ class EnhancedPDFTextInspector < PDF::Inspector
     end
   end
 
-  def strings
-    @text.map {|it| it[:string] }
+  def strings text = @text
+    text.map {|it| it[:string] }
+  end
+
+  def lines text = @text
+    prev_y = nil
+    text.reduce [] do |accum, it|
+      current_line = prev_y && it[:y] == prev_y ? accum.pop : ''
+      accum << %(#{current_line}#{it[:string]})
+      prev_y = it[:y]
+      accum
+    end
   end
 
   def page= page

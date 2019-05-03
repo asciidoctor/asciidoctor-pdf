@@ -37,13 +37,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect category_d_text.size).to be 1
     category_k_text = pdf.find_text string: 'K', page_number: 4
     (expect category_k_text.size).to be 1
-    last_y = nil
-    raw_index_text = (pdf.find_text page_number: 4).map do |it|
-      result = (last_y && last_y != it[:y] ? ?\n : '') + it[:string]
-      last_y = it[:y]
-      result
-    end.join
-    (expect raw_index_text).to eql <<~'EOS'.chomp
+    (expect (pdf.lines pdf.find_text page_number: 4).join ?\n).to eql <<~'EOS'.chomp
     Index
     C
     cats, 1
@@ -70,13 +64,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     == Index
     EOS
 
-    last_y = nil
-    raw_index_text = (pdf.find_text page_number: 3).map do |it|
-      result = (last_y && last_y != it[:y] ? ?\n : '') + it[:string]
-      last_y = it[:y]
-      result
-    end.join
-    (expect raw_index_text).to eql <<~'EOS'.chomp
+    (expect (pdf.lines pdf.find_text page_number: 3).join ?\n).to eql <<~'EOS'.chomp
     Index
     @
     @Transactional, 1
@@ -98,13 +86,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     == Index
     EOS
 
-    last_y = nil
-    raw_index_text = (pdf.find_text page_number: 3).map do |it|
-      result = (last_y && last_y != it[:y] ? ?\n : '') + it[:string]
-      last_y = it[:y]
-      result
-    end.join
-    (expect raw_index_text).to eql <<~'EOS'.chomp
+    (expect (pdf.lines pdf.find_text page_number: 3).join ?\n).to eql <<~'EOS'.chomp
     Index
     É
     étudier, 1
@@ -133,13 +115,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     == Index
     EOS
 
-    last_y = nil
-    raw_index_text = (pdf.find_text page_number: 5).map do |it|
-      result = (last_y && last_y != it[:y] ? ?\n : '') + it[:string]
-      last_y = it[:y]
-      result
-    end.join
-    (expect raw_index_text).to include 'coming soon, 1, 2, 3'
+    (expect (pdf.lines pdf.find_text page_number: 5).join ?\n).to include 'coming soon, 1, 2, 3'
   end
 
   it 'should combine range if same index entry occurs on sequential pages when media is not screen' do
@@ -162,12 +138,6 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     == Index
     EOS
 
-    last_y = nil
-    raw_index_text = (pdf.find_text page_number: 5).map do |it|
-      result = (last_y && last_y != it[:y] ? ?\n : '') + it[:string]
-      last_y = it[:y]
-      result
-    end.join
-    (expect raw_index_text).to include 'coming soon, 1-3'
+    (expect (pdf.lines pdf.find_text page_number: 5).join ?\n).to include 'coming soon, 1-3'
   end
 end
