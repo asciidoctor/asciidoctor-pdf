@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * restore compatibility with Asciidoctor back to 1.5.3 and add verification to test matrix (#1038)
 * show parts in toc when toclevels=0 (#783)
 * fix duplication of footnotes in keep together regions (#1047)
+* display standalone preamble in book normally (#1051)
 
 == 1.5.0.alpha.17 (2019-04-23) - @mojavelinux
 

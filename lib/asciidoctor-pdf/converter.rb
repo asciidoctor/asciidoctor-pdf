@@ -548,7 +548,8 @@ class Converter < ::Prawn::Document
 
   def convert_preamble node
     # TODO find_by needs to support a depth argument
-    if (first_p = (node.find_by context: :paragraph)[0]) && first_p.parent == node
+    # FIXME core should not be promoting paragraph to preamble if there are no sections
+    if (first_p = (node.find_by context: :paragraph)[0]) && first_p.parent == node && node.document.sections?
       first_p.add_role 'lead'
     end
     convert_content_for_block node
