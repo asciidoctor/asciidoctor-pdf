@@ -50,6 +50,35 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
   end
 
+  it 'should not automatically promote nested index terms' do
+    pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
+    = Document Title
+
+    == Big Cats
+
+    (((cats,big cats)))
+    (((cats,big cats,lion)))
+    The king of the jungle is the lion, which is a big cat.
+
+    [index]
+    == Index
+    EOS
+
+    category_c_text = pdf.find_text string: 'C', page_number: 3
+    (expect category_c_text.size).to eql 1
+    category_b_text = pdf.find_text string: 'B', page_number: 3
+    (expect category_b_text).to be_empty
+    category_l_text = pdf.find_text string: 'L', page_number: 3
+    (expect category_l_text).to be_empty
+    (expect (pdf.lines pdf.find_text page_number: 3).join ?\n).to eql <<~'EOS'.chomp
+    Index
+    C
+    cats
+    big cats, 1
+    lion, 1
+    EOS
+  end
+
   it 'should group index entries that start with symbol under symbol category' do
     pdf = to_pdf <<~'EOS', doctype: 'book', analyze: true
     = Document Title
