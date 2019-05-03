@@ -30,13 +30,13 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
 
     index_text = pdf.find_text string: 'Index', page_number: 4, font_size: 22
-    (expect index_text.size).to be 1
+    (expect index_text.size).to eql 1
     category_c_text = pdf.find_text string: 'C', page_number: 4
-    (expect category_c_text.size).to be 1
+    (expect category_c_text.size).to eql 1
     category_d_text = pdf.find_text string: 'D', page_number: 4
-    (expect category_d_text.size).to be 1
+    (expect category_d_text.size).to eql 1
     category_k_text = pdf.find_text string: 'K', page_number: 4
-    (expect category_k_text.size).to be 1
+    (expect category_k_text.size).to eql 1
     (expect (pdf.lines pdf.find_text page_number: 4).join ?\n).to eql <<~'EOS'.chomp
     Index
     C

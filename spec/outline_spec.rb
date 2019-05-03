@@ -27,7 +27,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline[1][:children][0][:title]).to eql 'Chapter Section'
     (expect outline[1][:children][0][:dest][:pagenum]).to eql 2
     (expect outline[1][:children][0][:dest][:top]).to be false
-    (expect outline[1][:children][0][:children].size).to be 0
+    (expect outline[1][:children][0][:children]).to be_empty
     chapter_section_ref = (get_names pdf)['_chapter_section']
     (expect chapter_section_ref).not_to be_nil
     chapter_section_obj = pdf.objects[chapter_section_ref]

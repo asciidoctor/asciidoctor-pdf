@@ -41,10 +41,10 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
 
       doctitle_text = (pdf.find_text 'Document Title')[0]
       (expect doctitle_text).not_to be_nil
-      (expect doctitle_text[:page_number]).to be 1
+      (expect doctitle_text[:page_number]).to eql 1
       body_text = (pdf.find_text 'body')[0]
       (expect body_text).not_to be_nil
-      (expect body_text[:page_number]).to be 1
+      (expect body_text[:page_number]).to eql 1
       (expect doctitle_text[:y]).to be > body_text[:y]
     end
 
