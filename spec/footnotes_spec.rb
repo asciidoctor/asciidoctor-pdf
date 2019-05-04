@@ -59,12 +59,20 @@ describe 'Asciidoctor::PDF::Converter - Footnotes' do
     (expect text[-1][:font_size]).to eql 8
   end
 
-  it 'should use number of target footnote for footnote reference' do
-    pdf = to_pdf <<~'EOS', analyze: true
-    You can download patches from the product page.footnote:sub[Only available if you have an active subscription.]
+  it 'should use number of target footnote in footnote reference' do
+    if asciidoctor_1_5_7_or_better?
+      pdf = to_pdf <<~'EOS', analyze: true
+      You can download patches from the product page.footnote:sub[Only available if you have an active subscription.]
 
-    If you have problems running the software, you can submit a support request.footnote:sub[]
-    EOS
+      If you have problems running the software, you can submit a support request.footnote:sub[]
+      EOS
+    else
+      pdf = to_pdf <<~'EOS', analyze: true
+      You can download patches from the product page.footnoteref:[sub,Only available if you have an active subscription.]
+
+      If you have problems running the software, you can submit a support request.footnoteref:[sub]
+      EOS
+    end
 
     text = pdf.text
     p1 = (pdf.find_text %r/download/)[0]
