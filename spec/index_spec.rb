@@ -33,10 +33,13 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect index_text.size).to eql 1
     category_c_text = pdf.find_text string: 'C', page_number: 4
     (expect category_c_text.size).to eql 1
+    (expect category_c_text[0][:font_name].downcase).to include 'bold'
     category_d_text = pdf.find_text string: 'D', page_number: 4
     (expect category_d_text.size).to eql 1
+    (expect category_d_text[0][:font_name].downcase).to include 'bold'
     category_k_text = pdf.find_text string: 'K', page_number: 4
     (expect category_k_text.size).to eql 1
+    (expect category_k_text[0][:font_name].downcase).to include 'bold'
     (expect (pdf.lines pdf.find_text page_number: 4).join ?\n).to eql <<~'EOS'.chomp
     Index
     C
@@ -66,6 +69,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
     category_c_text = pdf.find_text string: 'C', page_number: 3
     (expect category_c_text.size).to eql 1
+    (expect category_c_text[0][:font_name].downcase).to include 'bold'
     category_b_text = pdf.find_text string: 'B', page_number: 3
     (expect category_b_text).to be_empty
     category_l_text = pdf.find_text string: 'L', page_number: 3
