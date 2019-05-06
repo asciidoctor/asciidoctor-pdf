@@ -84,4 +84,29 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline[0][:title]).to eql %(ACME\u2122 Catalog <\u2116 1>)
     (expect outline[1][:title]).to eql %(Paper Clips \u2116 4)
   end
+
+  it 'should label front matter pages using roman numerals' do
+    pdf = to_pdf <<~'EOS', doctype: :book
+    = Book Title
+    :toc:
+
+    == Chapter 1
+
+    == Chapter 2
+    EOS
+
+    (expect get_page_labels pdf).to eql %w(i ii 1 2)
+  end
+
+  it 'should label first page starting with 1 if no front matter is present' do
+    pdf = to_pdf <<~'EOS', doctype: :book
+    no front matter
+
+    <<<
+
+    more content
+    EOS
+
+    (expect get_page_labels pdf).to eql %w(1 2)
+  end
 end
