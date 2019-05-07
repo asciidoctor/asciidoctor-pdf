@@ -273,7 +273,7 @@ class Converter < ::Prawn::Document
       end
     end
 
-    add_outline doc, num_toc_levels, toc_page_nums, num_front_matter_pages
+    add_outline doc, (doc.attr 'outlinelevels', num_toc_levels).to_i, toc_page_nums, num_front_matter_pages
     # TODO allow document (or theme) to override initial view magnification
     # NOTE add 1 to page height to force initial scroll to 0; a nil value also seems to work
     catalog.data[:OpenAction] = dest_fit_horizontally((page_height + 1), state.pages[0]) if state.pages.size > 0
