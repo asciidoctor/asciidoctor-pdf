@@ -113,4 +113,45 @@ describe 'Asciidoctor::PDF::Converter - Tables' do
     (expect pdf.find_text 'multiply').not_to be_empty
     (expect pdf.find_text 'divide').not_to be_empty
   end
+
+  it 'should not accumulate cell padding between tables' do
+    theme_overrides = { table_cell_padding: [5, 5, 5, 5] }
+    pdf = to_pdf <<~'EOS', theme_overrides: theme_overrides, analyze: :true
+    |===
+    |A |B
+
+    |A1
+    |B1
+
+    |A2
+    |B2
+    |===
+
+    |===
+    |A |B
+
+    |A1
+    |B1
+
+    |A2
+    |B2
+    |===
+
+    |===
+    |A |B
+
+    |A1
+    |B1
+
+    |A2
+    |B2
+    |===
+    EOS
+
+    first_a1_text = (pdf.find_text 'A1')[0]
+    first_a2_text = (pdf.find_text 'A2')[0]
+    last_a1_text = (pdf.find_text 'A1')[-1]
+    last_a2_text = (pdf.find_text 'A2')[-1]
+    (expect first_a1_text[:y] - first_a2_text[:y]).to eql (last_a1_text[:y] - last_a2_text[:y])
+  end
 end

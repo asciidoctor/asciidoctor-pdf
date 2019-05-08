@@ -1756,7 +1756,9 @@ class Converter < ::Prawn::Document
           cell_line_metrics = calc_line_metrics theme.base_line_height
         end
         if cell_line_metrics
-          unless ::Array === (cell_padding = cell_data[:padding]) && cell_padding.size == 4
+          if ::Array === (cell_padding = cell_data[:padding]) && cell_padding.size == 4
+            cell_padding = cell_padding.dup
+          else
             cell_padding = cell_data[:padding] = inflate_padding cell_padding
           end
           cell_padding[0] += cell_line_metrics.padding_top
