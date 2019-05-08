@@ -3590,6 +3590,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |screen {vbar} print {vbar} prepress
 |:media: prepress
 
+|outlinelevels
+|number (default: same as _toclevels_)
+|:outlinelevels: 2
+
 |page-background-image^[4]^
 |path^[2]^ {vbar} image macro^[3]^
 |:page-background-image: image:bg.jpg[]
