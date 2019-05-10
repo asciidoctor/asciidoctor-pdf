@@ -950,39 +950,46 @@ class Converter < ::Prawn::Document
     end
 
     indent marker_width do
-      convert_content_for_list_item node, margin_bottom: @theme.outline_list_item_spacing
+      convert_content_for_list_item node, :colist, margin_bottom: @theme.outline_list_item_spacing
     end
   end
 
   def convert_dlist node
     add_dest_for_block node if node.id
 
-    # TODO check if we're within one line of the bottom of the page
-    # and advance to the next page if so (similar to logic for section titles)
-    layout_caption node.title if node.title?
+    case node.style
+    when 'qanda'
+      (@list_numbers ||= []) << '1'
+      convert_outline_list node
+      @list_numbers.pop
+    else
+      # TODO check if we're within one line of the bottom of the page
+      # and advance to the next page if so (similar to logic for section titles)
+      layout_caption node.title if node.title?
 
-    node.items.each do |terms, desc|
-      terms = [*terms]
-      # NOTE don't orphan the terms, allow for at least one line of content
-      # FIXME extract ensure_space (or similar) method
-      advance_page if cursor < @theme.base_line_height_length * (terms.size + 1)
-      terms.each do |term|
-        # FIXME layout_prose should pass style downward when parsing formatted text
-        #layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
-        term_text = term.text
-        case @theme.description_list_term_font_style.to_sym
-        when :bold
-          term_text = %(<strong>#{term_text}</strong>)
-        when :italic
-          term_text = %(<em>#{term_text}</em>)
-        when :bold_italic
-          term_text = %(<strong><em>#{term_text}</em></strong>)
+      node.items.each do |terms, desc|
+        terms = [*terms]
+        # NOTE don't orphan the terms, allow for at least one line of content
+        # FIXME extract ensure_space (or similar) method
+        advance_page if cursor < @theme.base_line_height_length * (terms.size + 1)
+        terms.each do |term|
+          # FIXME layout_prose should pass style downward when parsing formatted text
+          #layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
+          term_text = term.text
+          case @theme.description_list_term_font_style.to_sym
+          when :bold
+            term_text = %(<strong>#{term_text}</strong>)
+          when :italic
+            term_text = %(<em>#{term_text}</em>)
+          when :bold_italic
+            term_text = %(<strong><em>#{term_text}</em></strong>)
+          end
+          layout_prose term_text, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
         end
-        layout_prose term_text, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
-      end
-      if desc
-        indent @theme.description_list_description_indent do
-          convert_content_for_list_item desc
+        if desc
+          indent @theme.description_list_description_indent do
+            convert_content_for_list_item desc, :dlist_desc
+          end
         end
       end
     end
@@ -1089,7 +1096,7 @@ class Converter < ::Prawn::Document
       node.items.each do |item|
         # FIXME extract to an ensure_space (or similar) method; simplify
         advance_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
-        convert_outline_list_item item, item.complex?, opts
+        convert_outline_list_item item, node, opts
       end
     end
     # NOTE Children will provide the necessary bottom margin if last item is complex.
@@ -1101,15 +1108,16 @@ class Converter < ::Prawn::Document
     end
   end
 
-  def convert_outline_list_item node, complex = false, opts = {}
+  def convert_outline_list_item node, list, opts = {}
     # TODO move this to a draw_bullet (or draw_marker) method
     marker_style = {}
     marker_style[:font_color] = @theme.outline_list_marker_font_color || @font_color
     marker_style[:font_family] = font_family
     marker_style[:font_size] = font_size
     marker_style[:line_height] = @theme.base_line_height
-    case (list_type = node.parent.context)
+    case (list_type = list.context)
     when :ulist
+      complex = node.complex?
       marker_type = @list_bullets[-1]
       if marker_type == :checkbox
         # QUESTION should we remove marker indent if not a checkbox?
@@ -1124,10 +1132,17 @@ class Converter < ::Prawn::Document
         marker_style[prop] = @theme[%(ulist_marker_#{marker_type}_#{prop})] || @theme[%(ulist_marker_#{prop})] || marker_style[prop]
       end if marker
     when :olist
+      complex = node.complex?
       dir = (node.parent.option? 'reversed') ? :pred : :next
       @list_numbers << ((index = @list_numbers.pop).public_send dir)
       marker = %(#{index}.)
+    when :dlist
+      # NOTE list.style is 'qanda'
+      complex = node[1] && node[1].complex?
+      @list_numbers << (index = @list_numbers.pop).next
+      marker = %(#{index}.)
     else
+      complex = node.complex?
       logger.warn %(unknown list type #{list_type.inspect})
       marker = @theme.ulist_marker_disc_content || Bullets[:disc]
     end
@@ -1158,15 +1173,24 @@ class Converter < ::Prawn::Document
     end
 
     if complex
-      convert_content_for_list_item node, opts
+      convert_content_for_list_item node, list_type, opts
     else
-      convert_content_for_list_item node, (opts.merge margin_bottom: @theme.outline_list_item_spacing)
+      convert_content_for_list_item node, list_type, (opts.merge margin_bottom: @theme.outline_list_item_spacing)
     end
   end
 
-  def convert_content_for_list_item node, opts = {}
-    layout_prose node.text, opts if node.text?
-    convert_content_for_block node
+  def convert_content_for_list_item node, list_type, opts = {}
+    if list_type == :dlist # qanda
+      terms, desc = node
+      [*terms].each {|term| layout_prose %(<em>#{term.text}</em>), opts }
+      if desc
+        layout_prose desc.text, opts if desc.text?
+        convert_content_for_block desc
+      end
+    else
+      layout_prose node.text, opts if node.text?
+      convert_content_for_block node
+    end
   end
 
   def convert_image node, opts = {}

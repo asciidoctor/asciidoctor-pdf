@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * display standalone preamble in book normally (#1051)
 * allow outline depth to be set using outlinelevels attribute independent of toclevels (#1054)
 * fix compounding cell padding (#1053)
+* add support for qanda list (#1013)
 
 == 1.5.0.alpha.17 (2019-04-23) - @mojavelinux
 
