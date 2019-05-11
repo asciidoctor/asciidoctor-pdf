@@ -56,7 +56,7 @@ class EnhancedPDFTextInspector < PDF::Inspector
   def lines text = @text
     prev_y = nil
     text.reduce [] do |accum, it|
-      current_line = prev_y && it[:y] == prev_y ? accum.pop : ''
+      current_line = prev_y && (prev_y - it[:y]).abs < 6 ? accum.pop : ''
       accum << %(#{current_line}#{it[:string]})
       prev_y = it[:y]
       accum
