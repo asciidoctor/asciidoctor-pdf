@@ -154,4 +154,22 @@ describe 'Asciidoctor::PDF::Converter - Tables' do
     last_a2_text = (pdf.find_text 'A2')[-1]
     (expect first_a1_text[:y] - first_a2_text[:y]).to eql (last_a1_text[:y] - last_a2_text[:y])
   end
+
+  it 'should allocate remaining width to autowidth column' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [cols="10,~"]
+    |===
+    |0x00
+    |UNSPECIFIED
+    
+    |0x01
+    |OK
+    |===
+    EOS
+    (expect pdf.strings).to eql %w(0x00 UNSPECIFIED 0x01 OK)
+    unspecified_text = (pdf.find_text 'UNSPECIFIED')[0]
+    (expect unspecified_text[:x]).to eql 101.12
+    ok_text = (pdf.find_text 'OK')[0]
+    (expect ok_text[:x]).to eql 101.12
+  end if asciidoctor_1_5_7_or_better?
 end
