@@ -34,4 +34,38 @@ describe 'Asciidoctor::PDF::Converter - Lists' do
       ]
     end
   end
+
+  context 'Bibliography' do
+    it 'should reference bibliography entry using ID in square brackets by default' do
+
+      pdf = to_pdf <<~EOS, analyze: true
+      The recommended reading includes <<bar>>.
+
+      [bibliography]
+      == Bibliography
+
+      #{asciidoctor_1_5_7_or_better? ? '' : '[bibliography]'}
+      * [[[bar]]] Bar, Foo. All The Things. 2010.
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to include 'The recommended reading includes [bar].'
+      (expect lines).to include '▪[bar] Bar, Foo. All The Things. 2010.'
+    end
+
+    it 'should reference bibliography entry using custom reftext square brackets' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      The recommended reading includes <<bar>>.
+
+      [bibliography]
+      == Bibliography
+
+      * [[[bar,1]]] Bar, Foo. All The Things. 2010.
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to include 'The recommended reading includes [1].'
+      (expect lines).to include '▪[1] Bar, Foo. All The Things. 2010.'
+    end if asciidoctor_1_5_7_or_better?
+  end
 end
