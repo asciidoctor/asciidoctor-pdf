@@ -46,7 +46,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect pdf.find_text %r/^\d+$/).to be_empty
   end
 
-  it 'should start running content at title page if running_content_start_at key is set to title in theme' do
+  it 'should start running content at title page if running_content_start_at key is title' do
     theme_overrides = { running_content_start_at: 'title' }
 
     pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
@@ -61,18 +61,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     == Third Chapter
     EOS
 
-    pdf.text.inject({}) {|accum, text|
-      (accum[text[:page_number]] ||= []) << text
+    pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      accum << (pdf.find_text page_number: page_number, y: 14.388)[-1][:string]
       accum
-    }.each do |page_number, texts|
-      last_text = texts[-1]
-      (expect last_text).not_to be_nil
-      (expect page_number.to_s).to eql last_text[:string]
-      (expect last_text[:y]).to eql 14.388
     end
+    (expect pgnum_labels).to eq %w(i ii 1 2 3)
   end
 
-  it 'should start running content at toc page if running_content_start_at key is set to toc in theme' do
+  it 'should start running content at toc page if running_content_start_at key is toc' do
     theme_overrides = { running_content_start_at: 'toc' }
 
     pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
@@ -87,22 +83,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     == Third Chapter
     EOS
 
-    pdf.text.inject({}) {|accum, text|
-      (accum[text[:page_number]] ||= []) << text
+    pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      accum << ((pdf.find_text page_number: page_number, y: 14.388)[-1] || {})[:string]
       accum
-    }.each do |page_number, texts|
-      if page_number == 1
-        (expect texts.size).to eql 1
-      else
-        last_text = texts[-1]
-        (expect last_text).not_to be_nil
-        (expect page_number.pred.to_s).to eql last_text[:string]
-        (expect last_text[:y]).to eql 14.388
-      end
     end
+    (expect pgnum_labels).to eq [nil, 'ii', '1', '2', '3']
   end
 
-  it 'should start running content at body if running_content_start_at key is set to toc in theme and toc is disabled' do
+  it 'should start running content at body if running_content_start_at key is toc and toc is disabled' do
     theme_overrides = { running_content_start_at: 'toc' }
 
     pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
@@ -116,19 +104,55 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     == Third Chapter
     EOS
 
-    pdf.text.inject({}) {|accum, text|
-      (accum[text[:page_number]] ||= []) << text
+    pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      accum << ((pdf.find_text page_number: page_number, y: 14.388)[-1] || {})[:string]
       accum
-    }.each do |page_number, texts|
-      if page_number == 1
-        (expect texts.size).to eql 1
-      else
-        last_text = texts[-1]
-        (expect last_text).not_to be_nil
-        (expect page_number.pred.to_s).to eql last_text[:string]
-        (expect last_text[:y]).to eql 14.388
-      end
     end
+    (expect pgnum_labels).to eq [nil, '1', '2', '3']
+  end
+
+  it 'should start page numbering at title page if page_numbering_start_at is title' do
+    theme_overrides = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
+
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == First Chapter
+
+    == Second Chapter
+
+    == Third Chapter
+    EOS
+
+    pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      accum << (pdf.find_text page_number: page_number, y: 14.388)[-1][:string]
+      accum
+    end
+    (expect pgnum_labels).to eq %w(1 2 3 4 5)
+  end
+
+  it 'should start page numbering at toc page if page_numbering_start_at is toc' do
+    theme_overrides = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
+
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == First Chapter
+
+    == Second Chapter
+
+    == Third Chapter
+    EOS
+
+    pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      accum << (pdf.find_text page_number: page_number, y: 14.388)[-1][:string]
+      accum
+    end
+    (expect pgnum_labels).to eq %w(i 1 2 3 4)
   end
 
   it 'should add running header starting at body if header key is set in theme' do

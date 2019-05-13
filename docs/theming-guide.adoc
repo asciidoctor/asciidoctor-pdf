@@ -932,6 +932,12 @@ See <<Title Page>> for details.
 (default: A4)
 |page:
   size: Letter
+
+|numbering_start_at
+|title {vbar} toc {vbar} body +
+(default: body)
+|page:
+  numbering_start_at: toc
 |===
 
 . Page background images are automatically scaled to fit within the bounds of the page.

@@ -234,20 +234,31 @@ class Converter < ::Prawn::Document
     start_new_page if @media == 'prepress' && verso_page?
 
     if insert_title_page
-      body_start_page_number = page_number
+      body_offset = (body_start_page_number = page_number) - 1
+      front_matter_sig = [@theme.running_content_start_at || 'body', @theme.page_numbering_start_at || 'body', insert_toc]
       # NOTE start running content from title or toc, if specified (default: body)
-      if @theme.running_content_start_at == 'title'
-        num_front_matter_pages = 0
-      elsif insert_toc && @theme.running_content_start_at == 'toc'
-        num_front_matter_pages = 1
-      else # body
-        num_front_matter_pages = body_start_page_number - 1
-      end
+      num_front_matter_pages = {
+        ['title', 'title', true] => [0, 0],
+        ['title', 'title', false] => [0, 0],
+        ['title', 'toc', true] => [0, 1],
+        ['title', 'toc', false] => [0, 1],
+        ['title', 'body', true] => [0, body_offset],
+        ['title', 'body', false] => [0, 1],
+        ['toc', 'title', true] => [1, 0],
+        ['toc', 'title', false] => [1, 0],
+        ['toc', 'toc', true] => [1, 1],
+        ['toc', 'toc', false] => [1, 1],
+        ['toc', 'body', true] => [1, body_offset],
+        ['body', 'title', true] => [body_offset, 0],
+        ['body', 'title', false] => [1, 0],
+        ['body', 'toc', true] => [body_offset, 1],
+      }[front_matter_sig] || [body_offset, body_offset]
     else
-      num_front_matter_pages = body_start_page_number - 1
+      # Q: what if there's only a toc page, but not title?
+      num_front_matter_pages = [body_start_page_number - 1] * 2
     end
 
-    @index.start_page_number = num_front_matter_pages + 1
+    @index.start_page_number = num_front_matter_pages[1] + 1
     doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
     add_dest_for_block doc, doc_anchor
 
@@ -262,7 +273,7 @@ class Converter < ::Prawn::Document
     # QUESTION should we delete page if document is empty? (leaving no pages?)
     delete_page if page_is_empty? && page_count > 1
 
-    toc_page_nums = insert_toc ? (layout_toc doc, num_toc_levels, toc_page_nums.first, num_front_matter_pages, toc_start) : []
+    toc_page_nums = insert_toc ? (layout_toc doc, num_toc_levels, toc_page_nums.first, num_front_matter_pages[1], toc_start) : []
 
     unless page_count < body_start_page_number
       unless doc.noheader || @theme.header_height.to_f.zero?
@@ -273,7 +284,7 @@ class Converter < ::Prawn::Document
       end
     end
 
-    add_outline doc, (doc.attr 'outlinelevels', num_toc_levels).to_i, toc_page_nums, num_front_matter_pages
+    add_outline doc, (doc.attr 'outlinelevels', num_toc_levels).to_i, toc_page_nums, num_front_matter_pages[1]
     # TODO allow document (or theme) to override initial view magnification
     # NOTE add 1 to page height to force initial scroll to 0; a nil value also seems to work
     catalog.data[:OpenAction] = dest_fit_horizontally((page_height + 1), state.pages[0]) if state.pages.size > 0
@@ -2657,7 +2668,7 @@ class Converter < ::Prawn::Document
 
   # TODO delegate to layout_page_header and layout_page_footer per page
   def layout_running_content periphery, doc, opts = {}
-    skip = opts[:skip] || 1
+    skip, skip_pagenums = opts[:skip] || [1, 1]
     # NOTE find and advance to first non-imported content page to use as model page
     return unless (content_start_page = state.pages[skip..-1].index {|p| !p.imported_page? })
     content_start_page += (skip + 1)
@@ -2679,7 +2690,7 @@ class Converter < ::Prawn::Document
     section_start_pages = {}
     trailing_section_start_pages = {}
     sections.each do |sect|
-      page_num = (sect.attr 'pdf-page-start').to_i - skip
+      page_num = (sect.attr 'pdf-page-start').to_i - skip_pagenums
       if is_book && ((sect_is_part = sect.part?) || sect.chapter?)
         if sect_is_part
           part_start_pages[page_num] ||= (sect.numbered_title formal: true)
@@ -2914,7 +2925,8 @@ class Converter < ::Prawn::Document
     repeat((content_start_page..page_count), dynamic: true) do
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
-      pgnum_label = page_number - skip
+      pgnum_label = page_number - skip_pagenums
+      pgnum_label = (RomanNumeral.new page_number, :lower) if pgnum_label < 1
       side = page_side((folio_basis == :physical ? page_number : pgnum_label), invert_folio)
       # FIXME we need to have a content setting for chapter pages
       content_by_position, colspec_by_position = content_dict[side], colspec_dict[side]

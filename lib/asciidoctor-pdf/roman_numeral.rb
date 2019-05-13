@@ -73,6 +73,14 @@ class RomanNumeral
     @integer_value
   end
 
+  def odd?
+    to_i.odd?
+  end
+
+  def even?
+    to_i.even?
+  end
+
   def next
     RomanNumeral.new @integer_value + 1, @letter_case
   end
