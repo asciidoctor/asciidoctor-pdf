@@ -2060,7 +2060,7 @@ class Converter < ::Prawn::Document
       elsif (@media ||= node.document.attr 'media', 'screen') != 'screen' || (node.document.attr? 'show-link-uri')
         # QUESTION should we insert breakable chars into URI when building fragment instead?
         # TODO allow style of printed link to be controlled by theme
-        %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> [<font size="0.85em">#{breakable_uri target}</font>])
+        %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> [<font size="0.85em">#{breakable_uri target}</font>&#93;)
       else
         %(<a href="#{node.target}"#{attrs.join}>#{node.text}</a>)
       end
@@ -2081,9 +2081,9 @@ class Converter < ::Prawn::Document
             text = node.document.catalog[:ids][refid]
           end
         end
-        %(<a anchor="#{derive_anchor_from_id refid}">#{text || "[#{refid}]"}</a>)
+        %(<a anchor="#{derive_anchor_from_id refid}">#{text || "[#{refid}]"}</a>).gsub ']', '&#93;'
       else
-        %(<a anchor="#{node.document.attr 'pdf-anchor'}">#{node.text || '[^top]'}</a>)
+        %(<a anchor="#{node.document.attr 'pdf-anchor'}">#{node.text || '[^top&#93;'}</a>)
       end
     when :ref
       # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment

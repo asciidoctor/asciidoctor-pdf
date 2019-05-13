@@ -105,4 +105,29 @@ describe 'Asciidoctor::PDF::Converter - Footnotes' do
     (expect (combined_text.scan '[2]').length).to eql 2
     (expect (combined_text.scan '[3]').length).to eql 0
   end
+
+  it 'should allow a bibliography ref to be used inside the text of a footnote' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    There are lots of things to know.footnote:[Be sure to read <<wells>> to learn about it.]
+
+    [bibliography]
+    == Bibliography
+
+    * [[[wells]]] Ashley Wells. 'Stuff About Stuff'. Publishistas. 2010.
+    EOS
+
+    lines = pdf.lines
+    (expect lines[0]).to eql 'There are lots of things to know.[1]'
+    (expect lines[-1]).to eql '[1] Be sure to read [wells] to learn about it.'
+  end
+
+  it 'should allow a link to be used in footnote when media is print' do
+    pdf = to_pdf <<~'EOS', attributes: 'nofooter media=print', analyze: true
+    When in doubt, search.footnote:[Use a search engine like https://google.com[Google]]
+    EOS
+
+    lines = pdf.lines
+    (expect lines[0]).to eql 'When in doubt, search.[1]'
+    (expect lines[-1]).to eql '[1] Use a search engine like Google [https://google.com]'
+  end
 end
