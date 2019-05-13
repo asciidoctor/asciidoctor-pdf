@@ -198,7 +198,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       header_verso_right_content: '({document-title})'
     }
 
-    pdf = to_pdf <<~'EOS', attributes: 'noheader', analyze: true
+    pdf = to_pdf <<~'EOS', attributes: 'noheader', theme_overrides: theme_overrides, analyze: true
     = Document Title
     :doctype: book
 
@@ -206,5 +206,30 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     EOS
 
     (expect pdf.find_text '(Document Title)').to be_empty
+  end
+
+  it 'should use doctitle, toc-title, and preface-title as chapter-title before first chapter' do
+    theme_overrides = {
+      running_content_start_at: 'title',
+      page_numbering_start_at: 'title',
+      footer_recto_right_content: '{chapter-title}',
+      footer_verso_left_content: '{chapter-title}',
+    }
+
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    = Document Title
+    :doctype: book
+    :toc:
+
+    content
+
+    == Chapter 1
+
+    content
+    EOS
+
+    expected_running_content_by_page = { 1 => 'Document Title', 2 => 'Table of Contents', 3 => 'Preface', 4 => 'Chapter 1' }
+    running_content_by_page = (pdf.find_text y: 14.388).reduce({}) {|accum, text| accum[text[:page_number]] = text[:string]; accum }
+    (expect running_content_by_page).to eql expected_running_content_by_page
   end
 end

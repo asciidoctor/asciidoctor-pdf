@@ -277,10 +277,10 @@ class Converter < ::Prawn::Document
 
     unless page_count < body_start_page_number
       unless doc.noheader || @theme.header_height.to_f.zero?
-        layout_running_content :header, doc, skip: num_front_matter_pages
+        layout_running_content :header, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number
       end
       unless doc.nofooter || @theme.footer_height.to_f.zero?
-        layout_running_content :footer, doc, skip: num_front_matter_pages
+        layout_running_content :footer, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number
       end
     end
 
@@ -2668,7 +2668,8 @@ class Converter < ::Prawn::Document
 
   # TODO delegate to layout_page_header and layout_page_footer per page
   def layout_running_content periphery, doc, opts = {}
-    skip, skip_pagenums = opts[:skip] || [1, 1]
+    skip, skip_pagenums, body_start_page_number = opts[:skip] || [1, 1]
+    body_start_page_number = opts[:body_start_page_number] || 1
     # NOTE find and advance to first non-imported content page to use as model page
     return unless (content_start_page = state.pages[skip..-1].index {|p| !p.imported_page? })
     content_start_page += (skip + 1)
@@ -2713,8 +2714,8 @@ class Converter < ::Prawn::Document
     sections_by_page = {}
     # QUESTION should the default part be the doctitle?
     last_part = nil
-    # QUESTION should we enforce that the preamble is preface?
-    last_chap = is_book ? (doc.attr 'preface-title', 'Preface') : nil
+    # QUESTION should we enforce that the preamble is a preface?
+    last_chap = is_book ? :pre : nil
     last_sect = nil
     sect_search_threshold = 1
     (1..num_pages).each do |num|
@@ -2741,7 +2742,17 @@ class Converter < ::Prawn::Document
         end
       end
       parts_by_page[num] = last_part
-      chapters_by_page[num] = last_chap
+      if last_chap == :pre
+        if num == 1
+          chapters_by_page[num] = doc.doctitle
+        elsif num >= body_start_page_number
+          chapters_by_page[num] = is_book ? (doc.attr 'preface-title', 'Preface') : nil
+        else
+          chapters_by_page[num] = doc.attr 'toc-title'
+        end
+      else
+        chapters_by_page[num] = last_chap
+      end
       sections_by_page[num] = last_sect
     end
 
