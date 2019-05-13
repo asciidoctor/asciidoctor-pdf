@@ -15,6 +15,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * fix compounding cell padding (#1053)
 * add support for qanda list (#1013)
 * fix parsing of bibref and link inside footnote text (#1061)
+* restore square brackets around ID of bibliography entry with custom ID (#1065)
 
 == 1.5.0.alpha.17 (2019-04-23) - @mojavelinux
 

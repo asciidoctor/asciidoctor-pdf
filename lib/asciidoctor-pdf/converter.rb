@@ -2092,9 +2092,14 @@ class Converter < ::Prawn::Document
     when :bibref
       # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
       # NOTE technically node.text should be node.reftext, but subs have already been applied to text
-      # NOTE check reftext? for compatibility with Asciidoctor <= 1.5.5
+      # NOTE reftext is no longer enclosed in [] starting in Asciidoctor 2.0.0
       # NOTE id is used instead of target starting in Asciidoctor 2.0.0
-      %(<a name="#{node.target || node.id}">#{DummyText}</a>#{(reftext = node.reftext) ? reftext : "[#{node.target || node.id}]"})
+      if (reftext = node.reftext)
+        reftext = %([#{reftext}]) unless reftext.start_with? '['
+      else
+        reftext = %([#{node.target || node.id}])
+      end
+      %(<a name="#{node.target || node.id}">#{DummyText}</a>#{reftext})
     else
       logger.warn %(unknown anchor type: #{node.type.inspect})
     end
