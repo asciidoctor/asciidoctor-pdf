@@ -54,7 +54,7 @@ describe 'Asciidoctor::PDF::Converter - Footnotes' do
     (expect text[2][:font_size]).to be < text[1][:font_size]
     # footnote item
     (expect (pdf.find_text 'Section B')[0][:order]).to be < (pdf.find_text '] More about that thing.')[0][:order]
-    (expect (strings.slice -3, 3).join).to eql '[1] More about that thing.'
+    (expect (strings.slice(-3, 3)).join).to eql '[1] More about that thing.'
     (expect text[-1][:page_number]).to eql 2
     (expect text[-1][:font_size]).to eql 8
   end

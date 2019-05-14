@@ -2,7 +2,23 @@ require 'asciidoctor/pdf'
 require 'pathname'
 require 'pdf/inspector'
 
-PDF::Reader.prepend(Module.new do
+# NOTE fix warning in Prawn::Font:TTF
+Prawn::Font::TTF.prepend (Module.new do
+  def initialize *args
+    @italic_angle = nil
+    super
+  end
+end)
+
+# NOTE fix warning in TTFunk::Table
+TTFunk::Table.prepend (Module.new do
+  def initialize *args
+    @offset = nil
+    super
+  end
+end)
+
+PDF::Reader.prepend (Module.new do
   def source
     objects.instance_variable_get :@io
   end
@@ -16,7 +32,7 @@ PDF::Reader.prepend(Module.new do
   end
 end)
 
-PDF::Inspector::Text.prepend(Module.new do
+PDF::Inspector::Text.prepend (Module.new do
   def page= page
     @page_number = page.number
     super
@@ -150,6 +166,8 @@ RSpec.configure do |config|
     line: PDF::Inspector::Graphics::Line,
   }).default = EnhancedPDFTextInspector
 
+  alias :original_to_pdf :to_pdf
+
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
     opts[:attributes] = 'nofooter' unless opts.key? :attributes
@@ -176,7 +194,7 @@ RSpec.configure do |config|
       title = (((title = entry[:Title]).slice 2, title.size).unpack 'n*').pack 'U*'
       dest = entry[:Dest]
       dest_page_object = objects[dest[0]]
-      dest_page = pdf.pages.find {|candidate| candidate.page_object == dest_page_object }
+      dest_page = pages.find {|candidate| candidate.page_object == dest_page_object }
       top = dest_page.attributes[:MediaBox][3] == dest[3]
       children = entry[:Count] > 0 ? (extract_outline pdf, entry) : []
       result << { title: title, dest: { pagenum: dest_page.number, x: dest[2], y: dest[3], top: top }, children: children }

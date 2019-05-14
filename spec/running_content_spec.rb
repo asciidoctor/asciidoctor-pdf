@@ -176,7 +176,6 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     second page
     EOS
 
-    expected_x_positions = [541.009, 49.24]
     expected_page_numbers = %w(1 2)
 
     header_texts = pdf.find_text '(Document Title)'
