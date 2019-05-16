@@ -19,6 +19,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add page_numbering_start_at key to theme to control start page for page numbering (#1041)
 * don't allow running_content_start_at key to affect page numbering (#1041)
 * substitute \{chapter-title} property on front matter pages (replace with doctitle and toc-title, respectively, when running content starts before first page of body) (#1040)
+* allow side margins to be set on elements on title page (#824)
 
 == 1.5.0.alpha.17 (2019-04-23) - @mojavelinux
 

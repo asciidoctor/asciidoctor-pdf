@@ -29,6 +29,59 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect pdf.pages.size).to eql 1
       (expect pdf.pages[0][:strings]).to_not include 'Document Title'
     end
+
+    it 'should allow left margin of elements on title page to be configured' do
+      input = <<~'EOS'
+      = Book Title: Bring Out Your Dead Trees
+      Author Name
+      v1.0, 2001-01-01
+
+      body
+      EOS
+
+      theme_overrides = { title_page_align: 'left' }
+
+      pdf = to_pdf input, doctype: :book, theme_overrides: theme_overrides, analyze: true
+
+      expected_x = (pdf.find_text page_number: 1).map {|it| it[:x] + 10 }
+
+      theme_overrides.update \
+        title_page_title_margin_left: 10,
+        title_page_subtitle_margin_left: 10,
+        title_page_authors_margin_left: 10,
+        title_page_revision_margin_left: 10
+
+      pdf = to_pdf input, doctype: :book, theme_overrides: theme_overrides, analyze: true
+
+      actual_x = (pdf.find_text page_number: 1).map {|it| it[:x] }
+      (expect actual_x).to eql expected_x
+    end
+
+    it 'should allow right margin of elements on title page to be configured' do
+      input = <<~'EOS'
+      = Book Title: Bring Out Your Dead Trees
+      Author Name
+      v1.0, 2001-01-01
+
+      body
+      EOS
+
+      pdf = to_pdf input, doctype: :book, analyze: true
+
+      expected_x = (pdf.find_text page_number: 1).map {|it| it[:x] - 10 }
+
+      theme_overrides = {
+        title_page_title_margin_right: 10,
+        title_page_subtitle_margin_right: 10,
+        title_page_authors_margin_right: 10,
+        title_page_revision_margin_right: 10,
+      }
+
+      pdf = to_pdf input, doctype: :book, theme_overrides: theme_overrides, analyze: true
+
+      actual_x = (pdf.find_text page_number: 1).map {|it| it[:x] }
+      (expect actual_x).to eql expected_x
+    end
   end
 
   context 'article' do

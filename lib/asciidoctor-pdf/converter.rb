@@ -2320,9 +2320,7 @@ class Converter < ::Prawn::Document
         relative_to_imagesdir = false
       end
       # HACK quick fix to resolve image path relative to theme
-      unless doc.attr? 'title-logo-image'
-        logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, (doc.attr 'pdf-stylesdir')
-      end
+      logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, (doc.attr 'pdf-stylesdir') unless doc.attr? 'title-logo-image'
       logo_image_attrs['target'] = logo_image_path
       logo_image_attrs['align'] ||= (@theme.title_page_logo_align || title_align.to_s)
       # QUESTION should we allow theme to turn logo image off?
@@ -2337,7 +2335,9 @@ class Converter < ::Prawn::Document
       # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
       image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs
       # NOTE pinned option keeps image on same page
-      convert_image image_block, relative_to_imagesdir: relative_to_imagesdir, pinned: true
+      indent (@theme.title_page_logo_margin_left || 0), (@theme.title_page_logo_margin_right || 0) do
+        convert_image image_block, relative_to_imagesdir: relative_to_imagesdir, pinned: true
+      end
       @y = initial_y
     end
 
@@ -2354,34 +2354,40 @@ class Converter < ::Prawn::Document
         @y = title_top
       end
       move_down(@theme.title_page_title_margin_top || 0)
-      theme_font :title_page_title do
-        layout_heading doctitle.main,
-          align: title_align,
-          margin: 0,
-          line_height: @theme.title_page_title_line_height
+      indent (@theme.title_page_title_margin_left || 0), (@theme.title_page_title_margin_right || 0) do
+        theme_font :title_page_title do
+          layout_heading doctitle.main,
+            align: title_align,
+            margin: 0,
+            line_height: @theme.title_page_title_line_height
+        end
       end
       move_down(@theme.title_page_title_margin_bottom || 0)
       if doctitle.subtitle
         move_down(@theme.title_page_subtitle_margin_top || 0)
-        theme_font :title_page_subtitle do
-          layout_heading doctitle.subtitle,
-            align: title_align,
-            margin: 0,
-            line_height: @theme.title_page_subtitle_line_height
+        indent (@theme.title_page_subtitle_margin_left || 0), (@theme.title_page_subtitle_margin_right || 0) do
+          theme_font :title_page_subtitle do
+            layout_heading doctitle.subtitle,
+              align: title_align,
+              margin: 0,
+              line_height: @theme.title_page_subtitle_line_height
+          end
         end
         move_down(@theme.title_page_subtitle_margin_bottom || 0)
       end
       if doc.attr? 'authors'
         move_down(@theme.title_page_authors_margin_top || 0)
-        # TODO provide an API in core to get authors as an array
-        authors = (1..(doc.attr 'authorcount', 1).to_i).map {|idx|
-          doc.attr(idx == 1 ? 'author' : %(author_#{idx}))
-        } * (@theme.title_page_authors_delimiter || ', ')
-        theme_font :title_page_authors do
-          layout_prose authors,
-            align: title_align,
-            margin: 0,
-            normalize: false
+        indent (@theme.title_page_authors_margin_left || 0), (@theme.title_page_authors_margin_right || 0) do
+          # TODO provide an API in core to get authors as an array
+          authors = (1..(doc.attr 'authorcount', 1).to_i).map {|idx|
+            doc.attr(idx == 1 ? 'author' : %(author_#{idx}))
+          } * (@theme.title_page_authors_delimiter || ', ')
+          theme_font :title_page_authors do
+            layout_prose authors,
+              align: title_align,
+              margin: 0,
+              normalize: false
+          end
         end
         move_down(@theme.title_page_authors_margin_bottom || 0)
       end
@@ -2389,11 +2395,13 @@ class Converter < ::Prawn::Document
       unless revision_info.empty?
         move_down(@theme.title_page_revision_margin_top || 0)
         revision_text = revision_info * (@theme.title_page_revision_delimiter || ', ')
-        theme_font :title_page_revision do
-          layout_prose revision_text,
-            align: title_align,
-            margin: 0,
-            normalize: false
+        indent (@theme.title_page_revision_margin_left || 0), (@theme.title_page_revision_margin_right || 0) do
+          theme_font :title_page_revision do
+            layout_prose revision_text,
+              align: title_align,
+              margin: 0,
+              normalize: false
+          end
         end
         move_down(@theme.title_page_revision_margin_bottom || 0)
       end
