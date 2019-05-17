@@ -159,13 +159,12 @@ class Converter < ::Prawn::Document
 
     # promote anonymous preface (defined using preamble block) to preface section
     # FIXME this should be done in core
-    if doc.doctype == 'book' && (blk_0 = doc.blocks[0]) && blk_0.context == :preamble &&
-        blk_0.title? && blk_0.blocks[0].style != 'abstract' && (blk_1 = doc.blocks[1]) && blk_1.context == :section
+    if doc.doctype == 'book' && (blk_0 = doc.blocks[0]) && blk_0.context == :preamble && blk_0.title? &&
+        !blk_0.title.nil_or_empty? && blk_0.blocks[0].style != 'abstract' && (blk_1 = doc.blocks[1]) && blk_1.context == :section
       preface = Section.new doc, blk_1.level, false, attributes: { 1 => 'preface', 'style' => 'preface' }
       preface.special = true
       preface.sectname = 'preface'
-      # NOTE the premable will only have a title if preface-title is set, so this fallback is redundant
-      preface.title = doc.attr 'preface-title', 'Preface'
+      preface.title = blk_0.instance_variable_get :@title
       # QUESTION should ID be generated from raw or converted title? core is not clear about this
       preface.id = preface.generate_id
       preface.blocks.replace blk_0.blocks.map {|b| b.parent = preface; b }

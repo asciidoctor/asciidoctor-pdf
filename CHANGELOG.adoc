@@ -20,6 +20,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * don't allow running_content_start_at key to affect page numbering (#1041)
 * substitute \{chapter-title} property on front matter pages (replace with doctitle and toc-title, respectively, when running content starts before first page of body) (#1040)
 * allow side margins to be set on elements on title page (#824)
+* don't promote preamble to preface if preface-title attribute is empty
 
 == 1.5.0.alpha.17 (2019-04-23) - @mojavelinux
 

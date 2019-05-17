@@ -47,7 +47,51 @@ describe 'Asciidoctor::PDF::Converter - Sections' do
     (expect pdf.text.map {|it| it.values_at :string, :font_name }).to eql expected_text
   end
 
-  it 'should promote anonymous preface in book doctype to preface section if preface-title attribute is set' do
+  it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is not set' do
+    input = <<~'EOS'
+    = Book Title
+    :doctype: book
+
+    anonymous preface
+
+    == First Chapter
+
+    chapter content
+    EOS
+
+    pdf = to_pdf input
+    names = get_names pdf
+    (expect names.keys).not_to include '_preface'
+
+    text = (to_pdf input, analyze: true).text
+    (expect text[1][:string]).to eql 'anonymous preface'
+    (expect text[1][:font_size]).to eql 13
+  end
+
+  # QUESTION is this the right behavior? should the value default to Preface instead?
+  it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is empty' do
+    input = <<~'EOS'
+    = Book Title
+    :doctype: book
+    :preface-title:
+
+    anonymous preface
+
+    == First Chapter
+
+    chapter content
+    EOS
+
+    pdf = to_pdf input
+    names = get_names pdf
+    (expect names.keys).not_to include '_preface'
+
+    text = (to_pdf input, analyze: true).text
+    (expect text[1][:string]).to eql 'anonymous preface'
+    (expect text[1][:font_size]).to eql 13
+  end
+
+  it 'should promote anonymous preface in book doctype to preface section if preface-title attribute is non-empty' do
     input = <<~'EOS'
     = Book Title
     :doctype: book
