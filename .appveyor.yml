@@ -1,0 +1,19 @@
+version: '{build}'
+skip_tags: true
+clone_depth: 2
+environment:
+  matrix:
+  # see https://www.appveyor.com/docs/build-environment/#ruby for list of installed Ruby runtimes
+  - ruby_version: '26'
+init:
+- set PATH=C:\Ruby%ruby_version%\bin;%PATH:C:\Ruby193\bin;=%
+- echo %PATH%
+- ruby -v
+- gem -v
+- bundle version
+install:
+- bundle --jobs=3 --path=.bundle\gems
+build_script:
+- bundle exec rake build
+test_script:
+- bundle exec rake spec
