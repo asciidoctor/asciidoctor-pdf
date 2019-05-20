@@ -172,4 +172,24 @@ describe 'Asciidoctor::PDF::Converter - Tables' do
     ok_text = (pdf.find_text 'OK')[0]
     (expect ok_text[:x]).to eql 101.12
   end if asciidoctor_1_5_7_or_better?
+
+  context 'AsciiDoc table cell' do
+    it 'should convert blocks in an AsciiDoc table cell' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      |===
+      a|
+      [start=10]
+      . ten
+      . eleven
+      . twelve
+
+      [%hardbreaks]
+      buckle
+      my
+      shoe
+      |===
+      EOS
+      (expect pdf.lines).to eql ['10.ten', '11.eleven', '12.twelve', 'buckle', 'my', 'shoe']
+    end
+  end
 end
