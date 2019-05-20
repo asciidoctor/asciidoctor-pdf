@@ -47,6 +47,26 @@ describe 'Asciidoctor::PDF::Converter - Sections' do
     (expect pdf.text.map {|it| it.values_at :string, :font_name }).to eql expected_text
   end
 
+  it 'should add destination for each section' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+
+    == Level 1
+
+    === Level 2
+
+    ==== Level 3
+
+    ===== Level 4
+    EOS
+
+    names = get_names pdf
+    (expect names).to include '_level_1'
+    (expect names).to include '_level_2'
+    (expect names).to include '_level_3'
+    (expect names).to include '_level_4'
+  end
+
   it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is not set' do
     input = <<~'EOS'
     = Book Title
