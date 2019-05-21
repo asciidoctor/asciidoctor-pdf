@@ -1,6 +1,19 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Lists' do
+  context 'Unordered List' do
+    it 'should use marker specified by style' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [square]
+      * one
+      * two
+      * three
+      EOS
+
+      (expect pdf.lines).to eql ['▪one', '▪two', '▪three']
+    end
+  end
+
   context 'Ordered List' do
     it 'should number list items using arabic numbering by default' do
       pdf = to_pdf <<~'EOS', analyze: true
