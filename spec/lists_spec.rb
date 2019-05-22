@@ -29,9 +29,9 @@ describe 'Asciidoctor::PDF::Converter - Lists' do
     it 'should use marker specified by style' do
       pdf = to_pdf <<~'EOS', analyze: true
       [lowerroman]
-      . a
-      . b
-      . c
+      . one
+      . two
+      . three
       EOS
 
       (expect pdf.lines).to eql ['i.one', 'ii.two', 'iii.three']
