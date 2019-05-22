@@ -25,6 +25,17 @@ describe 'Asciidoctor::PDF::Converter - Lists' do
       (expect pdf.strings).to eql %w(1. a 2. b 3. c)
       (expect pdf.lines).to eql ['1.a', '2.b', '3.c']
     end
+
+    it 'should use marker specified by style' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [lowerroman]
+      . a
+      . b
+      . c
+      EOS
+
+      (expect pdf.lines).to eql ['i.one', 'ii.two', 'iii.three']
+    end
   end
 
   context 'Description List' do
