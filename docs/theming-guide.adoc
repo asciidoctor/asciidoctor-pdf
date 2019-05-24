@@ -96,6 +96,15 @@ link:
   font_color: #002FA7
 outline_list:
   indent: $base_font_size * 1.5
+footer:
+  height: $base_line_height_length * 2.5
+  line_height: 1
+  recto:
+    right:
+      content: '{page-number}'
+  verso:
+    left:
+      content: $footer_recto_right_content
 ----
 
 When creating a new theme, you only have to define the keys you want to override from the base theme, which is loaded prior to loading your custom theme.
@@ -3200,6 +3209,7 @@ If value is not specified, dot leaders are shown for all levels.
 === Running Content (Header & Footer)
 
 The keys in this category control the arrangement and style of running header and footer content.
+Please note that the running content will _not_ be used unless a) the periphery (header or footer) is configured and b) the height key for the periphery is assigned a value.
 
 [cols="3,4,5l"]
 |===
@@ -3403,7 +3413,7 @@ The keys in this category control the arrangement and style of running header an
       content: '\{page-number}'
 |===
 . The background color spans the width of the page, as does the border when a background color is specified.
-. If the height is not set, the running content at this periphery is disabled.
+. *If the height is not set, the running content at this periphery is disabled.*
 . If the side padding is negative, the content will bleed into the margin of the page.
 . `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
