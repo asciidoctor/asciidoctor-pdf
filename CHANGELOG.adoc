@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * restore compatibility with Asciidoctor back to 1.5.3 and add verification to test matrix (#1038)
 * show parts in toc when toclevels=0 (#783)
+* add support for autonumbered callouts in source blocks (#1076)
 * fix duplication of footnotes in keep together regions (#1047)
 * display standalone preamble in book normally (#1051)
 * allow outline depth to be set using outlinelevels attribute independent of toclevels (#1054)

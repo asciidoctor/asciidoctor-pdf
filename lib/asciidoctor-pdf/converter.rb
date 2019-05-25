@@ -90,8 +90,8 @@ class Converter < ::Prawn::Document
   MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'
   MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|p[txc])?$/
   PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
-  # CalloutExtractRx synced from /lib/asciidoctor.rb of Asciidoctor core
-  CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(--|)(\d+)\2> ?(?=(?:\\?<!?\2\d+\2> ?)*$)/
+  # CalloutExtractRx taken from lib/asciidoctor/rx.rb of Asciidoctor core
+  CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(|--)(\d+|\.)\2> ?(?=(?:\\?<!?\2\d+\2> ?)*$)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
   UriBreakCharsRx = /(?:\/|\?|&amp;|#)(?!$)/
   UriBreakCharRepl = %(\\&#{ZeroWidthSpace})
@@ -1575,15 +1575,16 @@ class Converter < ::Prawn::Document
   # and the mapping of lines to conums as the second.
   def extract_conums string
     conum_mapping = {}
+    auto_num = 0
     string = string.split(LF).map.with_index {|line, line_num|
       # FIXME we get extra spaces before numbers if more than one on a line
       if line.include? '<'
         line.gsub(CalloutExtractRx) {
           # honor the escape
-          if $1 == '\\'
-            $&.sub '\\', ''
+          if $1 == ?\\
+            $&.sub $1, ''
           else
-            (conum_mapping[line_num] ||= []) << $3.to_i
+            (conum_mapping[line_num] ||= []) << ($3 == '.' ? (auto_num += 1) : $3.to_i)
             ''
           end
         }
