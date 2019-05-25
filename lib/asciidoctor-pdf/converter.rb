@@ -116,7 +116,8 @@ class Converter < ::Prawn::Document
     @list_numbers = []
     @list_bullets = []
     @capabilities = {
-      expands_tabs: (::Asciidoctor::VERSION.start_with? '1.5.3.') || AsciidoctorVersion >= (::Gem::Version.create '1.5.3')
+      expands_tabs: (::Asciidoctor::VERSION.start_with? '1.5.3.') || AsciidoctorVersion >= (::Gem::Version.create '1.5.3'),
+      syntax_highlighter: AsciidoctorVersion >= (::Gem::Version.create '2.0.0'),
     }
   end
 
@@ -1408,13 +1409,27 @@ class Converter < ::Prawn::Document
 
     # HACK disable built-in syntax highlighter; must be done before calling node.content!
     if node.style == 'source' && node.attributes['language'] &&
-        (highlighter = node.document.attributes['source-highlighter']) &&
-        (SourceHighlighters.include? highlighter)
+        (highlighter = node.document.attributes['source-highlighter']) && (SourceHighlighters.include? highlighter) &&
+        (@capabilities[:syntax_highlighter] ? node.document.syntax_highlighter.highlight? : true)
+      case highlighter
+      when 'coderay'
+        unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
+          highlighter = nil if (Helpers.require_library CodeRayRequirePath, 'coderay', :warn).nil?
+        end
+      when 'pygments'
+        unless defined? ::Pygments
+          highlighter = nil if (Helpers.require_library 'pygments', 'pygments.rb', :warn).nil?
+        end
+      when 'rouge'
+        unless defined? ::Rouge::Formatters::Prawn
+          highlighter = nil if (Helpers.require_library RougeRequirePath, 'rouge', :warn).nil?
+        end
+      end
       prev_subs = (subs = node.subs).dup
-      # NOTE the highlight sub is only set for coderay and pygments atm
+      # NOTE the highlight sub is only set for coderay, rouge, and pygments atm
       highlight_idx = subs.index :highlight
       # NOTE scratch? here only applies if listing block is nested inside another block
-      if scratch?
+      if !highlighter || scratch?
         highlighter = nil
         if highlight_idx
           # switch the :highlight sub back to :specialcharacters
@@ -1443,7 +1458,6 @@ class Converter < ::Prawn::Document
 
     source_chunks = case highlighter
     when 'coderay'
-      Helpers.require_library CodeRayRequirePath, 'coderay' unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
       source_string, conum_mapping = extract_conums source_string
       srclang = node.attr 'language', 'text', false
       begin
@@ -1454,7 +1468,6 @@ class Converter < ::Prawn::Document
       fragments = (::CodeRay.scan source_string, srclang).to_prawn
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     when 'pygments'
-      Helpers.require_library 'pygments', 'pygments.rb' unless defined? ::Pygments
       lexer = ::Pygments::Lexer.find_by_alias(node.attr 'language', 'text', false) || ::Pygments::Lexer.find_by_mimetype('text/plain')
       lexer_opts = {
         nowrap: true,
@@ -1493,7 +1506,6 @@ class Converter < ::Prawn::Document
       fragments = restore_conums fragments, conum_mapping, num_trailing_spaces, linenums if conum_mapping
       fragments = guard_indentation fragments
     when 'rouge'
-      Helpers.require_library RougeRequirePath, 'rouge' unless defined? ::Rouge::Formatters::Prawn
       lexer = ::Rouge::Lexer.find(node.attr 'language', 'text', false) || ::Rouge::Lexers::PlainText
       lexer_opts = lexer.tag == 'php' ? { start_inline: !(node.option? 'mixed') } : {}
       formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap)
