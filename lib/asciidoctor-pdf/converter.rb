@@ -90,8 +90,7 @@ class Converter < ::Prawn::Document
   MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'
   MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|p[txc])?$/
   PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
-  # CalloutExtractRx taken from lib/asciidoctor/rx.rb of Asciidoctor core
-  CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(|--)(\d+|\.)\2> ?(?=(?:\\?<!?\2\d+\2> ?)*$)/
+  CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(|--)(\d+|\.)\2> ?(?=(?:\\?<!?\2(?:\d+|\.)\2>)*$)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
   UriBreakCharsRx = /(?:\/|\?|&amp;|#)(?!$)/
   UriBreakCharRepl = %(\\&#{ZeroWidthSpace})
