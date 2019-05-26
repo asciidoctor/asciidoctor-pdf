@@ -74,6 +74,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * guard against pygments returning nil (#884)
 * encode quotes in alt text of inline image (#977)
 * fix crash when menu macro is used in a section or block title (#934)
+* remove duplicate message when syntax highlighter is unavailable; don't crash processor (#1078)
 * only look for the start attribute on the code block itself when highlighting with rouge
 * apply block styling to background for line-oriented tokens in rouge by default
 * detect pagenum ranges in index when media is print or prepress (#906)
