@@ -111,6 +111,18 @@ When creating a new theme, you only have to define the keys you want to override
 All the available keys are documented in <<Keys>>.
 The converter uses the information from the theme map to help construct the PDF.
 
+Instead of writing a theme from scratch, you can extend the default theme using the `extends` key as follows:
+
+[source,yaml]
+----
+extends: default
+base:
+  color: #ff0000
+----
+
+You can also point the extends key at another custom theme to extend from it.
+Currently, the base theme is always loaded first.
+
 WARNING: If you start a new theme from scratch, we strongly recommend defining TrueType fonts and specifying them in the `base` and `literal` categories.
 Otherwise, Asciidoctor PDF will use built-in AFM fonts, which can result in missing functionality and warnings.
 
@@ -884,6 +896,33 @@ IMPORTANT: The https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/t
 When creating a theme, all keys are optional.
 Required keys are provided by the base theme.
 Therefore, you only have to declare keys that you want to override.
+
+[#keys-extends]
+=== Extends
+
+A theme can extend another theme using the `extends` key.
+The extends key accepts either a single value or an array of values.
+Each value is interpreted as a filename.
+If the filename equals `default`, it resolves to the location of the default (built-in) theme.
+If the filename is absolute, it's used as is.
+If the filename begins with `./`, it is resolved relative to the current theme file.
+Otherwise, the filename is resolved relative to the value of the `pdf-stylesdir` attribute.
+
+The files references by the extends key are loaded in order just like the main theme file.
+The keys in each theme, including the main theme, are overlaid onto the keys from the previous theme.
+Currently, the base theme is always loaded first.
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|extends
+|String or Array
+(default: [])
+|extends:
+- default
+- ./brand-theme.yml
+|===
 
 [#keys-page]
 === Page
