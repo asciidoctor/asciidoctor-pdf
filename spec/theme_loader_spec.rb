@@ -63,33 +63,6 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.code_font_family).to eql 'M+ 1mn'
       (expect theme.conum_font_family).to eql 'M+ 1mn'
     end
-
-    it 'should load and extend themes specified by extends array' do
-      theme_data = SafeYAML.load <<~EOS
-      extends:
-      - custom-theme.yml
-      - red-theme.yml
-      base:
-        align: justify
-      EOS
-      theme = subject.new.load theme_data, nil, fixtures_dir
-      (expect theme.base_align).to eql 'justify'
-      (expect theme.base_font_family).to eql 'Times-Roman'
-      (expect theme.base_font_color).to eql 'FF0000'
-    end
-
-    it 'should extend default theme out of built-in themes directory if value of extends entry is default' do
-      theme_data = SafeYAML.load <<~EOS
-      extends:
-      - default
-      - red-theme.yml
-      base:
-        font_color: 0000ff
-      EOS
-      theme = subject.new.load theme_data, nil, fixtures_dir
-      (expect theme.base_font_family).to eql 'Noto Serif'
-      (expect theme.base_font_color).to eql '0000FF'
-    end
   end
 
   context '.load_file' do
@@ -98,6 +71,21 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme).not_to be_nil
       (expect theme).to be_an OpenStruct
       (expect theme.to_h).to be_empty
+    end
+
+    it 'should load and extend themes specified by extends array' do
+      input_file = ::File.join fixtures_dir, 'extended-custom-theme.yml'
+      theme = subject.load_file input_file, nil, fixtures_dir
+      (expect theme.base_align).to eql 'justify'
+      (expect theme.base_font_family).to eql 'Times-Roman'
+      (expect theme.base_font_color).to eql 'FF0000'
+    end
+
+    it 'should extend built-in default theme if value of extends entry is default' do
+      input_file = ::File.join fixtures_dir, 'extended-red-theme.yml'
+      theme = subject.load_file input_file, nil, fixtures_dir
+      (expect theme.base_font_family).to eql 'Noto Serif'
+      (expect theme.base_font_color).to eql '0000FF'
     end
   end
 

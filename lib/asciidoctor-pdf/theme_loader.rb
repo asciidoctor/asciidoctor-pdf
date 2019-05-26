@@ -75,24 +75,24 @@ class ThemeLoader
 
   def self.load_file filename, theme_data = nil, theme_path = nil
     yaml_data = ::SafeYAML.load (::File.read filename, encoding: ::Encoding::UTF_8).each_line.map {|l| l.sub HexColorEntryRx, '\k<k>: \'\k<v>\'' }.join
+    if ::Hash === yaml_data && (extend_files = yaml_data.delete 'extends')
+      [*extend_files].each do |extend_file|
+        if extend_file == 'default'
+          extend_file = resolve_theme_file extend_file, (extend_theme_path = ThemesDir)
+        elsif extend_file.start_with? './'
+          extend_file = resolve_theme_file extend_file, (extend_theme_path = (::File.dirname ::File.absolute_path filename))
+        else
+          extend_file = resolve_theme_file extend_file, (extend_theme_path = theme_path)
+        end
+        theme_data = load_file extend_file, theme_data, extend_theme_path
+      end
+    end
     self.new.load yaml_data, theme_data, theme_path
   end
 
   def load hash, theme_data = nil, theme_path = nil
     theme_data ||= ::OpenStruct.new
     return theme_data unless ::Hash === hash
-    if (extend_files = hash.delete 'extends')
-      [*extend_files].each do |extend_file|
-        if extend_file == 'default'
-          extend_file = self.class.resolve_theme_file extend_file, (extend_theme_path = ThemesDir)
-        elsif extend_file.start_with? './'
-          extend_file = self.class.resolve_theme_file extend_file, (extend_theme_path = (::File.dirname ::File.absolute_path filename))
-        else
-          extend_file = self.class.resolve_theme_file extend_file, (extend_theme_path = theme_path)
-        end
-        theme_data = self.class.load_file extend_file, theme_data, extend_theme_path
-      end
-    end
     base_code_font_family = theme_data.delete 'code_font_family'
     base_conum_font_family = theme_data.delete 'conum_font_family'
     hash.inject(theme_data) {|data, (key, val)| process_entry key, val, data }
