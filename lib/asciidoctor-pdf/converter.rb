@@ -1024,6 +1024,8 @@ class Converter < ::Prawn::Document
       RomanNumeral.new 'I'
     when 'lowergreek'
       LowercaseGreekA
+    when 'unnumbered', 'no-bullet'
+      nil
     else
       '1'
     end
@@ -1144,9 +1146,11 @@ class Converter < ::Prawn::Document
       end
     when :olist
       complex = node.complex?
-      dir = (node.parent.option? 'reversed') ? :pred : :next
-      @list_numbers << ((index = @list_numbers.pop).public_send dir)
-      marker = %(#{index}.)
+      if (index = @list_numbers.pop)
+        marker = %(#{index}.)
+        dir = (node.parent.option? 'reversed') ? :pred : :next
+        @list_numbers << (index = index.public_send dir)
+      end
     when :dlist
       # NOTE list.style is 'qanda'
       complex = node[1] && node[1].complex?
