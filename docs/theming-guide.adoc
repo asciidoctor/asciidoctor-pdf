@@ -905,8 +905,8 @@ The extends key accepts either a single value or an array of values.
 Each value is interpreted as a filename.
 If the filename equals `default`, it resolves to the location of the default (built-in) theme.
 If the filename is absolute, it's used as is.
-If the filename begins with `./`, it's resolved relative to the current theme file.
-Otherwise, the filename is resolved relative to the value of the `pdf-stylesdir` attribute.
+If the filename begins with `./`, it's resolved as is relative to the current theme file.
+Otherwise, the filename is resolved in the same way as the value of the `pdf-style` attribute (resolved relative to the value of the `pdf-stylesdir` attribute).
 
 Currently, the base theme is always loaded first.
 Then, the files referenced by the extends key are loaded in order.
