@@ -1127,19 +1127,20 @@ class Converter < ::Prawn::Document
     case (list_type = list.context)
     when :ulist
       complex = node.complex?
-      marker_type = @list_bullets[-1]
-      if marker_type == :checkbox
-        # QUESTION should we remove marker indent if not a checkbox?
-        if node.attr? 'checkbox', nil, false
-          marker_type = (node.attr? 'checked', nil, false) ? :checked : :unchecked
-          marker = @theme[%(ulist_marker_#{marker_type}_content)] || BallotBox[marker_type]
+      if (marker_type = @list_bullets[-1])
+        if marker_type == :checkbox
+          # QUESTION should we remove marker indent if not a checkbox?
+          if node.attr? 'checkbox', nil, false
+            marker_type = (node.attr? 'checked', nil, false) ? :checked : :unchecked
+            marker = @theme[%(ulist_marker_#{marker_type}_content)] || BallotBox[marker_type]
+          end
+        else
+          marker = @theme[%(ulist_marker_#{marker_type}_content)] || Bullets[marker_type]
         end
-      else
-        marker = @theme[%(ulist_marker_#{marker_type}_content)] || Bullets[marker_type]
+        [:font_color, :font_family, :font_size, :line_height].each do |prop|
+          marker_style[prop] = @theme[%(ulist_marker_#{marker_type}_#{prop})] || @theme[%(ulist_marker_#{prop})] || marker_style[prop]
+        end if marker
       end
-      [:font_color, :font_family, :font_size, :line_height].each do |prop|
-        marker_style[prop] = @theme[%(ulist_marker_#{marker_type}_#{prop})] || @theme[%(ulist_marker_#{prop})] || marker_style[prop]
-      end if marker
     when :olist
       complex = node.complex?
       dir = (node.parent.option? 'reversed') ? :pred : :next

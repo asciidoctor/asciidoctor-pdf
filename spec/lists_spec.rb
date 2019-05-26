@@ -12,6 +12,24 @@ describe 'Asciidoctor::PDF::Converter - Lists' do
 
       (expect pdf.lines).to eql ['▪one', '▪two', '▪three']
     end
+
+    it 'should make bullets invisible if list has no-bullet style' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      reference
+
+      [no-bullet]
+      * wood
+      * hammer
+      * nail
+      EOS
+
+      (expect pdf.lines[1..-1]).to eql %w(wood hammer nail)
+      left_margin = pdf.text[0][:x]
+      indents = pdf.text[1..-1].map {|it| it[:x] }
+      (expect indents.size).to eql 3
+      (expect indents.uniq.size).to eql 1
+      (expect indents[0]).to be > left_margin
+    end
   end
 
   context 'Ordered List' do
