@@ -83,12 +83,14 @@ class ThemeLoader
     return theme_data unless ::Hash === hash
     if (extend_files = hash.delete 'extends')
       [*extend_files].each do |extend_file|
-        if extend_file.start_with? './'
-          extend_file = ::File.expand_path extend_file, (::File.dirname ::File.absolute_path filename)
+        if extend_file == 'default'
+          extend_file = self.class.resolve_theme_file extend_file, (extend_theme_path = ThemesDir)
+        elsif extend_file.start_with? './'
+          extend_file = self.class.resolve_theme_file extend_file, (extend_theme_path = (::File.dirname ::File.absolute_path filename))
         else
-          extend_file = self.class.resolve_theme_file extend_file, (extend_file == 'default' ? ThemesDir : theme_path)
+          extend_file = self.class.resolve_theme_file extend_file, (extend_theme_path = theme_path)
         end
-        theme_data = self.class.load_file extend_file, theme_data, theme_path
+        theme_data = self.class.load_file extend_file, theme_data, extend_theme_path
       end
     end
     base_code_font_family = theme_data.delete 'code_font_family'
