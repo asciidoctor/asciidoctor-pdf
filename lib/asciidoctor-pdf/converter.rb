@@ -1028,7 +1028,7 @@ class Converter < ::Prawn::Document
     end
     # TODO support start values < 1 (issue #498)
     if (start = ((node.attr 'start', nil, false) || ((node.option? 'reversed') ? node.items.size : 1)).to_i) > 1
-      (start - 1).times { list_number = list_number.next  }
+      (start - 1).times { list_number = list_number.next }
     end
     @list_numbers << list_number
     convert_outline_list node
