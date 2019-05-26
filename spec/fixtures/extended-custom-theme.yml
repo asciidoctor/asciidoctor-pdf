@@ -1,0 +1,5 @@
+extends:
+- custom-theme.yml
+- red-theme.yml
+base:
+  align: justify

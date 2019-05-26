@@ -1,0 +1,5 @@
+extends:
+- default
+- ./red-theme.yml
+base:
+  font_color: 0000ff
