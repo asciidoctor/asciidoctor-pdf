@@ -112,7 +112,7 @@ class Converter < ::Prawn::Document
       # NOTE enabling data-uri forces Asciidoctor Diagram to produce absolute image paths
       doc.attributes['data-uri'] = ((doc.instance_variable_get :@attribute_overrides) || {})['data-uri'] = ''
     end
-    @list_numbers = []
+    @list_numerals = []
     @list_bullets = []
     @capabilities = {
       expands_tabs: (::Asciidoctor::VERSION.start_with? '1.5.3.') || AsciidoctorVersion >= (::Gem::Version.create '1.5.3'),
@@ -928,10 +928,10 @@ class Converter < ::Prawn::Document
       end
     end
     add_dest_for_block node if node.id
-    @list_numbers ||= []
+    @list_numerals ||= []
     # FIXME move \u2460 to constant (or theme setting)
     # \u2460 = circled one, \u24f5 = double circled one, \u278b = negative circled one
-    @list_numbers << %(\u2460)
+    @list_numerals << %(\u2460)
     #stroke_horizontal_rule @theme.caption_border_bottom_color
     line_metrics = calc_line_metrics @theme.base_line_height
     node.items.each_with_index do |item, idx|
@@ -939,7 +939,7 @@ class Converter < ::Prawn::Document
       advance_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top) + 1
       convert_colist_item item
     end
-    @list_numbers.pop
+    @list_numerals.pop
     # correct bottom margin of last item
     list_margin_bottom = @theme.prose_margin_bottom
     margin_bottom list_margin_bottom - @theme.outline_list_item_spacing
@@ -951,7 +951,7 @@ class Converter < ::Prawn::Document
       marker_width = rendered_width_of_string %(#{conum_glyph 1}x)
       float do
         bounding_box [0, cursor], width: marker_width do
-          @list_numbers << (index = @list_numbers.pop).next
+          @list_numerals << (index = @list_numerals.pop).next
           theme_font :conum do
             layout_prose index, align: :center, line_height: @theme.conum_line_height, inline_format: false, margin: 0
           end
@@ -969,9 +969,9 @@ class Converter < ::Prawn::Document
 
     case node.style
     when 'qanda'
-      (@list_numbers ||= []) << '1'
+      (@list_numerals ||= []) << '1'
       convert_outline_list node
-      @list_numbers.pop
+      @list_numerals.pop
     else
       # TODO check if we're within one line of the bottom of the page
       # and advance to the next page if so (similar to logic for section titles)
@@ -1007,7 +1007,7 @@ class Converter < ::Prawn::Document
 
   def convert_olist node
     add_dest_for_block node if node.id
-    @list_numbers ||= []
+    @list_numerals ||= []
     # TODO move list_number resolve to a method
     list_number = case node.style
     when 'arabic'
@@ -1035,9 +1035,9 @@ class Converter < ::Prawn::Document
     if (start = ((node.attr 'start', nil, false) || ((node.option? 'reversed') ? node.items.size : 1)).to_i) > 1
       (start - 1).times { list_number = list_number.next }
     end
-    @list_numbers << list_number
+    @list_numerals << list_number
     convert_outline_list node
-    @list_numbers.pop
+    @list_numerals.pop
   end
 
   def convert_ulist node
@@ -1095,7 +1095,7 @@ class Converter < ::Prawn::Document
     complex = false
     # ...or if we want to give all items in the list the same treatment
     #complex = node.items.find(&:complex?) ? true : false
-    if (node.context == :ulist && !@list_bullets[-1]) || (node.context == :olist && !@list_numbers[-1])
+    if (node.context == :ulist && !@list_bullets[-1]) || (node.context == :olist && !@list_numerals[-1])
       if node.style == 'unstyled'
         # unstyled takes away all indentation
         list_indent = 0
@@ -1148,19 +1148,19 @@ class Converter < ::Prawn::Document
       end
     when :olist
       complex = node.complex?
-      if (index = @list_numbers.pop)
+      if (index = @list_numerals.pop)
         if index.empty?
           marker = ''
         else
           marker = %(#{index}.)
           dir = (node.parent.option? 'reversed') ? :pred : :next
-          @list_numbers << (index = index.public_send dir)
+          @list_numerals << (index = index.public_send dir)
         end
       end
     when :dlist
       # NOTE list.style is 'qanda'
       complex = node[1] && node[1].complex?
-      @list_numbers << (index = @list_numbers.pop).next
+      @list_numerals << (index = @list_numerals.pop).next
       marker = %(#{index}.)
     else
       complex = node.complex?
