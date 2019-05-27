@@ -54,6 +54,24 @@ describe 'Asciidoctor::PDF::Converter - Lists' do
 
       (expect pdf.lines).to eql ['i.one', 'ii.two', 'iii.three']
     end
+
+    it 'should make numbers invisible if list has unnumbered style' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      reference
+
+      [unnumbered]
+      . one
+      . two
+      . three
+      EOS
+
+      (expect pdf.lines[1..-1]).to eql %w(one two three)
+      left_margin = pdf.text[0][:x]
+      indents = pdf.text[1..-1].map {|it| it[:x] }
+      (expect indents.size).to eql 3
+      (expect indents.uniq.size).to eql 1
+      (expect indents[0]).to be > left_margin
+    end
   end
 
   context 'Description List' do
