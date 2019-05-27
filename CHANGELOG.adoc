@@ -24,6 +24,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * don't promote preamble to preface if preface-title attribute is empty
 * expand padding value for running content (header and footer) to array
 * add support for unnumbered (and no-bullet) style on ordered list (#1073)
+* add visual regression capability to test suite (@beatchristen)
 
 == 1.5.0.alpha.17 (2019-04-23) - @mojavelinux
 

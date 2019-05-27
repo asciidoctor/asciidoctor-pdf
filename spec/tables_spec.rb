@@ -116,7 +116,7 @@ describe 'Asciidoctor::PDF::Converter - Tables' do
 
   it 'should not accumulate cell padding between tables' do
     theme_overrides = { table_cell_padding: [5, 5, 5, 5] }
-    pdf = to_pdf <<~'EOS', theme_overrides: theme_overrides, analyze: :true
+    pdf = to_pdf <<~'EOS', pdf_theme: (build_pdf_theme theme_overrides), analyze: true
     |===
     |A |B
 

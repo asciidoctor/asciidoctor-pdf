@@ -50,4 +50,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake', '~> 12.3.0'
   s.add_development_dependency 'rspec', '~> 3.8.0'
   s.add_development_dependency 'pdf-inspector', '~> 1.3.0'
+  s.add_development_dependency 'chunky_png', '~> 1.3.0'
 end

@@ -3,6 +3,7 @@ begin
   RSpec::Core::RakeTask.new :spec do |t|
     t.verbose = true
     opts = %w(-f progress)
+    opts.append '-t', '~integration' if ENV['UNIT']
     opts.unshift '-w' if !ENV['CI'] || ENV['COVERAGE']
     t.rspec_opts = opts
   end

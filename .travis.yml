@@ -1,4 +1,8 @@
 dist: trusty
+addons:
+  apt:
+    packages:
+    - poppler-utils
 git:
   # use depth 2 just in case two refs get pushed at once (like a tag)
   depth: 2
