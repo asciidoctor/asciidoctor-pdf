@@ -1024,8 +1024,10 @@ class Converter < ::Prawn::Document
       RomanNumeral.new 'I'
     when 'lowergreek'
       LowercaseGreekA
-    when 'unnumbered', 'no-bullet'
+    when 'unstyled', 'unnumbered', 'no-bullet'
       nil
+    when 'none'
+      ''
     else
       '1'
     end
@@ -1093,13 +1095,13 @@ class Converter < ::Prawn::Document
     complex = false
     # ...or if we want to give all items in the list the same treatment
     #complex = node.items.find(&:complex?) ? true : false
-    if node.context == :ulist && !@list_bullets[-1]
+    if (node.context == :ulist && !@list_bullets[-1]) || (node.context == :olist && !@list_numbers[-1])
       if node.style == 'unstyled'
         # unstyled takes away all indentation
         list_indent = 0
       elsif (list_indent = @theme.outline_list_indent) > 0
         # no-bullet aligns text with left-hand side of bullet position (as though there's no bullet)
-        list_indent = [list_indent - (rendered_width_of_string %(\u2022x)), 0].max
+        list_indent = [list_indent - (rendered_width_of_string %(#{node.context == :ulist ? "\u2022" : '1.'}x)), 0].max
       end
     else
       list_indent = @theme.outline_list_indent
@@ -1147,9 +1149,13 @@ class Converter < ::Prawn::Document
     when :olist
       complex = node.complex?
       if (index = @list_numbers.pop)
-        marker = %(#{index}.)
-        dir = (node.parent.option? 'reversed') ? :pred : :next
-        @list_numbers << (index = index.public_send dir)
+        if index.empty?
+          marker = ''
+        else
+          marker = %(#{index}.)
+          dir = (node.parent.option? 'reversed') ? :pred : :next
+          @list_numbers << (index = index.public_send dir)
+        end
       end
     when :dlist
       # NOTE list.style is 'qanda'

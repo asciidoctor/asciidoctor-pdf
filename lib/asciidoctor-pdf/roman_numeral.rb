@@ -94,6 +94,10 @@ class RomanNumeral
     RomanNumeral.new @integer_value - 1, @letter_case
   end
 
+  def empty?
+    false
+  end
+
   def self.int_to_roman value
     result = []
     BaseDigits.keys.reverse_each do |ival|
