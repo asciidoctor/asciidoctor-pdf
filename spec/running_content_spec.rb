@@ -155,6 +155,22 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect pgnum_labels).to eq %w(i 1 2 3 4)
   end
 
+  it 'should expand footer padding from single value' do
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: {}, analyze: true
+    = Document Title
+
+    first page
+
+    <<<
+
+    second page
+    EOS
+
+    p2_text = pdf.find_text page_number: 2
+    (expect p2_text[1][:x]).to be > p2_text[0][:x]
+    (expect p2_text[1][:string]).to eql '2'
+  end
+
   it 'should add running header starting at body if header key is set in theme' do
     theme_overrides = {
       header_font_size: 9,
@@ -205,6 +221,32 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     EOS
 
     (expect pdf.find_text '(Document Title)').to be_empty
+  end
+
+  it 'should expand header padding from single value' do
+    theme_overrides = {
+      header_font_size: 9,
+      header_height: 30,
+      header_line_height: 1,
+      header_padding: 5,
+      header_recto_right_content: '{page-number}',
+      header_verso_left_content: '{page-number}'
+    }
+
+    pdf = to_pdf <<~'EOS', attributes: {}, theme_overrides: theme_overrides, analyze: true
+    = Document Title
+    :nofooter:
+
+    first page
+
+    <<<
+
+    second page
+    EOS
+
+    p2_text = pdf.find_text page_number: 2
+    (expect p2_text[1][:x]).to be > p2_text[0][:x]
+    (expect p2_text[1][:string]).to eql '2'
   end
 
   it 'should use doctitle, toc-title, and preface-title as chapter-title before first chapter' do

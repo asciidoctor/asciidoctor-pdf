@@ -2790,7 +2790,7 @@ class Converter < ::Prawn::Document
       trim_top = page_height
       # NOTE height is required atm
       trim_height = @theme.header_height || page_margin_top
-      trim_padding = @theme.header_padding || [0, 0, 0, 0]
+      trim_padding = inflate_padding @theme.header_padding || 0
       trim_bg_color = resolve_theme_color :header_background_color
       trim_border_width = @theme.header_border_width || @theme.base_border_width
       trim_border_style = (@theme.header_border_style || :solid).to_sym
@@ -2801,7 +2801,7 @@ class Converter < ::Prawn::Document
       trim_line_metrics = calc_line_metrics(@theme.footer_line_height || @theme.base_line_height)
       # NOTE height is required atm
       trim_top = trim_height = @theme.footer_height || page_margin_bottom
-      trim_padding = @theme.footer_padding || [0, 0, 0, 0]
+      trim_padding = inflate_padding @theme.footer_padding || 0
       trim_bg_color = resolve_theme_color :footer_background_color
       trim_border_width = @theme.footer_border_width || @theme.base_border_width
       trim_border_style = (@theme.footer_border_style || :solid).to_sym
