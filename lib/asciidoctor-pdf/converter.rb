@@ -647,7 +647,7 @@ class Converter < ::Prawn::Document
             float do
               bounding_box [0, cursor], width: label_width + lpad[1], height: box_height do
                 stroke_vertical_rule rule_color,
-                    at: bounds.width,
+                    at: bounds.right,
                     line_style: (@theme.admonition_column_rule_style || :solid).to_sym,
                     line_width: rule_width
               end
@@ -3031,7 +3031,7 @@ class Converter < ::Prawn::Document
                 end
                 theme_font %(#{periphery}_#{side}_#{position}) do
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
-                    at: [colspec[:x], trim_content_height + trim_padding[2] + trim_line_metrics.padding_bottom],
+                    at: [colspec[:x], trim_top - trim_padding[0] + (trim_valign == :center ? font.descender * 0.5 : 0)],
                     width: colspec[:width],
                     height: trim_content_height,
                     align: colspec[:align],
