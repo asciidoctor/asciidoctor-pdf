@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::Pdf::Converter - Manpage' do
+describe 'Asciidoctor::PDF::Converter - Manpage' do
   it 'should generate name section automatically' do
     pdf = to_pdf <<~'EOS', doctype: :manpage, analyze: true
     = cmd(1)

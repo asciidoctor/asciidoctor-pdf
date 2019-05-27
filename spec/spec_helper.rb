@@ -193,7 +193,7 @@ RSpec.configure do |config|
   end
 
   def build_pdf_theme overrides = {}
-    Asciidoctor::Pdf::ThemeLoader.load_theme.tap {|theme| overrides.each {|k, v| theme[k] = v } }
+    Asciidoctor::PDF::ThemeLoader.load_theme.tap {|theme| overrides.each {|k, v| theme[k] = v } }
   end
 
   def extract_outline pdf, list = pdf.outlines
