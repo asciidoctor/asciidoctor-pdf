@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::PDF::Converter - Paragraphs' do
+describe 'Asciidoctor::PDF::Converter - Paragraph' do
   it 'should normalize whitespace' do
     pdf = to_pdf <<~EOS, analyze: true
     He's  a  real  nowhere  man,

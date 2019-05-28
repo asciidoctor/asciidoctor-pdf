@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::PDF::Converter - Breaks' do
+describe 'Asciidoctor::PDF::Converter - Break' do
   context 'Line Breaks' do
     it 'should place text on separate line after explicit line break' do
       pdf = to_pdf <<~'EOS', analyze: true

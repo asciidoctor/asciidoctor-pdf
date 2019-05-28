@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::PDF::Converter - Cover Pages' do
+describe 'Asciidoctor::PDF::Converter - Cover Page' do
   it 'should add front cover page if front-cover-image is set' do
     pdf = to_pdf <<~'EOS', attributes: { 'imagesdir' => fixtures_dir }, analyze: true
     = Document Title

@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::PDF::Converter - Lists' do
+describe 'Asciidoctor::PDF::Converter - List' do
   context 'Unordered List' do
     it 'should use marker specified by style' do
       pdf = to_pdf <<~'EOS', analyze: true

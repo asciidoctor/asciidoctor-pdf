@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::PDF::Converter - Source Blocks' do
+describe 'Asciidoctor::PDF::Converter - Source' do
   context 'Callouts' do
     it 'should substitute autonumber callouts with circled numbers when using rouge as syntax highlighter' do
       pdf = to_pdf <<~'EOS', analyze: true

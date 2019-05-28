@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::PDF::Converter - Sections' do
+describe 'Asciidoctor::PDF::Converter - Section' do
   it 'should apply font size according to section level' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Document Title

@@ -1,6 +1,6 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::PDF::Converter - Images' do
+describe 'Asciidoctor::PDF::Converter - Image' do
   context 'SVG' do
     it 'should not leave gap around SVG that specifies viewBox but no width' do
       input = <<~'EOS'
