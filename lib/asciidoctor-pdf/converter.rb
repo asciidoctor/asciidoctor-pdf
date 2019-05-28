@@ -114,6 +114,7 @@ class Converter < ::Prawn::Document
     end
     @capabilities = {
       expands_tabs: (::Asciidoctor::VERSION.start_with? '1.5.3.') || AsciidoctorVersion >= (::Gem::Version.create '1.5.3'),
+      special_sectnums: AsciidoctorVersion >= (::Gem::Version.create '1.5.7'),
       syntax_highlighter: AsciidoctorVersion >= (::Gem::Version.create '2.0.0'),
     }
   end
@@ -153,6 +154,9 @@ class Converter < ::Prawn::Document
     unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
       doc.attributes['pagenums'] = ''
     end
+    if (idx_sect = doc.sections.find {|candidate| candidate.sectname == 'index' }) && idx_sect.numbered
+      idx_sect.numbered = false
+    end unless @capabilities[:special_sectnums]
     #assign_missing_section_ids doc
 
     # promote anonymous preface (defined using preamble block) to preface section

@@ -25,6 +25,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * expand padding value for running content (header and footer) to array
 * add support for unnumbered (and no-bullet) style on ordered list (#1073)
 * add visual regression capability to test suite (@beatchristen)
+* ensure index section doesn't get numbered when using Asciidoctor < 1.5.7
 
 == 1.5.0.alpha.17 (2019-04-23) - @mojavelinux
 

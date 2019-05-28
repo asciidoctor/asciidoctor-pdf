@@ -53,6 +53,30 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
   end
 
+  it 'should not assign number or chapter label to index section' do
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+    = Cats & Dogs
+    :sectnums:
+
+    == Cats
+
+    We know that ((cats)) control the internet.
+
+    == Dogs
+
+    Cats may rule, well, everything.
+    But ((dogs)) are a human's best friend.
+
+    [index]
+    == Index
+    EOS
+
+    index_text = pdf.find_text string: 'Chapter 3. Index', page_number: 4
+    (expect index_text.size).to eql 0
+    index_text = pdf.find_text string: 'Index', page_number: 4
+    (expect index_text.size).to eql 1
+  end
+
   it 'should not automatically promote nested index terms' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
