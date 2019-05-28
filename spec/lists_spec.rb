@@ -30,6 +30,30 @@ describe 'Asciidoctor::PDF::Converter - Lists' do
       (expect indents.uniq.size).to eql 1
       (expect indents[0]).to be > left_margin
     end
+
+    it 'should apply proper indentation for each list style that hides the marker' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      reference
+
+      [unstyled]
+      * unstyled
+
+      [no-bullet]
+      * no-bullet
+
+      [none]
+      * none
+      EOS
+
+      (expect pdf.text.size).to eql 4
+      left_margin = (pdf.find_text string: 'reference')[0][:x]
+      unstyled_item = (pdf.find_text string: 'unstyled')[0]
+      (expect unstyled_item[:x]).to eql left_margin
+      no_bullet_item = (pdf.find_text string: 'no-bullet')[0]
+      (expect no_bullet_item[:x]).to eql 56.3805
+      none_item = (pdf.find_text string: 'none')[0]
+      (expect none_item[:x]).to eql 66.24
+    end
   end
 
   context 'Ordered List' do
@@ -71,6 +95,35 @@ describe 'Asciidoctor::PDF::Converter - Lists' do
       (expect indents.size).to eql 3
       (expect indents.uniq.size).to eql 1
       (expect indents[0]).to be > left_margin
+    end
+
+    it 'should apply proper indentation for each list style that hides the marker' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      reference
+
+      [unstyled]
+      . unstyled
+
+      [no-bullet]
+      . no-bullet
+
+      [unnumbered]
+      . unnumbered
+
+      [none]
+      . none
+      EOS
+
+      (expect pdf.text.size).to eql 5
+      left_margin = (pdf.find_text string: 'reference')[0][:x]
+      unstyled_item = (pdf.find_text string: 'unstyled')[0]
+      (expect unstyled_item[:x]).to eql left_margin
+      no_bullet_item = (pdf.find_text string: 'no-bullet')[0]
+      (expect no_bullet_item[:x]).to eql 51.6765
+      unnumbered_item = (pdf.find_text string: 'unnumbered')[0]
+      (expect unnumbered_item[:x]).to eql 51.6765
+      none_item = (pdf.find_text string: 'none')[0]
+      (expect none_item[:x]).to eql 66.24
     end
   end
 
