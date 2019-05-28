@@ -112,8 +112,6 @@ class Converter < ::Prawn::Document
       # NOTE enabling data-uri forces Asciidoctor Diagram to produce absolute image paths
       doc.attributes['data-uri'] = ((doc.instance_variable_get :@attribute_overrides) || {})['data-uri'] = ''
     end
-    @list_numerals = []
-    @list_bullets = []
     @capabilities = {
       expands_tabs: (::Asciidoctor::VERSION.start_with? '1.5.3.') || AsciidoctorVersion >= (::Gem::Version.create '1.5.3'),
       syntax_highlighter: AsciidoctorVersion >= (::Gem::Version.create '2.0.0'),
@@ -332,6 +330,8 @@ class Converter < ::Prawn::Document
     @font_color = theme.base_font_color
     @base_align = (align = doc.attr 'text-alignment') && (TextAlignmentNames.include? align) ? align : theme.base_align
     @text_transform = nil
+    @list_numerals = []
+    @list_bullets = []
     @footnotes = []
     @index = IndexCatalog.new
     # NOTE we have to init Pdfmark class here while we have reference to the doc
