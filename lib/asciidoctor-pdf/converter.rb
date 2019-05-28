@@ -2238,7 +2238,7 @@ class Converter < ::Prawn::Document
       node.type == :visible ? node.text : ''
     else
       dest = {
-        anchor: (anchor_name = %(__indexterm-#{node.object_id}))
+        anchor: (anchor_name = @index.next_anchor_name)
         # NOTE page number is added in InlineDestinationMarker
       }
       anchor = %(<a name="#{anchor_name}" type="indexterm">#{DummyText}</a>)

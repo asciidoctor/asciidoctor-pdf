@@ -9,6 +9,11 @@ module Asciidoctor; module PDF
       @categories = {}
       @start_page_number = 1
       @dests = {}
+      @sequence = 0
+    end
+
+    def next_anchor_name
+      %(__indexterm-#{@sequence += 1})
     end
 
     def store_term names, dest = nil
