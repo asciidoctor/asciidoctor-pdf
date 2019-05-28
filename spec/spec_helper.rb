@@ -1,6 +1,7 @@
 require 'asciidoctor/pdf'
 require 'chunky_png'
-require 'pathname'
+require 'open3' unless defined? Open3
+require 'pathname' unless defined? Pathname
 require 'pdf/inspector'
 
 # NOTE fix warning in Prawn::Font:TTF
@@ -144,6 +145,38 @@ RSpec.configure do |config|
     defined? Asciidoctor::LoggerManager
   end
 
+  def asciidoctor_pdf_bin opts = {}
+    bin_path = File.join __dir__, '..', 'bin', 'asciidoctor-pdf'
+    if opts.fetch :with_ruby, true
+      ruby = File.join RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name']
+      if (ruby_opts = opts[:ruby_opts])
+        [ruby, *ruby_opts, bin_path]
+      else
+        [ruby, bin_path]
+      end
+    else
+      bin_path
+    end
+  end
+
+  def run_command cmd, *args
+    Dir.chdir __dir__ do
+      if Array === cmd
+        args.unshift *cmd
+        cmd = args.shift
+      end
+      Open3.capture3 cmd, *args
+    end
+  end
+
+  def examples_dir
+    File.join __dir__, '..', 'examples'
+  end
+
+  def example_file path
+    File.join examples_dir, path
+  end
+
   def fixtures_dir
     File.join __dir__, 'fixtures'
   end
@@ -278,7 +311,11 @@ RSpec.configure do |config|
 end
 
 RSpec::Matchers.define :visually_match do |reference_filename|
-  reference_path = File.join __dir__, 'reference', reference_filename
+  if (Pathname reference_filename).absolute?
+    reference_path = reference_filename
+  else
+    reference_path = File.join __dir__, 'reference', reference_filename
+  end
   match do |actual_path|
     return false unless File.exist? reference_path
     images_output_dir = output_file 'visual-comparison-workdir'

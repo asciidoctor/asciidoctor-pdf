@@ -3,7 +3,7 @@
 1 0 obj
 << /Title (The Dangerous & Thrilling Documentation Chronicles: Based on True Events)
 /Author <feff004b00690073006d00650074002000430061006d00e9006c00e9006f006e002c0020004c0061007a0061007200750073002000680065007400200044007200610065006b0065>
-/Creator (Asciidoctor PDF 1.5.0.alpha.17.dev, based on Prawn 2.2.2)
+/Creator (Asciidoctor PDF 1.5.0.alpha.18.dev, based on Prawn 2.2.2)
 /Producer <feff004b00690073006d00650074002000430061006d00e9006c00e9006f006e002c0020004c0061007a0061007200750073002000680065007400200044007200610065006b0065>
 >>
 endobj
@@ -12406,7 +12406,7 @@ endobj
 endobj
 87 0 obj
 << /Limits [(__anchor-top) (_dawn_on_the_plateau)]
-/Names [(__anchor-top) 16 0 R (__indexterm-40863960) 23 0 R (__indexterm-42550280) 31 0 R (__indexterm-42551320) 30 0 R (__indexterm-42565480) 35 0 R (__indexterm-42687200) 69 0 R (_a_recipe_for_potion_that_will_ensure_you_win_the_hearts_of_developers) 51 0 R (_are_you_still_here) 57 0 R (_can_i_get_some_code) 68 0 R (_credits) 96 0 R (_dawn_on_the_plateau) 62 0 R]
+/Names [(__anchor-top) 16 0 R (__indexterm-33240040) 69 0 R (__indexterm-40109020) 23 0 R (__indexterm-41779940) 31 0 R (__indexterm-41780920) 30 0 R (__indexterm-41795200) 35 0 R (_a_recipe_for_potion_that_will_ensure_you_win_the_hearts_of_developers) 51 0 R (_are_you_still_here) 57 0 R (_can_i_get_some_code) 68 0 R (_credits) 96 0 R (_dawn_on_the_plateau) 62 0 R]
 >>
 endobj
 88 0 obj
@@ -13078,7 +13078,7 @@ endobj
 endobj
 102 0 obj
 << /Border [0 0 0]
-/Dest (__indexterm-42565480)
+/Dest (__indexterm-41795200)
 /Subtype /Link
 /Rect [97.4955 731.36 103.365 745.64]
 /Type /Annot
@@ -13086,7 +13086,7 @@ endobj
 endobj
 103 0 obj
 << /Border [0 0 0]
-/Dest (__indexterm-40863960)
+/Dest (__indexterm-40109020)
 /Subtype /Link
 /Rect [91.1115 684.8 96.981 699.08]
 /Type /Annot
@@ -13094,7 +13094,7 @@ endobj
 endobj
 104 0 obj
 << /Border [0 0 0]
-/Dest (__indexterm-42687200)
+/Dest (__indexterm-33240040)
 /Subtype /Link
 /Rect [114.2745 638.24 120.144 652.52]
 /Type /Annot
@@ -13102,7 +13102,7 @@ endobj
 endobj
 105 0 obj
 << /Border [0 0 0]
-/Dest (__indexterm-42550280)
+/Dest (__indexterm-41779940)
 /Subtype /Link
 /Rect [135.2799 575.9 141.1494 590.18]
 /Type /Annot
@@ -13110,7 +13110,7 @@ endobj
 endobj
 106 0 obj
 << /Border [0 0 0]
-/Dest (__indexterm-42551320)
+/Dest (__indexterm-41780920)
 /Subtype /Link
 /Rect [120.2799 529.34 126.1494 543.62]
 /Type /Annot

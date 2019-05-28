@@ -22,7 +22,6 @@ matrix:
     env: ASCIIDOCTOR_VERSION=1.5.3
 script:
 - bundle exec rake spec
-- bundle exec asciidoctor-pdf -o test.pdf examples/chronicles-example.adoc
 deploy:
   provider: rubygems
   gem: asciidoctor-pdf
