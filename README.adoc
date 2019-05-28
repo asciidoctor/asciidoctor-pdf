@@ -790,6 +790,28 @@ You can use the application to convert a document as follows:
 
  $ bundle exec asciidoctor-pdf /path/to/sample.adoc
 
+=== Install the Application Globally (optional)
+
+If you want to install the application globally so you can run it anywhere, use the following `rake` task:
+
+ $ bundle exec rake install
+
+This task will package the gem and install it into your system gems.
+
+If you want to install the gem using a separate command, first use the following `rake` task to build it:
+
+ $ rm -rf pkg
+   bundle exec rake build
+
+This task packages the application as a gem and writes it to the [.path]_pkg_ directory.
+A message will be printed to the console telling you the exact filename.
+You can now use the `gem install` command to install it.
+
+ $ gem install pkg/*.gem
+
+You'll want to pay attention to which Ruby installation you are installing the gem into.
+If successful, the `asciidoctor-pdf` executable will be available on your PATH.
+
 endif::[]
 
 === Test a Pull Request
