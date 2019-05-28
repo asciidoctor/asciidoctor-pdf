@@ -790,7 +790,7 @@ You can use the application to convert a document as follows:
 
  $ bundle exec asciidoctor-pdf /path/to/sample.adoc
 
-=== Install the Application Globally (optional)
+=== Install the Application (optional)
 
 If you want to install the application globally so you can run it anywhere, use the following `rake` task:
 
