@@ -572,10 +572,9 @@ class Converter < ::Prawn::Document
     convert_content_for_block node
   end
 
-  # TODO add prose around image logic (use role to add special logic for headshot)
   def convert_paragraph node
     add_dest_for_block node if node.id
-    prose_opts = {}
+    prose_opts = { margin_bottom: 0 }
     lead = (roles = node.roles).include? 'lead'
     if (align = resolve_alignment_from_role roles)
       prose_opts[:align] = align
@@ -596,6 +595,14 @@ class Converter < ::Prawn::Document
     else
       layout_prose node.content, prose_opts
     end
+
+    if (margin_inner_val = @theme.prose_margin_inner) &&
+        (next_block = (siblings = node.parent.blocks)[(siblings.index node) + 1]) && next_block.context == :paragraph
+      margin_bottom_val = margin_inner_val
+    else
+      margin_bottom_val = @theme.prose_margin_bottom
+    end
+    margin_bottom margin_bottom_val
   end
 
   def convert_admonition node
