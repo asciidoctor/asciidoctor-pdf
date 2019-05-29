@@ -357,11 +357,19 @@ module Extensions
     end
   end
 
-  # Performs the same work as text except that the first_line_opts
-  # are applied to the first line of text renderered. It's necessary
-  # to use low-level APIs in this method so that we only style the
-  # first line and not the remaining lines (which is the default
-  # behavior in Prawn).
+  # NOTE override built-in draw_indented_formatted_line to insert leading before second line
+  def draw_indented_formatted_line string, opts
+    result = super
+    unless @no_text_printed || @all_text_printed
+      # as of Prawn 1.2.1, we have to handle the line gap after the first line manually
+      move_down opts[:leading]
+    end
+    result
+  end
+
+  # Performs the same work as Prawn::Text.text except that the first_line_opts are applied to the first line of text
+  # renderered. It's necessary to use low-level APIs in this method so we only style the first line and not the
+  # remaining lines (which is the default behavior in Prawn).
   def text_with_formatted_first_line string, first_line_opts, opts
     color = opts.delete :color
     fragments = parse_text string, opts
@@ -378,17 +386,27 @@ module Extensions
     first_line_opts = opts.merge(first_line_opts).merge single_line: true
     box = ::Prawn::Text::Formatted::Box.new fragments, first_line_opts
     # NOTE get remaining_fragments before we add color to fragments on first line
-    remaining_fragments = box.render dry_run: true
+    if (text_indent = opts.delete :indent_paragraphs)
+      remaining_fragments = indent text_indent do
+        box.render dry_run: true
+      end
+    else
+      remaining_fragments = box.render dry_run: true
+    end
     # NOTE color must be applied per-fragment
     if first_line_color
       fragments.each {|fragment| fragment[:color] ||= first_line_color}
     end
-    fill_formatted_text_box fragments, first_line_opts
+    if text_indent
+      indent text_indent do
+        fill_formatted_text_box fragments, first_line_opts
+      end
+    else
+      fill_formatted_text_box fragments, first_line_opts
+    end
     unless remaining_fragments.empty?
       # NOTE color must be applied per-fragment
-      if color
-        remaining_fragments.each {|fragment| fragment[:color] ||= color }
-      end
+      remaining_fragments.each {|fragment| fragment[:color] ||= color } if color
       # as of Prawn 1.2.1, we have to handle the line gap after the first line manually
       move_down opts[:leading]
       remaining_fragments = fill_formatted_text_box remaining_fragments, opts

@@ -1670,6 +1670,12 @@ Typically, all the margin is placed on the bottom.
 (default: 12)
 |prose:
   margin_bottom: $vertical_spacing
+
+|text_indent
+|<<measurement-units,Measurement>> +
+(default: _not set_)
+|prose:
+  text_indent: 18
 |===
 
 [#keys-block]
