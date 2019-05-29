@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - List' do
-  context 'Unordered List' do
+  context 'Unordered' do
     it 'should use marker specified by style' do
       pdf = to_pdf <<~'EOS', analyze: true
       [square]
@@ -56,7 +56,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
   end
 
-  context 'Ordered List' do
+  context 'Ordered' do
     it 'should number list items using arabic numbering by default' do
       pdf = to_pdf <<~'EOS', analyze: true
       . a
@@ -77,6 +77,30 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       (expect pdf.lines).to eql ['i.one', 'ii.two', 'iii.three']
+    end
+
+    it 'should align list numbers to right and extend towards left margin' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      . one
+      . two
+      . three
+      . four
+      . five
+      . six
+      . seven
+      . eight
+      . nine
+      . ten
+      EOS
+
+      nine_text = (pdf.find_text string: 'nine')[0]
+      ten_text = (pdf.find_text string: 'ten')[0]
+
+      (expect nine_text[:x]).to eql ten_text[:x]
+
+      no9_text = (pdf.find_text string: '9.')[0]
+      no10_text = (pdf.find_text string: '10.')[0]
+      (expect no9_text[:x]).to be > no10_text[:x]
     end
 
     it 'should make numbers invisible if list has unnumbered style' do
@@ -127,7 +151,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
   end
 
-  context 'Description List' do
+  context 'Description' do
     it 'should convert qanda to ordered list' do
       pdf = to_pdf <<~'EOS', analyze: true
       [qanda]
