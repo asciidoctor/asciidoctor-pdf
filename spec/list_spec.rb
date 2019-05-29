@@ -118,6 +118,21 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql %w(9.nine 10.ten)
     end
 
+    it 'should start numbering at value of specified start attribute using specified numeration style' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [upperroman,start=9]
+      . nine
+      . ten
+      EOS
+
+      no1_text = (pdf.find_text string: 'I.')[0]
+      (expect no1_text).to be_nil
+      no9_text = (pdf.find_text string: 'IX.')[0]
+      (expect no9_text).not_to be_nil
+      (expect no9_text[:order]).to eql 1
+      (expect pdf.lines).to eql %w(IX.nine X.ten)
+    end
+
     it 'should make numbers invisible if list has unnumbered style' do
       pdf = to_pdf <<~'EOS', analyze: true
       reference
