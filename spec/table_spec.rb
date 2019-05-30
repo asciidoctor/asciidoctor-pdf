@@ -69,7 +69,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     EOS
 
     (expect to_file).to visually_match 'table-stripes-odd.pdf'
-  end
+  end if asciidoctor_1_5_7_or_better?
 
   it 'should not fail to fit text in cell' do
     pdf = to_pdf <<~'EOS', analyze: true
