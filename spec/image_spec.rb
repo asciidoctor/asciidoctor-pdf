@@ -51,11 +51,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'PNG' do
     it 'should scale image to width of page when pdfwidth=100vw and align-to-page option is set', integration: true do
-      to_file = to_pdf_file <<~'EOS', 'images-full-width.pdf', attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }
+      to_file = to_pdf_file <<~'EOS', 'image-full-width.pdf', attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }
       image::square.png[pdfwidth=100vw,opts=align-to-page]
       EOS
 
-      (expect to_file).to visually_match 'images-full-width.pdf'
+      (expect to_file).to visually_match 'image-full-width.pdf'
     end
   end
 end
