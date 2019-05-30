@@ -58,6 +58,19 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     (expect pdf.points.size).to eql 16
   end if asciidoctor_2_or_better?
 
+  it 'should apply stripes to specified group of rows as specified by stripes attribute', integration: true do
+    to_file = to_pdf_file <<~'EOS', 'table-stripes-odd.pdf', attributes: 'nofooter'
+    [cols=3*,stripes=odd]
+    |===
+    |A1 |B1 |C1
+    |A2 |B2 |C2
+    |A3 |B3 |C3
+    |===
+    EOS
+
+    (expect to_file).to visually_match 'table-stripes-odd.pdf'
+  end
+
   it 'should not fail to fit text in cell' do
     pdf = to_pdf <<~'EOS', analyze: true
     |===
