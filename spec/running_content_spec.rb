@@ -36,7 +36,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   end
 
   it 'should not add running footer if nofooter attribute is set' do
-    pdf = to_pdf <<~'EOS', attributes: 'nofooter', analyze: true
+    pdf = to_pdf <<~'EOS', attributes: { 'nofooter' => '' }, analyze: true
     = Document Title
     :doctype: book
 
@@ -213,7 +213,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       header_verso_right_content: '({document-title})'
     }
 
-    pdf = to_pdf <<~'EOS', attributes: 'noheader', pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+    pdf = to_pdf <<~'EOS', attributes: { 'noheader' => '' }, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
     = Document Title
     :doctype: book
 
@@ -284,7 +284,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       footer_height: 160,
       page_margin: [160, 48, 160, 48]
 
-    to_file = to_pdf_file 'Hello world', 'running-content-background-colors.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file 'Hello world', 'running-content-background-colors.pdf', attributes: {}, pdf_theme: pdf_theme
 
     (expect to_file).to visually_match 'running-content-background-colors.pdf'
   end

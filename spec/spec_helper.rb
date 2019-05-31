@@ -204,7 +204,10 @@ RSpec.configure do |config|
 
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
-    opts[:attributes] = 'nofooter' unless opts.key? :attributes
+    opts[:attributes] = { 'imagesdir' => fixtures_dir, 'nofooter' => '' } unless opts.key? :attributes
+    if (attribute_overrides = opts.delete :attribute_overrides)
+      (opts[:attributes] ||= {}).update attribute_overrides
+    end
     if Pathname === input
       opts[:to_dir] = output_dir unless opts.key? :to_dir
       pdf_io = (Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)).attr 'outfile'
@@ -217,6 +220,10 @@ RSpec.configure do |config|
 
   def to_pdf_file input, output_filename, opts = {}
     opts[:to_file] = (to_file = File.join output_dir, output_filename)
+    opts[:attributes] = { 'imagesdir' => fixtures_dir, 'nofooter' => '' } unless opts.key? :attributes
+    if (attribute_overrides = opts.delete :attribute_overrides)
+      (opts[:attributes] ||= {}).update attribute_overrides
+    end
     if Pathname === input
       Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)
     else

@@ -48,7 +48,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       And away we go!
       EOS
 
-      ['toc', %(toc preface-title=Preface)].each do |attrs|
+      [{ 'toc' => '' }, { 'toc' => '', 'preface-title' => 'Preface' }].each do |attrs|
         pdf = to_pdf input, doctype: :book, attributes: attrs, analyze: :page
         (expect pdf.pages.size).to eql 4
         (expect pdf.pages[0][:strings]).to include 'Document Title'

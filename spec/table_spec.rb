@@ -59,7 +59,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
   end if asciidoctor_2_or_better?
 
   it 'should apply stripes to specified group of rows as specified by stripes attribute', integration: true do
-    to_file = to_pdf_file <<~'EOS', 'table-stripes-odd.pdf', attributes: 'nofooter'
+    to_file = to_pdf_file <<~'EOS', 'table-stripes-odd.pdf'
     [cols=3*,stripes=odd]
     |===
     |A1 |B1 |C1

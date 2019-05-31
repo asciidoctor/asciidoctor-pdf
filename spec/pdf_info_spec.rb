@@ -45,7 +45,7 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
     end
 
     it 'should not add dates to document if reproducible attribute is set' do
-      pdf = to_pdf <<~'EOS', attributes: 'reproducible'
+      pdf = to_pdf <<~'EOS', attributes: { 'reproducible' => '' }
       = Document Title
       Author Name
 

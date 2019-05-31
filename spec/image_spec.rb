@@ -3,7 +3,7 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Image' do
   context 'imagesdir' do
     it 'should resolve target of block image relative to imagesdir', integration: true do
-      to_file = to_pdf_file <<~'EOS', 'image-wolpertinger.pdf', attributes: { 'imagesdir' => examples_dir, 'nofooter' => '' }
+      to_file = to_pdf_file <<~'EOS', 'image-wolpertinger.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[pdfwidth=25%]
       EOS
 
@@ -22,13 +22,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       after
       EOS
 
-      pdf = to_pdf input, attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }, analyze: :rect
+      pdf = to_pdf input, analyze: :rect
       (expect pdf.rectangles.size).to eql 1
       (expect pdf.rectangles[0][:point]).to eql [0.0, 200.0]
       (expect pdf.rectangles[0][:width]).to eql 200.0
       (expect pdf.rectangles[0][:height]).to eql 200.0
 
-      pdf = to_pdf input, attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }, analyze: true
+      pdf = to_pdf input, analyze: true
       text = pdf.text
       (expect text.size).to eql 1
       (expect text[0][:string]).to eql 'after'
@@ -45,13 +45,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       after
       EOS
 
-      pdf = to_pdf input, attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }, analyze: :rect
+      pdf = to_pdf input, analyze: :rect
       (expect pdf.rectangles.size).to eql 1
       (expect pdf.rectangles[0][:point]).to eql [0.0, 200.0]
       (expect pdf.rectangles[0][:width]).to eql 200.0
       (expect pdf.rectangles[0][:height]).to eql 200.0
 
-      pdf = to_pdf input, attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }, analyze: true
+      pdf = to_pdf input, analyze: true
       text = pdf.text
       (expect text.size).to eql 1
       (expect text[0][:string]).to eql 'after'
@@ -61,7 +61,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'PNG' do
     it 'should scale image to width of page when pdfwidth=100vw and align-to-page option is set', integration: true do
-      to_file = to_pdf_file <<~'EOS', 'image-full-width.pdf', attributes: { 'imagesdir' => fixtures_dir, 'nofooter' => '' }
+      to_file = to_pdf_file <<~'EOS', 'image-full-width.pdf'
       image::square.png[pdfwidth=100vw,opts=align-to-page]
       EOS
 
