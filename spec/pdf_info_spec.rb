@@ -43,6 +43,18 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect pdf.info[:Author]).to eql 'Author Name'
       (expect pdf.info[:Producer]).to eql 'Big Cheese'
     end
+
+    it 'should not add dates to document if reproducible attribute is set' do
+      pdf = to_pdf <<~'EOS', attributes: 'reproducible'
+      = Document Title
+      Author Name
+
+      content
+      EOS
+
+      (expect pdf.info[:ModDate]).to be_nil
+      (expect pdf.info[:CreationDate]).to be_nil
+    end
   end
 
   context 'document title' do
