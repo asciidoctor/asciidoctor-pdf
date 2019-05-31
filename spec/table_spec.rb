@@ -205,4 +205,26 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.lines).to eql ['10.ten', '11.eleven', '12.twelve', 'buckle', 'my', 'shoe']
     end
   end
+
+  it 'should convert nested table' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [cols="1,2a"]
+    |===
+    |Normal cell
+    |Cell with nested table
+    [cols="2,1"]
+    !===
+    !Nested table cell 1 !Nested table cell 2
+    !===
+    |===
+    EOS
+
+    (expect pdf.lines.find {|l| l.include? '!' }).to be_nil
+    (expect pdf.lines.size).to eql 2
+    (expect pdf.lines[1]).to eql 'Nested table cell 1Nested table cell 2'
+    nested_cell_1 = (pdf.find_text string: 'Nested table cell 1')[0]
+    nested_cell_2 = (pdf.find_text string: 'Nested table cell 2')[0]
+    (expect nested_cell_1[:y]).to eql nested_cell_2[:y]
+    (expect nested_cell_1[:x]).to be < nested_cell_2[:x]
+  end
 end
