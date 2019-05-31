@@ -1,6 +1,16 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Image' do
+  context 'imagesdir' do
+    it 'should resolve target of block image relative to imagesdir', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'image-wolpertinger.pdf', attributes: { 'imagesdir' => examples_dir, 'nofooter' => '' }
+      image::wolpertinger.jpg[pdfwidth=25%]
+      EOS
+
+      (expect to_file).to visually_match 'image-wolpertinger.pdf'
+    end
+  end
+
   context 'SVG' do
     it 'should not leave gap around SVG that specifies viewBox but no width' do
       input = <<~'EOS'
