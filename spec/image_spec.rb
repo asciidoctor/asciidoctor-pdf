@@ -9,6 +9,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect to_file).to visually_match 'image-wolpertinger.pdf'
     end
+
+    it 'should resolve target of inline image relative to imagesdir', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'image-inline.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      image:sample-logo.jpg[ACME,12] ACME products are the best!
+      EOS
+
+      (expect to_file).to visually_match 'image-inline.pdf'
+    end
   end
 
   context 'SVG' do
