@@ -265,6 +265,11 @@ RSpec.configure do |config|
     Hash[*objects[pdf.catalog[:PageLabels]][:Nums]].reduce([]) {|accum, (idx, val)| accum[idx] = val[:P]; accum }
   end
 
+  def get_annotations pdf, page_num
+    objects = pdf.objects
+    (pdf.page page_num).attributes[:Annots].map {|ref| objects[ref] }
+  end
+
   def get_page_size pdf, page_num
     (pdf.page page_num).attributes[:MediaBox].slice 2, 2
   end
