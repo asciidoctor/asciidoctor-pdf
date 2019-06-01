@@ -77,15 +77,19 @@ describe 'Asciidoctor::PDF::Converter - List' do
   end
 
   context 'Ordered' do
-    it 'should number list items using arabic numbering by default' do
+    it 'should number list items using arabic, loweralpha, lowerroman, upperalpha, upperroman numbering by default' do
       pdf = to_pdf <<~'EOS', analyze: true
-      . a
-      . b
-      . c
+      . 1
+       .. a
+        ... i
+         .... A
+          ..... I
+      . 2
+      . 3
       EOS
 
-      (expect pdf.strings).to eql %w(1. a 2. b 3. c)
-      (expect pdf.lines).to eql ['1.a', '2.b', '3.c']
+      (expect pdf.strings).to eql %w(1. 1 a. a i. i A. A I. I 2. 2 3. 3)
+      (expect pdf.lines).to eql %w(1.1 a.a i.i A.A I.I 2.2 3.3)
     end
 
     it 'should use marker specified by style' do
