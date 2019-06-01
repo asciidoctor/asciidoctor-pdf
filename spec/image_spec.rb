@@ -76,4 +76,21 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-full-width.pdf'
     end
   end
+
+  context 'BMP' do
+    it 'should warn and replace block image with alt text if image format is unsupported' do
+      with_memory_logger do |logger|
+        pdf = to_pdf <<~'EOS', analyze: true
+        image::waterfall.bmp[Waterfall,240]
+        EOS
+
+        (expect pdf.lines).to eql ['[Waterfall] | waterfall.bmp']
+        if logger
+          (expect logger.messages.size).to eql 1
+          (expect logger.messages[0][:severity]).to eql :WARN
+          (expect logger.messages[0][:message]).to include 'could not embed image'
+        end
+      end
+    end
+  end
 end
