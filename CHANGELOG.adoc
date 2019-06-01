@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 1.5.0.alpha.18 (2019-06-01) - @mojavelinux
 
 * restore compatibility with Asciidoctor back to 1.5.3 and add verification to test matrix (#1038)
 * allow theme to set text indent for paragraphs using prose_text_indent (#191)
