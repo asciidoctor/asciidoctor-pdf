@@ -77,9 +77,10 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect index_text.size).to eql 1
   end
 
-  it 'should use anchor names which are reproducible between runs' do
+  it 'should generate anchor names for indexterms which are reproducible between runs' do
     input = <<~'EOS'
     = Cats & Dogs
+    :reproducible:
 
     == Cats
 
@@ -96,7 +97,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
     to_file_a = to_pdf_file input, 'index-reproducible-a.pdf', doctype: :book
     to_file_b = to_pdf_file input, 'index-reproducible-b.pdf', doctype: :book
-    (expect FileUtils.compare_file to_file_a, to_file_a).to be true
+    (expect FileUtils.compare_file to_file_a, to_file_b).to be true
   end
 
   it 'should not automatically promote nested index terms' do
