@@ -10,12 +10,42 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-wolpertinger.pdf'
     end
 
+    it 'should replace block image with alt text if image is missing' do
+      with_memory_logger do |logger|
+        pdf = to_pdf <<~'EOS', analyze: true
+        image::no-such-image.png[Missing Image]
+        EOS
+
+        (expect pdf.lines).to eql ['[Missing Image] | no-such-image.png']
+        if logger
+          (expect logger.messages.size).to eql 1
+          (expect logger.messages[0][:severity]).to eql :WARN
+          (expect logger.messages[0][:message]).to include 'image to embed not found or not readable'
+        end
+      end
+    end
+
     it 'should resolve target of inline image relative to imagesdir', integration: true do
       to_file = to_pdf_file <<~'EOS', 'image-inline.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image:sample-logo.jpg[ACME,12] ACME products are the best!
       EOS
 
       (expect to_file).to visually_match 'image-inline.pdf'
+    end
+
+    it 'should replace inline image with alt text if image is missing' do
+      with_memory_logger do |logger|
+        pdf = to_pdf <<~'EOS', analyze: true
+        You cannot see that which is image:not-there.png[not there].
+        EOS
+
+        (expect pdf.lines).to eql ['You cannot see that which is [not there].']
+        if logger
+          (expect logger.messages.size).to eql 1
+          (expect logger.messages[0][:severity]).to eql :WARN
+          (expect logger.messages[0][:message]).to include 'image to embed not found or not readable'
+        end
+      end
     end
   end
 
