@@ -67,6 +67,47 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect names).to include '_level_4'
   end
 
+  it 'should add part signifier and part number to part if part numbering is enabled' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Book Title
+    :doctype: book
+    :sectnums:
+    :partnums:
+
+    = A
+
+    == Foo
+
+    = B
+
+    == Bar
+    EOS
+
+    titles = (pdf.find_text font_size: 27).map {|it| it[:string] }.reject {|it| it == 'Book Title' }
+    (expect titles).to eql ['Part I: A', 'Part II: B']
+  end if asciidoctor_2_or_better?
+
+  it 'should use specified part signifier if part numbering is enabled and part-signifier attribute is set' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Book Title
+    :doctype: book
+    :sectnums:
+    :partnums:
+    :part-signifier: P
+
+    = A
+
+    == Foo
+
+    = B
+
+    == Bar
+    EOS
+
+    titles = (pdf.find_text font_size: 27).map {|it| it[:string] }.reject {|it| it == 'Book Title' }
+    (expect titles).to eql ['P I: A', 'P II: B']
+  end if asciidoctor_2_or_better?
+
   it 'should add default chapter signifier to chapter title if section numbering is enabled' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Book Title

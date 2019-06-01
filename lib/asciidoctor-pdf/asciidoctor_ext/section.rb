@@ -1,17 +1,25 @@
 class Asciidoctor::Section
   def numbered_title opts = {}
     unless (@cached_numbered_title ||= nil)
-      if (slevel = (@level == 0 && @special ? 1 : @level)) == 0
+      slevel = @level == 0 && @special ? 1 : @level
+      if @numbered && !@caption && slevel <= (@document.attr 'sectnumlevels', 3).to_i
+        @is_numbered = true
+        @cached_formal_numbered_title = if @document.doctype == 'book'
+          if slevel == 0
+            @cached_numbered_title = %(#{sectnum nil, ':'} #{title})
+            %(#{@document.attr 'part-signifier', 'Part'} #{@cached_numbered_title}).lstrip
+          elsif slevel == 1
+            @cached_numbered_title = %(#{sectnum} #{title})
+            %(#{@document.attr 'chapter-signifier', (@document.attr 'chapter-label', 'Chapter')} #{@cached_numbered_title}).lstrip
+          else
+            @cached_numbered_title = %(#{sectnum} #{title})
+          end
+        else
+          @cached_numbered_title = %(#{sectnum} #{title})
+        end
+      elsif slevel == 0
         @is_numbered = false
         @cached_numbered_title = @cached_formal_numbered_title = title
-      elsif @numbered && !@caption && slevel <= (@document.attr 'sectnumlevels', 3).to_i
-        @is_numbered = true
-        @cached_numbered_title = %(#{sectnum} #{title})
-        @cached_formal_numbered_title = if slevel == 1 && @document.doctype == 'book'
-          %(#{@document.attr 'chapter-signifier', (@document.attr 'chapter-label', 'Chapter')} #{@cached_numbered_title}).lstrip
-        else
-          @cached_numbered_title
-        end
       else
         @is_numbered = false
         @cached_numbered_title = @cached_formal_numbered_title = captioned_title
