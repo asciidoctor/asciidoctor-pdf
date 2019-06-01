@@ -67,6 +67,59 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect names).to include '_level_4'
   end
 
+  it 'should add default chapter signifier to chapter title if section numbering is enabled' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Book Title
+    :doctype: book
+    :sectnums:
+
+    == The Beginning
+
+    == The End
+    EOS
+
+    chapter_titles = (pdf.find_text font_size: 22).map {|it| it[:string] }
+    (expect chapter_titles).to eql ['Chapter 1. The Beginning', 'Chapter 2. The End']
+  end
+
+  it 'should add chapter signifier to chapter title if section numbering is enabled and chapter-signifier attribute is set' do
+    # NOTE chapter-label is the legacy name
+    { 'chapter-label' => 'Ch', 'chapter-signifier' => 'Ch' }.each do |attr_name, attr_val|
+      pdf = to_pdf <<~EOS, analyze: true
+      = Book Title
+      :doctype: book
+      :sectnums:
+      :#{attr_name}: #{attr_val}
+
+      == The Beginning
+
+      == The End
+      EOS
+
+      chapter_titles = (pdf.find_text font_size: 22).map {|it| it[:string] }
+      (expect chapter_titles).to eql ['Ch 1. The Beginning', 'Ch 2. The End']
+    end
+  end
+
+  it 'should not add chapter label to chapter title if section numbering is enabled and chapter-signifier attribute is empty' do
+    # NOTE chapter-label is the legacy name
+    %w(chapter-label chapter-signifier).each do |attr_name|
+      pdf = to_pdf <<~EOS, analyze: true
+      = Book Title
+      :doctype: book
+      :sectnums:
+      :#{attr_name}:
+
+      == The Beginning
+
+      == The End
+      EOS
+
+      chapter_titles = (pdf.find_text font_size: 22).map {|it| it[:string] }
+      (expect chapter_titles).to eql ['1. The Beginning', '2. The End']
+    end
+  end
+
   it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is not set' do
     input = <<~'EOS'
     = Book Title
