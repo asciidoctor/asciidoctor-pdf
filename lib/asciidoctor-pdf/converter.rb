@@ -2913,21 +2913,25 @@ class Converter < ::Prawn::Document
       ColumnPositions.each do |position|
         unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
           # TODO support image URL (using resolve_image_path)
-          if (val.include? ':') && val =~ ImageAttributeValueRx &&
-              ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
-            attrs = (AttributeList.new $2).parse
-            col_width = colspec_dict[side][position][:width]
-            if (fit = attrs['fit']) == 'contain'
-              width = col_width
-            else
-              unless (width = resolve_explicit_width attrs, col_width)
-                # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
-                # NOTE failure message will be reported later when image is rendered
-                width = (to_pt intrinsic_image_dimensions(path)[:width], :px) rescue 0
+          if (val.include? ':') && val =~ ImageAttributeValueRx
+            if ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
+              attrs = (AttributeList.new $2).parse
+              col_width = colspec_dict[side][position][:width]
+              if (fit = attrs['fit']) == 'contain'
+                width = col_width
+              else
+                unless (width = resolve_explicit_width attrs, col_width)
+                  # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
+                  # NOTE failure message will be reported later when image is rendered
+                  width = (to_pt intrinsic_image_dimensions(path)[:width], :px) rescue 0
+                end
+                width = col_width if fit == 'scale-down' && width > col_width
               end
-              width = col_width if fit == 'scale-down' && width > col_width
+              side_content[position] = { path: path, width: width, fit: !!fit }
+            else
+              logger.warn %(image to embed not found or not readable: #{path})
+              side_content[position] = val
             end
-            side_content[position] = { path: path, width: width, fit: !!fit }
           else
             side_content[position] = val
           end

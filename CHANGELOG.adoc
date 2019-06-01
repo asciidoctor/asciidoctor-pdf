@@ -30,6 +30,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * ensure index section doesn't get numbered when using Asciidoctor < 1.5.7
 * add part signifier and part number to part title if partnums is set; allow signifier to be customized using part-signifier attribute (#597)
 * add support for the chapter-signifier attribute as the prefered alternative to chapter-label
+* warn if the image referenced in the running content cannot be found (#731)
 
 == 1.5.0.alpha.17 (2019-04-23) - @mojavelinux
 
