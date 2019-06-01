@@ -9,7 +9,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect pdf.find_text 'visible index entry').to be_empty
   end
 
-  it 'should add the index entries the section with the index style' do
+  it 'should add the index entries to the section with the index style' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
 
@@ -75,6 +75,28 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect index_text.size).to eql 0
     index_text = pdf.find_text string: 'Index', page_number: 4
     (expect index_text.size).to eql 1
+  end
+
+  it 'should use anchor names which are reproducible between runs' do
+    input = <<~'EOS'
+    = Cats & Dogs
+
+    == Cats
+
+    We know that ((cats)) control the internet.
+
+    == Dogs
+
+    Cats may rule, well, everything.
+    But ((dogs)) are a human's best friend.
+
+    [index]
+    == Index
+    EOS
+
+    to_file_a = to_pdf_file input, 'index-reproducible-a.pdf', doctype: :book
+    to_file_b = to_pdf_file input, 'index-reproducible-b.pdf', doctype: :book
+    (expect FileUtils.compare_file to_file_a, to_file_a).to be true
   end
 
   it 'should not automatically promote nested index terms' do
