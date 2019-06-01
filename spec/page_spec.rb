@@ -7,7 +7,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       content
       EOS
       (expect pdf.pages.size).to eql 1
-      (expect pdf.pages[0][:size]).to eql [595.28, 841.89]
+      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
     end
 
     it 'should set page size specified by pdf-page-size attribute using predefined name' do
@@ -17,7 +17,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       content
       EOS
       (expect pdf.pages.size).to eql 1
-      (expect pdf.pages[0][:size]).to eql [612.0, 792.0]
+      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
     it 'should set page size specified by pdf-page-size attribute using dimension array in pt' do
@@ -37,7 +37,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       content
       EOS
       (expect pdf.pages.size).to eql 1
-      (expect pdf.pages[0][:size]).to eql [612.0, 792.0]
+      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
     it 'should set page size specified by pdf-page-size attribute using dimension string in in' do
@@ -47,7 +47,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       content
       EOS
       (expect pdf.pages.size).to eql 1
-      (expect pdf.pages[0][:size]).to eql [612.0, 792.0]
+      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
   end
 
