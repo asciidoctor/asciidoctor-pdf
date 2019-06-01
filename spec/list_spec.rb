@@ -2,6 +2,26 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - List' do
   context 'Unordered' do
+    it 'should use different marker for first three list levels' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      * level one
+       ** level two
+        *** level three
+         **** level four
+      * back to level one
+      EOS
+
+      expected_lines = [
+        '•level one',
+        '◦level two',
+        '▪level three',
+        '▪level four',
+        '•back to level one'
+      ]
+
+      (expect pdf.lines).to eql expected_lines
+    end
+
     it 'should use marker specified by style' do
       pdf = to_pdf <<~'EOS', analyze: true
       [square]
