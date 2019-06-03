@@ -7,6 +7,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* fix position of text in running header (#1087)
 * apply custom theme to chronicles example to customize running content and demonstrate how to extend default theme
 
 == 1.5.0.alpha.18 (2019-06-01) - @mojavelinux
