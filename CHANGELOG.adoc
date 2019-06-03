@@ -5,6 +5,10 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+* apply custom theme to chronicles example to customize running content and demonstrate how to extend default theme
+
 == 1.5.0.alpha.18 (2019-06-01) - @mojavelinux
 
 * restore compatibility with Asciidoctor back to 1.5.3 and add verification to test matrix (#1038)
