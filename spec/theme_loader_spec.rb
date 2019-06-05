@@ -179,6 +179,20 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.blockquote_padding).to eql [0, 10, -9, 14.5]
     end
 
+    it 'should not compute value if operator is not surrounded by spaces on either side' do
+      theme_data = SafeYAML.load <<~EOS
+      brand:
+        ten: 10
+        a_string: ten*10
+        another_string: ten-10
+      EOS
+
+      theme = subject.new.load theme_data
+      (expect theme.brand_ten).to eql 10
+      (expect theme.brand_a_string).to eql 'ten*10'
+      (expect theme.brand_another_string).to eql 'ten-10'
+    end
+
     it 'should apply precision functions to value' do
       theme_data = SafeYAML.load <<~EOS
       base:

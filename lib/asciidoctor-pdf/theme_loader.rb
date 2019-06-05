@@ -180,16 +180,24 @@ class ThemeLoader
     # NOTE leave % as a string; handled by converter for now
     expr = resolve_measurement_values(original = expr)
     while true
-      result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
-      unchanged = (result == expr)
-      expr = result
-      break if unchanged
+      if (expr.count '*/') > 0
+        result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
+        unchanged = (result == expr)
+        expr = result
+        break if unchanged
+      else
+        break
+      end
     end
     while true
-      result = expr.gsub(AddSubtractOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
-      unchanged = (result == expr)
-      expr = result
-      break if unchanged
+      if (expr.count '+-') > 0
+        result = expr.gsub(AddSubtractOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
+        unchanged = (result == expr)
+        expr = result
+        break if unchanged
+      else
+        break
+      end
     end
     if (expr.end_with? ')') && expr =~ PrecisionFuncRx
       op = $1
