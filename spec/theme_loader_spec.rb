@@ -226,16 +226,21 @@ describe Asciidoctor::PDF::ThemeLoader do
         font_color: 333333
       link:
         font_color: 428bca
+      literal:
+        font_color: 222
       EOS
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to eql 'FFFFFF'
       (expect theme.page_background_color).to be_a subject::HexColorValue
       (expect theme.base_font_color).to eql '000000'
       (expect theme.base_font_color).to be_a subject::HexColorValue
+      # NOTE this assertion tests that the value can be an integer, not a string
       (expect theme.heading_font_color).to eql '333333'
       (expect theme.heading_font_color).to be_a subject::HexColorValue
       (expect theme.link_font_color).to eql '428BCA'
       (expect theme.link_font_color).to be_a subject::HexColorValue
+      (expect theme.literal_font_color).to eql '222222'
+      (expect theme.literal_font_color).to be_a subject::HexColorValue
     end
 
     it 'should coerce rgb color values to hex and wrap in color type if key ends with _color' do
@@ -272,9 +277,16 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     # NOTE this only works when the theme is read from a file
-    it 'should allow hex color values to be written with # prefix' do
+    it 'should allow hex color values to be written with # prefix for keys that end with color' do
       theme = subject.load_theme 'hex-color-shorthand', fixtures_dir
       (expect theme.base_font_color).to eql '222222'
+      (expect theme.link_font_color).to eql '428BCA'
+    end
+
+    # NOTE this is only relevant when the theme is read from a file
+    it 'should not coerce color-like values to string if key does not end with color' do
+      theme = subject.load_theme 'color-like-value', fixtures_dir
+      (expect theme.footer_height).to eql 100
     end
 
     it 'should coerce content key to a string' do

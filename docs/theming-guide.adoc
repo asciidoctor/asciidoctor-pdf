@@ -187,7 +187,7 @@ The value of a key may be one of the following types:
   - Font family name (e.g., Roboto)
   - Font style (normal, bold, italic, bold_italic)
   - Alignment (left, center, right, justify)
-  - Color as hex string (e.g., #ffffff)
+  - Color as hex string (e.g., 'ff0000', #ff0000, or '#ff0000')
   - Image path
   - Enumerated type (where specified)
   - Text content (where specified)
@@ -286,22 +286,22 @@ For instance, here's how you can define your brand colors:
 [source,yaml,subs=attributes+]
 ----
 brand:
-  primary: #E0162B {conum-guard-yaml} <1>
-  secondary: '#FFFFFF' {conum-guard-yaml} <2>
-  alert: '0052A5' {conum-guard-yaml} <3>
+  primary_color: #E0162B {conum-guard-yaml} <1>
+  secondary_color: '#FFFFFF' {conum-guard-yaml} <2>
+  alert_color: '0052A5' {conum-guard-yaml} <3>
 ----
-<1> To align with CSS, you may add a `+#+` in front of the hex color value.
-A YAML preprocessor is used to ensure the value is not treated as a comment as it would normally be the case in YAML.
+<1> To align with CSS, you may add `+#+` in front of the hex color value to coerce it to a string.
+A YAML preprocessor is used to ensure the value is not treated as a comment as would normally be the case in YAML.
 <2> You may put quotes around the CSS-style hex value to make it friendly to a YAML editor or validation tool.
 <3> The leading `+#+` on a hex value is entirely optional.
-However, we recommend that you always use either a leading `+#+` or surrounding quotes (or both) to prevent YAML from mangling the value.
+However, we recommend that you always use either a leading `+#+` or surrounding quotes (or both) to prevent YAML from mangling the value (for example, 000000 would become 0, so use '000000' or #000000 instead).
 
 You can now use these custom variables later in the theme file:
 
 [source,yaml]
 ----
 base:
-  font_color: $brand_primary
+  font_color: $brand_primary_color
 ----
 
 === Math Expressions & Functions
@@ -403,9 +403,6 @@ The following units are supported:
 Viewport-relative percentages (vw or vh units) are calculated as a percentage of the page width or height, respectively.
 Currently, percentage units can only be used for placing elements on the title page or for setting the width of a block image.
 
-IMPORTANT: Numbers with more than two digits should be written as a float (e.g., 100.0), a math expression (e.g, 1 * 100), or with a unit (e.g., 100pt).
-Otherwise, the value may be misinterpreted as a hex color (e.g., '100') and could cause the converter to crash.
-
 Here's an example of how you can use inches to define the page margins:
 
 [source,yaml]
@@ -482,7 +479,7 @@ or
 
 The theme language supports color values in three formats:
 
-Hex:: A string of 3 or 6 characters with an optional leading `#`, optional surrounding quotes or both.
+Hex:: A string of 3 or 6 characters with an optional leading `#`, optional surrounding quotes, or both.
 RGB:: An array of numeric values ranging from 0 to 255.
 CMYK:: An array of numeric values ranging from 0 to 1 or from 0% to 100%.
 Transparent:: The special value `transparent` indicates that a color should not be used.
@@ -490,10 +487,12 @@ Transparent:: The special value `transparent` indicates that a color should not 
 ==== Hex
 
 The hex color value is likely most familiar to web developers.
-The value must be either 3 or 6 characters (case insensitive) with an optional leading hash (`#`), optional surrounding quotes or both.
+The value must be either 3 or 6 characters (case insensitive) with an optional leading hash (`#`), optional surrounding quotes, or both.
 
 To align with CSS, you may add a `+#+` in front of the hex color value.
-A YAML preprocessor is used to ensure the value is not treated as a comment as it would normally be the case in YAML.
+A YAML preprocessor is used to ensure the value is not treated as a comment as would normally be the case in YAML.
+That same preprocessor will also coerce a primitive value to a string if `color` is the name of the last segment in the key (e.g., `font_color`).
+This avoids the problem of 000 becoming 0 (and similar implicit conversions) when the theme file is parsed.
 
 You also may put quotes around the CSS-style hex value to make it friendly to a YAML editor or validation tool.
 In this case, the leading `+#+` on a hex value is entirely optional.
@@ -3474,9 +3473,9 @@ Please note that the running content will _not_ be used unless a) the periphery 
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
 . `<position>` can be `left`, `center` or `right`.
 
-IMPORTANT: You must define a height for the running header or footer, respectively, or it will not be shown.
+IMPORTANT: If you don't specify a height for either the header or footer key, it effectively disables the content at that periphery.
 
-If you define running header and footer content in your theme, you can still disable this content per document by setting the `noheader` and `nofooter` attributes in the AsciiDoc document header, respectively.
+If you define running header and footer content in your theme (including the height), you can still disable this content per document by setting the `noheader` and `nofooter` attributes in the AsciiDoc document header, respectively.
 
 If content is not specified for the running footer, the page number (i.e., `\{page-number}`) is shown on the left on verso pages and the right on recto pages.
 You can disable this behavior by defining the attribute `nofooter` in the AsciiDoc document header or by defining the key `footer_<side>_content: none` in the theme.

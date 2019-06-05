@@ -21,7 +21,7 @@ class ThemeLoader
 
   VariableRx = /\$([a-z0-9_]+)/
   LoneVariableRx = /^\$([a-z0-9_]+)$/
-  HexColorEntryRx = /^(?<k>[[:blank:]]*[[:graph:]]+): +(?!null$)(?<q>["']?)#?(?<v>[a-z0-9]{3,6})\k<q> *(?:#.*)?$/
+  HexColorEntryRx = /^(?<k>[[:blank:]]*[[:graph:]]+): +(?!null$)(?<q>["']?)(?<h>#)?(?<v>[a-f0-9]{3,6})\k<q> *(?:#.*)?$/
   MultiplyDivideOpRx = /(-?\d+(?:\.\d+)?) +([*\/]) +(-?\d+(?:\.\d+)?)/
   AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+\-]) +(-?\d+(?:\.\d+)?)/
   PrecisionFuncRx = /^(round|floor|ceil)\(/
@@ -74,7 +74,9 @@ class ThemeLoader
   end
 
   def self.load_file filename, theme_data = nil, theme_path = nil
-    yaml_data = ::SafeYAML.load (::File.read filename, encoding: ::Encoding::UTF_8).each_line.map {|l| l.sub HexColorEntryRx, '\k<k>: \'\k<v>\'' }.join
+    yaml_data = ::SafeYAML.load (::File.read filename, encoding: ::Encoding::UTF_8).each_line.map {|l|
+      l.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || m[:k] == 'color' || (m[:k].end_with? '_color') ? "'#{m[:v]}'" : m[:v]}) }
+    }.join
     if ::Hash === yaml_data && (extend_files = yaml_data.delete 'extends')
       [*extend_files].each do |extend_file|
         if extend_file == 'default'
@@ -206,13 +208,6 @@ class ThemeLoader
     when ColorValue
       # already converted
       return value
-    when ::String
-      if value == 'transparent'
-        # FIXME should we have a TransparentColorValue class?
-        return HexColorValue.new value
-      elsif value.length == 6
-        return HexColorValue.new value.upcase
-      end
     when ::Array
       case value.length
       # CMYK value
@@ -241,9 +236,18 @@ class ThemeLoader
       else
         value = value.join
       end
+    when ::String
+      if value == 'transparent'
+        # FIXME should we have a TransparentColorValue class?
+        return HexColorValue.new value
+      elsif value.length == 6
+        return HexColorValue.new value.upcase
+      end
     else
-      # Unknown type; coerce to a string
-      value = value.to_s
+      # Unknown type (usually Integer); coerce to String
+      if (value = value.to_s).length == 6
+        return HexColorValue.new value.upcase
+      end
     end
     value = case value.length
     when 6
