@@ -171,7 +171,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect p2_text[1][:string]).to eql '2'
   end
 
-  it 'wip should add running header starting at body if header key is set in theme' do
+  it 'should add running header starting at body if header key is set in theme' do
     theme_overrides = {
       header_font_size: 9,
       header_height: 30,
