@@ -3063,7 +3063,7 @@ class Converter < ::Prawn::Document
                 end
                 theme_font %(#{periphery}_#{side}_#{position}) do
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
-                    at: [colspec[:x], trim_top - trim_padding[0] + (trim_valign == :center ? font.descender * 0.5 : 0)],
+                    at: [colspec[:x], trim_height - trim_padding[0] + (trim_valign == :center ? font.descender * 0.5 : 0)],
                     width: colspec[:width],
                     height: trim_content_height,
                     align: colspec[:align],

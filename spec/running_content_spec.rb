@@ -171,7 +171,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect p2_text[1][:string]).to eql '2'
   end
 
-  it 'should add running header starting at body if header key is set in theme' do
+  it 'wip should add running header starting at body if header key is set in theme' do
     theme_overrides = {
       header_font_size: 9,
       header_height: 30,
@@ -194,12 +194,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     expected_page_numbers = %w(1 2)
 
+    page_height = pdf.pages[0][:size][1]
     header_texts = pdf.find_text '(Document Title)'
     (expect header_texts.size).to be expected_page_numbers.size
     expected_page_numbers.each_with_index do |page_number, idx|
       (expect header_texts[idx][:string]).to eql '(Document Title)'
       (expect header_texts[idx][:page_number]).to eql page_number.to_i + 1
       (expect header_texts[idx][:font_size]).to eql 9
+      (expect header_texts[idx][:y]).to be < page_height
     end
   end
 

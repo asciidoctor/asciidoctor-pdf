@@ -238,7 +238,10 @@ toc:
 footnotes:
   font_size: round($base_font_size * 0.75)
   item_spacing: $outline_list_item_spacing / 2
-# NOTE in addition to footer, header is also supported
+header:
+  font_size: $base_font_size_small
+  line_height: 1
+  vertical_align: middle
 footer:
   font_size: $base_font_size_small
   # NOTE if background_color is set, background and border will span width of page
@@ -248,27 +251,11 @@ footer:
   line_height: 1
   padding: [$base_line_height_length / 2, 1, 0, 1]
   vertical_align: top
-  #image_vertical_align: <alignment> or <number>
-  # additional attributes for content:
-  # * {page-count}
-  # * {page-number}
-  # * {document-title}
-  # * {document-subtitle}
-  # * {chapter-title}
-  # * {section-title}
-  # * {section-or-chapter-title}
   recto:
     #columns: "<50% =0% >50%"
     right:
       content: '{page-number}'
-      #content: '{section-or-chapter-title} | {page-number}'
-      #content: '{document-title} | {page-number}'
-    #center:
-    #  content: '{page-number}'
   verso:
     #columns: $footer_recto_columns
     left:
       content: $footer_recto_right_content
-      #content: '{page-number} | {chapter-title}'
-    #center:
-    #  content: '{page-number}'
