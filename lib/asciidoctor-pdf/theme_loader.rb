@@ -21,7 +21,7 @@ class ThemeLoader
 
   VariableRx = /\$([a-z0-9_]+)/
   LoneVariableRx = /^\$([a-z0-9_]+)$/
-  HexColorEntryRx = /^(?<k>[[:blank:]]*[[:graph:]]+): +(?!null$)(?<q>["']?)(?<h>#)?(?<v>[a-f0-9]{3,6})\k<q> *(?:#.*)?$/
+  HexColorEntryRx = /^(?<k>[ \t]*\p{Graph}+): +(?!null$)(?<q>["']?)(?<h>#)?(?<v>[a-f0-9]{3,6})\k<q> *(?:#.*)?$/
   MultiplyDivideOpRx = /(-?\d+(?:\.\d+)?) +([*\/]) +(-?\d+(?:\.\d+)?)/
   AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+\-]) +(-?\d+(?:\.\d+)?)/
   PrecisionFuncRx = /^(round|floor|ceil)\(/
