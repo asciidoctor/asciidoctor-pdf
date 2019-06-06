@@ -66,12 +66,12 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       (expect pdf.text.size).to eql 4
-      left_margin = (pdf.find_text string: 'reference')[0][:x]
-      unstyled_item = (pdf.find_text string: 'unstyled')[0]
+      left_margin = (pdf.find_text 'reference')[0][:x]
+      unstyled_item = (pdf.find_text 'unstyled')[0]
       (expect unstyled_item[:x]).to eql left_margin
-      no_bullet_item = (pdf.find_text string: 'no-bullet')[0]
+      no_bullet_item = (pdf.find_text 'no-bullet')[0]
       (expect no_bullet_item[:x]).to eql 56.3805
-      none_item = (pdf.find_text string: 'none')[0]
+      none_item = (pdf.find_text 'none')[0]
       (expect none_item[:x]).to eql 66.24
     end
   end
@@ -117,13 +117,13 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . ten
       EOS
 
-      nine_text = (pdf.find_text string: 'nine')[0]
-      ten_text = (pdf.find_text string: 'ten')[0]
+      nine_text = (pdf.find_text 'nine')[0]
+      ten_text = (pdf.find_text 'ten')[0]
 
       (expect nine_text[:x]).to eql ten_text[:x]
 
-      no9_text = (pdf.find_text string: '9.')[0]
-      no10_text = (pdf.find_text string: '10.')[0]
+      no9_text = (pdf.find_text '9.')[0]
+      no10_text = (pdf.find_text '10.')[0]
       (expect no9_text[:x]).to be > no10_text[:x]
     end
 
@@ -134,9 +134,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . ten
       EOS
 
-      no1_text = (pdf.find_text string: '1.')[0]
+      no1_text = (pdf.find_text '1.')[0]
       (expect no1_text).to be_nil
-      no9_text = (pdf.find_text string: '9.')[0]
+      no9_text = (pdf.find_text '9.')[0]
       (expect no9_text).not_to be_nil
       (expect no9_text[:order]).to eql 1
       (expect pdf.lines).to eql %w(9.nine 10.ten)
@@ -149,9 +149,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . ten
       EOS
 
-      no1_text = (pdf.find_text string: 'I.')[0]
+      no1_text = (pdf.find_text 'I.')[0]
       (expect no1_text).to be_nil
-      no9_text = (pdf.find_text string: 'IX.')[0]
+      no9_text = (pdf.find_text 'IX.')[0]
       (expect no9_text).not_to be_nil
       (expect no9_text[:order]).to eql 1
       (expect pdf.lines).to eql %w(IX.nine X.ten)
@@ -193,14 +193,14 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       (expect pdf.text.size).to eql 5
-      left_margin = (pdf.find_text string: 'reference')[0][:x]
-      unstyled_item = (pdf.find_text string: 'unstyled')[0]
+      left_margin = (pdf.find_text 'reference')[0][:x]
+      unstyled_item = (pdf.find_text 'unstyled')[0]
       (expect unstyled_item[:x]).to eql left_margin
-      no_bullet_item = (pdf.find_text string: 'no-bullet')[0]
+      no_bullet_item = (pdf.find_text 'no-bullet')[0]
       (expect no_bullet_item[:x]).to eql 51.6765
-      unnumbered_item = (pdf.find_text string: 'unnumbered')[0]
+      unnumbered_item = (pdf.find_text 'unnumbered')[0]
       (expect unnumbered_item[:x]).to eql 51.6765
-      none_item = (pdf.find_text string: 'none')[0]
+      none_item = (pdf.find_text 'none')[0]
       (expect none_item[:x]).to eql 66.24
     end
   end

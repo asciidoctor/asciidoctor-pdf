@@ -11,7 +11,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     (expect link_annotation[:A][:URI]).to eql 'https://asciidoctor.org'
 
     pdf = to_pdf input, analyze: true
-    link_text = (pdf.find_text string: 'https://asciidoctor.org')[0]
+    link_text = (pdf.find_text 'https://asciidoctor.org')[0]
     (expect link_text).not_to be_nil
     (expect link_text[:font_color]).to eql '428BCA'
     (expect link_text[:x]).to eql link_annotation[:Rect][0]

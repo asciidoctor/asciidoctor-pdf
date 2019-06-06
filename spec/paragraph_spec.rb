@@ -43,7 +43,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect line_spacing[0]).to eql 15.78
     (expect pdf.text[0][:x]).to be > pdf.text[1][:x]
     (expect pdf.text[2][:x]).to be > pdf.text[3][:x]
-    list_item_text = (pdf.find_text string: 'list item')[0]
+    list_item_text = (pdf.find_text 'list item')[0]
     (expect (pdf.text[3][:y] - list_item_text[:y]).round 2).to eql 27.78
   end
 
