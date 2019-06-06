@@ -194,8 +194,11 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     it 'should keep paragraphs in table cell separate' do
       pdf = to_pdf <<~'EOS', analyze: true
       |===
-      |line 1
-      wrapped
+      |all one
+      line
+
+      |line 1 +
+      line 2
 
       |paragraph 1
 
@@ -203,11 +206,15 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      cell_1_text = pdf.find_text 'line 1 wrapped'
+      cell_1_text = pdf.find_text 'all one line'
       (expect cell_1_text).not_to be_empty
-      cell_2_text = pdf.find_text %r/^paragraph (?:1|2)/
+      cell_2_text = pdf.find_text %r/^line (?:1|2)/
       (expect cell_2_text.size).to eql 2
       (expect cell_2_text[0][:y]).to be > cell_2_text[1][:y]
+      cell_3_text = pdf.find_text %r/^paragraph (?:1|2)/
+      (expect cell_3_text.size).to eql 2
+      (expect cell_3_text[0][:y]).to be > cell_3_text[1][:y]
+      (expect cell_3_text[0][:y] - cell_3_text[1][:y]).to be > (cell_2_text[0][:y] - cell_2_text[1][:y])
     end
   end
 
