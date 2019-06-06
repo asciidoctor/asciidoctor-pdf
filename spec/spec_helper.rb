@@ -81,6 +81,10 @@ class EnhancedPDFTextInspector < PDF::Inspector
     end
   end
 
+  def page pagenum
+    @pages[pagenum - 1]
+  end
+
   def page= page
     @pages << { size: (page.attributes[:MediaBox].slice 2, 2), text: [] }
     @page_number = page.number

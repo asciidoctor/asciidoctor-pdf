@@ -2033,18 +2033,23 @@ class Converter < ::Prawn::Document
 
   # NOTE to insert sequential page breaks, you must put {nbsp} between page breaks
   def convert_page_break node
-    unless at_page_top?
-      if (page_layout = node.attr 'page-layout').nil_or_empty?
-        if node.role? && (page_layout = (node.roles.map(&:to_sym) & PageLayouts)[-1])
-          advance_page layout: page_layout
-        else
-          advance_page
-        end
-      elsif PageLayouts.include?(page_layout = page_layout.to_sym)
-        advance_page layout: page_layout
-      else
-        advance_page
+    if (page_layout = node.attr 'page-layout').nil_or_empty?
+      unless node.role? && (page_layout = (node.roles.map(&:to_sym) & PageLayouts)[-1])
+        page_layout = nil
       end
+    elsif !PageLayouts.include?(page_layout = page_layout.to_sym)
+      page_layout = nil
+    end
+
+    if at_page_top?
+      if page_layout && page_layout != page.layout && page_is_empty?
+        delete_page
+        advance_page layout: page_layout
+      end
+    elsif page_layout
+      advance_page layout: page_layout
+    else
+      advance_page
     end
   end
 
@@ -3099,7 +3104,7 @@ class Converter < ::Prawn::Document
     outline.define do
       # FIXME use sanitize: :plain_text once available
       if (doctitle = document.sanitize(doc.doctitle use_fallback: true))
-        # FIXME link to title page if there's a cover page (skip cover page and ensuing blank page)
+        # FIXME link to title page if there's a cover page (skip cover page and ensure blank page)
         page title: doctitle, destination: (document.dest_top 1)
       end
       page title: (doc.attr 'toc-title'), destination: (document.dest_top toc_page_nums.first) unless toc_page_nums.none?
