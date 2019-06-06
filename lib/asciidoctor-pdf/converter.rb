@@ -96,7 +96,7 @@ class Converter < ::Prawn::Document
   UriBreakCharRepl = %(\\&#{ZeroWidthSpace})
   UriSchemeBoundaryRx = /(?<=:\/\/)/
   LineScanRx = /\n|.+/
-  BlankLineRx = /\n[[:blank:]]*\n/
+  BlankLineRx = /\n{2,}/
   WhitespaceChars = %( \t\n)
   SourceHighlighters = ['coderay', 'pygments', 'rouge'].to_set
   PygmentsBgColorRx = /^\.highlight +{ *background: *#([^;]+);/

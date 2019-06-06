@@ -190,6 +190,27 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
   end
 
+  context 'Basic table cell' do
+    it 'should keep paragraphs in table cell separate' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      |===
+      |line 1
+      wrapped
+
+      |paragraph 1
+
+      paragraph 2
+      |===
+      EOS
+
+      cell_1_text = pdf.find_text 'line 1 wrapped'
+      (expect cell_1_text).not_to be_empty
+      cell_2_text = pdf.find_text %r/^paragraph (?:1|2)/
+      (expect cell_2_text.size).to eql 2
+      (expect cell_2_text[0][:y]).to be > cell_2_text[1][:y]
+    end
+  end
+
   context 'AsciiDoc table cell' do
     it 'should convert blocks in an AsciiDoc table cell' do
       pdf = to_pdf <<~'EOS', analyze: true
