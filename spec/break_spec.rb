@@ -82,5 +82,90 @@ describe 'Asciidoctor::PDF::Converter - Break' do
 
       (expect pdf.pages.size).to eql 1
     end
+
+    it 'should change layout if page break specifies page-layout attribute' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      portrait
+
+      [page-layout=landscape]
+      <<<
+
+      landscape
+      EOS
+
+      text = pdf.text
+      (expect text.size).to eql 2
+      (expect text[0].values_at :string, :page_number, :x, :y).to eq ['portrait', 1, 48.24, 793.926]
+      (expect text[1].values_at :string, :page_number, :x, :y).to eq ['landscape', 2, 48.24, 547.316]
+    end
+
+    it 'should change layout if page break specifies layout role' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      portrait
+
+      [.landscape]
+      <<<
+
+      landscape
+      EOS
+
+      text = pdf.text
+      (expect text.size).to eql 2
+      (expect text[0].values_at :string, :page_number, :x, :y).to eq ['portrait', 1, 48.24, 793.926]
+      (expect text[1].values_at :string, :page_number, :x, :y).to eq ['landscape', 2, 48.24, 547.316]
+    end
+
+    it 'should switch layout each time page break specifies layout role' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      portrait
+
+      [.landscape]
+      <<<
+
+      landscape
+
+      [.portrait]
+      <<<
+
+      portrait
+
+      [.landscape]
+      <<<
+
+      landscape
+      EOS
+
+      portrait_text = pdf.find_text 'portrait'
+      (expect portrait_text.size).to eql 2
+      portrait_text.each do |text|
+        page = pdf.page text[:page_number]
+        (expect page[:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
+      end
+
+      landscape_text = pdf.find_text 'landscape'
+      (expect landscape_text.size).to eql 2
+      landscape_text.each do |text|
+        page = pdf.page text[:page_number]
+        (expect page[:size]).to eql PDF::Core::PageGeometry::SIZES['A4'].reverse
+      end
+    end
+
+    it 'should switch layout specified by page break even when it falls at a natural page break' do
+      pdf = to_pdf <<~EOS, analyze: true
+      portrait
+
+      [.landscape]
+      <<<
+
+      #{%(landscape +\n) * 31}landscape
+
+      [.portrait]
+      <<<
+
+      portrait
+      EOS
+
+      (expect (pdf.page 3)[:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
+    end
   end
 end
