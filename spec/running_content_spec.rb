@@ -171,6 +171,34 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect p2_text[1][:string]).to eql '2'
   end
 
+  it 'should place footer correctly if layout changes' do
+    theme_overrides = {
+      footer_padding: 0,
+      footer_verso_left_content: 'verso',
+      footer_verso_right_content: nil,
+      footer_recto_left_content: 'recto',
+      footer_recto_right_content: nil,
+    }
+
+    pdf = to_pdf <<~'EOS', attributes: {}, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+    portrait
+
+    [.landscape]
+    <<<
+
+    landscape
+
+    [.portrait]
+
+    portrait
+    EOS
+
+    (expect pdf.text.size).to eql 5
+    pdf.text.each do |text|
+      (expect text[:x]).to eql 48.24
+    end
+  end
+
   it 'should add running header starting at body if header key is set in theme' do
     theme_overrides = {
       header_font_size: 9,

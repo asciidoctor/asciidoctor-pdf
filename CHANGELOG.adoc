@@ -17,6 +17,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add support for cgi-style options on source language when syntax highlighting with Rouge (#1102)
 * apply custom theme to chronicles example to customize running content and demonstrate how to extend default theme
 * drop remapping of legacy running content keys in theme data
+* allocate styles for running content per page layout
 
 == 1.5.0.alpha.18 (2019-06-01) - @mojavelinux
 

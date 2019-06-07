@@ -302,6 +302,7 @@ class Converter < ::Prawn::Document
 
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
+    @stylesdir = doc.attr 'pdf-stylesdir'
     theme = load_theme doc
     pdf_opts = build_pdf_options doc, theme
     # QUESTION should page options be preserved (otherwise, not readily available)
@@ -351,7 +352,7 @@ class Converter < ::Prawn::Document
   end
 
   def load_theme doc
-    @theme ||= doc.options[:pdf_theme] || ThemeLoader.load_theme((doc.attr 'pdf-style'), (doc.attr 'pdf-stylesdir'))
+    @theme ||= doc.options[:pdf_theme] || ThemeLoader.load_theme((doc.attr 'pdf-style'), @stylesdir)
   end
 
   def build_pdf_options doc, theme
@@ -2384,7 +2385,7 @@ class Converter < ::Prawn::Document
         relative_to_imagesdir = false
       end
       # HACK quick fix to resolve image path relative to theme
-      logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, (doc.attr 'pdf-stylesdir') unless doc.attr? 'title-logo-image'
+      logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @stylesdir unless doc.attr? 'title-logo-image'
       logo_image_attrs['target'] = logo_image_path
       logo_image_attrs['align'] ||= (@theme.title_page_logo_align || title_align.to_s)
       # QUESTION should we allow theme to turn logo image off?
@@ -2739,10 +2740,6 @@ class Converter < ::Prawn::Document
   end
 
   # TODO delegate to layout_page_header and layout_page_footer per page
-  # 1. For each of the page sizes and page layouts in use, determine the
-  #    heading and footer positions/sizing.
-  # 2. For each page apply the correct page size and page layout header
-  #    and footer.
   def layout_running_content periphery, doc, opts = {}
     skip, skip_pagenums, body_start_page_number = opts[:skip] || [1, 1]
     body_start_page_number = opts[:body_start_page_number] || 1
@@ -2841,94 +2838,164 @@ class Converter < ::Prawn::Document
     allow_uri_read = doc.attr? 'allow-uri-read'
     svg_fallback_font = default_svg_font
 
-    # Determine all combinations of Page Size and Layout.
-    layouts_used = Set.new
-    layout_page_number = {}
-    (content_start_page..page_count).each do |page_number|
-      go_to_page page_number
-      layouts_used.add("#{page.size}_#{page.layout}")
-      layout_page_number["#{page.size}_#{page.layout}"] = page_number
+    pagenums_enabled = doc.attr? 'pagenums'
+    attribute_missing_doc = doc.attr 'attribute-missing'
+    case @media == 'prepress' ? 'physical' : (doc.attr 'pdf-folio-placement')
+    when 'physical'
+      folio_basis, invert_folio = :physical, false
+    when 'physical-inverted'
+      folio_basis, invert_folio = :physical, true
+    when 'virtual-inverted'
+      folio_basis, invert_folio = :virtual, true
+    else
+      folio_basis, invert_folio = :virtual, false
+    end
+    periphery_layout_cache = {}
+    repeat((content_start_page..page_count), dynamic: true) do
+      # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
+      next if page.imported_page?
+      pgnum_label = page_number - skip_pagenums
+      pgnum_label = (RomanNumeral.new page_number, :lower) if pgnum_label < 1
+      side = page_side((folio_basis == :physical ? page_number : pgnum_label), invert_folio)
+      # QUESTION should allocation be per side?
+      trim_styles, colspec_dict, content_dict, stamp_names = allocate_running_content_layout page, periphery, periphery_layout_cache
+      # FIXME we need to have a content setting for chapter pages
+      content_by_position, colspec_by_position = content_dict[side], colspec_dict[side]
+      # TODO populate chapter-number
+      # TODO populate numbered and unnumbered chapter and section titles
+      doc.set_attr 'page-number', pgnum_label.to_s if pagenums_enabled
+      # QUESTION should the fallback value be nil instead of empty string? or should we remove attribute if no value?
+      doc.set_attr 'part-title', (parts_by_page[pgnum_label] || '')
+      doc.set_attr 'chapter-title', (chapters_by_page[pgnum_label] || '')
+      doc.set_attr 'section-title', (sections_by_page[pgnum_label] || '')
+      doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum_label] || chapters_by_page[pgnum_label] || '')
+
+      stamp stamp_names[side] if stamp_names
+
+      theme_font periphery do
+        canvas do
+          bounding_box [trim_styles[:content_left][side], trim_styles[:top]], width: trim_styles[:content_width][side], height: trim_styles[:height] do
+            ColumnPositions.each do |position|
+              next unless (content = content_by_position[position])
+              next unless (colspec = colspec_by_position[position])[:width] > 0
+              # FIXME we need to have a content setting for chapter pages
+              case content
+              when ::Hash
+                # NOTE image vposition respects padding; use negative image_vertical_align value to revert
+                trim_v_padding = (trim_padding = trim_styles[:padding])[0] + trim_padding[2]
+                # NOTE float ensures cursor position is restored and returns us to current page if we overrun
+                float do
+                  # NOTE bounding_box is redundant if trim_v_padding is 0
+                  bounding_box [colspec[:x], cursor - trim_padding[0]], width: colspec[:width], height: (bounds.height - trim_v_padding) do
+                    begin
+                      if (img_path = content[:path]).downcase.end_with? '.svg'
+                        svg_data = ::File.read img_path
+                        svg_obj = ::Prawn::SVG::Interface.new svg_data, self,
+                            position: colspec[:align],
+                            vposition: trim_styles[:img_valign],
+                            width: content[:width],
+                            # TODO enforce jail in safe mode
+                            enable_file_requests_with_root: (::File.dirname img_path),
+                            enable_web_requests: allow_uri_read,
+                            fallback_font_name: svg_fallback_font
+                        if content[:fit] && svg_obj.document.sizing.output_height > (available_h = bounds.height)
+                          svg_obj.resize height: available_h
+                        end
+                        svg_obj.draw
+                      else
+                        img_opts = { position: colspec[:align], vposition: trim_styles[:img_valign] }
+                        if content[:fit]
+                          img_opts[:fit] = [content[:width], bounds.height]
+                        else
+                          img_opts[:width] = content[:width]
+                        end
+                        image img_path, img_opts
+                      end
+                    rescue
+                      logger.warn %(could not embed image in running content: #{img_path}; #{$!.message})
+                    end
+                  end
+                end
+              when ::String
+                # NOTE minor optimization
+                if content == '{page-number}'
+                  content = pagenums_enabled ? pgnum_label.to_s : nil
+                else
+                  # FIXME get apply_subs to handle drop-line w/o a warning
+                  doc.set_attr 'attribute-missing', 'skip' unless attribute_missing_doc == 'skip'
+                  if (content = doc.apply_subs content).include? '{'
+                    # NOTE must use &#123; in place of {, not \{, to escape attribute reference
+                    content = content.split(LF).delete_if {|line| SimpleAttributeRefRx.match? line } * LF
+                  end
+                  doc.set_attr 'attribute-missing', attribute_missing_doc unless attribute_missing_doc == 'skip'
+                end
+                theme_font %(#{periphery}_#{side}_#{position}) do
+                  formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
+                    at: [colspec[:x], trim_styles[:height] - trim_styles[:padding][0] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
+                    width: colspec[:width],
+                    height: trim_styles[:content_height],
+                    align: colspec[:align],
+                    valign: trim_styles[:valign],
+                    leading: trim_styles[:line_metrics].leading,
+                    final_gap: false,
+                    overflow: :truncate
+                end
+              end
+            end
+          end
+        end
+      end
     end
 
-    trim_line_metrics = Hash.new
-    trim_top = Hash.new
-    trim_height = Hash.new
-    trim_padding = Hash.new
-    content_dict = Hash.new
-    trim_content_left = Hash.new
-    trim_content_width = Hash.new
-    trim_img_valign = Hash.new
-    trim_content_height = Hash.new
-    trim_valign = Hash.new
-    colspec_dict = Hash.new
-    stamps = Hash.new
-    trim_stamp_name = Hash.new
+    go_to_page prev_page_number
+    nil
+  end
 
-    layouts_used.each do |lay|
-      go_to_page layout_page_number[lay]
-
-      # Determination of header and footer positions.
-      # Loop through for each page size and layout.
-      if periphery == :header
-        trim_line_metrics[lay] = calc_line_metrics(@theme.header_line_height || @theme.base_line_height)
-        trim_top[lay] = page_height
-        # NOTE height is required atm
-        trim_height[lay] = @theme.header_height || page_margin_top
-        trim_padding[lay] = @theme.header_padding || [0, 0, 0, 0]
-        trim_bg_color = resolve_theme_color :header_background_color
-        trim_border_width = @theme.header_border_width || @theme.base_border_width
-        trim_border_style = (@theme.header_border_style || :solid).to_sym
-        trim_border_color = resolve_theme_color :header_border_color
-        trim_valign[lay] = (@theme.header_vertical_align || :middle).to_sym
-        trim_img_valign[lay] = @theme.header_image_vertical_align
-      else
-        trim_line_metrics[lay] = calc_line_metrics(@theme.footer_line_height || @theme.base_line_height)
-        # NOTE height is required atm
-        trim_top[lay] = trim_height[lay] = @theme.footer_height || page_margin_bottom
-        trim_padding[lay] = @theme.footer_padding || [0, 0, 0, 0]
-        trim_bg_color = resolve_theme_color :footer_background_color
-        trim_border_width = @theme.footer_border_width || @theme.base_border_width
-        trim_border_style = (@theme.footer_border_style || :solid).to_sym
-        trim_border_color = resolve_theme_color :footer_border_color
-        trim_valign[lay] = (@theme.footer_vertical_align || :middle).to_sym
-        trim_img_valign[lay] = @theme.footer_image_vertical_align
-      end
-
-      trim_stamp_name[lay] = {
-        recto: %(#{lay}_#{periphery}_recto),
-        verso: %(#{lay}_#{periphery}_verso)
+  def allocate_running_content_layout page, periphery, cache
+    #layout = (page.dimensions.slice 2, 2).join ':'
+    layout = page.layout
+    cache[layout] ||= begin
+      trim_styles = {
+        line_metrics: (trim_line_metrics = calc_line_metrics @theme[%(#{periphery}_line_height)] || @theme.base_line_height),
+        # NOTE we've already verified this property is set
+        height: (trim_height = @theme[%(#{periphery}_height)]),
+        top: periphery == :header ? page_height : trim_height,
+        padding: (trim_padding = inflate_padding @theme[%(#{periphery}_padding)] || 0),
+        bg_color: (resolve_theme_color %(#{periphery}_background_color).to_sym),
+        border_width: (trim_border_width = @theme[%(#{periphery}_border_width)] || @theme.base_border_width),
+        border_style: (@theme[%(#{periphery}_border_style)] || :solid).to_sym,
+        border_color: trim_border_width == 0 ? nil : (resolve_theme_color %(#{periphery}_border_color).to_sym),
+        valign: (val = (@theme[%(#{periphery}_vertical_align)] || :middle).to_sym) == :middle ? :center : val,
+        img_valign: @theme[%(#{periphery}_image_vertical_align)],
+        left: {
+          recto: (trim_left_recto = @page_margin_by_side[:recto][3]),
+          verso: (trim_left_verso = @page_margin_by_side[:verso][3]),
+        },
+        width: {
+          recto: (trim_width_recto = page_width - trim_left_recto - @page_margin_by_side[:recto][1]),
+          verso: (trim_width_verso = page_width - trim_left_verso - @page_margin_by_side[:verso][1]),
+        },
+        content_left: {
+          recto: trim_left_recto + trim_padding[3],
+          verso: trim_left_verso + trim_padding[3],
+        },
+        content_width: (trim_content_width = {
+          recto: trim_width_recto - trim_padding[1] - trim_padding[3],
+          verso: trim_width_verso - trim_padding[1] - trim_padding[3],
+        }),
+        content_height: trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom,
       }
-      trim_left = {
-        recto: @page_margin_by_side[:recto][3],
-        verso: @page_margin_by_side[:verso][3]
-      }
-      trim_width = {
-        recto: page_width - trim_left[:recto] - @page_margin_by_side[:recto][1],
-        verso: page_width - trim_left[:verso] - @page_margin_by_side[:verso][1]
-      }
-      trim_content_left[lay] = {
-        recto: trim_left[:recto] + trim_padding[lay][3],
-        verso: trim_left[:verso] + trim_padding[lay][3]
-      }
-      trim_content_width[lay] = {
-        recto: trim_width[:recto] - trim_padding[lay][3] - trim_padding[lay][1],
-        verso: trim_width[:verso] - trim_padding[lay][3] - trim_padding[lay][1]
-      }
-      trim_content_height[lay] = trim_height[lay] - trim_padding[lay][0] - trim_padding[lay][2] - trim_line_metrics[lay].padding_top - trim_line_metrics[lay].padding_bottom
-      trim_border_color = nil if trim_border_width == 0
-      trim_valign[lay] = :center if trim_valign[lay] == :middle
-      case trim_img_valign[lay]
+      case trim_styles[:img_valign]
       when nil
-        trim_img_valign[lay] = trim_valign[lay]
+        trim_styles[:img_valign] = trim_styles[:valign]
       when 'middle'
-        trim_img_valign[lay] = :center
+        trim_styles[:img_valign] = :center
       when 'top', 'center', 'bottom'
-        trim_img_valign[lay] = trim_img_valign[lay].to_sym
+        trim_styles[:img_valign] = trim_styles[:img_valign].to_sym
       end
 
-      # Set the positions of the three header/footer sections (left | center | right).
-      colspec_dict[lay] = PageSides.inject({}) do |acc, side|
-        side_trim_content_width = trim_content_width[lay][side]
+      colspec_dict = PageSides.inject({}) do |acc, side|
+        side_trim_content_width = trim_content_width[side]
         if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)] || @theme[%(#{periphery}_columns)])
           case (colspecs = (custom_colspecs.to_s.tr ',', ' ').split[0..2]).size
           when 3
@@ -2964,30 +3031,32 @@ class Converter < ::Prawn::Document
         acc
       end
 
-      # TODO move this to a method so it can be reused; cache results
-      content_dict[lay] = PageSides.inject({}) do |acc, side|
+      content_dict = PageSides.inject({}) do |acc, side|
         side_content = {}
         ColumnPositions.each do |position|
           unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
             # TODO support image URL (using resolve_image_path)
-            if (val.include? ':') && val =~ ImageAttributeValueRx &&
-                ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
-              attrs = (AttributeList.new $2).parse
-              col_width = colspec_dict[lay][side][position][:width]
-              if (fit = attrs['fit']) == 'contain'
-                width = col_width
-              else
-                unless (width = resolve_explicit_width attrs, col_width)
-                  # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
-                  # NOTE failure message will be reported later when image is rendered
-                  width = (to_pt intrinsic_image_dimensions(path)[:width], :px) rescue 0
+            if (val.include? ':') && val =~ ImageAttributeValueRx
+              if ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, @stylesdir))
+                attrs = (AttributeList.new $2).parse
+                col_width = colspec_dict[side][position][:width]
+                if (fit = attrs['fit']) == 'contain'
+                  width = col_width
+                else
+                  unless (width = resolve_explicit_width attrs, col_width)
+                    # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
+                    # NOTE failure message will be reported later when image is rendered
+                    width = (to_pt intrinsic_image_dimensions(path)[:width], :px) rescue 0
+                  end
+                  width = col_width if fit == 'scale-down' && width > col_width
                 end
-                width = col_width if fit == 'scale-down' && width > col_width
+                side_content[position] = { path: path, width: width, fit: !!fit }
+              else
+                # NOTE allows inline image handler to report invalid reference and replace with alt text
+                side_content[position] = %(image:#{path}[#{$2}])
               end
-              side_content[position] = { path: path, width: width, fit: !!fit }
             else
-              # NOTE allows inline image handler to report invalid reference and replace with alt text
-              side_content[position] = %(image:#{path}[#{$2}])
+              side_content[position] = val
             end
           end
         end
@@ -3000,146 +3069,37 @@ class Converter < ::Prawn::Document
         acc
       end
 
-      stamps[lay] = {}
-      if trim_bg_color || trim_border_color
+      if trim_styles[:bg_color] || trim_styles[:border_color]
+        stamp_names = {
+          recto: %(#{layout}_#{periphery}_recto),
+          verso: %(#{layout}_#{periphery}_verso),
+        }
         PageSides.each do |side|
-          create_stamp trim_stamp_name[lay][side] do
+          create_stamp stamp_names[side] do
             canvas do
-              if trim_bg_color
-                bounding_box [0, trim_top[lay]], width: bounds.width, height: trim_height[lay] do
-                  fill_bounds trim_bg_color
-                  if trim_border_color
+              if trim_styles[:bg_color]
+                bounding_box [0, trim_styles[:top]], width: bounds.width, height: trim_styles[:height] do
+                  fill_bounds trim_styles[:bg_color]
+                  if trim_styles[:border_color]
                     # TODO stroke_horizontal_rule should support :at
                     move_down bounds.height if periphery == :header
-                    stroke_horizontal_rule trim_border_color, line_width: trim_border_width, line_style: trim_border_style
+                    stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style]
                   end
                 end
               else
-                bounding_box [trim_left[side], trim_top[lay]], width: trim_width[side], height: trim_height[lay] do
+                bounding_box [trim_styles[:left][side], trim_styles[:top]], width: trim_styles[:width][side], height: trim_styles[:height] do
                   # TODO stroke_horizontal_rule should support :at
                   move_down bounds.height if periphery == :header
-                  stroke_horizontal_rule trim_border_color, line_width: trim_border_width, line_style: trim_border_style
-                end
-              end
-            end
-          end
-        end
-        stamps[lay][periphery] = true
-      end
-    end
-
-    pagenums_enabled = doc.attr? 'pagenums'
-    attribute_missing_doc = doc.attr 'attribute-missing'
-    case @media == 'prepress' ? 'physical' : (doc.attr 'pdf-folio-placement')
-    when 'physical'
-      folio_basis, invert_folio = :physical, false
-    when 'physical-inverted'
-      folio_basis, invert_folio = :physical, true
-    when 'virtual-inverted'
-      folio_basis, invert_folio = :virtual, true
-    else
-      folio_basis, invert_folio = :virtual, false
-    end
-
-    # PAGE LOOP.
-    repeat((content_start_page..page_count), dynamic: true) do
-      # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
-      next if page.imported_page?
-
-      lay = "#{page.size}_#{page.layout}"
-
-      pgnum_label = page_number - skip
-      side = page_side((folio_basis == :physical ? page_number : pgnum_label), invert_folio)
-      # FIXME we need to have a content setting for chapter pages
-      content_by_position, colspec_by_position = content_dict[lay][side], colspec_dict[lay][side]
-      # TODO populate chapter-number
-      # TODO populate numbered and unnumbered chapter and section titles
-      doc.set_attr 'page-number', pgnum_label.to_s if pagenums_enabled
-      # QUESTION should the fallback value be nil instead of empty string? or should we remove attribute if no value?
-      doc.set_attr 'part-title', (parts_by_page[pgnum_label] || '')
-      doc.set_attr 'chapter-title', (chapters_by_page[pgnum_label] || '')
-      doc.set_attr 'section-title', (sections_by_page[pgnum_label] || '')
-      doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum_label] || chapters_by_page[pgnum_label] || '')
-
-      stamp trim_stamp_name[lay][side] if stamps[lay][periphery]
-
-      theme_font periphery do
-        canvas do
-          bounding_box [trim_content_left[lay][side], trim_top[lay]], width: trim_content_width[lay][side], height: trim_height[lay] do
-            ColumnPositions.each do |position|
-              next unless (content = content_by_position[position])
-              next unless (colspec = colspec_by_position[position])[:width] > 0
-              # FIXME we need to have a content setting for chapter pages
-              case content
-              when ::Hash
-                # NOTE image vposition respects padding; use negative image_vertical_align value to revert
-                trim_v_padding = trim_padding[lay][0] + trim_padding[lay][2]
-                # NOTE float ensures cursor position is restored and returns us to current page if we overrun
-                float do
-                  # NOTE bounding_box is redundant if trim_v_padding is 0
-                  bounding_box [colspec[:x], cursor - trim_padding[lay][0]], width: colspec[:width], height: (bounds.height - trim_v_padding) do
-                    begin
-                      if (img_path = content[:path]).downcase.end_with? '.svg'
-                        svg_data = ::File.read img_path
-                        svg_obj = ::Prawn::SVG::Interface.new svg_data, self,
-                            position: colspec[:align],
-                            vposition: trim_img_valign[lay],
-                            width: content[:width],
-                            # TODO enforce jail in safe mode
-                            enable_file_requests_with_root: (::File.dirname img_path),
-                            enable_web_requests: allow_uri_read,
-                            fallback_font_name: svg_fallback_font
-                        if content[:fit] && svg_obj.document.sizing.output_height > (available_h = bounds.height)
-                          svg_obj.resize height: available_h
-                        end
-                        svg_obj.draw
-                      else
-                        img_opts = { position: colspec[:align], vposition: trim_img_valign[lay] }
-                        if content[:fit]
-                          img_opts[:fit] = [content[:width], bounds.height]
-                        else
-                          img_opts[:width] = content[:width]
-                        end
-                        image img_path, img_opts
-                      end
-                    rescue
-                      logger.warn %(could not embed image in running content: #{img_path}; #{$!.message})
-                    end
-                  end
-                end
-              when ::String
-                # NOTE minor optimization
-                if content == '{page-number}'
-                  content = pagenums_enabled ? pgnum_label.to_s : nil
-                else
-                  # FIXME get apply_subs to handle drop-line w/o a warning
-                  doc.set_attr 'attribute-missing', 'skip' unless attribute_missing_doc == 'skip'
-                  if (content = doc.apply_subs content).include? '{'
-                    # NOTE must use &#123; in place of {, not \{, to escape attribute reference
-                    content = content.split(LF).delete_if {|line| SimpleAttributeRefRx.match? line } * LF
-                  end
-                  doc.set_attr 'attribute-missing', attribute_missing_doc unless attribute_missing_doc == 'skip'
-                end
-                theme_font %(#{periphery}_#{side}_#{position}) do
-                  formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
-                    at: [colspec[:x], trim_content_height[lay] + trim_padding[lay][2] + trim_line_metrics[lay].padding_bottom],
-                    width: colspec[:width],
-                    height: trim_content_height[lay],
-                    align: colspec[:align],
-                    valign: trim_valign[lay],
-                    leading: trim_line_metrics[lay].leading,
-                    final_gap: false,
-                    overflow: :truncate
+                  stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style]
                 end
               end
             end
           end
         end
       end
-    end
 
-    go_to_page prev_page_number
-    nil
+      [trim_styles, colspec_dict, content_dict, stamp_names]
+    end
   end
 
   def add_outline doc, num_levels = 2, toc_page_nums = [], num_front_matter_pages = 0
@@ -3605,7 +3565,7 @@ class Converter < ::Prawn::Document
       end
 
       if (bg_image = doc_attr_val ? (resolve_image_path doc, bg_image, relative_to_imagesdir) :
-          (ThemeLoader.resolve_theme_asset bg_image, (doc.attr 'pdf-stylesdir')))
+          (ThemeLoader.resolve_theme_asset bg_image, @stylesdir))
         if ::File.readable? bg_image
           bg_image
         else
