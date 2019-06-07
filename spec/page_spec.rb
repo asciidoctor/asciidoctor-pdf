@@ -73,9 +73,11 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
   context 'Margin' do
     it 'should use the margin specified in theme by default' do
-      pdf = to_pdf <<~'EOS', analyze: true
-      content
-      EOS
+      input = 'content'
+      prawn = to_pdf input, analyze: :document
+      pdf = to_pdf input, analyze: true
+
+      (expect prawn.page_margin).to eql [36, 48.24, 48.24, 48.24]
       (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 48.24, 793.926]
     end
 

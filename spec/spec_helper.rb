@@ -214,7 +214,14 @@ RSpec.configure do |config|
     end
     if Pathname === input
       opts[:to_dir] = output_dir unless opts.key? :to_dir
-      pdf_io = (Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)).attr 'outfile'
+      doc = Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)
+      if analyze == :document
+        return doc.converter
+      else
+        pdf_io = doc.attr 'outfile'
+      end
+    elsif analyze == :document
+      return Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, header_footer: true)
     else
       # NOTE use header_footer for compatibility with Asciidoctor < 2
       pdf_io = StringIO.new (Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, header_footer: true)).render
