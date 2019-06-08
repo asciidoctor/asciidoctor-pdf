@@ -5,6 +5,6 @@ base: # this is a trailing line comment
   font_color: #222
 page:
   background:
-    color: #fefefe
+    color: '#fefefe'
 link:
   font_color: $brand_primary
