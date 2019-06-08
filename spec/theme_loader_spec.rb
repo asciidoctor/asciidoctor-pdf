@@ -73,6 +73,10 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.to_h).to be_empty
     end
 
+    it 'should fail if theme is indented using tabs' do
+      expect { subject.load_file fixture_file 'tab-indentation-theme.yml' }.to raise_exception RuntimeError
+    end
+
     it 'should load and extend themes specified by extends array' do
       input_file = ::File.join fixtures_dir, 'extended-custom-theme.yml'
       theme = subject.load_file input_file, nil, fixtures_dir
