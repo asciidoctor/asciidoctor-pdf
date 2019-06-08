@@ -251,6 +251,8 @@ class ThemeLoader
       elsif value.length == 6
         return HexColorValue.new value.upcase
       end
+    when ::NilClass
+      return nil
     else
       # Unknown type (usually Integer); coerce to String
       if (value = value.to_s).length == 6

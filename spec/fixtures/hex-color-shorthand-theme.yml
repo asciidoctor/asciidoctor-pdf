@@ -8,3 +8,5 @@ page:
     color: '#fefefe'
 link:
   font_color: $brand_primary
+footer:
+  background_color: null

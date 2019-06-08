@@ -137,6 +137,17 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
   end
 
+  context 'data types' do
+    it 'should resolve null color value as nil' do
+      theme_data = SafeYAML.load <<~EOS
+      page:
+        background_color: null
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.page_background_color).to be_nil
+    end
+  end
+
   context 'interpolation' do
     it 'should resolve variable reference to previously defined key' do
       theme_data = SafeYAML.load <<~EOS
@@ -300,6 +311,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_color).to eql '222222'
       (expect theme.page_background_color).to eql 'FEFEFE'
       (expect theme.link_font_color).to eql '428BCA'
+      (expect theme.footer_background_color).to be_nil
     end
 
     # NOTE this is only relevant when the theme is read from a file
