@@ -291,9 +291,10 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     # NOTE this only works when the theme is read from a file
-    it 'should allow hex color values to be written with # prefix for keys that end with color' do
+    it 'should allow hex color values to be prefixed with # for keys that end in _color' do
       theme = subject.load_theme 'hex-color-shorthand', fixtures_dir
       (expect theme.base_font_color).to eql '222222'
+      (expect theme.page_background_color).to eql 'FEFEFE'
       (expect theme.link_font_color).to eql '428BCA'
     end
 

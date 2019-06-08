@@ -2,6 +2,9 @@
 brand:
   primary: #428bca
 base: # this is a trailing line comment
-  font_color: #222222
+  font_color: #222
+page:
+  background:
+    color: #fefefe
 link:
   font_color: $brand_primary
