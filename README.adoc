@@ -660,27 +660,55 @@ The only restriction is that no index terms may be defined below this section.
 NOTE: Although the catalog is generated automatically, you have to mark the index terms manually.
 However, you could use an extension, such as a TreeProcessor, to automatically mark index terms.
 
-== Optional Scripts
+== Optimizing the Generated PDF
 
-{project-name} also provides a shell script that invokes GhostScript (`gs`) to optimize and compress the generated PDF with minimal impact on quality.
+=== optimize-pdf
+
+{project-name} also provides a shell script that uses GhostScript (`gs`) to optimize and compress the generated PDF (with minimal impact on quality).
 You must have Ghostscript installed to use it.
 
 Here's an example usage:
 
  $ ./bin/optimize-pdf basic-example.pdf
 
-The command will generate the file [.path]_example-optimized.pdf_ in the current directory.
+The command will generate the file [.path]_basic-example-optimized.pdf_ in the same directory.
 
 WARNING: The `optimize-pdf` script currently requires a Bash shell (Linux, OSX, etc).
 We plan to rewrite the script in Ruby so it works across platforms (see https://github.com/asciidoctor/asciidoctor-pdf/issues/1[issue #1])
 
-IMPORTANT: The `optimize-pdf` script relies on Ghostscript >= 9.10.
-Otherwise, it may actually make the PDF larger.
-Also, you should only consider using it if the file size of the original PDF is > 5MB.
-
 If a file is found with the extension `.pdfmark` and the same rootname as the input file, it is used to add metadata to the generated PDF document.
 This file is necessary to preserve the document metadata since Ghostscript will otherwise drop it.
 That's why {project-name} always creates this file in addition to the PDF.
+
+IMPORTANT: The `optimize-pdf` script relies on Ghostscript >= 9.10.
+Otherwise, it may actually make the PDF larger.
+You should probably only consider using it if the file size of the original PDF is > 5MB.
+
+=== hexapdf
+
+Another option to optimize the PDF is https://hexapdf.gettalong.org/[hexapdf] (gem: hexapdf, command: hexapdf).
+Before introducing it, though, it's important to point out that its license is AGPL.
+If that's okay with you, read on to learn how to use it.
+
+First, install the hexapdf gem using the following command:
+
+ $ gem install hexapdf
+
+You can then use it to optimize your PDF as follows:
+
+ $ hexapdf optimize --compress-pages --force basic-example.pdf basic-example-optimized.pdf
+
+This command does not manipulate the images in any way.
+It merely compresses the objects in the PDF and prunes any unreachable references.
+But given how much waste Prawn leaves behind, this turns out to reduce the file size significantly.
+
+To see more options, run:
+
+ $ hexapdf help optimize
+
+For example, to make the source of the PDF a bit more readable, set the stream-related options to `preserve`.
+
+hexapdf also allows you to add password protection to your PDF, if that's something you're interested in doing.
 
 ifndef::env-site[]
 == Contributing
