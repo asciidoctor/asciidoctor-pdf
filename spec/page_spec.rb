@@ -99,4 +99,18 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 72.0, 757.926]
     end
   end
+
+  context 'Background' do
+    it 'should set page background color specified by page_background_color key in theme' do
+      theme_overrides = { page_background_color: 'ECFBF4' }
+      to_file = to_pdf_file <<~'EOS', 'page-background-color', pdf_theme: (build_pdf_theme theme_overrides)
+      = Document Title
+      :doctype: book
+
+      content
+      EOS
+
+      (expect to_file).to visually_match 'page-background-color.pdf'
+    end
+  end
 end
