@@ -112,5 +112,59 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       (expect to_file).to visually_match 'page-background-color.pdf'
     end
+
+    it 'should set the background image specified by the page-background-image attribute' do
+      to_file = to_pdf_file <<~'EOS', 'page-background-image.pdf'
+      = Document Title
+      :doctype: book
+      :page-background-image: image::bg.png[]
+
+      content
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image.pdf'
+    end
+
+    it 'should alternate page background if both verso and recto background images are specified' do
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
+      = Document Title
+      :doctype: book
+      :page-background-image-recto: image::recto-bg.png[]
+      :page-background-image-verso: image::verso-bg.png[]
+
+      content
+
+      <<<
+
+      more content
+
+      <<<
+
+      the end
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-alt.pdf'
+    end
+
+    it 'should use background image as fallback if background image for side not specified' do
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
+      = Document Title
+      :doctype: book
+      :page-background-image: image::recto-bg.png[]
+      :page-background-image-verso: image::verso-bg.png[]
+
+      content
+
+      <<<
+
+      more content
+
+      <<<
+
+      the end
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-alt.pdf'
+    end
   end
 end

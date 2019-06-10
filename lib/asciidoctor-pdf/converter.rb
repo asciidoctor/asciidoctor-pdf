@@ -182,12 +182,10 @@ class Converter < ::Prawn::Document
         set_page_margin next_page_margin
       end
       # TODO implement as a watermark (on top)
-      if @page_bg_image && verso_page?
+      if (bg_image = @page_bg_image[page_side])
         # FIXME implement fitting and centering for SVG
         # TODO implement image scaling (numeric value or "fit")
-        canvas { image @page_bg_image_verso, position: :center, fit: [bounds.width, bounds.height] }
-      elsif @page_bg_image_recto && recto_page?
-        canvas { image @page_bg_image_recto, position: :center, fit: [bounds.width, bounds.height] }
+        canvas { image bg_image, position: :center, fit: [bounds.width, bounds.height] }
       elsif @page_bg_color && @page_bg_color != 'FFFFFF'
         fill_absolute_bounds @page_bg_color
       end
@@ -327,19 +325,15 @@ class Converter < ::Prawn::Document
     # QUESTION should ThemeLoader register fonts?
     register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
     if (bg_image = resolve_background_image doc, theme, 'page-background-image') && bg_image != 'none'
-      @page_bg_image_verso = bg_image
-      @page_bg_image_recto = bg_image
+      @page_bg_image = { verso: bg_image, recto: bg_image }
     else
-      if (bg_image = resolve_background_image doc, theme, 'page-background-image-verso') && bg_image != 'none'
-        @page_bg_image_verso = bg_image
-      else
-        @page_bg_image_verso = nil
-      end
-      if (bg_image = resolve_background_image doc, theme, 'page-background-image-recto') && bg_image != 'none'
-        @page_bg_image_recto = bg_image
-      else
-        @page_bg_image_recto = nil
-      end
+      @page_bg_image = {}
+    end
+    if (bg_image = resolve_background_image doc, theme, 'page-background-image-verso') && bg_image != 'none'
+      @page_bg_image[:verso] = bg_image
+    end
+    if (bg_image = resolve_background_image doc, theme, 'page-background-image-recto') && bg_image != 'none'
+      @page_bg_image[:recto] = bg_image
     end
     @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
     @fallback_fonts = [*theme.font_fallbacks]
@@ -2345,13 +2339,13 @@ class Converter < ::Prawn::Document
   def layout_title_page doc
     return unless doc.header? && !doc.notitle
 
-    prev_bg_image = @page_bg_image_recto
+    prev_bg_image = @page_bg_image[side = page_side]
     prev_bg_color = @page_bg_color
 
     if (bg_image = resolve_background_image doc, @theme, 'title-page-background-image')
-      @page_bg_image_recto = (bg_image == 'none' ? nil : bg_image)
+      @page_bg_image[side] = (bg_image == 'none' ? nil : bg_image)
     else
-      @page_bg_image_recto = nil
+      @page_bg_image.delete side
     end
     if (bg_color = resolve_theme_color :title_page_background_color)
       @page_bg_color = bg_color
@@ -2359,7 +2353,7 @@ class Converter < ::Prawn::Document
     # NOTE a new page will already be started if the cover image is a PDF
     start_new_page unless page_is_empty?
     start_new_page if @ppbook && verso_page?
-    @page_bg_image_recto = prev_bg_image
+    @page_bg_image[side] = prev_bg_image if prev_bg_image
     @page_bg_color = prev_bg_color if bg_color
 
     # IMPORTANT this is the first page created, so we need to set the base font
