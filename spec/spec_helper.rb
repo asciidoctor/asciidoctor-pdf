@@ -336,11 +336,7 @@ RSpec.configure do |config|
 end
 
 RSpec::Matchers.define :visually_match do |reference_filename|
-  if (Pathname reference_filename).absolute?
-    reference_path = reference_filename
-  else
-    reference_path = File.join __dir__, 'reference', reference_filename
-  end
+  reference_path = (Pathname.new reference_filename).absolute? ? reference_filename : (File.join __dir__, 'reference', reference_filename)
   match do |actual_path|
     return false unless File.exist? reference_path
     images_output_dir = output_file 'visual-comparison-workdir'
