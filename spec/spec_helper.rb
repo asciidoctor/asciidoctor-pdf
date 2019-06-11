@@ -315,8 +315,8 @@ RSpec.configure do |config|
 
   def compute_image_differences reference, actual, difference = nil
     diff = []
-    actual_image = ChunkyPNG::Image.from_file actual
     reference_image = ChunkyPNG::Image.from_file reference
+    actual_image = actual ? (ChunkyPNG::Image.from_file actual) : (ChunkyPNG::Image.new reference_image.width, reference_image.height)
 
     actual_image.height.times do |y|
       actual_image.row(y).each_with_index do |pixel, x|
@@ -352,8 +352,9 @@ RSpec::Matchers.define :visually_match do |reference_filename|
     pixels = 0
     Dir[%(#{output_basename}-reference-*.png)].each do |reference_page_filename|
       actual_page_filename = reference_page_filename.sub %(#{output_basename}-reference), %(#{output_basename}-actual)
+      actual_page_filename = nil unless File.exist? actual_page_filename
       difference_page_filename = reference_page_filename.sub %(#{output_basename}-reference), %(#{output_basename}-diff)
-      next if FileUtils.compare_file reference_page_filename, actual_page_filename
+      next if actual_page_filename && (FileUtils.compare_file reference_page_filename, actual_page_filename)
       pixels += compute_image_differences reference_page_filename, actual_page_filename, difference_page_filename
     end
 
