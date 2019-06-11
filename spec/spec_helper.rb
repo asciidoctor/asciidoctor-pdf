@@ -315,8 +315,17 @@ RSpec.configure do |config|
 
   def compute_image_differences reference, actual, difference = nil
     diff = []
-    reference_image = ChunkyPNG::Image.from_file reference
-    actual_image = actual ? (ChunkyPNG::Image.from_file actual) : (ChunkyPNG::Image.new reference_image.width, reference_image.height)
+    if reference
+      reference_image = ChunkyPNG::Image.from_file reference
+      if actual
+        actual_image = ChunkyPNG::Image.from_file actual
+      else
+        actual_image = ChunkyPNG::Image.new reference_image.width, reference_image.height
+      end
+    else
+      actual_image = ChunkyPNG::Image.from_file actual
+      reference_image = ChunkyPNG::Image.new actual_image.width, actual_image.height
+    end
 
     actual_image.height.times do |y|
       actual_image.row(y).each_with_index do |pixel, x|
@@ -346,15 +355,19 @@ RSpec::Matchers.define :visually_match do |reference_filename|
     system 'pdftocairo', '-png', reference_path, %(#{output_basename}-reference)
 
     pixels = 0
-    Dir[%(#{output_basename}-reference-*.png)].each do |reference_page_filename|
-      actual_page_filename = reference_page_filename.sub %(#{output_basename}-reference), %(#{output_basename}-actual)
+
+    Dir[%(#{output_basename}-{actual,reference}-*.png)].map {|filename|
+      (/-(?:actual|reference)-(\d+)\.png$/.match filename)[1]
+    }.sort.uniq.each do |idx|
+      reference_page_filename = %(#{output_basename}-reference-#{idx}.png)
+      reference_page_filename = nil unless File.exist? reference_page_filename
+      actual_page_filename = %(#{output_basename}-actual-#{idx}.png)
       actual_page_filename = nil unless File.exist? actual_page_filename
-      difference_page_filename = reference_page_filename.sub %(#{output_basename}-reference), %(#{output_basename}-diff)
-      next if actual_page_filename && (FileUtils.compare_file reference_page_filename, actual_page_filename)
-      pixels += compute_image_differences reference_page_filename, actual_page_filename, difference_page_filename
+      next if reference_page_filename && actual_page_filename && (FileUtils.compare_file reference_page_filename, actual_page_filename)
+      pixels += compute_image_differences reference_page_filename, actual_page_filename, %(#{output_basename}-diff-#{idx}.png)
     end
 
-    pixels == 0
+    pixels.zero?
   end
 
   failure_message {|actual_path| %(expected #{actual_path} to be visually identical to #{reference_path}) }
