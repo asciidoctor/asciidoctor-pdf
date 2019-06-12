@@ -989,11 +989,6 @@ See <<Title Page>> for details.
 |===
 
 . Page background images are automatically scaled to fit within the bounds of the page.
-+
-NOTE: Page backgrounds do not currently work when using AsciidoctorJ PDF.
-This limitation is due to a bug in Prawn 1.3.1.
-The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgrade that is waiting on AsciidoctorJ to migrate to JRuby 9000).
-For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
 . Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
 . The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin_inner and margin_outer values.
 These margins and used when the value `prepress` is assigned to the `media` document attribute.
@@ -1638,11 +1633,6 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 |===
 
 . Page background images are automatically scaled to fit within the bounds of the page.
-+
-NOTE: Page backgrounds do not currently work when using AsciidoctorJ PDF.
-This limitation is due to a bug in Prawn 1.3.1.
-The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgrade that is waiting on AsciidoctorJ to migrate to JRuby 9000).
-For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
 . Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
 . Percentage unit can be % (relative to content height) or vh (relative to page height).
 
@@ -3714,11 +3704,6 @@ These settings override equivalent keys defined in the theme file, where applica
 . The target of the image macro is resolved relative to `imagesdir`.
 If the image macro syntax is not used, the value is resolved relative to the base directory, which defaults to the document directory.
 . Page background images are automatically scaled to fit within the bounds of the page.
-+
-NOTE: Page backgrounds do not currently work when using AsciidoctorJ PDF.
-This limitation is due to a bug in Prawn 1.3.1.
-The limitation will remain until AsciidoctorJ PDF upgrades to Prawn 2.x (an upgrade that is waiting on AsciidoctorJ to migrate to JRuby 9000).
-For more details, see http://discuss.asciidoctor.org/Asciidoctor-YAML-style-file-for-PDF-and-maven-td3849.html[this thread].
 . Controls whether the `page-number` attribute is accessible to the running header and footer content specified in the theme file.
 Use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively, from the document.
 . Enables generation of the http://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark] file, which contains metadata that is fed to Ghostscript when optimizing the PDF file.
