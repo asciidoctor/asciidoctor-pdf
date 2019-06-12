@@ -3021,7 +3021,7 @@ The keys in this category control the arrangement and style of tables and table 
   header_cell:
     text_transform: uppercase
 |===
-. Applied to even rows by default; controlled using `stripes` attribute (even, odd, all, none) on table.
+. Applied to even rows by default; controlled using `stripes` attribute (even, odd, all, none) on table or `table-stripes` attribute on document (or the `stripes` attribute on the document if using Asciidoctor < 2).
 //. `<parity>` can be `odd` (odd rows) or `even` (even rows).
 
 [#keys-footnotes]
