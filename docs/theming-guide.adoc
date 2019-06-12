@@ -946,10 +946,18 @@ See <<Title Page>> for details.
   background_color: #fefefe
 
 |background_image^[1]^
-|Inline image macro^[2]^ +
+|image macro^[2]^ +
 (default: _not set_)
 |page:
   background_image: image:page-bg.png[]
+
+|background_image_(recto{vbar}verso)^[1]^
+|image macro^[2]^ +
+(default: _not set_)
+|page:
+  background_image:
+    recto: image:page-bg-recto.png[]
+    verso: image:page-bg-verso.png[]
 
 |layout
 |portrait {vbar} landscape +
@@ -989,6 +997,8 @@ See <<Title Page>> for details.
 |===
 
 . Page background images are automatically scaled to fit within the bounds of the page.
+If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background is specified, it will be used only for that side.
+If you flatten out the keys (e.g., `page_background_recto`), you can also set the default page background image (`page_background`), which will then be used as a fallback if a background image isn't specified for a side.
 . Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
 . The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin_inner and margin_outer values.
 These margins and used when the value `prepress` is assigned to the `media` document attribute.
@@ -1328,7 +1338,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
   background_color: #eaeaea
 
 |background_image^[1]^
-|Inline image macro^[2]^ +
+|image macro^[2]^ +
 (default: _not set_)
 |title_page:
   background_image: image:title.png[]
@@ -1379,7 +1389,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     align: right
 
 |image
-|Inline image macro^[2]^ +
+|image macro^[2]^ +
 (default: _not set_)
 |title_page:
   logo:
@@ -3658,6 +3668,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |path^[2]^ {vbar} image macro^[3]^
 |:page-background-image: image:bg.jpg[]
 
+|page-background-image-(recto{vbar}verso)^[4]^
+|path^[2]^ {vbar} image macro^[3]^
+|:page-background-image-recto: image:bg-recto.jpg[]
+
 |pagenums^[5]^
 |flag (default: _set_)
 |:pagenums:
@@ -3704,6 +3718,8 @@ These settings override equivalent keys defined in the theme file, where applica
 . The target of the image macro is resolved relative to `imagesdir`.
 If the image macro syntax is not used, the value is resolved relative to the base directory, which defaults to the document directory.
 . Page background images are automatically scaled to fit within the bounds of the page.
+If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background is specified, it will be used only for that side.
+If a background image isn't specified for a side, the converter will use the default page background image (`page-background-image`), if specified.
 . Controls whether the `page-number` attribute is accessible to the running header and footer content specified in the theme file.
 Use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively, from the document.
 . Enables generation of the http://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark] file, which contains metadata that is fed to Ghostscript when optimizing the PDF file.
