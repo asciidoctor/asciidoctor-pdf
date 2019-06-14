@@ -188,6 +188,45 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       last_a2_text = (pdf.find_text 'A2')[-1]
       (expect first_a1_text[:y] - first_a2_text[:y]).to eql (last_a1_text[:y] - last_a2_text[:y])
     end
+
+    it 'should set padding on head cells the same as body cells by default' do
+      input = <<~'EOS'
+      [frame=none,grid=rows]
+      |===
+      | Column A | Column B
+
+      | A1
+      | B1
+      |===
+      EOS
+
+      reference_pdf = to_pdf input, analyze: :line
+      pdf = to_pdf input, pdf_theme: (build_pdf_theme table_cell_padding: [10, 3, 10, 3]), analyze: :line
+
+      # NOTE the line under the head row should moved down
+      (expect pdf.points[0][1]).to be < reference_pdf.points[0][1]
+    end
+
+    it 'should set padding on head cells as specified by table_head_cell_padding theme key' do
+      input = <<~'EOS'
+      [frame=none,grid=rows]
+      |===
+      | Column A | Column B
+
+      | A1
+      | B1
+      |===
+      EOS
+
+      reference_pdf = to_pdf input, analyze: true
+      pdf = to_pdf input, pdf_theme: (build_pdf_theme table_head_cell_padding: [10, 3, 10, 3]), analyze: true
+      
+      reference_a1_text = (reference_pdf.find_text 'A1')[0]
+      a1_text = (pdf.find_text 'A1')[0]
+
+      # NOTE the first body row should be moved down
+      (expect a1_text[:y]).to be < reference_a1_text[:y]
+    end
   end
 
   context 'Basic table cell' do
