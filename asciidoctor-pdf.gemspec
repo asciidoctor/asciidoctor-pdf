@@ -48,6 +48,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'treetop', '~> 1.5.0'
 
   s.add_development_dependency 'rake', '~> 12.3.0'
+  # Asciidoctor PDF supports Rouge >= 2; Rouge 3.4.1 emits a superfluous warning in verbose mode
+  s.add_development_dependency 'rouge', '~> 3.4.0', '!= 3.4.1'
   s.add_development_dependency 'rspec', '~> 3.8.0'
   s.add_development_dependency 'pdf-inspector', '~> 1.3.0'
   s.add_development_dependency 'chunky_png', '~> 1.3.0'

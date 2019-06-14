@@ -32,6 +32,48 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       # NOTE the echo keyword should not be highlighted
       (expect echo_text).to be_nil
     end
+
+    it 'should preserve cgi-style options when setting start_inline option for PHP' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,php?funcnamehighlighting=0]
+      ----
+      cal_days_in_month(CAL_GREGORIAN, 6, 2019)
+      ----
+      EOS
+
+      if Rouge.version >= '2.1.0'
+        funcname_text = (pdf.find_text 'cal_days_in_month')[0]
+        (expect funcname_text).not_to be_nil
+        (expect funcname_text[:font_color]).to eql '333333'
+
+        year_text = (pdf.find_text '2019')[0]
+        (expect year_text).not_to be_nil
+        (expect year_text[:font_color]).to eql '0000DD'
+      else
+        text = pdf.text
+        (expect text.size).to eql 1
+        (expect text[0][:string]).to eql 'cal_days_in_month(CAL_GREGORIAN, 6, 2019)'
+        (expect text[0][:font_color]).to eql '333333'
+      end
+    end
+
+    it 'should not enable start_inline option for PHP if disabled by cgi-style option' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,php?start_inline=0]
+      ----
+      cal_days_in_month(CAL_GREGORIAN, 6, 2019)
+      ----
+      EOS
+
+      text = pdf.text
+      (expect text.size).to eql 1
+      (expect text[0][:string]).to eql 'cal_days_in_month(CAL_GREGORIAN, 6, 2019)'
+      (expect text[0][:font_color]).to eql '333333'
+    end
   end
 
   context 'Callouts' do

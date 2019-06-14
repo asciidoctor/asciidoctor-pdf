@@ -9,8 +9,7 @@ gem 'prawn-table', git: 'https://github.com/prawnpdf/prawn-table.git', ref: '515
 # Add unicode (preferred) or activesupport to transform case of text containing multibyte chars on Ruby < 2.4
 gem 'unicode', require: false if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
 #gem 'activesupport', '4.2.7.1', require: false if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
-# NOTE rouge is defined here to control version and to verify it gets lazy loaded
-gem 'rouge', '2.2.1', require: false
+gem 'rouge', ENV['ROUGE_VERSION'], require: false if ENV.key? 'ROUGE_VERSION'
 
 group :docs do
   gem 'yard', require: false
