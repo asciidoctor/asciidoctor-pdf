@@ -59,6 +59,17 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect text[-1][:font_size]).to eql 8
   end
 
+  it 'should render footnotes in table cell that are directly adjacent to text' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    |===
+    |``German``footnote:[Other non-English languages may be supported in the future depending on demand.]
+    | 80footnote:[Width and Length is overridden by the actual terminal or window size, if available.]
+    |===
+    EOS
+
+    (expect pdf.lines.slice 0, 2).to eql ['German[1]', '80[2]']
+  end
+
   it 'should use number of target footnote in footnote reference' do
     if asciidoctor_1_5_7_or_better?
       pdf = to_pdf <<~'EOS', analyze: true
