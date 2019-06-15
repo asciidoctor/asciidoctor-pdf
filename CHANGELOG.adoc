@@ -55,6 +55,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add support for nbsp named entity (i.e., `+&nbsp;`); replace occurances of nbsp named entity with a single space in outline
 * upgrade to FontAwesome 5; introduce the fas, far, and fab icon sets, now preferred over fa; drop support for octicons (#891) (@jessedoyle)
 * place footnotes at end of chapters in books or end of document otherwise (#85) (@bcourtine)
+* fix rendering of footnotes directly adjacent to text in a normal table cell (#927)
 * place toc directly after document title when doctype is not book (#233) (@ogmios-voice)
 * add page layout control to page break (#490) (@resort-diaper)
 * allow additional style properties to be set per heading level (#176) (@billybooth)
