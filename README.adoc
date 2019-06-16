@@ -788,6 +788,10 @@ To disable the visual integration tests, pass the `` option:
 
  $ bundle exec rspec -t ~integration
 
+If a visual integration test fails, you can instruct the test suite to keep the files in the [.path]_spec/output_ directory by setting the `DEBUG` environment variable:
+
+ $ DEBUG=true bundle exec rspec -t integration
+
 If you want to see the name of each test as it is run, add the `-fd` option:
 
  $ bundle exec rspec -fd
@@ -801,11 +805,15 @@ Running tests using `rspec` directly gives you the advantage of being able to sp
 To run a single test, you can filter by the name of the test.
 For example, to run all tests that pertain to failures, use:
 
- $ bundle exec rspec -e fail -fd
+ $ bundle exec rspec -e fail
+
+To run all tests that have `wip` in the name, use:
+
+ $ bundle exec rspec -e wip
 
 You can also run all tests in a given file by passing the file's path to rspec:
 
- $ bundle exec rspec -fd spec/toc_spec.rb
+ $ bundle exec rspec spec/toc_spec.rb
 
 For a full list of options that rspec provides, run `rspec -h`.
 

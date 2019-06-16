@@ -138,7 +138,7 @@ RSpec.configure do |config|
   end
 
   config.after :suite do
-    FileUtils.rm_r output_dir, force: true, secure: true
+    FileUtils.rm_r output_dir, force: true, secure: true unless ENV.key? 'DEBUG'
   end
 
   def asciidoctor_2_or_better?
