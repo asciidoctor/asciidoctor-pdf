@@ -25,7 +25,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       base:
         font:
           family: Times-Roman
-        border-width: 0.5
+        border_width: 0.5
       admonition:
         label:
           font_style: bold
@@ -35,6 +35,21 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme).to respond_to :page_size
       (expect theme).to respond_to :base_font_family
       (expect theme).to respond_to :base_border_width
+      (expect theme).to respond_to :admonition_label_font_style
+    end
+
+    it 'should replace hyphens in key names with underscores' do
+      theme_data = SafeYAML.load <<~EOS
+      page-size: A4
+      base:
+        font-family: Times-Roman
+      admonition:
+        label-font-style: bold
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme).to be_an OpenStruct
+      (expect theme).to respond_to :page_size
+      (expect theme).to respond_to :base_font_family
       (expect theme).to respond_to :admonition_label_font_style
     end
 
