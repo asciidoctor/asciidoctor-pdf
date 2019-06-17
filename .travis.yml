@@ -20,6 +20,8 @@ matrix:
   include:
   - rvm: *oldest_ruby
     env: ASCIIDOCTOR_VERSION=1.5.3
+  - rvm: *oldest_ruby
+    env: ROUGE_VERSION='~> 2.0.0'
 script:
 - bundle exec rake spec
 deploy:

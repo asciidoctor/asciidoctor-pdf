@@ -26,6 +26,6 @@ describe 'asciidoctor-pdf' do
       (expect err).to be_empty
       reference_file = File.absolute_path example_file 'chronicles-example.pdf'
       (expect output_file 'chronicles-example.pdf').to visually_match reference_file
-    end
+    end unless ENV['ROUGE_VERSION'] && ENV['ROUGE_VERSION'].split[-1] < '2.1.0'
   end
 end

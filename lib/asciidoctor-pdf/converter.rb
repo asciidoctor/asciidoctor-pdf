@@ -1540,14 +1540,24 @@ class Converter < ::Prawn::Document
       fragments = restore_conums fragments, conum_mapping, num_trailing_spaces, linenums if conum_mapping
       fragments = guard_indentation fragments
     when 'rouge'
-      lexer = ::Rouge::Lexer.find(node.attr 'language', 'text', false) || ::Rouge::Lexers::PlainText
-      lexer_opts = lexer.tag == 'php' ? { start_inline: !(node.option? 'mixed') } : {}
+      if (srclang = node.attr 'language', nil, false)
+        if srclang.include? '?'
+          if (lexer = ::Rouge::Lexer.find_fancy srclang)
+            unless lexer.tag != 'php' || (node.option? 'mixed') || ((lexer_opts = lexer.options).key? 'start_inline')
+              lexer = lexer.class.new lexer_opts.merge 'start_inline' => true
+            end
+          end
+        elsif (lexer = ::Rouge::Lexer.find srclang)
+          lexer = lexer.new start_inline: true if lexer.tag == 'php' && !(node.option? 'mixed')
+        end
+      end
+      lexer ||= ::Rouge::Lexers::PlainText
       formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap)
       formatter_opts = (node.attr? 'linenums') ? { line_numbers: true, start_line: (node.attr 'start', 1, false).to_i } : {}
       # QUESTION allow border color to be set by theme for highlighted block?
       bg_color_override = formatter.background_color
       source_string, conum_mapping = extract_conums source_string
-      fragments = formatter.format((lexer.lex source_string, lexer_opts), formatter_opts)
+      fragments = formatter.format((lexer.lex source_string), formatter_opts)
       # NOTE cleanup trailing endline (handled in rouge_ext/formatters/prawn instead)
       #fragments[-1][:text] == LF ? fragments.pop : fragments[-1][:text].chop!
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
