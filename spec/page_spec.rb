@@ -113,11 +113,23 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-color.pdf'
     end
 
-    it 'should set the background image specified by the page-background-image attribute' do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image.pdf'
+    it 'should set the background image using target of macro specified in page-background-image attribute' do
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-macro.pdf'
       = Document Title
       :doctype: book
       :page-background-image: image::bg.png[]
+
+      content
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image.pdf'
+    end
+
+    it 'should set the background image using path specified in page-background-image attribute' do
+      to_file = to_pdf_file <<~EOS, 'page-background-image-path.pdf'
+      = Document Title
+      :doctype: book
+      :page-background-image: #{fixture_file 'bg.png', relative: true}
 
       content
       EOS
