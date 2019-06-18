@@ -46,8 +46,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines[1..-1]).to eql %w(wood hammer nail)
       left_margin = pdf.text[0][:x]
       indents = pdf.text[1..-1].map {|it| it[:x] }
-      (expect indents.size).to eql 3
-      (expect indents.uniq.size).to eql 1
+      (expect indents).to have_size 3
+      (expect indents.uniq).to have_size 1
       (expect indents[0]).to be > left_margin
     end
 
@@ -65,7 +65,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       * none
       EOS
 
-      (expect pdf.text.size).to eql 4
+      (expect pdf.text).to have_size 4
       left_margin = (pdf.find_text 'reference')[0][:x]
       unstyled_item = (pdf.find_text 'unstyled')[0]
       (expect unstyled_item[:x]).to eql left_margin
@@ -170,8 +170,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines[1..-1]).to eql %w(one two three)
       left_margin = pdf.text[0][:x]
       indents = pdf.text[1..-1].map {|it| it[:x] }
-      (expect indents.size).to eql 3
-      (expect indents.uniq.size).to eql 1
+      (expect indents).to have_size 3
+      (expect indents.uniq).to have_size 1
       (expect indents[0]).to be > left_margin
     end
 
@@ -192,7 +192,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . none
       EOS
 
-      (expect pdf.text.size).to eql 5
+      (expect pdf.text).to have_size 5
       left_margin = (pdf.find_text 'reference')[0][:x]
       unstyled_item = (pdf.find_text 'unstyled')[0]
       (expect unstyled_item[:x]).to eql left_margin

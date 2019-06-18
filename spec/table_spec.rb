@@ -10,7 +10,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      (expect pdf.points.size).to eql 32
+      (expect pdf.points).to have_size 32
     end
 
     it 'should allow frame and grid to be specified on table using frame and grid attributes' do
@@ -22,7 +22,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      (expect pdf.points.size).to eql 16
+      (expect pdf.points).to have_size 16
     end
 
     it 'should treat topbot value of frame attribute as an alias for ends' do
@@ -42,7 +42,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      (expect pdf_a.points.size).to eql pdf_b.points.size
+      (expect pdf_a.points).to have_size pdf_b.points.size
     end
 
     it 'should allow frame and grid to be set globally using table-frame and table-grid attributes' do
@@ -56,7 +56,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      (expect pdf.points.size).to eql 16
+      (expect pdf.points).to have_size 16
     end if asciidoctor_2_or_better?
 
     it 'should apply stripes to specified group of rows as specified by stripes attribute', integration: true do
@@ -248,10 +248,10 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       cell_1_text = pdf.find_text 'all one line'
       (expect cell_1_text).not_to be_empty
       cell_2_text = pdf.find_text %r/^line (?:1|2)/
-      (expect cell_2_text.size).to eql 2
+      (expect cell_2_text).to have_size 2
       (expect cell_2_text[0][:y]).to be > cell_2_text[1][:y]
       cell_3_text = pdf.find_text %r/^paragraph (?:1|2)/
-      (expect cell_3_text.size).to eql 2
+      (expect cell_3_text).to have_size 2
       (expect cell_3_text[0][:y]).to be > cell_3_text[1][:y]
       (expect cell_3_text[0][:y] - cell_3_text[1][:y]).to be > (cell_2_text[0][:y] - cell_2_text[1][:y])
     end
@@ -290,7 +290,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       (expect pdf.lines.find {|l| l.include? '!' }).to be_nil
-      (expect pdf.lines.size).to eql 2
+      (expect pdf.lines).to have_size 2
       (expect pdf.lines[1]).to eql 'Nested table cell 1Nested table cell 2'
       nested_cell_1 = (pdf.find_text 'Nested table cell 1')[0]
       nested_cell_2 = (pdf.find_text 'Nested table cell 2')[0]

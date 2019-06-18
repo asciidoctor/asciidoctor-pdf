@@ -10,10 +10,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       EOS
 
       first_paragraph_text = pdf.find_text 'first paragraph'
-      (expect first_paragraph_text.size).to eql 1
+      (expect first_paragraph_text).to have_size 1
       (expect first_paragraph_text[0][:font_size]).to eql 10.5
       second_paragraph_text = pdf.find_text 'first paragraph'
-      (expect second_paragraph_text.size).to eql 1
+      (expect second_paragraph_text).to have_size 1
       (expect second_paragraph_text[0][:font_size]).to eql 10.5
     end
 
@@ -27,10 +27,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       EOS
 
       first_paragraph_text = pdf.find_text 'first paragraph'
-      (expect first_paragraph_text.size).to eql 1
+      (expect first_paragraph_text).to have_size 1
       (expect first_paragraph_text[0][:font_size]).to eql 10.5
       second_paragraph_text = pdf.find_text 'first paragraph'
-      (expect second_paragraph_text.size).to eql 1
+      (expect second_paragraph_text).to have_size 1
       (expect second_paragraph_text[0][:font_size]).to eql 10.5
     end
 
@@ -48,13 +48,13 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       EOS
 
       preamble_text = pdf.find_text 'preamble content'
-      (expect preamble_text.size).to eql 1
+      (expect preamble_text).to have_size 1
       (expect preamble_text[0][:font_size]).to eql 13
       more_preamble_text = pdf.find_text 'more preamble content'
-      (expect more_preamble_text.size).to eql 1
+      (expect more_preamble_text).to have_size 1
       (expect more_preamble_text[0][:font_size]).to eql 10.5
       section_text = pdf.find_text 'section content'
-      (expect section_text.size).to eql 1
+      (expect section_text).to have_size 1
       (expect section_text[0][:font_size]).to eql 10.5
     end
   end
@@ -68,10 +68,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       EOS
 
       first_paragraph_text = pdf.find_text 'first paragraph'
-      (expect first_paragraph_text.size).to eql 1
+      (expect first_paragraph_text).to have_size 1
       (expect first_paragraph_text[0][:font_size]).to eql 10.5
       second_paragraph_text = pdf.find_text 'first paragraph'
-      (expect second_paragraph_text.size).to eql 1
+      (expect second_paragraph_text).to have_size 1
       (expect second_paragraph_text[0][:font_size]).to eql 10.5
     end
 
@@ -85,10 +85,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       EOS
 
       first_paragraph_text = pdf.find_text 'first paragraph'
-      (expect first_paragraph_text.size).to eql 1
+      (expect first_paragraph_text).to have_size 1
       (expect first_paragraph_text[0][:font_size]).to eql 10.5
       second_paragraph_text = pdf.find_text 'first paragraph'
-      (expect second_paragraph_text.size).to eql 1
+      (expect second_paragraph_text).to have_size 1
       (expect second_paragraph_text[0][:font_size]).to eql 10.5
     end
 
@@ -106,13 +106,13 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       EOS
 
       preamble_text = pdf.find_text 'preamble content'
-      (expect preamble_text.size).to eql 1
+      (expect preamble_text).to have_size 1
       (expect preamble_text[0][:font_size]).to eql 13
       more_preamble_text = pdf.find_text 'more preamble content'
-      (expect more_preamble_text.size).to eql 1
+      (expect more_preamble_text).to have_size 1
       (expect more_preamble_text[0][:font_size]).to eql 10.5
       section_text = pdf.find_text 'section content'
-      (expect section_text.size).to eql 1
+      (expect section_text).to have_size 1
       (expect section_text[0][:font_size]).to eql 10.5
     end
 
@@ -128,12 +128,12 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       section content
       EOS
 
-      (expect (pdf.find_text string: 'Preface', page_number: 2, font_size: 22).size).to eql 1
+      (expect pdf.find_text string: 'Preface', page_number: 2, font_size: 22).to have_size 1
       preamble_text = pdf.find_text 'preamble content'
-      (expect preamble_text.size).to eql 1
+      (expect preamble_text).to have_size 1
       (expect preamble_text[0][:font_size]).to eql 10.5
       section_text = pdf.find_text 'section content'
-      (expect section_text.size).to eql 1
+      (expect section_text).to have_size 1
       (expect section_text[0][:font_size]).to eql 10.5
     end
   end

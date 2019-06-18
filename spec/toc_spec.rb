@@ -12,7 +12,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       == Conclusion
       EOS
-      (expect pdf.pages.size).to eql 4
+      (expect pdf.pages).to have_size 4
       (expect pdf.find_text 'Table of Contents').to be_empty
     end
 
@@ -27,7 +27,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       == Conclusion
       EOS
-      (expect pdf.pages.size).to eql 5
+      (expect pdf.pages).to have_size 5
       (expect pdf.find_text string: 'Document Title', page_number: 1).not_to be_empty
       (expect pdf.find_text string: 'Table of Contents', page_number: 2).not_to be_empty
       (expect pdf.find_text string: '1', page_number: 2).not_to be_empty
@@ -50,7 +50,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       [{ 'toc' => '' }, { 'toc' => '', 'preface-title' => 'Preface' }].each do |attrs|
         pdf = to_pdf input, doctype: :book, attributes: attrs, analyze: :page
-        (expect pdf.pages.size).to eql 4
+        (expect pdf.pages).to have_size 4
         (expect pdf.pages[0][:strings]).to include 'Document Title'
         (expect pdf.pages[1][:strings]).to include 'Table of Contents'
         if attrs.include? 'preface-title'
@@ -82,7 +82,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       ==== Level 3
       EOS
-      (expect pdf.pages.size).to eql 3
+      (expect pdf.pages).to have_size 3
       (expect pdf.pages[0][:strings]).to include 'Document Title'
       (expect pdf.pages[1][:strings]).to include 'Table of Contents'
       (expect pdf.pages[1][:strings]).to include 'Level 1'
@@ -105,7 +105,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       == Chapter B
       EOS
-      (expect pdf.pages.size).to eql 6
+      (expect pdf.pages).to have_size 6
       (expect pdf.pages[1][:strings]).to include 'Table of Contents'
       (expect pdf.pages[1][:strings]).to include 'Part One'
       (expect pdf.pages[1][:strings]).to include 'Part Two'
@@ -121,7 +121,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       == Chapter 1#{sections.join}
       EOS
-      (expect pdf.pages.size).to eql 6
+      (expect pdf.pages).to have_size 6
       (expect pdf.pages[0][:strings]).to include 'Document Title'
       (expect pdf.pages[1][:strings]).to include 'Table of Contents'
       (expect pdf.pages[3][:strings]).to include 'Chapter 1'
@@ -139,7 +139,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       == Conclusion
       EOS
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
       (expect pdf.find_text 'Table of Contents').to be_empty
     end
 
@@ -164,9 +164,9 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       #{lorem}
       EOS
       pdf = to_pdf input, analyze: true
-      (expect pdf.pages.size).to eql 2
-      (expect (pdf.find_text string: 'Table of Contents', page_number: 1).size).to eql 1
-      (expect (pdf.find_text string: 'Introduction', page_number: 1).size).to eql 2
+      (expect pdf.pages).to have_size 2
+      (expect pdf.find_text string: 'Table of Contents', page_number: 1).to have_size 1
+      (expect pdf.find_text string: 'Introduction', page_number: 1).to have_size 2
       doctitle_text = (pdf.find_text 'Document Title')[0]
       toc_title_text = (pdf.find_text 'Table of Contents')[0]
       toc_bottom_text = (pdf.find_text '2')[0]
@@ -187,7 +187,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       #{sections.join}
       EOS
       pdf = to_pdf input, analyze: :page
-      (expect pdf.pages.size).to eql 4
+      (expect pdf.pages).to have_size 4
       (expect pdf.pages[0][:strings]).to include 'Document Title'
       (expect pdf.pages[0][:strings]).to include 'Table of Contents'
       (expect pdf.pages[0][:strings]).not_to include 'Section 40'
@@ -220,7 +220,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       == Conclusion
       EOS
-      (expect pdf.pages.size).to eql 3
+      (expect pdf.pages).to have_size 3
       (expect pdf.pages[0][:strings]).to include 'Document Title'
       (expect pdf.pages[1][:strings]).to include 'Table of Contents'
       (expect pdf.pages[1][:strings]).to include '1'

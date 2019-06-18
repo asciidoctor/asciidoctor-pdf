@@ -9,14 +9,14 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       body
       EOS
 
-      (expect pdf.pages.size).to eql 2
+      (expect pdf.pages).to have_size 2
       text = pdf.text
-      (expect text.size).to eql 2
-      (expect pdf.pages[0][:text].size).to eql 1
+      (expect text).to have_size 2
+      (expect pdf.pages[0][:text]).to have_size 1
       doctitle_text = pdf.pages[0][:text][0]
       (expect doctitle_text[:string]).to eql 'Document Title'
       (expect doctitle_text[:font_size]).to eql 27
-      (expect pdf.pages[1][:text].size).to eql 1
+      (expect pdf.pages[1][:text]).to have_size 1
     end
 
     it 'should not include title page if notitle attribute is set' do
@@ -26,7 +26,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
 
       body
       EOS
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:strings]).to_not include 'Document Title'
     end
 
@@ -122,7 +122,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
 
       body
       EOS
-      (expect pdf.pages.size).to eql 2
+      (expect pdf.pages).to have_size 2
       (expect pdf.pages[0][:strings]).to include 'Document Title'
       (expect pdf.pages[1][:strings]).to include 'body'
     end
@@ -134,7 +134,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
 
       body
       EOS
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:strings]).to_not include 'Document Title'
     end
   end

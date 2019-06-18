@@ -5,7 +5,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     input = 'The home page for Asciidoctor is located at https://asciidoctor.org.'
     pdf = to_pdf input
     annotations = get_annotations pdf, 1
-    (expect annotations.size).to eql 1
+    (expect annotations).to have_size 1
     link_annotation = annotations[0]
     (expect link_annotation[:Subtype]).to eql :Link
     (expect link_annotation[:A][:URI]).to eql 'https://asciidoctor.org'

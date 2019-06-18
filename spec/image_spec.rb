@@ -18,7 +18,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
         (expect pdf.lines).to eql ['[Missing Image] | no-such-image.png']
         if logger
-          (expect logger.messages.size).to eql 1
+          (expect logger.messages).to have_size 1
           (expect logger.messages[0][:severity]).to eql :WARN
           (expect logger.messages[0][:message]).to include 'image to embed not found or not readable'
         end
@@ -41,7 +41,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
         (expect pdf.lines).to eql ['You cannot see that which is [not there].']
         if logger
-          (expect logger.messages.size).to eql 1
+          (expect logger.messages).to have_size 1
           (expect logger.messages[0][:severity]).to eql :WARN
           (expect logger.messages[0][:message]).to include 'image to embed not found or not readable'
         end
@@ -61,14 +61,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       EOS
 
       pdf = to_pdf input, analyze: :rect
-      (expect pdf.rectangles.size).to eql 1
+      (expect pdf.rectangles).to have_size 1
       (expect pdf.rectangles[0][:point]).to eql [0.0, 200.0]
       (expect pdf.rectangles[0][:width]).to eql 200.0
       (expect pdf.rectangles[0][:height]).to eql 200.0
 
       pdf = to_pdf input, analyze: true
       text = pdf.text
-      (expect text.size).to eql 1
+      (expect text).to have_size 1
       (expect text[0][:string]).to eql 'after'
       (expect text[0][:y]).to eql 176.036
     end
@@ -84,14 +84,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       EOS
 
       pdf = to_pdf input, analyze: :rect
-      (expect pdf.rectangles.size).to eql 1
+      (expect pdf.rectangles).to have_size 1
       (expect pdf.rectangles[0][:point]).to eql [0.0, 200.0]
       (expect pdf.rectangles[0][:width]).to eql 200.0
       (expect pdf.rectangles[0][:height]).to eql 200.0
 
       pdf = to_pdf input, analyze: true
       text = pdf.text
-      (expect text.size).to eql 1
+      (expect text).to have_size 1
       (expect text[0][:string]).to eql 'after'
       (expect text[0][:y]).to eql 276.036
     end
@@ -116,7 +116,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
         (expect pdf.lines).to eql ['[Waterfall] | waterfall.bmp']
         if logger
-          (expect logger.messages.size).to eql 1
+          (expect logger.messages).to have_size 1
           (expect logger.messages[0][:severity]).to eql :WARN
           (expect logger.messages[0][:message]).to include 'could not embed image'
         end
@@ -135,7 +135,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       EOS
 
       pages = pdf.pages
-      (expect pages.size).to eql 3
+      (expect pages).to have_size 3
       (expect pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
       (expect pages[0][:text][-1][:string]).to eql '1'
       (expect pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']

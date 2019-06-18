@@ -8,7 +8,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     Making all his nowhere plans\tfor nobody.
     EOS
     text = pdf.text
-    (expect text.size).to eql 1
+    (expect text).to have_size 1
     (expect text).not_to include '  '
     (expect text).not_to include ?\t
     (expect text).not_to include ?\n
@@ -24,7 +24,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     All your base are belong to us.
     EOS
 
-    (expect pdf.text.size).to eql 4
+    (expect pdf.text).to have_size 4
     (expect pdf.text[0][:x]).to be > pdf.text[1][:x]
     (expect pdf.text[2][:x]).to be > pdf.text[3][:x]
   end
@@ -39,7 +39,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     EOS
 
     line_spacing = 1.upto(3).map {|i| (pdf.text[i - 1][:y] - pdf.text[i][:y]).round 2 }.uniq
-    (expect line_spacing.size).to eql 1
+    (expect line_spacing).to have_size 1
     (expect line_spacing[0]).to eql 15.78
     (expect pdf.text[0][:x]).to be > pdf.text[1][:x]
     (expect pdf.text[2][:x]).to be > pdf.text[3][:x]

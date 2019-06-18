@@ -30,15 +30,15 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
 
     index_text = pdf.find_text string: 'Index', page_number: 4, font_size: 22
-    (expect index_text.size).to eql 1
+    (expect index_text).to have_size 1
     category_c_text = pdf.find_text string: 'C', page_number: 4
-    (expect category_c_text.size).to eql 1
+    (expect category_c_text).to have_size 1
     (expect category_c_text[0][:font_name].downcase).to include 'bold'
     category_d_text = pdf.find_text string: 'D', page_number: 4
-    (expect category_d_text.size).to eql 1
+    (expect category_d_text).to have_size 1
     (expect category_d_text[0][:font_name].downcase).to include 'bold'
     category_k_text = pdf.find_text string: 'K', page_number: 4
-    (expect category_k_text.size).to eql 1
+    (expect category_k_text).to have_size 1
     (expect category_k_text[0][:font_name].downcase).to include 'bold'
     (expect (pdf.lines pdf.find_text page_number: 4).join ?\n).to eql <<~'EOS'.chomp
     Index
@@ -72,9 +72,9 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
 
     index_text = pdf.find_text string: 'Chapter 3. Index', page_number: 4
-    (expect index_text.size).to eql 0
+    (expect index_text).to be_empty
     index_text = pdf.find_text string: 'Index', page_number: 4
-    (expect index_text.size).to eql 1
+    (expect index_text).to have_size 1
   end
 
   it 'should generate anchor names for indexterms which are reproducible between runs' do
@@ -115,7 +115,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
 
     category_c_text = pdf.find_text string: 'C', page_number: 3
-    (expect category_c_text.size).to eql 1
+    (expect category_c_text).to have_size 1
     (expect category_c_text[0][:font_name].downcase).to include 'bold'
     category_b_text = pdf.find_text string: 'B', page_number: 3
     (expect category_b_text).to be_empty

@@ -20,7 +20,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       pdf = PDF::Reader.new to_file
 
       annotations = get_annotations pdf, 1
-      (expect annotations.size).to eql 1
+      (expect annotations).to have_size 1
       link_annotation = annotations[0]
       (expect link_annotation[:Subtype]).to eql :Link
       (expect link_annotation[:A][:URI]).to eql %(https://www.youtube.com/watch?v=#{video_id})
@@ -37,7 +37,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       pdf = PDF::Reader.new to_file
 
       annotations = get_annotations pdf, 1
-      (expect annotations.size).to eql 1
+      (expect annotations).to have_size 1
       link_annotation = annotations[0]
       (expect link_annotation[:Subtype]).to eql :Link
       (expect link_annotation[:A][:URI]).to eql %(https://vimeo.com/#{video_id})

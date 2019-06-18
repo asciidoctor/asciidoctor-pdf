@@ -15,15 +15,15 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     EOS
 
     outline = extract_outline pdf
-    (expect outline.size).to eql 4
+    (expect outline).to have_size 4
     (expect outline[0][:title]).to eql 'Document Title'
     (expect outline[0][:dest][:pagenum]).to eql 1
     (expect outline[0][:dest][:top]).to be true
-    (expect outline[0][:children].size).to eql 0
+    (expect outline[0][:children]).to be_empty
     (expect outline[1][:title]).to eql 'First Chapter'
     (expect outline[1][:dest][:pagenum]).to eql 2
     (expect outline[1][:dest][:top]).to be true
-    (expect outline[1][:children].size).to eql 1
+    (expect outline[1][:children]).to have_size 1
     (expect outline[1][:children][0][:title]).to eql 'Chapter Section'
     (expect outline[1][:children][0][:dest][:pagenum]).to eql 2
     (expect outline[1][:children][0][:dest][:top]).to be false
@@ -36,7 +36,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline[3][:title]).to eql 'Last Chapter'
     (expect outline[3][:dest][:pagenum]).to eql 4
     (expect outline[3][:dest][:top]).to be true
-    (expect outline[3][:children].size).to eql 0
+    (expect outline[3][:children]).to be_empty
   end
 
   it 'should limit outline depth according to value of toclevels attribute' do
@@ -54,7 +54,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     EOS
 
     outline = extract_outline pdf
-    (expect outline.size).to eql 4
+    (expect outline).to have_size 4
     (expect outline[1][:title]).to eq 'First Chapter'
     (expect outline[1][:children]).to be_empty
   end
@@ -77,7 +77,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     EOS
 
     outline = extract_outline pdf
-    (expect outline.size).to eql 4
+    (expect outline).to have_size 4
     (expect outline[1][:title]).to eq 'First Chapter'
     (expect outline[1][:children]).not_to be_empty
     (expect outline[1][:children][0][:title]).to eq 'Chapter Section'
@@ -102,7 +102,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     EOS
 
     outline = extract_outline pdf
-    (expect outline.size).to eql 4
+    (expect outline).to have_size 4
     (expect outline[1][:title]).to eq 'First Chapter'
     (expect outline[1][:children]).to be_empty
   end
@@ -115,7 +115,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     EOS
 
     outline = extract_outline pdf
-    (expect outline.size).to eql 2
+    (expect outline).to have_size 2
     (expect outline[0][:title]).to eql 'Document Title'
     (expect outline[1][:title]).to eql 'First Chapter'
   end
@@ -128,7 +128,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     EOS
 
     outline = extract_outline pdf
-    (expect outline.size).to eql 2
+    (expect outline).to have_size 2
     (expect outline[0][:title]).to eql %(ACME\u2122 Catalog <\u2116 1>)
     (expect outline[1][:title]).to eql %(Paper Clips \u2116 4)
   end

@@ -19,13 +19,13 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect text[2][:font_size]).to be < text[1][:font_size]
     (expect text[3][:font_color]).to eql '428BCA'
     # superscript group
-    (expect (text.slice 2, 3).map {|it| [it[:y], it[:font_size]] }.uniq.size).to eql 1
+    (expect (text.slice 2, 3).map {|it| [it[:y], it[:font_size]] }.uniq).to have_size 1
     # footnote item
     (expect (strings.slice 6, 3).join).to eql '[1] More about that thing.'
     (expect text[6][:y]).to be < text[5][:y]
     (expect text[6][:page_number]).to eql 1
     (expect text[6][:font_size]).to eql 8
-    (expect (text.slice 6, 3).map {|it| [it[:y], it[:font_size]] }.uniq.size).to eql 1
+    (expect (text.slice 6, 3).map {|it| [it[:y], it[:font_size]] }.uniq).to have_size 1
     # next chapter
     (expect text[9][:page_number]).to eql 2
   end
@@ -50,7 +50,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect text[2][:font_size]).to be < text[1][:font_size]
     (expect text[3][:font_color]).to eql '428BCA'
     # superscript group
-    (expect (text.slice 2, 3).map {|it| [it[:y], it[:font_size]] }.uniq.size).to eql 1
+    (expect (text.slice 2, 3).map {|it| [it[:y], it[:font_size]] }.uniq).to have_size 1
     (expect text[2][:font_size]).to be < text[1][:font_size]
     # footnote item
     (expect (pdf.find_text 'Section B')[0][:order]).to be < (pdf.find_text '] More about that thing.')[0][:order]
@@ -112,9 +112,9 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect combined_text).to include '[1] money'
     (expect combined_text).to include 'Make it snow.[2]'
     (expect combined_text).to include '[2] dollar bills'
-    (expect (combined_text.scan '[1]').length).to eql 2
-    (expect (combined_text.scan '[2]').length).to eql 2
-    (expect (combined_text.scan '[3]').length).to eql 0
+    (expect combined_text.scan '[1]').to have_size 2
+    (expect combined_text.scan '[2]').to have_size 2
+    (expect combined_text.scan '[3]').to be_empty
   end
 
   it 'should allow a bibliography ref to be used inside the text of a footnote' do

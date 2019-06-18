@@ -10,7 +10,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     content page
     EOS
 
-    (expect pdf.pages.size).to eql 3
+    (expect pdf.pages).to have_size 3
     (expect pdf.pages[0][:text]).to be_empty
   end
 

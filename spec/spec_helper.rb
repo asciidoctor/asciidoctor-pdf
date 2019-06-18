@@ -348,6 +348,11 @@ RSpec.configure do |config|
   end
 end
 
+RSpec::Matchers.define :have_size do |expected|
+  match {|actual| actual.size == expected }
+  failure_message {|actual| %(expected #{actual} to have size #{expected}, but was #{actual.size}) }
+end
+
 RSpec::Matchers.define :visually_match do |reference_filename|
   reference_path = (Pathname.new reference_filename).absolute? ? reference_filename : (File.join __dir__, 'reference', reference_filename)
   match do |actual_path|

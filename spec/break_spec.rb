@@ -40,8 +40,8 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       after_text = (pdf.find_text 'after')[0]
 
       pdf = to_pdf input, analyze: :line
-      (expect pdf.widths.size).to eql 1
-      (expect pdf.points.size).to eql 2
+      (expect pdf.widths).to have_size 1
+      (expect pdf.points).to have_size 2
       (expect pdf.widths[0]).to eql 0.5
       (expect pdf.points[0][1]).to be < before_text[:y]
       (expect pdf.points[0][1]).to be > after_text[:y]
@@ -58,7 +58,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       bar
       EOS
 
-      (expect pdf.pages.size).to eql 2
+      (expect pdf.pages).to have_size 2
       (expect pdf.pages[0][:strings]).to include 'foo'
       (expect pdf.pages[1][:strings]).to include 'bar'
     end
@@ -70,7 +70,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       foo
       EOS
 
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
     end
 
     it 'should not leave blank page at the end of document' do
@@ -80,7 +80,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       <<<
       EOS
 
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
     end
 
     it 'should change layout if page break specifies page-layout attribute' do
@@ -94,7 +94,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       EOS
 
       text = pdf.text
-      (expect text.size).to eql 2
+      (expect text).to have_size 2
       (expect text[0].values_at :string, :page_number, :x, :y).to eq ['portrait', 1, 48.24, 793.926]
       (expect text[1].values_at :string, :page_number, :x, :y).to eq ['landscape', 2, 48.24, 547.316]
     end
@@ -110,7 +110,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       EOS
 
       text = pdf.text
-      (expect text.size).to eql 2
+      (expect text).to have_size 2
       (expect text[0].values_at :string, :page_number, :x, :y).to eq ['portrait', 1, 48.24, 793.926]
       (expect text[1].values_at :string, :page_number, :x, :y).to eq ['landscape', 2, 48.24, 547.316]
     end
@@ -136,14 +136,14 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       EOS
 
       portrait_text = pdf.find_text 'portrait'
-      (expect portrait_text.size).to eql 2
+      (expect portrait_text).to have_size 2
       portrait_text.each do |text|
         page = pdf.page text[:page_number]
         (expect page[:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
       end
 
       landscape_text = pdf.find_text 'landscape'
-      (expect landscape_text.size).to eql 2
+      (expect landscape_text).to have_size 2
       landscape_text.each do |text|
         page = pdf.page text[:page_number]
         (expect page[:size]).to eql PDF::Core::PageGeometry::SIZES['A4'].reverse

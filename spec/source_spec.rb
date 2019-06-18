@@ -53,7 +53,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         (expect year_text[:font_color]).to eql '0000DD'
       else
         text = pdf.text
-        (expect text.size).to eql 1
+        (expect text).to have_size 1
         (expect text[0][:string]).to eql 'cal_days_in_month(CAL_GREGORIAN, 6, 2019)'
         (expect text[0][:font_color]).to eql '333333'
       end
@@ -70,7 +70,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
 
       text = pdf.text
-      (expect text.size).to eql 1
+      (expect text).to have_size 1
       (expect text[0][:string]).to eql 'cal_days_in_month(CAL_GREGORIAN, 6, 2019)'
       (expect text[0][:font_color]).to eql '333333'
     end

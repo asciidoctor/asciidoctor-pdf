@@ -6,7 +6,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       pdf = to_pdf <<~'EOS', analyze: :page
       content
       EOS
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
     end
 
@@ -16,7 +16,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       content
       EOS
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
@@ -26,7 +26,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       content
       EOS
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size]).to eql [600.0, 800.0]
     end
 
@@ -36,7 +36,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       content
       EOS
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
@@ -46,7 +46,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       content
       EOS
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
   end
@@ -56,7 +56,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       pdf = to_pdf <<~'EOS'
       content
       EOS
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
       (expect pdf.pages[0].orientation).to eql 'portrait'
     end
 
@@ -66,7 +66,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       content
       EOS
-      (expect pdf.pages.size).to eql 1
+      (expect pdf.pages).to have_size 1
       (expect pdf.pages[0].orientation).to eql 'landscape'
     end
   end

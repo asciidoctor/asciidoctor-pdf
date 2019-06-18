@@ -24,9 +24,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     expected_page_numbers = %w(1 2 3 4)
     expected_x_positions = [541.009, 49.24]
 
-    (expect pdf.pages.size).to eql 5
+    (expect pdf.pages).to have_size 5
     page_number_texts = pdf.find_text %r/^\d+$/
-    (expect page_number_texts.size).to eql expected_page_numbers.size
+    (expect page_number_texts).to have_size expected_page_numbers.size
     page_number_texts.each_with_index do |page_number_text, idx|
       (expect page_number_text[:page_number]).to eql idx + 2
       (expect page_number_text[:x]).to eql expected_x_positions[idx.even? ? 0 : 1]
@@ -196,7 +196,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     page_height = pdf.pages[0][:size][1]
     header_texts = pdf.find_text '(Document Title)'
-    (expect header_texts.size).to be expected_page_numbers.size
+    (expect header_texts).to have_size expected_page_numbers.size
     expected_page_numbers.each_with_index do |page_number, idx|
       (expect header_texts[idx][:string]).to eql '(Document Title)'
       (expect header_texts[idx][:page_number]).to eql page_number.to_i + 1
