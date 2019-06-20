@@ -290,4 +290,64 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     (expect to_file).to visually_match 'running-content-background-colors.pdf'
   end
+
+  it 'should scale image up to width when fit=contain', integration: true do
+    %w(pdfwidth=99.76 fit=contain pdfwidth=0.5in,fit=contain pdfwidth=15in,fit=contain).each_with_index do |image_attrlist, idx|
+      pdf_theme = build_pdf_theme \
+        header_height: 36,
+        header_recto_columns: '>40% =20% <40%',
+        header_recto_left_content: 'text',
+        header_recto_center_content: %(image:#{fixture_file 'green-bar.svg'}[#{image_attrlist}]),
+        header_recto_right_content: 'text'
+
+      to_file = to_pdf_file %([.text-center]\ncontent), %(running-content-image-contain-#{idx}.pdf), pdf_theme: pdf_theme
+
+      (expect to_file).to visually_match 'running-content-image-fit.pdf'
+    end
+  end
+
+  it 'should scale image down to width when fit=scale-down', integration: true do
+    %w(pdfwidth=99.76 pdfwidth=15in,fit=scale-down).each_with_index do |image_attrlist, idx|
+      pdf_theme = build_pdf_theme \
+        header_height: 36,
+        header_recto_columns: '>40% =20% <40%',
+        header_recto_left_content: 'text',
+        header_recto_center_content: %(image:#{fixture_file 'green-bar.svg'}[#{image_attrlist}]),
+        header_recto_right_content: 'text'
+
+      to_file = to_pdf_file %([.text-center]\ncontent), %(running-content-image-scale-down-width-#{idx}.pdf), pdf_theme: pdf_theme
+
+      (expect to_file).to visually_match 'running-content-image-fit.pdf'
+    end
+  end
+
+  it 'should scale image down to height when fit=scale-down', integration: true do
+    %w(pdfwidth=30.60 fit=scale-down).each_with_index do |image_attrlist, idx|
+      pdf_theme = build_pdf_theme \
+        header_height: 36,
+        header_recto_columns: '>40% =20% <40%',
+        header_recto_left_content: 'text',
+        header_recto_center_content: %(image:#{fixture_file 'tux.png'}[#{image_attrlist}]),
+        header_recto_right_content: 'text'
+
+      to_file = to_pdf_file %([.text-center]\ncontent), %(running-content-image-scale-down-height-#{idx}.pdf), pdf_theme: pdf_theme
+
+      (expect to_file).to visually_match 'running-content-image-scale-down.pdf'
+    end
+  end
+
+  it 'should not modify image dimensions when fit=scale-down if image already fits', integration: true do
+    %w(pdfwidth=0.5in pdfwidth=0.5in,fit=scale-down).each_with_index do |image_attrlist, idx|
+      pdf_theme = build_pdf_theme \
+        header_height: 36,
+        header_recto_columns: '>40% =20% <40%',
+        header_recto_left_content: 'text',
+        header_recto_center_content: %(image:#{fixture_file 'green-bar.svg'}[#{image_attrlist}]),
+        header_recto_right_content: 'text'
+
+      to_file = to_pdf_file %([.text-center]\ncontent), %(running-content-image-#{idx}.pdf), pdf_theme: pdf_theme
+
+      (expect to_file).to visually_match 'running-content-image.pdf'
+    end
+  end
 end
