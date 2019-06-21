@@ -2953,8 +2953,8 @@ class Converter < ::Prawn::Document
               end
               side_content[position] = { path: path, width: width, fit: !!fit }
             else
-              logger.warn %(image to embed not found or not readable: #{path})
-              side_content[position] = val
+              # NOTE allows inline image handler to report invalid reference and replace with alt text
+              side_content[position] = %(image:#{path}[#{$2}])
             end
           else
             side_content[position] = val
