@@ -353,26 +353,17 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
   it 'should warn and replace image with alt text if image is not found' do
     [true, false].each do |block|
-      with_memory_logger do |logger|
+      (expect {
         pdf_theme = build_pdf_theme \
           header_height: 36,
           header_recto_columns: '=100%',
           header_recto_center_content: %(image:#{block ? ':' : ''}no-such-image.png[alt text])
 
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
-        content
-        EOS
+        pdf = to_pdf 'content', pdf_theme: pdf_theme, analyze: true
 
         alt_text = pdf.find_text '[alt text]'
         (expect alt_text).to have_size 1
-
-        if logger
-          (expect logger.messages).to have_size 1
-          (expect logger.messages[0][:severity]).to eql :WARN
-          (expect logger.messages[0][:message]).to include 'image to embed not found or not readable'
-          (expect logger.messages[0][:message]).to end_with 'data/themes/no-such-image.png'
-        end
-      end
+      }).to log_message severity: :WARN, message: %r(image to embed not found or not readable.*data/themes/no-such-image\.png$)
     end
   end
 end

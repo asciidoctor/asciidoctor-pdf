@@ -11,18 +11,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should replace block image with alt text if image is missing' do
-      with_memory_logger do |logger|
-        pdf = to_pdf <<~'EOS', analyze: true
-        image::no-such-image.png[Missing Image]
-        EOS
-
+      (expect {
+        pdf = to_pdf 'image::no-such-image.png[Missing Image]', analyze: true
         (expect pdf.lines).to eql ['[Missing Image] | no-such-image.png']
-        if logger
-          (expect logger.messages).to have_size 1
-          (expect logger.messages[0][:severity]).to eql :WARN
-          (expect logger.messages[0][:message]).to include 'image to embed not found or not readable'
-        end
-      end
+      }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
     it 'should resolve target of inline image relative to imagesdir', integration: true do
@@ -34,18 +26,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should replace inline image with alt text if image is missing' do
-      with_memory_logger do |logger|
-        pdf = to_pdf <<~'EOS', analyze: true
-        You cannot see that which is image:not-there.png[not there].
-        EOS
-
+      (expect {
+        pdf = to_pdf 'You cannot see that which is image:not-there.png[not there].', analyze: true
         (expect pdf.lines).to eql ['You cannot see that which is [not there].']
-        if logger
-          (expect logger.messages).to have_size 1
-          (expect logger.messages[0][:severity]).to eql :WARN
-          (expect logger.messages[0][:message]).to include 'image to embed not found or not readable'
-        end
-      end
+      }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
   end
 
@@ -109,18 +93,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'BMP' do
     it 'should warn and replace block image with alt text if image format is unsupported' do
-      with_memory_logger do |logger|
-        pdf = to_pdf <<~'EOS', analyze: true
-        image::waterfall.bmp[Waterfall,240]
-        EOS
-
+      (expect {
+        pdf = to_pdf 'image::waterfall.bmp[Waterfall,240]', analyze: true
         (expect pdf.lines).to eql ['[Waterfall] | waterfall.bmp']
-        if logger
-          (expect logger.messages).to have_size 1
-          (expect logger.messages[0][:severity]).to eql :WARN
-          (expect logger.messages[0][:message]).to include 'could not embed image'
-        end
-      end
+      }).to log_message severity: :WARN, message: '~could not embed image'
     end
   end
 

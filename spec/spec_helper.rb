@@ -359,6 +359,38 @@ RSpec::Matchers.define :have_size do |expected|
   failure_message {|actual| %(expected #{actual} to have size #{expected}, but was #{actual.size}) }
 end
 
+RSpec::Matchers.define :have_message do |expected|
+  match do |logger|
+    result = false
+    if (messages = logger.messages).size == 1
+      if (message = messages[0])[:severity] == expected[:severity]
+        if Regexp === (expected_message = expected[:message])
+          result = true if expected_message.match? message[:message]
+        elsif expected_message.start_with? '~'
+          result = true if message[:message].include? expected_message.delete_prefix '~'
+        elsif message[:message] === expected_message
+          result = true
+        end
+      end
+    end
+    result
+  end
+
+  failure_message { %(expected #{expected[:severity]} message#{expected[:message].chr == '~' ? ' containing ' : ' matching '}`#{expected[:message]}' to have been logged) }
+end
+
+RSpec::Matchers.define :log_message do |expected|
+  match notify_expectation_failures: true do |actual|
+    with_memory_logger do |logger|
+      actual.call
+      (expect logger).to have_message expected if logger
+      true
+    end
+  end
+
+  supports_block_expectations
+end
+
 RSpec::Matchers.define :visually_match do |reference_filename|
   reference_path = (Pathname.new reference_filename).absolute? ? reference_filename : (File.join __dir__, 'reference', reference_filename)
   match do |actual_path|

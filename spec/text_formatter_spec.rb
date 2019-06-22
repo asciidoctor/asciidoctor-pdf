@@ -30,16 +30,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should ignore unknown named entities' do
-      with_memory_logger do |logger|
+      (expect {
         output = subject.format '&dagger;'
-        if logger
-          (expect logger.messages).to have_size 1
-          (expect logger.messages[0][:severity]).to eql :ERROR
-          (expect logger.messages[0][:message]).to include 'failed to parse formatted text'
-        end
         (expect output).to have_size 1
         (expect output[0][:text]).to eql '&dagger;'
-      end
+      }).to log_message severity: :ERROR, message: '~failed to parse formatted text'
     end
 
     it 'should decode decimal character references in link href' do
