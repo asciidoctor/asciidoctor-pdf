@@ -16,6 +16,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * resolve null color value in theme to nil (aka not set)
 * add support for cgi-style options on source language when syntax highlighting with Rouge (#1102)
 * apply custom theme to chronicles example to customize running content and demonstrate how to extend default theme
+* drop remapping of legacy running content keys in theme data
 
 == 1.5.0.alpha.18 (2019-06-01) - @mojavelinux
 

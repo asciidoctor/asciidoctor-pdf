@@ -98,14 +98,6 @@ class ThemeLoader
     base_code_font_family = theme_data.delete 'code_font_family'
     base_conum_font_family = theme_data.delete 'conum_font_family'
     hash.inject(theme_data) {|data, (key, val)| process_entry key, val, data }
-    # NOTE remap legacy running content keys (e.g., header_recto_content_left => header_recto_left_content)
-    %w(header_recto header_verso footer_recto footer_verso).each do |periphery_face|
-      %w(left center right).each do |align|
-        if (val = theme_data.delete %(#{periphery_face}_content_#{align}))
-          theme_data[%(#{periphery_face}_#{align}_content)] = val
-        end
-      end
-    end
     theme_data.base_align ||= 'left'
     theme_data.code_font_family ||= (theme_data.literal_font_family || base_code_font_family)
     theme_data.conum_font_family ||= (theme_data.literal_font_family || base_conum_font_family)
