@@ -216,6 +216,9 @@ RSpec.configure do |config|
     if (attribute_overrides = opts.delete :attribute_overrides)
       (opts[:attributes] ||= {}).update attribute_overrides
     end
+    if Hash === (pdf_theme = opts[:pdf_theme])
+      opts[:pdf_theme] = build_pdf_theme pdf_theme
+    end
     if Pathname === input
       opts[:to_dir] = output_dir unless opts.key? :to_dir
       doc = Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)
@@ -238,6 +241,9 @@ RSpec.configure do |config|
     opts[:attributes] = { 'imagesdir' => fixtures_dir, 'nofooter' => '' } unless opts.key? :attributes
     if (attribute_overrides = opts.delete :attribute_overrides)
       (opts[:attributes] ||= {}).update attribute_overrides
+    end
+    if Hash === (pdf_theme = opts[:pdf_theme])
+      opts[:pdf_theme] = build_pdf_theme pdf_theme
     end
     if Pathname === input
       Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)

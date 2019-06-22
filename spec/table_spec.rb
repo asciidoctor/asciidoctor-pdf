@@ -149,8 +149,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end if asciidoctor_1_5_7_or_better?
 
     it 'should not accumulate cell padding between tables' do
-      theme_overrides = { table_cell_padding: [5, 5, 5, 5] }
-      pdf = to_pdf <<~'EOS', pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_cell_padding: [5, 5, 5, 5] }, analyze: true
       |===
       |A |B
 
@@ -201,7 +200,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       reference_pdf = to_pdf input, analyze: :line
-      pdf = to_pdf input, pdf_theme: (build_pdf_theme table_cell_padding: [10, 3, 10, 3]), analyze: :line
+      pdf = to_pdf input, pdf_theme: { table_cell_padding: [10, 3, 10, 3] }, analyze: :line
 
       # NOTE the line under the head row should moved down
       (expect pdf.points[0][1]).to be < reference_pdf.points[0][1]
@@ -219,7 +218,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       reference_pdf = to_pdf input, analyze: true
-      pdf = to_pdf input, pdf_theme: (build_pdf_theme table_head_cell_padding: [10, 3, 10, 3]), analyze: true
+      pdf = to_pdf input, pdf_theme: { table_head_cell_padding: [10, 3, 10, 3] }, analyze: true
       
       reference_a1_text = (reference_pdf.find_text 'A1')[0]
       a1_text = (pdf.find_text 'A1')[0]
