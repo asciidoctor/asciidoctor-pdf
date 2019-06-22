@@ -626,6 +626,20 @@ Therefore, to print a range of pages as they are labeled in the document, you ne
 For example, if you only want to print the first 5 pages labeled with a page number (e.g., 1-5), and there are 2 pages before the page labeled as page 1, you need to add 2 to both numbers in the range, giving you a physical page range of 3-7.
 That's the range you need to enter into the print dialog.
 
+== Title Page
+
+Unlike other converters, the PDF converter introduces a dedicated title page at the start of the document.
+The title page contains the doctitle, author, date, and revision info.
+If a front cover image is specified, the title page comes after the front cover.
+The title page can be styled using the theme and/or reserved page attributes.
+
+The title page is enabled if either of these conditions are met:
+
+* The document has the `book` doctype.
+* The `title-page` attribute is set (with an empty value) in the document header.
+
+When the title page is enabled, the table of contents (aka TOC) also gets is own page (or pages, if necessary).
+
 == Table of Contents
 
 The table of contents (TOC) is not included by default.
