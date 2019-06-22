@@ -367,7 +367,7 @@ RSpec::Matchers.define :have_message do |expected|
         if Regexp === (expected_message = expected[:message])
           result = true if expected_message.match? message[:message]
         elsif expected_message.start_with? '~'
-          result = true if message[:message].include? expected_message.delete_prefix '~'
+          result = true if message[:message].include? expected_message[1..-1]
         elsif message[:message] === expected_message
           result = true
         end
