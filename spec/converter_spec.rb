@@ -21,8 +21,8 @@ describe Asciidoctor::PDF::Converter do
     end
 
     it 'should convert AsciiDoc file to PDF file when backend is pdf' do
-      pdf = to_pdf Pathname fixture_file 'hello.adoc'
-      (expect Pathname output_file 'hello.pdf').to exist
+      pdf = to_pdf Pathname.new fixture_file 'hello.adoc'
+      (expect Pathname.new output_file 'hello.pdf').to exist
       (expect pdf.page_count).to be > 0
     end
   end
@@ -33,8 +33,8 @@ describe Asciidoctor::PDF::Converter do
     end
 
     it 'should not fail to convert empty file' do
-      pdf = to_pdf Pathname fixture_file 'empty.adoc'
-      (expect Pathname output_file 'empty.pdf').to exist
+      pdf = to_pdf Pathname.new fixture_file 'empty.adoc'
+      (expect Pathname.new output_file 'empty.pdf').to exist
       (expect pdf.page_count).to be > 0
     end
 
