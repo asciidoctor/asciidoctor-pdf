@@ -84,4 +84,46 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect pdf.text[1][:x]).to be > pdf.text[2][:x]
     (expect pdf.text[3][:string]).to eql 'And on it goes.'
   end
+
+  it 'should decorate first line of abstract when abstract has multiple lines' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+
+    [abstract]
+    First line of abstract. +
+    Second line of abstract.
+
+    == Section
+
+    content
+    EOS
+
+    abstract_text_line1 = pdf.find_text 'First line of abstract.'
+    abstract_text_line2 = pdf.find_text 'Second line of abstract.'
+    (expect abstract_text_line1).to have_size 1
+    (expect abstract_text_line1[0][:order]).to eql 2
+    (expect abstract_text_line1[0][:font_name]).to include 'BoldItalic'
+    (expect abstract_text_line2).to have_size 1
+    (expect abstract_text_line2[0][:order]).to eql 3
+    (expect abstract_text_line2[0][:font_name]).not_to include 'BoldItalic'
+    
+  end
+
+  it 'should decorate first line of abstract when abstract has single line' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+
+    [abstract]
+    First and only line of abstract.
+
+    == Section
+
+    content
+    EOS
+
+    abstract_text = pdf.find_text 'First and only line of abstract.'
+    (expect abstract_text).to have_size 1
+    (expect abstract_text[0][:order]).to eql 2
+    (expect abstract_text[0][:font_name]).to include 'BoldItalic'
+  end
 end
