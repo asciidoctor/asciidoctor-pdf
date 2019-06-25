@@ -18,6 +18,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * apply custom theme to chronicles example to customize running content and demonstrate how to extend default theme
 * drop remapping of legacy running content keys in theme data
 * resize running content to fit page layout (#1036)
+* exclude border width from running content area (#1109)
 
 == 1.5.0.alpha.18 (2019-06-01) - @mojavelinux
 
