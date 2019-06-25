@@ -171,7 +171,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect p2_text[1][:string]).to eql '2'
   end
 
-  it 'should place footer correctly if layout changes' do
+  it 'should place footer text correctly if page layout changes' do
     theme_overrides = {
       footer_padding: 0,
       footer_verso_left_content: 'verso',
@@ -197,6 +197,40 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     pdf.text.each do |text|
       (expect text[:x]).to eql 48.24
     end
+  end
+
+  it 'should adjust dimensions of running content to fit page layout' do
+    filler = lorem_ipsum '2-sentences-2-paragraphs'
+    theme_overrides = {
+      footer_recto_left_content: '{section-title}',
+      footer_recto_right_content: '{page-number}',
+      footer_verso_left_content: '{page-number}',
+      footer_verso_right_content: '{section-title}',
+    }
+
+    to_file = to_pdf_file <<~EOS, 'running-content-alt-layouts.pdf', attributes: {}, pdf_theme: (build_pdf_theme theme_overrides)
+    = Alternating Page Layouts
+
+    This document demonstrates that the running content is adjusted to fit the page layout as the page layout alternates.
+
+    #{filler}
+
+    [.landscape]
+    <<<
+
+    == Landscape Page
+
+    #{filler}
+
+    [.portrait]
+    <<<
+
+    == Portrait Page
+
+    #{filler}
+    EOS
+
+    (expect to_file).to visually_match 'running-content-alt-layouts.pdf'
   end
 
   it 'should add running header starting at body if header key is set in theme' do
