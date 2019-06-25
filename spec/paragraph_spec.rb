@@ -15,14 +15,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should indent first line of paragraph if prose_text_indent key is set in theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { prose_text_indent: 18 }, analyze: true
-    Unix cat buffer.
-    I'm sorry Dave, I'm afraid I can't do that.
-    Race condition bang endif linux L0phtCrack fork gnu int long stdio.h unix memory leak fail try catch void.
-
-    Hack the mainframe segfault for hexadecimal private deadlock echo linux float stack alloc brute force tcp false packet.
-    All your base are belong to us.
-    EOS
+    pdf = to_pdf (lorem_ipsum '2-paragraphs'), pdf_theme: { prose_text_indent: 18 }, analyze: true
 
     (expect pdf.text).to have_size 4
     (expect pdf.text[0][:x]).to be > pdf.text[1][:x]
@@ -30,10 +23,8 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should use prose_margin_inner between paragraphs when prose-text_indent key is set in theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { prose_text_indent: 18, prose_margin_inner: 0 }, analyze: true
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    pdf = to_pdf <<~EOS, pdf_theme: { prose_text_indent: 18, prose_margin_inner: 0 }, analyze: true
+    #{lorem_ipsum '2-sentences-2-paragraphs'}
 
     * list item
     EOS
@@ -48,23 +39,13 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should not alter line height of wrapped lines when prose_text_indent is set in theme' do
-    pdf = to_pdf <<~'EOS', analyze: true
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    input = lorem_ipsum '4-sentences-2-paragraphs'
 
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    EOS
+    pdf = to_pdf input, analyze: true
 
     last_line_y = pdf.text[-1][:y]
 
-    pdf = to_pdf <<~'EOS', pdf_theme: { prose_text_indent: 18 }, analyze: true
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    EOS
+    pdf = to_pdf input, pdf_theme: { prose_text_indent: 18 }, analyze: true
 
     (expect pdf.text[-1][:y]).to eql last_line_y
   end

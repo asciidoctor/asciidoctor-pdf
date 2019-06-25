@@ -301,6 +301,10 @@ RSpec.configure do |config|
     found ? found.number : nil
   end
 
+  def lorem_ipsum id
+    (@lorem_ipsum_data ||= (YAML.load_file fixture_file 'lorem-ipsum.yml'))[id]
+  end
+
   def with_memory_logger level = nil
     if asciidoctor_1_5_7_or_better?
       old_logger = Asciidoctor::LoggerManager.logger
