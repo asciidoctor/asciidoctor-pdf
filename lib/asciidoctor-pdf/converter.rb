@@ -302,6 +302,7 @@ class Converter < ::Prawn::Document
 
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
+    @stylesdir = doc.attr 'pdf-stylesdir'
     theme = load_theme doc
     pdf_opts = build_pdf_options doc, theme
     # QUESTION should page options be preserved (otherwise, not readily available)
@@ -351,7 +352,7 @@ class Converter < ::Prawn::Document
   end
 
   def load_theme doc
-    @theme ||= doc.options[:pdf_theme] || ThemeLoader.load_theme((doc.attr 'pdf-style'), (doc.attr 'pdf-stylesdir'))
+    @theme ||= doc.options[:pdf_theme] || ThemeLoader.load_theme((doc.attr 'pdf-style'), @stylesdir)
   end
 
   def build_pdf_options doc, theme
@@ -2384,7 +2385,7 @@ class Converter < ::Prawn::Document
         relative_to_imagesdir = false
       end
       # HACK quick fix to resolve image path relative to theme
-      logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, (doc.attr 'pdf-stylesdir') unless doc.attr? 'title-logo-image'
+      logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @stylesdir unless doc.attr? 'title-logo-image'
       logo_image_attrs['target'] = logo_image_path
       logo_image_attrs['align'] ||= (@theme.title_page_logo_align || title_align.to_s)
       # QUESTION should we allow theme to turn logo image off?
@@ -2837,166 +2838,6 @@ class Converter < ::Prawn::Document
     allow_uri_read = doc.attr? 'allow-uri-read'
     svg_fallback_font = default_svg_font
 
-    if periphery == :header
-      trim_line_metrics = calc_line_metrics(@theme.header_line_height || @theme.base_line_height)
-      trim_top = page_height
-      # NOTE height is required atm
-      trim_height = @theme.header_height || page_margin_top
-      trim_padding = inflate_padding @theme.header_padding || 0
-      trim_bg_color = resolve_theme_color :header_background_color
-      trim_border_width = @theme.header_border_width || @theme.base_border_width
-      trim_border_style = (@theme.header_border_style || :solid).to_sym
-      trim_border_color = resolve_theme_color :header_border_color
-      trim_valign = (@theme.header_vertical_align || :middle).to_sym
-      trim_img_valign = @theme.header_image_vertical_align
-    else
-      trim_line_metrics = calc_line_metrics(@theme.footer_line_height || @theme.base_line_height)
-      # NOTE height is required atm
-      trim_top = trim_height = @theme.footer_height || page_margin_bottom
-      trim_padding = inflate_padding @theme.footer_padding || 0
-      trim_bg_color = resolve_theme_color :footer_background_color
-      trim_border_width = @theme.footer_border_width || @theme.base_border_width
-      trim_border_style = (@theme.footer_border_style || :solid).to_sym
-      trim_border_color = resolve_theme_color :footer_border_color
-      trim_valign = (@theme.footer_vertical_align || :middle).to_sym
-      trim_img_valign = @theme.footer_image_vertical_align
-    end
-
-    trim_stamp_name = {
-      recto: %(#{periphery}_recto),
-      verso: %(#{periphery}_verso)
-    }
-    trim_left = {
-      recto: @page_margin_by_side[:recto][3],
-      verso: @page_margin_by_side[:verso][3]
-    }
-    trim_width = {
-      recto: page_width - trim_left[:recto] - @page_margin_by_side[:recto][1],
-      verso: page_width - trim_left[:verso] - @page_margin_by_side[:verso][1]
-    }
-    trim_content_left = {
-      recto: trim_left[:recto] + trim_padding[3],
-      verso: trim_left[:verso] + trim_padding[3]
-    }
-    trim_content_width = {
-      recto: trim_width[:recto] - trim_padding[3] - trim_padding[1],
-      verso: trim_width[:verso] - trim_padding[3] - trim_padding[1]
-    }
-    trim_content_height = trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom
-    trim_border_color = nil if trim_border_width == 0
-    trim_valign = :center if trim_valign == :middle
-    case trim_img_valign
-    when nil
-      trim_img_valign = trim_valign
-    when 'middle'
-      trim_img_valign = :center
-    when 'top', 'center', 'bottom'
-      trim_img_valign = trim_img_valign.to_sym
-    end
-
-    colspec_dict = PageSides.inject({}) do |acc, side|
-      side_trim_content_width = trim_content_width[side]
-      if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)] || @theme[%(#{periphery}_columns)])
-        case (colspecs = (custom_colspecs.to_s.tr ',', ' ').split[0..2]).size
-        when 3
-          colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
-        when 2
-          colspecs = { left: colspecs[0], center: '0', right: colspecs[1] }
-        when 0, 1
-          colspecs = { left: '0', center: colspecs[0] || '100', right: '0' }
-        end
-        tot_width = 0
-        side_colspecs = colspecs.map {|col, spec|
-          if (alignment_char = spec.chr).to_i.to_s != alignment_char
-            alignment = AlignmentTable[alignment_char] || :left
-            rel_width = spec[1..-1].to_f
-          else
-            alignment = :left
-            rel_width = spec.to_f
-          end
-          tot_width += rel_width
-          [col, { align: alignment, width: rel_width, x: 0 }]
-        }.to_h
-        # QUESTION should we allow the columns to overlap (capping width at 100%)?
-        side_colspecs.each {|_, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
-        side_colspecs[:right][:x] = (side_colspecs[:center][:x] = side_colspecs[:left][:width]) + side_colspecs[:center][:width]
-        acc[side] = side_colspecs
-      else
-        acc[side] = {
-          left: { align: :left, width: side_trim_content_width, x: 0 },
-          center: { align: :center, width: side_trim_content_width, x: 0 },
-          right: { align: :right, width: side_trim_content_width, x: 0 }
-        }
-      end
-      acc
-    end
-
-    # TODO move this to a method so it can be reused; cache results
-    content_dict = PageSides.inject({}) do |acc, side|
-      side_content = {}
-      ColumnPositions.each do |position|
-        unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
-          # TODO support image URL (using resolve_image_path)
-          if (val.include? ':') && val =~ ImageAttributeValueRx
-            if ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, (doc.attr 'pdf-stylesdir')))
-              attrs = (AttributeList.new $2).parse
-              col_width = colspec_dict[side][position][:width]
-              if (fit = attrs['fit']) == 'contain'
-                width = col_width
-              else
-                unless (width = resolve_explicit_width attrs, col_width)
-                  # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
-                  # NOTE failure message will be reported later when image is rendered
-                  width = (to_pt intrinsic_image_dimensions(path)[:width], :px) rescue 0
-                end
-                width = col_width if fit == 'scale-down' && width > col_width
-              end
-              side_content[position] = { path: path, width: width, fit: !!fit }
-            else
-              # NOTE allows inline image handler to report invalid reference and replace with alt text
-              side_content[position] = %(image:#{path}[#{$2}])
-            end
-          else
-            side_content[position] = val
-          end
-        end
-      end
-      # NOTE set fallbacks if not explicitly disabled
-      if side_content.empty? && periphery == :footer && @theme[%(footer_#{side}_content)] != 'none'
-        side_content = { side == :recto ? :right : :left => '{page-number}' }
-      end
-
-      acc[side] = side_content
-      acc
-    end
-
-    stamps = {}
-    if trim_bg_color || trim_border_color
-      PageSides.each do |side|
-        create_stamp trim_stamp_name[side] do
-          canvas do
-            if trim_bg_color
-              bounding_box [0, trim_top], width: bounds.width, height: trim_height do
-                fill_bounds trim_bg_color
-                if trim_border_color
-                  # TODO stroke_horizontal_rule should support :at
-                  move_down bounds.height if periphery == :header
-                  stroke_horizontal_rule trim_border_color, line_width: trim_border_width, line_style: trim_border_style
-                end
-              end
-            else
-              bounding_box [trim_left[side], trim_top], width: trim_width[side], height: trim_height do
-                # TODO stroke_horizontal_rule should support :at
-                move_down bounds.height if periphery == :header
-                stroke_horizontal_rule trim_border_color, line_width: trim_border_width, line_style: trim_border_style
-              end
-            end
-          end
-        end
-      end
-      stamps[periphery] = true
-    end
-
     pagenums_enabled = doc.attr? 'pagenums'
     attribute_missing_doc = doc.attr 'attribute-missing'
     case @media == 'prepress' ? 'physical' : (doc.attr 'pdf-folio-placement')
@@ -3009,12 +2850,15 @@ class Converter < ::Prawn::Document
     else
       folio_basis, invert_folio = :virtual, false
     end
+    periphery_layout_cache = {}
     repeat((content_start_page..page_count), dynamic: true) do
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
       pgnum_label = page_number - skip_pagenums
       pgnum_label = (RomanNumeral.new page_number, :lower) if pgnum_label < 1
       side = page_side((folio_basis == :physical ? page_number : pgnum_label), invert_folio)
+      # QUESTION should allocation be per side?
+      trim_styles, colspec_dict, content_dict, stamp_names = allocate_running_content_layout page, periphery, periphery_layout_cache
       # FIXME we need to have a content setting for chapter pages
       content_by_position, colspec_by_position = content_dict[side], colspec_dict[side]
       # TODO populate chapter-number
@@ -3026,11 +2870,11 @@ class Converter < ::Prawn::Document
       doc.set_attr 'section-title', (sections_by_page[pgnum_label] || '')
       doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum_label] || chapters_by_page[pgnum_label] || '')
 
-      stamp trim_stamp_name[side] if stamps[periphery]
+      stamp stamp_names[side] if stamp_names
 
       theme_font periphery do
         canvas do
-          bounding_box [trim_content_left[side], trim_top], width: trim_content_width[side], height: trim_height do
+          bounding_box [trim_styles[:content_left][side], trim_styles[:top]], width: trim_styles[:content_width][side], height: trim_styles[:height] do
             ColumnPositions.each do |position|
               next unless (content = content_by_position[position])
               next unless (colspec = colspec_by_position[position])[:width] > 0
@@ -3038,7 +2882,7 @@ class Converter < ::Prawn::Document
               case content
               when ::Hash
                 # NOTE image vposition respects padding; use negative image_vertical_align value to revert
-                trim_v_padding = trim_padding[0] + trim_padding[2]
+                trim_v_padding = (trim_padding = trim_styles[:padding])[0] + trim_padding[2]
                 # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                 float do
                   # NOTE bounding_box is redundant if trim_v_padding is 0
@@ -3048,7 +2892,7 @@ class Converter < ::Prawn::Document
                         svg_data = ::File.read img_path
                         svg_obj = ::Prawn::SVG::Interface.new svg_data, self,
                             position: colspec[:align],
-                            vposition: trim_img_valign,
+                            vposition: trim_styles[:img_valign],
                             width: content[:width],
                             # TODO enforce jail in safe mode
                             enable_file_requests_with_root: (::File.dirname img_path),
@@ -3059,7 +2903,7 @@ class Converter < ::Prawn::Document
                         end
                         svg_obj.draw
                       else
-                        img_opts = { position: colspec[:align], vposition: trim_img_valign }
+                        img_opts = { position: colspec[:align], vposition: trim_styles[:img_valign] }
                         if content[:fit]
                           img_opts[:fit] = [content[:width], bounds.height]
                         else
@@ -3087,12 +2931,12 @@ class Converter < ::Prawn::Document
                 end
                 theme_font %(#{periphery}_#{side}_#{position}) do
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
-                    at: [colspec[:x], trim_height - trim_padding[0] + (trim_valign == :center ? font.descender * 0.5 : 0)],
+                    at: [colspec[:x], trim_styles[:height] - trim_styles[:padding][0] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
                     width: colspec[:width],
-                    height: trim_content_height,
+                    height: trim_styles[:content_height],
                     align: colspec[:align],
-                    valign: trim_valign,
-                    leading: trim_line_metrics.leading,
+                    valign: trim_styles[:valign],
+                    leading: trim_styles[:line_metrics].leading,
                     final_gap: false,
                     overflow: :truncate
                 end
@@ -3105,6 +2949,157 @@ class Converter < ::Prawn::Document
 
     go_to_page prev_page_number
     nil
+  end
+
+  def allocate_running_content_layout page, periphery, cache
+    #layout = (page.dimensions.slice 2, 2).join ':'
+    layout = page.layout
+    cache[layout] ||= begin
+      trim_styles = {
+        line_metrics: (trim_line_metrics = calc_line_metrics @theme[%(#{periphery}_line_height)] || @theme.base_line_height),
+        # NOTE we've already verified this property is set
+        height: (trim_height = @theme[%(#{periphery}_height)]),
+        top: periphery == :header ? page_height : trim_height,
+        padding: (trim_padding = inflate_padding @theme[%(#{periphery}_padding)] || 0),
+        bg_color: (resolve_theme_color %(#{periphery}_background_color).to_sym),
+        border_width: (trim_border_width = @theme[%(#{periphery}_border_width)] || @theme.base_border_width),
+        border_style: (@theme[%(#{periphery}_border_style)] || :solid).to_sym,
+        border_color: trim_border_width == 0 ? nil : (resolve_theme_color %(#{periphery}_border_color).to_sym),
+        valign: (val = (@theme[%(#{periphery}_vertical_align)] || :middle).to_sym) == :middle ? :center : val,
+        img_valign: @theme[%(#{periphery}_image_vertical_align)],
+        left: {
+          recto: (trim_left_recto = @page_margin_by_side[:recto][3]),
+          verso: (trim_left_verso = @page_margin_by_side[:verso][3]),
+        },
+        width: {
+          recto: (trim_width_recto = page_width - trim_left_recto - @page_margin_by_side[:recto][1]),
+          verso: (trim_width_verso = page_width - trim_left_verso - @page_margin_by_side[:verso][1]),
+        },
+        content_left: {
+          recto: trim_left_recto + trim_padding[3],
+          verso: trim_left_verso + trim_padding[3],
+        },
+        content_width: (trim_content_width = {
+          recto: trim_width_recto - trim_padding[1] - trim_padding[3],
+          verso: trim_width_verso - trim_padding[1] - trim_padding[3],
+        }),
+        content_height: trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom,
+      }
+      case trim_styles[:img_valign]
+      when nil
+        trim_styles[:img_valign] = trim_styles[:valign]
+      when 'middle'
+        trim_styles[:img_valign] = :center
+      when 'top', 'center', 'bottom'
+        trim_styles[:img_valign] = trim_styles[:img_valign].to_sym
+      end
+
+      colspec_dict = PageSides.inject({}) do |acc, side|
+        side_trim_content_width = trim_content_width[side]
+        if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)] || @theme[%(#{periphery}_columns)])
+          case (colspecs = (custom_colspecs.to_s.tr ',', ' ').split[0..2]).size
+          when 3
+            colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
+          when 2
+            colspecs = { left: colspecs[0], center: '0', right: colspecs[1] }
+          when 0, 1
+            colspecs = { left: '0', center: colspecs[0] || '100', right: '0' }
+          end
+          tot_width = 0
+          side_colspecs = colspecs.map {|col, spec|
+            if (alignment_char = spec.chr).to_i.to_s != alignment_char
+              alignment = AlignmentTable[alignment_char] || :left
+              rel_width = spec[1..-1].to_f
+            else
+              alignment = :left
+              rel_width = spec.to_f
+            end
+            tot_width += rel_width
+            [col, { align: alignment, width: rel_width, x: 0 }]
+          }.to_h
+          # QUESTION should we allow the columns to overlap (capping width at 100%)?
+          side_colspecs.each {|_, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
+          side_colspecs[:right][:x] = (side_colspecs[:center][:x] = side_colspecs[:left][:width]) + side_colspecs[:center][:width]
+          acc[side] = side_colspecs
+        else
+          acc[side] = {
+            left: { align: :left, width: side_trim_content_width, x: 0 },
+            center: { align: :center, width: side_trim_content_width, x: 0 },
+            right: { align: :right, width: side_trim_content_width, x: 0 }
+          }
+        end
+        acc
+      end
+
+      content_dict = PageSides.inject({}) do |acc, side|
+        side_content = {}
+        ColumnPositions.each do |position|
+          unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
+            # TODO support image URL (using resolve_image_path)
+            if (val.include? ':') && val =~ ImageAttributeValueRx
+              if ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, @stylesdir))
+                attrs = (AttributeList.new $2).parse
+                col_width = colspec_dict[side][position][:width]
+                if (fit = attrs['fit']) == 'contain'
+                  width = col_width
+                else
+                  unless (width = resolve_explicit_width attrs, col_width)
+                    # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
+                    # NOTE failure message will be reported later when image is rendered
+                    width = (to_pt intrinsic_image_dimensions(path)[:width], :px) rescue 0
+                  end
+                  width = col_width if fit == 'scale-down' && width > col_width
+                end
+                side_content[position] = { path: path, width: width, fit: !!fit }
+              else
+                # NOTE allows inline image handler to report invalid reference and replace with alt text
+                side_content[position] = %(image:#{path}[#{$2}])
+              end
+            else
+              side_content[position] = val
+            end
+          end
+        end
+        # NOTE set fallbacks if not explicitly disabled
+        if side_content.empty? && periphery == :footer && @theme[%(footer_#{side}_content)] != 'none'
+          side_content = { side == :recto ? :right : :left => '{page-number}' }
+        end
+
+        acc[side] = side_content
+        acc
+      end
+
+      if trim_styles[:bg_color] || trim_styles[:border_color]
+        stamp_names = {
+          recto: %(#{layout}_#{periphery}_recto),
+          verso: %(#{layout}_#{periphery}_verso),
+        }
+        PageSides.each do |side|
+          create_stamp stamp_names[side] do
+            canvas do
+              if trim_styles[:bg_color]
+                bounding_box [0, trim_styles[:top]], width: bounds.width, height: trim_styles[:height] do
+                  fill_bounds trim_styles[:bg_color]
+                  if trim_styles[:border_color]
+                    # TODO stroke_horizontal_rule should support :at
+                    move_down bounds.height if periphery == :header
+                    stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style]
+                  end
+                end
+              else
+                bounding_box [trim_styles[:left][side], trim_styles[:top]], width: trim_styles[:width][side], height: trim_styles[:height] do
+                  # TODO stroke_horizontal_rule should support :at
+                  move_down bounds.height if periphery == :header
+                  stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style]
+                end
+              end
+            end
+          end
+        end
+      end
+
+      [trim_styles, colspec_dict, content_dict, stamp_names]
+    end
   end
 
   def add_outline doc, num_levels = 2, toc_page_nums = [], num_front_matter_pages = 0
@@ -3570,7 +3565,7 @@ class Converter < ::Prawn::Document
       end
 
       if (bg_image = doc_attr_val ? (resolve_image_path doc, bg_image, relative_to_imagesdir) :
-          (ThemeLoader.resolve_theme_asset bg_image, (doc.attr 'pdf-stylesdir')))
+          (ThemeLoader.resolve_theme_asset bg_image, @stylesdir))
         if ::File.readable? bg_image
           bg_image
         else
