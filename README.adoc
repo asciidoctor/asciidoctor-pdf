@@ -502,23 +502,25 @@ In addition to support for more additional image file formats, this gem also spe
 
 == STEM Support
 
-Unlike the built-in HTML converter, Asciidoctor PDF does not provide native support for STEM blocks and inline macros.
-That's because Asciidoctor core doesn't actually process STEM equations.
-In the HTML output, Asciidoctor relies on the JavaScript-based MathJax library to parse and render the equations in the browser.
-All the HTML converter does is wrap the equations so MathJax is able to find them.
+Unlike the built-in HTML converter, Asciidoctor PDF does not provide native support for STEM blocks and inline macros (i.e., asciimath and latexmath).
+That's because Asciidoctor core doesn't process the STEM content itself.
+It just passes it through to the converter.
+In the HTML output, Asciidoctor relies on the JavaScript-based MathJax library to parse and render the equations in the browser when the page is loaded.
+The HTML converter simply wraps the equations in special markup so MathJax can find them.
 
 In order to insert a rendered equation into the PDF, the toolchain has to parse the equations and convert them to a format the PDF writer (Prawn) can understand.
 That typically means converting to an image.
 
-The recommended solution is an extension named Asciidoctor Mathematical, which we'll cover here.
-Another solution still under development uses Mathoid to convert STEM equations to images.
-Mathoid is a library that invokes MathJax using a headless browser.
+The recommended solution is an extension named Asciidoctor Mathematical, which we'll cover in this document.
+
+Another solution, which is still under development, uses Mathoid to convert STEM equations to images.
+Mathoid is a library that invokes MathJax using a headless browser, so it supports both asciimath and latexmath equations.
 That prototype can be found in the https://github.com/asciidoctor/asciidoctor-extensions-lab#extension-catalog[Asciidoctor extensions lab].
 
 === Asciidoctor Mathematical
 
-{uri-asciidoctor-mathematical}[Asciidoctor Mathematical] is an extension for Asciidoctor that provides alternate processing of STEM blocks and inline macros.
-After the document has been parsed, the extension locates all the STEM blocks and inline macros, converts the equations to images using Mathematical, then replaces them with image nodes.
+{uri-asciidoctor-mathematical}[Asciidoctor Mathematical] is an extension for Asciidoctor that provides alternate processing of STEM blocks and inline macros (currently only latexmath).
+After the document has been parsed, the extension locates all the latexmath blocks and inline macros, converts the equations to images using Mathematical, then replaces them with image nodes.
 Conversion then proceeds as normal.
 
 Asciidoctor Mathematical is a Ruby gem that uses native extensions.
