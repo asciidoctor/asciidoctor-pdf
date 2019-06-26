@@ -2911,19 +2911,22 @@ class Converter < ::Prawn::Document
                   end
                 end
               when ::String
-                # NOTE minor optimization
-                if content == '{page-number}'
-                  content = pagenums_enabled ? pgnum_label.to_s : nil
-                else
-                  # FIXME get apply_subs to handle drop-line w/o a warning
-                  doc.set_attr 'attribute-missing', 'skip' unless attribute_missing_doc == 'skip'
-                  if (content = doc.apply_subs content).include? '{'
-                    # NOTE must use &#123; in place of {, not \{, to escape attribute reference
-                    content = content.split(LF).delete_if {|line| SimpleAttributeRefRx.match? line } * LF
-                  end
-                  doc.set_attr 'attribute-missing', attribute_missing_doc unless attribute_missing_doc == 'skip'
-                end
                 theme_font %(#{periphery}_#{side}_#{position}) do
+                  # NOTE minor optimization
+                  if content == '{page-number}'
+                    content = pagenums_enabled ? pgnum_label.to_s : nil
+                  else
+                    # FIXME get apply_subs to handle drop-line w/o a warning
+                    doc.set_attr 'attribute-missing', 'skip' unless attribute_missing_doc == 'skip'
+                    if (content = doc.apply_subs content).include? '{'
+                      # NOTE must use &#123; in place of {, not \{, to escape attribute reference
+                      content = content.split(LF).delete_if {|line| SimpleAttributeRefRx.match? line } * LF
+                    end
+                    doc.set_attr 'attribute-missing', attribute_missing_doc unless attribute_missing_doc == 'skip'
+                    if (transform = @text_transform) && transform != 'none'
+                      content = transform_text content, @text_transform
+                    end
+                  end
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
                     at: [colspec[:x], trim_styles[:height] - trim_styles[:padding][0] - trim_styles[:content_offset] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
                     width: colspec[:width],

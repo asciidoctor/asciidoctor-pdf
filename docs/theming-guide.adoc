@@ -3350,6 +3350,12 @@ Please note that the running content will _not_ be used unless a) the periphery 
 |header:
   image_vertical_align: 4
 
+|text_transform
+|<<text-transforms,Text transform>> +
+(default: none)
+|header:
+  text_transform: uppercase
+
 |vertical_align
 |top {vbar} middle {vbar} bottom +
 (default: middle)
@@ -3445,6 +3451,12 @@ Please note that the running content will _not_ be used unless a) the periphery 
 |footer:
   image_vertical_align: 4
 
+|text_transform
+|<<text-transforms,Text transform>> +
+(default: none)
+|footer:
+  text_transform: uppercase
+
 |vertical_align
 |top {vbar} middle {vbar} bottom +
 (default: middle)
@@ -3480,7 +3492,7 @@ If you define running header and footer content in your theme (including the hei
 If content is not specified for the running footer, the page number (i.e., `\{page-number}`) is shown on the left on verso pages and the right on recto pages.
 You can disable this behavior by defining the attribute `nofooter` in the AsciiDoc document header or by defining the key `footer_<side>_content: none` in the theme.
 
-TIP: Although not listed in the table above, you can control the font properties used for running content for each column position on each page side (e.g., `footer_<side>_<position>_font_color`).
+TIP: Although not listed in the table above, you can control the font settings (font_family, font_size, font_color, font_style, text_transform) that get applied to the running content in each column position for each page side (e.g., `footer_<side>_<position>_font_color`).
 For example, you can set the font color used for the right-hand column on recto pages by setting `footer_recto_right_font_color: 6CC644`.
 
 ==== Attribute References
