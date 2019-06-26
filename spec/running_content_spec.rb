@@ -155,6 +155,46 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect pgnum_labels).to eq %w(i 1 2 3 4)
   end
 
+  it 'should be able to set font styles per periphery and side in theme' do
+    pdf_theme = build_pdf_theme \
+      footer_font_size: 7.5,
+      footer_recto_left_content: '{section-title}',
+      footer_recto_left_font_style: 'bold',
+      footer_recto_left_text_transform: 'lowercase',
+      footer_recto_right_content: '{page-number}',
+      footer_recto_right_font_color: '00ff00',
+      footer_verso_left_content: '{page-number}',
+      footer_verso_left_font_color: 'ff0000',
+      footer_verso_right_content: '{section-title}',
+      footer_verso_right_text_transform: 'uppercase'
+
+    pdf = to_pdf <<~'EOS', attributes: {}, pdf_theme: pdf_theme, analyze: true
+    = Document Title
+
+    Preamble text.
+
+    <<<
+
+    == Beginning
+
+    <<<
+
+    == Middle
+
+    <<<
+
+    == End
+    EOS
+
+    (expect pdf.find_text font_size: 7.5, page_number: 1, string: '1', font_color: '00FF00').to have_size 1
+    (expect pdf.find_text font_size: 7.5, page_number: 2, string: 'BEGINNING').to have_size 1
+    (expect pdf.find_text font_size: 7.5, page_number: 2, string: '2', font_color: 'FF0000').to have_size 1
+    (expect pdf.find_text font_size: 7.5, page_number: 3, string: 'middle', font_name: 'NotoSerif-Bold').to have_size 1
+    (expect pdf.find_text font_size: 7.5, page_number: 3, string: '3', font_color: '00FF00').to have_size 1
+    (expect pdf.find_text font_size: 7.5, page_number: 4, string: 'END').to have_size 1
+    (expect pdf.find_text font_size: 7.5, page_number: 4, string: '4', font_color: 'FF0000').to have_size 1
+  end
+
   it 'should expand footer padding from single value' do
     pdf = to_pdf <<~'EOS', attributes: {}, analyze: true
     = Document Title

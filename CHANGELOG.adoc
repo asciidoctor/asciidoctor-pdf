@@ -19,6 +19,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * drop remapping of legacy running content keys in theme data
 * resize running content to fit page layout (#1036)
 * exclude border width from running content area (#1109)
+* support text-transform property in running content (#702)
 
 == 1.5.0.alpha.18 (2019-06-01) - @mojavelinux
 
