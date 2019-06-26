@@ -47,6 +47,22 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.text.map {|it| it.values_at :string, :font_name }).to eql expected_text
   end
 
+  it 'should uppercase section titles if text_transform key in theme is set to uppercase' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: :uppercase }, analyze: true
+    = Document Title
+
+    == Beginning
+
+    == Middle
+
+    == End
+    EOS
+
+    pdf.text.each do |text|
+      (expect text[:string]).to eql text[:string].upcase
+    end
+  end
+
   it 'should add destination for each section' do
     pdf = to_pdf <<~'EOS'
     = Document Title

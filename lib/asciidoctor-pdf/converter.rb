@@ -644,7 +644,7 @@ class Converter < ::Prawn::Document
       label_text = node.caption
       theme_font :admonition_label do
         theme_font %(admonition_label_#{type}) do
-          if (transform = @text_transform) && transform != 'none'
+          if (transform = @text_transform)
             label_text = transform_text label_text, transform
           end
           label_width = rendered_width_of_string label_text
@@ -1744,9 +1744,7 @@ class Converter < ::Prawn::Document
     table_data = []
     node.rows[:head].each do |row|
       table_header = true
-      if (head_transform = theme.table_head_text_transform)
-        head_transform = nil if head_transform == 'none'
-      end
+      head_transform = resolve_text_transform :table_head_text_transform, nil
       row_data = []
       row.each do |cell|
         row_data << {
@@ -1809,9 +1807,7 @@ class Converter < ::Prawn::Document
             end
           end
           header_cell_data = header_cell_data_cache.dup
-          if (cell_transform = header_cell_data.delete :text_transform) == 'none'
-            cell_transform = nil
-          end
+          cell_transform = resolve_text_transform header_cell_data, nil
           cell_data.update header_cell_data unless header_cell_data.empty?
           cell_line_metrics = calc_line_metrics theme.base_line_height
         when :monospaced
@@ -2026,7 +2022,7 @@ class Converter < ::Prawn::Document
         foot_row.font = theme.table_foot_font_family if theme.table_foot_font_family
         foot_row.font_style = theme.table_foot_font_style.to_sym if theme.table_foot_font_style
         # HACK we should do this transformation when creating the cell
-        #if (foot_transform = theme.table_foot_text_transform) && foot_transform != 'none'
+        #if (foot_transform = resolve_text_transform :table_foot_text_transform, nil)
         #  foot_row.each {|c| c.content = (transform_text c.content, foot_transform) if c.content }
         #end
       end
@@ -2517,7 +2513,7 @@ class Converter < ::Prawn::Document
   def layout_heading string, opts = {}
     top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme[%(heading_h#{opts[:level]}_margin_top)] || @theme.heading_margin_top
     bot_margin = margin || (opts.delete :margin_bottom) || @theme[%(heading_h#{opts[:level]}_margin_bottom)] || @theme.heading_margin_bottom
-    if (transform = (opts.delete :text_transform) || @text_transform) && transform != 'none'
+    if (transform = resolve_text_transform opts)
       string = transform_text string, transform
     end
     margin_top top_margin
@@ -2533,7 +2529,7 @@ class Converter < ::Prawn::Document
   def layout_prose string, opts = {}
     top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.prose_margin_top
     bot_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom
-    if (transform = (opts.delete :text_transform) || @text_transform) && transform != 'none'
+    if (transform = resolve_text_transform opts)
       string = transform_text string, transform
     end
     # NOTE used by extensions; ensures linked text gets formatted using the link styles
@@ -2664,8 +2660,7 @@ class Converter < ::Prawn::Document
     end
     sections.each do |sect|
       theme_font :toc, level: (sect.level + 1) do
-        sect_title = (transform = @text_transform) && transform != 'none' ?
-            (transform_text sect.numbered_title, transform) : sect.numbered_title
+        sect_title = (transform = @text_transform) ? (transform_text sect.numbered_title, transform) : sect.numbered_title
         # NOTE only write section title (excluding dots and page number) if this is a dry run
         if scratch?
           # FIXME use layout_prose
@@ -3179,6 +3174,14 @@ class Converter < ::Prawn::Document
     @theme.svg_font_family || @theme.base_font_family
   end
 
+  def resolve_text_transform key, use_fallback = true
+    if (transform = ::Hash === key ? (key.delete :text_transform) : @theme[key.to_s])
+      transform == 'none' ? nil : transform
+    elsif use_fallback
+      @text_transform
+    end
+  end
+
   # QUESTION should we pass a category as an argument?
   # QUESTION should we make this a method on the theme ostruct? (e.g., @theme.resolve_color key, fallback)
   def resolve_theme_color key, fallback_color = nil
@@ -3252,7 +3255,7 @@ class Converter < ::Prawn::Document
     end
 
     prev_color, @font_color = @font_color, color if color
-    prev_transform, @text_transform = @text_transform, transform if transform
+    prev_transform, @text_transform = @text_transform, (transform == 'none' ? nil : transform) if transform
 
     font family, size: size, style: (style && style.to_sym) do
       result = yield
