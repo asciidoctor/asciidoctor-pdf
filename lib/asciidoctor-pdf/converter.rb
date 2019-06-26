@@ -2947,7 +2947,6 @@ class Converter < ::Prawn::Document
   end
 
   def allocate_running_content_layout page, periphery, cache
-    #layout = (page.dimensions.slice 2, 2).join ':'
     layout = page.layout
     cache[layout] ||= begin
       trim_styles = {
