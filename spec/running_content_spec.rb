@@ -30,7 +30,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     page_number_texts.each_with_index do |page_number_text, idx|
       (expect page_number_text[:page_number]).to eql idx + 2
       (expect page_number_text[:x]).to eql expected_x_positions[idx.even? ? 0 : 1]
-      (expect page_number_text[:y]).to eql 14.388
+      (expect page_number_text[:y]).to eql 14.263
       (expect page_number_text[:font_size]).to eql 9
     end
   end
@@ -62,7 +62,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     EOS
 
     pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
-      accum << (pdf.find_text page_number: page_number, y: 14.388)[-1][:string]
+      accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       accum
     end
     (expect pgnum_labels).to eq %w(i ii 1 2 3)
@@ -84,7 +84,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     EOS
 
     pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
-      accum << ((pdf.find_text page_number: page_number, y: 14.388)[-1] || {})[:string]
+      accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       accum
     end
     (expect pgnum_labels).to eq [nil, 'ii', '1', '2', '3']
@@ -105,7 +105,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     EOS
 
     pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
-      accum << ((pdf.find_text page_number: page_number, y: 14.388)[-1] || {})[:string]
+      accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       accum
     end
     (expect pgnum_labels).to eq [nil, '1', '2', '3']
@@ -127,7 +127,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     EOS
 
     pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
-      accum << (pdf.find_text page_number: page_number, y: 14.388)[-1][:string]
+      accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       accum
     end
     (expect pgnum_labels).to eq %w(1 2 3 4 5)
@@ -149,7 +149,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     EOS
 
     pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
-      accum << (pdf.find_text page_number: page_number, y: 14.388)[-1][:string]
+      accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       accum
     end
     (expect pgnum_labels).to eq %w(i 1 2 3 4)
@@ -334,7 +334,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     EOS
 
     expected_running_content_by_page = { 1 => 'Document Title', 2 => 'Table of Contents', 3 => 'Preface', 4 => 'Chapter 1' }
-    running_content_by_page = (pdf.find_text y: 14.388).reduce({}) {|accum, text| accum[text[:page_number]] = text[:string]; accum }
+    running_content_by_page = (pdf.find_text y: 14.263).reduce({}) {|accum, text| accum[text[:page_number]] = text[:string]; accum }
     (expect running_content_by_page).to eql expected_running_content_by_page
   end
 
@@ -366,6 +366,30 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       (expect to_file).to visually_match 'running-content-image-fit.pdf'
     end
+  end
+
+  it 'should not overlap border when scaling image to fit content area', integration: true do
+    pdf_theme = build_pdf_theme \
+      header_height: 36,
+      header_border_width: 5,
+      header_border_color: 'dddddd',
+      header_recto_columns: '>40% =20% <40%',
+      header_recto_left_content: 'text',
+      header_recto_center_content: %(image:#{fixture_file 'square.png'}[fit=contain]),
+      header_recto_right_content: 'text',
+      footer_height: 36,
+      footer_padding: 0,
+      footer_vertical_align: 'middle',
+      footer_border_width: 5,
+      footer_border_color: 'dddddd',
+      footer_recto_columns: '>40% =20% <40%',
+      footer_recto_left_content: 'text',
+      footer_recto_center_content: %(image:#{fixture_file 'square.png'}[fit=contain]),
+      footer_recto_right_content: 'text'
+
+    to_file = to_pdf_file %([.text-center]\ncontent), 'running-content-image-contain-border.pdf', attributes: {}, pdf_theme: pdf_theme
+
+    (expect to_file).to visually_match 'running-content-image-contain-border.pdf'
   end
 
   it 'should scale image down to width when fit=scale-down', integration: true do

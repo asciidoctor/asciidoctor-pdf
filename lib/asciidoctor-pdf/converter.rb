@@ -2876,12 +2876,11 @@ class Converter < ::Prawn::Document
               # FIXME we need to have a content setting for chapter pages
               case content
               when ::Hash
-                # NOTE image vposition respects padding; use negative image_vertical_align value to revert
-                trim_v_padding = (trim_padding = trim_styles[:padding])[0] + trim_padding[2]
                 # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                 float do
-                  # NOTE bounding_box is redundant if trim_v_padding is 0
-                  bounding_box [colspec[:x], cursor - trim_padding[0]], width: colspec[:width], height: (bounds.height - trim_v_padding) do
+                  # NOTE image vposition respects padding; use negative image_vertical_align value to revert
+                  # NOTE bounding_box is redundant if both vertical padding and border width are 0
+                  bounding_box [colspec[:x], cursor - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colspec[:width], height: trim_styles[:content_height] do
                     begin
                       if (img_path = content[:path]).downcase.end_with? '.svg'
                         svg_data = ::File.read img_path
@@ -2926,9 +2925,9 @@ class Converter < ::Prawn::Document
                 end
                 theme_font %(#{periphery}_#{side}_#{position}) do
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
-                    at: [colspec[:x], trim_styles[:height] - trim_styles[:padding][0] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
+                    at: [colspec[:x], trim_styles[:height] - trim_styles[:padding][0] - trim_styles[:content_offset] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
                     width: colspec[:width],
-                    height: trim_styles[:content_height],
+                    height: trim_styles[:prose_content_height],
                     align: colspec[:align],
                     valign: trim_styles[:valign],
                     leading: trim_styles[:line_metrics].leading,
@@ -2956,9 +2955,9 @@ class Converter < ::Prawn::Document
         top: periphery == :header ? page_height : trim_height,
         padding: (trim_padding = inflate_padding @theme[%(#{periphery}_padding)] || 0),
         bg_color: (resolve_theme_color %(#{periphery}_background_color).to_sym),
-        border_width: (trim_border_width = @theme[%(#{periphery}_border_width)] || @theme.base_border_width),
+        border_color: (trim_border_color = resolve_theme_color %(#{periphery}_border_color).to_sym),
         border_style: (@theme[%(#{periphery}_border_style)] || :solid).to_sym,
-        border_color: trim_border_width == 0 ? nil : (resolve_theme_color %(#{periphery}_border_color).to_sym),
+        border_width: (trim_border_width = trim_border_color ? @theme[%(#{periphery}_border_width)] || @theme.base_border_width || 0 : 0),
         valign: (val = (@theme[%(#{periphery}_vertical_align)] || :middle).to_sym) == :middle ? :center : val,
         img_valign: @theme[%(#{periphery}_image_vertical_align)],
         left: {
@@ -2977,7 +2976,10 @@ class Converter < ::Prawn::Document
           recto: trim_width_recto - trim_padding[1] - trim_padding[3],
           verso: trim_width_verso - trim_padding[1] - trim_padding[3],
         }),
-        content_height: trim_height - trim_padding[0] - trim_padding[2] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom,
+        content_height: (content_height = trim_height - trim_padding[0] - trim_padding[2] - (trim_border_width * 0.5)),
+        prose_content_height: content_height - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom,
+        # NOTE content offset adjusts y position to account for border
+        content_offset: (periphery == :footer ? trim_border_width * 0.5 : 0),
       }
       case trim_styles[:img_valign]
       when nil
@@ -3063,7 +3065,7 @@ class Converter < ::Prawn::Document
         acc
       end
 
-      if trim_styles[:bg_color] || trim_styles[:border_color]
+      if trim_styles[:bg_color] || trim_styles[:border_width] > 0
         stamp_names = {
           recto: %(#{layout}_#{periphery}_recto),
           verso: %(#{layout}_#{periphery}_verso),
@@ -3074,7 +3076,7 @@ class Converter < ::Prawn::Document
               if trim_styles[:bg_color]
                 bounding_box [0, trim_styles[:top]], width: bounds.width, height: trim_styles[:height] do
                   fill_bounds trim_styles[:bg_color]
-                  if trim_styles[:border_color]
+                  if trim_styles[:border_width] > 0
                     # TODO stroke_horizontal_rule should support :at
                     move_down bounds.height if periphery == :header
                     stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style]
