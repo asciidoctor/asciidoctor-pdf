@@ -139,6 +139,7 @@ class LineInspector < PDF::Inspector
     @lines = []
     @from = nil
     @color = nil
+    @graphic_states = {}
     @page_number = 1
     @width = nil
   end
@@ -153,10 +154,17 @@ class LineInspector < PDF::Inspector
 
   def page= page
     @page_number = page.number
+    @graphic_states = page.graphic_states
   end
 
   def set_color_for_stroking_and_special *params
     @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
+  end
+
+  def set_graphics_state_parameters ref
+    if (opacity = @graphic_states[ref][:ca])
+      @color += '%02X' % (opacity * 255).round
+    end
   end
 
   def set_line_width line_width

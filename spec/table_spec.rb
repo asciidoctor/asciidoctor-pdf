@@ -96,6 +96,29 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[2][:width]).to eql 0.5
       (expect lines[3][:width]).to eql 0.5
     end
+
+    it 'should allow theme to set table border color to transparent' do
+      theme_overrides = {
+        table_border_color: 'transparent'
+      }
+
+      pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: theme_overrides
+      [frame=none,grid=rows]
+      |===
+      | Col A | Col B
+
+      | A1
+      | B1
+
+      | A2
+      | B2
+      |===
+      EOS
+
+      pdf.lines.uniq.each do |line|
+        (expect line[:color]).to eql '00000000'
+      end
+    end
   end
 
   context 'Dimensions' do
