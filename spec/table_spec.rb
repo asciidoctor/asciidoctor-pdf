@@ -97,9 +97,32 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[3][:width]).to eql 0.5
     end
 
+    it 'should allow theme to customize bottom border of table head row' do
+      theme_overrides = {
+        table_head_border_bottom_width: 0.5,
+        table_head_border_bottom_style: 'dashed',
+        table_head_border_bottom_color: 'a9a9a9',
+      }
+      to_file = to_pdf_file <<~'EOS', 'table-head-border-bottom.pdf', pdf_theme: theme_overrides
+      [frame=none,grid=rows]
+      |===
+      | Col A | Col B
+
+      | A1
+      | B1
+
+      | A2
+      | B2
+      |===
+      EOS
+
+      (expect to_file).to visually_match 'table-head-border-bottom.pdf'
+    end
+
     it 'should allow theme to set table border color to transparent' do
       theme_overrides = {
-        table_border_color: 'transparent'
+        table_border_color: 'transparent',
+        table_head_border_bottom_color: 'transparent',
       }
 
       pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: theme_overrides

@@ -1885,6 +1885,11 @@ class Converter < ::Prawn::Document
     table_border_color = theme.table_border_color || theme.table_grid_color || theme.base_border_color
     table_border_style = (theme.table_border_style || :solid).to_sym
     table_border_width = theme.table_border_width
+    if table_header
+      head_border_bottom_color = theme.table_head_border_bottom_color || table_border_color
+      head_border_bottom_style = (theme.table_head_border_bottom_style || table_border_style).to_sym
+      head_border_bottom_width = theme.table_head_border_bottom_width || table_border_width
+    end
     [:top, :bottom, :left, :right].each {|edge| border_width[edge] = table_border_width }
     table_grid_color = theme.table_grid_color || table_border_color
     table_grid_style = (theme.table_grid_style || table_border_style).to_sym
@@ -1969,11 +1974,10 @@ class Converter < ::Prawn::Document
       @pdf.layout_table_caption node, table_width, alignment if node.title? && caption_side == :top
       if grid == 'none' && frame == 'none'
         if table_header
-          # FIXME allow header border bottom width and style to be set by theme
           rows(0).tap do |r|
-            r.border_bottom_line, r.border_bottom_width = :solid, 1.25
-            # QUESTION should we use the table border color for the bottom border color of the header row?
-            #r.border_bottom_color, r.border_bottom_line, r.border_bottom_width = table_border_color, :solid, 1.25
+            r.border_bottom_color = head_border_bottom_color
+            r.border_bottom_line = head_border_bottom_style
+            r.border_bottom_width = head_border_bottom_width
           end
         end
       else
@@ -1981,16 +1985,15 @@ class Converter < ::Prawn::Document
         cells.border_width = [border_width[:rows], border_width[:cols], border_width[:rows], border_width[:cols]]
 
         if table_header
-          # FIXME allow header border bottom width and style to be set by theme
           rows(0).tap do |r|
-            r.border_bottom_line, r.border_bottom_width = :solid, 1.25
-            # QUESTION should we use the table border color for the bottom border color of the header row?
-            #r.border_bottom_color, r.border_bottom_line, r.border_bottom_width = table_border_color, :solid, 1.25
+            r.border_bottom_color = head_border_bottom_color
+            r.border_bottom_line = head_border_bottom_style
+            r.border_bottom_width = head_border_bottom_width
           end
           rows(1).tap do |r|
-            r.border_top_line, r.border_top_width = :solid, 1.25
-            # QUESTION should we use the table border color for the top border color of the first row?
-            #r.border_top_color, r.border_top_line, r.border_top_width = table_border_color, :solid, 1.25
+            r.border_top_color = head_border_bottom_color
+            r.border_top_line = head_border_bottom_style
+            r.border_top_width = head_border_bottom_width
           end if num_rows > 1
         end
 

@@ -91,6 +91,7 @@ table_border_style: solid
 table_border_width: 0.5
 table_cell_padding: 2
 table_head_font_style: bold
+table_head_border_bottom_width: 1.25
 table_body_stripe_background_color: 'EEEEEE'
 thematic_break_border_color: 'EEEEEE'
 thematic_break_border_style: solid
