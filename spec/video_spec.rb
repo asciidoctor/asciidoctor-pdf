@@ -30,7 +30,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'Vimeo' do
     it 'should replace image with poster image if allow-uri-read attribute is set', integration: true do
-      video_id = '300817511'
+      video_id = '77477140'
       to_file = to_pdf_file <<~EOS, 'video-vimeo-poster.pdf', attribute_overrides: { 'allow-uri-read' => '' }
       video::#{video_id}[vimeo,pdfwidth=100%]
       EOS
