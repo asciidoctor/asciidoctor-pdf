@@ -2863,6 +2863,27 @@ The keys in this category control the arrangement and style of tables and table 
   head:
     background_color: #f0f0f0
 
+|border_bottom_color
+|<<colors,Color>> +
+(default: $table_border_color)
+|table:
+  head:
+    border_bottom_color: #dddddd
+
+|border_bottom_style
+|solid {vbar} dashed {vbar} dotted +
+(default: solid)
+|table:
+  head:
+    border_bottom_style: dashed
+
+|border_bottom_width
+|<<values,Number>> +
+(default: 1.25)
+|table:
+  head:
+    border_bottom_width: 1
+
 |font_color
 |<<colors,Color>> +
 (default: $table_font_color)
