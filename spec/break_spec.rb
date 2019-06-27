@@ -40,11 +40,15 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       after_text = (pdf.find_text 'after')[0]
 
       pdf = to_pdf input, analyze: :line
-      (expect pdf.widths).to have_size 1
-      (expect pdf.points).to have_size 2
-      (expect pdf.widths[0]).to eql 0.5
-      (expect pdf.points[0][1]).to be < before_text[:y]
-      (expect pdf.points[0][1]).to be > after_text[:y]
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      line = lines[0]
+      (expect line[:color]).to eql 'EEEEEE'
+      (expect line[:width]).to eql 0.5
+      (expect line[:from][:x]).to be < line[:to][:x]
+      (expect line[:from][:y]).to eql line[:to][:y]
+      (expect line[:from][:y]).to be < before_text[:y]
+      (expect line[:from][:y]).to be > after_text[:y]
     end
   end
 

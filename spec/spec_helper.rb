@@ -132,6 +132,38 @@ class EnhancedPDFTextInspector < PDF::Inspector
   end
 end
 
+class LineInspector < PDF::Inspector
+  attr_accessor :lines
+
+  def initialize
+    @lines = []
+    @from = nil
+    @color = nil
+    @page_number = 1
+    @width = nil
+  end
+
+  def append_line x, y
+    @lines << { page_number: @page_number, from: @from, to: { x: x, y: y }, color: @color, width: @width }
+  end
+
+  def begin_new_subpath x, y
+    @from = { x: x, y: y }
+  end
+
+  def page= page
+    @page_number = page.number
+  end
+
+  def set_color_for_stroking_and_special *params
+    @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
+  end
+
+  def set_line_width line_width
+    @width = line_width
+  end
+end
+
 RSpec.configure do |config|
   config.before :suite do
     FileUtils.mkdir_p output_dir
@@ -205,7 +237,7 @@ RSpec.configure do |config|
     text: EnhancedPDFTextInspector,
     page: PDF::Inspector::Page,
     rect: PDF::Inspector::Graphics::Rectangle,
-    line: PDF::Inspector::Graphics::Line,
+    line: LineInspector,
   }).default = EnhancedPDFTextInspector
 
   alias :original_to_pdf :to_pdf

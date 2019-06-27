@@ -10,7 +10,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      (expect pdf.points).to have_size 32
+      (expect pdf.lines.uniq).to have_size 12
     end
 
     it 'should allow frame and grid to be specified on table using frame and grid attributes' do
@@ -22,7 +22,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      (expect pdf.points).to have_size 16
+      (expect pdf.lines.uniq).to have_size 6
     end
 
     it 'should treat topbot value of frame attribute as an alias for ends' do
@@ -42,7 +42,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      (expect pdf_a.points).to have_size pdf_b.points.size
+      (expect pdf_a.lines).to eql pdf_b.lines
     end
 
     it 'should allow frame and grid to be set globally using table-frame and table-grid attributes' do
@@ -56,7 +56,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      (expect pdf.points).to have_size 16
+      (expect pdf.lines.uniq).to have_size 6
     end if asciidoctor_2_or_better?
 
     it 'should apply stripes to specified group of rows as specified by stripes attribute', integration: true do
@@ -71,6 +71,31 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       (expect to_file).to visually_match 'table-stripes-odd.pdf'
     end if asciidoctor_1_5_7_or_better?
+
+    it 'should apply thicker bottom border to table head row' do
+      pdf = to_pdf <<~'EOS', analyze: :line
+      [frame=none,grid=rows]
+      |===
+      | Col A | Col B
+
+      | A1
+      | B1
+
+      | A2
+      | B2
+      |===
+      EOS
+
+      lines = pdf.lines.uniq
+      (expect lines).to have_size 4
+      (expect lines[0][:width]).to eql 1.25
+      (expect lines[1][:width]).to eql 1.25
+      (expect lines[0][:from][:y]).to eql lines[0][:to][:y]
+      (expect lines[1][:from][:y]).to eql lines[1][:to][:y]
+      (expect lines[0][:from][:y]).to eql lines[1][:from][:y]
+      (expect lines[2][:width]).to eql 0.5
+      (expect lines[3][:width]).to eql 0.5
+    end
   end
 
   context 'Dimensions' do
@@ -203,7 +228,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       pdf = to_pdf input, pdf_theme: { table_cell_padding: [10, 3, 10, 3] }, analyze: :line
 
       # NOTE the line under the head row should moved down
-      (expect pdf.points[0][1]).to be < reference_pdf.points[0][1]
+      (expect pdf.lines[0][:from][:y]).to be < reference_pdf.lines[0][:from][:y]
     end
 
     it 'should set padding on head cells as specified by table_head_cell_padding theme key' do
