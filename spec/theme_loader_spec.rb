@@ -52,40 +52,13 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme).to respond_to :base_font_family
       (expect theme).to respond_to :admonition_label_font_style
     end
-
-    it 'should ensure required keys are set' do
-      theme_data = SafeYAML.load <<~EOS
-      literal:
-        font_family: Courier
-      EOS
-      theme = subject.new.load theme_data
-      (expect theme.base_align).to eql 'left'
-      (expect theme.code_font_family).to eql 'Courier'
-      (expect theme.conum_font_family).to eql 'Courier'
-    end
-
-    it 'should not overwrite required keys with default values if already set' do
-      theme_data = SafeYAML.load <<~EOS
-      base:
-        align: justify
-      code:
-        font_family: M+ 1mn
-      conum:
-        font_family: M+ 1mn
-      EOS
-      theme = subject.new.load theme_data
-      (expect theme.base_align).to eql 'justify'
-      (expect theme.code_font_family).to eql 'M+ 1mn'
-      (expect theme.conum_font_family).to eql 'M+ 1mn'
-    end
   end
 
   context '.load_file' do
     it 'should not fail if theme file is empty' do
       theme = subject.load_file fixture_file 'empty-theme.yml'
-      (expect theme).not_to be_nil
       (expect theme).to be_an OpenStruct
-      (expect theme.to_h).to be_empty
+      (expect theme).to eql subject.load_base_theme
     end
 
     it 'should fail if theme is indented using tabs' do
@@ -136,6 +109,16 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.table_border_style).to eql 'solid'
     end
 
+    it 'should not inherit from base theme if custom theme extends nothing' do
+      theme = subject.load_theme fixture_file 'empty-theme-no-extends.yml'
+      (expect theme.table_border_style).to be_nil
+    end
+
+    it 'should not inherit from base theme if custom theme extends default' do
+      theme = subject.load_theme 'extended-default-theme.yml', fixtures_dir
+      (expect theme.table_border_style).to be_nil
+    end
+
     it 'should look for file ending in -theme.yml when resolving custom theme' do
       theme = subject.load_theme 'custom', fixtures_dir
       (expect theme.base_font_family).to eql 'Times-Roman'
@@ -149,6 +132,21 @@ describe Asciidoctor::PDF::ThemeLoader do
     it 'should load specified file ending with .yml from specified path' do
       theme = subject.load_theme 'custom-theme.yml', fixtures_dir
       (expect theme.base_font_family).to eql 'Times-Roman'
+    end
+
+    it 'should ensure required keys are set' do
+      theme = subject.load_theme 'empty-theme-no-extends.yml', fixtures_dir
+      (expect theme.base_align).to eql 'left'
+      (expect theme.code_font_family).to eql 'Courier'
+      (expect theme.conum_font_family).to eql 'Courier'
+      (expect theme.to_h.keys).to have_size 3
+    end
+
+    it 'should not overwrite required keys with default values if already set' do
+      theme = subject.load_theme 'extended-default-theme.yml', fixtures_dir
+      (expect theme.base_align).to eql 'justify'
+      (expect theme.code_font_family).to eql 'M+ 1mn'
+      (expect theme.conum_font_family).to eql 'M+ 1mn'
     end
   end
 
@@ -321,7 +319,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     # NOTE this only works when the theme is read from a file
-    it 'should allow hex color values to be prefixed with # for keys that end in _color' do
+    it 'should allow hex color values to be prefixed with # for any key' do
       theme = subject.load_theme 'hex-color-shorthand', fixtures_dir
       (expect theme.base_font_color).to eql '222222'
       (expect theme.page_background_color).to eql 'FEFEFE'

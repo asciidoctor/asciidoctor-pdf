@@ -81,7 +81,7 @@ class ThemeLoader
 
   def self.load_file filename, theme_data = nil, theme_path = nil
     data = ::File.read filename, encoding: ::Encoding::UTF_8
-    data.each_line.map {|l|
+    data = data.each_line.map {|l|
       l.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || m[:k] == 'color' || (m[:k].end_with? '_color') ? "'#{m[:v]}'" : m[:v]}) }
     }.join unless filename == DefaultThemePath
     yaml_data = ::SafeYAML.load data
