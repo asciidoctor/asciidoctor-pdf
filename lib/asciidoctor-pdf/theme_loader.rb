@@ -61,48 +61,54 @@ class ThemeLoader
 
   # NOTE base theme is loaded "as is" (no post-processing)
   def self.load_base_theme
-    ::OpenStruct.new(::SafeYAML.load_file BaseThemePath)
+    ::OpenStruct.new ::SafeYAML.load_file BaseThemePath
   end
 
-  def self.load_theme theme_name = nil, theme_path = nil, opts = {}
-    if (theme_file = resolve_theme_file theme_name, theme_path) == BaseThemePath ||
-        (theme_file != DefaultThemePath && (opts.fetch :apply_base_theme, true))
-      theme_data = load_base_theme
+  def self.load_theme theme_name = nil, theme_path = nil
+    if (theme_file = resolve_theme_file theme_name, theme_path) == BaseThemePath
+      load_base_theme
+    elsif theme_file == DefaultThemePath
+      load_file theme_file, nil, theme_path
+    else
+      theme_data = load_file theme_file, nil, theme_path
+      # QUESTION should we enforce any other fallback values?
+      theme_data.base_align ||= 'left'
+      theme_data.code_font_family ||= (theme_data.literal_font_family || 'Courier')
+      theme_data.conum_font_family ||= (theme_data.literal_font_family || 'Courier')
+      theme_data
     end
-
-    theme_file == BaseThemePath ? theme_data : (load_file theme_file, theme_data, theme_path)
   end
 
   def self.load_file filename, theme_data = nil, theme_path = nil
-    yaml_data = ::SafeYAML.load (::File.read filename, encoding: ::Encoding::UTF_8).each_line.map {|l|
+    data = ::File.read filename, encoding: ::Encoding::UTF_8
+    data.each_line.map {|l|
       l.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || m[:k] == 'color' || (m[:k].end_with? '_color') ? "'#{m[:v]}'" : m[:v]}) }
-    }.join
-    if ::Hash === yaml_data && (extend_files = yaml_data.delete 'extends')
-      [*extend_files].each do |extend_file|
-        if extend_file == 'default'
-          extend_file = resolve_theme_file extend_file, (extend_theme_path = ThemesDir)
-        elsif extend_file.start_with? './'
-          extend_file = resolve_theme_file extend_file, (extend_theme_path = (::File.dirname ::File.absolute_path filename))
-        else
-          extend_file = resolve_theme_file extend_file, (extend_theme_path = theme_path)
+    }.join unless filename == DefaultThemePath
+    yaml_data = ::SafeYAML.load data
+    if ::Hash === yaml_data && (yaml_data.key? 'extends')
+      if (extends = yaml_data.delete 'extends')
+        [*extends].each do |extend_file|
+          if extend_file == 'base'
+            theme_data = theme_data ? (::OpenStruct.new theme_data.to_h.merge load_base_theme.to_h) : load_base_theme
+            next
+          elsif extend_file == 'default'
+            extend_file = resolve_theme_file extend_file, (extend_theme_path = ThemesDir)
+          elsif extend_file.start_with? './'
+            extend_file = resolve_theme_file extend_file, (extend_theme_path = (::File.dirname ::File.absolute_path filename))
+          else
+            extend_file = resolve_theme_file extend_file, (extend_theme_path = theme_path)
+          end
+          theme_data = load_file extend_file, theme_data, extend_theme_path
         end
-        theme_data = load_file extend_file, theme_data, extend_theme_path
       end
+    else
+      theme_data ||= (filename == DefaultThemePath ? nil : load_base_theme)
     end
     self.new.load yaml_data, theme_data, theme_path
   end
 
   def load hash, theme_data = nil, theme_path = nil
-    theme_data ||= ::OpenStruct.new
-    return theme_data unless ::Hash === hash
-    base_code_font_family = theme_data.delete 'code_font_family'
-    base_conum_font_family = theme_data.delete 'conum_font_family'
-    hash.inject(theme_data) {|data, (key, val)| process_entry key, val, data }
-    theme_data.base_align ||= 'left'
-    theme_data.code_font_family ||= (theme_data.literal_font_family || base_code_font_family)
-    theme_data.conum_font_family ||= (theme_data.literal_font_family || base_conum_font_family)
-    # QUESTION should we do any other post-load calculations or defaults?
-    theme_data
+    ::Hash === hash ? hash.reduce(theme_data || ::OpenStruct.new) {|data, (key, val)| process_entry key, val, data } : (theme_data || ::OpenStruct.new)
   end
 
   private
