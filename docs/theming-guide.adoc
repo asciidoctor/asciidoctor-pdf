@@ -117,7 +117,7 @@ Instead of writing a theme from scratch, you can extend the default theme using 
 ----
 extends: default
 base:
-  color: #ff0000
+  font_color: #ff0000
 ----
 
 You can also point the extends key at another custom theme to extend from it.
