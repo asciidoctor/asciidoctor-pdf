@@ -1,0 +1,3 @@
+extends: extends-nil-theme.yml
+heading:
+  font_family: $base_font_family
