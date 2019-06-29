@@ -39,7 +39,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       :pdf-page-size: 200x400
       :pdf-page-margin: 0
 
-      image::viewbox-only.svg[]
+      image::square-viewbox-only.svg[]
 
       after
       EOS
@@ -62,7 +62,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       :pdf-page-size: 200x400
       :pdf-page-margin: 0
 
-      image::viewbox-only.svg[pdfwidth=50%]
+      image::square-viewbox-only.svg[pdfwidth=50%]
 
       after
       EOS
