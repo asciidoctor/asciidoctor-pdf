@@ -39,7 +39,7 @@ module Extensions
 
   # Returns the effective (writable) width of the page
   #
-  # If inside a fixed-height bounding box, returns height of box.
+  # If inside a bounding box, returns width of box.
   #
   def effective_page_width
     reference_bounds.width
