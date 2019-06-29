@@ -1,0 +1,4 @@
+extends: base
+base:
+  font_family: Times-Roman
+  font_color: 333333
