@@ -110,7 +110,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not inherit from base theme if custom theme extends nothing' do
-      theme = subject.load_theme fixture_file 'empty-theme-no-extends.yml'
+      theme = subject.load_theme fixture_file 'extends-nil-empty-theme.yml'
       (expect theme.table_border_style).to be_nil
     end
 
@@ -143,7 +143,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should ensure required keys are set' do
-      theme = subject.load_theme 'empty-theme-no-extends.yml', fixtures_dir
+      theme = subject.load_theme 'extends-nil-empty-theme.yml', fixtures_dir
       (expect theme.base_align).to eql 'left'
       (expect theme.code_font_family).to eql 'Courier'
       (expect theme.conum_font_family).to eql 'Courier'
