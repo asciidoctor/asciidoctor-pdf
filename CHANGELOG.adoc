@@ -12,6 +12,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * fix position of text in running header (#1087)
 * don't convert values in theme which are not color keys to a string (#1089)
 * apply page layout specified on page break even when break falls page boundary (#1091)
+* scale SVG background image to fit page in the same way raster image is scaled (#765)
 * replace hyphens with underscores in top-level theme keys
 * resolve null color value in theme to nil (aka not set)
 * add support for cgi-style options on source language when syntax highlighting with Rouge (#1102)

@@ -136,6 +136,28 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
 
+    it 'should scale up background SVG to fit boundaries of page' do
+      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-scale-up.pdf'
+      = Document Title
+      :page-background-image: #{fixture_file 'square.svg', relative: true}
+
+      This page has a background image that is rather loud.
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
+    end
+
+    it 'should scale down background SVG to fit boundaries of page' do
+      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-scale-down.pdf'
+      = Document Title
+      :page-background-image: #{fixture_file 'example-watermark.svg', relative: true}
+
+      This page has a watermark.
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-svg-scale-down.pdf'
+    end
+
     it 'should alternate page background if both verso and recto background images are specified' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
       = Document Title

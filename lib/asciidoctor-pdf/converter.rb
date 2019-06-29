@@ -183,9 +183,9 @@ class Converter < ::Prawn::Document
       end
       # TODO implement as a watermark (on top)
       if (bg_image = @page_bg_image[page_side])
-        # FIXME implement fitting and centering for SVG
-        # TODO implement image scaling (numeric value or "fit")
-        canvas { image bg_image, position: :center, fit: [bounds.width, bounds.height] }
+        # TODO implement horizontal and vertical alignment
+        # TODO implement image sizing (width, pdfwidth, or fit)
+        canvas { image bg_image, position: :center, vposition: :top, fit: [bounds.width, bounds.height] }
       elsif @page_bg_color && @page_bg_color != 'FFFFFF'
         fill_absolute_bounds @page_bg_color
       end
