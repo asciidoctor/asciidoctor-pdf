@@ -119,6 +119,14 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.table_border_style).to be_nil
     end
 
+    it 'should inherit from base theme if custom theme extends base' do
+      base_theme = subject.load_base_theme
+      theme = subject.load_theme fixture_file 'extended-base-theme.yml'
+      (expect theme.base_font_family).not_to eql base_theme.base_font_family
+      (expect theme.base_font_color).not_to eql base_theme.base_font_color
+      (expect theme.base_font_size).to eql base_theme.base_font_size
+    end
+
     it 'should look for file ending in -theme.yml when resolving custom theme' do
       theme = subject.load_theme 'custom', fixtures_dir
       (expect theme.base_font_family).to eql 'Times-Roman'
