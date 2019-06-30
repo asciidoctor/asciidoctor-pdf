@@ -66,7 +66,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should load and extend themes specified by extends array' do
-      input_file = ::File.join fixtures_dir, 'extended-custom-theme.yml'
+      input_file = File.join fixtures_dir, 'extended-custom-theme.yml'
       theme = subject.load_file input_file, nil, fixtures_dir
       (expect theme.base_align).to eql 'justify'
       (expect theme.base_font_family).to eql 'Times-Roman'
@@ -74,7 +74,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should extend built-in default theme if value of extends entry is default' do
-      input_file = ::File.join fixtures_dir, 'extended-red-theme.yml'
+      input_file = File.join fixtures_dir, 'extended-red-theme.yml'
       theme = subject.load_file input_file, nil, fixtures_dir
       (expect theme.base_font_family).to eql 'Noto Serif'
       (expect theme.base_font_color).to eql '0000FF'
@@ -177,15 +177,32 @@ describe Asciidoctor::PDF::ThemeLoader do
   end
 
   context 'interpolation' do
-    it 'should resolve variable reference to previously defined key' do
+    it 'should resolve variable reference with underscores to previously defined key' do
       theme_data = SafeYAML.load <<~EOS
       brand:
         blue: '0000FF'
       base:
         font_color: $brand_blue
+      heading:
+        font_color: $base_font_color
       EOS
       theme = subject.new.load theme_data
       (expect theme.base_font_color).to eql '0000FF'
+      (expect theme.heading_font_color).to eql theme.base_font_color
+    end
+
+    it 'should resolve variable reference with hyphens to previously defined key' do
+      theme_data = SafeYAML.load <<~EOS
+      brand:
+        blue: '0000FF'
+      base:
+        font_color: $brand-blue
+      heading:
+        font_color: $base-font-color
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.base_font_color).to eql '0000FF'
+      (expect theme.heading_font_color).to eql theme.base_font_color
     end
 
     it 'should interpolate variables in value' do
@@ -258,9 +275,11 @@ describe Asciidoctor::PDF::ThemeLoader do
       base:
         font_color: [100, 100, 100, 100]
       heading:
-        font_color: [0, 0, 0, 0.92]
+        font-color: [0, 0, 0, 0.92]
       link:
-        font_color: [67.33%, 31.19%, 0, 20.78%]
+        font-color: [67.33%, 31.19%, 0, 20.78%]
+      literal:
+        font-color: [0%, 0%, 0%, 0.87]
       EOS
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to eql 'FFFFFF'
@@ -271,6 +290,8 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.heading_font_color).to be_a subject::CmykColorValue
       (expect theme.link_font_color).to eql [67.33, 31.19, 0, 20.78]
       (expect theme.link_font_color).to be_a subject::CmykColorValue
+      (expect theme.literal_font_color).to eql [0, 0, 0, 87]
+      (expect theme.literal_font_color).to be_a subject::CmykColorValue
     end
 
     it 'should wrap hex color values in color type if key ends with _color' do
@@ -280,11 +301,11 @@ describe Asciidoctor::PDF::ThemeLoader do
       base:
         font_color: '000000'
       heading:
-        font_color: 333333
+        font-color: 333333
       link:
-        font_color: 428bca
+        font-color: 428bca
       literal:
-        font_color: 222
+        font-color: 222
       EOS
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to eql 'FFFFFF'
@@ -307,9 +328,11 @@ describe Asciidoctor::PDF::ThemeLoader do
       base:
         font_color: [0, 0, 0]
       heading:
-        font_color: [51, 51, 51]
+        font-color: [51, 51, 51]
       link:
-        font_color: [66, 139, 202]
+        font-color: [66, 139, 202]
+      literal:
+        font-color: ['34', '34', '34']
       EOS
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to eql 'FFFFFF'
@@ -320,6 +343,8 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.heading_font_color).to be_a subject::HexColorValue
       (expect theme.link_font_color).to eql '428BCA'
       (expect theme.link_font_color).to be_a subject::HexColorValue
+      (expect theme.literal_font_color).to eql '222222'
+      (expect theme.literal_font_color).to be_a subject::HexColorValue
     end
 
     it 'should not wrap value in color type if key does not end with _color' do
@@ -339,6 +364,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_color).to eql '222222'
       (expect theme.page_background_color).to eql 'FEFEFE'
       (expect theme.link_font_color).to eql '428BCA'
+      (expect theme.footer_font_color).to eql '000099'
       (expect theme.footer_background_color).to be_nil
     end
 
@@ -361,7 +387,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       EOS
       theme = subject.new.load theme_data
       (expect theme.footer_recto_left_content).to eql 'bar'
-      (expect theme.footer_recto_right_content).to be_a ::String
+      (expect theme.footer_recto_right_content).to be_a String
       (expect theme.footer_recto_right_content).to eql '10'
     end
   end

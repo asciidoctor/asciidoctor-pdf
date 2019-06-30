@@ -10,3 +10,4 @@ link:
   font_color: $brand_primary
 footer:
   background_color: null
+  font-color: 009
