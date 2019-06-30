@@ -701,7 +701,7 @@ class Converter < ::Prawn::Document
                 if icon_path.end_with? '.svg'
                   begin
                     svg_obj = ::Prawn::SVG::Interface.new ::File.read(icon_path), self,
-	                    position: label_align,
+	                      position: label_align,
                         vposition: label_valign,
                         width: label_width,
                         height: box_height,
