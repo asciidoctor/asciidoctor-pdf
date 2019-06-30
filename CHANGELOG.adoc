@@ -25,6 +25,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow theme to set bottom border properties (color, style, and width) of table head row (#770)
 * change how base theme is loaded
 * never load base theme when loading default theme; otherwise load base theme if extends isn't specified, but only if theme data hasn't been initialized
+* set PDF version to 1.4 by default (#302)
+* allow PDF version to be set using pdf-version document attribute (#302)
 
 == 1.5.0.alpha.18 (2019-06-01) - @mojavelinux
 
