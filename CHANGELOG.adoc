@@ -15,6 +15,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * don't convert values in theme which are not color keys to a string (#1089)
 * apply page layout specified on page break even when break falls page boundary (#1091)
 * scale SVG background image to fit page in the same way raster image is scaled (#765)
+* allow page background size to be controlled using image macro attributes (#1117)
 * replace hyphens with underscores in top-level theme keys
 * resolve null color value in theme to nil (aka not set)
 * add support for cgi-style options on source language when syntax highlighting with Rouge (#1102)

@@ -391,12 +391,11 @@ In this case, the image is scaled down to fit on a single page.
 If you want a block image to align to the boundaries of the page (not the content margin), specify the `align-to-page` option (e.g., `opts="align-to-page"`).
 This is most useful when using vw units because you can make the image cover the entire width of the page.
 
-Images in running content also support the `fit` attribute.
+Images in running content and page background images also support the `fit` attribute (when specified using the image macro).
 If the value of this attribute is `contain`, the image size is increased or decreased to fill the available space while preserving its aspect ratio.
 If the value of this attribute is `scaled-down`, the image size is first resolved in the normal way, then scaled down further to fit within the available space, if necessary.
 
-Page background images are automatically scaled to fit the bounds of the page.
-Any explicit sizing is ignored for those images.
+If sizing information is not specified for a page background image, the image is automatically scaled to fit the bounds of the page (i.e., `fit=contain`).
 
 === Using the pdfwidth Attribute
 

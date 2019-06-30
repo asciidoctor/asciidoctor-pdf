@@ -185,8 +185,7 @@ class Converter < ::Prawn::Document
       # TODO implement as a watermark (on top)
       if (bg_image = @page_bg_image[page_side])
         # TODO implement horizontal and vertical alignment
-        # TODO implement image sizing (width, pdfwidth, or fit)
-        canvas { image bg_image, position: :center, vposition: :top, fit: [bounds.width, bounds.height] }
+        canvas { image bg_image[0], (bg_image[1].merge position: :center, vposition: :top) }
       elsif @page_bg_color && @page_bg_color != 'FFFFFF'
         fill_absolute_bounds @page_bg_color
       end
@@ -327,16 +326,16 @@ class Converter < ::Prawn::Document
     end
     # QUESTION should ThemeLoader register fonts?
     register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
-    if (bg_image = resolve_background_image doc, theme, 'page-background-image') && bg_image != 'none'
+    if (bg_image = resolve_background_image doc, theme, 'page-background-image') && bg_image[0]
       @page_bg_image = { verso: bg_image, recto: bg_image }
     else
-      @page_bg_image = {}
+      @page_bg_image = { verso: nil, recto: nil }
     end
-    if (bg_image = resolve_background_image doc, theme, 'page-background-image-verso') && bg_image != 'none'
-      @page_bg_image[:verso] = bg_image
+    if (bg_image = resolve_background_image doc, theme, 'page-background-image-verso')
+      @page_bg_image[:verso] = bg_image[0] ? bg_image : nil
     end
-    if (bg_image = resolve_background_image doc, theme, 'page-background-image-recto') && bg_image != 'none'
-      @page_bg_image[:recto] = bg_image
+    if (bg_image = resolve_background_image doc, theme, 'page-background-image-recto') && bg_image[0]
+      @page_bg_image[:recto] = bg_image[0] ? bg_image : nil
     end
     @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
     @fallback_fonts = [*theme.font_fallbacks]
@@ -2358,12 +2357,7 @@ class Converter < ::Prawn::Document
 
     prev_bg_image = @page_bg_image[side = page_side]
     prev_bg_color = @page_bg_color
-
-    if (bg_image = resolve_background_image doc, @theme, 'title-page-background-image')
-      @page_bg_image[side] = (bg_image == 'none' ? nil : bg_image)
-    else
-      @page_bg_image.delete side
-    end
+    @page_bg_image[side] = (bg_image = resolve_background_image doc, @theme, 'title-page-background-image') && bg_image[0] ? bg_image : nil
     if (bg_color = resolve_theme_color :title_page_background_color)
       @page_bg_color = bg_color
     end
@@ -3562,32 +3556,58 @@ class Converter < ::Prawn::Document
     end
   end
 
-  # Resolve the path to the background image either from a document attribute or theme key.
+  # Resolve the path and sizing of the background image either from a document attribute or theme key.
   #
-  # Returns The string "none" if the background image value is none, otherwise the resolved
-  # path to the image. If neither the document attribute or theme key are specified, or
-  # the image path cannot be resolved, return nil.
-  def resolve_background_image doc, theme, key
-    if (bg_image = (doc_attr_val = (doc.attr key)) || theme[(key.tr '-', '_').to_sym])
-      return bg_image if bg_image == 'none'
-
-      if (bg_image.include? ':') && bg_image =~ ImageAttributeValueRx
-        # QUESTION should we support width and height in this case?
-        # TODO support explicit format
-        bg_image = $1
-        relative_to_imagesdir = true
+  # Returns the argument list for the image method if the document attribute or theme key is found. Otherwise,
+  # nothing. The first argument in the argument list is the image path. If that value is nil, the background
+  # image is disabled. The second argument is the options hash to specify the dimensions, such as width and fit.
+  def resolve_background_image doc, theme, key, container = nil
+    container ||= [page_width, page_height]
+    if (bg_image_path = (doc.attr key) || (from_theme = theme[(key.tr '-', '_').to_sym]))
+      if bg_image_path == 'none'
+        return []
+      elsif (bg_image_path.include? ':') && bg_image_path =~ ImageAttributeValueRx
+        bg_image_attrs = (AttributeList.new $2).parse ['alt', 'width']
+        # TODO support explicit image format by passing value of format attribute
+        bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset $1, @stylesdir) : (resolve_image_path doc, $1, true)
       else
-        relative_to_imagesdir = false
+        bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset bg_image_path, @stylesdir) : (resolve_image_path doc, bg_image_path, false)
       end
 
-      if (bg_image = doc_attr_val ? (resolve_image_path doc, bg_image, relative_to_imagesdir) :
-          (ThemeLoader.resolve_theme_asset bg_image, @stylesdir))
-        if ::File.readable? bg_image
-          bg_image
-        else
-          logger.warn %(#{key.tr '-', ' '} not found or readable: #{bg_image})
-          nil
+      if !(::File.readable? bg_image_path)
+        logger.warn %(#{key.tr '-', ' '} not found or readable: #{bg_image_path})
+        return
+      elsif bg_image_attrs
+        bg_image_opts = {}
+        if (bg_image_fit = bg_image_attrs['fit'])
+          if bg_image_fit == 'none'
+            if (bg_image_width = resolve_explicit_width bg_image_attrs, container[0])
+              bg_image_opts[:width] = bg_image_width
+            end
+          elsif bg_image_fit == 'scale-down'
+            if (bg_image_width = resolve_explicit_width bg_image_attrs, container[0])
+              bg_image_opts[:width] = bg_image_width
+            end
+            if bg_image_width && bg_image_width > container[0]
+              bg_image_opts.delete :width
+              bg_image_opts[:fit] = container
+            # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
+            elsif (bg_image_size = intrinsic_image_dimensions bg_image_path rescue nil) &&
+                (bg_image_width ? bg_image_width * (bg_image_size[:width] / bg_image_size[:height]) > container[1] : (to_pt bg_image_size[:width], :px) > container[0] || (to_pt bg_image_size[:height], :px) > container[1])
+              bg_image_opts.delete :width
+              bg_image_opts[:fit] = container
+            end
+          else # contain
+            bg_image_opts[:fit] = container
+          end
+        elsif (bg_image_width = resolve_explicit_width bg_image_attrs, container[0])
+          bg_image_opts[:width] = bg_image_width
+        else # default to fit=contain if sizing is not specified
+          bg_image_opts[:fit] = container
         end
+        [bg_image_path, bg_image_opts]
+      else
+        [bg_image_path, { fit: container }]
       end
     end
   end
