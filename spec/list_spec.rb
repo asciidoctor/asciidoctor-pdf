@@ -157,6 +157,17 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql %w(IX.nine X.ten)
     end
 
+    it 'should ignore start attribute if marker is disabled' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [unstyled,start=10]
+      . a
+      . b
+      . c
+      EOS
+
+      (expect pdf.lines).to eql %w(a b c)
+    end
+
     it 'should make numbers invisible if list has unnumbered style' do
       pdf = to_pdf <<~'EOS', analyze: true
       reference

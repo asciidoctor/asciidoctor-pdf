@@ -1033,8 +1033,8 @@ class Converter < ::Prawn::Document
   def convert_olist node
     add_dest_for_block node if node.id
     @list_numerals ||= []
-    # TODO move list_number resolve to a method
-    list_number = case node.style
+    # TODO move list_numeral resolve to a method
+    list_numeral = case node.style
     when 'arabic'
       '1'
     when 'decimal'
@@ -1057,10 +1057,10 @@ class Converter < ::Prawn::Document
       '1'
     end
     # TODO support start values < 1 (issue #498)
-    if (start = ((node.attr 'start', nil, false) || ((node.option? 'reversed') ? node.items.size : 1)).to_i) > 1
-      (start - 1).times { list_number = list_number.next }
+    if list_numeral && (start = ((node.attr 'start', nil, false) || ((node.option? 'reversed') ? node.items.size : 1)).to_i) > 1
+      (start - 1).times { list_numeral = list_numeral.next }
     end
-    @list_numerals << list_number
+    @list_numerals << list_numeral
     convert_outline_list node
     @list_numerals.pop
   end
