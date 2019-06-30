@@ -303,6 +303,7 @@ class Converter < ::Prawn::Document
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
     @stylesdir = doc.attr 'pdf-stylesdir'
+    @allow_uri_read = doc.attr? 'allow-uri-read'
     theme = load_theme doc
     pdf_opts = build_pdf_options doc, theme
     # QUESTION should page options be preserved? (otherwise, not readily available)
@@ -705,7 +706,7 @@ class Converter < ::Prawn::Document
                         width: label_width,
                         height: box_height,
                         fallback_font_name: default_svg_font,
-                        enable_web_requests: (doc.attr? 'allow-uri-read'),
+                        enable_web_requests: allow_uri_read,
                         enable_file_requests_with_root: (::File.dirname icon_path)
                     if (icon_height = (svg_size = svg_obj.document.sizing).output_height) > box_height
                       icon_width = (svg_obj.resize height: (icon_height = box_height)).output_width
@@ -1299,7 +1300,7 @@ class Converter < ::Prawn::Document
               position: alignment,
               width: width,
               fallback_font_name: default_svg_font,
-              enable_web_requests: (node.document.attr? 'allow-uri-read'),
+              enable_web_requests: allow_uri_read,
               # TODO enforce jail in safe mode
               enable_file_requests_with_root: file_request_root
           rendered_w = (svg_size = svg_obj.document.sizing).output_width
@@ -1404,11 +1405,11 @@ class Converter < ::Prawn::Document
     when 'youtube'
       video_path = %(https://www.youtube.com/watch?v=#{video_id = node.attr 'target'})
       # see http://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api
-      poster = (node.document.attr? 'allow-uri-read') ? %(https://img.youtube.com/vi/#{video_id}/maxresdefault.jpg) : nil
+      poster = allow_uri_read ? %(https://img.youtube.com/vi/#{video_id}/maxresdefault.jpg) : nil
       type = 'YouTube video'
     when 'vimeo'
       video_path = %(https://vimeo.com/#{video_id = node.attr 'target'})
-      if node.document.attr? 'allow-uri-read'
+      if allow_uri_read
         if node.document.attr? 'cache-uri'
           Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
         else
@@ -2833,7 +2834,7 @@ class Converter < ::Prawn::Document
     doc.set_attr 'document-title', doctitle.main
     doc.set_attr 'document-subtitle', doctitle.subtitle
     doc.set_attr 'page-count', num_pages
-    allow_uri_read = doc.attr? 'allow-uri-read'
+    enable_svg_web_requests = allow_uri_read
     svg_fallback_font = default_svg_font
 
     pagenums_enabled = doc.attr? 'pagenums'
@@ -2893,7 +2894,7 @@ class Converter < ::Prawn::Document
                             width: content[:width],
                             # TODO enforce jail in safe mode
                             enable_file_requests_with_root: (::File.dirname img_path),
-                            enable_web_requests: allow_uri_read,
+                            enable_web_requests: enable_svg_web_requests,
                             fallback_font_name: svg_fallback_font
                         if content[:fit] && svg_obj.document.sizing.output_height > (available_h = bounds.height)
                           svg_obj.resize height: available_h
@@ -3180,6 +3181,8 @@ class Converter < ::Prawn::Document
   def default_svg_font
     @theme.svg_font_family || @theme.base_font_family
   end
+
+  attr_reader :allow_uri_read
 
   def resolve_text_transform key, use_fallback = true
     if (transform = ::Hash === key ? (key.delete :text_transform) : @theme[key.to_s])
@@ -3531,7 +3534,7 @@ class Converter < ::Prawn::Document
     # handle case when image is a URI
     elsif (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
         (image_path = (node.normalize_web_path image_path, imagesdir, false)))
-      unless doc.attr? 'allow-uri-read'
+      unless allow_uri_read
         logger.warn %(allow-uri-read is not enabled; cannot embed remote image: #{image_path}) unless scratch?
         return
       end
