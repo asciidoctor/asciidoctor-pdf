@@ -2,8 +2,16 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - PDF Info' do
   context 'compliance' do
-    it 'should generate a PDF 1.3-compatible document' do
-      (expect (to_pdf 'hello').pdf_version).to eq 1.3
+    it 'should generate a PDF 1.4-compatible document by default' do
+      (expect (to_pdf 'hello').pdf_version).to eq 1.4
+    end
+
+    it 'should set PDF version specified by pdf-version attribute if valid' do
+      (expect (to_pdf 'hello', attributes: { 'pdf-version' => '1.6' }).pdf_version).to eq 1.6
+    end
+
+    it 'should generate a PDF 1.4-compatible document if value of pdf-version attribute is not recognized' do
+      (expect (to_pdf 'hello', attributes: { 'pdf-version' => '3.0' }).pdf_version).to eq 1.4
     end
   end
 

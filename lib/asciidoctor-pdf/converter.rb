@@ -57,6 +57,7 @@ class Converter < ::Prawn::Document
   ColumnPositions = [:left, :center, :right]
   PageLayouts = [:portrait, :landscape]
   PageSides = [:recto, :verso]
+  (PDFVersions = { '1.3' => 1.3, '1.4' => 1.4, '1.5' => 1.5, '1.6' => 1.6, '1.7' => 1.7 }).default = 1.4
   LF = %(\n)
   DoubleLF = %(\n\n)
   TAB = %(\t)
@@ -305,9 +306,10 @@ class Converter < ::Prawn::Document
     @stylesdir = doc.attr 'pdf-stylesdir'
     theme = load_theme doc
     pdf_opts = build_pdf_options doc, theme
-    # QUESTION should page options be preserved (otherwise, not readily available)
+    # QUESTION should page options be preserved? (otherwise, not readily available)
     #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
     ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
+    renderer.min_version PDFVersions[doc.attr 'pdf-version']
     @page_margin_by_side = { recto: page_margin, verso: page_margin }
     if (@media = doc.attr 'media', 'screen') == 'prepress'
       @ppbook = doc.doctype == 'book'
