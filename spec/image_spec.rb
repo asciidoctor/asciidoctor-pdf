@@ -79,6 +79,30 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:string]).to eql 'after'
       (expect text[0][:y]).to eql 276.036
     end
+
+    it 'should embed local image' do
+      to_file = to_pdf_file <<~'EOS', 'image-svg-with-local-image.pdf'
+      A sign of a good writer: image:svg-with-local-image.svg[]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-with-image.pdf'
+    end
+
+    it 'should embed remote image if allow allow-uri-read attribute is set' do
+      to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
+      A sign of a good writer: image:svg-with-remote-image.svg[]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-with-image.pdf'
+    end
+
+    it 'should not embed remote image if allow allow-uri-read attribute is not set' do
+      to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image-disabled.pdf'
+      A sign of a good writer: image:svg-with-remote-image.svg[]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-with-missing-image.pdf'
+    end
   end
 
   context 'PNG' do
