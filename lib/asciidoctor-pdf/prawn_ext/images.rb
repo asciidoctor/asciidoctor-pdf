@@ -32,7 +32,7 @@ module Images
   # intrinsic width and height values (in pixels)
   def intrinsic_image_dimensions path
     if path.end_with? '.svg'
-      img_obj = ::Prawn::SVG::Interface.new ::File.read(path), self, {}
+      img_obj = ::Prawn::SVG::Interface.new (::File.read path), self, {}
       img_size = img_obj.document.sizing
       { width: img_size.output_width, height: img_size.output_height }
     else
