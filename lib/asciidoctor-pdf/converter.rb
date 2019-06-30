@@ -1038,7 +1038,7 @@ class Converter < ::Prawn::Document
     # TODO move list_numeral resolve to a method
     list_numeral = case node.style
     when 'arabic'
-      '1'
+      1
     when 'decimal'
       '01'
     when 'loweralpha'
@@ -1056,11 +1056,15 @@ class Converter < ::Prawn::Document
     when 'none'
       ''
     else
-      '1'
+      1
     end
-    # TODO support start values < 1 (issue #498)
-    if list_numeral && (start = ((node.attr 'start', nil, false) || ((node.option? 'reversed') ? node.items.size : 1)).to_i) > 1
-      (start - 1).times { list_numeral = list_numeral.next }
+    if list_numeral && list_numeral != '' &&
+        (start = (node.attr 'start', nil, false) || ((node.option? 'reversed') ? node.items.size : nil))
+      if (start = start.to_i) > 1
+        (start - 1).times { list_numeral = list_numeral.next }
+      elsif start < 1 && !(::String === list_numeral)
+        (start - 1).abs.times { list_numeral = list_numeral.pred }
+      end
     end
     @list_numerals << list_numeral
     convert_outline_list node
@@ -1176,7 +1180,7 @@ class Converter < ::Prawn::Document
     when :olist
       complex = node.complex?
       if (index = @list_numerals.pop)
-        if index.empty?
+        if index == ''
           marker = ''
         else
           marker = %(#{index}.)

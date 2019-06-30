@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow the theme to control the padding of table cells in the head row using the table_head_cell_padding key (#1098)
 * fix position of text in running header (#1087)
 * ignore start attribute on ordered list if marker is disabled
+* allow start value to be negative for ordered lists that use arabic or roman numbering (#498)
 * don't convert values in theme which are not color keys to a string (#1089)
 * apply page layout specified on page break even when break falls page boundary (#1091)
 * scale SVG background image to fit page in the same way raster image is scaled (#765)
