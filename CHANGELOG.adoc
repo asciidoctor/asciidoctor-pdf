@@ -18,6 +18,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow page background size to be controlled using image macro attributes (#1117)
 * set enable_file_requests_with_root and enable_web_requests options for inline SVGs (#683)
 * replace hyphens with underscores in top-level theme keys
+* allow hyphens to be used in variable references in theme (#1122)
 * resolve null color value in theme to nil (aka not set)
 * add support for cgi-style options on source language when syntax highlighting with Rouge (#1102)
 * apply custom theme to chronicles example to customize running content and demonstrate how to extend default theme

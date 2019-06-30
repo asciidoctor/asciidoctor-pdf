@@ -19,8 +19,8 @@ class ThemeLoader
   DefaultThemePath = ::File.expand_path 'default-theme.yml', ThemesDir
   BaseThemePath = ::File.expand_path 'base-theme.yml', ThemesDir
 
-  VariableRx = /\$([a-z0-9_]+)/
-  LoneVariableRx = /^\$([a-z0-9_]+)$/
+  VariableRx = /\$([a-z0-9_-]+)/
+  LoneVariableRx = /^\$([a-z0-9_-]+)$/
   HexColorEntryRx = /^(?<k> *\p{Graph}+): +(?!null$)(?<q>["']?)(?<h>#)?(?<v>[a-f0-9]{3,6})\k<q> *(?:#.*)?$/
   MultiplyDivideOpRx = /(-?\d+(?:\.\d+)?) +([*\/]) +(-?\d+(?:\.\d+)?)/
   AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+\-]) +(-?\d+(?:\.\d+)?)/
@@ -82,7 +82,7 @@ class ThemeLoader
   def self.load_file filename, theme_data = nil, theme_path = nil
     data = ::File.read filename, encoding: ::Encoding::UTF_8
     data = data.each_line.map {|l|
-      l.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || m[:k] == 'color' || (m[:k].end_with? '_color') ? "'#{m[:v]}'" : m[:v]}) }
+      l.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || (m[:k].end_with? 'color') ? "'#{m[:v]}'" : m[:v]}) }
     }.join unless filename == DefaultThemePath
     yaml_data = ::SafeYAML.load data
     if ::Hash === yaml_data && (yaml_data.key? 'extends')
@@ -114,7 +114,7 @@ class ThemeLoader
   private
 
   def process_entry key, val, data
-    key = key.tr '-', '_'
+    key = key.tr '-', '_' if key.include? '-'
     if key == 'font_catalog' || key == 'font_fallbacks'
       data[key] = val
     elsif key.start_with? 'admonition_icon_'
@@ -149,21 +149,27 @@ class ThemeLoader
   def expand_vars expr, vars
     if (idx = (expr.index '$'))
       if idx == 0 && expr =~ LoneVariableRx
-        if vars.respond_to? $1
-          vars[$1]
+        if (key = $1).include? '-'
+          key = key.tr '-', '_'
+        end
+        if vars.respond_to? key
+          vars[key]
         else
           logger.warn %(unknown variable reference in PDF theme: $#{$1})
           expr
         end
       else
-        expr.gsub(VariableRx) {
-          if vars.respond_to? $1
-            vars[$1]
+        expr.gsub(VariableRx) do
+          if (key = $1).include? '-'
+            key = key.tr '-', '_'
+          end
+          if vars.respond_to? key
+            vars[key]
           else
             logger.warn %(unknown variable reference in PDF theme: $#{$1})
             $&
           end
-        }
+        end
       end
     else
       expr
