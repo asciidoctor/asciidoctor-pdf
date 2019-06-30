@@ -168,6 +168,28 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql %w(a b c)
     end
 
+    it 'should allow start value to be less than 1 for list with arabic numbering' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [start=-1]
+      . negative one
+      . zero
+      . positive one
+      EOS
+
+      (expect pdf.lines).to eql ['-1.negative one', '0.zero', '1.positive one']
+    end
+
+    it 'should allow start value to be less than 1 for list with roman numbering' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [lowerroman,start=-1]
+      . negative one
+      . zero
+      . positive one
+      EOS
+
+      (expect pdf.lines).to eql ['-1.negative one', '0.zero', 'i.positive one']
+    end
+
     it 'should make numbers invisible if list has unnumbered style' do
       pdf = to_pdf <<~'EOS', analyze: true
       reference
