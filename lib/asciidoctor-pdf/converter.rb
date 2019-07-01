@@ -1279,7 +1279,7 @@ class Converter < ::Prawn::Document
     end if node.title?
 
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
-    width = resolve_explicit_width node.attributes, (available_w = bounds.width), support_vw: true, use_fallback: true
+    width = resolve_explicit_width node.attributes, (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
     # TODO add `to_pt page_width` method to ViewportWidth type
     width = (width.to_f / 100) * page_width if ViewportWidth === width
 
@@ -3659,7 +3659,8 @@ class Converter < ::Prawn::Document
       end
     elsif attrs.key? 'width'
       # QUESTION should we honor percentage width value?
-      [max_width, (to_pt attrs['width'].to_f, :px)].min
+      width = to_pt attrs['width'].to_f, :px
+      opts[:constrain_to_bounds] ? [max_width, width].min : width
     end
   end
 
