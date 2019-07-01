@@ -2834,8 +2834,6 @@ class Converter < ::Prawn::Document
     doc.set_attr 'document-title', doctitle.main
     doc.set_attr 'document-subtitle', doctitle.subtitle
     doc.set_attr 'page-count', num_pages
-    enable_svg_web_requests = allow_uri_read
-    svg_fallback_font = default_svg_font
 
     pagenums_enabled = doc.attr? 'pagenums'
     attribute_missing_doc = doc.attr 'attribute-missing'
@@ -2882,36 +2880,12 @@ class Converter < ::Prawn::Document
               when ::Hash
                 # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                 float do
-                  # NOTE image vposition respects padding; use negative image_vertical_align value to revert
                   # NOTE bounding_box is redundant if both vertical padding and border width are 0
                   bounding_box [colspec[:x], cursor - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colspec[:width], height: trim_styles[:content_height] do
-                    begin
-                      if (img_path = content[:path]).downcase.end_with? '.svg'
-                        svg_data = ::File.read img_path
-                        svg_obj = ::Prawn::SVG::Interface.new svg_data, self,
-                            position: colspec[:align],
-                            vposition: trim_styles[:img_valign],
-                            width: content[:width],
-                            # TODO enforce jail in safe mode
-                            enable_file_requests_with_root: (::File.dirname img_path),
-                            enable_web_requests: enable_svg_web_requests,
-                            fallback_font_name: svg_fallback_font
-                        if content[:fit] && svg_obj.document.sizing.output_height > (available_h = bounds.height)
-                          svg_obj.resize height: available_h
-                        end
-                        svg_obj.draw
-                      else
-                        img_opts = { position: colspec[:align], vposition: trim_styles[:img_valign] }
-                        if content[:fit]
-                          img_opts[:fit] = [content[:width], bounds.height]
-                        else
-                          img_opts[:width] = content[:width]
-                        end
-                        image img_path, img_opts
-                      end
-                    rescue
-                      logger.warn %(could not embed image in running content: #{img_path}; #{$!.message})
-                    end
+                    # NOTE image vposition respects padding; use negative image_vertical_align value to revert
+                    img_opts = content.merge position: colspec[:align], vposition: trim_styles[:img_valign]
+                    img_path = img_opts.delete :path
+                    image img_path, img_opts rescue logger.warn %(could not embed image in running content: #{img_path}; #{$!.message})
                   end
                 end
               when ::String
@@ -3040,23 +3014,41 @@ class Converter < ::Prawn::Document
           unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
             # TODO support image URL (using resolve_image_path)
             if (val.include? ':') && val =~ ImageAttributeValueRx
-              if ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, @stylesdir))
+              if ::File.readable? (image_path = ThemeLoader.resolve_theme_asset $1, @stylesdir)
+                image_spec = (image_path.downcase.end_with? '.svg') ? {
+                  path: image_path,
+                  # TODO enforce jail in safe mode
+                  enable_file_requests_with_root: (::File.dirname image_path),
+                  enable_web_requests: allow_uri_read,
+                  fallback_font_name: default_svg_font,
+                } : { path: image_path }
                 attrs = (AttributeList.new $2).parse ['alt', 'width']
                 col_width = colspec_dict[side][position][:width]
-                if (fit = attrs['fit']) == 'contain'
-                  width = col_width
-                else
-                  unless (width = resolve_explicit_width attrs, col_width)
-                    # QUESTION should we lookup and scale intrinsic width if explicit width is not given?
-                    # NOTE failure message will be reported later when image is rendered
-                    width = (to_pt intrinsic_image_dimensions(path)[:width], :px) rescue 0
+                if (fit = attrs['fit'])
+                  col_height = trim_styles[:content_height]
+                  if fit == 'scale-down'
+                    if (image_width = resolve_explicit_width attrs, col_width)
+                      image_spec[:width] = image_width
+                    end
+                    if image_width && image_width > col_width
+                      image_spec.delete :width
+                      image_spec[:fit] = [col_width, col_height]
+                    # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
+                    elsif (image_size = intrinsic_image_dimensions image_path rescue nil) &&
+                        (image_width ? image_width * (image_size[:height] / image_size[:width]) > col_height : (to_pt image_size[:width], :px) > col_width || (to_pt image_size[:height], :px) > col_height)
+                      image_spec.delete :width
+                      image_spec[:fit] = [col_width, col_height]
+                    end
+                  else # contain
+                    image_spec[:fit] = [col_width, col_height]
                   end
-                  width = col_width if fit == 'scale-down' && width > col_width
+                elsif (image_width = resolve_explicit_width attrs, col_width)
+                  image_spec[:width] = image_width
                 end
-                side_content[position] = { path: path, width: width, fit: !!fit }
+                side_content[position] = image_spec
               else
                 # NOTE allows inline image handler to report invalid reference and replace with alt text
-                side_content[position] = %(image:#{path}[#{$2}])
+                side_content[position] = %(image:#{image_path}[#{$2}])
               end
             else
               side_content[position] = val

@@ -462,6 +462,17 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
   end
 
+  it 'should scale image down to minimum dimension when fit=scale-down', integration: true do
+    pdf_theme = build_pdf_theme \
+      header_height: 24,
+      header_recto_columns: '>25% =50% <25%',
+      header_recto_left_content: 'text',
+      header_recto_center_content: %(image:#{fixture_file 'square-viewbox-only.svg'}[fit=scale-down]),
+      header_recto_right_content: 'text'
+    to_file = to_pdf_file %([.text-center]\ncontent), 'running-content-image-scale-down-min.pdf', pdf_theme: pdf_theme
+    (expect to_file).to visually_match 'running-content-image-scale-down-min.pdf'
+  end
+
   it 'should not modify image dimensions when fit=scale-down if image already fits', integration: true do
     %w(pdfwidth=0.5in pdfwidth=0.5in,fit=scale-down).each_with_index do |image_attrlist, idx|
       pdf_theme = build_pdf_theme \
