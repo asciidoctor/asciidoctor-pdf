@@ -3014,7 +3014,7 @@ class Converter < ::Prawn::Document
           unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
             # TODO support image URL (using resolve_image_path)
             if (val.include? ':') && val =~ ImageAttributeValueRx
-              if ::File.readable? (image_path = ThemeLoader.resolve_theme_asset $1, @stylesdir)
+              if ::File.readable? (image_path = (ThemeLoader.resolve_theme_asset $1, @stylesdir))
                 image_spec = (image_path.downcase.end_with? '.svg') ? {
                   path: image_path,
                   # TODO enforce jail in safe mode
