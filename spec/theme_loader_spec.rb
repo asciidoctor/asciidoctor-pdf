@@ -287,11 +287,11 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_color).to eql '000000'
       (expect theme.base_font_color).to be_a subject::HexColorValue
       (expect theme.heading_font_color).to eql [0, 0, 0, 92]
-      (expect theme.heading_font_color).to be_a subject::CmykColorValue
+      (expect theme.heading_font_color).to be_a subject::CMYKColorValue
       (expect theme.link_font_color).to eql [67.33, 31.19, 0, 20.78]
-      (expect theme.link_font_color).to be_a subject::CmykColorValue
+      (expect theme.link_font_color).to be_a subject::CMYKColorValue
       (expect theme.literal_font_color).to eql [0, 0, 0, 87]
-      (expect theme.literal_font_color).to be_a subject::CmykColorValue
+      (expect theme.literal_font_color).to be_a subject::CMYKColorValue
     end
 
     it 'should wrap hex color values in color type if key ends with _color' do

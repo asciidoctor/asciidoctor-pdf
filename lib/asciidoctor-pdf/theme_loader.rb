@@ -35,7 +35,7 @@ class ThemeLoader
 
   # A marker module for a normalized CMYK array
   # Prevents normalizing CMYK value more than once
-  module CmykColorValue
+  module CMYKColorValue
     include ColorValue
     def to_s
       %([#{join ', '}])
@@ -237,7 +237,7 @@ class ThemeLoader
         when [100, 100, 100, 100]
           return HexColorValue.new '000000'
         else
-          value.extend CmykColorValue
+          value.extend CMYKColorValue
           return value
         end
       # RGB value
