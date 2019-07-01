@@ -3041,7 +3041,7 @@ class Converter < ::Prawn::Document
             # TODO support image URL (using resolve_image_path)
             if (val.include? ':') && val =~ ImageAttributeValueRx
               if ::File.readable?(path = (ThemeLoader.resolve_theme_asset $1, @stylesdir))
-                attrs = (AttributeList.new $2).parse
+                attrs = (AttributeList.new $2).parse ['alt', 'width']
                 col_width = colspec_dict[side][position][:width]
                 if (fit = attrs['fit']) == 'contain'
                   width = col_width

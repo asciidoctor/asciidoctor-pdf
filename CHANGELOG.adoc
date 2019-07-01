@@ -26,6 +26,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * resize running content to fit page layout (#1036)
 * exclude border width from running content area (#1109)
 * support text-transform property in running content (#702)
+* support width attribute on image in running content if no other dimension attribute is specified
 * allow theme to set bottom border properties (color, style, and width) of table head row (#770)
 * change how base theme is loaded
 * never load base theme when loading default theme; otherwise load base theme if extends isn't specified, but only if theme data hasn't been initialized

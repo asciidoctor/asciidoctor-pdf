@@ -477,6 +477,17 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
   end
 
+  it 'should size image based on width attribute value if no other dimension attribute is specified' do
+    pdf_theme = build_pdf_theme \
+      header_height: 36,
+      header_recto_columns: '<25% =50% >25%',
+      header_recto_center_content: %(image:#{fixture_file 'square-viewbox-only.svg'}[square,24])
+
+    to_file = to_pdf_file %([.text-center]\ncontent), 'running-content-image-width.pdf', pdf_theme: pdf_theme
+
+    (expect to_file).to visually_match 'running-content-image-width.pdf'
+  end
+
   it 'should warn and replace image with alt text if image is not found' do
     [true, false].each do |block|
       (expect {
