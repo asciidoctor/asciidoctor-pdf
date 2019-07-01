@@ -237,6 +237,18 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-scale-down.pdf'
     end
 
+    it 'should not scale background SVG with explicit width to fit boundaries of page if fit is scale-down and image fits' do
+      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-prescaled.pdf'
+      = Document Title
+      :pdf-page-layout: landscape
+      :page-background-image: image::example-watermark.svg[pdfwidth=50%,fit=scale-down]
+
+      This page has a watermark.
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-svg-prescaled.pdf'
+    end
+
     it 'should not scale background SVG to fit boundaries of page if fit is none' do
       to_file = to_pdf_file <<~EOS, 'page-background-image-svg-fit-none.pdf'
       = Document Title
