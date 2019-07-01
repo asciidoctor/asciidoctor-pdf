@@ -241,7 +241,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       to_file = to_pdf_file <<~EOS, 'page-background-image-svg-prescaled.pdf'
       = Document Title
       :pdf-page-layout: landscape
-      :page-background-image: image::example-watermark.svg[pdfwidth=50%,fit=scale-down]
+      :page-background-image: image::green-bar.svg[pdfwidth=50%,fit=scale-down]
 
       This page has a watermark.
       EOS
