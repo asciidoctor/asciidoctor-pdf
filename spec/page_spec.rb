@@ -101,7 +101,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
   end
 
   context 'Background' do
-    it 'should set page background color specified by page_background_color key in theme' do
+    it 'should set page background color specified by page_background_color key in theme', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-color.pdf', pdf_theme: { page_background_color: 'ECFBF4' }
       = Document Title
       :doctype: book
@@ -112,7 +112,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-color.pdf'
     end
 
-    it 'should set the background image using target of macro specified in page-background-image attribute' do
+    it 'should set the background image using target of macro specified in page-background-image attribute', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-inline-macro.pdf'
       = Document Title
       :doctype: book
@@ -124,7 +124,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
 
-    it 'should recognize attribute value that use block macro syntax' do
+    it 'should recognize attribute value that use block macro syntax', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-block-macro.pdf'
       = Document Title
       :doctype: book
@@ -136,7 +136,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
 
-    it 'should set the background image using path specified in page-background-image attribute' do
+    it 'should set the background image using path specified in page-background-image attribute', integration: true do
       to_file = to_pdf_file <<~EOS, 'page-background-image-path.pdf'
       = Document Title
       :doctype: book
@@ -148,7 +148,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
 
-    it 'should scale background image until it reaches shortest side' do
+    it 'should scale background image until it reaches shortest side', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-max-height.pdf'
       = Document Title
       :pdf-page-layout: landscape
@@ -160,7 +160,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-max-height.pdf'
     end
 
-    it 'should set width of background image according to width attribute' do
+    it 'should set width of background image according to width attribute', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-width.pdf'
       = Document Title
       :page-background-image: image:square.png[bg,200]
@@ -171,7 +171,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-width.pdf'
     end
 
-    it 'should scale up background SVG to fit boundaries of page if value is path' do
+    it 'should scale up background SVG to fit boundaries of page if value is path', integration: true do
       to_file = to_pdf_file <<~EOS, 'page-background-image-svg-scale-up-from-path.pdf'
       = Document Title
       :page-background-image: #{fixture_file 'square.svg', relative: true}
@@ -182,7 +182,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
     end
 
-    it 'should scale up background SVG to fit boundaries of page if value is macro' do
+    it 'should scale up background SVG to fit boundaries of page if value is macro', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-scale-up-from-macro.pdf'
       = Document Title
       :page-background-image: image:square.svg[]
@@ -193,7 +193,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
     end
 
-    it 'should scale up background SVG to fit boundaries of page if fit is contain' do
+    it 'should scale up background SVG to fit boundaries of page if fit is contain', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-contain.pdf'
       = Document Title
       :page-background-image: image:square.svg[fit=contain]
@@ -204,7 +204,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
     end
 
-    it 'should scale up background SVG to fit boundaries of page if pdfwidth is 100%' do
+    it 'should scale up background SVG to fit boundaries of page if pdfwidth is 100%', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-pdfwidth.pdf'
       = Document Title
       :pdf-page-layout: landscape
@@ -216,7 +216,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-cover.pdf'
     end
 
-    it 'should scale down background SVG to fit boundaries of page if value is path' do
+    it 'should scale down background SVG to fit boundaries of page if value is path', integration: true do
       to_file = to_pdf_file <<~EOS, 'page-background-image-svg-scale-down-from-path.pdf'
       = Document Title
       :page-background-image: #{fixture_file 'example-watermark.svg', relative: true}
@@ -227,7 +227,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-scale-down.pdf'
     end
 
-    it 'should scale down background SVG to fit boundaries of page if value is macro' do
+    it 'should scale down background SVG to fit boundaries of page if value is macro', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-scale-down-from-macro.pdf'
       = Document Title
       :page-background-image: image:example-watermark.svg[]
@@ -238,7 +238,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-scale-down.pdf'
     end
 
-    it 'should scale down background SVG to fit boundaries of page if fit is scale-down' do
+    it 'should scale down background SVG to fit boundaries of page if fit is scale-down', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-scale-down.pdf'
       = Document Title
       :page-background-image: image:example-watermark.svg[fit=scale-down]
@@ -249,7 +249,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-scale-down.pdf'
     end
 
-    it 'should not scale background SVG with explicit width to fit boundaries of page if fit is scale-down and image fits' do
+    it 'should not scale background SVG with explicit width to fit boundaries of page if fit is scale-down and image fits', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-prescaled.pdf'
       = Document Title
       :pdf-page-layout: landscape
@@ -261,7 +261,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-prescaled.pdf'
     end
 
-    it 'should not scale background SVG to fit boundaries of page if fit is none' do
+    it 'should not scale background SVG to fit boundaries of page if fit is none', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-none.pdf'
       = Document Title
       :page-background-image: image:example-watermark.svg[fit=none]
@@ -302,7 +302,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-with-image.pdf'
     end
 
-    it 'should position background image according to value of position attribute on macro' do
+    it 'should position background image according to value of position attribute on macro', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-position.pdf'
       = Document Title
       :page-background-image: image:example-watermark.svg[pdfwidth=50%,position=bottom center]
@@ -313,7 +313,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-position.pdf'
     end
 
-    it 'should alternate page background if both verso and recto background images are specified' do
+    it 'should alternate page background if both verso and recto background images are specified', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
       = Document Title
       :doctype: book
@@ -334,7 +334,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-alt.pdf'
     end
 
-    it 'should alternate page background in landscape if both verso and recto background images are specified' do
+    it 'should alternate page background in landscape if both verso and recto background images are specified', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-alt-landscape.pdf'
       = Document Title
       :doctype: book
@@ -356,7 +356,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-alt-landscape.pdf'
     end
 
-    it 'should use background image as fallback if background image for side not specified' do
+    it 'should use background image as fallback if background image for side not specified', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
       = Document Title
       :doctype: book
