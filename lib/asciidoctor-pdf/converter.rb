@@ -341,7 +341,7 @@ class Converter < ::Prawn::Document
     @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
     @fallback_fonts = [*theme.font_fallbacks]
     @font_color = theme.base_font_color
-    @base_align = (align = doc.attr 'text-alignment') && (TextAlignmentNames.include? align) ? align : theme.base_align
+    @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
     @text_transform = nil
     @list_numerals = []
     @list_bullets = []

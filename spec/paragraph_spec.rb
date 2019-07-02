@@ -38,6 +38,19 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect (pdf.text[3][:y] - list_item_text[:y]).round 2).to eql 27.78
   end
 
+  it 'should allow text alignment to be controlled using text-align document attribute' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+    :text-align: right
+
+    right-aligned
+    EOS
+
+    center_x = (pdf.page 1)[:size][1] / 2
+    paragraph_text = (pdf.find_text 'right-aligned')[0]
+    (expect paragraph_text[:x]).to be > center_x
+  end
+
   it 'should not alter line height of wrapped lines when prose_text_indent is set in theme' do
     input = lorem_ipsum '4-sentences-2-paragraphs'
 
