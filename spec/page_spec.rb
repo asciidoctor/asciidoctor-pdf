@@ -113,10 +113,22 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should set the background image using target of macro specified in page-background-image attribute' do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-macro.pdf'
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-inline-macro.pdf'
       = Document Title
       :doctype: book
-      :page-background-image: image::bg.png[]
+      :page-background-image: image:bg.png[]
+
+      content
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image.pdf'
+    end
+
+    it 'should recognize attribute value that use block macro syntax' do
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-block-macro.pdf'
+      = Document Title
+      :doctype: book
+      :page-background-image: image:bg.png[]
 
       content
       EOS
@@ -140,7 +152,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-max-height.pdf'
       = Document Title
       :pdf-page-layout: landscape
-      :page-background-image: image::square.png[]
+      :page-background-image: image:square.png[]
 
       This page has a background image that is rather loud.
       EOS
@@ -151,7 +163,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should set width of background image according to width attribute' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-width.pdf'
       = Document Title
-      :page-background-image: image::square.png[bg,200]
+      :page-background-image: image:square.png[bg,200]
 
       This page has a background image that is rather loud.
       EOS
@@ -173,7 +185,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should scale up background SVG to fit boundaries of page if value is macro' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-scale-up-from-macro.pdf'
       = Document Title
-      :page-background-image: image::square.svg[]
+      :page-background-image: image:square.svg[]
 
       This page has a background image that is rather loud.
       EOS
@@ -184,7 +196,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should scale up background SVG to fit boundaries of page if fit is contain' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-contain.pdf'
       = Document Title
-      :page-background-image: image::square.svg[fit=contain]
+      :page-background-image: image:square.svg[fit=contain]
 
       This page has a background image that is rather loud.
       EOS
@@ -196,7 +208,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-pdfwidth.pdf'
       = Document Title
       :pdf-page-layout: landscape
-      :page-background-image: image::square.svg[pdfwidth=100%]
+      :page-background-image: image:square.svg[pdfwidth=100%]
 
       This page has a background image that is rather loud.
       EOS
@@ -218,7 +230,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should scale down background SVG to fit boundaries of page if value is macro' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-scale-down-from-macro.pdf'
       = Document Title
-      :page-background-image: image::example-watermark.svg[]
+      :page-background-image: image:example-watermark.svg[]
 
       This page has a watermark.
       EOS
@@ -229,7 +241,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should scale down background SVG to fit boundaries of page if fit is scale-down' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-scale-down.pdf'
       = Document Title
-      :page-background-image: image::example-watermark.svg[fit=scale-down]
+      :page-background-image: image:example-watermark.svg[fit=scale-down]
 
       This page has a watermark.
       EOS
@@ -241,7 +253,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-prescaled.pdf'
       = Document Title
       :pdf-page-layout: landscape
-      :page-background-image: image::green-bar.svg[pdfwidth=50%,fit=scale-down]
+      :page-background-image: image:green-bar.svg[pdfwidth=50%,fit=scale-down]
 
       This page has a watermark.
       EOS
@@ -252,7 +264,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should not scale background SVG to fit boundaries of page if fit is none' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-none.pdf'
       = Document Title
-      :page-background-image: image::example-watermark.svg[fit=none]
+      :page-background-image: image:example-watermark.svg[fit=none]
 
       This page has a watermark.
       EOS
@@ -264,8 +276,8 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
       = Document Title
       :doctype: book
-      :page-background-image-recto: image::recto-bg.png[]
-      :page-background-image-verso: image::verso-bg.png[]
+      :page-background-image-recto: image:recto-bg.png[]
+      :page-background-image-verso: image:verso-bg.png[]
 
       content
 
@@ -286,8 +298,8 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       = Document Title
       :doctype: book
       :pdf-page-layout: landscape
-      :page-background-image-recto: image::recto-bg-landscape.png[]
-      :page-background-image-verso: image::verso-bg-landscape.png[]
+      :page-background-image-recto: image:recto-bg-landscape.png[]
+      :page-background-image-verso: image:verso-bg-landscape.png[]
 
       content
 
@@ -307,8 +319,8 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
       = Document Title
       :doctype: book
-      :page-background-image: image::recto-bg.png[]
-      :page-background-image-verso: image::verso-bg.png[]
+      :page-background-image: image:recto-bg.png[]
+      :page-background-image-verso: image:verso-bg.png[]
 
       content
 
