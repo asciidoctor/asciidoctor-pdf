@@ -206,7 +206,7 @@ RSpec.configure do |config|
   def run_command cmd, *args
     Dir.chdir __dir__ do
       if Array === cmd
-        args.unshift *cmd
+        args.unshift(*cmd)
         cmd = args.shift
       end
       Open3.capture3 cmd, *args
