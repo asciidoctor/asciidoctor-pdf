@@ -184,7 +184,7 @@ class Converter < ::Prawn::Document
       end
       # TODO implement as a watermark (on top)
       if (bg_image = @page_bg_image[page_side])
-        canvas { image bg_image[0], ({ position: :center, vposition: :top }.merge bg_image[1]) }
+        canvas { image bg_image[0], ({ position: :center, vposition: :center }.merge bg_image[1]) }
       elsif @page_bg_color && @page_bg_color != 'FFFFFF'
         fill_absolute_bounds @page_bg_color
       end
