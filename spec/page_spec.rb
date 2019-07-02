@@ -137,7 +137,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should scale background image until it reaches shortest side' do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-max-height.pdf'
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-max-height.pdf'
       = Document Title
       :pdf-page-layout: landscape
       :page-background-image: image::square.png[]
@@ -149,7 +149,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should set width of background image according to width attribute' do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-width.pdf'
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-width.pdf'
       = Document Title
       :page-background-image: image::square.png[bg,200]
 
@@ -171,7 +171,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should scale up background SVG to fit boundaries of page if value is macro' do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-scale-up-from-macro.pdf'
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-scale-up-from-macro.pdf'
       = Document Title
       :page-background-image: image::square.svg[]
 
@@ -182,7 +182,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should scale up background SVG to fit boundaries of page if fit is contain' do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-fit-contain.pdf'
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-contain.pdf'
       = Document Title
       :page-background-image: image::square.svg[fit=contain]
 
@@ -193,7 +193,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should scale up background SVG to fit boundaries of page if pdfwidth is 100%' do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-pdfwidth.pdf'
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-pdfwidth.pdf'
       = Document Title
       :pdf-page-layout: landscape
       :page-background-image: image::square.svg[pdfwidth=100%]
@@ -216,7 +216,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should scale down background SVG to fit boundaries of page if value is macro' do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-scale-down-from-macro.pdf'
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-scale-down-from-macro.pdf'
       = Document Title
       :page-background-image: image::example-watermark.svg[]
 
@@ -227,7 +227,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should scale down background SVG to fit boundaries of page if fit is scale-down' do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-fit-scale-down.pdf'
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-scale-down.pdf'
       = Document Title
       :page-background-image: image::example-watermark.svg[fit=scale-down]
 
@@ -238,7 +238,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should not scale background SVG with explicit width to fit boundaries of page if fit is scale-down and image fits' do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-prescaled.pdf'
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-prescaled.pdf'
       = Document Title
       :pdf-page-layout: landscape
       :page-background-image: image::green-bar.svg[pdfwidth=50%,fit=scale-down]
@@ -250,7 +250,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should not scale background SVG to fit boundaries of page if fit is none' do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-fit-none.pdf'
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-none.pdf'
       = Document Title
       :page-background-image: image::example-watermark.svg[fit=none]
 
