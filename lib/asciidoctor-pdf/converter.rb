@@ -184,8 +184,7 @@ class Converter < ::Prawn::Document
       end
       # TODO implement as a watermark (on top)
       if (bg_image = @page_bg_image[page_side])
-        # TODO implement horizontal and vertical alignment
-        canvas { image bg_image[0], (bg_image[1].merge position: :center, vposition: :top) }
+        canvas { image bg_image[0], ({ position: :center, vposition: :top }.merge bg_image[1]) }
       elsif @page_bg_color && @page_bg_color != 'FFFFFF'
         fill_absolute_bounds @page_bg_color
       end
@@ -3584,6 +3583,9 @@ class Converter < ::Prawn::Document
       end
 
       if bg_image_attrs
+        if (bg_image_pos = bg_image_attrs['position']) && (bg_image_pos = resolve_background_position bg_image_pos, nil)
+          bg_image_opts.update bg_image_pos
+        end
         if (bg_image_fit = bg_image_attrs['fit'])
           if bg_image_fit == 'none'
             if (bg_image_width = resolve_explicit_width bg_image_attrs, container[0])
@@ -3671,6 +3673,37 @@ class Converter < ::Prawn::Document
       # QUESTION should we honor percentage width value?
       width = to_pt attrs['width'].to_f, :px
       opts[:constrain_to_bounds] ? [max_width, width].min : width
+    end
+  end
+
+  def resolve_background_position value, default_value = {}
+    if value.include? ' '
+      result = {}
+      center = nil
+      (value.split ' ', 2).each do |keyword|
+        if keyword == 'left' || keyword == 'right'
+          result[:position] = keyword.to_sym
+        elsif keyword == 'top' || keyword == 'bottom'
+          result[:vposition] = keyword.to_sym
+        elsif keyword == 'center'
+          center = true
+        end
+      end
+      if center
+        result[:position] ||= :center
+        result[:vposition] ||= :center
+        result
+      elsif (result.key? :position) && (result.key? :vposition)
+        result
+      else
+        default_value
+      end
+    elsif value == 'left' || value == 'right' || value == 'center'
+      { position: value.to_sym, vposition: :center }
+    elsif value == 'top' || value == 'bottom'
+      { position: :center, vposition: value.to_sym }
+    else
+      default_value
     end
   end
 

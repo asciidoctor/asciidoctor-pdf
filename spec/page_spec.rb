@@ -274,7 +274,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should allow remote image in SVG to be read if allow-uri-read attribute is set', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
-      :page-background-image: image:svg-with-remote-image.svg[fit=none]
+      :page-background-image: image:svg-with-remote-image.svg[fit=none,position=top]
 
       Asciidoctor
       EOS
@@ -284,7 +284,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should not allow remote image in SVG to be read if allow-uri-read attribute is not set', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-with-remote-image-disabled.pdf'
-      :page-background-image: image:svg-with-remote-image.svg[fit=none]
+      :page-background-image: image:svg-with-remote-image.svg[fit=none,position=top]
 
       Asciidoctor
       EOS
@@ -294,12 +294,23 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should read local image relative to SVG', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-with-local-image.pdf'
-      :page-background-image: image:svg-with-local-image.svg[fit=none]
+      :page-background-image: image:svg-with-local-image.svg[fit=none,position=top]
 
       Asciidoctor
       EOS
 
       (expect to_file).to visually_match 'page-background-image-svg-with-image.pdf'
+    end
+
+    it 'should position background image according to value of position attribute on macro' do
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-position.pdf'
+      = Document Title
+      :page-background-image: image:example-watermark.svg[pdfwidth=50%,position=bottom center]
+
+      content
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-position.pdf'
     end
 
     it 'should alternate page background if both verso and recto background images are specified' do

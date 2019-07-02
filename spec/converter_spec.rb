@@ -66,5 +66,25 @@ describe Asciidoctor::PDF::Converter do
 
       (expect pdf.instance_variable_get :@theme).to be theme
     end
+
+    it 'should convert background position to options' do
+      converter = Asciidoctor::PDF::Converter.new 'pdf', {}
+      {
+        'center' => { position: :center, vposition: :center },
+        'top' => { position: :center, vposition: :top },
+        'bottom' => { position: :center, vposition: :bottom },
+        'left' => { position: :left, vposition: :center },
+        'right' => { position: :right, vposition: :center },
+        'top left' => { position: :left, vposition: :top },
+        'right top' => { position: :right, vposition: :top },
+        'bottom left' => { position: :left, vposition: :bottom },
+        'right bottom' => { position: :right, vposition: :bottom },
+        'center right' => { position: :right, vposition: :center },
+        'left center' => { position: :left, vposition: :center },
+        'center center' => { position: :center, vposition: :center },
+      }.each do |value, expected|
+        (expect converter.resolve_background_position value).to eql expected
+      end
+    end
   end
 end
