@@ -16,6 +16,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * apply page layout specified on page break even when break falls page boundary (#1091)
 * scale SVG background image to fit page in the same way raster image is scaled (#765)
 * allow page background size to be controlled using image macro attributes (#1117)
+* allow page background position to be controlled using position attribute on image macro (#1124)
+* change default background position to center (#1124)
 * set enable_file_requests_with_root and enable_web_requests options for inline SVGs (#683)
 * replace hyphens with underscores in top-level theme keys
 * allow hyphens to be used in variable references in theme (#1122)

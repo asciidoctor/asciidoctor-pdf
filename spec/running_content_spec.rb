@@ -239,7 +239,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
   end
 
-  it 'should adjust dimensions of running content to fit page layout' do
+  it 'should adjust dimensions of running content to fit page layout', integration: true do
     filler = lorem_ipsum '2-sentences-2-paragraphs'
     theme_overrides = {
       footer_recto_left_content: '{section-title}',
@@ -488,7 +488,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
   end
 
-  it 'should size image based on width attribute value if no other dimension attribute is specified' do
+  it 'should size image based on width attribute value if no other dimension attribute is specified', integration: true do
     pdf_theme = build_pdf_theme \
       header_height: 36,
       header_recto_columns: '<25% =50% >25%',

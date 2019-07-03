@@ -97,7 +97,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[3][:width]).to eql 0.5
     end
 
-    it 'should allow theme to customize bottom border of table head row' do
+    it 'should allow theme to customize bottom border of table head row', integration: true do
       theme_overrides = {
         table_head_border_bottom_width: 0.5,
         table_head_border_bottom_style: 'dashed',
