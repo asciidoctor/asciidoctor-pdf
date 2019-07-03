@@ -2875,15 +2875,14 @@ class Converter < ::Prawn::Document
               next unless (colspec = colspec_by_position[position])[:width] > 0
               # FIXME we need to have a content setting for chapter pages
               case content
-              when ::Hash
+              when ::Array
                 # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                 float do
                   # NOTE bounding_box is redundant if both vertical padding and border width are 0
                   bounding_box [colspec[:x], cursor - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colspec[:width], height: trim_styles[:content_height] do
                     # NOTE image vposition respects padding; use negative image_vertical_align value to revert
-                    img_opts = content.merge position: colspec[:align], vposition: trim_styles[:img_valign]
-                    img_path = img_opts.delete :path
-                    image img_path, img_opts rescue logger.warn %(could not embed image in running content: #{img_path}; #{$!.message})
+                    image_opts = content[1].merge position: colspec[:align], vposition: trim_styles[:img_valign]
+                    image content[0], image_opts rescue logger.warn %(could not embed image in running content: #{content[0]}; #{$!.message})
                   end
                 end
               when ::String
@@ -3013,36 +3012,39 @@ class Converter < ::Prawn::Document
             # TODO support image URL
             if (val.include? ':') && val =~ ImageAttributeValueRx
               if ::File.readable? (image_path = (ThemeLoader.resolve_theme_asset $1, @stylesdir))
-                image_spec = (image_path.downcase.end_with? '.svg') ? {
-                  path: image_path,
-                  enable_file_requests_with_root: (::File.dirname image_path),
-                  enable_web_requests: allow_uri_read,
-                  fallback_font_name: default_svg_font,
-                } : { path: image_path }
+                if image_path.downcase.end_with? '.svg'
+                  image_opts = {
+                    enable_file_requests_with_root: (::File.dirname image_path),
+                    enable_web_requests: allow_uri_read,
+                    fallback_font_name: default_svg_font,
+                  }
+                else
+                  image_opts = {}
+                end
                 attrs = (AttributeList.new $2).parse ['alt', 'width']
                 col_width = colspec_dict[side][position][:width]
                 if (fit = attrs['fit'])
                   col_height = trim_styles[:content_height]
                   if fit == 'scale-down'
                     if (image_width = resolve_explicit_width attrs, col_width)
-                      image_spec[:width] = image_width
+                      image_opts[:width] = image_width
                     end
                     if image_width && image_width > col_width
-                      image_spec.delete :width
-                      image_spec[:fit] = [col_width, col_height]
+                      image_opts.delete :width
+                      image_opts[:fit] = [col_width, col_height]
                     # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
                     elsif (image_size = intrinsic_image_dimensions image_path rescue nil) &&
                         (image_width ? image_width * (image_size[:height] / image_size[:width]) > col_height : (to_pt image_size[:width], :px) > col_width || (to_pt image_size[:height], :px) > col_height)
-                      image_spec.delete :width
-                      image_spec[:fit] = [col_width, col_height]
+                      image_opts.delete :width
+                      image_opts[:fit] = [col_width, col_height]
                     end
                   else # contain
-                    image_spec[:fit] = [col_width, col_height]
+                    image_opts[:fit] = [col_width, col_height]
                   end
                 elsif (image_width = resolve_explicit_width attrs, col_width)
-                  image_spec[:width] = image_width
+                  image_opts[:width] = image_width
                 end
-                side_content[position] = image_spec
+                side_content[position] = [image_path, image_opts]
               else
                 # NOTE allows inline image handler to report invalid reference and replace with alt text
                 side_content[position] = %(image:#{image_path}[#{$2}])
@@ -3062,10 +3064,7 @@ class Converter < ::Prawn::Document
       end
 
       if trim_styles[:bg_color] || trim_styles[:border_width] > 0
-        stamp_names = {
-          recto: %(#{layout}_#{periphery}_recto),
-          verso: %(#{layout}_#{periphery}_verso),
-        }
+        stamp_names = { recto: %(#{layout}_#{periphery}_recto), verso: %(#{layout}_#{periphery}_verso) }
         PageSides.each do |side|
           create_stamp stamp_names[side] do
             canvas do
