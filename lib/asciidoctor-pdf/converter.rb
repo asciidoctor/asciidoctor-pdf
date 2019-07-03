@@ -1301,7 +1301,6 @@ class Converter < ::Prawn::Document
               width: width,
               fallback_font_name: default_svg_font,
               enable_web_requests: allow_uri_read,
-              # TODO enforce jail in safe mode
               enable_file_requests_with_root: file_request_root
           rendered_w = (svg_size = svg_obj.document.sizing).output_width
           if !width && (svg_obj.document.root.attributes.key? 'width')
@@ -3012,12 +3011,11 @@ class Converter < ::Prawn::Document
         side_content = {}
         ColumnPositions.each do |position|
           unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
-            # TODO support image URL (using resolve_image_path)
+            # TODO support image URL
             if (val.include? ':') && val =~ ImageAttributeValueRx
               if ::File.readable? (image_path = (ThemeLoader.resolve_theme_asset $1, @stylesdir))
                 image_spec = (image_path.downcase.end_with? '.svg') ? {
                   path: image_path,
-                  # TODO enforce jail in safe mode
                   enable_file_requests_with_root: (::File.dirname image_path),
                   enable_web_requests: allow_uri_read,
                   fallback_font_name: default_svg_font,
@@ -3564,6 +3562,7 @@ class Converter < ::Prawn::Document
       elsif (bg_image_path.include? ':') && bg_image_path =~ ImageAttributeValueRx
         bg_image_attrs = (AttributeList.new $2).parse ['alt', 'width']
         # TODO support explicit image format by passing value of format attribute
+        # TODO support remote image when loaded from theme
         bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset $1, @stylesdir) : (resolve_image_path doc, $1, true)
       else
         bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset bg_image_path, @stylesdir) : (resolve_image_path doc, bg_image_path, false)
@@ -3576,7 +3575,6 @@ class Converter < ::Prawn::Document
 
       if bg_image_path.downcase.end_with? '.svg'
         bg_image_opts = {
-          # TODO enforce jail in safe mode
           enable_file_requests_with_root: (::File.dirname bg_image_path),
           enable_web_requests: allow_uri_read,
           fallback_font_name: default_svg_font,
