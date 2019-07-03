@@ -3572,8 +3572,20 @@ class Converter < ::Prawn::Document
       if !(::File.readable? bg_image_path)
         logger.warn %(#{key.tr '-', ' '} not found or readable: #{bg_image_path})
         return
-      elsif bg_image_attrs
+      end
+
+      if bg_image_path.downcase.end_with? '.svg'
+        bg_image_opts = {
+          # TODO enforce jail in safe mode
+          enable_file_requests_with_root: (::File.dirname bg_image_path),
+          enable_web_requests: allow_uri_read,
+          fallback_font_name: default_svg_font,
+        }
+      else
         bg_image_opts = {}
+      end
+
+      if bg_image_attrs
         if (bg_image_fit = bg_image_attrs['fit'])
           if bg_image_fit == 'none'
             if (bg_image_width = resolve_explicit_width bg_image_attrs, container[0])
@@ -3600,10 +3612,10 @@ class Converter < ::Prawn::Document
         else # default to fit=contain if sizing is not specified
           bg_image_opts[:fit] = container
         end
-        [bg_image_path, bg_image_opts]
       else
-        [bg_image_path, { fit: container }]
+        bg_image_opts[:fit] = container
       end
+      [bg_image_path, bg_image_opts]
     end
   end
 
