@@ -144,4 +144,28 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pages[2][:text][-1][:string]).to eql '3'
     end
   end
+
+  context 'Data URI' do
+    it 'should embed block image if target is a JPG data URI' do
+      image_data = File.binread fixture_file 'square.jpg'
+      encoded_image_data = Base64.strict_encode64 image_data
+      pdf = to_pdf %(image::data:image/jpg;base64,#{encoded_image_data}[])
+      images = pdf.pages[0].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+      (expect images).to have_size 1
+      (expect images[0].hash[:Width]).to eql 5
+      (expect images[0].hash[:Height]).to eql 5
+      (expect image_data).to eql images[0].data
+    end
+
+    it 'should embed inline image if target is a JPG data URI' do
+      image_data = File.binread fixture_file 'square.jpg'
+      encoded_image_data = Base64.strict_encode64 image_data
+      pdf = to_pdf %(image:data:image/jpg;base64,#{encoded_image_data}[] base64)
+      images = pdf.pages[0].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+      (expect images).to have_size 1
+      (expect images[0].hash[:Width]).to eql 5
+      (expect images[0].hash[:Height]).to eql 5
+      (expect image_data).to eql images[0].data
+    end
+  end
 end
