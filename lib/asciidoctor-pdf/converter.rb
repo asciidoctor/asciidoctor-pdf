@@ -698,7 +698,7 @@ class Converter < ::Prawn::Document
                     color: icon_data[:stroke_color],
                     size: icon_size
               elsif icons
-                if icon_path.end_with? '.svg'
+                if icon_path.downcase.end_with? '.svg'
                   begin
                     svg_obj = ::Prawn::SVG::Interface.new ::File.read(icon_path), self,
 	                      position: label_align,
