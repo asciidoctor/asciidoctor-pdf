@@ -647,6 +647,8 @@ If you want to use custom fonts, you must first declare them in your theme file.
 IMPORTANT: Asciidoctor has no challenge working with Unicode.
 In fact, it prefers Unicode and considers the entire range.
 However, once you convert to PDF, you have to meet the font requirements of PDF in order to preserve Unicode characters.
+That means you need to provide a font (at least a fallback font) that contains glyphs for all the characters you want to use.
+If you don't, you may notice that characters are missing.
 There's nothing Asciidoctor can do to convince PDF to work with extended characters without the right fonts in play.
 
 === Built-In (AFM) Fonts
@@ -694,10 +696,13 @@ When using the built-in PDF (AFM) fonts on a block of content in your AsciiDoc d
  The following text could not be fully converted to the Windows-1252 character set:
  | <string with unknown glyph>
 
-This behavior differs from the default behavior in Prawn, which simply crashes.
+This behavior differs from the default behavior in Prawn, which is to simply crash.
 
 You'll often see this warning if you're using callouts in your document and you haven't specified a TrueType font in your theme.
 To prevent this warning, you need to specify a TrueType font.
+
+When using a TrueType font, you will get no warning for a missing glyph.
+That's a consequence of how Prawn works and is outside of Asciidoctor PDF's control.
 
 For more information about how Prawn handles character encodings for built-in fonts, see https://github.com/prawnpdf/prawn/blob/master/CHANGELOG.md#vastly-improved-handling-of-encodings-for-pdf-built-in-afm-fonts[this note in the Prawn CHANGELOG].
 ****
