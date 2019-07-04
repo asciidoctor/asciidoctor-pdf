@@ -2981,16 +2981,6 @@ The keys in this category control the arrangement and style of tables and table 
   foot:
     font-style: italic
 
-//deprecated
-//3+|[#key-prefix-table-row]*Key Prefix:* <<key-prefix-table-row,table-<parity>-row>>^[1]^
-//
-//|background-color
-//|<<colors,Color>> +
-//(default: $table-background-color)
-//|table:
-//  even-row:
-//    background-color: #f9f9f9
-
 3+|[#key-prefix-table-cell]*Key Prefix:* <<key-prefix-table-cell,table-cell>>
 
 |padding
@@ -3051,8 +3041,11 @@ The keys in this category control the arrangement and style of tables and table 
   header-cell:
     text-transform: uppercase
 |===
-. Applied to even rows by default; controlled using `stripes` attribute (even, odd, all, none) on table or `table-stripes` attribute on document (or the `stripes` attribute on the document if using Asciidoctor < 2).
-//. `<parity>` can be `odd` (odd rows) or `even` (even rows).
+. This key only controls the color that is used for stripes.
+The appearance of stripes is controlled using the `stripes` table attribute, the `table-stripes` document attribute (since Asciidoctor 2), or the `stripes` document attribute (prior to Asciidoctor 2).
+Permitted attribute values are even, odd, all, and none.
+Prior to Asciidoctor 2, even rows are shaded by default (e.g., `stripes=even`).
+Since Asciidoctor 2, table stripes are not enabled by default (e.g., `stripes=none`).
 
 [#keys-footnotes]
 === Footnotes
