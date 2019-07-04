@@ -352,8 +352,13 @@ class Converter < ::Prawn::Document
 
   def load_theme doc
     @theme ||= begin
-      @stylesdir = doc.attr 'pdf-stylesdir'
-      doc.options[:pdf_theme] || (ThemeLoader.load_theme (doc.attr 'pdf-style'), @stylesdir)
+      if (theme = doc.options[:pdf_theme])
+        @stylesdir = theme.__dir__ || (doc.attr 'pdf-stylesdir') || ThemeLoader::ThemesDir
+      else
+        theme = ThemeLoader.load_theme (doc.attr 'pdf-style'), (doc.attr 'pdf-stylesdir')
+        @stylesdir = theme.__dir__ || ThemeLoader::ThemesDir
+      end
+      theme
     end
   end
 

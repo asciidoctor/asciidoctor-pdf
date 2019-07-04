@@ -499,6 +499,35 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect to_file).to visually_match 'running-content-image-width.pdf'
   end
 
+  it 'should resolve image target relative to stylesdir', integration: true do
+    [
+      {
+        'pdf-style' => 'running-header',
+        'pdf-stylesdir' => fixtures_dir,
+      },
+      {
+        'pdf-style' => 'fixtures/running-header-outside-fixtures-theme.yml',
+        'pdf-stylesdir' => (File.dirname fixtures_dir),
+      },
+    ].each_with_index do |attribute_overrides, idx|
+      to_file = to_pdf_file <<~'EOS', %(running-content-image-from-stylesdir-#{idx}.pdf), attribute_overrides: attribute_overrides
+      [.text-center]
+      content
+      EOS
+      (expect to_file).to visually_match 'running-content-image.pdf'
+    end
+  end
+
+  it 'should resolve image target relative to theme file when stylesdir is not set', integration: true do
+    attribute_overrides = { 'pdf-style' => (fixture_file 'running-header-theme.yml', relative: true) }
+    to_file = to_pdf_file <<~'EOS', 'running-content-image-from-style.pdf', attribute_overrides: attribute_overrides
+    [.text-center]
+    content
+    EOS
+
+    (expect to_file).to visually_match 'running-content-image.pdf'
+  end
+
   it 'should warn and replace image with alt text if image is not found' do
     [true, false].each do |block|
       (expect {

@@ -1,0 +1,8 @@
+extends: default
+header:
+  height: 36
+  recto:
+    columns: '>40% =20% <40%'
+    left_content: text
+    center_content: image:fixtures/green-bar.svg[pdfwidth=0.5in]
+    right_content: text
