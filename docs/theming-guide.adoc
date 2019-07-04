@@ -595,8 +595,6 @@ title-page:
   background-image: title-cover.png
 ----
 
-In this case, the image is resolved relative to theme directory.
-
 Here's how the image is specified using the inline image macro:
 
 [source,yaml]
@@ -605,10 +603,10 @@ title-page:
   background-image: image:title-cover.png[]
 ----
 
-In this case, the image is resolved relative to the value of the `imagesdir` attribute.
-Wrapping the value in the image macro sends a hint to the converter to resolve it just like other images.
+In either case, the image is resolved relative to the value of the `pdf-stylesdir` attribute, as previously described.
 
-Like in the AsciiDoc syntax, the inline image macro allows you to supply set the width of the image and the alignment:
+Like in the AsciiDoc syntax, wrapping the value in the image macro allows you to specify other settings, such as `pdfwidth`, `fit`, and/or `align`.
+For example:
 
 [source,yaml]
 ----
