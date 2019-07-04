@@ -32,6 +32,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * support width attribute on image in running content if no other dimension attribute is specified
 * apply correct scale-down logic to image in running content
 * allow theme to set bottom border properties (color, style, and width) of table head row (#770)
+* allow column rule and spacing to be specified for running content when multiple columns are specified (#1093)
 * change how base theme is loaded
 * never load base theme when loading default theme; otherwise load base theme if extends isn't specified, but only if theme data hasn't been initialized
 * shorten text-alignment attribute to text-align
