@@ -584,7 +584,8 @@ The following image types (and corresponding file extensions) are supported:
 * JPEG (.jpg)
 * SVG (.svg)
 
-CAUTION: The GIF format (.gif) is not supported.
+CAUTION: The GIF format (.gif) and BMP format (.bmp) are not supported unless you're using prawn-gmagick.
+See https://github.com/asciidoctor/asciidoctor-pdf#supporting-additional-image-file-formats[support for additional image file formats] for details.
 
 Here's how an image is specified in the theme file as a bare image path:
 
