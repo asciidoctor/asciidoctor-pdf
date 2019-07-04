@@ -301,10 +301,8 @@ class Converter < ::Prawn::Document
 
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
-    @stylesdir = doc.attr 'pdf-stylesdir'
     @allow_uri_read = doc.attr? 'allow-uri-read'
-    theme = load_theme doc
-    pdf_opts = build_pdf_options doc, theme
+    pdf_opts = build_pdf_options doc, (theme = load_theme doc)
     # QUESTION should page options be preserved? (otherwise, not readily available)
     #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
     ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
@@ -353,7 +351,10 @@ class Converter < ::Prawn::Document
   end
 
   def load_theme doc
-    @theme ||= doc.options[:pdf_theme] || ThemeLoader.load_theme((doc.attr 'pdf-style'), @stylesdir)
+    @theme ||= begin
+      @stylesdir = doc.attr 'pdf-stylesdir'
+      doc.options[:pdf_theme] || (ThemeLoader.load_theme (doc.attr 'pdf-style'), @stylesdir)
+    end
   end
 
   def build_pdf_options doc, theme
