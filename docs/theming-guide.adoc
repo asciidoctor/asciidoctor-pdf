@@ -3625,8 +3625,8 @@ _Specifying an absolute path is recommended._
 If you use images in your theme, image paths are resolved relative to this directory.
 
 pdf-style:: The name of the YAML theme file to load.
-If the name ends with `.yml`, it's assumed to be the complete name of a file.
-Otherwise, `-theme.yml` is appended to the name to make the file name (i.e., `<name>-theme.yml`).
+If the name ends with `.yml`, it's assumed to be the complete name of a file and is resolved relative to `pdf-stylesdir`, if specified, otherwise the current directory.
+Otherwise, `-theme.yml` is appended to the name to make the file name (i.e., `<name>-theme.yml`) and is resolved relative to `pdf-stylesdir`, if specified, otherwise the built-in themes dir.
 
 pdf-fontsdir:: The directory where the fonts used by your theme, if any, are located.
 _Specifying an absolute path is recommended._
