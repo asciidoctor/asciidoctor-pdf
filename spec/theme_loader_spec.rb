@@ -66,7 +66,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should load and extend themes specified by extends array' do
-      input_file = File.join fixtures_dir, 'extended-custom-theme.yml'
+      input_file = fixture_file 'extended-custom-theme.yml'
       theme = subject.load_file input_file, nil, fixtures_dir
       (expect theme.base_align).to eql 'justify'
       (expect theme.base_font_family).to eql 'Times-Roman'
@@ -74,7 +74,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should extend built-in default theme if value of extends entry is default' do
-      input_file = File.join fixtures_dir, 'extended-red-theme.yml'
+      input_file = fixture_file 'extended-red-theme.yml'
       theme = subject.load_file input_file, nil, fixtures_dir
       (expect theme.base_font_family).to eql 'Noto Serif'
       (expect theme.base_font_color).to eql '0000FF'
