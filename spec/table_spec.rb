@@ -160,16 +160,16 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       [%autowidth]
       |===
       |Operation |Operator
-      
+
       |add
       |+
-      
+
       |subtract
       |-
-      
+
       |multiply
       |*
-      
+
       |divide
       |/
       |===
@@ -184,13 +184,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       [%autowidth]
       |===
       |Op
-      
+
       |add
-      
+
       |subtract
-      
+
       |multiply
-      
+
       |divide
       |===
       EOS
@@ -207,7 +207,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       |0x00
       |UNSPECIFIED
-      
+
       |0x01
       |OK
       |===
@@ -290,7 +290,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       reference_pdf = to_pdf input, analyze: true
       pdf = to_pdf input, pdf_theme: { table_head_cell_padding: [10, 3, 10, 3] }, analyze: true
-      
+
       reference_a1_text = (reference_pdf.find_text 'A1')[0]
       a1_text = (pdf.find_text 'A1')[0]
 

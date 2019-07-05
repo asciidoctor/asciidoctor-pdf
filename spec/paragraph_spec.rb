@@ -100,7 +100,6 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect abstract_text_line2).to have_size 1
     (expect abstract_text_line2[0][:order]).to eql 3
     (expect abstract_text_line2[0][:font_name]).not_to include 'BoldItalic'
-    
   end
 
   it 'should decorate first line of abstract when abstract has single line' do

@@ -45,7 +45,7 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       = Document Title
       Author Name
       :publisher: Big Cheese
-      
+
       content
       EOS
       (expect pdf.info[:Author]).to eql 'Author Name'
