@@ -555,18 +555,18 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect to_file).to visually_match 'running-content-image-width.pdf'
   end
 
-  it 'should resolve image target relative to stylesdir', integration: true do
+  it 'should resolve image target relative to themesdir', integration: true do
     [
       {
-        'pdf-style' => 'running-header',
-        'pdf-stylesdir' => fixtures_dir,
+        'pdf-theme' => 'running-header',
+        'pdf-themesdir' => fixtures_dir,
       },
       {
-        'pdf-style' => 'fixtures/running-header-outside-fixtures-theme.yml',
-        'pdf-stylesdir' => (File.dirname fixtures_dir),
+        'pdf-theme' => 'fixtures/running-header-outside-fixtures-theme.yml',
+        'pdf-themesdir' => (File.dirname fixtures_dir),
       },
     ].each_with_index do |attribute_overrides, idx|
-      to_file = to_pdf_file <<~'EOS', %(running-content-image-from-stylesdir-#{idx}.pdf), attribute_overrides: attribute_overrides
+      to_file = to_pdf_file <<~'EOS', %(running-content-image-from-themesdir-#{idx}.pdf), attribute_overrides: attribute_overrides
       [.text-center]
       content
       EOS
@@ -574,9 +574,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
   end
 
-  it 'should resolve image target relative to theme file when stylesdir is not set', integration: true do
-    attribute_overrides = { 'pdf-style' => (fixture_file 'running-header-theme.yml', relative: true) }
-    to_file = to_pdf_file <<~'EOS', 'running-content-image-from-style.pdf', attribute_overrides: attribute_overrides
+  it 'should resolve image target relative to theme file when themesdir is not set', integration: true do
+    attribute_overrides = { 'pdf-theme' => (fixture_file 'running-header-theme.yml', relative: true) }
+    to_file = to_pdf_file <<~'EOS', 'running-content-image-from-theme.pdf', attribute_overrides: attribute_overrides
     [.text-center]
     content
     EOS

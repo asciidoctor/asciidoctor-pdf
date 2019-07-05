@@ -353,10 +353,11 @@ class Converter < ::Prawn::Document
   def load_theme doc
     @theme ||= begin
       if (theme = doc.options[:pdf_theme])
-        @stylesdir = theme.__dir__ || (doc.attr 'pdf-stylesdir') || ThemeLoader::ThemesDir
+        @themesdir = theme.__dir__ || (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir')
       else
-        theme = ThemeLoader.load_theme (doc.attr 'pdf-style'), (doc.attr 'pdf-stylesdir')
-        @stylesdir = theme.__dir__ || ThemeLoader::ThemesDir
+        theme_name = (doc.attr 'pdf-theme') || (doc.attr 'pdf-style')
+        theme = ThemeLoader.load_theme theme_name, ((doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir'))
+        @themesdir = theme.__dir__
       end
       theme
     end
@@ -2399,7 +2400,7 @@ class Converter < ::Prawn::Document
         relative_to_imagesdir = false
       end
       # HACK quick fix to resolve image path relative to theme
-      logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @stylesdir unless doc.attr? 'title-logo-image'
+      logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.attr? 'title-logo-image'
       logo_image_attrs['target'] = logo_image_path
       logo_image_attrs['align'] ||= (@theme.title_page_logo_align || title_align.to_s)
       # QUESTION should we allow theme to turn logo image off?
@@ -3050,7 +3051,7 @@ class Converter < ::Prawn::Document
           unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
             # TODO support image URL
             if (val.include? ':') && val =~ ImageAttributeValueRx
-              if ::File.readable? (image_path = (ThemeLoader.resolve_theme_asset $1, @stylesdir))
+              if ::File.readable? (image_path = (ThemeLoader.resolve_theme_asset $1, @themesdir))
                 if (::Asciidoctor::Image.format image_path) == 'svg'
                   image_format = 'svg'
                   image_opts = {
@@ -3601,9 +3602,9 @@ class Converter < ::Prawn::Document
         bg_image_attrs = (AttributeList.new $2).parse ['alt', 'width']
         # TODO support explicit image format by passing value of format attribute
         # TODO support remote image when loaded from theme
-        bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset $1, @stylesdir) : (resolve_image_path doc, $1, true)
+        bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset $1, @themesdir) : (resolve_image_path doc, $1, true)
       else
-        bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset bg_image_path, @stylesdir) : (resolve_image_path doc, bg_image_path, false)
+        bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset bg_image_path, @themesdir) : (resolve_image_path doc, bg_image_path, false)
       end
 
       return unless bg_image_path

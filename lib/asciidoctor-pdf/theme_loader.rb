@@ -54,7 +54,7 @@ class ThemeLoader
     [theme_file, theme_path]
   end
 
-  def self.resolve_theme_asset asset_path, theme_path = nil
+  def self.resolve_theme_asset asset_path, theme_path
     ::File.expand_path asset_path, (theme_path || ThemesDir)
   end
 

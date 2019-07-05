@@ -65,7 +65,7 @@ Some of these properties have different names from those found in CSS.
 * The `font-color` property in the theme language is equivalent to the `color` property in CSS.
 ====
 
-A theme (or style) is described in a YAML-based data format and stored in a dedicated theme file.
+A theme is described in a YAML-based data format and stored in a dedicated theme file.
 YAML is a human-friendly data format that resembles CSS and helps to describe the theme.
 The theme language adds some extra features to YAML, such as variables, basic math, measurements and color values.
 These enhancements will be explained in detail in later sections.
@@ -576,8 +576,8 @@ base:
 === Images
 
 An image is specified either as a bare image path or as an inline image macro as found in the AsciiDoc syntax.
-Images are currently resolved relative to the value of the `pdf-stylesdir` attribute.
-(If `pdf-style` is a path that ends in `.yml`, and `pdf-stylesdir` is not set, then the images are resolved relative to the directory of the path specified by `pdf-style`).
+Images in the theme file are currently resolved relative to the value of the `pdf-themesdir` attribute.
+(If `pdf-theme` is a path that ends in `.yml`, and `pdf-themesdir` is not set, then the images are resolved relative to the directory of the path specified by `pdf-theme`).
 
 The following image types (and corresponding file extensions) are supported:
 
@@ -604,7 +604,7 @@ title-page:
   background-image: image:title-cover.png[]
 ----
 
-In either case, the image is resolved relative to the value of the `pdf-stylesdir` attribute, as previously described.
+In either case, the image is resolved relative to the value of the `pdf-themesdir` attribute, as previously described.
 
 Like in the AsciiDoc syntax, wrapping the value in the image macro allows you to specify other settings, such as `pdfwidth`, `fit`, and/or `align`.
 For example:
@@ -782,7 +782,7 @@ heading:
 
 When you execute Asciidoctor PDF, you need to specify the directory where the fonts reside using the `pdf-fontsdir` attribute:
 
- $ asciidoctor-pdf -a pdf-style=basic-theme.yml -a pdf-fontsdir=path/to/fonts document.adoc
+ $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir=path/to/fonts document.adoc
 
 WARNING: Currently, all fonts referenced by the theme need to be present in the directory specified by the `pdf-fontsdir` attribute.
 
@@ -912,7 +912,7 @@ Each value is interpreted as a filename.
 If the filename equals `default`, it resolves to the location of the default (built-in) theme.
 If the filename is absolute, it's used as is.
 If the filename begins with `./`, it's resolved as a theme file relative to the current theme file.
-Otherwise, the filename is resolved as a theme file in the normal way (relative to the value of the `pdf-stylesdir` attribute).
+Otherwise, the filename is resolved as a theme file in the normal way (relative to the value of the `pdf-themesdir` attribute).
 
 Currently, the base theme is always loaded first.
 Then, the files referenced by the extends key are loaded in order.
@@ -1008,7 +1008,7 @@ The size of the background can be controlled using any of the sizing attributes 
 If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background is specified, it will be used only for that side.
 If you flatten out the keys (e.g., `page-background-recto`), you can also set the default page background image (`page-background`), which will then be used as a fallback if a background image isn't specified for a side.
 To disable the background for a side, use the value `none`.
-. Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
+. Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
 . The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin-inner and margin-outer values.
 These margins and used when the value `prepress` is assigned to the `media` document attribute.
 
@@ -1653,7 +1653,7 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 
 . By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`).
 The size of the background can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width).
-. Target may be an absolute path or a path relative to the value of the `pdf-stylesdir` attribute.
+. Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
 . Percentage unit can be % (relative to content height) or vh (relative to page height).
 
 [#keys-prose]
@@ -3618,15 +3618,15 @@ This is done using AsciiDoc attributes.
 
 There are three AsciiDoc attributes that tell Asciidoctor PDF how to locate and apply your theme.
 
-pdf-stylesdir:: The directory where the theme file is located.
+pdf-theme (or pdf-style):: The name of the YAML theme file to load.
+If the name ends with `.yml`, it's assumed to be the complete name of a file and is resolved relative to `pdf-themesdir`, if specified, otherwise the current directory.
+Otherwise, `-theme.yml` is appended to the name to make the file name (i.e., `<name>-theme.yml`) and is resolved relative to `pdf-themesdir`, if specified, otherwise the built-in themes dir.
+
+pdf-themesdir (or pdf-stylesdir):: The directory where the theme file is located.
 _Specifying an absolute path is recommended._
 +
 If you use images in your theme, image paths are resolved relative to this directory.
-If `pdf-style` ends with `.yml`, and `pdf-stylesdir` is not specified, then `pdf-stylesdir` defaults to the directory of the path specified by `pdf-style`.
-
-pdf-style:: The name of the YAML theme file to load.
-If the name ends with `.yml`, it's assumed to be the complete name of a file and is resolved relative to `pdf-stylesdir`, if specified, otherwise the current directory.
-Otherwise, `-theme.yml` is appended to the name to make the file name (i.e., `<name>-theme.yml`) and is resolved relative to `pdf-stylesdir`, if specified, otherwise the built-in themes dir.
+If `pdf-theme` ends with `.yml`, and `pdf-themesdir` is not specified, then `pdf-themesdir` defaults to the directory of the path specified by `pdf-theme`.
 
 pdf-fontsdir:: The directory where the fonts used by your theme, if any, are located.
 _Specifying an absolute path is recommended._
@@ -3647,15 +3647,15 @@ resources/
 
 Here's how you'd load your theme when calling Asciidoctor PDF:
 
- $ asciidoctor-pdf -a pdf-stylesdir=resources/themes -a pdf-style=basic -a pdf-fontsdir=resources/fonts
+ $ asciidoctor-pdf -a pdf-themesdir=resources/themes -a pdf-theme=basic -a pdf-fontsdir=resources/fonts
 
 If all goes well, Asciidoctor PDF should run without an error or warning.
 
 NOTE: You only need to specify the `pdf-fontsdir` if you are using custom fonts in your theme.
 
-You can skip setting the `pdf-stylesdir` attribute and just pass the absolute path of your theme file to the `pdf-style` attribute.
+You can skip setting the `pdf-themesdir` attribute and just pass the absolute path of your theme file to the `pdf-theme` attribute.
 
- $ asciidoctor-pdf -a pdf-style=resources/themes/basic-theme.yml -a pdf-fontsdir=resources/fonts
+ $ asciidoctor-pdf -a pdf-theme=resources/themes/basic-theme.yml -a pdf-fontsdir=resources/fonts
 
 However, in this case, image paths in your theme won't be resolved properly.
 
@@ -3663,7 +3663,7 @@ Paths are resolved relative to the current directory.
 However, in the future, this may change so that paths are resolved relative to the base directory (typically the document's directory).
 Therefore, it's recommend that you specify absolute paths for now to future-proof your configuration.
 
-  $ asciidoctor-pdf -a pdf-stylesdir=/path/to/resources/themes -a pdf-style=basic -a pdf-fontsdir=/path/to/resources/fonts
+ $ asciidoctor-pdf -a pdf-themesdir=/path/to/resources/themes -a pdf-theme=basic -a pdf-fontsdir=/path/to/resources/fonts
 
 As usual, you can also use build tools like Maven and Gradle to build a themed PDF.
 The only thing you need to add to an existing build is the attributes mentioned above.
