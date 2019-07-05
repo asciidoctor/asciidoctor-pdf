@@ -1256,19 +1256,25 @@ class Converter < ::Prawn::Document
 
     if image_format == 'gif' && !(defined? ::GMagick::Image)
       logger.warn %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
-      image_path = false
+      image_path = nil
     elsif ::Base64 === target
       image_path = target
-    elsif (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format) &&
-        (::File.readable? image_path)
-      # NOTE import_page automatically advances to next page afterwards
-      # QUESTION should we add destination to top of imported page?
-      return import_page image_path, replace: page_is_empty? if image_format == 'pdf'
-    else
-      logger.warn %(image to embed not found or not readable: #{image_path || target}) unless scratch?
+    elsif (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format)
+      if ::File.readable? image_path
+        # NOTE import_page automatically advances to next page afterwards
+        # QUESTION should we add destination to top of imported page?
+        return import_page image_path, replace: page_is_empty? if image_format == 'pdf'
+      elsif image_format == 'pdf'
+        logger.warn %(pdf to insert not found or not readable: #{image_path}) unless scratch?
+        # QUESTION should we use alt text in this case?
+        return
+      else
+        logger.warn %(image to embed not found or not readable: #{image_path}) unless scratch?
+        image_path = nil
+      end
+    elsif image_format == 'pdf'
       # QUESTION should we use alt text in this case?
-      return if image_format == 'pdf'
-      image_path = false
+      return
     end
 
     theme_margin :block, :top unless (pinned = opts[:pinned])
@@ -2270,11 +2276,15 @@ class Converter < ::Prawn::Document
         logger.warn %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
         img = %([#{node.attr 'alt'}])
       # NOTE an image with a data URI is handled using a temporary file
-      elsif (image_path = resolve_image_path node, target, true, image_format) && (::File.readable? image_path)
-        width_attr = (width = preresolve_explicit_width node.attributes) ? %( width="#{width}") : nil
-        img = %(<img src="#{image_path}" format="#{image_format}" alt="[#{encode_quotes node.attr 'alt'}]"#{width_attr} tmp="#{TemporaryPath === image_path}">)
+      elsif (image_path = resolve_image_path node, target, true, image_format)
+        if ::File.readable? image_path
+          width_attr = (width = preresolve_explicit_width node.attributes) ? %( width="#{width}") : nil
+          img = %(<img src="#{image_path}" format="#{image_format}" alt="[#{encode_quotes node.attr 'alt'}]"#{width_attr} tmp="#{TemporaryPath === image_path}">)
+        else
+          logger.warn %(image to embed not found or not readable: #{image_path}) unless scratch?
+          img = %([#{node.attr 'alt'}])
+        end
       else
-        logger.warn %(image to embed not found or not readable: #{image_path || target}) unless scratch?
         img = %([#{node.attr 'alt'}])
       end
       (node.attr? 'link', nil, false) ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
@@ -2497,7 +2507,7 @@ class Converter < ::Prawn::Document
         end
       else
         logger.warn %(#{face} cover image not found or readable: #{cover_image})
-      end
+      end if cover_image
     end
   ensure
     unlink_tmp_file cover_image if cover_image
@@ -3596,7 +3606,9 @@ class Converter < ::Prawn::Document
         bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset bg_image_path, @stylesdir) : (resolve_image_path doc, bg_image_path, false)
       end
 
-      if !(::File.readable? bg_image_path)
+      return unless bg_image_path
+
+      unless ::File.readable? bg_image_path
         logger.warn %(#{key.tr '-', ' '} not found or readable: #{bg_image_path})
         return
       end

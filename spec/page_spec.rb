@@ -136,6 +136,17 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
 
+    it 'should not crash if background image is a URI and the allow-uri-read attribute is not set' do
+      (expect {
+        to_pdf <<~'EOS'
+        = Document Title
+        :page-background-image: image:https://example.org/bg.svg[]
+
+        content
+        EOS
+      }).to not_raise_exception & (log_message severity: :WARN, message: '~allow-uri-read is not enabled')
+    end
+
     it 'should set the background image using path specified in page-background-image attribute', integration: true do
       to_file = to_pdf_file <<~EOS, 'page-background-image-path.pdf'
       = Document Title
