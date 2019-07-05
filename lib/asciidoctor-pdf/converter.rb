@@ -2876,16 +2876,31 @@ class Converter < ::Prawn::Document
       theme_font periphery do
         canvas do
           bounding_box [trim_styles[:content_left][side], trim_styles[:top]], width: trim_styles[:content_width][side], height: trim_styles[:height] do
+            if (trim_column_rule_width = trim_styles[:column_rule_width]) > 0
+              trim_column_rule_spacing = trim_styles[:column_rule_spacing]
+            else
+              trim_column_rule_width = nil
+            end
+            prev_position = nil
             ColumnPositions.each do |position|
               next unless (content = content_by_position[position])
               next unless (colspec = colspec_by_position[position])[:width] > 0
+              left, colwidth = colspec[:x], colspec[:width]
+              if trim_column_rule_width && colwidth < bounds.width
+                if (trim_column_rule = prev_position)
+                  left += (trim_column_rule_spacing * 0.5)
+                  colwidth -= trim_column_rule_spacing
+                else
+                  colwidth -= (trim_column_rule_spacing * 0.5)
+                end
+              end
               # FIXME we need to have a content setting for chapter pages
               case content
               when ::Array
                 # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                 float do
                   # NOTE bounding_box is redundant if both vertical padding and border width are 0
-                  bounding_box [colspec[:x], bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colspec[:width], height: trim_styles[:content_height] do
+                  bounding_box [left, bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colwidth, height: trim_styles[:content_height] do
                     # NOTE image vposition respects padding; use negative image_vertical_align value to revert
                     image_opts = content[1].merge position: colspec[:align], vposition: trim_styles[:img_valign]
                     image content[0], image_opts rescue logger.warn %(could not embed image in running content: #{content[0]}; #{$!.message})
@@ -2909,8 +2924,8 @@ class Converter < ::Prawn::Document
                     end
                   end
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
-                    at: [colspec[:x], bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
-                    width: colspec[:width],
+                    at: [left, bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
+                    width: colwidth,
                     height: trim_styles[:prose_content_height],
                     align: colspec[:align],
                     valign: trim_styles[:valign],
@@ -2919,6 +2934,10 @@ class Converter < ::Prawn::Document
                     overflow: :truncate
                 end
               end
+              bounding_box [colspec[:x], bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colspec[:width], height: trim_styles[:content_height] do
+                stroke_vertical_rule trim_styles[:column_rule_color], at: bounds.left, line_style: trim_styles[:column_rule_style], line_width: trim_column_rule_width
+              end if trim_column_rule
+              prev_position = position
             end
           end
         end
@@ -2942,6 +2961,10 @@ class Converter < ::Prawn::Document
         border_color: (trim_border_color = resolve_theme_color %(#{periphery}_border_color).to_sym),
         border_style: (@theme[%(#{periphery}_border_style)] || :solid).to_sym,
         border_width: (trim_border_width = trim_border_color ? @theme[%(#{periphery}_border_width)] || @theme.base_border_width || 0 : 0),
+        column_rule_color: (trim_column_rule_color = resolve_theme_color %(#{periphery}_column_rule_color).to_sym),
+        column_rule_style: (@theme[%(#{periphery}_column_rule_style)] || :solid).to_sym,
+        column_rule_width: (trim_column_rule_color ? @theme[%(#{periphery}_column_rule_width)] || 0 : 0),
+        column_rule_spacing: (trim_column_rule_spacing = @theme[%(#{periphery}_column_rule_spacing)] || 0),
         valign: (val = (@theme[%(#{periphery}_vertical_align)] || :middle).to_sym) == :middle ? :center : val,
         img_valign: @theme[%(#{periphery}_image_vertical_align)],
         left: {

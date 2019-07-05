@@ -393,6 +393,62 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect to_file).to visually_match 'running-content-background-colors.pdf'
   end
 
+  it 'should draw column rule between columns using specified width and spacing', integration: true do
+    pdf_theme = build_pdf_theme \
+      header_height: 36,
+      header_padding: [8, 0],
+      header_columns: '>40% =10% <40%',
+      header_column_rule_width: 0.5,
+      header_column_rule_color: '333333',
+      header_column_rule_spacing: 8,
+      header_recto_left_content: 'left',
+      header_recto_center_content: 'center',
+      header_recto_right_content: 'right',
+      footer_border_width: 0,
+      footer_padding: [8, 0],
+      footer_columns: '>40% =10% <40%',
+      footer_column_rule_width: 0.5,
+      footer_column_rule_color: '333333',
+      footer_column_rule_spacing: 8,
+      footer_recto_left_content: 'left',
+      footer_recto_center_content: 'center',
+      footer_recto_right_content: 'right'
+
+    to_file = to_pdf_file <<~'EOS', 'running-content-column-rule.pdf', attributes: {}, pdf_theme: pdf_theme
+    = Document Title
+
+    content
+    EOS
+
+    (expect to_file).to visually_match 'running-content-column-rule.pdf'
+  end
+
+  it 'should not draw column rule if there is only one column', integration: true do
+    pdf_theme = build_pdf_theme \
+      header_height: 36,
+      header_padding: [8, 0],
+      header_columns: '<25% =50% >25%',
+      header_column_rule_width: 0.5,
+      header_column_rule_color: '333333',
+      header_column_rule_spacing: 8,
+      header_recto_left_content: 'left',
+      footer_border_width: 0,
+      footer_padding: [8, 0],
+      footer_columns: '<25% =50% >25%',
+      footer_column_rule_width: 0.5,
+      footer_column_rule_color: '333333',
+      footer_column_rule_spacing: 8,
+      footer_recto_right_content: 'right'
+
+    to_file = to_pdf_file <<~'EOS', 'running-content-no-column-rule.pdf', attributes: {}, pdf_theme: pdf_theme
+    = Document Title
+
+    content
+    EOS
+
+    (expect to_file).to visually_match 'running-content-no-column-rule.pdf'
+  end
+
   it 'should scale image up to width when fit=contain', integration: true do
     %w(pdfwidth=99.76 fit=contain pdfwidth=0.5in,fit=contain pdfwidth=15in,fit=contain).each_with_index do |image_attrlist, idx|
       pdf_theme = build_pdf_theme \
