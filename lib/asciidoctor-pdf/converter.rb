@@ -2880,7 +2880,7 @@ class Converter < ::Prawn::Document
                 # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                 float do
                   # NOTE bounding_box is redundant if both vertical padding and border width are 0
-                  bounding_box [colspec[:x], cursor - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colspec[:width], height: trim_styles[:content_height] do
+                  bounding_box [colspec[:x], bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colspec[:width], height: trim_styles[:content_height] do
                     # NOTE image vposition respects padding; use negative image_vertical_align value to revert
                     image_opts = content[1].merge position: colspec[:align], vposition: trim_styles[:img_valign]
                     image content[0], image_opts rescue logger.warn %(could not embed image in running content: #{content[0]}; #{$!.message})
@@ -2904,7 +2904,7 @@ class Converter < ::Prawn::Document
                     end
                   end
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
-                    at: [colspec[:x], trim_styles[:height] - trim_styles[:padding][0] - trim_styles[:content_offset] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
+                    at: [colspec[:x], bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
                     width: colspec[:width],
                     height: trim_styles[:prose_content_height],
                     align: colspec[:align],
