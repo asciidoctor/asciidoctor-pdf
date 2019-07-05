@@ -43,16 +43,15 @@ class ThemeLoader
   end
 
   def self.resolve_theme_file theme_name = nil, theme_path = nil
-    theme_name ||= 'default'
-    # if .yml extension is given, don't append -theme.yml
-    if (theme_name.end_with? '.yml')
+    # if .yml extension is given, assume it's a path (don't append -theme.yml)
+    if ((theme_name ||= 'default').end_with? '.yml')
       # FIXME restrict to jail!
-      # QUESTION why are we not using expand_path in this case?
-      theme_path ? (::File.join theme_path, theme_name) : theme_name
+      theme_file = ::File.expand_path theme_name, theme_path
+      theme_path ||= ::File.dirname theme_file
     else
-      # QUESTION should we append '-theme.yml' or just '.yml'?
-      ::File.expand_path %(#{theme_name}-theme.yml), (theme_path || ThemesDir)
+      theme_file = ::File.expand_path %(#{theme_name}-theme.yml), (theme_path || (theme_path = ThemesDir))
     end
+    [theme_file, theme_path]
   end
 
   def self.resolve_theme_asset asset_path, theme_path = nil
@@ -61,20 +60,22 @@ class ThemeLoader
 
   # NOTE base theme is loaded "as is" (no post-processing)
   def self.load_base_theme
-    ::OpenStruct.new ::SafeYAML.load_file BaseThemePath
+    (::OpenStruct.new ::SafeYAML.load_file BaseThemePath).tap {|theme| theme.__dir__ = ThemesDir }
   end
 
   def self.load_theme theme_name = nil, theme_path = nil
-    if (theme_file = resolve_theme_file theme_name, theme_path) == BaseThemePath
+    theme_file, theme_path = resolve_theme_file theme_name, theme_path
+    if theme_file == BaseThemePath
       load_base_theme
-    elsif theme_file == DefaultThemePath
-      load_file theme_file, nil, theme_path
     else
       theme_data = load_file theme_file, nil, theme_path
-      # QUESTION should we enforce any other fallback values?
-      theme_data.base_align ||= 'left'
-      theme_data.code_font_family ||= (theme_data.literal_font_family || 'Courier')
-      theme_data.conum_font_family ||= (theme_data.literal_font_family || 'Courier')
+      unless theme_file == DefaultThemePath
+        # QUESTION should we enforce any other fallback values?
+        theme_data.base_align ||= 'left'
+        theme_data.code_font_family ||= (theme_data.literal_font_family || 'Courier')
+        theme_data.conum_font_family ||= (theme_data.literal_font_family || 'Courier')
+      end
+      theme_data.__dir__ = theme_path
       theme_data
     end
   end
@@ -92,11 +93,11 @@ class ThemeLoader
             theme_data = theme_data ? (::OpenStruct.new theme_data.to_h.merge load_base_theme.to_h) : load_base_theme
             next
           elsif extend_file == 'default'
-            extend_file = resolve_theme_file extend_file, (extend_theme_path = ThemesDir)
+            extend_file, extend_theme_path = resolve_theme_file extend_file
           elsif extend_file.start_with? './'
-            extend_file = resolve_theme_file extend_file, (extend_theme_path = (::File.dirname ::File.absolute_path filename))
+            extend_file, extend_theme_path = resolve_theme_file extend_file, (::File.dirname filename)
           else
-            extend_file = resolve_theme_file extend_file, (extend_theme_path = theme_path)
+            extend_file, extend_theme_path = resolve_theme_file extend_file, theme_path
           end
           theme_data = load_file extend_file, theme_data, extend_theme_path
         end

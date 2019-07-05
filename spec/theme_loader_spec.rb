@@ -137,6 +137,13 @@ describe Asciidoctor::PDF::ThemeLoader do
     it 'should look for file ending in -theme.yml when resolving custom theme' do
       theme = subject.load_theme 'custom', fixtures_dir
       (expect theme.base_font_family).to eql 'Times-Roman'
+      (expect theme.__dir__).to eql fixtures_dir
+    end
+
+    it 'should set __dir__ to dirname of theme file if theme path not set' do
+      theme = subject.load_theme fixture_file 'custom-theme.yml'
+      (expect theme.base_font_family).to eql 'Times-Roman'
+      (expect theme.__dir__).to eql fixtures_dir
     end
 
     it 'should load specified file ending with .yml if path is not given' do
@@ -149,12 +156,21 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_family).to eql 'Times-Roman'
     end
 
+    it 'should load extended themes relative theme file when theme_path is not specified' do
+      theme = subject.load_theme fixture_file 'extended-custom-theme.yml'
+      (expect theme.__dir__).to eql fixtures_dir
+      (expect theme.base_align).to eql 'justify'
+      (expect theme.base_font_family).to eql 'Times-Roman'
+      (expect theme.base_font_color).to eql 'FF0000'
+    end
+
     it 'should ensure required keys are set' do
       theme = subject.load_theme 'extends-nil-empty-theme.yml', fixtures_dir
+      (expect theme.__dir__).to eql fixtures_dir
       (expect theme.base_align).to eql 'left'
       (expect theme.code_font_family).to eql 'Courier'
       (expect theme.conum_font_family).to eql 'Courier'
-      (expect theme.to_h.keys).to have_size 3
+      (expect theme.to_h.keys).to have_size 4
     end
 
     it 'should not overwrite required keys with default values if already set' do
