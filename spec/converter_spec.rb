@@ -58,6 +58,33 @@ describe Asciidoctor::PDF::Converter do
       (expect doc.attr? 'data-uri').to be true
     end if asciidoctor_2_or_better?
 
+    it 'should apply the theme at the path specified by pdf-theme' do
+      %w(theme style).each do |term|
+        pdf = to_pdf <<~EOS, analyze: true
+        = Document Title
+        :pdf-#{term}: #{fixture_file 'red-theme.yml', relative: true}
+
+        red text
+        EOS
+
+        (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
+      end
+    end
+
+    it 'should apply the named theme specified by pdf-theme located in the specified pdf-themesdir' do
+      %w(theme style).each do |term|
+        pdf = to_pdf <<~EOS, analyze: true
+        = Document Title
+        :pdf-#{term}: red
+        :pdf-#{term}sdir: #{fixtures_dir}
+
+        red text
+        EOS
+
+        (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
+      end
+    end
+
     it 'should use theme passed in through :pdf_theme option' do
       theme = Asciidoctor::PDF::ThemeLoader.load_theme 'custom', fixtures_dir
       pdf = Asciidoctor.convert <<~'EOS', backend: 'pdf', pdf_theme: theme

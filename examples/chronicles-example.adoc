@@ -18,8 +18,8 @@ ifeval::["{asciidoctor-version}" < "1.5.7"]
 :legacy-footnoteref:
 endif::[]
 ifdef::backend-pdf[]
-:pdf-style: chronicles
-:pdf-stylesdir: {docdir}
+:pdf-theme: chronicles
+:pdf-themesdir: {docdir}
 :title-logo-image: image:sample-banner.svg[pdfwidth=4.25in,align=center]
 :source-highlighter: rouge
 //:rouge-style: github
