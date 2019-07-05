@@ -68,7 +68,7 @@ describe Asciidoctor::PDF::Converter do
     end
 
     it 'should convert background position to options' do
-      converter = Asciidoctor::PDF::Converter.new 'pdf', {}
+      converter = asciidoctor_2_or_better? ? (Asciidoctor::Converter.create 'pdf') : (Asciidoctor::Converter::Factory.create 'pdf')
       {
         'center' => { position: :center, vposition: :center },
         'top' => { position: :center, vposition: :top },
