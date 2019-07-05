@@ -3063,7 +3063,7 @@ class Converter < ::Prawn::Document
                       image_opts.delete :width
                       image_opts[:fit] = [col_width, col_height]
                     # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
-                    elsif (image_size = intrinsic_image_dimensions image_path, image_format rescue nil) &&
+                    elsif (image_size = intrinsic_image_dimensions image_path, image_format) &&
                         (image_width ? image_width * (image_size[:height] / image_size[:width]) > col_height : (to_pt image_size[:width], :px) > col_width || (to_pt image_size[:height], :px) > col_height)
                       image_opts.delete :width
                       image_opts[:fit] = [col_width, col_height]
@@ -3629,7 +3629,7 @@ class Converter < ::Prawn::Document
               bg_image_opts.delete :width
               bg_image_opts[:fit] = container
             # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
-            elsif (bg_image_size = intrinsic_image_dimensions bg_image_path, bg_image_format rescue nil) &&
+            elsif (bg_image_size = intrinsic_image_dimensions bg_image_path, bg_image_format) &&
                 (bg_image_width ? bg_image_width * (bg_image_size[:height] / bg_image_size[:width]) > container[1] : (to_pt bg_image_size[:width], :px) > container[0] || (to_pt bg_image_size[:height], :px) > container[1])
               bg_image_opts.delete :width
               bg_image_opts[:fit] = container

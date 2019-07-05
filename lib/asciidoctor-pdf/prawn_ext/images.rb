@@ -40,6 +40,7 @@ module Images
       _, img_size = ::File.open(path, 'rb') {|fd| build_image_object fd }
       { width: img_size.width, height: img_size.height }
     end
+  rescue
   end
 end
 
