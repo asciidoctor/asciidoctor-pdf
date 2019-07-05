@@ -703,7 +703,7 @@ class Converter < ::Prawn::Document
                     color: icon_data[:stroke_color],
                     size: icon_size
               elsif icons
-                if icon_path.downcase.end_with? '.svg'
+                if (::Asciidoctor::Image.format icon_path) == 'svg'
                   begin
                     svg_obj = ::Prawn::SVG::Interface.new ::File.read(icon_path), self,
 	                      position: label_align,
@@ -3041,7 +3041,8 @@ class Converter < ::Prawn::Document
             # TODO support image URL
             if (val.include? ':') && val =~ ImageAttributeValueRx
               if ::File.readable? (image_path = (ThemeLoader.resolve_theme_asset $1, @stylesdir))
-                if image_path.downcase.end_with? '.svg'
+                if (::Asciidoctor::Image.format image_path) == 'svg'
+                  image_format = 'svg'
                   image_opts = {
                     enable_file_requests_with_root: (::File.dirname image_path),
                     enable_web_requests: allow_uri_read,
@@ -3062,7 +3063,7 @@ class Converter < ::Prawn::Document
                       image_opts.delete :width
                       image_opts[:fit] = [col_width, col_height]
                     # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
-                    elsif (image_size = intrinsic_image_dimensions image_path rescue nil) &&
+                    elsif (image_size = intrinsic_image_dimensions image_path, image_format rescue nil) &&
                         (image_width ? image_width * (image_size[:height] / image_size[:width]) > col_height : (to_pt image_size[:width], :px) > col_width || (to_pt image_size[:height], :px) > col_height)
                       image_opts.delete :width
                       image_opts[:fit] = [col_width, col_height]
@@ -3535,7 +3536,7 @@ class Converter < ::Prawn::Document
     doc = node.document
     imagesdir = relative_to_imagesdir ? (resolve_imagesdir doc) : nil
     image_path ||= node.attr 'target'
-    image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node : nil)
+    image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node.attributes : nil)
     # NOTE currently used for inline images
     if ::Base64 === image_path
       tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
@@ -3600,7 +3601,8 @@ class Converter < ::Prawn::Document
         return
       end
 
-      if bg_image_path.downcase.end_with? '.svg'
+      if (::Asciidoctor::Image.format bg_image_path) == 'svg'
+        bg_image_format = 'svg'
         bg_image_opts = {
           enable_file_requests_with_root: (::File.dirname bg_image_path),
           enable_web_requests: allow_uri_read,
@@ -3627,7 +3629,7 @@ class Converter < ::Prawn::Document
               bg_image_opts.delete :width
               bg_image_opts[:fit] = container
             # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
-            elsif (bg_image_size = intrinsic_image_dimensions bg_image_path rescue nil) &&
+            elsif (bg_image_size = intrinsic_image_dimensions bg_image_path, bg_image_format rescue nil) &&
                 (bg_image_width ? bg_image_width * (bg_image_size[:height] / bg_image_size[:width]) > container[1] : (to_pt bg_image_size[:width], :px) > container[0] || (to_pt bg_image_size[:height], :px) > container[1])
               bg_image_opts.delete :width
               bg_image_opts[:fit] = container
