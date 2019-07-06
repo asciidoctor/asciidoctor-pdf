@@ -753,6 +753,7 @@ module Extensions
   # edges of the page (full coverage).
   def image_page file, options = {}
     start_new_page_discretely
+    image_page_number = page_number
     if options[:canvas]
       canvas do
         image file, width: bounds.width, height: bounds.height
@@ -760,8 +761,8 @@ module Extensions
     else
       image file, fit: [bounds.width, bounds.height]
     end
-    # FIXME shouldn't this be `go_to_page prev_page_number + 1`?
-    go_to_page page_count
+    # NOTE advance to new page just in case the image function threw off the cursor
+    go_to_page image_page_number
     nil
   end
 
