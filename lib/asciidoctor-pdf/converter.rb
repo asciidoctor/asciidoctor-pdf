@@ -2492,7 +2492,8 @@ class Converter < ::Prawn::Document
     # TODO turn processing of attribute with inline image a utility function in Asciidoctor
     if (cover_image_path = (doc.attr %(#{face}-cover-image)))
       if (cover_image_path.include? ':') && cover_image_path =~ ImageAttributeValueRx
-        # TODO support explicit image format
+        cover_image_attrs = (AttributeList.new $2).parse ['alt', 'width']
+        # TODO support explicit image format by passing value of format attribute
         cover_image_path = resolve_image_path doc, $1
       else
         cover_image_path = resolve_image_path doc, cover_image_path, false
@@ -2510,6 +2511,7 @@ class Converter < ::Prawn::Document
         import_page cover_image_path, advance: face != :back
       else
         if (::Asciidoctor::Image.format cover_image_path) == 'svg'
+          cover_image_format = 'svg'
           cover_image_opts = {
             enable_file_requests_with_root: (::File.dirname cover_image_path),
             enable_web_requests: allow_uri_read,
@@ -2517,6 +2519,40 @@ class Converter < ::Prawn::Document
           }
         else
           cover_image_opts = {}
+        end
+        container = [page_width, page_height]
+        if cover_image_attrs
+          if (cover_image_pos = cover_image_attrs['position']) && (cover_image_pos = resolve_background_position cover_image_pos, nil)
+            cover_image_opts.update cover_image_pos
+          end
+          if (cover_image_fit = cover_image_attrs['fit'])
+            if cover_image_fit == 'none'
+              if (cover_image_width = resolve_explicit_width cover_image_attrs, container[0])
+                cover_image_opts[:width] = cover_image_width
+              end
+            elsif cover_image_fit == 'scale-down'
+              if (cover_image_width = resolve_explicit_width cover_image_attrs, container[0])
+                cover_image_opts[:width] = cover_image_width
+              end
+              if cover_image_width && cover_image_width > container[0]
+                cover_image_opts.delete :width
+                cover_image_opts[:fit] = container
+              # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
+              elsif (cover_image_size = intrinsic_image_dimensions cover_image_path, cover_image_format) &&
+                  (cover_image_width ? cover_image_width * (cover_image_size[:height] / cover_image_size[:width]) > container[1] : (to_pt cover_image_size[:width], :px) > container[0] || (to_pt cover_image_size[:height], :px) > container[1])
+                cover_image_opts.delete :width
+                cover_image_opts[:fit] = container
+              end
+            else # contain
+              cover_image_opts[:fit] = container
+            end
+          elsif (cover_image_width = resolve_explicit_width cover_image_attrs, container[0])
+            cover_image_opts[:width] = cover_image_width
+          else # default to fit=contain if sizing is not specified
+            cover_image_opts[:fit] = container
+          end
+        else
+          cover_image_opts[:fit] = container
         end
         image_page cover_image_path, (cover_image_opts.merge canvas: true)
       end
