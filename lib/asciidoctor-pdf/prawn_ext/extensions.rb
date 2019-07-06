@@ -754,12 +754,10 @@ module Extensions
   def image_page file, options = {}
     start_new_page_discretely
     image_page_number = page_number
-    if options[:canvas]
-      canvas do
-        image file, width: bounds.width, height: bounds.height
-      end
+    if options.delete :canvas
+      canvas { image file, (options.merge width: bounds.width, height: bounds.height) }
     else
-      image file, fit: [bounds.width, bounds.height]
+      image file, (options.merge fit: [bounds.width, bounds.height])
     end
     # NOTE advance to new page just in case the image function threw off the cursor
     go_to_page image_page_number
