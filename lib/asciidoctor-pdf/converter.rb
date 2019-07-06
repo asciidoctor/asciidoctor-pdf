@@ -190,7 +190,7 @@ class Converter < ::Prawn::Document
       end
     end if respond_to? :on_page_create
 
-    layout_cover_page :front, doc
+    layout_cover_page doc, :front
     if (insert_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
       layout_title_page doc
       # NOTE a new page will already be started if the cover image is a PDF
@@ -290,7 +290,7 @@ class Converter < ::Prawn::Document
     catalog.data[:OpenAction] = dest_fit_horizontally((page_height + 1), state.pages[0]) if state.pages.size > 0
     catalog.data[:ViewerPreferences] = { DisplayDocTitle: true }
 
-    layout_cover_page :back, doc
+    layout_cover_page doc, :back
     nil
   end
 
@@ -2488,7 +2488,7 @@ class Converter < ::Prawn::Document
     end
   end
 
-  def layout_cover_page face, doc
+  def layout_cover_page doc, face
     # TODO turn processing of attribute with inline image a utility function in Asciidoctor
     if (cover_image = (doc.attr %(#{face}-cover-image)))
       if (cover_image.include? ':') && cover_image =~ ImageAttributeValueRx
