@@ -2490,28 +2490,39 @@ class Converter < ::Prawn::Document
 
   def layout_cover_page doc, face
     # TODO turn processing of attribute with inline image a utility function in Asciidoctor
-    if (cover_image = (doc.attr %(#{face}-cover-image)))
-      if (cover_image.include? ':') && cover_image =~ ImageAttributeValueRx
+    if (cover_image_path = (doc.attr %(#{face}-cover-image)))
+      if (cover_image_path.include? ':') && cover_image_path =~ ImageAttributeValueRx
         # TODO support explicit image format
-        cover_image = resolve_image_path doc, $1
+        cover_image_path = resolve_image_path doc, $1
       else
-        cover_image = resolve_image_path doc, cover_image, false
+        cover_image_path = resolve_image_path doc, cover_image_path, false
       end
 
-      if ::File.readable? cover_image
-        go_to_page page_count if face == :back
-        if cover_image.downcase.end_with? '.pdf'
-          # NOTE import_page automatically advances to next page afterwards (can we change this behavior?)
-          import_page cover_image, advance: face != :back
-        else
-          image_page cover_image, canvas: true
-        end
+      return unless cover_image_path
+
+      unless ::File.readable? cover_image_path
+        logger.warn %(#{face} cover image not found or readable: #{cover_image_path})
+        return
+      end
+
+      go_to_page page_count if face == :back
+      if cover_image_path.downcase.end_with? '.pdf'
+        import_page cover_image_path, advance: face != :back
       else
-        logger.warn %(#{face} cover image not found or readable: #{cover_image})
-      end if cover_image
+        if (::Asciidoctor::Image.format cover_image_path) == 'svg'
+          cover_image_opts = {
+            enable_file_requests_with_root: (::File.dirname cover_image_path),
+            enable_web_requests: allow_uri_read,
+            fallback_font_name: default_svg_font,
+          }
+        else
+          cover_image_opts = {}
+        end
+        image_page cover_image_path, (cover_image_opts.merge canvas: true)
+      end
     end
   ensure
-    unlink_tmp_file cover_image if cover_image
+    unlink_tmp_file cover_image_path if cover_image_path
   end
 
   def start_new_chapter chapter
