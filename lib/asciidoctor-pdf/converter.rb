@@ -3613,17 +3613,14 @@ class Converter < ::Prawn::Document
             image_opts[:width] = image_width
           end
         elsif image_fit == 'scale-down'
-          if (image_width = resolve_explicit_width image_attrs, container_width)
-            image_opts[:width] = image_width
-          end
-          if image_width && image_width > container_width
-            image_opts.delete :width
-            image_opts[:fit] = container_size
           # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
+          if (image_width = resolve_explicit_width image_attrs, container_width) && image_width > container_width
+            image_opts[:fit] = container_size
           elsif (image_size = intrinsic_image_dimensions image_path, image_format) &&
               (image_width ? image_width * (image_size[:height] / image_size[:width]) > container_height : (to_pt image_size[:width], :px) > container_width || (to_pt image_size[:height], :px) > container_height)
-            image_opts.delete :width
             image_opts[:fit] = container_size
+          elsif image_width
+            image_opts[:width] = image_width
           end
         else # contain
           image_opts[:fit] = container_size
