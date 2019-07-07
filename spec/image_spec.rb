@@ -154,7 +154,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect images).to have_size 1
       (expect images[0].hash[:Width]).to eql 5
       (expect images[0].hash[:Height]).to eql 5
-      (expect image_data).to eql images[0].data
+      (expect images[0].data).to eql image_data
     end
 
     it 'should embed inline image if target is a JPG data URI' do
@@ -165,7 +165,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect images).to have_size 1
       (expect images[0].hash[:Width]).to eql 5
       (expect images[0].hash[:Height]).to eql 5
-      (expect image_data).to eql images[0].data
+      (expect images[0].data).to eql image_data
     end
   end
 end
