@@ -3613,7 +3613,7 @@ class Converter < ::Prawn::Document
         bg_image_attrs = (AttributeList.new $2).parse ['alt', 'width']
         # TODO support explicit image format by passing value of format attribute
         # TODO support remote image when loaded from theme
-        bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset $1, @themesdir) : (resolve_image_path doc, $1, true)
+        bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset $1, @themesdir) : (resolve_image_path doc, $1)
       else
         bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset bg_image_path, @themesdir) : (resolve_image_path doc, bg_image_path, false)
       end
