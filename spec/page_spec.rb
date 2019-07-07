@@ -224,7 +224,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       This page has a background image that is rather loud.
       EOS
 
-      (expect to_file).to visually_match 'page-background-image-svg-cover.pdf'
+      (expect to_file).to visually_match 'page-background-image-svg-contain.pdf'
     end
 
     it 'should scale down background SVG to fit boundaries of page if value is path', integration: true do
@@ -281,6 +281,17 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       EOS
 
       (expect to_file).to visually_match 'page-background-image-svg-unscaled.pdf'
+    end
+
+    it 'should scale up background SVG until it covers page if fit=cover', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-cover.pdf'
+      = Document Title
+      :page-background-image: image:square.svg[fit=cover]
+
+      This page has a background image that is rather loud.
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-svg-cover.pdf'
     end
 
     it 'should allow remote image in SVG to be read if allow-uri-read attribute is set', integration: true do

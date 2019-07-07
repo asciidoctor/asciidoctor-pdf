@@ -18,6 +18,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * scale SVG background image to fit page in the same way raster image is scaled (#765)
 * allow page background size to be controlled using image macro attributes (#1117)
 * allow page background image position to be controlled using position attribute on image macro (#1124)
+* add support for fit=cover for cover page, page background, and running content images (#1136)
 * change default background image position to center (#1124)
 * allow cover image position to be controlled using position attribute on image macro (#1134)
 * change default cover image position to center (#1134)
