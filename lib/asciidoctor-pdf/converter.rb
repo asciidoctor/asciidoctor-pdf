@@ -2490,31 +2490,31 @@ class Converter < ::Prawn::Document
 
   def layout_cover_page doc, face
     # TODO turn processing of attribute with inline image a utility function in Asciidoctor
-    if (cover_image_path = (doc.attr %(#{face}-cover-image)))
-      if (cover_image_path.include? ':') && cover_image_path =~ ImageAttributeValueRx
-        cover_image_attrs = (AttributeList.new $2).parse ['alt', 'width']
-        # TODO support explicit image format by passing value of format attribute
-        cover_image_path = resolve_image_path doc, $1
+    if (image_path = (doc.attr %(#{face}-cover-image)))
+      if (image_path.include? ':') && image_path =~ ImageAttributeValueRx
+        image_attrs = (AttributeList.new $2).parse ['alt', 'width']
+        image_path = resolve_image_path doc, $1, true, (image_format = image_attrs['format'])
       else
-        cover_image_path = resolve_image_path doc, cover_image_path, false
+        image_path = resolve_image_path doc, image_path, false
       end
 
-      return unless cover_image_path
+      return unless image_path
 
-      unless ::File.readable? cover_image_path
-        logger.warn %(#{face} cover image not found or readable: #{cover_image_path})
+      unless ::File.readable? image_path
+        logger.warn %(#{face} cover image not found or readable: #{image_path})
         return
       end
 
       go_to_page page_count if face == :back
-      if cover_image_path.downcase.end_with? '.pdf'
-        import_page cover_image_path, advance: face != :back
+      if image_path.downcase.end_with? '.pdf'
+        import_page image_path, advance: face != :back
       else
-        image_page cover_image_path, ((resolve_image_options cover_image_path, cover_image_attrs, background: true).merge canvas: true)
+        image_opts = resolve_image_options image_path, image_attrs, background: true, format: image_format
+        image_page image_path, (image_opts.merge canvas: true)
       end
     end
   ensure
-    unlink_tmp_file cover_image_path if cover_image_path
+    unlink_tmp_file image_path if image_path
   end
 
   def start_new_chapter chapter
@@ -3052,11 +3052,11 @@ class Converter < ::Prawn::Document
         side_content = {}
         ColumnPositions.each do |position|
           unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
-            # TODO support image URL
             if (val.include? ':') && val =~ ImageAttributeValueRx
+              # TODO support image URL
               if ::File.readable? (image_path = (ThemeLoader.resolve_theme_asset $1, @themesdir))
                 image_attrs = (AttributeList.new $2).parse ['alt', 'width']
-                image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_styles[:content_height]]
+                image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_styles[:content_height]], format: image_attrs['format']
                 side_content[position] = [image_path, image_opts]
               else
                 # NOTE allows inline image handler to report invalid reference and replace with alt text
@@ -3566,36 +3566,35 @@ class Converter < ::Prawn::Document
   # nothing. The first argument in the argument list is the image path. If that value is nil, the background
   # image is disabled. The second argument is the options hash to specify the dimensions, such as width and fit.
   def resolve_background_image doc, theme, key
-    if (bg_image_path = (doc.attr key) || (from_theme = theme[(key.tr '-', '_').to_sym]))
-      if bg_image_path == 'none'
+    if (image_path = (doc.attr key) || (from_theme = theme[(key.tr '-', '_').to_sym]))
+      if image_path == 'none'
         return []
-      elsif (bg_image_path.include? ':') && bg_image_path =~ ImageAttributeValueRx
-        bg_image_attrs = (AttributeList.new $2).parse ['alt', 'width']
-        # TODO support explicit image format by passing value of format attribute
+      elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
+        image_attrs = (AttributeList.new $2).parse ['alt', 'width']
         # TODO support remote image when loaded from theme
-        bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset $1, @themesdir) : (resolve_image_path doc, $1)
+        image_path = from_theme ? (ThemeLoader.resolve_theme_asset $1, @themesdir) : (resolve_image_path doc, $1, true, (image_format = image_attrs['format']))
       else
-        bg_image_path = from_theme ? (ThemeLoader.resolve_theme_asset bg_image_path, @themesdir) : (resolve_image_path doc, bg_image_path, false)
+        image_path = from_theme ? (ThemeLoader.resolve_theme_asset image_path, @themesdir) : (resolve_image_path doc, image_path, false)
       end
 
-      return unless bg_image_path
+      return unless image_path
 
-      unless ::File.readable? bg_image_path
-        logger.warn %(#{key.tr '-', ' '} not found or readable: #{bg_image_path})
+      unless ::File.readable? image_path
+        logger.warn %(#{key.tr '-', ' '} not found or readable: #{image_path})
         return
       end
 
-      [bg_image_path, (resolve_image_options bg_image_path, bg_image_attrs, background: true)]
+      [image_path, (resolve_image_options image_path, image_attrs, background: true, format: image_format)]
     end
   end
 
   def resolve_image_options image_path, image_attrs, opts = {}
-    if (::Asciidoctor::Image.format image_path) == 'svg'
-      image_format = 'svg'
+    if (image_format = opts[:format] || (::Asciidoctor::Image.format image_path)) == 'svg'
       image_opts = {
         enable_file_requests_with_root: (::File.dirname image_path),
         enable_web_requests: allow_uri_read,
         fallback_font_name: default_svg_font,
+        format: 'svg',
       }
     else
       image_opts = {}

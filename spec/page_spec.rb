@@ -411,5 +411,22 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         (expect to_file).to visually_match 'page-background-image-recto-only.pdf'
       end
     end
+
+    it 'should use the specified image format', integration: true do
+      source_file = (dest_file = fixture_file 'square') + '.svg'
+      begin
+        FileUtils.cp source_file, dest_file
+        to_file = to_pdf_file <<~'EOS', 'page-background-image-format.pdf'
+        = Document Title
+        :page-background-image: image:square[format=svg]
+
+        This page has a background image that is rather loud.
+        EOS
+
+        (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
+      ensure
+        File.unlink dest_file
+      end
+    end
   end
 end

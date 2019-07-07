@@ -10,7 +10,7 @@ module Images
   # Dispatch to suitable image method in Prawn based on file extension.
   def image file, opts = {}
     # FIXME handle case when SVG is an IO object
-    if ::String === file && (file.downcase.end_with? '.svg')
+    if ::String === file && (((opts = opts.dup).delete :format) == 'svg' || (file.downcase.end_with? '.svg'))
       #opts[:enable_file_requests_with_root] = (::File.dirname file) unless opts.key? :enable_file_requests_with_root
       #opts[:enable_web_requests] = allow_uri_read if !(opts.key? :enable_web_requests) && (respond_to? :allow_uri_read)
       #opts[:fallback_font_name] = default_svg_font if !(opts.key? :fallback_font_name) && (respond_to? :default_svg_font)

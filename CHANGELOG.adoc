@@ -34,6 +34,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * support text-transform property in running content (#702)
 * support width attribute on image in running content if no other dimension attribute is specified
 * apply correct scale-down logic to image in running content
+* allow image format to be specified using format attribute (cover page image, page background image, running content image) (#1132)
 * allow theme to set bottom border properties (color, style, and width) of table head row (#770)
 * allow column rule and spacing to be specified for running content when multiple columns are specified (#1093)
 * change how base theme is loaded
