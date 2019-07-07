@@ -3607,11 +3607,12 @@ class Converter < ::Prawn::Document
       end
       if (image_fit = image_attrs['fit'])
         container_width, container_height = container_size
-        if image_fit == 'none'
+        case image_fit
+        when 'none'
           if (image_width = resolve_explicit_width image_attrs, container_width)
             image_opts[:width] = image_width
           end
-        elsif image_fit == 'scale-down'
+        when 'scale-down'
           # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
           if (image_width = resolve_explicit_width image_attrs, container_width) && image_width > container_width
             image_opts[:fit] = container_size
@@ -3620,6 +3621,15 @@ class Converter < ::Prawn::Document
             image_opts[:fit] = container_size
           elsif image_width
             image_opts[:width] = image_width
+          end
+        when 'cover'
+          # QUESTION should we take explicit width into account?
+          if (image_size = intrinsic_image_dimensions image_path, image_format)
+            if container_width * (image_size[:height] / image_size[:width]) < container_height
+              image_opts[:height] = container_height
+            else
+              image_opts[:width] = container_width
+            end
           end
         else # contain
           image_opts[:fit] = container_size

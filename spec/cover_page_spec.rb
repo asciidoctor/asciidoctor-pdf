@@ -94,7 +94,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect to_file).to visually_match 'cover-page-front-cover-image-unscaled.pdf'
   end
 
-  it 'should scale front cover until it reaches the boundaries of the page', integration: true do
+  it 'should scale front cover by default until it reaches the boundaries of the page', integration: true do
     to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-max.pdf'
     = Document Title
     :front-cover-image: image:cover.jpg[]
@@ -104,6 +104,17 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     EOS
 
     (expect to_file).to visually_match 'cover-page-front-cover-image-max.pdf'
+  end
+
+  it 'should scale front cover until it covers page if fit=cover', integration: true do
+    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-cover.pdf'
+    = Document Title
+    :front-cover-image: image:cover.jpg[fit=cover]
+
+    content page
+    EOS
+
+    (expect to_file).to visually_match 'cover-page-front-cover-image-cover.pdf'
   end
 
   it 'should position front cover image as specified by position attribute', integration: true do
