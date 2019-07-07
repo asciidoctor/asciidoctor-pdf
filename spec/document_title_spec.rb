@@ -82,6 +82,24 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       actual_x = (pdf.find_text page_number: 1).map {|it| it[:x] }
       (expect actual_x).to eql expected_x
     end
+
+    it 'should be able to set background color of title page', integration: true do
+      theme_overrides = {
+        title_page_background_color: '000000',
+        title_page_title_font_color: 'EFEFEF',
+        title_page_authors_font_color: 'DBDBDB',
+      }
+
+      to_file = to_pdf_file <<~EOS, 'document-title-background-color.pdf', pdf_theme: theme_overrides
+      = Dark and Stormy
+      Author Name
+      :doctype: book
+
+      body
+      EOS
+
+      (expect to_file).to visually_match 'document-title-background-color.pdf'
+    end
   end
 
   context 'article' do
