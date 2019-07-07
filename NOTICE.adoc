@@ -1,7 +1,7 @@
 = Asciidoctor PDF
 OpenDevise Inc.; Asciidoctor Project
 
-Copyright (C) 2014-2016 OpenDevise Inc. and the Asciidoctor Project.
+Copyright (C) 2014-2019 OpenDevise Inc. and the Asciidoctor Project.
 
 Please visit the Asciidoctor project site for more information:
 
@@ -26,7 +26,7 @@ M+ OUTLINE FONTS (M+ TESTFLIGHT 058)::
 
   - http://mplus-fonts.sourceforge.jp/mplus-outline-fonts/index-en.html
 
-Noto Serif Font (v2014-01-30)::
+Noto Serif Font (v2015-06-05)::
   Noto is font family developed by the Google Internationalization Team that aims to support all the world's languages.
   The Noto Serif font is used for headings and body copy and is bundled in the PDF file.
   The Noto fonts are licensed under the Apache 2.0 License.
@@ -36,7 +36,7 @@ Noto Serif Font (v2014-01-30)::
 
   - https://code.google.com/p/noto/
 
-Font Awesome Icon Font (v4.0.3)::
+Font Awesome Icon Font (v5.4)::
   Font Awesome (@fontawesome), the iconic font designed for Bootstrap by David Gandy (@davegandy), is used for the admonition icons and other icons in author's content and bundled in the PDF file.
   Font Awesome is fully open source and GPL compatible.
   The font is licensed under the SIL Open Font 1.1 License (OFL).
@@ -45,14 +45,6 @@ Font Awesome Icon Font (v4.0.3)::
   http://scripts.sil.org/OFL
 
   - http://fontawesome.io
-
-Liberation Fonts (v2.00.1)::
-  The Liberation(tm) Fonts 2.00.1, which are used by default, are licensed under the SIL Open Font License, Version 1.1.
-  You may obtain a copy of the license at:
-
-  http://scripts.sil.org/OFL
-
-  - https://fedorahosted.org/liberation-fonts 
 
 RomanNumeral class::
   The RomanNumeral class, which is used for numbering of ordered lists, is borrowed from the roman-numerals RubyGem and modified for the purpose of this application.
@@ -74,3 +66,8 @@ Bootstrap (v3.0.3)::
   The default theme is inspired by Bootstrap 3.0.3.
 
   - http://getbootstrap.com
+
+spec/fixtures/cover.jpg::
+  Attribution: Wikimedia Foundation; License: Creative Commons Attribution-Share Alike 3.0 Unported
+  
+  - https://commons.wikimedia.org/wiki/File:10_sharing_book_cover_background.jpg
