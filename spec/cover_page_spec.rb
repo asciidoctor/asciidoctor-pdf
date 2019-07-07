@@ -29,7 +29,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should scale front cover image to fit page', integration: true do
-    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image.pdf', attributes: { 'imagesdir' => fixtures_dir }
+    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image.pdf'
     = Document Title
     :doctype: book
     :front-cover-image: image:cover.jpg[]
@@ -41,7 +41,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should recognize attribute value that uses block macro syntax', integration: true do
-    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-block-macro.pdf', attributes: { 'imagesdir' => fixtures_dir }
+    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-block-macro.pdf'
     = Document Title
     :doctype: book
     :front-cover-image: image::cover.jpg[]
@@ -53,7 +53,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should scale and clip front cover image to cover whole page', integration: true do
-    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-clipped.pdf', attributes: { 'imagesdir' => fixtures_dir }
+    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-clipped.pdf'
     = Document Title
     :doctype: book
     :front-cover-image: image:cover.jpg[]
