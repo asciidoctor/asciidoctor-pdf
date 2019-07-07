@@ -16,6 +16,23 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
   end
 
+  it 'should add back cover page if back-cover-image is set' do
+    pdf = to_pdf <<~EOS
+    = Document Title
+    :front-cover-image: #{fixture_file 'cover.jpg', relative: true}
+    :back-cover-image: #{fixture_file 'cover.jpg', relative: true}
+
+    content page
+    EOS
+
+    (expect pdf.pages).to have_size 3
+    (expect pdf.pages[0].text).to be_empty
+    (expect pdf.pages[2].text).to be_empty
+    images = pdf.pages[2].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+    (expect images).to have_size 1
+    (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
+  end
+
   it 'should only add cover page if front-cover-image is set and document has no content' do
     pdf = to_pdf %(:front-cover-image: #{fixture_file 'cover.jpg', relative: true})
     (expect pdf.pages).to have_size 1
