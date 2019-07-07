@@ -2492,7 +2492,8 @@ class Converter < ::Prawn::Document
     # TODO turn processing of attribute with inline image a utility function in Asciidoctor
     if (cover_image_path = (doc.attr %(#{face}-cover-image)))
       if (cover_image_path.include? ':') && cover_image_path =~ ImageAttributeValueRx
-        # TODO support explicit image format
+        cover_image_attrs = (AttributeList.new $2).parse ['alt', 'width']
+        # TODO support explicit image format by passing value of format attribute
         cover_image_path = resolve_image_path doc, $1
       else
         cover_image_path = resolve_image_path doc, cover_image_path, false
@@ -2509,16 +2510,7 @@ class Converter < ::Prawn::Document
       if cover_image_path.downcase.end_with? '.pdf'
         import_page cover_image_path, advance: face != :back
       else
-        if (::Asciidoctor::Image.format cover_image_path) == 'svg'
-          cover_image_opts = {
-            enable_file_requests_with_root: (::File.dirname cover_image_path),
-            enable_web_requests: allow_uri_read,
-            fallback_font_name: default_svg_font,
-          }
-        else
-          cover_image_opts = {}
-        end
-        image_page cover_image_path, (cover_image_opts.merge canvas: true)
+        image_page cover_image_path, ((resolve_image_options cover_image_path, cover_image_attrs, background: true).merge canvas: true)
       end
     end
   ensure
@@ -3063,39 +3055,8 @@ class Converter < ::Prawn::Document
             # TODO support image URL
             if (val.include? ':') && val =~ ImageAttributeValueRx
               if ::File.readable? (image_path = (ThemeLoader.resolve_theme_asset $1, @themesdir))
-                if (::Asciidoctor::Image.format image_path) == 'svg'
-                  image_format = 'svg'
-                  image_opts = {
-                    enable_file_requests_with_root: (::File.dirname image_path),
-                    enable_web_requests: allow_uri_read,
-                    fallback_font_name: default_svg_font,
-                  }
-                else
-                  image_opts = {}
-                end
-                attrs = (AttributeList.new $2).parse ['alt', 'width']
-                col_width = colspec_dict[side][position][:width]
-                if (fit = attrs['fit'])
-                  col_height = trim_styles[:content_height]
-                  if fit == 'scale-down'
-                    if (image_width = resolve_explicit_width attrs, col_width)
-                      image_opts[:width] = image_width
-                    end
-                    if image_width && image_width > col_width
-                      image_opts.delete :width
-                      image_opts[:fit] = [col_width, col_height]
-                    # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
-                    elsif (image_size = intrinsic_image_dimensions image_path, image_format) &&
-                        (image_width ? image_width * (image_size[:height] / image_size[:width]) > col_height : (to_pt image_size[:width], :px) > col_width || (to_pt image_size[:height], :px) > col_height)
-                      image_opts.delete :width
-                      image_opts[:fit] = [col_width, col_height]
-                    end
-                  else # contain
-                    image_opts[:fit] = [col_width, col_height]
-                  end
-                elsif (image_width = resolve_explicit_width attrs, col_width)
-                  image_opts[:width] = image_width
-                end
+                image_attrs = (AttributeList.new $2).parse ['alt', 'width']
+                image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_styles[:content_height]]
                 side_content[position] = [image_path, image_opts]
               else
                 # NOTE allows inline image handler to report invalid reference and replace with alt text
@@ -3604,8 +3565,7 @@ class Converter < ::Prawn::Document
   # Returns the argument list for the image method if the document attribute or theme key is found. Otherwise,
   # nothing. The first argument in the argument list is the image path. If that value is nil, the background
   # image is disabled. The second argument is the options hash to specify the dimensions, such as width and fit.
-  def resolve_background_image doc, theme, key, container = nil
-    container ||= [page_width, page_height]
+  def resolve_background_image doc, theme, key
     if (bg_image_path = (doc.attr key) || (from_theme = theme[(key.tr '-', '_').to_sym]))
       if bg_image_path == 'none'
         return []
@@ -3625,52 +3585,58 @@ class Converter < ::Prawn::Document
         return
       end
 
-      if (::Asciidoctor::Image.format bg_image_path) == 'svg'
-        bg_image_format = 'svg'
-        bg_image_opts = {
-          enable_file_requests_with_root: (::File.dirname bg_image_path),
-          enable_web_requests: allow_uri_read,
-          fallback_font_name: default_svg_font,
-        }
-      else
-        bg_image_opts = {}
-      end
-
-      if bg_image_attrs
-        if (bg_image_pos = bg_image_attrs['position']) && (bg_image_pos = resolve_background_position bg_image_pos, nil)
-          bg_image_opts.update bg_image_pos
-        end
-        if (bg_image_fit = bg_image_attrs['fit'])
-          if bg_image_fit == 'none'
-            if (bg_image_width = resolve_explicit_width bg_image_attrs, container[0])
-              bg_image_opts[:width] = bg_image_width
-            end
-          elsif bg_image_fit == 'scale-down'
-            if (bg_image_width = resolve_explicit_width bg_image_attrs, container[0])
-              bg_image_opts[:width] = bg_image_width
-            end
-            if bg_image_width && bg_image_width > container[0]
-              bg_image_opts.delete :width
-              bg_image_opts[:fit] = container
-            # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
-            elsif (bg_image_size = intrinsic_image_dimensions bg_image_path, bg_image_format) &&
-                (bg_image_width ? bg_image_width * (bg_image_size[:height] / bg_image_size[:width]) > container[1] : (to_pt bg_image_size[:width], :px) > container[0] || (to_pt bg_image_size[:height], :px) > container[1])
-              bg_image_opts.delete :width
-              bg_image_opts[:fit] = container
-            end
-          else # contain
-            bg_image_opts[:fit] = container
-          end
-        elsif (bg_image_width = resolve_explicit_width bg_image_attrs, container[0])
-          bg_image_opts[:width] = bg_image_width
-        else # default to fit=contain if sizing is not specified
-          bg_image_opts[:fit] = container
-        end
-      else
-        bg_image_opts[:fit] = container
-      end
-      [bg_image_path, bg_image_opts]
+      [bg_image_path, (resolve_image_options bg_image_path, bg_image_attrs, background: true)]
     end
+  end
+
+  def resolve_image_options image_path, image_attrs, opts = {}
+    if (::Asciidoctor::Image.format image_path) == 'svg'
+      image_format = 'svg'
+      image_opts = {
+        enable_file_requests_with_root: (::File.dirname image_path),
+        enable_web_requests: allow_uri_read,
+        fallback_font_name: default_svg_font,
+      }
+    else
+      image_opts = {}
+    end
+    background = opts[:background]
+    container_size = opts.fetch :container_size, (background ? [page_width, page_height] : [bounds.width, bounds.height])
+    if image_attrs
+      if background && (image_pos = image_attrs['position']) && (image_pos = resolve_background_position image_pos, nil)
+        image_opts.update image_pos
+      end
+      if (image_fit = image_attrs['fit'])
+        container_width, container_height = container_size
+        if image_fit == 'none'
+          if (image_width = resolve_explicit_width image_attrs, container_width)
+            image_opts[:width] = image_width
+          end
+        elsif image_fit == 'scale-down'
+          if (image_width = resolve_explicit_width image_attrs, container_width)
+            image_opts[:width] = image_width
+          end
+          if image_width && image_width > container_width
+            image_opts.delete :width
+            image_opts[:fit] = container_size
+          # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
+          elsif (image_size = intrinsic_image_dimensions image_path, image_format) &&
+              (image_width ? image_width * (image_size[:height] / image_size[:width]) > container_height : (to_pt image_size[:width], :px) > container_width || (to_pt image_size[:height], :px) > container_height)
+            image_opts.delete :width
+            image_opts[:fit] = container_size
+          end
+        else # contain
+          image_opts[:fit] = container_size
+        end
+      elsif (image_width = resolve_explicit_width image_attrs, container_size[0])
+        image_opts[:width] = image_width
+      else # default to fit=contain if sizing is not specified
+        image_opts[:fit] = container_size
+      end
+    else
+      image_opts[:fit] = container_size
+    end
+    image_opts
   end
 
   # Resolves the explicit width as a PDF pt value if the value is specified in

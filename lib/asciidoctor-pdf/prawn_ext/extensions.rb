@@ -748,16 +748,15 @@ module Extensions
     nil
   end
 
-  # Create a new page for the specified image. If the
-  # canvas option is true, the image is stretched to the
-  # edges of the page (full coverage).
+  # Create a new page for the specified image. If the canvas option is true,
+  # the image is positioned relative to the boundaries of the page.
   def image_page file, options = {}
     start_new_page_discretely
     image_page_number = page_number
     if options.delete :canvas
-      canvas { image file, (options.merge width: bounds.width, height: bounds.height) }
+      canvas { image file, ({ position: :center, vposition: :center }.merge options) }
     else
-      image file, (options.merge fit: [bounds.width, bounds.height])
+      image file, (options.merge position: :center, vposition: :center, fit: [bounds.width, bounds.height])
     end
     # NOTE advance to new page just in case the image function threw off the cursor
     go_to_page image_page_number

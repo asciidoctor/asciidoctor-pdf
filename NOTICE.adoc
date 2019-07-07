@@ -68,6 +68,12 @@ Bootstrap (v3.0.3)::
   - http://getbootstrap.com
 
 spec/fixtures/cover.jpg::
-  Attribution: Wikimedia Foundation; License: Creative Commons Attribution-Share Alike 3.0 Unported
-  
-  - https://commons.wikimedia.org/wiki/File:10_sharing_book_cover_background.jpg
+  Attribution: Dominicus Johannes Bergsma; License: Creative Commons Attribution-Share Alike 3.0 Unported
+  This file is licensed under the Creative Commons Attribution-Share Alike 3.0 Unported license.
+
+  - https://commons.wikimedia.org/wiki/File:Dahlia_%27Bishop_of_Auckland.JPG
+
+spec/fixtures/tux.png::
+  Attribution: Larry Ewing, Simon Budig, Garrett LeSage; License: Creative Commons CC0 1.0 Universal Public Domain Dedication
+
+  - https://commons.wikimedia.org/wiki/File:Tux.svg

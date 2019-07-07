@@ -40,7 +40,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     images = pdf.pages[0].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
     (expect images).to have_size 1
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
-   end
+  end
 
   it 'should not crash if front cover image is a URI and the allow-uri-read attribute is not set' do
     pdf = nil
@@ -70,7 +70,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     end
   end
 
-  it 'should scale front cover image to fit page', integration: true do
+  it 'should scale front cover image to fit page by default', integration: true do
     to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image.pdf'
     = Document Title
     :doctype: book
@@ -82,16 +82,38 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect to_file).to visually_match 'cover-page-front-cover-image.pdf'
   end
 
-  it 'should scale and clip front cover image to cover whole page', integration: true do
-    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-clipped.pdf'
+  it 'should not scale front cover image to fit page if fit is none', integration: true do
+    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-unscaled.pdf'
     = Document Title
     :doctype: book
+    :front-cover-image: image:cover.jpg[fit=none]
+
+    content page
+    EOS
+
+    (expect to_file).to visually_match 'cover-page-front-cover-image-unscaled.pdf'
+  end
+
+  it 'should position front cover image as specified by position attribute', integration: true do
+    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-positioned.pdf'
+    = Document Title
+    :front-cover-image: image:square.svg[pdfwidth=50%,position=top right]
+
+    content page
+    EOS
+
+    (expect to_file).to visually_match 'cover-page-front-cover-image-positioned.pdf'
+  end
+
+  it 'should scale front cover until it reaches the boundaries of the page', integration: true do
+    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-max.pdf'
+    = Document Title
     :front-cover-image: image:cover.jpg[]
     :pdf-page-size: Legal
 
     content page
     EOS
 
-    (expect to_file).to visually_match 'cover-page-front-cover-image-clipped.pdf'
+    (expect to_file).to visually_match 'cover-page-front-cover-image-max.pdf'
   end
 end
