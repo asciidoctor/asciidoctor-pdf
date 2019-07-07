@@ -3289,6 +3289,9 @@ If value is not specified, dot leaders are shown for all levels.
 The keys in this category control the arrangement and style of running header and footer content.
 Please note that the running content will _not_ be used unless a) the periphery (header or footer) is configured and b) the height key for the periphery is assigned a value.
 
+CAUTION: If the height of the running content periphery is larger than the page margin, the running content will cover the main content.
+To avoid this problem, reduce the height of the running content periphery or make the page margin on that side larger.
+
 [cols="3,4,5l"]
 |===
 |Key |Value Type |Example
