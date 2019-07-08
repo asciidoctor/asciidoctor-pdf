@@ -92,7 +92,7 @@ class ThemeLoader
           if extend_file == 'base'
             theme_data = theme_data ? (::OpenStruct.new theme_data.to_h.merge load_base_theme.to_h) : load_base_theme
             next
-          elsif extend_file == 'default'
+          elsif extend_file == 'default' || extend_file == 'default-with-fallback-font'
             extend_file, extend_theme_path = resolve_theme_file extend_file
           elsif extend_file.start_with? './'
             extend_file, extend_theme_path = resolve_theme_file extend_file, (::File.dirname filename)
