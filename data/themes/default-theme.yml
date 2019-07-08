@@ -67,6 +67,9 @@ vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
 # QUESTION should vertical_spacing be block_spacing instead?
 vertical_spacing: $vertical_rhythm
+button:
+  content: "[\u2009%s\u2009]"
+  font_style: bold
 link:
   font_color: 428bca
 # literal is currently used for inline monospaced in prose and table cells

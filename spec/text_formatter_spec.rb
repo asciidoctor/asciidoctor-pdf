@@ -101,7 +101,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[0][:y]).to be > text[1][:y]
     end
 
-    it 'should add background and border to monospaced text defined in theme', integration: true do
+    it 'should add background and border to code as defined in theme', integration: true do
       theme_overrides = {
         literal_background_color: 'f5f5f5',
         literal_border_color: 'dddddd',
@@ -111,6 +111,18 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       }
       to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: theme_overrides, analyze: true
       (expect to_file).to visually_match 'text-formatter-code.pdf'
+    end
+
+    it 'should add background and border to button as defined in theme', integration: true do
+      theme_overrides = {
+        button_content: '%s',
+        button_background_color: '007BFF',
+        button_border_offset: 1.5,
+        button_border_radius: 2.5,
+        button_font_color: 'ffffff',
+      }
+      to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button.pdf', pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }, analyze: true
+      (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
   end
 end

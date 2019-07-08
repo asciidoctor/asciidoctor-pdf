@@ -20,27 +20,44 @@ class Transform
     @merge_adjacent_text_nodes = options[:merge_adjacent_text_nodes]
     # TODO add support for character spacing
     if (theme = options[:theme])
-      @link_font_settings = {
-        color: theme.link_font_color,
-        font: theme.link_font_family,
-        size: theme.link_font_size,
-        styles: to_styles(theme.link_font_style, theme.link_text_decoration)
-      }.compact
-      @monospaced_font_settings = {
-        color: theme.literal_font_color,
-        font: theme.literal_font_family,
-        size: theme.literal_font_size,
-        styles: to_styles(theme.literal_font_style),
-        background_color: (monospaced_bg_color = theme.literal_background_color),
-        border_width: (monospaced_border_width = theme.literal_border_width),
-        border_color: monospaced_border_width && (theme.literal_border_color || theme.base_border_color),
-        border_offset: (monospaced_bg_or_border = monospaced_bg_color || monospaced_border_width) && theme.literal_border_offset,
-        border_radius: monospaced_bg_or_border && theme.literal_border_radius,
-        callback: monospaced_bg_or_border && [TextBackgroundAndBorderRenderer],
-      }.compact
+      @theme_settings = {
+        button: {
+          color: theme.button_font_color,
+          font: theme.button_font_family,
+          size: theme.button_font_size,
+          styles: to_styles(theme.button_font_style),
+          background_color: (button_bg_color = theme.button_background_color),
+          border_width: (button_border_width = theme.button_border_width),
+          border_color: button_border_width && (theme.button_border_color || theme.base_border_color),
+          border_offset: (button_bg_or_border = button_bg_color || button_border_width) && theme.button_border_offset,
+          border_radius: button_bg_or_border && theme.button_border_radius,
+          callback: button_bg_or_border && [TextBackgroundAndBorderRenderer],
+        }.compact,
+        code: {
+          color: theme.literal_font_color,
+          font: theme.literal_font_family,
+          size: theme.literal_font_size,
+          styles: to_styles(theme.literal_font_style),
+          background_color: (monospaced_bg_color = theme.literal_background_color),
+          border_width: (monospaced_border_width = theme.literal_border_width),
+          border_color: monospaced_border_width && (theme.literal_border_color || theme.base_border_color),
+          border_offset: (monospaced_bg_or_border = monospaced_bg_color || monospaced_border_width) && theme.literal_border_offset,
+          border_radius: monospaced_bg_or_border && theme.literal_border_radius,
+          callback: monospaced_bg_or_border && [TextBackgroundAndBorderRenderer],
+        }.compact,
+        link: {
+          color: theme.link_font_color,
+          font: theme.link_font_family,
+          size: theme.link_font_size,
+          styles: to_styles(theme.link_font_style, theme.link_text_decoration)
+        }.compact,
+      }
     else
-      @link_font_settings = { color: '0000FF' }
-      @monospaced_font_settings = { font: 'Courier', size: 0.9 }
+      @theme_settings = {
+        button: { font: 'Courier', styles: [:bold].to_set },
+        code: { font: 'Courier', size: 0.9 },
+        link: { color: '0000FF' },
+      }
     end
   end
 
@@ -129,9 +146,9 @@ class Transform
       styles << :bold
     when :em
       styles << :italic
-    when :code
+    when :code, :button
       # NOTE prefer old value, except for styles and callback, which should be combined
-      fragment.update(@monospaced_font_settings) {|k, oval, nval| k == :styles ? oval.merge(nval) : (k == :callback ? oval.union(nval) : oval) }
+      fragment.update(@theme_settings[tag_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : (k == :callback ? oval.union(nval) : oval) }
     when :color
       if !fragment[:color]
         if (rgb = attrs[:rgb])
@@ -202,7 +219,7 @@ class Transform
         end
       end
       # NOTE prefer old value, except for styles, which should be combined
-      fragment.update(@link_font_settings) {|k, old_v, new_v| k == :styles ? old_v.merge(new_v) : old_v } if visible
+      fragment.update(@theme_settings[:link]) {|k, oval, nval| k == :styles ? oval.merge(nval) : oval } if visible
     when :sub
       styles << :subscript
     when :sup

@@ -356,44 +356,44 @@ module Markup
       r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
       r0 = r1
     else
-      if (match_len = has_terminal?('code', false, index))
+      if (match_len = has_terminal?('strong', false, index))
         r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
         @index += match_len
       else
-        terminal_parse_failure('code')
+        terminal_parse_failure('strong')
         r2 = nil
       end
       if r2
         r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
         r0 = r2
       else
-        if (match_len = has_terminal?('color', false, index))
+        if (match_len = has_terminal?('em', false, index))
           r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
           @index += match_len
         else
-          terminal_parse_failure('color')
+          terminal_parse_failure('em')
           r3 = nil
         end
         if r3
           r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
           r0 = r3
         else
-          if (match_len = has_terminal?('del', false, index))
+          if (match_len = has_terminal?('code', false, index))
             r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
             @index += match_len
           else
-            terminal_parse_failure('del')
+            terminal_parse_failure('code')
             r4 = nil
           end
           if r4
             r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
             r0 = r4
           else
-            if (match_len = has_terminal?('em', false, index))
+            if (match_len = has_terminal?('color', false, index))
               r5 = instantiate_node(SyntaxNode,input, index...(index + match_len))
               @index += match_len
             else
-              terminal_parse_failure('em')
+              terminal_parse_failure('color')
               r5 = nil
             end
             if r5
@@ -422,11 +422,11 @@ module Markup
                   r7 = SyntaxNode.new(input, (index-1)...index) if r7 == true
                   r0 = r7
                 else
-                  if (match_len = has_terminal?('strong', false, index))
+                  if (match_len = has_terminal?('button', false, index))
                     r8 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                     @index += match_len
                   else
-                    terminal_parse_failure('strong')
+                    terminal_parse_failure('button')
                     r8 = nil
                   end
                   if r8
@@ -455,8 +455,20 @@ module Markup
                         r10 = SyntaxNode.new(input, (index-1)...index) if r10 == true
                         r0 = r10
                       else
-                        @index = i0
-                        r0 = nil
+                        if (match_len = has_terminal?('del', false, index))
+                          r11 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                          @index += match_len
+                        else
+                          terminal_parse_failure('del')
+                          r11 = nil
+                        end
+                        if r11
+                          r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
+                          r0 = r11
+                        else
+                          @index = i0
+                          r0 = nil
+                        end
                       end
                     end
                   end

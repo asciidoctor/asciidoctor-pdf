@@ -2202,8 +2202,7 @@ class Converter < ::Prawn::Document
   end
 
   def convert_inline_button node
-    %(<strong>[#{NarrowNoBreakSpace}#{node.text}#{NarrowNoBreakSpace}]</strong>)
-    #%(<strong>[#{NoBreakSpace}#{node.text}#{NoBreakSpace}]</strong>)
+    %(<button>#{(@theme.button_content || '%s').sub '%s', node.text}</button>)
   end
 
   def convert_inline_callout node

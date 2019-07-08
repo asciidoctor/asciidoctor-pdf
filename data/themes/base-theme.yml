@@ -21,6 +21,9 @@ base_line_height: 1.15
 base_line_height_length: 13.8
 base_border_color: 'EEEEEE'
 base_border_width: 0.5
+button_content: '[%s]'
+button_font_family: Courier
+button_font_style: bold
 link_font_color: '0000EE'
 literal_font_family: Courier
 heading_font_style: bold
