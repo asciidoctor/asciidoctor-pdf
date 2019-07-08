@@ -100,5 +100,17 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[0][:font_size]).to be > text[1][:font_size]
       (expect text[0][:y]).to be > text[1][:y]
     end
+
+    it 'should add background and border to monospaced text defined in theme', integration: true do
+      theme_overrides = {
+        literal_background_color: 'f5f5f5',
+        literal_border_color: 'dddddd',
+        literal_border_width: 0.25,
+        literal_border_offset: 1.25,
+        literal_border_radius: 3,
+      }
+      to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: theme_overrides, analyze: true
+      (expect to_file).to visually_match 'text-formatter-code.pdf'
+    end
   end
 end
