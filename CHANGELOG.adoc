@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 1.5.0.beta.1 (2019-07-08) - @mojavelinux
 
 * rename pdf-style and pdf-stylesdir attributes to pdf-theme and pdf-themesdir, respectively (while still honoring the old names for compatibility) (#1127)
 * don't load fallback font by default; move fallback font to default-with-fallback-font theme
