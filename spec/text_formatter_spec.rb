@@ -124,5 +124,10 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button.pdf', pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }, analyze: true
       (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
+
+    it 'should use glyph from fallback font if not present in primary font' do
+      to_file = to_pdf_file '*を*', 'text-formatter-fallback-font.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      (expect to_file).to visually_match 'text-formatter-fallback-font.pdf'
+    end
   end
 end
