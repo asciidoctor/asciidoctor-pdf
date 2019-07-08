@@ -2777,8 +2777,8 @@ class Converter < ::Prawn::Document
     # FIXME probably need to treat doctypes differently
     is_book = doc.doctype == 'book'
     header = doc.header? ? doc.header : nil
-    # TODO make this section threshold configurable (perhaps in theme?)
-    sections = doc.find_by(context: :section) {|sect| sect.level < 3 && sect != header } || []
+    sectlevels = (@theme[%(#{periphery}_sectlevels)] || 2).to_i
+    sections = doc.find_by(context: :section) {|sect| sect.level <= sectlevels && sect != header } || []
 
     # FIXME we need a proper model for all this page counting
     # FIXME we make a big assumption that part & chapter start on new pages
