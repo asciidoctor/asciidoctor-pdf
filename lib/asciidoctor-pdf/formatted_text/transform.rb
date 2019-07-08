@@ -30,7 +30,13 @@ class Transform
         color: theme.literal_font_color,
         font: theme.literal_font_family,
         size: theme.literal_font_size,
-        styles: to_styles(theme.literal_font_style)
+        styles: to_styles(theme.literal_font_style),
+        background_color: (monospaced_bg_color = theme.literal_background_color),
+        border_width: (monospaced_border_width = theme.literal_border_width),
+        border_color: monospaced_border_width && (theme.literal_border_color || theme.base_border_color),
+        border_offset: (monospaced_bg_or_border = monospaced_bg_color || monospaced_border_width) && theme.literal_border_offset,
+        border_radius: monospaced_bg_or_border && theme.literal_border_radius,
+        callback: monospaced_bg_or_border && [TextBackgroundAndBorderRenderer],
       }.compact
     else
       @link_font_settings = { color: '0000FF' }
@@ -124,8 +130,8 @@ class Transform
     when :em
       styles << :italic
     when :code
-      # NOTE prefer old value, except for styles, which should be combined
-      fragment.update(@monospaced_font_settings) {|k, old_v, new_v| k == :styles ? old_v.merge(new_v) : old_v }
+      # NOTE prefer old value, except for styles and callback, which should be combined
+      fragment.update(@monospaced_font_settings) {|k, oval, nval| k == :styles ? oval.merge(nval) : (k == :callback ? oval.union(nval) : oval) }
     when :color
       if !fragment[:color]
         if (rgb = attrs[:rgb])

@@ -28,6 +28,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * automatically set pdf-stylesdir if pdf-style ends with .yml and pdf-stylesdir is not specified (#1126)
 * replace hyphens with underscores in top-level theme keys
 * allow hyphens to be used in variable references in theme (#1122)
+* allow theme to control background and border of inline code (literal) (#306)
 * resolve null color value in theme to nil (aka not set)
 * add support for cgi-style options on source language when syntax highlighting with Rouge (#1102)
 * apply custom theme to chronicles example to customize running content and demonstrate how to extend default theme
