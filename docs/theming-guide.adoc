@@ -3303,6 +3303,7 @@ To avoid this problem, reduce the height of the running content periphery or mak
 |Key |Value Type |Example
 
 3+|[#key-prefix-running-content]*Key Prefix:* <<key-prefix-running-content,running-content>>
+
 |start-at
 |title {vbar} toc {vbar} body +
 (default: body)
@@ -3382,6 +3383,12 @@ To avoid this problem, reduce the height of the running content periphery or mak
 (default: _not set_)
 |header:
   image-vertical-align: 4
+
+|sectlevels
+|Integer +
+(default: 2)
+|header:
+  sectlevels: 3
 
 |text-transform
 |<<text-transforms,Text transform>> +
@@ -3483,6 +3490,12 @@ To avoid this problem, reduce the height of the running content periphery or mak
 (default: _not set_)
 |footer:
   image-vertical-align: 4
+
+|sectlevels
+|Integer +
+(default: 2)
+|footer:
+  sectlevels: 3
 
 |text-transform
 |<<text-transforms,Text transform>> +

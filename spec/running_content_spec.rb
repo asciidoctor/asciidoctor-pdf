@@ -599,4 +599,44 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       }).to log_message severity: :WARN, message: %r(image to embed not found or not readable.*data/themes/no-such-image\.png$)
     end
   end
+
+  it 'should assign section titles down to sectlevels defined in theme' do
+    input = <<~'EOS'
+    = Document Title
+    :doctype: book
+
+    == A
+
+    <<<
+
+    === Level 2
+
+    <<<
+
+    ==== Level 3
+
+    <<<
+
+    ===== Level 4
+
+    == B
+    EOS
+
+    {
+      nil => ['A', 'Level 2', 'Level 2', 'Level 2', 'B'],
+      2 => ['A', 'Level 2', 'Level 2', 'Level 2', 'B'],
+      3 => ['A', 'Level 2', 'Level 3', 'Level 3', 'B'],
+      4 => ['A', 'Level 2', 'Level 3', 'Level 4', 'B'],
+    }.each do |sectlevels, expected|
+      theme_overrides = {
+        footer_sectlevels: sectlevels,
+        footer_font_family: 'Helvetica',
+        footer_recto_right_content: '{section-or-chapter-title}',
+        footer_verso_left_content: '{section-or-chapter-title}',
+      }
+      pdf = to_pdf input, attributes: {}, pdf_theme: theme_overrides, analyze: true
+      titles = (pdf.find_text font_name: 'Helvetica').map {|it| it[:string] }
+      (expect titles).to eql expected
+    end
+  end
 end

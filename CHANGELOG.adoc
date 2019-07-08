@@ -35,6 +35,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * resize running content to fit page layout (#1036)
 * exclude border width from running content area (#1109)
 * support text-transform property in running content (#702)
+* make depth of section titles assigned to section-title attribute in running content configurable (#1141)
 * support width attribute on image in running content if no other dimension attribute is specified
 * apply correct scale-down logic to image in running content
 * allow image format to be specified using format attribute (cover page image, page background image, running content image) (#1132)
