@@ -1956,6 +1956,7 @@ class Converter < ::Prawn::Document
     end
 
     caption_side = (theme.table_caption_side || :top).to_sym
+    caption_max_width = (theme.table_caption_max_width || 'fit-content').to_s
 
     table_settings = {
       header: table_header,
@@ -1988,7 +1989,8 @@ class Converter < ::Prawn::Document
     table table_data, table_settings do
       # NOTE call width to capture resolved table width
       table_width = width
-      @pdf.layout_table_caption node, table_width, alignment if node.title? && caption_side == :top
+      caption_max_width = caption_max_width == 'fit-content' ? table_width : nil
+      @pdf.layout_table_caption node, alignment, caption_max_width if node.title? && caption_side == :top
       if grid == 'none' && frame == 'none'
         if table_header
           rows(0).tap do |r|
@@ -2047,7 +2049,7 @@ class Converter < ::Prawn::Document
         #end
       end
     end
-    layout_table_caption node, table_width, alignment, :bottom if node.title? && caption_side == :bottom
+    layout_table_caption node, alignment, caption_max_width, caption_side if node.title? && caption_side == :bottom
     theme_margin :block, :bottom
   end
 
@@ -2624,14 +2626,19 @@ class Converter < ::Prawn::Document
   end
 
   # Render the caption for a table and return the height of the rendered content
-  def layout_table_caption node, width, alignment = :left, side = :top
-    # QUESTION should we confine width of title to width of table?
-    if alignment == :left || (excess = bounds.width - width) == 0
-      layout_caption node, side: side
-    else
-      indent excess * (alignment == :center ? 0.5 : 1) do
-        layout_caption node, side: side
+  def layout_table_caption node, table_alignment = :left, max_width = nil, side = :top
+    if max_width && (remainder = bounds.width - max_width) > 0
+      case table_alignment
+      when :right
+        indent(remainder) { layout_caption node, side: side }
+      when :center
+        side_margin = remainder * 0.5
+        indent(side_margin, side_margin) { layout_caption node, side: side }
+      else # :left
+        indent(0, remainder) { layout_caption node, side: side }
       end
+    else
+      layout_caption node, side: side
     end
   end
 

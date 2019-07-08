@@ -10,6 +10,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * rename pdf-style and pdf-stylesdir attributes to pdf-theme and pdf-themesdir, respectively (while still honoring the old names for compatibility) (#1127)
 * apply cell padding to table cells in the head row (#1098)
 * allow the theme to control the padding of table cells in the head row using the table_head_cell_padding key (#1098)
+* fix position of table caption for autowidth table when caption align is center (#1138)
+* adjust width of table caption to match width of table unless table_caption_max_width is none in theme (#1138)
 * fix position of text in running header (#1087)
 * ignore start attribute on ordered list if marker is disabled
 * allow start value to be negative for ordered lists that use arabic or roman numbering (#498)

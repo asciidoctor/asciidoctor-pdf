@@ -368,4 +368,133 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect nested_cell_1[:x]).to be < nested_cell_2[:x]
     end
   end
+
+  context 'Caption' do
+    it 'should add title as caption above table by default' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      .Table description
+      |===
+      | Col A | Col B
+
+      | A1
+      | B1
+
+      | A2
+      | B2
+      |===
+      EOS
+
+      caption_text = pdf.text[0]
+      (expect caption_text[:string]).to eql 'Table 1. Table description'
+      (expect caption_text[:font_name]).to eql 'NotoSerif-Italic'
+      (expect caption_text[:y]).to be > (pdf.find_text 'Col A')[0][:y]
+    end
+
+    it 'should add title as caption below table if table_caption_side key in theme is bottom' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_caption_side: 'bottom' }, analyze: true
+      .Table description
+      |===
+      | Col A | Col B
+
+      | A1
+      | B1
+
+      | A2
+      | B2
+      |===
+      EOS
+
+      caption_text = pdf.text[-1]
+      (expect caption_text[:string]).to eql 'Table 1. Table description'
+      (expect caption_text[:y]).to be < (pdf.find_text 'B2')[0][:y]
+    end
+
+    it 'should confine caption to width of table by default', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'table-caption-width.pdf', pdf_theme: { caption_align: 'center' }
+      .A rather long description for this table
+      [%header%autowidth]
+      |===
+      | Col A | Col B
+
+      | A1
+      | B1
+
+      | A2
+      | B2
+      |===
+
+      .A rather long description for this table
+      [%header%autowidth,align=center]
+      |===
+      | Col C | Col D
+
+      | C1
+      | D1
+
+      | C2
+      | D2
+      |===
+
+      .A rather long description for this table
+      [%header%autowidth,align=right]
+      |===
+      | Col E | Col F
+
+      | E1
+      | F1
+
+      | E2
+      | F2
+      |===
+      EOS
+
+      (expect to_file).to visually_match 'table-caption-width.pdf'
+    end
+
+    it 'should not confine caption to width of table if table_caption_max_width key in theme is none' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { caption_align: 'center', table_caption_max_width: 'none' }, analyze: true
+      :table-caption!:
+
+      .A rather long description for this table
+      [%autowidth]
+      |===
+      | Col A | Col B
+
+      | A1
+      | B1
+
+      | A2
+      | B2
+      |===
+
+      .A rather long description for this table
+      [%autowidth,align=center]
+      |===
+      | Col C | Col D
+
+      | C1
+      | D1
+
+      | C2
+      | D2
+      |===
+
+      .A rather long description for this table
+      [%autowidth,align=right]
+      |===
+      | Col E | Col F
+
+      | E1
+      | F1
+
+      | E2
+      | F2
+      |===
+      EOS
+
+      caption_texts = pdf.find_text 'A rather long description for this table'
+      (expect caption_texts).to have_size 3
+      (expect caption_texts.map {|it| it[:x] }.uniq).to have_size 1
+    end
+  end
 end
