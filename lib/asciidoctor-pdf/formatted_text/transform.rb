@@ -79,7 +79,7 @@ class Transform
               image_format: attributes[:format],
               # a zero-width space in the text will cause the image to be duplicated
               text: (attributes[:alt].delete ZeroWidthSpace),
-              callback: InlineImageRenderer
+              callback: [InlineImageRenderer],
             }
             if (img_w = attributes[:width])
               fragment[:image_width] = img_w
@@ -168,7 +168,7 @@ class Transform
         fragment[:width] = value
         if (value = attrs[:align])
           fragment[:align] = value.to_sym
-          fragment[:callback] = InlineTextAligner
+          (fragment[:callback] ||= []) << InlineTextAligner
         end
       end
       #if !fragment[:character_spacing] && (value = attrs[:character_spacing])
@@ -191,7 +191,7 @@ class Transform
           if (type = attrs[:type])
             fragment[:type] = type.to_sym
           end
-          fragment[:callback] = InlineDestinationMarker
+          (fragment[:callback] ||= []) << InlineDestinationMarker
           visible = false
         end
       end
