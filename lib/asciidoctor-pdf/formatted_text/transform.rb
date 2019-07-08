@@ -25,13 +25,13 @@ class Transform
         font: theme.link_font_family,
         size: theme.link_font_size,
         styles: to_styles(theme.link_font_style, theme.link_text_decoration)
-      }.select! {|_, val| val }
+      }.compact
       @monospaced_font_settings = {
         color: theme.literal_font_color,
         font: theme.literal_font_family,
         size: theme.literal_font_size,
         styles: to_styles(theme.literal_font_style)
-      }.select! {|_, val| val }
+      }.compact
     else
       @link_font_settings = { color: '0000FF' }
       @monospaced_font_settings = { font: 'Courier', size: 0.9 }
