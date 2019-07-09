@@ -175,20 +175,7 @@ class Converter < ::Prawn::Document
       blk_0 = blk_1 = preface = nil
     end
 
-    # NOTE on_page_create is called within a float context
-    # NOTE on_page_create is not called for imported pages, front and back cover pages, and other image pages
-    on_page_create do
-      # NOTE we assume in prepress that physical page number reflects page side
-      if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_side]) != page_margin
-        set_page_margin next_page_margin
-      end
-      # TODO implement as a watermark (on top)
-      if (bg_image = @page_bg_image[page_side])
-        canvas { image bg_image[0], ({ position: :center, vposition: :center }.merge bg_image[1]) }
-      elsif @page_bg_color && @page_bg_color != 'FFFFFF'
-        fill_absolute_bounds @page_bg_color
-      end
-    end
+    on_page_create &(method :init_page)
 
     layout_cover_page doc, :front
     if (insert_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
@@ -470,6 +457,21 @@ class Converter < ::Prawn::Document
       info[:CreationDate] = ::Time.parse(doc.attr 'localdatetime') rescue (now ||= ::Time.now)
     end
     info
+  end
+
+  # NOTE init_page is called within a float context
+  # NOTE init_page is not called for imported pages, front and back cover pages, and other image pages
+  def init_page *args
+    # NOTE we assume in prepress that physical page number reflects page side
+    if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_side]) != page_margin
+      set_page_margin next_page_margin
+    end
+    # TODO implement as a watermark (on top)
+    if (bg_image = @page_bg_image[page_side])
+      canvas { image bg_image[0], ({ position: :center, vposition: :center }.merge bg_image[1]) }
+    elsif @page_bg_color && @page_bg_color != 'FFFFFF'
+      fill_absolute_bounds @page_bg_color
+    end
   end
 
   def convert_section sect, opts = {}
