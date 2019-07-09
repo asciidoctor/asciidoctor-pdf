@@ -100,6 +100,120 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
 
       (expect to_file).to visually_match 'document-title-background-color.pdf'
     end
+
+    it 'set background image of title page from title-page-background-image attribute', integration: true do
+      pdf = to_pdf <<~EOS
+      = The Amazing
+      Author Name
+      :doctype: book
+      :title-page-background-image: image:bg.png[]
+
+      beginning
+
+      <<<
+
+      middle
+
+      <<<
+
+      end
+      EOS
+
+      (expect pdf.pages).to have_size 4
+      [1, 0, 0, 0].each_with_index do |expected_num_images, idx|
+        images = pdf.pages[idx].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+        (expect images).to have_size expected_num_images
+      end
+    end
+
+    it 'set background image when document has image cover page', integration: true do
+      pdf = to_pdf <<~EOS
+      = The Amazing
+      Author Name
+      :doctype: book
+      :front-cover-image: image:cover.jpg[]
+      :title-page-background-image: image:bg.png[]
+
+      beginning
+
+      <<<
+
+      middle
+
+      <<<
+
+      end
+      EOS
+
+      (expect pdf.pages).to have_size 5
+      [1, 1, 0, 0, 0].each_with_index do |expected_num_images, idx|
+        images = pdf.pages[idx].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+        (expect images).to have_size expected_num_images
+      end
+    end
+
+    it 'set background image when document has PDF cover page', integration: true do
+      pdf = to_pdf <<~EOS
+      = The Amazing
+      Author Name
+      :doctype: book
+      :front-cover-image: image:blue-letter.pdf[]
+      :title-page-background-image: image:tux.png[]
+      :page-background-image: image:bg.png[]
+
+      beginning
+
+      <<<
+
+      middle
+
+      <<<
+
+      end
+      EOS
+
+      images_by_page = []
+      (expect pdf.pages).to have_size 5
+      [0, 1, 1, 1, 1].each_with_index do |expected_num_images, idx|
+        images = pdf.pages[idx].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+        images_by_page << images
+        (expect images).to have_size expected_num_images
+      end
+
+      (expect images_by_page[1][0].data).not_to eql images_by_page[2][0].data
+      (expect images_by_page[2..-1].map {|it| it[0].data }.uniq).to have_size 1
+    end
+
+    it 'set background color when document has PDF cover page', integration: true do
+      pdf = to_pdf <<~EOS, pdf_theme: { title_page_background_color: 'eeeeee' }
+      = The Amazing
+      Author Name
+      :doctype: book
+      :front-cover-image: image:blue-letter.pdf[]
+      :title-page-background-image: none
+      :page-background-image: image:bg.png[]
+
+      beginning
+
+      <<<
+
+      middle
+
+      <<<
+
+      end
+      EOS
+
+      images_by_page = []
+      (expect pdf.pages).to have_size 5
+      [0, 0, 1, 1, 1].each_with_index do |expected_num_images, idx|
+        images = pdf.pages[idx].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+        images_by_page << images
+        (expect images).to have_size expected_num_images
+      end
+
+      (expect images_by_page[2..-1].map {|it| it[0].data }.uniq).to have_size 1
+    end
   end
 
   context 'article' do

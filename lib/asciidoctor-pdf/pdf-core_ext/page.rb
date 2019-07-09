@@ -35,4 +35,16 @@ class PDF::Core::Page
   def empty?
     content.stream.filtered_stream == (@tare_content_stream ||= InitialPageContent) && document.page_number > 0
   end
+
+  # Reset the content of the page.
+  # Note that this method may leave behind an orphaned background image.
+  def reset_content
+    unless content.stream.filtered_stream == InitialPageContent
+      resources[:XObject].clear
+      new_content = document.state.store[document.ref({})]
+      new_content << 'q' << ?\n
+      content.replace new_content
+      @tare_content_stream = InitialPageContent
+    end
+  end
 end

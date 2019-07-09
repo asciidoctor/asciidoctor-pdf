@@ -317,10 +317,10 @@ class Converter < ::Prawn::Document
       @page_bg_image = { verso: nil, recto: nil }
     end
     if (bg_image = resolve_background_image doc, theme, 'page-background-image-verso')
-      @page_bg_image[:verso] = bg_image[0] ? bg_image : nil
+      @page_bg_image[:verso] = bg_image[0] && bg_image
     end
-    if (bg_image = resolve_background_image doc, theme, 'page-background-image-recto') && bg_image[0]
-      @page_bg_image[:recto] = bg_image[0] ? bg_image : nil
+    if (bg_image = resolve_background_image doc, theme, 'page-background-image-recto')
+      @page_bg_image[:recto] = bg_image[0] && bg_image
     end
     @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
     @fallback_fonts = [*theme.font_fallbacks]
@@ -2376,16 +2376,24 @@ class Converter < ::Prawn::Document
   def layout_title_page doc
     return unless doc.header? && !doc.notitle
 
-    prev_bg_image = @page_bg_image[side = page_side]
+    # NOTE a new page may have already been started at this point, so decide what to do with it
+    if page.empty?
+      page.reset_content if (recycle = @ppbook ? verso_page? : true)
+    elsif @ppbook && verso_page?
+      start_new_page
+    end
+
+    side = recycle ? page_side : (page_side page_number + 1)
+    prev_bg_image = @page_bg_image[side]
     prev_bg_color = @page_bg_color
-    @page_bg_image[side] = (bg_image = resolve_background_image doc, @theme, 'title-page-background-image') && bg_image[0] ? bg_image : nil
+    if (bg_image = resolve_background_image doc, @theme, 'title-page-background-image')
+      @page_bg_image[side] = bg_image[0] && bg_image
+    end
     if (bg_color = resolve_theme_color :title_page_background_color)
       @page_bg_color = bg_color
     end
-    # NOTE a new page will already be started if the cover image is a PDF
-    start_new_page unless page.empty?
-    start_new_page if @ppbook && verso_page?
-    @page_bg_image[side] = prev_bg_image if prev_bg_image
+    recycle ? (init_page self) : start_new_page
+    @page_bg_image[side] = prev_bg_image if bg_image
     @page_bg_color = prev_bg_color if bg_color
 
     # IMPORTANT this is the first page created, so we need to set the base font

@@ -749,7 +749,7 @@ module Extensions
     else
       image file, (options.merge position: :center, vposition: :center, fit: [bounds.width, bounds.height])
     end
-    # NOTE advance to new page just in case the image function threw off the cursor
+    # NOTE advance to newly created page just in case the image function threw off the cursor
     go_to_page image_page_number
     nil
   end
