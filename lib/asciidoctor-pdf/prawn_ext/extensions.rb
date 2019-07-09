@@ -726,9 +726,11 @@ module Extensions
 
   # Import the specified page into the current document.
   #
-  # By default, advance to the subsequent page, creating one if necessary.
+  # By default, advance to the next page afterwards, creating it if necessary.
   # This behavior can be disabled by passing the option `advance: false`.
-  #
+  # However, due to how page creation works in Prawn, understand that advancing
+  # to the next page is necessary to prevent the size & layout of the imported
+  # page from affecting a newly created page.
   def import_page file, opts = {}
     prev_page_layout = page.layout
     prev_page_size = page.size
