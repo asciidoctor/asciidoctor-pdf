@@ -188,7 +188,7 @@ class Converter < ::Prawn::Document
       elsif @page_bg_color && @page_bg_color != 'FFFFFF'
         fill_absolute_bounds @page_bg_color
       end
-    end if respond_to? :on_page_create
+    end
 
     layout_cover_page doc, :front
     if (insert_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
