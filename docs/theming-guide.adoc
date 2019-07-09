@@ -1187,6 +1187,36 @@ The keys in this category are used for inline monospaced text in prose and table
 
 3+|[#key-prefix-literal]*Key Prefix:* <<key-prefix-literal,literal>>
 
+|background-color
+|<<colors,Color>> +
+(default: _not set_)
+|literal:
+  background-color: #f5f5f5
+
+|border-color^[1]^
+|<<colors,Color>> +
+(default: _not set_)
+|literal:
+  border-color: #cccccc
+
+|border-offset^[2]^
+|<<values,Number>> +
+(default: 0)
+|literal:
+  border-offset: 2
+
+|border-radius
+|<<values,Number>> +
+(default: _not set_)
+|literal:
+  border-radius: 3
+
+|border-width
+|<<values,Number>> +
+(default: $base-border-width)
+|literal:
+  border-width: 0.5
+
 |font-color
 |<<colors,Color>> +
 (default: _inherit_)
@@ -1211,6 +1241,11 @@ The keys in this category are used for inline monospaced text in prose and table
 |literal:
   font-style: bold
 |===
+. The border is only used if a border color is specified and the border width is not explicitly set to 0.
+The border only works properly if the literal phrase does not have nested formatting.
+Otherwise, the border will be inherited, producing a less than desirable result.
+. The border offset is the amount that the background and border swells around the text.
+It does not affect the distance between the formatted phrase and the phrases that surround it.
 
 [#keys-heading]
 === Heading
@@ -1937,6 +1972,82 @@ The keys in this category are used to control the style of callout numbers (conu
 . Currently, the font must contain the circle numbers starting at glyph U+2460.
 . font-family, font-size, font-style, and line-height are only used for markers in a colist.
 These properties are inherited for conums inside a verbatim block.
+
+[#keys-button]
+=== Button
+
+The keys in this category apply to a button reference (generated from the inline button macro).
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-button]*Key Prefix:* <<key-prefix-button,button>>
+
+|background-color
+|<<colors,Color>> +
+(default: _not set_)
+|button:
+  background-color: #0000ff
+
+|border-color^[1]^
+|<<colors,Color>> +
+(default: _not set_)
+|button:
+  border-color: #cccccc
+
+|border-offset^[2]^
+|<<values,Number>> +
+(default: 0)
+|button:
+  border-offset: 2
+
+|border-radius
+|<<values,Number>> +
+(default: _not set_)
+|button:
+  border-radius: 3
+
+|border-width
+|<<values,Number>> +
+(default: $base-border-width)
+|button:
+  border-width: 0.5
+
+|content^[3]^
+|<<quoted-string,Quoted string>> +
+(default: "%s")
+|button:
+  content: "[\u2009%s\u2009]"
+
+|font-color
+|<<colors,Color>> +
+(default: _inherit_)
+|button:
+  font-color: #ffffff
+
+|font-family
+|<<fonts,Font family name>> +
+(default: $base-font-family)
+|button:
+  font-family: M+ 1mn
+
+|font-size
+|<<values,Number>> +
+(default: _inherit_)
+|button:
+  font-size: 12
+
+|font-style
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|button:
+  font-style: bold
+|===
+. The border is only used if a border color is specified and the border width is not explicitly set to 0.
+. The border offset is the amount that the background and border swells around the text.
+It does not affect the distance between the formatted phrase and the phrases that surround it.
+. The character sequence `%s` in the content key gets replaced with the button label.
 
 [#keys-menu]
 === Menu
