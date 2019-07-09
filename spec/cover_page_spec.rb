@@ -33,7 +33,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
   end
 
-  it 'should only add cover page if front-cover-image is set and document has no content' do
+  it 'should create document with cover page only if front-cover-image is set and document has no content' do
     pdf = to_pdf %(:front-cover-image: #{fixture_file 'cover.jpg', relative: true})
     (expect pdf.pages).to have_size 1
     (expect pdf.pages[0].text).to be_empty
@@ -143,5 +143,26 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     ensure
       File.unlink dest_file
     end
+  end
+
+  it 'should not allow page size of PDF cover page to affect page size of document' do
+    input = <<~EOS
+    = Document Title
+    :front-cover-image: #{fixture_file 'blue-letter.pdf', relative: true}
+
+    content
+    EOS
+
+    pdf = to_pdf input, analyze: :rect
+    rects = pdf.rectangles
+    (expect rects).to have_size 1
+    (expect rects[0]).to eql({ point: [0.0, 0.0], width: 612.0, height: 792.0 })
+
+    pdf = to_pdf input, analyze: true
+    (expect pdf.pages).to have_size 2
+    (expect pdf.pages[0][:text]).to be_empty
+    (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+    (expect pdf.pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
+    (expect pdf.pages[1][:text]).not_to be_empty
   end
 end
