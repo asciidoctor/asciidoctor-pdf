@@ -5,6 +5,10 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+* use more robust mechanism to detect an empty page; tare content stream after adding page background color or image
+
 == 1.5.0.beta.1 (2019-07-08) - @mojavelinux
 
 * rename pdf-style and pdf-stylesdir attributes to pdf-theme and pdf-themesdir, respectively (while still honoring the old names for compatibility) (#1127)

@@ -143,6 +143,29 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pages[1][:text]).to be_empty
       (expect pages[2][:text][-1][:string]).to eql '3'
     end
+
+    it 'should replace empty page at location of block macro if target is a PDF' do
+      pdf = to_pdf <<~'EOS', attributes: { 'imagesdir' => fixtures_dir }, analyze: true
+      :page-background-image: image:bg.png[]
+
+      before
+
+      <<<
+
+      image::blue-letter.pdf[]
+
+      after
+      EOS
+
+      pages = pdf.pages
+      (expect pages).to have_size 3
+      (expect pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
+      (expect pages[0][:text][-1][:string]).to eql '1'
+      (expect pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+      # NOTE no running content on imported pages
+      (expect pages[1][:text]).to be_empty
+      (expect pages[2][:text][-1][:string]).to eql '3'
+    end
   end
 
   context 'Data URI' do

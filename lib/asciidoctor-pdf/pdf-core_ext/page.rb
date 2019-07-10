@@ -1,4 +1,6 @@
 class PDF::Core::Page
+  InitialPageContent = %(q\n)
+
   # Restore the new_content_stream method from PDF::Core::Page
   #
   # The prawn-templates gem relies on the new_content_stream method on
@@ -22,4 +24,15 @@ class PDF::Core::Page
   def imported_page?
     @imported_page
   end unless method_defined? :imported_page?
+
+  # Record the page's current state as the tare content stream (i.e., empty, meaning no content has been written).
+  def tare_content_stream
+    @tare_content_stream = content.stream.filtered_stream
+  end
+
+  # Returns whether the current page is empty based on tare content stream (i.e., no content has been written).
+  # Returns false if a page has not yet been created.
+  def empty?
+    content.stream.filtered_stream == (@tare_content_stream ||= InitialPageContent) && document.page_number > 0
+  end
 end

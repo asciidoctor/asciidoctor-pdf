@@ -181,10 +181,10 @@ class Converter < ::Prawn::Document
     if (insert_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
       layout_title_page doc
       # NOTE a new page will already be started if the cover image is a PDF
-      start_new_page unless page_is_empty?
+      start_new_page unless page.empty?
     else
       # NOTE a new page will already be started if the cover image is a PDF
-      start_new_page unless page_is_empty?
+      start_new_page unless page.empty?
       body_start_page_number = page_number
       if doc.header? && !doc.notitle
         theme_font :heading, level: 1 do
@@ -258,7 +258,7 @@ class Converter < ::Prawn::Document
 
     # NOTE delete orphaned page (a page was created but there was no additional content)
     # QUESTION should we delete page if document is empty? (leaving no pages?)
-    delete_page if page_is_empty? && page_count > 1
+    delete_page if page.empty? && page_count > 1
 
     toc_page_nums = insert_toc ? (layout_toc doc, num_toc_levels, toc_page_nums.first, num_front_matter_pages[1], toc_start) : []
 
@@ -469,8 +469,10 @@ class Converter < ::Prawn::Document
     # TODO implement as a watermark (on top)
     if (bg_image = @page_bg_image[page_side])
       canvas { image bg_image[0], ({ position: :center, vposition: :center }.merge bg_image[1]) }
+      page.tare_content_stream
     elsif @page_bg_color && @page_bg_color != 'FFFFFF'
       fill_absolute_bounds @page_bg_color
+      page.tare_content_stream
     end
   end
 
@@ -1266,7 +1268,7 @@ class Converter < ::Prawn::Document
       if ::File.readable? image_path
         # NOTE import_page automatically advances to next page afterwards
         # QUESTION should we add destination to top of imported page?
-        return import_page image_path, replace: page_is_empty? if image_format == 'pdf'
+        return import_page image_path, replace: page.empty? if image_format == 'pdf'
       elsif image_format == 'pdf'
         logger.warn %(pdf to insert not found or not readable: #{image_path}) unless scratch?
         # QUESTION should we use alt text in this case?
@@ -2080,7 +2082,7 @@ class Converter < ::Prawn::Document
     end
 
     if at_page_top?
-      if page_layout && page_layout != page.layout && page_is_empty?
+      if page_layout && page_layout != page.layout && page.empty?
         delete_page
         advance_page layout: page_layout
       end
@@ -2381,7 +2383,7 @@ class Converter < ::Prawn::Document
       @page_bg_color = bg_color
     end
     # NOTE a new page will already be started if the cover image is a PDF
-    start_new_page unless page_is_empty?
+    start_new_page unless page.empty?
     start_new_page if @ppbook && verso_page?
     @page_bg_image[side] = prev_bg_image if prev_bg_image
     @page_bg_color = prev_bg_color if bg_color

@@ -141,17 +141,6 @@ module Extensions
     @y == @margin_box.absolute_top
   end
 
-  # Returns whether the current page is empty (i.e., no content has been written).
-  # Returns false if a page has not yet been created.
-  #
-  def empty_page?
-    # if we are at the page top, assume we didn't write anything to the page
-    #at_page_top?
-    # ...or use more robust, low-level check (initial value of content is "q\n")
-    page_number > 0 && page.content.stream.filtered_stream == InitialPageContent
-  end
-  alias page_is_empty? empty_page?
-
   # Returns whether the current page is the last page in the document.
   #
   def last_page?
@@ -789,9 +778,7 @@ module Extensions
   # Start a new page without triggering the on_page_create callback
   #
   def start_new_page_discretely options = {}
-    perform_discretely do
-      start_new_page options
-    end
+    perform_discretely { start_new_page options }
   end
 
   # Grouping

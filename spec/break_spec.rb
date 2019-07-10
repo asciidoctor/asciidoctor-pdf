@@ -78,13 +78,20 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should not leave blank page at the end of document' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      input = <<~'EOS'
       foo
 
       <<<
       EOS
 
-      (expect pdf.pages).to have_size 1
+      [
+        {},
+        { page_background_color: 'eeeeee' },
+        { page_background_image: %(image:#{fixture_file 'square.svg'}[]) },
+      ].each do |theme_overrides|
+        pdf = to_pdf input, pdf_theme: theme_overrides, analyze: :page
+        (expect pdf.pages).to have_size 1
+      end
     end
 
     it 'should change layout if page break specifies page-layout attribute' do
