@@ -3698,7 +3698,9 @@ class Converter < ::Prawn::Document
         str_to_pt width
       end
     elsif opts[:use_fallback] && (width = @theme.image_width)
-      if width.end_with? '%'
+      if ::Numeric === width
+        width
+      elsif (width = width.to_s).end_with? '%'
         (width.to_f / 100) * max_width
       elsif opts[:support_vw] && (width.end_with? 'vw')
         (width.chomp 'vw').extend ViewportWidth

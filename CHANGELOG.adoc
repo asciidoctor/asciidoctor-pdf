@@ -7,6 +7,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* fix crash when image_width is defined in theme (#995)
 * use more robust mechanism to detect an empty page; tare content stream after adding page background color or image
 
 == 1.5.0.beta.1 (2019-07-08) - @mojavelinux
