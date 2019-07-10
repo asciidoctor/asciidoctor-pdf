@@ -113,6 +113,28 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect to_file).to visually_match 'image-full-width.pdf'
     end
+
+    it 'should use the numeric width defined in the theme if an explicit width is not specified', integration: true do
+      [72, '72'].each do |image_width|
+        to_file = to_pdf_file <<~'EOS', 'image-numeric-fallback-width.pdf', pdf_theme: { image_width: image_width }
+        image::tux.png[pdfwidth=204px]
+
+        image::tux.png[,204]
+
+        image::tux.png[]
+        EOS
+
+        (expect to_file).to visually_match 'image-numeric-fallback-width.pdf'
+      end
+    end
+
+    it 'should use the percentage width defined in the theme if an explicit width is not specified', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'image-percentage-fallback-width.pdf', pdf_theme: { image_width: '50%' }
+      image::tux.png[]
+      EOS
+
+      (expect to_file).to visually_match 'image-percentage-fallback-width.pdf'
+    end
   end
 
   context 'BMP' do
