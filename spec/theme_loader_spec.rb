@@ -379,8 +379,10 @@ describe Asciidoctor::PDF::ThemeLoader do
     it 'should allow hex color values to be prefixed with # for any key' do
       theme = subject.load_theme 'hex-color-shorthand', fixtures_dir
       (expect theme.base_font_color).to eql '222222'
+      (expect theme.base_border_color).to eql 'DDDDDD'
       (expect theme.page_background_color).to eql 'FEFEFE'
       (expect theme.link_font_color).to eql '428BCA'
+      (expect theme.literal_font_color).to eql 'AA0000'
       (expect theme.footer_font_color).to eql '000099'
       (expect theme.footer_background_color).to be_nil
     end

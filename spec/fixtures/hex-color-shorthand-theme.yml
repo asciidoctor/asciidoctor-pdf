@@ -3,11 +3,14 @@ brand:
   primary: #428bca
 base: # this is a trailing line comment
   font_color: #222
+  border_color: #DDDDDD
 page:
   background:
     color: '#fefefe'
 link:
   font_color: $brand_primary
+literal:
+  font_color: "#a00"
 footer:
   background_color: null
   font-color: 009
