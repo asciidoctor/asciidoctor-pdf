@@ -1338,6 +1338,7 @@ class Converter < ::Prawn::Document
           add_dest_for_block node if node.id
           # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
           # breakage occurs when running content (stamps) are added to page
+          # seems to be resolved as of Prawn 2.2.2
           update_colors if graphic_state.color_space.empty?
           # NOTE prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
           # NOTE cursor advanced automatically
@@ -1373,6 +1374,7 @@ class Converter < ::Prawn::Document
           add_dest_for_block node if node.id
           # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
           # breakage occurs when running content (stamps) are added to page
+          # seems to be resolved as of Prawn 2.2.2
           update_colors if graphic_state.color_space.empty?
           # NOTE specify both width and height to avoid recalculation
           embed_image image_obj, image_info, width: rendered_w, height: rendered_h, position: alignment
