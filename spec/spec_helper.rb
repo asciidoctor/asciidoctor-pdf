@@ -258,7 +258,7 @@ RSpec.configure do |config|
       (opts[:attributes] ||= {}).update attribute_overrides
     end
     if Hash === (pdf_theme = opts[:pdf_theme])
-      opts[:pdf_theme] = build_pdf_theme pdf_theme
+      opts[:pdf_theme] = build_pdf_theme pdf_theme, (pdf_theme.delete :extends)
     end
     if Pathname === input
       opts[:to_dir] = output_dir unless opts.key? :to_dir
@@ -284,7 +284,7 @@ RSpec.configure do |config|
       (opts[:attributes] ||= {}).update attribute_overrides
     end
     if Hash === (pdf_theme = opts[:pdf_theme])
-      opts[:pdf_theme] = build_pdf_theme pdf_theme
+      opts[:pdf_theme] = build_pdf_theme pdf_theme, (pdf_theme.delete :extends)
     end
     if Pathname === input
       Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)
@@ -294,8 +294,8 @@ RSpec.configure do |config|
     to_file
   end
 
-  def build_pdf_theme overrides = {}
-    Asciidoctor::PDF::ThemeLoader.load_theme.tap {|theme| overrides.each {|k, v| theme[k] = v } }
+  def build_pdf_theme overrides = {}, extends = nil
+    (Asciidoctor::PDF::ThemeLoader.load_theme extends).tap {|theme| overrides.each {|k, v| theme[k] = v } }
   end
 
   def extract_outline pdf, list = pdf.outlines
