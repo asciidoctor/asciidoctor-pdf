@@ -16,7 +16,6 @@ class ThemeLoader
   DataDir = ::File.expand_path(::File.join(::File.dirname(__FILE__), '..', '..', 'data'))
   ThemesDir = ::File.join DataDir, 'themes'
   FontsDir = ::File.join DataDir, 'fonts'
-  DefaultThemePath = ::File.expand_path 'default-theme.yml', ThemesDir
   BaseThemePath = ::File.expand_path 'base-theme.yml', ThemesDir
 
   VariableRx = /\$([a-z0-9_-]+)/
@@ -44,12 +43,12 @@ class ThemeLoader
 
   def self.resolve_theme_file theme_name = nil, theme_path = nil
     # if .yml extension is given, assume it's a path (don't append -theme.yml)
-    if ((theme_name ||= 'default').end_with? '.yml')
+    if theme_name && (theme_name.end_with? '.yml')
       # FIXME restrict to jail!
       theme_file = ::File.expand_path theme_name, theme_path
       theme_path ||= ::File.dirname theme_file
     else
-      theme_file = ::File.expand_path %(#{theme_name}-theme.yml), (theme_path || (theme_path = ThemesDir))
+      theme_file = ::File.expand_path %(#{theme_name || 'default'}-theme.yml), (theme_path ||= ThemesDir)
     end
     [theme_file, theme_path]
   end
@@ -69,7 +68,7 @@ class ThemeLoader
       load_base_theme
     else
       theme_data = load_file theme_file, nil, theme_path
-      unless theme_file == DefaultThemePath
+      unless (::File.dirname theme_file) == ThemesDir
         # QUESTION should we enforce any other fallback values?
         theme_data.base_align ||= 'left'
         theme_data.code_font_family ||= (theme_data.literal_font_family || 'Courier')
@@ -82,9 +81,9 @@ class ThemeLoader
 
   def self.load_file filename, theme_data = nil, theme_path = nil
     data = ::File.read filename, encoding: ::Encoding::UTF_8
-    data = data.each_line.map {|l|
-      l.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || (m[:k].end_with? 'color') ? "'#{m[:v]}'" : m[:v]}) }
-    }.join unless filename == DefaultThemePath
+    data = data.each_line.map {|line|
+      line.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || (m[:k].end_with? 'color') ? "'#{m[:v]}'" : m[:v]}) }
+    }.join unless (::File.dirname filename) == ThemesDir
     yaml_data = ::SafeYAML.load data
     if ::Hash === yaml_data && (yaml_data.key? 'extends')
       if (extends = yaml_data.delete 'extends')
@@ -93,7 +92,7 @@ class ThemeLoader
             theme_data = theme_data ? (::OpenStruct.new theme_data.to_h.merge load_base_theme.to_h) : load_base_theme
             next
           elsif extend_file == 'default' || extend_file == 'default-with-fallback-font'
-            extend_file, extend_theme_path = resolve_theme_file extend_file
+            extend_file, extend_theme_path = resolve_theme_file extend_file, ThemesDir
           elsif extend_file.start_with? './'
             extend_file, extend_theme_path = resolve_theme_file extend_file, (::File.dirname filename)
           else
@@ -103,7 +102,7 @@ class ThemeLoader
         end
       end
     else
-      theme_data ||= (filename == DefaultThemePath ? nil : load_base_theme)
+      theme_data ||= ((::File.dirname filename) == ThemesDir ? nil : load_base_theme)
     end
     self.new.load yaml_data, theme_data, theme_path
   end
