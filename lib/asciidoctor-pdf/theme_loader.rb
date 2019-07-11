@@ -71,6 +71,7 @@ class ThemeLoader
       unless (::File.dirname theme_file) == ThemesDir
         # QUESTION should we enforce any other fallback values?
         theme_data.base_align ||= 'left'
+        theme_data.base_font_color ||= '000000'
         theme_data.code_font_family ||= (theme_data.literal_font_family || 'Courier')
         theme_data.conum_font_family ||= (theme_data.literal_font_family || 'Courier')
       end

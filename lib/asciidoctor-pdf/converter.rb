@@ -324,7 +324,7 @@ class Converter < ::Prawn::Document
     end
     @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
     @fallback_fonts = [*theme.font_fallbacks]
-    @font_color = theme.base_font_color
+    @font_color = theme.base_font_color || '000000'
     @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
     @text_transform = nil
     @list_numerals = []
