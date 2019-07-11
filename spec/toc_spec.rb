@@ -228,4 +228,34 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[2][:strings]).to include 'Introduction'
     end
   end
+
+  it 'should apply consistent font color to running content when base font color is unset', integration: true do
+    theme_overrides = {
+      extends: 'base',
+      base_font_color: nil,
+      header_height: 36,
+      header_font_color: '0000FF',
+      header_columns: '0% =100% 0%',
+      header_recto_center_content: 'header text',
+      header_verso_center_content: 'header text',
+      toc_dot_leader_font_color: 'CCCCCC',
+      running_content_start_at: 'toc',
+    }
+    to_file = to_pdf_file <<~'EOS', 'toc-running-content-font-color.pdf', pdf_theme: theme_overrides, analyze: true
+    = Document Title
+    Author Name
+    :doctype: book
+    :toc:
+
+    == A
+
+    text
+
+    == B
+
+    text
+    EOS
+
+    (expect to_file).to visually_match 'toc-running-content-font-color.pdf'
+  end
 end
