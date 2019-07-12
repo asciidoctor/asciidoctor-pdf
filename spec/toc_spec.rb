@@ -126,6 +126,26 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[1][:strings]).to include 'Table of Contents'
       (expect pdf.pages[3][:strings]).to include 'Chapter 1'
     end
+
+    it 'should not crash if entry wraps' do
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+      = Document Title
+      :toc:
+
+      == This Here is an Absurdly Long Section Title That Exceeds the Length of a Single Line and Therefore Wraps
+
+      content
+      EOS
+
+      toc_text = pdf.find_text page_number: 2
+      (expect toc_text.size).to be > 1
+      (expect toc_text[1][:string]).to eql 'This Here is an Absurdly Long Section Title That Exceeds the Length of a Single Line and'
+      (expect toc_text[2][:string]).to eql 'Therefore Wraps'
+      dot_leader_text = (pdf.find_text page_number: 2).select {|it| it[:string].start_with? '.' }
+      (expect dot_leader_text).to be_empty
+      page_number_text = pdf.find_text page_number: 2, string: '1'
+      (expect page_number_text).to have_size 1
+    end
   end
 
   context 'article' do
