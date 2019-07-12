@@ -1335,17 +1335,17 @@ class Converter < ::Prawn::Document
               rendered_w = (svg_size = svg_obj.resize height: (rendered_h = available_h)).output_width
             end
           end
+          image_y = y
           add_dest_for_block node if node.id
           # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
           # breakage occurs when running content (stamps) are added to page
           # seems to be resolved as of Prawn 2.2.2
           update_colors if graphic_state.color_space.empty?
           # NOTE prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
-          # NOTE cursor advanced automatically
+          # NOTE cursor advances automatically
           svg_obj.draw
           if (link = node.attr 'link', nil, false)
-            link_box = [(abs_left = svg_obj.position[0] + bounds.absolute_left), y, (abs_left + rendered_w), (y + rendered_h)]
-            link_annotation link_box, Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: link.as_pdf }
+            add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
           end
         else
           # FIXME this code really needs to be better organized!
@@ -1365,12 +1365,7 @@ class Converter < ::Prawn::Document
               rendered_w, rendered_h = image_info.calc_image_dimensions height: (rendered_h = available_h)
             end
           end
-          # NOTE must calculate link position before embedding to get proper boundaries
-          if (link = node.attr 'link', nil, false)
-            img_x, img_y = image_position rendered_w, rendered_h, position: alignment
-            link_box = [img_x, (img_y - rendered_h), (img_x + rendered_w), img_y]
-          end
-          image_top = cursor
+          image_y = y
           add_dest_for_block node if node.id
           # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
           # breakage occurs when running content (stamps) are added to page
@@ -1378,9 +1373,11 @@ class Converter < ::Prawn::Document
           update_colors if graphic_state.color_space.empty?
           # NOTE specify both width and height to avoid recalculation
           embed_image image_obj, image_info, width: rendered_w, height: rendered_h, position: alignment
-          link_annotation link_box, Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: link.as_pdf } if link
+          if (link = node.attr 'link', nil, false)
+            add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
+          end
           # NOTE Asciidoctor disables automatic advancement of cursor for raster images, so move cursor manually
-          move_down rendered_h if cursor == image_top
+          move_down rendered_h if y == image_y
         end
       end
       layout_caption node, side: :bottom if node.title?
@@ -2937,7 +2934,15 @@ class Converter < ::Prawn::Document
                   bounding_box [left, bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colwidth, height: trim_styles[:content_height] do
                     # NOTE image vposition respects padding; use negative image_vertical_align value to revert
                     image_opts = content[1].merge position: colspec[:align], vposition: trim_styles[:img_valign]
-                    image content[0], image_opts rescue logger.warn %(could not embed image in running content: #{content[0]}; #{$!.message})
+                    begin
+                      image_info = image content[0], image_opts
+                      if (image_link = content[2])
+                        image_info = { width: image_info.scaled_width, height: image_info.scaled_height } unless image_opts[:format] == 'svg'
+                        add_link_to_image image_link, image_info, image_opts
+                      end
+                    rescue
+                      logger.warn %(could not embed image in running content: #{content[0]}; #{$!.message})
+                    end
                   end
                 end
               when ::String
@@ -3077,7 +3082,7 @@ class Converter < ::Prawn::Document
               if ::File.readable? (image_path = (ThemeLoader.resolve_theme_asset $1, @themesdir))
                 image_attrs = (AttributeList.new $2).parse ['alt', 'width']
                 image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_styles[:content_height]], format: image_attrs['format']
-                side_content[position] = [image_path, image_opts]
+                side_content[position] = [image_path, image_opts, image_attrs['link']]
               else
                 # NOTE allows inline image handler to report invalid reference and replace with alt text
                 side_content[position] = %(image:#{image_path}[#{$2}])
@@ -3753,6 +3758,33 @@ class Converter < ::Prawn::Document
     else
       default_value
     end
+  end
+
+  def add_link_to_image uri, image_info, image_opts
+    image_width = image_info[:width]
+    image_height = image_info[:height]
+
+    case image_opts[:position]
+    when :center
+      image_x = bounds.left_side + (bounds.width - image_width) * 0.5
+    when :right
+      image_x = bounds.right_side - image_width
+    else # :left or not set
+      image_x = bounds.left_side
+    end
+
+    case image_opts[:vposition]
+    when :top
+      image_y = bounds.absolute_top
+    when :center
+      image_y = bounds.absolute_top - (bounds.height - image_height) * 0.5
+    when :bottom
+      image_y = bounds.absolute_bottom + image_height
+    else
+      image_y = y
+    end unless (image_y = image_opts[:y])
+
+    link_annotation [image_x, (image_y - image_height), (image_x + image_width), image_y], Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: uri.as_pdf }
   end
 
   # QUESTION is there a better way to do this?

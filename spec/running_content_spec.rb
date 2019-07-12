@@ -600,6 +600,46 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
   end
 
+  it 'should add link to raster image if link attribute is set' do
+    theme_overrides = {
+      __dir__: fixtures_dir,
+      header_height: 36,
+      header_columns: '0% =100% 0%',
+      header_recto_center_content: 'image:tux.png[link=https://www.linuxfoundation.org/projects/linux/]',
+      header_verso_center_content: 'image:tux.png[link=https://www.linuxfoundation.org/projects/linux/]',
+    }
+    pdf = to_pdf 'body', pdf_theme: theme_overrides
+
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link_annotation = annotations[0]
+    (expect link_annotation[:Subtype]).to eql :Link
+    (expect link_annotation[:A][:URI]).to eql 'https://www.linuxfoundation.org/projects/linux/'
+    link_rect = link_annotation[:Rect]
+    (expect (link_rect[3] - link_rect[1]).round 1).to eql 36.0
+    (expect (link_rect[2] - link_rect[0]).round 1).to eql 30.6
+  end
+
+  it 'should add link to SVG image if link attribute is set' do
+    theme_overrides = {
+      __dir__: fixtures_dir,
+      header_height: 36,
+      header_columns: '0% =100% 0%',
+      header_recto_center_content: 'image:square.svg[link=https://example.org]',
+      header_verso_center_content: 'image:square.svg[link=https://example.org]',
+    }
+    pdf = to_pdf 'body', pdf_theme: theme_overrides
+
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link_annotation = annotations[0]
+    (expect link_annotation[:Subtype]).to eql :Link
+    (expect link_annotation[:A][:URI]).to eql 'https://example.org'
+    link_rect = link_annotation[:Rect]
+    (expect (link_rect[3] - link_rect[1]).round 1).to eql 36.0
+    (expect (link_rect[2] - link_rect[0]).round 1).to eql 36.0
+  end
+
   it 'should assign section titles down to sectlevels defined in theme' do
     input = <<~'EOS'
     = Document Title
