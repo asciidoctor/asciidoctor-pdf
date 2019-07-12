@@ -213,4 +213,54 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect images[0].data).to eql image_data
     end
   end
+
+  context 'Link' do
+    it 'should add link around block raster image if link attribute is set' do
+      pdf = to_pdf <<~'EOS'
+      image::tux.png[pdfwidth=1in,link=https://www.linuxfoundation.org/projects/linux/]
+      EOS
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to eql :Link
+      (expect link_annotation[:A][:URI]).to eql 'https://www.linuxfoundation.org/projects/linux/'
+      link_rect = link_annotation[:Rect]
+      (expect (link_rect[2] - link_rect[0]).round 1).to eql 72.0
+      (expect (link_rect[3] - link_rect[1]).round 1).to eql 84.7
+      (expect link_rect[0]).to eql 48.24
+    end
+
+    it 'should add link around block SVG image if link attribute is set' do
+      pdf = to_pdf <<~'EOS'
+      image::square.svg[pdfwidth=1in,link=https://example.org]
+      EOS
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to eql :Link
+      (expect link_annotation[:A][:URI]).to eql 'https://example.org'
+      link_rect = link_annotation[:Rect]
+      (expect (link_rect[2] - link_rect[0]).round 1).to eql 72.0
+      (expect (link_rect[3] - link_rect[1]).round 1).to eql 72.0
+      (expect link_rect[0]).to eql 48.24
+    end
+
+    it 'should add link around inline image if link attribute is set' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir }
+      image:sample-logo.jpg[ACME,pdfwidth=12pt,link=https://example.org] is a sign of quality!
+      EOS
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to eql :Link
+      (expect link_annotation[:A][:URI]).to eql 'https://example.org'
+      link_rect = link_annotation[:Rect]
+      (expect (link_rect[2] - link_rect[0]).round 1).to eql 12.0
+      (expect (link_rect[3] - link_rect[1]).round 1).to eql 14.3
+      (expect link_rect[0]).to eql 48.24
+    end
+  end
 end
