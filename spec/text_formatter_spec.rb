@@ -125,6 +125,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
 
+    it 'should add background and border to key as defined in theme', integration: true do
+      to_file = to_pdf_file 'Press kbd:[Ctrl,c] to kill the server.', 'text-formatter-key.pdf', attribute_overrides: { 'experimental' => '' }, analyze: true
+      (expect to_file).to visually_match 'text-formatter-key.pdf'
+    end
+
     it 'should use glyph from fallback font if not present in primary font' do
       to_file = to_pdf_file '*を*', 'text-formatter-fallback-font.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
       (expect to_file).to visually_match 'text-formatter-fallback-font.pdf'

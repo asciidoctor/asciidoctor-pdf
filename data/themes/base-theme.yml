@@ -24,6 +24,8 @@ base_border_width: 0.5
 button_content: '[%s]'
 button_font_family: Courier
 button_font_style: bold
+key_font_family: Courier
+key_font_style: italic
 link_font_color: '0000EE'
 literal_font_family: Courier
 heading_font_style: bold

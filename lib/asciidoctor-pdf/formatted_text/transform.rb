@@ -45,6 +45,18 @@ class Transform
           border_radius: monospaced_bg_or_border && theme.literal_border_radius,
           callback: monospaced_bg_or_border && [TextBackgroundAndBorderRenderer],
         }.compact,
+        key: {
+          color: theme.key_font_color,
+          font: theme.key_font_family || theme.literal_font_family,
+          size: theme.key_font_size,
+          styles: to_styles(theme.key_font_style),
+          background_color: (key_bg_color = theme.key_background_color),
+          border_width: (key_border_width = theme.key_border_width),
+          border_color: key_border_width && (theme.key_border_color || theme.base_border_color),
+          border_offset: (key_bg_or_border = key_bg_color || key_border_width) && theme.key_border_offset,
+          border_radius: key_bg_or_border && theme.key_border_radius,
+          callback: key_bg_or_border && [TextBackgroundAndBorderRenderer],
+        }.compact,
         link: {
           color: theme.link_font_color,
           font: theme.link_font_family,
@@ -56,6 +68,7 @@ class Transform
       @theme_settings = {
         button: { font: 'Courier', styles: [:bold].to_set },
         code: { font: 'Courier' },
+        key: { font: 'Courier', styles: [:italic].to_set },
         link: { color: '0000FF' },
       }
     end
@@ -146,7 +159,7 @@ class Transform
       styles << :bold
     when :em
       styles << :italic
-    when :code, :button
+    when :code, :button, :key
       # NOTE prefer old value, except for styles and callback, which should be combined
       fragment.update(@theme_settings[tag_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : (k == :callback ? oval.union(nval) : oval) }
     when :color

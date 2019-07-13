@@ -58,15 +58,23 @@ vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
 # QUESTION should vertical_spacing be block_spacing instead?
 vertical_spacing: $vertical_rhythm
-button:
-  content: "[\u2009%s\u2009]"
-  font_style: bold
 link:
   font_color: 428bca
 # literal is currently used for inline monospaced in prose and table cells
 literal:
   font_color: b12146
   font_family: M+ 1mn
+button:
+  content: "[\u2009%s\u2009]"
+  font_style: bold
+key:
+  background_color: f5f5f5
+  border_color: cccccc
+  border_offset: 1.5
+  border_radius: 2
+  border_width: 0.375
+  font_family: $literal_font_family
+  separator: "\u202f+\u202f"
 menu:
   caret_content: " <font size=\"1.15em\"><color rgb=\"b12146\">\u203a</color></font> "
 heading:
