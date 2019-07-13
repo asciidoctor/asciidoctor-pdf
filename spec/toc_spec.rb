@@ -127,6 +127,29 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[3][:strings]).to include 'Chapter 1'
     end
 
+    it 'should not add toc title to page or outline if toc-title is unset' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :doctype: book
+      :toc:
+      :!toc-title:
+
+      == Beginning
+
+      == Middle
+
+      == End
+      EOS
+
+      (expect pdf.pages).to have_size 5
+      (expect pdf.pages[1].text).to start_with 'Beginning'
+
+      outline = extract_outline pdf
+      (expect outline).to have_size 4
+      (expect outline[0][:title]).to eql 'Document Title'
+      (expect outline[1][:title]).to eql 'Beginning'
+    end
+
     it 'should not crash if entry wraps' do
       pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
       = Document Title

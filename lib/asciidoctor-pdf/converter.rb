@@ -2657,10 +2657,12 @@ class Converter < ::Prawn::Document
     go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
     start_page_number = page_number
     @y = start_at if start_at
-    theme_font :heading, level: 2 do
-      theme_font :toc_title do
-        toc_title_align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
-        layout_heading((doc.attr 'toc-title'), align: toc_title_align)
+    unless (toc_title = doc.attr 'toc-title').nil_or_empty?
+      theme_font :heading, level: 2 do
+        theme_font :toc_title do
+          toc_title_align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
+          layout_heading toc_title, align: toc_title_align
+        end
       end
     end
     # QUESTION should we skip this whole method if num_levels < 0?
@@ -3150,7 +3152,9 @@ class Converter < ::Prawn::Document
         # FIXME link to title page if there's a cover page (skip cover page and ensure blank page)
         page title: doctitle, destination: (document.dest_top 1)
       end
-      page title: (doc.attr 'toc-title'), destination: (document.dest_top toc_page_nums.first) unless toc_page_nums.none?
+      unless toc_page_nums.none? || (toc_title = doc.attr 'toc-title').nil_or_empty?
+        page title: toc_title, destination: (document.dest_top toc_page_nums.first)
+      end
       # QUESTION any way to get add_outline_level to invoke in the context of the outline?
       document.add_outline_level self, doc.sections, num_levels
     end

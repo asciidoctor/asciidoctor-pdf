@@ -8,6 +8,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == Unreleased
 
 * fix crash when image_width is defined in theme (#995)
+* fix crash when toc is enabled and toc-title attribute is unset
 * coerce color values in theme that contain uppercase letters (#1149)
 * ensure base font color is set
 * use more robust mechanism to detect an empty page; tare content stream after adding page background color or image
