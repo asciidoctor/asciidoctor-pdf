@@ -1887,7 +1887,7 @@ The keys in this category are used to control the style of literal, listing and 
 
 |font-size
 |<<values,Number>> +
-(default: 10.5)
+(default: 10.8)
 |code:
   font-size: 11
 
@@ -2000,13 +2000,13 @@ The keys in this category apply to a button reference (generated from the inline
 |<<values,Number>> +
 (default: 0)
 |button:
-  border-offset: 2
+  border-offset: 1.5
 
 |border-radius
 |<<values,Number>> +
-(default: _not set_)
+(default: 0)
 |button:
-  border-radius: 3
+  border-radius: 2
 
 |border-width
 |<<values,Number>> +
@@ -2028,7 +2028,7 @@ The keys in this category apply to a button reference (generated from the inline
 
 |font-family
 |<<fonts,Font family name>> +
-(default: $base-font-family)
+(default: Courier)
 |button:
   font-family: M+ 1mn
 
@@ -2040,9 +2040,9 @@ The keys in this category apply to a button reference (generated from the inline
 
 |font-style
 |<<font-styles,Font style>> +
-(default: _inherit_)
+(default: bold)
 |button:
-  font-style: bold
+  font-style: normal
 |===
 . The border is only used if a border color is specified and the border width is not explicitly set to 0.
 . The border offset is the amount that the background and border swells around the text.
@@ -3186,9 +3186,9 @@ The styling of the links is controlled by the global link styles.
 
 |font-size
 |<<values,Number>> +
-(default: 8)
+(default: 9)
 |footnotes:
-  font-size: 6
+  font-size: 8
 
 |font-style
 |<<font-styles,Font style>> +

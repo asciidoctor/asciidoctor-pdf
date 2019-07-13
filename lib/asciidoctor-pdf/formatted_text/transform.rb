@@ -49,13 +49,13 @@ class Transform
           color: theme.link_font_color,
           font: theme.link_font_family,
           size: theme.link_font_size,
-          styles: to_styles(theme.link_font_style, theme.link_text_decoration)
+          styles: to_styles(theme.link_font_style, theme.link_text_decoration),
         }.compact,
       }
     else
       @theme_settings = {
         button: { font: 'Courier', styles: [:bold].to_set },
-        code: { font: 'Courier', size: 0.9 },
+        code: { font: 'Courier' },
         link: { color: '0000FF' },
       }
     end
