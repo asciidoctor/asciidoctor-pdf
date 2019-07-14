@@ -2622,6 +2622,25 @@ The keys in this category control the arrangement of block images.
 . Only applies to block images.
 If specified, this value takes precedence over the value of the `width` attribute on the image macro, but not over the value of the `pdfwidth` attribute.
 
+[#keys-svg]
+=== SVG
+
+The keys in this category control the SVG integration.
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-image]*Key Prefix:* <<key-prefix-svg,svg>>
+
+|fallback_font_family^[1]^
+|<<fonts,Font family name>> +
+(default: $base-font-family)
+|svg:
+  fallback_font_family: Times-Roman
+|===
+. The fallback font family is only used when the font family in the SVG does not map to a known font name from the font catalog.
+
 [#keys-lead]
 === Lead
 

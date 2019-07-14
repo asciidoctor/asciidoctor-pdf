@@ -13,7 +13,7 @@ module Images
     if ::String === file && (((opts = opts.dup).delete :format) == 'svg' || (file.downcase.end_with? '.svg'))
       #opts[:enable_file_requests_with_root] = (::File.dirname file) unless opts.key? :enable_file_requests_with_root
       #opts[:enable_web_requests] = allow_uri_read if !(opts.key? :enable_web_requests) && (respond_to? :allow_uri_read)
-      #opts[:fallback_font_name] = default_svg_font if !(opts.key? :fallback_font_name) && (respond_to? :default_svg_font)
+      #opts[:fallback_font_name] = fallback_svg_font_name if !(opts.key? :fallback_font_name) && (respond_to? :fallback_svg_font_name)
       if (opts.key? :fit) && (fit = opts.delete :fit) && !opts[:width] && !opts[:height]
         svg (::File.read file), opts do |svg_doc|
           max_width, max_height = fit

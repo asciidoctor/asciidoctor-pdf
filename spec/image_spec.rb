@@ -80,6 +80,28 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:y]).to eql 276.036
     end
 
+    it 'should replace unrecognized font family with base font family' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      image::svg-with-text.svg[]
+      EOS
+
+      text = pdf.find_text 'This text uses the default SVG font.'
+      (expect text).to have_size 1
+      (expect text[0][:font_name]).to eql 'NotoSerif'
+      (expect text[0][:font_size]).to eql 12.0
+    end
+
+    it 'should replace unrecognized font family with svg font family if specified in theme' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { svg_fallback_font_family: 'Times-Roman' }, analyze: true
+      image::svg-with-text.svg[pdfwidth=100%]
+      EOS
+
+      text = pdf.find_text 'This text uses the default SVG font.'
+      (expect text).to have_size 1
+      (expect text[0][:font_name]).to eql 'Times-Roman'
+      (expect text[0][:font_size]).to eql 12.0
+    end
+
     it 'should embed local image', integration: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-with-local-image.pdf'
       A sign of a good writer: image:svg-with-local-image.svg[]

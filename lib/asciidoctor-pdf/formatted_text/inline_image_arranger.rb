@@ -66,7 +66,7 @@ module InlineImageArranger
           svg_obj = ::Prawn::SVG::Interface.new ::File.read(image_path), doc,
               at: doc.bounds.top_left,
               width: image_w,
-              fallback_font_name: doc.default_svg_font,
+              fallback_font_name: doc.fallback_svg_font_name,
               enable_web_requests: doc.allow_uri_read,
               enable_file_requests_with_root: (::File.dirname image_path)
           svg_size = image_w ? svg_obj.document.sizing :

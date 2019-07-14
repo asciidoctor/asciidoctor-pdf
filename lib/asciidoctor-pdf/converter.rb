@@ -715,7 +715,7 @@ class Converter < ::Prawn::Document
                         vposition: label_valign,
                         width: label_width,
                         height: box_height,
-                        fallback_font_name: default_svg_font,
+                        fallback_font_name: fallback_svg_font_name,
                         enable_web_requests: allow_uri_read,
                         enable_file_requests_with_root: (::File.dirname icon_path)
                     if (icon_height = (svg_size = svg_obj.document.sizing).output_height) > box_height
@@ -1315,7 +1315,7 @@ class Converter < ::Prawn::Document
           svg_obj = ::Prawn::SVG::Interface.new svg_data, self,
               position: alignment,
               width: width,
-              fallback_font_name: default_svg_font,
+              fallback_font_name: fallback_svg_font_name,
               enable_web_requests: allow_uri_read,
               enable_file_requests_with_root: file_request_root
           rendered_w = (svg_size = svg_obj.document.sizing).output_width
@@ -3208,8 +3208,8 @@ class Converter < ::Prawn::Document
     ::File.absolute_path font_file, fonts_dir
   end
 
-  def default_svg_font
-    @theme.svg_font_family || @theme.base_font_family
+  def fallback_svg_font_name
+    @theme.svg_fallback_font_family || @theme.svg_font_family || @theme.base_font_family
   end
 
   attr_reader :allow_uri_read
@@ -3622,7 +3622,7 @@ class Converter < ::Prawn::Document
       image_opts = {
         enable_file_requests_with_root: (::File.dirname image_path),
         enable_web_requests: allow_uri_read,
-        fallback_font_name: default_svg_font,
+        fallback_font_name: fallback_svg_font_name,
         format: 'svg',
       }
     else
