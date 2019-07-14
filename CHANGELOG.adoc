@@ -16,6 +16,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * make sure title page background or color (and only title page background or color) gets applied to title page even when page has already been created (#1144)
 * allow theme to control background and border of inline kbd (#313)
 * add support for link on image in running content (#1002)
+* allow theme to disable font kerning
 
 == 1.5.0.beta.1 (2019-07-08) - @mojavelinux
 

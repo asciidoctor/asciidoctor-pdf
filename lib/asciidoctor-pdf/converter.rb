@@ -309,8 +309,10 @@ class Converter < ::Prawn::Document
     else
       @ppbook = false
     end
-    # QUESTION should ThemeLoader register fonts?
+    # QUESTION should ThemeLoader handle registering fonts instead?
     register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
+    default_kerning theme.base_font_kerning != 'none'
+    @fallback_fonts = [*theme.font_fallbacks]
     if (bg_image = resolve_background_image doc, theme, 'page-background-image') && bg_image[0]
       @page_bg_image = { verso: bg_image, recto: bg_image }
     else
@@ -323,7 +325,6 @@ class Converter < ::Prawn::Document
       @page_bg_image[:recto] = bg_image[0] && bg_image
     end
     @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
-    @fallback_fonts = [*theme.font_fallbacks]
     @font_color = theme.base_font_color || '000000'
     @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
     @text_transform = nil
@@ -3198,9 +3199,6 @@ class Converter < ::Prawn::Document
     (font_catalog || {}).each do |key, styles|
       register_font key => styles.map {|style, path| [style.to_sym, (font_path path, fonts_dir)]}.to_h
     end
-
-    # FIXME read kerning setting from theme!
-    default_kerning true
   end
 
   def font_path font_file, fonts_dir

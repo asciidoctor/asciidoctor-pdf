@@ -116,7 +116,7 @@ class ThemeLoader
 
   def process_entry key, val, data
     key = key.tr '-', '_' if key.include? '-'
-    if key == 'font_catalog' || key == 'font_fallbacks'
+    if key.start_with? 'font_'
       data[key] = val
     elsif key.start_with? 'admonition_icon_'
       data[key] = (val || {}).map do |(key2, val2)|

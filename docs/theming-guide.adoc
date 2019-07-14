@@ -1062,6 +1062,12 @@ NOTE: While it's common to define additional keys in this category (e.g., `base-
 |base:
   font-family: Noto Serif
 
+|font-kerning
+|normal {vbar} default +
+(default: normal)
+|base:
+  font-kerning: none
+
 |font-size
 |<<values,Number>> +
 (default: 12)
