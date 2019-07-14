@@ -195,7 +195,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       image_data = File.binread fixture_file 'square.jpg'
       encoded_image_data = Base64.strict_encode64 image_data
       pdf = to_pdf %(image::data:image/jpg;base64,#{encoded_image_data}[])
-      images = pdf.pages[0].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+      images = get_images pdf, 1
       (expect images).to have_size 1
       (expect images[0].hash[:Width]).to eql 5
       (expect images[0].hash[:Height]).to eql 5
@@ -206,7 +206,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       image_data = File.binread fixture_file 'square.jpg'
       encoded_image_data = Base64.strict_encode64 image_data
       pdf = to_pdf %(image:data:image/jpg;base64,#{encoded_image_data}[] base64)
-      images = pdf.pages[0].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+      images = get_images pdf, 1
       (expect images).to have_size 1
       (expect images[0].hash[:Width]).to eql 5
       (expect images[0].hash[:Height]).to eql 5

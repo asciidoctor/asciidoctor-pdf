@@ -121,7 +121,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
 
       (expect pdf.pages).to have_size 4
       [1, 0, 0, 0].each_with_index do |expected_num_images, idx|
-        images = pdf.pages[idx].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+        images = get_images pdf, idx.next
         (expect images).to have_size expected_num_images
       end
     end
@@ -147,7 +147,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
 
       (expect pdf.pages).to have_size 5
       [1, 1, 0, 0, 0].each_with_index do |expected_num_images, idx|
-        images = pdf.pages[idx].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+        images = get_images pdf, idx.next
         (expect images).to have_size expected_num_images
       end
     end
@@ -175,7 +175,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       images_by_page = []
       (expect pdf.pages).to have_size 5
       [0, 1, 1, 1, 1].each_with_index do |expected_num_images, idx|
-        images = pdf.pages[idx].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+        images = get_images pdf, idx.next
         images_by_page << images
         (expect images).to have_size expected_num_images
       end
@@ -207,7 +207,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       images_by_page = []
       (expect pdf.pages).to have_size 5
       [0, 0, 1, 1, 1].each_with_index do |expected_num_images, idx|
-        images = pdf.pages[idx].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+        images = get_images pdf, idx.next
         images_by_page << images
         (expect images).to have_size expected_num_images
       end

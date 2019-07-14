@@ -327,9 +327,21 @@ RSpec.configure do |config|
     Hash[*objects[pdf.catalog[:PageLabels]][:Nums]].reduce([]) {|accum, (idx, val)| accum[idx] = val[:P]; accum }
   end
 
-  def get_annotations pdf, page_num
+  def get_annotations pdf, page_num = nil
     objects = pdf.objects
-    (pdf.page page_num).attributes[:Annots].map {|ref| objects[ref] }
+    if page_num
+      (pdf.page page_num).attributes[:Annots].map {|ref| objects[ref] }
+    else
+      pdf.pages.reduce([]) {|accum, page| page.attributes[:Annots].each {|ref| accum << objects[ref] }; accum }
+    end
+  end
+
+  def get_images pdf, page_num = nil
+    if page_num
+      (pdf.page page_num).xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+    else
+      pdf.pages.reduce([]) {|accum, page| page.xobjects.each {|_, candidate| candidate.hash[:Subtype] == :Image ? (accum << candidate) : accum }; accum }
+    end
   end
 
   def get_page_size pdf, page_num

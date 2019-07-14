@@ -11,7 +11,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
 
     (expect pdf.pages).to have_size 2
     (expect pdf.pages[0].text).to be_empty
-    images = pdf.pages[0].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+    images = get_images pdf, 1
     (expect images).to have_size 1
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
   end
@@ -28,7 +28,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect pdf.pages).to have_size 3
     (expect pdf.pages[0].text).to be_empty
     (expect pdf.pages[2].text).to be_empty
-    images = pdf.pages[2].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+    images = get_images pdf, 3
     (expect images).to have_size 1
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
   end
@@ -37,7 +37,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     pdf = to_pdf %(:front-cover-image: #{fixture_file 'cover.jpg', relative: true})
     (expect pdf.pages).to have_size 1
     (expect pdf.pages[0].text).to be_empty
-    images = pdf.pages[0].xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
+    images = get_images pdf, 1
     (expect images).to have_size 1
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
   end
