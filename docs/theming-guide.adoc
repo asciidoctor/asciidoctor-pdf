@@ -186,23 +186,23 @@ Also note the presence of the colon (`:`) after each key name.
 The value of a key may be one of the following types:
 
 * String
-  - Font family name (e.g., Roboto)
-  - Font style (normal, bold, italic, bold_italic)
-  - Alignment (left, center, right, justify)
-  - Color as hex string (e.g., 'ff0000', #ff0000, or '#ff0000')
-  - Image path
-  - Enumerated type (where specified)
-  - Text content (where specified)
+ ** Font family name (e.g., Roboto)
+ ** Font style (normal, bold, italic, bold_italic)
+ ** Alignment (left, center, right, justify)
+ ** Color as hex string (e.g., 'ff0000', #ff0000, or '#ff0000')
+ ** Image path
+ ** Enumerated type (where specified)
+ ** Text content (where specified)
 * Null (clears any previously assigned value)
-  - _empty_ (i.e., no value specified)
-  - null
-  - ~
+ ** _empty_ (i.e., no value specified)
+ ** null
+ ** ~
 * Number (integer or float) with optional units (default unit is points)
 * Array
-  - Color as RGB array (e.g., [51, 51, 51])
-  - Color CMYK array (e.g., [50, 100, 0, 0])
-  - Margin (e.g., [1in, 1in, 1in, 1in])
-  - Padding (e.g., [1in, 1in, 1in, 1in])
+ ** Color as RGB array (e.g., [51, 51, 51])
+ ** Color CMYK array (e.g., [50, 100, 0, 0])
+ ** Margin (e.g., [1in, 1in, 1in, 1in])
+ ** Padding (e.g., [1in, 1in, 1in, 1in])
 * Variable reference (e.g., $base_font_color or $base-font-color)
 * Math expression
 
@@ -866,7 +866,7 @@ font:
       bold: droid-sans-fallback.ttf
       bold_italic: droid-sans-fallback.ttf
   fallbacks:
-    - DroidSansFallback
+  - DroidSansFallback
 ----
 
 TIP: If you are using more than one fallback font, add additional lines to the `fallbacks` key.
