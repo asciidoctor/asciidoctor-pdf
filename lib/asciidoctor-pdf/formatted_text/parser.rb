@@ -433,11 +433,11 @@ module Markup
                     r8 = SyntaxNode.new(input, (index-1)...index) if r8 == true
                     r0 = r8
                   else
-                    if (match_len = has_terminal?('sub', false, index))
+                    if (match_len = has_terminal?('key', false, index))
                       r9 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                       @index += match_len
                     else
-                      terminal_parse_failure('sub')
+                      terminal_parse_failure('key')
                       r9 = nil
                     end
                     if r9
@@ -455,19 +455,31 @@ module Markup
                         r10 = SyntaxNode.new(input, (index-1)...index) if r10 == true
                         r0 = r10
                       else
-                        if (match_len = has_terminal?('del', false, index))
+                        if (match_len = has_terminal?('sub', false, index))
                           r11 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                           @index += match_len
                         else
-                          terminal_parse_failure('del')
+                          terminal_parse_failure('sub')
                           r11 = nil
                         end
                         if r11
                           r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
                           r0 = r11
                         else
-                          @index = i0
-                          r0 = nil
+                          if (match_len = has_terminal?('del', false, index))
+                            r12 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                            @index += match_len
+                          else
+                            terminal_parse_failure('del')
+                            r12 = nil
+                          end
+                          if r12
+                            r12 = SyntaxNode.new(input, (index-1)...index) if r12 == true
+                            r0 = r12
+                          else
+                            @index = i0
+                            r0 = nil
+                          end
                         end
                       end
                     end

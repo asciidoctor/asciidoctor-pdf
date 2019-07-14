@@ -2049,6 +2049,82 @@ The keys in this category apply to a button reference (generated from the inline
 It does not affect the distance between the formatted phrase and the phrases that surround it.
 . The character sequence `%s` in the content key gets replaced with the button label.
 
+[#keys-key]
+=== Key
+
+The keys in this category apply to a key reference (generated from the inline kbd macro).
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-key]*Key Prefix:* <<key-prefix-key,key>>
+
+|background-color
+|<<colors,Color>> +
+(default: _not set_)
+|key:
+  background-color: #fafafa
+
+|border-color^[1]^
+|<<colors,Color>> +
+(default: _not set_)
+|key:
+  border-color: #cccccc
+
+|border-offset^[2]^
+|<<values,Number>> +
+(default: 0)
+|key:
+  border-offset: 1.5
+
+|border-radius
+|<<values,Number>> +
+(default: 0)
+|key:
+  border-radius: 2
+
+|border-width
+|<<values,Number>> +
+(default: $base-border-width)
+|key:
+  border-width: 0.375
+
+|separator^[3]^
+|<<quoted-string,Quoted string>> +
+(default: "+")
+|key:
+  separator: "\u2009+\u2009"
+
+|font-color
+|<<colors,Color>> +
+(default: _inherit_)
+|key:
+  font-color: #000
+
+|font-family
+|<<fonts,Font family name>> +
+(default: Courier)
+|key:
+  font-family: $base-font-family
+
+|font-size
+|<<values,Number>> +
+(default: _inherit_)
+|key:
+  font-size: 10.5
+
+|font-style
+|<<font-styles,Font style>> +
+(default: italic)
+|key:
+  font-style: normal
+|===
+. The border is only used if a border color is specified and the border width is not explicitly set to 0.
+. The border offset is the amount that the background and border swells around the text.
+It does not affect the distance between the formatted phrase and the phrases that surround it.
+. The separator is only used for multi-key sequences.
+
 [#keys-menu]
 === Menu
 
