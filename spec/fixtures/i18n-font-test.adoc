@@ -1,0 +1,154 @@
+= i18n Font Test
+:icons: font
+:credit: http://clagnut.com/blog/2380
+
+[abstract]
+Grumpy wizards make toxic brew for the evil Queen and Jack.
+But they feared not, for they had the many tongues of Noto Serif on their side.
+
+== Diacritics
+
+À Á Â Ã Ä Å Ā Ă Ą Ǻ Ȁ Ȃ Æ Ǽ Ć Ç Ĉ Ċ Č Ď Đ Ð Ḍ Ǳ ǲ Ǆ ǅ È É Ê Ë Ē Ĕ Ė Ę Ẽ Ě Ẹ Ȅ Ȇ Ə Ǵ Ĝ Ğ Ġ Ģ Ĥ Ħ Ḥ Ĭ Ì Í Î Ï İ Ĩ Ī Į Ị Ȉ Ȋ Ĳ Ĵ Ķ Ĺ Ļ Ľ Ŀ Ł Ǉ ǈ Ñ Ń Ņ Ň Ṅ Ŋ Ǌ ǋ Ò Ó Ô Õ Ö Ō Ŏ Ő Ø Ǿ Ǫ Ọ Ȍ Ȏ Œ Þ Ŕ Ŗ Ř Ṛ Ȑ Ȓ Ś Ŝ Š Ș Ş Ṣ Ŧ Ť Ț Ţ Ṭ Ù Ú Û Ü Ũ Ū Ŭ Ů Ű Ų Ụ Ȕ Ȗ Ẁ Ẃ Ẅ Ŵ Ý Ŷ Ÿ Ỳ Ỹ Ź Ż Ž Ẓ
+à á â ã ä å ā ă ą ǻ ȁ ȃ æ ǽ ć ç ĉ ċ č ď đ ð ḍ ǳ ǆ è é ê ë ē ĕ ė ę ě ẽ ẹ ȅ ȇ ə ǵ ĝ ğ ġ ģ ĥ ħ ḥ ì í î ï ĩ ī į ĭ ị ȉ ȋ ĳ ĵ ķ ĸ ĺ ļ ľ ŀ ł ǉ ń ŉ ņ ň ñ ṅ ŋ ǌ ò ó ô õ ö ø ō ŏ ő ǿ ǫ ọ ȍ ȏ œ þ ŕ ŗ ř ṛ ȑ ȓ ś ŝ š ș ş ṣ ß ŧ ť ț ţ ṭ ù ú û ü ũ ū ŭ ů ű ų ụ ȕ ȗ µ μ ẁ ẃ ẅ ŵ ý ÿ ŷ ỳ ỹ ź ż ž ẓ
+
+== List Markers
+
+.Greek numeration
+[lowergreek]
+. one
+. two
+. three
+
+.Checklist
+* [x] Checked
+* [ ] Unchecked
+
+== Characters By Language
+
+=== Bulgarian
+
+Ах чудна българска земьо, полюшвай цъфтящи жита.
+
+=== Catalan
+
+«Dóna amor que seràs feliç!».
+Això, il·lús company geniüt, ja és un lluït rètol blavís.
+
+=== Croatian
+
+Gojazni đačić s biciklom drži hmelj i finu vatu u džepu nošnje.
+
+=== Czech
+
+Příliš žluťoučký kůň úpěl ďábelské ódy.
+
+=== Danish
+
+Quizdeltagerne spiste jordbær med fløde, mens cirkusklovnen Walther spillede på xylofon.
+
+=== Dutch
+
+Lynx c.q. vos prikt bh: dag zwemjuf!
+
+=== Finnish
+
+Albert osti fagotin ja töräytti puhkuvan melodian.
+
+=== French
+
+Voyez le brick géant que j’examine près du wharf.
+
+=== German
+
+Victor jagt zwölf Boxkämpfer quer über den großen Sylter Deich.
+
+=== Greek
+
+Τάχιστη αλώπηξ βαφής ψημένη γη, δρασκελίζει υπέρ νωθρού κυνός.
+
+=== Hungarian
+
+Árvíztűrő tükörfúrógép.
+
+=== Icelandic
+
+Kæmi ný öxi hér, ykist þjófum nú bæði víl og ádrepa.
+
+=== Italian
+
+In quel campo si trovan funghi in abbondanza.
+
+=== Japanese
+
+[%hardbreaks]
+いろはにほへと
+ちりぬるを
+わかよたれそ
+つねならむ
+うゐのおくやま
+けふこえて
+あさきゆめみし
+ゑひもせす
+
+=== Korean
+
+키스의 고유조건은 입술끼리 만나야 하고 특별한 기술은 필요치 않다.
+
+=== Norwegian
+
+Jeg begynte å fortære en sandwich mens jeg kjørte taxi på vei til quiz.
+
+=== Polish
+
+Pójdźże, kiń tę chmurność w głąb flaszy!
+
+=== Portuguese
+
+À noite, vovô Kowalsky vê o ímã cair no pé do pingüim queixoso e vovó põe açúcar no chá de tâmaras do jabuti feliz.
+
+=== Romanian
+
+Bând whisky, jazologul șprițuit vomă fix în tequila.
+
+=== Russian
+
+Съешь же ещё этих мягких французских булок, да выпей чаю.
+
+=== Serbian
+
+Gojazni đačić s biciklom drži hmelj i finu vatu u džepu nošnje.
+
+=== Slovak
+
+Kŕdeľ ďatľov učí koňa žrať kôru.
+
+=== Slovenian
+
+Šerif bo za vajo spet kuhal domače žgance.
+
+=== Spanish
+
+Benjamín pidió una bebida de kiwi y fresa.
+
+Jovencillo emponzoñado de whisky: ¡qué figurota exhibe!
+
+=== Swedish
+
+Byxfjärmat föl gick på duvshowen.
+
+=== Turkish
+
+Saf ve haydut kız çocuğu bin plaj görmüş.
+
+=== Ukrainian
+
+Чуєш їх, доцю, га?
+
+== Monospace Text
+
+----
+<h1>Hej världen!</h1> <!--1-->
+<p>Прощай, мир!</p> <!--2-->
+----
+<1> `Hej världen!` is Swedish for `Hello, World!`.
+<2> `Прощай, мир!` is Russian for `Goodbye, World!`.
