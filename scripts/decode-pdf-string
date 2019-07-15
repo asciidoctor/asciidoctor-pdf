@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+str = ARGV[0]
+
+def string_object_to_utf16 str
+  [str.force_encoding(::Encoding::US_ASCII)].pack('H*').force_encoding ::Encoding::UTF_16BE
+end
+
+def string_object_to_utf8 str
+  [str.force_encoding(::Encoding::US_ASCII)].pack('H*').force_encoding ::Encoding::UTF_8
+end
+
+def utf16_to_utf8 str
+  str.encode ::Encoding::UTF_8
+end
+
+def decode_hexified_utf16_string_object str
+  utf16_to_utf8 string_object_to_utf16 str
+end
+
+def decode_hexified_utf8_string_object str
+  string_object_to_utf8 str
+end
+
+if ARGV[1] == 'utf8'
+  puts decode_hexified_utf8_string_object ARGV[0].dup
+else
+  puts decode_hexified_utf16_string_object ARGV[0].dup
+end
