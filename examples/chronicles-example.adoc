@@ -23,8 +23,6 @@ ifdef::backend-pdf[]
 :title-logo-image: image:sample-banner.svg[pdfwidth=4.25in,align=center]
 :source-highlighter: rouge
 //:rouge-style: github
-//:source-highlighter: pygments
-//:pygments-style: tango
 endif::[]
 // URIs:
 :uri-devoxx: https://devoxx.be
