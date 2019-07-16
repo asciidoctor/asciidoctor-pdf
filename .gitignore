@@ -3,6 +3,7 @@
 /Gemfile.lock
 /apidoc/
 /pkg/
+/scripts/fonts/
 /.bundle/
 /.idea/
 /.ruby-gemset

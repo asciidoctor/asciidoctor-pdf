@@ -1,0 +1,407 @@
+#!/usr/bin/env fontforge
+
+# Prerequisites:
+#
+# - fontforge: https://fontforge.github.io/en-US/
+#
+# Run using:
+#
+# $ ./subset-fonts.pe <source directory> <output directory>
+#
+# Example:
+#
+# $ ./subset-fonts.pe source-fonts ../data/fonts
+#
+# NOTE: Ignore "GID out of range" warnings; fontforge has to kick the tires a bit to flush out these dead references.
+#
+# Use with Noto Serif fonts from https://code.google.com/p/noto/source/browse/#svn%2Ftrunk%2Ffonts%2Findividual%2Funhinted
+# Use with M+ fonts from http://mplus-fonts.sourceforge.jp/mplus-outline-fonts/download/index-en.html
+#
+# See Unicode Blocks: http://jrgraphix.net/research/unicode_blocks.php
+#
+# IMPORTANT: Must generate Apple format (0x10) or include old-fashioned 'kern' table for kerning to work in Prawn.
+# Prawn misses some of the kern pairs when using the Apply format, so the old-fashioned 'kern' table is best (0x90).
+# Keep in mind, though, that the old-fashioned 'kern' table only supported a limited number of pairs.
+#
+# generate flags (additive):
+# * 0x00 - OpenType
+# * 0x10 - Apple
+# * 0x80 - OpenType and Apple
+# * 0x90 - Neither OpenType or Apple (implicitly generates an old-style 'kern' table)
+# * 0x800 - Generate old-style 'kern' table
+# * 0x08 - exclude TrueType instructions
+# * 0x04 - exclude PS glyph names; short format only (PDF readers use these names to guess characters when copying text)
+# * 0x4000000 - drop glyphs with Unicode value of -1
+#
+# NOTE best choice for Prawn only is 0x90 + 0x08
+# NOTE best choice for web only is 0x00 + 0x08
+# NOTE best choice for Prawn & web is 0x00 + 0x800 + 0x08
+
+genflags = 0x90 + 0x08
+#copy_fonts = ["NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-BoldItalic.ttf", "mplus-1p-regular.ttf"]
+copy_fonts = ["mplus-1p-regular.ttf"]
+num_copy_fonts = SizeOf(copy_fonts)
+code_fonts = ["mplus-1mn-light.ttf", "mplus-1mn-regular.ttf", "mplus-1mn-medium.ttf", "mplus-1mn-bold.ttf"]
+num_code_fonts = SizeOf(code_fonts)
+code_script = "ascii"
+
+if ($argc >= 2)
+  source_dir = $argv[1]
+else
+  source_dir = "."
+endif
+if ($argc >= 3)
+  output_dir = $argv[2]
+else
+  output_dir = "generated"
+endif
+
+fa_src_filepath = StrJoin([source_dir, "FontAwesome.ttf"], "/")
+fi = 0
+while (fi < num_copy_fonts)
+  copy_font = copy_fonts[fi]
+  src_filepath = StrJoin([source_dir, copy_font], "/")
+  new_basename = ToLower(copy_font:r)
+  if (Strstr(new_basename, "-hinted") >= 0)
+    new_basename = StrJoin(StrSplit(new_basename, "-hinted"), "")
+  endif
+  if (Strstr(new_basename, "-unhinted") >= 0)
+    new_basename = StrJoin(StrSplit(new_basename, "-unhinted"), "")
+  endif
+  if (Strstr(new_basename, "bolditalic") >= 0)
+    new_basename = StrJoin(StrSplit(new_basename, "bolditalic"), "bold_italic")
+  endif
+  is_mplus = Strstr(new_basename, "mplus") >= 0
+  is_noto = Strstr(new_basename, "noto") >= 0
+  copy_scripts = ["subset"]
+  # remove hyphen from mplus-1 file basename
+  if (is_mplus)
+    new_basename = "mplus1" + StrJoin(StrSplit(new_basename, "mplus-1"), "")
+    copy_scripts = ["fallback"]
+  endif
+  num_copy_scripts = SizeOf(copy_scripts)
+  si = 0
+  while (si < num_copy_scripts)
+    script = copy_scripts[si]
+    if (new_basename == "notoserif-regular")
+      Print("Stealing ballot boxes from symbol font...")
+      # Grab ballot boxes from FontAwesome
+      Open(fa_src_filepath)
+      # relocate 0uf046 -> 0u2611
+      Select(0uf046)
+      Copy()
+      Select(0u2611)
+      Paste()
+      # relocate 0uf096 -> 0u2610
+      Select(0uf096)
+      Copy()
+      Select(0u2610)
+      Paste()
+      # select and copy ballot boxes
+      Select(0u2610,0u2611)
+      Copy()
+      Close()
+    endif
+    Open(src_filepath)
+    if (new_basename == "notoserif-regular")
+      # Import ballot boxes from FontAwesome
+      SelectMore(0u2610,0u2611)
+      Paste()
+      SetWidth(1664)
+      Print("Done stealing ballot boxes from symbol font")
+    endif
+    SelectAll()
+    # Remove TrueType instructions
+    ClearInstrs()
+    SelectNone()
+    if (is_noto)
+      # Move single and double arrows up to align with middle of X
+      SelectMore(0u2190)
+      SelectMore(0u2192)
+      SelectMore(0u21d0)
+      SelectMore(0u21d2)
+      Move(0, 380)
+      SelectNone()
+    endif
+    # Basic Latin (e.g., English)
+    SelectMore(0u0020,0u007e)
+    # Latin-1 Supplement (covers core Western European languages)
+    #SelectMore(0u00a1,0u00ff)
+    SelectMore(0u00a1,0u00fd)
+    # Latin Extended-A (covers Czech, Dutch, Polish & Turkish, esp. names)
+    SelectMore(0u0100,0u017f)
+    # General Punctuation (most of it) (e.g., dashes, curved quotes, bullet, ellipsis)
+    SelectMore(0u2000,0u203a)
+    # More picky general punctuation
+    ## Spaces
+    #SelectMore(0u2000,0u200b)
+    ## Dashes
+    #SelectMore(0u2012,0u2015)
+    ## Curved quotes
+    #SelectMore(0u2018,0u2019)
+    #SelectMore(0u201c,0u201d)
+    #SelectMore(0u2039,0u203a)
+    ## Daggars
+    #SelectMore(0u2020,0u2021)
+    ## Bullet
+    #SelectMore(0u2022)
+    ## Ellipsis
+    #SelectMore(0u2026)
+    # Additional Currency Symbols
+    #SelectMore(0u20a0,0u20d0)
+    # ...or just the Euro sign
+    SelectMore(0u20ac)
+    # Trademark sign (selected from Letterlike Symbols set)
+    SelectMore(0u2122)
+    # Mathematical Operators (e.g., infinity, sum, partial differential)
+    SelectMore(0u2200,0u22ff)
+    # Geometric Shapes (e.g., list bullets)
+    SelectMore(0u25a0,0u25ff)
+    # Greek (frequently used for math and bullets)
+    SelectMore(0u0370,0u03ff)
+    if (is_noto)
+      # Single arrows (present in Noto Serif, but misaligned; missing from Roboto)
+      SelectMore(0u2190)
+      SelectMore(0u2192)
+      # Double arrows (added to Noto Serif manually; missing from Roboto)
+      SelectMore(0u21d0)
+      SelectMore(0u21d2)
+    endif
+    if (is_mplus)
+      # Single arrows (present in Noto Serif, but ugly; missing from Roboto)
+      SelectMore(0u2190,0u2195)
+      # Double arrows (missing from Noto Serif & Roboto)
+      SelectMore(0u21d0,0u21d5)
+      # Ballot boxes (added to Noto Serif; missing from Roboto)
+      #SelectMore(0u2610,0u2612)
+      SelectMore(0u2610,0u2611)
+      # Check mark (missing from Noto Serif & Roboto)
+      SelectMore(0u2713)
+    endif
+    if (new_basename == "notoserif-regular")
+      # Ballot boxes (imported from FontAwesome)
+      SelectMore(0u2610,0u2611)
+    endif
+    if (script == "latin-ext" || script == "latin-ext-cyrillic" || script == "fallback")
+      # Latin Extended-B
+      SelectMore(0u0180,0u024f)
+      # IPA Extensions (i.e., core phonetics)
+      #SelectMore(0u0250,0u02af)
+      # Upside-down e (from IPA Extensions)
+      SelectMore(0u0259)
+      # Spacing Modifier Letters (i.e., IPA tone marks, and modifiers for aspiration and palatalization)
+      SelectMore(0u02b0,0u02ff)
+      # Latin Ligatures (e.g., fi) (Noto Serif doesn't auto-detect them, so leave them off)
+      #SelectMore(0ufb00,0ufb06)
+    endif
+    if (script == "latin-cyrillic" || script == "latin-ext-cyrillic" || script == "multilingual" || script == "fallback")
+      # Cyrillic
+      SelectMore(0u0400,0u04ff)
+    endif
+    if (script == "multilingual" || script == "fallback")
+      # Non-optimal selection for Vietnamese
+      # Latin Extended-A, Latin Extended Additional
+      #SelectMore(0u0100,0u017f)
+      #SelectMore(0u1e00,0u1eff)
+      # Optimal selection for Vietnamese (see http://blog.int3ractive.com/2010/06/optimal-unicode-range-for-vietnamese.html)
+      # NOTE Latin Extended-A may already included at this point, so 0u0102-0u0169 may be redundant
+      SelectMore(0u0102,0u0103)
+      SelectMore(0u0110,0u0111)
+      SelectMore(0u0128,0u0129)
+      SelectMore(0u0168,0u0169)
+      SelectMore(0u01a0,0u01b0)
+      SelectMore(0u1ea0,0u1ef9)
+      if (is_mplus)
+        # CJK Symbols and Punctuation (not present in mainstream Noto Serif and Roboto fonts)
+        SelectMore(0u3000,0u303f)
+        # Hiragana
+        SelectMore(0u3040,0u309f)
+        # Katakana
+        SelectMore(0u30a0,0u30ff)
+        # Full-width roman characters and half-width katakana
+        SelectMore(0uff00,0uffef)
+        # CJK Unified Ideographs (for Japanese, aka kanji) (not present in mainstream Noto Serif and Roboto fonts)
+        SelectMore(0u4e00,0u9faf)
+      endif
+      # Select all them symbols
+      #SelectAll()
+    endif
+    #if (script == "fallback")
+    #  # Cyrillic Supplement
+    #  #SelectMore(0u0500,0u052f)
+    #  # Greek Extended (i.e., Polytonic)
+    #  #SelectMore(0u1f00,0u1fff)
+    #  # Select all them symbols
+    #  SelectAll()
+    #endif
+    # BOM
+    SelectMore(0ufeff)
+    # No-break space
+    SelectMore(0u00a0)
+    # Non-marking return (QUESTION do we really need this?)
+    #SelectMore(0u000d)
+    # Drop all glyphs that weren't selected
+    SelectInvert()
+    Clear()
+    SelectNone()
+    if (is_mplus)
+      # Generate BOM, zero-width space, and word joiner from no-break space (for M+ fonts)
+      Select(0u00a0)
+      Copy()
+      SelectNone()
+      SelectMore(0ufeff)
+      SelectMore(0u200b)
+      SelectMore(0u2060)
+      Paste()
+      SetWidth(0)
+      SelectNone()
+      # Generate narrow no-break space from thin space (for M+ fonts)
+      Select(0u2009)
+      Copy()
+      SelectNone()
+      Select(0u202f)
+      Paste()
+      SetWidth(226)
+      # Generate hair space from thin space (for M+ fonts)
+      Select(0u2009)
+      Copy()
+      SelectNone()
+      Select(0u200a)
+      Paste()
+      SetWidth(94)
+      SelectNone()
+    else
+      # Generate word joiner for zero-width no break space
+      Select(0ufeff)
+      Copy()
+      Select(0u2060)
+      Paste()
+      SelectNone()
+      # Generate no-break hyphen from hyphen (for Noto Serif fonts)
+      Select(0u002d)
+      Copy()
+      SelectNone()
+      Select(0u2011)
+      Paste()
+      SelectNone()
+    endif
+
+    # Generate line feed from no-break space (works around error "cmap format 14 is not supported" in ttfunk)
+    # FIXME another option here is to select all the characters referenced by the cmap format 14 table
+    Select(0u00a0)
+    Copy()
+    SelectNone()
+    Select(0u000a)
+    Paste()
+    SetWidth(0)
+    SelectNone()
+
+    new_filename = new_basename + "-" + script + ".ttf"
+    new_filepath = output_dir + "/" + new_filename
+    Print("Generating " + new_filename + "...")
+    Generate(new_filepath, "", genflags)
+    Close()
+    if (is_mplus)
+      # Regenerate font to drop invalid cmap format 14 table (ignore warnings)
+      Open(new_filepath)
+      Generate(new_filepath, "", genflags)
+      Close()
+    endif
+    si = si + 1
+  endloop
+  fi = fi + 1
+endloop
+
+fi = 0
+while (fi < num_code_fonts)
+  src_filepath = StrJoin([source_dir, code_fonts[fi]], "/")
+  new_basename = code_fonts[fi]:r
+  # remove hyphen from mplus-1 file basename
+  new_basename = "mplus1" + StrJoin(StrSplit(new_basename, "mplus-1"), "")
+  new_suffix = "-" + code_script + ".ttf"
+  Open(src_filepath)
+  SelectAll()
+  # NOTE: M+ fonts don't have hinting, so technically this is redundant
+  ClearInstrs()
+  SelectNone()
+  if (code_script == "ascii")
+    # Basic Latin (e.g., Code)
+    SelectMore(0u0020,0u007e)
+    # No-break space
+    SelectMore(0u00a0)
+    # Box drawing symbols for unix `tree` output
+    SelectMore(0u2500,0u257f)
+    if (new_basename == "mplus1mn-regular")
+      # Enclosed numbers (1-20)
+      SelectMore(0u2460,0u2473)
+      new_suffix = "-ascii-conums.ttf"
+    endif
+    SelectInvert()
+    Clear()
+    SelectNone()
+  endif
+  SetFontNames(new_basename, "M+ 1mn")
+  # repurpose light as italic
+  if (new_basename == "mplus1mn-light")
+    SetFontNames("mplus1mn-italic", "M+ 1mn", "M+ 1mn Italic")
+    SetOS2Value("Weight", 400)
+    SetPanose(2, 5)
+    SetTTFName(0x409, 2, "Italic")
+    SetTTFName(0x409, 16, "")
+    SetTTFName(0x409, 17, "")
+    SetTTFName(0x411, 16, "")
+    SetTTFName(0x411, 17, "")
+    new_basename = "mplus1mn-italic"
+  # repurpose medium as bold
+  elseif (new_basename == "mplus1mn-medium")
+    SetFontNames("mplus1mn-bold", "M+ 1mn", "M+ 1mn Bold")
+    SetOS2Value("Weight", 700)
+    SetPanose(2, 8)
+    SetTTFName(0x409, 2, "Bold")
+    SetTTFName(0x409, 16, "")
+    SetTTFName(0x409, 17, "")
+    SetTTFName(0x411, 16, "")
+    SetTTFName(0x411, 17, "")
+    new_basename = "mplus1mn-bold"
+  # repurpose bold as bold italic
+  elseif (new_basename == "mplus1mn-bold")
+    SetFontNames("mplus1mn-bold_italic", "M+ 1mn", "M+ 1mn Bold Italic")
+    SetOS2Value("Weight", 700)
+    SetPanose(2, 8)
+    SetTTFName(0x409, 2, "Bold Italic")
+    SetTTFName(0x409, 16, "")
+    SetTTFName(0x409, 17, "")
+    SetTTFName(0x411, 16, "")
+    SetTTFName(0x411, 17, "")
+    new_basename = "mplus1mn-bold_italic"
+  endif
+
+  # Generate BOM from no-break space
+  Select(0u00a0)
+  Copy()
+  SelectNone()
+  Select(0ufeff)
+  Paste()
+  SetWidth(0)
+  SelectNone()
+
+  # Generate line feed from no-break space
+  Select(0u00a0)
+  Copy()
+  SelectNone()
+  Select(0u000a)
+  Paste()
+  SetWidth(0)
+  SelectNone()
+
+  new_filename = new_basename + new_suffix
+  new_filepath = output_dir + "/" + new_filename
+  Print("Generating " + new_filename + "...")
+  Generate(new_filepath, "", genflags)
+  Close()
+  # Regenerate font to drop invalid cmap format 14 table (ignore warnings)
+  Open(new_filepath)
+  Generate(new_filepath, "", genflags)
+  Close()
+  fi = fi + 1
+endloop

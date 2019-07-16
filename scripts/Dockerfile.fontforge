@@ -1,0 +1,11 @@
+# podman build -t fontforge -f Dockerfile.fontforge
+FROM fedora:31
+
+RUN groupadd -g 1000 fontforge && \
+    useradd -u 1000 -g 1000 -G fontforge fontforge && \
+    dnf install -y fontforge xz
+
+USER fontforge
+WORKDIR /home/fontforge
+
+ENTRYPOINT [ "fontforge" ]
