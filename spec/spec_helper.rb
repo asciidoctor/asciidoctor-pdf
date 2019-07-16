@@ -440,7 +440,7 @@ end
 
 RSpec::Matchers.define :log_message do |expected|
   match notify_expectation_failures: true do |actual|
-    with_memory_logger do |logger|
+    with_memory_logger expected[:using_log_level] do |logger|
       actual.call
       (expect logger).to have_message expected if logger
       true

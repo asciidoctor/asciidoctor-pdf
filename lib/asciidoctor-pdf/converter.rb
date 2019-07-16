@@ -2248,22 +2248,29 @@ class Converter < ::Prawn::Document
       else
         size_attr = ''
       end
-      begin
-        if icon_set == 'fa'
-          font_data = nil
-          resolved_icon_set = FontAwesomeIconSets.find {|candidate| (font_data = icon_font_data candidate).unicode icon_name rescue nil }
-          if resolved_icon_set
-            icon_set = resolved_icon_set
-            logger.info { %(#{icon_name} icon found in deprecated fa icon set; use #{icon_set} icon set instead) }
-          else
-            raise
-          end
+      if icon_set == 'fa'
+        # legacy name from Font Awesome < 5
+        if (remapped_icon_name = resolve_legacy_icon_name icon_name)
+          requested_icon_name = icon_name
+          icon_set, icon_name = remapped_icon_name.split '-', 2
+          glyph = (icon_font_data icon_set).unicode icon_name
+          logger.info { %(#{requested_icon_name} icon found in deprecated fa icon set; using #{icon_name} from #{icon_set} icon set instead) }
+        # new name in Font Awesome >= 5 (but document is configured to use fa icon set)
         else
-          font_data = icon_font_data icon_set
+          font_data = nil
+          if (resolved_icon_set = FontAwesomeIconSets.find {|candidate| (font_data = icon_font_data candidate).unicode icon_name rescue nil })
+            icon_set = resolved_icon_set
+            glyph = font_data.unicode icon_name
+            logger.info { %(#{icon_name} icon not found in deprecated fa icon set; using match found in #{resolved_icon_set} icon set instead) }
+          end
         end
+      else
+        glyph = (icon_font_data icon_set).unicode icon_name rescue nil
+      end
+      if glyph
         # TODO support rotate and flip attributes
-        %(<font name="#{icon_set}"#{size_attr}>#{font_data.unicode icon_name}</font>)
-      rescue
+        %(<font name="#{icon_set}"#{size_attr}>#{glyph}</font>)
+      else
         logger.warn %(#{icon_name} is not a valid icon name in the #{icon_set} icon set)
         %([#{node.attr 'alt'}])
       end
