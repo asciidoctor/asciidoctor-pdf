@@ -33,10 +33,11 @@ This document describes how the theming system works, how to define a custom the
 
 IMPORTANT: If you're creating a custom theme, you're expected to supply your own fonts.
 We recognize this can be a major obstacle when you're starting out.
-Therefore, your other option is to simply redeclare the fonts from the https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml[default theme] in the <<Custom Fonts,font catalog>>.
-Asciidoctor PDF will then resolve the fonts that are bundled with the gem.
+That's why the best way to get started to <<Extends,extend the default theme>>, which already provides the necessary fonts.
+The other option is to simply redeclare the fonts from the https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml[default theme] in the <<Custom Fonts,font catalog>>.
+In both cases, Asciidoctor PDF will then resolve the fonts that are bundled with the gem.
 
-WARNING: If you don't declare your own fonts, the built-in (AFM) fonts declared in https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/base-theme.yml[base theme] will be used instead.
+WARNING: If you don't declare your own fonts (or extend the default theme), the built-in (AFM) fonts declared in https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/base-theme.yml[base theme] will be used instead.
 Using AFM fonts can result in missing functionality and warnings.
 See the <<Built-In (AFM) Fonts>> section to learn more about these limitations.
 
@@ -907,6 +908,15 @@ Therefore, you only have to declare keys that you want to override.
 === Extends
 
 A theme can extend another theme using the `extends` key.
+For example:
+
+[source,yaml]
+----
+extends: default
+base:
+  font-color: #ff0000
+----
+
 The extends key accepts either a single value or an array of values.
 Each value is interpreted as a filename.
 If the filename equals `default`, it resolves to the location of the default (built-in) theme.
