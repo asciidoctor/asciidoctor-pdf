@@ -35,7 +35,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect text).to have_size 2
       label_text = text[0]
       (expect label_text[:string]).to eql ?\uf0eb
-      (expect label_text[:font_name]).to eql 'FontAwesome5FreeRegular'
+      (expect label_text[:font_name]).to eql 'FontAwesome5Free-Regular'
       content_text = text[1]
       (expect content_text[:string]).to eql 'Look for the warp zone under the bridge.'
     end
@@ -54,7 +54,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect text).to have_size 2
       label_text = text[0]
       (expect label_text[:string]).to eql ?\uf3d1
-      (expect label_text[:font_name]).to eql 'FontAwesome5FreeRegular'
+      (expect label_text[:font_name]).to eql 'FontAwesome5Free-Regular'
       content_text = text[1]
       (expect content_text[:string]).to eql 'Look for the warp zone under the bridge.'
     end
