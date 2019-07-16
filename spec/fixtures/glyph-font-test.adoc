@@ -1,0 +1,41 @@
+[%hardbreaks]
+// single arrows
+a &#x2192; b
+c &#x2190; d
+// double arrows
+a &#x21d2; b
+c &#x21d0; d
+// euro sign
+99,99 &#x20ac;
+// trademark sign
+YOLO&#x2122;
+// math operators
+To &#x221e;!
+// circled numbers
+`&#x2460;` to `&#x2473;`
+`&#x2776;` to `&#x24f4;`
+// greek
+&#x0391; to &#x03a9;
+// cyrillic
+&#x0416;
+// vietnamese
+&#x01a0;
+// no-break space and narrow no-break
+keep{nbsp}close
+keep&#x202f;close(r)
+// zero-width space
+ad{zwsp}joined
+// word joiner
+in&#x2060;divisible
+// hair space
+almost&#x200a;touching
+// no-break hyphen
+fast&#x2011;approaching
+ifeval::["{pdf-theme}"=="default-with-fallback-font"]
+// check mark
+&#x2713; done
+// upside down e
+upsid&#x0259; down
+// CJK
+&#x3041;&#x3000;&#x3088;
+endif::[]

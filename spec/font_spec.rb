@@ -13,6 +13,24 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       to_file = to_pdf_file input_file, 'font-i18n-default-with-fallback.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
       (expect to_file).to visually_match 'font-i18n-default-with-fallback.pdf'
     end
+
+    it 'should include expected glyphs in bundled default font' do
+      input_file = Pathname.new fixture_file 'glyph-font-test.adoc'
+      to_file = to_pdf_file input_file, 'font-glyph-default.pdf'
+      (expect to_file).to visually_match 'font-glyph-default.pdf'
+    end
+
+    it 'should include expected glyphs in bundled default font with fallback font' do
+      input_file = Pathname.new fixture_file 'glyph-font-test.adoc'
+      to_file = to_pdf_file input_file, 'font-glyph-default-with-fallback.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      (expect to_file).to visually_match 'font-glyph-default-with-fallback.pdf'
+    end
+
+    it 'should include expected glyphs in fallback font' do
+      input_file = Pathname.new fixture_file 'glyph-font-test.adoc'
+      to_file = to_pdf_file input_file, 'font-glyph-fallback-only.pdf', pdf_theme: { extends: 'default-with-fallback-font', base_font_family: 'M+ 1p Fallback' }, attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      (expect to_file).to visually_match 'font-glyph-fallback-only.pdf'
+    end
   end
 
   context 'Kerning' do
