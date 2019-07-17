@@ -302,6 +302,10 @@ module Extensions
     ::Prawn::Icon::FontData.load self, family
   end
 
+  def resolve_legacy_icon_name name
+    ::Prawn::Icon::Compatibility::SHIMS[%(fa-#{name})]
+  end
+
   def calc_line_metrics line_height = 1, font = self.font, font_size = self.font_size
     line_height_length = line_height * font_size
     leading = line_height_length - font_size
