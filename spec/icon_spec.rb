@@ -52,4 +52,22 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Regular'
     }).to log_message severity: :INFO, message: 'smile-wink icon not found in deprecated fa icon set; using match found in far icon set instead', using_log_level: :INFO
   end
+
+  it 'should parse icon inside kbd macro' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :experimental:
+    :icons: font
+    :icon-set: fas
+
+    Press kbd:[Alt,icon:arrow-up[\]] to move the line up.
+    EOS
+
+    keyseq_text = pdf.text.find_all {|candidate| ['Alt', %(\u202f+\u202f), ?\uf062].include? candidate[:string] }
+    (expect keyseq_text.size).to eql 3
+    (expect keyseq_text[0][:string]).to eql 'Alt'
+    (expect keyseq_text[0][:font_name]).to eql 'mplus1mn-regular'
+    (expect keyseq_text[1][:string]).to eql %(\u202f+\u202f)
+    (expect keyseq_text[2][:string]).to eql ?\uf062
+    (expect keyseq_text[2][:font_name]).to eql 'FontAwesome5Free-Solid'
+  end
 end
