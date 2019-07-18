@@ -1946,7 +1946,7 @@ Otherwise, the style is controlled by the source highlighter theme.
 [#keys-callout-numbers]
 === Callout Numbers
 
-The keys in this category are used to control the style of callout numbers (conums) inside verbatim blocks and in callout lists (colists).
+The keys in this category are used to control the style of callout numbers (i.e., conums) inside verbatim blocks and in callout lists (colists).
 
 [cols="3,4,5l"]
 |===
@@ -1983,11 +1983,18 @@ The keys in this category are used to control the style of callout numbers (conu
 (default: 1.15)
 |conum:
   line-height: 4 / 3
+
+|glyphs^[2]^
+|circled {vbar} filled {vbar} Unicode String ranges +
+(default: circled)
+|conum:
+  glyphs: \u0031-\u0039
 |===
 
 . Currently, the font must contain the circle numbers starting at glyph U+2460.
 . font-family, font-size, font-style, and line-height are only used for markers in a colist.
 These properties are inherited for conums inside a verbatim block.
+. The glyphs can be specified as a comma-separated list of ranges, where the range values are Unicode numbers (e.g., \u2460).
 
 [#keys-button]
 === Button

@@ -7,14 +7,15 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* only apply title page background image to the title page (#1144)
+* make sure title page background or color (and only title page background or color) gets applied to title page even when page has already been created (#1144)
 * fix crash when image_width is defined in theme (#995)
 * fix crash when toc is enabled and toc-title attribute is unset
 * correctly map legacy Font Awesome icon names when icon set is not specified (#1157)
 * coerce color values in theme that contain uppercase letters (#1149)
 * ensure base font color is set
 * use more robust mechanism to detect an empty page; tare content stream after adding page background color or image
-* only apply title page background image to the title page (#1144)
-* make sure title page background or color (and only title page background or color) gets applied to title page even when page has already been created (#1144)
+* allow theme to control glyphs used for conums (#133)
 * allow theme to control background and border of inline kbd (#313)
 * add support for link on image in running content (#1002)
 * allow theme to disable font kerning

@@ -180,6 +180,7 @@ conum:
   font_color: $literal_font_color
   font_size: $base_font_size
   line_height: 4 / 3
+  glyphs: circled
 example:
   border_color: $base_border_color
   border_radius: $base_border_radius

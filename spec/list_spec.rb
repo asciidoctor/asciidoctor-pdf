@@ -259,6 +259,68 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
   end
 
+  context 'Callout' do
+    it 'should use callout numbers as list markers and in referenced block' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      ....
+      line one <1>
+      line two
+      line three <2>
+      ....
+      <1> First line
+      <2> Last line
+      EOS
+
+      one_text = pdf.find_text ?\u2460
+      two_text = pdf.find_text ?\u2461
+      (expect one_text).to have_size 2
+      (expect two_text).to have_size 2
+      (one_text + two_text).each do |text|
+        (expect text[:font_name]).to eql 'mplus1mn-regular'
+        (expect text[:font_color]).to eql 'B12146'
+      end
+      (expect one_text[1][:y]).to be < two_text[0][:y]
+    end
+
+    it 'should allow conum font color to be customized by theme' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { conum_font_color: '0000ff' }, analyze: true
+      ....
+      line one <1>
+      line two
+      line three <2>
+      ....
+      <1> First line
+      <2> Last line
+      EOS
+
+      one_text = pdf.find_text ?\u2460
+      (expect one_text).to have_size 2
+      one_text.each do |text|
+        (expect text[:font_name]).to eql 'mplus1mn-regular'
+        (expect text[:font_color]).to eql '0000FF'
+      end
+    end
+
+    it 'should allow conum glyphs to be customized' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { conum_glyphs: '\u0031-\u0039' }, analyze: true
+      ....
+      line one <1>
+      line two
+      line three <2>
+      ....
+      <1> First line
+      <2> Last line
+      EOS
+
+      one_text = pdf.find_text '1'
+      (expect one_text).to have_size 2
+      one_text.each do |text|
+        (expect text[:font_name]).to eql 'mplus1mn-regular'
+        (expect text[:font_color]).to eql 'B12146'
+      end
+    end
+  end
+
   context 'Bibliography' do
     it 'should reference bibliography entry using ID in square brackets by default' do
 
