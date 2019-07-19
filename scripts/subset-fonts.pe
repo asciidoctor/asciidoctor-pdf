@@ -332,8 +332,11 @@ while (fi < num_code_fonts)
     # Box drawing symbols for unix `tree` output
     SelectMore(0u2500,0u257f)
     if (new_basename == "mplus1mn-regular")
-      # Enclosed numbers (1-20)
+      # Enclosed numbers (1-20 circled and filled)
       SelectMore(0u2460,0u2473)
+      SelectMore(0u2776,0u277f)
+      SelectMore(0u24eb,0u24f4)
+      SelectMore(0u278a,0u2793)
       new_suffix = "-ascii-conums.ttf"
     endif
     SelectInvert()

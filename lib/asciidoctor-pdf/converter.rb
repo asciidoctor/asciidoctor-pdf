@@ -89,9 +89,7 @@ class Converter < ::Prawn::Document
   }
   ConumSets = {
     'circled' => (?\u2460..?\u2473).to_a,
-    # 'double-circled' => ...,
-    'filled' => (?\u278a..?\u2793).to_a + (?\u24eb..?\u24f4).to_a,
-    # 'parenthesized' => ...,
+    'filled' => (?\u2776..?\u277f).to_a + (?\u24eb..?\u24f4).to_a,
   }
   SimpleAttributeRefRx = /(?<!\\)\{\w+(?:[\-]\w+)*\}/
   MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'

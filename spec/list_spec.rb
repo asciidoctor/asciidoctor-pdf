@@ -301,7 +301,28 @@ describe 'Asciidoctor::PDF::Converter - List' do
       end
     end
 
-    it 'should allow conum glyphs to be customized' do
+    it 'should support filled conum glyphs if specified in theme' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { conum_glyphs: 'filled' }, analyze: true
+      ....
+      line one <1>
+      line two
+      line three <2>
+      ....
+      <1> First line
+      <2> Last line
+      EOS
+
+      one_text = pdf.find_text ?\u2776
+      two_text = pdf.find_text ?\u2777
+      (expect one_text).to have_size 2
+      (expect two_text).to have_size 2
+      (one_text + two_text).each do |text|
+        (expect text[:font_name]).to eql 'mplus1mn-regular'
+        (expect text[:font_color]).to eql 'B12146'
+      end
+    end
+
+    it 'should allow conum glyphs to be specified explicitly' do
       pdf = to_pdf <<~'EOS', pdf_theme: { conum_glyphs: '\u0031-\u0039' }, analyze: true
       ....
       line one <1>

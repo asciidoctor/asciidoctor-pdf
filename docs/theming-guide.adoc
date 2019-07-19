@@ -1994,7 +1994,8 @@ The keys in this category are used to control the style of callout numbers (i.e.
 . Currently, the font must contain the circle numbers starting at glyph U+2460.
 . font-family, font-size, font-style, and line-height are only used for markers in a colist.
 These properties are inherited for conums inside a verbatim block.
-. The glyphs can be specified as a comma-separated list of ranges, where the range values are Unicode numbers (e.g., \u2460).
+. The font must provide the required glyphs.
+The glyphs can be specified as a comma-separated list of ranges, where the range values are Unicode numbers (e.g., \u2460).
 
 [#keys-button]
 === Button
