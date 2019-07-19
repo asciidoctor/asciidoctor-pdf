@@ -1957,7 +1957,7 @@ class Converter < ::Prawn::Document
         (alignment = (node.roles & BlockAlignmentNames)[-1])
       alignment = alignment.to_sym
     else
-      alignment = :left
+      alignment = (theme.table_align || :left).to_sym
     end
 
     caption_side = (theme.table_caption_side || :top).to_sym
