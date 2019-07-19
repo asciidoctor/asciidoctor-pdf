@@ -76,6 +76,7 @@ code_padding: 9
 code_border_color: 'EEEEEE'
 code_border_width: 0.5
 conum_line_height: 1.15
+conum_glyphs: circled
 example_background_color: 'FFFFFF'
 example_border_color: 'EEEEEE'
 example_border_width: 0.5

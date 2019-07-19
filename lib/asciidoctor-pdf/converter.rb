@@ -87,6 +87,12 @@ class Converter < ::Prawn::Document
     checked: %(\u2611),
     unchecked: %(\u2610)
   }
+  ConumSets = {
+    'circled' => (?\u2460..?\u2473).to_a,
+    # 'double-circled' => ...,
+    'filled' => (?\u278a..?\u2793).to_a + (?\u24eb..?\u24f4).to_a,
+    # 'parenthesized' => ...,
+  }
   SimpleAttributeRefRx = /(?<!\\)\{\w+(?:[\-]\w+)*\}/
   MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'
   MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|p[txc])?$/
@@ -331,6 +337,10 @@ class Converter < ::Prawn::Document
     @list_numerals = []
     @list_bullets = []
     @footnotes = []
+    @conum_glyphs = ConumSets[@theme.conum_glyphs || 'circled'] || (@theme.conum_glyphs.split ',').map {|r|
+      from, to = r.rstrip.split '-', 2
+      to ? ((get_char from)..(get_char to)).to_a : [(get_char from)]
+    }.flatten
     @index = IndexCatalog.new
     # NOTE we have to init Pdfmark class here while we have reference to the doc
     @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
@@ -967,9 +977,7 @@ class Converter < ::Prawn::Document
     end
     add_dest_for_block node if node.id
     @list_numerals ||= []
-    # FIXME move \u2460 to constant (or theme setting)
-    # \u2460 = circled one, \u24f5 = double circled one, \u278b = negative circled one
-    @list_numerals << %(\u2460)
+    @list_numerals << 1
     #stroke_horizontal_rule @theme.caption_border_bottom_color
     line_metrics = calc_line_metrics @theme.base_line_height
     node.items.each_with_index do |item, idx|
@@ -985,13 +993,13 @@ class Converter < ::Prawn::Document
 
   def convert_colist_item node
     marker_width = nil
+    @list_numerals << (index = @list_numerals.pop).next
     theme_font :conum do
-      marker_width = rendered_width_of_string %(#{conum_glyph 1}x)
+      marker_width = rendered_width_of_string %(#{marker = conum_glyph index}x)
       float do
         bounding_box [0, cursor], width: marker_width do
-          @list_numerals << (index = @list_numerals.pop).next
           theme_font :conum do
-            layout_prose index, align: :center, line_height: @theme.conum_line_height, inline_format: false, margin: 0
+            layout_prose marker, align: :center, line_height: @theme.conum_line_height, inline_format: false, margin: 0
           end
         end
       end
@@ -1143,7 +1151,7 @@ class Converter < ::Prawn::Document
         list_indent = 0
       elsif (list_indent = @theme.outline_list_indent) > 0
         # no-bullet aligns text with left-hand side of bullet position (as though there's no bullet)
-        list_indent = [list_indent - (rendered_width_of_string %(#{node.context == :ulist ? "\u2022" : '1.'}x)), 0].max
+        list_indent = [list_indent - (rendered_width_of_string %(#{node.context == :ulist ? ?\u2022 : '1.'}x)), 0].max
       end
     else
       list_indent = @theme.outline_list_indent
@@ -1716,12 +1724,7 @@ class Converter < ::Prawn::Document
   end
 
   def conum_glyph number
-    # FIXME make starting glyph a constant and/or theme setting
-    # FIXME use lookup table for glyphs instead of relying on counting
-    # \u2460 = circled one, \u24f5 = double circled one, \u278b = negative circled one
-    glyph = %(\u2460)
-    (number - 1).times { glyph = glyph.next }
-    glyph
+    @conum_glyphs[number - 1]
   end
 
   # Adds guards to preserve indentation
@@ -3833,6 +3836,10 @@ class Converter < ::Prawn::Document
     else
       nums
     end
+  end
+
+  def get_char code
+    (code.start_with? '\u') ? ([((code.slice 2, code.length).to_i 16)].pack 'U1') : code
   end
 
   # QUESTION move to prawn/extensions.rb?
