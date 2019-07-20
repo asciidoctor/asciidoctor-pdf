@@ -497,4 +497,29 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect caption_texts.map {|it| it[:x] }.uniq).to have_size 1
     end
   end
+
+  context 'Table alignment' do
+    it 'should allow theme to customize default alignment of table ' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_align: 'right' }, analyze: true
+      [cols=3*,width=50%]
+      |===
+      |RIGHT |B1 |C1
+      |A2 |B2 |C2
+      |A3 |B3 |C3
+      |===
+
+      [cols=3*,width=50%,align=left]
+      |===
+      |LEFT |B1 |C1
+      |A2 |B2 |C2
+      |A3 |B3 |C3
+      |===
+      EOS
+
+      cell_right = (pdf.find_text 'RIGHT')[0]
+      cell_left = (pdf.find_text 'LEFT')[0]
+
+      (expect cell_right[:x]).to be > cell_left[:x]
+    end
+  end
 end
