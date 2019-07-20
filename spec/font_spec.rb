@@ -55,4 +55,15 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-kerning-disabled.pdf'
     end
   end
+
+  context 'Separators' do
+    it 'should not break line at location of no-break space' do
+      input = (%w(a b c d).reduce([]) {|accum, it| accum << (it * 20) }.join ' ') + ?\u00a0 + ('e' * 20)
+      pdf = to_pdf input, analyze: true
+      text = pdf.text
+      (expect text).to have_size 2
+      (expect text[0][:string]).to end_with 'c'
+      (expect text[1][:string]).to start_with 'd'
+    end
+  end
 end
