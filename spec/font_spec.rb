@@ -64,6 +64,17 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect text).to have_size 2
       (expect text[0][:string]).to end_with 'c'
       (expect text[1][:string]).to start_with 'd'
+      (expect text[1][:y]).to be < text[0][:y]
+    end
+
+    it 'should use zero-width space a line break opportunity' do
+      input = (%w(a b c d e f).reduce([]) {|accum, it| accum << (it * 5) + ?\u200b + (it * 10) }.join ' ')
+      pdf = to_pdf input, analyze: true
+      text = pdf.text
+      (expect text).to have_size 2
+      (expect text[0][:string]).to eql 'aaaaaaaaaaaaaaa bbbbbbbbbbbbbbb ccccccccccccccc ddddddddddddddd eeeeeeeeeeeeeee fffff'
+      (expect text[1][:string]).to eql 'ffffffffff'
+      (expect text[1][:y]).to be < text[0][:y]
     end
   end
 end
