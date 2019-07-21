@@ -34,7 +34,7 @@ cp /usr/share/fonts/google-noto/NotoSerif-{Regular,Italic,Bold,BoldItalic}.ttf .
 
 cd ..
 
-podman run --rm -it --privileged \
+podman run --rm -t -u 0:0 --privileged \
   -e "SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}" \
   -v `pwd`:/home/fontforge/scripts \
   -v `pwd`/$BUILD_DIR:/home/fontforge/scripts/build \
