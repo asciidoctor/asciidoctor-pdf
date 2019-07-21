@@ -31,6 +31,12 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       to_file = to_pdf_file input_file, 'font-glyph-fallback-only.pdf', pdf_theme: { extends: 'default-with-fallback-font', base_font_family: 'M+ 1p Fallback' }, attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
       (expect to_file).to visually_match 'font-glyph-fallback-only.pdf'
     end
+
+    it 'should include box drawing glyphs in bundled monospace font' do
+      input_file = Pathname.new fixture_file 'box-drawing.adoc'
+      to_file = to_pdf_file input_file, 'font-box-drawing.pdf'
+      (expect to_file).to visually_match 'font-box-drawing.pdf'
+    end
   end
 
   context 'built-in (AFM)' do

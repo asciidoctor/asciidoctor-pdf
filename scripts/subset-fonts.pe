@@ -322,10 +322,10 @@ while (fi < num_code_fonts)
   SelectNone()
   if (code_script == "ascii")
     # Basic Latin (e.g., Code)
-    SelectMore(0u0020,0u007e)
+    Select(0u0020,0u007e)
     # No-break space
     SelectMore(0u00a0)
-    # Box drawing symbols for unix `tree` output
+    # Box drawing symbols (for unix `tree` output)
     SelectMore(0u2500,0u257f)
     if (new_basename == "mplus1mn-regular")
       # Enclosed numbers (1-20 circled and filled)
@@ -337,6 +337,10 @@ while (fi < num_code_fonts)
     SelectInvert()
     Clear()
     SelectNone()
+    ## Adjust width of box drawing symbols (not working)
+    #Select(0u2500,0u257f)
+    #SetWidth(50, 2)
+    #SelectNone()
   endif
   SetFontNames(new_basename, "M+ 1mn")
   # repurpose light as italic
