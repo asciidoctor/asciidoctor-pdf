@@ -8,10 +8,10 @@ font:
       bold_italic: notoserif-bold_italic-subset.ttf
     # M+ 1mn supports ASCII and the circled numbers used for conums
     M+ 1mn:
-      normal: mplus1mn-regular-ascii-conums.ttf
-      bold: mplus1mn-bold-ascii.ttf
-      italic: mplus1mn-italic-ascii.ttf
-      bold_italic: mplus1mn-bold_italic-ascii.ttf
+      normal: mplus1mn-regular-subset.ttf
+      bold: mplus1mn-bold-subset.ttf
+      italic: mplus1mn-italic-subset.ttf
+      bold_italic: mplus1mn-bold_italic-subset.ttf
 page:
   background_color: ffffff
   layout: portrait

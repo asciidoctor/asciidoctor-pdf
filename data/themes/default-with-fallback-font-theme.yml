@@ -7,10 +7,10 @@ font:
       italic: notoserif-italic-subset.ttf
       bold_italic: notoserif-bold_italic-subset.ttf
     M+ 1mn:
-      normal: mplus1mn-regular-ascii-conums.ttf
-      bold: mplus1mn-bold-ascii.ttf
-      italic: mplus1mn-italic-ascii.ttf
-      bold_italic: mplus1mn-bold_italic-ascii.ttf
+      normal: mplus1mn-regular-subset.ttf
+      bold: mplus1mn-bold-subset.ttf
+      italic: mplus1mn-italic-subset.ttf
+      bold_italic: mplus1mn-bold_italic-subset.ttf
     # M+ 1p supports Latin, Latin-1 Supplement, Latin Extended, Greek, Cyrillic, Vietnamese, Japanese & an assortment of symbols
     # It also provides arrows for ->, <-, => and <= replacements in case these glyphs are missing from font
     M+ 1p Fallback:

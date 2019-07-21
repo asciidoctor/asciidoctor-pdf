@@ -42,7 +42,7 @@ copy_fonts = ["NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.t
 # FIXME reenable copy_scripts to be customized at top level; disabled due to support for mplus1p-regular-fallback
 # copy_scripts = ["subset"]
 code_fonts = ["mplus-1mn-light.ttf", "mplus-1mn-regular.ttf", "mplus-1mn-medium.ttf", "mplus-1mn-bold.ttf"]
-code_scripts = ["ascii"]
+code_scripts = ["ascii", "subset"]
 
 if ($argc >= 2)
   source_dir = $argv[1]
@@ -331,6 +331,18 @@ while (fi < num_code_fonts)
     SelectNone()
     # Basic Latin (e.g., English)
     SelectMore(0u0020,0u007e)
+    if (script == "subset")
+      # Latin-1 Supplement (covers core Western European languages)
+      SelectMore(0u00a1,0u00fd)
+      # Latin Extended-A (covers Czech, Dutch, Polish & Turkish, esp. names)
+      SelectMore(0u0100,0u017f)
+      # Greek Alphabet (frequently used for math)
+      SelectMore(0u0391,0u03c9)
+      # Euro sign
+      SelectMore(0u20ac)
+      # Cyrillic
+      SelectMore(0u0400,0u04ff)
+    endif
     # No-break space
     SelectMore(0u00a0)
     # Box drawing symbols (for unix `tree` output)
