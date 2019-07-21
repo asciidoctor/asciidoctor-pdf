@@ -1,4 +1,10 @@
 class Prawn::Font::AFM
+  if defined? ::Asciidoctor::Logging
+    include ::Asciidoctor::Logging
+  else
+    include ::Asciidoctor::LoggingShim
+  end
+
   FALLBACK_CHARS = {
     %(\u200b) => '',
     %(\u202f) => %(\u00a0),
@@ -17,8 +23,8 @@ class Prawn::Font::AFM
   def normalize_encoding text
     text.encode 'windows-1252', fallback: FALLBACK_CHARS
   rescue ::Encoding::UndefinedConversionError
-    warn 'The following text could not be fully converted to the Windows-1252 character set:'
-    warn %(#{text.gsub(/^/, '| ').rstrip})
+    logger.warn %(The following text could not be fully converted to the Windows-1252 character set:
+#{text.gsub(/^/, '| ').rstrip})
     text.encode 'windows-1252', undef: :replace, replace: %(\u00ac)
   rescue ::Encoding::InvalidByteSequenceError
     raise Prawn::Errors::IncompatibleStringEncoding,

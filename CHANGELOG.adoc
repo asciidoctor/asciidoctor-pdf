@@ -21,6 +21,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add support for link on image in running content (#1002)
 * allow theme to disable font kerning
 * add support for default theme alignment for tables (#1164)
+* route AFM font warning through Asciidoctor logger
 
 == 1.5.0.beta.1 (2019-07-08) - @mojavelinux
 

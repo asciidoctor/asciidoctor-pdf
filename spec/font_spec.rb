@@ -33,6 +33,14 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     end
   end
 
+  context 'built-in (AFM)' do
+    it 'should warn if document contains glyph not supported by AFM font' do
+      (expect {
+        to_pdf 'α', analyze: true, attribute_overrides: { 'pdf-theme' => 'base' }
+      }).to log_message severity: :WARN, message: %(The following text could not be fully converted to the Windows-1252 character set:\n| α)
+    end
+  end
+
   context 'Kerning' do
     it 'should enable kerning when using default theme' do
       to_file = to_pdf_file <<~'EOS', 'font-kerning-default.pdf'
