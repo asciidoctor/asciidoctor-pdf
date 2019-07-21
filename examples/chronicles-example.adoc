@@ -284,20 +284,22 @@ Install Prawn:
 Then create your first PDF document in Ruby!
 
 .Generates a basic PDF document using Prawn
-```ruby
+[source,ruby]
+----
 require 'prawn' # <1>
 
 Prawn::Document.generate 'output.pdf' do # <3>
   text 'Hello, World!' # <2>
 end
-```
+----
 <1> Imports Prawn library
 <2> Adds text “Hello, World!” to first page
 <3> Writes PDF to [file]_output.pdf_ after executing all statements
 
 How about some source code that styles code? So meta!
 
-```css
+[source,css]
+----
 code {
   padding: 2px 4px;
   font-size: 90%;
@@ -307,7 +309,7 @@ code {
   background-color: #f9f2f4;
   border-radius: 4px;
 }
-```
+----
 
 Where could we go without some Java?
 Naturally, some autosizing is necessary.
