@@ -101,6 +101,7 @@ while (fi < num_copy_fonts)
         # NOTE it shouldn't be necessary to write the file here, but for some reason it doesn't work otherwise in this script
         Generate(new_filepath, "", genflags)
         src_filepath = new_filepath
+        Close()
       endif
       Print("Stealing double arrows from M+ 1p...")
       Open(mplus1p_src_filepath)
