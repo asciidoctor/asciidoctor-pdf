@@ -16,8 +16,21 @@ if [ ! -d $MPLUS_TESTFLIGHT ]; then
   tar xf ${MPLUS_TESTFLIGHT}.tar.xz
 fi
 
+# NOTE assume use of /usr/share/fonts/google-noto from Fedora package
+#if [ ! -d NotoSerif ]; then
+#  # from https://www.google.com/get/noto/#serif-lgc
+#  curl -LOs https://noto-website-2.storage.googleapis.com/pkgs/NotoSerif-hinted.zip
+#  unzip -q -d NotoSerif NotoSerif-hinted.zip
+#fi
+
+if [ ! -f fontawesome-webfont.ttf ]; then
+  curl -LOs https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.ttf
+fi  
+
 cp ${MPLUS_TESTFLIGHT}/mplus-1mn*ttf .
 cp ${MPLUS_TESTFLIGHT}/mplus-1p-regular.ttf .
+# FIXME use fonts from google-noto-serif-fonts RPM
+cp /usr/share/fonts/google-noto/NotoSerif-{Regular,Italic,Bold,BoldItalic}.ttf .
 
 cd ..
 

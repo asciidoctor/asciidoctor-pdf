@@ -1,0 +1,14 @@
+M+ fonts are generated from the M+ outline fonts TESTFLIGHT 63a retrieved from http://mplus-fonts.osdn.jp/mplus-outline-fonts/download/index-en.html.
+
+The following changes were made using fontforge to produce mplus1mn-*-ascii.ttf fonts:
+
+* Subsetted to include:
+ ** Non-visible Characters (U+00a0)
+ ** Basic Latin (U+0020–U+007e)
+ ** Enclosed Numbers (U+2460–U+2473, U+2776–U+277f, U+24eb–U+24f4) (M+ 1mn Regular only)
+ ** Box Drawing Symbols (U+2500–U+257f)
+* Added BOM (U+feff) and line feed (U+000a) characters (from blank)
+* Generated old-style kern table (neither Apple or OpenType) (required to make kerning work in Prawn) (flags: 0x90)
+* Removed Truetype instructions (information not used by Prawn) (flags: 0x08)
+* Generated with PS Glyph Names option enabled (didn't use 0x04 flag)
+* Generate flags used, in total: 0x90 + 0x08

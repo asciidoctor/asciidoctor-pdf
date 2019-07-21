@@ -38,8 +38,7 @@
 # NOTE best choice for Prawn & web is 0x00 + 0x800 + 0x08
 
 genflags = 0x90 + 0x08
-#copy_fonts = ["NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-BoldItalic.ttf", "mplus-1p-regular.ttf"]
-copy_fonts = ["mplus-1p-regular.ttf"]
+copy_fonts = ["NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-BoldItalic.ttf", "mplus-1p-regular.ttf"]
 num_copy_fonts = SizeOf(copy_fonts)
 code_fonts = ["mplus-1mn-light.ttf", "mplus-1mn-regular.ttf", "mplus-1mn-medium.ttf", "mplus-1mn-bold.ttf"]
 num_code_fonts = SizeOf(code_fonts)
@@ -56,18 +55,13 @@ else
   output_dir = "generated"
 endif
 
-fa_src_filepath = StrJoin([source_dir, "FontAwesome.ttf"], "/")
+fa_src_filepath = StrJoin([source_dir, "fontawesome-webfont.ttf"], "/")
+mplus1p_src_filepath = StrJoin([source_dir, "mplus-1p-regular.ttf"], "/")
 fi = 0
 while (fi < num_copy_fonts)
   copy_font = copy_fonts[fi]
   src_filepath = StrJoin([source_dir, copy_font], "/")
   new_basename = ToLower(copy_font:r)
-  if (Strstr(new_basename, "-hinted") >= 0)
-    new_basename = StrJoin(StrSplit(new_basename, "-hinted"), "")
-  endif
-  if (Strstr(new_basename, "-unhinted") >= 0)
-    new_basename = StrJoin(StrSplit(new_basename, "-unhinted"), "")
-  endif
   if (Strstr(new_basename, "bolditalic") >= 0)
     new_basename = StrJoin(StrSplit(new_basename, "bolditalic"), "bold_italic")
   endif
@@ -83,46 +77,57 @@ while (fi < num_copy_fonts)
   si = 0
   while (si < num_copy_scripts)
     script = copy_scripts[si]
-    if (new_basename == "notoserif-regular")
-      Print("Stealing ballot boxes from symbol font...")
-      # Grab ballot boxes from FontAwesome
-      Open(fa_src_filepath)
-      # relocate 0uf046 -> 0u2611
-      Select(0uf046)
-      Copy()
-      Select(0u2611)
-      Paste()
-      # relocate 0uf096 -> 0u2610
-      Select(0uf096)
-      Copy()
-      Select(0u2610)
-      Paste()
-      # select and copy ballot boxes
-      Select(0u2610,0u2611)
+    new_filename = new_basename + "-" + script + ".ttf"
+    new_filepath = output_dir + "/" + new_filename
+    if (is_noto)
+      Print("Stealing glyphs from other fonts...")
+      if (new_basename == "notoserif-regular")
+        Print("Stealing ballot boxes from FontAwesome...")
+        # Grab ballot boxes from FontAwesome
+        Open(fa_src_filepath)
+        # relocate 0uf046 -> 0u2611
+        Select(0uf046); Copy(); Select(0u2611); Paste()
+        # relocate 0uf096 -> 0u2610
+        Select(0uf096); Copy(); Select(0u2610); Paste()
+        # select and copy ballot boxes
+        Select(0u2610,0u2611)
+        Copy()
+        Close()
+        Open(src_filepath)
+        Select(0u2610,0u2611)
+        Paste()
+        SetWidth(1664)
+        SelectNone()
+        # NOTE it shouldn't be necessary to write the file here, but for some reason it doesn't work otherwise in this script
+        Generate(new_filepath, "", genflags)
+        src_filepath = new_filepath
+      endif
+      Print("Stealing double arrows from M+ 1p...")
+      Open(mplus1p_src_filepath)
+      SelectMore(0u21d0)
+      SelectMore(0u21d2)
       Copy()
       Close()
-    endif
-    Open(src_filepath)
-    if (new_basename == "notoserif-regular")
-      # Import ballot boxes from FontAwesome
-      SelectMore(0u2610,0u2611)
+      Open(src_filepath)
+      SelectMore(0u21d0)
+      SelectMore(0u21d2)
       Paste()
-      SetWidth(1664)
-      Print("Done stealing ballot boxes from symbol font")
-    endif
-    SelectAll()
-    # Remove TrueType instructions
-    ClearInstrs()
-    SelectNone()
-    if (is_noto)
+      Scale(200, 200)
+      SetWidth(2048)
+      CenterInWidth()
       # Move single and double arrows up to align with middle of X
       SelectMore(0u2190)
       SelectMore(0u2192)
-      SelectMore(0u21d0)
-      SelectMore(0u21d2)
       Move(0, 380)
       SelectNone()
+      Print("Done stealing glyphs from other fonts")
+    else
+      Open(src_filepath)
     endif
+    SelectAll()
+    # Remove TrueType instructions (i.e., hinting)
+    ClearInstrs()
+    SelectNone()
     # Basic Latin (e.g., English)
     SelectMore(0u0020,0u007e)
     # Latin-1 Supplement (covers core Western European languages)
@@ -160,27 +165,29 @@ while (fi < num_copy_fonts)
     # Greek (frequently used for math and bullets)
     SelectMore(0u0370,0u03ff)
     if (is_noto)
-      # Single arrows (present in Noto Serif, but misaligned; missing from Roboto)
+      # Single arrows (present in Noto Serif, but misaligned)
       SelectMore(0u2190)
       SelectMore(0u2192)
-      # Double arrows (added to Noto Serif manually; missing from Roboto)
+      # Double arrows (missing from Noto Serif originally)
       SelectMore(0u21d0)
       SelectMore(0u21d2)
+      if (new_basename == "notoserif-regular")
+        # Ballot boxes (imported from FontAwesome)
+        SelectMore(0u2610,0u2611)
+      endif
+      # Check mark (missing from Noto Serif)
+      #SelectMore(0u2713)
     endif
     if (is_mplus)
-      # Single arrows (present in Noto Serif, but ugly; missing from Roboto)
+      # Single arrows
       SelectMore(0u2190,0u2195)
-      # Double arrows (missing from Noto Serif & Roboto)
+      # Double arrows
       SelectMore(0u21d0,0u21d5)
-      # Ballot boxes (added to Noto Serif; missing from Roboto)
+      # Ballot boxes
       #SelectMore(0u2610,0u2612)
       SelectMore(0u2610,0u2611)
-      # Check mark (missing from Noto Serif & Roboto)
+      # Check mark
       SelectMore(0u2713)
-    endif
-    if (new_basename == "notoserif-regular")
-      # Ballot boxes (imported from FontAwesome)
-      SelectMore(0u2610,0u2611)
     endif
     if (script == "latin-ext" || script == "latin-ext-cyrillic" || script == "fallback")
       # Latin Extended-B
@@ -189,16 +196,16 @@ while (fi < num_copy_fonts)
       #SelectMore(0u0250,0u02af)
       # Upside-down e (from IPA Extensions)
       SelectMore(0u0259)
-      # Spacing Modifier Letters (i.e., IPA tone marks, and modifiers for aspiration and palatalization)
+      # Spacing Modifier Letters (i.e., IPA tone marks, and modifiers for aspiration and palatalization) (missing from Noto Serif)
       SelectMore(0u02b0,0u02ff)
       # Latin Ligatures (e.g., fi) (Noto Serif doesn't auto-detect them, so leave them off)
       #SelectMore(0ufb00,0ufb06)
     endif
-    if (script == "latin-cyrillic" || script == "latin-ext-cyrillic" || script == "multilingual" || script == "fallback")
+    if (script == "latin-cyrillic" || script == "latin-ext-cyrillic" || script == "subset" || script == "fallback")
       # Cyrillic
       SelectMore(0u0400,0u04ff)
     endif
-    if (script == "multilingual" || script == "fallback")
+    if (script == "subset" || script == "fallback")
       # Non-optimal selection for Vietnamese
       # Latin Extended-A, Latin Extended Additional
       #SelectMore(0u0100,0u017f)
@@ -212,7 +219,7 @@ while (fi < num_copy_fonts)
       SelectMore(0u01a0,0u01b0)
       SelectMore(0u1ea0,0u1ef9)
       if (is_mplus)
-        # CJK Symbols and Punctuation (not present in mainstream Noto Serif and Roboto fonts)
+        # CJK Symbols and Punctuation (not present in mainstream Noto Serif fonts)
         SelectMore(0u3000,0u303f)
         # Hiragana
         SelectMore(0u3040,0u309f)
@@ -220,11 +227,9 @@ while (fi < num_copy_fonts)
         SelectMore(0u30a0,0u30ff)
         # Full-width roman characters and half-width katakana
         SelectMore(0uff00,0uffef)
-        # CJK Unified Ideographs (for Japanese, aka kanji) (not present in mainstream Noto Serif and Roboto fonts)
+        # CJK Unified Ideographs (for Japanese, aka kanji) (not present in mainstream Noto Serif fonts)
         SelectMore(0u4e00,0u9faf)
       endif
-      # Select all them symbols
-      #SelectAll()
     endif
     #if (script == "fallback")
     #  # Cyrillic Supplement
@@ -234,7 +239,7 @@ while (fi < num_copy_fonts)
     #  # Select all them symbols
     #  SelectAll()
     #endif
-    # BOM
+    # BOM (zero-width no-break space)
     SelectMore(0ufeff)
     # No-break space
     SelectMore(0u00a0)
@@ -245,7 +250,7 @@ while (fi < num_copy_fonts)
     Clear()
     SelectNone()
     if (is_mplus)
-      # Generate BOM, zero-width space, and word joiner from no-break space (for M+ fonts)
+      # Generate BOM (zero-width no-break space), zero-width space, and word joiner from no-break space (for M+ fonts)
       Select(0u00a0)
       Copy()
       SelectNone()
@@ -271,7 +276,7 @@ while (fi < num_copy_fonts)
       SetWidth(94)
       SelectNone()
     else
-      # Generate word joiner for zero-width no break space
+      # Generate word joiner from BOM (zero-width no-break space)
       Select(0ufeff)
       Copy()
       Select(0u2060)
@@ -284,6 +289,10 @@ while (fi < num_copy_fonts)
       Select(0u2011)
       Paste()
       SelectNone()
+      # Fix width of .null character
+      #Select(0u0000)
+      #SetWidth(0)
+      #SelectNone()
     endif
 
     # Generate line feed from no-break space (works around error "cmap format 14 is not supported" in ttfunk)
@@ -296,8 +305,6 @@ while (fi < num_copy_fonts)
     SetWidth(0)
     SelectNone()
 
-    new_filename = new_basename + "-" + script + ".ttf"
-    new_filepath = output_dir + "/" + new_filename
     Print("Generating " + new_filename + "...")
     Generate(new_filepath, "", genflags)
     Close()
@@ -336,7 +343,7 @@ while (fi < num_code_fonts)
       SelectMore(0u2460,0u2473)
       SelectMore(0u2776,0u277f)
       SelectMore(0u24eb,0u24f4)
-      SelectMore(0u278a,0u2793)
+      #SelectMore(0u278a,0u2793)
       new_suffix = "-ascii-conums.ttf"
     endif
     SelectInvert()
@@ -379,7 +386,7 @@ while (fi < num_code_fonts)
     new_basename = "mplus1mn-bold_italic"
   endif
 
-  # Generate BOM from no-break space
+  # Generate BOM (zero-width no-break space) from no-break space
   Select(0u00a0)
   Copy()
   SelectNone()
