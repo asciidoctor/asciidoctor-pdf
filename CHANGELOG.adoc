@@ -15,6 +15,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * coerce color values in theme that contain uppercase letters (#1149)
 * ensure base font color is set
 * use more robust mechanism to detect an empty page; tare content stream after adding page background color or image
+* ignore pdf-themesdir unless pdf-theme is specified (#1167)
 * allow theme to control glyphs used for conums (#133)
 * allow theme to control background and border of inline kbd (#313, #1004)
 * add support for link on image in running content (#1002)
