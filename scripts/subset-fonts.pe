@@ -105,13 +105,16 @@ while (fi < num_copy_fonts)
       endif
       Print("Stealing double arrows from M+ 1p...")
       Open(mplus1p_src_filepath)
+      from_em = $em
       SelectSingletons(0u21d0,0u21d2)
       Copy()
       Close()
       Open(src_filepath)
       SelectSingletons(0u21d0,0u21d2)
       Paste()
-      Scale(200, 200)
+      # TODO to be strictly accurate, multiply $em by 1.0
+      scale_factor = ($em / from_em) * 100
+      Scale(scale_factor, scale_factor)
       SetWidth(2048)
       CenterInWidth()
       # Move single and double arrows up to align with middle of X
