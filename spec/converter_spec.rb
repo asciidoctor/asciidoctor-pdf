@@ -71,6 +71,26 @@ describe Asciidoctor::PDF::Converter do
       end
     end
 
+    it 'should only load theme from pdf-themesdir if pdf-theme attribute specified' do
+      %w(theme style).each do |term|
+        [nil, 'default'].each do |theme|
+          to_pdf_opts = { analyze: true }
+          to_pdf_opts[:attribute_overrides] = { %(pdf-#{term}) => theme } if theme
+          pdf = to_pdf <<~EOS, to_pdf_opts
+          = Document Title
+          :pdf-#{term}sdir: #{fixtures_dir}
+
+          body text
+          EOS
+
+          expected_font_color = theme ? 'AA0000' : '333333'
+          body_text = (pdf.find_text 'body text')[0]
+          (expect body_text).not_to be_nil
+          (expect body_text[:font_color]).to eql expected_font_color
+        end
+      end
+    end
+
     it 'should apply the named theme specified by pdf-theme located in the specified pdf-themesdir' do
       %w(theme style).each do |term|
         pdf = to_pdf <<~EOS, analyze: true

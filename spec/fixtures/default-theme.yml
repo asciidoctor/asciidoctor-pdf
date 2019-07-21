@@ -1,0 +1,4 @@
+# not really the default theme, but a custom theme named default
+extends: base
+base:
+  font-color: #aa0000
