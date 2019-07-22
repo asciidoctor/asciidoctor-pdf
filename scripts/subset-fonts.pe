@@ -39,8 +39,7 @@
 
 genflags = 0x90 + 0x08
 copy_fonts = ["NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-BoldItalic.ttf", "mplus-1p-regular.ttf"]
-# FIXME reenable copy_scripts to be customized at top level; disabled due to support for mplus1p-regular-fallback
-# copy_scripts = ["subset"]
+copy_scripts = ["subset"]
 code_fonts = ["mplus-1mn-light.ttf", "mplus-1mn-regular.ttf", "mplus-1mn-medium.ttf", "mplus-1mn-bold.ttf"]
 code_scripts = ["ascii", "subset"]
 
@@ -69,16 +68,17 @@ while (fi < num_copy_fonts)
   endif
   is_mplus = Strstr(new_basename, "mplus") >= 0
   is_noto = Strstr(new_basename, "noto") >= 0
-  copy_scripts = ["subset"]
   # remove hyphen from mplus-1 file basename
   if (is_mplus)
     new_basename = "mplus1" + StrJoin(StrSplit(new_basename, "mplus-1"), "")
-    copy_scripts = ["fallback"]
   endif
   si = 0
   num_copy_scripts = SizeOf(copy_scripts)
   while (si < num_copy_scripts)
     script = copy_scripts[si]
+    if (is_mplus && new_basename == "mplus1p-regular" && script == "subset")
+      script = "fallback"
+    endif
     new_filename = new_basename + "-" + script + ".ttf"
     new_filepath = output_dir + "/" + new_filename
     if (is_noto)
