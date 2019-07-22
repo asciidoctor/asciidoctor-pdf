@@ -42,8 +42,12 @@ describe 'Asciidoctor::PDF::Converter - Font' do
   context 'built-in (AFM)' do
     it 'should warn if document contains glyph not supported by AFM font' do
       (expect {
-        to_pdf 'α', analyze: true, attribute_overrides: { 'pdf-theme' => 'base' }
-      }).to log_message severity: :WARN, message: %(The following text could not be fully converted to the Windows-1252 character set:\n| α)
+        pdf = to_pdf 'α to ω', analyze: true, attribute_overrides: { 'pdf-theme' => 'base' }
+        not_glyph = ?\u00ac
+        text = pdf.text
+        (expect text).to have_size 1
+        (expect text[0][:string]).to eql %(#{not_glyph} to #{not_glyph})
+      }).to log_message severity: :WARN, message: %(The following text could not be fully converted to the Windows-1252 character set:\n| α to ω)
     end
   end
 
