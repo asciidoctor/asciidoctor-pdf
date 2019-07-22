@@ -1,0 +1,19 @@
+Let's assume you've put your theme-related files inside a directory name `resources` that has the following layout:
+
+....
+resources
+├── fonts
+│   ├── roboto-bold_italic.ttf
+│   ├── roboto-bold.ttf
+│   ├── roboto-italic.ttf
+│   └── roboto-normal.ttf
+└── themes
+    └── basic-theme.yml
+....
+
+Let's make a box.
+
+....
+┌─┐
+└─┘
+....
