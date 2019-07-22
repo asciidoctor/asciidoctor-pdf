@@ -39,10 +39,10 @@
 
 genflags = 0x90 + 0x08
 copy_fonts = ["NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-BoldItalic.ttf", "mplus-1p-regular.ttf"]
-num_copy_fonts = SizeOf(copy_fonts)
+# FIXME reenable copy_scripts to be customized at top level; disabled due to support for mplus1p-regular-fallback
+# copy_scripts = ["subset"]
 code_fonts = ["mplus-1mn-light.ttf", "mplus-1mn-regular.ttf", "mplus-1mn-medium.ttf", "mplus-1mn-bold.ttf"]
-num_code_fonts = SizeOf(code_fonts)
-code_script = "ascii"
+code_scripts = ["ascii", "subset"]
 
 if ($argc >= 2)
   source_dir = $argv[1]
@@ -57,7 +57,9 @@ endif
 
 fa_src_filepath = StrJoin([source_dir, "fontawesome-webfont.ttf"], "/")
 mplus1p_src_filepath = StrJoin([source_dir, "mplus-1p-regular.ttf"], "/")
+
 fi = 0
+num_copy_fonts = SizeOf(copy_fonts)
 while (fi < num_copy_fonts)
   copy_font = copy_fonts[fi]
   src_filepath = StrJoin([source_dir, copy_font], "/")
@@ -73,8 +75,8 @@ while (fi < num_copy_fonts)
     new_basename = "mplus1" + StrJoin(StrSplit(new_basename, "mplus-1"), "")
     copy_scripts = ["fallback"]
   endif
-  num_copy_scripts = SizeOf(copy_scripts)
   si = 0
+  num_copy_scripts = SizeOf(copy_scripts)
   while (si < num_copy_scripts)
     script = copy_scripts[si]
     new_filename = new_basename + "-" + script + ".ttf"
@@ -309,20 +311,38 @@ while (fi < num_copy_fonts)
 endloop
 
 fi = 0
+num_code_fonts = SizeOf(code_fonts)
 while (fi < num_code_fonts)
-  src_filepath = StrJoin([source_dir, code_fonts[fi]], "/")
-  new_basename = code_fonts[fi]:r
+  code_font = code_fonts[fi]
+  src_filepath = StrJoin([source_dir, code_font], "/")
+  new_basename_base = code_font:r
   # remove hyphen from mplus-1 file basename
-  new_basename = "mplus1" + StrJoin(StrSplit(new_basename, "mplus-1"), "")
-  new_suffix = "-" + code_script + ".ttf"
-  Open(src_filepath)
-  SelectAll()
-  # NOTE: M+ fonts don't have hinting, so technically this is redundant
-  ClearInstrs()
-  SelectNone()
-  if (code_script == "ascii")
-    # Basic Latin (e.g., Code)
-    Select(0u0020,0u007e)
+  new_basename_base = "mplus1" + StrJoin(StrSplit(new_basename_base, "mplus-1"), "")
+  si = 0
+  num_code_scripts = SizeOf(code_scripts)
+  while (si < num_code_scripts)
+    new_basename = new_basename_base
+    script = code_scripts[si]
+    new_suffix = "-" + script + ".ttf"
+    Open(src_filepath)
+    SelectAll()
+    # NOTE: M+ fonts don't have hinting, so technically this is redundant
+    ClearInstrs()
+    SelectNone()
+    # Basic Latin (e.g., English)
+    SelectMore(0u0020,0u007e)
+    if (script == "subset")
+      # Latin-1 Supplement (covers core Western European languages)
+      SelectMore(0u00a1,0u00fd)
+      # Latin Extended-A (covers Czech, Dutch, Polish & Turkish, esp. names)
+      SelectMore(0u0100,0u017f)
+      # Greek Alphabet (frequently used for math)
+      SelectMore(0u0391,0u03c9)
+      # Euro sign
+      SelectMore(0u20ac)
+      # Cyrillic
+      SelectMore(0u0400,0u04ff)
+    endif
     # No-break space
     SelectMore(0u00a0)
     # Box drawing symbols (for unix `tree` output)
@@ -332,78 +352,84 @@ while (fi < num_code_fonts)
       SelectMore(0u2460,0u2473)
       SelectMore(0u2776,0u277f)
       SelectMore(0u24eb,0u24f4)
-      new_suffix = "-ascii-conums.ttf"
+      if (script == "ascii")
+        new_suffix = "-" + script + "-conums.ttf"
+      endif
     endif
     SelectInvert()
     Clear()
     SelectNone()
+    SetFontNames(new_basename, "M+ 1mn")
+    # repurpose light as italic
+    if (new_basename == "mplus1mn-light")
+      SetFontNames("mplus1mn-italic", "M+ 1mn", "M+ 1mn Italic")
+      SetOS2Value("Weight", 400)
+      SetPanose(2, 5)
+      SetTTFName(0x409, 2, "Italic")
+      SetTTFName(0x409, 16, "")
+      SetTTFName(0x409, 17, "")
+      SetTTFName(0x411, 16, "")
+      SetTTFName(0x411, 17, "")
+      new_basename = "mplus1mn-italic"
+    # repurpose medium as bold
+    elseif (new_basename == "mplus1mn-medium")
+      SetFontNames("mplus1mn-bold", "M+ 1mn", "M+ 1mn Bold")
+      SetOS2Value("Weight", 700)
+      SetPanose(2, 8)
+      SetTTFName(0x409, 2, "Bold")
+      SetTTFName(0x409, 16, "")
+      SetTTFName(0x409, 17, "")
+      SetTTFName(0x411, 16, "")
+      SetTTFName(0x411, 17, "")
+      new_basename = "mplus1mn-bold"
+    # repurpose bold as bold italic
+    elseif (new_basename == "mplus1mn-bold")
+      SetFontNames("mplus1mn-bold_italic", "M+ 1mn", "M+ 1mn Bold Italic")
+      SetOS2Value("Weight", 700)
+      SetPanose(2, 8)
+      SetTTFName(0x409, 2, "Bold Italic")
+      SetTTFName(0x409, 16, "")
+      SetTTFName(0x409, 17, "")
+      SetTTFName(0x411, 16, "")
+      SetTTFName(0x411, 17, "")
+      new_basename = "mplus1mn-bold_italic"
+    endif
+
     ## Adjust width of box drawing symbols (not working)
     #Select(0u2500,0u257f)
     #SetWidth(50, 2)
     #SelectNone()
-  endif
-  SetFontNames(new_basename, "M+ 1mn")
-  # repurpose light as italic
-  if (new_basename == "mplus1mn-light")
-    SetFontNames("mplus1mn-italic", "M+ 1mn", "M+ 1mn Italic")
-    SetOS2Value("Weight", 400)
-    SetPanose(2, 5)
-    SetTTFName(0x409, 2, "Italic")
-    SetTTFName(0x409, 16, "")
-    SetTTFName(0x409, 17, "")
-    SetTTFName(0x411, 16, "")
-    SetTTFName(0x411, 17, "")
-    new_basename = "mplus1mn-italic"
-  # repurpose medium as bold
-  elseif (new_basename == "mplus1mn-medium")
-    SetFontNames("mplus1mn-bold", "M+ 1mn", "M+ 1mn Bold")
-    SetOS2Value("Weight", 700)
-    SetPanose(2, 8)
-    SetTTFName(0x409, 2, "Bold")
-    SetTTFName(0x409, 16, "")
-    SetTTFName(0x409, 17, "")
-    SetTTFName(0x411, 16, "")
-    SetTTFName(0x411, 17, "")
-    new_basename = "mplus1mn-bold"
-  # repurpose bold as bold italic
-  elseif (new_basename == "mplus1mn-bold")
-    SetFontNames("mplus1mn-bold_italic", "M+ 1mn", "M+ 1mn Bold Italic")
-    SetOS2Value("Weight", 700)
-    SetPanose(2, 8)
-    SetTTFName(0x409, 2, "Bold Italic")
-    SetTTFName(0x409, 16, "")
-    SetTTFName(0x409, 17, "")
-    SetTTFName(0x411, 16, "")
-    SetTTFName(0x411, 17, "")
-    new_basename = "mplus1mn-bold_italic"
-  endif
 
-  # Generate BOM (zero-width no-break space) from no-break space
-  Select(0u00a0)
-  Copy()
-  SelectNone()
-  Select(0ufeff)
-  Paste()
-  SetWidth(0)
-  SelectNone()
+    # Generate BOM (zero-width no-break space) from no-break space
+    Select(0u00a0)
+    Copy()
+    SelectNone()
+    Select(0ufeff)
+    Paste()
+    SetWidth(0)
+    SelectNone()
 
-  # Generate line feed from no-break space
-  Select(0u00a0)
-  Copy()
-  SelectNone()
-  Select(0u000a)
-  Paste()
-  SetWidth(0)
-  SelectNone()
+    # Generate line feed from no-break space
+    Select(0u00a0)
+    Copy()
+    SelectNone()
+    Select(0u000a)
+    Paste()
+    SetWidth(0)
+    SelectNone()
 
-  new_filename = new_basename + new_suffix
-  new_filepath = output_dir + "/" + new_filename
-  Print("Generating " + new_filename + "...")
-  Generate(new_filepath, "", genflags)
-  Close()
-  # Regenerate font to drop invalid cmap format 14 table (ignore warnings)
-  Open(new_filepath)
-  Generate(new_filepath, "", genflags)
-  Close()
+    new_filename = new_basename + new_suffix
+    new_filepath = output_dir + "/" + new_filename
+    Print("Generating " + new_filename + "...")
+    Generate(new_filepath, "", genflags)
+    Close()
+
+    # Regenerate font to drop invalid cmap format 14 table (ignore warnings)
+    Open(new_filepath)
+    Generate(new_filepath, "", genflags)
+    Close()
+    si = si + 1
+  endloop
+
   fi = fi + 1
 endloop
