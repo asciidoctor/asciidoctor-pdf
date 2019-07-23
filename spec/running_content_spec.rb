@@ -393,7 +393,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       content
       EOS
 
-      (expect logger).to be_empty
+      (expect logger).to be_empty if logger
       running_text = pdf.find_text %(The Chronicles of <Foo> & #{?\u00a6})
       (expect running_text).to have_size 1
     end
