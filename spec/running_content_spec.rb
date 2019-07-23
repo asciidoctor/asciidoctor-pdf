@@ -378,6 +378,27 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect running_content_by_page).to eql expected_running_content_by_page
   end
 
+  it 'should escape text of doctitle attribute' do
+    theme_overrides = {
+      footer_recto_right_content: '({doctitle})',
+      footer_verso_left_content: '({doctitle})',
+    }
+
+    with_memory_logger do |logger|
+      pdf = to_pdf <<~'EOS', attributes: { 'doctitle' => 'The Chronicles of <Foo> & &#166;' }, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      :doctype: book
+
+      == Chapter 1
+
+      content
+      EOS
+
+      (expect logger).to be_empty
+      running_text = pdf.find_text %(The Chronicles of <Foo> & #{?\u00a6})
+      (expect running_text).to have_size 1
+    end
+  end
+
   it 'should draw background color across whole periphery region', integration: true do
     pdf_theme = build_pdf_theme \
       header_background_color: '009246',
