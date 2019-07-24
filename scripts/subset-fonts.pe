@@ -114,10 +114,9 @@ while (fi < num_copy_fonts)
       Open(src_filepath)
       SelectSingletons(0u21d0,0u21d2)
       Paste()
-      # TODO to be strictly accurate, multiply $em by 1.0
-      scale_factor = ($em / from_em) * 100
+      scale_factor = (1.0 * $em / from_em) * 100
       Scale(scale_factor, scale_factor)
-      SetWidth(2048)
+      SetWidth($em)
       CenterInWidth()
       # Move single and double arrows up to align with middle of X
       SelectMoreSingletons(0u2190,0u2192)
