@@ -1966,7 +1966,8 @@ class Converter < ::Prawn::Document
 
     table_settings = {
       header: table_header,
-      position: alignment,
+      # NOTE position is handled by this method
+      position: :left,
       cell_style: {
         # NOTE the border color and style of the outer frame is set later
         border_color: table_grid_color,
@@ -1992,11 +1993,23 @@ class Converter < ::Prawn::Document
 
     theme_margin :block, :top
 
+    left_padding = right_padding = nil
     table table_data, table_settings do
       # NOTE call width to capture resolved table width
       table_width = width
       caption_max_width = caption_max_width == 'fit-content' ? table_width : nil
       @pdf.layout_table_caption node, alignment, caption_max_width if node.title? && caption_side == :top
+      # NOTE align using padding instead of bounding_box as prawn-table does
+      # using a bounding_box across pages mangles the margin box of subsequent pages
+      if alignment != :left && table_width != (this_bounds = @pdf.bounds).width
+        if alignment == :center
+          left_padding = right_padding = (this_bounds.width - width) * 0.5
+          this_bounds.add_left_padding left_padding
+          this_bounds.add_right_padding right_padding
+        else # :right
+          this_bounds.add_left_padding(left_padding = this_bounds.width - width)
+        end
+      end
       if grid == 'none' && frame == 'none'
         if table_header
           rows(0).tap do |r|
@@ -2054,6 +2067,10 @@ class Converter < ::Prawn::Document
         #  foot_row.each {|c| c.content = (transform_text c.content, foot_transform) if c.content }
         #end
       end
+    end
+    if left_padding
+      bounds.subtract_left_padding left_padding
+      bounds.subtract_right_padding right_padding if right_padding
     end
     layout_table_caption node, alignment, caption_max_width, caption_side if node.title? && caption_side == :bottom
     theme_margin :block, :bottom

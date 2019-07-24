@@ -521,5 +521,103 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       (expect cell_right[:x]).to be > cell_left[:x]
     end
+
+    it 'should allow position of table to be set using align attribute on table' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=3*,width=50%]
+      |===
+      |LEFT |B1 |C1
+      |A2 |B2 |C2
+      |A3 |B3 |C3
+      |===
+
+      [cols=3*,width=50%,align=right]
+      |===
+      |RIGHT |B1 |C1
+      |A2 |B2 |C2
+      |A3 |B3 |C3
+      |===
+      EOS
+
+      cell_right_text = (pdf.find_text 'RIGHT')[0]
+      cell_left_text = (pdf.find_text 'LEFT')[0]
+
+      (expect cell_right_text[:x]).to be > cell_left_text[:x]
+    end
+
+    it 'should not mangle margin box on subsequent pages if table with alignment crosses page boundary' do
+      blank_line = %(\n\n)
+
+      pdf = to_pdf <<~EOS, analyze: true
+      #{(['filler'] * 25).join blank_line}
+
+      [%autowidth,align=right]
+      |===
+      |A | B
+
+      |A1
+      |B1
+
+      |A2
+      |B2
+
+      |A3
+      |B3
+      |===
+
+      #{(['filler'] * 22).join blank_line}
+
+      #{(['* list item'] * 6).join ?\n}
+      EOS
+
+      page_width = pdf.pages[0][:size][0]
+      a1_text = (pdf.find_text 'A1')[0]
+      a3_text = (pdf.find_text 'A3')[0]
+      (expect a1_text[:x]).to be > (page_width * 0.5)
+      (expect a1_text[:page_number]).to eql 1
+      (expect a3_text[:x]).to be > (page_width * 0.5)
+      (expect a3_text[:page_number]).to eql 2
+      first_list_item_text = (pdf.find_text string: 'list item', page_number: 2)[0]
+      last_list_item_text = (pdf.find_text string: 'list item', page_number: 3)[-1]
+      # NOTE if this is off, the margin box got mangled
+      (expect last_list_item_text[:x]).to eql first_list_item_text[:x]
+    end
+
+    it 'should set width of aligned table relative to bounds' do
+      pdf = to_pdf <<~EOS, analyze: true
+      [width=25%,align=right]
+      |===
+      |A | B
+
+      |A1
+      |B1
+
+      |A2
+      |B2
+      |===
+      ====
+      ****
+
+      [width=25%,align=right]
+      |===
+      |A | B
+
+      |A1
+      |B1
+
+      |A2
+      |B2
+      |===
+      ****
+      ====
+      EOS
+
+      page_width = pdf.pages[0][:size][0]
+      first_a1_text = (pdf.find_text 'A1')[0]
+      second_a1_text = (pdf.find_text 'A1')[1]
+      (expect first_a1_text[:x]).to be > (page_width * 0.5)
+      (expect second_a1_text[:x]).to be > (page_width * 0.5)
+      (expect first_a1_text[:x]).to be > second_a1_text[:x]
+    end
   end
 end
