@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * fix crash when toc is enabled and toc-title attribute is unset
 * correctly map legacy Font Awesome icon names when icon set is not specified (#1157)
 * coerce color values in theme that contain uppercase letters (#1149)
+* prevent table alignment from modifying margins of subsequent pages; only align table if width is less than bounds (#1170)
 * ensure base font color is set
 * use more robust mechanism to detect an empty page; tare content stream after adding page background color or image
 * ignore pdf-themesdir unless pdf-theme is specified (#1167)
