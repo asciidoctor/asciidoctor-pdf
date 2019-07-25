@@ -68,11 +68,11 @@ class CodeRayEncoder < ::CodeRay::Encoders::Encoder
     value:             '336600'
   }
 
-  LF = %(\n)
-  NoBreakSpace = %(\u00a0)
-  InnerIndent = %(\n )
-  GuardedIndent = %(\u00a0)
-  GuardedInnerIndent = %(\n\u00a0)
+  LF = ?\n
+  NoBreakSpace = ?\u00a0
+  InnerIndent = LF + ' '
+  GuardedIndent = ?\u00a0
+  GuardedInnerIndent = LF + GuardedIndent
 
   def setup options
     super

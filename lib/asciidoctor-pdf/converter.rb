@@ -58,34 +58,34 @@ class Converter < ::Prawn::Document
   PageLayouts = [:portrait, :landscape]
   PageSides = [:recto, :verso]
   (PDFVersions = { '1.3' => 1.3, '1.4' => 1.4, '1.5' => 1.5, '1.6' => 1.6, '1.7' => 1.7 }).default = 1.4
-  LF = %(\n)
-  DoubleLF = %(\n\n)
-  TAB = %(\t)
-  InnerIndent = %(\n )
+  LF = ?\n
+  DoubleLF = LF * 2
+  TAB = ?\t
+  InnerIndent = LF + ' '
   # a no-break space is used to replace a leading space to prevent Prawn from trimming indentation
   # a leading zero-width space can't be used as it gets dropped when calculating the line width
-  GuardedIndent = %(\u00a0)
-  GuardedInnerIndent = %(\n\u00a0)
+  GuardedIndent = ?\u00a0
+  GuardedInnerIndent = LF + GuardedIndent
   TabRx = /\t/
   TabIndentRx = /^\t+/
-  NoBreakSpace = %(\u00a0)
-  NarrowNoBreakSpace = %(\u202f)
-  ZeroWidthSpace = %(\u200b)
-  DummyText = %(\u0000)
+  NoBreakSpace = ?\u00a0
+  NarrowNoBreakSpace = ?\u202f
+  ZeroWidthSpace = ?\u200b
+  DummyText = ?\u0000
   DotLeaderTextDefault = '. '
-  EmDash = %(\u2014)
-  RightPointer = %(\u25ba)
-  LowercaseGreekA = %(\u03b1)
+  EmDash = ?\u2014
+  RightPointer = ?\u25ba
+  LowercaseGreekA = ?\u03b1
   Bullets = {
-    disc: %(\u2022),
-    circle: %(\u25e6),
-    square: %(\u25aa),
+    disc: ?\u2022,
+    circle: ?\u25e6,
+    square: ?\u25aa,
     none: ''
   }
   # NOTE Default theme font uses ballot boxes from FontAwesome
   BallotBox = {
-    checked: %(\u2611),
-    unchecked: %(\u2610)
+    checked: ?\u2611,
+    unchecked: ?\u2610
   }
   ConumSets = {
     'circled' => (?\u2460..?\u2473).to_a,
@@ -102,7 +102,7 @@ class Converter < ::Prawn::Document
   UriSchemeBoundaryRx = /(?<=:\/\/)/
   LineScanRx = /\n|.+/
   BlankLineRx = /\n{2,}/
-  WhitespaceChars = %( \t\n)
+  WhitespaceChars = ' ' + TAB + LF
   SourceHighlighters = ['coderay', 'pygments', 'rouge'].to_set
   PygmentsBgColorRx = /^\.highlight +{ *background: *#([^;]+);/
   ViewportWidth = ::Module.new
@@ -2360,9 +2360,9 @@ class Converter < ::Prawn::Document
     when :subscript
       open, close, is_tag = ['<sub>', '</sub>', true]
     when :double
-      open, close, is_tag = ['“', '”', false]
+      open, close, is_tag = [?\u201c, ?\u201d, false]
     when :single
-      open, close, is_tag = ['‘', '’', false]
+      open, close, is_tag = [?\u2018, ?\u2019, false]
     #when :asciimath, :latexmath
     else
       open, close, is_tag = [nil, nil, false]

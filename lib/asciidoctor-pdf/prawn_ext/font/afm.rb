@@ -6,11 +6,11 @@ class Prawn::Font::AFM
   end
 
   FALLBACK_CHARS = {
-    %(\u200b) => '',
-    %(\u202f) => %(\u00a0),
-    %(\u2009) => ' ',
-    %(\u25e6) => '-',
-    %(\u25aa) => %(\u00b7)
+    ?\u200b => '',
+    ?\u202f => ?\u00a0,
+    ?\u2009 => ' ',
+    ?\u25e6 => '-',
+    ?\u25aa => ?\u00b7
   }
 
   remove_method :normalize_encoding
@@ -25,7 +25,7 @@ class Prawn::Font::AFM
   rescue ::Encoding::UndefinedConversionError
     logger.warn %(The following text could not be fully converted to the Windows-1252 character set:
 #{text.gsub(/^/, '| ').rstrip})
-    text.encode 'windows-1252', undef: :replace, replace: %(\u00ac)
+    text.encode 'windows-1252', undef: :replace, replace: ?\u00ac
   rescue ::Encoding::InvalidByteSequenceError
     raise Prawn::Errors::IncompatibleStringEncoding,
           %(Your document includes text which is not compatible with the Windows-1252 character set.
