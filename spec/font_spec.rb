@@ -49,6 +49,28 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         (expect text[0][:string]).to eql %(#{not_glyph} to #{not_glyph})
       }).to log_message severity: :WARN, message: %(The following text could not be fully converted to the Windows-1252 character set:\n| α to ω)
     end
+
+    it 'should replace essential characters with suitable replacements to avoid warnings' do
+      with_memory_logger do |logger|
+        pdf_theme = {
+          base_font_family: 'Helvetica'
+        }
+        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        :experimental:
+
+        * disc
+         ** circle
+           *** square
+
+        no{zwsp}space
+
+        button:[Save]
+        EOS
+        (expect logger).to be_empty if logger
+        (expect pdf.find_text font_name: 'Helvetica').to have_size pdf.text.size
+        (expect pdf.lines).to eql [%(\u2022disc), '-circle', %(\u00b7square), 'nospace', 'button:[Save]']
+      end
+    end
   end
 
   context 'Kerning' do
