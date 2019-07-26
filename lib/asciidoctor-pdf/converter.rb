@@ -69,7 +69,6 @@ class Converter < ::Prawn::Document
   TabRx = /\t/
   TabIndentRx = /^\t+/
   NoBreakSpace = ?\u00a0
-  NarrowNoBreakSpace = ?\u202f
   ZeroWidthSpace = ?\u200b
   DummyText = ?\u0000
   DotLeaderTextDefault = '. '
