@@ -384,7 +384,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       footer_verso_left_content: '({doctitle})',
     }
 
-    with_memory_logger do |logger|
+    (expect {
       pdf = to_pdf <<~'EOS', attributes: { 'doctitle' => 'The Chronicles of <Foo> & &#166;' }, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
       :doctype: book
 
@@ -393,10 +393,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       content
       EOS
 
-      (expect logger).to be_empty if logger
       running_text = pdf.find_text %(The Chronicles of <Foo> & \u00a6)
       (expect running_text).to have_size 1
-    end
+    }).to not_log_message
   end
 
   it 'should draw background color across whole periphery region', integration: true do

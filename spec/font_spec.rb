@@ -51,11 +51,8 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     end
 
     it 'should replace essential characters with suitable replacements to avoid warnings' do
-      with_memory_logger do |logger|
-        pdf_theme = {
-          base_font_family: 'Helvetica'
-        }
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      (expect {
+        pdf = to_pdf <<~'EOS', pdf_theme: { base_font_family: 'Helvetica' }, analyze: true
         :experimental:
 
         * disc
@@ -65,11 +62,11 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         no{zwsp}space
 
         button:[Save]
+
         EOS
-        (expect logger).to be_empty if logger
         (expect pdf.find_text font_name: 'Helvetica').to have_size pdf.text.size
         (expect pdf.lines).to eql [%(\u2022disc), '-circle', %(\u00b7square), 'nospace', 'button:[Save]']
-      end
+      }).to not_log_message
     end
   end
 
