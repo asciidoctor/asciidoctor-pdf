@@ -114,6 +114,12 @@ describe Asciidoctor::PDF::Converter do
       (expect pdf.instance_variable_get :@theme).to be theme
     end
 
+    it 'should log error if theme cannot be found or loaded' do
+      (expect {
+        Asciidoctor.convert 'foo', backend: 'pdf', attributes: { 'pdf-theme' => 'foo' }
+      }).to (raise_exception Errno::ENOENT) & (log_message severity: :ERROR, message: '~could not locate or load the built-in pdf theme `foo\'')
+    end
+
     it 'should convert background position to options' do
       converter = asciidoctor_2_or_better? ? (Asciidoctor::Converter.create 'pdf') : (Asciidoctor::Converter::Factory.create 'pdf')
       {
