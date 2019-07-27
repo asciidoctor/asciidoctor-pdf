@@ -22,6 +22,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add support for link on image in running content (#1002)
 * allow theme to disable font kerning
 * add support for default theme alignment for tables (#1164)
+* allow theme to customize style of titles in running content (#1044)
 * route AFM font warning through Asciidoctor logger
 * upgrade code font (M+ 1mn) to TESTFLIGHT-63a
 * include all alphanumeric characters in code font (mplus1mn) (#282)

@@ -353,6 +353,37 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect p2_text[1][:string]).to eql '2'
   end
 
+  it 'should allow style of title-related attributes to be customized using the title-style key' do
+    input = <<~'EOS'
+    = Document Title
+    :doctype: book
+    :sectnums:
+    :notitle:
+
+    == Beginning
+    EOS
+
+    pdf_theme = {
+      footer_recto_left_content: '[{chapter-title}]',
+      footer_recto_right_content: '',
+      footer_verso_left_content: '[{chapter-title}]',
+      footer_verso_right_content: '',
+      footer_font_color: 'AA0000',
+    }
+
+    [
+      [nil, 'Chapter 1. Beginning'],
+      ['document', 'Chapter 1. Beginning'],
+      ['toc', '1. Beginning'],
+      ['basic', 'Beginning'],
+    ].each do |(title_style, expected_title)|
+      pdf_theme = pdf_theme.merge footer_title_style: title_style if title_style
+      pdf = to_pdf input, pdf_theme: pdf_theme, attribute_overrides: { 'nofooter' => nil }, analyze: true
+      footer_text = (pdf.find_text font_color: 'AA0000')[0]
+      (expect footer_text[:string]).to eql %([#{expected_title}])
+    end
+  end
+
   it 'should use doctitle, toc-title, and preface-title as chapter-title before first chapter' do
     theme_overrides = {
       running_content_start_at: 'title',

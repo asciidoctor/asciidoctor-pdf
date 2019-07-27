@@ -105,6 +105,10 @@ class Converter < ::Prawn::Document
   SourceHighlighters = ['coderay', 'pygments', 'rouge'].to_set
   PygmentsBgColorRx = /^\.highlight +{ *background: *#([^;]+);/
   ViewportWidth = ::Module.new
+  (TitleStyles = {
+    'toc' => [:numbered_title],
+    'basic' => [:title],
+  }).default = [:numbered_title, formal: true]
 
   def initialize backend, opts
     super
@@ -2826,6 +2830,7 @@ class Converter < ::Prawn::Document
     sectlevels = (@theme[%(#{periphery}_sectlevels)] || 2).to_i
     sections = doc.find_by(context: :section) {|sect| sect.level <= sectlevels && sect != header } || []
 
+    title_method = TitleStyles[@theme[%(#{periphery}_title_style)]]
     # FIXME we need a proper model for all this page counting
     # FIXME we make a big assumption that part & chapter start on new pages
     # index parts, chapters and sections by the visual page number on which they start
@@ -2837,16 +2842,16 @@ class Converter < ::Prawn::Document
       page_num = (sect.attr 'pdf-page-start').to_i - skip_pagenums
       if is_book && ((sect_is_part = sect.part?) || sect.chapter?)
         if sect_is_part
-          part_start_pages[page_num] ||= (sect.numbered_title formal: true)
+          part_start_pages[page_num] ||= sect.send(*title_method)
         else
-          chapter_start_pages[page_num] ||= (sect.numbered_title formal: true)
+          chapter_start_pages[page_num] ||= sect.send(*title_method)
           if sect.sectname == 'appendix' && !part_start_pages.empty?
             # FIXME need a better way to indicate that part has ended
             part_start_pages[page_num] = ''
           end
         end
       else
-        sect_title = trailing_section_start_pages[page_num] = sect.numbered_title formal: true
+        sect_title = trailing_section_start_pages[page_num] = sect.send(*title_method)
         section_start_pages[page_num] ||= sect_title
       end
     end
