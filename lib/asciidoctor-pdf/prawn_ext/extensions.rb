@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 Prawn::Font::AFM.instance_variable_set :@hide_m17n_warning, true
 
 require 'prawn/icon'

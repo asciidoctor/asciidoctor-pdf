@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Asciidoctor::PDF::FormattedText
 module InlineImageArranger
   include ::Asciidoctor::PDF::Measurements

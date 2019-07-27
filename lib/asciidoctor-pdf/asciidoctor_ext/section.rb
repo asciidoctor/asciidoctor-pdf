@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Asciidoctor::Section
   def numbered_title opts = {}
     unless (@cached_numbered_title ||= nil)

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Prawn; module SVG
   class Interface
     def resize opts = {}

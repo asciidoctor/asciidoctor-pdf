@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 ######################################################################
 #
 # This file was copied from Prawn (manual/syntax_highlight.rb) and

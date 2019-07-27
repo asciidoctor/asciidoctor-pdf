@@ -1,4 +1,4 @@
-# encoding: utf-8
+# frozen_string_literal: true
 # TODO cleanup imports...decide what belongs in asciidoctor-pdf.rb
 require 'prawn'
 require_relative 'ttfunk_ext'

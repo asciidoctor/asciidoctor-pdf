@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'safe_yaml/load'
 require 'ostruct'
 require_relative 'core_ext/ostruct'

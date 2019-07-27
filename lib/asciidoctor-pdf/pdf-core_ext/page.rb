@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class PDF::Core::Page
   InitialPageContent = %(q\n)
 

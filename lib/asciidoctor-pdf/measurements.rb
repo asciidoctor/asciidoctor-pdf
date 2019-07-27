@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Asciidoctor; module PDF
   module Measurements
     MeasurementValueRx = /(\d+|\d*\.\d+)(in|mm|cm|p[txc])?$/

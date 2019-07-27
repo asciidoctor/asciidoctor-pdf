@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Asciidoctor::PDF::FormattedText
 module InlineTextAligner
   module_function

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'delegate'
 
 # A delegator that allows the size method to be used on the STDOUT object.

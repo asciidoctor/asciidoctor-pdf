@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Rouge
   module Themes
     # A port of the bw style from Pygments.

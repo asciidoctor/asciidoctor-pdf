@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # TODO add these methods to Asciidoctor core
 class Asciidoctor::ListItem
   # Check whether this list item has complex content (i.e., nested blocks other than an outline list).

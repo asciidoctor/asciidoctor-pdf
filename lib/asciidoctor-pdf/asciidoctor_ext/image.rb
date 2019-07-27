@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Asciidoctor
 module Image
   DataUriRx = /^data:image\/(?<fmt>png|jpe?g|gif|pdf|bmp|tiff);base64,(?<data>.*)$/

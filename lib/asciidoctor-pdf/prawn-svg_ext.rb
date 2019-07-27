@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'prawn-svg' unless defined? Prawn::SVG::Interface
 require_relative 'prawn-svg_ext/interface'
 # NOTE disable system fonts since they're non-portable

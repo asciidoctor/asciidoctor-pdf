@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Prawn; class Table; class Cell
   class AsciiDoc < Cell
     attr_accessor :align

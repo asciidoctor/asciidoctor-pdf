@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'treetop'
 require 'set' unless defined? Set
 require_relative 'formatted_text/parser'

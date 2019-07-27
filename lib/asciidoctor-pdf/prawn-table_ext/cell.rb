@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Prawn::Table::Cell
   remove_method :draw_borders
   # Draws borders around the cell. Borders are centered on the bounds of

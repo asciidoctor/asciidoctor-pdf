@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # NOTE these are either candidates for inclusion in Asciidoctor core or backports
 require_relative 'asciidoctor_ext/abstract_block'
 require_relative 'asciidoctor_ext/document'

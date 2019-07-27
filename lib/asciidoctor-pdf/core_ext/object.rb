@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Object
   # Convert the object to a serialized PDF object.
   def to_pdf

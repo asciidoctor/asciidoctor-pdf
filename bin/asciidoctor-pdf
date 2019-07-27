@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 if File.file?(asciidoctor_pdf = (File.expand_path '../../lib/asciidoctor/pdf.rb', __FILE__))
   require asciidoctor_pdf
