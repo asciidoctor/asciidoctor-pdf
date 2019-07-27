@@ -170,7 +170,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'PDF' do
     it 'should insert page at location of block macro if target is a PDF' do
-      pdf = to_pdf <<~'EOS', attributes: { 'imagesdir' => fixtures_dir }, analyze: true
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'nofooter' => nil }, analyze: true
       before
 
       image::blue-letter.pdf[]
@@ -189,7 +189,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should replace empty page at location of block macro if target is a PDF' do
-      pdf = to_pdf <<~'EOS', attributes: { 'imagesdir' => fixtures_dir }, analyze: true
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'nofooter' => nil }, analyze: true
       :page-background-image: image:bg.png[]
 
       before

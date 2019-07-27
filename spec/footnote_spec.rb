@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Footnote' do
   it 'should place footnotes at the end of each chapter when doctype is book' do
-    pdf = to_pdf <<~'EOS', doctype: :book, attributes: { 'notitle' => '', 'nofooter' => '' }, analyze: true
+    pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'notitle' => '' }, analyze: true
     == Chapter A
 
     About this thing.footnote:[More about that thing.] And so on.
@@ -31,7 +31,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should place footnotes at the end of document when doctype is not book' do
-    pdf = to_pdf <<~'EOS', attributes: { 'notitle' => '', 'nofooter' => '' }, analyze: true
+    pdf = to_pdf <<~'EOS', attributes_overrides: { 'notitle' => '' }, analyze: true
     == Section A
 
     About this thing.footnote:[More about that thing.] And so on.
@@ -133,7 +133,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should allow a link to be used in footnote when media is print' do
-    pdf = to_pdf <<~'EOS', attributes: { 'media' => 'print', 'nofooter' => '' }, analyze: true
+    pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => 'print' }, analyze: true
     When in doubt, search.footnote:[Use a search engine like https://google.com[Google]]
     EOS
 

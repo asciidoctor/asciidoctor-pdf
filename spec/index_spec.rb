@@ -199,7 +199,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   end
 
   it 'should combine range if same index entry occurs on sequential pages when media is not screen' do
-    pdf = to_pdf <<~'EOS', doctype: :book, attributes: { 'media' => 'print', 'nofooter' => '' }, analyze: true
+    pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'media' => 'print' }, analyze: true
     = Document Title
 
     == First Chapter
