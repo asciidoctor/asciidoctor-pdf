@@ -24,6 +24,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add support for default theme alignment for tables (#1164)
 * add theming support to (inline) roles on phrases (#368)
 * allow theme to customize style of titles in running content (#1044)
+* add support for the built-in big and small roles on phrases (#459)
 * route AFM font warning through Asciidoctor logger
 * upgrade code font (M+ 1mn) to TESTFLIGHT-63a
 * include all alphanumeric characters in code font (mplus1mn) (#282)

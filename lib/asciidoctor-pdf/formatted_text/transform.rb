@@ -81,12 +81,28 @@ class Transform
         end
         accum
       end
+      unless @theme_settings.key? 'big'
+        if (base_font_size_large = theme.base_font_size_large)
+          @theme_settings['big'] = { size: %(#{(base_font_size_large / theme.base_font_size.to_f).round 4}em) }
+        else
+          @theme_settings['big'] = { size: '1.1667em' }
+        end
+      end
+      unless @theme_settings.key? 'small'
+        if (base_font_size_small = theme.base_font_size_small)
+          @theme_settings['small'] = { size: %(#{(base_font_size_small / theme.base_font_size.to_f).round 4}em) }
+        else
+          @theme_settings['small'] = { size: '0.8333em' }
+        end
+      end
     else
       @theme_settings = {
         button: { font: 'Courier', styles: [:bold].to_set },
         code: { font: 'Courier' },
         key: { font: 'Courier', styles: [:italic].to_set },
         link: { color: '0000FF' },
+        'big' => { size: '1.667em' },
+        'small' => { size: '0.8333em' },
       }
     end
   end
