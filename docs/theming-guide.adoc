@@ -688,7 +688,7 @@ For anything outside of that, PDF is BYOF (Bring Your Own Font).
 Even though the built-in fonts require the content to be encoded in WINANSI, _you still type your AsciiDoc document in UTF-8_.
 Asciidoctor PDF encodes the content into WINANSI when building the PDF.
 
-CAUTION: Built-in fonts do not use the <<fallback-fonts,fallback fonts>>.
+WARNING: Built-in (AFM) fonts do not use the <<fallback-fonts,fallback fonts>>.
 In order for the fallback font to kick in, you must be using a TrueType font.
 
 .WINANSI Encoding Behavior
@@ -727,7 +727,7 @@ Also provides the circuled numbers used in callouts.
 http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1p[M+ 1p Fallback]::
 A sans-serif font that provides a very complete set of Unicode glyphs.
 Cannot be styled as italic, bold or bold_italic.
-Used as the fallback font.
+Used as the fallback font in the `default-with-fallback-font` theme.
 
 CAUTION: At the time of this writing, you cannot use the bundled fonts if you change the value of the `pdf-fontsdir` attribute (and thus define your own custom fonts).
 This limitation may be lifted in the future.
@@ -820,13 +820,14 @@ This will allow you to use the same font names (aka families) in both your graph
 If a TrueType font is missing a character needed to render the document, such as a special symbol, you can have Asciidoctor PDF look for the character in a fallback font.
 You only need to specify a single fallback font, typically one that provides a full set of symbols.
 
-IMPORTANT: The fallback font is only used when the primary font is a TrueType font (i.e., TTF, DFont, TTC).
+IMPORTANT: The fallback font only gets used when the primary font is a TrueType font (i.e., TTF, DFont, TTC).
 Any glyph missing from an AFM font is simply replaced with the "`not`" glyph (`&#172;`).
 
-CAUTION: Using the fallback font slows down PDF generation slightly because it has to analyze every single character.
+CAUTION: The `default` theme does not use a fallback font.
+However, the built-in `default-with-fallback-font` theme does.
+Using the fallback font slows down PDF generation slightly because it has to analyze every single character.
 It's use is not recommended for large documents.
 Instead, it's best to select primary fonts that have all the characters you need.
-Keep in mind that the default theme currently uses a fallback font, though this may change in the future.
 
 Like with other custom fonts, you first need to declare the fallback font.
 Let's choose https://github.com/android/platform_frameworks_base/blob/master/data/fonts/DroidSansFallback.ttf[Droid Sans Fallback].
@@ -882,7 +883,7 @@ base:
 
 That's it!
 Now you're covered.
-If your custom font is missing a glyph, Asciidoctor PDF will look in your fallback font.
+If your custom TTF font is missing a glyph, Asciidoctor PDF will look in your fallback font.
 You don't need to reference the fallback font anywhere else in your theme file.
 
 == Keys
