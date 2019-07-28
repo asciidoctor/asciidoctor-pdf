@@ -737,8 +737,8 @@ This limitation may be lifted in the future.
 The limited character set of WINANSI, or the bland look of the built-in fonts, may motivate you to load your own font.
 Custom fonts can enhance the look of your PDF theme substantially.
 
-To start, you need to find a TTF file collection for the font you want to use.
-A collection typically consists of all four styles of a font:
+To start, find the TTF file collection for the font you want to use.
+A collection typically consists of all four font styles:
 
 * normal
 * italic
@@ -746,13 +746,13 @@ A collection typically consists of all four styles of a font:
 * bold_italic
 
 You'll need all four styles to support AsciiDoc content properly.
-_Asciidoctor PDF cannot italicize a font dynamically like a browser can, so you need the italic style._
+_Asciidoctor PDF cannot italicize a font dynamically like a browser can, so the italic styles are required._
 
-Once you've obtained the TTF files, put them into a directory in your project where you want to store the fonts.
+Once you've obtained the TTF files, put them in the directory inside your project where you want to store the fonts.
 It's recommended that you name them consistently so it's easier to type the names in the theme file.
 
 Let's assume the name of the font is https://github.com/google/roboto/tree/master/out/RobotoTTF[Roboto].
-Name the files as follows:
+Rename the files as follows:
 
 * roboto-normal.ttf (_originally Roboto-Regular.ttf_)
 * roboto-italic.ttf (_originally Roboto-Italic.ttf_)
@@ -773,7 +773,7 @@ font:
 ----
 
 You can use the key that you assign to the font in the font catalog anywhere the `font-family` property is accepted in the theme file.
-For instance, to use the Roboto font for all headings, you'd use:
+For example, to use the Roboto font for all headings, use:
 
 [source,yaml]
 ----
@@ -781,16 +781,18 @@ heading:
   font-family: Roboto
 ----
 
-When you execute Asciidoctor PDF, you need to specify the directory where the fonts reside using the `pdf-fontsdir` attribute:
+When you execute Asciidoctor PDF, specify the directory where the fonts reside using the `pdf-fontsdir` attribute:
 
  $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir=path/to/fonts document.adoc
 
 WARNING: Currently, all fonts referenced by the theme need to be present in the directory specified by the `pdf-fontsdir` attribute.
 
-When Asciidoctor PDF creates the PDF, it only embeds the glyphs from the font that are needed to render the characters present in the document.
-In other words, Asciidoctor PDF automatically subsets the font.
-However, if you're storing the fonts in a repository, you may want to subset the font (for instance, by using FontForge) to reduce the space the font occupies in that storage.
-This is simply a personal preference.
+TIP: When Asciidoctor PDF creates the PDF, it only embeds the glyphs from the font that are needed to render the characters present in the document.
+Effectively, it subsets the font.
+While that saves space taken up by the generated PDF, you may still be storing the full font in your source repository.
+To minimize the size of the source font, you can use FontForge to subset the font ahead of time.
+Subsetting a font means remove glyphs you don't plan to use.
+Doing so it not a requirement, simply a personal preference.
 
 You can add any number of fonts to the catalog.
 Each font must be assigned a unique key, as shown here:
@@ -811,9 +813,9 @@ font:
       bold_italic: roboto-light-bold_italic.ttf
 ----
 
-TIP: Text in SVGs will use the font catalog from your theme.
-We recommend that you match the font key to the name of the font seen by the operating system.
-This will allow you to use the same font names (aka families) in both your graphics program and Asciidoctor PDF.
+Text in SVGs will use the font catalog from your theme.
+We recommend that you match the font key in your theme file to the name of the font seen by the operating system.
+This will allow you to use the same font names (aka families) in both your graphics program and Asciidoctor PDF, thus making them portable.
 
 === Fallback Fonts
 
