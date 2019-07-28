@@ -27,6 +27,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * upgrade code font (M+ 1mn) to TESTFLIGHT-63a
 * include all alphanumeric characters in code font (mplus1mn) (#282)
 * report clearer error message when theme can't be found or loaded
+* document how to prepare a TTF font to work best with Asciidoctor PDF (#297)
 
 == 1.5.0.beta.1 (2019-07-08) - @mojavelinux
 

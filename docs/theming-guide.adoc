@@ -4,6 +4,7 @@ Dan Allen <https://github.com/mojavelinux[@mojavelinux]>
 :idprefix:
 :idseparator: -
 :toc: preamble
+:experimental:
 ifndef::env-github[:icons: font]
 ifdef::env-github[]
 :outfilesuffix: .adoc
@@ -19,6 +20,8 @@ endif::[]
 :conum-guard-yaml: #
 ifndef::icons[:conum-guard-yaml: # #]
 ifdef::backend-pdf[:conum-guard-yaml: # #]
+:url-fontforge: https://fontforge.github.io/en-US/
+:url-fontforge-scripting: https://fontforge.github.io/en-US/documentation/scripting/
 
 ////
 Topics remaining to document:
@@ -31,13 +34,12 @@ Topics remaining to document:
 The theming system in Asciidoctor PDF is used to control the layout and styling of the PDF file Asciidoctor PDF generates from AsciiDoc.
 This document describes how the theming system works, how to define a custom theme in YAML and how to activate the theme when running Asciidoctor PDF.
 
-IMPORTANT: If you're creating a custom theme, you're expected to supply your own fonts.
-We recognize this can be a major obstacle when you're starting out.
-That's why the best way to get started to <<Extends,extend the default theme>>, which already provides the necessary fonts.
-The other option is to simply redeclare the fonts from the https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml[default theme] in the <<Custom Fonts,font catalog>>.
-In both cases, Asciidoctor PDF will then resolve the fonts that are bundled with the gem.
+TIP: The quickest way to get started creating your own theme is to <<Extends,extend the default theme>>.
+This not only gives you all the styles you need to build on, but also a collection of <<Bundled Fonts,bundled fonts>>.
+If you override the font catalog in your theme file, you must declare all the fonts you use (and provide the font files themselves).
+Insted, if you want to reuse the bundled fonts, simply reference the <<Bundled Fonts,bundled fonts>> in the <<Custom Fonts,font catalog>>.
 
-WARNING: If you don't declare your own fonts (or extend the default theme), the built-in (AFM) fonts declared in https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/base-theme.yml[base theme] will be used instead.
+WARNING: If you don't declare your own fonts (or extend the default theme), only the built-in (AFM) fonts provided by the PDF reader will be available.
 Using AFM fonts can result in missing functionality and warnings.
 See the <<Built-In (AFM) Fonts>> section to learn more about these limitations.
 
@@ -748,6 +750,9 @@ A collection typically consists of all four font styles:
 You'll need all four styles to support AsciiDoc content properly.
 _Asciidoctor PDF cannot italicize a font dynamically like a browser can, so the italic styles are required._
 
+In order for a third-party font to work properly with Prawn (and hence Asciidoctor PDF), several modifications are required.
+See <<Prepare a Custom Font>> to learn how to prepare your font for use with Asciidoctor PDF.
+
 Once you've obtained the TTF files, put them in the directory inside your project where you want to store the fonts.
 It's recommended that you name them consistently so it's easier to type the names in the theme file.
 
@@ -790,7 +795,7 @@ WARNING: Currently, all fonts referenced by the theme need to be present in the 
 TIP: When Asciidoctor PDF creates the PDF, it only embeds the glyphs from the font that are needed to render the characters present in the document.
 Effectively, it subsets the font.
 While that saves space taken up by the generated PDF, you may still be storing the full font in your source repository.
-To minimize the size of the source font, you can use FontForge to subset the font ahead of time.
+To minimize the size of the source font, you can use {url-fontforge}[FontForge] to subset the font ahead of time.
 Subsetting a font means remove glyphs you don't plan to use.
 Doing so it not a requirement, simply a personal preference.
 
@@ -4171,3 +4176,107 @@ For more information about source highlighting with Rouge, refer to the http://r
 
 * http://www.sitepoint.com/hackable-pdf-typesetting-in-ruby-with-prawn[Hackable PDF typesetting in Ruby with Prawn]
 ////
+
+[appendix]
+== Preparing a Custom Font
+
+Any TTF font can be used with Prawn--and hence Asciidoctor PDF--without modifications (unless, of course, it's corrupt or contains errors).
+However, you may discover that kerning is disabled and certain required glyphs are missing.
+To address these problems, you need to prepare the font using a font program such as {url-fontforge}[FontForge].
+
+=== Validate the Font
+
+Before using the font, you may want to check that the font is valid.
+To do so, create the following script, which will verify that the TTF font is free from errors.
+
+.validate-font.rb
+[source,ruby]
+----
+require 'ttfunk'
+require 'ttfunk/subset_collection'
+
+ttf_subsets = TTFunk::SubsetCollection.new TTFunk::File.open ARGV[0]
+(0...(ttf_subsets.instance_variable_get :@subsets).size).each {|idx| ttf_subsets[idx].encode }
+----
+
+Run the script on your font as follows:
+
+ $ ruby validate-font.rb path/to/font.ttf
+
+If this script fails, the font will not work with Asciidoctor PDF.
+To repair it, open the font in FontForge and resave it using menu:File[Generate Fonts...,Generate].
+Dismiss any warning dialogs.
+
+Resaving the font in FontForge will usually resolve any errors in the font.
+(If not, you may need to find another font, or at least another copy of it).
+
+=== Modifying the Font
+
+To ready your font for use with Asciidoctor PDF, you'll need to modify it using a font program.
+We recommend using {url-fontforge}[FontForge].
+But don't let this scare you off.
+FontForge essentially works like a vector-drawing tool, in which each character is a separate canvas.
+You can find a crash course in how to use the program on the FontForge project site.
+
+Here are the modifications you need to apply to a custom font for it to work best with Asciidoctor PDF:
+
+* Convert the font to TTF (only required if the font is not already a TTF, such as an OTF or TTC).
+* Add the glyphs for the required characters if missing from the font (optional if using a falback font).
+* Subset the font to exclude unused characters to reduce the file size (optional).
+* Save the file using the old-style kern table to activate kerning.
+
+NOTE: Technically, subsetting the font (i.e., removing glyphs) is not required since Prawn only embeds the characters from the font used in the document (i.e., it automatically subsets the font).
+However, if you plan to commit the font to a repository, subsetting helps keep the file size down.
+
+Most fonts do not provide glyphs for all the Unicode character ranges (i.e., scripts).
+(A glyph is the corresponding vector image for a Unicode character).
+In fact, many fonts only include glyphs for Latin (Basic, Supplement, and Extended) and a few other scripts (e.g., Cyrillic, Greek).
+That means certain glyphs Asciidoctor PDF relies on may be missing from the font.
+
+Below are are the non-Latin characters that Asciidoctor PDF uses (for which glyphs are often missing):
+Unless you're using a fallback font that fills in the missing glyphs, you need to ensure these glyphs are present in your font (and add them if not).
+
+* \u00a0 - no-break space
+* \ufeff - zero width no-break space
+* \u200b - zero width space (used for line break hints)
+* \u000a - line feed character (zero width)
+* \u2009 - thin spaced (used in the button UI element)
+* \u202f - narrow no-break space (used in the keybinding UI element)
+* \u2011 - non-breaking hyphen
+* \u2022 - disc (used for first-level unordered list level)
+* \u25e6 - circle (used for second-level unordered list level)
+* \u25aa - square (used for third-level unordered list level)
+* \u2611 - ballot box checked (used for checked list item)
+* \u2610 - ballot box unchecked (used for unchecked list item)
+* \u2014 - em-dash (used in quote attribute)
+* \u203a - single right-pointing quotation mark (used in the menu UI element)
+* \u25ba - right pointer (used for media play icon when icon fonts are disabled)
+
+If you're preparing a font for use in verbatim blocks (e.g., a listing block), you'll also need this range of characters:
+
+* \u2460 to \u2468 - circled numbers
+
+One way to get these glyphs is to steal them from another font (or from another character in the same font).
+To do so, open the other font in FontForge, select the character, press kbd:[Ctrl,c], switch back to your font, select the character again, and press kbd:[Ctrl,v].
+You may need to scale the glyph so it fits properly in the art box.
+
+IMPORTANT: If you're copying a non-visible character, be sure to set the width to 0 using menu:Metrics[Set Width...], enter 0 into *Set Width To*, then click btn:[OK].
+
+When you're done, save the font with the old-style kern table enabled.
+To do so, select menu:File[Generate Fonts...], click btn:[Options], and make sure only the following options are selected (equivalent to the flags 0x90 + 0x08):
+
+* [x] OpenType
+ ** [x] Old style 'kern'
+
+Then click btn:[Generate] to generate and save the font.
+
+Your font file is now ready to be used with Asciidoctor PDF.
+
+=== Scripting the Font Modifications
+
+Performing all this font modification manually can be tedious (not to mention hard to reproduce).
+Fortunately, FontForge provides a {url-fontforge-scripting}[scripting interface], which you can use to automate the process.
+
+In fact, that's what we use to prepare the fonts that are bundled with Asciidoctor PDF.
+You can find that FontForge script, the Bash script that calls it, and the Docker image in which it is run in the https://github.com/asciidoctor/asciidoctor-pdf/tree/master/scripts[scripts directory] of this project.
+You can use that script as a starting point or reference for your own font preparation / modification script.
