@@ -201,7 +201,7 @@ class Converter < ::Prawn::Document
     end
 
     # NOTE font must be set before toc dry run to ensure dry run size is accurate
-    font @theme.base_font_family, size: @theme.base_font_size, style: @theme.base_font_style.to_sym
+    font @theme.base_font_family, size: @theme.base_font_size, style: (@theme.base_font_style || :normal).to_sym
 
     num_toc_levels = (doc.attr 'toclevels', 2).to_i
     if (insert_toc = (doc.attr? 'toc') && doc.sections?)
@@ -518,7 +518,7 @@ class Converter < ::Prawn::Document
         end
       else
         # FIXME smarter calculation here!!
-        start_new_page unless at_page_top? || cursor > (height_of title) + @theme.heading_margin_top + @theme.heading_margin_bottom + (@theme.base_line_height_length * 1.5)
+        start_new_page unless at_page_top? || cursor > (height_of title) + @theme.heading_margin_top + @theme.heading_margin_bottom + ((@theme.base_line_height_length || (font_size * @theme.base_line_height)) * 1.5)
       end
       # QUESTION should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
       sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
@@ -1037,26 +1037,25 @@ class Converter < ::Prawn::Document
         terms = [*terms]
         # NOTE don't orphan the terms, allow for at least one line of content
         # FIXME extract ensure_space (or similar) method
-        advance_page if cursor < @theme.base_line_height_length * (terms.size + 1)
+        advance_page if cursor < (@theme.base_line_height_length || (font_size * @theme.base_line_height)) * (terms.size + 1)
         terms.each do |term|
           # FIXME layout_prose should pass style downward when parsing formatted text
           #layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
-          term_text = term.text
-          case @theme.description_list_term_font_style.to_sym
-          when :bold
-            term_text = %(<strong>#{term_text}</strong>)
-          when :italic
-            term_text = %(<em>#{term_text}</em>)
-          when :bold_italic
-            term_text = %(<strong><em>#{term_text}</em></strong>)
+          case @theme.description_list_term_font_style.to_s
+          when 'bold'
+            term_text = %(<strong>#{term.text}</strong>)
+          when 'italic'
+            term_text = %(<em>#{term.text}</em>)
+          when 'bold_italic'
+            term_text = %(<strong><em>#{term.text}</em></strong>)
+          else
+            term_text = term.text
           end
           layout_prose term_text, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
         end
-        if desc
-          indent @theme.description_list_description_indent do
-            convert_content_for_list_item desc, :dlist_desc
-          end
-        end
+        indent(@theme.description_list_description_indent || 0) do
+          convert_content_for_list_item desc, :dlist_desc
+        end if desc
       end
     end
   end
@@ -1159,12 +1158,12 @@ class Converter < ::Prawn::Document
       if node.style == 'unstyled'
         # unstyled takes away all indentation
         list_indent = 0
-      elsif (list_indent = @theme.outline_list_indent) > 0
+      elsif (list_indent = @theme.outline_list_indent || 0) > 0
         # no-bullet aligns text with left-hand side of bullet position (as though there's no bullet)
         list_indent = [list_indent - (rendered_width_of_string %(#{node.context == :ulist ? ?\u2022 : '1.'}x)), 0].max
       end
     else
-      list_indent = @theme.outline_list_indent
+      list_indent = @theme.outline_list_indent || 0
     end
     indent list_indent do
       node.items.each do |item|
@@ -1177,8 +1176,7 @@ class Converter < ::Prawn::Document
     # However, don't leave gap at the bottom if list is nested in an outline list
     unless complex || (node.nested? && node.parent.parent.outline?)
       # correct bottom margin of last item
-      list_margin_bottom = @theme.prose_margin_bottom
-      margin_bottom list_margin_bottom - @theme.outline_list_item_spacing
+      margin_bottom((@theme.prose_margin_bottom || 0) - (@theme.outline_list_item_spacing || 0))
     end
   end
 
@@ -1651,7 +1649,7 @@ class Converter < ::Prawn::Document
         end
 
         pad_box @theme.code_padding do
-          typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height),
+          typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height || @theme.base_line_height),
               # QUESTION should we require the code_font_color to be set?
               color: (@theme.code_font_color || @font_color),
               size: adjusted_font_size
@@ -2589,7 +2587,7 @@ class Converter < ::Prawn::Document
       string = transform_text string, transform
     end
     margin_top top_margin
-    typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme[%(heading_h#{opts[:level]}_line_height)] || @theme.heading_line_height), {
+    typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme[%(heading_h#{opts[:level]}_line_height)] || @theme.heading_line_height || @theme.base_line_height), {
       color: @font_color,
       inline_format: true,
       align: @base_align.to_sym
@@ -3290,7 +3288,7 @@ class Converter < ::Prawn::Document
   # Insert a margin space at the specified side unless cursor is at the top of the page.
   # Start a new page if n value is greater than remaining space on page.
   def margin n, side
-    unless n == 0 || at_page_top?
+    unless (n || 0) == 0 || at_page_top?
       # NOTE use low-level cursor calculation to workaround cursor bug in column_box context
       if y - reference_bounds.absolute_bottom > n
         move_down n

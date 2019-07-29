@@ -168,10 +168,11 @@ describe Asciidoctor::PDF::ThemeLoader do
       theme = subject.load_theme 'extends-nil-empty-theme.yml', fixtures_dir
       (expect theme.__dir__).to eql fixtures_dir
       (expect theme.base_align).to eql 'left'
+      (expect theme.base_line_height).to eql 1
       (expect theme.base_font_color).to eql '000000'
       (expect theme.code_font_family).to eql 'Courier'
       (expect theme.conum_font_family).to eql 'Courier'
-      (expect theme.to_h.keys).to have_size 5
+      (expect theme.to_h.keys).to have_size 6
     end
 
     it 'should not overwrite required keys with default values if already set' do

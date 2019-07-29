@@ -120,6 +120,28 @@ describe Asciidoctor::PDF::Converter do
       }).to (raise_exception Errno::ENOENT) & (log_message severity: :ERROR, message: '~could not locate or load the built-in pdf theme `foo\'')
     end
 
+    it 'should not crash if theme does not specify any keys' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'extends-nil-empty-theme.yml') }, analyze: true
+      = Document Title
+      :doctype: book
+
+      This is the stark theme.
+
+      == Section Title
+
+      .dlist
+      term:: desc
+
+      .ulist
+      * one
+      * two
+      * three
+      EOS
+      
+      (expect pdf.pages).to have_size 2
+      (expect pdf.find_text font_name: 'Helvetica', font_size: 12).to have_size pdf.text.size
+    end
+
     it 'should convert background position to options' do
       converter = asciidoctor_2_or_better? ? (Asciidoctor::Converter.create 'pdf') : (Asciidoctor::Converter::Factory.create 'pdf')
       {
