@@ -17,10 +17,12 @@ rvm:
 - 2.5.5
 - 2.4.6
 - &oldest_ruby 2.3.8
-- jruby-9.2.7.0
-- jruby-9.1.17.0
 matrix:
   include:
+  - rvm: jruby-9.2.7.0
+    env: JRUBY_OPTS='--dev'
+  - rvm: jruby-9.1.17.0
+    env: JRUBY_OPTS='--dev'
   - rvm: *oldest_ruby
     env: ASCIIDOCTOR_VERSION=1.5.3
   - rvm: *oldest_ruby
