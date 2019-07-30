@@ -51,6 +51,12 @@ base:
   border_color: eeeeee
   border_radius: 4
   border_width: 0.5
+role:
+  big:
+    font_size: $base_font_size_large
+role:
+  small:
+    font_size: $base_font_size_small
 # FIXME vertical_rhythm is weird; we should think in terms of ems
 #vertical_rhythm: $base_line_height_length * 2 / 3
 # correct line height for Noto Serif metrics (comes with built-in line height)
