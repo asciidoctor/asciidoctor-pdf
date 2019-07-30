@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 1.5.0.beta.2 (2019-07-30) - @mojavelinux
 
 * only apply title page background image to the title page (#1144)
 * make sure title page background or color (and only title page background or color) gets applied to title page even when page has already been created (#1144)
