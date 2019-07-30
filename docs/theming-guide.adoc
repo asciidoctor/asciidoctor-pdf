@@ -949,6 +949,67 @@ Each time a theme is loaded, the keys are overlaid onto the keys from the previo
 - ./brand-theme.yml
 |===
 
+[#keys-role]
+=== Role
+
+The keys in the `role` category define custom roles for formatting.
+The name of the role is the first subkey level.
+The role name may not contain a hyphen or underscore.
+The keys under the role are the concrete theming properties.
+
+Here's an example of a role for making text red:
+
+[source,yaml]
+----
+role:
+  red:
+    font-color: #ff0000
+----
+
+This role can be used as follows:
+
+[source,asciidoc]
+----
+Error text is shown in [.red]#red#.
+----
+
+Currently, custom roles only apply to inline phrases and only support changing the font properties.
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-role]*Key Prefix:* <<key-prefix-role,role-<name> >>
+
+|font-color
+|<<colors,Color>> +
+(default: _inherit_)
+|role:
+  red:
+    font-color: #ff0000
+
+|font-family
+|<<fonts,Font family name>> +
+(default: Courier)
+|role:
+  label:
+    font-family: M+ 1mn
+
+|font-size
+|<<values,Number>> +
+(default: _inherit_)
+|role:
+  large:
+    font-size: 12
+
+|font-style
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|role:
+  heavy:
+    font-style: bold
+|===
+
 [#keys-page]
 === Page
 

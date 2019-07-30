@@ -134,5 +134,48 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       to_file = to_pdf_file '*を*', 'text-formatter-fallback-font.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
       (expect to_file).to visually_match 'text-formatter-fallback-font.pdf'
     end
+
+    it 'should allow theme to control formatting apply to phrase by role' do
+      pdf_theme = {
+        role_red_font_color: 'ff0000',
+        role_red_font_style: 'bold',
+        role_blue_font_color: '0000ff',
+        role_blue_font_style: 'bold_italic',
+      }
+      pdf = to_pdf 'Roses are [.red]_red_, violets are [.blue]#blue#.', pdf_theme: pdf_theme, analyze: true
+
+      red_text = (pdf.find_text 'red')[0]
+      blue_text = (pdf.find_text 'blue')[0]
+      (expect red_text[:font_color]).to eql 'FF0000'
+      (expect red_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+      (expect blue_text[:font_color]).to eql '0000FF'
+      (expect blue_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+    end
+
+    it 'should append font style configured for role to current style' do
+      pdf_theme = {
+        role_quick_font_style: 'italic',
+      }
+      pdf = to_pdf '*That was [.quick]#quick#.*', pdf_theme: pdf_theme, analyze: true
+
+      glorious_text = (pdf.find_text 'quick')[0]
+      (expect glorious_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+    end
+
+    it 'should support theming multiple roles on a single phrase' do
+      pdf_theme = {
+        role_bold_font_style: 'bold',
+        role_italic_font_style: 'italic',
+        role_blue_font_color: '0000ff',
+        role_mono_font_family: 'Courier',
+        role_tiny_font_size: 8,
+      }
+      pdf = to_pdf '[.bold.italic.blue.mono.tiny]#text#', pdf_theme: pdf_theme, analyze: true
+
+      formatted_text = (pdf.find_text 'text')[0]
+      (expect formatted_text[:font_name]).to eql 'Courier-BoldOblique'
+      (expect formatted_text[:font_color]).to eql '0000FF'
+      (expect formatted_text[:font_size]).to eql 8
+    end
   end
 end
