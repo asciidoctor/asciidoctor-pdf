@@ -15,6 +15,12 @@ class Transform
   }
   CharRefRx = /&(?:(#{CharEntityTable.keys * ?|})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
   TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
+  ThemeKeyToFragmentProperty = {
+    'font_color' => :color,
+    'font_family' => :font,
+    'font_size' => :size,
+    'font_style' => :styles,
+  }
   #DummyText = ?\u0000
 
   def initialize(options = {})
@@ -65,6 +71,16 @@ class Transform
           styles: to_styles(theme.link_font_style, theme.link_text_decoration),
         }.compact,
       }
+      theme.each_pair.reduce @theme_settings do |accum, (key, val)|
+        if (key = key.to_s).start_with? 'role_'
+          role, key = (key.slice 5, key.length).split '_', 2
+          if (prop = ThemeKeyToFragmentProperty[key])
+            val = to_styles val if prop == :styles
+            (accum[role] ||= {})[prop] = val
+          end
+        end
+        accum
+      end
     else
       @theme_settings = {
         button: { font: 'Courier', styles: [:bold].to_set },
@@ -279,6 +295,8 @@ class Transform
         styles << :underline
       when 'line-through'
         styles << :strikethrough
+      else
+        fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : oval } if @theme_settings.key? class_name
       end
     end if attrs.key?(:class)
     fragment.delete(:styles) if styles.empty?
