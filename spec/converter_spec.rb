@@ -127,7 +127,9 @@ describe Asciidoctor::PDF::Converter do
 
       This is the stark theme.
 
-      == Section Title
+      == Chapter Title
+
+      === Section Title
 
       .dlist
       term:: desc
@@ -138,8 +140,13 @@ describe Asciidoctor::PDF::Converter do
       * three
       EOS
       
-      (expect pdf.pages).to have_size 2
+      (expect pdf.pages).to have_size 3
       (expect pdf.find_text font_name: 'Helvetica', font_size: 12).to have_size pdf.text.size
+      (expect (pdf.find_text 'Document Title')[0]).not_to be_nil
+      (expect (pdf.find_text 'Chapter Title')[0]).not_to be_nil
+      (expect (pdf.find_text 'Section Title')[0]).not_to be_nil
+      (expect (pdf.find_text 'ulist')[0]).not_to be_nil
+      (expect (pdf.find_text 'one')[0]).not_to be_nil
     end
 
     it 'should convert background position to options' do

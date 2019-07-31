@@ -519,7 +519,7 @@ class Converter < ::Prawn::Document
         end
       else
         # FIXME smarter calculation here!!
-        start_new_page unless at_page_top? || cursor > (height_of title) + @theme.heading_margin_top + @theme.heading_margin_bottom + (@root_font_size * @theme.base_line_height * 1.5)
+        start_new_page unless at_page_top? || cursor > (height_of title) + (@theme.heading_margin_top || 0) + (@theme.heading_margin_bottom || 0) + (@root_font_size * @theme.base_line_height * 1.5)
       end
       # QUESTION should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
       sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
@@ -3313,7 +3313,7 @@ class Converter < ::Prawn::Document
     # TODO inheriting from generic category should be an option
     if opts.key? :level
       level = opts[:level]
-      family = @theme[%(#{category}_h#{level}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family
+      family = @theme[%(#{category}_h#{level}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family || font_family
       size = @theme[%(#{category}_h#{level}_font_size)] || @theme[%(#{category}_font_size)] || @root_font_size
       style = @theme[%(#{category}_h#{level}_font_style)] || @theme[%(#{category}_font_style)]
       color = @theme[%(#{category}_h#{level}_font_color)] || @theme[%(#{category}_font_color)]

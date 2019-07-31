@@ -7,6 +7,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* don't drop headings if base font family is not set in theme
+* don't crash if heading margins are not set in theme
 * don't rely on base_line_height_length theme key in converter (should be internal to theme)
 * set fallback value for base (root) font size
 
