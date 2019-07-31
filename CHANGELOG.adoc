@@ -5,6 +5,11 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+* don't rely on base_line_height_length theme key in converter (should be internal to theme)
+* set fallback value for base (root) font size
+
 == 1.5.0.beta.2 (2019-07-30) - @mojavelinux
 
 * only apply title page background image to the title page (#1144)

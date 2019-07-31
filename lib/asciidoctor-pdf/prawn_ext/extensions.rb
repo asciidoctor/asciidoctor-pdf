@@ -234,7 +234,7 @@ module Extensions
       super @font_size
     elsif String === points
       if points.end_with? 'rem'
-        super(@theme.base_font_size * points.to_f)
+        super(@root_font_size * points.to_f)
       elsif points.end_with? 'em'
         super(@font_size * points.to_f)
       elsif points.end_with? '%'

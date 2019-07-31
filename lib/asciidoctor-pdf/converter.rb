@@ -201,7 +201,7 @@ class Converter < ::Prawn::Document
     end
 
     # NOTE font must be set before toc dry run to ensure dry run size is accurate
-    font @theme.base_font_family, size: @theme.base_font_size, style: (@theme.base_font_style || :normal).to_sym
+    font @theme.base_font_family, size: @root_font_size, style: (@theme.base_font_style || :normal).to_sym
 
     num_toc_levels = (doc.attr 'toclevels', 2).to_i
     if (insert_toc = (doc.attr? 'toc') && doc.sections?)
@@ -331,6 +331,7 @@ class Converter < ::Prawn::Document
       @page_bg_image[:recto] = bg_image[0] && bg_image
     end
     @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
+    @root_font_size = theme.base_font_size || 12
     @font_color = theme.base_font_color || '000000'
     @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
     @text_transform = nil
@@ -518,7 +519,7 @@ class Converter < ::Prawn::Document
         end
       else
         # FIXME smarter calculation here!!
-        start_new_page unless at_page_top? || cursor > (height_of title) + @theme.heading_margin_top + @theme.heading_margin_bottom + ((@theme.base_line_height_length || (font_size * @theme.base_line_height)) * 1.5)
+        start_new_page unless at_page_top? || cursor > (height_of title) + @theme.heading_margin_top + @theme.heading_margin_bottom + (@root_font_size * @theme.base_line_height * 1.5)
       end
       # QUESTION should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
       sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
@@ -1037,7 +1038,7 @@ class Converter < ::Prawn::Document
         terms = [*terms]
         # NOTE don't orphan the terms, allow for at least one line of content
         # FIXME extract ensure_space (or similar) method
-        advance_page if cursor < (@theme.base_line_height_length || (font_size * @theme.base_line_height)) * (terms.size + 1)
+        advance_page if cursor < (@root_font_size * @theme.base_line_height) * (terms.size + 1)
         terms.each do |term|
           # FIXME layout_prose should pass style downward when parsing formatted text
           #layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
@@ -2432,7 +2433,7 @@ class Converter < ::Prawn::Document
     @page_bg_color = prev_bg_color if bg_color
 
     # IMPORTANT this is the first page created, so we need to set the base font
-    font @theme.base_font_family, size: @theme.base_font_size
+    font @theme.base_font_family, size: @root_font_size
 
     # QUESTION allow alignment per element on title page?
     title_align = (@theme.title_page_align || @base_align).to_sym
@@ -3313,7 +3314,7 @@ class Converter < ::Prawn::Document
     if opts.key? :level
       level = opts[:level]
       family = @theme[%(#{category}_h#{level}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family
-      size = @theme[%(#{category}_h#{level}_font_size)] || @theme[%(#{category}_font_size)] || @theme.base_font_size
+      size = @theme[%(#{category}_h#{level}_font_size)] || @theme[%(#{category}_font_size)] || @root_font_size
       style = @theme[%(#{category}_h#{level}_font_style)] || @theme[%(#{category}_font_style)]
       color = @theme[%(#{category}_h#{level}_font_color)] || @theme[%(#{category}_font_color)]
       # NOTE global text_transform is not currently supported

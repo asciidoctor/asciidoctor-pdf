@@ -1193,7 +1193,7 @@ NOTE: While it's common to define additional keys in this category (e.g., `base-
 
 |line-height-length^[2]^
 |<<values,Number>> +
-(default: 13.8)
+(default: _not set_)
 |base:
   line-height-length: 12
 
@@ -1209,8 +1209,9 @@ NOTE: While it's common to define additional keys in this category (e.g., `base-
 . The `text-transform` key cannot be set globally.
 Therefore, this key should not be used.
 The value of `none` is implicit and is documented here for completeness.
-. You should set one of `line-height` or `line-height-length`, then derive the value of the other using a calculation as these are correlated values.
-For instance, if you set `line-height-length`, then use `$base-line-height-length / $base-font-size` as the value of `line-height`.
+. The `line-height-length` is a pseudo property that's local the theme.
+It's often used for computing the `base-line-height` from the base font size and the desired line height size.
+For instance, if you set `base-line-height-length`, you can use `$base-line-height-length / $base-font-size` to set the value of `base-line-height`.
 
 [#keys-vertical-spacing]
 === Vertical Spacing
