@@ -975,6 +975,14 @@ Error text is shown in [.red]#red#.
 
 Currently, custom roles only apply to inline phrases and only support changing the font properties.
 
+The converter provides several predefined roles.
+The `big` and `small` roles map the font size to the $base_font_size_large and $base_font_size_small values, respectively.
+These two roles can be redefined.
+The `underline` and `line-through` roles add the underline and strikethrough decorations, respectively.
+These two roles _can't_ be redefined.
+The color roles (e.g., `blue`), which you may be familiar with from the HTML converter, are not mapped by default.
+You'll need to define these in your theme if you'd like to make use of them when converting to PDF.
+
 [cols="3,4,5l"]
 |===
 |Key |Value Type |Example
