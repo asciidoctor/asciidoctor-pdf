@@ -384,7 +384,7 @@ If the width exceeds the content area width, the image is scaled down to the con
 |If you don't specify one of the aforementioned width settings, the intrinsic width of the image is used (the px value is multiplied by 75% to convert to pt, assuming canvas is 96 dpi) unless the width exceeds the content area width, in which case the image is scaled down to the content area width.
 |===
 
-The image is always sized according to the explicit or intrinsic width and its height is scaled proportionally.
+The image is always sized according to the explicit or intrinsic width, then its height is scaled proportionally.
 The height of the image is ignored by the PDF converter unless the height of the image exceeds the content height of the page.
 In this case, the image is scaled down to fit on a single page.
 
@@ -440,6 +440,43 @@ This is done to maximize the use of available space.
 Once the resolved height exceeds this amount, the height of the line is increased (by increasing the font size of the invisible placeholder text) to accommodate the image.
 In this case, the surrounding text will be aligned to the bottom of the image.
 If the image height exceeds the height of the page, the image will be scaled down to fit on a single page (this may cause the image to advance to the subsequent page).
+
+== Background Image Positioning
+
+In addition to scaling, background images for cover pages, content pages, and the title page support positioning via the `position` attribute.
+The `position` attribute accepts a syntax similar to the `background-position` property in CSS, except only the keyword positions are supported.
+The position consists of two values, the vertical position and the horizontal position (e.g., `top center`).
+If only one value is specified (e.g., `top`), the other value is assumed to be `center`.
+If the `position` attribute is not specified, the value is assumed to be `center center` (i.e., the image is centered on the page).
+
+The following table provides a list of the vertical and horizontal positioning keywords that are supported.
+You can use any combination of these keywords to position the image.
+
+|===
+| Vertical Positions | Horizontal Positions
+
+| top +
+center +
+bottom
+
+| left +
+center +
+right
+|===
+
+Here's an example of how to place a background image at the top center of every page:
+
+----
+:page-background-image: image:bg.png[pdfwidth=50%,position=top]
+----
+
+Here's how to move it to the bottom right:
+
+----
+:page-background-image: image:bg.png[pdfwidth=50%,position=bottom right]
+----
+
+If an image dimension matches the height or width of the page, the positioning keyword for that axis has no effect.
 
 == Fonts in SVG Images
 
