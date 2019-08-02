@@ -488,14 +488,16 @@ class Converter < ::Prawn::Document
     if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_side]) != page_margin
       set_page_margin next_page_margin
     end
+    if @page_bg_color && @page_bg_color != 'FFFFFF'
+      tare = true
+      fill_absolute_bounds @page_bg_color
+    end
     # TODO implement as a watermark (on top)
     if (bg_image = @page_bg_image[page_side])
+      tare = true
       canvas { image bg_image[0], ({ position: :center, vposition: :center }.merge bg_image[1]) }
-      page.tare_content_stream
-    elsif @page_bg_color && @page_bg_color != 'FFFFFF'
-      fill_absolute_bounds @page_bg_color
-      page.tare_content_stream
     end
+    page.tare_content_stream if tare
   end
 
   def convert_section sect, opts = {}
