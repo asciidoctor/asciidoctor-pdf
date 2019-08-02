@@ -325,17 +325,19 @@ To find a complete list of available icons, consult the https://github.com/jesse
 
 == Image Paths
 
-Relative images paths are resolved relative to the value of the `imagesdir` attribute at the time the converter is run.
+Relative images paths in the document are resolved relative to the value of the `imagesdir` attribute (at the time the converter runs).
 This is effectively the same as how the built-in HTML converter works when the `data-uri` attribute is set.
 The `imagesdir` is blank by default, which means relative images paths are resolved relative to the input document.
+Relative images paths in the theme are resolved relative to the value of the `pdf-themesdir` attribute (which defaults to the directory of the theme file).
+The `imagesdir` attribute is not used when resolving an image path in the theme file.
 Absolute image paths are used as is.
 
 If the image is an SVG, and the SVG includes a nested raster image (PNG or JPG) with a relative path, that path is resolved relative to the directory that contains the SVG.
 
-The converter will refuse to include an image if the target is a URI unless the `allow-uri-read` attribute is enabled via the CLI or API.
+The converter will refuse to embed an image if the target is a URI (including image references in an SVG) unless the `allow-uri-read` attribute is enabled via the CLI or API.
 
-If the image is an SVG and that SVG links to another image, the linked image will be resolved using the same rules as the original image.
-However, note that a width and height must be specified on the linked image or else the SVG library will fail to process it.
+If you use a linked image in an SVG, the width and height of that image must be specified.
+Otherwise, the SVG library will fail to process it.
 
 === Asciidoctor Diagram Integration
 
