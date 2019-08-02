@@ -90,7 +90,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
         title_page_authors_font_color: 'DBDBDB',
       }
 
-      to_file = to_pdf_file <<~EOS, 'document-title-background-color.pdf', pdf_theme: theme_overrides
+      to_file = to_pdf_file <<~'EOS', 'document-title-background-color.pdf', pdf_theme: theme_overrides
       = Dark and Stormy
       Author Name
       :doctype: book
@@ -102,7 +102,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'set background image of title page from title-page-background-image attribute', integration: true do
-      pdf = to_pdf <<~EOS
+      pdf = to_pdf <<~'EOS'
       = The Amazing
       Author Name
       :doctype: book
@@ -127,7 +127,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'set background image when document has image cover page', integration: true do
-      pdf = to_pdf <<~EOS
+      pdf = to_pdf <<~'EOS'
       = The Amazing
       Author Name
       :doctype: book
@@ -153,7 +153,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'set background image when document has PDF cover page', integration: true do
-      pdf = to_pdf <<~EOS
+      pdf = to_pdf <<~'EOS'
       = The Amazing
       Author Name
       :doctype: book
@@ -185,7 +185,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'set background color when document has PDF cover page', integration: true do
-      pdf = to_pdf <<~EOS, pdf_theme: { title_page_background_color: 'eeeeee' }
+      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_background_color: 'eeeeee' }
       = The Amazing
       Author Name
       :doctype: book
@@ -213,6 +213,30 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       end
 
       (expect images_by_page[2..-1].map {|it| it[0].data }.uniq).to have_size 1
+    end
+
+    it 'should not use page background on title page if page_background is set to none in theme' do
+      pdf_theme = {
+        page_background_image: %(image:#{fixture_file 'bg.png'}[]),
+        title_page_background_image: 'none',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      = Document Title
+      :doctype: book
+
+      == Chapter 1
+
+      content
+
+      == Chapter 2
+
+      content
+      EOS
+
+      (expect pdf.pages).to have_size 3
+      (expect get_images pdf, 1).to have_size 0
+      (expect get_images pdf, 2).to have_size 1
+      (expect get_images pdf, 3).to have_size 1
     end
   end
 
