@@ -57,11 +57,6 @@ _No more middleman._ +
 _No more DocBook toolchain._ +
 It's AsciiDoc straight to PDF!
 
-[caption=Status]
-CAUTION: {project-name} is currently _alpha_ software.
-While the converter handles most AsciiDoc content, there's still work needed to fill in gaps where conversion is incomplete, incorrect or not implemented.
-See the milestone v1.5.0 in the {uri-project-issues}[issue tracker] for details.
-
 toc::[]
 
 == Prawn, the Majestic PDF Generator
@@ -147,9 +142,11 @@ ifndef::env-site[You can also <<development,run the code from source>> if you wa
 
 === Install the Published Gem
 
-{project-name} is published as a pre-release on RubyGems.org.
-First, make sure you have satisfied the <<Prerequisites,prerequisites>>.
-Then, you can install the published gem using the following command:
+{project-name} is published to RubyGems.org as a pre-release.
+Since it's in pre-release, you have to specify the `--pre` flag when installing using the `gem` command.
+
+To install {project-name}, first make sure you have satisfied the <<Prerequisites,prerequisites>>.
+Then, install the gem from RubyGems.org using the following command:
 
  $ gem install asciidoctor-pdf --pre
 
