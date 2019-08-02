@@ -356,7 +356,7 @@ Keep in mind that this strategy may introduce other side effects you'll have to 
 Since PDF is a fixed-width canvas, you almost always need to specify a width to get the image to fit properly on the page.
 There are five ways to specify the width of an image, listed here in order of precedence:
 
-[cols="1s,3d"]
+[cols="1s,3"]
 |===
 |Attribute{nbsp}Name | Description
 
@@ -439,6 +439,35 @@ This is done to maximize the use of available space.
 Once the resolved height exceeds this amount, the height of the line is increased (by increasing the font size of the invisible placeholder text) to accommodate the image.
 In this case, the surrounding text will be aligned to the bottom of the image.
 If the image height exceeds the height of the page, the image will be scaled down to fit on a single page (this may cause the image to advance to the subsequent page).
+
+=== Background Image Sizing
+
+In addition to the width-related attributes previously covered, background images can be sized relative to the page using the `fit` attribute of the image macro.
+The `fit` attribute works similarly to the `object-fit` property in CSS.
+It's value must be specified as a single keyword, chosen from the table below.
+The starting size of the image is determined by the explicit width, if specified, or the implicit width.
+The height is always derived from with width, respecting the implicit aspect ratio of the image.
+The available space for a background image (i.e., the canvas) is the page.
+
+[cols="1s,3"]
+|===
+| Value | Purpose
+
+| contain
+| The image is scaled up or down while retaining its aspect ratio to fit within the available space.
+
+| cover
+| The image is scaled up or down while retaining its aspect ratio so the image completely covers the available space, even if it means the image must be clipped in one direction.
+
+| scale-down
+| The image is scaled down while retaining its aspect ratio to fit within the available space.
+If the image already fits, it is not scaled.
+
+| none
+| The image is not scaled.
+|===
+
+The `fit` attribute is often combined with the `position` attribute, covered next, to control the placement of the image on the canvas.
 
 == Background Image Positioning
 
