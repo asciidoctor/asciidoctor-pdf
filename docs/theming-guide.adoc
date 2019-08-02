@@ -572,7 +572,7 @@ It's possible to specify no color by assigning the special value `transparent`, 
 
 [source,yaml]
 ----
-base:
+table:
   background-color: transparent
 ----
 
@@ -1024,7 +1024,7 @@ You'll need to define these in your theme if you'd like to make use of them when
 The keys in this category control the size, margins and background of each page (i.e., canvas).
 We recommended that you define this category before all other categories.
 
-NOTE: The background of the title page can be styled independently.
+NOTE: The background of the title page can be styled independently of other pages.
 See <<Title Page>> for details.
 
 [cols="3,4,5l"]
@@ -1039,14 +1039,14 @@ See <<Title Page>> for details.
 |page:
   background-color: #fefefe
 
-|background-image^[1]^
-|image macro^[2]^ +
+|background-image^[2]^
+|image macro^[3]^ +
 (default: _not set_)
 |page:
   background-image: image:page-bg.png[]
 
-|background-image-(recto{vbar}verso)^[1]^
-|image macro^[2]^ +
+|background-image-(recto{vbar}verso)^[2]^
+|image macro^[3]^ +
 (default: _not set_)
 |page:
   background-image:
@@ -1065,13 +1065,13 @@ See <<Title Page>> for details.
 |page:
   margin: [0.5in, 0.67in, 1in, 0.67in]
 
-|margin-inner^[3]^
+|margin-inner^[4]^
 |<<measurement-units,Measurement>> +
 (default: 48)
 |page:
   margin-inner: 0.75in
 
-|margin-outer^[3]^
+|margin-outer^[4]^
 |<<measurement-units,Measurement>> +
 (default: 24)
 |page:
@@ -1090,11 +1090,14 @@ See <<Title Page>> for details.
   numbering-start-at: toc
 |===
 
-. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`).
-The size of the background can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width).
+. To disable the background color for the page, set the value to white (i.e., FFFFFF).
+The color keyword `transparent` is not recognized in this context.
+. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+The size of the background image can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width).
+The position of the background image can be controlled using the `position` attribute.
 If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background is specified, it will be used only for that side.
-If you flatten out the keys (e.g., `page-background-recto`), you can also set the default page background image (`page-background`), which will then be used as a fallback if a background image isn't specified for a side.
-To disable the background for a side, use the value `none`.
+If you define the keys using the flatten structure (e.g., `page-background-image-recto`), you can also set the default page background image (`page-background-image`), which will then be used as a fallback if a background image isn't specified for a given side.
+To disable the background image, use the value `none`.
 . Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
 . The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin-inner and margin-outer values.
 These margins and used when the value `prepress` is assigned to the `media` document attribute.
@@ -1475,8 +1478,8 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
 |title-page:
   background-color: #eaeaea
 
-|background-image^[1]^
-|image macro^[2]^ +
+|background-image^[2]^
+|image macro^[3]^ +
 (default: _not set_)
 |title-page:
   background-image: image:title.png[]
@@ -1527,14 +1530,14 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     align: right
 
 |image
-|image macro^[2]^ +
+|image macro^[3]^ +
 (default: _not set_)
 |title-page:
   logo:
     image: image:logo.png[pdfwidth=25%]
 
 |top
-|Percentage^[3]^ +
+|Percentage^[4]^ +
 (default: 10%)
 |title-page:
   logo:
@@ -1780,8 +1783,11 @@ TIP: The title page can be disabled from the document by setting the `notitle` a
     margin-bottom: 5
 |===
 
-. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`).
-The size of the background can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width).
+. To disable the background color for the title page, set the value to white (i.e., FFFFFF).
+The color keyword `transparent` is not recognized in this context.
+. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+The size of the background image can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width).
+The position of the background image can be controlled using the `position` attribute.
 . Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
 . Percentage unit can be % (relative to content height) or vh (relative to page height).
 
@@ -4100,11 +4106,12 @@ These settings override equivalent keys defined in the theme file, where applica
 . The path is resolved relative to base_dir.
 . The target of the image macro is resolved relative to `imagesdir`.
 If the image macro syntax is not used, the value is resolved relative to the base directory, which defaults to the document directory.
-. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`).
-The size of the background can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width).
+. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+The size of the background image can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width).
+The position of the background image can be controlled using the `position` attribute.
 If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background is specified, it will be used only for that side.
 If a background image isn't specified for a side, the converter will use the default page background image (`page-background-image`), if specified.
-To disable the background for a side, use the value `none`.
+To disable the background image for a side, use the value `none`.
 . Controls whether the `page-number` attribute is accessible to the running header and footer content specified in the theme file.
 Use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively, from the document.
 . Enables generation of the http://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark] file, which contains metadata that is fed to Ghostscript when optimizing the PDF file.
