@@ -1,0 +1,6 @@
+extends: default
+header:
+  height: 36
+  recto:
+    columns: '0% =100% 0%'
+    center_content: image:logo.png[pdfwidth=0.25in] ACME, Inc.
