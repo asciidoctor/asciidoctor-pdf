@@ -124,6 +124,16 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
 
+    it 'should allow both background color and image to be set concurrently' do
+      pdf_theme = {
+        page_background_color: 'F9F9F9',
+        page_background_image: %(image:#{fixture_file 'tux.png'}[pdfwidth=50%]),
+      }
+      to_file = to_pdf_file '{blank}', 'page-background-color-and-image.pdf', pdf_theme: pdf_theme
+
+      (expect to_file).to visually_match 'page-background-color-and-image.pdf'
+    end
+
     it 'should recognize attribute value that use block macro syntax', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-block-macro.pdf'
       = Document Title

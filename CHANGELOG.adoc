@@ -7,6 +7,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* allow page background color and background image to be used simultaneously (#1186)
 * don't drop headings if base font family is not set in theme
 * don't crash if heading margins are not set in theme
 * don't rely on base_line_height_length theme key in converter (should be internal to theme)
