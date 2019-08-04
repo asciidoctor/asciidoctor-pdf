@@ -1458,7 +1458,11 @@ If you want the font size of a specific level to be inherited, you must assign t
 
 The keys in this category control the style of the title page as well as the arrangement and style of the elements on it.
 
-TIP: The title page can be disabled from the document by setting the `notitle` attribute in the AsciiDoc document header.
+IMPORTANT: The title page is only enabled by default for the book doctype (e.g., `:doctype: book`).
+If you want to enable the title page when using a different doctype (such as the article doctype), you must define the `title-page` attribute in the document header (i.e., `:title-page:`).
+
+TIP: The title page can be disabled for the book doctype by setting the `notitle` attribute in the AsciiDoc document header (i.e., `:notitle:`).
+(For other doctypes, just don't set the `title-page` attribute).
 
 [cols="3,4,5l"]
 |===
@@ -4118,7 +4122,8 @@ Use the `noheader` and `nofooter` attributes to disable the running header and f
 . _(Experimental)_ The `text-align` document attribute is intended as a simple way to toggle text justification.
 The value of this attribute overrides the `base-align` key set by the theme.
 For more fine-grained control, you should customize using the theme.
-. Force a title page to be added even when the doctype is not book.
+. The title page is only enabled by default for the book doctype.
+To force the title page to be used for other doctypes, set the `title-page` attribute in the document header.
 
 == Publishing Mode
 
