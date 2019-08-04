@@ -635,6 +635,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect to_file).to visually_match 'running-content-image.pdf'
   end
 
+  it 'should resolve run-in image relative to themesdir', integration: true do
+    to_file = to_pdf_file 'content', 'running-content-run-in-image.pdf', attribute_overrides: { 'pdf-theme' => (fixture_file 'running-header-run-in-image-theme.yml') }
+    (expect to_file).to visually_match 'running-content-run-in-image.pdf'
+  end
+
   it 'should warn and replace image with alt text if image is not found' do
     [true, false].each do |block|
       (expect {

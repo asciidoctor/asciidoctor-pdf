@@ -2995,9 +2995,17 @@ class Converter < ::Prawn::Document
                   else
                     # FIXME get apply_subs to handle drop-line w/o a warning
                     doc.set_attr 'attribute-missing', 'skip' unless attribute_missing_doc == 'skip'
+                    old_imagesdir = doc.attr 'imagesdir'
+                    doc.set_attr 'imagesdir', @themesdir
+                    # NOTE drop lines with attribute references that didn't resolve
                     if (content = doc.apply_subs content).include? '{'
                       # NOTE must use &#123; in place of {, not \{, to escape attribute reference
                       content = content.split(LF).delete_if {|line| SimpleAttributeRefRx.match? line } * LF
+                    end
+                    if old_imagesdir
+                      doc.set_attr 'imagesdir', old_imagesdir
+                    else
+                      doc.remove_attr 'imagesdir'
                     end
                     doc.set_attr 'attribute-missing', attribute_missing_doc unless attribute_missing_doc == 'skip'
                     if (transform = @text_transform) && transform != 'none'
