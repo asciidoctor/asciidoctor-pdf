@@ -3005,7 +3005,8 @@ class Converter < ::Prawn::Document
                     if old_imagesdir
                       doc.set_attr 'imagesdir', old_imagesdir
                     else
-                      doc.remove_attr 'imagesdir'
+                      # NOTE remove_attr not defined until Asciidoctor 1.5.6
+                      doc.attributes.delete 'imagesdir'
                     end
                     doc.set_attr 'attribute-missing', attribute_missing_doc unless attribute_missing_doc == 'skip'
                     if (transform = @text_transform) && transform != 'none'
