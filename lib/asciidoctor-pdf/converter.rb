@@ -576,7 +576,7 @@ class Converter < ::Prawn::Document
         end
       end
       theme_font :abstract do
-        prose_opts = { line_height: @theme.abstract_line_height, align: (@theme.abstract_align || @base_align).to_sym }
+        prose_opts = { line_height: @theme.abstract_line_height, align: (initial_alignment = (@theme.abstract_align || @base_align).to_sym) }
         if (text_indent = @theme.prose_text_indent)
           prose_opts[:indent_paragraphs] = text_indent
         end
@@ -590,14 +590,21 @@ class Converter < ::Prawn::Document
             # FIXME is playback necessary here?
             child.document.playback_attributes child.attributes
             if child.context == :paragraph
+              if (alignment = resolve_alignment_from_role child.roles)
+                prose_opts[:align] = alignment
+              end
               layout_prose child.content, prose_opts
               prose_opts.delete :first_line_options
+              prose_opts[:align] = initial_alignment
             else
               # FIXME this could do strange things if the wrong kind of content shows up
               convert_content_for_block child
             end
           end
         elsif node.content_model != :compound && (string = node.content)
+          if (alignment = resolve_alignment_from_role node.roles)
+            prose_opts[:align] = alignment
+          end
           layout_prose string, prose_opts
         end
       end

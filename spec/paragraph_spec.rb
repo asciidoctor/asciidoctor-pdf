@@ -119,4 +119,48 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect abstract_text[0][:order]).to eql 2
     (expect abstract_text[0][:font_name]).to include 'BoldItalic'
   end
+
+  it 'should honor text alignment role on abstract paragraph' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+
+    [abstract.text-right]
+    Enter stage right.
+
+    == Section
+
+    content
+    EOS
+
+    halfway_point = (pdf.page 1)[:size][0] * 0.5
+    abstract_text = pdf.find_text 'Enter stage right.'
+    (expect abstract_text).to have_size 1
+    (expect abstract_text[0][:x]).to be > halfway_point
+  end
+
+  it 'should honor text alignment role on nested abstract paragraph' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+
+    [abstract]
+    --
+    [.text-right]
+    Enter stage right.
+
+    Mirror, stage left.
+    --
+
+    == Section
+
+    content
+    EOS
+
+    halfway_point = (pdf.page 1)[:size][0] * 0.5
+    abstract_text_1 = pdf.find_text 'Enter stage right.'
+    (expect abstract_text_1).to have_size 1
+    (expect abstract_text_1[0][:x]).to be > halfway_point
+    abstract_text_2 = pdf.find_text 'Mirror, stage left.'
+    (expect abstract_text_2).to have_size 1
+    (expect abstract_text_2[0][:x]).to be < halfway_point
+  end
 end

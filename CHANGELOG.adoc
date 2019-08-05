@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * don't rely on base_line_height_length theme key in converter (should be internal to theme)
 * set fallback value for base (root) font size
 * always resolve images in running content relative to themesdir (instead of document) (#1183)
+* honor text alignment role on abstract paragraph(s)
 
 == 1.5.0.beta.2 (2019-07-30) - @mojavelinux
 
