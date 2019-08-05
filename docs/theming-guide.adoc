@@ -1172,9 +1172,9 @@ NOTE: While it's common to define additional keys in this category (e.g., `base-
 
 |font-size-min
 |<<values,Number>> +
-(default: 9)
+(default: 6)
 |base:
-  font-size-min: 6
+  font-size-min: $base-font-size * 0.75
 
 // font-size-small is a variable, not an official key
 //|font-size-small

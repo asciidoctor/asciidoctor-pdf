@@ -15,7 +15,7 @@ base_font_color: '000000'
 base_font_family: Helvetica
 base_font_size: 12
 # QUESTION should we rename to min_font_size?
-base_font_size_min: 9
+base_font_size_min: 6
 base_font_style: normal
 base_line_height: 1.15
 base_border_color: 'EEEEEE'
