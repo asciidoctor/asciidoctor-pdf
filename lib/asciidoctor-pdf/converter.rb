@@ -278,9 +278,16 @@ class Converter < ::Prawn::Document
     end
 
     add_outline doc, (doc.attr 'outlinelevels', num_toc_levels).to_i, toc_page_nums, num_front_matter_pages[1]
-    # TODO allow document (or theme) to override initial view magnification
-    # NOTE add 1 to page height to force initial scroll to 0; a nil value also seems to work
-    catalog.data[:OpenAction] = dest_fit_horizontally((page_height + 1), state.pages[0]) if state.pages.size > 0
+    if state.pages.size > 0 && (initial_zoom = @theme.page_initial_zoom)
+      case initial_zoom.to_sym
+      when :Fit
+        catalog.data[:OpenAction] = dest_fit state.pages[0]
+      when :FitV
+        catalog.data[:OpenAction] = dest_fit_vertically 0, state.pages[0]
+      when :FitH
+        catalog.data[:OpenAction] = dest_fit_horizontally page_height, state.pages[0]
+      end
+    end
     catalog.data[:ViewerPreferences] = { DisplayDocTitle: true }
 
     layout_cover_page doc, :back

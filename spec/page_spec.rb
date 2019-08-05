@@ -71,6 +71,27 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
   end
 
+  context 'Initial Zoom' do
+    it 'should set initial zoom to FitH by default' do
+      pdf = to_pdf 'content'
+      open_action = pdf.catalog[:OpenAction]
+      (expect open_action).not_to be_nil
+      (expect open_action).to have_size 3
+      (expect pdf.objects[open_action[0]]).to eql (pdf.page 1).page_object
+      (expect open_action[1]).to eql :FitH
+      (expect open_action[2]).to eql (get_page_size pdf, 1)[1]
+    end
+
+    it 'should set initial zoom as specified by theme' do
+      pdf = to_pdf 'content', pdf_theme: { page_initial_zoom: 'Fit' }
+      open_action = pdf.catalog[:OpenAction]
+      (expect open_action).not_to be_nil
+      (expect open_action).to have_size 2
+      (expect pdf.objects[open_action[0]]).to eql (pdf.page 1).page_object
+      (expect open_action[1]).to eql :Fit
+    end
+  end
+
   context 'Margin' do
     it 'should use the margin specified in theme by default' do
       input = 'content'

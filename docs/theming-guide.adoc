@@ -1053,6 +1053,12 @@ See <<Title Page>> for details.
     recto: image:page-bg-recto.png[]
     verso: image:page-bg-verso.png[]
 
+|initial-zoom
+|Fit {vbar} FitH {vbar} FitV +
+(default: FitH)
+|page:
+  initial-zoom: Fit
+
 |layout
 |portrait {vbar} landscape +
 (default: portrait)
