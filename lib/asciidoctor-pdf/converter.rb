@@ -222,9 +222,7 @@ class Converter < ::Prawn::Document
       end
     end
 
-    # FIXME only apply to book doctype once title and toc are moved to start page when using article doctype
-    #start_new_page if @ppbook && verso_page?
-    start_new_page if @media == 'prepress' && verso_page?
+    start_new_page if @ppbook && verso_page?
 
     if insert_title_page
       body_offset = (body_start_page_number = page_number) - 1
@@ -313,7 +311,7 @@ class Converter < ::Prawn::Document
       # NOTE prepare scratch document to use page margin from recto side (which has same width as verso side)
       set_page_margin page_margin_recto unless page_margin_recto == page_margin
     else
-      @ppbook = false
+      @ppbook = nil
     end
     # QUESTION should ThemeLoader handle registering fonts instead?
     register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
@@ -2423,8 +2421,8 @@ class Converter < ::Prawn::Document
 
     # NOTE a new page may have already been started at this point, so decide what to do with it
     if page.empty?
-      page.reset_content if (recycle = @ppbook ? verso_page? : true)
-    elsif @ppbook && verso_page?
+      page.reset_content if (recycle = @ppbook ? recto_page? : true)
+    elsif @ppbook && page_number > 0 && recto_page?
       start_new_page
     end
 

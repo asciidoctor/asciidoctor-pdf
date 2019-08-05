@@ -15,6 +15,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * reduce min font size in base theme
 * always resolve images in running content relative to themesdir (instead of document) (#1183)
 * honor text alignment role on abstract paragraph(s)
+* don't insert blank page at start of document if media=prepress and document does not have a cover (#1181)
+* insert blank page after cover if media=prepress (#1181)
 
 == 1.5.0.beta.2 (2019-07-30) - @mojavelinux
 
