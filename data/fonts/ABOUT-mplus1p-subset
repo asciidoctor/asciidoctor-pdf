@@ -17,6 +17,7 @@ The following changes were made using fontforge to produce mplus1p-regular-fallb
  ** General Punctuation (U+2000–U203a)
  ** Geometric Shapes (U+25a0–U25ff)
  ** Assorted Symbols (U+20ac, U+2122, U+21d0–U+21d5, U+2190–U+2195, U+2610–U+2611, U+2713)
+ ** .notdef glyph
 * Added BOM (U+feff), hair space (U+200a), zero-width space (U+200b) and line feed (U+000a) characters (from blank)
 * Manually added non-breaking hyphen (U+2011) from hyphen (U+002d)
 * Generated old-style kern table (neither Apple or OpenType) (required to make kerning work in Prawn) (flags: 0x90)

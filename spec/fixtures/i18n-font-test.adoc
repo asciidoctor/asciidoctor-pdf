@@ -149,7 +149,7 @@ Saf ve haydut kız çocuğu bin plaj görmüş.
 ----
 <h1>Hej världen!</h1> <!--1-->
 <p>Прощай, мир!</p> <!--2-->
-<p>Compute the Δ from Α to Ω in €.</p> <!--3-->
+<p>Compute the Δ from Α to Ω in €, not ₿.</p> <!--3-->
 ----
 <1> `Hej världen!` is Swedish for `Hello, World!`.
 <2> `Прощай, мир!` is Russian for `Goodbye, World!`.

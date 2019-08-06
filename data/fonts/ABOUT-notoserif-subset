@@ -17,6 +17,7 @@ The following changes were made using fontforge to produce the notoserif-*-subse
  ** General Punctuation (U+2000–U203a)
  ** Geometric Shapes (U+25a0–U25ff)
  ** Assorted Symbols (U+20ac, U+2122, U+21d0, U+21d2, U+2190, U+2192)
+ ** .notdef glyph
 * Imported ballot boxes from Font Awesome (U+2610, U+2611) (Noto Serif Regular only)
 * Added line feed character (U+000a)
 * Generated old-style kern table (neither Apple or OpenType) (required to make kerning work in Prawn) (flags: 0x90)

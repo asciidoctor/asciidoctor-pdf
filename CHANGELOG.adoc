@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * allow page background color and background image to be used simultaneously (#1186)
 * allow theme to specifiy initial zoom (#305)
+* add the .notdef glyph to the bundled fonts (a box which is used as the default glyph if the font is missing a character) (#1194)
 * don't drop headings if base font family is not set in theme
 * don't crash if heading margins are not set in theme
 * don't rely on base_line_height_length theme key in converter (should be internal to theme)

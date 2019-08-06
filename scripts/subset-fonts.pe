@@ -237,6 +237,8 @@ while (fi < num_copy_fonts)
     #endif
     # BOM (zero-width no-break space) and no-break space
     SelectMoreSingletons(0ufeff,0u00a0)
+    # Keep .notdef, which will be used as the default glyph if the font is missing a glyph
+    SelectMore('.notdef')
     # Drop all glyphs that weren't selected
     SelectInvert()
     Clear()
@@ -355,6 +357,8 @@ while (fi < num_code_fonts)
         new_suffix = "-" + script + "-conums.ttf"
       endif
     endif
+    # Keep .notdef, which will be used as the default glyph if the font is missing a glyph
+    SelectMore('.notdef')
     SelectInvert()
     Clear()
     SelectNone()
