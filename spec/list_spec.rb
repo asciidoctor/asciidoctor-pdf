@@ -74,6 +74,32 @@ describe 'Asciidoctor::PDF::Converter - List' do
       none_item = (pdf.find_text 'none')[0]
       (expect none_item[:x]).to eql 66.24
     end
+
+    it 'should apply correct margin if primary text of list item is blank' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      * foo
+      * {blank}
+      * bar
+      EOS
+
+      mark_texts = pdf.find_text '•'
+      (expect mark_texts).to have_size 3
+      first_to_second_spacing = (mark_texts[0][:y] - mark_texts[1][:y]).round 2
+      second_to_third_spacing = (mark_texts[1][:y] - mark_texts[2][:y]).round 2
+      (expect first_to_second_spacing).to eql second_to_third_spacing
+    end
+
+    it 'should align first block of list item with marker if primary text is blank' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      * {blank}
+      +
+      text
+      EOS
+
+      text = pdf.text
+      (expect text).to have_size 2
+      (expect text[0][:y]).to eql text[1][:y]
+    end
   end
 
   context 'Ordered' do

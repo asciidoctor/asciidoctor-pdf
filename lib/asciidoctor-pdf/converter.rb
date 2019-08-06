@@ -1282,7 +1282,11 @@ class Converter < ::Prawn::Document
         convert_content_for_block desc
       end
     else
-      layout_prose node.text, opts if node.text?
+      if (primary_text = node.text).nil_or_empty?
+        layout_prose DummyText, opts unless node.blocks?
+      else
+        layout_prose primary_text, opts
+      end
       convert_content_for_block node
     end
   end
