@@ -3,6 +3,7 @@
 vertical_spacing: 12
 page_background_color: 'FFFFFF'
 page_layout: portrait
+page_initial_zoom: FitH
 # 36 is equivalent to 0.5in
 page_margin: 36
 page_margin_inner: 48
