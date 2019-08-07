@@ -989,7 +989,7 @@ You'll need to define these in your theme if you'd like to make use of them when
 |===
 |Key |Value Type |Example
 
-3+|[#key-prefix-role]*Key Prefix:* <<key-prefix-role,role-<name> >>
+3+|[#key-prefix-role]*Key Prefix:* <<key-prefix-role,role-<name>{zwsp}>>
 
 |font-color
 |<<colors,Color>> +
@@ -1418,7 +1418,7 @@ The keys in this category control the style of most headings, including part tit
 |heading:
   margin-bottom: 9.6
 
-3+|[#key-prefix-heading-level]*Key Prefix:* <<key-prefix-heading-level,heading-h<n> >>^[1]^
+3+|[#key-prefix-heading-level]*Key Prefix:* <<key-prefix-heading-level,heading-h<n>{zwsp}>>^[1]^
 
 |align
 |<<text-alignments,Text alignment>> +
@@ -2681,7 +2681,7 @@ The keys in this category control the arrangement and style of admonition blocks
   label:
     text-transform: lowercase
 
-3+|[#key-prefix-admonition-icon]*Key Prefix:* <<key-prefix-admonition-icon,admonition-icon-<name> >>^[2]^
+3+|[#key-prefix-admonition-icon]*Key Prefix:* <<key-prefix-admonition-icon,admonition-icon-<name>{zwsp}>>^[2]^
 
 |name
 |<icon set>-<icon name>^[3]^ +
@@ -3056,7 +3056,7 @@ The keys in this category control the arrangement and style of unordered list it
 |===
 |Key |Value Type |Example
 
-3+|*Key Prefix:* ulist-marker-<type>^[1]^
+3+|[#key-prefix-ulist-marker-type]*Key Prefix:* <<key-prefix-ulist-marker-type,ulist-marker-<type>{zwsp}>>^[1]^
 
 |content
 |<<quoted-string,Quoted string>>
@@ -3496,7 +3496,7 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   margin-top: 0
 
-3+|[#key-prefix-toc-level]*Key Prefix:* <<key-prefix-toc-level,toc-h<n> >>^[1]^
+3+|[#key-prefix-toc-level]*Key Prefix:* <<key-prefix-toc-level,toc-h<n>{zwsp}>>^[1]^
 
 |font-color
 |<<colors,Color>> +
