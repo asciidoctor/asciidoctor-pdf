@@ -410,5 +410,20 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.footer_recto_right_content).to be_a String
       (expect theme.footer_recto_right_content).to eql '10'
     end
+
+    it 'should resolve variable references in font catalog' do
+      theme_data = SafeYAML.load <<~EOS
+      vars:
+        serif-font: /path/to/serif-font.ttf
+      font:
+        catalog:
+          Serif:
+            normal: $vars-serif-font
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.font_catalog).to be_a Hash
+      (expect theme.font_catalog['Serif']).to be_a Hash
+      (expect theme.font_catalog['Serif']['normal']).to eql '/path/to/serif-font.ttf'
+    end
   end
 end

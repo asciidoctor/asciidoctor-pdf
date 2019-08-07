@@ -116,8 +116,16 @@ class ThemeLoader
 
   def process_entry key, val, data
     key = key.tr '-', '_' if key.include? '-'
-    if key.start_with? 'font_'
-      data[key] = val
+    if key == 'font'
+      val.each do |subkey, subval|
+        if subkey == 'catalog' && ::Hash === subval
+          subval = subval.reduce({}) do |accum, (name, styles)|
+            accum[name] = ::Hash === styles ? styles.reduce({}) {|subaccum, (style, path)| subaccum[style] = (expand_vars path, data); subaccum } : styles
+            accum
+          end
+        end
+        data[%(font_#{subkey})] = subval
+      end
     elsif key.start_with? 'admonition_icon_'
       data[key] = (val || {}).map do |(key2, val2)|
         [key2.to_sym, (key2.end_with? '_color') ? to_color(evaluate val2, data) : (evaluate val2, data)]
