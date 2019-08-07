@@ -34,10 +34,10 @@ Topics remaining to document:
 The theming system in Asciidoctor PDF is used to control the layout and styling of the PDF file Asciidoctor PDF generates from AsciiDoc.
 This document describes how the theming system works, how to define a custom theme in YAML and how to activate the theme when running Asciidoctor PDF.
 
-TIP: The quickest way to get started creating your own theme is to <<Extends,extend the default theme>>.
-This not only gives you all the styles you need to build on, but also a collection of <<Bundled Fonts,bundled fonts>>.
-If you override the font catalog in your theme file, you must declare all the fonts you use (and provide the font files themselves).
-Insted, if you want to reuse the bundled fonts, simply reference the <<Bundled Fonts,bundled fonts>> in the <<Custom Fonts,font catalog>>.
+TIP: The quickest way to create your own theme is to <<Extends,extend the default theme>>.
+This not only gives you a set of foundation styles to build on, it also provides a collection of <<Bundled Fonts,bundled fonts>>.
+If you want to replace the bundled fonts with your own, you must declare the name and location of each font in the <<Custom fonts,font catalog>>.
+To reuse the bundled fonts, you can either extend the default theme and/or redeclare the bundled fonts in the font catalog.
 
 WARNING: If you don't declare your own fonts (or extend the default theme), only the built-in (AFM) fonts provided by the PDF reader will be available.
 Using AFM fonts can result in missing functionality and warnings.
@@ -74,8 +74,9 @@ The theme language adds some extra features to YAML, such as variables, basic ma
 These enhancements will be explained in detail in later sections.
 
 The theme file must be named _<name>-theme.yml_, where `<name>` is the name of the theme.
+_We recommend *not* using the names *base* or *default* so you don't confuse it with one of the built-in themes._
 
-Here's an example of a basic theme file:
+Here's an example of a basic theme file that extends the base theme:
 
 .basic-theme.yml
 [source,yaml]
@@ -116,7 +117,7 @@ When creating a new theme, you only have to define the keys you want to override
 All the available keys are documented in <<Keys>>.
 The converter uses the information from the theme map to help construct the PDF.
 
-Instead of writing a theme from scratch, you can extend the default theme using the `extends` key as follows:
+Instead of designing a theme from scratch, you can extend the default theme using the `extends` key as follows:
 
 [source,yaml]
 ----
@@ -126,7 +127,7 @@ base:
 ----
 
 You can also point the extends key at another custom theme to extend from it.
-Currently, the base theme is always loaded first.
+If you don't want to extend any theme, including the base theme, assign the value `~` to the `extends` key (i.e., `extends: ~`).
 
 WARNING: If you start a new theme from scratch, we strongly recommend defining TrueType fonts and specifying them in the `base` and `literal` categories.
 Otherwise, Asciidoctor PDF will use built-in AFM fonts, which can result in missing functionality and warnings.
