@@ -652,7 +652,7 @@ IMPORTANT: Asciidoctor has no challenge working with Unicode.
 In fact, it prefers Unicode and considers the entire range.
 However, once you convert to PDF, you have to meet the font requirements of PDF in order to preserve Unicode characters.
 That means you need to provide a font (at least a fallback font) that contains glyphs for all the characters you want to use.
-If you don't, you may notice that characters are missing.
+If you don't, you may notice that characters are missing (usually replaced with a box).
 There's nothing Asciidoctor can do to convince PDF to work with extended characters without the right fonts in play.
 
 === Built-In (AFM) Fonts
@@ -707,6 +707,7 @@ To prevent this warning, you need to specify a TrueType font.
 
 When using a TrueType font, you will get no warning for a missing glyph.
 That's a consequence of how Prawn works and is outside of Asciidoctor PDF's control.
+However, you'll likely see it substituted with a box (guaranteed if you're using one of the bundled fonts).
 
 For more information about how Prawn handles character encodings for built-in fonts, see https://github.com/prawnpdf/prawn/blob/master/CHANGELOG.md#vastly-improved-handling-of-encodings-for-pdf-built-in-afm-fonts[this note in the Prawn CHANGELOG].
 ****
@@ -826,6 +827,7 @@ This will allow you to use the same font names (aka families) in both your graph
 
 If a TrueType font is missing a character needed to render the document, such as a special symbol, you can have Asciidoctor PDF look for the character in a fallback font.
 You only need to specify a single fallback font, typically one that provides a full set of symbols.
+If the character isn't found in the fallback font, it will mostly likely be replaced by a box (guaranteed if you're using the bundled fallback font).
 
 IMPORTANT: The fallback font only gets used when the primary font is a TrueType font (i.e., TTF, DFont, TTC).
 Any glyph missing from an AFM font is simply replaced with the "`not`" glyph (`&#172;`).
@@ -4269,7 +4271,7 @@ For more information about source highlighting with Rouge, refer to the http://r
 == Preparing a Custom Font
 
 Any TTF font can be used with Prawn--and hence Asciidoctor PDF--without modifications (unless, of course, it's corrupt or contains errors).
-However, you may discover that kerning is disabled and certain required glyphs are missing.
+However, you may discover that kerning is disabled and certain required glyphs are missing (or replaced with boxes).
 To address these problems, you need to prepare the font using a font program such as {url-fontforge}[FontForge].
 
 === Validate the Font
@@ -4309,7 +4311,7 @@ You can find a crash course in how to use the program on the FontForge project s
 Here are the modifications you need to apply to a custom font for it to work best with Asciidoctor PDF:
 
 * Convert the font to TTF (only required if the font is not already a TTF, such as an OTF or TTC).
-* Add the glyphs for the required characters if missing from the font (optional if using a falback font).
+* Add the glyphs for the required characters if missing from the font (optional if using a fallback font).
 * Subset the font to exclude unused characters to reduce the file size (optional).
 * Save the file using the old-style kern table to activate kerning.
 
@@ -4321,7 +4323,7 @@ Most fonts do not provide glyphs for all the Unicode character ranges (i.e., scr
 In fact, many fonts only include glyphs for Latin (Basic, Supplement, and Extended) and a few other scripts (e.g., Cyrillic, Greek).
 That means certain glyphs Asciidoctor PDF relies on may be missing from the font.
 
-Below are are the non-Latin characters that Asciidoctor PDF uses (for which glyphs are often missing):
+Below are the non-Latin characters (identified by Unicode code point) on which Asciidoctor PDF relies that are often missing from fonts.
 Unless you're using a fallback font that fills in the missing glyphs, you need to ensure these glyphs are present in your font (and add them if not).
 
 * \u00a0 - no-break space
@@ -4339,6 +4341,11 @@ Unless you're using a fallback font that fills in the missing glyphs, you need t
 * \u2014 - em-dash (used in quote attribute)
 * \u203a - single right-pointing quotation mark (used in the menu UI element)
 * \u25ba - right pointer (used for media play icon when icon fonts are disabled)
+* .notdef - used as the default glyph when a requested character is missing from the font (usually a box)
+
+NOTE: If the .notdef glyph is non-empty (i.e., contains splines), it will be used as the default glyph when the document requests a character that is missing from the font.
+Unlike other glyphs, the .notdef glyph is referenced by name only.
+It does not have a designated Unicode code point.
 
 If you're preparing a font for use in verbatim blocks (e.g., a listing block), you'll also need this range of characters:
 
