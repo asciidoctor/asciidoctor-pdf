@@ -877,7 +877,7 @@ class Converter < ::Prawn::Document
         end
         if node.attr? 'attribution', nil, false
           theme_font :blockquote_cite do
-            layout_prose %(#{EmDash} #{[(node.attr 'attribution'), (node.attr 'citetitle', nil, false)].compact * ', '}), align: :left, normalize: false
+            layout_prose %(#{EmDash} #{[(node.attr 'attribution'), (node.attr 'citetitle', nil, false)].compact.join ', '}), align: :left, normalize: false
           end
         end
       end
@@ -1570,7 +1570,7 @@ class Converter < ::Prawn::Document
       # TODO enable once we support background color on spans
       #if node.attr? 'highlight', nil, false
       #  unless (hl_lines = node.resolve_lines_to_highlight(node.attr 'highlight', nil, false)).empty?
-      #    pygments_config[:hl_lines] = hl_lines * ' '
+      #    pygments_config[:hl_lines] = hl_lines.join ' '
       #  end
       #end
       # QUESTION should we treat white background as inherit?
@@ -1704,7 +1704,7 @@ class Converter < ::Prawn::Document
       else
         line
       end
-    } * LF
+    }.join LF
     conum_mapping = nil if conum_mapping.empty?
     [string, conum_mapping]
   end
@@ -1742,7 +1742,7 @@ class Converter < ::Prawn::Document
       line.unshift text: %(#{(cur_line_num + linenums).to_s.rjust pad_size} ), color: linenum_color if linenums
       if (conums = conum_mapping.delete cur_line_num)
         line << { text: ' ' * num_trailing_spaces } if last_line && num_trailing_spaces > 0
-        conum_text = conums.map {|num| conum_glyph num } * ' '
+        conum_text = conums.map {|num| conum_glyph num }.join ' '
         line << (conum_color ? { text: conum_text, color: conum_color } : { text: conum_text })
       end
       line << { text: LF } unless last_line
@@ -2175,7 +2175,7 @@ class Converter < ::Prawn::Document
       else
         pagenums = consolidate_ranges term.dests.uniq {|dest| dest[:page] }.map {|dest| dest[:page].to_s }
       end
-      text = %(#{text}, #{pagenums * ', '})
+      text = %(#{text}, #{pagenums.join ', '})
     end
     layout_prose text, align: :left, margin: 0
 
@@ -2384,7 +2384,7 @@ class Converter < ::Prawn::Document
     menu = node.attr 'menu'
     caret = (load_theme node.document).menu_caret_content || %( \u203a )
     if !(submenus = node.attr 'submenus').empty?
-      %(<strong>#{[menu, *submenus, (node.attr 'menuitem')] * caret}</strong>)
+      %(<strong>#{[menu, *submenus, (node.attr 'menuitem')].join caret}</strong>)
     elsif (menuitem = node.attr 'menuitem')
       %(<strong>#{menu}#{caret}#{menuitem}</strong>)
     else
@@ -2528,7 +2528,7 @@ class Converter < ::Prawn::Document
           # TODO provide an API in core to get authors as an array
           authors = (1..(doc.attr 'authorcount', 1).to_i).map {|idx|
             doc.attr(idx == 1 ? 'author' : %(author_#{idx}))
-          } * (@theme.title_page_authors_delimiter || ', ')
+          }.join (@theme.title_page_authors_delimiter || ', ')
           theme_font :title_page_authors do
             layout_prose authors,
               align: title_align,
@@ -2541,7 +2541,7 @@ class Converter < ::Prawn::Document
       revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact
       unless revision_info.empty?
         move_down(@theme.title_page_revision_margin_top || 0)
-        revision_text = revision_info * (@theme.title_page_revision_delimiter || ', ')
+        revision_text = revision_info.join (@theme.title_page_revision_delimiter || ', ')
         indent (@theme.title_page_revision_margin_left || 0), (@theme.title_page_revision_margin_right || 0) do
           theme_font :title_page_revision do
             layout_prose revision_text,
@@ -3016,7 +3016,7 @@ class Converter < ::Prawn::Document
                     # NOTE drop lines with attribute references that didn't resolve
                     if (content = doc.apply_subs content).include? '{'
                       # NOTE must use &#123; in place of {, not \{, to escape attribute reference
-                      content = content.split(LF).delete_if {|line| SimpleAttributeRefRx.match? line } * LF
+                      content = content.split(LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF
                     end
                     if old_imagesdir
                       doc.set_attr 'imagesdir', old_imagesdir

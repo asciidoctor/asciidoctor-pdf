@@ -13,7 +13,7 @@ class Transform
     nbsp: ?\u00a0,
     quot: ?",
   }
-  CharRefRx = /&(?:(#{CharEntityTable.keys * ?|})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
+  CharRefRx = /&(?:(#{CharEntityTable.keys.join ?|})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
   TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
   ThemeKeyToFragmentProperty = {
     'font_color' => :color,

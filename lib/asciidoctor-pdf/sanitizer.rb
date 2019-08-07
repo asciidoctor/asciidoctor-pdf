@@ -17,7 +17,7 @@ module Sanitizer
     '&gt;' => ?>,
     '&amp;' => ?&,
   }
-  XMLSpecialCharsRx = /(?:#{XMLSpecialChars.keys * ?|})/
+  XMLSpecialCharsRx = /(?:#{XMLSpecialChars.keys.join ?|})/
   InverseXMLSpecialChars = XMLSpecialChars.invert
   InverseXMLSpecialCharsRx = /[#{InverseXMLSpecialChars.keys.join}]/
   (BuiltInNamedEntities = {

@@ -21,7 +21,7 @@ class ImplicitHeaderProcessor < ::Asciidoctor::Extensions::IncludeProcessor
         if (second_line = fd.readline)
           if AuthorInfoLineRx =~ second_line
             # FIXME temporary hack to set author and e-mail attributes; this should handle all attributes in header!
-            author = [$1, $2, $3].compact * ' '
+            author = [$1, $2, $3].compact.join ' '
             email = $4
             reader.push_include fd.readlines, target, target, 3, attributes unless fd.eof?
             reader.push_include first_line, target, target, 1, attributes
