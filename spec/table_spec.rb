@@ -297,6 +297,32 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       # NOTE the first body row should be moved down
       (expect a1_text[:y]).to be < reference_a1_text[:y]
     end
+
+    it 'should not split cells in head row across pages' do
+      hard_line_break = %( +\n)
+      filler = (['filler'] * 40).join hard_line_break
+      head_cell_1 = %w(this is a very tall cell in the head row of this table).join hard_line_break
+      head_cell_2 = %w(this is an even taller cell also in the head row of this table).join hard_line_break
+      pdf = to_pdf <<~EOS, analyze: true
+      #{filler}
+
+      [%header,cols=2*]
+      |===
+      |#{head_cell_1}
+      |#{head_cell_2}
+
+      |body cell
+      |body cell
+      |===
+      EOS
+
+      filler_page_nums = (pdf.find_text 'filler').map {|it| it[:page_number] }
+      (expect filler_page_nums.uniq).to have_size 1
+      (expect filler_page_nums[0]).to eql 1
+      table_cell_page_nums = pdf.text.reject {|it| it[:string] == 'filler' }.map {|it| it[:page_number] }
+      (expect table_cell_page_nums.uniq).to have_size 1
+      (expect table_cell_page_nums[0]).to eql 2
+    end
   end
 
   context 'Basic table cell' do
