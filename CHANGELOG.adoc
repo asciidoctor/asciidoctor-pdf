@@ -19,6 +19,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * honor text alignment role on abstract paragraph(s)
 * don't insert blank page at start of document if media=prepress and document does not have a cover (#1181)
 * insert blank page after cover if media=prepress (#1181)
+* include revremark on title page if specified (#1198)
 * align first block of list item with marker if primary text is blank (#1196)
 * apply correct margin to list item if primary text is blank (#1196)
 * resolve variables in font catalog in theme file

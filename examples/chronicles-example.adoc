@@ -1,6 +1,6 @@
 = The Dangerous & _Thrilling_ Documentation Chronicles: Based on True Events
 Kismet Caméléon; Lazarus het_Draeke
-v1.0, 2014-01-01: The first incarnation of The Documentation Chronicles.
+v1.0, 2014-01-01
 :description: This story chronicles the inexplicable hazards and vicious beasts a \
 team must conquer and vanquish on their journey to discovering the true power of \
 Open Source.

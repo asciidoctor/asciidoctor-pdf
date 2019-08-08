@@ -30,6 +30,17 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect pdf.pages[0][:strings]).to_not include 'Document Title'
     end
 
+    it 'should include revision number, date, and remark on title page' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      Author Name
+      v1.0, 2019-01-01: Draft
+      :doctype: book
+      EOS
+
+      (expect pdf.lines).to include 'Version 1.0, 2019-01-01: Draft'
+    end
+
     it 'should allow left margin of elements on title page to be configured' do
       input = <<~'EOS'
       = Book Title: Bring Out Your Dead Trees

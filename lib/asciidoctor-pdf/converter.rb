@@ -2542,6 +2542,9 @@ class Converter < ::Prawn::Document
       unless revision_info.empty?
         move_down(@theme.title_page_revision_margin_top || 0)
         revision_text = revision_info.join (@theme.title_page_revision_delimiter || ', ')
+        if (revremark = doc.attr 'revremark')
+          revision_text = %(#{revision_text}: #{revremark})
+        end
         indent (@theme.title_page_revision_margin_left || 0), (@theme.title_page_revision_margin_right || 0) do
           theme_font :title_page_revision do
             layout_prose revision_text,
