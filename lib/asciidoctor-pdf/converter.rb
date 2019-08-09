@@ -1301,15 +1301,17 @@ class Converter < ::Prawn::Document
     elsif ::Base64 === target
       image_path = target
     elsif (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format)
-      if ::File.readable? image_path
-        # NOTE import_page automatically advances to next page afterwards
-        # QUESTION should we add destination to top of imported page?
-        return import_page image_path, replace: page.empty? if image_format == 'pdf'
-      elsif image_format == 'pdf'
-        logger.warn %(pdf to insert not found or not readable: #{image_path}) unless scratch?
-        # QUESTION should we use alt text in this case?
+      if image_format == 'pdf'
+        if ::File.readable? image_path
+          # NOTE import_page automatically advances to next page afterwards
+          # QUESTION should we add destination to top of imported page?
+          import_page image_path, replace: page.empty?
+        else
+          # QUESTION should we use alt text in this case?
+          logger.warn %(pdf to insert not found or not readable: #{image_path})
+        end
         return
-      else
+      elsif !(::File.readable? image_path)
         logger.warn %(image to embed not found or not readable: #{image_path}) unless scratch?
         image_path = nil
       end
