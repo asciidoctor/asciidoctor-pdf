@@ -564,27 +564,25 @@ Please refer to the {uri-prawn-gmagick}[README for prawn-gmagick] to learn how t
 Once this gem is installed, Asciidoctor automatically switches over to it to handle embedding of all images.
 In addition to support for more additional image file formats, this gem also speeds up image processing considerably, so we highly recommend using it if you can.
 
-== Import PDF Pages
+== Importing PDF Pages
 
-When writing content, it is sometimes important to include pages with styles impossible to achieve currently with Asciidoc.
-For example, individual pages that have full-bleed color that runs right up to the page edge.
-Or complex layouts that might come from specialized design programs like https://inkscape.org[Inkscape].
+In addition to using a PDF page for the front or back cover, you can also insert a PDF page at an arbitrary location.
+This technique is useful to include pages that have complex layouts and graphics prepared in a specialized design program (such as Inkscape), which would otherwise not be achievable using this converter.
+One such example is an insert such as an advertisement or visual interlude.
 
-For physical prints, these types of markings and stylistic flourishes are useful https://fromplantoprototype.com/blog/2019/08/07/importing-pdf-pages-in-asciidoctor-pdf/[to separate chapters and article sections].
-Using colored page edges makes it is possible to look at the https://www.alibris.com/glossary/condition#booka[fore-edge] of a printed object and distinguish the different parts.
-It's a helpful way to physically and visually index a book or a longer article.
-
-To add these types of pages to an Asciidoc file, use the following construct:
+To import the first page from a PDF file, use the block image macro with the PDF filename as the image target.
 
 [source,asciidoc]
 ----
-:imagesdir: ./
 image::custom-page.pdf[]
 ----
 
-A page break will automatically be inserted before and after the imported PDF page, so there is no need to add extra https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/#breaks[`<<<` markup] around the `image::[]` statement.
+WARNING: This will only insert the *first page* from the PDF (see https://github.com/asciidoctor/asciidoctor-pdf/issues/177[#177]).
 
-Note also that, at the moment, this construct will import only the first page from the PDF (according to enhancement https://github.com/asciidoctor/asciidoctor-pdf/issues/177[#177]).
+The converter will insert the page from the PDF as a dedicated page that matches the size and layout of the page being imported (no matter where the block image occurs).
+Therefore, there's no need to put a manual page break (i.e., `<<<`) around the image macro.
+
+To see a practical example of how to use this feature, refer to the blog post https://fromplantoprototype.com/blog/2019/08/07/importing-pdf-pages-in-asciidoctor-pdf/[Importing PDF Pages in asciidoctor-pdf].
 
 == STEM Support
 
