@@ -579,6 +579,10 @@ image::custom-page.pdf[]
 
 WARNING: This will only insert the *first page* from the PDF (see https://github.com/asciidoctor/asciidoctor-pdf/issues/177[#177]).
 
+CAUTION: An image macro that imports a PDF page should never be nested inside a delimited block or table.
+It should be a direct descendant of the document or a section.
+Otherwise, the behavior is unspecified.
+
 The converter will insert the page from the PDF as a dedicated page that matches the size and layout of the page being imported (no matter where the block image occurs).
 Therefore, there's no need to put a manual page break (i.e., `<<<`) around the image macro.
 
