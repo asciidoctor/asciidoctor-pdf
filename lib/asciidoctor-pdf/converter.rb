@@ -672,13 +672,13 @@ class Converter < ::Prawn::Document
     if (label_min_width = @theme.admonition_label_min_width)
       label_min_width = label_min_width.to_f
     end
-    icons = ((doc = node.document).attr? 'icons') ? (doc.attr 'icons') : false
+    icons = ((doc = node.document).attr? 'icons') ? (doc.attr 'icons') : nil
     if (data_uri_enabled = doc.attr? 'data-uri')
       doc.remove_attr 'data-uri'
     end
     if icons == 'font' && !(node.attr? 'icon', nil, false)
       icon_data = admonition_icon_data(label_text = type.to_sym)
-      label_width = label_min_width ? label_min_width : (icon_data[:size] * 1.5)
+      label_width = label_min_width ? label_min_width : ((icon_size = icon_data[:size] || 24) * 1.5)
     # NOTE icon_uri will consider icon attribute on node first, then type
     elsif icons && ::File.readable?(icon_path = (node.icon_uri type))
       icons = true
@@ -686,7 +686,7 @@ class Converter < ::Prawn::Document
       label_width = label_min_width ? label_min_width : 36.0
     else
       if icons
-        icons = false
+        icons = nil
         logger.warn %(admonition icon image not found or not readable: #{icon_path}) unless scratch?
       end
       label_text = node.caption
@@ -730,7 +730,7 @@ class Converter < ::Prawn::Document
             bounding_box [0, cursor], width: label_width, height: box_height do
               if icons == 'font'
                 # FIXME we're assume icon is a square
-                icon_size = fit_icon_to_bounds icon_data[:size]
+                icon_size = fit_icon_to_bounds icon_size
                 # NOTE Prawn's vertical center is not reliable, so calculate it manually
                 if label_valign == :center
                   label_valign = :top
