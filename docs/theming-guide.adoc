@@ -2711,6 +2711,8 @@ The keys in this category control the arrangement and style of admonition blocks
 
 . The top and bottom padding values are ignored on admonition-label-padding.
 . `<name>` can be `note`, `tip`, `warning`, `important`, or `caution`.
+All icon types must be grouped under a single `icons` category.
+In other words, _do not_ declare the `icons` category multiple times.
 The subkeys in the icon category cannot be flattened (e.g., `tip-name: far-lightbulb` is not valid syntax).
 . Required.
 See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository] for a list of valid icon names.
