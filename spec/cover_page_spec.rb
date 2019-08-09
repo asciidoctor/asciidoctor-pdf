@@ -165,4 +165,15 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect pdf.pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
     (expect pdf.pages[1][:text]).not_to be_empty
   end
+
+  it 'should import specified page from PDF file' do
+    pdf = to_pdf <<~'EOS'
+    :front-cover-image: image:red-green-blue.pdf[page=3]
+
+    content
+    EOS
+    (expect pdf.pages).to have_size 2
+    page_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
+    (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
+  end
 end

@@ -577,7 +577,15 @@ To import the first page from a PDF file, use the block image macro with the PDF
 image::custom-page.pdf[]
 ----
 
-WARNING: This will only insert the *first page* from the PDF (see https://github.com/asciidoctor/asciidoctor-pdf/issues/177[#177]).
+By default, this macro will import the first page of the PDF.
+To import a different page, specify it as a 1-based index using the `page` attribute.
+
+[source,asciidoc]
+----
+image::custom-page.pdf[page=2]
+----
+
+To import multiple pages, you'll need to use multiple image macros, each specifying the page number to import.
 
 CAUTION: An image macro that imports a PDF page should never be nested inside a delimited block or table.
 It should be a direct descendant of the document or a section.
