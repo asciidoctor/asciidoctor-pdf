@@ -19,6 +19,12 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect pdf.pages[1][:text]).to have_size 1
     end
 
+    it 'should create document with only a title page if body is empty' do
+      pdf = to_pdf '= Title Page Only', doctype: :book, analyze: true
+      (expect pdf.pages).to have_size 1
+      (expect pdf.lines).to eql ['Title Page Only']
+    end
+
     it 'should not include title page if notitle attribute is set' do
       pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
       = Document Title
@@ -292,6 +298,12 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect pdf.pages).to have_size 2
       (expect pdf.pages[0][:strings]).to include 'Document Title'
       (expect pdf.pages[1][:strings]).to include 'body'
+    end
+
+    it 'should create document with only a title page if body is empty and title-page is set' do
+      pdf = to_pdf '= Title Page Only', attribute_overrides: { 'title-page' => '' }, analyze: true
+      (expect pdf.pages).to have_size 1
+      (expect pdf.lines).to eql ['Title Page Only']
     end
 
     it 'should not include document title if notitle attribute is set' do
