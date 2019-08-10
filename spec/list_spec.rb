@@ -75,6 +75,22 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect none_item[:x]).to eql 66.24
     end
 
+    it 'should allow theme to change marker characters' do
+      pdf_theme = {
+        ulist_marker_disc_content: %(\u25ca),
+        ulist_marker_circle_content: %(\u25cc),
+        ulist_marker_square_content: %(\u25a1),
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      * diamond
+       ** dotted circle
+        *** white square
+      EOS
+
+      (expect pdf.lines).to eql [%(\u25cadiamond), %(\u25ccdotted circle), %(\u25a1white square)]
+    end
+
     it 'should apply correct margin if primary text of list item is blank' do
       pdf = to_pdf <<~'EOS', analyze: true
       * foo
@@ -99,6 +115,31 @@ describe 'Asciidoctor::PDF::Converter - List' do
       text = pdf.text
       (expect text).to have_size 2
       (expect text[0][:y]).to eql text[1][:y]
+    end
+  end
+
+  context 'Checklist' do
+    it 'should replace markers with checkboxes in checklist' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      * [ ] todo
+      * [x] done
+      EOS
+
+      (expect pdf.lines).to eql [%(\u2610todo), %(\u2611done)]
+    end
+
+    it 'should allow theme to change checkbox characters' do
+      pdf_theme = {
+        ulist_marker_unchecked_content: %(\u25d8),
+        ulist_marker_checked_content: %(\u25d9),
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      * [ ] todo
+      * [x] done
+      EOS
+
+      (expect pdf.lines).to eql [%(\u25d8todo), %(\u25d9done)]
     end
   end
 
