@@ -13,7 +13,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'YouTube' do
     it 'should replace image with poster image if allow-uri-read attribute is set', integration: true do
-      video_id = '49tpIMDy9BE'
+      video_id = 'EJ09pSuA9hw'
       to_file = to_pdf_file <<~EOS, 'video-youtube-poster.pdf', attribute_overrides: { 'allow-uri-read' => '' }
       video::#{video_id}[youtube,pdfwidth=100%]
       EOS
