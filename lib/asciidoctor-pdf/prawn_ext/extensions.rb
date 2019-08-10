@@ -732,7 +732,7 @@ module Extensions
     prev_text_rendering_mode = (defined? @text_rendering_mode) ? @text_rendering_mode : nil
     delete_page if opts[:replace]
     # NOTE use functionality provided by prawn-templates
-    start_new_page_discretely template: file
+    start_new_page_discretely template: file, template_page: opts[:page]
     # prawn-templates sets text_rendering_mode to :unknown, which breaks running content; revert
     @text_rendering_mode = prev_text_rendering_mode
     if opts.fetch :advance, true

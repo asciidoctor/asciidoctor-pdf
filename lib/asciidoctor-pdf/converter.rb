@@ -1305,7 +1305,7 @@ class Converter < ::Prawn::Document
         if ::File.readable? image_path
           # NOTE import_page automatically advances to next page afterwards
           # QUESTION should we add destination to top of imported page?
-          import_page image_path, replace: page.empty?
+          import_page image_path, page: [(node.attr 'page').to_i, 1].max, replace: page.empty?
         else
           # QUESTION should we use alt text in this case?
           logger.warn %(pdf to insert not found or not readable: #{image_path})
@@ -2579,7 +2579,7 @@ class Converter < ::Prawn::Document
 
       go_to_page page_count if face == :back
       if image_path.downcase.end_with? '.pdf'
-        import_page image_path, advance: face != :back
+        import_page image_path, page: [((image_attrs || {})['page']).to_i, 1].max, advance: face != :back
       else
         image_opts = resolve_image_options image_path, image_attrs, background: true, format: image_format
         image_page image_path, (image_opts.merge canvas: true)
