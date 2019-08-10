@@ -359,7 +359,7 @@ class Converter < ::Prawn::Document
       if (theme = doc.options[:pdf_theme])
         @themesdir = theme.__dir__ || (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir')
       elsif (theme_name = (doc.attr 'pdf-theme') || (doc.attr 'pdf-style'))
-        theme = ThemeLoader.load_theme theme_name, (theme_dir = (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir'))
+        theme = ThemeLoader.load_theme theme_name, (indir = (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir'))
         @themesdir = theme.__dir__
       else
         theme = ThemeLoader.load_theme
@@ -367,8 +367,8 @@ class Converter < ::Prawn::Document
       end
       theme
     rescue
-      if theme_dir
-        message = %(could not locate or load the pdf theme `#{theme_name}' in #{::File.absolute_path theme_dir})
+      if indir
+        message = %(could not locate or load the pdf theme `#{theme_name}' in #{::File.expand_path indir})
       else
         message = %(could not locate or load the built-in pdf theme `#{theme_name}')
       end
@@ -3652,7 +3652,7 @@ class Converter < ::Prawn::Document
       end
     # handle case when image is a local file
     else
-      ::File.expand_path(node.normalize_system_path image_path, imagesdir, nil, target_name: 'image')
+      node.normalize_system_path image_path, imagesdir, nil, target_name: 'image'
     end
   end
 

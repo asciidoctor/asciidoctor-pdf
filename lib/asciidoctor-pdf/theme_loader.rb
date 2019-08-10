@@ -13,10 +13,10 @@ class ThemeLoader
     include ::Asciidoctor::LoggingShim
   end
 
-  DataDir = ::File.expand_path(::File.join(::File.dirname(__FILE__), '..', '..', 'data'))
+  DataDir = ::File.absolute_path %(#{__dir__}/../../data)
   ThemesDir = ::File.join DataDir, 'themes'
   FontsDir = ::File.join DataDir, 'fonts'
-  BaseThemePath = ::File.expand_path 'base-theme.yml', ThemesDir
+  BaseThemePath = ::File.join ThemesDir, 'base-theme.yml'
 
   VariableRx = /\$([a-z0-9_-]+)/
   LoneVariableRx = /^\$([a-z0-9_-]+)$/
@@ -48,7 +48,8 @@ class ThemeLoader
       theme_file = ::File.expand_path theme_name, theme_path
       theme_path ||= ::File.dirname theme_file
     else
-      theme_file = ::File.expand_path %(#{theme_name || 'default'}-theme.yml), (theme_path ||= ThemesDir)
+      theme_path = theme_path ? (::File.expand_path theme_path) : ThemesDir
+      theme_file = ::File.absolute_path ::File.join theme_path, %(#{theme_name || 'default'}-theme.yml)
     end
     [theme_file, theme_path]
   end
