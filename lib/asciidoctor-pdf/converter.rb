@@ -321,7 +321,7 @@ class Converter < ::Prawn::Document
       @ppbook = nil
     end
     # QUESTION should ThemeLoader handle registering fonts instead?
-    register_fonts theme.font_catalog, (doc.attr 'scripts', 'latin'), (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
+    register_fonts theme.font_catalog, (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
     default_kerning theme.base_font_kerning != 'none'
     @fallback_fonts = [*theme.font_fallbacks]
     if (bg_image = resolve_background_image doc, theme, 'page-background-image') && bg_image[0]
@@ -3264,7 +3264,7 @@ class Converter < ::Prawn::Document
     nil
   end
 
-  def register_fonts font_catalog, scripts = 'latin', fonts_dir
+  def register_fonts font_catalog, fonts_dir
     (font_catalog || {}).each do |key, styles|
       register_font key => styles.map {|style, path| [style.to_sym, (font_path path, fonts_dir)]}.to_h
     end
