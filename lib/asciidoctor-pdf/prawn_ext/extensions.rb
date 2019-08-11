@@ -174,7 +174,7 @@ module Extensions
   #  }
   #
   def register_font data
-    font_families.update data.inject({}) {|accum, (key, val)| accum[key.to_s] = val; accum }
+    font_families.update data.reduce({}) {|accum, (key, val)| accum[key.to_s] = val; accum }
   end
 
   # Enhances the built-in font method to allow the font

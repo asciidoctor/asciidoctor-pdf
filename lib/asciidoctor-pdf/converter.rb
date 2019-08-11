@@ -3108,7 +3108,7 @@ class Converter < ::Prawn::Document
         trim_styles[:img_valign] = trim_styles[:img_valign].to_sym
       end
 
-      colspec_dict = PageSides.inject({}) do |acc, side|
+      colspec_dict = PageSides.reduce({}) do |acc, side|
         side_trim_content_width = trim_content_width[side]
         if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)] || @theme[%(#{periphery}_columns)])
           case (colspecs = (custom_colspecs.to_s.tr ',', ' ').split[0..2]).size
@@ -3145,7 +3145,7 @@ class Converter < ::Prawn::Document
         acc
       end
 
-      content_dict = PageSides.inject({}) do |acc, side|
+      content_dict = PageSides.reduce({}) do |acc, side|
         side_content = {}
         ColumnPositions.each do |position|
           unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
@@ -3883,7 +3883,7 @@ class Converter < ::Prawn::Document
   def consolidate_ranges nums
     if nums.size > 1
       prev = nil
-      nums.inject([]) {|accum, num|
+      nums.reduce([]) {|accum, num|
         if prev && (prev.to_i + 1) == num.to_i
           accum[-1][1] = num
         else
