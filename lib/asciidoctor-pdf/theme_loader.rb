@@ -41,21 +41,24 @@ class ThemeLoader
     end
   end
 
-  def self.resolve_theme_file theme_name = nil, theme_path = nil
-    # if .yml extension is given, assume it's a path (don't append -theme.yml)
+  def self.resolve_theme_file theme_name = nil, theme_dir = nil
+    # NOTE if .yml extension is given, assume it's a path (don't append -theme.yml)
     if theme_name && (theme_name.end_with? '.yml')
       # FIXME restrict to jail!
-      theme_file = ::File.expand_path theme_name, theme_path
-      theme_path ||= ::File.dirname theme_file
+      if theme_dir
+        theme_path = ::File.absolute_path theme_name, (theme_dir = ::File.expand_path theme_dir)
+      else
+        theme_dir = ::File.dirname(theme_path = (::File.absolute_path theme_name))
+      end
     else
-      theme_path = theme_path ? (::File.expand_path theme_path) : ThemesDir
-      theme_file = ::File.absolute_path ::File.join theme_path, %(#{theme_name || 'default'}-theme.yml)
+      theme_dir = theme_dir ? (::File.expand_path theme_dir) : ThemesDir
+      theme_path = ::File.absolute_path ::File.join theme_dir, %(#{theme_name || 'default'}-theme.yml)
     end
-    [theme_file, theme_path]
+    [theme_path, theme_dir]
   end
 
-  def self.resolve_theme_asset asset_path, theme_path
-    ::File.expand_path asset_path, (theme_path || ThemesDir)
+  def self.resolve_theme_asset asset_path, theme_dir = nil
+    ::File.absolute_path asset_path, (theme_dir || ThemesDir)
   end
 
   # NOTE base theme is loaded "as is" (no post-processing)
@@ -63,25 +66,25 @@ class ThemeLoader
     (::OpenStruct.new ::SafeYAML.load_file BaseThemePath).tap {|theme| theme.__dir__ = ThemesDir }
   end
 
-  def self.load_theme theme_name = nil, theme_path = nil
-    theme_file, theme_path = resolve_theme_file theme_name, theme_path
-    if theme_file == BaseThemePath
+  def self.load_theme theme_name = nil, theme_dir = nil
+    theme_path, theme_dir = resolve_theme_file theme_name, theme_dir
+    if theme_path == BaseThemePath
       load_base_theme
     else
-      theme_data = load_file theme_file, nil, theme_path
-      unless (::File.dirname theme_file) == ThemesDir
+      theme_data = load_file theme_path, nil, theme_dir
+      unless (::File.dirname theme_path) == ThemesDir
         theme_data.base_align ||= 'left'
         theme_data.base_line_height ||= 1
         theme_data.base_font_color ||= '000000'
         theme_data.code_font_family ||= (theme_data.literal_font_family || 'Courier')
         theme_data.conum_font_family ||= (theme_data.literal_font_family || 'Courier')
       end
-      theme_data.__dir__ = theme_path
+      theme_data.__dir__ = theme_dir
       theme_data
     end
   end
 
-  def self.load_file filename, theme_data = nil, theme_path = nil
+  def self.load_file filename, theme_data = nil, theme_dir = nil
     data = ::File.read filename, encoding: ::Encoding::UTF_8
     data = data.each_line.map {|line|
       line.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || (m[:k].end_with? 'color') ? "'#{m[:v]}'" : m[:v]}) }
@@ -89,27 +92,27 @@ class ThemeLoader
     yaml_data = ::SafeYAML.load data
     if ::Hash === yaml_data && (yaml_data.key? 'extends')
       if (extends = yaml_data.delete 'extends')
-        [*extends].each do |extend_file|
-          if extend_file == 'base'
+        [*extends].each do |extend_path|
+          if extend_path == 'base'
             theme_data = theme_data ? (::OpenStruct.new theme_data.to_h.merge load_base_theme.to_h) : load_base_theme
             next
-          elsif extend_file == 'default' || extend_file == 'default-with-fallback-font'
-            extend_file, extend_theme_path = resolve_theme_file extend_file, ThemesDir
-          elsif extend_file.start_with? './'
-            extend_file, extend_theme_path = resolve_theme_file extend_file, (::File.dirname filename)
+          elsif extend_path == 'default' || extend_path == 'default-with-fallback-font'
+            extend_path, extend_theme_dir = resolve_theme_file extend_path, ThemesDir
+          elsif extend_path.start_with? './'
+            extend_path, extend_theme_dir = resolve_theme_file extend_path, (::File.dirname filename)
           else
-            extend_file, extend_theme_path = resolve_theme_file extend_file, theme_path
+            extend_path, extend_theme_dir = resolve_theme_file extend_path, theme_dir
           end
-          theme_data = load_file extend_file, theme_data, extend_theme_path
+          theme_data = load_file extend_path, theme_data, extend_theme_dir
         end
       end
     else
       theme_data ||= ((::File.dirname filename) == ThemesDir ? nil : load_base_theme)
     end
-    self.new.load yaml_data, theme_data, theme_path
+    self.new.load yaml_data, theme_data, theme_dir
   end
 
-  def load hash, theme_data = nil, theme_path = nil
+  def load hash, theme_data = nil, theme_dir = nil
     ::Hash === hash ? hash.reduce(theme_data || ::OpenStruct.new) {|data, (key, val)| process_entry key, val, data } : (theme_data || ::OpenStruct.new)
   end
 

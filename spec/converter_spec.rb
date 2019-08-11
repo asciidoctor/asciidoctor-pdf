@@ -107,11 +107,15 @@ describe Asciidoctor::PDF::Converter do
 
     it 'should use theme passed in through :pdf_theme option' do
       theme = Asciidoctor::PDF::ThemeLoader.load_theme 'custom', fixtures_dir
-      pdf = Asciidoctor.convert <<~'EOS', backend: 'pdf', pdf_theme: theme
-      content
-      EOS
-
+      pdf = Asciidoctor.convert 'content', backend: 'pdf', pdf_theme: theme
       (expect pdf.instance_variable_get :@theme).to be theme
+    end
+
+    it 'should set themesdir theme with __dir__ is passed via :pdf_theme option' do
+      theme = Asciidoctor::PDF::ThemeLoader.load_base_theme
+      theme.delete_field :__dir__
+      pdf = Asciidoctor.convert 'content', backend: 'pdf', pdf_theme: theme
+      (expect pdf.instance_variable_get :@themesdir).to eql Dir.pwd
     end
 
     it 'should log error if theme cannot be found or loaded' do

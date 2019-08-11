@@ -357,18 +357,17 @@ class Converter < ::Prawn::Document
   def load_theme doc
     @theme ||= begin
       if (theme = doc.options[:pdf_theme])
-        @themesdir = theme.__dir__ || (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir')
+        @themesdir = ::File.expand_path theme.__dir__ || (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir') || ::Dir.pwd
       elsif (theme_name = (doc.attr 'pdf-theme') || (doc.attr 'pdf-style'))
-        theme = ThemeLoader.load_theme theme_name, (indir = (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir'))
+        theme = ThemeLoader.load_theme theme_name, (user_themesdir = (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir'))
         @themesdir = theme.__dir__
       else
-        theme = ThemeLoader.load_theme
-        @themesdir = theme.__dir__
+        @themesdir = (theme = ThemeLoader.load_theme).__dir__
       end
       theme
     rescue
-      if indir
-        message = %(could not locate or load the pdf theme `#{theme_name}' in #{::File.expand_path indir})
+      if user_themesdir
+        message = %(could not locate or load the pdf theme `#{theme_name}' in #{user_themesdir})
       else
         message = %(could not locate or load the built-in pdf theme `#{theme_name}')
       end
