@@ -733,8 +733,8 @@ A sans-serif font that provides a very complete set of Unicode glyphs.
 Cannot be styled as italic, bold or bold_italic.
 Used as the fallback font in the `default-with-fallback-font` theme.
 
-CAUTION: At the time of this writing, you cannot use the bundled fonts if you change the value of the `pdf-fontsdir` attribute (and thus define your own custom fonts).
-This limitation may be lifted in the future.
+TIP: If you want to specify the location of custom fonts using the `pdf-fontsdir` attribute, yet still be able to use the bundled fonts, you need to refer to the bundled fonts using the `GEM_FONTS_DIR` token.
+To do so, you can either a) prefix the path of the bundled font in the theme file with the segment `GEM_FONTS_DIR` (e.g., `GEM_FONTS_DIR/mplus1p-regular-fallback.ttf`, or b) include `GEM_FONT_DIR` in the value of the `pdf-fontsdir` attribute, separated from the location of your custom fonts by the path separator (e.g., `path/to/fonts:GEM_FONTS_DIR`).
 
 === Custom Fonts
 
@@ -792,7 +792,13 @@ When you execute Asciidoctor PDF, specify the directory where the fonts reside u
 
  $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir=path/to/fonts document.adoc
 
-WARNING: Currently, all fonts referenced by the theme need to be present in the directory specified by the `pdf-fontsdir` attribute.
+You can specify multiple directories by separating the entries with the path separator (`:` for Unix, `;` for Windows).
+
+ $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir=path/to/fonts:path/to/more-fonts document.adoc
+
+To include the bundled fonts in the search, use the `GEM_FONTS_DIR` token:
+
+ $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir=path/to/fonts:GEM_FONTS_DIR document.adoc
 
 TIP: When Asciidoctor PDF creates the PDF, it only embeds the glyphs from the font that are needed to render the characters present in the document.
 Effectively, it subsets the font.
@@ -3992,7 +3998,8 @@ _Specifying an absolute path is recommended._
 If you use images in your theme, image paths are resolved relative to this directory.
 If `pdf-theme` ends with `.yml`, and `pdf-themesdir` is not specified, then `pdf-themesdir` defaults to the directory of the path specified by `pdf-theme`.
 
-pdf-fontsdir:: The directory where the fonts used by your theme, if any, are located.
+pdf-fontsdir:: The directory or directories where the fonts used by your theme, if any, are located.
+Multiple entries must be separated by path separator (`:` for Unix, `;` for Windows).
 _Specifying an absolute path is recommended._
 
 Let's assume that you've put your theme files inside a directory named `resources` with the following layout:
@@ -4015,7 +4022,7 @@ Here's how you'd load your theme when calling Asciidoctor PDF:
 
 If all goes well, Asciidoctor PDF should run without an error or warning.
 
-NOTE: You only need to specify the `pdf-fontsdir` if you are using custom fonts in your theme.
+NOTE: You only need to specify the `pdf-fontsdir` if you're using custom fonts in your theme.
 
 You can skip setting the `pdf-themesdir` attribute and just pass the absolute path of your theme file to the `pdf-theme` attribute.
 

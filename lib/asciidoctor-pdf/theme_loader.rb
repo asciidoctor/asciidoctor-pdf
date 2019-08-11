@@ -124,7 +124,17 @@ class ThemeLoader
       val.each do |subkey, subval|
         if subkey == 'catalog' && ::Hash === subval
           subval = subval.reduce({}) do |accum, (name, styles)|
-            accum[name] = ::Hash === styles ? styles.reduce({}) {|subaccum, (style, path)| subaccum[style] = (expand_vars path, data); subaccum } : styles
+            if ::Hash === styles
+              accum[name] = styles.reduce({}) do |subaccum, (style, path)|
+                if (path.start_with? 'GEM_FONTS_DIR') && (sep = path[13])
+                  path = %(#{FontsDir}#{sep}#{path.slice 14, path.length})
+                end
+                subaccum[style] = expand_vars path, data
+                subaccum
+              end
+            else
+              accum[name] = styles
+            end
             accum
           end
         end
