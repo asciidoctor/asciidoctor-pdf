@@ -39,8 +39,8 @@ class Converter < ::Prawn::Document
   register_for 'pdf'
 
   # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
-  CodeRayRequirePath = ::File.join((::File.dirname __FILE__), 'prawn_ext/coderay_encoder')
-  RougeRequirePath = ::File.join((::File.dirname __FILE__), 'rouge_ext')
+  CodeRayRequirePath = ::File.join __dir__, 'prawn_ext/coderay_encoder'
+  RougeRequirePath = ::File.join __dir__, 'rouge_ext'
 
   AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
   AdmonitionIcons = {
