@@ -179,48 +179,40 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
   end
 
-  it 'should support size roles (big and small) in default theme' do
-    pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: (pdf_theme = build_pdf_theme), analyze: true
-    text = pdf.text
-    (expect text).to have_size 3
-    (expect text[0][:font_size].to_f.round 2).to eql pdf_theme.base_font_size_large.to_f
-    (expect text[1][:font_size]).to eql pdf_theme.base_font_size
-    (expect text[2][:font_size].to_f.round 2).to eql pdf_theme.base_font_size_small.to_f
-  end
+  context 'Roles' do
+    it 'should support size roles (big and small) in default theme' do
+      pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: (pdf_theme = build_pdf_theme), analyze: true
+      text = pdf.text
+      (expect text).to have_size 3
+      (expect text[0][:font_size].to_f.round 2).to eql pdf_theme.base_font_size_large.to_f
+      (expect text[1][:font_size]).to eql pdf_theme.base_font_size
+      (expect text[2][:font_size].to_f.round 2).to eql pdf_theme.base_font_size_small.to_f
+    end
 
-  it 'should allow theme to override formatting for big and small roles' do
-    pdf_theme = {
-      role_big_font_size: 12,
-      role_big_font_style: 'bold',
-      role_small_font_size: 8,
-      role_small_font_style: 'italic',
-    }
-    pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: pdf_theme, analyze: true
-    text = pdf.text
-    (expect text).to have_size 3
-    (expect text[0][:font_size]).to eql 12
-    (expect text[0][:font_name]).to eql 'NotoSerif-Bold'
-    (expect text[2][:font_size]).to eql 8
-    (expect text[2][:font_name]).to eql 'NotoSerif-Italic'
-  end
+    it 'should allow theme to override formatting for big and small roles' do
+      pdf_theme = {
+        role_big_font_size: 12,
+        role_big_font_style: 'bold',
+        role_small_font_size: 8,
+        role_small_font_style: 'italic',
+      }
+      pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: pdf_theme, analyze: true
+      text = pdf.text
+      (expect text).to have_size 3
+      (expect text[0][:font_size]).to eql 12
+      (expect text[0][:font_name]).to eql 'NotoSerif-Bold'
+      (expect text[2][:font_size]).to eql 8
+      (expect text[2][:font_name]).to eql 'NotoSerif-Italic'
+    end
 
-  it 'should support size roles (big and small) using fallback values if not specified in theme' do
-    pdf_theme = build_pdf_theme({ base_font_size: 12 }, (fixture_file 'extends-nil-theme.yml'))
-    pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: pdf_theme, analyze: true
-    text = pdf.text
-    (expect text).to have_size 3
-    (expect text[0][:font_size].to_f.round 2).to eql 14.0
-    (expect text[1][:font_size]).to eql 12
-    (expect text[2][:font_size].to_f.round 2).to eql 10.0
-  end
-
-  it 'should resolve font size specified in rem' do
-    pdf_theme = {
-      base_font_size: 12,
-      link_font_size: '0.75rem'
-    }
-    pdf = to_pdf 'https://asciidoctor.org[Asciidoctor]', pdf_theme: pdf_theme, analyze: true
-    linked_text = (pdf.find_text 'Asciidoctor')[0]
-    (expect linked_text[:font_size]).to eql 9.0
+    it 'should support size roles (big and small) using fallback values if not specified in theme' do
+      pdf_theme = build_pdf_theme({ base_font_size: 12 }, (fixture_file 'extends-nil-theme.yml'))
+      pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: pdf_theme, analyze: true
+      text = pdf.text
+      (expect text).to have_size 3
+      (expect text[0][:font_size].to_f.round 2).to eql 14.0
+      (expect text[1][:font_size]).to eql 12
+      (expect text[2][:font_size].to_f.round 2).to eql 10.0
+    end
   end
 end

@@ -162,4 +162,16 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect text[1][:y]).to be < text[0][:y]
     end
   end
+
+  context 'font sizes' do
+    it 'should resolve font size of inline element specified in rem' do
+      pdf_theme = {
+        base_font_size: 12,
+        link_font_size: '0.75rem'
+      }
+      pdf = to_pdf 'https://asciidoctor.org[Asciidoctor]', pdf_theme: pdf_theme, analyze: true
+      linked_text = (pdf.find_text 'Asciidoctor')[0]
+      (expect linked_text[:font_size]).to eql 9.0
+    end
+  end
 end
