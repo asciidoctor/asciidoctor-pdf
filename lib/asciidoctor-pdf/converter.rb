@@ -101,6 +101,7 @@ class Converter < ::Prawn::Document
   UriSchemeBoundaryRx = /(?<=:\/\/)/
   LineScanRx = /\n|.+/
   BlankLineRx = /\n{2,}/
+  CjkLineBreakRx = /(?=[\u3000\u30a0-\u30ff\u3040-\u309f\p{Han}\uff00-\uffef])/
   WhitespaceChars = ' ' + TAB + LF
   SourceHighlighters = ['coderay', 'pygments', 'rouge'].to_set
   PygmentsBgColorRx = /^\.highlight +{ *background: *#([^;]+);/
@@ -339,6 +340,7 @@ class Converter < ::Prawn::Document
     @root_font_size = theme.base_font_size || 12
     @font_color = theme.base_font_color || '000000'
     @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
+    @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
     @text_transform = nil
     @list_numerals = []
     @list_bullets = []
@@ -3469,6 +3471,7 @@ class Converter < ::Prawn::Document
   def typeset_text string, line_metrics, opts = {}
     move_down line_metrics.padding_top
     opts = { leading: line_metrics.leading, final_gap: line_metrics.final_gap }.merge opts
+    string = string.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
     if (first_line_opts = opts.delete :first_line_options)
       # TODO good candidate for Prawn enhancement!
       text_with_formatted_first_line string, first_line_opts, opts
