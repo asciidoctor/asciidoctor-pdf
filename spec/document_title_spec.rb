@@ -47,6 +47,26 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect pdf.lines).to include 'Version 1.0, 2019-01-01: Draft'
     end
 
+    it 'should allow delimiter for authors and revision info to be set' do
+      pdf_theme = {
+        title_page_authors_delimiter: ' / ',
+        title_page_revision_delimiter: ' - ',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      Doc Writer; Junior Writer 
+      v1.0, 2019-01-01
+      :doctype: book
+
+      content
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to include 'Doc Writer / Junior Writer'
+      (expect lines).to include 'Version 1.0 - 2019-01-01'
+    end
+
     it 'should allow left margin of elements on title page to be configured' do
       input = <<~'EOS'
       = Book Title: Bring Out Your Dead Trees
