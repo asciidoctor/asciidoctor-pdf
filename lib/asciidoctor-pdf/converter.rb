@@ -3264,8 +3264,23 @@ class Converter < ::Prawn::Document
   end
 
   def register_fonts font_catalog, fonts_dir
-    (font_catalog || {}).each do |key, styles|
-      register_font key => styles.map {|style, path| [style.to_sym, (font_path path, fonts_dir)]}.to_h
+    return unless font_catalog
+    dirs = (fonts_dir.split ::File::PATH_SEPARATOR, -1).map do |dir|
+      dir.empty? || dir == 'GEM_FONTS_DIR' ? ThemeLoader::FontsDir : dir
+    end
+    font_catalog.each do |key, styles|
+      styles = styles.reduce({}) do |accum, (style, path)|
+        found = dirs.find do |dir|
+          resolved_font_path = font_path path, dir
+          if ::File.readable? resolved_font_path
+            accum[style.to_sym] = resolved_font_path
+            true
+          end
+        end
+        raise ::Errno::ENOENT, %(#{path} not found in #{fonts_dir}) unless found
+        accum
+      end
+      register_font key => styles
     end
   end
 
