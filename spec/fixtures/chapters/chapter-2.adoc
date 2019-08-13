@@ -1,0 +1,10 @@
+== Chapter 2
+
+Prepare to be educated.
+This chapter has it all!
+
+To begin, jump to <<chapters/chapter-2/first-steps.adoc#_first_steps,first steps>>.
+
+<<<
+
+include::chapter-2/first-steps.adoc[]

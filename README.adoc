@@ -596,6 +596,91 @@ Therefore, there's no need to put a manual page break (i.e., `<<<`) around the i
 
 To see a practical example of how to use this feature, refer to the blog post https://fromplantoprototype.com/blog/2019/08/07/importing-pdf-pages-in-asciidoctor-pdf/[Importing PDF Pages in asciidoctor-pdf].
 
+== Crafting Interdocument Xrefs
+
+This converter produces a single PDF file, which means content from multiple source documents get colocated into the same output file.
+That means references between documents must necessarily become internal references.
+These interdocument cross references (i.e., xrefs) will only successfully make that transition if you structure your document in accordance with the rules.
+
+Those rules are as follows:
+
+. The path segment of the interdocument xref must match the project-relative path of the included document
+. The reference must include the ID of the target element
+
+For instance, if your primary document contains the following include:
+
+[source,asciidoc]
+----
+\include::chapters/chapter-1.adoc[]
+----
+
+Then an interdocument xref to an anchor in that chapter must be expressed as:
+
+[source,asciidoc]
+----
+<<chapters/chapter-1.adoc#_anchor_name,Destination in Chapter 1>>
+----
+
+This rule holds regardless of which document the xref is located in.
+
+To resolve the interdocument xref, the converter first checks if the target matches the `docname` attribute.
+It then looks to see if the target matches one of the included files.
+(In both cases, it ignores the file extension).
+If Asciidoctor cannot resolve the target of an interdocument xref, it simply makes a link (like the HTML converter).
+
+Let's consider a complete example.
+Assume you are converting the following book document at the root of the project:
+
+[source,asciidoc]
+----
+= Book Title
+:doctype: book
+
+\include::chapters/chapter-1.adoc[]
+
+\include::chapters/chapter-2.adoc[]
+----
+
+Where the contents of chapter 1 is as follows:
+
+[source,asciidoc]
+----
+== Chapter 1
+
+We cover a little bit here.
+The rest you can find in <<chapters/chapter-2.adoc#_chapter_2,Chapter 2>>.
+----
+
+And the contents of chapter 2 is as follows:
+
+[source,asciidoc]
+----
+== Chapter 2
+
+Prepare to be educated.
+This chapter has it all!
+
+To begin, jump to <<chapters/chapter-2/first-steps.adoc#_first_steps,first steps>>.
+
+<<<
+
+\include::chapter-2/first-steps.adoc[]
+----
+
+And, finally, the contents of the nested include is as follows:
+
+[source,asciidoc]
+----
+=== First Steps
+
+Let's start small.
+----
+
+You'll find when you run this example that all the interdocument xrefs become internal references in the PDF.
+
+The reason both the path and anchor are required (even when liking to the top of a chapter) is so the interdocument xref works independent of the converter.
+In other words, it encodes the complete information about the reference so the converter can sort out where the target is in all circumstances.
+
 == STEM Support
 
 Unlike the built-in HTML converter, Asciidoctor PDF does not provide native support for STEM blocks and inline macros (i.e., asciimath and latexmath).
