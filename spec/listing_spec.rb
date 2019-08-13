@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Listing' do
-  it 'should move listing block to next page if possible to avoid split' do
+  it 'should move listing block to next page if it will fit to avoid splitting it' do
     pdf = to_pdf <<~EOS, analyze: true
     #{(['paragraph'] * 20).join (?\n * 2)}
 
@@ -12,6 +12,21 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     listing_page_numbers = (pdf.find_text 'listing').map {|it| it[:page_number] }.uniq
     (expect listing_page_numbers).to eql [2]
+  end
+
+  it 'should not move listing block to next page if it does not fit on whole page' do
+    pdf = to_pdf <<~EOS, analyze: true
+    #{(['paragraph'] * 20).join (?\n * 2)}
+
+    ----
+    #{(['listing'] * 60).join ?\n}
+    ----
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    listing_texts = pdf.find_text 'listing'
+    (expect listing_texts[0][:page_number]).to eql 1
+    (expect listing_texts[-1][:page_number]).to eql 2
   end
 
   it 'should resize font size to prevent wrapping if autofit option is set' do
