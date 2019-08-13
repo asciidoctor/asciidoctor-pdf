@@ -185,6 +185,16 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect text[1][:y]).to be < text[0][:y]
     end
 
+    it 'should not break line at location of non-breaking hyphen' do
+      input = (%w(a b c d).reduce([]) {|accum, it| accum << (it * 20) }.join ' ') + ?\u2011 + ('e' * 20)
+      pdf = to_pdf input, analyze: true
+      text = pdf.text
+      (expect text).to have_size 2
+      (expect text[0][:string]).to end_with 'c'
+      (expect text[1][:string]).to start_with 'd'
+      (expect text[1][:y]).to be < text[0][:y]
+    end
+
     it 'should use zero-width space a line break opportunity' do
       input = (%w(a b c d e f).reduce([]) {|accum, it| accum << (it * 5) + ?\u200b + (it * 10) }.join ' ')
       pdf = to_pdf input, analyze: true
