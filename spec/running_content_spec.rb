@@ -384,6 +384,49 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
   end
 
+  it 'should set part-title, chapter-title, and section-title based on context of current page' do
+    pdf_theme = {
+      footer_columns: '<25% >70%',
+      footer_recto_left_content: 'FOOTER',
+      footer_recto_right_content: '[{part-title}|{chapter-title}|{section-title}]',
+      footer_verso_left_content: 'FOOTER',
+      footer_verso_right_content: '[{part-title}|{chapter-title}|{section-title}]',
+    }
+
+    pdf = to_pdf <<~'EOS', attribute_overrides: { 'nofooter' =>  nil }, pdf_theme: pdf_theme, analyze: true
+    = Document Title
+    :doctype: book
+
+    = Part I
+
+    == Chapter A
+
+    === Detail
+
+    <<<
+
+    === More Detail
+
+    == Chapter B
+
+    = Part II
+
+    == Chapter C
+    EOS
+
+    footer_y = (pdf.find_text 'FOOTER')[0][:y]
+    titles_by_page = (pdf.find_text y: footer_y).reduce({}) do |accum, it|
+      accum[it[:page_number]] = it[:string] unless it[:string] == 'FOOTER'
+      accum
+    end
+    (expect titles_by_page[2]).to eql '[Part I||]'
+    (expect titles_by_page[3]).to eql '[Part I|Chapter A|Detail]'
+    (expect titles_by_page[4]).to eql '[Part I|Chapter A|More Detail]'
+    (expect titles_by_page[5]).to eql '[Part I|Chapter B|]'
+    (expect titles_by_page[6]).to eql '[Part II||]'
+    (expect titles_by_page[7]).to eql '[Part II|Chapter C|]'
+  end
+
   it 'should use doctitle, toc-title, and preface-title as chapter-title before first chapter' do
     theme_overrides = {
       running_content_start_at: 'title',
