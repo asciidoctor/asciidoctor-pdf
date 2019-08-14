@@ -1,0 +1,6 @@
+= Book Title
+:doctype: book
+
+include::chapters/chapter-1.adoc[]
+
+include::chapters/chapter-2.adoc[]

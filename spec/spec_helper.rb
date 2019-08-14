@@ -330,9 +330,9 @@ RSpec.configure do |config|
   def get_annotations pdf, page_num = nil
     objects = pdf.objects
     if page_num
-      (pdf.page page_num).attributes[:Annots].map {|ref| objects[ref] }
+      (pdf.page page_num).attributes[:Annots].to_a.map {|ref| objects[ref] }
     else
-      pdf.pages.reduce([]) {|accum, page| page.attributes[:Annots].each {|ref| accum << objects[ref] }; accum }
+      pdf.pages.reduce([]) {|accum, page| page.attributes[:Annots].to_a.each {|ref| accum << objects[ref] }; accum }
     end
   end
 
