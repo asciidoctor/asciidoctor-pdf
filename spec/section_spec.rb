@@ -245,4 +245,66 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect text[2][:string]).to eql 'anonymous preface'
     (expect text[2][:font_size]).to eql 10.5
   end
+
+  it 'should not add break before chapter if break-before key in theme is auto' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_chapter_break_before: 'auto' }, analyze: true
+    = Document Title
+    :doctype: book
+
+    == Chapter A
+
+    == Chapter B
+    EOS
+
+    chapter_a_text = (pdf.find_text 'Chapter A')[0]
+    chapter_b_text = (pdf.find_text 'Chapter B')[0]
+    (expect chapter_a_text[:page_number]).to eql 2
+    (expect chapter_b_text[:page_number]).to eql 2
+  end
+
+  it 'should not add break before part if break-before key in theme is auto' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_part_break_before: 'auto', heading_chapter_break_before: 'auto' }, analyze: true
+    = Document Title
+    :doctype: book
+
+    = Part I
+
+    == Chapter in Part I
+
+    = Part II
+
+    == Chapter in Part II
+    EOS
+
+    part_1_text = (pdf.find_text 'Part I')[0]
+    part_2_text = (pdf.find_text 'Part II')[0]
+    (expect part_1_text[:page_number]).to eql 2
+    (expect part_2_text[:page_number]).to eql 2
+  end
+
+  it 'should add break after part if break-after key in theme is always' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_part_break_after: 'always', heading_chapter_break_before: 'auto' }, analyze: true
+    = Document Title
+    :doctype: book
+
+    = Part I
+
+    == Chapter in Part I
+
+    == Another Chapter in Part I
+
+    = Part II
+
+    == Chapter in Part II
+    EOS
+
+    part_1_text = (pdf.find_text 'Part I')[0]
+    part_2_text = (pdf.find_text 'Part II')[0]
+    chapter_1_text = (pdf.find_text 'Chapter in Part I')[0]
+    chapter_2_text = (pdf.find_text 'Another Chapter in Part I')[0]
+    (expect part_1_text[:page_number]).to eql 2
+    (expect chapter_1_text[:page_number]).to eql 3
+    (expect chapter_2_text[:page_number]).to eql 3
+    (expect part_2_text[:page_number]).to eql 4
+  end
 end
