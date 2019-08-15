@@ -27,6 +27,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * resolve variables in font catalog in theme file
 * if value of scripts attribute is cjk, break lines between any two CJK characters (except punctuation) (#1206)
 * use fallback size for admonition icon
+* allow attribute reference in running content to be escaped using a backslash
 
 == 1.5.0.beta.2 (2019-07-30) - @mojavelinux
 

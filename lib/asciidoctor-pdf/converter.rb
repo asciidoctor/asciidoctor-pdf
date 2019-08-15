@@ -2935,7 +2935,6 @@ class Converter < ::Prawn::Document
     doc.set_attr 'page-count', num_pages
 
     pagenums_enabled = doc.attr? 'pagenums'
-    attribute_missing_doc = doc.attr 'attribute-missing'
     case @media == 'prepress' ? 'physical' : (doc.attr 'pdf-folio-placement')
     when 'physical'
       folio_basis, invert_folio = :physical, false
@@ -3015,22 +3014,7 @@ class Converter < ::Prawn::Document
                   if content == '{page-number}'
                     content = pagenums_enabled ? pgnum_label.to_s : nil
                   else
-                    # FIXME get apply_subs to handle drop-line w/o a warning
-                    doc.set_attr 'attribute-missing', 'skip' unless attribute_missing_doc == 'skip'
-                    old_imagesdir = doc.attr 'imagesdir'
-                    doc.set_attr 'imagesdir', @themesdir
-                    # NOTE drop lines with attribute references that didn't resolve
-                    if (content = doc.apply_subs content).include? '{'
-                      # NOTE must use &#123; in place of {, not \{, to escape attribute reference
-                      content = content.split(LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF
-                    end
-                    if old_imagesdir
-                      doc.set_attr 'imagesdir', old_imagesdir
-                    else
-                      # NOTE remove_attr not defined until Asciidoctor 1.5.6
-                      doc.attributes.delete 'imagesdir'
-                    end
-                    doc.set_attr 'attribute-missing', attribute_missing_doc unless attribute_missing_doc == 'skip'
+                    content = apply_subs_discretely doc, content, drop_lines_with_unresolved_attributes: true
                     if (transform = @text_transform) && transform != 'none'
                       content = transform_text content, @text_transform
                     end
@@ -3883,6 +3867,27 @@ class Converter < ::Prawn::Document
     path.unlink if TemporaryPath === path && path.exist?
   rescue
     logger.warn %(could not delete temporary image: #{path}; #{$!.message})
+  end
+
+  def apply_subs_discretely doc, value, opts = {}
+    imagesdir = doc.attr 'imagesdir'
+    doc.set_attr 'imagesdir', @themesdir
+    # FIXME get apply_subs to handle drop-line w/o a warning
+    doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
+    value = value.gsub '\{', '\\\\\\{' if (escaped_attr_ref = value.include? '\{')
+    value = doc.apply_subs value
+    if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
+      value = (value.split LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF
+    end
+    value = value.gsub '\{', '{' if escaped_attr_ref
+    doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
+    if imagesdir
+      doc.set_attr 'imagesdir', imagesdir
+    else
+      # NOTE remove_attr not defined until Asciidoctor 1.5.6
+      doc.attributes.delete 'imagesdir'
+    end
+    value
   end
 
   # NOTE assume URL is escaped (i.e., contains character references such as &amp;)

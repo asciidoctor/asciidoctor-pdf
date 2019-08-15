@@ -452,6 +452,30 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect running_content_by_page).to eql expected_running_content_by_page
   end
 
+  it 'should not substitute escaped attribute reference in content' do
+    pdf_theme = {
+      footer_recto_right_content: '\{keepme}',
+      footer_verso_left_content: '\{keepme}',
+    }
+
+    pdf = to_pdf 'body', attribute_overrides: { 'nofooter' => nil }, pdf_theme: pdf_theme, analyze: true
+
+    running_text = pdf.find_text '{keepme}'
+    (expect running_text).to have_size 1
+  end
+
+  it 'should drop line in content with unresolved attribute reference' do
+    pdf_theme = {
+      footer_recto_right_content: %(keep\ndrop{bogus}\nme),
+      footer_verso_left_content: %(keep\ndrop{bogus}\nme),
+    }
+
+    pdf = to_pdf 'body', attribute_overrides: { 'nofooter' => nil }, pdf_theme: pdf_theme, analyze: true
+
+    running_text = pdf.find_text %(keep me)
+    (expect running_text).to have_size 1
+  end
+
   it 'should escape text of doctitle attribute' do
     theme_overrides = {
       footer_recto_right_content: '({doctitle})',
