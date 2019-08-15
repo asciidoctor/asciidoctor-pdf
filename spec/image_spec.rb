@@ -211,6 +211,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pages[2][:text][-1][:string]).to eql '3'
     end
 
+    it 'should only import first page of multi-page PDF file by default' do
+      pdf = to_pdf 'image::red-green-blue.pdf[]'
+      (expect pdf.pages).to have_size 1
+      page_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
+      (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '1.0 0.0 0.0 scn']
+    end
+
     it 'should import specified page from PDF file' do
       pdf = to_pdf 'image::red-green-blue.pdf[page=2]'
       (expect pdf.pages).to have_size 1
