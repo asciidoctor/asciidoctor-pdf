@@ -300,11 +300,10 @@ class Converter < ::Prawn::Document
 
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
-    @allow_uri_read = doc.attr? 'allow-uri-read'
     pdf_opts = build_pdf_options doc, (theme = load_theme doc)
     # QUESTION should page options be preserved? (otherwise, not readily available)
     #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
-    ::Prawn::Document.instance_method(:initialize).bind(self).call pdf_opts
+    ((::Prawn::Document.instance_method :initialize).bind self).call pdf_opts
     renderer.min_version PDFVersions[doc.attr 'pdf-version']
     @page_margin_by_side = { recto: page_margin, verso: page_margin }
     if (@media = doc.attr 'media', 'screen') == 'prepress'
@@ -325,6 +324,7 @@ class Converter < ::Prawn::Document
     register_fonts theme.font_catalog, (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
     default_kerning theme.base_font_kerning != 'none'
     @fallback_fonts = [*theme.font_fallbacks]
+    @allow_uri_read = doc.attr? 'allow-uri-read'
     if (bg_image = resolve_background_image doc, theme, 'page-background-image') && bg_image[0]
       @page_bg_image = { verso: bg_image, recto: bg_image }
     else
