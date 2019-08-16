@@ -496,6 +496,41 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     }).to not_log_message
   end
 
+  it 'should parse running content as AsciiDoc' do
+    pdf_theme = {
+      footer_recto_right_content: 'footer: *bold* _italic_ `mono`',
+      footer_verso_left_content: 'https://asciidoctor.org[Asciidoctor] AsciiDoc -> PDF',
+    }
+    input = <<~'EOS'
+    page 1
+
+    <<<
+
+    page 2
+    EOS
+
+    pdf = to_pdf input, attribute_overrides: { 'nofooter' => nil }, pdf_theme: pdf_theme, analyze: true
+    
+    footer_y = (pdf.find_text 'footer: ')[0][:y]
+    bold_text = (pdf.find_text string: 'bold', page_number: 1, y: footer_y)[0]
+    (expect bold_text).not_to be_nil
+    italic_text = (pdf.find_text string: 'italic', page_number: 1, y: footer_y)[0]
+    (expect italic_text).not_to be_nil
+    mono_text = (pdf.find_text string: 'mono', page_number: 1, y: footer_y)[0]
+    (expect mono_text).not_to be_nil
+    link_text = (pdf.find_text string: 'Asciidoctor', page_number: 2, y: footer_y)[0]
+    (expect link_text).not_to be_nil
+    convert_text = (pdf.find_text string: %( AsciiDoc \u2192 PDF), page_number: 2, y: footer_y)[0] 
+    (expect convert_text).not_to be_nil
+
+    pdf = to_pdf input, attribute_overrides: { 'nofooter' => nil }, pdf_theme: pdf_theme
+    annotations_p2 = get_annotations pdf, 2
+    (expect annotations_p2).to have_size 1
+    link_annotation = annotations_p2[0]
+    (expect link_annotation[:Subtype]).to eql :Link
+    (expect link_annotation[:A][:URI]).to eql 'https://asciidoctor.org'
+  end
+
   it 'should draw background color across whole periphery region', integration: true do
     pdf_theme = build_pdf_theme \
       header_background_color: '009246',
