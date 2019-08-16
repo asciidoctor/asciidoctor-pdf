@@ -2460,17 +2460,16 @@ class Converter < ::Prawn::Document
     title_align = (@theme.title_page_align || @base_align).to_sym
 
     # TODO disallow .pdf as image type
-    if (logo_image_path = (doc.attr 'title-logo-image', @theme.title_page_logo_image))
+    if (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
       if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
-        logo_image_path = $1
         logo_image_attrs = (AttributeList.new $2).parse ['alt', 'width', 'height']
         relative_to_imagesdir = true
+        logo_image_path = logo_image_from_theme ? (ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, $1), @themesdir) : $1
       else
         logo_image_attrs = {}
         relative_to_imagesdir = false
+        logo_image_path = ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, logo_image_path), @themesdir if logo_image_from_theme
       end
-      # HACK quick fix to resolve image path relative to theme
-      logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.attr? 'title-logo-image'
       logo_image_attrs['target'] = logo_image_path
       logo_image_attrs['align'] ||= (@theme.title_page_logo_align || title_align.to_s)
       # QUESTION should we allow theme to turn logo image off?
@@ -3668,10 +3667,17 @@ class Converter < ::Prawn::Document
         return []
       elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
         image_attrs = (AttributeList.new $2).parse ['alt', 'width']
+        if from_theme
+          # TODO support remote image when loaded from theme
+          image_path = ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, $1), @themesdir
+        else
+          image_path = resolve_image_path doc, $1, true, (image_format = image_attrs['format'])
+        end
+      elsif from_theme
         # TODO support remote image when loaded from theme
-        image_path = from_theme ? (ThemeLoader.resolve_theme_asset $1, @themesdir) : (resolve_image_path doc, $1, true, (image_format = image_attrs['format']))
+        image_path = ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, image_path), @themesdir
       else
-        image_path = from_theme ? (ThemeLoader.resolve_theme_asset image_path, @themesdir) : (resolve_image_path doc, image_path, false)
+        image_path = resolve_image_path doc, image_path, false
       end
 
       return unless image_path
@@ -3872,7 +3878,7 @@ class Converter < ::Prawn::Document
   def apply_subs_discretely doc, value, opts = {}
     imagesdir = doc.attr 'imagesdir'
     doc.set_attr 'imagesdir', @themesdir
-    # FIXME get apply_subs to handle drop-line w/o a warning
+    # FIXME get sub_attributes to handle drop-line w/o a warning
     doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
     value = value.gsub '\{', '\\\\\\{' if (escaped_attr_ref = value.include? '\{')
     value = doc.apply_subs value
@@ -3887,6 +3893,13 @@ class Converter < ::Prawn::Document
       # NOTE remove_attr not defined until Asciidoctor 1.5.6
       doc.attributes.delete 'imagesdir'
     end
+    value
+  end
+
+  def sub_attributes_discretely doc, value
+    doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
+    value = doc.apply_subs value
+    doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
     value
   end
 

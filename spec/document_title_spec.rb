@@ -67,6 +67,31 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect lines).to include 'Version 1.0 - 2019-01-01'
     end
 
+    it 'should add logo specified by title-logo-image document attribute to title page' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[]
+      EOS
+
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].hash[:Width]).to eql 204
+      (expect images[0].hash[:Height]).to eql 240
+    end
+
+    it 'should add logo specified by title_page_logo_image theme key to title page' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: 'image:{docdir}/tux.png[]' }, attribute_overrides: { 'docdir' => fixtures_dir }
+      = Document Title
+      :doctype: book
+      EOS
+
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].hash[:Width]).to eql 204
+      (expect images[0].hash[:Height]).to eql 240
+    end
+
     it 'should allow left margin of elements on title page to be configured' do
       input = <<~'EOS'
       = Book Title: Bring Out Your Dead Trees

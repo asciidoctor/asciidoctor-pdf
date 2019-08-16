@@ -155,6 +155,16 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-color-and-image.pdf'
     end
 
+    it 'should resolve attribute reference in image path in theme' do
+      pdf_theme = {
+        page_background_color: 'F9F9F9',
+        page_background_image: 'image:{docdir}/tux.png[pdfwidth=50%]',
+      }
+      to_file = to_pdf_file '{blank}', 'page-background-color-and-image-relative-to-docdir.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }
+
+      (expect to_file).to visually_match 'page-background-color-and-image.pdf'
+    end
+
     it 'should recognize attribute value that use block macro syntax', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-block-macro.pdf'
       = Document Title
