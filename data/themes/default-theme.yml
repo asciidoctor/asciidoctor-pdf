@@ -55,7 +55,6 @@ base:
 role:
   big:
     font_size: $base_font_size_large
-role:
   small:
     font_size: $base_font_size_small
 # FIXME vertical_rhythm is weird; we should think in terms of ems

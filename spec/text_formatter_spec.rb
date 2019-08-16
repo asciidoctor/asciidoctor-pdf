@@ -181,6 +181,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
 
   context 'Roles' do
     it 'should support size roles (big and small) in default theme' do
+      pdf_theme = build_pdf_theme
+      (expect pdf_theme.role_big_font_size).to eql 13
+      (expect pdf_theme.role_small_font_size).to eql 9
       pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: (pdf_theme = build_pdf_theme), analyze: true
       text = pdf.text
       (expect text).to have_size 3
