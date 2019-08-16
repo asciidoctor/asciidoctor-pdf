@@ -47,6 +47,22 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.text.map {|it| it.values_at :string, :font_name }).to eql expected_text
   end
 
+  it 'should not add top margin to section title if it is positioned at the top of the page' do
+    pdf = to_pdf '== Section Title', analyze: true
+    y1 = (pdf.find_text 'Section Title')[0][:y]
+    pdf = to_pdf '== Section Title', pdf_theme: { heading_margin_top: 50 }, analyze: true
+    y2 = (pdf.find_text 'Section Title')[0][:y]
+    (expect y1).to eql y2
+  end
+
+  it 'should add page top margin to section title if it is positioned at the top of the page' do
+    pdf = to_pdf '== Section Title', analyze: true
+    y1 = (pdf.find_text 'Section Title')[0][:y]
+    pdf = to_pdf '== Section Title', pdf_theme: { heading_margin_page_top: 50 }, analyze: true
+    y2 = (pdf.find_text 'Section Title')[0][:y]
+    (expect y1).to be > y2
+  end
+
   it 'should uppercase section titles if text_transform key in theme is set to uppercase' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     = Document Title
