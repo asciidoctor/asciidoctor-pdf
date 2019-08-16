@@ -510,7 +510,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     EOS
 
     pdf = to_pdf input, attribute_overrides: { 'nofooter' => nil }, pdf_theme: pdf_theme, analyze: true
-    
+
     footer_y = (pdf.find_text 'footer: ')[0][:y]
     bold_text = (pdf.find_text string: 'bold', page_number: 1, y: footer_y)[0]
     (expect bold_text).not_to be_nil
@@ -520,7 +520,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect mono_text).not_to be_nil
     link_text = (pdf.find_text string: 'Asciidoctor', page_number: 2, y: footer_y)[0]
     (expect link_text).not_to be_nil
-    convert_text = (pdf.find_text string: %( AsciiDoc \u2192 PDF), page_number: 2, y: footer_y)[0] 
+    convert_text = (pdf.find_text string: %( AsciiDoc \u2192 PDF), page_number: 2, y: footer_y)[0]
     (expect convert_text).not_to be_nil
 
     pdf = to_pdf input, attribute_overrides: { 'nofooter' => nil }, pdf_theme: pdf_theme

@@ -55,7 +55,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
 
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       = Document Title
-      Doc Writer; Junior Writer 
+      Doc Writer; Junior Writer
       v1.0, 2019-01-01
       :doctype: book
 

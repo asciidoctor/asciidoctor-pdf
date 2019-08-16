@@ -143,7 +143,7 @@ describe Asciidoctor::PDF::Converter do
       * two
       * three
       EOS
-      
+
       (expect pdf.pages).to have_size 3
       (expect pdf.find_text font_name: 'Helvetica', font_size: 12).to have_size pdf.text.size
       (expect (pdf.find_text 'Document Title')[0]).not_to be_nil
