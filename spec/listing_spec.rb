@@ -14,7 +14,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect listing_page_numbers).to eql [2]
   end
 
-  it 'should not move listing block to next page if it does not fit on whole page' do
+  it 'should split listing block if it cannot fit on a whole page' do
     pdf = to_pdf <<~EOS, analyze: true
     #{(['paragraph'] * 20).join (?\n * 2)}
 

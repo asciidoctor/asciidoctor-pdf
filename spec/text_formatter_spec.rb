@@ -130,7 +130,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-key.pdf'
     end
 
-    it 'should use glyph from fallback font if not present in primary font' do
+    it 'should use glyph from fallback font if not present in primary font', integration: true do
       to_file = to_pdf_file '*を*', 'text-formatter-fallback-font.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
       (expect to_file).to visually_match 'text-formatter-fallback-font.pdf'
     end

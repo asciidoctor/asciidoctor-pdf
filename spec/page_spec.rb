@@ -145,7 +145,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
 
-    it 'should allow both background color and image to be set concurrently' do
+    it 'should allow both background color and image to be set concurrently', integration: true do
       pdf_theme = {
         page_background_color: 'F9F9F9',
         page_background_image: %(image:#{fixture_file 'tux.png'}[pdfwidth=50%]),
@@ -155,7 +155,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-color-and-image.pdf'
     end
 
-    it 'should resolve attribute reference in image path in theme' do
+    it 'should resolve attribute reference in image path in theme', integration: true do
       pdf_theme = {
         page_background_color: 'F9F9F9',
         page_background_image: 'image:{docdir}/tux.png[pdfwidth=50%]',
