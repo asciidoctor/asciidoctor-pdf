@@ -1425,6 +1425,12 @@ The keys in this category control the style of most headings, including part tit
 |heading:
   margin-bottom: 9.6
 
+|min-height-after
+|<<measurement-units,Measurement>> +
+(default: $base-font-size * $base-line-height * 1.5)
+|heading:
+  min-height-after: 0.5in
+
 |chapter-break-before
 |always {vbar} auto +
 (default: always)

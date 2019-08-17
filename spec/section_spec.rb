@@ -246,6 +246,56 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect text[2][:font_size]).to eql 10.5
   end
 
+  it 'should not force title of empty section to next page if it fits on page' do
+    pdf = to_pdf <<~EOS, analyze: true
+    == Section A
+
+    [%hardbreaks]
+    #{(['filler'] * 41).join ?\n}
+
+    == Section B
+    EOS
+
+    section_b_text = (pdf.find_text 'Section B')[0]
+    (expect section_b_text[:page_number]).to eql 1
+  end
+
+  it 'should force section title to next page to keep with first line of section content' do
+    pdf = to_pdf <<~EOS, analyze: true
+    == Section A
+
+    [%hardbreaks]
+    #{(['filler'] * 41).join ?\n}
+
+    == Section B
+
+    content
+    EOS
+
+    section_b_text = (pdf.find_text 'Section B')[0]
+    (expect section_b_text[:page_number]).to eql 2
+    content_text = (pdf.find_text 'content')[0]
+    (expect content_text[:page_number]).to eql 2
+  end
+
+  it 'should not force section title to next page to keep with content if heading_min_height_after is zero' do
+    pdf = to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 0 }, analyze: true
+    == Section A
+
+    [%hardbreaks]
+    #{(['filler'] * 41).join ?\n}
+
+    == Section B
+
+    content
+    EOS
+
+    section_b_text = (pdf.find_text 'Section B')[0]
+    (expect section_b_text[:page_number]).to eql 1
+    content_text = (pdf.find_text 'content')[0]
+    (expect content_text[:page_number]).to eql 2
+  end
+
   it 'should not add break before chapter if break-before key in theme is auto' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_chapter_break_before: 'auto' }, analyze: true
     = Document Title
