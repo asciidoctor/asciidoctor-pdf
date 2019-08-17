@@ -142,6 +142,7 @@ class ThemeLoader
       end
     elsif key.start_with? 'admonition_icon_'
       data[key] = (val || {}).map do |(key2, val2)|
+        key2 = key2.tr '-', '_' if key2.include? '-'
         [key2.to_sym, (key2.end_with? '_color') ? to_color(evaluate val2, data) : (evaluate val2, data)]
       end.to_h
     elsif ::Hash === val
