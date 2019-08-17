@@ -43,14 +43,20 @@ describe Asciidoctor::PDF::ThemeLoader do
       page-size: A4
       base:
         font-family: Times-Roman
+      abstract:
+        title-font-size: 20
       admonition:
-        label-font-style: bold
+        icon:
+          tip:
+            stroke-color: FFFF00
       EOS
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme).to respond_to :page_size
       (expect theme).to respond_to :base_font_family
-      (expect theme).to respond_to :admonition_label_font_style
+      (expect theme).to respond_to :abstract_title_font_size
+      (expect theme).to respond_to :admonition_icon_tip
+      (expect theme.admonition_icon_tip).to have_key :stroke_color
     end
   end
 

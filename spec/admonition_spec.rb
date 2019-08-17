@@ -40,6 +40,17 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect content_text[:string]).to eql 'Look for the warp zone under the bridge.'
     end
 
+    it 'should set color of icon to value of stroke_color key specified in theme' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_note: { stroke_color: '00ff00' } }, analyze: true
+      :icons: font
+
+      NOTE: This icon is green.
+      EOS
+
+      icon_text = (pdf.find_text ?\uf05a)[0]
+      (expect icon_text[:font_color]).to eql '00FF00'
+    end
+
     it 'should use icon glyph specified in theme' do
       pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_tip: { name: 'far-money-bill-alt' } }, analyze: true
       :icons: font
