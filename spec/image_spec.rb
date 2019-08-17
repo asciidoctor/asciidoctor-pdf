@@ -198,6 +198,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       image::blue-letter.pdf[]
 
+      <<<
+
       after
       EOS
 
