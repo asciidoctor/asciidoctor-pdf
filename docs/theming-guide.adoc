@@ -1425,6 +1425,27 @@ The keys in this category control the style of most headings, including part tit
 |heading:
   margin-bottom: 9.6
 
+|chapter-break-before
+|always {vbar} auto +
+(default: always)
+|heading:
+  chapter:
+    break-before: auto
+
+|part-break-before
+|always {vbar} auto +
+(default: always)
+|heading:
+  part:
+    break-before: auto
+
+|part-break-after
+|always {vbar} auto +
+(default: auto)
+|heading:
+  part:
+    break-after: always
+
 3+|[#key-prefix-heading-level]*Key Prefix:* <<key-prefix-heading-level,heading-h<n>{zwsp}>>^[1]^
 
 |align

@@ -25,6 +25,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * include revremark on title page if specified (#1198)
 * align first block of list item with marker if primary text is blank (#1196)
 * apply correct margin to list item if primary text is blank (#1196)
+* allow page break before and after part and before chapter to be configured by theme (#74)
 * allow page number of PDF to import to be specified using `page` attribute on image macro (#1202)
 * resolve variables in font catalog in theme file
 * if value of scripts attribute is cjk, break lines between any two CJK characters (except punctuation) (#1206)

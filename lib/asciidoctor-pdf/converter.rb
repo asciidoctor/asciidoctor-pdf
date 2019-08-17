@@ -520,15 +520,20 @@ class Converter < ::Prawn::Document
       if sect.part_or_chapter?
         if sect.chapter?
           type = :chapter
-          start_new_chapter sect
+          if @theme.heading_chapter_break_before == 'auto'
+            start_new_chapter sect if @theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0]
+          else
+            start_new_chapter sect
+          end
         else
           type = :part
-          start_new_part sect
+          start_new_part sect unless @theme.heading_part_break_before == 'auto'
         end
-      else
-        # FIXME smarter calculation here!!
-        start_new_page unless at_page_top? || cursor > (height_of title) + (@theme.heading_margin_top || 0) + (@theme.heading_margin_bottom || 0) + (@root_font_size * @theme.base_line_height * 1.5)
       end
+      # FIXME smarter calculation here!!
+      unless cursor > (height_of title) + (@theme.heading_margin_top || 0) + (@theme.heading_margin_bottom || 0) + (@root_font_size * @theme.base_line_height * 1.5)
+        start_new_page
+      end unless at_page_top?
       # QUESTION should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
       sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
       # QUESTION should we just assign the section this generated id?
