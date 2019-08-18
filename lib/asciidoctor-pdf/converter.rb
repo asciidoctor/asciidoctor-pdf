@@ -581,11 +581,9 @@ class Converter < ::Prawn::Document
   def convert_abstract node
     add_dest_for_block node if node.id
     pad_box @theme.abstract_padding do
-      if node.title?
-        theme_font :abstract_title do
-          layout_heading node.title, align: (@theme.abstract_title_align || @base_align).to_sym
-        end
-      end
+      theme_font :abstract_title do
+        layout_heading node.title, align: (@theme.abstract_title_align || @base_align).to_sym
+      end if node.title?
       theme_font :abstract do
         prose_opts = { line_height: @theme.abstract_line_height, align: (initial_alignment = (@theme.abstract_align || @base_align).to_sym) }
         if (text_indent = @theme.prose_text_indent)
@@ -976,12 +974,10 @@ class Converter < ::Prawn::Document
         end
       end
       pad_box @theme.sidebar_padding do
-        if node.title?
-          theme_font :sidebar_title do
-            # QUESTION should we allow margins of sidebar title to be customized?
-            layout_heading node.title, align: (@theme.sidebar_title_align || @base_align).to_sym, margin_top: 0
-          end
-        end
+        theme_font :sidebar_title do
+          # QUESTION should we allow margins of sidebar title to be customized?
+          layout_heading node.title, align: (@theme.sidebar_title_align || @base_align).to_sym, margin_top: 0
+        end if node.title?
         theme_font :sidebar do
           convert_content_for_block node
         end
