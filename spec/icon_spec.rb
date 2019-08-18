@@ -53,6 +53,19 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     }).to log_message severity: :INFO, message: 'smile-wink icon not found in deprecated fa icon set; using match found in far icon set instead', using_log_level: :INFO
   end
 
+  it 'should apply styles from role to icon' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { role_red_font_color: 'FF0000' }, analyze: true
+    :icons: font
+
+    icon:heart[role=red]
+    EOS
+
+    heart_text = pdf.text[0]
+    (expect heart_text[:string]).to eql ?\uf004
+    (expect heart_text[:font_name]).to eql 'FontAwesome5Free-Regular'
+    (expect heart_text[:font_color]).to eql 'FF0000'
+  end
+
   it 'should parse icon inside kbd macro' do
     pdf = to_pdf <<~'EOS', analyze: true
     :experimental:
