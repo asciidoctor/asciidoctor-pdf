@@ -1482,7 +1482,7 @@ The keys in this category control the style of most headings, including part tit
 |<<text-transforms,Text transform>> +
 (default: $heading-text-transform)
 |heading:
-  text-transform: lowercase
+  h3-text-transform: lowercase
 |===
 
 . `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
