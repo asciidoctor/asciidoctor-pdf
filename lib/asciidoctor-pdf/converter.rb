@@ -2604,13 +2604,14 @@ class Converter < ::Prawn::Document
   # QUESTION why doesn't layout_heading set the font??
   # QUESTION why doesn't layout_heading accept a node?
   def layout_heading string, opts = {}
-    top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme[%(heading_h#{opts[:level]}_margin_top)] || @theme.heading_margin_top
-    bot_margin = margin || (opts.delete :margin_bottom) || @theme[%(heading_h#{opts[:level]}_margin_bottom)] || @theme.heading_margin_bottom
+    hlevel = opts[:level]
+    top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || (hlevel ? @theme[%(heading_h#{hlevel}_margin_top)] : nil) || @theme.heading_margin_top
+    bot_margin = margin || (opts.delete :margin_bottom) || (hlevel ? @theme[%(heading_h#{hlevel}_margin_bottom)] : nil) || @theme.heading_margin_bottom
     if (transform = resolve_text_transform opts)
       string = transform_text string, transform
     end
     margin_top top_margin
-    typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme[%(heading_h#{opts[:level]}_line_height)] || @theme.heading_line_height || @theme.base_line_height), {
+    typeset_text string, calc_line_metrics((opts.delete :line_height) || (hlevel ? @theme[%(heading_h#{hlevel}_line_height)] : nil) || @theme.heading_line_height || @theme.base_line_height), {
       color: @font_color,
       inline_format: true,
       align: @base_align.to_sym
