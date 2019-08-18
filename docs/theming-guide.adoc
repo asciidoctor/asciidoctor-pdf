@@ -1419,6 +1419,12 @@ The keys in this category control the style of most headings, including part tit
 |heading:
   margin-top: $vertical-spacing * 0.2
 
+|margin-page-top
+|<<measurement-units,Measurement>> +
+(default: 0)
+|heading:
+  margin-page-top: $vertical-spacing
+
 |margin-bottom
 |<<measurement-units,Measurement>> +
 (default: 12)
@@ -1483,6 +1489,24 @@ The keys in this category control the style of most headings, including part tit
 (default: $heading-text-transform)
 |heading:
   h3-text-transform: lowercase
+
+|margin-top
+|<<measurement-units,Measurement>> +
+(default: $heading-margin-top)
+|heading:
+  h2-margin-top: $vertical-spacing * 0.5
+
+|margin-page-top
+|<<measurement-units,Measurement>> +
+(default: $heading-margin-page-top)
+|heading:
+  h2-margin-page-top: $vertical-spacing
+
+|margin-bottom
+|<<measurement-units,Measurement>> +
+(default: $heading-margin-bottom)
+|heading:
+  h2-margin-bottom: 10
 |===
 
 . `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.

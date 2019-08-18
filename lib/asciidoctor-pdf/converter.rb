@@ -2601,11 +2601,20 @@ class Converter < ::Prawn::Document
   alias start_new_part start_new_chapter
   alias layout_part_title layout_chapter_title
 
-  # QUESTION why doesn't layout_heading set the font??
+  # NOTE layout_heading doesn't set the theme font because it's used for various types of headings
   # QUESTION why doesn't layout_heading accept a node?
   def layout_heading string, opts = {}
     hlevel = opts[:level]
-    top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || (hlevel ? @theme[%(heading_h#{hlevel}_margin_top)] : nil) || @theme.heading_margin_top
+    unless (top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top))
+      if at_page_top?
+        if hlevel && (top_margin = @theme[%(heading_h#{hlevel}_margin_page_top)] || @theme.heading_margin_page_top || 0) > 0
+          move_down top_margin
+        end
+        top_margin = 0
+      else
+        top_margin = (hlevel ? @theme[%(heading_h#{hlevel}_margin_top)] : nil) || @theme.heading_margin_top
+      end
+    end
     bot_margin = margin || (opts.delete :margin_bottom) || (hlevel ? @theme[%(heading_h#{hlevel}_margin_bottom)] : nil) || @theme.heading_margin_bottom
     if (transform = resolve_text_transform opts)
       string = transform_text string, transform
@@ -3303,25 +3312,28 @@ class Converter < ::Prawn::Document
         radius: @theme[%(#{category}_border_radius)]
   end
 
-  # Insert a top margin space unless cursor is at the top of the page.
-  # Start a new page if n value is greater than remaining space on page.
-  def margin_top n
-    margin n, :top
+  # Insert a top margin equal to amount if cursor is not at the top of the
+  # page. Start a new page instead if amount is greater than the remaining
+  # space on the page.
+  def margin_top amount
+    margin amount, :top
   end
 
-  # Insert a bottom margin space unless cursor is at the top of the page (not likely).
-  # Start a new page if n value is greater than remaining space on page.
-  def margin_bottom n
-    margin n, :bottom
+  # Insert a bottom margin equal to amount unless cursor is at the top of the
+  # page (not likely). Start a new page instead if amount is greater than the
+  # remaining space on the page.
+  def margin_bottom amount
+    margin amount, :bottom
   end
 
-  # Insert a margin space at the specified side unless cursor is at the top of the page.
-  # Start a new page if n value is greater than remaining space on page.
-  def margin n, side
-    unless (n || 0) == 0 || at_page_top?
+  # Insert a margin at the specified side if the cursor is not at the top of
+  # the page. Start a new page if amount is greater than the remaining space on
+  # the page.
+  def margin amount, side
+    unless (amount || 0) == 0 || at_page_top?
       # NOTE use low-level cursor calculation to workaround cursor bug in column_box context
-      if y - reference_bounds.absolute_bottom > n
-        move_down n
+      if y - reference_bounds.absolute_bottom > amount
+        move_down amount
       else
         # set cursor at top of next page
         reference_bounds.move_past_bottom
