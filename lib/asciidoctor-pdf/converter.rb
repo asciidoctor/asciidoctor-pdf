@@ -698,9 +698,7 @@ class Converter < ::Prawn::Document
       label_text = node.caption
       theme_font :admonition_label do
         theme_font %(admonition_label_#{type}) do
-          if (transform = @text_transform)
-            label_text = transform_text label_text, transform
-          end
+          label_text = transform_text label_text, @text_transform if @text_transform
           label_width = rendered_width_of_string label_text
           label_width = label_min_width if label_min_width && label_min_width > label_width
         end
@@ -2766,7 +2764,7 @@ class Converter < ::Prawn::Document
     end
     sections.each do |sect|
       theme_font :toc, level: (sect.level + 1) do
-        sect_title = (transform = @text_transform) ? (transform_text sect.numbered_title, transform) : sect.numbered_title
+        sect_title = @text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title
         # NOTE only write section title (excluding dots and page number) if this is a dry run
         if scratch?
           # FIXME use layout_prose
@@ -3019,9 +3017,7 @@ class Converter < ::Prawn::Document
                     content = pagenums_enabled ? pgnum_label.to_s : nil
                   else
                     content = apply_subs_discretely doc, content, drop_lines_with_unresolved_attributes: true
-                    if (transform = @text_transform) && transform != 'none'
-                      content = transform_text content, @text_transform
-                    end
+                    content = transform_text content, @text_transform if @text_transform
                   end
                   formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
                     at: [left, bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
