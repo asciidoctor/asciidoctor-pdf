@@ -582,7 +582,7 @@ class Converter < ::Prawn::Document
     add_dest_for_block node if node.id
     pad_box @theme.abstract_padding do
       theme_font :abstract_title do
-        layout_heading node.title, align: (@theme.abstract_title_align || @base_align).to_sym
+        layout_heading node.title, align: (@theme.abstract_title_align || @base_align).to_sym, margin_top: (@theme.heading_margin_top || 0), margin_bottom: (@theme.heading_margin_bottom || 0)
       end if node.title?
       theme_font :abstract do
         prose_opts = { line_height: @theme.abstract_line_height, align: (initial_alignment = (@theme.abstract_align || @base_align).to_sym) }
@@ -976,7 +976,7 @@ class Converter < ::Prawn::Document
       pad_box @theme.sidebar_padding do
         theme_font :sidebar_title do
           # QUESTION should we allow margins of sidebar title to be customized?
-          layout_heading node.title, align: (@theme.sidebar_title_align || @base_align).to_sym, margin_top: 0
+          layout_heading node.title, align: (@theme.sidebar_title_align || @base_align).to_sym, margin_top: 0, margin_bottom: (@theme.heading_margin_bottom || 0)
         end if node.title?
         theme_font :sidebar do
           convert_content_for_block node
@@ -2721,7 +2721,7 @@ class Converter < ::Prawn::Document
       theme_font :heading, level: 2 do
         theme_font :toc_title do
           toc_title_align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
-          layout_heading toc_title, align: toc_title_align
+          layout_heading toc_title, align: toc_title_align, level: 2
         end
       end
     end
