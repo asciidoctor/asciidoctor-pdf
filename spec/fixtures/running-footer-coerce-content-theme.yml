@@ -1,0 +1,7 @@
+extends: default
+footer:
+  recto:
+    left:
+      content: 1000
+    right:
+      content: true

@@ -58,6 +58,27 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme).to respond_to :admonition_icon_tip
       (expect theme.admonition_icon_tip).to have_key :stroke_color
     end
+
+    it 'should convert keys that end in content to a string' do
+      theme_data = SafeYAML.load <<~EOS
+      menu:
+        caret_content:
+        - '>'
+      ulist:
+        marker:
+          disc:
+            content: 0
+      footer:
+        recto:
+          left:
+            content: true
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme).to be_an OpenStruct
+      (expect theme.menu_caret_content).to eql '[">"]'
+      (expect theme.ulist_marker_disc_content).to eql '0'
+      (expect theme.footer_recto_left_content).to eql 'true'
+    end
   end
 
   context '.load_file' do

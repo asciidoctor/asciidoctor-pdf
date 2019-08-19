@@ -452,6 +452,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect running_content_by_page).to eql expected_running_content_by_page
   end
 
+  it 'should coerce content value to string' do
+    pdf = to_pdf 'body', attribute_overrides: { 'nofooter' => nil, 'pdf-theme' => (fixture_file 'running-footer-coerce-content-theme.yml') }, analyze: true
+
+    (expect pdf.find_text '1000').to have_size 1
+    (expect pdf.find_text 'true').to have_size 1
+  end
+
   it 'should not substitute escaped attribute reference in content' do
     pdf_theme = {
       footer_recto_right_content: '\{keepme}',

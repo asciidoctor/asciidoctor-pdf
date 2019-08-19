@@ -150,7 +150,7 @@ class ThemeLoader
     elsif key.end_with? '_color'
       # QUESTION do we really need to evaluate_math in this case?
       data[key] = to_color(evaluate val, data)
-    elsif %(#{key.chomp '_'}_).include? '_content_'
+    elsif key.end_with? '_content'
       data[key] = (expand_vars val.to_s, data).to_s
     else
       data[key] = evaluate val, data
