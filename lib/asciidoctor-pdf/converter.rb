@@ -2285,18 +2285,6 @@ class Converter < ::Prawn::Document
         icon_set = node.attr 'set', (node.document.attr 'icon-set', 'fa'), false
       end
       icon_set = 'fa' unless IconSets.include? icon_set
-      if node.attr? 'size', nil, false
-        case (size = node.attr 'size')
-        when 'lg'
-          size_attr = %( size="1.333em")
-        when 'fw'
-          size_attr = %( width="1em" align="center")
-        else
-          size_attr = %( size="#{size.sub 'x', 'em'}")
-        end
-      else
-        size_attr = ''
-      end
       if icon_set == 'fa'
         # legacy name from Font Awesome < 5
         if (remapped_icon_name = resolve_legacy_icon_name icon_name)
@@ -2317,8 +2305,21 @@ class Converter < ::Prawn::Document
         glyph = (icon_font_data icon_set).unicode icon_name rescue nil
       end
       if glyph
+        if node.attr? 'size', nil, false
+          case (size = node.attr 'size')
+          when 'lg'
+            size_attr = %( size="1.333em")
+          when 'fw'
+            size_attr = %( width="1em" align="center")
+          else
+            size_attr = %( size="#{size.sub 'x', 'em'}")
+          end
+        else
+          size_attr = ''
+        end
+        class_attr = node.role? ? %( class="#{node.role}") : ''
         # TODO support rotate and flip attributes
-        %(<font name="#{icon_set}"#{size_attr}>#{glyph}</font>)
+        %(<font name="#{icon_set}"#{size_attr}#{class_attr}>#{glyph}</font>)
       else
         logger.warn %(#{icon_name} is not a valid icon name in the #{icon_set} icon set)
         %([#{node.attr 'alt'}])

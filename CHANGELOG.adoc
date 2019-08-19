@@ -30,6 +30,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * use value of theme key heading-margin-page-top as top margin for heading if cursor is at top of page (#576)
 * resolve variables in font catalog in theme file
 * if value of scripts attribute is cjk, break lines between any two CJK characters (except punctuation) (#1206)
+* add support for role to font-based icon (to change font color) (#349)
 * use fallback size for admonition icon
 * allow attribute reference in running content to be escaped using a backslash
 
