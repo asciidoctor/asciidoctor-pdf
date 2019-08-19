@@ -369,4 +369,78 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect link_rect[0]).to eql 48.24
     end
   end
+
+  context 'Border' do
+    it 'should draw border around PNG image if border width and border color are set in the theme', integration: true do
+      pdf_theme = {
+        image_border_width: 0.5,
+        image_border_color: 'DDDDDD',
+        image_border_radius: 2,
+      }
+
+      to_file = to_pdf_file <<~'EOS', 'image-border.pdf', pdf_theme: pdf_theme
+      .Tux
+      image::tux.png[align=center]
+      EOS
+
+      (expect to_file).to visually_match 'image-border.pdf'
+    end
+
+    it 'should stretch border around PNG image to bounds if border align key is justify', integration: true do
+      pdf_theme = {
+        image_border_width: 0.5,
+        image_border_color: 'DDDDDD',
+        image_border_radius: 2,
+        image_border_fit: 'auto',
+      }
+
+      to_file = to_pdf_file <<~'EOS', 'image-border-fit-page.pdf', pdf_theme: pdf_theme
+      .Tux
+      image::tux.png[align=center]
+      EOS
+
+      (expect to_file).to visually_match 'image-border-fit-page.pdf'
+    end
+
+    it 'should draw border around SVG if border width and border color are set in the theme', integration: true do
+      pdf_theme = {
+        image_border_width: 1,
+        image_border_color: '000000',
+      }
+
+      to_file = to_pdf_file <<~'EOS', 'image-svg-border.pdf', pdf_theme: pdf_theme
+      .Square
+      image::square.svg[align=center,pdfwidth=25%]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-border.pdf'
+    end
+
+    it 'should stretch border around SVG to bounds if border align key is justify', integration: true do
+      pdf_theme = {
+        image_border_width: 1,
+        image_border_color: '000000',
+        image_border_fit: 'auto',
+      }
+
+      to_file = to_pdf_file <<~'EOS', 'image-svg-border-fit-page.pdf', pdf_theme: pdf_theme
+      .Square
+      image::square.svg[align=center,pdfwidth=25%]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-border-fit-page.pdf'
+    end
+
+    it 'should not draw border around image if noborder role is present', integration: true do
+      pdf_theme = {
+        image_border_width: 1,
+        image_border_color: '000000',
+      }
+      to_file = to_pdf_file <<~'EOS', 'image-noborder.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }
+      image::wolpertinger.jpg[pdfwidth=25%,role=noborder]
+      EOS
+
+      (expect to_file).to visually_match 'image-wolpertinger.pdf'
+    end
+  end
 end
