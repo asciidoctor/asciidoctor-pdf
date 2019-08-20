@@ -190,14 +190,18 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       lines = pdf.lines pdf.find_text page_number: 2
       (expect lines).to have_size 5
       (expect lines[0]).to eql 'Table of Contents'
-      (expect lines[1]).to start_with 'I: P1'
-      (expect lines[2]).to start_with '1. C1'
-      (expect lines[3]).to start_with 'II: P2'
-      (expect lines[4]).to start_with '2. C2'
       if asciidoctor_2_or_better?
+        (expect lines[1]).to start_with 'I: P1'
+        (expect lines[3]).to start_with 'II: P2'
         (expect pdf.find_text 'Part I: P1').to have_size 1
-        (expect pdf.find_text 'Chapter 1. C1').to have_size 1
+      else
+        (expect lines[1]).to start_with 'P1'
+        (expect lines[3]).to start_with 'P2'
+        (expect pdf.find_text 'P1').to have_size 2
       end
+      (expect lines[2]).to start_with '1. C1'
+      (expect lines[4]).to start_with '2. C2'
+      (expect pdf.find_text 'Chapter 1. C1').to have_size 1
     end
   end
 
