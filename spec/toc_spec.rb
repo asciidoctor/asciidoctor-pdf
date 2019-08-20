@@ -169,6 +169,36 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       page_number_text = pdf.find_text page_number: 2, string: '1'
       (expect page_number_text).to have_size 1
     end
+
+    it 'should not use part or chapter signifier in toc' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Book Title
+      :doctype: book
+      :sectnums:
+      :partnums:
+      :toc:
+
+      = P1
+
+      == C1
+
+      = P2
+
+      == C2
+      EOS
+
+      lines = pdf.lines pdf.find_text page_number: 2
+      (expect lines).to have_size 5
+      (expect lines[0]).to eql 'Table of Contents'
+      (expect lines[1]).to start_with 'I: P1'
+      (expect lines[2]).to start_with '1. C1'
+      (expect lines[3]).to start_with 'II: P2'
+      (expect lines[4]).to start_with '2. C2'
+      if asciidoctor_2_or_better?
+        (expect pdf.find_text 'Part I: P1').to have_size 1
+        (expect pdf.find_text 'Chapter 1. C1').to have_size 1
+      end
+    end
   end
 
   context 'article' do
