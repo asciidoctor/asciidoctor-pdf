@@ -40,6 +40,7 @@ heading_h6_font_size: 10
 heading_line_height: 1.15
 heading_margin_top: 4
 heading_margin_bottom: 12
+heading_min_height_after: 20
 title_page_align: center
 title_page_line_height: 1.15
 title_page_logo_top: 10%

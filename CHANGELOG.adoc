@@ -17,6 +17,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * don't rely on base_line_height_length theme key in converter (should be internal to theme)
 * set fallback value for base (root) font size
 * reduce min font size in base theme
+* allow theme to configure the minimum height required after a section title for it to stay on same page (#1210)
 * convert hyphen to underscore in theme key for admonition icon type (#1217)
 * always resolve images in running content relative to themesdir (instead of document) (#1183)
 * honor text alignment role on abstract paragraph(s)

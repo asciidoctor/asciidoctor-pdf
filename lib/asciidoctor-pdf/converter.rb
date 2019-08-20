@@ -530,10 +530,15 @@ class Converter < ::Prawn::Document
           start_new_part sect unless @theme.heading_part_break_before == 'auto'
         end
       end
-      # FIXME smarter calculation here!!
-      unless cursor > (height_of title) + (@theme.heading_margin_top || 0) + (@theme.heading_margin_bottom || 0) + (@root_font_size * @theme.base_line_height * 1.5)
-        start_new_page
-      end unless at_page_top?
+      unless at_page_top?
+        # FIXME this height doesn't account for impact of text transform or inline formatting
+        heading_height =
+          (height_of_typeset_text title, line_height: (@theme[%(heading_h#{hlevel}_line_height)] || @theme.heading_line_height)) +
+          (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top || 0) +
+          (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom || 0)
+        heading_height += (@theme.heading_min_height_after || 0) if sect.blocks?
+        start_new_page unless cursor > heading_height
+      end
       # QUESTION should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
       sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
       # QUESTION should we just assign the section this generated id?
