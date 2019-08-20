@@ -1,17 +1,18 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Paragraph' do
-  it 'should normalize whitespace' do
+  it 'should normalize newlines and whitespace' do
     pdf = to_pdf <<~EOS, analyze: true
     He's  a  real  nowhere  man,
     Sitting in his nowhere land,
     Making all his nowhere plans\tfor nobody.
     EOS
-    text = pdf.text
-    (expect text).to have_size 1
+    (expect pdf.text).to have_size 1
+    text = pdf.text[0][:string]
     (expect text).not_to include '  '
     (expect text).not_to include ?\t
     (expect text).not_to include ?\n
+    (expect text).to include 'man, Sitting'
   end
 
   it 'should indent first line of paragraph if prose_text_indent key is set in theme' do

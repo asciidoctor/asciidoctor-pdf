@@ -329,8 +329,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     it 'should keep paragraphs in table cell separate' do
       pdf = to_pdf <<~'EOS', analyze: true
       |===
-      |all one
-      line
+      |all one line
 
       |line 1 +
       line 2
@@ -350,6 +349,22 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect cell_3_text).to have_size 2
       (expect cell_3_text[0][:y]).to be > cell_3_text[1][:y]
       (expect cell_3_text[0][:y] - cell_3_text[1][:y]).to be > (cell_2_text[0][:y] - cell_2_text[1][:y])
+    end
+
+    it 'should normalize newlines and whitespace' do
+      pdf = to_pdf <<~EOS, analyze: true
+      |===
+      |He's  a  real  nowhere  man,
+      Sitting in his nowhere land,
+      Making all his nowhere plans\tfor nobody.
+      |===
+      EOS
+      (expect pdf.text).to have_size 1
+      text = pdf.text[0][:string]
+      (expect text).not_to include '  '
+      (expect text).not_to include ?\t
+      (expect text).not_to include ?\n
+      (expect text).to include 'man, Sitting'
     end
   end
 
