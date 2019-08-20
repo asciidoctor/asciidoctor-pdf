@@ -46,6 +46,17 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect pdf.find_text %r/^\d+$/).to be_empty
   end
 
+  it 'should not attempt to add running content if document has no body' do
+    pdf = to_pdf <<~'EOS', attributes: { 'nofooter' => 'nil' }, analyze: true
+    = Document Title
+    :doctype: book
+    EOS
+
+    text = pdf.text
+    (expect text).to have_size 1
+    (expect text[0][:string]).to eql 'Document Title'
+  end
+
   it 'should start running content at title page if running_content_start_at key is title' do
     theme_overrides = { running_content_start_at: 'title' }
 
