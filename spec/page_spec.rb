@@ -141,6 +141,32 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       (expect to_file).to visually_match 'page-prepress-margins.pdf'
     end
+
+    it 'should derive recto/verso margins from inner/outer margins when media=prepress', integration: true do
+      pdf_theme = {
+        margin_inner: '1in',
+        margin_outer: '0.75in',
+      }
+      to_file = to_pdf_file <<~'EOS', 'page-prepress-custom-margins.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'nofooter' => nil }
+      = Book Title
+      :media: prepress
+      :doctype: book
+
+      == First Chapter
+
+      <<<
+
+      === A Section
+
+      == Last Chapter
+
+      <<<
+
+      === B Section
+      EOS
+
+      (expect to_file).to visually_match 'page-prepress-custom-margins.pdf'
+    end
   end
 
   context 'Background' do
