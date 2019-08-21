@@ -119,6 +119,28 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       EOS
       (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 72.0, 757.926]
     end
+
+    it 'should use recto/verso margins when media=prepress', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'page-prepress-margins.pdf', attribute_overrides: { 'nofooter' => nil }
+      = Book Title
+      :media: prepress
+      :doctype: book
+
+      == First Chapter
+
+      <<<
+
+      === A Section
+
+      == Last Chapter
+
+      <<<
+
+      === B Section
+      EOS
+
+      (expect to_file).to visually_match 'page-prepress-margins.pdf'
+    end
   end
 
   context 'Background' do
