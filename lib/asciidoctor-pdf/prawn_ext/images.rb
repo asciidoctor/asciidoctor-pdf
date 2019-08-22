@@ -16,13 +16,13 @@ module Images
       #opts[:enable_web_requests] = allow_uri_read if !(opts.key? :enable_web_requests) && (respond_to? :allow_uri_read)
       #opts[:fallback_font_name] = fallback_svg_font_name if !(opts.key? :fallback_font_name) && (respond_to? :fallback_svg_font_name)
       if (opts.key? :fit) && (fit = opts.delete :fit) && !opts[:width] && !opts[:height]
-        svg (::File.read file), opts do |svg_doc|
+        svg (::File.read file, mode: 'r:UTF-8'), opts do |svg_doc|
           max_width, max_height = fit
           svg_doc.calculate_sizing requested_width: max_width if max_width && svg_doc.sizing.output_width != max_width
           svg_doc.calculate_sizing requested_height: max_height if max_height && svg_doc.sizing.output_height > max_height
         end
       else
-        svg (::File.read file), opts
+        svg (::File.read file, mode: 'r:UTF-8'), opts
       end
     else
       _initial_image file, opts
@@ -35,7 +35,7 @@ module Images
   # intrinsic width and height values (in pixels)
   def intrinsic_image_dimensions path, format
     if format == 'svg'
-      img_obj = ::Prawn::SVG::Interface.new (::File.read path), self, {}
+      img_obj = ::Prawn::SVG::Interface.new (::File.read path, mode: 'r:UTF-8'), self, {}
       img_size = img_obj.document.sizing
       { width: img_size.output_width, height: img_size.output_height }
     else

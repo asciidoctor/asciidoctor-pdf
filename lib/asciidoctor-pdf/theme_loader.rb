@@ -85,7 +85,7 @@ class ThemeLoader
   end
 
   def self.load_file filename, theme_data = nil, theme_dir = nil
-    data = ::File.read filename, encoding: ::Encoding::UTF_8
+    data = ::File.read filename, mode: 'r:UTF-8', newline: :universal
     data = data.each_line.map {|line|
       line.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || (m[:k].end_with? 'color') ? "'#{m[:v]}'" : m[:v]}) }
     }.join unless (::File.dirname filename) == ThemesDir

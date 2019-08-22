@@ -753,7 +753,7 @@ class Converter < ::Prawn::Document
               elsif icons
                 if (::Asciidoctor::Image.format icon_path) == 'svg'
                   begin
-                    svg_obj = ::Prawn::SVG::Interface.new ::File.read(icon_path), self,
+                    svg_obj = ::Prawn::SVG::Interface.new ::File.read(icon_path, mode: 'r:UTF-8'), self,
 	                      position: label_align,
                         vposition: label_valign,
                         width: label_width,
@@ -1352,7 +1352,7 @@ class Converter < ::Prawn::Document
             svg_data = ::Base64.decode64 image_path
             file_request_root = false
           else
-            svg_data = ::File.read image_path
+            svg_data = ::File.read image_path, mode: 'r:UTF-8'
             file_request_root = ::File.dirname image_path
           end
           svg_obj = ::Prawn::SVG::Interface.new svg_data, self,
