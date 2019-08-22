@@ -69,5 +69,65 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       content_text = text[1]
       (expect content_text[:string]).to eql 'Look for the warp zone under the bridge.'
     end
+
+    it 'should use SVG icon specified by icon attribute when icons attribute is set', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
+      :icons: font
+      :iconsdir:
+
+      [TIP,icon=square.svg]
+      ====
+      Use the icon attribute to customize the image for an admonition block.
+      ====
+      EOS
+
+      (expect to_file).to visually_match 'admonition-custom-svg-icon.pdf'
+    end
+
+    it 'should use raster icon specified by icon attribute when icons attribute is set', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'admonition-custom-raster-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
+      :icons: font
+      :iconsdir:
+
+      [TIP,icon=tux.png]
+      ====
+      Use the icon attribute to customize the image for an admonition block.
+      ====
+      EOS
+
+      (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
+    end
+
+    it 'should resolve icon when icons attribute is set to image', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'admonition-image-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
+      :icons: image
+      :iconsdir:
+
+      [TIP]
+      ====
+      Use the icon attribute to customize the image for an admonition block.
+      ====
+      EOS
+
+      (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
+    end
+
+    it 'should warn and fallback to admonition label if image icon cannot be resolved', integration: true do
+      (expect {
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: true
+        :icons: image
+        :iconsdir:
+
+        [NOTE]
+        ====
+        Use the icon attribute to customize the image for an admonition block.
+        ====
+        EOS
+
+        note_text = (pdf.find_text 'NOTE')[0]
+        (expect note_text).not_to be_nil
+        (expect note_text[:font_name]).to include 'Bold'
+      }).to log_message severity: :WARN, message: '~admonition icon not found or not readable'
+    end
   end
 end

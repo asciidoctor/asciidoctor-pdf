@@ -29,6 +29,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow page break before and after part and before chapter to be configured by theme (#74)
 * allow page number of PDF to import to be specified using `page` attribute on image macro (#1202)
 * use value of theme key heading-margin-page-top as top margin for heading if cursor is at top of page (#576)
+* resolve icon image relative to docdir instead of current working directory
 * resolve variables in font catalog in theme file
 * if value of scripts attribute is cjk, break lines between any two CJK characters (except punctuation) (#1206)
 * add support for role to font-based icon (to change font color) (#349)

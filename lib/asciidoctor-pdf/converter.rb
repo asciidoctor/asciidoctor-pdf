@@ -689,14 +689,17 @@ class Converter < ::Prawn::Document
       icon_data = admonition_icon_data(label_text = type.to_sym)
       label_width = label_min_width ? label_min_width : ((icon_size = icon_data[:size] || 24) * 1.5)
     # NOTE icon_uri will consider icon attribute on node first, then type
-    elsif icons && ::File.readable?(icon_path = (node.icon_uri type))
+    # QUESTION should we use resolve_image_path here?
+    elsif icons && (icon_path = node.icon_uri type) &&
+        (icon_path = node.normalize_system_path icon_path, nil, nil, target_name: 'admonition icon') &&
+        (::File.readable? icon_path)
       icons = true
       # TODO introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
       label_width = label_min_width ? label_min_width : 36.0
     else
       if icons
         icons = nil
-        logger.warn %(admonition icon image not found or not readable: #{icon_path}) unless scratch?
+        logger.warn %(admonition icon not found or not readable: #{icon_path}) unless scratch?
       end
       label_text = node.caption
       theme_font :admonition_label do
@@ -768,7 +771,7 @@ class Converter < ::Prawn::Document
                     end
                     svg_obj.draw
                   rescue
-                    logger.warn %(could not embed admonition icon image: #{icon_path}; #{$!.message})
+                    logger.warn %(could not embed admonition icon: #{icon_path}; #{$!.message})
                   end
                 else
                   begin
@@ -783,7 +786,7 @@ class Converter < ::Prawn::Document
                     embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
                   rescue
                     # QUESTION should we show the label in this case?
-                    logger.warn %(could not embed admonition icon image: #{icon_path}; #{$!.message})
+                    logger.warn %(could not embed admonition icon: #{icon_path}; #{$!.message})
                   end
                 end
               else
