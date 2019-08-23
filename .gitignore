@@ -2,10 +2,11 @@
 /_*/
 /Gemfile.lock
 /apidoc/
+/coverage/
+/deep_cover/
 /pkg/
 /scripts/fonts/
 /.bundle/
 /.idea/
-/.ruby-gemset
 /.ruby-version
 /.yardoc/

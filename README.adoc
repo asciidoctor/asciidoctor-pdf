@@ -1076,6 +1076,38 @@ To switch back to master, just type:
 
  $ git checkout master
 
+=== Generate Code Coverage Report
+
+To generate a code coverage report when running tests using simplecov, set the `COVERAGE` environment variable as follows when running the tests:
+
+ $ COVERAGE=true bundle exec rake spec
+
+You'll see a total coverage score as well as a link to the HTML report in the output.
+The HTML report helps you understand which lines and branches were missed, if any.
+
+Despite being fast, the downside of using simplecov is that it misses code branches.
+You can use deep-cover instead of simplecov to generate a more thorough report.
+To do so, set the `COVERAGE` environment variable to `deep` when running the tests:
+
+ $ COVERAGE=deep bundle exec rake spec
+
+You'll see a total coverage score, a detailed coverage report, and a link to HTML report in the output.
+The HTML report helps you understand which lines and branches were missed, if any.
+
+////
+As an alternative to deep cover's native HTML reporter, you can also use istanbul / nyc.
+First, you'll need to have the `nyc` command available on your system:
+
+ $ npm install -g nyc
+
+Next, in addition to the `COVERAGE` environment variable, also set the `DEEP_COVER_REPORTER` environment variable as follows when running the tests:
+
+ $ COVERAGE=deep DEEP_COVER_REPORTER=istanbul bundle exec rake spec
+
+You'll see a total coverage score, a detailed coverage report, and a link to HTML report in the output.
+The HTML report helps you understand which lines and branches were missed, if any.
+////
+
 [[resources,Links]]
 == Resources
 

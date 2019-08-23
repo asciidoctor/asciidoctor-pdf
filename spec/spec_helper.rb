@@ -1,3 +1,11 @@
+if ENV['COVERAGE'] == 'deep'
+  ENV['DEEP_COVER'] = 'true'
+  require 'deep_cover'
+elsif ENV['COVERAGE'] == 'true'
+  require 'deep_cover/builtin_takeover'
+  require 'simplecov'
+end
+
 require 'asciidoctor/pdf'
 require 'base64'
 require 'chunky_png'
