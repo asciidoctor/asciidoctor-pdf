@@ -74,6 +74,23 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect text[0][:string]).to eql 'cal_days_in_month(CAL_GREGORIAN, 6, 2019)'
       (expect text[0][:font_color]).to eql '333333'
     end
+
+    it 'should use rouge style specified by rouge-style attribute', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'source-rouge-style.pdf'
+      :source-highlighter: rouge
+      :rouge-style: molokai
+
+      [source,js]
+      ----
+      'use strict'
+
+      const TAG_ALL_RX = /<[^>]+>/g
+      module.exports = (html) => html && html.replace(TAG_ALL_RX, '')
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-rouge-style.pdf'
+    end
   end
 
   context 'Callouts' do
