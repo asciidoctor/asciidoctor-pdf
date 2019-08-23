@@ -93,6 +93,24 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
   end
 
+  context 'CodeRay' do
+    it 'should highlight source using CodeRay if source-highlighter is coderay' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: coderay
+
+      [source,ruby]
+      ----
+      puts 'Hello, CodeRay!'
+      ----
+      EOS
+
+      hello_text = (pdf.find_text 'Hello, CodeRay!')[0]
+      (expect hello_text).not_to be_nil
+      (expect hello_text[:font_color]).to eql 'CC3300'
+      (expect hello_text[:font_name]).to eql 'mplus1mn-regular'
+    end
+  end
+
   context 'Callouts' do
     it 'should substitute autonumber callouts with circled numbers when using rouge as syntax highlighter' do
       pdf = to_pdf <<~'EOS', analyze: true
