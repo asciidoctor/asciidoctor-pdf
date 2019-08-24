@@ -52,6 +52,26 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect pdf.info[:Producer]).to eql 'Big Cheese'
     end
 
+    it 'should set Subject field to value of subject attribute if set' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :subject: Cooking
+
+      content
+      EOS
+      (expect pdf.info[:Subject]).to eql 'Cooking'
+    end
+
+    it 'should set Keywords field to value of subject attribute if set' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :keywords: cooking, diet, plants
+
+      content
+      EOS
+      (expect pdf.info[:Keywords]).to eql 'cooking, diet, plants'
+    end
+
     it 'should not add dates to document if reproducible attribute is set' do
       pdf = to_pdf <<~'EOS', attribute_overrides: { 'reproducible' => '' }
       = Document Title

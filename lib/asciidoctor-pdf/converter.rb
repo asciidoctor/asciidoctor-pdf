@@ -464,18 +464,10 @@ class Converter < ::Prawn::Document
     info = {}
     # FIXME use sanitize: :plain_text once available
     info[:Title] = sanitize(doc.doctitle use_fallback: true).as_pdf
-    if doc.attr? 'authors'
-      info[:Author] = (doc.attr 'authors').as_pdf
-    end
-    if doc.attr? 'subject'
-      info[:Subject] = (doc.attr 'subject').as_pdf
-    end
-    if doc.attr? 'keywords'
-      info[:Keywords] = (doc.attr 'keywords').as_pdf
-    end
-    if (doc.attr? 'publisher')
-      info[:Producer] = (doc.attr 'publisher').as_pdf
-    end
+    info[:Author] = (doc.attr 'authors').as_pdf if doc.attr? 'authors'
+    info[:Subject] = (doc.attr 'subject').as_pdf if doc.attr? 'subject'
+    info[:Keywords] = (doc.attr 'keywords').as_pdf if doc.attr? 'keywords'
+    info[:Producer] = (doc.attr 'publisher').as_pdf if doc.attr? 'publisher'
     info[:Creator] = %(Asciidoctor PDF #{::Asciidoctor::PDF::VERSION}, based on Prawn #{::Prawn::VERSION}).as_pdf
     info[:Producer] ||= (info[:Author] || info[:Creator])
     unless doc.attr? 'reproducible'
