@@ -7,6 +7,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* fill and stroke bounds of example across all pages (#362)
 * allow page background color and background image to be used simultaneously (#1186)
 * allow multiple font dirs to be specified (#80)
 * allow theme to specifiy initial zoom (#305)
