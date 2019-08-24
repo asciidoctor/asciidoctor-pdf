@@ -177,6 +177,22 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect formatted_text[:font_color]).to eql '0000FF'
       (expect formatted_text[:font_size]).to eql 8
     end
+
+    it 'should be able to reference section title containing icon' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :icons: font
+
+      [#reference]
+      == icon:cogs[] Heading
+
+      See <<reference>>.
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[0]).to eql %(\uf085 Heading)
+      (expect lines[1]).to eql %(See \uf085 Heading.)
+    end
   end
 
   context 'Roles' do
