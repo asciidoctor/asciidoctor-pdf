@@ -17,6 +17,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
+    it 'should warn instead of crash if block image is unreadable' do
+      image_file = fixture_file 'logo.png'
+      old_mode = (File.stat image_file).mode
+      begin
+        (expect {
+          FileUtils.chmod 0000, image_file
+          pdf = to_pdf 'image::logo.png[Unreadable Image]', analyze: true
+          (expect pdf.lines).to eql ['[Unreadable Image] | logo.png']
+        }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      ensure
+        FileUtils.chmod old_mode, image_file
+      end
+    end unless windows?
+
     it 'should resolve target of inline image relative to imagesdir', integration: true do
       to_file = to_pdf_file <<~'EOS', 'image-inline.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image:sample-logo.jpg[ACME,12] ACME products are the best!
@@ -31,6 +45,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         (expect pdf.lines).to eql ['You cannot see that which is [not there].']
       }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
+
+    it 'should warn instead of crash if inline image is unreadable' do
+      image_file = fixture_file 'logo.png'
+      old_mode = (File.stat image_file).mode
+      begin
+        (expect {
+          FileUtils.chmod 0000, image_file
+          pdf = to_pdf 'image:logo.png[Unreadable Image,16] Company Name', analyze: true
+          (expect pdf.lines).to eql ['[Unreadable Image] Company Name']
+        }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      ensure
+        FileUtils.chmod old_mode, image_file
+      end
+    end unless windows?
   end
 
   context 'SVG' do
