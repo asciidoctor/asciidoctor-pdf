@@ -204,6 +204,30 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
   end
 
+  it 'should number subsection of appendix based on appendix letter' do
+    pdf = to_pdf <<~'EOS', analyze: true
+		= Book Title
+		:doctype: book
+		:sectnums:
+
+		== Chapter
+
+		content
+
+		[appendix]
+		= Appendix
+
+		content
+
+		=== Appendix Subsection
+
+		content
+    EOS
+
+    expected_text = asciidoctor_1_5_7_or_better? ? 'A.1. Appendix Subsection' : '1.1. Appendix Subsection'
+    (expect pdf.lines).to include expected_text
+  end
+
   it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is not set' do
     input = <<~'EOS'
     = Book Title
