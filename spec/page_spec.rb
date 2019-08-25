@@ -488,7 +488,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-alt.pdf'
     end
 
-    it 'should allow background image to be disabled if side is set to none', integration: true do
+    it 'should allow recto background image to be disabled if side is set to none', integration: true do
       [
         { 'page-background-image' => 'image:recto-bg.png[]', 'page-background-image-verso' => 'none' },
         { 'page-background-image-recto' => 'image:recto-bg.png[]' },
@@ -509,6 +509,30 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         EOS
 
         (expect to_file).to visually_match 'page-background-image-recto-only.pdf'
+      end
+    end
+
+    it 'should allow verso background image to be disabled if side is set to none', integration: true do
+      [
+        { 'page-background-image' => 'image:verso-bg.png[]', 'page-background-image-recto' => 'none' },
+        { 'page-background-image-verso' => 'image:verso-bg.png[]' },
+      ].each do |attribute_overrides|
+        to_file = to_pdf_file <<~EOS, 'page-background-image-verso-only.pdf', attribute_overrides: attribute_overrides
+        = Document Title
+        :doctype: book
+
+        content
+
+        <<<
+
+        more content
+
+        <<<
+
+        the end
+        EOS
+
+        (expect to_file).to visually_match 'page-background-image-verso-only.pdf'
       end
     end
 
