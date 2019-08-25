@@ -1973,7 +1973,7 @@ class Converter < ::Prawn::Document
 
     if node.option? 'autowidth'
       table_width = (node.attr? 'width', nil, false) ? bounds.width * ((node.attr 'tablepcwidth') / 100.0) :
-          ((node.has_role? 'spread') ? bounds.width : nil)
+          (((node.has_role? 'stretch') || (node.has_role? 'spread')) ? bounds.width : nil)
       column_widths = []
     else
       table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
