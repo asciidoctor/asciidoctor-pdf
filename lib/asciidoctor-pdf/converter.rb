@@ -1050,7 +1050,7 @@ class Converter < ::Prawn::Document
     @list_numerals << 1
     #stroke_horizontal_rule @theme.caption_border_bottom_color
     line_metrics = calc_line_metrics @theme.base_line_height
-    node.items.each_with_index do |item, idx|
+    node.items.each do |item|
       # FIXME extract to an ensure_space (or similar) method; simplify
       advance_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top) + 1
       convert_colist_item item
