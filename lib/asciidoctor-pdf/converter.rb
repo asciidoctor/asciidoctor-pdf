@@ -824,15 +824,60 @@ class Converter < ::Prawn::Document
   def convert_example node
     add_dest_for_block node if node.id
     theme_margin :block, :top
+    caption_height = 0
+    dry_run do
+      move_down 1 # hack to force top margin to be applied
+      caption_height = (layout_caption node) - 1
+    end if node.title?
     keep_together do |box_height = nil|
       push_scratch node.document if scratch?
-      caption_height = node.title? ? (layout_caption node) : 0
       if box_height
+        # FIXME due to the calculation error logged in #789, we must advance page even when content is split across pages
+        advance_page if box_height > cursor && !at_page_top?
+        layout_caption node
         float do
-          bounding_box [0, cursor], width: bounds.width, height: box_height - caption_height do
-            theme_fill_and_stroke_bounds :example
+          # TODO move the multi-page logic to theme_fill_and_stroke_bounds
+          if (b_width = @theme.example_border_width || 0) > 0 && (b_color = @theme.example_border_color)
+            if b_color == @page_bg_color # let page background cut into example background
+              b_gap_color, b_shift = @page_bg_color, b_width
+            elsif (b_gap_color = @theme.example_background_color) && b_gap_color != b_color
+              b_shift = 0
+            else # let page background cut into border
+              b_gap_color, b_shift = @page_bg_color, 0
+            end
+          else # let page background cut into sidebar background
+            b_width = 0.5 if b_width == 0
+            b_shift, b_gap_color = b_width * 0.5, @page_bg_color
+          end
+          b_radius = (@theme.example_border_radius || 0) + b_width
+          initial_page, remaining_height = true, box_height - caption_height
+          while remaining_height > 0
+            advance_page unless initial_page
+            fragment_height = [(available_height = cursor), remaining_height].min
+            bounding_box [0, available_height], width: bounds.width, height: fragment_height do
+              theme_fill_and_stroke_bounds :example
+              unless b_width == 0
+                indent b_radius, b_radius do
+                  move_down b_shift
+                  # dashed line to indicate continuation from previous page; swell line to cover background
+                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
+                  move_up b_shift
+                end unless initial_page
+                if remaining_height > fragment_height
+                  move_down fragment_height - b_shift
+                  indent b_radius, b_radius do
+                    # dashed line to indicate continuation to next page; swell line to cover background
+                    stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
+                  end
+                end
+              end
+            end
+            remaining_height -= fragment_height
+            initial_page = false
           end
         end
+      else
+        move_down caption_height
       end
       pad_box @theme.example_padding do
         theme_font :example do
@@ -1327,9 +1372,9 @@ class Converter < ::Prawn::Document
     # TODO move this calculation into a method, such as layout_caption node, side: :bottom, dry_run: true
     caption_h = 0
     dry_run do
-      move_down 0.0001 # hack to force top margin to be applied
+      move_down 1 # hack to force top margin to be applied
       # NOTE we assume caption fits on a single page, which seems reasonable
-      caption_h = layout_caption node, side: :bottom
+      caption_h = (layout_caption node, side: :bottom) - 1
     end if node.title?
 
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
