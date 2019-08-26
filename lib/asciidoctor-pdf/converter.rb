@@ -1382,7 +1382,7 @@ class Converter < ::Prawn::Document
     # TODO add `to_pt page_width` method to ViewportWidth type
     width = (width.to_f / 100) * page_width if ViewportWidth === width
 
-    alignment = ((node.attr 'align', nil, false) || @theme.image_align).to_sym
+    alignment = ((node.attr 'align', nil, false) || @theme.image_align || :left).to_sym
     align_to_page = node.option? 'align-to-page'
 
     begin

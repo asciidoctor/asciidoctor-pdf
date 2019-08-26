@@ -61,6 +61,34 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end unless windows?
   end
 
+  context 'Alignment' do
+    it 'should not crash when converting block image if theme is blank' do
+      image_data = File.binread example_file 'wolpertinger.jpg'
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'extends-nil-empty-theme.yml'), 'imagesdir' => examples_dir }
+      image::wolpertinger.jpg[]
+      EOS
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].data).to eql image_data
+    end
+
+    it 'should align block image to value of align attribute on macro', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'image-align-right-attribute.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      image::wolpertinger.jpg[align=right]
+      EOS
+      
+      (expect to_file).to visually_match 'image-align-right.pdf'
+    end
+
+    it 'should align block image to value of image_align key in theme if alignment not specified on image', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'image-align-right-theme.pdf', pdf_theme: { image_align: 'right' }, attribute_overrides: { 'imagesdir' => examples_dir }
+      image::wolpertinger.jpg[]
+      EOS
+      
+      (expect to_file).to visually_match 'image-align-right.pdf'
+    end
+  end
+
   context 'SVG' do
     it 'should not leave gap around SVG that specifies viewBox but no width' do
       input = <<~'EOS'
