@@ -1049,10 +1049,9 @@ class Converter < ::Prawn::Document
     @list_numerals ||= []
     @list_numerals << 1
     #stroke_horizontal_rule @theme.caption_border_bottom_color
-    line_metrics = calc_line_metrics @theme.base_line_height
+    line_metrics = theme_font :conum do calc_line_metrics @theme.base_line_height end
     node.items.each do |item|
-      # FIXME extract to an ensure_space (or similar) method; simplify
-      advance_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top) + 1
+      allocate_space_for_list_item line_metrics
       convert_colist_item item
     end
     @list_numerals.pop
@@ -1093,11 +1092,11 @@ class Converter < ::Prawn::Document
       # and advance to the next page if so (similar to logic for section titles)
       layout_caption node.title if node.title?
 
+      line_metrics = calc_line_metrics @theme.base_line_height
       node.items.each do |terms, desc|
         terms = [*terms]
-        # NOTE don't orphan the terms, allow for at least one line of content
-        # FIXME extract ensure_space (or similar) method
-        advance_page if cursor < (@root_font_size * @theme.base_line_height) * (terms.size + 1)
+        # NOTE don't orphan the terms (keep together terms and at least one line of content)
+        allocate_space_for_list_item line_metrics, (terms.size + 1), ((@theme.description_list_term_spacing || 0) + 0.05)
         terms.each do |term|
           # FIXME layout_prose should pass style downward when parsing formatted text
           #layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
@@ -1227,8 +1226,7 @@ class Converter < ::Prawn::Document
     end
     indent list_indent do
       node.items.each do |item|
-        # FIXME extract to an ensure_space (or similar) method; simplify
-        advance_page if cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top)
+        allocate_space_for_list_item line_metrics
         convert_outline_list_item item, node, opts
       end
     end
@@ -1334,6 +1332,10 @@ class Converter < ::Prawn::Document
       end
       convert_content_for_block node
     end
+  end
+
+  def allocate_space_for_list_item line_metrics, number = 1, additional_gap = 0
+    advance_page if !at_page_top? && cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top + additional_gap) * number
   end
 
   def convert_image node, opts = {}

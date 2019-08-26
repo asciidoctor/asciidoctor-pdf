@@ -116,6 +116,24 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect text).to have_size 2
       (expect text[0][:y]).to eql text[1][:y]
     end
+
+    it 'should keep list marker with primary text' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :pdf-page-size: 52mm x 74mm
+      :pdf-page-margin: 0
+
+      ....
+      #{['filler'] * 11 * ?\n}
+      ....
+
+      * list item
+      EOS
+
+      marker_text = (pdf.find_text ?\u2022)[0]
+      (expect marker_text[:page_number]).to eql 2
+      item_text = (pdf.find_text 'list item')[0]
+      (expect item_text[:page_number]).to eql 2
+    end
   end
 
   context 'Checklist' do
@@ -303,6 +321,24 @@ describe 'Asciidoctor::PDF::Converter - List' do
       none_item = (pdf.find_text 'none')[0]
       (expect none_item[:x]).to eql 66.24
     end
+
+    it 'should keep list marker with primary text' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :pdf-page-size: 52mm x 74mm
+      :pdf-page-margin: 0
+
+      ....
+      #{['filler'] * 11 * ?\n}
+      ....
+
+      . list item
+      EOS
+
+      marker_text = (pdf.find_text '1.')[0]
+      (expect marker_text[:page_number]).to eql 2
+      item_text = (pdf.find_text 'list item')[0]
+      (expect item_text[:page_number]).to eql 2
+    end
   end
 
   context 'Description' do
@@ -323,6 +359,47 @@ describe 'Asciidoctor::PDF::Converter - List' do
         'What is the answer to the Ultimate Question?',
         '42'
       ]
+    end
+
+    it 'should keep term with primary text' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :pdf-page-size: 52mm x 80mm
+      :pdf-page-margin: 0
+
+      ....
+      #{['filler'] * 11 * ?\n}
+      ....
+
+      term::
+      desc
+      EOS
+
+      term_text = (pdf.find_text 'term')[0]
+      (expect term_text[:page_number]).to eql 2
+      desc_text = (pdf.find_text 'desc')[0]
+      (expect desc_text[:page_number]).to eql 2
+    end
+
+    it 'should keep all terms with primary text' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :pdf-page-size: 52mm x 87.5mm
+      :pdf-page-margin: 0
+
+      ....
+      #{['filler'] * 11 * ?\n}
+      ....
+
+      term 1::
+      term 2::
+      desc
+      EOS
+
+      term1_text = (pdf.find_text 'term 1')[0]
+      (expect term1_text[:page_number]).to eql 2
+      term2_text = (pdf.find_text 'term 2')[0]
+      (expect term2_text[:page_number]).to eql 2
+      desc_text = (pdf.find_text 'desc')[0]
+      (expect desc_text[:page_number]).to eql 2
     end
   end
 
@@ -406,6 +483,25 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect text[:font_name]).to eql 'mplus1mn-regular'
         (expect text[:font_color]).to eql 'B12146'
       end
+    end
+
+    it 'should keep list marker with primary text' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :pdf-page-size: 52mm x 72.25mm
+      :pdf-page-margin: 0
+
+      ....
+      filler <1>
+      #{['filler'] * 10 * ?\n}
+      ....
+
+      <1> description
+      EOS
+
+      marker_text = (pdf.find_text ?\u2460)[-1]
+      (expect marker_text[:page_number]).to eql 2
+      item_text = (pdf.find_text 'description')[0]
+      (expect item_text[:page_number]).to eql 2
     end
   end
 
