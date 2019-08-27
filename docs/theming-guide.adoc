@@ -2085,7 +2085,7 @@ The keys in this category are used to control the style of literal, listing and 
 |code:
   padding: 11
 
-3+|[#key-prefix-table-cell]*Key Prefix:* <<key-prefix-code-linenum,code-linenum>>^[2]^
+3+|[#key-prefix-code-linenum]*Key Prefix:* <<key-prefix-code-linenum,code-linenum>>^[2]^
 
 |font-color
 |<<colors,Color>> +
