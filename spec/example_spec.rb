@@ -55,4 +55,17 @@ describe 'Asciidoctor::PDF::Converter - Example' do
 
     (expect to_file).to visually_match 'example-page-split.pdf'
   end
+
+  it 'should not add signifier and numeral to caption if example-caption attribute is unset' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :!example-caption:
+
+    .Title
+    ====
+    content
+    ====
+    EOS
+
+    (expect pdf.lines[0]).to eql 'Title'
+  end
 end
