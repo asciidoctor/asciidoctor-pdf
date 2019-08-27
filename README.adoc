@@ -771,10 +771,11 @@ Therefore, the long lines are forced to wrap.
 Wrapped lines can make the verbatim blocks hard to read or even cause confusion.
 
 To help address this problem, Asciidoctor PDF provides the `autofit` option on all verbatim (i.e., literal, listing and source) blocks to attempt to fit the text within the available width.
-When the `autofit` option is enabled, Asciidoctor PDF will decrease the font size until the longest line fits without wrapping.
+When the `autofit` option is enabled, Asciidoctor PDF will decrease the font size (as much as it can) until the longest line fits without wrapping.
 
-CAUTION: The font size will not be decreased beyond the value of the `base_font_size_min` key specified in the PDF theme.
+CAUTION: The converter will not shrink the font size beyond the value of the `base_font_size_min` key specified in the PDF theme.
 If that threshold is reached, lines may still wrap.
+To allow `autofit` to handle all cases, set `base_font_size_min` to `0` in your theme.
 
 Here's an example of the autofit option enabled on a source block:
 
