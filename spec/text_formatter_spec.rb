@@ -109,7 +109,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         literal_border_offset: 1.25,
         literal_border_radius: 3,
       }
-      to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: theme_overrides, analyze: true
+      to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: theme_overrides
       (expect to_file).to visually_match 'text-formatter-code.pdf'
     end
 
@@ -121,12 +121,12 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         button_border_radius: 2.5,
         button_font_color: 'ffffff',
       }
-      to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button.pdf', pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }, analyze: true
+      to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button.pdf', pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }
       (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
 
     it 'should add background and border to key as defined in theme', integration: true do
-      to_file = to_pdf_file 'Press kbd:[Ctrl,c] to kill the server.', 'text-formatter-key.pdf', attribute_overrides: { 'experimental' => '' }, analyze: true
+      to_file = to_pdf_file 'Press kbd:[Ctrl,c] to kill the server.', 'text-formatter-key.pdf', attribute_overrides: { 'experimental' => '' }
       (expect to_file).to visually_match 'text-formatter-key.pdf'
     end
 

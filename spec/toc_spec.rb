@@ -318,7 +318,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       toc_dot_leader_font_color: 'CCCCCC',
       running_content_start_at: 'toc',
     }
-    to_file = to_pdf_file <<~'EOS', 'toc-running-content-font-color.pdf', pdf_theme: theme_overrides, analyze: true
+    to_file = to_pdf_file <<~'EOS', 'toc-running-content-font-color.pdf', pdf_theme: theme_overrides
     = Document Title
     Author Name
     :doctype: book

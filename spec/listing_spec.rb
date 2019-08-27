@@ -30,7 +30,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should use dashed border to indicate where block is split across a page boundary' do
-    to_file = to_pdf_file <<~EOS, 'listing-page-split.pdf', analyze: true
+    to_file = to_pdf_file <<~EOS, 'listing-page-split.pdf'
     ----
     #{(['listing'] * 60).join ?\n}
     ----
