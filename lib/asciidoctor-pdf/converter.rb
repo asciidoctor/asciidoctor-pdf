@@ -1421,6 +1421,7 @@ class Converter < ::Prawn::Document
             end
           end
           image_y = y
+          image_cursor = cursor
           add_dest_for_block node if node.id
           # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
           # breakage occurs when running content (stamps) are added to page
@@ -1429,6 +1430,7 @@ class Converter < ::Prawn::Document
           # NOTE prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
           # NOTE cursor advances automatically
           svg_obj.draw
+          draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? 'noborder'
           if (link = node.attr 'link', nil, false)
             add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
           end
@@ -1451,6 +1453,7 @@ class Converter < ::Prawn::Document
             end
           end
           image_y = y
+          image_cursor = cursor
           add_dest_for_block node if node.id
           # NOTE workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
           # breakage occurs when running content (stamps) are added to page
@@ -1458,6 +1461,7 @@ class Converter < ::Prawn::Document
           update_colors if graphic_state.color_space.empty?
           # NOTE specify both width and height to avoid recalculation
           embed_image image_obj, image_info, width: rendered_w, height: rendered_h, position: alignment
+          draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? 'noborder'
           if (link = node.attr 'link', nil, false)
             add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
           end
@@ -1472,6 +1476,22 @@ class Converter < ::Prawn::Document
     end
   ensure
     unlink_tmp_file image_path if image_path
+  end
+
+  def draw_image_border top, w, h, alignment
+    if (b_width = @theme.image_border_width || 0) > 0 && @theme.image_border_color
+      if (@theme.image_border_fit || 'content') == 'auto'
+        bb_width = bounds.width
+      elsif alignment == :center
+        bb_x = (bounds.width - w) * 0.5
+      elsif alignment == :right
+        bb_x = bounds.width - w
+      end
+      bounding_box [(bb_x || 0), top], width: (bb_width || w), height: h, position: alignment do
+        theme_fill_and_stroke_bounds :image, background_color: 'transparent'
+      end
+      true
+    end
   end
 
   def on_image_error reason, node, target, opts = {}

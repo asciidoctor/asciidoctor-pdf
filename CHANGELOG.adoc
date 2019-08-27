@@ -26,6 +26,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * insert blank page after cover if media=prepress (#1181)
 * add support for stretch role on table (as preferred alias for spread) (#1225)
 * include revremark on title page if specified (#1198)
+* allow theme to configure border around block image (#767)
 * align first block of list item with marker if primary text is blank (#1196)
 * apply correct margin to list item if primary text is blank (#1196)
 * allow page break before and after part and before chapter to be configured by theme (#74)

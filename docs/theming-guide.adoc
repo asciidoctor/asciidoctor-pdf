@@ -2797,10 +2797,37 @@ The keys in this category control the arrangement of block images.
 (default: _not set_)
 |image:
   width: 100%
+
+|border-color^[2]^
+|<<colors,Color>> +
+(default: _not set_)
+|image:
+  border-color: #cccccc
+
+|border-radius
+|<<values,Number>> +
+(default: _not set_)
+|image:
+  border-radius: 2
+
+|border-width^[2]^
+|<<values,Number>> +
+(default: _not set_)
+|image:
+  border-width: 0.5
+
+|border-fit^[3]^
+|content {vbar} auto
+(default: content)
+|image:
+  border-fit: auto
 |===
 
 . Only applies to block images.
 If specified, this value takes precedence over the value of the `width` attribute on the image macro, but not over the value of the `pdfwidth` attribute.
+. The border is only used if a border color is specified, the border width is specified, the border width is greater than 0, and the `noborder` role is not present.
+The border is drawn above the image on the inside of the box reserved for the image.
+. The value `auto` means the border should expand to fit the width of the container (i.e., full width) instead of the image.
 
 [#keys-svg]
 === SVG
