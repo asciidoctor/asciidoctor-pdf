@@ -26,6 +26,39 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     (expect link[:A][:URI]).to eql input
   end
 
+  it 'should split bare URL on breakable characters' do
+    [
+      'the URL on this line will get split on the ? char https://github.com/asciidoctor/asciidoctor/issues?|q=milestone%3Av2.0.x',
+      'the URL on this line will get split on the / char instead https://github.com/asciidoctor/asciidoctor/|issues?q=milestone%3Av2.0.x',
+      'the URL on this line will get split on the # char https://github.com/asciidoctor/asciidoctor/issues#|milestone%3Av2.0.x',
+    ].each do |text|
+      before, after = text.split '|', 2
+      pdf = to_pdf %(#{before}#{after}), analyze: true
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[0]).to end_with before
+      (expect lines[1]).to start_with after
+    end
+  end
+
+  it 'should not split bare URL when using an AFM font' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_family: 'Helvetica' }, analyze: true
+    this line contains a URL that falls at the end of the line and yet cannot be split https://goo.gl/search/asciidoctor
+    EOS
+    lines = pdf.lines
+    (expect lines).to have_size 2
+    (expect lines[1]).to eql 'https://goo.gl/search/asciidoctor'
+  end
+
+  it 'should not split bare URL after scheme' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    this line contains a URL that falls at the end of the line that is not split after the scheme https://goo.gl/search/asciidoctor
+    EOS
+    lines = pdf.lines
+    (expect lines).to have_size 2
+    (expect lines[1]).to eql 'https://goo.gl/search/asciidoctor'
+  end
+
   it 'should reveal URL of link when media=print or media=prepress' do
     %w(print prepress).each do |media|
       pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => 'print' }, analyze: true
