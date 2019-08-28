@@ -1975,6 +1975,7 @@ class Converter < ::Prawn::Document
             cell_data[:inline_format] = [normalize: true]
           end
         end
+        cell_data[:background_color] = (node.document.attr 'cellbgcolor')[1..-1] if node.document.attr? 'cellbgcolor'
         row_data << cell_data
       end
       table_data << row_data
