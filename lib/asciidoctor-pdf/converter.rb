@@ -2478,6 +2478,8 @@ class Converter < ::Prawn::Document
       open, close, is_tag = [?\u201c, ?\u201d, false]
     when :single
       open, close, is_tag = [?\u2018, ?\u2019, false]
+    when :mark
+      open, close, is_tag = ['<mark>', '</mark>', true]
     #when :asciimath, :latexmath
     else
       open, close, is_tag = [nil, nil, false]

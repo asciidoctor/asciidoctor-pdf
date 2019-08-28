@@ -467,19 +467,31 @@ module Markup
                           r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
                           r0 = r11
                         else
-                          if (match_len = has_terminal?('del', false, index))
+                          if (match_len = has_terminal?('mark', false, index))
                             r12 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                             @index += match_len
                           else
-                            terminal_parse_failure('del')
+                            terminal_parse_failure('mark')
                             r12 = nil
                           end
                           if r12
                             r12 = SyntaxNode.new(input, (index-1)...index) if r12 == true
                             r0 = r12
                           else
-                            @index = i0
-                            r0 = nil
+                            if (match_len = has_terminal?('del', false, index))
+                              r13 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                              @index += match_len
+                            else
+                              terminal_parse_failure('del')
+                              r13 = nil
+                            end
+                            if r13
+                              r13 = SyntaxNode.new(input, (index-1)...index) if r13 == true
+                              r0 = r13
+                            else
+                              @index = i0
+                              r0 = nil
+                            end
                           end
                         end
                       end

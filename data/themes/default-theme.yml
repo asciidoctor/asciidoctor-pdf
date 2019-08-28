@@ -81,6 +81,9 @@ key:
   border_width: 0.375
   font_family: $literal_font_family
   separator: "\u202f+\u202f"
+mark:
+  background_color: ffff00
+  border_offset: 0.5
 menu:
   caret_content: " <font size=\"1.15em\"><color rgb=\"b12146\">\u203a</color></font> "
 heading:

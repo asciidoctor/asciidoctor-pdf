@@ -32,7 +32,7 @@ class Transform
           color: theme.button_font_color,
           font: theme.button_font_family,
           size: theme.button_font_size,
-          styles: to_styles(theme.button_font_style),
+          styles: (to_styles theme.button_font_style),
           background_color: (button_bg_color = theme.button_background_color),
           border_width: (button_border_width = theme.button_border_width),
           border_color: button_border_width && (theme.button_border_color || theme.base_border_color),
@@ -44,7 +44,7 @@ class Transform
           color: theme.literal_font_color,
           font: theme.literal_font_family,
           size: theme.literal_font_size,
-          styles: to_styles(theme.literal_font_style),
+          styles: (to_styles theme.literal_font_style),
           background_color: (monospaced_bg_color = theme.literal_background_color),
           border_width: (monospaced_border_width = theme.literal_border_width),
           border_color: monospaced_border_width && (theme.literal_border_color || theme.base_border_color),
@@ -56,7 +56,7 @@ class Transform
           color: theme.key_font_color,
           font: theme.key_font_family || theme.literal_font_family,
           size: theme.key_font_size,
-          styles: to_styles(theme.key_font_style),
+          styles: (to_styles theme.key_font_style),
           background_color: (key_bg_color = theme.key_background_color),
           border_width: (key_border_width = theme.key_border_width),
           border_color: key_border_width && (theme.key_border_color || theme.base_border_color),
@@ -68,7 +68,14 @@ class Transform
           color: theme.link_font_color,
           font: theme.link_font_family,
           size: theme.link_font_size,
-          styles: to_styles(theme.link_font_style, theme.link_text_decoration),
+          styles: (to_styles theme.link_font_style, theme.link_text_decoration),
+        }.compact,
+        mark: {
+          color: theme.mark_font_color,
+          styles: (to_styles theme.mark_font_style),
+          background_color: (mark_bg_color = theme.mark_background_color),
+          border_offset: mark_bg_color && theme.mark_border_offset,
+          callback: mark_bg_color && [TextBackgroundAndBorderRenderer],
         }.compact,
       }
       theme.each_pair.reduce @theme_settings do |accum, (key, val)|
@@ -101,6 +108,7 @@ class Transform
         code: { font: 'Courier' },
         key: { font: 'Courier', styles: [:italic].to_set },
         link: { color: '0000FF' },
+        mark: { background_color: 'FFFF00', callback: [TextBackgroundAndBorderRenderer] },
         'big' => { size: '1.667em' },
         'small' => { size: '0.8333em' },
       }
@@ -192,7 +200,7 @@ class Transform
       styles << :bold
     when :em
       styles << :italic
-    when :code, :button, :key
+    when :button, :code, :key, :mark
       # NOTE prefer old value, except for styles and callback, which should be combined
       fragment.update(@theme_settings[tag_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : (k == :callback ? oval.union(nval) : oval) }
     when :color
