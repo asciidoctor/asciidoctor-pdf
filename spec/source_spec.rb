@@ -91,6 +91,21 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       (expect to_file).to visually_match 'source-rouge-style.pdf'
     end
+
+    it 'should not crash if source-highlighter attribute is defined outside of document header' do
+      (expect {
+        to_pdf <<~'EOS'
+        = Document Title
+
+        :source-highlighter: rouge
+
+        [source,ruby]
+        ----
+        puts 'yo, world!'
+        ----
+        EOS
+      }).not_to raise_exception
+    end
   end
 
   context 'CodeRay' do
@@ -108,6 +123,21 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect hello_text).not_to be_nil
       (expect hello_text[:font_color]).to eql 'CC3300'
       (expect hello_text[:font_name]).to eql 'mplus1mn-regular'
+    end
+
+    it 'should not crash if source-highlighter attribute is defined outside of document header' do
+      (expect {
+        to_pdf <<~'EOS'
+        = Document Title
+
+        :source-highlighter: coderay
+
+        [source,ruby]
+        ----
+        puts 'yo, world!'
+        ----
+        EOS
+      }).not_to raise_exception
     end
   end
 

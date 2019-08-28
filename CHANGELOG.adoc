@@ -38,6 +38,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add support for role to font-based icon (to change font color) (#349)
 * use fallback size for admonition icon
 * allow attribute reference in running content to be escaped using a backslash
+* don't crash if source-highlighter attribute is defined outside the header (#1231)
 
 == 1.5.0.beta.2 (2019-07-30) - @mojavelinux
 
