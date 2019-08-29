@@ -1807,7 +1807,8 @@ class Converter < ::Prawn::Document
     # append conums to appropriate lines, then flatten to an array of fragments
     lines.flat_map.with_index do |line, cur_line_num|
       last_line = cur_line_num == last_line_num
-      line.unshift text: %(#{(cur_line_num + linenums).to_s.rjust pad_size} ), color: linenum_color if linenums
+      # NOTE use ::String.new to ensure string is not frozen
+      line.unshift text: (::String.new %(#{(cur_line_num + linenums).to_s.rjust pad_size} )), color: linenum_color if linenums
       if (conums = conum_mapping.delete cur_line_num)
         line << { text: ' ' * num_trailing_spaces } if last_line && num_trailing_spaces > 0
         conum_text = conums.map {|num| conum_glyph num }.join ' '
