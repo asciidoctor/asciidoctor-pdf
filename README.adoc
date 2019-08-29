@@ -150,6 +150,17 @@ Then, install the gem from RubyGems.org using the following command:
 
  $ gem install asciidoctor-pdf --pre
 
+If you're on a Mac and get the following error:
+
+```
+ERROR:  While executing gem ... (Gem::FilePermissionError)
+    You don't have write permissions for the /Library/Ruby/Gems/2.x.x directory.
+```
+
+Then your currently installed version of Ruby is owned by Apple and part of the system code. While you could override this ownership, a better practice is to install your own local copy using `brew install ruby` or the installation mechanism of your choice.
+
+Your non-system version of Ruby will likely live at `/usr/local/opt/ruby/bin` - you may need to explictly add that to your path.
+
 If you want to syntax highlight source listings, you'll also want to install Rouge, Pygments, or CodeRay.
 Choose one (or more) of the following:
 
