@@ -1663,7 +1663,7 @@ class Converter < ::Prawn::Document
       end
       fragments = text_formatter.format result
       fragments = restore_conums fragments, conum_mapping, num_trailing_spaces, linenums if conum_mapping
-      fragments = guard_indentation fragments
+      fragments = guard_indentation_in_fragments fragments
     when 'rouge'
       if (srclang = node.attr 'language', nil, false)
         if srclang.include? '?'
@@ -1820,18 +1820,6 @@ class Converter < ::Prawn::Document
 
   def conum_glyph number
     @conum_glyphs[number - 1]
-  end
-
-  # Adds guards to preserve indentation
-  def guard_indentation fragments
-    start_of_line = true
-    fragments.each do |fragment|
-      next if (text = fragment[:text]).empty?
-      text[0] = GuardedIndent if start_of_line && (text.start_with? ' ')
-      text.gsub! InnerIndent, GuardedInnerIndent if text.include? InnerIndent
-      start_of_line = text.end_with? LF
-    end
-    fragments
   end
 
   def convert_table node
@@ -3570,7 +3558,7 @@ class Converter < ::Prawn::Document
     (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + line_metrics.padding_bottom
   end
 
-  def guard_indentation string, guard_indent = true
+  def guard_indentation string
     if string
       string[0] = GuardedIndent if string.start_with? ' '
       string.gsub! InnerIndent, GuardedInnerIndent if string.include? InnerIndent
@@ -3578,6 +3566,17 @@ class Converter < ::Prawn::Document
     else
       ''
     end
+  end
+
+  def guard_indentation_in_fragments fragments
+    start_of_line = true
+    fragments.each do |fragment|
+      next if (text = fragment[:text]).empty?
+      text[0] = GuardedIndent if start_of_line && (text.start_with? ' ')
+      text.gsub! InnerIndent, GuardedInnerIndent if text.include? InnerIndent
+      start_of_line = text.end_with? LF
+    end
+    fragments
   end
 
   # Derive a PDF-safe, ASCII-only anchor name from the given value.
