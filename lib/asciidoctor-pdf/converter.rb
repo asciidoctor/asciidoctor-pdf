@@ -122,7 +122,6 @@ class Converter < ::Prawn::Document
       doc.attributes['data-uri'] = ((doc.instance_variable_get :@attribute_overrides) || {})['data-uri'] = ''
     end
     @capabilities = {
-      expands_tabs: (::Asciidoctor::VERSION.start_with? '1.5.3.') || AsciidoctorVersion >= (::Gem::Version.create '1.5.3'),
       special_sectnums: AsciidoctorVersion >= (::Gem::Version.create '1.5.7'),
       syntax_highlighter: AsciidoctorVersion >= (::Gem::Version.create '2.0.0'),
     }
@@ -918,7 +917,7 @@ class Converter < ::Prawn::Document
           if node.context == :quote
             convert_content_for_block node
           else # verse
-            content = preserve_indentation node.content, (node.attr 'tabsize')
+            content = guard_indentation node.content
             layout_prose content, normalize: false, align: :left
           end
         end
@@ -1597,7 +1596,7 @@ class Converter < ::Prawn::Document
         else
           prev_subs = nil
         end
-        source_string = preserve_indentation node.content, (node.attr 'tabsize')
+        source_string = guard_indentation node.content
       else
         # NOTE the source highlighter logic below handles the callouts and highlight subs
         if highlight_idx
@@ -1606,12 +1605,12 @@ class Converter < ::Prawn::Document
           subs.delete_all :specialcharacters, :callouts
         end
         # the indent guard will be added by the source highlighter logic
-        source_string = preserve_indentation node.content, (node.attr 'tabsize'), false
+        source_string = node.content || ''
       end
     else
       highlighter = nil
       prev_subs = nil
-      source_string = preserve_indentation node.content, (node.attr 'tabsize')
+      source_string = guard_indentation node.content
     end
 
     bg_color_override = nil
@@ -1941,7 +1940,7 @@ class Converter < ::Prawn::Document
           cell_line_metrics = calc_line_metrics theme.base_line_height
         when :literal
           # FIXME core should not substitute in this case
-          cell_data[:content] = preserve_indentation((cell.instance_variable_get :@text), (node.document.attr 'tabsize'))
+          cell_data[:content] = guard_indentation cell.instance_variable_get :@text
           # NOTE the absence of the inline_format option implies it's disabled
           # QUESTION should we use literal_font_*, code_font_*, or introduce another category?
           cell_data[:font] = theme.code_font_family
@@ -1953,7 +1952,7 @@ class Converter < ::Prawn::Document
           end
           cell_line_metrics = calc_line_metrics theme.code_line_height
         when :verse
-          cell_data[:content] = preserve_indentation cell.text, (node.document.attr 'tabsize')
+          cell_data[:content] = guard_indentation cell.text
           cell_data[:inline_format] = true
           cell_line_metrics = calc_line_metrics theme.base_line_height
         when :asciidoc
@@ -3571,59 +3570,13 @@ class Converter < ::Prawn::Document
     (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + line_metrics.padding_bottom
   end
 
-  def preserve_indentation string, tab_size = nil, guard_indent = true
-    return '' unless string
-    # expand tabs if they aren't already expanded, even if explicitly disabled
-    # NOTE Asciidoctor >= 1.5.3 already replaces tabs if tabsize attribute is positive
-    if ((tab_size = tab_size.to_i) < 1 || !@capabilities[:expands_tabs]) && (string.include? TAB)
-      # Asciidoctor <= 1.5.2 already does tab replacement in some cases, so be consistent about tab size
-      full_tab_space = ' ' * (tab_size = 4)
-      result = []
-      string.each_line do |line|
-        if line.start_with? TAB
-          if guard_indent
-            # NOTE '+' operator is faster than interpolation
-            line.sub!(TabIndentRx) { GuardedIndent + (full_tab_space * $&.length).chop! }
-          else
-            line.sub!(TabIndentRx) { full_tab_space * $&.length }
-          end
-          leading_space = false
-        # QUESTION should we check for LF first?
-        elsif line == LF
-          result << line
-          next
-        else
-          leading_space = guard_indent && (line.start_with? ' ')
-        end
-
-        if line.include? TAB
-          # keep track of how many spaces were added to adjust offset in match data
-          spaces_added = 0
-          line.gsub!(TabRx) {
-            # calculate how many spaces this tab represents, then replace tab with spaces
-            if (offset = ($~.begin 0) + spaces_added) % tab_size == 0
-              spaces_added += (tab_size - 1)
-              full_tab_space
-            else
-              unless (spaces = tab_size - offset % tab_size) == 1
-                spaces_added += (spaces - 1)
-              end
-              ' ' * spaces
-            end
-          }
-        end
-
-        # NOTE we save time by adding indent guard per line while performing tab expansion
-        line[0] = GuardedIndent if leading_space
-        result << line
-      end
-      result.join
-    else
-      if guard_indent
-        string[0] = GuardedIndent if string.start_with? ' '
-        string.gsub! InnerIndent, GuardedInnerIndent if string.include? InnerIndent
-      end
+  def guard_indentation string, guard_indent = true
+    if string
+      string[0] = GuardedIndent if string.start_with? ' '
+      string.gsub! InnerIndent, GuardedInnerIndent if string.include? InnerIndent
       string
+    else
+      ''
     end
   end
 
