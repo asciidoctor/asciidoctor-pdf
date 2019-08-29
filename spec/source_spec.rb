@@ -141,6 +141,47 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
   end
 
+  context 'Pygments' do
+    it 'should highlight source using CodeRay if source-highlighter is coderay' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: pygments
+
+      [source,ruby]
+      ----
+      puts "Hello, Pygments!"
+      ----
+      EOS
+
+      hello_text = (pdf.find_text '"Hello, Pygments!"')[0]
+      (expect hello_text).not_to be_nil
+      (expect hello_text[:font_color]).to eql 'DD2200'
+      (expect hello_text[:font_name]).to eql 'mplus1mn-regular'
+    end
+
+    it 'should not crash when aligning line numbers' do
+      (expect {
+        to_pdf <<~'EOS', analyze: true
+        :source-highlighter: pygments
+
+        [source,xml,linenums]
+        ----
+        <?xml version="1.0" encoding="UTF-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+          <url>
+            <loc>https://example.org/home.html</loc>
+            <lastmod>2019-01-01T00:00:00.000Z</lastmod>
+          </url>
+          <url>
+            <loc>https://example.org/about.html</loc>
+            <lastmod>2019-01-01T00:00:00.000Z</lastmod>
+          </url>
+        </urlset>
+        ----
+        EOS
+      }).not_to raise_exception
+    end
+  end if ENV.key? 'PYGMENTS_VERSION'
+
   context 'Callouts' do
     it 'should substitute autonumber callouts with circled numbers when using rouge as syntax highlighter' do
       pdf = to_pdf <<~'EOS', analyze: true
