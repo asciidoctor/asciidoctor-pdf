@@ -255,6 +255,20 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_bottom_text[:y] - content_top_text[:y]).to be < 35
     end
 
+    it 'should insert toc at top of first page if toc is set and document has no doctitle' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :toc:
+
+      == Section A
+
+      == Section B
+      EOS
+
+      toc_title_text = (pdf.find_text 'Table of Contents')[0]
+      sect_a_text = (pdf.find_text string: 'Section A', font_size: 22)[0]
+      (expect toc_title_text[:y]).to be > sect_a_text[:y]
+    end
+
     it 'should reserve enough pages for toc if it spans more than one page' do
       sections = (1..40).map {|num| %(\n\n== Section #{num}) }
       input = <<~EOS
