@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow page background color and background image to be used simultaneously (#1186)
 * allow multiple font dirs to be specified (#80)
 * allow theme to specifiy initial zoom (#305)
+* strip surrounding whitespace from text in normal table cells
 * allow attribute references to be used in image paths in theme (#588)
 * honor the cellbgcolor attribute defined in a table cell to set the cell background color (#234) (*mch*)
 * add the .notdef glyph to the bundled fonts (a box which is used as the default glyph if the font is missing a character) (#1194)

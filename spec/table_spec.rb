@@ -438,6 +438,40 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect text).not_to include ?\n
       (expect text).to include 'man, Sitting'
     end
+
+    it 'should strip whitespace after applying substitutions' do
+      ['%autowidth', '%header%autowidth'].each do |table_attrs|
+        pdf = to_pdf <<~EOS, analyze: :line
+        [#{table_attrs}]
+        |===
+        | text
+        |===
+
+        <<<
+
+        [#{table_attrs}]
+        |===
+        | text {empty}
+        |===
+
+        <<<
+
+        [#{table_attrs}]
+        |===
+        | {empty} text
+        |===
+        EOS
+
+        lines_by_page = pdf.lines.reduce ::Hash.new do |accum, line|
+          (accum[line.delete :page_number] ||= []) << line
+          accum
+        end
+        (expect lines_by_page[1]).to have_size 4
+        (2..3).each do |rownum|
+          (expect lines_by_page[1]).to eql lines_by_page[rownum]
+        end
+      end
+    end
   end
 
   context 'AsciiDoc table cell' do

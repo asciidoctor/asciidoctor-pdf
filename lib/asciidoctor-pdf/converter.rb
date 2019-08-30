@@ -1856,7 +1856,7 @@ class Converter < ::Prawn::Document
       row_data = []
       row.each do |cell|
         row_data << {
-          content: (head_transform ? (transform_text cell.text, head_transform) : cell.text),
+          content: (head_transform ? (transform_text cell.text.strip, head_transform) : cell.text.strip),
           inline_format: [normalize: true],
           background_color: head_bg_color,
           text_color: (theme.table_head_font_color || theme.table_font_color || @font_color),
@@ -1965,7 +1965,9 @@ class Converter < ::Prawn::Document
           #cell_data[:final_gap] = cell_line_metrics.final_gap
         end
         unless cell_data.key? :content
-          if (cell_text = cell_transform ? (transform_text cell.text, cell_transform) : cell.text).include? LF
+          cell_text = cell.text.strip
+          cell_text = transform_text cell_text if cell_transform
+          if cell_text.include? LF
             # NOTE effectively the same as calling cell.content (should we use that instead?)
             # FIXME hard breaks not quite the same result as separate paragraphs; need custom cell impl here
             cell_data[:content] = (cell_text.split BlankLineRx).map {|l| l.tr_s WhitespaceChars, ' ' }.join DoubleLF
