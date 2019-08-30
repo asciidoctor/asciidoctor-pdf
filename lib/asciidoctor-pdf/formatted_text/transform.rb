@@ -20,6 +20,11 @@ class Transform
     'font_family' => :font,
     'font_size' => :size,
     'font_style' => :styles,
+    'background_color' => :background_color,
+    'border_offset' => :border_offset,
+    'border_radius' => :border_radius,
+    'border_width' => :border_width,
+    'border_color' => :border_color,
   }
   #DummyText = ?\u0000
 
@@ -321,6 +326,7 @@ class Transform
         styles << :strikethrough
       else
         fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : oval } if @theme_settings.key? class_name
+        (fragment[:callback] ||= []) << TextBackgroundAndBorderRenderer
       end
     end if attrs.key?(:class)
     fragment.delete(:styles) if styles.empty?

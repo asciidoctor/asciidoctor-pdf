@@ -238,5 +238,20 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[1][:font_size]).to eql 12
       (expect text[2][:font_size].to_f.round 2).to eql 10.0
     end
+
+    it 'should allow theme to override background and border for custom role' do
+      theme_overrides = {
+          role_variable_font_family: 'Courier',
+          role_variable_font_size: 10,
+          role_variable_font_color: 'FFFFFF',
+          role_variable_background_color: 'CF2974',
+          role_variable_border_color: 'ED398A',
+          role_variable_border_offset: 1.25,
+          role_variable_border_radius: 2,
+          role_variable_border_width: 1
+      }
+      to_file = to_pdf_file '[.variable]#counter#', 'text-formatter-inline-role-bg.pdf', pdf_theme: theme_overrides
+      (expect to_file).to visually_match 'text-formatter-inline-role-bg.pdf'
+    end
   end
 end
