@@ -16,6 +16,11 @@ class Transform
   CharRefRx = /&(?:(#{CharEntityTable.keys.join ?|})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
   TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
   ThemeKeyToFragmentProperty = {
+    'background_color' => :background_color,
+    'border_color' => :border_color,
+    'border_offset' => :border_offset,
+    'border_radius' => :border_radius,
+    'border_width' => :border_width,
     'font_color' => :color,
     'font_family' => :font,
     'font_size' => :size,
@@ -321,6 +326,9 @@ class Transform
         styles << :strikethrough
       else
         fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : oval } if @theme_settings.key? class_name
+        if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
+          ((fragment[:callback] ||= []) << TextBackgroundAndBorderRenderer).uniq!
+        end 
       end
     end if attrs.key?(:class)
     fragment.delete(:styles) if styles.empty?

@@ -44,6 +44,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow attribute reference in running content to be escaped using a backslash
 * fix crash if source-highlighter attribute is defined outside the header (#1231)
 * fix crash when aligning line numbers of source highlighted with Pygments (#1233)
+* allow theme to configure text background and border on marks elements (#1223)
 
 == 1.5.0.beta.2 (2019-07-30) - @mojavelinux
 
