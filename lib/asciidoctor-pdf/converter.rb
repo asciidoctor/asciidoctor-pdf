@@ -196,8 +196,8 @@ class Converter < ::Prawn::Document
         theme_font :heading, level: 1 do
           layout_heading doc.doctitle, align: (@theme.heading_h1_align || :center).to_sym, level: 1
         end
-        toc_start = @y
       end
+      toc_start = @y
     end
 
     # NOTE font must be set before toc dry run to ensure dry run size is accurate
