@@ -16,15 +16,15 @@ class Transform
   CharRefRx = /&(?:(#{CharEntityTable.keys.join ?|})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
   TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
   ThemeKeyToFragmentProperty = {
+    'background_color' => :background_color,
+    'border_color' => :border_color,
+    'border_offset' => :border_offset,
+    'border_radius' => :border_radius,
+    'border_width' => :border_width,
     'font_color' => :color,
     'font_family' => :font,
     'font_size' => :size,
     'font_style' => :styles,
-    'background_color' => :background_color,
-    'border_offset' => :border_offset,
-    'border_radius' => :border_radius,
-    'border_width' => :border_width,
-    'border_color' => :border_color,
   }
   #DummyText = ?\u0000
 
