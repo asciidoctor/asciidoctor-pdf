@@ -150,6 +150,39 @@ Then, install the gem from RubyGems.org using the following command:
 
  $ gem install asciidoctor-pdf --pre
 
+=== Installation Troubleshooting
+
+If you get a permission error while installing the gem, such as the one below, it's likely you're attempting to install the gem directly into your system.
+Installing gems for tech writing directly into your system is not recommended.
+
+.Permission error when attempting to install as a system gem
+....
+ERROR:  While executing gem ... (Gem::FilePermissionError)
+    You don't have write permissions for the /Library/Ruby/Gems/2.x.x directory.
+....
+
+A better practice (and one that will ensure your sanity) is to ignore any version of Ruby installed on your system and use https://rvm.io[RVM] to manage the Ruby installation instead.
+The benefit of this approach is that a) Ruby is guaranteed to be set up correctly, b) installing gems will in no way interfere with the operation of your system, and c) any bin scripts provided by the installed gems will be available on your PATH.
+All files are managed in user space (aka your home or user directory).
+If something gets messed up, you can simply remove the `$HOME/.rvm` folder and start over.
+
+To learn how to install RVM, follow the https://asciidoctor.org/docs/install-asciidoctor-macos/#rvm-procedure-recommended[RVM installation procedure] covered in the Asciidoctor documentation.
+Once you have installed RVM and used it to install Ruby, make sure to activate the Ruby managed by RVM using `rvm use default` or a specific Ruby version like `rvm use 2.6`.
+(You'll need to do this each time you open a new terminal).
+
+After installing the gem, you can see where it was installed using the following command:
+
+ $ gem which asciidoctor-pdf
+
+To see where the bin script is located, use this command:
+
+ $ command -v asciidoctor-pdf
+
+Both paths should be underneath the [.path]_.rvm_ directory.
+If not, check your RVM setup.
+
+==== Install a Syntax Highlighter (optional)
+
 If you want to syntax highlight source listings, you'll also want to install Rouge, Pygments, or CodeRay.
 Choose one (or more) of the following:
 
