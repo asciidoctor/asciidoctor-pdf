@@ -7,12 +7,13 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* allow multiple font dirs to be specified using the pdf-fontsdir attribute (#80)
 * fill and stroke bounds of example across all pages (#362)
 * allow page background color and background image to be used simultaneously (#1186)
-* allow multiple font dirs to be specified (#80)
 * allow theme to specifiy initial zoom (#305)
 * strip surrounding whitespace from text in normal table cells
 * allow attribute references to be used in image paths in theme (#588)
+* resolve variables in font catalog in theme file
 * honor the cellbgcolor attribute defined in a table cell to set the cell background color (#234) (*mch*)
 * add the .notdef glyph to the bundled fonts (a box which is used as the default glyph if the font is missing a character) (#1194)
 * don't drop headings if base font family is not set in theme
@@ -37,14 +38,13 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * use value of theme key heading-margin-page-top as top margin for heading if cursor is at top of page (#576)
 * resolve icon image relative to docdir instead of current working directory
 * allow theme to style mark element; add default styles to built-in themes (#1226)
-* resolve variables in font catalog in theme file
 * if value of scripts attribute is cjk, break lines between any two CJK characters (except punctuation) (#1206)
 * add support for role to font-based icon (to change font color) (#349)
 * use fallback size for admonition icon
 * allow attribute reference in running content to be escaped using a backslash
+* allow theme to configure text background and border on a phrase with a custom role (#1223)
 * fix crash if source-highlighter attribute is defined outside the header (#1231)
 * fix crash when aligning line numbers of source highlighted with Pygments (#1233)
-* allow theme to configure text background and border on marks elements (#1223)
 
 == 1.5.0.beta.2 (2019-07-30) - @mojavelinux
 
