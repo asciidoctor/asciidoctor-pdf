@@ -239,7 +239,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[2][:font_size].to_f.round 2).to eql 10.0
     end
 
-    it 'should allow theme to override background and border for custom role' do
+    it 'should allow theme to override background and border for custom role', integration: true do
       theme_overrides = {
           role_variable_font_family: 'Courier',
           role_variable_font_size: 10,
