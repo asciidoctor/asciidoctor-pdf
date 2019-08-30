@@ -326,7 +326,9 @@ class Transform
         styles << :strikethrough
       else
         fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : oval } if @theme_settings.key? class_name
-        (fragment[:callback] ||= []) << TextBackgroundAndBorderRenderer
+        if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
+          ((fragment[:callback] ||= []) << TextBackgroundAndBorderRenderer).uniq!
+        end 
       end
     end if attrs.key?(:class)
     fragment.delete(:styles) if styles.empty?
