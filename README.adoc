@@ -150,7 +150,7 @@ Then, install the gem from RubyGems.org using the following command:
 
  $ gem install asciidoctor-pdf --pre
 
-=== Installation Troubleshooting
+==== Installation Troubleshooting
 
 If you get a permission error while installing the gem, such as the one below, it's likely you're attempting to install the gem directly into your system.
 Installing gems for tech writing directly into your system is not recommended.
