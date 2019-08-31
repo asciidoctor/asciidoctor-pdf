@@ -475,7 +475,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
   end
 
   context 'Literal table cell' do
-    it 'wip should not apply substitutions' do
+    it 'should not apply substitutions' do
       pdf = to_pdf <<~'EOS', analyze: true
       |===
       l|{asciidoctor-version} foo--bar
