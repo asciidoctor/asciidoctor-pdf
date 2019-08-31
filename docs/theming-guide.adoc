@@ -4201,6 +4201,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |title-page-background-image
 |path^[2]^ {vbar} image macro^[3]^
 |:title-page-background-image: image:title-bg.jpg[]
+
+|toc-max-pagenum-digits^[9]^
+|Integer (default: 3)
+|:toc-max-pagenum-digits: 4
 |===
 
 . `<face>` can be `front` or `back`.
@@ -4221,6 +4225,7 @@ The value of this attribute overrides the `base-align` key set by the theme.
 For more fine-grained control, you should customize using the theme.
 . The title page is only enabled by default for the book doctype.
 To force the title page to be used for other doctypes, set the `title-page` attribute in the document header.
+. If the TOC overlaps the first page of content, increase this number.
 
 == Publishing Mode
 
