@@ -122,6 +122,7 @@ class Converter < ::Prawn::Document
       doc.attributes['data-uri'] = ((doc.instance_variable_get :@attribute_overrides) || {})['data-uri'] = ''
     end
     @capabilities = {
+      honors_literal_cell_style: AsciidoctorVersion >= (::Gem::Version.create '1.5.6'),
       special_sectnums: AsciidoctorVersion >= (::Gem::Version.create '1.5.7'),
       syntax_highlighter: AsciidoctorVersion >= (::Gem::Version.create '2.0.0'),
     }
@@ -1928,8 +1929,7 @@ class Converter < ::Prawn::Document
           end
           cell_line_metrics = calc_line_metrics theme.base_line_height
         when :literal
-          # FIXME core should not substitute in this case
-          cell_data[:content] = guard_indentation cell.instance_variable_get :@text
+          cell_data[:content] = @capabilities[:honors_literal_cell_style] ? (guard_indentation cell.text) : (guard_indentation cell.instance_variable_get :@text)
           # NOTE the absence of the inline_format option implies it's disabled
           # QUESTION should we use literal_font_*, code_font_*, or introduce another category?
           cell_data[:font] = theme.code_font_family

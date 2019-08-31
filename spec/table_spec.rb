@@ -474,6 +474,18 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
   end
 
+  context 'Literal table cell' do
+    it 'wip should not apply substitutions' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      |===
+      l|{asciidoctor-version} foo--bar
+      |===
+      EOS
+
+      (expect pdf.lines[0]).to eql '{asciidoctor-version} foo--bar'
+    end
+  end
+
   context 'AsciiDoc table cell' do
     it 'should convert blocks in an AsciiDoc table cell' do
       pdf = to_pdf <<~'EOS', analyze: true
