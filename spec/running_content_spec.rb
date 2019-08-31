@@ -57,6 +57,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect text[0][:string]).to eql 'Document Title'
   end
 
+  it 'should add running content if document is empty' do
+    pdf = to_pdf '', attributes: { 'nofooter' => nil }, analyze: true
+    text = pdf.text
+    (expect text).to have_size 1
+    (expect text[0][:string]).to eql '1'
+  end
+
   it 'should start running content at title page if running_content_start_at key is title' do
     theme_overrides = { running_content_start_at: 'title' }
 
