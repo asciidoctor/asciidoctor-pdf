@@ -30,14 +30,34 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
     end
 
     it 'should set Author and Producer field to value of author attribute if set' do
-      pdf = to_pdf <<~'EOS'
-      = Document Title
-      Author Name
+      ['Author Name', ':author: Author Name'].each do |author_line|
+        pdf = to_pdf <<~EOS
+        = Document Title
+        #{author_line}
 
-      content
-      EOS
-      (expect pdf.info[:Producer]).to eql pdf.info[:Author]
-      (expect pdf.info[:Author]).to eql 'Author Name'
+        content
+        EOS
+        (expect pdf.info[:Producer]).to eql pdf.info[:Author]
+        (expect pdf.info[:Author]).to eql 'Author Name'
+      end
+    end
+
+    it 'should set Author and Producer field to value of author attribute if set to multiple authors' do
+      ['Author Name; Assistant Name', ':authors: Author Name; Assistant Name'].each do |author_line|
+        pdf = to_pdf <<~EOS
+        = Document Title
+        #{author_line}
+
+        [%hardbreaks]
+        First Author: {author_1}
+        Second Author: {author_2}
+        EOS
+        lines = ((pdf.page 1).text.split ?\n).map &:strip
+        (expect pdf.info[:Producer]).to eql pdf.info[:Author]
+        (expect pdf.info[:Author]).to eql 'Author Name, Assistant Name'
+        (expect lines).to include 'First Author: Author Name'
+        (expect lines).to include 'Second Author: Assistant Name'
+      end
     end
 
     it 'should set Producer field to value of publisher attribute if set' do
