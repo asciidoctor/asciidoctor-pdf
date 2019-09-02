@@ -320,6 +320,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
   end
 
+  context 'allow-uri-read' do
+    it 'should warn if image is remote and allow-uri-read is not set' do
+      (expect {
+        pdf = to_pdf 'image::https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png[Remote Image]', analyze: true
+        (expect pdf.lines).to eql ['[Remote Image] | https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png']
+      }).to log_message severity: :WARN, message: '~allow-uri-read is not enabled; cannot embed remote image'
+    end
+  end
+
   context 'Link' do
     it 'should add link around block raster image if link attribute is set' do
       pdf = to_pdf <<~'EOS'
