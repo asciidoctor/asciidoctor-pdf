@@ -327,6 +327,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         (expect pdf.lines).to eql ['[Remote Image] | https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png']
       }).to log_message severity: :WARN, message: '~allow-uri-read is not enabled; cannot embed remote image'
     end
+
+    it 'should read remote image if allow-uri-read is set' do
+      pdf = to_pdf 'image::https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png[Remote Image]', attribute_overrides: { 'allow-uri-read' => '' }
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect (pdf.page 1).text).to be_empty
+    end
   end
 
   context 'Link' do
