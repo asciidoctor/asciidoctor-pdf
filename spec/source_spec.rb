@@ -142,7 +142,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
   end
 
   context 'Pygments' do
-    it 'should highlight source using CodeRay if source-highlighter is coderay' do
+    it 'should highlight source using Pygments if source-highlighter is pygments' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: pygments
 
@@ -158,9 +158,28 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect hello_text[:font_name]).to eql 'mplus1mn-regular'
     end
 
+    it 'should not crash when adding indentation guards' do
+      (expect {
+        pdf = to_pdf <<~EOS, analyze: true
+        :source-highlighter: pygments
+
+        [source,yaml]
+        ---
+        category:
+          hash:
+            key: "value"
+        ---
+        EOS
+        (expect pdf.find_text 'category:').to have_size 1
+        (expect pdf.find_text %(\u00a0 hash:)).to have_size 1
+        (expect pdf.find_text %(\u00a0   key: )).to have_size 1
+        (expect pdf.find_text '"value"').to have_size 1
+      }).not_to raise_exception
+    end
+
     it 'should not crash when aligning line numbers' do
       (expect {
-        to_pdf <<~'EOS', analyze: true
+        to_pdf <<~'EOS'
         :source-highlighter: pygments
 
         [source,xml,linenums]
