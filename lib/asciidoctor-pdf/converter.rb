@@ -1808,8 +1808,7 @@ class Converter < ::Prawn::Document
     # append conums to appropriate lines, then flatten to an array of fragments
     lines.flat_map.with_index do |line, cur_line_num|
       last_line = cur_line_num == last_line_num
-      # NOTE use ::String.new to ensure string is not frozen
-      line.unshift text: (::String.new %(#{(cur_line_num + linenums).to_s.rjust pad_size} )), color: linenum_color if linenums
+      line.unshift text: %(#{(cur_line_num + linenums).to_s.rjust pad_size} ), color: linenum_color if linenums
       if (conums = conum_mapping.delete cur_line_num)
         line << { text: ' ' * num_trailing_spaces } if last_line && num_trailing_spaces > 0
         conum_text = conums.map {|num| conum_glyph num }.join ' '
@@ -3480,10 +3479,10 @@ class Converter < ::Prawn::Document
     arranger = ::Prawn::Text::Formatted::Arranger.new self
     by_line = arranger.consumed = []
     fragments.each do |fragment|
-      if (txt = fragment[:text]) == LF
+      if (text = fragment[:text]) == LF
         by_line << fragment
-      elsif txt.include? LF
-        txt.scan(LineScanRx) do |line|
+      elsif text.include? LF
+        text.scan(LineScanRx) do |line|
           by_line << (line == LF ? { text: LF } : (fragment.merge text: line))
         end
       else
@@ -3576,8 +3575,11 @@ class Converter < ::Prawn::Document
     start_of_line = true
     fragments.each do |fragment|
       next if (text = fragment[:text]).empty?
-      text[0] = GuardedIndent if start_of_line && (text.start_with? ' ')
-      text.gsub! InnerIndent, GuardedInnerIndent if text.include? InnerIndent
+      if start_of_line && (text.start_with? ' ')
+        fragment[:text] = GuardedIndent + (((text = text.slice 1, text.length).include? InnerIndent) ? (text.gsub InnerIndent, GuardedInnerIndent) : text)
+      elsif text.include? InnerIndent
+        fragment[:text] = text.gsub InnerIndent, GuardedInnerIndent
+      end
       start_of_line = text.end_with? LF
     end
     fragments
