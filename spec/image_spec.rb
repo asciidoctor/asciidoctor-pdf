@@ -334,6 +334,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect images).to have_size 1
       (expect (pdf.page 1).text).to be_empty
     end
+
+    it 'should use image format specified by format attribute' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'allow-uri-read' => '' }, analyze: :rect
+      :pdf-page-size: 200x400
+      :pdf-page-margin: 0
+
+      image::https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/square.svg?v=1[format=svg,pdfwidth=100%]
+      EOS
+      (expect pdf.rectangles).to have_size 1
+      rect = pdf.rectangles[0]
+      (expect rect[:point]).to eql [0.0, 200.0]
+      (expect rect[:width]).to eql 200.0
+      (expect rect[:height]).to eql 200.0
+    end
   end
 
   context 'Link' do
