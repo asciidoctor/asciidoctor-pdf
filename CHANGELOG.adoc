@@ -5,6 +5,10 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+* allow font catalog and font fallbacks to be defined as flat keys in the theme file (#1243)
+
 == 1.5.0.beta.3 (2019-08-30) - @mojavelinux
 
 * allow multiple font dirs to be specified using the pdf-fontsdir attribute (#80)

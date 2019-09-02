@@ -122,29 +122,26 @@ class ThemeLoader
     key = key.tr '-', '_' if key.include? '-'
     if key == 'font'
       val.each do |subkey, subval|
-        if subkey == 'catalog' && ::Hash === subval
-          subval = subval.reduce({}) do |accum, (name, styles)|
-            if ::Hash === styles
-              accum[name] = styles.reduce({}) do |subaccum, (style, path)|
-                if (path.start_with? 'GEM_FONTS_DIR') && (sep = path[13])
-                  path = %(#{FontsDir}#{sep}#{path.slice 14, path.length})
-                end
-                subaccum[style] = expand_vars path, data
-                subaccum
-              end
-            else
-              accum[name] = styles
-            end
-            accum
+        process_entry %(#{key}_#{subkey}), subval, data if subkey == 'catalog' || subkey == 'fallbacks'
+      end if ::Hash === val
+    elsif key == 'font_catalog'
+      data[key] = ::Hash === val ? val.reduce({}) {|accum, (name, styles)|
+        accum[name] = styles.reduce({}) do |subaccum, (style, path)|
+          if (path.start_with? 'GEM_FONTS_DIR') && (sep = path[13])
+            path = %(#{FontsDir}#{sep}#{path.slice 14, path.length})
           end
-        end
-        data[%(font_#{subkey})] = subval
-      end
+          subaccum[style] = expand_vars path, data
+          subaccum
+        end if ::Hash === styles
+        accum
+      } : {}
+    elsif key == 'font_fallbacks'
+      data[key] = ::Array === val ? val.map {|name| expand_vars name.to_s, data } : []
     elsif key.start_with? 'admonition_icon_'
-      data[key] = (val || {}).map do |(key2, val2)|
+      data[key] = val ? val.map {|(key2, val2)|
         key2 = key2.tr '-', '_' if key2.include? '-'
         [key2.to_sym, (key2.end_with? '_color') ? to_color(evaluate val2, data) : (evaluate val2, data)]
-      end.to_h
+      }.to_h : {}
     elsif ::Hash === val
       val.each {|subkey, subval| process_entry %(#{key}_#{subkey}), subval, data }
     elsif key.end_with? '_color'

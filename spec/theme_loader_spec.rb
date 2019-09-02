@@ -79,6 +79,24 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.ulist_marker_disc_content).to eql '0'
       (expect theme.footer_recto_left_content).to eql 'true'
     end
+
+    it 'should allow font catalog and font fallbacks to be defined as flat keys' do
+      theme_data = SafeYAML.load <<~EOS
+      font_catalog:
+        Serif:
+          normal: /path/to/serif-font.ttf
+        Fallback:
+          normal: /path/to/fallback-font.ttf
+      font_fallbacks:
+      - Fallback
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.font_catalog).to be_a Hash
+      (expect theme.font_catalog['Serif']).to be_a Hash
+      (expect theme.font_catalog['Serif']['normal']).to eql '/path/to/serif-font.ttf'
+      (expect theme.font_fallbacks).to be_a Array
+      (expect theme.font_fallbacks).to eql ['Fallback']
+    end
   end
 
   context '.load_file' do
