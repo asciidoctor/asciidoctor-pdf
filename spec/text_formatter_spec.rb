@@ -253,5 +253,43 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       to_file = to_pdf_file '[.variable]#counter#', 'text-formatter-inline-role-bg.pdf', pdf_theme: theme_overrides
       (expect to_file).to visually_match 'text-formatter-inline-role-bg.pdf'
     end
+
+    it 'should support role that sets font color in section title and toc' do
+      pdf_theme = {
+        role_red_font_color: 'FF0000',
+        role_blue_font_color: '0000FF',
+      }
+      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: pdf_theme
+      = Document Title
+      :doctype: book
+      :notitle:
+      :toc:
+
+      == [.red]#Red Chapter#
+
+      == [.blue]#Blue Chapter#
+
+      == Default Chapter
+      EOS
+
+      red_section_text = pdf.find_text 'Red Chapter'
+      blue_section_text = pdf.find_text 'Blue Chapter'
+      default_section_text = pdf.find_text 'Default Chapter'
+      (expect red_section_text).to have_size 2
+      (expect red_section_text[0][:page_number]).to eql 1
+      (expect red_section_text[0][:font_color]).to eql 'FF0000'
+      (expect red_section_text[1][:page_number]).to eql 2
+      (expect red_section_text[1][:font_color]).to eql 'FF0000'
+      (expect blue_section_text).to have_size 2
+      (expect blue_section_text[0][:page_number]).to eql 1
+      (expect blue_section_text[0][:font_color]).to eql '0000FF'
+      (expect blue_section_text[1][:page_number]).to eql 3
+      (expect blue_section_text[1][:font_color]).to eql '0000FF'
+      (expect default_section_text).to have_size 2
+      (expect default_section_text[0][:page_number]).to eql 1
+      (expect default_section_text[0][:font_color]).to eql '333333'
+      (expect default_section_text[1][:page_number]).to eql 4
+      (expect default_section_text[1][:font_color]).to eql '333333'
+    end
   end
 end

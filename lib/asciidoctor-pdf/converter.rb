@@ -2848,9 +2848,7 @@ class Converter < ::Prawn::Document
                 (font_styles << :underline) : font_styles)
           }
           (sect_title_fragments = text_formatter.format sect_title).each do |fragment|
-            fragment.update sect_title_format_override do |key, old_val, new_val|
-              key == :styles ? (old_val.merge new_val) : new_val
-            end
+            fragment.update(sect_title_format_override) {|k, oval, nval| k == :styles ? (oval.merge nval) : oval }
           end
           pgnum_label_width = rendered_width_of_string pgnum_label
           indent 0, pgnum_label_width do
