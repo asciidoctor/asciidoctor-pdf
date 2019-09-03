@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * allow font catalog and font fallbacks to be defined as flat keys in the theme file (#1243)
 * don't crash when adding indentation guards to source highlighted with Pygments (#1246)
+* don't override font color of formatted text in toc (#1247)
 
 == 1.5.0.beta.3 (2019-08-30) - @mojavelinux
 
