@@ -1689,7 +1689,7 @@ class Converter < ::Prawn::Document
       conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
     else
       # NOTE only format if we detect a need (callouts or inline formatting)
-      (XMLMarkupRx.match? source_string) ? (text_formatter.format source_string) : [{ text: source_string }]
+      (XMLMarkupRx.match? source_string) ? (text_formatter.format source_string) : [text: source_string]
     end
 
     node.subs.replace prev_subs if prev_subs
@@ -3291,7 +3291,7 @@ class Converter < ::Prawn::Document
       if (level = sect.level) == num_levels || !sect.sections?
         outline.page title: sect_title, destination: sect_destination
       elsif level <= num_levels
-        outline.section sect_title, { destination: sect_destination } do
+        outline.section sect_title, destination: sect_destination do
           add_outline_level outline, sect.sections, num_levels
         end
       end
