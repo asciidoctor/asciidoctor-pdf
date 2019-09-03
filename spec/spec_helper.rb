@@ -318,8 +318,14 @@ RSpec.configure do |config|
       dest_page_object = objects[dest[0]]
       dest_page = pages.find {|candidate| candidate.page_object == dest_page_object }
       top = dest_page.attributes[:MediaBox][3] == dest[3]
-      children = entry[:Count] > 0 ? (extract_outline pdf, entry) : []
-      result << { title: title, dest: { pagenum: dest_page.number, x: dest[2], y: dest[3], top: top }, children: children }
+      if (count = entry[:Count]) == 0
+        closed = true
+        children = []
+      else
+        closed = count < 0
+        children = extract_outline pdf, entry
+      end
+      result << { title: title, dest: { pagenum: dest_page.number, x: dest[2], y: dest[3], top: top }, closed: closed, children: children }
       entry = entry[:Next]
     end
     result

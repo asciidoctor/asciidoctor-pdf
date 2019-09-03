@@ -279,7 +279,7 @@ class Converter < ::Prawn::Document
       end
     end
 
-    add_outline doc, (doc.attr 'outlinelevels', num_toc_levels).to_i, toc_page_nums, num_front_matter_pages[1]
+    add_outline doc, (doc.attr 'outlinelevels', num_toc_levels), toc_page_nums, num_front_matter_pages[1]
     if state.pages.size > 0 && (initial_zoom = @theme.page_initial_zoom)
       case initial_zoom.to_sym
       when :Fit
@@ -3256,6 +3256,17 @@ class Converter < ::Prawn::Document
   end
 
   def add_outline doc, num_levels = 2, toc_page_nums = [], num_front_matter_pages = 0
+    if ::String === num_levels
+      if num_levels.include? ':'
+        num_levels, expand_levels = num_levels.split ':', 2
+        num_levels = num_levels.empty? ? (doc.attr 'toclevels', 2).to_i : num_levels.to_i
+        expand_levels = expand_levels.to_i
+      else
+        num_levels = expand_levels = num_levels.to_i
+      end
+    else
+      expand_levels = num_levels
+    end
     front_matter_counter = RomanNumeral.new 0, :lower
     pagenum_labels = {}
 
@@ -3278,7 +3289,7 @@ class Converter < ::Prawn::Document
         page title: toc_title, destination: (document.dest_top toc_page_nums.first)
       end
       # QUESTION any way to get add_outline_level to invoke in the context of the outline?
-      document.add_outline_level self, doc.sections, num_levels
+      document.add_outline_level self, doc.sections, num_levels, expand_levels
     end
 
     catalog.data[:PageLabels] = state.store.ref Nums: pagenum_labels.flatten
@@ -3286,15 +3297,15 @@ class Converter < ::Prawn::Document
     nil
   end
 
-  def add_outline_level outline, sections, num_levels
+  def add_outline_level outline, sections, num_levels, expand_levels
     sections.each do |sect|
       sect_title = sanitize sect.numbered_title formal: true
       sect_destination = sect.attr 'pdf-destination'
       if (level = sect.level) == num_levels || !sect.sections?
         outline.page title: sect_title, destination: sect_destination
       elsif level <= num_levels
-        outline.section sect_title, destination: sect_destination do
-          add_outline_level outline, sect.sections, num_levels
+        outline.section sect_title, destination: sect_destination, closed: expand_levels < 1 do
+          add_outline_level outline, sect.sections, num_levels, (expand_levels - 1)
         end
       end
     end
