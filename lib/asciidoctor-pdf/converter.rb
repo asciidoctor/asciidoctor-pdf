@@ -210,7 +210,10 @@ class Converter < ::Prawn::Document
       toc_page_nums = page_number
       toc_end = nil
       dry_run do
-        toc_page_nums = layout_toc doc, num_toc_levels, toc_page_nums, 0, toc_start
+        pagenum_width = theme_font(:doc) { rendered_width_of_string '0' * (doc.attr 'toc-max-pagenum-digits', 3).to_i }
+        indent 0, pagenum_width do
+          toc_page_nums = layout_toc doc, num_toc_levels, toc_page_nums, 0, toc_start
+        end
         move_down @theme.block_margin_bottom unless insert_title_page
         toc_end = @y
       end

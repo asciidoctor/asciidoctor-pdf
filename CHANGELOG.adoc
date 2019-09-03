@@ -10,6 +10,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow font catalog and font fallbacks to be defined as flat keys in the theme file (#1243)
 * don't crash when adding indentation guards to source highlighted with Pygments (#1246)
 * don't override font color of formatted text in toc (#1247)
+* prevent toc from overrunning first page of content by reserving more space for the page number (#1242)
+* allow number of digits reserved for page number in the toc to be adjusted using toc-max-pagenum-digits attribute (#1242)
 
 == 1.5.0.beta.3 (2019-08-30) - @mojavelinux
 

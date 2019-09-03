@@ -203,6 +203,26 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect lines[4]).to start_with '2. C2'
       (expect pdf.find_text 'Chapter 1. C1').to have_size 1
     end
+
+    it 'should reserve enough room for toc when page number forces section title in toc to wrap' do
+      pdf = to_pdf <<~EOS, analyze: true
+      = Document Title
+      :doctype: book
+      :notitle:
+      :toc:
+
+      #{(['== Chapter'] * 9).join ?\n}
+
+      == This is a very long section title that wraps in the table of contents when the page number is added
+
+      #{(['== Chapter'] * 27).join ?\n}
+
+      == Last Chapter
+      EOS
+
+      (expect pdf.find_text page_number: 2, string: 'Last Chapter').to have_size 1
+      (expect pdf.find_text page_number: 2, string: 'Chapter').to be_empty
+    end
   end
 
   context 'article' do
