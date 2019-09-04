@@ -3286,7 +3286,6 @@ class Converter < ::Prawn::Document
     nil
   end
 
-  # FIXME only nest inside root node if doctype=article
   def add_outline_level outline, sections, num_levels
     sections.each do |sect|
       sect_title = sanitize sect.numbered_title formal: true
