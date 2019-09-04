@@ -113,13 +113,13 @@ class ThemeLoader
   end
 
   def load hash, theme_data = nil, theme_dir = nil
-    ::Hash === hash ? hash.reduce(theme_data || ::OpenStruct.new) {|data, (key, val)| process_entry key, val, data } : (theme_data || ::OpenStruct.new)
+    ::Hash === hash ? hash.reduce(theme_data || ::OpenStruct.new) {|data, (key, val)| process_entry key, val, data, true } : (theme_data || ::OpenStruct.new)
   end
 
   private
 
-  def process_entry key, val, data
-    key = key.tr '-', '_' if key.include? '-'
+  def process_entry key, val, data, normalize_key = false
+    key = key.tr '-', '_' if normalize_key && (key.include? '-')
     if key == 'font'
       val.each do |subkey, subval|
         process_entry %(#{key}_#{subkey}), subval, data if subkey == 'catalog' || subkey == 'fallbacks'
@@ -143,7 +143,9 @@ class ThemeLoader
         [key2.to_sym, (key2.end_with? '_color') ? to_color(evaluate val2, data) : (evaluate val2, data)]
       }.to_h : {}
     elsif ::Hash === val
-      val.each {|subkey, subval| process_entry %(#{key}_#{subkey}), subval, data }
+      val.each do |subkey, subval|
+        process_entry %(#{key}_#{key == 'role' || !(subkey.include? '-') ? subkey : (subkey.tr '-', '_')}), subval, data
+      end
     elsif key.end_with? '_color'
       # QUESTION do we really need to evaluate_math in this case?
       data[key] = to_color(evaluate val, data)

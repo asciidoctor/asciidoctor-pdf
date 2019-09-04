@@ -59,6 +59,24 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.admonition_icon_tip).to have_key :stroke_color
     end
 
+    it 'should not replace hyphens with underscores in role names' do
+      theme_data = SafeYAML.load <<~EOS
+      role:
+        flaming-red:
+          font-color: ff0000
+        so-very-blue:
+          font:
+            color: 0000ff
+      EOS
+      theme = subject.new.load theme_data
+      puts theme.to_yaml
+      (expect theme).to be_an OpenStruct
+      (expect theme).to respond_to 'role_flaming-red_font_color'
+      (expect theme['role_flaming-red_font_color']).to eql 'FF0000'
+      (expect theme).to respond_to 'role_so-very-blue_font_color'
+      (expect theme['role_so-very-blue_font_color']).to eql '0000FF'
+    end
+
     it 'should convert keys that end in content to a string' do
       theme_data = SafeYAML.load <<~EOS
       menu:

@@ -152,49 +152,6 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-fallback-font.pdf'
     end
 
-    it 'should allow theme to control formatting apply to phrase by role' do
-      pdf_theme = {
-        role_red_font_color: 'ff0000',
-        role_red_font_style: 'bold',
-        role_blue_font_color: '0000ff',
-        role_blue_font_style: 'bold_italic',
-      }
-      pdf = to_pdf 'Roses are [.red]_red_, violets are [.blue]#blue#.', pdf_theme: pdf_theme, analyze: true
-
-      red_text = (pdf.find_text 'red')[0]
-      blue_text = (pdf.find_text 'blue')[0]
-      (expect red_text[:font_color]).to eql 'FF0000'
-      (expect red_text[:font_name]).to eql 'NotoSerif-BoldItalic'
-      (expect blue_text[:font_color]).to eql '0000FF'
-      (expect blue_text[:font_name]).to eql 'NotoSerif-BoldItalic'
-    end
-
-    it 'should append font style configured for role to current style' do
-      pdf_theme = {
-        role_quick_font_style: 'italic',
-      }
-      pdf = to_pdf '*That was [.quick]#quick#.*', pdf_theme: pdf_theme, analyze: true
-
-      glorious_text = (pdf.find_text 'quick')[0]
-      (expect glorious_text[:font_name]).to eql 'NotoSerif-BoldItalic'
-    end
-
-    it 'should support theming multiple roles on a single phrase' do
-      pdf_theme = {
-        role_bold_font_style: 'bold',
-        role_italic_font_style: 'italic',
-        role_blue_font_color: '0000ff',
-        role_mono_font_family: 'Courier',
-        role_tiny_font_size: 8,
-      }
-      pdf = to_pdf '[.bold.italic.blue.mono.tiny]#text#', pdf_theme: pdf_theme, analyze: true
-
-      formatted_text = (pdf.find_text 'text')[0]
-      (expect formatted_text[:font_name]).to eql 'Courier-BoldOblique'
-      (expect formatted_text[:font_color]).to eql '0000FF'
-      (expect formatted_text[:font_size]).to eql 8
-    end
-
     it 'should be able to reference section title containing icon' do
       pdf = to_pdf <<~'EOS', analyze: true
       :icons: font
@@ -251,18 +208,74 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[2][:font_size].to_f.round 2).to eql 10.0
     end
 
-    it 'should allow theme to override background and border for custom role', integration: true do
-      theme_overrides = {
-          role_variable_font_family: 'Courier',
-          role_variable_font_size: 10,
-          role_variable_font_color: 'FFFFFF',
-          role_variable_background_color: 'CF2974',
-          role_variable_border_color: 'ED398A',
-          role_variable_border_offset: 1.25,
-          role_variable_border_radius: 2,
-          role_variable_border_width: 1
+    it 'should allow theme to control formatting apply to phrase by role' do
+      pdf_theme = {
+        role_red_font_color: 'ff0000',
+        role_red_font_style: 'bold',
+        role_blue_font_color: '0000ff',
+        role_blue_font_style: 'bold_italic',
       }
-      to_file = to_pdf_file '[.variable]#counter#', 'text-formatter-inline-role-bg.pdf', pdf_theme: theme_overrides
+      pdf = to_pdf 'Roses are [.red]_red_, violets are [.blue]#blue#.', pdf_theme: pdf_theme, analyze: true
+
+      red_text = (pdf.find_text 'red')[0]
+      blue_text = (pdf.find_text 'blue')[0]
+      (expect red_text[:font_color]).to eql 'FF0000'
+      (expect red_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+      (expect blue_text[:font_color]).to eql '0000FF'
+      (expect blue_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+    end
+
+    it 'should allow custom role to contain hyphens' do
+      pdf_theme = {
+        'role_flaming-red_font_color' => 'ff0000',
+        'role_so-very-blue_font_color' => '0000ff',
+      }
+      pdf = to_pdf 'Roses are [.flaming-red]_red_, violets are [.so-very-blue]#blue#.', pdf_theme: pdf_theme, analyze: true
+
+      red_text = (pdf.find_text 'red')[0]
+      blue_text = (pdf.find_text 'blue')[0]
+      (expect red_text[:font_color]).to eql 'FF0000'
+      (expect blue_text[:font_color]).to eql '0000FF'
+    end
+
+    it 'should append font style configured for role to current style' do
+      pdf_theme = {
+        role_quick_font_style: 'italic',
+      }
+      pdf = to_pdf '*That was [.quick]#quick#.*', pdf_theme: pdf_theme, analyze: true
+
+      glorious_text = (pdf.find_text 'quick')[0]
+      (expect glorious_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+    end
+
+    it 'should support theming multiple roles on a single phrase' do
+      pdf_theme = {
+        role_bold_font_style: 'bold',
+        role_italic_font_style: 'italic',
+        role_blue_font_color: '0000ff',
+        role_mono_font_family: 'Courier',
+        role_tiny_font_size: 8,
+      }
+      pdf = to_pdf '[.bold.italic.blue.mono.tiny]#text#', pdf_theme: pdf_theme, analyze: true
+
+      formatted_text = (pdf.find_text 'text')[0]
+      (expect formatted_text[:font_name]).to eql 'Courier-BoldOblique'
+      (expect formatted_text[:font_color]).to eql '0000FF'
+      (expect formatted_text[:font_size]).to eql 8
+    end
+
+    it 'should allow theme to override background and border for custom role', integration: true do
+      pdf_theme = {
+        role_variable_font_family: 'Courier',
+        role_variable_font_size: 10,
+        role_variable_font_color: 'FFFFFF',
+        role_variable_background_color: 'CF2974',
+        role_variable_border_color: 'ED398A',
+        role_variable_border_offset: 1.25,
+        role_variable_border_radius: 2,
+        role_variable_border_width: 1
+      }
+      to_file = to_pdf_file '[.variable]#counter#', 'text-formatter-inline-role-bg.pdf', pdf_theme: pdf_theme
       (expect to_file).to visually_match 'text-formatter-inline-role-bg.pdf'
     end
 
