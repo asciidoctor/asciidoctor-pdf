@@ -175,6 +175,17 @@ describe 'Asciidoctor::PDF::Converter - Table' do
   end
 
   context 'Dimensions' do
+    it 'should throw exception if no width is assigned to column' do
+      (expect {
+        to_pdf <<~'EOS'
+        [cols=",50%,50%"]
+        |===
+        | Column A | Column B | Column C
+        |===
+        EOS
+      }).to raise_exception ::Prawn::Errors::CannotFit
+    end
+
     it 'should not fail to fit text in cell' do
       pdf = to_pdf <<~'EOS', analyze: true
       |===
