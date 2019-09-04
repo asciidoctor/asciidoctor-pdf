@@ -8,6 +8,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == Unreleased
 
 * always use ; as delimiter to separate multiple font dirs to be compatible with JAR paths (#1250)
+* preserve hyphens in role names in theme file (#1254)
 * allow font catalog and font fallbacks to be defined as flat keys in the theme file (#1243)
 * don't crash when adding indentation guards to source highlighted with Pygments (#1246)
 * don't override font color of formatted text in toc (#1247)
