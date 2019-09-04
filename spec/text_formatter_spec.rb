@@ -12,15 +12,27 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
 
   context 'character references' do
     it 'should decode decimal character reference' do
-      output = subject.format '&#169;'
-      (expect output).to have_size 1
-      (expect output[0][:text]).to eql ?\u00a9
+      {
+        '&#39;' => ?',
+        '&#169;' => ?\u00a9,
+        '&#128515;' => ([0x1f603].pack 'U1'),
+      }.each do |ref, chr|
+        output = subject.format ref
+        (expect output).to have_size 1
+        (expect output[0][:text]).to eql chr
+      end
     end
 
     it 'should decode hexadecimal character reference' do
-      output = subject.format '&#xa9;'
-      (expect output).to have_size 1
-      (expect output[0][:text]).to eql ?\u00a9
+      {
+        '&#x27;' => ?',
+        '&#xa9;' => ?\u00a9,
+        '&#x1f603;' => ([0x1f603].pack 'U1'),
+      }.each do |ref, chr|
+        output = subject.format ref
+        (expect output).to have_size 1
+        (expect output[0][:text]).to eql chr
+      end
     end
 
     it 'should decode recognized named entities' do
