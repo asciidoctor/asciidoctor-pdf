@@ -79,14 +79,21 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     end
 
     it 'should look for font file in all specified font dirs' do
-      pdf = to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => ([fixtures_dir, Asciidoctor::Pdf::ThemeLoader::FontsDir].join File::PATH_SEPARATOR) }
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => ([fixtures_dir, Asciidoctor::Pdf::ThemeLoader::FontsDir].join ';') }
       fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
       (expect fonts).to have_size 1
       (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
     end
 
     it 'should look for font file in gem fonts dir if path entry is empty' do
-      pdf = to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => ([fixtures_dir, ''].join File::PATH_SEPARATOR) }
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => ([fixtures_dir, ''].join ';') }
+      fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
+      (expect fonts).to have_size 1
+      (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
+    end
+
+    it 'should look for font file in gem fonts dir if path entry is GEM_FONTS_DIR' do
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => ([fixtures_dir, 'GEM_FONTS_DIR'].join ';') }
       fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
       (expect fonts).to have_size 1
       (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'

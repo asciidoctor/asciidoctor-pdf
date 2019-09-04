@@ -324,7 +324,7 @@ class Converter < ::Prawn::Document
       @ppbook = nil
     end
     # QUESTION should ThemeLoader handle registering fonts instead?
-    register_fonts theme.font_catalog, (doc.attr 'pdf-fontsdir', ThemeLoader::FontsDir)
+    register_fonts theme.font_catalog, (doc.attr 'pdf-fontsdir', 'GEM_FONTS_DIR')
     default_kerning theme.base_font_kerning != 'none'
     @fallback_fonts = [*theme.font_fallbacks]
     @allow_uri_read = doc.attr? 'allow-uri-read'
@@ -3317,8 +3317,8 @@ class Converter < ::Prawn::Document
 
   def register_fonts font_catalog, fonts_dir
     return unless font_catalog
-    dirs = (fonts_dir.split ::File::PATH_SEPARATOR, -1).map do |dir|
-      dir.empty? || dir == 'GEM_FONTS_DIR' ? ThemeLoader::FontsDir : dir
+    dirs = (fonts_dir.split ';', -1).map do |dir|
+      dir == 'GEM_FONTS_DIR' || dir.empty? ? ThemeLoader::FontsDir : dir
     end
     font_catalog.each do |key, styles|
       styles = styles.reduce({}) do |accum, (style, path)|
