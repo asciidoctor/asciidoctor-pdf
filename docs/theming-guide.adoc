@@ -22,6 +22,7 @@ ifndef::icons[:conum-guard-yaml: # #]
 ifdef::backend-pdf[:conum-guard-yaml: # #]
 :url-fontforge: https://fontforge.github.io/en-US/
 :url-fontforge-scripting: https://fontforge.github.io/en-US/documentation/scripting/
+:url-prawn: http://prawnpdf.org
 
 ////
 Topics remaining to document:
@@ -4404,6 +4405,133 @@ For more information about source highlighting with Rouge, refer to the http://r
 
 * http://www.sitepoint.com/hackable-pdf-typesetting-in-ruby-with-prawn[Hackable PDF typesetting in Ruby with Prawn]
 ////
+
+== Extending the Converter
+
+This converter uses {url-prawn}[Prawn] under the covers to generate the PDF.
+Prawn is a low-level PDF writer that can load fonts, ink text, embed images, add graphics, and draw lines.
+With those operations alone, this converter manages to produce a PDF from an AsciiDoc document.
+This section explains the role of theming in this process and how to extend the converter to take it further.
+
+=== Going Beyond Theming
+
+While creating the PDF document, there are thousands of small decisions the converter must make about how to instruct Prawn to layout the content elements on the page (so-called "`hackable typesetting`").
+But once these elements are written, they can't be moved or styled (as is the case with HTML and CSS).
+To help influence those decisions--and thus prevent the converter from becoming too opinionated, a theming system was introduced.
+That theming system is described in this document.
+
+The theme support is there to provide basic customizations (fonts, colors, borders, spacing, etc.).
+But it can only go so far.
+At some point, it becomes necessary to extend the converter to meet advanced design requirements.
+
+Before you dive into extending this converter, you'll need to understand how to use Prawn.
+The article https://www.sitepoint.com/hackable-pdf-typesetting-in-ruby-with-prawn/[Hackable PDF Typesetting in Ruby with Prawn] gives a crash course in how to create your first PDF document containing text, graphics, and images with Prawn.
+That article is essential reading for working with Asciidoctor PDF, which uses many of the same operations (as well as many helpful add-ons).
+Once you feel comfortable with Prawn, you're ready to extend the converter.
+
+=== Tailoring Conversion
+
+The methods on a converter class that handle conversion follow the pattern `convert_<name>` for block elements (e.g., `convert_example`) and `convert_inline_<name>` for inline elements (e.g., `convert_inline_anchor`), where `<name>` is the name of the element.
+
+When you override a block element, you write PDF objects directly to the Prawn Document (the current context).
+When you override an inline element, you return pseudo-HTML, which is then parsed and converted into PDF objects.
+
+The pseudo-HTML in Asciidoctor PDF evolved from the inline formatting in Prawn, now supporting the following elements: a, br, button, code, color, del, em, font, img, key, mark, span, strong, sub, sup.
+All decimal and hexadecimal character references are supported, as well as the named entities amp, apos, gt, lt, nbsp, and quot (e.g., `\&apos;`.
+You can change the font color using `rgb` attribue on the `color` element (e.g., `<color rgb="#ff0000">`) and the font family and size using `name` and `size` attributes on the `font` element, respectively (e.g., `<font name="sans" size="12">`).
+You can also use the `style` attribute on `span` to control the font color, weight, and style using the relevant CSS property names.
+The pseudo-HTML in Asciidoctor PDF also supports the `class` attribute on any element for applying roles from the theme.
+(Though not recommended, you can pass this pseudo-HTML straight through to Prawn using an inline passthrough in AsciiDoc).
+
+=== Defining the Extended Converter
+
+Starting with Asciidoctor 2, defining an extending converter and registering it in place of the original is very straightforward.
+
+.custom-pdf-converter.rb
+[source,ruby]
+----
+class CustomPDFConverter < (Asciidoctor::Converter.for 'pdf')
+  register_for 'pdf'
+
+  # overrides go here
+end
+----
+
+As it stands, the converter doesn't do anything differently than the primary converter because we haven't yet overridden any of its methods.
+Let's do that now, starting by overriding the thematic break (aka horizonal rule) to make it render like a ribbon:
+
+[source,ruby]
+----
+  def convert_thematic_break node
+    theme_margin :thematic_break, :top
+    stroke_horizontal_rule 'FF0000', line_width: 0.5, line_style: :solid
+    move_down 1
+    stroke_horizontal_rule 'FF0000', line_width: 1, line_style: :solid
+    move_down 1
+    stroke_horizontal_rule 'FF0000', line_width: 0.5, line_style: :solid
+    theme_margin :thematic_break, :bottom
+  end
+----
+
+This converter will replace the thematic break with a red ribbon.
+
+Another way to override the converter is to modify the node, then delegate back to the primary converter.
+Let's put a page break before all paragraphs unless the cursor is at the top of the page.
+We'll call `super` to let the primary converter handle the work of rendering the paragraph.
+
+[source,ruby]
+----
+  def convert_paragraph node
+    bounds.move_past_bottom unless at_page_top?
+    super
+  end
+----
+
+Now let's look at how to modify an inline element.
+Let's say we want to override the kbd element.
+
+[source,ruby]
+----
+  def convert_inline_kbd node
+    %(<strong><color rgb="AA0000">#{(node.attr 'keys').join ' + '}</color></strong>)
+  end
+----
+
+Refer to the primary converter to discover the pseudo-HTML you can use for inline elements.
+
+So far we've just been biting around the edges.
+A more realistic use case is to customize the part title page in a multi-part book.
+Since this is a specialized section element, there's a dedicated method named `layout_part_title` that you'll need to override.
+
+Let's customize the part title page by making the background orange, making the font white, centering the title on the page, and disabling the running content.
+(You don't need to start a new page before and after the part title since that's already done for you).
+
+[source,ruby]
+----
+  def layout_part_title node, title, opts = {}
+    fill_absolute_bounds 'E64C3D'
+    move_down 20
+    typeset_text title, (calc_line_metrics 1.5), color: 'FFFFFF', inline_format: true, align: :center, size: 42
+    page.instance_variable_set :@imported_page, true
+  end
+----
+
+The method `typeset_text` and `calc_line_metrics` are provided by Asciidoctor PDF to make writing text easier.
+If you wanted, you could just use the low-level `text` method provided by Prawn.
+
+To find all the available methods to override, consult the https://www.rubydoc.info/github/asciidoctor/asciidoctor-pdf/Asciidoctor/Pdf/Converter[API docs].
+For deeper examples of how to override the behavior of the converter, refer to the extended converter in the https://github.com/mraible/infoq-mini-book/blob/master/src/main/ruby/asciidoctor-pdf-extensions.rb[InfoQ Mini-Book template].
+
+Now that you've seen some examples of how to extend the converter, let's look at how to use it.
+
+=== Using the Extended Converter
+
+To use this converter, register it by passing the path to the `-r` flag when calling the `asciidoctor-pdf` command:
+
+ $ asciidoctor-pdf -r ./custom-pdf-converter.rb document.adoc
+
+That's all there is too it.
+Now you're hacking the typesetting!
 
 [appendix]
 == Preparing a Custom Font
