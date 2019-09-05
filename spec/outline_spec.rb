@@ -23,6 +23,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline[1][:title]).to eql 'First Chapter'
     (expect outline[1][:dest][:pagenum]).to eql 2
     (expect outline[1][:dest][:top]).to be true
+    (expect outline[1][:closed]).to be false
     (expect outline[1][:children]).to have_size 1
     (expect outline[1][:children][0][:title]).to eql 'Chapter Section'
     (expect outline[1][:children][0][:dest][:pagenum]).to eql 2
@@ -79,6 +80,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     outline = extract_outline pdf
     (expect outline).to have_size 4
     (expect outline[1][:title]).to eq 'First Chapter'
+    (expect outline[1][:closed]).to be false
     (expect outline[1][:children]).not_to be_empty
     (expect outline[1][:children][0][:title]).to eq 'Chapter Section'
     (expect outline[1][:children][0][:children]).to be_empty
@@ -105,6 +107,61 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline).to have_size 4
     (expect outline[1][:title]).to eq 'First Chapter'
     (expect outline[1][:children]).to be_empty
+  end
+
+  it 'should use second argument of outlinelevels attribute to control depth at which outline is expanded' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :doctype: book
+    :outlinelevels: 3:1
+
+    == Chapter
+
+    === Section
+
+    ==== Subsection
+
+    == Another Chapter
+
+    === Another Section
+    EOS
+
+    outline = extract_outline pdf
+    (expect outline).to have_size 3
+    (expect outline[0][:title]).to eql 'Document Title'
+    (expect outline[0][:children]).to be_empty
+    (expect outline[1][:title]).to eql 'Chapter'
+    (expect outline[1][:closed]).to be false
+    (expect outline[1][:children]).to have_size 1
+    (expect outline[1][:children][0][:title]).to eql 'Section'
+    (expect outline[1][:children][0][:closed]).to be true
+    (expect outline[1][:children][0][:children]).to have_size 1
+    (expect outline[1][:children][0][:children][0][:title]).to eql 'Subsection'
+    (expect outline[1][:children][0][:children][0][:children]).to be_empty
+  end
+
+  it 'should expand outline based on depth not level' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :doctype: book
+    :outlinelevels: 3:1
+
+    = Part
+
+    == Chapter
+
+    === Section
+    EOS
+
+    outline = extract_outline pdf
+    (expect outline).to have_size 2
+    (expect outline[0][:title]).to eql 'Document Title'
+    (expect outline[0][:children]).to be_empty
+    (expect outline[1][:title]).to eql 'Part'
+    (expect outline[1][:closed]).to be false
+    (expect outline[1][:children]).to have_size 1
+    (expect outline[1][:children][0][:title]).to eql 'Chapter'
+    (expect outline[1][:children][0][:closed]).to be true
   end
 
   it 'should sanitize titles' do

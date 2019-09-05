@@ -4146,8 +4146,8 @@ These settings override equivalent keys defined in the theme file, where applica
 |screen {vbar} print {vbar} prepress
 |:media: prepress
 
-|outlinelevels
-|number (default: same as _toclevels_)
+|outlinelevels^[10]^
+|Integer {vbar} Integer:Integer (default: same as _toclevels_)
 |:outlinelevels: 2
 
 |page-background-image^[4]^
@@ -4226,6 +4226,8 @@ For more fine-grained control, you should customize using the theme.
 . The title page is only enabled by default for the book doctype.
 To force the title page to be used for other doctypes, set the `title-page` attribute in the document header.
 . If the TOC overlaps the first page of content, increase this number.
+. The second number in the value of `outlinelevels` is the number of levels of the outline to expand (e.g., `3:1`).
+If the second number is not present, all levels are expanded.
 
 == Publishing Mode
 
