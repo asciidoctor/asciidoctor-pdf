@@ -31,7 +31,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       EOS
 
       (expect pdf.lines).to include 'Start with Chapter 1.'
-    end
+    end if asciidoctor_1_5_7_or_better?
 
     it 'should refer to chapter title and number when xrefstyle is basic' do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -61,6 +61,6 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       EOS
 
       (expect pdf.lines).to include 'Start with Chapter 1, A.'
-    end
+    end if asciidoctor_1_5_7_or_better?
   end
 end
