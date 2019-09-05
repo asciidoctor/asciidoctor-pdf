@@ -11,7 +11,6 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
     Yada yada yada.
     EOS
-
     strings, text = pdf.strings, pdf.text
     (expect (strings.slice 2, 3).join).to eql '[1]'
     # superscript
@@ -57,6 +56,23 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect (strings.slice(-3, 3)).join).to eql '[1] More about that thing.'
     (expect text[-1][:page_number]).to eql 2
     (expect text[-1][:font_size]).to eql 8
+  end
+
+  it 'should create bidirectional links between footnote ref and def' do
+    pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'notitle' => '' }
+    = Document Title
+
+    == Chapter A
+
+    About this thing.footnote:[More about that thing.] And so on.
+    EOS
+    annotations = (get_annotations pdf, 1).sort_by {|it| it[:Rect][1] }.reverse
+    (expect annotations).to have_size 2
+    footnote_label_y = annotations[0][:Rect][3]
+    footnote_item_y = annotations[1][:Rect][3]
+    names = get_names pdf
+    (expect footnote_label_y - pdf.objects[names['_footnoteref_1']][3]).to be < 1
+    (expect pdf.objects[names['_footnotedef_1']][3]).to eql footnote_item_y
   end
 
   it 'should render footnotes in table cell that are directly adjacent to text' do
