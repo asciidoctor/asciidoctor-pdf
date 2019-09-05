@@ -112,12 +112,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should use the margin specified by the pdf-page-margin attribute as string' do
-      pdf = to_pdf <<~'EOS', analyze: true
-      :pdf-page-margin: 1in
+      %w(1in 72pt 25.4mm 2.54cm 96px).each do |val|
+        pdf = to_pdf <<~EOS, analyze: true
+        :pdf-page-margin: #{val}
 
-      content
-      EOS
-      (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 72.0, 757.926]
+        content
+        EOS
+        (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 72.0, 757.926]
+      end
     end
 
     it 'should use recto/verso margins when media=prepress', integration: true do
