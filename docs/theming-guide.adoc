@@ -963,7 +963,7 @@ Each time a theme is loaded, the keys are overlaid onto the keys from the previo
 
 The keys in the `role` category define custom roles for formatting.
 The name of the role is the first subkey level.
-The role name may not contain a hyphen or underscore.
+The role name may not contain an underscore.
 The keys under the role are the concrete theming properties.
 
 Here's an example of a role for making text red:
@@ -997,6 +997,41 @@ You'll need to define these in your theme if you'd like to make use of them when
 |Key |Value Type |Example
 
 3+|[#key-prefix-role]*Key Prefix:* <<key-prefix-role,role-<name>{zwsp}>>
+
+|background-color
+|<<colors,Color>> +
+(default: _not set_)
+|role:
+  highlight:
+    background-color: #ffff00
+
+|border-color
+|<<colors,Color>> +
+(default: _not set_)
+|role:
+  found:
+    border-color: #cccccc
+
+|border-offset
+|<<values,Number>> +
+(default: 0)
+|role:
+  found:
+    border-offset: 2
+
+|border-radius
+|<<values,Number>> +
+(default: _not set_)
+|role:
+  found:
+    border-radius: 3
+
+|border-width
+|<<values,Number>> +
+(default: _not set_)
+|role:
+  found:
+    border-width: 0.5
 
 |font-color
 |<<colors,Color>> +
