@@ -539,6 +539,29 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
   end
 
+  context 'Verse table cell' do
+    it 'should apply normal subs and preserve indentation' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      |===
+      v|
+      here
+        we
+          go
+      *again*
+      |===
+      EOS
+
+      p pdf.text
+      lines = pdf.lines
+      (expect lines).to have_size 4
+      (expect lines[0]).to eql 'here'
+      (expect lines[1]).to eql %(\u00a0 we)
+      (expect lines[2]).to eql %(\u00a0   go)
+      (expect lines[3]).to eql 'again'
+      (expect (pdf.find_text 'again')[0][:font_name]).to eql 'NotoSerif-Bold'
+    end
+  end unless asciidoctor_2_or_better?
+
   context 'Caption' do
     it 'should add title as caption above table by default' do
       pdf = to_pdf <<~'EOS', analyze: true
