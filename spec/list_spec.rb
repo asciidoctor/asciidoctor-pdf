@@ -403,6 +403,21 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
   end
 
+  context 'Q & A' do
+    it 'should layout Q & A list like a description list with questions in italic', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'list-qanda.pdf'
+      [qanda]
+      What's the answer to the ultimate question?:: 42
+
+      Do you have an opinion?::
+      Would you like to share it?::
+      Yes and no.
+      EOS
+
+      (expect to_file).to visually_match 'list-qanda.pdf'
+    end
+  end
+
   context 'Callout' do
     it 'should use callout numbers as list markers and in referenced block' do
       pdf = to_pdf <<~'EOS', analyze: true

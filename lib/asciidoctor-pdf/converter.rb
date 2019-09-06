@@ -1322,7 +1322,7 @@ class Converter < ::Prawn::Document
   def convert_content_for_list_item node, list_type, opts = {}
     if list_type == :dlist # qanda
       terms, desc = node
-      [*terms].each {|term| layout_prose %(<em>#{term.text}</em>), opts }
+      [*terms].each {|term| layout_prose %(<em>#{term.text}</em>), (opts.merge margin_top: 0, margin_bottom: @theme.description_list_term_spacing) }
       if desc
         layout_prose desc.text, opts if desc.text?
         convert_content_for_block desc

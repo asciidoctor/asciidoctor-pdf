@@ -5,6 +5,10 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+* Fix spacing between items in qanda list
+
 == 1.5.0.beta.4 (2019-09-04) - @mojavelinux
 
 * always use ; as delimiter to separate multiple font dirs to be compatible with JAR paths (#1250)
