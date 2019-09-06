@@ -1613,11 +1613,8 @@ class Converter < ::Prawn::Document
       end
     else
       highlighter = nil
-      prev_subs = nil
       source_string = guard_indentation node.content
     end
-
-    bg_color_override = nil
 
     source_chunks = case highlighter
     when 'coderay'
