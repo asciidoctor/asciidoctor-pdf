@@ -96,7 +96,31 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect pdf.lines).to eql ['flush', %(\u00a0 indented), 'flush']
   end
 
-  it 'should replace tabs with spaces if tabsize is specified as block attribute' do
+  it 'should expand tabs if tabsize attribute is not specified' do
+    pdf = to_pdf <<~EOS, analyze: true
+    ----
+    flush
+      lead space
+    \tlead tab
+    \tlead tab\tcolumn tab
+      lead space\tcolumn tab
+    flush\t\t\tcolumn tab
+    ----
+    EOS
+
+    expected_lines = [
+      'flush',
+      %(\u00a0 lead space),
+      %(\u00a0   lead tab),
+      %(\u00a0   lead tab    column tab),
+      %(\u00a0 lead space    column tab),
+      'flush           column tab',
+    ]
+
+    (expect pdf.lines).to eql expected_lines
+  end
+
+  it 'should expand tabs if tabsize is specified as block attribute' do
     pdf = to_pdf <<~EOS, analyze: true
     [tabsize=4]
     ----
@@ -121,7 +145,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect pdf.lines).to eql expected_lines
   end
 
-  it 'should replace tabs with spaces if tabsize is specified as document attribute' do
+  it 'should expand tabs if tabsize is specified as document attribute' do
     pdf = to_pdf <<~EOS, analyze: true
     :tabsize: 4
 
