@@ -1078,7 +1078,7 @@ class Converter < ::Prawn::Document
     end
 
     indent marker_width do
-      convert_content_for_list_item node, :colist, margin_bottom: @theme.outline_list_item_spacing
+      convert_content_for_list_item node, :colist, margin_bottom: @theme.outline_list_item_spacing, normalize_line_height: true
     end
   end
 
@@ -1113,10 +1113,10 @@ class Converter < ::Prawn::Document
           else
             term_text = term.text
           end
-          layout_prose term_text, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
+          layout_prose term_text, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left, normalize_line_height: true
         end
         indent(@theme.description_list_description_indent || 0) do
-          convert_content_for_list_item desc, :dlist_desc
+          convert_content_for_list_item desc, :dlist_desc, normalize_line_height: true
         end if desc
       end
     end
@@ -1313,9 +1313,9 @@ class Converter < ::Prawn::Document
     end
 
     if complex
-      convert_content_for_list_item node, list_type, opts
+      convert_content_for_list_item node, list_type, (opts.merge normalize_line_height: true)
     else
-      convert_content_for_list_item node, list_type, (opts.merge margin_bottom: @theme.outline_list_item_spacing)
+      convert_content_for_list_item node, list_type, (opts.merge margin_bottom: @theme.outline_list_item_spacing, normalize_line_height: true)
     end
   end
 
@@ -2236,7 +2236,7 @@ class Converter < ::Prawn::Document
       end
       text = %(#{text}, #{pagenums.join ', '})
     end
-    layout_prose text, align: :left, margin: 0
+    layout_prose text, align: :left, margin: 0, normalize_line_height: true
 
     term.subterms.each do |subterm|
       indent @theme.description_list_description_indent do
@@ -2700,6 +2700,7 @@ class Converter < ::Prawn::Document
       string = %(<a anchor="#{anchor}">#{string}</a>)
     end
     margin_top top_margin
+    string = ZeroWidthSpace + string if opts.delete :normalize_line_height
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
       color: @font_color,
       # NOTE normalize makes endlines soft (replaces "\n" with ' ')
@@ -2748,7 +2749,8 @@ class Converter < ::Prawn::Document
         margin_top: margin[:top],
         margin_bottom: margin[:bottom],
         align: (@theme.caption_align || @base_align).to_sym,
-        normalize: false
+        normalize: false,
+        normalize_line_height: true
       }.merge(opts)
       if side == :top && @theme.caption_border_bottom_color
         stroke_horizontal_rule @theme.caption_border_bottom_color
@@ -2830,7 +2832,7 @@ class Converter < ::Prawn::Document
     end
     sections.each do |sect|
       theme_font :toc, level: (sect.level + 1) do
-        sect_title = @text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title
+        sect_title = ZeroWidthSpace + (@text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title)
         # NOTE only write section title (excluding dots and page number) if this is a dry run
         if scratch?
           # FIXME use layout_prose

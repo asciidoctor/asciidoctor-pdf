@@ -36,6 +36,26 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.find_text string: 'Introduction', page_number: 3).not_to be_empty
     end
 
+    it 'should space items in toc evently even if title is entirely monospace' do
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+      = Document Title
+      :toc:
+
+      == Beginning
+
+      == `Middle`
+
+      == End
+      EOS
+      (expect pdf.find_text string: 'Table of Contents', page_number: 2).not_to be_empty
+      beginning_pagenum_text = (pdf.find_text string: '1', page_number: 2)[0]
+      middle_pagenum_text = (pdf.find_text string: '2', page_number: 2)[0]
+      end_pagenum_text = (pdf.find_text string: '3', page_number: 2)[0]
+      beginning_to_middle_spacing = (beginning_pagenum_text[:y] - middle_pagenum_text[:y]).round 2
+      middle_to_end_spacing = (middle_pagenum_text[:y] - end_pagenum_text[:y]).round 2
+      (expect beginning_to_middle_spacing).to eql middle_to_end_spacing
+    end
+
     it 'should only include preface in toc if preface-title is set' do
       input = <<~'EOS'
       = Document Title
