@@ -69,7 +69,6 @@ describe Asciidoctor::PDF::ThemeLoader do
             color: 0000ff
       EOS
       theme = subject.new.load theme_data
-      puts theme.to_yaml
       (expect theme).to be_an OpenStruct
       (expect theme).to respond_to 'role_flaming-red_font_color'
       (expect theme['role_flaming-red_font_color']).to eql 'FF0000'
