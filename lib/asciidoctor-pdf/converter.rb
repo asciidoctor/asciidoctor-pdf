@@ -1608,8 +1608,8 @@ class Converter < ::Prawn::Document
         else
           subs.delete_all :specialcharacters, :callouts
         end
-        # the indent guard will be added by the source highlighter logic
-        source_string = node.content || ''
+        # NOTE indentation guards will be added by the source highlighter logic
+        source_string = expand_tabs node.content
       end
     else
       highlighter = nil
@@ -3569,14 +3569,65 @@ class Converter < ::Prawn::Document
     (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + line_metrics.padding_bottom
   end
 
+  # NOTE only used when tabsize attribute is not specified
+  # tabs must always be replaced with spaces in order for the indentation guards to work
+  def expand_tabs string
+    if string.nil_or_empty?
+      ''
+    elsif string.include? TAB
+      full_tab_space = ' ' * (tab_size = 4)
+      (string.split LF, -1).map do |line|
+        if line.empty?
+          line
+        elsif (tab_idx = line.index TAB)
+          if tab_idx == 0
+            leading_tabs = 0
+            line.each_byte do |b|
+              break unless b == 9
+              leading_tabs += 1
+            end
+            line = %(#{full_tab_space * leading_tabs}#{rest = line.slice leading_tabs, line.length})
+            next line unless rest.include? TAB
+          end
+          # keeps track of how many spaces were added to adjust offset in match data
+          spaces_added = 0
+          idx = 0
+          result = ''
+          line.each_char do |c|
+            if c == TAB
+              # calculate how many spaces this tab represents, then replace tab with spaces
+              if (offset = idx + spaces_added) % tab_size == 0
+                spaces_added += (tab_size - 1)
+                result = result + full_tab_space
+              else
+                unless (spaces = tab_size - offset % tab_size) == 1
+                  spaces_added += (spaces - 1)
+                end
+                result = result + (' ' * spaces)
+              end
+            else
+              result = result + c
+            end
+            idx += 1
+          end
+          result
+        else
+          line
+        end
+      end.join LF
+    else
+      string
+    end
+  end
+
+  # Add an indentation guard at the start of indented lines.
+  # Expand tabs to spaces if tabs are present
   def guard_indentation string
-    if string
+    unless (string = expand_tabs string).empty?
       string[0] = GuardedIndent if string.start_with? ' '
       string.gsub! InnerIndent, GuardedInnerIndent if string.include? InnerIndent
-      string
-    else
-      ''
     end
+    string
   end
 
   def guard_indentation_in_fragments fragments

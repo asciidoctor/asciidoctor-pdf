@@ -2,6 +2,24 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Source' do
   context 'Rouge' do
+    it 'should expand tabs to preserve indentation' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: rouge
+
+      [source,c]
+      ----
+      int main() {
+      \tevent_loop();
+      \treturn 0;
+      }
+      ----
+      EOS
+      lines = pdf.lines
+      (expect lines).to have_size 4
+      (expect lines[1]).to eql %(\u00a0   event_loop();)
+      (expect lines[2]).to eql %(\u00a0   return 0;)
+    end
+
     it 'should enable start_inline option for PHP by default' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
@@ -139,6 +157,24 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         EOS
       }).not_to raise_exception
     end
+
+    it 'should expand tabs to preserve indentation' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: coderay
+
+      [source,c]
+      ----
+      int main() {
+      \tevent_loop();
+      \treturn 0;
+      }
+      ----
+      EOS
+      lines = pdf.lines
+      (expect lines).to have_size 4
+      (expect lines[1]).to eql %(\u00a0   event_loop();)
+      (expect lines[2]).to eql %(\u00a0   return 0;)
+    end
   end
 
   context 'Pygments' do
@@ -175,6 +211,24 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         (expect pdf.find_text %(\u00a0   key: )).to have_size 1
         (expect pdf.find_text '"value"').to have_size 1
       }).not_to raise_exception
+    end
+
+    it 'should expand tabs to preserve indentation' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: pygments
+
+      [source,c]
+      ----
+      int main() {
+      \tevent_loop();
+      \treturn 0;
+      }
+      ----
+      EOS
+      lines = pdf.lines
+      (expect lines).to have_size 4
+      (expect lines[1]).to eql %(\u00a0   event_loop();)
+      (expect lines[2]).to eql %(\u00a0   return 0;)
     end
 
     it 'should not crash when aligning line numbers' do

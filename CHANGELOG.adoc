@@ -7,8 +7,9 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
-* Fix spacing between items in qanda list
-* Expand home directory reference in theme name when value ends with .yml and no themedir is specified
+* preserve indentation that uses tabs in verbatim blocks when tabsize is not set (#1258)
+* fix spacing between items in qanda list
+* expand home directory reference in theme name when value ends with .yml and no themedir is specified
 
 == 1.5.0.beta.4 (2019-09-04) - @mojavelinux
 
