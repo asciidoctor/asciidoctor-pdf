@@ -48,7 +48,7 @@ class ThemeLoader
       if theme_dir
         theme_path = ::File.absolute_path theme_name, (theme_dir = ::File.expand_path theme_dir)
       else
-        theme_dir = ::File.dirname(theme_path = (::File.absolute_path theme_name))
+        theme_dir = ::File.dirname(theme_path = (::File.expand_path theme_name))
       end
     else
       theme_dir = theme_dir ? (::File.expand_path theme_dir) : ThemesDir

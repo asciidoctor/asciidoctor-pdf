@@ -245,6 +245,32 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
   end
 
+  context '.resolve_theme_file' do
+    it 'should expand reference to home directory in theme dir when resolving theme file from name' do
+      expected_path = File.join Dir.home, '.local/share/asciidoctor-pdf/custom-theme.yml'
+      expected_dir = File.dirname expected_path
+      theme_path, theme_dir = subject.resolve_theme_file 'custom', '~/.local/share/asciidoctor-pdf'
+      (expect theme_path).to eql expected_path
+      (expect theme_dir).to eql expected_dir
+    end
+
+    it 'should expand reference to home directory in theme dir when resolving theme file from filename' do
+      expected_path = File.join Dir.home, '.local/share/asciidoctor-pdf/custom-theme.yml'
+      expected_dir = File.dirname expected_path
+      theme_path, theme_dir = subject.resolve_theme_file 'custom-theme.yml', '~/.local/share/asciidoctor-pdf'
+      (expect theme_path).to eql expected_path
+      (expect theme_dir).to eql expected_dir
+    end
+
+    it 'should expand reference to home directory in theme file when resolving theme file' do
+      expected_path = File.join Dir.home, '.local/share/asciidoctor-pdf/custom-theme.yml'
+      expected_dir = File.dirname expected_path
+      theme_path, theme_dir = subject.resolve_theme_file '~/.local/share/asciidoctor-pdf/custom-theme.yml'
+      (expect theme_path).to eql expected_path
+      (expect theme_dir).to eql expected_dir
+    end
+  end
+
   context 'data types' do
     it 'should resolve null color value as nil' do
       theme_data = SafeYAML.load <<~EOS
