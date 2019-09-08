@@ -734,7 +734,7 @@ Cannot be styled as italic, bold or bold_italic.
 Used as the fallback font in the `default-with-fallback-font` theme.
 
 TIP: If you want to specify the location of custom fonts using the `pdf-fontsdir` attribute, yet still be able to use the bundled fonts, you need to refer to the bundled fonts using the `GEM_FONTS_DIR` token.
-To do so, you can either a) prefix the path of the bundled font in the theme file with the segment `GEM_FONTS_DIR` (e.g., `GEM_FONTS_DIR/mplus1p-regular-fallback.ttf`, or b) include `GEM_FONT_DIR` in the value of the `pdf-fontsdir` attribute, separated from the location of your custom fonts by a semi-colon (e.g., `path/to/your/fonts;GEM_FONTS_DIR`).
+To do so, you can either a) prefix the path of the bundled font in the theme file with the segment `GEM_FONTS_DIR` (e.g., `GEM_FONTS_DIR/mplus1p-regular-fallback.ttf`, or b) use relative paths in the theme file and include `GEM_FONT_DIR` in the value of the `pdf-fontsdir` attribute separated by the location of your custom fonts using a semi-colon (e.g., `"path/to/your/fonts;GEM_FONTS_DIR"`).
 
 === Custom Fonts
 
@@ -792,13 +792,17 @@ When you execute Asciidoctor PDF, specify the directory where the fonts reside u
 
  $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir=path/to/fonts document.adoc
 
-You can specify multiple directories by separating the entries with a semi-colon:
+You can specify multiple directories by separating the entries with a semi-colon and enclosing the value in double quotes:
 
- $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir=path/to/fonts;path/to/more-fonts document.adoc
+ $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir="path/to/fonts;path/to/more-fonts" document.adoc
 
 To include the bundled fonts in the search, use the `GEM_FONTS_DIR` token:
 
- $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir=path/to/fonts;GEM_FONTS_DIR document.adoc
+ $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir="path/to/fonts;GEM_FONTS_DIR" document.adoc
+
+When running Asciidoctor PDF on the JVM (perhaps using AsciidoctorJ PDF), you can refer a directory inside of any JAR file on the classpath by prefixing the path with `uri:classloader:`:
+
+ $ asciidoctorj -b pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir="uri:classloader:/path/to/fonts;GEM_FONTS_DIR" document.adoc
 
 TIP: When Asciidoctor PDF creates the PDF, it only embeds the glyphs from the font that are needed to render the characters present in the document.
 Effectively, it subsets the font.
@@ -4113,6 +4117,7 @@ If `pdf-theme` ends with `.yml`, and `pdf-themesdir` is not specified, then `pdf
 
 pdf-fontsdir:: The directory or directories where the fonts used by your theme, if any, are located.
 Multiple entries must be separated by a semi-colon.
+To reference a file inside a JAR file on the classpath, prefix with the path with `uri:classloader:` (AsciidoctorJ only).
 _Specifying an absolute path is recommended._
 
 Let's assume that you've put your theme files inside a directory named `resources` with the following layout:
@@ -4154,6 +4159,8 @@ The only thing you need to add to an existing build is the attributes mentioned 
 
 * https://github.com/asciidoctor/asciidoctor-maven-examples/tree/master/asciidoctor-pdf-with-theme-example[Maven Example]
 * https://github.com/asciidoctor/asciidoctor-gradle-examples/tree/master/asciidoc-to-pdf-with-theme-example[Gradle Example]
+
+TIP: To reference a theme file or directory of fonts inside a JAR file on the classpath, prefix the path with `uri:classloader:`.
 
 == Theme-Related Document Attributes
 
