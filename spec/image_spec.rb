@@ -46,6 +46,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
+    it 'should respect value of imagesdir if changed mid-document' do
+      pdf = to_pdf <<~EOS, attributes: { 'nofooter' => '' }
+      :imagesdir: #{fixtures_dir}
+
+      image::tux.png[tux]
+
+      :imagesdir: #{examples_dir}
+
+      image::wolpertinger.jpg[wolpertinger]
+      EOS
+
+      (expect get_images pdf).to have_size 2
+    end
+
     it 'should warn instead of crash if inline image is unreadable' do
       image_file = fixture_file 'logo.png'
       old_mode = (File.stat image_file).mode
