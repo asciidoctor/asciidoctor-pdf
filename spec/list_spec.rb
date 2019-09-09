@@ -469,6 +469,25 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect one_text[1][:y]).to be < two_text[0][:y]
     end
 
+    it 'should use consistent line height even if list item is entirely monospace' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      ....
+      line one <1>
+      line two <2>
+      line three <3>
+      ....
+      <1> describe one
+      <2> `describe two`
+      <3> describe three
+      EOS
+
+      mark_texts = [(pdf.find_text ?\u2460)[-1], (pdf.find_text ?\u2461)[-1], (pdf.find_text ?\u2462)[-1]]
+      (expect mark_texts).to have_size 3
+      first_to_second_spacing = (mark_texts[0][:y] - mark_texts[1][:y]).round 2
+      second_to_third_spacing = (mark_texts[1][:y] - mark_texts[2][:y]).round 2
+      (expect first_to_second_spacing).to eql second_to_third_spacing
+    end
+
     it 'should allow conum font color to be customized by theme' do
       pdf = to_pdf <<~'EOS', pdf_theme: { conum_font_color: '0000ff' }, analyze: true
       ....
