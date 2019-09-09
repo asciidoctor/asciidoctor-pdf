@@ -8,6 +8,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == Unreleased
 
 * preserve indentation that uses tabs in verbatim blocks when tabsize is not set (#1258)
+* use consistent line height for list items and toc entries if text is entirely monospace (#1204)
 * fix spacing between items in qanda list
 * expand home directory reference in theme name when value ends with .yml and no themedir is specified
 

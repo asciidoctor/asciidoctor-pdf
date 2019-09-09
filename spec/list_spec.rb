@@ -91,6 +91,20 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql [%(\u25cadiamond), %(\u25ccdotted circle), %(\u25a1white square)]
     end
 
+    it 'should use consistent line height even if list item is entirely monospace' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      * foo
+      * `mono`
+      * bar
+      EOS
+
+      mark_texts = pdf.find_text '•'
+      (expect mark_texts).to have_size 3
+      first_to_second_spacing = (mark_texts[0][:y] - mark_texts[1][:y]).round 2
+      second_to_third_spacing = (mark_texts[1][:y] - mark_texts[2][:y]).round 2
+      (expect first_to_second_spacing).to eql second_to_third_spacing
+    end
+
     it 'should apply correct margin if primary text of list item is blank' do
       pdf = to_pdf <<~'EOS', analyze: true
       * foo
@@ -186,6 +200,20 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       (expect pdf.lines).to eql ['i.one', 'ii.two', 'iii.three']
+    end
+
+    it 'should use consistent line height even if list item is entirely monospace' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      . foo
+      . `mono`
+      . bar
+      EOS
+
+      mark_texts = pdf.text.select {|it| it[:string].end_with? '.' }
+      (expect mark_texts).to have_size 3
+      first_to_second_spacing = (mark_texts[0][:y] - mark_texts[1][:y]).round 2
+      second_to_third_spacing = (mark_texts[1][:y] - mark_texts[2][:y]).round 2
+      (expect first_to_second_spacing).to eql second_to_third_spacing
     end
 
     it 'should align list numbers to right and extend towards left margin' do
