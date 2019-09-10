@@ -13,6 +13,29 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
   end
 
+  it 'should reserve 1em of space for fw icon' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :icons: font
+    :icon-set: fas
+
+    *|* icon:arrows-alt-h[fw] *|* icon:arrows-alt-v[fw] *|*
+    EOS
+    guide_text = pdf.find_text string: '|', font_name: 'NotoSerif-Bold'
+    first_icon_gap = (guide_text[1][:x] - guide_text[0][:x]).round 2
+    second_icon_gap = (guide_text[2][:x] - guide_text[1][:x]).round 2
+    (expect first_icon_gap).to eql second_icon_gap
+  end
+
+  it 'should align fw icon in center of 1em space', integration: true do
+    to_file = to_pdf_file <<~'EOS', 'icon-fw.pdf'
+    :icons: font
+    :icon-set: fas
+
+    *|* icon:arrows-alt-h[fw] *|* icon:arrows-alt-v[fw] *|*
+    EOS
+    (expect to_file).to visually_match 'icon-fw.pdf'
+  end
+
   it 'should use icon name as alt text and warn if icon name not found in icon set' do
     (expect {
       pdf = to_pdf <<~'EOS', analyze: true
