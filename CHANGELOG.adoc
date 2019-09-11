@@ -7,6 +7,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* start at setting for running content and page numbering must account for front cover (#1266)
 * preserve indentation that uses tabs in verbatim blocks when tabsize is not set (#1258)
 * use consistent line height for list items and toc entries if text is entirely monospace (#1204)
 * fix spacing between items in qanda list

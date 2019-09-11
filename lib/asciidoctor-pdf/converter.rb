@@ -184,13 +184,14 @@ class Converter < ::Prawn::Document
 
     on_page_create &(method :init_page)
 
+    marked_page_number = page_number
+    # NOTE a new page will already be started (page_number = 2) if the front cover image is a PDF
     layout_cover_page doc, :front
+    has_front_cover = page_number > marked_page_number
     if (use_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
       layout_title_page doc
-      # NOTE a new page will already be started if the cover image is a PDF
       start_new_page unless page.empty?
     else
-      # NOTE a new page will already be started if the cover image is a PDF
       start_new_page unless page.empty?
       body_start_page_number = page_number
       if doc.header? && !doc.notitle
@@ -229,24 +230,25 @@ class Converter < ::Prawn::Document
     start_new_page if @ppbook && verso_page?
 
     if use_title_page
+      first_page_offset = (zero_page_offset = has_front_cover ? 1 : 0).next
       body_offset = (body_start_page_number = page_number) - 1
-      front_matter_sig = [@theme.running_content_start_at || 'body', @theme.page_numbering_start_at || 'body', insert_toc]
       # NOTE start running content from title or toc, if specified (default: body)
+      front_matter_sig = [@theme.running_content_start_at || 'body', @theme.page_numbering_start_at || 'body', insert_toc]
+      # table values are number of pages to skip before starting running content and page numbering, respectively
       num_front_matter_pages = {
-        ['title', 'title', true] => [0, 0],
-        ['title', 'title', false] => [0, 0],
-        ['title', 'toc', true] => [0, 1],
-        ['title', 'toc', false] => [0, 1],
-        ['title', 'body', true] => [0, body_offset],
-        ['title', 'body', false] => [0, 1],
-        ['toc', 'title', true] => [1, 0],
-        ['toc', 'title', false] => [1, 0],
-        ['toc', 'toc', true] => [1, 1],
-        ['toc', 'toc', false] => [1, 1],
-        ['toc', 'body', true] => [1, body_offset],
-        ['body', 'title', true] => [body_offset, 0],
-        ['body', 'title', false] => [1, 0],
-        ['body', 'toc', true] => [body_offset, 1],
+        ['title', 'title', true] => [zero_page_offset, zero_page_offset],
+        ['title', 'title', false] => [zero_page_offset, zero_page_offset],
+        ['title', 'toc', true] => [zero_page_offset, first_page_offset],
+        ['title', 'toc', false] => [zero_page_offset, body_offset],
+        ['title', 'body', true] => [zero_page_offset, body_offset],
+        ['title', 'body', false] => [zero_page_offset, body_offset],
+        ['toc', 'title', true] => [first_page_offset, zero_page_offset],
+        ['toc', 'title', false] => [body_offset, zero_page_offset],
+        ['toc', 'toc', true] => [first_page_offset, first_page_offset],
+        ['toc', 'body', true] => [first_page_offset, body_offset],
+        ['body', 'title', true] => [body_offset, zero_page_offset],
+        ['body', 'title', false] => [body_offset, zero_page_offset],
+        ['body', 'toc', true] => [body_offset, first_page_offset],
       }[front_matter_sig] || [body_offset, body_offset]
     else
       # Q: what if there's only a toc page, but not title?

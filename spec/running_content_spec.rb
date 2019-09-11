@@ -86,6 +86,30 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect pgnum_labels).to eq %w(i ii 1 2 3)
   end
 
+  it 'should start running content at title page if running_content_start_at key is title and document has front cover' do
+    theme_overrides = { running_content_start_at: 'title' }
+
+    pdf = to_pdf <<~'EOS', attribute_overrides: { 'nofooter' => nil }, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+    = Document Title
+    :doctype: book
+    :toc:
+    :front-cover-image: image:cover.jpg[]
+
+    == First Chapter
+
+    == Second Chapter
+
+    == Third Chapter
+    EOS
+
+    (expect pdf.find_text page_number: 1).to be_empty
+    pgnum_labels = (2.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
+      accum
+    end
+    (expect pgnum_labels).to eq %w(ii iii 1 2 3)
+  end
+
   it 'should start running content at toc page if running_content_start_at key is toc' do
     theme_overrides = { running_content_start_at: 'toc' }
 
@@ -145,6 +169,30 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     EOS
 
     pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
+      accum
+    end
+    (expect pgnum_labels).to eq %w(1 2 3 4 5)
+  end
+
+  it 'should start page numbering at title page if page_numbering_start_at is title and document has front cover' do
+    theme_overrides = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
+
+    pdf = to_pdf <<~'EOS', attribute_overrides: { 'nofooter' => nil }, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+    = Document Title
+    :doctype: book
+    :toc:
+    :front-cover-image: image:cover.jpg[]
+
+    == First Chapter
+
+    == Second Chapter
+
+    == Third Chapter
+    EOS
+
+    (expect pdf.find_text page_number: 1).to be_empty
+    pgnum_labels = (2.upto pdf.pages.size).reduce([]) do |accum, page_number|
       accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       accum
     end
