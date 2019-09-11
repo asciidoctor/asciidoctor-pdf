@@ -185,7 +185,7 @@ class Converter < ::Prawn::Document
     on_page_create &(method :init_page)
 
     layout_cover_page doc, :front
-    if (insert_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
+    if (use_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
       layout_title_page doc
       # NOTE a new page will already be started if the cover image is a PDF
       start_new_page unless page.empty?
@@ -214,11 +214,11 @@ class Converter < ::Prawn::Document
         indent 0, pagenum_width do
           toc_page_nums = layout_toc doc, num_toc_levels, toc_page_nums, 0, toc_start
         end
-        move_down @theme.block_margin_bottom unless insert_title_page
+        move_down @theme.block_margin_bottom unless use_title_page
         toc_end = @y
       end
       # NOTE reserve pages for the toc; leaves cursor on page after last page in toc
-      if insert_title_page
+      if use_title_page
         toc_page_nums.each { start_new_page }
       else
         (toc_page_nums.first...toc_page_nums.last).each { start_new_page }
@@ -228,7 +228,7 @@ class Converter < ::Prawn::Document
 
     start_new_page if @ppbook && verso_page?
 
-    if insert_title_page
+    if use_title_page
       body_offset = (body_start_page_number = page_number) - 1
       front_matter_sig = [@theme.running_content_start_at || 'body', @theme.page_numbering_start_at || 'body', insert_toc]
       # NOTE start running content from title or toc, if specified (default: body)
