@@ -203,6 +203,23 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect get_page_labels pdf).to eql %w(i ii 1 2)
   end
 
+  it 'should label title page using roman numeral ii if cover page is present' do
+    pdf = to_pdf <<~'EOS', doctype: :book
+    = Book Title
+    :toc:
+    :front-cover-image: image:cover.jpg[]
+
+    == Chapter 1
+
+    == Chapter 2
+    EOS
+
+    (expect get_page_labels pdf).to eql %w(i ii iii 1 2)
+    outline = extract_outline pdf
+    (expect outline[0][:title]).to eql 'Book Title'
+    (expect outline[0][:dest][:pagenum]).to eql 2
+  end
+
   it 'should label first page starting with 1 if no front matter is present' do
     pdf = to_pdf <<~'EOS', doctype: :book
     no front matter
