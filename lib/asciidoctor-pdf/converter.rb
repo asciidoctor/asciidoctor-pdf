@@ -191,6 +191,7 @@ class Converter < ::Prawn::Document
     if (use_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
       layout_title_page doc
       start_new_page unless page.empty?
+      has_title_page = page_number == (has_front_cover ? 3 : 2)
     else
       start_new_page unless page.empty?
       body_start_page_number = page_number
@@ -230,10 +231,17 @@ class Converter < ::Prawn::Document
     start_new_page if @ppbook && verso_page?
 
     if use_title_page
-      first_page_offset = (zero_page_offset = has_front_cover ? 1 : 0).next
+      zero_page_offset = has_front_cover ? 1 : 0
+      first_page_offset = has_title_page ? zero_page_offset.next : zero_page_offset
       body_offset = (body_start_page_number = page_number) - 1
+      if (running_content_start_at = @theme.running_content_start_at || 'body') == 'title' && !has_title_page
+        running_content_start_at = 'toc'
+      end
+      if (page_numbering_start_at = @theme.page_numbering_start_at || 'body') == 'title' && !has_title_page
+        page_numbering_start_at = 'toc'
+      end
       # NOTE start running content from title or toc, if specified (default: body)
-      front_matter_sig = [@theme.running_content_start_at || 'body', @theme.page_numbering_start_at || 'body', insert_toc]
+      front_matter_sig = [running_content_start_at, page_numbering_start_at, insert_toc]
       # table values are number of pages to skip before starting running content and page numbering, respectively
       num_front_matter_pages = {
         ['title', 'title', true] => [zero_page_offset, zero_page_offset],
