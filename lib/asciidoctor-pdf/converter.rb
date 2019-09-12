@@ -283,7 +283,7 @@ class Converter < ::Prawn::Document
       end
     end
 
-    add_outline doc, (doc.attr 'outlinelevels', num_toc_levels), toc_page_nums, num_front_matter_pages[1]
+    add_outline doc, (doc.attr 'outlinelevels', num_toc_levels), toc_page_nums, num_front_matter_pages[1], has_front_cover
     if state.pages.size > 0 && (initial_zoom = @theme.page_initial_zoom)
       case initial_zoom.to_sym
       when :Fit
@@ -3258,7 +3258,7 @@ class Converter < ::Prawn::Document
     end
   end
 
-  def add_outline doc, num_levels = 2, toc_page_nums = [], num_front_matter_pages = 0
+  def add_outline doc, num_levels = 2, toc_page_nums = [], num_front_matter_pages = 0, has_front_cover = false
     if ::String === num_levels
       if num_levels.include? ':'
         num_levels, expand_levels = num_levels.split ':', 2
@@ -3284,9 +3284,8 @@ class Converter < ::Prawn::Document
 
     outline.define do
       # FIXME use sanitize: :plain_text once available
-      if (doctitle = document.sanitize(doc.doctitle use_fallback: true))
-        # FIXME link to title page if there's a cover page (skip cover page and ensure blank page)
-        page title: doctitle, destination: (document.dest_top 1)
+      if (doctitle = document.sanitize(doc.doctitle use_fallback: true)) && document.page_count > (has_front_cover ? 2 : 1)
+        page title: doctitle, destination: (document.dest_top has_front_cover ? 2 : 1)
       end
       unless toc_page_nums.none? || (toc_title = doc.attr 'toc-title').nil_or_empty?
         page title: toc_title, destination: (document.dest_top toc_page_nums.first)

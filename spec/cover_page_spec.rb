@@ -40,6 +40,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     images = get_images pdf, 1
     (expect images).to have_size 1
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
+    (expect extract_outline pdf).to be_empty
   end
 
   it 'should not crash if front cover image is a URI and the allow-uri-read attribute is not set' do
