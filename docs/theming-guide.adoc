@@ -756,7 +756,7 @@ If you don't have one of the variants, you can simply reuse the normal variant i
 _Asciidoctor PDF cannot italicize a font dynamically like a browser can, so the italic styles are required._
 
 In order for a third-party font to work properly with Prawn (and hence Asciidoctor PDF), several modifications are required.
-See <<Prepare a Custom Font>> to learn how to prepare your font for use with Asciidoctor PDF.
+See <<Preparing a Custom Font>> to learn how to prepare your font for use with Asciidoctor PDF.
 
 Once you've obtained the TTF files, put them in the directory inside your project where you want to store the fonts.
 It's recommended that you name them consistently so it's easier to type the names in the theme file.
