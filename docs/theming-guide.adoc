@@ -750,7 +750,9 @@ A collection typically consists of all four font styles:
 * bold
 * bold_italic
 
-You'll need all four styles to support AsciiDoc content properly.
+You'll need all four variants to support AsciiDoc content properly.
+Otherwise, the converter will likely crash.
+If you don't have one of the variants, you can simply reuse the normal variant in its place.
 _Asciidoctor PDF cannot italicize a font dynamically like a browser can, so the italic styles are required._
 
 In order for a third-party font to work properly with Prawn (and hence Asciidoctor PDF), several modifications are required.
@@ -779,6 +781,9 @@ font:
       bold: roboto-bold.ttf
       bold_italic: roboto-bold_italic.ttf
 ----
+
+CAUTION: You must declare all four variants.
+If you're missing the font file for one of the variants, configure it to use the same font file as the normal variant.
 
 You can use the key that you assign to the font in the font catalog anywhere the `font-family` property is accepted in the theme file.
 For example, to use the Roboto font for all headings, use:
