@@ -121,8 +121,7 @@ class Transform
   end
 
   # FIXME pass styles downwards to child elements rather than decorating on way out of hierarchy
-  def apply(parsed)
-    fragments = []
+  def apply(parsed, fragments = [], inherited = nil)
     previous_fragment_is_text = false
     # NOTE we use each since using inject is slower than a manual loop
     parsed.each do |node|
@@ -133,14 +132,16 @@ class Transform
           unless (pcdata = node[:pcdata]).empty?
             tag_name = node[:name]
             attributes = node[:attributes]
-            # NOTE decorate child fragments with styles from this element
-            fragments << apply(pcdata).map {|fragment| build_fragment(fragment, tag_name, attributes) }
+            parent = clone_fragment inherited
+            # NOTE decorate child fragments with inherited properties from this element
+            apply(pcdata, fragments, (build_fragment parent, tag_name, attributes))
             previous_fragment_is_text = false
           # NOTE skip element if it has no children
           #else
           #  # NOTE handle an empty anchor element (i.e., <a ...></a>)
           #  if (tag_name = node[:name]) == :a
-          #    fragments << build_fragment({ text: DummyText }, tag_name, node[:attributes])
+          #    seed = clone_fragment inherited, text: DummyText
+          #    fragments << build_fragment(seed, tag_name, node[:attributes])
           #    previous_fragment_is_text = false
           #  end
           end
@@ -149,7 +150,7 @@ class Transform
           case node[:name]
           when :br
             if @merge_adjacent_text_nodes && previous_fragment_is_text
-              fragments << { text: %(#{fragments.pop[:text]}#{LF}) }
+              fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{LF}))
             else
               fragments << { text: LF }
             end
@@ -163,6 +164,9 @@ class Transform
               text: (attributes[:alt].delete ZeroWidthSpace),
               callback: [InlineImageRenderer],
             }
+            if inherited && (link = inherited[:link])
+              fragment[:link] = link
+            end
             if (img_w = attributes[:width])
               fragment[:image_width] = img_w
             end
@@ -172,9 +176,9 @@ class Transform
         end
       when :text
         if @merge_adjacent_text_nodes && previous_fragment_is_text
-          fragments << { text: %(#{fragments.pop[:text]}#{node[:value]}) }
+          fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{node[:value]}))
         else
-          fragments << { text: node[:value] }
+          fragments << (clone_fragment inherited, text: node[:value])
         end
         previous_fragment_is_text = true
       when :charref
@@ -188,14 +192,14 @@ class Transform
           text = [(node[:value].to_i 16)].pack('U1')
         end
         if @merge_adjacent_text_nodes && previous_fragment_is_text
-          fragments << { text: %(#{fragments.pop[:text]}#{text}) }
+          fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{text}))
         else
-          fragments << { text: text }
+          fragments << (clone_fragment inherited, text: text)
         end
         previous_fragment_is_text = true
       end
     end
-    fragments.flatten
+    fragments
   end
 
   def build_fragment(fragment, tag_name, attrs = {})
@@ -206,39 +210,36 @@ class Transform
     when :em
       styles << :italic
     when :button, :code, :key, :mark
-      # NOTE prefer old value, except for styles and callback, which should be combined
-      fragment.update(@theme_settings[tag_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : (k == :callback ? oval.union(nval) : oval) }
+      fragment.update(@theme_settings[tag_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : (k == :callback ? oval.union(nval) : nval) }
     when :color
-      if !fragment[:color]
-        if (rgb = attrs[:rgb])
-          case rgb.chr
-          when '#'
-            fragment[:color] = rgb[1..-1]
-          when '['
-            # treat value as CMYK array (e.g., "[50, 100, 0, 0]")
-            fragment[:color] = rgb[1..-1].chomp(']').split(', ').map(&:to_i)
-            # ...or we could honor an rgb array too
-            #case (vals = rgb[1..-1].chomp(']').split(', ')).size
-            #when 4
-            #  fragment[:color] = vals.map(&:to_i)
-            #when 3
-            #  fragment[:color] = vals.map {|e| '%02X' % e.to_i }.join
-            #end
-          else
-            fragment[:color] = rgb
-          end
-        # QUESTION should we even support r,g,b and c,m,y,k as individual values?
-        elsif (r_val = attrs[:r]) && (g_val = attrs[:g]) && (b_val = attrs[:b])
-          fragment[:color] = [r_val, g_val, b_val].map {|e| '%02X' % e.to_i }.join
-        elsif (c_val = attrs[:c]) && (m_val = attrs[:m]) && (y_val = attrs[:y]) && (k_val = attrs[:k])
-          fragment[:color] = [c_val.to_i, m_val.to_i, y_val.to_i, k_val.to_i]
+      if (rgb = attrs[:rgb])
+        case rgb.chr
+        when '#'
+          fragment[:color] = rgb[1..-1]
+        when '['
+          # treat value as CMYK array (e.g., "[50, 100, 0, 0]")
+          fragment[:color] = rgb[1..-1].chomp(']').split(', ').map(&:to_i)
+          # ...or we could honor an rgb array too
+          #case (vals = rgb[1..-1].chomp(']').split(', ')).size
+          #when 4
+          #  fragment[:color] = vals.map(&:to_i)
+          #when 3
+          #  fragment[:color] = vals.map {|e| '%02X' % e.to_i }.join
+          #end
+        else
+          fragment[:color] = rgb
         end
+      # QUESTION should we even support r,g,b and c,m,y,k as individual values?
+      elsif (r_val = attrs[:r]) && (g_val = attrs[:g]) && (b_val = attrs[:b])
+        fragment[:color] = [r_val, g_val, b_val].map {|e| '%02X' % e.to_i }.join
+      elsif (c_val = attrs[:c]) && (m_val = attrs[:m]) && (y_val = attrs[:y]) && (k_val = attrs[:k])
+        fragment[:color] = [c_val.to_i, m_val.to_i, y_val.to_i, k_val.to_i]
       end
     when :font
-      if !fragment[:font] && (value = attrs[:name])
+      if (value = attrs[:name])
         fragment[:font] = value
       end
-      if !fragment[:size] && (value = attrs[:size])
+      if (value = attrs[:size])
         # FIXME can we make this comparison more robust / accurate?
         if %(#{f_value = value.to_f}) == value || %(#{value.to_i}) == value
           fragment[:size] = f_value
@@ -250,10 +251,10 @@ class Transform
         fragment[:width] = value
         if (value = attrs[:align])
           fragment[:align] = value.to_sym
-          (fragment[:callback] ||= []) << InlineTextAligner
+          fragment[:callback] = ((fragment[:callback] ||= []) << InlineTextAligner).uniq
         end
       end
-      #if !fragment[:character_spacing] && (value = attrs[:character_spacing])
+      #if (value = attrs[:character_spacing])
       #  fragment[:character_spacing] = value.to_f
       #end
     when :a
@@ -273,12 +274,11 @@ class Transform
           if (type = attrs[:type])
             fragment[:type] = type.to_sym
           end
-          (fragment[:callback] ||= []) << InlineDestinationMarker
+          fragment[:callback] = ((fragment[:callback] ||= []) << InlineDestinationMarker).uniq
           visible = false
         end
       end
-      # NOTE prefer old value, except for styles, which should be combined
-      fragment.update(@theme_settings[:link]) {|k, oval, nval| k == :styles ? oval.merge(nval) : oval } if visible
+      fragment.update(@theme_settings[:link]) {|k, oval, nval| k == :styles ? oval.merge(nval) : nval } if visible
     when :sub
       styles << :subscript
     when :sup
@@ -325,13 +325,25 @@ class Transform
       when 'line-through'
         styles << :strikethrough
       else
-        fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : oval } if @theme_settings.key? class_name
+        fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : nval } if @theme_settings.key? class_name
         if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
-          ((fragment[:callback] ||= []) << TextBackgroundAndBorderRenderer).uniq!
+          fragment[:callback] = ((fragment[:callback] || []) << TextBackgroundAndBorderRenderer).uniq
         end 
       end
     end if attrs.key?(:class)
     fragment.delete(:styles) if styles.empty?
+    fragment
+  end
+
+  def clone_fragment fragment, append = nil
+    if fragment
+      fragment = fragment.dup
+      fragment[:styles] = fragment[:styles].dup if fragment.key? :styles
+      fragment[:callback] = fragment[:callback].dup if fragment.key? :callback
+    else
+      fragment = {}
+    end
+    fragment.update append if append
     fragment
   end
 
