@@ -17,4 +17,22 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     _, page_height = get_page_size pdf, top_page_num
     (expect top_y).to eql page_height
   end
+
+  it 'should define a dest at the location of an inline anchor' do
+    ['[[details]]details', '[#details]#details#'].each do |details|
+      pdf = to_pdf <<~EOS
+      Here's the intro.
+
+      <<<
+
+      Here are all the #{details}.
+      EOS
+
+      names = get_names pdf
+      (expect names).to have_key 'details'
+      details_dest = pdf.objects[names['details']]
+      details_dest_pagenum = get_page_number pdf, details_dest[0]
+      (expect details_dest_pagenum).to eql 2
+    end
+  end
 end
