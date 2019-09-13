@@ -264,6 +264,17 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect formatted_text[:font_size]).to eql 8
     end
 
+    it 'should allow styles from role to override default styles for element' do
+      pdf_theme = {
+        role_blue_font_color: '0000ff',
+      }
+      pdf = to_pdf '[.blue]`text`', pdf_theme: pdf_theme, analyze: true
+
+      formatted_text = (pdf.find_text 'text')[0]
+      (expect formatted_text[:font_name]).to eql 'mplus1mn-regular'
+      (expect formatted_text[:font_color]).to eql '0000FF'
+    end
+
     it 'should allow theme to override background and border for custom role', integration: true do
       pdf_theme = {
         role_variable_font_family: 'Courier',
