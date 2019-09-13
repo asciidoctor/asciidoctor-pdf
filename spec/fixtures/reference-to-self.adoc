@@ -1,0 +1,8 @@
+= Document Title
+:doctype: book
+
+first page of content
+
+<<<
+
+<<reference-to-self#,go to top>>

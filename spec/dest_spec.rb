@@ -18,6 +18,14 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect top_y).to eql page_height
   end
 
+  it 'should link self-referencing interdocument xref to built-in __anchor-top ref' do
+    pdf = to_pdf Pathname.new fixture_file 'reference-to-self.adoc'
+    (expect Pathname.new output_file 'reference-to-self.pdf').to exist
+    annotations = get_annotations pdf
+    (expect annotations).to have_size 1
+    (expect annotations[0][:Dest]).to eql '__anchor-top'
+  end
+
   it 'should define a dest at the location of an inline anchor' do
     ['[[details]]details', '[#details]#details#'].each do |details|
       pdf = to_pdf <<~EOS
