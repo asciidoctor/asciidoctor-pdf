@@ -364,6 +364,16 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
   end
 
+  context 'Inline' do
+    it 'should convert multiple images on the same line', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'image-multiple-inline.pdf'
+      image:logo.png[Asciidoctor,12] is developed on image:tux.png[Linux,12].
+      EOS
+
+      (expect to_file).to visually_match 'image-multiple-inline.pdf'
+    end
+  end
+
   context 'Link' do
     it 'should add link around block raster image if link attribute is set' do
       pdf = to_pdf <<~'EOS'
