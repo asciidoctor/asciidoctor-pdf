@@ -57,11 +57,29 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect text[0][:string]).to eql 'Document Title'
   end
 
-  it 'should add running content if document is empty' do
+  it 'should add running content if document is empty (single blank page)' do
     pdf = to_pdf '', attributes: { 'nofooter' => nil }, analyze: true
     text = pdf.text
     (expect text).to have_size 1
     (expect text[0][:string]).to eql '1'
+  end
+
+  it 'should start adding running content to page after imported page' do
+    pdf = to_pdf <<~'EOS', attribute_overrides:  { 'nofooter' => nil }, analyze: true
+    image::blue-letter.pdf[]
+
+    first non-imported page
+    EOS
+
+    pages = pdf.pages
+    (expect pages).to have_size 2
+    (expect pdf.find_text page_number: 1).to be_empty
+    p2_text = pdf.find_text page_number: 2
+    (expect p2_text).to have_size 2
+    (expect p2_text[0][:string]).to eql 'first non-imported page'
+    (expect p2_text[0][:order]).to eql 1
+    (expect p2_text[1][:string]).to eql '2'
+    (expect p2_text[1][:order]).to eql 2
   end
 
   it 'should start running content at title page if running_content_start_at key is title' do
