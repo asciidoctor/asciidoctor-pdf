@@ -103,6 +103,50 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       (expect annotations[0][:Dest]).to eql 'observed-values'
       (expect (pdf.page 2).text).to include 'table'
     end
+
+    it 'should create reference to a list item with an anchor' do
+      pdf = to_pdf <<~'EOS'
+      Jump to the <<first-item>>.
+
+      <<<
+
+      * [[first-item,first item]]list item
+      EOS
+
+      names = get_names pdf
+      (expect names).to have_key 'first-item'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      (expect annotations[0][:Dest]).to eql 'first-item'
+      if asciidoctor_1_5_7_or_better?
+        (expect (pdf.page 1).text).to include 'first item'
+      else
+        (expect (pdf.page 1).text).to include '[first-item]'
+      end
+    end
+
+    it 'should create reference to a table cell with an anchor' do
+      pdf = to_pdf <<~'EOS'
+      Jump to the <<first-cell>>.
+
+      <<<
+
+      |===
+      |[[first-cell,first cell]]table cell
+      |===
+      EOS
+
+      names = get_names pdf
+      (expect names).to have_key 'first-cell'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      (expect annotations[0][:Dest]).to eql 'first-cell'
+      if asciidoctor_1_5_7_or_better?
+        (expect (pdf.page 1).text).to include 'first cell'
+      else
+        (expect (pdf.page 1).text).to include '[first-cell]'
+      end
+    end
   end
 
   context 'interdocument' do
