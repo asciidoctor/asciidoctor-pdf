@@ -1,6 +1,20 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Admonition' do
+  it 'should advance block to next page to avoid splitting it if it will fit' do
+    pdf = to_pdf <<~EOS, analyze: true
+    #{(['paragraph'] * 20).join %(\n\n)}
+
+    [NOTE]
+    ====
+    #{(['admonition'] * 20).join %(\n\n)}
+    ====
+    EOS
+
+    admon_page_numbers = (pdf.find_text 'admonition').map {|it| it[:page_number] }.uniq
+    (expect admon_page_numbers).to eql [2]
+  end
+
   context 'Text' do
     it 'should show bold admonition label by default' do
       pdf = to_pdf <<~'EOS', analyze: true
