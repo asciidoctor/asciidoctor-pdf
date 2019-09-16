@@ -35,4 +35,21 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
       (expect details_dest_pagenum).to eql 2
     end
   end
+
+  it 'should keep anchor with text if text is advanced to next page' do
+    pdf = to_pdf <<~EOS
+    jump to <<anchor>>
+
+    #{(['paragraph'] * 25).join %(\n\n)}
+
+    #{(['paragraph'] * 16).join ' '} [#anchor]#supercalifragilisticexpialidocious#
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key 'anchor'
+    anchor_dest = pdf.objects[names['anchor']]
+    anchor_dest_pagenum = get_page_number pdf, anchor_dest[0]
+    (expect anchor_dest_pagenum).to eql 2
+    (expect (pdf.page 2).text).to eql 'supercalifragilisticexpialidocious'
+  end
 end
