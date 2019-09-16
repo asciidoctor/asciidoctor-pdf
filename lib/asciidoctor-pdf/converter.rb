@@ -3837,7 +3837,7 @@ class Converter < ::Prawn::Document
               image_opts[:width] = container_width
             end
           end
-        else # contain
+        else # when 'contain'
           image_opts[:fit] = container_size
         end
       elsif (image_width = resolve_explicit_width image_attrs, container_size[0])
