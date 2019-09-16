@@ -218,7 +218,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_family).to eql 'Times-Roman'
     end
 
-    it 'should load extended themes relative theme file when theme_path is not specified' do
+    it 'should load extended themes relative to theme file when theme_path is not specified' do
       theme = subject.load_theme fixture_file 'extended-custom-theme.yml'
       (expect theme.__dir__).to eql fixtures_dir
       (expect theme.base_align).to eql 'justify'
