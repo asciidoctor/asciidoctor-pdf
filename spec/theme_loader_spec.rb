@@ -281,6 +281,26 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.page_background_color).to be_nil
     end
 
+    it 'should expand color value to 6 hexadecimal digits' do
+      {
+        '0' => '000000',
+        '9' => '000009',
+        '000000' => '000000',
+        '222' => '222222',
+        '123' => '112233',
+        '000011' => '000009',
+        '2222' => '002222',
+        '11223344' => '112233',
+      }.each do |input, resolved|
+        theme_data = SafeYAML.load <<~EOS
+        page:
+          background_color: #{input}
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme.page_background_color).to eql resolved
+      end
+    end
+
     it 'should wrap cmyk color values in color type if key ends with _color' do
       theme_data = SafeYAML.load <<~EOS
       page:
