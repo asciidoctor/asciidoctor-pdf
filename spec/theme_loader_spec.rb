@@ -280,99 +280,6 @@ describe Asciidoctor::PDF::ThemeLoader do
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to be_nil
     end
-  end
-
-  context 'interpolation' do
-    it 'should resolve variable reference with underscores to previously defined key' do
-      theme_data = SafeYAML.load <<~EOS
-      brand:
-        blue: '0000FF'
-      base:
-        font_color: $brand_blue
-      heading:
-        font_color: $base_font_color
-      EOS
-      theme = subject.new.load theme_data
-      (expect theme.base_font_color).to eql '0000FF'
-      (expect theme.heading_font_color).to eql theme.base_font_color
-    end
-
-    it 'should resolve variable reference with hyphens to previously defined key' do
-      theme_data = SafeYAML.load <<~EOS
-      brand:
-        blue: '0000FF'
-      base:
-        font_color: $brand-blue
-      heading:
-        font_color: $base-font-color
-      EOS
-      theme = subject.new.load theme_data
-      (expect theme.base_font_color).to eql '0000FF'
-      (expect theme.heading_font_color).to eql theme.base_font_color
-    end
-
-    it 'should interpolate variables in value' do
-      theme_data = SafeYAML.load <<~EOS
-      brand:
-        font_family_name: Noto
-        font_family_variant: Serif
-      base:
-        font_family: $brand_font_family_name $brand_font_family_variant
-      heading:
-        font_family: $brand_font_family_name Sans
-      EOS
-      theme = subject.new.load theme_data
-      (expect theme.base_font_family).to eql 'Noto Serif'
-      (expect theme.heading_font_family).to eql 'Noto Sans'
-    end
-
-    it 'should interpolate computed value' do
-      theme_data = SafeYAML.load <<~EOS
-      base:
-        font_size: 10
-        line_height_length: 12
-        line_height: $base_line_height_length / $base_font_size
-        font_size_large: $base_font_size * 1.25
-        font_size_min: $base_font_size * 3 / 4
-      blockquote:
-        border_width: 5
-        padding:  [0, $base_line_height_length - 2, $base_line_height_length * -0.75, $base_line_height_length + $blockquote_border_width / 2]
-      EOS
-      theme = subject.new.load theme_data
-      (expect theme.base_line_height).to eql 1.2
-      (expect theme.base_font_size_large).to eql 12.5
-      (expect theme.base_font_size_min).to eql 7.5
-      (expect theme.blockquote_padding).to eql [0, 10, -9, 14.5]
-    end
-
-    it 'should not compute value if operator is not surrounded by spaces on either side' do
-      theme_data = SafeYAML.load <<~EOS
-      brand:
-        ten: 10
-        a_string: ten*10
-        another_string: ten-10
-      EOS
-
-      theme = subject.new.load theme_data
-      (expect theme.brand_ten).to eql 10
-      (expect theme.brand_a_string).to eql 'ten*10'
-      (expect theme.brand_another_string).to eql 'ten-10'
-    end
-
-    it 'should apply precision functions to value' do
-      theme_data = SafeYAML.load <<~EOS
-      base:
-        font_size: 10.5
-      heading:
-        h1_font_size: ceil($base_font_size * 2.6)
-        h2_font_size: floor($base_font_size * 2.1)
-        h3_font_size: round($base_font_size * 1.5)
-      EOS
-      theme = subject.new.load theme_data
-      (expect theme.heading_h1_font_size).to eql 28
-      (expect theme.heading_h2_font_size).to eql 22
-      (expect theme.heading_h3_font_size).to eql 16
-    end
 
     it 'should wrap cmyk color values in color type if key ends with _color' do
       theme_data = SafeYAML.load <<~EOS
@@ -497,6 +404,99 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.footer_recto_left_content).to eql 'bar'
       (expect theme.footer_recto_right_content).to be_a String
       (expect theme.footer_recto_right_content).to eql '10'
+    end
+  end
+
+  context 'interpolation' do
+    it 'should resolve variable reference with underscores to previously defined key' do
+      theme_data = SafeYAML.load <<~EOS
+      brand:
+        blue: '0000FF'
+      base:
+        font_color: $brand_blue
+      heading:
+        font_color: $base_font_color
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.base_font_color).to eql '0000FF'
+      (expect theme.heading_font_color).to eql theme.base_font_color
+    end
+
+    it 'should resolve variable reference with hyphens to previously defined key' do
+      theme_data = SafeYAML.load <<~EOS
+      brand:
+        blue: '0000FF'
+      base:
+        font_color: $brand-blue
+      heading:
+        font_color: $base-font-color
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.base_font_color).to eql '0000FF'
+      (expect theme.heading_font_color).to eql theme.base_font_color
+    end
+
+    it 'should interpolate variables in value' do
+      theme_data = SafeYAML.load <<~EOS
+      brand:
+        font_family_name: Noto
+        font_family_variant: Serif
+      base:
+        font_family: $brand_font_family_name $brand_font_family_variant
+      heading:
+        font_family: $brand_font_family_name Sans
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.base_font_family).to eql 'Noto Serif'
+      (expect theme.heading_font_family).to eql 'Noto Sans'
+    end
+
+    it 'should interpolate computed value' do
+      theme_data = SafeYAML.load <<~EOS
+      base:
+        font_size: 10
+        line_height_length: 12
+        line_height: $base_line_height_length / $base_font_size
+        font_size_large: $base_font_size * 1.25
+        font_size_min: $base_font_size * 3 / 4
+      blockquote:
+        border_width: 5
+        padding:  [0, $base_line_height_length - 2, $base_line_height_length * -0.75, $base_line_height_length + $blockquote_border_width / 2]
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.base_line_height).to eql 1.2
+      (expect theme.base_font_size_large).to eql 12.5
+      (expect theme.base_font_size_min).to eql 7.5
+      (expect theme.blockquote_padding).to eql [0, 10, -9, 14.5]
+    end
+
+    it 'should not compute value if operator is not surrounded by spaces on either side' do
+      theme_data = SafeYAML.load <<~EOS
+      brand:
+        ten: 10
+        a_string: ten*10
+        another_string: ten-10
+      EOS
+
+      theme = subject.new.load theme_data
+      (expect theme.brand_ten).to eql 10
+      (expect theme.brand_a_string).to eql 'ten*10'
+      (expect theme.brand_another_string).to eql 'ten-10'
+    end
+
+    it 'should apply precision functions to value' do
+      theme_data = SafeYAML.load <<~EOS
+      base:
+        font_size: 10.5
+      heading:
+        h1_font_size: ceil($base_font_size * 2.6)
+        h2_font_size: floor($base_font_size * 2.1)
+        h3_font_size: round($base_font_size * 1.5)
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.heading_h1_font_size).to eql 28
+      (expect theme.heading_h2_font_size).to eql 22
+      (expect theme.heading_h3_font_size).to eql 16
     end
 
     it 'should resolve variable references in font catalog' do
