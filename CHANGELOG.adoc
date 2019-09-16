@@ -114,6 +114,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * change default background image position to center (#1124)
 * allow cover image position to be controlled using position attribute on image macro (#1134)
 * change default cover image position to center (#1134)
+* allow cover image size to be controlled using fit, pdfwidth, and width attributes; don't scale image by default (#1134)
 * set enable_file_requests_with_root and enable_web_requests options for all SVGs (#683)
 * automatically set pdf-stylesdir if pdf-style ends with .yml and pdf-stylesdir is not specified (#1126)
 * replace hyphens with underscores in top-level theme keys
