@@ -198,7 +198,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should allow both background color and image to be set concurrently', integration: true do
       pdf_theme = {
         page_background_color: 'F9F9F9',
-        page_background_image: %(image:#{fixture_file 'tux.png'}[pdfwidth=50%]),
+        page_background_image: %(image:#{fixture_file 'tux.png'}[fit=none,pdfwidth=50%]),
       }
       to_file = to_pdf_file '{blank}', 'page-background-color-and-image.pdf', pdf_theme: pdf_theme
 
@@ -208,7 +208,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should resolve attribute reference in image path in theme', integration: true do
       pdf_theme = {
         page_background_color: 'F9F9F9',
-        page_background_image: 'image:{docdir}/tux.png[pdfwidth=50%]',
+        page_background_image: 'image:{docdir}/tux.png[fit=none,pdfwidth=50%]',
       }
       to_file = to_pdf_file '{blank}', 'page-background-color-and-image-relative-to-docdir.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }
 
@@ -262,10 +262,10 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-max-height.pdf'
     end
 
-    it 'should set width of background image according to width attribute', integration: true do
+    it 'should set width of background image according to width attribute when fit=none', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-width.pdf'
       = Document Title
-      :page-background-image: image:square.png[bg,200]
+      :page-background-image: image:square.png[bg,200,fit=none]
 
       This page has a background image that is rather loud.
       EOS
@@ -306,11 +306,11 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
     end
 
-    it 'should scale up background SVG to fit boundaries of page if pdfwidth is 100%', integration: true do
+    it 'should scale up background SVG to fit boundaries of page if pdfwidth is 100% and fit=none', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-pdfwidth.pdf'
       = Document Title
       :pdf-page-layout: landscape
-      :page-background-image: image:square.svg[pdfwidth=100%]
+      :page-background-image: image:square.svg[fit=none,pdfwidth=100%]
 
       This page has a background image that is rather loud.
       EOS
@@ -429,7 +429,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should position background image according to value of position attribute on macro', integration: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-position.pdf'
       = Document Title
-      :page-background-image: image:example-watermark.svg[pdfwidth=50%,position=bottom center]
+      :page-background-image: image:example-watermark.svg[fit=none,pdfwidth=50%,position=bottom center]
 
       content
       EOS

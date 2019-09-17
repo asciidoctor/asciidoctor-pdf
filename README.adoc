@@ -475,19 +475,20 @@ If the image height exceeds the height of the page, the image will be scaled dow
 
 === Background Image Sizing
 
-In addition to the width-related attributes previously covered, background images can be sized relative to the page using the `fit` attribute of the image macro.
+In addition to the width-related attributes previously covered, cover and background images can be sized relative to the page using the `fit` attribute of the image macro.
 The `fit` attribute works similarly to the `object-fit` property in CSS.
 It's value must be specified as a single keyword, chosen from the table below.
 The starting size of the image is determined by the explicit width, if specified, or the implicit width.
 The height is always derived from the width while respecting the implicit aspect ratio of the image.
 The available space for a background image (i.e., the canvas) is the page.
+If the `fit` attribute is not specified, it defaults to `contain`.
 
 [cols="1s,3"]
 |===
 | Value | Purpose
 
 | contain
-| The image is scaled up or down while retaining its aspect ratio to fit within the available space.
+| The image is scaled up or down while retaining its aspect ratio to fit within the available space. (default)
 
 | cover
 | The image is scaled up or down while retaining its aspect ratio so the image completely covers the available space, even if it means the image must be clipped in one direction.
@@ -532,13 +533,13 @@ right
 Here's an example of how to place a background image at the top center of every page:
 
 ----
-:page-background-image: image:bg.png[pdfwidth=50%,position=top]
+:page-background-image: image:bg.png[fit=none,pdfwidth=50%,position=top]
 ----
 
 Here's how to move it to the bottom right:
 
 ----
-:page-background-image: image:bg.png[pdfwidth=50%,position=bottom right]
+:page-background-image: image:bg.png[fit=none,pdfwidth=50%,position=bottom right]
 ----
 
 If an image dimension matches the height or width of the page, the positioning keyword for that axis has no effect.

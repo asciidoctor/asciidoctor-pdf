@@ -3811,7 +3811,7 @@ class Converter < ::Prawn::Document
       if background && (image_pos = image_attrs['position']) && (image_pos = resolve_background_position image_pos, nil)
         image_opts.update image_pos
       end
-      if (image_fit = image_attrs['fit'])
+      if (image_fit = image_attrs['fit'] || (background ? 'contain' : nil))
         image_fit = 'contain' if image_format == 'svg' && image_fit == 'fill'
         container_width, container_height = container_size
         case image_fit
