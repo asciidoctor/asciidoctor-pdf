@@ -479,7 +479,7 @@ In addition to the width-related attributes previously covered, background image
 The `fit` attribute works similarly to the `object-fit` property in CSS.
 It's value must be specified as a single keyword, chosen from the table below.
 The starting size of the image is determined by the explicit width, if specified, or the implicit width.
-The height is always derived from with width, respecting the implicit aspect ratio of the image.
+The height is always derived from the width while respecting the implicit aspect ratio of the image.
 The available space for a background image (i.e., the canvas) is the page.
 
 [cols="1s,3"]
