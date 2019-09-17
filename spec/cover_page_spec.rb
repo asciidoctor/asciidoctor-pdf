@@ -67,20 +67,35 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
       content page
       EOS
 
-      (expect to_file).to visually_match 'cover-page-front-cover-image.pdf'
+      (expect to_file).to visually_match 'cover-page-front-cover-image-contain.pdf'
     end
   end
 
-  it 'should scale front cover image to fit page by default', integration: true do
-    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image.pdf'
+  it 'should scale front cover image to boundaries of page by default', integration: true do
+    ['', 'fit=contain'].each do |image_opts|
+      to_file = to_pdf_file <<~EOS, %(cover-page-front-cover-image-#{image_opts.empty? ? 'default' : 'contain'}.pdf)
+      = Document Title
+      :doctype: book
+      :front-cover-image: image:cover.jpg[#{image_opts}]
+
+      content page
+      EOS
+
+      (expect to_file).to visually_match 'cover-page-front-cover-image-contain.pdf'
+    end
+  end
+
+  it 'should stretch front cover image to boundaries of page if fit=fill', integration: true do
+    to_file = to_pdf_file <<~EOS, 'cover-page-front-cover-image-fill.pdf'
     = Document Title
     :doctype: book
-    :front-cover-image: image:cover.jpg[]
+    :front-cover-image: image:cover.jpg[fit=fill]
+    :pdf-page-size: Letter
 
     content page
     EOS
 
-    (expect to_file).to visually_match 'cover-page-front-cover-image.pdf'
+    (expect to_file).to visually_match 'cover-page-front-cover-image-fill.pdf'
   end
 
   it 'should not scale front cover image to fit page if fit is none', integration: true do
@@ -95,19 +110,20 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect to_file).to visually_match 'cover-page-front-cover-image-unscaled.pdf'
   end
 
-  it 'should scale front cover by default until it reaches the boundaries of the page', integration: true do
-    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-max.pdf'
-    = Document Title
-    :front-cover-image: image:cover.jpg[]
-    :pdf-page-size: Legal
+  it 'should scale front cover down until it is contained within the boundaries of the page', integration: true do
+    ['', 'fit=scale-down'].each do |image_opts|
+      to_file = to_pdf_file <<~EOS, %(cover-page-front-cover-image-#{image_opts.empty? ? 'max' : 'scale-down'}.pdf)
+      :front-cover-image: image:cover.jpg[#{image_opts}]
+      :pdf-page-size: A7
 
-    content page
-    EOS
+      content page
+      EOS
 
-    (expect to_file).to visually_match 'cover-page-front-cover-image-max.pdf'
+      (expect to_file).to visually_match 'cover-page-front-cover-image-max.pdf'
+    end
   end
 
-  it 'should scale front cover until it covers page if fit=cover', integration: true do
+  it 'should scale front cover image until it covers page if fit=cover', integration: true do
     to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-cover.pdf'
     = Document Title
     :front-cover-image: image:cover.jpg[fit=cover]

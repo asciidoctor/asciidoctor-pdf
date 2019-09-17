@@ -3812,6 +3812,7 @@ class Converter < ::Prawn::Document
         image_opts.update image_pos
       end
       if (image_fit = image_attrs['fit'])
+        image_fit = 'contain' if image_format == 'svg' && image_fit == 'fill'
         container_width, container_height = container_size
         case image_fit
         when 'none'
@@ -3837,6 +3838,9 @@ class Converter < ::Prawn::Document
               image_opts[:width] = container_width
             end
           end
+        when 'fill'
+          image_opts[:width] = container_width
+          image_opts[:height] = container_height
         else # when 'contain'
           image_opts[:fit] = container_size
         end
