@@ -34,6 +34,7 @@ cp /usr/share/fonts/google-noto/NotoSerif-{Regular,Italic,Bold,BoldItalic}.ttf .
 
 cd ..
 
+# NOTE build image using command found at top of Dockerfile.fontforge
 podman run --rm -t -u 0:0 --privileged \
   -e "SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}" \
   -v `pwd`:/home/fontforge/scripts \
@@ -44,6 +45,8 @@ podman run --rm -t -u 0:0 --privileged \
 exitcode=$?
 
 rm -f $SOURCE_DIR/*.ttf
-rmdir build
+if [ -d build ]; then
+  rmdir build
+fi
 
 exit $exitcode
