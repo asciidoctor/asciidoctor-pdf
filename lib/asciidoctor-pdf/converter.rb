@@ -3806,7 +3806,7 @@ class Converter < ::Prawn::Document
       image_opts = {}
     end
     background = opts[:background]
-    container_size = opts.fetch :container_size, (background ? [page_width, page_height] : [bounds.width, bounds.height])
+    container_size = opts[:container_size] || (background ? [page_width, page_height] : [bounds.width, bounds.height])
     if image_attrs
       if background && (image_pos = image_attrs['position']) && (image_pos = resolve_background_position image_pos, nil)
         image_opts.update image_pos
