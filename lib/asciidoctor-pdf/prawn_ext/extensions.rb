@@ -517,6 +517,10 @@ module Extensions
     #end
   end
 
+  def inflate_indent value
+    (::Array === value ? (value.slice 0, 2) : (::Array.new 2, value)).map(&:to_f)
+  end
+
   # TODO memoize the result
   def inflate_padding padding
     padding = [*(padding || 0)].slice 0, 4
