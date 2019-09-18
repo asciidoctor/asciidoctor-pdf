@@ -297,6 +297,7 @@ class Converter < ::Prawn::Document
     end
     catalog.data[:ViewerPreferences] = { DisplayDocTitle: true }
 
+    stamp_foreground_image doc, has_front_cover
     layout_cover_page doc, :back
     nil
   end
@@ -498,7 +499,6 @@ class Converter < ::Prawn::Document
       tare = true
       fill_absolute_bounds @page_bg_color
     end
-    # TODO implement as a watermark (on top)
     if (bg_image = @page_bg_image[page_side])
       tare = true
       canvas { image bg_image[0], ({ position: :center, vposition: :center }.merge bg_image[1]) }
@@ -2647,6 +2647,22 @@ class Converter < ::Prawn::Document
     unlink_tmp_file image_path if image_path
   end
 
+  def stamp_foreground_image doc, has_front_cover
+    if (first_page = (has_front_cover ? state.pages[1..-1] : state.pages).find {|it| !it.imported_page? }) &&
+        (first_page_num = (state.pages.index first_page) + 1) &&
+        (fg_image = resolve_background_image doc, @theme, 'page-foreground-image') && fg_image[0]
+      go_to_page first_page_num
+      create_stamp 'foreground-image' do
+        canvas { image fg_image[0], ({ position: :center, vposition: :center }.merge fg_image[1]) }
+      end
+      stamp 'foreground-image'
+      (first_page_num.next..page_count).each do |num|
+        go_to_page num
+        stamp 'foreground-image' unless page.imported_page?
+      end
+    end
+  end
+
   def start_new_chapter chapter
     start_new_page unless at_page_top?
     # TODO must call update_colors before advancing to next page if start_new_page is called in layout_chapter_title
@@ -2908,7 +2924,7 @@ class Converter < ::Prawn::Document
     skip, skip_pagenums, body_start_page_number = opts[:skip] || [1, 1]
     body_start_page_number = opts[:body_start_page_number] || 1
     # NOTE find and advance to first non-imported content page to use as model page
-    return unless (content_start_page = state.pages[skip..-1].index {|p| !p.imported_page? })
+    return unless (content_start_page = state.pages[skip..-1].index {|it| !it.imported_page? })
     content_start_page += (skip + 1)
     num_pages = page_count - skip
     prev_page_number = page_number

@@ -7,6 +7,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* add support for a foreground image on each page using the page-foreground-image attribute or theme key (#727)
 * set fit=contain by default on cover and page background images (#1275)
 * implement fit=fill for cover, page background, and running content raster (non-SVG) images (#1276)
 * add glyphs for built-in characters to bundled monospace font (M+ 1mn) (#1274)

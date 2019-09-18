@@ -1112,6 +1112,12 @@ See <<Title Page>> for details.
     recto: image:page-bg-recto.png[]
     verso: image:page-bg-verso.png[]
 
+|foreground-image^[2]^
+|image macro^[3]^ +
+(default: _not set_)
+|page
+  foreground-image: image:watermark.svg[]
+
 |initial-zoom
 |Fit {vbar} FitH {vbar} FitV +
 (default: FitH)
@@ -1157,12 +1163,12 @@ See <<Title Page>> for details.
 
 . To disable the background color for the page, set the value to white (i.e., FFFFFF).
 The color keyword `transparent` is not recognized in this context.
-. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
-The size of the background image can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width) when `fit=none`.
-The position of the background image can be controlled using the `position` attribute.
-If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background is specified, it will be used only for that side.
+. By default, page background and foreground images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+The size of the image can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width) when `fit=none`.
+The position of the image can be controlled using the `position` attribute.
+If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background image is specified, it will be used only for that side (not available for the foreground image).
 If you define the keys using the flatten structure (e.g., `page-background-image-recto`), you can also set the default page background image (`page-background-image`), which will then be used as a fallback if a background image isn't specified for a given side.
-To disable the background image, use the value `none`.
+To disable the image, use the value `none`.
 . Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
 . The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin-inner and margin-outer values.
 These margins and used when the value `prepress` is assigned to the `media` document attribute.
@@ -4210,6 +4216,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |page-background-image-(recto{vbar}verso)^[4]^
 |path^[2]^ {vbar} image macro^[3]^
 |:page-background-image-recto: image:bg-recto.jpg[]
+
+|page-foreground-image
+|path^[2]^ {vbar} image macro^[3]^
+|:page-foreground-image: image:watermark.svg[]
 
 |pagenums^[5]^
 |flag (default: _set_)
