@@ -137,7 +137,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   it 'should position front cover image as specified by position attribute', integration: true do
     to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-positioned.pdf'
     = Document Title
-    :front-cover-image: image:square.svg[pdfwidth=50%,position=top right]
+    :front-cover-image: image:square.svg[fit=none,pdfwidth=50%,position=top right]
 
     content page
     EOS
