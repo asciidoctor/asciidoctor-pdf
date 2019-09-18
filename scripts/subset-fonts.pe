@@ -337,6 +337,8 @@ while (fi < num_code_fonts)
       SelectMore(0u00a1,0u00fd)
       # Latin Extended-A (covers Czech, Dutch, Polish & Turkish, esp. names)
       SelectMore(0u0100,0u017f)
+      # General Punctuation (e.g., em dashes, arrows, ellipsis, trademark)
+      SelectMoreSingletons(0u2014,0u2026,0u2122,0u2190,0u2192,0u21d0,0u21d2)
       # Greek Alphabet (frequently used for math)
       SelectMore(0u0391,0u03c9)
       # Euro sign

@@ -1,14 +1,18 @@
 [%hardbreaks]
 // single arrows
-a &#x2192; b
-c &#x2190; d
+a &#x2192; b `&#x2192;` c
+c &#x2190; b `&#x2190;` a
 // double arrows
-a &#x21d2; b
-c &#x21d0; d
+a &#x21d2; b `&#x21d2;` c
+c &#x21d0; b `&#x21d0;` a
+// em-dash
+a--b `c--d`
+// ellipsis
+so... `well...`
 // euro sign
-99,99 &#x20ac;
+99,99 &#x20ac; `-5,00 &#x20ac;`
 // trademark sign
-YOLO&#x2122;
+YOLO&#x2122; `ACME&#x2122;`
 // math operators
 To &#x221e;!
 // circled numbers
@@ -36,6 +40,8 @@ ifeval::["{pdf-theme}"=="default-with-fallback-font"]
 &#x2713; done
 // upside down e
 upsid&#x0259; down
+// extended monospace punctuation
+`&#x2022;`
 // CJK
 &#x3041;&#x3000;&#x3088;
 endif::[]
