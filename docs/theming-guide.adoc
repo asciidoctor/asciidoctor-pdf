@@ -3091,6 +3091,24 @@ The keys in this category control the style of thematic breaks (aka horizontal r
 
 The keys in this category control the arrangement and style of definition list items (terms and descriptions).
 
+[TIP]
+====
+Asciidoctor PDF supports unordered and ordered description lists.
+These are defined as a description list, but get displayed as an unordered or ordered description list with the term as a subject.
+Only one term is supported.
+The subject is shown using the term font style (bold by default).
+The subject is stacked above the description if the "stack" role is present.
+Otherwise, the subject is arranged as a run-in followed by a subject stop (`:` by default).
+The subject stop can be customized using the `subject-stop` attribute.
+
+[source,asciidoc]
+----
+[unordered]
+* alpha:: partially complete and unstable
+* beta:: feature complete and undergoing testing
+----
+====
+
 [cols="3,4,5l"]
 |===
 |Key |Value Type |Example

@@ -96,6 +96,7 @@ class Converter < ::Prawn::Document
   PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
   CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(|--)(\d+|\.)\2> ?(?=(?:\\?<!?\2(?:\d+|\.)\2>)*$)/
   ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
+  StopPunctRx = /[.!?;:]$/
   UriBreakCharsRx = /(?:\/|\?|&amp;|#)(?!$)/
   UriBreakCharRepl = %(\\&#{ZeroWidthSpace})
   UriSchemeBoundaryRx = /(?<=:\/\/)/
@@ -1089,7 +1090,27 @@ class Converter < ::Prawn::Document
   def convert_dlist node
     add_dest_for_block node if node.id
 
-    case node.style
+    case (style = node.style)
+    when 'unordered', 'ordered'
+      if style == 'unordered'
+        list_style = :ulist
+        (markers = @list_bullets) << :disc
+      else
+        list_style = :olist
+        (markers = @list_numerals) << 1
+      end
+      list = List.new node.parent, list_style
+      stack_subject = node.has_role? 'stack'
+      subject_stop = node.attr 'subject-stop', (stack_subject ? nil : ':'), false
+      node.items.each do |subjects, dd|
+        subject = [*subjects].first.text
+        list_item_text = %(+++<strong>#{subject}#{(StopPunctRx.match? sanitize subject) ? '' : subject_stop}</strong>#{dd.text? ? "#{stack_subject ? '<br>' : ' '}#{dd.text}" : ''}+++)
+        list_item = ListItem.new list, list_item_text
+        dd.blocks.each {|it| list_item << it }
+        list << list_item
+      end
+      convert_outline_list list
+      markers.pop
     when 'qanda'
       @list_numerals << '1'
       convert_outline_list node
