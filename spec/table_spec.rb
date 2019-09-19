@@ -59,6 +59,24 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.lines.uniq).to have_size 6
     end if asciidoctor_2_or_better?
 
+    it 'should allow theme to control table stripe color using table_body_stripe_background_color key', integration: true do
+      pdf_theme = {
+        table_body_background_color: 'FDFDFD',
+        table_body_stripe_background_color: 'EFEFEF',
+      }
+      to_file = to_pdf_file <<~'EOS', 'table-stripes-even.pdf', pdf_theme: pdf_theme
+      [stripes=even]
+      |===
+      |fee
+      |fi
+      |fo
+      |fum
+      |===
+      EOS
+
+      (expect to_file).to visually_match 'table-stripes-even.pdf'
+    end
+
     it 'should apply stripes to specified group of rows as specified by stripes attribute', integration: true do
       to_file = to_pdf_file <<~'EOS', 'table-stripes-odd.pdf'
       [cols=3*,stripes=odd]

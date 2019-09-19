@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * implement fit=fill for cover, page background, and running content raster (non-SVG) images (#1276)
 * add glyphs for built-in characters to bundled monospace font (M+ 1mn) (#1274)
 * look for noborder role on image even if other roles are defined
+* remove deprecated table_odd_row_background_color and table_even_row_background_color keys from theme
 
 == 1.5.0.beta.5 (2019-09-13) - @mojavelinux
 
@@ -280,7 +281,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * implement start line number for source listing (Rouge) (#752)
 * enable "start inline" option when highlighting PHP (#755)
 * persuade CodeRay to handle html+ source languages
-* introduce stripes attribute to table to control zebra-striping (#724)
+* introduce stripes attribute to table to control zebra striping (#724)
+* use theme key table_body_stripe_background_color to control color of table stripes (#724)
 * allow theme to set style of table border and grid (#766)
 * allow theme to set text transform on header cell in table body (#750)
 * set top border width of first body row to match bottom border width of header row

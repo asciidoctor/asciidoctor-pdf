@@ -1845,12 +1845,8 @@ class Converter < ::Prawn::Document
     # NOTE emulate table bg color by using it as a fallback value for each element
     head_bg_color = resolve_theme_color :table_head_background_color, tbl_bg_color
     foot_bg_color = resolve_theme_color :table_foot_background_color, tbl_bg_color
-    body_bg_color = resolve_theme_color :table_body_background_color,
-        # table_odd_row_background_color is deprecated
-        (resolve_theme_color :table_odd_row_background_color, tbl_bg_color)
-    body_stripe_bg_color = resolve_theme_color :table_body_stripe_background_color,
-        # table_even_row_background_color is deprecated
-        (resolve_theme_color :table_even_row_background_color, tbl_bg_color)
+    body_bg_color = resolve_theme_color :table_body_background_color, tbl_bg_color
+    body_stripe_bg_color = resolve_theme_color :table_body_stripe_background_color, tbl_bg_color
 
     table_data = []
     node.rows[:head].each do |row|
