@@ -1118,6 +1118,54 @@ class Converter < ::Prawn::Document
       end
       convert_outline_list list
       markers.pop
+    when 'horizontal'
+      table_data = []
+      term_padding = desc_padding = term_line_metrics = term_inline_format = nil
+      max_term_width = 0
+      theme_font :description_list_term do
+        if (term_font_styles = font_styles).empty?
+          term_inline_format = true
+        else
+          term_inline_format = [normalize: false, inherited: { styles: term_font_styles }]
+        end
+        term_line_metrics = calc_line_metrics @theme.description_list_term_line_height || @theme.base_line_height
+        term_padding = [term_line_metrics.padding_top, 10, (@theme.prose_margin_bottom || 0) * 0.5 + term_line_metrics.padding_bottom, 10]
+        desc_padding = [0, 10, (@theme.prose_margin_bottom || 0) * 0.5, 10]
+      end
+      node.items.each do |terms, desc|
+        term_text = [*terms].map(&:text).join ?\n
+        if (term_width = width_of term_text, inline_format: term_inline_format) > max_term_width
+          max_term_width = term_width
+        end
+        row_data = [{
+          text_color: @font_color,
+          content: term_text,
+          inline_format: term_inline_format,
+          padding: term_padding,
+          leading: term_line_metrics.leading,
+          # FIXME prawn-table doesn't have support for final_gap option
+          #final_gap: term_line_metrics.final_gap,
+          valign: :top,
+        }]
+        desc_container = Block.new desc, :open
+        desc_container << (Block.new desc_container, :paragraph, source: (desc.instance_variable_get :@text)) if desc.text?
+        desc.blocks.each {|b| desc_container << b } if desc.block?
+        row_data << {
+          content: (::Prawn::Table::Cell::AsciiDoc.new self, {
+            content: desc_container,
+            text_color: @font_color,
+            padding: desc_padding,
+            valign: :top,
+          }),
+        }
+        table_data << row_data
+      end
+      max_term_width += (term_padding[1] + term_padding[3])
+      term_column_width = [max_term_width, bounds.width * 0.5].min
+      table table_data, { position: :left, cell_style: { border_width: 0 }, column_widths: [term_column_width] } do
+        @pdf.layout_table_caption node if node.title?
+      end
+      margin_bottom (@theme.prose_margin_bottom || 0) * 0.5
     when 'qanda'
       @list_numerals << '1'
       convert_outline_list node
@@ -1138,7 +1186,7 @@ class Converter < ::Prawn::Document
             term_font_styles = nil
           end
           terms.each do |term|
-            # QUESTION should we use inherited option on layout_prose in other places?
+            # QUESTION should we pass down styles in other calls to layout_prose
             layout_prose term.text, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left, line_height: term_line_height, normalize_line_height: true, styles: term_font_styles
           end
         end
