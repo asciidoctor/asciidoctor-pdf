@@ -491,7 +491,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_color: '000000',
       }
       to_file = to_pdf_file <<~'EOS', 'image-noborder.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }
-      image::wolpertinger.jpg[pdfwidth=25%,role=noborder]
+      image::wolpertinger.jpg[pdfwidth=25%,role=specimen noborder]
       EOS
 
       (expect to_file).to visually_match 'image-wolpertinger.pdf'

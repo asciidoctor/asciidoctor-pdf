@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * set fit=contain by default on cover and page background images (#1275)
 * implement fit=fill for cover, page background, and running content raster (non-SVG) images (#1276)
 * add glyphs for built-in characters to bundled monospace font (M+ 1mn) (#1274)
+* look for noborder role on image even if other roles are defined
 
 == 1.5.0.beta.5 (2019-09-13) - @mojavelinux
 

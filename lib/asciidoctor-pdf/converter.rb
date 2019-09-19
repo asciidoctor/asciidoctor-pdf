@@ -1438,7 +1438,7 @@ class Converter < ::Prawn::Document
           # NOTE prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
           # NOTE cursor advances automatically
           svg_obj.draw
-          draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? 'noborder'
+          draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? && (node.has_role? 'noborder')
           if (link = node.attr 'link', nil, false)
             add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
           end
@@ -1469,7 +1469,7 @@ class Converter < ::Prawn::Document
           update_colors if graphic_state.color_space.empty?
           # NOTE specify both width and height to avoid recalculation
           embed_image image_obj, image_info, width: rendered_w, height: rendered_h, position: alignment
-          draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? 'noborder'
+          draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? && (node.has_role? 'noborder')
           if (link = node.attr 'link', nil, false)
             add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
           end
