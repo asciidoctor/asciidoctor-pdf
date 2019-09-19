@@ -1054,7 +1054,6 @@ class Converter < ::Prawn::Document
       end
     end
     add_dest_for_block node if node.id
-    @list_numerals ||= []
     @list_numerals << 1
     #stroke_horizontal_rule @theme.caption_border_bottom_color
     line_metrics = theme_font :conum do calc_line_metrics @theme.base_line_height end
@@ -1092,7 +1091,7 @@ class Converter < ::Prawn::Document
 
     case node.style
     when 'qanda'
-      (@list_numerals ||= []) << '1'
+      @list_numerals << '1'
       convert_outline_list node
       @list_numerals.pop
     else
@@ -1129,7 +1128,6 @@ class Converter < ::Prawn::Document
 
   def convert_olist node
     add_dest_for_block node if node.id
-    @list_numerals ||= []
     # TODO move list_numeral resolve to a method
     list_numeral = case node.style
     when 'arabic'
