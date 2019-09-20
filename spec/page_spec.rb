@@ -566,4 +566,45 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       end
     end
   end
+
+  context 'Watermark' do
+    it 'should stamp watermark image on the top of all pages if page-foreground-image is specified', integration: true do
+      to_file = to_pdf_file <<~EOS, 'page-watermark.pdf'
+      = Document Title
+      :doctype: book
+      :page-foreground-image: image:watermark.svg[]
+
+      [.text-left]
+      #{['lots of rambling'] * 150 * ?\n}
+
+      <<<
+
+      [.text-left]
+      #{['lots of rambling'] * 150 * ?\n}
+      EOS
+
+      (expect to_file).to visually_match 'page-watermark.pdf'
+    end
+
+    it 'should no apply watermark image to front cover, back cover, or imported page', integration: true do
+      to_file = to_pdf_file <<~EOS, 'page-watermark-content-only.pdf'
+      = Document Title
+      :doctype: book
+      :front-cover-image: image:cover.jpg[]
+      :back-cover-image: image:cover.jpg[]
+      :page-foreground-image: image:watermark.svg[]
+      :notitle:
+
+      [.text-left]
+      #{['lots of rambling'] * 150 * ?\n}
+
+      image::red-green-blue.pdf[page=1]
+
+      [.text-left]
+      #{['lots of rambling'] * 150 * ?\n}
+      EOS
+
+      (expect to_file).to visually_match 'page-watermark-content-only.pdf'
+    end
+  end
 end
