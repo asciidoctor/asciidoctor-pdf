@@ -429,6 +429,15 @@ describe 'Asciidoctor::PDF::Converter - List' do
       desc_text = (pdf.find_text 'desc')[0]
       (expect desc_text[:page_number]).to eql 2
     end
+
+    it 'wip should style term with italic text using bold italic' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      _term_:: desc
+      EOS
+
+      term_text = (pdf.find_text 'term')[0]
+      (expect term_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+    end
   end
 
   context 'Q & A' do
