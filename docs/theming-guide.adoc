@@ -37,7 +37,7 @@ This document describes how the theming system works, how to define a custom the
 
 TIP: The quickest way to create your own theme is to <<Extends,extend the default theme>>.
 This not only gives you a set of foundation styles to build on, it also provides a collection of <<Bundled Fonts,bundled fonts>>.
-If you want to replace the bundled fonts with your own, you must declare the name and location of each font in the <<Custom fonts,font catalog>>.
+If you want to replace the bundled fonts with your own, you must declare the name and location of each font in the <<Custom Fonts,font catalog>>.
 To reuse the bundled fonts, you can either extend the default theme and/or redeclare the bundled fonts in the font catalog.
 
 WARNING: If you don't declare your own fonts (or extend the default theme), only the built-in (AFM) fonts provided by the PDF reader will be available.
