@@ -370,25 +370,6 @@ describe 'Asciidoctor::PDF::Converter - List' do
   end
 
   context 'Description' do
-    it 'should convert qanda to ordered list' do
-      pdf = to_pdf <<~'EOS', analyze: true
-      [qanda]
-      What is Asciidoctor?::
-      An implementation of the AsciiDoc processor in Ruby.
-
-      What is the answer to the Ultimate Question?::
-      42
-      EOS
-      (expect pdf.strings).to eql [
-        '1.',
-        'What is Asciidoctor?',
-        'An implementation of the AsciiDoc processor in Ruby.',
-        '2.',
-        'What is the answer to the Ultimate Question?',
-        '42'
-      ]
-    end
-
     it 'should keep term with primary text' do
       pdf = to_pdf <<~EOS, analyze: true
       :pdf-page-size: 52mm x 80mm
@@ -438,9 +419,176 @@ describe 'Asciidoctor::PDF::Converter - List' do
       term_text = (pdf.find_text 'term')[0]
       (expect term_text[:font_name]).to eql 'NotoSerif-BoldItalic'
     end
+
+    context 'Unordered' do
+      it 'should layout unordered description list like an unordered list with subject in bold' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [unordered]
+        item a:: about item a
+        +
+        more about item a
+
+        item b::
+        about item b
+        EOS
+
+        (expect pdf.lines).to eql ['•item a: about item a', 'more about item a', '•item b: about item b']
+        item_a_subject_text = (pdf.find_text 'item a:')[0]
+        (expect item_a_subject_text).not_to be_nil
+        (expect item_a_subject_text[:font_name]).to eql 'NotoSerif-Bold'
+      end
+
+      it 'should allow subject stop to be customized using subject-stop attribute' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [unordered,subject-stop=.]
+        item a:: about item a
+        +
+        more about item a
+
+        item b::
+        about item b
+        EOS
+
+        (expect pdf.lines).to eql ['•item a. about item a', 'more about item a', '•item b. about item b']
+      end
+
+      it 'should not add subject stop if subject ends with stop punctuation' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [unordered,subject-stop=.]
+        item a.:: about item a
+        +
+        more about item a
+
+        _item b:_::
+        about item b
+
+        well?::
+        yes
+        EOS
+
+        (expect pdf.lines).to eql ['•item a. about item a', 'more about item a', '•item b: about item b', '•well? yes']
+      end
+
+      it 'should add subject stop if subject ends with character reference' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [unordered]
+        &:: ampersand
+        >:: greater than
+        EOS
+
+        (expect pdf.lines).to eql ['•&: ampersand', '•>: greater than']
+      end
+
+      it 'should stack subject on top of text if stack role is present' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [unordered.stack]
+        item a:: about item a
+        +
+        more about item a
+
+        item b::
+        about item b
+        EOS
+
+        (expect pdf.lines).to eql ['•item a', 'about item a', 'more about item a', '•item b', 'about item b']
+      end
+    end
+
+    context 'Ordered' do
+      it 'should layout ordered description list like an ordered list with subject in bold' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [ordered]
+        item a:: about item a
+        +
+        more about item a
+
+        item b::
+        about item b
+        EOS
+
+        (expect pdf.lines).to eql ['1.item a: about item a', 'more about item a', '2.item b: about item b']
+        item_a_subject_text = (pdf.find_text 'item a:')[0]
+        (expect item_a_subject_text).not_to be_nil
+        (expect item_a_subject_text[:font_name]).to eql 'NotoSerif-Bold'
+      end
+
+      it 'should allow subject stop to be customized using subject-stop attribute' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [ordered,subject-stop=.]
+        item a:: about item a
+        +
+        more about item a
+
+        item b::
+        about item b
+        EOS
+
+        (expect pdf.lines).to eql ['1.item a. about item a', 'more about item a', '2.item b. about item b']
+      end
+
+      it 'should not add subject stop if subject ends with stop punctuation' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [ordered,subject-stop=.]
+        item a.:: about item a
+        +
+        more about item a
+
+        _item b:_::
+        about item b
+
+        well?::
+        yes
+        EOS
+
+        (expect pdf.lines).to eql ['1.item a. about item a', 'more about item a', '2.item b: about item b', '3.well? yes']
+      end
+
+      it 'should add subject stop if subject ends with character reference' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [ordered]
+        &:: ampersand
+        >:: greater than
+        EOS
+
+        (expect pdf.lines).to eql ['1.&: ampersand', '2.>: greater than']
+      end
+
+      it 'should stack subject on top of text if stack role is present' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [ordered.stack]
+        item a:: about item a
+        +
+        more about item a
+
+        item b::
+        about item b
+        EOS
+
+        (expect pdf.lines).to eql ['1.item a', 'about item a', 'more about item a', '2.item b', 'about item b']
+      end
+    end
   end
 
   context 'Q & A' do
+    it 'should convert qanda to ordered list' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [qanda]
+      What is Asciidoctor?::
+      An implementation of the AsciiDoc processor in Ruby.
+
+      What is the answer to the Ultimate Question?::
+      42
+      EOS
+      (expect pdf.strings).to eql [
+        '1.',
+        'What is Asciidoctor?',
+        'An implementation of the AsciiDoc processor in Ruby.',
+        '2.',
+        'What is the answer to the Ultimate Question?',
+        '42'
+      ]
+    end
+
     it 'should layout Q & A list like a description list with questions in italic', integration: true do
       to_file = to_pdf_file <<~'EOS', 'list-qanda.pdf'
       [qanda]

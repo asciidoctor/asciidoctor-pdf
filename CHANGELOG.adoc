@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add glyphs for built-in characters to bundled monospace font (M+ 1mn) (#1274)
 * look for noborder role on image even if other roles are defined
 * remove deprecated table_odd_row_background_color and table_even_row_background_color keys from theme
+* implement unordered and ordered description lists (#1280)
 
 == 1.5.0.beta.5 (2019-09-13) - @mojavelinux
 
