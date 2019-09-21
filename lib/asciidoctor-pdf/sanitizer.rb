@@ -39,10 +39,9 @@ module Sanitizer
   # FIXME move to a module so we can mix it in elsewhere
   # FIXME add option to control escaping entities, or a filter mechanism in general
   def sanitize string
-    string.strip
-        .gsub(SanitizeXMLRx, '')
-        .tr_s(' ', ' ')
-        .gsub(CharRefRx) { $1 ? BuiltInNamedEntities[$1] : [$2 ? $2.to_i : ($3.to_i 16)].pack('U1') }
+    string = string.gsub(SanitizeXMLRx, '') if string.include? '<'
+    string = string.gsub(CharRefRx) { $1 ? BuiltInNamedEntities[$1] : ([$2 ? $2.to_i : ($3.to_i 16)].pack 'U1') } if string.include? '&'
+    string.strip.tr_s ' ', ' '
   end
 
   def escape_xml string
