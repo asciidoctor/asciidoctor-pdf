@@ -15,6 +15,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * remove deprecated table_odd_row_background_color and table_even_row_background_color keys from theme
 * implement unordered and ordered description lists (#1280)
 * recognize transparent as valid value for cellbgcolor attribute
+* allow custom role to revert font style to normal (#1286)
 
 == 1.5.0.beta.5 (2019-09-13) - @mojavelinux
 

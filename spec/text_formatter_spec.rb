@@ -275,6 +275,16 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect formatted_text[:font_color]).to eql '0000FF'
     end
 
+    it 'should allow role to set font style back to normal' do
+      pdf_theme = {
+        role_normal_font_style: 'normal',
+      }
+      pdf = to_pdf '[.normal]_text_', pdf_theme: pdf_theme, analyze: true
+
+      formatted_text = (pdf.find_text 'text')[0]
+      (expect formatted_text[:font_name]).to eql 'NotoSerif'
+    end
+
     it 'should allow theme to override background and border for custom role', integration: true do
       pdf_theme = {
         role_variable_font_family: 'Courier',
