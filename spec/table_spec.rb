@@ -176,6 +176,21 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect to_file).to visually_match 'table-cellbgcolor.pdf'
     end
 
+    it 'should allow value of cellbgcolor attribute in table cell to be transparent', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor.pdf'
+      :attribute-undefined: drop
+
+      [%autowidth,cols=3*]
+      |===
+      | default background color
+      | {set:cellbgcolor:#FF0000}red background color
+      | {set:cellbgcolor:transparent}default background color again
+      |===
+      EOS
+
+      (expect to_file).to visually_match 'table-cellbgcolor.pdf'
+    end
+
     it 'should use value of cellbgcolor attribute in table cell to override background color set by theme', integration: true do
       to_file = to_pdf_file <<~'EOS','table-cellbgcolor-override.pdf', pdf_theme: { table_body_background_color: 'CCCCCC' }
       :attribute-undefined: drop
