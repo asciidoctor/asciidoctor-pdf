@@ -95,6 +95,19 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect chapter_text[:page_number]).to eql 3
     end
 
+    it 'should not advance to next page if preceding content advanced page' do
+      pdf = to_pdf <<~EOS, analyze: true
+      ....
+      #{(['filler'] * 50).join ?\n}
+      ....
+      
+      start of page
+      EOS
+
+      start_of_page_text = (pdf.find_text 'start of page')[0]
+      (expect start_of_page_text[:page_number]).to eql 2
+    end
+
     it 'should not leave blank page at the end of document' do
       input = <<~'EOS'
       foo
