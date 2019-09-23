@@ -120,7 +120,6 @@ class Transform
     end
   end
 
-  # FIXME pass styles downwards to child elements rather than decorating on way out of hierarchy
   def apply(parsed, fragments = [], inherited = nil)
     previous_fragment_is_text = false
     # NOTE we use each since using inject is slower than a manual loop
