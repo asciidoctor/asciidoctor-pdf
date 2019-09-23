@@ -210,7 +210,7 @@ class Transform
     when :em
       styles << :italic
     when :button, :code, :key, :mark
-      fragment.update(@theme_settings[tag_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : (k == :callback ? oval.union(nval) : nval) }
+      fragment.update(@theme_settings[tag_name]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : (k == :callback ? oval.union(nval) : nval) }
     when :color
       if (rgb = attrs[:rgb])
         case rgb.chr
@@ -278,7 +278,7 @@ class Transform
           visible = false
         end
       end
-      fragment.update(@theme_settings[:link]) {|k, oval, nval| k == :styles ? oval.merge(nval) : nval } if visible
+      fragment.update(@theme_settings[:link]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : nval } if visible
     when :sub
       styles << :subscript
     when :sup
@@ -325,7 +325,7 @@ class Transform
       when 'line-through'
         styles << :strikethrough
       else
-        fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? oval.merge(nval) : nval } if @theme_settings.key? class_name
+        fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : nval } if @theme_settings.key? class_name
         if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
           fragment[:callback] = ((fragment[:callback] || []) << TextBackgroundAndBorderRenderer).uniq
         end 
