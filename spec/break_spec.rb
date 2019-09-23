@@ -67,7 +67,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect pdf.pages[1][:strings]).to include 'bar'
     end
 
-    it 'should not advance to next page if already at top of page' do
+    it 'should not advance to next page if at start of document' do
       pdf = to_pdf <<~'EOS', analyze: :page
       <<<
 
@@ -75,6 +75,24 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       EOS
 
       (expect pdf.pages).to have_size 1
+    end
+
+    it 'should not advance to next page if preceding content forced a new page to be started' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Book Title
+      :doctype: book
+
+      = Part
+
+      <<<
+
+      == Chapter
+      EOS
+
+      part_text = (pdf.find_text 'Part')[0]
+      (expect part_text[:page_number]).to eql 2
+      chapter_text = (pdf.find_text 'Chapter')[0]
+      (expect chapter_text[:page_number]).to eql 3
     end
 
     it 'should not leave blank page at the end of document' do
