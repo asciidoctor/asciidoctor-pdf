@@ -16,6 +16,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * implement unordered and ordered description lists (#1280)
 * recognize transparent as valid value for cellbgcolor attribute
 * allow custom role to revert font style to normal (#1286)
+* allow theme to control font properties (font size, font color, etc) of description list term (#1289)
 
 == 1.5.0.beta.5 (2019-09-13) - @mojavelinux
 

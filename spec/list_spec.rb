@@ -411,13 +411,26 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect desc_text[:page_number]).to eql 2
     end
 
-    it 'should style term with italic text using bold italic' do
-      pdf = to_pdf <<~'EOS', analyze: true
-      _term_:: desc
-      EOS
+    it 'wip should style term with italic text using bold italic' do
+      pdf = to_pdf '_term_:: desc', analyze: true
 
       term_text = (pdf.find_text 'term')[0]
       (expect term_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+    end
+
+    it 'should allow theme to control font properties of term' do
+      pdf_theme = {
+        description_list_term_font_style: 'italic',
+        description_list_term_font_size: 12,
+        description_list_term_font_color: 'AA0000',
+        description_list_term_text_transform: 'uppercase',
+      }
+      pdf = to_pdf '*term*:: desc', pdf_theme: pdf_theme, analyze: true
+
+      term_text = (pdf.find_text 'TERM')[0]
+      (expect term_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+      (expect term_text[:font_size]).to eql 12
+      (expect term_text[:font_color]).to eql 'AA0000'
     end
 
     context 'Unordered' do
