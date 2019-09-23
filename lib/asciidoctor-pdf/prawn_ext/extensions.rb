@@ -14,6 +14,11 @@ module Extensions
   FontAwesomeIconSets = %w(fab far fas)
   IconSets = %w(fab far fas fi pf).to_set
   InitialPageContent = %(q\n)
+  (FontStyleToSet = {
+    bold: [:bold].to_set,
+    italic: [:italic].to_set,
+    bold_italic: [:bold, :italic].to_set,
+  }).default = ::Set.new
 
   # - :height is the height of a line
   # - :leading is spacing between adjacent lines
@@ -264,11 +269,7 @@ module Extensions
   # which defaults to the current font style.
   #
   def font_styles style = font_style
-    if style
-      style == :bold_italic ? [:bold, :italic].to_set : [style].to_set
-    else
-      ::Set.new
-    end
+    FontStyleToSet[style].dup
   end
 
   # Apply the font settings (family, size, styles and character spacing) from
