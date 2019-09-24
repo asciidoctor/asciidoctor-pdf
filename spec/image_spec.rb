@@ -206,6 +206,16 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-full-width.pdf'
     end
 
+    it 'should scale down image if height exceeds available space' do
+      to_file = to_pdf_file <<~'EOS', 'image-png-scale-to-fit.pdf'
+      :pdf-page-layout: landscape
+
+      image::tux.png[pdfwidth=100%]
+      EOS
+
+      (expect to_file).to visually_match 'image-png-scale-to-fit.pdf'
+    end
+
     it 'should use the numeric width defined in the theme if an explicit width is not specified', integration: true do
       [72, '72'].each do |image_width|
         to_file = to_pdf_file <<~'EOS', 'image-numeric-fallback-width.pdf', pdf_theme: { image_width: image_width }
