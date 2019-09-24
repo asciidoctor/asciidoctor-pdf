@@ -555,7 +555,14 @@ class Converter < ::Prawn::Document
       end
     end
 
-    sect.sectname == 'index' ? (convert_index_section sect) : (convert_content_for_block sect)
+    if (section_indent = @theme.section_indent)
+      indent_l, indent_r = inflate_indent section_indent
+      indent indent_l, indent_r do
+        sect.sectname == 'index' ? (convert_index_section sect) : (convert_content_for_block sect)
+      end
+    else
+      sect.sectname == 'index' ? (convert_index_section sect) : (convert_content_for_block sect)
+    end
     layout_footnotes sect if type == :chapter
     sect.set_attr 'pdf-page-end', page_number
   end

@@ -7,11 +7,12 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
-* allow foreground image (e.g., watermark) to be added to each page using page-foreground-image attribute or theme key (#727)
 * set fit=contain by default on cover and page background images (#1275)
 * implement fit=fill for cover, page background, and running content raster (non-SVG) images (#1276)
+* allow foreground image (e.g., watermark) to be added to each page using page-foreground-image attribute or theme key (#727)
+* allow section body to be indented using section_indent key in theme (#737)
 * add glyphs for built-in characters to bundled monospace font (M+ 1mn) (#1274)
-* look for noborder role on image even if other roles are defined
+* look for "noborder" role on image even if other roles are defined
 * remove deprecated table_odd_row_background_color and table_even_row_background_color keys from theme
 * implement unordered and ordered description lists (#1280)
 * recognize transparent as valid value for cellbgcolor attribute

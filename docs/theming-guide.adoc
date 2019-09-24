@@ -1575,6 +1575,24 @@ The keys in this category control the style of most headings, including part tit
 . A font size is assigned to each heading level by the base theme.
 If you want the font size of a specific level to be inherited, you must assign the value `null` (or `~` for short).
 
+[#keys-section]
+=== Section
+
+The keys in this category control the style of a section body.
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-section]*Key Prefix:* <<key-prefix-section,section>>
+
+|indent
+|<<measurement-units,Measurement>> +
+(default: 0)
+|section:
+  indent: 36
+|===
+
 [#keys-title-page]
 === Title Page
 

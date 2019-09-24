@@ -408,4 +408,42 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect chapter_2_text[:page_number]).to eql 3
     (expect part_2_text[:page_number]).to eql 4
   end
+
+  it 'should indent section body if section_indent is set to single value in theme' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+    = Document Title
+
+    == Section Title
+
+    paragraph
+
+    paragraph
+    EOS
+
+    section_text = (pdf.find_text 'Section Title')[0]
+    paragraph_text = pdf.find_text 'paragraph'
+
+    (expect section_text[:x]).to eql 48.24
+    (expect paragraph_text[0][:x]).to eql 84.24
+    (expect paragraph_text[1][:x]).to eql 84.24
+  end
+
+  it 'should indent section body if section_indent is set to array in theme' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: [36, 0] }, analyze: true
+    = Document Title
+
+    == Section Title
+
+    paragraph
+
+    paragraph
+    EOS
+
+    section_text = (pdf.find_text 'Section Title')[0]
+    paragraph_text = pdf.find_text 'paragraph'
+
+    (expect section_text[:x]).to eql 48.24
+    (expect paragraph_text[0][:x]).to eql 84.24
+    (expect paragraph_text[1][:x]).to eql 84.24
+  end
 end
