@@ -411,7 +411,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect desc_text[:page_number]).to eql 2
     end
 
-    it 'wip should style term with italic text using bold italic' do
+    it 'should style term with italic text using bold italic' do
       pdf = to_pdf '_term_:: desc', analyze: true
 
       term_text = (pdf.find_text 'term')[0]
