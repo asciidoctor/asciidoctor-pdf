@@ -1120,25 +1120,20 @@ class Converter < ::Prawn::Document
       # and advance to the next page if so (similar to logic for section titles)
       layout_caption node.title if node.title?
 
-      line_metrics = calc_line_metrics @theme.base_line_height
+      term_line_height = @theme.description_list_term_line_height || @theme.base_line_height
+      line_metrics = theme_font(:description_list_term) { calc_line_metrics term_line_height }
       node.items.each do |terms, desc|
         terms = [*terms]
         # NOTE don't orphan the terms (keep together terms and at least one line of content)
         allocate_space_for_list_item line_metrics, (terms.size + 1), ((@theme.description_list_term_spacing || 0) + 0.05)
-        terms.each do |term|
-          # FIXME layout_prose should pass style downward when parsing formatted text
-          #layout_prose term.text, style: @theme.description_list_term_font_style.to_sym, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left
-          case @theme.description_list_term_font_style.to_s
-          when 'bold'
-            term_text = %(<strong>#{term.text}</strong>)
-          when 'italic'
-            term_text = %(<em>#{term.text}</em>)
-          when 'bold_italic'
-            term_text = %(<strong><em>#{term.text}</em></strong>)
-          else
-            term_text = term.text
+        theme_font :description_list_term do
+          if (term_font_styles = font_styles).empty?
+            term_font_styles = nil
           end
-          layout_prose term_text, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left, normalize_line_height: true
+          terms.each do |term|
+            # QUESTION should we use inherited option on layout_prose in other places?
+            layout_prose term.text, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left, line_height: term_line_height, normalize_line_height: true, styles: term_font_styles
+          end
         end
         indent(@theme.description_list_description_indent || 0) do
           convert_content_for_list_item desc, :dlist_desc, normalize_line_height: true
@@ -2740,10 +2735,14 @@ class Converter < ::Prawn::Document
     end
     margin_top top_margin
     string = ZeroWidthSpace + string if opts.delete :normalize_line_height
+    # NOTE normalize makes endlines soft (replaces "\n" with ' ')
+    inline_format_opts = { normalize: (opts.delete :normalize) != false }
+    if (styles = opts.delete :styles)
+      inline_format_opts[:inherited] = { styles: styles }
+    end
     typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
       color: @font_color,
-      # NOTE normalize makes endlines soft (replaces "\n" with ' ')
-      inline_format: [normalize: (opts.delete :normalize) != false],
+      inline_format: [inline_format_opts],
       align: @base_align.to_sym
     }.merge(opts)
     margin_bottom bot_margin

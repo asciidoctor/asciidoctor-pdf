@@ -3115,11 +3115,41 @@ The subject stop can be customized using the `subject-stop` attribute.
 
 3+|[#key-prefix-description-list]*Key Prefix:* <<key-prefix-description-list,description-list>>
 
+|term-font-color
+|<<colors,Color>> +
+(default: _inherit_)
+|description-list:
+  term-font-color: #AA0000
+
+|term-font-family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|description-list:
+  term-font-family: Noto Serif
+
+|term-font-size
+|<<values,Number>> +
+(default: _inherit_)
+|description-list:
+  term-font-size: 12
+
 |term-font-style
 |<<font-styles,Font style>> +
 (default: bold)
 |description-list:
   term-font-style: italic
+
+|term-text-transform
+|<<text-transforms,Text transform>> +
+(default: none)
+|description-list:
+  term-text-transform: none
+
+|term-line-height
+|<<values,Number>> +
+(default: $base-line-height)
+|description-list:
+  term-line-height: 1.2
 
 |term-spacing
 |<<measurement-units,Measurement>> +

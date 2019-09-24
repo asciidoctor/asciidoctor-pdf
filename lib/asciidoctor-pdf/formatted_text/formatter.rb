@@ -22,7 +22,7 @@ class Formatter
     string = string.tr_s(WHITESPACE, ' ') if options[:normalize]
     return [text: string] unless FormattingSnifferPattern.match? string
     if (parsed = @parser.parse(string))
-      @transform.apply(parsed.content)
+      @transform.apply(parsed.content, [], options[:inherited])
     else
       logger.error %(failed to parse formatted text: #{string})
       [text: string]
