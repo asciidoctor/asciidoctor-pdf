@@ -433,6 +433,73 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect term_text[:font_color]).to eql 'AA0000'
     end
 
+    context 'Horizontal' do
+      it 'should arrange horizontal list in two columns' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [horizontal]
+        foo:: bar
+        yin:: yang
+        EOS
+
+        foo_text = (pdf.find_text 'foo')[0]
+        bar_text = (pdf.find_text 'bar')[0]
+        (expect foo_text[:y]).to eql bar_text[:y]
+      end
+
+      it 'should support multiple terms in horizontal list' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [horizontal]
+        foo::
+        bar::
+        baz::
+        desc
+        EOS
+
+        (expect pdf.find_text 'foo').not_to be_empty
+        (expect pdf.find_text 'bar').not_to be_empty
+        (expect pdf.find_text 'baz').not_to be_empty
+        (expect pdf.find_text 'desc').not_to be_empty
+        foo_text = (pdf.find_text 'foo')[0]
+        desc_text = (pdf.find_text 'desc')[0]
+        (expect foo_text[:y]).to eql desc_text[:y]
+      end
+
+      it 'should not break term that not extend past the midpoint of the page' do
+        pdf = to_pdf <<~EOS, analyze: true
+        [horizontal]
+        handoverallthekeystoyourkingdom:: #{(['submit'] * 50).join ' '}
+        EOS
+
+        (expect pdf.lines[0]).to start_with 'handoverallthekeystoyourkingdomsubmit submit'
+      end
+
+      it 'should break term that extends past the midpoint of the page' do
+        pdf = to_pdf <<~EOS, analyze: true
+        [horizontal]
+        handoverallthekeystoyourkingdomtomenow:: #{(['submit'] * 50).join ' '}
+        EOS
+
+        (expect pdf.lines[0]).not_to start_with 'handoverallthekeystoyourkingdomtomenow'
+      end
+
+      it 'should support complex content in horizontal list', integration: true do
+        to_file = to_pdf_file <<~EOS, 'list-horizontal-dlist.pdf'
+        [horizontal]
+        term::
+        desc
+        +
+        more desc
+        +
+         literal
+
+        yin::
+        yang
+        EOS
+
+        (expect to_file).to visually_match 'list-horizontal-dlist.pdf'
+      end
+    end
+
     context 'Unordered' do
       it 'should layout unordered description list like an unordered list with subject in bold' do
         pdf = to_pdf <<~'EOS', analyze: true
