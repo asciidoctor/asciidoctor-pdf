@@ -464,6 +464,23 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect foo_text[:y]).to eql desc_text[:y]
       end
 
+      it 'should align term to top when description spans multiple lines' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [horizontal]
+        foo::
+        +
+        desc +
+        more desc +
+        even more desc
+        EOS
+
+        (expect pdf.find_text 'foo').not_to be_empty
+        (expect pdf.find_text 'desc').not_to be_empty
+        foo_text = (pdf.find_text 'foo')[0]
+        desc_text = (pdf.find_text 'desc')[0]
+        (expect foo_text[:y]).to eql desc_text[:y]
+      end
+
       it 'should not break term that not extend past the midpoint of the page' do
         pdf = to_pdf <<~EOS, analyze: true
         [horizontal]
