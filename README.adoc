@@ -716,7 +716,7 @@ Let's start small.
 
 You'll find when you run this example that all the interdocument xrefs become internal references in the PDF.
 
-The reason both the path and anchor are required (even when liking to the top of a chapter) is so the interdocument xref works independent of the converter.
+The reason both the path and anchor are required (even when linking to the top of a chapter) is so the interdocument xref works independent of the converter.
 In other words, it encodes the complete information about the reference so the converter can sort out where the target is in all circumstances.
 
 == STEM Support
