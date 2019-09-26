@@ -490,6 +490,15 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.blockquote_padding).to eql [0, 10, -9, 14.5]
     end
 
+    it 'should allow numeric value with units to be negative' do
+      theme_data = SafeYAML.load <<~EOS
+      footer:
+        padding: [0, -0.67in, 0, -0.67in]
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.footer_padding).to eql [0, -48.24, 0, -48.24]
+    end
+
     it 'should not compute value if operator is not surrounded by spaces on either side' do
       theme_data = SafeYAML.load <<~EOS
       brand:

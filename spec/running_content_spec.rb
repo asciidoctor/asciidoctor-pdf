@@ -449,6 +449,25 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect p2_text[1][:string]).to eql '2'
   end
 
+  it 'should allow horizontal footer padding to be negative', integration: true do
+    pdf_theme = {
+      footer_font_color: '000000',
+      footer_padding: [0, -48.24, 0, -48.24],
+      footer_recto_left_content: 'text left',
+      footer_recto_right_content: 'text right',
+      footer_vertical_align: 'middle',
+    }
+
+    to_file = to_pdf_file <<~'EOS', 'running-content-negative-padding.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'nofooter' => nil }
+    text left
+
+    [.text-right]
+    text right
+    EOS
+
+    (expect to_file).to visually_match 'running-content-negative-padding.pdf'
+  end
+
   it 'should place footer text correctly if page layout changes' do
     theme_overrides = {
       footer_padding: 0,
