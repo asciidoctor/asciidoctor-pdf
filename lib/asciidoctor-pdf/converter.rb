@@ -2812,7 +2812,7 @@ class Converter < ::Prawn::Document
     sect.sectname = 'section'
     sect.id = node.attr 'manname-id'
     sect.title = title
-    sect << (Block.new sect, :paragraph, source: %(#{node.attr 'manname'} - #{node.attr 'manpurpose'}))
+    sect << (Block.new sect, :paragraph, source: %(#{node.attr 'manname'} - #{node.attr 'manpurpose'}), subs: :normal)
     sect
   end
 

@@ -19,6 +19,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow custom role to revert font style to normal (#1286)
 * allow theme to control font properties (font size, font color, etc) of description list term (#1289)
 * layout horizontal dlist in two columns (#310)
+* apply normal substitutions to content of manname section (#1294)
 
 == 1.5.0.beta.5 (2019-09-13) - @mojavelinux
 
