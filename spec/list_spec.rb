@@ -468,9 +468,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
         pdf = to_pdf <<~'EOS', analyze: true
         [horizontal]
         foo::
-        +
         desc +
-        more desc +
+        _more desc_
+        +
         even more desc
         EOS
 
@@ -479,6 +479,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
         foo_text = (pdf.find_text 'foo')[0]
         desc_text = (pdf.find_text 'desc')[0]
         (expect foo_text[:y]).to eql desc_text[:y]
+        more_desc_text = (pdf.find_text 'more desc')[0]
+        (expect more_desc_text[:font_name]).to eql 'NotoSerif-Italic'
       end
 
       it 'should not break term that not extend past the midpoint of the page' do

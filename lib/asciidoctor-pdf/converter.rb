@@ -1148,7 +1148,7 @@ class Converter < ::Prawn::Document
           valign: :top,
         }]
         desc_container = Block.new desc, :open
-        desc_container << (Block.new desc_container, :paragraph, source: (desc.instance_variable_get :@text)) if desc.text?
+        desc_container << (Block.new desc_container, :paragraph, source: (desc.instance_variable_get :@text), subs: :default) if desc.text?
         desc.blocks.each {|b| desc_container << b } if desc.block?
         row_data << {
           content: (::Prawn::Table::Cell::AsciiDoc.new self, {
