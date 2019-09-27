@@ -468,6 +468,72 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect to_file).to visually_match 'running-content-negative-padding.pdf'
   end
 
+  it 'should invert recto and verso if pdf-folio-placement is virtual-inverted' do
+    pdf_theme = {
+      footer_verso_left_content: 'verso',
+      footer_verso_right_content: 'verso',
+      footer_recto_left_content: 'recto',
+      footer_recto_right_content: 'recto',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'nofooter' => nil }, analyze: true
+    :pdf-folio-placement: virtual-inverted
+
+    content
+    EOS
+
+    footer_text = pdf.find_text font_size: 9
+    (expect footer_text).to have_size 2
+    (expect footer_text[0][:string]).to eql 'verso'
+    (expect footer_text[1][:string]).to eql 'verso'
+  end
+
+  it 'should invert recto and verso if pdf-folio-placement is physical-inverted' do
+    pdf_theme = {
+      footer_verso_left_content: 'verso',
+      footer_verso_right_content: 'verso',
+      footer_recto_left_content: 'recto',
+      footer_recto_right_content: 'recto',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'nofooter' => nil }, analyze: true
+    = Document Title
+    :pdf-folio-placement: physical-inverted
+    :media: print
+    :doctype: book
+
+    content
+    EOS
+
+    footer_text = pdf.find_text font_size: 9
+    (expect footer_text).to have_size 2
+    (expect footer_text[0][:string]).to eql 'recto'
+    (expect footer_text[1][:string]).to eql 'recto'
+  end
+
+  it 'should base recto and verso on physical page if media=prepress even if pdf-folio-placement is set' do
+    pdf_theme = {
+      footer_verso_left_content: 'verso',
+      footer_verso_right_content: 'verso',
+      footer_recto_left_content: 'recto',
+      footer_recto_right_content: 'recto',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'nofooter' => nil }, analyze: true
+    = Document Title
+    :pdf-folio-placement: virtual-inverted
+    :media: prepress
+    :doctype: book
+
+    content
+    EOS
+
+    footer_text = pdf.find_text font_size: 9
+    (expect footer_text).to have_size 2
+    (expect footer_text[0][:string]).to eql 'recto'
+    (expect footer_text[1][:string]).to eql 'recto'
+  end
+
   it 'should place footer text correctly if page layout changes' do
     theme_overrides = {
       footer_padding: 0,
