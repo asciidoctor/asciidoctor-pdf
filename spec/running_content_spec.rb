@@ -511,6 +511,33 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect footer_text[1][:string]).to eql 'recto'
   end
 
+  it 'should base recto and verso on physical page number if pdf-folio-placement is physical or physical-inverted' do
+    pdf_theme = {
+      footer_verso_left_content: 'verso',
+      footer_verso_right_content: 'verso',
+      footer_recto_left_content: 'recto',
+      footer_recto_right_content: 'recto',
+    }
+
+    { 'physical' => 'verso', 'physical-inverted' => 'recto' }.each do |placement, side|
+      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, attribute_overrides: { 'nofooter' => nil }, analyze: true
+      = Document Title
+      :pdf-folio-placement: #{placement}
+      :doctype: book
+      :toc:
+
+      == Chapter
+
+      #{40.times.map {|it| %(=== Section #{it + 1})}.join %(\n\n)}
+      EOS
+
+      (expect pdf.find_text page_number: 4, string: 'Chapter').to have_size 1
+      body_start_footer_text = pdf.find_text font_size: 9, page_number: 4
+      (expect body_start_footer_text).to have_size 2
+      (expect body_start_footer_text[0][:string]).to eql side
+    end
+  end
+
   it 'should base recto and verso on physical page if media=prepress even if pdf-folio-placement is set' do
     pdf_theme = {
       footer_verso_left_content: 'verso',
