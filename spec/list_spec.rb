@@ -369,6 +369,22 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
   end
 
+  context 'Mixed' do
+    it 'should use correct default markers for mixed nested lists' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      * l1
+       . l2
+        ** l3
+         .. l4
+          *** l5
+           ... l6
+      * l1
+      EOS
+
+      (expect pdf.lines).to eql ['•l1', '1.l2', '▪l3', 'a.l4', '▪l5', 'i.l6', '•l1']
+    end
+  end
+
   context 'Description' do
     it 'should keep term with primary text' do
       pdf = to_pdf <<~EOS, analyze: true
