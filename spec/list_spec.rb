@@ -383,6 +383,28 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
       (expect pdf.lines).to eql ['•l1', '1.l2', '▪l3', 'a.l4', '▪l5', 'i.l6', '•l1']
     end
+
+    # NOTE expand this test as necessary to cover the various permutations
+    it 'should not insert excess space between nested lists or list items with block content', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'list-complex-nested.pdf'
+      * list item
+       . first
+      +
+      attached paragraph
+
+       . second
+      +
+      attached paragraph
+
+      * list item
+      +
+      attached paragraph
+
+      * list item
+      EOS
+
+      (expect to_file).to visually_match 'list-complex-nested.pdf'
+    end
   end
 
   context 'Description' do
