@@ -28,4 +28,22 @@ describe 'asciidoctor-pdf' do
       (expect output_file 'chronicles-example.pdf').to visually_match reference_file
     end unless ENV['ROUGE_VERSION'] && ENV['ROUGE_VERSION'].split[-1] < '2.1.0'
   end
+
+  # NOTE cannot test pdfmark using API test since Object#to_pdf method conflicts with rspec helper of same name
+  context 'pdfmark' do
+    it 'should generate pdfmark file if pdfmark attribute is set' do
+      out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (fixture_file 'pdfmark-sample.adoc')
+      (expect res.exitstatus).to eql 0
+      (expect out).to be_empty
+      (expect err).to be_empty
+      pdfmark_file = Pathname.new output_file 'pdfmark-sample.pdfmark'
+      (expect pdfmark_file).to exist
+      pdfmark_contents = pdfmark_file.read
+      (expect pdfmark_contents).to include '/Title (Book Title)'
+      (expect pdfmark_contents).to include '/Author (Author Name)'
+      (expect pdfmark_contents).to include '/Subject (programming)'
+      (expect pdfmark_contents).to include '/Keywords (sample, test)'
+      (expect pdfmark_contents).to include '/DOCINFO pdfmark'
+    end
+  end
 end
