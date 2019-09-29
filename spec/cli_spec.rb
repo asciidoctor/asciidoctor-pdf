@@ -32,17 +32,30 @@ describe 'asciidoctor-pdf' do
   # NOTE cannot test pdfmark using API test since Object#to_pdf method conflicts with rspec helper of same name
   context 'pdfmark' do
     it 'should generate pdfmark file if pdfmark attribute is set' do
-      out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (fixture_file 'pdfmark-sample.adoc')
+      out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, '-a', 'pdfmark', (fixture_file 'book.adoc')
       (expect res.exitstatus).to eql 0
       (expect out).to be_empty
       (expect err).to be_empty
-      pdfmark_file = Pathname.new output_file 'pdfmark-sample.pdfmark'
+      pdfmark_file = Pathname.new output_file 'book.pdfmark'
       (expect pdfmark_file).to exist
       pdfmark_contents = pdfmark_file.read
       (expect pdfmark_contents).to include '/Title (Book Title)'
       (expect pdfmark_contents).to include '/Author (Author Name)'
-      (expect pdfmark_contents).to include '/Subject (programming)'
-      (expect pdfmark_contents).to include '/Keywords (sample, test)'
+      (expect pdfmark_contents).to include '/DOCINFO pdfmark'
+    end
+
+    it 'should hex encode title if contains non-ASCII character' do
+      out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (fixture_file 'pdfmark-non-ascii-title.adoc')
+      (expect res.exitstatus).to eql 0
+      (expect out).to be_empty
+      (expect err).to be_empty
+      pdfmark_file = Pathname.new output_file 'pdfmark-non-ascii-title.pdfmark'
+      (expect pdfmark_file).to exist
+      pdfmark_contents = pdfmark_file.read
+      (expect pdfmark_contents).to include '/Title <feff004c006500730020004d0069007300e9007200610062006c00650073>'
+      (expect pdfmark_contents).to include '/Author (Victor Hugo)'
+      (expect pdfmark_contents).to include '/Subject (June Rebellion)'
+      (expect pdfmark_contents).to include '/Keywords (france, poor, rebellion)'
       (expect pdfmark_contents).to include '/DOCINFO pdfmark'
     end
   end

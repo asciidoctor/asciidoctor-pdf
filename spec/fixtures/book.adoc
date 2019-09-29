@@ -1,4 +1,5 @@
 = Book Title
+Author Name
 :doctype: book
 
 include::chapters/chapter-1.adoc[]
