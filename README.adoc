@@ -898,27 +898,25 @@ However, you could use an extension, such as a TreeProcessor, to automatically m
 
 == Optimizing the Generated PDF
 
-=== optimize-pdf
+=== asciidoctor-pdf-optimize
 
-{project-name} also provides a shell script that uses GhostScript (`gs`) to optimize and compress the generated PDF (with minimal impact on quality).
-You must have Ghostscript installed to use it.
+{project-name} also provides a bin script that uses GhostScript to optimize and compress the generated PDF (with minimal impact on quality).
+You must have Ghostscript (command: `gs`) and the `rghost` gem installed to use it.
 
 Here's an example usage:
 
- $ ./bin/optimize-pdf basic-example.pdf
+ $ asciidoctor-pdf-optimize basic-example.pdf
 
-The command will generate the file [.path]_basic-example-optimized.pdf_ in the same directory.
-
-WARNING: The `optimize-pdf` script currently requires a Bash shell (Linux, OSX, etc).
-We plan to rewrite the script in Ruby so it works across platforms (see https://github.com/asciidoctor/asciidoctor-pdf/issues/1[issue #1])
+The command will overwrite the PDF file with an optimized version.
 
 If a file is found with the extension `.pdfmark` and the same rootname as the input file, it is used to add metadata to the generated PDF document.
 This file is necessary to preserve the document metadata since Ghostscript will otherwise drop it.
 That's why {project-name} always creates this file in addition to the PDF.
 
-IMPORTANT: The `optimize-pdf` script relies on Ghostscript >= 9.10.
-Otherwise, it may actually make the PDF larger.
-You should probably only consider using it if the file size of the original PDF is > 5MB.
+IMPORTANT: The `asciidoctor-pdf-optimize` is not guaranteed to reduce the size of the PDF file.
+It may actually make the PDF larger.
+You should probably only consider using it if the file size of the original PDF is several megabytes.
+You can also try reducing the quality of the output file using the `-q` flag (e.g., `-q screen`).
 
 === hexapdf
 

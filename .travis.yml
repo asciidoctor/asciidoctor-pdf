@@ -2,6 +2,7 @@ dist: trusty
 addons:
   apt:
     packages:
+    - ghostscript
     - poppler-utils
 cache:
   bundler: true
@@ -28,6 +29,7 @@ matrix:
     env: ROUGE_VERSION='~> 2.0.0'
 env:
   global:
+  - RGHOST_VERSION='0.9.7'
   - PYGMENTS_VERSION='~> 1.2.0'
 bundler_args: --path=.bundle/gems --jobs=3 --retry=3 --without=docs
 script:
