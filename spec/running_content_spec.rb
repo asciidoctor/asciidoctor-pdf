@@ -1065,6 +1065,27 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect to_file).to visually_match 'running-content-image-width.pdf'
   end
 
+  it 'should print running content on consecutive pages even when image in running content overruns bounds', integration: true do
+    pdf_theme = {
+      footer_recto_left_content: '{page-number}',
+      footer_recto_right_content: %(image:#{fixture_file 'tux.png'}[pdfwidth=100px]),
+      footer_verso_left_content: '{page-number}',
+      footer_verso_right_content: %(image:#{fixture_file 'tux.png'}[pdfwidth=100px]),
+    }
+
+    to_file = to_pdf_file <<~'EOS', 'running-content-image-overrun.pdf', attribute_overrides: { 'nofooter' => nil }, pdf_theme: pdf_theme
+    = Article Title
+
+    content
+
+    <<<
+
+    content
+    EOS
+
+    (expect to_file).to visually_match 'running-content-image-overrun.pdf'
+  end
+
   it 'should resolve image target relative to themesdir', integration: true do
     [
       {
