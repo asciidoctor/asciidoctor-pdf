@@ -41,6 +41,7 @@ class Converter < ::Prawn::Document
   # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
   CodeRayRequirePath = ::File.join __dir__, 'prawn_ext/coderay_encoder'
   RougeRequirePath = ::File.join __dir__, 'rouge_ext'
+  OptimizerRequirePath = ::File.join __dir__, 'optimizer'
 
   AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
   AdmonitionIcons = {
@@ -362,6 +363,7 @@ class Converter < ::Prawn::Document
     @index = IndexCatalog.new
     # NOTE we have to init Pdfmark class here while we have reference to the doc
     @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
+    @optimize = doc.attr 'optimize'
     init_scratch_prototype
     self
   end
@@ -3411,6 +3413,9 @@ class Converter < ::Prawn::Document
       pdf_doc.render_file target
       # QUESTION restore attributes first?
       @pdfmark.generate_file target if @pdfmark
+      if @optimize && ((defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?)
+        (Optimizer.new @optimize).generate_file target
+      end
     end
     # write scratch document if debug is enabled (or perhaps DEBUG_STEPS env)
     #get_scratch_document.render_file 'scratch.pdf'

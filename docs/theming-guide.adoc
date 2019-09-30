@@ -4271,6 +4271,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |screen {vbar} print {vbar} prepress
 |:media: prepress
 
+|optimize
+|screen {vbar} ebook {vbar} printer {vbar} prepress {vbar} default (default: default)
+|:optimize: prepress
+
 |outlinelevels^[10]^
 |Integer {vbar} Integer:Integer (default: same as _toclevels_)
 |:outlinelevels: 2

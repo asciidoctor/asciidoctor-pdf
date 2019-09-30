@@ -29,8 +29,7 @@ Gem::Specification.new do |s|
     files = Dir['**/*']
   end
   s.files = files.grep %r/^(?:(?:data|lib)\/.+|docs\/theming-guide\.adoc|(?:CHANGELOG|LICENSE|NOTICE|README)\.adoc|\.yardopts|#{s.name}\.gemspec)$/
-  # FIXME optimize-pdf is currently a shell script, so listing it here won't work
-  #s.executables = (files.grep %r/^bin\//).map {|f| File.basename f }
+  s.executables = (files.grep %r/^bin\//).map {|f| File.basename f }
   s.executables = ['asciidoctor-pdf']
   s.require_paths = ['lib']
   #s.test_files = files.grep %r/^(?:test|spec|feature)\/.*$/
