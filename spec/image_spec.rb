@@ -382,6 +382,29 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect to_file).to visually_match 'image-multiple-inline.pdf'
     end
+
+    it 'should increase line height if height if image height is more than 1.5x line height', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'image-inline-extends-line-height.pdf'
+      see tux run +
+      see image:tux.png[tux] run +
+      see tux run
+      EOS
+
+      (expect to_file).to visually_match 'image-inline-extends-line-height.pdf'
+    end
+
+    it 'should not increase line height if image height does not exceed 1.5x line height', integration: true do
+      pdf = to_pdf <<~'EOS', analyze: true
+      see tux run +
+      see tux run +
+      see image:tux.png[tux,24] run
+      EOS
+
+      text = pdf.text
+      line1_spacing = (text[0][:y] - text[1][:y]).round 2
+      line2_spacing = (text[1][:y] - text[2][:y]).round 2
+      (expect line1_spacing).to eql line2_spacing
+    end
   end
 
   context 'Link' do
