@@ -195,6 +195,38 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
 
+    it 'should resolve background image in theme relative to theme dir', integration: true do
+      [true, false].each do |macro|
+        pdf_theme = {
+          __dir__: fixtures_dir,
+          page_background_image: (macro ? 'image:bg.png[]' : 'bg.png'),
+        }
+        to_file = to_pdf_file <<~'EOS', %(page-background-image-#{macro ? 'macro' : 'bare'}.pdf), pdf_theme: pdf_theme
+        = Document Title
+        :doctype: book
+
+        content
+        EOS
+
+        (expect to_file).to visually_match 'page-background-image.pdf'
+      end
+    end
+
+    it 'should resolve background image in theme relative to themesdir', integration: true do
+      attribute_overrides = {
+        'pdf-theme' => 'page-background-image',
+        'pdf-themesdir' => fixtures_dir,
+      }
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-bare-in-theme-file.pdf', attribute_overrides: attribute_overrides
+      = Document Title
+      :doctype: book
+
+      content
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image.pdf'
+    end
+
     it 'should allow both background color and image to be set concurrently', integration: true do
       pdf_theme = {
         page_background_color: 'F9F9F9',

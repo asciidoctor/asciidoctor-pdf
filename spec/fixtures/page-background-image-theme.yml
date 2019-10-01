@@ -1,0 +1,3 @@
+extends: default
+page:
+  background-image: bg.png
