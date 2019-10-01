@@ -253,6 +253,24 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         EOS
       }).not_to raise_exception
     end
+
+    it 'should preserve space before callout on last line' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: pygments
+
+      [source,yaml]
+      ----
+      foo: 'bar'
+      key: 'value' #<1>
+      ----
+      <1> key-value pair
+      EOS
+
+      text = pdf.text
+      conum_idx = text.index {|it| it[:string] == '①' }
+      (expect text[conum_idx - 1][:string]).to eql ' '
+      (expect text[conum_idx - 2][:string]).to eql '\'value\''
+    end
   end if ENV.key? 'PYGMENTS_VERSION'
 
   context 'Callouts' do
