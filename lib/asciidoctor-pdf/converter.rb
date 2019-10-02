@@ -315,7 +315,7 @@ class Converter < ::Prawn::Document
     # QUESTION should page options be preserved? (otherwise, not readily available)
     #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
     ((::Prawn::Document.instance_method :initialize).bind self).call pdf_opts
-    renderer.min_version PDFVersions[doc.attr 'pdf-version']
+    renderer.min_version(@pdf_version = PDFVersions[doc.attr 'pdf-version'])
     @page_margin_by_side = { recto: page_margin, verso: page_margin }
     if (@media = doc.attr 'media', 'screen') == 'prepress'
       @ppbook = doc.doctype == 'book'
@@ -3414,7 +3414,7 @@ class Converter < ::Prawn::Document
       # QUESTION restore attributes first?
       @pdfmark.generate_file target if @pdfmark
       if @optimize && ((defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?)
-        (Optimizer.new @optimize).generate_file target
+        (Optimizer.new @optimize, pdf_doc.min_version).generate_file target
       end
     end
     # write scratch document if debug is enabled (or perhaps DEBUG_STEPS env)

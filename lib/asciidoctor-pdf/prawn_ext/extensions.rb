@@ -35,6 +35,12 @@ module Extensions
     state.store.root
   end
 
+  # Retrieves the compatiblity version of the PDF.
+  #
+  def min_version
+    state.version
+  end
+
   # Measurements
 
   # Returns the width of the current page from edge-to-edge

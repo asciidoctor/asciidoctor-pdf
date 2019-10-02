@@ -10,6 +10,7 @@ describe 'Asciidoctor::PDF::Optimizer' do
     to_optimized_file_size = (File.stat to_optimized_file).size
     (expect to_optimized_file_size).to be < to_file_size
     pdf = PDF::Reader.new to_optimized_file
+    (expect pdf.pdf_version).to eql 1.4
     (expect pdf.pages).to have_size 4
     pdf_info = pdf.info
     (expect pdf_info[:Producer]).to include 'Ghostscript'
@@ -27,6 +28,7 @@ describe 'Asciidoctor::PDF::Optimizer' do
     to_prepress_file_size = (File.stat to_prepress_file).size
     (expect to_prepress_file_size).to be < to_screen_file_size
     pdf = PDF::Reader.new to_prepress_file
+    (expect pdf.pdf_version).to eql 1.4
     (expect pdf.pages).to have_size 4
     pdf_info = pdf.info
     (expect pdf_info[:Producer]).to include 'Ghostscript'
