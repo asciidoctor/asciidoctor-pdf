@@ -38,6 +38,27 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme).to respond_to :admonition_label_font_style
     end
 
+    it 'should not flatten admonition icon keys' do
+      theme_data = SafeYAML.load <<~EOS
+      admonition:
+        icon:
+          tip:
+            name: far-lightbulb
+            stroke_color: ffff00
+            size: 24
+          note:
+            name: far-sticky-note
+            stroke_color: 0000ff
+            size: 24
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme).to be_an OpenStruct
+      (expect theme.admonition_icon_tip).to be_a ::Hash
+      (expect theme.admonition_icon_tip).to eql name: 'far-lightbulb', stroke_color: 'FFFF00', size: 24
+      (expect theme.admonition_icon_note).to be_a ::Hash
+      (expect theme.admonition_icon_note).to eql name: 'far-sticky-note', stroke_color: '0000FF', size: 24
+    end
+
     it 'should replace hyphens in key names with underscores' do
       theme_data = SafeYAML.load <<~EOS
       page-size: A4
@@ -56,6 +77,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme).to respond_to :base_font_family
       (expect theme).to respond_to :abstract_title_font_size
       (expect theme).to respond_to :admonition_icon_tip
+      (expect theme.admonition_icon_tip).to be_a ::Hash
       (expect theme.admonition_icon_tip).to have_key :stroke_color
     end
 
