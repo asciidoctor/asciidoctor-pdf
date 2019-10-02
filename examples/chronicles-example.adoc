@@ -241,8 +241,8 @@ Violets are +++<span style="color: #0000FF">blue</span>+++__-ish__.
 
 == Words Seasoned with Power
 
-_To tame_ the wild wolpertingers we needed to build a *charm*.
-But **u**ltimate victory could only be won if we divined the *_true name_* of the __war__lock.
+To _tame_ the [.wild]#wild# wolpertingers, we needed to build a *charm*.
+But **ul**timate victory could only be won if we divined the *_true name_* of the __war__lock.
 
 "`What kind of charm?`" Lazarus asked. "`An odoriferous one or a mineral one?`"
 Kizmet shrugged. "`The note from Olaf's desk says '`wormwood and licorice,`' but these could be normal groceries for werewolves.`"
@@ -273,7 +273,7 @@ Listing block content is rendered as `<pre>` text.
 The `listing` style is applied to an element, such as a paragraph, by setting the `listing` attribute on that element.
 ****
 
-Let's get our ((highlighting)) on!
+Let's get our #((highlighting))# on!
 
 <<<
 
@@ -311,7 +311,7 @@ code {
 }
 ----
 
-Where could we go without some Java?
+Where could we go without some Java(TM)?
 Naturally, some autosizing is necessary.
 
 [source%autofit,java]
@@ -509,7 +509,7 @@ Here's some content inside an open block.
 [appendix]
 == Credits
 
-.Brought to you with icon:heart[] by OpenDevise
+.Brought to you with icon:heart[set=fas,role=love] by OpenDevise
 [%header%footer,cols="2,2s,^4",grid=rows,frame=topbot,width=75%,caption=]
 |===
 |Name |Title |Alias
@@ -522,7 +522,7 @@ Here's some content inside an open block.
 |Vice President
 |http://twitter.com/mojavelinux[@mojavelinux]
 
-3+^.e|Powered by Open Source(TM)
+3+^.e|Powered by Open Source
 |===
 
 [index]

@@ -1,4 +1,13 @@
 extends: default
+role:
+  love:
+    font-color: E0245E
+  wild:
+    font-color: 222222
+    text-transform: uppercase
+    font-style: italic
+    background-color: BCD637
+    border-offset: 1.5
 header:
   font_color: 999999
   height: 0.5in
