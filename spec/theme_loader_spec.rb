@@ -98,6 +98,18 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme['role_so-very-blue_font_color']).to eql '0000FF'
     end
 
+    it 'should allow role to contain uppercase characters' do
+      theme_data = SafeYAML.load <<~EOS
+      role:
+        BOLD:
+          font-style: bold
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme).to be_an OpenStruct
+      (expect theme).to respond_to 'role_BOLD_font_style'
+      (expect theme['role_BOLD_font_style']).to eql 'bold'
+    end
+
     it 'should convert keys that end in content to a string' do
       theme_data = SafeYAML.load <<~EOS
       menu:
