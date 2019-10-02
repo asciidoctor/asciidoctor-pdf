@@ -10,14 +10,20 @@ class Pdfmark
 
   def generate
     doc = @doc
+    if doc.attr? 'reproducible'
+      mod_date = creation_date = ::Time.at 0
+    else
+      mod_date = ::Time.parse doc.attr 'docdatetime' rescue (now ||= ::Time.now)
+      creation_date = ::Time.parse doc.attr 'localdatetime' rescue (now ||= ::Time.now)
+    end
     # FIXME use sanitize: :plain_text once available
     content = <<~EOS
     [ /Title #{sanitize(doc.doctitle use_fallback: true).to_pdf}
       /Author #{(doc.attr 'authors').to_pdf}
       /Subject #{(doc.attr 'subject').to_pdf}
       /Keywords #{(doc.attr 'keywords').to_pdf}
-      /ModDate #{date = ::Time.now.to_pdf}
-      /CreationDate #{date}
+      /ModDate #{mod_date.to_pdf}
+      /CreationDate #{creation_date.to_pdf}
       /Creator (Asciidoctor PDF #{::Asciidoctor::PDF::VERSION}, based on Prawn #{::Prawn::VERSION})
       /Producer #{(doc.attr 'publisher').to_pdf}
       /DOCINFO pdfmark
