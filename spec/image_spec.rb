@@ -393,7 +393,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-inline-extends-line-height.pdf'
     end
 
-    it 'should not increase line height if image height does not exceed 1.5x line height', integration: true do
+    it 'should not increase line height if image height does not exceed 1.5x line height' do
       pdf = to_pdf <<~'EOS', analyze: true
       see tux run +
       see tux run +
@@ -404,6 +404,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       line1_spacing = (text[0][:y] - text[1][:y]).round 2
       line2_spacing = (text[1][:y] - text[2][:y]).round 2
       (expect line1_spacing).to eql line2_spacing
+    end
+
+    it 'should scale image down to fit available height', integration: true do
+      to_file = to_pdf_file <<~'EOS', 'image-inline-scale-down.pdf'
+      :pdf-page-size: A6
+      :pdf-page-layout: landscape
+
+      image:cover.jpg[]
+      EOS
+
+      (expect to_file).to visually_match 'image-inline-scale-down.pdf'
     end
   end
 

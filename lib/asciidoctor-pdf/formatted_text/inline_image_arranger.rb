@@ -48,10 +48,7 @@ module InlineImageArranger
     return if (raw_image_fragments = fragments.select {|f| (f.key? :image_path) && !(f.key? :image_obj) }).empty?
     scratch = doc.scratch?
     available_w = doc.bounds.width
-    #available_h = doc.bounds.height
-    # NOTE try to fit image within bounds if cursor is within 1% of top of page
-    # QUESTION are we considering the right boundaries here?
-    available_h ||= (doc.cursor / (available_h = doc.bounds.height) >= 0.99 ? doc.cursor : available_h)
+    available_h = doc.page.empty? ? doc.cursor : doc.bounds.height
     raw_image_fragments.each do |fragment|
       drop = scratch
       begin
