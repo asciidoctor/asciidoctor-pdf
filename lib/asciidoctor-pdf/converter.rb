@@ -2993,7 +2993,14 @@ class Converter < ::Prawn::Document
 
   def admonition_icon_data key
     if (icon_data = @theme[%(admonition_icon_#{key})])
-      (AdmonitionIcons[key] || {}).merge icon_data
+      icon_data = (AdmonitionIcons[key] || {}).merge icon_data
+      if (icon_name = icon_data[:name])
+        unless icon_name.start_with?(*IconSetPrefixes)
+          logger.info { %(#{key} admonition in theme uses icon from deprecated fa icon set; use fas, far, or fab instead) }
+          icon_data[:name] = %(fa-#{icon_name}) unless icon_name.start_with? 'fa-'
+        end
+      end
+      icon_data
     else
       AdmonitionIcons[key]
     end

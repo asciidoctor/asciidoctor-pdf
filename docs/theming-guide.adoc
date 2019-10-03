@@ -2848,6 +2848,7 @@ The subkeys in the icon category cannot be flattened (e.g., `tip-name: far-light
 . Required.
 See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository] for a list of valid icon names.
 The prefix (e.g., `fas-`) determines which font set to use.
+If the prefix is not specified, `fa-` is assumed.
 
 [#keys-image]
 === Image

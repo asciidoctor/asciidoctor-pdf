@@ -54,6 +54,30 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect content_text[:string]).to eql 'Look for the warp zone under the bridge.'
     end
 
+    it 'should assume icon name with no icon set prefix is a legacy FontAwesome icon name' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_tip: { name: 'smile-wink' } }, analyze: true
+      :icons: font
+
+      TIP: Time to upgrade your icon set.
+      EOS
+
+      icon_text = pdf.text[0]
+      (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+      (expect icon_text[:string]).to eql ?\uf4da
+    end
+
+    it 'should allow icon to come from Foundation icon set' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_warning: { name: 'fi-alert' } }, analyze: true
+      :icons: font
+
+      WARNING: Just don't do it.
+      EOS
+
+      icon_text = pdf.text[0]
+      (expect icon_text[:font_name]).to eql 'fontcustom'
+      (expect icon_text[:string]).to eql ?\uf101
+    end
+
     it 'should set color of icon to value of stroke_color key specified in theme' do
       pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_note: { stroke_color: '00ff00' } }, analyze: true
       :icons: font
