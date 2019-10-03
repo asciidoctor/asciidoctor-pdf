@@ -110,7 +110,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme['role_BOLD_font_style']).to eql 'bold'
     end
 
-    it 'should convert keys that end in content to a string' do
+    it 'should coerce value of keys that end in content to a string' do
       theme_data = SafeYAML.load <<~EOS
       menu:
         caret_content:
@@ -123,12 +123,34 @@ describe Asciidoctor::PDF::ThemeLoader do
         recto:
           left:
             content: true
+          right:
+            content: 2 * 2
       EOS
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme.menu_caret_content).to eql '[">"]'
       (expect theme.ulist_marker_disc_content).to eql '0'
       (expect theme.footer_recto_left_content).to eql 'true'
+      (expect theme.footer_recto_right_content).to eql '2 * 2'
+    end
+
+    it 'should expand variables in value of keys that end in _content' do
+      theme_data = SafeYAML.load <<~EOS
+      page:
+        size: A4
+      base:
+        font_size: 12
+      footer:
+        verso:
+          left:
+            content: 2 * $base_font_size
+          right:
+            content: $page_size
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme).to be_an OpenStruct
+      (expect theme.footer_verso_left_content).to eql '2 * 12'
+      (expect theme.footer_verso_right_content).to eql 'A4'
     end
 
     it 'should allow font catalog and font fallbacks to be defined as flat keys' do
