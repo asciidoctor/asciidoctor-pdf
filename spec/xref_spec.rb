@@ -218,5 +218,19 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
 
       (expect pdf.lines).to include 'Start with Chapter 1, A.'
     end if asciidoctor_1_5_7_or_better?
+
+    it 'should refer to image with title by reference signifier and number when xrefstyle is short' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :xrefstyle: short
+
+      See <<img>>.
+
+      .Title of Image
+      [#img]
+      image::tux.png[]
+      EOS
+
+      (expect pdf.lines[0]).to eql 'See Figure 1.'
+    end if asciidoctor_1_5_7_or_better?
   end
 end
