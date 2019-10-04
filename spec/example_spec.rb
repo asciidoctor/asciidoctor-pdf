@@ -68,4 +68,22 @@ describe 'Asciidoctor::PDF::Converter - Example' do
 
     (expect pdf.lines[0]).to eql 'Title'
   end
+
+  it 'should allow theme to override caption for example blocks' do
+    pdf_theme = {
+      caption_font_color: '0000ff',
+      example_caption_font_style: 'bold',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    .Title
+    ====
+    content
+    ====
+    EOS
+
+    title_text = (pdf.find_text 'Example 1. Title')[0]
+    (expect title_text[:font_color]).to eql '0000FF'
+    (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
+  end
 end
