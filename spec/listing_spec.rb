@@ -170,4 +170,22 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     (expect pdf.lines).to eql expected_lines
   end
+
+  it 'should allow theme to override caption for code blocks' do
+    pdf_theme = {
+      caption_font_color: '0000ff',
+      code_caption_font_style: 'bold',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    .Title
+    ----
+    content
+    ----
+    EOS
+
+    title_text = (pdf.find_text 'Title')[0]
+    (expect title_text[:font_color]).to eql '0000FF'
+    (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
+  end
 end

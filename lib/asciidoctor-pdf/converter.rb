@@ -574,8 +574,7 @@ class Converter < ::Prawn::Document
     return if (fns = (doc = node.document).footnotes - @footnotes).empty?
     theme_margin :footnotes, :top
     theme_font :footnotes do
-      # FIXME layout_caption resets the theme font for footnotes
-      (title = doc.attr 'footnotes-title') && (layout_caption title)
+      (title = doc.attr 'footnotes-title') && (layout_caption title, category: :footnotes)
       item_spacing = @theme.footnotes_item_spacing || 0
       fns.each do |fn|
         layout_prose %(<a name="_footnotedef_#{index = fn.index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{index}</a>] #{fn.text}), margin_bottom: item_spacing
@@ -845,14 +844,14 @@ class Converter < ::Prawn::Document
     caption_height = 0
     dry_run do
       move_down 1 # hack to force top margin to be applied
-      caption_height = (layout_caption node) - 1
+      caption_height = (layout_caption node, category: :example) - 1
     end if node.title?
     keep_together do |box_height = nil|
       push_scratch node.document if scratch?
       if box_height
         # FIXME due to the calculation error logged in #789, we must advance page even when content is split across pages
         advance_page if box_height > cursor && !at_page_top?
-        layout_caption node
+        layout_caption node, category: :example
         float do
           # TODO move the multi-page logic to theme_fill_and_stroke_bounds
           if (b_width = @theme.example_border_width || 0) > 0 && (b_color = @theme.example_border_color)
@@ -930,7 +929,7 @@ class Converter < ::Prawn::Document
       push_scratch node.document if scratch?
       start_page_number = page_number
       start_cursor = cursor
-      caption_height = node.title? ? (layout_caption node) : 0
+      caption_height = node.title? ? (layout_caption node, category: :blockquote) : 0
       pad_box @theme.blockquote_padding do
         theme_font :blockquote do
           if node.context == :quote
@@ -1175,7 +1174,7 @@ class Converter < ::Prawn::Document
     else
       # TODO check if we're within one line of the bottom of the page
       # and advance to the next page if so (similar to logic for section titles)
-      layout_caption node.title if node.title?
+      layout_caption node.title, category: :description_list if node.title?
 
       term_line_height = @theme.description_list_term_line_height || @theme.base_line_height
       line_metrics = theme_font(:description_list_term) { calc_line_metrics term_line_height }
@@ -1276,7 +1275,7 @@ class Converter < ::Prawn::Document
   def convert_outline_list node
     # TODO check if we're within one line of the bottom of the page
     # and advance to the next page if so (similar to logic for section titles)
-    layout_caption node.title if node.title?
+    layout_caption node.title, category: :outline_list if node.title?
 
     opts = {}
     if (align = resolve_alignment_from_role node.roles)
@@ -1450,12 +1449,12 @@ class Converter < ::Prawn::Document
 
     return on_image_error :missing, node, target, opts unless image_path
 
-    # TODO move this calculation into a method, such as layout_caption node, side: :bottom, dry_run: true
+    # TODO move this calculation into a method, such as layout_caption node, category: :image, side: :bottom, dry_run: true
     caption_h = 0
     dry_run do
       move_down 1 # hack to force top margin to be applied
       # NOTE we assume caption fits on a single page, which seems reasonable
-      caption_h = (layout_caption node, side: :bottom) - 1
+      caption_h = (layout_caption node, category: :image, side: :bottom) - 1
     end if node.title?
 
     # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
@@ -1548,7 +1547,7 @@ class Converter < ::Prawn::Document
           move_down rendered_h if y == image_y
         end
       end
-      layout_caption node, side: :bottom if node.title?
+      layout_caption node, category: :image, side: :bottom if node.title?
       theme_margin :block, :bottom unless pinned
     rescue
       on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{$!.message}))
@@ -1583,7 +1582,7 @@ class Converter < ::Prawn::Document
         margin: 0,
         normalize: false,
         single_line: true
-    layout_caption node, side: :bottom if node.title?
+    layout_caption node, category: :image, side: :bottom if node.title?
     theme_margin :block, :bottom unless opts[:pinned]
     nil
   end
@@ -1776,7 +1775,7 @@ class Converter < ::Prawn::Document
     theme_margin :block, :top
 
     keep_together do |box_height = nil|
-      caption_height = node.title? ? (layout_caption node) : 0
+      caption_height = node.title? ? (layout_caption node, category: :code) : 0
       theme_font :code do
         if box_height
           float do
@@ -2834,23 +2833,28 @@ class Converter < ::Prawn::Document
     else
       return 0
     end
+    category_caption = (category = opts[:category]) ? %(#{category}_caption) : 'caption'
     theme_font :caption do
-      if (side = (opts.delete :side) || :top) == :top
-        margin = { top: @theme.caption_margin_outside, bottom: @theme.caption_margin_inside }
-      else
-        margin = { top: @theme.caption_margin_inside, bottom: @theme.caption_margin_outside }
-      end
-      layout_prose string, {
-        margin_top: margin[:top],
-        margin_bottom: margin[:bottom],
-        align: (@theme.caption_align || @base_align).to_sym,
-        normalize: false,
-        normalize_line_height: true
-      }.merge(opts)
-      if side == :top && @theme.caption_border_bottom_color
-        stroke_horizontal_rule @theme.caption_border_bottom_color
-        # FIXME HACK move down slightly so line isn't covered by filled area (half width of line)
-        move_down 0.25
+      theme_font category_caption do
+        caption_margin_outside = @theme[%(#{category_caption}_margin_outside)] || @theme.caption_margin_outside
+        caption_margin_inside = @theme[%(#{category_caption}_margin_inside)] || @theme.caption_margin_inside
+        if (side = (opts.delete :side) || :top) == :top
+          margin = { top: caption_margin_outside, bottom: caption_margin_inside }
+        else
+          margin = { top: caption_margin_inside, bottom: caption_margin_outside }
+        end
+        layout_prose string, {
+          margin_top: margin[:top],
+          margin_bottom: margin[:bottom],
+          align: (@theme[%(#{category_caption}_align)] || @theme.caption_align || @base_align).to_sym,
+          normalize: false,
+          normalize_line_height: true
+        }.merge(opts)
+        if side == :top && (bb_color = @theme[%(#{category_caption}_border_bottom_color)] || @theme.caption_border_bottom_color)
+          stroke_horizontal_rule bb_color
+          # FIXME HACK move down slightly so line isn't covered by filled area (half width of line)
+          move_down 0.25
+        end
       end
     end
     # NOTE we assume we don't clear more than one page
@@ -2866,15 +2870,15 @@ class Converter < ::Prawn::Document
     if max_width && (remainder = bounds.width - max_width) > 0
       case table_alignment
       when :right
-        indent(remainder) { layout_caption node, side: side }
+        indent(remainder) { layout_caption node, category: :table, side: side }
       when :center
         side_margin = remainder * 0.5
-        indent(side_margin, side_margin) { layout_caption node, side: side }
+        indent(side_margin, side_margin) { layout_caption node, category: :table, side: side }
       else # :left
-        indent(0, remainder) { layout_caption node, side: side }
+        indent(0, remainder) { layout_caption node, category: :table, side: side }
       end
     else
-      layout_caption node, side: side
+      layout_caption node, category: :table, side: side
     end
   end
 
