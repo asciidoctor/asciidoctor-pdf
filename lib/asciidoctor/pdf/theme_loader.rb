@@ -13,7 +13,7 @@ class ThemeLoader
     include ::Asciidoctor::LoggingShim
   end
 
-  DataDir = ::File.absolute_path %(#{__dir__}/../../data)
+  DataDir = ::File.absolute_path %(#{__dir__}/../../../data)
   ThemesDir = ::File.join DataDir, 'themes'
   FontsDir = ::File.join DataDir, 'fonts'
   BaseThemePath = ::File.join ThemesDir, 'base-theme.yml'
