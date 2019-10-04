@@ -38,6 +38,19 @@ describe Asciidoctor::PDF::Converter do
       (expect pdf.page_count).to be > 0
     end
 
+    it 'should convert file in secure mode' do
+      input_file = fixture_file 'secure.adoc'
+      output_file = output_file 'secure.pdf'
+      doc = Asciidoctor.convert_file input_file, backend: 'pdf', to_dir: output_dir, safe: 'secure'
+      (expect doc.attr 'outfile').to be_nil
+      pdf = PDF::Reader.new output_file
+      (expect pdf.pages).to have_size 2
+      (expect pdf.pages[0].text).to include 'Book Title'
+      (expect pdf.pages[1].text).to include 'Chapter'
+      images = get_images pdf
+      (expect images).to have_size 1
+    end
+
     it 'should ensure data-uri attribute is set' do
       doc = Asciidoctor.load <<~'EOS', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
       image::logo.png[]
