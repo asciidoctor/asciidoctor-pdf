@@ -150,6 +150,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:y]).to eql 276.036
     end
 
+    it 'should scale down SVG to fit bounds if width is set in SVG but not on image macro', integration: true do
+      to_file = to_pdf_file 'image::green-bar-width.svg[]', 'image-svg-scale-to-fit-bounds.pdf'
+
+      (expect to_file).to visually_match 'image-svg-scale-to-fit-bounds.pdf'
+    end
+
     it 'should replace unrecognized font family with base font family' do
       pdf = to_pdf <<~'EOS', analyze: true
       image::svg-with-text.svg[]
