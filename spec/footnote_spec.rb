@@ -58,6 +58,19 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect text[-1][:font_size]).to eql 8
   end
 
+  it 'should add title to footnotes block if footnotes-title is set' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :footnotes-title: Footnotes
+
+    main content.footnote:[This is a footnote, just so you know.]
+    EOS
+
+    footnotes_title_text = (pdf.find_text 'Footnotes')[0]
+    (expect footnotes_title_text).not_to be_nil
+    (expect footnotes_title_text[:font_name]).to eql 'NotoSerif-Italic'
+    (expect footnotes_title_text[:y]).to be < (pdf.find_text 'main content.')[0][:y]
+  end
+
   it 'should create bidirectional links between footnote ref and def' do
     pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'notitle' => '' }
     = Document Title
