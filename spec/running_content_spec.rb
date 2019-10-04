@@ -1176,6 +1176,22 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     (expect (link_rect[2] - link_rect[0]).round 1).to eql 36.0
   end
 
+  it 'should replace unrecognized font family in SVG with SVG fallback font family specified in theme' do
+    theme_overrides = {
+      __dir__: fixtures_dir,
+      header_height: 36,
+      header_columns: '0% =100% 0%',
+      header_recto_center_content: 'image:svg-with-text.svg[]',
+      header_verso_center_content: 'image:svg-with-text.svg[]',
+      svg_fallback_font_family: 'Times-Roman',
+    }
+    pdf = to_pdf 'body', pdf_theme: theme_overrides, analyze: true
+
+    text = pdf.find_text 'This text uses the default SVG font.'
+    (expect text).to have_size 1
+    (expect text[0][:font_name]).to eql 'Times-Roman'
+  end
+
   it 'should assign section titles down to sectlevels defined in theme' do
     input = <<~'EOS'
     = Document Title

@@ -167,15 +167,19 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:font_size]).to eql 12.0
     end
 
-    it 'should replace unrecognized font family with svg font family if specified in theme' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { svg_fallback_font_family: 'Times-Roman' }, analyze: true
-      image::svg-with-text.svg[pdfwidth=100%]
-      EOS
+    it 'should replace unrecognized font family in SVG with SVG fallback font family if specified in theme' do
+      [true, false].each do |block|
+        pdf = to_pdf <<~EOS, pdf_theme: { svg_fallback_font_family: 'Times-Roman' }, analyze: true
+        #{block ? '' : 'before'}
+        image:#{block ? ':' : ''}svg-with-text.svg[pdfwidth=100%]
+        #{block ? '' : 'after'}
+        EOS
 
-      text = pdf.find_text 'This text uses the default SVG font.'
-      (expect text).to have_size 1
-      (expect text[0][:font_name]).to eql 'Times-Roman'
-      (expect text[0][:font_size]).to eql 12.0
+        text = pdf.find_text 'This text uses the default SVG font.'
+        (expect text).to have_size 1
+        (expect text[0][:font_name]).to eql 'Times-Roman'
+        (expect text[0][:font_size]).to eql 12.0
+      end
     end
 
     it 'should embed local image', integration: true do
