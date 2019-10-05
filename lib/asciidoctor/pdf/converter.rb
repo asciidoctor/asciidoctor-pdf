@@ -1370,8 +1370,10 @@ class Converter < ::Prawn::Document
       marker_gap = rendered_width_of_char 'x'
       font marker_style[:font_family], size: marker_style[:font_size] do
         marker_width = rendered_width_of_string marker
+        marker_height = height_of_typeset_text marker, line_height: marker_style[:line_height], single_line: true
         start_position = -marker_width + -marker_gap
         float do
+          start_new_page if @media == 'prepress' && cursor < marker_height
           flow_bounding_box start_position, width: marker_width do
             layout_prose marker,
               align: :right,
@@ -3676,7 +3678,7 @@ class Converter < ::Prawn::Document
 
   def height_of_typeset_text string, opts = {}
     line_metrics = (calc_line_metrics opts[:line_height] || @theme.base_line_height)
-    (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + line_metrics.padding_bottom
+    (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + (opts[:single_line] ? 0 : line_metrics.padding_bottom)
   end
 
   # NOTE only used when tabsize attribute is not specified

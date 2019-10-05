@@ -148,6 +148,39 @@ describe 'Asciidoctor::PDF::Converter - List' do
       item_text = (pdf.find_text 'list item')[0]
       (expect item_text[:page_number]).to eql 2
     end
+
+    it 'should position marker correctly when media is prepress and list item is advanced to next page' do
+      pdf = to_pdf <<~EOS, pdf_theme: { prose_margin_bottom: 705.5 }, analyze: true
+      :media: prepress
+
+      filler
+
+      * first
+      * middle
+      * last
+      EOS
+
+      marker_texts = pdf.find_text string: '•', page_number: 2
+      (expect marker_texts).to have_size 2
+      (expect marker_texts[0][:x]).to eql marker_texts[1][:x]
+    end
+
+    it 'should position marker correctly when media is prepress and list item is split across page' do
+      pdf = to_pdf <<~EOS, pdf_theme: { prose_margin_bottom: 705 }, analyze: true
+      :media: prepress
+
+      filler
+
+      * first
+      * middle +
+      more middle
+      * last
+      EOS
+
+      (expect (pdf.find_text 'middle')[0][:page_number]).to eql 1
+      (expect (pdf.find_text '•')[1][:page_number]).to eql 1
+      (expect (pdf.find_text '•')[2][:page_number]).to eql 2
+    end
   end
 
   context 'Checklist' do
