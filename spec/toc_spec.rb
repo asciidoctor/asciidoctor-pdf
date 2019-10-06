@@ -170,7 +170,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect outline[1][:title]).to eql 'Beginning'
     end
 
-    it 'should not crash if entry wraps' do
+    it 'should line up dots and page number with wrapped line' do
       pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
       = Document Title
       :toc:
@@ -185,7 +185,8 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_text[1][:string]).to eql 'This Here is an Absurdly Long Section Title That Exceeds the Length of a Single Line and'
       (expect toc_text[2][:string]).to eql 'Therefore Wraps'
       dot_leader_text = (pdf.find_text page_number: 2).select {|it| it[:string].start_with? '.' }
-      (expect dot_leader_text).to be_empty
+      (expect dot_leader_text).not_to be_empty
+      (expect dot_leader_text[0][:y]).to be < toc_text[1][:y]
       page_number_text = pdf.find_text page_number: 2, string: '1'
       (expect page_number_text).to have_size 1
     end

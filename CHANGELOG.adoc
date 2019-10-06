@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * reorganize source files under asciidoctor/pdf folder (instead of asciidoctor-pdf)
 * reorganize monkeypatch files under asciidoctor/pdf/ext
+* extend dots leading up to page number from wrapped line in toc (#1152)
 * set fit=contain by default on cover and page background images (#1275)
 * implement fit=fill for cover, page background, and running content raster (non-SVG) images (#1276)
 * allow foreground image (e.g., watermark) to be added to each page using page-foreground-image attribute or theme key (#727)
