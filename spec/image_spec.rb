@@ -17,6 +17,26 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
+    it 'should be able to customize formatting of alt text using theme' do
+      pdf_theme = {
+        image_alt_content: '%{alt} (%{target})'
+      }
+      (expect {
+        pdf = to_pdf 'image::no-such-image.png[Missing Image]', pdf_theme: pdf_theme, analyze: true
+        (expect pdf.lines).to eql ['Missing Image (no-such-image.png)']
+      }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+    end
+
+    it 'should be able to customize formatting of alt text using theme' do
+      pdf_theme = {
+        image_alt_content: '%{alt} (%{target})'
+      }
+      (expect {
+        pdf = to_pdf 'image::no-such-image.png[Missing Image]', pdf_theme: pdf_theme, analyze: true
+        (expect pdf.lines).to eql ['Missing Image (no-such-image.png)']
+      }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+    end
+
     it 'should warn instead of crash if block image is unreadable' do
       image_file = fixture_file 'logo.png'
       old_mode = (File.stat image_file).mode

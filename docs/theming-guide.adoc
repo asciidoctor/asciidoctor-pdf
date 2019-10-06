@@ -2897,6 +2897,43 @@ The keys in this category control the arrangement of block images.
 (default: content)
 |image:
   border-fit: auto
+
+3+|[#key-prefix-image-alt]*Key Prefix:* <<key-prefix-image-alt,image-alt>>
+
+|content^[4]^
+|<<quoted-string,Quoted string>> +
+(default: "%\{link}[%\{alt}]%{/link} {vbar} %\{target}")
+|image:
+  alt:
+    content: "%{alt} (%{target})"
+
+|font-color
+|<<colors,Color>> +
+(default: _inherit_)
+|image:
+  alt:
+    font-color: #ff000
+
+|font-family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|image
+  alt:
+    font-family: Courier
+
+|font-size
+|<<values,Number>> +
+(default: _inherit_)
+|image:
+  alt:
+    font-size: 9
+
+|font-style
+|<<font-styles,Font style>> +
+(default: normal)
+|iamge:
+  alt:
+    font-style: italic
 |===
 
 . Only applies to block images.
@@ -2904,6 +2941,7 @@ If specified, this value takes precedence over the value of the `width` attribut
 . The border is only used if a border color is specified, the border width is specified, the border width is greater than 0, and the `noborder` role is not present.
 The border is drawn above the image on the inside of the box reserved for the image.
 . The value `auto` means the border should expand to fit the width of the container (i.e., full width) instead of the image.
+. Use the placeholders `%\{alt}`, `%\{target}`, `%\{link}`, and `%{/link}` to insert the alt text, image target, and link open/close tags into the content template.
 
 [#keys-svg]
 === SVG
