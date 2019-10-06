@@ -79,6 +79,24 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
   end
 
+  it 'should not alter character references when text transform is uppercase' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
+    == &lt;Tom &amp; Jerry&gt;
+    EOS
+
+    text = pdf.text[0]
+    (expect pdf.text[0][:string]).to eql '<TOM & JERRY>'
+  end
+
+  it 'should not alter HTML tags when text transform is uppercase' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
+    == _Quick_ Start
+    EOS
+
+    text = pdf.text[0]
+    (expect pdf.text[0][:string]).to eql 'QUICK'
+  end
+
   it 'should not apply text transform if value of text_transform key is none' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase', heading_h3_text_transform: 'none' }, analyze: true
     == Uppercase
