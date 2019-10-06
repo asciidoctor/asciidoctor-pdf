@@ -9,6 +9,24 @@ describe 'asciidoctor-pdf' do
     end
   end
 
+  context 'Require' do
+    it 'should load converter if backend is pdf and require is asciidoctor-pdf' do
+      out, err, res = run_command 'bundle', 'exec', 'asciidoctor', '-r', 'asciidoctor-pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc')
+      (expect res.exitstatus).to eql 0
+      (expect out).to be_empty
+      (expect err).to be_empty
+      (expect Pathname.new output_file 'hello.pdf').to exist
+    end
+
+    it 'should load converter if backend is pdf and require is asciidoctor-pdf' do
+      out, err, res = run_command 'bundle', 'exec', 'asciidoctor', '-r', 'asciidoctor/pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc')
+      (expect res.exitstatus).to eql 0
+      (expect out).to be_empty
+      (expect err).to be_empty
+      (expect Pathname.new output_file 'hello.pdf').to exist
+    end
+  end
+
   context 'Examples' do
     it 'should convert the basic example', integration: true do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (example_file 'basic-example.adoc')
