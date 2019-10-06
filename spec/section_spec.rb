@@ -203,6 +203,26 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
   end
 
+  it 'should add chapter signifier to chapter title if section numbering and toc are enabled and chapter-signifier attribute is set' do
+    # NOTE chapter-label is the legacy name
+    { 'chapter-label' => 'Ch', 'chapter-signifier' => 'Ch' }.each do |attr_name, attr_val|
+      pdf = to_pdf <<~EOS, analyze: true
+      = Book Title
+      :doctype: book
+      :sectnums:
+      :toc:
+      :#{attr_name}: #{attr_val}
+
+      == The Beginning
+
+      == The End
+      EOS
+
+      chapter_titles = (pdf.find_text font_size: 22).select {|it| it[:page_number] >= 3 }.map {|it| it[:string] }
+      (expect chapter_titles).to eql ['Ch 1. The Beginning', 'Ch 2. The End']
+    end
+  end
+
   it 'should not add chapter label to chapter title if section numbering is enabled and chapter-signifier attribute is empty' do
     # NOTE chapter-label is the legacy name
     %w(chapter-label chapter-signifier).each do |attr_name|
