@@ -94,11 +94,11 @@ describe 'Asciidoctor::PDF::Converter - List' do
     it 'should allow FontAwesome icon to be used as list marker' do
       %w(fa far).each do |font_family|
         pdf_theme = {
-          ulist_marker_circle_font_family: font_family,
-          ulist_marker_circle_content: ?\uf192,
+          ulist_marker_disc_font_family: font_family,
+          ulist_marker_disc_content: ?\uf192,
         }
 
-        pdf = to_pdf <<~'EOS', analyze: true
+        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
         * bullseye!
         EOS
 
