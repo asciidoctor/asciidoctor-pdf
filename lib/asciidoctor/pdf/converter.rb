@@ -2943,6 +2943,7 @@ class Converter < ::Prawn::Document
           pgnum_label = ((sect.attr 'pdf-page-start') - num_front_matter_pages).to_s
           start_page_number = page_number
           start_cursor = cursor
+          start_dots = nil
           # NOTE use low-level text formatter to add anchor overlay without styling text as link & force color
           sect_title_format_override = {
             anchor: (sect_anchor = sect.attr 'pdf-anchor'),
@@ -2955,7 +2956,12 @@ class Converter < ::Prawn::Document
           end
           pgnum_label_width = rendered_width_of_string pgnum_label
           indent 0, pgnum_label_width do
+            sect_title_fragments[-1][:callback] = (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
             typeset_formatted_text sect_title_fragments, line_metrics
+            start_dots = last_fragment_pos.right
+            last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
+            # NOTE this will be incorrect if wrapped line is all monospace
+            start_cursor = last_fragment_cursor if start_cursor - last_fragment_cursor > line_metrics.height
           end
           end_page_number = page_number
           end_cursor = cursor
@@ -2964,13 +2970,11 @@ class Converter < ::Prawn::Document
           move_cursor_to start_cursor
           if dot_leader[:width] > 0 && (dot_leader[:levels].include? sect.level)
             pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
-            # WARNING width_of is not accurate if string must use characters from fallback font
-            sect_title_width = width_of sect_title, inline_format: true
             save_font do
               # NOTE the same font is used for dot leaders throughout toc
               set_font toc_font_info[:font], toc_font_info[:size]
               font_style dot_leader[:font_style]
-              num_dots = ((bounds.width - sect_title_width - dot_leader[:spacer_width] - pgnum_label_width) / dot_leader[:width]).floor
+              num_dots = ((bounds.width - start_dots - dot_leader[:spacer_width] - pgnum_label_width) / dot_leader[:width]).floor
               # FIXME dots don't line up in columns if width of page numbers differ
               typeset_formatted_text [
                   { text: (dot_leader[:text] * (num_dots < 0 ? 0 : num_dots)), color: dot_leader[:font_color] },
