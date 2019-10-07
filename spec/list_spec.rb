@@ -91,6 +91,24 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql [%(\u25cadiamond), %(\u25ccdotted circle), %(\u25a1white square)]
     end
 
+    it 'should allow FontAwesome icon to be used as list marker' do
+      %w(fa far).each do |font_family|
+        pdf_theme = {
+          ulist_marker_circle_font_family: font_family,
+          ulist_marker_circle_content: ?\uf192,
+        }
+
+        pdf = to_pdf <<~'EOS', analyze: true
+        * bullseye!
+        EOS
+
+        (expect pdf.lines).to eql [%(\uf192bullseye!)]
+        marker_text = (pdf.find_text ?\uf192)[0]
+        (expect marker_text).not_to be_nil
+        (expect marker_text[:font_name]).to eql 'FontAwesome5Free-Regular'
+      end
+    end
+
     it 'should use consistent line height even if list item is entirely monospace' do
       pdf = to_pdf <<~'EOS', analyze: true
       * foo
@@ -205,6 +223,30 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       (expect pdf.lines).to eql [%(\u25d8todo), %(\u25d9done)]
+    end
+
+    it 'should allow theme to use FontAwesome icon for checkbox characters' do
+      %w(fa fas).each do |font_family|
+        pdf_theme = {
+          ulist_marker_unchecked_font_family: font_family,
+          ulist_marker_unchecked_content: %(\uf096),
+          ulist_marker_checked_font_family: font_family,
+          ulist_marker_checked_content: %(\uf046),
+        }
+
+        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        * [ ] todo
+        * [x] done
+        EOS
+
+        (expect pdf.lines).to eql [%(\uf096todo), %(\uf046done)]
+        unchecked_marker_text = (pdf.find_text ?\uf096)[0]
+        (expect unchecked_marker_text).not_to be_nil
+        (expect unchecked_marker_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+        checked_marker_text = (pdf.find_text ?\uf046)[0]
+        (expect checked_marker_text).not_to be_nil
+        (expect checked_marker_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+      end
     end
   end
 
