@@ -28,6 +28,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * optimize PDF using quality specified in value of optimize attribute if optimize attribute is set (#535)
 * assume admonition icon in theme is a legacy FontAwesome icon if the icon set prefix is absent
 * rewrite optimize-pdf as a bin script named asciidoctor-pdf-optimize
+* allow image alt text formatting and arrangement to be controlled by theme (#730)
 
 == 1.5.0.beta.5 (2019-09-13) - @mojavelinux
 

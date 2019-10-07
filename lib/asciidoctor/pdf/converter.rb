@@ -1576,14 +1576,23 @@ class Converter < ::Prawn::Document
 
   def on_image_error reason, node, target, opts = {}
     logger.warn opts[:message] if opts.key? :message
-    alt_text = (link = node.attr 'link', nil, false) ?
-        %(<a href="#{link}">[#{node.attr 'alt'}]</a> | <em>#{target}</em>) :
-        %([#{node.attr 'alt'}] | <em>#{target}</em>)
-    layout_prose alt_text,
-        align: ((node.attr 'align', nil, false) || @theme.image_align).to_sym,
-        margin: 0,
-        normalize: false,
-        single_line: true
+    alt_text_vars = { alt: (node.attr 'alt'), target: target }
+    alt_text_template = @theme.image_alt_content || %(%{link}[%{alt}]%{/link} | <em>%{target}</em>)
+    if (link = node.attr 'link', nil, false)
+      alt_text_vars[:link] = %(<a href="#{link}">)
+      alt_text_vars[:'/link'] = '</a>'
+    else
+      alt_text_vars[:link] = ''
+      alt_text_vars[:'/link'] = ''
+    end
+    alt_text = alt_text_template % alt_text_vars
+    theme_font :image_alt do
+      layout_prose alt_text,
+          align: ((node.attr 'align', nil, false) || @theme.image_align).to_sym,
+          margin: 0,
+          normalize: false,
+          single_line: true
+    end
     layout_caption node, category: :image, side: :bottom if node.title?
     theme_margin :block, :bottom unless opts[:pinned]
     nil
