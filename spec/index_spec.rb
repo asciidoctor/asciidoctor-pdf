@@ -53,6 +53,34 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
   end
 
+  it 'should create link from entry in index to location of term' do
+    input = <<~'EOS'
+    = Document Title
+    :doctype: book
+
+    == Chapter About Dogs
+
+    Cats may rule, well, everything.
+    But ((dogs)) are a human's best friend.
+
+    [index]
+    == Index
+    EOS
+
+    pdf = to_pdf input, analyze: true
+    dogs_text = (pdf.find_text 'dogs are a human’s best friend.')[0]
+
+    pdf = to_pdf input
+    annotations = get_annotations pdf, 3
+    (expect annotations).to have_size 1
+    dest = annotations[0][:Dest]
+    names = get_names pdf
+    (expect names).to have_key dest
+    (expect pdf.objects[names[dest]][2]).to eql dogs_text[:x]
+    term_pgnum = get_page_number pdf, pdf.objects[pdf.objects[names[dest]][0]]
+    (expect term_pgnum).to eql 2
+  end
+
   it 'should not assign number or chapter label to index section' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Cats & Dogs
