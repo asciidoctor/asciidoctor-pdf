@@ -461,6 +461,19 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect link_rect[0]).to eql 48.24
     end
 
+    it 'should use link in alt text if image is missing' do
+      (expect {
+        pdf = to_pdf 'image::no-such-image.png[Missing Image,link=https://example.org]'
+        text = (pdf.page 1).text
+        (expect text).to eql '[Missing Image] | no-such-image.png'
+        annotations = get_annotations pdf, 1
+        (expect annotations).to have_size 1
+        link_annotation = annotations[0]
+        (expect link_annotation[:Subtype]).to eql :Link
+        (expect link_annotation[:A][:URI]).to eql 'https://example.org'
+      }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+    end
+
     it 'should add link around inline image if link attribute is set' do
       pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir }
       image:sample-logo.jpg[ACME,pdfwidth=12pt,link=https://example.org] is a sign of quality!
