@@ -26,6 +26,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * layout horizontal dlist in two columns (#310)
 * apply normal substitutions to content of manname section (#1294)
 * optimize PDF using quality specified in value of optimize attribute if optimize attribute is set (#535)
+* allow xref macro to override xrefstyle set on document
 * assume admonition icon in theme is a legacy FontAwesome icon if the icon set prefix is absent
 * rewrite optimize-pdf as a bin script named asciidoctor-pdf-optimize
 * allow image alt text formatting and arrangement to be controlled by theme (#730)

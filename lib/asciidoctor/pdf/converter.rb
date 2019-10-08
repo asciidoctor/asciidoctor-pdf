@@ -2361,7 +2361,7 @@ class Converter < ::Prawn::Document
         unless (text = node.text)
           if (refs = node.document.catalog[:refs])
             if ::Asciidoctor::AbstractNode === (ref = refs[refid])
-              text = ref.xreftext((@xrefstyle ||= (node.document.attr 'xrefstyle')))
+              text = ref.xreftext node.attr 'xrefstyle', nil, true
             end
           else
             # Asciidoctor < 1.5.6

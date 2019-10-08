@@ -219,6 +219,21 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       (expect pdf.lines).to include 'Start with Chapter 1, A.'
     end if asciidoctor_1_5_7_or_better?
 
+    it 'should use xrefstyle specified on xref macro' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+      :sectnums:
+      :xrefstyle: short
+
+      Start with xref:_a[xrefstyle=full].
+
+      == A
+      EOS
+
+      (expect pdf.lines).to include 'Start with Chapter 1, A.'
+    end if asciidoctor_1_5_7_or_better?
+
     it 'should refer to image with title by reference signifier and number when xrefstyle is short' do
       pdf = to_pdf <<~'EOS', analyze: true
       :xrefstyle: short
