@@ -147,6 +147,19 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
         (expect (pdf.page 1).text).to include '[first-cell]'
       end
     end
+
+    it 'should show ID enclosed in square brackets if reference cannot be resolved' do
+      pdf = to_pdf <<~'EOS'
+      Road to <<nowhere>>.
+      EOS
+
+      (expect (pdf.page 1).text).to eq 'Road to [nowhere].'
+      names = get_names pdf
+      (expect names).not_to have_key 'nowhere'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      (expect annotations[0][:Dest]).to eql 'nowhere'
+    end
   end
 
   context 'interdocument' do
@@ -247,5 +260,24 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
 
       (expect pdf.lines[0]).to eql 'See Figure 1.'
     end if asciidoctor_1_5_7_or_better?
+
+    it 'should show ID of reference enclosed in square brackets if reference has no xreftext' do
+      pdf = to_pdf <<~'EOS'
+      :xrefstyle: full
+
+      Jump to the <<first-item>>.
+
+      <<<
+
+      * [[first-item]]list item
+      EOS
+
+      names = get_names pdf
+      (expect names).to have_key 'first-item'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      (expect annotations[0][:Dest]).to eql 'first-item'
+      (expect (pdf.page 1).text).to include '[first-item]'
+    end
   end
 end
