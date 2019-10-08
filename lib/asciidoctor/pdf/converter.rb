@@ -923,16 +923,17 @@ class Converter < ::Prawn::Document
   def convert_quote_or_verse node
     add_dest_for_block node if node.id
     theme_margin :block, :top
-    b_width = @theme.blockquote_border_width
-    b_color = @theme.blockquote_border_color
+    category = node.context == :quote ? :blockquote : :verse
+    b_width = @theme[%(#{category}_border_width)] || 0
+    b_color = @theme[%(#{category}_border_color)]
     keep_together do |box_height = nil|
       push_scratch node.document if scratch?
       start_page_number = page_number
       start_cursor = cursor
-      caption_height = node.title? ? (layout_caption node, category: :blockquote) : 0
-      pad_box @theme.blockquote_padding do
-        theme_font :blockquote do
-          if node.context == :quote
+      caption_height = node.title? ? (layout_caption node, category: category) : 0
+      pad_box @theme[%(#{category}_padding)] do
+        theme_font category do
+          if category == :blockquote
             convert_content_for_block node
           else # verse
             content = guard_indentation node.content
@@ -940,7 +941,7 @@ class Converter < ::Prawn::Document
           end
         end
         if node.attr? 'attribution', nil, false
-          theme_font :blockquote_cite do
+          theme_font %(#{category}_cite) do
             layout_prose %(#{EmDash} #{[(node.attr 'attribution'), (node.attr 'citetitle', nil, false)].compact.join ', '}), align: :left, normalize: false
           end
         end
@@ -972,9 +973,11 @@ class Converter < ::Prawn::Document
             caption_height = 0
           end
           # NOTE b_height is 0 when block terminates at bottom of page
-          bounding_box [0, y_draw], width: bounds.width, height: b_height do
-            stroke_vertical_rule b_color, line_width: b_width, at: b_width / 2.0
-          end unless b_height == 0
+          unless b_height == 0
+            bounding_box [0, y_draw], width: bounds.width, height: b_height do
+              stroke_vertical_rule b_color, line_width: b_width, at: b_width / 2.0
+            end
+          end
         end
       end
       pop_scratch node.document if scratch?

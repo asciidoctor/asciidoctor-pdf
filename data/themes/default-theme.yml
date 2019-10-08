@@ -164,7 +164,6 @@ admonition:
     text_transform: uppercase
     font_style: bold
 blockquote:
-  font_color: $base_font_color
   font_size: $base_font_size_large
   border_color: $base_border_color
   border_width: 5
@@ -172,6 +171,13 @@ blockquote:
   padding: [0, $horizontal_rhythm, $block_margin_bottom * -0.75, $horizontal_rhythm + $blockquote_border_width / 2]
   cite_font_size: $base_font_size_small
   cite_font_color: 999999
+verse:
+  font_size: $blockquote_font_size
+  border_color: $blockquote_border_color
+  border_width: $blockquote_border_width
+  padding: $blockquote_padding
+  cite_font_size: $blockquote_cite_font_size
+  cite_font_color: $blockquote_cite_font_color
 # code is used for source blocks (perhaps change to source or listing?)
 code:
   font_color: $base_font_color
