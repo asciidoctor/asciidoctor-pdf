@@ -4666,7 +4666,7 @@ When you override a block element, you write PDF objects directly to the Prawn D
 When you override an inline element, you return pseudo-HTML, which is then parsed and converted into PDF objects.
 
 The pseudo-HTML in Asciidoctor PDF evolved from the inline formatting in Prawn, now supporting the following elements: a, br, button, code, color, del, em, font, img, key, mark, span, strong, sub, sup.
-All decimal and hexadecimal character references are supported, as well as the named entities amp, apos, gt, lt, nbsp, and quot (e.g., `\&apos;`.
+All decimal and hexadecimal character references are supported, as well as the named entities amp, apos, gt, lt, nbsp, and quot (e.g., `\&apos;`).
 You can change the font color using `rgb` attribue on the `color` element (e.g., `<color rgb="#ff0000">`) and the font family and size using `name` and `size` attributes on the `font` element, respectively (e.g., `<font name="sans" size="12">`).
 You can also use the `style` attribute on `span` to control the font color, weight, and style using the relevant CSS property names.
 The pseudo-HTML in Asciidoctor PDF also supports the `class` attribute on any element for applying roles from the theme.
