@@ -490,6 +490,7 @@ Hex:: A string of 3 or 6 characters with an optional leading `#`, optional surro
 RGB:: An array of numeric values ranging from 0 to 255.
 CMYK:: An array of numeric values ranging from 0 to 1 or from 0% to 100%.
 Transparent:: The special value `transparent` indicates that a color should not be used.
+Where the transparent keyword is not recognized, you can use the CMYK array value [0, 0, 0, 0] to get the same effect.
 
 ==== Hex
 
@@ -576,6 +577,14 @@ It's possible to specify no color by assigning the special value `transparent`, 
 ----
 table:
   background-color: transparent
+----
+
+In some cases, this can also be expressed using a CMYK array value:
+
+[source,yaml]
+----
+title-page:
+  font-color: [0, 0, 0, 0]
 ----
 
 === Images
