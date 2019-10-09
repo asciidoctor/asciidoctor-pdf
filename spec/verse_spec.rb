@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Verse' do
   it 'should show caption above block if title is specified' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~'EOS', analyze: true
     .Fog
     [verse]
     ____
@@ -35,7 +35,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
   end
 
   it 'should not draw left border if border_width is 0' do
-    pdf = to_pdf <<~EOS, pdf_theme: { blockquote_border_width: 0 }, analyze: :line
+    pdf = to_pdf <<~'EOS', pdf_theme: { blockquote_border_width: 0 }, analyze: :line
     ____
     here
     we
