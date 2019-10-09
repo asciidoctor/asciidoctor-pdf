@@ -13,13 +13,13 @@ git:
   depth: 5
 language: ruby
 rvm:
-- &release_ruby 2.6.3
-- 2.5.5
-- 2.4.6
+- &release_ruby 2.6.5
+- 2.5.7
+- 2.4.9
 - &oldest_ruby 2.3.8
 matrix:
   include:
-  - rvm: jruby-9.2.7.0
+  - rvm: jruby-9.2.8.0
     env: JRUBY_OPTS='--dev'
   - rvm: jruby-9.1.17.0
     env: JRUBY_OPTS='--dev'
