@@ -167,5 +167,43 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         (expect note_text[:font_name]).to include 'Bold'
       }).to log_message severity: :WARN, message: '~admonition icon not found or not readable'
     end
+
+    it 'should allow theme to specify icon for custom admonition type' do
+      require 'asciidoctor/extensions'
+
+      extensions = proc do
+        block :QUESTION do
+          on_context :example
+          process do |parent, reader, attrs|
+            attrs['name'] = 'question'
+            attrs['caption'] = 'Question'
+            create_block parent, :admonition, reader.lines, attrs, content_model: :compound
+          end
+        end
+      end
+
+      pdf_theme = {
+        admonition_icon_question: {
+          name: 'question-circle',
+          size: 20,
+        }
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, extensions: extensions, analyze: true
+      :icons: font
+
+      [QUESTION]
+      ====
+      Are you following along?
+      ====
+      EOS
+
+      icon_text = (pdf.find_text ?\uf059)[0]
+      (expect icon_text).not_to be_nil
+      (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+      (expect icon_text[:font_size]).to eql 20
+      question_text = (pdf.find_text 'Are you following along?')
+      (expect question_text).not_to be_nil
+    end
   end
 end
