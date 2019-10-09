@@ -314,7 +314,7 @@ base:
 === Math Expressions & Functions
 
 The theme language supports basic math operations to support calculated values.
-Like programming languages, multiple and divide take precedence over add and subtract.
+Like programming languages, multiply and divide take precedence over add and subtract.
 
 The following table lists the supported operations and the corresponding operator for each.
 
