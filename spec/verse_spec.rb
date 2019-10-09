@@ -45,4 +45,26 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
 
     (expect pdf.lines).to be_empty
   end
+
+  it 'should be able to modify styles using verse category in theme' do
+    pdf_theme = {
+      verse_font_size: 10.5,
+      verse_font_family: 'M+ 1mn',
+      verse_font_color: '555555',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    [verse]
+    ____
+    The fog comes
+    on little cat feet.
+    ____
+    EOS
+
+    text = pdf.text
+    (expect text).to have_size 2
+    (expect text[0][:font_name]).to eql 'mplus1mn-regular'
+    (expect text[0][:font_size]).to eql 10.5
+    (expect text[0][:font_color]).to eql '555555'
+  end
 end

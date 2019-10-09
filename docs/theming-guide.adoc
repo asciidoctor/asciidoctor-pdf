@@ -2026,7 +2026,7 @@ Block styles are applied to the following block types:
 === Caption
 
 The keys in this category control the arrangement and style of block captions.
-In addition to the generic caption category, each of these keys can be set on the caption key nested inside the following block categories: blockquote, code, example, footnotes, image, listing, and table.
+In addition to the generic caption category, each of these keys can be set on the caption key nested inside the following block categories: blockquote, code, example, footnotes, image, listing, table, and verse.
 
 [cols="3,4,5l"]
 |===
@@ -2417,7 +2417,7 @@ The keys in this category control the arrangement and style of quote blocks.
 |<<colors,Color>> +
 (default: #eeeeee)
 |blockquote:
-  border-color: #eeeeee
+  border-color: #dddddd
 
 |font-color
 |<<colors,Color>> +
@@ -2489,6 +2489,105 @@ The keys in this category control the arrangement and style of quote blocks.
 |<<text-transforms,Text transform>> +
 (default: _inherit_)
 |blockquote:
+  cite:
+    text-transform: uppercase
+|===
+
+. Only applies to the left side.
+
+[#keys-verse]
+=== Verse
+
+The keys in this category control the arrangement and style of verse blocks.
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-verse]*Key Prefix:* <<key-prefix-verse,verse>>
+
+|border-width^[1]^
+|<<values,Number>> +
+(default: 4)
+|verse:
+  border-width: 5
+
+|border-color^[1]^
+|<<colors,Color>> +
+(default: #eeeeee)
+|verse:
+  border-color: #dddddd
+
+|font-color
+|<<colors,Color>> +
+(default: _inherit_)
+|verse:
+  font-color: #333333
+
+|font-family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|verse:
+  font-family: M+ 1mn
+
+|font-size
+|<<values,Number>> +
+(default: _inherit_)
+|verse:
+  font-size: 10
+
+|font-style
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|verse:
+  font-style: bold
+
+|text-transform
+|<<text-transforms,Text transform>> +
+(default: _inherit_)
+|verse:
+  text-transform: uppercase
+
+|padding
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
+(default: [6, 12, -6, 14])
+|verse:
+  padding: [5, 10, -5, 12]
+
+3+|[#key-prefix-verse-cite]*Key Prefix:* <<key-prefix-verse-cite,verse-cite>>
+
+|font-size
+|<<values,Number>> +
+(default: _inherit_)
+|verse:
+  cite:
+    font-size: 9
+
+|font-color
+|<<colors,Color>> +
+(default: _inherit_)
+|verse:
+  cite:
+    font-color: #999999
+
+|font-family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|verse:
+  cite:
+    font-family: Noto Serif
+
+|font-style
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|verse:
+  cite:
+    font-style: italic
+
+|text-transform
+|<<text-transforms,Text transform>> +
+(default: _inherit_)
+|verse:
   cite:
     text-transform: uppercase
 |===

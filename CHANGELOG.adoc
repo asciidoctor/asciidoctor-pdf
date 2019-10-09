@@ -22,6 +22,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow custom role to revert font style to normal (#1286)
 * allow theme to control font properties (font size, font color, etc) of description list term (#1289)
 * allow theme to override caption styles for specific block categories: blockquote, code, example, footnotes, image, listing, and table (#307)
+* allow theme to control style of verse block independently of a quote block (#40)
 * position list marker correctly when media=prepress and list item is advanced to next page or split across pages (#1303)
 * layout horizontal dlist in two columns (#310)
 * apply normal substitutions to content of manname section (#1294)
