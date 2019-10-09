@@ -17,4 +17,16 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     (expect lines[1]).to eql %(\u00a0   we)
     (expect lines[2]).to eql %(\u00a0       go)
   end
+
+  it 'should not draw left border if border_width is 0' do
+    pdf = to_pdf <<~EOS, pdf_theme: { blockquote_border_width: 0 }, analyze: :line
+    ____
+    here
+    we
+    go
+    ____
+    EOS
+
+    (expect pdf.lines).to be_empty
+  end
 end
