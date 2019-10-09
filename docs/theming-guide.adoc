@@ -815,7 +815,7 @@ Effectively, it subsets the font.
 While that saves space taken up by the generated PDF, you may still be storing the full font in your source repository.
 To minimize the size of the source font, you can use {url-fontforge}[FontForge] to subset the font ahead of time.
 Subsetting a font means remove glyphs you don't plan to use.
-Doing so it not a requirement, simply a personal preference.
+Doing so is not a requirement, simply a personal preference.
 
 You can add any number of fonts to the catalog.
 Each font must be assigned a unique key, as shown here:
