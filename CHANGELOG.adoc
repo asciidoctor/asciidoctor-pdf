@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * set fit=contain by default on cover and page background images (#1275)
 * implement fit=fill for cover, page background, and running content raster (non-SVG) images (#1276)
 * allow foreground image (e.g., watermark) to be added to each page using page-foreground-image attribute or theme key (#727)
+* allow theme to set font color to transparent (#1310)
 * allow section body to be indented using section_indent key in theme (#737)
 * add glyphs for built-in characters to bundled monospace font (M+ 1mn) (#1274)
 * look for "noborder" role on image even if other roles are defined

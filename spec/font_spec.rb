@@ -213,7 +213,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     end
   end
 
-  context 'font sizes' do
+  context 'Font size' do
     it 'should resolve font size of inline element specified in rem' do
       pdf_theme = {
         base_font_size: 12,
@@ -222,6 +222,26 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       pdf = to_pdf 'https://asciidoctor.org[Asciidoctor]', pdf_theme: pdf_theme, analyze: true
       linked_text = (pdf.find_text 'Asciidoctor')[0]
       (expect linked_text[:font_size]).to eql 9.0
+    end
+  end
+
+  context 'Font color' do
+    it 'should allow font color to be transparent', integration: true do
+      pdf_theme = {
+        page_background_color: 'F1F8FF',
+      }
+      to_file_reference = to_pdf_file '', 'font-transparent-color-reference.pdf', pdf_theme: pdf_theme
+
+      pdf_theme = {
+        title_page_background_color: 'F1F8FF',
+        title_page_title_font_color: 'transparent',
+      }
+      to_file_actual = to_pdf_file <<~'EOS', 'font-transparent-color-actual.pdf', pdf_theme: pdf_theme
+      = Document Title
+      :doctype: book
+      EOS
+
+      (expect to_file_actual).to visually_match to_file_reference
     end
   end
 end
