@@ -1,6 +1,22 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Verse' do
+  it 'should show caption above block if title is specified' do
+    pdf = to_pdf <<~EOS, analyze: true
+    .Fog
+    [verse]
+    ____
+    The fog comes
+    on little cat feet.
+    ____
+    EOS
+
+    (expect pdf.lines).to eql ['Fog', 'The fog comes', 'on little cat feet.']
+    title_text = (pdf.find_text 'Fog')[0]
+    (expect title_text[:font_name]).to eql 'NotoSerif-Italic'
+    (expect title_text[:x]).to eql 48.24
+  end
+
   it 'should expand tabs and preserve indentation' do
     pdf = to_pdf <<~EOS, analyze: true
     [verse]
