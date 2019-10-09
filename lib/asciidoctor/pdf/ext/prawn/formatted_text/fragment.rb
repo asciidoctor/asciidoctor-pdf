@@ -1,8 +1,5 @@
 # frozen_string_literal: true
-module Asciidoctor
-module Prawn
-module FormattedText
-module Fragment
+Prawn::Text::Formatted::Fragment.prepend (Module.new do
   attr_reader :document
 
   # Prevent fragment from being written by discarding the text.
@@ -29,9 +26,4 @@ module Fragment
       super
     end
   end
-end
-
-::Prawn::Text::Formatted::Fragment.prepend Fragment
-end
-end
-end
+end)
