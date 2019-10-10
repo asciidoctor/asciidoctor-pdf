@@ -448,7 +448,7 @@ Images can be aligned as follows:
 
 === Font Styles
 
-In most cases, whereever you can specify a custom font family, you can also specify a font style.
+In most cases, wherever you can specify a custom font family, you can also specify a font style.
 These two settings are combined to locate the font to use.
 
 The following font styles are recognized:
