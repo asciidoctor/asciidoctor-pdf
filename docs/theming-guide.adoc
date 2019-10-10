@@ -1283,9 +1283,10 @@ NOTE: While it's common to define additional keys in this category (e.g., `base-
 . The `text-transform` key cannot be set globally.
 Therefore, this key should not be used.
 The value of `none` is implicit and is documented here for completeness.
-. The `line-height-length` is a pseudo property that's local the theme.
-It's often used for computing the `base-line-height` from the base font size and the desired line height size.
+. `line-height-length` is a utility property that's internal to the theme.
+It's used as an intermediate property for computing the `base-line-height` from the base font size and the desired line height size.
 For instance, if you set `base-line-height-length`, you can use `$base-line-height-length / $base-font-size` to set the value of `base-line-height`.
+You don't have to go about it this way in your own theme.
 
 [#keys-vertical-spacing]
 === Vertical Spacing
