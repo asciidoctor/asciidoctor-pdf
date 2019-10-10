@@ -191,23 +191,22 @@ class Converter < ::Prawn::Document
     # NOTE a new page will already be started (page_number = 2) if the front cover image is a PDF
     layout_cover_page doc, :front
     has_front_cover = page_number > marked_page_number
-    if (use_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
-      layout_title_page doc
-      start_new_page unless page.empty?
-      has_title_page = page_number == (has_front_cover ? 3 : 2)
-    else
-      start_new_page unless page.empty?
-      body_start_page_number = page_number
-      if doc.header? && !doc.notitle
-        theme_font :heading, level: 1 do
-          layout_heading doc.doctitle, align: (@theme.heading_h1_align || :center).to_sym, level: 1
-        end
-      end
-      toc_start = @y
-    end
+
+    layout_title_page doc if (use_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
 
     # NOTE font must be set before toc dry run to ensure dry run size is accurate
+    start_new_page unless page.empty?
     font @theme.base_font_family, size: @root_font_size, style: (@theme.base_font_style || :normal).to_sym
+
+    if use_title_page
+      has_title_page = page_number == (has_front_cover ? 3 : 2)
+    else
+      body_start_page_number = page_number
+      theme_font :heading, level: 1 do
+        layout_heading doc.doctitle, align: (@theme.heading_h1_align || :center).to_sym, level: 1
+      end if doc.header? && !doc.notitle
+      toc_start = @y
+    end
 
     num_toc_levels = (doc.attr 'toclevels', 2).to_i
     if (insert_toc = (doc.attr? 'toc') && doc.sections?)
