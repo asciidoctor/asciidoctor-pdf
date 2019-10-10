@@ -194,7 +194,7 @@ class Converter < ::Prawn::Document
 
     layout_title_page doc if (use_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
 
-    # NOTE font must be set before toc dry run to ensure dry run size is accurate
+    # NOTE font must be set before content is written to the main or scratch document
     start_new_page unless page.empty?
     font @theme.base_font_family, size: @root_font_size, style: (@theme.base_font_style || :normal).to_sym
 
@@ -205,29 +205,14 @@ class Converter < ::Prawn::Document
       theme_font :heading, level: 1 do
         layout_heading doc.doctitle, align: (@theme.heading_h1_align || :center).to_sym, level: 1
       end if doc.header? && !doc.notitle
-      toc_start = @y
     end
 
-    num_toc_levels = (doc.attr 'toclevels', 2).to_i
+    toc_num_levels = (doc.attr 'toclevels', 2).to_i
     if (insert_toc = (doc.attr? 'toc') && doc.sections?)
       start_new_page if @ppbook && verso_page?
-      toc_page_nums = page_number
-      toc_end = nil
-      dry_run do
-        pagenum_width = theme_font(:doc) { rendered_width_of_string '0' * (doc.attr 'toc-max-pagenum-digits', 3).to_i }
-        indent 0, pagenum_width do
-          toc_page_nums = layout_toc doc, num_toc_levels, toc_page_nums, 0, toc_start
-        end
-        move_down @theme.block_margin_bottom unless use_title_page
-        toc_end = @y
-      end
-      # NOTE reserve pages for the toc; leaves cursor on page after last page in toc
-      if use_title_page
-        toc_page_nums.each { start_new_page }
-      else
-        (toc_page_nums.first...toc_page_nums.last).each { start_new_page }
-        @y = toc_end
-      end
+      allocate_toc doc, toc_num_levels, @y, use_title_page
+    else
+      @toc_extent = nil
     end
 
     start_new_page if @ppbook && verso_page?
@@ -255,7 +240,7 @@ class Converter < ::Prawn::Document
         ['body', 'toc'] => [body_offset, first_page_offset],
       }[front_matter_sig] || [body_offset, body_offset]
     else
-      # Q: what if there's only a toc page, but not title?
+      # Q: what if there's only a toc page, but no title page?
       num_front_matter_pages = [body_start_page_number - 1] * 2
     end
 
@@ -274,7 +259,7 @@ class Converter < ::Prawn::Document
     # QUESTION should we delete page if document is empty? (leaving no pages?)
     delete_page if page.empty? && page_count > 1
 
-    toc_page_nums = insert_toc ? (layout_toc doc, num_toc_levels, toc_page_nums.first, num_front_matter_pages[1], toc_start) : []
+    toc_page_nums = @toc_extent ? (layout_toc doc, toc_num_levels, @toc_extent[:page_nums].first, @toc_extent[:start_y], num_front_matter_pages[1]) : []
 
     unless page_count < body_start_page_number
       unless doc.noheader || @theme.header_height.to_f.zero?
@@ -285,7 +270,7 @@ class Converter < ::Prawn::Document
       end
     end
 
-    add_outline doc, (doc.attr 'outlinelevels', num_toc_levels), toc_page_nums, num_front_matter_pages[1], has_front_cover
+    add_outline doc, (doc.attr 'outlinelevels', toc_num_levels), toc_page_nums, num_front_matter_pages[1], has_front_cover
     if state.pages.size > 0 && (initial_zoom = @theme.page_initial_zoom)
       case initial_zoom.to_sym
       when :Fit
@@ -2259,8 +2244,9 @@ class Converter < ::Prawn::Document
   # deprecated
   alias convert_horizontal_rule convert_thematic_break
 
-  # NOTE manual placement not yet possible, so return nil
   def convert_toc node
+    #doc = node.document
+    #allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (doc.doctype == 'book' || (doc.attr? 'title-page'))
     nil
   end
 
@@ -2895,11 +2881,32 @@ class Converter < ::Prawn::Document
     end
   end
 
+  def allocate_toc doc, toc_num_levels, toc_start_y, use_title_page
+    toc_page_nums = page_number
+    pagenum_width = theme_font(:doc) { rendered_width_of_string '0' * (doc.attr 'toc-max-pagenum-digits', 3).to_i }
+    toc_end = nil
+    dry_run do
+      indent 0, pagenum_width do
+        toc_page_nums = layout_toc doc, toc_num_levels, toc_page_nums, toc_start_y
+      end
+      move_down @theme.block_margin_bottom unless use_title_page
+      toc_end = @y
+    end
+    # NOTE reserve pages for the toc; leaves cursor on page after last page in toc
+    if use_title_page
+      toc_page_nums.each { start_new_page }
+    else
+      (toc_page_nums.size - 1).times { start_new_page }
+      @y = toc_end
+    end
+    @toc_extent = { page_nums: toc_page_nums, start_y: toc_start_y }
+  end
+
   # NOTE num_front_matter_pages is not used during a dry run
-  def layout_toc doc, num_levels = 2, toc_page_number = 2, num_front_matter_pages = 0, start_at = nil
+  def layout_toc doc, num_levels = 2, toc_page_number = 2, start_y = nil, num_front_matter_pages = 0
     go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
     start_page_number = page_number
-    @y = start_at if start_at
+    @y = start_y if start_y
     unless (toc_title = doc.attr 'toc-title').nil_or_empty?
       theme_font :heading, level: 2 do
         theme_font :toc_title do
