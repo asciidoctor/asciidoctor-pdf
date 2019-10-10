@@ -516,6 +516,21 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         end
       end
     end
+
+    it 'should transform non-ASCII letters when text transform is uppercase' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_head_text_transform: 'uppercase' }, analyze: true
+      |===
+      |über |étudier
+
+      |cell
+      |cell
+      |===
+      EOS
+
+      text = pdf.text
+      (expect text[0][:string]).to eql 'ÜBER'
+      (expect text[1][:string]).to eql 'ÉTUDIER'
+    end
   end
 
   context 'Literal table cell' do

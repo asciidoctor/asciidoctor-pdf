@@ -97,6 +97,14 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.text[0][:string]).to eql 'QUICK'
   end
 
+  it 'should transform non-ASCII letters when text transform is uppercase' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
+    == über étudier
+    EOS
+
+    (expect pdf.lines[0]).to eql 'ÜBER ÉTUDIER'
+  end
+
   it 'should not apply text transform if value of text_transform key is none' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase', heading_h3_text_transform: 'none' }, analyze: true
     == Uppercase
