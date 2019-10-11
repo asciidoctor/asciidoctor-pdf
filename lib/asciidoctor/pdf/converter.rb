@@ -240,7 +240,6 @@ class Converter < ::Prawn::Document
         ['body', 'toc'] => [body_offset, first_page_offset],
       }[front_matter_sig] || [body_offset, body_offset]
     else
-      # Q: what if there's only a toc page, but no title page?
       num_front_matter_pages = [body_start_page_number - 1] * 2
     end
 
