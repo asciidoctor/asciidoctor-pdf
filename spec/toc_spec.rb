@@ -147,6 +147,35 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[3][:strings]).to include 'Chapter 1'
     end
 
+    it 'should insert toc at location of toc macro if toc attribute is macro' do
+      lorem = ['lorem ipsum'] * 10 * %(\n\n)
+      input = <<~EOS
+      = Document Title
+      :doctype: book
+      :toc: macro
+
+      Preamble
+
+      == Introduction
+
+      #{lorem}
+
+      toc::[]
+
+      == Main
+
+      #{lorem}
+
+      == Conclusion
+
+      #{lorem}
+      EOS
+      pdf = to_pdf input, analyze: true
+      (expect pdf.pages).to have_size 6
+      toc_title_text = (pdf.find_text 'Table of Contents')[0]
+      (expect toc_title_text[:page_number]).to eql 4
+    end
+
     it 'should not add toc title to page or outline if toc-title is unset' do
       pdf = to_pdf <<~'EOS'
       = Document Title
@@ -358,6 +387,43 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[1][:strings]).to include '1'
       (expect pdf.pages[1][:strings]).not_to include '2'
       (expect pdf.pages[2][:strings]).to include 'Introduction'
+    end
+
+    it 'should insert toc at location of toc macro if toc attribute is macro' do
+      lorem = ['lorem ipsum'] * 10 * %(\n\n)
+      input = <<~EOS
+      = Document Title
+      :toc: macro
+
+      Preamble
+
+      == Introduction
+
+      #{lorem}
+
+      toc::[]
+
+      == Main
+
+      #{lorem}
+
+      == Conclusion
+
+      #{lorem}
+      EOS
+      pdf = to_pdf input, analyze: true
+      (expect pdf.pages).to have_size 2
+      (expect pdf.find_text string: 'Table of Contents', page_number: 1).to have_size 1
+      (expect pdf.find_text string: 'Introduction', page_number: 1).to have_size 2
+      doctitle_text = (pdf.find_text 'Document Title')[0]
+      toc_title_text = (pdf.find_text 'Table of Contents')[0]
+      toc_bottom_text = (pdf.find_text '2')[0]
+      content_top_text = (pdf.find_text 'Preamble')[0]
+      intro_title_text = (pdf.find_text 'Introduction')[0]
+      (expect doctitle_text[:y]).to be > toc_title_text[:y]
+      (expect toc_title_text[:y]).to be < content_top_text[:y]
+      (expect toc_bottom_text[:y]).to be < content_top_text[:y]
+      (expect toc_title_text[:y]).to be < intro_title_text[:y]
     end
   end
 

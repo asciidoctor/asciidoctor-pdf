@@ -208,7 +208,7 @@ class Converter < ::Prawn::Document
     end
 
     toc_num_levels = (doc.attr 'toclevels', 2).to_i
-    if (insert_toc = (doc.attr? 'toc') && doc.sections?)
+    if (insert_toc = (doc.attr? 'toc') && !(doc.attr? 'toc-placement', 'macro') && doc.sections?)
       start_new_page if @ppbook && verso_page?
       allocate_toc doc, toc_num_levels, @y, use_title_page
     else
@@ -2244,8 +2244,13 @@ class Converter < ::Prawn::Document
   alias convert_horizontal_rule convert_thematic_break
 
   def convert_toc node
-    #doc = node.document
-    #allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (doc.doctype == 'book' || (doc.attr? 'title-page'))
+    if ((doc = node.document).attr? 'toc-placement', 'macro') && doc.sections?
+      if (is_book = doc.doctype == 'book')
+        start_new_page unless page.empty?
+        start_new_page if @ppbook && verso_page?
+      end
+      allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (is_book || (doc.attr? 'title-page'))
+    end
     nil
   end
 
