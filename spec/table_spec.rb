@@ -319,7 +319,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should allocate remaining width to autowidth column' do
       pdf = to_pdf <<~'EOS', analyze: true
-      [cols="10,~"]
+      [cols="10,>~"]
       |===
       |0x00
       |UNSPECIFIED
@@ -330,9 +330,27 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
       (expect pdf.strings).to eql %w(0x00 UNSPECIFIED 0x01 OK)
       unspecified_text = (pdf.find_text 'UNSPECIFIED')[0]
-      (expect unspecified_text[:x]).to eql 101.12
+      (expect unspecified_text[:x].floor).to eql 476
       ok_text = (pdf.find_text 'OK')[0]
-      (expect ok_text[:x]).to eql 101.12
+      (expect ok_text[:x].floor).to eql 529
+    end if asciidoctor_1_5_7_or_better?
+
+    it 'should extend width of table to fit content in autowidth column when autowidth option is set on table' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [%autowidth,cols="10,>~"]
+      |===
+      |0x00
+      |UNSPECIFIED
+
+      |0x01
+      |OK
+      |===
+      EOS
+      (expect pdf.strings).to eql %w(0x00 UNSPECIFIED 0x01 OK)
+      unspecified_text = (pdf.find_text 'UNSPECIFIED')[0]
+      (expect unspecified_text[:x].floor).to eql 81
+      ok_text = (pdf.find_text 'OK')[0]
+      (expect ok_text[:x].floor).to eql 135
     end if asciidoctor_1_5_7_or_better?
 
     it 'should not accumulate cell padding between tables' do
