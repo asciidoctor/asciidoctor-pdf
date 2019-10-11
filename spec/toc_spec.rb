@@ -456,4 +456,15 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     (expect to_file).to visually_match 'toc-running-content-font-color.pdf'
   end
+
+  it 'should decode character references in toc entries' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+    :toc:
+
+    == Paper Clips &#x2116;&nbsp;4
+    EOS
+
+    (expect pdf.find_text %(Paper Clips \u2116\u00a04)).to have_size 2
+  end
 end

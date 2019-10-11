@@ -177,7 +177,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline[1][:title]).to eql 'First Chapter'
   end
 
-  it 'should decode character references in titles' do
+  it 'should decode character references in entries' do
     pdf = to_pdf <<~'EOS', doctype: :book
     = ACME(TM) Catalog <&#8470;&nbsp;1>
 
