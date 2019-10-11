@@ -578,6 +578,8 @@ table:
   background-color: transparent
 ----
 
+The `transparent` keyword can be used for the background or border color, but not the font color.
+
 === Images
 
 An image is specified either as a bare image path or as an inline image macro as found in the AsciiDoc syntax.
