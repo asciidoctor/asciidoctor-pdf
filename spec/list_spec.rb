@@ -213,8 +213,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
     it 'should allow theme to change checkbox characters' do
       pdf_theme = {
-        ulist_marker_unchecked_content: %(\u25d8),
-        ulist_marker_checked_content: %(\u25d9),
+        ulist_marker_unchecked_content: ?\u25d8,
+        ulist_marker_checked_content: ?\u25d9,
       }
 
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
@@ -223,6 +223,16 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       (expect pdf.lines).to eql [%(\u25d8todo), %(\u25d9done)]
+    end
+
+    it 'should use glyph from fallback font if not present in main font', integration: true do
+      pdf_theme = build_pdf_theme({ ulist_marker_checked_content: ?\u303c }, 'default-with-fallback-font')
+
+      to_file = to_pdf_file <<~'EOS', 'list-checked-glyph-fallback.pdf', pdf_theme: pdf_theme
+      * [x] done
+      EOS
+
+      (expect to_file).to visually_match 'list-checked-glyph-fallback.pdf'
     end
 
     it 'should allow theme to use FontAwesome icon for checkbox characters' do
