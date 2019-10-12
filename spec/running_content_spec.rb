@@ -36,7 +36,18 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   end
 
   it 'should not add running footer if nofooter attribute is set' do
-    pdf = to_pdf <<~'EOS', attributes: { 'nofooter' => 'nil' }, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: { 'nofooter' => '' }, analyze: true
+    = Document Title
+    :doctype: book
+
+    body
+    EOS
+
+    (expect pdf.find_text %r/^\d+$/).to be_empty
+  end
+
+  it 'should not add running footer if height is nil' do
+    pdf = to_pdf <<~'EOS', attributes: { 'nofooter' => nil }, pdf_theme: { footer_height: nil }, analyze: true
     = Document Title
     :doctype: book
 
@@ -47,7 +58,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   end
 
   it 'should not attempt to add running content if document has no body' do
-    pdf = to_pdf <<~'EOS', attributes: { 'nofooter' => 'nil' }, analyze: true
+    pdf = to_pdf <<~'EOS', attributes: { 'nofooter' => nil }, analyze: true
     = Document Title
     :doctype: book
     EOS
