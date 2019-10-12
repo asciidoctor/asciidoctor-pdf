@@ -4250,7 +4250,7 @@ If you reference an attribute which is not defined, all the text on that same li
 One case where this is useful is when referencing the `page-number` attribute.
 If you unset the `pagenums` attribute on the document, any line in the running content that makes reference to `\{page-number}` will be dropped.
 
-You can also built-in AsciiDoc text replacements like `+(C)+`, numeric character references like `+&#169;+` and inline formatting (e.g., bold, italic, monospace).
+You can also built-in AsciiDoc text replacements like `+(C)+`, numeric character references like `+&#169;+`, hexidecimal character references like `+&#x20ac;+`, and inline formatting (e.g., bold, italic, monospace).
 
 Here's an example that shows how attributes and replacements can be used in the running footer:
 
