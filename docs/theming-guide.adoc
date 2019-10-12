@@ -4238,13 +4238,17 @@ You can use _any_ attribute defined in your AsciiDoc document (such as `doctitle
 In addition, the following attributes are also available when defining the content keys in the footer:
 
 * page-count
-* page-number
+* page-number (only set if the `pagenums` attribute is set on the document, which it is by default)
 * document-title
 * document-subtitle
 * part-title
 * chapter-title
 * section-title
 * section-or-chapter-title
+
+If you reference an attribute which is not defined, all the text on that same line in the running content will be dropped.
+One case where this is useful is when referencing the `page-number` attribute.
+If you unset the `pagenums` attribute on the document, any line in the running content that makes reference to `\{page-number}` will be dropped.
 
 You can also built-in AsciiDoc text replacements like `+(C)+`, numeric character references like `+&#169;+` and inline formatting (e.g., bold, italic, monospace).
 
@@ -4496,8 +4500,8 @@ The position of the background image can be controlled using the `position` attr
 If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background is specified, it will be used only for that side.
 If a background image isn't specified for a side, the converter will use the default page background image (`page-background-image`), if specified.
 To disable the background image for a side, use the value `none`.
-. Controls whether the `page-number` attribute is accessible to the running header and footer content specified in the theme file.
-Use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively, from the document.
+. Controls whether the implicit `page-number` attribute is to the running header and footer content specified in the theme file.
+Instead of disabling page numbers, you can use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively.
 . Enables generation of the http://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark] file, which contains metadata that is fed to Ghostscript when optimizing the PDF file.
 . _(Experimental)_ The `text-align` document attribute is intended as a simple way to toggle text justification.
 The value of this attribute overrides the `base-align` key set by the theme.
