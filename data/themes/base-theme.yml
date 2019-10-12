@@ -114,3 +114,5 @@ toc_indent: 15
 toc_line_height: 1.4
 footnotes_font_size: 9
 footnotes_item_space: 3
+footer_recto_right_content: '{page-number}'
+footer_verso_left_content: '{page-number}'

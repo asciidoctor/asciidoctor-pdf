@@ -3245,8 +3245,7 @@ class Converter < ::Prawn::Document
   end
 
   def allocate_running_content_layout page, periphery, cache
-    layout = page.layout
-    cache[layout] ||= begin
+    cache[layout = page.layout] ||= begin
       trim_styles = {
         line_metrics: (trim_line_metrics = calc_line_metrics @theme[%(#{periphery}_line_height)] || @theme.base_line_height),
         # NOTE we've already verified this property is set
@@ -3348,10 +3347,6 @@ class Converter < ::Prawn::Document
               side_content[position] = val
             end
           end
-        end
-        # NOTE set fallbacks if not explicitly disabled
-        if side_content.empty? && periphery == :footer && @theme[%(footer_#{side}_content)] != 'none'
-          side_content = { side == :recto ? :right : :left => '{page-number}' }
         end
 
         acc[side] = side_content
