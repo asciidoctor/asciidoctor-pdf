@@ -734,6 +734,31 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
   end
 
+  it 'should set document-title and document-subtitle based on doctitle' do
+    pdf_theme = {
+      footer_recto_left_content: '({document-title})',
+      footer_recto_right_content: '[{document-subtitle}]',
+      footer_verso_left_content: '({document-title})',
+      footer_verso_right_content: '[{document-subtitle}]',
+    }
+
+    pdf = to_pdf <<~'EOS', attribute_overrides: { 'nofooter' => nil }, pdf_theme: pdf_theme, analyze: true
+    = Document Title: Subtitle
+    :doctype: book
+
+    == Beginning
+
+    == End
+    EOS
+
+    [2, 3].each do |pgnum|
+      main_title_text = (pdf.find_text page_number: pgnum, string: '(Document Title)')[0]
+      subtitle_text = (pdf.find_text page_number: pgnum, string: '[Subtitle]')[0]
+      (expect main_title_text).not_to be_nil
+      (expect subtitle_text).not_to be_nil
+    end
+  end
+
   it 'should set part-title, chapter-title, and section-title based on context of current page' do
     pdf_theme = {
       footer_columns: '<25% >70%',
