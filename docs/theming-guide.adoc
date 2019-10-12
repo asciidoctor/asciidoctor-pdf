@@ -4217,6 +4217,7 @@ To avoid this problem, reduce the height of the running content periphery or mak
 . *If the height is not set, the running content at this periphery is disabled.*
 . If the side padding is negative, the content will bleed into the margin of the page.
 . `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
+The `columns` key can also be defined one level up (on `header` or `footer`), in which case the setting will be inherited.
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
 . `<position>` can be `left`, `center` or `right`.
 
