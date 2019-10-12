@@ -4271,6 +4271,8 @@ footer:
       content: '*{page-number}* | {chapter-title}'
 ----
 
+==== Multiple Lines
+
 You can split the content value across multiple lines using YAML's multiline string syntax.
 In this case, the single quotes around the string are not necessary.
 To force a hard line break in the output, add `{sp}+` to the end of the line in normal AsciiDoc fashion.
