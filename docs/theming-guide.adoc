@@ -4061,7 +4061,7 @@ To avoid this problem, reduce the height of the running content periphery or mak
 |header:
   image-vertical-align: 4
 
-|sectlevels
+|sectlevels^[4]^
 |Integer +
 (default: 2)
 |header:
@@ -4085,14 +4085,14 @@ To avoid this problem, reduce the height of the running content periphery or mak
 |header:
   vertical-align: center
 
-|<side>-columns^[4]^
+|<side>-columns^[5]^
 |Column specs triple +
 (default: _not set_)
 |header:
   recto:
     columns: <25% =50% >25%
 
-|<side>-<position>-content^[4,5]^
+|<side>-<position>-content^[5,6]^
 |<<quoted-string,Quoted string>> +
 (default: '\{page-number}')
 |header:
@@ -4174,7 +4174,7 @@ To avoid this problem, reduce the height of the running content periphery or mak
 |footer:
   image-vertical-align: 4
 
-|sectlevels
+|sectlevels^[4]^
 |Integer +
 (default: 2)
 |footer:
@@ -4198,14 +4198,14 @@ To avoid this problem, reduce the height of the running content periphery or mak
 |footer:
   vertical-align: top
 
-|<side>-columns^[4]^
+|<side>-columns^[5]^
 |Column specs triple +
 (default: _not set_)
 |footer:
   verso:
     columns: <50% =0% <50%
 
-|<side>-<position>-content^[4,5]^
+|<side>-<position>-content^[5,6]^
 |<<quoted-string,Quoted string>> +
 (default: '\{page-number}')
 |footer:
@@ -4216,6 +4216,7 @@ To avoid this problem, reduce the height of the running content periphery or mak
 . The background color spans the width of the page, as does the border when a background color is specified.
 . *If the height is not set, the running content at this periphery is disabled.*
 . If the side padding is negative, the content will bleed into the margin of the page.
+. The maximum section level considered when assigning the implicit `section-title` attribute (and related) available to the running content.
 . `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
 The `columns` key can also be defined one level up (on `header` or `footer`), in which case the setting will be inherited.
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
