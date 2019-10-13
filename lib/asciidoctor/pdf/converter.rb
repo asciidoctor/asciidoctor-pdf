@@ -185,7 +185,7 @@ class Converter < ::Prawn::Document
       blk_0 = blk_1 = preface = nil
     end
 
-    on_page_create &(method :init_page)
+    on_page_create(&(method :init_page))
 
     marked_page_number = page_number
     # NOTE a new page will already be started (page_number = 2) if the front cover image is a PDF
