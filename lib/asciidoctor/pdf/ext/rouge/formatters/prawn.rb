@@ -110,7 +110,7 @@ class Prawn < Formatter
   def create_fragment tok, val = nil
     fragment = val ? { text: val } : {}
     if (style_rules = @theme.style_for tok)
-      if (bg = normalize_color style_rules.bg) && bg != @background_color
+      if (bg = normalize_color style_rules.bg) && bg != background_color
         fragment[:background_color] = bg
         fragment[:callback] = @background_colorizer
         if LineOrientedTokens.include? tok
