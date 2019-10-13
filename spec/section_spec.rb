@@ -84,7 +84,6 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == &lt;Tom &amp; Jerry&gt;
     EOS
 
-    text = pdf.text[0]
     (expect pdf.text[0][:string]).to eql '<TOM & JERRY>'
   end
 
@@ -93,7 +92,6 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == _Quick_ Start
     EOS
 
-    text = pdf.text[0]
     (expect pdf.text[0][:string]).to eql 'QUICK'
   end
 

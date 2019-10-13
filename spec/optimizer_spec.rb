@@ -3,7 +3,6 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Optimizer' do
   it 'should optimize output file if optimize attribute is set' do
     input_file = Pathname.new example_file 'basic-example.adoc'
-    reference_file = example_file 'basic-example.pdf'
     to_file = to_pdf_file input_file, 'optimizer-not-optimized.pdf'
     to_optimized_file = to_pdf_file input_file, 'optimizer-default.pdf', attribute_overrides: { 'optimize' => '', 'subject' => 'Example' }
     to_file_size = (File.stat to_file).size
@@ -21,7 +20,6 @@ describe 'Asciidoctor::PDF::Optimizer' do
 
   it 'should optimize output file using quality specified by value of optimize attribute' do
     input_file = Pathname.new example_file 'basic-example.adoc'
-    reference_file = example_file 'basic-example.pdf'
     to_screen_file = to_pdf_file input_file, 'optimizer-screen.pdf', attribute_overrides: { 'optimize' => 'screen' }
     to_prepress_file = to_pdf_file input_file, 'optimizer-prepress.pdf', attribute_overrides: { 'optimize' => 'prepress' }
     to_screen_file_size = (File.stat to_screen_file).size
