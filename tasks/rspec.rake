@@ -4,7 +4,7 @@ begin
     t.verbose = true
     opts = %w(-f progress)
     opts.append '-t', '~integration' if ENV['UNIT']
-    opts.unshift '-w' if !ENV['CI'] || ENV['COVERAGE']
+    opts.unshift '-w' if $VERBOSE || ENV['COVERAGE']
     t.rspec_opts = opts
   end
 rescue LoadError
