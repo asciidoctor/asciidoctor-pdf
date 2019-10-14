@@ -2,8 +2,9 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Outline' do
   it 'should create an outline to navigate the document structure' do
-    pdf = to_pdf <<~'EOS', doctype: :book
+    pdf = to_pdf <<~'EOS'
     = Document Title
+    :doctype: book
 
     == First Chapter
 
@@ -41,8 +42,9 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
   end
 
   it 'should limit outline depth according to value of toclevels attribute' do
-    pdf = to_pdf <<~'EOS', doctype: :book
+    pdf = to_pdf <<~'EOS'
     = Document Title
+    :doctype: book
     :toclevels: 1
 
     == First Chapter
@@ -61,8 +63,9 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
   end
 
   it 'should allow outline depth to exceed toclevels of outlinelevels attribute is set' do
-    pdf = to_pdf <<~'EOS', doctype: :book
+    pdf = to_pdf <<~'EOS'
     = Document Title
+    :doctype: book
     :toclevels: 1
     :outlinelevels: 2
 
@@ -87,8 +90,9 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
   end
 
   it 'should limit outline depth if value of outlinelevels attribute is less than value of toclevels attribute' do
-    pdf = to_pdf <<~'EOS', doctype: :book
+    pdf = to_pdf <<~'EOS'
     = Document Title
+    :doctype: book
     :toclevels: 2
     :outlinelevels: 1
 
@@ -185,8 +189,9 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
   end
 
   it 'should sanitize titles' do
-    pdf = to_pdf <<~'EOS', doctype: :book
+    pdf = to_pdf <<~'EOS'
     = _Document_ *Title*
+    :doctype: book
 
     == _First_ *Chapter*
     EOS
@@ -198,8 +203,9 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
   end
 
   it 'should decode character references in entries' do
-    pdf = to_pdf <<~'EOS', doctype: :book
+    pdf = to_pdf <<~'EOS'
     = ACME(TM) Catalog <&#8470;&nbsp;1>
+    :doctype: book
 
     == Paper Clips &#x2116;&nbsp;4
     EOS
@@ -211,8 +217,9 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
   end
 
   it 'should label front matter pages using roman numerals' do
-    pdf = to_pdf <<~'EOS', doctype: :book
+    pdf = to_pdf <<~'EOS'
     = Book Title
+    :doctype: book
     :toc:
 
     == Chapter 1
@@ -224,8 +231,9 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
   end
 
   it 'should label title page using roman numeral ii if cover page is present' do
-    pdf = to_pdf <<~'EOS', doctype: :book
+    pdf = to_pdf <<~'EOS'
     = Book Title
+    :doctype: book
     :toc:
     :front-cover-image: image:cover.jpg[]
 
