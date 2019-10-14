@@ -310,6 +310,7 @@ RSpec.configure do |config|
     result = []
     objects = pdf.objects
     pages = pdf.pages
+    labels = get_page_labels pdf
     entry = list[:First]
     while entry
       entry = objects[entry]
@@ -325,7 +326,7 @@ RSpec.configure do |config|
         closed = count < 0
         children = extract_outline pdf, entry
       end
-      result << { title: title, dest: { pagenum: dest_page.number, x: dest[2], y: dest[3], top: top }, closed: closed, children: children }
+      result << { title: title, dest: { pagenum: dest_page.number, label: labels[dest_page.number - 1], x: dest[2], y: dest[3], top: top }, closed: closed, children: children }
       entry = entry[:Next]
     end
     result
