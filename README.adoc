@@ -1145,6 +1145,23 @@ You'll see a total coverage score, a detailed coverage report, and a link to HTM
 The HTML report helps you understand which lines and branches were missed, if any.
 ////
 
+=== Rebuild the Formatter Text Parser
+
+The formatted text is first converted to a pseudo-HTML language, then converted from there into Prawn text fragments using a https://github.com/cjheath/treetop[treetop] parser.
+treetop is a Ruby-based parsing DSL based on parsing expression grammars.
+This strategy allows the converter to manipulate the formatted text without needing the know the internal details of how Prawn arranges text fragments.
+It also allows Asciidoctor to behave in a consistent manner, since some of the inline parsing in Asciidoctor assumes that the converter is generating an SGML-based language like HTML or DocBook.
+
+The parsing expression grammar is defined in the source file [.path]_lib/asciidoctor/pdf/formatted_text/parser.treetop_.
+If you make a change to this file, you must regenerate the parser, which is defined in the source file _lib/asciidoctor/pdf/formatted_text/parser.rb_.
+(Don't modify the generated parser directly).
+
+Use the following command to regenerate the parser:
+
+ bundle exec tt lib/asciidoctor/pdf/formatted_text/parser.treetop
+
+You then need to commit both files.
+
 [[resources,Links]]
 == Resources
 

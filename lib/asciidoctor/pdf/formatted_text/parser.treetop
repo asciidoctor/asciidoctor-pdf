@@ -1,4 +1,4 @@
-# regenerate parser.rb using `tt parser.treetop`
+# frozen_string_literal: true
 module Asciidoctor
 module PDF
 module FormattedText
