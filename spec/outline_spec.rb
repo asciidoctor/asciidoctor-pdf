@@ -164,6 +164,26 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline[1][:children][0][:closed]).to be true
   end
 
+  it 'should include doctitle in outline for book if notitle attribute is set' do
+    pdf = to_pdf <<~'EOS'
+    = Book Title
+    :doctype: book
+    :notitle:
+
+    == Foo
+
+    == Bar
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    (expect pdf.pages[0].text).to eql 'Foo'
+    outline = extract_outline pdf
+    (expect outline).to have_size 3
+    (expect outline[0][:title]).to eql 'Book Title'
+    (expect outline[1][:title]).to eql 'Foo'
+    (expect outline[0][:dest][:pagenum]).to eql outline[1][:dest][:pagenum]
+  end
+
   it 'should sanitize titles' do
     pdf = to_pdf <<~'EOS', doctype: :book
     = _Document_ *Title*
