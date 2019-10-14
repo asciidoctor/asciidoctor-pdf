@@ -95,6 +95,29 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       (expect pdf.find_text %r/^\d+$/).to be_empty
     end
+
+	  it 'should add footer if theme extends base and footer height is set' do
+			pdf_theme = {
+				extends: 'base',
+				footer_height: 36,
+			}
+			pdf = to_pdf <<~'EOS', attribute_overrides: { 'nofooter' => nil }, pdf_theme: pdf_theme, analyze: true
+			= Document Title
+			:doctype: book
+
+			== Beginning
+
+			== End
+			EOS
+
+			pagenum_1_text = (pdf.find_text '1')[0]
+			pagenum_2_text = (pdf.find_text '2')[0]
+			(expect pagenum_1_text).not_to be_nil
+			(expect pagenum_1_text[:page_number]).to eql 2
+			(expect pagenum_2_text).not_to be_nil
+			(expect pagenum_2_text[:page_number]).to eql 3
+			(expect pagenum_1_text[:x]).to be > pagenum_2_text[:x]
+		end
   end
 
   context 'Header' do

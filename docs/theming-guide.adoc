@@ -4226,9 +4226,6 @@ IMPORTANT: If you don't specify a height for either the header or footer key, it
 
 If you define running header and footer content in your theme (including the height), you can still disable this content per document by setting the `noheader` and `nofooter` attributes in the AsciiDoc document header, respectively.
 
-If content is not specified for the running footer, the page number (i.e., `\{page-number}`) is shown on the left on verso pages and the right on recto pages.
-You can disable this behavior by defining the attribute `nofooter` in the AsciiDoc document header or by defining the key `footer-<side>-content: none` in the theme.
-
 TIP: Although not listed in the table above, you can control the font settings (font-family, font-size, font-color, font-style, text-transform) that get applied to the running content in each column position for each page side (e.g., `footer-<side>-<position>-font-color`).
 For example, you can set the font color used for the right-hand column on recto pages by setting `footer-recto-right-font-color: 6CC644`.
 
