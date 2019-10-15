@@ -34,13 +34,15 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should create document with cover page only if front-cover-image is set and document has no content' do
-    pdf = to_pdf %(:front-cover-image: #{fixture_file 'cover.jpg', relative: true})
-    (expect pdf.pages).to have_size 1
-    (expect pdf.pages[0].text).to be_empty
-    images = get_images pdf, 1
-    (expect images).to have_size 1
-    (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
-    (expect extract_outline pdf).to be_empty
+    %w(article book).each do |doctype|
+      pdf = to_pdf %(:front-cover-image: #{fixture_file 'cover.jpg', relative: true}), doctype: doctype
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0].text).to be_empty
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
+      (expect extract_outline pdf).to be_empty
+    end
   end
 
   it 'should not crash if front cover image is a URI and the allow-uri-read attribute is not set' do
