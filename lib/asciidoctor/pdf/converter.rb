@@ -4104,7 +4104,6 @@ class Converter < ::Prawn::Document
   # QUESTION is there a better way to do this?
   # I suppose we could have @tmp_files as an instance variable on converter instead
   # It might be sufficient to delete temporary files once per conversion
-  # NOTE Ruby 1.9 will sometimes delete a tmp file before the process exits
   def unlink_tmp_file path
     path.unlink if TemporaryPath === path && path.exist?
   rescue
