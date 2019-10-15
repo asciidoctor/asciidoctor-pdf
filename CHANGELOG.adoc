@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * set default footer content in base theme; remove logic to process `footer_<side>_content: none` key (#1320)
 * include doctitle in outline for article when article is only a single page (#1322)
 * point doctitle entry in outline to first page of content when doctype is article and document has front cover
+* fix asciidoctor-pdf-optimize script
 * rename `-q` CLI option of asciidoctor-pdf-optimize script to `--quality`
 
 == 1.5.0.beta.6 (2019-10-11) - @mojavelinux
