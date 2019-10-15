@@ -1953,7 +1953,7 @@ class Converter < ::Prawn::Document
           rowspan: cell.rowspan || 1,
           align: (cell.attr 'halign', nil, false).to_sym,
           valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym,
-          padding: theme.table_cell_padding
+          padding: theme.table_cell_padding,
         }
         cell_transform = nil
         case cell.style
