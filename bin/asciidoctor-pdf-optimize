@@ -15,6 +15,6 @@ unless (filename = args.pop)
   exit 1
 end
 
-quality = args[0] == '-q' ? args[1].to_s : ''
+quality = args[0] == '--quality' ? args[1].to_s : ''
 
 (Asciidoctor::PDF::Optimizer.new quality).generate_file filename

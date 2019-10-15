@@ -916,7 +916,8 @@ That's why {project-name} always creates this file in addition to the PDF.
 IMPORTANT: The `asciidoctor-pdf-optimize` is not guaranteed to reduce the size of the PDF file.
 It may actually make the PDF larger.
 You should probably only consider using it if the file size of the original PDF is several megabytes.
-You can also try reducing the quality of the output file using the `-q` flag (e.g., `-q screen`).
+You can also try reducing the quality of the output file using the `--quality` flag (e.g., `--quality screen`).
+The `--quality` flag accepts the following keywords: `default` (default), `screen`, `ebook`, `printer`, and `prepress`.
 
 === hexapdf
 
