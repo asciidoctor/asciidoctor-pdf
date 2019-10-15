@@ -211,6 +211,51 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline[1][:dest][:label]).to eql '1'
   end
 
+  it 'should include doctitle in outline for article' do
+    pdf = to_pdf <<~'EOS'
+    = Article Title
+
+    == Foo
+
+    == Bar
+    EOS
+
+    (expect pdf.pages).to have_size 1
+    (expect pdf.pages[0].text).to include 'Article Title'
+    (expect pdf.pages[0].text).to include 'Foo'
+    outline = extract_outline pdf
+    (expect outline).to have_size 3
+    (expect outline[0][:title]).to eql 'Article Title'
+    (expect outline[0][:dest][:pagenum]).to eql 1
+    (expect outline[0][:dest][:label]).to eql '1'
+    (expect outline[1][:title]).to eql 'Foo'
+    (expect outline[1][:dest][:pagenum]).to eql 1
+    (expect outline[1][:dest][:label]).to eql '1'
+  end
+
+  it 'should include doctitle in outline for article if notitle attribute is set' do
+    pdf = to_pdf <<~'EOS'
+    = Article Title
+    :notitle:
+
+    == Foo
+
+    == Bar
+    EOS
+
+    (expect pdf.pages).to have_size 1
+    (expect pdf.pages[0].text).not_to include 'Article Title'
+    (expect pdf.pages[0].text).to include 'Foo'
+    outline = extract_outline pdf
+    (expect outline).to have_size 3
+    (expect outline[0][:title]).to eql 'Article Title'
+    (expect outline[0][:dest][:pagenum]).to eql 1
+    (expect outline[0][:dest][:label]).to eql '1'
+    (expect outline[1][:title]).to eql 'Foo'
+    (expect outline[1][:dest][:pagenum]).to eql 1
+    (expect outline[1][:dest][:label]).to eql '1'
+  end
+
   it 'should sanitize titles' do
     pdf = to_pdf <<~'EOS'
     = _Document_ *Title*
