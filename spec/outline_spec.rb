@@ -316,6 +316,23 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline[0][:dest][:pagenum]).to eql 2
   end
 
+  it 'should link doctitle dest to second page of article with front cover' do
+    pdf = to_pdf <<~EOS
+    = Document Title
+    :front-cover-image: #{fixture_file 'cover.jpg', relative: true}
+
+    content page
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    outline = extract_outline pdf
+    (expect outline).to have_size 1
+    doctitle_entry = outline[0]
+    (expect doctitle_entry[:title]).to eql 'Document Title'
+    (expect doctitle_entry[:dest][:pagenum]).to eql 2
+    (expect doctitle_entry[:dest][:label]).to eql '1'
+  end
+
   it 'should link doctitle dest to second page of book with front cover' do
     pdf = to_pdf <<~EOS
     = Document Title
