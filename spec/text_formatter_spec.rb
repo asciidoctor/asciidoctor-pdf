@@ -170,6 +170,40 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
   end
 
   context 'Roles' do
+    it 'should support built-in underline role for text span' do
+      input = '[.underline]#2001: A Space Odyssey#'
+      pdf = to_pdf input, analyze: :line
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      underline = lines[0]
+      pdf = to_pdf input, analyze: true
+      text = pdf.text
+      (expect text).to have_size 1
+      underlined_text = text[0]
+      (expect underline[:from][:x]).to eql underlined_text[:x]
+      (expect underline[:from][:y]).to be < underlined_text[:y]
+      (expect underlined_text[:y] - underline[:from][:y]).to eql 1.25
+      (expect underlined_text[:font_color]).to eql underline[:color]
+      (expect underline[:to][:x] - underline[:from][:x]).to be > 100
+    end
+
+    it 'should support built-in line-through role for text span' do
+      input = '[.line-through]#delete me#'
+      pdf = to_pdf input, analyze: :line
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      underline = lines[0]
+      pdf = to_pdf input, analyze: true
+      text = pdf.text
+      (expect text).to have_size 1
+      underlined_text = text[0]
+      (expect underline[:from][:x]).to eql underlined_text[:x]
+      (expect underline[:from][:y]).to be > underlined_text[:y]
+      (expect underlined_text[:y] - underline[:from][:y]).to be < 0
+      (expect underlined_text[:font_color]).to eql underline[:color]
+      (expect underline[:to][:x] - underline[:from][:x]).to be > 45
+    end
+
     it 'should support size roles (big and small) in default theme' do
       pdf_theme = build_pdf_theme
       (expect pdf_theme.role_big_font_size).to eql 13
