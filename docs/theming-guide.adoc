@@ -845,8 +845,11 @@ This will allow you to use the same font names (aka families) in both your graph
 === Fallback Fonts
 
 If a TrueType font is missing a character needed to render the document, such as a special symbol, you can have Asciidoctor PDF look for the character in a fallback font.
+
 You only need to specify a single fallback font, typically one that provides a full set of symbols.
-If the character isn't found in the fallback font, it will mostly likely be replaced by a box (guaranteed if you're using the bundled fallback font).
+If the character isn't found in the fallback font, it will mostly likely be replaced by a box (which is guaranteed if you're using the bundled fallback font).
+
+IMPORTANT: When defining the fallback font, you *must specify all four variants* (normal, bold, italic, bold_italic), even if you use the same font file for each.
 
 IMPORTANT: The fallback font only gets used when the primary font is a TrueType font (i.e., TTF, DFont, TTC).
 Any glyph missing from an AFM font is simply replaced with the "`not`" glyph (`&#172;`).
@@ -876,6 +879,9 @@ font:
       bold: droid-sans-fallback.ttf
       bold_italic: droid-sans-fallback.ttf
 ----
+
+Notice that we define all four variants for the fallback font, even though we're use the same font file for each variant.
+This ensures the fallback font will be used regardless of which font style is active when it gets called on.
 
 Next, add the key name to the `fallbacks` key under the `font-catalog` key.
 The `fallbacks` key accepts an array of values, meaning you can specify more than one fallback font.
