@@ -24,7 +24,6 @@ class Transform
     'font_color' => :color,
     'font_family' => :font,
     'font_size' => :size,
-    'font_style' => :styles,
   }
   #DummyText = ?\u0000
 
@@ -83,14 +82,20 @@ class Transform
           callback: mark_bg_color && [TextBackgroundAndBorderRenderer],
         }.compact,
       }
+      revise_roles = [].to_set
       theme.each_pair.reduce @theme_settings do |accum, (key, val)|
         if (key = key.to_s).start_with? 'role_'
           role, key = (key.slice 5, key.length).split '_', 2
           if (prop = ThemeKeyToFragmentProperty[key])
-            val = to_styles val if prop == :styles
             (accum[role] ||= {})[prop] = val
+          elsif key == 'font_style' || key == 'text_decoration'
+            revise_roles << role
           end
         end
+        accum
+      end
+      revise_roles.reduce @theme_settings do |accum, role|
+        (accum[role] ||= {})[:styles] = to_styles theme[%(role_#{role}_font_style)], theme[%(role_#{role}_text_decoration)]
         accum
       end
       unless @theme_settings.key? 'big'
@@ -354,8 +359,6 @@ class Transform
       styles = [:italic].to_set
     when 'bold_italic'
       styles = [:bold, :italic].to_set
-    else
-      styles = nil
     end
     if (style = TextDecorationTable[text_decoration])
       styles ? (styles << style) : [style].to_set

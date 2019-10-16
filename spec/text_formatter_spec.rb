@@ -259,6 +259,44 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect blue_text[:font_name]).to eql 'NotoSerif-BoldItalic'
     end
 
+    it 'should allow custom role to specify underline text decoration' do
+      pdf_theme = { role_movie_text_decoration: 'underline' }
+      input = '[.movie]_2001: A Space Odyssey_'
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      underline = lines[0]
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      text = pdf.text
+      (expect text).to have_size 1
+      underlined_text = text[0]
+      (expect underlined_text[:font_name]).to eql 'NotoSerif-Italic'
+      (expect underline[:from][:x]).to eql underlined_text[:x]
+      (expect underline[:from][:y]).to be < underlined_text[:y]
+      (expect underlined_text[:y] - underline[:from][:y]).to eql 1.25
+      (expect underlined_text[:font_color]).to eql underline[:color]
+      (expect underline[:to][:x] - underline[:from][:x]).to be > 100
+    end
+
+    it 'should allow custom role to specify line-through text decoration' do
+      pdf_theme = { role_delete_text_decoration: 'line-through' }
+      input = '[.delete]*delete me*'
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      underline = lines[0]
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      text = pdf.text
+      (expect text).to have_size 1
+      underlined_text = text[0]
+      (expect underlined_text[:font_name]).to eql 'NotoSerif-Bold'
+      (expect underline[:from][:x]).to eql underlined_text[:x]
+      (expect underline[:from][:y]).to be > underlined_text[:y]
+      (expect underlined_text[:y] - underline[:from][:y]).to be < 0
+      (expect underlined_text[:font_color]).to eql underline[:color]
+      (expect underline[:to][:x] - underline[:from][:x]).to be > 45
+    end
+
     it 'should allow custom role to contain hyphens' do
       pdf_theme = {
         'role_flaming-red_font_color' => 'ff0000',
