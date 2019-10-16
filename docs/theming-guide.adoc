@@ -1610,6 +1610,8 @@ The keys in this category control the style of the title page as well as the arr
 IMPORTANT: The title page is only enabled by default for the book doctype (e.g., `:doctype: book`).
 If you want to enable the title page when using a different doctype (such as the article doctype), you must define the `title-page` attribute in the document header (i.e., `:title-page:`).
 
+NOTE: Subtitle partitioning of the doctitle is only enabled when the title page is also enabled.
+
 TIP: The title page can be disabled for the book doctype by setting the `notitle` attribute in the AsciiDoc document header (i.e., `:notitle:`).
 (For other doctypes, just don't set the `title-page` attribute).
 
