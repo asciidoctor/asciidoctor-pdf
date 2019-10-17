@@ -3,8 +3,16 @@ require 'rghost'
 module Asciidoctor
 module PDF
 class Optimizer
+  QUALITY_NAMES = ({
+    'default' => :default,
+    'screen' => :screen,
+    'ebook' => :ebook,
+    'printer' => :printer,
+    'prepress' => :prepress,
+  }).default = :default
+
   def initialize quality = 'default', compatibility_level = '1.4'
-    @quality = quality.empty? ? :default : quality.to_sym
+    @quality = QUALITY_NAMES[quality]
     @compatibility_level = compatibility_level
   end
 

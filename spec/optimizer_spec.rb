@@ -33,4 +33,11 @@ describe 'Asciidoctor::PDF::Optimizer' do
     (expect pdf_info[:Title]).to eql 'Document Title'
     (expect pdf_info[:Author]).to eql 'Doc Writer'
   end
+
+  it 'should use default quality if specified quality is not recognized' do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    (expect {
+      to_pdf_file input_file, 'optimizer-fallback.pdf', attribute_overrides: { 'optimize' => 'foobar' }
+    }).to not_raise_exception
+  end
 end if ENV['RGHOST_VERSION']
