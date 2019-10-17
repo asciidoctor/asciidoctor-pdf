@@ -1162,7 +1162,7 @@ See <<Title Page>> for details.
 |page:
   size: Letter
 
-|numbering-start-at ^[5]^
+|numbering-start-at^[5]^
 |title {vbar} toc {vbar} body +
 (default: body)
 |page:
@@ -1599,11 +1599,12 @@ The keys in this category control the style of a section body.
 3+|[#key-prefix-section]*Key Prefix:* <<key-prefix-section,section>>
 
 |indent
-|<<measurement-units,Measurement>> +
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[left,right]>>^[1]^ +
 (default: 0)
 |section:
   indent: 36
 |===
+. A single value is used for both the left and right side.
 
 [#keys-title-page]
 === Title Page
@@ -4223,7 +4224,7 @@ To avoid this problem, reduce the height of the running content periphery or mak
 
 3+|[#key-prefix-running-content]*Key Prefix:* <<key-prefix-running-content,running-content>>
 
-|start-at ^[7]^
+|start-at^[7]^
 |title {vbar} toc {vbar} body +
 (default: body)
 |running-content:
