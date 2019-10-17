@@ -3,7 +3,7 @@ Dan Allen <https://github.com/mojavelinux[@mojavelinux]>
 // Settings:
 :idprefix:
 :idseparator: -
-:toc: preamble
+:toc: macro
 :experimental:
 ifndef::env-github[:icons: font]
 ifdef::env-github[]
