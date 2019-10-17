@@ -1420,6 +1420,7 @@ The keys in this category are used for inline monospaced text in prose and table
 |literal:
   font-style: bold
 |===
+
 . The border is only used if a border color is specified and the border width is not explicitly set to 0.
 The border only works properly if the literal phrase does not have nested formatting.
 Otherwise, the border will be inherited, producing a less than desirable result.
@@ -2181,6 +2182,7 @@ The keys in this category are used to control the style of literal, listing and 
 |code:
   linenum-font-color: #ccc
 |===
+
 . The line-gap property is used to tune the height of the background color applied to a span of block text highlighted using Rouge.
 . The code-linenum category only applies when using Pygments as the source highlighter.
 Otherwise, the style is controlled by the source highlighter theme.
@@ -2310,6 +2312,7 @@ The keys in this category apply to a button reference (generated from the inline
 |button:
   font-style: normal
 |===
+
 . The border is only used if a border color is specified and the border width is not explicitly set to 0.
 . The border offset is the amount that the background and border swells around the text.
 It does not affect the distance between the formatted phrase and the phrases that surround it.
@@ -2386,6 +2389,7 @@ The keys in this category apply to a key reference (generated from the inline kb
 |key:
   font-style: normal
 |===
+
 . The border is only used if a border color is specified and the border width is not explicitly set to 0.
 . The border offset is the amount that the background and border swells around the text.
 It does not affect the distance between the formatted phrase and the phrases that surround it.
@@ -3072,6 +3076,7 @@ The keys in this category control the SVG integration.
 |svg:
   fallback_font_family: Times-Roman
 |===
+
 . The fallback font family is only used when the font family in the SVG does not map to a known font name from the font catalog.
 
 [#keys-lead]
@@ -3735,6 +3740,7 @@ The keys in this category control the arrangement and style of tables and table 
   header-cell:
     text-transform: uppercase
 |===
+
 . This key only controls the color that is used for stripes.
 The appearance of stripes is controlled using the `stripes` table attribute, the `table-stripes` document attribute (since Asciidoctor 2), or the `stripes` document attribute (prior to Asciidoctor 2).
 Permitted attribute values are even, odd, all, and none.
