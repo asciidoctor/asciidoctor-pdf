@@ -3,7 +3,7 @@ require 'rghost'
 module Asciidoctor
 module PDF
 class Optimizer
-  QUALITY_NAMES = ({
+  (QUALITY_NAMES = {
     'default' => :default,
     'screen' => :screen,
     'ebook' => :ebook,

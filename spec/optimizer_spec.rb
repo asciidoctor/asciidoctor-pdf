@@ -37,7 +37,29 @@ describe 'Asciidoctor::PDF::Optimizer' do
   it 'should use default quality if specified quality is not recognized' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     (expect {
-      to_pdf_file input_file, 'optimizer-fallback.pdf', attribute_overrides: { 'optimize' => 'foobar' }
+      to_pdf_file input_file, 'optimizer-fallback-quality.pdf', attribute_overrides: { 'optimize' => 'foobar' }
     }).to not_raise_exception
+  end
+
+  it 'should optimize PDF passed to asciidoctor-pdf-optimizer CLI' do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    to_file = to_pdf_file input_file, 'optimizer-cli.pdf'
+    out, err, res = run_command asciidoctor_pdf_optimize_bin, '--quality', 'prepress', to_file
+    (expect res.exitstatus).to eql 0
+    (expect out).to be_empty
+    (expect err).to be_empty
+    pdf_info = (PDF::Reader.new to_file).info
+    (expect pdf_info[:Producer]).to include 'Ghostscript'
+  end
+
+  it 'should not crash if quality passed to asciidoctor-pdf-optimizer CLI is no recognized' do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    to_file = to_pdf_file input_file, 'optimizer-cli-fallback-quality.pdf'
+    out, err, res = run_command asciidoctor_pdf_optimize_bin, '--quality', 'foobar', to_file
+    (expect res.exitstatus).to eql 0
+    (expect out).to be_empty
+    (expect err).to be_empty
+    pdf_info = (PDF::Reader.new to_file).info
+    (expect pdf_info[:Producer]).to include 'Ghostscript'
   end
 end if ENV['RGHOST_VERSION']

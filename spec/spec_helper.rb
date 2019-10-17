@@ -198,8 +198,8 @@ RSpec.configure do |config|
     defined? Asciidoctor::LoggerManager
   end
 
-  def asciidoctor_pdf_bin opts = {}
-    bin_path = File.join __dir__, '..', 'bin', 'asciidoctor-pdf'
+  def bin_script name, opts = {}
+    bin_path = File.join __dir__, '..', 'bin', name
     if opts.fetch :with_ruby, true
       ruby = File.join RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name']
       if (ruby_opts = opts[:ruby_opts])
@@ -210,6 +210,14 @@ RSpec.configure do |config|
     else
       bin_path
     end
+  end
+
+  def asciidoctor_pdf_bin
+    bin_script 'asciidoctor-pdf'
+  end
+
+  def asciidoctor_pdf_optimize_bin
+    bin_script 'asciidoctor-pdf-optimize'
   end
 
   def run_command cmd, *args
