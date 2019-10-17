@@ -11,7 +11,7 @@ end
 args = ARGV.dup
 
 unless (filename = args.pop)
-  warn 'asciidoctor-optimize-pdf: Please specify a PDF file to optimize.'
+  warn 'asciidoctor-pdf-optimize: Please specify a PDF file to optimize.'
   exit 1
 end
 
