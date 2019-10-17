@@ -1162,7 +1162,7 @@ See <<Title Page>> for details.
 |page:
   size: Letter
 
-|numbering-start-at
+|numbering-start-at ^[5]^
 |title {vbar} toc {vbar} body +
 (default: body)
 |page:
@@ -1180,6 +1180,8 @@ To disable the image, use the value `none`.
 . Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
 . The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin-inner and margin-outer values.
 These margins and used when the value `prepress` is assigned to the `media` document attribute.
+. The `toc` value only applies if the toc is in the default location (before the first page of the body).
+If the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
 
 [#keys-base]
 === Base
@@ -3987,14 +3989,6 @@ To avoid this problem, reduce the height of the running content periphery or mak
 |===
 |Key |Value Type |Example
 
-3+|[#key-prefix-running-content]*Key Prefix:* <<key-prefix-running-content,running-content>>
-
-|start-at
-|title {vbar} toc {vbar} body +
-(default: body)
-|running-content:
-  start-at: toc
-
 3+|[#key-prefix-header]*Key Prefix:* <<key-prefix-header,header>>
 
 |background-color^[1]^
@@ -4220,7 +4214,16 @@ To avoid this problem, reduce the height of the running content periphery or mak
   verso:
     center:
       content: '\{page-number}'
+
+3+|[#key-prefix-running-content]*Key Prefix:* <<key-prefix-running-content,running-content>>
+
+|start-at ^[7]^
+|title {vbar} toc {vbar} body +
+(default: body)
+|running-content:
+  start-at: toc
 |===
+
 . The background color spans the width of the page, as does the border when a background color is specified.
 . *If the height is not set, the running content at this periphery is disabled.*
 . If the side padding is negative, the content will bleed into the margin of the page.
@@ -4229,6 +4232,8 @@ To avoid this problem, reduce the height of the running content periphery or mak
 The `columns` key can also be defined one level up (on `header` or `footer`), in which case the setting will be inherited.
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
 . `<position>` can be `left`, `center` or `right`.
+. The `toc` value only applies if the toc is in the default location (before the first page of the body).
+If the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
 
 IMPORTANT: If you don't specify a height for either the header or footer key, it effectively disables the content at that periphery.
 
