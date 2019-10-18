@@ -3039,7 +3039,7 @@ class Converter < ::Prawn::Document
 
   # TODO delegate to layout_page_header and layout_page_footer per page
   def layout_running_content periphery, doc, opts = {}
-    skip, skip_pagenums, body_start_page_number = opts[:skip] || [1, 1]
+    skip, skip_pagenums = opts[:skip] || [1, 1]
     body_start_page_number = opts[:body_start_page_number] || 1
     # NOTE find and advance to first non-imported content page to use as model page
     return unless (content_start_page = state.pages[skip..-1].index {|it| !it.imported_page? })
