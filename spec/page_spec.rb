@@ -123,7 +123,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should use recto/verso margins when media=prepress', integration: true do
-      to_file = to_pdf_file <<~'EOS', 'page-prepress-margins.pdf', attribute_overrides: { 'nofooter' => nil }
+      to_file = to_pdf_file <<~'EOS', 'page-prepress-margins.pdf', enable_footer: true
       = Book Title
       :media: prepress
       :doctype: book
@@ -149,7 +149,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         margin_inner: '1in',
         margin_outer: '0.75in',
       }
-      to_file = to_pdf_file <<~'EOS', 'page-prepress-custom-margins.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'nofooter' => nil }
+      to_file = to_pdf_file <<~'EOS', 'page-prepress-custom-margins.pdf', pdf_theme: pdf_theme, enable_footer: true
       = Book Title
       :media: prepress
       :doctype: book

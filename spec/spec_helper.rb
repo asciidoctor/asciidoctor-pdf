@@ -269,7 +269,9 @@ RSpec.configure do |config|
 
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
-    opts[:attributes] = { 'imagesdir' => fixtures_dir, 'nofooter' => '' } unless opts.key? :attributes
+    enable_footer = opts.delete :enable_footer
+    opts[:attributes] = { 'imagesdir' => fixtures_dir } unless opts.key? :attributes
+    opts[:attributes]['nofooter'] = '' unless enable_footer
     if (attribute_overrides = opts.delete :attribute_overrides)
       (opts[:attributes] ||= {}).update attribute_overrides
     end
@@ -295,7 +297,9 @@ RSpec.configure do |config|
 
   def to_pdf_file input, output_filename, opts = {}
     opts[:to_file] = (to_file = File.join output_dir, output_filename)
-    opts[:attributes] = { 'imagesdir' => fixtures_dir, 'nofooter' => '' } unless opts.key? :attributes
+    enable_footer = opts.delete :enable_footer
+    opts[:attributes] = { 'imagesdir' => fixtures_dir } unless opts.key? :attributes
+    opts[:attributes]['nofooter'] = '' unless enable_footer
     if (attribute_overrides = opts.delete :attribute_overrides)
       (opts[:attributes] ||= {}).update attribute_overrides
     end

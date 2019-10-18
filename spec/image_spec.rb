@@ -67,7 +67,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should respect value of imagesdir if changed mid-document' do
-      pdf = to_pdf <<~EOS, attributes: { 'nofooter' => '' }
+      pdf = to_pdf <<~EOS, enable_footer: true, attributes: {}
       :imagesdir: #{fixtures_dir}
 
       image::tux.png[tux]
@@ -280,7 +280,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'PDF' do
     it 'should insert page at location of block macro if target is a PDF' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'nofooter' => nil }, analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
       before
 
       image::blue-letter.pdf[]
@@ -299,7 +299,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should replace empty page at location of block macro if target is a PDF' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'nofooter' => nil }, analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
       :page-background-image: image:bg.png[]
 
       before
