@@ -1602,9 +1602,10 @@ The keys in this category control the style of a section body.
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[left,right]>>^[1]^ +
 (default: 0)
 |section:
-  indent: 36
+  indent: [0.5in, 0]
 |===
-. A single value is used for both the left and right side.
+. A single value gets applied to both the left and right side (e.g., `0.5in`).
+A two-value array configures the left and right side independently (e.g., `[0.5in, 0]`).
 
 [#keys-title-page]
 === Title Page
