@@ -490,6 +490,62 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
       (expect pgnum_labels).to eq %w(1 2 3 4)
     end
+
+    it 'should compute page-count attribute correctly when running content starts after page numbering' do
+      pdf_theme = {
+        page_numbering_start_at: 'toc',
+        running_content_start_at: 'body',
+        footer_recto_right_content: '{page-number} of {page-count}',
+        footer_verso_left_content: '{page-number} of {page-count}',
+        footer_font_color: 'AA0000',
+      }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :doctype: book
+      :toc:
+
+      == Beginning
+
+      == End
+      EOS
+
+      footer_texts = pdf.find_text font_color: 'AA0000'
+      (expect footer_texts).to have_size 2
+      (expect footer_texts[0][:page_number]).to eql 3
+      (expect footer_texts[0][:string]).to eql '2 of 3'
+      (expect footer_texts[1][:page_number]).to eql 4
+      (expect footer_texts[1][:string]).to eql '3 of 3'
+    end
+
+    it 'should compute page-count attribute correctly when running content starts after page numbering' do
+      pdf_theme = {
+        page_numbering_start_at: 'body',
+        running_content_start_at: 'toc',
+        footer_recto_right_content: '{page-number} of {page-count}',
+        footer_verso_left_content: '{page-number} of {page-count}',
+        footer_font_color: 'AA0000',
+      }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :doctype: book
+      :toc:
+
+      == Beginning
+
+      == End
+      EOS
+
+      footer_texts = pdf.find_text font_color: 'AA0000'
+      (expect footer_texts).to have_size 3
+      (expect footer_texts[0][:page_number]).to eql 2
+      (expect footer_texts[0][:string]).to eql 'ii of 2'
+      (expect footer_texts[1][:page_number]).to eql 3
+      (expect footer_texts[1][:string]).to eql '1 of 2'
+      (expect footer_texts[2][:page_number]).to eql 4
+      (expect footer_texts[2][:string]).to eql '2 of 2'
+    end
   end
 
   context 'Theming' do

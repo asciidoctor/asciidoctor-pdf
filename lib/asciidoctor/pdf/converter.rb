@@ -3044,7 +3044,7 @@ class Converter < ::Prawn::Document
     # NOTE find and advance to first non-imported content page to use as model page
     return unless (content_start_page = state.pages[skip..-1].index {|it| !it.imported_page? })
     content_start_page += (skip + 1)
-    num_pages = page_count - skip
+    num_pages = page_count - skip_pagenums
     prev_page_number = page_number
     go_to_page content_start_page
 
