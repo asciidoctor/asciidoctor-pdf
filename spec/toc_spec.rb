@@ -427,7 +427,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
   end
 
-  it 'should apply consistent font color to running content when base font color is unset', integration: true do
+  it 'should apply consistent font color to running content when base font color is unset', visual: true do
     theme_overrides = {
       extends: 'base',
       base_font_color: nil,

@@ -59,7 +59,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.lines.uniq).to have_size 6
     end if asciidoctor_2_or_better?
 
-    it 'should allow theme to control table stripe color using table_body_stripe_background_color key', integration: true do
+    it 'should allow theme to control table stripe color using table_body_stripe_background_color key', visual: true do
       pdf_theme = {
         table_body_background_color: 'FDFDFD',
         table_body_stripe_background_color: 'EFEFEF',
@@ -77,7 +77,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect to_file).to visually_match 'table-stripes-even.pdf'
     end
 
-    it 'should apply stripes to specified group of rows as specified by stripes attribute', integration: true do
+    it 'should apply stripes to specified group of rows as specified by stripes attribute', visual: true do
       to_file = to_pdf_file <<~'EOS', 'table-stripes-odd.pdf'
       [cols=3*,stripes=odd]
       |===
@@ -115,7 +115,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[3][:width]).to eql 0.5
     end
 
-    it 'should allow theme to customize bottom border of table head row', integration: true do
+    it 'should allow theme to customize bottom border of table head row', visual: true do
       theme_overrides = {
         table_head_border_bottom_width: 0.5,
         table_head_border_bottom_style: 'dashed',
@@ -161,7 +161,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       end
     end
 
-    it 'should honor cellbgcolor attribute in table cell to set background color of cell', integration: true do
+    it 'should honor cellbgcolor attribute in table cell to set background color of cell', visual: true do
       to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor.pdf'
       :attribute-undefined: drop
 
@@ -176,7 +176,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect to_file).to visually_match 'table-cellbgcolor.pdf'
     end
 
-    it 'should allow value of cellbgcolor attribute in table cell to be transparent', integration: true do
+    it 'should allow value of cellbgcolor attribute in table cell to be transparent', visual: true do
       to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor.pdf'
       :attribute-undefined: drop
 
@@ -191,7 +191,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect to_file).to visually_match 'table-cellbgcolor.pdf'
     end
 
-    it 'should use value of cellbgcolor attribute in table cell to override background color set by theme', integration: true do
+    it 'should use value of cellbgcolor attribute in table cell to override background color set by theme', visual: true do
       to_file = to_pdf_file <<~'EOS','table-cellbgcolor-override.pdf', pdf_theme: { table_body_background_color: 'CCCCCC' }
       :attribute-undefined: drop
 
@@ -685,7 +685,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect caption_text[:y]).to be < (pdf.find_text 'B2')[0][:y]
     end
 
-    it 'should confine caption to width of table by default', integration: true do
+    it 'should confine caption to width of table by default', visual: true do
       to_file = to_pdf_file <<~'EOS', 'table-caption-width.pdf', pdf_theme: { caption_align: 'center' }
       .A rather long description for this table
       [%header%autowidth]

@@ -26,7 +26,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     (expect first_icon_gap).to eql second_icon_gap
   end
 
-  it 'should align fw icon in center of 1em space', integration: true do
+  it 'should align fw icon in center of 1em space', visual: true do
     to_file = to_pdf_file <<~'EOS', 'icon-fw.pdf'
     :icons: font
     :icon-set: fas

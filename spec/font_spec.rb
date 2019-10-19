@@ -2,37 +2,37 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Font' do
   context 'bundled with default themes' do
-    it 'should not apply fallback font when using default theme', integration: true do
+    it 'should not apply fallback font when using default theme', visual: true do
       input_file = Pathname.new fixture_file 'i18n-font-test.adoc'
       to_file = to_pdf_file input_file, 'font-i18n-default.pdf'
       (expect to_file).to visually_match 'font-i18n-default.pdf'
     end
 
-    it 'should apply fallback font when using default theme with fallback font', integration: true do
+    it 'should apply fallback font when using default theme with fallback font', visual: true do
       input_file = Pathname.new fixture_file 'i18n-font-test.adoc'
       to_file = to_pdf_file input_file, 'font-i18n-default-with-fallback.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
       (expect to_file).to visually_match 'font-i18n-default-with-fallback.pdf'
     end
 
-    it 'should include expected glyphs in bundled default font', integration: true do
+    it 'should include expected glyphs in bundled default font', visual: true do
       input_file = Pathname.new fixture_file 'glyph-font-test.adoc'
       to_file = to_pdf_file input_file, 'font-glyph-default.pdf'
       (expect to_file).to visually_match 'font-glyph-default.pdf'
     end
 
-    it 'should include expected glyphs in bundled default font with fallback font', integration: true do
+    it 'should include expected glyphs in bundled default font with fallback font', visual: true do
       input_file = Pathname.new fixture_file 'glyph-font-test.adoc'
       to_file = to_pdf_file input_file, 'font-glyph-default-with-fallback.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
       (expect to_file).to visually_match 'font-glyph-default-with-fallback.pdf'
     end
 
-    it 'should include expected glyphs in fallback font', integration: true do
+    it 'should include expected glyphs in fallback font', visual: true do
       input_file = Pathname.new fixture_file 'glyph-font-test.adoc'
       to_file = to_pdf_file input_file, 'font-glyph-fallback-only.pdf', pdf_theme: { extends: 'default-with-fallback-font', base_font_family: 'M+ 1p Fallback' }, attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
       (expect to_file).to visually_match 'font-glyph-fallback-only.pdf'
     end
 
-    it 'should include box drawing glyphs in bundled monospace font', integration: true do
+    it 'should include box drawing glyphs in bundled monospace font', visual: true do
       input_file = Pathname.new fixture_file 'box-drawing.adoc'
       to_file = to_pdf_file input_file, 'font-box-drawing.pdf'
       (expect to_file).to visually_match 'font-box-drawing.pdf'
@@ -108,7 +108,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
   end
 
   context 'Kerning' do
-    it 'should enable kerning when using default theme', integration: true do
+    it 'should enable kerning when using default theme', visual: true do
       to_file = to_pdf_file <<~'EOS', 'font-kerning-default.pdf'
       [%hardbreaks]
       AVA
@@ -121,7 +121,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-kerning-default.pdf'
     end
 
-    it 'should enable kerning when using base theme', integration: true do
+    it 'should enable kerning when using base theme', visual: true do
       to_file = to_pdf_file <<~'EOS', 'font-kerning-base.pdf', attribute_overrides: { 'pdf-theme' => 'base' }
       [%hardbreaks]
       AVA
@@ -134,7 +134,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-kerning-base.pdf'
     end
 
-    it 'should allow theme to disable kerning', integration: true do
+    it 'should allow theme to disable kerning', visual: true do
       to_file = to_pdf_file <<~'EOS', 'font-kerning-disabled.pdf', pdf_theme: { base_font_kerning: 'none' }
       [%hardbreaks]
       AVA

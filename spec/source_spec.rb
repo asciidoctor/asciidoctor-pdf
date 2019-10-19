@@ -93,7 +93,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect text[0][:font_color]).to eql '333333'
     end
 
-    it 'should use rouge style specified by rouge-style attribute', integration: true do
+    it 'should use rouge style specified by rouge-style attribute', visual: true do
       to_file = to_pdf_file <<~'EOS', 'source-rouge-style.pdf'
       :source-highlighter: rouge
       :rouge-style: molokai

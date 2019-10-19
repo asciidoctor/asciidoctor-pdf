@@ -574,7 +574,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect p2_text[1][:string]).to eql '2'
     end
 
-    it 'should allow horizontal padding to be negative', integration: true do
+    it 'should allow horizontal padding to be negative', visual: true do
       pdf_theme = {
         footer_font_color: '000000',
         footer_padding: [0, -48.24, 0, -48.24],
@@ -659,7 +659,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect link_annotation[:A][:URI]).to eql 'https://asciidoctor.org'
     end
 
-    it 'should draw background color across whole periphery region', integration: true do
+    it 'should draw background color across whole periphery region', visual: true do
       pdf_theme = build_pdf_theme \
         header_background_color: '009246',
         header_border_width: 0,
@@ -674,7 +674,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-background-colors.pdf'
     end
 
-    it 'should draw column rule between columns using specified width and spacing', integration: true do
+    it 'should draw column rule between columns using specified width and spacing', visual: true do
       pdf_theme = build_pdf_theme \
         header_height: 36,
         header_padding: [8, 0],
@@ -704,7 +704,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-column-rule.pdf'
     end
 
-    it 'should not draw column rule if there is only one column', integration: true do
+    it 'should not draw column rule if there is only one column', visual: true do
       pdf_theme = build_pdf_theme \
         header_height: 36,
         header_padding: [8, 0],
@@ -855,7 +855,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
     end
 
-    it 'should adjust dimensions of running content to fit page layout', integration: true do
+    it 'should adjust dimensions of running content to fit page layout', visual: true do
       filler = lorem_ipsum '2-sentences-2-paragraphs'
       theme_overrides = {
         footer_recto_left_content: '{section-title}',
@@ -1077,7 +1077,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   end
 
   context 'Images' do
-    it 'should scale image up to width when fit=contain', integration: true do
+    it 'should scale image up to width when fit=contain', visual: true do
       %w(pdfwidth=99.76 fit=contain pdfwidth=0.5in,fit=contain pdfwidth=15in,fit=contain).each_with_index do |image_attrlist, idx|
         pdf_theme = build_pdf_theme \
           header_height: 36,
@@ -1092,7 +1092,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
     end
 
-    it 'should not overlap border when scaling image to fit content area', integration: true do
+    it 'should not overlap border when scaling image to fit content area', visual: true do
       pdf_theme = build_pdf_theme \
         header_height: 36,
         header_border_width: 5,
@@ -1116,7 +1116,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-image-contain-border.pdf'
     end
 
-    it 'should scale image down to width when fit=scale-down', integration: true do
+    it 'should scale image down to width when fit=scale-down', visual: true do
       %w(pdfwidth=99.76 pdfwidth=15in,fit=scale-down).each_with_index do |image_attrlist, idx|
         pdf_theme = build_pdf_theme \
           header_height: 36,
@@ -1131,7 +1131,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
     end
 
-    it 'should scale image down to height when fit=scale-down', integration: true do
+    it 'should scale image down to height when fit=scale-down', visual: true do
       %w(pdfwidth=30.60 fit=scale-down).each_with_index do |image_attrlist, idx|
         pdf_theme = build_pdf_theme \
           header_height: 36,
@@ -1146,7 +1146,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
     end
 
-    it 'should scale image down to minimum dimension when fit=scale-down', integration: true do
+    it 'should scale image down to minimum dimension when fit=scale-down', visual: true do
       pdf_theme = build_pdf_theme \
         header_height: 24,
         header_recto_columns: '>25% =50% <25%',
@@ -1157,7 +1157,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-image-scale-down-min.pdf'
     end
 
-    it 'should not modify image dimensions when fit=scale-down if image already fits', integration: true do
+    it 'should not modify image dimensions when fit=scale-down if image already fits', visual: true do
       %w(pdfwidth=0.5in pdfwidth=0.5in,fit=scale-down).each_with_index do |image_attrlist, idx|
         pdf_theme = build_pdf_theme \
           header_height: 36,
@@ -1172,7 +1172,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
     end
 
-    it 'should size image based on width attribute value if no other dimension attribute is specified', integration: true do
+    it 'should size image based on width attribute value if no other dimension attribute is specified', visual: true do
       pdf_theme = build_pdf_theme \
         header_height: 36,
         header_recto_columns: '<25% =50% >25%',
@@ -1183,7 +1183,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-image-width.pdf'
     end
 
-    it 'should print running content on consecutive pages even when image in running content overruns bounds', integration: true do
+    it 'should print running content on consecutive pages even when image in running content overruns bounds', visual: true do
       pdf_theme = {
         footer_recto_left_content: '{page-number}',
         footer_recto_right_content: %(image:#{fixture_file 'tux.png'}[pdfwidth=100px]),
@@ -1204,7 +1204,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-image-overrun.pdf'
     end
 
-    it 'should resolve image target relative to themesdir', integration: true do
+    it 'should resolve image target relative to themesdir', visual: true do
       [
         {
           'pdf-theme' => 'running-header',
@@ -1223,7 +1223,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
     end
 
-    it 'should resolve image target relative to theme file when themesdir is not set', integration: true do
+    it 'should resolve image target relative to theme file when themesdir is not set', visual: true do
       attribute_overrides = { 'pdf-theme' => (fixture_file 'running-header-theme.yml', relative: true) }
       to_file = to_pdf_file <<~'EOS', 'running-content-image-from-theme.pdf', attribute_overrides: attribute_overrides
       [.text-center]
@@ -1233,7 +1233,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-image.pdf'
     end
 
-    it 'should resolve run-in image relative to themesdir', integration: true do
+    it 'should resolve run-in image relative to themesdir', visual: true do
       to_file = to_pdf_file 'content', 'running-content-run-in-image.pdf', attribute_overrides: { 'pdf-theme' => (fixture_file 'running-header-run-in-image-theme.yml') }
       (expect to_file).to visually_match 'running-content-run-in-image.pdf'
     end

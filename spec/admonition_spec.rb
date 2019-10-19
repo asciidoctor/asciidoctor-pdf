@@ -108,7 +108,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect content_text[:string]).to eql 'Look for the warp zone under the bridge.'
     end
 
-    it 'should use SVG icon specified by icon attribute when icons attribute is set', integration: true do
+    it 'should use SVG icon specified by icon attribute when icons attribute is set', visual: true do
       to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: font
       :iconsdir:
@@ -122,7 +122,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-svg-icon.pdf'
     end
 
-    it 'should use raster icon specified by icon attribute when icons attribute is set', integration: true do
+    it 'should use raster icon specified by icon attribute when icons attribute is set', visual: true do
       to_file = to_pdf_file <<~'EOS', 'admonition-custom-raster-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: font
       :iconsdir:
@@ -136,7 +136,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
     end
 
-    it 'should resolve icon when icons attribute is set to image', integration: true do
+    it 'should resolve icon when icons attribute is set to image', visual: true do
       to_file = to_pdf_file <<~'EOS', 'admonition-image-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: image
       :iconsdir:
@@ -150,7 +150,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
     end
 
-    it 'should warn and fallback to admonition label if image icon cannot be resolved', integration: true do
+    it 'should warn and fallback to admonition label if image icon cannot be resolved', visual: true do
       (expect {
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: true
         :icons: image

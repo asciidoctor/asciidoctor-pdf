@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Image' do
   context 'imagesdir' do
-    it 'should resolve target of block image relative to imagesdir', integration: true do
+    it 'should resolve target of block image relative to imagesdir', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-wolpertinger.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[pdfwidth=25%]
       EOS
@@ -51,7 +51,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
     end unless windows?
 
-    it 'should resolve target of inline image relative to imagesdir', integration: true do
+    it 'should resolve target of inline image relative to imagesdir', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-inline.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image:sample-logo.jpg[ACME,12] ACME products are the best!
       EOS
@@ -106,7 +106,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect images[0].data).to eql image_data
     end
 
-    it 'should align block image to value of align attribute on macro', integration: true do
+    it 'should align block image to value of align attribute on macro', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-align-right-attribute.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[align=right]
       EOS
@@ -114,7 +114,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-align-right.pdf'
     end
 
-    it 'should align block image to value of image_align key in theme if alignment not specified on image', integration: true do
+    it 'should align block image to value of image_align key in theme if alignment not specified on image', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-align-right-theme.pdf', pdf_theme: { image_align: 'right' }, attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[]
       EOS
@@ -170,7 +170,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:y]).to eql 276.036
     end
 
-    it 'should scale down SVG to fit bounds if width is set in SVG but not on image macro', integration: true do
+    it 'should scale down SVG to fit bounds if width is set in SVG but not on image macro', visual: true do
       to_file = to_pdf_file 'image::green-bar-width.svg[]', 'image-svg-scale-to-fit-bounds.pdf'
 
       (expect to_file).to visually_match 'image-svg-scale-to-fit-bounds.pdf'
@@ -202,7 +202,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
     end
 
-    it 'should embed local image', integration: true do
+    it 'should embed local image', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-with-local-image.pdf'
       A sign of a good writer: image:svg-with-local-image.svg[]
       EOS
@@ -210,7 +210,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-with-image.pdf'
     end
 
-    it 'should embed remote image if allow allow-uri-read attribute is set', integration: true do
+    it 'should embed remote image if allow allow-uri-read attribute is set', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
       A sign of a good writer: image:svg-with-remote-image.svg[]
       EOS
@@ -218,7 +218,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-with-image.pdf'
     end
 
-    it 'should not embed remote image if allow allow-uri-read attribute is not set', integration: true do
+    it 'should not embed remote image if allow allow-uri-read attribute is not set', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image-disabled.pdf'
       A sign of a good writer: image:svg-with-remote-image.svg[]
       EOS
@@ -228,7 +228,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'PNG' do
-    it 'should scale image to width of page when pdfwidth=100vw and align-to-page option is set', integration: true do
+    it 'should scale image to width of page when pdfwidth=100vw and align-to-page option is set', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-full-width.pdf'
       image::square.png[pdfwidth=100vw,opts=align-to-page]
       EOS
@@ -236,7 +236,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-full-width.pdf'
     end
 
-    it 'should scale down image if height exceeds available space' do
+    it 'should scale down image if height exceeds available space', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-png-scale-to-fit.pdf'
       :pdf-page-layout: landscape
 
@@ -246,7 +246,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-png-scale-to-fit.pdf'
     end
 
-    it 'should use the numeric width defined in the theme if an explicit width is not specified', integration: true do
+    it 'should use the numeric width defined in the theme if an explicit width is not specified', visual: true do
       [72, '72'].each do |image_width|
         to_file = to_pdf_file <<~'EOS', 'image-numeric-fallback-width.pdf', pdf_theme: { image_width: image_width }
         image::tux.png[pdfwidth=204px]
@@ -260,7 +260,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
     end
 
-    it 'should use the percentage width defined in the theme if an explicit width is not specified', integration: true do
+    it 'should use the percentage width defined in the theme if an explicit width is not specified', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-percentage-fallback-width.pdf', pdf_theme: { image_width: '50%' }
       image::tux.png[]
       EOS
@@ -405,7 +405,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Inline' do
-    it 'should convert multiple images on the same line', integration: true do
+    it 'should convert multiple images on the same line', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-multiple-inline.pdf'
       image:logo.png[Asciidoctor,12] is developed on image:tux.png[Linux,12].
       EOS
@@ -413,7 +413,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-multiple-inline.pdf'
     end
 
-    it 'should increase line height if height if image height is more than 1.5x line height', integration: true do
+    it 'should increase line height if height if image height is more than 1.5x line height', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-inline-extends-line-height.pdf'
       see tux run +
       see image:tux.png[tux] run +
@@ -436,7 +436,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect line1_spacing).to eql line2_spacing
     end
 
-    it 'should scale image down to fit available height', integration: true do
+    it 'should scale image down to fit available height', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-inline-scale-down.pdf'
       :pdf-page-size: A6
       :pdf-page-layout: landscape
@@ -512,7 +512,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Border' do
-    it 'should draw border around PNG image if border width and border color are set in the theme', integration: true do
+    it 'should draw border around PNG image if border width and border color are set in the theme', visual: true do
       pdf_theme = {
         image_border_width: 0.5,
         image_border_color: 'DDDDDD',
@@ -527,7 +527,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-border.pdf'
     end
 
-    it 'should stretch border around PNG image to bounds if border align key is justify', integration: true do
+    it 'should stretch border around PNG image to bounds if border align key is justify', visual: true do
       pdf_theme = {
         image_border_width: 0.5,
         image_border_color: 'DDDDDD',
@@ -543,7 +543,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-border-fit-page.pdf'
     end
 
-    it 'should draw border around SVG if border width and border color are set in the theme', integration: true do
+    it 'should draw border around SVG if border width and border color are set in the theme', visual: true do
       pdf_theme = {
         image_border_width: 1,
         image_border_color: '000000',
@@ -557,7 +557,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-border.pdf'
     end
 
-    it 'should stretch border around SVG to bounds if border align key is justify', integration: true do
+    it 'should stretch border around SVG to bounds if border align key is justify', visual: true do
       pdf_theme = {
         image_border_width: 1,
         image_border_color: '000000',
@@ -572,7 +572,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-border-fit-page.pdf'
     end
 
-    it 'should not draw border around image if noborder role is present', integration: true do
+    it 'should not draw border around image if noborder role is present', visual: true do
       pdf_theme = {
         image_border_width: 1,
         image_border_color: '000000',

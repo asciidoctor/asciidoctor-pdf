@@ -45,7 +45,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     (expect example_content_text[-1][:page_number]).to eql 2
   end
 
-  it 'should split border when block is split across pages', integration: true do
+  it 'should split border when block is split across pages', visual: true do
     to_file = to_pdf_file <<~EOS, 'example-page-split.pdf'
     .Title
     ====

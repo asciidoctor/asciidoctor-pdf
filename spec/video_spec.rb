@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Image' do
   context 'Local' do
-    it 'should replace image with poster image if specified', integration: true do
+    it 'should replace image with poster image if specified', visual: true do
       to_file = to_pdf_file <<~'EOS', 'video-local-file-poster.pdf'
       video::asciidoctor.mp4[logo.png,200,200]
       EOS
@@ -12,7 +12,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'YouTube' do
-    it 'should replace image with poster image if allow-uri-read attribute is set', integration: true do
+    it 'should replace image with poster image if allow-uri-read attribute is set', visual: true do
       video_id = 'EJ09pSuA9hw'
       to_file = to_pdf_file <<~EOS, 'video-youtube-poster.pdf', attribute_overrides: { 'allow-uri-read' => '' }
       video::#{video_id}[youtube,pdfwidth=100%]
@@ -29,7 +29,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Vimeo' do
-    it 'should replace image with poster image if allow-uri-read attribute is set', integration: true do
+    it 'should replace image with poster image if allow-uri-read attribute is set', visual: true do
       video_id = '77477140'
       to_file = to_pdf_file <<~EOS, 'video-vimeo-poster.pdf', attribute_overrides: { 'allow-uri-read' => '' }
       video::#{video_id}[vimeo,pdfwidth=100%]

@@ -59,7 +59,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect pdf.find_text 'Document Title').to have_size 1
   end
 
-  it 'should recognize attribute value that uses image macro syntax', integration: true do
+  it 'should recognize attribute value that uses image macro syntax', visual: true do
     %w(block inline).each do |type|
       to_file = to_pdf_file <<~EOS, %(cover-page-front-cover-#{type}-image-macro.pdf)
       = Document Title
@@ -73,7 +73,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     end
   end
 
-  it 'should scale front cover image to boundaries of page by default', integration: true do
+  it 'should scale front cover image to boundaries of page by default', visual: true do
     ['', 'fit=contain'].each do |image_opts|
       to_file = to_pdf_file <<~EOS, %(cover-page-front-cover-image-#{image_opts.empty? ? 'default' : 'contain'}.pdf)
       = Document Title
@@ -87,7 +87,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     end
   end
 
-  it 'should stretch front cover image to boundaries of page if fit=fill', integration: true do
+  it 'should stretch front cover image to boundaries of page if fit=fill', visual: true do
     to_file = to_pdf_file <<~EOS, 'cover-page-front-cover-image-fill.pdf'
     = Document Title
     :doctype: book
@@ -100,7 +100,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect to_file).to visually_match 'cover-page-front-cover-image-fill.pdf'
   end
 
-  it 'should not scale front cover image to fit page if fit is none', integration: true do
+  it 'should not scale front cover image to fit page if fit is none', visual: true do
     to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-unscaled.pdf'
     = Document Title
     :doctype: book
@@ -112,7 +112,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect to_file).to visually_match 'cover-page-front-cover-image-unscaled.pdf'
   end
 
-  it 'should scale front cover down until it is contained within the boundaries of the page', integration: true do
+  it 'should scale front cover down until it is contained within the boundaries of the page', visual: true do
     ['', 'fit=scale-down'].each do |image_opts|
       to_file = to_pdf_file <<~EOS, %(cover-page-front-cover-image-#{image_opts.empty? ? 'max' : 'scale-down'}.pdf)
       :front-cover-image: image:cover.jpg[#{image_opts}]
@@ -125,7 +125,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     end
   end
 
-  it 'should scale front cover image until it covers page if fit=cover', integration: true do
+  it 'should scale front cover image until it covers page if fit=cover', visual: true do
     to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-cover.pdf'
     = Document Title
     :front-cover-image: image:cover.jpg[fit=cover]
@@ -136,7 +136,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect to_file).to visually_match 'cover-page-front-cover-image-cover.pdf'
   end
 
-  it 'should position front cover image as specified by position attribute', integration: true do
+  it 'should position front cover image as specified by position attribute', visual: true do
     to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-positioned.pdf'
     = Document Title
     :front-cover-image: image:square.svg[fit=none,pdfwidth=50%,position=top right]
@@ -147,7 +147,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect to_file).to visually_match 'cover-page-front-cover-image-positioned.pdf'
   end
 
-  it 'should use specified image format', integration: true do
+  it 'should use specified image format', visual: true do
     source_file = (dest_file = fixture_file 'square') + '.svg'
     begin
       FileUtils.cp source_file, dest_file

@@ -225,7 +225,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql [%(\u25d8todo), %(\u25d9done)]
     end
 
-    it 'should use glyph from fallback font if not present in main font', integration: true do
+    it 'should use glyph from fallback font if not present in main font', visual: true do
       pdf_theme = build_pdf_theme({ ulist_marker_checked_content: ?\u303c }, 'default-with-fallback-font')
 
       to_file = to_pdf_file <<~'EOS', 'list-checked-glyph-fallback.pdf', pdf_theme: pdf_theme
@@ -470,7 +470,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     # NOTE expand this test as necessary to cover the various permutations
-    it 'should not insert excess space between nested lists or list items with block content', integration: true do
+    it 'should not insert excess space between nested lists or list items with block content', visual: true do
       to_file = to_pdf_file <<~'EOS', 'list-complex-nested.pdf'
       * list item
        . first
@@ -624,7 +624,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect pdf.lines[0]).not_to start_with 'handoverallthekeystoyourkingdomtomenow'
       end
 
-      it 'should support complex content in horizontal list', integration: true do
+      it 'should support complex content in horizontal list', visual: true do
         to_file = to_pdf_file <<~EOS, 'list-horizontal-dlist.pdf'
         [horizontal]
         term::
@@ -811,7 +811,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       ]
     end
 
-    it 'should layout Q & A list like a description list with questions in italic', integration: true do
+    it 'should layout Q & A list like a description list with questions in italic', visual: true do
       to_file = to_pdf_file <<~'EOS', 'list-qanda.pdf'
       [qanda]
       What's the answer to the ultimate question?:: 42

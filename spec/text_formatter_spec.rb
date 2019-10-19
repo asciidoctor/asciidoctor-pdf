@@ -113,7 +113,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[0][:y]).to be > text[1][:y]
     end
 
-    it 'should add background and border to code as defined in theme', integration: true do
+    it 'should add background and border to code as defined in theme', visual: true do
       theme_overrides = {
         literal_background_color: 'f5f5f5',
         literal_border_color: 'dddddd',
@@ -125,7 +125,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-code.pdf'
     end
 
-    it 'should add background and border to button as defined in theme', integration: true do
+    it 'should add background and border to button as defined in theme', visual: true do
       theme_overrides = {
         button_content: '%s',
         button_background_color: '007BFF',
@@ -137,17 +137,17 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
 
-    it 'should add background and border to key as defined in theme', integration: true do
+    it 'should add background and border to key as defined in theme', visual: true do
       to_file = to_pdf_file 'Press kbd:[Ctrl,c] to kill the server.', 'text-formatter-key.pdf', attribute_overrides: { 'experimental' => '' }
       (expect to_file).to visually_match 'text-formatter-key.pdf'
     end
 
-    it 'should add background to mark as defined in theme', integration: true do
+    it 'should add background to mark as defined in theme', visual: true do
       to_file = to_pdf_file 'normal #highlight# normal', 'text-formatter-mark.pdf'
       (expect to_file).to visually_match 'text-formatter-mark.pdf'
     end
 
-    it 'should use glyph from fallback font if not present in primary font', integration: true do
+    it 'should use glyph from fallback font if not present in primary font', visual: true do
       to_file = to_pdf_file '*を*', 'text-formatter-fallback-font.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
       (expect to_file).to visually_match 'text-formatter-fallback-font.pdf'
     end
@@ -357,7 +357,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect formatted_text[:font_name]).to eql 'NotoSerif'
     end
 
-    it 'should allow theme to override background and border for custom role', integration: true do
+    it 'should allow theme to override background and border for custom role', visual: true do
       pdf_theme = {
         role_variable_font_family: 'Courier',
         role_variable_font_size: 10,
