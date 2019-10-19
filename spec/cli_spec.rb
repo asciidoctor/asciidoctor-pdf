@@ -11,7 +11,7 @@ describe 'asciidoctor-pdf' do
 
   context 'Require' do
     it 'should load converter if backend is pdf and require is asciidoctor-pdf', cli: true do
-      out, err, res = run_command 'bundle', 'exec', 'asciidoctor', '-r', 'asciidoctor-pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc')
+      out, err, res = run_command asciidoctor_bin, '-r', 'asciidoctor-pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc')
       (expect res.exitstatus).to eql 0
       (expect out).to be_empty
       (expect err).to be_empty
@@ -19,7 +19,7 @@ describe 'asciidoctor-pdf' do
     end
 
     it 'should load converter if backend is pdf and require is asciidoctor-pdf', cli: true do
-      out, err, res = run_command 'bundle', 'exec', 'asciidoctor', '-r', 'asciidoctor/pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc')
+      out, err, res = run_command asciidoctor_bin, '-r', 'asciidoctor/pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc')
       (expect res.exitstatus).to eql 0
       (expect out).to be_empty
       (expect err).to be_empty

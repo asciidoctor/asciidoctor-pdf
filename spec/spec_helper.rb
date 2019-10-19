@@ -199,17 +199,11 @@ RSpec.configure do |config|
   end
 
   def bin_script name, opts = {}
-    bin_path = File.join __dir__, '..', 'bin', name
-    if opts.fetch :with_ruby, true
-      ruby = File.join RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name']
-      if (ruby_opts = opts[:ruby_opts])
-        [ruby, *ruby_opts, bin_path]
-      else
-        [ruby, bin_path]
-      end
-    else
-      bin_path
-    end
+    Gem.bin_path (opts.fetch :gem, 'asciidoctor-pdf'), name
+  end
+
+  def asciidoctor_bin
+    bin_script 'asciidoctor', gem: 'asciidoctor'
   end
 
   def asciidoctor_pdf_bin
