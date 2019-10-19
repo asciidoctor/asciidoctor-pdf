@@ -11,7 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * include doctitle in outline for article when article is only a single page (#1322)
 * allow custom (inline) role to control text decoration property (#1326)
 * point doctitle entry in outline to first page of content when doctype is article and document has front cover
-* fix asciidoctor-pdf-optimize script
+* fix asciidoctor-pdf-optimize script and register it as a bin script
 * rename `-q` CLI option of asciidoctor-pdf-optimize script to `--quality`
 * only promote first paragraph of preamble to lead paragraph (assuming it has no role) (#1332)
 * don't promote first paragraph of preamble to lead paragraph if it already has a role (#1332)

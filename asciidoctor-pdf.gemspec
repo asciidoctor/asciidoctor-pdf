@@ -30,7 +30,6 @@ Gem::Specification.new do |s|
   end
   s.files = files.grep %r/^(?:(?:data|lib)\/.+|docs\/theming-guide\.adoc|(?:CHANGELOG|LICENSE|NOTICE|README)\.adoc|\.yardopts|#{s.name}\.gemspec)$/
   s.executables = (files.grep %r/^bin\//).map {|f| File.basename f }
-  s.executables = ['asciidoctor-pdf']
   s.require_paths = ['lib']
   #s.test_files = files.grep %r/^(?:test|spec|feature)\/.*$/
 
