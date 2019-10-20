@@ -14,4 +14,23 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     sidebar_text = (pdf.find_text 'Sidebar')[0]
     (expect sidebar_text[:page_number]).to eql 2
   end
+
+  it 'should use block title as heading of sidebar block' do
+    input = <<~'EOS'
+    .Sidebar Title
+    ****
+    Sidebar content.
+    ****
+    EOS
+
+    pdf = to_pdf input, analyze: :line
+    sidebar_border_top = pdf.lines.find {|it| it[:color] == 'E1E1E1' }[:from][:y]
+
+    pdf = to_pdf input, analyze: true
+    title_text = (pdf.find_text 'Sidebar Title')[0]
+    (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
+    (expect title_text[:font_size]).to eql 13
+    (expect title_text[:x]).to be > 100
+    (expect title_text[:y]).to be < sidebar_border_top
+  end
 end
