@@ -202,6 +202,38 @@ You then activate syntax highlighting for a given document by adding the `source
 :source-highlighter: rouge
 ----
 
+==== Upgrade Prawn and Extensions (optional)
+
+{project-name} uses Prawn to handle the PDF generation, which has a different release cycle.
+At times, there may are development features in Prawn and its extensions you need to use which haven't yet been released.
+No problem.
+You can still gain access to these features by installing the unreleased gems directly from GitHub.
+
+To get started, first create a [.path]_Gemfile_ in the root of your project.
+In that file, declare the gem soruce, the {project-handle} gem, and the prawn gem and/or one of its extension gems.
+In this example, we'll install both the prawn and prawn-table gems from GitHub.
+
+.Gemfile
+[source,ruby]
+----
+source 'https://rubygems.org'
+
+gem 'asciidoctor-pdf'
+gem 'prawn', github: 'prawnpdf/prawn'
+gem 'prawn-table', github: 'prawnpdf/prawn-table'
+----
+
+You can then install the gems into your project using the `bundle` command:
+
+ $ bundle --path=.bundle/gems
+
+Since you are using Bundler to manage the gems, you'll need to prefix all commands with `bundle exec`.
+For example:
+
+ $ bundle exec asciidoctor-pdf -v
+
+Thus, to any command present in the following sections, be sure to include this prefix.
+
 === Run the Application
 
 Assuming all the required gems install properly, verify you can run the `asciidoctor-pdf` script:
