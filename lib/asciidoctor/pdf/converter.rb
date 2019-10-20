@@ -207,58 +207,62 @@ class Converter < ::Prawn::Document
       end if doc.header? && !doc.notitle
     end
 
-    toc_num_levels = (doc.attr 'toclevels', 2).to_i
-    if (insert_toc = (doc.attr? 'toc') && !(doc.attr? 'toc-placement', 'macro') && doc.sections?)
+    num_front_matter_pages = toc_page_nums = toc_num_levels = nil
+
+    indent_section do
+      toc_num_levels = (doc.attr 'toclevels', 2).to_i
+      if (insert_toc = (doc.attr? 'toc') && !(doc.attr? 'toc-placement', 'macro') && doc.sections?)
+        start_new_page if @ppbook && verso_page?
+        allocate_toc doc, toc_num_levels, @y, use_title_page
+      else
+        @toc_extent = nil
+      end
+
       start_new_page if @ppbook && verso_page?
-      allocate_toc doc, toc_num_levels, @y, use_title_page
-    else
-      @toc_extent = nil
+
+      if use_title_page
+        zero_page_offset = has_front_cover ? 1 : 0
+        first_page_offset = has_title_page ? zero_page_offset.next : zero_page_offset
+        body_offset = (body_start_page_number = page_number) - 1
+        running_content_start_at = @theme.running_content_start_at || 'body'
+        running_content_start_at = 'toc' if running_content_start_at == 'title' && !has_title_page
+        running_content_start_at = 'body' if running_content_start_at == 'toc' && !insert_toc
+        page_numbering_start_at = @theme.page_numbering_start_at || 'body'
+        page_numbering_start_at = 'toc' if page_numbering_start_at == 'title' && !has_title_page
+        page_numbering_start_at = 'body' if page_numbering_start_at == 'toc' && !insert_toc
+        front_matter_sig = [running_content_start_at, page_numbering_start_at]
+        # table values are number of pages to skip before starting running content and page numbering, respectively
+        num_front_matter_pages = {
+          ['title', 'title'] => [zero_page_offset, zero_page_offset],
+          ['title', 'toc'] => [zero_page_offset, first_page_offset],
+          ['title', 'body'] => [zero_page_offset, body_offset],
+          ['toc', 'title'] => [first_page_offset, zero_page_offset],
+          ['toc', 'toc'] => [first_page_offset, first_page_offset],
+          ['toc', 'body'] => [first_page_offset, body_offset],
+          ['body', 'title'] => [body_offset, zero_page_offset],
+          ['body', 'toc'] => [body_offset, first_page_offset],
+        }[front_matter_sig] || [body_offset, body_offset]
+      else
+        num_front_matter_pages = [body_start_page_number - 1] * 2
+      end
+
+      @index.start_page_number = num_front_matter_pages[1] + 1
+      doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
+      add_dest_for_block doc, doc_anchor
+
+      convert_section generate_manname_section doc if doc.doctype == 'manpage' && (doc.attr? 'manpurpose')
+
+      convert_content_for_block doc
+
+      # NOTE for a book, these are leftover footnotes; for an article this is everything
+      outdent_section { layout_footnotes doc }
+
+      # NOTE delete orphaned page (a page was created but there was no additional content)
+      # QUESTION should we delete page if document is empty? (leaving no pages?)
+      delete_page if page.empty? && page_count > 1
+
+      toc_page_nums = @toc_extent ? (layout_toc doc, toc_num_levels, @toc_extent[:page_nums].first, @toc_extent[:start_y], num_front_matter_pages[1]) : []
     end
-
-    start_new_page if @ppbook && verso_page?
-
-    if use_title_page
-      zero_page_offset = has_front_cover ? 1 : 0
-      first_page_offset = has_title_page ? zero_page_offset.next : zero_page_offset
-      body_offset = (body_start_page_number = page_number) - 1
-      running_content_start_at = @theme.running_content_start_at || 'body'
-      running_content_start_at = 'toc' if running_content_start_at == 'title' && !has_title_page
-      running_content_start_at = 'body' if running_content_start_at == 'toc' && !insert_toc
-      page_numbering_start_at = @theme.page_numbering_start_at || 'body'
-      page_numbering_start_at = 'toc' if page_numbering_start_at == 'title' && !has_title_page
-      page_numbering_start_at = 'body' if page_numbering_start_at == 'toc' && !insert_toc
-      front_matter_sig = [running_content_start_at, page_numbering_start_at]
-      # table values are number of pages to skip before starting running content and page numbering, respectively
-      num_front_matter_pages = {
-        ['title', 'title'] => [zero_page_offset, zero_page_offset],
-        ['title', 'toc'] => [zero_page_offset, first_page_offset],
-        ['title', 'body'] => [zero_page_offset, body_offset],
-        ['toc', 'title'] => [first_page_offset, zero_page_offset],
-        ['toc', 'toc'] => [first_page_offset, first_page_offset],
-        ['toc', 'body'] => [first_page_offset, body_offset],
-        ['body', 'title'] => [body_offset, zero_page_offset],
-        ['body', 'toc'] => [body_offset, first_page_offset],
-      }[front_matter_sig] || [body_offset, body_offset]
-    else
-      num_front_matter_pages = [body_start_page_number - 1] * 2
-    end
-
-    @index.start_page_number = num_front_matter_pages[1] + 1
-    doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
-    add_dest_for_block doc, doc_anchor
-
-    convert_section generate_manname_section doc if doc.doctype == 'manpage' && (doc.attr? 'manpurpose')
-
-    convert_content_for_block doc
-
-    # NOTE for a book, these are leftover footnotes; for an article this is everything
-    layout_footnotes doc
-
-    # NOTE delete orphaned page (a page was created but there was no additional content)
-    # QUESTION should we delete page if document is empty? (leaving no pages?)
-    delete_page if page.empty? && page_count > 1
-
-    toc_page_nums = @toc_extent ? (layout_toc doc, toc_num_levels, @toc_extent[:page_nums].first, @toc_extent[:start_y], num_front_matter_pages[1]) : []
 
     unless page_count < body_start_page_number
       unless doc.noheader || @theme.header_height.to_f.zero?
@@ -536,20 +540,39 @@ class Converter < ::Prawn::Document
       elsif type == :chapter
         layout_chapter_title sect, title, align: align, level: hlevel
       else
-        layout_heading title, align: align, level: hlevel
+        layout_heading title, align: align, level: hlevel, outdent: true
       end
     end
 
+    if sect.sectname == 'index'
+      outdent_section { convert_index_section sect }
+    else
+      convert_content_for_block sect
+    end
+    outdent_section { layout_footnotes sect } if type == :chapter
+    sect.set_attr 'pdf-page-end', page_number
+  end
+
+  def indent_section
     if (section_indent = @theme.section_indent)
       indent_l, indent_r = inflate_indent section_indent
       indent indent_l, indent_r do
-        sect.sectname == 'index' ? (convert_index_section sect) : (convert_content_for_block sect)
+        yield
       end
     else
-      sect.sectname == 'index' ? (convert_index_section sect) : (convert_content_for_block sect)
+      yield
     end
-    layout_footnotes sect if type == :chapter
-    sect.set_attr 'pdf-page-end', page_number
+  end
+
+  def outdent_section enabled = true
+    if enabled && (section_indent = @theme.section_indent)
+      indent_l, indent_r = inflate_indent section_indent
+      indent -indent_l, -indent_r do
+        yield
+      end
+    else
+      yield
+    end
   end
 
   # QUESTION if a footnote ref appears in a separate chapter, should the footnote def be duplicated?
@@ -571,52 +594,54 @@ class Converter < ::Prawn::Document
     add_dest_for_block node if node.id
     # QUESTION should we decouple styles from section titles?
     theme_font :heading, level: (hlevel = node.level + 1) do
-      layout_heading node.title, align: (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym, level: hlevel
+      layout_heading node.title, align: (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym, level: hlevel, outdent: (node.parent.context == :section)
     end
   end
 
   def convert_abstract node
     add_dest_for_block node if node.id
-    pad_box @theme.abstract_padding do
-      theme_font :abstract_title do
-        layout_prose node.title, align: (@theme.abstract_title_align || @base_align).to_sym, margin_top: (@theme.heading_margin_top || 0), margin_bottom: (@theme.heading_margin_bottom || 0), line_height: @theme.heading_line_height
-      end if node.title?
-      theme_font :abstract do
-        prose_opts = { line_height: @theme.abstract_line_height, align: (initial_alignment = (@theme.abstract_align || @base_align).to_sym) }
-        if (text_indent = @theme.prose_text_indent)
-          prose_opts[:indent_paragraphs] = text_indent
-        end
-        # FIXME control more first_line_options using theme
-        if (line1_font_style = @theme.abstract_first_line_font_style) && line1_font_style.to_sym != font_style
-          prose_opts[:first_line_options] = { styles: [font_style, line1_font_style.to_sym] }
-        end
-        # FIXME make this cleaner!!
-        if node.blocks?
-          node.blocks.each do |child|
-            # FIXME is playback necessary here?
-            child.document.playback_attributes child.attributes
-            if child.context == :paragraph
-              if (alignment = resolve_alignment_from_role child.roles)
-                prose_opts[:align] = alignment
+    outdent_section do
+      pad_box @theme.abstract_padding do
+        theme_font :abstract_title do
+          layout_prose node.title, align: (@theme.abstract_title_align || @base_align).to_sym, margin_top: (@theme.heading_margin_top || 0), margin_bottom: (@theme.heading_margin_bottom || 0), line_height: @theme.heading_line_height
+        end if node.title?
+        theme_font :abstract do
+          prose_opts = { line_height: @theme.abstract_line_height, align: (initial_alignment = (@theme.abstract_align || @base_align).to_sym) }
+          if (text_indent = @theme.prose_text_indent)
+            prose_opts[:indent_paragraphs] = text_indent
+          end
+          # FIXME control more first_line_options using theme
+          if (line1_font_style = @theme.abstract_first_line_font_style) && line1_font_style.to_sym != font_style
+            prose_opts[:first_line_options] = { styles: [font_style, line1_font_style.to_sym] }
+          end
+          # FIXME make this cleaner!!
+          if node.blocks?
+            node.blocks.each do |child|
+              # FIXME is playback necessary here?
+              child.document.playback_attributes child.attributes
+              if child.context == :paragraph
+                if (alignment = resolve_alignment_from_role child.roles)
+                  prose_opts[:align] = alignment
+                end
+                layout_prose child.content, prose_opts
+                prose_opts.delete :first_line_options
+                prose_opts[:align] = initial_alignment
+              else
+                # FIXME this could do strange things if the wrong kind of content shows up
+                convert_content_for_block child
               end
-              layout_prose child.content, prose_opts
-              prose_opts.delete :first_line_options
-              prose_opts[:align] = initial_alignment
-            else
-              # FIXME this could do strange things if the wrong kind of content shows up
-              convert_content_for_block child
             end
+          elsif node.content_model != :compound && (string = node.content)
+            if (alignment = resolve_alignment_from_role node.roles)
+              prose_opts[:align] = alignment
+            end
+            layout_prose string, prose_opts
           end
-        elsif node.content_model != :compound && (string = node.content)
-          if (alignment = resolve_alignment_from_role node.roles)
-            prose_opts[:align] = alignment
-          end
-          layout_prose string, prose_opts
         end
       end
+      # QUESTION should we be adding margin below the abstract??
+      #theme_margin :block, :bottom
     end
-    # QUESTION should we be adding margin below the abstract??
-    #theme_margin :block, :bottom
   end
 
   def convert_preamble node
@@ -2747,7 +2772,7 @@ class Converter < ::Prawn::Document
   end
 
   def layout_chapter_title node, title, opts = {}
-    layout_heading title, opts
+    layout_heading title, (opts.merge outdent: true)
   end
 
   alias start_new_part start_new_chapter
@@ -2771,13 +2796,15 @@ class Converter < ::Prawn::Document
     if (transform = resolve_text_transform opts)
       string = transform_text string, transform
     end
-    margin_top top_margin
-    typeset_text string, calc_line_metrics((opts.delete :line_height) || (hlevel ? @theme[%(heading_h#{hlevel}_line_height)] : nil) || @theme.heading_line_height || @theme.base_line_height), {
-      color: @font_color,
-      inline_format: true,
-      align: @base_align.to_sym
-    }.merge(opts)
-    margin_bottom bot_margin
+    outdent_section(opts.delete :outdent) do
+      margin_top top_margin
+      typeset_text string, calc_line_metrics((opts.delete :line_height) || (hlevel ? @theme[%(heading_h#{hlevel}_line_height)] : nil) || @theme.heading_line_height || @theme.base_line_height), {
+        color: @font_color,
+        inline_format: true,
+        align: @base_align.to_sym
+      }.merge(opts)
+      margin_bottom bot_margin
+    end
   end
 
   # NOTE inline_format is true by default
@@ -2914,7 +2941,7 @@ class Converter < ::Prawn::Document
       theme_font :heading, level: 2 do
         theme_font :toc_title do
           toc_title_align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
-          layout_heading toc_title, align: toc_title_align, level: 2
+          layout_heading toc_title, align: toc_title_align, level: 2, outdent: true
         end
       end
     end
