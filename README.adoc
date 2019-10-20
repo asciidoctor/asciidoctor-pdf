@@ -989,11 +989,9 @@ We'll leverage the project configuration to install the necessary dependencies.
 
 === Install Dependencies
 
-If you're using {url-rvm}[RVM], we recommend creating a new gemset to work with {project-name}:
+We recommend using {url-rvm}[RVM] to manage the installation of Ruby you'll use to build and develop the project.
 
- $ rvm use 2.5@asciidoctor-pdf --create
-
-We like RVM because it keeps the dependencies required by various projects isolated.
+ $ rvm use 2.6
 
 The dependencies needed to use {project-name} are defined in the [.path]_Gemfile_ at the root of the project.
 We can use Bundler to install the dependencies for us.
@@ -1006,11 +1004,11 @@ If it's not installed, use the `gem` command to install it.
 
  $ gem install bundler
 
-Then use the `bundle` command to install the project dependencies:
+Then use the `bundle` command with the `--path` option to install the project dependencies into the project:
 
- $ bundle
+ $ bundle --path=.bundle/gems
 
-NOTE: You need to call `bundle` from the project directory so that it can find the [.path]_Gemfile_.
+NOTE: You must call `bundle` from the project directory so that it can find the [.path]_Gemfile_.
 
 === Run the Tests
 
