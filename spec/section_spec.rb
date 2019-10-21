@@ -453,41 +453,227 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect part_2_text[:page_number]).to eql 4
   end
 
-  it 'should indent section body if section_indent is set to single value in theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
-    = Document Title
+  context 'Section indent' do
+    it 'should indent section body if section_indent is set to single value in theme' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      = Document Title
 
-    == Section Title
+      == Section Title
 
-    paragraph
+      paragraph
 
-    paragraph
-    EOS
+      [.text-right]
+      paragraph
+      EOS
 
-    section_text = (pdf.find_text 'Section Title')[0]
-    paragraph_text = pdf.find_text 'paragraph'
+      section_text = (pdf.find_text 'Section Title')[0]
+      paragraph_text = pdf.find_text 'paragraph'
 
-    (expect section_text[:x]).to eql 48.24
-    (expect paragraph_text[0][:x]).to eql 84.24
-    (expect paragraph_text[1][:x]).to eql 84.24
-  end
+      (expect section_text[:x]).to eql 48.24
+      (expect paragraph_text[0][:x]).to eql 84.24
+      (expect paragraph_text[1][:x].to_i).to eql 458
+    end
 
-  it 'should indent section body if section_indent is set to array in theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: [36, 0] }, analyze: true
-    = Document Title
+    it 'should indent section body if section_indent is set to array in theme' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: [36, 0] }, analyze: true
+      = Document Title
 
-    == Section Title
+      == Section Title
 
-    paragraph
+      paragraph
 
-    paragraph
-    EOS
+      [.text-right]
+      paragraph
+      EOS
 
-    section_text = (pdf.find_text 'Section Title')[0]
-    paragraph_text = pdf.find_text 'paragraph'
+      section_text = (pdf.find_text 'Section Title')[0]
+      paragraph_text = pdf.find_text 'paragraph'
 
-    (expect section_text[:x]).to eql 48.24
-    (expect paragraph_text[0][:x]).to eql 84.24
-    (expect paragraph_text[1][:x]).to eql 84.24
+      (expect section_text[:x]).to eql 48.24
+      (expect paragraph_text[0][:x]).to eql 84.24
+      (expect paragraph_text[1][:x].to_i).to eql (458 + 36)
+    end
+
+    it 'should indent toc entries if section_indent is set in theme' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      = Document Title
+      :doctype: book
+      :toc:
+
+      == Chapter
+
+      == Another Chapter
+      EOS
+
+      toc_texts = pdf.find_text page_number: 2
+      toc_title_text = toc_texts.find {|it| it[:string] == 'Table of Contents' }
+      (expect toc_title_text[:x]).to eql 48.24
+      chapter_title_text = toc_texts.find {|it| it[:string] == 'Chapter' }
+      (expect chapter_title_text[:x]).to eql 84.24
+    end
+
+    it 'should indent preamble if section_indent is set in theme' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      = Document Title
+
+      preamble
+
+      == Section
+
+      content
+      EOS
+
+      preamble_text = (pdf.find_text 'preamble')[0]
+      (expect preamble_text[:x]).to eql 84.24
+      section_content_text = (pdf.find_text 'content')[0]
+      (expect section_content_text[:x]).to eql 84.24
+    end
+
+    it 'should not reapply section indent to nested sections' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      = Document Title
+      :doctype: book
+      :notitle:
+
+      == Chapter
+
+      chapter body
+
+      === Section
+
+      section body
+      EOS
+
+      chapter_title_text = (pdf.find_text 'Chapter')[0]
+      section_title_text = (pdf.find_text 'Section')[0]
+      (expect chapter_title_text[:x]).to eql 48.24
+      (expect section_title_text[:x]).to eql 48.24
+
+      chapter_body_text = (pdf.find_text 'chapter body')[0]
+      section_body_text = (pdf.find_text 'section body')[0]
+      (expect chapter_body_text[:x]).to eql 84.24
+      (expect section_body_text[:x]).to eql 84.24
+    end
+
+    it 'should outdent abstract title and body' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36, abstract_title_align: :left }, analyze: true
+      = Document Title
+      :doctype: book
+
+      .Abstract
+      [abstract]
+      A presage of what is to come.
+
+      == Chapter
+
+      What came to pass.
+      EOS
+
+      abstract_title_text = (pdf.find_text 'Abstract')[0]
+      (expect abstract_title_text[:x]).to eql 48.24
+      abstract_content_text = (pdf.find_text 'A presage of what is to come.')[0]
+      (expect abstract_content_text[:x]).to eql 48.24
+      chapter_text = (pdf.find_text 'What came to pass.')[0]
+      (expect chapter_text[:x]).to eql 84.24
+    end
+
+    it 'should outdent discrete heading' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      = Document Title
+
+      == Section
+
+      paragraph
+
+      [discrete]
+      === Discrete Heading
+
+      paragraph
+
+      === Nested Section
+
+      paragraph
+
+      [discrete]
+      ==== Another Discrete Heading
+
+      paragraph
+      EOS
+
+      discrete_heading_texts = pdf.find_text string: %r/Discrete/
+      (expect discrete_heading_texts).to have_size 2
+      (expect discrete_heading_texts[0][:x]).to eql 48.24
+      (expect discrete_heading_texts[1][:x]).to eql 48.24
+      paragraph_texts = pdf.find_text 'paragraph'
+      (expect paragraph_texts.map {|it| it[:x] }.uniq).to eql [84.24]
+    end
+
+    it 'should not outdent discrete heading inside block' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      == Section
+
+      ****
+      sidebar content
+
+      [discrete]
+      == Discrete Heading
+      ****
+      EOS
+
+      sidebar_content_text = (pdf.find_text 'sidebar content')[0]
+      discrete_heading_text = (pdf.find_text 'Discrete Heading')[0]
+      (expect sidebar_content_text[:x]).to eql discrete_heading_text[:x]
+    end
+
+    it 'should outdent footnotes in article' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      = Document Title
+
+      == Section
+
+      paragraph{blank}footnote:[About this paragraph]
+      EOS
+
+      paragraph_text = (pdf.find_text 'paragraph')[0]
+      footnote_text_fragments = pdf.text.select {|it| it[:y] < paragraph_text[:y] }
+      (expect footnote_text_fragments[0][:string]).to eql '['
+      (expect footnote_text_fragments[0][:x]).to eql 48.24
+    end
+
+    it 'should outdent footnotes in book' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      = Document Title
+      :doctype: book
+
+      == Chapter
+
+      paragraph{blank}footnote:[About this paragraph]
+      EOS
+
+      paragraph_text = (pdf.find_text 'paragraph')[0]
+      footnote_text_fragments = (pdf.find_text page_number: 2).select {|it| it[:y] < paragraph_text[:y] }
+      (expect footnote_text_fragments[0][:string]).to eql '['
+      (expect footnote_text_fragments[0][:x]).to eql 48.24
+    end
+
+    it 'should not indent body of index section' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      = Document Title
+      :doctype: book
+
+      == Chapter
+
+      ((paragraph))
+
+      [index]
+      == Index
+      EOS
+
+      index_page_texts = pdf.find_text page_number: 3
+      index_title_text = index_page_texts.find {|it| it[:string] == 'Index' }
+      (expect index_title_text[:x]).to eql 48.24
+      category_text = index_page_texts.find {|it| it[:string] == 'P' }
+      (expect category_text[:x]).to eql 48.24
+    end
   end
 end
