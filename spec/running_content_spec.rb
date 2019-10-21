@@ -1035,6 +1035,66 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect titles_by_page[7]).to eql '[Part II|Chapter C|]'
     end
 
+    it 'should set chapter-title to value of preface-title attribute for pages in the preamble' do
+      pdf_theme = {
+        footer_font_color: 'AA0000',
+        footer_recto_right_content: '{chapter-title}',
+        footer_verso_left_content: '{chapter-title}',
+      }
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze:  true
+      = Document Title
+      :doctype: book
+      :preface-title: PREFACE
+
+      First page of preface.
+
+      <<<
+
+      Second page of preface.
+
+      == First Chapter
+      EOS
+
+      footer_texts = pdf.find_text font_color: 'AA0000'
+      (expect footer_texts).to have_size 3
+      (expect footer_texts[0][:page_number]).to eql 2
+      (expect footer_texts[0][:string]).to eql 'PREFACE'
+      (expect footer_texts[1][:page_number]).to eql 3
+      (expect footer_texts[1][:string]).to eql 'PREFACE'
+      (expect footer_texts[2][:page_number]).to eql 4
+      (expect footer_texts[2][:string]).to eql 'First Chapter'
+    end
+
+    it 'should set chapter-title attribute correctly on pages in preface when title page is disabled' do
+      pdf_theme = {
+        footer_font_color: 'AA0000',
+        footer_recto_right_content: '{chapter-title}',
+        footer_verso_left_content: '{chapter-title}',
+      }
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze:  true
+      = Document Title
+      :doctype: book
+      :notitle:
+
+      First page of preface.
+
+      <<<
+
+      Second page of preface.
+
+      == First Chapter
+      EOS
+
+      footer_texts = pdf.find_text font_color: 'AA0000'
+      (expect footer_texts).to have_size 3
+      (expect footer_texts[0][:page_number]).to eql 1
+      (expect footer_texts[0][:string]).to eql 'Preface'
+      (expect footer_texts[1][:page_number]).to eql 2
+      (expect footer_texts[1][:string]).to eql 'Preface'
+      (expect footer_texts[2][:page_number]).to eql 3
+      (expect footer_texts[2][:string]).to eql 'First Chapter'
+    end
+
     it 'should assign section titles down to sectlevels defined in theme' do
       input = <<~'EOS'
       = Document Title
