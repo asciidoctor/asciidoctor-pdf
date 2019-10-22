@@ -3187,9 +3187,21 @@ class Converter < ::Prawn::Document
       doc.set_attr 'page-number', pgnum_label if pagenums_enabled
       # QUESTION should the fallback value be nil instead of empty string? or should we remove attribute if no value?
       doc.set_attr 'part-title', (parts_by_page[pgnum] || '')
-      doc.set_attr 'chapter-title', (chapters_by_page[pgnum] || '')
-      doc.set_attr 'section-title', (sections_by_page[pgnum] || '')
-      doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum] || chapters_by_page[pgnum] || '')
+      if toc_page_nums && (toc_page_nums.cover? pgnum)
+        if is_book
+          doc.set_attr 'chapter-title', (sect_or_chap_title = toc_title)
+          doc.set_attr 'section-title', ''
+        else
+          doc.set_attr 'chapter-title', ''
+          doc.set_attr 'section-title', (sect_or_chap_title = section_start_pages[pgnum] ? sections_by_page[pgnum] : toc_title)
+        end
+        doc.set_attr 'section-or-chapter-title', sect_or_chap_title
+        toc_page_nums = nil if toc_page_nums.end == pgnum
+      else
+        doc.set_attr 'chapter-title', (chapters_by_page[pgnum] || '')
+        doc.set_attr 'section-title', (sections_by_page[pgnum] || '')
+        doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum] || chapters_by_page[pgnum] || '')
+      end
 
       stamp stamp_names[side] if stamp_names
 

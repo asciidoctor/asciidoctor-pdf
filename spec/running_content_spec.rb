@@ -1119,6 +1119,121 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect footer_texts[2][:string]).to eql 'First Chapter'
     end
 
+    it 'should set chapter-title attribute to value of toc-title attribute on toc pages in default location' do
+      pdf_theme = {
+        running_content_start_at: 'toc',
+        footer_font_color: 'AA0000',
+        footer_recto_right_content: '{page-number} | {chapter-title}',
+        footer_verso_left_content: '{chapter-title} | {page-number}',
+      }
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :doctype: book
+      :toc:
+      :toc-title: Contents
+
+      == Beginning
+
+      == End
+      EOS
+
+      footer_texts = pdf.find_text font_color: 'AA0000'
+      (expect footer_texts).to have_size 3
+      (expect footer_texts[0][:page_number]).to eql 2
+      (expect footer_texts[0][:string]).to eql 'Contents | ii'
+      (expect footer_texts[1][:page_number]).to eql 3
+      (expect footer_texts[1][:string]).to eql '1 | Beginning'
+    end
+
+    it 'should set chapter-title attribute to value of toc-title attribute on toc pages in custom location' do
+      pdf_theme = {
+        footer_font_color: 'AA0000',
+        footer_recto_right_content: '{page-number} | {chapter-title}',
+        footer_verso_left_content: '{chapter-title} | {page-number}',
+      }
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :doctype: book
+      :toc: macro
+      :toc-title: Contents
+
+      == Beginning
+
+      toc::[]
+
+      == End
+      EOS
+
+      footer_texts = pdf.find_text font_color: 'AA0000'
+      (expect footer_texts).to have_size 3
+      (expect footer_texts[0][:page_number]).to eql 2
+      (expect footer_texts[0][:string]).to eql '1 | Beginning'
+      (expect footer_texts[1][:page_number]).to eql 3
+      (expect footer_texts[1][:string]).to eql 'Contents | 2'
+      (expect footer_texts[2][:page_number]).to eql 4
+      (expect footer_texts[2][:string]).to eql '3 | End'
+    end
+
+    it 'should set section-title attribute to value of toc-title attribute on toc pages in custom location' do
+      pdf_theme = {
+        footer_font_color: 'AA0000',
+        footer_recto_right_content: '{page-number} | {section-title}',
+        footer_verso_left_content: '{section-title} | {page-number}',
+      }
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :toc: macro
+      :toc-title: Contents
+
+      == Beginning
+
+      <<<
+
+      toc::[]
+
+      <<<
+
+      == End
+      EOS
+
+      footer_texts = pdf.find_text font_color: 'AA0000'
+      (expect footer_texts).to have_size 3
+      (expect footer_texts[0][:page_number]).to eql 1
+      (expect footer_texts[0][:string]).to eql '1 | Beginning'
+      (expect footer_texts[1][:page_number]).to eql 2
+      (expect footer_texts[1][:string]).to eql 'Contents | 2'
+      (expect footer_texts[2][:page_number]).to eql 3
+      (expect footer_texts[2][:string]).to eql '3 | End'
+    end
+
+    it 'should not set section-title attribute to value of toc-title attribute on toc pages that contain other section' do
+      pdf_theme = {
+        footer_font_color: 'AA0000',
+        footer_recto_right_content: '{page-number} | {section-title}',
+        footer_verso_left_content: '{section-title} | {page-number}',
+      }
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :toc: macro
+      :toc-title: Contents
+
+      == Beginning
+
+      toc::[]
+
+      <<<
+
+      == End
+      EOS
+
+      footer_texts = pdf.find_text font_color: 'AA0000'
+      (expect footer_texts).to have_size 2
+      (expect footer_texts[0][:page_number]).to eql 1
+      (expect footer_texts[0][:string]).to eql '1 | Beginning'
+      (expect footer_texts[1][:page_number]).to eql 2
+      (expect footer_texts[1][:string]).to eql 'End | 2'
+    end
+
     it 'should assign section titles down to sectlevels defined in theme' do
       input = <<~'EOS'
       = Document Title
