@@ -1035,13 +1035,37 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect titles_by_page[7]).to eql '[Part II|Chapter C|]'
     end
 
+    it 'should not set section-title attribute on pages in preamble of article' do
+      pdf_theme = {
+        footer_font_color: 'AA0000',
+        footer_recto_right_content: '[{section-title}]',
+        footer_verso_left_content: '[{section-title}]',
+      }
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      = Document Title
+
+      First page of preamble.
+
+      <<<
+
+      Second page of preamble.
+
+      == Section Title
+      EOS
+
+      footer_texts = pdf.find_text font_color: 'AA0000'
+      (expect footer_texts).to have_size 2
+      (expect footer_texts[0][:string]).to eql '[]'
+      (expect footer_texts[1][:string]).to eql '[Section Title]'
+    end
+
     it 'should set chapter-title to value of preface-title attribute for pages in the preamble' do
       pdf_theme = {
         footer_font_color: 'AA0000',
         footer_recto_right_content: '{chapter-title}',
         footer_verso_left_content: '{chapter-title}',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze:  true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :preface-title: PREFACE
@@ -1071,7 +1095,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: '{chapter-title}',
         footer_verso_left_content: '{chapter-title}',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze:  true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :notitle:
