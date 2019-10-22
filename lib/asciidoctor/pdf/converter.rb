@@ -3071,7 +3071,7 @@ class Converter < ::Prawn::Document
     # NOTE find and advance to first non-imported content page to use as model page
     return unless (content_start_page = state.pages[skip..-1].index {|it| !it.imported_page? })
     content_start_page += (skip + 1)
-    num_pages = page_count - skip_pagenums
+    num_pages = page_count
     prev_page_number = page_number
     go_to_page content_start_page
 
@@ -3080,34 +3080,37 @@ class Converter < ::Prawn::Document
     header = doc.header? ? doc.header : nil
     sectlevels = (@theme[%(#{periphery}_sectlevels)] || 2).to_i
     sections = doc.find_by(context: :section) {|sect| sect.level <= sectlevels && sect != header } || []
+    if (toc_page_nums = @toc_extent && @toc_extent[:page_nums])
+      toc_title = (doc.attr 'toc-title') || ''
+    end
 
     title_method = TitleStyles[@theme[%(#{periphery}_title_style)]]
     # FIXME we need a proper model for all this page counting
     # FIXME we make a big assumption that part & chapter start on new pages
-    # index parts, chapters and sections by the visual page number on which they start
+    # index parts, chapters and sections by the physical page number on which they start
     part_start_pages = {}
     chapter_start_pages = {}
     section_start_pages = {}
     trailing_section_start_pages = {}
     sections.each do |sect|
-      page_num = (sect.attr 'pdf-page-start').to_i - skip_pagenums
+      pgnum = (sect.attr 'pdf-page-start').to_i
       if is_book && ((sect_is_part = sect.part?) || sect.chapter?)
         if sect_is_part
-          part_start_pages[page_num] ||= sect.send(*title_method)
+          part_start_pages[pgnum] ||= sect.send(*title_method)
         else
-          chapter_start_pages[page_num] ||= sect.send(*title_method)
+          chapter_start_pages[pgnum] ||= sect.send(*title_method)
           if sect.sectname == 'appendix' && !part_start_pages.empty?
             # FIXME need a better way to indicate that part has ended
-            part_start_pages[page_num] = ''
+            part_start_pages[pgnum] = ''
           end
         end
       else
-        sect_title = trailing_section_start_pages[page_num] = sect.send(*title_method)
-        section_start_pages[page_num] ||= sect_title
+        sect_title = trailing_section_start_pages[pgnum] = sect.send(*title_method)
+        section_start_pages[pgnum] ||= sect_title
       end
     end
 
-    # index parts, chapters, and sections by the visual page number on which they appear
+    # index parts, chapters, and sections by the physical page number on which they appear
     parts_by_page = {}
     chapters_by_page = {}
     sections_by_page = {}
@@ -3117,42 +3120,42 @@ class Converter < ::Prawn::Document
     last_chap = is_book ? :pre : nil
     last_sect = nil
     sect_search_threshold = 1
-    (1..num_pages).each do |num|
-      if (part = part_start_pages[num])
+    (1..num_pages).each do |pgnum|
+      if (part = part_start_pages[pgnum])
         last_part = part
         last_chap = nil
         last_sect = nil
       end
-      if (chap = chapter_start_pages[num])
+      if (chap = chapter_start_pages[pgnum])
         last_chap = chap
         last_sect = nil
       end
-      if (sect = section_start_pages[num])
+      if (sect = section_start_pages[pgnum])
         last_sect = sect
       elsif part || chap
-        sect_search_threshold = num
+        sect_search_threshold = pgnum
       # NOTE we didn't find a section on this page; look back to find last section started
       elsif last_sect
-        ((sect_search_threshold)..(num - 1)).reverse_each do |prev|
+        ((sect_search_threshold)..(pgnum - 1)).reverse_each do |prev|
           if (sect = trailing_section_start_pages[prev])
             last_sect = sect
             break
           end
         end
       end
-      parts_by_page[num] = last_part
+      parts_by_page[pgnum] = last_part
       if last_chap == :pre
-        if num == 1
-          chapters_by_page[num] = doc.doctitle
-        elsif num >= body_start_page_number
-          chapters_by_page[num] = is_book ? (doc.attr 'preface-title', 'Preface') : nil
+        if pgnum >= body_start_page_number
+          chapters_by_page[pgnum] = is_book ? (doc.attr 'preface-title', 'Preface') : nil
+        elsif toc_page_nums && (toc_page_nums.cover? pgnum)
+          chapters_by_page[pgnum] = toc_title
         else
-          chapters_by_page[num] = doc.attr 'toc-title'
+          chapters_by_page[pgnum] = doc.doctitle
         end
       else
-        chapters_by_page[num] = last_chap
+        chapters_by_page[pgnum] = last_chap
       end
-      sections_by_page[num] = last_sect
+      sections_by_page[pgnum] = last_sect
     end
 
     doctitle = doc.doctitle partition: true, use_fallback: true
@@ -3160,7 +3163,7 @@ class Converter < ::Prawn::Document
     doc.set_attr 'doctitle', doctitle.combined
     doc.set_attr 'document-title', doctitle.main
     doc.set_attr 'document-subtitle', doctitle.subtitle
-    doc.set_attr 'page-count', num_pages
+    doc.set_attr 'page-count', (num_pages - skip_pagenums)
 
     pagenums_enabled = doc.attr? 'pagenums'
     case @media == 'prepress' ? 'physical' : (doc.attr 'pdf-folio-placement')
@@ -3174,24 +3177,24 @@ class Converter < ::Prawn::Document
       folio_basis, invert_folio = :virtual, false
     end
     periphery_layout_cache = {}
-    repeat((content_start_page..page_count), dynamic: true) do
+    repeat((content_start_page..num_pages), dynamic: true) do
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
-      pgnum_label = page_number - skip_pagenums
-      pgnum_label = (RomanNumeral.new page_number, :lower) if pgnum_label < 1
-      side = page_side((folio_basis == :physical ? page_number : pgnum_label), invert_folio)
+      virtual_pgnum = (pgnum = page_number) - skip_pagenums
+      pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new pgnum, :lower) : virtual_pgnum).to_s
+      side = page_side((folio_basis == :physical ? pgnum : virtual_pgnum), invert_folio)
       # QUESTION should allocation be per side?
       trim_styles, colspec_dict, content_dict, stamp_names = allocate_running_content_layout page, periphery, periphery_layout_cache
       # FIXME we need to have a content setting for chapter pages
       content_by_position, colspec_by_position = content_dict[side], colspec_dict[side]
       # TODO populate chapter-number
       # TODO populate numbered and unnumbered chapter and section titles
-      doc.set_attr 'page-number', pgnum_label.to_s if pagenums_enabled
+      doc.set_attr 'page-number', pgnum_label if pagenums_enabled
       # QUESTION should the fallback value be nil instead of empty string? or should we remove attribute if no value?
-      doc.set_attr 'part-title', (parts_by_page[pgnum_label] || '')
-      doc.set_attr 'chapter-title', (chapters_by_page[pgnum_label] || '')
-      doc.set_attr 'section-title', (sections_by_page[pgnum_label] || '')
-      doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum_label] || chapters_by_page[pgnum_label] || '')
+      doc.set_attr 'part-title', (parts_by_page[pgnum] || '')
+      doc.set_attr 'chapter-title', (chapters_by_page[pgnum] || '')
+      doc.set_attr 'section-title', (sections_by_page[pgnum] || '')
+      doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum] || chapters_by_page[pgnum] || '')
 
       stamp stamp_names[side] if stamp_names
 
@@ -3240,7 +3243,7 @@ class Converter < ::Prawn::Document
                 theme_font %(#{periphery}_#{side}_#{position}) do
                   # NOTE minor optimization
                   if content == '{page-number}'
-                    content = pagenums_enabled ? pgnum_label.to_s : nil
+                    content = pagenums_enabled ? pgnum_label : nil
                   else
                     content = apply_subs_discretely doc, content, drop_lines_with_unresolved_attributes: true
                     content = transform_text content, @text_transform if @text_transform
