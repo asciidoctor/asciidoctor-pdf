@@ -187,6 +187,75 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
   end
 
   context 'xrefstyle' do
+    it 'should refer to part by label and number when xrefstyle is short' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+      :partnums:
+      :xrefstyle: short
+
+      = Beginner
+
+      == Basic Lesson
+
+      Now you are ready for <<_advanced>>!
+
+      = Advanced
+
+      == Advanced Lesson
+
+      If you are so advanced, why do you even need a lesson?
+      EOS
+
+      (expect pdf.lines).to include 'Now you are ready for Part II!'
+    end if asciidoctor_1_5_7_or_better?
+
+    it 'should refer to part by name when xrefstyle is basic' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+      :partnums:
+      :xrefstyle: basic
+
+      = Beginner
+
+      == Basic Lesson
+
+      Now you are ready for <<_advanced>>!
+
+      = Advanced
+
+      == Advanced Lesson
+
+      If you are so advanced, why do you even need a lesson?
+      EOS
+
+      (expect pdf.lines).to include 'Now you are ready for Advanced!'
+    end
+
+    it 'should refer to part by label, number, and title when xrefstyle is full' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+      :partnums:
+      :xrefstyle: full
+
+      = Beginner
+
+      == Basic Lesson
+
+      Now you are ready for <<_advanced>>!
+
+      = Advanced
+
+      == Advanced Lesson
+
+      If you are so advanced, why do you even need a lesson?
+      EOS
+
+      (expect pdf.lines).to include 'Now you are ready for Part II, “Advanced”!'
+    end if asciidoctor_1_5_7_or_better?
+
     it 'should refer to chapter by label and number when xrefstyle is short' do
       pdf = to_pdf <<~'EOS', analyze: true
       = Document Title
