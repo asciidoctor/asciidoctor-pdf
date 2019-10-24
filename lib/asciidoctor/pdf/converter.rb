@@ -2509,7 +2509,7 @@ class Converter < ::Prawn::Document
 
   def convert_inline_indexterm node
     # NOTE indexterms not supported if text gets substituted before PDF is initialized
-    return '' unless instance_variable_defined? :@index
+    return '' unless defined? @index
     if scratch?
       node.type == :visible ? node.text : ''
     else
