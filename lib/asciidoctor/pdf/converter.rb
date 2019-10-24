@@ -1564,7 +1564,7 @@ class Converter < ::Prawn::Document
   end
 
   def draw_image_border top, w, h, alignment
-    if (b_width = @theme.image_border_width || 0) > 0 && @theme.image_border_color
+    if (@theme.image_border_width || 0) > 0 && @theme.image_border_color
       if (@theme.image_border_fit || 'content') == 'auto'
         bb_width = bounds.width
       elsif alignment == :center
@@ -3283,7 +3283,7 @@ class Converter < ::Prawn::Document
         column_rule_color: (trim_column_rule_color = resolve_theme_color %(#{periphery}_column_rule_color).to_sym),
         column_rule_style: (@theme[%(#{periphery}_column_rule_style)] || :solid).to_sym,
         column_rule_width: (trim_column_rule_color ? @theme[%(#{periphery}_column_rule_width)] || 0 : 0),
-        column_rule_spacing: (trim_column_rule_spacing = @theme[%(#{periphery}_column_rule_spacing)] || 0),
+        column_rule_spacing: (@theme[%(#{periphery}_column_rule_spacing)] || 0),
         valign: (val = (@theme[%(#{periphery}_vertical_align)] || :middle).to_sym) == :middle ? :center : val,
         img_valign: @theme[%(#{periphery}_image_vertical_align)],
         left: {

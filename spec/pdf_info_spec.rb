@@ -52,7 +52,7 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
         First Author: {author_1}
         Second Author: {author_2}
         EOS
-        lines = ((pdf.page 1).text.split ?\n).map &:strip
+        lines = ((pdf.page 1).text.split ?\n).map(&:strip)
         (expect pdf.info[:Producer]).to eql pdf.info[:Author]
         (expect pdf.info[:Author]).to eql 'Author Name, Assistant Name'
         (expect lines).to include 'First Author: Author Name'
