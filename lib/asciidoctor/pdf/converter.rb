@@ -347,6 +347,7 @@ class Converter < ::Prawn::Document
       from, to = r.rstrip.split '-', 2
       to ? ((get_char from)..(get_char to)).to_a : [(get_char from)]
     }.flatten
+    @section_indent = (val = @theme.section_indent) && (inflate_indent val)
     @index = IndexCatalog.new
     # NOTE we have to init Pdfmark class here while we have reference to the doc
     @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
@@ -554,22 +555,16 @@ class Converter < ::Prawn::Document
   end
 
   def indent_section
-    if (section_indent = @theme.section_indent)
-      indent_l, indent_r = inflate_indent section_indent
-      indent indent_l, indent_r do
-        yield
-      end
+    if (values = @section_indent)
+      indent(values[0], values[1]) { yield }
     else
       yield
     end
   end
 
   def outdent_section enabled = true
-    if enabled && (section_indent = @theme.section_indent)
-      indent_l, indent_r = inflate_indent section_indent
-      indent -indent_l, -indent_r do
-        yield
-      end
+    if enabled && (values = @section_indent)
+      indent(-values[0], -values[1]) { yield }
     else
       yield
     end
