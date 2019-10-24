@@ -1,3 +1,4 @@
+require_relative 'ignore-gem-warnings' if $VERBOSE
 if ENV['COVERAGE'] == 'deep'
   ENV['DEEP_COVER'] = 'true'
   require 'deep_cover'
