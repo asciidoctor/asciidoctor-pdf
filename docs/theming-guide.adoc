@@ -4245,6 +4245,9 @@ If the toc macro is used to position the toc, the start-at behavior is the same 
 
 IMPORTANT: If you don't specify a height for either the header or footer key, it effectively disables the content at that periphery.
 
+TIP: Although not listed in the table above, you can control the font settings (font-family, font-size, font-color, font-style, text-transform) that get applied to the running content in each column position for each page side (e.g., `footer-<side>-<position>-font-color`).
+For example, you can set the font color used for the right-hand column on recto pages by setting `footer-recto-right-font-color: 6CC644`.
+
 If you define running header and footer content in your theme (including the height), you can still disable this content per document by setting the `noheader` and `nofooter` attributes in the AsciiDoc document header, respectively.
 
 If you extend either the base or default theme, and don't specify content for the footer, the current page number will be added to the right side on recto pages and the left side on verso pages.
@@ -4252,6 +4255,7 @@ To disable this behavior, you can use the following snippet:
 
 [source,yaml]
 ----
+extends: default
 footer:
   recto:
     right:
@@ -4267,6 +4271,7 @@ If you want to replace the alternating page numbers with a centered page number,
 
 [source,yaml]
 ----
+extends: default
 footer:
   columns: =100%
   recto:
@@ -4277,8 +4282,23 @@ footer:
       content: '{page-number}'
 ----
 
-TIP: Although not listed in the table above, you can control the font settings (font-family, font-size, font-color, font-style, text-transform) that get applied to the running content in each column position for each page side (e.g., `footer-<side>-<position>-font-color`).
-For example, you can set the font color used for the right-hand column on recto pages by setting `footer-recto-right-font-color: 6CC644`.
+In the last two examples, the recto and verso both have the same content.
+In this case, you can reduce the amount of configuring using a YAML reference.
+For example:
+
+[source,yaml]
+----
+extends: default
+footer:
+  columns: =100%
+  recto: &shared_footer
+    center:
+      content: '{page-number}'
+  verso: *shared_footer
+----
+
+The `&shared_footer` assigns an ID to the YAML subtree under the `recto` key and the `*shared_footer` outputs a copy of it under the `verso` key.
+This technique can be used thoughout the theme file as it's a core feature of YAML.
 
 ==== Attribute References
 
