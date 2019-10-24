@@ -9,6 +9,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * fix value of implicit page-count attribute when page numbering and running content don't start on same page (#1334)
 * fix value of implicit chapter-title attribute on preface pages (#1340)
+* set chapter-title attribute to value of toc-title attribute on toc pages in book (#1338)
+* set section-title attribute to value of toc-title attribute on toc pages in article if page has no other sections (#1338)
 * set default footer content in base theme; remove logic to process `footer_<side>_content: none` key (#1320)
 * include doctitle in outline for article when article is only a single page (#1322)
 * allow custom (inline) role to control text decoration property (#1326)
