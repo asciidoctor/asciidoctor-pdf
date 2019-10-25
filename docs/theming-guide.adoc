@@ -1705,6 +1705,13 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
 
 3+|[#key-prefix-title-page-title]*Key Prefix:* <<key-prefix-title-page-title,title-page-title>>
 
+|display
+|none +
+(default: _not set_)
+|title-page:
+  title:
+    display: none
+
 |font-color
 |<<colors,Color>> +
 (default: _inherit_)
@@ -1770,6 +1777,13 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
 
 3+|[#key-prefix-title-page-subtitle]*Key Prefix:* <<key-prefix-title-page-subtitle,title-page-subtitle>>
 
+|display
+|none +
+(default: _not set_)
+|title-page:
+  subtitle:
+    display: none
+
 |font-color
 |<<colors,Color>> +
 (default: _inherit_)
@@ -1828,6 +1842,13 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
 
 3+|[#key-prefix-authors]*Key Prefix:* <<key-prefix-authors,title-page-authors>>
 
+|display
+|none +
+(default: _not set_)
+|title-page:
+  authors:
+    display: none
+
 |delimiter
 |<<quoted-string,Quoted string>> +
 (default: ', ')
@@ -1885,6 +1906,13 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
     margin-bottom: 5
 
 3+|[#key-prefix-revision]*Key Prefix:* <<key-prefix-revision,title-page-revision>>
+
+|display
+|none +
+(default: _not set_)
+|title-page:
+  revision:
+    display: none
 
 |delimiter
 |<<quoted-string,Quoted string>> +

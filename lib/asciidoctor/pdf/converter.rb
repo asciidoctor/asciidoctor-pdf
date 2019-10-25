@@ -2615,7 +2615,7 @@ class Converter < ::Prawn::Document
     title_align = (@theme.title_page_align || @base_align).to_sym
 
     # TODO disallow .pdf as image type
-    if (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
+    if @theme.title_page_logo_display != 'none' && (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
       if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
         logo_image_attrs = (AttributeList.new $2).parse ['alt', 'width', 'height']
         relative_to_imagesdir = true
@@ -2647,7 +2647,6 @@ class Converter < ::Prawn::Document
 
     # TODO prevent content from spilling to next page
     theme_font :title_page do
-      doctitle = doc.doctitle partition: true
       if (title_top = @theme.title_page_title_top)
         if title_top.end_with? 'vh'
           title_top = page_height - page_height * title_top.to_f / 100.0
@@ -2657,21 +2656,24 @@ class Converter < ::Prawn::Document
         # FIXME delegate to method to convert page % to y value
         @y = title_top
       end
-      move_down(@theme.title_page_title_margin_top || 0)
-      indent (@theme.title_page_title_margin_left || 0), (@theme.title_page_title_margin_right || 0) do
-        theme_font :title_page_title do
-          layout_prose doctitle.main,
-            align: title_align,
-            margin: 0,
-            line_height: @theme.title_page_title_line_height
+      unless @theme.title_page_title_display == 'none'
+        doctitle = doc.doctitle partition: true
+        move_down(@theme.title_page_title_margin_top || 0)
+        indent (@theme.title_page_title_margin_left || 0), (@theme.title_page_title_margin_right || 0) do
+          theme_font :title_page_title do
+            layout_prose doctitle.main,
+              align: title_align,
+              margin: 0,
+              line_height: @theme.title_page_title_line_height
+          end
         end
+        move_down(@theme.title_page_title_margin_bottom || 0)
       end
-      move_down(@theme.title_page_title_margin_bottom || 0)
-      if doctitle.subtitle
+      if @theme.title_page_subtitle_display != 'none' && (subtitle = (doctitle || (doc.doctitle partition: true)).subtitle)
         move_down(@theme.title_page_subtitle_margin_top || 0)
         indent (@theme.title_page_subtitle_margin_left || 0), (@theme.title_page_subtitle_margin_right || 0) do
           theme_font :title_page_subtitle do
-            layout_prose doctitle.subtitle,
+            layout_prose subtitle,
               align: title_align,
               margin: 0,
               line_height: @theme.title_page_subtitle_line_height
@@ -2679,7 +2681,7 @@ class Converter < ::Prawn::Document
         end
         move_down(@theme.title_page_subtitle_margin_bottom || 0)
       end
-      if doc.attr? 'authors'
+      if @theme.title_page_authors_display != 'none' && (doc.attr? 'authors')
         move_down(@theme.title_page_authors_margin_top || 0)
         indent (@theme.title_page_authors_margin_left || 0), (@theme.title_page_authors_margin_right || 0) do
           # TODO provide an API in core to get authors as an array
@@ -2695,8 +2697,7 @@ class Converter < ::Prawn::Document
         end
         move_down(@theme.title_page_authors_margin_bottom || 0)
       end
-      revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact
-      unless revision_info.empty?
+      unless @theme.title_page_revision_display == 'none' || (revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact).empty?
         move_down(@theme.title_page_revision_margin_top || 0)
         revision_text = revision_info.join (@theme.title_page_revision_delimiter || ', ')
         if (revremark = doc.attr 'revremark')
@@ -2713,6 +2714,8 @@ class Converter < ::Prawn::Document
         move_down(@theme.title_page_revision_margin_bottom || 0)
       end
     end
+
+    layout_prose DummyText, margin: 0, line_height: 1, normalize: false if page.empty?
   end
 
   def layout_cover_page doc, face
