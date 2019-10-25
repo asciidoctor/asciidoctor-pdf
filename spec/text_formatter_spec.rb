@@ -297,6 +297,24 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect underline[:to][:x] - underline[:from][:x]).to be > 45
     end
 
+    it 'should allow custom role to specify relative font size' do
+      pdf_theme = {
+        heading_h2_font_size: 24,
+        literal_font_size: '0.75em',
+        role_mono_font_size: '0.875em',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      == `MIN` and [.mono]`MAX`
+      EOS
+
+      min_text = (pdf.find_text 'MIN')[0]
+      normal_text = (pdf.find_text ' and ')[0]
+      max_text = (pdf.find_text 'MAX')[0]
+      (expect min_text[:font_size]).to eql 18.0
+      (expect normal_text[:font_size]).to eql 24
+      (expect max_text[:font_size]).to eql 21.0
+    end
+
     it 'should allow custom role to contain hyphens' do
       pdf_theme = {
         'role_flaming-red_font_color' => 'ff0000',
