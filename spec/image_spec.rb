@@ -4,7 +4,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   context 'imagesdir' do
     it 'should resolve target of block image relative to imagesdir', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-wolpertinger.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
-      image::wolpertinger.jpg[pdfwidth=25%]
+      image::wolpertinger.jpg[,144]
       EOS
 
       (expect to_file).to visually_match 'image-wolpertinger.pdf'
@@ -123,6 +123,95 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
   end
 
+  context 'Width' do
+    subject {
+      asciidoctor_2_or_better? ? (Asciidoctor::Converter.create 'pdf') : (Asciidoctor::Converter::Factory.create 'pdf')
+    }
+
+    it 'should resolve pdfwidth in % to pt' do
+      attrs = { 'pdfwidth' => '25%' }
+      (expect subject.resolve_explicit_width attrs, 1000).to eql 250.0
+    end
+
+    it 'should resolve pdfwidth in px to pt' do
+      attrs = { 'pdfwidth' => '144px' }
+      (expect subject.resolve_explicit_width attrs, 1000).to eql 108.0
+    end
+
+    it 'should resolve pdfwidth in vw' do
+      attrs = { 'pdfwidth' => '50vw' }
+      result = subject.resolve_explicit_width attrs, 1000, support_vw: true
+      (expect result.to_f).to eql 50.0
+      (expect result.singleton_class).to include Asciidoctor::PDF::Converter::ViewportWidth
+    end
+
+    it 'should resolve scaledwidth in % to pt' do
+      attrs = { 'scaledwidth' => '25%' }
+      (expect subject.resolve_explicit_width attrs, 1000).to eql 250.0
+    end
+
+    it 'should resolve scaledwidth in px to pt' do
+      attrs = { 'scaledwidth' => '144px' }
+      (expect subject.resolve_explicit_width attrs, 1000).to eql 108.0
+    end
+
+    it 'should size image using percentage width specified by pdfwidth', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-pdfwidth-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      image::wolpertinger.jpg[,144,pdfwidth=25%,scaledwidth=50%]
+      EOS
+
+      (expect to_file).to visually_match 'image-pdfwidth-percentage.pdf'
+    end
+
+    it 'should size image using percentage width specified by scaledwidth', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-scaledwidth-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      image::wolpertinger.jpg[,144,scaledwidth=25%]
+      EOS
+
+      (expect to_file).to visually_match 'image-pdfwidth-percentage.pdf'
+    end
+
+    it 'should scale image to width of page when pdfwidth=100vw and align-to-page option is set', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-full-width.pdf'
+      image::square.png[pdfwidth=100vw,opts=align-to-page]
+      EOS
+
+      (expect to_file).to visually_match 'image-full-width.pdf'
+    end
+
+    it 'should scale down image if height exceeds available space', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-png-scale-to-fit.pdf'
+      :pdf-page-layout: landscape
+
+      image::tux.png[pdfwidth=100%]
+      EOS
+
+      (expect to_file).to visually_match 'image-png-scale-to-fit.pdf'
+    end
+
+    it 'should use the numeric width defined in the theme if an explicit width is not specified', visual: true do
+      [72, '72'].each do |image_width|
+        to_file = to_pdf_file <<~'EOS', 'image-numeric-fallback-width.pdf', pdf_theme: { image_width: image_width }
+        image::tux.png[pdfwidth=204px]
+
+        image::tux.png[,204]
+
+        image::tux.png[]
+        EOS
+
+        (expect to_file).to visually_match 'image-numeric-fallback-width.pdf'
+      end
+    end
+
+    it 'should use the percentage width defined in the theme if an explicit width is not specified', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-percentage-fallback-width.pdf', pdf_theme: { image_width: '50%' }
+      image::tux.png[]
+      EOS
+
+      (expect to_file).to visually_match 'image-percentage-fallback-width.pdf'
+    end
+  end
+
   context 'SVG' do
     it 'should not leave gap around SVG that specifies viewBox but no width' do
       input = <<~'EOS'
@@ -228,44 +317,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'PNG' do
-    it 'should scale image to width of page when pdfwidth=100vw and align-to-page option is set', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-full-width.pdf'
-      image::square.png[pdfwidth=100vw,opts=align-to-page]
-      EOS
+    it 'should embed PNG image', visual: true do
+      to_file = to_pdf_file 'image::tux.png[]', 'image-png-implicit-width.pdf'
 
-      (expect to_file).to visually_match 'image-full-width.pdf'
-    end
-
-    it 'should scale down image if height exceeds available space', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-png-scale-to-fit.pdf'
-      :pdf-page-layout: landscape
-
-      image::tux.png[pdfwidth=100%]
-      EOS
-
-      (expect to_file).to visually_match 'image-png-scale-to-fit.pdf'
-    end
-
-    it 'should use the numeric width defined in the theme if an explicit width is not specified', visual: true do
-      [72, '72'].each do |image_width|
-        to_file = to_pdf_file <<~'EOS', 'image-numeric-fallback-width.pdf', pdf_theme: { image_width: image_width }
-        image::tux.png[pdfwidth=204px]
-
-        image::tux.png[,204]
-
-        image::tux.png[]
-        EOS
-
-        (expect to_file).to visually_match 'image-numeric-fallback-width.pdf'
-      end
-    end
-
-    it 'should use the percentage width defined in the theme if an explicit width is not specified', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-percentage-fallback-width.pdf', pdf_theme: { image_width: '50%' }
-      image::tux.png[]
-      EOS
-
-      (expect to_file).to visually_match 'image-percentage-fallback-width.pdf'
+      (expect to_file).to visually_match 'image-png-implicit-width.pdf'
     end
   end
 
@@ -578,7 +633,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_color: '000000',
       }
       to_file = to_pdf_file <<~'EOS', 'image-noborder.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }
-      image::wolpertinger.jpg[pdfwidth=25%,role=specimen noborder]
+      image::wolpertinger.jpg[,144,role=specimen noborder]
       EOS
 
       (expect to_file).to visually_match 'image-wolpertinger.pdf'
