@@ -463,7 +463,7 @@ class Converter < ::Prawn::Document
   def build_pdf_info doc
     info = {}
     # FIXME use sanitize: :plain_text once available
-    if (doctitle = doc.doctitle use_fallback: true)
+    if (doctitle = doc.header? ? doc.doctitle : (doc.attr 'untitled-label'))
       info[:Title] = (sanitize doctitle).as_pdf
     end
     info[:Author] = (doc.attr 'authors').as_pdf if doc.attr? 'authors'
@@ -3452,7 +3452,7 @@ class Converter < ::Prawn::Document
       initial_pagenum = has_front_cover ? 2 : 1
       initial_pagenum -= 1 unless doc.doctype == 'book' || (doc.attr? 'title-page')
       # FIXME use sanitize: :plain_text once available
-      if document.page_count > initial_pagenum && (doctitle = doc.doctitle use_fallback: true)
+      if document.page_count > initial_pagenum && (doctitle = doc.header? ? doc.doctitle : (doc.attr 'untitled-label'))
         page title: (document.sanitize doctitle), destination: (document.dest_top has_front_cover ? 2 : 1)
       end
       unless toc_page_nums.none? || (toc_title = doc.attr 'toc-title').nil_or_empty?

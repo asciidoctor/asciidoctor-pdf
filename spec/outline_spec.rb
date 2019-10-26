@@ -363,7 +363,44 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect get_page_labels pdf).to eql %w(1 2)
   end
 
-  it 'should not crash if doctitle is not set and untitled-label attribute is unset' do
+  it 'should set doctitle in outline to value of untitled-label attribute if document has no doctitle or sections' do
+    pdf = to_pdf 'body only'
+
+    outline = extract_outline pdf
+    (expect outline).to have_size 1
+    (expect outline[0][:title]).to eql 'Untitled'
+    (expect outline[0][:children]).to be_empty
+  end
+
+  it 'should set doctitle in outline to value of untitled-label attribute if document has no doctitle and has sections' do
+    pdf = to_pdf <<~'EOS'
+    == First Section
+
+    == Last Section
+    EOS
+
+    outline = extract_outline pdf
+    (expect outline).to have_size 3
+    (expect outline[0][:title]).to eql 'Untitled'
+    (expect outline[0][:children]).to be_empty
+  end
+
+  it 'should set not set doctitle in outline if document has no doctitle, has sections, and untitled-label attribute is unset' do
+    pdf = to_pdf <<~'EOS'
+    :untitled-label!:
+
+    == First Section
+
+    == Last Section
+    EOS
+
+    outline = extract_outline pdf
+    (expect outline).to have_size 2
+    (expect outline[0][:title]).to eql 'First Section'
+    (expect outline[1][:title]).to eql 'Last Section'
+  end
+
+  it 'should not crash if doctitle is not set and untitled-label attribute is unset and document has no sections' do
     pdf = to_pdf <<~'EOS'
     :untitled-label!:
 
