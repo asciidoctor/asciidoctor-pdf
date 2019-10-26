@@ -362,4 +362,14 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
 
     (expect get_page_labels pdf).to eql %w(1 2)
   end
+
+  it 'should not crash if doctitle is not set and untitled-label attribute is unset' do
+    pdf = to_pdf <<~'EOS'
+    :untitled-label!:
+
+    body only
+    EOS
+
+    (expect extract_outline pdf).to be_empty
+  end
 end
