@@ -321,6 +321,56 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect get_images pdf, 2).to have_size 1
       (expect get_images pdf, 3).to have_size 1
     end
+
+    it 'should allow theme to disable elements on title page' do
+      pdf_theme = {
+        title_page_subtitle_display: 'none',
+        title_page_authors_display: 'none',
+        title_page_revision_display: 'none',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title: Subtitle
+      :doctype: book
+      Author Name
+      v1.0, 2020-01-01
+
+      first page of content
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      title_page_texts = pdf.find_text page_number: 1
+      (expect title_page_texts).to have_size 1
+      (expect title_page_texts[0][:string]).to eql 'Document Title'
+    end
+
+    it 'should not remove title page if all elements are disabled' do
+      pdf_theme = {
+        title_page_title_display: 'none',
+        title_page_subtitle_display: 'none',
+        title_page_authors_display: 'none',
+        title_page_revision_display: 'none',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      = Document Title: Subtitle
+      :doctype: book
+      :title-page-background-image: image:cover.jpg[]
+      Author Name
+      v1.0, 2020-01-01
+
+      first page of content
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      title_page_text = (pdf.page 1).text
+      (expect title_page_text).to be_empty
+
+      image_data = File.binread fixture_file 'cover.jpg'
+      title_page_images = get_images pdf, 1
+      (expect title_page_images).to have_size 1
+      (expect title_page_images[0].data).to eql image_data
+    end
   end
 
   context 'article' do
