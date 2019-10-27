@@ -19,15 +19,18 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline).to have_size 4
     (expect outline[0][:title]).to eql 'Document Title'
     (expect outline[0][:dest][:pagenum]).to eql 1
+    (expect outline[0][:dest][:label]).to eql 'i'
     (expect outline[0][:dest][:top]).to be true
     (expect outline[0][:children]).to be_empty
     (expect outline[1][:title]).to eql 'First Chapter'
     (expect outline[1][:dest][:pagenum]).to eql 2
+    (expect outline[1][:dest][:label]).to eql '1'
     (expect outline[1][:dest][:top]).to be true
     (expect outline[1][:closed]).to be false
     (expect outline[1][:children]).to have_size 1
     (expect outline[1][:children][0][:title]).to eql 'Chapter Section'
     (expect outline[1][:children][0][:dest][:pagenum]).to eql 2
+    (expect outline[1][:children][0][:dest][:label]).to eql '1'
     (expect outline[1][:children][0][:dest][:top]).to be false
     (expect outline[1][:children][0][:children]).to be_empty
     chapter_section_ref = (get_names pdf)['_chapter_section']
@@ -37,6 +40,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline[1][:children][0][:dest][:pagenum]).to eql get_page_number pdf, chapter_section_obj[0]
     (expect outline[3][:title]).to eql 'Last Chapter'
     (expect outline[3][:dest][:pagenum]).to eql 4
+    (expect outline[3][:dest][:label]).to eql '3'
     (expect outline[3][:dest][:top]).to be true
     (expect outline[3][:children]).to be_empty
   end
@@ -185,7 +189,9 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect outline).to have_size 3
     (expect outline[0][:title]).to eql 'Book Title'
     (expect outline[1][:title]).to eql 'Foo'
+    (expect outline[1][:dest][:pagenum]).to eql 1
     (expect outline[0][:dest][:pagenum]).to eql outline[1][:dest][:pagenum]
+    (expect outline[0][:dest][:label]).to eql outline[1][:dest][:label]
   end
 
   it 'should include doctitle in outline for article if title-page attribute is set' do
@@ -249,11 +255,59 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     outline = extract_outline pdf
     (expect outline).to have_size 3
     (expect outline[0][:title]).to eql 'Article Title'
-    (expect outline[0][:dest][:pagenum]).to eql 1
-    (expect outline[0][:dest][:label]).to eql '1'
     (expect outline[1][:title]).to eql 'Foo'
     (expect outline[1][:dest][:pagenum]).to eql 1
     (expect outline[1][:dest][:label]).to eql '1'
+    (expect outline[0][:dest][:pagenum]).to eql outline[1][:dest][:pagenum]
+    (expect outline[0][:dest][:label]).to eql outline[1][:dest][:label]
+  end
+
+  it 'should generate outline for book that only consists of doctitle' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :doctype: book
+    EOS
+
+    outline = extract_outline pdf
+    (expect outline).to have_size 1
+    (expect outline[0][:title]).to eql 'Document Title'
+    (expect outline[0][:dest][:pagenum]).to eql 1
+    (expect outline[0][:dest][:label]).to eql 'i'
+    (expect outline[0][:children]).to be_empty
+  end
+
+  it 'should not generate outline for book that only consists of front cover' do
+    pdf = to_pdf <<~'EOS'
+    :front-cover-image: image:cover.jpg[]
+    :doctype: book
+    EOS
+
+    (expect pdf.pages).to have_size 1
+    outline = extract_outline pdf
+    (expect outline).to have_size 0
+  end
+
+  it 'should generate outline for article that only consists of doctitle' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    EOS
+
+    outline = extract_outline pdf
+    (expect outline).to have_size 1
+    (expect outline[0][:title]).to eql 'Document Title'
+    (expect outline[0][:dest][:pagenum]).to eql 1
+    (expect outline[0][:dest][:label]).to eql '1'
+    (expect outline[0][:children]).to be_empty
+  end
+
+  it 'should not generate outline for article that only consists of front cover' do
+    pdf = to_pdf <<~'EOS'
+    :front-cover-image: image:cover.jpg[]
+    EOS
+
+    (expect pdf.pages).to have_size 1
+    outline = extract_outline pdf
+    (expect outline).to have_size 0
   end
 
   it 'should sanitize titles' do
@@ -363,12 +417,23 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     (expect get_page_labels pdf).to eql %w(1 2)
   end
 
-  it 'should set doctitle in outline to value of untitled-label attribute if document has no doctitle or sections' do
+  it 'should set doctitle in outline to value of untitled-label attribute if article has no doctitle or sections' do
     pdf = to_pdf 'body only'
 
     outline = extract_outline pdf
     (expect outline).to have_size 1
     (expect outline[0][:title]).to eql 'Untitled'
+    (expect outline[0][:dest][:label]).to eql '1'
+    (expect outline[0][:children]).to be_empty
+  end
+
+  it 'should set doctitle in outline to value of untitled-label attribute if book has no doctitle or chapters' do
+    pdf = to_pdf 'body only', doctype: :book
+
+    outline = extract_outline pdf
+    (expect outline).to have_size 1
+    (expect outline[0][:title]).to eql 'Untitled'
+    (expect outline[0][:dest][:label]).to eql '1'
     (expect outline[0][:children]).to be_empty
   end
 

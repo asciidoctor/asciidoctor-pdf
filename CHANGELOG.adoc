@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * fix value of implicit chapter-title attribute on preface pages (#1340)
 * show value of untitled-label attribute in outline if doctitle is not set (#1348)
 * don't show entry for doctitle in outline if doctitle is not set and untitled-label attribute is unset (#1348)
+* generate outline if document has doctitle but no body (#1349)
 * allow elements on title page to be disabled from theme using display: none (#1346)
 * set chapter-title attribute to value of toc-title attribute on toc pages in book (#1338)
 * set section-title attribute to value of toc-title attribute on toc pages in article if page has no other sections (#1338)

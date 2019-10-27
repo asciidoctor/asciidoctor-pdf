@@ -3450,15 +3450,14 @@ class Converter < ::Prawn::Document
 
     outline.define do
       initial_pagenum = has_front_cover ? 2 : 1
-      initial_pagenum -= 1 unless doc.doctype == 'book' || (doc.attr? 'title-page')
       # FIXME use sanitize: :plain_text once available
-      if document.page_count > initial_pagenum && (doctitle = doc.header? ? doc.doctitle : (doc.attr 'untitled-label'))
+      if document.page_count >= initial_pagenum && (doctitle = doc.header? ? doc.doctitle : (doc.attr 'untitled-label'))
         page title: (document.sanitize doctitle), destination: (document.dest_top has_front_cover ? 2 : 1)
       end
       unless toc_page_nums.none? || (toc_title = doc.attr 'toc-title').nil_or_empty?
         page title: toc_title, destination: (document.dest_top toc_page_nums.first)
       end
-      # QUESTION any way to get add_outline_level to invoke in the context of the outline?
+      # QUESTION is there any way to get add_outline_level to invoke in the context of the outline?
       document.add_outline_level self, doc.sections, num_levels, expand_levels
     end
 
