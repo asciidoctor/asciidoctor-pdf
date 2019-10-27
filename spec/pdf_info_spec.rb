@@ -111,6 +111,11 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect pdf.info[:Title]).to eql 'Untitled'
     end
 
+    it 'should not set Title field if untitled-label attribute is unset and doctitle is not set' do
+      pdf = to_pdf 'body', attribute_overrides: { 'untitled-label' => nil }
+      (expect pdf.info).not_to have_key :Title
+    end
+
     it 'should set Title field to value of document title if set' do
       pdf = to_pdf '= Document Title'
       (expect pdf.info[:Title]).to eql 'Document Title'
