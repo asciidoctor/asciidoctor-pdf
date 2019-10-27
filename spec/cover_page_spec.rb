@@ -59,7 +59,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect pdf.find_text 'Document Title').to have_size 1
   end
 
-  it 'should recognize attribute value that uses image macro syntax', visual: true do
+  it 'should recognize attribute value that uses image macro syntax and resolve relative to imagesdir', visual: true do
     %w(block inline).each do |type|
       to_file = to_pdf_file <<~EOS, %(cover-page-front-cover-#{type}-image-macro.pdf)
       = Document Title
@@ -71,6 +71,12 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
 
       (expect to_file).to visually_match 'cover-page-front-cover-image-contain.pdf'
     end
+  end
+
+  it 'should resolve bare image path relative to docdir', visual: true do
+    input_file = Pathname.new fixture_file 'hello.adoc'
+    to_file = to_pdf_file input_file, 'cover-page-front-cover-image-path.pdf', attribute_overrides: { 'imagesdir' => 'does-not-exist', 'front-cover-image' => 'cover.jpg' }
+    (expect to_file).to visually_match 'cover-page-front-cover-image-path.pdf'
   end
 
   it 'should scale front cover image to boundaries of page by default', visual: true do
