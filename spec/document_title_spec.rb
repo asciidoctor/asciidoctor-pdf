@@ -101,6 +101,26 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect images[0].hash[:Height]).to eql 240
     end
 
+    it 'should align logo using value of align attribute specified on image macro', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'document-title-logo-align-attribute.pdf'
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[align=left]
+      EOS
+
+      (expect to_file).to visually_match 'document-title-logo-align-left.pdf'
+    end
+
+    it 'should ignore align attribute on logo macro if value is invalid', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'document-title-logo-align-invalid.pdf', pdf_theme: { title_page_logo_align: 'left' }
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[align=foo]
+      EOS
+
+      (expect to_file).to visually_match 'document-title-logo-align-left.pdf'
+    end
+
     it 'should add logo specified by title_page_logo_image theme key to title page' do
       pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: 'image:{docdir}/tux.png[]' }, attribute_overrides: { 'docdir' => fixtures_dir }
       = Document Title

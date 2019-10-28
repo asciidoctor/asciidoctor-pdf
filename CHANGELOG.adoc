@@ -23,6 +23,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * only promote first paragraph of preamble to lead paragraph (assuming it has no role) (#1332)
 * don't promote first paragraph of preamble to lead paragraph if it already has a role (#1332)
 * fix crash when document has no doctitle or sections and untitled-label attribute is unset
+* ignore invalid align value for title logo image (#1352)
 
 == 1.5.0.beta.6 (2019-10-11) - @mojavelinux
 
