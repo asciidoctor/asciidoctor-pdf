@@ -73,6 +73,20 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       (expect (pdf.page 2).text).to include 'Chapter B'
     end
 
+    it 'should reference section with ID that contains non-ASCII characters' do
+      pdf = to_pdf <<~'EOS'
+      == Über Étudier
+
+      See <<_über_étudier>>.
+      EOS
+
+      hex_encoded_id = %(0x#{('_über_étudier'.unpack 'H*')[0]})
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      (expect annotations[0][:Dest]).to eql hex_encoded_id
+      (expect (pdf.page 1).text).to include 'See Über Étudier.'
+    end
+
     it 'should create reference to a block by explicit ID' do
       pdf = to_pdf <<~'EOS'
       = Document Title

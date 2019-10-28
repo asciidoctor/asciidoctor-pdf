@@ -128,10 +128,19 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     EOS
 
     names = get_names pdf
-    (expect names).to include '_level_1'
-    (expect names).to include '_level_2'
-    (expect names).to include '_level_3'
-    (expect names).to include '_level_4'
+    (expect names).to have_key '_level_1'
+    (expect names).to have_key '_level_2'
+    (expect names).to have_key '_level_3'
+    (expect names).to have_key '_level_4'
+  end
+
+  it 'should hex encode name for ID that contains non-ASCII characters' do
+    pdf = to_pdf '== Über Étudier'
+    hex_encoded_id = %(0x#{('_über_étudier'.unpack 'H*')[0]})
+    names = (get_names pdf).reject {|(k, v)| k == '__anchor-top' }
+    (expect names).to have_size 1
+    name, val = names.to_a[0]
+    (expect name).to eql hex_encoded_id
   end
 
   it 'should add part signifier and part number to part if part numbering is enabled' do
@@ -286,7 +295,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     pdf = to_pdf input
     names = get_names pdf
-    (expect names.keys).not_to include '_preface'
+    (expect names).not_to have_key '_preface'
 
     text = (to_pdf input, analyze: true).text
     (expect text[1][:string]).to eql 'anonymous preface'
@@ -309,7 +318,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     pdf = to_pdf input
     names = get_names pdf
-    (expect names.keys).not_to include '_preface'
+    (expect names).not_to have_key '_preface'
 
     text = (to_pdf input, analyze: true).text
     (expect text[1][:string]).to eql 'anonymous preface'
@@ -331,7 +340,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     pdf = to_pdf input
     names = get_names pdf
-    (expect names.keys).to include '_prelude'
+    (expect names).to have_key '_prelude'
     (expect pdf.objects[names['_prelude']][3]).to eql (get_page_size pdf, 2)[1]
 
     text = (to_pdf input, analyze: true).text
