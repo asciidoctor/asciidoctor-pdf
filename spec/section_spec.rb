@@ -139,9 +139,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     hex_encoded_id = %(0x#{('_über_étudier'.unpack 'H*')[0]})
     names = (get_names pdf).reject {|(k, v)| k == '__anchor-top' }
     (expect names).to have_size 1
-    name, val = names.to_a[0]
+    name = names.keys[0]
     (expect name).to eql hex_encoded_id
-  end
+  end if RUBY_VERSION >= '2.4.0'
 
   it 'should add part signifier and part number to part if part numbering is enabled' do
     pdf = to_pdf <<~'EOS', analyze: true
