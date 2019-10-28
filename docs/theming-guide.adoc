@@ -4343,6 +4343,7 @@ In addition, the following attributes are also available when defining the conte
 * section-or-chapter-title
 
 If you reference an attribute which is not defined, all the text on that same line in the running content will be dropped.
+This feature allows you to have alternate lines that are selected when all the attribute references are satisfied.
 One case where this is useful is when referencing the `page-number` attribute.
 If you unset the `pagenums` attribute on the document, any line in the running content that makes reference to `\{page-number}` will be dropped.
 
