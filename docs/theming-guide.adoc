@@ -4565,7 +4565,11 @@ These settings override equivalent keys defined in the theme file, where applica
 |flag (default: _not set_)
 |:pdfmark:
 
-|text-align^[7]^
+|scripts^[7]^
+|cjk (default: _not set_)
+|:scripts: cjk
+
+|text-align^[8]^
 |<<text-alignments,Text alignment>>
 |:text-align: left
 
@@ -4573,7 +4577,7 @@ These settings override equivalent keys defined in the theme file, where applica
 |path^[2]^ {vbar} image macro^[3]^
 |:title-logo-image: image:logo.png[top=25%, align=center, pdfwidth=0.5in]
 
-|title-page^[8]^
+|title-page^[9]^
 |flag (default: _not set_)
 |:title-page:
 
@@ -4581,7 +4585,7 @@ These settings override equivalent keys defined in the theme file, where applica
 |path^[2]^ {vbar} image macro^[3]^
 |:title-page-background-image: image:title-bg.jpg[]
 
-|toc-max-pagenum-digits^[9]^
+|toc-max-pagenum-digits^[10]^
 |Integer (default: 3)
 |:toc-max-pagenum-digits: 4
 |===
@@ -4599,6 +4603,10 @@ To disable the background image for a side, use the value `none`.
 . Controls whether the implicit `page-number` attribute is to the running header and footer content specified in the theme file.
 Instead of disabling page numbers, you can use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively.
 . Enables generation of the http://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark] file, which contains metadata that is fed to Ghostscript when optimizing the PDF file.
+. Activates line break rules for CJK languages.
+Languages like Chinese and Japanese are written without spaces (and may not use spaces when mixing with English words).
+A line break can occur between any two CJK characters.
+These languages also use different punctuation for pause, full stop, and dash, which are taken into account when breaking lines.
 . _(Experimental)_ The `text-align` document attribute is intended as a simple way to toggle text justification.
 The value of this attribute overrides the `base-align` key set by the theme.
 For more fine-grained control, you should customize using the theme.
