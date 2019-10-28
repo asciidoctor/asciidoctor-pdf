@@ -1439,7 +1439,13 @@ class Converter < ::Prawn::Document
         if ::File.readable? image_path
           # NOTE import_page automatically advances to next page afterwards
           # QUESTION should we add destination to top of imported page?
-          import_page image_path, page: [(node.attr 'page').to_i, 1].max, replace: page.empty?
+          if (pgnums = node.attr 'pages', nil, false)
+            (resolve_pagenums pgnums).each_with_index do |pgnum, idx|
+              import_page image_path, page: pgnum, replace: (idx == 0 ? page.empty? : true)
+            end
+          else
+            import_page image_path, page: [(node.attr 'page', nil, 1).to_i, 1].max, replace: page.empty?
+          end
         else
           # QUESTION should we use alt text in this case?
           logger.warn %(pdf to insert not found or not readable: #{image_path})
@@ -4207,6 +4213,20 @@ class Converter < ::Prawn::Document
     else
       nums
     end
+  end
+
+  def resolve_pagenums val
+    pgnums = []
+    ((val.include? ',') ? (val.split ',') : (val.split ';')).each do |entry|
+      if entry.include? '..'
+        from, _, to = entry.partition '..'
+        pgnums += ([from.to_i, 1].max..[to.to_i, 1].max).to_a
+      else
+        pgnums << entry.to_i
+      end
+    end
+
+    pgnums
   end
 
   def get_char code
