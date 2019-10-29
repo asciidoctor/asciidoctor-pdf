@@ -647,24 +647,35 @@ To import the first page from a PDF file, use the block image macro with the PDF
 image::custom-page.pdf[]
 ----
 
+The converter will insert the page from the PDF as a dedicated page that matches the size and layout of the page being imported (no matter where the block image occurs).
+Therefore, there's no need to put a manual page break (i.e., `<<<`) around the image macro.
+
 By default, this macro will import the first page of the PDF.
 To import a different page, specify it as a 1-based index using the `page` attribute.
 
 [source,asciidoc]
 ----
-image::custom-page.pdf[page=2]
+image::custom-pages.pdf[page=2]
 ----
 
-To import multiple pages, you'll need to use multiple image macros, each specifying the page number to import.
+You can import multiple pages either using multiple image macros or using the `pages` attribute.
+The `pages` attribute accepts individual page numbers or page number ranges (two page numbers separated by `..`).
+The values can be separated either by commas or semi-colons.
+(The syntax is similar to the syntax uses for the `lines` attribute of the AsciiDoc include directive).
 
-CAUTION: An image macro that imports a PDF page should never be nested inside a delimited block or table.
-It should be a direct descendant of the document or a section.
-Otherwise, the behavior is unspecified.
+[source,asciidoc]
+----
+image::custom-pages.pdf[pages=3;1..2]
+----
 
-The converter will insert the page from the PDF as a dedicated page that matches the size and layout of the page being imported (no matter where the block image occurs).
-Therefore, there's no need to put a manual page break (i.e., `<<<`) around the image macro.
+Pages are imported in the order listed.
 
 To see a practical example of how to use this feature, refer to the blog post https://fromplantoprototype.com/blog/2019/08/07/importing-pdf-pages-in-asciidoctor-pdf/[Importing PDF Pages in asciidoctor-pdf].
+
+CAUTION: An image macro used to imports PDF pages should never be nested inside a delimited block or table cell.
+It should be a direct descendant of the document or a section.
+That's because what it imports are entire pages.
+If it's used inside a delimited block or table cell, the behavior is unspecified.
 
 == Crafting Interdocument Xrefs
 

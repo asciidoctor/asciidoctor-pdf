@@ -403,6 +403,19 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       p2_contents = pdf.objects[(pdf.page 2).page_object[:Contents][0]].data
       (expect (p2_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 1.0 0.0 scn']
     end
+
+    it 'should insert all pages specified by pages attribute without leaving blank pages in between' do
+      pdf = to_pdf <<~'EOS'
+      image::red-green-blue.pdf[pages=3;1..2]
+      EOS
+      (expect pdf.pages).to have_size 3
+      p1_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
+      (expect (p1_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
+      p2_contents = pdf.objects[(pdf.page 2).page_object[:Contents][0]].data
+      (expect (p2_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '1.0 0.0 0.0 scn']
+      p3_contents = pdf.objects[(pdf.page 3).page_object[:Contents][0]].data
+      (expect (p3_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 1.0 0.0 scn']
+    end
   end
 
   context 'Data URI' do
