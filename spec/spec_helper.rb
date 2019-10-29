@@ -10,6 +10,7 @@ end
 require 'asciidoctor/pdf'
 require 'base64'
 require 'chunky_png'
+require 'fileutils'
 require 'open3' unless defined? Open3
 require 'pathname' unless defined? Pathname
 require 'pdf/inspector'
