@@ -137,9 +137,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   it 'should hex encode name for ID that contains non-ASCII characters' do
     pdf = to_pdf '== Über Étudier'
     hex_encoded_id = %(0x#{('_über_étudier'.unpack 'H*')[0]})
-    names = (get_names pdf).reject {|(k, v)| k == '__anchor-top' }
+    names = (get_names pdf).keys.reject {|k| k == '__anchor-top' }
     (expect names).to have_size 1
-    name = names.keys[0]
+    name = names[0]
     (expect name).to eql hex_encoded_id
   end if RUBY_VERSION >= '2.4.0'
 
