@@ -15,6 +15,17 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     (expect sidebar_text[:page_number]).to eql 2
   end
 
+  it 'should draw line around sidebar block' do
+    pdf = to_pdf <<~'EOS', analyze: :line
+    ****
+    sidebar
+    ****
+    EOS
+
+    # NOTE lines without width are for the background
+    (expect pdf.lines.select {|it| it[:width] }).to have_size 4
+  end
+
   it 'should use block title as heading of sidebar block' do
     input = <<~'EOS'
     .Sidebar Title

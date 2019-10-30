@@ -169,6 +169,14 @@ class LineInspector < PDF::Inspector
     @from = { x: x, y: y }
   end
 
+  def close_subpath
+    @from = nil
+  end
+
+  def stroke_path
+    @width = nil
+  end
+
   def page= page
     @page_number = page.number
     @graphic_states = page.graphic_states
