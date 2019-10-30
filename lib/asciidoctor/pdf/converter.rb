@@ -2134,7 +2134,7 @@ class Converter < ::Prawn::Document
       table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
       column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
       # NOTE until Asciidoctor 1.5.4, colpcwidth values didn't always add up to 100%; use last column to compensate
-      unless column_widths.empty? || (width_delta = table_width - column_widths.reduce(:+)) == 0
+      unless column_widths.empty? || (width_delta = table_width - column_widths.sum) == 0
         column_widths[-1] += width_delta
       end
     end
@@ -3708,7 +3708,7 @@ class Converter < ::Prawn::Document
       width_of_string str, opts
     else
       char_widths = chars.map {|char| rendered_width_of_char char, opts }
-      char_widths.reduce(&:+) + (char_widths.length * character_spacing)
+      char_widths.sum + (char_widths.length * character_spacing)
     end
   end
 
