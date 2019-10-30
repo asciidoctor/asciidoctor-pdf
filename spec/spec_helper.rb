@@ -106,11 +106,18 @@ class EnhancedPDFTextInspector < PDF::Inspector
     end
   end
 
+  # Tf
   def set_text_font_and_size *params
     @state.set_text_font_and_size(*params)
     @font_settings = { name: @fonts[params[0]], size: params[1], color: @color }
   end
 
+  # scn (used for font color in SVG)
+  def set_color_for_nonstroking_and_special *params
+    @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
+  end
+
+  # SCN
   def set_color_for_stroking_and_special *params
     @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
   end
@@ -167,16 +174,19 @@ class LineInspector < PDF::Inspector
     @graphic_states = page.graphic_states
   end
 
+  # SCN
   def set_color_for_stroking_and_special *params
     @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
   end
 
+  # gs
   def set_graphics_state_parameters ref
     if (opacity = @graphic_states[ref][:ca])
       @color += '%02X' % (opacity * 255).round
     end
   end
 
+  # w
   def set_line_width line_width
     @width = line_width
   end

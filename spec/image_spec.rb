@@ -265,22 +265,35 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-scale-to-fit-bounds.pdf'
     end
 
-    it 'should replace unrecognized font family with base font family' do
+    it 'should map font names in SVG to font names in document font catalog' do
       pdf = to_pdf <<~'EOS', analyze: true
       image::svg-with-text.svg[]
+      EOS
+
+      text = pdf.find_text 'This text uses a document font.'
+      (expect text).to have_size 1
+      (expect text[0][:font_name]).to eql 'mplus1mn-regular'
+      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_color]).to eql 'AA0000'
+    end
+
+    it 'should replace unrecognized font family with base font family' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      image::svg-with-unknown-font.svg[]
       EOS
 
       text = pdf.find_text 'This text uses the default SVG font.'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'NotoSerif'
       (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_color]).to eql 'AA0000'
     end
 
     it 'should replace unrecognized font family in SVG with SVG fallback font family if specified in theme' do
       [true, false].each do |block|
         pdf = to_pdf <<~EOS, pdf_theme: { svg_fallback_font_family: 'Times-Roman' }, analyze: true
         #{block ? '' : 'before'}
-        image:#{block ? ':' : ''}svg-with-text.svg[pdfwidth=100%]
+        image:#{block ? ':' : ''}svg-with-unknown-font.svg[pdfwidth=100%]
         #{block ? '' : 'after'}
         EOS
 
@@ -288,6 +301,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         (expect text).to have_size 1
         (expect text[0][:font_name]).to eql 'Times-Roman'
         (expect text[0][:font_size]).to eql 12.0
+        (expect text[0][:font_color]).to eql 'AA0000'
       end
     end
 

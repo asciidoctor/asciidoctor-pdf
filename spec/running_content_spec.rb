@@ -1554,8 +1554,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         __dir__: fixtures_dir,
         header_height: 36,
         header_columns: '0% =100% 0%',
-        header_recto_center_content: 'image:svg-with-text.svg[]',
-        header_verso_center_content: 'image:svg-with-text.svg[]',
+        header_recto_center_content: 'image:svg-with-unknown-font.svg[]',
+        header_verso_center_content: 'image:svg-with-unknown-font.svg[]',
         svg_fallback_font_family: 'Times-Roman',
       }
       pdf = to_pdf 'body', pdf_theme: theme_overrides, analyze: true

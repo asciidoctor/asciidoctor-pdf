@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Outline' do
   context 'General' do
-    it 'should set /PageModes /UseOutlines in PDF catalog' do
+    it 'should set /PageModes /UseOutlines in PDF catalog to enable outline hierarchy' do
       pdf = to_pdf <<~'EOS'
       = Document Title
 
