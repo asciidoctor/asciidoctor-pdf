@@ -250,7 +250,7 @@ module Extensions
       elsif points.end_with? 'em'
         super(@font_size * points.to_f)
       elsif points.end_with? '%'
-        super(@font_size * (points.to_f / 100.0))
+        super(@font_size * (points.to_f / 100))
       else
         super points.to_f
       end
