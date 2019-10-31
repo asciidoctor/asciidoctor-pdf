@@ -315,6 +315,20 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect max_text[:font_size]).to eql 21.0
     end
 
+    it 'should allow custom role to override styles of link' do
+      pdf_theme = {
+        heading_font_color: '000000',
+        link_font_color: '0000AA',
+        role_hlink_font_color: '00AA00',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      == https://asciidoctor.org[Asciidoctor,role=hlink]
+      EOS
+
+      link_text = (pdf.find_text 'Asciidoctor')[0]
+      (expect link_text[:font_color]).to eql '00AA00'
+    end
+
     it 'should allow custom role to contain hyphens' do
       pdf_theme = {
         'role_flaming-red_font_color' => 'ff0000',
