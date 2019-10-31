@@ -829,7 +829,7 @@ class Converter < ::Prawn::Document
         end
         pad_box [cpad[0], 0, cpad[2], label_width + lpad[1] + cpad[3]] do
           move_down shift_top
-          layout_caption node.title if node.title?
+          layout_caption node.title, category: :admonition if node.title?
           theme_font :admonition do
             convert_content_for_block node
           end
