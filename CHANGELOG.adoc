@@ -5,6 +5,10 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+* allow theme to override styles of caption on admonition blocks (#561)
+
 == 1.5.0.beta.7 (2019-10-29) - @mojavelinux
 
 * fix value of implicit page-count attribute when page numbering and running content don't start on same page (#1334)

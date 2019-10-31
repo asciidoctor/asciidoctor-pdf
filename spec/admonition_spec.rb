@@ -15,6 +15,22 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect admon_page_numbers).to eql [2]
   end
 
+  it 'should allow theme to configure properties of caption' do
+    pdf_theme = {
+      admonition_caption_font_color: '00AA00',
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    .Admonition title
+    [NOTE]
+    ====
+    There's something you should know.
+    ====
+    EOS
+
+    title_text = (pdf.find_text 'Admonition title')[0]
+    (expect title_text[:font_color]).to eql '00AA00'
+  end
+
   context 'Text' do
     it 'should show bold admonition label by default' do
       pdf = to_pdf <<~'EOS', analyze: true
