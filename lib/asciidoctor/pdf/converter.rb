@@ -2061,6 +2061,7 @@ class Converter < ::Prawn::Document
         unless cell_data.key? :content
           cell_text = cell.text.strip
           cell_text = transform_text cell_text if cell_transform
+          cell_text = cell_text.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
           if cell_text.include? LF
             # NOTE effectively the same as calling cell.content (should we use that instead?)
             # FIXME hard breaks not quite the same result as separate paragraphs; need custom cell impl here
