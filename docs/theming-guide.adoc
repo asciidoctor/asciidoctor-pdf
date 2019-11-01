@@ -1083,6 +1083,13 @@ You'll need to define these in your theme if you'd like to make use of them when
 |role:
   heavy:
     font-style: bold
+
+|text-decoration
+|none {vbar} underline {vbar} line-through +
+(default: none)
+|role:
+  deleted:
+    text-decoration: line-through
 |===
 
 [#keys-page]
