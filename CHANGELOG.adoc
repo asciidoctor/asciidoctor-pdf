@@ -7,6 +7,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* allow theme to configure content of entries in authors line on title page (#800)
 * allow theme to override styles of caption on admonition blocks (#561)
 * if value of scripts attribute is cjk, break lines between any two CJK characters except punctuation in table cells (#1359) (*gasol*)
 

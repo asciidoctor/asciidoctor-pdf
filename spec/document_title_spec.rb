@@ -68,6 +68,83 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect pdf.lines).to include 'Version 1.0, 2019-01-01: Draft'
     end
 
+    it 'should display author names under document title' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      Doc Writer; Junior Writer
+      :doctype: book
+
+      body
+      EOS
+
+      title_page_lines = pdf.lines(pdf.find_text page_number: 1)
+      (expect title_page_lines).to eql ['Document Title', 'Doc Writer, Junior Writer']
+    end
+
+    it 'should allow theme to customize content of authors line' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_authors_content: '{url}[{author}]' }
+      = Document Title
+      Doc Writer <doc@example.org>; Junior Writer <https://github.com/ghost>
+      :doctype: book
+
+      body
+      EOS
+
+      (expect (pdf.page 1).text).to include 'Doc Writer, Junior Writer'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 2
+      author1_annotation = annotations[0]
+      (expect author1_annotation[:Subtype]).to eql :Link
+      (expect author1_annotation[:A][:URI]).to eql 'mailto:doc@example.org'
+      author2_annotation = annotations[1]
+      (expect author2_annotation[:Subtype]).to eql :Link
+      (expect author2_annotation[:A][:URI]).to eql 'https://github.com/ghost'
+    end
+
+    it 'should allow theme to customize content of authors line by available metadata' do
+      pdf_theme = {
+        title_page_authors_content_name_only: '{authorinitials}',
+        title_page_authors_content_with_email: '{lastname}, {firstname} <{email}>',
+        title_page_authors_content_with_url: '{url}[{author}]',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      = Document Title
+      Doc Writer <doc@example.org>; Junior Writer <https://github.com/ghost>; Jane Doe
+      :doctype: book
+
+      body
+      EOS
+
+      (expect (pdf.page 1).text).to include 'Writer, Doc <doc@example.org>, Junior Writer, JD'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 2
+      author1_annotation = annotations[0]
+      (expect author1_annotation[:Subtype]).to eql :Link
+      (expect author1_annotation[:A][:URI]).to eql 'mailto:doc@example.org'
+      author2_annotation = annotations[1]
+      (expect author2_annotation[:Subtype]).to eql :Link
+      (expect author2_annotation[:A][:URI]).to eql 'https://github.com/ghost'
+    end
+
+    it 'should be able to use an icon in an author entry' do
+      pdf_theme = {
+        title_page_authors_content: '{author} {url}[icon:twitter[]]',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      Doc Writer <https://twitter.com/asciidoctor>
+      :icons: font
+      :doctype: book
+
+      body
+      EOS
+
+      title_page_lines = pdf.lines(pdf.find_text page_number: 1)
+      (expect title_page_lines).to include %(Doc Writer \uf099)
+    end
+
     it 'should allow delimiter for authors and revision info to be set' do
       pdf_theme = {
         title_page_authors_delimiter: ' / ',
