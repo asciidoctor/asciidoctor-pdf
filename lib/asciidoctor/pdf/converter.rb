@@ -59,6 +59,7 @@ class Converter < ::Prawn::Document
   PageLayouts = [:portrait, :landscape]
   PageSides = [:recto, :verso]
   (PDFVersions = { '1.3' => 1.3, '1.4' => 1.4, '1.5' => 1.5, '1.6' => 1.6, '1.7' => 1.7 }).default = 1.4
+  AuthorAttributeNames = ['author', 'authorinitials', 'firstname', 'middlename', 'lastname', 'email']
   LF = ?\n
   DoubleLF = LF * 2
   TAB = ?\t
@@ -2695,9 +2696,22 @@ class Converter < ::Prawn::Document
       if @theme.title_page_authors_display != 'none' && (doc.attr? 'authors')
         move_down(@theme.title_page_authors_margin_top || 0)
         indent (@theme.title_page_authors_margin_left || 0), (@theme.title_page_authors_margin_right || 0) do
+          authors_content = @theme.title_page_authors_content
+          authors_content = {
+            name_only: @theme.title_page_authors_content_name_only || authors_content,
+            with_email: @theme.title_page_authors_content_with_email || authors_content,
+            with_url: @theme.title_page_authors_content_with_url || authors_content,
+          }
           # TODO provide an API in core to get authors as an array
           authors = (1..(doc.attr 'authorcount', 1).to_i).map {|idx|
-            doc.attr(idx == 1 ? 'author' : %(author_#{idx}))
+            promote_author doc, idx do
+              author_content_key = (url = doc.attr 'url') ? ((url.start_with? 'mailto:') ? :with_email : :with_url) : :name_only
+              if (author_content = authors_content[author_content_key])
+                apply_subs_discretely doc, author_content
+              else
+                doc.attr 'author'
+              end
+            end
           }.join (@theme.title_page_authors_delimiter || ', ')
           theme_font :title_page_authors do
             layout_prose authors,
@@ -4174,8 +4188,7 @@ class Converter < ::Prawn::Document
     if imagesdir
       doc.set_attr 'imagesdir', imagesdir
     else
-      # NOTE remove_attr not defined until Asciidoctor 1.5.6
-      doc.attributes.delete 'imagesdir'
+      doc.remove_attr 'imagesdir'
     end
     value
   end
@@ -4185,6 +4198,44 @@ class Converter < ::Prawn::Document
     value = doc.apply_subs value
     doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
     value
+  end
+
+  def promote_author doc, idx = 1
+    doc.remove_attr 'url' if (original_url = doc.attr 'url')
+    email = nil
+    if idx > 1
+      original_attrs = AuthorAttributeNames.reduce({}) do |accum, name|
+        accum[name] = doc.attr name
+        if (val = doc.attr %(#{name}_#{idx}))
+          doc.set_attr name, val
+          # NOTE email holds url as well
+          email = val if name == 'email'
+        else
+          doc.remove_attr name
+        end
+        accum
+      end
+      doc.set_attr 'url', ((email.include? '@') ? %(mailto:#{email}) : email) if email
+      result = yield
+      original_attrs.each do |name, val|
+        if val
+          doc.set_attr name, val
+        else
+          doc.remove_attr name
+        end
+      end
+    else
+      if (email = doc.attr 'email')
+        doc.set_attr 'url', ((email.include? '@') ? %(mailto:#{email}) : email)
+      end
+      result = yield
+    end
+    if original_url
+      doc.set_attr 'url', original_url
+    elsif email
+      doc.remove_attr 'url'
+    end
+    result
   end
 
   # NOTE assume URL is escaped (i.e., contains character references such as &amp;)

@@ -1849,6 +1849,17 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
 
 3+|[#key-prefix-authors]*Key Prefix:* <<key-prefix-authors,title-page-authors>>
 
+|content
+|<<quoted-string,Quoted AsciiDoc string>> +
+(optional subkeys: name_only, with_email, with_url) +
+(default: "\{author}")
+|title-page:
+  authors:
+    content:
+      name_only: "{author}"
+      with_email: "{author} <{email}>"
+      with_url: "{url}[{author}]"
+
 |display
 |none +
 (default: _not set_)
