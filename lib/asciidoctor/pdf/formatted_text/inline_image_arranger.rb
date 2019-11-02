@@ -66,7 +66,8 @@ module InlineImageArranger
               width: image_w,
               fallback_font_name: doc.fallback_svg_font_name,
               enable_web_requests: doc.allow_uri_read,
-              enable_file_requests_with_root: (::File.dirname image_path)
+              enable_file_requests_with_root: (::File.dirname image_path),
+              cache_images: doc.cache_uri
           svg_size = image_w ? svg_obj.document.sizing :
               # NOTE convert intrinsic dimensions to points; constrain to content width
               (svg_obj.resize width: [(to_pt svg_obj.document.sizing.output_width, :px), available_w].min)
