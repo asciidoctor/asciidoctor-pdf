@@ -1332,6 +1332,18 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   end
 
   context 'Images' do
+    it 'should align images based on column aligment', visual: true do
+      pdf_theme = {
+        footer_columns: '>50% <50%',
+        footer_recto_left_content: %(image:#{fixture_file 'tux.png'}[fit=contain]),
+        footer_recto_right_content: %(image:#{fixture_file 'tux.png'}[fit=contain])
+      }
+
+      to_file = to_pdf_file 'body', 'running-content-image-alignment.pdf', pdf_theme: pdf_theme, enable_footer: true
+
+      (expect to_file).to visually_match 'running-content-image-alignment.pdf'
+    end
+
     it 'should scale image up to width when fit=contain', visual: true do
       %w(pdfwidth=99.76 fit=contain pdfwidth=0.5in,fit=contain pdfwidth=15in,fit=contain).each_with_index do |image_attrlist, idx|
         pdf_theme = build_pdf_theme \
