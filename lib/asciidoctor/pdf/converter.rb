@@ -324,6 +324,7 @@ class Converter < ::Prawn::Document
     default_kerning theme.base_font_kerning != 'none'
     @fallback_fonts = [*theme.font_fallbacks]
     @allow_uri_read = doc.attr? 'allow-uri-read'
+    @cache_uri = doc.attr? 'cache-uri'
     if (bg_image = resolve_background_image doc, theme, 'page-background-image') && bg_image[0]
       @page_bg_image = { verso: bg_image, recto: bg_image }
     else
@@ -777,7 +778,8 @@ class Converter < ::Prawn::Document
                         height: box_height,
                         fallback_font_name: fallback_svg_font_name,
                         enable_web_requests: allow_uri_read,
-                        enable_file_requests_with_root: (::File.dirname icon_path)
+                        enable_file_requests_with_root: (::File.dirname icon_path),
+                        cache_images: cache_uri
                     if (icon_height = (svg_size = svg_obj.document.sizing).output_height) > box_height
                       icon_width = (svg_obj.resize height: (icon_height = box_height)).output_width
                     else
@@ -1496,7 +1498,8 @@ class Converter < ::Prawn::Document
               width: width,
               fallback_font_name: fallback_svg_font_name,
               enable_web_requests: allow_uri_read,
-              enable_file_requests_with_root: file_request_root
+              enable_file_requests_with_root: file_request_root,
+              cache_images: cache_uri
           rendered_w = (svg_size = svg_obj.document.sizing).output_width
           if !width && (svg_obj.document.root.attributes.key? 'width')
             # NOTE scale native width & height from px to pt and restrict width to available width
@@ -1632,7 +1635,7 @@ class Converter < ::Prawn::Document
     when 'vimeo'
       video_path = %(https://vimeo.com/#{video_id = node.attr 'target'})
       if allow_uri_read
-        if node.document.attr? 'cache-uri'
+        if cache_uri
           Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
         else
           ::OpenURI
@@ -3552,6 +3555,7 @@ class Converter < ::Prawn::Document
   end
 
   attr_reader :allow_uri_read
+  attr_reader :cache_uri
 
   def resolve_text_transform key, use_fallback = true
     if (transform = ::Hash === key ? (key.delete :text_transform) : @theme[key.to_s])
@@ -3930,7 +3934,7 @@ class Converter < ::Prawn::Document
         logger.warn %(allow-uri-read is not enabled; cannot embed remote image: #{image_path}) unless scratch?
         return
       end
-      if doc.attr? 'cache-uri'
+      if cache_uri
         Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
       else
         ::OpenURI
@@ -3991,6 +3995,7 @@ class Converter < ::Prawn::Document
       image_opts = {
         enable_file_requests_with_root: (::File.dirname image_path),
         enable_web_requests: allow_uri_read,
+        cache_images: cache_uri,
         fallback_font_name: fallback_svg_font_name,
         format: 'svg',
       }
