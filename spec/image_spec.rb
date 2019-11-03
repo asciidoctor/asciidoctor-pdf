@@ -336,6 +336,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect to_file).to visually_match 'image-png-implicit-width.pdf'
     end
+
+    it 'should fail to embed interlaced PNG image with warning' do
+      { '::' => '[Interlaced PNG] | interlaced.png', ':' => '[Interlaced PNG]' }.each do |macro_delim, alt_text|
+        (expect {
+          pdf = to_pdf %(image#{macro_delim}interlaced.png[Interlaced PNG]), analyze: true
+          (expect pdf.lines).to eql [alt_text]
+        }).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'interlaced.png'}; PNG uses unsupported interlace method; install prawn-gmagick gem to add support)
+      end
+    end
   end
 
   context 'BMP' do

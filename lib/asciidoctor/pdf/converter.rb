@@ -1569,7 +1569,7 @@ class Converter < ::Prawn::Document
       layout_caption node, category: :image, side: :bottom if node.title?
       theme_margin :block, :bottom unless pinned
     rescue
-      on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{$!.message}))
+      on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! ? '; install prawn-gmagick gem to add support' : ''}))
     end
   ensure
     unlink_tmp_file image_path if image_path
