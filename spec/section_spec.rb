@@ -87,6 +87,14 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.text[0][:string]).to eql '<TOM & JERRY>'
   end
 
+  it 'should support hexidecimal character reference in section title' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    == &#xb5;Services
+    EOS
+
+    (expect pdf.text[0][:string]).to eql %(\u00b5Services)
+  end
+
   it 'should not alter HTML tags when text transform is uppercase' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     == _Quick_ Start
@@ -101,6 +109,14 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     EOS
 
     (expect pdf.lines[0]).to eql 'ÜBER ÉTUDIER'
+  end
+
+  it 'should ignore letters in hexidecimal character reference in section title when transforming to uppercase' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
+    == &#xb5;Services
+    EOS
+
+    (expect pdf.text[0][:string]).to eql %(\u00b5SERVICES)
   end
 
   it 'should not apply text transform if value of text_transform key is none' do
