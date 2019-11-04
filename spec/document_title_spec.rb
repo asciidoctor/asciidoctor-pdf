@@ -127,6 +127,24 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect author2_annotation[:A][:URI]).to eql 'https://github.com/ghost'
     end
 
+    it 'should allow theme to customize style of link in authors line using custom role' do
+      attributes = asciidoctor_1_5_7_or_better? ? {} : { 'linkattrs' => '' }
+      pdf_theme = {
+        role_author_font_color: '00AA00',
+        title_page_authors_content: '{url}[{author},role=author]',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: attributes, analyze: true
+      = Document Title
+      Junior Writer <https://github.com/ghost>
+      :doctype: book
+
+      body
+      EOS
+
+      author_text = (pdf.find_text 'Junior Writer')[0]
+      (expect author_text[:font_color]).to eql '00AA00'
+    end
+
     it 'should be able to use an icon in an author entry' do
       pdf_theme = {
         title_page_authors_content: '{author} {url}[icon:twitter[]]',
