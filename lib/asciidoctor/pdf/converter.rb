@@ -274,6 +274,7 @@ class Converter < ::Prawn::Document
       end
     end
 
+    catalog.data[:PageMode] = :FullScreen if (doc.attr 'pdf-page-mode', @theme.page_mode) == 'fullscreen'
     add_outline doc, (doc.attr 'outlinelevels', toc_num_levels), toc_page_nums, num_front_matter_pages[1], has_front_cover
     if state.pages.size > 0 && (initial_zoom = @theme.page_initial_zoom)
       case initial_zoom.to_sym
@@ -3488,7 +3489,7 @@ class Converter < ::Prawn::Document
     end
 
     catalog.data[:PageLabels] = state.store.ref Nums: pagenum_labels.flatten
-    catalog.data[:PageMode] = :UseOutlines
+    catalog.data[((doc.attr 'pdf-page-mode') || @theme.page_mode) == 'fullscreen' ? :NonFullScreenPageMode : :PageMode] = :UseOutlines
     nil
   end
 

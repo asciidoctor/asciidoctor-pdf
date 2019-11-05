@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Outline' do
   context 'General' do
-    it 'should set /PageModes /UseOutlines in PDF catalog to enable outline hierarchy' do
+    it 'should set /PageMode /UseOutlines in PDF catalog to enable outline hierarchy' do
       pdf = to_pdf <<~'EOS'
       = Document Title
 
@@ -12,6 +12,20 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       EOS
 
       (expect pdf.catalog[:PageMode]).to eq :UseOutlines
+    end
+
+    it 'should set /NonFullScreenPageMode /UseOutlines in PDF catalog if fullscreen mode is enabled' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :pdf-page-mode: fullscreen
+
+      == First
+
+      == Last
+      EOS
+
+      (expect pdf.catalog[:PageMode]).not_to eq :UseOutlines
+      (expect pdf.catalog[:NonFullScreenPageMode]).to eq :UseOutlines
     end
 
     it 'should create an outline to navigate the document structure' do
