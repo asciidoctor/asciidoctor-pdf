@@ -81,6 +81,185 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect title_page_lines).to eql ['Document Title', 'Doc Writer, Junior Writer']
     end
 
+    it 'should add logo specified by title-logo-image document attribute to title page' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[]
+      EOS
+
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].hash[:Width]).to eql 204
+      (expect images[0].hash[:Height]).to eql 240
+    end
+
+    it 'should align logo using value of align attribute specified on image macro', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'document-title-logo-align-attribute.pdf'
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[align=left]
+      EOS
+
+      (expect to_file).to visually_match 'document-title-logo-align-left.pdf'
+    end
+
+    it 'should ignore align attribute on logo macro if value is invalid', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'document-title-logo-align-invalid.pdf', pdf_theme: { title_page_logo_align: 'left' }
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[align=foo]
+      EOS
+
+      (expect to_file).to visually_match 'document-title-logo-align-left.pdf'
+    end
+
+    it 'set background image of title page from title-page-background-image attribute', visual: true do
+      pdf = to_pdf <<~'EOS'
+      = The Amazing
+      Author Name
+      :doctype: book
+      :title-page-background-image: image:bg.png[]
+
+      beginning
+
+      <<<
+
+      middle
+
+      <<<
+
+      end
+      EOS
+
+      (expect pdf.pages).to have_size 4
+      [1, 0, 0, 0].each_with_index do |expected_num_images, idx|
+        images = get_images pdf, idx.next
+        (expect images).to have_size expected_num_images
+      end
+    end
+
+    it 'set background image when document has image cover page', visual: true do
+      pdf = to_pdf <<~'EOS'
+      = The Amazing
+      Author Name
+      :doctype: book
+      :front-cover-image: image:cover.jpg[]
+      :title-page-background-image: image:bg.png[]
+
+      beginning
+
+      <<<
+
+      middle
+
+      <<<
+
+      end
+      EOS
+
+      (expect pdf.pages).to have_size 5
+      [1, 1, 0, 0, 0].each_with_index do |expected_num_images, idx|
+        images = get_images pdf, idx.next
+        (expect images).to have_size expected_num_images
+      end
+    end
+
+    it 'set background image when document has PDF cover page', visual: true do
+      pdf = to_pdf <<~'EOS'
+      = The Amazing
+      Author Name
+      :doctype: book
+      :front-cover-image: image:blue-letter.pdf[]
+      :title-page-background-image: image:tux.png[]
+      :page-background-image: image:bg.png[]
+
+      beginning
+
+      <<<
+
+      middle
+
+      <<<
+
+      end
+      EOS
+
+      images_by_page = []
+      (expect pdf.pages).to have_size 5
+      [0, 1, 1, 1, 1].each_with_index do |expected_num_images, idx|
+        images = get_images pdf, idx.next
+        images_by_page << images
+        (expect images).to have_size expected_num_images
+      end
+
+      (expect images_by_page[1][0].data).not_to eql images_by_page[2][0].data
+      (expect images_by_page[2..-1].map {|it| it[0].data }.uniq).to have_size 1
+    end
+  end
+
+  context 'article' do
+    it 'should center document title at top of first page of content' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+
+      body
+      EOS
+
+      doctitle_text = (pdf.find_text 'Document Title')[0]
+      (expect doctitle_text).not_to be_nil
+      (expect doctitle_text[:page_number]).to eql 1
+      body_text = (pdf.find_text 'body')[0]
+      (expect body_text).not_to be_nil
+      (expect body_text[:page_number]).to eql 1
+      (expect doctitle_text[:y]).to be > body_text[:y]
+    end
+
+    it 'should align document title according to value of heading_h1_align theme key' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_align: 'left' }, analyze: true
+      = Document Title
+
+      body
+      EOS
+
+      doctitle_text = (pdf.find_text 'Document Title')[0]
+      (expect doctitle_text).not_to be_nil
+      body_text = (pdf.find_text 'body')[0]
+      (expect body_text).not_to be_nil
+      (expect doctitle_text[:x]).to eql body_text[:x]
+    end
+
+    it 'should place document title on title page if title-page attribute is set' do
+      pdf = to_pdf <<~'EOS', analyze: :page
+      = Document Title
+      :title-page:
+
+      body
+      EOS
+      (expect pdf.pages).to have_size 2
+      (expect pdf.pages[0][:strings]).to include 'Document Title'
+      (expect pdf.pages[1][:strings]).to include 'body'
+    end
+
+    it 'should create document with only a title page if body is empty and title-page is set' do
+      pdf = to_pdf '= Title Page Only', attribute_overrides: { 'title-page' => '' }, analyze: true
+      (expect pdf.pages).to have_size 1
+      (expect pdf.lines).to eql ['Title Page Only']
+    end
+
+    it 'should not include document title if notitle attribute is set' do
+      pdf = to_pdf <<~'EOS', analyze: :page
+      = Document Title
+      :notitle:
+
+      body
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:strings]).to_not include 'Document Title'
+    end
+  end
+
+  context 'theming' do
     it 'should allow theme to customize content of authors line' do
       pdf = to_pdf <<~'EOS', pdf_theme: { title_page_authors_content: '{url}[{author}]' }
       = Document Title
@@ -183,39 +362,6 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect lines).to include 'Version 1.0 - 2019-01-01'
     end
 
-    it 'should add logo specified by title-logo-image document attribute to title page' do
-      pdf = to_pdf <<~'EOS'
-      = Document Title
-      :doctype: book
-      :title-logo-image: image:tux.png[]
-      EOS
-
-      images = get_images pdf, 1
-      (expect images).to have_size 1
-      (expect images[0].hash[:Width]).to eql 204
-      (expect images[0].hash[:Height]).to eql 240
-    end
-
-    it 'should align logo using value of align attribute specified on image macro', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'document-title-logo-align-attribute.pdf'
-      = Document Title
-      :doctype: book
-      :title-logo-image: image:tux.png[align=left]
-      EOS
-
-      (expect to_file).to visually_match 'document-title-logo-align-left.pdf'
-    end
-
-    it 'should ignore align attribute on logo macro if value is invalid', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'document-title-logo-align-invalid.pdf', pdf_theme: { title_page_logo_align: 'left' }
-      = Document Title
-      :doctype: book
-      :title-logo-image: image:tux.png[align=foo]
-      EOS
-
-      (expect to_file).to visually_match 'document-title-logo-align-left.pdf'
-    end
-
     it 'should add logo specified by title_page_logo_image theme key to title page' do
       pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: 'image:{docdir}/tux.png[]' }, attribute_overrides: { 'docdir' => fixtures_dir }
       = Document Title
@@ -297,89 +443,6 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       EOS
 
       (expect to_file).to visually_match 'document-title-background-color.pdf'
-    end
-
-    it 'set background image of title page from title-page-background-image attribute', visual: true do
-      pdf = to_pdf <<~'EOS'
-      = The Amazing
-      Author Name
-      :doctype: book
-      :title-page-background-image: image:bg.png[]
-
-      beginning
-
-      <<<
-
-      middle
-
-      <<<
-
-      end
-      EOS
-
-      (expect pdf.pages).to have_size 4
-      [1, 0, 0, 0].each_with_index do |expected_num_images, idx|
-        images = get_images pdf, idx.next
-        (expect images).to have_size expected_num_images
-      end
-    end
-
-    it 'set background image when document has image cover page', visual: true do
-      pdf = to_pdf <<~'EOS'
-      = The Amazing
-      Author Name
-      :doctype: book
-      :front-cover-image: image:cover.jpg[]
-      :title-page-background-image: image:bg.png[]
-
-      beginning
-
-      <<<
-
-      middle
-
-      <<<
-
-      end
-      EOS
-
-      (expect pdf.pages).to have_size 5
-      [1, 1, 0, 0, 0].each_with_index do |expected_num_images, idx|
-        images = get_images pdf, idx.next
-        (expect images).to have_size expected_num_images
-      end
-    end
-
-    it 'set background image when document has PDF cover page', visual: true do
-      pdf = to_pdf <<~'EOS'
-      = The Amazing
-      Author Name
-      :doctype: book
-      :front-cover-image: image:blue-letter.pdf[]
-      :title-page-background-image: image:tux.png[]
-      :page-background-image: image:bg.png[]
-
-      beginning
-
-      <<<
-
-      middle
-
-      <<<
-
-      end
-      EOS
-
-      images_by_page = []
-      (expect pdf.pages).to have_size 5
-      [0, 1, 1, 1, 1].each_with_index do |expected_num_images, idx|
-        images = get_images pdf, idx.next
-        images_by_page << images
-        (expect images).to have_size expected_num_images
-      end
-
-      (expect images_by_page[1][0].data).not_to eql images_by_page[2][0].data
-      (expect images_by_page[2..-1].map {|it| it[0].data }.uniq).to have_size 1
     end
 
     it 'set background color when document has PDF cover page', visual: true do
@@ -485,67 +548,6 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       title_page_images = get_images pdf, 1
       (expect title_page_images).to have_size 1
       (expect title_page_images[0].data).to eql image_data
-    end
-  end
-
-  context 'article' do
-    it 'should center document title at top of first page of content' do
-      pdf = to_pdf <<~'EOS', analyze: true
-      = Document Title
-
-      body
-      EOS
-
-      doctitle_text = (pdf.find_text 'Document Title')[0]
-      (expect doctitle_text).not_to be_nil
-      (expect doctitle_text[:page_number]).to eql 1
-      body_text = (pdf.find_text 'body')[0]
-      (expect body_text).not_to be_nil
-      (expect body_text[:page_number]).to eql 1
-      (expect doctitle_text[:y]).to be > body_text[:y]
-    end
-
-    it 'should align document title according to value of heading_h1_align theme key' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_align: 'left' }, analyze: true
-      = Document Title
-
-      body
-      EOS
-
-      doctitle_text = (pdf.find_text 'Document Title')[0]
-      (expect doctitle_text).not_to be_nil
-      body_text = (pdf.find_text 'body')[0]
-      (expect body_text).not_to be_nil
-      (expect doctitle_text[:x]).to eql body_text[:x]
-    end
-
-    it 'should place document title on title page if title-page attribute is set' do
-      pdf = to_pdf <<~'EOS', analyze: :page
-      = Document Title
-      :title-page:
-
-      body
-      EOS
-      (expect pdf.pages).to have_size 2
-      (expect pdf.pages[0][:strings]).to include 'Document Title'
-      (expect pdf.pages[1][:strings]).to include 'body'
-    end
-
-    it 'should create document with only a title page if body is empty and title-page is set' do
-      pdf = to_pdf '= Title Page Only', attribute_overrides: { 'title-page' => '' }, analyze: true
-      (expect pdf.pages).to have_size 1
-      (expect pdf.lines).to eql ['Title Page Only']
-    end
-
-    it 'should not include document title if notitle attribute is set' do
-      pdf = to_pdf <<~'EOS', analyze: :page
-      = Document Title
-      :notitle:
-
-      body
-      EOS
-      (expect pdf.pages).to have_size 1
-      (expect pdf.pages[0][:strings]).to_not include 'Document Title'
     end
   end
 end
