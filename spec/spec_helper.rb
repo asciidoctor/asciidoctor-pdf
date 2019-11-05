@@ -150,6 +150,36 @@ class EnhancedPDFTextInspector < PDF::Inspector
   end
 end
 
+class ImageInspector < PDF::Inspector
+  attr_reader :images
+
+  def initialize
+    @images = []
+    @x = @y = @width = @height = nil
+    @page_number = 1
+  end
+
+  def page= page
+    @page_number = page.number
+    @image_xobjects = page.xobjects.reduce({}) do |accum, (name, xobject)|
+      accum[name] = xobject if xobject.hash[:Subtype] == :Image
+      accum
+    end
+  end
+
+  def concatenate_matrix width, p2, p3, height, x, y
+    @width = width
+    @height = height
+    @x = x
+    @y = y + height
+  end
+
+  def invoke_xobject name
+    image_info = (image = @image_xobjects[name]).hash
+    @images << { name: name, page_number: @page_number, x: @x, y: @y, width: @width, height: @height, implicit_height: image_info[:Height], implicit_width: image_info[:Width], data: image.data }
+  end
+end
+
 class LineInspector < PDF::Inspector
   attr_accessor :lines
 
@@ -273,10 +303,11 @@ RSpec.configure do |config|
   end
 
   (PDF_INSPECTOR_CLASS = {
-    text: EnhancedPDFTextInspector,
+    image: ImageInspector,
+    line: LineInspector,
     page: PDF::Inspector::Page,
     rect: PDF::Inspector::Graphics::Rectangle,
-    line: LineInspector,
+    text: EnhancedPDFTextInspector,
   }).default = EnhancedPDFTextInspector
 
   alias :original_to_pdf :to_pdf
