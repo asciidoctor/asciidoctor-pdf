@@ -1704,7 +1704,7 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
     image: image:logo.png[pdfwidth=25%]
 
 |top
-|<<measurement-units,Measurement>> +
+|<<measurement-units,Measurement>>^[4]^ +
 (default: 10%)
 |title-page:
   logo:
@@ -1762,7 +1762,7 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
     line-height: 0.9
 
 |top
-|Percentage^[4]^ +
+|<<measurement-units,Measurement>>^[4]^ +
 (default: 40%)
 |title-page:
   title:
@@ -1995,7 +1995,7 @@ The color keyword `transparent` is not recognized in this context.
 The size of the background image can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width) when `fit=none`.
 The position of the background image can be controlled using the `position` attribute.
 . Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
-. Percentage unit can be % (relative to content height) or vh (relative to page height).
+. % unit is relative to content height; vh unit is relative to page height.
 
 [#keys-prose]
 === Prose

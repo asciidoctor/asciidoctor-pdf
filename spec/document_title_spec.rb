@@ -473,6 +473,69 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect title_page_image[:y]).to eql expected_top
     end
 
+    it 'should move title down from top margin by % value of title_page_title_top key' do
+      pdf_theme = {
+        title_page_title_top: '10%',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :doctype: book
+
+      content
+      EOS
+
+      page_height = 841.89 # ~11.69in
+      top_margin = 0.5 * 72
+      bottom_margin = 0.67 * 72
+
+      doctitle_text = (pdf.find_text 'Document Title')[0]
+      (expect doctitle_text[:page_number]).to eql 1
+      effective_page_height = page_height - top_margin - bottom_margin
+      expected_top = page_height - top_margin - (effective_page_height * 0.10)
+      (expect doctitle_text[:y] + doctitle_text[:font_size]).to be_within(0.5).of(expected_top)
+    end
+
+    it 'should move title down from top margin by pt value of title_page_title_top key' do
+      pdf_theme = {
+        title_page_title_top: '20pt',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :doctype: book
+
+      content
+      EOS
+
+      page_height = 841.89 # ~11.69in
+      top_margin = 0.5 * 72
+
+      doctitle_text = (pdf.find_text 'Document Title')[0]
+      (expect doctitle_text[:page_number]).to eql 1
+      expected_top = page_height - top_margin - 20
+      (expect doctitle_text[:y] + doctitle_text[:font_size]).to be_within(0.5).of(expected_top)
+    end
+
+    it 'should move title down from top of page by vh value of title_page_title_top key' do
+      pdf_theme = {
+        title_page_title_top: '0vh',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :doctype: book
+
+      content
+      EOS
+
+      page_height = 841.89 # ~11.69in
+
+      doctitle_text = (pdf.find_text 'Document Title')[0]
+      (expect doctitle_text[:page_number]).to eql 1
+      (expect doctitle_text[:y] + doctitle_text[:font_size]).to be_within(0.5).of(page_height)
+    end
+
     it 'should allow left margin of elements on title page to be configured' do
       input = <<~'EOS'
       = Book Title: Bring Out Your Dead Trees
