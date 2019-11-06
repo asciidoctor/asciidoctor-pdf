@@ -2643,13 +2643,7 @@ class Converter < ::Prawn::Document
         logo_image_attrs['align'] = logo_align
       end
       # QUESTION should we allow theme to turn logo image off?
-      logo_image_top = logo_image_attrs['top'] || @theme.title_page_logo_top || '10%'
-      # FIXME delegate to method to convert page % to y value
-      if logo_image_top.end_with? 'vh'
-        logo_image_top = page_height - page_height * (logo_image_top.to_f / 100)
-      else
-        logo_image_top = bounds.absolute_top - effective_page_height * (logo_image_top.to_f / 100)
-      end
+      logo_image_top = resolve_top(logo_image_attrs['top'] || @theme.title_page_logo_top || '10%')
       initial_y, @y = @y, logo_image_top
       # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
       image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs
@@ -4139,6 +4133,16 @@ class Converter < ::Prawn::Document
       { position: :center, vposition: value.to_sym }
     else
       default_value
+    end
+  end
+
+  def resolve_top val
+    if val.end_with? 'vh'
+      page_height * (1 - (val.to_f / 100))
+    elsif val.end_with? '%'
+      @y - effective_page_height * (val.to_f / 100)
+    else
+      @y - (str_to_pt val)
     end
   end
 

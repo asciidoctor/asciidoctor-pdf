@@ -1704,7 +1704,7 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
     image: image:logo.png[pdfwidth=25%]
 
 |top
-|Percentage^[4]^ +
+|<<measurement-units,Measurement>> +
 (default: 10%)
 |title-page:
   logo:
@@ -1762,7 +1762,7 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
     line-height: 0.9
 
 |top
-|Percentage^[3]^ +
+|Percentage^[4]^ +
 (default: 40%)
 |title-page:
   title:
