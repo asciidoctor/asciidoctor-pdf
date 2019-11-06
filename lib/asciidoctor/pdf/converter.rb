@@ -2642,15 +2642,16 @@ class Converter < ::Prawn::Document
       if (logo_align = [(logo_image_attrs.delete 'align'), @theme.title_page_logo_align, title_align.to_s].find {|val| (BlockAlignmentNames.include? val) })
         logo_image_attrs['align'] = logo_align
       end
-      logo_image_top = resolve_top logo_image_attrs['top'] || @theme.title_page_logo_top || '10%'
-      initial_y, @y = @y, logo_image_top
+      if (logo_image_top = logo_image_attrs['top'] || @theme.title_page_logo_top)
+        initial_y, @y = @y, (resolve_top logo_image_top)
+      end
       # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
       image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs
       # NOTE pinned option keeps image on same page
       indent (@theme.title_page_logo_margin_left || 0), (@theme.title_page_logo_margin_right || 0) do
         convert_image image_block, relative_to_imagesdir: relative_to_imagesdir, pinned: true
       end
-      @y = initial_y
+      @y = initial_y if initial_y
     end
 
     # TODO prevent content from spilling to next page

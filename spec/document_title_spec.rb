@@ -393,34 +393,36 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'should move logo down from top margin of page by % value of title_page_logo_top key' do
-      pdf_theme = {
-        title_page_logo_top: '10%',
-      }
+      [nil, '10%'].each do |top|
+        pdf_theme = {
+          title_page_logo_top: top,
+        }
 
-      pdf = to_pdf <<~'EOS', analyze: :image, pdf_theme: pdf_theme
-      = Document Title
-      :doctype: book
-      :title-logo-image: image:tux.png[align=left]
+        pdf = to_pdf <<~'EOS', analyze: :image, pdf_theme: pdf_theme
+        = Document Title
+        :doctype: book
+        :title-logo-image: image:tux.png[align=left]
 
-      image::tux.png[]
-      EOS
+        image::tux.png[]
+        EOS
 
-      left_margin = 0.67 * 72
-      top_margin = 0.5 * 72
-      bottom_margin = 0.67 * 72
-      page_height = 841.89 # ~11.69in
+        left_margin = 0.67 * 72
+        top_margin = 0.5 * 72
+        bottom_margin = 0.67 * 72
+        page_height = 841.89 # ~11.69in
 
-      images = pdf.images
-      (expect images).to have_size 2
-      title_page_image = images[0]
-      reference_image = images[1]
-      (expect title_page_image[:page_number]).to eql 1
-      (expect reference_image[:page_number]).to eql 2
-      (expect title_page_image[:x]).to eql left_margin
-      (expect title_page_image[:x]).to eql reference_image[:x]
-      effective_page_height = page_height - top_margin - bottom_margin
-      expected_top = reference_image[:y] - (effective_page_height * 0.10)
-      (expect title_page_image[:y]).to eql expected_top
+        images = pdf.images
+        (expect images).to have_size 2
+        title_page_image = images[0]
+        reference_image = images[1]
+        (expect title_page_image[:page_number]).to eql 1
+        (expect reference_image[:page_number]).to eql 2
+        (expect title_page_image[:x]).to eql left_margin
+        (expect title_page_image[:x]).to eql reference_image[:x]
+        effective_page_height = page_height - top_margin - bottom_margin
+        expected_top = reference_image[:y] - (effective_page_height * (top.to_f / 100))
+        (expect title_page_image[:y]).to eql expected_top
+      end
     end
 
     it 'should move logo down from top margin of page by pt value of title_page_logo_top key' do
