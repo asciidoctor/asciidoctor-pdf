@@ -604,11 +604,13 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
         title_page_subtitle_display: 'none',
         title_page_authors_display: 'none',
         title_page_revision_display: 'none',
+        title_page_logo_display: 'none',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
       = Document Title: Subtitle
       :doctype: book
+      :title-logo-image: image:tux.png[]
       Author Name
       v1.0, 2020-01-01
 
@@ -616,9 +618,8 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       EOS
 
       (expect pdf.pages).to have_size 2
-      title_page_texts = pdf.find_text page_number: 1
-      (expect title_page_texts).to have_size 1
-      (expect title_page_texts[0][:string]).to eql 'Document Title'
+      (expect (pdf.page 1).text).to eql 'Document Title'
+      (expect get_images pdf, 1).to be_empty
     end
 
     it 'should not remove title page if all elements are disabled' do

@@ -2642,7 +2642,6 @@ class Converter < ::Prawn::Document
       if (logo_align = [(logo_image_attrs.delete 'align'), @theme.title_page_logo_align, title_align.to_s].find {|val| (BlockAlignmentNames.include? val) })
         logo_image_attrs['align'] = logo_align
       end
-      # QUESTION should we allow theme to turn logo image off?
       logo_image_top = resolve_top(logo_image_attrs['top'] || @theme.title_page_logo_top || '10%')
       initial_y, @y = @y, logo_image_top
       # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
