@@ -1163,6 +1163,12 @@ See <<Title Page>> for details.
 |page:
   margin-outer: 0.59in
 
+|mode
+|fullscreen
+(default: _not set_)
+|page:
+  mode: fullscreen
+
 |size
 |https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width,height]>> +
 (default: A4)

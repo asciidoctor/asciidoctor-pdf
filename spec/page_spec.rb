@@ -92,6 +92,23 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
   end
 
+  context 'Mode' do
+    it 'should set page mode to fullscreen if page_mode key in them is fullscreen' do
+      pdf = to_pdf 'content', pdf_theme: { page_mode: 'fullscreen' }
+      (expect pdf.catalog[:PageMode]).to eql :FullScreen
+    end
+
+    it 'should set page mode to fullscreen if pdf-page-mode attribute is fullscreen' do
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-page-mode' => 'fullscreen' }
+      (expect pdf.catalog[:PageMode]).to eql :FullScreen
+    end
+
+    it 'should allow pdf-page-mode attribute in document to disable fullscreen mode' do
+      pdf = to_pdf 'content', pdf_theme: { page_mode: 'fullscreen' }, attribute_overrides: { 'pdf-page-mode' => '' }
+      (expect pdf.catalog[:PageMode]).not_to eql :FullScreen
+    end
+  end
+
   context 'Margin' do
     it 'should use the margin specified in theme by default' do
       input = 'content'
