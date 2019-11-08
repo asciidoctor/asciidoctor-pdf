@@ -578,6 +578,16 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[1]).to eql %(\u00a0   we)
       (expect lines[2]).to eql %(\u00a0       go)
     end
+
+    it 'should not double escape specialchars' do
+      pdf = to_pdf <<~EOS, analyze: true
+      |===
+      l|< and >
+      |===
+      EOS
+
+      (expect pdf.lines).to eql ['< and >']
+    end
   end
 
   context 'AsciiDoc table cell' do
