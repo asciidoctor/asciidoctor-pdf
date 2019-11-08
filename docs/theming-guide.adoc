@@ -4518,7 +4518,13 @@ The only thing you need to add to an existing build is the attributes mentioned 
 * https://github.com/asciidoctor/asciidoctor-maven-examples/tree/master/asciidoctor-pdf-with-theme-example[Maven Example]
 * https://github.com/asciidoctor/asciidoctor-gradle-examples/tree/master/asciidoc-to-pdf-with-theme-example[Gradle Example]
 
-TIP: To reference a theme file or directory of fonts inside a JAR file on the classpath, prefix the path with `uri:classloader:`.
+Speaking of Java, you can bundle and distribute your theme and fonts in a jar file.
+To reference the theme file and/or directory of fonts from inside the jar, refer to their location on the classpath using the `uri:classloader:` prefix.
+Here's how you'd load both the theme and fonts from the classpath:
+
+ $ asciidoctorj -b pdf -a pdf-theme="uri:classloader:/path/to/themes/my-theme.yml" -a pdf-fontsdir="uri:classloader:/path/to/fonts" document.adoc
+
+This only works when running Asciidoctor PDF on the JVM.
 
 == Theme-Related Document Attributes
 
