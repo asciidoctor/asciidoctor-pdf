@@ -480,6 +480,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect (pdf.page 1).text).to be_empty
     end
 
+    it 'should log warning if remote image cannot be fetched' do
+      (expect {
+        pdf = to_pdf 'image::http://example.org/no-such-image.png[No Such Image]', attribute_overrides: { 'allow-uri-read' => '' }, analyze: true
+        (expect pdf.lines).to eql ['[No Such Image] | http://example.org/no-such-image.png']
+      }).to log_message severity: :WARN, message: '~could not retrieve remote image: http://example.org/no-such-image.png; 404 Not Found'
+    end
+
     it 'should use image format specified by format attribute' do
       pdf = to_pdf <<~'EOS', attribute_overrides: { 'allow-uri-read' => '' }, analyze: :rect
       :pdf-page-size: 200x400

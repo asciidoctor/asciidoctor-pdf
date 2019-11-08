@@ -8,6 +8,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == Unreleased
 
 * don't double escape XML special characters in literal table cell (#1370)
+* log warning with error message if remote image cannot be retrieved
 * allow initial page mode to be set to fullscreen using pdf-page-mode=fullscreen attribute or page_mode=fullscreen theme key (#1357)
 * allow theme to configure content of entries in authors line on title page (#800)
 * allow theme to override styles of caption on admonition blocks (#561)

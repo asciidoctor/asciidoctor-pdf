@@ -3934,6 +3934,7 @@ class Converter < ::Prawn::Document
         open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
         tmp_image.path.extend TemporaryPath
       rescue
+        logger.warn %(could not retrieve remote image: #{image_path}; #{$!.message}) unless scratch?
         nil
       ensure
         tmp_image.close
