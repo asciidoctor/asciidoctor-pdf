@@ -2997,6 +2997,7 @@ class Converter < ::Prawn::Document
     toc_font_info = theme_font :toc do
       { font: font, size: @font_size }
     end
+    hanging_indent = @theme.toc_hanging_indent || 0
     sections.each do |sect|
       theme_font :toc, level: (sect.level + 1) do
         sect_title = ZeroWidthSpace + (@text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title)
@@ -3004,7 +3005,9 @@ class Converter < ::Prawn::Document
         if scratch?
           # FIXME use layout_prose
           # NOTE must wrap title in empty anchor element in case links are styled with different font family / size
-          typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true
+          indent hanging_indent do
+            typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true, indent_paragraphs: -hanging_indent
+          end
         else
           pgnum_label = ((sect.attr 'pdf-page-start') - num_front_matter_pages).to_s
           start_page_number = page_number
@@ -3021,10 +3024,10 @@ class Converter < ::Prawn::Document
             fragment.update(sect_title_format_override) {|k, oval, nval| k == :styles ? (oval.merge nval) : oval }
           end
           pgnum_label_width = rendered_width_of_string pgnum_label
-          indent 0, pgnum_label_width do
+          indent hanging_indent, pgnum_label_width do
             sect_title_fragments[-1][:callback] = (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
-            typeset_formatted_text sect_title_fragments, line_metrics
-            start_dots = last_fragment_pos.right
+            typeset_formatted_text sect_title_fragments, line_metrics, indent_paragraphs: -hanging_indent
+            start_dots = last_fragment_pos.right + hanging_indent
             last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
             # NOTE this will be incorrect if wrapped line is all monospace
             start_cursor = last_fragment_cursor if start_cursor - last_fragment_cursor > line_metrics.height
