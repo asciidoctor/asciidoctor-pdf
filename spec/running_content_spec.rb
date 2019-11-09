@@ -668,6 +668,17 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect running_text).to have_size 1
     end
 
+    it 'should normalize newlines and whitespace' do
+      pdf_theme = {
+        footer_recto_right_content: %(He's  a  real  nowhere  man,\nMaking all his nowhere plans\tfor nobody.),
+        footer_verso_left_content: %(He's  a  real  nowhere  man,\nMaking all his nowhere plans\tfor nobody.),
+      }
+
+      pdf = to_pdf 'body', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+
+      (expect pdf.lines.last).to eql %(He\u2019s a real nowhere man, Making all his nowhere plans for nobody.)
+    end
+
     it 'should drop line in content with unresolved attribute reference' do
       pdf_theme = {
         footer_recto_right_content: %(keep\ndrop{bogus}\nme),
