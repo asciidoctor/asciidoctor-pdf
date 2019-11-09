@@ -2452,11 +2452,14 @@ class Converter < ::Prawn::Document
     if node.document.attr? 'icons', 'font'
       if (icon_name = node.target).include? '@'
         icon_name, icon_set = icon_name.split '@', 2
+        explicit_icon_set = true
+      elsif (icon_set = node.attr 'set', nil, false)
+        explicit_icon_set = true
       else
-        icon_set = node.attr 'set', (node.document.attr 'icon-set', 'fa'), false
+        icon_set = node.document.attr 'icon-set', 'fa'
       end
-      icon_set = 'fa' unless IconSets.include? icon_set
-      if icon_set == 'fa'
+      if icon_set == 'fa' || !(IconSets.include? icon_set)
+        icon_set = 'fa'
         # legacy name from Font Awesome < 5
         if (remapped_icon_name = resolve_legacy_icon_name icon_name)
           requested_icon_name = icon_name
@@ -2473,6 +2476,10 @@ class Converter < ::Prawn::Document
           end
         end
       else
+        glyph = (icon_font_data icon_set).unicode icon_name rescue nil
+      end
+      unless glyph || explicit_icon_set || !icon_name.start_with?(*IconSetPrefixes)
+        icon_set, icon_name = icon_name.split '-', 2
         glyph = (icon_font_data icon_set).unicode icon_name rescue nil
       end
       if glyph
