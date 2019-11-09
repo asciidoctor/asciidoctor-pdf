@@ -1576,5 +1576,19 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'Times-Roman'
     end
+
+    it 'should embed local image referenced in SVG' do
+      pdf_theme = {
+        __dir__: fixtures_dir,
+        footer_padding: 0,
+        footer_recto_right_content: 'image:svg-with-local-image.svg[fit=contain]',
+        footer_verso_left_content: 'image:svg-with-local-image.svg[fit=contain]',
+      }
+      to_file = to_pdf_file <<~'EOS', 'running-content-svg-with-local-image.pdf', enable_footer: true, pdf_theme: pdf_theme
+      body
+      EOS
+
+      (expect to_file).to visually_match 'running-content-svg-with-local-image.pdf'
+    end
   end
 end

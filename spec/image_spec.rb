@@ -305,12 +305,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
     end
 
-    it 'should embed local image', visual: true do
+    it 'should embed local image in inline image', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-with-local-image.pdf'
       A sign of a good writer: image:svg-with-local-image.svg[]
       EOS
 
       (expect to_file).to visually_match 'image-svg-with-image.pdf'
+    end
+
+    it 'should embed local image in block image', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-block-svg-with-local-image.pdf'
+      image::svg-with-local-image.svg[]
+      EOS
+
+      (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
     end
 
     it 'should embed remote image if allow allow-uri-read attribute is set', visual: true do
