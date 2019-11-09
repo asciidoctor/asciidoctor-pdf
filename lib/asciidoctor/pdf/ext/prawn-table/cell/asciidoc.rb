@@ -55,9 +55,10 @@ module Prawn; class Table; class Cell
 
     def draw_content
       pdf = @pdf
-      # NOTE draw_bounded_content adds FPTolerance to width and height, which causes content to overflow
+      # NOTE draw_bounded_content automatically adds FPTolerance to width and height
       pdf.bounds.instance_variable_set :@width, spanned_content_width
-      pdf.bounds.instance_variable_set :@height, spanned_content_height
+      # NOTE we've already reserved the space, so just let the box stretch to the bottom of the page to avoid overflow
+      pdf.bounds.instance_variable_set :@height, pdf.y
       if @valign != :top && (excess_y = spanned_content_height - natural_content_height) > 0
         pdf.move_down(@valign == :center ? (excess_y.fdiv 2) : excess_y)
       end

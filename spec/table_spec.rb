@@ -630,6 +630,45 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect nested_cell_1[:y]).to eql nested_cell_2[:y]
       (expect nested_cell_1[:x]).to be < nested_cell_2[:x]
     end
+
+    it 'should not fail to fit content in table cell and create blank page when margin bottom is 0' do
+      pdf_theme = {
+        base_font_family: 'M+ 1mn',
+        prose_margin_bottom: 0,
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      |===
+      a|
+      * abc
+      |===
+      EOS
+
+      p1_lines = pdf.lines (pdf.page 1)[:text]
+      (expect p1_lines).to eql ['•abc']
+      (expect pdf.pages).to have_size 1
+    end
+
+    it 'should not fail to fit content in table cell and create blank page when margin bottom is positive' do
+      pdf_theme = {
+        base_font_family: 'M+ 1mn',
+        prose_margin_bottom: 2,
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      before
+
+      |===
+      a|
+      * abc
+      * xyz
+      |===
+
+      after
+      EOS
+
+      p1_lines = pdf.lines (pdf.page 1)[:text]
+      (expect p1_lines).to eql ['before', '•abc', '•xyz', 'after']
+      (expect pdf.pages).to have_size 1
+    end
   end
 
   context 'Verse table cell' do
