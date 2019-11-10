@@ -3911,6 +3911,12 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   indent: 20
 
+|hanging-indent
+|<<measurement-units,Measurement>> +
+(default: _not set_)
+|toc:
+  hanging-indent: 0.5in
+
 |margin-top
 |<<measurement-units,Measurement>> +
 (default: 0)

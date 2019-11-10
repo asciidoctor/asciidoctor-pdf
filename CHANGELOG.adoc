@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow initial page mode to be set to fullscreen using pdf-page-mode=fullscreen attribute or page_mode=fullscreen theme key (#1357)
 * allow theme to configure content of entries in authors line on title page (#800)
 * allow theme to override styles of caption on admonition blocks (#561)
+* allow theme to configure hanging indent for titles in toc (#1153)
 * allow top value of logo and title on title page to be specified in any measurement unit
 * don't set a top value for the logo on the title page if not set in theme
 * if value of scripts attribute is cjk, break lines between any two CJK characters except punctuation in table cells (#1359) (*gasol*)
