@@ -18,14 +18,14 @@ class Pdfmark
     end
     # FIXME use sanitize: :plain_text once available
     content = <<~EOS
-    [ /Title #{sanitize(doc.doctitle use_fallback: true).to_pdf}
-      /Author #{(doc.attr 'authors').to_pdf}
-      /Subject #{(doc.attr 'subject').to_pdf}
-      /Keywords #{(doc.attr 'keywords').to_pdf}
-      /ModDate #{mod_date.to_pdf}
-      /CreationDate #{creation_date.to_pdf}
+    [ /Title #{sanitize(doc.doctitle use_fallback: true).to_pdf_object}
+      /Author #{(doc.attr 'authors').to_pdf_object}
+      /Subject #{(doc.attr 'subject').to_pdf_object}
+      /Keywords #{(doc.attr 'keywords').to_pdf_object}
+      /ModDate #{mod_date.to_pdf_object}
+      /CreationDate #{creation_date.to_pdf_object}
       /Creator (Asciidoctor PDF #{::Asciidoctor::PDF::VERSION}, based on Prawn #{::Prawn::VERSION})
-      /Producer #{(doc.attr 'publisher').to_pdf}
+      /Producer #{(doc.attr 'publisher').to_pdf_object}
       /DOCINFO pdfmark
     EOS
     content

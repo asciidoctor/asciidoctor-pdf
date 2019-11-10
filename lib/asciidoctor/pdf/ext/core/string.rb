@@ -12,16 +12,12 @@ class String
 
   # If the string is ASCII only, convert it to a PDF LiteralString object. Otherwise, return self.
   def as_pdf
-    if ascii_only?
-      ::PDF::Core::LiteralString.new(encode ::Encoding::ASCII_8BIT)
-    else
-      self
-    end
+    ascii_only? ? (::PDF::Core::LiteralString.new encode ::Encoding::ASCII_8BIT) : self
   end
 
   # Convert the string to a serialized PDF object. If the string can be encoded as ASCII-8BIT, first convert it to a PDF
   # LiteralString object.
-  def to_pdf
+  def to_pdf_object
     ::PDF::Core.pdf_object as_pdf
   end
 end

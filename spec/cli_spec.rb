@@ -47,7 +47,6 @@ describe 'asciidoctor-pdf' do
     end unless ENV['ROUGE_VERSION'] && ENV['ROUGE_VERSION'].split[-1] < '2.1.0'
   end
 
-  # NOTE cannot test pdfmark using API test since Object#to_pdf method conflicts with rspec helper of same name
   context 'pdfmark' do
     it 'should generate pdfmark file if pdfmark attribute is set', cli: true do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, '-a', 'pdfmark', (fixture_file 'book.adoc')

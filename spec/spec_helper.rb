@@ -313,8 +313,6 @@ RSpec.configure do |config|
     text: EnhancedPDFTextInspector,
   }).default = EnhancedPDFTextInspector
 
-  alias :original_to_pdf :to_pdf
-
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
     enable_footer = opts.delete :enable_footer
