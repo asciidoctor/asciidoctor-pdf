@@ -481,6 +481,28 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.footer_recto_right_content).to be_a String
       (expect theme.footer_recto_right_content).to eql '10'
     end
+
+    it 'should not modify value without units' do
+      [36, 36.0, 48.24, (20 / 17.0)].each do |val|
+        theme_data = SafeYAML.load <<~EOS
+        footer:
+          padding: #{val}
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme.footer_padding).to eql val
+      end
+    end
+
+    it 'should resolve value with units to PDF point value' do
+      ['0.5in', '36pt', '48px', '12.7mm', '1.27cm'].each do |val|
+        theme_data = SafeYAML.load <<~EOS
+        footer:
+          padding: #{val}
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme.footer_padding.to_f.round 2).to eql 36.0
+      end
+    end
   end
 
   context 'interpolation' do
