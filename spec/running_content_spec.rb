@@ -1588,7 +1588,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect text[0][:font_name]).to eql 'Times-Roman'
     end
 
-    it 'should embed local image referenced in SVG' do
+    it 'should embed local image referenced in SVG', visual: true do
       pdf_theme = {
         __dir__: fixtures_dir,
         footer_padding: 0,
