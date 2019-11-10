@@ -232,12 +232,15 @@ class LineInspector < PDF::Inspector
 end
 
 RSpec.configure do |config|
+
   config.before :suite do
     FileUtils.mkdir_p output_dir
   end
 
   config.after :suite do
-    FileUtils.rm_r output_dir, force: true, secure: true unless ENV.key? 'DEBUG'
+    unless (ENV.key? 'DEBUG') || config.reporter.failed_examples.find {|it| it.metadata[:visual] }
+      FileUtils.rm_r output_dir, force: true, secure: true
+    end
   end
 
   def asciidoctor_2_or_better?
@@ -551,7 +554,10 @@ RSpec::Matchers.define :visually_match do |reference_filename|
   match do |actual_path|
     # NOTE add this line to detect which tests use a visual match
     #warn caller.find {|it| it.include? '_spec.rb:' }
-    return false unless File.exist? reference_path
+    unless File.exist? reference_path
+      File.unlink actual_path unless ENV.key? 'DEBUG'
+      return false
+    end
     images_output_dir = output_file 'visual-comparison-workdir'
     Dir.mkdir images_output_dir unless Dir.exist? images_output_dir
     output_basename = File.join images_output_dir, (File.basename actual_path, '.pdf')
@@ -559,19 +565,27 @@ RSpec::Matchers.define :visually_match do |reference_filename|
     system 'pdftocairo', '-png', reference_path, %(#{output_basename}-reference)
 
     pixels = 0
+    tmp_files = [actual_path]
 
     Dir[%(#{output_basename}-{actual,reference}-*.png)].map {|filename|
       (/-(?:actual|reference)-(\d+)\.png$/.match filename)[1]
     }.sort.uniq.each do |idx|
       reference_page_filename = %(#{output_basename}-reference-#{idx}.png)
       reference_page_filename = nil unless File.exist? reference_page_filename
+      tmp_files << reference_page_filename if reference_page_filename
       actual_page_filename = %(#{output_basename}-actual-#{idx}.png)
       actual_page_filename = nil unless File.exist? actual_page_filename
+      tmp_files << actual_page_filename if actual_page_filename
       next if reference_page_filename && actual_page_filename && (FileUtils.compare_file reference_page_filename, actual_page_filename)
       pixels += compute_image_differences reference_page_filename, actual_page_filename, %(#{output_basename}-diff-#{idx}.png)
     end
 
-    pixels.zero?
+    if pixels > 0
+      tmp_files.each {|it| File.unlink it } unless ENV.key? 'DEBUG'
+      false
+    else
+      true
+    end
   end
 
   failure_message {|actual_path| %(expected #{actual_path} to be visually identical to #{reference_path}) }
