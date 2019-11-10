@@ -25,6 +25,22 @@ describe Asciidoctor::PDF::Pdfmark do
     (expect contents).to end_with %(/DOCINFO pdfmark\n)
   end
 
+  it 'should set date to Unix epoch in UTC if reproducible attribute is set' do
+    doc = Asciidoctor.load <<~'EOS', safe: :safe
+    = Document Title
+    Author Name
+    :reproducible:
+
+    body
+    EOS
+
+    contents = (subject.new doc).generate
+    (expect contents).to include '/Title (Document Title)'
+    (expect contents).to include '/ModDate (D:19700101000000+00\'00\')'
+    (expect contents).to include '/CreationDate (D:19700101000000+00\'00\')'
+    (expect contents).to end_with %(/DOCINFO pdfmark\n)
+  end
+
   it 'should fallback to current date if dates are not parsable' do
     doc = Asciidoctor.load <<~'EOS', safe: :safe
     = Document Title

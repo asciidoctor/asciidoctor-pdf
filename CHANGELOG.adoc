@@ -19,6 +19,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * if value of scripts attribute is cjk, break lines between any two CJK characters except punctuation in table cells (#1359) (*gasol*)
 * recommend installing prawn-gmagick gem if image format is unsupported
 * set cache_images option on SVG interface if cache-uri attribute is set on document (#223)
+* write Unix epoch dates to pdfmark file in UTC when reproducible is set
 
 == 1.5.0.beta.7 (2019-10-29) - @mojavelinux
 

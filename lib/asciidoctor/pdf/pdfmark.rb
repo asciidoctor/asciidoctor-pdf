@@ -11,7 +11,7 @@ class Pdfmark
   def generate
     doc = @doc
     if doc.attr? 'reproducible'
-      mod_date = creation_date = ::Time.at 0
+      mod_date = creation_date = (::Time.at 0).utc
     else
       mod_date = ::Time.parse doc.attr 'docdatetime' rescue (now ||= ::Time.now)
       creation_date = ::Time.parse doc.attr 'localdatetime' rescue (now ||= ::Time.now)
