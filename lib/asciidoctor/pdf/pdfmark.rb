@@ -13,8 +13,8 @@ class Pdfmark
     if doc.attr? 'reproducible'
       mod_date = creation_date = (::Time.at 0).utc
     else
-      mod_date = ::Time.parse doc.attr 'docdatetime' rescue (now ||= ::Time.now)
-      creation_date = ::Time.parse doc.attr 'localdatetime' rescue (now ||= ::Time.now)
+      mod_date = ::Time.parse doc.attr 'docdatetime' rescue mod_date = (now ||= ::Time.now)
+      creation_date = ::Time.parse doc.attr 'localdatetime' rescue creation_date = (now ||= ::Time.now)
     end
     # FIXME use sanitize: :plain_text once available
     content = <<~EOS
