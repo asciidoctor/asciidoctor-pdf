@@ -2285,6 +2285,7 @@ class Converter < ::Prawn::Document
         start_new_page unless at_page_top?
         start_new_page if @ppbook && verso_page? && !(node.option? 'nonfacing')
       end
+      add_dest_for_block node, (derive_anchor_from_id node.id, 'toc')
       allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (is_book || (doc.attr? 'title-page'))
     end
     nil
@@ -3469,18 +3470,21 @@ class Converter < ::Prawn::Document
       pagenum_labels[n] = { P: (::PDF::Core::LiteralString.new %(#{i + 1})) }
     end
 
+    unless toc_page_nums.none? || (toc_title = doc.attr 'toc-title').nil_or_empty?
+      toc_section = insert_toc_section doc, toc_title, toc_page_nums
+    end
+
     outline.define do
       initial_pagenum = has_front_cover ? 2 : 1
       # FIXME use sanitize: :plain_text once available
       if document.page_count >= initial_pagenum && (doctitle = doc.header? ? doc.doctitle : (doc.attr 'untitled-label'))
         page title: (document.sanitize doctitle), destination: (document.dest_top has_front_cover ? 2 : 1)
       end
-      unless toc_page_nums.none? || (toc_title = doc.attr 'toc-title').nil_or_empty?
-        page title: toc_title, destination: (document.dest_top toc_page_nums.first)
-      end
       # QUESTION is there any way to get add_outline_level to invoke in the context of the outline?
       document.add_outline_level self, doc.sections, num_levels, expand_levels
     end
+
+    toc_section.parent.blocks.delete toc_section if toc_section
 
     catalog.data[:PageLabels] = state.store.ref Nums: pagenum_labels.flatten
     catalog.data[((doc.attr 'pdf-page-mode') || @theme.page_mode) == 'fullscreen' ? :NonFullScreenPageMode : :PageMode] = :UseOutlines
@@ -3499,6 +3503,30 @@ class Converter < ::Prawn::Document
         end
       end
     end
+  end
+
+  def insert_toc_section doc, toc_title, toc_page_nums
+    if (doc.attr? 'toc-placement', 'macro') && (toc_node = (doc.find_by context: :toc)[0])
+      if (parent_section = toc_node.parent).context == :section
+        grandparent_section = parent_section.parent
+        toc_level = parent_section.level
+        insert_idx = (grandparent_section.blocks.index parent_section) + 1
+      else
+        parent_section = grandparent_section = doc
+        toc_level = doc.sections[0].level
+        insert_idx = 0
+      end
+      toc_dest = toc_node.attr 'pdf-destination'
+    else
+      parent_section = grandparent_section = doc
+      toc_level = doc.sections[0].level
+      insert_idx = 0
+      toc_dest = dest_top toc_page_nums.first
+    end
+    toc_section = Section.new grandparent_section, toc_level, false, { attributes: { 'pdf-destination' => toc_dest } }
+    toc_section.title = toc_title
+    grandparent_section.blocks.insert insert_idx, toc_section
+    toc_section
   end
 
   def write pdf_doc, target

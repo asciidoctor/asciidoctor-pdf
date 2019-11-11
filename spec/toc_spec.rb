@@ -174,6 +174,41 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages).to have_size 6
       toc_title_text = (pdf.find_text 'Table of Contents')[0]
       (expect toc_title_text[:page_number]).to eql 4
+
+      pdf = to_pdf input
+      outline = extract_outline pdf
+      (expect outline).to have_size 5
+      (expect outline.map {|it| it[:title] }).to eql ['Document Title', 'Introduction', 'Table of Contents', 'Main', 'Conclusion']
+      toc_dest = outline[2][:dest]
+      (expect toc_dest[:pagenum]).to eql 4
+      (expect toc_dest[:label]).to eql '3'
+      (expect toc_dest[:y]).to be > 800
+    end
+
+    it 'should insert macro toc in outline as sibling of section in which it is contained' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :doctype: book
+      :toc: macro
+
+      == Chapter
+
+      === Section
+
+      toc::[]
+
+      === Another Section
+      EOS
+
+      outline = extract_outline pdf
+      chapter_entry = outline[1]
+      (expect chapter_entry).not_to be_nil
+      (expect chapter_entry[:title]).to eql 'Chapter'
+      chapter_entry_children = chapter_entry[:children]
+      (expect chapter_entry[:children]).to have_size 3
+      toc_entry = chapter_entry[:children][1]
+      (expect toc_entry[:title]).to eql 'Table of Contents'
+      (expect toc_entry[:dest][:label]).to eql '2'
     end
 
     it 'should not add toc title to page or outline if toc-title is unset' do
@@ -447,6 +482,60 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_title_text[:y]).to be < content_top_text[:y]
       (expect toc_bottom_text[:y]).to be < content_top_text[:y]
       (expect toc_title_text[:y]).to be < intro_title_text[:y]
+
+      pdf = to_pdf input
+      outline = extract_outline pdf
+      (expect outline).to have_size 5
+      (expect outline.map {|it| it[:title] }).to eql ['Document Title', 'Introduction', 'Table of Contents', 'Main', 'Conclusion']
+      toc_dest = outline[2][:dest]
+      (expect toc_dest[:pagenum]).to eql 1
+      (expect toc_dest[:label]).to eql '1'
+      (expect toc_dest[:y]).to be < 800
+    end
+
+    it 'should insert macro toc in outline as sibling of section in which it is contained' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :toc: macro
+
+      == Section
+
+      === Subsection
+
+      toc::[]
+
+      === Another Subsection
+      EOS
+
+      outline = extract_outline pdf
+      section_entry = outline[1]
+      (expect section_entry).not_to be_nil
+      (expect section_entry[:title]).to eql 'Section'
+      section_entry_children = section_entry[:children]
+      (expect section_entry[:children]).to have_size 3
+      toc_entry = section_entry[:children][1]
+      (expect toc_entry[:title]).to eql 'Table of Contents'
+      (expect toc_entry[:dest][:label]).to eql '1'
+    end
+
+    it 'should insert macro toc in outline before other sections if macro proceeds sections' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :toc: macro
+
+      toc::[]
+
+      == Section
+
+      === Subsection
+
+      === Another Subsection
+      EOS
+
+      outline = extract_outline pdf
+      toc_entry = outline[1]
+      (expect toc_entry[:title]).to eql 'Table of Contents'
+      (expect toc_entry[:dest][:label]).to eql '1'
     end
   end
 
