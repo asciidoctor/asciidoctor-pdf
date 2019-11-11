@@ -32,6 +32,8 @@ module Sanitizer
   XMLMarkupRx = /&#?[a-z\d]+;|</
   CharRefRx = /&(?:([a-z][a-z]+\d{0,2})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
   SiftPCDATARx = /(&#?[a-z\d]+;|<[^>]+>)|([^&<]+)/
+  WordRx = /\S+/
+  SoftHyphen = ?\u00ad
 
   # Strip leading, trailing and repeating whitespace, remove XML tags and
   # resolve all entities in the specified string.
@@ -95,6 +97,18 @@ module Sanitizer
     def lowercase_mb string
       string.downcase
     end
+  end
+
+  def hyphenate_pcdata string, hyphenator
+    if XMLMarkupRx.match? string
+      string.gsub(SiftPCDATARx) { $2 ? (hyphenate_words $2, hyphenator) : $1 }
+    else
+      hyphenate_words string, hyphenator
+    end
+  end
+
+  def hyphenate_words string, hyphenator = nil
+    string.gsub(WordRx) { hyphenator.visualize $&, SoftHyphen }
   end
 end
 end

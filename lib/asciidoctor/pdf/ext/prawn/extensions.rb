@@ -435,6 +435,10 @@ module Extensions
     end
   end
 
+  def hyphenate_text text, hyphenator
+    hyphenate_pcdata text, hyphenator
+  end
+
   # Cursor
 
   # Short-circuits the call to the built-in move_up operation

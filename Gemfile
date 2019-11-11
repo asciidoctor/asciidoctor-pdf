@@ -12,6 +12,7 @@ gem 'unicode', require: false if (Gem::Version.new RUBY_VERSION) < (Gem::Version
 gem 'rghost', ENV['RGHOST_VERSION'], require: false if ENV.key? 'RGHOST_VERSION'
 gem 'rouge', ENV['ROUGE_VERSION'], require: false if ENV.key? 'ROUGE_VERSION'
 gem 'pygments.rb', ENV['PYGMENTS_VERSION'], require: false if ENV.key? 'PYGMENTS_VERSION'
+gem 'text-hyphen', require: false
 
 group :docs do
   gem 'yard', require: false

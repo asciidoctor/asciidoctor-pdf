@@ -4554,6 +4554,10 @@ These settings override equivalent keys defined in the theme file, where applica
 (format can be image or PDF)
 |:front-cover-image: image:front-cover.pdf[]
 
+|hyphens^[7]^
+|language code {vbar} _blank_ to default to en_us (default: _not set_)
+|:hyphens: de
+
 |media
 |screen {vbar} print {vbar} prepress
 |:media: prepress
