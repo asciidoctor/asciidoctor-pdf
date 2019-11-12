@@ -164,4 +164,30 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect abstract_text_2).to have_size 1
     (expect abstract_text_2[0][:x]).to be < halfway_point
   end
+
+  it 'should apply same line height to all paragraphs in abstract' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+
+    [abstract]
+    --
+    paragraph 1, line 1 +
+    paragraph 1, line 2
+
+    paragraph 2, line 1 +
+    paragraph 2, line 2
+    --
+
+    == Section
+
+    content
+    EOS
+
+    p1_l1_text = (pdf.find_text 'paragraph 1, line 1')[0]
+    p1_l2_text = (pdf.find_text 'paragraph 1, line 2')[0]
+    p2_l1_text = (pdf.find_text 'paragraph 2, line 1')[0]
+    p2_l2_text = (pdf.find_text 'paragraph 2, line 2')[0]
+
+    (expect p2_l1_text[:y] - p2_l2_text[:y]).to eql p1_l1_text[:y] - p1_l2_text[:y]
+  end
 end

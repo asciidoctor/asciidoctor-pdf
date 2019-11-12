@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * fix AsciiDoc table cell from overflowing bounds of table and creating extra page (#1369)
 * don't double escape XML special characters in literal table cell (#1370)
+* use same line height throughout abstract
 * place toc at same position in outline as it is in the document (#1361)
 * log warning with error message if remote image cannot be retrieved
 * allow initial page mode to be set to fullscreen using pdf-page-mode=fullscreen attribute or page_mode=fullscreen theme key (#1357)
