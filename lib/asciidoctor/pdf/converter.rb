@@ -480,8 +480,8 @@ class Converter < ::Prawn::Document
     unless doc.attr? 'reproducible'
       # NOTE since we don't track the creation date of the input file, we map the ModDate header to the last modified
       # date of the input document and the CreationDate header to the date the PDF was produced by the converter.
-      info[:ModDate] = ::Time.parse(doc.attr 'docdatetime') rescue (now ||= ::Time.now)
-      info[:CreationDate] = ::Time.parse(doc.attr 'localdatetime') rescue (now ||= ::Time.now)
+      info[:ModDate] = (::Time.parse doc.attr 'docdatetime') rescue (now ||= ::Time.now)
+      info[:CreationDate] = (::Time.parse doc.attr 'localdatetime') rescue (now ||= ::Time.now)
     end
     info
   end

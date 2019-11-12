@@ -92,6 +92,23 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect pdf.info[:Keywords]).to eql 'cooking, diet, plants'
     end
 
+    it 'should parse date attributes as local date objects' do
+      pdf = to_pdf 'content', attribute_overrides: { 'docdatetime' => '2019-01-15', 'localdatetime' => '2019-01-15' }
+      (expect pdf.info[:ModDate]).not_to be_nil
+      (expect pdf.info[:ModDate]).to start_with 'D:20190115000000'
+      (expect pdf.info[:CreationDate]).not_to be_nil
+      (expect pdf.info[:CreationDate]).to start_with 'D:20190115000000'
+    end
+
+    it 'should use current date as fallback when date attributes cannot be parsed' do
+      pdf = to_pdf 'content', attribute_overrides: { 'docdatetime' => 'garbage', 'localdatetime' => 'garbage' }
+      (expect pdf.info[:ModDate]).not_to be_nil
+      (expect pdf.info[:ModDate]).to start_with 'D:'
+      (expect pdf.info[:CreationDate]).not_to be_nil
+      (expect pdf.info[:CreationDate]).to start_with 'D:'
+      (expect pdf.info[:ModDate]).to eql pdf.info[:CreationDate]
+    end
+
     it 'should not add dates to document if reproducible attribute is set' do
       pdf = to_pdf <<~'EOS', attribute_overrides: { 'reproducible' => '' }
       = Document Title
