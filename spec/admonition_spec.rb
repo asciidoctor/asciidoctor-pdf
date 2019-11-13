@@ -166,7 +166,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
     end
 
-    it 'should warn and fallback to admonition label if image icon cannot be resolved', visual: true do
+    it 'should warn and fallback to admonition label if image icon cannot be resolved' do
       (expect {
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: true
         :icons: image

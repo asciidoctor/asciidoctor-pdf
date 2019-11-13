@@ -132,7 +132,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect to_file).to visually_match 'document-title-logo-align-left.pdf'
     end
 
-    it 'should set background image of title page from title-page-background-image attribute', visual: true do
+    it 'should set background image of title page from title-page-background-image attribute' do
       pdf = to_pdf <<~'EOS'
       = The Amazing
       Author Name
@@ -157,7 +157,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       end
     end
 
-    it 'should set background image when document has image cover page', visual: true do
+    it 'should set background image when document has image cover page' do
       pdf = to_pdf <<~'EOS'
       = The Amazing
       Author Name
@@ -183,7 +183,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       end
     end
 
-    it 'should set background image when document has PDF cover page', visual: true do
+    it 'should set background image when document has PDF cover page' do
       pdf = to_pdf <<~'EOS'
       = The Amazing
       Author Name
@@ -609,7 +609,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect to_file).to visually_match 'document-title-background-color.pdf'
     end
 
-    it 'should set background color when document has PDF cover page', visual: true do
+    it 'should set background color when document has PDF cover page' do
       pdf = to_pdf <<~'EOS', pdf_theme: { title_page_background_color: 'eeeeee' }
       = The Amazing
       Author Name
