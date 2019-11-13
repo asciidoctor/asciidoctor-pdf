@@ -238,6 +238,18 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       cover_page_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
       (expect (cover_page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
     end
+
+    it 'should be able to set size and position of title page background image', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'document-title-background-image-size-position.pdf'
+      = Document Title
+      :doctype: book
+      :title-page-background-image: image:tux.png[fit=none,position=bottom left]
+
+      content
+      EOS
+
+      (expect to_file).to visually_match 'document-title-background-image-size-position.pdf'
+    end
   end
 
   context 'article' do
