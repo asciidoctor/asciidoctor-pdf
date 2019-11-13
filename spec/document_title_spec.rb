@@ -157,7 +157,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       end
     end
 
-    it 'should set background image when document has image cover page' do
+    it 'should set background image of title page when document has image cover page' do
       pdf = to_pdf <<~'EOS'
       = The Amazing
       Author Name
@@ -183,7 +183,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       end
     end
 
-    it 'should set background image when document has PDF cover page' do
+    it 'should set background image of title page and body pages when document has PDF cover page' do
       pdf = to_pdf <<~'EOS'
       = The Amazing
       Author Name
@@ -215,7 +215,7 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect images_by_page[2..-1].map {|it| it[0].data }.uniq).to have_size 1
     end
 
-    it 'should not create extra blank page when document has cover page and page background' do
+    it 'should not create extra blank page when document has cover page and page background image' do
       image_data = File.binread fixture_file 'cover.jpg'
 
       pdf = to_pdf <<~'EOS'
