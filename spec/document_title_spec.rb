@@ -214,6 +214,30 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect images_by_page[1][0].data).not_to eql images_by_page[2][0].data
       (expect images_by_page[2..-1].map {|it| it[0].data }.uniq).to have_size 1
     end
+
+    it 'should not create extra blank page when document has cover page and page background' do
+      image_data = File.binread fixture_file 'cover.jpg'
+
+      pdf = to_pdf <<~'EOS'
+      = The Amazing
+      Author Name
+      :doctype: book
+      :front-cover-image: image:blue-letter.pdf[]
+      :title-page-background-image: image:cover.jpg[]
+      :page-background-image: image:tux.png[]
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      images_by_page = []
+      [0, 1].each_with_index do |expected_num_images, idx|
+        images = get_images pdf, idx.next
+        images_by_page << images
+        (expect images).to have_size expected_num_images
+      end
+      (expect images_by_page[1][0].data).to eql image_data
+      cover_page_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
+      (expect (cover_page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
+    end
   end
 
   context 'article' do
