@@ -205,8 +205,8 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect chapter_entry).not_to be_nil
       (expect chapter_entry[:title]).to eql 'Chapter'
       chapter_entry_children = chapter_entry[:children]
-      (expect chapter_entry[:children]).to have_size 3
-      toc_entry = chapter_entry[:children][1]
+      (expect chapter_entry_children).to have_size 3
+      toc_entry = chapter_entry_children[1]
       (expect toc_entry[:title]).to eql 'Table of Contents'
       (expect toc_entry[:dest][:label]).to eql '2'
     end
@@ -512,8 +512,8 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect section_entry).not_to be_nil
       (expect section_entry[:title]).to eql 'Section'
       section_entry_children = section_entry[:children]
-      (expect section_entry[:children]).to have_size 3
-      toc_entry = section_entry[:children][1]
+      (expect section_entry_children).to have_size 3
+      toc_entry = section_entry_children[1]
       (expect toc_entry[:title]).to eql 'Table of Contents'
       (expect toc_entry[:dest][:label]).to eql '1'
     end
