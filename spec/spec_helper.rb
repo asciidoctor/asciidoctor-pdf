@@ -552,10 +552,7 @@ RSpec::Matchers.define :visually_match do |reference_filename|
   match do |actual_path|
     # NOTE add this line to detect which tests use a visual match
     #warn caller.find {|it| it.include? '_spec.rb:' }
-    unless File.exist? reference_path
-      File.unlink actual_path unless ENV.key? 'DEBUG'
-      return false
-    end
+    return false unless File.exist? reference_path
     images_output_dir = output_file 'visual-comparison-workdir'
     Dir.mkdir images_output_dir unless Dir.exist? images_output_dir
     output_basename = File.join images_output_dir, (File.basename actual_path, '.pdf')
