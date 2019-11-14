@@ -986,8 +986,10 @@ Each time a theme is loaded, the keys are overlaid onto the keys from the previo
 
 The keys in the `role` category define custom roles for formatting.
 The name of the role is the first subkey level.
-The role name may not contain an underscore.
-The keys under the role are the concrete theming properties.
+The role name may contain a hyphen, but *a role name cannot contain an underscore*.
+The keys under the role are the theming properties.
+
+IMPORTANT: Custom roles only apply to inline phrases.
 
 Here's an example of a role for making text red:
 
@@ -1005,7 +1007,21 @@ This role can be used as follows:
 Error text is shown in [.red]#red#.
 ----
 
-Currently, custom roles only apply to inline phrases and only support changing the font properties.
+You can also use a role to unset a font color (to make it inherit):
+
+[source,yaml]
+----
+role:
+  heading-code:
+    font-color: ~
+----
+
+This role can be used as follows:
+
+[source,asciidoc]
+----
+== [.heading-code]`SELECT` clause
+----
 
 The converter provides several predefined roles.
 The `big` and `small` roles map the font size to the $base-font-size-large and $base-font-size-small values, respectively.
