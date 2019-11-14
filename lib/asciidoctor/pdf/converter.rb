@@ -685,11 +685,10 @@ class Converter < ::Prawn::Document
 
     if (margin_inner_val = @theme.prose_margin_inner) &&
         (next_block = (siblings = node.parent.blocks)[(siblings.index node) + 1]) && next_block.context == :paragraph
-      margin_bottom_val = margin_inner_val
+      margin_bottom margin_inner_val
     else
-      margin_bottom_val = @theme.prose_margin_bottom
+      margin_bottom @theme.prose_margin_bottom
     end
-    margin_bottom margin_bottom_val
   end
 
   def convert_admonition node
