@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 module Asciidoctor; module PDF
   class IndexCatalog
-    include Sanitizer
+    include ::Asciidoctor::PDF::TextTransformer
+
     LeadingAlphaRx = /^\p{Alpha}/
 
     attr_accessor :start_page_number

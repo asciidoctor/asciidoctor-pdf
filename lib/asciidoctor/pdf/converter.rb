@@ -14,6 +14,7 @@ require_relative 'ext/pdf-core'
 require_relative 'temporary_path'
 require_relative 'measurements'
 require_relative 'sanitizer'
+require_relative 'text_transformer'
 require_relative 'ext/prawn'
 require_relative 'formatted_text'
 require_relative 'pdfmark'
@@ -154,7 +155,7 @@ class Converter < ::Prawn::Document
       node.content
     elsif node.content_model != :compound && (string = node.content)
       # TODO this content could be cached on repeat invocations!
-      layout_prose string, opts
+      layout_prose string, (opts.merge hyphenate: true)
     end
     node.document.instance_variable_set :@converter, prev_converter if prev_converter
   end
@@ -344,6 +345,14 @@ class Converter < ::Prawn::Document
     @font_color = theme.base_font_color || '000000'
     @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
     @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
+    if (hyphen_lang = doc.attr 'hyphens')
+      hyphen_lang = doc.attr 'lang' if hyphen_lang.empty?
+      hyphen_lang = 'en_us' if hyphen_lang.nil_or_empty? || hyphen_lang == 'en'
+      hyphen_lang = (hyphen_lang.tr '-', '_').downcase
+      if (defined? ::Text::Hyphen) || !(Helpers.require_library 'text/hyphen', 'text-hyphen', :warn).nil?
+        @hyphenator = ::Text::Hyphen.new language: hyphen_lang
+      end
+    end
     @text_transform = nil
     @list_numerals = []
     @list_bullets = []
@@ -585,7 +594,7 @@ class Converter < ::Prawn::Document
       (title = doc.attr 'footnotes-title') && (layout_caption title, category: :footnotes)
       item_spacing = @theme.footnotes_item_spacing || 0
       fns.each do |fn|
-        layout_prose %(<a name="_footnotedef_#{index = fn.index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{index}</a>] #{fn.text}), margin_bottom: item_spacing
+        layout_prose %(<a name="_footnotedef_#{index = fn.index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{index}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
       end
       @footnotes += fns
     end
@@ -608,7 +617,7 @@ class Converter < ::Prawn::Document
           layout_prose node.title, align: (@theme.abstract_title_align || @base_align).to_sym, margin_top: (@theme.heading_margin_top || 0), margin_bottom: (@theme.heading_margin_bottom || 0), line_height: @theme.heading_line_height
         end if node.title?
         theme_font :abstract do
-          prose_opts = { line_height: @theme.abstract_line_height, align: (@theme.abstract_align || @base_align).to_sym }
+          prose_opts = { line_height: @theme.abstract_line_height, align: (@theme.abstract_align || @base_align).to_sym, hyphenate: true }
           if (text_indent = @theme.prose_text_indent)
             prose_opts[:indent_paragraphs] = text_indent
           end
@@ -652,7 +661,7 @@ class Converter < ::Prawn::Document
 
   def convert_paragraph node
     add_dest_for_block node if node.id
-    prose_opts = { margin_bottom: 0 }
+    prose_opts = { margin_bottom: 0, hyphenate: true }
     lead = (roles = node.roles).include? 'lead'
     if (align = resolve_alignment_from_role roles)
       prose_opts[:align] = align
@@ -943,7 +952,7 @@ class Converter < ::Prawn::Document
             convert_content_for_block node
           else # verse
             content = guard_indentation node.content
-            layout_prose content, normalize: false, align: :left
+            layout_prose content, normalize: false, align: :left, hyphenate: true
           end
         end
         if node.attr? 'attribution', nil, false
@@ -1410,14 +1419,14 @@ class Converter < ::Prawn::Document
       terms, desc = node
       [*terms].each {|term| layout_prose %(<em>#{term.text}</em>), (opts.merge margin_top: 0, margin_bottom: @theme.description_list_term_spacing) }
       if desc
-        layout_prose desc.text, opts if desc.text?
+        layout_prose desc.text, (opts.merge hyphenate: true) if desc.text?
         convert_content_for_block desc
       end
     else
       if (primary_text = node.text).nil_or_empty?
         layout_prose DummyText, opts unless node.blocks?
       else
-        layout_prose primary_text, opts
+        layout_prose primary_text, (opts.merge hyphenate: true)
       end
       convert_content_for_block node
     end
@@ -1953,8 +1962,10 @@ class Converter < ::Prawn::Document
       head_transform = resolve_text_transform :table_head_text_transform, nil
       row_data = []
       row.each do |cell|
+        cell_text = head_transform ? (transform_text cell.text.strip, head_transform) : cell.text.strip
+        cell_text = hyphenate_text cell_text, @hyphenator if defined? @hyphenator
         row_data << {
-          content: (head_transform ? (transform_text cell.text.strip, head_transform) : cell.text.strip),
+          content: cell_text,
           inline_format: [normalize: true],
           background_color: head_bg_color,
           text_color: (theme.table_head_font_color || theme.table_font_color || @font_color),
@@ -2065,6 +2076,7 @@ class Converter < ::Prawn::Document
         unless cell_data.key? :content
           cell_text = cell.text.strip
           cell_text = transform_text cell_text if cell_transform
+          cell_text = hyphenate_text cell_text, @hyphenator if defined? @hyphenator
           cell_text = cell_text.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
           if cell_text.include? LF
             # NOTE effectively the same as calling cell.content (should we use that instead?)
@@ -2836,6 +2848,7 @@ class Converter < ::Prawn::Document
     if (transform = resolve_text_transform opts)
       string = transform_text string, transform
     end
+    string = hyphenate_text string, @hyphenator if (opts.delete :hyphenate) && (defined? @hyphenator)
     # NOTE used by extensions; ensures linked text gets formatted using the link styles
     if (anchor = opts.delete :anchor)
       string = %(<a anchor="#{anchor}">#{string}</a>)
@@ -2899,7 +2912,8 @@ class Converter < ::Prawn::Document
           margin_bottom: margin[:bottom],
           align: (@theme[%(#{category_caption}_align)] || @theme.caption_align || @base_align).to_sym,
           normalize: false,
-          normalize_line_height: true
+          normalize_line_height: true,
+          hyphenate: true,
         }.merge(opts)
         if side == :top && (bb_color = @theme[%(#{category_caption}_border_bottom_color)] || @theme.caption_border_bottom_color)
           stroke_horizontal_rule bb_color

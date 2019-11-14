@@ -10,6 +10,7 @@ module Prawn
 module Extensions
   include ::Asciidoctor::PDF::Measurements
   include ::Asciidoctor::PDF::Sanitizer
+  include ::Asciidoctor::PDF::TextTransformer
 
   FontAwesomeIconSets = %w(fab far fas)
   IconSets = %w(fab far fas fi pf).to_set
@@ -433,6 +434,10 @@ module Extensions
     else
       text
     end
+  end
+
+  def hyphenate_text text, hyphenator
+    hyphenate_pcdata text, hyphenator
   end
 
   # Cursor
