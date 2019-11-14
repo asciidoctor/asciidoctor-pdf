@@ -265,6 +265,18 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-scale-to-fit-bounds.pdf'
     end
 
+    it 'should display text inside link' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      image::svg-with-link.svg[]
+      EOS
+
+      text = pdf.find_text 'Text with link'
+      (expect text).to have_size 1
+      (expect text[0][:font_name]).to eql 'mplus1mn-regular'
+      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_color]).to eql 'AA0000'
+    end
+
     it 'should map font names in SVG to font names in document font catalog' do
       pdf = to_pdf <<~'EOS', analyze: true
       image::svg-with-text.svg[]
