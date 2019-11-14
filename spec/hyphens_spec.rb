@@ -125,6 +125,20 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     (expect lines[0].count ?\u00ad).to eql 1
   end
 
+  it 'should apply hyphenation when line is advanced to next page' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { prose_margin_top: 700 }, analyze: true
+    = Document Title
+    :hyphens:
+
+    foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar paragraph
+    EOS
+
+    lines = pdf.lines pdf.find_text page_number: 2
+    (expect lines).to have_size 2
+    (expect lines[0]).to end_with %( para\u00ad)
+    (expect lines[1]).to eql 'graph'
+  end
+
   it 'should show visible hyphen at locate where word is split across lines', visual: true do
     to_file = to_pdf_file <<~'EOS', 'hyphens-word-break.pdf'
     :hyphens:

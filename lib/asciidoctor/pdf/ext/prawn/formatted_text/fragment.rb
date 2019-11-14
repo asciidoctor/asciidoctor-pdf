@@ -7,6 +7,12 @@ Prawn::Text::Formatted::Fragment.prepend (Module.new do
     @text = ''
   end
 
+  # Don't strip soft hyphens when repacking unretrieved fragments
+  def include_trailing_white_space!
+    @format_state.delete :normalized_soft_hyphen
+    super
+  end
+
   # Modify the built-in ascender write method to allow an override value to be
   # specified using the format_state hash.
   def ascender= val
