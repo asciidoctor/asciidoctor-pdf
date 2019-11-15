@@ -167,6 +167,24 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect lines[0]).to eql %(\uf085 Heading)
       (expect lines[1]).to eql %(See \uf085 Heading.)
     end
+
+    it 'should apply text transform to text' do
+      [
+        ['uppercase', 'here we go *again*', 'HERE WE GO AGAIN'],
+        ['lowercase', 'Here We Go *Again*', 'here we go again'],
+        ['capitalize', 'Here we go *again*', 'Here We Go Again'],
+      ].each do |(transform, before, after)|
+        pdf = to_pdf <<~EOS, pdf_theme: { heading_text_transform: transform }, analyze: true
+        == #{before}
+        EOS
+
+        lines = pdf.lines
+        (expect lines).to have_size 1
+        (expect lines[0]).to eql after
+        formatted_word = (pdf.find_text %r/again/i)[0]
+        (expect formatted_word[:font_name]).to eql 'NotoSerif-Bold'
+      end
+    end
   end
 
   context 'Roles' do

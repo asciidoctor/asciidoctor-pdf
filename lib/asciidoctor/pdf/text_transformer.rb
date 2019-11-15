@@ -25,6 +25,18 @@ module TextTransformer
     end
   end
 
+  def capitalize_words_pcdata string
+    if XMLMarkupRx.match? string
+      string.gsub(PCDATAFilterRx) { $2 ? (capitalize_words_mb $2) : $1 }
+    else
+      captialize_words_mb string
+    end
+  end
+
+  def capitalize_words_mb string
+    string.gsub(WordRx) { capitalize_mb $& }
+  end
+
   if RUBY_VERSION >= '2.4'
     def uppercase_mb string
       string.upcase
@@ -32,6 +44,10 @@ module TextTransformer
 
     def lowercase_mb string
       string.downcase
+    end
+
+    def capitalize_mb string
+      string.capitalize
     end
   # NOTE Unicode library is 4x as fast as ActiveSupport::MultiByte::Chars
   elsif defined? ::Unicode
@@ -41,6 +57,10 @@ module TextTransformer
 
     def lowercase_mb string
       string.ascii_only? ? string.downcase : (::Unicode.downcase string)
+    end
+
+    def capitalize_mb string
+      string.ascii_only? ? string.capitalize : (::Unicode.capitalize string)
     end
   elsif defined? ::ActiveSupport::Multibyte
     MultibyteChars = ::ActiveSupport::Multibyte::Chars
@@ -52,6 +72,10 @@ module TextTransformer
     def lowercase_mb string
       string.ascii_only? ? string.downcase : (MultibyteChars.new string).downcase.to_s
     end
+
+    def capitalize_mb string
+      string.ascii_only? ? string.capitalize : (MultibyteChars.new string).capitalize.to_s
+    end
   else
     def uppercase_mb string
       string.upcase
@@ -59,6 +83,10 @@ module TextTransformer
 
     def lowercase_mb string
       string.downcase
+    end
+
+    def capitalize_mb string
+      string.capitalize
     end
   end
 

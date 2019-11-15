@@ -431,6 +431,8 @@ module Extensions
       uppercase_pcdata text
     when :lowercase, 'lowercase'
       lowercase_mb text
+    when :capitalize, 'capitalize'
+      capitalize_words_pcdata text
     else
       text
     end
