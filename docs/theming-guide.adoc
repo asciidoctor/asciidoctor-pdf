@@ -465,6 +465,7 @@ The following transforms are recognized:
 
 * uppercase
 * lowercase
+* capitalize (each word, like CSS)
 * none (clears an inherited value)
 
 [CAUTION#transform-unicode-letters]
@@ -479,8 +480,6 @@ or
 
  $ gem install unicode
 ====
-
-// Additional transforms, such as capitalize, may be added in the future.
 
 === Colors
 
@@ -1502,7 +1501,7 @@ The keys in this category control the style of most headings, including part tit
 |<<text-transforms,Text transform>> +
 (default: _inherit_)
 |heading:
-  text-transform: uppercase
+  text-transform: capitalize
 
 |line-height
 |<<values,Number>> +
@@ -1591,7 +1590,7 @@ The keys in this category control the style of most headings, including part tit
 |<<text-transforms,Text transform>> +
 (default: $heading-text-transform)
 |heading:
-  h3-text-transform: lowercase
+  h3-text-transform: uppercase
 
 |margin-top
 |<<measurement-units,Measurement>> +
