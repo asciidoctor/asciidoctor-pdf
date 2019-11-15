@@ -437,7 +437,7 @@ module Extensions
   end
 
   def hyphenate_text text, hyphenator
-    hyphenate_pcdata text, hyphenator
+    hyphenate_words_pcdata text, hyphenator
   end
 
   # Cursor

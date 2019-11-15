@@ -62,7 +62,7 @@ module TextTransformer
     end
   end
 
-  def hyphenate_pcdata string, hyphenator
+  def hyphenate_words_pcdata string, hyphenator
     if XMLMarkupRx.match? string
       string.gsub(PCDATAFilterRx) { $2 ? (hyphenate_words $2, hyphenator) : $1 }
     else
