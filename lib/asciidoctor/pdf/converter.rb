@@ -2089,7 +2089,7 @@ class Converter < ::Prawn::Document
         end
         if node.document.attr? 'cellbgcolor'
           cell_bg_color = node.document.attr 'cellbgcolor'
-          cell_data[:background_color] = cell_bg_color == 'transparent' ? body_bg_color : (cell_bg_color.slice 1, cell_bg_color.length) 
+          cell_data[:background_color] = cell_bg_color == 'transparent' ? body_bg_color : (cell_bg_color.slice 1, cell_bg_color.length)
         end
         row_data << cell_data
       end

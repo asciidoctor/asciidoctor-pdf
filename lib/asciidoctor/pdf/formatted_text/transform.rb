@@ -332,7 +332,7 @@ class Transform
         fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : nval } if @theme_settings.key? class_name
         if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
           fragment[:callback] = ((fragment[:callback] || []) << TextBackgroundAndBorderRenderer).uniq
-        end 
+        end
       end
     end if attrs.key?(:class)
     fragment.delete(:styles) if styles.empty?

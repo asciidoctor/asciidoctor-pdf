@@ -100,7 +100,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       ....
       #{(['filler'] * 50).join ?\n}
       ....
-      
+
       start of page
       EOS
 
