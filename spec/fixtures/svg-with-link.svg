@@ -1,0 +1,7 @@
+<svg version="1.1" viewBox="0 0 200 20" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<a href="https://example.org" target="_top" xlink:show="new" xlink:title="Text with link" xlink:type="simple">
+<text x="1.5214844" y="14.561523" fill="#aa0000" font-size="12">
+<tspan x="1.5214844" dy="0" font-family="M+ 1mn">Text with link</tspan>
+</text>
+</a>
+</svg>
