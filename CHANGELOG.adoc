@@ -7,7 +7,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
-* hyphenate prose using the text-hyphen gem if the `hyphens` attribute is set (#20)
+* automatically hyphenate prose using the text-hyphen gem if the `hyphenate` attribute is set; set language using attribute value (#20)
 * fix AsciiDoc table cell from overflowing bounds of table and creating extra page (#1369)
 * don't double escape XML special characters in literal table cell (#1370)
 * use same line height throughout abstract

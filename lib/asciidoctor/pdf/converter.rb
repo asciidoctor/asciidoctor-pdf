@@ -345,12 +345,12 @@ class Converter < ::Prawn::Document
     @font_color = theme.base_font_color || '000000'
     @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
     @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
-    if (hyphen_lang = doc.attr 'hyphens')
-      hyphen_lang = doc.attr 'lang' if hyphen_lang.empty?
-      hyphen_lang = 'en_us' if hyphen_lang.nil_or_empty? || hyphen_lang == 'en'
-      hyphen_lang = (hyphen_lang.tr '-', '_').downcase
+    if (hyphenate_lang = doc.attr 'hyphenate')
+      hyphenate_lang = doc.attr 'lang' if hyphenate_lang.empty?
+      hyphenate_lang = 'en_us' if hyphenate_lang.nil_or_empty? || hyphenate_lang == 'en'
+      hyphenate_lang = (hyphenate_lang.tr '-', '_').downcase
       if (defined? ::Text::Hyphen) || !(Helpers.require_library 'text/hyphen', 'text-hyphen', :warn).nil?
-        @hyphenator = ::Text::Hyphen.new language: hyphen_lang
+        @hyphenator = ::Text::Hyphen.new language: hyphenate_lang
       end
     end
     @text_transform = nil

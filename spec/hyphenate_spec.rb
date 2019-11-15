@@ -1,9 +1,9 @@
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::PDF::Converter - Hyphens' do
-  it 'should hyphenate text in paragraph if hyphens attribute is set' do
+describe 'Asciidoctor::PDF::Converter - Hyphenate' do
+  it 'should hyphenate text in paragraph if hyphenate attribute is set' do
     pdf = to_pdf <<~'EOS', analyze: true
-    :hyphens:
+    :hyphenate:
 
     This story chronicles the inexplicable hazards and vicious beasts a team must conquer and vanquish.
     EOS
@@ -16,7 +16,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
 
   it 'should hyphenate text split across multiple lines' do
     pdf = to_pdf <<~'EOS', analyze: true
-    :hyphens:
+    :hyphenate:
 
     This story chronicles the
     inexplicable hazards and
@@ -30,9 +30,9 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     (expect lines[0].count ?\u00ad).to eql 1
   end
 
-  it 'should hyphenate text in table cell if hyphens attribute is set' do
+  it 'should hyphenate text in table cell if hyphenate attribute is set' do
     pdf = to_pdf <<~'EOS', analyze: true
-    :hyphens:
+    :hyphenate:
 
     |===
     |This story chronicles the inexplicable hazards and vicious beasts a team must conquer and vanquish.
@@ -45,9 +45,9 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     (expect lines[0].count ?\u00ad).to eql 1
   end
 
-  it 'should hyphenate text in a list item if hyphens attribute is set' do
+  it 'should hyphenate text in a list item if hyphenate attribute is set' do
     pdf = to_pdf <<~'EOS', analyze: true
-    :hyphens:
+    :hyphenate:
 
     * This story chronicles the inexplicable hazards and vicious beasts a team must conquer and vanquish.
     EOS
@@ -60,7 +60,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
 
   it 'should hyphenate formatted word' do
     pdf = to_pdf <<~'EOS', analyze: true
-    :hyphens:
+    :hyphenate:
 
     This story chronicles the inexplicable hazards and vicious beasts a team must conquer and *vanquish* on the journey to discover the true power of Open Source.
     EOS
@@ -80,7 +80,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     (expect {
       pdf = to_pdf <<~'EOS', analyze: true
       :icons: font
-      :hyphens:
+      :hyphenate:
 
       This story chronicles the inexplicable icon:biohazard@fas[] and vicious icon:paw@fas[] teams must conquer on the journey to discover the true power of Open Source.
       EOS
@@ -94,9 +94,9 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     }).to not_log_message
   end
 
-  it 'should set hyphenation language based on value of hyphens attribute' do
+  it 'should set hyphenation language based on value of hyphenate attribute' do
     pdf = to_pdf <<~'EOS', analyze: true
-    :hyphens: DE
+    :hyphenate: DE
 
     Mitwirkende sind immer willkommen.
     Neue Mitwirkende sind immer willkommen!
@@ -109,10 +109,10 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     (expect lines[0].count ?\u00ad).to eql 1
   end
 
-  it 'should set hyphenation language based on value of lang attribute if value of hyphens attribute is empty' do
+  it 'should set hyphenation language based on value of lang attribute if value of hyphenate attribute is empty' do
     pdf = to_pdf <<~'EOS', analyze: true
     :lang: DE
-    :hyphens:
+    :hyphenate:
 
     Mitwirkende sind immer willkommen.
     Neue Mitwirkende sind immer willkommen!
@@ -126,12 +126,12 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
   end
 
   it 'should show visible hyphen at locate where word is split across lines', visual: true do
-    to_file = to_pdf_file <<~'EOS', 'hyphens-word-break.pdf'
-    :hyphens:
+    to_file = to_pdf_file <<~'EOS', 'hyphenate-word-break.pdf'
+    :hyphenate:
 
     This story chronicles the inexplicable hazards and vicious beasts a team must conquer and vanquish.
     EOS
 
-    (expect to_file).to visually_match 'hyphens-word-break.pdf'
+    (expect to_file).to visually_match 'hyphenate-word-break.pdf'
   end
 end
