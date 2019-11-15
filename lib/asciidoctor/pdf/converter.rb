@@ -2732,7 +2732,7 @@ class Converter < ::Prawn::Document
         end
         move_down(@theme.title_page_authors_margin_bottom || 0)
       end
-      unless @theme.title_page_revision_display == 'none' || (revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact).empty?
+      unless @theme.title_page_revision_display == 'none' || (revision_info = [(doc.attr? 'productversion') ? %(#{doc.attr 'version-label'} #{doc.attr 'productversion'}) : nil, (doc.attr 'revdate')].compact).empty?
         move_down(@theme.title_page_revision_margin_top || 0)
         revision_text = revision_info.join (@theme.title_page_revision_delimiter || ', ')
         if (revremark = doc.attr 'revremark')
