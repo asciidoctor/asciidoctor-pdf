@@ -185,6 +185,16 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         (expect formatted_word[:font_name]).to eql 'NotoSerif-Bold'
       end
     end
+
+    it 'should not lowercase tags when applying lowercase text transform' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_text_transform: 'lowercase' }
+      ****
+      image:TuxTheLinuxPenguin.png[width=20] <= How this fella came to be the Linux mascot.
+      ****
+      EOS
+
+      (expect get_images pdf).to have_size 1
+    end
   end
 
   context 'Roles' do
