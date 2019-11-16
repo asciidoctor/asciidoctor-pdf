@@ -14,6 +14,7 @@ module PDF
 module TextTransformer
   XMLMarkupRx = /&#?[a-z\d]+;|</
   PCDATAFilterRx = /(&#?[a-z\d]+;|<[^>]+>)|([^&<]+)/
+  TagFilterRx = /(<[^>]+>)|([^<]+)/
   WordRx = /\S+/
   SoftHyphen = ?\u00ad
 
@@ -22,6 +23,14 @@ module TextTransformer
       string.gsub(PCDATAFilterRx) { $2 ? (uppercase_mb $2) : $1 }
     else
       uppercase_mb string
+    end
+  end
+
+  def lowercase_pcdata string
+    if string.include? '<'
+      string.gsub(TagFilterRx) { $2 ? (lowercase_mb $2) : $1 }
+    else
+      lowercase_mb string
     end
   end
 

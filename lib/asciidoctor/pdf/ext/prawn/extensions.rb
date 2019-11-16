@@ -430,7 +430,7 @@ module Extensions
     when :uppercase, 'uppercase'
       uppercase_pcdata text
     when :lowercase, 'lowercase'
-      lowercase_mb text
+      lowercase_pcdata text
     when :capitalize, 'capitalize'
       capitalize_words_pcdata text
     else
