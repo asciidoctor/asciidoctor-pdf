@@ -98,6 +98,8 @@ class Transform
         (accum[role] ||= {})[:styles] = to_styles theme[%(role_#{role}_font_style)], theme[%(role_#{role}_text_decoration)]
         accum
       end
+      @theme_settings['line-through'] = { styles: [:strikethrough].to_set } unless @theme_settings.key? 'line-through'
+      @theme_settings['underline'] = { styles: [:underline].to_set } unless @theme_settings.key? 'underline'
       unless @theme_settings.key? 'big'
         if (base_font_size_large = theme.base_font_size_large)
           @theme_settings['big'] = { size: %(#{(base_font_size_large / theme.base_font_size.to_f).round 4}em) }
@@ -119,6 +121,8 @@ class Transform
         key: { font: 'Courier', styles: [:italic].to_set },
         link: { color: '0000FF' },
         mark: { background_color: 'FFFF00', callback: [TextBackgroundAndBorderRenderer] },
+        'line-through' => { styles: [:strikethrough].to_set },
+        'underline' => { styles: [:underline].to_set },
         'big' => { size: '1.667em' },
         'small' => { size: '0.8333em' },
       }
@@ -323,16 +327,9 @@ class Transform
     end
     # TODO we could limit to select tags, but doesn't seem to really affect performance
     attrs[:class].split.each do |class_name|
-      case class_name
-      when 'underline'
-        styles << :underline
-      when 'line-through'
-        styles << :strikethrough
-      else
-        fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : nval } if @theme_settings.key? class_name
-        if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
-          fragment[:callback] = ((fragment[:callback] || []) << TextBackgroundAndBorderRenderer).uniq
-        end
+      if @theme_settings.key? class_name
+        fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : nval }
+        fragment[:callback] = ((fragment[:callback] || []) << TextBackgroundAndBorderRenderer).uniq if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
       end
     end if attrs.key?(:class)
     fragment.delete(:styles) if styles.empty?

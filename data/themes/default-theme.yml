@@ -53,6 +53,10 @@ base:
   border_radius: 4
   border_width: 0.5
 role:
+  line-through:
+    text_decoration: line-through
+  underline:
+    text_decoration: underline
   big:
     font_size: $base_font_size_large
   small:
