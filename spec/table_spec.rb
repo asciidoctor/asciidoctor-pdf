@@ -683,7 +683,6 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      p pdf.text
       lines = pdf.lines
       (expect lines).to have_size 4
       (expect lines[0]).to eql 'here'
