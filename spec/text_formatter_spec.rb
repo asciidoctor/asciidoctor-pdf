@@ -232,6 +232,23 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect underline[:to][:x] - underline[:from][:x]).to be > 45
     end
 
+    it 'should allow theme to override formatting for text decoration roles' do
+      pdf_theme = {
+        'role_line-through_text_decoration': 'none',
+        'role_line-through_font_color': 'AA0000',
+        'role_underline_text_decoration': 'none',
+        'role_underline_font_color': '0000AA',
+      }
+      input = '[.underline]#underline# and [.line-through]#line-through#'
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+      (expect pdf.lines).to be_empty
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      line_through_text = (pdf.find_text 'line-through')[0]
+      (expect line_through_text[:font_color]).to eql 'AA0000'
+      underline_text = (pdf.find_text 'underline')[0]
+      (expect underline_text[:font_color]).to eql '0000AA'
+    end
+
     it 'should support size roles (big and small) in default theme' do
       pdf_theme = build_pdf_theme
       (expect pdf_theme.role_big_font_size).to eql 13
@@ -244,7 +261,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[2][:font_size].to_f.round 2).to eql pdf_theme.base_font_size_small.to_f
     end
 
-    it 'should allow theme to override formatting for big and small roles' do
+    it 'should allow theme to override formatting for font size roles' do
       pdf_theme = {
         role_big_font_size: 12,
         role_big_font_style: 'bold',
@@ -260,7 +277,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[2][:font_name]).to eql 'NotoSerif-Italic'
     end
 
-    it 'should support size roles (big and small) using fallback values if not specified in theme' do
+    it 'should support font size roles (big and small) using fallback values if not specified in theme' do
       pdf_theme = build_pdf_theme({ base_font_size: 12 }, (fixture_file 'extends-nil-theme.yml'))
       pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: pdf_theme, analyze: true
       text = pdf.text

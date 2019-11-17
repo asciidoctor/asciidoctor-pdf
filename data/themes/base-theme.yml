@@ -21,6 +21,8 @@ base_font_style: normal
 base_line_height: 1.15
 base_border_color: 'EEEEEE'
 base_border_width: 0.5
+role_line-through_text_decoration: line-through
+role_underline_text_decoration: underline
 role_big_font_size: 14
 role_small_font_size: 10
 button_content: '[%s]'
