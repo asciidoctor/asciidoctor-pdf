@@ -298,7 +298,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       lines = pdf.lines pdf.find_text page_number: 2
       (expect lines).to have_size 5
       (expect lines[0]).to eql 'Table of Contents'
-      if asciidoctor_2_or_better?
+      if asciidoctor_1_5_7_or_better?
         (expect lines[1]).to start_with 'I: P1'
         (expect lines[3]).to start_with 'II: P2'
         (expect pdf.find_text 'Part I: P1').to have_size 1
