@@ -81,118 +81,120 @@ describe Asciidoctor::PDF::Converter do
       (expect doc.attr? 'data-uri').to be true
     end if asciidoctor_2_or_better?
 
-    it 'should apply the theme at the path specified by pdf-theme' do
-      %w(theme style).each do |term|
-        pdf = to_pdf <<~EOS, analyze: true
-        = Document Title
-        :pdf-#{term}: #{fixture_file 'red-theme.yml', relative: true}
-
-        red text
-        EOS
-
-        (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
-      end
-    end
-
-    it 'should only load theme from pdf-themesdir if pdf-theme attribute specified' do
-      %w(theme style).each do |term|
-        [nil, 'default'].each do |theme|
-          to_pdf_opts = { analyze: true }
-          to_pdf_opts[:attribute_overrides] = { %(pdf-#{term}) => theme } if theme
-          pdf = to_pdf <<~EOS, to_pdf_opts
+    context 'theme' do
+      it 'should apply the theme at the path specified by pdf-theme' do
+        %w(theme style).each do |term|
+          pdf = to_pdf <<~EOS, analyze: true
           = Document Title
-          :pdf-#{term}sdir: #{fixtures_dir}
+          :pdf-#{term}: #{fixture_file 'red-theme.yml', relative: true}
 
-          body text
+          red text
           EOS
 
-          expected_font_color = theme ? 'AA0000' : '333333'
-          body_text = (pdf.find_text 'body text')[0]
-          (expect body_text).not_to be_nil
-          (expect body_text[:font_color]).to eql expected_font_color
+          (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
         end
       end
-    end
 
-    it 'should apply the named theme specified by pdf-theme located in the specified pdf-themesdir' do
-      %w(theme style).each do |term|
-        pdf = to_pdf <<~EOS, analyze: true
+      it 'should only load theme from pdf-themesdir if pdf-theme attribute specified' do
+        %w(theme style).each do |term|
+          [nil, 'default'].each do |theme|
+            to_pdf_opts = { analyze: true }
+            to_pdf_opts[:attribute_overrides] = { %(pdf-#{term}) => theme } if theme
+            pdf = to_pdf <<~EOS, to_pdf_opts
+            = Document Title
+            :pdf-#{term}sdir: #{fixtures_dir}
+
+            body text
+            EOS
+
+            expected_font_color = theme ? 'AA0000' : '333333'
+            body_text = (pdf.find_text 'body text')[0]
+            (expect body_text).not_to be_nil
+            (expect body_text[:font_color]).to eql expected_font_color
+          end
+        end
+      end
+
+      it 'should apply the named theme specified by pdf-theme located in the specified pdf-themesdir' do
+        %w(theme style).each do |term|
+          pdf = to_pdf <<~EOS, analyze: true
+          = Document Title
+          :pdf-#{term}: red
+          :pdf-#{term}sdir: #{fixtures_dir}
+
+          red text
+          EOS
+
+          (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
+        end
+      end
+
+      it 'should use theme passed in through :pdf_theme option' do
+        theme = Asciidoctor::PDF::ThemeLoader.load_theme 'custom', fixtures_dir
+        pdf = Asciidoctor.convert 'content', backend: 'pdf', pdf_theme: theme
+        (expect pdf.instance_variable_get :@theme).to be theme
+      end
+
+      it 'should set themesdir theme with __dir__ is passed via :pdf_theme option' do
+        theme = Asciidoctor::PDF::ThemeLoader.load_base_theme
+        theme.delete_field :__dir__
+        pdf = Asciidoctor.convert 'content', backend: 'pdf', pdf_theme: theme
+        (expect pdf.instance_variable_get :@themesdir).to eql Dir.pwd
+      end
+
+      it 'should log error if theme cannot be found or loaded' do
+        (expect {
+          Asciidoctor.convert 'foo', backend: 'pdf', attributes: { 'pdf-theme' => 'foo' }
+        }).to (raise_exception Errno::ENOENT) & (log_message severity: :ERROR, message: '~could not locate or load the built-in pdf theme `foo\'')
+      end
+
+      it 'should not crash if theme does not specify any keys' do
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'extends-nil-empty-theme.yml') }, analyze: true
         = Document Title
-        :pdf-#{term}: red
-        :pdf-#{term}sdir: #{fixtures_dir}
+        :doctype: book
 
-        red text
+        This is the stark theme.
+
+        == Chapter Title
+
+        === Section Title
+
+        .dlist
+        term:: desc
+
+        .ulist
+        * one
+        * two
+        * three
         EOS
 
-        (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
+        (expect pdf.pages).to have_size 3
+        (expect pdf.find_text font_name: 'Helvetica', font_size: 12).to have_size pdf.text.size
+        (expect (pdf.find_text 'Document Title')[0]).not_to be_nil
+        (expect (pdf.find_text 'Chapter Title')[0]).not_to be_nil
+        (expect (pdf.find_text 'Section Title')[0]).not_to be_nil
+        (expect (pdf.find_text 'ulist')[0]).not_to be_nil
+        (expect (pdf.find_text 'one')[0]).not_to be_nil
       end
-    end
 
-    it 'should use theme passed in through :pdf_theme option' do
-      theme = Asciidoctor::PDF::ThemeLoader.load_theme 'custom', fixtures_dir
-      pdf = Asciidoctor.convert 'content', backend: 'pdf', pdf_theme: theme
-      (expect pdf.instance_variable_get :@theme).to be theme
-    end
-
-    it 'should set themesdir theme with __dir__ is passed via :pdf_theme option' do
-      theme = Asciidoctor::PDF::ThemeLoader.load_base_theme
-      theme.delete_field :__dir__
-      pdf = Asciidoctor.convert 'content', backend: 'pdf', pdf_theme: theme
-      (expect pdf.instance_variable_get :@themesdir).to eql Dir.pwd
-    end
-
-    it 'should log error if theme cannot be found or loaded' do
-      (expect {
-        Asciidoctor.convert 'foo', backend: 'pdf', attributes: { 'pdf-theme' => 'foo' }
-      }).to (raise_exception Errno::ENOENT) & (log_message severity: :ERROR, message: '~could not locate or load the built-in pdf theme `foo\'')
-    end
-
-    it 'should not crash if theme does not specify any keys' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'extends-nil-empty-theme.yml') }, analyze: true
-      = Document Title
-      :doctype: book
-
-      This is the stark theme.
-
-      == Chapter Title
-
-      === Section Title
-
-      .dlist
-      term:: desc
-
-      .ulist
-      * one
-      * two
-      * three
-      EOS
-
-      (expect pdf.pages).to have_size 3
-      (expect pdf.find_text font_name: 'Helvetica', font_size: 12).to have_size pdf.text.size
-      (expect (pdf.find_text 'Document Title')[0]).not_to be_nil
-      (expect (pdf.find_text 'Chapter Title')[0]).not_to be_nil
-      (expect (pdf.find_text 'Section Title')[0]).not_to be_nil
-      (expect (pdf.find_text 'ulist')[0]).not_to be_nil
-      (expect (pdf.find_text 'one')[0]).not_to be_nil
-    end
-
-    it 'should convert background position to options' do
-      converter = asciidoctor_2_or_better? ? (Asciidoctor::Converter.create 'pdf') : (Asciidoctor::Converter::Factory.create 'pdf')
-      {
-        'center' => { position: :center, vposition: :center },
-        'top' => { position: :center, vposition: :top },
-        'bottom' => { position: :center, vposition: :bottom },
-        'left' => { position: :left, vposition: :center },
-        'right' => { position: :right, vposition: :center },
-        'top left' => { position: :left, vposition: :top },
-        'right top' => { position: :right, vposition: :top },
-        'bottom left' => { position: :left, vposition: :bottom },
-        'right bottom' => { position: :right, vposition: :bottom },
-        'center right' => { position: :right, vposition: :center },
-        'left center' => { position: :left, vposition: :center },
-        'center center' => { position: :center, vposition: :center },
-      }.each do |value, expected|
-        (expect converter.resolve_background_position value).to eql expected
+      it 'should convert background position to options' do
+        converter = asciidoctor_2_or_better? ? (Asciidoctor::Converter.create 'pdf') : (Asciidoctor::Converter::Factory.create 'pdf')
+        {
+          'center' => { position: :center, vposition: :center },
+          'top' => { position: :center, vposition: :top },
+          'bottom' => { position: :center, vposition: :bottom },
+          'left' => { position: :left, vposition: :center },
+          'right' => { position: :right, vposition: :center },
+          'top left' => { position: :left, vposition: :top },
+          'right top' => { position: :right, vposition: :top },
+          'bottom left' => { position: :left, vposition: :bottom },
+          'right bottom' => { position: :right, vposition: :bottom },
+          'center right' => { position: :right, vposition: :center },
+          'left center' => { position: :left, vposition: :center },
+          'center center' => { position: :center, vposition: :center },
+        }.each do |value, expected|
+          (expect converter.resolve_background_position value).to eql expected
+        end
       end
     end
   end
