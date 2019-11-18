@@ -130,6 +130,7 @@ class Converter < ::Prawn::Document
       special_sectnums: AsciidoctorVersion >= (::Gem::Version.create '1.5.7'),
       syntax_highlighter: AsciidoctorVersion >= (::Gem::Version.create '2.0.0'),
     }
+    @initial_instance_variables = [:@initial_instance_variables] + instance_variables
   end
 
   def convert node, name = nil, opts = {}
@@ -303,6 +304,7 @@ class Converter < ::Prawn::Document
 
   # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
+    (instance_variables - @initial_instance_variables).each {|ivar| remove_instance_variable ivar } if state
     pdf_opts = build_pdf_options doc, (theme = load_theme doc)
     # QUESTION should page options be preserved? (otherwise, not readily available)
     #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }

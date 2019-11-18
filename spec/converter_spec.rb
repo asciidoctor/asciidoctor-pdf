@@ -51,6 +51,16 @@ describe Asciidoctor::PDF::Converter do
       (expect images).to have_size 1
     end
 
+    it 'should be able to reuse instance of converter' do
+      input_file = fixture_file 'book.adoc'
+      doc = Asciidoctor.load_file input_file, backend: 'pdf', safe: :safe, attributes: { 'reproducible' => '' }
+      converter = doc.converter
+      pdf_1 = doc.convert.render
+      doc = Asciidoctor.load_file input_file, backend: 'pdf', safe: :safe, attributes: { 'reproducible' => '' }, converter: converter
+      pdf_2 = doc.convert.render
+      (expect pdf_1).to eql pdf_2
+    end
+
     it 'should ensure data-uri attribute is set' do
       doc = Asciidoctor.load <<~'EOS', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
       image::logo.png[]
