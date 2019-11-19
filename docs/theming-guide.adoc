@@ -438,6 +438,14 @@ Text can be aligned as follows:
 * right
 * justify (stretched to each edge)
 
+==== Text Decorations
+
+The following decorations can be applied to text:
+
+* none (no decoration)
+* underline
+* line-through
+
 ==== Image Alignments
 
 Images can be aligned as follows:
@@ -1100,7 +1108,7 @@ You'll need to define these in your theme if you'd like to make use of them when
     font-style: bold
 
 |text-decoration
-|none {vbar} underline {vbar} line-through +
+|<<text-decorations,Text decoration>> +
 (default: none)
 |role:
   deleted:
@@ -1377,7 +1385,7 @@ The keys in this category are used to style hyperlink text.
   font-style: italic
 
 |text-decoration
-|none {vbar} underline {vbar} line-through +
+|<<text-decorations,Text decoration>> +
 (default: none)
 |link:
   text-decoration: underline
@@ -1498,7 +1506,7 @@ The keys in this category control the style of most headings, including part tit
   font-style: bold
 
 |text-decoration
-|none {vbar} underline {vbar} line-through +
+|<<text-decorations,Text decoration>> +
 (default: none)
 |heading:
   text-decoration: underline
@@ -3909,7 +3917,7 @@ The keys in this category control the arrangement and style of the table of cont
   font-style: bold
 
 |text-decoration
-|none {vbar} underline +
+|<<text-decorations,Text decoration>> +
 (default: none)
 |toc:
   text-decoration: underline

@@ -3043,8 +3043,7 @@ class Converter < ::Prawn::Document
           sect_title_format_override = {
             anchor: (sect_anchor = sect.attr 'pdf-anchor'),
             color: @font_color,
-            styles: ((@theme[%(toc_h#{sect.level + 1}_text_decoration)] || @theme.toc_text_decoration) == 'underline' ?
-                (font_styles << :underline) : font_styles)
+            styles: (text_decoration = TextDecorationTable[@theme[%(toc_h#{sect.level + 1}_text_decoration)] || @theme.toc_text_decoration]) ? (font_styles << text_decoration) : font_styles,
           }
           (sect_title_fragments = text_formatter.format sect_title).each do |fragment|
             fragment.update(sect_title_format_override) {|k, oval, nval| k == :styles ? (oval.merge nval) : oval }
