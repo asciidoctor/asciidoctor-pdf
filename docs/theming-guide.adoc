@@ -1497,6 +1497,12 @@ The keys in this category control the style of most headings, including part tit
 |heading:
   font-style: bold
 
+|text-decoration
+|none {vbar} underline {vbar} line-through +
+(default: none)
+|heading:
+  text-decoration: underline
+
 |text-transform
 |<<text-transforms,Text transform>> +
 (default: _inherit_)
@@ -3963,12 +3969,6 @@ The keys in this category control the arrangement and style of the table of cont
 (default: _inherit_)
 |toc:
   font-style: italic
-
-|text-decoration
-|none {vbar} underline +
-(default: _inherit_)
-|toc:
-  text-decoration: none
 
 |text-transform
 |<<text-transforms,Text transform>> +

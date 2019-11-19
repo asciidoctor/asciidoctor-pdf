@@ -19,6 +19,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow theme to configure content of entries in authors line on title page (#800)
 * allow theme to override styles of caption on admonition blocks (#561)
 * allow theme to configure hanging indent for titles in toc (#1153)
+* allow theme to configure text decoration of headings (#811)
 * define line-through and underline roles as built-in custom roles so they can be customized (#1393)
 * allow top value of logo and title on title page to be specified in any measurement unit
 * don't set a top value for the logo on the title page if not set in theme

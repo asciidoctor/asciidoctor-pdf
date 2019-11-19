@@ -54,6 +54,7 @@ class Converter < ::Prawn::Document
   }
   TextAlignmentNames = ['justify', 'left', 'center', 'right']
   TextAlignmentRoles = ['text-justify', 'text-left', 'text-center', 'text-right']
+  TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
   BlockAlignmentNames = ['left', 'center', 'right']
   AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
   ColumnPositions = [:left, :center, :right]
@@ -2833,9 +2834,15 @@ class Converter < ::Prawn::Document
     end
     outdent_section(opts.delete :outdent) do
       margin_top top_margin
+      # QUESTION should we move inherited styles to typeset_text?
+      if (text_decoration_style = TextDecorationTable[@theme[%(heading_h#{hlevel}_text_decoration)] || @theme.heading_text_decoration])
+        inline_format_opts = [{ inherited: { styles: [text_decoration_style].to_set } }]
+      else
+        inline_format_opts = true
+      end
       typeset_text string, calc_line_metrics((opts.delete :line_height) || (hlevel ? @theme[%(heading_h#{hlevel}_line_height)] : nil) || @theme.heading_line_height || @theme.base_line_height), {
         color: @font_color,
-        inline_format: true,
+        inline_format: inline_format_opts,
         align: @base_align.to_sym
       }.merge(opts)
       margin_bottom bot_margin

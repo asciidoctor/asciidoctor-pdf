@@ -87,6 +87,23 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.text[0][:string]).to eql '<TOM & JERRY>'
   end
 
+  it 'should underline section titles if text_decoration key in theme is set to underline' do
+    pdf_theme = { heading_text_decoration: 'underline' }
+    input = '== Section Title'
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+    lines = pdf.lines
+    (expect lines).to have_size 1
+    underline = lines[0]
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    text = pdf.text
+    (expect text).to have_size 1
+    underlined_text = text[0]
+    (expect underline[:from][:x]).to eql underlined_text[:x]
+    (expect underline[:from][:y]).to be_within(2).of(underlined_text[:y])
+    (expect underlined_text[:font_color]).to eql underline[:color]
+    (expect underline[:to][:x] - underline[:from][:x]).to be_within(2).of 140
+  end
+
   it 'should support hexidecimal character reference in section title' do
     pdf = to_pdf <<~'EOS', analyze: true
     == &#xb5;Services
