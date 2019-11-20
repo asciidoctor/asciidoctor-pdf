@@ -52,7 +52,7 @@ describe 'Asciidoctor::PDF::Optimizer' do
     (expect pdf_info[:Producer]).to include 'Ghostscript'
   end
 
-  it 'should not crash if quality passed to asciidoctor-pdf-optimizer CLI is no recognized', cli: true do
+  it 'should not crash if quality passed to asciidoctor-pdf-optimizer CLI is not recognized', cli: true do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-cli-fallback-quality.pdf'
     out, err, res = run_command asciidoctor_pdf_optimize_bin, '--quality', 'foobar', to_file
