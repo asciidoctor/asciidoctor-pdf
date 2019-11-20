@@ -24,6 +24,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow top value of logo and title on title page to be specified in any measurement unit
 * don't set a top value for the logo on the title page if not set in theme
 * if value of scripts attribute is cjk, break lines between any two CJK characters except punctuation in table cells (#1359) (*gasol*)
+* ignore invalid cellbgcolor value (#1396)
 * recommend installing prawn-gmagick gem if image format is unsupported
 * set cache_images option on SVG interface if cache-uri attribute is set on document (#223)
 * upgrade prawn-svg to fix display of links in plantuml diagrams (#1105)

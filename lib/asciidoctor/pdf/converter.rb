@@ -109,6 +109,7 @@ class Converter < ::Prawn::Document
   CjkLineBreakRx = /(?=[\u3000\u30a0-\u30ff\u3040-\u309f\p{Han}\uff00-\uffef])/
   WhitespaceChars = ' ' + TAB + LF
   ValueSeparatorRx = /;|,/
+  HexColorRx = /^#[a-fA-F0-9]{6}$/
   SourceHighlighters = ['coderay', 'pygments', 'rouge'].to_set
   PygmentsBgColorRx = /^\.highlight +{ *background: *#([^;]+);/
   ViewportWidth = ::Module.new
@@ -2091,8 +2092,11 @@ class Converter < ::Prawn::Document
           end
         end
         if node.document.attr? 'cellbgcolor'
-          cell_bg_color = node.document.attr 'cellbgcolor'
-          cell_data[:background_color] = cell_bg_color == 'transparent' ? body_bg_color : (cell_bg_color.slice 1, cell_bg_color.length)
+          if (cell_bg_color = node.document.attr 'cellbgcolor') == 'transparent'
+            cell_data[:background_color] = body_bg_color
+          elsif (cell_bg_color.start_with? '#') && (HexColorRx.match? cell_bg_color)
+            cell_data[:background_color] = cell_bg_color.slice 1, cell_bg_color.length
+          end
         end
         row_data << cell_data
       end
