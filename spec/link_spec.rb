@@ -68,4 +68,24 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       (expect pdf.lines).to eql ['Asciidoctor [https://asciidoctor.org] is a text processor.']
     end
   end
+
+  it 'should split revealed URL on breakable characters when media=print, media=prepress, or show-link-uri is set' do
+    inputs = [
+      'the URL on this line will get split on the ? char https://github.com/asciidoctor/asciidoctor/issues?|q=milestone%3Av2.0.x[link]',
+      'the URL on this line will get split on the / char instead https://github.com/asciidoctor/asciidoctor/|issues?q=milestone%3Av2.0.x[link]',
+      'the URL on this line will get split on the # char https://github.com/asciidoctor/asciidoctor/issues#|milestone%3Av2.0.x[link]',
+    ]
+    [{ 'media' => 'print' }, { 'media' => 'prepress' }, { 'show-link-uri' => '' }].each do |attribute_overrides|
+      inputs.each do |text|
+        before, after = text.split '|', 2
+        expected_before = before.sub 'https://', 'link [https://'
+        expected_after = after.sub '[link]', ']'
+        pdf = to_pdf %(#{before}#{after}), attribute_overrides: attribute_overrides, analyze: true
+        lines = pdf.lines
+        (expect lines).to have_size 2
+        (expect lines[0]).to end_with expected_before
+        (expect lines[1]).to start_with expected_after
+      end
+    end
+  end
 end
