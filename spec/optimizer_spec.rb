@@ -18,6 +18,28 @@ describe 'Asciidoctor::PDF::Optimizer' do
     (expect pdf_info[:Subject]).to eql 'Example'
   end
 
+  it 'should use existing pdfmark file if present when optimizing' do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    pdfmark_file = Pathname.new output_file 'optimizer-pdfmark.pdfmark'
+    pdfmark_file.write <<~EOS
+    [ /Title (All Your PDF Are Belong To Us)
+      /Author (CATS)
+      /Subject (Zero Wing)
+      /ModDate (D:19920101000000-00'00')
+      /CreationDate (D:19920101000000-00'00')
+      /Creator (Genesis)
+      /DOCINFO pdfmark
+    EOS
+    to_file = to_pdf_file input_file, 'optimizer-pdfmark.pdf', attribute_overrides: { 'optimize' => '' }
+    pdf = PDF::Reader.new to_file
+    pdf_info = pdf.info
+    (expect pdf_info[:Producer]).to include 'Ghostscript'
+    (expect pdf_info[:Title]).to eql 'All Your PDF Are Belong To Us'
+    (expect pdf_info[:Subject]).to eql 'Zero Wing'
+    (expect pdf_info[:Creator]).to eql 'Genesis'
+    pdfmark_file.unlink
+  end
+
   it 'should optimize output file using quality specified by value of optimize attribute' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_screen_file = to_pdf_file input_file, 'optimizer-screen.pdf', attribute_overrides: { 'optimize' => 'screen' }

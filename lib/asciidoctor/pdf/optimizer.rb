@@ -1,4 +1,5 @@
 require 'rghost'
+require 'tmpdir'
 
 module Asciidoctor
 module PDF
@@ -17,14 +18,23 @@ class Optimizer
   end
 
   def generate_file target
-    filename_o = (filename = Pathname.new target).sub_ext '-o.pdf'
-    pdfmark = filename.sub_ext '.pdfmark'
-    (::RGhost::Convert.new target).to :pdf,
-      filename: filename_o.to_s,
-      quality: @quality,
-      d: { Printed: false, CannotEmbedFontPolicy: '/Warning', CompatibilityLevel: @compatibility_level },
-      raw: pdfmark.file? ? pdfmark.to_s : nil
-    filename_o.rename target
+    ::Dir::Tmpname.create ['asciidoctor-pdf-', '.pdf'] do |tmpfile|
+      filename = Pathname.new target
+      filename_o = Pathname.new tmpfile
+      pdfmark = filename.sub_ext '.pdfmark'
+      inputs = pdfmark.file? ? [target, pdfmark.to_s] : target
+      (::RGhost::Convert.new inputs).to :pdf,
+        filename: filename_o.to_s,
+        quality: @quality,
+        d: { Printed: false, CannotEmbedFontPolicy: '/Warning', CompatibilityLevel: @compatibility_level }
+      begin
+        filename_o.rename target
+      rescue ::Errno::EXDEV
+        filename.binwrite filename_o.binread
+        filename_o.unlink
+      end
+    end
+    nil
   end
 end
 end

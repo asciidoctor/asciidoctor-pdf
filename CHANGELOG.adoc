@@ -29,6 +29,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * upgrade prawn-svg to fix display of links in plantuml diagrams (#1105)
 * allow icon set to be specified as prefix on target of icon macro (#1365)
 * write Unix epoch dates to pdfmark file in UTC when reproducible is set
+* fix optimizer so it applies pdfmark after reading input file
 * allow converter instance to be reused
 
 == 1.5.0.beta.7 (2019-10-29) - @mojavelinux
