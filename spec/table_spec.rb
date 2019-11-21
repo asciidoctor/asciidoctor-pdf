@@ -178,13 +178,24 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should allow value of cellbgcolor attribute in table cell to be transparent', visual: true do
       to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor.pdf'
-      :attribute-undefined: drop
-
       [%autowidth,cols=3*]
       |===
       | default background color
       | {set:cellbgcolor:#FF0000}red background color
       | {set:cellbgcolor:transparent}default background color again
+      |===
+      EOS
+
+      (expect to_file).to visually_match 'table-cellbgcolor.pdf'
+    end
+
+    it 'should ignore cellbgcolor attribute if not a valid hex color', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor-invalid.pdf'
+      [%autowidth,cols=3*]
+      |===
+      | {set:cellbgcolor:#f00}default background color
+      | {set:cellbgcolor:#ff0000}red background color
+      | {set:cellbgcolor:bogus}default background color again
       |===
       EOS
 
