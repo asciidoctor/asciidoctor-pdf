@@ -138,7 +138,6 @@ class Converter < ::Prawn::Document
   def convert node, name = nil, opts = {}
     method_name = %(convert_#{name ||= node.node_name})
     if respond_to? method_name
-      # NOTE we prepend the prefix "convert_" to avoid conflict with Prawn methods
       result = send method_name, node
     else
       # TODO delegate to convert_method_missing
