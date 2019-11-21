@@ -13,12 +13,7 @@ options = Asciidoctor::Cli::Options.new backend: 'pdf', header_footer: true
 # FIXME provide an API in Asciidoctor for sub-components to print version information
 unless ARGV != ['-v'] && (ARGV & ['-V', '--version']).empty?
   $stdout.write %(Asciidoctor PDF #{Asciidoctor::PDF::VERSION} using )
-  # NOTE the print_version method was added in Asciidoctor 1.5.2
-  if options.respond_to? :print_version
-    options.print_version
-  else
-    puts %(Asciidoctor #{::Asciidoctor::VERSION} [http://asciidoctor.org])
-  end
+  options.print_version
   exit 0
 end
 
