@@ -487,9 +487,12 @@ class Converter < ::Prawn::Document
     info[:Subject] = (doc.attr 'subject').as_pdf if doc.attr? 'subject'
     info[:Keywords] = (doc.attr 'keywords').as_pdf if doc.attr? 'keywords'
     info[:Producer] = (doc.attr 'publisher').as_pdf if doc.attr? 'publisher'
-    info[:Creator] = %(Asciidoctor PDF #{::Asciidoctor::PDF::VERSION}, based on Prawn #{::Prawn::VERSION}).as_pdf
-    info[:Producer] ||= (info[:Author] || info[:Creator])
-    unless doc.attr? 'reproducible'
+    if doc.attr? 'reproducible'
+      info[:Creator] = 'Asciidoctor PDF, based on Prawn'.as_pdf
+      info[:Producer] ||= (info[:Author] || info[:Creator])
+    else
+      info[:Creator] = %(Asciidoctor PDF #{::Asciidoctor::PDF::VERSION}, based on Prawn #{::Prawn::VERSION}).as_pdf
+      info[:Producer] ||= (info[:Author] || info[:Creator])
       # NOTE since we don't track the creation date of the input file, we map the ModDate header to the last modified
       # date of the input document and the CreationDate header to the date the PDF was produced by the converter.
       info[:ModDate] = (::Time.parse doc.attr 'docdatetime') rescue (now ||= ::Time.now)

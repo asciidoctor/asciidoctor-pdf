@@ -121,6 +121,17 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect pdf.info[:CreationDate]).to be_nil
     end
 
+    it 'should not add software versions to document if reproducible attribute is set' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'reproducible' => '' }
+      = Document Title
+      Author Name
+
+      content
+      EOS
+
+      (expect pdf.info[:Creator]).to eql 'Asciidoctor PDF, based on Prawn'
+    end
+
     it 'should set mod and creation dates to match SOURCE_DATE_EPOCH environment variable' do
       old_source_date_epoch = ENV.delete 'SOURCE_DATE_EPOCH'
       begin
