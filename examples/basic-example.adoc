@@ -1,14 +1,15 @@
 = Document Title
 Doc Writer <doc@example.com>
-:doctype: book
 :reproducible:
-//:source-highlighter: coderay
-:source-highlighter: rouge
 :listing-caption: Listing
+:source-highlighter: rouge
+:toc:
+// Uncomment next line to add a title page (or set doctype to book)
+//:title-page:
 // Uncomment next line to set page size (default is A4)
 //:pdf-page-size: Letter
 
-A simple http://asciidoc.org[AsciiDoc] document.
+An example of a basic http://asciidoc.org[AsciiDoc] document prepared by {author}.
 
 == Introduction
 
@@ -17,6 +18,9 @@ A paragraph followed by an unordered list{empty}footnote:[AsciiDoc supports unor
 [square]
 * item 1
 * item 2
+* item 3
+
+== Main
 
 Here's how you say "`Hello, World!`" in Prawn:
 
