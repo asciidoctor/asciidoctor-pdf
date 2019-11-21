@@ -24,6 +24,8 @@ class Transform
     'font_color' => :color,
     'font_family' => :font,
     'font_size' => :size,
+    'text_decoration_color' => :text_decoration_color,
+    'text_decoration_width' => :text_decoration_width,
   }
   #DummyText = ?\u0000
 
@@ -73,6 +75,8 @@ class Transform
           font: theme.link_font_family,
           size: theme.link_font_size,
           styles: (to_styles theme.link_font_style, theme.link_text_decoration),
+          text_decoration_color: theme.link_text_decoration_color,
+          text_decoration_width: theme.link_text_decoration_width,
         }.compact,
         mark: {
           color: theme.mark_font_color,
@@ -329,7 +333,9 @@ class Transform
     attrs[:class].split.each do |class_name|
       if @theme_settings.key? class_name
         fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : nval }
-        fragment[:callback] = ((fragment[:callback] || []) << TextBackgroundAndBorderRenderer).uniq if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
+        if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
+          fragment[:callback] = ((fragment[:callback] || []) << TextBackgroundAndBorderRenderer).uniq
+        end
       end
     end if attrs.key?(:class)
     fragment.delete(:styles) if styles.empty?

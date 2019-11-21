@@ -2842,7 +2842,12 @@ class Converter < ::Prawn::Document
       margin_top top_margin
       # QUESTION should we move inherited styles to typeset_text?
       if (text_decoration_style = TextDecorationTable[@theme[%(heading_h#{hlevel}_text_decoration)] || @theme.heading_text_decoration])
-        inline_format_opts = [{ inherited: { styles: [text_decoration_style].to_set } }]
+        inherited = {
+          styles: [text_decoration_style].to_set,
+          text_decoration_color: @theme[%(heading_h#{hlevel}_text_decoration_color)] || @theme.heading_text_decoration_color,
+          text_decoration_width: @theme[%(heading_h#{hlevel}_text_decoration_width)] || @theme.heading_text_decoration_width,
+        }.compact
+        inline_format_opts = [{ inherited: inherited }]
       else
         inline_format_opts = true
       end

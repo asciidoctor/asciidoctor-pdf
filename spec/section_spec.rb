@@ -104,6 +104,22 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect underline[:to][:x] - underline[:from][:x]).to be_within(2).of 140
   end
 
+  it 'should be able to adjust color and width of text decoration' do
+    pdf_theme = { heading_text_decoration: 'underline', heading_text_decoration_color: 'cccccc', heading_text_decoration_width: 0.5 }
+    input = '== Section Title'
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+    lines = pdf.lines
+    (expect lines).to have_size 1
+    underline = lines[0]
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    text = pdf.text
+    (expect text).to have_size 1
+    underlined_text = text[0]
+    (expect underlined_text[:font_color]).not_to eql underline[:color]
+    (expect underline[:color]).to eql 'CCCCCC'
+    (expect underline[:width]).to eql 0.5
+  end
+
   it 'should support hexidecimal character reference in section title' do
     pdf = to_pdf <<~'EOS', analyze: true
     == &#xb5;Services
