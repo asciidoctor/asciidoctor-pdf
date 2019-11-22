@@ -54,7 +54,7 @@ class Converter < ::Prawn::Document
   }
   TextAlignmentNames = ['justify', 'left', 'center', 'right']
   TextAlignmentRoles = ['text-justify', 'text-left', 'text-center', 'text-right']
-  TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
+  TextDecorationStyleTable = { 'underline' => :underline, 'line-through' => :strikethrough }
   BlockAlignmentNames = ['left', 'center', 'right']
   AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
   ColumnPositions = [:left, :center, :right]
@@ -2841,15 +2841,10 @@ class Converter < ::Prawn::Document
     outdent_section(opts.delete :outdent) do
       margin_top top_margin
       # QUESTION should we move inherited styles to typeset_text?
-      if (text_decoration_style = TextDecorationTable[@theme[%(heading_h#{hlevel}_text_decoration)] || @theme.heading_text_decoration])
-        inherited = {
-          styles: [text_decoration_style].to_set,
-          text_decoration_color: @theme[%(heading_h#{hlevel}_text_decoration_color)] || @theme.heading_text_decoration_color,
-          text_decoration_width: @theme[%(heading_h#{hlevel}_text_decoration_width)] || @theme.heading_text_decoration_width,
-        }.compact
-        inline_format_opts = [{ inherited: inherited }]
-      else
+      if (inherited = apply_text_decoration ::Set.new, :heading, hlevel).empty?
         inline_format_opts = true
+      else
+        inline_format_opts = [{ inherited: inherited }]
       end
       typeset_text string, calc_line_metrics((opts.delete :line_height) || (hlevel ? @theme[%(heading_h#{hlevel}_line_height)] : nil) || @theme.heading_line_height || @theme.base_line_height), {
         color: @font_color,
@@ -3050,14 +3045,11 @@ class Converter < ::Prawn::Document
           start_page_number = page_number
           start_cursor = cursor
           start_dots = nil
-          # NOTE use low-level text formatter to add anchor overlay without styling text as link & force color
-          sect_title_format_override = {
-            anchor: (sect_anchor = sect.attr 'pdf-anchor'),
-            color: @font_color,
-            styles: (text_decoration = TextDecorationTable[@theme[%(toc_h#{sect.level + 1}_text_decoration)] || @theme.toc_text_decoration]) ? (font_styles << text_decoration) : font_styles,
-          }
+          # NOTE use text formatter to add anchor overlay to avoid using inline format with synthetic anchor tag
+          sect_title_fragment_overrides = (apply_text_decoration font_styles, :toc, sect.level.next)
+            .merge anchor: (sect_anchor = sect.attr 'pdf-anchor'), color: @font_color
           (sect_title_fragments = text_formatter.format sect_title).each do |fragment|
-            fragment.update(sect_title_format_override) {|k, oval, nval| k == :styles ? (oval.merge nval) : oval }
+            fragment.update(sect_title_fragment_overrides) {|k, oval, nval| k == :styles ? (oval.merge nval) : oval }
           end
           pgnum_label_width = rendered_width_of_string pgnum_label
           indent hanging_indent, pgnum_label_width do
@@ -3614,6 +3606,18 @@ class Converter < ::Prawn::Document
 
   attr_reader :allow_uri_read
   attr_reader :cache_uri
+
+  def apply_text_decoration styles, category, level = nil
+    if (text_decoration_style = TextDecorationStyleTable[(level && @theme[%(#{category}_h#{level}_text_decoration)]) || @theme[%(#{category}_text_decoration)]])
+      {
+        styles: (styles << text_decoration_style),
+        text_decoration_color: (level && @theme[%(#{category}_h#{level}_text_decoration_color)]) || @theme[%(#{category}_text_decoration_color)],
+        text_decoration_width: (level && @theme[%(#{category}_h#{level}_text_decoration_width)]) || @theme[%(#{category}_text_decoration_width)],
+      }.compact
+    else
+      styles.empty? ? {} : { styles: styles }
+    end
+  end
 
   def resolve_text_transform key, use_fallback = true
     if (transform = ::Hash === key ? (key.delete :text_transform) : @theme[key.to_s])

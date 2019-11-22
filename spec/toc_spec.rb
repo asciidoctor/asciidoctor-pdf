@@ -592,6 +592,28 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect toc_entry_underline[:color]).to eql toc_entry_text[:font_color]
   end
 
+  it 'should allow theme to specify color and width of text decoration for entries in toc' do
+    pdf_theme = {
+      toc_text_decoration: 'underline',
+      toc_text_decoration_color: 'cccccc',
+      toc_text_decoration_width: 0.5,
+    }
+    input = <<~'EOS'
+    = Document Title
+    :toc:
+    :title-page:
+
+    == Underline Me
+    EOS
+
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+    lines = pdf.lines
+    (expect lines).to have_size 1
+    toc_entry_underline = lines[0]
+    (expect toc_entry_underline[:color]).to eql 'CCCCCC'
+    (expect toc_entry_underline[:width]).to eql 0.5
+  end
+
   it 'should decode character references in toc entries' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Document Title

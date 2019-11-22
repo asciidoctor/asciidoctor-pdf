@@ -3960,6 +3960,18 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   text-decoration: underline
 
+|text-decoration-color
+|<<colors,Color>> +
+(default: $toc-font-color)
+|toc
+  text-decoration-color: #cccccc
+
+|text-decoration-width
+|<<values,Number>> +
+(default: 1)
+|toc:
+  text-decoration-width: 0.5
+
 |text-transform
 |<<text-transforms,Text transform>> +
 (default: _inherit_)
