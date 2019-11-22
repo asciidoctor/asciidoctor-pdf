@@ -248,4 +248,23 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
     (expect (pdf.lines pdf.find_text page_number: 5).join ?\n).to include 'coming soon, 1-3'
   end
+
+  it 'should apply hanging indent to wrapped lines equal to twice level indent' do
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+    = Document Title
+
+    text(((searching,for fun and profit)))(((searching,when you have absolutely no clue where to begin)))
+
+    [index]
+    == Index
+    EOS
+
+    searching_text = (pdf.find_text page_number: 3, string: 'searching')[0]
+    fun_profit_text = (pdf.find_text page_number: 3, string: /^for fun/)[0]
+    begin_text = (pdf.find_text page_number: 3, string: /^begin/)[0]
+    left_margin = searching_text[:x]
+    level_indent = fun_profit_text[:x] - left_margin
+    hanging_indent = begin_text[:x] - fun_profit_text[:x]
+    (expect hanging_indent.round).to eql (level_indent * 2).round
+  end
 end

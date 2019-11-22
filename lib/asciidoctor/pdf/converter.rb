@@ -2366,7 +2366,10 @@ class Converter < ::Prawn::Document
       end
       text = %(#{text}, #{pagenums.join ', '})
     end
-    layout_prose text, align: :left, margin: 0, normalize_line_height: true
+    hanging_indent = @theme.description_list_description_indent * 2
+    indent hanging_indent do
+      layout_prose text, align: :left, margin: 0, normalize_line_height: true, indent_paragraphs: -hanging_indent
+    end
 
     term.subterms.each do |subterm|
       indent @theme.description_list_description_indent do
