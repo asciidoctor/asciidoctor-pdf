@@ -1150,7 +1150,7 @@ class Converter < ::Prawn::Document
         if (term_font_styles = font_styles).empty?
           term_inline_format = true
         else
-          term_inline_format = [normalize: false, inherited: { styles: term_font_styles }]
+          term_inline_format = [inherited: { styles: term_font_styles }]
         end
         term_line_metrics = calc_line_metrics @theme.description_list_term_line_height || @theme.base_line_height
         term_padding = [term_line_metrics.padding_top, 10, (@theme.prose_margin_bottom || 0) * 0.5 + term_line_metrics.padding_bottom, 10]
