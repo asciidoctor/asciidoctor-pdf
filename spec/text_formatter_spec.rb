@@ -249,6 +249,27 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect underline_text[:font_color]).to eql '0000AA'
     end
 
+    it 'should allow theme to set text decoration color and width' do
+      pdf_theme = {
+        'role_line-through_text_decoration_color': 'AA0000',
+        'role_line-through_text_decoration_width': 2,
+        'role_underline_text_decoration_color': '0000AA',
+        'role_underline_text_decoration_width': 0.5,
+      }
+      input = <<~'EOS'
+      [.underline]#underline#
+
+      [.line-through]#line-through#
+      EOS
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[0][:color]).to eql '0000AA'
+      (expect lines[0][:width]).to eql 0.5
+      (expect lines[1][:color]).to eql 'AA0000'
+      (expect lines[1][:width]).to eql 2
+    end
+
     it 'should support size roles (big and small) in default theme' do
       pdf_theme = build_pdf_theme
       (expect pdf_theme.role_big_font_size).to eql 13

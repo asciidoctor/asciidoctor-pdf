@@ -1113,6 +1113,20 @@ You'll need to define these in your theme if you'd like to make use of them when
 |role:
   deleted:
     text-decoration: line-through
+
+|text-decoration-color
+|<<colors,Color>> +
+(default: $role-<name>-font-color)
+|role:
+  deleted:
+    text-decoration-color: #ff0000
+
+|text-decoration-width
+|<<values,Number>> +
+(default: 1)
+|role:
+  underline:
+    text-decoration-width: 0.5
 |===
 
 [#keys-page]
@@ -1389,6 +1403,18 @@ The keys in this category are used to style hyperlink text.
 (default: none)
 |link:
   text-decoration: underline
+
+|text-decoration-color
+|<<colors,Color>> +
+(default: $link-font-color)
+|link:
+  text-decoration-color: #0000ff
+
+|text-decoration-width
+|<<values,Number>> +
+(default: 1)
+|link:
+  text-decoration-width: 0.5
 |===
 
 [#keys-literal]
@@ -1510,6 +1536,18 @@ The keys in this category control the style of most headings, including part tit
 (default: none)
 |heading:
   text-decoration: underline
+
+|text-decoration-color
+|<<colors,Color>> +
+(default: $heading-font-color)
+|heading:
+  text-decoration-color: #cccccc
+
+|text-decoration-width
+|<<values,Number>> +
+(default: 1)
+|heading:
+  text-decoration-width: 0.5
 
 |text-transform
 |<<text-transforms,Text transform>> +
