@@ -93,7 +93,7 @@ endif::[]
 == Highlights
 
 * Direct AsciiDoc to PDF conversion
-* <<docs/theming-guide.adoc,Configuration-driven theme (style and layout)>>
+* <<docs/theming-guide.adoc#,Configuration-driven theme (style and layout)>>
 * SVG support
 * PDF document outline (i.e., bookmarks)
 * Table of contents page(s)
