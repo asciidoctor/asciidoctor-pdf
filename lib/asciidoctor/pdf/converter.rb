@@ -3045,12 +3045,9 @@ class Converter < ::Prawn::Document
           start_page_number = page_number
           start_cursor = cursor
           start_dots = nil
+          sect_title_inherited = (apply_text_decoration ::Set.new, :toc, sect.level.next).merge anchor: (sect_anchor = sect.attr 'pdf-anchor'), color: @font_color
           # NOTE use text formatter to add anchor overlay to avoid using inline format with synthetic anchor tag
-          sect_title_fragment_overrides = (apply_text_decoration font_styles, :toc, sect.level.next)
-            .merge anchor: (sect_anchor = sect.attr 'pdf-anchor'), color: @font_color
-          (sect_title_fragments = text_formatter.format sect_title).each do |fragment|
-            fragment.update(sect_title_fragment_overrides) {|k, oval, nval| k == :styles ? (oval.merge nval) : oval }
-          end
+          sect_title_fragments = text_formatter.format sect_title, inherited: sect_title_inherited
           pgnum_label_width = rendered_width_of_string pgnum_label
           indent hanging_indent, pgnum_label_width do
             sect_title_fragments[-1][:callback] = (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
