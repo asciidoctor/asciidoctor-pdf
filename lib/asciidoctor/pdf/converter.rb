@@ -624,7 +624,7 @@ class Converter < ::Prawn::Document
         end if node.title?
         theme_font :abstract do
           prose_opts = { line_height: @theme.abstract_line_height, align: (@theme.abstract_align || @base_align).to_sym, hyphenate: true }
-          if (text_indent = @theme.prose_text_indent)
+          if (text_indent = @theme.prose_text_indent || 0) > 0
             prose_opts[:indent_paragraphs] = text_indent
           end
           # FIXME control more first_line_options using theme
@@ -673,7 +673,7 @@ class Converter < ::Prawn::Document
       prose_opts[:align] = align
     end
 
-    if (text_indent = @theme.prose_text_indent)
+    if (text_indent = @theme.prose_text_indent || 0) > 0
       prose_opts[:indent_paragraphs] = text_indent
     end
 
@@ -2366,11 +2366,7 @@ class Converter < ::Prawn::Document
       end
       text = %(#{text}, #{pagenums.join ', '})
     end
-    hanging_indent = @theme.description_list_description_indent * 2
-    indent hanging_indent do
-      layout_prose text, align: :left, margin: 0, normalize_line_height: true, indent_paragraphs: -hanging_indent
-    end
-
+    layout_prose text, align: :left, margin: 0, normalize_line_height: true, hanging_indent: @theme.description_list_description_indent * 2
     term.subterms.each do |subterm|
       indent @theme.description_list_description_indent do
         convert_index_list_item subterm
@@ -3032,17 +3028,15 @@ class Converter < ::Prawn::Document
     toc_font_info = theme_font :toc do
       { font: font, size: @font_size }
     end
-    hanging_indent = @theme.toc_hanging_indent || 0
     sections.each do |sect|
       theme_font :toc, level: (sect.level + 1) do
         sect_title = ZeroWidthSpace + (@text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title)
+        hanging_indent = @theme.toc_hanging_indent || 0
         # NOTE only write section title (excluding dots and page number) if this is a dry run
         if scratch?
           # FIXME use layout_prose
           # NOTE must wrap title in empty anchor element in case links are styled with different font family / size
-          indent hanging_indent do
-            typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true, indent_paragraphs: -hanging_indent
-          end
+          typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true, hanging_indent: hanging_indent
         else
           pgnum_label = ((sect.attr 'pdf-page-start') - num_front_matter_pages).to_s
           start_page_number = page_number
@@ -3052,9 +3046,9 @@ class Converter < ::Prawn::Document
           # NOTE use text formatter to add anchor overlay to avoid using inline format with synthetic anchor tag
           sect_title_fragments = text_formatter.format sect_title, inherited: sect_title_inherited
           pgnum_label_width = rendered_width_of_string pgnum_label
-          indent hanging_indent, pgnum_label_width do
+          indent 0, pgnum_label_width do
             sect_title_fragments[-1][:callback] = (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
-            typeset_formatted_text sect_title_fragments, line_metrics, indent_paragraphs: -hanging_indent
+            typeset_formatted_text sect_title_fragments, line_metrics, hanging_indent: hanging_indent
             start_dots = last_fragment_pos.right + hanging_indent
             last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
             # NOTE this will be incorrect if wrapped line is all monospace
@@ -3812,7 +3806,11 @@ class Converter < ::Prawn::Document
     move_down line_metrics.padding_top
     opts = { leading: line_metrics.leading, final_gap: line_metrics.final_gap }.merge opts
     string = string.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
-    if (first_line_opts = opts.delete :first_line_options)
+    if (hanging_indent = (opts.delete :hanging_indent) || 0) > 0
+      indent hanging_indent do
+        text string, (opts.merge indent_paragraphs: -hanging_indent)
+      end
+    elsif (first_line_opts = opts.delete :first_line_options)
       # TODO good candidate for Prawn enhancement!
       text_with_formatted_first_line string, first_line_opts, opts
     else
@@ -3824,7 +3822,14 @@ class Converter < ::Prawn::Document
   # QUESTION combine with typeset_text?
   def typeset_formatted_text fragments, line_metrics, opts = {}
     move_down line_metrics.padding_top
-    formatted_text fragments, { leading: line_metrics.leading, final_gap: line_metrics.final_gap }.merge(opts)
+    opts = { leading: line_metrics.leading, final_gap: line_metrics.final_gap }.merge opts
+    if (hanging_indent = (opts.delete :hanging_indent) || 0) > 0
+      indent hanging_indent do
+        formatted_text fragments, (opts.merge indent_paragraphs: -hanging_indent)
+      end
+    else
+      formatted_text fragments, opts
+    end
     move_down line_metrics.padding_bottom
   end
 
