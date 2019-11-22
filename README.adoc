@@ -160,7 +160,7 @@ ERROR:  While executing gem ... (Gem::FilePermissionError)
     You don't have write permissions for the /Library/Ruby/Gems/2.x.x directory.
 ....
 
-A better practice (and one that will ensure your sanity) is to ignore any version of Ruby installed on your system and use https://rvm.io[RVM] to manage the Ruby installation instead.
+A better practice (and one that will ensure your sanity) is to ignore any version of Ruby installed on your system and use {url-rvm}[RVM] to manage the Ruby installation instead.
 The benefit of this approach is that a) Ruby is guaranteed to be set up correctly, b) installing gems will in no way interfere with the operation of your system, and c) any bin scripts provided by the installed gems will be available on your PATH.
 All files are managed in user space (aka your home or user directory).
 If something gets messed up, you can simply remove the [.path]_$HOME/.rvm_ folder and start over.
