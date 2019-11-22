@@ -589,6 +589,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     toc_entry_text = (pdf.find_text page_number: 2, string: 'Underline Me')[0]
     (expect toc_entry_underline[:from][:x]).to eql toc_entry_text[:x]
     (expect toc_entry_underline[:from][:y]).to be_within(2).of(toc_entry_text[:y])
+    (expect toc_entry_underline[:color]).to eql toc_entry_text[:font_color]
   end
 
   it 'should decode character references in toc entries' do
