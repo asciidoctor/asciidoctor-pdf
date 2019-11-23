@@ -348,6 +348,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect to_file).to visually_match 'image-svg-with-missing-image.pdf'
     end
+
+    it 'should ignore inline option for SVG on image macro' do
+      pdf = to_pdf <<~'EOS', analyze: :rect
+      image::square.svg[pdfwidth=200pt,opts=inline]
+      EOS
+      (expect pdf.rectangles).to have_size 1
+      rect = pdf.rectangles[0]
+      (expect rect[:point]).to eql [48.24, 605.89]
+      (expect rect[:width]).to eql 200.0
+      (expect rect[:height]).to eql 200.0
+    end
   end
 
   context 'PNG' do
