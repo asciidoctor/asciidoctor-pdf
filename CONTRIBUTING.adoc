@@ -1,0 +1,60 @@
+= Contributing
+// Settings:
+:experimental:
+:idprefix:
+:idseparator: -
+// URLs:
+:url-project-repo: https://github.com/asciidoctor/asciidoctor-pdf
+:url-project-issues: {url-project-repo}/issues
+:url-project-list: https://discuss.asciidoctor.org
+
+In the spirit of free software, _everyone_ is encouraged to help improve this project.
+And we want you to help.
+Yes, _you!_
+
+== We Welcome Your Participation
+
+Keep in mind, *anyone* can contribute to an Asciidoctor project.
+If you have a specialty, or just some creativity to share, we welcome your participation.
+Contributing is _not_ just for developers.
+
+Of course, we'll always need help with the code as it's the basis of the project.
+But code isn't going to make the project successful alone.
+We also need documentation, automation, design, marketing, communication, advocacy and more for it to make an impact.
+
+== Ideas for Getting Involved
+
+Here are just a few of the ways you can contribute to the project:
+
+* Reporting bugs (_The easiest way to get started!_)
+* Sharing ideas on {url-project-list}
+* Suggesting new feature or improvements in the issue tracker
+* Speaking about the technology
+* Advocating for the technology
+* Assisting with design and/or UX (stylesheets, themes, logos, etc)
+* Conducting user studies and collecting feedback
+* Automating system administration tasks (releases, changelog, announcements, hosting, etc)
+* Writing, editing or maintaining the documentation
+* Organizing the content (information architecture & content strategy)
+* Using or extending the software in a creative way
+* Testing a prerelease, a pull request or master
+* Reviewing or providing feedback on pull requests
+* Writing code (_No patch is too small!_)
+** Fixing typos
+** Adding or revising comments or API docs
+** Fixing {url-project-issues}[issues]
+** Writing tests
+** Refactoring the code
+* Something we haven't suggested...seriously!
+
+The best way to get involved is just to show up and express your interest.
+We have a very friendly and encouraging culture.
+Harassment or offensive behavior is simply not tolerated.
+We are positive, even when being critical.
+We also strive to lift others up and help them be successful.
+We want your choice to participate in an Asciidoctor project be the start of an exciting and rewarding journey.
+So thanks for showing up!
+
+== Code Development
+
+If you want to write code, the <<CONTRIBUTING-CODE.adoc#,Contributing Code>> guide will help you to get started quickly.
