@@ -47,6 +47,21 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.text.map {|it| it.values_at :string, :font_name }).to eql expected_text
   end
 
+  it 'should not apply bold to italic text if headings are bold in theme' do
+    pdf_theme = {
+      heading_font_style: 'bold',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    == Get Started _Quickly_
+    EOS
+
+    text = pdf.text
+    (expect text).to have_size 2
+    (expect text[0][:font_name]).to eql 'NotoSerif-Bold'
+    (expect text[1][:font_name]).to eql 'NotoSerif-Italic'
+  end
+
   it 'should not add top margin to section title if it is positioned at the top of the page' do
     pdf = to_pdf '== Section Title', analyze: true
     y1 = (pdf.find_text 'Section Title')[0][:y]

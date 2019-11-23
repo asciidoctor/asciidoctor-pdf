@@ -569,6 +569,25 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect to_file).to visually_match 'toc-running-content-font-color.pdf'
   end
 
+  it 'should not apply bold to italic text if headings are bold in theme' do
+    pdf_theme = {
+      toc_font_style: 'bold',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == Get Started _Quickly_
+    EOS
+
+    get_started_text = (pdf.find_text page_number: 2, string: %r/^Get Started/)[0]
+    quickly_text = (pdf.find_text page_number: 2, string:  'Quickly')[0]
+    (expect get_started_text[:font_name]).to eql 'NotoSerif-Bold'
+    (expect quickly_text[:font_name]).to eql 'NotoSerif-Italic'
+  end
+
   it 'should allow theme to specify text decoration for entries in toc' do
     pdf_theme = {
       toc_text_decoration: 'underline',
