@@ -766,7 +766,7 @@ class Converter < ::Prawn::Document
           float do
             bounding_box [0, cursor], width: label_width, height: box_height do
               if icons == 'font'
-                # FIXME we're assume icon is a square
+                # FIXME we assume icon is square
                 icon_size = fit_icon_to_bounds icon_size
                 # NOTE Prawn's vertical center is not reliable, so calculate it manually
                 if label_valign == :center
