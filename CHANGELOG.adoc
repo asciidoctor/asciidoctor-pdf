@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 1.5.0.beta.8 (2019-11-23) - @mojavelinux
 
 * automatically hyphenate prose using the text-hyphen gem if the `hyphens` document attribute is set (#20)
 * set hyphenation language using the `hyphens` attribute value, falling back to the `lang` attribute (#20)
