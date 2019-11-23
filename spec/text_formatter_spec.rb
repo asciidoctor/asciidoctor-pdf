@@ -363,6 +363,29 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect underline[:to][:x] - underline[:from][:x]).to be > 45
     end
 
+    it 'should allow theme to set text decoration color and width for custom role' do
+      pdf_theme = {
+        'role_delete_text_decoration': 'line-through',
+        'role_delete_text_decoration_color': 'AA0000',
+        'role_delete_text_decoration_width': 2,
+        'role_important_text_decoration': 'underline',
+        'role_important_text_decoration_color': '0000AA',
+        'role_important_text_decoration_width': 0.5,
+      }
+      input = <<~'EOS'
+      [.important]#important#
+
+      [.delete]#delete#
+      EOS
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[0][:color]).to eql '0000AA'
+      (expect lines[0][:width]).to eql 0.5
+      (expect lines[1][:color]).to eql 'AA0000'
+      (expect lines[1][:width]).to eql 2
+    end
+
     it 'should allow custom role to specify relative font size' do
       pdf_theme = {
         heading_h2_font_size: 24,

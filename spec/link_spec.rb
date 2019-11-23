@@ -88,4 +88,33 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       end
     end
   end
+
+  it 'should apply text decoration to link defined by theme' do
+    pdf_theme = {
+      link_text_decoration: 'underline',
+    }
+    input = 'The home page for Asciidoctor is located at https://asciidoctor.org.'
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+    lines = pdf.lines
+    (expect lines).to have_size 1
+    underline = lines[0]
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :true
+    link_text = (pdf.find_text 'https://asciidoctor.org')[0]
+    (expect link_text[:font_color]).to eql underline[:color]
+    (expect underline[:width]).to be_nil
+  end
+
+  it 'should allow theme to set width and color of text decoration' do
+    pdf_theme = {
+      link_text_decoration: 'underline',
+      link_text_decoration_color: '0000FF',
+      link_text_decoration_width: 0.5,
+    }
+    pdf = to_pdf 'The home page for Asciidoctor is located at https://asciidoctor.org.', pdf_theme: pdf_theme, analyze: :line
+    lines = pdf.lines
+    (expect lines).to have_size 1
+    underline = lines[0]
+    (expect underline[:color]).to eql '0000FF'
+    (expect underline[:width]).to eql 0.5
+  end
 end
