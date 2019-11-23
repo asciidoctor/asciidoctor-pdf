@@ -303,7 +303,6 @@ class Converter < ::Prawn::Document
   # it the same as a full document.
   alias convert_embedded convert_document
 
-  # TODO only allow method to be called once (or we need a reset)
   def init_pdf doc
     (instance_variables - @initial_instance_variables).each {|ivar| remove_instance_variable ivar } if state
     pdf_opts = build_pdf_options doc, (theme = load_theme doc)
