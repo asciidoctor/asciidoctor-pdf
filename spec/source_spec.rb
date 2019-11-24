@@ -271,6 +271,22 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect text[conum_idx - 1][:string]).to eql ' '
       (expect text[conum_idx - 2][:string]).to eql '\'value\''
     end
+
+    it 'should support background color on highlighted tokens', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'source-pygments-token-background-color.pdf'
+      :source-highlighter: pygments
+      :pygments-style: colorful
+
+      [source,ruby]
+      ----
+      if /^#[a-fA-F0-9]{6}$/.match? color
+        puts 'hex color'
+      end
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-pygments-token-background-color.pdf'
+    end
   end if ENV.key? 'PYGMENTS_VERSION'
 
   context 'Callouts' do
