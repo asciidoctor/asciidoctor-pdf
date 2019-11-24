@@ -931,9 +931,14 @@ class Converter < ::Prawn::Document
       # TODO process abstract child even when partintro has multiple blocks
       convert_abstract node.blocks[0]
     else
-      add_dest_for_block node if node.id
-      layout_caption node.title if node.title?
-      convert_content_for_block node
+      doc = node.document
+      keep_together_if node.option? 'unbreakable' do
+        push_scratch doc if scratch?
+        add_dest_for_block node if node.id
+        layout_caption node.title if node.title?
+        convert_content_for_block node
+        pop_scratch doc if scratch?
+      end
     end
   end
 
