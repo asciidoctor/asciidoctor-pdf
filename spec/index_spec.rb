@@ -203,6 +203,34 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
   end
 
+  it 'should sort terms in index, ignoring case' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+    :doctype: book
+
+    == Chapter A
+
+    ((AsciiDoc)) is a lightweight markup language.
+    It is used for content ((authoring)).
+
+    == Chapter B
+
+    ((Asciidoctor)) is an AsciiDoc processor.
+    
+    == Chapter C
+
+    If an element has an ((anchor)), you can link to it.
+
+    [index]
+    == Index
+    EOS
+
+    index_pagenum = (pdf.find_text 'Index')[0][:page_number]
+    index_page_lines = pdf.lines pdf.find_text page_number: index_pagenum
+    terms = index_page_lines.select {|it| it.include? ',' }.map {|it| (it.split ',', 2)[0] }
+    (expect terms).to eql ['anchor', 'AsciiDoc', 'Asciidoctor', 'authoring']
+  end
+
   it 'should not combine range if same index entry occurs on sequential pages when media is screen' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title

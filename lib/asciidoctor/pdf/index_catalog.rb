@@ -95,7 +95,7 @@ module Asciidoctor; module PDF
     end
 
     def <=> other
-      @name <=> other.name
+      (val = @name.casecmp other.name) == 0 ? @name <=> other.name : val
     end
   end
 
