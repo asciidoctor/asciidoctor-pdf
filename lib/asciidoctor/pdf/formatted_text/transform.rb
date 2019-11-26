@@ -14,6 +14,7 @@ class Transform
     quot: ?",
   }
   CharRefRx = /&(?:(#{CharEntityTable.keys.join ?|})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
+  HexColorRx = /^#[a-fA-F0-9]{6}$/
   TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
   ThemeKeyToFragmentProperty = {
     'background_color' => :background_color,
@@ -303,13 +304,13 @@ class Transform
         pname, pvalue = style.split(':', 2)
         case pname
         when 'color'
-          # QUESTION should we check whether the value is a valid hex color?
+          # TODO check whether the value is a valid hex color?
           unless fragment[:color]
             case pvalue.length
             when 6
               fragment[:color] = pvalue
             when 7
-              fragment[:color] = pvalue.slice(1, 6) if pvalue.start_with?('#')
+              fragment[:color] = pvalue.slice(1, 6) if pvalue.start_with? '#'
             # QUESTION should we support the 3 character form?
             #when 3
             #  fragment[:color] = pvalue.each_char.map {|c| c * 2 }.join
@@ -324,6 +325,12 @@ class Transform
         when 'font-style'
           if pvalue == 'italic'
             styles << :italic
+          end
+        # background-color needed to support syntax highlighters
+        when 'background-color'
+          if (pvalue.start_with? '#') && (HexColorRx.match? pvalue)
+            fragment[:background_color] = pvalue.slice 1, pvalue.length
+            fragment[:callback] = ((fragment[:callback] || []) << TextBackgroundAndBorderRenderer).uniq
           end
         # TODO text-transform
         end
