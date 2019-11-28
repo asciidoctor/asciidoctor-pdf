@@ -464,7 +464,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect content_text[:page_number]).to eql 2
   end
 
-  it 'should not add break before chapter if break-before key in theme is auto' do
+  it 'should not add break before chapter if heading-chapter-break-before key in theme is auto' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_chapter_break_before: 'auto' }, analyze: true
     = Document Title
     :doctype: book
@@ -480,7 +480,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect chapter_b_text[:page_number]).to eql 2
   end
 
-  it 'should not add break before part if break-before key in theme is auto' do
+  it 'should not add break before part if heading-part-break-before key in theme is auto' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_part_break_before: 'auto', heading_chapter_break_before: 'auto' }, analyze: true
     = Document Title
     :doctype: book
