@@ -500,7 +500,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect part_2_text[:page_number]).to eql 2
   end
 
-  it 'should add break after part if break-after key in theme is always' do
+  it 'should add break after part if heading-part-break-after key in theme is always' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_part_break_after: 'always', heading_chapter_break_before: 'auto' }, analyze: true
     = Document Title
     :doctype: book
