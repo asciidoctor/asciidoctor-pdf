@@ -397,7 +397,7 @@ class Converter < ::Prawn::Document
   def build_pdf_options doc, theme
     case (page_margin = (doc.attr 'pdf-page-margin') || theme.page_margin)
     when ::Array
-      page_margin = page_margin[0..3] if page_margin.length > 4
+      page_margin = page_margin.slice 0, 4 if page_margin.length > 4
       page_margin = page_margin.map {|v| ::Numeric === v ? v : (str_to_pt v.to_s) }
     when ::Numeric
       page_margin = [page_margin]
@@ -405,11 +405,11 @@ class Converter < ::Prawn::Document
       if page_margin.empty?
         page_margin = nil
       elsif (page_margin.start_with? '[') && (page_margin.end_with? ']')
-        if (page_margin = page_margin[1...-1].rstrip).empty?
+        if (page_margin = (page_margin.slice 1, page_margin.size - 1).rstrip).empty?
           page_margin = [0]
         else
           if (page_margin = page_margin.split ',', -1).length > 4
-            page_margin = page_margin[0..3]
+            page_margin = page_margin.slice 0, 4
           end
           page_margin = page_margin.map {|v| str_to_pt v.rstrip }
         end
@@ -442,9 +442,7 @@ class Converter < ::Prawn::Document
         page_size
       end
     when ::Array
-      unless page_size.size == 2
-        page_size = page_size[0..1].fill(0..1) {|i| page_size[i] || 0}
-      end
+      page_size = (page_size.slice 0, 2).fill(0..1) {|i| page_size[i] || 0 } unless page_size.size == 2
       page_size.map do |dim|
         if ::Numeric === dim
           # dimension cannot be less than 0
@@ -1736,7 +1734,7 @@ class Converter < ::Prawn::Document
       source_string, conum_mapping = extract_conums source_string
       srclang = node.attr 'language', 'text', false
       begin
-        ::CodeRay::Scanners[(srclang = (srclang.start_with? 'html+') ? srclang[5..-1].to_sym : srclang.to_sym)]
+        ::CodeRay::Scanners[(srclang = (srclang.start_with? 'html+') ? (srclang.slice 5, srclang.length).to_sym : srclang.to_sym)]
       rescue ::ArgumentError
         srclang = :text
       end
@@ -2790,8 +2788,9 @@ class Converter < ::Prawn::Document
   end
 
   def stamp_foreground_image doc, has_front_cover
-    if (first_page = (has_front_cover ? state.pages[1..-1] : state.pages).find {|it| !it.imported_page? }) &&
-        (first_page_num = (state.pages.index first_page) + 1) &&
+    pages = state.pages
+    if (first_page = (has_front_cover ? (pages.slice 1, pages.size) : pages).find {|it| !it.imported_page? }) &&
+        (first_page_num = (pages.index first_page) + 1) &&
         (fg_image = resolve_background_image doc, @theme, 'page-foreground-image') && fg_image[0]
       go_to_page first_page_num
       create_stamp 'foreground-image' do
@@ -3378,19 +3377,19 @@ class Converter < ::Prawn::Document
       colspec_dict = PageSides.reduce({}) do |acc, side|
         side_trim_content_width = trim_content_width[side]
         if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)] || @theme[%(#{periphery}_columns)])
-          case (colspecs = (custom_colspecs.to_s.tr ',', ' ').split[0..2]).size
-          when 3
-            colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
-          when 2
-            colspecs = { left: colspecs[0], center: '0', right: colspecs[1] }
+          case (colspecs = (custom_colspecs.to_s.tr ',', ' ').split).size
           when 0, 1
             colspecs = { left: '0', center: colspecs[0] || '100', right: '0' }
+          when 2
+            colspecs = { left: colspecs[0], center: '0', right: colspecs[1] }
+          else # 3
+            colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
           end
           tot_width = 0
           side_colspecs = colspecs.map {|col, spec|
             if (alignment_char = spec.chr).to_i.to_s != alignment_char
               alignment = AlignmentTable[alignment_char] || :left
-              rel_width = spec[1..-1].to_f
+              rel_width = (spec.slice 1, spec.length).to_f
             else
               alignment = :left
               rel_width = spec.to_f
@@ -3948,7 +3947,7 @@ class Converter < ::Prawn::Document
 
   def resolve_alignment_from_role roles
     if (align_role = roles.reverse.find {|r| TextAlignmentRoles.include? r })
-      align_role[5..-1].to_sym
+      (align_role.slice 5, align_role.length).to_sym
     else
       nil
     end

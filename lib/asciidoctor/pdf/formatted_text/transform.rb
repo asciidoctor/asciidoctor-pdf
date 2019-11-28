@@ -228,12 +228,12 @@ class Transform
       if (rgb = attrs[:rgb])
         case rgb.chr
         when '#'
-          fragment[:color] = rgb[1..-1]
+          fragment[:color] = rgb.slice 1, rgb.length
         when '['
           # treat value as CMYK array (e.g., "[50, 100, 0, 0]")
-          fragment[:color] = rgb[1..-1].chomp(']').split(', ').map(&:to_i)
+          fragment[:color] = rgb.slice(1, rgb.length).chomp(']').split(', ').map(&:to_i)
           # ...or we could honor an rgb array too
-          #case (vals = rgb[1..-1].chomp(']').split(', ')).size
+          #case (vals = rgb.slice(1, rgb.length).chomp(']').split(', ')).size
           #when 4
           #  fragment[:color] = vals.map(&:to_i)
           #when 3

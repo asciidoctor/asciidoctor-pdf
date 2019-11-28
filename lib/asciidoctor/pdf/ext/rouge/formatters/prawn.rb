@@ -149,7 +149,7 @@ class Prawn < Formatter
     if (normalized = @normalized_colors[raw])
       normalized
     else
-      normalized = (raw.start_with? '#') ? raw[1..-1] : raw
+      normalized = (raw.start_with? '#') ? (raw.slice 1, raw.length) : raw
       normalized = normalized.each_char.map {|c| c * 2 }.join if normalized.length == 3
       @normalized_colors[raw] = normalized
     end

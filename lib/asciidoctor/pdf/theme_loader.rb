@@ -293,7 +293,7 @@ class ThemeLoader
       value.each_char.map {|c| c * 2 }.join
     else
       # truncate or pad with leading zeros (e.g., ff -> 0000ff)
-      value[0..5].rjust 6, '0'
+      (value.slice 0, 6).rjust 6, '0'
     end
     HexColorValue.new value.upcase
   end
