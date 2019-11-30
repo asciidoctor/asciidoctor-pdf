@@ -597,7 +597,7 @@ class Converter < ::Prawn::Document
       (title = doc.attr 'footnotes-title') && (layout_caption title, category: :footnotes)
       item_spacing = @theme.footnotes_item_spacing || 0
       fns.each do |fn|
-        layout_prose %(<a name="_footnotedef_#{index = fn.index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{index}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
+        layout_prose %(<a id="_footnotedef_#{index = fn.index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{index}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
       end
       @footnotes += fns
     end
@@ -2421,7 +2421,7 @@ class Converter < ::Prawn::Document
     when :ref
       # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
       # NOTE id is used instead of target starting in Asciidoctor 2.0.0
-      %(<a name="#{node.target || node.id}">#{DummyText}</a>)
+      %(<a id="#{node.target || node.id}">#{DummyText}</a>)
     when :bibref
       # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
       # NOTE technically node.text should be node.reftext, but subs have already been applied to text
@@ -2432,7 +2432,7 @@ class Converter < ::Prawn::Document
       else
         reftext = %([#{node.target || node.id}])
       end
-      %(<a name="#{node.target || node.id}">#{DummyText}</a>#{reftext})
+      %(<a id="#{node.target || node.id}">#{DummyText}</a>#{reftext})
     else
       logger.warn %(unknown anchor type: #{node.type.inspect})
     end
@@ -2457,7 +2457,7 @@ class Converter < ::Prawn::Document
 
   def convert_inline_footnote node
     if (index = node.attr 'index') && (node.document.footnotes.find {|fn| fn.index == index })
-      anchor = node.type == :xref ? '' : %(<a name="_footnoteref_#{index}">#{DummyText}</a>)
+      anchor = node.type == :xref ? '' : %(<a id="_footnoteref_#{index}">#{DummyText}</a>)
       %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{index}</a>]</sup>)
     elsif node.type == :xref
       # NOTE footnote reference not found
@@ -2559,7 +2559,7 @@ class Converter < ::Prawn::Document
         anchor: (anchor_name = @index.next_anchor_name)
         # NOTE page number is added in InlineDestinationMarker
       }
-      anchor = %(<a name="#{anchor_name}" type="indexterm">#{DummyText}</a>)
+      anchor = %(<a id="#{anchor_name}" type="indexterm">#{DummyText}</a>)
       if node.type == :visible
         @index.store_primary_term(sanitize(visible_term = node.text), dest)
         %(#{anchor}#{visible_term})
@@ -2624,7 +2624,7 @@ class Converter < ::Prawn::Document
     end
 
     # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
-    node.id ? %(<a name="#{node.id}">#{DummyText}</a>#{quoted_text}) : quoted_text
+    node.id ? %(<a id="#{node.id}">#{DummyText}</a>#{quoted_text}) : quoted_text
   end
 
   def layout_title_page doc

@@ -281,7 +281,7 @@ class Transform
           fragment[:link] = value.include?(';') ? value.gsub(CharRefRx) {
             $1 ? CharEntityTable[$1.to_sym] : [$2 ? $2.to_i : ($3.to_i 16)].pack('U1')
           } : value
-        elsif (value = attrs[:name])
+        elsif (value = attrs[:id] || attrs[:name])
           # NOTE text is null character, which is used as placeholder text so Prawn doesn't drop fragment
           fragment[:name] = value
           if (type = attrs[:type])
