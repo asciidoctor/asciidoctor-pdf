@@ -12,6 +12,37 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     (expect fragments[0][:styles]).to eql [:bold].to_set
   end
 
+  it 'should create fragment for sup text' do
+    input = 'x<sup>2</sup>'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 2
+    (expect fragments[0][:text]).to eql 'x'
+    (expect fragments[1][:text]).to eql '2'
+    (expect fragments[1][:styles].to_a).to eql [:superscript]
+  end
+
+  it 'should create fragment for sub text' do
+    input = 'H<sub>2</sub>O'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 3
+    (expect fragments[0][:text]).to eql 'H'
+    (expect fragments[1][:text]).to eql '2'
+    (expect fragments[1][:styles].to_a).to eql [:subscript]
+    (expect fragments[2][:text]).to eql 'O'
+  end
+
+  it 'should create fragment for del text' do
+    input = '<del>old</del>new'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 2
+    (expect fragments[0][:text]).to eql 'old'
+    (expect fragments[0][:styles].to_a).to eql [:strikethrough]
+    (expect fragments[1][:text]).to eql 'new'
+  end
+
   it 'should not merge adjacent text nodes by default' do
     input = 'foo<br>bar'
     parsed = parser.parse input
