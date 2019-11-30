@@ -14,8 +14,13 @@ class QuantifiableStdout < SimpleDelegator
     super
   end
 
+  def << content
+    @size += content.to_s.bytesize
+    super
+  end
+
   def write content
-    @size += content.bytesize
+    @size += content.to_s.bytesize
     super
   end
 end
