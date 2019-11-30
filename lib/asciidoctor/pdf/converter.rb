@@ -147,7 +147,7 @@ class Converter < ::Prawn::Document
     ::Asciidoctor::Inline === node ? result : self
   end
 
-  def convert_content_for_block node, opts = {}
+  def traverse node, opts = {}
     if self != (prev_converter = node.document.converter)
       node.document.instance_variable_set :@converter, self
     else
@@ -255,7 +255,7 @@ class Converter < ::Prawn::Document
 
       convert_section generate_manname_section doc if doc.doctype == 'manpage' && (doc.attr? 'manpurpose')
 
-      convert_content_for_block doc
+      traverse doc
 
       # NOTE for a book, these are leftover footnotes; for an article this is everything
       outdent_section { layout_footnotes doc }
@@ -567,7 +567,7 @@ class Converter < ::Prawn::Document
     if sect.sectname == 'index'
       outdent_section { convert_index_section sect }
     else
-      convert_content_for_block sect
+      traverse sect
     end
     outdent_section { layout_footnotes sect } if type == :chapter
     sect.set_attr 'pdf-page-end', page_number
@@ -638,7 +638,7 @@ class Converter < ::Prawn::Document
                 prose_opts.delete :first_line_options
               else
                 # FIXME this could do strange things if the wrong kind of content shows up
-                convert_content_for_block child
+                traverse child
               end
             end
           elsif node.content_model != :compound && (string = node.content)
@@ -659,7 +659,7 @@ class Converter < ::Prawn::Document
     if node.blocks? && (first_block = node.blocks[0]).context == :paragraph && node.document.sections?
       first_block.add_role 'lead' unless first_block.role?
     end
-    convert_content_for_block node
+    traverse node
   end
 
   def convert_paragraph node
@@ -844,7 +844,7 @@ class Converter < ::Prawn::Document
           move_down shift_top
           layout_caption node.title, category: :admonition if node.title?
           theme_font :admonition do
-            convert_content_for_block node
+            traverse node
           end
           # FIXME HACK compensate for margin bottom of admonition content
           move_up shift_bottom unless at_page_top?
@@ -915,7 +915,7 @@ class Converter < ::Prawn::Document
       end
       pad_box @theme.example_padding do
         theme_font :example do
-          convert_content_for_block node
+          traverse node
         end
       end
       pop_scratch node.document if scratch?
@@ -936,7 +936,7 @@ class Converter < ::Prawn::Document
         push_scratch doc if scratch?
         add_dest_for_block node if node.id
         layout_caption node.title if node.title?
-        convert_content_for_block node
+        traverse node
         pop_scratch doc if scratch?
       end
     end
@@ -956,7 +956,7 @@ class Converter < ::Prawn::Document
       pad_box @theme[%(#{category}_padding)] do
         theme_font category do
           if category == :blockquote
-            convert_content_for_block node
+            traverse node
           else # verse
             content = guard_indentation node.content
             layout_prose content, normalize: false, align: :left, hyphenate: true
@@ -1066,7 +1066,7 @@ class Converter < ::Prawn::Document
           layout_prose node.title, align: (@theme.sidebar_title_align || @base_align).to_sym, margin_top: 0, margin_bottom: (@theme.heading_margin_bottom || 0), line_height: @theme.heading_line_height
         end if node.title?
         theme_font :sidebar do
-          convert_content_for_block node
+          traverse node
         end
       end
       pop_scratch node.document if scratch?
@@ -1116,7 +1116,7 @@ class Converter < ::Prawn::Document
     end
 
     indent marker_width do
-      convert_content_for_list_item node, :colist, margin_bottom: @theme.outline_list_item_spacing, normalize_line_height: true
+      traverse_list_item node, :colist, margin_bottom: @theme.outline_list_item_spacing, normalize_line_height: true
     end
   end
 
@@ -1217,7 +1217,7 @@ class Converter < ::Prawn::Document
           end
         end
         indent(@theme.description_list_description_indent || 0) do
-          convert_content_for_list_item desc, :dlist_desc, normalize_line_height: true
+          traverse_list_item desc, :dlist_desc, normalize_line_height: true
         end if desc
       end
     end
@@ -1415,19 +1415,19 @@ class Converter < ::Prawn::Document
     end
 
     if complex
-      convert_content_for_list_item node, list_type, (opts.merge normalize_line_height: true)
+      traverse_list_item node, list_type, (opts.merge normalize_line_height: true)
     else
-      convert_content_for_list_item node, list_type, (opts.merge margin_bottom: @theme.outline_list_item_spacing, normalize_line_height: true)
+      traverse_list_item node, list_type, (opts.merge margin_bottom: @theme.outline_list_item_spacing, normalize_line_height: true)
     end
   end
 
-  def convert_content_for_list_item node, list_type, opts = {}
+  def traverse_list_item node, list_type, opts = {}
     if list_type == :dlist # qanda
       terms, desc = node
       [*terms].each {|term| layout_prose %(<em>#{term.text}</em>), (opts.merge margin_top: 0, margin_bottom: @theme.description_list_term_spacing) }
       if desc
         layout_prose desc.text, (opts.merge hyphenate: true) if desc.text?
-        convert_content_for_block desc
+        traverse desc
       end
     else
       if (primary_text = node.text).nil_or_empty?
@@ -1435,7 +1435,7 @@ class Converter < ::Prawn::Document
       else
         layout_prose primary_text, (opts.merge hyphenate: true)
       end
-      convert_content_for_block node
+      traverse node
     end
   end
 

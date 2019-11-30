@@ -36,7 +36,7 @@ module Prawn; class Table; class Cell
           # HACK force margin_top to be applied
           move_down 0.0001
           # TODO truncate margin bottom of last block
-          convert_content_for_block cell.content
+          traverse cell.content
         end
       end
       # FIXME prawn-table doesn't support cell taller than a single page
@@ -64,7 +64,7 @@ module Prawn; class Table; class Cell
       end
       # TODO apply horizontal alignment (right now must use alignment on content block)
       # QUESTION inherit table cell font properties?
-      pdf.convert_content_for_block content
+      pdf.traverse content
       nil
     end
   end
