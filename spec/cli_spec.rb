@@ -47,6 +47,17 @@ describe 'asciidoctor-pdf' do
     end unless ENV['ROUGE_VERSION'] && ENV['ROUGE_VERSION'].split[-1] < '2.1.0'
   end
 
+  context 'redirection' do
+    it 'should be able to write output to file via stdout' do
+      in_file = fixture_file 'book.adoc'
+      to_file = output_file 'book.pdf'
+      pid = Process.spawn asciidoctor_pdf_bin, '-o', '-', in_file, out: to_file
+      Process.wait pid
+      (expect Pathname.new to_file).to exist
+      (expect { PDF::Reader.new to_file }).not_to raise_exception
+    end
+  end
+
   context 'pdfmark' do
     it 'should generate pdfmark file if pdfmark attribute is set', cli: true do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, '-a', 'pdfmark', (fixture_file 'book.adoc')

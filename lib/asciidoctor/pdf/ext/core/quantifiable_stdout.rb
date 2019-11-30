@@ -12,6 +12,7 @@ class QuantifiableStdout < SimpleDelegator
   def initialize delegate
     @size = 0
     super
+    delegate.binmode
   end
 
   def << content
