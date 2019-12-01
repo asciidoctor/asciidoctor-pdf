@@ -52,6 +52,18 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     (expect fragments[1][:text]).to eql 'new'
   end
 
+  it 'should convert named entity' do
+    input = '&quot;&lt;&amp;&gt;&quot;'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 5
+    (expect fragments[0][:text]).to eql ?"
+    (expect fragments[1][:text]).to eql ?<
+    (expect fragments[2][:text]).to eql ?&
+    (expect fragments[3][:text]).to eql ?>
+    (expect fragments[4][:text]).to eql ?"
+  end
+
   it 'should not merge adjacent text nodes by default' do
     input = 'foo<br>bar'
     parsed = parser.parse input
