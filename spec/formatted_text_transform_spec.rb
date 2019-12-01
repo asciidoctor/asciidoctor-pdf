@@ -12,6 +12,15 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     (expect fragments[0][:styles]).to eql [:bold].to_set
   end
 
+  it 'should create fragment for emphasized text' do
+    input = '<em>fast</em>'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 1
+    (expect fragments[0][:text]).to eql 'fast'
+    (expect fragments[0][:styles]).to eql [:italic].to_set
+  end
+
   it 'should create fragment for sup text' do
     input = 'x<sup>2</sup>'
     parsed = parser.parse input
