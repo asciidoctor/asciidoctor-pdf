@@ -8,6 +8,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == Unreleased
 
 * ignore case when sorting index terms (#1405)
+* allow output file to be written to stdout (#1411)
 
 == 1.5.0.beta.8 (2019-11-23) - @mojavelinux
 
