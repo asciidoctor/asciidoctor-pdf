@@ -39,6 +39,12 @@ class Converter < ::Prawn::Document
 
   register_for 'pdf'
 
+  attr_reader :allow_uri_read
+
+  attr_reader :cache_uri
+
+  attr_reader :theme
+
   # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
   CodeRayRequirePath = ::File.join __dir__, 'ext/prawn/coderay_encoder'
   RougeRequirePath = ::File.join __dir__, 'ext/rouge'
@@ -3600,9 +3606,6 @@ class Converter < ::Prawn::Document
   def fallback_svg_font_name
     @theme.svg_fallback_font_family || @theme.svg_font_family || @theme.base_font_family
   end
-
-  attr_reader :allow_uri_read
-  attr_reader :cache_uri
 
   def apply_text_decoration styles, category, level = nil
     if (text_decoration_style = TextDecorationStyleTable[(level && @theme[%(#{category}_h#{level}_text_decoration)]) || @theme[%(#{category}_text_decoration)]])

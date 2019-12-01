@@ -197,5 +197,12 @@ describe Asciidoctor::PDF::Converter do
         end
       end
     end
+
+    it 'should expose theme as property on converter' do
+      doc = Asciidoctor.load 'yo', backend: :pdf
+      doc.convert
+      (expect doc.converter.theme).not_to be_nil
+      (expect doc.converter.theme.base_font_family).to eql 'Noto Serif'
+    end
   end
 end
