@@ -1,0 +1,96 @@
+AllCops:
+  TargetRubyVersion: 2.3
+Layout/SpaceInsideBlockBraces:
+  SpaceBeforeBlockParameters: false
+Layout/AlignArguments:
+  EnforcedStyle: with_fixed_indentation
+  IndentationWidth: 4
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+  IndentationWidth: 4
+Layout/IndentFirstArgument:
+  Enabled: false
+Layout/LeadingCommentSpace:
+  Enabled: false
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+Layout/RescueEnsureAlignment:
+  Enabled: false
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+Lint/ParenthesesAsGroupedExpression:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/BlockNesting:
+  Max: 4
+Metrics/ClassLength:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/LineLength:
+  Enabled: false
+#  Max: 120
+Metrics/MethodLength:
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
+Naming/ConstantName:
+  Enabled: false
+Naming/FileName:
+  Enabled: false
+Naming/PredicateName:
+  NameWhitelist:
+  - has_yaml_header?
+  - has_front_matter?
+Style/CaseEquality:
+  Enabled: false
+Style/CharacterLiteral:
+  Enabled: false
+Style/ConditionalAssignment:
+  EnforcedStyle: assign_inside_condition
+  IncludeTernaryExpressions: false
+Style/Documentation:
+  Enabled: false # FIXME reenable me
+Style/DoubleNegation:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/GuardClause:
+  Enabled: false
+Style/HashSyntax:
+  EnforcedStyle: ruby19_no_mixed_keys
+Style/MethodDefParentheses:
+  EnforcedStyle: require_no_parentheses
+Style/MutableConstant:
+  Enabled: false
+Style/MultilineIfModifier:
+  Enabled: false
+Style/MultilineTernaryOperator:
+  Enabled: false
+Style/NestedTernaryOperator:
+  Enabled: false
+Style/NumericPredicate:
+  EnforcedStyle: comparison
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    default: ()
+    '%w': ()
+    '%r': //
+Style/PerlBackrefs:
+  Enabled: false
+Style/RescueStandardError:
+  EnforcedStyle: implicit
+Style/SpecialGlobalVars:
+  EnforcedStyle: use_perl_names
+Style/SymbolArray:
+  EnforcedStyle: brackets
+# I'd like to enable this one, but rubocop gets confused
+Style/TernaryParentheses:
+  Enabled: false
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
