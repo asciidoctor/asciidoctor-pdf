@@ -68,8 +68,6 @@ Style/FormatString:
   EnforcedStyle: percent
 Style/FormatStringToken:
   EnforcedStyle: unannotated
-Style/FrozenStringLiteralComment:
-  Enabled: false
 Style/GuardClause:
   Enabled: false
 Style/HashSyntax:

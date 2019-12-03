@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Warning
   module Processor
     def warn str
