@@ -2,13 +2,13 @@ AllCops:
   TargetRubyVersion: 2.3
 Layout/SpaceInsideBlockBraces:
   SpaceBeforeBlockParameters: false
-Layout/AlignArguments:
+Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 4
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 4
-Layout/IndentFirstArgument:
+Layout/FirstArgumentIndentation:
   Enabled: false
 Layout/LeadingCommentSpace:
   Enabled: false
@@ -41,10 +41,8 @@ Naming/ConstantName:
   Enabled: false
 Naming/FileName:
   Enabled: false
-Naming/PredicateName:
-  NameWhitelist:
-  - has_yaml_header?
-  - has_front_matter?
+Naming/HeredocDelimiterNaming:
+  Enabled: false
 Style/CaseEquality:
   Enabled: false
 Style/CharacterLiteral:
