@@ -97,28 +97,28 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect pdf.find_text %r/^\d+$/).to be_empty
     end
 
-	  it 'should add footer if theme extends base and footer height is set' do
-			pdf_theme = {
-				extends: 'base',
-				footer_height: 36,
-			}
-			pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
-			= Document Title
-			:doctype: book
+    it 'should add footer if theme extends base and footer height is set' do
+      pdf_theme = {
+        extends: 'base',
+        footer_height: 36,
+      }
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :doctype: book
 
-			== Beginning
+      == Beginning
 
-			== End
-			EOS
+      == End
+      EOS
 
-			pagenum_1_text = (pdf.find_text '1')[0]
-			pagenum_2_text = (pdf.find_text '2')[0]
-			(expect pagenum_1_text).not_to be_nil
-			(expect pagenum_1_text[:page_number]).to eql 2
-			(expect pagenum_2_text).not_to be_nil
-			(expect pagenum_2_text[:page_number]).to eql 3
-			(expect pagenum_1_text[:x]).to be > pagenum_2_text[:x]
-		end
+      pagenum1_text = (pdf.find_text '1')[0]
+      pagenum2_text = (pdf.find_text '2')[0]
+      (expect pagenum1_text).not_to be_nil
+      (expect pagenum1_text[:page_number]).to eql 2
+      (expect pagenum2_text).not_to be_nil
+      (expect pagenum2_text[:page_number]).to eql 3
+      (expect pagenum1_text[:x]).to be > pagenum2_text[:x]
+    end
   end
 
   context 'Header' do
@@ -129,7 +129,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_line_height: 1,
         header_padding: [6, 1, 0, 1],
         header_recto_right_content: '({document-title})',
-        header_verso_right_content: '({document-title})'
+        header_verso_right_content: '({document-title})',
       }
 
       pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
@@ -163,7 +163,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_line_height: 1,
         header_padding: [6, 1, 0, 1],
         header_recto_right_content: '({document-title})',
-        header_verso_right_content: '({document-title})'
+        header_verso_right_content: '({document-title})',
       }
 
       pdf = to_pdf <<~'EOS', enable_footer: true, attribute_overrides: { 'noheader' => '' }, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
@@ -193,9 +193,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(i ii 1 2 3)
     end
@@ -217,9 +216,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       (expect pdf.find_text page_number: 1).to be_empty
-      pgnum_labels = (2.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (2.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(ii iii 1 2 3)
     end
@@ -240,9 +238,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(i 1 2 3)
     end
@@ -262,9 +259,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(1 2 3)
     end
@@ -284,9 +280,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
-        accum
       end
       (expect pgnum_labels).to eq [nil, 'ii', '1', '2', '3']
     end
@@ -307,9 +302,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(i 1 2 3)
     end
@@ -328,9 +322,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
-        accum
       end
       (expect pgnum_labels).to eq [nil, '1', '2', '3']
     end
@@ -350,9 +343,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(1 2 3)
     end
@@ -372,9 +364,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(i 1 2 3)
     end
@@ -394,9 +385,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(1 2 3 4 5)
     end
@@ -417,9 +407,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(1 2 3 4)
     end
@@ -439,9 +428,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(1 2 3)
     end
@@ -461,9 +449,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(i 1 2 3 4)
     end
@@ -484,9 +471,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).reduce([]) do |accum, page_number|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
-        accum
       end
       (expect pgnum_labels).to eq %w(1 2 3 4)
     end
@@ -612,7 +598,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_line_height: 1,
         header_padding: 5,
         header_recto_right_content: '{page-number}',
-        header_verso_left_content: '{page-number}'
+        header_verso_left_content: '{page-number}',
       }
 
       pdf = to_pdf <<~'EOS', pdf_theme: (build_pdf_theme theme_overrides), analyze: true
@@ -859,7 +845,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
         == Chapter
 
-        #{40.times.map {|it| %(=== Section #{it + 1})}.join %(\n\n)}
+        #{40.times.map {|it| %(=== Section #{it + 1}) }.join %(\n\n)}
         EOS
 
         (expect pdf.find_text page_number: 4, string: 'Chapter').to have_size 1
@@ -964,7 +950,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_left_content: '({doctitle})',
       }
 
-      (expect {
+      (expect do
         pdf = to_pdf <<~'EOS', enable_footer: true, attribute_overrides: { 'doctitle' => 'The Chronicles of <Foo> & &#166;' }, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
         :doctype: book
 
@@ -975,7 +961,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
         running_text = pdf.find_text %(The Chronicles of <Foo> & \u00a6)
         (expect running_text).to have_size 1
-      }).to not_log_message
+      end).to not_log_message
     end
 
     it 'should set document-title and document-subtitle based on doctitle' do
@@ -1034,9 +1020,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       footer_y = (pdf.find_text 'FOOTER')[0][:y]
-      titles_by_page = (pdf.find_text y: footer_y).reduce({}) do |accum, it|
+      titles_by_page = (pdf.find_text y: footer_y).each_with_object({}) do |it, accum|
         accum[it[:page_number]] = it[:string] unless it[:string] == 'FOOTER'
-        accum
       end
       (expect titles_by_page[2]).to eql '[Part I||]'
       (expect titles_by_page[3]).to eql '[Part I|Chapter A|Detail]'
@@ -1306,7 +1291,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       expected_running_content_by_page = { 1 => 'Document Title', 2 => 'Table of Contents', 3 => 'Preface', 4 => 'Chapter 1' }
-      running_content_by_page = (pdf.find_text y: 14.263).reduce({}) {|accum, text| accum[text[:page_number]] = text[:string]; accum }
+      running_content_by_page = (pdf.find_text y: 14.263).each_with_object({}) {|text, accum| accum[text[:page_number]] = text[:string] }
       (expect running_content_by_page).to eql expected_running_content_by_page
     end
 
@@ -1332,7 +1317,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         [nil, 'Chapter 1. Beginning'],
         ['document', 'Chapter 1. Beginning'],
         ['toc', '1. Beginning'],
-        ['basic', 'Beginning'],
+        %w(basic Beginning),
       ].each do |(title_style, expected_title)|
         pdf_theme = pdf_theme.merge footer_title_style: title_style if title_style
         pdf = to_pdf input, pdf_theme: pdf_theme, enable_footer: true, analyze: true
@@ -1347,7 +1332,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pdf_theme = {
         footer_columns: '>50% <50%',
         footer_recto_left_content: %(image:#{fixture_file 'tux.png'}[fit=contain]),
-        footer_recto_right_content: %(image:#{fixture_file 'tux.png'}[fit=contain])
+        footer_recto_right_content: %(image:#{fixture_file 'tux.png'}[fit=contain]),
       }
 
       to_file = to_pdf_file 'body', 'running-content-image-alignment.pdf', pdf_theme: pdf_theme, enable_footer: true
@@ -1518,7 +1503,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should warn and replace image with alt text if image is not found' do
       [true, false].each do |block|
-        (expect {
+        (expect do
           pdf_theme = build_pdf_theme \
             header_height: 36,
             header_recto_columns: '=100%',
@@ -1528,7 +1513,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
           alt_text = pdf.find_text '[alt text]'
           (expect alt_text).to have_size 1
-        }).to log_message severity: :WARN, message: %r(image to embed not found or not readable.*data/themes/no-such-image\.png$)
+        end).to log_message severity: :WARN, message: %r(image to embed not found or not readable.*data/themes/no-such-image\.png$)
       end
     end
 

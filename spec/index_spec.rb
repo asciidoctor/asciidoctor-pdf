@@ -216,7 +216,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     == Chapter B
 
     ((Asciidoctor)) is an AsciiDoc processor.
-    
+
     == Chapter C
 
     If an element has an ((anchor)), you can link to it.
@@ -228,7 +228,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     index_pagenum = (pdf.find_text 'Index')[0][:page_number]
     index_page_lines = pdf.lines pdf.find_text page_number: index_pagenum
     terms = index_page_lines.select {|it| it.include? ',' }.map {|it| (it.split ',', 2)[0] }
-    (expect terms).to eql ['anchor', 'AsciiDoc', 'Asciidoctor', 'authoring']
+    (expect terms).to eql %w(anchor AsciiDoc Asciidoctor authoring)
   end
 
   it 'should not combine range if same index entry occurs on sequential pages when media is screen' do

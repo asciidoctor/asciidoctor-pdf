@@ -179,7 +179,7 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       doctitle = 'Guide de démarrage rapide'
       pdf = to_pdf %(= #{doctitle})
       (expect pdf.info[:Title]).to eql doctitle
-      encoded_doctitle = (pdf.objects[pdf.objects.trailer[:Info]])[:Title].unpack 'H*'
+      encoded_doctitle = pdf.objects[pdf.objects.trailer[:Info]][:Title].unpack 'H*'
       (expect encoded_doctitle).to eql (doctitle.encode Encoding::UTF_16).unpack 'H*'
     end
   end

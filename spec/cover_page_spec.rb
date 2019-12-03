@@ -47,14 +47,14 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
 
   it 'should not crash if front cover image is a URI and the allow-uri-read attribute is not set' do
     pdf = nil
-    (expect {
+    (expect do
       pdf = to_pdf <<~'EOS', analyze: true
       = Document Title
       :front-cover-image: https://example.org/cover.svg
 
       content
       EOS
-    }).to not_raise_exception & (log_message severity: :WARN, message: '~allow-uri-read is not enabled')
+    end).to not_raise_exception & (log_message severity: :WARN, message: '~allow-uri-read is not enabled')
     (expect pdf.pages).to have_size 1
     (expect pdf.find_text 'Document Title').to have_size 1
   end
@@ -181,7 +181,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     pdf = to_pdf input, analyze: :rect
     rects = pdf.rectangles
     (expect rects).to have_size 1
-    (expect rects[0]).to eql({ point: [0.0, 0.0], width: 612.0, height: 792.0 })
+    (expect rects[0]).to eql point: [0.0, 0.0], width: 612.0, height: 792.0
 
     pdf = to_pdf input, analyze: true
     (expect pdf.pages).to have_size 2

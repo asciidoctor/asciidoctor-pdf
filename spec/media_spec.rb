@@ -34,7 +34,7 @@ describe 'Asciidoctor::PDF::Converter - media' do
       (expect (pdf.page 1).text).to be_empty
       (expect (pdf.page 3).text).to eql 'Document Title'
       (expect (pdf.page 5).text).to eql 'Chapter Title'
-      # TODO add helper method to get content stream for page
+      # TODO: add helper method to get content stream for page
       title_page_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
       (expect (title_page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
     end

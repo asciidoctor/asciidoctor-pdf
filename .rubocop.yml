@@ -1,10 +1,14 @@
 AllCops:
   TargetRubyVersion: 2.3
-Layout/SpaceInsideBlockBraces:
-  SpaceBeforeBlockParameters: false
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 4
+Layout/SpaceInsideBlockBraces:
+  SpaceBeforeBlockParameters: false
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+Layout/HeredocIndentation:
+  Enabled: false
 Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 4
@@ -35,6 +39,8 @@ Metrics/LineLength:
 #  Max: 120
 Metrics/MethodLength:
   Enabled: false
+Metrics/ParameterLists:
+  Max: 10
 Metrics/PerceivedComplexity:
   Enabled: false
 Naming/ConstantName:
@@ -43,6 +49,10 @@ Naming/FileName:
   Enabled: false
 Naming/HeredocDelimiterNaming:
   Enabled: false
+Naming/MethodParameterName:
+  Enabled: false
+Style/BlockDelimiters:
+  EnforcedStyle: braces_for_chaining
 Style/CaseEquality:
   Enabled: false
 Style/CharacterLiteral:
@@ -54,6 +64,10 @@ Style/Documentation:
   Enabled: false # FIXME reenable me
 Style/DoubleNegation:
   Enabled: false
+Style/FormatString:
+  EnforcedStyle: percent
+Style/FormatStringToken:
+  EnforcedStyle: unannotated
 Style/FrozenStringLiteralComment:
   Enabled: false
 Style/GuardClause:
@@ -64,6 +78,8 @@ Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
 Style/MutableConstant:
   Enabled: false
+Style/MultilineBlockChain:
+  Enabled: false
 Style/MultilineIfModifier:
   Enabled: false
 Style/MultilineTernaryOperator:
@@ -72,12 +88,16 @@ Style/NestedTernaryOperator:
   Enabled: false
 Style/NumericPredicate:
   EnforcedStyle: comparison
+Style/ParallelAssignment:
+  Enabled: false
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
     default: ()
     '%w': ()
     '%r': //
 Style/PerlBackrefs:
+  Enabled: false
+Style/RegexpLiteral:
   Enabled: false
 Style/RescueStandardError:
   EnforcedStyle: implicit

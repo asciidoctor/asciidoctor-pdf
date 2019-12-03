@@ -494,10 +494,10 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == Chapter in Part II
     EOS
 
-    part_1_text = (pdf.find_text 'Part I')[0]
-    part_2_text = (pdf.find_text 'Part II')[0]
-    (expect part_1_text[:page_number]).to eql 2
-    (expect part_2_text[:page_number]).to eql 2
+    part1_text = (pdf.find_text 'Part I')[0]
+    part2_text = (pdf.find_text 'Part II')[0]
+    (expect part1_text[:page_number]).to eql 2
+    (expect part2_text[:page_number]).to eql 2
   end
 
   it 'should add break after part if heading-part-break-after key in theme is always' do
@@ -516,14 +516,14 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == Chapter in Part II
     EOS
 
-    part_1_text = (pdf.find_text 'Part I')[0]
-    part_2_text = (pdf.find_text 'Part II')[0]
-    chapter_1_text = (pdf.find_text 'Chapter in Part I')[0]
-    chapter_2_text = (pdf.find_text 'Another Chapter in Part I')[0]
-    (expect part_1_text[:page_number]).to eql 2
-    (expect chapter_1_text[:page_number]).to eql 3
-    (expect chapter_2_text[:page_number]).to eql 3
-    (expect part_2_text[:page_number]).to eql 4
+    part1_text = (pdf.find_text 'Part I')[0]
+    part2_text = (pdf.find_text 'Part II')[0]
+    chapter1_text = (pdf.find_text 'Chapter in Part I')[0]
+    chapter2_text = (pdf.find_text 'Another Chapter in Part I')[0]
+    (expect part1_text[:page_number]).to eql 2
+    (expect chapter1_text[:page_number]).to eql 3
+    (expect chapter2_text[:page_number]).to eql 3
+    (expect part2_text[:page_number]).to eql 4
   end
 
   context 'Section indent' do

@@ -42,11 +42,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should ignore unknown named entities' do
-      (expect {
+      (expect do
         output = subject.format '&dagger;'
         (expect output).to have_size 1
         (expect output[0][:text]).to eql '&dagger;'
-      }).to log_message severity: :ERROR, message: '~failed to parse formatted text'
+      end).to log_message severity: :ERROR, message: '~failed to parse formatted text'
     end
 
     it 'should decode decimal character references in link href' do
@@ -66,40 +66,40 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
   context 'integration' do
     it 'should format constrained strong phrase' do
       pdf = to_pdf '*strong*', analyze: true
-      (expect pdf.text[0].values_at :string, :font_name).to eql ['strong', 'NotoSerif-Bold']
+      (expect pdf.text[0].values_at :string, :font_name).to eql %w(strong NotoSerif-Bold)
     end
 
     it 'should format unconstrained strong phrase' do
       pdf = to_pdf '**super**nova', analyze: true
-      (expect pdf.text[0].values_at :string, :font_name).to eql ['super', 'NotoSerif-Bold']
-      (expect pdf.text[1].values_at :string, :font_name).to eql ['nova', 'NotoSerif']
+      (expect pdf.text[0].values_at :string, :font_name).to eql %w(super NotoSerif-Bold)
+      (expect pdf.text[1].values_at :string, :font_name).to eql %w(nova NotoSerif)
     end
 
     it 'should format constrained emphasis phrase' do
       pdf = to_pdf '_emphasis_', analyze: true
-      (expect pdf.text[0].values_at :string, :font_name).to eql ['emphasis', 'NotoSerif-Italic']
+      (expect pdf.text[0].values_at :string, :font_name).to eql %w(emphasis NotoSerif-Italic)
     end
 
     it 'should format unconstrained emphasis phrase' do
       pdf = to_pdf '__un__cool', analyze: true
-      (expect pdf.text[0].values_at :string, :font_name).to eql ['un', 'NotoSerif-Italic']
-      (expect pdf.text[1].values_at :string, :font_name).to eql ['cool', 'NotoSerif']
+      (expect pdf.text[0].values_at :string, :font_name).to eql %w(un NotoSerif-Italic)
+      (expect pdf.text[1].values_at :string, :font_name).to eql %w(cool NotoSerif)
     end
 
     it 'should format constrained monospace phrase' do
       pdf = to_pdf '`monospace`', analyze: true
-      (expect pdf.text[0].values_at :string, :font_name).to eql ['monospace', 'mplus1mn-regular']
+      (expect pdf.text[0].values_at :string, :font_name).to eql %w(monospace mplus1mn-regular)
     end
 
     it 'should format unconstrained monospace phrase' do
       pdf = to_pdf '``install``ed', analyze: true
-      (expect pdf.text[0].values_at :string, :font_name).to eql ['install', 'mplus1mn-regular']
-      (expect pdf.text[1].values_at :string, :font_name).to eql ['ed', 'NotoSerif']
+      (expect pdf.text[0].values_at :string, :font_name).to eql %w(install mplus1mn-regular)
+      (expect pdf.text[1].values_at :string, :font_name).to eql %w(ed NotoSerif)
     end
 
     it 'should format superscript phrase' do
       pdf = to_pdf 'x^2^', analyze: true
-      (expect pdf.strings).to eql ['x', '2']
+      (expect pdf.strings).to eql %w(x 2)
       text = pdf.text
       (expect text[0][:font_size]).to be > text[1][:font_size]
       (expect text[0][:y]).to be < text[1][:y]
@@ -107,7 +107,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
 
     it 'should format subscript phrase' do
       pdf = to_pdf 'O~2~', analyze: true
-      (expect pdf.strings).to eql ['O', '2']
+      (expect pdf.strings).to eql %w(O 2)
       text = pdf.text
       (expect text[0][:font_size]).to be > text[1][:font_size]
       (expect text[0][:y]).to be > text[1][:y]
@@ -488,7 +488,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         role_variable_border_color: 'ED398A',
         role_variable_border_offset: 1.25,
         role_variable_border_radius: 2,
-        role_variable_border_width: 1
+        role_variable_border_width: 1,
       }
       to_file = to_pdf_file '[.variable]#counter#', 'text-formatter-inline-role-bg.pdf', pdf_theme: pdf_theme
       (expect to_file).to visually_match 'text-formatter-inline-role-bg.pdf'

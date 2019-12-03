@@ -48,7 +48,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
   end
 
   it 'should not support icon set as prefix on icon name if explicit icon set is specified' do
-    (expect {
+    (expect do
       pdf = to_pdf <<~'EOS', analyze: true
       :icons: font
 
@@ -56,7 +56,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       EOS
       wink_text = pdf.find_text ?\uf0ad
       (expect wink_text).to be_empty
-    }).to log_message severity: :WARN, message: 'fas-wrench is not a valid icon name in the fab icon set'
+    end).to log_message severity: :WARN, message: 'fas-wrench is not a valid icon name in the fab icon set'
   end
 
   it 'should reserve 1em of space for fw icon' do
@@ -88,7 +88,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       ['icon:no-such-icon@fas[]', 'no such icon@fas'],
       ['icon:fas-no-such-icon[]', 'fas no such icon'],
     ].each do |macro, alt|
-      (expect {
+      (expect do
         pdf = to_pdf <<~EOS, analyze: true
         :icons: font
 
@@ -97,12 +97,12 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
         text = pdf.text
         (expect text).to have_size 1
         (expect text[0][:string]).to eql %([#{alt}] will surely fail.)
-      }).to log_message severity: :WARN, message: 'no-such-icon is not a valid icon name in the fas icon set'
+      end).to log_message severity: :WARN, message: 'no-such-icon is not a valid icon name in the fas icon set'
     end
   end
 
   it 'should remap legacy icon name if icon set is not specified and report remapping' do
-    (expect {
+    (expect do
       pdf = to_pdf <<~'EOS', analyze: true
       :icons: font
 
@@ -111,11 +111,11 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       hdd_text = pdf.find_text ?\uf0a0
       (expect hdd_text).to have_size 1
       (expect hdd_text[0][:font_name]).to eql 'FontAwesome5Free-Regular'
-    }).to log_message severity: :INFO, message: 'hdd-o icon found in deprecated fa icon set; using hdd from far icon set instead', using_log_level: :INFO
+    end).to log_message severity: :INFO, message: 'hdd-o icon found in deprecated fa icon set; using hdd from far icon set instead', using_log_level: :INFO
   end
 
   it 'should resolve non-legacy icon name if icon set is not specified and report icon set in which it was found' do
-    (expect {
+    (expect do
       pdf = to_pdf <<~'EOS', analyze: true
       :icons: font
 
@@ -124,7 +124,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       wink_text = pdf.find_text ?\uf4da
       (expect wink_text).to have_size 1
       (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Regular'
-    }).to log_message severity: :INFO, message: 'smile-wink icon not found in deprecated fa icon set; using match found in far icon set instead', using_log_level: :INFO
+    end).to log_message severity: :INFO, message: 'smile-wink icon not found in deprecated fa icon set; using match found in far icon set instead', using_log_level: :INFO
   end
 
   it 'should apply styles from role to icon' do

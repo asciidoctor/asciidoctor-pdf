@@ -16,7 +16,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         '◦level two',
         '▪level three',
         '▪level four',
-        '•back to level one'
+        '•back to level one',
       ]
 
       (expect pdf.lines).to eql expected_lines
@@ -807,7 +807,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         'An implementation of the AsciiDoc processor in Ruby.',
         '2.',
         'What is the answer to the Ultimate Question?',
-        '42'
+        '42',
       ]
     end
 
@@ -948,7 +948,6 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
   context 'Bibliography' do
     it 'should reference bibliography entry using ID in square brackets by default' do
-
       pdf = to_pdf <<~EOS, analyze: true
       The recommended reading includes <<bar>>.
 

@@ -53,7 +53,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect text[2][:font_size]).to be < text[1][:font_size]
     # footnote item
     (expect (pdf.find_text 'Section B')[0][:order]).to be < (pdf.find_text '] More about that thing.')[0][:order]
-    (expect (strings.slice(-3, 3)).join).to eql '[1] More about that thing.'
+    (expect strings.slice(-3, 3).join).to eql '[1] More about that thing.'
     (expect text[-1][:page_number]).to eql 2
     (expect text[-1][:font_size]).to eql 8
   end
@@ -116,12 +116,12 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
     text = pdf.text
     p1 = (pdf.find_text %r/download/)[0]
-    fn1 = (text.slice p1[:order], 3).reduce('') {|accum, it| accum += it[:string] }
+    fn1 = (text.slice p1[:order], 3).reduce('') {|accum, it| accum + it[:string] }
     (expect fn1).to eql '[1]'
     p2 = (pdf.find_text %r/support request/)[0]
-    fn2 = (text.slice p2[:order], 3).reduce('') {|accum, it| accum += it[:string] }
+    fn2 = (text.slice p2[:order], 3).reduce('') {|accum, it| accum + it[:string] }
     (expect fn2).to eql '[1]'
-    f1 = (pdf.find_text font_size: 8).reduce('') {|accum, it| accum += it[:string] }
+    f1 = (pdf.find_text font_size: 8).reduce('') {|accum, it| accum + it[:string] }
     (expect f1).to eql '[1] Only available if you have an active subscription.'
   end
 

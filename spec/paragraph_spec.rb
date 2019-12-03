@@ -157,12 +157,12 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     EOS
 
     halfway_point = (pdf.page 1)[:size][0] * 0.5
-    abstract_text_1 = pdf.find_text 'Enter stage right.'
-    (expect abstract_text_1).to have_size 1
-    (expect abstract_text_1[0][:x]).to be > halfway_point
-    abstract_text_2 = pdf.find_text 'Mirror, stage left.'
-    (expect abstract_text_2).to have_size 1
-    (expect abstract_text_2[0][:x]).to be < halfway_point
+    abstract_text1 = pdf.find_text 'Enter stage right.'
+    (expect abstract_text1).to have_size 1
+    (expect abstract_text1[0][:x]).to be > halfway_point
+    abstract_text2 = pdf.find_text 'Mirror, stage left.'
+    (expect abstract_text2).to have_size 1
+    (expect abstract_text2[0][:x]).to be < halfway_point
   end
 
   it 'should apply same line height to all paragraphs in abstract' do

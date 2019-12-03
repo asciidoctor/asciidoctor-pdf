@@ -58,9 +58,9 @@ describe 'Asciidoctor::PDF::Optimizer' do
 
   it 'should use default quality if specified quality is not recognized' do
     input_file = Pathname.new example_file 'basic-example.adoc'
-    (expect {
+    (expect do
       to_pdf_file input_file, 'optimizer-fallback-quality.pdf', attribute_overrides: { 'optimize' => 'foobar' }
-    }).to not_raise_exception
+    end).to not_raise_exception
   end
 
   it 'should optimize PDF passed to asciidoctor-pdf-optimizer CLI', cli: true do

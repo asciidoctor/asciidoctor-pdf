@@ -11,41 +11,41 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should replace block image with alt text if image is missing' do
-      (expect {
+      (expect do
         pdf = to_pdf 'image::no-such-image.png[Missing Image]', analyze: true
         (expect pdf.lines).to eql ['[Missing Image] | no-such-image.png']
-      }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
     it 'should be able to customize formatting of alt text using theme' do
       pdf_theme = {
-        image_alt_content: '%{alt} (%{target})'
+        image_alt_content: '%{alt} (%{target})', # rubocop:disable Style/FormatStringToken
       }
-      (expect {
+      (expect do
         pdf = to_pdf 'image::no-such-image.png[Missing Image]', pdf_theme: pdf_theme, analyze: true
         (expect pdf.lines).to eql ['Missing Image (no-such-image.png)']
-      }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
     it 'should be able to customize formatting of alt text using theme' do
       pdf_theme = {
-        image_alt_content: '%{alt} (%{target})'
+        image_alt_content: '%{alt} (%{target})', # rubocop:disable Style/FormatStringToken
       }
-      (expect {
+      (expect do
         pdf = to_pdf 'image::no-such-image.png[Missing Image]', pdf_theme: pdf_theme, analyze: true
         (expect pdf.lines).to eql ['Missing Image (no-such-image.png)']
-      }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
-    it 'should warn instead of crash if block image is unreadable' do
+    it 'wip should warn instead of crash if block image is unreadable' do
       image_file = fixture_file 'logo.png'
       old_mode = (File.stat image_file).mode
       begin
-        (expect {
-          FileUtils.chmod 0000, image_file
+        (expect do
+          FileUtils.chmod 0o000, image_file
           pdf = to_pdf 'image::logo.png[Unreadable Image]', analyze: true
           (expect pdf.lines).to eql ['[Unreadable Image] | logo.png']
-        }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+        end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
       ensure
         FileUtils.chmod old_mode, image_file
       end
@@ -60,10 +60,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should replace inline image with alt text if image is missing' do
-      (expect {
+      (expect do
         pdf = to_pdf 'You cannot see that which is image:not-there.png[not there].', analyze: true
         (expect pdf.lines).to eql ['You cannot see that which is [not there].']
-      }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
     it 'should respect value of imagesdir if changed mid-document' do
@@ -84,11 +84,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       image_file = fixture_file 'logo.png'
       old_mode = (File.stat image_file).mode
       begin
-        (expect {
-          FileUtils.chmod 0000, image_file
+        (expect do
+          FileUtils.chmod 0o000, image_file
           pdf = to_pdf 'image:logo.png[Unreadable Image,16] Company Name', analyze: true
           (expect pdf.lines).to eql ['[Unreadable Image] Company Name']
-        }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+        end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
       ensure
         FileUtils.chmod old_mode, image_file
       end
@@ -124,9 +124,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Width' do
-    subject {
+    subject do
       asciidoctor_2_or_better? ? (Asciidoctor::Converter.create 'pdf') : (Asciidoctor::Converter::Factory.create 'pdf')
-    }
+    end
 
     it 'should resolve pdfwidth in % to pt' do
       attrs = { 'pdfwidth' => '25%' }
@@ -370,20 +370,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should fail to embed interlaced PNG image with warning' do
       { '::' => '[Interlaced PNG] | interlaced.png', ':' => '[Interlaced PNG]' }.each do |macro_delim, alt_text|
-        (expect {
+        (expect do
           pdf = to_pdf %(image#{macro_delim}interlaced.png[Interlaced PNG]), analyze: true
           (expect pdf.lines).to eql [alt_text]
-        }).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'interlaced.png'}; PNG uses unsupported interlace method; install prawn-gmagick gem to add support)
+        end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'interlaced.png'}; PNG uses unsupported interlace method; install prawn-gmagick gem to add support)
       end
     end
   end
 
   context 'BMP' do
     it 'should warn and replace block image with alt text if image format is unsupported' do
-      (expect {
+      (expect do
         pdf = to_pdf 'image::waterfall.bmp[Waterfall,240]', analyze: true
         (expect pdf.lines).to eql ['[Waterfall] | waterfall.bmp']
-      }).to log_message severity: :WARN, message: '~could not embed image'
+      end).to log_message severity: :WARN, message: '~could not embed image'
     end
   end
 
@@ -498,10 +498,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'allow-uri-read' do
     it 'should warn if image is remote and allow-uri-read is not set' do
-      (expect {
+      (expect do
         pdf = to_pdf 'image::https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png[Remote Image]', analyze: true
         (expect pdf.lines).to eql ['[Remote Image] | https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png']
-      }).to log_message severity: :WARN, message: '~allow-uri-read is not enabled; cannot embed remote image'
+      end).to log_message severity: :WARN, message: '~allow-uri-read is not enabled; cannot embed remote image'
     end
 
     it 'should read remote image if allow-uri-read is set' do
@@ -512,10 +512,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should log warning if remote image cannot be fetched' do
-      (expect {
+      (expect do
         pdf = to_pdf 'image::http://example.org/no-such-image.png[No Such Image]', attribute_overrides: { 'allow-uri-read' => '' }, analyze: true
         (expect pdf.lines).to eql ['[No Such Image] | http://example.org/no-such-image.png']
-      }).to log_message severity: :WARN, message: '~could not retrieve remote image: http://example.org/no-such-image.png; 404 Not Found'
+      end).to log_message severity: :WARN, message: '~could not retrieve remote image: http://example.org/no-such-image.png; 404 Not Found'
     end
 
     it 'should use image format specified by format attribute' do
@@ -611,7 +611,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should use link in alt text if image is missing' do
-      (expect {
+      (expect do
         pdf = to_pdf 'image::no-such-image.png[Missing Image,link=https://example.org]'
         text = (pdf.page 1).text
         (expect text).to eql '[Missing Image] | no-such-image.png'
@@ -620,7 +620,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         link_annotation = annotations[0]
         (expect link_annotation[:Subtype]).to eql :Link
         (expect link_annotation[:A][:URI]).to eql 'https://example.org'
-      }).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
     it 'should add link around inline image if link attribute is set' do

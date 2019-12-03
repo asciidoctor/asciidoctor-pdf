@@ -55,10 +55,10 @@ describe Asciidoctor::PDF::Converter do
       input_file = fixture_file 'book.adoc'
       doc = Asciidoctor.load_file input_file, backend: 'pdf', safe: :safe, attributes: { 'reproducible' => '' }
       converter = doc.converter
-      pdf_1 = doc.convert.render
+      pdf1 = doc.convert.render
       doc = Asciidoctor.load_file input_file, backend: 'pdf', safe: :safe, attributes: { 'reproducible' => '' }, converter: converter
-      pdf_2 = doc.convert.render
-      (expect pdf_1).to eql pdf_2
+      pdf2 = doc.convert.render
+      (expect pdf1).to eql pdf2
     end
 
     it 'should ensure data-uri attribute is set' do
@@ -143,9 +143,9 @@ describe Asciidoctor::PDF::Converter do
       end
 
       it 'should log error if theme cannot be found or loaded' do
-        (expect {
+        (expect do
           Asciidoctor.convert 'foo', backend: 'pdf', attributes: { 'pdf-theme' => 'foo' }
-        }).to (raise_exception Errno::ENOENT) & (log_message severity: :ERROR, message: '~could not locate or load the built-in pdf theme `foo\'')
+        end).to (raise_exception Errno::ENOENT) & (log_message severity: :ERROR, message: '~could not locate or load the built-in pdf theme `foo\'')
       end
 
       it 'should not crash if theme does not specify any keys' do

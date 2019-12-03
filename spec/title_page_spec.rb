@@ -44,7 +44,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     body
     EOS
 
-    title_page_lines = pdf.lines(pdf.find_text page_number: 1)
+    title_page_lines = pdf.lines pdf.find_text page_number: 1
     (expect title_page_lines).to eql ['Document Title', 'Doc Writer, Junior Writer']
   end
 
@@ -321,7 +321,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       body
       EOS
 
-      title_page_lines = pdf.lines(pdf.find_text page_number: 1)
+      title_page_lines = pdf.lines pdf.find_text page_number: 1
       (expect title_page_lines).to include %(Doc Writer \uf099)
     end
 

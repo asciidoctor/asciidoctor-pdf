@@ -41,17 +41,17 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
   context 'built-in (AFM)' do
     it 'should warn if document contains glyph not supported by AFM font' do
-      (expect {
+      (expect do
         pdf = to_pdf 'α to ω', analyze: true, attribute_overrides: { 'pdf-theme' => 'base' }
         not_glyph = ?\u00ac
         text = pdf.text
         (expect text).to have_size 1
         (expect text[0][:string]).to eql %(#{not_glyph} to #{not_glyph})
-      }).to log_message severity: :WARN, message: %(The following text could not be fully converted to the Windows-1252 character set:\n| α to ω)
+      end).to log_message severity: :WARN, message: %(The following text could not be fully converted to the Windows-1252 character set:\n| α to ω)
     end
 
     it 'should replace essential characters with suitable replacements to avoid warnings' do
-      (expect {
+      (expect do
         pdf = to_pdf <<~'EOS', pdf_theme: { base_font_family: 'Helvetica' }, analyze: true
         :experimental:
 
@@ -66,7 +66,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         EOS
         (expect pdf.find_text font_name: 'Helvetica').to have_size pdf.text.size
         (expect pdf.lines).to eql [%(\u2022disc), '-circle', %(\u00b7square), 'nospace', 'button:[Save]']
-      }).to not_log_message
+      end).to not_log_message
     end
   end
 
@@ -217,7 +217,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     it 'should resolve font size of inline element specified in rem' do
       pdf_theme = {
         base_font_size: 12,
-        link_font_size: '0.75rem'
+        link_font_size: '0.75rem',
       }
       pdf = to_pdf 'https://asciidoctor.org[Asciidoctor]', pdf_theme: pdf_theme, analyze: true
       linked_text = (pdf.find_text 'Asciidoctor')[0]

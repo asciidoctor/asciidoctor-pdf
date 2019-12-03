@@ -111,7 +111,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should not crash if source-highlighter attribute is defined outside of document header' do
-      (expect {
+      (expect do
         to_pdf <<~'EOS'
         = Document Title
 
@@ -122,7 +122,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         puts 'yo, world!'
         ----
         EOS
-      }).not_to raise_exception
+      end).not_to raise_exception
     end
   end
 
@@ -144,7 +144,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should not crash if source-highlighter attribute is defined outside of document header' do
-      (expect {
+      (expect do
         to_pdf <<~'EOS'
         = Document Title
 
@@ -155,7 +155,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         puts 'yo, world!'
         ----
         EOS
-      }).not_to raise_exception
+      end).not_to raise_exception
     end
 
     it 'should expand tabs to preserve indentation' do
@@ -195,7 +195,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should not crash when adding indentation guards' do
-      (expect {
+      (expect do
         pdf = to_pdf <<~EOS, analyze: true
         :source-highlighter: pygments
 
@@ -210,7 +210,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         (expect pdf.find_text %(\u00a0 hash:)).to have_size 1
         (expect pdf.find_text %(\u00a0   key: )).to have_size 1
         (expect pdf.find_text '"value"').to have_size 1
-      }).not_to raise_exception
+      end).not_to raise_exception
     end
 
     it 'should expand tabs to preserve indentation' do
@@ -232,7 +232,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should not crash when aligning line numbers' do
-      (expect {
+      (expect do
         to_pdf <<~'EOS'
         :source-highlighter: pygments
 
@@ -251,7 +251,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         </urlset>
         ----
         EOS
-      }).not_to raise_exception
+      end).not_to raise_exception
     end
 
     it 'should preserve space before callout on last line' do

@@ -10,9 +10,9 @@ describe 'Asciidoctor::PDF::Converter - Open' do
     [%unbreakable]
     --
     To install Antora, open a terminal and type:
-    
+
      $ npm i -g @antora/cli@2.2 @antora/site-generator-default@2.2
-    
+
     The `@` at the beginning of the package name is important.
     It tells `npm` that the `cli` package is located in the `antora` group.
     If you omit this character, `npm` will assume the package name is the name of a git repository on GitHub.
@@ -35,9 +35,9 @@ describe 'Asciidoctor::PDF::Converter - Open' do
     [%unbreakable]
     --
     To install Antora, open a terminal and type:
-    
+
      $ npm i -g @antora/cli@2.2 @antora/site-generator-default@2.2
-    
+
     The `@` at the beginning of the package name is important.
     It tells `npm` that the `cli` package is located in the `antora` group.
     If you omit this character, `npm` will assume the package name is the name of a git repository on GitHub.

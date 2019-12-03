@@ -82,9 +82,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
         end
         (expect pdf.pages[1][:strings]).to include 'Chapter 1'
         (expect pdf.pages[1][:strings]).to include '2'
-        if attrs.include? 'preface-title'
-          (expect pdf.pages[2][:strings]).to include 'Preface'
-        end
+        (expect pdf.pages[2][:strings]).to include 'Preface' if attrs.include? 'preface-title'
         (expect pdf.pages[2][:strings]).to include 'This is the preface.'
         (expect pdf.pages[3][:strings]).to include 'Chapter 1'
       end
@@ -582,8 +580,8 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     == Get Started _Quickly_
     EOS
 
-    get_started_text = (pdf.find_text page_number: 2, string: %r/^Get Started/)[0]
-    quickly_text = (pdf.find_text page_number: 2, string:  'Quickly')[0]
+    get_started_text = (pdf.find_text page_number: 2, string: /^Get Started/)[0]
+    quickly_text = (pdf.find_text page_number: 2, string: 'Quickly')[0]
     (expect get_started_text[:font_name]).to eql 'NotoSerif-Bold'
     (expect quickly_text[:font_name]).to eql 'NotoSerif-Italic'
   end

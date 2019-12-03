@@ -167,7 +167,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should warn and fallback to admonition label if image icon cannot be resolved' do
-      (expect {
+      (expect do
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: true
         :icons: image
         :iconsdir:
@@ -181,7 +181,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         note_text = (pdf.find_text 'NOTE')[0]
         (expect note_text).not_to be_nil
         (expect note_text[:font_name]).to include 'Bold'
-      }).to log_message severity: :WARN, message: '~admonition icon not found or not readable'
+      end).to log_message severity: :WARN, message: '~admonition icon not found or not readable'
     end
 
     it 'should allow theme to specify icon for custom admonition type' do
@@ -199,10 +199,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end
 
       pdf_theme = {
-        admonition_icon_question: {
-          name: 'question-circle',
-          size: 20,
-        }
+        admonition_icon_question: { name: 'question-circle', size: 20 },
       }
 
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, extensions: extensions, analyze: true

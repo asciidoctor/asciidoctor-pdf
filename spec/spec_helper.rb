@@ -84,11 +84,10 @@ class EnhancedPDFTextInspector < PDF::Inspector
 
   def lines text = @text
     prev_y = nil
-    text.reduce [] do |accum, it|
+    text.each_with_object [] do |it, accum|
       current_line = prev_y && (prev_y - it[:y]).abs < 6 ? accum.pop : ''
       accum << %(#{current_line}#{it[:string]})
       prev_y = it[:y]
-      accum
     end
   end
 
@@ -108,18 +107,18 @@ class EnhancedPDFTextInspector < PDF::Inspector
   end
 
   # Tf
-  def set_text_font_and_size *params
+  def set_text_font_and_size *params # rubocop:disable Naming/AccessorMethodName
     @state.set_text_font_and_size(*params)
     @font_settings = { name: @fonts[params[0]], size: params[1], color: @color }
   end
 
   # scn (used for font color in SVG)
-  def set_color_for_nonstroking_and_special *params
+  def set_color_for_nonstroking_and_special *params # rubocop:disable Naming/AccessorMethodName
     @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
   end
 
   # SCN
-  def set_color_for_stroking_and_special *params
+  def set_color_for_stroking_and_special *params # rubocop:disable Naming/AccessorMethodName
     @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
   end
 
@@ -161,13 +160,12 @@ class ImageInspector < PDF::Inspector
 
   def page= page
     @page_number = page.number
-    @image_xobjects = page.xobjects.reduce({}) do |accum, (name, xobject)|
+    @image_xobjects = page.xobjects.each_with_object({}) do |(name, xobject), accum|
       accum[name] = xobject if xobject.hash[:Subtype] == :Image
-      accum
     end
   end
 
-  def concatenate_matrix width, p2, p3, height, x, y
+  def concatenate_matrix width, _p2, _p3, height, x, y
     @width = width
     @height = height
     @x = x
@@ -214,33 +212,30 @@ class LineInspector < PDF::Inspector
   end
 
   # SCN
-  def set_color_for_stroking_and_special *params
+  def set_color_for_stroking_and_special *params # rubocop:disable Naming/AccessorMethodName
     @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
   end
 
   # gs
-  def set_graphics_state_parameters ref
+  def set_graphics_state_parameters ref # rubocop:disable Naming/AccessorMethodName
     if (opacity = @graphic_states[ref][:ca])
       @color += '%02X' % (opacity * 255).round
     end
   end
 
   # w
-  def set_line_width line_width
+  def set_line_width line_width # rubocop:disable Naming/AccessorMethodName
     @width = line_width
   end
 end
 
 RSpec.configure do |config|
-
   config.before :suite do
     FileUtils.mkdir_p output_dir
   end
 
   config.after :suite do
-    unless (ENV.key? 'DEBUG') || config.reporter.failed_examples.find {|it| it.metadata[:visual] }
-      FileUtils.rm_r output_dir, force: true, secure: true
-    end
+    FileUtils.rm_r output_dir, force: true, secure: true unless (ENV.key? 'DEBUG') || config.reporter.failed_examples.find {|it| it.metadata[:visual] }
   end
 
   def asciidoctor_2_or_better?
@@ -397,7 +392,7 @@ RSpec.configure do |config|
 
   def get_page_labels pdf
     objects = pdf.objects
-    Hash[*objects[pdf.catalog[:PageLabels]][:Nums]].reduce([]) {|accum, (idx, val)| accum[idx] = val[:P]; accum }
+    Hash[*objects[pdf.catalog[:PageLabels]][:Nums]].each_with_object([]) {|(idx, val), accum| accum[idx] = val[:P] }
   end
 
   def get_annotations pdf, page_num = nil
@@ -405,7 +400,7 @@ RSpec.configure do |config|
     if page_num
       (pdf.page page_num).attributes[:Annots].to_a.map {|ref| objects[ref] }
     else
-      pdf.pages.reduce([]) {|accum, page| page.attributes[:Annots].to_a.each {|ref| accum << objects[ref] }; accum }
+      pdf.pages.each_with_object([]) {|page, accum| page.attributes[:Annots].to_a.each {|ref| accum << objects[ref] } }
     end
   end
 
@@ -413,7 +408,7 @@ RSpec.configure do |config|
     if page_num
       (pdf.page page_num).xobjects.select {|_, candidate| candidate.hash[:Subtype] == :Image }.values
     else
-      pdf.pages.reduce([]) {|accum, page| page.xobjects.each {|_, candidate| candidate.hash[:Subtype] == :Image ? (accum << candidate) : accum }; accum }
+      pdf.pages.each_with_object([]) {|page, accum| page.xobjects.each {|_, candidate| candidate.hash[:Subtype] == :Image ? (accum << candidate) : accum } }
     end
   end
 
@@ -473,11 +468,11 @@ RSpec.configure do |config|
 
     actual_image.height.times do |y|
       actual_image.row(y).each_with_index do |pixel, x|
-        diff << [x,y] unless pixel == reference_image[x,y]
+        diff << [x, y] unless pixel == reference_image[x, y]
       end
     end
 
-    if diff.length > 0 && difference
+    if !diff.empty? && difference
       x = diff.map {|xy| xy[0] }
       y = diff.map {|xy| xy[1] }
       actual_image.rect x.min, y.min, x.max, y.max, (ChunkyPNG::Color.rgb 0, 255, 0)

@@ -203,7 +203,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should use value of cellbgcolor attribute in table cell to override background color set by theme', visual: true do
-      to_file = to_pdf_file <<~'EOS','table-cellbgcolor-override.pdf', pdf_theme: { table_body_background_color: 'CCCCCC' }
+      to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor-override.pdf', pdf_theme: { table_body_background_color: 'CCCCCC' }
       :attribute-undefined: drop
 
       [%autowidth,cols=3*]
@@ -220,14 +220,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Dimensions' do
     it 'should throw exception if no width is assigned to column' do
-      (expect {
+      (expect do
         to_pdf <<~'EOS'
         [cols=",50%,50%"]
         |===
         | Column A | Column B | Column C
         |===
         EOS
-      }).to raise_exception ::Prawn::Errors::CannotFit
+      end).to raise_exception ::Prawn::Errors::CannotFit
     end
 
     it 'should not fail to fit text in cell' do
@@ -446,15 +446,15 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     it 'should not split cells in head row across pages' do
       hard_line_break = %( +\n)
       filler = (['filler'] * 40).join hard_line_break
-      head_cell_1 = %w(this is a very tall cell in the head row of this table).join hard_line_break
-      head_cell_2 = %w(this is an even taller cell also in the head row of this table).join hard_line_break
+      head_cell1 = %w(this is a very tall cell in the head row of this table).join hard_line_break
+      head_cell2 = %w(this is an even taller cell also in the head row of this table).join hard_line_break
       pdf = to_pdf <<~EOS, analyze: true
       #{filler}
 
       [%header,cols=2*]
       |===
-      |#{head_cell_1}
-      |#{head_cell_2}
+      |#{head_cell1}
+      |#{head_cell2}
 
       |body cell
       |body cell
@@ -485,15 +485,15 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      cell_1_text = pdf.find_text 'all one line'
-      (expect cell_1_text).not_to be_empty
-      cell_2_text = pdf.find_text %r/^line (?:1|2)/
-      (expect cell_2_text).to have_size 2
-      (expect cell_2_text[0][:y]).to be > cell_2_text[1][:y]
-      cell_3_text = pdf.find_text %r/^paragraph (?:1|2)/
-      (expect cell_3_text).to have_size 2
-      (expect cell_3_text[0][:y]).to be > cell_3_text[1][:y]
-      (expect cell_3_text[0][:y] - cell_3_text[1][:y]).to be > (cell_2_text[0][:y] - cell_2_text[1][:y])
+      cell1_text = pdf.find_text 'all one line'
+      (expect cell1_text).not_to be_empty
+      cell2_text = pdf.find_text %r/^line (?:1|2)/
+      (expect cell2_text).to have_size 2
+      (expect cell2_text[0][:y]).to be > cell2_text[1][:y]
+      cell3_text = pdf.find_text %r/^paragraph (?:1|2)/
+      (expect cell3_text).to have_size 2
+      (expect cell3_text[0][:y]).to be > cell3_text[1][:y]
+      (expect cell3_text[0][:y] - cell3_text[1][:y]).to be > (cell2_text[0][:y] - cell2_text[1][:y])
     end
 
     it 'should normalize newlines and whitespace' do
@@ -535,9 +535,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         |===
         EOS
 
-        lines_by_page = pdf.lines.reduce ::Hash.new do |accum, line|
+        lines_by_page = pdf.lines.each_with_object ::Hash.new do |line, accum|
           (accum[line.delete :page_number] ||= []) << line
-          accum
         end
         (expect lines_by_page[1]).to have_size 4
         (2..3).each do |rownum|
@@ -636,10 +635,10 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.lines.find {|l| l.include? '!' }).to be_nil
       (expect pdf.lines).to have_size 2
       (expect pdf.lines[1]).to eql 'Nested table cell 1Nested table cell 2'
-      nested_cell_1 = (pdf.find_text 'Nested table cell 1')[0]
-      nested_cell_2 = (pdf.find_text 'Nested table cell 2')[0]
-      (expect nested_cell_1[:y]).to eql nested_cell_2[:y]
-      (expect nested_cell_1[:x]).to be < nested_cell_2[:x]
+      nested_cell1 = (pdf.find_text 'Nested table cell 1')[0]
+      nested_cell2 = (pdf.find_text 'Nested table cell 2')[0]
+      (expect nested_cell1[:y]).to eql nested_cell2[:y]
+      (expect nested_cell1[:x]).to be < nested_cell2[:x]
     end
 
     it 'should not fail to fit content in table cell and create blank page when margin bottom is 0' do

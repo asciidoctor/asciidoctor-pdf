@@ -77,7 +77,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
   end
 
   it 'should not mangle formatting when hyphenating text' do
-    (expect {
+    (expect do
       pdf = to_pdf <<~'EOS', analyze: true
       :icons: font
       :hyphens:
@@ -91,7 +91,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
       (expect lines[0].count ?\u00ad).to eql 1
       (expect lines[0]).to include ?\uf780
       (expect lines[0]).to include ?\uf1b0
-    }).to not_log_message
+    end).to not_log_message
   end
 
   it 'should set hyphenation language based on value of hyphens attribute' do

@@ -61,7 +61,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
 
   it 'should reveal URL of link when media=print or media=prepress' do
     %w(print prepress).each do |media|
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => 'print' }, analyze: true
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => media }, analyze: true
       https://asciidoctor.org[Asciidoctor] is a text processor.
       EOS
 
@@ -98,7 +98,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     lines = pdf.lines
     (expect lines).to have_size 1
     underline = lines[0]
-    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :true
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     link_text = (pdf.find_text 'https://asciidoctor.org')[0]
     (expect link_text[:font_color]).to eql underline[:color]
     (expect underline[:width]).to be_nil
