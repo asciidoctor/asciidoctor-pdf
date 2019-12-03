@@ -103,9 +103,6 @@ Style/SpecialGlobalVars:
   EnforcedStyle: use_perl_names
 Style/SymbolArray:
   EnforcedStyle: brackets
-# I'd like to enable this one, but rubocop gets confused
-Style/TernaryParentheses:
-  Enabled: false
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInHashLiteral:
