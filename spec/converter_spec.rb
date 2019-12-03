@@ -7,15 +7,15 @@ describe Asciidoctor::PDF::Converter do
     it 'should map Asciidoctor::Pdf module to Asciidoctor::PDF' do
       (expect Asciidoctor::Pdf).to be Asciidoctor::PDF
       (expect Asciidoctor::Pdf::VERSION).to be Asciidoctor::PDF::VERSION
-      (expect Asciidoctor::Pdf::Converter).to be Asciidoctor::PDF::Converter
+      (expect Asciidoctor::Pdf::Converter).to be described_class
       (expect Asciidoctor::Pdf::ThemeLoader).to be Asciidoctor::PDF::ThemeLoader
     end
   end
 
-  context '.register_for' do
+  describe '.register_for' do
     it 'should self register to handle pdf backend' do
       registered = asciidoctor_2_or_better? ? (Asciidoctor::Converter.for 'pdf') : (Asciidoctor::Converter::Factory.resolve 'pdf')
-      (expect registered).to be Asciidoctor::PDF::Converter
+      (expect registered).to be described_class
     end
 
     it 'should convert AsciiDoc string to PDF object when backend is pdf' do
@@ -29,9 +29,9 @@ describe Asciidoctor::PDF::Converter do
     end
   end
 
-  context '#convert' do
+  describe '#convert' do
     it 'should not fail to convert empty string' do
-      (expect to_pdf '').to_not be_nil
+      (expect to_pdf '').not_to be_nil
     end
 
     it 'should not fail to convert empty file' do

@@ -14,7 +14,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     EOS
 
     sidebar_text = (pdf.find_text 'Sidebar')[0]
-    (expect sidebar_text[:page_number]).to eql 2
+    (expect sidebar_text[:page_number]).to be 2
   end
 
   it 'should draw line around sidebar block' do
@@ -42,7 +42,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     pdf = to_pdf input, analyze: true
     title_text = (pdf.find_text 'Sidebar Title')[0]
     (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
-    (expect title_text[:font_size]).to eql 13
+    (expect title_text[:font_size]).to be 13
     (expect title_text[:x]).to be > 100
     (expect title_text[:y]).to be < sidebar_border_top
   end

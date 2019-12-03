@@ -13,7 +13,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     lines = pdf.lines
     (expect lines).to have_size 2
     (expect lines[0]).to end_with ?\u00ad
-    (expect lines[0].count ?\u00ad).to eql 1
+    (expect lines[0].count ?\u00ad).to be 1
   end
 
   it 'should hyphenate text split across multiple lines' do
@@ -29,7 +29,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     lines = pdf.lines
     (expect lines).to have_size 2
     (expect lines[0]).to end_with ?\u00ad
-    (expect lines[0].count ?\u00ad).to eql 1
+    (expect lines[0].count ?\u00ad).to be 1
   end
 
   it 'should hyphenate text in table cell if hyphens attribute is set' do
@@ -44,7 +44,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     lines = pdf.lines
     (expect lines).to have_size 2
     (expect lines[0]).to end_with ?\u00ad
-    (expect lines[0].count ?\u00ad).to eql 1
+    (expect lines[0].count ?\u00ad).to be 1
   end
 
   it 'should hyphenate text in a list item if hyphens attribute is set' do
@@ -57,7 +57,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     lines = pdf.lines
     (expect lines).to have_size 2
     (expect lines[0]).to end_with ?\u00ad
-    (expect lines[0].count ?\u00ad).to eql 1
+    (expect lines[0].count ?\u00ad).to be 1
   end
 
   it 'should hyphenate formatted word' do
@@ -70,7 +70,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     lines = pdf.lines
     (expect lines).to have_size 2
     (expect lines[0]).to end_with ?\u00ad
-    (expect lines[0].count ?\u00ad).to eql 1
+    (expect lines[0].count ?\u00ad).to be 1
     bold_texts = pdf.find_text font_name: 'NotoSerif-Bold'
     (expect bold_texts).to have_size 2
     (expect bold_texts[0][:string]).to eql %(van\u00ad)
@@ -90,7 +90,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
       lines = pdf.lines
       (expect lines).to have_size 2
       (expect lines[0]).to end_with ?\u00ad
-      (expect lines[0].count ?\u00ad).to eql 1
+      (expect lines[0].count ?\u00ad).to be 1
       (expect lines[0]).to include ?\uf780
       (expect lines[0]).to include ?\uf1b0
     end).to not_log_message
@@ -108,7 +108,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     lines = pdf.lines
     (expect lines).to have_size 3
     (expect lines[0]).to end_with ?\u00ad
-    (expect lines[0].count ?\u00ad).to eql 1
+    (expect lines[0].count ?\u00ad).to be 1
   end
 
   it 'should set hyphenation language based on value of lang attribute if value of hyphens attribute is empty' do
@@ -124,7 +124,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     lines = pdf.lines
     (expect lines).to have_size 3
     (expect lines[0]).to end_with ?\u00ad
-    (expect lines[0].count ?\u00ad).to eql 1
+    (expect lines[0].count ?\u00ad).to be 1
   end
 
   it 'should apply hyphenation when line is advanced to next page' do

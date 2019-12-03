@@ -11,7 +11,7 @@ describe 'Asciidoctor::PDF::Optimizer' do
     to_optimized_file_size = (File.stat to_optimized_file).size
     (expect to_optimized_file_size).to be < to_file_size
     pdf = PDF::Reader.new to_optimized_file
-    (expect pdf.pdf_version).to eql 1.4
+    (expect pdf.pdf_version).to be 1.4
     (expect pdf.pages).to have_size 3
     pdf_info = pdf.info
     (expect pdf_info[:Producer]).to include 'Ghostscript'
@@ -50,7 +50,7 @@ describe 'Asciidoctor::PDF::Optimizer' do
     to_prepress_file_size = (File.stat to_prepress_file).size
     (expect to_prepress_file_size).to be < to_screen_file_size
     pdf = PDF::Reader.new to_prepress_file
-    (expect pdf.pdf_version).to eql 1.4
+    (expect pdf.pdf_version).to be 1.4
     (expect pdf.pages).to have_size 3
     pdf_info = pdf.info
     (expect pdf_info[:Producer]).to include 'Ghostscript'
@@ -69,7 +69,7 @@ describe 'Asciidoctor::PDF::Optimizer' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-cli.pdf'
     out, err, res = run_command asciidoctor_pdf_optimize_bin, '--quality', 'prepress', to_file
-    (expect res.exitstatus).to eql 0
+    (expect res.exitstatus).to be 0
     (expect out).to be_empty
     (expect err).to be_empty
     pdf_info = (PDF::Reader.new to_file).info
@@ -80,7 +80,7 @@ describe 'Asciidoctor::PDF::Optimizer' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-cli-fallback-quality.pdf'
     out, err, res = run_command asciidoctor_pdf_optimize_bin, '--quality', 'foobar', to_file
-    (expect res.exitstatus).to eql 0
+    (expect res.exitstatus).to be 0
     (expect out).to be_empty
     (expect err).to be_empty
     pdf_info = (PDF::Reader.new to_file).info

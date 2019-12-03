@@ -35,9 +35,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       p2_text = pdf.find_text page_number: 2
       (expect p2_text).to have_size 2
       (expect p2_text[0][:string]).to eql 'first non-imported page'
-      (expect p2_text[0][:order]).to eql 1
+      (expect p2_text[0][:order]).to be 1
       (expect p2_text[1][:string]).to eql '2'
-      (expect p2_text[1][:order]).to eql 2
+      (expect p2_text[1][:order]).to be 2
     end
   end
 
@@ -71,8 +71,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       page_number_texts.each_with_index do |page_number_text, idx|
         (expect page_number_text[:page_number]).to eql idx + 2
         (expect page_number_text[:x]).to eql expected_x_positions[idx.even? ? 0 : 1]
-        (expect page_number_text[:y]).to eql 14.263
-        (expect page_number_text[:font_size]).to eql 9
+        (expect page_number_text[:y]).to be 14.263
+        (expect page_number_text[:font_size]).to be 9
       end
     end
 
@@ -116,9 +116,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pagenum1_text = (pdf.find_text '1')[0]
       pagenum2_text = (pdf.find_text '2')[0]
       (expect pagenum1_text).not_to be_nil
-      (expect pagenum1_text[:page_number]).to eql 2
+      (expect pagenum1_text[:page_number]).to be 2
       (expect pagenum2_text).not_to be_nil
-      (expect pagenum2_text[:page_number]).to eql 3
+      (expect pagenum2_text[:page_number]).to be 3
       (expect pagenum1_text[:x]).to be > pagenum2_text[:x]
     end
   end
@@ -153,7 +153,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       expected_page_numbers.each_with_index do |page_number, idx|
         (expect header_texts[idx][:string]).to eql '(Document Title)'
         (expect header_texts[idx][:page_number]).to eql page_number.to_i + 1
-        (expect header_texts[idx][:font_size]).to eql 9
+        (expect header_texts[idx][:font_size]).to be 9
         (expect header_texts[idx][:y]).to be < page_height
       end
     end
@@ -500,13 +500,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 2
-      (expect footer_texts[0][:page_number]).to eql 3
+      (expect footer_texts[0][:page_number]).to be 3
       (expect footer_texts[0][:string]).to eql '2 of 3'
-      (expect footer_texts[1][:page_number]).to eql 4
+      (expect footer_texts[1][:page_number]).to be 4
       (expect footer_texts[1][:string]).to eql '3 of 3'
     end
 
-    it 'should compute page-count attribute correctly when running content starts after page numbering' do
+    it 'should compute page-count attribute correctly when page numbering starts after running content' do
       pdf_theme = {
         page_numbering_start_at: 'body',
         running_content_start_at: 'toc',
@@ -527,11 +527,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
-      (expect footer_texts[0][:page_number]).to eql 2
+      (expect footer_texts[0][:page_number]).to be 2
       (expect footer_texts[0][:string]).to eql 'ii of 2'
-      (expect footer_texts[1][:page_number]).to eql 3
+      (expect footer_texts[1][:page_number]).to be 3
       (expect footer_texts[1][:string]).to eql '1 of 2'
-      (expect footer_texts[2][:page_number]).to eql 4
+      (expect footer_texts[2][:page_number]).to be 4
       (expect footer_texts[2][:string]).to eql '2 of 2'
     end
   end
@@ -710,7 +710,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       annotations_p2 = get_annotations pdf, 2
       (expect annotations_p2).to have_size 1
       link_annotation = annotations_p2[0]
-      (expect link_annotation[:Subtype]).to eql :Link
+      (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql 'https://asciidoctor.org'
     end
 
@@ -904,9 +904,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       portrait
       EOS
 
-      (expect pdf.text.size).to eql 5
+      (expect pdf.text.size).to be 5
       pdf.text.each do |text|
-        (expect text[:x]).to eql 48.24
+        (expect text[:x]).to be 48.24
       end
     end
 
@@ -1079,11 +1079,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
-      (expect footer_texts[0][:page_number]).to eql 2
+      (expect footer_texts[0][:page_number]).to be 2
       (expect footer_texts[0][:string]).to eql 'PREFACE'
-      (expect footer_texts[1][:page_number]).to eql 3
+      (expect footer_texts[1][:page_number]).to be 3
       (expect footer_texts[1][:string]).to eql 'PREFACE'
-      (expect footer_texts[2][:page_number]).to eql 4
+      (expect footer_texts[2][:page_number]).to be 4
       (expect footer_texts[2][:string]).to eql 'First Chapter'
     end
 
@@ -1109,11 +1109,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
-      (expect footer_texts[0][:page_number]).to eql 1
+      (expect footer_texts[0][:page_number]).to be 1
       (expect footer_texts[0][:string]).to eql 'Preface'
-      (expect footer_texts[1][:page_number]).to eql 2
+      (expect footer_texts[1][:page_number]).to be 2
       (expect footer_texts[1][:string]).to eql 'Preface'
-      (expect footer_texts[2][:page_number]).to eql 3
+      (expect footer_texts[2][:page_number]).to be 3
       (expect footer_texts[2][:string]).to eql 'First Chapter'
     end
 
@@ -1137,9 +1137,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
-      (expect footer_texts[0][:page_number]).to eql 2
+      (expect footer_texts[0][:page_number]).to be 2
       (expect footer_texts[0][:string]).to eql 'Contents | ii'
-      (expect footer_texts[1][:page_number]).to eql 3
+      (expect footer_texts[1][:page_number]).to be 3
       (expect footer_texts[1][:string]).to eql '1 | Beginning'
     end
 
@@ -1164,11 +1164,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
-      (expect footer_texts[0][:page_number]).to eql 2
+      (expect footer_texts[0][:page_number]).to be 2
       (expect footer_texts[0][:string]).to eql '1 | Beginning'
-      (expect footer_texts[1][:page_number]).to eql 3
+      (expect footer_texts[1][:page_number]).to be 3
       (expect footer_texts[1][:string]).to eql 'Contents | 2'
-      (expect footer_texts[2][:page_number]).to eql 4
+      (expect footer_texts[2][:page_number]).to be 4
       (expect footer_texts[2][:string]).to eql '3 | End'
     end
 
@@ -1196,11 +1196,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
-      (expect footer_texts[0][:page_number]).to eql 1
+      (expect footer_texts[0][:page_number]).to be 1
       (expect footer_texts[0][:string]).to eql '1 | Beginning'
-      (expect footer_texts[1][:page_number]).to eql 2
+      (expect footer_texts[1][:page_number]).to be 2
       (expect footer_texts[1][:string]).to eql 'Contents | 2'
-      (expect footer_texts[2][:page_number]).to eql 3
+      (expect footer_texts[2][:page_number]).to be 3
       (expect footer_texts[2][:string]).to eql '3 | End'
     end
 
@@ -1226,9 +1226,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 2
-      (expect footer_texts[0][:page_number]).to eql 1
+      (expect footer_texts[0][:page_number]).to be 1
       (expect footer_texts[0][:string]).to eql '1 | Beginning'
-      (expect footer_texts[1][:page_number]).to eql 2
+      (expect footer_texts[1][:page_number]).to be 2
       (expect footer_texts[1][:string]).to eql 'End | 2'
     end
 
@@ -1532,11 +1532,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       link_annotation = annotations[0]
-      (expect link_annotation[:Subtype]).to eql :Link
+      (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql 'https://www.linuxfoundation.org/projects/linux/'
       link_rect = link_annotation[:Rect]
-      (expect (link_rect[3] - link_rect[1]).round 1).to eql 36.0
-      (expect (link_rect[2] - link_rect[0]).round 1).to eql 30.6
+      (expect (link_rect[3] - link_rect[1]).round 1).to be 36.0
+      (expect (link_rect[2] - link_rect[0]).round 1).to be 30.6
     end
 
     it 'should add link to SVG image if link attribute is set' do
@@ -1552,11 +1552,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       link_annotation = annotations[0]
-      (expect link_annotation[:Subtype]).to eql :Link
+      (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql 'https://example.org'
       link_rect = link_annotation[:Rect]
-      (expect (link_rect[3] - link_rect[1]).round 1).to eql 36.0
-      (expect (link_rect[2] - link_rect[0]).round 1).to eql 36.0
+      (expect (link_rect[3] - link_rect[1]).round 1).to be 36.0
+      (expect (link_rect[2] - link_rect[0]).round 1).to be 36.0
     end
 
     it 'should replace unrecognized font family in SVG with SVG fallback font family specified in theme' do

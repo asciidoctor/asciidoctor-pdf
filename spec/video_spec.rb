@@ -24,7 +24,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       link_annotation = annotations[0]
-      (expect link_annotation[:Subtype]).to eql :Link
+      (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql %(https://www.youtube.com/watch?v=#{video_id})
       (expect to_file).to visually_match 'video-youtube-poster.pdf'
     end unless ENV['CI']
@@ -41,7 +41,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       link_annotation = annotations[0]
-      (expect link_annotation[:Subtype]).to eql :Link
+      (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql %(https://vimeo.com/#{video_id})
       (expect to_file).to visually_match 'video-vimeo-poster.pdf'
     end

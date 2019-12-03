@@ -216,7 +216,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       icon_text = (pdf.find_text ?\uf059)[0]
       (expect icon_text).not_to be_nil
       (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
-      (expect icon_text[:font_size]).to eql 20
+      (expect icon_text[:font_size]).to be 20
       question_text = (pdf.find_text 'Are you following along?')
       (expect question_text).not_to be_nil
     end

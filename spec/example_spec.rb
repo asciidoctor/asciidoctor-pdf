@@ -13,7 +13,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     EOS
 
     example_text = (pdf.find_text 'content')[0]
-    (expect example_text[:page_number]).to eql 2
+    (expect example_text[:page_number]).to be 2
   end
 
   it 'should keep title with content when block is advanced to next page' do
@@ -28,8 +28,8 @@ describe 'Asciidoctor::PDF::Converter - Example' do
 
     example_title_text = (pdf.find_text 'Example 1. Title')[0]
     example_content_text = (pdf.find_text 'content')[0]
-    (expect example_title_text[:page_number]).to eql 2
-    (expect example_content_text[:page_number]).to eql 2
+    (expect example_title_text[:page_number]).to be 2
+    (expect example_content_text[:page_number]).to be 2
   end
 
   it 'should split block if it cannot fit on one page' do
@@ -42,9 +42,9 @@ describe 'Asciidoctor::PDF::Converter - Example' do
 
     example_title_text = (pdf.find_text 'Example 1. Title')[0]
     example_content_text = (pdf.find_text 'content')
-    (expect example_title_text[:page_number]).to eql 1
-    (expect example_content_text[0][:page_number]).to eql 1
-    (expect example_content_text[-1][:page_number]).to eql 2
+    (expect example_title_text[:page_number]).to be 1
+    (expect example_content_text[0][:page_number]).to be 1
+    (expect example_content_text[-1][:page_number]).to be 2
   end
 
   it 'should split border when block is split across pages', visual: true do

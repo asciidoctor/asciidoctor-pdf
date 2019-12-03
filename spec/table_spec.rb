@@ -108,13 +108,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       lines = pdf.lines.uniq
       (expect lines).to have_size 4
-      (expect lines[0][:width]).to eql 1.25
-      (expect lines[1][:width]).to eql 1.25
+      (expect lines[0][:width]).to be 1.25
+      (expect lines[1][:width]).to be 1.25
       (expect lines[0][:from][:y]).to eql lines[0][:to][:y]
       (expect lines[1][:from][:y]).to eql lines[1][:to][:y]
       (expect lines[0][:from][:y]).to eql lines[1][:from][:y]
-      (expect lines[2][:width]).to eql 0.5
-      (expect lines[3][:width]).to eql 0.5
+      (expect lines[2][:width]).to be 0.5
+      (expect lines[3][:width]).to be 0.5
     end
 
     it 'should allow theme to customize bottom border of table head row', visual: true do
@@ -238,8 +238,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |Aaaaa Bbbbb Ccccc |*{zwsp}* Aaaaa_Bbbbb_Ccccc |Aaaaa_Bbbbb_Ccccc |Aaaaa_Bbbbb_Ccccc |A
       |===
       EOS
-      (expect pdf.strings.index 'Aaaaa Bbbbb').to eql 0
-      (expect pdf.strings.index 'Ccccc').to eql 1
+      (expect pdf.strings.index 'Aaaaa Bbbbb').to be 0
+      (expect pdf.strings.index 'Ccccc').to be 1
     end
 
     it 'should not break words in head row when autowidth option is set' do
@@ -298,8 +298,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       lines = pdf.lines
       (expect lines).to have_size 2
-      (expect lines[0][:from][:x]).to eql 48.24
-      (expect lines[1][:from][:x]).to eql 547.04
+      (expect lines[0][:from][:x]).to be 48.24
+      (expect lines[1][:from][:x]).to be 547.04
     end
 
     it 'should not stretch autowidth table to width of bounds by default' do
@@ -312,7 +312,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       lines = pdf.lines
       (expect lines).to have_size 2
-      (expect lines[0][:from][:x]).to eql 48.24
+      (expect lines[0][:from][:x]).to be 48.24
       (expect lines[1][:from][:x]).to be < 100
     end
 
@@ -326,8 +326,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       lines = pdf.lines
       (expect lines).to have_size 2
-      (expect lines[0][:from][:x]).to eql 48.24
-      (expect lines[1][:from][:x]).to eql 547.04
+      (expect lines[0][:from][:x]).to be 48.24
+      (expect lines[1][:from][:x]).to be 547.04
     end
 
     it 'should allocate remaining width to autowidth column' do
@@ -343,9 +343,9 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
       (expect pdf.strings).to eql %w(0x00 UNSPECIFIED 0x01 OK)
       unspecified_text = (pdf.find_text 'UNSPECIFIED')[0]
-      (expect unspecified_text[:x].floor).to eql 476
+      (expect unspecified_text[:x].floor).to be 476
       ok_text = (pdf.find_text 'OK')[0]
-      (expect ok_text[:x].floor).to eql 529
+      (expect ok_text[:x].floor).to be 529
     end if asciidoctor_1_5_7_or_better?
 
     it 'should extend width of table to fit content in autowidth column when autowidth option is set on table' do
@@ -361,9 +361,9 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
       (expect pdf.strings).to eql %w(0x00 UNSPECIFIED 0x01 OK)
       unspecified_text = (pdf.find_text 'UNSPECIFIED')[0]
-      (expect unspecified_text[:x].floor).to eql 81
+      (expect unspecified_text[:x].floor).to be 81
       ok_text = (pdf.find_text 'OK')[0]
-      (expect ok_text[:x].floor).to eql 135
+      (expect ok_text[:x].floor).to be 135
     end if asciidoctor_1_5_7_or_better?
 
     it 'should not accumulate cell padding between tables' do
@@ -465,10 +465,10 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       filler_page_nums = (pdf.find_text 'filler').map {|it| it[:page_number] }
       (expect filler_page_nums.uniq).to have_size 1
-      (expect filler_page_nums[0]).to eql 1
+      (expect filler_page_nums[0]).to be 1
       table_cell_page_nums = pdf.text.reject {|it| it[:string] == 'filler' }.map {|it| it[:page_number] }
       (expect table_cell_page_nums.uniq).to have_size 1
-      (expect table_cell_page_nums[0]).to eql 2
+      (expect table_cell_page_nums[0]).to be 2
     end
   end
 
@@ -910,9 +910,9 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       a1_text = (pdf.find_text 'A1')[0]
       a3_text = (pdf.find_text 'A3')[0]
       (expect a1_text[:x]).to be > (page_width * 0.5)
-      (expect a1_text[:page_number]).to eql 1
+      (expect a1_text[:page_number]).to be 1
       (expect a3_text[:x]).to be > (page_width * 0.5)
-      (expect a3_text[:page_number]).to eql 2
+      (expect a3_text[:page_number]).to be 2
       first_list_item_text = (pdf.find_text string: 'list item', page_number: 2)[0]
       last_list_item_text = (pdf.find_text string: 'list item', page_number: 3)[-1]
       # NOTE if this is off, the margin box got mangled

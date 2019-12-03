@@ -72,9 +72,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       unstyled_item = (pdf.find_text 'unstyled')[0]
       (expect unstyled_item[:x]).to eql left_margin
       no_bullet_item = (pdf.find_text 'no-bullet')[0]
-      (expect no_bullet_item[:x]).to eql 56.3805
+      (expect no_bullet_item[:x]).to be 56.3805
       none_item = (pdf.find_text 'none')[0]
-      (expect none_item[:x]).to eql 66.24
+      (expect none_item[:x]).to be 66.24
     end
 
     it 'should allow theme to change marker characters' do
@@ -164,9 +164,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       marker_text = (pdf.find_text ?\u2022)[0]
-      (expect marker_text[:page_number]).to eql 2
+      (expect marker_text[:page_number]).to be 2
       item_text = (pdf.find_text 'list item')[0]
-      (expect item_text[:page_number]).to eql 2
+      (expect item_text[:page_number]).to be 2
     end
 
     it 'should position marker correctly when media is prepress and list item is advanced to next page' do
@@ -197,9 +197,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       * last
       EOS
 
-      (expect (pdf.find_text 'middle')[0][:page_number]).to eql 1
-      (expect (pdf.find_text '•')[1][:page_number]).to eql 1
-      (expect (pdf.find_text '•')[2][:page_number]).to eql 2
+      (expect (pdf.find_text 'middle')[0][:page_number]).to be 1
+      (expect (pdf.find_text '•')[1][:page_number]).to be 1
+      (expect (pdf.find_text '•')[2][:page_number]).to be 2
     end
   end
 
@@ -338,7 +338,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect no1_text).to be_nil
       no9_text = (pdf.find_text '9.')[0]
       (expect no9_text).not_to be_nil
-      (expect no9_text[:order]).to eql 1
+      (expect no9_text[:order]).to be 1
       (expect pdf.lines).to eql %w(9.nine 10.ten)
     end
 
@@ -353,7 +353,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect no1_text).to be_nil
       no9_text = (pdf.find_text 'IX.')[0]
       (expect no9_text).not_to be_nil
-      (expect no9_text[:order]).to eql 1
+      (expect no9_text[:order]).to be 1
       (expect pdf.lines).to eql %w(IX.nine X.ten)
     end
 
@@ -430,11 +430,11 @@ describe 'Asciidoctor::PDF::Converter - List' do
       unstyled_item = (pdf.find_text 'unstyled')[0]
       (expect unstyled_item[:x]).to eql left_margin
       no_bullet_item = (pdf.find_text 'no-bullet')[0]
-      (expect no_bullet_item[:x]).to eql 51.6765
+      (expect no_bullet_item[:x]).to be 51.6765
       unnumbered_item = (pdf.find_text 'unnumbered')[0]
-      (expect unnumbered_item[:x]).to eql 51.6765
+      (expect unnumbered_item[:x]).to be 51.6765
       none_item = (pdf.find_text 'none')[0]
-      (expect none_item[:x]).to eql 66.24
+      (expect none_item[:x]).to be 66.24
     end
 
     it 'should keep list marker with primary text' do
@@ -450,9 +450,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       marker_text = (pdf.find_text '1.')[0]
-      (expect marker_text[:page_number]).to eql 2
+      (expect marker_text[:page_number]).to be 2
       item_text = (pdf.find_text 'list item')[0]
-      (expect item_text[:page_number]).to eql 2
+      (expect item_text[:page_number]).to be 2
     end
   end
 
@@ -509,9 +509,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       term_text = (pdf.find_text 'term')[0]
-      (expect term_text[:page_number]).to eql 2
+      (expect term_text[:page_number]).to be 2
       desc_text = (pdf.find_text 'desc')[0]
-      (expect desc_text[:page_number]).to eql 2
+      (expect desc_text[:page_number]).to be 2
     end
 
     it 'should keep all terms with primary text' do
@@ -529,11 +529,11 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       term1_text = (pdf.find_text 'term 1')[0]
-      (expect term1_text[:page_number]).to eql 2
+      (expect term1_text[:page_number]).to be 2
       term2_text = (pdf.find_text 'term 2')[0]
-      (expect term2_text[:page_number]).to eql 2
+      (expect term2_text[:page_number]).to be 2
       desc_text = (pdf.find_text 'desc')[0]
-      (expect desc_text[:page_number]).to eql 2
+      (expect desc_text[:page_number]).to be 2
     end
 
     it 'should style term with italic text using bold italic' do
@@ -554,7 +554,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
       term_text = (pdf.find_text 'TERM')[0]
       (expect term_text[:font_name]).to eql 'NotoSerif-BoldItalic'
-      (expect term_text[:font_size]).to eql 12
+      (expect term_text[:font_size]).to be 12
       (expect term_text[:font_color]).to eql 'AA0000'
     end
 
@@ -942,9 +942,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       marker_text = (pdf.find_text ?\u2460)[-1]
-      (expect marker_text[:page_number]).to eql 2
+      (expect marker_text[:page_number]).to be 2
       item_text = (pdf.find_text 'description')[0]
-      (expect item_text[:page_number]).to eql 2
+      (expect item_text[:page_number]).to be 2
     end
   end
 

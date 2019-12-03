@@ -134,7 +134,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     underlined_text = text[0]
     (expect underlined_text[:font_color]).not_to eql underline[:color]
     (expect underline[:color]).to eql 'CCCCCC'
-    (expect underline[:width]).to eql 0.5
+    (expect underline[:width]).to be 0.5
   end
 
   it 'should support hexidecimal character reference in section title' do
@@ -365,7 +365,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     text = (to_pdf input, analyze: true).text
     (expect text[1][:string]).to eql 'anonymous preface'
-    (expect text[1][:font_size]).to eql 13
+    (expect text[1][:font_size]).to be 13
   end
 
   # QUESTION is this the right behavior? should the value default to Preface instead?
@@ -388,7 +388,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     text = (to_pdf input, analyze: true).text
     (expect text[1][:string]).to eql 'anonymous preface'
-    (expect text[1][:font_size]).to eql 13
+    (expect text[1][:font_size]).to be 13
   end
 
   it 'should promote anonymous preface in book doctype to preface section if preface-title attribute is non-empty' do
@@ -411,9 +411,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     text = (to_pdf input, analyze: true).text
     (expect text[1][:string]).to eql 'Prelude'
-    (expect text[1][:font_size]).to eql 22
+    (expect text[1][:font_size]).to be 22
     (expect text[2][:string]).to eql 'anonymous preface'
-    (expect text[2][:font_size]).to eql 10.5
+    (expect text[2][:font_size]).to be 10.5
   end
 
   it 'should not force title of empty section to next page if it fits on page' do
@@ -427,7 +427,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     EOS
 
     section_b_text = (pdf.find_text 'Section B')[0]
-    (expect section_b_text[:page_number]).to eql 1
+    (expect section_b_text[:page_number]).to be 1
   end
 
   it 'should force section title to next page to keep with first line of section content' do
@@ -443,9 +443,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     EOS
 
     section_b_text = (pdf.find_text 'Section B')[0]
-    (expect section_b_text[:page_number]).to eql 2
+    (expect section_b_text[:page_number]).to be 2
     content_text = (pdf.find_text 'content')[0]
-    (expect content_text[:page_number]).to eql 2
+    (expect content_text[:page_number]).to be 2
   end
 
   it 'should not force section title to next page to keep with content if heading_min_height_after is zero' do
@@ -461,9 +461,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     EOS
 
     section_b_text = (pdf.find_text 'Section B')[0]
-    (expect section_b_text[:page_number]).to eql 1
+    (expect section_b_text[:page_number]).to be 1
     content_text = (pdf.find_text 'content')[0]
-    (expect content_text[:page_number]).to eql 2
+    (expect content_text[:page_number]).to be 2
   end
 
   it 'should not add break before chapter if heading-chapter-break-before key in theme is auto' do
@@ -478,8 +478,8 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     chapter_a_text = (pdf.find_text 'Chapter A')[0]
     chapter_b_text = (pdf.find_text 'Chapter B')[0]
-    (expect chapter_a_text[:page_number]).to eql 2
-    (expect chapter_b_text[:page_number]).to eql 2
+    (expect chapter_a_text[:page_number]).to be 2
+    (expect chapter_b_text[:page_number]).to be 2
   end
 
   it 'should not add break before part if heading-part-break-before key in theme is auto' do
@@ -498,8 +498,8 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     part1_text = (pdf.find_text 'Part I')[0]
     part2_text = (pdf.find_text 'Part II')[0]
-    (expect part1_text[:page_number]).to eql 2
-    (expect part2_text[:page_number]).to eql 2
+    (expect part1_text[:page_number]).to be 2
+    (expect part2_text[:page_number]).to be 2
   end
 
   it 'should add break after part if heading-part-break-after key in theme is always' do
@@ -522,10 +522,10 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     part2_text = (pdf.find_text 'Part II')[0]
     chapter1_text = (pdf.find_text 'Chapter in Part I')[0]
     chapter2_text = (pdf.find_text 'Another Chapter in Part I')[0]
-    (expect part1_text[:page_number]).to eql 2
-    (expect chapter1_text[:page_number]).to eql 3
-    (expect chapter2_text[:page_number]).to eql 3
-    (expect part2_text[:page_number]).to eql 4
+    (expect part1_text[:page_number]).to be 2
+    (expect chapter1_text[:page_number]).to be 3
+    (expect chapter2_text[:page_number]).to be 3
+    (expect part2_text[:page_number]).to be 4
   end
 
   context 'Section indent' do
@@ -544,9 +544,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       section_text = (pdf.find_text 'Section Title')[0]
       paragraph_text = pdf.find_text 'paragraph'
 
-      (expect section_text[:x]).to eql 48.24
-      (expect paragraph_text[0][:x]).to eql 84.24
-      (expect paragraph_text[1][:x].to_i).to eql 458
+      (expect section_text[:x]).to be 48.24
+      (expect paragraph_text[0][:x]).to be 84.24
+      (expect paragraph_text[1][:x].to_i).to be 458
     end
 
     it 'should indent section body if section_indent is set to array in theme' do
@@ -564,8 +564,8 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       section_text = (pdf.find_text 'Section Title')[0]
       paragraph_text = pdf.find_text 'paragraph'
 
-      (expect section_text[:x]).to eql 48.24
-      (expect paragraph_text[0][:x]).to eql 84.24
+      (expect section_text[:x]).to be 48.24
+      (expect paragraph_text[0][:x]).to be 84.24
       (expect paragraph_text[1][:x].to_i).to eql (458 + 36)
     end
 
@@ -582,9 +582,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
       toc_texts = pdf.find_text page_number: 2
       toc_title_text = toc_texts.find {|it| it[:string] == 'Table of Contents' }
-      (expect toc_title_text[:x]).to eql 48.24
+      (expect toc_title_text[:x]).to be 48.24
       chapter_title_text = toc_texts.find {|it| it[:string] == 'Chapter' }
-      (expect chapter_title_text[:x]).to eql 84.24
+      (expect chapter_title_text[:x]).to be 84.24
     end
 
     it 'should indent preamble if section_indent is set in theme' do
@@ -599,9 +599,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       EOS
 
       preamble_text = (pdf.find_text 'preamble')[0]
-      (expect preamble_text[:x]).to eql 84.24
+      (expect preamble_text[:x]).to be 84.24
       section_content_text = (pdf.find_text 'content')[0]
-      (expect section_content_text[:x]).to eql 84.24
+      (expect section_content_text[:x]).to be 84.24
     end
 
     it 'should not reapply section indent to nested sections' do
@@ -621,13 +621,13 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
       chapter_title_text = (pdf.find_text 'Chapter')[0]
       section_title_text = (pdf.find_text 'Section')[0]
-      (expect chapter_title_text[:x]).to eql 48.24
-      (expect section_title_text[:x]).to eql 48.24
+      (expect chapter_title_text[:x]).to be 48.24
+      (expect section_title_text[:x]).to be 48.24
 
       chapter_body_text = (pdf.find_text 'chapter body')[0]
       section_body_text = (pdf.find_text 'section body')[0]
-      (expect chapter_body_text[:x]).to eql 84.24
-      (expect section_body_text[:x]).to eql 84.24
+      (expect chapter_body_text[:x]).to be 84.24
+      (expect section_body_text[:x]).to be 84.24
     end
 
     it 'should outdent abstract title and body' do
@@ -645,11 +645,11 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       EOS
 
       abstract_title_text = (pdf.find_text 'Abstract')[0]
-      (expect abstract_title_text[:x]).to eql 48.24
+      (expect abstract_title_text[:x]).to be 48.24
       abstract_content_text = (pdf.find_text 'A presage of what is to come.')[0]
-      (expect abstract_content_text[:x]).to eql 48.24
+      (expect abstract_content_text[:x]).to be 48.24
       chapter_text = (pdf.find_text 'What came to pass.')[0]
-      (expect chapter_text[:x]).to eql 84.24
+      (expect chapter_text[:x]).to be 84.24
     end
 
     it 'should outdent discrete heading' do
@@ -677,8 +677,8 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
       discrete_heading_texts = pdf.find_text string: %r/Discrete/
       (expect discrete_heading_texts).to have_size 2
-      (expect discrete_heading_texts[0][:x]).to eql 48.24
-      (expect discrete_heading_texts[1][:x]).to eql 48.24
+      (expect discrete_heading_texts[0][:x]).to be 48.24
+      (expect discrete_heading_texts[1][:x]).to be 48.24
       paragraph_texts = pdf.find_text 'paragraph'
       (expect paragraph_texts.map {|it| it[:x] }.uniq).to eql [84.24]
     end
@@ -712,7 +712,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       paragraph_text = (pdf.find_text 'paragraph')[0]
       footnote_text_fragments = pdf.text.select {|it| it[:y] < paragraph_text[:y] }
       (expect footnote_text_fragments[0][:string]).to eql '['
-      (expect footnote_text_fragments[0][:x]).to eql 48.24
+      (expect footnote_text_fragments[0][:x]).to be 48.24
     end
 
     it 'should outdent footnotes in book' do
@@ -728,7 +728,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       paragraph_text = (pdf.find_text 'paragraph')[0]
       footnote_text_fragments = (pdf.find_text page_number: 2).select {|it| it[:y] < paragraph_text[:y] }
       (expect footnote_text_fragments[0][:string]).to eql '['
-      (expect footnote_text_fragments[0][:x]).to eql 48.24
+      (expect footnote_text_fragments[0][:x]).to be 48.24
     end
 
     it 'should not indent body of index section' do
@@ -746,9 +746,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
       index_page_texts = pdf.find_text page_number: 3
       index_title_text = index_page_texts.find {|it| it[:string] == 'Index' }
-      (expect index_title_text[:x]).to eql 48.24
+      (expect index_title_text[:x]).to be 48.24
       category_text = index_page_texts.find {|it| it[:string] == 'P' }
-      (expect category_text[:x]).to eql 48.24
+      (expect category_text[:x]).to be 48.24
     end
   end
 end

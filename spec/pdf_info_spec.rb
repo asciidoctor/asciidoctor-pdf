@@ -20,14 +20,14 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
   context 'attribution' do
     it 'should include Asciidoctor PDF and Prawn versions in Creator field' do
       creator = (to_pdf 'hello').info[:Creator]
-      (expect creator).to_not be_nil
+      (expect creator).not_to be_nil
       (expect creator).to include %(Asciidoctor PDF #{Asciidoctor::PDF::VERSION})
       (expect creator).to include %(Prawn #{Prawn::VERSION})
     end
 
     it 'should set Producer field to value of Creator field by default' do
       pdf = to_pdf 'hello'
-      (expect pdf.info[:Producer]).to_not be_nil
+      (expect pdf.info[:Producer]).not_to be_nil
       (expect pdf.info[:Producer]).to eql pdf.info[:Creator]
     end
 

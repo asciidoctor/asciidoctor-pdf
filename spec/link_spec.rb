@@ -9,7 +9,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     annotations = get_annotations pdf, 1
     (expect annotations).to have_size 1
     link_annotation = annotations[0]
-    (expect link_annotation[:Subtype]).to eql :Link
+    (expect link_annotation[:Subtype]).to be :Link
     (expect link_annotation[:A][:URI]).to eql 'https://asciidoctor.org'
 
     pdf = to_pdf input, analyze: true
@@ -117,6 +117,6 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     (expect lines).to have_size 1
     underline = lines[0]
     (expect underline[:color]).to eql '0000FF'
-    (expect underline[:width]).to eql 0.5
+    (expect underline[:width]).to be 0.5
   end
 end

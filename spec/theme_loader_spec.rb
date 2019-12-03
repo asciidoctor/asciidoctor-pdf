@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 describe Asciidoctor::PDF::ThemeLoader do
   subject { described_class }
 
-  context '#load' do
+  describe '#load' do
     it 'should not fail if theme data is empty' do
       theme = subject.new.load ''
       (expect theme).not_to be_nil
@@ -174,7 +174,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
   end
 
-  context '.load_file' do
+  describe '.load_file' do
     it 'should not fail if theme file is empty' do
       theme = subject.load_file fixture_file 'empty-theme.yml'
       (expect theme).to be_an OpenStruct
@@ -201,7 +201,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
   end
 
-  context '.load_theme' do
+  describe '.load_theme' do
     it 'should load base theme if theme name is base' do
       theme = subject.load_theme 'base'
       (expect theme).not_to be_nil
@@ -288,7 +288,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       theme = subject.load_theme 'extends-nil-empty-theme.yml', fixtures_dir
       (expect theme.__dir__).to eql fixtures_dir
       (expect theme.base_align).to eql 'left'
-      (expect theme.base_line_height).to eql 1
+      (expect theme.base_line_height).to be 1
       (expect theme.base_font_color).to eql '000000'
       (expect theme.code_font_family).to eql 'Courier'
       (expect theme.conum_font_family).to eql 'Courier'
@@ -303,7 +303,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
   end
 
-  context '.resolve_theme_file' do
+  describe '.resolve_theme_file' do
     it 'should expand reference to home directory in theme dir when resolving theme file from name' do
       expected_path = File.join Dir.home, '.local/share/asciidoctor-pdf/custom-theme.yml'
       expected_dir = File.dirname expected_path
@@ -464,7 +464,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     # NOTE this is only relevant when the theme is read from a file
     it 'should not coerce color-like values to string if key does not end with color' do
       theme = subject.load_theme 'color-like-value', fixtures_dir
-      (expect theme.footer_height).to eql 100
+      (expect theme.footer_height).to be 100
     end
 
     it 'should coerce content key to a string' do
@@ -502,7 +502,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           padding: #{val}
         EOS
         theme = subject.new.load theme_data
-        (expect theme.footer_padding.to_f.round 2).to eql 36.0
+        (expect theme.footer_padding.to_f.round 2).to be 36.0
       end
     end
   end
@@ -564,9 +564,9 @@ describe Asciidoctor::PDF::ThemeLoader do
         padding:  [0, $base_line_height_length - 2, $base_line_height_length * -0.75, $base_line_height_length + $blockquote_border_width / 2]
       EOS
       theme = subject.new.load theme_data
-      (expect theme.base_line_height).to eql 1.2
-      (expect theme.base_font_size_large).to eql 12.5
-      (expect theme.base_font_size_min).to eql 7.5
+      (expect theme.base_line_height).to be 1.2
+      (expect theme.base_font_size_large).to be 12.5
+      (expect theme.base_font_size_min).to be 7.5
       (expect theme.blockquote_padding).to eql [0, 10, -9, 14.5]
     end
 
@@ -588,7 +588,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       EOS
 
       theme = subject.new.load theme_data
-      (expect theme.brand_ten).to eql 10
+      (expect theme.brand_ten).to be 10
       (expect theme.brand_a_string).to eql 'ten*10'
       (expect theme.brand_another_string).to eql 'ten-10'
     end
@@ -603,9 +603,9 @@ describe Asciidoctor::PDF::ThemeLoader do
         h3_font_size: round($base_font_size * 1.5)
       EOS
       theme = subject.new.load theme_data
-      (expect theme.heading_h1_font_size).to eql 28
-      (expect theme.heading_h2_font_size).to eql 22
-      (expect theme.heading_h3_font_size).to eql 16
+      (expect theme.heading_h1_font_size).to be 28
+      (expect theme.heading_h2_font_size).to be 22
+      (expect theme.heading_h3_font_size).to be 16
     end
 
     it 'should resolve variable references in font catalog' do

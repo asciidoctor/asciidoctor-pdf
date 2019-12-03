@@ -6,7 +6,7 @@ describe 'asciidoctor-pdf' do
   context 'Options' do
     it 'should print the version of Asciidoctor PDF to stdout when invoked with the -V flag', cli: true do
       out, _, res = run_command asciidoctor_pdf_bin, '-V'
-      (expect res.exitstatus).to eql 0
+      (expect res.exitstatus).to be 0
       (expect out).to include %(Asciidoctor PDF #{Asciidoctor::PDF::VERSION} using Asciidoctor #{Asciidoctor::VERSION})
     end
   end
@@ -14,15 +14,7 @@ describe 'asciidoctor-pdf' do
   context 'Require' do
     it 'should load converter if backend is pdf and require is asciidoctor-pdf', cli: true do
       out, err, res = run_command asciidoctor_bin, '-r', 'asciidoctor-pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc')
-      (expect res.exitstatus).to eql 0
-      (expect out).to be_empty
-      (expect err).to be_empty
-      (expect Pathname.new output_file 'hello.pdf').to exist
-    end
-
-    it 'should load converter if backend is pdf and require is asciidoctor-pdf', cli: true do
-      out, err, res = run_command asciidoctor_bin, '-r', 'asciidoctor/pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc')
-      (expect res.exitstatus).to eql 0
+      (expect res.exitstatus).to be 0
       (expect out).to be_empty
       (expect err).to be_empty
       (expect Pathname.new output_file 'hello.pdf').to exist
@@ -32,7 +24,7 @@ describe 'asciidoctor-pdf' do
   context 'Examples' do
     it 'should convert the basic example', cli: true, visual: true do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (example_file 'basic-example.adoc')
-      (expect res.exitstatus).to eql 0
+      (expect res.exitstatus).to be 0
       (expect out).to be_empty
       (expect err).to be_empty
       reference_file = File.absolute_path example_file 'basic-example.pdf'
@@ -41,7 +33,7 @@ describe 'asciidoctor-pdf' do
 
     it 'should convert the chronicles example', cli: true, visual: true do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (example_file 'chronicles-example.adoc')
-      (expect res.exitstatus).to eql 0
+      (expect res.exitstatus).to be 0
       (expect out).to be_empty
       (expect err).to be_empty
       reference_file = File.absolute_path example_file 'chronicles-example.pdf'
@@ -63,7 +55,7 @@ describe 'asciidoctor-pdf' do
   context 'pdfmark' do
     it 'should generate pdfmark file if pdfmark attribute is set', cli: true do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, '-a', 'pdfmark', (fixture_file 'book.adoc')
-      (expect res.exitstatus).to eql 0
+      (expect res.exitstatus).to be 0
       (expect out).to be_empty
       (expect err).to be_empty
       pdfmark_file = Pathname.new output_file 'book.pdfmark'
@@ -76,7 +68,7 @@ describe 'asciidoctor-pdf' do
 
     it 'should hex encode title if contains non-ASCII character', cli: true do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (fixture_file 'pdfmark-non-ascii-title.adoc')
-      (expect res.exitstatus).to eql 0
+      (expect res.exitstatus).to be 0
       (expect out).to be_empty
       (expect err).to be_empty
       pdfmark_file = Pathname.new output_file 'pdfmark-non-ascii-title.pdfmark'

@@ -14,7 +14,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     (expect pdf.lines).to eql ['Words of wisdom', 'Let it be.']
     title_text = (pdf.find_text 'Words of wisdom')[0]
     (expect title_text[:font_name]).to eql 'NotoSerif-Italic'
-    (expect title_text[:x]).to eql 48.24
+    (expect title_text[:x]).to be 48.24
   end
 
   it 'should not draw left border if border_width is 0' do
@@ -48,6 +48,6 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
     quote_borders = pdf.lines.select {|it| it[:color] == 'EEEEEE' }
     (expect quote_borders).to have_size 1
-    (expect quote_borders[0][:page_number]).to eql 1
+    (expect quote_borders[0][:page_number]).to be 1
   end
 end

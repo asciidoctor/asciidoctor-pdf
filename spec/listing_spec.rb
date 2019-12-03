@@ -27,8 +27,8 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     (expect pdf.pages).to have_size 2
     listing_texts = pdf.find_text 'listing'
-    (expect listing_texts[0][:page_number]).to eql 1
-    (expect listing_texts[-1][:page_number]).to eql 2
+    (expect listing_texts[0][:page_number]).to be 1
+    (expect listing_texts[-1][:page_number]).to be 2
   end
 
   it 'should use dashed border to indicate where block is split across a page boundary', visual: true do
@@ -66,7 +66,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     EOS
 
     (expect pdf.text).to have_size 2
-    (expect pdf.text[0][:font_size]).to eql 8
+    (expect pdf.text[0][:font_size]).to be 8
   end
 
   it 'should allow autofit to shrink text as much as it needs if the minimum font size is 0' do

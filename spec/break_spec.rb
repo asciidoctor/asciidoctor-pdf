@@ -46,7 +46,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect lines).to have_size 1
       line = lines[0]
       (expect line[:color]).to eql 'EEEEEE'
-      (expect line[:width]).to eql 0.5
+      (expect line[:width]).to be 0.5
       (expect line[:from][:x]).to be < line[:to][:x]
       (expect line[:from][:y]).to eql line[:to][:y]
       (expect line[:from][:y]).to be < before_text[:y]
@@ -92,9 +92,9 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       EOS
 
       part_text = (pdf.find_text 'Part')[0]
-      (expect part_text[:page_number]).to eql 2
+      (expect part_text[:page_number]).to be 2
       chapter_text = (pdf.find_text 'Chapter')[0]
-      (expect chapter_text[:page_number]).to eql 3
+      (expect chapter_text[:page_number]).to be 3
     end
 
     it 'should not advance to next page if preceding content advanced page' do
@@ -107,7 +107,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       EOS
 
       start_of_page_text = (pdf.find_text 'start of page')[0]
-      (expect start_of_page_text[:page_number]).to eql 2
+      (expect start_of_page_text[:page_number]).to be 2
     end
 
     it 'should not leave blank page at the end of document' do

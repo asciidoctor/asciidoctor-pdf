@@ -80,7 +80,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect names).to have_key dest
     (expect pdf.objects[names[dest]][2]).to eql dogs_text[:x]
     term_pgnum = get_page_number pdf, pdf.objects[pdf.objects[names[dest]][0]]
-    (expect term_pgnum).to eql 2
+    (expect term_pgnum).to be 2
   end
 
   it 'should not assign number or chapter label to index section' do

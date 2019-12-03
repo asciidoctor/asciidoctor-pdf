@@ -80,7 +80,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect open_action).not_to be_nil
       (expect open_action).to have_size 3
       (expect pdf.objects[open_action[0]]).to eql (pdf.page 1).page_object
-      (expect open_action[1]).to eql :FitH
+      (expect open_action[1]).to be :FitH
       (expect open_action[2]).to eql (get_page_size pdf, 1)[1]
     end
 
@@ -90,24 +90,24 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect open_action).not_to be_nil
       (expect open_action).to have_size 2
       (expect pdf.objects[open_action[0]]).to eql (pdf.page 1).page_object
-      (expect open_action[1]).to eql :Fit
+      (expect open_action[1]).to be :Fit
     end
   end
 
   context 'Mode' do
     it 'should set page mode to fullscreen if page_mode key in them is fullscreen' do
       pdf = to_pdf 'content', pdf_theme: { page_mode: 'fullscreen' }
-      (expect pdf.catalog[:PageMode]).to eql :FullScreen
+      (expect pdf.catalog[:PageMode]).to be :FullScreen
     end
 
     it 'should set page mode to fullscreen if pdf-page-mode attribute is fullscreen' do
       pdf = to_pdf 'content', attribute_overrides: { 'pdf-page-mode' => 'fullscreen' }
-      (expect pdf.catalog[:PageMode]).to eql :FullScreen
+      (expect pdf.catalog[:PageMode]).to be :FullScreen
     end
 
     it 'should allow pdf-page-mode attribute in document to disable fullscreen mode' do
       pdf = to_pdf 'content', pdf_theme: { page_mode: 'fullscreen' }, attribute_overrides: { 'pdf-page-mode' => '' }
-      (expect pdf.catalog[:PageMode]).not_to eql :FullScreen
+      (expect pdf.catalog[:PageMode]).not_to be :FullScreen
     end
   end
 

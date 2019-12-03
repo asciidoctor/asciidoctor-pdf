@@ -57,14 +57,14 @@ describe 'Asciidoctor::PDF::Converter - media' do
       EOS
 
       (expect pdf.pages).to have_size 11
-      (expect (pdf.find_text 'Document Title')[0][:page_number]).to eql 3
-      (expect (pdf.find_text 'Table of Contents')[0][:page_number]).to eql 5
-      (expect (pdf.find_text 'Beginning')[0][:page_number]).to eql 5
-      (expect (pdf.find_text 'Beginning')[1][:page_number]).to eql 7
-      (expect (pdf.find_text 'Middle')[0][:page_number]).to eql 5
-      (expect (pdf.find_text 'Middle')[1][:page_number]).to eql 9
-      (expect (pdf.find_text 'End')[0][:page_number]).to eql 5
-      (expect (pdf.find_text 'End')[1][:page_number]).to eql 11
+      (expect (pdf.find_text 'Document Title')[0][:page_number]).to be 3
+      (expect (pdf.find_text 'Table of Contents')[0][:page_number]).to be 5
+      (expect (pdf.find_text 'Beginning')[0][:page_number]).to be 5
+      (expect (pdf.find_text 'Beginning')[1][:page_number]).to be 7
+      (expect (pdf.find_text 'Middle')[0][:page_number]).to be 5
+      (expect (pdf.find_text 'Middle')[1][:page_number]).to be 9
+      (expect (pdf.find_text 'End')[0][:page_number]).to be 5
+      (expect (pdf.find_text 'End')[1][:page_number]).to be 11
     end
 
     it 'should not insert blank page at start of document if document has no cover' do
@@ -82,11 +82,11 @@ describe 'Asciidoctor::PDF::Converter - media' do
 
       (expect pdf.pages).to have_size 5
       doctitle_text = (pdf.find_text 'Document Title')[0]
-      (expect doctitle_text[:page_number]).to eql 1
+      (expect doctitle_text[:page_number]).to be 1
       preface_text = (pdf.find_text 'Preface content.')[0]
-      (expect preface_text[:page_number]).to eql 3
+      (expect preface_text[:page_number]).to be 3
       chapter_title_text = (pdf.find_text 'Chapter Title')[0]
-      (expect chapter_title_text[:page_number]).to eql 5
+      (expect chapter_title_text[:page_number]).to be 5
     end
 
     it 'should not insert blank page at start of document with toc if title page is disabled' do
@@ -104,11 +104,11 @@ describe 'Asciidoctor::PDF::Converter - media' do
 
       (expect pdf.pages).to have_size 3
       toc_text = (pdf.find_text 'Table of Contents')[0]
-      (expect toc_text[:page_number]).to eql 1
+      (expect toc_text[:page_number]).to be 1
       chapter_title_texts = pdf.find_text 'Chapter Title'
       (expect chapter_title_texts).to have_size 2
-      (expect chapter_title_texts[0][:page_number]).to eql 1
-      (expect chapter_title_texts[1][:page_number]).to eql 3
+      (expect chapter_title_texts[0][:page_number]).to be 1
+      (expect chapter_title_texts[1][:page_number]).to be 3
     end
 
     it 'should not insert blank page before chapter if chapter has nonfacing option' do
@@ -124,7 +124,7 @@ describe 'Asciidoctor::PDF::Converter - media' do
       EOS
 
       chapter_text = (pdf.find_text 'Chapter')[0]
-      (expect chapter_text[:page_number]).to eql 4
+      (expect chapter_text[:page_number]).to be 4
     end
   end
 end

@@ -15,7 +15,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     top_dest = pdf.objects[names['__anchor-top']]
     top_page_num = get_page_number pdf, top_dest[0]
     top_y = top_dest[3]
-    (expect top_page_num).to eql 2
+    (expect top_page_num).to be 2
     _, page_height = get_page_size pdf, top_page_num
     (expect top_y).to eql page_height
   end
@@ -34,7 +34,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
       (expect names).to have_key 'details'
       details_dest = pdf.objects[names['details']]
       details_dest_pagenum = get_page_number pdf, details_dest[0]
-      (expect details_dest_pagenum).to eql 2
+      (expect details_dest_pagenum).to be 2
     end
   end
 
@@ -51,7 +51,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect names).to have_key 'anchor'
     anchor_dest = pdf.objects[names['anchor']]
     anchor_dest_pagenum = get_page_number pdf, anchor_dest[0]
-    (expect anchor_dest_pagenum).to eql 2
+    (expect anchor_dest_pagenum).to be 2
     (expect (pdf.page 2).text).to eql 'supercalifragilisticexpialidocious'
   end
 end

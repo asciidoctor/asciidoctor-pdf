@@ -29,17 +29,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
-    it 'should be able to customize formatting of alt text using theme' do
-      pdf_theme = {
-        image_alt_content: '%{alt} (%{target})', # rubocop:disable Style/FormatStringToken
-      }
-      (expect do
-        pdf = to_pdf 'image::no-such-image.png[Missing Image]', pdf_theme: pdf_theme, analyze: true
-        (expect pdf.lines).to eql ['Missing Image (no-such-image.png)']
-      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
-    end
-
-    it 'wip should warn instead of crash if block image is unreadable' do
+    it 'should warn instead of crash if block image is unreadable' do
       image_file = fixture_file 'logo.png'
       old_mode = (File.stat image_file).mode
       begin
@@ -132,29 +122,29 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should resolve pdfwidth in % to pt' do
       attrs = { 'pdfwidth' => '25%' }
-      (expect subject.resolve_explicit_width attrs, 1000).to eql 250.0
+      (expect subject.resolve_explicit_width attrs, 1000).to be 250.0
     end
 
     it 'should resolve pdfwidth in px to pt' do
       attrs = { 'pdfwidth' => '144px' }
-      (expect subject.resolve_explicit_width attrs, 1000).to eql 108.0
+      (expect subject.resolve_explicit_width attrs, 1000).to be 108.0
     end
 
     it 'should resolve pdfwidth in vw' do
       attrs = { 'pdfwidth' => '50vw' }
       result = subject.resolve_explicit_width attrs, 1000, support_vw: true
-      (expect result.to_f).to eql 50.0
+      (expect result.to_f).to be 50.0
       (expect result.singleton_class).to include Asciidoctor::PDF::Converter::ViewportWidth
     end
 
     it 'should resolve scaledwidth in % to pt' do
       attrs = { 'scaledwidth' => '25%' }
-      (expect subject.resolve_explicit_width attrs, 1000).to eql 250.0
+      (expect subject.resolve_explicit_width attrs, 1000).to be 250.0
     end
 
     it 'should resolve scaledwidth in px to pt' do
       attrs = { 'scaledwidth' => '144px' }
-      (expect subject.resolve_explicit_width attrs, 1000).to eql 108.0
+      (expect subject.resolve_explicit_width attrs, 1000).to be 108.0
     end
 
     it 'should size image using percentage width specified by pdfwidth', visual: true do
@@ -228,14 +218,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       pdf = to_pdf input, analyze: :rect
       (expect pdf.rectangles).to have_size 1
       (expect pdf.rectangles[0][:point]).to eql [0.0, 200.0]
-      (expect pdf.rectangles[0][:width]).to eql 200.0
-      (expect pdf.rectangles[0][:height]).to eql 200.0
+      (expect pdf.rectangles[0][:width]).to be 200.0
+      (expect pdf.rectangles[0][:height]).to be 200.0
 
       pdf = to_pdf input, analyze: true
       text = pdf.text
       (expect text).to have_size 1
       (expect text[0][:string]).to eql 'after'
-      (expect text[0][:y]).to eql 176.036
+      (expect text[0][:y]).to be 176.036
     end
 
     it 'should not leave gap around constrained SVG that specifies viewBox but no width' do
@@ -251,14 +241,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       pdf = to_pdf input, analyze: :rect
       (expect pdf.rectangles).to have_size 1
       (expect pdf.rectangles[0][:point]).to eql [0.0, 200.0]
-      (expect pdf.rectangles[0][:width]).to eql 200.0
-      (expect pdf.rectangles[0][:height]).to eql 200.0
+      (expect pdf.rectangles[0][:width]).to be 200.0
+      (expect pdf.rectangles[0][:height]).to be 200.0
 
       pdf = to_pdf input, analyze: true
       text = pdf.text
       (expect text).to have_size 1
       (expect text[0][:string]).to eql 'after'
-      (expect text[0][:y]).to eql 276.036
+      (expect text[0][:y]).to be 276.036
     end
 
     it 'should scale down SVG to fit bounds if width is set in SVG but not on image macro', visual: true do
@@ -275,7 +265,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'Text with link'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'mplus1mn-regular'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size]).to be 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -287,7 +277,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'This text uses a document font.'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'mplus1mn-regular'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size]).to be 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -299,7 +289,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'This text uses the default SVG font.'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'NotoSerif'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size]).to be 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -314,7 +304,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         text = pdf.find_text 'This text uses the default SVG font.'
         (expect text).to have_size 1
         (expect text[0][:font_name]).to eql 'Times-Roman'
-        (expect text[0][:font_size]).to eql 12.0
+        (expect text[0][:font_size]).to be 12.0
         (expect text[0][:font_color]).to eql 'AA0000'
       end
     end
@@ -358,8 +348,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pdf.rectangles).to have_size 1
       rect = pdf.rectangles[0]
       (expect rect[:point]).to eql [48.24, 605.89]
-      (expect rect[:width]).to eql 200.0
-      (expect rect[:height]).to eql 200.0
+      (expect rect[:width]).to be 200.0
+      (expect rect[:height]).to be 200.0
     end
   end
 
@@ -481,8 +471,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       pdf = to_pdf %(image::data:image/jpg;base64,#{encoded_image_data}[])
       images = get_images pdf, 1
       (expect images).to have_size 1
-      (expect images[0].hash[:Width]).to eql 5
-      (expect images[0].hash[:Height]).to eql 5
+      (expect images[0].hash[:Width]).to be 5
+      (expect images[0].hash[:Height]).to be 5
       (expect images[0].data).to eql image_data
     end
 
@@ -492,8 +482,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       pdf = to_pdf %(image:data:image/jpg;base64,#{encoded_image_data}[] base64)
       images = get_images pdf, 1
       (expect images).to have_size 1
-      (expect images[0].hash[:Width]).to eql 5
-      (expect images[0].hash[:Height]).to eql 5
+      (expect images[0].hash[:Width]).to be 5
+      (expect images[0].hash[:Height]).to be 5
       (expect images[0].data).to eql image_data
     end
   end
@@ -530,8 +520,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pdf.rectangles).to have_size 1
       rect = pdf.rectangles[0]
       (expect rect[:point]).to eql [0.0, 200.0]
-      (expect rect[:width]).to eql 200.0
-      (expect rect[:height]).to eql 200.0
+      (expect rect[:width]).to be 200.0
+      (expect rect[:height]).to be 200.0
     end
   end
 
@@ -588,12 +578,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       link_annotation = annotations[0]
-      (expect link_annotation[:Subtype]).to eql :Link
+      (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql 'https://www.linuxfoundation.org/projects/linux/'
       link_rect = link_annotation[:Rect]
-      (expect (link_rect[2] - link_rect[0]).round 1).to eql 72.0
-      (expect (link_rect[3] - link_rect[1]).round 1).to eql 84.7
-      (expect link_rect[0]).to eql 48.24
+      (expect (link_rect[2] - link_rect[0]).round 1).to be 72.0
+      (expect (link_rect[3] - link_rect[1]).round 1).to be 84.7
+      (expect link_rect[0]).to be 48.24
     end
 
     it 'should add link around block SVG image if link attribute is set' do
@@ -604,12 +594,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       link_annotation = annotations[0]
-      (expect link_annotation[:Subtype]).to eql :Link
+      (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql 'https://example.org'
       link_rect = link_annotation[:Rect]
-      (expect (link_rect[2] - link_rect[0]).round 1).to eql 72.0
-      (expect (link_rect[3] - link_rect[1]).round 1).to eql 72.0
-      (expect link_rect[0]).to eql 48.24
+      (expect (link_rect[2] - link_rect[0]).round 1).to be 72.0
+      (expect (link_rect[3] - link_rect[1]).round 1).to be 72.0
+      (expect link_rect[0]).to be 48.24
     end
 
     it 'should use link in alt text if image is missing' do
@@ -620,7 +610,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         annotations = get_annotations pdf, 1
         (expect annotations).to have_size 1
         link_annotation = annotations[0]
-        (expect link_annotation[:Subtype]).to eql :Link
+        (expect link_annotation[:Subtype]).to be :Link
         (expect link_annotation[:A][:URI]).to eql 'https://example.org'
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
@@ -633,12 +623,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       link_annotation = annotations[0]
-      (expect link_annotation[:Subtype]).to eql :Link
+      (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql 'https://example.org'
       link_rect = link_annotation[:Rect]
-      (expect (link_rect[2] - link_rect[0]).round 1).to eql 12.0
-      (expect (link_rect[3] - link_rect[1]).round 1).to eql 14.3
-      (expect link_rect[0]).to eql 48.24
+      (expect (link_rect[2] - link_rect[0]).round 1).to be 12.0
+      (expect (link_rect[3] - link_rect[1]).round 1).to be 14.3
+      (expect link_rect[0]).to be 48.24
     end
   end
 

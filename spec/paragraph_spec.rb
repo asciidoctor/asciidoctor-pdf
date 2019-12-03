@@ -34,11 +34,11 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
 
     line_spacing = 1.upto(3).map {|i| (pdf.text[i - 1][:y] - pdf.text[i][:y]).round 2 }.uniq
     (expect line_spacing).to have_size 1
-    (expect line_spacing[0]).to eql 15.78
+    (expect line_spacing[0]).to be 15.78
     (expect pdf.text[0][:x]).to be > pdf.text[1][:x]
     (expect pdf.text[2][:x]).to be > pdf.text[3][:x]
     list_item_text = (pdf.find_text 'list item')[0]
-    (expect (pdf.text[3][:y] - list_item_text[:y]).round 2).to eql 27.78
+    (expect (pdf.text[3][:y] - list_item_text[:y]).round 2).to be 27.78
   end
 
   it 'should allow text alignment to be controlled using text-align document attribute' do
@@ -98,10 +98,10 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     abstract_text_line1 = pdf.find_text 'First line of abstract.'
     abstract_text_line2 = pdf.find_text 'Second line of abstract.'
     (expect abstract_text_line1).to have_size 1
-    (expect abstract_text_line1[0][:order]).to eql 2
+    (expect abstract_text_line1[0][:order]).to be 2
     (expect abstract_text_line1[0][:font_name]).to include 'BoldItalic'
     (expect abstract_text_line2).to have_size 1
-    (expect abstract_text_line2[0][:order]).to eql 3
+    (expect abstract_text_line2[0][:order]).to be 3
     (expect abstract_text_line2[0][:font_name]).not_to include 'BoldItalic'
   end
 
@@ -119,7 +119,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
 
     abstract_text = pdf.find_text 'First and only line of abstract.'
     (expect abstract_text).to have_size 1
-    (expect abstract_text[0][:order]).to eql 2
+    (expect abstract_text[0][:order]).to be 2
     (expect abstract_text[0][:font_name]).to include 'BoldItalic'
   end
 

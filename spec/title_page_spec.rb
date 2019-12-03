@@ -16,7 +16,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     (expect pdf.pages[0][:text]).to have_size 1
     doctitle_text = pdf.pages[0][:text][0]
     (expect doctitle_text[:string]).to eql 'Document Title'
-    (expect doctitle_text[:font_size]).to eql 27
+    (expect doctitle_text[:font_size]).to be 27
     (expect pdf.pages[1][:text]).to have_size 1
   end
 
@@ -80,8 +80,8 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
       images = get_images pdf, 1
       (expect images).to have_size 1
-      (expect images[0].hash[:Width]).to eql 204
-      (expect images[0].hash[:Height]).to eql 240
+      (expect images[0].hash[:Width]).to be 204
+      (expect images[0].hash[:Height]).to be 240
     end
 
     it 'should position logo using value of top attribute on image macro in title-logo-image attribute' do
@@ -97,7 +97,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       images = pdf.images
       (expect images).to have_size 1
       title_page_image = images[0]
-      (expect title_page_image[:page_number]).to eql 1
+      (expect title_page_image[:page_number]).to be 1
       (expect title_page_image[:x]).to eql left_margin
       (expect title_page_image[:y]).to eql page_height
     end
@@ -258,10 +258,10 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 2
       author1_annotation = annotations[0]
-      (expect author1_annotation[:Subtype]).to eql :Link
+      (expect author1_annotation[:Subtype]).to be :Link
       (expect author1_annotation[:A][:URI]).to eql 'mailto:doc@example.org'
       author2_annotation = annotations[1]
-      (expect author2_annotation[:Subtype]).to eql :Link
+      (expect author2_annotation[:Subtype]).to be :Link
       (expect author2_annotation[:A][:URI]).to eql 'https://github.com/ghost'
     end
 
@@ -284,10 +284,10 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 2
       author1_annotation = annotations[0]
-      (expect author1_annotation[:Subtype]).to eql :Link
+      (expect author1_annotation[:Subtype]).to be :Link
       (expect author1_annotation[:A][:URI]).to eql 'mailto:doc@example.org'
       author2_annotation = annotations[1]
-      (expect author2_annotation[:Subtype]).to eql :Link
+      (expect author2_annotation[:Subtype]).to be :Link
       (expect author2_annotation[:A][:URI]).to eql 'https://github.com/ghost'
     end
 
@@ -355,8 +355,8 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
       images = get_images pdf, 1
       (expect images).to have_size 1
-      (expect images[0].hash[:Width]).to eql 204
-      (expect images[0].hash[:Height]).to eql 240
+      (expect images[0].hash[:Width]).to be 204
+      (expect images[0].hash[:Height]).to be 240
     end
 
     it 'should move logo down from top margin of page by % value of title_page_logo_top key' do
@@ -382,8 +382,8 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         (expect images).to have_size 2
         title_page_image = images[0]
         reference_image = images[1]
-        (expect title_page_image[:page_number]).to eql 1
-        (expect reference_image[:page_number]).to eql 2
+        (expect title_page_image[:page_number]).to be 1
+        (expect reference_image[:page_number]).to be 2
         (expect title_page_image[:x]).to eql left_margin
         (expect title_page_image[:x]).to eql reference_image[:x]
         effective_page_height = page_height - top_margin - bottom_margin
@@ -411,8 +411,8 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images).to have_size 2
       title_page_image = images[0]
       reference_image = images[1]
-      (expect title_page_image[:page_number]).to eql 1
-      (expect reference_image[:page_number]).to eql 2
+      (expect title_page_image[:page_number]).to be 1
+      (expect reference_image[:page_number]).to be 2
       (expect title_page_image[:x]).to eql left_margin
       (expect title_page_image[:x]).to eql reference_image[:x]
       expected_top = reference_image[:y] - 20
@@ -436,7 +436,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       images = pdf.images
       (expect images).to have_size 1
       title_page_image = images[0]
-      (expect title_page_image[:page_number]).to eql 1
+      (expect title_page_image[:page_number]).to be 1
       (expect title_page_image[:x]).to eql left_margin
       expected_top = page_height - (page_height * 0.05)
       (expect title_page_image[:y]).to eql expected_top
@@ -459,7 +459,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       bottom_margin = 0.67 * 72
 
       doctitle_text = (pdf.find_text 'Document Title')[0]
-      (expect doctitle_text[:page_number]).to eql 1
+      (expect doctitle_text[:page_number]).to be 1
       effective_page_height = page_height - top_margin - bottom_margin
       expected_top = page_height - top_margin - (effective_page_height * 0.10)
       (expect doctitle_text[:y] + doctitle_text[:font_size]).to be_within(0.5).of(expected_top)
@@ -481,7 +481,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       top_margin = 0.5 * 72
 
       doctitle_text = (pdf.find_text 'Document Title')[0]
-      (expect doctitle_text[:page_number]).to eql 1
+      (expect doctitle_text[:page_number]).to be 1
       expected_top = page_height - top_margin - 20
       (expect doctitle_text[:y] + doctitle_text[:font_size]).to be_within(0.5).of(expected_top)
     end
@@ -501,7 +501,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       page_height = 841.89 # ~11.69in
 
       doctitle_text = (pdf.find_text 'Document Title')[0]
-      (expect doctitle_text[:page_number]).to eql 1
+      (expect doctitle_text[:page_number]).to be 1
       (expect doctitle_text[:y] + doctitle_text[:font_size]).to be_within(0.5).of(page_height)
     end
 

@@ -152,7 +152,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     EOS
 
     keyseq_text = pdf.text.find_all {|candidate| ['Alt', %(\u202f+\u202f), ?\uf062].include? candidate[:string] }
-    (expect keyseq_text.size).to eql 3
+    (expect keyseq_text.size).to be 3
     (expect keyseq_text[0][:string]).to eql 'Alt'
     (expect keyseq_text[0][:font_name]).to eql 'mplus1mn-regular'
     (expect keyseq_text[1][:string]).to eql %(\u202f+\u202f)

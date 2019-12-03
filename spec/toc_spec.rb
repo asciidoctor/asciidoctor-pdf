@@ -173,14 +173,14 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       pdf = to_pdf input, analyze: true
       (expect pdf.pages).to have_size 6
       toc_title_text = (pdf.find_text 'Table of Contents')[0]
-      (expect toc_title_text[:page_number]).to eql 4
+      (expect toc_title_text[:page_number]).to be 4
 
       pdf = to_pdf input
       outline = extract_outline pdf
       (expect outline).to have_size 5
       (expect outline.map {|it| it[:title] }).to eql ['Document Title', 'Introduction', 'Table of Contents', 'Main', 'Conclusion']
       toc_dest = outline[2][:dest]
-      (expect toc_dest[:pagenum]).to eql 4
+      (expect toc_dest[:pagenum]).to be 4
       (expect toc_dest[:label]).to eql '3'
       (expect toc_dest[:y]).to be > 800
     end
@@ -488,7 +488,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect outline).to have_size 5
       (expect outline.map {|it| it[:title] }).to eql ['Document Title', 'Introduction', 'Table of Contents', 'Main', 'Conclusion']
       toc_dest = outline[2][:dest]
-      (expect toc_dest[:pagenum]).to eql 1
+      (expect toc_dest[:pagenum]).to be 1
       (expect toc_dest[:label]).to eql '1'
       (expect toc_dest[:y]).to be < 800
     end
@@ -630,7 +630,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect lines).to have_size 1
     toc_entry_underline = lines[0]
     (expect toc_entry_underline[:color]).to eql 'CCCCCC'
-    (expect toc_entry_underline[:width]).to eql 0.5
+    (expect toc_entry_underline[:width]).to be 0.5
   end
 
   it 'should decode character references in toc entries' do

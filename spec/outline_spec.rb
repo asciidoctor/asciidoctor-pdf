@@ -47,18 +47,18 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       outline = extract_outline pdf
       (expect outline).to have_size 4
       (expect outline[0][:title]).to eql 'Document Title'
-      (expect outline[0][:dest][:pagenum]).to eql 1
+      (expect outline[0][:dest][:pagenum]).to be 1
       (expect outline[0][:dest][:label]).to eql 'i'
       (expect outline[0][:dest][:top]).to be true
       (expect outline[0][:children]).to be_empty
       (expect outline[1][:title]).to eql 'First Chapter'
-      (expect outline[1][:dest][:pagenum]).to eql 2
+      (expect outline[1][:dest][:pagenum]).to be 2
       (expect outline[1][:dest][:label]).to eql '1'
       (expect outline[1][:dest][:top]).to be true
       (expect outline[1][:closed]).to be false
       (expect outline[1][:children]).to have_size 1
       (expect outline[1][:children][0][:title]).to eql 'Chapter Section'
-      (expect outline[1][:children][0][:dest][:pagenum]).to eql 2
+      (expect outline[1][:children][0][:dest][:pagenum]).to be 2
       (expect outline[1][:children][0][:dest][:label]).to eql '1'
       (expect outline[1][:children][0][:dest][:top]).to be false
       (expect outline[1][:children][0][:children]).to be_empty
@@ -68,7 +68,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline[1][:children][0][:dest][:y]).to eql chapter_section_obj[3]
       (expect outline[1][:children][0][:dest][:pagenum]).to eql get_page_number pdf, chapter_section_obj[0]
       (expect outline[3][:title]).to eql 'Last Chapter'
-      (expect outline[3][:dest][:pagenum]).to eql 4
+      (expect outline[3][:dest][:pagenum]).to be 4
       (expect outline[3][:dest][:label]).to eql '3'
       (expect outline[3][:dest][:top]).to be true
       (expect outline[3][:children]).to be_empty
@@ -83,7 +83,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       outline = extract_outline pdf
       (expect outline).to have_size 1
       (expect outline[0][:title]).to eql 'Document Title'
-      (expect outline[0][:dest][:pagenum]).to eql 1
+      (expect outline[0][:dest][:pagenum]).to be 1
       (expect outline[0][:dest][:label]).to eql 'i'
       (expect outline[0][:children]).to be_empty
     end
@@ -107,7 +107,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       outline = extract_outline pdf
       (expect outline).to have_size 1
       (expect outline[0][:title]).to eql 'Document Title'
-      (expect outline[0][:dest][:pagenum]).to eql 1
+      (expect outline[0][:dest][:pagenum]).to be 1
       (expect outline[0][:dest][:label]).to eql '1'
       (expect outline[0][:children]).to be_empty
     end
@@ -270,7 +270,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline).to have_size 3
       (expect outline[0][:title]).to eql 'Book Title'
       (expect outline[1][:title]).to eql 'Foo'
-      (expect outline[1][:dest][:pagenum]).to eql 1
+      (expect outline[1][:dest][:pagenum]).to be 1
       (expect outline[0][:dest][:pagenum]).to eql outline[1][:dest][:pagenum]
       (expect outline[0][:dest][:label]).to eql outline[1][:dest][:label]
     end
@@ -291,10 +291,10 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       outline = extract_outline pdf
       (expect outline).to have_size 3
       (expect outline[0][:title]).to eql 'Article Title'
-      (expect outline[0][:dest][:pagenum]).to eql 1
+      (expect outline[0][:dest][:pagenum]).to be 1
       (expect outline[0][:dest][:label]).to eql 'i'
       (expect outline[1][:title]).to eql 'Foo'
-      (expect outline[1][:dest][:pagenum]).to eql 2
+      (expect outline[1][:dest][:pagenum]).to be 2
       (expect outline[1][:dest][:label]).to eql '1'
     end
 
@@ -313,10 +313,10 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       outline = extract_outline pdf
       (expect outline).to have_size 3
       (expect outline[0][:title]).to eql 'Article Title'
-      (expect outline[0][:dest][:pagenum]).to eql 1
+      (expect outline[0][:dest][:pagenum]).to be 1
       (expect outline[0][:dest][:label]).to eql '1'
       (expect outline[1][:title]).to eql 'Foo'
-      (expect outline[1][:dest][:pagenum]).to eql 1
+      (expect outline[1][:dest][:pagenum]).to be 1
       (expect outline[1][:dest][:label]).to eql '1'
     end
 
@@ -337,7 +337,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline).to have_size 3
       (expect outline[0][:title]).to eql 'Article Title'
       (expect outline[1][:title]).to eql 'Foo'
-      (expect outline[1][:dest][:pagenum]).to eql 1
+      (expect outline[1][:dest][:pagenum]).to be 1
       (expect outline[1][:dest][:label]).to eql '1'
       (expect outline[0][:dest][:pagenum]).to eql outline[1][:dest][:pagenum]
       (expect outline[0][:dest][:label]).to eql outline[1][:dest][:label]
@@ -356,7 +356,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline).to have_size 1
       doctitle_entry = outline[0]
       (expect doctitle_entry[:title]).to eql 'Document Title'
-      (expect doctitle_entry[:dest][:pagenum]).to eql 2
+      (expect doctitle_entry[:dest][:pagenum]).to be 2
       (expect doctitle_entry[:dest][:label]).to eql '1'
     end
 
@@ -374,7 +374,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline).to have_size 1
       doctitle_entry = outline[0]
       (expect doctitle_entry[:title]).to eql 'Document Title'
-      (expect doctitle_entry[:dest][:pagenum]).to eql 2
+      (expect doctitle_entry[:dest][:pagenum]).to be 2
       (expect doctitle_entry[:dest][:label]).to eql 'ii'
     end
 
@@ -467,7 +467,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect get_page_labels pdf).to eql %w(i ii iii 1 2)
       outline = extract_outline pdf
       (expect outline[0][:title]).to eql 'Book Title'
-      (expect outline[0][:dest][:pagenum]).to eql 2
+      (expect outline[0][:dest][:pagenum]).to be 2
     end
 
     it 'should label first page starting with 1 if no front matter is present' do
