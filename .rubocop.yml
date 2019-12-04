@@ -4,13 +4,12 @@ require: rubocop-rspec
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 4
+Layout/CaseIndentation:
+  EnforcedStyle: end
 Layout/SpaceInsideBlockBraces:
   SpaceBeforeBlockParameters: false
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
-Layout/HashAlignment:
-  EnforcedHashRocketStyle: table
-  EnforcedColonStyle: table
 Layout/HeredocIndentation:
   Enabled: false
 Layout/ParameterAlignment:
@@ -26,6 +25,8 @@ Layout/RescueEnsureAlignment:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
   Enabled: false
+Lint/EmptyWhen:
+  Enabled: false
 Lint/ParenthesesAsGroupedExpression:
   Enabled: false
 Metrics/AbcSize:
@@ -33,7 +34,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Enabled: false
 Metrics/BlockNesting:
-  Max: 4
+  Max: 5
 Metrics/ClassLength:
   Enabled: false
 Metrics/CyclomaticComplexity:
@@ -54,6 +55,8 @@ Naming/FileName:
 Naming/HeredocDelimiterNaming:
   Enabled: false
 Naming/MethodParameterName:
+  Enabled: false
+Security/Open:
   Enabled: false
 Style/BlockDelimiters:
   EnforcedStyle: braces_for_chaining
@@ -90,6 +93,8 @@ Style/MultilineIfModifier:
   Enabled: false
 Style/MultilineTernaryOperator:
   Enabled: false
+Style/MultipleComparison:
+  Enabled: false
 Style/NestedTernaryOperator:
   Enabled: false
 Style/NumericPredicate:
@@ -104,6 +109,8 @@ Style/PercentLiteralDelimiters:
 Style/PerlBackrefs:
   Enabled: false
 Style/RegexpLiteral:
+  Enabled: false
+Style/RescueModifier:
   Enabled: false
 Style/RescueStandardError:
   EnforcedStyle: implicit

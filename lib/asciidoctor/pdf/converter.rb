@@ -53,11 +53,11 @@ module Asciidoctor
 
       AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
       AdmonitionIcons = {
-        caution:   { name: 'fas-fire', stroke_color: 'BF3400', size: 24 },
+        caution: { name: 'fas-fire', stroke_color: 'BF3400', size: 24 },
         important: { name: 'fas-exclamation-circle', stroke_color: 'BF0000', size: 24 },
-        note:      { name: 'fas-info-circle', stroke_color: '19407C', size: 24 },
-        tip:       { name: 'far-lightbulb', stroke_color: '111111', size: 24 },
-        warning:   { name: 'fas-exclamation-triangle', stroke_color: 'BF6900', size: 24 },
+        note: { name: 'fas-info-circle', stroke_color: '19407C', size: 24 },
+        tip: { name: 'far-lightbulb', stroke_color: '111111', size: 24 },
+        warning: { name: 'fas-exclamation-triangle', stroke_color: 'BF6900', size: 24 },
       }
       TextAlignmentNames = %w(justify left center right)
       TextAlignmentRoles = %w(text-justify text-left text-center text-right)
@@ -87,19 +87,19 @@ module Asciidoctor
       RightPointer = ?\u25ba
       LowercaseGreekA = ?\u03b1
       Bullets = {
-        disc:   ?\u2022,
+        disc: ?\u2022,
         circle: ?\u25e6,
         square: ?\u25aa,
-        none:   '',
+        none: '',
       }
       # NOTE Default theme font uses ballot boxes from FontAwesome
       BallotBox = {
-        checked:   ?\u2611,
+        checked: ?\u2611,
         unchecked: ?\u2610,
       }
       ConumSets = {
         'circled' => (?\u2460..?\u2473).to_a,
-        'filled'  => (?\u2776..?\u277f).to_a + (?\u24eb..?\u24f4).to_a,
+        'filled' => (?\u2776..?\u277f).to_a + (?\u24eb..?\u24f4).to_a,
       }
       SimpleAttributeRefRx = /(?<!\\)\{\w+(?:[\-]\w+)*\}/
       MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'
@@ -121,7 +121,7 @@ module Asciidoctor
       PygmentsBgColorRx = /^\.highlight +{ *background: *#([^;]+);/
       ViewportWidth = ::Module.new
       (TitleStyles = {
-        'toc'   => [:numbered_title],
+        'toc' => [:numbered_title],
         'basic' => [:title],
       }).default = [:numbered_title, formal: true]
 
@@ -136,7 +136,7 @@ module Asciidoctor
           doc.attributes['data-uri'] = ((doc.instance_variable_get :@attribute_overrides) || {})['data-uri'] = ''
         end
         @capabilities = {
-          special_sectnums:   AsciidoctorVersion >= (::Gem::Version.create '1.5.7'),
+          special_sectnums: AsciidoctorVersion >= (::Gem::Version.create '1.5.7'),
           syntax_highlighter: AsciidoctorVersion >= (::Gem::Version.create '2.0.0'),
         }
         @initial_instance_variables = [:@initial_instance_variables] + instance_variables
@@ -179,18 +179,18 @@ module Asciidoctor
         #assign_missing_section_ids doc
 
         # promote anonymous preface (defined using preamble block) to preface section
-        # FIXME this should be done in core
-        if doc.doctype == 'book' && (blk_0 = doc.blocks[0]) && blk_0.context == :preamble && blk_0.title? &&
-            !blk_0.title.nil_or_empty? && blk_0.blocks[0].style != 'abstract' && (blk_1 = doc.blocks[1]) && blk_1.context == :section
-          preface = Section.new doc, blk_1.level, false, attributes: { 1 => 'preface', 'style' => 'preface' }
+        # FIXME: this should be done in core
+        if doc.doctype == 'book' && (blk0 = doc.blocks[0]) && blk0.context == :preamble && blk0.title? &&
+            !blk0.title.nil_or_empty? && blk0.blocks[0].style != 'abstract' && (blk1 = doc.blocks[1]) && blk1.context == :section
+          preface = Section.new doc, blk1.level, false, attributes: { 1 => 'preface', 'style' => 'preface' }
           preface.special = true
           preface.sectname = 'preface'
-          preface.title = blk_0.instance_variable_get :@title
+          preface.title = blk0.instance_variable_get :@title
           # QUESTION should ID be generated from raw or converted title? core is not clear about this
           preface.id = preface.generate_id
-          preface.blocks.replace blk_0.blocks.map {|b| b.parent = preface; b }
+          preface.blocks.replace blk0.blocks.map {|b| (b.parent = preface) && b }
           doc.blocks[0] = preface
-          blk_0 = blk_1 = preface = nil
+          blk0 = blk1 = preface = nil # rubocop:disable Lint/UselessAssignment
         end
 
         on_page_create(&(method :init_page))
@@ -241,14 +241,14 @@ module Asciidoctor
             front_matter_sig = [running_content_start_at, page_numbering_start_at]
             # table values are number of pages to skip before starting running content and page numbering, respectively
             num_front_matter_pages = {
-              ['title', 'title'] => [zero_page_offset, zero_page_offset],
-              ['title', 'toc'] => [zero_page_offset, first_page_offset],
-              ['title', 'body'] => [zero_page_offset, body_offset],
-              ['toc', 'title'] => [first_page_offset, zero_page_offset],
-              ['toc', 'toc'] => [first_page_offset, first_page_offset],
-              ['toc', 'body'] => [first_page_offset, body_offset],
-              ['body', 'title'] => [body_offset, zero_page_offset],
-              ['body', 'toc'] => [body_offset, first_page_offset],
+              %w(title title) => [zero_page_offset, zero_page_offset],
+              %w(title toc) => [zero_page_offset, first_page_offset],
+              %w(title body) => [zero_page_offset, body_offset],
+              %w(toc title) => [first_page_offset, zero_page_offset],
+              %w(toc toc) => [first_page_offset, first_page_offset],
+              %w(toc body) => [first_page_offset, body_offset],
+              %w(body title) => [body_offset, zero_page_offset],
+              %w(body toc) => [body_offset, first_page_offset],
             }[front_matter_sig] || [body_offset, body_offset]
           else
             num_front_matter_pages = [body_start_page_number - 1] * 2
@@ -276,17 +276,13 @@ module Asciidoctor
         end
 
         unless page_count < body_start_page_number
-          unless doc.noheader || @theme.header_height.to_f.zero?
-            layout_running_content :header, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number
-          end
-          unless doc.nofooter || @theme.footer_height.to_f.zero?
-            layout_running_content :footer, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number
-          end
+          layout_running_content :header, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number unless doc.noheader || @theme.header_height.to_f == 0
+          layout_running_content :footer, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number unless doc.nofooter || @theme.footer_height.to_f == 0
         end
 
         catalog.data[:PageMode] = :FullScreen if (doc.attr 'pdf-page-mode', @theme.page_mode) == 'fullscreen'
         add_outline doc, (doc.attr 'outlinelevels', toc_num_levels), toc_page_nums, num_front_matter_pages[1], has_front_cover
-        if state.pages.size > 0 && (initial_zoom = @theme.page_initial_zoom)
+        if !state.pages.empty? && (initial_zoom = @theme.page_initial_zoom)
           case initial_zoom.to_sym
           when :Fit
             catalog.data[:OpenAction] = dest_fit state.pages[0]
@@ -352,13 +348,12 @@ module Asciidoctor
         @font_color = theme.base_font_color || '000000'
         @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
         @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
-        if (hyphen_lang = doc.attr 'hyphens')
+        if (hyphen_lang = doc.attr 'hyphens') &&
+            ((defined? ::Text::Hyphen) || !(Helpers.require_library 'text/hyphen', 'text-hyphen', :warn).nil?)
           hyphen_lang = doc.attr 'lang' if hyphen_lang.empty?
           hyphen_lang = 'en_us' if hyphen_lang.nil_or_empty? || hyphen_lang == 'en'
           hyphen_lang = (hyphen_lang.tr '-', '_').downcase
-          if (defined? ::Text::Hyphen) || !(Helpers.require_library 'text/hyphen', 'text-hyphen', :warn).nil?
-            @hyphenator = ::Text::Hyphen.new language: hyphen_lang
-          end
+          @hyphenator = ::Text::Hyphen.new language: hyphen_lang
         end
         @text_transform = nil
         @list_numerals = []
@@ -378,7 +373,7 @@ module Asciidoctor
       end
 
       def load_theme doc
-        @theme ||= begin
+        @theme ||= begin # rubocop:disable Naming/MemoizedInstanceVariableName
           if (theme = doc.options[:pdf_theme])
             @themesdir = ::File.expand_path theme.__dir__ || (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir') || ::Dir.pwd
           elsif (theme_name = (doc.attr 'pdf-theme') || (doc.attr 'pdf-style'))
@@ -440,15 +435,14 @@ module Asciidoctor
           page_size = theme.page_size
         end
 
-        page_size = case page_size
+        case page_size
         when ::String
-          # TODO extract helper method to check for named page size
-          if ::PDF::Core::PageGeometry::SIZES.key?(page_size = page_size.upcase)
-            page_size
-          end
+          # TODO: extract helper method to check for named page size
+          page_size = page_size.upcase
+          page_size = nil unless ::PDF::Core::PageGeometry::SIZES.key? page_size
         when ::Array
           page_size = (page_size.slice 0, 2).fill(0..1) {|i| page_size[i] || 0 } unless page_size.size == 2
-          page_size.map do |dim|
+          page_size = page_size.map do |dim|
             if ::Numeric === dim
               # dimension cannot be less than 0
               dim > 0 ? dim : break
@@ -459,29 +453,29 @@ module Asciidoctor
               break
             end
           end
+        else
+          page_size = nil
         end
 
         if (page_layout = (doc.attr 'pdf-page-layout') || theme.page_layout).nil_or_empty? ||
-            !(PageLayouts.include?(page_layout = page_layout.to_sym))
+            !PageLayouts.include?(page_layout = page_layout.to_sym)
           page_layout = nil
         end
 
         {
-          #compress: true,
-          #optimize_objects: true,
           margin: (page_margin || 36),
           page_size: (page_size || 'A4'),
           page_layout: (page_layout || :portrait),
           info: (build_pdf_info doc),
           skip_page_creation: true,
-          text_formatter: (FormattedText::Formatter.new theme: theme)
+          text_formatter: (FormattedText::Formatter.new theme: theme),
         }
       end
 
-      # FIXME Pdfmark should use the PDF info result
+      # FIXME: Pdfmark should use the PDF info result
       def build_pdf_info doc
         info = {}
-        # FIXME use sanitize: :plain_text once available
+        # FIXME: use sanitize: :plain_text once available
         if (doctitle = doc.header? ? doc.doctitle : (doc.attr 'untitled-label'))
           info[:Title] = (sanitize doctitle).as_pdf
         end
@@ -498,14 +492,14 @@ module Asciidoctor
           # NOTE: since we don't track the creation date of the input file, we map the ModDate header to the last modified
           # date of the input document and the CreationDate header to the date the PDF was produced by the converter.
           info[:ModDate] = (::Time.parse doc.attr 'docdatetime') rescue (now ||= ::Time.now)
-          info[:CreationDate] = (::Time.parse doc.attr 'localdatetime') rescue (now ||= ::Time.now)
+          info[:CreationDate] = (::Time.parse doc.attr 'localdatetime') rescue (now || ::Time.now)
         end
         info
       end
 
       # NOTE: init_page is called within a float context
       # NOTE: init_page is not called for imported pages, front and back cover pages, and other image pages
-      def init_page *args
+      def init_page *_args
         # NOTE: we assume in prepress that physical page number reflects page side
         if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_side]) != page_margin
           set_page_margin next_page_margin
@@ -521,9 +515,9 @@ module Asciidoctor
         page.tare_content_stream if tare
       end
 
-      def convert_section sect, opts = {}
+      def convert_section sect, _opts = {}
         if sect.sectname == 'abstract'
-          # HACK cheat a bit to hide this section from TOC; TOC should filter these sections
+          # HACK: cheat a bit to hide this section from TOC; TOC should filter these sections
           sect.context = :open
           return convert_abstract sect
         end
@@ -546,7 +540,7 @@ module Asciidoctor
             end
           end
           unless at_page_top?
-            # FIXME this height doesn't account for impact of text transform or inline formatting
+            # FIXME: this height doesn't account for impact of text transform or inline formatting
             heading_height =
               (height_of_typeset_text title, line_height: (@theme[%(heading_h#{hlevel}_line_height)] || @theme.heading_line_height)) +
               (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top || 0) +
@@ -629,20 +623,20 @@ module Asciidoctor
               if (text_indent = @theme.prose_text_indent || 0) > 0
                 prose_opts[:indent_paragraphs] = text_indent
               end
-              # FIXME control more first_line_options using theme
+              # FIXME: control more first_line_options using theme
               if (line1_font_style = @theme.abstract_first_line_font_style) && line1_font_style.to_sym != font_style
                 prose_opts[:first_line_options] = { styles: [font_style, line1_font_style.to_sym] }
               end
-              # FIXME make this cleaner!!
+              # FIXME: make this cleaner!!
               if node.blocks?
                 node.blocks.each do |child|
-                  # FIXME is playback necessary here?
+                  # FIXME: is playback necessary here?
                   child.document.playback_attributes child.attributes
                   if child.context == :paragraph
                     layout_prose child.content, ((align = resolve_alignment_from_role child.roles) ? (prose_opts.merge align: align) : prose_opts.dup)
                     prose_opts.delete :first_line_options
                   else
-                    # FIXME this could do strange things if the wrong kind of content shows up
+                    # FIXME: this could do strange things if the wrong kind of content shows up
                     traverse child
                   end
                 end
@@ -660,7 +654,7 @@ module Asciidoctor
       end
 
       def convert_preamble node
-        # FIXME core should not be promoting paragraph to preamble if there are no sections
+        # FIXME: core should not be promoting paragraph to preamble if there are no sections
         if node.blocks? && (first_block = node.blocks[0]).context == :paragraph && node.document.sections?
           first_block.add_role 'lead' unless first_block.role?
         end
@@ -679,7 +673,7 @@ module Asciidoctor
           prose_opts[:indent_paragraphs] = text_indent
         end
 
-        # TODO check if we're within one line of the bottom of the page
+        # TODO: check if we're within one line of the bottom of the page
         # and advance to the next page if so (similar to logic for section titles)
         layout_caption node.title if node.title?
 
@@ -704,7 +698,7 @@ module Asciidoctor
         theme_margin :block, :top
         type = node.attr 'name'
         label_align = (@theme.admonition_label_align || :center).to_sym
-        # TODO allow vertical_align to be a number
+        # TODO: allow vertical_align to be a number
         if (label_valign = (@theme.admonition_label_vertical_align || :middle).to_sym) == :middle
           label_valign = :center
         end
@@ -717,15 +711,15 @@ module Asciidoctor
         end
         if icons == 'font' && !(node.attr? 'icon', nil, false)
           icon_data = admonition_icon_data(label_text = type.to_sym)
-          label_width = label_min_width ? label_min_width : ((icon_size = icon_data[:size] || 24) * 1.5)
+          label_width = label_min_width || ((icon_size = icon_data[:size] || 24) * 1.5)
         # NOTE: icon_uri will consider icon attribute on node first, then type
         # QUESTION should we use resolve_image_path here?
         elsif icons && (icon_path = node.icon_uri type) &&
             (icon_path = node.normalize_system_path icon_path, nil, nil, target_name: 'admonition icon') &&
             (::File.readable? icon_path)
           icons = true
-          # TODO introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
-          label_width = label_min_width ? label_min_width : 36.0
+          # TODO: introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
+          label_width = label_min_width || 36.0
         else
           if icons
             icons = nil
@@ -747,7 +741,7 @@ module Asciidoctor
         unless ::Array === (lpad = @theme.admonition_label_padding || cpad)
           lpad = ::Array.new 4, lpad
         end
-        # FIXME this shift stuff is a real hack until we have proper margin collapsing
+        # FIXME: this shift stuff is a real hack until we have proper margin collapsing
         shift_base = @theme.prose_margin_bottom
         shift_top = shift_base / 3.0
         shift_bottom = (shift_base * 2) / 3.0
@@ -812,7 +806,7 @@ module Asciidoctor
                         icon_width = [(to_pt image_info.width, :px), label_width].min
                         if (icon_height = icon_width * (1 / icon_aspect_ratio)) > box_height
                           icon_width *= box_height / icon_height
-                          icon_height = box_height
+                          icon_height = box_height # rubocop:disable Lint/UselessAssignment
                         end
                         embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
                       rescue
@@ -851,7 +845,7 @@ module Asciidoctor
               theme_font :admonition do
                 traverse node
               end
-              # FIXME HACK compensate for margin bottom of admonition content
+              # FIXME: HACK compensate for margin bottom of admonition content
               move_up shift_bottom unless at_page_top?
             end
           end
@@ -865,17 +859,17 @@ module Asciidoctor
         theme_margin :block, :top
         caption_height = 0
         dry_run do
-          move_down 1 # hack to force top margin to be applied
+          move_down 1 # HACK: force top margin to be applied
           caption_height = (layout_caption node, category: :example) - 1
         end if node.title?
         keep_together do |box_height = nil|
           push_scratch node.document if scratch?
           if box_height
-            # FIXME due to the calculation error logged in #789, we must advance page even when content is split across pages
+            # FIXME: due to the calculation error logged in #789, we must advance page even when content is split across pages
             advance_page if box_height > cursor && !at_page_top?
             layout_caption node, category: :example
             float do
-              # TODO move the multi-page logic to theme_fill_and_stroke_bounds
+              # TODO: move the multi-page logic to theme_fill_and_stroke_bounds
               if (b_width = @theme.example_border_width || 0) > 0 && (b_color = @theme.example_border_color)
                 if b_color == @page_bg_color # let page background cut into example background
                   b_gap_color, b_shift = @page_bg_color, b_width
@@ -932,8 +926,8 @@ module Asciidoctor
         if node.style == 'abstract'
           convert_abstract node
         elsif node.style == 'partintro' && node.blocks.size == 1 && node.blocks[0].style == 'abstract'
-          # TODO process block title and id
-          # TODO process abstract child even when partintro has multiple blocks
+          # TODO: process block title and id
+          # TODO: process abstract child even when partintro has multiple blocks
           convert_abstract node.blocks[0]
         else
           doc = node.document
@@ -973,8 +967,8 @@ module Asciidoctor
               end
             end
           end
-          # FIXME we want to draw graphics before content, but box_height is not reliable when spanning pages
-          # FIXME border extends to bottom of content area if block terminates at bottom of page
+          # FIXME: we want to draw graphics before content, but box_height is not reliable when spanning pages
+          # FIXME: border extends to bottom of content area if block terminates at bottom of page
           if box_height && b_width > 0
             page_spread = page_number - start_page_number + 1
             end_cursor = cursor
@@ -1000,10 +994,9 @@ module Asciidoctor
                 caption_height = 0
               end
               # NOTE: b_height is 0 when block terminates at bottom of page
-              unless b_height == 0
-                bounding_box [0, y_draw], width: bounds.width, height: b_height do
-                  stroke_vertical_rule b_color, line_width: b_width, at: b_width / 2.0
-                end
+              next if b_height == 0
+              bounding_box [0, y_draw], width: bounds.width, height: b_height do
+                stroke_vertical_rule b_color, line_width: b_width, at: b_width / 2.0
               end
             end
           end
@@ -1021,10 +1014,10 @@ module Asciidoctor
         keep_together do |box_height = nil|
           push_scratch node.document if scratch?
           if box_height
-            # FIXME due to the calculation error logged in #789, we must advance page even when content is split across pages
+            # FIXME: due to the calculation error logged in #789, we must advance page even when content is split across pages
             advance_page if box_height > cursor && !at_page_top?
             float do
-              # TODO move the multi-page logic to theme_fill_and_stroke_bounds
+              # TODO: move the multi-page logic to theme_fill_and_stroke_bounds
               if (b_width = @theme.sidebar_border_width || 0) > 0 && (b_color = @theme.sidebar_border_color)
                 if b_color == @page_bg_color # let page background cut into sidebar background
                   b_gap_color, b_shift = @page_bg_color, b_width
@@ -1080,8 +1073,8 @@ module Asciidoctor
       end
 
       def convert_colist node
-        # HACK undo the margin below previous listing or literal block
-        # TODO allow this to be set using colist_margin_top
+        # HACK: undo the margin below previous listing or literal block
+        # TODO: allow this to be set using colist_margin_top
         unless at_page_top?
           # NOTE: this logic won't work for a colist nested inside a list item until Asciidoctor 1.5.3
           if (self_idx = node.parent.blocks.index node) && self_idx > 0 &&
@@ -1095,7 +1088,7 @@ module Asciidoctor
         add_dest_for_block node if node.id
         @list_numerals << 1
         #stroke_horizontal_rule @theme.caption_border_bottom_color
-        line_metrics = theme_font :conum do calc_line_metrics @theme.base_line_height end
+        line_metrics = theme_font(:conum) { calc_line_metrics @theme.base_line_height }
         node.items.each do |item|
           allocate_space_for_list_item line_metrics
           convert_colist_item item
@@ -1174,7 +1167,7 @@ module Asciidoctor
               inline_format: term_inline_format,
               padding: term_padding,
               leading: term_line_metrics.leading,
-              # FIXME prawn-table doesn't have support for final_gap option
+              # FIXME: prawn-table doesn't have support for final_gap option
               #final_gap: term_line_metrics.final_gap,
               valign: :top,
             }]
@@ -1182,18 +1175,13 @@ module Asciidoctor
             desc_container << (Block.new desc_container, :paragraph, source: (desc.instance_variable_get :@text), subs: :default) if desc.text?
             desc.blocks.each {|b| desc_container << b } if desc.block?
             row_data << {
-              content: (::Prawn::Table::Cell::AsciiDoc.new self, {
-                content: desc_container,
-                text_color: @font_color,
-                padding: desc_padding,
-                valign: :top,
-              }),
+              content: (::Prawn::Table::Cell::AsciiDoc.new self, content: desc_container, text_color: @font_color, padding: desc_padding, valign: :top),
             }
             table_data << row_data
           end
           max_term_width += (term_padding[1] + term_padding[3])
           term_column_width = [max_term_width, bounds.width * 0.5].min
-          table table_data, { position: :left, cell_style: { border_width: 0 }, column_widths: [term_column_width] } do
+          table table_data, position: :left, cell_style: { border_width: 0 }, column_widths: [term_column_width] do
             @pdf.layout_table_caption node if node.title?
           end
           margin_bottom (@theme.prose_margin_bottom || 0) * 0.5
@@ -1202,7 +1190,7 @@ module Asciidoctor
           convert_outline_list node
           @list_numerals.pop
         else
-          # TODO check if we're within one line of the bottom of the page
+          # TODO: check if we're within one line of the bottom of the page
           # and advance to the next page if so (similar to logic for section titles)
           layout_caption node.title, category: :description_list if node.title?
 
@@ -1230,28 +1218,28 @@ module Asciidoctor
 
       def convert_olist node
         add_dest_for_block node if node.id
-        # TODO move list_numeral resolve to a method
-        list_numeral = case node.style
+        # TODO: move list_numeral resolve to a method
+        case node.style
         when 'arabic'
-          1
+          list_numeral = 1
         when 'decimal'
-          '01'
+          list_numeral = '01'
         when 'loweralpha'
-          'a'
+          list_numeral = 'a'
         when 'upperalpha'
-          'A'
+          list_numeral = 'A'
         when 'lowerroman'
-          RomanNumeral.new 'i'
+          list_numeral = RomanNumeral.new 'i'
         when 'upperroman'
-          RomanNumeral.new 'I'
+          list_numeral = RomanNumeral.new 'I'
         when 'lowergreek'
-          LowercaseGreekA
+          list_numeral = LowercaseGreekA
         when 'unstyled', 'unnumbered', 'no-bullet'
-          nil
+          list_numeral = nil
         when 'none'
-          ''
+          list_numeral = ''
         else
-          1
+          list_numeral = 1
         end
         if list_numeral && list_numeral != '' &&
             (start = (node.attr 'start', nil, false) || ((node.option? 'reversed') ? node.items.size : nil))
@@ -1268,32 +1256,32 @@ module Asciidoctor
 
       def convert_ulist node
         add_dest_for_block node if node.id
-        # TODO move bullet_type to method on List (or helper method)
+        # TODO: move bullet_type to method on List (or helper method)
         if node.option? 'checklist'
           @list_bullets << :checkbox
         else
-          bullet_type = if (style = node.style)
+          if (style = node.style)
             case style
             when 'bibliography'
-              :square
+              bullet_type = :square
             when 'unstyled', 'no-bullet'
-              nil
+              bullet_type = nil
             else
               if Bullets.key?(candidate = style.to_sym)
-                candidate
+                bullet_type = candidate
               else
                 logger.warn %(unknown unordered list style: #{candidate})
-                :disc
+                bullet_type = :disc
               end
             end
           else
             case node.outline_level
             when 1
-              :disc
+              bullet_type = :disc
             when 2
-              :circle
+              bullet_type = :circle
             else
-              :square
+              bullet_type = :square
             end
           end
           @list_bullets << bullet_type
@@ -1303,7 +1291,7 @@ module Asciidoctor
       end
 
       def convert_outline_list node
-        # TODO check if we're within one line of the bottom of the page
+        # TODO: check if we're within one line of the bottom of the page
         # and advance to the next page if so (similar to logic for section titles)
         layout_caption node.title, category: :outline_list if node.title?
 
@@ -1347,7 +1335,7 @@ module Asciidoctor
       end
 
       def convert_outline_list_item node, list, opts = {}
-        # TODO move this to a draw_bullet (or draw_marker) method
+        # TODO: move this to a draw_bullet (or draw_marker) method
         marker_style = {}
         marker_style[:font_color] = @theme.outline_list_marker_font_color || @font_color
         marker_style[:font_family] = font_family
@@ -1378,12 +1366,12 @@ module Asciidoctor
             else
               marker = %(#{index}.)
               dir = (node.parent.option? 'reversed') ? :pred : :next
-              @list_numerals << (index = index.public_send dir)
+              @list_numerals << (index.public_send dir)
             end
           end
         when :dlist
           # NOTE: list.style is 'qanda'
-          complex = node[1] && node[1].complex?
+          complex = node[1]&.complex?
           @list_numerals << (index = @list_numerals.pop).next
           marker = %(#{index}.)
         else
@@ -1406,14 +1394,14 @@ module Asciidoctor
               start_new_page if @media == 'prepress' && cursor < marker_height
               flow_bounding_box start_position, width: marker_width do
                 layout_prose marker,
-                  align: :right,
-                  character_spacing: -0.5,
-                  color: marker_style[:font_color],
-                  inline_format: false,
-                  line_height: marker_style[:line_height],
-                  margin: 0,
-                  normalize: false,
-                  single_line: true
+                    align: :right,
+                    character_spacing: -0.5,
+                    color: marker_style[:font_color],
+                    inline_format: false,
+                    line_height: marker_style[:line_height],
+                    margin: 0,
+                    normalize: false,
+                    single_line: true
               end
             end
           end
@@ -1487,17 +1475,17 @@ module Asciidoctor
 
         return on_image_error :missing, node, target, opts unless image_path
 
-        # TODO move this calculation into a method, such as layout_caption node, category: :image, side: :bottom, dry_run: true
+        # TODO: move this calculation into a method, such as layout_caption node, category: :image, side: :bottom, dry_run: true
         caption_h = 0
         dry_run do
-          move_down 1 # hack to force top margin to be applied
+          move_down 1 # HACK: force top margin to be applied
           # NOTE: we assume caption fits on a single page, which seems reasonable
           caption_h = (layout_caption node, category: :image, side: :bottom) - 1
         end if node.title?
 
-        # TODO support cover (aka canvas) image layout using "canvas" (or "cover") role
+        # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
         width = resolve_explicit_width node.attributes, (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
-        # TODO add `to_pt page_width` method to ViewportWidth type
+        # TODO: add `to_pt page_width` method to ViewportWidth type
         width = (width.to_f / 100) * page_width if ViewportWidth === width
 
         alignment = ((node.attr 'align', nil, false) || @theme.image_align || :left).to_sym
@@ -1533,9 +1521,7 @@ module Asciidoctor
                   advance_page
                   available_h = cursor - caption_h
                 end
-                if rendered_h > available_h
-                  rendered_w = (svg_size = svg_obj.resize height: (rendered_h = available_h)).output_width
-                end
+                rendered_w = (svg_obj.resize height: (rendered_h = available_h)).output_width if rendered_h > available_h
               end
               image_y = y
               image_cursor = cursor
@@ -1552,7 +1538,7 @@ module Asciidoctor
                 add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
               end
             else
-              # FIXME this code really needs to be better organized!
+              # FIXME: this code really needs to be better organized!
               # NOTE: use low-level API to access intrinsic dimensions; build_image_object caches image data previously loaded
               image_obj, image_info = ::Base64 === image_path ?
                   ::StringIO.open((::Base64.decode64 image_path), 'rb') {|fd| build_image_object fd } :
@@ -1565,9 +1551,7 @@ module Asciidoctor
                   advance_page
                   available_h = cursor - caption_h
                 end
-                if rendered_h > available_h
-                  rendered_w, rendered_h = image_info.calc_image_dimensions height: (rendered_h = available_h)
-                end
+                rendered_w, rendered_h = image_info.calc_image_dimensions height: available_h if rendered_h > available_h
               end
               image_y = y
               image_cursor = cursor
@@ -1611,10 +1595,10 @@ module Asciidoctor
         end
       end
 
-      def on_image_error reason, node, target, opts = {}
+      def on_image_error _reason, node, target, opts = {}
         logger.warn opts[:message] if opts.key? :message
         alt_text_vars = { alt: (node.attr 'alt'), target: target }
-        alt_text_template = @theme.image_alt_content || %(%{link}[%{alt}]%{/link} | <em>%{target}</em>)
+        alt_text_template = @theme.image_alt_content || %(%{link}[%{alt}]%{/link} | <em>%{target}</em>) # rubocop:disable Style/FormatStringToken
         if (link = node.attr 'link', nil, false)
           alt_text_vars[:link] = %(<a href="#{link}">)
           alt_text_vars[:'/link'] = '</a>'
@@ -1638,7 +1622,7 @@ module Asciidoctor
       def convert_audio node
         add_dest_for_block node if node.id
         theme_margin :block, :top
-        audio_path = node.media_uri(node.attr 'target')
+        audio_path = node.media_uri node.attr 'target'
         play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
         layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0, single_line: true
         layout_caption node, side: :bottom if node.title?
@@ -1666,7 +1650,7 @@ module Asciidoctor
           end
           type = 'Vimeo video'
         else
-          video_path = node.media_uri(node.attr 'target')
+          video_path = node.media_uri node.attr 'target'
           type = 'video'
         end
 
@@ -1693,7 +1677,7 @@ module Asciidoctor
       def convert_listing_or_literal node
         add_dest_for_block node if node.id
 
-        # HACK disable built-in syntax highlighter; must be done before calling node.content!
+        # HACK: disable built-in syntax highlighter; must be done before calling node.content!
         if node.style == 'source' && node.attributes['language'] &&
             (highlighter = node.document.attributes['source-highlighter']) && (SourceHighlighters.include? highlighter) &&
             (@capabilities[:syntax_highlighter] ? (syntax_hl = node.document.syntax_highlighter) && syntax_hl.highlight? : true)
@@ -1739,7 +1723,7 @@ module Asciidoctor
           source_string = guard_indentation node.content
         end
 
-        source_chunks = case highlighter
+        case highlighter
         when 'coderay'
           source_string, conum_mapping = extract_conums source_string
           srclang = node.attr 'language', 'text', false
@@ -1749,17 +1733,17 @@ module Asciidoctor
             srclang = :text
           end
           fragments = (::CodeRay.scan source_string, srclang).to_prawn
-          conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
+          source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
         when 'pygments'
-          lexer = ::Pygments::Lexer.find_by_alias(node.attr 'language', 'text', false) || ::Pygments::Lexer.find_by_mimetype('text/plain')
+          lexer = (::Pygments::Lexer.find_by_alias node.attr 'language', 'text', false) || (::Pygments::Lexer.find_by_mimetype 'text/plain')
           lexer_opts = {
             nowrap: true,
             noclasses: true,
             stripnl: false,
-            style: (style = (node.document.attr 'pygments-style') || 'pastie')
+            style: (style = (node.document.attr 'pygments-style') || 'pastie'),
           }
           lexer_opts[:startinline] = !(node.option? 'mixed') if lexer.name == 'PHP'
-          # TODO enable once we support background color on spans
+          # TODO: enable once we support background color on spans
           #if node.attr? 'highlight', nil, false
           #  unless (hl_lines = node.resolve_lines_to_highlight(node.attr 'highlight', nil, false)).empty?
           #    pygments_config[:hl_lines] = hl_lines.join ' '
@@ -1767,7 +1751,7 @@ module Asciidoctor
           #end
           # QUESTION should we treat white background as inherit?
           # QUESTION allow border color to be set by theme for highlighted block?
-          if (node.document.attr? 'pygments-bgcolor')
+          if node.document.attr? 'pygments-bgcolor'
             bg_color_override = node.document.attr 'pygments-bgcolor'
           elsif style == 'pastie'
             node.document.set_attr 'pygments-bgcolor', (bg_color_override = nil)
@@ -1787,7 +1771,7 @@ module Asciidoctor
           end
           fragments = text_formatter.format result
           fragments = restore_conums fragments, conum_mapping, num_trailing_spaces, linenums if conum_mapping
-          fragments = guard_indentation_in_fragments fragments
+          source_chunks = guard_indentation_in_fragments fragments
         when 'rouge'
           if (srclang = node.attr 'language', nil, false)
             if srclang.include? '?'
@@ -1809,10 +1793,10 @@ module Asciidoctor
           fragments = formatter.format((lexer.lex source_string), formatter_opts)
           # NOTE: cleanup trailing endline (handled in ext/rouge/formatters/prawn instead)
           #fragments[-1][:text] == LF ? fragments.pop : fragments[-1][:text].chop!
-          conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
+          source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
         else
           # NOTE: only format if we detect a need (callouts or inline formatting)
-          (XMLMarkupRx.match? source_string) ? (text_formatter.format source_string) : [text: source_string]
+          source_chunks = (XMLMarkupRx.match? source_string) ? (text_formatter.format source_string) : [text: source_string]
         end
 
         node.subs.replace prev_subs if prev_subs
@@ -1827,7 +1811,7 @@ module Asciidoctor
           theme_font :code do
             if box_height
               float do
-                # TODO move the multi-page logic to theme_fill_and_stroke_bounds
+                # TODO: move the multi-page logic to theme_fill_and_stroke_bounds
                 unless (b_width = @theme.code_border_width || 0) == 0
                   b_radius = (@theme.code_border_radius || 0) + b_width
                   b_gap_color = bg_color_override || @theme.code_background_color || @page_bg_color
@@ -1882,9 +1866,9 @@ module Asciidoctor
         conum_mapping = {}
         auto_num = 0
         string = string.split(LF).map.with_index {|line, line_num|
-          # FIXME we get extra spaces before numbers if more than one on a line
+          # FIXME: we get extra spaces before numbers if more than one on a line
           if line.include? '<'
-            line.gsub(CalloutExtractRx) {
+            line.gsub CalloutExtractRx do
               # honor the escape
               if $1 == ?\\
                 $&.sub $1, ''
@@ -1892,7 +1876,7 @@ module Asciidoctor
                 (conum_mapping[line_num] ||= []) << ($3 == '.' ? (auto_num += 1) : $3.to_i)
                 ''
               end
-            }
+            end
           else
             line
           end
@@ -1948,7 +1932,7 @@ module Asciidoctor
 
       def convert_table node
         add_dest_for_block node if node.id
-        # TODO we could skip a lot of the logic below when num_rows == 0
+        # TODO: we could skip a lot of the logic below when num_rows == 0
         num_rows = node.attr 'rowcount'
         num_cols = node.columns.size
         table_header = false
@@ -2025,7 +2009,7 @@ module Asciidoctor
                   ['font_family', :font, false],
                   ['font_size', :size, false],
                   ['font_style', :font_style, true],
-                  ['text_transform', :text_transform, true]
+                  ['text_transform', :text_transform, true],
                 ].each do |(theme_key, data_key, symbol_value)|
                   if (val = theme[%(table_header_cell_#{theme_key})] || theme[%(table_head_#{theme_key})])
                     header_cell_data_cache[data_key] = symbol_value ? val.to_sym : val
@@ -2082,7 +2066,7 @@ module Asciidoctor
               cell_padding[0] += cell_line_metrics.padding_top
               cell_padding[2] += cell_line_metrics.padding_bottom
               cell_data[:leading] = cell_line_metrics.leading
-              # TODO patch prawn-table to pass through final_gap option
+              # TODO: patch prawn-table to pass through final_gap option
               #cell_data[:final_gap] = cell_line_metrics.final_gap
             end
             unless cell_data.key? :content
@@ -2190,10 +2174,10 @@ module Asciidoctor
             border_color: table_grid_color,
             border_lines: [table_grid_style],
             # NOTE: the border width is set later
-            border_width: 0
+            border_width: 0,
           },
           width: table_width,
-          column_widths: column_widths
+          column_widths: column_widths,
         }
 
         # QUESTION should we support nth; should we support sequence of roles?
@@ -2274,12 +2258,12 @@ module Asciidoctor
           unless node.rows[:foot].empty?
             foot_row = row(num_rows - 1)
             foot_row.background_color = foot_bg_color
-            # FIXME find a way to do this when defining the cells
+            # FIXME: find a way to do this when defining the cells
             foot_row.text_color = theme.table_foot_font_color if theme.table_foot_font_color
             foot_row.size = theme.table_foot_font_size if theme.table_foot_font_size
             foot_row.font = theme.table_foot_font_family if theme.table_foot_font_family
             foot_row.font_style = theme.table_foot_font_style.to_sym if theme.table_foot_font_style
-            # HACK we should do this transformation when creating the cell
+            # HACK: we should do this transformation when creating the cell
             #if (foot_transform = resolve_text_transform :table_foot_text_transform, nil)
             #  foot_row.each {|c| c.content = (transform_text c.content, foot_transform) if c.content }
             #end
@@ -2293,7 +2277,7 @@ module Asciidoctor
         theme_margin :block, :bottom
       end
 
-      def convert_thematic_break node
+      def convert_thematic_break _node
         theme_margin :thematic_break, :top
         stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width, line_style: @theme.thematic_break_border_style.to_sym
         theme_margin :thematic_break, :bottom
@@ -2336,7 +2320,7 @@ module Asciidoctor
         end
       end
 
-      def convert_index_section node
+      def convert_index_section _node
         unless @index.empty?
           space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
           column_box [0, cursor], columns: 2, width: bounds.width, reflow_margins: true do
@@ -2344,11 +2328,11 @@ module Asciidoctor
               # NOTE cursor method always returns 0 inside column_box; breaks reference_bounds.move_past_bottom
               bounds.move_past_bottom if space_needed_for_category > y - reference_bounds.absolute_bottom
               layout_prose category.name,
-                align: :left,
-                inline_format: false,
-                margin_top: 0,
-                margin_bottom: @theme.description_list_term_spacing,
-                style: @theme.description_list_term_font_style.to_sym
+                  align: :left,
+                  inline_format: false,
+                  margin_top: 0,
+                  margin_bottom: @theme.description_list_term_spacing,
+                  style: @theme.description_list_term_font_style.to_sym
               category.terms.each do |term|
                 convert_index_list_item term
               end
@@ -2397,7 +2381,7 @@ module Asciidoctor
           # NOTE @media may not be initialized if method is called before convert phase
           elsif (@media ||= node.document.attr 'media', 'screen') != 'screen' || (node.document.attr? 'show-link-uri')
             # QUESTION should we insert breakable chars into URI when building fragment instead?
-            # TODO allow style of printed link to be controlled by theme
+            # TODO: allow style of printed link to be controlled by theme
             %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> [<font size="0.85em">#{breakable_uri target}</font>&#93;)
           else
             %(<a href="#{node.target}"#{attrs.join}>#{node.text}</a>)
@@ -2518,7 +2502,7 @@ module Asciidoctor
               size_attr = ''
             end
             class_attr = node.role? ? %( class="#{node.role}") : ''
-            # TODO support rotate and flip attributes
+            # TODO: support rotate and flip attributes
             %(<font name="#{icon_set}"#{size_attr}#{class_attr}>#{glyph}</font>)
           else
             logger.warn %(#{icon_name} is not a valid icon name in the #{icon_set} icon set)
@@ -2560,10 +2544,8 @@ module Asciidoctor
         if scratch?
           node.type == :visible ? node.text : ''
         else
-          dest = {
-            anchor: (anchor_name = @index.next_anchor_name)
-            # NOTE page number is added in InlineDestinationMarker
-          }
+          # NOTE page number is added in InlineDestinationMarker
+          dest = { anchor: (anchor_name = @index.next_anchor_name) }
           anchor = %(<a id="#{anchor_name}" type="indexterm">#{DummyText}</a>)
           if node.type == :visible
             @index.store_primary_term(sanitize(visible_term = node.text), dest)
@@ -2661,10 +2643,10 @@ module Asciidoctor
         # QUESTION allow alignment per element on title page?
         title_align = (@theme.title_page_align || @base_align).to_sym
 
-        # TODO disallow .pdf as image type
+        # TODO: disallow .pdf as image type
         if @theme.title_page_logo_display != 'none' && (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
           if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
-            logo_image_attrs = (AttributeList.new $2).parse ['alt', 'width', 'height']
+            logo_image_attrs = (AttributeList.new $2).parse %w(alt width height)
             relative_to_imagesdir = true
             logo_image_path = logo_image_from_theme ? (ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, $1), @themesdir) : $1
           else
@@ -2679,7 +2661,7 @@ module Asciidoctor
           if (logo_image_top = logo_image_attrs['top'] || @theme.title_page_logo_top)
             initial_y, @y = @y, (resolve_top logo_image_top)
           end
-          # FIXME add API to Asciidoctor for creating blocks like this (extract from extensions module?)
+          # FIXME: add API to Asciidoctor for creating blocks like this (extract from extensions module?)
           image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs
           # NOTE pinned option keeps image on same page
           indent (@theme.title_page_logo_margin_left || 0), (@theme.title_page_logo_margin_right || 0) do
@@ -2688,7 +2670,7 @@ module Asciidoctor
           @y = initial_y if initial_y
         end
 
-        # TODO prevent content from spilling to next page
+        # TODO: prevent content from spilling to next page
         theme_font :title_page do
           if (title_top = @theme.title_page_title_top)
             @y = resolve_top title_top
@@ -2699,9 +2681,9 @@ module Asciidoctor
             indent (@theme.title_page_title_margin_left || 0), (@theme.title_page_title_margin_right || 0) do
               theme_font :title_page_title do
                 layout_prose doctitle.main,
-                  align: title_align,
-                  margin: 0,
-                  line_height: @theme.title_page_title_line_height
+                    align: title_align,
+                    margin: 0,
+                    line_height: @theme.title_page_title_line_height
               end
             end
             move_down(@theme.title_page_title_margin_bottom || 0)
@@ -2711,9 +2693,9 @@ module Asciidoctor
             indent (@theme.title_page_subtitle_margin_left || 0), (@theme.title_page_subtitle_margin_right || 0) do
               theme_font :title_page_subtitle do
                 layout_prose subtitle,
-                  align: title_align,
-                  margin: 0,
-                  line_height: @theme.title_page_subtitle_line_height
+                    align: title_align,
+                    margin: 0,
+                    line_height: @theme.title_page_subtitle_line_height
               end
             end
             move_down(@theme.title_page_subtitle_margin_bottom || 0)
@@ -2727,7 +2709,7 @@ module Asciidoctor
                 with_email: @theme.title_page_authors_content_with_email || authors_content,
                 with_url: @theme.title_page_authors_content_with_url || authors_content,
               }
-              # TODO provide an API in core to get authors as an array
+              # TODO: provide an API in core to get authors as an array
               authors = (1..(doc.attr 'authorcount', 1).to_i).map {|idx|
                 promote_author doc, idx do
                   author_content_key = (url = doc.attr 'url') ? ((url.start_with? 'mailto:') ? :with_email : :with_url) : :name_only
@@ -2740,9 +2722,9 @@ module Asciidoctor
               }.join (@theme.title_page_authors_delimiter || ', ')
               theme_font :title_page_authors do
                 layout_prose authors,
-                  align: title_align,
-                  margin: 0,
-                  normalize: false
+                    align: title_align,
+                    margin: 0,
+                    normalize: false
               end
             end
             move_down(@theme.title_page_authors_margin_bottom || 0)
@@ -2756,9 +2738,9 @@ module Asciidoctor
             indent (@theme.title_page_revision_margin_left || 0), (@theme.title_page_revision_margin_right || 0) do
               theme_font :title_page_revision do
                 layout_prose revision_text,
-                  align: title_align,
-                  margin: 0,
-                  normalize: false
+                    align: title_align,
+                    margin: 0,
+                    normalize: false
               end
             end
             move_down(@theme.title_page_revision_margin_bottom || 0)
@@ -2769,10 +2751,10 @@ module Asciidoctor
       end
 
       def layout_cover_page doc, face
-        # TODO turn processing of attribute with inline image a utility function in Asciidoctor
+        # TODO: turn processing of attribute with inline image a utility function in Asciidoctor
         if (image_path = (doc.attr %(#{face}-cover-image)))
           if (image_path.include? ':') && image_path =~ ImageAttributeValueRx
-            image_attrs = (AttributeList.new $2).parse ['alt', 'width']
+            image_attrs = (AttributeList.new $2).parse %w(alt width)
             image_path = resolve_image_path doc, $1, true, (image_format = image_attrs['format'])
           else
             image_path = resolve_image_path doc, image_path, false
@@ -2816,11 +2798,11 @@ module Asciidoctor
 
       def start_new_chapter chapter
         start_new_page unless at_page_top?
-        # TODO must call update_colors before advancing to next page if start_new_page is called in layout_chapter_title
+        # TODO: must call update_colors before advancing to next page if start_new_page is called in layout_chapter_title
         start_new_page if @ppbook && verso_page? && !(chapter.option? 'nonfacing')
       end
 
-      def layout_chapter_title node, title, opts = {}
+      def layout_chapter_title _node, title, opts = {}
         layout_heading title, (opts.merge outdent: true)
       end
 
@@ -2845,7 +2827,7 @@ module Asciidoctor
         if (transform = resolve_text_transform opts)
           string = transform_text string, transform
         end
-        outdent_section(opts.delete :outdent) do
+        outdent_section opts.delete :outdent do
           margin_top top_margin
           # QUESTION should we move inherited styles to typeset_text?
           if (inherited = apply_text_decoration ::Set.new, :heading, hlevel).empty?
@@ -2856,7 +2838,7 @@ module Asciidoctor
           typeset_text string, calc_line_metrics((opts.delete :line_height) || (hlevel ? @theme[%(heading_h#{hlevel}_line_height)] : nil) || @theme.heading_line_height || @theme.base_line_height), {
             color: @font_color,
             inline_format: inline_format_opts,
-            align: @base_align.to_sym
+            align: @base_align.to_sym,
           }.merge(opts)
           margin_bottom bot_margin
         end
@@ -2884,7 +2866,7 @@ module Asciidoctor
         typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
           color: @font_color,
           inline_format: [inline_format_opts],
-          align: @base_align.to_sym
+          align: @base_align.to_sym,
         }.merge(opts)
         margin_bottom bot_margin
       end
@@ -2903,7 +2885,7 @@ module Asciidoctor
       end
 
       # Render the caption and return the height of the rendered content
-      # TODO allow margin to be zeroed
+      # TODO: allow margin to be zeroed
       def layout_caption subject, opts = {}
         mark = { cursor: cursor, page_number: page_number }
         case subject
@@ -2938,7 +2920,7 @@ module Asciidoctor
             }.merge(opts)
             if side == :top && (bb_color = @theme[%(#{category_caption}_border_bottom_color)] || @theme.caption_border_bottom_color)
               stroke_horizontal_rule bb_color
-              # FIXME HACK move down slightly so line isn't covered by filled area (half width of line)
+              # FIXME: HACK move down slightly so line isn't covered by filled area (half width of line)
               move_down 0.25
             end
           end
@@ -3005,7 +2987,7 @@ module Asciidoctor
         # QUESTION should we skip this whole method if num_levels < 0?
         unless num_levels < 0
           dot_leader = theme_font :toc do
-            # TODO we could simplify by using nested theme_font :toc_dot_leader
+            # TODO: we could simplify by using nested theme_font :toc_dot_leader
             if (dot_leader_font_style = (@theme.toc_dot_leader_font_style || :normal).to_sym) != font_style
               font_style dot_leader_font_style
             end
@@ -3016,9 +2998,9 @@ module Asciidoctor
                   (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (0..num_levels).to_set)),
               text: (dot_leader_text = @theme.toc_dot_leader_content || DotLeaderTextDefault),
               width: dot_leader_text.empty? ? 0 : (rendered_width_of_string dot_leader_text),
-              # TODO spacer gives a little bit of room between dots and page number
+              # TODO: spacer gives a little bit of room between dots and page number
               spacer: { text: NoBreakSpace, size: (spacer_font_size = @font_size * 0.25) },
-              spacer_width: (rendered_width_of_char NoBreakSpace, size: spacer_font_size)
+              spacer_width: (rendered_width_of_char NoBreakSpace, size: spacer_font_size),
             }
           end
           line_metrics = calc_line_metrics @theme.toc_line_height
@@ -3042,7 +3024,7 @@ module Asciidoctor
             hanging_indent = @theme.toc_hanging_indent || 0
             # NOTE only write section title (excluding dots and page number) if this is a dry run
             if scratch?
-              # FIXME use layout_prose
+              # FIXME: use layout_prose
               # NOTE must wrap title in empty anchor element in case links are styled with different font family / size
               typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true, hanging_indent: hanging_indent
             else
@@ -3064,7 +3046,7 @@ module Asciidoctor
               end
               end_page_number = page_number
               end_cursor = cursor
-              # TODO it would be convenient to have a cursor mark / placement utility that took page number into account
+              # TODO: it would be convenient to have a cursor mark / placement utility that took page number into account
               go_to_page start_page_number if start_page_number != end_page_number
               move_cursor_to start_cursor
               if dot_leader[:width] > 0 && (dot_leader[:levels].include? sect.level)
@@ -3074,12 +3056,12 @@ module Asciidoctor
                   set_font toc_font_info[:font], toc_font_info[:size]
                   font_style dot_leader[:font_style]
                   num_dots = ((bounds.width - start_dots - dot_leader[:spacer_width] - pgnum_label_width) / dot_leader[:width]).floor
-                  # FIXME dots don't line up in columns if width of page numbers differ
+                  # FIXME: dots don't line up in columns if width of page numbers differ
                   typeset_formatted_text [
-                      { text: (dot_leader[:text] * (num_dots < 0 ? 0 : num_dots)), color: dot_leader[:font_color] },
-                      dot_leader[:spacer],
-                      { text: pgnum_label, anchor: sect_anchor }.merge(pgnum_label_font_settings)
-                    ], line_metrics, align: :right
+                    { text: (dot_leader[:text] * (num_dots < 0 ? 0 : num_dots)), color: dot_leader[:font_color] },
+                    dot_leader[:spacer],
+                    { text: pgnum_label, anchor: sect_anchor }.merge(pgnum_label_font_settings),
+                  ], line_metrics, align: :right
                 end
               else
                 typeset_formatted_text [{ text: pgnum_label, color: @font_color, anchor: sect_anchor }], line_metrics, align: :right
@@ -3115,7 +3097,7 @@ module Asciidoctor
         end
       end
 
-      # TODO delegate to layout_page_header and layout_page_footer per page
+      # TODO: delegate to layout_page_header and layout_page_footer per page
       def layout_running_content periphery, doc, opts = {}
         skip, skip_pagenums = opts[:skip] || [1, 1]
         body_start_page_number = opts[:body_start_page_number] || 1
@@ -3126,7 +3108,7 @@ module Asciidoctor
         prev_page_number = page_number
         go_to_page content_start_page
 
-        # FIXME probably need to treat doctypes differently
+        # FIXME: probably need to treat doctypes differently
         is_book = doc.doctype == 'book'
         header = doc.header? ? doc.header : nil
         sectlevels = (@theme[%(#{periphery}_sectlevels)] || 2).to_i
@@ -3136,8 +3118,8 @@ module Asciidoctor
         end
 
         title_method = TitleStyles[@theme[%(#{periphery}_title_style)]]
-        # FIXME we need a proper model for all this page counting
-        # FIXME we make a big assumption that part & chapter start on new pages
+        # FIXME: we need a proper model for all this page counting
+        # FIXME: we make a big assumption that part & chapter start on new pages
         # index parts, chapters and sections by the physical page number on which they start
         part_start_pages = {}
         chapter_start_pages = {}
@@ -3151,7 +3133,7 @@ module Asciidoctor
             else
               chapter_start_pages[pgnum] ||= sect.send(*title_method)
               if sect.sectname == 'appendix' && !part_start_pages.empty?
-                # FIXME need a better way to indicate that part has ended
+                # FIXME: need a better way to indicate that part has ended
                 part_start_pages[pgnum] = ''
               end
             end
@@ -3187,7 +3169,7 @@ module Asciidoctor
             sect_search_threshold = pgnum
           # NOTE we didn't find a section on this page; look back to find last section started
           elsif last_sect
-            ((sect_search_threshold)..(pgnum - 1)).reverse_each do |prev|
+            (sect_search_threshold..(pgnum - 1)).reverse_each do |prev|
               if (sect = trailing_section_start_pages[prev])
                 last_sect = sect
                 break
@@ -3236,10 +3218,10 @@ module Asciidoctor
           side = page_side((folio_basis == :physical ? pgnum : virtual_pgnum), invert_folio)
           # QUESTION should allocation be per side?
           trim_styles, colspec_dict, content_dict, stamp_names = allocate_running_content_layout page, periphery, periphery_layout_cache
-          # FIXME we need to have a content setting for chapter pages
+          # FIXME: we need to have a content setting for chapter pages
           content_by_position, colspec_by_position = content_dict[side], colspec_dict[side]
-          # TODO populate chapter-number
-          # TODO populate numbered and unnumbered chapter and section titles
+          # TODO: populate chapter-number
+          # TODO: populate numbered and unnumbered chapter and section titles
           doc.set_attr 'page-number', pgnum_label if pagenums_enabled
           # QUESTION should the fallback value be nil instead of empty string? or should we remove attribute if no value?
           doc.set_attr 'part-title', (parts_by_page[pgnum] || '')
@@ -3282,7 +3264,7 @@ module Asciidoctor
                       colwidth -= (trim_column_rule_spacing * 0.5)
                     end
                   end
-                  # FIXME we need to have a content setting for chapter pages
+                  # FIXME: we need to have a content setting for chapter pages
                   case content
                   when ::Array
                     # NOTE float ensures cursor position is restored and returns us to current page if we overrun
@@ -3312,14 +3294,14 @@ module Asciidoctor
                         content = transform_text content, @text_transform if @text_transform
                       end
                       formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
-                        at: [left, bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
-                        width: colwidth,
-                        height: trim_styles[:prose_content_height],
-                        align: colspec[:align],
-                        valign: trim_styles[:valign],
-                        leading: trim_styles[:line_metrics].leading,
-                        final_gap: false,
-                        overflow: :truncate
+                          at: [left, bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
+                          width: colwidth,
+                          height: trim_styles[:prose_content_height],
+                          align: colspec[:align],
+                          valign: trim_styles[:valign],
+                          leading: trim_styles[:line_metrics].leading,
+                          final_gap: false,
+                          overflow: :truncate
                     end
                   end
                   bounding_box [colspec[:x], bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colspec[:width], height: trim_styles[:content_height] do
@@ -3415,7 +3397,7 @@ module Asciidoctor
               acc[side] = {
                 left: { align: :left, width: side_trim_content_width, x: 0 },
                 center: { align: :center, width: side_trim_content_width, x: 0 },
-                right: { align: :right, width: side_trim_content_width, x: 0 }
+                right: { align: :right, width: side_trim_content_width, x: 0 },
               }
             end
           end
@@ -3425,9 +3407,9 @@ module Asciidoctor
             ColumnPositions.each do |position|
               unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
                 if (val.include? ':') && val =~ ImageAttributeValueRx
-                  # TODO support image URL
+                  # TODO: support image URL
                   if ::File.readable? (image_path = (ThemeLoader.resolve_theme_asset $1, @themesdir))
-                    image_attrs = (AttributeList.new $2).parse ['alt', 'width']
+                    image_attrs = (AttributeList.new $2).parse %w(alt width)
                     image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_styles[:content_height]], format: image_attrs['format']
                     side_content[position] = [image_path, image_opts, image_attrs['link']]
                   else
@@ -3452,14 +3434,14 @@ module Asciidoctor
                     bounding_box [0, trim_styles[:top]], width: bounds.width, height: trim_styles[:height] do
                       fill_bounds trim_styles[:bg_color]
                       if trim_styles[:border_width] > 0
-                        # TODO stroke_horizontal_rule should support :at
+                        # TODO: stroke_horizontal_rule should support :at
                         move_down bounds.height if periphery == :header
                         stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style]
                       end
                     end
                   else
                     bounding_box [trim_styles[:left][side], trim_styles[:top]], width: trim_styles[:width][side], height: trim_styles[:height] do
-                      # TODO stroke_horizontal_rule should support :at
+                      # TODO: stroke_horizontal_rule should support :at
                       move_down bounds.height if periphery == :header
                       stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style]
                     end
@@ -3494,7 +3476,7 @@ module Asciidoctor
 
         # add labels for each content page, which is required for reader's page navigator to work correctly
         (num_front_matter_pages..(page_count - 1)).each_with_index do |n, i|
-          pagenum_labels[n] = { P: (::PDF::Core::LiteralString.new %(#{i + 1})) }
+          pagenum_labels[n] = { P: (::PDF::Core::LiteralString.new (i + 1).to_s) }
         end
 
         unless toc_page_nums.none? || (toc_title = doc.attr 'toc-title').nil_or_empty?
@@ -3503,7 +3485,7 @@ module Asciidoctor
 
         outline.define do
           initial_pagenum = has_front_cover ? 2 : 1
-          # FIXME use sanitize: :plain_text once available
+          # FIXME: use sanitize: :plain_text once available
           if document.page_count >= initial_pagenum && (doctitle = doc.header? ? doc.doctitle : (doc.attr 'untitled-label'))
             page title: (document.sanitize doctitle), destination: (document.dest_top has_front_cover ? 2 : 1)
           end
@@ -3539,18 +3521,18 @@ module Asciidoctor
             toc_level = parent_section.level
             insert_idx = (grandparent_section.blocks.index parent_section) + 1
           else
-            parent_section = grandparent_section = doc
+            grandparent_section = doc
             toc_level = doc.sections[0].level
             insert_idx = 0
           end
           toc_dest = toc_node.attr 'pdf-destination'
         else
-          parent_section = grandparent_section = doc
+          grandparent_section = doc
           toc_level = doc.sections[0].level
           insert_idx = 0
           toc_dest = dest_top toc_page_nums.first
         end
-        toc_section = Section.new grandparent_section, toc_level, false, { attributes: { 'pdf-destination' => toc_dest } }
+        toc_section = Section.new grandparent_section, toc_level, false, attributes: { 'pdf-destination' => toc_dest }
         toc_section.title = toc_title
         grandparent_section.blocks.insert insert_idx, toc_section
         toc_section
@@ -3564,10 +3546,8 @@ module Asciidoctor
         else
           pdf_doc.render_file target
           # QUESTION restore attributes first?
-          @pdfmark.generate_file target if @pdfmark
-          if @optimize && ((defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?)
-            (Optimizer.new @optimize, pdf_doc.min_version).generate_file target
-          end
+          @pdfmark&.generate_file target
+          (Optimizer.new @optimize, pdf_doc.min_version).generate_file target if @optimize && ((defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?)
         end
         # write scratch document if debug is enabled (or perhaps DEBUG_STEPS env)
         #get_scratch_document.render_file 'scratch.pdf'
@@ -3657,7 +3637,7 @@ module Asciidoctor
       # Insert a margin at the specified side if the cursor is not at the top of
       # the page. Start a new page if amount is greater than the remaining space on
       # the page.
-      def margin amount, side
+      def margin amount, _side
         unless (amount || 0) == 0 || at_page_top?
           # NOTE use low-level cursor calculation to workaround cursor bug in column_box context
           if y - reference_bounds.absolute_bottom > amount
@@ -3679,7 +3659,7 @@ module Asciidoctor
 
       def theme_font category, opts = {}
         result = nil
-        # TODO inheriting from generic category should be an option
+        # TODO: inheriting from generic category should be an option
         if opts.key? :level
           level = opts[:level]
           family = @theme[%(#{category}_h#{level}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family || font_family
@@ -3733,8 +3713,6 @@ module Asciidoctor
             else
               adjusted_font_size
             end
-          else
-            nil
           end
         end
       end
@@ -3743,7 +3721,7 @@ module Asciidoctor
       #
       # Finalizing the arranger is deferred since it must be done in the context of
       # the global font settings you want applied to each fragment.
-      def arrange_fragments_by_line fragments, opts = {}
+      def arrange_fragments_by_line fragments, _opts = {}
         arranger = ::Prawn::Text::Formatted::Arranger.new self
         by_line = arranger.consumed = []
         fragments.each do |fragment|
@@ -3791,19 +3769,17 @@ module Asciidoctor
 
       # Compute the rendered width of a char, taking fallback fonts into account
       def rendered_width_of_char char, opts = {}
-        if @fallback_fonts.empty? || (font.glyph_present? char)
-          width_of_string char, opts
-        else
+        unless @fallback_fonts.empty? || (font.glyph_present? char)
           @fallback_fonts.each do |fallback_font|
             font fallback_font do
               return width_of_string char, opts if font.glyph_present? char
             end
           end
-          width_of_string char, opts
         end
+        width_of_string char, opts
       end
 
-      # TODO document me, esp the first line formatting functionality
+      # TODO: document me, esp the first line formatting functionality
       def typeset_text string, line_metrics, opts = {}
         move_down line_metrics.padding_top
         opts = { leading: line_metrics.leading, final_gap: line_metrics.final_gap }.merge opts
@@ -3813,7 +3789,7 @@ module Asciidoctor
             text string, (opts.merge indent_paragraphs: -hanging_indent)
           end
         elsif (first_line_opts = opts.delete :first_line_options)
-          # TODO good candidate for Prawn enhancement!
+          # TODO: good candidate for Prawn enhancement!
           text_with_formatted_first_line string, first_line_opts, opts
         else
           text string, opts
@@ -3847,7 +3823,7 @@ module Asciidoctor
           ''
         elsif string.include? TAB
           full_tab_space = ' ' * (tab_size = 4)
-          (string.split LF, -1).map do |line|
+          (string.split LF, -1).map {|line|
             if line.empty?
               line
             elsif (tab_idx = line.index TAB)
@@ -3869,15 +3845,15 @@ module Asciidoctor
                   # calculate how many spaces this tab represents, then replace tab with spaces
                   if (offset = idx + spaces_added) % tab_size == 0
                     spaces_added += (tab_size - 1)
-                    result = result + full_tab_space
+                    result += full_tab_space
                   else
                     unless (spaces = tab_size - offset % tab_size) == 1
                       spaces_added += (spaces - 1)
                     end
-                    result = result + (' ' * spaces)
+                    result += (' ' * spaces)
                   end
                 else
-                  result = result + c
+                  result += c
                 end
                 idx += 1
               end
@@ -3885,7 +3861,7 @@ module Asciidoctor
             else
               line
             end
-          end.join LF
+          }.join LF
         else
           string
         end
@@ -3942,7 +3918,7 @@ module Asciidoctor
           # QUESTION when content is aligned to left margin, should we keep precise x value or just use 0?
           dest_x = 0 if dest_x <= page_margin_left
           dest_y = at_page_top? && (node.context == :section || node.context == :document) ? page_height : y
-          # TODO find a way to store only the ref of the destination; look it up when we need it
+          # TODO: find a way to store only the ref of the destination; look it up when we need it
           node.set_attr 'pdf-destination', (node_dest = (dest_xyz dest_x, dest_y))
           add_dest id, node_dest
         end
@@ -3952,8 +3928,6 @@ module Asciidoctor
       def resolve_alignment_from_role roles
         if (align_role = roles.reverse.find {|r| TextAlignmentRoles.include? r })
           (align_role.slice 5, align_role.length).to_sym
-        else
-          nil
         end
       end
 
@@ -3989,7 +3963,7 @@ module Asciidoctor
           tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
           tmp_image.binmode unless image_format == 'svg'
           begin
-            tmp_image.write(::Base64.decode64 image_path)
+            tmp_image.write ::Base64.decode64 image_path
             tmp_image.path.extend TemporaryPath
           rescue
             nil
@@ -4035,15 +4009,15 @@ module Asciidoctor
           if image_path == 'none'
             return []
           elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
-            image_attrs = (AttributeList.new $2).parse ['alt', 'width']
+            image_attrs = (AttributeList.new $2).parse %w(alt width)
             if from_theme
-              # TODO support remote image when loaded from theme
+              # TODO: support remote image when loaded from theme
               image_path = ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, $1), @themesdir
             else
               image_path = resolve_image_path doc, $1, true, (image_format = image_attrs['format'])
             end
           elsif from_theme
-            # TODO support remote image when loaded from theme
+            # TODO: support remote image when loaded from theme
             image_path = ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, image_path), @themesdir
           else
             image_path = resolve_image_path doc, image_path, false
@@ -4261,13 +4235,11 @@ module Asciidoctor
       def apply_subs_discretely doc, value, opts = {}
         imagesdir = doc.attr 'imagesdir'
         doc.set_attr 'imagesdir', @themesdir
-        # FIXME get sub_attributes to handle drop-line w/o a warning
+        # FIXME: get sub_attributes to handle drop-line w/o a warning
         doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
         value = value.gsub '\{', '\\\\\\{' if (escaped_attr_ref = value.include? '\{')
         value = doc.apply_subs value
-        if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
-          value = (value.split LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF
-        end
+        value = (value.split LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
         value = value.gsub '\{', '{' if escaped_attr_ref
         doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
         if imagesdir
