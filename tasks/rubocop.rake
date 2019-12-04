@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 begin
   require 'rubocop/rake_task'
   RuboCop::RakeTask.new :lint do |t|
-    t.patterns = ['Rakefile', 'tasks/*.rake', 'lib/**/*.rb', 'spec/**/*.rb']
+    t.patterns = ['Rakefile', 'Gemfile', 'tasks/*.rake', 'lib/**/*.rb', 'spec/**/*.rb']
   end
 rescue LoadError => e
   task :lint do

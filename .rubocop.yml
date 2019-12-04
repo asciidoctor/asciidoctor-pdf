@@ -8,6 +8,9 @@ Layout/SpaceInsideBlockBraces:
   SpaceBeforeBlockParameters: false
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
 Layout/HeredocIndentation:
   Enabled: false
 Layout/ParameterAlignment:
@@ -36,7 +39,7 @@ Metrics/ClassLength:
 Metrics/CyclomaticComplexity:
   Enabled: false
 Metrics/LineLength:
-  Enabled: false
+  Enabled: false # TODO reenable me
 #  Max: 120
 Metrics/MethodLength:
   Enabled: false
@@ -58,6 +61,8 @@ Style/CaseEquality:
   Enabled: false
 Style/CharacterLiteral:
   Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
 Style/ConditionalAssignment:
   EnforcedStyle: assign_inside_condition
   IncludeTernaryExpressions: false
@@ -73,6 +78,8 @@ Style/GuardClause:
   Enabled: false
 Style/HashSyntax:
   EnforcedStyle: ruby19_no_mixed_keys
+Style/IfUnlessModifierOfIfUnless:
+  Enabled: false
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
 Style/MutableConstant:
@@ -104,6 +111,8 @@ Style/SpecialGlobalVars:
   EnforcedStyle: use_perl_names
 Style/SymbolArray:
   EnforcedStyle: brackets
+Style/TernaryParentheses:
+  Enabled: false # TODO consider reenabling
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInHashLiteral:
