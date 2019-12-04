@@ -16,7 +16,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     (expect pdf.lines).to eql ['Fog', 'The fog comes', 'on little cat feet.']
     title_text = (pdf.find_text 'Fog')[0]
     (expect title_text[:font_name]).to eql 'NotoSerif-Italic'
-    (expect title_text[:x]).to be 48.24
+    (expect title_text[:x]).to eql 48.24
   end
 
   it 'should expand tabs and preserve indentation' do
@@ -66,7 +66,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     text = pdf.text
     (expect text).to have_size 2
     (expect text[0][:font_name]).to eql 'mplus1mn-regular'
-    (expect text[0][:font_size]).to be 10.5
+    (expect text[0][:font_size]).to eql 10.5
     (expect text[0][:font_color]).to eql '555555'
   end
 end

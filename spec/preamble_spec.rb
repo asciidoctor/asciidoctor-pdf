@@ -13,10 +13,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
 
       first_paragraph_text = pdf.find_text 'first paragraph'
       (expect first_paragraph_text).to have_size 1
-      (expect first_paragraph_text[0][:font_size]).to be 10.5
+      (expect first_paragraph_text[0][:font_size]).to eql 10.5
       second_paragraph_text = pdf.find_text 'first paragraph'
       (expect second_paragraph_text).to have_size 1
-      (expect second_paragraph_text[0][:font_size]).to be 10.5
+      (expect second_paragraph_text[0][:font_size]).to eql 10.5
     end
 
     it 'should not style first paragraph of preamble as lead in article with no sections' do
@@ -30,10 +30,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
 
       first_paragraph_text = pdf.find_text 'first paragraph'
       (expect first_paragraph_text).to have_size 1
-      (expect first_paragraph_text[0][:font_size]).to be 10.5
+      (expect first_paragraph_text[0][:font_size]).to eql 10.5
       second_paragraph_text = pdf.find_text 'first paragraph'
       (expect second_paragraph_text).to have_size 1
-      (expect second_paragraph_text[0][:font_size]).to be 10.5
+      (expect second_paragraph_text[0][:font_size]).to eql 10.5
     end
 
     it 'should style first paragraph of preamble as lead' do
@@ -54,10 +54,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       (expect preamble_text[0][:font_size]).to be 13
       more_preamble_text = pdf.find_text 'more preamble content'
       (expect more_preamble_text).to have_size 1
-      (expect more_preamble_text[0][:font_size]).to be 10.5
+      (expect more_preamble_text[0][:font_size]).to eql 10.5
       section_text = pdf.find_text 'section content'
       (expect section_text).to have_size 1
-      (expect section_text[0][:font_size]).to be 10.5
+      (expect section_text[0][:font_size]).to eql 10.5
     end
 
     it 'should not style first paragraph of preamble as lead if it already has a role' do
@@ -76,10 +76,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
 
       preamble_text = pdf.find_text 'preamble content'
       (expect preamble_text).to have_size 1
-      (expect preamble_text[0][:font_size]).to be 10.5
+      (expect preamble_text[0][:font_size]).to eql 10.5
       more_preamble_text = pdf.find_text 'more preamble content'
       (expect more_preamble_text).to have_size 1
-      (expect more_preamble_text[0][:font_size]).to be 10.5
+      (expect more_preamble_text[0][:font_size]).to eql 10.5
     end
   end
 
@@ -95,10 +95,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
 
       first_paragraph_text = pdf.find_text 'first paragraph'
       (expect first_paragraph_text).to have_size 1
-      (expect first_paragraph_text[0][:font_size]).to be 10.5
+      (expect first_paragraph_text[0][:font_size]).to eql 10.5
       second_paragraph_text = pdf.find_text 'first paragraph'
       (expect second_paragraph_text).to have_size 1
-      (expect second_paragraph_text[0][:font_size]).to be 10.5
+      (expect second_paragraph_text[0][:font_size]).to eql 10.5
     end
 
     it 'should not style first paragraph of preamble as lead in book with no sections' do
@@ -113,10 +113,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
 
       first_paragraph_text = pdf.find_text 'first paragraph'
       (expect first_paragraph_text).to have_size 1
-      (expect first_paragraph_text[0][:font_size]).to be 10.5
+      (expect first_paragraph_text[0][:font_size]).to eql 10.5
       second_paragraph_text = pdf.find_text 'first paragraph'
       (expect second_paragraph_text).to have_size 1
-      (expect second_paragraph_text[0][:font_size]).to be 10.5
+      (expect second_paragraph_text[0][:font_size]).to eql 10.5
     end
 
     it 'should style first paragraph of preamble as lead in book with at least one chapter' do
@@ -138,10 +138,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       (expect preamble_text[0][:font_size]).to be 13
       more_preamble_text = pdf.find_text 'more preamble content'
       (expect more_preamble_text).to have_size 1
-      (expect more_preamble_text[0][:font_size]).to be 10.5
+      (expect more_preamble_text[0][:font_size]).to eql 10.5
       section_text = pdf.find_text 'chapter content'
       (expect section_text).to have_size 1
-      (expect section_text[0][:font_size]).to be 10.5
+      (expect section_text[0][:font_size]).to eql 10.5
     end
 
     it 'should not style paragraph after abstract as lead in book with an abstract' do
@@ -163,10 +163,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
 
       after_abstract_text = pdf.find_text 'This is the paragraph after the abstract.'
       (expect after_abstract_text).to have_size 1
-      (expect after_abstract_text[0][:font_size]).to be 10.5
+      (expect after_abstract_text[0][:font_size]).to eql 10.5
       after_that_text = pdf.find_text 'This is the paragraph after that.'
       (expect after_that_text).to have_size 1
-      (expect after_that_text[0][:font_size]).to be 10.5
+      (expect after_that_text[0][:font_size]).to eql 10.5
     end
 
     it 'should promote preamble to preface if preface-title is set' do
@@ -185,10 +185,10 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       (expect pdf.find_text string: 'Preface', page_number: 2, font_size: 22).to have_size 1
       preamble_text = pdf.find_text 'preamble content'
       (expect preamble_text).to have_size 1
-      (expect preamble_text[0][:font_size]).to be 10.5
+      (expect preamble_text[0][:font_size]).to eql 10.5
       section_text = pdf.find_text 'chapter content'
       (expect section_text).to have_size 1
-      (expect section_text[0][:font_size]).to be 10.5
+      (expect section_text[0][:font_size]).to eql 10.5
     end
   end
 
@@ -216,7 +216,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       (expect preamble_text[0][:font_color]).to eql '000000'
       more_preamble_text = pdf.find_text 'more preamble content'
       (expect more_preamble_text).to have_size 1
-      (expect more_preamble_text[0][:font_size]).to be 10.5
+      (expect more_preamble_text[0][:font_size]).to eql 10.5
       (expect more_preamble_text[0][:font_color]).to eql '333333'
     end
 

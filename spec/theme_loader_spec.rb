@@ -502,7 +502,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           padding: #{val}
         EOS
         theme = subject.new.load theme_data
-        (expect theme.footer_padding.to_f.round 2).to be 36.0
+        (expect theme.footer_padding.to_f.round 2).to eql 36.0
       end
     end
   end
@@ -564,9 +564,9 @@ describe Asciidoctor::PDF::ThemeLoader do
         padding:  [0, $base_line_height_length - 2, $base_line_height_length * -0.75, $base_line_height_length + $blockquote_border_width / 2]
       EOS
       theme = subject.new.load theme_data
-      (expect theme.base_line_height).to be 1.2
-      (expect theme.base_font_size_large).to be 12.5
-      (expect theme.base_font_size_min).to be 7.5
+      (expect theme.base_line_height).to eql 1.2
+      (expect theme.base_font_size_large).to eql 12.5
+      (expect theme.base_font_size_min).to eql 7.5
       (expect theme.blockquote_padding).to eql [0, 10, -9, 14.5]
     end
 

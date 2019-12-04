@@ -140,3 +140,5 @@ RSpec/NamedSubject:
   Enabled: false
 RSpec/VoidExpect:
   Enabled: false
+RSpec/BeEql:
+  Enabled: false # NOTE: can't enable since be <float> doesn't work on JRuby

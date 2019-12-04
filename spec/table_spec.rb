@@ -108,13 +108,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       lines = pdf.lines.uniq
       (expect lines).to have_size 4
-      (expect lines[0][:width]).to be 1.25
-      (expect lines[1][:width]).to be 1.25
+      (expect lines[0][:width]).to eql 1.25
+      (expect lines[1][:width]).to eql 1.25
       (expect lines[0][:from][:y]).to eql lines[0][:to][:y]
       (expect lines[1][:from][:y]).to eql lines[1][:to][:y]
       (expect lines[0][:from][:y]).to eql lines[1][:from][:y]
-      (expect lines[2][:width]).to be 0.5
-      (expect lines[3][:width]).to be 0.5
+      (expect lines[2][:width]).to eql 0.5
+      (expect lines[3][:width]).to eql 0.5
     end
 
     it 'should allow theme to customize bottom border of table head row', visual: true do
@@ -298,8 +298,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       lines = pdf.lines
       (expect lines).to have_size 2
-      (expect lines[0][:from][:x]).to be 48.24
-      (expect lines[1][:from][:x]).to be 547.04
+      (expect lines[0][:from][:x]).to eql 48.24
+      (expect lines[1][:from][:x]).to eql 547.04
     end
 
     it 'should not stretch autowidth table to width of bounds by default' do
@@ -312,7 +312,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       lines = pdf.lines
       (expect lines).to have_size 2
-      (expect lines[0][:from][:x]).to be 48.24
+      (expect lines[0][:from][:x]).to eql 48.24
       (expect lines[1][:from][:x]).to be < 100
     end
 
@@ -326,8 +326,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       lines = pdf.lines
       (expect lines).to have_size 2
-      (expect lines[0][:from][:x]).to be 48.24
-      (expect lines[1][:from][:x]).to be 547.04
+      (expect lines[0][:from][:x]).to eql 48.24
+      (expect lines[1][:from][:x]).to eql 547.04
     end
 
     it 'should allocate remaining width to autowidth column' do

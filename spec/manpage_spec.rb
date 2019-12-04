@@ -30,7 +30,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
     (expect name_title_text[:font_size]).to be 22
     name_body_text = (pdf.find_text 'cmd - does stuff')[0]
     (expect name_body_text).not_to be_nil
-    (expect name_body_text[:font_size]).to be 10.5
+    (expect name_body_text[:font_size]).to eql 10.5
     (expect (pdf.find_text font_size: 22).map {|it| it[:string] }).to eql [expected_name_title, 'Synopsis', 'Options']
   end
 

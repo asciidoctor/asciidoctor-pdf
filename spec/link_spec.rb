@@ -117,6 +117,6 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     (expect lines).to have_size 1
     underline = lines[0]
     (expect underline[:color]).to eql '0000FF'
-    (expect underline[:width]).to be 0.5
+    (expect underline[:width]).to eql 0.5
   end
 end

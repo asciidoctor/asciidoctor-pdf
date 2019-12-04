@@ -34,11 +34,11 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
 
     line_spacing = 1.upto(3).map {|i| (pdf.text[i - 1][:y] - pdf.text[i][:y]).round 2 }.uniq
     (expect line_spacing).to have_size 1
-    (expect line_spacing[0]).to be 15.78
+    (expect line_spacing[0]).to eql 15.78
     (expect pdf.text[0][:x]).to be > pdf.text[1][:x]
     (expect pdf.text[2][:x]).to be > pdf.text[3][:x]
     list_item_text = (pdf.find_text 'list item')[0]
-    (expect (pdf.text[3][:y] - list_item_text[:y]).round 2).to be 27.78
+    (expect (pdf.text[3][:y] - list_item_text[:y]).round 2).to eql 27.78
   end
 
   it 'should allow text alignment to be controlled using text-align document attribute' do

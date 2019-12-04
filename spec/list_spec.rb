@@ -72,9 +72,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       unstyled_item = (pdf.find_text 'unstyled')[0]
       (expect unstyled_item[:x]).to eql left_margin
       no_bullet_item = (pdf.find_text 'no-bullet')[0]
-      (expect no_bullet_item[:x]).to be 56.3805
+      (expect no_bullet_item[:x]).to eql 56.3805
       none_item = (pdf.find_text 'none')[0]
-      (expect none_item[:x]).to be 66.24
+      (expect none_item[:x]).to eql 66.24
     end
 
     it 'should allow theme to change marker characters' do
@@ -430,11 +430,11 @@ describe 'Asciidoctor::PDF::Converter - List' do
       unstyled_item = (pdf.find_text 'unstyled')[0]
       (expect unstyled_item[:x]).to eql left_margin
       no_bullet_item = (pdf.find_text 'no-bullet')[0]
-      (expect no_bullet_item[:x]).to be 51.6765
+      (expect no_bullet_item[:x]).to eql 51.6765
       unnumbered_item = (pdf.find_text 'unnumbered')[0]
-      (expect unnumbered_item[:x]).to be 51.6765
+      (expect unnumbered_item[:x]).to eql 51.6765
       none_item = (pdf.find_text 'none')[0]
-      (expect none_item[:x]).to be 66.24
+      (expect none_item[:x]).to eql 66.24
     end
 
     it 'should keep list marker with primary text' do

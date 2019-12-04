@@ -630,7 +630,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect lines).to have_size 1
     toc_entry_underline = lines[0]
     (expect toc_entry_underline[:color]).to eql 'CCCCCC'
-    (expect toc_entry_underline[:width]).to be 0.5
+    (expect toc_entry_underline[:width]).to eql 0.5
   end
 
   it 'should decode character references in toc entries' do

@@ -46,7 +46,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect lines).to have_size 1
       line = lines[0]
       (expect line[:color]).to eql 'EEEEEE'
-      (expect line[:width]).to be 0.5
+      (expect line[:width]).to eql 0.5
       (expect line[:from][:x]).to be < line[:to][:x]
       (expect line[:from][:y]).to eql line[:to][:y]
       (expect line[:from][:y]).to be < before_text[:y]

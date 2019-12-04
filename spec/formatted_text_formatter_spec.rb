@@ -212,7 +212,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       underlined_text = text[0]
       (expect underline[:from][:x]).to eql underlined_text[:x]
       (expect underline[:from][:y]).to be < underlined_text[:y]
-      (expect underlined_text[:y] - underline[:from][:y]).to be 1.25
+      (expect underlined_text[:y] - underline[:from][:y]).to eql 1.25
       (expect underlined_text[:font_color]).to eql underline[:color]
       (expect underline[:to][:x] - underline[:from][:x]).to be > 100
     end
@@ -267,7 +267,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       lines = pdf.lines
       (expect lines).to have_size 2
       (expect lines[0][:color]).to eql '0000AA'
-      (expect lines[0][:width]).to be 0.5
+      (expect lines[0][:width]).to eql 0.5
       (expect lines[1][:color]).to eql 'AA0000'
       (expect lines[1][:width]).to be 2
     end
@@ -305,9 +305,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: pdf_theme, analyze: true
       text = pdf.text
       (expect text).to have_size 3
-      (expect text[0][:font_size].to_f.round 2).to be 14.0
+      (expect text[0][:font_size].to_f.round 2).to eql 14.0
       (expect text[1][:font_size]).to be 12
-      (expect text[2][:font_size].to_f.round 2).to be 10.0
+      (expect text[2][:font_size].to_f.round 2).to eql 10.0
     end
 
     it 'should allow theme to control formatting apply to phrase by role' do
@@ -341,7 +341,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect underlined_text[:font_name]).to eql 'NotoSerif-Italic'
       (expect underline[:from][:x]).to eql underlined_text[:x]
       (expect underline[:from][:y]).to be < underlined_text[:y]
-      (expect underlined_text[:y] - underline[:from][:y]).to be 1.25
+      (expect underlined_text[:y] - underline[:from][:y]).to eql 1.25
       (expect underlined_text[:font_color]).to eql underline[:color]
       (expect underline[:to][:x] - underline[:from][:x]).to be > 100
     end
@@ -383,7 +383,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       lines = pdf.lines
       (expect lines).to have_size 2
       (expect lines[0][:color]).to eql '0000AA'
-      (expect lines[0][:width]).to be 0.5
+      (expect lines[0][:width]).to eql 0.5
       (expect lines[1][:color]).to eql 'AA0000'
       (expect lines[1][:width]).to be 2
     end
@@ -401,9 +401,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       min_text = (pdf.find_text 'MIN')[0]
       normal_text = (pdf.find_text ' and ')[0]
       max_text = (pdf.find_text 'MAX')[0]
-      (expect min_text[:font_size]).to be 18.0
+      (expect min_text[:font_size]).to eql 18.0
       (expect normal_text[:font_size]).to be 24
-      (expect max_text[:font_size]).to be 21.0
+      (expect max_text[:font_size]).to eql 21.0
     end
 
     it 'should allow custom role to override styles of link' do
