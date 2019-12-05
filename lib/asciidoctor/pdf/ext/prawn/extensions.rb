@@ -347,9 +347,9 @@ module Asciidoctor
         options = options.dup
         if (format_option = options.delete :inline_format)
           format_option = [] unless ::Array === format_option
-          fragments = self.text_formatter.format string, *format_option
+          fragments = text_formatter.format string, *format_option
         else
-          fragments = [{text: string}]
+          fragments = [text: string]
         end
 
         if (color = options.delete :color)
@@ -398,9 +398,7 @@ module Asciidoctor
           remaining_fragments = box.render dry_run: true
         end
         # NOTE color must be applied per-fragment
-        if first_line_color
-          fragments.each {|fragment| fragment[:color] ||= first_line_color}
-        end
+        fragments.each {|fragment| fragment[:color] ||= first_line_color } if first_line_color
         if text_indent
           indent text_indent do
             fill_formatted_text_box fragments, first_line_opts
@@ -456,8 +454,7 @@ module Asciidoctor
       # to next page if image doesn't fit before rendering image.
       #--
       # NOTE could use :at option when calling image/embed_image instead
-      def move_text_position h
-      end
+      def move_text_position h; end
 
       # Short-circuits the call to the built-in move_down operation
       # when n is 0.
@@ -501,7 +498,7 @@ module Asciidoctor
       #
       def pad_box padding
         if padding
-          # TODO implement shorthand combinations like in CSS
+          # TODO: implement shorthand combinations like in CSS
           p_top, p_right, p_bottom, p_left = ::Array === padding ? padding : (::Array.new 4, padding)
           begin
             # logic is intentionally inlined
@@ -536,7 +533,7 @@ module Asciidoctor
         (::Array === value ? (value.slice 0, 2) : (::Array.new 2, value)).map(&:to_f)
       end
 
-      # TODO memoize the result
+      # TODO: memoize the result
       def inflate_padding padding
         padding = [*(padding || 0)].slice 0, 4
         case padding.size
@@ -570,7 +567,7 @@ module Asciidoctor
       # you can specify an absolute left position and pass additional options through to bounding_box.
       #
       def flow_bounding_box left = 0, opts = {}
-        original_y = self.y
+        original_y = y
         # QUESTION should preserving original_x be an option?
         original_x = bounds.absolute_left - margin_box.absolute_left
         canvas do
@@ -639,7 +636,7 @@ module Asciidoctor
       # be used to conditionally disable this behavior.
       #
       def shade_box color, line_color = nil, options = {}
-        if (!options.has_key? :only_if) || options[:only_if]
+        if (!options.key? :only_if) || options[:only_if]
           # FIXME: could use save_graphics_state here
           previous_fill_color = current_fill_color
           fill_color color
@@ -812,7 +809,7 @@ module Asciidoctor
       #
       def group_if verdict
         if verdict
-          state.optimize_objects = false # optimize objects breaks group
+          state.optimize_objects = false # optimize_objects breaks group
           group { yield }
         else
           yield
@@ -825,15 +822,15 @@ module Asciidoctor
 
         # use cached instance, tests show it's faster
         #@prototype ||= ::Prawn::Document.new
-        @scratch ||= if defined? @prototype
-          scratch = Marshal.load Marshal.dump @prototype
-          scratch.instance_variable_set(:@prototype, @prototype)
-          # TODO set scratch number on scratch document
-          scratch
-        else
-          logger.warn 'no scratch prototype available; instantiating fresh scratch document'
-          ::Prawn::Document.new
-        end
+        @scratch ||= if defined? @prototype # rubocop:disable Naming/MemoizedInstanceVariableName
+                       scratch = Marshal.load Marshal.dump @prototype
+                       scratch.instance_variable_set(:@prototype, @prototype)
+                       # TODO: set scratch number on scratch document
+                       scratch
+                     else
+                       logger.warn 'no scratch prototype available; instantiating fresh scratch document'
+                       ::Prawn::Document.new
+                     end
       end
 
       def scratch?
@@ -843,7 +840,6 @@ module Asciidoctor
       end
       alias is_scratch? scratch?
 
-      # TODO document me
       def dry_run &block
         scratch = get_scratch_document
         # QUESTION should we use scratch.advance_page instead?
@@ -870,10 +866,10 @@ module Asciidoctor
 
       # Attempt to keep the objects generated in the block on the same page
       #
-      # TODO short-circuit nested usage
+      # TODO: short-circuit nested usage
       def keep_together &block
         available_space = cursor
-        total_height, _, _ = dry_run(&block)
+        total_height, = dry_run(&block)
         # NOTE technically, if we're at the page top, we don't even need to do the
         # dry run, except several uses of this method rely on the calculated height
         if total_height > available_space && !at_page_top? && total_height <= effective_page_height
@@ -883,7 +879,7 @@ module Asciidoctor
           started_new_page = false
         end
 
-        # HACK yield doesn't work here on JRuby (at least not when called from AsciidoctorJ)
+        # HACK: yield doesn't work here on JRuby (at least not when called from AsciidoctorJ)
         #yield remainder, started_new_page
         instance_exec(total_height, started_new_page, &block)
       end
