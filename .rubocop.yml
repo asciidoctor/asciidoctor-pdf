@@ -29,12 +29,14 @@ Lint/EmptyWhen:
   Enabled: false
 Lint/ParenthesesAsGroupedExpression:
   Enabled: false
+Lint/SuppressedException:
+  Enabled: false
 Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
   Enabled: false
 Metrics/BlockNesting:
-  Max: 5
+  Max: 10
 Metrics/ClassLength:
   Enabled: false
 Metrics/CyclomaticComplexity:
@@ -44,9 +46,13 @@ Metrics/LineLength:
 #  Max: 120
 Metrics/MethodLength:
   Enabled: false
+Metrics/ModuleLength:
+  Enabled: false
 Metrics/ParameterLists:
   Max: 10
 Metrics/PerceivedComplexity:
+  Enabled: false
+Naming/AccessorMethodName:
   Enabled: false
 Naming/ConstantName:
   Enabled: false
@@ -57,6 +63,10 @@ Naming/HeredocDelimiterNaming:
 Naming/MethodParameterName:
   Enabled: false
 Security/Open:
+  Enabled: false
+Style/Attr:
+  Enabled: false
+Style/BlockComments:
   Enabled: false
 Style/BlockDelimiters:
   EnforcedStyle: braces_for_chaining
@@ -80,7 +90,7 @@ Style/FormatStringToken:
 Style/GuardClause:
   Enabled: false
 Style/HashSyntax:
-  EnforcedStyle: ruby19_no_mixed_keys
+  EnforcedStyle: ruby19
 Style/IfUnlessModifierOfIfUnless:
   Enabled: false
 Style/MethodDefParentheses:
