@@ -12,9 +12,7 @@ class PDF::Core::Page
   # see https://github.com/prawnpdf/pdf-core/commit/67f9a08a03bcfcc5a24cf76b135c218d3d3ab05d
   def new_content_stream
     return if in_stamp_stream?
-    unless Array === dictionary.data[:Contents]
-      dictionary.data[:Contents] = [content]
-    end
+    dictionary.data[:Contents] = [content] unless Array === dictionary.data[:Contents]
     @content = document.ref({})
     dictionary.data[:Contents] << document.state.store[@content]
     document.open_graphics_state

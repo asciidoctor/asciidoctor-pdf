@@ -32,7 +32,7 @@ module Prawn
         def dry_run
           cell = self
           max_height = nil
-          height, _, _ = @pdf.dry_run do
+          height, = @pdf.dry_run do
             max_height = bounds.height
             # NOTE: we should be able to use cell.max_width, but returns 0 in some conditions (like when colspan > 1)
             indent cell.padding_left, bounds.width - cell.width + cell.padding_right do

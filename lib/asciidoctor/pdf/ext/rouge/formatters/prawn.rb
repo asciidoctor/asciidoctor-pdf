@@ -12,7 +12,7 @@ module Rouge
         ::Rouge::Token::Tokens::Generic::Inserted,
         ::Rouge::Token::Tokens::Generic::Deleted,
         ::Rouge::Token::Tokens::Generic::Heading,
-        ::Rouge::Token::Tokens::Generic::Subheading
+        ::Rouge::Token::Tokens::Generic::Subheading,
       ]
 
       LF = ?\n
@@ -81,7 +81,7 @@ module Rouge
             # NOTE extra column is the trailing space after the line number
             linenum_w += 1
             fragments.each do |fragment|
-              fragment[:text] = %(#{fragment[:text].rjust linenum_w, NoBreakSpace}) if fragment[:linenum]
+              fragment[:text] = (fragment[:text].rjust linenum_w, NoBreakSpace).to_s if fragment[:linenum]
             end
           end
           fragments

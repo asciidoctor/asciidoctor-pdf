@@ -25,13 +25,11 @@ class Prawn::Table::Cell
                    when :top
                      [[x, y], [x + width, y]]
                    when :bottom
-                     [[x, y-height], [x + width, y - height]]
+                     [[x, y - height], [x + width, y - height]]
                    when :left
-                     [[x, y + (border_top_width / 2.0)],
-                      [x, y - height - (border_bottom_width / 2.0)]]
+                     [[x, y + (border_top_width / 2.0)], [x, y - height - (border_bottom_width / 2.0)]]
                    when :right
-                     [[x + width, y + (border_top_width / 2.0)],
-                      [x + width, y - height - (border_bottom_width / 2.0)]]
+                     [[x + width, y + (border_top_width / 2.0)], [x + width, y - height - (border_bottom_width / 2.0)]]
                    end
 
         case border_line
