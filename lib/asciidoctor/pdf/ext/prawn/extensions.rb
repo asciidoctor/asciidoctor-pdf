@@ -326,7 +326,7 @@ module Asciidoctor
         LineMetrics.new line_height_length, leading, padding_top, padding_bottom, false
       end
 
-    =begin
+=begin
       # these line metrics attempted to figure out a correction based on the reported height and the font_size
       # however, it only works for some fonts, and breaks down for fonts like Noto Serif
       def calc_line_metrics line_height = 1, font = self.font, font_size = self.font_size
@@ -338,7 +338,7 @@ module Asciidoctor
         final_gap = font.line_gap != 0
         LineMetrics.new line_height_length, leading, shift, shift, final_gap
       end
-    =end
+=end
 
       # Parse the text into an array of fragments using the text formatter.
       def parse_text string, options = {}
