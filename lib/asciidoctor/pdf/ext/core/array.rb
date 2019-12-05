@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Array
   def delete_all *entries
     entries.map {|entry| delete entry }.compact

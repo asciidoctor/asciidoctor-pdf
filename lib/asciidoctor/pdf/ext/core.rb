@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'core/object'
 require_relative 'core/array'
 require_relative 'core/hash'

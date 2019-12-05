@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Prawn::Table::Cell::Text
   # Override draw_content method to drop cursor advancement
   remove_method :draw_content

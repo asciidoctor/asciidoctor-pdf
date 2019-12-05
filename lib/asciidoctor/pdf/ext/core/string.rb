@@ -1,13 +1,12 @@
 # frozen_string_literal: true
+
 class String
   def pred
-    begin
-      # integers
-      %(#{(Integer self) - 1})
-    rescue ::ArgumentError
-      # chars (upper alpha, lower alpha, lower greek)
-      ([65, 97, 945].include? ord) ? '0' : ([ord - 1].pack 'U1')
-    end
+    # integers
+    ((Integer self) - 1).to_s
+  rescue ::ArgumentError
+    # chars (upper alpha, lower alpha, lower greek)
+    ([65, 97, 945].include? ord) ? '0' : ([ord - 1].pack 'U1')
   end unless method_defined? :pred
 
   # If the string is ASCII only, convert it to a PDF LiteralString object. Otherwise, return self.

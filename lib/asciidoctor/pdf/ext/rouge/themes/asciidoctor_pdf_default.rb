@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Rouge
   module Themes
     # A variation on the pastie style from Pygments, customized for Asciidoctor PDF

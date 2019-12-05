@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class PDF::Core::Page
   InitialPageContent = %(q\n)
 
@@ -14,7 +15,7 @@ class PDF::Core::Page
     unless Array === dictionary.data[:Contents]
       dictionary.data[:Contents] = [content]
     end
-    @content = document.ref Hash.new
+    @content = document.ref({})
     dictionary.data[:Contents] << document.state.store[@content]
     document.open_graphics_state
   end unless method_defined? :new_content_stream

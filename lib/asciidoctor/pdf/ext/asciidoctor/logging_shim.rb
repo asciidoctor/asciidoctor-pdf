@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Asciidoctor
   class StubLogger
     class << self
@@ -7,13 +8,11 @@ module Asciidoctor
       end
 
       def warn message = nil
-        message = block_given? ? yield : message unless message
-        ::Kernel.warn %(asciidoctor: WARNING: #{message})
+        ::Kernel.warn %(asciidoctor: WARNING: #{message || (block_given? ? yield : '???')})
       end
 
       def error message = nil
-        message = block_given? ? yield : message unless message
-        ::Kernel.warn %(asciidoctor: ERROR: #{message})
+        ::Kernel.warn %(asciidoctor: ERROR: #{message || (block_given? ? yield : '???')})
       end
     end
   end

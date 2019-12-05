@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-# TODO add these methods to Asciidoctor core
+
+# TODO: add these methods to Asciidoctor core
 class Asciidoctor::List
   # Check whether this list is an outline list (unordered or ordered).
   #
@@ -24,7 +25,7 @@ class Asciidoctor::List
   def outline_level
     l = 1
     ancestor = self
-    # FIXME does not cross out of AsciiDoc table cell
+    # FIXME: does not cross out of AsciiDoc table cell
     while (ancestor = ancestor.parent)
       l += 1 if Asciidoctor::List === ancestor && ancestor.outline?
     end

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # the following are organized under the Asciidoctor::Prawn namespace
 require_relative 'prawn/font/afm'
 require_relative 'prawn/images'

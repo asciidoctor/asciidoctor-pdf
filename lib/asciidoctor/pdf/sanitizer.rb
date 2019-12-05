@@ -4,18 +4,18 @@ module Asciidoctor
   module PDF
     module Sanitizer
       XMLSpecialChars = {
-        '&lt;'  => ?<,
-        '&gt;'  => ?>,
+        '&lt;' => ?<,
+        '&gt;' => ?>,
         '&amp;' => ?&,
       }
       XMLSpecialCharsRx = /(?:#{XMLSpecialChars.keys.join ?|})/
       InverseXMLSpecialChars = XMLSpecialChars.invert
       InverseXMLSpecialCharsRx = /[#{InverseXMLSpecialChars.keys.join}]/
       (BuiltInNamedEntities = {
-        'amp'  => ?&,
+        'amp' => ?&,
         'apos' => ?',
-        'gt'   => ?>,
-        'lt'   => ?<,
+        'gt' => ?>,
+        'lt' => ?<,
         'nbsp' => ' ',
         'quot' => ?",
       }).default = ??

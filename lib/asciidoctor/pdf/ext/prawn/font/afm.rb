@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Prawn::Font::AFM
   if defined? ::Asciidoctor::Logging
     include ::Asciidoctor::Logging
@@ -11,7 +12,7 @@ class Prawn::Font::AFM
     ?\u202f => ?\u00a0,
     ?\u2009 => ' ',
     ?\u25e6 => '-',
-    ?\u25aa => ?\u00b7
+    ?\u25aa => ?\u00b7,
   }
 
   remove_method :normalize_encoding
@@ -29,7 +30,7 @@ class Prawn::Font::AFM
     text.encode 'windows-1252', undef: :replace, replace: ?\u00ac
   rescue ::Encoding::InvalidByteSequenceError
     raise Prawn::Errors::IncompatibleStringEncoding,
-          %(Your document includes text which is not compatible with the Windows-1252 character set.
-If you need full UTF-8 support, use TTF fonts instead of the built-in PDF (AFM) fonts.)
+        'Your document includes text which is not compatible with the Windows-1252 character set.
+If you need full UTF-8 support, use TTF fonts instead of the built-in PDF (AFM) fonts.'
   end
 end

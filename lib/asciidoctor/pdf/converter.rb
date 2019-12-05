@@ -5,7 +5,7 @@ require 'prawn'
 require_relative 'ext/ttfunk'
 begin
   require 'prawn/gmagick'
-rescue LoadError # rubocop:disable Lint/SuppressedException
+rescue LoadError
 end unless defined? GMagick::Image
 require_relative 'ext/prawn-svg'
 require_relative 'ext/prawn-table'

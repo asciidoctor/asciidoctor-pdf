@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 unless (defined? PDF::Core.pdf_object) == 'method'
   module PDF::Core
     alias pdf_object PdfObject

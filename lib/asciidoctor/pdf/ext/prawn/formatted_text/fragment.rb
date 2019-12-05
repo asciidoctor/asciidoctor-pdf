@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 Prawn::Text::Formatted::Fragment.prepend (Module.new do
   attr_reader :document
 

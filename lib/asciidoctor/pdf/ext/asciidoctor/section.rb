@@ -1,22 +1,24 @@
 # frozen_string_literal: true
+
 class Asciidoctor::Section
   def numbered_title opts = {}
-    unless (@cached_numbered_title ||= nil)
+    @cached_numbered_title ||= nil
+    unless @cached_numbered_title
       slevel = @level == 0 && @special ? 1 : @level
       if @numbered && !@caption && slevel <= (@document.attr 'sectnumlevels', 3).to_i
         @is_numbered = true
-        @cached_formal_numbered_title = if @document.doctype == 'book'
+        if @document.doctype == 'book'
           if slevel == 0
             @cached_numbered_title = %(#{sectnum nil, ':'} #{title})
-            %(#{@document.attr 'part-signifier', 'Part'} #{@cached_numbered_title}).lstrip
+            @cached_formal_numbered_title = %(#{@document.attr 'part-signifier', 'Part'} #{@cached_numbered_title}).lstrip
           elsif slevel == 1
             @cached_numbered_title = %(#{sectnum} #{title})
-            %(#{@document.attr 'chapter-signifier', (@document.attr 'chapter-label', 'Chapter')} #{@cached_numbered_title}).lstrip
+            @cached_formal_numbered_title = %(#{@document.attr 'chapter-signifier', (@document.attr 'chapter-label', 'Chapter')} #{@cached_numbered_title}).lstrip
           else
-            @cached_numbered_title = %(#{sectnum} #{title})
+            @cached_formal_numbered_title = @cached_numbered_title = %(#{sectnum} #{title})
           end
         else
-          @cached_numbered_title = %(#{sectnum} #{title})
+          @cached_formal_numbered_title = @cached_numbered_title = %(#{sectnum} #{title})
         end
       elsif slevel == 0
         @is_numbered = false

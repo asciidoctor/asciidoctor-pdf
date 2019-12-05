@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 Prawn::Text::Formatted::Box.prepend (Module.new do
   def draw_fragment_overlay_styles fragment
     if (underline = (styles = fragment.styles).include? :underline) || (styles.include? :strikethrough)

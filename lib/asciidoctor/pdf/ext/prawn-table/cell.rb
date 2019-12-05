@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Prawn::Table::Cell
   remove_method :draw_borders
   # Draws borders around the cell. Borders are centered on the bounds of
@@ -6,7 +7,7 @@ class Prawn::Table::Cell
   # setting appropriate padding to ensure the border does not overlap with
   # cell content.
   #
-  def draw_borders(pt)
+  def draw_borders pt
     x, y = pt
 
     @pdf.mask(:line_width, :stroke_color) do
@@ -22,15 +23,15 @@ class Prawn::Table::Cell
         # of the corner, so that the corners end up square.
         from, to = case border
                    when :top
-                     [[x, y], [x+width, y]]
+                     [[x, y], [x + width, y]]
                    when :bottom
-                     [[x, y-height], [x+width, y-height]]
+                     [[x, y-height], [x + width, y - height]]
                    when :left
                      [[x, y + (border_top_width / 2.0)],
                       [x, y - height - (border_bottom_width / 2.0)]]
                    when :right
-                     [[x+width, y + (border_top_width / 2.0)],
-                      [x+width, y - height - (border_bottom_width / 2.0)]]
+                     [[x + width, y + (border_top_width / 2.0)],
+                      [x + width, y - height - (border_bottom_width / 2.0)]]
                    end
 
         case border_line
