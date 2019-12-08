@@ -17,7 +17,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         output = subject.format input
         (expect output).to have_size 1
         (expect output[0][:text]).to eql input
-      end).to log_message severity: :ERROR, message: %r(^failed to parse formatted text:)
+      end).to log_message severity: :ERROR, message: /^failed to parse formatted text:/
     end
   end
 
