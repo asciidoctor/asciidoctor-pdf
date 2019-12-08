@@ -54,6 +54,42 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     (expect fragments[1][:text]).to eql 'new'
   end
 
+  it 'should create fragment with custom font name' do
+    input = '<font name="Helvetica">Helvetica</font>'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 1
+    (expect fragments[0][:text]).to eql 'Helvetica'
+    (expect fragments[0][:font]).to eql 'Helvetica'
+  end
+
+  it 'should create fragment with custom font size' do
+    input = '<font size="20">big</font>'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 1
+    (expect fragments[0][:text]).to eql 'big'
+    (expect fragments[0][:size]).to eql 20.0
+  end
+
+  it 'should create fragment with custom hex color' do
+    input = '<color rgb="#ff0000">red</color>'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 1
+    (expect fragments[0][:text]).to eql 'red'
+    (expect fragments[0][:color]).to eql 'ff0000'
+  end
+
+  it 'should create fragment with custom cmyk color' do
+    input = '<color rgb="[50, 100, 0, 0]">color</color>'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 1
+    (expect fragments[0][:text]).to eql 'color'
+    (expect fragments[0][:color]).to eql [50, 100, 0, 0]
+  end
+
   it 'should convert named entity' do
     input = '&quot;&lt;&amp;&gt;&quot;'
     parsed = parser.parse input
