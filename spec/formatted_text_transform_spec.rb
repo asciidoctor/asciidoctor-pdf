@@ -90,6 +90,11 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     (expect fragments[0][:color]).to eql [50, 100, 0, 0]
   end
 
+  it 'should return nil if text contains invalid markup' do
+    input = 'before <foo>bar</foo> after'
+    (expect parser.parse input).to be_nil
+  end
+
   it 'should convert named entity' do
     input = '&quot;&lt;&amp;&gt;&quot;'
     parsed = parser.parse input

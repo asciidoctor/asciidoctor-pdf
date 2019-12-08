@@ -10,6 +10,15 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect output[0][:text]).to eql 'strong'
       (expect output[0][:styles]).to eql [:bold].to_set
     end
+
+    it 'should warn if text contains invalid markup' do
+      (expect do
+        input = 'before <foo>bar</foo> after'
+        output = subject.format input
+        (expect output).to have_size 1
+        (expect output[0][:text]).to eql input
+      end).to log_message severity: :ERROR, message: %r(^failed to parse formatted text:)
+    end
   end
 
   context 'character references' do
