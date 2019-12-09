@@ -119,4 +119,75 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     (expect underline[:color]).to eql '0000FF'
     (expect underline[:width]).to eql 0.5
   end
+
+  it 'should convert bare email address to link' do
+    pdf = to_pdf 'Send a message to doc.writer@example.org.'
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link_annotation = annotations[0]
+    (expect link_annotation[:Subtype]).to be :Link
+    (expect link_annotation[:A][:URI]).to eql 'mailto:doc.writer@example.org'
+  end
+
+  it 'should create email address link' do
+    pdf = to_pdf 'Send a message to mailto:doc.writer@example.org[Doc Writer].'
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link_annotation = annotations[0]
+    (expect link_annotation[:Subtype]).to be :Link
+    (expect link_annotation[:A][:URI]).to eql 'mailto:doc.writer@example.org'
+    (expect (pdf.page 1).text).to include 'Doc Writer'
+  end
+
+  it 'should show mailto address of bare email when media=prepress' do
+    input = 'Send message to doc.writer@example.org.'
+    pdf = to_pdf input, attribute_overrides: { 'media' => 'prepress' }
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link_annotation = annotations[0]
+    (expect link_annotation[:Subtype]).to be :Link
+    (expect link_annotation[:A][:URI]).to eql 'mailto:doc.writer@example.org'
+
+    pdf = to_pdf input, attribute_overrides: { 'media' => 'prepress' }, analyze: true
+    (expect pdf.lines[0]).to eql 'Send message to doc.writer@example.org [mailto:doc.writer@example.org].'
+  end
+
+  it 'should show mailto address of email link when media=prepress' do
+    input = 'Send message to mailto:doc.writer@example.org[Doc Writer].'
+    pdf = to_pdf input, attribute_overrides: { 'media' => 'prepress' }
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link_annotation = annotations[0]
+    (expect link_annotation[:Subtype]).to be :Link
+    (expect link_annotation[:A][:URI]).to eql 'mailto:doc.writer@example.org'
+
+    pdf = to_pdf input, attribute_overrides: { 'media' => 'prepress' }, analyze: true
+    (expect pdf.lines[0]).to eql 'Send message to Doc Writer [mailto:doc.writer@example.org].'
+  end
+
+  it 'should not show mailto address of bare email when media=prepress and hide-uri-scheme is set' do
+    input = 'Send message to doc.writer@example.org.'
+    pdf = to_pdf input, attribute_overrides: { 'media' => 'prepress', 'hide-uri-scheme' => '' }
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link_annotation = annotations[0]
+    (expect link_annotation[:Subtype]).to be :Link
+    (expect link_annotation[:A][:URI]).to eql 'mailto:doc.writer@example.org'
+
+    pdf = to_pdf input, attribute_overrides: { 'media' => 'prepress', 'hide-uri-scheme' => '' }, analyze: true
+    (expect pdf.lines[0]).to eql 'Send message to doc.writer@example.org.'
+  end
+
+  it 'should not use mailto prefix on email address of email link when media=prepress and hide-uri-scheme is set' do
+    input = 'Send message to mailto:doc.writer@example.org[Doc Writer].'
+    pdf = to_pdf input, attribute_overrides: { 'media' => 'prepress', 'hide-uri-scheme' => '' }
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link_annotation = annotations[0]
+    (expect link_annotation[:Subtype]).to be :Link
+    (expect link_annotation[:A][:URI]).to eql 'mailto:doc.writer@example.org'
+
+    pdf = to_pdf input, attribute_overrides: { 'media' => 'prepress', 'hide-uri-scheme' => '' }, analyze: true
+    (expect pdf.lines[0]).to eql 'Send message to Doc Writer [doc.writer@example.org].'
+  end
 end
