@@ -4273,13 +4273,7 @@ module Asciidoctor
           end
           doc.set_attr 'url', ((email.include? '@') ? %(mailto:#{email}) : email) if email
           result = yield
-          original_attrs.each do |name, val|
-            if val
-              doc.set_attr name, val
-            else
-              doc.remove_attr name
-            end
-          end
+          original_attrs.each {|name, val| val ? (doc.set_attr name, val) : (doc.remove_attr name) }
         else
           if (email = doc.attr 'email')
             doc.set_attr 'url', ((email.include? '@') ? %(mailto:#{email}) : email)
