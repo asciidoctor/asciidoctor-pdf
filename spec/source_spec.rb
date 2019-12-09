@@ -126,6 +126,29 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         EOS
       end).not_to raise_exception
     end
+
+    it 'should apply bw style' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+      :rouge-style: bw
+
+      [source,ruby]
+      ----
+      class Beer
+        attr_reader :style
+      end
+      ----
+      EOS
+
+      beer_text = (pdf.find_text 'Beer')[0]
+      (expect beer_text).not_to be_nil
+      (expect beer_text[:font_name]).to eql 'mplus1mn-bold'
+      if (Gem::Version.new Rouge.version) >= (Gem::Version.new '3.4.0')
+        (expect beer_text[:font_color]).to eql '333333'
+      else
+        (expect beer_text[:font_color]).to eql 'BB0066'
+      end
+    end
   end
 
   context 'CodeRay' do
