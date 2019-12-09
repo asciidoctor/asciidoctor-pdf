@@ -681,6 +681,27 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect p1_lines).to eql ['before', '•abc', '•xyz', 'after']
       (expect pdf.pages).to have_size 1
     end
+
+    it 'should honor vertical alignment' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=2*]
+      |===
+      | 1 +
+      2 +
+      3 +
+      4
+
+      .^a|
+      AsciiDoc cell
+      |===
+      EOS
+
+      ref_below = (pdf.find_text '2')[0][:y]
+      ref_above = (pdf.find_text '3')[0][:y]
+      asciidoc_y = (pdf.find_text 'AsciiDoc cell')[0][:y]
+      (expect asciidoc_y).to be < ref_below
+      (expect asciidoc_y).to be > ref_above
+    end
   end
 
   context 'Verse table cell' do
