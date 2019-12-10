@@ -110,6 +110,17 @@ endif::[]
 * Custom (TTF) fonts
 * Double-sided printing mode (margins alternate on recto and verso pages)
 
+== Known Limitations
+
+* Table cells that exceed height of a single page will be truncated (see https://github.com/prawnpdf/prawn-table/issues/41[prawn-table#41])
+* Columns cannot be assigned a 0% width; the same goes for autowidth columns when the width of all other columns meets or exceeds 100%
+* Footnotes are always rendered as endnotes (at end of chapter for books; at end of document for all other doctypes)
+* Must use development version of prawn-table for autowidth to work on table head row
+* Must use development version of prawn for error to include font name when requested font style is missing
+* Must use Ruby >= 2.4 for natural cross references to work with non-ASCII titles
+* AsciiDoc table cell leaves padding below last block (due to lack of margin collapsing)
+* Prawn does not support double-wide box drawing glyphs correctly, so boxes aren't aligned properly in verbatim blocks (see https://github.com/prawnpdf/prawn/issues/1002[prawn#1002]
+
 == Prerequisites
 
 All that's needed is Ruby 2.3 or better and a few Ruby gems (including at least Asciidoctor 1.5.3), which we explain how to install in the next section.
