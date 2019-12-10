@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * ignore case when sorting index terms (#1405)
 * allow output file to be written to stdout (#1411)
 * expose theme as property on converter
+* add support for unbreakable option on open blocks (#1407) *@mogztter*
 * don't add mailto: prefix to revealed mailto URI when hide-uri-scheme is set (#920)
 
 == 1.5.0.beta.8 (2019-11-23) - @mojavelinux
