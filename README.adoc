@@ -400,7 +400,10 @@ To find a complete list of available icons, consult the https://github.com/jesse
 
 == Image Paths
 
-Relative images paths in the document are resolved relative to the value of the `imagesdir` attribute (at the time the converter runs).
+Images are resolved at the time the converter runs.
+That means they need to be located where the converter can find them.
+
+Relative images paths in the document are resolved relative to the value of the `imagesdir` attribute.
 This is effectively the same as how the built-in HTML converter works when the `data-uri` attribute is set.
 The `imagesdir` is blank by default, which means relative images paths are resolved relative to the input document.
 Relative images paths in the theme are resolved relative to the value of the `pdf-themesdir` attribute (which defaults to the directory of the theme file).
