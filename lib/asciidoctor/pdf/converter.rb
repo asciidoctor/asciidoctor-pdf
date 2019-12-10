@@ -46,6 +46,8 @@ module Asciidoctor
 
       attr_reader :theme
 
+      attr_reader :text_decoration_width
+
       # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
       CodeRayRequirePath = ::File.join __dir__, 'ext/prawn/coderay_encoder'
       RougeRequirePath = ::File.join __dir__, 'ext/rouge'
@@ -346,6 +348,7 @@ module Asciidoctor
         @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
         @root_font_size = theme.base_font_size || 12
         @font_color = theme.base_font_color || '000000'
+        @text_decoration_width = theme.base_text_decoration_width
         @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
         @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
         if (hyphen_lang = doc.attr 'hyphens') &&

@@ -281,6 +281,19 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect lines[1][:width]).to be 2
     end
 
+    it 'should allow theme to set base text decoration width' do
+      pdf_theme = {
+        base_text_decoration_width: 0.5,
+        role_underline_text_decoration_color: '0000AA',
+      }
+      input = '[.underline]#underline#'
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      (expect lines[0][:color]).to eql '0000AA'
+      (expect lines[0][:width]).to eql 0.5
+    end
+
     it 'should support size roles (big and small) in default theme' do
       pdf_theme = build_pdf_theme
       (expect pdf_theme.role_big_font_size).to be 13
