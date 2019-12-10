@@ -2366,6 +2366,8 @@ module Asciidoctor
       end
 
       def convert_inline_anchor node
+        doc = node.document
+        target = node.target
         case node.type
         when :link
           attrs = []
@@ -2375,42 +2377,49 @@ module Asciidoctor
           end
           #attrs << %( title="#{node.attr 'title'}") if node.attr? 'title'
           attrs << %( target="#{node.attr 'window'}") if node.attr? 'window', nil, false
+          if (@media ||= doc.attr 'media', 'screen') != 'screen' && (target.start_with? 'mailto:') && (doc.attr? 'hide-uri-scheme')
+            bare_target = target.slice 7, target.length
+            node.add_role 'bare' if (text = node.text) == bare_target
+          else
+            text = node.text
+            bare_target = target
+          end
           if (role = node.attr 'role', nil, false) && (role == 'bare' || ((role.split ' ').include? 'bare'))
             # QUESTION should we insert breakable chars into URI when building fragment instead?
-            %(<a href="#{node.target}"#{attrs.join}>#{breakable_uri node.text}</a>)
+            %(<a href="#{target}"#{attrs.join}>#{breakable_uri text}</a>)
           # NOTE @media may not be initialized if method is called before convert phase
-          elsif (@media ||= node.document.attr 'media', 'screen') != 'screen' || (node.document.attr? 'show-link-uri')
+          elsif @media != 'screen' || (doc.attr? 'show-link-uri')
             # QUESTION should we insert breakable chars into URI when building fragment instead?
             # TODO: allow style of printed link to be controlled by theme
-            %(<a href="#{target = node.target}"#{attrs.join}>#{node.text}</a> [<font size="0.85em">#{breakable_uri target}</font>&#93;)
+            %(<a href="#{target}"#{attrs.join}>#{text}</a> [<font size="0.85em">#{breakable_uri bare_target}</font>&#93;)
           else
-            %(<a href="#{node.target}"#{attrs.join}>#{node.text}</a>)
+            %(<a href="#{target}"#{attrs.join}>#{text}</a>)
           end
         when :xref
           # NOTE non-nil path indicates this is an inter-document xref that's not included in current document
           if (path = node.attributes['path'])
             # NOTE we don't use local as that doesn't work on the web
             # NOTE for the fragment to work in most viewers, it must be #page=<N> <= document this!
-            %(<a href="#{node.target}">#{node.text || path}</a>)
+            %(<a href="#{target}">#{node.text || path}</a>)
           elsif (refid = node.attributes['refid'])
             unless (text = node.text)
-              if (refs = node.document.catalog[:refs])
+              if (refs = doc.catalog[:refs])
                 if ::Asciidoctor::AbstractNode === (ref = refs[refid])
                   text = ref.xreftext node.attr 'xrefstyle', nil, true
                 end
               else
                 # Asciidoctor < 1.5.6
-                text = node.document.catalog[:ids][refid]
+                text = doc.catalog[:ids][refid]
               end
             end
             %(<a anchor="#{derive_anchor_from_id refid}">#{text || "[#{refid}]"}</a>).gsub ']', '&#93;'
           else
-            %(<a anchor="#{node.document.attr 'pdf-anchor'}">#{node.text || '[^top&#93;'}</a>)
+            %(<a anchor="#{doc.attr 'pdf-anchor'}">#{node.text || '[^top&#93;'}</a>)
           end
         when :ref
           # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
           # NOTE id is used instead of target starting in Asciidoctor 2.0.0
-          %(<a id="#{node.target || node.id}">#{DummyText}</a>)
+          %(<a id="#{target || node.id}">#{DummyText}</a>)
         when :bibref
           # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
           # NOTE technically node.text should be node.reftext, but subs have already been applied to text
@@ -2419,9 +2428,9 @@ module Asciidoctor
           if (reftext = node.reftext)
             reftext = %([#{reftext}]) unless reftext.start_with? '['
           else
-            reftext = %([#{node.target || node.id}])
+            reftext = %([#{target || node.id}])
           end
-          %(<a id="#{node.target || node.id}">#{DummyText}</a>#{reftext})
+          %(<a id="#{target || node.id}">#{DummyText}</a>#{reftext})
         else
           logger.warn %(unknown anchor type: #{node.type.inspect})
         end
