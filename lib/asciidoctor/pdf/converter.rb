@@ -2381,8 +2381,8 @@ module Asciidoctor
             bare_target = target.slice 7, target.length
             node.add_role 'bare' if (text = node.text) == bare_target
           else
-            text = node.text
             bare_target = target
+            text = node.text
           end
           if (role = node.attr 'role', nil, false) && (role == 'bare' || ((role.split ' ').include? 'bare'))
             # QUESTION should we insert breakable chars into URI when building fragment instead?
