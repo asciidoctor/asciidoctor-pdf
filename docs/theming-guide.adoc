@@ -4779,7 +4779,7 @@ Other "`facing`" pages may be added in the future.
 
 It's possible to disable the automatic facing feature for a given part or chapter.
 This can be done by adding the nonfacing option to the section node.
-When the nonfacing option is present, the part or chapter title will be placed on the following page.
+When the nonfacing option is present, the part or chapter title will be placed on the next adjacent page rather than the next facing page.
 
 [source,asciidoc]
 ----
