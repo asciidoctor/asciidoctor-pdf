@@ -1338,6 +1338,12 @@ NOTE: While it's common to define additional keys in this category (e.g., `base-
   line-height: >
     $base-line-height-length /
     $base-font-size
+
+|text-decoration-width
+|<<values,Number>> +
+(default: 1)
+|base:
+  text-decoration-width: 0.5
 |===
 
 . The `text-transform` key cannot be set globally.
