@@ -108,6 +108,12 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect pdf.text[1].values_at :string, :font_name).to eql %w(ed NotoSerif)
     end
 
+    it 'should format stem equation as monospace' do
+      pdf = to_pdf 'Use stem:[x^2] to square the value.', analyze: true
+      equation_text = (pdf.find_text 'x^2')[0]
+      (expect equation_text[:font_name]).to eql 'mplus1mn-regular'
+    end
+
     it 'should format superscript phrase' do
       pdf = to_pdf 'x^2^', analyze: true
       (expect pdf.strings).to eql %w(x 2)

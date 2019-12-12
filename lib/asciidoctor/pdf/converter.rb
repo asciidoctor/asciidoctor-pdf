@@ -1861,6 +1861,7 @@ module Asciidoctor
 
       alias convert_listing convert_listing_or_literal
       alias convert_literal convert_listing_or_literal
+      alias convert_stem convert_listing_or_literal
 
       # Extract callout marks from string, indexed by 0-based line number
       # Return an Array with the processed string as the first argument
@@ -2595,7 +2596,7 @@ module Asciidoctor
           open, close, is_tag = ['<em>', '</em>', true]
         when :strong
           open, close, is_tag = ['<strong>', '</strong>', true]
-        when :monospaced
+        when :monospaced, :asciimath, :latexmath
           open, close, is_tag = ['<code>', '</code>', true]
         when :superscript
           open, close, is_tag = ['<sup>', '</sup>', true]
@@ -2607,7 +2608,6 @@ module Asciidoctor
           open, close, is_tag = [?\u2018, ?\u2019, false]
         when :mark
           open, close, is_tag = ['<mark>', '</mark>', true]
-        #when :asciimath, :latexmath
         else
           open, close, is_tag = [nil, nil, false]
         end
