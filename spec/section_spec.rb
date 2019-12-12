@@ -528,6 +528,31 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect part2_text[:page_number]).to be 4
   end
 
+  it 'should support abstract defined as special section' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+    :toc:
+
+    [abstract]
+    == Abstract
+
+    A presage of what is to come.
+
+    == Body
+
+    What came to pass.
+    EOS
+
+    abstract_title_text = (pdf.find_text 'Abstract')[0]
+    (expect abstract_title_text[:x]).to be > 48.24
+    abstract_content_text = (pdf.find_text 'A presage of what is to come.')[0]
+    (expect abstract_content_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+    (expect abstract_content_text[:font_color]).to eql '5C6266'
+    toc_entries = pdf.lines.select {|it| it.include? '. . .' }
+    (expect toc_entries).to have_size 1
+    (expect toc_entries[0]).to start_with 'Body'
+  end
+
   context 'Section indent' do
     it 'should indent section body if section_indent is set to single value in theme' do
       pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
