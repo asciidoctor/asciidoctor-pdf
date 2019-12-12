@@ -147,6 +147,16 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect subject.resolve_explicit_width attrs, 1000).to eql 108.0
     end
 
+    it 'should resolve width in % to pt' do
+      attrs = { 'width' => '25%' }
+      (expect subject.resolve_explicit_width attrs, 1000).to eql 250.0
+    end
+
+    it 'should resolve unitless width in px to pt' do
+      attrs = { 'width' => '100' }
+      (expect subject.resolve_explicit_width attrs, 1000).to eql 75.0
+    end
+
     it 'should size image using percentage width specified by pdfwidth', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-pdfwidth-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[,144,pdfwidth=25%,scaledwidth=50%]
@@ -158,6 +168,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should size image using percentage width specified by scaledwidth', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-scaledwidth-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[,144,scaledwidth=25%]
+      EOS
+
+      (expect to_file).to visually_match 'image-pdfwidth-percentage.pdf'
+    end
+
+    it 'should size image using percentage width specified by width', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-width-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      image::wolpertinger.jpg[,144,width=25%]
       EOS
 
       (expect to_file).to visually_match 'image-pdfwidth-percentage.pdf'

@@ -15,6 +15,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow theme to set base text decoration width (#1414)
 * render stem block as raw literal block
 * render stem phrase as monospaced text
+* honor percentage unit on width attribute value on image (#1402)
 
 == 1.5.0.beta.8 (2019-11-23) - @mojavelinux
 

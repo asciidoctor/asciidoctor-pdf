@@ -4161,8 +4161,11 @@ module Asciidoctor
             str_to_pt width
           end
         elsif attrs.key? 'width'
-          # QUESTION should we honor percentage width value?
-          width = to_pt attrs['width'].to_f, :px
+          if (width = attrs['width']).end_with? '%'
+            width = (width.to_f / 100) * max_width
+          else
+            width = to_pt width.to_f, :px
+          end
           opts[:constrain_to_bounds] ? [max_width, width].min : width
         end
       end
