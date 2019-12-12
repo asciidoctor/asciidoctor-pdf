@@ -476,6 +476,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect images[0].data).to eql image_data
     end
 
+    it 'should embed block image if target is an SVG data URI' do
+      image_data = File.read (fixture_file 'square.svg'), mode: 'r:UTF-8'
+      encoded_image_data = Base64.strict_encode64 image_data
+      pdf = to_pdf %(image::data:image/svg+xml;base64,#{encoded_image_data}[]), analyze: :rect
+      (expect pdf.rectangles).to have_size 1
+    end
+
     it 'should embed inline image if target is a JPG data URI' do
       image_data = File.binread fixture_file 'square.jpg'
       encoded_image_data = Base64.strict_encode64 image_data
@@ -485,6 +492,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect images[0].hash[:Width]).to be 5
       (expect images[0].hash[:Height]).to be 5
       (expect images[0].data).to eql image_data
+    end
+
+    it 'should embed inline image if target is an SVG data URI' do
+      image_data = File.read (fixture_file 'square.svg'), mode: 'r:UTF-8'
+      encoded_image_data = Base64.strict_encode64 image_data
+      pdf = to_pdf %(image:data:image/svg+xml;base64,#{encoded_image_data}[]), analyze: :rect
+      (expect pdf.rectangles).to have_size 1
     end
   end
 
