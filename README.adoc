@@ -455,6 +455,7 @@ _Only applies to block images._
 
 |width
 |The unitless display width of the image (assumed to be pixels), typically matching the intrinsic width of the image.
+If the value ends in % (not recommended), it's assumed to be the percentage of the available content area width.
 If the width exceeds the content area width, the image is scaled down to the content area width.
 
 |_unspecified_
