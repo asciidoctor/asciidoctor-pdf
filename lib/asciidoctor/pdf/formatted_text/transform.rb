@@ -181,6 +181,9 @@ module Asciidoctor
                   if (img_w = attributes[:width])
                     fragment[:image_width] = img_w
                   end
+                  if (img_fit = attributes[:fit])
+                    fragment[:image_fit] = img_fit
+                  end
                   fragments << fragment
                   previous_fragment_is_text = false
                 end
