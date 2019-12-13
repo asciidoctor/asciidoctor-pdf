@@ -262,7 +262,7 @@ module Asciidoctor
               fragment[:width] = value
               if (value = attrs[:align])
                 fragment[:align] = value.to_sym
-                fragment[:callback] = ((fragment[:callback] ||= []) << InlineTextAligner).uniq
+                fragment[:callback] = ((fragment[:callback] || []) << InlineTextAligner).uniq
               end
             end
             #if (value = attrs[:character_spacing])
@@ -285,7 +285,7 @@ module Asciidoctor
                 if (type = attrs[:type])
                   fragment[:type] = type.to_sym
                 end
-                fragment[:callback] = ((fragment[:callback] ||= []) << InlineDestinationMarker).uniq
+                fragment[:callback] = ((fragment[:callback] || []) << InlineDestinationMarker).uniq
                 visible = false
               end
             end
