@@ -2,7 +2,8 @@
 
 module Asciidoctor
   module Image
-    DataUriRx = /^data:image\/(?<fmt>png|jpe?g|gif|pdf|bmp|tiff);base64,(?<data>.*)$/
+    DataUriRx = /^data:image\/(?<fmt>png|jpe?g|gif|pdf|bmp|tiff|svg\+xml);base64,(?<data>.*)$/
+    FormatAliases = { 'jpg' => 'jpeg', 'svg+xml' => 'svg' }
 
     class << self
       def format path, attributes = nil
@@ -17,7 +18,7 @@ module Asciidoctor
     def target_and_format
       image_path = inline? ? target : (attr 'target')
       if (image_path.start_with? 'data:') && (m = DataUriRx.match image_path)
-        [(m[:data].extend ::Base64), m[:fmt]]
+        [(m[:data].extend ::Base64), (FormatAliases.fetch m[:fmt], m[:fmt])]
       else
         [image_path, (attr 'format', nil, false) || ((ext = ::File.extname image_path).downcase.slice 1, ext.length)]
       end
