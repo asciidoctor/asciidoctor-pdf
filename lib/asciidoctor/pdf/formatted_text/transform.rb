@@ -221,7 +221,7 @@ module Asciidoctor
           when :em
             styles << :italic
           when :button, :code, :key, :mark
-            fragment.update(@theme_settings[tag_name]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : (k == :callback ? oval.union(nval) : nval) }
+            fragment.update(@theme_settings[tag_name]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : (k == :callback ? oval | nval : nval) }
           when :color
             if (rgb = attrs[:rgb])
               case rgb.chr
@@ -262,7 +262,7 @@ module Asciidoctor
               fragment[:width] = value
               if (value = attrs[:align])
                 fragment[:align] = value.to_sym
-                fragment[:callback] = ((fragment[:callback] || []) << InlineTextAligner).uniq
+                fragment[:callback] = (fragment[:callback] || []) | [InlineTextAligner]
               end
             end
             #if (value = attrs[:character_spacing])
@@ -285,7 +285,7 @@ module Asciidoctor
                 if (type = attrs[:type])
                   fragment[:type] = type.to_sym
                 end
-                fragment[:callback] = ((fragment[:callback] || []) << InlineDestinationMarker).uniq
+                fragment[:callback] = (fragment[:callback] || []) | [InlineDestinationMarker]
                 visible = false
               end
             end
@@ -325,7 +325,7 @@ module Asciidoctor
               when 'background-color'
                 if (pvalue.start_with? '#') && (HexColorRx.match? pvalue)
                   fragment[:background_color] = pvalue.slice 1, pvalue.length
-                  fragment[:callback] = ((fragment[:callback] || []) << TextBackgroundAndBorderRenderer).uniq
+                  fragment[:callback] = (fragment[:callback] || []) | [TextBackgroundAndBorderRenderer]
                 end
               end
             end if attrs.key?(:style)
@@ -334,7 +334,7 @@ module Asciidoctor
           attrs[:class].split.each do |class_name|
             next unless @theme_settings.key? class_name
             fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : nval }
-            fragment[:callback] = ((fragment[:callback] || []) << TextBackgroundAndBorderRenderer).uniq if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
+            fragment[:callback] = (fragment[:callback] || []) | [TextBackgroundAndBorderRenderer] if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
           end if attrs.key?(:class)
           fragment.delete(:styles) if styles.empty?
           fragment
