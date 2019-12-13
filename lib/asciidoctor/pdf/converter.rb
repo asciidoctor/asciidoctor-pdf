@@ -2538,7 +2538,7 @@ module Asciidoctor
           # NOTE an image with a data URI is handled using a temporary file
           elsif (image_path = resolve_image_path node, target, true, image_format)
             if ::File.readable? image_path
-              width_attr = (width = preresolve_explicit_width node.attributes) ? %( width="#{width}") : nil
+              width_attr = (width = preresolve_explicit_width node.attributes) ? %( width="#{width}") : ''
               img = %(<img src="#{image_path}" format="#{image_format}" alt="[#{encode_quotes node.attr 'alt'}]"#{width_attr} tmp="#{TemporaryPath === image_path}">)
             else
               logger.warn %(image to embed not found or not readable: #{image_path}) unless scratch?
