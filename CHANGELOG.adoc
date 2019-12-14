@@ -17,6 +17,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * render stem block as raw literal block
 * render stem phrase as monospaced text
 * honor percentage unit on width attribute value on image (#1402)
+* fix crash when capitalizing text that does not contain markup
 
 == 1.5.0.beta.8 (2019-11-23) - @mojavelinux
 

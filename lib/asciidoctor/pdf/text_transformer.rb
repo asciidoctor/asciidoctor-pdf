@@ -23,7 +23,7 @@ module Asciidoctor
         if XMLMarkupRx.match? string
           string.gsub(PCDATAFilterRx) { $2 ? (capitalize_words_mb $2) : $1 }
         else
-          captialize_words_mb string
+          capitalize_words_mb string
         end
       end
 
