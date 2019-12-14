@@ -2612,14 +2612,15 @@ module Asciidoctor
           open, close, is_tag = [nil, nil, false]
         end
 
+        inner_text = node.text
+
         if (role = node.role)
-          if is_tag
-            quoted_text = %(#{open.chop} class="#{role}">#{node.text}#{close})
-          else
-            quoted_text = %(<span class="#{role}">#{open}#{node.text}#{close}</span>)
+          if (text_transform = (load_theme node.document)[%(role_#{role}_text_transform)])
+            inner_text = transform_text inner_text, text_transform
           end
+          quoted_text = is_tag ? %(#{open.chop} class="#{role}">#{inner_text}#{close}) : %(<span class="#{role}">#{open}#{inner_text}#{close}</span>)
         else
-          quoted_text = %(#{open}#{node.text}#{close})
+          quoted_text = %(#{open}#{inner_text}#{close})
         end
 
         # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
