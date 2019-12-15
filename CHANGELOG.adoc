@@ -19,6 +19,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * honor percentage unit on width attribute value on image (#1402)
 * fix crash when capitalizing text that does not contain markup
 * allow custom inline role to control text transform (#1379)
+* convert link macro enclosed in smart quotes
 
 == 1.5.0.beta.8 (2019-11-23) - @mojavelinux
 

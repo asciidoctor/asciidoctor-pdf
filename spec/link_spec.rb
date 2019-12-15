@@ -28,6 +28,26 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     (expect link[:A][:URI]).to eql input
   end
 
+  it 'should convert link surrounded in double smart quotes' do
+    pdf = to_pdf '"`https://asciidoctor.org[Asciidoctor]`"'
+    text = (pdf.page 1).text
+    (expect text).to eql %(\u201cAsciidoctor\u201d)
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link = annotations[0]
+    (expect link[:A][:URI]).to eql 'https://asciidoctor.org'
+  end
+
+  it 'should convert link surrounded in single smart quotes' do
+    pdf = to_pdf %('`https://asciidoctor.org[Asciidoctor]`')
+    text = (pdf.page 1).text
+    (expect text).to eql %(\u2018Asciidoctor\u2019)
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link = annotations[0]
+    (expect link[:A][:URI]).to eql 'https://asciidoctor.org'
+  end
+
   it 'should split bare URL on breakable characters' do
     [
       'the URL on this line will get split on the ? char https://github.com/asciidoctor/asciidoctor/issues?|q=milestone%3Av2.0.x',

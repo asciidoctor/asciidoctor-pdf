@@ -2603,9 +2603,9 @@ module Asciidoctor
         when :subscript
           open, close, is_tag = ['<sub>', '</sub>', true]
         when :double
-          open, close, is_tag = [?\u201c, ?\u201d, false]
+          open, close, is_tag = ['&#8220;', '&#8221;', false]
         when :single
-          open, close, is_tag = [?\u2018, ?\u2019, false]
+          open, close, is_tag = ['&#8216;', '&#8217;', false]
         when :mark
           open, close, is_tag = ['<mark>', '</mark>', true]
         else
