@@ -356,7 +356,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[2][:font_size].to_f.round 2).to eql 10.0
     end
 
-    it 'should allow theme to control formatting apply to phrase by role' do
+    it 'should allow theme to control formatting applied to phrase by role' do
       pdf_theme = {
         role_red_font_color: 'ff0000',
         role_red_font_style: 'bold',
@@ -432,6 +432,22 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect lines[0][:width]).to eql 0.5
       (expect lines[1][:color]).to eql 'AA0000'
       (expect lines[1][:width]).to be 2
+    end
+
+    it 'should allow custom role to apply text transform' do
+      pdf_theme = {
+        role_lower_text_transform: 'lowercase',
+        role_upper_text_transform: 'uppercase',
+        role_capital_text_transform: 'capitalize',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      [.lower]#WHISPER# [.upper]#shout# [.capital]#here me roar#
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      (expect lines[0]).to eql 'whisper SHOUT Here Me Roar'
     end
 
     it 'should allow custom role to specify relative font size' do
