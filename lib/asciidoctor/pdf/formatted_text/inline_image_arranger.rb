@@ -60,6 +60,8 @@ module Asciidoctor::PDF::FormattedText
             image_w = [available_w, (image_w.end_with? '%') ? (image_w.to_f / 100 * available_w) : image_w.to_f].min
           end
 
+          max_image_h = fragment[:image_fit] == 'line' ? [available_h, doc.font.height].min : available_h
+
           # TODO: make helper method to calculate width and height of image
           if fragment[:image_format] == 'svg'
             svg_obj = ::Prawn::SVG::Interface.new ::File.read(image_path, mode: 'r:UTF-8'), doc,
@@ -73,8 +75,8 @@ module Asciidoctor::PDF::FormattedText
                 # NOTE convert intrinsic dimensions to points; constrain to content width
                 (svg_obj.resize width: [(to_pt svg_obj.document.sizing.output_width, :px), available_w].min)
             # NOTE the best we can do is make the image fit within full height of bounds
-            if (image_h = svg_size.output_height) > available_h
-              image_w = (svg_obj.resize height: (image_h = available_h)).output_width
+            if (image_h = svg_size.output_height) > max_image_h
+              image_w = (svg_obj.resize height: (image_h = max_image_h)).output_width
             else
               image_w = svg_size.output_width
             end
@@ -96,7 +98,7 @@ module Asciidoctor::PDF::FormattedText
               image_h = to_pt image_info.height, :px
             end
             # NOTE the best we can do is make the image fit within full height of bounds
-            image_w = (image_h = available_h) * (image_info.width.fdiv image_info.height) if image_h > available_h
+            image_w = (image_h = max_image_h) * (image_info.width.fdiv image_info.height) if image_h > max_image_h
             fragment[:image_obj] = image_obj
             fragment[:image_info] = image_info
           end

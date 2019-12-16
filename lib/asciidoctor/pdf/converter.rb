@@ -2539,7 +2539,8 @@ module Asciidoctor
           elsif (image_path = resolve_image_path node, target, true, image_format)
             if ::File.readable? image_path
               width_attr = (width = preresolve_explicit_width node.attributes) ? %( width="#{width}") : ''
-              img = %(<img src="#{image_path}" format="#{image_format}" alt="[#{encode_quotes node.attr 'alt'}]"#{width_attr} tmp="#{TemporaryPath === image_path}">)
+              fit_attr = (fit = node.attr 'fit', nil, false) ? %( fit="#{fit}") : ''
+              img = %(<img src="#{image_path}" format="#{image_format}" alt="[#{encode_quotes node.attr 'alt'}]"#{width_attr}#{fit_attr} tmp="#{TemporaryPath === image_path}">)
             else
               logger.warn %(image to embed not found or not readable: #{image_path}) unless scratch?
               img = %([#{node.attr 'alt'}])

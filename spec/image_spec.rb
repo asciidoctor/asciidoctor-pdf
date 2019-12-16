@@ -599,6 +599,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect to_file).to visually_match 'image-inline-scale-down.pdf'
     end
+
+    it 'should scale image down to fit line if fit=line', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-inline-fit-line.pdf'
+      See image:tux.png[fit=line] run.
+      EOS
+
+      (expect to_file).to visually_match 'image-inline-fit-line.pdf'
+    end
   end
 
   context 'Link' do
