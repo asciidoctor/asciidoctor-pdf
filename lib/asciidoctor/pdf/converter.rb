@@ -3674,13 +3674,13 @@ module Asciidoctor
         result = nil
         # TODO: inheriting from generic category should be an option
         if opts.key? :level
-          level = opts[:level]
-          family = @theme[%(#{category}_h#{level}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family || font_family
-          size = @theme[%(#{category}_h#{level}_font_size)] || @theme[%(#{category}_font_size)] || @root_font_size
-          style = @theme[%(#{category}_h#{level}_font_style)] || @theme[%(#{category}_font_style)]
-          color = @theme[%(#{category}_h#{level}_font_color)] || @theme[%(#{category}_font_color)]
+          hlevel_category = %(#{category}_h#{opts[:level]})
+          family = @theme[%(#{hlevel_category}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family || font_family
+          size = @theme[%(#{hlevel_category}_font_size)] || @theme[%(#{category}_font_size)] || @root_font_size
+          style = @theme[%(#{hlevel_category}_font_style)] || @theme[%(#{category}_font_style)]
+          color = @theme[%(#{hlevel_category}_font_color)] || @theme[%(#{category}_font_color)]
           # NOTE global text_transform is not currently supported
-          transform = @theme[%(#{category}_h#{level}_text_transform)] || @theme[%(#{category}_text_transform)]
+          transform = @theme[%(#{hlevel_category}_text_transform)] || @theme[%(#{category}_text_transform)]
         else
           inherited_font = font_info
           family = @theme[%(#{category}_font_family)] || inherited_font[:family]
