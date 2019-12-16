@@ -470,10 +470,7 @@ If you want a block image to align to the boundaries of the page (not the conten
 This is most useful when using vw units because you can make the image cover the entire width of the page.
 
 Images in running content and page background images also support the `fit` attribute (when specified using the image macro).
-If the value of this attribute is `contain`, the image size is increased or decreased to fill the available space while preserving its aspect ratio.
-If the value of this attribute is `scaled-down`, the image size is first resolved in the normal way, then scaled down further to fit within the available space, if necessary.
-
-If sizing information is not specified for a page background image, the image is automatically scaled to fit the bounds of the page (i.e., `fit=contain`).
+See <<Background Image Sizing>> for details.
 
 === Using the pdfwidth Attribute
 
@@ -513,6 +510,8 @@ Inline images can be sized in much the same way as block images (using the pdfwi
 * The image will be scaled down, if necessary, to fit the width and height of the content area.
 * Inline images do not currently support a default width controlled from the theme.
 
+To confine the inline image to the height of the line while preserving the aspect ratio, use the attribute `fit=line`.
+
 If the resolved height of the image is less than or equal to 1.5 times the line height, the image won't disrupt the line height and is centered vertically in the line.
 This is done to maximize the use of available space.
 Once the resolved height exceeds this amount, the height of the line is increased (by increasing the font size of the invisible placeholder text) to accommodate the image.
@@ -527,7 +526,7 @@ It's value must be specified as a single keyword, chosen from the table below.
 The starting size of the image is determined by the explicit width, if specified, or the implicit width.
 The height is always derived from the width while respecting the implicit aspect ratio of the image.
 The available space for a background image (i.e., the canvas) is the page.
-If the `fit` attribute is not specified, it defaults to `contain`.
+If the `fit` attribute is not specified, it defaults to `contain` (i.e., the image is automatically scaled to fit the bounds of the page).
 
 [cols="1s,3"]
 |===
