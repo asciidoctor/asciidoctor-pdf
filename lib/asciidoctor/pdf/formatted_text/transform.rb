@@ -94,6 +94,10 @@ module Asciidoctor
               role, key = (key.slice 5, key.length).split '_', 2
               if (prop = ThemeKeyToFragmentProperty[key])
                 (accum[role] ||= {})[prop] = val
+              #elsif key == 'font_kerning'
+              #  unless (resolved_val = val == 'none' ? false : (val == 'normal' ? true : nil)).nil?
+              #    (accum[role] ||= {})[:kerning] = resolved_val
+              #  end
               elsif key == 'font_style' || key == 'text_decoration'
                 revise_roles << role
               end

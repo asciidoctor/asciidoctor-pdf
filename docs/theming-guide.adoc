@@ -1524,6 +1524,12 @@ The keys in this category control the style of most headings, including part tit
 |heading:
   font-family: Noto Serif
 
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|heading:
+  font-kerning: none
+
 // NOTE: heading-font-size is overridden by h<n>-font-size in base theme
 //|font-size
 //|<<values,Number>> +
@@ -1631,6 +1637,12 @@ The keys in this category control the style of most headings, including part tit
 (default: $heading-font-family)
 |heading:
   h4-font-family: Roboto
+
+|font-kerning
+|normal {vbar} none +
+(default: $heading-font-kerning)
+|heading:
+  h3-font-kerning: none
 
 |font-size^[1]^
 |<<values,Number>> +
@@ -1742,6 +1754,12 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
 |title-page:
   font-family: Noto Serif
 
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|title-page:
+  font-kerning: none
+
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
@@ -1811,6 +1829,13 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
 |title-page:
   title:
     font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|title-page:
+  title:
+    font-kerning: none
 
 |font-size
 |<<values,Number>> +
@@ -1883,6 +1908,13 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
 |title-page:
   subtitle:
     font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|title-page:
+  subtitle:
+    font-kerning: none
 
 |font-size
 |<<values,Number>> +
@@ -1967,6 +1999,13 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
   authors:
     font-family: Noto Serif
 
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|title-page:
+  authors:
+    font-kerning: none
+
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
@@ -2031,6 +2070,13 @@ TIP: The title page can be disabled for the book doctype by setting the `notitle
 |title-page:
   revision:
     font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|title-page:
+  revision:
+    font-kerning: none
 
 |font-size
 |<<values,Number>> +
@@ -2193,6 +2239,12 @@ In addition to the generic caption category, each of these keys can be set on th
 |caption:
   font-family: M+ 1mn
 
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|caption:
+  font-kerning: none
+
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
@@ -2337,6 +2389,12 @@ The keys in this category are used to control the style of callout numbers (i.e.
 |conum:
   font-family: M+ 1mn
 
+|font-kerning^[2]^
+|normal {vbar} none +
+(default: _inherit_)
+|conum:
+  font-kerning: none
+
 |font-size^[2]^
 |<<values,Number>> +
 (default: _inherit_)
@@ -2363,7 +2421,7 @@ The keys in this category are used to control the style of callout numbers (i.e.
 |===
 
 . Currently, the font must contain the circle numbers starting at glyph U+2460.
-. font-family, font-size, font-style, and line-height are only used for markers in a colist.
+. font-family, font-kerning, font-size, font-style, and line-height are only used for markers in a colist.
 These properties are inherited for conums inside a verbatim block.
 . The font must provide the required glyphs.
 The glyphs can be specified as a comma-separated list of ranges, where the range values are Unicode numbers (e.g., \u2460).
@@ -2575,6 +2633,12 @@ The keys in this category control the arrangement and style of quote blocks.
 |blockquote:
   font-family: Noto Serif
 
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|blockquote:
+  font-kerning: none
+
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
@@ -2621,6 +2685,13 @@ The keys in this category control the arrangement and style of quote blocks.
 |blockquote:
   cite:
     font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|blockquote:
+  cite:
+    font-kerning: none
 
 |font-style
 |<<font-styles,Font style>> +
@@ -2674,6 +2745,12 @@ The keys in this category control the arrangement and style of verse blocks.
 |verse:
   font-family: M+ 1mn
 
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|verse:
+  font-kerning: none
+
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
@@ -2720,6 +2797,13 @@ The keys in this category control the arrangement and style of verse blocks.
 |verse:
   cite:
     font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|verse:
+  cite:
+    font-kerning: none
 
 |font-style
 |<<font-styles,Font style>> +
@@ -2785,6 +2869,12 @@ The keys in this category control the arrangement and style of sidebar blocks.
 |sidebar:
   font-family: M+ 1p
 
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|sidebar:
+  font-kerning: none
+
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
@@ -2831,6 +2921,13 @@ The keys in this category control the arrangement and style of sidebar blocks.
 |sidebar:
   title:
     font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|sidebar:
+  title:
+    font-kerning: none
 
 |font-size
 |<<values,Number>> +
@@ -2901,6 +2998,12 @@ The keys in this category control the arrangement and style of example blocks.
 |example:
   font-family: M+ 1p
 
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|example:
+  font-kerning: none
+
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
@@ -2966,6 +3069,12 @@ The keys in this category control the arrangement and style of admonition blocks
 (default: _inherit_)
 |admonition:
   font-family: Noto Sans
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|admonition:
+  font-kerning: none
 
 |font-size
 |<<values,Number>> +
@@ -3035,6 +3144,13 @@ The keys in this category control the arrangement and style of admonition blocks
 |admonition:
   label:
     font-family: M+ 1p
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|admonition:
+  label:
+    font-kerning: none
 
 |font-size
 |<<values,Number>> +
@@ -3164,6 +3280,13 @@ The keys in this category control the arrangement of block images.
   alt:
     font-family: Courier
 
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|image:
+  alt:
+    font-kerning: none
+
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
@@ -3228,6 +3351,12 @@ The keys in this category control the styling of lead paragraphs.
 (default: _inherit_)
 |lead:
   font-family: M+ 1p
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|lead:
+  font-kerning: none
 
 |font-size
 |<<values,Number>> +
@@ -3323,6 +3452,13 @@ The keys in this category control the arrangement and style of the abstract.
 |abstract:
   title:
     font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|abstract:
+  title:
+    font-kerning: none
 
 |font-size
 |<<values,Number>> +
@@ -3428,6 +3564,12 @@ The subject stop can be customized using the `subject-stop` attribute.
 (default: _inherit_)
 |description-list:
   term-font-family: Noto Serif
+
+|term-font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|description-list:
+  term-font-kerning: none
 
 |term-font-size
 |<<values,Number>> +
@@ -3652,6 +3794,12 @@ The keys in this category control the arrangement and style of tables and table 
 |table:
   font-family: Helvetica
 
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|table:
+  font-kerning: none
+
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
@@ -3732,6 +3880,13 @@ The keys in this category control the arrangement and style of tables and table 
 |table:
   head:
     font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|table:
+  head:
+    font-kerning: none
 
 |font-size
 |<<values,Number>> +
@@ -3947,6 +4102,12 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   font-family: Noto Serif
 
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|toc:
+  font-kerning: none
+
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
@@ -4020,25 +4181,31 @@ The keys in this category control the arrangement and style of the table of cont
 |<<fonts,Font family name>> +
 (default: _inherit_)
 |toc:
-  font-family: Noto Serif
+  h2-font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|toc:
+  h3-font-kerning: none
 
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
 |toc:
-  font-size: 9
+  h3-font-size: 9
 
 |font-style
 |<<font-styles,Font style>> +
 (default: _inherit_)
 |toc:
-  font-style: italic
+  h2-font-style: italic
 
 |text-transform
 |<<text-transforms,Text transform>> +
 (default: _inherit_)
 |toc:
-  text-transform: uppercase
+  h3-text-transform: uppercase
 
 3+|[#key-prefix-toc-title]*Key Prefix:* <<key-prefix-toc-title,toc-title>>
 
@@ -4062,6 +4229,13 @@ The keys in this category control the arrangement and style of the table of cont
 |toc:
   title:
     font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|toc:
+  title:
+    font-kerning: none
 
 |font-size
 |<<values,Number>> +
@@ -4171,6 +4345,12 @@ To avoid this problem, reduce the height of the running content periphery or mak
 (default: _inherit_)
 |header:
   font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|header:
+  font-kerning: none
 
 |font-size
 |<<values,Number>> +
@@ -4284,6 +4464,12 @@ To avoid this problem, reduce the height of the running content periphery or mak
 (default: _inherit_)
 |footer:
   font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|footer:
+  font-kerning: none
 
 |font-size
 |<<values,Number>> +
