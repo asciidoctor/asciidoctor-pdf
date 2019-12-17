@@ -159,7 +159,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect images).to have_size 1
     cover_image = images[0]
     (expect cover_image[:x]).to eql 0.0
-    (expect cover_image[:width]).to be pdf_page_size[0]
+    (expect cover_image[:width]).to eql pdf_page_size[0]
     (expect cover_image[:height]).to be > pdf_page_size[1]
     (expect cover_image[:y]).to be > pdf_page_size[1]
   end
