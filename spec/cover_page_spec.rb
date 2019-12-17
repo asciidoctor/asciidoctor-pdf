@@ -144,6 +144,26 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect to_file).to visually_match 'cover-page-front-cover-image-cover.pdf'
   end
 
+  it 'should scale front cover image with aspect ratio taller than page until it covers page if fit=cover' do
+    pdf_page_size = get_page_size (to_pdf 'content', attribute_overrides: { 'pdf-page-size' => 'Letter' }), 1
+
+    pdf = to_pdf <<~'EOS', analyze: :image
+    = Document Title
+    :pdf-page-size: Letter
+    :front-cover-image: image:cover.jpg[fit=cover]
+
+    content page
+    EOS
+
+    images = pdf.images
+    (expect images).to have_size 1
+    cover_image = images[0]
+    (expect cover_image[:x]).to eql 0.0
+    (expect cover_image[:width]).to be pdf_page_size[0]
+    (expect cover_image[:height]).to be > pdf_page_size[1]
+    (expect cover_image[:y]).to be > pdf_page_size[1]
+  end
+
   it 'should position front cover image as specified by position attribute', visual: true do
     to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-positioned.pdf'
     = Document Title
