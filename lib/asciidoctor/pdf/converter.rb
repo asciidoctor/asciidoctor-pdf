@@ -367,6 +367,7 @@ module Asciidoctor
           to ? ((get_char from)..(get_char to)).to_a : [(get_char from)]
         }.flatten
         @section_indent = (val = @theme.section_indent) && (inflate_indent val)
+        @toc_max_pagenum_digits = (doc.attr 'toc-max-pagenum-digits', 3).to_i
         @index = IndexCatalog.new
         # NOTE: we have to init Pdfmark class here while we have reference to the doc
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
@@ -2966,12 +2967,9 @@ module Asciidoctor
 
       def allocate_toc doc, toc_num_levels, toc_start_y, use_title_page
         toc_page_nums = page_number
-        pagenum_width = theme_font(:doc) { rendered_width_of_string '0' * (doc.attr 'toc-max-pagenum-digits', 3).to_i }
         toc_end = nil
         dry_run do
-          indent 0, pagenum_width do
-            toc_page_nums = layout_toc doc, toc_num_levels, toc_page_nums, toc_start_y
-          end
+          toc_page_nums = layout_toc doc, toc_num_levels, toc_page_nums, toc_start_y
           move_down @theme.block_margin_bottom unless use_title_page
           toc_end = @y
         end
@@ -3032,15 +3030,18 @@ module Asciidoctor
         toc_font_info = theme_font :toc do
           { font: font, size: @font_size }
         end
+        hanging_indent = @theme.toc_hanging_indent || 0
         sections.each do |sect|
           theme_font :toc, level: (sect.level + 1) do
             sect_title = ZeroWidthSpace + (@text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title)
-            hanging_indent = @theme.toc_hanging_indent || 0
+            pgnum_label_placeholder_width = rendered_width_of_string '0' * @toc_max_pagenum_digits
             # NOTE only write section title (excluding dots and page number) if this is a dry run
             if scratch?
-              # FIXME: use layout_prose
-              # NOTE must wrap title in empty anchor element in case links are styled with different font family / size
-              typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true, hanging_indent: hanging_indent
+              indent 0, pgnum_label_placeholder_width do
+                # FIXME: use layout_prose
+                # NOTE must wrap title in empty anchor element in case links are styled with different font family / size
+                typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true, hanging_indent: hanging_indent
+              end
             else
               pgnum_label = ((sect.attr 'pdf-page-start') - num_front_matter_pages).to_s
               start_page_number = page_number
@@ -3049,8 +3050,7 @@ module Asciidoctor
               sect_title_inherited = (apply_text_decoration ::Set.new, :toc, sect.level.next).merge anchor: (sect_anchor = sect.attr 'pdf-anchor'), color: @font_color
               # NOTE use text formatter to add anchor overlay to avoid using inline format with synthetic anchor tag
               sect_title_fragments = text_formatter.format sect_title, inherited: sect_title_inherited
-              pgnum_label_width = rendered_width_of_string pgnum_label
-              indent 0, pgnum_label_width do
+              indent 0, pgnum_label_placeholder_width do
                 sect_title_fragments[-1][:callback] = (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
                 typeset_formatted_text sect_title_fragments, line_metrics, hanging_indent: hanging_indent
                 start_dots = last_fragment_pos.right + hanging_indent
@@ -3064,6 +3064,7 @@ module Asciidoctor
               go_to_page start_page_number if start_page_number != end_page_number
               move_cursor_to start_cursor
               if dot_leader[:width] > 0 && (dot_leader[:levels].include? sect.level)
+                pgnum_label_width = rendered_width_of_string pgnum_label
                 pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
                 save_font do
                   # NOTE the same font is used for dot leaders throughout toc

@@ -643,4 +643,21 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     (expect pdf.find_text %(Paper Clips \u2116\u00a04)).to have_size 2
   end
+
+  it 'should allocate correct number of pages for toc if line numbers cause lines to wrap' do
+    chapter_title = %(\n\n== A long chapter title that wraps to a second line in the toc when the page number exceeds one digit)
+
+    input = <<~EOS
+    = Document Title
+    :doctype: book
+    :toc:
+    :nofooter:
+    #{chapter_title * 38}
+    EOS
+
+    pdf = to_pdf input, analyze: true
+    last_pagenum_text = (pdf.find_text '38')[0]
+    first_chapter_text = (pdf.find_text font_name: 'NotoSerif-Bold', font_size: 22, string: /^A long chapter title/)[0]
+    (expect first_chapter_text[:page_number]).to be last_pagenum_text[:page_number].next
+  end
 end
