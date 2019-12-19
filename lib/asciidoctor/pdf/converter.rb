@@ -2671,8 +2671,13 @@ module Asciidoctor
         if @theme.title_page_logo_display != 'none' && (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
           if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
             logo_image_attrs = (AttributeList.new $2).parse %w(alt width height)
-            relative_to_imagesdir = true
-            logo_image_path = logo_image_from_theme ? (ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, $1), @themesdir) : $1
+            if logo_image_from_theme
+              relative_to_imagesdir = false
+              logo_image_path = ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, $1), @themesdir
+            else
+              relative_to_imagesdir = true
+              logo_image_path = $1
+            end
           else
             logo_image_attrs = {}
             relative_to_imagesdir = false

@@ -359,6 +359,22 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images[0].hash[:Height]).to be 240
     end
 
+    it 'should resolve title page logo image from theme relative to themedir' do
+      pdf_theme = {
+        __dir__: examples_dir,
+        title_page_logo_image: 'image:sample-logo.jpg[]',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      = Document Title
+      :doctype: book
+      EOS
+
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].hash[:Width]).to be 331
+      (expect images[0].hash[:Height]).to be 369
+    end
+
     it 'should move logo down from top margin of page by % value of title_page_logo_top key' do
       [nil, '10%'].each do |top|
         pdf_theme = {
