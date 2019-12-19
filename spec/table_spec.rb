@@ -561,6 +561,22 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect text[0][:string]).to eql 'ÜBER'
       (expect text[1][:string]).to eql 'ÉTUDIER'
     end
+
+    it 'should honor horizontal alignment on cell' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols="1,>1"]
+      |===
+      |a |z
+      |===
+      EOS
+
+      page_width = pdf.pages[0][:size][0]
+      midpoint = page_width * 0.5
+      a_text = (pdf.find_text 'a')[0]
+      z_text = (pdf.find_text 'z')[0]
+      (expect a_text[:x]).to be < midpoint
+      (expect z_text[:x]).to be > midpoint
+    end
   end
 
   context 'Literal table cell' do
