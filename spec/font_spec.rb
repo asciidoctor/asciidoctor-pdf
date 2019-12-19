@@ -136,7 +136,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-kerning-base.pdf'
     end
 
-    it 'should allow theme to disable kerning', visual: true do
+    it 'should allow theme to disable kerning globally', visual: true do
       to_file = to_pdf_file <<~'EOS', 'font-kerning-disabled.pdf', pdf_theme: { base_font_kerning: 'none' }
       [%hardbreaks]
       AVA
@@ -147,6 +147,25 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       EOS
 
       (expect to_file).to visually_match 'font-kerning-disabled.pdf'
+    end
+
+    it 'should allow theme to disable kerning per category' do
+      {
+        'example' => %([example]\nAV T. ij WA *guideline*),
+        'sidebar' => %([sidebar]\nAV T. ij WA *guideline*),
+        'heading' => '== AV T. ij WA *guideline*',
+        'table' => %(|===\n| AV T. ij WA *guideline*\n|===),
+        'table_head' => %([%header]\n|===\n| AV T. ij WA *guideline*\n|===),
+        'caption' => %(.AV T. ij WA *guideline*'\n--\ncontent\n--),
+      }.each do |category, input|
+        pdf = to_pdf input, analyze: true
+        guideline_column_with_kerning = (pdf.find_text 'guideline')[0][:x]
+
+        pdf = to_pdf input, pdf_theme: { %(#{category}_font_kerning) => 'none' }, analyze: true
+        guideline_column_without_kerning = (pdf.find_text 'guideline')[0][:x]
+
+        (expect guideline_column_without_kerning).to be > guideline_column_with_kerning
+      end
     end
   end
 

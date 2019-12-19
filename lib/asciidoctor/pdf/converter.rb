@@ -64,6 +64,7 @@ module Asciidoctor
       TextAlignmentNames = %w(justify left center right)
       TextAlignmentRoles = %w(text-justify text-left text-center text-right)
       TextDecorationStyleTable = { 'underline' => :underline, 'line-through' => :strikethrough }
+      FontKerningTable = { 'normal' => true, 'none' => false }
       BlockAlignmentNames = %w(left center right)
       AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
       ColumnPositions = [:left, :center, :right]
@@ -1148,7 +1149,7 @@ module Asciidoctor
           markers.pop
         when 'horizontal'
           table_data = []
-          term_padding = desc_padding = term_line_metrics = term_inline_format = nil
+          term_padding = desc_padding = term_line_metrics = term_inline_format = term_kerning = nil
           max_term_width = 0
           theme_font :description_list_term do
             if (term_font_styles = font_styles).empty?
@@ -1159,14 +1160,16 @@ module Asciidoctor
             term_line_metrics = calc_line_metrics @theme.description_list_term_line_height || @theme.base_line_height
             term_padding = [term_line_metrics.padding_top, 10, (@theme.prose_margin_bottom || 0) * 0.5 + term_line_metrics.padding_bottom, 10]
             desc_padding = [0, 10, (@theme.prose_margin_bottom || 0) * 0.5, 10]
+            term_kerning = default_kerning?
           end
           node.items.each do |terms, desc|
             term_text = [*terms].map(&:text).join ?\n
-            if (term_width = width_of term_text, inline_format: term_inline_format) > max_term_width
+            if (term_width = width_of term_text, inline_format: term_inline_format, kerning: term_kerning) > max_term_width
               max_term_width = term_width
             end
             row_data = [{
               text_color: @font_color,
+              kerning: term_kerning,
               content: term_text,
               inline_format: term_inline_format,
               padding: term_padding,
@@ -1957,9 +1960,12 @@ module Asciidoctor
         body_bg_color = resolve_theme_color :table_body_background_color, tbl_bg_color
         body_stripe_bg_color = resolve_theme_color :table_body_stripe_background_color, tbl_bg_color
 
+        cell_kerning = resolve_font_kerning theme.table_font_kerning
+
         table_data = []
         node.rows[:head].each do |row|
           table_header = true
+          head_kerning = resolve_font_kerning theme.table_head_font_kerning, cell_kerning
           head_transform = resolve_text_transform :table_head_text_transform, nil
           row_data = []
           row.each do |cell|
@@ -1973,6 +1979,7 @@ module Asciidoctor
               size: (theme.table_head_font_size || theme.table_font_size),
               font: (theme.table_head_font_family || theme.table_font_family),
               font_style: (val = theme.table_head_font_style || theme.table_font_style) ? val.to_sym : nil,
+              kerning: head_kerning,
               colspan: cell.colspan || 1,
               rowspan: cell.rowspan || 1,
               align: (cell.attr 'halign', nil, false).to_sym,
@@ -1991,6 +1998,7 @@ module Asciidoctor
               text_color: (theme.table_font_color || @font_color),
               size: theme.table_font_size,
               font: theme.table_font_family,
+              kerning: cell_kerning,
               colspan: cell.colspan || 1,
               rowspan: cell.rowspan || 1,
               align: (cell.attr 'halign', nil, false).to_sym,
@@ -2055,6 +2063,7 @@ module Asciidoctor
               cell_data[:inline_format] = true
               cell_line_metrics = calc_line_metrics theme.base_line_height
             when :asciidoc
+              cell_data.delete :kerning
               asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self,
                   (cell_data.merge content: cell.inner_document, font_style: (val = theme.table_font_style) ? val.to_sym : nil)
               cell_data = { content: asciidoc_cell }
@@ -3628,6 +3637,10 @@ module Asciidoctor
         end
       end
 
+      def resolve_font_kerning keyword, fallback = default_kerning?
+        keyword && (FontKerningTable.key? keyword) ? FontKerningTable[keyword] : fallback
+      end
+
       def theme_fill_and_stroke_bounds category, opts = {}
         background_color = opts[:background_color] || @theme[%(#{category}_background_color)]
         fill_and_stroke_bounds background_color, @theme[%(#{category}_border_color)],
@@ -3681,6 +3694,7 @@ module Asciidoctor
           size = @theme[%(#{hlevel_category}_font_size)] || @theme[%(#{category}_font_size)] || @root_font_size
           style = @theme[%(#{hlevel_category}_font_style)] || @theme[%(#{category}_font_style)]
           color = @theme[%(#{hlevel_category}_font_color)] || @theme[%(#{category}_font_color)]
+          kerning = resolve_font_kerning @theme[%(#{hlevel_category}_font_kerning)] || @theme[%(#{category}_font_kerning)], nil
           # NOTE global text_transform is not currently supported
           transform = @theme[%(#{hlevel_category}_text_transform)] || @theme[%(#{category}_text_transform)]
         else
@@ -3689,11 +3703,13 @@ module Asciidoctor
           size = @theme[%(#{category}_font_size)] || inherited_font[:size]
           style = @theme[%(#{category}_font_style)] || inherited_font[:style]
           color = @theme[%(#{category}_font_color)]
+          kerning = resolve_font_kerning @theme[%(#{category}_font_kerning)], nil
           # NOTE global text_transform is not currently supported
           transform = @theme[%(#{category}_text_transform)]
         end
 
         prev_color, @font_color = @font_color, color if color
+        prev_kerning, self.default_kerning = default_kerning?, kerning unless kerning.nil?
         prev_transform, @text_transform = @text_transform, (transform == 'none' ? nil : transform) if transform
 
         font family, size: size, style: (style && style.to_sym) do
@@ -3701,6 +3717,7 @@ module Asciidoctor
         end
 
         @font_color = prev_color if color
+        default_kerning prev_kerning unless kerning.nil?
         @text_transform = prev_transform if transform
         result
       end
@@ -3772,6 +3789,7 @@ module Asciidoctor
 
       # Compute the rendered width of a string, taking fallback fonts into account
       def rendered_width_of_string str, opts = {}
+        opts = opts.merge kerning: default_kerning?
         if str.length == 1
           rendered_width_of_char str, opts
         elsif (chars = str.each_char).all? {|char| font.glyph_present? char }
