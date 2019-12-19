@@ -573,9 +573,9 @@ RSpec::Matchers.define :visually_match do |reference_filename|
     end
 
     if pixels > 0
-      tmp_files.each {|it| File.unlink it } unless ENV.key? 'DEBUG'
       false
     else
+      tmp_files.each {|it| File.unlink it } unless ENV.key? 'DEBUG'
       true
     end
   end
