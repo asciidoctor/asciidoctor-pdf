@@ -3,7 +3,7 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Open' do
-  it 'should keep block together when it has the unbreakable option' do
+  it 'should keep block together when it has the unbreakable option', visual: true do
     to_file = to_pdf_file <<~EOS, 'open-unbreakable-option-fit.pdf'
     Make it rain.footnote:[money]
 
@@ -28,7 +28,7 @@ describe 'Asciidoctor::PDF::Converter - Open' do
     (expect to_file).to visually_match 'open-unbreakable-option-fit.pdf'
   end
 
-  it 'should break an unbreakable block if it does not fit on one page' do
+  it 'should break an unbreakable block if it does not fit on one page', visual: true do
     to_file = to_pdf_file <<~EOS, 'open-unbreakable-option-break.pdf'
     Make it rain.footnote:[money]
 

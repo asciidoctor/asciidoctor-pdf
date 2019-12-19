@@ -547,7 +547,7 @@ end
 RSpec::Matchers.define :visually_match do |reference_filename|
   reference_path = (Pathname.new reference_filename).absolute? ? reference_filename : (File.join __dir__, 'reference', reference_filename)
   match do |actual_path|
-    # NOTE add this line to detect which tests use a visual match
+    # NOTE uncomment this line and run `bundle exec rspec -t ~visual` to detect which tests use a visual match
     #warn caller.find {|it| it.include? '_spec.rb:' }
     return false unless File.exist? reference_path
     images_output_dir = output_file 'visual-comparison-workdir'
