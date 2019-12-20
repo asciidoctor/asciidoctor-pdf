@@ -195,6 +195,41 @@ To switch back to master, just type:
 
  $ git checkout master
 
+==== In Your Application
+
+If you're using {project-name} in your application, you can test against the code in the pull request using Bundler.
+
+First, you need to find the origin URL and branch of the PR.
+You can find this information on the PR page.
+
+Next, update the entry in your project's [.path]_Gemfile_ to point to the branch from which the pull request was originated.
+
+.Gemfile
+[source,ruby]
+----
+source 'https://rubygems.org'
+
+gem 'asciidoctor-pdf', github: '<username>/asciidoctor-pdf', branch: 'issue-864'
+----
+
+Then run Bundler to update the gems in your project:
+
+ $ rm -f Gemfile.lock
+   bundle config --local github.https true
+   bundle --path=.bundle/gems --binstubs=.bundle/.bin
+
+Now you can run the development version of {project-name} using:
+
+ $ bundle exec asciidoctor-pdf input.adoc
+
+or
+
+ $ ./.bundle/.bin/asciidoctor-pdf input.adoc
+
+These instructions work for testing any development version of {project-name} directly from GitHub.
+
+TIP: If you're running {project-name} in a Gradle build, follow https://github.com/asciidoctor/asciidoctor-pdf/issues/650#issuecomment-258338060[these instructions] to use the development version of {project-name}.
+
 === Generate Code Coverage Report
 
 To generate a code coverage report when running tests using simplecov, set the `COVERAGE` environment variable as follows when running the tests:
