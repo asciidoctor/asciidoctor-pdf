@@ -168,7 +168,7 @@ You can now use the `gem install` command to install it.
 You'll want to pay attention to which Ruby installation you are installing the gem into.
 If successful, the `asciidoctor-pdf` executable will be available on your PATH.
 
-endif::[]
+TIP: If you're running {project-name} in a Gradle build, follow https://github.com/asciidoctor/asciidoctor-pdf/issues/650#issuecomment-258338060[these instructions] to use the development version of {project-name}.
 
 === Test a Pull Request
 
@@ -227,8 +227,6 @@ or
  $ ./.bundle/.bin/asciidoctor-pdf input.adoc
 
 These instructions work for testing any development version of {project-name} directly from GitHub.
-
-TIP: If you're running {project-name} in a Gradle build, follow https://github.com/asciidoctor/asciidoctor-pdf/issues/650#issuecomment-258338060[these instructions] to use the development version of {project-name}.
 
 === Generate Code Coverage Report
 
