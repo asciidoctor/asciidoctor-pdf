@@ -612,7 +612,7 @@ module Asciidoctor
         add_dest_for_block node if node.id
         hlevel = node.level.next
         unless (align = resolve_alignment_from_role node.roles)
-          align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym 
+          align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
         end
         # QUESTION should we decouple styles from section titles?
         theme_font :heading, level: hlevel do
