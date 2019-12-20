@@ -725,6 +725,22 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       (expect sidebar_content_text[:x]).to eql discrete_heading_text[:x]
     end
 
+    it 'should honor text alignment role on discrete heading' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [discrete]
+      == Discrete Heading
+      EOS
+      left_x = (pdf.find_text 'Discrete Heading')[0][:x]
+
+      pdf = to_pdf <<~'EOS', analyze: true
+      [discrete.text-right]
+      == Discrete Heading
+      EOS
+      right_x = (pdf.find_text 'Discrete Heading')[0][:x]
+
+      (expect right_x).to be > left_x
+    end
+
     it 'should outdent footnotes in article' do
       pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
       = Document Title

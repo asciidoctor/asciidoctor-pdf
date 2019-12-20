@@ -610,9 +610,13 @@ module Asciidoctor
 
       def convert_floating_title node
         add_dest_for_block node if node.id
+        hlevel = node.level.next
+        unless (align = resolve_alignment_from_role node.roles)
+          align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym 
+        end
         # QUESTION should we decouple styles from section titles?
-        theme_font :heading, level: (hlevel = node.level + 1) do
-          layout_heading node.title, align: (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym, level: hlevel, outdent: (node.parent.context == :section)
+        theme_font :heading, level: hlevel do
+          layout_heading node.title, align: align, level: hlevel, outdent: (node.parent.context == :section)
         end
       end
 
