@@ -9,13 +9,8 @@ module Asciidoctor::PDF::FormattedText
       include ::Asciidoctor::LoggingShim
     end
 
+    # NOTE we must use a visible char or else Prawn won't allocate space for the fragment
     ImagePlaceholderChar = '.'
-    begin
-      require 'concurrent/map' unless defined? ::Concurrent::Map
-      PlaceholderWidthCache = ::Concurrent::Map.new
-    rescue
-      PlaceholderWidthCache = {}
-    end
     TemporaryPath = ::Asciidoctor::PDF::TemporaryPath
 
     def wrap fragments
@@ -103,7 +98,6 @@ module Asciidoctor::PDF::FormattedText
             fragment[:image_info] = image_info
           end
 
-          spacer_w = nil
           doc.fragment_font fragment do
             # NOTE if image height exceeds line height by more than 1.5x, increase the line height
             # FIXME: we could really use a nicer API from Prawn here; this is an ugly hack
@@ -117,26 +111,10 @@ module Asciidoctor::PDF::FormattedText
               #doc.font_size(fragment[:size] = (f_height + line_font.descender) * (doc.font_size / line_font.height))
               fragment[:line_height_increased] = true
             end
-
-            unless (spacer_w = PlaceholderWidthCache[f_info = doc.font_info])
-              spacer_w = PlaceholderWidthCache[f_info] = doc.width_of ImagePlaceholderChar
-            end
           end
 
-          # NOTE make room for image by repeating image placeholder character, using character spacing to fine-tune
-          # NOTE image_width is constrained to available_w, so we don't have to check for overflow
-          spacer_cnt, remainder = image_w.divmod spacer_w
-          if spacer_cnt > 0
-            fragment[:text] = ImagePlaceholderChar * spacer_cnt
-            fragment[:character_spacing] = remainder.fdiv spacer_cnt if remainder > 0
-          else
-            fragment[:text] = ImagePlaceholderChar
-            fragment[:character_spacing] = -(spacer_w - remainder)
-          end
-
-          # FIXME: we could use a nicer API from Prawn here that lets us reserve a fragment width without text
-          #fragment[:image_width] = fragment[:width] = image_w
-          fragment[:image_width] = image_w
+          fragment[:text] = ImagePlaceholderChar
+          fragment[:image_width] = fragment[:width] = image_w
           fragment[:image_height] = image_h
         rescue
           logger.warn %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! ? '; install prawn-gmagick gem to add support' : ''})

@@ -43,21 +43,6 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
     end unless windows?
 
-    it 'should resolve target of inline image relative to imagesdir', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-inline.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
-      image:sample-logo.jpg[ACME,12] ACME products are the best!
-      EOS
-
-      (expect to_file).to visually_match 'image-inline.pdf'
-    end
-
-    it 'should replace inline image with alt text if image is missing' do
-      (expect do
-        pdf = to_pdf 'You cannot see that which is image:not-there.png[not there].', analyze: true
-        (expect pdf.lines).to eql ['You cannot see that which is [not there].']
-      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
-    end
-
     it 'should respect value of imagesdir if changed mid-document' do
       pdf = to_pdf <<~EOS, enable_footer: true, attributes: {}
       :imagesdir: #{fixtures_dir}
@@ -71,20 +56,6 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect get_images pdf).to have_size 2
     end
-
-    it 'should warn instead of crash if inline image is unreadable' do
-      image_file = fixture_file 'logo.png'
-      old_mode = (File.stat image_file).mode
-      begin
-        (expect do
-          FileUtils.chmod 0o000, image_file
-          pdf = to_pdf 'image:logo.png[Unreadable Image,16] Company Name', analyze: true
-          (expect pdf.lines).to eql ['[Unreadable Image] Company Name']
-        end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
-      ensure
-        FileUtils.chmod old_mode, image_file
-      end
-    end unless windows?
   end
 
   context 'Alignment' do
@@ -558,6 +529,36 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Inline' do
+    it 'should resolve target of inline image relative to imagesdir', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-inline.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      image:sample-logo.jpg[ACME,12] ACME products are the best!
+      EOS
+
+      (expect to_file).to visually_match 'image-inline.pdf'
+    end
+
+    it 'should replace inline image with alt text if image is missing' do
+      (expect do
+        pdf = to_pdf 'You cannot see that which is image:not-there.png[not there].', analyze: true
+        (expect pdf.lines).to eql ['You cannot see that which is [not there].']
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+    end
+
+    it 'should warn instead of crash if inline image is unreadable' do
+      image_file = fixture_file 'logo.png'
+      old_mode = (File.stat image_file).mode
+      begin
+        (expect do
+          FileUtils.chmod 0o000, image_file
+          pdf = to_pdf 'image:logo.png[Unreadable Image,16] Company Name', analyze: true
+          (expect pdf.lines).to eql ['[Unreadable Image] Company Name']
+        end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      ensure
+        FileUtils.chmod old_mode, image_file
+      end
+    end unless windows?
+
+    # NOTE this test also verifies space is allocated for an inline image at the start of a line
     it 'should convert multiple images on the same line', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-multiple-inline.pdf'
       image:logo.png[Asciidoctor,12] is developed on image:tux.png[Linux,12].
