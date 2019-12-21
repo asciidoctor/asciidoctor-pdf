@@ -147,7 +147,7 @@ describe Asciidoctor::PDF::Converter do
       it 'should log error if theme cannot be found or loaded' do
         (expect do
           Asciidoctor.convert 'foo', backend: 'pdf', attributes: { 'pdf-theme' => 'foo' }
-        end).to (raise_exception Errno::ENOENT) & (log_message severity: :ERROR, message: '~could not locate or load the built-in pdf theme `foo\'')
+        end).to log_message severity: :ERROR, message: '~could not locate or load the built-in pdf theme `foo\'; reverting to default theme'
       end
 
       it 'should not crash if theme does not specify any keys' do
