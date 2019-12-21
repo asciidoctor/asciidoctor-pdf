@@ -112,9 +112,10 @@ endif::[]
 
 == Known Limitations
 
+* Footnotes are always rendered as endnotes (at end of chapter for books; at end of document for all other doctypes)
 * Table cells that exceed height of a single page will be truncated (see https://github.com/prawnpdf/prawn-table/issues/41[prawn-table#41])
 * Columns cannot be assigned a 0% width; the same goes for autowidth columns when the width of all other columns meets or exceeds 100%
-* Footnotes are always rendered as endnotes (at end of chapter for books; at end of document for all other doctypes)
+* An inline image in a table cell will not force the column wider if the width of the image exceeds the width of the column; either reduce the image width using `pdfwidth` or increase the width of the column using `cols`; another solution is to convert the cell to an AsciiDoc table cell (see https://github.com/asciidoctor/asciidoctor-pdf/issues/830)
 * Must use development version of prawn-table for autowidth to work on table head row
 * Must use development version of prawn for error to include font name when requested font style is missing
 * Must use Ruby >= 2.4 for natural cross references to work with non-ASCII titles
