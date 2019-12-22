@@ -233,7 +233,8 @@ end
 
 RSpec.configure do |config|
   config.before :suite do
-    FileUtils.mkdir_p output_dir
+    FileUtils.rm_r output_dir, force: true, secure: true
+    FileUtils.mkdir output_dir
   end
 
   config.after :suite do
