@@ -288,12 +288,11 @@ module Asciidoctor
                 end : value
               elsif (value = attrs[:id] || attrs[:name])
                 # NOTE text is null character, which is used as placeholder text so Prawn doesn't drop fragment
-                fragment[:name] = value
+                fragment = { name: value, callback: [InlineDestinationMarker] }
                 if (type = attrs[:type])
                   fragment[:type] = type.to_sym
                 end
-                fragment[:callback] = (fragment[:callback] || []) | [InlineDestinationMarker]
-                visible = false
+                visible = nil
               end
             end
             fragment.update(@theme_settings[:link]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : nval } if visible
