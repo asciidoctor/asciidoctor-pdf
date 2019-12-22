@@ -203,15 +203,16 @@ module Asciidoctor
         layout_cover_page doc, :front
         has_front_cover = page_number > marked_page_number
 
-        layout_title_page doc if (use_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
+        if (use_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
+          layout_title_page doc
+          has_title_page = page_number == (has_front_cover ? 2 : 1)
+        end
 
         # NOTE: font must be set before content is written to the main or scratch document
         start_new_page unless page.empty?
         font @theme.base_font_family, size: @root_font_size, style: (@theme.base_font_style || :normal).to_sym
 
-        if use_title_page
-          has_title_page = page_number == (has_front_cover ? 3 : 2)
-        else
+        unless use_title_page
           body_start_page_number = page_number
           theme_font :heading, level: 1 do
             layout_heading doc.doctitle, align: (@theme.heading_h1_align || :center).to_sym, level: 1
