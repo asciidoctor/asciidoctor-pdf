@@ -146,6 +146,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       = Book Title
       :media: prepress
       :doctype: book
+      :front-cover-image: ~
 
       == First Chapter
 
@@ -172,6 +173,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       = Book Title
       :media: prepress
       :doctype: book
+      :front-cover-image: ~
 
       == First Chapter
 
@@ -187,6 +189,57 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       EOS
 
       (expect to_file).to visually_match 'page-prepress-custom-margins.pdf'
+    end
+
+    it 'should not apply recto margins to title page of prepress document by default if first page', visual: true do
+      pdf_theme = {
+        margin_inner: '1in',
+        margin_outer: '0.75in',
+      }
+      to_file = to_pdf_file <<~'EOS', 'page-prepress-margins-no-cover.pdf', pdf_theme: pdf_theme, enable_footer: true
+      = Book Title
+      :media: prepress
+      :doctype: book
+
+      == First Chapter
+
+      <<<
+
+      === A Section
+
+      == Last Chapter
+
+      <<<
+
+      === B Section
+      EOS
+
+      (expect to_file).to visually_match 'page-prepress-margins-no-cover.pdf'
+    end
+
+    it 'should apply recto margins to first page of prepress document if not title page or cover', visual: true do
+      pdf_theme = {
+        margin_inner: '1in',
+        margin_outer: '0.75in',
+      }
+      to_file = to_pdf_file <<~'EOS', 'page-prepress-margins-body-only.pdf', pdf_theme: pdf_theme, enable_footer: true
+      :media: prepress
+      :doctype: book
+
+      == First Chapter
+
+      <<<
+
+      === A Section
+
+      == Last Chapter
+
+      <<<
+
+      === B Section
+      EOS
+
+      (expect to_file).to visually_match 'page-prepress-margins-body-only.pdf'
     end
   end
 
