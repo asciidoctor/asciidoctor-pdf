@@ -80,14 +80,14 @@ button:
 key:
   background_color: f5f5f5
   border_color: cccccc
-  border_offset: 1.5
+  border_offset: 2
   border_radius: 2
-  border_width: 0.375
+  border_width: 0.5
   font_family: $literal_font_family
   separator: "\u202f+\u202f"
 mark:
   background_color: ffff00
-  border_offset: 0.5
+  border_offset: 1
 menu:
   caret_content: " <font size=\"1.15em\"><color rgb=\"b12146\">\u203a</color></font> "
 heading:

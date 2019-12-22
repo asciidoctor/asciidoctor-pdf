@@ -44,8 +44,9 @@ module Asciidoctor
                 background_color: (button_bg_color = theme.button_background_color),
                 border_width: (button_border_width = theme.button_border_width),
                 border_color: button_border_width && (theme.button_border_color || theme.base_border_color),
-                border_offset: (button_bg_or_border = button_bg_color || button_border_width) && theme.button_border_offset,
+                border_offset: (button_border_offset = (button_bg_or_border = button_bg_color || button_border_width) && theme.button_border_offset),
                 border_radius: button_bg_or_border && theme.button_border_radius,
+                align: button_border_offset && :center,
                 callback: button_bg_or_border && [TextBackgroundAndBorderRenderer],
               }.compact,
               code: {
@@ -53,12 +54,13 @@ module Asciidoctor
                 font: theme.literal_font_family,
                 size: theme.literal_font_size,
                 styles: (to_styles theme.literal_font_style),
-                background_color: (monospaced_bg_color = theme.literal_background_color),
-                border_width: (monospaced_border_width = theme.literal_border_width),
-                border_color: monospaced_border_width && (theme.literal_border_color || theme.base_border_color),
-                border_offset: (monospaced_bg_or_border = monospaced_bg_color || monospaced_border_width) && theme.literal_border_offset,
-                border_radius: monospaced_bg_or_border && theme.literal_border_radius,
-                callback: monospaced_bg_or_border && [TextBackgroundAndBorderRenderer],
+                background_color: (mono_bg_color = theme.literal_background_color),
+                border_width: (mono_border_width = theme.literal_border_width),
+                border_color: mono_border_width && (theme.literal_border_color || theme.base_border_color),
+                border_offset: (mono_border_offset = (mono_bg_or_border = mono_bg_color || mono_border_width) && theme.literal_border_offset),
+                border_radius: mono_bg_or_border && theme.literal_border_radius,
+                align: mono_border_offset && :center,
+                callback: mono_bg_or_border && [TextBackgroundAndBorderRenderer],
               }.compact,
               key: {
                 color: theme.key_font_color,
@@ -68,8 +70,9 @@ module Asciidoctor
                 background_color: (key_bg_color = theme.key_background_color),
                 border_width: (key_border_width = theme.key_border_width),
                 border_color: key_border_width && (theme.key_border_color || theme.base_border_color),
-                border_offset: (key_bg_or_border = key_bg_color || key_border_width) && theme.key_border_offset,
+                border_offset: (key_border_offset = (key_bg_or_border = key_bg_color || key_border_width) && theme.key_border_offset),
                 border_radius: key_bg_or_border && theme.key_border_radius,
+                align: key_border_offset && :center,
                 callback: key_bg_or_border && [TextBackgroundAndBorderRenderer],
               }.compact,
               link: {
@@ -84,7 +87,8 @@ module Asciidoctor
                 color: theme.mark_font_color,
                 styles: (to_styles theme.mark_font_style),
                 background_color: (mark_bg_color = theme.mark_background_color),
-                border_offset: mark_bg_color && theme.mark_border_offset,
+                border_offset: (mark_border_offset = mark_bg_color && theme.mark_border_offset),
+                align: mark_border_offset && :center,
                 callback: mark_bg_color && [TextBackgroundAndBorderRenderer],
               }.compact,
             }
@@ -269,7 +273,6 @@ module Asciidoctor
               fragment[:width] = value
               if (value = attrs[:align])
                 fragment[:align] = value.to_sym
-                fragment[:callback] = (fragment[:callback] || []) | [InlineTextAligner]
               end
             end
             #if (value = attrs[:character_spacing])
@@ -325,8 +328,7 @@ module Asciidoctor
                 styles << :bold if pvalue == 'bold'
               when 'font-style'
                 styles << :italic if pvalue == 'italic'
-              # background-color needed to support syntax highlighters
-              when 'background-color'
+              when 'background-color' # background-color needed to support syntax highlighters
                 if (pvalue.start_with? '#') && (HexColorRx.match? pvalue)
                   fragment[:background_color] = pvalue.slice 1, pvalue.length
                   fragment[:callback] = [TextBackgroundAndBorderRenderer] | (fragment[:callback] || [])
@@ -338,9 +340,13 @@ module Asciidoctor
           attrs[:class].split.each do |class_name|
             next unless @theme_settings.key? class_name
             update_fragment fragment, @theme_settings[class_name]
-            fragment[:callback] = [TextBackgroundAndBorderRenderer] | (fragment[:callback] || []) if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
+            if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
+              fragment[:callback] = [TextBackgroundAndBorderRenderer] | (fragment[:callback] || [])
+              fragment[:align] = :center if fragment[:border_offset]
+            end
           end if attrs.key?(:class)
           fragment.delete(:styles) if styles.empty?
+          fragment[:callback] = (fragment[:callback] || []) | [InlineTextAligner] if fragment.key? :align
           fragment
         end
 
