@@ -228,7 +228,7 @@ module Asciidoctor
           when :em
             styles << :italic
           when :button, :code, :key, :mark
-            fragment.update(@theme_settings[tag_name]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : (k == :callback ? oval | nval : nval) }
+            update_fragment fragment, @theme_settings[tag_name]
           when :color
             if (rgb = attrs[:rgb])
               case rgb.chr
@@ -295,7 +295,7 @@ module Asciidoctor
                 visible = nil
               end
             end
-            fragment.update(@theme_settings[:link]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : nval } if visible
+            update_fragment fragment, @theme_settings[:link] if visible
           when :sub
             styles << :subscript
           when :sup
@@ -339,7 +339,7 @@ module Asciidoctor
           # TODO: we could limit to select tags, but doesn't seem to really affect performance
           attrs[:class].split.each do |class_name|
             next unless @theme_settings.key? class_name
-            fragment.update(@theme_settings[class_name]) {|k, oval, nval| k == :styles ? (nval ? oval.merge(nval) : oval.clear) : nval }
+            update_fragment fragment, @theme_settings[class_name]
             fragment[:callback] = (fragment[:callback] || []) | [TextBackgroundAndBorderRenderer] if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
           end if attrs.key?(:class)
           fragment.delete(:styles) if styles.empty?
@@ -371,6 +371,18 @@ module Asciidoctor
             styles ? (styles << style) : [style].to_set
           else
             styles
+          end
+        end
+
+        def update_fragment fragment, props
+          fragment.update props do |k, oval, nval|
+            if k == :styles
+              nval ? (oval.merge nval) : oval.clear
+            elsif k == :callback
+              oval | nval
+            else
+              nval
+            end
           end
         end
       end
