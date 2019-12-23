@@ -188,6 +188,24 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       linenum_text = (pdf.find_text %r/^11 *$/)[0]
       (expect linenum_text[:font_color]).to eql 'C0C0C0'
     end
+
+    it 'should use font color from style' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+      :rouge-style: monokai
+
+      [source,text]
+      ----
+      foo
+      bar
+      baz
+      ----
+      EOS
+
+      pdf.text.each do |text|
+        (expect text[:font_color]).to eql 'F8F8F2'
+      end
+    end
   end
 
   context 'CodeRay' do
@@ -392,6 +410,24 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
 
       (expect to_file).to visually_match 'source-pygments-background-color.pdf'
+    end
+
+    it 'should use font color from style' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: pygments
+      :pygments-style: monokai
+
+      [source,text]
+      ----
+      foo
+      bar
+      baz
+      ----
+      EOS
+
+      pdf.text.each do |text|
+        (expect text[:font_color]).to eql 'F8F8F2'
+      end
     end
   end if ENV.key? 'PYGMENTS_VERSION'
 

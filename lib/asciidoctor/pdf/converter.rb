@@ -51,6 +51,7 @@ module Asciidoctor
       # NOTE require_library doesn't support require_relative and we don't modify the load path for this gem
       CodeRayRequirePath = ::File.join __dir__, 'ext/prawn/coderay_encoder'
       RougeRequirePath = ::File.join __dir__, 'ext/rouge'
+      PygmentsRequirePath = ::File.join __dir__, 'ext/pygments'
       OptimizerRequirePath = ::File.join __dir__, 'optimizer'
 
       AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
@@ -121,7 +122,6 @@ module Asciidoctor
       ValueSeparatorRx = /;|,/
       HexColorRx = /^#[a-fA-F0-9]{6}$/
       SourceHighlighters = %w(coderay pygments rouge).to_set
-      PygmentsBgColorRx = /^\.highlight *{ *background(?:-color)?: *#([a-fA-F0-9]{6})/
       ViewportWidth = ::Module.new
       (TitleStyles = {
         'toc' => [:numbered_title],
@@ -1700,8 +1700,8 @@ module Asciidoctor
               highlighter = nil if (Helpers.require_library CodeRayRequirePath, 'coderay', :warn).nil?
             end
           when 'pygments'
-            unless defined? ::Pygments
-              highlighter = nil if (Helpers.require_library 'pygments', 'pygments.rb', :warn).nil?
+            unless defined? ::Pygments::Ext::BlockStyles
+              highlighter = nil if (Helpers.require_library PygmentsRequirePath, 'pygments.rb', :warn).nil?
             end
           when 'rouge'
             unless defined? ::Rouge::Formatters::Prawn
@@ -1762,16 +1762,10 @@ module Asciidoctor
           #    pygments_config[:hl_lines] = hl_lines.join ' '
           #  end
           #end
-          # QUESTION should we treat white background as inherit?
           # QUESTION allow border color to be set by theme for highlighted block?
-          if node.document.attr? 'pygments-bgcolor'
-            bg_color_override = node.document.attr 'pygments-bgcolor'
-          elsif style == 'pastie'
-            node.document.set_attr 'pygments-bgcolor', (bg_color_override = nil)
-          else
-            node.document.set_attr 'pygments-bgcolor',
-                (bg_color_override = PygmentsBgColorRx =~ (::Pygments.css '.highlight', style: style) ? $1 : nil)
-          end
+          pg_block_styles = ::Pygments::Ext::BlockStyles.for style
+          bg_color_override = pg_block_styles[:background_color]
+          font_color_override = pg_block_styles[:font_color]
           source_string, conum_mapping = extract_conums source_string
           # NOTE: pygments.rb strips trailing whitespace; preserve it in case there are conums on last line
           num_trailing_spaces = source_string.length - (source_string = source_string.rstrip).length if conum_mapping
@@ -1858,8 +1852,7 @@ module Asciidoctor
 
             pad_box @theme.code_padding do
               typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height || @theme.base_line_height),
-                  # QUESTION should we require the code_font_color to be set?
-                  color: (@theme.code_font_color || @font_color),
+                  color: (font_color_override || @theme.code_font_color || @font_color),
                   size: adjusted_font_size
             end
           end
