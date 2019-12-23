@@ -269,11 +269,11 @@ module Asciidoctor
                 fragment[:size] = value
               end
             end
+            # NOTE width is used for font-based icons
             if (value = attrs[:width])
               fragment[:width] = value
-              if (value = attrs[:align])
-                fragment[:align] = value.to_sym
-              end
+              fragment[:align] = :center
+              fragment[:callback] = (fragment[:callback] || []) | [InlineTextAligner]
             end
             #if (value = attrs[:character_spacing])
             #  fragment[:character_spacing] = value.to_f
@@ -306,7 +306,7 @@ module Asciidoctor
           when :del
             styles << :strikethrough
           when :span
-            # NOTE spaces in style attribute value are superfluous, for our purpose; split drops record after trailing ;
+            # NOTE spaces in style value are superfluous for our purpose; split drops record after trailing ;
             attrs[:style].tr(' ', '').split(';').each do |style|
               pname, pvalue = style.split(':', 2)
               # TODO: text-transform
@@ -328,6 +328,12 @@ module Asciidoctor
                 styles << :bold if pvalue == 'bold'
               when 'font-style'
                 styles << :italic if pvalue == 'italic'
+              when 'align', 'text-align'
+                fragment[:align] = pvalue.to_sym
+                fragment[:callback] = (fragment[:callback] || []) | [InlineTextAligner]
+              when 'width'
+                # NOTE implicitly activates inline-block behavior
+                fragment[:width] = pvalue
               when 'background-color' # background-color needed to support syntax highlighters
                 if (pvalue.start_with? '#') && (HexColorRx.match? pvalue)
                   fragment[:background_color] = pvalue.slice 1, pvalue.length

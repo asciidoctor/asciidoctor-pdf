@@ -27,6 +27,14 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         (expect output[0][:text]).to eql input
       end).to log_message severity: :ERROR, message: /^failed to parse formatted text:/
     end
+
+    it 'should allow span tag to control width and text alignment' do
+      output = subject.format '<span style="width: 1in; align: center">hi</span>'
+      (expect output).to have_size 1
+      (expect output[0][:text]).to eql 'hi'
+      (expect output[0][:width]).to eql '1in'
+      (expect output[0][:align]).to eql :center
+    end
   end
 
   context 'character references' do
@@ -237,6 +245,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       EOS
 
       (expect get_images pdf).to have_size 1
+    end
+
+    it 'should apply width and alignment specified by span tag', visual: true do
+      to_file = to_pdf_file '|+++<span style="width: 1in; align: center; background-color: #ffff00">hi</span>+++|', 'text-formatter-width-text-alignment.pdf'
+      (expect to_file).to visually_match 'text-formatter-width-text-alignment.pdf'
     end
   end
 

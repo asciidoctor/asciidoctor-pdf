@@ -2514,7 +2514,7 @@ module Asciidoctor
               when 'lg'
                 size_attr = ' size="1.333em"'
               when 'fw'
-                size_attr = ' width="1em" align="center"'
+                size_attr = ' width="1em"'
               else
                 size_attr = %( size="#{size.sub 'x', 'em'}")
               end
