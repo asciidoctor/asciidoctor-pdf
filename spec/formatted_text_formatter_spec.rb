@@ -11,6 +11,14 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect output[0][:styles]).to eql [:bold].to_set
     end
 
+    it 'should allow font color to be set on nested phrase' do
+      input = '<span style="color: #FF0000">hot <span style="color: #0000FF">cold</span> hot</span>'
+      output = subject.format input
+      (expect output).to have_size 3
+      (expect output[1][:text]).to eql 'cold'
+      (expect output[1][:color]).to eql '0000FF'
+    end
+
     it 'should warn if text contains invalid markup' do
       (expect do
         input = 'before <foo>bar</foo> after'

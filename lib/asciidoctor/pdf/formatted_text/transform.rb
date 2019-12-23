@@ -310,19 +310,17 @@ module Asciidoctor
               case pname
               when 'color'
                 # TODO: check whether the value is a valid hex color?
-                unless fragment[:color]
-                  case pvalue.length
-                  when 6
-                    fragment[:color] = pvalue
-                  when 7
-                    fragment[:color] = pvalue.slice(1, 6) if pvalue.start_with? '#'
-                  end
-                  # QUESTION should we support the 3 character form?
-                  #when 3
-                  #  fragment[:color] = pvalue.each_char.map {|c| c * 2 }.join
-                  #when 4
-                  #  fragment[:color] = pvalue.slice(1, 3).each_char.map {|c| c * 2 }.join if pvalue.start_with?('#')
+                case pvalue.length
+                when 6
+                  fragment[:color] = pvalue
+                when 7
+                  fragment[:color] = pvalue.slice(1, 6) if pvalue.start_with? '#'
                 end
+                # QUESTION should we support the 3 character form?
+                #when 3
+                #  fragment[:color] = pvalue.each_char.map {|c| c * 2 }.join
+                #when 4
+                #  fragment[:color] = pvalue.slice(1, 3).each_char.map {|c| c * 2 }.join if pvalue.start_with?('#')
               when 'font-weight'
                 styles << :bold if pvalue == 'bold'
               when 'font-style'
