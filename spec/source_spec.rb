@@ -128,7 +128,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should apply bw style' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~EOS, analyze: true
       :source-highlighter: rouge
       :rouge-style: bw
 
@@ -258,7 +258,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
     it 'should not crash when aligning line numbers' do
       (expect do
-        to_pdf <<~'EOS'
+        to_pdf <<~EOS
         :source-highlighter: pygments
 
         [source,xml,linenums]
@@ -314,7 +314,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should use background color from style', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'source-pygments-background-color.pdf', pdf_theme: { code_background_color: 'fafafa' }
+      to_file = to_pdf_file <<~EOS, 'source-pygments-background-color.pdf', pdf_theme: { code_background_color: 'fafafa' }
       :source-highlighter: pygments
       :pygments-style: monokai
 
@@ -342,7 +342,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
   context 'Callouts' do
     it 'should substitute autonumber callouts with circled numbers when using rouge as syntax highlighter' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~EOS, analyze: true
       :source-highlighter: rouge
 
       [source,java]
@@ -362,7 +362,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should process multiple autonumber callouts on a single line when using rouge as syntax highlighter' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~EOS, analyze: true
       :source-highlighter: rouge
 
       [source,java]
