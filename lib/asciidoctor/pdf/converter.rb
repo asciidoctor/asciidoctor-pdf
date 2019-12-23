@@ -121,7 +121,7 @@ module Asciidoctor
       ValueSeparatorRx = /;|,/
       HexColorRx = /^#[a-fA-F0-9]{6}$/
       SourceHighlighters = %w(coderay pygments rouge).to_set
-      PygmentsBgColorRx = /^\.highlight +{ *background: *#([^;]+);/
+      PygmentsBgColorRx = /^\.highlight *{ *background(?:-color)?: *#([a-fA-F0-9]{6})/
       ViewportWidth = ::Module.new
       (TitleStyles = {
         'toc' => [:numbered_title],

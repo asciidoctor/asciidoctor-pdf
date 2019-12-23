@@ -312,6 +312,32 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       (expect to_file).to visually_match 'source-pygments-token-background-color.pdf'
     end
+
+    it 'should use background color from style', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'source-pygments-background-color.pdf', pdf_theme: { code_background_color: 'fafafa' }
+      :source-highlighter: pygments
+      :pygments-style: monokai
+
+      .Ruby
+      [source,ruby]
+      ----
+      if /^#[a-fA-F0-9]{6}$/.match? color
+        puts 'hex color'
+      end
+      ----
+
+      .JavaScript
+      [source,js]
+      ----
+      'use strict'
+
+      const TAG_ALL_RX = /<[^>]+>/g
+      module.exports = (html) => html && html.replace(TAG_ALL_RX, '')
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-pygments-background-color.pdf'
+    end
   end if ENV.key? 'PYGMENTS_VERSION'
 
   context 'Callouts' do
