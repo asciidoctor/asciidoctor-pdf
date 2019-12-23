@@ -331,7 +331,7 @@ module Asciidoctor
               when 'background-color'
                 if (pvalue.start_with? '#') && (HexColorRx.match? pvalue)
                   fragment[:background_color] = pvalue.slice 1, pvalue.length
-                  fragment[:callback] = (fragment[:callback] || []) | [TextBackgroundAndBorderRenderer]
+                  fragment[:callback] = [TextBackgroundAndBorderRenderer] | (fragment[:callback] || [])
                 end
               end
             end if attrs.key?(:style)
@@ -340,7 +340,7 @@ module Asciidoctor
           attrs[:class].split.each do |class_name|
             next unless @theme_settings.key? class_name
             update_fragment fragment, @theme_settings[class_name]
-            fragment[:callback] = (fragment[:callback] || []) | [TextBackgroundAndBorderRenderer] if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
+            fragment[:callback] = [TextBackgroundAndBorderRenderer] | (fragment[:callback] || []) if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
           end if attrs.key?(:class)
           fragment.delete(:styles) if styles.empty?
           fragment
