@@ -149,6 +149,45 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         (expect beer_text[:font_color]).to eql 'BB0066'
       end
     end
+
+    it 'should add line numbers to start of line if linenums option is enabled' do
+      expected_lines = <<~EOS.split ?\n
+       1 <?xml version="1.0" encoding="UTF-8"?>
+       2 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+       3   <url>
+       4     <loc>https://example.org/home.html</loc>
+       5     <lastmod>2019-01-01T00:00:00.000Z</lastmod>
+       6   </url>
+       7   <url>
+       8     <loc>https://example.org/about.html</loc>
+       9     <lastmod>2019-01-01T00:00:00.000Z</lastmod>
+      10   </url>
+      11 </urlset>
+      EOS
+
+      pdf = to_pdf <<~EOS, pdf_theme: { code_linenum_font_color: 'C0C0C0' }, analyze: true
+      :source-highlighter: pygments
+
+      [source,xml,linenums]
+      ----
+      <?xml version="1.0" encoding="UTF-8"?>
+      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        <url>
+          <loc>https://example.org/home.html</loc>
+          <lastmod>2019-01-01T00:00:00.000Z</lastmod>
+        </url>
+        <url>
+          <loc>https://example.org/about.html</loc>
+          <lastmod>2019-01-01T00:00:00.000Z</lastmod>
+        </url>
+      </urlset>
+      ----
+      EOS
+
+      (expect pdf.lines).to eql expected_lines
+      linenum_text = (pdf.find_text %r/^11 *$/)[0]
+      (expect linenum_text[:font_color]).to eql 'C0C0C0'
+    end
   end
 
   context 'CodeRay' do
@@ -258,7 +297,21 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
     it 'should not crash when aligning line numbers' do
       (expect do
-        to_pdf <<~EOS
+        expected_lines = <<~EOS.split ?\n
+         1 <?xml version="1.0" encoding="UTF-8"?>
+         2 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+         3   <url>
+         4     <loc>https://example.org/home.html</loc>
+         5     <lastmod>2019-01-01T00:00:00.000Z</lastmod>
+         6   </url>
+         7   <url>
+         8     <loc>https://example.org/about.html</loc>
+         9     <lastmod>2019-01-01T00:00:00.000Z</lastmod>
+        10   </url>
+        11 </urlset>
+        EOS
+
+        pdf = to_pdf <<~EOS, analyze: true
         :source-highlighter: pygments
 
         [source,xml,linenums]
@@ -276,6 +329,8 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         </urlset>
         ----
         EOS
+
+        (expect pdf.lines).to eql expected_lines
       end).not_to raise_exception
     end
 
