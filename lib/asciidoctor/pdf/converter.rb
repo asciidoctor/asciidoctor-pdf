@@ -1756,12 +1756,6 @@ module Asciidoctor
             style: (style = (node.document.attr 'pygments-style') || 'pastie'),
           }
           lexer_opts[:startinline] = !(node.option? 'mixed') if lexer.name == 'PHP'
-          # TODO: enable once we support background color on spans
-          #if node.attr? 'highlight', nil, false
-          #  unless (hl_lines = node.resolve_lines_to_highlight(node.attr 'highlight', nil, false)).empty?
-          #    pygments_config[:hl_lines] = hl_lines.join ' '
-          #  end
-          #end
           # QUESTION allow border color to be set by theme for highlighted block?
           pg_block_styles = ::Pygments::Ext::BlockStyles.for style
           bg_color_override = pg_block_styles[:background_color]
@@ -1771,13 +1765,25 @@ module Asciidoctor
           num_trailing_spaces = source_string.length - (source_string = source_string.rstrip).length if conum_mapping
           # NOTE: highlight can return nil if something goes wrong; fallback to encoded source string if this happens
           result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
+          if node.attr? 'highlight', nil, false
+            if (highlight_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
+                (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
+                (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
+              highlight_lines = nil
+            else
+              pg_highlight_bg_color = pg_block_styles[:highlight_background_color]
+              highlight_lines = highlight_lines.map {|linenum| [linenum, pg_highlight_bg_color] }.to_h
+            end
+          end
           if (linenums = node.attr? 'linenums')
             linenums = (node.attr 'start', 1, false).to_i
             @theme.code_linenum_font_color ||= '999999'
-            conum_mapping ||= {}
+            postprocess = true
+          elsif conum_mapping || highlight_lines
+            postprocess = true
           end
           fragments = text_formatter.format result
-          fragments = restore_conums fragments, conum_mapping, num_trailing_spaces, linenums if conum_mapping
+          fragments = restore_conums fragments, conum_mapping, num_trailing_spaces, linenums, highlight_lines if postprocess
           source_chunks = guard_indentation_in_fragments fragments
         when 'rouge'
           if (srclang = node.attr 'language', nil, false)
@@ -1894,7 +1900,7 @@ module Asciidoctor
       #--
       # QUESTION can this be done more efficiently?
       # QUESTION can we reuse arrange_fragments_by_line?
-      def restore_conums fragments, conum_mapping, num_trailing_spaces = 0, linenums = nil
+      def restore_conums fragments, conum_mapping, num_trailing_spaces = 0, linenums = nil, highlight_lines = nil
         lines = []
         line_num = 0
         # reorganize the fragments into an array of lines
@@ -1920,8 +1926,13 @@ module Asciidoctor
         # append conums to appropriate lines, then flatten to an array of fragments
         lines.flat_map.with_index do |line, cur_line_num|
           last_line = cur_line_num == last_line_num
-          line.unshift text: %(#{(cur_line_num + linenums).to_s.rjust pad_size} ), color: linenum_color if linenums
-          if (conums = conum_mapping.delete cur_line_num)
+          visible_line_num = cur_line_num + (linenums || 1)
+          if highlight_lines && (highlight_bg_color = highlight_lines[visible_line_num])
+            #line.each {|frag| (frag[:callback] || []).delete FormattedText::TextBackgroundAndBorderRenderer }
+            line.unshift text: DummyText, background_color: highlight_bg_color, inline_block: true, stretch: true, width: 0, callback: [FormattedText::TextBackgroundAndBorderRenderer]
+          end
+          line.unshift text: %(#{visible_line_num.to_s.rjust pad_size} ), color: linenum_color if linenums
+          if conum_mapping && (conums = conum_mapping.delete cur_line_num)
             line << { text: ' ' * num_trailing_spaces } if last_line && num_trailing_spaces > 0
             conum_text = conums.map {|num| conum_glyph num }.join ' '
             line << (conum_color ? { text: conum_text, color: conum_color } : { text: conum_text })

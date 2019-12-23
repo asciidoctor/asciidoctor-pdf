@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * account for border offset in width of fragment (#1264)
 * ignore case when sorting index terms (#1405)
 * allow output file to be written to stdout (#1411)
+* implement line highlighting for source blocks when using Pygments as source highlighter (#1444)
 * expose theme as property on converter
 * add support for unbreakable option on open blocks (#1407) *@mogztter*
 * don't add mailto: prefix to revealed mailto URI when hide-uri-scheme is set (#920)
