@@ -143,7 +143,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         literal_background_color: 'f5f5f5',
         literal_border_color: 'dddddd',
         literal_border_width: 0.25,
-        literal_border_offset: 1.25,
+        literal_border_offset: 2.5,
         literal_border_radius: 3,
       }
       to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: theme_overrides
@@ -154,8 +154,8 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       theme_overrides = {
         button_content: '%s',
         button_background_color: '007BFF',
-        button_border_offset: 1.5,
-        button_border_radius: 2.5,
+        button_border_offset: 3,
+        button_border_radius: 2,
         button_font_color: 'ffffff',
       }
       to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button.pdf', pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }
@@ -554,15 +554,15 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     it 'should allow theme to override background and border for custom role', visual: true do
       pdf_theme = {
         role_variable_font_family: 'Courier',
-        role_variable_font_size: 10,
+        role_variable_font_size: '1.15em',
         role_variable_font_color: 'FFFFFF',
         role_variable_background_color: 'CF2974',
-        role_variable_border_color: 'ED398A',
-        role_variable_border_offset: 1.25,
+        role_variable_border_color: '222222',
+        role_variable_border_offset: 2,
         role_variable_border_radius: 2,
         role_variable_border_width: 1,
       }
-      to_file = to_pdf_file '[.variable]#counter#', 'text-formatter-inline-role-bg.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file 'reads value from the [.variable]#counter# variable', 'text-formatter-inline-role-bg.pdf', pdf_theme: pdf_theme
       (expect to_file).to visually_match 'text-formatter-inline-role-bg.pdf'
     end
 

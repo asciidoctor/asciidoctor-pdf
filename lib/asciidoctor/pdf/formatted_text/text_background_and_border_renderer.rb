@@ -9,14 +9,13 @@ module Asciidoctor::Pdf::FormattedText
       return if (pdf = fragment.document).scratch?
       data = fragment.format_state
       if (border_offset = data[:border_offset])
-        at = [fragment.left - border_offset, fragment.top + border_offset]
-        width = fragment.width + border_offset * 2
+        at = [fragment.left, fragment.top + border_offset]
         height = fragment.height + border_offset * 2
       else
         at = fragment.top_left
-        width = fragment.width
         height = fragment.height
       end
+      width = fragment.width
       border_radius = data[:border_radius]
       if (background_color = data[:background_color])
         prev_fill_color = pdf.fill_color
