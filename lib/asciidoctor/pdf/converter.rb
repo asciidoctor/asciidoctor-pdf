@@ -1798,11 +1798,16 @@ module Asciidoctor
             end
           end
           lexer ||= ::Rouge::Lexers::PlainText
-          formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap)
+          formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap, highlight_background_color: @theme.code_highlight_background_color)
           formatter_opts = (node.attr? 'linenums') ? { line_numbers: true, start_line: (node.attr 'start', 1, false).to_i } : {}
           # QUESTION allow border color to be set by theme for highlighted block?
           bg_color_override = formatter.background_color
           source_string, conum_mapping = extract_conums source_string
+          if node.attr? 'highlight', nil, false
+            unless (hl_lines = node.resolve_lines_to_highlight source_string, (node.attr 'highlight')).empty?
+              formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
+            end
+          end
           fragments = formatter.format((lexer.lex source_string), formatter_opts)
           source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
         else

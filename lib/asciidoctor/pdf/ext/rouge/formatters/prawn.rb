@@ -16,6 +16,7 @@ module Rouge
       ]
 
       LF = ?\n
+      DummyText = ?\u0000
       NoBreakSpace = ?\u00a0
       InnerIndent = %(#{LF} )
       GuardedIndent = NoBreakSpace
@@ -35,7 +36,8 @@ module Rouge
         @theme = theme
         @normalized_colors = {}
         @background_colorizer = BackgroundColorizer.new line_gap: opts[:line_gap]
-        @linenum_fragment_base = (create_fragment Tokens::Generic::Lineno).merge linenum: true
+        @linenum_fragment_base = create_fragment Tokens::Generic::Lineno
+        @highlight_line_fragment = create_highlight_line_fragment opts[:highlight_background_color]
       end
 
       def background_color
@@ -49,34 +51,38 @@ module Rouge
       end
 
       def stream tokens, opts = {}
-        if opts[:line_numbers]
+        line_numbers = opts[:line_numbers]
+        highlight_lines = opts[:highlight_lines]
+        if line_numbers || highlight_lines
           linenum = (linenum = opts[:start_line]) > 0 ? linenum : 1
           fragments = []
-          fragments << (create_linenum_fragment linenum)
+          fragments << (create_linenum_fragment linenum) if line_numbers
+          fragments << @highlight_line_fragment.dup if highlight_lines && highlight_lines[linenum]
           tokens.each do |tok, val|
             if val == LF
               fragments << { text: LF }
-              fragments << (create_linenum_fragment linenum += 1)
+              linenum += 1
+              fragments << (create_linenum_fragment linenum) if line_numbers
+              fragments << @highlight_line_fragment.dup if highlight_lines && highlight_lines[linenum]
             elsif val.include? LF
               # NOTE we assume if the fragment ends in a line feed, the intention was to match a line-oriented form
               line_oriented = val.end_with? LF
               base_fragment = create_fragment tok, val
               val.each_line do |line|
-                fragments << (line_oriented ? (base_fragment.merge text: line, line_oriented: true) : (base_fragment.merge text: line))
-                # NOTE append linenum fragment if there's a next line; only works if source doesn't have trailing endline
-                fragments << (create_linenum_fragment linenum += 1) if line.end_with? LF
+                fragments << (line_oriented ? (base_fragment.merge text: line, inline_block: true) : (base_fragment.merge text: line))
+                next unless line.end_with? LF
+                # NOTE eagerly append linenum fragment or line highlight if there's a next line
+                linenum += 1
+                fragments << (create_linenum_fragment linenum) if line_numbers
+                fragments << @highlight_line_fragment.dup if highlight_lines && highlight_lines[linenum]
               end
             else
               fragments << (create_fragment tok, val)
             end
           end
-          # NOTE drop orphaned linenum fragment (due to trailing endline in source)
-          #if (last_fragment = fragments[-1]) && last_fragment[:linenum]
-          #  fragments.pop
-          #  linenum -= 1
-          #end
           # NOTE pad numbers that have less digits than the largest line number
-          if (linenum_w = linenum.to_s.length) > 1
+          # FIXME we could store these fragments so we don't have find them again
+          if line_numbers && (linenum_w = linenum.to_s.length) > 1
             # NOTE extra column is the trailing space after the line number
             linenum_w += 1
             fragments.each do |fragment|
@@ -98,7 +104,7 @@ module Rouge
               #fragment = create_fragment tok, val
               fragment = val.rstrip.empty? ? { text: val } : (create_fragment tok, val)
               # NOTE we assume if the fragment ends in a line feed, the intention was to match a line-oriented form
-              fragment[:line_oriented] = true if (start_of_line = val.end_with? LF)
+              fragment[:inline_block] = true if (start_of_line = val.end_with? LF)
               fragment
             end
           end
@@ -140,7 +146,18 @@ module Rouge
       end
 
       def create_linenum_fragment linenum
-        @linenum_fragment_base.merge text: %(#{linenum} )
+        @linenum_fragment_base.merge text: %(#{linenum} ), linenum: linenum
+      end
+
+      def create_highlight_line_fragment bg_color
+        {
+          background_color: (bg_color || 'FFFFCC'),
+          callback: @background_colorizer,
+          extend: true,
+          inline_block: true,
+          text: DummyText,
+          width: 0,
+        }
       end
 
       def normalize_color raw
@@ -153,22 +170,29 @@ module Rouge
           @normalized_colors[raw] = normalized
         end
       end
-    end
 
-    class BackgroundColorizer
-      def initialize opts = {}
-        @line_gap = opts[:line_gap] || 0
-      end
+      class BackgroundColorizer
+        def initialize opts = {}
+          @line_gap = opts[:line_gap] || 0
+        end
 
-      def render_behind fragment
-        pdf = fragment.document
-        data = fragment.format_state
-        prev_fill_color = pdf.fill_color
-        pdf.fill_color data[:background_color]
-        v_gap = data[:inline_block] ? @line_gap : 0
-        fragment_width = data[:line_oriented] && data[:extend] ? (pdf.bounds.width - fragment.left) : fragment.width
-        pdf.fill_rectangle [fragment.left, fragment.top + v_gap * 0.5], fragment_width, (fragment.height + v_gap)
-        pdf.fill_color prev_fill_color
+        def render_behind fragment
+          pdf = fragment.document
+          data = fragment.format_state
+          prev_fill_color = pdf.fill_color
+          pdf.fill_color data[:background_color]
+          if data[:inline_block]
+            fragment_width = data[:extend] ? pdf.bounds.width - fragment.left : fragment.width
+            v_gap = @line_gap
+          else
+            fragment_width = fragment.width
+            v_gap = 0
+          end
+          pdf.fill_rectangle [fragment.left, fragment.top + v_gap * 0.5], fragment_width, (fragment.height + v_gap)
+          pdf.fill_color prev_fill_color
+          fragment.conceal if fragment.text == DummyText
+          nil
+        end
       end
     end
   end
