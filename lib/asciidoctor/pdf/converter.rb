@@ -1798,8 +1798,6 @@ module Asciidoctor
           bg_color_override = formatter.background_color
           source_string, conum_mapping = extract_conums source_string
           fragments = formatter.format((lexer.lex source_string), formatter_opts)
-          # NOTE: cleanup trailing endline (handled in ext/rouge/formatters/prawn instead)
-          #fragments[-1][:text] == LF ? fragments.pop : fragments[-1][:text].chop!
           source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
         else
           # NOTE: only format if we detect a need (callouts or inline formatting)

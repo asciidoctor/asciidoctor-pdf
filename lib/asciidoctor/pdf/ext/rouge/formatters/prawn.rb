@@ -50,13 +50,9 @@ module Rouge
 
       def stream tokens, opts = {}
         if opts[:line_numbers]
-          if (linenum = opts[:start_line]) > 0
-            linenum -= 1
-          else
-            linenum = 0
-          end
+          linenum = (linenum = opts[:start_line]) > 0 ? linenum : 1
           fragments = []
-          fragments << (create_linenum_fragment linenum += 1)
+          fragments << (create_linenum_fragment linenum)
           tokens.each do |tok, val|
             if val == LF
               fragments << { text: LF }
@@ -75,7 +71,10 @@ module Rouge
             end
           end
           # NOTE drop orphaned linenum fragment (due to trailing endline in source)
-          fragments.pop if (last_fragment = fragments[-1]) && last_fragment[:linenum]
+          #if (last_fragment = fragments[-1]) && last_fragment[:linenum]
+          #  fragments.pop
+          #  linenum -= 1
+          #end
           # NOTE pad numbers that have less digits than the largest line number
           if (linenum_w = linenum.to_s.length) > 1
             # NOTE extra column is the trailing space after the line number
@@ -103,7 +102,6 @@ module Rouge
               fragment
             end
           end
-          # QUESTION should we strip trailing newline?
         end
       end
 
