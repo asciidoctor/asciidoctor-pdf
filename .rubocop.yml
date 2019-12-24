@@ -86,7 +86,7 @@ Style/DoubleNegation:
 Style/FormatString:
   EnforcedStyle: percent
 Style/FormatStringToken:
-  EnforcedStyle: unannotated
+  Enabled: false
 Style/GuardClause:
   Enabled: false
 Style/HashSyntax:

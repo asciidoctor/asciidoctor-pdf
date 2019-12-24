@@ -1611,7 +1611,7 @@ module Asciidoctor
       def on_image_error _reason, node, target, opts = {}
         logger.warn opts[:message] if opts.key? :message
         alt_text_vars = { alt: (node.attr 'alt'), target: target }
-        alt_text_template = @theme.image_alt_content || %(%{link}[%{alt}]%{/link} | <em>%{target}</em>) # rubocop:disable Style/FormatStringToken
+        alt_text_template = @theme.image_alt_content || '%{link}[%{alt}]%{/link} | <em>%{target}</em>'
         if (link = node.attr 'link', nil, false)
           alt_text_vars[:link] = %(<a href="#{link}">)
           alt_text_vars[:'/link'] = '</a>'
@@ -2514,9 +2514,9 @@ module Asciidoctor
             if node.attr? 'size', nil, false
               case (size = node.attr 'size')
               when 'lg'
-                size_attr = %( size="1.333em")
+                size_attr = ' size="1.333em"'
               when 'fw'
-                size_attr = %( width="1em" align="center")
+                size_attr = ' width="1em" align="center"'
               else
                 size_attr = %( size="#{size.sub 'x', 'em'}")
               end

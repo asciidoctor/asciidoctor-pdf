@@ -20,9 +20,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should be able to customize formatting of alt text using theme' do
-      pdf_theme = {
-        image_alt_content: '%{alt} (%{target})', # rubocop:disable Style/FormatStringToken
-      }
+      pdf_theme = { image_alt_content: '%{alt} (%{target})' }
       (expect do
         pdf = to_pdf 'image::no-such-image.png[Missing Image]', pdf_theme: pdf_theme, analyze: true
         (expect pdf.lines).to eql ['Missing Image (no-such-image.png)']
