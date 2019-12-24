@@ -14,9 +14,9 @@ module Pygments
           ($1.strip.split ';').each do |style|
             pname, pval = (style.split ':', 2).map(&:strip)
             if pname == 'background' || pname == 'background-color'
-              styles[:background_color] = (pval.slice 1, pval.length).upcase if HexColorRx.match? pval
+              styles[:background_color] = pval.slice 1, pval.length if HexColorRx.match? pval
             elsif pname == 'color'
-              styles[:font_color] = (pval.slice 1, pval.length).upcase if HexColorRx.match? pval
+              styles[:font_color] = pval.slice 1, pval.length if HexColorRx.match? pval
             end
           end
         end
