@@ -446,6 +446,29 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         (expect text[:font_color]).to eql 'F8F8F2'
       end
     end
+
+    it 'should highlight selected lines but not the line numbers', visual: true do
+      to_file = to_pdf_file <<~EOS, 'source-pygments-line-highlighting.pdf'
+      :source-highlighter: pygments
+
+      [source,groovy,linenums,highlight=7-9]
+      ----
+      package com.example
+
+      import static ratpack.groovy.Groovy.ratpack
+
+      ratpack {
+          handlers {
+              get {
+                  render "Hello, World!"
+              }
+          }
+      }
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-pygments-line-highlighting.pdf'
+    end
   end if ENV.key? 'PYGMENTS_VERSION'
 
   context 'Callouts' do
