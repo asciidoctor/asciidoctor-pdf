@@ -28,7 +28,7 @@ Prawn::Text::Formatted::Fragment.prepend (Module.new do
 
   def width
     if (val = format_state[:width])
-      val = (val.end_with? 'em') ? val.to_f * @document.font_size : val.to_f if ::String === val
+      val = (val.end_with? 'em') ? val.to_f * @document.font_size : (@document.str_to_pt val) if ::String === val
     else
       val = super
     end
