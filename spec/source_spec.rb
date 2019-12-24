@@ -165,8 +165,8 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       11 </urlset>
       EOS
 
-      pdf = to_pdf <<~EOS, pdf_theme: { code_linenum_font_color: 'C0C0C0' }, analyze: true
-      :source-highlighter: pygments
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: rouge
 
       [source,xml,linenums]
       ----
@@ -186,7 +186,24 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       (expect pdf.lines).to eql expected_lines
       linenum_text = (pdf.find_text %r/^11 *$/)[0]
-      (expect linenum_text[:font_color]).to eql 'C0C0C0'
+      (expect linenum_text[:font_color]).to eql '888888'
+    end
+
+    it 'should honor start value for line numbering' do
+      expected_lines = <<~EOS.split ?\n
+      5 puts 'Hello, World!'
+      EOS
+
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: rouge
+
+      [source,xml,linenums,start=5]
+      ----
+      puts 'Hello, World!'
+      ----
+      EOS
+
+      (expect pdf.lines).to eql expected_lines
     end
 
     it 'should use font color from style' do
