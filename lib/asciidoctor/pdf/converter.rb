@@ -1929,7 +1929,7 @@ module Asciidoctor
           visible_line_num = cur_line_num + (linenums || 1)
           if highlight_lines && (highlight_bg_color = highlight_lines[visible_line_num])
             #line.each {|frag| (frag[:callback] || []).delete FormattedText::TextBackgroundAndBorderRenderer }
-            line.unshift text: DummyText, background_color: highlight_bg_color, inline_block: true, stretch: true, width: 0, callback: [FormattedText::TextBackgroundAndBorderRenderer]
+            line.unshift text: DummyText, background_color: highlight_bg_color, inline_block: true, extend: true, width: 0, callback: [FormattedText::TextBackgroundAndBorderRenderer]
           end
           line.unshift text: %(#{visible_line_num.to_s.rjust pad_size} ), color: linenum_color if linenums
           if conum_mapping && (conums = conum_mapping.delete cur_line_num)
