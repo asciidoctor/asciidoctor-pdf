@@ -369,6 +369,23 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       end).not_to raise_exception
     end
 
+    it 'should honor start value for line numbering' do
+      expected_lines = <<~EOS.split ?\n
+      5 puts 'Hello, World!'
+      EOS
+
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: pygments
+
+      [source,xml,linenums,start=5]
+      ----
+      puts 'Hello, World!'
+      ----
+      EOS
+
+      (expect pdf.lines).to eql expected_lines
+    end
+
     it 'should preserve space before callout on last line' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: pygments
