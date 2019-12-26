@@ -366,6 +366,32 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect ok_text[:x].floor).to be 135
     end if asciidoctor_1_5_7_or_better?
 
+    it 'should account for line metrics in cell padding' do
+      input = <<~'EOS'
+      |===
+      |A |B
+
+      |A1
+      |B1
+
+      |A2
+      |B2
+      |===
+      EOS
+
+      last_y = nil
+      [5, [5, 5, 5, 5]].each do |cell_padding|
+        pdf = to_pdf input, pdf_theme: { table_cell_padding: cell_padding }, analyze: true
+        a2_text = (pdf.find_text 'A2')[0]
+        (expect a2_text[:y]).to eql last_y if last_y
+        last_y = a2_text[:y]
+      end
+
+      pdf = to_pdf input, pdf_theme: { base_line_height: 2, table_cell_padding: 5 }, analyze: true
+      a2_text = (pdf.find_text 'A2')[0]
+      (expect a2_text[:y]).to be < last_y
+    end
+
     it 'should not accumulate cell padding between tables' do
       pdf = to_pdf <<~'EOS', pdf_theme: { table_cell_padding: [5, 5, 5, 5] }, analyze: true
       |===

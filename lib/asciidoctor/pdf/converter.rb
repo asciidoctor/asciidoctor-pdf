@@ -2016,7 +2016,6 @@ module Asciidoctor
               rowspan: cell.rowspan || 1,
               align: (cell.attr 'halign', nil, false).to_sym,
               valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym,
-              padding: theme.table_cell_padding,
             }
             cell_transform = nil
             case cell.style
@@ -2078,23 +2077,21 @@ module Asciidoctor
             when :asciidoc
               cell_data.delete :kerning
               asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self,
-                  (cell_data.merge content: cell.inner_document, font_style: (val = theme.table_font_style) ? val.to_sym : nil)
+                  (cell_data.merge content: cell.inner_document, font_style: (val = theme.table_font_style) ? val.to_sym : nil, padding: theme.table_cell_padding)
               cell_data = { content: asciidoc_cell }
             else
               cell_data[:font_style] = (val = theme.table_font_style) ? val.to_sym : nil
               cell_line_metrics = calc_line_metrics theme.base_line_height
             end
             if cell_line_metrics
-              if ::Array === (cell_padding = cell_data[:padding]) && cell_padding.size == 4
-                cell_padding = cell_padding.dup
-              else
-                cell_padding = cell_data[:padding] = inflate_padding cell_padding
-              end
+              cell_padding = theme.table_cell_padding
+              cell_padding = ::Array === cell_padding && cell_padding.size == 4 ? cell_padding.dup : (inflate_padding cell_padding)
               cell_padding[0] += cell_line_metrics.padding_top
               cell_padding[2] += cell_line_metrics.padding_bottom
               cell_data[:leading] = cell_line_metrics.leading
               # TODO: patch prawn-table to pass through final_gap option
               #cell_data[:final_gap] = cell_line_metrics.final_gap
+              cell_data[:padding] = cell_padding
             end
             unless cell_data.key? :content
               cell_text = cell.text.strip
