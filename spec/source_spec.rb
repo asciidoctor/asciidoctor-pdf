@@ -206,6 +206,23 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect pdf.lines).to eql expected_lines
     end
 
+    it 'should preserve orphan callout on last line' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,yaml]
+      ----
+      foo: 'bar'
+      key: 'value'
+      <1>
+      ----
+      <1> End the file with a trailing newline
+      EOS
+
+      conum_texts = pdf.find_text string: '①'
+      (expect conum_texts).to have_size 2
+    end
+
     it 'should use font color from style' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge

@@ -1912,7 +1912,7 @@ module Asciidoctor
         fragments.each do |fragment|
           line = (lines[line_num] ||= [])
           if (text = fragment[:text]) == LF
-            line_num += 1
+            lines[line_num += 1] ||= []
           elsif text.include? LF
             text.split(LF, -1).each_with_index do |line_in_fragment, idx|
               line = (lines[line_num += 1] ||= []) unless idx == 0

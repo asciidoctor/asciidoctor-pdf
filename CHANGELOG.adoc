@@ -32,6 +32,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * fall back to default theme instead of crashing if specified theme cannot be resolved
 * allow font color to be set on nested span in passthrough content
 * move width and align attributes from font tag to width and align style properties on span tag
+* preserve isolated callout on final line of source block
 
 == 1.5.0.beta.8 (2019-11-23) - @mojavelinux
 
