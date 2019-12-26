@@ -1976,32 +1976,45 @@ module Asciidoctor
         cell_kerning = resolve_font_kerning theme.table_font_kerning
 
         table_data = []
-        node.rows[:head].each do |row|
-          table_header = true
-          head_kerning = resolve_font_kerning theme.table_head_font_kerning, cell_kerning
-          head_transform = resolve_text_transform :table_head_text_transform, nil
-          row_data = []
-          row.each do |cell|
-            cell_text = head_transform ? (transform_text cell.text.strip, head_transform) : cell.text.strip
-            cell_text = hyphenate_text cell_text, @hyphenator if defined? @hyphenator
-            row_data << {
-              content: cell_text,
+        theme_font :table do
+          theme_font :table_head do
+            table_header = true
+            head_font_info = font_info
+            head_line_metrics = calc_line_metrics theme.base_line_height
+            head_cell_padding = theme.table_head_cell_padding || theme.table_cell_padding
+            head_cell_padding = ::Array === head_cell_padding && head_cell_padding.size == 4 ? head_cell_padding.dup : (inflate_padding head_cell_padding)
+            head_cell_padding[0] += head_line_metrics.padding_top
+            head_cell_padding[2] += head_line_metrics.padding_bottom
+            # QUESTION why doesn't text transform inherit from table?
+            head_transform = resolve_text_transform :table_head_text_transform, nil
+            base_cell_data = {
               inline_format: [normalize: true],
               background_color: head_bg_color,
-              text_color: (theme.table_head_font_color || theme.table_font_color || @font_color),
-              size: (theme.table_head_font_size || theme.table_font_size),
-              font: (theme.table_head_font_family || theme.table_font_family),
-              font_style: (val = theme.table_head_font_style || theme.table_font_style) ? val.to_sym : nil,
-              kerning: head_kerning,
-              colspan: cell.colspan || 1,
-              rowspan: cell.rowspan || 1,
-              align: (cell.attr 'halign', nil, false).to_sym,
-              valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym,
-              padding: theme.table_head_cell_padding || theme.table_cell_padding,
+              text_color: @font_color,
+              size: head_font_info[:size],
+              font: head_font_info[:family],
+              font_style: head_font_info[:style],
+              kerning: default_kerning?,
+              padding: head_cell_padding,
+              leading: head_line_metrics.leading,
+              # TODO: patch prawn-table to pass through final_gap option
+              #final_gap: head_line_metrics.final_gap,
             }
+            node.rows[:head].each do |row|
+              table_data << (row.map do |cell|
+                cell_text = head_transform ? (transform_text cell.text.strip, head_transform) : cell.text.strip
+                cell_text = hyphenate_text cell_text, @hyphenator if defined? @hyphenator
+                base_cell_data.merge \
+                  content: cell_text,
+                  colspan: cell.colspan || 1,
+                  rowspan: cell.rowspan || 1,
+                  align: (cell.attr 'halign', nil, false).to_sym,
+                  valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym
+              end)
+            end
           end
-          table_data << row_data
-        end
+          # TODO: move unless to inner block when theme_font :table is applied to all rows
+        end unless node.rows[:head].empty?
 
         header_cell_data_cache = nil
         (node.rows[:body] + node.rows[:foot]).each do |row|
