@@ -1973,6 +1973,7 @@ module Asciidoctor
         body_bg_color = resolve_theme_color :table_body_background_color, tbl_bg_color
         body_stripe_bg_color = resolve_theme_color :table_body_stripe_background_color, tbl_bg_color
 
+        base_line_metrics = calc_line_metrics theme.base_line_height
         cell_kerning = resolve_font_kerning theme.table_font_kerning
 
         table_data = []
@@ -2022,10 +2023,10 @@ module Asciidoctor
             case cell.style
             when :emphasis
               cell_data[:font_style] = :italic
-              cell_line_metrics = calc_line_metrics theme.base_line_height
+              cell_line_metrics = base_line_metrics
             when :strong
               cell_data[:font_style] = :bold
-              cell_line_metrics = calc_line_metrics theme.base_line_height
+              cell_line_metrics = base_line_metrics
             when :header
               unless header_cell_data_cache
                 header_cell_data_cache = {}
@@ -2048,7 +2049,7 @@ module Asciidoctor
               header_cell_data = header_cell_data_cache.dup
               cell_transform = resolve_text_transform header_cell_data, nil
               cell_data.update header_cell_data unless header_cell_data.empty?
-              cell_line_metrics = calc_line_metrics theme.base_line_height
+              cell_line_metrics = base_line_metrics
             when :monospaced
               cell_data[:font] = theme.literal_font_family
               if (val = theme.literal_font_size)
@@ -2057,7 +2058,7 @@ module Asciidoctor
               if (val = theme.literal_font_color)
                 cell_data[:text_color] = val
               end
-              cell_line_metrics = calc_line_metrics theme.base_line_height
+              cell_line_metrics = base_line_metrics
             when :literal
               # NOTE: we want the raw AsciiDoc in this case
               cell_data[:content] = guard_indentation cell.instance_variable_get :@text
@@ -2074,7 +2075,7 @@ module Asciidoctor
             when :verse
               cell_data[:content] = guard_indentation cell.text
               cell_data[:inline_format] = true
-              cell_line_metrics = calc_line_metrics theme.base_line_height
+              cell_line_metrics = base_line_metrics
             when :asciidoc
               cell_data.delete :kerning
               asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self,
@@ -2082,7 +2083,7 @@ module Asciidoctor
               cell_data = { content: asciidoc_cell }
             else
               cell_data[:font_style] = (val = theme.table_font_style) ? val.to_sym : nil
-              cell_line_metrics = calc_line_metrics theme.base_line_height
+              cell_line_metrics = base_line_metrics
             end
             if cell_line_metrics
               if ::Array === (cell_padding = cell_data[:padding]) && cell_padding.size == 4
