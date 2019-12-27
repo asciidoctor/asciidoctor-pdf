@@ -422,8 +422,12 @@ RSpec.configure do |config|
     end
   end
 
-  def get_page_size pdf, page_num
-    (pdf.page page_num).attributes[:MediaBox].slice 2, 2
+  def get_page_size pdf, page_num = 1
+    if ::PDF::Reader === pdf
+      (pdf.page page_num).attributes[:MediaBox].slice 2, 2
+    else
+      pdf.pages[page_num - 1][:size]
+    end
   end
 
   def get_page_number pdf, page
