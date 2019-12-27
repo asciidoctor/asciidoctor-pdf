@@ -219,7 +219,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       <1> End the file with a trailing newline
       EOS
 
-      conum_texts = pdf.find_text string: '①'
+      conum_texts = pdf.find_text '①'
       (expect conum_texts).to have_size 2
     end
 

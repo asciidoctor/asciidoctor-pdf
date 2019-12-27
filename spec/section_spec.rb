@@ -700,7 +700,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       paragraph
       EOS
 
-      discrete_heading_texts = pdf.find_text string: %r/Discrete/
+      discrete_heading_texts = pdf.find_text %r/Discrete/
       (expect discrete_heading_texts).to have_size 2
       (expect discrete_heading_texts[0][:x]).to eql 48.24
       (expect discrete_heading_texts[1][:x]).to eql 48.24
