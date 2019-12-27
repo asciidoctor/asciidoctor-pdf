@@ -208,6 +208,8 @@ module Asciidoctor
           has_title_page = page_number == (has_front_cover ? 2 : 1)
         end
 
+        @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress' && page_number == 0
+
         # NOTE: font must be set before content is written to the main or scratch document
         start_new_page unless page.empty?
         font @theme.base_font_family, size: @root_font_size, style: (@theme.base_font_style || :normal).to_sym
@@ -315,7 +317,7 @@ module Asciidoctor
         #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
         ((::Prawn::Document.instance_method :initialize).bind self).call pdf_opts
         renderer.min_version(@pdf_version = PDFVersions[doc.attr 'pdf-version'])
-        @page_margin_by_side = { recto: page_margin, verso: page_margin }
+        @page_margin_by_side = { recto: page_margin, verso: page_margin, cover: page_margin }
         if (@media = doc.attr 'media', 'screen') == 'prepress'
           @ppbook = doc.doctype == 'book'
           page_margin_recto = @page_margin_by_side[:recto]
@@ -508,7 +510,8 @@ module Asciidoctor
       # NOTE: init_page is not called for imported pages, front and back cover pages, and other image pages
       def init_page *_args
         # NOTE: we assume in prepress that physical page number reflects page side
-        if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_side]) != page_margin
+        if @media == 'prepress' &&
+            (next_page_margin = @page_margin_by_side[page_number == 1 ? :cover : page_side]) != page_margin
           set_page_margin next_page_margin
         end
         if @page_bg_color && @page_bg_color != 'FFFFFF'
@@ -2795,7 +2798,10 @@ module Asciidoctor
       def layout_cover_page doc, face
         # TODO: turn processing of attribute with inline image a utility function in Asciidoctor
         if (image_path = (doc.attr %(#{face}-cover-image)))
-          if (image_path.include? ':') && image_path =~ ImageAttributeValueRx
+          if image_path == '~'
+            image_path = nil
+            @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress'
+          elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
             image_attrs = (AttributeList.new $2).parse %w(alt width)
             image_path = resolve_image_path doc, $1, true, (image_format = image_attrs['format'])
           else

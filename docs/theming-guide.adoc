@@ -1230,6 +1230,8 @@ To disable the image, use the value `none`.
 . Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
 . The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin-inner and margin-outer values.
 These margins and used when the value `prepress` is assigned to the `media` document attribute.
+If no cover is specified, the recto margin is not applied to the title page.
+To apply the recto margin to the title page, but not include a cover, assign the value `~` to the `front-cover-image` attribute.
 . The `toc` value only applies if the toc is in the default location (before the first page of the body).
 If the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
 
@@ -4956,7 +4958,10 @@ recto page margin:: [0.5in, *0.59in*, 0.67in, *0.75in*]
 verso page margin:: [0.5in, *0.75in*, 0.67in, *0.59in*]
 
 The page margins alternate between recto and verso.
-The first page in the document is a recto page.
+The first page in the document (after the cover) is a recto page.
+
+If no cover is specified, the recto margin is not applied to the title page.
+To apply the recto margin to the title page, but not include a cover, assign the value `~` to the `front-cover-image` attribute.
 
 === Automatic Facing Pages
 
