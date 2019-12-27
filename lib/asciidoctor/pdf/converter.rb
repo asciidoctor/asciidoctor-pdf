@@ -1973,10 +1973,11 @@ module Asciidoctor
         body_bg_color = resolve_theme_color :table_body_background_color, tbl_bg_color
         body_stripe_bg_color = resolve_theme_color :table_body_stripe_background_color, tbl_bg_color
 
-        cell_kerning = resolve_font_kerning theme.table_font_kerning
+        base_header_cell_data = nil
 
         table_data = []
         theme_font :table do
+          head_rows = node.rows[:head]
           theme_font :table_head do
             table_header = true
             head_font_info = font_info
@@ -2000,7 +2001,7 @@ module Asciidoctor
               # TODO: patch prawn-table to pass through final_gap option
               #final_gap: head_line_metrics.final_gap,
             }
-            node.rows[:head].each do |row|
+            head_rows.each do |row|
               table_data << (row.map do |cell|
                 cell_text = head_transform ? (transform_text cell.text.strip, head_transform) : cell.text.strip
                 cell_text = hyphenate_text cell_text, @hyphenator if defined? @hyphenator
@@ -2012,135 +2013,124 @@ module Asciidoctor
                   valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym
               end)
             end
-          end
-          # TODO: move unless to inner block when theme_font :table is applied to all rows
-        end unless node.rows[:head].empty?
+          end unless head_rows.empty?
 
-        header_cell_data_cache = nil
-        (node.rows[:body] + node.rows[:foot]).each do |row|
-          row_data = []
-          row.each do |cell|
-            cell_data = {
-              text_color: (theme.table_font_color || @font_color),
-              size: theme.table_font_size,
-              font: theme.table_font_family,
-              kerning: cell_kerning,
-              colspan: cell.colspan || 1,
-              rowspan: cell.rowspan || 1,
-              align: (cell.attr 'halign', nil, false).to_sym,
-              valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym,
-            }
-            cell_transform = nil
-            case cell.style
-            when :emphasis
-              cell_data[:font_style] = :italic
-              cell_line_metrics = calc_line_metrics theme.base_line_height
-            when :strong
-              cell_data[:font_style] = :bold
-              cell_line_metrics = calc_line_metrics theme.base_line_height
-            when :header
-              unless header_cell_data_cache
-                header_cell_data_cache = {}
-                [
-                  #['align', :align, true], # QUESTION should we honor alignment set by col/cell spec? how can we tell?
-                  ['font_color', :text_color, false],
-                  ['font_family', :font, false],
-                  ['font_size', :size, false],
-                  ['font_style', :font_style, true],
-                  ['text_transform', :text_transform, true],
-                ].each do |(theme_key, data_key, symbol_value)|
-                  if (val = theme[%(table_header_cell_#{theme_key})] || theme[%(table_head_#{theme_key})])
-                    header_cell_data_cache[data_key] = symbol_value ? val.to_sym : val
+          body_font_info = font_info
+          base_cell_data = {
+            text_color: @font_color,
+            size: body_font_info[:size],
+            font: body_font_info[:family],
+            kerning: default_kerning?,
+          }
+          (node.rows[:body] + node.rows[:foot]).each do |row|
+            table_data << (row.map do |cell|
+              cell_data = base_cell_data.merge \
+                colspan: cell.colspan || 1,
+                rowspan: cell.rowspan || 1,
+                align: (cell.attr 'halign', nil, false).to_sym,
+                valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym
+              case cell.style
+              when :emphasis
+                cell_data[:font_style] = :italic
+                cell_line_metrics = calc_line_metrics theme.base_line_height
+              when :strong
+                cell_data[:font_style] = :bold
+                cell_line_metrics = calc_line_metrics theme.base_line_height
+              when :header
+                unless base_header_cell_data
+                  theme_font :table_head do
+                    theme_font :table_header_cell do
+                      header_cell_font_info = font_info
+                      base_header_cell_data = {
+                        text_color: @font_color,
+                        font: header_cell_font_info[:family],
+                        size: header_cell_font_info[:size],
+                        style: header_cell_font_style[:style],
+                        text_transform: @text_transform
+                      }
+                    end
+                  end
+                  if (val = resolve_theme_color :table_header_cell_background_color, head_bg_color)
+                    base_header_cell_data[:background_color] = val
                   end
                 end
-                if (val = resolve_theme_color :table_header_cell_background_color, head_bg_color)
-                  header_cell_data_cache[:background_color] = val
+                cell_data.update base_header_cell_data
+                cell_transform = cell_data.delete :text_transform
+                cell_line_metrics = calc_line_metrics theme.base_line_height
+              when :monospaced
+                cell_data[:font] = theme.literal_font_family
+                if (val = theme.literal_font_size)
+                  cell_data[:size] = val
+                end
+                if (val = theme.literal_font_color)
+                  cell_data[:text_color] = val
+                end
+                cell_line_metrics = calc_line_metrics theme.base_line_height
+              when :literal
+                # NOTE: we want the raw AsciiDoc in this case
+                cell_data[:content] = guard_indentation cell.instance_variable_get :@text
+                # NOTE: the absence of the inline_format option implies it's disabled
+                # QUESTION should we use literal_font_*, code_font_*, or introduce another category?
+                cell_data[:font] = theme.code_font_family
+                if (val = theme.code_font_size)
+                  cell_data[:size] = val
+                end
+                if (val = theme.code_font_color)
+                  cell_data[:text_color] = val
+                end
+                cell_line_metrics = calc_line_metrics theme.code_line_height
+              when :verse
+                cell_data[:content] = guard_indentation cell.text
+                cell_data[:inline_format] = true
+                cell_line_metrics = calc_line_metrics theme.base_line_height
+              when :asciidoc
+                cell_data.delete :kerning
+                asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self,
+                    (cell_data.merge content: cell.inner_document, font_style: (val = theme.table_font_style) ? val.to_sym : nil, padding: theme.table_cell_padding)
+                cell_data = { content: asciidoc_cell }
+              else
+                cell_data[:font_style] = (val = theme.table_font_style) ? val.to_sym : nil
+                cell_line_metrics = calc_line_metrics theme.base_line_height
+              end
+              if cell_line_metrics
+                cell_padding = theme.table_cell_padding
+                cell_padding = ::Array === cell_padding && cell_padding.size == 4 ? cell_padding.dup : (inflate_padding cell_padding)
+                cell_padding[0] += cell_line_metrics.padding_top
+                cell_padding[2] += cell_line_metrics.padding_bottom
+                cell_data[:leading] = cell_line_metrics.leading
+                # TODO: patch prawn-table to pass through final_gap option
+                #cell_data[:final_gap] = cell_line_metrics.final_gap
+                cell_data[:padding] = cell_padding
+              end
+              unless cell_data.key? :content
+                cell_text = cell.text.strip
+                cell_text = transform_text cell_text if cell_transform
+                cell_text = hyphenate_text cell_text, @hyphenator if defined? @hyphenator
+                cell_text = cell_text.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
+                if cell_text.include? LF
+                  # NOTE: effectively the same as calling cell.content (should we use that instead?)
+                  # FIXME: hard breaks not quite the same result as separate paragraphs; need custom cell impl here
+                  cell_data[:content] = (cell_text.split BlankLineRx).map {|l| l.tr_s WhitespaceChars, ' ' }.join DoubleLF
+                  cell_data[:inline_format] = true
+                else
+                  cell_data[:content] = cell_text
+                  cell_data[:inline_format] = [normalize: true]
                 end
               end
-              header_cell_data = header_cell_data_cache.dup
-              cell_transform = resolve_text_transform header_cell_data, nil
-              cell_data.update header_cell_data unless header_cell_data.empty?
-              cell_line_metrics = calc_line_metrics theme.base_line_height
-            when :monospaced
-              cell_data[:font] = theme.literal_font_family
-              if (val = theme.literal_font_size)
-                cell_data[:size] = val
+              if node.document.attr? 'cellbgcolor'
+                if (cell_bg_color = node.document.attr 'cellbgcolor') == 'transparent'
+                  cell_data[:background_color] = body_bg_color
+                elsif (cell_bg_color.start_with? '#') && (HexColorRx.match? cell_bg_color)
+                  cell_data[:background_color] = cell_bg_color.slice 1, cell_bg_color.length
+                end
               end
-              if (val = theme.literal_font_color)
-                cell_data[:text_color] = val
-              end
-              cell_line_metrics = calc_line_metrics theme.base_line_height
-            when :literal
-              # NOTE: we want the raw AsciiDoc in this case
-              cell_data[:content] = guard_indentation cell.instance_variable_get :@text
-              # NOTE: the absence of the inline_format option implies it's disabled
-              # QUESTION should we use literal_font_*, code_font_*, or introduce another category?
-              cell_data[:font] = theme.code_font_family
-              if (val = theme.code_font_size)
-                cell_data[:size] = val
-              end
-              if (val = theme.code_font_color)
-                cell_data[:text_color] = val
-              end
-              cell_line_metrics = calc_line_metrics theme.code_line_height
-            when :verse
-              cell_data[:content] = guard_indentation cell.text
-              cell_data[:inline_format] = true
-              cell_line_metrics = calc_line_metrics theme.base_line_height
-            when :asciidoc
-              cell_data.delete :kerning
-              asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self,
-                  (cell_data.merge content: cell.inner_document, font_style: (val = theme.table_font_style) ? val.to_sym : nil, padding: theme.table_cell_padding)
-              cell_data = { content: asciidoc_cell }
-            else
-              cell_data[:font_style] = (val = theme.table_font_style) ? val.to_sym : nil
-              cell_line_metrics = calc_line_metrics theme.base_line_height
-            end
-            if cell_line_metrics
-              cell_padding = theme.table_cell_padding
-              cell_padding = ::Array === cell_padding && cell_padding.size == 4 ? cell_padding.dup : (inflate_padding cell_padding)
-              cell_padding[0] += cell_line_metrics.padding_top
-              cell_padding[2] += cell_line_metrics.padding_bottom
-              cell_data[:leading] = cell_line_metrics.leading
-              # TODO: patch prawn-table to pass through final_gap option
-              #cell_data[:final_gap] = cell_line_metrics.final_gap
-              cell_data[:padding] = cell_padding
-            end
-            unless cell_data.key? :content
-              cell_text = cell.text.strip
-              cell_text = transform_text cell_text if cell_transform
-              cell_text = hyphenate_text cell_text, @hyphenator if defined? @hyphenator
-              cell_text = cell_text.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
-              if cell_text.include? LF
-                # NOTE: effectively the same as calling cell.content (should we use that instead?)
-                # FIXME: hard breaks not quite the same result as separate paragraphs; need custom cell impl here
-                cell_data[:content] = (cell_text.split BlankLineRx).map {|l| l.tr_s WhitespaceChars, ' ' }.join DoubleLF
-                cell_data[:inline_format] = true
-              else
-                cell_data[:content] = cell_text
-                cell_data[:inline_format] = [normalize: true]
-              end
-            end
-            if node.document.attr? 'cellbgcolor'
-              if (cell_bg_color = node.document.attr 'cellbgcolor') == 'transparent'
-                cell_data[:background_color] = body_bg_color
-              elsif (cell_bg_color.start_with? '#') && (HexColorRx.match? cell_bg_color)
-                cell_data[:background_color] = cell_bg_color.slice 1, cell_bg_color.length
-              end
-            end
-            row_data << cell_data
+              cell_data
+            end)
           end
-          table_data << row_data
         end
 
         # NOTE: Prawn aborts if table data is empty, so ensure there's at least one row
-        if table_data.empty?
-          empty_row = []
-          node.columns.each do
-            empty_row << { content: '' }
-          end
-          table_data = [empty_row]
-        end
+        table_data = ::Array.new(node.columns.size) { { 'content' => '' } } if table_data.empty?
 
         border_width = {}
         table_border_color = theme.table_border_color || theme.table_grid_color || theme.base_border_color
