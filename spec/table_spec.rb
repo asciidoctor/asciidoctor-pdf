@@ -1056,4 +1056,64 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[4]).to start_with 'して'
     end
   end
+
+  context 'Cell spanning' do
+    it 'should honor colspan on cell in head row' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=2*^]
+      |===
+      2+|Columns
+
+      |cell
+      |cell
+      |===
+      EOS
+
+      page_width = (get_page_size pdf)[0]
+      midpoint = page_width * 0.5
+      columns_text = (pdf.find_text 'Columns')[0]
+      (expect columns_text[:x]).to be < midpoint
+      (expect columns_text[:x] + columns_text[:width]).to be > midpoint
+      (expect pdf.find_text 'cell').to have_size 2
+    end
+
+    it 'should honor colspan on cell in body row' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=2*^]
+      |===
+      |cell
+      |cell
+
+      2+|one big cell
+      |===
+      EOS
+
+      page_width = (get_page_size pdf)[0]
+      midpoint = page_width * 0.5
+      big_cell_text = (pdf.find_text 'one big cell')[0]
+      (expect big_cell_text[:x]).to be < midpoint
+      (expect big_cell_text[:x] + big_cell_text[:width]).to be > midpoint
+      (expect pdf.find_text 'cell').to have_size 2
+    end
+
+    it 'should honor rowspan on cell in body row' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=2*^.^]
+      |===
+      .2+|one big cell
+      |cell
+
+      |cell
+      |===
+      EOS
+
+      big_cell_text = (pdf.find_text 'one big cell')[0]
+      top_cell_text, bottom_cell_text = pdf.find_text 'cell'
+      (expect top_cell_text[:x]).to eql bottom_cell_text[:x]
+      (expect top_cell_text[:y]).to be > bottom_cell_text[:y]
+      (expect big_cell_text[:x]).to be < top_cell_text[:x]
+      (expect big_cell_text[:y]).to be < top_cell_text[:y]
+      (expect big_cell_text[:y]).to be > bottom_cell_text[:y]
+    end
+  end
 end

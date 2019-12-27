@@ -2009,7 +2009,6 @@ module Asciidoctor
                 base_cell_data.merge \
                   content: cell_text,
                   colspan: cell.colspan || 1,
-                  rowspan: cell.rowspan || 1,
                   align: (cell.attr 'halign', nil, false).to_sym,
                   valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym
               end)
