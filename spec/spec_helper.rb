@@ -133,6 +133,11 @@ class EnhancedPDFTextInspector < PDF::Inspector
   end
 
   def show_text text, kerned = false
+    # NOTE this may be a rough approximation
+    text_width = (@state.current_font.unpack text).reduce 0 do |width, code|
+      width + (@state.current_font.glyph_width code) * @font_settings[:size] / 1000.0
+    end
+
     string = @state.current_font.to_utf8 text
     if @cursor
       accum = @cursor
@@ -141,11 +146,13 @@ class EnhancedPDFTextInspector < PDF::Inspector
       accum[:font_size] = @font_settings[:size]
       accum[:font_color] = @font_settings[:color]
       accum[:string] = string
+      accum[:width] = text_width
       @text << accum
       @pages[-1][:text] << accum
       @cursor = nil
     else
       (accum = @text[-1])[:string] += string
+      accum[:width] += text_width
     end
     accum[:kerned] ||= kerned
   end
