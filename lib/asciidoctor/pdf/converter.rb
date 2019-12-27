@@ -1974,6 +1974,7 @@ module Asciidoctor
         body_stripe_bg_color = resolve_theme_color :table_body_stripe_background_color, tbl_bg_color
 
         base_header_cell_data = nil
+        header_cell_line_metrics = nil
 
         table_data = []
         theme_font :table do
@@ -2015,13 +2016,14 @@ module Asciidoctor
             end
           end unless head_rows.empty?
 
-          body_font_info = font_info
           base_cell_data = {
-            text_color: @font_color,
+            font: (body_font_info = font_info)[:family],
+            font_style: body_font_info[:style],
             size: body_font_info[:size],
-            font: body_font_info[:family],
             kerning: default_kerning?,
+            text_color: @font_color,
           }
+          body_cell_line_metrics = calc_line_metrics theme.base_line_height
           (node.rows[:body] + node.rows[:foot]).each do |row|
             table_data << (row.map do |cell|
               cell_data = base_cell_data.merge \
@@ -2029,13 +2031,12 @@ module Asciidoctor
                 rowspan: cell.rowspan || 1,
                 align: (cell.attr 'halign', nil, false).to_sym,
                 valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym
+              cell_line_metrics = body_cell_line_metrics
               case cell.style
               when :emphasis
                 cell_data[:font_style] = :italic
-                cell_line_metrics = calc_line_metrics theme.base_line_height
               when :strong
                 cell_data[:font_style] = :bold
-                cell_line_metrics = calc_line_metrics theme.base_line_height
               when :header
                 unless base_header_cell_data
                   theme_font :table_head do
@@ -2046,8 +2047,9 @@ module Asciidoctor
                         font: header_cell_font_info[:family],
                         size: header_cell_font_info[:size],
                         style: header_cell_font_style[:style],
-                        text_transform: @text_transform
+                        text_transform: @text_transform,
                       }
+                      header_cell_line_metrics = calc_line_metrics theme.base_line_height
                     end
                   end
                   if (val = resolve_theme_color :table_header_cell_background_color, head_bg_color)
@@ -2056,45 +2058,44 @@ module Asciidoctor
                 end
                 cell_data.update base_header_cell_data
                 cell_transform = cell_data.delete :text_transform
-                cell_line_metrics = calc_line_metrics theme.base_line_height
+                cell_line_metrics = header_cell_line_metrics
               when :monospaced
-                cell_data[:font] = theme.literal_font_family
-                if (val = theme.literal_font_size)
-                  cell_data[:size] = val
+                cell_data.delete :font_style
+                theme_font :literal do
+                  mono_cell_font_info = font_info
+                  cell_data[:font] = mono_cell_font_info[:family]
+                  cell_data[:size] = mono_cell_font_info[:size]
+                  cell_data[:text_color] = @font_color
+                  cell_line_metrics = calc_line_metrics theme.base_line_height
                 end
-                if (val = theme.literal_font_color)
-                  cell_data[:text_color] = val
-                end
-                cell_line_metrics = calc_line_metrics theme.base_line_height
               when :literal
                 # NOTE: we want the raw AsciiDoc in this case
                 cell_data[:content] = guard_indentation cell.instance_variable_get :@text
                 # NOTE: the absence of the inline_format option implies it's disabled
+                cell_data.delete :font_style
                 # QUESTION should we use literal_font_*, code_font_*, or introduce another category?
-                cell_data[:font] = theme.code_font_family
-                if (val = theme.code_font_size)
-                  cell_data[:size] = val
+                theme_font :code do
+                  literal_cell_font_info = font_info
+                  cell_data[:font] = literal_cell_font_info[:family]
+                  cell_data[:size] = literal_cell_font_info[:size]
+                  cell_data[:text_color] = @font_color
+                  cell_line_metrics = calc_line_metrics theme.base_line_height
                 end
-                if (val = theme.code_font_color)
-                  cell_data[:text_color] = val
-                end
-                cell_line_metrics = calc_line_metrics theme.code_line_height
               when :verse
                 cell_data[:content] = guard_indentation cell.text
                 cell_data[:inline_format] = true
-                cell_line_metrics = calc_line_metrics theme.base_line_height
+                cell_data.delete :font_style
               when :asciidoc
                 cell_data.delete :kerning
+                cell_data.delete :font_style
+                cell_line_metrics = nil
                 asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self,
                     (cell_data.merge content: cell.inner_document, font_style: (val = theme.table_font_style) ? val.to_sym : nil, padding: theme.table_cell_padding)
                 cell_data = { content: asciidoc_cell }
-              else
-                cell_data[:font_style] = (val = theme.table_font_style) ? val.to_sym : nil
-                cell_line_metrics = calc_line_metrics theme.base_line_height
               end
               if cell_line_metrics
-                cell_padding = theme.table_cell_padding
-                cell_padding = ::Array === cell_padding && cell_padding.size == 4 ? cell_padding.dup : (inflate_padding cell_padding)
+                cell_padding = ::Array === (cell_padding = theme.table_cell_padding) && cell_padding.size == 4 ?
+                  cell_padding.dup : (inflate_padding cell_padding)
                 cell_padding[0] += cell_line_metrics.padding_top
                 cell_padding[2] += cell_line_metrics.padding_bottom
                 cell_data[:leading] = cell_line_metrics.leading

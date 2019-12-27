@@ -29,6 +29,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow inline image to be fit within line using fit=line (#711)
 * fix fit=cover for background image when aspect ratio of image is taller than page (#1430)
 * compute and apply line metrics for cells in table head row (#1436)
+* compute and apply line metrics correctly for cells in table body and foot rows (#1436)
 * allocate space for pagenum in toc consistently (#1434)
 * fall back to default theme instead of crashing if specified theme cannot be resolved
 * allow font color to be set on nested span in passthrough content
