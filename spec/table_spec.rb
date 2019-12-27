@@ -663,6 +663,29 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
   end
 
+  context 'Verse table cell' do
+    it 'should support verse if supported by core' do
+      pdf = to_pdf <<~EOS, analyze: true
+      |===
+      v|foo
+        bar
+      |===
+      EOS
+
+      if asciidoctor_2_or_better?
+        foobar_text = (pdf.find_text 'foo bar')[0]
+        (expect foobar_text).not_to be_nil
+      else
+        foo_text = (pdf.find_text 'foo')[0]
+        bar_text = (pdf.find_text %(\u00a0 bar))[0]
+        (expect foo_text).not_to be_nil
+        (expect bar_text).not_to be_nil
+        (expect foo_text[:x]).to eql bar_text[:x]
+        (expect foo_text[:y]).to be > bar_text[:y]
+      end
+    end
+  end
+
   context 'AsciiDoc table cell' do
     it 'should convert blocks in an AsciiDoc table cell' do
       pdf = to_pdf <<~'EOS', analyze: true
