@@ -392,6 +392,25 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect a2_text[:y]).to be < last_y
     end
 
+    it 'should account for font size when computing padding' do
+      input = <<~'EOS'
+      |===
+      |A |B
+
+      |A1
+      |B1
+
+      |A2
+      |B2
+      |===
+      EOS
+
+      pdf = to_pdf input, pdf_theme: { table_font_size: 20 }, analyze: true
+      a2_text = (pdf.find_text 'A2')[0]
+      # we can't really use a reference here, so we'll check for an specific offset
+      (expect a2_text[:y]).to be < 708
+    end
+
     it 'should not accumulate cell padding between tables' do
       pdf = to_pdf <<~'EOS', pdf_theme: { table_cell_padding: [5, 5, 5, 5] }, analyze: true
       |===
