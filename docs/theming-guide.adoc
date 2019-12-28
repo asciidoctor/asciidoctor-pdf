@@ -2355,7 +2355,15 @@ The keys in this category are used to control the style of literal, listing and 
 |code:
   padding: 11
 
-3+|[#key-prefix-code-linenum]*Key Prefix:* <<key-prefix-code-linenum,code-linenum>>^[2]^
+3+|[#key-prefix-code-highlight]*Key Prefix:* <<key-prefix-code-highlight,code-highlight>>^[2]^
+
+|background-color
+|<<colors,Color>> +
+(default: #FFFFCC)
+|code:
+  highlight-background-color: #ffff00
+
+3+|[#key-prefix-code-linenum]*Key Prefix:* <<key-prefix-code-linenum,code-linenum>>^[3]^
 
 |font-color
 |<<colors,Color>> +
@@ -2365,8 +2373,10 @@ The keys in this category are used to control the style of literal, listing and 
 |===
 
 . The line-gap property is used to tune the height of the background color applied to a span of block text highlighted using Rouge.
+. The code-highlight category only applies when using Rouge as the source highlighter.
+Otherwise, the styles are controlled by the source highlighter theme.
 . The code-linenum category only applies when using Pygments as the source highlighter.
-Otherwise, the style is controlled by the source highlighter theme.
+Otherwise, the styles are controlled by the source highlighter theme.
 
 [#keys-callout-numbers]
 === Callout Numbers
