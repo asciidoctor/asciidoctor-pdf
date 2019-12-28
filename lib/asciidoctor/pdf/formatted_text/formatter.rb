@@ -11,7 +11,7 @@ module Asciidoctor
         end
 
         FormattingSnifferPattern = /[<&]/
-        WHITESPACE = %( \t\")
+        WHITESPACE = %( \t\n)
 
         def initialize options = {}
           @parser = MarkupParser.new

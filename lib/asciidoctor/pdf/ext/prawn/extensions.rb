@@ -248,17 +248,17 @@ module Asciidoctor
           super @font_size
         elsif String === points
           if points.end_with? 'rem'
-            super(@root_font_size * points.to_f)
+            super @root_font_size * points.to_f
           elsif points.end_with? 'em'
-            super(@font_size * points.to_f)
+            super @font_size * points.to_f
           elsif points.end_with? '%'
-            super(@font_size * (points.to_f / 100))
+            super @font_size * (points.to_f / 100)
           else
             super points.to_f
           end
         # FIXME: HACK assume em value
         elsif points < 1
-          super(@font_size * points)
+          super @font_size * points
         else
           super points
         end
@@ -824,7 +824,7 @@ module Asciidoctor
         #@prototype ||= ::Prawn::Document.new
         @scratch ||= if defined? @prototype # rubocop:disable Naming/MemoizedInstanceVariableName
                        scratch = Marshal.load Marshal.dump @prototype
-                       scratch.instance_variable_set(:@prototype, @prototype)
+                       scratch.instance_variable_set :@prototype, @prototype
                        # TODO: set scratch number on scratch document
                        scratch
                      else

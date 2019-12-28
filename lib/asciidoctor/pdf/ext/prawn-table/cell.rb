@@ -10,7 +10,7 @@ class Prawn::Table::Cell
   def draw_borders pt
     x, y = pt
 
-    @pdf.mask(:line_width, :stroke_color) do
+    @pdf.mask :line_width, :stroke_color do
       @borders.each do |border|
         idx = { top: 0, right: 1, bottom: 2, left: 3 }[border]
         border_color = @border_colors[idx]
@@ -47,11 +47,11 @@ class Prawn::Table::Cell
         if border_color == 'transparent'
           @pdf.stroke_color = '000000'
           @pdf.transparent 0 do
-            @pdf.stroke_line(from, to)
+            @pdf.stroke_line from, to
           end
         else
           @pdf.stroke_color = border_color
-          @pdf.stroke_line(from, to)
+          @pdf.stroke_line from, to
         end
         @pdf.undash
       end

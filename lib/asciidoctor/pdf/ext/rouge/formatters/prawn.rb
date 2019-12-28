@@ -41,7 +41,7 @@ module Rouge
       end
 
       def background_color
-        @background_color ||= normalize_color((@theme.style_for Tokens::Text).bg)
+        @background_color ||= (normalize_color (@theme.style_for Tokens::Text).bg)
       end
 
       # Override format method so fragments don't get flatted to a string

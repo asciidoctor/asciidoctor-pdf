@@ -49,7 +49,8 @@ module Asciidoctor
           if theme_dir
             theme_path = ::File.absolute_path theme_name, (theme_dir = ::File.expand_path theme_dir)
           else
-            theme_dir = ::File.dirname(theme_path = (::File.expand_path theme_name))
+            theme_path = ::File.expand_path theme_name
+            theme_dir = ::File.dirname theme_path
           end
         else
           theme_dir = theme_dir ? (::File.expand_path theme_dir) : ThemesDir
@@ -183,7 +184,7 @@ module Asciidoctor
               expr
             end
           else
-            expr.gsub(VariableRx) do
+            expr.gsub VariableRx do
               if (key = $1).include? '-'
                 key = key.tr '-', '_'
               end
@@ -205,7 +206,7 @@ module Asciidoctor
         # resolve measurement values (e.g., 0.5in => 36)
         # QUESTION should we round the value? perhaps leave that to the precision functions
         # NOTE leave % as a string; handled by converter for now
-        expr = resolve_measurement_values(original = expr)
+        original, expr = expr, (resolve_measurement_values expr)
         loop do
           if (expr.count '*/') > 0
             result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send $2.to_sym, $3.to_f }

@@ -195,7 +195,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
       (expect pgnum_labels).to eq %w(i ii 1 2 3)
@@ -218,7 +218,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       (expect pdf.find_text page_number: 1).to be_empty
-      pgnum_labels = (2.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (2.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
       (expect pgnum_labels).to eq %w(ii iii 1 2 3)
@@ -240,7 +240,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
       (expect pgnum_labels).to eq %w(i 1 2 3)
@@ -261,7 +261,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
       (expect pgnum_labels).to eq %w(1 2 3)
@@ -282,7 +282,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       end
       (expect pgnum_labels).to eq [nil, 'ii', '1', '2', '3']
@@ -304,7 +304,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       end
       (expect pgnum_labels).to eq %w(i 1 2 3)
@@ -324,7 +324,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       end
       (expect pgnum_labels).to eq [nil, '1', '2', '3']
@@ -345,7 +345,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
       (expect pgnum_labels).to eq %w(1 2 3)
@@ -366,7 +366,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
       (expect pgnum_labels).to eq %w(i 1 2 3)
@@ -387,7 +387,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
       (expect pgnum_labels).to eq %w(1 2 3 4 5)
@@ -409,7 +409,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
       (expect pgnum_labels).to eq %w(1 2 3 4)
@@ -430,7 +430,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
       (expect pgnum_labels).to eq %w(1 2 3)
@@ -451,7 +451,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
       (expect pgnum_labels).to eq %w(i 1 2 3 4)
@@ -473,7 +473,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
       EOS
 
-      pgnum_labels = (1.upto pdf.pages.size).each_with_object([]) do |page_number, accum|
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
       (expect pgnum_labels).to eq %w(1 2 3 4)
@@ -1022,7 +1022,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       footer_y = (pdf.find_text 'FOOTER')[0][:y]
-      titles_by_page = (pdf.find_text y: footer_y).each_with_object({}) do |it, accum|
+      titles_by_page = (pdf.find_text y: footer_y).each_with_object ::Hash.new do |it, accum|
         accum[it[:page_number]] = it[:string] unless it[:string] == 'FOOTER'
       end
       (expect titles_by_page[2]).to eql '[Part I||]'

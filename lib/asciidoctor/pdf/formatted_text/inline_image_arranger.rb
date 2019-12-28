@@ -104,7 +104,7 @@ module Asciidoctor::PDF::FormattedText
             if (f_height = image_h) > (line_font = doc.font).height * 1.5
               # align with descender (equivalent to vertical-align: bottom in CSS)
               fragment[:ascender] = f_height - (fragment[:descender] = line_font.descender)
-              doc.font_size(fragment[:size] = f_height * (doc.font_size / line_font.height))
+              doc.font_size (fragment[:size] = f_height * (doc.font_size / line_font.height))
               # align with baseline (roughly equivalent to vertical-align: baseline in CSS)
               #fragment[:ascender] = f_height
               #fragment[:descender] = 0

@@ -6,14 +6,7 @@ module Asciidoctor
       class Transform
         LF = ?\n
         ZeroWidthSpace = ?\u200b
-        CharEntityTable = {
-          amp: ?&,
-          apos: ?',
-          gt: ?>,
-          lt: ?<,
-          nbsp: ?\u00a0,
-          quot: ?",
-        }
+        CharEntityTable = { amp: ?&, apos: ?', gt: ?>, lt: ?<, nbsp: ?\u00a0, quot: ?" }
         CharRefRx = /&(?:(#{CharEntityTable.keys.join ?|})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
         HexColorRx = /^#[a-fA-F0-9]{6}$/
         TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
@@ -147,7 +140,7 @@ module Asciidoctor
             case node[:type]
             when :element
               # case 1: non-void element
-              if node.key?(:pcdata)
+              if node.key? :pcdata
                 # NOTE skip element if it has no children
                 if (pcdata = node[:pcdata]).empty?
                   ## NOTE handle an empty anchor element (i.e., <a ...></a>)
@@ -161,7 +154,7 @@ module Asciidoctor
                   attributes = node[:attributes]
                   parent = clone_fragment inherited
                   # NOTE decorate child fragments with inherited properties from this element
-                  apply(pcdata, fragments, (build_fragment parent, tag_name, attributes))
+                  apply pcdata, fragments, (build_fragment parent, tag_name, attributes)
                   previous_fragment_is_text = false
                 end
               # case 2: void element
@@ -208,10 +201,10 @@ module Asciidoctor
                 text = CharEntityTable[node[:value]]
               elsif ref_type == :decimal
                 # FIXME: AFM fonts do not include a thin space glyph; set fallback_fonts to allow glyph to be resolved
-                text = [node[:value]].pack('U1')
+                text = [node[:value]].pack 'U1'
               else
                 # FIXME: AFM fonts do not include a thin space glyph; set fallback_fonts to allow glyph to be resolved
-                text = [(node[:value].to_i 16)].pack('U1')
+                text = [(node[:value].to_i 16)].pack 'U1'
               end
               if @merge_adjacent_text_nodes && previous_fragment_is_text
                 fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{text}))
@@ -286,9 +279,9 @@ module Asciidoctor
               if (value = attrs[:anchor])
                 fragment[:anchor] = value
               elsif (value = attrs[:href])
-                fragment[:link] = (value.include? ';') ? value.gsub(CharRefRx) do
+                fragment[:link] = (value.include? ';') ? (value.gsub CharRefRx do
                   $1 ? CharEntityTable[$1.to_sym] : [$2 ? $2.to_i : ($3.to_i 16)].pack('U1')
-                end : value
+                end) : value
               elsif (value = attrs[:id] || attrs[:name])
                 # NOTE text is null character, which is used as placeholder text so Prawn doesn't drop fragment
                 fragment = { name: value, callback: [InlineDestinationMarker] }
@@ -308,7 +301,7 @@ module Asciidoctor
           when :span
             # NOTE spaces in style value are superfluous for our purpose; split drops record after trailing ;
             attrs[:style].tr(' ', '').split(';').each do |style|
-              pname, pvalue = style.split(':', 2)
+              pname, pvalue = style.split ':', 2
               # TODO: text-transform
               case pname
               when 'color'
@@ -317,7 +310,7 @@ module Asciidoctor
                 when 6
                   fragment[:color] = pvalue
                 when 7
-                  fragment[:color] = pvalue.slice(1, 6) if pvalue.start_with? '#'
+                  fragment[:color] = pvalue.slice 1, 6 if pvalue.start_with? '#'
                 end
                 # QUESTION should we support the 3 character form?
                 #when 3
@@ -340,7 +333,7 @@ module Asciidoctor
                   fragment[:callback] = [TextBackgroundAndBorderRenderer] | (fragment[:callback] || [])
                 end
               end
-            end if attrs.key?(:style)
+            end if attrs.key? :style
           end
           # TODO: we could limit to select tags, but doesn't seem to really affect performance
           attrs[:class].split.each do |class_name|
@@ -350,8 +343,8 @@ module Asciidoctor
               fragment[:callback] = [TextBackgroundAndBorderRenderer] | (fragment[:callback] || [])
               fragment[:align] = :center if fragment[:border_offset]
             end
-          end if attrs.key?(:class)
-          fragment.delete(:styles) if styles.empty?
+          end if attrs.key? :class
+          fragment.delete :styles if styles.empty?
           fragment[:callback] = (fragment[:callback] || []) | [InlineTextAligner] if fragment.key? :align
           fragment
         end

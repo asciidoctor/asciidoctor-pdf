@@ -316,7 +316,7 @@ module Asciidoctor
         # QUESTION should page options be preserved? (otherwise, not readily available)
         #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
         ((::Prawn::Document.instance_method :initialize).bind self).call pdf_opts
-        renderer.min_version(@pdf_version = PDFVersions[doc.attr 'pdf-version'])
+        renderer.min_version (@pdf_version = PDFVersions[doc.attr 'pdf-version'])
         @page_margin_by_side = { recto: page_margin, verso: page_margin, cover: page_margin }
         if (@media = doc.attr 'media', 'screen') == 'prepress'
           @ppbook = doc.doctype == 'book'
@@ -724,7 +724,8 @@ module Asciidoctor
           doc.remove_attr 'data-uri'
         end
         if icons == 'font' && !(node.attr? 'icon', nil, false)
-          icon_data = admonition_icon_data(label_text = type.to_sym)
+          label_text = type.to_sym
+          icon_data = admonition_icon_data label_text
           label_width = label_min_width || ((icon_size = icon_data[:size] || 24) * 1.5)
         # NOTE: icon_uri will consider icon attribute on node first, then type
         # QUESTION should we use resolve_image_path here?
@@ -1283,7 +1284,8 @@ module Asciidoctor
             when 'unstyled', 'no-bullet'
               bullet_type = nil
             else
-              if Bullets.key?(candidate = style.to_sym)
+              candidate = style.to_sym
+              if Bullets.key? candidate
                 bullet_type = candidate
               else
                 logger.warn %(unknown unordered list style: #{candidate})
@@ -1660,7 +1662,7 @@ module Asciidoctor
             else
               ::OpenURI
             end
-            poster = open(%(http://vimeo.com/api/v2/video/#{video_id}.xml), 'r') do |f|
+            poster = open %(http://vimeo.com/api/v2/video/#{video_id}.xml), 'r' do |f|
               /<thumbnail_large>(.*?)<\/thumbnail_large>/ =~ f.read && $1
             end
           end
@@ -1811,7 +1813,7 @@ module Asciidoctor
               formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
             end
           end
-          fragments = formatter.format((lexer.lex source_string), formatter_opts)
+          fragments = formatter.format (lexer.lex source_string), formatter_opts
           source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
         else
           # NOTE: only format if we detect a need (callouts or inline formatting)
@@ -2238,7 +2240,8 @@ module Asciidoctor
               this_bounds.add_left_padding left_padding
               this_bounds.add_right_padding right_padding
             else # :right
-              this_bounds.add_left_padding(left_padding = this_bounds.width - width)
+              left_padding = this_bounds.width - width
+              this_bounds.add_left_padding left_padding
             end
           end
           if grid == 'none' && frame == 'none'
@@ -2286,7 +2289,7 @@ module Asciidoctor
 
           # QUESTION should cell padding be configurable for foot row cells?
           unless node.rows[:foot].empty?
-            foot_row = row(num_rows - 1)
+            foot_row = row num_rows.pred
             foot_row.background_color = foot_bg_color
             # FIXME: find a way to do this when defining the cells
             foot_row.text_color = theme.table_foot_font_color if theme.table_foot_font_color
@@ -2588,7 +2591,8 @@ module Asciidoctor
           dest = { anchor: (anchor_name = @index.next_anchor_name) }
           anchor = %(<a id="#{anchor_name}" type="indexterm">#{DummyText}</a>)
           if node.type == :visible
-            @index.store_primary_term(sanitize(visible_term = node.text), dest)
+            visible_term = node.text
+            @index.store_primary_term (sanitize visible_term), dest
             %(#{anchor}#{visible_term})
           else
             @index.store_term((node.attr 'terms').map {|term| sanitize term }, dest)
@@ -3259,7 +3263,7 @@ module Asciidoctor
           folio_basis, invert_folio = :virtual, false
         end
         periphery_layout_cache = {}
-        repeat((content_start_page..num_pages), dynamic: true) do
+        repeat (content_start_page..num_pages), dynamic: true do
           # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
           next if page.imported_page?
           virtual_pgnum = (pgnum = page_number) - skip_pagenums
@@ -3785,7 +3789,7 @@ module Asciidoctor
           if (text = fragment[:text]) == LF
             by_line << fragment
           elsif text.include? LF
-            text.scan(LineScanRx) do |line|
+            text.scan LineScanRx do |line|
               by_line << (line == LF ? { text: LF } : (fragment.merge text: line))
             end
           else
