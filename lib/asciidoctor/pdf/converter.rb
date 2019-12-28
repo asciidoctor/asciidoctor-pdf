@@ -534,6 +534,11 @@ module Asciidoctor
 
         type = nil
         title = sect.numbered_title formal: true
+        sep = (sect.attr 'separator', nil, false) || (sect.document.attr 'title-separator') || ''
+        if !sep.empty? && title.include?(sep = %(#{sep} ))
+          title, _, subtitle = title.rpartition sep
+          title = %(#{title}\n<em class="subtitle">#{subtitle}</em>)
+        end
         theme_font :heading, level: (hlevel = sect.level + 1) do
           align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
           if sect.part_or_chapter?

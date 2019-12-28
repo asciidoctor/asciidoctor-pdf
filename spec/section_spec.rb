@@ -64,6 +64,85 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect text[1][:font_name]).to eql 'NotoSerif-Italic'
   end
 
+  it 'should not partition section title by default' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    == Title: Subtitle
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 1
+    (expect lines[0]).to eql 'Title: Subtitle'
+  end
+
+  it 'should partition section title if title-separator document attribute is set and present in title' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :title-separator: :
+
+    == The Title: The Subtitle
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 2
+    (expect lines).to eql ['The Title', 'The Subtitle']
+    title_text = (pdf.find_text 'The Title')[0]
+    subtitle_text = (pdf.find_text 'The Subtitle')[0]
+    (expect subtitle_text[:font_size]).to be < title_text[:font_size]
+    (expect subtitle_text[:font_color]).to eql '999999'
+    (expect subtitle_text[:font_name]).to eql 'NotoSerif-Italic'
+  end
+
+  it 'should partition section title if separator block attribute is set and present in title' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [separator=:]
+    == The Title: The Subtitle
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 2
+    (expect lines).to eql ['The Title', 'The Subtitle']
+    title_text = (pdf.find_text 'The Title')[0]
+    subtitle_text = (pdf.find_text 'The Subtitle')[0]
+    (expect subtitle_text[:font_size]).to be < title_text[:font_size]
+    (expect subtitle_text[:font_color]).to eql '999999'
+    (expect subtitle_text[:font_name]).to eql 'NotoSerif-Italic'
+  end
+
+  it 'should partition title on last occurrence of separator' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :title-separator: :
+
+    == Foo: Bar: Baz
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 2
+    (expect lines).to eql ['Foo: Bar', 'Baz']
+  end
+
+  it 'should not partition section title if separator is not followed by space' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [separator=:]
+    == Title:Subtitle
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 1
+    (expect lines[0]).to eql 'Title:Subtitle'
+  end
+
+  it 'should not partition section title if separator block attribute is empty' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :title-separator: :
+
+    [separator=]
+    == Title: Subtitle
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 1
+    (expect lines[0]).to eql 'Title: Subtitle'
+  end
+
   it 'should not add top margin to section title if it is positioned at the top of the page' do
     pdf = to_pdf '== Section Title', analyze: true
     y1 = (pdf.find_text 'Section Title')[0][:y]
