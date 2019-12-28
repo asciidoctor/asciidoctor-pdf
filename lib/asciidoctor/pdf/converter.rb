@@ -534,8 +534,8 @@ module Asciidoctor
 
         type = nil
         title = sect.numbered_title formal: true
-        align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
         theme_font :heading, level: (hlevel = sect.level + 1) do
+          align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
           if sect.part_or_chapter?
             if sect.chapter?
               type = :chapter
