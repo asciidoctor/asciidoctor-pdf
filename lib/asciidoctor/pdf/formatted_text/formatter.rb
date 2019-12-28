@@ -11,7 +11,7 @@ module Asciidoctor
         end
 
         FormattingSnifferPattern = /[<&]/
-        WHITESPACE = " \t\n"
+        WHITESPACE = %( \t\")
 
         def initialize options = {}
           @parser = MarkupParser.new
@@ -20,11 +20,11 @@ module Asciidoctor
 
         def format string, *args
           options = args[0] || {}
-          string = string.tr_s(WHITESPACE, ' ') if options[:normalize]
+          string = string.tr_s WHITESPACE, ' ' if options[:normalize]
           inherited = options[:inherited]
           if FormattingSnifferPattern.match? string
-            if (parsed = @parser.parse(string))
-              return @transform.apply(parsed.content, [], inherited)
+            if (parsed = @parser.parse string)
+              return @transform.apply parsed.content, [], inherited
             else
               logger.error %(failed to parse formatted text: #{string})
             end
