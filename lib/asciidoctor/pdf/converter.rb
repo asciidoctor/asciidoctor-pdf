@@ -763,10 +763,10 @@ module Asciidoctor
         keep_together do |box_height = nil|
           push_scratch doc if scratch?
           if box_height
-            if (b_width = @theme.admonition_border_width || 0) > 0 && (b_color = @theme.admonition_border_color)
+            if @theme.admonition_background_color || ((@theme.admonition_border_width || 0) > 0 && @theme.admonition_border_color)
               float do
                 bounding_box [0, cursor], width: bounds.width, height: box_height do
-                  fill_and_stroke_bounds nil, b_color, line_width: b_width, radius: @theme.admonition_border_radius
+                  theme_fill_and_stroke_bounds :admonition
                 end
               end
             end

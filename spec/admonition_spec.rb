@@ -222,7 +222,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
   end
 
-  context 'Lines' do
+  context 'Background & Lines' do
     it 'should allow theme to customize color and width of column rule' do
       pdf_theme = {
         admonition_column_rule_color: '222222',
@@ -252,6 +252,19 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       EOS
 
       (expect to_file).to visually_match 'admonition-border.pdf'
+    end
+
+    it 'should allow theme to add background color', visual: true do
+      pdf_theme = {
+        admonition_background_color: 'eeeeee',
+        admonition_border_radius: 3,
+        admonition_column_rule_width: 0,
+      }
+      to_file = to_pdf_file <<~'EOS', 'admonition-background-color.pdf', pdf_theme: pdf_theme
+      TIP: You can use the theme to add a background color.
+      EOS
+
+      (expect to_file).to visually_match 'admonition-background-color.pdf'
     end
   end
 end
