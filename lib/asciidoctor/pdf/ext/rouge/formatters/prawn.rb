@@ -54,7 +54,7 @@ module Rouge
         line_numbers = opts[:line_numbers]
         highlight_lines = opts[:highlight_lines]
         if line_numbers || highlight_lines
-          linenum = (linenum = opts[:start_line]) > 0 ? linenum : 1
+          linenum = (linenum = opts[:start_line] || 1) > 0 ? linenum : 1
           fragments = []
           fragments << (create_linenum_fragment linenum) if line_numbers
           fragments << @highlight_line_fragment.dup if highlight_lines && highlight_lines[linenum]

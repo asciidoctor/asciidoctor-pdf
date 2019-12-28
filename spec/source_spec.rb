@@ -240,6 +240,66 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         (expect text[:font_color]).to eql 'F8F8F2'
       end
     end
+
+    it 'should highlight lines specified by highlight attribute on block', visual: true do
+      to_file = to_pdf_file <<~EOS, 'source-rouge-line-highlighting.pdf'
+      :source-highlighter: rouge
+
+      [source,c,highlight=4;7-8]
+      ----
+      /**
+       * A program that prints "Hello, World!"
+       **/
+      #include <stdio.h>
+
+      int main(void) {
+        printf("Hello, World!\\n");
+        return 0;
+      }
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-rouge-line-highlighting.pdf'
+    end
+
+    it 'should highlight lines specified by highlight attribute on block when linenums are enabled', visual: true do
+      to_file = to_pdf_file <<~EOS, 'source-rouge-line-highlighting-with-linenums.pdf'
+      :source-highlighter: rouge
+
+      [source,c,linenums,highlight=4;7-8]
+      ----
+      /**
+       * A program that prints "Hello, World!"
+       **/
+      #include <stdio.h>
+
+      int main(void) {
+        printf("Hello, World!\\n");
+        return 0;
+      }
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-rouge-line-highlighting-with-linenums.pdf'
+    end
+
+    it 'should base highlight lines on start value', visual: true do
+      to_file = to_pdf_file <<~EOS, 'source-rouge-line-highlighting-with-linenums-start.pdf'
+      :source-highlighter: rouge
+
+      [source,c,linenums,start=4,highlight=4;7-8]
+      ----
+      #include <stdio.h>
+
+      int main(void) {
+        printf("Hello, World!\\n");
+        return 0;
+      }
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-rouge-line-highlighting-with-linenums-start.pdf'
+    end
   end
 
   context 'CodeRay' do
