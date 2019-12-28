@@ -2850,11 +2850,12 @@ module Asciidoctor
         start_new_page if @ppbook && verso_page? && !(chapter.option? 'nonfacing')
       end
 
+      alias start_new_part start_new_chapter
+
       def layout_chapter_title _node, title, opts = {}
         layout_heading title, (opts.merge outdent: true)
       end
 
-      alias start_new_part start_new_chapter
       alias layout_part_title layout_chapter_title
 
       # NOTE layout_heading doesn't set the theme font because it's used for various types of headings
