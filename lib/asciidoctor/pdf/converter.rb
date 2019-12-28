@@ -1809,7 +1809,9 @@ module Asciidoctor
           bg_color_override = formatter.background_color
           source_string, conum_mapping = extract_conums source_string
           if node.attr? 'highlight', nil, false
-            unless (hl_lines = node.resolve_lines_to_highlight source_string, (node.attr 'highlight')).empty?
+            unless (hl_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
+                (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
+                (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
               formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
             end
           end
