@@ -762,6 +762,15 @@ module Asciidoctor
         shift_bottom = (shift_base * 2) / 3.0
         keep_together do |box_height = nil|
           push_scratch doc if scratch?
+          if box_height
+            if (b_width = @theme.admonition_border_width || 0) > 0 && (b_color = @theme.admonition_border_color)
+              float do
+                bounding_box [0, cursor], width: bounds.width, height: box_height do
+                  fill_and_stroke_bounds nil, b_color, line_width: b_width, radius: @theme.admonition_border_radius
+                end
+              end
+            end
+          end
           pad_box [0, cpad[1], 0, lpad[3]] do
             if box_height
               if (rule_color = @theme.admonition_column_rule_color) &&
