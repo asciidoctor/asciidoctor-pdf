@@ -283,7 +283,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect to_file).to visually_match 'source-rouge-line-highlighting-with-linenums.pdf'
     end
 
-    it 'should base highlight lines on start value', visual: true do
+    it 'should interpret highlight lines relative to start value', visual: true do
       to_file = to_pdf_file <<~EOS, 'source-rouge-line-highlighting-with-linenums-start.pdf'
       :source-highlighter: rouge
 
@@ -299,6 +299,26 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
 
       (expect to_file).to visually_match 'source-rouge-line-highlighting-with-linenums-start.pdf'
+    end
+
+    it 'should preserve indentation when highlighting lines without linenums enabled', visual: true do
+      to_file = to_pdf_file <<~EOS, 'source-rouge-line-highlighting-indent.pdf'
+      :source-highlighter: rouge
+
+      [source,groovy,highlight=4-5]
+      ----
+      ratpack {
+          handlers {
+              get {
+                  render '''|Hello,
+                            |World!'''.stripMargin()
+              }
+          }
+      }
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-rouge-line-highlighting-indent.pdf'
     end
   end
 
