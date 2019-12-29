@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow output file to be written to stdout (#1411)
 * implement line highlighting for source blocks when using Rouge as source highlighter (#681)
 * implement line highlighting for source blocks when using Pygments as source highlighter (#1444)
+* indent wrapped lines in source block beyond linenum gutter (#504)
 * don't mangle source block if linenums are enabled and language is not set
 * don't print line number if source block is empty
 * don't apply recto margin to title page if cover is absent unless value of front-cover-image attribute is `~` (#793)

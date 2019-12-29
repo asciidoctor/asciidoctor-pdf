@@ -351,6 +351,39 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       (expect to_file).to visually_match 'source-rouge-line-highlighting-indent.pdf'
     end
+
+    it 'should indent wrapped line if line numbers are enabled' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,text,linenums]
+      ----
+      Here we go again here we go again here we go again here we go again here we go again Here we go again
+      ----
+      EOS
+
+      linenum_text = (pdf.find_text '1 ')[0]
+      (expect linenum_text[:x]).not_to be_nil
+      start_texts = pdf.find_text %r/^Here we go again/
+      (expect start_texts).to have_size 2
+      (expect start_texts[0][:x]).to eql start_texts[1][:x]
+      (expect start_texts[0][:x]).to be > linenum_text[:x]
+    end
+
+    it 'should highlight and indent wrapped line', visual: true do
+      to_file = to_pdf_file <<~EOS, 'source-rouge-highlight-wrapped-line.pdf'
+      :source-highlighter: rouge
+
+      [source,xml,linenums,highlight=1;3]
+      ----
+      <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+      </project>
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-rouge-highlight-wrapped-line.pdf'
+    end
   end
 
   context 'CodeRay' do
@@ -644,6 +677,39 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         expected_lines = asciidoctor_2_or_better? ? ['1 fee', '2 fi', '3 fo', '4 fum'] : %w(fee fi fo fum)
         (expect pdf.lines).to eql expected_lines
       end).to not_log_message
+    end
+
+    it 'should indent wrapped line if line numbers are enabled' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: pygments
+
+      [source,text,linenums]
+      ----
+      Here we go again here we go again here we go again here we go again here we go again Here we go again
+      ----
+      EOS
+
+      linenum_text = (pdf.find_text '1 ')[0]
+      (expect linenum_text[:x]).not_to be_nil
+      start_texts = pdf.find_text %r/^Here we go again/
+      (expect start_texts).to have_size 2
+      (expect start_texts[0][:x]).to eql start_texts[1][:x]
+      (expect start_texts[0][:x]).to be > linenum_text[:x]
+    end
+
+    it 'should highlight and indent wrapped line', visual: true do
+      to_file = to_pdf_file <<~EOS, 'source-pygments-highlight-wrapped-line.pdf'
+      :source-highlighter: pygments
+
+      [source,xml,linenums,highlight=1;3]
+      ----
+      <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
+      </project>
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-pygments-highlight-wrapped-line.pdf'
     end
   end if ENV.key? 'PYGMENTS_VERSION'
 
