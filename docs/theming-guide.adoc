@@ -1030,13 +1030,12 @@ This role can be used as follows:
 == [.heading-code]`SELECT` clause
 ----
 
-The converter provides several predefined roles.
+The converter provides several predefined roles, which can can all be redefined.
 The `big` and `small` roles map the font size to the $base-font-size-large and $base-font-size-small values, respectively.
-These two roles can be redefined.
 The `underline` and `line-through` roles add the underline and strikethrough decorations, respectively.
-These two roles _can't_ be redefined.
+The `subtitle` role is used to configure the font properties of the subtitle of a section title.
 The color roles (e.g., `blue`), which you may be familiar with from the HTML converter, are not mapped by default.
-You'll need to define these in your theme if you'd like to make use of them when converting to PDF.
+You'll need to define these color roles in your theme if you'd like to make use of them when converting to PDF.
 
 [cols="3,4,5l"]
 |===
