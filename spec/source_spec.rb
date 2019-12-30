@@ -206,6 +206,18 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect pdf.lines).to eql expected_lines
     end
 
+    it 'should not add line number to first line if source is empty' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source%linenums]
+      ----
+      ----
+      EOS
+
+      (expect pdf.text).to be_empty
+    end
+
     it 'should not emit error if linenums are enabled and language is not set' do
       (expect do
         pdf = to_pdf <<~'EOS', analyze: true
@@ -600,6 +612,18 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
 
       (expect to_file).to visually_match 'source-pygments-line-highlighting.pdf'
+    end
+
+    it 'should not add line number to first line if source is empty' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: pygments
+
+      [source%linenums]
+      ----
+      ----
+      EOS
+
+      (expect pdf.text).to be_empty
     end
 
     it 'should not emit error if linenums are enabled and language is not set' do

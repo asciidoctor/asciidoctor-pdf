@@ -14,6 +14,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * implement line highlighting for source blocks when using Rouge as source highlighter (#681)
 * implement line highlighting for source blocks when using Pygments as source highlighter (#1444)
 * don't mangle source block if linenums are enabled and language is not set
+* don't print line number if source block is empty
 * don't apply recto margin to title page if cover is absent unless value of front-cover-image attribute is `~` (#793)
 * expose theme as property on converter
 * add support for unbreakable option on open blocks (#1407) *@mogztter*

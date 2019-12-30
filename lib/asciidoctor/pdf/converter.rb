@@ -1753,70 +1753,74 @@ module Asciidoctor
           fragments = (::CodeRay.scan source_string, srclang).to_prawn
           source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
         when 'pygments'
-          lexer = (::Pygments::Lexer.find_by_alias node.attr 'language', 'text', false) || (::Pygments::Lexer.find_by_mimetype 'text/plain')
-          lexer_opts = {
-            nowrap: true,
-            noclasses: true,
-            stripnl: false,
-            style: (style = (node.document.attr 'pygments-style') || 'pastie'),
-          }
-          lexer_opts[:startinline] = !(node.option? 'mixed') if lexer.name == 'PHP'
+          style = (node.document.attr 'pygments-style') || 'pastie'
           # QUESTION allow border color to be set by theme for highlighted block?
           pg_block_styles = ::Pygments::Ext::BlockStyles.for style
           bg_color_override = pg_block_styles[:background_color]
           font_color_override = pg_block_styles[:font_color]
-          source_string, conum_mapping = extract_conums source_string
-          # NOTE: pygments.rb strips trailing whitespace; preserve it in case there are conums on last line
-          num_trailing_spaces = source_string.length - (source_string = source_string.rstrip).length if conum_mapping
-          # NOTE: highlight can return nil if something goes wrong; fallback to encoded source string if this happens
-          result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
-          if node.attr? 'highlight', nil, false
-            if (highlight_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
-                (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
-                (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
-              highlight_lines = nil
-            else
-              pg_highlight_bg_color = pg_block_styles[:highlight_background_color]
-              highlight_lines = highlight_lines.map {|linenum| [linenum, pg_highlight_bg_color] }.to_h
-            end
-          end
-          if (linenums = node.attr? 'linenums')
-            linenums = (node.attr 'start', 1, false).to_i
-            @theme.code_linenum_font_color ||= '999999'
-            postprocess = true
-          elsif conum_mapping || highlight_lines
-            postprocess = true
-          end
-          fragments = text_formatter.format result
-          fragments = restore_conums fragments, conum_mapping, num_trailing_spaces, linenums, highlight_lines if postprocess
-          source_chunks = guard_indentation_in_fragments fragments
-        when 'rouge'
-          if (srclang = node.attr 'language', nil, false)
-            if srclang.include? '?'
-              if (lexer = ::Rouge::Lexer.find_fancy srclang)
-                unless lexer.tag != 'php' || (node.option? 'mixed') || ((lexer_opts = lexer.options).key? 'start_inline')
-                  lexer = lexer.class.new lexer_opts.merge 'start_inline' => true
-                end
+          if source_string.empty?
+            source_chunks = []
+          else
+            lexer = (::Pygments::Lexer.find_by_alias node.attr 'language', 'text', false) || (::Pygments::Lexer.find_by_mimetype 'text/plain')
+            lexer_opts = { nowrap: true, noclasses: true, stripnl: false, style: style }
+            lexer_opts[:startinline] = !(node.option? 'mixed') if lexer.name == 'PHP'
+            source_string, conum_mapping = extract_conums source_string
+            # NOTE: pygments.rb strips trailing whitespace; preserve it in case there are conums on last line
+            num_trailing_spaces = source_string.length - (source_string = source_string.rstrip).length if conum_mapping
+            # NOTE: highlight can return nil if something goes wrong; fallback to encoded source string if this happens
+            result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
+            if node.attr? 'highlight', nil, false
+              if (highlight_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
+                  (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
+                  (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
+                highlight_lines = nil
+              else
+                pg_highlight_bg_color = pg_block_styles[:highlight_background_color]
+                highlight_lines = highlight_lines.map {|linenum| [linenum, pg_highlight_bg_color] }.to_h
               end
-            elsif (lexer = ::Rouge::Lexer.find srclang)
-              lexer = lexer.new start_inline: true if lexer.tag == 'php' && !(node.option? 'mixed')
             end
+            if (linenums = node.attr? 'linenums')
+              linenums = (node.attr 'start', 1, false).to_i
+              @theme.code_linenum_font_color ||= '999999'
+              postprocess = true
+            elsif conum_mapping || highlight_lines
+              postprocess = true
+            end
+            fragments = text_formatter.format result
+            fragments = restore_conums fragments, conum_mapping, num_trailing_spaces, linenums, highlight_lines if postprocess
+            source_chunks = guard_indentation_in_fragments fragments
           end
-          lexer ||= ::Rouge::Lexers::PlainText
+        when 'rouge'
           formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap, highlight_background_color: @theme.code_highlight_background_color)
-          formatter_opts = (node.attr? 'linenums') ? { line_numbers: true, start_line: (node.attr 'start', 1, false).to_i } : {}
           # QUESTION allow border color to be set by theme for highlighted block?
           bg_color_override = formatter.background_color
-          source_string, conum_mapping = extract_conums source_string
-          if node.attr? 'highlight', nil, false
-            unless (hl_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
-                (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
-                (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
-              formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
+          if source_string.empty?
+            source_chunks = []
+          else
+            formatter_opts = (node.attr? 'linenums') ? { line_numbers: true, start_line: (node.attr 'start', 1, false).to_i } : {}
+            if (srclang = node.attr 'language', nil, false)
+              if srclang.include? '?'
+                if (lexer = ::Rouge::Lexer.find_fancy srclang)
+                  unless lexer.tag != 'php' || (node.option? 'mixed') || ((lexer_opts = lexer.options).key? 'start_inline')
+                    lexer = lexer.class.new lexer_opts.merge 'start_inline' => true
+                  end
+                end
+              elsif (lexer = ::Rouge::Lexer.find srclang)
+                lexer = lexer.new start_inline: true if lexer.tag == 'php' && !(node.option? 'mixed')
+              end
             end
+            lexer ||= ::Rouge::Lexers::PlainText
+            source_string, conum_mapping = extract_conums source_string
+            if node.attr? 'highlight', nil, false
+              unless (hl_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
+                  (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
+                  (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
+                formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
+              end
+            end
+            fragments = formatter.format (lexer.lex source_string), formatter_opts
+            source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
           end
-          fragments = formatter.format (lexer.lex source_string), formatter_opts
-          source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
         else
           # NOTE: only format if we detect a need (callouts or inline formatting)
           source_chunks = (XMLMarkupRx.match? source_string) ? (text_formatter.format source_string) : [text: source_string]
