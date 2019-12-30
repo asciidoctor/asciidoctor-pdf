@@ -232,7 +232,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         ----
         EOS
 
-        expected_lines = asciidoctor_2_or_better? ? ['1 fee', '2 fi', '3 fo', '4 fum'] : ['fee', 'fi', 'fo', 'fum']
+        expected_lines = asciidoctor_2_or_better? ? ['1 fee', '2 fi', '3 fo', '4 fum'] : %w(fee fi fo fum)
         (expect pdf.lines).to eql expected_lines
       end).to not_log_message
     end
@@ -641,7 +641,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         ----
         EOS
 
-        expected_lines = asciidoctor_2_or_better? ? ['1 fee', '2 fi', '3 fo', '4 fum'] : ['fee', 'fi', 'fo', 'fum']
+        expected_lines = asciidoctor_2_or_better? ? ['1 fee', '2 fi', '3 fo', '4 fum'] : %w(fee fi fo fum)
         (expect pdf.lines).to eql expected_lines
       end).to not_log_message
     end
