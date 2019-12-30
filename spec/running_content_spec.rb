@@ -807,9 +807,31 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_height: 160,
         page_margin: [160, 48, 160, 48]
 
-      to_file = to_pdf_file 'Hello world', 'running-content-background-colors.pdf', enable_footer: true, pdf_theme: pdf_theme
+      to_file = to_pdf_file 'Hello world', 'running-content-background-color.pdf', enable_footer: true, pdf_theme: pdf_theme
 
-      (expect to_file).to visually_match 'running-content-background-colors.pdf'
+      (expect to_file).to visually_match 'running-content-background-color.pdf'
+    end
+
+    it 'should draw background image across whole periphery region', visual: true do
+      pdf_theme = build_pdf_theme \
+        header_background_image: %(image:#{fixture_file 'running-content-bg-letter.svg'}[fit=contain]),
+        header_border_width: 0,
+        header_height: 30,
+        header_padding: 0,
+        header_recto_left_content: '{page-number}',
+        footer_background_image: %(image:#{fixture_file 'running-content-bg-letter.svg'}[fit=contain]),
+        footer_border_width: 0,
+        footer_height: 30,
+        footer_padding: 0,
+        footer_vertical_align: 'middle'
+
+      to_file = to_pdf_file <<~'EOS', 'running-content-background-image.pdf', enable_footer: true, pdf_theme: pdf_theme
+      :pdf-page-size: Letter
+
+      Hello, World!
+      EOS
+
+      (expect to_file).to visually_match 'running-content-background-image.pdf'
     end
 
     it 'should draw column rule between columns using specified width and spacing', visual: true do

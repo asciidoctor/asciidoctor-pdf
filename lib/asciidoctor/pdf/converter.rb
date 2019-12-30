@@ -3308,7 +3308,7 @@ module Asciidoctor
           pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new pgnum, :lower) : virtual_pgnum).to_s
           side = page_side((folio_basis == :physical ? pgnum : virtual_pgnum), invert_folio)
           # QUESTION should allocation be per side?
-          trim_styles, colspec_dict, content_dict, stamp_names = allocate_running_content_layout page, periphery, periphery_layout_cache
+          trim_styles, colspec_dict, content_dict, stamp_names = allocate_running_content_layout doc, page, periphery, periphery_layout_cache
           # FIXME: we need to have a content setting for chapter pages
           content_by_position, colspec_by_position = content_dict[side], colspec_dict[side]
           # TODO: populate chapter-number
@@ -3409,7 +3409,7 @@ module Asciidoctor
         nil
       end
 
-      def allocate_running_content_layout page, periphery, cache
+      def allocate_running_content_layout doc, page, periphery, cache
         cache[layout = page.layout] ||= begin
           trim_styles = {
             line_metrics: (trim_line_metrics = calc_line_metrics @theme[%(#{periphery}_line_height)] || @theme.base_line_height),
@@ -3455,6 +3455,12 @@ module Asciidoctor
             trim_styles[:img_valign] = :center
           when 'top', 'center', 'bottom'
             trim_styles[:img_valign] = trim_styles[:img_valign].to_sym
+          end
+
+          if (trim_bg_image = resolve_background_image doc, @theme, :footer_background_image, container_size: [page_width, trim_height]) && trim_bg_image[0]
+            trim_styles[:bg_image] = trim_bg_image
+          else
+            trim_bg_image = nil
           end
 
           colspec_dict = PageSides.each_with_object({}) do |side, acc|
@@ -3516,19 +3522,21 @@ module Asciidoctor
             acc[side] = side_content
           end
 
-          if trim_styles[:bg_color] || trim_styles[:border_width] > 0
+          if (trim_bg_color = trim_styles[:bg_color]) || trim_bg_image || trim_border_width > 0
             stamp_names = { recto: %(#{layout}_#{periphery}_recto), verso: %(#{layout}_#{periphery}_verso) }
             PageSides.each do |side|
               create_stamp stamp_names[side] do
                 canvas do
-                  if trim_styles[:bg_color]
+                  if trim_bg_color || trim_bg_image
                     bounding_box [0, trim_styles[:top]], width: bounds.width, height: trim_styles[:height] do
-                      fill_bounds trim_styles[:bg_color]
-                      if trim_styles[:border_width] > 0
+                      fill_bounds trim_bg_color if trim_bg_color
+                      if trim_border_width > 0
                         # TODO: stroke_horizontal_rule should support :at
                         move_down bounds.height if periphery == :header
-                        stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style]
+                        stroke_horizontal_rule trim_styles[:border_color], line_width: trim_border_width, line_style: trim_styles[:border_style]
                       end
+                      # NOTE: must draw line first or SVG will cause border to disappear
+                      image trim_bg_image[0], ({ position: :center, vposition: :center }.merge trim_bg_image[1]) if trim_bg_image
                     end
                   else
                     bounding_box [trim_styles[:left][side], trim_styles[:top]], width: trim_styles[:width][side], height: trim_styles[:height] do
@@ -4104,8 +4112,13 @@ module Asciidoctor
       # Returns the argument list for the image method if the document attribute or theme key is found. Otherwise,
       # nothing. The first argument in the argument list is the image path. If that value is nil, the background
       # image is disabled. The second argument is the options hash to specify the dimensions, such as width and fit.
-      def resolve_background_image doc, theme, key
-        if (image_path = (doc.attr key) || (from_theme = theme[(key.tr '-', '_').to_sym]))
+      def resolve_background_image doc, theme, key, opts = {}
+        if ::String === key
+          image_path = (doc.attr key) || (from_theme = theme[(key.tr '-', '_').to_sym])
+        else
+          image_path = from_theme = theme[key]
+        end
+        if image_path
           if image_path == 'none'
             return []
           elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
@@ -4130,7 +4143,7 @@ module Asciidoctor
             return
           end
 
-          [image_path, (resolve_image_options image_path, image_attrs, background: true, format: image_format)]
+          [image_path, (resolve_image_options image_path, image_attrs, (opts.merge background: true, format: image_format))]
         end
       end
 
