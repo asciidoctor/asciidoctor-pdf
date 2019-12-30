@@ -4561,7 +4561,7 @@ To avoid this problem, reduce the height of the running content periphery or mak
 3+|[#key-prefix-running-content]*Key Prefix:* <<key-prefix-running-content,running-content>>
 
 |start-at^[7]^
-|title {vbar} toc {vbar} body +
+|title {vbar} toc {vbar} body {vbar} Integer +
 (default: body)
 |running-content:
   start-at: toc
@@ -4577,6 +4577,7 @@ Where the page sides fall in relation to the physical or printed page number is 
 . `<position>` can be `left`, `center` or `right`.
 . The `toc` value only applies if the toc is in the default location (before the first page of the body).
 If the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
+If value is an integer, the running content will start at the specified page of the body (i.e., 1 is first page, 2 is second page, etc.)
 
 IMPORTANT: If you don't specify a height for either the header or footer key, it effectively disables the content at that periphery.
 
