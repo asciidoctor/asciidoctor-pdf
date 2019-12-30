@@ -241,21 +241,26 @@ module Asciidoctor
             running_content_start_at = @theme.running_content_start_at || 'body'
             running_content_start_at = 'toc' if running_content_start_at == 'title' && !has_title_page
             running_content_start_at = 'body' if running_content_start_at == 'toc' && !insert_toc
-            page_numbering_start_at = @theme.page_numbering_start_at || 'body'
-            page_numbering_start_at = 'toc' if page_numbering_start_at == 'title' && !has_title_page
-            page_numbering_start_at = 'body' if page_numbering_start_at == 'toc' && !insert_toc
+            if Integer === (page_numbering_start_at = @theme.page_numbering_start_at || 'body')
+              page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 1].max
+              page_numbering_start_at = 'body'
+            else
+              page_numbering_body_offset = body_offset
+              page_numbering_start_at = 'toc' if page_numbering_start_at == 'title' && !has_title_page
+              page_numbering_start_at = 'body' if page_numbering_start_at == 'toc' && !insert_toc
+            end
             front_matter_sig = [running_content_start_at, page_numbering_start_at]
             # table values are number of pages to skip before starting running content and page numbering, respectively
             num_front_matter_pages = {
               %w(title title) => [zero_page_offset, zero_page_offset],
               %w(title toc) => [zero_page_offset, first_page_offset],
-              %w(title body) => [zero_page_offset, body_offset],
+              %w(title body) => [zero_page_offset, page_numbering_body_offset],
               %w(toc title) => [first_page_offset, zero_page_offset],
               %w(toc toc) => [first_page_offset, first_page_offset],
-              %w(toc body) => [first_page_offset, body_offset],
+              %w(toc body) => [first_page_offset, page_numbering_body_offset],
               %w(body title) => [body_offset, zero_page_offset],
               %w(body toc) => [body_offset, first_page_offset],
-            }[front_matter_sig] || [body_offset, body_offset]
+            }[front_matter_sig] || [body_offset, page_numbering_body_offset]
           else
             num_front_matter_pages = [body_start_page_number - 1] * 2
           end
@@ -3107,7 +3112,9 @@ module Asciidoctor
                 typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true, hanging_indent: hanging_indent
               end
             else
-              pgnum_label = ((sect.attr 'pdf-page-start') - num_front_matter_pages).to_s
+              physical_pgnum = sect.attr 'pdf-page-start'
+              virtual_pgnum = physical_pgnum - num_front_matter_pages
+              pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new physical_pgnum, :lower) : virtual_pgnum).to_s
               start_page_number = page_number
               start_cursor = cursor
               start_dots = nil
