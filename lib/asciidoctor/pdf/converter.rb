@@ -1787,7 +1787,7 @@ module Asciidoctor
                 highlight_lines = highlight_lines.map {|linenum| [linenum, pg_highlight_bg_color] }.to_h
               end
             end
-            if (linenums = node.attr? 'linenums')
+            if node.attr? 'linenums'
               linenums = (node.attr 'start', 1, false).to_i
               @theme.code_linenum_font_color ||= '999999'
               postprocess = true
