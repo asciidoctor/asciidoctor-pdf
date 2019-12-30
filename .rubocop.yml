@@ -12,6 +12,8 @@ Layout/EmptyLineAfterGuardClause:
   Enabled: false
 Layout/HeredocIndentation:
   Enabled: false
+Layout/LineLength:
+  Enabled: false # TODO reenable me
 Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 4
@@ -41,8 +43,6 @@ Metrics/ClassLength:
   Enabled: false
 Metrics/CyclomaticComplexity:
   Enabled: false
-Metrics/LineLength:
-  Enabled: false # TODO reenable me
 #  Max: 120
 Metrics/MethodLength:
   Enabled: false
