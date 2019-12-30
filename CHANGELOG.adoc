@@ -21,6 +21,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * don't add mailto: prefix to revealed mailto URI when hide-uri-scheme is set (#920)
 * allow theme to set base text decoration width (#1414)
 * allow theme to set font-kerning per category (#1431)
+* allow theme to specify border for admonition block (#444)
+* allow theme to specify background color for admonition block (#444)
 * allow text alignment roles to be used to control alignment of discrete heading
 * use font color from pygments style for unhighlighted text (#1441)
 * render stem block as raw literal block
