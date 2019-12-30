@@ -1696,9 +1696,9 @@ module Asciidoctor
         add_dest_for_block node if node.id
 
         # HACK: disable built-in syntax highlighter; must be done before calling node.content!
-        if node.style == 'source' && node.attributes['language'] &&
-            (highlighter = node.document.attributes['source-highlighter']) && (SourceHighlighters.include? highlighter) &&
-            (@capabilities[:syntax_highlighter] ? (syntax_hl = node.document.syntax_highlighter) && syntax_hl.highlight? : true)
+        if node.style == 'source' && (highlighter = @capabilities[:syntax_highlighter] ?
+            (syntax_hl = node.document.syntax_highlighter) && syntax_hl.highlight? && syntax_hl.name :
+            (highlighter = node.document.attributes['source-highlighter']) && (SourceHighlighters.include? highlighter) && highlighter)
           case highlighter
           when 'coderay'
             unless defined? ::Asciidoctor::Prawn::CodeRayEncoder

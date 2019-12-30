@@ -206,6 +206,24 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect pdf.lines).to eql expected_lines
     end
 
+    it 'should not emit error if linenums are enabled and language is not set' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        :source-highlighter: rouge
+
+        [source%linenums]
+        ----
+        fee
+        fi
+        fo
+        fum
+        ----
+        EOS
+
+        (expect pdf.lines).to eql ['1 fee', '2 fi', '3 fo', '4 fum']
+      end).to not_log_message
+    end
+
     it 'should preserve orphan callout on last line' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
@@ -582,6 +600,24 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
 
       (expect to_file).to visually_match 'source-pygments-line-highlighting.pdf'
+    end
+
+    it 'should not emit error if linenums are enabled and language is not set' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        :source-highlighter: pygments
+
+        [source%linenums]
+        ----
+        fee
+        fi
+        fo
+        fum
+        ----
+        EOS
+
+        (expect pdf.lines).to eql ['1 fee', '2 fi', '3 fo', '4 fum']
+      end).to not_log_message
     end
   end if ENV.key? 'PYGMENTS_VERSION'
 
