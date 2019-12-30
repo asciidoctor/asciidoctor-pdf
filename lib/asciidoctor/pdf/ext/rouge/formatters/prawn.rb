@@ -162,6 +162,7 @@ module Rouge
           background_color: (bg_color || 'FFFFCC'),
           callback: @background_colorizer,
           extend: true,
+          highlight: true,
           inline_block: true,
           text: DummyText,
           width: 0,

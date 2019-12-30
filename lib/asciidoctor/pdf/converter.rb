@@ -1791,6 +1791,7 @@ module Asciidoctor
               linenums = (node.attr 'start', 1, false).to_i
               @theme.code_linenum_font_color ||= '999999'
               postprocess = true
+              wrap_ext = FormattedText::SourceWrap
             elsif conum_mapping || highlight_lines
               postprocess = true
             end
@@ -1805,7 +1806,12 @@ module Asciidoctor
           if source_string.empty?
             source_chunks = []
           else
-            formatter_opts = (node.attr? 'linenums') ? { line_numbers: true, start_line: (node.attr 'start', 1, false).to_i } : {}
+            if node.attr? 'linenums'
+              formatter_opts = { line_numbers: true, start_line: (node.attr 'start', 1, false).to_i }
+              wrap_ext = FormattedText::SourceWrap
+            else
+              formatter_opts = {}
+            end
             if (srclang = node.attr 'language', nil, false)
               if srclang.include? '?'
                 if (lexer = ::Rouge::Lexer.find_fancy srclang)
@@ -1879,9 +1885,11 @@ module Asciidoctor
             end
 
             pad_box @theme.code_padding do
+              ::Prawn::Text::Formatted::Box.extensions << wrap_ext if wrap_ext
               typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height || @theme.base_line_height),
                   color: (font_color_override || @theme.code_font_color || @font_color),
                   size: adjusted_font_size
+              ::Prawn::Text::Formatted::Box.extensions.pop if wrap_ext
             end
           end
         end
@@ -1952,10 +1960,9 @@ module Asciidoctor
           last_line = cur_line_num == last_line_num
           visible_line_num = cur_line_num + (linenums || 1)
           if highlight_lines && (highlight_bg_color = highlight_lines[visible_line_num])
-            #line.each {|frag| (frag[:callback] || []).delete FormattedText::TextBackgroundAndBorderRenderer }
-            line.unshift text: DummyText, background_color: highlight_bg_color, inline_block: true, extend: true, width: 0, callback: [FormattedText::TextBackgroundAndBorderRenderer]
+            line.unshift text: DummyText, background_color: highlight_bg_color, highlight: true, inline_block: true, extend: true, width: 0, callback: [FormattedText::TextBackgroundAndBorderRenderer]
           end
-          line.unshift text: %(#{visible_line_num.to_s.rjust pad_size} ), color: linenum_color if linenums
+          line.unshift text: %(#{visible_line_num.to_s.rjust pad_size} ), linenum: visible_line_num, color: linenum_color if linenums
           if conum_mapping && (conums = conum_mapping.delete cur_line_num)
             line << { text: ' ' * num_trailing_spaces } if last_line && num_trailing_spaces > 0
             conum_text = conums.map {|num| conum_glyph num }.join ' '
