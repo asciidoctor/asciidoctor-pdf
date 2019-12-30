@@ -329,6 +329,58 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
       (expect pgnum_labels).to eq [nil, '1', '2', '3']
     end
+
+    it 'should start running content at specified page of body if running_content_start_at is an integer' do
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 3 }, analyze: true
+      = Book Title
+      :doctype: book
+      :toc:
+
+      == Dedication
+
+      To the only person who gets me.
+
+      == Acknowledgements
+
+      Thanks all to all who made this possible!
+
+      == Chapter One
+
+      content
+      EOS
+
+      (expect pdf.pages).to have_size 5
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels).to eq [nil, nil, nil, nil, '3']
+    end
+
+    it 'should start page numbering and running content at specified page of body' do
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 3, running_content_start_at: 3 }, analyze: true
+      = Book Title
+      :doctype: book
+      :toc:
+
+      == Dedication
+
+      To the only person who gets me.
+
+      == Acknowledgements
+
+      Thanks all to all who made this possible!
+
+      == Chapter One
+
+      content
+      EOS
+
+      (expect pdf.pages).to have_size 5
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels).to eq [nil, nil, nil, nil, '1']
+    end
   end
 
   context 'Page numbering' do
