@@ -44,51 +44,26 @@ image:https://img.shields.io/gem/v/asciidoctor-pdf.svg[Latest Release, link={url
 image:https://img.shields.io/badge/license-MIT-blue.svg[MIT License, link=#copyright]
 endif::[]
 
-ifdef::env-site[]
 Asciidoctor PDF is a native PDF converter for AsciiDoc.
 It bypasses the requirement to generate an interim format such as DocBook, Apache FO, or LaTeX.
-Instead, you can use it to convert directly from AsciiDoc to PDF.
+Instead, you can use this extension to convert directly from AsciiDoc to PDF.
 Its aim is to take the pain out of creating PDF documents from AsciiDoc.
-endif::[]
-ifndef::env-site[]
-_Lo and behold_, a native PDF converter for AsciiDoc built with {url-asciidoctor}[Asciidoctor] and {url-prawn}[Prawn]! +
-_No more middleman._ +
-_No more DocBook toolchain._ +
-It's AsciiDoc straight to PDF!
 
 toc::[]
 
-== Prawn, the Majestic PDF Generator
+== Overview
 
-{url-project}[{project-name}] is made possible by an amazing Ruby gem named Prawn.
-And what a gem it is!
+{project-name} is an Asciidoctor extension that converts an AsciiDoc document directly to a PDF document.
+The style and layout of the PDF is controlled by a specialized theme file.
+To the degree possible, this converter supports all the features of AsciiDoc supported by the built-in converters, but there are limits to what Prawn supports and what is possible with PDF in general.
 
-{url-prawn}[Prawn] is a nimble PDF writer for Ruby.
-More important, it's a hackable platform that offers both high level APIs for the most common needs and low level APIs for bending the document model to accommodate special circumstances.
+Under the covers, {project-name} uses the Prawn gem (and its extensions, such as prawn-svg and prawn-table) to generate the PDF document.
+{url-prawn}[Prawn] is a general purpose PDF generator for Ruby that features high-level APIs for common needs like setting up the page and inserting images and low-level APIs for positioning and rendering text and graphics.
 
-With Prawn, you can write text, draw lines and shapes and place images _anywhere_ on the page and add as much color as you like.
-In addition, it brings a fluent API and aggressive code re-use to the printable document space.
-
-Here's an example that demonstrates how to use Prawn to create a basic PDF document.
-
-.Create a basic PDF document using Prawn
-[source,ruby]
-----
-require 'prawn'
-
-Prawn::Document.generate 'output.pdf' do
-  text 'Hello, PDF creation!'
-end
-----
-
-It's that easy.
-And that's just the beginning.
-Skip ahead to <<getting-started,Getting started>> to start putting it use.
-
-Prawn is the _killer library_ for PDF generation we've needed to close this critical gap in Asciidoctor.
-It absolutely takes the pain out of creating printable documents.
-Picking up from there, {project-name} takes the pain out of creating PDF documents _from AsciiDoc_.
-endif::[]
+Prawn takes the pain out of creating (basic) PDF documents.
+Likewise, {project-name} takes the pain out of creating PDF documents _directly from AsciiDoc_.
+Skip ahead to <<getting-started,Getting started>> to start putting {project-name} use.
+But don't miss the <<Highlights>> and <<Known Limitations>> sections to understand what's possible.
 
 == Highlights
 
@@ -108,7 +83,7 @@ endif::[]
 * Table border settings honored
 * Font-based icons
 * Custom (TTF) fonts
-* Double-sided printing mode (margins alternate on recto and verso pages)
+* Double-sided (aka prepress) printing mode (i.e., margins alternate on recto and verso pages)
 
 == Known Limitations
 
