@@ -200,9 +200,7 @@ class LineInspector < PDF::Inspector
   end
 
   def append_line x, y
-    unless @color.nil? && @width.nil?
-      @lines << { page_number: @page_number, from: @from, to: { x: x, y: y }, color: @color, width: @width }
-    end
+    @lines << { page_number: @page_number, from: @from, to: { x: x, y: y }, color: @color, width: @width } unless @color.nil? && @width.nil?
   end
 
   def begin_new_subpath x, y

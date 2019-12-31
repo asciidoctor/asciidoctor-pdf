@@ -2621,11 +2621,23 @@ The keys in this category control the arrangement and style of quote blocks.
 
 3+|[#key-prefix-blockquote]*Key Prefix:* <<key-prefix-blockquote,blockquote>>
 
+|background-color
+|<<colors,Color>> +
+(default: _not set_)
+|blockquote:
+  background-color: #dddddd
+
 |border-width^[1]^
+|<<values,Number>> +
+(default: 0)
+|blockquote:
+  border-width: 0.5
+
+|border-left-width^[1]^
 |<<values,Number>> +
 (default: 4)
 |blockquote:
-  border-width: 5
+  border-left-width: 5
 
 |border-color^[1]^
 |<<colors,Color>> +
@@ -2720,7 +2732,8 @@ The keys in this category control the arrangement and style of quote blocks.
     text-transform: uppercase
 |===
 
-. Only applies to the left side.
+. If border-left-width is non-zero, the border is only applied to the left side.
+Otherwise, if border-width is non-zero, the border is drawn around the whole block.
 
 [#keys-verse]
 === Verse
@@ -2733,11 +2746,23 @@ The keys in this category control the arrangement and style of verse blocks.
 
 3+|[#key-prefix-verse]*Key Prefix:* <<key-prefix-verse,verse>>
 
+|background-color
+|<<colors,Color>> +
+(default: _not set_)
+|verse:
+  background-color: #dddddd
+
 |border-width^[1]^
+|<<values,Number>> +
+(default: 0)
+|verse:
+  border-width: 0.5
+
+|border-left-width^[1]^
 |<<values,Number>> +
 (default: 4)
 |verse:
-  border-width: 5
+  border-left-width: 5
 
 |border-color^[1]^
 |<<colors,Color>> +
@@ -2832,7 +2857,8 @@ The keys in this category control the arrangement and style of verse blocks.
     text-transform: uppercase
 |===
 
-. Only applies to the left side.
+. If border-left-width is non-zero, the border is only applied to the left side.
+Otherwise, if border-width is non-zero, the border is drawn around the whole block.
 
 [#keys-sidebar]
 === Sidebar

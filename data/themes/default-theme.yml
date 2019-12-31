@@ -173,15 +173,17 @@ admonition:
 blockquote:
   font_size: $base_font_size_large
   border_color: $base_border_color
-  border_width: 5
+  border_width: 0
+  border_left_width: 5
   # FIXME disable negative padding bottom once margin collapsing is implemented
-  padding: [0, $horizontal_rhythm, $block_margin_bottom * -0.75, $horizontal_rhythm + $blockquote_border_width / 2]
+  padding: [0, $horizontal_rhythm, $block_margin_bottom * -0.75, $horizontal_rhythm + $blockquote_border_left_width / 2]
   cite_font_size: $base_font_size_small
   cite_font_color: 999999
 verse:
   font_size: $blockquote_font_size
   border_color: $blockquote_border_color
   border_width: $blockquote_border_width
+  border_left_width: $blockquote_border_left_width
   padding: $blockquote_padding
   cite_font_size: $blockquote_cite_font_size
   cite_font_color: $blockquote_cite_font_color
