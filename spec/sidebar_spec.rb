@@ -46,4 +46,14 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     (expect title_text[:x]).to be > 100
     (expect title_text[:y]).to be < sidebar_border_top
   end
+
+  it 'should not add border if border width is not set in theme or value is nil' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_border_color: 'AA0000', sidebar_border_width: nil }, analyze: :line
+    ****
+    Sidebar
+    ****
+    EOS
+
+    (expect pdf.lines).to have_size 0
+  end
 end
