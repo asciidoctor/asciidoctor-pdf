@@ -69,13 +69,16 @@ But don't miss the <<Highlights>> and <<Known Limitations>> sections to understa
 
 * Direct AsciiDoc to PDF conversion
 * <<docs/theming-guide.adoc#,Configuration-driven theme (style and layout)>>
-* SVG support
+* Full SVG support
 * PDF document outline (i.e., bookmarks)
+* Title page
 * Table of contents page(s)
 * Document metadata (title, authors, subject, keywords, etc)
 * Internal cross reference links
 * Syntax highlighting with Rouge, Pygments, or CodeRay
+* Page background color or page background image with named scaling
 * Page numbering
+* Double-sided (aka prepress) printing mode (i.e., margins alternate on recto and verso pages)
 * Customizable running content (header and footer)
 * “Keep together” blocks (i.e., page breaks avoided in certain block content)
 * Orphaned section titles avoided
@@ -83,7 +86,9 @@ But don't miss the <<Highlights>> and <<Known Limitations>> sections to understa
 * Table border settings honored
 * Font-based icons
 * Custom (TTF) fonts
-* Double-sided (aka prepress) printing mode (i.e., margins alternate on recto and verso pages)
+* Auto-generated index
+* Automatic hyphenation (when enabled)
+* Compression / optimization of output file
 
 == Known Limitations
 
