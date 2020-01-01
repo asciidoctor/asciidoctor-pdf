@@ -983,10 +983,60 @@ module Asciidoctor
         add_dest_for_block node if node.id
         theme_margin :block, :top
         category = node.context == :quote ? :blockquote : :verse
-        b_width = @theme[%(#{category}_border_width)] || 0
-        b_color = @theme[%(#{category}_border_color)]
+        unless (b_left_width = @theme[%(#{category}_border_left_width)]) && b_left_width > 0
+          b_left_width = nil
+          if (b_width = @theme[%(#{category}_border_width)])
+            b_width = nil unless b_width > 0
+          end
+        end
+        b_color = @theme[%(#{category}_border_color)] if b_width || b_left_width
+        bg_color = @theme[%(#{category}_background_color)]
         keep_together do |box_height = nil|
           push_scratch node.document if scratch?
+          if box_height && (b_width || bg_color)
+            # FIXME: due to the calculation error logged in #789, we must advance page even when content is split across pages
+            advance_page if box_height > cursor && !at_page_top?
+            float do
+              # TODO: move the multi-page logic to theme_fill_and_stroke_bounds
+              if b_width
+                if b_color == @page_bg_color # let page background cut into sidebar background
+                  b_gap_color, b_shift = @page_bg_color, b_width
+                elsif (b_gap_color = bg_color) && b_gap_color != b_color
+                  b_shift = 0
+                else # let page background cut into border
+                  b_gap_color, b_shift = @page_bg_color, 0
+                end
+              else # let page background cut into sidebar background
+                b_shift, b_gap_color = (b_width = 0.5) * 0.5, @page_bg_color
+              end
+              b_radius = @theme[%(#{category}_border_radius)] || 0
+              initial_page, remaining_height = true, box_height
+              while remaining_height > 0
+                advance_page unless initial_page
+                fragment_height = [(available_height = cursor), remaining_height].min
+                bounding_box [0, available_height], width: bounds.width, height: fragment_height do
+                  theme_fill_and_stroke_bounds category
+                  unless b_width == 0
+                    indent b_radius, b_radius do
+                      move_down b_shift
+                      # dashed line to indicate continuation from previous page; swell line to cover background
+                      stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
+                      move_up b_shift
+                    end unless initial_page
+                    if remaining_height > fragment_height
+                      move_down fragment_height - b_shift
+                      indent b_radius, b_radius do
+                        # dashed line to indicate continuation to next page; swell line to cover background
+                        stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
+                      end
+                    end
+                  end
+                end
+                remaining_height -= fragment_height
+                initial_page = false
+              end
+            end
+          end
           start_page_number = page_number
           start_cursor = cursor
           caption_height = node.title? ? (layout_caption node, category: category) : 0
@@ -1007,7 +1057,7 @@ module Asciidoctor
           end
           # FIXME: we want to draw graphics before content, but box_height is not reliable when spanning pages
           # FIXME: border extends to bottom of content area if block terminates at bottom of page
-          if box_height && b_width > 0
+          if box_height && b_left_width
             page_spread = page_number - start_page_number + 1
             end_cursor = cursor
             go_to_page start_page_number
@@ -1034,7 +1084,7 @@ module Asciidoctor
               # NOTE: b_height is 0 when block terminates at bottom of page
               next if b_height == 0
               bounding_box [0, y_draw], width: bounds.width, height: b_height do
-                stroke_vertical_rule b_color, line_width: b_width, at: b_width / 2.0
+                stroke_vertical_rule b_color, line_width: b_left_width, at: b_left_width * 0.5
               end
             end
           end

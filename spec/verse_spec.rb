@@ -36,8 +36,9 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     (expect lines[2]).to eql %(\u00a0       go)
   end
 
-  it 'should not draw left border if border_width is 0' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { blockquote_border_width: 0 }, analyze: :line
+  it 'should not draw left border if border_left_width is 0' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { verse_border_left_width: 0 }, analyze: :line
+    [verse]
     ____
     here
     we
@@ -68,5 +69,39 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     (expect text[0][:font_name]).to eql 'mplus1mn-regular'
     (expect text[0][:font_size]).to eql 10.5
     (expect text[0][:font_color]).to eql '555555'
+  end
+
+  it 'should apply specified background color', visual: true do
+    pdf_theme = {
+      verse_background_color: 'dddddd',
+      verse_border_color: 'aa0000',
+    }
+    to_file = to_pdf_file <<~'EOS', 'verse-background-color.pdf', pdf_theme: pdf_theme
+    [verse]
+    ____
+    Let it be.
+    Let it be.
+    ____
+    EOS
+
+    (expect to_file).to visually_match 'verse-background-color.pdf'
+  end
+
+  it 'should apply specified border and background color', visual: true do
+    pdf_theme = build_pdf_theme \
+      verse_border_left_width: 0,
+      verse_border_width: 0.5,
+      verse_border_color: 'aa0000',
+      verse_background_color: 'dddddd'
+    pdf_theme.blockquote_padding = pdf_theme.sidebar_padding
+    to_file = to_pdf_file <<~'EOS', 'verse-border-and-background-color.pdf', pdf_theme: pdf_theme
+    [verse,Paul McCartney]
+    ____
+    Let it be.
+    Let it be.
+    ____
+    EOS
+
+    (expect to_file).to visually_match 'verse-border-and-background-color.pdf'
   end
 end
