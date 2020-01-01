@@ -903,50 +903,7 @@ module Asciidoctor
         keep_together do |box_height = nil|
           push_scratch node.document if scratch?
           if box_height
-            # FIXME: due to the calculation error logged in #789, we must advance page even when content is split across pages
-            advance_page if box_height > cursor && !at_page_top?
-            layout_caption node, category: :example
-            float do
-              # TODO: move the multi-page logic to theme_fill_and_stroke_bounds
-              if (b_width = @theme.example_border_width || 0) > 0 && (b_color = @theme.example_border_color)
-                if b_color == @page_bg_color # let page background cut into example background
-                  b_gap_color, b_shift = @page_bg_color, b_width
-                elsif (b_gap_color = @theme.example_background_color) && b_gap_color != b_color
-                  b_shift = 0
-                else # let page background cut into border
-                  b_gap_color, b_shift = @page_bg_color, 0
-                end
-              else # let page background cut into sidebar background
-                b_width = 0.5 if b_width == 0
-                b_shift, b_gap_color = b_width * 0.5, @page_bg_color
-              end
-              b_radius = (@theme.example_border_radius || 0) + b_width
-              initial_page, remaining_height = true, box_height - caption_height
-              while remaining_height > 0
-                advance_page unless initial_page
-                fragment_height = [(available_height = cursor), remaining_height].min
-                bounding_box [0, available_height], width: bounds.width, height: fragment_height do
-                  theme_fill_and_stroke_bounds :example
-                  unless b_width == 0
-                    indent b_radius, b_radius do
-                      move_down b_shift
-                      # dashed line to indicate continuation from previous page; swell line to cover background
-                      stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
-                      move_up b_shift
-                    end unless initial_page
-                    if remaining_height > fragment_height
-                      move_down fragment_height - b_shift
-                      indent b_radius, b_radius do
-                        # dashed line to indicate continuation to next page; swell line to cover background
-                        stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
-                      end
-                    end
-                  end
-                end
-                remaining_height -= fragment_height
-                initial_page = false
-              end
-            end
+            theme_fill_and_stroke_block :example, box_height, (node.title? ? node : nil)
           else
             move_down caption_height
           end
@@ -1101,51 +1058,7 @@ module Asciidoctor
         theme_margin :block, :top
         keep_together do |box_height = nil|
           push_scratch node.document if scratch?
-          if box_height
-            # FIXME: due to the calculation error logged in #789, we must advance page even when content is split across pages
-            advance_page if box_height > cursor && !at_page_top?
-            float do
-              # TODO: move the multi-page logic to theme_fill_and_stroke_bounds
-              if (b_width = @theme.sidebar_border_width || 0) > 0 && (b_color = @theme.sidebar_border_color)
-                if b_color == @page_bg_color # let page background cut into sidebar background
-                  b_gap_color, b_shift = @page_bg_color, b_width
-                elsif (b_gap_color = @theme.sidebar_background_color) && b_gap_color != b_color
-                  b_shift = 0
-                else # let page background cut into border
-                  b_gap_color, b_shift = @page_bg_color, 0
-                end
-              else # let page background cut into sidebar background
-                b_width = 0.5 if b_width == 0
-                b_shift, b_gap_color = b_width * 0.5, @page_bg_color
-              end
-              b_radius = (@theme.sidebar_border_radius || 0) + b_width
-              initial_page, remaining_height = true, box_height
-              while remaining_height > 0
-                advance_page unless initial_page
-                fragment_height = [(available_height = cursor), remaining_height].min
-                bounding_box [0, available_height], width: bounds.width, height: fragment_height do
-                  theme_fill_and_stroke_bounds :sidebar
-                  unless b_width == 0
-                    indent b_radius, b_radius do
-                      move_down b_shift
-                      # dashed line to indicate continuation from previous page; swell line to cover background
-                      stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
-                      move_up b_shift
-                    end unless initial_page
-                    if remaining_height > fragment_height
-                      move_down fragment_height - b_shift
-                      indent b_radius, b_radius do
-                        # dashed line to indicate continuation to next page; swell line to cover background
-                        stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
-                      end
-                    end
-                  end
-                end
-                remaining_height -= fragment_height
-                initial_page = false
-              end
-            end
-          end
+          theme_fill_and_stroke_block :sidebar, box_height if box_height
           pad_box @theme.sidebar_padding do
             theme_font :sidebar_title do
               # QUESTION should we allow margins of sidebar title to be customized?
@@ -3771,6 +3684,59 @@ module Asciidoctor
         fill_and_stroke_bounds background_color, @theme[%(#{category}_border_color)],
             line_width: (@theme[%(#{category}_border_width)] || 0),
             radius: @theme[%(#{category}_border_radius)]
+      end
+
+      def theme_fill_and_stroke_block category, block_height, node = nil
+        if (b_width = @theme[%(#{category}_border_width)])
+          b_width = nil unless b_width > 0
+        end
+        bg_color = @theme[%(#{category}_background_color)]
+        return unless b_width || (bg_color && bg_color != 'transparent')
+        if (b_color = @theme[%(#{category}_border_color)]) == 'transparent'
+          b_color = @page_bg_color
+        end
+        b_radius = (@theme[%(#{category}_border_radius)] || 0) + b_width if b_width
+        if b_width && b_color
+          if b_color == @page_bg_color # let page background cut into block background
+            b_gap_color, b_shift = @page_bg_color, b_width
+          elsif (b_gap_color = bg_color) && b_gap_color != b_color
+            b_shift = 0
+          else # let page background cut into border
+            b_gap_color, b_shift = @page_bg_color, 0
+          end
+        else # let page background cut into block background
+          b_shift, b_gap_color = (b_width ||= 0.5) * 0.5, @page_bg_color
+        end
+        # FIXME: due to the calculation error logged in #789, we must advance page even when content is split across pages
+        advance_page if block_height > cursor && !at_page_top?
+        caption_height = node ? (layout_caption node, category: category) - 1 : 0
+        float do
+          initial_page, remaining_height = true, block_height - caption_height
+          while remaining_height > 0
+            advance_page unless initial_page
+            fragment_height = [(available_height = cursor), remaining_height].min
+            bounding_box [0, available_height], width: bounds.width, height: fragment_height do
+              theme_fill_and_stroke_bounds category
+              if b_width
+                indent b_radius, b_radius do
+                  move_down b_shift
+                  # dashed line to indicate continuation from previous page; swell line slightly to cover background
+                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
+                  move_up b_shift
+                end unless initial_page
+                if remaining_height > fragment_height
+                  move_down fragment_height - b_shift
+                  indent b_radius, b_radius do
+                    # dashed line to indicate continuation to next page; swell line to cover background
+                    stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
+                  end
+                end
+              end
+            end
+            remaining_height -= fragment_height
+            initial_page = false
+          end
+        end
       end
 
       # Insert a top margin equal to amount if cursor is not at the top of the
