@@ -16,6 +16,30 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     (expect example_text[:page_number]).to be 2
   end
 
+  it 'should include title if specified' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    .Title
+    ====
+    Content
+    ====
+    EOS
+
+    title_texts = pdf.find_text 'Example 1. Title'
+    (expect title_texts).to have_size 1
+  end
+
+  it 'should include title if specified and background and border are not' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { example_background_color: 'transparent', example_border_width: 0 }, analyze: true
+    .Title
+    ====
+    Content
+    ====
+    EOS
+
+    title_texts = pdf.find_text 'Example 1. Title'
+    (expect title_texts).to have_size 1
+  end
+
   it 'should keep title with content when block is advanced to next page' do
     pdf = to_pdf <<~EOS, analyze: true
     #{(['filler'] * 15).join %(\n\n)}

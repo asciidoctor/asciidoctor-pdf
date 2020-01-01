@@ -3649,8 +3649,10 @@ module Asciidoctor
         if (bg_color = @theme[%(#{category}_background_color)]) == 'transparent'
           bg_color = nil
         end
-        # FIXME: need to render caption, if specified
-        return unless b_width || bg_color
+        unless b_width || bg_color
+          (node = opts[:caption_node]) && node.title? && (layout_caption node, category: category)
+          return
+        end
         if (b_color = @theme[%(#{category}_border_color)]) == 'transparent'
           b_color = @page_bg_color
         end
