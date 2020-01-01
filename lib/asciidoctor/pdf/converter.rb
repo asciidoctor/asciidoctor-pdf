@@ -1549,7 +1549,7 @@ module Asciidoctor
             bb_x = bounds.width - w
           end
           bounding_box [(bb_x || 0), top], width: (bb_width || w), height: h, position: alignment do
-            theme_fill_and_stroke_bounds :image, background_color: 'transparent'
+            theme_fill_and_stroke_bounds :image, background_color: nil
           end
           true
         end
@@ -1784,40 +1784,7 @@ module Asciidoctor
         keep_together do |box_height = nil|
           caption_height = node.title? ? (layout_caption node, category: :code) : 0
           theme_font :code do
-            if box_height
-              float do
-                # TODO: move the multi-page logic to theme_fill_and_stroke_bounds
-                unless (b_width = @theme.code_border_width || 0) == 0
-                  b_radius = (@theme.code_border_radius || 0) + b_width
-                  b_gap_color = bg_color_override || @theme.code_background_color || @page_bg_color
-                end
-                remaining_height = box_height - caption_height
-                i = 0
-                while remaining_height > 0
-                  advance_page if (started_new_page = i > 0)
-                  fill_height = [remaining_height, cursor].min
-                  bounding_box [0, cursor], width: bounds.width, height: fill_height do
-                    theme_fill_and_stroke_bounds :code, background_color: bg_color_override
-                    unless b_width == 0
-                      indent b_radius, b_radius do
-                        # dashed line to indicate continuation from previous page
-                        stroke_horizontal_rule b_gap_color, line_width: b_width, line_style: :dashed
-                      end if started_new_page
-                      if remaining_height > fill_height
-                        move_down fill_height
-                        indent b_radius, b_radius do
-                          # dashed line to indicate continuation on next page
-                          stroke_horizontal_rule b_gap_color, line_width: b_width, line_style: :dashed
-                        end
-                      end
-                    end
-                  end
-                  remaining_height -= fill_height
-                  i += 1
-                end
-              end
-            end
-
+            theme_fill_and_stroke_block :code, (box_height - caption_height), background_color: bg_color_override, split_from_top: false if box_height
             pad_box @theme.code_padding do
               ::Prawn::Text::Formatted::Box.extensions << wrap_ext if wrap_ext
               typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height || @theme.base_line_height),
@@ -3636,7 +3603,7 @@ module Asciidoctor
       end
 
       def theme_fill_and_stroke_bounds category, opts = {}
-        bg_color = opts[:background_color] || @theme[%(#{category}_background_color)]
+        bg_color = (opts.key? :background_color) ? opts[:background_color] : @theme[%(#{category}_background_color)]
         fill_and_stroke_bounds bg_color, @theme[%(#{category}_border_color)],
             line_width: (@theme[%(#{category}_border_width)] || 0),
             radius: @theme[%(#{category}_border_radius)]
@@ -3646,7 +3613,7 @@ module Asciidoctor
         if (b_width = (opts.key? :border_width) ? opts[:border_width] : @theme[%(#{category}_border_width)])
           b_width = nil unless b_width > 0
         end
-        if (bg_color = @theme[%(#{category}_background_color)]) == 'transparent'
+        if (bg_color = opts[:background_color] || @theme[%(#{category}_background_color)]) == 'transparent'
           bg_color = nil
         end
         unless b_width || bg_color
@@ -3669,7 +3636,7 @@ module Asciidoctor
           b_shift, b_gap_color = (b_width ||= 0.5) * 0.5, @page_bg_color
         end
         # FIXME: due to the calculation error logged in #789, we must advance page even when content is split across pages
-        advance_page if block_height > cursor && !at_page_top?
+        advance_page if (opts.fetch :split_from_top, true) && block_height > cursor && !at_page_top?
         caption_height = (node = opts[:caption_node]) && node.title? ? (layout_caption node, category: category) - 1 : 0
         float do
           remaining_height = block_height - caption_height
@@ -3678,7 +3645,7 @@ module Asciidoctor
             advance_page unless initial_page
             chunk_height = [(available_height = cursor), remaining_height].min
             bounding_box [0, available_height], width: bounds.width, height: chunk_height do
-              theme_fill_and_stroke_bounds category
+              theme_fill_and_stroke_bounds category, background_color: bg_color
               if b_width
                 indent b_radius, b_radius do
                   move_down b_shift
@@ -3695,8 +3662,8 @@ module Asciidoctor
                 end
               end
             end
-            remaining_height -= chunk_height
             initial_page = false
+            remaining_height -= chunk_height
           end
         end
       end
