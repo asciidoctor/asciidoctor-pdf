@@ -3636,8 +3636,8 @@ module Asciidoctor
       end
 
       def theme_fill_and_stroke_bounds category, opts = {}
-        background_color = opts[:background_color] || @theme[%(#{category}_background_color)]
-        fill_and_stroke_bounds background_color, @theme[%(#{category}_border_color)],
+        bg_color = opts[:background_color] || @theme[%(#{category}_background_color)]
+        fill_and_stroke_bounds bg_color, @theme[%(#{category}_border_color)],
             line_width: (@theme[%(#{category}_border_width)] || 0),
             radius: @theme[%(#{category}_border_radius)]
       end
@@ -3646,8 +3646,11 @@ module Asciidoctor
         if (b_width = (opts.key? :border_width) ? opts[:border_width] : @theme[%(#{category}_border_width)])
           b_width = nil unless b_width > 0
         end
-        bg_color = @theme[%(#{category}_background_color)]
-        return unless b_width || (bg_color && bg_color != 'transparent')
+        if (bg_color = @theme[%(#{category}_background_color)]) == 'transparent'
+          bg_color = nil
+        end
+        # FIXME: need to render caption, if specified
+        return unless b_width || bg_color
         if (b_color = @theme[%(#{category}_border_color)]) == 'transparent'
           b_color = @page_bg_color
         end
@@ -3667,29 +3670,30 @@ module Asciidoctor
         advance_page if block_height > cursor && !at_page_top?
         caption_height = node ? (layout_caption node, category: category) - 1 : 0
         float do
-          initial_page, remaining_height = true, block_height - caption_height
+          remaining_height = block_height - caption_height
+          initial_page = true
           while remaining_height > 0
             advance_page unless initial_page
-            fragment_height = [(available_height = cursor), remaining_height].min
-            bounding_box [0, available_height], width: bounds.width, height: fragment_height do
+            chunk_height = [(available_height = cursor), remaining_height].min
+            bounding_box [0, available_height], width: bounds.width, height: chunk_height do
               theme_fill_and_stroke_bounds category
               if b_width
                 indent b_radius, b_radius do
                   move_down b_shift
-                  # dashed line to indicate continuation from previous page; swell line slightly to cover background
+                  # dashed line indicates continuation from previous page; swell line slightly to cover background
                   stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
                   move_up b_shift
                 end unless initial_page
-                if remaining_height > fragment_height
-                  move_down fragment_height - b_shift
+                if remaining_height > chunk_height
+                  move_down chunk_height - b_shift
                   indent b_radius, b_radius do
-                    # dashed line to indicate continuation to next page; swell line to cover background
+                    # dashed line indicates continuation from previous page; swell line slightly to cover background
                     stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
                   end
                 end
               end
             end
-            remaining_height -= fragment_height
+            remaining_height -= chunk_height
             initial_page = false
           end
         end
