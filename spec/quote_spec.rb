@@ -83,4 +83,21 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
     (expect to_file).to visually_match 'quote-border-and-background-color.pdf'
   end
+
+  it 'should split border when block is split across pages', visual: true do
+    pdf_theme = {
+      blockquote_border_left_width: 0,
+      blockquote_border_width: 0.5,
+      blockquote_border_color: 'CCCCCC',
+      blockquote_background_color: 'EEEEEE',
+      blockquote_padding: [6, 10, 0, 10],
+    }
+    to_file = to_pdf_file <<~EOS, 'quote-page-split.pdf', pdf_theme: pdf_theme
+    ____
+    #{(['Let it be.'] * 30).join %(\n\n)}
+    ____
+    EOS
+
+    (expect to_file).to visually_match 'quote-page-split.pdf'
+  end
 end
