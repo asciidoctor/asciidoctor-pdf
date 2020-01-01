@@ -47,6 +47,32 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     (expect title_text[:y]).to be < sidebar_border_top
   end
 
+  it 'should split block if it cannot fit on one page' do
+    pdf = to_pdf <<~EOS, analyze: true
+    .Sidebar Title
+    ****
+    #{(['content'] * 30).join %(\n\n)}
+    ****
+    EOS
+
+    title_text = (pdf.find_text 'Sidebar Title')[0]
+    content_text = (pdf.find_text 'content')
+    (expect title_text[:page_number]).to be 1
+    (expect content_text[0][:page_number]).to be 1
+    (expect content_text[-1][:page_number]).to be 2
+  end
+
+  it 'should split border when block is split across pages', visual: true do
+    to_file = to_pdf_file <<~EOS, 'sidebar-page-split.pdf'
+    .Sidebar Title
+    ****
+    #{(['content'] * 30).join %(\n\n)}
+    ****
+    EOS
+
+    (expect to_file).to visually_match 'sidebar-page-split.pdf'
+  end
+
   it 'should not add border if border width is not set in theme or value is nil' do
     pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_border_color: 'AA0000', sidebar_border_width: nil }, analyze: :line
     ****
