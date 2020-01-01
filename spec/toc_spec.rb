@@ -133,6 +133,61 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[1][:strings]).not_to include 'Chapter B'
     end
 
+    it 'should allow section to override toclevels for descendant sections' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+      :toc:
+      :toclevels: 3
+
+      == Chapter
+
+      === Chapter Section
+
+      ==== Chapter Subsection
+
+      [appendix,toclevels=1]
+      == Lorem Ipsum
+
+      === Appendix Section
+
+      ==== Appendix Subsection
+      EOS
+
+      (expect pdf.find_text page_number: 2, string: 'Chapter').to have_size 1
+      (expect pdf.find_text page_number: 2, string: 'Chapter Section').to have_size 1
+      (expect pdf.find_text page_number: 2, string: 'Chapter Subsection').to have_size 1
+      (expect pdf.find_text page_number: 2, string: 'Appendix A: Lorem Ipsum').to have_size 1
+      (expect pdf.find_text page_number: 2, string: 'Appendix Section').to have_size 0
+    end
+
+    it 'should allow section to remove itself from toc by setting toclevels to less than section level' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+      :toc:
+      :toclevels: 3
+
+      == Chapter
+
+      === Chapter Section
+
+      ==== Chapter Subsection
+
+      [appendix,toclevels=0]
+      == Lorem Ipsum
+
+      === Appendix Section
+
+      ==== Appendix Subsection
+      EOS
+
+      (expect pdf.find_text page_number: 2, string: 'Chapter').to have_size 1
+      (expect pdf.find_text page_number: 2, string: 'Chapter Section').to have_size 1
+      (expect pdf.find_text page_number: 2, string: 'Chapter Subsection').to have_size 1
+      (expect pdf.find_text page_number: 2, string: 'Appendix A: Lorem Ipsum').to have_size 0
+    end
+
     it 'should reserve enough pages for toc if it spans more than one page' do
       sections = (1..40).map {|num| %(\n\n=== Section #{num}) }
       pdf = to_pdf <<~EOS, doctype: :book, analyze: :page
