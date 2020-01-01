@@ -903,7 +903,7 @@ module Asciidoctor
         keep_together do |box_height = nil|
           push_scratch node.document if scratch?
           if box_height
-            theme_fill_and_stroke_block :example, box_height, (node.title? ? node : nil)
+            theme_fill_and_stroke_block :example, box_height, caption_node: node
           else
             move_down caption_height
           end
@@ -948,7 +948,7 @@ module Asciidoctor
         end
         keep_together do |box_height = nil|
           push_scratch node.document if scratch?
-          theme_fill_and_stroke_block category, box_height, nil, border_width: b_width if box_height && (b_width || @theme[%(#{category}_background_color)])
+          theme_fill_and_stroke_block category, box_height, border_width: b_width if box_height && (b_width || @theme[%(#{category}_background_color)])
           start_page_number = page_number
           start_cursor = cursor
           caption_height = node.title? ? (layout_caption node, category: category) : 0
@@ -3642,7 +3642,7 @@ module Asciidoctor
             radius: @theme[%(#{category}_border_radius)]
       end
 
-      def theme_fill_and_stroke_block category, block_height, node = nil, opts = {}
+      def theme_fill_and_stroke_block category, block_height, opts = {}
         if (b_width = (opts.key? :border_width) ? opts[:border_width] : @theme[%(#{category}_border_width)])
           b_width = nil unless b_width > 0
         end
@@ -3668,7 +3668,7 @@ module Asciidoctor
         end
         # FIXME: due to the calculation error logged in #789, we must advance page even when content is split across pages
         advance_page if block_height > cursor && !at_page_top?
-        caption_height = node ? (layout_caption node, category: category) - 1 : 0
+        caption_height = (node = opts[:caption_node]) && node.title? ? (layout_caption node, category: category) - 1 : 0
         float do
           remaining_height = block_height - caption_height
           initial_page = true
