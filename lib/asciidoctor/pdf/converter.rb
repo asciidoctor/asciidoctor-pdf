@@ -2992,6 +2992,7 @@ module Asciidoctor
         end
         hanging_indent = @theme.toc_hanging_indent || 0
         sections.each do |sect|
+          next if (num_levels_for_sect = (sect.attr 'toclevels', num_levels, false).to_i) < sect.level
           theme_font :toc, level: (sect.level + 1) do
             sect_title = ZeroWidthSpace + (@text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title)
             pgnum_label_placeholder_width = rendered_width_of_string '0' * @toc_max_pagenum_digits
@@ -3048,8 +3049,8 @@ module Asciidoctor
             end
           end
           indent @theme.toc_indent do
-            layout_toc_level sect.sections, num_levels, line_metrics, dot_leader, num_front_matter_pages
-          end if sect.level < num_levels
+            layout_toc_level sect.sections, num_levels_for_sect, line_metrics, dot_leader, num_front_matter_pages
+          end if num_levels_for_sect > sect.level
         end
       end
 
