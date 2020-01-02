@@ -3424,7 +3424,7 @@ module Asciidoctor
                       # NOTE: must draw line first or SVG will cause border to disappear
                       image trim_bg_image[0], ({ position: :center, vposition: :center }.merge trim_bg_image[1]) if trim_bg_image
                     end
-                  else
+                  elsif trim_border_width > 0
                     bounding_box [trim_styles[:left][side], trim_styles[:top]], width: trim_styles[:width][side], height: trim_styles[:height] do
                       # TODO: stroke_horizontal_rule should support :at
                       move_down bounds.height if periphery == :header
