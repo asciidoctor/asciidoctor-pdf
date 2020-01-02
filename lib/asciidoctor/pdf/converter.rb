@@ -3416,11 +3416,11 @@ module Asciidoctor
                   if trim_bg_color || trim_bg_image
                     bounding_box [0, trim_styles[:top]], width: bounds.width, height: trim_styles[:height] do
                       fill_bounds trim_bg_color if trim_bg_color
-                      if trim_border_width > 0
+                      float do
                         # TODO: stroke_horizontal_rule should support :at
                         move_down bounds.height if periphery == :header
                         stroke_horizontal_rule trim_styles[:border_color], line_width: trim_border_width, line_style: trim_styles[:border_style]
-                      end
+                      end if trim_border_width > 0
                       # NOTE: must draw line first or SVG will cause border to disappear
                       image trim_bg_image[0], ({ position: :center, vposition: :center }.merge trim_bg_image[1]) if trim_bg_image
                     end
