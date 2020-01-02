@@ -3343,7 +3343,7 @@ module Asciidoctor
             trim_styles[:img_valign] = trim_styles[:img_valign].to_sym
           end
 
-          if (trim_bg_image = resolve_background_image doc, @theme, :footer_background_image, container_size: [page_width, trim_height]) && trim_bg_image[0]
+          if (trim_bg_image = resolve_background_image doc, @theme, %(#{periphery}_background_image).to_sym, container_size: [page_width, trim_height]) && trim_bg_image[0]
             trim_styles[:bg_image] = trim_bg_image
           else
             trim_bg_image = nil
