@@ -653,6 +653,34 @@ module Asciidoctor
         yield
       end
 
+      # Strokes a horizontal line using the current bounds. The width of the line
+      # can be specified using the line_width option. The offset from the cursor
+      # can be set using the at option.
+      #
+      def stroke_horizontal_rule rule_color = stroke_color, options = {}
+        rule_y = cursor - (options[:at] || 0)
+        rule_style = options[:line_style]
+        rule_width = options[:line_width] || 0.5
+        rule_x_start = bounds.left
+        rule_x_end = bounds.right
+        rule_inked = false
+        save_graphics_state do
+          line_width rule_width
+          stroke_color rule_color
+          case rule_style
+          when :dashed
+            dash rule_width * 4
+          when :dotted
+            dash rule_width
+          when :double
+            stroke_horizontal_line rule_x_start, rule_x_end, at: (rule_y + rule_width)
+            stroke_horizontal_line rule_x_start, rule_x_end, at: (rule_y - rule_width)
+            rule_inked = true
+          end if rule_style
+          stroke_horizontal_line rule_x_start, rule_x_end, at: rule_y unless rule_inked
+        end
+      end
+
       # A compliment to the stroke_horizontal_rule method, strokes a
       # vertical line using the current bounds. The width of the line
       # can be specified using the line_width option. The horizontal (x)
@@ -677,35 +705,6 @@ module Asciidoctor
             rule_x += rule_width
           end if rule_style
           stroke_vertical_line rule_y_from, rule_y_to, at: rule_x
-        end
-      end
-
-      # Strokes a horizontal line using the current bounds. The width of the line
-      # can be specified using the line_width option.
-      #
-      def stroke_horizontal_rule rule_color = stroke_color, options = {}
-        rule_style = options[:line_style]
-        rule_width = options[:line_width] || 0.5
-        rule_x_start = bounds.left
-        rule_x_end = bounds.right
-        rule_inked = false
-        save_graphics_state do
-          line_width rule_width
-          stroke_color rule_color
-          case rule_style
-          when :dashed
-            dash rule_width * 4
-          when :dotted
-            dash rule_width
-          when :double
-            move_up rule_width
-            stroke_horizontal_line rule_x_start, rule_x_end
-            move_down rule_width * 2
-            stroke_horizontal_line rule_x_start, rule_x_end
-            move_up rule_width
-            rule_inked = true
-          end if rule_style
-          stroke_horizontal_line rule_x_start, rule_x_end unless rule_inked
         end
       end
 

@@ -3417,19 +3417,15 @@ module Asciidoctor
                   if trim_bg_color || trim_bg_image
                     bounding_box [0, trim_styles[:top]], width: bounds.width, height: trim_styles[:height] do
                       fill_bounds trim_bg_color if trim_bg_color
-                      float do
-                        # TODO: stroke_horizontal_rule should support :at
-                        move_down bounds.height if periphery == :header
-                        stroke_horizontal_rule trim_styles[:border_color], line_width: trim_border_width, line_style: trim_styles[:border_style]
-                      end if trim_border_width > 0
+                      if trim_border_width > 0
+                        stroke_horizontal_rule trim_styles[:border_color], line_width: trim_border_width, line_style: trim_styles[:border_style], at: (periphery == :header ? bounds.height : 0)
+                      end
                       # NOTE: must draw line first or SVG will cause border to disappear
                       image trim_bg_image[0], ({ position: :center, vposition: :center }.merge trim_bg_image[1]) if trim_bg_image
                     end
                   elsif trim_border_width > 0
                     bounding_box [trim_styles[:left][side], trim_styles[:top]], width: trim_styles[:width][side], height: trim_styles[:height] do
-                      # TODO: stroke_horizontal_rule should support :at
-                      move_down bounds.height if periphery == :header
-                      stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style]
+                      stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style], at: (periphery == :header ? bounds.height : 0)
                     end
                   end
                 end
@@ -3649,10 +3645,8 @@ module Asciidoctor
               theme_fill_and_stroke_bounds category, background_color: bg_color
               if b_width
                 indent b_radius, b_radius do
-                  move_down b_shift
                   # dashed line indicates continuation from previous page; swell line slightly to cover background
-                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
-                  move_up b_shift
+                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed, at: b_shift
                 end unless initial_page
                 if remaining_height > chunk_height
                   move_down chunk_height - b_shift
