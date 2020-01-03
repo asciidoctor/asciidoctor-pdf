@@ -814,12 +814,12 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should draw background image across whole periphery region', visual: true do
       pdf_theme = build_pdf_theme \
-        header_background_image: %(image:#{fixture_file 'running-content-bg-letter.svg'}[fit=contain]),
+        header_background_image: %(image:#{fixture_file 'header-bg-letter.svg'}[fit=contain]),
         header_border_width: 0,
         header_height: 30,
         header_padding: 0,
         header_recto_left_content: '{page-number}',
-        footer_background_image: %(image:#{fixture_file 'running-content-bg-letter.svg'}[fit=contain]),
+        footer_background_image: %(image:#{fixture_file 'footer-bg-letter.svg'}[fit=contain]),
         footer_border_width: 0,
         footer_height: 30,
         footer_padding: 0,
