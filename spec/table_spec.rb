@@ -163,6 +163,30 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       end
     end
 
+    it 'should allow theme to set color, width, and style of grid' do
+      pdf_theme = {
+        table_grid_color: 'AAAAAA',
+        table_grid_width: 3,
+        table_grid_style: 'dashed',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      [frame=none,grid=all]
+      |===
+      | A | B
+      | C | D
+      |===
+      EOS
+
+      # NOTE it appears Prawn table is drawing the same line multiple times
+      lines = pdf.lines.uniq
+      (expect lines).to have_size 4
+      lines.each do |line|
+        (expect line[:color]).to eql 'AAAAAA'
+        (expect line[:width]).to eql 3
+        (expect line[:style]).to eql :dashed
+      end
+    end
+
     it 'should honor cellbgcolor attribute in table cell to set background color of cell', visual: true do
       to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor.pdf'
       :attribute-undefined: drop
