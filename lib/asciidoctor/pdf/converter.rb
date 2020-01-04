@@ -2,7 +2,6 @@
 
 # TODO: cleanup imports...decide what belongs in asciidoctor/pdf.rb
 require 'prawn'
-require_relative 'ext/ttfunk'
 begin
   require 'prawn/gmagick'
 rescue LoadError
