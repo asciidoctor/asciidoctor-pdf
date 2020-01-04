@@ -197,10 +197,11 @@ class LineInspector < PDF::Inspector
     @graphic_states = {}
     @page_number = 1
     @width = nil
+    @style = :solid
   end
 
   def append_line x, y
-    @lines << { page_number: @page_number, from: @from, to: { x: x, y: y }, color: @color, width: @width } unless @color.nil? && @width.nil?
+    @lines << { page_number: @page_number, from: @from, to: { x: x, y: y }, color: @color, width: @width, style: @style } unless @color.nil? && @width.nil?
   end
 
   def begin_new_subpath x, y
@@ -229,6 +230,22 @@ class LineInspector < PDF::Inspector
   def set_graphics_state_parameters ref
     if (opacity = @graphic_states[ref][:ca])
       @color += '%02X' % (opacity * 255).round
+    end
+  end
+
+  # d
+  def set_line_dash a, _b
+    if a.empty?
+      @style = :solid
+    else
+      gap, len = a
+      if gap == len
+        @style = :dashed
+      elsif gap < len
+        @style = :dotted
+      else
+        @style = :solid
+      end
     end
   end
 
