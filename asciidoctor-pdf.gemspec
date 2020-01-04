@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'asciidoctor', '>= 1.5.3', '< 3.0.0'
   s.add_runtime_dependency 'prawn', '~> 2.2.0'
   # NOTE ttfunk 1.6 generates TT instructions ghostscript cannot process, so lock the version of ttfunk
-  s.add_runtime_dependency 'ttfunk', '1.5.1'
+  s.add_runtime_dependency 'ttfunk', '~> 1.5.1'
   s.add_runtime_dependency 'prawn-table', '~> 0.2.0'
   s.add_runtime_dependency 'prawn-templates', '~> 0.1.0'
   s.add_runtime_dependency 'prawn-svg', '~> 0.30.0'
