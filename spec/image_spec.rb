@@ -691,6 +691,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect caption_text[:font_name]).to eql 'NotoSerif-Italic'
       (expect caption_text[:y]).to be < image_bottom
     end
+
+    it 'should set caption align to image align if theme sets caption align to inherit' do
+      pdf_theme = {
+        image_caption_align: 'inherit',
+      }
+
+      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }, analyze: true
+      .Behold, the great Wolpertinger!
+      image::wolpertinger.jpg[,144,align=right]
+      EOS
+
+      midpoint = (get_page_size pdf)[0] * 0.5
+      (expect pdf.text[0][:x]).to be > midpoint
+    end
   end
 
   context 'Border' do

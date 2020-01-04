@@ -1434,12 +1434,14 @@ module Asciidoctor
 
         return on_image_error :missing, node, target, opts unless image_path
 
+        alignment = ((node.attr 'align', nil, false) || @theme.image_align || :left).to_sym
+
         # TODO: move this calculation into a method, such as layout_caption node, category: :image, side: :bottom, dry_run: true
         caption_h = 0
         dry_run do
           move_down 1 # HACK: force top margin to be applied
           # NOTE: we assume caption fits on a single page, which seems reasonable
-          caption_h = (layout_caption node, category: :image, side: :bottom) - 1
+          caption_h = (layout_caption node, category: :image, side: :bottom, block_align: alignment) - 1
         end if node.title?
 
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
@@ -1447,7 +1449,6 @@ module Asciidoctor
         # TODO: add `to_pt page_width` method to ViewportWidth type
         width = (width.to_f / 100) * page_width if ViewportWidth === width
 
-        alignment = ((node.attr 'align', nil, false) || @theme.image_align || :left).to_sym
         align_to_page = node.option? 'align-to-page'
 
         begin
@@ -1529,7 +1530,7 @@ module Asciidoctor
               move_down rendered_h if y == image_y
             end
           end
-          layout_caption node, category: :image, side: :bottom if node.title?
+          layout_caption node, category: :image, side: :bottom, block_align: alignment if node.title?
           theme_margin :block, :bottom unless pinned
         rescue
           on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! ? '; install prawn-gmagick gem to add support' : ''}))
@@ -2875,6 +2876,12 @@ module Asciidoctor
           return 0
         end
         category_caption = (category = opts[:category]) ? %(#{category}_caption) : 'caption'
+        block_align = opts.delete :block_align
+        if (align = @theme[%(#{category_caption}_align)] || @theme.caption_align)
+          align = align == 'inherit' && block_align ? block_align : align.to_sym
+        else
+          align = @base_align.to_sym
+        end
         theme_font :caption do
           theme_font category_caption do
             caption_margin_outside = @theme[%(#{category_caption}_margin_outside)] || @theme.caption_margin_outside
@@ -2887,7 +2894,7 @@ module Asciidoctor
             layout_prose string, {
               margin_top: margin[:top],
               margin_bottom: margin[:bottom],
-              align: (@theme[%(#{category_caption}_align)] || @theme.caption_align || @base_align).to_sym,
+              align: align,
               normalize: false,
               normalize_line_height: true,
               hyphenate: true,
