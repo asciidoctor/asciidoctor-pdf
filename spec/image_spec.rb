@@ -697,13 +697,74 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_caption_align: 'inherit',
       }
 
-      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }, analyze: true
       .Behold, the great Wolpertinger!
       image::wolpertinger.jpg[,144,align=right]
       EOS
 
       midpoint = (get_page_size pdf)[0] * 0.5
       (expect pdf.text[0][:x]).to be > midpoint
+    end
+
+    it 'should restrict caption width to width of image if max-width is fit-content' do
+      pdf_theme = {
+        image_caption_align: 'inherit',
+        image_caption_max_width: 'fit-content',
+      }
+
+      input = <<~'EOS'
+      .This is a picture of our beloved Tux.
+      image::tux.png[align=right]
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :image
+
+      images = pdf.images
+      (expect images).to have_size 1
+      tux_image = images[0]
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+
+      caption_texts = pdf.text
+      (expect caption_texts).to have_size 2
+      caption_text_l1, caption_text_l2 = caption_texts
+      (expect caption_text_l1[:y]).to be > caption_text_l2[:y]
+      (expect caption_text_l1[:string]).to start_with 'Figure 1.'
+      (expect caption_text_l1[:width]).to be < tux_image[:width]
+      (expect caption_text_l2[:width]).to be < tux_image[:width]
+      (expect caption_text_l1[:x]).to be > tux_image[:x]
+      (expect caption_text_l2[:x]).to be > caption_text_l1[:x]
+      (expect caption_text_l1[:x] + caption_text_l1[:width]).to be_within(1).of caption_text_l2[:x] + caption_text_l2[:width]
+    end
+
+    it 'should align caption within width of image if alignment is fixed and max-width is fit-content' do
+      pdf_theme = {
+        image_caption_align: 'left',
+        image_caption_max_width: 'fit-content',
+      }
+
+      input = <<~'EOS'
+      .This is a picture of our beloved Tux.
+      image::tux.png[align=right]
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :image
+
+      images = pdf.images
+      (expect images).to have_size 1
+      tux_image = images[0]
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+
+      caption_texts = pdf.text
+      (expect caption_texts).to have_size 2
+      caption_text_l1, caption_text_l2 = caption_texts
+      (expect caption_text_l1[:y]).to be > caption_text_l2[:y]
+      (expect caption_text_l1[:string]).to start_with 'Figure 1.'
+      (expect caption_text_l1[:width]).to be < tux_image[:width]
+      (expect caption_text_l2[:width]).to be < tux_image[:width]
+      (expect caption_text_l1[:x]).to eql tux_image[:x]
+      (expect caption_text_l2[:x]).to eql caption_text_l1[:x]
     end
   end
 

@@ -31,6 +31,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow theme to specify background color and full border for quote and verse blocks (#1309)
 * allow text alignment roles to be used to control alignment of discrete heading
 * allow theme to configure image caption align(ment) to inherit from image align(ment) (#1459)
+* allow theme to confine width of image caption to width of image (#1291)
 * don't apply border to block if border width is not set (or nil)
 * use font color from pygments style for unhighlighted text (#1441)
 * render stem block as raw literal block
