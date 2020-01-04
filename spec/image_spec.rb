@@ -671,6 +671,28 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
   end
 
+  context 'Caption' do
+    it 'should render caption under an image with a title' do
+      input = <<~'EOS'
+      .Tux, the Linux mascot
+      image::tux.png[tux]
+      EOS
+
+      pdf = to_pdf input, analyze: :image
+      images = pdf.images
+      (expect images).to have_size 1
+      image_bottom = images[0][:y] - images[0][:height]
+
+      pdf = to_pdf input, analyze: true
+      text = pdf.text
+      (expect text).to have_size 1
+      caption_text = text[0]
+      (expect caption_text[:string]).to eql 'Figure 1. Tux, the Linux mascot'
+      (expect caption_text[:font_name]).to eql 'NotoSerif-Italic'
+      (expect caption_text[:y]).to be < image_bottom
+    end
+  end
+
   context 'Border' do
     it 'should draw border around PNG image if border width and border color are set in the theme', visual: true do
       pdf_theme = {
