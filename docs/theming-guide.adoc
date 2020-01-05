@@ -3341,6 +3341,20 @@ The keys in this category control the arrangement of block images.
 |iamge:
   alt:
     font-style: italic
+
+|caption-align
+|<<text-alignments,Text alignment>> {vbar} inherit +
+(default: $caption-align)
+|image:
+  caption:
+    align: inherit
+
+|caption-max-width^[5]^
+|fit-content {vbar} none +
+(default: none)
+|image:
+  caption:
+    max-width: fit-content
 |===
 
 . Only applies to block images.
@@ -3349,6 +3363,7 @@ If specified, this value takes precedence over the value of the `width` attribut
 The border is drawn above the image on the inside of the box reserved for the image.
 . The value `auto` means the border should expand to fit the width of the container (i.e., full width) instead of the image.
 . Use the placeholders `%\{alt}`, `%\{target}`, `%\{link}`, and `%{/link}` to insert the alt text, image target, and link open/close tags into the content template.
+. In order for the image to be sized correctly when max-width is fit-content, a width should always be specified on the image.
 
 [#keys-svg]
 === SVG

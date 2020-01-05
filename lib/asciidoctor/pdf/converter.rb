@@ -1434,23 +1434,25 @@ module Asciidoctor
         return on_image_error :missing, node, target, opts unless image_path
 
         alignment = ((node.attr 'align', nil, false) || @theme.image_align || :left).to_sym
-
-        # TODO: move this calculation into a method, such as layout_caption node, category: :image, side: :bottom, dry_run: true
-        caption_h = 0
-        dry_run do
-          move_down 1 # HACK: force top margin to be applied
-          # NOTE: we assume caption fits on a single page, which seems reasonable
-          caption_h = (layout_caption node, category: :image, side: :bottom, block_align: alignment) - 1
-        end if node.title?
-
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
         width = resolve_explicit_width node.attributes, (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
         # TODO: add `to_pt page_width` method to ViewportWidth type
         width = (width.to_f / 100) * page_width if ViewportWidth === width
 
+        # TODO: move this calculation into a method, such as layout_caption node, category: :image, side: :bottom, dry_run: true
+        caption_h = 0
+        # NOTE: if width is not set explicitly and max-width is fit-content, caption height may not be accurate
+        caption_max_w = width && @theme.image_caption_max_width == 'fit-content' ? width : nil
+        dry_run do
+          move_down 1 # HACK: force top margin to be applied
+          # NOTE: we assume caption fits on a single page, which seems reasonable
+          caption_h = (layout_caption node, category: :image, side: :bottom, block_align: alignment, max_width: caption_max_w) - 1
+        end if node.title?
+
         align_to_page = node.option? 'align-to-page'
 
         begin
+          rendered_w = nil
           span_page_width_if align_to_page do
             if image_format == 'svg'
               if ::Base64 === image_path
@@ -1529,7 +1531,10 @@ module Asciidoctor
               move_down rendered_h if y == image_y
             end
           end
-          layout_caption node, category: :image, side: :bottom, block_align: alignment if node.title?
+          if node.title?
+            caption_max_w = @theme.image_caption_max_width == 'fit-content' ? rendered_w : nil
+            layout_caption node, category: :image, side: :bottom, block_align: alignment, max_width: caption_max_w
+          end
           theme_margin :block, :bottom unless pinned
         rescue
           on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! ? '; install prawn-gmagick gem to add support' : ''}))
@@ -2877,9 +2882,21 @@ module Asciidoctor
         category_caption = (category = opts[:category]) ? %(#{category}_caption) : 'caption'
         block_align = opts.delete :block_align
         if (align = @theme[%(#{category_caption}_align)] || @theme.caption_align)
-          align = align == 'inherit' && block_align ? block_align : align.to_sym
+          align = align == 'inherit' ? (block_align || @base_align) : align.to_sym
         else
           align = @base_align.to_sym
+        end
+        if block_align && (max_width = opts.delete :max_width) && (remainder = bounds.width - max_width) > 0
+          case block_align
+          when :right
+            indent_by = [remainder, 0]
+          when :center
+            indent_by = [(side_margin = remainder * 0.5), side_margin]
+          else # :left
+            indent_by = [0, remainder]
+          end
+        else
+          indent_by = [0, 0]
         end
         theme_font :caption do
           theme_font category_caption do
@@ -2890,14 +2907,16 @@ module Asciidoctor
             else
               margin = { top: caption_margin_inside, bottom: caption_margin_outside }
             end
-            layout_prose string, {
-              margin_top: margin[:top],
-              margin_bottom: margin[:bottom],
-              align: align,
-              normalize: false,
-              normalize_line_height: true,
-              hyphenate: true,
-            }.merge(opts)
+            indent(*indent_by) do
+              layout_prose string, {
+                margin_top: margin[:top],
+                margin_bottom: margin[:bottom],
+                align: align,
+                normalize: false,
+                normalize_line_height: true,
+                hyphenate: true,
+              }.merge(opts)
+            end
             if side == :top && (bb_color = @theme[%(#{category_caption}_border_bottom_color)] || @theme.caption_border_bottom_color)
               stroke_horizontal_rule bb_color
               # FIXME: HACK move down slightly so line isn't covered by filled area (half width of line)
@@ -2915,19 +2934,7 @@ module Asciidoctor
 
       # Render the caption for a table and return the height of the rendered content
       def layout_table_caption node, table_alignment = :left, max_width = nil, side = :top
-        if max_width && (remainder = bounds.width - max_width) > 0
-          case table_alignment
-          when :right
-            indent(remainder) { layout_caption node, category: :table, side: side }
-          when :center
-            side_margin = remainder * 0.5
-            indent(side_margin, side_margin) { layout_caption node, category: :table, side: side }
-          else # :left
-            indent(0, remainder) { layout_caption node, category: :table, side: side }
-          end
-        else
-          layout_caption node, category: :table, side: side
-        end
+        layout_caption node, category: :table, side: side, block_align: table_alignment, max_width: max_width
       end
 
       def allocate_toc doc, toc_num_levels, toc_start_y, use_title_page
