@@ -2223,7 +2223,7 @@ In addition to the generic caption category, each of these keys can be set on th
 
 3+|[#key-prefix-caption]*Key Prefix:* <<key-prefix-caption,caption>>
 
-|align
+|align^[1]^
 |<<text-alignments,Text alignment>> +
 (default: left)
 |caption:
@@ -2277,6 +2277,9 @@ In addition to the generic caption category, each of these keys can be set on th
 |caption:
   margin-outside: 0
 |===
+
+. When nested inside the `image` key (i.e., `image-caption-align`), the value `inherit` is also accepted.
+The value `inherit` resolves to the alignment of the block image.
 
 [#keys-code]
 === Code
