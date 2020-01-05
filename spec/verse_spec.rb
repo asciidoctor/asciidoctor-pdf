@@ -104,4 +104,22 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
 
     (expect to_file).to visually_match 'verse-border-and-background-color.pdf'
   end
+
+  it 'should split border when block is split across pages', visual: true do
+    pdf_theme = {
+      verse_border_left_width: 0,
+      verse_border_width: 0.5,
+      verse_border_color: 'CCCCCC',
+      verse_background_color: 'EEEEEE',
+      verse_padding: [6, 10, 0, 10],
+    }
+    to_file = to_pdf_file <<~EOS, 'verse-page-split.pdf', pdf_theme: pdf_theme
+    [verse]
+    ____
+    #{(['Let it be.'] * 50).join ?\n}
+    ____
+    EOS
+
+    (expect to_file).to visually_match 'verse-page-split.pdf'
+  end
 end
