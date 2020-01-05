@@ -4032,7 +4032,7 @@ Since Asciidoctor 2, table stripes are not enabled by default (e.g., `stripes=no
 [#keys-footnotes]
 === Footnotes
 
-The keys in this catagory control the style the list of footnotes at the end of the chapter (book) or document (otherwise).
+The keys in this catagory control the style of footnotes at the end of the chapter (book) or document (otherwise).
 If the `footnotes-title` attribute is specified, it is styled as a block caption.
 The styling of the links is controlled by the global link styles.
 
