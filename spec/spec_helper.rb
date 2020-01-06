@@ -295,7 +295,12 @@ RSpec.configure do |config|
         args.unshift(*cmd)
         cmd = args.shift
       end
-      env_override = { 'RUBYOPT' => nil }
+      env_override = {}
+      if Hash === args[-1]
+        env_override['RUBYOPT'] = nil unless args.pop[:use_bundler]
+      elsif (defined? Bundler) && (prawn_table = Bundler.definition.dependencies.find {|it| it.name == 'prawn-table' })
+        env_override['PRAWN_TABLE_REQUIRE_PATH'] = (prawn_table.source.path + 'lib/prawn/table').to_s
+      end
       Open3.capture3 env_override, cmd, *args
     end
   end
