@@ -295,7 +295,8 @@ RSpec.configure do |config|
         args.unshift(*cmd)
         cmd = args.shift
       end
-      Open3.capture3 cmd, *args
+      env_override = { 'RUBYOPT' => nil }
+      Open3.capture3 env_override, cmd, *args
     end
   end
 
