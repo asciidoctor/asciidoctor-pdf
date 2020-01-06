@@ -2842,6 +2842,11 @@ module Asciidoctor
       end
 
       # Render the caption and return the height of the rendered content
+      #
+      # The subject argument can either be a String or an AbstractNode. If
+      # subject is an AbstractNode, only call this method if the node has a
+      # title (i.e., subject.title? return true).
+      #--
       # TODO: allow margin to be zeroed
       def layout_caption subject, opts = {}
         if opts.delete :dry_run
@@ -2857,13 +2862,9 @@ module Asciidoctor
         when ::String
           string = subject
         when ::Asciidoctor::AbstractBlock
-          if subject.title?
-            string = subject.captioned_title
-          else
-            return 0
-          end
+          string = subject.captioned_title
         else
-          return 0
+          raise ArgumentError, 'invalid subject'
         end
         category_caption = (category = opts[:category]) ? %(#{category}_caption) : 'caption'
         block_align = opts.delete :block_align
