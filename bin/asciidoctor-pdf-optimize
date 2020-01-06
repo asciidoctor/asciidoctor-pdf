@@ -5,7 +5,7 @@ optimizer = File.absolute_path '../lib/asciidoctor/pdf/optimizer.rb', __dir__
 if File.exist? optimizer
   require optimizer
 else
-  require 'asciidoctor-pdf/optimizer'
+  require 'asciidoctor/pdf/optimizer'
 end
 
 args = ARGV.dup
