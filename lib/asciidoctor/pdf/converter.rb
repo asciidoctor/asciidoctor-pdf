@@ -364,7 +364,7 @@ module Asciidoctor
         @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
         @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
         if (hyphen_lang = doc.attr 'hyphens') &&
-            ((defined? ::Text::Hyphen) || !(Helpers.require_library 'text/hyphen', 'text-hyphen', :warn).nil?)
+            ((defined? ::Text::Hyphen::VERSION) || !(Helpers.require_library 'text/hyphen', 'text-hyphen', :warn).nil?)
           hyphen_lang = doc.attr 'lang' if hyphen_lang.empty?
           hyphen_lang = 'en_us' if hyphen_lang.nil_or_empty? || hyphen_lang == 'en'
           hyphen_lang = (hyphen_lang.tr '-', '_').downcase
