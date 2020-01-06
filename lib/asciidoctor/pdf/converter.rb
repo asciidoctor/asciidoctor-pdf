@@ -1,25 +1,9 @@
 # frozen_string_literal: true
 
-require 'prawn'
-begin
-  require 'prawn/gmagick'
-rescue LoadError
-end unless defined? GMagick::Image
-require_relative 'ext/prawn-svg'
-require_relative 'ext/prawn-table'
-require_relative 'ext/prawn-templates'
-require_relative 'ext/core'
-require_relative 'ext/pdf-core'
-require_relative 'temporary_path'
-require_relative 'measurements'
-require_relative 'sanitizer'
-require_relative 'text_transformer'
-require_relative 'ext/prawn'
 require_relative 'formatted_text'
-require_relative 'pdfmark'
-require_relative 'theme_loader'
-require_relative 'roman_numeral'
 require_relative 'index_catalog'
+require_relative 'pdfmark'
+require_relative 'roman_numeral'
 
 autoload :StringIO, 'stringio'
 autoload :Tempfile, 'tempfile'
@@ -3534,7 +3518,6 @@ module Asciidoctor
 
       def write pdf_doc, target
         if target.respond_to? :write
-          require_relative 'ext/core/quantifiable_stdout' unless defined? ::QuantifiableStdout
           target = ::QuantifiableStdout.new STDOUT if target == STDOUT
           pdf_doc.render target
         else
