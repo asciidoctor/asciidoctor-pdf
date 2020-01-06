@@ -877,11 +877,7 @@ module Asciidoctor
       def convert_example node
         add_dest_for_block node if node.id
         theme_margin :block, :top
-        caption_height = 0
-        dry_run do
-          move_down 1 # HACK: force top margin to be applied
-          caption_height = (layout_caption node, category: :example) - 1
-        end if node.title?
+        caption_height = node.title? ? (layout_caption node, category: :example, dry_run: true) : 0
         keep_together do |box_height = nil|
           push_scratch node.document if scratch?
           if box_height
@@ -1423,15 +1419,13 @@ module Asciidoctor
         # TODO: add `to_pt page_width` method to ViewportWidth type
         width = (width.to_f / 100) * page_width if ViewportWidth === width
 
-        # TODO: move this calculation into a method, such as layout_caption node, category: :image, side: :bottom, dry_run: true
-        caption_h = 0
-        # NOTE: if width is not set explicitly and max-width is fit-content, caption height may not be accurate
-        caption_max_w = width && @theme.image_caption_max_width == 'fit-content' ? width : nil
-        dry_run do
-          move_down 1 # HACK: force top margin to be applied
-          # NOTE: we assume caption fits on a single page, which seems reasonable
-          caption_h = (layout_caption node, category: :image, side: :bottom, block_align: alignment, max_width: caption_max_w) - 1
-        end if node.title?
+        if node.title?
+          # NOTE: if width is not set explicitly and max-width is fit-content, caption height may not be accurate
+          caption_max_w = width && @theme.image_caption_max_width == 'fit-content' ? width : nil
+          caption_h = layout_caption node, category: :image, side: :bottom, block_align: alignment, max_width: caption_max_w, dry_run: true
+        else
+          caption_h = 0
+        end
 
         align_to_page = node.option? 'align-to-page'
 
@@ -2850,6 +2844,14 @@ module Asciidoctor
       # Render the caption and return the height of the rendered content
       # TODO: allow margin to be zeroed
       def layout_caption subject, opts = {}
+        if opts.delete :dry_run
+          height = nil
+          dry_run do
+            move_down 1 # HACK: force top margin to be applied
+            height = (layout_caption subject, opts) - 1
+          end
+          return height
+        end
         mark = { cursor: cursor, page_number: page_number }
         case subject
         when ::String
