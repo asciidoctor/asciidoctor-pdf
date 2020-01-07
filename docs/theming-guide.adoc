@@ -3826,6 +3826,12 @@ The keys in this category control the arrangement and style of tables and table 
 |table:
   border-width: 0.5
 
+|caption-align
+|<<text-alignments,Text alignment>> {vbar} inherit +
+(default: $caption-align)
+|table:
+  caption-align: inherit
+
 |caption-side
 |top {vbar} bottom +
 (default: top)
