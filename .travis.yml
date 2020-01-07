@@ -13,7 +13,8 @@ git:
   depth: 5
 language: ruby
 rvm:
-- &release_ruby 2.6.5
+- &release_ruby 2.7.0
+- 2.6.5
 - 2.5.7
 - 2.4.9
 - &oldest_ruby 2.3.8
