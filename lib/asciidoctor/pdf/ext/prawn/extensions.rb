@@ -203,7 +203,7 @@ module Asciidoctor
             options = options.reject {|k| k == :style } if options.key? :style
           end
         end
-        super name, options
+        super
       end
 
       # Retrieves the current font name (i.e., family).
