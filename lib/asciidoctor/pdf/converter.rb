@@ -2285,9 +2285,10 @@ module Asciidoctor
           end
           text = %(#{text}, #{pagenums.join ', '})
         end
-        layout_prose text, align: :left, margin: 0, normalize_line_height: true, hanging_indent: @theme.description_list_description_indent * 2
-        term.subterms.each do |subterm|
-          indent @theme.description_list_description_indent do
+        subterm_indent = @theme.description_list_description_indent
+        layout_prose text, align: :left, margin: 0, normalize_line_height: true, hanging_indent: subterm_indent * 2
+        indent subterm_indent do
+          term.subterms.each do |subterm|
             convert_index_list_item subterm
           end
         end unless term.leaf?
