@@ -961,6 +961,21 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect caption_texts).to have_size 3
       (expect caption_texts.map {|it| it[:x] }.uniq).to have_size 1
     end
+
+    it 'should allow theme to set caption alignment to inherit from table' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_caption_align: 'inherit' }, analyze: true
+      .Right-aligned caption
+      [width=25%,align=right]
+      |===
+      |1 |2
+      |3 |4
+      |===
+      EOS
+
+      first_cell_text = (pdf.find_text '1')[0]
+      caption_text = (pdf.find_text %r/^Table 1\./)[0]
+      (expect caption_text[:x]).to be > first_cell_text[:x]
+    end
   end
 
   context 'Table alignment' do
