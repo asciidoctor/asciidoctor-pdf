@@ -27,6 +27,8 @@ Layout/RescueEnsureAlignment:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
   Enabled: false
+Lint/AmbiguousOperator:
+  Enabled: false
 Lint/EmptyWhen:
   Enabled: false
 Lint/ParenthesesAsGroupedExpression:
