@@ -280,8 +280,9 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   end
 
   it 'should apply hanging indent to wrapped lines equal to twice level indent' do
-    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+    pdf = to_pdf <<~'EOS', analyze: true
     = Document Title
+    :doctype: book
 
     text(((searching,for fun and profit)))(((searching,when you have absolutely no clue where to begin)))
 
