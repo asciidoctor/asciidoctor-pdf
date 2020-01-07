@@ -201,7 +201,7 @@ class LineInspector < PDF::Inspector
   end
 
   def append_curved_segment *args
-    x, y = args.slice -2, 2
+    x, y = args.pop 2
     @from = { x: x, y: y }
   end
 
