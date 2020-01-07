@@ -200,8 +200,14 @@ class LineInspector < PDF::Inspector
     @style = :solid
   end
 
+  def append_curved_segment *args
+    x, y = args.slice -2, 2
+    @from = { x: x, y: y }
+  end
+
   def append_line x, y
     @lines << { page_number: @page_number, from: @from, to: { x: x, y: y }, color: @color, width: @width, style: @style } unless @color.nil? && @width.nil?
+    @from = { x: x, y: y }
   end
 
   def begin_new_subpath x, y
