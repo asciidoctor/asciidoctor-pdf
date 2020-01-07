@@ -1419,13 +1419,8 @@ module Asciidoctor
         # TODO: add `to_pt page_width` method to ViewportWidth type
         width = (width.to_f / 100) * page_width if ViewportWidth === width
 
-        if node.title?
-          # NOTE: if width is not set explicitly and max-width is fit-content, caption height may not be accurate
-          caption_max_w = width && @theme.image_caption_max_width == 'fit-content' ? width : nil
-          caption_h = layout_caption node, category: :image, side: :bottom, block_align: alignment, max_width: caption_max_w, dry_run: true
-        else
-          caption_h = 0
-        end
+        # NOTE: if width is not set explicitly and max-width is fit-content, caption height may not be accurate
+        caption_h = node.title? ? (layout_caption node, category: :image, side: :bottom, block_align: alignment, block_width: width, max_width: @theme.image_caption_max_width, dry_run: true) : 0
 
         align_to_page = node.option? 'align-to-page'
 
@@ -1509,10 +1504,7 @@ module Asciidoctor
               move_down rendered_h if y == image_y
             end
           end
-          if node.title?
-            caption_max_w = @theme.image_caption_max_width == 'fit-content' ? rendered_w : nil
-            layout_caption node, category: :image, side: :bottom, block_align: alignment, max_width: caption_max_w
-          end
+          layout_caption node, category: :image, side: :bottom, block_align: alignment, block_width: rendered_w, max_width: @theme.image_caption_max_width if node.title?
           theme_margin :block, :bottom unless pinned
         rescue
           on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! ? '; install prawn-gmagick gem to add support' : ''}))
@@ -2099,7 +2091,7 @@ module Asciidoctor
         end
 
         caption_side = (theme.table_caption_side || :top).to_sym
-        caption_max_width = (theme.table_caption_max_width || 'fit-content').to_s
+        caption_max_width = theme.table_caption_max_width || 'fit-content'
 
         table_settings = {
           header: table_header,
@@ -2134,8 +2126,7 @@ module Asciidoctor
         table table_data, table_settings do
           # NOTE: call width to capture resolved table width
           table_width = width
-          caption_max_width = caption_max_width == 'fit-content' ? table_width : nil
-          @pdf.layout_table_caption node, alignment, caption_max_width if node.title? && caption_side == :top
+          @pdf.layout_table_caption node, alignment, table_width, caption_max_width if node.title? && caption_side == :top
           # NOTE align using padding instead of bounding_box as prawn-table does
           # using a bounding_box across pages mangles the margin box of subsequent pages
           if alignment != :left && table_width != (this_bounds = @pdf.bounds).width
@@ -2210,7 +2201,7 @@ module Asciidoctor
           bounds.subtract_left_padding left_padding
           bounds.subtract_right_padding right_padding if right_padding
         end
-        layout_table_caption node, alignment, caption_max_width, caption_side if node.title? && caption_side == :bottom
+        layout_table_caption node, alignment, table_width, caption_max_width, caption_side if node.title? && caption_side == :bottom
         theme_margin :block, :bottom
       end
 
@@ -2873,17 +2864,20 @@ module Asciidoctor
         else
           align = @base_align.to_sym
         end
-        if block_align && (max_width = opts.delete :max_width) && (remainder = bounds.width - max_width) > 0
-          case block_align
-          when :right
-            indent_by = [remainder, 0]
-          when :center
-            indent_by = [(side_margin = remainder * 0.5), side_margin]
-          else # :left
-            indent_by = [0, remainder]
+        indent_by = [0, 0]
+        if block_align
+          block_width = opts.delete :block_width
+          if (max_width = opts.delete :max_width) && max_width != 'none' &&
+              (max_width != 'fit-content' || (max_width = block_width)) && (remainder = bounds.width - max_width) > 0
+            case block_align
+            when :right
+              indent_by = [remainder, 0]
+            when :center
+              indent_by = [(side_margin = remainder * 0.5), side_margin]
+            else # :left
+              indent_by = [0, remainder]
+            end
           end
-        else
-          indent_by = [0, 0]
         end
         theme_font :caption do
           theme_font category_caption do
@@ -2920,8 +2914,8 @@ module Asciidoctor
       end
 
       # Render the caption for a table and return the height of the rendered content
-      def layout_table_caption node, table_alignment = :left, max_width = nil, side = :top
-        layout_caption node, category: :table, side: side, block_align: table_alignment, max_width: max_width
+      def layout_table_caption node, table_alignment = :left, table_width = nil, max_width = nil, side = :top
+        layout_caption node, category: :table, side: side, block_align: table_alignment, block_width: table_width, max_width: max_width
       end
 
       def allocate_toc doc, toc_num_levels, toc_start_y, use_title_page
