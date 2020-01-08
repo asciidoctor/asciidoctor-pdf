@@ -122,12 +122,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should use the margin specified by the pdf-page-margin attribute as array' do
-      pdf = to_pdf <<~'EOS', analyze: true
-      :pdf-page-margin: [0, 0, 0, 0]
+      ['0.5in, 1in, 0.5in, 1in', '36pt, 72pt, 36pt, 72pt'].each do |val|
+        pdf = to_pdf <<~EOS, analyze: true
+        :pdf-page-margin: [#{val}]
 
-      content
-      EOS
-      (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 0.0, 829.926]
+        content
+        EOS
+        (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 72.0, 793.926]
+      end
     end
 
     it 'should use the margin specified by the pdf-page-margin attribute as string' do

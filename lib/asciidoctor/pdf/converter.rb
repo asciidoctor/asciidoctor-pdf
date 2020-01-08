@@ -406,7 +406,7 @@ module Asciidoctor
           if page_margin.empty?
             page_margin = nil
           elsif (page_margin.start_with? '[') && (page_margin.end_with? ']')
-            if (page_margin = (page_margin.slice 1, page_margin.size - 1).rstrip).empty?
+            if (page_margin = (page_margin.slice 1, page_margin.length - 2).rstrip).empty?
               page_margin = [0]
             else
               if (page_margin = page_margin.split ',', -1).length > 4
