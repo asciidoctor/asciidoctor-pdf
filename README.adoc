@@ -294,27 +294,89 @@ For example, to configure Rouge to use the built-in monokai theme, run Asciidoct
 It's possible to develop your own theme for Rouge.
 Refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theme Guide>> for details.
 
-=== Support for Non-Latin Languages
+== Support for Non-Latin Languages
 
 Asciidoctor can process the full range of characters in the UTF-8 character set.
-That means you can write your document in any language, save the file with UTF-8 encoding, and expect Asciidoctor to convert the text properly.
-However, you may notice that certain characters for certain languages, such as Chinese, are missing in the PDF.
-Read on to find out why and how to address it.
+That means you can write your document in any language, save the file with UTF-8 encoding (_that's important!_), and expect Asciidoctor to convert the text properly.
+But you still need a font that provides the glyphs for those characters.
 
-If you're writing in a non-Latin language, you need to use a dedicated theme that provides the necessary fonts.
-For example, to produce a PDF from a document written in a CJK language such as Chinese, you need to use a CJK theme.
-You can get such a theme by installing the `asciidoctor-pdf-cjk-kai_gen_gothic` gem.
-See the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project for detailed instructions.
-
-Using a dedicated theme is necessary because PDF is a "`bring your own font`" kind of system.
-In other words, the font you provide must provide glyphs for all the characters.
-There's no one font that supports all the worlds languages (though some, like Noto Serif, certainly come close).
-Even if there were such a font, bundling that font with the main gem would make the package enormous.
+When converting a document with Asciidoctor PDF, you may notice that some of the glyphs for certain languages, such as Chinese, are missing from the PDF.
+PDF is a "`bring your own font`" kind of system.
+In other words, the font you provide must provide glyphs for all the characters used.
+There's no one font that supports all the world's languages (though some, like Noto Serif, certainly come close).
+Even if there were such a font, bundling that font with the main gem would make it enormous.
 It would also severely limit the style choices in the default theme, which targets Latin-based languages.
-
 Therefore, we're taking the strategy of creating separate dedicated theme gems that target each language family, such as CJK.
-The base theme for CJK languages is provided by the https://github.com/chloerei/asciidoctor-pdf-cjk[asciidoctor-pdf-cjk] project and a concrete implementation provided by the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project that's based on the kai_gen_gothic font.
-Of course, you're free to follow this model and create your own theme gem that uses fonts of your choice.
+Read on to find out how to use these themes.
+
+Asciidoctor PDF provides a built-in theme that provides a broad range of characters in the CJK charsets, so you can start with that theme:
+
+ $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=default-with-fallback-font document.adoc
+
+Notice the `-a scripts=cjk` option.
+That's important.
+It tells the converter to insert break opportunities between CJK characters so that the line wraps properly when mixing English and a CJK language like Japanese.
+
+If the built-in theme with the fallback font doesn't go far enough, you'll need to use a theme that is optimized for CJK text.
+You can get such a theme by installing the `asciidoctor-pdf-cjk-kai_gen_gothic` gem.
+The https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project provides themes optimized for CJK languages based on the kai_gen_gothic font.
+See the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project README for detailed setup instructions.
+
+Once you have that gem installed (and the fonts), you need to tell Asciidoctor PDF to use one of the themes.
+If you're converting a document that is primarily written in Japanese, you'd run Asciidoctor PDF as follows:
+
+ asciidoctor-pdf -r asciidoctor-pdf-cjk-kai_gen_gothic -a pdf-theme=KaiGenGothicJP document.adoc
+
+You also have to option of creating your own theme gem that uses fonts of your choice.
+For example, if you want to use the `asciidoctor-pdf-cjk-kai_gen_gothic` gem to fetch fonts, but then use them in your own theme, here's how you'd do it.
+
+. Install the `asciidoctor-pdf-cjk-kai_gen_gothic` gem:
+
+ $ gem install asciidoctor-pdf-cjk-kai_gen_gothic
+
+. Download / install the fonts:
+
+ $ asciidoctor-pdf-cjk-kai_gen_gothic-install
+
+. Create a theme that extends the default theme:
++
+[source,yml]
+----
+extends: default
+font:
+  catalog:
+    KaiGen Gothic JP:
+      normal: KaiGenGothicJP-Regular.ttf
+      bold: KaiGenGothicJP-Bold.ttf
+      italic: KaiGenGothicJP-Regular-Italic.ttf
+      bold_italic: KaiGenGothicJP-Bold-Italic.ttf
+    M+ 1mn:
+      normal: GEM_FONTS_DIR/mplus1mn-regular-subset.ttf
+      bold: GEM_FONTS_DIR/mplus1mn-bold-subset.ttf
+      italic: GEM_FONTS_DIR/mplus1mn-italic-subset.ttf
+      bold_italic: GEM_FONTS_DIR/mplus1mn-bold_italic-subset.ttf
+  fallbacks:
+  - KaiGen Gothic JP
+base:
+  font-family: KaiGen Gothic JP
+heading:
+  font-family: $base-font-family
+abstract:
+  title:
+    font-family: $heading-font-family
+sidebar:
+  title:
+    font-family: $heading-font-family
+----
+
+. Load your theme when running Asciidoctor PDF:
+
+ $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=./jp-theme.yml -a pdf-fontsdir=`ruby -r asciidoctor-pdf-cjk-kai_gen_gothic -e "print File.expand_path '../fonts', (Gem.datadir 'asciidoctor-pdf-cjk-kai_gen_gothic')"` document.adoc
+
+The `-a pdf-fontsdir` option is important to tell Asciidoctor PDF where to find your custom fonts.
+
+Rather than using the installer from the `asciidoctor-pdf-cjk-kai_gen_gothic` gem, you can download fonts whatever way you choose.
+When using your own fonts, be sure to consult the <<docs/theming-guide.adoc#preparing-a-custom-font,Preparing a Custom Font>> section of the theming guide to find recommended modifications.
 
 == Font-Based Icons
 
