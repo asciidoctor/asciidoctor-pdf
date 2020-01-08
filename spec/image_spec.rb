@@ -338,6 +338,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect rect[:width]).to eql 200.0
       (expect rect[:height]).to eql 200.0
     end
+
+    it 'should fail to embed broke SVG with warning' do
+      { '::' => '[Broken SVG] | broken.svg', ':' => '[Broken SVG]' }.each do |macro_delim, alt_text|
+        (expect do
+          pdf = to_pdf %(image#{macro_delim}broken.svg[Broken SVG]), analyze: true
+          (expect pdf.lines).to eql [alt_text]
+        end).to log_message severity: :WARN, message: %(~could not embed image: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
+      end
+    end
   end
 
   context 'PNG' do
