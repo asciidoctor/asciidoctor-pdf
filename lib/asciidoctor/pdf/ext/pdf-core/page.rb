@@ -18,6 +18,9 @@ class PDF::Core::Page
     document.open_graphics_state
   end unless method_defined? :new_content_stream
 
+  # NOTE alias method to avoid warning if another gem replaces this method
+  alias __new_content_stream new_content_stream
+
   # Restore the imported_page? method from PDF::Core::Page
   #
   # see https://github.com/prawnpdf/pdf-core/commit/0e326a838e142061be8e062168190fae6b3b1dcf
