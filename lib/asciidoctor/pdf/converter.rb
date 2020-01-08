@@ -1578,7 +1578,7 @@ module Asciidoctor
             else
               ::OpenURI
             end
-            poster = open %(http://vimeo.com/api/v2/video/#{video_id}.xml), 'r' do |f|
+            poster = ::OpenURI.open_uri %(http://vimeo.com/api/v2/video/#{video_id}.xml), 'r' do |f|
               /<thumbnail_large>(.*?)<\/thumbnail_large>/ =~ f.read && $1
             end
           end
@@ -4026,7 +4026,7 @@ module Asciidoctor
           tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
           tmp_image.binmode if (binary = image_format != 'svg')
           begin
-            open(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
+            ::OpenURI.open_uri(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
             tmp_image.path.extend TemporaryPath
           rescue
             logger.warn %(could not retrieve remote image: #{image_path}; #{$!.message}) unless scratch?
