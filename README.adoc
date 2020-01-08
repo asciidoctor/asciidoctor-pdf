@@ -998,6 +998,15 @@ However, you could use an extension, such as a TreeProcessor, to automatically m
 
 == Optimizing the Generated PDF
 
+By default, Asciidoctor PDF does not optimize the output document or even compress the streams.
+The simplest way to reduce the size of the file is to enable stream compression (using the FlateDecode method).
+You can enable this feature by setting the `compress` attribute on the document:
+
+ $ asciidoctor-pdf -a compress document.adoc
+
+For more thorough optimzation, you can use either the built-in `asciidoctor-pdf-optimize` script or hexapdf.
+Read on to learn how.
+
 === asciidoctor-pdf-optimize
 
 {project-name} also provides a bin script that uses GhostScript to optimize and compress the generated PDF (with minimal impact on quality).

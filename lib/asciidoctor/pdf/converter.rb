@@ -468,6 +468,7 @@ module Asciidoctor
           page_size: (page_size || 'A4'),
           page_layout: (page_layout || :portrait),
           info: (build_pdf_info doc),
+          compress: (doc.attr? 'compress'),
           skip_page_creation: true,
           text_formatter: (FormattedText::Formatter.new theme: theme),
         }

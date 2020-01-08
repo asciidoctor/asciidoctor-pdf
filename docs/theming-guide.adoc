@@ -4902,6 +4902,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |screen {vbar} print {vbar} prepress
 |:media: prepress
 
+|compress
+|flag (default: _not set_)
+|:compress:
+
 |optimize
 |screen {vbar} ebook {vbar} printer {vbar} prepress {vbar} default (default: default)
 |:optimize: prepress
