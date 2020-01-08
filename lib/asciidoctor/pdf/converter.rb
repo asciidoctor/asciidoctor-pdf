@@ -815,6 +815,9 @@ module Asciidoctor
                           icon_width = svg_size.output_width
                         end
                         svg_obj.draw
+                        svg_obj.document.warnings.each do |icon_warning|
+                          logger.warn %(problem encountered in image: #{icon_path}; #{icon_warning})
+                        end
                       rescue
                         logger.warn %(could not embed admonition icon: #{icon_path}; #{$!.message})
                       end
@@ -1467,6 +1470,9 @@ module Asciidoctor
               # NOTE: prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
               # NOTE: cursor advances automatically
               svg_obj.draw
+              svg_obj.document.warnings.each do |img_warning|
+                logger.warn %(problem encountered in image: #{image_path}; #{img_warning})
+              end
               draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? && (node.has_role? 'noborder')
               if (link = node.attr 'link', nil, false)
                 add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
