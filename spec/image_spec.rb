@@ -347,6 +347,19 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         end).to log_message severity: :WARN, message: %(~could not embed image: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
       end
     end
+
+    it 'should pass SVG warnings to logger' do
+      { '::' => [48.24, 605.89], ':' => [48.24, 605.14] }.each do |macro_delim, point|
+        (expect do
+          pdf = to_pdf %(image#{macro_delim}faulty.svg[Faulty SVG]), analyze: :rect
+          (expect pdf.rectangles).to have_size 1
+          rect = pdf.rectangles[0]
+          (expect rect[:point]).to eql point
+          (expect rect[:width]).to eql 200.0
+          (expect rect[:height]).to eql 200.0
+        end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'faulty.svg'}; Unknown tag 'foobar')
+      end
+    end
   end
 
   context 'PNG' do
