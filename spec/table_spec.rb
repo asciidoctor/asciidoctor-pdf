@@ -648,6 +648,71 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
   end
 
+  context 'Header table cell' do
+    it 'should style a header table cell like a cell in the head row by default' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [%autowidth,cols="1h,3"]
+      |===
+      | Vendor
+      | Samsung
+
+      | Model
+      | Galaxy s10
+
+      | OS
+      | Android 9.0 Pie
+
+      | Resolution
+      | 3040x1440
+      |===
+      EOS
+
+      vendor_text = (pdf.find_text 'Vendor')[0]
+      (expect vendor_text[:font_name]).to eql 'NotoSerif-Bold'
+      model_text = (pdf.find_text 'Model')[0]
+      (expect model_text[:font_name]).to eql 'NotoSerif-Bold'
+    end
+
+    it 'should allow theme to modify style of header cell in table body independent of cell in table head' do
+      pdf_theme = {
+        table_head_font_color: '222222',
+        table_header_cell_font_style: 'italic',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      [%header%autowidth,cols="1h,3"]
+      |===
+      | Feature | Value
+
+      | Vendor
+      | Samsung
+
+      | Model
+      | Galaxy s10
+
+      | OS
+      | Android 9.0 Pie
+
+      | Resolution
+      | 3040x1440
+      |===
+      EOS
+
+      feature_text = (pdf.find_text 'Feature')[0]
+      (expect feature_text[:font_color]).to eql '222222'
+      (expect feature_text[:font_name]).to eql 'NotoSerif-Bold'
+      vendor_text = (pdf.find_text 'Vendor')[0]
+      (expect vendor_text[:font_color]).to eql '222222'
+      (expect vendor_text[:font_name]).to eql 'NotoSerif-Italic'
+      model_text = (pdf.find_text 'Model')[0]
+      (expect model_text[:font_color]).to eql '222222'
+      (expect model_text[:font_name]).to eql 'NotoSerif-Italic'
+      samsung_text = (pdf.find_text 'Samsung')[0]
+      (expect samsung_text[:font_color]).to eql '333333'
+      (expect samsung_text[:font_name]).to eql 'NotoSerif'
+    end
+  end
+
   context 'Literal table cell' do
     it 'should not apply substitutions' do
       pdf = to_pdf <<~'EOS', analyze: true

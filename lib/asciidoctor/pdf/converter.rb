@@ -1946,7 +1946,7 @@ module Asciidoctor
                         text_color: @font_color,
                         font: header_cell_font_info[:family],
                         size: header_cell_font_info[:size],
-                        style: header_cell_font_style[:style],
+                        font_style: header_cell_font_info[:style],
                         text_transform: @text_transform,
                       }
                       header_cell_line_metrics = calc_line_metrics theme.base_line_height

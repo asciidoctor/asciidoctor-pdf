@@ -8,6 +8,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == Unreleased
 
 * patch Prawn to fix incompatibilty with Ruby 2.7
+* fix crash when assigning font style to header cell in table body (#1468)
 
 == 1.5.0.rc.1 (2020-01-06) - @mojavelinux
 
