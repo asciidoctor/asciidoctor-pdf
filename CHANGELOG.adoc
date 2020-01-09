@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 1.5.0.rc.2 (2020-01-09) - @mojavelinux
 
 * patch Prawn to fix incompatibilty with Ruby 2.7 (to fix text wrapping)
 * fix crash when assigning font style to header cell in table body (#1468)
