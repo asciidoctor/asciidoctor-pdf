@@ -875,6 +875,20 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect asciidoc_y).to be < ref_below
       (expect asciidoc_y).to be > ref_above
     end
+
+    it 'should apply cell padding to AsciiDoc table cell' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_cell_padding: 10 }, analyze: true
+      |===
+      | a a| b | c
+      | a | b | c
+      |===
+      EOS
+
+      a_texts = pdf.find_text 'a'
+      b_texts = pdf.find_text 'b'
+      (expect a_texts[0][:y]).to eql b_texts[0][:y]
+      (expect b_texts[0][:x]).to eql b_texts[1][:x]
+    end
   end
 
   context 'Verse table cell' do
