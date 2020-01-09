@@ -321,11 +321,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should not embed remote image if allow allow-uri-read attribute is not set', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image-disabled.pdf'
-      A sign of a good writer: image:svg-with-remote-image.svg[]
-      EOS
+      (expect do
+        to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image-disabled.pdf'
+        A sign of a good writer: image:svg-with-remote-image.svg[]
+        EOS
 
-      (expect to_file).to visually_match 'image-svg-with-missing-image.pdf'
+        (expect to_file).to visually_match 'image-svg-with-missing-image.pdf'
+      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-remote-image.svg'}; Error retrieving URL https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png)
     end
 
     it 'should ignore inline option for SVG on image macro' do
