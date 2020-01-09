@@ -207,7 +207,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme).not_to be_nil
       (expect theme).to be_an OpenStruct
       (expect theme.base_font_family).to eql 'Helvetica'
-      (expect theme.heading_font_family).to be_nil
+      (expect theme.literal_font_family).to eql 'Courier'
       (expect theme).to eql subject.load_base_theme
     end
 
@@ -215,7 +215,8 @@ describe Asciidoctor::PDF::ThemeLoader do
       theme = subject.load_theme
       (expect theme).not_to be_nil
       (expect theme).to be_an OpenStruct
-      (expect theme.heading_font_family).to eql 'Noto Serif'
+      (expect theme.base_font_family).to eql 'Noto Serif'
+      (expect theme.link_font_color).to eql '428BCA'
     end
 
     it 'should not inherit from base theme when loading default theme' do

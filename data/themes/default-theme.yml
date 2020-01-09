@@ -95,9 +95,7 @@ menu:
   caret_content: " <font size=\"1.15em\"><color rgb=\"b12146\">\u203a</color></font> "
 heading:
   align: left
-  #font_color: 181818
   font_color: $base_font_color
-  font_family: $base_font_family
   font_style: bold
   # h1 is used for part titles (book doctype) or the doctitle (article doctype)
   h1_font_size: floor($base_font_size * 2.6)
@@ -155,7 +153,6 @@ abstract:
   title:
     align: center
     font_color: $heading_font_color
-    font_family: $heading_font_family
     font_size: $heading_h4_font_size
     font_style: $heading_font_style
 admonition:
@@ -228,7 +225,6 @@ sidebar:
   title:
     align: center
     font_color: $heading_font_color
-    font_family: $heading_font_family
     font_size: $heading_h4_font_size
     font_style: $heading_font_style
 thematic_break:

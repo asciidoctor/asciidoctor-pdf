@@ -795,7 +795,7 @@ CAUTION: You must declare all four variants.
 If you're missing the font file for one of the variants, configure it to use the same font file as the normal variant.
 
 You can use the key that you assign to the font in the font catalog anywhere the `font-family` property is accepted in the theme file.
-For example, to use the Roboto font for all headings, use:
+For example, to use the Roboto font for all headings (section titles and discrete headings), use:
 
 [source,yaml]
 ----
@@ -1522,7 +1522,7 @@ The keys in this category control the style of most headings, including part tit
 
 |font-family
 |<<fonts,Font family name>> +
-(default: $base-font-family)
+(default: _inherit_)
 |heading:
   font-family: Noto Serif
 
