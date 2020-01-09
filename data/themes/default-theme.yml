@@ -13,7 +13,7 @@ font:
       italic: mplus1mn-italic-subset.ttf
       bold_italic: mplus1mn-bold_italic-subset.ttf
 page:
-  background_color: ffffff
+  background_color: FFFFFF
   layout: portrait
   initial_zoom: FitH
   margin: [0.5in, 0.67in, 0.67in, 0.67in]
@@ -49,7 +49,7 @@ base:
   font_size_small: round($base_font_size * 0.85)
   font_size_min: $base_font_size * 0.75
   font_style: normal
-  border_color: eeeeee
+  border_color: EEEEEE
   border_radius: 4
   border_width: 0.5
 role:
@@ -72,24 +72,24 @@ horizontal_rhythm: $base_line_height_length
 # QUESTION should vertical_spacing be block_spacing instead?
 vertical_spacing: $vertical_rhythm
 link:
-  font_color: 428bca
+  font_color: 428BCA
 # literal is currently used for inline monospaced in prose and table cells
 literal:
-  font_color: b12146
+  font_color: B12146
   font_family: M+ 1mn
 button:
   content: "[\u2009%s\u2009]"
   font_style: bold
 key:
-  background_color: f5f5f5
-  border_color: cccccc
+  background_color: F5F5F5
+  border_color: CCCCCC
   border_offset: 2
   border_radius: 2
   border_width: 0.5
   font_family: $literal_font_family
   separator: "\u202f+\u202f"
 mark:
-  background_color: ffff00
+  background_color: FFFF00
   border_offset: 1
 menu:
   caret_content: " <font size=\"1.15em\"><color rgb=\"b12146\">\u203a</color></font> "
@@ -145,7 +145,7 @@ lead:
   font_size: $base_font_size_large
   line_height: 1.4
 abstract:
-  font_color: 5c6266
+  font_color: 5C6266
   font_size: $lead_font_size
   line_height: $lead_line_height
   font_style: italic
@@ -193,8 +193,8 @@ code:
   line_height: 1.25
   # line_gap is an experimental property to control how a background color is applied to an inline block element
   line_gap: 3.8
-  background_color: f5f5f5
-  border_color: cccccc
+  background_color: F5F5F5
+  border_color: CCCCCC
   border_radius: $base_border_radius
   border_width: 0.75
 conum:
@@ -207,7 +207,7 @@ example:
   border_color: $base_border_color
   border_radius: $base_border_radius
   border_width: 0.75
-  background_color: ffffff
+  background_color: FFFFFF
   # FIXME reenable padding bottom once margin collapsing is implemented
   padding: [$vertical_rhythm, $horizontal_rhythm, 0, $horizontal_rhythm]
 image:
@@ -216,8 +216,8 @@ prose:
   margin_top: $block_margin_top
   margin_bottom: $block_margin_bottom
 sidebar:
-  background_color: eeeeee
-  border_color: e1e1e1
+  background_color: EEEEEE
+  border_color: E1E1E1
   border_radius: $base_border_radius
   border_width: $base_border_width
   # FIXME reenable padding bottom once margin collapsing is implemented
@@ -244,22 +244,22 @@ outline_list:
   item_spacing: $vertical_rhythm / 2
 table:
   background_color: $page_background_color
-  border_color: dddddd
+  border_color: DDDDDD
   border_width: $base_border_width
   cell_padding: 3
   head:
     font_style: bold
     border_bottom_width: $base_border_width * 2.5
   body:
-    stripe_background_color: f9f9f9
+    stripe_background_color: F9F9F9
   foot:
-    background_color: f0f0f0
+    background_color: F0F0F0
 toc:
   indent: $horizontal_rhythm
   line_height: 1.4
   dot_leader:
     #content: ". "
-    font_color: a9a9a9
+    font_color: A9A9A9
     #levels: 2 3
 footnotes:
   font_size: round($base_font_size * 0.75)
@@ -271,7 +271,7 @@ header:
 footer:
   font_size: $base_font_size_small
   # NOTE if background_color is set, background and border will span width of page
-  border_color: dddddd
+  border_color: DDDDDD
   border_width: 0.25
   height: $base_line_height_length * 2.5
   line_height: 1
