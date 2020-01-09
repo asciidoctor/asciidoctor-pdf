@@ -185,4 +185,24 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect encoded_doctitle).to eql (doctitle.encode Encoding::UTF_16).unpack 'H*'
     end
   end
+
+  context 'compress' do
+    it 'should not compress streams by default' do
+      pdf = to_pdf 'foobar'
+      objects = pdf.objects
+      pages = pdf.objects.values.find {|it| Hash === it && it[:Type] == :Pages }
+      stream = objects[objects[pages[:Kids][0]][:Contents]]
+      (expect stream.hash[:Filter]).to be_nil
+      (expect stream.data).to include '/DeviceRGB'
+    end
+
+    it 'should compress streams if compress attribute is set on document' do
+      pdf = to_pdf 'foobar', attribute_overrides: { 'compress' => '' }
+      objects = pdf.objects
+      pages = pdf.objects.values.find {|it| Hash === it && it[:Type] == :Pages }
+      stream = objects[objects[pages[:Kids][0]][:Contents]]
+      (expect stream.hash[:Filter]).to eql [:FlateDecode]
+      (expect stream.data).not_to include '/DeviceRGB'
+    end
+  end
 end

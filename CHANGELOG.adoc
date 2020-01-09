@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * fix parsing of array value of pdf-page-margin attribute (#1475)
 * fix warning when reading data from a remote URL when running with Ruby 2.7 (#1477)
 * pass SVG warnings to logger (#1479)
+* compress streams if the compress attribute is set on the document (#1471)
 
 == 1.5.0.rc.1 (2020-01-06) - @mojavelinux
 
