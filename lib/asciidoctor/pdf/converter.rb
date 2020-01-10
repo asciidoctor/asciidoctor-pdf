@@ -2866,6 +2866,7 @@ module Asciidoctor
           raise ArgumentError, 'invalid subject'
         end
         category_caption = (category = opts[:category]) ? %(#{category}_caption) : 'caption'
+        container_width = bounds.width
         block_align = opts.delete :block_align
         if (align = @theme[%(#{category_caption}_align)] || @theme.caption_align)
           align = align == 'inherit' ? (block_align || @base_align) : align.to_sym
@@ -2873,16 +2874,21 @@ module Asciidoctor
           align = @base_align.to_sym
         end
         indent_by = [0, 0]
-        if block_align
-          block_width = opts.delete :block_width
-          if (max_width = opts.delete :max_width) && max_width != 'none' &&
-              (max_width != 'fit-content' || (max_width = block_width)) && (remainder = bounds.width - max_width) > 0
+        block_width = opts.delete :block_width
+        if (max_width = opts.delete :max_width) && max_width != 'none'
+          if max_width == 'fit-content'
+            max_width = block_width || container_width
+          else
+            max_width = [max_width.to_f / 100 * bounds.width, bounds.width].min if ::String === max_width && (max_width.end_with? '%')
+            block_align = align
+          end
+          if (remainder = container_width - max_width) > 0
             case block_align
             when :right
               indent_by = [remainder, 0]
             when :center
               indent_by = [(side_margin = remainder * 0.5), side_margin]
-            else # :left
+            else # :left, nil
               indent_by = [0, remainder]
             end
           end

@@ -3350,7 +3350,7 @@ The keys in this category control the arrangement of block images.
     align: inherit
 
 |caption-max-width^[5]^
-|fit-content {vbar} none +
+|fit-content {vbar} none {vbar} <<measurement-units,Measurement>> +
 (default: none)
 |image:
   caption:
@@ -3839,7 +3839,7 @@ The keys in this category control the arrangement and style of tables and table 
   caption-side: bottom
 
 |caption-max-width
-|fit-content {vbar} none +
+|fit-content {vbar} none {vbar} <<measurement-units,Measurement>> +
 (default: fit-content)
 |table:
   caption-max-width: none

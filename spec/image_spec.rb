@@ -730,6 +730,25 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pdf.text[0][:x]).to be > midpoint
     end
 
+    it 'should restrict caption width to specified percentage of available width if max-width is percentage value' do
+      pdf_theme = {
+        image_caption_align: 'center',
+        image_caption_max_width: '25%',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      .This is a picture of our beloved Tux.
+      image::tux.png[]
+      EOS
+
+      midpoint = (get_page_size pdf, 1)[0] * 0.5
+      (expect pdf.lines).to eql ['Figure 1. This is a picture', 'of our beloved Tux.']
+      first_line_text, second_line_text = pdf.text
+      (expect first_line_text[:x]).to be > 48.24
+      (expect first_line_text[:x] + first_line_text[:width]).to be > midpoint
+      (expect second_line_text[:x]).to be > first_line_text[:x]
+    end
+
     it 'should restrict caption width to width of image if max-width is fit-content' do
       pdf_theme = {
         image_caption_align: 'inherit',
