@@ -1688,8 +1688,6 @@ module Asciidoctor
             lexer_opts = { nowrap: true, noclasses: true, stripnl: false, style: style }
             lexer_opts[:startinline] = !(node.option? 'mixed') if lexer.name == 'PHP'
             source_string, conum_mapping = extract_conums source_string
-            # NOTE: pygments.rb strips trailing whitespace; preserve it in case there are conums on last line
-            num_trailing_spaces = source_string.length - (source_string = source_string.rstrip).length if conum_mapping
             # NOTE: highlight can return nil if something goes wrong; fallback to encoded source string if this happens
             result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
             if node.attr? 'highlight', nil, false
@@ -1711,7 +1709,7 @@ module Asciidoctor
               postprocess = true
             end
             fragments = text_formatter.format result
-            fragments = restore_conums fragments, conum_mapping, num_trailing_spaces, linenums, highlight_lines if postprocess
+            fragments = restore_conums fragments, conum_mapping, linenums, highlight_lines if postprocess
             source_chunks = guard_indentation_in_fragments fragments
           end
         when 'rouge'
@@ -1793,7 +1791,7 @@ module Asciidoctor
         string = string.split(LF).map.with_index {|line, line_num|
           # FIXME: we get extra spaces before numbers if more than one on a line
           if line.include? '<'
-            line.gsub CalloutExtractRx do
+            line = line.gsub CalloutExtractRx do
               # honor the escape
               if $1 == ?\\
                 $&.sub $1, ''
@@ -1802,9 +1800,14 @@ module Asciidoctor
                 ''
               end
             end
-          else
-            line
+            # NOTE use first position to store space that precedes conums
+            if (conum_mapping.key? line_num) && (line.end_with? ' ')
+              trimmed_line = line.rstrip
+              conum_mapping[line_num].unshift line.slice trimmed_line.length, line.length
+              line = trimmed_line
+            end
           end
+          line
         }.join LF
         conum_mapping = nil if conum_mapping.empty?
         [string, conum_mapping]
@@ -1814,7 +1817,7 @@ module Asciidoctor
       #--
       # QUESTION can this be done more efficiently?
       # QUESTION can we reuse arrange_fragments_by_line?
-      def restore_conums fragments, conum_mapping, num_trailing_spaces = 0, linenums = nil, highlight_lines = nil
+      def restore_conums fragments, conum_mapping, linenums = nil, highlight_lines = nil
         lines = []
         line_num = 0
         # reorganize the fragments into an array of lines
@@ -1846,7 +1849,7 @@ module Asciidoctor
           end
           line.unshift text: %(#{visible_line_num.to_s.rjust pad_size} ), linenum: visible_line_num, color: linenum_color if linenums
           if conum_mapping && (conums = conum_mapping.delete cur_line_num)
-            line << { text: ' ' * num_trailing_spaces } if last_line && num_trailing_spaces > 0
+            line << { text: conums.shift } if ::String === conums[0]
             conum_text = conums.map {|num| conum_glyph num }.join ' '
             line << (conum_color ? { text: conum_text, color: conum_color } : { text: conum_text })
           end

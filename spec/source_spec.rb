@@ -753,5 +753,41 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect lines[2]).to end_with '; ②'
       (expect lines[3]).to end_with '; ③ ④'
     end
+
+    it 'should preserve space before callout on final line' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: pygments
+
+      [source,java]
+      ----
+      public interface Person {
+        String getName();
+      }  <1>
+      ----
+      <1> End class definition
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to include '}  ①'
+    end
+
+    it 'should hide spaces in front of conum from source highlighter' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: rouge
+
+      [source,apache]
+      ----
+      <Directory /usr/share/httpd/noindex>
+          AllowOverride None <1>
+          Require all granted
+      </Directory>
+      ----
+      <1> Cannot be overridden by .htaccess
+      EOS
+
+      none_text = (pdf.find_text 'None')[0]
+      (expect none_text).not_to be_nil
+      (expect none_text[:font_color]).to eql 'AA6600'
+    end
   end
 end
