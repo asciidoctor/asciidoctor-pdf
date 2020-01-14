@@ -1,0 +1,69 @@
+# invoke with -a pdf-theme=chronicles-dark -a rouge-style=molokai
+extends: chronicles
+page:
+  background-color: 000000
+base:
+  font-color: CCCCCC
+  border-color: 111111
+link:
+  font-color: BD7435
+literal:
+  font-color: 4EDEB9
+mark:
+  background-color: 0000FF
+key:
+  background-color: 0A0A0A
+  border-color: 333333
+heading:
+  font-color: $base-font-color
+title_page:
+  title:
+    font-color: 666666
+  authors:
+    font-color: E7E7E7
+abstract:
+  font-color: A39D99
+admonition:
+  column-rule-color: $base-border-color
+  icon:
+    caution:
+      stroke-color: 40CBFF
+    note:
+      stroke-color: E6BF83
+    tip:
+      stroke-color: EEEEEE
+    warning:
+      stroke-color: 4096FF
+blockquote:
+  border-color: $base-border-color
+  cite:
+    font-color: 666666
+verse:
+  border-color: $blockquote-border-color
+  cite:
+    font-color: $blockquote-cite-font-color
+code:
+  font-color: $base-font-color
+  background-color: 0A0A0A
+  border-color: 333333
+conum:
+  font-color: $literal-font-color
+example:
+  background-color: $page-background-color
+  border-color: $base-border-color
+sidebar:
+  background-color: 111111
+  border-color: 1A1A1A
+  title:
+    font-color: $heading-font-color
+thematic-break:
+  border-color: $base-border-color
+table:
+  background-color: $page-background-color
+  border-color: 222222
+  foot:
+    background-color: $table-background-color
+header:
+  font-color: 666666
+footer:
+  border-color: 222222

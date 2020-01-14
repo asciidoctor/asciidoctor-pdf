@@ -8,6 +8,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == Unreleased
 
 * allow max-width on caption be specified as a percentage (of the container width) (#1484)
+* add dark theme for chronicles example
 
 == 1.5.0.rc.2 (2020-01-09) - @mojavelinux
 
