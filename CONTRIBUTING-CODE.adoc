@@ -239,7 +239,11 @@ The HTML report helps you understand which lines and branches were missed, if an
 
 Despite being fast, the downside of using simplecov is that it misses code branches.
 You can use deep-cover instead of simplecov to generate a more thorough report.
-To do so, set the `COVERAGE` environment variable to `deep` when running the tests:
+To do so, first run `bundle` at least once with the `COVERAGE` environment variable set:
+
+ $ COVERAGE=true bundle
+
+Then, set the `COVERAGE` environment variable to `deep` when running the tests:
 
  $ COVERAGE=deep bundle exec rake spec
 

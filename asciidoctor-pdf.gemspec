@@ -48,7 +48,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'treetop', '~> 1.5.0'
 
   s.add_development_dependency 'rake', '~> 13.0.0'
-  s.add_development_dependency 'deep-cover-core', '~> 0.7.0'
   s.add_development_dependency 'simplecov', '~> 0.17.0'
   s.add_development_dependency 'rspec', '~> 3.9.0'
   s.add_development_dependency 'pdf-inspector', '~> 1.3.0'

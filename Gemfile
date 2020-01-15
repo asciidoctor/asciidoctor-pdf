@@ -19,3 +19,7 @@ gem 'text-hyphen', require: false
 group :docs do
   gem 'yard', require: false
 end
+
+group :coverage do
+  gem 'deep-cover-core', '~> 0.7.0', require: false if ENV.key? 'COVERAGE'
+end
