@@ -14,4 +14,30 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
       end
     end
   end
+
+  def process_vertical_alignment text
+    return super if ::Symbol === (valign = @vertical_align)
+
+    return if defined? @vertical_alignment_processed
+    @vertical_alignment_processed = true
+
+    valign, offset = valign
+
+    if valign == :top
+      @at[1] -= offset
+      return
+    end
+
+    wrap text
+    h = height
+
+    case valign
+    when :center
+      @at[1] -= (@height - h + @descender) * 0.5 + offset
+    when :bottom
+      @at[1] -= (@height - h) + offset
+    end
+
+    @height = h
+  end
 end)

@@ -4475,7 +4475,7 @@ To avoid this problem, reduce the height of the running content periphery or mak
   title-style: toc
 
 |vertical-align
-|top {vbar} middle {vbar} bottom +
+|top {vbar} middle {vbar} bottom {vbar} [top {vbar} middle {vbar} bottom, <<measurement-units,Measurement>>] +
 (default: middle)
 |header:
   vertical-align: middle
@@ -4600,7 +4600,7 @@ To avoid this problem, reduce the height of the running content periphery or mak
   title-style: toc
 
 |vertical-align
-|top {vbar} middle {vbar} bottom +
+|top {vbar} middle {vbar} bottom {vbar} [top {vbar} middle {vbar} bottom, <<measurement-units,Measurement>>] +
 (default: middle)
 |footer:
   vertical-align: top

@@ -3282,7 +3282,7 @@ module Asciidoctor
                         content = transform_text content, @text_transform if @text_transform
                       end
                       formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
-                          at: [left, bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset] + (trim_styles[:valign] == :center ? font.descender * 0.5 : 0)],
+                          at: [left, bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset] + ((Array trim_styles[:valign])[0] == :center ? font.descender * 0.5 : 0)],
                           width: colwidth,
                           height: trim_styles[:prose_content_height],
                           align: colspec[:align],
@@ -3308,6 +3308,10 @@ module Asciidoctor
 
       def allocate_running_content_layout doc, page, periphery, cache
         cache[layout = page.layout] ||= begin
+          valign, valign_offset = @theme[%(#{periphery}_vertical_align)]
+          if (valign = (valign || :middle).to_sym) == :middle
+            valign = :center
+          end
           trim_styles = {
             line_metrics: (trim_line_metrics = calc_line_metrics @theme[%(#{periphery}_line_height)] || @theme.base_line_height),
             # NOTE we've already verified this property is set
@@ -3322,7 +3326,7 @@ module Asciidoctor
             column_rule_style: (@theme[%(#{periphery}_column_rule_style)] || :solid).to_sym,
             column_rule_width: (trim_column_rule_color ? @theme[%(#{periphery}_column_rule_width)] || 0 : 0),
             column_rule_spacing: (@theme[%(#{periphery}_column_rule_spacing)] || 0),
-            valign: (val = (@theme[%(#{periphery}_vertical_align)] || :middle).to_sym) == :middle ? :center : val,
+            valign: valign_offset ? [valign, valign_offset] : valign,
             img_valign: @theme[%(#{periphery}_image_vertical_align)],
             left: {
               recto: (trim_left_recto = @page_margin_by_side[:recto][3]),
@@ -3347,7 +3351,7 @@ module Asciidoctor
           }
           case trim_styles[:img_valign]
           when nil
-            trim_styles[:img_valign] = trim_styles[:valign]
+            trim_styles[:img_valign] = valign
           when 'middle'
             trim_styles[:img_valign] = :center
           when 'top', 'center', 'bottom'
