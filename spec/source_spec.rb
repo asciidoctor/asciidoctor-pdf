@@ -755,20 +755,22 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should preserve space before callout on final line' do
-      pdf = to_pdf <<~EOS, analyze: true
-      :source-highlighter: pygments
+      ['rouge', (ENV.key? 'PYGMENTS_VERSION') ? 'pygments' : nil].compact.each do |highlighter|
+        pdf = to_pdf <<~EOS, analyze: true
+        :source-highlighter: #{highlighter}
 
-      [source,java]
-      ----
-      public interface Person {
-        String getName();
-      }  <1>
-      ----
-      <1> End class definition
-      EOS
+        [source,java]
+        ----
+        public interface Person {
+          String getName();
+        }  <1>
+        ----
+        <1> End class definition
+        EOS
 
-      lines = pdf.lines
-      (expect lines).to include '}  ①'
+        lines = pdf.lines
+        (expect lines).to include '}  ①'
+      end
     end
 
     it 'should hide spaces in front of conum from source highlighter' do
