@@ -4795,7 +4795,7 @@ header:
     center:
       content: $header-recto-center-content
 ----
-<1> You can use the `footer-vertical-align` attribute to slighly nudge the image up or down.
+<1> You can use the `image-vertical-align` key to slighly nudge the image up or down.
 
 CAUTION: By default, the image must fit in the allotted space for the running header or footer.
 Otherwise, you will run into layout issues.
