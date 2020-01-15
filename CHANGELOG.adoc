@@ -289,6 +289,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == 1.5.0.alpha.18 (2019-06-01) - @mojavelinux
 
 * restore compatibility with Asciidoctor back to 1.5.3 and add verification to test matrix (#1038)
+* allow one theme to extend another theme using the top-level `extends` key (#367)
 * allow theme to set text indent for paragraphs using prose_text_indent (#191)
 * allow theme to set spacing between adjacent paragraphs using prose_margin_inner (#191)
 * show parts in toc when toclevels=0 (#783)
