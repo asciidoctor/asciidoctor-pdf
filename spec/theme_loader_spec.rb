@@ -285,7 +285,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_color).to eql 'FF0000'
     end
 
-    it 'should ensure required keys are set' do
+    it 'should ensure required keys are set in non-built-in theme' do
       theme = subject.load_theme 'extends-nil-empty-theme.yml', fixtures_dir
       (expect theme.__dir__).to eql fixtures_dir
       (expect theme.base_align).to eql 'left'
@@ -294,6 +294,14 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.code_font_family).to eql 'Courier'
       (expect theme.conum_font_family).to eql 'Courier'
       (expect theme.to_h.keys).to have_size 6
+    end
+
+    it 'should link sidebar and abstract title font family to heading font family if only latter is set' do
+      theme = subject.load_theme 'heading-font-family-theme.yml', fixtures_dir
+      (expect theme.__dir__).to eql fixtures_dir
+      (expect theme.heading_font_family).to eql 'M+ 1mn'
+      (expect theme.abstract_title_font_family).to eql 'M+ 1mn'
+      (expect theme.sidebar_title_font_family).to eql 'M+ 1mn'
     end
 
     it 'should not overwrite required keys with default values if already set' do

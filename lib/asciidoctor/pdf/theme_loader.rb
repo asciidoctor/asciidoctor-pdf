@@ -80,6 +80,10 @@ module Asciidoctor
             theme_data.base_font_color ||= '000000'
             theme_data.code_font_family ||= (theme_data.literal_font_family || 'Courier')
             theme_data.conum_font_family ||= (theme_data.literal_font_family || 'Courier')
+            if (heading_font_family = theme_data.heading_font_family)
+              theme_data.abstract_title_font_family ||= heading_font_family
+              theme_data.sidebar_title_font_family ||= heading_font_family
+            end
           end
           theme_data.__dir__ = theme_dir
           theme_data

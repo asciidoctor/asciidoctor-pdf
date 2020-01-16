@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 * allow max-width on caption be specified as a percentage (of the container width) (#1484)
 * add dark theme for chronicles example
+* link font family for abstract and sidebar to heading font family if only latter is set
 
 == 1.5.0.rc.2 (2020-01-09) - @mojavelinux
 
