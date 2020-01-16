@@ -385,11 +385,12 @@ module Asciidoctor
           theme
         rescue
           if user_themesdir
-            message = %(could not locate or load the pdf theme `#{theme_name}' in #{user_themesdir}; reverting to default theme)
+            message = %(could not locate or load the pdf theme `#{theme_name}' in #{user_themesdir})
           else
-            message = %(could not locate or load the built-in pdf theme `#{theme_name}'; reverting to default theme)
+            message = %(could not locate or load the built-in pdf theme `#{theme_name}')
           end
-          logger.error message
+          message += %( because of #{$!.class} #{$!.message}) unless ::SystemCallError === $!
+          logger.error %(#{message}; reverting to default theme)
           @themesdir = (theme = ThemeLoader.load_theme).__dir__
           theme
         end
