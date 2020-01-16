@@ -720,6 +720,25 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-negative-padding.pdf'
     end
 
+    it 'should allow vertical alignment of content to be set in theme' do
+      pdf_theme = {
+        footer_font_color: '000000',
+        footer_padding: 0,
+        footer_height: 72,
+        footer_line_height: 1,
+        footer_font_size: 10,
+        footer_recto_left_content: 'text left',
+        footer_recto_right_content: 'text right',
+      }
+
+      # NOTE the exact y position is affected by the font height and line metrics, so use a fuzzy check
+      { 'top' => 72, 'middle' => 42, 'bottom' => 12 }.each do |valign, expected_y|
+        pdf = to_pdf 'body', pdf_theme: (pdf_theme.merge footer_vertical_align: valign), enable_footer: true, analyze: true
+        left_text = (pdf.find_text 'text left')[0]
+        (expect left_text[:y] + left_text[:font_size]).to be_within(1).of(expected_y)
+      end
+    end
+
     it 'should coerce content value to string' do
       pdf = to_pdf 'body', enable_footer: true, attribute_overrides: { 'pdf-theme' => (fixture_file 'running-footer-coerce-content-theme.yml') }, analyze: true
 
