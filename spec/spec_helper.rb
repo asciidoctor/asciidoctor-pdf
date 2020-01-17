@@ -536,6 +536,7 @@ RSpec::Matchers.define :have_size do |expected|
 end
 
 RSpec::Matchers.define :have_message do |expected|
+  actual = nil
   match do |logger|
     result = false
     if (messages = logger.messages).size == 1
@@ -548,11 +549,14 @@ RSpec::Matchers.define :have_message do |expected|
           result = true
         end
       end
+      actual = message
     end
     result
   end
 
-  failure_message { %(expected #{expected[:severity]} message#{expected[:message].chr == '~' ? ' containing ' : ' matching '}`#{expected[:message]}' to have been logged) }
+  failure_message do
+    %(expected #{expected[:severity]} message#{expected[:message].to_s.chr == '~' ? ' containing ' : ' matching '}`#{expected[:message]}' to have been logged) + (actual ? %(, but got #{actual[:severity]}: #{actual[:message]}) : '')
+  end
 end
 
 RSpec::Matchers.define :log_message do |expected|
