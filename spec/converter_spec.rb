@@ -150,6 +150,21 @@ describe Asciidoctor::PDF::Converter do
         end).to log_message severity: :ERROR, message: '~could not locate or load the built-in pdf theme `foo\'; reverting to default theme'
       end
 
+      it 'should log error with filename and reason if theme file cannot be parsed' do
+        pdf_theme = fixture_file 'tab-indentation-theme.yml'
+        (expect do
+          pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => pdf_theme }, analyze: true
+          (expect pdf.pages).to have_size 1
+        end).to log_message severity: :ERROR, message: /because of Psych::SyntaxError \(#{Regexp.escape pdf_theme}\): found character .*that cannot start any token.*; reverting to default theme/
+      end
+
+      it 'should log error with filename and reason if exception is thrown during theme compilation' do
+        (expect do
+          pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => (fixture_file 'invalid-theme.yml') }, analyze: true
+          (expect pdf.pages).to have_size 1
+        end).to log_message severity: :ERROR, message: /because of NoMethodError undefined method `start_with\?' for 10:(Fixnum|Integer); reverting to default theme/
+      end
+
       it 'should not crash if theme does not specify any keys' do
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'extends-nil-empty-theme.yml') }, analyze: true
         = Document Title

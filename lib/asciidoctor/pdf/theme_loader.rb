@@ -95,7 +95,7 @@ module Asciidoctor
         data = data.each_line.map {|line|
           line.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || (m[:k].end_with? 'color') ? "'#{m[:v]}'" : m[:v]}) }
         }.join unless (::File.dirname filename) == ThemesDir
-        yaml_data = ::SafeYAML.load data
+        yaml_data = ::SafeYAML.load data, filename
         if ::Hash === yaml_data && (yaml_data.key? 'extends')
           if (extends = yaml_data.delete 'extends')
             [*extends].each do |extend_path|

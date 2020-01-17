@@ -181,8 +181,8 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme).to eql subject.load_base_theme
     end
 
-    it 'should fail if theme is indented using tabs' do
-      expect { subject.load_file fixture_file 'tab-indentation-theme.yml' }.to raise_exception RuntimeError
+    it 'should throw error that includes filename and reason if theme is indented using tabs' do
+      expect { subject.load_file fixture_file 'tab-indentation-theme.yml' }.to raise_exception RuntimeError, /tab-indentation-theme\.yml\): found character .*that cannot start any token/
     end
 
     it 'should load and extend themes specified by extends array' do
