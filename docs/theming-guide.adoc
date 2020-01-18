@@ -52,6 +52,11 @@ The Asciidoctor PDF theme language is described using the http://en.wikipedia.or
 Therefore, if you have a background in web design, the terminology should be immediately familiar to you.
 *Note, however, that the theming system isn't actually CSS.*
 
+The theme file must be named _<name>-theme.yml_, where `<name>` is the name of the theme.
+_We recommend *not* using the names *base* or *default* so you don't confuse it with one of the built-in themes._
+
+=== Selectors and Properties
+
 Like CSS, themes have both selectors and properties.
 Selectors are the component you want to style.
 The properties are the style elements of that component that can be styled.
@@ -74,8 +79,7 @@ YAML is a human-friendly data format that resembles CSS and helps to describe th
 The theme language adds some extra features to YAML, such as variables, basic math, measurements and color values.
 These enhancements will be explained in detail in later sections.
 
-The theme file must be named _<name>-theme.yml_, where `<name>` is the name of the theme.
-_We recommend *not* using the names *base* or *default* so you don't confuse it with one of the built-in themes._
+=== Basic Theme
 
 Here's an example of a basic theme file that extends the base theme:
 
@@ -118,6 +122,8 @@ When creating a new theme, you only have to define the keys you want to override
 All the available keys are documented in <<Keys>>.
 The converter uses the information from the theme map to help construct the PDF.
 
+=== Basic Extended Theme
+
 Instead of designing a theme from scratch, you can extend the default theme using the `extends` key as follows:
 
 [source,yaml]
@@ -143,6 +149,8 @@ Alternatively, you can snag the file from your local installation using the foll
  $ ASCIIDOCTOR_PDF_DIR=`gem contents asciidoctor-pdf --show-install-dir`;\
    cp "$ASCIIDOCTOR_PDF_DIR/data/themes/default-theme.yml" custom-theme.yml
 ====
+
+=== Key Nesting
 
 Keys may be nested to an arbitrary depth to eliminate redundant prefixes (an approach inspired by SASS).
 Once the theme is loaded, all keys are flattened into a single map of qualified keys.
