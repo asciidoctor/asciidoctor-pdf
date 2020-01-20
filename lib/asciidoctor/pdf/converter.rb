@@ -761,36 +761,35 @@ module Asciidoctor
         shift_bottom = (shift_base * 2) / 3.0
         keep_together do |box_height = nil|
           push_scratch doc if scratch?
-          if box_height && (@theme.admonition_background_color ||
-              ((@theme.admonition_border_width || 0) > 0 && @theme.admonition_border_color))
-            float do
-              bounding_box [0, cursor], width: bounds.width, height: box_height do
-                theme_fill_and_stroke_bounds :admonition
-              end
-            end
-          end
+          theme_fill_and_stroke_block :admonition, box_height if box_height
           pad_box [0, cpad[1], 0, lpad[3]] do
             if box_height
+              label_height = [box_height, cursor].min
               if (rule_color = @theme.admonition_column_rule_color) &&
                   (rule_width = @theme.admonition_column_rule_width || @theme.base_border_width) && rule_width > 0
                 float do
-                  bounding_box [0, cursor], width: label_width + lpad[1], height: box_height do
-                    stroke_vertical_rule rule_color,
-                        at: bounds.right,
-                        line_style: (@theme.admonition_column_rule_style || :solid).to_sym,
-                        line_width: rule_width
+                  rule_height = box_height
+                  while rule_height > 0
+                    rule_segment_height = [rule_height, cursor].min
+                    bounding_box [0, cursor], width: label_width + lpad[1], height: rule_segment_height do
+                      stroke_vertical_rule rule_color,
+                          at: bounds.right,
+                          line_style: (@theme.admonition_column_rule_style || :solid).to_sym,
+                          line_width: rule_width
+                    end
+                    advance_page if (rule_height -= rule_segment_height) > 0
                   end
                 end
               end
               float do
-                bounding_box [0, cursor], width: label_width, height: box_height do
+                bounding_box [0, cursor], width: label_width, height: label_height do
                   if icons == 'font'
                     # FIXME: we assume icon is square
                     icon_size = fit_icon_to_bounds icon_size
                     # NOTE: Prawn's vertical center is not reliable, so calculate it manually
                     if label_valign == :center
                       label_valign = :top
-                      if (vcenter_pos = (box_height - icon_size) * 0.5) > 0
+                      if (vcenter_pos = (label_height - icon_size) * 0.5) > 0
                         move_down vcenter_pos
                       end
                     end
@@ -806,13 +805,13 @@ module Asciidoctor
                             position: label_align,
                             vposition: label_valign,
                             width: label_width,
-                            height: box_height,
+                            height: label_height,
                             fallback_font_name: fallback_svg_font_name,
                             enable_web_requests: allow_uri_read,
                             enable_file_requests_with_root: (::File.dirname icon_path),
                             cache_images: cache_uri
-                        if (icon_height = (svg_size = svg_obj.document.sizing).output_height) > box_height
-                          icon_width = (svg_obj.resize height: (icon_height = box_height)).output_width
+                        if (icon_height = (svg_size = svg_obj.document.sizing).output_height) > label_height
+                          icon_width = (svg_obj.resize height: (icon_height = label_height)).output_width
                         else
                           icon_width = svg_size.output_width
                         end
@@ -829,9 +828,9 @@ module Asciidoctor
                         icon_aspect_ratio = image_info.width.fdiv image_info.height
                         # NOTE: don't scale image up if smaller than label_width
                         icon_width = [(to_pt image_info.width, :px), label_width].min
-                        if (icon_height = icon_width * (1 / icon_aspect_ratio)) > box_height
-                          icon_width *= box_height / icon_height
-                          icon_height = box_height # rubocop:disable Lint/UselessAssignment
+                        if (icon_height = icon_width * (1 / icon_aspect_ratio)) > label_height
+                          icon_width *= label_height / icon_height
+                          icon_height = label_height # rubocop:disable Lint/UselessAssignment
                         end
                         embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
                       rescue
@@ -847,7 +846,7 @@ module Asciidoctor
                         # NOTE: Prawn's vertical center is not reliable, so calculate it manually
                         if label_valign == :center
                           label_valign = :top
-                          if (vcenter_pos = (box_height - (height_of_typeset_text label_text, line_height: 1)) * 0.5) > 0
+                          if (vcenter_pos = (label_height - (height_of_typeset_text label_text, line_height: 1)) * 0.5) > 0
                             move_down vcenter_pos
                           end
                         end
@@ -3634,7 +3633,7 @@ module Asciidoctor
         if (b_color = @theme[%(#{category}_border_color)]) == 'transparent'
           b_color = @page_bg_color
         end
-        b_radius = (@theme[%(#{category}_border_radius)] || 0) + b_width if b_width
+        b_radius = (@theme[%(#{category}_border_radius)] || 0) + (b_width || 0)
         if b_width && b_color
           if b_color == @page_bg_color # let page background cut into block background
             b_gap_color, b_shift = @page_bg_color, b_width

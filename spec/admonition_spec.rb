@@ -3,7 +3,7 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Admonition' do
-  it 'should advance block to next page to avoid splitting it if it will fit' do
+  it 'should advance block to next page to avoid splitting it if it will fit on page' do
     pdf = to_pdf <<~EOS, analyze: true
     #{(['paragraph'] * 20).join %(\n\n)}
 
@@ -15,6 +15,58 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     admon_page_numbers = (pdf.find_text 'admonition').map {|it| it[:page_number] }.uniq
     (expect admon_page_numbers).to eql [2]
+  end
+
+  it 'should vertically center label on first page if block is split across pages' do
+    pdf = to_pdf <<~EOS, pdf_theme: { page_margin: '0.5in' }, analyze: true
+    [NOTE]
+    ====
+    #{(['admonition'] * 40).join %(\n\n)}
+    ====
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    page_height = (get_page_size pdf)[1]
+    label_text = (pdf.find_text 'NOTE')[0]
+    label_text_midpoint = label_text[:y] + (label_text[:font_size] * 0.5)
+    (expect label_text_midpoint).to be_within(2).of(page_height * 0.5)
+  end
+
+  it 'should draw vertical rule on all pages if block is split across pages' do
+    pdf = to_pdf <<~EOS, pdf_theme: { page_margin: '0.5in' }, analyze: :line
+    [NOTE]
+    ====
+    #{(['admonition'] * 40).join %(\n\n)}
+    ====
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 2
+    (expect lines.map {|it| it[:page_number] }).to eql [1, 2]
+    (expect lines[0][:to][:y]).to eql 36.0
+    (expect lines[1][:to][:y]).to be > 36.0
+  end
+
+  it 'should draw border and background on all pages if block is split across pages', visual: true do
+    pdf_theme = {
+      admonition_background_color: 'F5A9A9',
+      admonition_border_width: 0.5,
+      admonition_border_color: '333333',
+      admonition_rule_color: 'FFFFFF',
+    }
+
+    to_file = to_pdf_file <<~EOS, 'admonition-page-split.pdf', pdf_theme: pdf_theme
+    before
+
+    [NOTE]
+    ====
+    #{(['admonition'] * 40).join %(\n\n)}
+    ====
+
+    after
+    EOS
+
+    (expect to_file).to visually_match 'admonition-page-split.pdf'
   end
 
   it 'should allow theme to configure properties of caption' do
