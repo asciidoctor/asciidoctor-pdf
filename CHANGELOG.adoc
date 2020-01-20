@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * add dark theme for chronicles example
 * allow vertical-align key for header and footer categories to accept numeric offset as second value (e.g., [top, 10]) (#1488)
 * link font family for abstract and sidebar to heading font family if only latter is set
+* reenable tests on Windows (#1499)
 
 == 1.5.0.rc.2 (2020-01-09) - @mojavelinux
 
