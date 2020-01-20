@@ -15,6 +15,7 @@ gem 'pygments.rb', ENV['PYGMENTS_VERSION'], require: false if ENV.key? 'PYGMENTS
 gem 'rghost', ENV['RGHOST_VERSION'], require: false if ENV.key? 'RGHOST_VERSION'
 gem 'rouge', ENV['ROUGE_VERSION'], require: false if ENV.key? 'ROUGE_VERSION'
 gem 'text-hyphen', require: false
+gem 'open-uri-cached', require: false
 
 group :docs do
   gem 'yard', require: false

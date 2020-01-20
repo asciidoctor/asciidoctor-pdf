@@ -14,6 +14,7 @@ require 'base64'
 require 'chunky_png'
 require 'fileutils' unless defined? FileUtils
 require 'open3' unless defined? Open3
+require 'open-uri/cached'
 require 'pathname' unless defined? Pathname
 require 'pdf/inspector'
 
@@ -265,6 +266,7 @@ RSpec.configure do |config|
   config.before :suite do
     FileUtils.rm_r output_dir, force: true, secure: true
     FileUtils.mkdir output_dir
+    OpenURI::Cache.cache_path = output_file 'open-uri-cache'
   end
 
   config.after :suite do

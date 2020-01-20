@@ -513,7 +513,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
   end
 
-  context 'allow-uri-read' do
+  context 'Remote' do
     it 'should warn if image is remote and allow-uri-read is not set' do
       (expect do
         pdf = to_pdf 'image::https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png[Remote Image]', analyze: true
@@ -547,6 +547,18 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect rect[:point]).to eql [0.0, 200.0]
       (expect rect[:width]).to eql 200.0
       (expect rect[:height]).to eql 200.0
+    end
+
+    it 'should cache remote image if cache-uri document attribute is set' do
+      image_url = 'https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png'
+      input = %(image::#{image_url}[Remote Image])
+      OpenURI::Cache.invalidate image_url
+      (expect OpenURI::Cache.get image_url).to be_nil
+      pdf = to_pdf input, attribute_overrides: { 'allow-uri-read' => '', 'cache-uri' => '' }
+      (expect OpenURI::Cache.get image_url).not_to be_nil
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect (pdf.page 1).text).to be_empty
     end
   end
 
