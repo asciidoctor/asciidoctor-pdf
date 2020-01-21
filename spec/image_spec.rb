@@ -327,7 +327,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         EOS
 
         (expect to_file).to visually_match 'image-svg-with-missing-image.pdf'
-      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-remote-image.svg'}; Error retrieving URL https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png)
+      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-remote-image.svg'}; Error retrieving URL https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@master/spec/fixtures/logo.png)
     end
 
     it 'should ignore inline option for SVG on image macro' do
@@ -516,13 +516,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   context 'Remote' do
     it 'should warn if image is remote and allow-uri-read is not set' do
       (expect do
-        pdf = to_pdf 'image::https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png[Remote Image]', analyze: true
-        (expect pdf.lines).to eql ['[Remote Image] | https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png']
+        pdf = to_pdf 'image::https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@master/spec/fixtures/logo.png[Remote Image]', analyze: true
+        (expect pdf.lines).to eql ['[Remote Image] | https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@master/spec/fixtures/logo.png']
       end).to log_message severity: :WARN, message: '~allow-uri-read is not enabled; cannot embed remote image'
     end
 
     it 'should read remote image if allow-uri-read is set' do
-      pdf = to_pdf 'image::https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png[Remote Image]', attribute_overrides: { 'allow-uri-read' => '' }
+      pdf = to_pdf 'image::https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@master/spec/fixtures/logo.png[Remote Image]', attribute_overrides: { 'allow-uri-read' => '' }
       images = get_images pdf, 1
       (expect images).to have_size 1
       (expect (pdf.page 1).text).to be_empty
@@ -540,7 +540,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       :pdf-page-size: 200x400
       :pdf-page-margin: 0
 
-      image::https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/square.svg?v=1[format=svg,pdfwidth=100%]
+      image::https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@master/spec/fixtures/square.svg?v=1[format=svg,pdfwidth=100%]
       EOS
       (expect pdf.rectangles).to have_size 1
       rect = pdf.rectangles[0]
@@ -550,7 +550,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should cache remote image if cache-uri document attribute is set' do
-      image_url = 'https://raw.githubusercontent.com/asciidoctor/asciidoctor-pdf/master/spec/fixtures/logo.png'
+      image_url = 'https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@master/spec/fixtures/logo.png'
       input = %(image::#{image_url}[Remote Image])
       OpenURI::Cache.invalidate image_url
       (expect OpenURI::Cache.get image_url).to be_nil
