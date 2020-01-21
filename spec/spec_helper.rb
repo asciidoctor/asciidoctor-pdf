@@ -282,7 +282,8 @@ RSpec.configure do |config|
   end
 
   def bin_script name, opts = {}
-    Gem.bin_path (opts.fetch :gem, 'asciidoctor-pdf'), name
+    bin_path = Gem.bin_path (opts.fetch :gem, 'asciidoctor-pdf'), name
+    windows? ? [Gem.ruby, bin_path] : bin_path
   end
 
   def asciidoctor_bin
