@@ -1,0 +1,7 @@
+/*file eol=lf
+/bin/* eol=lf
+*.adoc eol=lf
+*.pdf -text
+*.rb eol=lf
+*.svg eol=lf
+*.yml eol=lf
