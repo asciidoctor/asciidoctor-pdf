@@ -36,6 +36,8 @@ bundler_args: --path=.bundle/gems --jobs=3 --retry=3 --without=docs
 script:
 - bundle exec rake lint
 - bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
+# remove prawn-table so it doesn't get cached and cause cache to be reuploaded
+- bundle info --path prawn-table | xargs -r -IARG rm -rf ARG/.git
 deploy:
   provider: rubygems
   gem: asciidoctor-pdf
