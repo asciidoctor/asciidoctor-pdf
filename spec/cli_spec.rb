@@ -3,6 +3,12 @@
 require_relative 'spec_helper'
 
 describe 'asciidoctor-pdf' do
+  context 'Packaging' do
+    it 'should install bin script named asciidoctor-pdf' do
+      (expect Pathname.new File.join Gem.bindir, 'asciidoctor-pdf').to exist
+    end
+  end
+
   context 'Options' do
     it 'should print the version of Asciidoctor PDF to stdout when invoked with the -V flag', cli: true do
       out, _, res = run_command asciidoctor_pdf_bin, '-V'

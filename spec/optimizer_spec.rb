@@ -65,6 +65,10 @@ describe 'Asciidoctor::PDF::Optimizer' do
     end).to not_raise_exception
   end
 
+  it 'should install bin script named asciidoctor-pdf-optimize' do
+    (expect Pathname.new File.join Gem.bindir, 'asciidoctor-pdf').to exist
+  end
+
   it 'should optimize PDF passed to asciidoctor-pdf-optimizer CLI', cli: true do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-cli.pdf'
