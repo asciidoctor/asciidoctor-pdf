@@ -1,0 +1,13 @@
+extends: default
+font:
+  catalog:
+    merge: true
+    M+ 1mn:
+      normal: /path/to/mplus1mn-regular.ttf
+    VLGothic:
+      normal: &VLGothic /path/to/vlgothic-regular.ttf
+      bold: *VLGothic
+      italic: *VLGothic
+      bold_italic: *VLGothic
+  fallbacks:
+  - VLGothic

@@ -131,7 +131,8 @@ module Asciidoctor
             process_entry %(#{key}_#{subkey}), subval, data if subkey == 'catalog' || subkey == 'fallbacks'
           end if ::Hash === val
         elsif key == 'font_catalog'
-          data[key] = ::Hash === val ? val.reduce({}) do |accum, (name, styles)| # rubocop:disable Style/EachWithObject
+          catalog = (val.delete 'merge') ? data[key] || {} : {}
+          data[key] = ::Hash === val ? (val.reduce catalog do |accum, (name, styles)| # rubocop:disable Style/EachWithObject
             accum[name] = styles.reduce({}) do |subaccum, (style, path)| # rubocop:disable Style/EachWithObject
               if (path.start_with? 'GEM_FONTS_DIR') && (sep = path[13])
                 path = %(#{FontsDir}#{sep}#{path.slice 14, path.length})
@@ -140,7 +141,7 @@ module Asciidoctor
               subaccum
             end if ::Hash === styles
             accum
-          end : {}
+          end) : {}
         elsif key == 'font_fallbacks'
           data[key] = ::Array === val ? val.map {|name| expand_vars name.to_s, data } : []
         elsif key.start_with? 'admonition_icon_'

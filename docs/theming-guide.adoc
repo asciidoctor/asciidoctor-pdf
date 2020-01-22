@@ -974,8 +974,8 @@ If the filename is absolute, it's used as is.
 If the filename begins with `./`, it's resolved as a theme file relative to the current theme file.
 Otherwise, the filename is resolved as a theme file in the normal way (relative to the value of the `pdf-themesdir` attribute).
 
-CAUTION: If you define the <<Custom fonts,font catalog>> in a theme that extends from `default`, you *must* redeclare any built-in font that on which the combined theme depends.
-You can find those definitions in default theme.
+CAUTION: If you define the <<Custom fonts,font catalog>> in a theme that extends from `default`, you either have to redeclare any built-in font that on which the combined theme depends, or you need to set `merge: true` above your font definitions.
+You can find the built-in definitions in default theme.
 You'll then need to include `GEM_FONTS_DIR` in the value of the `pdf-fontsdir` attribute so that the converter can find and register them.
 To avoid having to do this, make sure you set the font family for any element that declares a font family in the default theme.
 
