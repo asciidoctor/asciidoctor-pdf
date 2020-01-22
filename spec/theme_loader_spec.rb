@@ -199,6 +199,24 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_family).to eql 'Noto Serif'
       (expect theme.base_font_color).to eql '0000FF'
     end
+
+    it 'should allow font catalog to be merged with font catalog from theme being extended' do
+      input_file = fixture_file 'extra-fonts-theme.yml'
+      theme = subject.load_file input_file, nil, fixtures_dir
+      (expect theme.font_catalog).to be_a Hash
+      (expect theme.font_catalog).to have_size 3
+      (expect theme.font_catalog).to have_key 'Noto Serif'
+      (expect theme.font_catalog).to have_key 'M+ 1mn'
+      (expect theme.font_catalog['Noto Serif']).to have_size 4
+      (expect theme.font_catalog['M+ 1mn']).to have_size 1
+      (expect theme.font_catalog['M+ 1mn']['normal']).to eql '/path/to/mplus1mn-regular.ttf'
+      (expect theme.font_catalog).to have_key 'VLGothic'
+      (expect theme.font_catalog['VLGothic']).to have_size 4
+      (expect theme.font_catalog['VLGothic'].values.uniq).to have_size 1
+      (expect theme.font_catalog['VLGothic']['normal']).to eql '/path/to/vlgothic-regular.ttf'
+      (expect theme.font_fallbacks).to be_a Array
+      (expect theme.font_fallbacks).to eql ['VLGothic']
+    end
   end
 
   describe '.load_theme' do
