@@ -131,8 +131,8 @@ module Asciidoctor
             process_entry %(#{key}_#{subkey}), subval, data if subkey == 'catalog' || subkey == 'fallbacks'
           end if ::Hash === val
         elsif key == 'font_catalog'
-          catalog = (val.delete 'merge') ? data[key] || {} : {}
-          data[key] = ::Hash === val ? (val.reduce catalog do |accum, (name, styles)| # rubocop:disable Style/EachWithObject
+          data[key] = ::Hash === val ? (val.reduce (val.delete 'merge') ? data[key] || {} : {} do |accum, (name, styles)| # rubocop:disable Style/EachWithObject
+            styles = %w(normal bold italic bold_italic).map {|style| [style, styles] }.to_h if ::String === styles
             accum[name] = styles.reduce({}) do |subaccum, (style, path)| # rubocop:disable Style/EachWithObject
               if (path.start_with? 'GEM_FONTS_DIR') && (sep = path[13])
                 path = %(#{FontsDir}#{sep}#{path.slice 14, path.length})

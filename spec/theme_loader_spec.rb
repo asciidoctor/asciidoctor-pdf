@@ -155,6 +155,22 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.footer_verso_right_content).to eql 'A4'
     end
 
+    it 'should allow font to be declared once for all styles' do
+      theme_data = SafeYAML.load <<~EOS
+      font:
+        catalog:
+          Serif: /path/to/serif-font.ttf
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.font_catalog).to be_a Hash
+      (expect theme.font_catalog['Serif']).to be_a Hash
+      (expect theme.font_catalog['Serif']).to have_size 4
+      (expect theme.font_catalog['Serif']['normal']).to eql '/path/to/serif-font.ttf'
+      (expect theme.font_catalog['Serif']['bold']).to eql '/path/to/serif-font.ttf'
+      (expect theme.font_catalog['Serif']['italic']).to eql '/path/to/serif-font.ttf'
+      (expect theme.font_catalog['Serif']['bold_italic']).to eql '/path/to/serif-font.ttf'
+    end
+
     it 'should allow font catalog and font fallbacks to be defined as flat keys' do
       theme_data = SafeYAML.load <<~EOS
       font_catalog:
