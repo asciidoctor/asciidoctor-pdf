@@ -4,10 +4,6 @@ font:
     merge: true
     # M+ 1p supports Latin, Latin-1 Supplement, Latin Extended, Greek, Cyrillic, Vietnamese, Japanese & an assortment of symbols
     # It also provides arrows for ->, <-, => and <= replacements in case these glyphs are missing from font
-    M+ 1p Fallback:
-      normal: &mplus1p_normal mplus1p-regular-fallback.ttf
-      bold: *mplus1p_normal
-      italic: *mplus1p_normal
-      bold_italic: *mplus1p_normal
+    M+ 1p Fallback: mplus1p-regular-fallback.ttf
   fallbacks:
   - M+ 1p Fallback
