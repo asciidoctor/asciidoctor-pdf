@@ -4,11 +4,7 @@ module Asciidoctor
   module PDF
     module FormattedText
       class Formatter
-        if defined? ::Asciidoctor::Logging
-          include ::Asciidoctor::Logging
-        else
-          include ::Asciidoctor::LoggingShim
-        end
+        include ::Asciidoctor::Logging
 
         FormattingSnifferPattern = /[<&]/
         WHITESPACE = %( \t\n)

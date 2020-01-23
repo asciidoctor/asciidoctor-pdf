@@ -3,11 +3,7 @@
 module Asciidoctor::PDF::FormattedText
   module InlineImageArranger
     include ::Asciidoctor::PDF::Measurements
-    if defined? ::Asciidoctor::Logging
-      include ::Asciidoctor::Logging
-    else
-      include ::Asciidoctor::LoggingShim
-    end
+    include ::Asciidoctor::Logging
 
     # NOTE we must use a visible char or else Prawn won't allocate space for the fragment
     ImagePlaceholderChar = '.'

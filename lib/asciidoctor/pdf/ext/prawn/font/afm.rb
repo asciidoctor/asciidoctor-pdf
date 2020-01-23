@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 class Prawn::Font::AFM
-  if defined? ::Asciidoctor::Logging
-    include ::Asciidoctor::Logging
-  else
-    include ::Asciidoctor::LoggingShim
-  end
+  include ::Asciidoctor::Logging
 
   FALLBACK_CHARS = {
     ?\u200b => '',

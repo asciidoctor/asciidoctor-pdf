@@ -8,11 +8,7 @@ module Asciidoctor
   module PDF
     class ThemeLoader
       include ::Asciidoctor::PDF::Measurements
-      if defined? ::Asciidoctor::Logging
-        include ::Asciidoctor::Logging
-      else
-        include ::Asciidoctor::LoggingShim
-      end
+      include ::Asciidoctor::Logging
 
       DataDir = ::File.absolute_path %(#{__dir__}/../../../data)
       ThemesDir = ::File.join DataDir, 'themes'

@@ -17,7 +17,7 @@ module Asciidoctor
     end
   end
 
-  module LoggingShim
+  module Logging
     def logger
       StubLogger
     end
