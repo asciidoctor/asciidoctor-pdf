@@ -107,6 +107,39 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect fonts).to have_size 1
       (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
     end
+
+    it 'should throw error if font with relative path cannot be found in GEM_FONTS_DIR' do
+      pdf_theme = {
+        font_catalog: {
+          'NoSuchFont' => {
+            'normal' => 'no-such-font.ttf',
+          },
+        },
+      }
+      expect { to_pdf 'content', pdf_theme: pdf_theme }.to raise_exception Errno::ENOENT, /no-such-font\.ttf not found in GEM_FONTS_DIR$/
+    end
+
+    it 'should throw error if font with relative path cannot be found in custom font dirs' do
+      pdf_theme = {
+        font_catalog: {
+          'NoSuchFont' => {
+            'normal' => 'no-such-font.ttf',
+          },
+        },
+      }
+      expect { to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => 'here,there' }, pdf_theme: pdf_theme }.to raise_exception Errno::ENOENT, /no-such-font\.ttf not found in here or there$/
+    end
+
+    it 'should throw error if font with absolute path cannot be found in custom font dirs' do
+      pdf_theme = {
+        font_catalog: {
+          'NoSuchFont' => {
+            'normal' => (font_path = fixture_file 'no-such-font.ttf'),
+          },
+        },
+      }
+      expect { to_pdf 'content', pdf_theme: pdf_theme }.to raise_exception Errno::ENOENT, /#{Regexp.escape font_path} not found$/
+    end
   end
 
   context 'Kerning' do

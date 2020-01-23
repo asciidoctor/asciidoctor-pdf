@@ -2,6 +2,7 @@
 
 require_relative 'core/object'
 require_relative 'core/array'
+require_relative 'core/file'
 require_relative 'core/hash'
 require_relative 'core/numeric'
 require_relative 'core/string'

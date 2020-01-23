@@ -3563,7 +3563,7 @@ module Asciidoctor
                 true
               end
             end
-            raise ::Errno::ENOENT, %(#{path} not found in #{fonts_dir}) unless found
+            raise ::Errno::ENOENT, ((File.absolute_path? path) ? %(#{path} not found) : %(#{path} not found in #{fonts_dir.gsub ValueSeparatorRx, ' or '})) unless found
           end
           register_font key => styles
         end
