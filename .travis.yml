@@ -5,38 +5,36 @@ addons:
     - ghostscript
     - poppler-utils
 git:
-  # use depth 5 to leave enough room for concurrent builds
-  depth: 5
+  depth: 5 # use depth 5 to leave enough room for concurrent builds
 language: ruby
-rvm:
-- &release_ruby 2.7.0
-- 2.6.5
-- 2.5.7
-- 2.4.9
-- &oldest_ruby 2.3.8
-matrix:
-  include:
-  - rvm: jruby-9.2.9.0
-    env: JRUBY_OPTS='--dev'
-  - rvm: jruby-9.1.17.0
-    env: JRUBY_OPTS='--dev'
-  - rvm: *oldest_ruby
-    env: ASCIIDOCTOR_VERSION=1.5.3
-  - rvm: *oldest_ruby
-    env: ROUGE_VERSION='~> 2.0.0'
+bundler_args: --path=.bundle/gems --jobs=3 --retry=3 --without=docs
 env:
   global:
   - PYGMENTS_VERSION='~> 1.2.0'
   - RGHOST_VERSION='0.9.7'
-bundler_args: --path=.bundle/gems --jobs=3 --retry=3 --without=docs
 script:
-- bundle exec rake lint
-- bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
-deploy:
-  provider: rubygems
-  gem: asciidoctor-pdf
-  api_key: ${RUBYGEMS_API_KEY}
-  on:
-    tags: true
-    repo: asciidoctor/asciidoctor-pdf
-    rvm: *release_ruby
+- &spec_script bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
+jobs:
+  include:
+  - name: +lint +release
+    rvm: 2.7.0
+    script:
+    - bundle exec rake lint
+    - *spec_script 
+    deploy:
+      provider: rubygems
+      gem: asciidoctor-pdf
+      api_key: ${RUBYGEMS_API_KEY}
+      on:
+        tags: true
+        repo: asciidoctor/asciidoctor-pdf
+  - rvm: jruby-9.2.9.0
+  - rvm: jruby-9.1.17.0
+  - rvm: 2.6.5
+  - rvm: 2.5.7
+  - rvm: 2.4.9
+  - rvm: &oldest_ruby 2.3.8
+  - rvm: *oldest_ruby
+    env: ASCIIDOCTOR_VERSION=1.5.3
+  - rvm: *oldest_ruby
+    env: ROUGE_VERSION='~> 2.0.0'
