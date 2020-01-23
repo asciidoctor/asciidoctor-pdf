@@ -5,15 +5,23 @@ addons:
     - ghostscript
     - poppler-utils
 git:
-  # use depth 5 to leave enough room for concurrent builds
-  depth: 5
+  depth: 5 # use depth 5 to leave enough room for concurrent builds
 language: ruby
-
+bundler_args: --path=.bundle/gems --jobs=3 --retry=3 --without=docs
+env:
+  global:
+  - PYGMENTS_VERSION='~> 1.2.0'
+  - RGHOST_VERSION='0.9.7'
+script:
+- &spec_script bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
 jobs:
   include:
+  - rvm: &release_ruby 2.7.0
+    script:
+    - bundle exec rake lint
+    - *spec_script 
   - rvm: jruby-9.2.9.0
   - rvm: jruby-9.1.17.0
-  - rvm: &release_ruby 2.7.0
   - rvm: 2.6.5
   - rvm: 2.5.7
   - rvm: 2.4.9
@@ -22,22 +30,11 @@ jobs:
     env: ASCIIDOCTOR_VERSION=1.5.3
   - rvm: *oldest_ruby
     env: ROUGE_VERSION='~> 2.0.0'
-
-  - name: Lint
+deploy:
+  provider: rubygems
+  gem: asciidoctor-pdf
+  api_key: ${RUBYGEMS_API_KEY}
+  on:
+    tags: true
+    repo: asciidoctor/asciidoctor-pdf
     rvm: *release_ruby
-    script: bundle exec rake lint
-    deploy:
-      provider: rubygems
-      gem: asciidoctor-pdf
-      api_key: ${RUBYGEMS_API_KEY}
-      on:
-        tags: true
-        repo: asciidoctor/asciidoctor-pdf
-
-env:
-  global:
-  - PYGMENTS_VERSION='~> 1.2.0'
-  - RGHOST_VERSION='0.9.7'
-bundler_args: --path=.bundle/gems --jobs=3 --retry=3 --without=docs
-script:
-- bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
