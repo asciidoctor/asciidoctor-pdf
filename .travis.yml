@@ -1,9 +1,7 @@
-dist: trusty
+dist: bionic
 addons:
   apt:
-    packages:
-    - ghostscript
-    - poppler-utils
+    packages: [ghostscript, poppler-utils]
 git:
   depth: 5 # use depth 5 to leave enough room for concurrent builds
 language: ruby
@@ -13,20 +11,22 @@ env:
   - PYGMENTS_VERSION='~> 1.2.0'
   - RGHOST_VERSION='0.9.7'
 stages:
-- lint
 - test
 - name: release gem
   if: repo = asciidoctor/asciidoctor-pdf AND tag IS present
 script: bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
 jobs:
   include:
-  - stage: lint
-    rvm: &newest_ruby 2.7.0
-    script: bundle exec rake lint
   - stage: test
+    name: Lint
+    addons: ~
+    rvm: &default_ruby 2.7.0
+    script: bundle exec rake lint
   - rvm: jruby-9.2.9.0
+    dist: trusty
   - rvm: jruby-9.1.17.0
-  - rvm: *newest_ruby
+    dist: trusty
+  - rvm: *default_ruby
   - rvm: 2.6.5
   - rvm: 2.5.7
   - rvm: 2.4.9
@@ -36,7 +36,7 @@ jobs:
   - rvm: *oldest_ruby
     env: ROUGE_VERSION='~> 2.0.0'
   - stage: release gem
-    rvm: *newest_ruby
+    rvm: *default_ruby
     script: skip
     deploy:
       provider: rubygems
