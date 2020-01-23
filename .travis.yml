@@ -12,16 +12,20 @@ env:
   global:
   - PYGMENTS_VERSION='~> 1.2.0'
   - RGHOST_VERSION='0.9.7'
-script:
-- &spec_script bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
+stages:
+- lint
+- test
+- name: release gem
+  if: repo = asciidoctor/asciidoctor-pdf AND tag IS present
+script: bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
 jobs:
   include:
-  - rvm: &release_ruby 2.7.0
-    script:
-    - bundle exec rake lint
-    - *spec_script 
+  - stage: lint
+    rvm: &newest_ruby 2.7.0
+    script: bundle exec rake lint
   - rvm: jruby-9.2.9.0
   - rvm: jruby-9.1.17.0
+  - rvm: *newest_ruby
   - rvm: 2.6.5
   - rvm: 2.5.7
   - rvm: 2.4.9
@@ -30,11 +34,10 @@ jobs:
     env: ASCIIDOCTOR_VERSION=1.5.3
   - rvm: *oldest_ruby
     env: ROUGE_VERSION='~> 2.0.0'
-deploy:
-  provider: rubygems
-  gem: asciidoctor-pdf
-  api_key: ${RUBYGEMS_API_KEY}
-  on:
-    tags: true
-    repo: asciidoctor/asciidoctor-pdf
-    rvm: *release_ruby
+  - stage: release gem
+    rvm: *newest_ruby
+    script: skip
+    deploy:
+      provider: rubygems
+      gem: asciidoctor-pdf
+      api_key: ${RUBYGEMS_API_KEY}
