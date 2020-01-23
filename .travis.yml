@@ -23,6 +23,7 @@ jobs:
   - stage: lint
     rvm: &newest_ruby 2.7.0
     script: bundle exec rake lint
+  - stage: test
   - rvm: jruby-9.2.9.0
   - rvm: jruby-9.1.17.0
   - rvm: *newest_ruby
