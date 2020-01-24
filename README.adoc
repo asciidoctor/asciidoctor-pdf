@@ -688,8 +688,9 @@ The prawn-gmagick gem uses native extensions to compile against GraphicsMagick.
 This system prerequisite limits installation to Linux and OSX.
 Please refer to the {url-prawn-gmagick}[README for prawn-gmagick] to learn how to install it.
 
-Once this gem is installed, Asciidoctor automatically switches over to it to handle embedding of all images.
-In addition to support for more additional image file formats, this gem also speeds up image processing considerably, so we highly recommend using it if you can.
+Once this gem is installed, Asciidoctor automatically loads it, then delegates to it to handle all image embedding.
+In addition to support for additional image file formats, this gem also speeds up image processing considerably.
+We highly recommend using this gem if you're able to install it.
 
 == Importing PDF Pages
 
