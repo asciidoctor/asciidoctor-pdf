@@ -22,7 +22,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
-    it 'should set page size specified by pdf-page-size attribute using dimension array in pt' do
+    it 'should set page size specified by pdf-page-size attribute using dimension array in points' do
       pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: [600, 800]
 
@@ -32,7 +32,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.pages[0][:size]).to eql [600.0, 800.0]
     end
 
-    it 'should set page size specified by pdf-page-size attribute using dimension array in in' do
+    it 'should set page size specified by pdf-page-size attribute using dimension array in inches' do
       pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: [8.5in, 11in]
 
@@ -42,7 +42,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
-    it 'should set page size specified by pdf-page-size attribute using dimension string in in' do
+    it 'should set page size specified by pdf-page-size attribute using dimension string in inches' do
       pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: 8.5in x 11in
 
