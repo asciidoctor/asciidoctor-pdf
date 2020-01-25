@@ -19,6 +19,25 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     (expect title_text[:x]).to eql 48.24
   end
 
+  it 'should show attribution line below text of verse' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [verse,Robert Frost,'Fire & Ice']
+    ____
+    Some say the world will end in fire,
+    Some say in ice.
+    ____
+    EOS
+
+    last_verse_text = pdf.text[-2]
+    attribution_text = (pdf.find_text %r/Robert Frost/)[0]
+    (expect attribution_text[:string]).to eql %(\u2014 Robert Frost, Fire & Ice)
+    (expect attribution_text[:font_size]).to eql 9
+    (expect attribution_text[:font_color]).to eql '999999'
+    (expect attribution_text[:font_name]).to eql 'NotoSerif'
+    (expect (last_verse_text[:y] - attribution_text[:y]).round).to eql 27
+    (expect attribution_text[:x]).to eql last_verse_text[:x]
+  end
+
   it 'should expand tabs and preserve indentation' do
     pdf = to_pdf <<~EOS, analyze: true
     [verse]

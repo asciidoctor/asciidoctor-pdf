@@ -17,6 +17,24 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     (expect title_text[:x]).to eql 48.24
   end
 
+  it 'should show attribution line below text of quote' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [,Alice Walker,Speech]
+    ____
+    The most common way people give up their power is by thinking they don't have any.
+    ____
+    EOS
+
+    last_quote_text = pdf.text[-2]
+    attribution_text = (pdf.find_text %r/Alice Walker/)[0]
+    (expect attribution_text[:string]).to eql %(\u2014 Alice Walker, Speech)
+    (expect attribution_text[:font_size]).to eql 9
+    (expect attribution_text[:font_color]).to eql '999999'
+    (expect attribution_text[:font_name]).to eql 'NotoSerif'
+    (expect (last_quote_text[:y] - attribution_text[:y]).round).to eql 27
+    (expect attribution_text[:x]).to eql last_quote_text[:x]
+  end
+
   it 'should not draw left border if border_left_width is 0' do
     pdf = to_pdf <<~'EOS', pdf_theme: { blockquote_border_left_width: 0 }, analyze: :line
     ____
