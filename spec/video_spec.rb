@@ -2,7 +2,7 @@
 
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::PDF::Converter - Image' do
+describe 'Asciidoctor::PDF::Converter - Video' do
   context 'Local' do
     it 'should replace image with poster image if specified', visual: true do
       to_file = to_pdf_file <<~'EOS', 'video-local-file-poster.pdf'
