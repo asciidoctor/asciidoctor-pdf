@@ -17,7 +17,7 @@ describe 'Asciidoctor::PDF::Converter - Audio' do
 
     after
     EOS
-    
+
     (expect pdf.lines).to eql expected_lines
     before_text = (pdf.find_text 'before')[0]
     audio_text = (pdf.find_text %r/\(audio\)/)[0]
@@ -29,7 +29,7 @@ describe 'Asciidoctor::PDF::Converter - Audio' do
     pdf = to_pdf <<~'EOS', attribute_overrides: { 'icons' => 'font' }, analyze: true
     audio::podcast.mp3[]
     EOS
-    
+
     icon_text = (pdf.find_text %(\uf04b))[0]
     (expect icon_text).not_to be_nil
     (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
