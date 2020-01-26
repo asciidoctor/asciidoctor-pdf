@@ -388,6 +388,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         (expect pdf.lines).to eql ['[Waterfall] | waterfall.bmp']
       end).to log_message severity: :WARN, message: '~could not embed image'
     end
+
+    it 'should embed BPM if prawn-gmagick is available' do
+      pdf = to_pdf 'image::waterfall.bmp[Waterfall,240]', analyze: :image
+      (expect pdf.images).to have_size 1
+      image = pdf.images[0]
+      (expect image[:implicit_width]).to eql 240
+      (expect image[:width]).to eql 180.0
+    end if defined? GMagick::Image
   end
 
   context 'PDF' do
