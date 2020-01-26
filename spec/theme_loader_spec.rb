@@ -348,7 +348,7 @@ describe Asciidoctor::PDF::ThemeLoader do
 
   describe '.resolve_theme_file' do
     it 'should expand reference to home directory in theme dir when resolving theme file from name' do
-      expected_path = File.join Dir.home, '.local/share/asciidoctor-pdf/custom-theme.yml'
+      expected_path = File.join home_dir, '.local/share/asciidoctor-pdf/custom-theme.yml'
       expected_dir = File.dirname expected_path
       theme_path, theme_dir = subject.resolve_theme_file 'custom', '~/.local/share/asciidoctor-pdf'
       (expect theme_path).to eql expected_path
@@ -356,7 +356,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should expand reference to home directory in theme dir when resolving theme file from filename' do
-      expected_path = File.join Dir.home, '.local/share/asciidoctor-pdf/custom-theme.yml'
+      expected_path = File.join home_dir, '.local/share/asciidoctor-pdf/custom-theme.yml'
       expected_dir = File.dirname expected_path
       theme_path, theme_dir = subject.resolve_theme_file 'custom-theme.yml', '~/.local/share/asciidoctor-pdf'
       (expect theme_path).to eql expected_path
@@ -364,7 +364,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should expand reference to home directory in theme file when resolving theme file' do
-      expected_path = File.join Dir.home, '.local/share/asciidoctor-pdf/custom-theme.yml'
+      expected_path = File.join home_dir, '.local/share/asciidoctor-pdf/custom-theme.yml'
       expected_dir = File.dirname expected_path
       theme_path, theme_dir = subject.resolve_theme_file '~/.local/share/asciidoctor-pdf/custom-theme.yml'
       (expect theme_path).to eql expected_path

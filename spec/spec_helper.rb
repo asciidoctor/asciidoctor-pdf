@@ -493,6 +493,10 @@ RSpec.configure do |config|
     RbConfig::CONFIG['host_os'] =~ /win|ming/
   end
 
+  def home_dir
+    windows? ? (Dir.home.tr ?\\, '/') : Dir.home
+  end
+
   def with_memory_logger level = nil
     if asciidoctor_1_5_7_or_better?
       old_logger = Asciidoctor::LoggerManager.logger
