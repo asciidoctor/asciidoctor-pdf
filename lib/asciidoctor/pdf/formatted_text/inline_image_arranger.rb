@@ -5,8 +5,7 @@ module Asciidoctor::PDF::FormattedText
     include ::Asciidoctor::PDF::Measurements
     include ::Asciidoctor::Logging
 
-    # NOTE we must use a visible char or else Prawn won't allocate space for the fragment
-    ImagePlaceholderChar = '.'
+    PlaceholderChar = ::Asciidoctor::Prawn::Extensions::PlaceholderChar
     TemporaryPath = ::Asciidoctor::PDF::TemporaryPath
 
     def wrap fragments
@@ -109,7 +108,10 @@ module Asciidoctor::PDF::FormattedText
             end
           end
 
-          fragment[:text] = ImagePlaceholderChar
+          # NOTE we can't rely on the fragment width because the line wrap mechanism ignores it;
+          # it only considers the text (string) and character spacing, rebuilding the string several times
+          fragment[:text] = PlaceholderChar
+          fragment[:character_spacing] = image_w
           fragment[:image_width] = fragment[:width] = image_w
           fragment[:image_height] = image_h
         rescue

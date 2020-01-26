@@ -22,6 +22,8 @@ module Asciidoctor
         italic: [:italic].to_set,
         bold_italic: [:bold, :italic].to_set,
       }).default = ::Set.new
+      # NOTE must use a visible char for placeholder or else Prawn won't reserve space for the fragment
+      PlaceholderChar = ?\u2063
 
       # - :height is the height of a line
       # - :leading is spacing between adjacent lines
@@ -307,6 +309,12 @@ module Asciidoctor
             yield
           end
         end
+      end
+
+      # Override width of string to check for placeholder char, which uses character spacing to control width
+      #
+      def width_of_string string, options = {}
+        string == PlaceholderChar ? @character_spacing : super
       end
 
       def icon_font_data family

@@ -616,6 +616,25 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-multiple-inline.pdf'
     end
 
+    it 'should not mangle character spacing in line if inline image wraps', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-wrap-inline.pdf'
+      [cols="30e,58,12",width=75%]
+      |===
+      |Name |Description |Min # data points
+
+      |Confidence interval of the mean
+      |The confidence interval of the mean is image:equation.svg[width=118], where image:symbol-m.svg[width=11] is the mean, image:symbol-s.svg[width=6] is the estimated sample standard deviation, and so on.
+      |2
+
+      |Confidence interval of the mean
+      a|The confidence interval of the mean is image:equation.svg[width=118], where image:symbol-m.svg[width=11] is the mean, image:symbol-s.svg[width=6] is the estimated sample standard deviation, and so on.
+      |2
+      |===
+      EOS
+
+      (expect to_file).to visually_match %(image-wrap-inline#{asciidoctor_1_5_7_or_better? ? '' : '-legacy'}.pdf)
+    end
+
     it 'should increase line height if height if image height is more than 1.5x line height', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-inline-extends-line-height.pdf'
       see tux run +
