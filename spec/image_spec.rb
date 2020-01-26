@@ -378,7 +378,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
           (expect pdf.lines).to eql [alt_text]
         end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'interlaced.png'}; PNG uses unsupported interlace method; install prawn-gmagick gem to add support)
       end
-    end
+    end unless defined? GMagick::Image
+
+    it 'should embed interlaced PNG image if prawn-gmagick is available' do
+      ['::', ':'].each do |macro_delim|
+        pdf = to_pdf %(image#{macro_delim}interlaced.png[Interlaced PNG]), analyze: :image
+        (expect pdf.images).to have_size 1
+      end
+    end if defined? GMagick::Image
   end
 
   context 'BMP' do
@@ -387,9 +394,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         pdf = to_pdf 'image::waterfall.bmp[Waterfall,240]', analyze: true
         (expect pdf.lines).to eql ['[Waterfall] | waterfall.bmp']
       end).to log_message severity: :WARN, message: '~could not embed image'
-    end
+    end unless defined? GMagick::Image
 
-    it 'should embed BPM if prawn-gmagick is available' do
+    it 'should embed BMP image if prawn-gmagick is available' do
       pdf = to_pdf 'image::waterfall.bmp[Waterfall,240]', analyze: :image
       (expect pdf.images).to have_size 1
       image = pdf.images[0]

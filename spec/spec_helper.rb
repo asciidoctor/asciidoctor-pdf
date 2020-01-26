@@ -25,6 +25,14 @@ require 'open-uri/cached'
 require 'pathname' unless defined? Pathname
 require 'pdf/inspector'
 
+# NOTE fix invalid bits for PNG in Gmagick
+Gmagick.prepend (Module.new do
+  def initialize image_blob
+    super
+    @bits = [@bits, 8].max
+  end
+end) if defined? ::GMagick::Image
+
 # NOTE fix warning in Prawn::Font:TTF
 Prawn::Font::TTF.prepend (Module.new do
   def initialize *args
