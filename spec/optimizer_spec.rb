@@ -66,7 +66,9 @@ describe 'Asciidoctor::PDF::Optimizer' do
   end
 
   it 'should install bin script named asciidoctor-pdf-optimize' do
-    (expect Pathname.new File.join Gem.bindir, 'asciidoctor-pdf').to exist
+    bin_script = (Pathname.new Gem.bindir) / 'asciidoctor-pdf-optimize'
+    bin_script = Pathname.new Gem.bin_path 'asciidoctor-pdf', 'asciidoctor-pdf-optimize' unless bin_script.exist?
+    (expect bin_script).to exist
   end
 
   it 'should optimize PDF passed to asciidoctor-pdf-optimizer CLI', cli: true do

@@ -5,7 +5,9 @@ require_relative 'spec_helper'
 describe 'asciidoctor-pdf' do
   context 'Packaging' do
     it 'should install bin script named asciidoctor-pdf' do
-      (expect Pathname.new File.join Gem.bindir, 'asciidoctor-pdf').to exist
+      bin_script = (Pathname.new Gem.bindir) / 'asciidoctor-pdf'
+      bin_script = Pathname.new Gem.bin_path 'asciidoctor-pdf', 'asciidoctor-pdf' unless bin_script.exist?
+      (expect bin_script).to exist
     end
   end
 
