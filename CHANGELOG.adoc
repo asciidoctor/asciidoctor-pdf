@@ -7,6 +7,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* reserve space for inline image correctly so it doesn't mangle the character spacing in the line when the image wraps (#1516)
 * allow custom theme to merge font catalog with theme being extended (#1505)
 * allow font path to be declared once for all font styles (#1507)
 * continue border, background, and column rule of admonition block on subsequent pages when block gets split (#1287)
