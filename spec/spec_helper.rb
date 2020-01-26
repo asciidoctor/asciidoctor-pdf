@@ -313,7 +313,7 @@ RSpec.configure do |config|
     bin_script 'asciidoctor-pdf-optimize'
   end
 
-  def run_command cmd, *args
+  def run_command cmd, *args, out: nil
     Dir.chdir __dir__ do
       if Array === cmd
         args.unshift(*cmd)
@@ -327,7 +327,11 @@ RSpec.configure do |config|
           env_override['PRAWN_TABLE_REQUIRE_PATH'] = (prawn_table.source.path + 'lib/prawn/table').to_s
         end
       end
-      Open3.capture3 env_override, cmd, *args
+      if out
+        Open3.pipeline_w([env_override, cmd, *args, { out: out }]) {}
+      else
+        Open3.capture3 env_override, cmd, *args
+      end
     end
   end
 

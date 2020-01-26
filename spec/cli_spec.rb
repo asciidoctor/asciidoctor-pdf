@@ -59,11 +59,7 @@ describe 'asciidoctor-pdf' do
 
   context 'redirection' do
     it 'should be able to write output to file via stdout' do
-      in_file = fixture_file 'book.adoc'
-      to_file = output_file 'book.pdf'
-      cmd = (Array asciidoctor_pdf_bin) + ['-o', '-', in_file]
-      pid = Process.spawn(*cmd, out: to_file)
-      Process.wait pid
+      run_command asciidoctor_pdf_bin, '-o', '-', (fixture_file 'book.adoc'), out: (to_file = output_file 'book.pdf')
       (expect Pathname.new to_file).to exist
       (expect { PDF::Reader.new to_file }).not_to raise_exception
     end
