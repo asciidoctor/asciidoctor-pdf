@@ -816,6 +816,18 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect link_annotation[:A][:URI]).to eql 'https://asciidoctor.org'
     end
 
+    it 'should allow theme to control border style', visual: true do
+      pdf_theme = {
+        footer_border_width: 1,
+        footer_border_style: 'dashed',
+        footer_border_color: '000000',
+      }
+
+      to_file = to_pdf_file 'content', 'running-content-border-style.pdf', enable_footer: true, pdf_theme: pdf_theme, analyze: :line
+
+      (expect to_file).to visually_match 'running-content-border-style.pdf'
+    end
+
     it 'should draw background color across whole periphery region', visual: true do
       pdf_theme = build_pdf_theme \
         header_background_color: '009246',
