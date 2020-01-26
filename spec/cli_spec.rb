@@ -62,7 +62,7 @@ describe 'asciidoctor-pdf' do
       run_command asciidoctor_pdf_bin, '-o', '-', (fixture_file 'book.adoc'), out: (to_file = output_file 'book.pdf')
       (expect Pathname.new to_file).to exist
       (expect { PDF::Reader.new to_file }).not_to raise_exception
-    end
+    end unless windows? && RUBY_ENGINE == 'jruby' # JRuby on Windows doesn't support redirection
   end
 
   context 'pdfmark' do
