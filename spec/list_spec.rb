@@ -558,6 +558,22 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect term_text[:font_color]).to eql 'AA0000'
     end
 
+    it 'should support complex content', visual: true do
+      to_file = to_pdf_file <<~EOS, 'list-complex-dlist.pdf'
+      term::
+      desc
+      +
+      more desc
+      +
+       literal
+
+      yin::
+      yang
+      EOS
+
+      (expect to_file).to visually_match 'list-complex-dlist.pdf'
+    end
+
     context 'Horizontal' do
       it 'should arrange horizontal list in two columns' do
         pdf = to_pdf <<~'EOS', analyze: true
