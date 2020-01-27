@@ -1011,7 +1011,6 @@ module Asciidoctor
         # HACK: undo the margin below previous listing or literal block
         # TODO: allow this to be set using colist_margin_top
         unless at_page_top?
-          # NOTE: this logic won't work for a colist nested inside a list item until Asciidoctor 1.5.3
           if (self_idx = node.parent.blocks.index node) && self_idx > 0 &&
               [:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
             move_up @theme.block_margin_bottom / 2.0
