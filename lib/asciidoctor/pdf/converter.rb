@@ -1093,7 +1093,7 @@ module Asciidoctor
             term_kerning = default_kerning?
           end
           node.items.each do |terms, desc|
-            term_text = [*terms].map(&:text).join ?\n
+            term_text = terms.map(&:text).join ?\n
             if (term_width = width_of term_text, inline_format: term_inline_format, kerning: term_kerning) > max_term_width
               max_term_width = term_width
             end
@@ -1134,7 +1134,6 @@ module Asciidoctor
           term_line_height = @theme.description_list_term_line_height || @theme.base_line_height
           line_metrics = theme_font(:description_list_term) { calc_line_metrics term_line_height }
           node.items.each do |terms, desc|
-            terms = [*terms]
             # NOTE: don't orphan the terms (keep together terms and at least one line of content)
             allocate_space_for_list_item line_metrics, (terms.size + 1), ((@theme.description_list_term_spacing || 0) + 0.05)
             theme_font :description_list_term do
@@ -1355,7 +1354,7 @@ module Asciidoctor
       def traverse_list_item node, list_type, opts = {}
         if list_type == :dlist # qanda
           terms, desc = node
-          [*terms].each {|term| layout_prose %(<em>#{term.text}</em>), (opts.merge margin_top: 0, margin_bottom: @theme.description_list_term_spacing) }
+          terms.each {|term| layout_prose %(<em>#{term.text}</em>), (opts.merge margin_top: 0, margin_bottom: @theme.description_list_term_spacing) }
           if desc
             layout_prose desc.text, (opts.merge hyphenate: true) if desc.text?
             traverse desc
