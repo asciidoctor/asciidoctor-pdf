@@ -15,8 +15,9 @@ jobs:
         uses: eregon/use-ruby-action@v1.10.0
         with:
           ruby-version: ${{ matrix.ruby }}
-        run: gem install bundler
       - name: Bundle
-        run: bundle --path .bundle/gems --jobs 3 --retry 3 --without docs
+        run: |
+          gem install bundler
+          bundle --path .bundle/gems --jobs 3 --retry 3 --without docs
       - name: Test
         run: bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
