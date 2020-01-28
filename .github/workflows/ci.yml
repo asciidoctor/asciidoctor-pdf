@@ -1,0 +1,23 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    strategy:
+      matrix:
+        ruby: [jruby, 2.4, 2.7]
+    runs-on: windows-latest
+    env:
+      PYGMENTS_VERSION: ~> 1.2.0
+    steps:
+      - name: Set up Ruby
+        uses: eregon/use-ruby-action@v1.10.0
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: |
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+      - name: Test
+        run: bundle exec rake spec
