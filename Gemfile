@@ -30,6 +30,6 @@ group :lint do
 end
 
 group :coverage do
-  gem 'simplecov', '~> 0.17.0', require: false
   gem 'deep-cover-core', '~> 0.7.0', require: false
+  gem 'simplecov', '~> 0.17.0', require: false
 end
