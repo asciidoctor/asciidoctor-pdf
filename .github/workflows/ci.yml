@@ -2,22 +2,21 @@ name: CI
 on: [push, pull_request]
 jobs:
   build:
+    runs-on: windows-latest
     strategy:
       matrix:
-        ruby: [jruby, 2.4, 2.7]
-    runs-on: windows-latest
+        ruby: [jruby, '2.7', '2.6', '2.5', '2.4']
     env:
-      PYGMENTS_VERSION: ~> 1.2.0
+      PYGMENTS_VERSION: '~> 1.2.0'
     steps:
-      - name: Set up Ruby
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Ruby
         uses: eregon/use-ruby-action@v1.10.0
         with:
           ruby-version: ${{ matrix.ruby }}
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
+        run: gem install bundler
+      - name: Bundle
+        run: bundle --path .bundle/gems --jobs 3 --retry 3 --without docs
       - name: Test
-        run: bundle exec rake spec
+        run: bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
