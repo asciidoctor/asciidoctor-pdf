@@ -5,7 +5,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        ruby: [jruby, '2.7', '2.6', '2.5', '2.4']
+        ruby: [jruby, '2.7', '2.6', '2.5', '2.4', '2.3']
     env:
       PYGMENTS_VERSION: '~> 1.2.0'
     steps:
@@ -15,9 +15,9 @@ jobs:
         uses: eregon/use-ruby-action@v1.10.0
         with:
           ruby-version: ${{ matrix.ruby }}
-      - name: Bundle
+      - name: Install dependencies
         run: |
-          gem install bundler
-          bundle --path .bundle/gems --jobs 3 --retry 3 --without docs
+          gem install bundler --version 2.1.2
+          bundle --jobs 3 --retry 3 --path .bundle/gems --without docs lint coverage
       - name: Test
         run: bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec

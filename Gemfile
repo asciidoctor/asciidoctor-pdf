@@ -22,6 +22,14 @@ group :docs do
   gem 'yard', require: false
 end
 
+group :lint do
+  unless Gem.win_platform? && RUBY_ENGINE == 'ruby' && (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
+    gem 'rubocop', '~> 0.78.0', require: false
+    gem 'rubocop-rspec', '~> 1.37.0', require: false
+  end
+end
+
 group :coverage do
-  gem 'deep-cover-core', '~> 0.7.0', require: false if ENV.key? 'COVERAGE'
+  gem 'simplecov', '~> 0.17.0', require: false
+  gem 'deep-cover-core', '~> 0.7.0', require: false
 end
