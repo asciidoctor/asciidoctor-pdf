@@ -136,10 +136,11 @@ module Asciidoctor
       end
 
       def traverse node, opts = {}
-        if self != (prev_converter = node.document.converter)
-          node.document.instance_variable_set :@converter, self
-        else
+        # NOTE converter instance in scratch document gets duplicated; must be rewired to this one
+        if self == (prev_converter = node.document.converter)
           prev_converter = nil
+        else
+          node.document.instance_variable_set :@converter, self
         end
         if node.blocks?
           node.content
