@@ -711,7 +711,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       (expect to_file).to visually_match 'source-pygments-highlight-wrapped-line.pdf'
     end
-  end if ENV.key? 'PYGMENTS_VERSION'
+  end if (ENV.key? 'PYGMENTS_VERSION') && !(Gem.win_platform? && RUBY_ENGINE == 'jruby')
 
   context 'Callouts' do
     it 'should substitute autonumber callouts with circled numbers when using rouge as syntax highlighter' do
@@ -755,7 +755,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should preserve space before callout on final line' do
-      ['rouge', (ENV.key? 'PYGMENTS_VERSION') ? 'pygments' : nil].compact.each do |highlighter|
+      ['rouge', (ENV.key? 'PYGMENTS_VERSION') && !(Gem.win_platform? && RUBY_ENGINE == 'jruby') ? 'pygments' : nil].compact.each do |highlighter|
         pdf = to_pdf <<~EOS, analyze: true
         :source-highlighter: #{highlighter}
 
