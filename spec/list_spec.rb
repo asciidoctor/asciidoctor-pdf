@@ -885,6 +885,32 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect first_to_second_spacing).to eql second_to_third_spacing
     end
 
+    it 'should only separate colist and listing or literal block by outline_list_item_spacing value' do
+      %w(---- ....).each do |block_delim|
+        input = <<~EOS
+        #{block_delim}
+        line one <1>
+        line two
+        line three <2>
+        #{block_delim}
+        <1> First line
+        <2> Last line
+        EOS
+
+        pdf = to_pdf input, analyze: :line
+        bottom_line_y = pdf.lines[2][:from][:y]
+
+        pdf = to_pdf input, analyze: true
+        colist_num_text = (pdf.find_text ?\u2460)[-1]
+        colist_num_top_y = colist_num_text[:y] + colist_num_text[:font_size]
+
+        gap = bottom_line_y - colist_num_top_y
+        # NOTE default outline list spacing is 6
+        (expect gap).to be > 6
+        (expect gap).to be < 8
+      end
+    end
+
     it 'should allow conum font color to be customized by theme' do
       pdf = to_pdf <<~'EOS', pdf_theme: { conum_font_color: '0000ff' }, analyze: true
       ....

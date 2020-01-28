@@ -1013,10 +1013,7 @@ module Asciidoctor
         unless at_page_top?
           if (self_idx = node.parent.blocks.index node) && self_idx > 0 &&
               [:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
-            move_up @theme.block_margin_bottom / 2.0
-            # or we could do...
-            #move_up @theme.block_margin_bottom
-            #move_down @theme.caption_margin_inside * 2
+            move_up @theme.block_margin_bottom - @theme.outline_list_item_spacing
           end
         end
         add_dest_for_block node if node.id
