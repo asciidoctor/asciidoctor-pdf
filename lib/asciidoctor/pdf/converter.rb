@@ -1621,7 +1621,8 @@ module Asciidoctor
             end
           when 'pygments'
             unless defined? ::Pygments::Ext::BlockStyles
-              highlighter = nil if (Helpers.require_library PygmentsRequirePath, 'pygments.rb', :warn).nil?
+              # pygments.rb hangs on JRuby for Windows, see https://github.com/asciidoctor/asciidoctor-epub3/issues/253
+              highlighter = nil if (::RUBY_ENGINE == 'jruby' && ::Gem.win_platform?) || (Helpers.require_library PygmentsRequirePath, 'pygments.rb', :warn).nil?
             end
           when 'rouge'
             unless defined? ::Rouge::Formatters::Prawn
