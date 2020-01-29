@@ -1,4 +1,4 @@
-Noto Serif fonts are generated from the google-noto-serif-fonts-20161022 Fedora RPM package Noto Serif.
+Noto Serif fonts are generated from the google-noto-serif-fonts-20161022 Fedora RPM package (commit 86b2e553c3e3e4d6614dadd1fa0a7a6dafd74552).
 
 The following changes were made using fontforge to produce the notoserif-*-subset.ttf fonts:
 
