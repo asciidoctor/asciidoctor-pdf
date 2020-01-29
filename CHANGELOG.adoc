@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * continue border, background, and column rule of admonition block on subsequent pages when block gets split (#1287)
 * allow max-width on caption be specified as a percentage (of the container width) (#1484)
 * log reason if theme file cannot be parsed or compiled (#1491)
+* bundle emoji font and use as fallback in default-with-fallback-font theme (#1129)
 * add dark theme for chronicles example
 * allow vertical-align key for header and footer categories to accept numeric offset as second value (e.g., [top, 10]) (#1488)
 * link font family for abstract and sidebar to heading font family if only latter is set
