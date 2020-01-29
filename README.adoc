@@ -217,9 +217,9 @@ gem 'prawn-table', github: 'prawnpdf/prawn-table'
 
 You can then install the gems into your project using the `bundle` command:
 
- $ bundle --path=.bundle/gems
+ $ bundle config set --local path .bundle/gems && bundle
 
-Since you are using Bundler to manage the gems, you'll need to prefix all commands with `bundle exec`.
+Since you're using Bundler to manage the gems, you'll need to prefix all commands with `bundle exec`.
 For example:
 
  $ bundle exec asciidoctor-pdf -v
