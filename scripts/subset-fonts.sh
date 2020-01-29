@@ -1,8 +1,11 @@
 #!/usr/bin/bash
 
-export SOURCE_DATE_EPOCH=$(date -d 2019-07-15T00:00:00 +%s)
+# NOTE only update when fonts are being changed
+export SOURCE_DATE_EPOCH=$(date -d 2020-01-29T00:00:00 +%s)
 
-MPLUS_TESTFLIGHT=mplus-TESTFLIGHT-063a
+MPLUS_VERSION=TESTFLIGHT-063a
+NOTO_VERSION=86b2e553c3e3e4d6614dadd1fa0a7a6dafd74552
+FONT_AWESOME_VERSION=4.7.0
 SOURCE_DIR=fonts
 BUILD_DIR=../data/fonts
 
@@ -11,26 +14,32 @@ rm -f $SOURCE_DIR/*.ttf
 
 cd $SOURCE_DIR
 
-if [ ! -d $MPLUS_TESTFLIGHT ]; then
-  curl -LOs https://osdn.net/dl/mplus-fonts/${MPLUS_TESTFLIGHT}.tar.xz
-  tar xf ${MPLUS_TESTFLIGHT}.tar.xz
+if [ ! -d mplus-$MPLUS_VERSION ]; then
+  curl -LOs https://osdn.net/dl/mplus-fonts/mplus-$MPLUS_VERSION.tar.xz
+  tar xf mplus-$MPLUS_VERSION.tar.xz
 fi
 
-# NOTE assume use of /usr/share/fonts/google-noto from Fedora package
-#if [ ! -d NotoSerif ]; then
-#  # from https://www.google.com/get/noto/#serif-lgc
-#  curl -LOs https://noto-website-2.storage.googleapis.com/pkgs/NotoSerif-hinted.zip
-#  unzip -q -d NotoSerif NotoSerif-hinted.zip
-#fi
+if [ ! -d noto-$NOTO_VERSION ]; then
+  mkdir noto-$NOTO_VERSION
+  cd noto-$NOTO_VERSION
+  curl -LOs https://github.com/googlefonts/noto-fonts/raw/$NOTO_VERSION/hinted/NotoSerif-Regular.ttf
+  curl -LOs https://github.com/googlefonts/noto-fonts/raw/$NOTO_VERSION/hinted/NotoSerif-Bold.ttf
+  curl -LOs https://github.com/googlefonts/noto-fonts/raw/$NOTO_VERSION/hinted/NotoSerif-Italic.ttf
+  curl -LOs https://github.com/googlefonts/noto-fonts/raw/$NOTO_VERSION/hinted/NotoSerif-BoldItalic.ttf
+  cd ..
+fi
 
-if [ ! -f fontawesome-webfont.ttf ]; then
-  curl -LOs https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/fonts/fontawesome-webfont.ttf
-fi  
+if [ ! -d font-awesome-$FONT_AWESOME_VERSION ]; then
+  mkdir font-awesome-$FONT_AWESOME_VERSION
+  cd font-awesome-$FONT_AWESOME_VERSION
+  curl -LOs https://cdnjs.cloudflare.com/ajax/libs/font-awesome/$FONT_AWESOME_VERSION/fonts/fontawesome-webfont.ttf
+  cd ..
+fi
 
-cp ${MPLUS_TESTFLIGHT}/mplus-1mn*ttf .
-cp ${MPLUS_TESTFLIGHT}/mplus-1p-regular.ttf .
-# FIXME use fonts from google-noto-serif-fonts RPM
-cp /usr/share/fonts/google-noto/NotoSerif-{Regular,Italic,Bold,BoldItalic}.ttf .
+cp mplus-$MPLUS_VERSION/mplus-1mn*ttf .
+cp mplus-$MPLUS_VERSION/mplus-1p-regular.ttf .
+cp noto-$NOTO_VERSION/*.ttf .
+cp font-awesome-$FONT_AWESOME_VERSION/*.ttf .
 
 cd ..
 
