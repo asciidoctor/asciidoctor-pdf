@@ -12,16 +12,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install Ruby
-        uses: eregon/use-ruby-action@v1.10.0
+        uses: eregon/use-ruby-action@v1
         with:
           ruby-version: ${{ matrix.ruby }}
       - name: Install dependencies
         run: |
-          gem install -N bundler
-          # NOTE using bundle config causes bundle install to crash; see https://github.com/eregon/use-ruby-action/issues/13
-          #bundle config --local path .bundle/gems
-          #bundle config --local without docs lint coverage
-          #bundle --jobs 3 --retry 3
-          bundle --jobs 3 --retry 3 --path .bundle/gems --without docs lint coverage
+          # Fix for PowerShell issue, non default value (stop) used by Actions
+          # see https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_preference_variables?view=powershell-7#erroractionpreference
+          $ErrorActionPreference = 'Continue'
+          bundle config --local path .bundle/gems
+          bundle config --local without docs lint coverage
+          bundle --jobs 3 --retry 3
       - name: Test
         run: bundle exec ruby -w $(bundle exec ruby -e 'print File.join Gem.bindir, %q(rake)') spec
