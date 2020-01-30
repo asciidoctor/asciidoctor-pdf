@@ -12,8 +12,10 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
     it 'should apply fallback font when using default theme with fallback font', visual: true do
       input_file = Pathname.new fixture_file 'i18n-font-test.adoc'
-      to_file = to_pdf_file input_file, 'font-i18n-default-with-fallback.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
-      (expect to_file).to visually_match 'font-i18n-default-with-fallback.pdf'
+      (expect do
+        to_file = to_pdf_file input_file, 'font-i18n-default-with-fallback.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+        (expect to_file).to visually_match 'font-i18n-default-with-fallback.pdf'
+      end).to log_message using_log_level: :INFO
     end
 
     it 'should include expected glyphs in bundled default font', visual: true do
@@ -49,17 +51,29 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
       (expect to_file).to visually_match 'font-emoji.pdf'
     end
+
+    it 'should log warning if character cannot be found in primary or fallback font when fallback font is enabled' do
+      (expect do
+        input = %(Bitcoin (\u20bf) is a cryptocurrency.)
+        pdf = to_pdf input, attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }, analyze: true
+        (expect pdf.lines).to eql [input]
+      end).to log_message severity: :WARN, message: %(Could not locate the character `\u20bf' in the following fonts: Noto Serif, M+ 1p Fallback, Noto Emoji), using_log_level: :INFO
+    end
   end
 
   context 'built-in (AFM)' do
     it 'should warn if document contains glyph not supported by AFM font' do
-      (expect do
-        pdf = to_pdf 'α to ω', analyze: true, attribute_overrides: { 'pdf-theme' => 'base' }
-        not_glyph = ?\u00ac
-        text = pdf.text
-        (expect text).to have_size 1
-        (expect text[0][:string]).to eql %(#{not_glyph} to #{not_glyph})
-      end).to log_message severity: :WARN, message: %(The following text could not be fully converted to the Windows-1252 character set:\n| α to ω)
+      [true, false].each do |in_block|
+        (expect do
+          input = 'α to ω'
+          input = %(====\n#{input}\n====) if in_block
+          pdf = to_pdf input, analyze: true, attribute_overrides: { 'pdf-theme' => 'base' }
+          not_glyph = ?\u00ac
+          text = pdf.text
+          (expect text).to have_size 1
+          (expect text[0][:string]).to eql %(#{not_glyph} to #{not_glyph})
+        end).to log_message severity: :WARN, message: %(The following text could not be fully converted to the Windows-1252 character set:\n| α to ω), using_log_level: :INFO
+      end
     end
 
     it 'should replace essential characters with suitable replacements to avoid warnings' do

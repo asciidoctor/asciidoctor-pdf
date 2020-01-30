@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 Prawn::Text::Formatted::Box.prepend (Module.new do
+  include ::Asciidoctor::Logging
+
   def draw_fragment_overlay_styles fragment
     if (underline = (styles = fragment.styles).include? :underline) || (styles.include? :strikethrough)
       (doc = fragment.document).save_graphics_state do
@@ -12,6 +14,18 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
         end
         underline ? (doc.stroke_line fragment.underline_points) : (doc.stroke_line fragment.strikethrough_points)
       end
+    end
+  end
+
+  def find_font_for_this_glyph char, current_font, fallback_fonts_to_check, original_font = current_font
+    @document.font current_font
+    if fallback_fonts_to_check.empty?
+      logger.warn %(Could not locate the character `#{char}' in the following fonts: #{([original_font].concat @fallback_fonts).join ', '}) if logger.info? && !@document.scratch?
+      current_font
+    elsif @document.font.glyph_present? char
+      current_font
+    else
+      find_font_for_this_glyph char, fallback_fonts_to_check.shift, fallback_fonts_to_check, original_font
     end
   end
 

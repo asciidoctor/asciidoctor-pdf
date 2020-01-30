@@ -22,7 +22,7 @@ class Prawn::Font::AFM
     text.encode 'windows-1252', fallback: FALLBACK_CHARS
   rescue ::Encoding::UndefinedConversionError
     logger.warn %(The following text could not be fully converted to the Windows-1252 character set:
-#{text.gsub(/^/, '| ').rstrip})
+#{text.gsub(/^/, '| ').rstrip}) if logger.info? && !@document.scratch?
     text.encode 'windows-1252', undef: :replace, replace: ?\u00ac
   rescue ::Encoding::InvalidByteSequenceError
     raise Prawn::Errors::IncompatibleStringEncoding,
