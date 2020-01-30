@@ -5,7 +5,6 @@ addons:
 git:
   depth: 5 # use depth 5 to leave enough room for concurrent builds
 language: ruby
-bundler_args: --path .bundle/gems --jobs 3 --retry 3 --without coverage docs
 env:
   global:
   - PYGMENTS_VERSION='~> 1.2.0'
@@ -14,7 +13,11 @@ stages:
 - test
 - name: release gem
   if: repo = asciidoctor/asciidoctor-pdf AND tag IS present
-script: bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
+install:
+- bundle config --local path .bundle/gems
+- bundle config --local without coverage docs
+- bundle --jobs 3 --retry 3
+script: bundle exec ruby -w $(bundle exec ruby -e 'print File.join Gem.bindir, %q(rake)') spec
 jobs:
   include:
   - stage: test

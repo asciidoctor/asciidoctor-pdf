@@ -17,7 +17,11 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
       - name: Install dependencies
         run: |
-          gem install bundler --version 2.1.2
+          gem install -N bundler
+          # NOTE using bundle config causes bundle install to crash; see https://github.com/eregon/use-ruby-action/issues/13
+          #bundle config --local path .bundle/gems
+          #bundle config --local without docs lint coverage
+          #bundle --jobs 3 --retry 3
           bundle --jobs 3 --retry 3 --path .bundle/gems --without docs lint coverage
       - name: Test
-        run: bundle exec ruby -w $(bundle exec ruby -e "print File.join Gem.bindir, 'rake'") spec
+        run: bundle exec ruby -w $(bundle exec ruby -e 'print File.join Gem.bindir, %q(rake)') spec
