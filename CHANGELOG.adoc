@@ -12,6 +12,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow font path to be declared once for all font styles (#1507)
 * continue border, background, and column rule of admonition block on subsequent pages when block gets split (#1287)
 * allow max-width on caption be specified as a percentage (of the container width) (#1484)
+* add destination to top of imported PDF if ID is specified on image block
 * log reason if theme file cannot be parsed or compiled (#1491)
 * add dark theme for chronicles example
 * allow vertical-align key for header and footer categories to accept numeric offset as second value (e.g., [top, 10]) (#1488)

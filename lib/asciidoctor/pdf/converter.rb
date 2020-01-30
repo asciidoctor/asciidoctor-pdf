@@ -1382,14 +1382,24 @@ module Asciidoctor
         elsif (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format)
           if image_format == 'pdf'
             if ::File.readable? image_path
+              if (id = node.id)
+                add_dest_block = proc do
+                  node.set_attr 'pdf-destination', (node_dest = dest_top)
+                  add_dest id, node_dest
+                end
+              end
               # NOTE: import_page automatically advances to next page afterwards
               # QUESTION should we add destination to top of imported page?
               if (pgnums = node.attr 'pages', nil, false)
                 (resolve_pagenums pgnums).each_with_index do |pgnum, idx|
-                  import_page image_path, page: pgnum, replace: (idx == 0 ? page.empty? : true)
+                  if idx == 0
+                    import_page image_path, page: pgnum, replace: page.empty?, &add_dest_block
+                  else
+                    import_page image_path, page: pgnum, replace: true
+                  end
                 end
               else
-                import_page image_path, page: [(node.attr 'page', nil, 1).to_i, 1].max, replace: page.empty?
+                import_page image_path, page: [(node.attr 'page', nil, 1).to_i, 1].max, replace: page.empty?, &add_dest_block
               end
             else
               # QUESTION should we use alt text in this case?

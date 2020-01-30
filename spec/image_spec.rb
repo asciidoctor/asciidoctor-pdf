@@ -488,6 +488,38 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       p3_contents = pdf.objects[(pdf.page 3).page_object[:Contents][0]].data
       (expect (p3_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 1.0 0.0 scn']
     end
+
+    it 'should add destination to top of imported page if ID is specified' do
+      pdf = to_pdf <<~'EOS'
+      go to <<red>>
+
+      .Red Page
+      [#red]
+      image::red-green-blue.pdf[page=1]
+      EOS
+
+      (expect get_names pdf).to have_key 'red'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      (expect annotations[0][:Dest]).to eql 'red'
+      (expect (pdf.page 1).text).to include 'Red Page'
+    end
+
+    it 'should add destination to top of first import page if ID is specified' do
+      pdf = to_pdf <<~'EOS'
+      go to <<red>>
+
+      .Red Page
+      [#red]
+      image::red-green-blue.pdf[pages=1..3]
+      EOS
+
+      (expect get_names pdf).to have_key 'red'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      (expect annotations[0][:Dest]).to eql 'red'
+      (expect (pdf.page 1).text).to include 'Red Page'
+    end
   end
 
   context 'Data URI' do
