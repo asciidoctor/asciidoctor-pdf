@@ -171,6 +171,19 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.font_catalog['Serif']['bold_italic']).to eql '/path/to/serif-font.ttf'
     end
 
+    it 'should allow regular to be used as alias for normal style when defining fonts' do
+      theme_data = SafeYAML.load <<~EOS
+      font:
+        catalog:
+          Serif:
+            regular: /path/to/serif-regular.ttf
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.font_catalog).to be_a Hash
+      (expect theme.font_catalog['Serif']).to be_a Hash
+      (expect theme.font_catalog['Serif']['normal']).to eql '/path/to/serif-regular.ttf'
+    end
+
     it 'should allow font catalog and font fallbacks to be defined as flat keys' do
       theme_data = SafeYAML.load <<~EOS
       font_catalog:

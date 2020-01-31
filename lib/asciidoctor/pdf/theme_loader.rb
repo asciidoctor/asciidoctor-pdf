@@ -133,7 +133,7 @@ module Asciidoctor
               if (path.start_with? 'GEM_FONTS_DIR') && (sep = path[13])
                 path = %(#{FontsDir}#{sep}#{path.slice 14, path.length})
               end
-              subaccum[style] = expand_vars path, data
+              subaccum[style == 'regular' ? 'normal' : style] = expand_vars path, data
               subaccum
             end if ::Hash === styles
             accum
