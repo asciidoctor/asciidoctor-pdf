@@ -710,7 +710,7 @@ Even though the built-in fonts require the content to be encoded in WINANSI, _yo
 Asciidoctor PDF encodes the content into WINANSI when building the PDF.
 
 WARNING: Built-in (AFM) fonts do not use the <<fallback-fonts,fallback fonts>>.
-In order for the fallback font to kick in, you must be using a TrueType font.
+In order for the fallback font to kick in, you must use a TrueType font as the primary font.
 
 .WINANSI Encoding Behavior
 ****
@@ -859,10 +859,10 @@ This will allow you to use the same font names (aka families) in both your graph
 
 === Fallback Fonts
 
-If a TrueType font is missing a character needed to render the document, such as a special symbol, you can have Asciidoctor PDF look for the character in a fallback font.
+If a TrueType font is missing a character needed to render the document, such as a special symbol or emoji, you can have Asciidoctor PDF look for the character in a fallback font.
 
 You only need to specify a single fallback font, typically one that provides a full set of symbols.
-If the character isn't found in the fallback font, it will mostly likely be replaced by a box (which is guaranteed if you're using the bundled fallback font).
+If the character isn't found in the fallback font, it will mostly likely be replaced by a box (i.e., the notdef glyph), which is guaranteed if you're using the bundled fallback font.
 
 IMPORTANT: When defining the fallback font, you *must specify all four variants* (normal, bold, italic, bold_italic), even if you use the same font file for each.
 
@@ -871,6 +871,8 @@ Any glyph missing from an AFM font is simply replaced with the "`not`" glyph (`&
 
 CAUTION: The `default` theme does not use a fallback font.
 However, the built-in `default-with-fallback-font` theme does.
+In fact, it provides two.
+One for general writing in non-Latin languages (M+ 1p) and another for emoji (Noto Emoji).
 Using the fallback font slows down PDF generation slightly because it has to analyze every single character.
 It's use is not recommended for large documents.
 Instead, it's best to select primary fonts that have all the characters you need.
@@ -934,6 +936,20 @@ That's it!
 Now you're covered.
 If your custom TTF font is missing a glyph, Asciidoctor PDF will look in your fallback font.
 You don't need to reference the fallback font anywhere else in your theme file.
+
+Here's another example that shows how to use an alternative emoji font (Symbola):
+
+[source,yaml]
+----
+extends: default-with-fallback-font
+font:
+  catalog:
+    merge: true
+    Symbola: /path/to/symbola.ttf
+  fallbacks: [ M+ 1p, Symbola ]
+----
+
+Now Asciidoctor PDF will look for the emoji in the Symbola font instead of the Noto Emoji font.
 
 == Keys
 
