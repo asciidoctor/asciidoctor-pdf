@@ -312,6 +312,20 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.find_text 'divide').not_to be_empty
     end
 
+    it 'should wrap text by character when autowidth option is set and cell forces table to page boundary' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [%autowidth,cols=3*]
+      |===
+      | 100
+      | Label1
+      | Lorem ipsum dolor sit amet, elit fusce duis, voluptatem ut,
+      mauris tempor orci odio sapien viverra ut, deserunt luctus.
+      |===
+      EOS
+
+      (expect pdf.lines).to eql ['10', '0', 'Label', '1', 'Lorem ipsum dolor sit amet, elit fusce duis, voluptatem ut, mauris tempor orci odio', 'sapien viverra ut, deserunt luctus.']
+    end
+
     it 'should stretch table to width of bounds by default' do
       pdf = to_pdf <<~'EOS', analyze: :line
       [grid=none,frame=sides]
