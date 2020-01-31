@@ -39,6 +39,16 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       to_file = to_pdf_file input_file, 'font-box-drawing.pdf'
       (expect to_file).to visually_match 'font-box-drawing.pdf'
     end
+
+    it 'should render emoji when using default theme with fallback font', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'font-emoji.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      Don't 😢 over spilled 🍺.
+
+      Asciidoctor is 👍.
+      EOS
+
+      (expect to_file).to visually_match 'font-emoji.pdf'
+    end
   end
 
   context 'built-in (AFM)' do

@@ -5,6 +5,7 @@ export SOURCE_DATE_EPOCH=$(date -d 2020-01-29T00:00:00 +%s)
 
 MPLUS_VERSION=TESTFLIGHT-063a
 NOTO_VERSION=86b2e553c3e3e4d6614dadd1fa0a7a6dafd74552
+EMOJI_VERSION=16151a2312a1f8a7d79e91789d3cfe24559d61f7
 FONT_AWESOME_VERSION=4.7.0
 SOURCE_DIR=fonts
 BUILD_DIR=../data/fonts
@@ -29,6 +30,13 @@ if [ ! -d noto-$NOTO_VERSION ]; then
   cd ..
 fi
 
+if [ ! -d emoji-$EMOJI_VERSION ]; then
+  mkdir emoji-$EMOJI_VERSION
+  cd emoji-$EMOJI_VERSION
+  curl -Ls -o NotoEmoji.ttf https://github.com/googlefonts/noto-emoji/raw/$EMOJI_VERSION/fonts/NotoEmoji-Regular.ttf
+  cd ..
+fi
+
 if [ ! -d font-awesome-$FONT_AWESOME_VERSION ]; then
   mkdir font-awesome-$FONT_AWESOME_VERSION
   cd font-awesome-$FONT_AWESOME_VERSION
@@ -39,6 +47,7 @@ fi
 cp mplus-$MPLUS_VERSION/mplus-1mn*ttf .
 cp mplus-$MPLUS_VERSION/mplus-1p-regular.ttf .
 cp noto-$NOTO_VERSION/*.ttf .
+cp emoji-$EMOJI_VERSION/*.ttf .
 cp font-awesome-$FONT_AWESOME_VERSION/*.ttf .
 
 cd ..

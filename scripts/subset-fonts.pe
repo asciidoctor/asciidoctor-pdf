@@ -40,6 +40,8 @@
 genflags = 0x90 + 0x08
 copy_fonts = ["NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-BoldItalic.ttf", "mplus-1p-regular.ttf"]
 copy_scripts = ["subset"]
+emoji_fonts = ["NotoEmoji-Regular.ttf"]
+emoji_scripts = ["subset"]
 code_fonts = ["mplus-1mn-light.ttf", "mplus-1mn-regular.ttf", "mplus-1mn-medium.ttf", "mplus-1mn-bold.ttf"]
 code_scripts = ["ascii", "subset"]
 
@@ -306,6 +308,47 @@ while (fi < num_copy_fonts)
       Generate(new_filepath, "", genflags)
       Close()
     endif
+    si = si + 1
+  endloop
+  fi = fi + 1
+endloop
+
+fi = 0
+num_emoji_fonts = SizeOf(emoji_fonts)
+while (fi < num_emoji_fonts)
+  emoji_font = emoji_fonts[fi]
+  src_filepath = StrJoin([source_dir, emoji_font], "/")
+  new_basename = ToLower(emoji_font:r)
+  si = 0
+  num_emoji_scripts = SizeOf(emoji_scripts)
+  while (si < num_emoji_scripts)
+    script = emoji_scripts[si]
+    new_filename = new_basename + "-" + script + ".ttf"
+    new_filepath = output_dir + "/" + new_filename
+    Open(src_filepath)
+    SelectAll()
+    # Remove TrueType instructions (i.e., hinting)
+    ClearInstrs()
+    SelectNone()
+
+    SelectAll()
+    SelectFewer(0u00a0,0u21af)
+    SelectFewer(0u24c2)
+    SelectFewer(0u25a0,0u25ff)
+    SelectFewer(0u2611)
+    SelectFewer(0u26aa,0u26ab)
+    SelectFewer(0u2705)
+    SelectFewer(0u2714,0u2716)
+    SelectFewer(0u274c,0u2757)
+    SelectFewer(0u2790,0u1f25f)
+    SelectMore(0u2b50)
+    SelectInvert()
+    Clear()
+    SelectNone()
+
+    Print("Generating " + new_filename + "...")
+    Generate(new_filepath, "", genflags)
+    Close()
     si = si + 1
   endloop
   fi = fi + 1
