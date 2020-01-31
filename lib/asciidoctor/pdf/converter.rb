@@ -899,10 +899,6 @@ module Asciidoctor
       def convert_open node
         if node.style == 'abstract'
           convert_abstract node
-        elsif node.style == 'partintro' && node.blocks.size == 1 && node.blocks[0].style == 'abstract'
-          # TODO: process block title and id
-          # TODO: process abstract child even when partintro has multiple blocks
-          convert_abstract node.blocks[0]
         else
           doc = node.document
           keep_together_if node.option? 'unbreakable' do
