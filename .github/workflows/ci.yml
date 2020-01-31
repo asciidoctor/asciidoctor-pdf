@@ -15,13 +15,15 @@ jobs:
         uses: eregon/use-ruby-action@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - name: Install dependencies
+      - name: Configure Bundler
         run: |
-          # Fix for PowerShell issue, non default value (stop) used by Actions
-          # see https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_preference_variables?view=powershell-7#erroractionpreference
-          $ErrorActionPreference = 'Continue'
           bundle config --local path .bundle/gems
           bundle config --local without docs lint coverage
+      - name: Install dependencies
+        run: |
+          # Prevent use of non-default value (Stop) by GitHub Actions, which can terminate step
+          # see https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_preference_variables?view=powershell-7#erroractionpreference
+          $ErrorActionPreference = 'Continue'
           bundle --jobs 3 --retry 3
       - name: Test
         run: bundle exec ruby -w $(bundle exec ruby -e 'print File.join Gem.bindir, %q(rake)') spec
