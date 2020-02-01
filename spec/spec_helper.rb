@@ -588,9 +588,19 @@ end
 
 RSpec::Matchers.define :log_message do |expected|
   match notify_expectation_failures: true do |actual|
-    with_memory_logger expected[:using_log_level] do |logger|
+    if expected
+      log_level_override = expected.delete :using_log_level
+      expected = nil if expected.empty?
+    end
+    with_memory_logger log_level_override do |logger|
       actual.call
-      (expect logger).to have_message expected if logger
+      if logger
+        if expected
+          (expect logger).to have_message expected
+        else
+          (expect logger).not_to be_empty
+        end
+      end
       true
     end
   end

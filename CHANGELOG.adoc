@@ -20,6 +20,9 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * link font family for abstract and sidebar to heading font family if only latter is set
 * if path of missing font is absolute, don't suggest that it was not found in the fontsdir
 * allow use of style "regular" as alias for "normal" when defining font
+* emit warning in verbose mode if glyph cannot be found in fallback font (#1529)
+* only emit warning when non-WINANSI character is used with AFM font if verbose mode is enabled
+* do not emit warning when non-WINANSI character is used with AFM font inside scratch document
 * upgrade treetop to 1.6
 * reenable tests on Windows (#1499)
 

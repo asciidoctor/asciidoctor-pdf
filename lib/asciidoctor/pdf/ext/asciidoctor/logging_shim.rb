@@ -7,6 +7,10 @@ module Asciidoctor
         # ignore since this isn't a real logger
       end
 
+      def info?
+        false
+      end
+
       def warn message = nil
         ::Kernel.warn %(asciidoctor: WARNING: #{message || (block_given? ? yield : '???')})
       end
