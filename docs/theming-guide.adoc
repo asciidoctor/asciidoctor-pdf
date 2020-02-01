@@ -673,6 +673,7 @@ However, once you convert to PDF, you have to meet the font requirements of PDF 
 That means you need to provide a font (at least a fallback font) that contains glyphs for all the characters you want to use.
 If you don't, you may notice that characters are missing (usually replaced with a box).
 There's nothing Asciidoctor can do to convince PDF to work with extended characters without the right fonts in play.
+To see which characters are missing from the font, enable verbose mode (`-v`) when running Asciidoctor PDF.
 
 === Built-In (AFM) Fonts
 
