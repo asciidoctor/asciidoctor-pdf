@@ -243,6 +243,27 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect lines).to have_size 2
       (expect lines[1]).to start_with '式。'
     end
+
+    it 'should not break line where no-break hyphen is adjacent to formatted text' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar **foo**&#8209;bar&#8209;**foo**
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[1]).to eql %(foo\u2011bar\u2011foo)
+    end
+
+    # NOTE this test demonstrates a bug in Prawn
+    it 'should break line if no-break hyphen is isolated into its own fragment' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar **foo**&#8209;**bar**&#8209;**foo**
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[1]).to eql %(\u2011bar\u2011foo)
+    end
   end
 
   context 'Separators' do
