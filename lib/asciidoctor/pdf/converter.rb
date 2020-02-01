@@ -3027,7 +3027,11 @@ module Asciidoctor
                 start_dots = last_fragment_pos.right + hanging_indent
                 last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
                 # NOTE this will be incorrect if wrapped line is all monospace
-                start_cursor = last_fragment_cursor if start_cursor - last_fragment_cursor > line_metrics.height
+                if (last_fragment_page_number = last_fragment_pos.page_number) > start_page_number ||
+                    (start_cursor - last_fragment_cursor) > line_metrics.height
+                  start_page_number = last_fragment_page_number
+                  start_cursor = last_fragment_cursor
+                end
               end
               end_page_number = page_number
               end_cursor = cursor

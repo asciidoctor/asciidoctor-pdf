@@ -311,6 +311,26 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect page_number_text).to have_size 1
     end
 
+    it 'should line up dots and page number with wrapped line when section title gets split across a page boundary' do
+      sections = (1..37).map {|num| %(\n\n== Section #{num}) }.join
+      pdf = to_pdf <<~EOS, doctype: :book, analyze: true
+      = Document Title
+      :toc:
+      #{sections}
+
+      == This is a unbelievably long section title that probably shouldn't be a section title at all but here we are
+
+      content
+      EOS
+
+      page_2_lines = pdf.lines pdf.find_text page_number: 2
+      (expect page_2_lines).to include 'Table of Contents'
+      (expect page_2_lines[-1]).to end_with 'but here'
+      page_3_lines = pdf.lines pdf.find_text page_number: 3
+      (expect page_3_lines).to have_size 1
+      (expect page_3_lines[0]).to match %r/we are(\. )+.*38$/
+    end
+
     it 'should allow hanging indent to be applied to lines that wrap' do
       pdf = to_pdf <<~'EOS', doctype: :book, pdf_theme: { toc_hanging_indent: 36 }, analyze: true
       = Document Title
