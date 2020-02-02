@@ -6,12 +6,15 @@ module Asciidoctor
       class Formatter
         include ::Asciidoctor::Logging
 
+        attr_accessor :scratch
+
         FormattingSnifferPattern = /[<&]/
         WHITESPACE = %( \t\n)
 
         def initialize options = {}
           @parser = MarkupParser.new
           @transform = Transform.new merge_adjacent_text_nodes: true, theme: options[:theme]
+          @scratch = false
         end
 
         def format string, *args
@@ -21,7 +24,7 @@ module Asciidoctor
           if FormattingSnifferPattern.match? string
             if (parsed = @parser.parse string)
               return @transform.apply parsed.content, [], inherited
-            else
+            elsif !@scratch
               logger.error %(failed to parse formatted text: #{string})
             end
           end

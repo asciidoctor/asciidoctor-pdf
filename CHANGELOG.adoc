@@ -24,6 +24,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * emit warning in verbose mode if glyph cannot be found in fallback font (#1529)
 * only emit warning when non-WINANSI character is used with AFM font if verbose mode is enabled
 * do not emit warning when non-WINANSI character is used with AFM font inside scratch document
+* do not emit log messages from scratch document
 * upgrade treetop to 1.6
 * reenable tests on Windows (#1499)
 

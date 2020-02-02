@@ -129,7 +129,7 @@ module Asciidoctor
           result = send method_name, node
         else
           # TODO: delegate to convert_method_missing
-          logger.warn %(conversion missing in backend #{@backend} for #{name})
+          logger.warn %(conversion missing in backend #{@backend} for #{name}) unless scratch?
         end
         # NOTE: inline nodes generate pseudo-HTML strings; the remainder write directly to PDF object
         ::Asciidoctor::Inline === node ? result : self
@@ -815,9 +815,9 @@ module Asciidoctor
                         svg_obj.draw
                         svg_obj.document.warnings.each do |icon_warning|
                           logger.warn %(problem encountered in image: #{icon_path}; #{icon_warning})
-                        end
+                        end unless scratch?
                       rescue
-                        logger.warn %(could not embed admonition icon: #{icon_path}; #{$!.message})
+                        logger.warn %(could not embed admonition icon: #{icon_path}; #{$!.message}) unless scratch?
                       end
                     else
                       begin
@@ -832,7 +832,7 @@ module Asciidoctor
                         embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
                       rescue
                         # QUESTION should we show the label in this case?
-                        logger.warn %(could not embed admonition icon: #{icon_path}; #{$!.message})
+                        logger.warn %(could not embed admonition icon: #{icon_path}; #{$!.message}) unless scratch?
                       end
                     end
                   else
@@ -1200,7 +1200,7 @@ module Asciidoctor
               if Bullets.key? candidate
                 bullet_type = candidate
               else
-                logger.warn %(unknown unordered list style: #{candidate})
+                logger.warn %(unknown unordered list style: #{candidate}) unless scratch?
                 bullet_type = :disc
               end
             end
@@ -1306,13 +1306,13 @@ module Asciidoctor
           marker = %(#{index}.)
         else
           complex = node.complex?
-          logger.warn %(unknown list type #{list_type.inspect})
+          logger.warn %(unknown list type #{list_type.inspect}) unless scratch?
           marker = @theme.ulist_marker_disc_content || Bullets[:disc]
         end
 
         if marker
           if marker_style[:font_family] == 'fa'
-            logger.info 'deprecated fa icon set found in theme; use fas, far, or fab instead'
+            logger.info 'deprecated fa icon set found in theme; use fas, far, or fab instead' unless scratch?
             marker_style[:font_family] = FontAwesomeIconSets.find {|candidate| (icon_font_data candidate).yaml[candidate].value? marker } || 'fas'
           end
           marker_gap = rendered_width_of_char 'x'
@@ -1399,7 +1399,7 @@ module Asciidoctor
               end
             else
               # QUESTION should we use alt text in this case?
-              logger.warn %(pdf to insert not found or not readable: #{image_path})
+              logger.warn %(pdf to insert not found or not readable: #{image_path}) unless scratch?
             end
             return
           elsif !(::File.readable? image_path)
@@ -1471,7 +1471,7 @@ module Asciidoctor
               svg_obj.draw
               svg_obj.document.warnings.each do |img_warning|
                 logger.warn %(problem encountered in image: #{image_path}; #{img_warning})
-              end
+              end unless scratch?
               draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? && (node.has_role? 'noborder')
               if (link = node.attr 'link', nil, false)
                 add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
@@ -1535,7 +1535,7 @@ module Asciidoctor
       end
 
       def on_image_error _reason, node, target, opts = {}
-        logger.warn opts[:message] if opts.key? :message
+        logger.warn opts[:message] if (opts.key? :message) && !scratch?
         alt_text_vars = { alt: (node.attr 'alt'), target: target }
         alt_text_template = @theme.image_alt_content || '%{link}[%{alt}]%{/link} | <em>%{target}</em>'
         if (link = node.attr 'link', nil, false)
@@ -2369,7 +2369,7 @@ module Asciidoctor
           end
           %(<a id="#{target || node.id}">#{DummyText}</a>#{reftext})
         else
-          logger.warn %(unknown anchor type: #{node.type.inspect})
+          logger.warn %(unknown anchor type: #{node.type.inspect}) unless scratch?
         end
       end
 
@@ -2417,14 +2417,14 @@ module Asciidoctor
               requested_icon_name = icon_name
               icon_set, icon_name = remapped_icon_name.split '-', 2
               glyph = (icon_font_data icon_set).unicode icon_name
-              logger.info { %(#{requested_icon_name} icon found in deprecated fa icon set; using #{icon_name} from #{icon_set} icon set instead) }
+              logger.info { %(#{requested_icon_name} icon found in deprecated fa icon set; using #{icon_name} from #{icon_set} icon set instead) } unless scratch?
             # new name in Font Awesome >= 5 (but document is configured to use fa icon set)
             else
               font_data = nil
               if (resolved_icon_set = FontAwesomeIconSets.find {|candidate| (font_data = icon_font_data candidate).unicode icon_name rescue nil })
                 icon_set = resolved_icon_set
                 glyph = font_data.unicode icon_name
-                logger.info { %(#{icon_name} icon not found in deprecated fa icon set; using match found in #{resolved_icon_set} icon set instead) }
+                logger.info { %(#{icon_name} icon not found in deprecated fa icon set; using match found in #{resolved_icon_set} icon set instead) } unless scratch?
               end
             end
           else
@@ -2451,7 +2451,7 @@ module Asciidoctor
             # TODO: support rotate and flip attributes
             %(<font name="#{icon_set}"#{size_attr}#{class_attr}>#{glyph}</font>)
           else
-            logger.warn %(#{icon_name} is not a valid icon name in the #{icon_set} icon set)
+            logger.warn %(#{icon_name} is not a valid icon name in the #{icon_set} icon set) unless scratch?
             %([#{node.attr 'alt'}])
           end
         else
@@ -3077,7 +3077,7 @@ module Asciidoctor
           icon_data = (AdmonitionIcons[key] || {}).merge icon_data
           if (icon_name = icon_data[:name])
             unless icon_name.start_with?(*IconSetPrefixes)
-              logger.info { %(#{key} admonition in theme uses icon from deprecated fa icon set; use fas, far, or fab instead) }
+              logger.info { %(#{key} admonition in theme uses icon from deprecated fa icon set; use fas, far, or fab instead) } unless scratch?
               icon_data[:name] = %(fa-#{icon_name}) unless icon_name.start_with? 'fa-'
             end
           end
@@ -4300,7 +4300,7 @@ module Asciidoctor
       def unlink_tmp_file path
         path.unlink if TemporaryPath === path && path.exist?
       rescue
-        logger.warn %(could not delete temporary image: #{path}; #{$!.message})
+        logger.warn %(could not delete temporary image: #{path}; #{$!.message}) unless scratch?
       end
 
       def apply_subs_discretely doc, value, opts = {}
@@ -4411,7 +4411,7 @@ module Asciidoctor
         @scratch_depth = 0
         # IMPORTANT don't set font before using Marshal, it causes serialization to fail
         @prototype = ::Marshal.load ::Marshal.dump self
-        @prototype.state.store.info.data[:Scratch] = true
+        @prototype.state.store.info.data[:Scratch] = @prototype.text_formatter.scratch = true
         # NOTE we're now starting a new page each time, so no need to do it here
         #@prototype.start_new_page if @prototype.page_number == 0
       end
