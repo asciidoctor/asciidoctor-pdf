@@ -1312,7 +1312,7 @@ module Asciidoctor
 
         if marker
           if marker_style[:font_family] == 'fa'
-            logger.info { 'deprecated fa icon set found in theme; use fas, far, or fab instead' }
+            logger.info 'deprecated fa icon set found in theme; use fas, far, or fab instead'
             marker_style[:font_family] = FontAwesomeIconSets.find {|candidate| (icon_font_data candidate).yaml[candidate].value? marker } || 'fas'
           end
           marker_gap = rendered_width_of_char 'x'
