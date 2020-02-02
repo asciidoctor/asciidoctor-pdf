@@ -6,7 +6,6 @@ module Asciidoctor::PDF::FormattedText
     include ::Asciidoctor::Logging
 
     PlaceholderChar = ::Asciidoctor::Prawn::Extensions::PlaceholderChar
-    TemporaryPath = ::Asciidoctor::PDF::TemporaryPath
 
     def wrap fragments
       arrange_images fragments
@@ -124,8 +123,6 @@ module Asciidoctor::PDF::FormattedText
             fragment.delete :image_info
             # NOTE retain key to indicate we've visited fragment already
             fragment[:image_obj] = nil
-            # NOTE in main document, temporary image path is unlinked by renderer
-            image_path.unlink if TemporaryPath === image_path && image_path.exist?
           end
         end
       end

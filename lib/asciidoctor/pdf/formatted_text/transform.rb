@@ -170,7 +170,7 @@ module Asciidoctor
                 when :img
                   attributes = node[:attributes]
                   fragment = {
-                    image_path: attributes[:tmp] == 'true' ? attributes[:src].extend(TemporaryPath) : attributes[:src],
+                    image_path: attributes[:src],
                     image_format: attributes[:format],
                     # a zero-width space in the text will cause the image to be duplicated
                     text: (attributes[:alt].delete ZeroWidthSpace),

@@ -291,6 +291,7 @@ module Asciidoctor
 
         stamp_foreground_image doc, has_front_cover
         layout_cover_page doc, :back
+        clean_up_tmp_files
         nil
       end
 
@@ -365,6 +366,7 @@ module Asciidoctor
         # NOTE: we have to init Pdfmark class here while we have reference to the doc
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
         @optimize = doc.attr 'optimize'
+        @tmp_files = {}
         init_scratch_prototype
         self
       end
@@ -1514,8 +1516,6 @@ module Asciidoctor
         rescue
           on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! ? '; install prawn-gmagick gem to add support' : ''}))
         end
-      ensure
-        unlink_tmp_file image_path if image_path
       end
 
       def draw_image_border top, w, h, alignment
@@ -2473,7 +2473,7 @@ module Asciidoctor
             if ::File.readable? image_path
               width_attr = (width = preresolve_explicit_width node.attributes) ? %( width="#{width}") : ''
               fit_attr = (fit = node.attr 'fit', nil, false) ? %( fit="#{fit}") : ''
-              img = %(<img src="#{image_path}" format="#{image_format}" alt="[#{encode_quotes node.attr 'alt'}]"#{width_attr}#{fit_attr} tmp="#{TemporaryPath === image_path}">)
+              img = %(<img src="#{image_path}" format="#{image_format}" alt="[#{encode_quotes node.attr 'alt'}]"#{width_attr}#{fit_attr}>)
             else
               logger.warn %(image to embed not found or not readable: #{image_path}) unless scratch?
               img = %([#{node.attr 'alt'}])
@@ -2731,8 +2731,6 @@ module Asciidoctor
             image_page image_path, (image_opts.merge canvas: true)
           end
         end
-      ensure
-        unlink_tmp_file image_path if image_path
       end
 
       def stamp_foreground_image doc, has_front_cover
@@ -4015,46 +4013,53 @@ module Asciidoctor
       # the temporary file. If the target is a URI and the allow-uri-read attribute
       # is not set, or the URI cannot be read, this method returns a nil value.
       #
-      # When a temporary file is used, the TemporaryPath type is mixed into the path string.
+      # When a temporary file is used, the file is stored in @tmp_files to be cleaned up after conversion.
       def resolve_image_path node, image_path = nil, relative_to_imagesdir = true, image_format = nil
         doc = node.document
         imagesdir = relative_to_imagesdir ? (resolve_imagesdir doc) : nil
         image_path ||= node.attr 'target'
         image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node.attributes : nil)
-        # NOTE currently used for inline images
+        # NOTE base64 logic currently used for inline images
         if ::Base64 === image_path
-          tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
+          return (tmp_file = @tmp_files[image_path]) && tmp_file.path if @tmp_files.key? image_path
+          @tmp_files[image_path] = tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
           tmp_image.binmode unless image_format == 'svg'
           begin
             tmp_image.write ::Base64.decode64 image_path
-            tmp_image.path.extend TemporaryPath
-          rescue
-            nil
-          ensure
             tmp_image.close
+            tmp_image.path
+          rescue
+            @tmp_files[image_path] = nil
+            tmp_image.close
+            unlink_tmp_file tmp_image
+            nil
           end
         # handle case when image is a URI
-        elsif (node.is_uri? image_path) || (imagesdir && (node.is_uri? imagesdir) &&
-            (image_path = (node.normalize_web_path image_path, imagesdir, false)))
+        elsif (node.is_uri? image_path) ||
+            (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
           unless allow_uri_read
             logger.warn %(allow-uri-read is not enabled; cannot embed remote image: #{image_path}) unless scratch?
             return
           end
-          if cache_uri
+          if @tmp_files.key? image_path
+            return (tmp_file = @tmp_files[image_path]) && tmp_file.path
+          elsif cache_uri
             Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
           else
             ::OpenURI
           end
-          tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
+          @tmp_files[image_path] = tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
           tmp_image.binmode if (binary = image_format != 'svg')
           begin
             ::OpenURI.open_uri(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
-            tmp_image.path.extend TemporaryPath
+            tmp_image.close
+            tmp_image.path
           rescue
             logger.warn %(could not retrieve remote image: #{image_path}; #{$!.message}) unless scratch?
-            nil
-          ensure
+            @tmp_files[image_path] = nil
             tmp_image.close
+            unlink_tmp_file tmp_image
+            nil
           end
         # handle case when image is a local file
         else
@@ -4294,13 +4299,16 @@ module Asciidoctor
         link_annotation [image_x, (image_y - image_height), (image_x + image_width), image_y], Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: uri.as_pdf }
       end
 
-      # QUESTION is there a better way to do this?
-      # I suppose we could have @tmp_files as an instance variable on converter instead
-      # It might be sufficient to delete temporary files once per conversion
-      def unlink_tmp_file path
-        path.unlink if TemporaryPath === path && path.exist?
+      def clean_up_tmp_files
+        @tmp_files.values.each {|tmp_file| unlink_tmp_file tmp_file if tmp_file }
+        @tmp_files.clear
+      end
+
+      def unlink_tmp_file file
+        path = file.path
+        ::File.unlink path if ::File.exist? path
       rescue
-        logger.warn %(could not delete temporary image: #{path}; #{$!.message}) unless scratch?
+        logger.warn %(could not delete temporary file: #{path}; #{$!.message}) unless scratch?
       end
 
       def apply_subs_discretely doc, value, opts = {}

@@ -833,6 +833,7 @@ module Asciidoctor
         @scratch ||= if defined? @prototype # rubocop:disable Naming/MemoizedInstanceVariableName
                        scratch = Marshal.load Marshal.dump @prototype
                        scratch.instance_variable_set :@prototype, @prototype
+                       scratch.instance_variable_set :@tmp_files, @tmp_files
                        # TODO: set scratch number on scratch document
                        scratch
                      else
