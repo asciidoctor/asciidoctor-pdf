@@ -2,6 +2,7 @@
 
 module Asciidoctor::PDF::FormattedText
   module InlineImageRenderer
+    include ::Asciidoctor::Logging
     TemporaryPath = ::Asciidoctor::PDF::TemporaryPath
 
     module_function
@@ -36,7 +37,7 @@ module Asciidoctor::PDF::FormattedText
         pdf.float do
           image_obj.draw
           image_obj.document.warnings.each do |img_warning|
-            pdf.logger.warn %(problem encountered in image: #{data[:image_path]}; #{img_warning})
+            logger.warn %(problem encountered in image: #{data[:image_path]}; #{img_warning})
           end
         end
       else
