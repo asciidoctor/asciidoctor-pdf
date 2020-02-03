@@ -614,17 +614,35 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect rect[:height]).to eql 200.0
     end
 
-    it 'should cache remote image if cache-uri document attribute is set' do
-      with_local_webserver do |base_url|
-        image_url = %(#{base_url}/logo.png)
-        input = %(image::#{image_url}[Remote Image])
-        OpenURI::Cache.invalidate image_url
-        (expect OpenURI::Cache.get image_url).to be_nil
-        pdf = to_pdf input, attribute_overrides: { 'allow-uri-read' => '', 'cache-uri' => '' }
-        (expect OpenURI::Cache.get image_url).not_to be_nil
-        images = get_images pdf, 1
-        (expect images).to have_size 1
-        (expect (pdf.page 1).text).to be_empty
+    context 'Cache' do
+      before :context do
+        (expect defined? OpenURI::Cache).to be_falsy
+        with_local_webserver do |base_url|
+          to_pdf %(image::#{base_url}/logo.png[]), attribute_overrides: { 'allow-uri-read' => '', 'cache-uri' => '' }
+        end
+        (expect defined? OpenURI::Cache).to be_truthy
+        OpenURI::Cache.cache_path = output_file 'open-uri-cache'
+      end
+
+      after :context do
+        OpenURI.singleton_class.alias_method :open_uri, :original_open_uri
+      end
+
+      before do
+        FileUtils.rm_r OpenURI::Cache.cache_path, force: true, secure: true
+      end
+
+      it 'should cache remote image if cache-uri document attribute is set' do
+        with_local_webserver do |base_url|
+          image_url = %(#{base_url}/logo.png)
+          (expect OpenURI::Cache.get image_url).to be_nil
+          pdf = to_pdf %(image::#{image_url}[Remote Image]), attribute_overrides: { 'allow-uri-read' => '', 'cache-uri' => '' }
+          (expect OpenURI::Cache.get image_url).not_to be_nil
+          OpenURI::Cache.invalidate image_url
+          images = get_images pdf, 1
+          (expect images).to have_size 1
+          (expect (pdf.page 1).text).to be_empty
+        end
       end
     end
   end

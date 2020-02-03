@@ -137,11 +137,15 @@ Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma
+RSpec/BeforeAfterAll:
+  Enabled: false
 RSpec/ContextWording:
   Enabled: false
 RSpec/DescribeClass:
   Enabled: false
 RSpec/ExampleLength:
+  Enabled: false
+RSpec/ExpectInHook:
   Enabled: false
 RSpec/FilePath:
   Enabled: false
