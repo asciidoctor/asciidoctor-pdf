@@ -84,6 +84,23 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images[0].hash[:Height]).to be 240
     end
 
+    it 'should use remote logo specified by title-logo-image document attribute to title page' do
+      with_local_webserver do |base_url|
+        [%(#{base_url}/tux.png), %(image:#{base_url}/tux.png[])].each do |image_url|
+          pdf = to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }
+          = Document Title
+          :doctype: book
+          :title-logo-image: #{image_url}
+          EOS
+
+          images = get_images pdf, 1
+          (expect images).to have_size 1
+          (expect images[0].hash[:Width]).to be 204
+          (expect images[0].hash[:Height]).to be 240
+        end
+      end
+    end
+
     it 'should position logo using value of top attribute on image macro in title-logo-image attribute' do
       pdf = to_pdf <<~'EOS', analyze: :image
       = Document Title
@@ -357,6 +374,22 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images).to have_size 1
       (expect images[0].hash[:Width]).to be 204
       (expect images[0].hash[:Height]).to be 240
+    end
+
+    it 'should use remote logo specified by title_page_logo_image theme key to title page' do
+      with_local_webserver do |base_url|
+        [%(#{base_url}/tux.png), %(image:#{base_url}/tux.png[])].each do |image_url|
+          pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: image_url }, attribute_overrides: { 'allow-uri-read' => '' }
+          = Document Title
+          :doctype: book
+          EOS
+
+          images = get_images pdf, 1
+          (expect images).to have_size 1
+          (expect images[0].hash[:Width]).to be 204
+          (expect images[0].hash[:Height]).to be 240
+        end
+      end
     end
 
     it 'should resolve title page logo image from theme relative to themedir' do
