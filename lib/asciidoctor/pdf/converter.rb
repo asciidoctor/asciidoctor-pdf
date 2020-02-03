@@ -4098,7 +4098,7 @@ module Asciidoctor
           return unless image_path
 
           unless ::File.readable? image_path
-            logger.warn %(#{key.tr '-', ' '} not found or readable: #{image_path})
+            logger.warn %(#{key.to_s.tr '-_', ' '} not found or readable: #{image_path})
             return
           end
 

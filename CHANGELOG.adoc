@@ -16,6 +16,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * place dots on correct page when section title in TOC wraps across a page boundary (#1533)
 * add destination to top of imported PDF if ID is specified on image block
 * log reason if theme file cannot be parsed or compiled (#1491)
+* fix crash if background image in theme is not readable
 * bundle emoji font and use as fallback in default-with-fallback-font theme (#1129)
 * add dark theme for chronicles example
 * allow vertical-align key for header and footer categories to accept numeric offset as second value (e.g., [top, 10]) (#1488)

@@ -865,6 +865,25 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-background-image.pdf'
     end
 
+    it 'should warn if background image cannot be resolved' do
+      pdf_theme = build_pdf_theme \
+        footer_background_image: 'no-such-image.png',
+        footer_border_width: 0,
+        footer_height: 30,
+        footer_padding: 0,
+        footer_vertical_align: 'middle'
+
+      (expect do
+        pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme
+
+        Hello, World!
+        EOS
+
+        images = get_images pdf, 1
+        (expect images).to be_empty
+      end).to log_message severity: :WARN, message: %r(footer background image not found or readable.*data/themes/no-such-image\.png$)
+    end
+
     it 'should draw column rule between columns using specified width and spacing', visual: true do
       pdf_theme = build_pdf_theme \
         header_height: 36,
