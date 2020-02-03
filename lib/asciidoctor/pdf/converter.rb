@@ -3405,10 +3405,9 @@ module Asciidoctor
             ColumnPositions.each do |position|
               unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
                 if (val.include? ':') && val =~ ImageAttributeValueRx
-                  # TODO: support image URL
-                  if ::File.readable? (image_path = (ThemeLoader.resolve_theme_asset $1, @themesdir))
-                    image_attrs = (AttributeList.new $2).parse %w(alt width)
-                    image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_styles[:content_height]], format: image_attrs['format']
+                  image_attrs = (AttributeList.new $2).parse %w(alt width)
+                  if (image_path = resolve_image_path doc, $1, @themesdir, (image_format = image_attrs['format'])) && (::File.readable? image_path)
+                    image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_styles[:content_height]], format: image_format
                     side_content[position] = [image_path, image_opts, image_attrs['link']]
                   else
                     # NOTE allows inline image handler to report invalid reference and replace with alt text
@@ -4014,9 +4013,9 @@ module Asciidoctor
       # is not set, or the URI cannot be read, this method returns a nil value.
       #
       # When a temporary file is used, the file is stored in @tmp_files to be cleaned up after conversion.
-      def resolve_image_path node, image_path = nil, relative_to_imagesdir = true, image_format = nil
+      def resolve_image_path node, image_path = nil, relative_to = true, image_format = nil
         doc = node.document
-        imagesdir = relative_to_imagesdir ? (resolve_imagesdir doc) : nil
+        imagesdir = relative_to == true ? (resolve_imagesdir doc) : relative_to
         image_path ||= node.attr 'target'
         image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node.attributes : nil)
         # NOTE base64 logic currently used for inline images
