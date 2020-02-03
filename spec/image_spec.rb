@@ -625,7 +625,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
 
       after :context do
-        OpenURI.singleton_class.alias_method :open_uri, :original_open_uri
+        OpenURI.singleton_class.send :alias_method, :open_uri, :original_open_uri
       end
 
       before do
