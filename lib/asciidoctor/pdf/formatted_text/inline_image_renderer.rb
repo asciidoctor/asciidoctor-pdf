@@ -2,8 +2,6 @@
 
 module Asciidoctor::PDF::FormattedText
   module InlineImageRenderer
-    TemporaryPath = ::Asciidoctor::PDF::TemporaryPath
-
     module_function
 
     # Embeds the image object in this fragment into the document in place of the
@@ -48,8 +46,6 @@ module Asciidoctor::PDF::FormattedText
 
       # prevent any text from being written
       fragment.conceal
-    ensure
-      data[:image_path].unlink if TemporaryPath === data[:image_path] && data[:image_path].exist?
     end
   end
 end

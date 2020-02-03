@@ -581,6 +581,66 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect (pdf.page 1).text).to be_empty
     end
 
+    it 'should only read remote image once if allow-uri-read is set' do
+      pdf = with_local_webserver do |base_url, thr|
+        image_macro = %(image::#{base_url}/logo.png[Remote Image])
+        result = to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }
+        #{image_macro}
+
+        ====
+        #{image_macro}
+        ====
+        EOS
+        requests = thr[:requests]
+        (expect requests).to have_size 1
+        (expect requests[0]).to include '/logo.png'
+        result
+      end
+      images = get_images pdf, 1
+      (expect images).to have_size 2
+      (expect (pdf.page 1).text).to be_empty
+    end
+
+    it 'should only read missing remote image once if allow-uri-read is set' do
+      with_local_webserver do |base_url, thr|
+        image_url = %(#{base_url}/no-such-image.png)
+        (expect do
+          image_macro = %(image::#{image_url}[Remote Image])
+          pdf = to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }
+          #{image_macro}
+
+          ====
+          #{image_macro}
+          ====
+          EOS
+          requests = thr[:requests]
+          (expect requests).to have_size 1
+          (expect requests[0]).to include '/no-such-image.png'
+          images = get_images pdf, 1
+          (expect images).to have_size 0
+          text = (pdf.page 1).text
+          (expect (text.scan %([Remote Image] | #{image_url})).size).to eql 2
+        end).to log_message severity: :WARN, message: %(~could not retrieve remote image: #{image_url}; 404 Not Found)
+      end
+    end
+
+    it 'should read same remote image for each unique query string if allow-uri-read is set' do
+      with_local_webserver do |base_url, thr|
+        pdf = to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }
+        image::#{base_url}/logo.png?v=1[Remote Image,format=png]
+
+        image::#{base_url}/logo.png?v=2[Remote Image,format=png]
+        EOS
+        requests = thr[:requests]
+        (expect requests).to have_size 2
+        (expect requests[0]).to include '/logo.png?v=1'
+        (expect requests[1]).to include '/logo.png?v=2'
+        images = get_images pdf, 1
+        (expect images).to have_size 2
+        (expect (pdf.page 1).text).to be_empty
+      end
+    end
+
     it 'should read remote image over HTTPS if allow-uri-read is set' do
       pdf = to_pdf 'image::https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@v1.5.0.rc.2/spec/fixtures/logo.png[Remote Image]', attribute_overrides: { 'allow-uri-read' => '' }
       images = get_images pdf, 1
@@ -634,15 +694,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
 
       it 'should cache remote image if cache-uri document attribute is set' do
-        with_local_webserver do |base_url|
+        with_local_webserver do |base_url, thr|
           image_url = %(#{base_url}/logo.png)
           (expect OpenURI::Cache.get image_url).to be_nil
-          pdf = to_pdf %(image::#{image_url}[Remote Image]), attribute_overrides: { 'allow-uri-read' => '', 'cache-uri' => '' }
-          (expect OpenURI::Cache.get image_url).not_to be_nil
+          2.times do
+            pdf = to_pdf %(image::#{image_url}[Remote Image]), attribute_overrides: { 'allow-uri-read' => '', 'cache-uri' => '' }
+            requests = thr[:requests]
+            (expect requests).to have_size 1
+            (expect requests[0]).to include '/logo.png'
+            (expect OpenURI::Cache.get image_url).not_to be_nil
+            images = get_images pdf, 1
+            (expect images).to have_size 1
+            (expect (pdf.page 1).text).to be_empty
+          end
           OpenURI::Cache.invalidate image_url
-          images = get_images pdf, 1
-          (expect images).to have_size 1
-          (expect (pdf.page 1).text).to be_empty
         end
       end
     end
