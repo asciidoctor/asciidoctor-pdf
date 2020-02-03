@@ -526,8 +526,8 @@ RSpec.configure do |config|
   def with_local_webserver host = resolve_localhost, port = 9876
     base_dir = fixtures_dir
     server = TCPServer.new host, port
-    requests = []
     server_thread = Thread.start do
+      Thread.current[:requests] = requests = []
       while (session = server.accept)
         requests << (request = session.gets)
         if /^GET (\S+) HTTP\/1\.1$/ =~ request.chomp
@@ -557,7 +557,7 @@ RSpec.configure do |config|
       end
     end
     begin
-      yield %(http://#{host}:#{port}), requests
+      yield %(http://#{host}:#{port}), server_thread
     ensure
       server_thread.exit
       server_thread.value
