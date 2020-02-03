@@ -4330,7 +4330,7 @@ module Asciidoctor
 
       def sub_attributes_discretely doc, value
         doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
-        value = doc.apply_subs value
+        value = doc.apply_subs value, [:attributes]
         doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
         value
       end
