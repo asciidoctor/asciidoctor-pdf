@@ -28,7 +28,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * do not emit warning when non-WINANSI character is used with AFM font inside scratch document
 * do not emit log messages from scratch document
 * upgrade treetop to 1.6
-* reenable tests on Windows (#1499)
+* reenable tests on Windows (#1499) *@slonopotamus*
 
 == 1.5.0.rc.2 (2020-01-09) - @mojavelinux
 
