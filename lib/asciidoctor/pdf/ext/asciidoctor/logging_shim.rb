@@ -25,5 +25,9 @@ module Asciidoctor
     def logger
       StubLogger
     end
+
+    def message_with_context text, _context = {}
+      text
+    end
   end
 end
