@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== Unreleased
+== 1.5.0.rc.3 (2020-02-04) - @mojavelinux
 
 * reserve space for inline image correctly so it doesn't mangle the character spacing in the line when the image wraps (#1516)
 * allow custom theme to merge font catalog with theme being extended (#1505)
