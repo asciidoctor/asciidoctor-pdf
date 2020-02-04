@@ -2,7 +2,7 @@
 
 module Asciidoctor
   module PDF
-    VERSION = '1.5.0.rc.3'
+    VERSION = '1.5.0.dev'
   end
   Pdf = PDF unless const_defined? :Pdf, false
 end
