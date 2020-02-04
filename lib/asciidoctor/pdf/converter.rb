@@ -2591,13 +2591,14 @@ module Asciidoctor
         # QUESTION allow alignment per element on title page?
         title_align = (@theme.title_page_align || @base_align).to_sym
 
-        # TODO: disallow .pdf as image type
+        # FIXME: disallow .pdf as image type
         if @theme.title_page_logo_display != 'none' && (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
           if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
             logo_image_attrs = (AttributeList.new $2).parse %w(alt width height)
             if logo_image_from_theme
               relative_to_imagesdir = false
-              logo_image_path = ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, $1), @themesdir
+              logo_image_path = sub_attributes_discretely doc, $1
+              logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
             else
               relative_to_imagesdir = true
               logo_image_path = $1
@@ -2605,7 +2606,10 @@ module Asciidoctor
           else
             logo_image_attrs = {}
             relative_to_imagesdir = false
-            logo_image_path = ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, logo_image_path), @themesdir if logo_image_from_theme
+            if logo_image_from_theme
+              logo_image_path = sub_attributes_discretely doc, logo_image_path
+              logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
+            end
           end
           logo_image_attrs['target'] = logo_image_path
           if (logo_align = [(logo_image_attrs.delete 'align'), @theme.title_page_logo_align, title_align.to_s].find {|val| (BlockAlignmentNames.include? val) })
@@ -4082,15 +4086,14 @@ module Asciidoctor
             return []
           elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
             image_attrs = (AttributeList.new $2).parse %w(alt width)
+            image_format = image_attrs['format']
             if from_theme
-              # TODO: support remote image when loaded from theme
-              image_path = ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, $1), @themesdir
+              image_path = resolve_image_path doc, (sub_attributes_discretely doc, $1), @themesdir, image_format
             else
-              image_path = resolve_image_path doc, $1, true, (image_format = image_attrs['format'])
+              image_path = resolve_image_path doc, $1, true, image_format
             end
           elsif from_theme
-            # TODO: support remote image when loaded from theme
-            image_path = ThemeLoader.resolve_theme_asset (sub_attributes_discretely doc, image_path), @themesdir
+            image_path = resolve_image_path doc, (sub_attributes_discretely doc, image_path), @themesdir
           else
             image_path = resolve_image_path doc, image_path, false
           end
@@ -4416,6 +4419,7 @@ module Asciidoctor
       def init_scratch_prototype
         @save_state = nil
         @scratch_depth = 0
+        # NOTE can't marshall tmp_files, so clear them before creating prototype
         saved_tmp_files, @tmp_files = @tmp_files, {}
         # IMPORTANT don't set font before using Marshal, it causes serialization to fail
         @prototype = ::Marshal.load ::Marshal.dump self
