@@ -3,6 +3,30 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Table' do
+  it 'should not crash if table has no rows' do
+    (expect do
+      pdf = to_pdf <<~'EOS', analyze: :line
+      |===
+      |===
+      EOS
+
+      (expect pdf.lines).to have_size 4
+    end).to not_raise_exception & (log_message severity: :WARN, message: 'no rows found in table')
+  end
+
+  it 'should not crash if cols and table cells are mismatched' do
+    (expect do
+      pdf = to_pdf <<~'EOS', analyze: :line
+      [cols="1,"]
+      |===
+      | cell
+      |===
+      EOS
+
+      (expect pdf.lines).to have_size 8
+    end).to not_raise_exception & (log_message severity: :WARN, message: 'no rows found in table')
+  end
+
   context 'Decoration' do
     it 'should apply frame all and grid all by default' do
       pdf = to_pdf <<~'EOS', analyze: :line

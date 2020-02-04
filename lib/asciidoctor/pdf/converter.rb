@@ -2039,7 +2039,10 @@ module Asciidoctor
         end
 
         # NOTE: Prawn aborts if table data is empty, so ensure there's at least one row
-        table_data = ::Array.new(node.columns.size) { { 'content' => '' } } if table_data.empty?
+        if table_data.empty?
+          logger.warn message_with_context 'no rows found in table', source_location: node.source_location
+          table_data << ::Array.new([node.columns.size, 1].max) { { content: '' } }
+        end
 
         border_width = {}
         table_border_color = theme.table_border_color || theme.table_grid_color || theme.base_border_color
