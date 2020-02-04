@@ -328,6 +328,7 @@ module Asciidoctor
         @fallback_fonts = [*theme.font_fallbacks]
         @allow_uri_read = doc.attr? 'allow-uri-read'
         @cache_uri = doc.attr? 'cache-uri'
+        @tmp_files = {}
         if (bg_image = resolve_background_image doc, theme, 'page-background-image') && bg_image[0]
           @page_bg_image = { verso: bg_image, recto: bg_image }
         else
@@ -366,7 +367,6 @@ module Asciidoctor
         # NOTE: we have to init Pdfmark class here while we have reference to the doc
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
         @optimize = doc.attr 'optimize'
-        @tmp_files = {}
         init_scratch_prototype
         self
       end
@@ -4416,11 +4416,13 @@ module Asciidoctor
       def init_scratch_prototype
         @save_state = nil
         @scratch_depth = 0
+        saved_tmp_files, @tmp_files = @tmp_files, {}
         # IMPORTANT don't set font before using Marshal, it causes serialization to fail
         @prototype = ::Marshal.load ::Marshal.dump self
         @prototype.state.store.info.data[:Scratch] = @prototype.text_formatter.scratch = true
         # NOTE we're now starting a new page each time, so no need to do it here
         #@prototype.start_new_page if @prototype.page_number == 0
+        @tmp_files = saved_tmp_files
       end
 
       def push_scratch doc
