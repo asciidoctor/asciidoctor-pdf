@@ -49,3 +49,5 @@ jobs:
       provider: rubygems
       gem: asciidoctor-pdf
       api_key: ${RUBYGEMS_API_KEY}
+      on:
+        tags: true
