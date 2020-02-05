@@ -2490,11 +2490,12 @@ module Asciidoctor
 
       def convert_inline_indexterm node
         # NOTE indexterms not supported if text gets substituted before PDF is initialized
-        return '' unless defined? @index
-        if scratch?
+        if !(defined? @index)
+          ''
+        elsif scratch?
           node.type == :visible ? node.text : ''
         else
-          # NOTE page number is added in InlineDestinationMarker
+          # NOTE page number (:page key) is added by InlineDestinationMarker
           dest = { anchor: (anchor_name = @index.next_anchor_name) }
           anchor = %(<a id="#{anchor_name}" type="indexterm">#{DummyText}</a>)
           if node.type == :visible

@@ -18,7 +18,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     == Chapter About Cats
 
     We know that ((cats)) control the internet.
-    But they sort run nature too.
+    But they sort of run nature too.
     (((cats,big cats,lion)))
     After all, the ((king of the jungle)) is the lion, which is a big cat.
 
@@ -53,6 +53,32 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     K
     king of the jungle, 1
     EOS
+  end
+
+  it 'should not add index entries in delimited block to index twice' do
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+    = Document Title
+
+    == Chapter about Cats
+
+    We know that ((cats)) control the internet.
+    But they sort of run nature too.
+    (((cats,big cats,lion)))
+    After all, the ((king of the jungle)) is the lion, which is a big cat.
+
+    .Dogs
+    ****
+    Cats may rule, well, everything.
+    But ((dogs)) are a human's best friend.
+    ****
+
+    [index]
+    == Index
+    EOS
+
+    index_text = pdf.find_text string: 'Index', page_number: 3, font_size: 22
+    (expect index_text).to have_size 1
+    (expect pdf.lines).to include 'dogs, 1'
   end
 
   it 'should create link from entry in index to location of term' do
