@@ -43,7 +43,7 @@ module Prawn
             end
           end
           # FIXME: prawn-table doesn't support cell taller than a single page
-          [max_height, height].min
+          [max_height, height - 0.0001].min
         end
 
         def natural_content_width
