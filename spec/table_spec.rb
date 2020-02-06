@@ -201,9 +201,32 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      # NOTE it appears Prawn table is drawing the same line multiple times
+      # NOTE it appears Prawn table is drawing the same grid line multiple times
       lines = pdf.lines.uniq
       (expect lines).to have_size 4
+      lines.each do |line|
+        (expect line[:color]).to eql 'AAAAAA'
+        (expect line[:width]).to eql 3
+        (expect line[:style]).to eql :dashed
+      end
+    end
+
+    it 'should allow theme to set color, width, and style of frame' do
+      pdf_theme = {
+        table_border_color: 'AAAAAA',
+        table_border_width: 3,
+        table_border_style: 'dashed',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      [frame=all,grid=none]
+      |===
+      | A | B
+      | C | D
+      |===
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 8
       lines.each do |line|
         (expect line[:color]).to eql 'AAAAAA'
         (expect line[:width]).to eql 3
