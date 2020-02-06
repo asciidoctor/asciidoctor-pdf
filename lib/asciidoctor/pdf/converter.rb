@@ -48,6 +48,15 @@ module Asciidoctor
       AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
       ColumnPositions = [:left, :center, :right]
       PageLayouts = [:portrait, :landscape]
+      (PageModes = {
+        'fullscreen' => [:FullScreen, :UseOutlines],
+        'fullscreen none' => [:FullScreen, :UseNone],
+        'fullscreen outline' => [:FullScreen, :UseOutlines],
+        'fullscreen thumbs' => [:FullScreen, :UseThumbs],
+        'none' => :UseNone,
+        'outline' => :UseOutlines,
+        'thumbs' => :UseThumbs,
+      }).default = :UseOutlines
       PageSides = [:recto, :verso]
       (PDFVersions = { '1.3' => 1.3, '1.4' => 1.4, '1.5' => 1.5, '1.6' => 1.6, '1.7' => 1.7 }).default = 1.4
       AuthorAttributeNames = %w(author authorinitials firstname middlename lastname email)
@@ -275,7 +284,6 @@ module Asciidoctor
           layout_running_content :footer, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number unless doc.nofooter || @theme.footer_height.to_f == 0
         end
 
-        catalog.data[:PageMode] = :FullScreen if (doc.attr 'pdf-page-mode', @theme.page_mode) == 'fullscreen'
         add_outline doc, (doc.attr 'outlinelevels', toc_num_levels), toc_page_nums, num_front_matter_pages[1], has_front_cover
         if !state.pages.empty? && (initial_zoom = @theme.page_initial_zoom)
           case initial_zoom.to_sym
@@ -3499,7 +3507,9 @@ module Asciidoctor
         toc_section.parent.blocks.delete toc_section if toc_section
 
         catalog.data[:PageLabels] = state.store.ref Nums: pagenum_labels.flatten
-        catalog.data[((doc.attr 'pdf-page-mode') || @theme.page_mode) == 'fullscreen' ? :NonFullScreenPageMode : :PageMode] = :UseOutlines
+        primary_page_mode, secondary_page_mode = PageModes[(doc.attr 'pdf-page-mode') || @theme.page_mode]
+        catalog.data[:PageMode] = primary_page_mode
+        catalog.data[:NonFullScreenPageMode] = secondary_page_mode if secondary_page_mode
         nil
       end
 
