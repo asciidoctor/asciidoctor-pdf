@@ -916,6 +916,46 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.pages).to have_size 1
     end
 
+    it 'should draw border around entire delimited block with text that wraps' do
+      pdf_theme = {
+        code_background_color: 'transparent',
+        code_border_radius: 0,
+      }
+
+      input = <<~EOS
+      [cols="1,1a",frame=none,grid=none]
+      |===
+      | cell
+      |
+      before block
+
+      ----
+      #{lorem_ipsum '1-sentence'}
+      #{lorem_ipsum '1-sentence'}
+      #{lorem_ipsum '1-sentence'}
+      #{lorem_ipsum '1-sentence'}
+      ----
+
+      after block
+      |===
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+      lines = pdf.lines
+      (expect lines).to have_size 4
+      border_bottom_y = lines[2][:from][:y]
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+
+      last_block_text = (pdf.find_text font_name: 'mplus1mn-regular')[-1]
+
+      (expect border_bottom_y).to be < last_block_text[:y]
+
+      after_block_text = (pdf.find_text 'after block')[0]
+
+      (expect after_block_text[:y]).to be < border_bottom_y
+    end
+
     it 'should honor vertical alignment' do
       pdf = to_pdf <<~'EOS', analyze: true
       [cols=2*]

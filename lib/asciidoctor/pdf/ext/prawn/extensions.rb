@@ -855,20 +855,19 @@ module Asciidoctor
         scratch.start_new_page
         start_page_number = scratch.page_number
         start_y = scratch.y
-        if (left_padding = bounds.total_left_padding) > 0
-          scratch.bounds.add_left_padding left_padding
-        end
-        if (right_padding = bounds.total_right_padding) > 0
-          scratch.bounds.add_right_padding right_padding
-        end
+        scratch_bounds = scratch.bounds
+        original_x = scratch_bounds.absolute_left
+        original_width = scratch_bounds.width
+        scratch_bounds.instance_variable_set :@x, bounds.absolute_left
+        scratch_bounds.instance_variable_set :@width, bounds.width
         scratch.font font_family, style: font_style, size: font_size do
           scratch.instance_exec(&block)
         end
         # NOTE don't count excess if cursor exceeds writable area (due to padding)
         full_page_height = scratch.effective_page_height
         partial_page_height = [full_page_height, start_y - scratch.y].min
-        scratch.bounds.subtract_left_padding left_padding if left_padding > 0
-        scratch.bounds.subtract_right_padding right_padding if right_padding > 0
+        scratch_bounds.instance_variable_set :@x, original_x
+        scratch_bounds.instance_variable_set :@width, original_width
         whole_pages = scratch.page_number - start_page_number
         [(whole_pages * full_page_height + partial_page_height), whole_pages, partial_page_height]
       end
