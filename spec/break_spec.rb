@@ -139,8 +139,8 @@ describe 'Asciidoctor::PDF::Converter - Break' do
 
       text = pdf.text
       (expect text).to have_size 2
-      (expect text[0].values_at :string, :page_number, :x, :y).to eq ['portrait', 1, 48.24, 793.926]
-      (expect text[1].values_at :string, :page_number, :x, :y).to eq ['landscape', 2, 48.24, 547.316]
+      (expect text[0].values_at :string, :page_number, :x, :y).to eql ['portrait', 1, 48.24, 793.926]
+      (expect text[1].values_at :string, :page_number, :x, :y).to eql ['landscape', 2, 48.24, 547.316]
     end
 
     it 'should change layout if page break specifies layout role' do
@@ -155,8 +155,8 @@ describe 'Asciidoctor::PDF::Converter - Break' do
 
       text = pdf.text
       (expect text).to have_size 2
-      (expect text[0].values_at :string, :page_number, :x, :y).to eq ['portrait', 1, 48.24, 793.926]
-      (expect text[1].values_at :string, :page_number, :x, :y).to eq ['landscape', 2, 48.24, 547.316]
+      (expect text[0].values_at :string, :page_number, :x, :y).to eql ['portrait', 1, 48.24, 793.926]
+      (expect text[1].values_at :string, :page_number, :x, :y).to eql ['landscape', 2, 48.24, 547.316]
     end
 
     it 'should switch layout each time page break specifies layout role' do

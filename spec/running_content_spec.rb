@@ -198,7 +198,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(i ii 1 2 3)
+      (expect pgnum_labels).to eql %w(i ii 1 2 3)
     end
 
     it 'should start running content at title page if running_content_start_at key is title and document has front cover' do
@@ -221,7 +221,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (2.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(ii iii 1 2 3)
+      (expect pgnum_labels).to eql %w(ii iii 1 2 3)
     end
 
     it 'should start running content at toc page if running_content_start_at key is title and title page is disabled' do
@@ -243,7 +243,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(i 1 2 3)
+      (expect pgnum_labels).to eql %w(i 1 2 3)
     end
 
     it 'should start running content at body if running_content_start_at key is title and title page and toc are disabled' do
@@ -264,7 +264,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(1 2 3)
+      (expect pgnum_labels).to eql %w(1 2 3)
     end
 
     it 'should start running content at toc page if running_content_start_at key is toc' do
@@ -285,7 +285,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       end
-      (expect pgnum_labels).to eq [nil, 'ii', '1', '2', '3']
+      (expect pgnum_labels).to eql [nil, 'ii', '1', '2', '3']
     end
 
     it 'should start running content at toc page if running_content_start_at key is toc and title page is disabled' do
@@ -307,7 +307,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       end
-      (expect pgnum_labels).to eq %w(i 1 2 3)
+      (expect pgnum_labels).to eql %w(i 1 2 3)
     end
 
     it 'should start running content at body if running_content_start_at key is toc and toc is disabled' do
@@ -327,7 +327,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       end
-      (expect pgnum_labels).to eq [nil, '1', '2', '3']
+      (expect pgnum_labels).to eql [nil, '1', '2', '3']
     end
 
     it 'should start running content at specified page of body if running_content_start_at is an integer' do
@@ -353,7 +353,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       end
-      (expect pgnum_labels).to eq [nil, nil, nil, nil, '3']
+      (expect pgnum_labels).to eql [nil, nil, nil, nil, '3']
     end
 
     it 'should start page numbering and running content at specified page of body' do
@@ -379,7 +379,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       end
-      (expect pgnum_labels).to eq [nil, nil, nil, nil, '1']
+      (expect pgnum_labels).to eql [nil, nil, nil, nil, '1']
     end
   end
 
@@ -400,7 +400,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(1 2 3)
+      (expect pgnum_labels).to eql %w(1 2 3)
     end
 
     it 'should start page numbering at body if title page is disabled and toc is enabled' do
@@ -421,7 +421,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(i 1 2 3)
+      (expect pgnum_labels).to eql %w(i 1 2 3)
     end
 
     it 'should start page numbering at title page if page_numbering_start_at is title' do
@@ -442,7 +442,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(1 2 3 4 5)
+      (expect pgnum_labels).to eql %w(1 2 3 4 5)
     end
 
     it 'should start page numbering at toc page if page_numbering_start_at is title and title page is disabled' do
@@ -464,7 +464,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(1 2 3 4)
+      (expect pgnum_labels).to eql %w(1 2 3 4)
     end
 
     it 'should start page numbering at body if page_numbering_start_at is title and title page and toc are disabled' do
@@ -485,7 +485,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(1 2 3)
+      (expect pgnum_labels).to eql %w(1 2 3)
     end
 
     it 'should start page numbering at toc page if page_numbering_start_at is toc' do
@@ -506,7 +506,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(i 1 2 3 4)
+      (expect pgnum_labels).to eql %w(i 1 2 3 4)
     end
 
     it 'should start page numbering at toc page if page_numbering_start_at is toc and title page is disabled' do
@@ -528,7 +528,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(1 2 3 4)
+      (expect pgnum_labels).to eql %w(1 2 3 4)
     end
 
     it 'should start page numbering at specified page of body if page_numbering_start_at is an integer' do
@@ -556,7 +556,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
       end
-      (expect pgnum_labels).to eq %w(i ii iii iv 1 2)
+      (expect pgnum_labels).to eql %w(i ii iii iv 1 2)
       dedication_toc_line = (pdf.lines pdf.find_text page_number: 2).find {|it| it.start_with? 'Dedication' }
       (expect dedication_toc_line).to end_with 'iii'
       (expect pdf.lines pdf.find_text page_number: pdf.pages.size).to include 'person, iii'

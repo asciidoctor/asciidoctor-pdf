@@ -13,7 +13,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       == Last
       EOS
 
-      (expect pdf.catalog[:PageMode]).to eq :UseOutlines
+      (expect pdf.catalog[:PageMode]).to eql :UseOutlines
     end
 
     it 'should set /NonFullScreenPageMode /UseOutlines in PDF catalog if fullscreen mode is enabled' do
@@ -26,8 +26,8 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       == Last
       EOS
 
-      (expect pdf.catalog[:PageMode]).not_to eq :UseOutlines
-      (expect pdf.catalog[:NonFullScreenPageMode]).to eq :UseOutlines
+      (expect pdf.catalog[:PageMode]).not_to eql :UseOutlines
+      (expect pdf.catalog[:NonFullScreenPageMode]).to eql :UseOutlines
     end
 
     it 'should create an outline to navigate the document structure' do
@@ -141,7 +141,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
 
       outline = extract_outline pdf
       (expect outline).to have_size 4
-      (expect outline[1][:title]).to eq 'First Chapter'
+      (expect outline[1][:title]).to eql 'First Chapter'
       (expect outline[1][:children]).to be_empty
     end
 
@@ -165,10 +165,10 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
 
       outline = extract_outline pdf
       (expect outline).to have_size 4
-      (expect outline[1][:title]).to eq 'First Chapter'
+      (expect outline[1][:title]).to eql 'First Chapter'
       (expect outline[1][:closed]).to be false
       (expect outline[1][:children]).not_to be_empty
-      (expect outline[1][:children][0][:title]).to eq 'Chapter Section'
+      (expect outline[1][:children][0][:title]).to eql 'Chapter Section'
       (expect outline[1][:children][0][:children]).to be_empty
     end
 
@@ -192,7 +192,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
 
       outline = extract_outline pdf
       (expect outline).to have_size 4
-      (expect outline[1][:title]).to eq 'First Chapter'
+      (expect outline[1][:title]).to eql 'First Chapter'
       (expect outline[1][:children]).to be_empty
     end
 
