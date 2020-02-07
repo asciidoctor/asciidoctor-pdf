@@ -169,7 +169,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       Road to <<nowhere>>.
       EOS
 
-      (expect (pdf.page 1).text).to eq 'Road to [nowhere].'
+      (expect (pdf.page 1).text).to eql 'Road to [nowhere].'
       names = get_names pdf
       (expect names).not_to have_key 'nowhere'
       annotations = get_annotations pdf, 1
