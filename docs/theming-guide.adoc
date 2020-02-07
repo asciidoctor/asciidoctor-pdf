@@ -1225,10 +1225,10 @@ See <<Title Page>> for details.
   margin-outer: 0.59in
 
 |mode
-|fullscreen
-(default: _not set_)
+|outline {vbar} none {vbar} thumbs {vbar} fullscreen {vbar} fullscreen outline {vbar} fullscreen none {vbar} fullscreen thumbs +
+(default: outline)
 |page:
-  mode: fullscreen
+  mode: fullscreen none
 
 |size
 |https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width,height]>> +
@@ -4962,6 +4962,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |pdf-page-margin
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>>
 |:pdf-page-margin: [1in, 0.5in]
+
+|pdf-page-mode
+|outline {vbar} none {vbar} thumbs {vbar} fullscreen {vbar} fullscreen outline {vbar} fullscreen none {vbar} fullscreen thumbs (default: outline)
+|:pdf-page-mode: fullscreen none
 
 |pdf-page-size
 |https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width, height]>>

@@ -8,6 +8,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == Unreleased
 
 * draw background and border around entire delimited block with wrapped text that appears inside an AsciiDoc table cell (#820)
+* allow page mode to be fully configured using pdf-page-mode attribute or page_mode theme key (#840)
 
 == 1.5.0.rc.3 (2020-02-04) - @mojavelinux
 

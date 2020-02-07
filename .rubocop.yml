@@ -117,8 +117,9 @@ Style/ParallelAssignment:
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
     default: ()
-    '%w': ()
+    '%i': ()
     '%r': //
+    '%w': ()
 Style/PerlBackrefs:
   Enabled: false
 Style/RegexpLiteral:

@@ -95,19 +95,79 @@ describe 'Asciidoctor::PDF::Converter - Page' do
   end
 
   context 'Mode' do
-    it 'should set page mode to fullscreen if page_mode key in them is fullscreen' do
+    it 'should set page mode to /UseOutlines by default' do
+      pdf = to_pdf 'content'
+      (expect pdf.catalog[:PageMode]).to be :UseOutlines
+    end
+
+    it 'should set page mode to /UseOutlines if value of page_mode key in theme is outline' do
+      pdf = to_pdf 'content', pdf_theme: { page_mode: 'outline' }
+      (expect pdf.catalog[:PageMode]).to be :UseOutlines
+    end
+
+    it 'should set page mode to /UseOutlines if value of pdf-page-mode attribute is outline' do
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-page-mode' => 'outline' }
+      (expect pdf.catalog[:PageMode]).to be :UseOutlines
+    end
+
+    it 'should set page mode to /UseNone if value of page_mode key in theme is none' do
+      pdf = to_pdf 'content', pdf_theme: { page_mode: 'none' }
+      (expect pdf.catalog[:PageMode]).to be :UseNone
+    end
+
+    it 'should set page mode to /UseNone if value of pdf-page-mode attribute is none' do
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-page-mode' => 'none' }
+      (expect pdf.catalog[:PageMode]).to be :UseNone
+    end
+
+    it 'should set page mode to /UseThumbs if value of page_mode key in theme is thumbs' do
+      pdf = to_pdf 'content', pdf_theme: { page_mode: 'thumbs' }
+      (expect pdf.catalog[:PageMode]).to be :UseThumbs
+    end
+
+    it 'should set page mode to /UseThumbs if value of pdf-page-mode attribute is thumbs' do
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-page-mode' => 'thumbs' }
+      (expect pdf.catalog[:PageMode]).to be :UseThumbs
+    end
+
+    it 'should set page mode to /UseOutlines if value of page_mode key in theme is unrecognized' do
+      pdf = to_pdf 'content', pdf_theme: { page_mode: 'invalid' }
+      (expect pdf.catalog[:PageMode]).to be :UseOutlines
+    end
+
+    it 'should set page mode to /UseOutlines if value of pdf-page-mode attribute is unrecognized' do
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-page-mode' => 'invalid' }
+      (expect pdf.catalog[:PageMode]).to be :UseOutlines
+    end
+
+    it 'should set page mode to fullscreen if page_mode key in theme is fullscreen' do
       pdf = to_pdf 'content', pdf_theme: { page_mode: 'fullscreen' }
       (expect pdf.catalog[:PageMode]).to be :FullScreen
+      (expect pdf.catalog[:NonFullScreenPageMode]).to be :UseOutlines
     end
 
     it 'should set page mode to fullscreen if pdf-page-mode attribute is fullscreen' do
       pdf = to_pdf 'content', attribute_overrides: { 'pdf-page-mode' => 'fullscreen' }
       (expect pdf.catalog[:PageMode]).to be :FullScreen
+      (expect pdf.catalog[:NonFullScreenPageMode]).to be :UseOutlines
+    end
+
+    it 'should set secondary page mode to none if page_mode key in theme is fullscreen none' do
+      pdf = to_pdf 'content', pdf_theme: { page_mode: 'fullscreen none' }
+      (expect pdf.catalog[:PageMode]).to be :FullScreen
+      (expect pdf.catalog[:NonFullScreenPageMode]).to be :UseNone
+    end
+
+    it 'should set secondary page mode to none if pdf-page-mode attribute is fullscreen none' do
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-page-mode' => 'fullscreen none' }
+      (expect pdf.catalog[:PageMode]).to be :FullScreen
+      (expect pdf.catalog[:NonFullScreenPageMode]).to be :UseNone
     end
 
     it 'should allow pdf-page-mode attribute in document to disable fullscreen mode' do
       pdf = to_pdf 'content', pdf_theme: { page_mode: 'fullscreen' }, attribute_overrides: { 'pdf-page-mode' => '' }
       (expect pdf.catalog[:PageMode]).not_to be :FullScreen
+      (expect pdf.catalog).not_to have_key :NonFullScreenPageMode
     end
   end
 
