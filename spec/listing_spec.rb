@@ -191,6 +191,21 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
   end
 
+  it 'should apply inline formatting if quotes subs is enabled' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [subs=+quotes]
+    ----
+    _1_ skipped
+    *99* passing
+    ----
+    EOS
+
+    italic_text = (pdf.find_text '1')[0]
+    (expect italic_text[:font_name]).to eql 'mplus1mn-italic'
+    bold_text = (pdf.find_text '99')[0]
+    (expect bold_text[:font_name]).to eql 'mplus1mn-bold'
+  end
+
   it 'should render stem as literal block if stem extension not present' do
     pdf = to_pdf <<~'EOS', analyze: true
     [stem]
