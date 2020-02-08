@@ -84,7 +84,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images[0].hash[:Height]).to be 240
     end
 
-    it 'should use remote logo specified by title-logo-image document attribute to title page' do
+    it 'should add remote logo specified by title-logo-image document attribute to title page' do
       with_local_webserver do |base_url|
         [%(#{base_url}/tux.png), %(image:#{base_url}/tux.png[])].each do |image_url|
           pdf = to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }
@@ -99,6 +99,22 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
           (expect images[0].hash[:Height]).to be 240
         end
       end
+    end
+
+    it 'should add logo specified by title-logo-image document attribute with data URI to title page' do
+      image_data = File.binread fixture_file 'tux.png'
+      encoded_image_data = Base64.strict_encode64 image_data
+      image_url = %(image:data:image/jpg;base64,#{encoded_image_data}[])
+      pdf = to_pdf <<~EOS
+      = Document Title
+      :doctype: book
+      :title-logo-image: #{image_url}
+      EOS
+
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].hash[:Width]).to be 204
+      (expect images[0].hash[:Height]).to be 240
     end
 
     it 'should position logo using value of top attribute on image macro in title-logo-image attribute' do
@@ -376,7 +392,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images[0].hash[:Height]).to be 240
     end
 
-    it 'should use remote logo specified by title_page_logo_image theme key to title page' do
+    it 'should add remote logo specified by title_page_logo_image theme key to title page' do
       with_local_webserver do |base_url|
         [%(#{base_url}/tux.png), %(image:#{base_url}/tux.png[])].each do |image_url|
           pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: image_url }, attribute_overrides: { 'allow-uri-read' => '' }
@@ -390,6 +406,21 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
           (expect images[0].hash[:Height]).to be 240
         end
       end
+    end
+
+    it 'should add logo specified by title-logo-image document attribute with data URI to title page' do
+      image_data = File.binread fixture_file 'tux.png'
+      encoded_image_data = Base64.strict_encode64 image_data
+      image_url = %(image:data:image/jpg;base64,#{encoded_image_data}[])
+      pdf = to_pdf <<~EOS, pdf_theme: { title_page_logo_image: image_url }
+      = Document Title
+      :doctype: book
+      EOS
+
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].hash[:Width]).to be 204
+      (expect images[0].hash[:Height]).to be 240
     end
 
     it 'should resolve title page logo image from theme relative to themedir' do
