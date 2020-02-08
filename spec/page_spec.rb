@@ -360,6 +360,32 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       end
     end
 
+    it 'should use data URI specified by page-background-image attribute as page background', visual: true do
+      image_data = File.binread fixture_file 'square.png'
+      encoded_image_data = Base64.strict_encode64 image_data
+      to_file = to_pdf_file <<~EOS, %(page-background-image-attr-data-uri.pdf)
+      = Document Title
+      :page-background-image: image:data:image/png;base64,#{encoded_image_data}[fit=fill]
+
+      This page has a background image that is rather loud.
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-fill.pdf'
+    end
+
+    it 'should use data URI specified in theme as page background', visual: true do
+      image_data = File.binread fixture_file 'square.png'
+      encoded_image_data = Base64.strict_encode64 image_data
+      pdf_theme = { page_background_image: %(image:data:image/png;base64,#{encoded_image_data}[fit=fill]) }
+      to_file = to_pdf_file <<~EOS, %(page-background-image-attr-data-uri.pdf), pdf_theme: pdf_theme
+      = Document Title
+
+      This page has a background image that is rather loud.
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-fill.pdf'
+    end
+
     it 'should resolve background image in theme relative to theme dir', visual: true do
       [true, false].each do |macro|
         pdf_theme = {
