@@ -3421,13 +3421,15 @@ module Asciidoctor
             ColumnPositions.each do |position|
               unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
                 if (val.include? ':') && val =~ ImageAttributeValueRx
-                  image_attrs = (AttributeList.new $2).parse %w(alt width)
-                  if (image_path = resolve_image_path doc, $1, @themesdir, (image_format = image_attrs['format'])) && (::File.readable? image_path)
+                  attrlist = $2
+                  image_attrs = (AttributeList.new attrlist).parse %w(alt width)
+                  image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
+                  if (image_path = resolve_image_path doc, image_path, @themesdir, image_format) && (::File.readable? image_path)
                     image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_styles[:content_height]], format: image_format
                     side_content[position] = [image_path, image_opts, image_attrs['link']]
                   else
                     # NOTE allows inline image handler to report invalid reference and replace with alt text
-                    side_content[position] = %(image:#{image_path}[#{$2}])
+                    side_content[position] = %(image:#{image_path}[#{attrlist}])
                   end
                 else
                   side_content[position] = val
