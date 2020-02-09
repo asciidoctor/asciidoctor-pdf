@@ -141,6 +141,39 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[3][:width]).to eql 0.5
     end
 
+    it 'should apply thicker bottom border to last table head row when table has multiple head rows' do
+      tree_processor_impl = proc do
+        process do |doc|
+          table = doc.blocks[0]
+          table.rows[:head] << table.rows[:body].shift
+        end
+      end
+      if asciidoctor_1_5_7_or_better?
+        opts = { extension_registry: Asciidoctor::Extensions.create { tree_processor(&tree_processor_impl) } }
+      else
+        opts = { extensions_registry: Asciidoctor::Extensions.build_registry { treeprocessor(&tree_processor_impl) } }
+      end
+      pdf = to_pdf <<~'EOS', (opts.merge analyze: :line)
+      [%header,frame=none,grid=rows]
+      |===
+      | Columns
+      | Col A
+
+      | A1
+
+      | A2
+      |===
+      EOS
+
+      lines = pdf.lines.uniq
+      ys = lines.map {|l| l[:from][:y] }.sort.reverse.uniq
+      (expect ys).to have_size 3
+      head_dividing_lines = lines.select {|l| l[:width] == 1.25 }
+      (expect head_dividing_lines).to have_size 1
+      (expect head_dividing_lines[0][:from][:y]).to eql head_dividing_lines[0][:to][:y]
+      (expect head_dividing_lines[0][:from][:y]).to eql ys[1]
+    end
+
     it 'should allow theme to customize bottom border of table head row', visual: true do
       theme_overrides = {
         table_head_border_bottom_width: 0.5,
@@ -161,6 +194,37 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       (expect to_file).to visually_match 'table-head-border-bottom.pdf'
+    end
+
+    it 'should repeat multiple head rows on subsequent pages' do
+      tree_processor_impl = proc do
+        process do |doc|
+          table = doc.blocks[0]
+          table.rows[:head] << table.rows[:body].shift
+        end
+      end
+      if asciidoctor_1_5_7_or_better?
+        opts = { extension_registry: Asciidoctor::Extensions.create { tree_processor(&tree_processor_impl) } }
+      else
+        opts = { extensions_registry: Asciidoctor::Extensions.build_registry { treeprocessor(&tree_processor_impl) } }
+      end
+      pdf = to_pdf <<~EOS, (opts.merge analyze: true)
+      [%header]
+      |===
+      2+^| Columns
+      ^| Column A ^| Column B
+      #{['| cell | cell'] * 40 * ?\n}
+      |===
+      EOS
+
+      [1, 2].each do |page_number|
+        col_a_text = (pdf.find_text page_number: page_number, string: 'Column A')[0]
+        col_b_text = (pdf.find_text page_number: page_number, string: 'Column B')[0]
+        (expect col_a_text).not_to be_nil
+        (expect col_a_text[:font_name]).to eql 'NotoSerif-Bold'
+        (expect col_b_text).not_to be_nil
+        (expect col_b_text[:font_name]).to eql 'NotoSerif-Bold'
+      end
     end
 
     it 'should allow theme to set table border color to transparent' do
