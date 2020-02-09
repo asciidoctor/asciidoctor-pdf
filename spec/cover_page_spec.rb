@@ -35,6 +35,24 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
   end
 
+  it 'should create blank page if front or back cover image is empty' do
+    pdf = to_pdf <<~'EOS'
+    = Book Title
+    :doctype: book
+    :front-cover-image:
+    :back-cover-image:
+
+    == Chapter
+
+    text
+    EOS
+
+    (expect pdf.pages).to have_size 4
+    (expect (pdf.page 1).text).to be_empty
+    (expect (pdf.page 2).text).to include 'Book Title'
+    (expect (pdf.page 4).text).to be_empty
+  end
+
   it 'should create document with cover page only if front-cover-image is set and document has no content' do
     %w(article book).each do |doctype|
       pdf = to_pdf %(:front-cover-image: #{fixture_file 'cover.jpg', relative: true}), doctype: doctype

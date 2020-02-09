@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow page mode to be fully configured using pdf-page-mode attribute or page_mode theme key (#840)
 * allow background image to be specified using a data URI
 * allow running content image to be specified using a data URI
+* support creating empty front or back cover by assigning empty value to front-cover-image or back-cover-image attribute
 
 == 1.5.0.rc.3 (2020-02-04) - @mojavelinux
 

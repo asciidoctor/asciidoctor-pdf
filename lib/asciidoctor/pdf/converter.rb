@@ -2722,7 +2722,13 @@ module Asciidoctor
       def layout_cover_page doc, face
         # TODO: turn processing of attribute with inline image a utility function in Asciidoctor
         if (image_path = (doc.attr %(#{face}-cover-image)))
-          if image_path == '~'
+          if image_path.empty?
+            go_to_page page_count if face == :back
+            start_new_page_discretely
+            # NOTE open graphics state to prevent page from being reused
+            open_graphics_state if face == :front
+            return
+          elsif image_path == '~'
             image_path = nil
             @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress'
           elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
