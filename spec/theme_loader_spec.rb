@@ -592,6 +592,19 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.heading_font_color).to eql theme.base_font_color
     end
 
+    it 'should warn if variable reference cannot be resolved' do
+      (expect do
+        theme_data = SafeYAML.load <<~EOS
+        brand:
+          blue: '0000FF'
+        base:
+          font_color: $brand-red
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme.base_font_color).to eql '$BRAND'
+      end).to log_message severity: :WARN, message: %(unknown variable reference in PDF theme: $brand-red)
+    end
+
     it 'should interpolate variables in value' do
       theme_data = SafeYAML.load <<~EOS
       brand:
@@ -605,6 +618,19 @@ describe Asciidoctor::PDF::ThemeLoader do
       theme = subject.new.load theme_data
       (expect theme.base_font_family).to eql 'Noto Serif'
       (expect theme.heading_font_family).to eql 'Noto Sans'
+    end
+
+    it 'should warn if variable reference cannot be resolved when interpolating value' do
+      (expect do
+        theme_data = SafeYAML.load <<~EOS
+        brand:
+          font_family_name: Noto
+        base:
+          font_family: $brand-font-family-name $brand-font-family-variant
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme.base_font_family).to eql 'Noto $brand-font-family-variant'
+      end).to log_message severity: :WARN, message: %(unknown variable reference in PDF theme: $brand-font-family-variant)
     end
 
     it 'should interpolate computed value' do
