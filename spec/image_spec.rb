@@ -812,6 +812,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect to_file).to visually_match 'image-inline-fit-line.pdf'
     end
+
+    it 'should not alter character spacing of text in inline SVG image', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-inline-svg-with-text.pdf'
+      before image:svg-with-text.svg[width=200] after
+      EOS
+
+      (expect to_file).to visually_match 'image-inline-svg-with-text.pdf'
+    end
   end
 
   context 'Link' do
