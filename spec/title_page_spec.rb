@@ -117,6 +117,24 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images[0].hash[:Height]).to be 240
     end
 
+    it 'should use image format for title logo specified by format attribute' do
+      source_file = (dest_file = fixture_file 'square') + '.svg'
+      begin
+        FileUtils.cp source_file, dest_file
+        pdf = to_pdf <<~EOS, enable_footer: true, analyze: :rect
+        = Document Title
+        :title-page:
+        :title-logo-image: image:#{dest_file}[format=svg]
+        EOS
+        (expect pdf.rectangles).to have_size 1
+        rect = pdf.rectangles[0]
+        (expect rect[:width]).to eql 200.0
+        (expect rect[:height]).to eql 200.0
+      ensure
+        File.unlink dest_file
+      end
+    end
+
     it 'should position logo using value of top attribute on image macro in title-logo-image attribute' do
       pdf = to_pdf <<~'EOS', analyze: :image
       = Document Title
