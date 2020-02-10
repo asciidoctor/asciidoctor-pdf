@@ -18,11 +18,20 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
   end
 
   def find_font_for_this_glyph char, current_font, fallback_fonts_to_check, original_font = current_font
-    @document.font current_font
+    (doc = @document).font current_font
     if fallback_fonts_to_check.empty?
-      logger.warn %(Could not locate the character `#{char}' in the following fonts: #{([original_font].concat @fallback_fonts).join ', '}) if logger.info? && !@document.scratch?
+      if logger.info? && !doc.scratch?
+        fonts_checked = @fallback_fonts.dup.unshift original_font
+        missing_chars = (doc.instance_variable_defined? :@missing_chars) ?
+            (doc.instance_variable_get :@missing_chars) : (doc.instance_variable_set :@missing_chars, {})
+        previous_fonts_checked = (missing_chars[char] ||= [])
+        if previous_fonts_checked.empty? && !(previous_fonts_checked.include? fonts_checked)
+          logger.warn %(Could not locate the character `#{char}' in the following fonts: #{fonts_checked.join ', '})
+          previous_fonts_checked << fonts_checked
+        end
+      end
       current_font
-    elsif @document.font.glyph_present? char
+    elsif doc.font.glyph_present? char
       current_font
     else
       find_font_for_this_glyph char, fallback_fonts_to_check.shift, fallback_fonts_to_check, original_font

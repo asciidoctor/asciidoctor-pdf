@@ -52,11 +52,12 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-emoji.pdf'
     end
 
-    it 'should log warning if character cannot be found in primary or fallback font when fallback font is enabled' do
+    it 'should log warning once per character not found in any font when fallback font is used and verbose mode is enabled' do
       (expect do
-        input = %(Bitcoin (\u20bf) is a cryptocurrency.)
+        input_lines = [%(Bitcoin (\u20bf) is a cryptocurrency.), %(The currency is represented using the symbol \u20bf.)]
+        input = input_lines.join %(\n\n)
         pdf = to_pdf input, attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }, analyze: true
-        (expect pdf.lines).to eql [input]
+        (expect pdf.lines).to eql input_lines
       end).to log_message severity: :WARN, message: %(Could not locate the character `\u20bf' in the following fonts: Noto Serif, M+ 1p Fallback, Noto Emoji), using_log_level: :INFO
     end
   end
