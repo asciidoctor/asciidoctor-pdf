@@ -32,7 +32,7 @@ module Asciidoctor::PDF::FormattedText
         # NOTE prawn-svg messes with the cursor; use float to workaround
         # NOTE prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
         pdf.float do
-          image_obj.draw
+          pdf.character_spacing(data[:actual_character_spacing]) { image_obj.draw }
           image_obj.document.warnings.each do |img_warning|
             # NOTE shim logger can't be imported into a module, so use the one from the PDF document instead
             pdf.logger.warn %(problem encountered in image: #{data[:image_path]}; #{img_warning})
