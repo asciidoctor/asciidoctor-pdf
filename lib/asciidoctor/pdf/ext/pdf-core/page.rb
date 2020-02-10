@@ -43,7 +43,8 @@ class PDF::Core::Page
   # Note that this method may leave behind an orphaned background image.
   def reset_content
     unless content.stream.filtered_stream == InitialPageContent
-      resources[:XObject].clear
+      xobjects.clear
+      ext_gstates.clear
       new_content = document.state.store[document.ref({})]
       new_content << 'q' << ?\n
       content.replace new_content
