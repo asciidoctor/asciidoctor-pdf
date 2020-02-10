@@ -7,6 +7,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+* support table with multiple head rows & decorate accordingly (#1539)
 * draw background and border around entire delimited block with wrapped text that appears inside an AsciiDoc table cell (#820)
 * fix crash when document has PDF cover page and SVG background (#1546)
 * allow page mode to be fully configured using pdf-page-mode attribute or page_mode theme key (#840)

@@ -25,6 +25,8 @@ require 'pathname' unless defined? Pathname
 require 'pdf/inspector'
 require 'socket'
 
+Asciidoctor.autoload :Extensions, 'asciidoctor/extensions' unless defined? Asciidoctor::LoggerManager
+
 # NOTE fix invalid bits for PNG in Gmagick
 Gmagick.prepend (Module.new do
   def initialize image_blob

@@ -1882,7 +1882,7 @@ module Asciidoctor
         # TODO: we could skip a lot of the logic below when num_rows == 0
         num_rows = node.attr 'rowcount'
         num_cols = node.columns.size
-        table_header = false
+        table_header_size = false
         theme = @theme
 
         tbl_bg_color = resolve_theme_color :table_background_color
@@ -1905,8 +1905,14 @@ module Asciidoctor
         table_data = []
         theme_font :table do
           head_rows = node.rows[:head]
+          body_rows = node.rows[:body]
+          #if (hrows = node.attr 'hrows', false, nil) && (shift_rows = hrows.to_i - head_rows.size) > 0
+          #  head_rows = head_rows.dup
+          #  body_rows = body_rows.dup
+          #  shift_rows.times { head_rows << body_rows.shift unless body_rows.empty? }
+          #end
           theme_font :table_head do
-            table_header = true
+            table_header_size = head_rows.size
             head_font_info = font_info
             head_line_metrics = calc_line_metrics theme.base_line_height
             head_cell_padding = theme.table_head_cell_padding || theme.table_cell_padding
@@ -1949,7 +1955,7 @@ module Asciidoctor
             text_color: @font_color,
           }
           body_cell_line_metrics = calc_line_metrics theme.base_line_height
-          (node.rows[:body] + node.rows[:foot]).each do |row|
+          (body_rows + node.rows[:foot]).each do |row|
             table_data << (row.map do |cell|
               cell_data = base_cell_data.merge \
                 colspan: cell.colspan || 1,
@@ -2065,7 +2071,7 @@ module Asciidoctor
         table_border_color = theme.table_border_color || theme.table_grid_color || theme.base_border_color
         table_border_style = (theme.table_border_style || :solid).to_sym
         table_border_width = theme.table_border_width
-        if table_header
+        if table_header_size
           head_border_bottom_color = theme.table_head_border_bottom_color || table_border_color
           head_border_bottom_style = (theme.table_head_border_bottom_style || table_border_style).to_sym
           head_border_bottom_width = theme.table_head_border_bottom_width || table_border_width
@@ -2122,7 +2128,7 @@ module Asciidoctor
         caption_max_width = theme.table_caption_max_width || 'fit-content'
 
         table_settings = {
-          header: table_header,
+          header: table_header_size,
           # NOTE: position is handled by this method
           position: :left,
           cell_style: {
@@ -2168,28 +2174,26 @@ module Asciidoctor
             end
           end
           if grid == 'none' && frame == 'none'
-            if table_header
-              rows(0).tap do |r|
-                r.border_bottom_color = head_border_bottom_color
-                r.border_bottom_line = head_border_bottom_style
-                r.border_bottom_width = head_border_bottom_width
-              end
-            end
+            rows(table_header_size).tap do |r|
+              r.border_bottom_color = head_border_bottom_color
+              r.border_bottom_line = head_border_bottom_style
+              r.border_bottom_width = head_border_bottom_width
+            end if table_header_size
           else
             # apply the grid setting first across all cells
             cells.border_width = [border_width[:rows], border_width[:cols], border_width[:rows], border_width[:cols]]
 
-            if table_header
-              rows(0).tap do |r|
+            if table_header_size
+              rows(table_header_size - 1).tap do |r|
                 r.border_bottom_color = head_border_bottom_color
                 r.border_bottom_line = head_border_bottom_style
                 r.border_bottom_width = head_border_bottom_width
               end
-              rows(1).tap do |r|
+              rows(table_header_size).tap do |r|
                 r.border_top_color = head_border_bottom_color
                 r.border_top_line = head_border_bottom_style
                 r.border_top_width = head_border_bottom_width
-              end if num_rows > 1
+              end if num_rows > table_header_size
             end
 
             # top edge of table
