@@ -521,7 +521,8 @@ module Asciidoctor
         end
         if (bg_image = @page_bg_image[page_side])
           tare = true
-          canvas { image bg_image[0], ({ position: :center, vposition: :center }.merge bg_image[1]) }
+          # NOTE: float is necessary since prawn-svg may mess with cursor position
+          float { canvas { image bg_image[0], ({ position: :center, vposition: :center }.merge bg_image[1]) } }
         end
         page.tare_content_stream if tare
       end

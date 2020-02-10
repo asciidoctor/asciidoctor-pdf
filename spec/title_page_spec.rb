@@ -240,7 +240,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images_by_page[2..-1].map {|it| it[0].data }.uniq).to have_size 1
     end
 
-    it 'should not create extra blank page when document has cover page and page background image' do
+    it 'should not create extra blank page when document has cover page and raster page background image' do
       image_data = File.binread fixture_file 'cover.jpg'
 
       pdf = to_pdf <<~'EOS'
@@ -262,6 +262,21 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images_by_page[1][0].data).to eql image_data
       cover_page_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
       (expect (cover_page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
+    end
+
+    it 'should not create extra blank page when document has cover page and SVG page background image', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'title-page-background-image-svg-with-cover.pdf'
+      = The Amazing
+      Author Name
+      :doctype: book
+      :front-cover-image: image:blue-letter.pdf[]
+      :title-page-background-image: image:example-watermark.svg[]
+      :page-background-image: image:watermark.svg[]
+
+      content
+      EOS
+
+      (expect to_file).to visually_match 'title-page-background-image-svg-with-cover.pdf'
     end
 
     it 'should be able to set size and position of title page background image', visual: true do
