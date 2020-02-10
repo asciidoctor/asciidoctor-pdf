@@ -280,6 +280,32 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
+    it 'should map generic font family to AFM font by default' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      image::svg-with-generic-font.svg[]
+      EOS
+
+      text = pdf.find_text 'This text uses the serif font.'
+      (expect text).to have_size 1
+      (expect text[0][:font_name]).to eql 'Times-Roman'
+      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_color]).to eql 'AA0000'
+    end
+
+    it 'should allow generic font family to be mapped in font catalog' do
+      pdf_theme = build_pdf_theme
+      pdf_theme[:font_catalog]['serif'] = { 'normal' => pdf_theme[:font_catalog]['Noto Serif']['normal'] }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      image::svg-with-generic-font.svg[]
+      EOS
+
+      text = pdf.find_text 'This text uses the serif font.'
+      (expect text).to have_size 1
+      (expect text[0][:font_name]).to eql 'NotoSerif'
+      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_color]).to eql 'AA0000'
+    end
+
     it 'should replace unrecognized font family in SVG with SVG fallback font family if specified in theme' do
       [true, false].each do |block|
         pdf = to_pdf <<~EOS, pdf_theme: { svg_fallback_font_family: 'Times-Roman' }, analyze: true
