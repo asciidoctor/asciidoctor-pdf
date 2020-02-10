@@ -1787,6 +1787,14 @@ module Asciidoctor
 
       alias convert_listing convert_listing_or_literal
       alias convert_literal convert_listing_or_literal
+
+      def convert_pass node
+        node = node.dup
+        (subs = node.subs.dup).unshift :specialcharacters
+        node.instance_variable_set :@subs, subs.uniq
+        convert_listing_or_literal node
+      end
+
       alias convert_stem convert_listing_or_literal
 
       # Extract callout marks from string, indexed by 0-based line number

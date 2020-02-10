@@ -14,6 +14,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 * allow running content image to be specified using a data URI
 * support creating empty front or back cover by assigning empty value to front-cover-image or back-cover-image attribute
 * only warn once per missing character (#1545)
+* render pass block as listing block, using raw source as contents
 
 == 1.5.0.rc.3 (2020-02-04) - @mojavelinux
 

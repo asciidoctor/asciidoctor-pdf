@@ -205,16 +205,4 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     bold_text = (pdf.find_text '99')[0]
     (expect bold_text[:font_name]).to eql 'mplus1mn-bold'
   end
-
-  it 'should render stem as literal block if stem extension not present' do
-    pdf = to_pdf <<~'EOS', analyze: true
-    [stem]
-    ++++
-    sig = enc(H(D), s)
-    ++++
-    EOS
-
-    equation_text = (pdf.find_text 'sig = enc(H(D), s)')[0]
-    (expect equation_text[:font_name]).to eql 'mplus1mn-regular'
-  end
 end
