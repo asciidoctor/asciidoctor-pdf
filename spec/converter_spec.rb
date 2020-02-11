@@ -14,7 +14,7 @@ describe Asciidoctor::PDF::Converter do
 
   describe '.register_for' do
     it 'should self register to handle pdf backend' do
-      registered = asciidoctor_2_or_better? ? (Asciidoctor::Converter.for 'pdf') : (Asciidoctor::Converter::Factory.resolve 'pdf')
+      registered = Asciidoctor::Converter.for 'pdf'
       (expect registered).to be described_class
     end
 
@@ -70,7 +70,7 @@ describe Asciidoctor::PDF::Converter do
       (expect doc.attr? 'data-uri').to be true
       doc.convert
       (expect doc.attr? 'data-uri').to be true
-    end if asciidoctor_2_or_better?
+    end
 
     it 'should ignore data-uri attribute entry in document' do
       doc = Asciidoctor.load <<~'EOS', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
@@ -81,7 +81,7 @@ describe Asciidoctor::PDF::Converter do
       (expect doc.attr? 'data-uri').to be true
       doc.convert
       (expect doc.attr? 'data-uri').to be true
-    end if asciidoctor_2_or_better?
+    end
 
     context 'theme' do
       it 'should apply the theme at the path specified by pdf-theme' do
@@ -195,7 +195,7 @@ describe Asciidoctor::PDF::Converter do
       end
 
       it 'should convert background position to options' do
-        converter = asciidoctor_2_or_better? ? (Asciidoctor::Converter.create 'pdf') : (Asciidoctor::Converter::Factory.create 'pdf')
+        converter = Asciidoctor::Converter.create 'pdf'
         {
           'center' => { position: :center, vposition: :center },
           'top' => { position: :center, vposition: :top },

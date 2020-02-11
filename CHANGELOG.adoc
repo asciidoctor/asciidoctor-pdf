@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+Compliance::
+
+* Drop support for versions of Asciidoctor < 2
+
 == 1.5.0 (2020-02-11) - @mojavelinux
 
 * support table with multiple head rows & decorate accordingly (#1539)

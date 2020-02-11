@@ -148,7 +148,7 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
           ENV.delete 'SOURCE_DATE_EPOCH'
         end
       end
-    end if asciidoctor_1_5_7_or_better?
+    end
   end
 
   context 'document title' do

@@ -9,13 +9,6 @@ elsif ENV['COVERAGE'] == 'true'
   require 'simplecov'
 end
 
-# TODO: remove once support for Ruby 2.3 is dropped
-if (ENV.key? 'APPVEYOR') && (RbConfig::CONFIG['host_os'].include? 'mingw') && (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
-  require 'openssl'
-  OpenSSL::SSL.send :remove_const, :VERIFY_PEER
-  OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
-end
-
 require 'asciidoctor/pdf'
 require 'base64'
 require 'chunky_png'
@@ -24,8 +17,6 @@ require 'open3' unless defined? Open3
 require 'pathname' unless defined? Pathname
 require 'pdf/inspector'
 require 'socket'
-
-Asciidoctor.autoload :Extensions, 'asciidoctor/extensions' unless defined? Asciidoctor::LoggerManager
 
 # NOTE fix invalid bits for PNG in Gmagick
 Gmagick.prepend (Module.new do
@@ -289,14 +280,6 @@ RSpec.configure do |config|
     FileUtils.rm_r output_dir, force: true, secure: true unless (ENV.key? 'DEBUG') || config.reporter.failed_examples.find {|it| it.metadata[:visual] }
   end
 
-  def asciidoctor_2_or_better?
-    defined? Asciidoctor::Converter.for
-  end
-
-  def asciidoctor_1_5_7_or_better?
-    defined? Asciidoctor::LoggerManager
-  end
-
   def bin_script name, opts = {}
     bin_path = Gem.bin_path (opts.fetch :gem, 'asciidoctor-pdf'), name
     windows? ? [Gem.ruby, bin_path] : bin_path
@@ -504,24 +487,13 @@ RSpec.configure do |config|
   end
 
   def with_memory_logger level = nil
-    if asciidoctor_1_5_7_or_better?
-      old_logger = Asciidoctor::LoggerManager.logger
-      logger = Asciidoctor::MemoryLogger.new
-      logger.level = level if level
-      begin
-        Asciidoctor::LoggerManager.logger = logger
-        yield logger
-      ensure
-        Asciidoctor::LoggerManager.logger = old_logger
-      end
-    else
-      old_stderr = $stderr
-      $stderr = StringIO.new
-      begin
-        yield
-      ensure
-        $stderr = old_stderr
-      end
+    old_logger, logger = Asciidoctor::LoggerManager.logger, Asciidoctor::MemoryLogger.new
+    logger.level = level if level
+    begin
+      Asciidoctor::LoggerManager.logger = logger
+      yield logger
+    ensure
+      Asciidoctor::LoggerManager.logger = old_logger
     end
   end
 

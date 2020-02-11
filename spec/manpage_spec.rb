@@ -24,7 +24,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
     *-v*:: Prints the version.
     EOS
 
-    expected_name_title = asciidoctor_1_5_7_or_better? ? 'Name' : '1. NAME'
+    expected_name_title = 'Name'
     name_title_text = (pdf.find_text expected_name_title)[0]
     (expect name_title_text).not_to be_nil
     (expect name_title_text[:font_size]).to be 22
@@ -76,5 +76,5 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
     name_title_text = (pdf.find_text 'NAME')[0]
     (expect name_title_text).not_to be_nil
     (expect name_title_text[:font_size]).to be 22
-  end if asciidoctor_1_5_7_or_better?
+  end
 end
