@@ -69,13 +69,16 @@ But don't miss the <<Highlights>> and <<Known Limitations>> sections to understa
 
 * Direct AsciiDoc to PDF conversion
 * <<docs/theming-guide.adoc#,Configuration-driven theme (style and layout)>>
-* Full SVG support
+* Custom (TTF) fonts
+* Full SVG support (thanks to https://github.com/mogest/prawn-svg[prawn-svg])
 * PDF document outline (i.e., bookmarks)
 * Title page
 * Table of contents page(s)
-* Document metadata (title, authors, subject, keywords, etc)
+* Document metadata (title, authors, subject, keywords, etc.)
+* Configurable page size (e.g., A4, Letter, Legal, etc)
 * Internal cross reference links
-* Syntax highlighting with Rouge, Pygments, or CodeRay
+* Syntax highlighting with Rouge (preferred), Pygments, or CodeRay
+* Cover pages
 * Page background color or page background image with named scaling
 * Page numbering
 * Double-sided (aka prepress) printing mode (i.e., margins alternate on recto and verso pages)
@@ -85,11 +88,10 @@ But don't miss the <<Highlights>> and <<Known Limitations>> sections to understa
 * Autofit verbatim blocks (as permitted by base_font_size_min setting)
 * Table border settings honored
 * Font-based icons
-* Custom (TTF) fonts
 * Auto-generated index
 * Automatic hyphenation (when enabled)
-* Compression / optimization of output file
 * Permissive line breaking for CJK languages
+* Compression / optimization of output file
 
 == Known Limitations
 
@@ -104,6 +106,7 @@ But don't miss the <<Highlights>> and <<Known Limitations>> sections to understa
 * Prawn does not support double-wide box drawing glyphs correctly, so box drawings aren't aligned properly in verbatim blocks (see https://github.com/prawnpdf/prawn/issues/1002[prawn#1002]
 * Orphan / widow support is limited; a page break can occur between a section title and its section content, a table caption and the caption, etc.; use a manual page break to avoid
 * If a no-break hyphen is surrounded by formatted text on both sides (or is formatted individually), it will not prevent a line break
+* Images cannot float
 
 == Prerequisites
 
@@ -136,13 +139,10 @@ ifndef::env-site[You can also <<development,run the code from source>> if you wa
 
 === Install the Published Gem
 
-{project-name} is published to RubyGems.org as a pre-release.
-Since it's in pre-release, you have to specify the `--pre` flag when installing using the `gem` command.
-
 To install {project-name}, first make sure you have satisfied the <<Prerequisites,prerequisites>>.
 Then, install the gem from RubyGems.org using the following command:
 
- $ gem install asciidoctor-pdf --pre
+ $ gem install asciidoctor-pdf
 
 ==== Installation Troubleshooting
 
