@@ -45,7 +45,7 @@ image:https://img.shields.io/badge/license-MIT-blue.svg[MIT License, link=#copyr
 endif::[]
 
 Asciidoctor PDF is a native PDF converter for AsciiDoc.
-It bypasses the requirement to generate an interim format such as DocBook, Apache FO, or LaTeX.
+It bypasses the requirement to generate an intermediary format such as DocBook, Apache FO, or LaTeX.
 Instead, you can use this extension to convert directly from AsciiDoc to PDF.
 Its aim is to take the pain out of creating PDF documents from AsciiDoc.
 
@@ -54,16 +54,17 @@ toc::[]
 == Overview
 
 {project-name} is an Asciidoctor extension that converts an AsciiDoc document directly to a PDF document.
-The style and layout of the PDF is controlled by a specialized theme file.
-To the degree possible, this converter supports all the features of AsciiDoc supported by the built-in converters, but there are limits to what Prawn supports and what is possible with PDF in general.
+The style and layout of the PDF is controlled by a dedicated theme file.
+To the degree possible, this converter supports all the features of AsciiDoc that are supported by the built-in converters.
+However, there are <<known-limitations,certain limits>> imposed by the PDF format and the PDF library this extension uses.
 
-Under the covers, {project-name} uses the Prawn gem (and its extensions, such as prawn-svg and prawn-table) to generate the PDF document.
+Under the covers, {project-name} uses the Prawn gem and its extensions (e.g., prawn-svg and prawn-table) to generate the PDF document.
 {url-prawn}[Prawn] is a general purpose PDF generator for Ruby that features high-level APIs for common needs like setting up the page and inserting images and low-level APIs for positioning and rendering text and graphics.
 
 Prawn takes the pain out of creating (basic) PDF documents.
 Likewise, {project-name} takes the pain out of creating PDF documents _directly from AsciiDoc_.
 Skip ahead to <<getting-started,Getting started>> to start putting {project-name} use.
-But don't miss the <<Highlights>> and <<Known Limitations>> sections to understand what's possible.
+But don't miss the <<Highlights>> to get a preview of what's possible.
 
 == Highlights
 
