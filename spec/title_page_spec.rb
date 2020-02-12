@@ -358,12 +358,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should allow theme to customize style of link in authors line using custom role' do
-      attributes = asciidoctor_1_5_7_or_better? ? {} : { 'linkattrs' => '' }
       pdf_theme = {
         role_author_font_color: '00AA00',
         title_page_authors_content: '{url}[{author},role=author]',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: attributes, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       = Document Title
       Junior Writer <https://github.com/ghost>
       :doctype: book

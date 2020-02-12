@@ -38,9 +38,9 @@ jobs:
   - rvm: 2.5.7
   - rvm: 2.4.9
   - rvm: &oldest_ruby 2.3.8
-  - rvm: *oldest_ruby
-    env: ASCIIDOCTOR_VERSION=1.5.3
-  - rvm: *oldest_ruby
+  #- rvm: *oldest_ruby
+  #  env: ASCIIDOCTOR_VERSION=2.0.10
+  - rvm: *default_ruby
     env: ROUGE_VERSION='~> 2.0.0'
   - stage: release gem
     rvm: *default_ruby

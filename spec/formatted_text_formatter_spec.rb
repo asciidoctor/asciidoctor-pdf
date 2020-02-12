@@ -495,8 +495,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         link_font_color: '0000AA',
         role_hlink_font_color: '00AA00',
       }
-      attribute_overrides = asciidoctor_1_5_7_or_better? ? {} : { 'linkattrs' => '' }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: attribute_overrides, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       == https://asciidoctor.org[Asciidoctor,role=hlink]
       EOS
 

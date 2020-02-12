@@ -134,11 +134,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       (expect annotations[0][:Dest]).to eql 'first-item'
-      if asciidoctor_1_5_7_or_better?
-        (expect (pdf.page 1).text).to include 'first item'
-      else
-        (expect (pdf.page 1).text).to include '[first-item]'
-      end
+      (expect (pdf.page 1).text).to include 'first item'
     end
 
     it 'should create reference to a table cell with an anchor' do
@@ -157,11 +153,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       (expect annotations[0][:Dest]).to eql 'first-cell'
-      if asciidoctor_1_5_7_or_better?
-        (expect (pdf.page 1).text).to include 'first cell'
-      else
-        (expect (pdf.page 1).text).to include '[first-cell]'
-      end
+      (expect (pdf.page 1).text).to include 'first cell'
     end
 
     it 'should show ID enclosed in square brackets if reference cannot be resolved' do
@@ -224,7 +216,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       EOS
 
       (expect pdf.lines).to include 'Now you are ready for Part II!'
-    end if asciidoctor_1_5_7_or_better?
+    end
 
     it 'should refer to part by name when xrefstyle is basic' do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -270,7 +262,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       EOS
 
       (expect pdf.lines).to include 'Now you are ready for Part II, “Advanced”!'
-    end if asciidoctor_1_5_7_or_better?
+    end
 
     it 'should refer to chapter by label and number when xrefstyle is short' do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -285,7 +277,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       EOS
 
       (expect pdf.lines).to include 'Start with Chapter 1.'
-    end if asciidoctor_1_5_7_or_better?
+    end
 
     it 'should refer to chapter title and number when xrefstyle is basic' do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -315,7 +307,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       EOS
 
       (expect pdf.lines).to include 'Start with Chapter 1, A.'
-    end if asciidoctor_1_5_7_or_better?
+    end
 
     it 'should use xrefstyle specified on xref macro' do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -330,7 +322,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       EOS
 
       (expect pdf.lines).to include 'Start with Chapter 1, A.'
-    end if asciidoctor_1_5_7_or_better?
+    end
 
     it 'should refer to image with title by title by default' do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -342,7 +334,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       EOS
 
       (expect pdf.lines[0]).to eql 'See Title of Image.'
-    end if asciidoctor_1_5_7_or_better?
+    end
 
     it 'should refer to image with title by reference signifier, number, and title when xrefstyle is full' do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -356,7 +348,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       EOS
 
       (expect pdf.lines[0]).to eql 'See Figure 1, “Title of Image”.'
-    end if asciidoctor_1_5_7_or_better?
+    end
 
     it 'should refer to image with title by reference signifier and number when xrefstyle is short' do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -370,7 +362,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       EOS
 
       (expect pdf.lines[0]).to eql 'See Figure 1.'
-    end if asciidoctor_1_5_7_or_better?
+    end
 
     it 'should show ID of reference enclosed in square brackets if reference has no xreftext' do
       pdf = to_pdf <<~'EOS'

@@ -85,9 +85,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Width' do
-    subject do
-      asciidoctor_2_or_better? ? (Asciidoctor::Converter.create 'pdf') : (Asciidoctor::Converter::Factory.create 'pdf')
-    end
+    subject { Asciidoctor::Converter.create 'pdf' }
 
     it 'should resolve pdfwidth in % to pt' do
       attrs = { 'pdfwidth' => '25%' }
@@ -794,7 +792,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       |===
       EOS
 
-      (expect to_file).to visually_match %(image-wrap-inline#{asciidoctor_1_5_7_or_better? ? '' : '-legacy'}.pdf)
+      (expect to_file).to visually_match 'image-wrap-inline.pdf'
     end
 
     it 'should increase line height if height if image height is more than 1.5x line height', visual: true do

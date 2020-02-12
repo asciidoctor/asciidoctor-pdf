@@ -32,7 +32,6 @@ module Asciidoctor
       PygmentsRequirePath = ::File.join __dir__, 'ext/pygments'
       OptimizerRequirePath = ::File.join __dir__, 'optimizer'
 
-      AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
       AdmonitionIcons = {
         caution: { name: 'fas-fire', stroke_color: 'BF3400', size: 24 },
         important: { name: 'fas-exclamation-circle', stroke_color: 'BF0000', size: 24 },
@@ -125,10 +124,6 @@ module Asciidoctor
           # NOTE enabling data-uri forces Asciidoctor Diagram to produce absolute image paths
           doc.attributes['data-uri'] = ((doc.instance_variable_get :@attribute_overrides) || {})['data-uri'] = ''
         end
-        @capabilities = {
-          special_sectnums: AsciidoctorVersion >= (::Gem::Version.create '1.5.7'),
-          syntax_highlighter: AsciidoctorVersion >= (::Gem::Version.create '2.0.0'),
-        }
         @initial_instance_variables = [:@initial_instance_variables] + instance_variables
       end
 
@@ -164,9 +159,6 @@ module Asciidoctor
         init_pdf doc
         # set default value for pagenums if not otherwise set
         doc.attributes['pagenums'] = '' unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
-        if (idx_sect = doc.sections.find {|candidate| candidate.sectname == 'index' }) && idx_sect.numbered
-          idx_sect.numbered = false
-        end unless @capabilities[:special_sectnums]
         #assign_missing_section_ids doc
 
         # promote anonymous preface (defined using preamble block) to preface section
@@ -1249,7 +1241,7 @@ module Asciidoctor
         line_metrics = calc_line_metrics @theme.base_line_height
         complex = false
         # ...or if we want to give all items in the list the same treatment
-        #complex = node.items.find(&:complex?) ? true : false
+        #complex = node.items.find(&:compound?) ? true : false
         if (node.context == :ulist && !@list_bullets[-1]) || (node.context == :olist && !@list_numerals[-1])
           if node.style == 'unstyled'
             # unstyled takes away all indentation
@@ -1284,7 +1276,7 @@ module Asciidoctor
         marker_style[:line_height] = @theme.base_line_height
         case (list_type = list.context)
         when :ulist
-          complex = node.complex?
+          complex = node.compound?
           if (marker_type = @list_bullets[-1])
             if marker_type == :checkbox
               # QUESTION should we remove marker indent if not a checkbox?
@@ -1300,7 +1292,7 @@ module Asciidoctor
             end if marker
           end
         when :olist
-          complex = node.complex?
+          complex = node.compound?
           if (index = @list_numerals.pop)
             if index == ''
               marker = ''
@@ -1312,11 +1304,11 @@ module Asciidoctor
           end
         when :dlist
           # NOTE: list.style is 'qanda'
-          complex = node[1]&.complex?
+          complex = node[1]&.compound?
           @list_numerals << (index = @list_numerals.pop).next
           marker = %(#{index}.)
         else
-          complex = node.complex?
+          complex = node.compound?
           logger.warn %(unknown list type #{list_type.inspect}) unless scratch?
           marker = @theme.ulist_marker_disc_content || Bullets[:disc]
         end
@@ -1626,9 +1618,7 @@ module Asciidoctor
         add_dest_for_block node if node.id
 
         # HACK: disable built-in syntax highlighter; must be done before calling node.content!
-        if node.style == 'source' && (highlighter = @capabilities[:syntax_highlighter] ?
-            (syntax_hl = node.document.syntax_highlighter) && syntax_hl.highlight? && syntax_hl.name :
-            (highlighter = node.document.attributes['source-highlighter']) && (SourceHighlighters.include? highlighter) && highlighter)
+        if node.style == 'source' && (highlighter = (syntax_hl = node.document.syntax_highlighter) && syntax_hl.highlight? && syntax_hl.name)
           case highlighter
           when 'coderay'
             unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
@@ -2111,10 +2101,6 @@ module Asciidoctor
         else
           table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
           column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
-          # NOTE: until Asciidoctor 1.5.4, colpcwidth values didn't always add up to 100%; use last column to compensate
-          unless column_widths.empty? || (width_delta = table_width - column_widths.sum) == 0
-            column_widths[-1] += width_delta
-          end
         end
 
         if ((alignment = node.attr 'align', nil, false) && (BlockAlignmentNames.include? alignment)) ||
@@ -2364,13 +2350,9 @@ module Asciidoctor
             %(<a href="#{target}">#{node.text || path}</a>)
           elsif (refid = node.attributes['refid'])
             unless (text = node.text)
-              if (refs = doc.catalog[:refs])
-                if ::Asciidoctor::AbstractNode === (ref = refs[refid])
-                  text = ref.xreftext node.attr 'xrefstyle', nil, true
-                end
-              else
-                # Asciidoctor < 1.5.6
-                text = doc.catalog[:ids][refid]
+              refs = doc.catalog[:refs]
+              if ::Asciidoctor::AbstractNode === (ref = refs[refid])
+                text = ref.xreftext node.attr 'xrefstyle', nil, true
               end
             end
             %(<a anchor="#{derive_anchor_from_id refid}">#{text || "[#{refid}]"}</a>).gsub ']', '&#93;'
@@ -2380,18 +2362,14 @@ module Asciidoctor
         when :ref
           # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
           # NOTE id is used instead of target starting in Asciidoctor 2.0.0
-          %(<a id="#{target || node.id}">#{DummyText}</a>)
+          %(<a id="#{node.id}">#{DummyText}</a>)
         when :bibref
           # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
           # NOTE technically node.text should be node.reftext, but subs have already been applied to text
           # NOTE reftext is no longer enclosed in [] starting in Asciidoctor 2.0.0
           # NOTE id is used instead of target starting in Asciidoctor 2.0.0
-          if (reftext = node.reftext)
-            reftext = %([#{reftext}]) unless reftext.start_with? '['
-          else
-            reftext = %([#{target || node.id}])
-          end
-          %(<a id="#{target || node.id}">#{DummyText}</a>#{reftext})
+          reftext = (reftext = node.reftext) ? %([#{reftext}]) : %([#{node.id}])
+          %(<a id="#{node.id}">#{DummyText}</a>#{reftext})
         else
           logger.warn %(unknown anchor type: #{node.type.inspect}) unless scratch?
         end

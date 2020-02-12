@@ -306,7 +306,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     titles = (pdf.find_text font_size: 27).map {|it| it[:string] }.reject {|it| it == 'Book Title' }
     (expect titles).to eql ['Part I: A', 'Part II: B']
-  end if asciidoctor_2_or_better?
+  end
 
   it 'should use specified part signifier if part numbering is enabled and part-signifier attribute is set' do
     pdf = to_pdf <<~'EOS', analyze: true
@@ -327,7 +327,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     titles = (pdf.find_text font_size: 27).map {|it| it[:string] }.reject {|it| it == 'Book Title' }
     (expect titles).to eql ['P I: A', 'P II: B']
-  end if asciidoctor_2_or_better?
+  end
 
   it 'should add default chapter signifier to chapter title if section numbering is enabled' do
     pdf = to_pdf <<~'EOS', analyze: true
@@ -422,8 +422,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 		content
     EOS
 
-    expected_text = asciidoctor_1_5_7_or_better? ? 'A.1. Appendix Subsection' : '1.1. Appendix Subsection'
-    (expect pdf.lines).to include expected_text
+    (expect pdf.lines).to include 'A.1. Appendix Subsection'
   end
 
   it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is not set' do

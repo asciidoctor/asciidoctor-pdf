@@ -83,7 +83,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       (expect pdf.lines.uniq).to have_size 6
-    end if asciidoctor_2_or_better?
+    end
 
     it 'should allow theme to control table stripe color using table_body_stripe_background_color key', visual: true do
       pdf_theme = {
@@ -114,7 +114,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       (expect to_file).to visually_match 'table-stripes-odd.pdf'
-    end if asciidoctor_1_5_7_or_better?
+    end
 
     it 'should apply thicker bottom border to table head row' do
       pdf = to_pdf <<~'EOS', analyze: :line
@@ -148,11 +148,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
           table.rows[:head] << table.rows[:body].shift
         end
       end
-      if asciidoctor_1_5_7_or_better?
-        opts = { extension_registry: Asciidoctor::Extensions.create { tree_processor(&tree_processor_impl) } }
-      else
-        opts = { extensions_registry: Asciidoctor::Extensions.build_registry { treeprocessor(&tree_processor_impl) } }
-      end
+      opts = { extension_registry: Asciidoctor::Extensions.create { tree_processor(&tree_processor_impl) } }
       pdf = to_pdf <<~'EOS', (opts.merge analyze: :line)
       [%header,frame=none,grid=rows]
       |===
@@ -203,11 +199,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
           table.rows[:head] << table.rows[:body].shift
         end
       end
-      if asciidoctor_1_5_7_or_better?
-        opts = { extension_registry: Asciidoctor::Extensions.create { tree_processor(&tree_processor_impl) } }
-      else
-        opts = { extensions_registry: Asciidoctor::Extensions.build_registry { treeprocessor(&tree_processor_impl) } }
-      end
+      opts = { extension_registry: Asciidoctor::Extensions.create { tree_processor(&tree_processor_impl) } }
       pdf = to_pdf <<~EOS, (opts.merge analyze: true)
       [%header]
       |===
@@ -495,7 +487,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect unspecified_text[:x].floor).to be 476
       ok_text = (pdf.find_text 'OK')[0]
       (expect ok_text[:x].floor).to be 529
-    end if asciidoctor_1_5_7_or_better?
+    end
 
     it 'should extend width of table to fit content in autowidth column when autowidth option is set on table' do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -513,7 +505,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect unspecified_text[:x].floor).to be 81
       ok_text = (pdf.find_text 'OK')[0]
       (expect ok_text[:x].floor).to be 135
-    end if asciidoctor_1_5_7_or_better?
+    end
 
     it 'should account for line metrics in cell padding' do
       input = <<~'EOS'
@@ -886,17 +878,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      if asciidoctor_2_or_better?
-        foobar_text = (pdf.find_text 'foo bar')[0]
-        (expect foobar_text).not_to be_nil
-      else
-        foo_text = (pdf.find_text 'foo')[0]
-        bar_text = (pdf.find_text %(\u00a0 bar))[0]
-        (expect foo_text).not_to be_nil
-        (expect bar_text).not_to be_nil
-        (expect foo_text[:x]).to eql bar_text[:x]
-        (expect foo_text[:y]).to be > bar_text[:y]
-      end
+      foobar_text = (pdf.find_text 'foo bar')[0]
+      (expect foobar_text).not_to be_nil
     end
   end
 
@@ -1055,28 +1038,6 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect b_texts[0][:x]).to eql b_texts[1][:x]
     end
   end
-
-  context 'Verse table cell' do
-    it 'should apply normal subs and preserve indentation' do
-      pdf = to_pdf <<~'EOS', analyze: true
-      |===
-      v|
-      here
-        we
-          go
-      *again*
-      |===
-      EOS
-
-      lines = pdf.lines
-      (expect lines).to have_size 4
-      (expect lines[0]).to eql 'here'
-      (expect lines[1]).to eql %(\u00a0 we)
-      (expect lines[2]).to eql %(\u00a0   go)
-      (expect lines[3]).to eql 'again'
-      (expect (pdf.find_text 'again')[0][:font_name]).to eql 'NotoSerif-Bold'
-    end
-  end unless asciidoctor_2_or_better?
 
   context 'Caption' do
     it 'should add title as caption above table by default' do

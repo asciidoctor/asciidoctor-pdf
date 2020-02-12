@@ -111,7 +111,7 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 
 == Prerequisites
 
-All that's needed is Ruby 2.3 or better and a few Ruby gems (including at least Asciidoctor 1.5.3), which we explain how to install in the next section.
+All that's needed is Ruby 2.3 or better and a few Ruby gems (including at least Asciidoctor 2.0.0), which we explain how to install in the next section.
 
 To check if you have Ruby available, use the `ruby` command to query the version installed:
 

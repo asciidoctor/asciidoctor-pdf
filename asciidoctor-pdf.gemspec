@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   #s.test_files = files.grep %r/^(?:test|spec|feature)\/.*$/
 
-  s.add_runtime_dependency 'asciidoctor', '>= 1.5.3', '< 3.0.0'
+  s.add_runtime_dependency 'asciidoctor', '~> 2.0'
   s.add_runtime_dependency 'prawn', '~> 2.2.0'
   # NOTE ttfunk 1.6 generates TT instructions ghostscript cannot process, so lock the version of ttfunk
   s.add_runtime_dependency 'ttfunk', ['~> 1.5.0'], ['>= 1.5.1']
