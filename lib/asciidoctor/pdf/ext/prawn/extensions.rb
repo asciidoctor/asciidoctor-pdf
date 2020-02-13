@@ -556,6 +556,8 @@ module Asciidoctor
         end
       end
 
+      alias inflate_margin inflate_padding
+
       # Stretch the current bounds to the left and right edges of the current page
       # while yielding the specified block if the verdict argument is true.
       # Otherwise, simply yield the specified block.

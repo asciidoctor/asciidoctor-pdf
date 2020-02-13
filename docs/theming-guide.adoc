@@ -4388,7 +4388,7 @@ If value is not specified, dot leaders are shown for all levels.
 The keys in this category control the arrangement and style of running header and footer content.
 Please note that the running content will _not_ be used unless a) the periphery (header or footer) is configured and b) the height key for the periphery is assigned a value.
 
-CAUTION: If the height of the running content periphery is larger than the page margin, the running content will cover the main content.
+CAUTION: If the height of the running content periphery is taller than the page margin, the running content will cover the main content.
 To avoid this problem, reduce the height of the running content periphery or make the page margin on that side larger.
 
 [cols="3,4,5l"]
@@ -4469,6 +4469,18 @@ To avoid this problem, reduce the height of the running content periphery or mak
 |header:
   line-height: 1.2
 
+|margin
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom (n/a),left]>> +
+(default: [0, inherit])
+|header:
+  margin: 0
+
+|content-margin
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
+(default: [0, inherit])
+|header:
+  content-margin: 0
+
 |padding^[3]^
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: 0)
@@ -4511,6 +4523,27 @@ To avoid this problem, reduce the height of the running content periphery or mak
 |header:
   recto:
     columns: <25% =50% >25%
+
+|<side>-margin^[5]^
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom (n/a),left]>> +
+(default: _inherit_)
+|header:
+  recto:
+    margin: [0, 0, 0, inherit]
+
+|<side>-content-margin^[5]^
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
+(default: _inherit_)
+|header:
+  recto:
+    content-margin: [0, 0, 0, inherit]
+
+|<side>-padding^[5]^
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
+(default: _inherit_)
+|header:
+  recto:
+    padding: [0, 3, 0, 3]
 
 |<side>-<position>-content^[5,6]^
 |<<quoted-string,Quoted string>> +
@@ -4594,6 +4627,18 @@ To avoid this problem, reduce the height of the running content periphery or mak
 |footer:
   line-height: 1.2
 
+|margin
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top (n/a),right,bottom,left]>> +
+(default: [0, inherit])
+|footer:
+  margin: 0
+
+|content-margin
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
+(default: [0, inherit])
+|footer:
+  content-margin: 0
+
 |padding^[3]^
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: 0)
@@ -4637,6 +4682,27 @@ To avoid this problem, reduce the height of the running content periphery or mak
   verso:
     columns: <50% =0% <50%
 
+|<side>-margin^[5]^
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top (n/a),right,bottom,left]>> +
+(default: [0, inherit])
+|footer:
+  verso:
+    margin: [0, inherit, 0, 0]
+
+|<side>-content-margin^[5]^
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
+(default: _inherit_)
+|footer:
+  verso:
+    content-margin: [0, inherit, 0, 0]
+
+|<side>-padding^[5]^
+|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
+(default: _inherit_)
+|footer:
+  verso:
+    padding: [0, 3, 0, 3]
+
 |<side>-<position>-content^[5,6]^
 |<<quoted-string,Quoted string>> +
 (default: '\{page-number}')
@@ -4654,9 +4720,10 @@ To avoid this problem, reduce the height of the running content periphery or mak
   start-at: toc
 |===
 
-. The background color spans the width of the page, as does the border when a background color is specified.
+. To make the background color and border span the width of the page, set the margin to 0 (and adjust the content-margin accordingly).
 . *If the height is not set, the running content at this periphery is disabled.*
-. If the side padding is negative, the content will bleed into the margin of the page.
+. Do not use negative margins.
+Instead, adjust the values of the margin and content-margin keys.
 . The maximum section level considered when assigning the implicit `section-title` attribute (and related) available to the running content.
 . `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
 The `columns` key can also be defined one level up (on `header` or `footer`), in which case the setting will be inherited.
