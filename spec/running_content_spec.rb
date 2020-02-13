@@ -828,14 +828,15 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-border-style.pdf'
     end
 
-    it 'should draw background color across whole periphery region', visual: true do
+    it 'should not draw background color across whole periphery region', visual: true do
       pdf_theme = build_pdf_theme \
         header_background_color: '009246',
         header_border_width: 0,
+        header_height: 160,
         footer_background_color: 'CE2B37',
         footer_border_width: 0,
-        header_height: 160,
         footer_height: 160,
+        footer_padding: [6, 49, 0, 49],
         page_margin: [160, 48, 160, 48]
 
       to_file = to_pdf_file 'Hello world', 'running-content-background-color.pdf', enable_footer: true, pdf_theme: pdf_theme
@@ -843,6 +844,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-background-color.pdf'
     end
 
+    # NOTE a background image is not affected by margins
     it 'should draw background image across whole periphery region', visual: true do
       pdf_theme = build_pdf_theme \
         header_background_image: %(image:#{fixture_file 'header-bg-letter.svg'}[fit=contain]),

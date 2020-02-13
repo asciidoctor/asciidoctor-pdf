@@ -3442,19 +3442,11 @@ module Asciidoctor
             PageSides.each do |side|
               create_stamp stamp_names[side] do
                 canvas do
-                  if trim_bg_color || trim_bg_image
-                    bounding_box [0, trim_styles[:top]], width: bounds.width, height: trim_styles[:height] do
-                      fill_bounds trim_bg_color if trim_bg_color
-                      if trim_border_width > 0
-                        stroke_horizontal_rule trim_styles[:border_color], line_width: trim_border_width, line_style: trim_styles[:border_style], at: (periphery == :header ? bounds.height : 0)
-                      end
-                      # NOTE: must draw line first or SVG will cause border to disappear
-                      image trim_bg_image[0], ({ position: :center, vposition: :center }.merge trim_bg_image[1]) if trim_bg_image
-                    end
-                  elsif trim_border_width > 0
-                    bounding_box [trim_styles[:left][side], trim_styles[:top]], width: trim_styles[:width][side], height: trim_styles[:height] do
-                      stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style], at: (periphery == :header ? bounds.height : 0)
-                    end
+                  bounding_box [trim_styles[:left][side], trim_styles[:top]], width: trim_styles[:width][side], height: trim_styles[:height] do
+                    fill_bounds trim_bg_color if trim_bg_color
+                    stroke_horizontal_rule trim_styles[:border_color], line_width: trim_border_width, line_style: trim_styles[:border_style], at: (periphery == :header ? bounds.height : 0) if trim_border_width > 0
+                    # NOTE: must draw line first or SVG will cause border to disappear
+                    image trim_bg_image[0], ({ position: :center, vposition: :center }.merge trim_bg_image[1]) if trim_bg_image
                   end
                 end
               end
