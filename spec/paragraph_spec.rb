@@ -82,6 +82,17 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect pdf.text[3][:string]).to eql 'And on it goes.'
   end
 
+  it 'should output block title for paragraph if specified' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    .Disclaimer
+    All views expressed are my own.
+    EOS
+
+    (expect pdf.lines).to eql ['Disclaimer', 'All views expressed are my own.']
+    disclaimer_text = (pdf.find_text 'Disclaimer')[0]
+    (expect disclaimer_text[:font_name]).to eql 'NotoSerif-Italic'
+  end
+
   it 'should decorate first line of abstract when abstract has multiple lines' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Document Title
