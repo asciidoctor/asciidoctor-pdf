@@ -82,6 +82,16 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect pdf.text[3][:string]).to eql 'And on it goes.'
   end
 
+  it 'should register ID for block if given' do
+    pdf = to_pdf <<~'EOS'
+    [#disclaimer]
+    All views expressed are my own.
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key 'disclaimer'
+  end
+
   it 'should output block title for paragraph if specified' do
     pdf = to_pdf <<~'EOS', analyze: true
     .Disclaimer
