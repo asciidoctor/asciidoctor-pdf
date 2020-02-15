@@ -361,7 +361,7 @@ module Asciidoctor
           from, to = r.rstrip.split '-', 2
           to ? ((get_char from)..(get_char to)).to_a : [(get_char from)]
         }.flatten
-        @section_indent = (val = @theme.section_indent) && (inflate_indent val)
+        @section_indent = (val = @theme.section_indent) && (expand_indent_value val)
         @toc_max_pagenum_digits = (doc.attr 'toc-max-pagenum-digits', 3).to_i
         @index = IndexCatalog.new
         # NOTE: we have to init Pdfmark class here while we have reference to the doc
@@ -1906,7 +1906,7 @@ module Asciidoctor
             head_font_info = font_info
             head_line_metrics = calc_line_metrics theme.base_line_height
             head_cell_padding = theme.table_head_cell_padding || theme.table_cell_padding
-            head_cell_padding = ::Array === head_cell_padding && head_cell_padding.size == 4 ? head_cell_padding.dup : (inflate_padding head_cell_padding)
+            head_cell_padding = ::Array === head_cell_padding && head_cell_padding.size == 4 ? head_cell_padding.dup : (expand_padding_value head_cell_padding)
             head_cell_padding[0] += head_line_metrics.padding_top
             head_cell_padding[2] += head_line_metrics.padding_bottom
             # QUESTION why doesn't text transform inherit from table?
@@ -2015,8 +2015,7 @@ module Asciidoctor
                 cell_data = { content: asciidoc_cell }
               end
               if cell_line_metrics
-                cell_padding = ::Array === (cell_padding = theme.table_cell_padding) && cell_padding.size == 4 ?
-                  cell_padding.dup : (inflate_padding cell_padding)
+                cell_padding = ::Array === (cell_padding = theme.table_cell_padding) && cell_padding.size == 4 ? cell_padding.dup : (expand_padding_value cell_padding)
                 cell_padding[0] += cell_line_metrics.padding_top
                 cell_padding[2] += cell_line_metrics.padding_bottom
                 cell_data[:leading] = cell_line_metrics.leading
@@ -3323,21 +3322,21 @@ module Asciidoctor
         cache[layout = page.layout] ||= begin
           page_margin_recto = @page_margin_by_side[:recto]
           trim_margin_recto = @theme[%(#{periphery}_recto_margin)] || @theme[%(#{periphery}_margin)] || [0, 'inherit', 0, 'inherit']
-          trim_margin_recto = (inflate_margin trim_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] : v.to_f }
+          trim_margin_recto = (expand_margin_value trim_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] : v.to_f }
           trim_content_margin_recto = @theme[%(#{periphery}_recto_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
-          trim_content_margin_recto = (inflate_margin trim_content_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] - trim_margin_recto[i] : v.to_f }
+          trim_content_margin_recto = (expand_margin_value trim_content_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] - trim_margin_recto[i] : v.to_f }
           if (trim_padding_recto = @theme[%(#{periphery}_recto_padding)] || @theme[%(#{periphery}_padding)])
-            trim_padding_recto = (inflate_margin trim_padding_recto).map.with_index {|v, i| v + trim_content_margin_recto[i] }
+            trim_padding_recto = (expand_margin_value trim_padding_recto).map.with_index {|v, i| v + trim_content_margin_recto[i] }
           else
             trim_padding_recto = trim_content_margin_recto
           end
           page_margin_verso = @page_margin_by_side[:verso]
           trim_margin_verso = @theme[%(#{periphery}_verso_margin)] || @theme[%(#{periphery}_margin)] || [0, 'inherit', 0, 'inherit']
-          trim_margin_verso = (inflate_margin trim_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] : v.to_f }
+          trim_margin_verso = (expand_margin_value trim_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] : v.to_f }
           trim_content_margin_verso = @theme[%(#{periphery}_verso_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
-          trim_content_margin_verso = (inflate_margin trim_content_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] - trim_margin_verso[i] : v.to_f }
+          trim_content_margin_verso = (expand_margin_value trim_content_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] - trim_margin_verso[i] : v.to_f }
           if (trim_padding_verso = @theme[%(#{periphery}_verso_padding)] || @theme[%(#{periphery}_padding)])
-            trim_padding_verso = (inflate_margin trim_padding_verso).map.with_index {|v, i| v + trim_content_margin_verso[i] }
+            trim_padding_verso = (expand_margin_value trim_padding_verso).map.with_index {|v, i| v + trim_content_margin_verso[i] }
           else
             trim_padding_verso = trim_content_margin_verso
           end

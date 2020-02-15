@@ -537,12 +537,12 @@ module Asciidoctor
         #end
       end
 
-      def inflate_indent value
+      def expand_indent_value value
         (::Array === value ? (value.slice 0, 2) : (::Array.new 2, value)).map(&:to_f)
       end
 
       # TODO: memoize the result
-      def inflate_padding padding
+      def expand_padding_value padding
         padding = [*(padding || 0)].slice 0, 4
         case padding.size
         when 1
@@ -556,7 +556,7 @@ module Asciidoctor
         end
       end
 
-      alias inflate_margin inflate_padding
+      alias expand_margin_value expand_padding_value
 
       # Stretch the current bounds to the left and right edges of the current page
       # while yielding the specified block if the verdict argument is true.
