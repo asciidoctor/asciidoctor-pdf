@@ -2228,9 +2228,6 @@ module Asciidoctor
         theme_margin :thematic_break, :bottom
       end
 
-      # deprecated
-      alias convert_horizontal_rule convert_thematic_break
-
       def convert_toc node
         if ((doc = node.document).attr? 'toc-placement', 'macro') && doc.sections?
           if (is_book = doc.doctype == 'book')

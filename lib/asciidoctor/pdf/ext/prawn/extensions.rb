@@ -95,16 +95,12 @@ module Asciidoctor
       def page_margin_left
         page.margins[:left]
       end
-      # deprecated
-      alias left_margin page_margin_left
 
       # Returns the width of the right margin for the current page
       #
       def page_margin_right
         page.margins[:right]
       end
-      # deprecated
-      alias right_margin page_margin_right
 
       # Returns the width of the top margin for the current page
       #
