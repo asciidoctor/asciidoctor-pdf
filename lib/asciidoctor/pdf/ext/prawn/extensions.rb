@@ -541,19 +541,27 @@ module Asciidoctor
         (::Array === value ? (value.slice 0, 2) : (::Array.new 2, value)).map(&:to_f)
       end
 
-      # TODO: memoize the result
-      def expand_padding_value padding
-        padding = [*(padding || 0)].slice 0, 4
-        case padding.size
-        when 1
-          [padding[0], padding[0], padding[0], padding[0]]
-        when 2
-          [padding[0], padding[1], padding[0], padding[1]]
-        when 3
-          [padding[0], padding[1], padding[2], padding[1]]
-        else
-          padding
+      def expand_padding_value shorthand
+        unless (padding = (@side_area_shorthand_cache ||= {})[shorthand])
+          if ::Array === shorthand
+            case shorthand.size
+            when 1
+              padding = [shorthand[0], shorthand[0], shorthand[0], shorthand[0]]
+            when 2
+              padding = [shorthand[0], shorthand[1], shorthand[0], shorthand[1]]
+            when 3
+              padding = [shorthand[0], shorthand[1], shorthand[2], shorthand[1]]
+            when 4
+              padding = shorthand
+            else
+              padding = shorthand.slice 0, 4
+            end
+          else
+            padding = ::Array.new 4, (shorthand || 0)
+          end
+          @side_area_shorthand_cache[shorthand] = padding
         end
+        padding.dup
       end
 
       alias expand_margin_value expand_padding_value
