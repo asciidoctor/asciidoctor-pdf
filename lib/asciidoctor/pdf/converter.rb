@@ -226,7 +226,7 @@ module Asciidoctor
             zero_page_offset = has_front_cover ? 1 : 0
             first_page_offset = has_title_page ? zero_page_offset.next : zero_page_offset
             body_offset = (body_start_page_number = page_number) - 1
-            if Integer === (running_content_start_at = @theme.running_content_start_at || 'body')
+            if ::Integer === (running_content_start_at = @theme.running_content_start_at || 'body')
               running_content_body_offset = body_offset + [running_content_start_at.pred, 1].max
               running_content_start_at = 'body'
             else
@@ -234,7 +234,7 @@ module Asciidoctor
               running_content_start_at = 'toc' if running_content_start_at == 'title' && !has_title_page
               running_content_start_at = 'body' if running_content_start_at == 'toc' && !insert_toc
             end
-            if Integer === (page_numbering_start_at = @theme.page_numbering_start_at || 'body')
+            if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at || 'body')
               page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 1].max
               page_numbering_start_at = 'body'
             else
