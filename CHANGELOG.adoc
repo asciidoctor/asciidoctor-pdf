@@ -9,7 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 Enhancements::
 
-* allow theme to control margin and content margin of running content per side (#994)
+* allow theme to control margin and content margin of running content per periphery (header or footer) and per side (recto or verso) (#994)
 
 Compliance::
 
