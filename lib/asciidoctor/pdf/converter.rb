@@ -636,10 +636,14 @@ module Asciidoctor
               if (text_indent = @theme.prose_text_indent || 0) > 0
                 prose_opts[:indent_paragraphs] = text_indent
               end
-              # FIXME: control more first_line_options using theme
+              # FIXME: allow theme to control more first line options
               if (line1_font_style = @theme.abstract_first_line_font_style) && line1_font_style.to_sym != font_style
-                prose_opts[:first_line_options] = { styles: [font_style, line1_font_style.to_sym] }
+                first_line_options = { styles: [font_style, line1_font_style.to_sym] }
               end
+              if (line1_font_color = @theme.abstract_first_line_font_color)
+                (first_line_options ||= {})[:color] = line1_font_color
+              end
+              prose_opts[:first_line_options] = first_line_options if first_line_options
               # FIXME: make this cleaner!!
               if node.blocks?
                 node.blocks.each do |child|

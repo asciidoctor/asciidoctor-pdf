@@ -365,14 +365,26 @@ module Asciidoctor
         end
       end
 
-      # NOTE override built-in draw_indented_formatted_line to insert leading before second line
-      def draw_indented_formatted_line string, opts
-        result = super
-        unless @no_text_printed || @all_text_printed
-          # as of Prawn 1.2.1, we have to handle the line gap after the first line manually
-          move_down opts[:leading]
+      # NOTE override built-in fill_formatted_text_box to insert leading before second line when :first_line is true
+      def fill_formatted_text_box text, opts
+        merge_text_box_positioning_options opts
+        box = ::Prawn::Text::Formatted::Box.new text, opts
+        remaining_text = box.render
+        @no_text_printed = box.nothing_printed?
+        @all_text_printed = box.everything_printed?
+
+        if @final_gap || (opts[:first_line] && !(@no_text_printed || @all_text_printed))
+          self.y -= box.height + box.line_gap + box.leading
+        else
+          self.y -= box.height
         end
-        result
+
+        remaining_text
+      end
+
+      # NOTE override built-in draw_indented_formatted_line to set first_line flag
+      def draw_indented_formatted_line string, opts
+        super string, (opts.merge first_line: true)
       end
 
       # Performs the same work as Prawn::Text.text except that the first_line_opts are applied to the first line of text
@@ -391,7 +403,7 @@ module Asciidoctor
         first_line_color = (first_line_opts.delete :color) || color
         opts = opts.merge document: self
         # QUESTION should we merge more carefully here? (hand-select keys?)
-        first_line_opts = opts.merge(first_line_opts).merge single_line: true
+        first_line_opts = opts.merge(first_line_opts).merge single_line: true, first_line: true
         box = ::Prawn::Text::Formatted::Box.new fragments, first_line_opts
         # NOTE get remaining_fragments before we add color to fragments on first line
         if (text_indent = opts.delete :indent_paragraphs)
@@ -413,8 +425,6 @@ module Asciidoctor
         unless remaining_fragments.empty?
           # NOTE color must be applied per-fragment
           remaining_fragments.each {|fragment| fragment[:color] ||= color } if color
-          # as of Prawn 1.2.1, we have to handle the line gap after the first line manually
-          move_down opts[:leading]
           remaining_fragments = fill_formatted_text_box remaining_fragments, opts
           draw_remaining_formatted_text_on_new_pages remaining_fragments, opts
         end
