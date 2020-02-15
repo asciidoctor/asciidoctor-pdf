@@ -3246,7 +3246,7 @@ module Asciidoctor
 
           theme_font periphery do
             canvas do
-              bounding_box [trim_styles[:content_left][side], trim_styles[:top]], width: trim_styles[:content_width][side], height: trim_styles[:height] do
+              bounding_box [trim_styles[:content_left][side], trim_styles[:top][side]], width: trim_styles[:content_width][side], height: trim_styles[:height] do
                 if (trim_column_rule_width = trim_styles[:column_rule_width]) > 0
                   trim_column_rule_spacing = trim_styles[:column_rule_spacing]
                 else
@@ -3271,7 +3271,7 @@ module Asciidoctor
                     # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                     float do
                       # NOTE bounding_box is redundant if both vertical padding and border width are 0
-                      bounding_box [left, bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colwidth, height: trim_styles[:content_height] do
+                      bounding_box [left, bounds.top - trim_styles[:padding][side][0] - trim_styles[:content_offset]], width: colwidth, height: trim_styles[:content_height][side] do
                         # NOTE image vposition respects padding; use negative image_vertical_align value to revert
                         image_opts = content[1].merge position: colspec[:align], vposition: trim_styles[:img_valign]
                         begin
@@ -3295,9 +3295,9 @@ module Asciidoctor
                         content = transform_text content, @text_transform if @text_transform
                       end
                       formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
-                          at: [left, bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset] + ((Array trim_styles[:valign])[0] == :center ? font.descender * 0.5 : 0)],
+                          at: [left, bounds.top - trim_styles[:padding][side][0] - trim_styles[:content_offset] + ((Array trim_styles[:valign])[0] == :center ? font.descender * 0.5 : 0)],
                           width: colwidth,
-                          height: trim_styles[:prose_content_height],
+                          height: trim_styles[:prose_content_height][side],
                           align: colspec[:align],
                           valign: trim_styles[:valign],
                           leading: trim_styles[:line_metrics].leading,
@@ -3305,7 +3305,7 @@ module Asciidoctor
                           overflow: :truncate
                     end
                   end
-                  bounding_box [colspec[:x], bounds.top - trim_styles[:padding][0] - trim_styles[:content_offset]], width: colspec[:width], height: trim_styles[:content_height] do
+                  bounding_box [colspec[:x], bounds.top - trim_styles[:padding][side][0] - trim_styles[:content_offset]], width: colspec[:width], height: trim_styles[:content_height][side] do
                     stroke_vertical_rule trim_styles[:column_rule_color], at: bounds.left, line_style: trim_styles[:column_rule_style], line_width: trim_column_rule_width
                   end if trim_column_rule
                   prev_position = position
@@ -3321,6 +3321,26 @@ module Asciidoctor
 
       def allocate_running_content_layout doc, page, periphery, cache
         cache[layout = page.layout] ||= begin
+          page_margin_recto = @page_margin_by_side[:recto]
+          trim_margin_recto = @theme[%(#{periphery}_recto_margin)] || @theme[%(#{periphery}_margin)] || [0, 'inherit', 0, 'inherit']
+          trim_margin_recto = (inflate_margin trim_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] : v.to_f }
+          trim_content_margin_recto = @theme[%(#{periphery}_recto_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
+          trim_content_margin_recto = (inflate_margin trim_content_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] - trim_margin_recto[i] : v.to_f }
+          if (trim_padding_recto = @theme[%(#{periphery}_recto_padding)] || @theme[%(#{periphery}_padding)])
+            trim_padding_recto = (inflate_margin trim_padding_recto).map.with_index {|v, i| v + trim_content_margin_recto[i] }
+          else
+            trim_padding_recto = trim_content_margin_recto
+          end
+          page_margin_verso = @page_margin_by_side[:verso]
+          trim_margin_verso = @theme[%(#{periphery}_verso_margin)] || @theme[%(#{periphery}_margin)] || [0, 'inherit', 0, 'inherit']
+          trim_margin_verso = (inflate_margin trim_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] : v.to_f }
+          trim_content_margin_verso = @theme[%(#{periphery}_verso_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
+          trim_content_margin_verso = (inflate_margin trim_content_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] - trim_margin_verso[i] : v.to_f }
+          if (trim_padding_verso = @theme[%(#{periphery}_verso_padding)] || @theme[%(#{periphery}_padding)])
+            trim_padding_verso = (inflate_margin trim_padding_verso).map.with_index {|v, i| v + trim_content_margin_verso[i] }
+          else
+            trim_padding_verso = trim_content_margin_verso
+          end
           valign, valign_offset = @theme[%(#{periphery}_vertical_align)]
           if (valign = (valign || :middle).to_sym) == :middle
             valign = :center
@@ -3329,8 +3349,6 @@ module Asciidoctor
             line_metrics: (trim_line_metrics = calc_line_metrics @theme[%(#{periphery}_line_height)] || @theme.base_line_height),
             # NOTE we've already verified this property is set
             height: (trim_height = @theme[%(#{periphery}_height)]),
-            top: periphery == :header ? page_height : trim_height,
-            padding: (trim_padding = inflate_padding @theme[%(#{periphery}_padding)] || 0),
             bg_color: (resolve_theme_color %(#{periphery}_background_color).to_sym),
             border_color: (trim_border_color = resolve_theme_color %(#{periphery}_border_color).to_sym),
             border_style: (@theme[%(#{periphery}_border_style)] || :solid).to_sym,
@@ -3341,24 +3359,38 @@ module Asciidoctor
             column_rule_spacing: (@theme[%(#{periphery}_column_rule_spacing)] || 0),
             valign: valign_offset ? [valign, valign_offset] : valign,
             img_valign: @theme[%(#{periphery}_image_vertical_align)],
+            top: {
+              recto: periphery == :header ? page_height - trim_margin_recto[0] : trim_height + trim_margin_recto[2],
+              verso: periphery == :header ? page_height - trim_margin_verso[0] : trim_height + trim_margin_verso[2],
+            },
             left: {
-              recto: (trim_left_recto = @page_margin_by_side[:recto][3]),
-              verso: (trim_left_verso = @page_margin_by_side[:verso][3]),
+              recto: (trim_left_recto = trim_margin_recto[3]),
+              verso: (trim_left_verso = trim_margin_verso[3]),
             },
             width: {
-              recto: (trim_width_recto = page_width - trim_left_recto - @page_margin_by_side[:recto][1]),
-              verso: (trim_width_verso = page_width - trim_left_verso - @page_margin_by_side[:verso][1]),
+              recto: (trim_width_recto = page_width - trim_left_recto - trim_margin_recto[1]),
+              verso: (trim_width_verso = page_width - trim_left_verso - trim_margin_verso[1]),
+            },
+            padding: {
+              recto: trim_padding_recto,
+              verso: trim_padding_verso,
             },
             content_left: {
-              recto: trim_left_recto + trim_padding[3],
-              verso: trim_left_verso + trim_padding[3],
+              recto: trim_left_recto + trim_padding_recto[3],
+              verso: trim_left_verso + trim_padding_verso[3],
             },
             content_width: (trim_content_width = {
-              recto: trim_width_recto - trim_padding[1] - trim_padding[3],
-              verso: trim_width_verso - trim_padding[1] - trim_padding[3],
+              recto: trim_width_recto - trim_padding_recto[1] - trim_padding_recto[3],
+              verso: trim_width_verso - trim_padding_verso[1] - trim_padding_verso[3],
             }),
-            content_height: (content_height = trim_height - trim_padding[0] - trim_padding[2] - (trim_border_width * 0.5)),
-            prose_content_height: content_height - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom,
+            content_height: (trim_content_height = {
+              recto: trim_height - trim_padding_recto[0] - trim_padding_recto[2] - (trim_border_width * 0.5),
+              verso: trim_height - trim_padding_verso[0] - trim_padding_verso[2] - (trim_border_width * 0.5),
+            }),
+            prose_content_height: {
+              recto: trim_content_height[:recto] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom,
+              verso: trim_content_height[:verso] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom,
+            },
             # NOTE content offset adjusts y position to account for border
             content_offset: (periphery == :footer ? trim_border_width * 0.5 : 0),
           }
@@ -3371,10 +3403,13 @@ module Asciidoctor
             trim_styles[:img_valign] = trim_styles[:img_valign].to_sym
           end
 
-          if (trim_bg_image = resolve_background_image doc, @theme, %(#{periphery}_background_image).to_sym, container_size: [page_width, trim_height]) && trim_bg_image[0]
-            trim_styles[:bg_image] = trim_bg_image
-          else
-            trim_bg_image = nil
+          if (trim_bg_image_recto = resolve_background_image doc, @theme, %(#{periphery}_background_image).to_sym, container_size: [trim_width_recto, trim_height]) && trim_bg_image_recto[0]
+            trim_bg_image = { recto: trim_bg_image_recto }
+            if trim_width_recto == trim_width_verso
+              trim_bg_image[:verso] = trim_bg_image_recto
+            else
+              trim_bg_image[:verso] = resolve_background_image doc, @theme, %(#{periphery}_background_image).to_sym, container_size: [trim_width_verso, trim_height]
+            end
           end
 
           colspec_dict = PageSides.each_with_object({}) do |side, acc|
@@ -3422,7 +3457,7 @@ module Asciidoctor
                   image_attrs = (AttributeList.new attrlist).parse %w(alt width)
                   image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
                   if (image_path = resolve_image_path doc, image_path, @themesdir, image_format) && (::File.readable? image_path)
-                    image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_styles[:content_height]], format: image_format
+                    image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_content_height[side]], format: image_format
                     side_content[position] = [image_path, image_opts, image_attrs['link']]
                   else
                     # NOTE allows inline image handler to report invalid reference and replace with alt text
@@ -3442,19 +3477,11 @@ module Asciidoctor
             PageSides.each do |side|
               create_stamp stamp_names[side] do
                 canvas do
-                  if trim_bg_color || trim_bg_image
-                    bounding_box [0, trim_styles[:top]], width: bounds.width, height: trim_styles[:height] do
-                      fill_bounds trim_bg_color if trim_bg_color
-                      if trim_border_width > 0
-                        stroke_horizontal_rule trim_styles[:border_color], line_width: trim_border_width, line_style: trim_styles[:border_style], at: (periphery == :header ? bounds.height : 0)
-                      end
-                      # NOTE: must draw line first or SVG will cause border to disappear
-                      image trim_bg_image[0], ({ position: :center, vposition: :center }.merge trim_bg_image[1]) if trim_bg_image
-                    end
-                  elsif trim_border_width > 0
-                    bounding_box [trim_styles[:left][side], trim_styles[:top]], width: trim_styles[:width][side], height: trim_styles[:height] do
-                      stroke_horizontal_rule trim_styles[:border_color], line_width: trim_styles[:border_width], line_style: trim_styles[:border_style], at: (periphery == :header ? bounds.height : 0)
-                    end
+                  bounding_box [trim_styles[:left][side], trim_styles[:top][side]], width: trim_styles[:width][side], height: trim_height do
+                    fill_bounds trim_bg_color if trim_bg_color
+                    # NOTE: must draw line before image or SVG will cause border to disappear
+                    stroke_horizontal_rule trim_styles[:border_color], line_width: trim_border_width, line_style: trim_styles[:border_style], at: (periphery == :header ? bounds.height : 0) if trim_border_width > 0
+                    image trim_bg_image[side][0], ({ position: :center, vposition: :center }.merge trim_bg_image[side][1]) if trim_bg_image
                   end
                 end
               end

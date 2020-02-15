@@ -828,14 +828,15 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-border-style.pdf'
     end
 
-    it 'should draw background color across whole periphery region', visual: true do
+    it 'should not draw background color across whole periphery region', visual: true do
       pdf_theme = build_pdf_theme \
         header_background_color: '009246',
         header_border_width: 0,
+        header_height: 160,
         footer_background_color: 'CE2B37',
         footer_border_width: 0,
-        header_height: 160,
         footer_height: 160,
+        footer_padding: [6, 49, 0, 49],
         page_margin: [160, 48, 160, 48]
 
       to_file = to_pdf_file 'Hello world', 'running-content-background-color.pdf', enable_footer: true, pdf_theme: pdf_theme
@@ -843,7 +844,28 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-background-color.pdf'
     end
 
-    it 'should draw background image across whole periphery region', visual: true do
+    it 'should not draw background color across whole periphery region if margin is 0', visual: true do
+      pdf_theme = build_pdf_theme \
+        header_background_color: '009246',
+        header_border_width: 0,
+        header_height: 160,
+        header_margin: 0,
+        header_content_margin: [0, 'inherit'],
+        header_padding: [6, 1, 0, 1],
+        footer_background_color: 'CE2B37',
+        footer_border_width: 0,
+        footer_height: 160,
+        footer_padding: [6, 1, 0, 1],
+        footer_margin: 0,
+        footer_content_margin: [0, 'inherit'],
+        page_margin: [160, 48, 160, 48]
+
+      to_file = to_pdf_file 'Hello world', 'running-content-background-color-full.pdf', enable_footer: true, pdf_theme: pdf_theme
+
+      (expect to_file).to visually_match 'running-content-background-color-full.pdf'
+    end
+
+    it 'should not draw background image across whole periphery region', visual: true do
       pdf_theme = build_pdf_theme \
         header_background_image: %(image:#{fixture_file 'header-bg-letter.svg'}[fit=contain]),
         header_border_width: 0,
@@ -865,6 +887,32 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-background-image.pdf'
     end
 
+    it 'should not draw background image across whole periphery region if margin is 0', visual: true do
+      pdf_theme = build_pdf_theme \
+        header_background_image: %(image:#{fixture_file 'header-bg-letter.svg'}[fit=contain]),
+        header_border_width: 0,
+        header_height: 30,
+        header_padding: 0,
+        header_margin: 0,
+        header_content_margin: [0, 'inherit'],
+        header_recto_left_content: '{page-number}',
+        footer_background_image: %(image:#{fixture_file 'footer-bg-letter.svg'}[fit=contain]),
+        footer_border_width: 0,
+        footer_height: 30,
+        footer_padding: 0,
+        footer_margin: 0,
+        footer_content_margin: [0, 'inherit'],
+        footer_vertical_align: 'middle'
+
+      to_file = to_pdf_file <<~'EOS', 'running-content-background-image-full.pdf', enable_footer: true, pdf_theme: pdf_theme
+      :pdf-page-size: Letter
+
+      Hello, World!
+      EOS
+
+      (expect to_file).to visually_match 'running-content-background-image-full.pdf'
+    end
+
     it 'should warn if background image cannot be resolved' do
       pdf_theme = build_pdf_theme \
         footer_background_image: 'no-such-image.png',
@@ -882,6 +930,183 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         images = get_images pdf, 1
         (expect images).to be_empty
       end).to log_message severity: :WARN, message: %r(footer background image not found or readable.*data/themes/no-such-image\.png$)
+    end
+
+    it 'should allow theme to control side margin of running content using fixed value' do
+      pdf_theme = {
+        header_height: 36,
+        header_padding: 0,
+        header_recto_margin: [0, 10],
+        header_recto_content_margin: 0,
+        header_recto_left_content: 'H',
+        header_verso_margin: [0, 10],
+        header_verso_content_margin: 0,
+        header_verso_right_content: 'H',
+        footer_padding: 0,
+        footer_recto_margin: [0, 10],
+        footer_recto_content_margin: 0,
+        footer_recto_left_content: 'F',
+        footer_verso_margin: [0, 10],
+        footer_verso_content_margin: 0,
+        footer_verso_right_content: 'F',
+      }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      page one
+
+      <<<
+
+      page two
+      EOS
+
+      page_width = (get_page_size pdf)[0]
+      p1_header_text = (pdf.find_text string: 'H', page_number: 1)[0]
+      p1_footer_text = (pdf.find_text string: 'F', page_number: 1)[0]
+      (expect p1_header_text[:x].round).to eql 10
+      (expect p1_footer_text[:x].round).to eql 10
+      p2_header_text = (pdf.find_text string: 'H', page_number: 2)[0]
+      p2_footer_text = (pdf.find_text string: 'F', page_number: 2)[0]
+      (expect (page_width - p2_header_text[:x] - p2_header_text[:width]).round).to eql 10
+      (expect (page_width - p2_footer_text[:x] - p2_footer_text[:width]).round).to eql 10
+    end
+
+    it 'should allow theme to control side margin of running content using inherited value' do
+      pdf_theme = {
+        header_height: 36,
+        header_padding: 0,
+        header_recto_margin: [0, 'inherit'],
+        header_recto_left_content: 'H',
+        header_verso_margin: [0, 'inherit'],
+        header_verso_right_content: 'H',
+        footer_padding: 0,
+        footer_recto_margin: [0, 'inherit'],
+        footer_recto_left_content: 'F',
+        footer_verso_margin: [0, 'inherit'],
+        footer_verso_right_content: 'F',
+      }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      page one
+
+      <<<
+
+      page two
+      EOS
+
+      page_width = (get_page_size pdf)[0]
+      p1_header_text = (pdf.find_text string: 'H', page_number: 1)[0]
+      p1_footer_text = (pdf.find_text string: 'F', page_number: 1)[0]
+      (expect p1_header_text[:x].round).to eql 48
+      (expect p1_footer_text[:x].round).to eql 48
+      p2_header_text = (pdf.find_text string: 'H', page_number: 2)[0]
+      p2_footer_text = (pdf.find_text string: 'F', page_number: 2)[0]
+      (expect (page_width - p2_header_text[:x] - p2_header_text[:width]).round).to eql 48
+      (expect (page_width - p2_footer_text[:x] - p2_footer_text[:width]).round).to eql 48
+    end
+
+    it 'should allow theme to control side content margin of running content using fixed value' do
+      pdf_theme = {
+        header_height: 36,
+        header_padding: 0,
+        header_recto_margin: [0, 10],
+        header_recto_content_margin: [0, 40],
+        header_recto_left_content: 'H',
+        header_verso_margin: [0, 10],
+        header_verso_content_margin: [0, 40],
+        header_verso_right_content: 'H',
+        footer_padding: 0,
+        footer_recto_margin: [0, 10],
+        footer_recto_content_margin: [0, 40],
+        footer_recto_left_content: 'F',
+        footer_verso_margin: [0, 10],
+        footer_verso_content_margin: [0, 40],
+        footer_verso_right_content: 'F',
+      }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      page one
+
+      <<<
+
+      page two
+      EOS
+
+      page_width = (get_page_size pdf)[0]
+      p1_header_text = (pdf.find_text string: 'H', page_number: 1)[0]
+      p1_footer_text = (pdf.find_text string: 'F', page_number: 1)[0]
+      (expect p1_header_text[:x].round).to eql 50
+      (expect p1_footer_text[:x].round).to eql 50
+      p2_header_text = (pdf.find_text string: 'H', page_number: 2)[0]
+      p2_footer_text = (pdf.find_text string: 'F', page_number: 2)[0]
+      (expect (page_width - p2_header_text[:x] - p2_header_text[:width]).round).to eql 50
+      (expect (page_width - p2_footer_text[:x] - p2_footer_text[:width]).round).to eql 50
+    end
+
+    it 'should allow theme to control side content margin of running content using inherited value' do
+      pdf_theme = {
+        header_height: 36,
+        header_padding: 0,
+        header_recto_margin: [0, 10],
+        header_recto_content_margin: [0, 'inherit'],
+        header_recto_left_content: 'H',
+        header_verso_margin: [0, 10],
+        header_verso_content_margin: [0, 'inherit'],
+        header_verso_right_content: 'H',
+        footer_padding: 0,
+        footer_recto_margin: [0, 10],
+        footer_recto_content_margin: [0, 'inherit'],
+        footer_recto_left_content: 'F',
+        footer_verso_margin: [0, 10],
+        footer_verso_content_margin: [0, 'inherit'],
+        footer_verso_right_content: 'F',
+      }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      page one
+
+      <<<
+
+      page two
+      EOS
+
+      page_width = (get_page_size pdf)[0]
+      p1_header_text = (pdf.find_text string: 'H', page_number: 1)[0]
+      p1_footer_text = (pdf.find_text string: 'F', page_number: 1)[0]
+      (expect p1_header_text[:x].round).to eql 48
+      (expect p1_footer_text[:x].round).to eql 48
+      p2_header_text = (pdf.find_text string: 'H', page_number: 2)[0]
+      p2_footer_text = (pdf.find_text string: 'F', page_number: 2)[0]
+      (expect (page_width - p2_header_text[:x] - p2_header_text[:width]).round).to eql 48
+      (expect (page_width - p2_footer_text[:x] - p2_footer_text[:width]).round).to eql 48
+    end
+
+    it 'should allow theme to control end margin of running content', visual: true do
+      pdf_theme = {
+        header_background_color: 'EEEEEE',
+        header_border_width: 0,
+        header_height: 24,
+        header_recto_left_content: '{page-number}',
+        header_recto_margin: [6, 0, 0],
+        header_verso_right_content: '{page-number}',
+        header_verso_margin: [6, 0, 0],
+        header_vertical_align: 'top',
+        footer_background_color: 'EEEEEE',
+        footer_border_width: 0,
+        footer_padding: 0,
+        footer_height: 24,
+        footer_recto_margin: [0, 0, 6],
+        footer_verso_margin: [0, 0, 6],
+      }
+
+      to_file = to_pdf_file <<~'EOS', 'running-content-end-margin.pdf', enable_footer: true, pdf_theme: pdf_theme
+      page one
+
+      <<<
+
+      page two
+      EOS
+
+      (expect to_file).to visually_match 'running-content-end-margin.pdf'
     end
 
     it 'should draw column rule between columns using specified width and spacing', visual: true do

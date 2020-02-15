@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == Unreleased
 
+Enhancements::
+
+* allow theme to control margin and content margin of running content per side (#994)
+
 Compliance::
 
 * Drop support for versions of Asciidoctor < 2
