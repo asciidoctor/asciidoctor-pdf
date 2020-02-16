@@ -25,6 +25,30 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect pdf.text[2][:x]).to be > pdf.text[3][:x]
   end
 
+  it 'should not alter line height of wrapped lines when prose_text_indent is set in theme that uses a TTF font' do
+    input = lorem_ipsum '4-sentences-2-paragraphs'
+
+    pdf = to_pdf input, analyze: true
+
+    last_line_y = pdf.text[-1][:y]
+
+    pdf = to_pdf input, pdf_theme: { prose_text_indent: 18 }, analyze: true
+
+    (expect pdf.text[-1][:y]).to eql last_line_y
+  end
+
+  it 'should not alter line height of wrapped lines when prose_text_indent is set in theme that uses an AFM font' do
+    input = lorem_ipsum '4-sentences-2-paragraphs'
+
+    pdf = to_pdf input, pdf_theme: { extends: 'base' }, analyze: true
+
+    last_line_y = pdf.text[-1][:y]
+
+    pdf = to_pdf input, pdf_theme: { extends: 'base', prose_text_indent: 18 }, analyze: true
+
+    (expect pdf.text[-1][:y]).to eql last_line_y
+  end
+
   it 'should use prose_margin_inner between paragraphs when prose-text_indent key is set in theme' do
     pdf = to_pdf <<~EOS, pdf_theme: { prose_text_indent: 18, prose_margin_inner: 0 }, analyze: true
     #{lorem_ipsum '2-sentences-2-paragraphs'}
@@ -52,18 +76,6 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     center_x = (pdf.page 1)[:size][1] / 2
     paragraph_text = (pdf.find_text 'right-aligned')[0]
     (expect paragraph_text[:x]).to be > center_x
-  end
-
-  it 'should not alter line height of wrapped lines when prose_text_indent is set in theme' do
-    input = lorem_ipsum '4-sentences-2-paragraphs'
-
-    pdf = to_pdf input, analyze: true
-
-    last_line_y = pdf.text[-1][:y]
-
-    pdf = to_pdf input, pdf_theme: { prose_text_indent: 18 }, analyze: true
-
-    (expect pdf.text[-1][:y]).to eql last_line_y
   end
 
   it 'should indent first line of abstract if prose_text_indent key is set in theme' do
@@ -124,6 +136,29 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect abstract_text_line2).to have_size 1
     (expect abstract_text_line2[0][:order]).to be 3
     (expect abstract_text_line2[0][:font_name]).not_to include 'BoldItalic'
+  end
+
+  it 'should use consistent spacing between lines in abstract when theme uses AFM font' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { extends: 'base', abstract_first_line_font_color: 'AA0000' }, analyze: true
+    = Document Title
+
+    [abstract]
+    First line of abstract. +
+    Second line of abstract. +
+    Third line of abstract.
+
+    == Section
+
+    content
+    EOS
+
+    abstract_text_line1 = (pdf.find_text 'First line of abstract.')[0]
+    abstract_text_line2 = (pdf.find_text 'Second line of abstract.')[0]
+    abstract_text_line3 = (pdf.find_text 'Third line of abstract.')[0]
+    line1_line2_gap = abstract_text_line1[:y] - abstract_text_line2[:y]
+    line2_line3_gap = abstract_text_line2[:y] - abstract_text_line3[:y]
+    (expect abstract_text_line1[:font_color]).to eql 'AA0000'
+    (expect line1_line2_gap).to eql line2_line3_gap
   end
 
   it 'should decorate first line of abstract when abstract has single line' do
