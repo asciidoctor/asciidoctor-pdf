@@ -5,6 +5,16 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== Unreleased
+
+Enhancements::
+
+* allow theme to control font color of first line of abstract
+
+Fixes::
+
+* fix spacing after first line of indented paragraph (#1557)
+
 == 1.5.0 (2020-02-11) - @mojavelinux
 
 * support table with multiple head rows & decorate accordingly (#1539)

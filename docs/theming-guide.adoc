@@ -3513,9 +3513,16 @@ The keys in this category control the arrangement and style of the abstract.
 
 3+|[#key-prefix-abstract-first-line]*Key Prefix:* <<key-prefix-abstract-first-line,abstract-first-line>>
 
+|font-color
+|<<colors,Color>> +
+(default: _not set_)
+|abstract:
+  first-line:
+    font-color: #AA0000
+
 |font-style
 |<<font-styles,Font style>> +
-(default: _inherit_)
+(default: _not set_)
 |abstract:
   first-line:
     font-style: bold
