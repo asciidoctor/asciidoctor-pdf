@@ -1,7 +1,13 @@
 name: CI
 on: [push, pull_request]
 jobs:
+  activate:
+    runs-on: ubuntu-latest
+    if: "! endsWith(github.event.head_commit.message, '[skip ci]')"
+    steps:
+    - run: echo ok go
   build:
+    needs: activate
     runs-on: windows-latest
     strategy:
       matrix:
