@@ -19,6 +19,7 @@ Fixes::
 Compliance::
 
 * Drop support for versions of Asciidoctor < 2
+* Drop deprecated Pdf module alias in API (leaving only PDF)
 
 == 1.5.1 (2020-02-16) - @mojavelinux
 
