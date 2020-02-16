@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Asciidoctor::Pdf::FormattedText
+module Asciidoctor::PDF::FormattedText
   module TextBackgroundAndBorderRenderer
     module_function
 

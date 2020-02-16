@@ -99,14 +99,14 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
   context 'custom' do
     it 'should resolve fonts in specified fonts dir' do
-      pdf = to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => Asciidoctor::Pdf::ThemeLoader::FontsDir }
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => Asciidoctor::PDF::ThemeLoader::FontsDir }
       fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
       (expect fonts).to have_size 1
       (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
     end
 
     it 'should look for font file in all specified font dirs' do
-      pdf = to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => ([fixtures_dir, Asciidoctor::Pdf::ThemeLoader::FontsDir].join ';') }
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => ([fixtures_dir, Asciidoctor::PDF::ThemeLoader::FontsDir].join ';') }
       fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
       (expect fonts).to have_size 1
       (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
