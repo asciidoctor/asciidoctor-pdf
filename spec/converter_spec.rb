@@ -3,15 +3,6 @@
 require_relative 'spec_helper'
 
 describe Asciidoctor::PDF::Converter do
-  context 'legacy module name' do
-    it 'should map Asciidoctor::Pdf module to Asciidoctor::PDF' do
-      (expect Asciidoctor::Pdf).to be Asciidoctor::PDF
-      (expect Asciidoctor::Pdf::VERSION).to be Asciidoctor::PDF::VERSION
-      (expect Asciidoctor::Pdf::Converter).to be described_class
-      (expect Asciidoctor::Pdf::ThemeLoader).to be Asciidoctor::PDF::ThemeLoader
-    end
-  end
-
   describe '.register_for' do
     it 'should self register to handle pdf backend' do
       registered = Asciidoctor::Converter.for 'pdf'

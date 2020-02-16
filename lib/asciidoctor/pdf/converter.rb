@@ -4490,5 +4490,4 @@ module Asciidoctor
       end
     end
   end
-  Pdf = PDF unless const_defined? :Pdf, false
 end
