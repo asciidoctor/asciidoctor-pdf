@@ -12,7 +12,7 @@ Enhancements::
 * allow theme to control margin and content margin of running content per periphery (header or footer) and per side (recto or verso) (#994)
 * allow theme to control font color of first line of abstract
 
-Fixes::
+Bug Fixes::
 
 * fix spacing after first line of indented paragraph (#1557)
 
@@ -27,7 +27,7 @@ Enhancements::
 
 * allow theme to control font color of first line of abstract
 
-Fixes::
+Bug Fixes::
 
 * fix spacing after first line of indented paragraph (#1557)
 
