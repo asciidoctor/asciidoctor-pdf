@@ -11,7 +11,7 @@ Enhancements::
 
 * allow theme to control font color of first line of abstract
 
-Fixes::
+Bug Fixes::
 
 * fix spacing after first line of indented paragraph (#1557)
 
