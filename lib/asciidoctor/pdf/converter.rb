@@ -524,6 +524,8 @@ module Asciidoctor
           # HACK: cheat a bit to hide this section from TOC; TOC should filter these sections
           sect.context = :open
           return convert_abstract sect
+        elsif (index_section = sect.sectname == 'index')
+          return if @index.empty?
         end
 
         type = nil
@@ -572,7 +574,7 @@ module Asciidoctor
           end
         end
 
-        if sect.sectname == 'index'
+        if index_section
           outdent_section { convert_index_section sect }
         else
           traverse sect
@@ -2267,26 +2269,24 @@ module Asciidoctor
       end
 
       def convert_index_section _node
-        unless @index.empty?
-          space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
-          column_box [0, cursor], columns: 2, width: bounds.width, reflow_margins: true do
-            @index.categories.each do |category|
-              # NOTE cursor method always returns 0 inside column_box; breaks reference_bounds.move_past_bottom
-              bounds.move_past_bottom if space_needed_for_category > y - reference_bounds.absolute_bottom
-              layout_prose category.name,
-                  align: :left,
-                  inline_format: false,
-                  margin_top: 0,
-                  margin_bottom: @theme.description_list_term_spacing,
-                  style: @theme.description_list_term_font_style.to_sym
-              category.terms.each do |term|
-                convert_index_list_item term
-              end
-              if @theme.prose_margin_bottom > y - reference_bounds.absolute_bottom
-                bounds.move_past_bottom
-              else
-                move_down @theme.prose_margin_bottom
-              end
+        space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
+        column_box [0, cursor], columns: 2, width: bounds.width, reflow_margins: true do
+          @index.categories.each do |category|
+            # NOTE cursor method always returns 0 inside column_box; breaks reference_bounds.move_past_bottom
+            bounds.move_past_bottom if space_needed_for_category > y - reference_bounds.absolute_bottom
+            layout_prose category.name,
+                align: :left,
+                inline_format: false,
+                margin_top: 0,
+                margin_bottom: @theme.description_list_term_spacing,
+                style: @theme.description_list_term_font_style.to_sym
+            category.terms.each do |term|
+              convert_index_list_item term
+            end
+            if @theme.prose_margin_bottom > y - reference_bounds.absolute_bottom
+              bounds.move_past_bottom
+            else
+              move_down @theme.prose_margin_bottom
             end
           end
         end

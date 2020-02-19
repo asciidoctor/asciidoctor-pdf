@@ -11,6 +11,20 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect pdf.find_text 'visible index entry').to be_empty
   end
 
+  it 'should not add index section if there are no index entries' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    == About
+
+    This document has no index entries.
+
+    [index]
+    == Index
+    EOS
+
+    (expect pdf.pages).to have_size 1
+    (expect pdf.find_text 'Index').to be_empty
+  end
+
   it 'should add the index entries to the section with the index style' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
