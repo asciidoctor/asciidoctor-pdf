@@ -120,6 +120,23 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       (expect (pdf.page 2).text).to include 'table'
     end
 
+    it 'should create reference to an anchor in a paragraph' do
+      pdf = to_pdf <<~'EOS'
+      Jump to the <<explanation>>.
+
+      <<<
+
+      [[explanation,explanation]]This is the explanation.
+      EOS
+
+      names = get_names pdf
+      (expect names).to have_key 'explanation'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      (expect annotations[0][:Dest]).to eql 'explanation'
+      (expect (pdf.page 1).text).to include 'explanation'
+    end
+
     it 'should create reference to a list item with an anchor' do
       pdf = to_pdf <<~'EOS'
       Jump to the <<first-item>>.
