@@ -135,10 +135,16 @@ describe Asciidoctor::PDF::Converter do
         (expect pdf.instance_variable_get :@themesdir).to eql Dir.pwd
       end
 
-      it 'should log error if theme cannot be found or loaded' do
+      it 'should log error if built-in theme cannot be found or loaded' do
         (expect do
           Asciidoctor.convert 'foo', backend: 'pdf', attributes: { 'pdf-theme' => 'foo' }
         end).to log_message severity: :ERROR, message: '~could not locate or load the built-in pdf theme `foo\'; reverting to default theme'
+      end
+
+      it 'should log error if user theme cannot be found or loaded' do
+        (expect do
+          Asciidoctor.convert 'foo', backend: 'pdf', attributes: { 'pdf-theme' => 'foo', 'pdf-themesdir' => fixtures_dir }
+        end).to log_message severity: :ERROR, message: %(~could not locate or load the pdf theme `foo\' in #{fixtures_dir}; reverting to default theme)
       end
 
       it 'should log error with filename and reason if theme file cannot be parsed' do
