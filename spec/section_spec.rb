@@ -300,6 +300,30 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.lines[0]).to eql 'The File menu'
   end
 
+  it 'should not crash if kbd macro is used in section title' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :experimental:
+
+    == The magic of kbd:[Ctrl,p]
+
+    Describe the magic of paste.
+    EOS
+
+    (expect pdf.lines[0]).to eql %(The magic of Ctrl\u202f+\u202fp)
+  end
+
+  it 'should not crash if btn macro is used in section title' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :experimental:
+
+    == The btn:[Save] button
+
+    Describe the save button.
+    EOS
+
+    (expect pdf.lines[0]).to eql %(The [\u2009Save\u2009] button)
+  end
+
   it 'should add part signifier and part number to part if part numbering is enabled' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Book Title
