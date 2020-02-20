@@ -332,7 +332,8 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should use remote image specified by page-background-image attribute as page background', visual: true do
       with_local_webserver do |base_url|
         [%(#{base_url}/bg.png), %(image:#{base_url}/bg.png[])].each_with_index do |image_url, idx|
-          to_file = to_pdf_file <<~EOS, %(page-background-image-remote-#{idx}.pdf), attribute_overrides: { 'allow-uri-read' => '' }
+          to_file = output_file %(page-background-image-remote-#{idx}.pdf)
+          doc = to_pdf <<~EOS, analyze: :document, to_file: to_file, attribute_overrides: { 'allow-uri-read' => '' }
           = Document Title
           :doctype: book
           :page-background-image: #{image_url}
@@ -341,6 +342,8 @@ describe 'Asciidoctor::PDF::Converter - Page' do
           EOS
 
           (expect to_file).to visually_match 'page-background-image.pdf'
+          # NOTE: we could assert no log messages instead, but that assumes the remove_tmp_files method is even called
+          (expect doc.converter.instance_variable_get :@tmp_files).to be_empty
         end
       end
     end
