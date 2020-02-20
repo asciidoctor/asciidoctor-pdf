@@ -9,6 +9,7 @@ env:
   global:
   - PYGMENTS_VERSION='~> 1.2.0'
   - RGHOST_VERSION='0.9.7'
+  - JRUBY_OPTS='-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-Xss2m -Xcompile.invokedynamic=false'
 stages:
 - test
 - name: release gem
@@ -17,7 +18,7 @@ install:
 - bundle config --local path .bundle/gems
 - bundle config --local without coverage docs
 - bundle --jobs 3 --retry 3
-script: bundle exec ruby -w $(bundle exec ruby -e 'print File.join Gem.bindir, %q(rake)') spec
+script: bundle exec ruby -w $(bundle exec which rake) spec
 jobs:
   include:
   - stage: test
