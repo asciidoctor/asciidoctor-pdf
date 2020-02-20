@@ -288,6 +288,18 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect name).to eql hex_encoded_id
   end if RUBY_VERSION >= '2.4.0'
 
+  it 'should not crash if menu macro is used in section title' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :experimental:
+
+    == The menu:File[] menu
+
+    Describe the file menu.
+    EOS
+
+    (expect pdf.lines[0]).to eql 'The File menu'
+  end
+
   it 'should add part signifier and part number to part if part numbering is enabled' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Book Title
