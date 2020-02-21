@@ -16,6 +16,7 @@ Enhancements::
 Bug Fixes::
 
 * fix spacing after first line of indented paragraph (#1557)
+* fix crash if btn or kbd macro is used in section title (#1563)
 
 Compliance::
 
