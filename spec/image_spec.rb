@@ -597,12 +597,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should read remote image if allow-uri-read is set' do
-      pdf = with_local_webserver do |base_url|
-        to_pdf %(image::#{base_url}/logo.png[Remote Image]), attribute_overrides: { 'allow-uri-read' => '' }
+      converter, pdf = with_local_webserver do |base_url|
+        doc = to_pdf %(image::#{base_url}/logo.png[Remote Image]), analyze: :document, to_file: (pdf_io = StringIO.new), attribute_overrides: { 'allow-uri-read' => '' }
+        [doc.converter, (PDF::Reader.new pdf_io)]
       end
       images = get_images pdf, 1
       (expect images).to have_size 1
       (expect (pdf.page 1).text).to be_empty
+      # NOTE: we could assert no log messages instead, but that assumes the remove_tmp_files method is even called
+      (expect converter.instance_variable_get :@tmp_files).to be_empty
     end
 
     it 'should only read remote image once if allow-uri-read is set' do
