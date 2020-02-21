@@ -299,7 +299,7 @@ module Asciidoctor
 
         stamp_foreground_image doc, has_front_cover
         layout_cover_page doc, :back
-        clean_up_tmp_files
+        remove_tmp_files
         nil
       end
 
@@ -836,7 +836,7 @@ module Asciidoctor
                       end
                     else
                       begin
-                        image_obj, image_info = build_image_object icon_path
+                        image_obj, image_info = ::File.open(icon_path, 'rb') {|fd| build_image_object fd }
                         icon_aspect_ratio = image_info.width.fdiv image_info.height
                         # NOTE: don't scale image up if smaller than label_width
                         icon_width = [(to_pt image_info.width, :px), label_width].min
@@ -3237,9 +3237,13 @@ module Asciidoctor
           folio_basis, invert_folio = :virtual, false
         end
         periphery_layout_cache = {}
+        # NOTE: this block is invoked during PDF generation, after convert_document has returned
         repeat (content_start_page..num_pages), dynamic: true do
-          # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
-          next if page.imported_page?
+          # NOTE: don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
+          if page.imported_page?
+            remove_tmp_files if page_number == num_pages
+            next
+          end
           virtual_pgnum = (pgnum = page_number) - skip_pagenums
           pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new pgnum, :lower) : virtual_pgnum).to_s
           side = page_side((folio_basis == :physical ? pgnum : virtual_pgnum), invert_folio)
@@ -3339,6 +3343,7 @@ module Asciidoctor
               end
             end
           end
+          remove_tmp_files if pgnum == num_pages
         end
 
         go_to_page prev_page_number
@@ -4063,17 +4068,17 @@ module Asciidoctor
         image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node.attributes : nil)
         # NOTE base64 logic currently used for inline images
         if ::Base64 === image_path
-          return (tmp_file = @tmp_files[image_path]) && tmp_file.path if @tmp_files.key? image_path
-          @tmp_files[image_path] = tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
+          return @tmp_files[image_path] if @tmp_files.key? image_path
+          tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
           tmp_image.binmode unless image_format == 'svg'
           begin
             tmp_image.write ::Base64.decode64 image_path
             tmp_image.close
-            tmp_image.path
+            @tmp_files[image_path] = tmp_image.path
           rescue
             @tmp_files[image_path] = nil
             tmp_image.close
-            unlink_tmp_file tmp_image
+            unlink_tmp_file tmp_image.path
             nil
           end
         # handle case when image is a URI
@@ -4084,23 +4089,23 @@ module Asciidoctor
             return
           end
           if @tmp_files.key? image_path
-            return (tmp_file = @tmp_files[image_path]) && tmp_file.path
+            return @tmp_files[image_path]
           elsif cache_uri
             Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
           else
             ::OpenURI
           end
-          @tmp_files[image_path] = tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
+          tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
           tmp_image.binmode if (binary = image_format != 'svg')
           begin
             ::OpenURI.open_uri(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
             tmp_image.close
-            tmp_image.path
+            @tmp_files[image_path] = tmp_image.path
           rescue
-            logger.warn %(could not retrieve remote image: #{image_path}; #{$!.message}) unless scratch?
             @tmp_files[image_path] = nil
+            logger.warn %(could not retrieve remote image: #{image_path}; #{$!.message}) unless scratch?
             tmp_image.close
-            unlink_tmp_file tmp_image
+            unlink_tmp_file tmp_image.path
             nil
           end
         # handle case when image is a local file
@@ -4343,16 +4348,16 @@ module Asciidoctor
         link_annotation [image_x, (image_y - image_height), (image_x + image_width), image_y], Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: uri.as_pdf }
       end
 
-      def clean_up_tmp_files
-        @tmp_files.values.each {|tmp_file| unlink_tmp_file tmp_file if tmp_file }
-        @tmp_files.clear
+      def remove_tmp_files
+        @tmp_files.reject! {|_, path| path ? (unlink_tmp_file path) : true }
       end
 
-      def unlink_tmp_file file
-        path = file.path
+      def unlink_tmp_file path
         ::File.unlink path if ::File.exist? path
+        true
       rescue
         logger.warn %(could not delete temporary file: #{path}; #{$!.message}) unless scratch?
+        false
       end
 
       def apply_subs_discretely doc, value, opts = {}
@@ -4461,14 +4466,11 @@ module Asciidoctor
       def init_scratch_prototype
         @save_state = nil
         @scratch_depth = 0
-        # NOTE can't marshall tmp_files, so clear them before creating prototype
-        saved_tmp_files, @tmp_files = @tmp_files, {}
         # IMPORTANT don't set font before using Marshal, it causes serialization to fail
         @prototype = ::Marshal.load ::Marshal.dump self
         @prototype.state.store.info.data[:Scratch] = @prototype.text_formatter.scratch = true
         # NOTE we're now starting a new page each time, so no need to do it here
         #@prototype.start_new_page if @prototype.page_number == 0
-        @tmp_files = saved_tmp_files
       end
 
       def push_scratch doc
