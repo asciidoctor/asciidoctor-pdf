@@ -2406,7 +2406,7 @@ module Asciidoctor
       end
 
       def convert_inline_button node
-        %(<button>#{(@theme.button_content || '%s').sub '%s', node.text}</button>)
+        %(<button>#{((load_theme node.document).button_content || '%s').sub '%s', node.text}</button>)
       end
 
       def convert_inline_callout node
@@ -2538,7 +2538,7 @@ module Asciidoctor
         if (keys = node.attr 'keys').size == 1
           %(<key>#{keys[0]}</key>)
         else
-          keys.map {|key| %(<key>#{key}</key>) }.join @theme.key_separator || '+'
+          keys.map {|key| %(<key>#{key}</key>) }.join (load_theme node.document).key_separator || '+'
         end
       end
 
