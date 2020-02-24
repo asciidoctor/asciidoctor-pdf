@@ -752,7 +752,7 @@ A sans-serif font that provides a very complete set of Unicode glyphs.
 Cannot be styled as italic, bold or bold_italic.
 Used as the fallback font in the `default-with-fallback-font` theme.
 
-TIP: If you want to specify the location of custom fonts using the `pdf-fontsdir` attribute, yet still be able to use the bundled fonts, you need to refer to the bundled fonts using the `GEM_FONTS_DIR` token.
+TIP: If you want to specify the location of custom fonts using the `pdf-fontsdir` attribute, yet still be able to reference the bundled fonts, you need to refer to the bundled fonts using the `GEM_FONTS_DIR` token.
 To do so, you can either a) prefix the path of the bundled font in the theme file with the segment `GEM_FONTS_DIR` (e.g., `GEM_FONTS_DIR/mplus1p-regular-fallback.ttf`, or b) use relative paths in the theme file and include `GEM_FONT_DIR` in the value of the `pdf-fontsdir` attribute separated by the location of your custom fonts using a semi-colon (e.g., `"path/to/your/fonts;GEM_FONTS_DIR"`).
 
 === Custom Fonts
@@ -820,7 +820,7 @@ You can specify multiple directories by separating the entries with a semi-colon
 
  $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir="path/to/fonts;path/to/more-fonts" document.adoc
 
-To include the bundled fonts in the search, use the `GEM_FONTS_DIR` token:
+To include the location of the bundled fonts in the search, add the `GEM_FONTS_DIR` token:
 
  $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir="path/to/fonts;GEM_FONTS_DIR" document.adoc
 
@@ -993,8 +993,7 @@ Otherwise, the filename is resolved as a theme file in the normal way (relative 
 
 CAUTION: If you define the <<Custom fonts,font catalog>> in a theme that extends from `default`, you either have to redeclare any built-in font that on which the combined theme depends, or you need to set `merge: true` above your font definitions.
 You can find the built-in definitions in default theme.
-You'll then need to include `GEM_FONTS_DIR` in the value of the `pdf-fontsdir` attribute so that the converter can find and register them.
-To avoid having to do this, make sure you set the font family for any element that declares a font family in the default theme.
+If you are referring to a bundled font, you'll need to prefix the path with `GEM_FONTS_DIR` or add it to the value of the `pdf-fontsdir` attribute so the converter can find and register them.
 
 Currently, the base theme is always loaded first.
 Then, the files referenced by the extends key are loaded in order.

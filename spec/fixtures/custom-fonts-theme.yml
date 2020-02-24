@@ -1,0 +1,7 @@
+extends: default
+font:
+  catalog:
+    merge: true
+    M+ 1p: ../../data/fonts/mplus1p-regular-fallback.ttf
+base:
+  font-family: M+ 1p
