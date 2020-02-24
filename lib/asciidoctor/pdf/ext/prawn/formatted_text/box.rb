@@ -17,9 +17,32 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
     end
   end
 
-  def find_font_for_this_glyph char, current_font, fallback_fonts_to_check, original_font = current_font
-    (doc = @document).font current_font
-    if fallback_fonts_to_check.empty?
+  def analyze_glyphs_for_fallback_font_support fragment_hash
+    fragment_font = fragment_hash[:font] || (original_font = @document.font.family)
+    if (fragment_font_styles = fragment_hash[:styles])
+      if fragment_font_styles.include? :bold
+        fragment_font_opts = { style: (fragment_font_styles.include? :italic) ? :bold_italic : :bold }
+      elsif fragment_font_styles.include? :italic
+        fragment_font_opts = { style: :italic }
+      end
+    end
+    fallback_fonts = @fallback_fonts.dup
+    font_glyph_pairs = []
+    @document.save_font do
+      fragment_hash[:text].each_char do |char|
+        font_glyph_pairs << [(find_font_for_this_glyph char, fragment_font, fragment_font_opts || {}, fallback_fonts.dup), char]
+      end
+    end
+    # NOTE: don't add a :font to fragment if it wasn't there originally
+    font_glyph_pairs.each {|pair| pair[0] = nil if pair[0] == original_font } if original_font
+    form_fragments_from_like_font_glyph_pairs font_glyph_pairs, fragment_hash
+  end
+
+  def find_font_for_this_glyph char, current_font, current_font_opts = {}, fallback_fonts_to_check = [], original_font = current_font
+    (doc = @document).font current_font, current_font_opts
+    if doc.font.glyph_present? char
+      current_font
+    elsif fallback_fonts_to_check.empty?
       if logger.info? && !doc.scratch?
         fonts_checked = @fallback_fonts.dup.unshift original_font
         missing_chars = (doc.instance_variable_defined? :@missing_chars) ?
@@ -30,11 +53,9 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
           previous_fonts_checked << fonts_checked
         end
       end
-      current_font
-    elsif doc.font.glyph_present? char
-      current_font
+      original_font
     else
-      find_font_for_this_glyph char, fallback_fonts_to_check.shift, fallback_fonts_to_check, original_font
+      find_font_for_this_glyph char, fallback_fonts_to_check.shift, current_font_opts, fallback_fonts_to_check, original_font
     end
   end
 
