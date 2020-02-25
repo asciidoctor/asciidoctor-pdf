@@ -36,6 +36,12 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-glyph-fallback-only.pdf'
     end
 
+    it 'should use notdef from original font of glyph not found in any fallback font', visual: true do
+      input = ?\u0278 * 10
+      to_file = to_pdf_file input, 'font-notdef-glyph.pdf', analyze: true, attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      (expect to_file).to visually_match 'font-notdef-glyph.pdf'
+    end
+
     it 'should include box drawing glyphs in bundled monospace font', visual: true do
       input_file = Pathname.new fixture_file 'box-drawing.adoc'
       to_file = to_pdf_file input_file, 'font-box-drawing.pdf'
