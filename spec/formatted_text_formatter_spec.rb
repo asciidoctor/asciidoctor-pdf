@@ -185,6 +185,27 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-fallback-font.pdf'
     end
 
+    it 'should look for glyph in font for the specified font style when fallback font is enabled' do
+      pdf_theme = {
+        extends: 'default',
+        font_catalog: {
+          'Noto Serif' => {
+            'normal' => 'notoemoji-subset.ttf',
+            'bold' => 'notoserif-bold-subset.ttf',
+          },
+          'M+ 1p Fallback' => {
+            'normal' => 'mplus1p-regular-fallback.ttf',
+            'bold' => 'mplus1p-regular-fallback.ttf',
+          },
+        },
+        font_fallbacks: ['M+ 1p Fallback'],
+      }
+      pdf = to_pdf %(**\u03a9**), analyze: true, pdf_theme: pdf_theme
+      text = (pdf.find_text ?\u03a9)[0]
+      (expect text).not_to be_nil
+      (expect text[:font_name]).to eql 'NotoSerif-Bold'
+    end
+
     it 'should be able to reference section title containing icon' do
       pdf = to_pdf <<~'EOS', analyze: true
       :icons: font
