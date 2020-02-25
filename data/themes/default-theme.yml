@@ -2,16 +2,16 @@ font:
   catalog:
     # Noto Serif supports Latin, Latin-1 Supplement, Latin Extended-A, Greek, Cyrillic, Vietnamese & an assortment of symbols
     Noto Serif:
-      normal: notoserif-regular-subset.ttf
-      bold: notoserif-bold-subset.ttf
-      italic: notoserif-italic-subset.ttf
-      bold_italic: notoserif-bold_italic-subset.ttf
+      normal: GEM_FONTS_DIR/notoserif-regular-subset.ttf
+      bold: GEM_FONTS_DIR/notoserif-bold-subset.ttf
+      italic: GEM_FONTS_DIR/notoserif-italic-subset.ttf
+      bold_italic: GEM_FONTS_DIR/notoserif-bold_italic-subset.ttf
     # M+ 1mn supports ASCII and the circled numbers used for conums
     M+ 1mn:
-      normal: mplus1mn-regular-subset.ttf
-      bold: mplus1mn-bold-subset.ttf
-      italic: mplus1mn-italic-subset.ttf
-      bold_italic: mplus1mn-bold_italic-subset.ttf
+      normal: GEM_FONTS_DIR/mplus1mn-regular-subset.ttf
+      bold: GEM_FONTS_DIR/mplus1mn-bold-subset.ttf
+      italic: GEM_FONTS_DIR/mplus1mn-italic-subset.ttf
+      bold_italic: GEM_FONTS_DIR/mplus1mn-bold_italic-subset.ttf
 page:
   background_color: FFFFFF
   layout: portrait
