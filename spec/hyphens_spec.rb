@@ -32,6 +32,12 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     (expect lines[0].count ?\u00ad).to be 1
   end
 
+  it 'should not hyphenate a hyphen' do
+    input = (['domain-driven design'] * 6).join ' '
+    pdf = to_pdf input, attribute_overrides: { 'hyphens' => '' }, analyze: true
+    (expect pdf.lines[0]).to end_with '-'
+  end
+
   it 'should hyphenate text in table cell if hyphens attribute is set' do
     pdf = to_pdf <<~'EOS', analyze: true
     :hyphens:
