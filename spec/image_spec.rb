@@ -386,6 +386,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'faulty.svg'}; Unknown tag 'foobar')
       end
     end
+
+    it 'should render linear gradient in SVG', visual: true do
+      to_file = to_pdf_file 'image::gradient.svg[pdfwidth=100%]', 'image-svg-with-gradient.pdf'
+      (expect to_file).to visually_match 'image-svg-with-gradient.pdf'
+    end
   end
 
   context 'PNG' do
