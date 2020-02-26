@@ -27,7 +27,7 @@ describe 'Asciidoctor::PDF::Converter - Video' do
       (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql %(https://www.youtube.com/watch?v=#{video_id})
       (expect to_file).to visually_match 'video-youtube-poster.pdf'
-    end unless ENV['CI']
+    end
   end
 
   context 'Vimeo' do
