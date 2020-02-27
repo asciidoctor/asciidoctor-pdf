@@ -4816,6 +4816,7 @@ In addition, the following attributes are also available when defining the conte
 
 * page-count
 * page-number (only set if the `pagenums` attribute is set on the document, which it is by default)
+* page-layout
 * document-title
 * document-subtitle
 * part-title
@@ -4844,6 +4845,7 @@ header:
     center:
       content: $header-recto-center-content
 footer:
+  background-image: image:running-content-bg-{page-layout}.svg[]
   height: 0.75in
   line-height: 1
   recto:

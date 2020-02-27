@@ -971,6 +971,25 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end).to log_message severity: :WARN, message: %r(footer background image not found or readable.*data/themes/no-such-image\.png$)
     end
 
+    it 'should be able to reference page layout in background image path', visual: true do
+      pdf_theme = { footer_background_image: 'image:{imagesdir}/square-{page-layout}.svg[]' }
+
+      to_file = to_pdf_file <<~'EOS', 'running-content-background-image-per-layout.pdf', pdf_theme: pdf_theme, enable_footer: true
+      page 1
+
+      [.landscape]
+      <<<
+
+      page 2
+
+      [.portrait]
+      <<<
+
+      page 3
+      EOS
+      (expect to_file).to visually_match 'running-content-background-image-per-layout.pdf'
+    end
+
     it 'should allow theme to control side margin of running content using fixed value' do
       pdf_theme = {
         header_height: 36,

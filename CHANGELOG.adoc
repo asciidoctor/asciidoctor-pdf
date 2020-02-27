@@ -13,6 +13,7 @@ Enhancements::
 * allow theme to control font color of first line of abstract
 * don't render index section if index is empty (i.e., there are no index entries)
 * stabilize font paths in built-in themes by prefixing paths with GEM_FONTS_DIR (#1568)
+* assign page-layout attribute in running content so it can be used select background per layout (#1570)
 
 Bug Fixes::
 
