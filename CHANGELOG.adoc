@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 Bug Fixes::
 
 * do not hyphen a hyphen when hyphenation is enabled (#1562)
+* fix crash when applying text transform to heading cell in table body (#1575)
 * honor font style when looking for glyph in font
 
 == 1.5.2 (2020-02-21) - @mojavelinux
