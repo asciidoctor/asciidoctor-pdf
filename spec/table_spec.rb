@@ -748,6 +748,20 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect text[1][:string]).to eql 'ÉTUDIER'
     end
 
+    it 'should apply text transform for head to heading cell' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_head_text_transform: 'uppercase' }, analyze: true
+      |===
+      |heading in head
+
+      h|heading in body
+      |===
+      EOS
+
+      text = pdf.text
+      (expect text[0][:string]).to eql 'HEADING IN HEAD'
+      (expect text[1][:string]).to eql 'HEADING IN BODY'
+    end
+
     it 'should honor horizontal alignment on cell' do
       pdf = to_pdf <<~'EOS', analyze: true
       [cols="1,>1"]
