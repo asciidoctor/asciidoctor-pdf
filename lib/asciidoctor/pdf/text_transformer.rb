@@ -17,7 +17,9 @@ module Asciidoctor
       PCDATAFilterRx = /(&#?[a-z\d]+;|<[^>]+>)|([^&<]+)/
       TagFilterRx = /(<[^>]+>)|([^<]+)/
       WordRx = /\S+/
+      Hyphen = '-'
       SoftHyphen = ?\u00ad
+      HyphenatedHyphen = '-' + SoftHyphen
 
       def capitalize_words_pcdata string
         if XMLMarkupRx.match? string
@@ -40,7 +42,7 @@ module Asciidoctor
       end
 
       def hyphenate_words string, hyphenator
-        string.gsub(WordRx) { hyphenator.visualize $&, SoftHyphen }
+        string.gsub(WordRx) { (hyphenator.visualize $&, SoftHyphen).gsub HyphenatedHyphen, Hyphen }
       end
 
       def lowercase_pcdata string
