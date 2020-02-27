@@ -2031,7 +2031,7 @@ module Asciidoctor
               end
               unless cell_data.key? :content
                 cell_text = cell.text.strip
-                cell_text = transform_text cell_text if cell_transform
+                cell_text = transform_text cell_text, cell_transform if cell_transform
                 cell_text = hyphenate_text cell_text, @hyphenator if defined? @hyphenator
                 cell_text = cell_text.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
                 if cell_text.include? LF
