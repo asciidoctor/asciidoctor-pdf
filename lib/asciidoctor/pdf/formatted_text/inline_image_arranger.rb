@@ -115,7 +115,7 @@ module Asciidoctor::PDF::FormattedText
           fragment[:image_width] = fragment[:width] = image_w
           fragment[:image_height] = image_h
         rescue
-          logger.warn %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! ? '; install prawn-gmagick gem to add support' : ''}) unless scratch
+          logger.warn %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}) unless scratch
           drop = true # delegate to cleanup logic in ensure block
         ensure
           # NOTE skip rendering image in scratch document or if image can't be loaded

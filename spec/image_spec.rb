@@ -417,6 +417,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         (expect pdf.images).to have_size 1
       end
     end if defined? GMagick::Image
+
+    it 'should not suggest installing prawn-gmagick if gem has already been loaded' do
+      ['::', ':'].each do |macro_delim|
+        (expect do
+          pdf = to_pdf %(image#{macro_delim}lorem-ipsum.yml[Unrecognized image format]), analyze: :image
+          (expect pdf.images).to have_size 0
+        end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'lorem-ipsum.yml'}; image file is an unrecognised format)
+      end
+    end if defined? GMagick::Image
   end
 
   context 'BMP' do
