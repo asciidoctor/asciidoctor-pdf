@@ -1521,7 +1521,7 @@ module Asciidoctor
           layout_caption node, category: :image, side: :bottom, block_align: alignment, block_width: rendered_w, max_width: @theme.image_caption_max_width if node.title?
           theme_margin :block, :bottom unless pinned
         rescue
-          on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! ? '; install prawn-gmagick gem to add support' : ''}))
+          on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}))
         end
       end
 
