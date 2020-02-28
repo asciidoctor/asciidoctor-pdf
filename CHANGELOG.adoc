@@ -24,6 +24,7 @@ Bug Fixes::
 * fix crash if btn or kbd macro is used in section title (#1563)
 * fix crash when applying text transform to heading cell in table body (#1575)
 * honor font style when looking for glyph in font
+* only suggest installing prawn-gmagick gem if not loaded (#1578)
 
 Compliance::
 
