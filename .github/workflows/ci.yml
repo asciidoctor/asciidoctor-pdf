@@ -11,8 +11,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        ruby: ['2.7', '2.6', '2.5', '2.4', '2.3']
-        #ruby: [jruby, '2.7', '2.6', '2.5', '2.4', '2.3']
+        ruby: [jruby, '2.7', '2.6', '2.5', '2.4', '2.3']
     env:
       PYGMENTS_VERSION: '~> 1.2.0'
     steps:
