@@ -31,6 +31,15 @@ Compliance::
 * drop support for versions of Asciidoctor < 2
 * drop deprecated Pdf module alias in API (leaving only PDF)
 
+== 1.5.3 (2020-02-28) - @mojavelinux
+
+Bug Fixes::
+
+* do not hyphen a hyphen when hyphenation is enabled (#1562)
+* fix crash when applying text transform to heading cell in table body (#1575)
+* honor font style when looking for glyph in font
+* only suggest installing prawn-gmagick gem if not loaded (#1578)
+
 == 1.5.2 (2020-02-21) - @mojavelinux
 
 Bug Fixes::
