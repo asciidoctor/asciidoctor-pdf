@@ -3221,12 +3221,16 @@ module Asciidoctor
           virtual_pgnum = (pgnum = page_number) - skip_pagenums
           pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new pgnum, :lower) : virtual_pgnum).to_s
           side = page_side((folio_basis == :physical ? pgnum : virtual_pgnum), invert_folio)
-          # QUESTION should allocation be per side?
+          doc.set_attr 'page-layout', page.layout.to_s
+
+          # NOTE: running content is cached per page layout
+          # QUESTION: should allocation be per side?
           trim_styles, colspec_dict, content_dict, stamp_names = allocate_running_content_layout doc, page, periphery, periphery_layout_cache
           # FIXME: we need to have a content setting for chapter pages
           content_by_position, colspec_by_position = content_dict[side], colspec_dict[side]
           # TODO: populate chapter-number
           # TODO: populate numbered and unnumbered chapter and section titles
+
           doc.set_attr 'page-number', pgnum_label if pagenums_enabled
           # QUESTION should the fallback value be nil instead of empty string? or should we remove attribute if no value?
           doc.set_attr 'part-title', (parts_by_page[pgnum] || '')
