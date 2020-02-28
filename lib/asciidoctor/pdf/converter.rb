@@ -269,8 +269,9 @@ class Converter < ::Prawn::Document
     end
 
     unless page_count < body_start_page_number
+
       unless doc.noheader || @theme.header_height.to_f.zero?
-        layout_running_content :header, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number
+        layout_running_content :header, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number # doc.noheader
       end
       unless doc.nofooter || @theme.footer_height.to_f.zero?
         layout_running_content :footer, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number
@@ -2617,7 +2618,7 @@ class Converter < ::Prawn::Document
     node.id ? %(<a name="#{node.id}">#{DummyText}</a>#{quoted_text}) : quoted_text
   end
 
-  def layout_title_page doc
+  def layout_title_page doc # title_page_Def
     return unless doc.header? && !doc.notitle
 
     # NOTE a new page may have already been started at this point, so decide what to do with it
@@ -2732,9 +2733,29 @@ class Converter < ::Prawn::Document
         end
         move_down(@theme.title_page_authors_margin_bottom || 0)
       end
-      unless @theme.title_page_revision_display == 'none' || (revision_info = [(doc.attr? 'productversion') ? %(#{doc.attr 'version-label'} #{doc.attr 'productversion'}) : nil, (doc.attr 'revdate')].compact).empty?
+
+
+      # adds productname and productversion attributes
+      theme_font :title_page_product_details do
+        product_text = %(#{doc.attr 'productname'}, version #{doc.attr 'productversion'})
+        layout_prose product_text,
+                     align: title_align,
+                     margin: 10,
+                     normalize: false
+      end
+
+      #adds document-title attribute
+      theme_font :title_page_document_title do
+      layout_prose %(#{doc.attr 'document-title'}),
+                   align: title_align,
+                   margin_top: 55,
+                   normalize: false
+      end
+
+      # adds revnumber, revdate attributes
+      unless @theme.title_page_revision_display == 'none' || (revision_info = [(doc.attr? 'revnumber') ? %(Issue #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact).empty? # revision_details
         move_down(@theme.title_page_revision_margin_top || 0)
-        revision_text = revision_info.join (@theme.title_page_revision_delimiter || ', ')
+        revision_text = revision_info.join (@theme.title_page_revision_delimiter || "\n")
         if (revremark = doc.attr 'revremark')
           revision_text = %(#{revision_text}: #{revremark})
         end
@@ -2750,6 +2771,7 @@ class Converter < ::Prawn::Document
       end
     end
 
+    # adds placeholder text if the page is empty
     layout_prose DummyText, margin: 0, line_height: 1, normalize: false if page.empty?
   end
 
@@ -3103,7 +3125,10 @@ class Converter < ::Prawn::Document
   end
 
   # TODO delegate to layout_page_header and layout_page_footer per page
-  def layout_running_content periphery, doc, opts = {}
+  def layout_running_content periphery, doc, opts = {}  # header/footer_function
+
+
+    # GOES TO THE FIRST PAGE WHERE HEADERS & FOOTERS WILL APPEAR
     skip, skip_pagenums = opts[:skip] || [1, 1]
     body_start_page_number = opts[:body_start_page_number] || 1
     # NOTE find and advance to first non-imported content page to use as model page
@@ -3111,25 +3136,35 @@ class Converter < ::Prawn::Document
     content_start_page += (skip + 1)
     num_pages = page_count
     prev_page_number = page_number
+
     go_to_page content_start_page
 
+    # GETS SECTIONS
     # FIXME probably need to treat doctypes differently
     is_book = doc.doctype == 'book'
     header = doc.header? ? doc.header : nil
     sectlevels = (@theme[%(#{periphery}_sectlevels)] || 2).to_i
     sections = doc.find_by(context: :section) {|sect| sect.level <= sectlevels && sect != header } || []
+
+    # TOC TITLE
     if (toc_page_nums = @toc_extent && @toc_extent[:page_nums])
       toc_title = (doc.attr 'toc-title') || ''
     end
 
+    # PERIPHERY STYLE
     title_method = TitleStyles[@theme[%(#{periphery}_title_style)]]
+
     # FIXME we need a proper model for all this page counting
     # FIXME we make a big assumption that part & chapter start on new pages
     # index parts, chapters and sections by the physical page number on which they start
+
+    # INITIALIZATION OF SPECIFIC TYPE PAGES
     part_start_pages = {}
     chapter_start_pages = {}
     section_start_pages = {}
     trailing_section_start_pages = {}
+
+    # SMALL LOOP FOR SECTIONS/PAGES/TITLES
     sections.each do |sect|
       pgnum = (sect.attr 'pdf-page-start').to_i
       if is_book && ((sect_is_part = sect.part?) || sect.chapter?)
@@ -3215,14 +3250,14 @@ class Converter < ::Prawn::Document
       folio_basis, invert_folio = :virtual, false
     end
     periphery_layout_cache = {}
-    repeat((content_start_page..num_pages), dynamic: true) do
+    repeat((content_start_page..num_pages), dynamic: true) do  # repeated
       # NOTE don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
       next if page.imported_page?
       virtual_pgnum = (pgnum = page_number) - skip_pagenums
       pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new pgnum, :lower) : virtual_pgnum).to_s
       side = page_side((folio_basis == :physical ? pgnum : virtual_pgnum), invert_folio)
       # QUESTION should allocation be per side?
-      trim_styles, colspec_dict, content_dict, stamp_names = allocate_running_content_layout page, periphery, periphery_layout_cache
+      trim_styles, colspec_dict, content_dict, stamp_names = allocate_running_content_layout page, periphery, periphery_layout_cache # allocate_running_content_layout CALL
       # FIXME we need to have a content setting for chapter pages
       content_by_position, colspec_by_position = content_dict[side], colspec_dict[side]
       # TODO populate chapter-number
@@ -3256,7 +3291,9 @@ class Converter < ::Prawn::Document
             else
               trim_column_rule_width = nil
             end
+
             prev_position = nil
+            # LOOP HERE ----------------------------------------------------------------
             ColumnPositions.each do |position|
               next unless (content = content_by_position[position])
               next unless (colspec = colspec_by_position[position])[:width] > 0
@@ -3270,6 +3307,7 @@ class Converter < ::Prawn::Document
                 end
               end
               # FIXME we need to have a content setting for chapter pages
+
               case content
               when ::Array
                 # NOTE float ensures cursor position is restored and returns us to current page if we overrun
@@ -3316,7 +3354,7 @@ class Converter < ::Prawn::Document
             end
           end
         end
-      end
+      end #--------------------------------------------------------------------- STYLING METHOD 'theme_font' ENDS HERE
     end
 
     go_to_page prev_page_number
