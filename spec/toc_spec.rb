@@ -328,7 +328,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect page_2_lines[-1]).to end_with 'but here'
       page_3_lines = pdf.lines pdf.find_text page_number: 3
       (expect page_3_lines).to have_size 1
-      (expect page_3_lines[0]).to match %r/we are(\. )+.*38$/
+      (expect page_3_lines[0]).to match %r/we are ?(\. )+ ?\u00a038$/
     end
 
     it 'should allow hanging indent to be applied to lines that wrap' do

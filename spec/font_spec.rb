@@ -95,10 +95,9 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         no{zwsp}space
 
         button:[Save]
-
         EOS
         (expect pdf.find_text font_name: 'Helvetica').to have_size pdf.text.size
-        (expect pdf.lines).to eql [%(\u2022disc), '-circle', %(\u00b7square), 'nospace', 'button:[Save]']
+        (expect pdf.lines).to eql [%(\u2022 disc), '- circle', %(\u00b7 square), 'nospace', 'button:[Save]']
       end).to not_log_message
     end
   end

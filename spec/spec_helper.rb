@@ -94,11 +94,19 @@ class EnhancedPDFTextInspector < PDF::Inspector
   end
 
   def lines text = @text
-    prev_y = nil
+    prev = nil
     text.each_with_object [] do |it, accum|
-      current_line = prev_y && (prev_y - it[:y]).abs < 6 ? accum.pop : ''
-      accum << %(#{current_line}#{it[:string]})
-      prev_y = it[:y]
+      #if prev && (prev[:y] == it[:y] || (prev[:y] - it[:y]).abs < [it[:font_size], prev[:font_size]].min * 0.5)
+      if prev && (prev[:y] == it[:y] || (prev[:y] - it[:y]).abs < 6)
+        if it[:x] - prev[:x] > prev[:width] + 0.5
+          accum << %(#{accum.pop.rstrip} #{it[:string].lstrip})
+        else
+          accum << %(#{accum.pop}#{it[:string]})
+        end
+      else
+        accum << it[:string]
+      end
+      prev = it
     end
   end
 

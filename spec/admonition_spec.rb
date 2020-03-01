@@ -93,7 +93,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       lines = pdf.lines
       (expect lines).to have_size 1
-      (expect lines[0]).to eql 'TIPLook for the warp zone under the bridge.'
+      (expect lines[0]).to eql 'TIP Look for the warp zone under the bridge.'
       text = pdf.text
       (expect text).to have_size 2
       label_text = text[0]
@@ -114,7 +114,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       lines = pdf.lines
       (expect lines).to have_size 1
-      (expect lines[0]).to eql %(\uf0ebLook for the warp zone under the bridge.)
+      (expect lines[0]).to eql %(\uf0eb Look for the warp zone under the bridge.)
       text = pdf.text
       (expect text).to have_size 2
       label_text = text[0]
@@ -168,7 +168,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       lines = pdf.lines
       (expect lines).to have_size 1
-      (expect lines[0]).to eql %(\uf3d1Look for the warp zone under the bridge.)
+      (expect lines[0]).to eql %(\uf3d1 Look for the warp zone under the bridge.)
       text = pdf.text
       (expect text).to have_size 2
       label_text = text[0]

@@ -913,7 +913,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       shoe
       |===
       EOS
-      (expect pdf.lines).to eql ['10.ten', '11.eleven', '12.twelve', 'buckle', 'my', 'shoe']
+      (expect pdf.lines).to eql ['10. ten', '11. eleven', '12. twelve', 'buckle', 'my', 'shoe']
     end
 
     it 'should convert nested table' do
@@ -931,7 +931,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       (expect pdf.lines.find {|l| l.include? '!' }).to be_nil
       (expect pdf.lines).to have_size 2
-      (expect pdf.lines[1]).to eql 'Nested table cell 1Nested table cell 2'
+      (expect pdf.lines[1]).to eql 'Nested table cell 1 Nested table cell 2'
       nested_cell1 = (pdf.find_text 'Nested table cell 1')[0]
       nested_cell2 = (pdf.find_text 'Nested table cell 2')[0]
       (expect nested_cell1[:y]).to eql nested_cell2[:y]
@@ -951,7 +951,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       p1_lines = pdf.lines (pdf.page 1)[:text]
-      (expect p1_lines).to eql ['•abc']
+      (expect p1_lines).to eql ['• abc']
       (expect pdf.pages).to have_size 1
     end
 
@@ -973,7 +973,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       p1_lines = pdf.lines (pdf.page 1)[:text]
-      (expect p1_lines).to eql ['before', '•abc', '•xyz', 'after']
+      (expect p1_lines).to eql ['before', '• abc', '• xyz', 'after']
       (expect pdf.pages).to have_size 1
     end
 

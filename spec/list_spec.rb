@@ -14,11 +14,11 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       expected_lines = [
-        '•level one',
-        '◦level two',
-        '▪level three',
-        '▪level four',
-        '•back to level one',
+        '• level one',
+        '◦ level two',
+        '▪ level three',
+        '▪ level four',
+        '• back to level one',
       ]
 
       (expect pdf.lines).to eql expected_lines
@@ -32,7 +32,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       * three
       EOS
 
-      (expect pdf.lines).to eql ['▪one', '▪two', '▪three']
+      (expect pdf.lines).to eql ['▪ one', '▪ two', '▪ three']
     end
 
     it 'should make bullets invisible if list has no-bullet style' do
@@ -90,7 +90,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         *** white square
       EOS
 
-      (expect pdf.lines).to eql [%(\u25cadiamond), %(\u25ccdotted circle), %(\u25a1white square)]
+      (expect pdf.lines).to eql [%(\u25ca diamond), %(\u25cc dotted circle), %(\u25a1 white square)]
     end
 
     it 'should allow FontAwesome icon to be used as list marker' do
@@ -104,7 +104,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         * bullseye!
         EOS
 
-        (expect pdf.lines).to eql [%(\uf192bullseye!)]
+        (expect pdf.lines).to eql [%(\uf192 bullseye!)]
         marker_text = (pdf.find_text ?\uf192)[0]
         (expect marker_text).not_to be_nil
         (expect marker_text[:font_name]).to eql 'FontAwesome5Free-Regular'
@@ -210,7 +210,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       * [x] done
       EOS
 
-      (expect pdf.lines).to eql [%(\u2610todo), %(\u2611done)]
+      (expect pdf.lines).to eql [%(\u2610 todo), %(\u2611 done)]
     end
 
     it 'should allow theme to change checkbox characters' do
@@ -224,7 +224,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       * [x] done
       EOS
 
-      (expect pdf.lines).to eql [%(\u25d8todo), %(\u25d9done)]
+      (expect pdf.lines).to eql [%(\u25d8 todo), %(\u25d9 done)]
     end
 
     it 'should use glyph from fallback font if not present in main font', visual: true do
@@ -251,7 +251,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         * [x] done
         EOS
 
-        (expect pdf.lines).to eql [%(\uf096todo), %(\uf046done)]
+        (expect pdf.lines).to eql [%(\uf096 todo), %(\uf046 done)]
         unchecked_marker_text = (pdf.find_text ?\uf096)[0]
         (expect unchecked_marker_text).not_to be_nil
         (expect unchecked_marker_text[:font_name]).to eql 'FontAwesome5Free-Solid'
@@ -274,8 +274,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . 3
       EOS
 
-      (expect pdf.strings).to eql %w(1. 1 a. a i. i A. A I. I 2. 2 3. 3)
-      (expect pdf.lines).to eql %w(1.1 a.a i.i A.A I.I 2.2 3.3)
+      (expect pdf.lines).to eql ['1. 1', 'a. a', 'i. i', 'A. A', 'I. I', '2. 2', '3. 3']
     end
 
     it 'should use marker specified by style' do
@@ -286,7 +285,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . three
       EOS
 
-      (expect pdf.lines).to eql ['i.one', 'ii.two', 'iii.three']
+      (expect pdf.lines).to eql ['i. one', 'ii. two', 'iii. three']
     end
 
     it 'should use consistent line height even if list item is entirely monospace' do
@@ -339,7 +338,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       no9_text = (pdf.find_text '9.')[0]
       (expect no9_text).not_to be_nil
       (expect no9_text[:order]).to be 1
-      (expect pdf.lines).to eql %w(9.nine 10.ten)
+      (expect pdf.lines).to eql ['9. nine', '10. ten']
     end
 
     it 'should start numbering at value of specified start attribute using specified numeration style' do
@@ -354,7 +353,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       no9_text = (pdf.find_text 'IX.')[0]
       (expect no9_text).not_to be_nil
       (expect no9_text[:order]).to be 1
-      (expect pdf.lines).to eql %w(IX.nine X.ten)
+      (expect pdf.lines).to eql ['IX. nine', 'X. ten']
     end
 
     it 'should ignore start attribute if marker is disabled' do
@@ -376,7 +375,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . positive one
       EOS
 
-      (expect pdf.lines).to eql ['-1.negative one', '0.zero', '1.positive one']
+      (expect pdf.lines).to eql ['-1. negative one', '0. zero', '1. positive one']
     end
 
     it 'should allow start value to be less than 1 for list with roman numbering' do
@@ -387,7 +386,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . positive one
       EOS
 
-      (expect pdf.lines).to eql ['-1.negative one', '0.zero', 'i.positive one']
+      (expect pdf.lines).to eql ['-1. negative one', '0. zero', 'i. positive one']
     end
 
     it 'should make numbers invisible if list has unnumbered style' do
@@ -468,7 +467,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       * l1
       EOS
 
-      (expect pdf.lines).to eql ['•l1', '1.l2', '▪l3', 'a.l4', '▪l5', 'i.l6', '•l1']
+      (expect pdf.lines).to eql ['• l1', '1. l2', '▪ l3', 'a. l4', '▪ l5', 'i. l6', '• l1']
     end
 
     # NOTE expand this test as necessary to cover the various permutations
@@ -624,13 +623,13 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect more_desc_text[:font_name]).to eql 'NotoSerif-Italic'
       end
 
-      it 'should not break term that not extend past the midpoint of the page' do
+      it 'should not break term that does not extend past the midpoint of the page' do
         pdf = to_pdf <<~EOS, analyze: true
         [horizontal]
         handoverallthekeystoyourkingdom:: #{(['submit'] * 50).join ' '}
         EOS
 
-        (expect pdf.lines[0]).to start_with 'handoverallthekeystoyourkingdomsubmit submit'
+        (expect pdf.lines[0]).to start_with 'handoverallthekeystoyourkingdom submit submit'
       end
 
       it 'should break term that extends past the midpoint of the page' do
@@ -672,7 +671,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         about item b
         EOS
 
-        (expect pdf.lines).to eql ['•item a: about item a', 'more about item a', '•item b: about item b']
+        (expect pdf.lines).to eql ['• item a: about item a', 'more about item a', '• item b: about item b']
         item_a_subject_text = (pdf.find_text 'item a:')[0]
         (expect item_a_subject_text).not_to be_nil
         (expect item_a_subject_text[:font_name]).to eql 'NotoSerif-Bold'
@@ -689,7 +688,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         about item b
         EOS
 
-        (expect pdf.lines).to eql ['•item a. about item a', 'more about item a', '•item b. about item b']
+        (expect pdf.lines).to eql ['• item a. about item a', 'more about item a', '• item b. about item b']
       end
 
       it 'should not add subject stop if subject ends with stop punctuation' do
@@ -706,7 +705,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         yes
         EOS
 
-        (expect pdf.lines).to eql ['•item a. about item a', 'more about item a', '•item b: about item b', '•well? yes']
+        (expect pdf.lines).to eql ['• item a. about item a', 'more about item a', '• item b: about item b', '• well? yes']
       end
 
       it 'should add subject stop if subject ends with character reference' do
@@ -716,7 +715,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         >:: greater than
         EOS
 
-        (expect pdf.lines).to eql ['•&: ampersand', '•>: greater than']
+        (expect pdf.lines).to eql ['• &: ampersand', '• >: greater than']
       end
 
       it 'should stack subject on top of text if stack role is present' do
@@ -730,7 +729,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         about item b
         EOS
 
-        (expect pdf.lines).to eql ['•item a', 'about item a', 'more about item a', '•item b', 'about item b']
+        (expect pdf.lines).to eql ['• item a', 'about item a', 'more about item a', '• item b', 'about item b']
       end
     end
 
@@ -746,7 +745,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         about item b
         EOS
 
-        (expect pdf.lines).to eql ['1.item a: about item a', 'more about item a', '2.item b: about item b']
+        (expect pdf.lines).to eql ['1. item a: about item a', 'more about item a', '2. item b: about item b']
         item_a_subject_text = (pdf.find_text 'item a:')[0]
         (expect item_a_subject_text).not_to be_nil
         (expect item_a_subject_text[:font_name]).to eql 'NotoSerif-Bold'
@@ -763,7 +762,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         about item b
         EOS
 
-        (expect pdf.lines).to eql ['1.item a. about item a', 'more about item a', '2.item b. about item b']
+        (expect pdf.lines).to eql ['1. item a. about item a', 'more about item a', '2. item b. about item b']
       end
 
       it 'should not add subject stop if subject ends with stop punctuation' do
@@ -780,7 +779,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         yes
         EOS
 
-        (expect pdf.lines).to eql ['1.item a. about item a', 'more about item a', '2.item b: about item b', '3.well? yes']
+        (expect pdf.lines).to eql ['1. item a. about item a', 'more about item a', '2. item b: about item b', '3. well? yes']
       end
 
       it 'should add subject stop if subject ends with character reference' do
@@ -790,7 +789,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         >:: greater than
         EOS
 
-        (expect pdf.lines).to eql ['1.&: ampersand', '2.>: greater than']
+        (expect pdf.lines).to eql ['1. &: ampersand', '2. >: greater than']
       end
 
       it 'should stack subject on top of text if stack role is present' do
@@ -804,7 +803,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         about item b
         EOS
 
-        (expect pdf.lines).to eql ['1.item a', 'about item a', 'more about item a', '2.item b', 'about item b']
+        (expect pdf.lines).to eql ['1. item a', 'about item a', 'more about item a', '2. item b', 'about item b']
       end
     end
   end
@@ -1002,8 +1001,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       lines = pdf.lines
+
       (expect lines).to include 'The recommended reading includes [bar].'
-      (expect lines).to include '▪[bar] Bar, Foo. All The Things. 2010.'
+      (expect lines).to include '▪ [bar] Bar, Foo. All The Things. 2010.'
     end
 
     it 'should reference bibliography entry using custom reftext square brackets' do
@@ -1018,7 +1018,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
       lines = pdf.lines
       (expect lines).to include 'The recommended reading includes [1].'
-      (expect lines).to include '▪[1] Bar, Foo. All The Things. 2010.'
+      (expect lines).to include '▪ [1] Bar, Foo. All The Things. 2010.'
     end
   end
 end

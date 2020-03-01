@@ -101,7 +101,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       [{ 'media' => 'print' }, { 'media' => 'prepress' }, { 'show-link-uri' => '' }].each do |attribute_overrides|
         inputs.each do |text|
           before, after = text.split '|', 2
-          expected_before = before.sub 'https://', 'link [https://'
+          expected_before = before.sub 'https://', 'link [ https://'
           expected_after = after.sub '[link]', ']'
           pdf = to_pdf %(#{before}#{after}), attribute_overrides: attribute_overrides, analyze: true
           lines = pdf.lines

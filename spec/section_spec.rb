@@ -309,7 +309,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     Describe the magic of paste.
     EOS
 
-    (expect pdf.lines[0]).to eql %(The magic of Ctrl\u202f+\u202fp)
+    (expect pdf.lines[0]).to eql %(The magic of Ctrl \u202f+\u202f p)
   end
 
   it 'should not crash if btn macro is used in section title' do
