@@ -24,6 +24,26 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql expected_lines
     end
 
+    it 'should indent each nested list' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      * level one
+       ** level two
+        *** level three
+      * back to level one
+      EOS
+
+      prev_it = nil
+      %w(one two three).each do |it|
+        if prev_it
+          text = (pdf.find_text %(level #{it}))[0]
+          prev_text = (pdf.find_text %(level #{prev_it}))[0]
+          (expect text[:x]).to be > prev_text[:x]
+        end
+        prev_it = it
+      end
+      (expect (pdf.find_text 'level one')[0][:x]).to eql (pdf.find_text 'back to level one')[0][:x]
+    end
+
     it 'should use marker specified by style' do
       pdf = to_pdf <<~'EOS', analyze: true
       [square]
@@ -275,6 +295,29 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       (expect pdf.lines).to eql ['1. 1', 'a. a', 'i. i', 'A. A', 'I. I', '2. 2', '3. 3']
+    end
+
+    it 'should indent each nested list' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      . 1
+       .. a
+        ... i
+         .... A
+          ..... I
+      . 2
+      . 3
+      EOS
+
+      prev_it = nil
+      %w(1 a i A I).each do |it|
+        if prev_it
+          text = (pdf.find_text it)[0]
+          prev_text = (pdf.find_text prev_it)[0]
+          (expect text[:x]).to be > prev_text[:x]
+        end
+        prev_it = it
+      end
+      (expect (pdf.find_text '1')[0][:x]).to eql (pdf.find_text '2')[0][:x]
     end
 
     it 'should use marker specified by style' do
