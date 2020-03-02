@@ -36,9 +36,9 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
     (expect to_file).to visually_match 'thematic-break-line-style-dashed.pdf'
   end
 
-  it 'should draw two parallel lines if the border style is double', visual: true do
+  it 'should draw two parallel lines that span the border width if the border style is double', visual: true do
     pdf_theme = {
-      thematic_break_border_width: 1,
+      thematic_break_border_width: 3,
       thematic_break_border_style: 'double',
       thematic_break_border_color: 'a0a0a0',
     }

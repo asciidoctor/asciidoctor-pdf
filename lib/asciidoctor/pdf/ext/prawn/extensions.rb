@@ -697,8 +697,10 @@ module Asciidoctor
           when :dotted
             dash rule_width
           when :double
-            stroke_horizontal_line rule_x_start, rule_x_end, at: (rule_y + rule_width)
-            stroke_horizontal_line rule_x_start, rule_x_end, at: (rule_y - rule_width)
+            single_rule_width = rule_width / 3.0
+            line_width single_rule_width
+            stroke_horizontal_line rule_x_start, rule_x_end, at: (rule_y + single_rule_width)
+            stroke_horizontal_line rule_x_start, rule_x_end, at: (rule_y - single_rule_width)
             rule_inked = true
           end if rule_style
           stroke_horizontal_line rule_x_start, rule_x_end, at: rule_y unless rule_inked
