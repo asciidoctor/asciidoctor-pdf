@@ -15,6 +15,21 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     (expect pdf.lines.map {|it| it[:width] }.uniq).to eql [0.5]
   end
 
+  it 'should apply border style defined by theme', visual: true do
+    pdf_theme = {
+      sidebar_border_width: 1,
+      sidebar_border_style: 'dashed',
+      sidebar_border_color: 'cccccc',
+    }
+    to_file = to_pdf_file <<~'EOS', 'sidebar-border-style.pdf', pdf_theme: pdf_theme
+    ****
+    sidebar
+    ****
+    EOS
+
+    (expect to_file).to visually_match 'sidebar-border-style.pdf'
+  end
+
   it 'should use block title as heading of sidebar block' do
     input = <<~'EOS'
     .Sidebar Title
