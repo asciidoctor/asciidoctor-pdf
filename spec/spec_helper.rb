@@ -235,10 +235,6 @@ class LineInspector < PDF::Inspector
     @from = nil
   end
 
-  def stroke_path
-    @width = nil
-  end
-
   def page= page
     @page_number = page.number
     @graphic_states = page.graphic_states
@@ -275,6 +271,11 @@ class LineInspector < PDF::Inspector
   # w
   def set_line_width line_width
     @width = line_width
+  end
+
+  # Q
+  def restore_graphics_state
+    @width = nil
   end
 end
 
