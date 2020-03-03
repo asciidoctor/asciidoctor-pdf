@@ -645,12 +645,7 @@ module Asciidoctor
           unless no_stroke
             stroke_color s_color
             line_width(options[:line_width] || 0.5)
-            # FIXME: think about best way to indicate dashed borders
-            #if options.has_key? :dash_width
-            #  dash options[:dash_width], space: options[:dash_space] || 1
-            #end
             stroke_rounded_rectangle bounds.top_left, bounds.width, bounds.height, radius
-            #undash if options.has_key? :dash_width
           end
         end
       end
