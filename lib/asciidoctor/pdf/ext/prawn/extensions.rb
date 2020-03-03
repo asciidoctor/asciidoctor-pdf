@@ -682,23 +682,25 @@ module Asciidoctor
         rule_width = options[:line_width] || 0.5
         rule_x_start = bounds.left
         rule_x_end = bounds.right
-        rule_inked = false
         save_graphics_state do
-          line_width rule_width
           stroke_color rule_color
           case rule_style
           when :dashed
+            line_width rule_width
             dash rule_width * 4
           when :dotted
+            line_width rule_width
             dash rule_width
           when :double
             single_rule_width = rule_width / 3.0
             line_width single_rule_width
             stroke_horizontal_line rule_x_start, rule_x_end, at: (rule_y + single_rule_width)
             stroke_horizontal_line rule_x_start, rule_x_end, at: (rule_y - single_rule_width)
-            rule_inked = true
-          end if rule_style
-          stroke_horizontal_line rule_x_start, rule_x_end, at: rule_y unless rule_inked
+            next
+          else # :solid
+            line_width rule_width
+          end
+          stroke_horizontal_line rule_x_start, rule_x_end, at: rule_y
         end
       end
 
