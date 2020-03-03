@@ -2230,7 +2230,7 @@ module Asciidoctor
 
       def convert_thematic_break _node
         theme_margin :thematic_break, :top
-        stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width, line_style: @theme.thematic_break_border_style.to_sym
+        stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width, line_style: (@theme.thematic_break_border_style || :solid).to_sym
         theme_margin :thematic_break, :bottom
       end
 
@@ -3668,6 +3668,7 @@ module Asciidoctor
         bg_color = (opts.key? :background_color) ? opts[:background_color] : @theme[%(#{category}_background_color)]
         fill_and_stroke_bounds bg_color, @theme[%(#{category}_border_color)],
             line_width: (@theme[%(#{category}_border_width)] || 0),
+            line_style: (@theme[%(#{category}_border_style)] || :solid).to_sym,
             radius: @theme[%(#{category}_border_radius)]
       end
 

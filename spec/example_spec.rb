@@ -112,4 +112,35 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     (expect title_text[:font_color]).to eql '0000FF'
     (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
   end
+
+  it 'should apply border style set by theme' do
+    pdf_theme = {
+      example_border_style: 'double',
+      example_border_width: 3,
+      example_border_radius: 0,
+      example_border_color: '333333',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    ====
+    example
+
+    content
+
+    here
+    ====
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 8
+    (expect lines.map {|it| it[:width] }.uniq).to eql [1.0]
+    outer_left_x = 48.24
+    outer_right_x = 547.04
+    outer_lines = lines.select {|it| it[:from][:x] == outer_left_x || it[:from][:x] == outer_right_x }
+    (expect outer_lines).to have_size 4
+    inner_left_x = 50.24
+    inner_right_x = 545.04
+    inner_lines = lines.select {|it| it[:from][:x] == inner_left_x || it[:from][:x] == inner_right_x }
+    (expect inner_lines).to have_size 4
+  end
 end
