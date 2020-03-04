@@ -891,15 +891,20 @@ font:
       italic: roboto-italic.ttf
       bold: roboto-bold.ttf
       bold_italic: roboto-bold_italic.ttf
-    DroidSansFallback:
-      normal: droid-sans-fallback.ttf
-      italic: droid-sans-fallback.ttf
-      bold: droid-sans-fallback.ttf
-      bold_italic: droid-sans-fallback.ttf
+    DroidSansFallback: droid-sans-fallback.ttf
 ----
 
-Notice that we define all four variants for the fallback font, even though we're use the same font file for each variant.
-This ensures the fallback font will be used regardless of which font style is active when it gets called on.
+Notice that we only declare the fallback font file once using a literal value.
+This ensures the font is defined for all four variants so it will be used regardless of which font style is active when it's called on.
+This assignment is equivalent to the following:
+
+[source,yaml]
+----
+DroidSansFallback:
+  '*': droid-sans-fallback.ttf
+----
+
+The benefit of this syntax is that it allows you to use a separate font file for just one of the variants (e.g., bold).
 
 Next, add the key name to the `fallbacks` key under the `font-catalog` key.
 The `fallbacks` key accepts an array of values, meaning you can specify more than one fallback font.
@@ -914,11 +919,7 @@ font:
       italic: roboto-italic.ttf
       bold: roboto-bold.ttf
       bold_italic: roboto-bold_italic.ttf
-    DroidSansFallback:
-      normal: droid-sans-fallback.ttf
-      italic: droid-sans-fallback.ttf
-      bold: droid-sans-fallback.ttf
-      bold_italic: droid-sans-fallback.ttf
+    DroidSansFallback: droid-sans-fallback.ttf
   fallbacks:
   - DroidSansFallback
 ----
