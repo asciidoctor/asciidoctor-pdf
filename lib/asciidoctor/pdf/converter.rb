@@ -180,7 +180,7 @@ module Asciidoctor
 
         marked_page_number = page_number
         # NOTE: a new page will already be started (page_number = 2) if the front cover image is a PDF
-        layout_cover_page doc, @theme, :front
+        layout_cover_page doc, :front
         has_front_cover = page_number > marked_page_number
 
         if (use_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
@@ -290,7 +290,7 @@ module Asciidoctor
         catalog.data[:ViewerPreferences] = { DisplayDocTitle: true }
 
         stamp_foreground_image doc, has_front_cover
-        layout_cover_page doc, @theme, :back
+        layout_cover_page doc, :back
         remove_tmp_files
         nil
       end
@@ -2710,8 +2710,8 @@ module Asciidoctor
         layout_prose DummyText, margin: 0, line_height: 1, normalize: false if page.empty?
       end
 
-      def layout_cover_page doc, theme, face
-        bg_image = resolve_background_image doc, theme, %(#{face}-cover-image), theme_key: %(cover_#{face}_image).to_sym, symbolic_paths: ['', '~']
+      def layout_cover_page doc, face
+        bg_image = resolve_background_image doc, @theme, %(#{face}-cover-image), theme_key: %(cover_#{face}_image).to_sym, symbolic_paths: ['', '~']
         if bg_image && bg_image[0]
           image_path, image_opts = bg_image
           if image_path.empty?
