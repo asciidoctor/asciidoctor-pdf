@@ -1093,7 +1093,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect caption_text[:y]).to be < (pdf.find_text 'B2')[0][:y]
     end
 
-    it 'should confine caption to width of table by default', visual: true do
+    it 'should restrict caption to width of table by default', visual: true do
       to_file = to_pdf_file <<~'EOS', 'table-caption-width.pdf', pdf_theme: { caption_align: 'center' }
       .A rather long description for this table
       [%header%autowidth]
@@ -1135,7 +1135,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect to_file).to visually_match 'table-caption-width.pdf'
     end
 
-    it 'should not confine caption to width of table if table_caption_max_width key in theme is none' do
+    it 'should not restrict caption to width of table if table_caption_max_width key in theme is none' do
       pdf = to_pdf <<~'EOS', pdf_theme: { caption_align: 'center', table_caption_max_width: 'none' }, analyze: true
       :table-caption!:
 
@@ -1179,6 +1179,32 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       caption_texts = pdf.find_text 'A rather long description for this table'
       (expect caption_texts).to have_size 3
       (expect caption_texts.map {|it| it[:x] }.uniq).to have_size 1
+    end
+
+    it 'should set caption to percentage of table width as specified by argument to fit-content function' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_caption_max_width: 'fit-content(50%)' }, analyze: true
+      :!table-caption:
+
+      .A rather long description for this table
+      [width=30%]
+      |===
+      | Col A | Col B | Col C | Col D
+      |===
+      EOS
+
+      expected_lines = <<~'EOS'.lines.map(&:chomp)
+      A rather long
+      description for
+      this table
+      Col A Col B Col C Col D
+      EOS
+
+      (expect pdf.lines).to eql expected_lines
+
+      page_width = (get_page_size pdf)[0]
+      caption_text = (pdf.find_text 'A rather long')[0]
+      content_area_width = page_width - (caption_text[:x] * 2)
+      (expect caption_text[:width]).to be < (content_area_width * 0.15)
     end
 
     it 'should allow theme to set caption alignment to inherit from table' do

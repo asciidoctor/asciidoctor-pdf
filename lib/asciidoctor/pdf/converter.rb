@@ -2876,8 +2876,12 @@ module Asciidoctor
         indent_by = [0, 0]
         block_width = opts.delete :block_width
         if (max_width = opts.delete :max_width) && max_width != 'none'
-          if max_width == 'fit-content'
-            max_width = block_width || container_width
+          if max_width.start_with? 'fit-content'
+            if max_width.end_with? 't', '()'
+              max_width = block_width || container_width
+            else
+              max_width = (block_width || container_width) * (max_width.slice 12, max_width.length - 1).to_f / 100.0
+            end
           else
             max_width = [max_width.to_f / 100 * bounds.width, bounds.width].min if ::String === max_width && (max_width.end_with? '%')
             block_align = align
