@@ -3400,6 +3400,13 @@ The keys in this category control the arrangement of block images.
   caption:
     align: inherit
 
+|caption-text-align
+|<<text-alignments,Text alignment>> {vbar} inherit +
+(default: $image-caption-align)
+|image:
+  caption:
+    text-align: left
+
 |caption-max-width^[5]^
 |fit-content {vbar} fit-content(percentage) {vbar} none {vbar} <<measurement-units,Measurement>> +
 (default: none)
@@ -3898,6 +3905,13 @@ The keys in this category control the arrangement and style of tables and table 
 (default: $caption-align)
 |table:
   caption-align: inherit
+
+|caption-text-align
+|<<text-alignments,Text alignment>> {vbar} inherit +
+(default: $table-caption-align)
+|table:
+  caption:
+    text-align: left
 
 |caption-side
 |top {vbar} bottom +
