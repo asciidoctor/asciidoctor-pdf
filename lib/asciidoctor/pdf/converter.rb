@@ -180,7 +180,7 @@ module Asciidoctor
 
         marked_page_number = page_number
         # NOTE: a new page will already be started (page_number = 2) if the front cover image is a PDF
-        layout_cover_page doc, :front
+        layout_cover_page doc, @theme, :front
         has_front_cover = page_number > marked_page_number
 
         if (use_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
@@ -290,7 +290,7 @@ module Asciidoctor
         catalog.data[:ViewerPreferences] = { DisplayDocTitle: true }
 
         stamp_foreground_image doc, has_front_cover
-        layout_cover_page doc, :back
+        layout_cover_page doc, @theme, :back
         remove_tmp_files
         nil
       end
@@ -2710,9 +2710,10 @@ module Asciidoctor
         layout_prose DummyText, margin: 0, line_height: 1, normalize: false if page.empty?
       end
 
-      def layout_cover_page doc, face
-        # TODO: turn processing of attribute with inline image a utility function in Asciidoctor
-        if (image_path = (doc.attr %(#{face}-cover-image)))
+      def layout_cover_page doc, theme, face
+        bg_image = resolve_background_image doc, theme, %(#{face}-cover-image), theme_key: %(cover_#{face}_image).to_sym, symbolic_paths: ['', '~']
+        if bg_image && bg_image[0]
+          image_path, image_opts = bg_image
           if image_path.empty?
             go_to_page page_count if face == :back
             start_new_page_discretely
@@ -2720,27 +2721,14 @@ module Asciidoctor
             open_graphics_state if face == :front
             return
           elsif image_path == '~'
-            image_path = nil
             @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress'
-          elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
-            image_attrs = (AttributeList.new $2).parse %w(alt width)
-            image_path = resolve_image_path doc, $1, true, (image_format = image_attrs['format'])
-          else
-            image_path = resolve_image_path doc, image_path, false
-          end
-
-          return unless image_path
-
-          unless ::File.readable? image_path
-            logger.warn %(#{face} cover image not found or readable: #{image_path})
             return
           end
 
           go_to_page page_count if face == :back
-          if image_path.downcase.end_with? '.pdf'
-            import_page image_path, page: [((image_attrs || {})['page']).to_i, 1].max, advance: face != :back
+          if image_opts[:format] == 'pdf'
+            import_page image_path, (image_opts.merge advance: face != :back)
           else
-            image_opts = resolve_image_options image_path, image_attrs, background: true, format: image_format
             image_page image_path, (image_opts.merge canvas: true)
           end
         end
@@ -4127,12 +4115,16 @@ module Asciidoctor
       # image is disabled. The second argument is the options hash to specify the dimensions, such as width and fit.
       def resolve_background_image doc, theme, key, opts = {}
         if ::String === key
-          image_path = (doc.attr key) || (from_theme = theme[(key.tr '-', '_').to_sym])
+          theme_key = opts.delete :theme_key
+          image_path = (doc.attr key) || (from_theme = theme[theme_key || (key.tr '-', '_').to_sym])
         else
           image_path = from_theme = theme[key]
         end
+        symbolic_paths = opts.delete :symbolic_paths
         if image_path
-          if image_path == 'none'
+          if symbolic_paths && (symbolic_paths.include? image_path)
+            return [image_path, {}]
+          elsif image_path == 'none'
             return []
           elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
             image_attrs = (AttributeList.new $2).parse %w(alt width)
@@ -4158,7 +4150,11 @@ module Asciidoctor
             return
           end
 
-          [image_path, (resolve_image_options image_path, image_attrs, (opts.merge background: true, format: image_format))]
+          if image_format == 'pdf'
+            [image_path, page: [((image_attrs || {})['page']).to_i, 1].max, format: image_format]
+          else
+            [image_path, (resolve_image_options image_path, image_attrs, (opts.merge background: true, format: image_format))]
+          end
         end
       end
 

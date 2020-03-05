@@ -3,7 +3,7 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Cover Page' do
-  it 'should add front cover page if front-cover-image is set' do
+  it 'should add front cover page if front-cover-image attribute is set to raw path' do
     pdf = to_pdf <<~EOS
     = Document Title
     :front-cover-image: #{fixture_file 'cover.jpg', relative: true}
@@ -18,7 +18,54 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
   end
 
-  it 'should add back cover page if back-cover-image is set' do
+  it 'should add front cover page if front-cover-image attribute is set to image macro' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :front-cover-image: image:cover.jpg[]
+
+    content page
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    (expect pdf.pages[0].text).to be_empty
+    images = get_images pdf, 1
+    (expect images).to have_size 1
+    (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
+  end
+
+  it 'should add front cover page if front-cover-image attribute is set to data URI' do
+    image_data = File.binread fixture_file 'cover.jpg'
+    encoded_image_data = Base64.strict_encode64 image_data
+    pdf = to_pdf <<~EOS
+    = Document Title
+    :front-cover-image: image:data:image/jpg;base64,#{encoded_image_data}[]
+
+    content page
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    (expect pdf.pages[0].text).to be_empty
+    images = get_images pdf, 1
+    (expect images).to have_size 1
+    (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
+  end
+
+  it 'should add front cover page if cover_front_image theme key is set' do
+    pdf_theme = { cover_front_image: (fixture_file 'cover.jpg') }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+    = Document Title
+
+    content page
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    (expect pdf.pages[0].text).to be_empty
+    images = get_images pdf, 1
+    (expect images).to have_size 1
+    (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
+  end
+
+  it 'should add back cover page if back-cover-image attribute is set to raw path' do
     pdf = to_pdf <<~EOS
     = Document Title
     :front-cover-image: #{fixture_file 'cover.jpg', relative: true}
@@ -31,6 +78,77 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect pdf.pages[0].text).to be_empty
     (expect pdf.pages[2].text).to be_empty
     images = get_images pdf, 3
+    (expect images).to have_size 1
+    (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
+  end
+
+  it 'should add back cover page if back-cover-image attribute is set to image macro' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :front-cover-image: image:cover.jpg[]
+    :back-cover-image: image:cover.jpg[]
+
+    content page
+    EOS
+
+    (expect pdf.pages).to have_size 3
+    (expect pdf.pages[0].text).to be_empty
+    (expect pdf.pages[2].text).to be_empty
+    images = get_images pdf, 3
+    (expect images).to have_size 1
+    (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
+  end
+
+  it 'should add back cover page if back-cover-image attribute is set to data URI' do
+    image_data = File.binread fixture_file 'cover.jpg'
+    encoded_image_data = Base64.strict_encode64 image_data
+    pdf = to_pdf <<~EOS
+    = Document Title
+    :front-cover-image: image:data:image/jpg;base64,#{encoded_image_data}[]
+    :back-cover-image: image:data:image/jpg;base64,#{encoded_image_data}[]
+
+    content page
+    EOS
+
+    (expect pdf.pages).to have_size 3
+    (expect pdf.pages[0].text).to be_empty
+    (expect pdf.pages[2].text).to be_empty
+    images = get_images pdf, 3
+    (expect images).to have_size 1
+    (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
+  end
+
+  it 'should add back cover page if cover_back_image theme key is set' do
+    pdf_theme = {
+      cover_front_image: (fixture_file 'cover.jpg'),
+      cover_back_image: (fixture_file 'cover.jpg'),
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+    = Document Title
+
+    content page
+    EOS
+
+    (expect pdf.pages).to have_size 3
+    (expect pdf.pages[0].text).to be_empty
+    (expect pdf.pages[2].text).to be_empty
+    images = get_images pdf, 3
+    (expect images).to have_size 1
+    (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
+  end
+
+  it 'should prefer attribute over theme key' do
+    pdf_theme = { cover_back_image: (fixture_file 'not-this-one.jpg') }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+    = Document Title
+    :back-cover-image: image:cover.jpg[]
+
+    content page
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    (expect pdf.pages[1].text).to be_empty
+    images = get_images pdf, 2
     (expect images).to have_size 1
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
   end
@@ -231,12 +349,20 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect pdf.pages[1][:text]).not_to be_empty
   end
 
-  it 'should import specified page from PDF file' do
+  it 'should import specified page from PDF file defined using front-cover-image attribute' do
     pdf = to_pdf <<~'EOS'
     :front-cover-image: image:red-green-blue.pdf[page=3]
 
     content
     EOS
+    (expect pdf.pages).to have_size 2
+    page_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
+    (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
+  end
+
+  it 'should import specified page from PDF file defined using cover_front_image theme key' do
+    pdf_theme = { cover_front_image: %(image:#{fixture_file 'red-green-blue.pdf'}[page=3]) }
+    pdf = to_pdf 'content', pdf_theme: pdf_theme
     (expect pdf.pages).to have_size 2
     page_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
     (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']

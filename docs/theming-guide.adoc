@@ -1153,6 +1153,32 @@ You'll need to define these color roles in your theme if you'd like to make use 
     text-decoration-width: 0.5
 |===
 
+[#keys-cover]
+=== Cover
+
+The keys in this category control the front and back cover images.
+Currently, the only supported feature is setting the image per side.
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-cover]*Key Prefix:* <<key-prefix-cover,cover>>
+
+|<face>-image^[1]^
+|path, image macro^[2]^ +
+(default: _not set_)
+|cover:
+  front:
+    image: image:cover.pdf[page=2]
+|===
+. `<face>` can be `front` or `back`.
+. The value may be an image file or a PDF file.
+A relative path will be resolved relative to the value of the `pdf-themesdir` attribute.
+An image files is handled just like a background image.
+If a PDF file is specified, the first page is used unless another page is specified by the `page` attribute.
+The page from the PDF file will be imported as is.
+
 [#keys-page]
 === Page
 
