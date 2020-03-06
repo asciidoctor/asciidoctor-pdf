@@ -2008,10 +2008,6 @@ module Asciidoctor
                   cell_data[:text_color] = @font_color
                   cell_line_metrics = calc_line_metrics theme.base_line_height
                 end
-              when :verse
-                cell_data[:content] = guard_indentation cell.text
-                cell_data[:inline_format] = true
-                cell_data.delete :font_style
               when :asciidoc
                 cell_data.delete :kerning
                 cell_data.delete :font_style
