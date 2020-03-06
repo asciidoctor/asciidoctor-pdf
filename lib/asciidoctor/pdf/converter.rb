@@ -2035,7 +2035,6 @@ module Asciidoctor
                 cell_text = hyphenate_text cell_text, @hyphenator if defined? @hyphenator
                 cell_text = cell_text.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
                 if cell_text.include? DoubleLF
-                  # NOTE: effectively the same as calling cell.content (should we use that instead?)
                   # FIXME: hard breaks not quite the same result as separate paragraphs; need custom cell impl here
                   cell_data[:content] = (cell_text.split BlankLineRx).map {|l| l.tr_s WhitespaceChars, ' ' }.join DoubleLF
                   cell_data[:inline_format] = true
