@@ -18,6 +18,7 @@ Enhancements::
 * stabilize font paths in built-in themes by prefixing paths with GEM_FONTS_DIR (#1568)
 * assign page-layout attribute in running content so it can be used select background per layout (#1570)
 * add support for assigning the same font file to all font variants (i.e., styles) using the wildcard key (`*`) (#1588)
+* allow caption max-width to be set to percentage of content by passing argument to fit-content function (#1494)
 
 Bug Fixes::
 
