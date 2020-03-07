@@ -57,7 +57,7 @@ module Asciidoctor::PDF::FormattedText
                 at: doc.bounds.top_left,
                 width: image_w,
                 fallback_font_name: doc.fallback_svg_font_name,
-                enable_web_requests: doc.allow_uri_read,
+                enable_web_requests: doc.allow_uri_read ? (doc.method :load_open_uri).to_proc : false,
                 enable_file_requests_with_root: (::File.dirname image_path),
                 cache_images: doc.cache_uri
             svg_size = image_w ? svg_obj.document.sizing :

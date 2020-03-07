@@ -813,7 +813,7 @@ module Asciidoctor
                             width: label_width,
                             height: label_height,
                             fallback_font_name: fallback_svg_font_name,
-                            enable_web_requests: allow_uri_read,
+                            enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
                             enable_file_requests_with_root: (::File.dirname icon_path),
                             cache_images: cache_uri
                         if (icon_height = (svg_size = svg_obj.document.sizing).output_height) > label_height
@@ -1458,7 +1458,7 @@ module Asciidoctor
                   position: alignment,
                   width: width,
                   fallback_font_name: fallback_svg_font_name,
-                  enable_web_requests: allow_uri_read,
+                  enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
                   enable_file_requests_with_root: file_request_root,
                   cache_images: cache_uri
               rendered_w = (svg_size = svg_obj.document.sizing).output_width
@@ -4158,7 +4158,7 @@ module Asciidoctor
         if (image_format = opts[:format] || (::Asciidoctor::Image.format image_path)) == 'svg'
           image_opts = {
             enable_file_requests_with_root: (::File.dirname image_path),
-            enable_web_requests: allow_uri_read,
+            enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
             cache_images: cache_uri,
             fallback_font_name: fallback_svg_font_name,
             format: 'svg',
@@ -4473,8 +4473,11 @@ module Asciidoctor
       def init_scratch_prototype
         @save_state = nil
         @scratch_depth = 0
+        # NOTE don't need background image in scratch document; can cause marshal error anyway
+        saved_page_bg_image, @page_bg_image = @page_bg_image, { verso: nil, recto: nil }
         # IMPORTANT don't set font before using Marshal, it causes serialization to fail
         @prototype = ::Marshal.load ::Marshal.dump self
+        @page_bg_image = saved_page_bg_image
         @prototype.state.store.info.data[:Scratch] = @prototype.text_formatter.scratch = true
         # NOTE we're now starting a new page each time, so no need to do it here
         #@prototype.start_new_page if @prototype.page_number == 0
