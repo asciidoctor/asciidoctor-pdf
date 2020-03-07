@@ -94,6 +94,24 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect pdf.info[:Keywords]).to eql 'cooking, diet, plants'
     end
 
+    it 'should sanitize values of Author, Subject, Keywords, and Producer fields' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      D&#95;J Allen
+      :subject: Science &amp; Math
+      :keywords: mass&#8211;energy equivalence
+      :publisher: Schr&#246;dinger&#8217;s Cat
+
+      content
+      EOS
+
+      pdf_info = pdf.info
+      (expect pdf_info[:Author]).to eql 'D_J Allen'
+      (expect pdf_info[:Subject]).to eql 'Science & Math'
+      (expect pdf_info[:Keywords]).to eql 'mass–energy equivalence'
+      (expect pdf_info[:Producer]).to eql 'Schrödinger’s Cat'
+    end
+
     it 'should parse date attributes as local date objects' do
       pdf = to_pdf 'content', attribute_overrides: { 'docdatetime' => '2019-01-15', 'localdatetime' => '2019-01-15' }
       (expect pdf.info[:ModDate]).not_to be_nil

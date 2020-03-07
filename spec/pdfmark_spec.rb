@@ -27,6 +27,25 @@ describe Asciidoctor::PDF::Pdfmark do
     (expect contents).to end_with %(/DOCINFO pdfmark\n)
   end
 
+  it 'should sanitize values of Author, Subject, Keywords, and Producer fields' do
+    doc = Asciidoctor.load <<~'EOS', safe: :safe
+    = Document Title
+    D&#95;J Allen
+    :subject: Science &amp; Math
+    :keywords: mass&#8211;energy equivalence
+    :publisher: Schr&#246;dinger&#8217;s Cat
+
+    content
+    EOS
+
+    contents = (subject.new doc).generate
+    (expect contents).to include '/Author (D_J Allen)'
+    (expect contents).to include '/Subject (Science & Math)'
+    (expect contents).to include '/Keywords <feff006d00610073007320130065006e00650072006700790020006500710075006900760061006c0065006e00630065>'
+    (expect contents).to include '/Producer <feff005300630068007200f600640069006e006700650072201900730020004300610074>'
+    (expect contents).to end_with %(/DOCINFO pdfmark\n)
+  end
+
   it 'should set date to Unix epoch in UTC if reproducible attribute is set' do
     doc = Asciidoctor.load <<~'EOS', safe: :safe
     = Document Title

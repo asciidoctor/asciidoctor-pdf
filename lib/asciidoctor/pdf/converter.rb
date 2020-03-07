@@ -477,14 +477,13 @@ module Asciidoctor
       # FIXME: Pdfmark should use the PDF info result
       def build_pdf_info doc
         info = {}
-        # FIXME: use sanitize: :plain_text once available
         if (doctitle = doc.header? ? doc.doctitle : (doc.attr 'untitled-label'))
           info[:Title] = (sanitize doctitle).as_pdf
         end
-        info[:Author] = (doc.attr 'authors').as_pdf if doc.attr? 'authors'
-        info[:Subject] = (doc.attr 'subject').as_pdf if doc.attr? 'subject'
-        info[:Keywords] = (doc.attr 'keywords').as_pdf if doc.attr? 'keywords'
-        info[:Producer] = (doc.attr 'publisher').as_pdf if doc.attr? 'publisher'
+        info[:Author] = (sanitize doc.attr 'authors').as_pdf if doc.attr? 'authors'
+        info[:Subject] = (sanitize doc.attr 'subject').as_pdf if doc.attr? 'subject'
+        info[:Keywords] = (sanitize doc.attr 'keywords').as_pdf if doc.attr? 'keywords'
+        info[:Producer] = (sanitize doc.attr 'publisher').as_pdf if doc.attr? 'publisher'
         if doc.attr? 'reproducible'
           info[:Creator] = 'Asciidoctor PDF, based on Prawn'.as_pdf
           info[:Producer] ||= (info[:Author] || info[:Creator])
