@@ -2830,7 +2830,7 @@ The keys in this category control the arrangement and style of verse blocks.
 |verse:
   font-color: #333333
 
-|font-family
+|font-family^[2]^
 |<<fonts,Font family name>> +
 (default: _inherit_)
 |verse:
@@ -2913,6 +2913,8 @@ The keys in this category control the arrangement and style of verse blocks.
 
 . If border-left-width is non-zero, the border is only applied to the left side.
 Otherwise, if border-width is non-zero, the border is drawn around the whole block.
+. The verse block does not use a fixed-width font by default, which can affect the layout if the content relies on columns.
+You can change verse blocks to use a fixed-width font (not necessarily a monospaced font) using this setting.
 
 [#keys-sidebar]
 === Sidebar

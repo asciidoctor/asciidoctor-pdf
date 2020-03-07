@@ -109,6 +109,7 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 * Orphan / widow support is limited; a page break can occur between a section title and its section content, a table caption and the caption, etc.; use a manual page break to avoid
 * If a no-break hyphen is surrounded by formatted text on both sides (or is formatted individually), it will not prevent a line break
 * Images cannot float
+* Verse blocks do not use a fixed-width font by default, but you can control this setting using the theme
 
 == Prerequisites
 
