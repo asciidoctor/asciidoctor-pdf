@@ -1585,12 +1585,7 @@ module Asciidoctor
         when 'vimeo'
           video_path = %(https://vimeo.com/#{video_id = node.attr 'target'})
           if allow_uri_read
-            if cache_uri
-              Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
-            else
-              ::OpenURI
-            end
-            poster = ::OpenURI.open_uri %(http://vimeo.com/api/v2/video/#{video_id}.xml), 'r' do |f|
+            poster = load_open_uri.open_uri %(http://vimeo.com/api/v2/video/#{video_id}.xml), 'r' do |f|
               /<thumbnail_large>(.*?)<\/thumbnail_large>/ =~ f.read && $1
             end
           end
@@ -4082,11 +4077,7 @@ module Asciidoctor
             return
           end
           return @tmp_files[image_path] if @tmp_files.key? image_path
-          if cache_uri
-            Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
-          else
-            ::OpenURI
-          end
+          load_open_uri
           tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
           tmp_image.binmode if (binary = image_format != 'svg')
           begin
@@ -4346,6 +4337,13 @@ module Asciidoctor
         end unless (image_y = image_opts[:y])
 
         link_annotation [image_x, (image_y - image_height), (image_x + image_width), image_y], Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: uri.as_pdf }
+      end
+
+      def load_open_uri
+        if @cache_uri && !(defined? ::OpenURI::Cache)
+          Helpers.require_library 'open-uri/cached', 'open-uri-cached'
+        end
+        ::OpenURI
       end
 
       def remove_tmp_files
