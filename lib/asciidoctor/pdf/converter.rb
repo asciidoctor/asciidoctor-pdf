@@ -4081,9 +4081,8 @@ module Asciidoctor
             logger.warn %(allow-uri-read is not enabled; cannot embed remote image: #{image_path}) unless scratch?
             return
           end
-          if @tmp_files.key? image_path
-            return @tmp_files[image_path]
-          elsif cache_uri
+          return @tmp_files[image_path] if @tmp_files.key? image_path
+          if cache_uri
             Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
           else
             ::OpenURI
