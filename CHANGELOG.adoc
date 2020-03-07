@@ -31,6 +31,7 @@ Bug Fixes::
 * honor font style when looking for glyph in font
 * only suggest installing prawn-gmagick gem if not loaded (#1578)
 * applying double border style to thematic break should honor border width
+* warn once instead of crashing if cache-uri is set but library is not available
 
 Compliance::
 
