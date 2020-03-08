@@ -1207,6 +1207,27 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect caption_text[:width]).to be < (content_area_width * 0.15)
     end
 
+    it 'should be able to control alignment of caption box and text independently using theme' do
+      pdf_theme = {
+        table_caption_align: 'center',
+        table_caption_text_align: 'left',
+        table_caption_max_width: '15%',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      :table-caption!:
+
+      .A rather long description for this table
+      [%autowidth]
+      |===
+      | Col A | Col B
+      |===
+      EOS
+
+      caption_texts = pdf.find_text font_name: 'NotoSerif-Italic'
+      (expect caption_texts).to have_size 3
+      (expect caption_texts.map {|it| it[:x] }.uniq).to have_size 1
+    end
+
     it 'should allow theme to set caption alignment to inherit from table' do
       pdf = to_pdf <<~'EOS', pdf_theme: { table_caption_align: 'inherit' }, analyze: true
       .Right-aligned caption

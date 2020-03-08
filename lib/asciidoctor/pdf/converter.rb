@@ -2863,6 +2863,11 @@ module Asciidoctor
         else
           align = @base_align.to_sym
         end
+        if (text_align = @theme[%(#{category_caption}_text_align)] || @theme.caption_text_align)
+          text_align = text_align == 'inherit' ? align : text_align.to_sym
+        else
+          text_align = align
+        end
         indent_by = [0, 0]
         block_width = opts.delete :block_width
         if (max_width = opts.delete :max_width) && max_width != 'none'
@@ -2900,7 +2905,7 @@ module Asciidoctor
               layout_prose string, {
                 margin_top: margin[:top],
                 margin_bottom: margin[:bottom],
-                align: align,
+                align: text_align,
                 normalize: false,
                 normalize_line_height: true,
                 hyphenate: true,
