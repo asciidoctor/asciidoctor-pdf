@@ -529,6 +529,20 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.literal_font_color).to be_a subject::HexColorValue
     end
 
+    it 'should flatten array color value of unsupported length to string if key ends with _color' do
+      theme_data = SafeYAML.load <<~EOS
+      page:
+        background_color: ['fff', 'fff']
+      base:
+        font_color: [0, 0, 0, 0, 0, 0]
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.page_background_color).to eql 'FFFFFF'
+      (expect theme.page_background_color).to be_a subject::HexColorValue
+      (expect theme.base_font_color).to eql '000000'
+      (expect theme.base_font_color).to be_a subject::HexColorValue
+    end
+
     it 'should not wrap value in color type if key does not end with _color' do
       theme_data = SafeYAML.load <<~EOS
       menu:
