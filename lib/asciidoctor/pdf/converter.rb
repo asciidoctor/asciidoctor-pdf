@@ -4081,11 +4081,10 @@ module Asciidoctor
             return
           end
           return @tmp_files[image_path] if @tmp_files.key? image_path
-          load_open_uri
           tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
           tmp_image.binmode if (binary = image_format != 'svg')
           begin
-            ::OpenURI.open_uri(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
+            load_open_uri.open_uri(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
             tmp_image.close
             @tmp_files[image_path] = tmp_image.path
           rescue
