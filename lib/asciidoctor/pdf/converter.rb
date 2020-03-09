@@ -3164,18 +3164,22 @@ module Asciidoctor
             end
           end
           parts_by_page[pgnum] = last_part
-          if last_chap == :pre
-            if pgnum >= body_start_page_number
-              chapters_by_page[pgnum] = is_book ? (doc.attr 'preface-title', 'Preface') : nil
-            elsif toc_page_nums && (toc_page_nums.cover? pgnum)
+          if toc_page_nums && (toc_page_nums.cover? pgnum)
+            if is_book
               chapters_by_page[pgnum] = toc_title
+              sections_by_page[pgnum] = nil
             else
-              chapters_by_page[pgnum] = doc.doctitle
+              chapters_by_page[pgnum] = nil
+              sections_by_page[pgnum] = section_start_pages[pgnum] || toc_title
             end
+            toc_page_nums = nil if toc_page_nums.end == pgnum
+          elsif last_chap == :pre
+            chapters_by_page[pgnum] = pgnum < body_start_page_number ? doc.doctitle : (is_book ? (doc.attr 'preface-title', 'Preface') : nil)
+            sections_by_page[pgnum] = last_sect
           else
             chapters_by_page[pgnum] = last_chap
+            sections_by_page[pgnum] = last_sect
           end
-          sections_by_page[pgnum] = last_sect
         end
 
         doctitle = doc.doctitle partition: true, use_fallback: true
@@ -3220,21 +3224,9 @@ module Asciidoctor
           doc.set_attr 'page-number', pgnum_label if pagenums_enabled
           # QUESTION should the fallback value be nil instead of empty string? or should we remove attribute if no value?
           doc.set_attr 'part-title', (parts_by_page[pgnum] || '')
-          if toc_page_nums && (toc_page_nums.cover? pgnum)
-            if is_book
-              doc.set_attr 'chapter-title', (sect_or_chap_title = toc_title)
-              doc.set_attr 'section-title', ''
-            else
-              doc.set_attr 'chapter-title', ''
-              doc.set_attr 'section-title', (sect_or_chap_title = section_start_pages[pgnum] ? sections_by_page[pgnum] : toc_title)
-            end
-            doc.set_attr 'section-or-chapter-title', sect_or_chap_title
-            toc_page_nums = nil if toc_page_nums.end == pgnum
-          else
-            doc.set_attr 'chapter-title', (chapters_by_page[pgnum] || '')
-            doc.set_attr 'section-title', (sections_by_page[pgnum] || '')
-            doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum] || chapters_by_page[pgnum] || '')
-          end
+          doc.set_attr 'chapter-title', (chapters_by_page[pgnum] || '')
+          doc.set_attr 'section-title', (sections_by_page[pgnum] || '')
+          doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum] || chapters_by_page[pgnum] || '')
 
           stamp stamp_names[side] if stamp_names
 
