@@ -17,16 +17,15 @@ module Asciidoctor
           mod_date = (::Time.parse doc.attr 'docdatetime') rescue (now ||= ::Time.now)
           creation_date = (::Time.parse doc.attr 'localdatetime') rescue (now || ::Time.now)
         end
-        # FIXME: use sanitize: :plain_text once available
         content = <<~EOS
         [ /Title #{(sanitize doc.doctitle use_fallback: true).to_pdf_object}
-          /Author #{(doc.attr 'authors').to_pdf_object}
-          /Subject #{(doc.attr 'subject').to_pdf_object}
-          /Keywords #{(doc.attr 'keywords').to_pdf_object}
+          /Author #{((doc.attr? 'authors') ? (sanitize doc.attr 'authors') : nil).to_pdf_object}
+          /Subject #{((doc.attr? 'subject') ? (sanitize doc.attr 'subject') : nil).to_pdf_object}
+          /Keywords #{((doc.attr? 'keywords') ? (sanitize doc.attr 'keywords') : nil).to_pdf_object}
           /ModDate #{mod_date.to_pdf_object}
           /CreationDate #{creation_date.to_pdf_object}
           /Creator (Asciidoctor PDF #{::Asciidoctor::PDF::VERSION}, based on Prawn #{::Prawn::VERSION})
-          /Producer #{(doc.attr 'publisher').to_pdf_object}
+          /Producer #{((doc.attr? 'publisher') ? (sanitize doc.attr 'publisher') : nil).to_pdf_object}
           /DOCINFO pdfmark
         EOS
         content

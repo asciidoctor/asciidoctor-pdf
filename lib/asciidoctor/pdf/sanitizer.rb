@@ -20,7 +20,7 @@ module Asciidoctor
         'quot' => ?",
       }).default = ??
       SanitizeXMLRx = /<[^>]+>/
-      CharRefRx = /&(?:([a-z][a-z]+\d{0,2})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
+      CharRefRx = /&(?:amp;)?(?:([a-z][a-z]+\d{0,2})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
 
       # Strip leading, trailing and repeating whitespace, remove XML tags and
       # resolve all entities in the specified string.
