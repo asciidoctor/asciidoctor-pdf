@@ -78,20 +78,5 @@ describe 'asciidoctor-pdf' do
       (expect pdfmark_contents).to include '/Author (Author Name)'
       (expect pdfmark_contents).to include '/DOCINFO pdfmark'
     end
-
-    it 'should hex encode title if contains non-ASCII character', cli: true do
-      out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (fixture_file 'pdfmark-non-ascii-title.adoc')
-      (expect res.exitstatus).to be 0
-      (expect out).to be_empty
-      (expect err).to be_empty
-      pdfmark_file = Pathname.new output_file 'pdfmark-non-ascii-title.pdfmark'
-      (expect pdfmark_file).to exist
-      pdfmark_contents = pdfmark_file.read
-      (expect pdfmark_contents).to include '/Title <feff004c006500730020004d0069007300e9007200610062006c00650073>'
-      (expect pdfmark_contents).to include '/Author (Victor Hugo)'
-      (expect pdfmark_contents).to include '/Subject (June Rebellion)'
-      (expect pdfmark_contents).to include '/Keywords (france, poor, rebellion)'
-      (expect pdfmark_contents).to include '/DOCINFO pdfmark'
-    end
   end
 end
