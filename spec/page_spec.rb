@@ -22,6 +22,16 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
+    it 'should ignore pdf-page-size attribute if value is unrecognized name' do
+      pdf = to_pdf <<~'EOS', analyze: :page
+      :pdf-page-size: Huge
+
+      content
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
+    end
+
     it 'should set page size specified by pdf-page-size attribute using dimension array in points' do
       pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: [600, 800]
