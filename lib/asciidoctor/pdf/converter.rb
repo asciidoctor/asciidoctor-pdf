@@ -4,6 +4,7 @@ require_relative 'formatted_text'
 require_relative 'index_catalog'
 require_relative 'pdfmark'
 require_relative 'roman_numeral'
+require_relative 'section_info_by_page'
 
 autoload :StringIO, 'stringio'
 autoload :Tempfile, 'tempfile'
@@ -3116,24 +3117,24 @@ module Asciidoctor
           pgnum = (sect.attr 'pdf-page-start').to_i
           if is_book && ((sect_is_part = sect.part?) || sect.chapter?)
             if sect_is_part
-              part_start_pages[pgnum] ||= sect.send(*title_method)
+              part_start_pages[pgnum] ||= sect
             else
-              chapter_start_pages[pgnum] ||= sect.send(*title_method)
+              chapter_start_pages[pgnum] ||= sect
               if sect.sectname == 'appendix' && !part_start_pages.empty?
                 # FIXME: need a better way to indicate that part has ended
                 part_start_pages[pgnum] = ''
               end
             end
           else
-            sect_title = trailing_section_start_pages[pgnum] = sect.send(*title_method)
-            section_start_pages[pgnum] ||= sect_title
+            trailing_section_start_pages[pgnum] = sect
+            section_start_pages[pgnum] ||= sect
           end
         end
 
         # index parts, chapters, and sections by the physical page number on which they appear
-        parts_by_page = {}
-        chapters_by_page = {}
-        sections_by_page = {}
+        parts_by_page = SectionInfoByPage.new title_method
+        chapters_by_page = SectionInfoByPage.new title_method
+        sections_by_page = SectionInfoByPage.new title_method
         # QUESTION should the default part be the doctitle?
         last_part = nil
         # QUESTION should we enforce that the preamble is a preface?
@@ -3218,15 +3219,18 @@ module Asciidoctor
           trim_styles, colspec_dict, content_dict, stamp_names = allocate_running_content_layout doc, page, periphery, periphery_layout_cache
           # FIXME: we need to have a content setting for chapter pages
           content_by_position, colspec_by_position = content_dict[side], colspec_dict[side]
-          # TODO: populate chapter-number
-          # TODO: populate numbered and unnumbered chapter and section titles
 
           doc.set_attr 'page-number', pgnum_label if pagenums_enabled
           # QUESTION should the fallback value be nil instead of empty string? or should we remove attribute if no value?
-          doc.set_attr 'part-title', (parts_by_page[pgnum] || '')
-          doc.set_attr 'chapter-title', (chapters_by_page[pgnum] || '')
-          doc.set_attr 'section-title', (sections_by_page[pgnum] || '')
-          doc.set_attr 'section-or-chapter-title', (sections_by_page[pgnum] || chapters_by_page[pgnum] || '')
+          doc.set_attr 'part-title', (parts_by_page[pgnum][:title] || '')
+          doc.set_attr 'chapter-title', ((chap_info = chapters_by_page[pgnum])[:title] || '')
+          if (chap_numeral = chap_info[:numeral])
+            doc.set_attr 'chapter-numeral', chap_numeral
+          else
+            doc.remove_attr 'chapter-numeral'
+          end
+          doc.set_attr 'section-title', ((sect_info = sections_by_page[pgnum])[:title] || '')
+          doc.set_attr 'section-or-chapter-title', (sect_info[:title] || chap_info[:title] || '')
 
           stamp stamp_names[side] if stamp_names
 
