@@ -99,18 +99,18 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
     it 'should allow theme to change marker characters' do
       pdf_theme = {
-        ulist_marker_disc_content: %(\u25ca),
-        ulist_marker_circle_content: %(\u25cc),
-        ulist_marker_square_content: %(\u25a1),
+        ulist_marker_disc_content: ?\u25ca,
+        ulist_marker_circle_content: ?\u25cc,
+        ulist_marker_square_content: '$',
       }
 
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       * diamond
        ** dotted circle
-        *** white square
+        *** dollar
       EOS
 
-      (expect pdf.lines).to eql [%(\u25ca diamond), %(\u25cc dotted circle), %(\u25a1 white square)]
+      (expect pdf.lines).to eql [%(\u25ca diamond), %(\u25cc dotted circle), '$ dollar']
     end
 
     it 'should allow FontAwesome icon to be used as list marker' do
