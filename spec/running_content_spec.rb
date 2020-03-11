@@ -1471,6 +1471,73 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect titles_by_page[7]).to eql '[Part II|Chapter C|]'
     end
 
+    it 'should set chapter-numeral attribute when a chapter is active and sectnums are enabled' do
+      pdf_theme = {
+        footer_title_style: 'basic',
+        footer_font_color: '0000FF',
+        footer_recto_right_content: %(({chapter-numeral})\n{chapter-title} | {page-number}),
+        footer_verso_left_content: %(({chapter-numeral})\n{chapter-title} | {page-number}),
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+      :sectnums:
+
+      preamble
+
+      == A
+
+      content
+
+      <<<
+
+      more content
+
+      == B
+
+      content
+      EOS
+
+      footer_texts = pdf.find_text font_color: '0000FF'
+      (expect footer_texts).to have_size 4
+      (expect footer_texts.map {|it| it[:page_number] }).to eql [2, 3, 4, 5]
+      (expect footer_texts.map {|it| it[:string] }).to eql ['Preface | 1', '(1) A | 2', '(1) A | 3', '(2) B | 4']
+    end
+
+    it 'should not set chapter-numeral attribute sectnums are not enabled' do
+      pdf_theme = {
+        footer_title_style: 'basic',
+        footer_font_color: '0000FF',
+        footer_recto_right_content: %(({chapter-numeral})\n{chapter-title} | {page-number}),
+        footer_verso_left_content: %(({chapter-numeral})\n{chapter-title} | {page-number}),
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+
+      preamble
+
+      == A
+
+      content
+
+      <<<
+
+      more content
+
+      == B
+
+      content
+      EOS
+
+      footer_texts = pdf.find_text font_color: '0000FF'
+      (expect footer_texts).to have_size 4
+      (expect footer_texts.map {|it| it[:page_number] }).to eql [2, 3, 4, 5]
+      (expect footer_texts.map {|it| it[:string] }).to eql ['Preface | 1', 'A | 2', 'A | 3', 'B | 4']
+    end
+
     it 'should not set section-title attribute on pages in preamble of article' do
       pdf_theme = {
         footer_font_color: 'AA0000',
