@@ -30,7 +30,7 @@ describe 'Asciidoctor::PDF::Converter - Audio' do
     audio::podcast.mp3[]
     EOS
 
-    icon_text = (pdf.find_text %(\uf04b))[0]
+    icon_text = (pdf.find_text ?\uf04b)[0]
     (expect icon_text).not_to be_nil
     (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
   end

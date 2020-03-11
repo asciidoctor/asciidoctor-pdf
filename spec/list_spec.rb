@@ -261,9 +261,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       %w(fa fas).each do |font_family|
         pdf_theme = {
           ulist_marker_unchecked_font_family: font_family,
-          ulist_marker_unchecked_content: %(\uf096),
+          ulist_marker_unchecked_content: ?\uf096,
           ulist_marker_checked_font_family: font_family,
-          ulist_marker_checked_content: %(\uf046),
+          ulist_marker_checked_content: ?\uf046,
         }
 
         pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
