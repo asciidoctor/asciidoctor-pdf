@@ -1072,9 +1072,13 @@ module Asciidoctor
           subject_stop = node.attr 'subject-stop', (stack_subject ? nil : ':'), false
           node.items.each do |subjects, dd|
             subject = [*subjects].first.text
-            list_item_text = %(+++<strong>#{subject}#{(StopPunctRx.match? sanitize subject) ? '' : subject_stop}</strong>#{dd.text? ? "#{stack_subject ? '<br>' : ' '}#{dd.text}" : ''}+++)
-            list_item = ListItem.new list, list_item_text
-            dd.blocks.each {|it| list_item << it }
+            if dd
+              list_item_text = %(+++<strong>#{subject}#{(StopPunctRx.match? sanitize subject) ? '' : subject_stop}</strong>#{dd.text? ? "#{stack_subject ? '<br>' : ' '}#{dd.text}" : ''}+++)
+              list_item = ListItem.new list, list_item_text
+              dd.blocks.each {|it| list_item << it } if dd.block?
+            else
+              list_item = ListItem.new list, %(+++<strong>#{subject}</strong>+++)
+            end
             list << list_item
           end
           convert_outline_list list

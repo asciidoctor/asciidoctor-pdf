@@ -787,6 +787,19 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
         (expect pdf.lines).to eql ['• item a', 'about item a', 'more about item a', '• item b', 'about item b']
       end
+
+      it 'should support item with no desc' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [unordered]
+        yin:: yang
+        foo::
+        EOS
+
+        (expect pdf.find_text 'foo').not_to be_empty
+        yin_text = (pdf.find_text 'yin:')[0]
+        foo_text = (pdf.find_text 'foo')[0]
+        (expect foo_text[:x]).to eql yin_text[:x]
+      end
     end
 
     context 'Ordered' do
