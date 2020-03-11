@@ -629,6 +629,19 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect foo_text[:y]).to eql bar_text[:y]
       end
 
+      it 'should support item with no desc' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [horizontal]
+        yin:: yang
+        foo::
+        EOS
+
+        (expect pdf.find_text 'foo').not_to be_empty
+        yin_text = (pdf.find_text 'yin')[0]
+        foo_text = (pdf.find_text 'foo')[0]
+        (expect foo_text[:x]).to eql yin_text[:x]
+      end
+
       it 'should support multiple terms in horizontal list' do
         pdf = to_pdf <<~'EOS', analyze: true
         [horizontal]

@@ -1110,12 +1110,16 @@ module Asciidoctor
               #final_gap: term_line_metrics.final_gap,
               valign: :top,
             }]
-            desc_container = Block.new desc, :open
-            desc_container << (Block.new desc_container, :paragraph, source: (desc.instance_variable_get :@text), subs: :default) if desc.text?
-            desc.blocks.each {|b| desc_container << b } if desc.block?
-            row_data << {
-              content: (::Prawn::Table::Cell::AsciiDoc.new self, content: desc_container, text_color: @font_color, padding: desc_padding, valign: :top),
-            }
+            if desc
+              desc_container = Block.new desc, :open
+              desc_container << (Block.new desc_container, :paragraph, source: (desc.instance_variable_get :@text), subs: :default) if desc.text?
+              desc.blocks.each {|b| desc_container << b } if desc.block?
+              row_data << {
+                content: (::Prawn::Table::Cell::AsciiDoc.new self, content: desc_container, text_color: @font_color, padding: desc_padding, valign: :top),
+              }
+            else
+              row_data << {}
+            end
             table_data << row_data
           end
           max_term_width += (term_padding[1] + term_padding[3])
