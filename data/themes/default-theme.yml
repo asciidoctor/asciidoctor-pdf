@@ -62,8 +62,9 @@ role:
   small:
     font_size: $base_font_size_small
   subtitle:
-    font_size: 0.8em
     font_color: 999999
+    font_size: 0.8em
+    font_style: normal_italic
 # FIXME vertical_rhythm is weird; we should think in terms of ems
 #vertical_rhythm: $base_line_height_length * 2 / 3
 # correct line height for Noto Serif metrics (comes with built-in line height)

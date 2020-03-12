@@ -2784,7 +2784,7 @@ module Asciidoctor
         outdent_section opts.delete :outdent do
           margin_top top_margin
           # QUESTION should we move inherited styles to typeset_text?
-          if (inherited = apply_text_decoration ::Set.new, :heading, hlevel).empty?
+          if (inherited = apply_text_decoration font_styles, :heading, hlevel).empty?
             inline_format_opts = true
           else
             inline_format_opts = [{ inherited: inherited }]

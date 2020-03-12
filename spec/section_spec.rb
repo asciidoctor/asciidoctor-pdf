@@ -49,19 +49,15 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.text.map {|it| it.values_at :string, :font_name }).to eql expected_text
   end
 
-  it 'should not apply bold to italic text if headings are bold in theme' do
-    pdf_theme = {
-      heading_font_style: 'bold',
-    }
-
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+  it 'should add text formatting styles to styles defined in theme' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_font_style: 'bold' }, analyze: true
     == Get Started _Quickly_
     EOS
 
     text = pdf.text
     (expect text).to have_size 2
     (expect text[0][:font_name]).to eql 'NotoSerif-Bold'
-    (expect text[1][:font_name]).to eql 'NotoSerif-Italic'
+    (expect text[1][:font_name]).to eql 'NotoSerif-BoldItalic'
   end
 
   it 'should not partition section title by default' do
