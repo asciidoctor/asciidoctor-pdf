@@ -702,6 +702,23 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect toc_entry_underline[:width]).to eql 0.5
   end
 
+  it 'should allow theme to specify text transform for entries in toc' do
+    pdf_theme = {
+      toc_text_transform: 'uppercase',
+    }
+    input = <<~'EOS'
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == Transform Me
+    EOS
+
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    toc_lines = pdf.lines pdf.find_text page_number: 2
+    (expect toc_lines.join ?\n).to include 'TRANSFORM ME'
+  end
+
   it 'should decode character references in toc entries' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Document Title
