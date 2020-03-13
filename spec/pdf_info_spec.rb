@@ -62,6 +62,24 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       end
     end
 
+    it 'should set Author and Producer field using authors attribute with non-Latin characters' do
+      ['Doc Writer; Antonín Dvořák', ':authors: Doc Writer; Antonín Dvořák'].each do |author_line|
+        pdf = to_pdf <<~EOS
+        = Document Title
+        #{author_line}
+
+        [%hardbreaks]
+        First Author: {author_1}
+        Second Author: {author_2}
+        EOS
+        lines = ((pdf.page 1).text.split ?\n).map(&:strip)
+        (expect pdf.info[:Producer]).to eql pdf.info[:Author]
+        (expect pdf.info[:Author]).to eql 'Doc Writer, Antonín Dvořák'
+        (expect lines).to include 'First Author: Doc Writer'
+        (expect lines).to include 'Second Author: Antonín Dvořák'
+      end
+    end
+
     it 'should set Producer field to value of publisher attribute if set' do
       pdf = to_pdf <<~'EOS'
       = Document Title

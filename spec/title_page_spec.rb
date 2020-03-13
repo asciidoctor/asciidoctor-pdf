@@ -40,14 +40,14 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
   it 'should display author names under document title on title page' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Document Title
-    Doc Writer; Junior Writer
+    Doc Writer; Antonín Dvořák
     :doctype: book
 
     body
     EOS
 
     title_page_lines = pdf.lines pdf.find_text page_number: 1
-    (expect title_page_lines).to eql ['Document Title', 'Doc Writer, Junior Writer']
+    (expect title_page_lines).to eql ['Document Title', 'Doc Writer, Antonín Dvořák']
   end
 
   context 'title-page' do
