@@ -557,6 +557,16 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect glorious_text[:font_name]).to eql 'NotoSerif'
     end
 
+    it 'should allow role to set font style to italic inside bold text' do
+      pdf_theme = {
+        role_term_font_style: 'normal_italic',
+      }
+      pdf = to_pdf '*We call that [.term]#intersectional#.*', pdf_theme: pdf_theme, analyze: true
+
+      glorious_text = (pdf.find_text 'intersectional')[0]
+      (expect glorious_text[:font_name]).to eql 'NotoSerif-Italic'
+    end
+
     it 'should support theming multiple roles on a single phrase' do
       pdf_theme = {
         role_bold_font_style: 'bold',
