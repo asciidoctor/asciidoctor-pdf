@@ -547,6 +547,16 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect glorious_text[:font_name]).to eql 'NotoSerif-BoldItalic'
     end
 
+    it 'should allow role to reset font style to normal' do
+      pdf_theme = {
+        role_normal_font_style: 'normal',
+      }
+      pdf = to_pdf '*Make it [.normal]#plain#.*', pdf_theme: pdf_theme, analyze: true
+
+      glorious_text = (pdf.find_text 'plain')[0]
+      (expect glorious_text[:font_name]).to eql 'NotoSerif'
+    end
+
     it 'should support theming multiple roles on a single phrase' do
       pdf_theme = {
         role_bold_font_style: 'bold',
