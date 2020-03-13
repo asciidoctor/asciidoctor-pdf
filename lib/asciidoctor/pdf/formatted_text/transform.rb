@@ -369,6 +369,8 @@ module Asciidoctor
             styles = [:italic].to_set
           when 'bold_italic'
             styles = [:bold, :italic].to_set
+          when 'normal_italic'
+            styles = [:normal, :italic].to_set
           end
           if (style = TextDecorationTable[text_decoration])
             styles ? (styles << style) : [style].to_set
@@ -380,7 +382,12 @@ module Asciidoctor
         def update_fragment fragment, props
           fragment.update props do |k, oval, nval|
             if k == :styles
-              nval ? (oval.merge nval) : oval.clear
+              if nval
+                oval.subtract [:bold, :italic] if nval.delete? :normal
+                oval.merge nval
+              else
+                oval.clear
+              end
             elsif k == :callback
               oval | nval
             else
