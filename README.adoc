@@ -96,20 +96,20 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 
 == Known Limitations
 
-* Footnotes are always rendered as endnotes (at end of chapter for books; at end of document for all other doctypes)
-* Table cells that exceed height of a single page will be truncated (see https://github.com/prawnpdf/prawn-table/issues/41[prawn-table#41])
-* Inline images in table cells must fit within available space or Prawn::Errors::CannotFit error will be thrown
-* Columns cannot be assigned a 0% width (or a width less than the width of a single character); in the same vein, a column cannot be set to autowidth if width of all other columns meets or exceeds 100%; the result is that the converter with throw a Prawn::Errors::CannotFit error
-* An inline image in a table cell will not force the column wider if the width of the image exceeds the width of the column; either reduce the image width using `pdfwidth` or increase the width of the column using `cols`; another solution is to convert the cell to an AsciiDoc table cell (see https://github.com/asciidoctor/asciidoctor-pdf/issues/830)
-* Must use development version of prawn-table for autowidth to work on table head row
-* Must use development version of prawn for error to include font name when requested font style is missing
-* Must use Ruby >= 2.4 for natural cross references to work with non-ASCII titles
-* AsciiDoc table cell leaves padding below last block (due to lack of margin collapsing)
-* Prawn does not support double-wide box drawing glyphs correctly, so box drawings aren't aligned properly in verbatim blocks (see https://github.com/prawnpdf/prawn/issues/1002[prawn#1002]
-* Orphan / widow support is limited; a page break can occur between a section title and its section content, a table caption and the caption, etc.; use a manual page break to avoid
-* If a no-break hyphen is surrounded by formatted text on both sides (or is formatted individually), it will not prevent a line break
-* Images cannot float
-* Verse blocks do not use a fixed-width font by default, but you can control this setting using the theme
+* Footnotes are always rendered as endnotes (at end of chapter for books; at end of document for all other doctypes).
+* Table cells that exceed height of a single page will be truncated (see https://github.com/prawnpdf/prawn-table/issues/41[prawn-table#41]).
+* Inline images in table cells must fit within available column width or a Prawn::Errors::CannotFit error will be thrown (see https://github.com/asciidoctor/asciidoctor-pdf/issues/1608 for workarounds).
+* Columns cannot be assigned a 0% width (or a width less than the width of a single character); in the same vein, a column cannot be set to autowidth if width of all other columns meets or exceeds 100%; the result is that the converter with throw a Prawn::Errors::CannotFit error.
+* An inline image in a table cell will not force the column wider if the width of the image exceeds the width of the column; either reduce the image width using `pdfwidth` or increase the width of the column using `cols`; another solution is to convert the cell to an AsciiDoc table cell (see https://github.com/asciidoctor/asciidoctor-pdf/issues/830).
+* Must use development version of prawn-table for autowidth to work on table head row.
+* Must use development version of prawn for error to include font name when requested font style is missing.
+* Must use Ruby >= 2.4 for natural cross references to work with non-ASCII titles.
+* AsciiDoc table cell leaves padding below last block (due to lack of margin collapsing).
+* Prawn does not support double-wide box drawing glyphs correctly, so box drawings aren't aligned properly in verbatim blocks (see https://github.com/prawnpdf/prawn/issues/1002[prawn#1002].
+* Orphan / widow support is limited; a page break can occur between a section title and its section content, a table caption and the caption, etc.; use a manual page break to avoid.
+* If a no-break hyphen is surrounded by formatted text on both sides (or is formatted individually), it will not prevent a line break.
+* Images cannot float.
+* Verse blocks do not use a fixed-width font by default, but you can control this setting using the theme.
 
 == Prerequisites
 
