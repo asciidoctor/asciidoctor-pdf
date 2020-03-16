@@ -293,6 +293,7 @@ module Asciidoctor
         stamp_foreground_image doc, has_front_cover
         layout_cover_page doc, :back
         remove_tmp_files
+        clear_scratch
         nil
       end
 
@@ -4498,6 +4499,11 @@ module Asciidoctor
           doc.attributes.replace @save_state[:attributes]
           @save_state = nil
         end
+      end
+
+      def clear_scratch
+        @scratch_depth = 0
+        @save_state = @prototype = @scratch = nil
       end
     end
   end
