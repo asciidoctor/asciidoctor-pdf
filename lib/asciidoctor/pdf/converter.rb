@@ -3230,7 +3230,12 @@ module Asciidoctor
 
           doc.set_attr 'page-number', pgnum_label if pagenums_enabled
           # QUESTION should the fallback value be nil instead of empty string? or should we remove attribute if no value?
-          doc.set_attr 'part-title', (parts_by_page[pgnum][:title] || '')
+          doc.set_attr 'part-title', ((part_info = parts_by_page[pgnum])[:title] || '')
+          if (part_numeral = part_info[:numeral])
+            doc.set_attr 'part-numeral', part_numeral
+          else
+            doc.remove_attr 'part-numeral'
+          end
           doc.set_attr 'chapter-title', ((chap_info = chapters_by_page[pgnum])[:title] || '')
           if (chap_numeral = chap_info[:numeral])
             doc.set_attr 'chapter-numeral', chap_numeral

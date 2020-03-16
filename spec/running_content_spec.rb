@@ -1471,7 +1471,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect titles_by_page[7]).to eql '[Part II|Chapter C|]'
     end
 
-    it 'should set chapter-numeral attribute when a chapter is active and sectnums are enabled' do
+    it 'should set chapter-numeral attribute when a chapter is active and sectnums attribute is set' do
       pdf_theme = {
         footer_title_style: 'basic',
         footer_font_color: '0000FF',
@@ -1505,7 +1505,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect footer_texts.map {|it| it[:string] }).to eql ['Preface | 1', '(1) A | 2', '(1) A | 3', '(2) B | 4']
     end
 
-    it 'should not set chapter-numeral attribute sectnums are not enabled' do
+    it 'should not set chapter-numeral attribute if sectnums attributes is not set' do
       pdf_theme = {
         footer_title_style: 'basic',
         footer_font_color: '0000FF',
@@ -1536,6 +1536,65 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect footer_texts).to have_size 4
       (expect footer_texts.map {|it| it[:page_number] }).to eql [2, 3, 4, 5]
       (expect footer_texts.map {|it| it[:string] }).to eql ['Preface | 1', 'A | 2', 'A | 3', 'B | 4']
+    end
+
+    it 'should set part-numeral attribute when a part is active and partnums attribute is set' do
+      pdf_theme = {
+        footer_title_style: 'basic',
+        footer_font_color: '0000FF',
+        footer_recto_right_content: %(P{part-numeral} |\n{page-number}),
+        footer_verso_left_content: %(P{part-numeral} |\n{page-number}),
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+      :partnums:
+
+      content
+
+      = A
+
+      == Chapter
+
+      content
+
+      = B
+
+      == Moar Chapter
+
+      content
+      EOS
+
+      footer_texts = pdf.find_text font_color: '0000FF'
+      (expect footer_texts).to have_size 5
+      (expect footer_texts.map {|it| it[:page_number] }).to eql (2..6).to_a
+      (expect footer_texts.map {|it| it[:string] }).to eql ['1', 'PI | 2', 'PI | 3', 'PII | 4', 'PII | 5']
+    end
+
+    it 'should not set part-numeral attribute if partnums attribute is not set' do
+      pdf_theme = {
+        footer_title_style: 'basic',
+        footer_font_color: '0000FF',
+        footer_recto_right_content: %(P{part-numeral} |\n{page-number}),
+        footer_verso_left_content: %(P{part-numeral} |\n{page-number}),
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+
+      = A
+
+      == Chapter
+
+      content
+      EOS
+
+      footer_texts = pdf.find_text font_color: '0000FF'
+      (expect footer_texts).to have_size 2
+      (expect footer_texts.map {|it| it[:page_number] }).to eql [2, 3]
+      (expect footer_texts.map {|it| it[:string] }).to eql %w(1 2)
     end
 
     it 'should not set section-title attribute on pages in preamble of article' do
