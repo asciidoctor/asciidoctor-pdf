@@ -712,6 +712,28 @@ describe 'Asciidoctor::PDF::Converter - Source' do
   end if (ENV.key? 'PYGMENTS_VERSION') && !(Gem.win_platform? && RUBY_ENGINE == 'jruby')
 
   context 'Callouts' do
+    it 'should honor font family set on conum category in theme for conum in source block' do
+      pdf = to_pdf <<~EOS, pdf_theme: { code_font_family: 'Courier' }, analyze: true
+      :source-highlighter: rouge
+
+      [source,java]
+      ----
+      public interface Person {
+        String getName(); <1>
+        String getDob(); <2>
+        int getAge(); <3>
+      }
+      ----
+      EOS
+
+      lines = pdf.lines
+      (expect lines[1]).to end_with '; ①'
+      (expect lines[2]).to end_with '; ②'
+      (expect lines[3]).to end_with '; ③'
+      conum_text = (pdf.find_text '①')[0]
+      (expect conum_text[:font_name]).not_to eql 'Courier'
+    end
+
     it 'should substitute autonumber callouts with circled numbers when using rouge as syntax highlighter' do
       pdf = to_pdf <<~EOS, analyze: true
       :source-highlighter: rouge

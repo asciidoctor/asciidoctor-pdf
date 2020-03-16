@@ -205,4 +205,21 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     bold_text = (pdf.find_text '99')[0]
     (expect bold_text[:font_name]).to eql 'mplus1mn-bold'
   end
+
+  it 'should honor font family set on conum category in theme for conum in listing block' do
+    pdf = to_pdf <<~EOS, pdf_theme: { code_font_family: 'Courier' }, analyze: true
+    ----
+    fe <1>
+    fi <2>
+    fo <3>
+    ----
+    EOS
+
+    lines = pdf.lines
+    (expect lines[0]).to end_with ' ①'
+    (expect lines[1]).to end_with ' ②'
+    (expect lines[2]).to end_with ' ③'
+    conum_text = (pdf.find_text '①')[0]
+    (expect conum_text[:font_name]).not_to eql 'Courier'
+  end
 end

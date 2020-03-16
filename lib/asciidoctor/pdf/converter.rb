@@ -1846,7 +1846,10 @@ module Asciidoctor
             line << fragment
           end
         end
-        conum_color = @theme.conum_font_color
+        conum_font_color = @theme.conum_font_color
+        if (conum_font_name = @theme.conum_font_family) == font_name
+          conum_font_name = nil
+        end
         last_line_num = lines.size - 1
         if linenums
           pad_size = (last_line_num + 1).to_s.length
@@ -1863,7 +1866,10 @@ module Asciidoctor
           if conum_mapping && (conums = conum_mapping.delete cur_line_num)
             line << { text: conums.shift } if ::String === conums[0]
             conum_text = conums.map {|num| conum_glyph num }.join ' '
-            line << (conum_color ? { text: conum_text, color: conum_color } : { text: conum_text })
+            conum_fragment = { text: conum_text }
+            conum_fragment[:color] = conum_font_color if conum_font_color
+            conum_fragment[:font] = conum_font_name if conum_font_name
+            line << conum_fragment
           end
           line << { text: LF } unless last_line
           line
@@ -2380,12 +2386,16 @@ module Asciidoctor
       end
 
       def convert_inline_callout node
-        if (conum_color = @theme.conum_font_color)
-          # NOTE CMYK value gets flattened here, but is restored by formatted text parser
-          %(<color rgb="#{conum_color}">#{conum_glyph node.text.to_i}</color>)
+        if (conum_font_family = @theme.conum_font_family) != font_name
+          result = %(<font name="#{conum_font_family}">#{conum_glyph node.text.to_i}</font>)
         else
-          conum_glyph node.text.to_i
+          result = conum_glyph node.text.to_i
         end
+        if (conum_font_color = @theme.conum_font_color)
+          # NOTE CMYK value gets flattened here, but is restored by formatted text parser
+          result = %(<color rgb="#{conum_font_color}">#{result}</font>)
+        end
+        result
       end
 
       def convert_inline_footnote node
