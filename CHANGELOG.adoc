@@ -22,6 +22,7 @@ Enhancements::
 * allow theme to control text alignment of caption independent of box alignment (#1493)
 * set chapter-numeral attribute in running content on pages of chapter if sectnums attribute is enabled (#1373)
 * add support for normal_italic font style (to reset font style to normal, then apply italic) (#1603)
+* honor text alignment roles (e.g., `text-center`) on block image (#1609)
 
 Bug Fixes::
 
