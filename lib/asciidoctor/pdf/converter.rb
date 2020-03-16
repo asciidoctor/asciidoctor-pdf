@@ -172,7 +172,7 @@ module Asciidoctor
           preface.title = blk0.instance_variable_get :@title
           # QUESTION should ID be generated from raw or converted title? core is not clear about this
           preface.id = preface.generate_id
-          preface.blocks.replace blk0.blocks.map {|b| b.parent = preface; b }
+          preface.blocks.replace blk0.blocks.map {|b| b.parent = preface; b } # rubocop:disable Style/Semicolon
           doc.blocks[0] = preface
           blk0 = blk1 = preface = nil # rubocop:disable Lint/UselessAssignment
         end
