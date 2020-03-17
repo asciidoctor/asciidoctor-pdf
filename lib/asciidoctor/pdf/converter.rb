@@ -1433,7 +1433,7 @@ module Asciidoctor
 
         return on_image_error :missing, node, target, opts unless image_path
 
-        alignment = ((node.attr 'align', nil, false) || @theme.image_align || :left).to_sym
+        alignment = ((node.attr 'align', nil, false) || (resolve_alignment_from_role node.roles) || @theme.image_align || :left).to_sym
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
         width = resolve_explicit_width node.attributes, (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
         # TODO: add `to_pt page_width` method to ViewportWidth type

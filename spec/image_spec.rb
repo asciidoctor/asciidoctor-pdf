@@ -75,6 +75,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-align-right.pdf'
     end
 
+    it 'should align block image as indicated by text alignment role on macro', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-align-right-attribute.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      [.text-right]
+      image::wolpertinger.jpg[]
+      EOS
+
+      (expect to_file).to visually_match 'image-align-right.pdf'
+    end
+
     it 'should align block image to value of image_align key in theme if alignment not specified on image', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-align-right-theme.pdf', pdf_theme: { image_align: 'right' }, attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[]
