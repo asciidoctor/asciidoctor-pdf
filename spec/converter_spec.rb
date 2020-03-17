@@ -33,15 +33,25 @@ describe Asciidoctor::PDF::Converter do
 
     it 'should convert file in secure mode' do
       input_file = fixture_file 'secure.adoc'
-      output_file = output_file 'secure.pdf'
+      target_file = output_file 'secure.pdf'
       doc = Asciidoctor.convert_file input_file, backend: 'pdf', to_dir: output_dir, safe: 'secure'
       (expect doc.attr 'outfile').to be_nil
-      pdf = PDF::Reader.new output_file
+      pdf = PDF::Reader.new target_file
       (expect pdf.pages).to have_size 2
       (expect pdf.pages[0].text).to include 'Book Title'
       (expect pdf.pages[1].text).to include 'Chapter'
       images = get_images pdf
       (expect images).to have_size 1
+    end
+
+    it 'should be able to load and convert in separate steps' do
+      input_file = fixture_file 'hello.adoc'
+      target_file = output_file 'hello.pdf'
+      doc = Asciidoctor.load_file input_file, backend: 'pdf'
+      doc.write doc.convert, target_file
+      (expect Pathname.new target_file).to exist
+      pdf = PDF::Reader.new target_file
+      (expect pdf.pages).to have_size 1
     end
 
     it 'should be able to reuse instance of converter' do
@@ -210,13 +220,13 @@ describe Asciidoctor::PDF::Converter do
           (expect converter.resolve_background_position value).to eql expected
         end
       end
-    end
 
-    it 'should expose theme as property on converter' do
-      doc = Asciidoctor.load 'yo', backend: :pdf
-      doc.convert
-      (expect doc.converter.theme).not_to be_nil
-      (expect doc.converter.theme.base_font_family).to eql 'Noto Serif'
+      it 'should expose theme as property on converter' do
+        doc = Asciidoctor.load 'yo', backend: :pdf
+        doc.convert
+        (expect doc.converter.theme).not_to be_nil
+        (expect doc.converter.theme.base_font_family).to eql 'Noto Serif'
+      end
     end
   end
 end
