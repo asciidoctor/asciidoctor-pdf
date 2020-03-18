@@ -1089,11 +1089,7 @@ module Asciidoctor
           term_padding = desc_padding = term_line_metrics = term_inline_format = term_kerning = nil
           max_term_width = 0
           theme_font :description_list_term do
-            if (term_font_styles = font_styles).empty?
-              term_inline_format = true
-            else
-              term_inline_format = [inherited: { styles: term_font_styles }]
-            end
+            term_inline_format = (term_font_styles = font_styles).empty? ? true : [inherited: { styles: term_font_styles }]
             term_line_metrics = calc_line_metrics @theme.description_list_term_line_height || @theme.base_line_height
             term_padding = [term_line_metrics.padding_top, 10, (@theme.prose_margin_bottom || 0) * 0.5 + term_line_metrics.padding_bottom, 10]
             desc_padding = [0, 10, (@theme.prose_margin_bottom || 0) * 0.5, 10]

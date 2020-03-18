@@ -629,6 +629,34 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect foo_text[:y]).to eql bar_text[:y]
       end
 
+      it 'should inherit term font styles from theme' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [horizontal]
+        __f__oo:: bar
+        EOS
+
+        text = pdf.text
+        (expect text).to have_size 3
+        (expect text[0][:string]).to eql 'f'
+        (expect text[0][:font_name]).to eql 'NotoSerif-BoldItalic'
+        (expect text[1][:string]).to eql 'oo'
+        (expect text[1][:font_name]).to eql 'NotoSerif-Bold'
+      end
+
+      it 'should apply inline formatted to term even if font style is set to normal by theme' do
+        pdf = to_pdf <<~'EOS', pdf_theme: { description_list_term_font_style: 'normal' }, analyze: true
+        [horizontal]
+        **f**oo:: bar
+        EOS
+
+        text = pdf.text
+        (expect text).to have_size 3
+        (expect text[0][:string]).to eql 'f'
+        (expect text[0][:font_name]).to eql 'NotoSerif-Bold'
+        (expect text[1][:string]).to eql 'oo'
+        (expect text[1][:font_name]).to eql 'NotoSerif'
+      end
+
       it 'should support item with no desc' do
         pdf = to_pdf <<~'EOS', analyze: true
         [horizontal]
