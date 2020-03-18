@@ -792,12 +792,18 @@ module Asciidoctor
         start_new_page_discretely template: file, template_page: opts[:page]
         # prawn-templates sets text_rendering_mode to :unknown, which breaks running content; revert
         @text_rendering_mode = prev_text_rendering_mode
-        yield if block_given?
-        if opts.fetch :advance, true
+        if page.imported_page?
+          yield if block_given?
           # NOTE set page size & layout explicitly in case imported page differs
           # I'm not sure it's right to start a new page here, but unfortunately there's no other
           # way atm to prevent the size & layout of the imported page from affecting subsequent pages
+          advance_page size: prev_page_size, layout: prev_page_layout if opts.fetch :advance, true
+        elsif opts.fetch :advance, true
+          delete_page
+          # NOTE see previous comment
           advance_page size: prev_page_size, layout: prev_page_layout
+        else
+          delete_page
         end
         nil
       end

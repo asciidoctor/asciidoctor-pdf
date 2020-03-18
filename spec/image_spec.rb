@@ -536,6 +536,19 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect (p3_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 1.0 0.0 scn']
     end
 
+    it 'should ignore page numbers not found in imported PDF' do
+      pdf = to_pdf <<~'EOS'
+      image::red-green-blue.pdf[pages=1..10]
+      EOS
+      (expect pdf.pages).to have_size 3
+      p1_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
+      (expect (p1_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '1.0 0.0 0.0 scn']
+      p2_contents = pdf.objects[(pdf.page 2).page_object[:Contents][0]].data
+      (expect (p2_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 1.0 0.0 scn']
+      p3_contents = pdf.objects[(pdf.page 3).page_object[:Contents][0]].data
+      (expect (p3_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
+    end
+
     it 'should add destination to top of imported page if ID is specified' do
       pdf = to_pdf <<~'EOS'
       go to <<red>>
