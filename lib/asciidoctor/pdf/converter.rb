@@ -1431,7 +1431,7 @@ module Asciidoctor
 
         alignment = ((node.attr 'align', nil, false) || (resolve_alignment_from_role node.roles) || @theme.image_align || :left).to_sym
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
-        width = resolve_explicit_width node.attributes, (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
+        width = resolve_explicit_width node.attributes, bounds_width: (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
         # TODO: add `to_pt page_width` method to ViewportWidth type
         width = (width.to_f / 100) * page_width if ViewportWidth === width
 
@@ -2468,7 +2468,7 @@ module Asciidoctor
           # NOTE an image with a data URI is handled using a temporary file
           elsif (image_path = resolve_image_path node, target, true, image_format)
             if ::File.readable? image_path
-              width_attr = (width = preresolve_explicit_width node.attributes) ? %( width="#{width}") : ''
+              width_attr = (width = resolve_explicit_width node.attributes) ? %( width="#{width}") : ''
               fit_attr = (fit = node.attr 'fit', nil, false) ? %( fit="#{fit}") : ''
               img = %(<img src="#{image_path}" format="#{image_format}" alt="[#{encode_quotes node.attr 'alt'}]"#{width_attr}#{fit_attr}>)
             else
@@ -4179,12 +4179,12 @@ module Asciidoctor
             container_width, container_height = container_size
             case image_fit
             when 'none'
-              if (image_width = resolve_explicit_width image_attrs, container_width)
+              if (image_width = resolve_explicit_width image_attrs, bounds_width: container_width)
                 image_opts[:width] = image_width
               end
             when 'scale-down'
               # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
-              if (image_width = resolve_explicit_width image_attrs, container_width) && image_width > container_width
+              if (image_width = resolve_explicit_width image_attrs, bounds_width: container_width) && image_width > container_width
                 image_opts[:fit] = container_size
               elsif (image_size = intrinsic_image_dimensions image_path, image_format) &&
                   (image_width ? image_width * (image_size[:height].to_f / image_size[:width]) > container_height : (to_pt image_size[:width], :px) > container_width || (to_pt image_size[:height], :px) > container_height)
@@ -4207,7 +4207,7 @@ module Asciidoctor
             else # when 'contain'
               image_opts[:fit] = container_size
             end
-          elsif (image_width = resolve_explicit_width image_attrs, container_size[0])
+          elsif (image_width = resolve_explicit_width image_attrs, bounds_width: container_size[0])
             image_opts[:width] = image_width
           else # default to fit=contain if sizing is not specified
             image_opts[:fit] = container_size
@@ -4218,36 +4218,22 @@ module Asciidoctor
         image_opts
       end
 
-      # Resolves the explicit width as a PDF pt value if the value is specified in
-      # absolute units, but defers resolving a percentage value until later.
+      # Resolves the explicit width, if specified, as a PDF pt value.
       #
-      # See resolve_explicit_width method for details about which attributes are considered.
-      def preresolve_explicit_width attrs
-        if attrs.key? 'pdfwidth'
-          ((width = attrs['pdfwidth']).end_with? '%') ? width : (str_to_pt width)
-        elsif attrs.key? 'scaledwidth'
-          # NOTE the parser automatically appends % if value is unitless
-          ((width = attrs['scaledwidth']).end_with? '%') ? width : (str_to_pt width)
-        elsif attrs.key? 'width'
-          # QUESTION should we honor percentage width value?
-          to_pt attrs['width'].to_f, :px
-        end
-      end
-
-      # Resolves the explicit width as a PDF pt value, if specified.
-      #
-      # Resolves the explicit width, first considering the pdfwidth attribute, then
-      # the scaledwidth attribute and finally the width attribute. If the specified
-      # value is in pixels, the value is scaled by 75% to perform approximate
-      # CSS px to PDF pt conversion. If the resolved width is larger than the
-      # max_width, the max_width value is returned.
+      # Resolves the explicit width, first considering the pdfwidth attribute, then the scaledwidth
+      # attribute, then the theme default (if enabled by the :use_fallback option), and finally the
+      # width attribute. If the specified value is in pixels, the value is scaled by 75% to perform
+      # approximate CSS px to PDF pt conversion. If the value is a percentage, and the
+      # bounds_width option is given, the percentage of the bounds_width value is returned.
+      # Otherwise, the percentage width is returned.
       #--
       # QUESTION should we enforce positive result?
-      def resolve_explicit_width attrs, max_width = bounds.width, opts = {}
-        # QUESTION should we restrict width to max_width for pdfwidth?
+      def resolve_explicit_width attrs, opts = {}
+        bounds_width = opts[:bounds_width]
+        # QUESTION should we restrict width to bounds_width for pdfwidth?
         if attrs.key? 'pdfwidth'
           if (width = attrs['pdfwidth']).end_with? '%'
-            (width.to_f / 100) * max_width
+            bounds_width ? (width.to_f / 100) * bounds_width : width
           elsif opts[:support_vw] && (width.end_with? 'vw')
             (width.chomp 'vw').extend ViewportWidth
           else
@@ -4256,7 +4242,7 @@ module Asciidoctor
         elsif attrs.key? 'scaledwidth'
           # NOTE the parser automatically appends % if value is unitless
           if (width = attrs['scaledwidth']).end_with? '%'
-            (width.to_f / 100) * max_width
+            bounds_width ? (width.to_f / 100) * bounds_width : width
           else
             str_to_pt width
           end
@@ -4264,7 +4250,7 @@ module Asciidoctor
           if ::Numeric === width
             width
           elsif (width = width.to_s).end_with? '%'
-            (width.to_f / 100) * max_width
+            bounds_width ? (width.to_f / 100) * bounds_width : bounds_width
           elsif opts[:support_vw] && (width.end_with? 'vw')
             (width.chomp 'vw').extend ViewportWidth
           else
@@ -4272,11 +4258,11 @@ module Asciidoctor
           end
         elsif attrs.key? 'width'
           if (width = attrs['width']).end_with? '%'
-            width = (width.to_f / 100) * max_width
+            width = (width.to_f / 100) * bounds_width if bounds_width
           else
             width = to_pt width.to_f, :px
           end
-          opts[:constrain_to_bounds] ? [max_width, width].min : width
+          bounds_width && opts[:constrain_to_bounds] ? [bounds_width, width].min : width
         end
       end
 

@@ -98,39 +98,39 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should resolve pdfwidth in % to pt' do
       attrs = { 'pdfwidth' => '25%' }
-      (expect subject.resolve_explicit_width attrs, 1000).to eql 250.0
+      (expect subject.resolve_explicit_width attrs, bounds_width: 1000).to eql 250.0
     end
 
     it 'should resolve pdfwidth in px to pt' do
       attrs = { 'pdfwidth' => '144px' }
-      (expect subject.resolve_explicit_width attrs, 1000).to eql 108.0
+      (expect subject.resolve_explicit_width attrs, bounds_width: 1000).to eql 108.0
     end
 
     it 'should resolve pdfwidth in vw' do
       attrs = { 'pdfwidth' => '50vw' }
-      result = subject.resolve_explicit_width attrs, 1000, support_vw: true
+      result = subject.resolve_explicit_width attrs, bounds_width: 1000, support_vw: true
       (expect result.to_f).to eql 50.0
       (expect result.singleton_class).to include Asciidoctor::PDF::Converter::ViewportWidth
     end
 
     it 'should resolve scaledwidth in % to pt' do
       attrs = { 'scaledwidth' => '25%' }
-      (expect subject.resolve_explicit_width attrs, 1000).to eql 250.0
+      (expect subject.resolve_explicit_width attrs, bounds_width: 1000).to eql 250.0
     end
 
     it 'should resolve scaledwidth in px to pt' do
       attrs = { 'scaledwidth' => '144px' }
-      (expect subject.resolve_explicit_width attrs, 1000).to eql 108.0
+      (expect subject.resolve_explicit_width attrs, bounds_width: 1000).to eql 108.0
     end
 
     it 'should resolve width in % to pt' do
       attrs = { 'width' => '25%' }
-      (expect subject.resolve_explicit_width attrs, 1000).to eql 250.0
+      (expect subject.resolve_explicit_width attrs, bounds_width: 1000).to eql 250.0
     end
 
     it 'should resolve unitless width in px to pt' do
       attrs = { 'width' => '100' }
-      (expect subject.resolve_explicit_width attrs, 1000).to eql 75.0
+      (expect subject.resolve_explicit_width attrs, bounds_width: 1000).to eql 75.0
     end
 
     it 'should size image using percentage width specified by pdfwidth', visual: true do
