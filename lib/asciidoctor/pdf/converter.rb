@@ -1623,144 +1623,143 @@ module Asciidoctor
       # QUESTION can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
       def convert_listing_or_literal node
         add_dest_for_block node if node.id
+        wrap_ext = source_chunks = bg_color_override = font_color_override = adjusted_font_size = nil
+        theme_font :code do
+          # HACK: disable built-in syntax highlighter; must be done before calling node.content!
+          if node.style == 'source' && (highlighter = (syntax_hl = node.document.syntax_highlighter) && syntax_hl.highlight? && syntax_hl.name)
+            case highlighter
+            when 'coderay'
+              unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
+                highlighter = nil if (Helpers.require_library CodeRayRequirePath, 'coderay', :warn).nil?
+              end
+            when 'pygments'
+              unless defined? ::Pygments::Ext::BlockStyles
+                highlighter = nil if (Helpers.require_library PygmentsRequirePath, 'pygments.rb', :warn).nil?
+              end
+            when 'rouge'
+              unless defined? ::Rouge::Formatters::Prawn
+                highlighter = nil if (Helpers.require_library RougeRequirePath, 'rouge', :warn).nil?
+              end
+            end
+            prev_subs = (subs = node.subs).dup
+            # NOTE: the highlight sub is only set for coderay, rouge, and pygments atm
+            highlight_idx = subs.index :highlight
+            # NOTE: scratch? here only applies if listing block is nested inside another block
+            if !highlighter || scratch?
+              highlighter = nil
+              if highlight_idx
+                # switch the :highlight sub back to :specialcharacters
+                subs[highlight_idx] = :specialcharacters
+              else
+                prev_subs = nil
+              end
+              source_string = guard_indentation node.content
+            else
+              # NOTE: the source highlighter logic below handles the callouts and highlight subs
+              if highlight_idx
+                subs.delete_all :highlight, :callouts
+              else
+                subs.delete_all :specialcharacters, :callouts
+              end
+              # NOTE: indentation guards will be added by the source highlighter logic
+              source_string = expand_tabs node.content
+            end
+          else
+            highlighter = nil
+            source_string = guard_indentation node.content
+          end
 
-        # HACK: disable built-in syntax highlighter; must be done before calling node.content!
-        if node.style == 'source' && (highlighter = (syntax_hl = node.document.syntax_highlighter) && syntax_hl.highlight? && syntax_hl.name)
           case highlighter
           when 'coderay'
-            unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
-              highlighter = nil if (Helpers.require_library CodeRayRequirePath, 'coderay', :warn).nil?
+            source_string, conum_mapping = extract_conums source_string
+            srclang = node.attr 'language', 'text', false
+            begin
+              ::CodeRay::Scanners[(srclang = (srclang.start_with? 'html+') ? (srclang.slice 5, srclang.length).to_sym : srclang.to_sym)]
+            rescue ::ArgumentError
+              srclang = :text
             end
+            fragments = (::CodeRay.scan source_string, srclang).to_prawn
+            source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
           when 'pygments'
-            unless defined? ::Pygments::Ext::BlockStyles
-              highlighter = nil if (Helpers.require_library PygmentsRequirePath, 'pygments.rb', :warn).nil?
+            style = (node.document.attr 'pygments-style') || 'pastie'
+            # QUESTION allow border color to be set by theme for highlighted block?
+            pg_block_styles = ::Pygments::Ext::BlockStyles.for style
+            bg_color_override = pg_block_styles[:background_color]
+            font_color_override = pg_block_styles[:font_color]
+            if source_string.empty?
+              source_chunks = []
+            else
+              lexer = (::Pygments::Lexer.find_by_alias node.attr 'language', 'text', false) || (::Pygments::Lexer.find_by_mimetype 'text/plain')
+              lexer_opts = { nowrap: true, noclasses: true, stripnl: false, style: style }
+              lexer_opts[:startinline] = !(node.option? 'mixed') if lexer.name == 'PHP'
+              source_string, conum_mapping = extract_conums source_string
+              # NOTE: highlight can return nil if something goes wrong; fallback to encoded source string if this happens
+              result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
+              if node.attr? 'highlight', nil, false
+                if (highlight_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
+                    (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
+                    (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
+                  highlight_lines = nil
+                else
+                  pg_highlight_bg_color = pg_block_styles[:highlight_background_color]
+                  highlight_lines = highlight_lines.map {|linenum| [linenum, pg_highlight_bg_color] }.to_h
+                end
+              end
+              if node.attr? 'linenums'
+                linenums = (node.attr 'start', 1, false).to_i
+                @theme.code_linenum_font_color ||= '999999'
+                postprocess = true
+                wrap_ext = FormattedText::SourceWrap
+              elsif conum_mapping || highlight_lines
+                postprocess = true
+              end
+              fragments = text_formatter.format result
+              fragments = restore_conums fragments, conum_mapping, linenums, highlight_lines if postprocess
+              source_chunks = guard_indentation_in_fragments fragments
             end
           when 'rouge'
-            unless defined? ::Rouge::Formatters::Prawn
-              highlighter = nil if (Helpers.require_library RougeRequirePath, 'rouge', :warn).nil?
-            end
-          end
-          prev_subs = (subs = node.subs).dup
-          # NOTE: the highlight sub is only set for coderay, rouge, and pygments atm
-          highlight_idx = subs.index :highlight
-          # NOTE: scratch? here only applies if listing block is nested inside another block
-          if !highlighter || scratch?
-            highlighter = nil
-            if highlight_idx
-              # switch the :highlight sub back to :specialcharacters
-              subs[highlight_idx] = :specialcharacters
+            formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap, highlight_background_color: @theme.code_highlight_background_color)
+            # QUESTION allow border color to be set by theme for highlighted block?
+            bg_color_override = formatter.background_color
+            if source_string.empty?
+              source_chunks = []
             else
-              prev_subs = nil
-            end
-            source_string = guard_indentation node.content
-          else
-            # NOTE: the source highlighter logic below handles the callouts and highlight subs
-            if highlight_idx
-              subs.delete_all :highlight, :callouts
-            else
-              subs.delete_all :specialcharacters, :callouts
-            end
-            # NOTE: indentation guards will be added by the source highlighter logic
-            source_string = expand_tabs node.content
-          end
-        else
-          highlighter = nil
-          source_string = guard_indentation node.content
-        end
-
-        case highlighter
-        when 'coderay'
-          source_string, conum_mapping = extract_conums source_string
-          srclang = node.attr 'language', 'text', false
-          begin
-            ::CodeRay::Scanners[(srclang = (srclang.start_with? 'html+') ? (srclang.slice 5, srclang.length).to_sym : srclang.to_sym)]
-          rescue ::ArgumentError
-            srclang = :text
-          end
-          fragments = (::CodeRay.scan source_string, srclang).to_prawn
-          source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
-        when 'pygments'
-          style = (node.document.attr 'pygments-style') || 'pastie'
-          # QUESTION allow border color to be set by theme for highlighted block?
-          pg_block_styles = ::Pygments::Ext::BlockStyles.for style
-          bg_color_override = pg_block_styles[:background_color]
-          font_color_override = pg_block_styles[:font_color]
-          if source_string.empty?
-            source_chunks = []
-          else
-            lexer = (::Pygments::Lexer.find_by_alias node.attr 'language', 'text', false) || (::Pygments::Lexer.find_by_mimetype 'text/plain')
-            lexer_opts = { nowrap: true, noclasses: true, stripnl: false, style: style }
-            lexer_opts[:startinline] = !(node.option? 'mixed') if lexer.name == 'PHP'
-            source_string, conum_mapping = extract_conums source_string
-            # NOTE: highlight can return nil if something goes wrong; fallback to encoded source string if this happens
-            result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
-            if node.attr? 'highlight', nil, false
-              if (highlight_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
-                  (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
-                  (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
-                highlight_lines = nil
+              if node.attr? 'linenums'
+                formatter_opts = { line_numbers: true, start_line: (node.attr 'start', 1, false).to_i }
+                wrap_ext = FormattedText::SourceWrap
               else
-                pg_highlight_bg_color = pg_block_styles[:highlight_background_color]
-                highlight_lines = highlight_lines.map {|linenum| [linenum, pg_highlight_bg_color] }.to_h
+                formatter_opts = {}
               end
-            end
-            if node.attr? 'linenums'
-              linenums = (node.attr 'start', 1, false).to_i
-              @theme.code_linenum_font_color ||= '999999'
-              postprocess = true
-              wrap_ext = FormattedText::SourceWrap
-            elsif conum_mapping || highlight_lines
-              postprocess = true
-            end
-            fragments = text_formatter.format result
-            fragments = restore_conums fragments, conum_mapping, linenums, highlight_lines if postprocess
-            source_chunks = guard_indentation_in_fragments fragments
-          end
-        when 'rouge'
-          formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap, highlight_background_color: @theme.code_highlight_background_color)
-          # QUESTION allow border color to be set by theme for highlighted block?
-          bg_color_override = formatter.background_color
-          if source_string.empty?
-            source_chunks = []
-          else
-            if node.attr? 'linenums'
-              formatter_opts = { line_numbers: true, start_line: (node.attr 'start', 1, false).to_i }
-              wrap_ext = FormattedText::SourceWrap
-            else
-              formatter_opts = {}
-            end
-            if (srclang = node.attr 'language', nil, false)
-              if srclang.include? '?'
-                if (lexer = ::Rouge::Lexer.find_fancy srclang)
-                  unless lexer.tag != 'php' || (node.option? 'mixed') || ((lexer_opts = lexer.options).key? 'start_inline')
-                    lexer = lexer.class.new lexer_opts.merge 'start_inline' => true
+              if (srclang = node.attr 'language', nil, false)
+                if srclang.include? '?'
+                  if (lexer = ::Rouge::Lexer.find_fancy srclang)
+                    unless lexer.tag != 'php' || (node.option? 'mixed') || ((lexer_opts = lexer.options).key? 'start_inline')
+                      lexer = lexer.class.new lexer_opts.merge 'start_inline' => true
+                    end
                   end
+                elsif (lexer = ::Rouge::Lexer.find srclang)
+                  lexer = lexer.new start_inline: true if lexer.tag == 'php' && !(node.option? 'mixed')
                 end
-              elsif (lexer = ::Rouge::Lexer.find srclang)
-                lexer = lexer.new start_inline: true if lexer.tag == 'php' && !(node.option? 'mixed')
               end
-            end
-            lexer ||= ::Rouge::Lexers::PlainText
-            source_string, conum_mapping = extract_conums source_string
-            if node.attr? 'highlight', nil, false
-              unless (hl_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
-                  (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
-                  (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
-                formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
+              lexer ||= ::Rouge::Lexers::PlainText
+              source_string, conum_mapping = extract_conums source_string
+              if node.attr? 'highlight', nil, false
+                unless (hl_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
+                    (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
+                    (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
+                  formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
+                end
               end
+              fragments = formatter.format (lexer.lex source_string), formatter_opts
+              source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
             end
-            fragments = formatter.format (lexer.lex source_string), formatter_opts
-            source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
+          else
+            # NOTE: only format if we detect a need (callouts or inline formatting)
+            source_chunks = (XMLMarkupRx.match? source_string) ? (text_formatter.format source_string) : [text: source_string]
           end
-        else
-          # NOTE: only format if we detect a need (callouts or inline formatting)
-          source_chunks = (XMLMarkupRx.match? source_string) ? (text_formatter.format source_string) : [text: source_string]
+          node.subs.replace prev_subs if prev_subs
+          adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ? (compute_autofit_font_size source_chunks, :code) : nil
         end
-
-        node.subs.replace prev_subs if prev_subs
-
-        adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ?
-            (theme_font_size_autofit source_chunks, :code) : nil
 
         theme_margin :block, :top
 
@@ -1777,6 +1776,7 @@ module Asciidoctor
             end
           end
         end
+
         stroke_horizontal_rule @theme.caption_border_bottom_color if node.title? && @theme.caption_border_bottom_color
 
         theme_margin :block, :bottom
@@ -3801,24 +3801,22 @@ module Asciidoctor
       #
       # Return the calculated font size if an adjustment is necessary or nil if no
       # font size adjustment is necessary.
-      def theme_font_size_autofit fragments, category
+      def compute_autofit_font_size fragments, category
         arranger = arrange_fragments_by_line fragments
-        theme_font category do
-          # NOTE finalizing the line here generates fragments & calculates their widths using the current font settings
-          # CAUTION it also removes zero-width spaces
-          arranger.finalize_line
-          actual_width = width_of_fragments arranger.fragments
-          unless ::Array === (padding = @theme[%(#{category}_padding)])
-            padding = ::Array.new 4, padding
-          end
-          available_width = bounds.width - (padding[3] || 0) - (padding[1] || 0)
-          if actual_width > available_width
-            adjusted_font_size = ((available_width * font_size).to_f / actual_width).truncate 4
-            if (min = @theme[%(#{category}_font_size_min)] || @theme.base_font_size_min) && adjusted_font_size < min
-              min
-            else
-              adjusted_font_size
-            end
+        # NOTE finalizing the line here generates fragments & calculates their widths using the current font settings
+        # CAUTION it also removes zero-width spaces
+        arranger.finalize_line
+        actual_width = width_of_fragments arranger.fragments
+        unless ::Array === (padding = @theme[%(#{category}_padding)])
+          padding = ::Array.new 4, padding
+        end
+        available_width = bounds.width - (padding[3] || 0) - (padding[1] || 0)
+        if actual_width > available_width
+          adjusted_font_size = ((available_width * font_size).to_f / actual_width).truncate 4
+          if (min = @theme[%(#{category}_font_size_min)] || @theme.base_font_size_min) && adjusted_font_size < min
+            min
+          else
+            adjusted_font_size
           end
         end
       end
