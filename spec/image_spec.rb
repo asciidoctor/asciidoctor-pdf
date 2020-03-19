@@ -524,16 +524,18 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should insert all pages specified by pages attribute without leaving blank pages in between' do
-      pdf = to_pdf <<~'EOS'
-      image::red-green-blue.pdf[pages=3;1..2]
-      EOS
-      (expect pdf.pages).to have_size 3
-      p1_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
-      (expect (p1_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
-      p2_contents = pdf.objects[(pdf.page 2).page_object[:Contents][0]].data
-      (expect (p2_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '1.0 0.0 0.0 scn']
-      p3_contents = pdf.objects[(pdf.page 3).page_object[:Contents][0]].data
-      (expect (p3_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 1.0 0.0 scn']
+      ['pages="3,1,2"', 'pages=3;1..2'].each do |pages_attr|
+        pdf = to_pdf <<~EOS
+        image::red-green-blue.pdf[#{pages_attr}]
+        EOS
+        (expect pdf.pages).to have_size 3
+        p1_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
+        (expect (p1_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
+        p2_contents = pdf.objects[(pdf.page 2).page_object[:Contents][0]].data
+        (expect (p2_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '1.0 0.0 0.0 scn']
+        p3_contents = pdf.objects[(pdf.page 3).page_object[:Contents][0]].data
+        (expect (p3_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 1.0 0.0 scn']
+      end
     end
 
     it 'should add destination to top of imported page if ID is specified' do
