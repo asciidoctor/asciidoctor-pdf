@@ -266,6 +266,50 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_entry[:dest][:label]).to eql '2'
     end
 
+    it 'should disable running content periphery on toc page if noheader or nofooer option is set on macro' do
+      pdf_theme = {
+        header_height: 30,
+        header_font_color: 'FF0000',
+        header_recto_right_content: 'Page {page-number}',
+        header_verso_right_content: 'Page {page-number}',
+        footer_font_color: '0000FF',
+        footer_recto_right_content: 'Page {page-number}',
+        footer_verso_right_content: 'Page {page-number}',
+      }
+
+      sections = (1..37).map {|num| %(\n\n== Section #{num}) }.join
+      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+      :toc: macro
+
+      == First Chapter
+      #{sections}
+
+      [%noheader%nofooter]
+      toc::[]
+
+      == Last Chapter
+      EOS
+
+      toc_text = (pdf.find_text 'Table of Contents')[0]
+      (expect toc_text).not_to be_nil
+      toc_page_number = toc_text[:page_number]
+      last_chapter_text = (pdf.find_text 'Last Chapter')[-1]
+      last_chapter_page_number = last_chapter_text[:page_number]
+      toc_page_number.upto last_chapter_page_number do |page_number|
+        header_texts = (pdf.find_text font_color: 'FF0000', page_number: page_number)
+        footer_texts = (pdf.find_text font_color: '0000FF', page_number: page_number)
+        if page_number < last_chapter_page_number
+          (expect header_texts).to be_empty
+          (expect footer_texts).to be_empty
+        else
+          (expect header_texts).not_to be_empty
+          (expect footer_texts).not_to be_empty
+        end
+      end
+    end
+
     it 'should not add toc title to page or outline if toc-title is unset' do
       pdf = to_pdf <<~'EOS'
       = Document Title
