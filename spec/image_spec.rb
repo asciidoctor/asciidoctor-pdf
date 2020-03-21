@@ -706,6 +706,28 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
     end
 
+    it 'should only read remote image once if used in both main and running content if allow-uri-read is set' do
+      pdf = with_local_webserver do |base_url, thr|
+        pdf_theme = {
+          header_height: 30,
+          header_columns: '=100%',
+          header_recto_center_content: %(image:#{base_url}/logo.png[Remote Image]),
+          footer_columns: '=100%',
+          footer_recto_center_content: %(image:#{base_url}/logo.png[Remote Image]),
+        }
+        result = to_pdf <<~EOS, pdf_theme: pdf_theme, enable_footer: true, attribute_overrides: { 'allow-uri-read' => '' }
+        image::#{base_url}/logo.png[Remote Image]
+        EOS
+        requests = thr[:requests]
+        (expect requests).to have_size 1
+        (expect requests[0]).to include '/logo.png'
+        result
+      end
+      images = get_images pdf, 1
+      (expect images).to have_size 3
+      (expect (pdf.page 1).text).to be_empty
+    end
+
     it 'should read remote image over HTTPS if allow-uri-read is set' do
       pdf = to_pdf 'image::https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@v1.5.0.rc.2/spec/fixtures/logo.png[Remote Image]', attribute_overrides: { 'allow-uri-read' => '' }
       images = get_images pdf, 1

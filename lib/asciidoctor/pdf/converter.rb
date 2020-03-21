@@ -293,8 +293,6 @@ module Asciidoctor
 
         stamp_foreground_image doc, has_front_cover
         layout_cover_page doc, :back
-        remove_tmp_files
-        clear_scratch
         nil
       end
 
@@ -3221,10 +3219,7 @@ module Asciidoctor
         # NOTE: this block is invoked during PDF generation, after convert_document has returned
         repeat (content_start_page..num_pages), dynamic: true do
           # NOTE: don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
-          if page.imported_page?
-            remove_tmp_files if page_number == num_pages
-            next
-          end
+          next if page.imported_page?
           virtual_pgnum = (pgnum = page_number) - skip_pagenums
           pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new pgnum, :lower) : virtual_pgnum).to_s
           side = page_side((folio_basis == :physical ? pgnum : virtual_pgnum), invert_folio)
@@ -3324,7 +3319,6 @@ module Asciidoctor
               end
             end
           end
-          remove_tmp_files if pgnum == num_pages
         end
 
         go_to_page prev_page_number
@@ -3601,6 +3595,8 @@ module Asciidoctor
         end
         # write scratch document if debug is enabled (or perhaps DEBUG_STEPS env)
         #get_scratch_document.render_file 'scratch.pdf'
+        clear_scratch
+        remove_tmp_files
         nil
       end
 
