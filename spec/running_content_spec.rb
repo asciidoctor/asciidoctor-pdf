@@ -1946,7 +1946,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       %w(pdfwidth=99.76 fit=contain pdfwidth=0.5in,fit=contain pdfwidth=15in,fit=contain).each_with_index do |image_attrlist, idx|
         pdf_theme = build_pdf_theme \
           header_height: 36,
-          header_recto_columns: '>40% =20% <40%',
+          header_columns: '>40% =20% <40%',
           header_recto_left_content: 'text',
           header_recto_center_content: %(image:#{fixture_file 'green-bar.svg'}[#{image_attrlist}]),
           header_recto_right_content: 'text'
@@ -1962,7 +1962,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_height: 36,
         header_border_width: 5,
         header_border_color: 'dddddd',
-        header_recto_columns: '>40% =20% <40%',
+        header_columns: '>40% =20% <40%',
         header_recto_left_content: 'text',
         header_recto_center_content: %(image:#{fixture_file 'square.png'}[fit=contain]),
         header_recto_right_content: 'text',
@@ -1985,7 +1985,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       %w(pdfwidth=99.76 pdfwidth=15in,fit=scale-down).each_with_index do |image_attrlist, idx|
         pdf_theme = build_pdf_theme \
           header_height: 36,
-          header_recto_columns: '>40% =20% <40%',
+          header_columns: '>40% =20% <40%',
           header_recto_left_content: 'text',
           header_recto_center_content: %(image:#{fixture_file 'green-bar.svg'}[#{image_attrlist}]),
           header_recto_right_content: 'text'
@@ -2000,7 +2000,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       %w(pdfwidth=30.60 fit=scale-down).each_with_index do |image_attrlist, idx|
         pdf_theme = build_pdf_theme \
           header_height: 36,
-          header_recto_columns: '>40% =20% <40%',
+          header_columns: '>40% =20% <40%',
           header_recto_left_content: 'text',
           header_recto_center_content: %(image:#{fixture_file 'tux.png'}[#{image_attrlist}]),
           header_recto_right_content: 'text'
@@ -2014,7 +2014,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     it 'should scale image down to minimum dimension when fit=scale-down', visual: true do
       pdf_theme = build_pdf_theme \
         header_height: 24,
-        header_recto_columns: '>25% =50% <25%',
+        header_columns: '>25% =50% <25%',
         header_recto_left_content: 'text',
         header_recto_center_content: %(image:#{fixture_file 'square-viewbox-only.svg'}[fit=scale-down]),
         header_recto_right_content: 'text'
@@ -2026,7 +2026,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       %w(pdfwidth=0.5in pdfwidth=0.5in,fit=scale-down).each_with_index do |image_attrlist, idx|
         pdf_theme = build_pdf_theme \
           header_height: 36,
-          header_recto_columns: '>40% =20% <40%',
+          header_columns: '>40% =20% <40%',
           header_recto_left_content: 'text',
           header_recto_center_content: %(image:#{fixture_file 'green-bar.svg'}[#{image_attrlist}]),
           header_recto_right_content: 'text'
@@ -2040,7 +2040,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     it 'should size image based on width attribute value if no other dimension attribute is specified', visual: true do
       pdf_theme = build_pdf_theme \
         header_height: 36,
-        header_recto_columns: '<25% =50% >25%',
+        header_columns: '<25% =50% >25%',
         header_recto_center_content: %(image:#{fixture_file 'square-viewbox-only.svg'}[square,24])
 
       to_file = to_pdf_file %([.text-center]\ncontent), 'running-content-image-width.pdf', pdf_theme: pdf_theme
@@ -2131,7 +2131,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         (expect do
           pdf_theme = build_pdf_theme \
             header_height: 36,
-            header_recto_columns: '=100%',
+            header_columns: '=100%',
             header_recto_center_content: %(image:#{block ? ':' : ''}no-such-image.png[alt text])
 
           pdf = to_pdf 'content', pdf_theme: pdf_theme, analyze: true
