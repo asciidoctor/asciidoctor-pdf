@@ -313,10 +313,9 @@ RSpec.configure do |config|
         cmd = args.shift
       end
       kw_args = Hash === args[-1] ? args.pop : {}
-      if kw_args[:use_bundler]
-        env_override = {}
-      else
-        env_override = { 'RUBYOPT' => nil }
+      env_override = kw_args[:env] || {}
+      unless kw_args[:use_bundler]
+        env_override['RUBYOPT'] = nil
         if (defined? Bundler) && (prawn_table = Bundler.definition.dependencies.find {|it| it.name == 'prawn-table' })
           env_override['PRAWN_TABLE_REQUIRE_PATH'] = (prawn_table.source.path + 'lib/prawn/table').to_s
         end
