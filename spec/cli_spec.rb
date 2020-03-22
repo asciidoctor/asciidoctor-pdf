@@ -79,4 +79,16 @@ describe 'asciidoctor-pdf' do
       (expect pdfmark_contents).to include '/DOCINFO pdfmark'
     end
   end
+
+  context 'keep artifacts' do
+    it 'should generate scratch file if KEEP_ARTIFACTS environment variable is set', cli: true do
+      out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (fixture_file 'dry-run-block.adoc'), env: { 'KEEP_ARTIFACTS' => 'true' }
+      (expect res.exitstatus).to be 0
+      (expect out).to be_empty
+      (expect err).to be_empty
+      scratch_file = Pathname.new output_file 'dry-run-block-scratch.pdf'
+      (expect scratch_file).to exist
+      (expect { PDF::Reader.new scratch_file }).not_to raise_exception
+    end
+  end
 end

@@ -3592,11 +3592,15 @@ module Asciidoctor
           # QUESTION restore attributes first?
           @pdfmark&.generate_file target
           (Optimizer.new @optimize, pdf_doc.min_version).generate_file target if @optimize && ((defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?)
+          to_file = true
         end
-        # write scratch document if debug is enabled (or perhaps DEBUG_STEPS env)
-        #get_scratch_document.render_file 'scratch.pdf'
+        if !ENV['KEEP_ARTIFACTS']
+          remove_tmp_files
+        elsif to_file
+          scratch_target = (target.slice 0, target.length - (target_ext = ::File.extname target).length) + '-scratch' + target_ext
+          get_scratch_document.render_file scratch_target
+        end
         clear_scratch
-        remove_tmp_files
         nil
       end
 

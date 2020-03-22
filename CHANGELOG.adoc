@@ -25,6 +25,7 @@ Enhancements::
 * add support for normal_italic font style (to reset font style to normal, then apply italic) (#1603)
 * honor text alignment roles (e.g., `text-center`) on block image (#1609)
 * ignore requested pages not found in imported PDF (#1616)
+* keep temporary artifacts (for debugging) if KEEP_ARTIFACTS env var is set
 
 Bug Fixes::
 
