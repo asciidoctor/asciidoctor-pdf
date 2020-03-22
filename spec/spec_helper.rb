@@ -420,7 +420,7 @@ RSpec.configure do |config|
     objects = pdf.objects
     pages = pdf.pages
     labels = get_page_labels pdf
-    entry = list[:First]
+    entry = list[:First] if list
     while entry
       entry = objects[entry]
       title = (((title = entry[:Title]).slice 2, title.size).unpack 'n*').pack 'U*'

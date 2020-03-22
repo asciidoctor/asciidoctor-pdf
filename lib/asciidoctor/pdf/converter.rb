@@ -159,7 +159,8 @@ module Asciidoctor
 
       def convert_document doc
         init_pdf doc
-        # set default value for pagenums if not otherwise set
+        # set default value for outline and pagenums if not otherwise set
+        doc.attributes['outline'] = '' unless (doc.attribute_locked? 'outline') || ((doc.instance_variable_get :@attributes_modified).include? 'outline')
         doc.attributes['pagenums'] = '' unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
         #assign_missing_section_ids doc
 
@@ -3534,7 +3535,7 @@ module Asciidoctor
           end
           # QUESTION is there any way to get add_outline_level to invoke in the context of the outline?
           document.add_outline_level self, doc.sections, num_levels, expand_levels
-        end
+        end if doc.attr? 'outline'
 
         toc_section.parent.blocks.delete toc_section if toc_section
 
