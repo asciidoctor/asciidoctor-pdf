@@ -26,6 +26,7 @@ Enhancements::
 * honor text alignment roles (e.g., `text-center`) on block image (#1609)
 * disable running header and/or footer on toc pages if noheader and/or nofooter option is set on toc macro (#1378)
 * ignore requested pages not found in imported PDF (#1616)
+* disable document outline if outline document attribute is unset (#1619)
 * keep temporary artifacts (for debugging) if KEEP_ARTIFACTS env var is set
 
 Bug Fixes::

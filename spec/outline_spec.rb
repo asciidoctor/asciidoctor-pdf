@@ -30,6 +30,25 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect pdf.catalog[:NonFullScreenPageMode]).to eql :UseOutlines
     end
 
+    it 'should not create outline if the outline document attribute is unset' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :doctype: book
+      :!outline:
+
+      == First Chapter
+
+      === Chapter Section
+
+      == Middle Chapter
+
+      == Last Chapter
+      EOS
+
+      outline = extract_outline pdf
+      (expect outline).to be_empty
+    end
+
     it 'should create an outline to navigate the document structure' do
       pdf = to_pdf <<~'EOS'
       = Document Title
