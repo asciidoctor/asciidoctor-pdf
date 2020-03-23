@@ -364,6 +364,7 @@ module Asciidoctor
         }.flatten
         @section_indent = (val = @theme.section_indent) && (expand_indent_value val)
         @toc_max_pagenum_digits = (doc.attr 'toc-max-pagenum-digits', 3).to_i
+        @disable_running_content = {}
         @index = IndexCatalog.new
         # NOTE: we have to init Pdfmark class here while we have reference to the doc
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
@@ -2242,6 +2243,8 @@ module Asciidoctor
           end
           add_dest_for_block node, (derive_anchor_from_id node.id, 'toc')
           allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (is_book || (doc.attr? 'title-page'))
+          @disable_running_content[:header] = (@disable_running_content[:header] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'noheader'
+          @disable_running_content[:footer] = (@disable_running_content[:footer] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'nofooter'
         end
         nil
       end
@@ -3118,6 +3121,7 @@ module Asciidoctor
         if (toc_page_nums = @toc_extent && @toc_extent[:page_nums])
           toc_title = (doc.attr 'toc-title') || ''
         end
+        disable_on_pages = @disable_running_content[periphery]
 
         title_method = TitleStyles[@theme[%(#{periphery}_title_style)]]
         # FIXME: we need a proper model for all this page counting
@@ -3218,9 +3222,10 @@ module Asciidoctor
         periphery_layout_cache = {}
         # NOTE: this block is invoked during PDF generation, after convert_document has returned
         repeat (content_start_page..num_pages), dynamic: true do
+          pgnum = page_number
           # NOTE: don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
-          next if page.imported_page?
-          virtual_pgnum = (pgnum = page_number) - skip_pagenums
+          next if page.imported_page? || (disable_on_pages && (disable_on_pages.include? pgnum))
+          virtual_pgnum = pgnum - skip_pagenums
           pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new pgnum, :lower) : virtual_pgnum).to_s
           side = page_side((folio_basis == :physical ? pgnum : virtual_pgnum), invert_folio)
           doc.set_attr 'page-layout', page.layout.to_s
