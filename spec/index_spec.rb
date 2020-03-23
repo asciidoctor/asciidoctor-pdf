@@ -302,21 +302,24 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
     == First Chapter
 
-    ((coming soon))
+    ((coming soon)) ((almost here))
 
     == Second Chapter
 
-    ((coming soon))
+    ((coming soon)) ((in draft))
 
     == Third Chapter
 
-    ((coming soon))
+    ((coming soon)) ((almost here))
 
     [index]
     == Index
     EOS
 
-    (expect (pdf.lines pdf.find_text page_number: 5).join ?\n).to include 'coming soon, 1-3'
+    index_lines = pdf.lines pdf.find_text page_number: 5
+    (expect index_lines).to include 'coming soon, 1-3'
+    (expect index_lines).to include 'in draft, 2'
+    (expect index_lines).to include 'almost here, 1, 3'
   end
 
   it 'should apply hanging indent to wrapped lines equal to twice level indent' do
