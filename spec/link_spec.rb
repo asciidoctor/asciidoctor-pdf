@@ -74,6 +74,13 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       (expect lines[1]).to eql 'verylongpathname?a'
     end
 
+    it 'should not attempt to break URL when URL is a bare scheme' do
+      pdf = to_pdf 'link:https://[]', analyze: true
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      (expect lines[0]).to eql 'https://'
+    end
+
     it 'should not split bare URL when using an AFM font' do
       pdf = to_pdf <<~'EOS', pdf_theme: { base_font_family: 'Helvetica' }, analyze: true
       this line contains a URL that falls at the end of the line and yet cannot be split https://goo.gl/search/asciidoctor
