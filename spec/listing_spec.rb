@@ -106,6 +106,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     \tlead tab
     \tlead tab\tcolumn tab
       lead space\tcolumn tab
+
     flush\t\t\tcolumn tab
     ----
     EOS
@@ -120,6 +121,10 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     ]
 
     (expect pdf.lines).to eql expected_lines
+    lines = pdf.text
+    line_gaps = 1.upto(lines.size - 1).map {|idx| (lines[idx - 1][:y] - lines[idx][:y]).round 2 }
+    (expect line_gaps[-1]).to eql line_gaps[-2] * 2
+    (expect line_gaps[-2]).to eql line_gaps[-3]
   end
 
   it 'should expand tabs if tabsize is specified as block attribute' do
@@ -131,6 +136,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     \tlead tab
     \tlead tab\tcolumn tab
       lead space\tcolumn tab
+
     flush\t\t\tcolumn tab
     ----
     EOS
@@ -145,6 +151,10 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     ]
 
     (expect pdf.lines).to eql expected_lines
+    lines = pdf.text
+    line_gaps = 1.upto(lines.size - 1).map {|idx| (lines[idx - 1][:y] - lines[idx][:y]).round 2 }
+    (expect line_gaps[-1]).to eql line_gaps[-2] * 2
+    (expect line_gaps[-2]).to eql line_gaps[-3]
   end
 
   it 'should expand tabs if tabsize is specified as document attribute' do
@@ -157,6 +167,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     \tlead tab
     \tlead tab\tcolumn tab
       lead space\tcolumn tab
+
     flush\t\t\tcolumn tab
     ----
     EOS
@@ -171,6 +182,10 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     ]
 
     (expect pdf.lines).to eql expected_lines
+    lines = pdf.text
+    line_gaps = 1.upto(lines.size - 1).map {|idx| (lines[idx - 1][:y] - lines[idx][:y]).round 2 }
+    (expect line_gaps[-1]).to eql line_gaps[-2] * 2
+    (expect line_gaps[-2]).to eql line_gaps[-3]
   end
 
   it 'should allow theme to override caption for code blocks' do
