@@ -749,17 +749,23 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should apply text transform for head to heading cell' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_head_text_transform: 'uppercase' }, analyze: true
-      |===
-      |heading in head
+      {
+        'uppercase' => ['HEADING IN HEAD', 'HEADING IN BODY'],
+        'lowercase' => ['heading in head', 'heading in body'],
+        'none' => ['Heading in head', 'Heading in body'],
+      }.each do |transform, expected|
+        pdf = to_pdf <<~'EOS', pdf_theme: { table_head_text_transform: transform }, analyze: true
+        |===
+        |Heading in head
 
-      h|heading in body
-      |===
-      EOS
+        h|Heading in body
+        |===
+        EOS
 
-      text = pdf.text
-      (expect text[0][:string]).to eql 'HEADING IN HEAD'
-      (expect text[1][:string]).to eql 'HEADING IN BODY'
+        text = pdf.text
+        (expect text[0][:string]).to eql expected[0]
+        (expect text[1][:string]).to eql expected[1]
+      end
     end
 
     it 'should honor horizontal alignment on cell' do
