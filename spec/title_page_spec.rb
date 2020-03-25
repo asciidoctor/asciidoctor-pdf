@@ -50,6 +50,26 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     (expect title_page_lines).to eql ['Document Title', 'Doc Writer, Antonín Dvořák']
   end
 
+  it 'should not overwrite url property when promoting authors for use on title page' do
+    pdf_theme = {
+      title_page_authors_content_with_email: '{author} // {email}',
+      title_page_authors_content_with_url: '{author} // {url}',
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    = Document Title
+    Doc Writer <https://example.org/doc>; Junior Writer <jr@example.org>
+    :doctype: book
+    :url: https://opensource.org
+
+    {url}
+    EOS
+
+    title_page_lines = pdf.lines pdf.find_text page_number: 1
+    (expect title_page_lines).to eql ['Document Title', 'Doc Writer // https://example.org/doc, Junior Writer // jr@example.org']
+    body_lines = pdf.lines pdf.find_text page_number: 2
+    (expect body_lines).to eql %w(https://opensource.org)
+  end
+
   context 'title-page' do
     it 'should place document title on title page if title-page attribute is set' do
       pdf = to_pdf <<~'EOS', analyze: :page
