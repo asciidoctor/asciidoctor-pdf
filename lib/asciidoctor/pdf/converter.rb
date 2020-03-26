@@ -264,11 +264,11 @@ module Asciidoctor
           # NOTE: for a book, these are leftover footnotes; for an article this is everything
           outdent_section { layout_footnotes doc }
 
+          toc_page_nums = @toc_extent ? (layout_toc doc, toc_num_levels, @toc_extent[:page_nums].first, @toc_extent[:start_y], num_front_matter_pages[1]) : []
+
           # NOTE: delete orphaned page (a page was created but there was no additional content)
           # QUESTION should we delete page if document is empty? (leaving no pages?)
           delete_page if page_count > 1 && page.empty?
-
-          toc_page_nums = @toc_extent ? (layout_toc doc, toc_num_levels, @toc_extent[:page_nums].first, @toc_extent[:start_y], num_front_matter_pages[1]) : []
         end
 
         unless page_count < body_start_page_number
@@ -3002,7 +3002,7 @@ module Asciidoctor
         end
         # NOTE range must be calculated relative to toc_page_number; absolute page number in scratch document is arbitrary
         toc_page_numbers = (toc_page_number..(toc_page_number + (page_number - start_page_number)))
-        go_to_page page_count - 1 unless scratch?
+        go_to_page page_count unless scratch?
         toc_page_numbers
       end
 
