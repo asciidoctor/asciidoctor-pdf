@@ -266,10 +266,7 @@ module Asciidoctor
 
           # NOTE: delete orphaned page (a page was created but there was no additional content)
           # QUESTION should we delete page if document is empty? (leaving no pages?)
-          if page_count > 1
-            go_to_page page_count unless last_page?
-            delete_page if page.empty?
-          end
+          delete_page if page_count > 1 && page.empty?
 
           toc_page_nums = @toc_extent ? (layout_toc doc, toc_num_levels, @toc_extent[:page_nums].first, @toc_extent[:start_y], num_front_matter_pages[1]) : []
         end
