@@ -113,6 +113,19 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql [%(\u25ca diamond), %(\u25cc dotted circle), '$ dollar']
     end
 
+    it 'should reserve enough space for marker that is not found in any font' do
+      pdf_theme = {
+        extends: 'default-with-fallback-font',
+        ulist_marker_disc_content: ?\u2055,
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      * missing marker
+      EOS
+
+      marker_text = (pdf.find_text ?\u2055)[0]
+      (expect marker_text[:width]).to eql 5.25
+    end
+
     it 'should allow FontAwesome icon to be used as list marker' do
       %w(fa far).each do |font_family|
         pdf_theme = {
