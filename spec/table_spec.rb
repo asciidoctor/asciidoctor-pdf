@@ -1082,6 +1082,33 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect a_texts[0][:y]).to eql b_texts[0][:y]
       (expect b_texts[0][:x]).to eql b_texts[1][:x]
     end
+
+    it 'should not allow AsciiDoc table cell to exceed height of content area' do
+      pdf_theme = {
+        footer_columns: '<100%',
+        footer_recto_center_content: 'footer text',
+        footer_verso_center_content: 'footer text',
+        footer_padding: 0,
+      }
+
+      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      |===
+      |before
+      a|start
+
+      #{['* middle'] * 34 * ?\n}
+
+      end
+      |after
+      |===
+      EOS
+
+      (expect pdf.pages.size).to eql 3
+      p2_text = pdf.find_text page_number: 2
+      footer_text = p2_text.find {|it| it[:string] == 'footer text' }
+      p2_text = p2_text.reject {|it| it == footer_text }
+      (expect p2_text[-1][:y]).to be > footer_text[:y]
+    end
   end
 
   context 'Caption' do
