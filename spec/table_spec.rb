@@ -783,6 +783,31 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect a_text[:x]).to be < midpoint
       (expect z_text[:x]).to be > midpoint
     end
+
+    it 'should truncate cell that exceeds the height of a single page' do
+      pdf = to_pdf <<~EOS, analyze: true
+      |===
+      |before
+      |start
+
+      #{['middle'] * 23 * %(\n\n)}
+
+      end
+      |after
+      |===
+      EOS
+
+      (expect pdf.pages.size).to eql 3
+      before_text = (pdf.find_text 'before')[0]
+      (expect before_text[:page_number]).to eql 1
+      start_text = (pdf.find_text 'start')[0]
+      (expect start_text[:page_number]).to eql 2
+      end_text = (pdf.find_text 'end')[0]
+      (expect end_text).to be_nil
+      (expect (pdf.find_text 'middle').map {|it| it[:page_number] }.uniq).to eql [2]
+      after_text = (pdf.find_text 'after')[0]
+      (expect after_text[:page_number]).to eql 3
+    end
   end
 
   context 'Header table cell' do
