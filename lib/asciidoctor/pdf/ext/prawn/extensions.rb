@@ -70,10 +70,16 @@ module Asciidoctor
 
       # Returns the effective (writable) height of the page
       #
-      # If inside a fixed-height bounding box, returns width of box.
+      # If inside a fixed-height bounding box, returns height of box.
       #
       def effective_page_height
         reference_bounds.height
+      end
+
+      # Returns the height of the content area of the page
+      #
+      def page_content_height
+        page_height - page_margin_top - page_margin_bottom
       end
 
       # Set the margins for the current page.
