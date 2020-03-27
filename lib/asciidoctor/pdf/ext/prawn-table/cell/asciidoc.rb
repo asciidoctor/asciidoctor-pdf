@@ -42,7 +42,7 @@ module Prawn
               traverse cell.content
             end
           end
-          # FIXME: prawn-table doesn't support cell taller than a single page
+          # FIXME: prawn-table doesn't support cells that exceed the height of a single page
           [max_height, height - 0.0001].min
         end
 
@@ -65,9 +65,14 @@ module Prawn
           if @valign != :top && (excess_y = spanned_content_height - natural_content_height) > 0
             pdf.move_down(@valign == :center ? (excess_y.fdiv 2) : excess_y)
           end
+          initial_page = pdf.page_number
           # TODO: apply horizontal alignment (right now must use alignment on content block)
           # QUESTION inherit table cell font properties?
           pdf.traverse content
+          # FIXME: prawn-table doesn't support cells that exceed the height of a single page
+          if (additional_pages = pdf.page_number - initial_page) > 0
+            additional_pages.times { pdf.delete_page }
+          end
           nil
         end
       end
