@@ -164,7 +164,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline[1][:children]).to be_empty
     end
 
-    it 'should allow outline depth to exceed toclevels of outlinelevels attribute is set' do
+    it 'should allow outline depth to exceed toclevels if outlinelevels attribute is set' do
       pdf = to_pdf <<~'EOS'
       = Document Title
       :doctype: book
@@ -213,6 +213,27 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline).to have_size 4
       (expect outline[1][:title]).to eql 'First Chapter'
       (expect outline[1][:children]).to be_empty
+    end
+
+    it 'should not include parts in outline if outlinelevels is less than 0' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :doctype: book
+      :outlinelevels: -1
+
+      = Part A
+
+      == Chapter A
+
+      = Part B
+
+      == Chapter B
+      EOS
+
+      outline = extract_outline pdf
+      (expect outline).to have_size 1
+      (expect outline[0][:title]).to eql 'Document Title'
+      (expect outline[0][:children]).to be_empty
     end
 
     it 'should use second argument of outlinelevels attribute to control depth at which outline is expanded' do
