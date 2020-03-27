@@ -236,6 +236,27 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline[0][:children]).to be_empty
     end
 
+    it 'should not include chapters in outline if outlinelevels is 0' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :doctype: book
+      :outlinelevels: 0
+
+      == Chapter A
+
+      === Topic A
+
+      == Chapter B
+
+      === Topic B
+      EOS
+
+      outline = extract_outline pdf
+      (expect outline).to have_size 1
+      (expect outline[0][:title]).to eql 'Document Title'
+      (expect outline[0][:children]).to be_empty
+    end
+
     it 'should use second argument of outlinelevels attribute to control depth at which outline is expanded' do
       pdf = to_pdf <<~'EOS'
       = Document Title
