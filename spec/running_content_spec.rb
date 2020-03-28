@@ -1471,6 +1471,39 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect titles_by_page[7]).to eql '[Part II|Chapter C|]'
     end
 
+    it 'should clear part title on appendix pages of multi-part book' do
+      pdf_theme = {
+        footer_font_color: '0000FF',
+        footer_recto_right_content: '{part-title} ({page-number})',
+        footer_verso_left_content: '{part-title} ({page-number})',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+
+      = Part A
+
+      == Chapter 1
+
+      = Part B
+
+      == Chapter 2
+
+      [appendix]
+      = Installation
+
+      Describe installation procedure.
+      EOS
+
+      footer_texts = pdf.find_text page_number: 5, font_color: '0000FF'
+      (expect footer_texts).to have_size 1
+      (expect footer_texts[0][:string]).to eql 'Part B (4)'
+      footer_texts = pdf.find_text page_number: 6, font_color: '0000FF'
+      (expect footer_texts).to have_size 1
+      (expect footer_texts[0][:string]).to eql '(5)'
+    end
+
     it 'should set chapter-numeral attribute when a chapter is active and sectnums attribute is set' do
       pdf_theme = {
         footer_title_style: 'basic',

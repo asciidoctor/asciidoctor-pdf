@@ -3136,10 +3136,8 @@ module Asciidoctor
               part_start_pages[pgnum] ||= sect
             else
               chapter_start_pages[pgnum] ||= sect
-              if sect.sectname == 'appendix' && !part_start_pages.empty?
-                # FIXME: need a better way to indicate that part has ended
-                part_start_pages[pgnum] = ''
-              end
+              # FIXME: need a better way to indicate that part has ended
+              part_start_pages[pgnum] = '' if sect.sectname == 'appendix' && !part_start_pages.empty?
             end
           else
             trailing_section_start_pages[pgnum] = sect
