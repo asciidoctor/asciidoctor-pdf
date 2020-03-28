@@ -1940,7 +1940,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should allow image vertical alignment to be set independent of column vertical alignment' do
-      image_positions = %w(top center bottom).reduce({}) do |accum, image_vertical_align|
+      image_positions = %w(top center bottom).each_with_object({}) do |image_vertical_align, accum|
         pdf_theme = {
           footer_columns: '<50% >50%',
           footer_padding: 0,
@@ -1954,7 +1954,6 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         images = pdf.images
         (expect images).to have_size 1
         accum[image_vertical_align] = images[0][:y]
-        accum
       end
       (expect image_positions['top']).to be > image_positions['center']
       (expect image_positions['center']).to be > image_positions['bottom']
