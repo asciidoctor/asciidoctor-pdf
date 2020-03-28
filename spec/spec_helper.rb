@@ -199,6 +199,7 @@ class ImageInspector < PDF::Inspector
   end
 
   def invoke_xobject name
+    return unless @image_xobjects.key? name
     image_info = (image = @image_xobjects[name]).hash
     @images << { name: name, page_number: @page_number, x: @x, y: @y, width: @width, height: @height, implicit_height: image_info[:Height], implicit_width: image_info[:Width], data: image.data }
   end
