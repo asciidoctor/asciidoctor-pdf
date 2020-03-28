@@ -1939,6 +1939,27 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-image-alignment.pdf'
     end
 
+    it 'should allow image vertical alignment to be set independent of column vertical alignment' do
+      image_positions = %w(top center bottom).reduce({}) do |accum, image_vertical_align|
+        pdf_theme = {
+          footer_columns: '<50% >50%',
+          footer_padding: 0,
+          footer_vertical_align: 'top',
+          footer_image_vertical_align: image_vertical_align,
+          footer_recto_left_content: %(image:#{fixture_file 'tux.png'}[pdfwidth=16]),
+          footer_recto_right_content: '{page-number}',
+        }
+
+        pdf = to_pdf 'body', pdf_theme: pdf_theme, enable_footer: true, analyze: :image
+        images = pdf.images
+        (expect images).to have_size 1
+        accum[image_vertical_align] = images[0][:y]
+        accum
+      end
+      (expect image_positions['top']).to be > image_positions['center']
+      (expect image_positions['center']).to be > image_positions['bottom']
+    end
+
     it 'should support remote image if allow-uri-read attribute is set', visual: true do
       with_local_webserver do |base_url|
         pdf_theme = {
