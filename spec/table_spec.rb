@@ -785,12 +785,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should truncate cell that exceeds the height of a single page' do
+      blank_line = %(\n\n)
+
       pdf = to_pdf <<~EOS, analyze: true
       |===
       |before
       |start
 
-      #{['middle'] * 23 * %(\n\n)}
+      #{(['middle'] * 23).join blank_line}
 
       end
       |after
@@ -1108,6 +1110,33 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       footer_text = p2_text.find {|it| it[:string] == 'footer text' }
       p2_text = p2_text.reject {|it| it == footer_text }
       (expect p2_text[-1][:y]).to be > footer_text[:y]
+    end
+
+    it 'should truncate cell that exceeds the height of a single page' do
+      blank_line = %(\n\n)
+
+      pdf = to_pdf <<~EOS, analyze: true
+      |===
+      |before
+      a|start
+
+      #{(['middle'] * 30).join blank_line}
+
+      end
+      |after
+      |===
+      EOS
+
+      (expect pdf.pages.size).to eql 3
+      before_text = (pdf.find_text 'before')[0]
+      (expect before_text[:page_number]).to eql 1
+      start_text = (pdf.find_text 'start')[0]
+      (expect start_text[:page_number]).to eql 2
+      end_text = (pdf.find_text 'end')[0]
+      (expect end_text).to be_nil
+      (expect (pdf.find_text 'middle').map {|it| it[:page_number] }.uniq).to eql [2]
+      after_text = (pdf.find_text 'after')[0]
+      (expect after_text[:page_number]).to eql 3
     end
   end
 
