@@ -4,6 +4,8 @@ module Prawn
   class Table
     class Cell
       class AsciiDoc < Cell
+        include ::Asciidoctor::Logging
+
         attr_accessor :align
         attr_accessor :valign
 
@@ -65,12 +67,13 @@ module Prawn
           if @valign != :top && (excess_y = spanned_content_height - natural_content_height) > 0
             pdf.move_down(@valign == :center ? (excess_y.fdiv 2) : excess_y)
           end
-          initial_page = pdf.page_number
+          start_page = pdf.page_number
           # TODO: apply horizontal alignment (right now must use alignment on content block)
           # QUESTION inherit table cell font properties?
           pdf.traverse content
           # FIXME: prawn-table doesn't support cells that exceed the height of a single page
-          if (additional_pages = pdf.page_number - initial_page) > 0
+          if (additional_pages = (end_page = pdf.page_number) - start_page) > 0
+            logger.error %(the table cell on page #{end_page - additional_pages} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page) unless additional_pages == 1 && pdf.at_page_top?
             additional_pages.times { pdf.delete_page }
           end
           nil
