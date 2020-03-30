@@ -49,6 +49,28 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     (expect title_text[:y]).to be < sidebar_border_top
   end
 
+  it 'should render adjacent sidebars without overlapping', visual: true do
+    to_file = to_pdf_file <<~'EOS', 'sidebar-adjacent.pdf'
+    ****
+    this
+
+    is
+
+    a
+
+    sidebar
+    ****
+
+    ****
+    another
+
+    sidebar
+    ****
+    EOS
+
+    (expect to_file).to visually_match 'sidebar-adjacent.pdf'
+  end
+
   it 'should keep sidebar together if it can fit on one page' do
     pdf = to_pdf <<~EOS, analyze: true
     #{(['filler'] * 15).join %(\n\n)}
