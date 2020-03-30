@@ -89,6 +89,23 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     (expect to_file).to visually_match 'sidebar-page-split.pdf'
   end
 
+  it 'should extend block to bottom of page but not beyond if content ends with page break', visual: true do
+    to_file = to_pdf_file <<~'EOS', 'sidebar-with-trailing-page-break.pdf'
+    .Sidebar Title
+    ****
+    Sidebar
+
+    Contents
+
+    <<<
+    ****
+
+    after
+    EOS
+
+    (expect to_file).to visually_match 'sidebar-with-trailing-page-break.pdf'
+  end
+
   it 'should not add border if border width is not set in theme or value is nil' do
     pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_border_color: 'AA0000', sidebar_border_width: nil }, analyze: :line
     ****
