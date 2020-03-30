@@ -4,7 +4,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Verse' do
   it 'should show caption above block if title is specified' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    input = <<~'EOS'
     .Fog
     [verse]
     ____
@@ -13,10 +13,19 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     ____
     EOS
 
+    pdf = to_pdf input, analyze: :line
+    lines = pdf.lines
+    (expect pdf.lines).to have_size 1
+
+    pdf = to_pdf input, analyze: true
     (expect pdf.lines).to eql ['Fog', 'The fog comes', 'on little cat feet.']
     title_text = (pdf.find_text 'Fog')[0]
+    body_text = (pdf.find_text 'The fog comes')[0]
     (expect title_text[:font_name]).to eql 'NotoSerif-Italic'
     (expect title_text[:x]).to eql 48.24
+    (expect title_text[:y]).to be > lines[0][:from][:y]
+    (expect title_text[:x]).to be < lines[0][:from][:x]
+    (expect lines[0][:from][:x]).to be < body_text[:x]
   end
 
   it 'should show attribution line below text of verse' do
