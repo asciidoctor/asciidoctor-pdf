@@ -943,21 +943,6 @@ module Asciidoctor
       def keep_together_if verdict, &block
         verdict ? keep_together(&block) : yield
       end
-
-=begin
-      def run_with_trial &block
-        available_space = cursor
-        total_height, whole_pages, remainder = dry_run(&block)
-        if whole_pages > 0 || remainder > available_space
-          started_new_page = true
-        else
-          started_new_page = false
-        end
-        # HACK yield doesn't work here on JRuby (at least not when called from AsciidoctorJ)
-        #yield remainder, started_new_page
-        instance_exec remainder, started_new_page, &block
-      end
-=end
     end
   end
 end
