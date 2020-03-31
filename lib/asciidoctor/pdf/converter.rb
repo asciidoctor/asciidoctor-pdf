@@ -135,7 +135,7 @@ module Asciidoctor
           result = send method_name, node
         else
           # TODO: delegate to convert_method_missing
-          logger.warn %(conversion missing in backend #{@backend} for #{name}) unless scratch?
+          logger.warn %(missing convert handler for #{name} node in #{@backend} backend) unless scratch?
         end
         # NOTE: inline nodes generate pseudo-HTML strings; the remainder write directly to PDF object
         ::Asciidoctor::Inline === node ? result : self

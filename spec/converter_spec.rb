@@ -64,6 +64,49 @@ describe Asciidoctor::PDF::Converter do
       (expect pdf1).to eql pdf2
     end
 
+    it 'should warn if convert method is not found for node' do
+      (expect do
+        doc = Asciidoctor.load <<~'EOS', backend: 'pdf', safe: :safe, attributes: { 'nofooter' => '' }
+        before
+
+        1,2,3
+
+        after
+        EOS
+        doc.blocks[1].context = :chart
+        pdf_stream = ::StringIO.new
+        doc.write doc.convert, pdf_stream
+        pdf = PDF::Reader.new pdf_stream
+        pages = pdf.pages
+        (expect pages).to have_size 1
+        lines = pdf.pages[0].text.lines.map(&:rstrip).reject(&:empty?)
+        (expect lines).to eql %w(before after)
+      end).to log_message severity: :WARN, message: 'missing convert handler for chart node in pdf backend'
+    end
+
+    it 'should not warn if convert method is not found for node in scratch document' do
+      (expect do
+        doc = Asciidoctor.load <<~'EOS', backend: 'pdf', safe: :safe, attributes: { 'nofooter' => '' }
+        before
+
+        [%unbreakable]
+        --
+        1,2,3
+        --
+
+        after
+        EOS
+        doc.blocks[1].blocks[0].context = :chart
+        pdf_stream = ::StringIO.new
+        doc.write doc.convert, pdf_stream
+        pdf = PDF::Reader.new pdf_stream
+        pages = pdf.pages
+        (expect pages).to have_size 1
+        lines = pdf.pages[0].text.lines.map(&:rstrip).reject(&:empty?)
+        (expect lines).to eql %w(before after)
+      end).to log_message severity: :WARN, message: 'missing convert handler for chart node in pdf backend'
+    end
+
     it 'should ensure data-uri attribute is set' do
       doc = Asciidoctor.load <<~'EOS', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
       image::logo.png[]
