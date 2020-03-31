@@ -934,18 +934,14 @@ module Asciidoctor
 
         # HACK: yield doesn't work here on JRuby (at least not when called from AsciidoctorJ)
         #yield remainder, started_new_page
-        instance_exec(total_height, started_new_page, &block)
+        instance_exec total_height, started_new_page, &block
       end
 
       # Attempt to keep the objects generated in the block on the same page
       # if the verdict parameter is true.
       #
       def keep_together_if verdict, &block
-        if verdict
-          keep_together(&block)
-        else
-          yield
-        end
+        verdict ? keep_together(&block) : yield
       end
 
 =begin
@@ -959,7 +955,7 @@ module Asciidoctor
         end
         # HACK yield doesn't work here on JRuby (at least not when called from AsciidoctorJ)
         #yield remainder, started_new_page
-        instance_exec(remainder, started_new_page, &block)
+        instance_exec remainder, started_new_page, &block
       end
 =end
     end
