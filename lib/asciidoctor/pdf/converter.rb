@@ -154,6 +154,7 @@ module Asciidoctor
           # TODO: this content could be cached on repeat invocations!
           layout_prose string, (opts.merge hyphenate: true)
         end
+      ensure
         node.document.instance_variable_set :@converter, prev_converter if prev_converter
       end
 
