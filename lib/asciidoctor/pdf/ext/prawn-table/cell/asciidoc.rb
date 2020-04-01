@@ -33,8 +33,10 @@ module Prawn
         # NOTE: automatic image sizing only works if cell has fixed width
         def dry_run
           cell = self
-          max_height = nil
-          height, = @pdf.dry_run do
+          height = nil
+          @pdf.dry_run do
+            start_page = page
+            start_cursor = cursor
             max_height = bounds.height
             # NOTE: we should be able to use cell.max_width, but returns 0 in some conditions (like when colspan > 1)
             indent cell.padding_left, bounds.width - cell.width + cell.padding_right do
@@ -43,9 +45,10 @@ module Prawn
               # TODO: truncate margin bottom of last block
               traverse cell.content
             end
+            # FIXME: prawn-table doesn't support cells that exceed the height of a single page
+            height = page == start_page ? start_cursor - (cursor + 0.0001) : max_height
           end
-          # FIXME: prawn-table doesn't support cells that exceed the height of a single page
-          [max_height, height - 0.0001].min
+          height
         end
 
         def natural_content_width
