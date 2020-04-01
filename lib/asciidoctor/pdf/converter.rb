@@ -924,6 +924,7 @@ module Asciidoctor
         add_dest_for_block node if node.id
         theme_margin :block, :top
         category = node.context == :quote ? :blockquote : :verse
+        # NOTE: b_width and b_left_width are mutually exclusive
         unless (b_left_width = @theme[%(#{category}_border_left_width)]) && b_left_width > 0
           b_left_width = nil
           if (b_width = @theme[%(#{category}_border_width)])
