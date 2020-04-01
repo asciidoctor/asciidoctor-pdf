@@ -24,4 +24,32 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     chapter_text = (pdf.find_text 'What came to pass.')[0]
     (expect chapter_text[:x]).to eql 84.24
   end
+
+  it 'should support non-paragraph blocks inside abstract block' do
+    input = <<~'EOS'
+    = Document Title
+
+    [abstract]
+    --
+    ____
+    This too shall pass.
+    ____
+    --
+
+    == Intro
+
+    And so it begins.
+    EOS
+
+    pdf = to_pdf input, analyze: :line
+    lines = pdf.lines
+    (expect lines).to have_size 1
+
+    pdf = to_pdf input, analyze: true
+    quote_text = (pdf.find_text 'This too shall pass.')[0]
+    (expect quote_text[:font_name]).to eql 'NotoSerif-Italic'
+    (expect quote_text[:font_color]).to eql '5C6266'
+    (expect quote_text[:y]).to be < lines[0][:from][:y]
+    (expect quote_text[:y]).to be > lines[0][:to][:y]
+  end
 end

@@ -649,14 +649,13 @@ module Asciidoctor
               # FIXME: make this cleaner!!
               if node.blocks?
                 node.blocks.each do |child|
-                  # FIXME: is playback necessary here?
-                  child.document.playback_attributes child.attributes
                   if child.context == :paragraph
+                    child.document.playback_attributes child.attributes
                     layout_prose child.content, ((align = resolve_alignment_from_role child.roles) ? (prose_opts.merge align: align) : prose_opts.dup)
                     prose_opts.delete :first_line_options
                   else
                     # FIXME: this could do strange things if the wrong kind of content shows up
-                    traverse child
+                    child.convert
                   end
                 end
               elsif node.content_model != :compound && (string = node.content)
