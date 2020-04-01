@@ -2857,8 +2857,8 @@ module Asciidoctor
         if opts.delete :dry_run
           height = nil
           dry_run do
-            move_down 1 # HACK: force top margin to be applied
-            height = (layout_caption subject, opts) - 1
+            move_down 0.001 # HACK: force top margin to be applied
+            height = layout_caption subject, opts
           end
           return height
         end
@@ -3705,7 +3705,7 @@ module Asciidoctor
         end
         # FIXME: due to the calculation error logged in #789, we must advance page even when content is split across pages
         advance_page if (opts.fetch :split_from_top, true) && block_height > cursor && !at_page_top?
-        caption_height = (node = opts[:caption_node]) && node.title? ? (layout_caption node, category: category) - 1 : 0
+        caption_height = (node = opts[:caption_node]) && node.title? ? (layout_caption node, category: category) : 0
         float do
           remaining_height = block_height - caption_height
           initial_page = true
