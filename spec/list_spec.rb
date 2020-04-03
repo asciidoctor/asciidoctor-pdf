@@ -344,6 +344,19 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql ['i. one', 'ii. two', 'iii. three']
     end
 
+    it 'should support decimal marker style' do
+      blank_line = %(\n\n)
+      pdf = to_pdf <<~EOS, analyze: true
+      [decimal]
+      #{(?a..?z).map {|c| '. ' + c }.join blank_line}
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 26
+      (expect lines[0]).to eql '01. a'
+      (expect lines[-1]).to eql '26. z'
+    end
+
     it 'should use consistent line height even if list item is entirely monospace' do
       pdf = to_pdf <<~'EOS', analyze: true
       . foo
