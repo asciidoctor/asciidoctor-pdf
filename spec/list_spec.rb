@@ -642,6 +642,22 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect foo_text[:y]).to eql bar_text[:y]
       end
 
+      it 'should include title above horizontal list' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        .Balance
+        [horizontal]
+        foo:: bar
+        yin:: yang
+        EOS
+
+        title_text = pdf.find_text 'Balance'
+        (expect title_text).to have_size 1
+        title_text = title_text[0]
+        (expect title_text[:font_name]).to eql 'NotoSerif-Italic'
+        list_text = (pdf.find_text 'foo')[0]
+        (expect title_text[:y]).to be > list_text[:y]
+      end
+
       it 'should inherit term font styles from theme' do
         pdf = to_pdf <<~'EOS', analyze: true
         [horizontal]
