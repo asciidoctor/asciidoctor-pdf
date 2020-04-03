@@ -111,10 +111,12 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     end
 
     it 'should look for font file in all specified font dirs' do
-      pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => (fixture_file 'bundled-fonts-theme.yml'), 'pdf-fontsdir' => ([fixtures_dir, Asciidoctor::PDF::ThemeLoader::FontsDir].join ';') }
-      fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
-      (expect fonts).to have_size 1
-      (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
+      %w(; ,).each do |separator|
+        pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => (fixture_file 'bundled-fonts-theme.yml'), 'pdf-fontsdir' => ([fixtures_dir, Asciidoctor::PDF::ThemeLoader::FontsDir].join separator) }
+        fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
+        (expect fonts).to have_size 1
+        (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
+      end
     end
 
     it 'should look for font file in gem fonts dir if path entry is empty' do
@@ -165,14 +167,16 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     end
 
     it 'should throw error if font with relative path cannot be found in custom font dirs' do
-      pdf_theme = {
-        font_catalog: {
-          'NoSuchFont' => {
-            'normal' => 'no-such-font.ttf',
+      %w(, ;).each do |separator|
+        pdf_theme = {
+          font_catalog: {
+            'NoSuchFont' => {
+              'normal' => 'no-such-font.ttf',
+            },
           },
-        },
-      }
-      expect { to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => 'here,there' }, pdf_theme: pdf_theme }.to raise_exception Errno::ENOENT, /no-such-font\.ttf not found in here or there$/
+        }
+        expect { to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => (%w(here there).join separator) }, pdf_theme: pdf_theme }.to raise_exception Errno::ENOENT, /no-such-font\.ttf not found in here or there$/
+      end
     end
 
     it 'should throw error if font with absolute path cannot be found in custom font dirs' do
