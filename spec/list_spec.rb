@@ -683,6 +683,24 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect foo_text[:x]).to eql yin_text[:x]
       end
 
+      it 'should support item with only blocks' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [horizontal]
+        yin::
+        +
+        yang
+
+        foo:: bar
+        EOS
+
+        (expect pdf.lines).to eql ['yin yang', 'foo bar']
+        yin_text = (pdf.find_text 'yin')[0]
+        yang_text = (pdf.find_text 'yang')[0]
+        foo_text = (pdf.find_text 'foo')[0]
+        bar_text = (pdf.find_text 'bar')[0]
+        (expect yin_text[:y] - foo_text[:y]).to eql yang_text[:y] - bar_text[:y]
+      end
+
       it 'should support multiple terms in horizontal list' do
         pdf = to_pdf <<~'EOS', analyze: true
         [horizontal]
