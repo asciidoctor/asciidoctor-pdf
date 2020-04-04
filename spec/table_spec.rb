@@ -814,6 +814,29 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
   end
 
+  context 'Strong table cell' do
+    it 'should style text a strong table cell as bold' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=2*,width=50%]
+      |===
+      |Item 1
+      |$10
+
+      |Item 2
+      |$5
+
+      >s|Total
+      |$15
+      |===
+      EOS
+
+      item_text = (pdf.find_text 'Item 1')[0]
+      total_text = (pdf.find_text 'Total')[0]
+      (expect total_text[:font_name]).to eql 'NotoSerif-Bold'
+      (expect total_text[:x]).to be > item_text[:x]
+    end
+  end
+
   context 'Header table cell' do
     it 'should style a header table cell like a cell in the head row by default' do
       pdf = to_pdf <<~'EOS', analyze: true
