@@ -837,6 +837,26 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
   end
 
+  context 'Monospaced table cell' do
+    it 'should apply literal style to text in a monospaced table cell' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { literal_font_size: 10.25 }, analyze: true
+      [cols="1m,1",width=50%]
+      |===
+      m|site.title
+      |The title of the site.
+
+      m|site.url
+      |The URL of the site.
+      |===
+      EOS
+
+      literal_text = (pdf.find_text 'site.title')[0]
+      (expect literal_text[:font_name]).to eql 'mplus1mn-regular'
+      (expect literal_text[:font_color]).to eql 'B12146'
+      (expect literal_text[:font_size]).to eql 10.25
+    end
+  end
+
   context 'Header table cell' do
     it 'should style a header table cell like a cell in the head row by default' do
       pdf = to_pdf <<~'EOS', analyze: true
