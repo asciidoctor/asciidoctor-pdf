@@ -131,6 +131,24 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect abstract_text).to have_size 1
     (expect abstract_text[0][:order]).to be 2
     (expect abstract_text[0][:font_name]).to include 'BoldItalic'
+    (expect abstract_text[0][:font_color]).to include '5C6266'
+  end
+
+  it 'should be able to disable first line decoration on abstract using theme' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_first_line_font_style: nil }, analyze: true
+    = Document Title
+
+    [abstract]
+    First and only line of abstract.
+
+    == Section
+
+    content
+    EOS
+
+    abstract_text = pdf.find_text 'First and only line of abstract.'
+    (expect abstract_text).to have_size 1
+    (expect abstract_text[0][:font_name]).to eql 'NotoSerif-Italic'
   end
 
   it 'should honor text alignment role on abstract paragraph' do
