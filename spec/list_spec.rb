@@ -55,6 +55,19 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql ['▪ one', '▪ two', '▪ three']
     end
 
+    it 'should emit warning if list style is unrecognized and fall back to disc' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [oval]
+        * one
+        * two
+        * three
+        EOS
+
+        (expect pdf.find_text ?\u2022).to have_size 3
+      end).to log_message severity: :WARN, message: 'unknown unordered list style: oval'
+    end
+
     it 'should make bullets invisible if list has no-bullet style' do
       pdf = to_pdf <<~'EOS', analyze: true
       reference
