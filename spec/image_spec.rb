@@ -1149,16 +1149,28 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-border-fit-page.pdf'
     end
 
-    it 'should not draw border around image if noborder role is present', visual: true do
+    it 'should not draw border around raster image if noborder role is present', visual: true do
       pdf_theme = {
         image_border_width: 1,
         image_border_color: '000000',
       }
-      to_file = to_pdf_file <<~'EOS', 'image-noborder.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'EOS', 'image-raster-noborder.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[,144,role=specimen noborder]
       EOS
 
       (expect to_file).to visually_match 'image-wolpertinger.pdf'
+    end
+
+    it 'should not draw border around SVG image if noborder role is present' do
+      pdf_theme = {
+        image_border_width: 1,
+        image_border_color: 'DEDEDE',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      image::square-viewbox-only.svg[role=noborder]
+      EOS
+
+      (expect pdf.lines.select {|it| it[:color] == 'DEDEDE' }).to be_empty
     end
   end
 end
