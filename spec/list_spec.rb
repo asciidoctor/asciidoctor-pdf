@@ -234,6 +234,21 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect (pdf.find_text '•')[1][:page_number]).to be 1
       (expect (pdf.find_text '•')[2][:page_number]).to be 2
     end
+
+    it 'should allow text alignment to be set using role', visual: true do
+      to_file = to_pdf_file <<~EOS, 'list-text-left-role.pdf'
+      [.text-left]
+      * #{lorem_ipsum '2-sentences-1-paragraph'}
+      EOS
+      (expect to_file).to visually_match 'list-text-left.pdf'
+    end
+
+    it 'should allow text alignment to be set using theme', visual: true do
+      to_file = to_pdf_file <<~EOS, 'list-text-left-role.pdf', pdf_theme: { outline_list_text_align: 'left' }
+      * #{lorem_ipsum '2-sentences-1-paragraph'}
+      EOS
+      (expect to_file).to visually_match 'list-text-left.pdf'
+    end
   end
 
   context 'Checklist' do
