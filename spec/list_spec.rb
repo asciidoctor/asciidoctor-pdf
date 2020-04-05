@@ -372,6 +372,19 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql ['i. one', 'ii. two', 'iii. three']
     end
 
+    it 'should fall back to arabic if list style is unknown' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [binary]
+        . one
+        . two
+        . three
+        EOS
+
+        (expect pdf.lines[0]).to eql '1. one'
+      end).to not_log_message
+    end
+
     it 'should support decimal marker style' do
       blank_line = %(\n\n)
       pdf = to_pdf <<~EOS, analyze: true
