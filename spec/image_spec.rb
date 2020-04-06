@@ -196,6 +196,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect to_file).to visually_match 'image-percentage-fallback-width.pdf'
     end
+
+    it 'should use the vw width defined in theme if explicit width is not specified', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-full-width-theme.pdf', pdf_theme: { image_width: '100vw' }
+      image::square.png[opts=align-to-page]
+      EOS
+
+      (expect to_file).to visually_match 'image-full-width.pdf'
+    end
   end
 
   context 'SVG' do
