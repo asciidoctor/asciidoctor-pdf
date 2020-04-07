@@ -4,6 +4,16 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - List' do
   context 'Unordered' do
+    it 'should register ID if list has an ID' do
+      pdf = to_pdf <<~'EOS'
+      [#takeaways]
+      * one
+      * two
+      EOS
+
+      (expect get_names pdf).to have_key 'takeaways'
+    end
+
     it 'should use different marker for first three list levels' do
       pdf = to_pdf <<~'EOS', analyze: true
       * level one
@@ -324,6 +334,16 @@ describe 'Asciidoctor::PDF::Converter - List' do
   end
 
   context 'Ordered' do
+    it 'should register ID if list has an ID' do
+      pdf = to_pdf <<~'EOS'
+      [#takeaways]
+      . one
+      . two
+      EOS
+
+      (expect get_names pdf).to have_key 'takeaways'
+    end
+
     it 'should number list items using arabic, loweralpha, lowerroman, upperalpha, upperroman numbering by default' do
       pdf = to_pdf <<~'EOS', analyze: true
       . 1
@@ -604,6 +624,16 @@ describe 'Asciidoctor::PDF::Converter - List' do
   end
 
   context 'Description' do
+    it 'should register ID if list has an ID' do
+      pdf = to_pdf <<~'EOS'
+      [#takeaways]
+      reuse:: try to avoid binning it in the first place
+      recycle:: if you do bin it, make sure the material gets reused
+      EOS
+
+      (expect get_names pdf).to have_key 'takeaways'
+    end
+
     it 'should keep term with primary text' do
       pdf = to_pdf <<~EOS, analyze: true
       :pdf-page-size: 52mm x 80mm
