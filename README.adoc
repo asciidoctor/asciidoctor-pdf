@@ -96,7 +96,8 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 
 == Known Limitations
 
-* Footnotes are always rendered as endnotes (at end of chapter for books; at end of document for all other doctypes).
+* Footnotes are always displayed as endnotes (at the end of chapter for books; at the end of document for all other doctypes).
+*Footnotes cannot be displayed at the bottom of the page because the PDF generator does not support content reflows.*
 * Table cells that exceed height of a single page will be truncated (see https://github.com/prawnpdf/prawn-table/issues/41[prawn-table#41]).
 * Inline images in table cells must fit within available column width or a Prawn::Errors::CannotFit error will be thrown (see https://github.com/asciidoctor/asciidoctor-pdf/issues/1608 for workarounds).
 * Columns cannot be assigned a 0% width (or a width less than the width of a single character); in the same vein, a column cannot be set to autowidth if width of all other columns meets or exceeds 100%; the result is that the converter with throw a Prawn::Errors::CannotFit error.
