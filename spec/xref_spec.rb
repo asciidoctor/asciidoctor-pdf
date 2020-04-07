@@ -89,6 +89,18 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       (expect (pdf.page 1).text).to include 'See Über Étudier.'
     end if RUBY_VERSION >= '2.4.0'
 
+    it 'should register ID for any block that has an ID' do
+      ['', 'example', 'open', 'sidebar', 'quote', 'verse', 'listing', 'literal', 'NOTE'].each do |style|
+        pdf = to_pdf <<~EOS
+        [#{style}#disclaimer]
+        All views expressed are my own.
+        EOS
+
+        names = get_names pdf
+        (expect names).to have_key 'disclaimer'
+      end
+    end
+
     it 'should create reference to a block by explicit ID' do
       pdf = to_pdf <<~'EOS'
       = Document Title
