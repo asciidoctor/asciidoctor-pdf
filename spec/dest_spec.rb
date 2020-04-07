@@ -20,6 +20,48 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect top_y).to eql page_height
   end
 
+  it 'should register dest for every block that has an ID' do
+    ['', 'abstract', 'example', 'open', 'sidebar', 'quote', 'verse', 'listing', 'literal', 'NOTE'].each do |style|
+      pdf = to_pdf <<~EOS
+      [#{style}#disclaimer]
+      All views expressed are my own.
+      EOS
+
+      names = get_names pdf
+      (expect names).to have_key 'disclaimer'
+    end
+  end
+
+  it 'should register dest for unordered list that has an ID' do
+    pdf = to_pdf <<~'EOS'
+    [#takeaways]
+    * one
+    * two
+    EOS
+
+    (expect get_names pdf).to have_key 'takeaways'
+  end
+
+  it 'should register dest for ordered list that has an ID' do
+    pdf = to_pdf <<~'EOS'
+    [#takeaways]
+    . one
+    . two
+    EOS
+
+    (expect get_names pdf).to have_key 'takeaways'
+  end
+
+  it 'should register dest for description list that has an ID' do
+    pdf = to_pdf <<~'EOS'
+    [#takeaways]
+    reuse:: try to avoid binning it in the first place
+    recycle:: if you do bin it, make sure the material gets reused
+    EOS
+
+    (expect get_names pdf).to have_key 'takeaways'
+  end
+
   it 'should define a dest at the location of an inline anchor' do
     ['[[details]]details', '[#details]#details#'].each do |details|
       pdf = to_pdf <<~EOS
