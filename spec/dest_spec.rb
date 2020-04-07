@@ -62,6 +62,66 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect get_names pdf).to have_key 'takeaways'
   end
 
+  it 'should register dest for each section with implicit ID' do
+    pdf = to_pdf <<~'EOS'
+    == Fee
+
+    === Fi
+
+    ==== Fo
+
+    ===== Fum
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key '_fee'
+    (expect names).to have_key '_fi'
+    (expect names).to have_key '_fo'
+    (expect names).to have_key '_fum'
+  end
+
+  it 'should register dest for each section with explicit ID' do
+    pdf = to_pdf <<~'EOS'
+    [#s-fee]
+    == Fee
+
+    [#s-fi]
+    === Fi
+
+    [#s-fo]
+    ==== Fo
+
+    [#s-fum]
+    ===== Fum
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key 's-fee'
+    (expect names).to have_key 's-fi'
+    (expect names).to have_key 's-fo'
+    (expect names).to have_key 's-fum'
+  end
+
+  it 'should register dest for a discrete heading with an ID' do
+    pdf = to_pdf <<~'EOS'
+    [#bundler]
+    == Bundler
+
+    Use this procedure if you're using Bundler.
+    EOS
+
+    (expect get_names pdf).to have_key 'bundler'
+  end
+
+  it 'should hex encode name for ID that contains non-ASCII characters' do
+    pdf = to_pdf '== Über Étudier'
+    hex_encoded_id = %(0x#{('_über_étudier'.unpack 'H*')[0]})
+    names = (get_names pdf).keys.reject {|k| k == '__anchor-top' }
+    (expect names).to have_size 1
+    name = names[0]
+    (expect name).to eql hex_encoded_id
+  end if RUBY_VERSION >= '2.4.0'
+
   it 'should define a dest at the location of an inline anchor' do
     ['[[details]]details', '[#details]#details#'].each do |details|
       pdf = to_pdf <<~EOS
