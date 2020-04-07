@@ -62,6 +62,21 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect get_names pdf).to have_key 'takeaways'
   end
 
+  it 'should register dest for callout list that has an ID' do
+    pdf = to_pdf <<~'EOS'
+    ----
+    require 'asciidoctor-pdf' // <1>
+
+    Asciidoctor.convert_file 'doc.adoc', backend: 'pdf', safe: :safe // <2>
+    ----
+    [#details]
+    <1> requires the library
+    <2> converts the document to PDF
+    EOS
+
+    (expect get_names pdf).to have_key 'details'
+  end
+
   it 'should register dest for each section with implicit ID' do
     pdf = to_pdf <<~'EOS'
     == Fee
