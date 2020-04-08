@@ -28,6 +28,7 @@ Enhancements::
 * ignore requested pages not found in imported PDF (#1616)
 * disable document outline if outline document attribute is unset (#1619)
 * keep temporary artifacts (for debugging) if KEEP_ARTIFACTS env var is set
+* define a dest name "toc" at the top of the default toc location
 
 Bug Fixes::
 
@@ -49,6 +50,7 @@ Bug Fixes::
 * use conum font family defined in theme for conum in verbatim block (#1611)
 * prevent content of AsciiDoc table cell from overrunning content on subsequent pages (#1623)
 * log error message if table cell is truncated (#1626)
+* use "toc" as the default dest name for the macro toc
 
 Compliance::
 

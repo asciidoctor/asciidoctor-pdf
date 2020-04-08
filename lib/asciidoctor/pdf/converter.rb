@@ -211,6 +211,7 @@ module Asciidoctor
           toc_num_levels = (doc.attr 'toclevels', 2).to_i
           if (insert_toc = (doc.attr? 'toc') && !(doc.attr? 'toc-placement', 'macro') && doc.sections?)
             start_new_page if @ppbook && verso_page?
+            add_dest_for_block doc, 'toc'
             allocate_toc doc, toc_num_levels, @y, use_title_page
           else
             @toc_extent = nil
@@ -2240,7 +2241,7 @@ module Asciidoctor
             start_new_page unless at_page_top?
             start_new_page if @ppbook && verso_page? && !(node.option? 'nonfacing')
           end
-          add_dest_for_block node, (derive_anchor_from_id node.id, 'toc')
+          add_dest_for_block node, (node.id || 'toc')
           allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (is_book || (doc.attr? 'title-page'))
           @disable_running_content[:header] = (@disable_running_content[:header] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'noheader'
           @disable_running_content[:footer] = (@disable_running_content[:footer] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'nofooter'

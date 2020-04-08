@@ -4,10 +4,16 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Dest' do
   it 'should define a dest named __anchor-top at top of the first body page' do
-    pdf = to_pdf <<~'EOS', doctype: :book
+    pdf = to_pdf <<~'EOS'
     = Document Title
+    :doctype: book
+    :toc:
 
-    first page of content
+    preamble
+
+    == Chapter
+
+    content
     EOS
 
     names = get_names pdf
@@ -15,9 +21,71 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     top_dest = pdf.objects[names['__anchor-top']]
     top_page_num = get_page_number pdf, top_dest[0]
     top_y = top_dest[3]
-    (expect top_page_num).to be 2
+    (expect top_page_num).to be 3
     _, page_height = get_page_size pdf, top_page_num
     (expect top_y).to eql page_height
+  end
+
+  it 'should define a dest named toc at the top of the first toc page' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == Chapter
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key 'toc'
+    toc_dest = pdf.objects[names['toc']]
+    toc_page_num = get_page_number pdf, toc_dest[0]
+    toc_y = toc_dest[3]
+    (expect toc_page_num).to be 2
+    _, page_height = get_page_size pdf, toc_page_num
+    (expect toc_y).to eql page_height
+  end
+
+  it 'should define a dest named toc at the location where the macro toc starts' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :toc: macro
+
+    content before the toc
+
+    toc::[]
+
+    == Chapter
+
+    == Another Chapter
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key 'toc'
+    toc_dest = pdf.objects[names['toc']]
+    toc_page_num = get_page_number pdf, toc_dest[0]
+    toc_y = toc_dest[3]
+    (expect toc_page_num).to be 1
+    _, page_height = get_page_size pdf, toc_page_num
+    (expect toc_y).to be < page_height
+  end
+
+  it 'should use the toc macro ID as the name of the dest for the macro toc' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :toc: macro
+
+    content before the toc
+
+    [#macro-toc]
+    toc::[]
+
+    == Chapter
+
+    == Another Chapter
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key 'macro-toc'
   end
 
   it 'should register dest for every block that has an ID' do
