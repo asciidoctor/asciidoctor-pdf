@@ -100,6 +100,20 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     end
   end
 
+  it 'should register dest for table that has an ID' do
+    pdf = to_pdf <<~'EOS'
+    [#props]
+    |===
+    | Name | Value
+
+    | Foo | Bar
+    |===
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key 'props'
+  end
+
   it 'should register dest for unordered list that has an ID' do
     pdf = to_pdf <<~'EOS'
     [#takeaways]
