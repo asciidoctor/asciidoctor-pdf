@@ -562,6 +562,17 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
     end
 
+    it 'should scale up background SVG to fit boundaries of page if fit is fill', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-fill.pdf'
+      = Document Title
+      :page-background-image: image:square.svg[fit=fill]
+
+      This page has a background image that is rather loud.
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
+    end
+
     it 'should scale up background SVG to fit boundaries of page if pdfwidth is 100% and fit=none', visual: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-pdfwidth.pdf'
       = Document Title
