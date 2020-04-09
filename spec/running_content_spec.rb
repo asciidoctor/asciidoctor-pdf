@@ -2194,6 +2194,40 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-run-in-image.pdf'
     end
 
+    it 'should set imagesdir attribute to value of themesdir in running content' do
+      pdf_theme = {
+        __dir__: fixtures_dir,
+        footer_columns: '=100%',
+        footer_padding: 0,
+        footer_recto_center_content: 'image:tux.png[pdfwidth=16] found in {imagesdir}',
+        footer_verso_center_content: 'image:tux.png[pdfwidth=16] found in {imagesdir}',
+      }
+
+      pdf = to_pdf 'body', pdf_theme: pdf_theme, enable_footer: true, analyze: :image
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:width]).to eql 16.0
+
+      pdf = to_pdf 'body', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      footer_text = (pdf.text.find {|it| it[:y] < 50 })
+      (expect footer_text[:string]).to end_with %(found in #{fixtures_dir})
+    end
+
+    it 'should not leave imagesdir attribute set after running content if originally unset' do
+      pdf_theme = {
+        __dir__: fixtures_dir,
+        footer_columns: '=100%',
+        footer_padding: 0,
+        footer_recto_center_content: 'image:tux.png[pdfwidth=16] found in {imagesdir}',
+        footer_verso_center_content: 'image:tux.png[pdfwidth=16] foudn in {imagesdir}',
+      }
+
+      doc = to_pdf 'body', pdf_theme: pdf_theme, enable_footer: true, to_file: (pdf_io = StringIO.new), attributes: {}, analyze: :document
+      (expect doc.attr? 'imagesdir').to be_falsy
+      pdf = PDF::Reader.new pdf_io
+      (expect (pdf.page 1).text).to include fixtures_dir
+    end
+
     it 'should warn and replace image with alt text if image is not found' do
       [true, false].each do |block|
         (expect do
