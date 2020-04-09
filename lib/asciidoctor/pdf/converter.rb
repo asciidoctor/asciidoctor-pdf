@@ -2364,13 +2364,10 @@ module Asciidoctor
           end
         when :ref
           # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
-          # NOTE id is used instead of target starting in Asciidoctor 2.0.0
           %(<a id="#{node.id}">#{DummyText}</a>)
         when :bibref
           # NOTE destination is created inside callback registered by FormattedTextTransform#build_fragment
           # NOTE technically node.text should be node.reftext, but subs have already been applied to text
-          # NOTE reftext is no longer enclosed in [] starting in Asciidoctor 2.0.0
-          # NOTE id is used instead of target starting in Asciidoctor 2.0.0
           reftext = (reftext = node.reftext) ? %([#{reftext}]) : %([#{node.id}])
           %(<a id="#{node.id}">#{DummyText}</a>#{reftext})
         else
