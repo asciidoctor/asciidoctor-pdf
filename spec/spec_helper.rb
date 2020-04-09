@@ -385,9 +385,9 @@ RSpec.configure do |config|
         pdf_io = doc.attr 'outfile'
       end
     elsif analyze == :document
-      return Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, header_footer: true)
+      return Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, standalone: true)
     else
-      Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, to_file: (pdf_io = StringIO.new), header_footer: true)
+      Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, to_file: (pdf_io = StringIO.new), standalone: true)
     end
     analyze ? (PDF_INSPECTOR_CLASS[analyze].analyze pdf_io) : (PDF::Reader.new pdf_io)
   end
@@ -406,7 +406,7 @@ RSpec.configure do |config|
     if Pathname === input
       Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)
     else
-      Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, header_footer: true)
+      Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, standalone: true)
     end
     to_file
   end
