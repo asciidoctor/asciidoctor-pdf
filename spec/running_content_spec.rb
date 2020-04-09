@@ -820,6 +820,21 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect running_text).to have_size 1
     end
 
+    it 'should not warn if attribute is missing in running content' do
+      (expect do
+        pdf_theme = {
+          footer_recto_right_content: %(keep\ndrop{does-not-exist}\nattribute-missing={attribute-missing}),
+          footer_verso_left_content: %(keep\ndrop{does-not-exist}\nattribute-missing={attribute-missing}),
+        }
+
+        doc = to_pdf 'body', attribute_overrides: { 'attribute-missing' => 'warn' }, enable_footer: true, pdf_theme: pdf_theme, to_file: (pdf_io = StringIO.new), analyze: :document
+
+        (expect doc.attr 'attribute-missing').to eql 'warn'
+        pdf = PDF::Reader.new pdf_io
+        (expect (pdf.page 1).text).to include 'keep attribute-missing=skip'
+      end).to not_log_message
+    end
+
     it 'should parse running content as AsciiDoc' do
       pdf_theme = {
         footer_recto_right_content: 'footer: *bold* _italic_ `mono`',
