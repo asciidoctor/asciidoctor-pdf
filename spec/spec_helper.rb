@@ -387,8 +387,7 @@ RSpec.configure do |config|
     elsif analyze == :document
       return Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, header_footer: true)
     else
-      # NOTE use header_footer for compatibility with Asciidoctor < 2
-      pdf_io = StringIO.new (Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, header_footer: true)).render
+      Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, to_file: (pdf_io = StringIO.new), header_footer: true)
     end
     analyze ? (PDF_INSPECTOR_CLASS[analyze].analyze pdf_io) : (PDF::Reader.new pdf_io)
   end
