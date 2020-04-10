@@ -1389,7 +1389,7 @@ module Asciidoctor
           image_path = nil
         elsif ::Base64 === target
           image_path = target
-        elsif (image_path = resolve_image_path node, target, (opts.fetch :relative_to_imagesdir, true), image_format)
+        elsif (image_path = resolve_image_path node, target, image_format, (opts.fetch :relative_to_imagesdir, true))
           if image_format == 'pdf'
             if ::File.readable? image_path
               if (id = node.id)
@@ -2475,7 +2475,7 @@ module Asciidoctor
             logger.warn %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
             img = %([#{node.attr 'alt'}])
           # NOTE an image with a data URI is handled using a temporary file
-          elsif (image_path = resolve_image_path node, target, true, image_format)
+          elsif (image_path = resolve_image_path node, target, image_format, true)
             if ::File.readable? image_path
               width_attr = (width = resolve_explicit_width node.attributes) ? %( width="#{width}") : ''
               fit_attr = (fit = node.attr 'fit', nil, false) ? %( fit="#{fit}") : ''
@@ -3462,7 +3462,7 @@ module Asciidoctor
                   attrlist = $2
                   image_attrs = (AttributeList.new attrlist).parse %w(alt width)
                   image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
-                  if (image_path = resolve_image_path doc, image_path, @themesdir, image_format) && (::File.readable? image_path)
+                  if (image_path = resolve_image_path doc, image_path, image_format, @themesdir) && (::File.readable? image_path)
                     image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_content_height[side]], format: image_format
                     side_content[position] = [image_path, image_opts, image_attrs['link']]
                   else
@@ -4068,11 +4068,10 @@ module Asciidoctor
       # is not set, or the URI cannot be read, this method returns a nil value.
       #
       # When a temporary file is used, the file is stored in @tmp_files to be cleaned up after conversion.
-      def resolve_image_path node, image_path = nil, relative_to = true, image_format = nil
+      def resolve_image_path node, image_path, image_format, relative_to = true
         doc = node.document
         imagesdir = relative_to == true ? (resolve_imagesdir doc) : relative_to
-        image_path ||= node.attr 'target'
-        image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node.attributes : nil)
+        #image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node.attributes : nil)
         # NOTE base64 logic currently used for inline images
         if ::Base64 === image_path
           return @tmp_files[image_path] if @tmp_files.key? image_path
@@ -4148,7 +4147,7 @@ module Asciidoctor
           end
 
           image_path, image_format = ::Asciidoctor::Image.target_and_format image_path, image_attrs
-          image_path = resolve_image_path doc, image_path, image_relative_to, image_format
+          image_path = resolve_image_path doc, image_path, image_format, image_relative_to
 
           return unless image_path
 
