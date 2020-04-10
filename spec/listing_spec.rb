@@ -98,6 +98,18 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect pdf.lines).to eql ['flush', %(\u00a0 indented), 'flush']
   end
 
+  it 'should guard indentation using no-break space character if string starts with indented line' do
+    pdf = to_pdf <<~EOS, analyze: true
+    ----
+      indented
+    flush
+      indented
+    ----
+    EOS
+
+    (expect pdf.lines).to eql [%(\u00a0 indented), 'flush', %(\u00a0 indented)]
+  end
+
   it 'should expand tabs if tabsize attribute is not specified' do
     pdf = to_pdf <<~EOS, analyze: true
     ----
