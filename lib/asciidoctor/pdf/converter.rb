@@ -3712,17 +3712,16 @@ module Asciidoctor
             chunk_height = [(available_height = cursor), remaining_height].min
             bounding_box [0, available_height], width: bounds.width, height: chunk_height do
               theme_fill_and_stroke_bounds category, background_color: bg_color
-              if b_width
+              # NOTE b_width is always set; if no border is set, split indicator is cut into background
+              indent b_radius, b_radius do
+                # dashed line indicates continuation from previous page; swell line slightly to cover background
+                stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed, at: b_shift
+              end unless initial_page
+              if remaining_height > chunk_height
+                move_down chunk_height - b_shift
                 indent b_radius, b_radius do
                   # dashed line indicates continuation from previous page; swell line slightly to cover background
-                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed, at: b_shift
-                end unless initial_page
-                if remaining_height > chunk_height
-                  move_down chunk_height - b_shift
-                  indent b_radius, b_radius do
-                    # dashed line indicates continuation from previous page; swell line slightly to cover background
-                    stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
-                  end
+                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
                 end
               end
             end
