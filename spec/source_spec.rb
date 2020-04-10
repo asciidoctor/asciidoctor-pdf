@@ -22,6 +22,26 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect lines[2]).to eql %(\u00a0   return 0;)
     end
 
+    it 'should expand tabs used for column alignment' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: rouge
+
+      [source,sql]
+      ----
+      SELECT
+      \tname,\t firstname,\t\tlastname
+      FROM
+      \tusers
+      WHERE
+      \tusername\t=\t'foobar'
+      ----
+      EOS
+      lines = pdf.lines
+      (expect lines).to have_size 6
+      (expect lines).to include %(\u00a0   name,    firstname,     lastname)
+      (expect lines).to include %(\u00a0   username    =   'foobar')
+    end
+
     it 'should enable start_inline option for PHP by default' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
