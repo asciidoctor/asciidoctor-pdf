@@ -201,6 +201,19 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 48.24, 793.926]
     end
 
+    it 'should truncate margin array in theme to 4 values' do
+      pdf_theme = { page_margin: [36, 24, 28.8, 24, 36, 36] }
+      input = 'content'
+      prawn = to_pdf input, pdf_theme: pdf_theme, analyze: :document
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+
+      (expect prawn.page_margin).to eql [36, 24, 28.8, 24]
+      content_text = pdf.text[0]
+      (expect content_text.values_at :string, :page_number, :x, :y).to eql ['content', 1, 24.0, 793.926]
+      content_top = (get_page_size pdf, 1)[1] - 36
+      (expect content_text[:y] + content_text[:font_size]).to be_within(2).of content_top
+    end
+
     it 'should use the margin specified by the pdf-page-margin attribute as array' do
       ['0.5in, 1in, 0.5in, 1in', '36pt, 72pt, 36pt, 72pt'].each do |val|
         pdf = to_pdf <<~EOS, analyze: true
@@ -221,6 +234,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         EOS
         (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 72.0, 757.926]
       end
+    end
+
+    it 'should split margin specified by the pdf-page-margin attribute as a string and use first 4 values' do
+      input = %(:pdf-page-margin: [32.5, 28, 32.5, 28, 36, 36]\n\ncontent)
+      prawn = to_pdf input, analyze: :document
+      pdf = to_pdf input, analyze: true
+      (expect prawn.page_margin).to eql [32.5, 28.0, 32.5, 28.0]
+      (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 28.0, 797.426]
     end
 
     it 'should use recto/verso margins when media=prepress', visual: true do
