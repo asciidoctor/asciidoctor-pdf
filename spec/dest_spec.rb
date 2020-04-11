@@ -114,6 +114,22 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect names).to have_key 'props'
   end
 
+  it 'should register dest for media macro that has an ID' do
+    {
+      image: 'tux.png',
+      video: 'webcast.mp4',
+      audio: 'podcast.mp3',
+    }.each do |macro_name, target|
+      pdf = to_pdf <<~EOS
+      [#media]
+      #{macro_name}::#{target}[]
+      EOS
+
+      names = get_names pdf
+      (expect names).to have_key 'media'
+    end
+  end
+
   it 'should register dest for unordered list that has an ID' do
     pdf = to_pdf <<~'EOS'
     [#takeaways]
