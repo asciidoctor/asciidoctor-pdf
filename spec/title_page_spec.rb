@@ -444,6 +444,15 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images[0].hash[:Height]).to be 240
     end
 
+    it 'should ignore missing attribute reference when resolve title page logo image from theme' do
+      (expect do
+        to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: 'image:{no-such-attribute}{attribute-missing}.png[]' }, attribute_overrides: { 'attribute-missing' => 'warn' }
+        = Document Title
+        :doctype: book
+        EOS
+      end).to log_message severity: :WARN, message: '~skip.png'
+    end
+
     it 'should add remote logo specified by title_page_logo_image theme key to title page' do
       with_local_webserver do |base_url|
         [%(#{base_url}/tux.png), %(image:#{base_url}/tux.png[])].each do |image_url|
