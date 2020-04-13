@@ -654,12 +654,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect converter.instance_variable_get :@tmp_files).to be_empty
     end
 
+    it 'should read image if allow-uri-read is set and imagesdir is a URL' do
+      pdf = with_local_webserver do |base_url|
+        to_pdf %(image::logo.png[Remote Image]), attribute_overrides: { 'allow-uri-read' => '', 'imagesdir' => %(#{base_url}/) }
+      end
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect (pdf.page 1).text).to be_empty
+    end
+
     it 'should read remote image with no file extension if allow-uri-read is set' do
       begin
         FileUtils.cp (fixture_file 'logo.png'), (fixture_file 'logo')
-        converter, pdf = with_local_webserver do |base_url|
-          doc = to_pdf %(image::#{base_url}/logo[Remote Image]), analyze: :document, to_file: (pdf_io = StringIO.new), attribute_overrides: { 'allow-uri-read' => '' }
-          [doc.converter, (PDF::Reader.new pdf_io)]
+        pdf = with_local_webserver do |base_url|
+          to_pdf %(image::#{base_url}/logo[Remote Image]), attribute_overrides: { 'allow-uri-read' => '' }
         end
         images = get_images pdf, 1
         (expect images).to have_size 1
