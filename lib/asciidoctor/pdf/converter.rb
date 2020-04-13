@@ -3463,7 +3463,7 @@ module Asciidoctor
                   image_attrs = (AttributeList.new attrlist).parse %w(alt width)
                   image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
                   if (image_path = resolve_image_path doc, image_path, image_format, @themesdir) && (::File.readable? image_path)
-                    image_opts = resolve_image_options image_path, image_attrs, container_size: [colspec_dict[side][position][:width], trim_content_height[side]], format: image_format
+                    image_opts = resolve_image_options image_path, image_format, image_attrs, container_size: [colspec_dict[side][position][:width], trim_content_height[side]]
                     side_content[position] = [image_path, image_opts, image_attrs['link']]
                   else
                     # NOTE allows inline image handler to report invalid reference and replace with alt text
@@ -4158,13 +4158,13 @@ module Asciidoctor
           if image_format == 'pdf'
             [image_path, page: [((image_attrs || {})['page']).to_i, 1].max, format: image_format]
           else
-            [image_path, (resolve_image_options image_path, image_attrs, (opts.merge background: true, format: image_format))]
+            [image_path, (resolve_image_options image_path, image_format, image_attrs, (opts.merge background: true))]
           end
         end
       end
 
-      def resolve_image_options image_path, image_attrs, opts = {}
-        if (image_format = opts[:format] || (::Asciidoctor::Image.format image_path)) == 'svg'
+      def resolve_image_options image_path, image_format, image_attrs, opts = {}
+        if image_format == 'svg'
           image_opts = {
             enable_file_requests_with_root: (::File.dirname image_path),
             enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
