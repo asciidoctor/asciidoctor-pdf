@@ -137,4 +137,14 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
 
     (expect pdf.lines).to have_size 0
   end
+
+  it 'should not add border if border color is transaprent' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_border_color: 'transparent' }, analyze: :line
+    ****
+    Sidebar
+    ****
+    EOS
+
+    (expect pdf.lines).to have_size 0
+  end
 end
