@@ -29,6 +29,7 @@ Enhancements::
 * disable document outline if outline document attribute is unset (#1619)
 * keep temporary artifacts (for debugging) if KEEP_ARTIFACTS env var is set
 * define a dest name "toc" at the top of the default toc location
+* normalize whitespace in authors content and drop lines with unresolved attribute references (#1642)
 
 Bug Fixes::
 
