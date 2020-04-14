@@ -35,6 +35,16 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:strings]).not_to include 'Document Title'
     end
+
+    it 'should include title page if showtitle attribute is unset (as it has no effect)' do
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
+      = Document Title
+      :!showtitle:
+
+      body
+      EOS
+      (expect pdf.pages[0][:strings]).to include 'Document Title'
+    end
   end
 
   context 'article' do
