@@ -4011,7 +4011,7 @@ module Asciidoctor
       def derive_anchor_from_id value, default_value = nil
         if value
           value.ascii_only? ? value : %(0x#{::PDF::Core.string_to_hex value})
-        elsif default_value
+        else
           %(__anchor-#{default_value})
         end
       end
