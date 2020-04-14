@@ -31,6 +31,10 @@ Lint/EmptyWhen:
   Enabled: false
 Lint/ParenthesesAsGroupedExpression:
   Enabled: false
+Lint/RaiseException:
+  Enabled: true
+Lint/StructNewOverride:
+  Enabled: true
 Lint/SuppressedException:
   Enabled: false
 Metrics/AbcSize:
@@ -89,8 +93,14 @@ Style/FormatStringToken:
   Enabled: false
 Style/GuardClause:
   Enabled: false
+Style/HashEachMethods:
+  Enabled: true
 Style/HashSyntax:
   EnforcedStyle: ruby19
+Style/HashTransformKeys:
+  Enabled: true
+Style/HashTransformValues:
+  Enabled: true
 Style/IfUnlessModifierOfIfUnless:
   Enabled: false
 Style/MethodCallWithArgsParentheses:

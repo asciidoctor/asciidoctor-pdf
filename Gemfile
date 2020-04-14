@@ -24,8 +24,8 @@ end
 
 group :lint do
   unless Gem.win_platform? && RUBY_ENGINE == 'ruby' && (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
-    gem 'rubocop', '~> 0.78.0', require: false
-    gem 'rubocop-rspec', '~> 1.37.0', require: false
+    gem 'rubocop', '~> 0.81.0', require: false
+    gem 'rubocop-rspec', '~> 1.38.0', require: false
   end
 end
 
