@@ -369,7 +369,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect pgnum_labels).to eql [nil, '1', '2', '3']
     end
 
-    it 'should start running content at specified page of body if running_content_start_at is an integer' do
+    it 'should start running content at specified page of body of book if running_content_start_at is an integer' do
       pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 3 }, analyze: true
       = Book Title
       :doctype: book
@@ -393,6 +393,32 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       end
       (expect pgnum_labels).to eql [nil, nil, nil, nil, '3']
+    end
+
+    it 'should start running content at specified page of document with no title page if running_content_start_at is an integer' do
+      pdf_theme = {
+        running_content_start_at: 3,
+        footer_font_color: '0000FF',
+      }
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      = Article Title
+
+      page one
+
+      <<<
+
+      page two
+
+      <<<
+
+      page three
+      EOS
+
+      (expect pdf.pages).to have_size 3
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, font_color: '0000FF')[0] || {})[:string]
+      end
+      (expect pgnum_labels).to eql [nil, nil, '3']
     end
 
     it 'should start page numbering and running content at specified page of body' do
@@ -419,6 +445,33 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       end
       (expect pgnum_labels).to eql [nil, nil, nil, nil, '1']
+    end
+
+    it 'should start page numbering and running content at specified page of document with no title page' do
+      pdf_theme = {
+        running_content_start_at: 3,
+        page_numbering_start_at: 3,
+        footer_font_color: '0000FF',
+      }
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      = Article Title
+
+      page one
+
+      <<<
+
+      page two
+
+      <<<
+
+      page three
+      EOS
+
+      (expect pdf.pages).to have_size 3
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, font_color: '0000FF')[0] || {})[:string]
+      end
+      (expect pgnum_labels).to eql [nil, nil, '1']
     end
   end
 
@@ -570,7 +623,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect pgnum_labels).to eql %w(1 2 3 4)
     end
 
-    it 'should start page numbering at specified page of body if page_numbering_start_at is an integer' do
+    it 'should start page numbering at specified page of body of book if page_numbering_start_at is an integer' do
       pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'title', page_numbering_start_at: 3 }, analyze: true
       = Book Title
       :doctype: book
@@ -599,6 +652,32 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       dedication_toc_line = (pdf.lines pdf.find_text page_number: 2).find {|it| it.start_with? 'Dedication' }
       (expect dedication_toc_line).to end_with 'iii'
       (expect pdf.lines pdf.find_text page_number: pdf.pages.size).to include 'person, iii'
+    end
+
+    it 'should start page numbering at specified page of document with no title page if page_numbering_start_at is an integer' do
+      pdf_theme = {
+        page_numbering_start_at: 3,
+        footer_font_color: '0000FF',
+      }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      = Article Title
+
+      page one
+
+      <<<
+
+      page two
+
+      <<<
+
+      page three
+      EOS
+
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << (pdf.find_text page_number: page_number, font_color: '0000FF')[0][:string]
+      end
+      (expect pgnum_labels).to eql %w(i ii 1)
     end
 
     it 'should compute page-count attribute correctly when running content starts after page numbering' do

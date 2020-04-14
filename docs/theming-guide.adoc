@@ -1304,7 +1304,7 @@ To disable the image, use the value `none`.
 These margins and used when the value `prepress` is assigned to the `media` document attribute.
 If no cover is specified, the recto margin is not applied to the title page.
 To apply the recto margin to the title page, but not include a cover, assign the value `~` to the `front-cover-image` attribute.
-. Only works if the document uses a title page (i.e., doctype is book or `title-page` attribute is set)
+. The `title` and `toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
 The `toc` value only applies if the toc is in the default location (before the first page of the body).
 If the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
 If value is an integer, page numbering will start at the specified page of the body (i.e., 1 is first page, 2 is second page, etc.)
@@ -4811,7 +4811,7 @@ Instead, adjust the values of the margin and content-margin keys.
 The `columns` key can also be defined one level up (on `header` or `footer`), in which case the setting will be inherited.
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
 . `<position>` can be `left`, `center` or `right`.
-. Only works if the document uses a title page (i.e., doctype is book or `title-page` attribute is set)
+. The `title` and `toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
 The `toc` value only applies if the toc is in the default location (before the first page of the body).
 If the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
 If value is an integer, the running content will start at the specified page of the body (i.e., 1 is first page, 2 is second page, etc.)
