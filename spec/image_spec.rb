@@ -27,6 +27,26 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
+    it 'should skip block if image is missing an alt text is empty' do
+      pdf_theme = { image_alt_content: '' }
+      (expect do
+        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        paragraph one
+
+        paragraph two
+
+        image::no-such-image.png[Missing Image]
+
+        paragraph three
+        EOS
+        (expect pdf.lines).to eql ['paragraph one', 'paragraph two', 'paragraph three']
+        para_one_y = (pdf.find_text 'paragraph one')[0][:y].round 2
+        para_two_y = (pdf.find_text 'paragraph two')[0][:y].round 2
+        para_three_y = (pdf.find_text 'paragraph three')[0][:y].round 2
+        (expect para_one_y - para_two_y).to eql para_two_y - para_three_y
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+    end
+
     it 'should warn instead of crash if block image is unreadable' do
       image_file = fixture_file 'logo.png'
       old_mode = (File.stat image_file).mode

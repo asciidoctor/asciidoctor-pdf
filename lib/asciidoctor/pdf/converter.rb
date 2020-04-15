@@ -1557,16 +1557,17 @@ module Asciidoctor
           alt_text_vars[:link] = ''
           alt_text_vars[:'/link'] = ''
         end
-        alt_text = alt_text_template % alt_text_vars
-        theme_font :image_alt do
-          layout_prose alt_text,
-              align: ((node.attr 'align', nil, false) || @theme.image_align).to_sym,
-              margin: 0,
-              normalize: false,
-              single_line: true
+        unless (alt_text = alt_text_template % alt_text_vars).empty?
+          theme_font :image_alt do
+            layout_prose alt_text,
+                align: ((node.attr 'align', nil, false) || @theme.image_align).to_sym,
+                margin: 0,
+                normalize: false,
+                single_line: true
+          end
+          layout_caption node, category: :image, side: :bottom if node.title?
+          theme_margin :block, :bottom unless opts[:pinned]
         end
-        layout_caption node, category: :image, side: :bottom if node.title?
-        theme_margin :block, :bottom unless opts[:pinned]
         nil
       end
 

@@ -30,6 +30,7 @@ Enhancements::
 * keep temporary artifacts (for debugging) if KEEP_ARTIFACTS env var is set
 * define a dest name "toc" at the top of the default toc location
 * normalize whitespace in authors content and drop lines with unresolved attribute references (#1642)
+* skip image block with missing image if computed alt text resolves to empty string (#1645)
 
 Bug Fixes::
 
