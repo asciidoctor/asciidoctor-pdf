@@ -351,6 +351,43 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect author2_annotation[:A][:URI]).to eql 'https://github.com/ghost'
     end
 
+    it 'should normalize whitespace in authors content' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_authors_content: %({url}\n[{author}]) }, analyze: true
+      = Document Title
+      Doc Writer <doc@example.org>
+      :doctype: book
+
+      body
+      EOS
+
+      (expect pdf.lines).to include 'mailto:doc@example.org [Doc Writer]'
+    end
+
+    it 'should drop lines with missing attribute reference in authors content' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_authors_content: %(keep: {firstname}\ndrop{no-such-attr}\nkeep: {lastname}) }, analyze: true
+      = Document Title
+      Doc Writer <doc@example.org>
+      :doctype: book
+
+      body
+      EOS
+
+      (expect pdf.lines).to include 'keep: Doc keep: Writer'
+    end
+
+    it 'should honor explicit hard line breaks in authors content' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_authors_content: %({firstname} +\n{lastname}) }, analyze: true
+      = Document Title
+      Doc Writer <doc@example.org>
+      :doctype: book
+
+      body
+      EOS
+
+      title_page_lines = pdf.lines pdf.find_text page_number: 1
+      (expect title_page_lines).to eql ['Document Title', 'Doc', 'Writer']
+    end
+
     it 'should allow theme to customize content of authors line by available metadata' do
       pdf_theme = {
         title_page_authors_content_name_only: '{authorinitials}',

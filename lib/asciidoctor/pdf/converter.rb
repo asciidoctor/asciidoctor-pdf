@@ -2667,18 +2667,18 @@ module Asciidoctor
           if @theme.title_page_authors_display != 'none' && (doc.attr? 'authors')
             move_down(@theme.title_page_authors_margin_top || 0)
             indent (@theme.title_page_authors_margin_left || 0), (@theme.title_page_authors_margin_right || 0) do
-              authors_content = @theme.title_page_authors_content
+              generic_authors_content = @theme.title_page_authors_content
               authors_content = {
-                name_only: @theme.title_page_authors_content_name_only || authors_content,
-                with_email: @theme.title_page_authors_content_with_email || authors_content,
-                with_url: @theme.title_page_authors_content_with_url || authors_content,
+                name_only: @theme.title_page_authors_content_name_only || generic_authors_content,
+                with_email: @theme.title_page_authors_content_with_email || generic_authors_content,
+                with_url: @theme.title_page_authors_content_with_url || generic_authors_content,
               }
               # TODO: provide an API in core to get authors as an array
               authors = (1..(doc.attr 'authorcount', 1).to_i).map {|idx|
                 promote_author doc, idx do
                   author_content_key = (url = doc.attr 'url') ? ((url.start_with? 'mailto:') ? :with_email : :with_url) : :name_only
                   if (author_content = authors_content[author_content_key])
-                    apply_subs_discretely doc, author_content
+                    apply_subs_discretely doc, author_content, drop_lines_with_unresolved_attributes: true
                   else
                     doc.attr 'author'
                   end
@@ -2688,7 +2688,7 @@ module Asciidoctor
                 layout_prose authors,
                     align: title_align,
                     margin: 0,
-                    normalize: false
+                    normalize: true
               end
             end
             move_down(@theme.title_page_authors_margin_bottom || 0)
