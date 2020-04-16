@@ -85,6 +85,25 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect title_text[:font_color]).to eql '00AA00'
   end
 
+  it 'should not move cursor below block if block ends at top of page' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    top of page
+
+    [NOTE]
+    ====
+    something to remember
+
+    <<<
+    ====
+
+    top of page
+    EOS
+
+    top_of_page_texts = pdf.find_text 'top of page'
+    (expect top_of_page_texts).to have_size 2
+    (expect top_of_page_texts[0][:y]).to eql top_of_page_texts[0][:y]
+  end
+
   context 'Text' do
     it 'should show bold admonition label by default' do
       pdf = to_pdf <<~'EOS', analyze: true
