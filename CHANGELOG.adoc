@@ -53,6 +53,7 @@ Bug Fixes::
 * prevent content of AsciiDoc table cell from overrunning content on subsequent pages (#1623)
 * log error message if table cell is truncated (#1626)
 * use "toc" as the default dest name for the macro toc
+* position page split indicator correctly when block has transparent border
 
 Compliance::
 

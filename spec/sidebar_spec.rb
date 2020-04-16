@@ -147,4 +147,35 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
 
     (expect pdf.lines).to have_size 0
   end
+
+  it 'should cut split indicator with preset width into background if sidebar has no border', visual: true do
+    pdf_theme = {
+      sidebar_border_width: 0,
+      sidebar_border_radius: 5,
+    }
+    to_file = to_pdf_file <<~EOS, 'sidebar-page-split-no-border.pdf', pdf_theme: pdf_theme
+    .Sidebar Title
+    ****
+    #{(['content'] * 30).join %(\n\n)}
+    ****
+    EOS
+
+    (expect to_file).to visually_match 'sidebar-page-split-no-border.pdf'
+  end
+
+  it 'should cut split indicator into background if sidebar has transparent border', visual: true do
+    pdf_theme = {
+      sidebar_border_width: 1,
+      sidebar_border_color: 'transparent',
+      sidebar_border_radius: 5,
+    }
+    to_file = to_pdf_file <<~EOS, 'sidebar-page-split-transparent-border.pdf', pdf_theme: pdf_theme
+    .Sidebar Title
+    ****
+    #{(['content'] * 30).join %(\n\n)}
+    ****
+    EOS
+
+    (expect to_file).to visually_match 'sidebar-page-split-transparent-border.pdf'
+  end
 end

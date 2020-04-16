@@ -3693,7 +3693,7 @@ module Asciidoctor
         b_radius = (@theme[%(#{category}_border_radius)] || 0) + (b_width || 0)
         if b_width && b_color
           if b_color == @page_bg_color # let page background cut into block background
-            b_gap_color, b_shift = @page_bg_color, b_width
+            b_gap_color, b_shift = @page_bg_color, (b_width * 0.5)
           elsif (b_gap_color = bg_color) && b_gap_color != b_color
             b_shift = 0
           else # let page background cut into border
