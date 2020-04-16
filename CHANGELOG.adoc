@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 Enhancements::
 
+* allow page numbering and running content to start after first page of a document without a title page by assigning an integer to the respective start_at theme key (#1644)
 * allow theme to define the front and back cover images (#1584)
 * allow the front and back cover images to be defined using a data URI (#1584)
 * allow theme to control margin and content margin of running content per periphery (header or footer) and per side (recto or verso) (#994)

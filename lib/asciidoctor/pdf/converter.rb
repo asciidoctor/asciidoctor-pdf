@@ -252,7 +252,18 @@ module Asciidoctor
               %w(body toc) => [running_content_body_offset, first_page_offset],
             }[front_matter_sig] || [running_content_body_offset, page_numbering_body_offset]
           else
-            num_front_matter_pages = [body_start_page_number - 1] * 2
+            body_offset = body_start_page_number - 1
+            if ::Integer === (running_content_start_at = @theme.running_content_start_at || 'body')
+              running_content_body_offset = body_offset + [running_content_start_at.pred, 1].max
+            else
+              running_content_body_offset = body_offset
+            end
+            if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at || 'body')
+              page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 1].max
+            else
+              page_numbering_body_offset = body_offset
+            end
+            num_front_matter_pages = [running_content_body_offset, page_numbering_body_offset]
           end
 
           @index.start_page_number = num_front_matter_pages[1] + 1
