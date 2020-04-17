@@ -1108,6 +1108,25 @@ describe 'Asciidoctor::PDF::Converter - List' do
       end
     end
 
+    it 'should not move cursor if callout list appears at top of page' do
+      pdf = to_pdf <<~EOS, analyze: true
+      key-value pair
+
+      ----
+      key: val # <1>
+      items:
+      #{(['- item'] * 46).join ?\n}
+      ----
+      <1> key-value pair
+      EOS
+
+      key_val_texts = pdf.find_text 'key-value pair'
+      (expect key_val_texts).to have_size 2
+      (expect key_val_texts[0][:page_number]).to eql 1
+      (expect key_val_texts[1][:page_number]).to eql 2
+      (expect key_val_texts[0][:y]).to eql key_val_texts[1][:y]
+    end
+
     it 'should allow conum font color to be customized by theme' do
       pdf = to_pdf <<~'EOS', pdf_theme: { conum_font_color: '0000ff' }, analyze: true
       ....
