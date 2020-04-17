@@ -618,8 +618,15 @@ module Asciidoctor
         theme_font :footnotes do
           (title = doc.attr 'footnotes-title') && (layout_caption title, category: :footnotes)
           item_spacing = @theme.footnotes_item_spacing || 0
+          index_offset = @rendered_footnotes.length
+          sect_xreftext = node.context == :section && (node.xreftext node.document.attr 'xrefstyle')
           fns.each do |fn|
-            layout_prose %(<a id="_footnotedef_#{index = fn.index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{index}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
+            label = (index = fn.index) - index_offset
+            if sect_xreftext
+              fn.singleton_class.send :attr_accessor, :label unless fn.respond_to? :label=
+              fn.label = %(#{label} - #{sect_xreftext})
+            end
+            layout_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{label}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
           end
           @rendered_footnotes += fns
         end
@@ -2407,9 +2414,10 @@ module Asciidoctor
       end
 
       def convert_inline_footnote node
-        if (index = node.attr 'index') && (node.document.footnotes.find {|candidate| candidate.index == index })
+        if (index = node.attr 'index') && (fn = node.document.footnotes.find {|candidate| candidate.index == index })
           anchor = node.type == :xref ? '' : %(<a id="_footnoteref_#{index}">#{DummyText}</a>)
-          %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{index}</a>]</sup>)
+          label = (@rendered_footnotes.include? fn) ? fn.label : (index - @rendered_footnotes.length)
+          %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{label}</a>]</sup>)
         elsif node.type == :xref
           # NOTE footnote reference not found
           %( <color rgb="FF0000">[#{node.text}]</color>)

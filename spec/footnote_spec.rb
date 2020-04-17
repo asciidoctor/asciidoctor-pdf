@@ -31,6 +31,54 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect text[9][:page_number]).to be 2
   end
 
+  it 'should reset footnote number per chapter' do
+    pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'notitle' => '' }, analyze: true
+    == Chapter A
+
+    About this thing.footnote:[More about that thing.] And so on.
+
+    == Chapter B
+
+    Yada yada yada.footnote:[What does it all mean?]
+    EOS
+
+    chapter_a_lines = pdf.lines pdf.find_text page_number: 1
+    (expect chapter_a_lines).to include 'About this thing.[1] And so on.'
+    (expect chapter_a_lines).to include '[1] More about that thing.'
+
+    chapter_b_lines = pdf.lines pdf.find_text page_number: 2
+    (expect chapter_b_lines).to include 'Yada yada yada.[1]'
+    (expect chapter_b_lines).to include '[1] What does it all mean?'
+  end
+
+  it 'should add xreftext of chapter to footnote reference to footnote in previous chapter' do
+    pdf = to_pdf <<~'EOS', doctype: :book, pdf_theme: { footnotes_font_color: 'AA0000' }, analyze: true
+    = Document Title
+    :notitle:
+    :xrefstyle: short
+    :sectnums:
+
+    == A
+
+    About this thing.footnote:fn1[More about that thing.] And so on.
+
+    == B
+
+    Yada yada yada.footnote:fn1[]
+    EOS
+
+    footnote_texts = pdf.find_text font_color: 'AA0000'
+    (expect footnote_texts.map {|it| it[:page_number] }.uniq).to eql [1]
+
+    chapter_a_lines = pdf.lines pdf.find_text page_number: 1
+    (expect chapter_a_lines).to include 'About this thing.[1] And so on.'
+    (expect chapter_a_lines).to include '[1] More about that thing.'
+
+    chapter_b_lines = pdf.lines pdf.find_text page_number: 2
+    (expect chapter_b_lines).to include 'Yada yada yada.[1 - Chapter 1]'
+    (expect chapter_b_lines).not_to include '[1] More about that thing.'
+  end
+
   it 'should place footnotes at the end of document when doctype is not book' do
     pdf = to_pdf <<~'EOS', attributes_overrides: { 'notitle' => '' }, analyze: true
     == Section A
