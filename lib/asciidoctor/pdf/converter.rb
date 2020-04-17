@@ -368,7 +368,7 @@ module Asciidoctor
         @text_transform = nil
         @list_numerals = []
         @list_bullets = []
-        @footnotes = []
+        @rendered_footnotes = []
         @conum_glyphs = ConumSets[@theme.conum_glyphs || 'circled'] || (@theme.conum_glyphs.split ',').map {|r|
           from, to = r.rstrip.split '-', 2
           to ? ((get_char from)..(get_char to)).to_a : [(get_char from)]
@@ -613,7 +613,7 @@ module Asciidoctor
 
       # QUESTION if a footnote ref appears in a separate chapter, should the footnote def be duplicated?
       def layout_footnotes node
-        return if (fns = (doc = node.document).footnotes - @footnotes).empty?
+        return if (fns = (doc = node.document).footnotes - @rendered_footnotes).empty?
         theme_margin :footnotes, :top
         theme_font :footnotes do
           (title = doc.attr 'footnotes-title') && (layout_caption title, category: :footnotes)
@@ -621,7 +621,7 @@ module Asciidoctor
           fns.each do |fn|
             layout_prose %(<a id="_footnotedef_#{index = fn.index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{index}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
           end
-          @footnotes += fns
+          @rendered_footnotes += fns
         end
         nil
       end
@@ -2407,7 +2407,7 @@ module Asciidoctor
       end
 
       def convert_inline_footnote node
-        if (index = node.attr 'index') && (node.document.footnotes.find {|fn| fn.index == index })
+        if (index = node.attr 'index') && (node.document.footnotes.find {|candidate| candidate.index == index })
           anchor = node.type == :xref ? '' : %(<a id="_footnoteref_#{index}">#{DummyText}</a>)
           %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{index}</a>]</sup>)
         elsif node.type == :xref
