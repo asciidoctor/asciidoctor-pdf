@@ -499,6 +499,18 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql ['-1. negative one', '0. zero', 'i. positive one']
     end
 
+    # TODO this should be -1, 0, a
+    it 'should ignore start value less than 1 for list with alpha numbering' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [loweralpha,start=-1]
+      . negative one
+      . zero
+      . positive one
+      EOS
+
+      (expect pdf.lines).to eql ['a. negative one', 'b. zero', 'c. positive one']
+    end
+
     it 'should make numbers invisible if list has unnumbered style' do
       pdf = to_pdf <<~'EOS', analyze: true
       reference
