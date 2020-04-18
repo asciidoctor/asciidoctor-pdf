@@ -18,7 +18,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Install Ruby
-      uses: eregon/use-ruby-action@v1
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
     - name: Configure Bundler
