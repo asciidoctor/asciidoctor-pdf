@@ -1420,18 +1420,15 @@ module Asciidoctor
               else
                 import_page image_path, page: [(node.attr 'page', nil, 1).to_i, 1].max, replace: page.empty?, &add_dest_block
               end
+              return
             else
-              # QUESTION should we use alt text in this case?
               logger.warn %(pdf to insert not found or not readable: #{image_path}) unless scratch?
+              image_path = nil
             end
-            return
           elsif !(::File.readable? image_path)
             logger.warn %(image to embed not found or not readable: #{image_path}) unless scratch?
             image_path = nil
           end
-        elsif image_format == 'pdf'
-          # QUESTION should we use alt text in this case?
-          return
         end
 
         theme_margin :block, :top unless (pinned = opts[:pinned])

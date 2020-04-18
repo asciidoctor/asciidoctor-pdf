@@ -481,6 +481,25 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'PDF' do
+    it 'should replace block macro with alt text if PDF is missing' do
+      (expect do
+        pdf = to_pdf 'image::missing.pdf[PDF insert]', analyze: true
+        (expect pdf.lines).to eql ['[PDF insert] | missing.pdf']
+      end).to log_message severity: :WARN, message: '~pdf to insert not found or not readable'
+    end
+
+    it 'should replace block macro with alt text if remote PDF is missing' do
+      image_url = nil
+      (expect do
+        pdf, image_url = with_local_webserver do |base_url|
+          target = %(#{base_url}/missing.pdf)
+          result = to_pdf %(image::#{target}[Remote PDF insert]), attribute_overrides: { 'allow-uri-read' => '' }, analyze: true
+          [result, target]
+        end
+        (expect pdf.lines).to eql [%([Remote PDF insert] | #{image_url})]
+      end).to log_message severity: :WARN, message: %(~could not retrieve remote image: #{image_url})
+    end
+
     it 'should insert page at location of block macro if target is a PDF' do
       pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
       before
