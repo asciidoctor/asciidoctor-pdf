@@ -411,8 +411,12 @@ module Asciidoctor
       def build_pdf_options doc, theme
         case (page_margin = (doc.attr 'pdf-page-margin') || theme.page_margin)
         when ::Array
-          page_margin = page_margin.slice 0, 4 if page_margin.length > 4
-          page_margin = page_margin.map {|v| ::Numeric === v ? v : (str_to_pt v.to_s) }
+          if page_margin.empty?
+            page_margin = nil
+          else
+            page_margin = page_margin.slice 0, 4 if page_margin.length > 4
+            page_margin = page_margin.map {|v| ::Numeric === v ? v : (str_to_pt v.to_s) }
+          end
         when ::Numeric
           page_margin = [page_margin]
         when ::String
@@ -420,7 +424,7 @@ module Asciidoctor
             page_margin = nil
           elsif (page_margin.start_with? '[') && (page_margin.end_with? ']')
             if (page_margin = (page_margin.slice 1, page_margin.length - 2).rstrip).empty?
-              page_margin = [0]
+              page_margin = nil
             else
               if (page_margin = page_margin.split ',', -1).length > 4
                 page_margin = page_margin.slice 0, 4

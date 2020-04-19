@@ -201,6 +201,15 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 48.24, 793.926]
     end
 
+    it 'should use default margin if value of margin in theme is empty array' do
+      pdf_theme = { page_margin: [] }
+      input = 'content'
+      prawn = to_pdf input, pdf_theme: pdf_theme, analyze: :document
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      (expect prawn.page_margin).to eql [36, 36, 36, 36]
+      (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 36.0, 793.926]
+    end
+
     it 'should coerce margin string values to numbers' do
       pdf_theme = { page_margin: ['0.5in', '0.67in', '0.67in', '0.75in'] }
       input = 'content'
@@ -252,6 +261,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       pdf = to_pdf input, analyze: true
       (expect prawn.page_margin).to eql [32.5, 28.0, 32.5, 28.0]
       (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 28.0, 797.426]
+    end
+
+    it 'should use default margin if value of pdf-page-margin is empty array' do
+      input = %(:pdf-page-margin: []\n\ncontent)
+      prawn = to_pdf input, analyze: :document
+      pdf = to_pdf input, analyze: true
+      (expect prawn.page_margin).to eql [36, 36, 36, 36]
+      (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 36.0, 793.926]
     end
 
     it 'should use recto/verso margins when media=prepress', visual: true do

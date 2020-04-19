@@ -57,6 +57,7 @@ Bug Fixes::
 * use "toc" as the default dest name for the macro toc
 * position page split indicator correctly when block has transparent border
 * replace block macro with missing PDF target with alt text
+* consistently use default margin when page margin resolves to empty array
 
 Compliance::
 
