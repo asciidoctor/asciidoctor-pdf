@@ -14,6 +14,7 @@ Open Source.
 :sectnums:
 :toc:
 :toclevels: 3
+:xrefstyle: short
 ifeval::["{asciidoctor-version}" < "1.5.7"]
 :legacy-footnoteref:
 endif::[]
