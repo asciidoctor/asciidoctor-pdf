@@ -523,7 +523,7 @@ module Asciidoctor
             (next_page_margin = @page_margin_by_side[page_number == 1 ? :cover : page_side]) != page_margin
           set_page_margin next_page_margin
         end
-        if @page_bg_color && @page_bg_color != 'FFFFFF'
+        unless @page_bg_color == 'FFFFFF'
           tare = true
           fill_absolute_bounds @page_bg_color
         end
