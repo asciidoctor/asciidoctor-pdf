@@ -242,7 +242,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     it 'should not fail if theme file is empty' do
       theme = subject.load_file fixture_file 'empty-theme.yml'
       (expect theme).to be_an OpenStruct
-      (expect theme).to eql subject.load_base_theme
+      (expect theme).to eql OpenStruct.new
     end
 
     it 'should throw error that includes filename and reason if theme is indented using tabs' do
@@ -307,9 +307,9 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.table_border_style).to be_nil
     end
 
-    it 'should inherit from base theme when loading custom theme' do
+    it 'should not inherit from base theme when loading custom theme' do
       theme = subject.load_theme fixture_file 'empty-theme.yml'
-      (expect theme.table_border_style).to eql 'solid'
+      (expect theme.table_border_style).to be_nil
     end
 
     it 'should not inherit from base theme if custom theme extends nothing' do

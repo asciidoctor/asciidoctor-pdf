@@ -92,24 +92,20 @@ module Asciidoctor
           line.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || (m[:k].end_with? 'color') ? "'#{m[:v]}'" : m[:v]}) }
         }.join unless (::File.dirname filename) == ThemesDir
         yaml_data = ::SafeYAML.load data, filename
-        if ::Hash === yaml_data && (yaml_data.key? 'extends')
-          if (extends = yaml_data.delete 'extends')
-            [*extends].each do |extend_path|
-              if extend_path == 'base'
-                theme_data = theme_data ? (::OpenStruct.new theme_data.to_h.merge load_base_theme.to_h) : load_base_theme
-                next
-              elsif extend_path == 'default' || extend_path == 'default-with-fallback-font'
-                extend_path, extend_theme_dir = resolve_theme_file extend_path, ThemesDir
-              elsif extend_path.start_with? './'
-                extend_path, extend_theme_dir = resolve_theme_file extend_path, (::File.dirname filename)
-              else
-                extend_path, extend_theme_dir = resolve_theme_file extend_path, theme_dir
-              end
-              theme_data = load_file extend_path, theme_data, extend_theme_dir
+        if ::Hash === yaml_data && (extends = yaml_data.delete 'extends')
+          [*extends].each do |extend_path|
+            if extend_path == 'base'
+              theme_data = theme_data ? (::OpenStruct.new theme_data.to_h.merge load_base_theme.to_h) : load_base_theme
+              next
+            elsif extend_path == 'default' || extend_path == 'default-with-fallback-font'
+              extend_path, extend_theme_dir = resolve_theme_file extend_path, ThemesDir
+            elsif extend_path.start_with? './'
+              extend_path, extend_theme_dir = resolve_theme_file extend_path, (::File.dirname filename)
+            else
+              extend_path, extend_theme_dir = resolve_theme_file extend_path, theme_dir
             end
+            theme_data = load_file extend_path, theme_data, extend_theme_dir
           end
-        else
-          theme_data ||= ((::File.dirname filename) == ThemesDir ? nil : load_base_theme)
         end
         new.load yaml_data, theme_data
       end
