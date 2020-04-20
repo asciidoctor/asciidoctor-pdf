@@ -108,6 +108,46 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect text[-1][:font_size]).to be 8
   end
 
+  it 'should be able to use footnotes_line_spacing key in theme to control spacing between footnotes' do
+    pdf_theme = {
+      base_line_height: 1,
+      base_font_size: 10,
+      footnotes_font_size: 10,
+      footnotes_item_spacing: 3,
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    line a{empty}footnote:[Footnote on line a] +
+    line b{empty}footnote:[Footnote on line b]
+    EOS
+
+    line_a_text = (pdf.find_text 'line a')[0]
+    line_b_text = (pdf.find_text 'line b')[0]
+    fn_a_text = (pdf.find_text %r/Footnote on line a$/)[0]
+    fn_b_text = (pdf.find_text %r/Footnote on line b$/)[0]
+
+    (expect ((line_a_text[:y] - line_b_text[:y]).round 2) + 3).to eql ((fn_a_text[:y] - fn_b_text[:y]).round 2)
+  end
+
+  it 'should not add spacing between footnote items if footnotes_item_spacing key is nil in theme' do
+    pdf_theme = {
+      base_line_height: 1,
+      base_font_size: 10,
+      footnotes_font_size: 10,
+      footnotes_item_spacing: nil,
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    line a{empty}footnote:[Footnote on line a] +
+    line b{empty}footnote:[Footnote on line b]
+    EOS
+
+    line_a_text = (pdf.find_text 'line a')[0]
+    line_b_text = (pdf.find_text 'line b')[0]
+    fn_a_text = (pdf.find_text %r/Footnote on line a$/)[0]
+    fn_b_text = (pdf.find_text %r/Footnote on line b$/)[0]
+
+    (expect (line_a_text[:y] - line_b_text[:y]).round 2).to eql ((fn_a_text[:y] - fn_b_text[:y]).round 2)
+  end
+
   it 'should add title to footnotes block if footnotes-title is set' do
     pdf = to_pdf <<~'EOS', analyze: true
     :footnotes-title: Footnotes
