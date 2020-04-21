@@ -257,15 +257,18 @@ class LineInspector < PDF::Inspector
   def set_line_dash a, _b
     if a.empty?
       @style = :solid
-    else
-      gap, len = a
-      if gap == len
-        @style = :dashed
-      elsif gap < len
+    elsif @width
+      gap = a[0]
+      if gap == @width
         @style = :dotted
+      elsif gap > @width
+        @style = :dashed
       else
         @style = :solid
       end
+    else
+      # NOTE we can only guess because we don't know the width of the line
+      @style = :dashed
     end
   end
 
