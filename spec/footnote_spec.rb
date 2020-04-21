@@ -112,7 +112,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
       $VERBOSE = old_verbose
       Warning.singleton_class.send :remove_method, :warn
     end
-  end
+  end if RUBY_VERSION >= '2.5.0'
 
   it 'should place footnotes at the end of document when doctype is not book' do
     pdf = to_pdf <<~'EOS', attributes_overrides: { 'notitle' => '' }, analyze: true
