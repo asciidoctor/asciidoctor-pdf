@@ -110,7 +110,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
       (expect warnings).to be_empty
     ensure
       $VERBOSE = old_verbose
-      Warning.singleton_class.remove_method :warn
+      Warning.singleton_class.send :remove_method, :warn
     end
   end
 
