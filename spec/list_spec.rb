@@ -1063,6 +1063,18 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
       (expect to_file).to visually_match 'list-qanda.pdf'
     end
+
+    it 'should convert question with no answer in Q & A list' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [qanda]
+      Question:: Answer
+      Unanswerable Question::
+      EOS
+
+      unanswerable_q_text = (pdf.find_text 'Unanswerable Question')[0]
+      (expect pdf.lines).to eql ['1. Question', 'Answer', '2. Unanswerable Question']
+      (expect unanswerable_q_text[:font_name]).to eql 'NotoSerif-Italic'
+    end
   end
 
   context 'Callout' do
