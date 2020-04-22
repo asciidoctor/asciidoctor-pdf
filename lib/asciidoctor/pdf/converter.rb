@@ -1306,7 +1306,23 @@ module Asciidoctor
         marker_style[:font_size] = font_size
         marker_style[:line_height] = @theme.base_line_height
         case (list_type = list.context)
-        when :ulist
+        when :dlist
+          # NOTE: list.style is 'qanda'
+          complex = node[1]&.compound?
+          @list_numerals << (index = @list_numerals.pop).next
+          marker = %(#{index}.)
+        when :olist
+          complex = node.compound?
+          if (index = @list_numerals.pop)
+            if index == ''
+              marker = ''
+            else
+              marker = %(#{index}.)
+              dir = (node.parent.option? 'reversed') ? :pred : :next
+              @list_numerals << (index.public_send dir)
+            end
+          end
+        else # :ulist
           complex = node.compound?
           if (marker_type = @list_bullets[-1])
             if marker_type == :checkbox
@@ -1322,26 +1338,6 @@ module Asciidoctor
               marker_style[prop] = @theme[%(ulist_marker_#{marker_type}_#{prop})] || @theme[%(ulist_marker_#{prop})] || marker_style[prop]
             end if marker
           end
-        when :olist
-          complex = node.compound?
-          if (index = @list_numerals.pop)
-            if index == ''
-              marker = ''
-            else
-              marker = %(#{index}.)
-              dir = (node.parent.option? 'reversed') ? :pred : :next
-              @list_numerals << (index.public_send dir)
-            end
-          end
-        when :dlist
-          # NOTE: list.style is 'qanda'
-          complex = node[1]&.compound?
-          @list_numerals << (index = @list_numerals.pop).next
-          marker = %(#{index}.)
-        else
-          complex = node.compound?
-          logger.warn %(unknown list type #{list_type.inspect}) unless scratch?
-          marker = @theme.ulist_marker_disc_content || Bullets[:disc]
         end
 
         if marker
