@@ -68,7 +68,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
 
     *|* icon:arrows-alt-h[fw] *|* icon:arrows-alt-v[fw] *|*
     EOS
-    guide_text = pdf.find_text string: '|', font_name: 'NotoSerif-Bold'
+    guide_text = pdf.find_text '|', font_name: 'NotoSerif-Bold'
     first_icon_gap = (guide_text[1][:x] - guide_text[0][:x]).round 2
     second_icon_gap = (guide_text[2][:x] - guide_text[1][:x]).round 2
     (expect first_icon_gap).to eql second_icon_gap

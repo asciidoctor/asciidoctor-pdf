@@ -930,15 +930,15 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       pdf = to_pdf input, enable_footer: true, pdf_theme: pdf_theme, analyze: true
 
       footer_y = (pdf.find_text 'footer: ')[0][:y]
-      bold_text = (pdf.find_text string: 'bold', page_number: 1, y: footer_y)[0]
+      bold_text = (pdf.find_text 'bold', page_number: 1, y: footer_y)[0]
       (expect bold_text).not_to be_nil
-      italic_text = (pdf.find_text string: 'italic', page_number: 1, y: footer_y)[0]
+      italic_text = (pdf.find_text 'italic', page_number: 1, y: footer_y)[0]
       (expect italic_text).not_to be_nil
-      mono_text = (pdf.find_text string: 'mono', page_number: 1, y: footer_y)[0]
+      mono_text = (pdf.find_text 'mono', page_number: 1, y: footer_y)[0]
       (expect mono_text).not_to be_nil
-      link_text = (pdf.find_text string: 'Asciidoctor', page_number: 2, y: footer_y)[0]
+      link_text = (pdf.find_text 'Asciidoctor', page_number: 2, y: footer_y)[0]
       (expect link_text).not_to be_nil
-      convert_text = (pdf.find_text string: %( AsciiDoc \u2192 PDF), page_number: 2, y: footer_y)[0]
+      convert_text = (pdf.find_text %( AsciiDoc \u2192 PDF), page_number: 2, y: footer_y)[0]
       (expect convert_text).not_to be_nil
 
       pdf = to_pdf input, enable_footer: true, pdf_theme: pdf_theme
@@ -1112,12 +1112,12 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       page_width = (get_page_size pdf)[0]
-      p1_header_text = (pdf.find_text string: 'H', page_number: 1)[0]
-      p1_footer_text = (pdf.find_text string: 'F', page_number: 1)[0]
+      p1_header_text = (pdf.find_text 'H', page_number: 1)[0]
+      p1_footer_text = (pdf.find_text 'F', page_number: 1)[0]
       (expect p1_header_text[:x].round).to eql 10
       (expect p1_footer_text[:x].round).to eql 10
-      p2_header_text = (pdf.find_text string: 'H', page_number: 2)[0]
-      p2_footer_text = (pdf.find_text string: 'F', page_number: 2)[0]
+      p2_header_text = (pdf.find_text 'H', page_number: 2)[0]
+      p2_footer_text = (pdf.find_text 'F', page_number: 2)[0]
       (expect (page_width - p2_header_text[:x] - p2_header_text[:width]).round).to eql 10
       (expect (page_width - p2_footer_text[:x] - p2_footer_text[:width]).round).to eql 10
     end
@@ -1146,12 +1146,12 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       page_width = (get_page_size pdf)[0]
-      p1_header_text = (pdf.find_text string: 'H', page_number: 1)[0]
-      p1_footer_text = (pdf.find_text string: 'F', page_number: 1)[0]
+      p1_header_text = (pdf.find_text 'H', page_number: 1)[0]
+      p1_footer_text = (pdf.find_text 'F', page_number: 1)[0]
       (expect p1_header_text[:x].round).to eql 48
       (expect p1_footer_text[:x].round).to eql 48
-      p2_header_text = (pdf.find_text string: 'H', page_number: 2)[0]
-      p2_footer_text = (pdf.find_text string: 'F', page_number: 2)[0]
+      p2_header_text = (pdf.find_text 'H', page_number: 2)[0]
+      p2_footer_text = (pdf.find_text 'F', page_number: 2)[0]
       (expect (page_width - p2_header_text[:x] - p2_header_text[:width]).round).to eql 48
       (expect (page_width - p2_footer_text[:x] - p2_footer_text[:width]).round).to eql 48
     end
@@ -1184,12 +1184,12 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       page_width = (get_page_size pdf)[0]
-      p1_header_text = (pdf.find_text string: 'H', page_number: 1)[0]
-      p1_footer_text = (pdf.find_text string: 'F', page_number: 1)[0]
+      p1_header_text = (pdf.find_text 'H', page_number: 1)[0]
+      p1_footer_text = (pdf.find_text 'F', page_number: 1)[0]
       (expect p1_header_text[:x].round).to eql 50
       (expect p1_footer_text[:x].round).to eql 50
-      p2_header_text = (pdf.find_text string: 'H', page_number: 2)[0]
-      p2_footer_text = (pdf.find_text string: 'F', page_number: 2)[0]
+      p2_header_text = (pdf.find_text 'H', page_number: 2)[0]
+      p2_footer_text = (pdf.find_text 'F', page_number: 2)[0]
       (expect (page_width - p2_header_text[:x] - p2_header_text[:width]).round).to eql 50
       (expect (page_width - p2_footer_text[:x] - p2_footer_text[:width]).round).to eql 50
     end
@@ -1222,12 +1222,12 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       page_width = (get_page_size pdf)[0]
-      p1_header_text = (pdf.find_text string: 'H', page_number: 1)[0]
-      p1_footer_text = (pdf.find_text string: 'F', page_number: 1)[0]
+      p1_header_text = (pdf.find_text 'H', page_number: 1)[0]
+      p1_footer_text = (pdf.find_text 'F', page_number: 1)[0]
       (expect p1_header_text[:x].round).to eql 48
       (expect p1_footer_text[:x].round).to eql 48
-      p2_header_text = (pdf.find_text string: 'H', page_number: 2)[0]
-      p2_footer_text = (pdf.find_text string: 'F', page_number: 2)[0]
+      p2_header_text = (pdf.find_text 'H', page_number: 2)[0]
+      p2_footer_text = (pdf.find_text 'F', page_number: 2)[0]
       (expect (page_width - p2_header_text[:x] - p2_header_text[:width]).round).to eql 48
       (expect (page_width - p2_footer_text[:x] - p2_footer_text[:width]).round).to eql 48
     end

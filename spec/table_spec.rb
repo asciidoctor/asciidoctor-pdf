@@ -1459,8 +1459,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect a1_text[:page_number]).to be 1
       (expect a3_text[:x]).to be > (page_width * 0.5)
       (expect a3_text[:page_number]).to be 2
-      first_list_item_text = (pdf.find_text string: 'list item', page_number: 2)[0]
-      last_list_item_text = (pdf.find_text string: 'list item', page_number: 3)[-1]
+      first_list_item_text = (pdf.find_text 'list item', page_number: 2)[0]
+      last_list_item_text = (pdf.find_text 'list item', page_number: 3)[-1]
       # NOTE if this is off, the margin box got mangled
       (expect last_list_item_text[:x]).to eql first_list_item_text[:x]
     end

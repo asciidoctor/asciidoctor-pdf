@@ -182,7 +182,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       chapter content
       EOS
 
-      (expect pdf.find_text string: 'Preface', page_number: 2, font_size: 22).to have_size 1
+      (expect pdf.find_text 'Preface', page_number: 2, font_size: 22).to have_size 1
       preamble_text = pdf.find_text 'preamble content'
       (expect preamble_text).to have_size 1
       (expect preamble_text[0][:font_size]).to eql 10.5

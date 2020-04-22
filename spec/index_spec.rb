@@ -45,15 +45,15 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     == Index
     EOS
 
-    index_text = pdf.find_text string: 'Index', page_number: 4, font_size: 22
+    index_text = pdf.find_text 'Index', page_number: 4, font_size: 22
     (expect index_text).to have_size 1
-    category_c_text = pdf.find_text string: 'C', page_number: 4
+    category_c_text = pdf.find_text 'C', page_number: 4
     (expect category_c_text).to have_size 1
     (expect category_c_text[0][:font_name].downcase).to include 'bold'
-    category_d_text = pdf.find_text string: 'D', page_number: 4
+    category_d_text = pdf.find_text 'D', page_number: 4
     (expect category_d_text).to have_size 1
     (expect category_d_text[0][:font_name].downcase).to include 'bold'
-    category_k_text = pdf.find_text string: 'K', page_number: 4
+    category_k_text = pdf.find_text 'K', page_number: 4
     (expect category_k_text).to have_size 1
     (expect category_k_text[0][:font_name].downcase).to include 'bold'
     (expect (pdf.lines pdf.find_text page_number: 4).join ?\n).to eql <<~'EOS'.chomp
@@ -90,7 +90,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     == Index
     EOS
 
-    index_text = pdf.find_text string: 'Index', page_number: 3, font_size: 22
+    index_text = pdf.find_text 'Index', page_number: 3, font_size: 22
     (expect index_text).to have_size 1
     (expect pdf.lines).to include 'dogs, 1'
   end
@@ -141,9 +141,9 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     == Index
     EOS
 
-    index_text = pdf.find_text string: 'Chapter 3. Index', page_number: 4
+    index_text = pdf.find_text 'Chapter 3. Index', page_number: 4
     (expect index_text).to be_empty
-    index_text = pdf.find_text string: 'Index', page_number: 4
+    index_text = pdf.find_text 'Index', page_number: 4
     (expect index_text).to have_size 1
   end
 
@@ -184,12 +184,12 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     == Index
     EOS
 
-    category_c_text = pdf.find_text string: 'C', page_number: 3
+    category_c_text = pdf.find_text 'C', page_number: 3
     (expect category_c_text).to have_size 1
     (expect category_c_text[0][:font_name].downcase).to include 'bold'
-    category_b_text = pdf.find_text string: 'B', page_number: 3
+    category_b_text = pdf.find_text 'B', page_number: 3
     (expect category_b_text).to be_empty
-    category_l_text = pdf.find_text string: 'L', page_number: 3
+    category_l_text = pdf.find_text 'L', page_number: 3
     (expect category_l_text).to be_empty
     (expect (pdf.lines pdf.find_text page_number: 3).join ?\n).to eql <<~'EOS'.chomp
     Index

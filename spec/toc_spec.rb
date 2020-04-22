@@ -30,12 +30,12 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Conclusion
       EOS
       (expect pdf.pages).to have_size 5
-      (expect pdf.find_text string: 'Document Title', page_number: 1).not_to be_empty
-      (expect pdf.find_text string: 'Table of Contents', page_number: 2).not_to be_empty
-      (expect pdf.find_text string: '1', page_number: 2).not_to be_empty
-      (expect pdf.find_text string: '2', page_number: 2).not_to be_empty
-      (expect pdf.find_text string: '3', page_number: 2).not_to be_empty
-      (expect pdf.find_text string: 'Introduction', page_number: 3).not_to be_empty
+      (expect pdf.find_text 'Document Title', page_number: 1).not_to be_empty
+      (expect pdf.find_text 'Table of Contents', page_number: 2).not_to be_empty
+      (expect pdf.find_text '1', page_number: 2).not_to be_empty
+      (expect pdf.find_text '2', page_number: 2).not_to be_empty
+      (expect pdf.find_text '3', page_number: 2).not_to be_empty
+      (expect pdf.find_text 'Introduction', page_number: 3).not_to be_empty
     end
 
     it 'should space items in toc evently even if title is entirely monospace' do
@@ -49,10 +49,10 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       == End
       EOS
-      (expect pdf.find_text string: 'Table of Contents', page_number: 2).not_to be_empty
-      beginning_pagenum_text = (pdf.find_text string: '1', page_number: 2)[0]
-      middle_pagenum_text = (pdf.find_text string: '2', page_number: 2)[0]
-      end_pagenum_text = (pdf.find_text string: '3', page_number: 2)[0]
+      (expect pdf.find_text 'Table of Contents', page_number: 2).not_to be_empty
+      beginning_pagenum_text = (pdf.find_text '1', page_number: 2)[0]
+      middle_pagenum_text = (pdf.find_text '2', page_number: 2)[0]
+      end_pagenum_text = (pdf.find_text '3', page_number: 2)[0]
       beginning_to_middle_spacing = (beginning_pagenum_text[:y] - middle_pagenum_text[:y]).round 2
       middle_to_end_spacing = (middle_pagenum_text[:y] - end_pagenum_text[:y]).round 2
       (expect beginning_to_middle_spacing).to eql middle_to_end_spacing
@@ -483,8 +483,8 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       EOS
       pdf = to_pdf input, analyze: true
       (expect pdf.pages).to have_size 2
-      (expect pdf.find_text string: 'Table of Contents', page_number: 1).to have_size 1
-      (expect pdf.find_text string: 'Introduction', page_number: 1).to have_size 2
+      (expect pdf.find_text 'Table of Contents', page_number: 1).to have_size 1
+      (expect pdf.find_text 'Introduction', page_number: 1).to have_size 2
       doctitle_text = (pdf.find_text 'Document Title')[0]
       toc_title_text = (pdf.find_text 'Table of Contents')[0]
       toc_bottom_text = (pdf.find_text '2')[0]
@@ -506,7 +506,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       EOS
 
       toc_title_text = (pdf.find_text 'Table of Contents')[0]
-      sect_a_text = (pdf.find_text string: 'Section A', font_size: 22)[0]
+      sect_a_text = (pdf.find_text 'Section A', font_size: 22)[0]
       (expect toc_title_text[:y]).to be > sect_a_text[:y]
     end
 
@@ -584,8 +584,8 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       EOS
       pdf = to_pdf input, analyze: true
       (expect pdf.pages).to have_size 2
-      (expect pdf.find_text string: 'Table of Contents', page_number: 1).to have_size 1
-      (expect pdf.find_text string: 'Introduction', page_number: 1).to have_size 2
+      (expect pdf.find_text 'Table of Contents', page_number: 1).to have_size 1
+      (expect pdf.find_text 'Introduction', page_number: 1).to have_size 2
       doctitle_text = (pdf.find_text 'Document Title')[0]
       toc_title_text = (pdf.find_text 'Table of Contents')[0]
       toc_bottom_text = (pdf.find_text '2')[0]

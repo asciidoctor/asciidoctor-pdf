@@ -239,7 +239,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       * last
       EOS
 
-      marker_texts = pdf.find_text string: '•', page_number: 2
+      marker_texts = pdf.find_text '•', page_number: 2
       (expect marker_texts).to have_size 2
       (expect marker_texts[0][:x]).to eql marker_texts[1][:x]
     end

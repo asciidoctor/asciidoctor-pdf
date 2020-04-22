@@ -79,8 +79,12 @@ class EnhancedPDFTextInspector < PDF::Inspector
     @pages = []
   end
 
-  def find_text filter
-    filter = { string: filter } unless ::Hash === filter
+  def find_text string, filter = {}
+    if ::Hash === string
+      filter = string.merge filter
+    else
+      filter[:string] = string
+    end
     if ::Regexp === filter[:string]
       string_rx = filter.delete :string
       @text.select {|candidate| filter <= candidate && (string_rx.match? candidate[:string]) }
