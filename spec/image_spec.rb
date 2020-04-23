@@ -273,6 +273,25 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:y]).to eql 276.036
     end
 
+    it 'should set color space on page that only has image and stamp' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { footer_recto_right_content: 'pg {page-number}' }, enable_footer: true
+      image::square.svg[]
+      EOS
+
+      (expect (pdf.page 1).text.squeeze).to eql 'pg 1'
+      raw_content = (pdf.page 1).raw_content
+      color_space_idx = raw_content.index <<~'EOS'
+      /DeviceRGB cs
+      0.0 0.0 0.0 scn
+      /DeviceRGB CS
+      0.0 0.0 0.0 SCN
+      EOS
+      stamp_idx = raw_content.index %(\n/Stamp)
+      (expect color_space_idx).to be > 0
+      (expect stamp_idx).to be > 0
+      (expect stamp_idx).to be > color_space_idx
+    end
+
     it 'should scale down SVG at top of page if dimensions exceed page size', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-scale-to-fit-page.pdf'
       :pdf-page-size: Letter
@@ -463,6 +482,25 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       to_file = to_pdf_file 'image::tux.png[]', 'image-png-implicit-width.pdf'
 
       (expect to_file).to visually_match 'image-png-implicit-width.pdf'
+    end
+
+    it 'should set color space on page that only has image and stamp' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { footer_recto_right_content: 'pg {page-number}' }, enable_footer: true
+      image::tux.png[]
+      EOS
+
+      (expect (pdf.page 1).text.squeeze).to eql 'pg 1'
+      raw_content = (pdf.page 1).raw_content
+      color_space_idx = raw_content.index <<~'EOS'
+      /DeviceRGB cs
+      0.0 0.0 0.0 scn
+      /DeviceRGB CS
+      0.0 0.0 0.0 SCN
+      EOS
+      stamp_idx = raw_content.index %(\n/Stamp)
+      (expect color_space_idx).to be > 0
+      (expect stamp_idx).to be > 0
+      (expect stamp_idx).to be > color_space_idx
     end
 
     it 'should fail to embed interlaced PNG image with warning' do
