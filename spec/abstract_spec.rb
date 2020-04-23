@@ -3,6 +3,17 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Abstract' do
+  it 'should convert document with only abstract' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [abstract]
+    This article is hot air.
+    EOS
+
+    abstract_text = (pdf.find_text 'This article is hot air.')[0]
+    (expect abstract_text).not_to be_nil
+    (expect abstract_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+  end
+
   it 'should outdent abstract title and body' do
     pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36, abstract_title_align: :left }, analyze: true
     = Document Title
