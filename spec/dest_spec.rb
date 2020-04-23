@@ -117,12 +117,13 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   it 'should register dest for media macro that has an ID' do
     {
       image: 'tux.png',
+      svg: 'green-bar.svg',
       video: 'webcast.mp4',
       audio: 'podcast.mp3',
     }.each do |macro_name, target|
       pdf = to_pdf <<~EOS
       [#media]
-      #{macro_name}::#{target}[]
+      #{macro_name == :svg ? 'image' : macro_name.to_s}::#{target}[]
       EOS
 
       names = get_names pdf
