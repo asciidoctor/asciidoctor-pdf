@@ -273,6 +273,34 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:y]).to eql 276.036
     end
 
+    it 'should scale down SVG at top of page if dimensions exceed page size', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-svg-scale-to-fit-page.pdf'
+      :pdf-page-size: Letter
+
+      image::watermark.svg[pdfwidth=100%]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-scale-to-fit-page.pdf'
+    end
+
+    it 'should scale down SVG not at top of page and advance to next page if dimensions exceed page size', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-svg-scale-to-fit-next-page-with-text.pdf'
+      :pdf-page-size: Letter
+
+      push
+
+      image
+
+      down
+
+      image::watermark.svg[pdfwidth=100%]
+      EOS
+
+      to_file = to_pdf_file %(image::#{to_file}[page=2]), 'image-svg-scale-to-fit-next-page.pdf'
+
+      (expect to_file).to visually_match 'image-svg-scale-to-fit-page.pdf'
+    end
+
     it 'should scale down SVG to fit bounds if width is set in SVG but not on image macro', visual: true do
       to_file = to_pdf_file 'image::green-bar-width.svg[]', 'image-svg-scale-to-fit-bounds.pdf'
 
