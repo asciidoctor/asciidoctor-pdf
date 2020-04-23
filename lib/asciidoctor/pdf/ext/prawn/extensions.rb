@@ -374,13 +374,12 @@ module Asciidoctor
       # NOTE override built-in fill_formatted_text_box to insert leading before second line when :first_line is true
       def fill_formatted_text_box text, opts
         merge_text_box_positioning_options opts
-        process_final_gap_option opts
         box = ::Prawn::Text::Formatted::Box.new text, opts
         remaining_text = box.render
         @no_text_printed = box.nothing_printed?
         @all_text_printed = box.everything_printed?
 
-        if @final_gap || (opts[:first_line] && !(@no_text_printed || @all_text_printed))
+        if ((defined? @final_gap) && @final_gap) || (opts[:first_line] && !(@no_text_printed || @all_text_printed))
           self.y -= box.height + box.line_gap + box.leading
         else
           self.y -= box.height
