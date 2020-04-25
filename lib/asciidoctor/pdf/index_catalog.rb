@@ -60,7 +60,7 @@ module Asciidoctor
 
       def link_dest_to_page anchor, physical_page_number
         if (dest = @dests[anchor])
-          virtual_page_number = physical_page_number - (@start_page_number - 1)
+          virtual_page_number = (dest[:page_sortable] = physical_page_number) - (@start_page_number - 1)
           dest[:page] = (virtual_page_number < 1 ? (RomanNumeral.new physical_page_number, :lower) : virtual_page_number).to_s
         end
       end
@@ -118,7 +118,7 @@ module Asciidoctor
       end
 
       def dests
-        @dests.select {|d| d.key? :page }.sort {|a, b| a[:page] <=> b[:page] }
+        @dests.select {|d| d.key? :page }.sort_by {|d| d[:page_sortable] }
       end
 
       def container?

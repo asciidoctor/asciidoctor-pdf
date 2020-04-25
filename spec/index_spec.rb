@@ -273,6 +273,38 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect terms).to eql %w(anchor AsciiDoc Asciidoctor authoring)
   end
 
+  it 'should sort arabic page numbers in index term numerically' do
+    index = Asciidoctor::PDF::IndexCatalog.new
+    [11, 10, 100].each do |pgnum|
+      index.store_primary_term 'monkey', { anchor: (anchor_name = index.next_anchor_name) }
+      index.link_dest_to_page anchor_name, pgnum
+    end
+    monkey_term = index.categories[0].terms[0]
+    (expect monkey_term.dests.map {|it| it[:page] }).to eql %w(10 11 100)
+  end
+
+  it 'should sort roman page numbers in index term numerically' do
+    index = Asciidoctor::PDF::IndexCatalog.new
+    index.start_page_number = 101
+    [11, 10, 100].each do |pgnum|
+      index.store_primary_term 'monkey', { anchor: (anchor_name = index.next_anchor_name) }
+      index.link_dest_to_page anchor_name, pgnum
+    end
+    monkey_term = index.categories[0].terms[0]
+    (expect monkey_term.dests.map {|it| it[:page] }).to eql %w(x xi c)
+  end
+
+  it 'should sort mixed page numbers in index term numerically' do
+    index = Asciidoctor::PDF::IndexCatalog.new
+    index.start_page_number = 101
+    [11, 10, 100, 101].each do |pgnum|
+      index.store_primary_term 'monkey', { anchor: (anchor_name = index.next_anchor_name) }
+      index.link_dest_to_page anchor_name, pgnum
+    end
+    monkey_term = index.categories[0].terms[0]
+    (expect monkey_term.dests.map {|it| it[:page] }).to eql %w(x xi c 1)
+  end
+
   it 'should not combine range if same index entry occurs on sequential pages when media is screen' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
@@ -320,6 +352,23 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect index_lines).to include 'coming soon, 1-3'
     (expect index_lines).to include 'in draft, 2'
     (expect index_lines).to include 'almost here, 1, 3'
+  end
+
+  it 'should sort page ranges using first page in sequence when media=print' do
+    indexterm_pagenums = [1, 10, 11, 13, 15, 16, 100, 150]
+    pagebreak = %(\n\n<<<\n\n)
+    input_lines = (1.upto 150).map {|pagenum| (indexterm_pagenums.include? pagenum) ? '((monkey))' : 'business' }
+    pdf = to_pdf <<~EOS, analyze: true
+    :doctype: book
+    :media: print
+
+    #{input_lines.join pagebreak}
+
+    [index]
+    == Index
+    EOS
+
+    (expect pdf.lines pdf.pages[-1][:text]).to include 'monkey, 1, 10-11, 13, 15-16, 100, 150'
   end
 
   it 'should apply hanging indent to wrapped lines equal to twice level indent' do
