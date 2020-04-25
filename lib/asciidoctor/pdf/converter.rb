@@ -907,6 +907,7 @@ module Asciidoctor
       end
 
       def convert_example node
+        return convert_open node if node.option? 'collapsible'
         add_dest_for_block node if node.id
         theme_margin :block, :top
         caption_height = node.title? ? (layout_caption node, category: :example, dry_run: true) : 0
@@ -933,7 +934,7 @@ module Asciidoctor
         keep_together_if node.option? 'unbreakable' do
           push_scratch doc if scratch?
           add_dest_for_block node if node.id
-          layout_caption node.title if node.title?
+          node.context == :example ? (layout_caption %(\u25bc #{node.title})) : (layout_caption node.title) if node.title?
           traverse node
           pop_scratch doc if scratch?
         end
