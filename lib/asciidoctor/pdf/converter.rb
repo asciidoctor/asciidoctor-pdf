@@ -928,17 +928,14 @@ module Asciidoctor
       end
 
       def convert_open node
-        if node.style == 'abstract'
-          convert_abstract node
-        else
-          doc = node.document
-          keep_together_if node.option? 'unbreakable' do
-            push_scratch doc if scratch?
-            add_dest_for_block node if node.id
-            layout_caption node.title if node.title?
-            traverse node
-            pop_scratch doc if scratch?
-          end
+        return convert_abstract node if node.style == 'abstract'
+        doc = node.document
+        keep_together_if node.option? 'unbreakable' do
+          push_scratch doc if scratch?
+          add_dest_for_block node if node.id
+          layout_caption node.title if node.title?
+          traverse node
+          pop_scratch doc if scratch?
         end
       end
 
