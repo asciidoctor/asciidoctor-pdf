@@ -44,6 +44,39 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     (expect attribution_text[:x]).to eql last_quote_text[:x]
   end
 
+  it 'should escape bare ampersand in attribution' do
+    (expect do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [quote, J. Helliwell & B. McMahon]
+      The richer the metadata available to the scientist, the greater the potential for new discoveries.
+      EOS
+
+      (expect pdf.lines[-1]).to eql %(\u2014 J. Helliwell & B. McMahon)
+    end).to not_log_message
+  end
+
+  it 'should escape bare ampersand in citetitle' do
+    (expect do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [quote, J. Helliwell & B. McMahon, Melbourne Congress & General Assembly of the IUCr]
+      The richer the metadata available to the scientist, the greater the potential for new discoveries.
+      EOS
+
+      (expect pdf.lines[-1]).to eql %(\u2014 J. Helliwell & B. McMahon, Melbourne Congress & General Assembly of the IUCr)
+    end).to not_log_message
+  end
+
+  it 'should render character reference in attribute if enclosed in single quotes' do
+    (expect do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [quote, J. Helliwell & B. McMahon &#169; IUCr]
+      The richer the metadata available to the scientist, the greater the potential for new discoveries.
+      EOS
+
+      (expect pdf.lines[-1]).to eql %(\u2014 J. Helliwell & B. McMahon \u00a9 IUCr)
+    end).to not_log_message
+  end
+
   it 'should not draw left border if border_left_width is 0' do
     pdf = to_pdf <<~'EOS', pdf_theme: { blockquote_border_left_width: 0 }, analyze: :line
     ____

@@ -21,6 +21,7 @@ module Asciidoctor
       }).default = ??
       SanitizeXMLRx = /<[^>]+>/
       CharRefRx = /&(?:amp;)?(?:([a-z][a-z]+\d{0,2})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
+      UnescapedAmpersandRx = /&(?!(?:[a-z][a-z]+\d{0,2}|#(?:\d\d\d{0,4}|x[a-f\d][a-f\d][a-f\d]{0,3}));)/
 
       # Strip leading, trailing and repeating whitespace, remove XML tags and
       # resolve all entities in the specified string.
@@ -35,6 +36,10 @@ module Asciidoctor
 
       def escape_xml string
         string.gsub InverseXMLSpecialCharsRx, InverseXMLSpecialChars
+      end
+
+      def escape_amp string
+        string.gsub UnescapedAmpersandRx, '&amp;'
       end
 
       def encode_quotes string

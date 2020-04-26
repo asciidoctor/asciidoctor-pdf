@@ -968,7 +968,15 @@ module Asciidoctor
             end
             if node.attr? 'attribution', nil, false
               theme_font %(#{category}_cite) do
-                layout_prose %(#{EmDash} #{[(node.attr 'attribution'), (node.attr 'citetitle', nil, false)].compact.join ', '}), align: :left, normalize: false
+                # NOTE temporary workaround to allow bare & to be used without having to wrap value in single quotes
+                attribution = node.attr 'attribution'
+                attribution = escape_amp attribution if attribution.include? '&'
+                attribution_parts = [attribution]
+                if (citetitle = node.attr 'citetitle', nil, false)
+                  citetitle = escape_amp citetitle if citetitle.include? '&'
+                  attribution_parts << citetitle
+                end
+                layout_prose %(#{EmDash} #{attribution_parts.join ', '}), align: :left, normalize: false
               end
             end
           end
