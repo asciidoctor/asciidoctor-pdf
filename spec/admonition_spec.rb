@@ -96,7 +96,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect label_text[:string]).to eql 'PRO TIP'
   end
 
-  # TODO this could use a deeper assertion
+  # TODO: this could use a deeper assertion
   it 'should compute width of label even when glyph is missing' do
     pdf = to_pdf <<~'EOS', analyze: true
     [NOTE,caption=⏻ Tip]
