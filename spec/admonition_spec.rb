@@ -85,6 +85,17 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect title_text[:font_color]).to eql '00AA00'
   end
 
+  it 'should use value of caption attribute as label' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [NOTE,caption=Pro Tip]
+    Use bundler!
+    EOS
+
+    label_text = pdf.text[0]
+    (expect label_text[:font_name]).to eql 'NotoSerif-Bold'
+    (expect label_text[:string]).to eql 'PRO TIP'
+  end
+
   it 'should not move cursor below block if block ends at top of page' do
     pdf = to_pdf <<~'EOS', analyze: true
     top of page
