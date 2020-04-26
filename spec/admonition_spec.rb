@@ -96,6 +96,18 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect label_text[:string]).to eql 'PRO TIP'
   end
 
+  # TODO this could use a deeper assertion
+  it 'should compute width of label even when glyph is missing' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [NOTE,caption=⏻ Tip]
+    Use bundler!
+    EOS
+
+    label_text = pdf.text[0]
+    (expect label_text[:font_name]).to eql 'NotoSerif-Bold'
+    (expect label_text[:string]).to eql '⏻ TIP'
+  end
+
   it 'should not move cursor below block if block ends at top of page' do
     pdf = to_pdf <<~'EOS', analyze: true
     top of page
