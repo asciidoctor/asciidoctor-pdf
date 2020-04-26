@@ -60,6 +60,8 @@ Bug Fixes::
 * replace block macro with missing PDF target with alt text
 * consistently use default margin when page margin resolves to empty array
 * sort page numbers in index numerically instead of lexicographically; sort mixed page number types correctly (#1657)
+* use informal title prefixed with down indicator for collapsible block (#1660)
+* don't apply border, shading, or padding to collapsible block (#1660)
 
 Compliance::
 

@@ -143,4 +143,22 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     inner_lines = lines.select {|it| it[:from][:x] == inner_left_x || it[:from][:x] == inner_right_x }
     (expect inner_lines).to have_size 4
   end
+
+  it 'should use informal title and no border or shading if collapsible option is set' do
+    input = <<~'EOS'
+    .Reveal Answer
+    [%collapsible]
+    ====
+    This is a PDF, so the answer is always visible.
+    ====
+    EOS
+
+    pdf = to_pdf input, analyze: true
+    lines = pdf.lines
+    (expect lines).to eql [%(\u25bc Reveal Answer), 'This is a PDF, so the answer is always visible.']
+    (expect pdf.text[0][:x]).to eql pdf.text[1][:x]
+
+    pdf = to_pdf input, analyze: :line
+    (expect pdf.lines).to be_empty
+  end
 end
