@@ -390,4 +390,24 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     hanging_indent = begin_text[:x] - fun_profit_text[:x]
     (expect hanging_indent.round).to eql (level_indent * 2).round
   end
+
+  it 'should not insert blank line if index term is forced to break' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+    :doctype: book
+    :notitle:
+
+    text(((flags,SHORT_FLAG)))(((flags,SUPER_LONG_FLAG_THAT_IS_FORCED_TO_BREAK)))
+
+    [index]
+    == Index
+    EOS
+
+    flags_text = (pdf.find_text 'flags', page_number: 2)[0]
+    short_flag_text = (pdf.find_text %r/^SHORT_FLAG/, page_number: 2)[0]
+    long_flag_text = (pdf.find_text %r/^SUPER_LONG_FLAG/, page_number: 2)[0]
+    line_gap = (flags_text[:y] - short_flag_text[:y]).round 2
+    (expect short_flag_text[:x]).to eql long_flag_text[:x]
+    (expect (short_flag_text[:y] - long_flag_text[:y]).round 2).to eql line_gap
+  end
 end
