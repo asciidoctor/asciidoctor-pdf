@@ -170,6 +170,21 @@ describe 'Asciidoctor::PDF::Converter - List' do
       end
     end
 
+    it 'should not insert extra blank line if list item text is forced to break' do
+      pdf = to_pdf <<~EOS, analyze: true
+      * #{'a' * 100}
+      * b +
+      b
+      EOS
+
+      a1_marker_text, b1_marker_text = pdf.find_text ?\u2022
+      a1_text, a2_text = pdf.find_text %r/^a+$/
+      b1_text, b2_text = pdf.find_text %r/^b$/
+      (expect a1_text[:y]).to eql a1_marker_text[:y]
+      (expect b1_text[:y]).to eql b1_marker_text[:y]
+      (expect (a1_text[:y] - a2_text[:y]).round 2).to eql ((b1_text[:y] - b2_text[:y]).round 2)
+    end
+
     it 'should use consistent line height even if list item is entirely monospace' do
       pdf = to_pdf <<~'EOS', analyze: true
       * foo
@@ -182,6 +197,25 @@ describe 'Asciidoctor::PDF::Converter - List' do
       first_to_second_spacing = (mark_texts[0][:y] - mark_texts[1][:y]).round 2
       second_to_third_spacing = (mark_texts[1][:y] - mark_texts[2][:y]).round 2
       (expect first_to_second_spacing).to eql second_to_third_spacing
+    end
+
+    it 'should apply consistent line height to wrapped line that only contained monospaced text' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      * A list item containing a `short code phrase` and a `slightly longer code phrase` and a `very long code phrase that wraps to the next line`
+      * B +
+      `code phrase for reference`
+      * C
+      EOS
+
+      mark_texts = pdf.find_text ?\u2022
+      a1_text = (pdf.find_text %r/^A /)[0]
+      b1_text = (pdf.find_text 'B')[0]
+      a_code_phrase_text, b_code_phrase_text = pdf.find_text %r/^code phrase /
+      (expect mark_texts).to have_size 3
+      item1_to_item2_spacing = (mark_texts[0][:y] - mark_texts[1][:y]).round 2
+      item2_to_item3_spacing = (mark_texts[1][:y] - mark_texts[2][:y]).round 2
+      (expect item1_to_item2_spacing).to eql item2_to_item3_spacing
+      (expect (a1_text[:y] - a_code_phrase_text[:y]).round 2).to eql ((b1_text[:y] - b_code_phrase_text[:y]).round 2)
     end
 
     it 'should apply correct margin if primary text of list item is blank' do

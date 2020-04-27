@@ -2837,7 +2837,6 @@ module Asciidoctor
           string = %(<a anchor="#{anchor}">#{string}</a>)
         end
         margin_top top_margin
-        string = ZeroWidthSpace + string if opts.delete :normalize_line_height
         # NOTE normalize makes endlines soft (replaces "\n" with ' ')
         inline_format_opts = { normalize: (opts.delete :normalize) != false }
         if (styles = opts.delete :styles)
@@ -3034,14 +3033,14 @@ module Asciidoctor
         sections.each do |sect|
           next if (num_levels_for_sect = (sect.attr 'toclevels', num_levels, false).to_i) < sect.level
           theme_font :toc, level: (sect.level + 1) do
-            sect_title = ZeroWidthSpace + (@text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title)
+            sect_title = @text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title
             pgnum_label_placeholder_width = rendered_width_of_string '0' * @toc_max_pagenum_digits
             # NOTE only write section title (excluding dots and page number) if this is a dry run
             if scratch?
               indent 0, pgnum_label_placeholder_width do
                 # FIXME: use layout_prose
                 # NOTE must wrap title in empty anchor element in case links are styled with different font family / size
-                typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true, hanging_indent: hanging_indent
+                typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true, hanging_indent: hanging_indent, normalize_line_height: true
               end
             else
               physical_pgnum = sect.attr 'pdf-page-start'
@@ -3055,7 +3054,7 @@ module Asciidoctor
               sect_title_fragments = text_formatter.format sect_title, inherited: sect_title_inherited
               indent 0, pgnum_label_placeholder_width do
                 sect_title_fragments[-1][:callback] = (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
-                typeset_formatted_text sect_title_fragments, line_metrics, hanging_indent: hanging_indent
+                typeset_formatted_text sect_title_fragments, line_metrics, hanging_indent: hanging_indent, normalize_line_height: true
                 start_dots = last_fragment_pos.right + hanging_indent
                 last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
                 # NOTE this will be incorrect if wrapped line is all monospace

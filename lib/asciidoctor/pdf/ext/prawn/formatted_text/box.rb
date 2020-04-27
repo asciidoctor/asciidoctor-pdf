@@ -3,6 +3,11 @@
 Prawn::Text::Formatted::Box.prepend (Module.new do
   include ::Asciidoctor::Logging
 
+  def initialize formatted_text, options = {}
+    super
+    formatted_text[0][:normalize_line_height] = true if options[:normalize_line_height] && !formatted_text.empty?
+  end
+
   def draw_fragment_overlay_styles fragment
     if (underline = (styles = fragment.styles).include? :underline) || (styles.include? :strikethrough)
       (doc = fragment.document).save_graphics_state do
