@@ -63,6 +63,7 @@ Bug Fixes::
 * sort page numbers in index numerically instead of lexicographically; sort mixed page number types correctly (#1657)
 * use informal title prefixed with down indicator for collapsible block (#1660)
 * don't apply border, shading, or padding to collapsible block (#1660)
+* escape bare ampersand in attribution and citetitle of quote or verse block (#1662)
 
 Compliance::
 
