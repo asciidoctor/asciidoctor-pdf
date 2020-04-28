@@ -546,7 +546,7 @@ module Asciidoctor
 
         type = nil
         title = sect.numbered_title formal: true
-        sep = (sect.attr 'separator', nil, false) || (sect.document.attr 'title-separator') || ''
+        sep = (sect.attr 'separator') || (sect.document.attr 'title-separator') || ''
         if !sep.empty? && title.include?(sep = %(#{sep} ))
           title, _, subtitle = title.rpartition sep
           title = %(#{title}\n<em class="subtitle">#{subtitle}</em>)
@@ -750,7 +750,7 @@ module Asciidoctor
         if (data_uri_enabled = doc.attr? 'data-uri')
           doc.remove_attr 'data-uri'
         end
-        if icons == 'font' && !(node.attr? 'icon', nil, false)
+        if icons == 'font' && !(node.attr? 'icon')
           label_text = type.to_sym
           icon_data = admonition_icon_data label_text
           label_width = label_min_width || ((icon_size = icon_data[:size] || 24) * 1.5)
@@ -966,13 +966,13 @@ module Asciidoctor
                 layout_prose content, normalize: false, align: :left, hyphenate: true
               end
             end
-            if node.attr? 'attribution', nil, false
+            if node.attr? 'attribution'
               theme_font %(#{category}_cite) do
                 # NOTE temporary workaround to allow bare & to be used without having to wrap value in single quotes
                 attribution = node.attr 'attribution'
                 attribution = escape_amp attribution if attribution.include? '&'
                 attribution_parts = [attribution]
-                if (citetitle = node.attr 'citetitle', nil, false)
+                if (citetitle = node.attr 'citetitle')
                   citetitle = escape_amp citetitle if citetitle.include? '&'
                   attribution_parts << citetitle
                 end
@@ -1096,7 +1096,7 @@ module Asciidoctor
           end
           list = List.new node.parent, list_style
           stack_subject = node.has_role? 'stack'
-          subject_stop = node.attr 'subject-stop', (stack_subject ? nil : ':'), false
+          subject_stop = node.attr 'subject-stop', (stack_subject ? nil : ':')
           node.items.each do |subjects, dd|
             subject = [*subjects].first.text
             if dd
@@ -1211,7 +1211,7 @@ module Asciidoctor
           list_numeral = 1
         end
         if list_numeral && list_numeral != '' &&
-            (start = (node.attr 'start', nil, false) || ((node.option? 'reversed') ? node.items.size : nil))
+            (start = (node.attr 'start') || ((node.option? 'reversed') ? node.items.size : nil))
           if (start = start.to_i) > 1
             (start - 1).times { list_numeral = list_numeral.next }
           elsif start < 1 && !(::String === list_numeral)
@@ -1333,8 +1333,8 @@ module Asciidoctor
           if (marker_type = @list_bullets[-1])
             if marker_type == :checkbox
               # QUESTION should we remove marker indent if not a checkbox?
-              if node.attr? 'checkbox', nil, false
-                marker_type = (node.attr? 'checked', nil, false) ? :checked : :unchecked
+              if node.attr? 'checkbox'
+                marker_type = (node.attr? 'checked') ? :checked : :unchecked
                 marker = @theme[%(ulist_marker_#{marker_type}_content)] || BallotBox[marker_type]
               end
             else
@@ -1422,7 +1422,7 @@ module Asciidoctor
               end
               # NOTE: import_page automatically advances to next page afterwards
               # QUESTION should we add destination to top of imported page?
-              if (pgnums = node.attr 'pages', nil, false)
+              if (pgnums = node.attr 'pages')
                 (resolve_pagenums pgnums).each_with_index do |pgnum, idx|
                   if idx == 0
                     import_page image_path, page: pgnum, replace: page.empty?, &add_dest_block
@@ -1448,7 +1448,7 @@ module Asciidoctor
 
         return on_image_error :missing, node, target, opts unless image_path
 
-        alignment = ((node.attr 'align', nil, false) || (resolve_alignment_from_role node.roles) || @theme.image_align || :left).to_sym
+        alignment = ((node.attr 'align') || (resolve_alignment_from_role node.roles) || @theme.image_align || :left).to_sym
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
         width = resolve_explicit_width node.attributes, bounds_width: (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
         # TODO: add `to_pt page_width` method to ViewportWidth type
@@ -1506,7 +1506,7 @@ module Asciidoctor
                 logger.warn %(problem encountered in image: #{image_path}; #{img_warning})
               end unless scratch?
               draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? && (node.has_role? 'noborder')
-              if (link = node.attr 'link', nil, false)
+              if (link = node.attr 'link')
                 add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
               end
             else
@@ -1535,7 +1535,7 @@ module Asciidoctor
               # NOTE: specify both width and height to avoid recalculation
               embed_image image_obj, image_info, width: rendered_w, height: rendered_h, position: alignment
               draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? && (node.has_role? 'noborder')
-              if (link = node.attr 'link', nil, false)
+              if (link = node.attr 'link')
                 add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
               end
               # NOTE: Asciidoctor disables automatic advancement of cursor for raster images, so move cursor manually
@@ -1570,7 +1570,7 @@ module Asciidoctor
         alt_text_vars = { alt: (node.attr 'alt'), target: target }
         alt_text_template = @theme.image_alt_content || '%{link}[%{alt}]%{/link} | <em>%{target}</em>'
         return if alt_text_template.empty?
-        if (link = node.attr 'link', nil, false)
+        if (link = node.attr 'link')
           alt_text_vars[:link] = %(<a href="#{link}">)
           alt_text_vars[:'/link'] = '</a>'
         else
@@ -1579,7 +1579,7 @@ module Asciidoctor
         end
         theme_font :image_alt do
           layout_prose alt_text_template % alt_text_vars,
-              align: ((node.attr 'align', nil, false) || @theme.image_align).to_sym,
+              align: ((node.attr 'align') || @theme.image_align).to_sym,
               margin: 0,
               normalize: false,
               single_line: true
@@ -1600,7 +1600,7 @@ module Asciidoctor
       end
 
       def convert_video node
-        case (poster = node.attr 'poster', nil, false)
+        case (poster = node.attr 'poster')
         when 'youtube'
           video_path = %(https://www.youtube.com/watch?v=#{video_id = node.attr 'target'})
           # see http://stackoverflow.com/questions/2068344/how-do-i-get-a-youtube-video-thumbnail-from-the-youtube-api
@@ -1690,7 +1690,7 @@ module Asciidoctor
           case highlighter
           when 'coderay'
             source_string, conum_mapping = extract_conums source_string
-            srclang = node.attr 'language', 'text', false
+            srclang = node.attr 'language', 'text'
             begin
               ::CodeRay::Scanners[(srclang = (srclang.start_with? 'html+') ? (srclang.slice 5, srclang.length).to_sym : srclang.to_sym)]
             rescue ::ArgumentError
@@ -1707,13 +1707,13 @@ module Asciidoctor
             if source_string.empty?
               source_chunks = []
             else
-              lexer = (::Pygments::Lexer.find_by_alias node.attr 'language', 'text', false) || (::Pygments::Lexer.find_by_mimetype 'text/plain')
+              lexer = (::Pygments::Lexer.find_by_alias node.attr 'language', 'text') || (::Pygments::Lexer.find_by_mimetype 'text/plain')
               lexer_opts = { nowrap: true, noclasses: true, stripnl: false, style: style }
               lexer_opts[:startinline] = !(node.option? 'mixed') if lexer.name == 'PHP'
               source_string, conum_mapping = extract_conums source_string
               # NOTE: highlight can return nil if something goes wrong; fallback to encoded source string if this happens
               result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
-              if node.attr? 'highlight', nil, false
+              if node.attr? 'highlight'
                 if (highlight_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
                     (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
                     (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
@@ -1724,7 +1724,7 @@ module Asciidoctor
                 end
               end
               if node.attr? 'linenums'
-                linenums = (node.attr 'start', 1, false).to_i
+                linenums = (node.attr 'start', 1).to_i
                 @theme.code_linenum_font_color ||= '999999'
                 postprocess = true
                 wrap_ext = FormattedText::SourceWrap
@@ -1743,12 +1743,12 @@ module Asciidoctor
               source_chunks = []
             else
               if node.attr? 'linenums'
-                formatter_opts = { line_numbers: true, start_line: (node.attr 'start', 1, false).to_i }
+                formatter_opts = { line_numbers: true, start_line: (node.attr 'start', 1).to_i }
                 wrap_ext = FormattedText::SourceWrap
               else
                 formatter_opts = {}
               end
-              if (srclang = node.attr 'language', nil, false)
+              if (srclang = node.attr 'language')
                 if srclang.include? '?'
                   if (lexer = ::Rouge::Lexer.find_fancy srclang)
                     unless lexer.tag != 'php' || (node.option? 'mixed') || ((lexer_opts = lexer.options).key? 'start_inline')
@@ -1761,7 +1761,7 @@ module Asciidoctor
               end
               lexer ||= ::Rouge::Lexers::PlainText
               source_string, conum_mapping = extract_conums source_string
-              if node.attr? 'highlight', nil, false
+              if node.attr? 'highlight'
                 unless (hl_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
                     (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
                     (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
@@ -1927,7 +1927,7 @@ module Asciidoctor
         theme_font :table do
           head_rows = node.rows[:head]
           body_rows = node.rows[:body]
-          #if (hrows = node.attr 'hrows', false, nil) && (shift_rows = hrows.to_i - head_rows.size) > 0
+          #if (hrows = node.attr 'hrows') && (shift_rows = hrows.to_i - head_rows.size) > 0
           #  head_rows = head_rows.dup
           #  body_rows = body_rows.dup
           #  shift_rows.times { head_rows << body_rows.shift unless body_rows.empty? }
@@ -1962,8 +1962,8 @@ module Asciidoctor
                 base_cell_data.merge \
                   content: cell_text,
                   colspan: cell.colspan || 1,
-                  align: (cell.attr 'halign', nil, false).to_sym,
-                  valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym
+                  align: (cell.attr 'halign').to_sym,
+                  valign: (val = cell.attr 'valign') == 'middle' ? :center : val.to_sym
               end)
             end
           end unless head_rows.empty?
@@ -1981,8 +1981,8 @@ module Asciidoctor
               cell_data = base_cell_data.merge \
                 colspan: cell.colspan || 1,
                 rowspan: cell.rowspan || 1,
-                align: (cell.attr 'halign', nil, false).to_sym,
-                valign: (val = cell.attr 'valign', nil, false) == 'middle' ? :center : val.to_sym
+                align: (cell.attr 'halign').to_sym,
+                valign: (val = cell.attr 'valign') == 'middle' ? :center : val.to_sym
               cell_line_metrics = body_cell_line_metrics
               case cell.style
               when :emphasis
@@ -2120,7 +2120,7 @@ module Asciidoctor
         end
 
         if node.option? 'autowidth'
-          table_width = (node.attr? 'width', nil, false) ? bounds.width * ((node.attr 'tablepcwidth') / 100.0) :
+          table_width = (node.attr? 'width') ? bounds.width * ((node.attr 'tablepcwidth') / 100.0) :
               (((node.has_role? 'stretch') || (node.has_role? 'spread')) ? bounds.width : nil)
           column_widths = []
         else
@@ -2128,7 +2128,7 @@ module Asciidoctor
           column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
         end
 
-        if ((alignment = node.attr 'align', nil, false) && (BlockAlignmentNames.include? alignment)) ||
+        if ((alignment = node.attr 'align') && (BlockAlignmentNames.include? alignment)) ||
             (alignment = (node.roles & BlockAlignmentNames)[-1])
           alignment = alignment.to_sym
         else
@@ -2345,7 +2345,7 @@ module Asciidoctor
             attrs << %( class="#{role}")
           end
           #attrs << %( title="#{node.attr 'title'}") if node.attr? 'title'
-          attrs << %( target="#{node.attr 'window'}") if node.attr? 'window', nil, false
+          attrs << %( target="#{node.attr 'window'}") if node.attr? 'window'
           if (@media ||= doc.attr 'media', 'screen') != 'screen' && (target.start_with? 'mailto:') && (doc.attr? 'hide-uri-scheme')
             bare_target = target.slice 7, target.length
             node.add_role 'bare' if (text = node.text) == bare_target
@@ -2353,7 +2353,7 @@ module Asciidoctor
             bare_target = target
             text = node.text
           end
-          if (role = node.attr 'role', nil, false) && (role == 'bare' || ((role.split ' ').include? 'bare'))
+          if (role = node.attr 'role') && (role == 'bare' || ((role.split ' ').include? 'bare'))
             # QUESTION should we insert breakable chars into URI when building fragment instead?
             %(<a href="#{target}"#{attrs.join}>#{breakable_uri text}</a>)
           # NOTE @media may not be initialized if method is called before convert phase
@@ -2431,7 +2431,7 @@ module Asciidoctor
           if (icon_name = node.target).include? '@'
             icon_name, icon_set = icon_name.split '@', 2
             explicit_icon_set = true
-          elsif (icon_set = node.attr 'set', nil, false)
+          elsif (icon_set = node.attr 'set')
             explicit_icon_set = true
           else
             icon_set = node.document.attr 'icon-set', 'fa'
@@ -2461,7 +2461,7 @@ module Asciidoctor
             glyph = (icon_font_data icon_set).unicode icon_name rescue nil
           end
           if glyph
-            if node.attr? 'size', nil, false
+            if node.attr? 'size'
               case (size = node.attr 'size')
               when 'lg'
                 size_attr = ' size="1.333em"'
@@ -2498,7 +2498,7 @@ module Asciidoctor
           elsif (image_path = resolve_image_path node, target, image_format, true)
             if ::File.readable? image_path
               width_attr = (width = resolve_explicit_width node.attributes) ? %( width="#{width}") : ''
-              fit_attr = (fit = node.attr 'fit', nil, false) ? %( fit="#{fit}") : ''
+              fit_attr = (fit = node.attr 'fit') ? %( fit="#{fit}") : ''
               img = %(<img src="#{image_path}" format="#{image_format}" alt="[#{encode_quotes node.attr 'alt'}]"#{width_attr}#{fit_attr}>)
             else
               logger.warn %(image to embed not found or not readable: #{image_path}) unless scratch?
@@ -2507,7 +2507,7 @@ module Asciidoctor
           else
             img = %([#{node.attr 'alt'}])
           end
-          (node.attr? 'link', nil, false) ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
+          (node.attr? 'link') ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
         end
       end
 
@@ -3032,7 +3032,7 @@ module Asciidoctor
         end
         hanging_indent = @theme.toc_hanging_indent || 0
         sections.each do |sect|
-          next if (num_levels_for_sect = (sect.attr 'toclevels', num_levels, false).to_i) < sect.level
+          next if (num_levels_for_sect = (sect.attr 'toclevels', num_levels).to_i) < sect.level
           theme_font :toc, level: (sect.level + 1) do
             sect_title = ZeroWidthSpace + (@text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title)
             pgnum_label_placeholder_width = rendered_width_of_string '0' * @toc_max_pagenum_digits
