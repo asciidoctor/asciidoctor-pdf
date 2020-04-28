@@ -898,6 +898,21 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect rect[:height]).to eql 200.0
     end
 
+    it 'should not inherit format from document' do
+      (expect do
+        pdf = with_local_webserver do |base_url|
+          to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }, analyze: :rect
+          :pdf-page-size: 200x400
+          :pdf-page-margin: 0
+          :format: svg
+
+          image::#{base_url}/square.svg?v=1[pdfwidth=100%]
+          EOS
+        end
+        (expect pdf.rectangles).to be_empty
+      end).to log_message severity: :WARN, message: %(~image file is an unrecognised format)
+    end
+
     context 'Cache' do
       before :context do
         (expect defined? OpenURI::Cache).to be_falsy
