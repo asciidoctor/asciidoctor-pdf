@@ -410,4 +410,24 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect short_flag_text[:x]).to eql long_flag_text[:x]
     (expect (short_flag_text[:y] - long_flag_text[:y]).round 2).to eql line_gap
   end
+
+  it 'should arrange index entries into two columns by default' do
+    pdf = to_pdf <<~EOS, analyze: true
+    = Document Title
+    :doctype: book
+    :notitle:
+
+    #{('a'..'z').map {|it| %(((#{it}-term))) }.join}
+
+    [index]
+    == Index
+    EOS
+
+    category_a_text = (pdf.find_text 'A')[0]
+    category_p_text = (pdf.find_text 'P')[0]
+    (expect category_a_text[:page_number]).to eql 2
+    (expect category_p_text[:page_number]).to eql 2
+    (expect category_p_text[:y]).to eql category_a_text[:y]
+    (expect category_p_text[:x]).to be > category_a_text[:x]
+  end
 end
