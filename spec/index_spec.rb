@@ -430,4 +430,28 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect category_p_text[:y]).to eql category_a_text[:y]
     (expect category_p_text[:x]).to be > category_a_text[:x]
   end
+
+  it 'should allow theme to configure number of columns' do
+    pdf = to_pdf <<~EOS, pdf_theme: { index_columns: 3 }, analyze: true
+    = Document Title
+    :doctype: book
+    :notitle:
+
+    #{('a'..'z').map {|it| %(((#{it}-keyword))((#{it}-term))) }.join}
+
+    [index]
+    == Index
+    EOS
+
+    category_a_text = (pdf.find_text 'A')[0]
+    category_l_text = (pdf.find_text 'L')[0]
+    category_w_text = (pdf.find_text 'W')[0]
+    (expect category_a_text[:page_number]).to eql 2
+    (expect category_l_text[:page_number]).to eql 2
+    (expect category_w_text[:page_number]).to eql 2
+    (expect category_l_text[:y]).to eql category_a_text[:y]
+    (expect category_w_text[:y]).to eql category_a_text[:y]
+    (expect category_w_text[:x]).to be > category_l_text[:x]
+    (expect category_l_text[:x]).to be > category_a_text[:x]
+  end
 end

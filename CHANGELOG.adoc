@@ -34,6 +34,7 @@ Enhancements::
 * normalize whitespace in authors content and drop lines with unresolved attribute references (#1642)
 * skip image block with missing image if computed alt text resolves to empty string (#1645)
 * custom theme does not inherit from base theme by default; must be specified explicitly using `extends: base` (#1640)
+* allow theme to confiure number of index columns using `index_columns` key (#1663)
 
 Bug Fixes::
 
