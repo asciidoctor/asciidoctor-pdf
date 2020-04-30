@@ -478,6 +478,19 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Raster' do
+    it 'should embed JPG image' do
+      pdf = to_pdf 'image::cover.jpg[]', pdf_theme: { page_size: 'Letter' }, analyze: :image
+      images = pdf.images
+      (expect images).to have_size 1
+      image = pdf.images[0]
+      (expect image[:page_number]).to eql 1
+      (expect image[:implicit_width]).to eql 287
+      (expect image[:x]).to eql 48.24
+      (expect image[:y]).to eql 756.0
+      (expect image[:width]).to eql 287 * 0.75
+      (expect image[:data]).to eql File.binread fixture_file 'cover.jpg'
+    end
+
     it 'should embed PNG image', visual: true do
       to_file = to_pdf_file 'image::tux.png[]', 'image-png-implicit-width.pdf'
 
