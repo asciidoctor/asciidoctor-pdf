@@ -14,6 +14,11 @@ Prawn::Text::Formatted::Fragment.prepend (Module.new do
     super
   end
 
+  # Use .tr instead of .gsub to remove zero-width spaces
+  def strip_zero_width_spaces string
+    string.encoding == Encoding::UTF_8 ? (string.tr Prawn::Text::ZWSP, '') : string
+  end
+
   # Modify the built-in ascender write method to allow an override value to be
   # specified using the format_state hash.
   def ascender= val
