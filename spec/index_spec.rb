@@ -5,10 +5,11 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Index' do
   it 'should not add index entries to the document if an index section is not present' do
     pdf = to_pdf <<~'EOS', analyze: true
-    You can add a ((visible index entry)) to your document by surrounding it in double round brackets.
+    You can add a ((visible index entry)) to your document by enclosing it in double round brackets.
     EOS
 
-    (expect pdf.find_text 'visible index entry').to be_empty
+    (expect pdf.find_text %r/visible index entry/).to have_size 1
+    (expect pdf.lines).to eql ['You can add a visible index entry to your document by enclosing it in double round brackets.']
   end
 
   it 'should not add index section if there are no index entries' do
