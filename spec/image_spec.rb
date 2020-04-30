@@ -3,6 +3,16 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Image' do
+  it 'should not crash when converting block image if theme is blank' do
+    image_data = File.binread example_file 'wolpertinger.jpg'
+    pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'extends-nil-empty-theme.yml'), 'imagesdir' => examples_dir }
+    image::wolpertinger.jpg[]
+    EOS
+    images = get_images pdf, 1
+    (expect images).to have_size 1
+    (expect images[0].data).to eql image_data
+  end
+
   context 'imagesdir' do
     it 'should resolve target of block image relative to imagesdir', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-wolpertinger.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
@@ -77,16 +87,6 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Alignment' do
-    it 'should not crash when converting block image if theme is blank' do
-      image_data = File.binread example_file 'wolpertinger.jpg'
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'extends-nil-empty-theme.yml'), 'imagesdir' => examples_dir }
-      image::wolpertinger.jpg[]
-      EOS
-      images = get_images pdf, 1
-      (expect images).to have_size 1
-      (expect images[0].data).to eql image_data
-    end
-
     it 'should align block image to value of align attribute on macro', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-align-right-attribute.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[align=right]
@@ -477,7 +477,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
   end
 
-  context 'PNG' do
+  context 'Raster' do
     it 'should embed PNG image', visual: true do
       to_file = to_pdf_file 'image::tux.png[]', 'image-png-implicit-width.pdf'
 
@@ -501,6 +501,24 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect color_space_idx).to be > 0
       (expect stamp_idx).to be > 0
       (expect stamp_idx).to be > color_space_idx
+    end
+
+    it 'should scale down image not at top of page and advance to next page if dimensions exceed page size' do
+      pdf_theme = { page_size: 'Letter', page_margin: 50 }
+      expected_top = (to_pdf 'image::cover.jpg[pdfwidth=1in]', pdf_theme: pdf_theme, analyze: :image).images[0][:y]
+      expected_height = 11 * 72.0 - 100
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
+      before
+
+      image::cover.jpg[pdfwidth=100%]
+      EOS
+
+      images = pdf.images
+      (expect images).to have_size 1
+      image = images[0]
+      (expect image[:page_number]).to eql 2
+      (expect image[:y]).to eql expected_top
+      (expect image[:height]).to eql expected_height
     end
 
     it 'should fail to embed interlaced PNG image with warning' do
