@@ -302,6 +302,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-scale-to-fit-page.pdf'
     end
 
+    it 'should scale down SVG at top of page to fit image and caption if dimensions exceed page size', visual: true do
+      to_file = to_pdf_file <<~EOS, 'image-svg-with-caption-scale-to-fit-page.pdf'
+      :pdf-page-size: Letter
+
+      .#{(['title text'] * 15).join ' '}
+      image::watermark.svg[pdfwidth=100%]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-with-caption-scale-to-fit-page.pdf'
+    end
+
     it 'should scale down SVG not at top of page and advance to next page if dimensions exceed page size', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-scale-to-fit-next-page-with-text.pdf'
       :pdf-page-size: Letter
