@@ -199,7 +199,7 @@ module Rouge
           end
           pdf.fill_rectangle [fragment.left, fragment.top + v_gap * 0.5], fragment_width, (fragment.height + v_gap)
           pdf.fill_color prev_fill_color
-          fragment.conceal if fragment.text == DummyText
+          fragment.conceal true if fragment.text == DummyText
           nil
         end
       end

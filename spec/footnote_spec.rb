@@ -287,4 +287,25 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect lines[0]).to eql 'When in doubt, search.[1]'
     (expect lines[-1]).to eql '[1] Use a search engine like Google [https://google.com]'
   end
+
+  it 'should not allocate space for anchor if font is missing glyph for null character' do
+    pdf_theme = {
+      extends: 'default',
+      font_catalog: {
+        'Missing Null' => {
+          'normal' => 'mplus1mn-regular-ascii-conums.ttf',
+        }
+      },
+      base_font_family: 'Missing Null',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    foo{empty}footnote:[Note about foo.]
+    EOS
+
+    foo_text = (pdf.find_text 'foo')[0]
+    foo_text_end = foo_text[:x] + foo_text[:width]
+    footnote_ref_start = (pdf.find_text '[')[0][:x]
+    (expect footnote_ref_start).to eql foo_text_end
+  end
 end

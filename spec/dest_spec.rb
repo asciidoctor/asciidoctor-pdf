@@ -270,4 +270,26 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect anchor_dest_pagenum).to be 2
     (expect (pdf.page 2).text).to eql 'supercalifragilisticexpialidocious'
   end
+
+  it 'should not allocate space for anchor if font is missing glyph for null character' do
+    pdf_theme = {
+      extends: 'default',
+      font_catalog: {
+        'Missing Null' => {
+          'normal' => 'mplus1mn-regular-ascii-conums.ttf',
+        }
+      },
+      base_font_family: 'Missing Null',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    foo [#bar]#bar# #baz#
+
+    foo bar #baz#
+    EOS
+
+    baz_texts = pdf.find_text 'baz'
+    (expect baz_texts).to have_size 2
+    (expect baz_texts[0][:x]).to eql baz_texts[1][:x]
+  end
 end
