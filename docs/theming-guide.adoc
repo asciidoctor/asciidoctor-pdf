@@ -85,6 +85,7 @@ Here's an example of a basic theme file that extends the base theme:
 .basic-theme.yml
 [source,yaml]
 ----
+extends: base
 page:
   layout: portrait
   margin: [0.75in, 1in, 0.75in, 1in]
@@ -117,7 +118,7 @@ footer:
       content: $footer-recto-right-content
 ----
 
-When creating a new theme, you only have to define the keys you want to override from the base theme, which is loaded prior to loading your custom theme.
+When creating a new theme, you only have to define the keys you want to override from the extended theme, which is loaded prior to loading your custom theme.
 All the available keys are documented in <<Keys>>.
 The converter uses the information from the theme map to help construct the PDF.
 
@@ -133,7 +134,7 @@ base:
 ----
 
 You can also point the extends key at another custom theme to extend from it.
-If you don't want to extend any theme, including the base theme, assign the value `~` to the `extends` key (i.e., `extends: ~`).
+If you don't want to extend any theme, including the base theme, omit the `extends` key or assign the value `~` to the `extends` key (i.e., `extends: ~`).
 
 WARNING: If you start a new theme from scratch, we strongly recommend defining TrueType fonts and specifying them in the `base` and `literal` categories.
 Otherwise, Asciidoctor PDF will use built-in AFM fonts, which can result in missing functionality and warnings.
@@ -989,7 +990,7 @@ The default values listed in this section get inherited from the https://github.
 
 IMPORTANT: The https://github.com/asciidoctor/asciidoctor-pdf/blob/master/data/themes/default-theme.yml[default theme] has a different set of values which are not shown in this guide.
 
-When creating a theme, all keys are optional.
+When creating a theme that extends the base theme, all keys are optional.
 Required keys are provided by the base theme.
 Therefore, you only have to declare keys that you want to override.
 
@@ -1013,7 +1014,7 @@ If the filename is absolute, it's used as is.
 If the filename begins with `./`, it's resolved as a theme file relative to the current theme file.
 Otherwise, the filename is resolved as a theme file in the normal way (relative to the value of the `pdf-themesdir` attribute).
 
-Currently, the base theme is always loaded first.
+Currently, the theme starts out empty.
 Then, the files referenced by the extends key are loaded in order.
 Finally, the keys in the current file are loaded.
 Each time a theme is loaded, the keys are overlaid onto the keys from the previous theme.
