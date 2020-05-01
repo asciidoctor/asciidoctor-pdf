@@ -3,6 +3,23 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Listing' do
+  it 'should render empty block if listing block is empty' do
+    pdf_theme = {
+      code_line_height: 1,
+      code_padding: 0,
+      code_border_width: 1,
+      code_border_radius: 0,
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    ----
+    ----
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 4
+    (expect lines[1][:from][:y] - lines[1][:to][:y]).to be <= 1
+  end
+
   it 'should move block to next page if it will fit to avoid splitting it' do
     pdf = to_pdf <<~EOS, analyze: true
     #{(['paragraph'] * 20).join (?\n * 2)}
