@@ -277,7 +277,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
       font_catalog: {
         'Missing Null' => {
           'normal' => 'mplus1mn-regular-ascii-conums.ttf',
-        }
+        },
       },
       base_font_family: 'Missing Null',
     }

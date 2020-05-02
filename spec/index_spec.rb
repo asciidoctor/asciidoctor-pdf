@@ -463,7 +463,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
         'Missing Null' => {
           'normal' => 'mplus1mn-regular-ascii-conums.ttf',
           'bold' => 'mplus1mn-regular-ascii-conums.ttf',
-        }
+        },
       },
       base_font_family: 'Missing Null',
     }
