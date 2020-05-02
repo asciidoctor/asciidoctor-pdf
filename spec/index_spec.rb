@@ -455,4 +455,30 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect category_w_text[:x]).to be > category_l_text[:x]
     (expect category_l_text[:x]).to be > category_a_text[:x]
   end
+
+  it 'should not allocate space for anchor if font is missing glyph for null character' do
+    pdf_theme = {
+      extends: 'default',
+      font_catalog: {
+        'Missing Null' => {
+          'normal' => 'mplus1mn-regular-ascii-conums.ttf',
+          'bold' => 'mplus1mn-regular-ascii-conums.ttf',
+        }
+      },
+      base_font_family: 'Missing Null',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    foo ((bar)) #baz#
+
+    foo bar #baz#
+
+    [index]
+    == Index
+    EOS
+
+    baz_texts = pdf.find_text 'baz'
+    (expect baz_texts).to have_size 2
+    (expect baz_texts[0][:x]).to eql baz_texts[1][:x]
+  end
 end

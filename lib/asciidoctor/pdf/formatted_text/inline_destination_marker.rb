@@ -13,7 +13,7 @@ module Asciidoctor::PDF::FormattedText
           dest_rect = fragment.absolute_bounding_box
           pdf.add_dest name, (pdf.dest_xyz dest_rect[0], dest_rect[-1])
           # prevent any text from being written
-          fragment.conceal
+          fragment.conceal true
         end
       end
     end

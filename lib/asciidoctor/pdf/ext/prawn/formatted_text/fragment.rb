@@ -3,9 +3,10 @@
 Prawn::Text::Formatted::Fragment.prepend (Module.new do
   attr_reader :document
 
-  # Prevent fragment from being written by discarding the text.
-  def conceal
+  # Prevent fragment from being written by discarding the text, optionally forcing the width to 0
+  def conceal force_width_to_zero = false
     @text = ''
+    @width = 0 if force_width_to_zero
   end
 
   # Don't strip soft hyphens when repacking unretrieved fragments

@@ -14,7 +14,7 @@ module Asciidoctor::PDF::FormattedText
         padding = (height = fragment.line_height) - fragment.height
         at = [fragment.left, fragment.top + padding * 0.5]
         width = data[:extend] ? (pdf.bounds.width - fragment.left) : fragment.width
-        fragment.conceal if fragment.text == DummyText
+        fragment.conceal true if fragment.text == DummyText
       elsif (border_offset = data[:border_offset])
         at = [fragment.left, fragment.top + border_offset]
         width = fragment.width

@@ -387,7 +387,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should allow generic font family to be mapped in font catalog' do
       pdf_theme = build_pdf_theme
-      pdf_theme[:font_catalog]['serif'] = { 'normal' => pdf_theme[:font_catalog]['Noto Serif']['normal'] }
+      pdf_theme.font_catalog['serif'] = { 'normal' => pdf_theme.font_catalog['Noto Serif']['normal'] }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       image::svg-with-generic-font.svg[]
       EOS
