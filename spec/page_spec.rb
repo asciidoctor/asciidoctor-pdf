@@ -296,8 +296,8 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should derive recto/verso margins from inner/outer margins when media=prepress', visual: true do
       pdf_theme = {
-        margin_inner: '1in',
-        margin_outer: '0.75in',
+        page_margin_inner: 72,
+        page_margin_outer: 54,
       }
       to_file = to_pdf_file <<~'EOS', 'page-prepress-custom-margins.pdf', pdf_theme: pdf_theme, enable_footer: true
       = Book Title
@@ -323,8 +323,8 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should not apply recto margins to title page of prepress document by default if first page', visual: true do
       pdf_theme = {
-        margin_inner: '1in',
-        margin_outer: '0.75in',
+        page_margin_inner: 72,
+        page_margin_outer: 54,
       }
       to_file = to_pdf_file <<~'EOS', 'page-prepress-margins-no-cover.pdf', pdf_theme: pdf_theme, enable_footer: true
       = Book Title
@@ -349,8 +349,8 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should apply recto margins to first page of prepress document if not title page or cover', visual: true do
       pdf_theme = {
-        margin_inner: '1in',
-        margin_outer: '0.75in',
+        page_margin_inner: 72,
+        page_margin_outer: 54,
       }
       to_file = to_pdf_file <<~'EOS', 'page-prepress-margins-body-only.pdf', pdf_theme: pdf_theme, enable_footer: true
       :media: prepress
