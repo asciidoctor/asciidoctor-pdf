@@ -76,11 +76,27 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
     end
 
-    it 'should hide page number if pagenums attribute is unset' do
+    it 'should hide page number if pagenums attribute is unset in document' do
       pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :!pagenums:
+
+      first page
+
+      <<<
+
+      second page
+      EOS
+
+      (expect pdf.find_text '1').to be_empty
+      (expect pdf.find_text '2').to be_empty
+    end
+
+    it 'should hide page number if pagenums attribute is unset via API' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pagenums' => nil }, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
 
       first page
 
@@ -111,8 +127,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       (expect pdf.find_text %r/\d+ hide me/).to be_empty
-      (expect pdf.find_text %r/recto right/).to have_size 1
-      (expect pdf.find_text %r/verso left/).to have_size 1
+      (expect pdf.find_text %r/recto right/, page_number: 2).to have_size 1
+      (expect pdf.find_text %r/verso left/, page_number: 3).to have_size 1
     end
 
     it 'should not add running footer if nofooter attribute is set' do
