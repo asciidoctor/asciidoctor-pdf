@@ -19,7 +19,8 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       content
       EOS
       (expect pdf.pages).to have_size 1
-      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+      # NOTE pdf-core 0.8 coerces whole number floats to integers
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
     it 'should ignore pdf-page-size attribute if value is unrecognized name' do
@@ -39,7 +40,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       content
       EOS
       (expect pdf.pages).to have_size 1
-      (expect pdf.pages[0][:size]).to eql [600.0, 800.0]
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql [600.0, 800.0]
     end
 
     it 'should set page size specified by pdf-page-size attribute using dimension array in inches' do
@@ -49,7 +50,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       content
       EOS
       (expect pdf.pages).to have_size 1
-      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
     it 'should set page size specified by pdf-page-size attribute using dimension string in inches' do
@@ -59,7 +60,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       content
       EOS
       (expect pdf.pages).to have_size 1
-      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
   end
 

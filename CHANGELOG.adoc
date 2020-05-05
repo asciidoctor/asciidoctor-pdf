@@ -68,6 +68,7 @@ Bug Fixes::
 * use informal title prefixed with down indicator for collapsible block (#1660)
 * don't apply border, shading, or padding to collapsible block (#1660)
 * escape bare ampersand in attribution and citetitle of quote or verse block (#1662)
+* fix numeric assertions in test suite (#1542)
 
 Compliance::
 

@@ -156,4 +156,4 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
 
     (expect to_file).to visually_match 'hyphens-word-break.pdf'
   end
-end
+end unless (Gem::Specification.stubs_for 'text-hyphen').empty?

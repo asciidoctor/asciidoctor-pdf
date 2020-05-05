@@ -343,7 +343,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'Text with link'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'mplus1mn-regular'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size].to_f).to eql 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -355,7 +355,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'This text uses a document font.'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'mplus1mn-regular'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size].to_f).to eql 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -367,7 +367,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'This text uses the default SVG font.'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'NotoSerif'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size].to_f).to eql 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -379,7 +379,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'This text uses the serif font.'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'Times-Roman'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size].to_f).to eql 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -393,7 +393,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'This text uses the serif font.'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'NotoSerif'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size].to_f).to eql 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -408,7 +408,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         text = pdf.find_text 'This text uses the default SVG font.'
         (expect text).to have_size 1
         (expect text[0][:font_name]).to eql 'Times-Roman'
-        (expect text[0][:font_size]).to eql 12.0
+        (expect text[0][:font_size].to_f).to eql 12.0
         (expect text[0][:font_color]).to eql 'AA0000'
       end
     end
@@ -619,7 +619,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pages).to have_size 3
       (expect pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
       (expect pages[0][:text][-1][:string]).to eql '1'
-      (expect pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+      (expect pages[1][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
       # NOTE no running content on imported pages
       (expect pages[1][:text]).to be_empty
       (expect pages[2][:text][-1][:string]).to eql '3'
@@ -644,7 +644,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pages).to have_size 3
       (expect pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
       (expect pages[0][:text][-1][:string]).to eql '1'
-      (expect pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+      (expect pages[1][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
       # NOTE no running content on imported pages
       (expect pages[1][:text]).to be_empty
       (expect pages[2][:text][-1][:string]).to eql '3'
@@ -990,7 +990,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
           OpenURI::Cache.invalidate image_url
         end
       end
-    end
+    end unless (Gem::Specification.stubs_for 'open-uri-cached').empty?
   end
 
   context 'Inline' do
