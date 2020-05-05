@@ -276,6 +276,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       = Book Title
       :media: prepress
       :doctype: book
+      // NOTE setting front-cover-image to ~ informs converter cover page will be added later
       :front-cover-image: ~
 
       == First Chapter
@@ -294,7 +295,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-prepress-margins.pdf'
     end
 
-    it 'should derive recto/verso margins from inner/outer margins when media=prepress', visual: true do
+    it 'should allow recto/verso margins to be customized by theme when media=prepress', visual: true do
       pdf_theme = {
         page_margin_inner: 72,
         page_margin_outer: 54,
@@ -319,6 +320,33 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       EOS
 
       (expect to_file).to visually_match 'page-prepress-custom-margins.pdf'
+    end
+
+    it 'should disable recto/verso margins when media=prepress if inner/outer margins in theme are nil', visual: true do
+      pdf_theme = {
+        page_margin_inner: nil,
+        page_margin_outer: nil,
+      }
+      to_file = to_pdf_file <<~'EOS', 'page-prepress-normal-margins.pdf', pdf_theme: pdf_theme, enable_footer: true
+      = Book Title
+      :media: prepress
+      :doctype: book
+      :front-cover-image: ~
+
+      == First Chapter
+
+      <<<
+
+      === A Section
+
+      == Last Chapter
+
+      <<<
+
+      === B Section
+      EOS
+
+      (expect to_file).to visually_match 'page-prepress-normal-margins.pdf'
     end
 
     it 'should not apply recto margins to title page of prepress document by default if first page', visual: true do
