@@ -23,6 +23,8 @@ module Asciidoctor
 
       attr_reader :cache_uri
 
+      attr_reader :index
+
       attr_reader :theme
 
       attr_reader :text_decoration_width
