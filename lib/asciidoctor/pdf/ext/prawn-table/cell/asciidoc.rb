@@ -34,19 +34,21 @@ module Prawn
         def dry_run
           cell = self
           height = nil
-          @pdf.dry_run do
-            start_page = page
-            start_cursor = cursor
-            max_height = bounds.height
-            # NOTE: we should be able to use cell.max_width, but returns 0 in some conditions (like when colspan > 1)
-            indent cell.padding_left, bounds.width - cell.width + cell.padding_right do
-              # HACK: force margin_top to be applied
-              move_down 0.0001
-              # TODO: truncate margin bottom of last block
-              traverse cell.content
+          apply_font_properties do
+            @pdf.dry_run do
+              start_page = page
+              start_cursor = cursor
+              max_height = bounds.height
+              # NOTE: we should be able to use cell.max_width, but returns 0 in some conditions (like when colspan > 1)
+              indent cell.padding_left, bounds.width - cell.width + cell.padding_right do
+                # HACK: force margin_top to be applied
+                move_down 0.0001
+                # TODO: truncate margin bottom of last block
+                traverse cell.content
+              end
+              # FIXME: prawn-table doesn't support cells that exceed the height of a single page
+              height = page == start_page ? start_cursor - (cursor + 0.0001) : max_height
             end
-            # FIXME: prawn-table doesn't support cells that exceed the height of a single page
-            height = page == start_page ? start_cursor - (cursor + 0.0001) : max_height
           end
           height
         end
@@ -73,13 +75,36 @@ module Prawn
           start_page = pdf.page_number
           # TODO: apply horizontal alignment (right now must use alignment on content block)
           # QUESTION inherit table cell font properties?
-          pdf.traverse content
+          apply_font_properties do
+            pdf.traverse content
+          end
           # FIXME: prawn-table doesn't support cells that exceed the height of a single page
           if (additional_pages = (end_page = pdf.page_number) - start_page) > 0
             logger.error %(the table cell on page #{end_page - additional_pages} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page) unless additional_pages == 1 && pdf.at_page_top?
             additional_pages.times { pdf.delete_page }
           end
           nil
+        end
+
+        private
+
+        def apply_font_properties
+          # NOTE font_info holds font properties outside table; used as fallback values
+          font_info = (pdf = @pdf).font_info
+          font_color, font_family, font_size, font_style = @font_options.values_at :color, :family, :size, :style
+          prev_font_color, pdf.font_color = pdf.font_color, font_color if font_color
+          font_family ||= font_info[:family]
+          if font_size
+            prev_font_scale, pdf.font_scale = pdf.font_scale, (font_size / font_info[:size])
+          else
+            font_size = font_info[:size]
+          end
+          font_style ||= font_info[:style]
+          pdf.font font_family, size: font_size, style: font_style do
+            yield
+          end
+          pdf.font_color = prev_font_color if prev_font_color
+          pdf.font_scale = prev_font_scale if prev_font_scale
         end
       end
     end
