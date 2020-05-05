@@ -49,6 +49,17 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       (expect link[:A][:URI]).to eql 'https://asciidoctor.org'
     end
 
+    it 'should not encode hash that precedes the fragment in a URL' do
+      url_with_hash = 'https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc#fonts'
+      pdf = to_pdf %(Learn how to configure #{url_with_hash}[].)
+      text = (pdf.page 1).text
+      (expect text).to eql %(Learn how to configure #{url_with_hash.sub 'theming-guide', "theming-\nguide"}.)
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 2
+      (expect annotations[0][:A][:URI]).to eql url_with_hash
+      (expect annotations[1][:A][:URI]).to eql url_with_hash
+    end
+
     it 'should split bare URL on breakable characters' do
       [
         'the URL on this line will get split on the ? char https://github.com/asciidoctor/asciidoctor/issues?|q=milestone%3Av2.0.x',
