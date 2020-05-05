@@ -201,6 +201,15 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 48.24, 793.926]
     end
 
+    it 'should use default margin if value of margin in theme is empty string' do
+      pdf_theme = { page_margin: '' }
+      input = 'content'
+      prawn = to_pdf input, pdf_theme: pdf_theme, analyze: :document
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      (expect prawn.page_margin).to eql [36, 36, 36, 36]
+      (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 36.0, 793.926]
+    end
+
     it 'should use default margin if value of margin in theme is empty array' do
       pdf_theme = { page_margin: [] }
       input = 'content'
