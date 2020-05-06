@@ -3898,7 +3898,7 @@ module Asciidoctor
           width_of_string str, opts
         else
           char_widths = chars.map {|char| rendered_width_of_char char, opts }
-          char_widths.sum + (char_widths.length * character_spacing)
+          char_widths.sum + (char_widths.length * (opts[:character_spacing] || character_spacing))
         end
       end
 
