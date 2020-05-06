@@ -195,6 +195,24 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect content_text[:string]).to eql 'Look for the warp zone under the bridge.'
     end
 
+    it 'should allow theme to control vertical alignment of icon' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_vertical_align: 'top' }, analyze: true
+      :icons: font
+
+      [NOTE]
+      ====
+      There are lots of things you need to know.
+      Then there are the things that you already know.
+      And those things that you don't know that you do not know.
+      This documentation seeks to close the gaps between them.
+      ====
+      EOS
+
+      icon_text = (pdf.find_text ?\uf05a)[0]
+      content_text = (pdf.find_text font_color: '333333')[1]
+      (expect icon_text[:y]).to be > content_text[:y]
+    end
+
     it 'should assume icon name with no icon set prefix is a legacy FontAwesome icon name' do
       pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_tip: { name: 'smile-wink' } }, analyze: true
       :icons: font
