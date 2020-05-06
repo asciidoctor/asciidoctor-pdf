@@ -1,6 +1,7 @@
 DeepCover.configure do
   output 'coverage/report-deep-cover'
-  paths %w(./lib)
+  paths %w(lib)
+  exclude_paths %w(lib/asciidoctor/pdf/formatted_text/parser.rb)
   reporter :text if ENV['CI']
   reporter :istanbul if ENV['DEEP_COVER_REPORTER'] == 'istanbul'
 end
