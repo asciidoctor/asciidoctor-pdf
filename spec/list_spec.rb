@@ -1253,6 +1253,21 @@ describe 'Asciidoctor::PDF::Converter - List' do
       end
     end
 
+    it 'should allow conum glyphs to be specified explicitly using numeric range' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { conum_glyphs: '1-20' }, analyze: true
+      ....
+      line one <1>
+      line two
+      line three <2>
+      ....
+      <1> First line
+      <2> Last line
+      EOS
+
+      one_text = pdf.find_text '1'
+      (expect one_text).to have_size 2
+    end
+
     it 'should allow conum glyphs to be specified explicitly using unicode range' do
       pdf = to_pdf <<~'EOS', pdf_theme: { conum_glyphs: '\u0031-\u0039' }, analyze: true
       ....
@@ -1272,19 +1287,20 @@ describe 'Asciidoctor::PDF::Converter - List' do
       end
     end
 
-    it 'should allow conum glyphs to be specified explicitly using numeric range' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { conum_glyphs: '1-20' }, analyze: true
+    it 'should allow conum glyphs to be specified as single unicode character' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { conum_glyphs: '\u2776' }, analyze: true
       ....
-      line one <1>
-      line two
-      line three <2>
+      the one and only line <1>
       ....
-      <1> First line
-      <2> Last line
+      <1> That's all we have time for
       EOS
 
-      one_text = pdf.find_text '1'
+      one_text = pdf.find_text ?\u2776
       (expect one_text).to have_size 2
+      one_text.each do |text|
+        (expect text[:font_name]).to eql 'mplus1mn-regular'
+        (expect text[:font_color]).to eql 'B12146'
+      end
     end
 
     it 'should keep list marker with primary text' do

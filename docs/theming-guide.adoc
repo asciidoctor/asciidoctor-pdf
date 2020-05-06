@@ -2543,7 +2543,7 @@ The keys in this category are used to control the style of callout numbers (i.e.
 |conum:
   line-height: 4 / 3
 
-|glyphs^[2]^
+|glyphs^[3]^
 |circled {vbar} filled {vbar} Unicode String ranges +
 (default: circled)
 |conum:
@@ -2555,6 +2555,7 @@ The keys in this category are used to control the style of callout numbers (i.e.
 These properties are inherited for conums inside a verbatim block.
 . The font must provide the required glyphs.
 The glyphs can be specified as a comma-separated list of ranges, where the range values are Unicode numbers (e.g., \u2460).
+Unicode escape sequences are recognized even if the value is not enclosed in double quotes.
 
 [#keys-button]
 === Button
