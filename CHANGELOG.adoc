@@ -12,6 +12,7 @@ Bug Fixes::
 * fix numeric assertions in test suite (#1542)
 * disable cache tests if open-uri-cache gem is not available
 * disable hyphen tests if text-hyphen gem is not available
+* compensate for change in how character_spacing is applied in FontMetricCache#width_of after Prawn 2.2.2
 
 == 1.5.3 (2020-02-28) - @mojavelinux
 
