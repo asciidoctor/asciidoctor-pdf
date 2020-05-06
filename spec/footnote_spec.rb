@@ -293,7 +293,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
       extends: 'default',
       font_catalog: {
         'Missing Null' => {
-          'normal' => 'mplus1mn-regular-ascii-conums.ttf',
+          'normal' => (fixture_file 'mplus1mn-regular-ascii.ttf'),
         },
       },
       base_font_family: 'Missing Null',
