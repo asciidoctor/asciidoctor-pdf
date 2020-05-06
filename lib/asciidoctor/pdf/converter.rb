@@ -1356,8 +1356,14 @@ module Asciidoctor
           marker_gap = rendered_width_of_char 'x'
           font marker_style[:font_family], size: marker_style[:font_size] do
             marker_width = rendered_width_of_string marker
+            # NOTE compensate if character_spacing is not applied to first character
+            # see https://github.com/prawnpdf/prawn/commit/c61c5d48841910aa11b9e3d6f0e01b68ce435329
+            character_spacing_correction = 0
+            character_spacing -0.5 do
+              character_spacing_correction = 0.5 if (rendered_width_of_char 'x', character_spacing: -0.5) == marker_gap
+            end
             marker_height = height_of_typeset_text marker, line_height: marker_style[:line_height], single_line: true
-            start_position = -marker_width + -marker_gap
+            start_position = -marker_width + -marker_gap + character_spacing_correction
             float do
               start_new_page if @media == 'prepress' && cursor < marker_height
               flow_bounding_box start_position, width: marker_width do
