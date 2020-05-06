@@ -324,8 +324,12 @@ RSpec.configure do |config|
       env_override = kw_args[:env] || {}
       unless kw_args[:use_bundler]
         env_override['RUBYOPT'] = nil
-        if (defined? Bundler) && (prawn_table = Bundler.definition.dependencies.find {|it| it.name == 'prawn-table' })
-          env_override['PRAWN_TABLE_REQUIRE_PATH'] = (prawn_table.source.path + 'lib/prawn/table').to_s
+        if defined? Bundler
+          rubylib = []
+          if (prawn_table_dep = Bundler.definition.dependencies.find {|it| it.name == 'prawn-table' })
+            rubylib << (prawn_table_dep.source.path + 'lib').to_s
+          end
+          env_override['RUBYLIB'] = rubylib.join File::PATH_SEPARATOR unless rubylib.empty?
         end
       end
       if (out = kw_args[:out])
