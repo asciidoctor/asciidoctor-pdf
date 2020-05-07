@@ -1682,11 +1682,7 @@ module Asciidoctor
               source_string = guard_indentation node.content
             else
               # NOTE: the source highlighter logic below handles the callouts and highlight subs
-              if highlight_idx
-                subs.delete_all :highlight, :callouts
-              else
-                subs.delete_all :specialcharacters, :callouts
-              end
+              subs.replace subs - (highlight_idx ? [:highlight, :callouts] : [:specialcharacters, :callouts])
               # NOTE: indentation guards will be added by the source highlighter logic
               source_string = expand_tabs node.content
             end
