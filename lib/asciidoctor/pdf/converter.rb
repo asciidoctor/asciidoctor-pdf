@@ -769,7 +769,7 @@ module Asciidoctor
             icons = nil
             logger.warn %(admonition icon not found or not readable: #{icon_path}) unless scratch?
           end
-          label_text = node.caption
+          label_text = sanitize node.caption
           theme_font :admonition_label do
             theme_font %(admonition_label_#{type}) do
               label_text = transform_text label_text, @text_transform if @text_transform
@@ -886,7 +886,7 @@ module Asciidoctor
                             valign: label_valign,
                             line_height: 1,
                             margin: 0,
-                            inline_format: false
+                            inline_format: false # already replaced character references
                       end
                     end
                   end

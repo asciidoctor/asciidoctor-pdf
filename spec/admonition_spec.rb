@@ -128,7 +128,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   context 'Text' do
-    it 'should show bold admonition label by default' do
+    it 'should show admonition label in bold by default' do
       pdf = to_pdf <<~'EOS', analyze: true
       TIP: Look for the warp zone under the bridge.
       EOS
@@ -172,6 +172,20 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       content_texts = pdf.find_text font_name: 'NotoSerif'
       (expect content_texts.map {|it| it[:x] }.uniq).to eql [content_texts[0][:x]]
+    end
+
+    it 'should resolve character references in label' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_font_color: '000000' }, analyze: true
+      [NOTE,caption=&#174;]
+      ====
+      Christoph and sons.
+      ====
+      EOS
+
+      label_text = (pdf.find_text font_color: '000000')[0]
+      (expect label_text[:string]).to eql ?\u00ae
+      (expect label_text[:width]).to be < label_text[:font_size]
+      (expect label_text[:font_name]).to eql 'NotoSerif-Bold'
     end
   end
 
