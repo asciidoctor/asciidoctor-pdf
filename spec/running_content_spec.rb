@@ -2213,25 +2213,23 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should use image format specified by format attribute' do
       source_file = (dest_file = fixture_file 'square') + '.svg'
-      begin
-        pdf_theme = {
-          footer_height: 36,
-          footer_padding: 0,
-          footer_recto_columns: '<25% =50% >25%',
-          footer_border_width: 0,
-          footer_recto_left_content: nil,
-          footer_recto_center_content: %(image:#{dest_file}[format=svg,fit=contain]),
-          footer_recto_right_content: nil,
-        }
-        FileUtils.cp source_file, dest_file
-        pdf = to_pdf 'content', enable_footer: true, pdf_theme: pdf_theme, analyze: :rect
-        (expect pdf.rectangles).to have_size 1
-        rect = pdf.rectangles[0]
-        (expect rect[:width]).to eql 200.0
-        (expect rect[:height]).to eql 200.0
-      ensure
-        File.unlink dest_file
-      end
+      pdf_theme = {
+        footer_height: 36,
+        footer_padding: 0,
+        footer_recto_columns: '<25% =50% >25%',
+        footer_border_width: 0,
+        footer_recto_left_content: nil,
+        footer_recto_center_content: %(image:#{dest_file}[format=svg,fit=contain]),
+        footer_recto_right_content: nil,
+      }
+      FileUtils.cp source_file, dest_file
+      pdf = to_pdf 'content', enable_footer: true, pdf_theme: pdf_theme, analyze: :rect
+      (expect pdf.rectangles).to have_size 1
+      rect = pdf.rectangles[0]
+      (expect rect[:width]).to eql 200.0
+      (expect rect[:height]).to eql 200.0
+    ensure
+      File.unlink dest_file
     end
 
     it 'should print running content on consecutive pages even when image in running content overruns bounds', visual: true do

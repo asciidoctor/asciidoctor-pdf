@@ -1,15 +1,5 @@
 # frozen_string_literal: true
 
-unless RUBY_VERSION >= '2.4'
-  begin
-    require 'unicode' unless defined? Unicode::VERSION
-  rescue LoadError
-    begin
-      require 'active_support/multibyte' unless defined? ActiveSupport::Multibyte
-    rescue LoadError; end
-  end
-end
-
 module Asciidoctor
   module PDF
     module TextTransformer
@@ -61,57 +51,16 @@ module Asciidoctor
         end
       end
 
-      if RUBY_VERSION >= '2.4'
-        def capitalize_mb string
-          string.capitalize
-        end
+      def capitalize_mb string
+        string.capitalize
+      end
 
-        def lowercase_mb string
-          string.downcase
-        end
+      def lowercase_mb string
+        string.downcase
+      end
 
-        def uppercase_mb string
-          string.upcase
-        end
-      # NOTE Unicode library is 4x as fast as ActiveSupport::MultiByte::Chars
-      elsif defined? ::Unicode
-        def capitalize_mb string
-          string.ascii_only? ? string.capitalize : (::Unicode.capitalize string)
-        end
-
-        def lowercase_mb string
-          string.ascii_only? ? string.downcase : (::Unicode.downcase string)
-        end
-
-        def uppercase_mb string
-          string.ascii_only? ? string.upcase : (::Unicode.upcase string)
-        end
-      elsif defined? ::ActiveSupport::Multibyte
-        MultibyteChars = ::ActiveSupport::Multibyte::Chars
-
-        def capitalize_mb string
-          string.ascii_only? ? string.capitalize : (MultibyteChars.new string).capitalize.to_s
-        end
-
-        def lowercase_mb string
-          string.ascii_only? ? string.downcase : (MultibyteChars.new string).downcase.to_s
-        end
-
-        def uppercase_mb string
-          string.ascii_only? ? string.upcase : (MultibyteChars.new string).upcase.to_s
-        end
-      else
-        def capitalize_mb string
-          string.capitalize
-        end
-
-        def lowercase_mb string
-          string.downcase
-        end
-
-        def uppercase_mb string
-          string.upcase
-        end
+      def uppercase_mb string
+        string.upcase
       end
     end
   end

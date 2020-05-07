@@ -41,90 +41,88 @@ module Asciidoctor::PDF::FormattedText
       available_h = doc.page.empty? ? doc.cursor : doc.bounds.height
       raw_image_fragments.each do |fragment|
         drop = scratch
-        begin
-          image_path = fragment[:image_path]
+        image_path = fragment[:image_path]
 
-          # NOTE only attempt to convert an unresolved (i.e., String) value
-          if ::String === (image_w = fragment[:image_width])
-            image_w = [available_w, (image_w.end_with? '%') ? (image_w.to_f / 100 * available_w) : image_w.to_f].min
-          end
+        # NOTE only attempt to convert an unresolved (i.e., String) value
+        if ::String === (image_w = fragment[:image_width])
+          image_w = [available_w, (image_w.end_with? '%') ? (image_w.to_f / 100 * available_w) : image_w.to_f].min
+        end
 
-          max_image_h = fragment[:image_fit] == 'line' ? [available_h, doc.font.height].min : available_h
+        max_image_h = fragment[:image_fit] == 'line' ? [available_h, doc.font.height].min : available_h
 
-          # TODO: make helper method to calculate width and height of image
-          if fragment[:image_format] == 'svg'
-            svg_obj = ::Prawn::SVG::Interface.new ::File.read(image_path, mode: 'r:UTF-8'), doc,
-                at: doc.bounds.top_left,
-                width: image_w,
-                fallback_font_name: doc.fallback_svg_font_name,
-                enable_web_requests: doc.allow_uri_read ? (doc.method :load_open_uri).to_proc : false,
-                enable_file_requests_with_root: (::File.dirname image_path),
-                cache_images: doc.cache_uri
-            svg_size = image_w ? svg_obj.document.sizing :
-                # NOTE convert intrinsic dimensions to points; constrain to content width
-                (svg_obj.resize width: [(to_pt svg_obj.document.sizing.output_width, :px), available_w].min)
-            # NOTE the best we can do is make the image fit within full height of bounds
-            if (image_h = svg_size.output_height) > max_image_h
-              image_w = (svg_obj.resize height: (image_h = max_image_h)).output_width
-            else
-              image_w = svg_size.output_width
-            end
-            fragment[:image_obj] = svg_obj
+        # TODO: make helper method to calculate width and height of image
+        if fragment[:image_format] == 'svg'
+          svg_obj = ::Prawn::SVG::Interface.new ::File.read(image_path, mode: 'r:UTF-8'), doc,
+              at: doc.bounds.top_left,
+              width: image_w,
+              fallback_font_name: doc.fallback_svg_font_name,
+              enable_web_requests: doc.allow_uri_read ? (doc.method :load_open_uri).to_proc : false,
+              enable_file_requests_with_root: (::File.dirname image_path),
+              cache_images: doc.cache_uri
+          svg_size = image_w ? svg_obj.document.sizing :
+              # NOTE convert intrinsic dimensions to points; constrain to content width
+              (svg_obj.resize width: [(to_pt svg_obj.document.sizing.output_width, :px), available_w].min)
+          # NOTE the best we can do is make the image fit within full height of bounds
+          if (image_h = svg_size.output_height) > max_image_h
+            image_w = (svg_obj.resize height: (image_h = max_image_h)).output_width
           else
-            # TODO: cache image info based on path (Prawn caches based on SHA1 of content)
-            # NOTE image_obj is constrained to image_width by renderer
-            image_obj, image_info = ::File.open(image_path, 'rb') {|fd| doc.build_image_object fd }
-            if image_w
-              if image_w == image_info.width
-                image_h = image_info.height.to_f
-              else
-                image_h = image_w * (image_info.height.fdiv image_info.width)
-              end
-            # NOTE convert intrinsic dimensions to points; constrain to content width
-            elsif (image_w = to_pt image_info.width, :px) > available_w
-              image_h = (image_w = available_w) * (image_info.height.fdiv image_info.width)
+            image_w = svg_size.output_width
+          end
+          fragment[:image_obj] = svg_obj
+        else
+          # TODO: cache image info based on path (Prawn caches based on SHA1 of content)
+          # NOTE image_obj is constrained to image_width by renderer
+          image_obj, image_info = ::File.open(image_path, 'rb') {|fd| doc.build_image_object fd }
+          if image_w
+            if image_w == image_info.width
+              image_h = image_info.height.to_f
             else
-              image_h = to_pt image_info.height, :px
+              image_h = image_w * (image_info.height.fdiv image_info.width)
             end
-            # NOTE the best we can do is make the image fit within full height of bounds
-            image_w = (image_h = max_image_h) * (image_info.width.fdiv image_info.height) if image_h > max_image_h
-            fragment[:image_obj] = image_obj
-            fragment[:image_info] = image_info
+          # NOTE convert intrinsic dimensions to points; constrain to content width
+          elsif (image_w = to_pt image_info.width, :px) > available_w
+            image_h = (image_w = available_w) * (image_info.height.fdiv image_info.width)
+          else
+            image_h = to_pt image_info.height, :px
           end
+          # NOTE the best we can do is make the image fit within full height of bounds
+          image_w = (image_h = max_image_h) * (image_info.width.fdiv image_info.height) if image_h > max_image_h
+          fragment[:image_obj] = image_obj
+          fragment[:image_info] = image_info
+        end
 
-          doc.fragment_font fragment do
-            # NOTE if image height exceeds line height by more than 1.5x, increase the line height
-            # FIXME: we could really use a nicer API from Prawn here; this is an ugly hack
-            if (f_height = image_h) > (line_font = doc.font).height * 1.5
-              # align with descender (equivalent to vertical-align: bottom in CSS)
-              fragment[:ascender] = f_height - (fragment[:descender] = line_font.descender)
-              doc.font_size (fragment[:size] = f_height * (doc.font_size / line_font.height))
-              # align with baseline (roughly equivalent to vertical-align: baseline in CSS)
-              #fragment[:ascender] = f_height
-              #fragment[:descender] = 0
-              #doc.font_size(fragment[:size] = (f_height + line_font.descender) * (doc.font_size / line_font.height))
-              fragment[:line_height_increased] = true
-            end
+        doc.fragment_font fragment do
+          # NOTE if image height exceeds line height by more than 1.5x, increase the line height
+          # FIXME: we could really use a nicer API from Prawn here; this is an ugly hack
+          if (f_height = image_h) > (line_font = doc.font).height * 1.5
+            # align with descender (equivalent to vertical-align: bottom in CSS)
+            fragment[:ascender] = f_height - (fragment[:descender] = line_font.descender)
+            doc.font_size (fragment[:size] = f_height * (doc.font_size / line_font.height))
+            # align with baseline (roughly equivalent to vertical-align: baseline in CSS)
+            #fragment[:ascender] = f_height
+            #fragment[:descender] = 0
+            #doc.font_size(fragment[:size] = (f_height + line_font.descender) * (doc.font_size / line_font.height))
+            fragment[:line_height_increased] = true
           end
+        end
 
-          # NOTE we can't rely on the fragment width because the line wrap mechanism ignores it;
-          # it only considers the text (string) and character spacing, rebuilding the string several times
-          fragment[:text] = PlaceholderChar
-          fragment[:actual_character_spacing] = doc.character_spacing
-          fragment[:character_spacing] = image_w
-          fragment[:image_width] = fragment[:width] = image_w
-          fragment[:image_height] = image_h
-        rescue
-          logger.warn %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}) unless scratch
-          drop = true # delegate to cleanup logic in ensure block
-        ensure
-          # NOTE skip rendering image in scratch document or if image can't be loaded
-          if drop
-            fragment.delete :callback
-            fragment.delete :image_info
-            # NOTE retain key to indicate we've visited fragment already
-            fragment[:image_obj] = nil
-          end
+        # NOTE we can't rely on the fragment width because the line wrap mechanism ignores it;
+        # it only considers the text (string) and character spacing, rebuilding the string several times
+        fragment[:text] = PlaceholderChar
+        fragment[:actual_character_spacing] = doc.character_spacing
+        fragment[:character_spacing] = image_w
+        fragment[:image_width] = fragment[:width] = image_w
+        fragment[:image_height] = image_h
+      rescue
+        logger.warn %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}) unless scratch
+        drop = true # delegate to cleanup logic in ensure block
+      ensure
+        # NOTE skip rendering image in scratch document or if image can't be loaded
+        if drop
+          fragment.delete :callback
+          fragment.delete :image_info
+          # NOTE retain key to indicate we've visited fragment already
+          fragment[:image_obj] = nil
         end
       end
     end

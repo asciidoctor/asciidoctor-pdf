@@ -87,7 +87,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       (expect annotations).to have_size 1
       (expect annotations[0][:Dest]).to eql hex_encoded_id
       (expect (pdf.page 1).text).to include 'See Über Étudier.'
-    end if RUBY_VERSION >= '2.4.0'
+    end
 
     it 'should create reference to a block by explicit ID' do
       pdf = to_pdf <<~'EOS'

@@ -58,17 +58,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should warn instead of crash if block image is unreadable' do
-      image_file = fixture_file 'logo.png'
-      old_mode = (File.stat image_file).mode
-      begin
-        (expect do
-          FileUtils.chmod 0o000, image_file
-          pdf = to_pdf 'image::logo.png[Unreadable Image]', analyze: true
-          (expect pdf.lines).to eql ['[Unreadable Image] | logo.png']
-        end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      (expect do
+        image_file = fixture_file 'logo.png'
+        old_mode = (File.stat image_file).mode
+        FileUtils.chmod 0o000, image_file
+        pdf = to_pdf 'image::logo.png[Unreadable Image]', analyze: true
+        (expect pdf.lines).to eql ['[Unreadable Image] | logo.png']
       ensure
         FileUtils.chmod old_mode, image_file
-      end
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end unless windows?
 
     it 'should respect value of imagesdir if changed mid-document' do
@@ -811,18 +809,16 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should read remote image with no file extension if allow-uri-read is set' do
-      begin
-        FileUtils.cp (fixture_file 'logo.png'), (fixture_file 'logo')
-        pdf = with_local_webserver do |base_url|
-          to_pdf %(image::#{base_url}/logo[Remote Image]), attribute_overrides: { 'allow-uri-read' => '' }
-        end
-        images = get_images pdf, 1
-        (expect images).to have_size 1
-        (expect images[0].hash[:Filter]).to eql [:FlateDecode]
-        (expect (pdf.page 1).text).to be_empty
-      ensure
-        File.unlink fixture_file 'logo'
+      FileUtils.cp (fixture_file 'logo.png'), (fixture_file 'logo')
+      pdf = with_local_webserver do |base_url|
+        to_pdf %(image::#{base_url}/logo[Remote Image]), attribute_overrides: { 'allow-uri-read' => '' }
       end
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].hash[:Filter]).to eql [:FlateDecode]
+      (expect (pdf.page 1).text).to be_empty
+    ensure
+      File.unlink fixture_file 'logo'
     end
 
     it 'should only read remote image once if allow-uri-read is set' do
@@ -940,19 +936,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect rect[:height]).to eql 200.0
     end
 
-    it 'should not inherit format from document' do
+    it 'wip should not inherit format from document' do
       (expect do
-        begin
-          FileUtils.cp (fixture_file 'square.svg'), (fixture_file 'square')
-          pdf = with_local_webserver do |base_url|
-            to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }, analyze: :rect
-            :pdf-page-size: 200x400
-            :pdf-page-margin: 0
-            :format: svg
+        FileUtils.cp (fixture_file 'square.svg'), (fixture_file 'square')
+        pdf = with_local_webserver do |base_url|
+          to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }, analyze: :rect
+          :pdf-page-size: 200x400
+          :pdf-page-margin: 0
+          :format: svg
 
-            image::#{base_url}/square[pdfwidth=100%]
-            EOS
-          end
+          image::#{base_url}/square[pdfwidth=100%]
+          EOS
         ensure
           File.unlink fixture_file 'square'
         end
@@ -1016,17 +1010,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should warn instead of crash if inline image is unreadable' do
-      image_file = fixture_file 'logo.png'
-      old_mode = (File.stat image_file).mode
-      begin
-        (expect do
-          FileUtils.chmod 0o000, image_file
-          pdf = to_pdf 'image:logo.png[Unreadable Image,16] Company Name', analyze: true
-          (expect pdf.lines).to eql ['[Unreadable Image] Company Name']
-        end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      (expect do
+        image_file = fixture_file 'logo.png'
+        old_mode = (File.stat image_file).mode
+        FileUtils.chmod 0o000, image_file
+        pdf = to_pdf 'image:logo.png[Unreadable Image,16] Company Name', analyze: true
+        (expect pdf.lines).to eql ['[Unreadable Image] Company Name']
       ensure
         FileUtils.chmod old_mode, image_file
-      end
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end unless windows?
 
     # NOTE this test also verifies space is allocated for an inline image at the start of a line

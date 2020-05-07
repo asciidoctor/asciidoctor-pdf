@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage = 'https://asciidoctor.org/docs/asciidoctor-pdf'
   s.license = 'MIT'
   # NOTE required ruby version is informational only; it's not enforced since it can't be overridden and can cause builds to break
-  #s.required_ruby_version = '>= 2.3.0'
+  #s.required_ruby_version = '>= 2.5.0'
   s.metadata = {
     'bug_tracker_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/issues',
     'changelog_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/blob/master/CHANGELOG.adoc',
@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'asciidoctor', '~> 2.0'
   s.add_runtime_dependency 'prawn', '~> 2.2.0'
-  # NOTE ttfunk 1.6 generates TT instructions ghostscript cannot process, so lock the version of ttfunk
+  # NOTE ttfunk 1.6 produces different results for missing glyphs, so lock the version to 1.5 >= 1.5.1
   s.add_runtime_dependency 'ttfunk', ['~> 1.5.0'], ['>= 1.5.1']
   # NOTE must use prawn-table from master branch (defined in Gemfile) for full functionality
   s.add_runtime_dependency 'prawn-table', '~> 0.2.0'
