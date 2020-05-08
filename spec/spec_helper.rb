@@ -299,7 +299,13 @@ RSpec.configure do |config|
 
   def bin_script name, opts = {}
     bin_path = Gem.bin_path (opts.fetch :gem, 'asciidoctor-pdf'), name
-    windows? ? [Gem.ruby, bin_path] : bin_path
+    if (defined? DeepCover) && !(DeepCover.const_defined? :TAKEOVER_IS_ON)
+      [Gem.ruby, '-rdeep_cover', bin_path]
+    elsif windows?
+      [Gem.ruby, bin_path]
+    else
+      bin_path
+    end
   end
 
   def asciidoctor_bin
