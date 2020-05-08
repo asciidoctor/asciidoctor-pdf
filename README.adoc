@@ -1077,6 +1077,8 @@ Now the index terms will be grouped and sorted according to your custom rules.
 By default, Asciidoctor PDF does not optimize the PDF it generates or compress its streams.
 This section covers several approaches you can take to optimize your PDF.
 
+IMPORTANT: If you are creating a PDF for an online publisher, like KDP, you probably need to optimize it. If you don't, as Amazon says, remove all the transparencies and flatten it, it may fail to process your upload.
+
 === Enable stream compression
 
 The simplest way to reduce the size of the PDF file is to enable stream compression (using the FlateDecode method).
