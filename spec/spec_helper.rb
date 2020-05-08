@@ -332,8 +332,8 @@ RSpec.configure do |config|
         env_override['RUBYOPT'] = nil
         if defined? Bundler
           rubylib = []
-          if (prawn_table_dep = Bundler.definition.dependencies.find {|it| it.name == 'prawn-table' })
-            rubylib << (prawn_table_dep.source.path + 'lib').to_s
+          if (prawn_table_spec = Gem::Specification.find_by_name 'prawn-table')
+            rubylib << (prawn_table_spec.source.path + 'lib').to_s
           end
           env_override['RUBYLIB'] = rubylib.join File::PATH_SEPARATOR unless rubylib.empty?
         end
