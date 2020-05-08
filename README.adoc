@@ -1074,35 +1074,49 @@ Now the index terms will be grouped and sorted according to your custom rules.
 
 == Optimizing the Generated PDF
 
-By default, Asciidoctor PDF does not optimize the output document or even compress the streams.
-The simplest way to reduce the size of the file is to enable stream compression (using the FlateDecode method).
+By default, Asciidoctor PDF does not optimize the PDF it generates or compress its streams.
+This section covers several approaches you can take to optimize your PDF.
+
+=== Enable stream compression
+
+The simplest way to reduce the size of the PDF file is to enable stream compression (using the FlateDecode method).
 You can enable this feature by setting the `compress` attribute on the document:
 
  $ asciidoctor-pdf -a compress document.adoc
 
-For more thorough optimzation, you can use either the built-in `asciidoctor-pdf-optimize` script or hexapdf.
+For more thorough optimization, you can use the integrated optimizer or hexapdf.
 Read on to learn how.
 
-=== asciidoctor-pdf-optimize
+=== rghost
 
-{project-name} also provides a bin script that uses GhostScript to optimize and compress the generated PDF (with minimal impact on quality).
+{project-name} also provides a flag (and bin script) that uses GhostScript (via rghost) to optimize and compress the generated PDF (with minimal impact on quality).
 You must have Ghostscript (command: `gs`) and the `rghost` gem installed to use it.
 
-Here's an example usage:
+Here's an example usage that converts your document and optimizes it:
+
+ $ asciidoctor-pdf -a optimize basic-example.adoc
+
+The command will generate an optimized PDF file.
+You can also try reducing the quality of the output file by passing a quality keyword to the `optimize` attribute (e.g., `--optimize=screen`).
+The `optimize` attribute accepts the following keywords: `default` (default, same if value is empty), `screen`, `ebook`, `printer`, and `prepress`.
+
+If you've already generated the PDF, and want to optimize it directly, you can use the bin script:
 
  $ asciidoctor-pdf-optimize basic-example.pdf
 
 The command will overwrite the PDF file with an optimized version.
+You can also try reducing the quality of the output file using the `--quality` flag (e.g., `--quality screen`).
+The `--quality` flag accepts the following keywords: `default` (default), `screen`, `ebook`, `printer`, and `prepress`.
 
-If a file is found with the extension `.pdfmark` and the same rootname as the input file, it is used to add metadata to the generated PDF document.
+In both cases, if a file is found with the extension `.pdfmark` and the same rootname as the input file, it is used to add metadata to the generated PDF document.
 This file is necessary to preserve the document metadata since Ghostscript will otherwise drop it.
 That's why {project-name} always creates this file in addition to the PDF.
 
 IMPORTANT: The `asciidoctor-pdf-optimize` is not guaranteed to reduce the size of the PDF file.
 It may actually make the PDF larger.
 You should probably only consider using it if the file size of the original PDF is several megabytes.
-You can also try reducing the quality of the output file using the `--quality` flag (e.g., `--quality screen`).
-The `--quality` flag accepts the following keywords: `default` (default), `screen`, `ebook`, `printer`, and `prepress`.
+
+If you have difficulty getting the `rghost` gem installed, or you aren't getting the results you expect, you can try the optimizer provided by hexapdf instead.
 
 === hexapdf
 
