@@ -936,7 +936,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect rect[:height]).to eql 200.0
     end
 
-    it 'wip should not inherit format from document' do
+    it 'should not inherit format from document' do
       (expect do
         FileUtils.cp (fixture_file 'square.svg'), (fixture_file 'square')
         pdf = with_local_webserver do |base_url|
