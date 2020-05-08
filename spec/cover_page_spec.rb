@@ -313,19 +313,17 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
 
   it 'should use specified image format', visual: true do
     source_file = (dest_file = fixture_file 'square') + '.svg'
-    begin
-      FileUtils.cp source_file, dest_file
-      to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-format.pdf'
-      = Document Title
-      :front-cover-image: image:square[format=svg]
+    FileUtils.cp source_file, dest_file
+    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-format.pdf'
+    = Document Title
+    :front-cover-image: image:square[format=svg]
 
-      content page
-      EOS
+    content page
+    EOS
 
-      (expect to_file).to visually_match 'cover-page-front-cover-image-format.pdf'
-    ensure
-      File.unlink dest_file
-    end
+    (expect to_file).to visually_match 'cover-page-front-cover-image-format.pdf'
+  ensure
+    File.unlink dest_file
   end
 
   it 'should not allow page size of PDF cover page to affect page size of document' do

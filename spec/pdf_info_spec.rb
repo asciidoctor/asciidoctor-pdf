@@ -172,17 +172,15 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
 
     it 'should set mod and creation dates to match SOURCE_DATE_EPOCH environment variable' do
       old_source_date_epoch = ENV.delete 'SOURCE_DATE_EPOCH'
-      begin
-        ENV['SOURCE_DATE_EPOCH'] = '1234123412'
-        pdf = to_pdf 'content'
-        (expect pdf.info[:ModDate]).to eql 'D:20090208200332+00\'00\''
-        (expect pdf.info[:CreationDate]).to eql 'D:20090208200332+00\'00\''
-      ensure
-        if old_source_date_epoch
-          ENV['SOURCE_DATE_EPOCH'] = old_source_date_epoch
-        else
-          ENV.delete 'SOURCE_DATE_EPOCH'
-        end
+      ENV['SOURCE_DATE_EPOCH'] = '1234123412'
+      pdf = to_pdf 'content'
+      (expect pdf.info[:ModDate]).to eql 'D:20090208200332+00\'00\''
+      (expect pdf.info[:CreationDate]).to eql 'D:20090208200332+00\'00\''
+    ensure
+      if old_source_date_epoch
+        ENV['SOURCE_DATE_EPOCH'] = old_source_date_epoch
+      else
+        ENV.delete 'SOURCE_DATE_EPOCH'
       end
     end
   end

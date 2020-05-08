@@ -508,12 +508,10 @@ RSpec.configure do |config|
   def with_memory_logger level = nil
     old_logger, logger = Asciidoctor::LoggerManager.logger, Asciidoctor::MemoryLogger.new
     logger.level = level if level
-    begin
-      Asciidoctor::LoggerManager.logger = logger
-      yield logger
-    ensure
-      Asciidoctor::LoggerManager.logger = old_logger
-    end
+    Asciidoctor::LoggerManager.logger = logger
+    yield logger
+  ensure
+    Asciidoctor::LoggerManager.logger = old_logger
   end
 
   def with_local_webserver host = resolve_localhost, port = 9876

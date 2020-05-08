@@ -80,6 +80,12 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should not warn when adding label accessor to footnote' do
+    old_verbose, $VERBOSE = $VERBOSE, 1
+    warnings = []
+    Warning.singleton_class.define_method :warn do |str|
+      warnings << str
+    end
+
     input = <<~'EOS'
     = Document Title
     :doctype: book
@@ -95,24 +101,17 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     Yada yada yada.footnote:fn1[]
     EOS
 
-    old_verbose, $VERBOSE = $VERBOSE, 1
-    warnings = []
-    begin
-      Warning.singleton_class.define_method :warn do |str|
-        warnings << str
-      end
-      doc = Asciidoctor.convert input, backend: 'pdf', safe: :safe, to_file: (pdf_io = StringIO.new), standalone: true
-      pdf_io.truncate 0
-      doc.converter.write doc.convert, pdf_io
-      pdf = EnhancedPDFTextInspector.analyze pdf_io
-      lines = pdf.lines pdf.find_text page_number: 2
-      (expect lines.join ?\n).to include '[1 - Chapter A]'
-      (expect warnings).to be_empty
-    ensure
-      $VERBOSE = old_verbose
-      Warning.singleton_class.send :remove_method, :warn
-    end
-  end if RUBY_VERSION >= '2.5.0'
+    doc = Asciidoctor.convert input, backend: 'pdf', safe: :safe, to_file: (pdf_io = StringIO.new), standalone: true
+    pdf_io.truncate 0
+    doc.converter.write doc.convert, pdf_io
+    pdf = EnhancedPDFTextInspector.analyze pdf_io
+    lines = pdf.lines pdf.find_text page_number: 2
+    (expect lines.join ?\n).to include '[1 - Chapter A]'
+    (expect warnings).to be_empty
+  ensure
+    $VERBOSE = old_verbose
+    Warning.singleton_class.send :remove_method, :warn
+  end
 
   it 'should place footnotes at the end of document when doctype is not book' do
     pdf = to_pdf <<~'EOS', attributes_overrides: { 'notitle' => '' }, analyze: true

@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.5
 require: rubocop-rspec
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
@@ -8,6 +8,8 @@ Layout/CaseIndentation:
   EnforcedStyle: end
 Layout/SpaceInsideBlockBraces:
   SpaceBeforeBlockParameters: false
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 Layout/HeredocIndentation:
@@ -87,6 +89,8 @@ Style/Documentation:
   Enabled: false # FIXME reenable me
 Style/DoubleNegation:
   Enabled: false
+Style/ExponentialNotation:
+  Enabled: true
 Style/FormatString:
   EnforcedStyle: percent
 Style/FormatStringToken:

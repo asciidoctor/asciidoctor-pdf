@@ -234,7 +234,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect names).to have_size 1
     name = names[0]
     (expect name).to eql hex_encoded_id
-  end if RUBY_VERSION >= '2.4.0'
+  end
 
   it 'should define a dest at the location of an inline anchor' do
     ['[[details]]details', '[#details]#details#'].each do |details|

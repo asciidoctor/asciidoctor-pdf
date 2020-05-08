@@ -486,15 +486,8 @@ The following transforms are recognized:
 
 [CAUTION#transform-unicode-letters]
 ====
-Since Ruby 2.4, Ruby has built-in support for transforming the case of any letter defined by Unicode.
-
-If you're using Ruby < 2.4, and the text you want to transform contains characters beyond the Basic Latin character set (e.g., an accented character), you must install either the `activesupport` or the `unicode` gem in order for those characters to be transformed.
-
- $ gem install activesupport
-
-or
-
- $ gem install unicode
+Ruby 2.5 and better has built-in support for transforming the case of any letter defined by Unicode.
+You no longer need the `activesupport` or `unicode` gem to transform characters beyon the Basic Latin character set (e.g., accented characters).
 ====
 
 === Colors

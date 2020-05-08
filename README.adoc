@@ -104,23 +104,23 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 * An inline image in a table cell will not force the column wider if the width of the image exceeds the width of the column; either reduce the image width using `pdfwidth` or increase the width of the column using `cols`; another solution is to convert the cell to an AsciiDoc table cell (see https://github.com/asciidoctor/asciidoctor-pdf/issues/830).
 * Must use development version of prawn-table for autowidth to work on table head row.
 * Must use development version of prawn for error to include font name when requested font style is missing.
-* Must use Ruby >= 2.4 for natural cross references to work with non-ASCII titles.
 * AsciiDoc table cell leaves padding below last block (due to lack of margin collapsing).
 * Prawn does not support double-wide box drawing glyphs correctly, so box drawings aren't aligned properly in verbatim blocks (see https://github.com/prawnpdf/prawn/issues/1002[prawn#1002].
 * Orphan / widow support is limited; a page break can occur between a section title and its section content, a table caption and the caption, etc.; use a manual page break to avoid.
 * If a no-break hyphen is surrounded by formatted text on both sides (or is formatted individually), it will not prevent a line break.
 * Images cannot float.
 * Verse blocks do not use a fixed-width font by default, but you can control this setting using the theme.
+//* Must use Ruby >= 2.4 for natural cross references to work with non-ASCII titles.
 
 == Prerequisites
 
-All that's needed is Ruby 2.3 or better and a few Ruby gems (including at least Asciidoctor 2.0.0), which we explain how to install in the next section.
+All that's needed is Ruby 2.5 or better (or JRuby 9.2 or better) and a few Ruby gems (including at least Asciidoctor 2.0.0), which we explain how to install in the next section.
 
 To check if you have Ruby available, use the `ruby` command to query the version installed:
 
- $ ruby --version
+ $ ruby -e 'puts RUBY_VERSION'
 
-Make sure this command reports a Ruby version that's at least 2.3.
+Make sure this command reports a Ruby version that's at least 2.5.
 If so, you may proceed.
 
 === System Encoding
@@ -165,7 +165,7 @@ All files are managed in user space (aka your home or user directory).
 If something gets messed up, you can simply remove the [.path]_$HOME/.rvm_ folder and start over.
 
 To learn how to install RVM, follow the https://asciidoctor.org/docs/install-asciidoctor-macos/#rvm-procedure-recommended[RVM installation procedure] covered in the Asciidoctor documentation.
-Once you have installed RVM and used it to install Ruby, make sure to activate the Ruby managed by RVM using `rvm use default` or a specific Ruby version like `rvm use 2.6`.
+Once you have installed RVM and used it to install Ruby, make sure to activate the Ruby managed by RVM using `rvm use default` or a specific Ruby version like `rvm use 2.7`.
 (You'll need to do this each time you open a new terminal).
 
 After installing the gem, you can see where it was installed using the following command:

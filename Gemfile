@@ -14,22 +14,17 @@ gem 'pygments.rb', ENV['PYGMENTS_VERSION'], require: false if ENV.key? 'PYGMENTS
 gem 'rghost', ENV['RGHOST_VERSION'], require: false if ENV.key? 'RGHOST_VERSION'
 gem 'rouge', ENV['ROUGE_VERSION'], require: false if ENV.key? 'ROUGE_VERSION'
 gem 'text-hyphen', require: false
-# Add unicode (preferred) or activesupport to transform case of text containing multibyte chars on Ruby < 2.4
-gem 'unicode', require: false if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
-#gem 'activesupport', '4.2.7.1', require: false if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
 
 group :docs do
   gem 'yard', require: false
 end
 
 group :lint do
-  unless Gem.win_platform? && RUBY_ENGINE == 'ruby' && (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
-    gem 'rubocop', '~> 0.81.0', require: false
-    gem 'rubocop-rspec', '~> 1.38.0', require: false
-  end
+  gem 'rubocop', '~> 0.82.0', require: false
+  gem 'rubocop-rspec', '~> 1.39.0', require: false
 end
 
 group :coverage do
   gem 'deep-cover-core', '~> 0.8.0', require: false
-  gem 'simplecov', '~> 0.17.0', require: false
+  gem 'simplecov', '~> 0.18.0', require: false
 end

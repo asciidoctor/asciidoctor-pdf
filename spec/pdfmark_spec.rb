@@ -83,18 +83,16 @@ describe Asciidoctor::PDF::Pdfmark do
 
     it 'should set mod and creation dates to match SOURCE_DATE_EPOCH environment variable' do
       old_source_date_epoch = ENV.delete 'SOURCE_DATE_EPOCH'
-      begin
-        ENV['SOURCE_DATE_EPOCH'] = '1234123412'
-        doc = Asciidoctor.load 'content', safe: :safe
-        contents = (subject.new doc).generate
-        (expect contents).to include '/ModDate (D:20090208200332+00\'00\')'
-        (expect contents).to include '/CreationDate (D:20090208200332+00\'00\')'
-      ensure
-        if old_source_date_epoch
-          ENV['SOURCE_DATE_EPOCH'] = old_source_date_epoch
-        else
-          ENV.delete 'SOURCE_DATE_EPOCH'
-        end
+      ENV['SOURCE_DATE_EPOCH'] = '1234123412'
+      doc = Asciidoctor.load 'content', safe: :safe
+      contents = (subject.new doc).generate
+      (expect contents).to include '/ModDate (D:20090208200332+00\'00\')'
+      (expect contents).to include '/CreationDate (D:20090208200332+00\'00\')'
+    ensure
+      if old_source_date_epoch
+        ENV['SOURCE_DATE_EPOCH'] = old_source_date_epoch
+      else
+        ENV.delete 'SOURCE_DATE_EPOCH'
       end
     end
   end
@@ -103,33 +101,29 @@ describe Asciidoctor::PDF::Pdfmark do
     it 'should generate pdfmark file if pdfmark attribute is set' do
       input_file = Pathname.new fixture_file 'book.adoc'
       pdfmark_file = Pathname.new output_file 'book.pdfmark'
-      begin
-        to_pdf input_file, to_dir: output_dir, attribute_overrides: { 'pdfmark' => '' }
-        (expect pdfmark_file).to exist
-        pdfmark_contents = pdfmark_file.read
-        (expect pdfmark_contents).to include '/Title (Book Title)'
-        (expect pdfmark_contents).to include '/Author (Author Name)'
-        (expect pdfmark_contents).to include '/DOCINFO pdfmark'
-      ensure
-        File.unlink pdfmark_file
-      end
+      to_pdf input_file, to_dir: output_dir, attribute_overrides: { 'pdfmark' => '' }
+      (expect pdfmark_file).to exist
+      pdfmark_contents = pdfmark_file.read
+      (expect pdfmark_contents).to include '/Title (Book Title)'
+      (expect pdfmark_contents).to include '/Author (Author Name)'
+      (expect pdfmark_contents).to include '/DOCINFO pdfmark'
+    ensure
+      File.unlink pdfmark_file
     end
 
     it 'should hex encode title if contains non-ASCII character' do
       input_file = Pathname.new fixture_file 'pdfmark-non-ascii-title.adoc'
       pdfmark_file = Pathname.new output_file 'pdfmark-non-ascii-title.pdfmark'
-      begin
-        to_pdf input_file, to_dir: output_dir, attribute_overrides: { 'pdfmark' => '' }
-        (expect pdfmark_file).to exist
-        pdfmark_contents = pdfmark_file.read
-      ensure
-        File.unlink pdfmark_file
-        (expect pdfmark_contents).to include '/Title <feff004c006500730020004d0069007300e9007200610062006c00650073>'
-        (expect pdfmark_contents).to include '/Author (Victor Hugo)'
-        (expect pdfmark_contents).to include '/Subject (June Rebellion)'
-        (expect pdfmark_contents).to include '/Keywords (france, poor, rebellion)'
-        (expect pdfmark_contents).to include '/DOCINFO pdfmark'
-      end
+      to_pdf input_file, to_dir: output_dir, attribute_overrides: { 'pdfmark' => '' }
+      (expect pdfmark_file).to exist
+      pdfmark_contents = pdfmark_file.read
+      (expect pdfmark_contents).to include '/Title <feff004c006500730020004d0069007300e9007200610062006c00650073>'
+      (expect pdfmark_contents).to include '/Author (Victor Hugo)'
+      (expect pdfmark_contents).to include '/Subject (June Rebellion)'
+      (expect pdfmark_contents).to include '/Keywords (france, poor, rebellion)'
+      (expect pdfmark_contents).to include '/DOCINFO pdfmark'
+    ensure
+      File.unlink pdfmark_file
     end
   end
 end
