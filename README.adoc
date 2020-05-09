@@ -1055,7 +1055,7 @@ module Asciidoctor::PDF
       (init_category category).store_term name, dest
     end
   end)
-  
+
   IndexTermGroup.prepend (::Module.new do
     def <=> other
       this = @name.delete_prefix 'fn'
