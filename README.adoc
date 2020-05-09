@@ -1077,7 +1077,9 @@ Now the index terms will be grouped and sorted according to your custom rules.
 By default, Asciidoctor PDF does not optimize the PDF it generates or compress its streams.
 This section covers several approaches you can take to optimize your PDF.
 
-IMPORTANT: If you are creating a PDF for an online publisher, like KDP, you probably need to optimize it. If you don't, as Amazon says, remove all the transparencies and flatten it, it may fail to process your upload.
+IMPORTANT: If you're creating a PDF for Amazon's Kindle Direct Publishing (KDP), and perhaps other online publishers, you likely need to optimize the file before uploading.
+In their words, you must https://kdp.amazon.com/en_US/help/topic/G201953020#check[flatten all transparencies^] (mostly likely referring to images).
+If you don't do this step, the platform may reject your upload.
 
 === Enable stream compression
 
