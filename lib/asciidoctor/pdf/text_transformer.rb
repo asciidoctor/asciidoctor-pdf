@@ -13,14 +13,14 @@ module Asciidoctor
 
       def capitalize_words_pcdata string
         if XMLMarkupRx.match? string
-          string.gsub(PCDATAFilterRx) { $2 ? (capitalize_words_mb $2) : $1 }
+          string.gsub(PCDATAFilterRx) { $2 ? (capitalize_words $2) : $1 }
         else
-          capitalize_words_mb string
+          capitalize_words string
         end
       end
 
-      def capitalize_words_mb string
-        string.gsub(WordRx) { capitalize_mb $& }
+      def capitalize_words string
+        string.gsub(WordRx) { $&.capitalize }
       end
 
       def hyphenate_words_pcdata string, hyphenator
@@ -37,30 +37,18 @@ module Asciidoctor
 
       def lowercase_pcdata string
         if string.include? '<'
-          string.gsub(TagFilterRx) { $2 ? (lowercase_mb $2) : $1 }
+          string.gsub(TagFilterRx) { $2 ? $2.downcase : $1 }
         else
-          lowercase_mb string
+          string.downcase
         end
       end
 
       def uppercase_pcdata string
         if XMLMarkupRx.match? string
-          string.gsub(PCDATAFilterRx) { $2 ? (uppercase_mb $2) : $1 }
+          string.gsub(PCDATAFilterRx) { $2 ? $2.upcase : $1 }
         else
-          uppercase_mb string
+          string.upcase
         end
-      end
-
-      def capitalize_mb string
-        string.capitalize
-      end
-
-      def lowercase_mb string
-        string.downcase
-      end
-
-      def uppercase_mb string
-        string.upcase
       end
     end
   end
