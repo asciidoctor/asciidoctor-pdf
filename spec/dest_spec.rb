@@ -218,7 +218,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
 
   it 'should register dest for a discrete heading with an ID' do
     pdf = to_pdf <<~'EOS'
-    [#bundler]
+    [discrete#bundler]
     == Bundler
 
     Use this procedure if you're using Bundler.
