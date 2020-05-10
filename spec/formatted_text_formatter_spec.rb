@@ -505,9 +505,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       min_text = (pdf.find_text 'MIN')[0]
       normal_text = (pdf.find_text ' and ')[0]
       max_text = (pdf.find_text 'MAX')[0]
-      (expect min_text[:font_size]).to eql 18.0
+      (expect min_text[:font_size].to_f).to eql 18.0
       (expect normal_text[:font_size]).to be 24
-      (expect max_text[:font_size]).to eql 21.0
+      (expect max_text[:font_size].to_f).to eql 21.0
     end
 
     it 'should allow custom role to override styles of link' do

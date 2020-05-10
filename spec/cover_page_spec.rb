@@ -295,7 +295,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect images).to have_size 1
     cover_image = images[0]
     (expect cover_image[:x].to_f).to eql 0.0
-    (expect cover_image[:width]).to eql pdf_page_size[0]
+    (expect cover_image[:width]).to eql pdf_page_size[0].to_f
     (expect cover_image[:height]).to be > pdf_page_size[1]
     (expect cover_image[:y]).to be > pdf_page_size[1]
   end
@@ -342,7 +342,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     pdf = to_pdf input, analyze: true
     (expect pdf.pages).to have_size 2
     (expect pdf.pages[0][:text]).to be_empty
-    (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+    (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     (expect pdf.pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
     (expect pdf.pages[1][:text]).not_to be_empty
   end

@@ -35,7 +35,7 @@ describe 'asciidoctor-pdf' do
       (expect err).to be_empty
       (expect Pathname.new output_file 'hello.pdf').to exist
     end
-  end
+  end if defined? Bundler
 
   context 'Examples' do
     it 'should convert the basic example', cli: true, visual: true do

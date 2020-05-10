@@ -343,7 +343,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'Text with link'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'mplus1mn-regular'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size].to_f).to eql 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -355,7 +355,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'This text uses a document font.'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'mplus1mn-regular'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size].to_f).to eql 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -367,7 +367,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'This text uses the default SVG font.'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'NotoSerif'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size].to_f).to eql 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -379,7 +379,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'This text uses the serif font.'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'Times-Roman'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size].to_f).to eql 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -393,7 +393,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       text = pdf.find_text 'This text uses the serif font.'
       (expect text).to have_size 1
       (expect text[0][:font_name]).to eql 'NotoSerif'
-      (expect text[0][:font_size]).to eql 12.0
+      (expect text[0][:font_size].to_f).to eql 12.0
       (expect text[0][:font_color]).to eql 'AA0000'
     end
 
@@ -408,7 +408,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         text = pdf.find_text 'This text uses the default SVG font.'
         (expect text).to have_size 1
         (expect text[0][:font_name]).to eql 'Times-Roman'
-        (expect text[0][:font_size]).to eql 12.0
+        (expect text[0][:font_size].to_f).to eql 12.0
         (expect text[0][:font_color]).to eql 'AA0000'
       end
     end
@@ -439,7 +439,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-remote-image.svg'}; Error retrieving URL https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@v1.5.0.rc.2/spec/fixtures/logo.png)
     end
 
-    it 'should embed remote image if allow allow-uri-read attribute is set', visual: true do
+    it 'should embed remote image if allow allow-uri-read attribute is set', visual: true, network: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
       A sign of a good writer: image:svg-with-remote-image.svg[]
       EOS
@@ -619,7 +619,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pages).to have_size 3
       (expect pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
       (expect pages[0][:text][-1][:string]).to eql '1'
-      (expect pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+      (expect pages[1][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
       # NOTE no running content on imported pages
       (expect pages[1][:text]).to be_empty
       (expect pages[2][:text][-1][:string]).to eql '3'
@@ -644,7 +644,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pages).to have_size 3
       (expect pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
       (expect pages[0][:text][-1][:string]).to eql '1'
-      (expect pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+      (expect pages[1][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
       # NOTE no running content on imported pages
       (expect pages[1][:text]).to be_empty
       (expect pages[2][:text][-1][:string]).to eql '3'
@@ -903,7 +903,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect (pdf.page 1).text).to be_empty
     end
 
-    it 'should read remote image over HTTPS if allow-uri-read is set' do
+    it 'should read remote image over HTTPS if allow-uri-read is set', network: true do
       pdf = to_pdf 'image::https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@v1.5.0.rc.2/spec/fixtures/logo.png[Remote Image]', attribute_overrides: { 'allow-uri-read' => '' }
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -990,7 +990,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
           OpenURI::Cache.invalidate image_url
         end
       end
-    end
+    end unless (Gem::Specification.stubs_for 'open-uri-cached').empty?
   end
 
   context 'Inline' do
