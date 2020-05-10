@@ -174,6 +174,22 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect content_texts.map {|it| it[:x] }.uniq).to eql [content_texts[0][:x]]
     end
 
+    it 'should allow theme to control vertical alignment of label' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_vertical_align: 'top' }, analyze: true
+      [NOTE]
+      ====
+      There are lots of things you need to know.
+      Then there are the things that you already know.
+      And those things that you don't know that you do not know.
+      This documentation seeks to close the gaps between them.
+      ====
+      EOS
+
+      icon_text = (pdf.find_text 'NOTE')[0]
+      content_text = (pdf.find_text font_name: 'NotoSerif')[0]
+      (expect icon_text[:y]).to be > content_text[:y]
+    end
+
     it 'should resolve character references in label' do
       pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_font_color: '000000' }, analyze: true
       [NOTE,caption=&#174;]
