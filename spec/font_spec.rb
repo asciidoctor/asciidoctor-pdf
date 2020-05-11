@@ -327,7 +327,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       }
       pdf = to_pdf 'https://asciidoctor.org[Asciidoctor]', pdf_theme: pdf_theme, analyze: true
       linked_text = (pdf.find_text 'Asciidoctor')[0]
-      (expect linked_text[:font_size]).to eql 9.0
+      (expect linked_text[:font_size].to_f).to eql 9.0
     end
   end
 end

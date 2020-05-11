@@ -17,6 +17,7 @@ if (ENV.key? 'APPVEYOR') && (RbConfig::CONFIG['host_os'].include? 'mingw') && (G
 end
 
 require 'asciidoctor/pdf'
+require 'prawn/table/version'
 require 'base64'
 require 'chunky_png'
 require 'fileutils' unless defined? FileUtils
