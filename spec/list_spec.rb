@@ -142,7 +142,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql [%(\u25ca diamond), %(\u25cc dotted circle), '$ dollar']
     end
 
-    it 'should allow theme to change marker color' do
+    it 'should allow theme to change marker color for ulist' do
       pdf_theme = { ulist_marker_font_color: '00FF00' }
 
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
@@ -153,6 +153,27 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
       marker_colors = (pdf.find_text ?\u2022).map {|it| it[:font_color] }.uniq
       (expect marker_colors).to eql ['00FF00']
+    end
+
+    it 'should allow theme to change marker color for any list' do
+      pdf_theme = { outline_list_marker_font_color: '00FF00' }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      * all
+      * the
+      * things
+
+      //
+
+      . pencil
+      . paper
+      . thoughts
+      EOS
+
+      ulist_marker_colors = (pdf.find_text ?\u2022).map {|it| it[:font_color] }.uniq
+      olist_marker_colors = (pdf.find_text %r/[1-3]\./).map {|it| it[:font_color] }.uniq
+      (expect ulist_marker_colors).to eql ['00FF00']
+      (expect olist_marker_colors).to eql ['00FF00']
     end
 
     it 'should reserve enough space for marker that is not found in any font' do
