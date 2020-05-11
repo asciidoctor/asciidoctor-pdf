@@ -539,6 +539,17 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql %w(a b c)
     end
 
+    it 'should ignore start value of 1' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [start=1]
+      . one
+      . two
+      . three
+      EOS
+
+      (expect pdf.lines).to eql ['1. one', '2. two', '3. three']
+    end
+
     it 'should allow start value to be less than 1 for list with arabic numbering' do
       pdf = to_pdf <<~'EOS', analyze: true
       [start=-1]
