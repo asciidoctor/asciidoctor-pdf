@@ -1138,7 +1138,7 @@ You can then use it to optimize your PDF as follows:
 
 This command does not manipulate the images in any way.
 It merely compresses the objects in the PDF and prunes any unreachable references.
-But given how much waste Prawn leaves behind, this turns out to reduce the file size significantly.
+But given how much waste Prawn leaves behind, this turns out to reduce the file size substantially.
 
 To see more options, run:
 
