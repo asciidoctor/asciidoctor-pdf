@@ -68,6 +68,22 @@ describe 'Asciidoctor::PDF::Converter - List' do
       end).to log_message severity: :WARN, message: 'unknown unordered list style: oval'
     end
 
+    it 'should not emit warning if list style is unrecognized in scratch document' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [%unbreakable]
+        --
+        [foobarbaz]
+        * foo
+        * bar
+        * baz
+        --
+        EOS
+
+        (expect pdf.find_text ?\u2022).to have_size 3
+      end).to log_message severity: :WARN, message: 'unknown unordered list style: foobarbaz' # asserts count of 1
+    end
+
     it 'should make bullets invisible if list has no-bullet style' do
       pdf = to_pdf <<~'EOS', analyze: true
       reference
