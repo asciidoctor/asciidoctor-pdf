@@ -1297,6 +1297,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Border' do
+    # NOTE tests center alignment
     it 'should draw border around PNG image if border width and border color are set in the theme', visual: true do
       pdf_theme = {
         image_border_width: 0.5,
@@ -1312,7 +1313,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-border.pdf'
     end
 
-    it 'should stretch border around PNG image to bounds if border align key is justify', visual: true do
+    it 'should stretch border around PNG image to bounds if border fit key is auto', visual: true do
       pdf_theme = {
         image_border_width: 0.5,
         image_border_color: 'DDDDDD',
@@ -1328,6 +1329,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-border-fit-page.pdf'
     end
 
+    # NOTE tests right alignment
     it 'should draw border around SVG if border width and border color are set in the theme', visual: true do
       pdf_theme = {
         image_border_width: 1,
@@ -1336,13 +1338,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       to_file = to_pdf_file <<~'EOS', 'image-svg-border.pdf', pdf_theme: pdf_theme
       .Square
-      image::square.svg[align=center,pdfwidth=25%]
+      image::square.svg[align=right,pdfwidth=25%]
       EOS
 
       (expect to_file).to visually_match 'image-svg-border.pdf'
     end
 
-    it 'should stretch border around SVG to bounds if border align key is justify', visual: true do
+    it 'should stretch border around SVG to bounds if border fit key is auto', visual: true do
       pdf_theme = {
         image_border_width: 1,
         image_border_color: '000000',
