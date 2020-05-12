@@ -92,7 +92,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       thematic_break_border_color: 'DDDDDD',
       thematic_break_margin_bottom: 669.75,
     }
-    pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: :line
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
     filler
 
     ---

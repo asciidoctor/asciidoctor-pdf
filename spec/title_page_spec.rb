@@ -508,7 +508,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       image_data = File.binread fixture_file 'tux.png'
       encoded_image_data = Base64.strict_encode64 image_data
       image_url = %(image:data:image/jpg;base64,#{encoded_image_data}[])
-      pdf = to_pdf <<~EOS, pdf_theme: { title_page_logo_image: image_url }
+      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: image_url }
       = Document Title
       :doctype: book
       EOS

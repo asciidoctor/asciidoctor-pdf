@@ -232,7 +232,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should stretch front cover image to boundaries of page if fit=fill', visual: true do
-    to_file = to_pdf_file <<~EOS, 'cover-page-front-cover-image-fill.pdf'
+    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-fill.pdf'
     = Document Title
     :doctype: book
     :front-cover-image: image:cover.jpg[fit=fill]

@@ -958,7 +958,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not double escape specialchars' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       |===
       l|< and >
       |===
@@ -970,7 +970,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Verse table cell' do
     it 'should support verse if supported by core' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       |===
       v|foo
         bar
@@ -1473,7 +1473,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should set width of aligned table relative to bounds' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       [width=25%,align=right]
       |===
       |A | B

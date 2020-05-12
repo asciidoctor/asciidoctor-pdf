@@ -859,7 +859,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         { 'page-background-image' => 'image:recto-bg.png[]', 'page-background-image-verso' => 'none' },
         { 'page-background-image-recto' => 'image:recto-bg.png[]' },
       ].each do |attribute_overrides|
-        to_file = to_pdf_file <<~EOS, 'page-background-image-recto-only.pdf', attribute_overrides: attribute_overrides
+        to_file = to_pdf_file <<~'EOS', 'page-background-image-recto-only.pdf', attribute_overrides: attribute_overrides
         = Document Title
         :doctype: book
 
@@ -883,7 +883,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         { 'page-background-image' => 'image:verso-bg.png[]', 'page-background-image-recto' => 'none' },
         { 'page-background-image-verso' => 'image:verso-bg.png[]' },
       ].each do |attribute_overrides|
-        to_file = to_pdf_file <<~EOS, 'page-background-image-verso-only.pdf', attribute_overrides: attribute_overrides
+        to_file = to_pdf_file <<~'EOS', 'page-background-image-verso-only.pdf', attribute_overrides: attribute_overrides
         = Document Title
         :doctype: book
 

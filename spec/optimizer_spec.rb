@@ -23,7 +23,7 @@ describe 'Asciidoctor::PDF::Optimizer' do
   it 'should use existing pdfmark file if present when optimizing' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     pdfmark_file = Pathname.new output_file 'optimizer-pdfmark.pdfmark'
-    pdfmark_file.write <<~EOS
+    pdfmark_file.write <<~'EOS'
     [ /Title (All Your PDF Are Belong To Us)
       /Author (CATS)
       /Subject (Zero Wing)

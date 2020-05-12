@@ -148,7 +148,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should apply bw style' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
       :rouge-style: bw
 
@@ -171,7 +171,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should add line numbers to start of line if linenums option is enabled' do
-      expected_lines = <<~EOS.split ?\n
+      expected_lines = <<~'EOS'.split ?\n
        1 <?xml version="1.0" encoding="UTF-8"?>
        2 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
        3   <url>
@@ -185,7 +185,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       11 </urlset>
       EOS
 
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
 
       [source,xml,linenums]
@@ -210,11 +210,11 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should honor start value for line numbering' do
-      expected_lines = <<~EOS.split ?\n
+      expected_lines = <<~'EOS'.split ?\n
       5 puts 'Hello, World!'
       EOS
 
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
 
       [source,xml,linenums,start=5]
@@ -292,7 +292,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should highlight lines specified by highlight attribute on block', visual: true do
-      to_file = to_pdf_file <<~EOS, 'source-rouge-line-highlighting.pdf'
+      to_file = to_pdf_file <<~'EOS', 'source-rouge-line-highlighting.pdf'
       :source-highlighter: rouge
 
       [source,c,highlight=4;7-8]
@@ -303,7 +303,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       #include <stdio.h>
 
       int main(void) {
-        printf("Hello, World!\\n");
+        printf("Hello, World!\n");
         return 0;
       }
       ----
@@ -313,7 +313,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should highlight lines specified by highlight attribute on block when linenums are enabled', visual: true do
-      to_file = to_pdf_file <<~EOS, 'source-rouge-line-highlighting-with-linenums.pdf'
+      to_file = to_pdf_file <<~'EOS', 'source-rouge-line-highlighting-with-linenums.pdf'
       :source-highlighter: rouge
 
       [source,c,linenums,highlight=4;7-8]
@@ -324,7 +324,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       #include <stdio.h>
 
       int main(void) {
-        printf("Hello, World!\\n");
+        printf("Hello, World!\n");
         return 0;
       }
       ----
@@ -334,7 +334,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should interpret highlight lines relative to start value', visual: true do
-      to_file = to_pdf_file <<~EOS, 'source-rouge-line-highlighting-with-linenums-start.pdf'
+      to_file = to_pdf_file <<~'EOS', 'source-rouge-line-highlighting-with-linenums-start.pdf'
       :source-highlighter: rouge
 
       [source,c,linenums,start=4,highlight=4;7-8]
@@ -342,7 +342,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       #include <stdio.h>
 
       int main(void) {
-        printf("Hello, World!\\n");
+        printf("Hello, World!\n");
         return 0;
       }
       ----
@@ -352,7 +352,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should preserve indentation when highlighting lines without linenums enabled', visual: true do
-      to_file = to_pdf_file <<~EOS, 'source-rouge-line-highlighting-indent.pdf'
+      to_file = to_pdf_file <<~'EOS', 'source-rouge-line-highlighting-indent.pdf'
       :source-highlighter: rouge
 
       [source,groovy,highlight=4-5]
@@ -390,7 +390,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should highlight and indent wrapped line', visual: true do
-      to_file = to_pdf_file <<~EOS, 'source-rouge-highlight-wrapped-line.pdf'
+      to_file = to_pdf_file <<~'EOS', 'source-rouge-highlight-wrapped-line.pdf'
       :source-highlighter: rouge
 
       [source,xml,linenums,highlight=1;3]
@@ -475,7 +475,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
     it 'should not crash when adding indentation guards' do
       (expect do
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~'EOS', analyze: true
         :source-highlighter: pygments
 
         [source,yaml]
@@ -512,7 +512,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
     it 'should not crash when aligning line numbers' do
       (expect do
-        expected_lines = <<~EOS.split ?\n
+        expected_lines = <<~'EOS'.split ?\n
          1 <?xml version="1.0" encoding="UTF-8"?>
          2 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
          3   <url>
@@ -526,7 +526,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         11 </urlset>
         EOS
 
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~'EOS', analyze: true
         :source-highlighter: pygments
 
         [source,xml,linenums]
@@ -550,11 +550,11 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should honor start value for line numbering' do
-      expected_lines = <<~EOS.split ?\n
+      expected_lines = <<~'EOS'.split ?\n
       5 puts 'Hello, World!'
       EOS
 
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: pygments
 
       [source,xml,linenums,start=5]
@@ -585,7 +585,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should support background color on highlighted tokens', visual: true do
-      to_file = to_pdf_file <<~EOS, 'source-pygments-token-background-color.pdf'
+      to_file = to_pdf_file <<~'EOS', 'source-pygments-token-background-color.pdf'
       :source-highlighter: pygments
       :pygments-style: colorful
 
@@ -601,7 +601,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should use background color from style', visual: true do
-      to_file = to_pdf_file <<~EOS, 'source-pygments-background-color.pdf', pdf_theme: { code_background_color: 'fafafa' }
+      to_file = to_pdf_file <<~'EOS', 'source-pygments-background-color.pdf', pdf_theme: { code_background_color: 'fafafa' }
       :source-highlighter: pygments
       :pygments-style: monokai
 
@@ -645,7 +645,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should highlight selected lines but not the line numbers', visual: true do
-      to_file = to_pdf_file <<~EOS, 'source-pygments-line-highlighting.pdf'
+      to_file = to_pdf_file <<~'EOS', 'source-pygments-line-highlighting.pdf'
       :source-highlighter: pygments
 
       [source,groovy,linenums,highlight=7-9]
@@ -716,7 +716,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should highlight and indent wrapped line', visual: true do
-      to_file = to_pdf_file <<~EOS, 'source-pygments-highlight-wrapped-line.pdf'
+      to_file = to_pdf_file <<~'EOS', 'source-pygments-highlight-wrapped-line.pdf'
       :source-highlighter: pygments
 
       [source,xml,linenums,highlight=1;3]
@@ -733,7 +733,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
   context 'Callouts' do
     it 'should honor font family set on conum category in theme for conum in source block' do
-      pdf = to_pdf <<~EOS, pdf_theme: { code_font_family: 'Courier' }, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: { code_font_family: 'Courier' }, analyze: true
       :source-highlighter: rouge
 
       [source,java]
@@ -755,7 +755,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should substitute autonumber callouts with circled numbers when using rouge as syntax highlighter' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
 
       [source,java]
@@ -775,7 +775,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should process multiple autonumber callouts on a single line when using rouge as syntax highlighter' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
 
       [source,java]
@@ -796,9 +796,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
     it 'should preserve space before callout on final line' do
       ['rouge', (ENV.key? 'PYGMENTS_VERSION') && !(Gem.win_platform? && RUBY_ENGINE == 'jruby') ? 'pygments' : nil].compact.each do |highlighter|
-        pdf = to_pdf <<~EOS, analyze: true
-        :source-highlighter: #{highlighter}
-
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'source-highlighter' => highlighter }, analyze: true
         [source,java]
         ----
         public interface Person {
@@ -814,7 +812,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should hide spaces in front of conum from source highlighter' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
 
       [source,apache]

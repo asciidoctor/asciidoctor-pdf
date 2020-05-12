@@ -300,7 +300,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     it 'should position marker correctly when media is prepress and list item is advanced to next page' do
-      pdf = to_pdf <<~EOS, pdf_theme: { prose_margin_bottom: 705.5 }, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: { prose_margin_bottom: 705.5 }, analyze: true
       :media: prepress
 
       filler
@@ -316,7 +316,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     it 'should position marker correctly when media is prepress and list item is split across page' do
-      pdf = to_pdf <<~EOS, pdf_theme: { prose_margin_bottom: 705 }, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: { prose_margin_bottom: 705 }, analyze: true
       :media: prepress
 
       filler
@@ -790,7 +790,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     it 'should support complex content', visual: true do
-      to_file = to_pdf_file <<~EOS, 'list-complex-dlist.pdf'
+      to_file = to_pdf_file <<~'EOS', 'list-complex-dlist.pdf'
       term::
       desc
       +
@@ -949,7 +949,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       end
 
       it 'should support complex content in horizontal list', visual: true do
-        to_file = to_pdf_file <<~EOS, 'list-horizontal-dlist.pdf'
+        to_file = to_pdf_file <<~'EOS', 'list-horizontal-dlist.pdf'
         [horizontal]
         term::
         desc

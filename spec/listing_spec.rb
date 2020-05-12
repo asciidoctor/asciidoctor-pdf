@@ -104,7 +104,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should guard indentation using no-break space character' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~'EOS', analyze: true
     ----
     flush
       indented
@@ -116,7 +116,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should guard indentation using no-break space character if string starts with indented line' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~'EOS', analyze: true
     ----
       indented
     flush
@@ -251,7 +251,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should honor font family set on conum category in theme for conum in listing block' do
-    pdf = to_pdf <<~EOS, pdf_theme: { code_font_family: 'Courier' }, analyze: true
+    pdf = to_pdf <<~'EOS', pdf_theme: { code_font_family: 'Courier' }, analyze: true
     ----
     fe <1>
     fi <2>
