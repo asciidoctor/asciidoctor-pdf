@@ -11,6 +11,27 @@ describe 'Asciidoctor::PDF::Converter - Video' do
 
       (expect to_file).to visually_match 'video-local-file-poster.pdf'
     end
+
+    it 'should replace video with video path and play icon if poster not specified' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :icons: font
+
+      video::asciidoctor.mp4[]
+      EOS
+
+      (expect pdf.lines).to eql [%(\uf04b\u00a0#{fixture_file 'asciidoctor.mp4'} (video))]
+    end
+
+    it 'should show caption for video with no poster if title is specified' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :icons: font
+
+      .Asciidoctor training
+      video::asciidoctor.mp4[]
+      EOS
+
+      (expect pdf.lines).to eql [%(\uf04b\u00a0#{fixture_file 'asciidoctor.mp4'} (video)), 'Asciidoctor training']
+    end
   end
 
   context 'YouTube' do
