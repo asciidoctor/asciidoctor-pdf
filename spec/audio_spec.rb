@@ -34,4 +34,15 @@ describe 'Asciidoctor::PDF::Converter - Audio' do
     (expect icon_text).not_to be_nil
     (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
   end
+
+  it 'should show caption for audio if title is specified' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :icons: font
+
+    .Episode 1 of my podcast
+    audio::podcast-e1.mp3[]
+    EOS
+
+    (expect pdf.lines).to eql [%(\uf04b\u00a0#{fixture_file 'podcast-e1.mp3'} (audio)), 'Episode 1 of my podcast']
+  end
 end
