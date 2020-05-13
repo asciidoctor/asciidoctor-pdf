@@ -29,6 +29,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
+    it 'should show caption for missing image' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        .A missing image
+        image::no-such-image.png[Missing Image]
+        EOS
+        p pdf.lines
+        (expect pdf.lines).to eql ['[Missing Image] | no-such-image.png', 'Figure 1. A missing image']
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+    end
+
     it 'should be able to customize formatting of alt text using theme' do
       pdf_theme = { image_alt_content: '%{alt} (%{target})' }
       (expect do
