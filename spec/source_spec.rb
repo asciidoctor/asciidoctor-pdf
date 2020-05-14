@@ -510,6 +510,22 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect lines[2]).to eql %(\u00a0   return 0;)
     end
 
+    it 'should use plain text lexer if language is not recognized' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: pygments
+
+      [source,foobar]
+      ----
+      puts "Hello, World!"
+      ----
+      EOS
+
+      puts_text = (pdf.find_text 'puts')[0]
+      (expect puts_text).to be_nil
+      (expect pdf.text).to have_size 1
+      (expect pdf.text[0][:font_color]).to eql '333333'
+    end
+
     it 'should enable start_inline option for PHP by default' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: pygments
