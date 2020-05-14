@@ -35,7 +35,6 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         .A missing image
         image::no-such-image.png[Missing Image]
         EOS
-        p pdf.lines
         (expect pdf.lines).to eql ['[Missing Image] | no-such-image.png', 'Figure 1. A missing image']
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
