@@ -647,30 +647,30 @@ module Asciidoctor
             fill_rounded_rectangle bounds.top_left, bounds.width, bounds.height, radius
           end
 
+          next if no_stroke
+
           # stroke
-          unless no_stroke
-            stroke_color s_color
-            stroke_width = options[:line_width] || 0.5
-            case options[:line_style]
-            when :dashed
-              line_width stroke_width
-              dash stroke_width * 4
-            when :dotted
-              line_width stroke_width
-              dash stroke_width
-            when :double
-              single_line_width = stroke_width / 3.0
-              line_width single_line_width
-              inner_line_offset = single_line_width * 2
-              inner_top_left = [bounds.left + inner_line_offset, bounds.top - inner_line_offset]
-              stroke_rounded_rectangle bounds.top_left, bounds.width, bounds.height, radius
-              stroke_rounded_rectangle inner_top_left, bounds.width - (inner_line_offset * 2), bounds.height - (inner_line_offset * 2), radius
-              next
-            else # :solid
-              line_width stroke_width
-            end
+          stroke_color s_color
+          s_width = options[:line_width] || 0.5
+          case options[:line_style]
+          when :dashed
+            line_width s_width
+            dash s_width * 4
+          when :dotted
+            line_width s_width
+            dash s_width
+          when :double
+            single_line_width = s_width / 3.0
+            line_width single_line_width
+            inner_line_offset = single_line_width * 2
+            inner_top_left = [bounds.left + inner_line_offset, bounds.top - inner_line_offset]
             stroke_rounded_rectangle bounds.top_left, bounds.width, bounds.height, radius
+            stroke_rounded_rectangle inner_top_left, bounds.width - (inner_line_offset * 2), bounds.height - (inner_line_offset * 2), radius
+            next
+          else # :solid
+            line_width s_width
           end
+          stroke_rounded_rectangle bounds.top_left, bounds.width, bounds.height, radius
         end
       end
 
