@@ -1053,7 +1053,6 @@ module Asciidoctor
         end unless at_page_top?
         add_dest_for_block node if node.id
         @list_numerals << 1
-        #stroke_horizontal_rule @theme.caption_border_bottom_color
         line_metrics = theme_font(:conum) { calc_line_metrics @theme.base_line_height }
         node.items.each do |item|
           allocate_space_for_list_item line_metrics
@@ -1794,8 +1793,6 @@ module Asciidoctor
             end
           end
         end
-
-        stroke_horizontal_rule @theme.caption_border_bottom_color if node.title? && @theme.caption_border_bottom_color
 
         theme_margin :block, :bottom
       end
@@ -2943,11 +2940,6 @@ module Asciidoctor
                 normalize_line_height: true,
                 hyphenate: true,
               }.merge(opts)
-            end
-            if side == :top && (bb_color = @theme[%(#{category_caption}_border_bottom_color)] || @theme.caption_border_bottom_color)
-              stroke_horizontal_rule bb_color
-              # FIXME: HACK move down slightly so line isn't covered by filled area (half width of line)
-              move_down 0.25
             end
           end
         end
