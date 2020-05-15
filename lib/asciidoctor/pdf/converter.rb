@@ -2926,7 +2926,7 @@ module Asciidoctor
           theme_font category_caption do
             caption_margin_outside = @theme[%(#{category_caption}_margin_outside)] || @theme.caption_margin_outside
             caption_margin_inside = @theme[%(#{category_caption}_margin_inside)] || @theme.caption_margin_inside
-            if (side = (opts.delete :side) || :top) == :top
+            if ((opts.delete :side) || :top) == :top
               margin = { top: caption_margin_outside, bottom: caption_margin_inside }
             else
               margin = { top: caption_margin_inside, bottom: caption_margin_outside }
