@@ -636,11 +636,15 @@ module Asciidoctor
       #
       def fill_and_stroke_bounds f_color = fill_color, s_color = stroke_color, options = {}
         no_fill = !f_color || f_color == 'transparent'
-        no_stroke = !s_color || s_color == 'transparent' || options[:line_width] == 0
+        if ::Array === (s_width = options[:line_width] || 0.5)
+          s_width_max = s_width.max
+          radius = 0
+        else
+          radius = options[:radius] || 0
+        end
+        no_stroke = !s_color || s_color == 'transparent' || (s_width_max || s_width) == 0
         return if no_fill && no_stroke
         save_graphics_state do
-          radius = options[:radius] || 0
-
           # fill
           unless no_fill
             fill_color f_color
@@ -650,27 +654,37 @@ module Asciidoctor
           next if no_stroke
 
           # stroke
-          stroke_color s_color
-          s_width = options[:line_width] || 0.5
-          case options[:line_style]
-          when :dashed
-            line_width s_width
-            dash s_width * 4
-          when :dotted
-            line_width s_width
-            dash s_width
-          when :double
-            single_line_width = s_width / 3.0
-            line_width single_line_width
-            inner_line_offset = single_line_width * 2
-            inner_top_left = [bounds.left + inner_line_offset, bounds.top - inner_line_offset]
+          if s_width_max
+            if (s_width_end = s_width[0] || 0) > 0
+              stroke_horizontal_rule s_color, line_width: s_width_end, line_style: options[:line_style]
+              stroke_horizontal_rule s_color, line_width: s_width_end, line_style: options[:line_style], at: bounds.height
+            end
+            if (s_width_side = s_width[1] || 0) > 0
+              stroke_vertical_rule s_color, line_width: s_width_side, line_style: options[:line_style]
+              stroke_vertical_rule s_color, line_width: s_width_side, line_style: options[:line_style], at: bounds.width
+            end
+          else
+            stroke_color s_color
+            case options[:line_style]
+            when :dashed
+              line_width s_width
+              dash s_width * 4
+            when :dotted
+              line_width s_width
+              dash s_width
+            when :double
+              single_line_width = s_width / 3.0
+              line_width single_line_width
+              inner_line_offset = single_line_width * 2
+              inner_top_left = [bounds.left + inner_line_offset, bounds.top - inner_line_offset]
+              stroke_rounded_rectangle bounds.top_left, bounds.width, bounds.height, radius
+              stroke_rounded_rectangle inner_top_left, bounds.width - (inner_line_offset * 2), bounds.height - (inner_line_offset * 2), radius
+              next
+            else # :solid
+              line_width s_width
+            end
             stroke_rounded_rectangle bounds.top_left, bounds.width, bounds.height, radius
-            stroke_rounded_rectangle inner_top_left, bounds.width - (inner_line_offset * 2), bounds.height - (inner_line_offset * 2), radius
-            next
-          else # :solid
-            line_width s_width
           end
-          stroke_rounded_rectangle bounds.top_left, bounds.width, bounds.height, radius
         end
       end
 
