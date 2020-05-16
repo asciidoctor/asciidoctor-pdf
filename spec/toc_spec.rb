@@ -133,6 +133,25 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[1][:strings]).not_to include 'Chapter B'
     end
 
+    it 'should not show any section titles when toclevels is less than 0' do
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+      = Document Title
+      :toc:
+      :toclevels: -1
+
+      = Part One
+
+      == Chapter A
+
+      = Part Two
+
+      == Chapter B
+      EOS
+      (expect pdf.pages).to have_size 6
+      toc_lines = pdf.lines pdf.find_text page_number: 2
+      (expect toc_lines).to eql ['Table of Contents']
+    end
+
     it 'should allow section to override toclevels for descendant sections' do
       pdf = to_pdf <<~'EOS', analyze: true
       = Document Title
