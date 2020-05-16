@@ -456,6 +456,32 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_lines).not_to include '.'
     end
 
+    it 'should allow theme to disable dot leader for nested levels' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_levels: 1 }, analyze: true
+      = Book Title
+      :doctype: book
+      :toc:
+
+      == Foo
+
+      === Foo Subsection
+
+      == Bar
+
+      === Bar Subsection
+
+      == Baz
+
+      === Baz Subsection
+      EOS
+
+      toc_lines = (pdf.lines pdf.find_text %r/Subsection/, page_number: 2).join ?\n
+      (expect toc_lines).to include 'Foo Subsection'
+      (expect toc_lines).to include 'Bar Subsection'
+      (expect toc_lines).to include 'Baz Subsection'
+      (expect toc_lines).not_to include '.'
+    end
+
     it 'should not use part or chapter signifier in toc' do
       pdf = to_pdf <<~'EOS', analyze: true
       = Book Title
