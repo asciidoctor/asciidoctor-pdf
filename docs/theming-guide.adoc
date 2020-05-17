@@ -4174,6 +4174,15 @@ The keys in this category control the arrangement and style of tables and table 
   cell:
     padding: 3
 
+3+|[#key-prefix-table-asciidoc-cell]*Key Prefix:* <<key-prefix-table-asciidoc-cell,table-asciidoc-cell>>
+
+|style
+|inherit {vbar} initial
+(default: inherit)
+|table:
+  asciidoc-cell:
+    style: initial
+
 3+|[#key-prefix-table-header-cell]*Key Prefix:* <<key-prefix-table-header-cell,table-header-cell>>
 
 //|align

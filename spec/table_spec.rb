@@ -1137,6 +1137,82 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect b_texts[0][:x]).to eql b_texts[1][:x]
     end
 
+    it 'should inherit font properties from table' do
+      pdf_theme = {
+        table_font_size: 8.5,
+        table_font_color: 'AA0000',
+        table_font_style: 'italic',
+        table_font_family: 'Helvetica',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      |===
+      | normal table cell a| AsciiDoc table cell
+      |===
+      EOS
+
+      normal_text = (pdf.find_text 'normal table cell')[0]
+      (expect normal_text[:font_name]).to eql 'Helvetica-Oblique'
+      (expect normal_text[:font_color]).to eql 'AA0000'
+      (expect normal_text[:font_size]).to eql 8.5
+      asciidoc_text = (pdf.find_text 'AsciiDoc table cell')[0]
+      (expect asciidoc_text[:font_name]).to eql 'Helvetica-Oblique'
+      (expect asciidoc_text[:font_color]).to eql 'AA0000'
+      (expect asciidoc_text[:font_size]).to eql 8.5
+    end
+
+    it 'should scale font size of nested blocks proportionally' do
+      pdf_theme = {
+        table_font_size: 8.5,
+        table_font_family: 'Helvetica',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      ....
+      literal block outside table
+      ....
+
+      |===
+      a|
+      ....
+      literal block inside table
+      ....
+      |===
+      EOS
+
+      outside_text = (pdf.find_text 'literal block outside table')[0]
+      (expect outside_text[:font_name]).to eql 'mplus1mn-regular'
+      (expect outside_text[:font_size]).to eql 11
+      inside_text = (pdf.find_text 'literal block inside table')[0]
+      (expect inside_text[:font_name]).to eql 'mplus1mn-regular'
+      (expect inside_text[:font_size]).to be < 9
+    end
+
+    it 'should not inherit font properties from table if table_asciidoc_cell_style key is set to initial in theme' do
+      pdf_theme = {
+        table_asciidoc_cell_style: 'initial',
+        table_font_size: 8.5,
+        table_font_color: 'AA0000',
+        table_font_style: 'italic',
+        table_font_family: 'Helvetica',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      |===
+      | normal table cell a| AsciiDoc table cell
+      |===
+      EOS
+
+      normal_text = (pdf.find_text 'normal table cell')[0]
+      (expect normal_text[:font_name]).to eql 'Helvetica-Oblique'
+      (expect normal_text[:font_color]).to eql 'AA0000'
+      (expect normal_text[:font_size]).to eql 8.5
+      asciidoc_text = (pdf.find_text 'AsciiDoc table cell')[0]
+      (expect asciidoc_text[:font_name]).to eql 'NotoSerif'
+      (expect asciidoc_text[:font_color]).to eql '333333'
+      (expect asciidoc_text[:font_size]).to eql 10.5
+    end
+
     it 'should not allow AsciiDoc table cell to bleed into footer' do
       pdf_theme = {
         footer_columns: '<100%',

@@ -908,9 +908,11 @@ module Asciidoctor
         original_width = scratch_bounds.width
         scratch_bounds.instance_variable_set :@x, bounds.absolute_left
         scratch_bounds.instance_variable_set :@width, bounds.width
+        prev_font_scale, scratch.font_scale = scratch.font_scale, font_scale
         scratch.font font_family, style: font_style, size: font_size do
           scratch.instance_exec(&block)
         end
+        scratch.font_scale = prev_font_scale
         # NOTE don't count excess if cursor exceeds writable area (due to padding)
         full_page_height = scratch.effective_page_height
         partial_page_height = [full_page_height, start_y - scratch.y].min

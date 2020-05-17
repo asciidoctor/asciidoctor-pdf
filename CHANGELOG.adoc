@@ -35,6 +35,7 @@ Enhancements::
 * skip image block with missing image if computed alt text resolves to empty string (#1645)
 * custom theme does not inherit from base theme by default; must be specified explicitly using `extends: base` (#1640)
 * allow theme to confiure number of index columns using `index_columns` key (#1663)
+* configure AsciiDoc table cell to inherit font properties from table and scale font size of nested blocks (#926)
 
 Bug Fixes::
 

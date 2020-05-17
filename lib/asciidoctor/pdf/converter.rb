@@ -23,6 +23,10 @@ module Asciidoctor
 
       attr_reader :cache_uri
 
+      attr_accessor :font_color
+
+      attr_accessor :font_scale
+
       attr_reader :index
 
       attr_reader :theme
@@ -356,6 +360,7 @@ module Asciidoctor
         end
         @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
         @root_font_size = theme.base_font_size || 12
+        @font_scale = 1
         @font_color = theme.base_font_color || '000000'
         @text_decoration_width = theme.base_text_decoration_width
         @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
@@ -2032,10 +2037,14 @@ module Asciidoctor
                 end
               when :asciidoc
                 cell_data.delete :kerning
-                cell_data.delete :font_style
+                if theme.table_asciidoc_cell_style == 'initial'
+                  cell_data.delete :font
+                  cell_data.delete :font_style
+                  cell_data.delete :size
+                  cell_data.delete :text_color
+                end
                 cell_line_metrics = nil
-                asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self,
-                    (cell_data.merge content: cell.inner_document, font_style: (val = theme.table_font_style) ? val.to_sym : nil, padding: theme.table_cell_padding)
+                asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self, (cell_data.merge content: cell.inner_document, padding: theme.table_cell_padding)
                 cell_data = { content: asciidoc_cell }
               end
               if cell_line_metrics
@@ -3806,7 +3815,7 @@ module Asciidoctor
         prev_kerning, self.default_kerning = default_kerning?, kerning unless kerning.nil?
         prev_transform, @text_transform = @text_transform, (transform == 'none' ? nil : transform) if transform
 
-        font family, size: size, style: (style && style.to_sym) do
+        font family, size: size * @font_scale, style: (style && style.to_sym) do
           result = yield
         end
 
