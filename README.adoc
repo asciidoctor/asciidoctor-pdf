@@ -289,7 +289,7 @@ The pain of the DocBook toolchain should be melting away about now.
 == Themes
 
 The layout and styling of the PDF is driven by a YAML configuration file.
-To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theme Guide>>.
+To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theming Guide>>.
 You can use the built-in theme files, which you can find in the [.path]_data/themes_ directory, as examples.
 
 If you've enabled a source highlighter, you can control the style (aka theme) it applies to source blocks using the `coderay-style`, `pygments-style`, and `rouge-style` attributes, respectively.
@@ -298,7 +298,7 @@ For example, to configure Rouge to use the built-in monokai theme, run Asciidoct
  $ asciidoctor-pdf -a rouge-style=monokai basic-example.adoc
 
 It's possible to develop your own theme for Rouge.
-Refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theme Guide>> for details.
+Refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theming Guide>> for details.
 
 == Support for Non-Latin Languages
 
