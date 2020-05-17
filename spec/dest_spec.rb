@@ -227,6 +227,21 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect get_names pdf).to have_key 'bundler'
   end
 
+  it 'should register dest for a link with an ID' do
+    pdf = to_pdf <<~'EOS'
+    see <<link,link>>
+
+    <<<
+
+    https://asciidoctor.org[Asciidoctor,id=link]
+    EOS
+
+    dests = get_names pdf
+    (expect dests).to have_key 'link'
+    link_dest_page = pdf.objects[dests['link']][0]
+    (expect get_page_number pdf, link_dest_page).to eql 2
+  end
+
   it 'should hex encode name for ID that contains non-ASCII characters' do
     pdf = to_pdf '== Über Étudier'
     hex_encoded_id = %(0x#{('_über_étudier'.unpack 'H*')[0]})

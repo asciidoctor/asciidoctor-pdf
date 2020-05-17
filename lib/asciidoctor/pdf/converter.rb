@@ -2345,8 +2345,8 @@ module Asciidoctor
         target = node.target
         case node.type
         when :link
+          anchor = node.id ? %(<a id="#{node.id}">#{DummyText}</a>) : ''
           attrs = []
-          #attrs << %( id="#{node.id}") if node.id
           if (role = node.role)
             attrs << %( class="#{role}")
           end
@@ -2361,14 +2361,14 @@ module Asciidoctor
           end
           if (role = node.attr 'role') && (role == 'bare' || ((role.split ' ').include? 'bare'))
             # QUESTION should we insert breakable chars into URI when building fragment instead?
-            %(<a href="#{target}"#{attrs.join}>#{breakable_uri text}</a>)
+            %(#{anchor}<a href="#{target}"#{attrs.join}>#{breakable_uri text}</a>)
           # NOTE @media may not be initialized if method is called before convert phase
           elsif @media != 'screen' || (doc.attr? 'show-link-uri')
             # QUESTION should we insert breakable chars into URI when building fragment instead?
             # TODO: allow style of printed link to be controlled by theme
-            %(<a href="#{target}"#{attrs.join}>#{text}</a> [<font size="0.85em">#{breakable_uri bare_target}</font>&#93;)
+            %(#{anchor}<a href="#{target}"#{attrs.join}>#{text}</a> [<font size="0.85em">#{breakable_uri bare_target}</font>&#93;)
           else
-            %(<a href="#{target}"#{attrs.join}>#{text}</a>)
+            %(#{anchor}<a href="#{target}"#{attrs.join}>#{text}</a>)
           end
         when :xref
           # NOTE non-nil path indicates this is an inter-document xref that's not included in current document
