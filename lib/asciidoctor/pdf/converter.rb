@@ -2350,8 +2350,6 @@ module Asciidoctor
           if (role = node.role)
             attrs << %( class="#{role}")
           end
-          #attrs << %( title="#{node.attr 'title'}") if node.attr? 'title'
-          attrs << %( target="#{node.attr 'window'}") if node.attr? 'window'
           if (@media ||= doc.attr 'media', 'screen') != 'screen' && (target.start_with? 'mailto:') && (doc.attr? 'hide-uri-scheme')
             bare_target = target.slice 7, target.length
             node.add_role 'bare' if (text = node.text) == bare_target
