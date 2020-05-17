@@ -780,7 +780,7 @@ For example, you can configure the PDF to open on a specific page using the spec
 A link to page 2 of xref:b.adoc#page=2[b].
 ----
 
-You can find a list of all the special fragment parameters in the https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/pdf_open_parameters.pdf#G4.1500549[PDF Open Parameters^] document.
+You can find a list of all the special fragment parameters in the https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/pdf_open_parameters.pdf#G4.1500549[PDF Open Parameters^] reference.
 
 === Converting Interdocument Xrefs to Internal Xrefs
 
