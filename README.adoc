@@ -741,11 +741,51 @@ It should be a direct descendant of the document or a section.
 That's because what it imports are entire pages.
 If it's used inside a delimited block or table cell, the behavior is unspecified.
 
-== Crafting Interdocument Xrefs
+== Interdocument Xrefs
 
-This converter produces a single PDF file, which means content from multiple source documents get colocated into the same output file.
-That means references between documents must necessarily become internal references.
-These interdocument cross references (i.e., xrefs) will only successfully make that transition if you structure your document in accordance with the rules.
+An xref to another AsciiDoc document (i.e., an interdocument xref) will either become a link to the PDF file generated from that source document or an internal link to an anchor within the current document.
+Which one it becomes depends on whether the target has been included into the current document.
+These section describes these two scenarios.
+
+=== Referencing Another Document
+
+If the target PDF is generated from an AsciiDoc file, you can make a reference to that PDF using the xref macro.
+
+Let's assume the current document is [.path]_a.adoc_ and the PDF you want to reference is generated from [.path]_b.adoc_.
+Here's how you can make a reference from the PDF generated from [.path]_a.adoc_ to the PDF generated from [.path]_b.adoc_.
+
+[source,asciidoc]
+----
+A link to xref:b.adoc[b].
+----
+
+This xref macro is translated to a link that refers to [.path]_b.pdf_.
+
+If there's an anchor you want to target in [.path]_b.pdf_, for example _chapter-b_, you can describe it using a URL fragment just like you would with any URL.
+
+[source,asciidoc]
+----
+A link to xref:b.adoc#chapter-b[b].
+----
+
+WARNING: Linking to a named anchor isn't supported by all PDF viewers.
+Some viewers (like Firefox) only support relative links when the PDF is accessed through a web server.
+To verify it's working, test the PDF in Firefox and served through a local web server.
+
+PDF supports a variety of PDF link open parameters you can control using the URL fragment.
+For example, you can configure the PDF to open on a specific page using the special fragment `page=<N>`, where `<N>` is the 1-based page number.
+
+[source,asciidoc]
+----
+A link to page 2 of xref:b.adoc#page=2[b].
+----
+
+You can find a list of all the special fragment parameters in the https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/pdf_open_parameters.pdf#G4.1500549[PDF Open Parameters^] document.
+
+=== Converting Interdocument Xrefs to Internal Xrefs
+
+If you're using this conveter to generate a single PDF file from multiple source documents (combined using the include directive), references between those included documents must become interal references.
+Interdocument cross references (i.e., xrefs) will only successfully make that transition if you structure your document in accordance with the rules.
 
 Those rules are as follows:
 
