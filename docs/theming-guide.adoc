@@ -5229,14 +5229,25 @@ To force the title page to be used for other doctypes, set the `title-page` attr
 . The second number in the value of `outlinelevels` is the number of levels of the outline to expand (e.g., `3:1`).
 If the second number is not present, all levels are expanded.
 
-== Publishing Mode
+[#print]
+== Printing Mode (print)
 
-Asciidoctor PDF provides the following features to assist with publishing:
+Asciidoctor PDF provides the following behaviors to assist with printing:
+
+* Shows the URL for links (unless the linked text matches the URL)
+* Consolidates page ranges in the index
+
+You activate these printing features by setting the `media` attribute to `print` in the header of your AsciiDoc document (e.g., `:media: print`) or from the API or CLI (e.g., `-a media=print`).
+
+[#prepress]
+== Publishing Mode (prepress)
+
+In addition to the <<print,printing mode behaviors>>, Asciidoctor PDF provides the following behaviors to assist with publishing:
 
 * Double-sided (mirror) page margins
 * Automatic facing pages
 
-These features are activated when you set the `media` attribute to `prepress` in the header of your AsciiDoc document or from the CLI or API.
+You activate these publishing (aka prepress) features by setting the `media` attribute to `prepress` in the header of your AsciiDoc document (e.g., `:media: prepress`) or from the API or CLI (e.g., `-a media=prepress`).
 The following sections describe the behaviors that this setting activates.
 
 === Double-Sided Page Margins
