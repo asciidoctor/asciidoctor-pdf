@@ -475,11 +475,58 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       === Baz Subsection
       EOS
 
-      toc_lines = (pdf.lines pdf.find_text %r/Subsection/, page_number: 2).join ?\n
+      toc_lines = pdf.lines.select {|it| it.include? 'Subsection' }.join ?\n
       (expect toc_lines).to include 'Foo Subsection'
       (expect toc_lines).to include 'Bar Subsection'
       (expect toc_lines).to include 'Baz Subsection'
       (expect toc_lines).not_to include '.'
+    end
+
+    it 'should allow theme to enable dot leader per level' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_levels: '1 3' }, analyze: true
+      = Book Title
+      :doctype: book
+      :toc:
+      :toclevels: 3
+
+      == Foo Top
+
+      === Foo Subsection
+
+      ==== Foo Deep
+
+      == Bar Top
+
+      === Bar Subsection
+
+      ==== Bar Deep
+
+      == Baz Top
+
+      === Baz Subsection
+
+      ==== Baz Deep
+      EOS
+
+      lines = pdf.lines
+
+      main_section_toc_lines = lines.select {|it| it.include? 'Top' }.join ?\n
+      (expect main_section_toc_lines).to include 'Foo Top'
+      (expect main_section_toc_lines).to include 'Bar Top'
+      (expect main_section_toc_lines).to include 'Baz Top'
+      (expect main_section_toc_lines).to include '.'
+
+      subsection_toc_lines = lines.select {|it| it.include? 'Subsection' }.join ?\n
+      (expect subsection_toc_lines).to include 'Foo Subsection'
+      (expect subsection_toc_lines).to include 'Bar Subsection'
+      (expect subsection_toc_lines).to include 'Baz Subsection'
+      (expect subsection_toc_lines).not_to include '.'
+
+      deep_section_toc_lines = lines.select {|it| it.include? 'Deep' }.join ?\n
+      (expect deep_section_toc_lines).to include 'Foo Deep'
+      (expect deep_section_toc_lines).to include 'Bar Deep'
+      (expect deep_section_toc_lines).to include 'Baz Deep'
+      (expect deep_section_toc_lines).to include '.'
     end
 
     it 'should not use part or chapter signifier in toc' do
