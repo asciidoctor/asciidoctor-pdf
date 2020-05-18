@@ -2372,7 +2372,6 @@ module Asciidoctor
           # NOTE non-nil path indicates this is an inter-document xref that's not included in current document
           if (path = node.attributes['path'])
             # NOTE we don't use local as that doesn't work on the web
-            # NOTE for the fragment to work in most viewers, it must be #page=<N> <= document this!
             %(<a href="#{target}">#{node.text || path}</a>)
           elsif (refid = node.attributes['refid'])
             unless (text = node.text)
