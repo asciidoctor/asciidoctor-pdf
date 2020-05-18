@@ -202,12 +202,22 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       (expect first_steps_ref[:Dest]).to eql '_first_steps'
     end
 
-    it 'should link self-referencing interdocument xref to built-in __anchor-top ref' do
+    it 'should link self-referencing interdocument xref with text to built-in __anchor-top ref' do
       pdf = to_pdf Pathname.new fixture_file 'reference-to-self.adoc'
       (expect Pathname.new output_file 'reference-to-self.pdf').to exist
       annotations = get_annotations pdf
-      (expect annotations).to have_size 1
+      (expect annotations).to have_size 2
       (expect annotations[0][:Dest]).to eql '__anchor-top'
+      (expect (pdf.page 3).text).to eql 'go to top'
+    end
+
+    it 'should link self-referencing interdocument xref without text to built-in __anchor-top ref' do
+      pdf = to_pdf Pathname.new fixture_file 'reference-to-self.adoc'
+      (expect Pathname.new output_file 'reference-to-self.pdf').to exist
+      annotations = get_annotations pdf
+      (expect annotations).to have_size 2
+      (expect annotations[1][:Dest]).to eql '__anchor-top'
+      (expect (pdf.page 4).text).to eql '[^top]'
     end
   end
 

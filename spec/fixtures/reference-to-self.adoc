@@ -5,4 +5,8 @@ first page of content
 
 <<<
 
-<<reference-to-self#,go to top>>
+xref:reference-to-self.adoc[go to top]
+
+<<<
+
+xref:reference-to-self.adoc[]
