@@ -188,7 +188,29 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
   end
 
   context 'interdocument' do
-    it 'should convert interdocument xrefs to internal references' do
+    it 'should convert interdocument xref to PDF link' do
+      input_file = Pathname.new fixture_file 'reference-to-sibling.adoc'
+      pdf = to_pdf input_file
+      p2_annotations = get_annotations pdf, 2
+      (expect p2_annotations).to have_size 2
+      book_ref = p2_annotations[0]
+      (expect book_ref[:Subtype]).to be :Link
+      (expect book_ref[:A][:S]).to eql :URI
+      (expect book_ref[:A][:URI]).to eql 'book.pdf'
+    end
+
+    it 'should convert deep interdocument xref to PDF link with fragment' do
+      input_file = Pathname.new fixture_file 'reference-to-sibling.adoc'
+      pdf = to_pdf input_file
+      p2_annotations = get_annotations pdf, 2
+      (expect p2_annotations).to have_size 2
+      first_steps_ref = p2_annotations[1]
+      (expect first_steps_ref[:Subtype]).to be :Link
+      (expect first_steps_ref[:A][:S]).to eql :URI
+      (expect first_steps_ref[:A][:URI]).to eql 'book.pdf#_first_steps'
+    end
+
+    it 'should convert interdocument xrefs included in current document to internal references' do
       input_file = Pathname.new fixture_file 'book.adoc'
       pdf = to_pdf input_file
       p2_annotations = get_annotations pdf, 2

@@ -1,4 +1,4 @@
-= Document Title
+= Reference to Self Example
 :doctype: book
 
 first page of content
