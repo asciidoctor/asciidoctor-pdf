@@ -329,6 +329,66 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline[1][:children][0][:title]).to eql 'Chapter'
       (expect outline[1][:children][0][:closed]).to be true
     end
+
+    it 'should use default toclevels for outline level if only expand levels is specified' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :doctype: book
+      :outlinelevels: :1
+
+      = Part
+
+      == Chapter
+
+      === Section
+
+      ==== Subsection
+      EOS
+
+      outline = extract_outline pdf
+      (expect outline).to have_size 2
+      (expect outline[0][:title]).to eql 'Document Title'
+      (expect outline[0][:children]).to be_empty
+      (expect outline[1][:title]).to eql 'Part'
+      (expect outline[1][:closed]).to be false
+      (expect outline[1][:children]).to have_size 1
+      (expect outline[1][:children][0][:title]).to eql 'Chapter'
+      (expect outline[1][:children][0][:closed]).to be true
+      (expect outline[1][:children][0][:children]).to have_size 1
+      (expect outline[1][:children][0][:children][0][:title]).to eql 'Section'
+      (expect outline[1][:children][0][:children][0][:children]).to have_size 0
+    end
+
+    it 'should use value of toclevels for outline level if only expand levels is specified' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :doctype: book
+      :toclevels: 3
+      :outlinelevels: :1
+
+      = Part
+
+      == Chapter
+
+      === Section
+
+      ==== Subsection
+      EOS
+
+      outline = extract_outline pdf
+      (expect outline).to have_size 2
+      (expect outline[0][:title]).to eql 'Document Title'
+      (expect outline[0][:children]).to be_empty
+      (expect outline[1][:title]).to eql 'Part'
+      (expect outline[1][:closed]).to be false
+      (expect outline[1][:children]).to have_size 1
+      (expect outline[1][:children][0][:title]).to eql 'Chapter'
+      (expect outline[1][:children][0][:closed]).to be true
+      (expect outline[1][:children][0][:children]).to have_size 1
+      (expect outline[1][:children][0][:children][0][:title]).to eql 'Section'
+      (expect outline[1][:children][0][:children][0][:children]).to have_size 1
+      (expect outline[1][:children][0][:children][0][:children][0][:title]).to eql 'Subsection'
+    end
   end
 
   context 'Doctitle' do
