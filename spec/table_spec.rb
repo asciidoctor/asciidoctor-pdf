@@ -966,6 +966,21 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       (expect pdf.lines).to eql ['< and >']
     end
+
+    it 'should scale font size by same amount as applied to table' do
+      pdf_theme = {
+        table_font_size: 8,
+        code_font_size: 10.5,
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      |===
+      |normal cell l|literal cell
+      |===
+      EOS
+
+      (expect (pdf.find_text 'normal cell')[0][:font_size].to_f).to eql 8.0
+      (expect (pdf.find_text 'literal cell')[0][:font_size].to_f).to eql 8.0
+    end
   end
 
   context 'Verse table cell' do
