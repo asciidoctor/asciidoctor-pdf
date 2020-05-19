@@ -3694,6 +3694,10 @@ module Asciidoctor
 
       def theme_fill_and_stroke_block category, block_height, opts = {}
         if (b_width = (opts.key? :border_width) ? opts[:border_width] : @theme[%(#{category}_border_width)])
+          if ::Array === b_width
+            b_width = b_width[0] || 0
+            b_radius = 0
+          end
           b_width = nil unless b_width > 0
         end
         if (bg_color = opts[:background_color] || @theme[%(#{category}_background_color)]) == 'transparent'
@@ -3706,7 +3710,7 @@ module Asciidoctor
         if (b_color = @theme[%(#{category}_border_color)]) == 'transparent'
           b_color = @page_bg_color
         end
-        b_radius = (@theme[%(#{category}_border_radius)] || 0) + (b_width || 0)
+        b_radius ||= (@theme[%(#{category}_border_radius)] || 0) + (b_width || 0)
         if b_width && b_color
           if b_color == @page_bg_color # let page background cut into block background
             b_gap_color, b_shift = @page_bg_color, (b_width * 0.5)

@@ -266,4 +266,78 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     conum_text = (pdf.find_text '①')[0]
     (expect conum_text[:font_name]).not_to eql 'Courier'
   end
+
+  it 'should allow width of border to be set only on ends' do
+    pdf_theme = {
+      code_border_color: 'AA0000',
+      code_border_width: [1, 0],
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    ----
+    foo
+    bar
+    baz
+    ----
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 2
+    (expect lines[0][:from][:y]).to eql lines[0][:to][:y]
+    (expect lines[1][:from][:y]).to eql lines[1][:to][:y]
+  end
+
+  it 'should allow width of border to be set only on sides' do
+    pdf_theme = {
+      code_border_color: 'AA0000',
+      code_border_width: [0, 1],
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    ----
+    foo
+    bar
+    baz
+    ----
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 2
+    (expect lines[0][:from][:x]).to eql lines[0][:to][:x]
+    (expect lines[1][:from][:x]).to eql lines[1][:to][:x]
+  end
+
+  it 'should allow width of border on ends and sides to be different' do
+    pdf_theme = {
+      code_border_color: 'AA0000',
+      code_border_width: [2, 1],
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    ----
+    foo
+    bar
+    baz
+    ----
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 4
+    (expect lines[0][:from][:y]).to eql lines[0][:to][:y]
+    (expect lines[0][:width]).to eql 2
+    (expect lines[2][:from][:x]).to eql lines[2][:to][:x]
+    (expect lines[2][:width]).to eql 1
+  end
+
+  it 'should use dashed border to indicate where block is split across a page boundary when border is only on ends', visual: true do
+    pdf_theme = {
+      code_border_color: 'AA0000',
+      code_border_width: [1, 0],
+    }
+
+    to_file = to_pdf_file <<~EOS, 'listing-page-split-border-ends.pdf', pdf_theme: pdf_theme
+    ----
+    #{(['listing'] * 60).join ?\n}
+    ----
+    EOS
+
+    (expect to_file).to visually_match 'listing-page-split-border-ends.pdf'
+  end
 end

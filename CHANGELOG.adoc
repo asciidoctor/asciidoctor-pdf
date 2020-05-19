@@ -37,6 +37,7 @@ Enhancements::
 * allow theme to confiure number of index columns using `index_columns` key (#1663)
 * configure AsciiDoc table cell to inherit font properties from table and scale font size of nested blocks (#926)
 * add support for id attribute on link macro
+* allow theme to configure width of block border on ends separate from sides (#1693)
 
 Bug Fixes::
 
