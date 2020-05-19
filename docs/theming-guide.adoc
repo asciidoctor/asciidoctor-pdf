@@ -593,6 +593,7 @@ The `transparent` keyword can be used for the background or border color, but no
 An image is specified either as a bare image path or as an inline image macro as found in the AsciiDoc syntax.
 Images in the theme file are currently resolved relative to the value of the `pdf-themesdir` attribute.
 (If `pdf-theme` is a path that ends in `.yml`, and `pdf-themesdir` is not set, then the images are resolved relative to the directory of the path specified by `pdf-theme`).
+If you want to use an image in your theme that's relative to the document you're converting, you can prefix the target with the `{docdir}` attribute reference.
 
 The following image types (and corresponding file extensions) are supported:
 
@@ -620,6 +621,13 @@ title-page:
 ----
 
 In either case, the image is resolved relative to the value of the `pdf-themesdir` attribute, as previously described.
+If you want to instead reference an image relative to the document you're converting, then prefix the target with the `{docdir}` attribute reference.
+
+[source,yaml]
+----
+title-page:
+  background-image: image:{docdir}/images/title-cover.png[]
+----
 
 Like in the AsciiDoc syntax, wrapping the value in the image macro allows you to specify other settings, such as `pdfwidth`, `fit`, and/or `align`.
 For example:
@@ -5205,7 +5213,7 @@ These settings override equivalent keys defined in the theme file, where applica
 
 . `<face>` can be `front` or `back`.
 . The path is resolved relative to base_dir.
-. The target of the image macro is resolved relative to `imagesdir`.
+. In this case, the target of the image macro is resolved relative to `imagesdir` since it's defined in an AsciiDoc document attribute (unlike in the theme, where it is resolved relative to the value of `pdf-themesdir`).
 If the image macro syntax is not used, the value is resolved relative to the base directory, which defaults to the document directory.
 . By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
 The size of the background image can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width) when `fit=none`.
