@@ -1,0 +1,6 @@
+= Reference to Sibling Example
+:doctype: book
+
+Grab a good xref:book.adoc[book].
+
+Then take your xref:book.adoc#_first_steps[first steps].
