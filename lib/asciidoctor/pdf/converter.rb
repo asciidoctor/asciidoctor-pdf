@@ -27,6 +27,8 @@ module Asciidoctor
 
       attr_accessor :font_scale
 
+      attr_reader :root_font_size
+
       attr_reader :index
 
       attr_reader :theme

@@ -1203,6 +1203,40 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect inside_text[:font_size]).to be < 9
     end
 
+    it 'should scale font size of nested blocks consistently, even if table is nested inside a block' do
+      pdf_theme = {
+        base_font_size: 12,
+        code_font_size: 10,
+        sidebar_font_size: 8,
+        table_font_size: 9,
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      |===
+      a|
+      ....
+      literal block outside sidebar
+      ....
+      |===
+
+      ====
+      |===
+      a|
+      ....
+      literal block inside sidebar
+      ....
+      |===
+      ====
+      EOS
+
+      outside_text = (pdf.find_text 'literal block outside sidebar')[0]
+      (expect outside_text[:font_name]).to eql 'mplus1mn-regular'
+      (expect outside_text[:font_size]).to eql 7.5
+      inside_text = (pdf.find_text 'literal block inside sidebar')[0]
+      (expect inside_text[:font_name]).to eql 'mplus1mn-regular'
+      (expect outside_text[:font_size]).to eql 7.5
+    end
+
     it 'should not inherit font properties from table if table_asciidoc_cell_style key is set to initial in theme' do
       pdf_theme = {
         table_asciidoc_cell_style: 'initial',
