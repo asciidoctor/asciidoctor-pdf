@@ -2031,7 +2031,7 @@ module Asciidoctor
                 theme_font :code do
                   literal_cell_font_info = font_info
                   cell_data[:font] = literal_cell_font_info[:family]
-                  cell_data[:size] = literal_cell_font_info[:size]
+                  cell_data[:size] = literal_cell_font_info[:size] * (cell_data[:size] / @root_font_size)
                   cell_data[:text_color] = @font_color
                   cell_line_metrics = calc_line_metrics theme.base_line_height
                 end
