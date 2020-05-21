@@ -44,6 +44,23 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect (pdf.find_text 'level one')[0][:x]).to eql (pdf.find_text 'back to level one')[0][:x]
     end
 
+    it 'should disable indent for list if outline_list_indent is 0' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      before
+
+      * a
+      * b
+      * c
+
+      after
+      EOS
+
+      (expect pdf.lines).to include %(\u2022 a)
+      before_text = (pdf.find_text 'before')[0]
+      list_item_text = (pdf.find_text 'a')[0]
+      (expect before_text[:x]).to eql list_item_text[:x]
+    end
+
     it 'should use marker specified by style' do
       pdf = to_pdf <<~'EOS', analyze: true
       [square]
@@ -100,6 +117,24 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect indents).to have_size 3
       (expect indents.uniq).to have_size 1
       (expect indents[0]).to be > left_margin
+    end
+
+    it 'should disable indent for no-bullet list if outline_list_indent is 0' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      before
+
+      [no-bullet]
+      * a
+      * b
+      * c
+
+      after
+      EOS
+
+      (expect pdf.lines).to include 'a'
+      before_text = (pdf.find_text 'before')[0]
+      list_item_text = (pdf.find_text 'a')[0]
+      (expect before_text[:x]).to eql list_item_text[:x]
     end
 
     it 'should apply proper indentation for each list style that hides the marker' do
