@@ -468,16 +468,20 @@ module Asciidoctor
           page_size = page_size.upcase
           page_size = nil unless ::PDF::Core::PageGeometry::SIZES.key? page_size
         when ::Array
-          page_size = (page_size.slice 0, 2).fill(0..1) {|i| page_size[i] || 0 } unless page_size.size == 2
-          page_size = page_size.map do |dim|
-            if ::Numeric === dim
-              # dimension cannot be less than 0
-              dim > 0 ? dim : break
-            elsif ::String === dim && MeasurementPartsRx =~ dim
-              # NOTE: truncate to max precision retained by PDF::Core
-              (to_pt $1.to_f, $2).truncate 4
-            else
-              break
+          if page_size.empty?
+            page_size = nil
+          else
+            page_size[1] ||= page_size[0]
+            page_size = (page_size.slice 0, 2).map do |dim|
+              if ::Numeric === dim
+                # dimension cannot be less than 0
+                dim > 0 ? dim : break
+              elsif ::String === dim && MeasurementPartsRx =~ dim
+                # NOTE: truncate to max precision retained by PDF::Core
+                (dim = (to_pt $1.to_f, $2).truncate 4) > 0 ? dim : break
+              else
+                break
+              end
             end
           end
         else

@@ -43,6 +43,38 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.pages[0][:size].map(&:to_f)).to eql [600.0, 800.0]
     end
 
+    it 'should set page size specified by page_size theme key using dimension array in points' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: [600, 800] }, analyze: :page
+      content
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql [600.0, 800.0]
+    end
+
+    it 'should truncate page size array to two dimensions' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: [600, 800, 1000] }, analyze: :page
+      content
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql [600.0, 800.0]
+    end
+
+    it 'should expand page size array to two dimensions' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: [800] }, analyze: :page
+      content
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql [800.0, 800.0]
+    end
+
+    it 'should use default page size if page size array is empty' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: [] }, analyze: :page
+      content
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['A4']
+    end
+
     it 'should set page size specified by pdf-page-size attribute using dimension array in inches' do
       pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: [8.5in, 11in]
@@ -57,6 +89,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: 8.5in x 11in
 
+      content
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+    end
+
+    it 'should set page size specified by page_size theme key using dimension array in inches' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: ['8.5in', '11in'] }, analyze: :page
       content
       EOS
       (expect pdf.pages).to have_size 1
