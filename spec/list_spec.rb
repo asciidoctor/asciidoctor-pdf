@@ -45,7 +45,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     it 'should disable indent for list if outline_list_indent is 0' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: { outline_list_indent: 0 }, analyze: true
       before
 
       * a
@@ -120,7 +120,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     it 'should disable indent for no-bullet list if outline_list_indent is 0' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: { outline_list_indent: 0 }, analyze: true
       before
 
       [no-bullet]
