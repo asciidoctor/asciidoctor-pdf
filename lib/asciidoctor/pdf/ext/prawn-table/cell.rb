@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-class Prawn::Table::Cell
-  remove_method :draw_borders
+Prawn::Table::Cell.prepend (Module.new do
   # Draws borders around the cell. Borders are centered on the bounds of
   # the cell outside of any padding, so the caller is responsible for
   # setting appropriate padding to ensure the border does not overlap with
   # cell content.
+  #
+  # Adds support for transparent border color.
   #
   def draw_borders pt
     x, y = pt
@@ -57,4 +58,4 @@ class Prawn::Table::Cell
       end
     end
   end
-end
+end)
