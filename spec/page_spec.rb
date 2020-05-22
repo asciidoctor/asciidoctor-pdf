@@ -75,6 +75,16 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['A4']
     end
 
+    it 'should use default page size if one of dimensions in page size array is 0' do
+      [[800, 0], ['8.5in', '0in']].each do |page_size|
+        pdf = to_pdf <<~'EOS', pdf_theme: { page_size: page_size }, analyze: :page
+        content
+        EOS
+        (expect pdf.pages).to have_size 1
+        (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['A4']
+      end
+    end
+
     it 'should set page size specified by pdf-page-size attribute using dimension array in inches' do
       pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: [8.5in, 11in]
