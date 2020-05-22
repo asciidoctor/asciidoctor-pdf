@@ -232,7 +232,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     names = get_names pdf
     names.delete '__anchor-top'
     (expect names).to have_size 4
-    names.keys.each do |name|
+    names.each_key do |name|
       (expect name).to start_with '__anchor-'
     end
   end
