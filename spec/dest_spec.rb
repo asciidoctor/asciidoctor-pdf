@@ -216,7 +216,54 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect names).to have_key 's-fum'
   end
 
-  it 'should register dest for a discrete heading with an ID' do
+  it 'should not register dest with auto-generated name for each section if sectids are disabled' do
+    pdf = to_pdf <<~'EOS'
+    :!sectids:
+
+    == Fee
+
+    === Fi
+
+    ==== Fo
+
+    ===== Fum
+    EOS
+
+    names = get_names pdf
+    names.delete '__anchor-top'
+    (expect names).to have_size 4
+    names.keys.each do |name|
+      (expect name).to start_with '__anchor-'
+    end
+  end
+
+  it 'should register dest for a discrete heading with an implicit ID' do
+    pdf = to_pdf <<~'EOS'
+    [discrete]
+    == Bundler
+
+    Use this procedure if you're using Bundler.
+    EOS
+
+    (expect get_names pdf).to have_key '_bundler'
+  end
+
+  it 'should not register dest for a discrete heading when sectids are disabled' do
+    pdf = to_pdf <<~'EOS'
+    :!sectids:
+
+    [discrete]
+    == Bundler
+
+    Use this procedure if you're using Bundler.
+    EOS
+
+    names = get_names pdf
+    names.delete '__anchor-top'
+    (expect names).to be_empty
+  end
+
+  it 'should register dest for a discrete heading with an explicit ID' do
     pdf = to_pdf <<~'EOS'
     [discrete#bundler]
     == Bundler

@@ -255,26 +255,6 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.find_text 'Title Case').to have_size 1
   end
 
-  it 'should add destination for each section' do
-    pdf = to_pdf <<~'EOS'
-    = Document Title
-
-    == Level 1
-
-    === Level 2
-
-    ==== Level 3
-
-    ===== Level 4
-    EOS
-
-    names = get_names pdf
-    (expect names).to have_key '_level_1'
-    (expect names).to have_key '_level_2'
-    (expect names).to have_key '_level_3'
-    (expect names).to have_key '_level_4'
-  end
-
   it 'should not crash if menu macro is used in section title' do
     pdf = to_pdf <<~'EOS', analyze: true
     :experimental:
