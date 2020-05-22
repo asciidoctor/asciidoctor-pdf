@@ -12,6 +12,16 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
     end
 
+    it 'should set page size specified by page_size key in theme with predefined name' do
+      ['LEGAL', 'legal', :LEGAL, :legal].each do |page_size|
+        pdf = to_pdf <<~'EOS', pdf_theme: { page_size: page_size }, analyze: :page
+        content
+        EOS
+        (expect pdf.pages).to have_size 1
+        (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LEGAL']
+      end
+    end
+
     it 'should set page size specified by pdf-page-size attribute using predefined name' do
       pdf = to_pdf <<~'EOS', analyze: :page
       :pdf-page-size: Letter
@@ -69,6 +79,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should use default page size if page size array is empty' do
       pdf = to_pdf <<~'EOS', pdf_theme: { page_size: [] }, analyze: :page
+      content
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['A4']
+    end
+
+    it 'should use default page size if page size has unrecognized type' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: true }, analyze: :page
       content
       EOS
       (expect pdf.pages).to have_size 1

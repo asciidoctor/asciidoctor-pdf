@@ -463,9 +463,9 @@ module Asciidoctor
         end
 
         case page_size
-        when ::String
+        when ::String, ::Symbol
           # TODO: extract helper method to check for named page size
-          page_size = page_size.upcase
+          page_size = page_size.to_s.upcase
           page_size = nil unless ::PDF::Core::PageGeometry::SIZES.key? page_size
         when ::Array
           if page_size.empty?
