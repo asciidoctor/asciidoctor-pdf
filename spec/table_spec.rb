@@ -243,6 +243,31 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       end
     end
 
+    it 'should allow theme to specify table border color as CMYK array' do
+      cmyk_color = [19, 9, 0, 60].extend Asciidoctor::PDF::ThemeLoader::CMYKColorValue
+      theme_overrides = {
+        table_border_color: cmyk_color,
+        table_head_border_bottom_color: cmyk_color,
+      }
+
+      pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: theme_overrides
+      [frame=none,grid=rows]
+      |===
+      | Col A | Col B
+
+      | A1
+      | B1
+
+      | A2
+      | B2
+      |===
+      EOS
+
+      pdf.lines.uniq.each do |line|
+        (expect line[:color]).to eql '30170099'
+      end
+    end
+
     it 'should allow theme to set color, width, and style of grid' do
       pdf_theme = {
         table_grid_color: 'AAAAAA',

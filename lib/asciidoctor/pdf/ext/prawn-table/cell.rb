@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 Prawn::Table::Cell.prepend (Module.new do
+  def border_color= color
+    color = [color, color] if Asciidoctor::PDF::ThemeLoader::CMYKColorValue === color
+    super
+  end
+
   # Draws borders around the cell. Borders are centered on the bounds of
   # the cell outside of any padding, so the caller is responsible for
   # setting appropriate padding to ensure the border does not overlap with
