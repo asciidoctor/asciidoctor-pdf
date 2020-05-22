@@ -284,7 +284,7 @@ module Asciidoctor
             return HexColorValue.new value.upcase
           end
         when ::NilClass
-          return nil
+          return
         else
           # Unknown type (usually Integer); coerce to String
           if (value = value.to_s).length == 6
