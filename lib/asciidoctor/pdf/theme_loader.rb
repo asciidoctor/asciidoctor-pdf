@@ -266,8 +266,7 @@ module Asciidoctor
             when [100, 100, 100, 100]
               return HexColorValue.new '000000'
             else
-              value.extend CMYKColorValue
-              return value
+              return value.extend CMYKColorValue
             end
           # RGB value
           when 3
