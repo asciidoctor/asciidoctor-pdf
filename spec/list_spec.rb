@@ -1011,9 +1011,19 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
         item b::
         about item b
+
+        item c::
+        +
+        details about item c
         EOS
 
-        (expect pdf.lines).to eql ['• item a: about item a', 'more about item a', '• item b: about item b']
+        (expect pdf.lines).to eql [
+          '• item a: about item a',
+          'more about item a',
+          '• item b: about item b',
+          '• item c:',
+          'details about item c',
+        ]
         item_a_subject_text = (pdf.find_text 'item a:')[0]
         (expect item_a_subject_text).not_to be_nil
         (expect item_a_subject_text[:font_name]).to eql 'NotoSerif-Bold'
@@ -1098,9 +1108,19 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
         item b::
         about item b
+
+        item c::
+        +
+        details about item c
         EOS
 
-        (expect pdf.lines).to eql ['1. item a: about item a', 'more about item a', '2. item b: about item b']
+        (expect pdf.lines).to eql [
+          '1. item a: about item a',
+          'more about item a',
+          '2. item b: about item b',
+          '3. item c:',
+          'details about item c',
+        ]
         item_a_subject_text = (pdf.find_text 'item a:')[0]
         (expect item_a_subject_text).not_to be_nil
         (expect item_a_subject_text[:font_name]).to eql 'NotoSerif-Bold'
