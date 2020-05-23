@@ -77,6 +77,19 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     (expect pdf.lines).to be_empty
   end
 
+  it 'should not draw left border if border_left_width is nil' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { verse_border_left_width: nil }, analyze: :line
+    [verse]
+    ____
+    here
+    we
+    go
+    ____
+    EOS
+
+    (expect pdf.lines).to be_empty
+  end
+
   it 'should be able to modify styles using verse category in theme' do
     pdf_theme = {
       verse_font_size: 10.5,

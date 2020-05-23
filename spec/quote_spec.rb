@@ -87,6 +87,16 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     (expect pdf.lines).to be_empty
   end
 
+  it 'should not draw left border if border_left_width is nil' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { blockquote_border_left_width: nil }, analyze: :line
+    ____
+    Let it be.
+    ____
+    EOS
+
+    (expect pdf.lines).to be_empty
+  end
+
   it 'should not draw left border on next page if block falls at bottom of page' do
     pdf_theme = {
       thematic_break_border_color: 'DDDDDD',
