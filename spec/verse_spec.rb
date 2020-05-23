@@ -78,7 +78,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
   end
 
   it 'should not draw left border if border_left_width is nil' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { verse_border_left_width: nil }, analyze: :line
+    pdf = to_pdf <<~'EOS', pdf_theme: { verse_border_left_width: nil, verse_border_width: nil }, analyze: :line
     [verse]
     ____
     here

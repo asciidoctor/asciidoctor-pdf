@@ -88,7 +88,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
   end
 
   it 'should not draw left border if border_left_width is nil' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { blockquote_border_left_width: nil }, analyze: :line
+    pdf = to_pdf <<~'EOS', pdf_theme: { blockquote_border_left_width: nil, blockquote_border_width: nil }, analyze: :line
     ____
     Let it be.
     ____
