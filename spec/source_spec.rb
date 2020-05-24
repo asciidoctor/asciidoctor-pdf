@@ -437,6 +437,20 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect message_text[:font_color]).to eql 'CC3300'
     end
 
+    it 'should fall back to text if language does not have valid characters' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: coderay
+
+      [source,?!?]
+      ----
+      ,[.,]
+      ----
+      EOS
+
+      text = (pdf.find_text ',[.,]')[0]
+      (expect text[:font_color]).to eql '333333'
+    end
+
     it 'should not crash if source-highlighter attribute is defined outside of document header' do
       (expect do
         to_pdf <<~'EOS'
