@@ -422,6 +422,21 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect hello_text[:font_name]).to eql 'mplus1mn-regular'
     end
 
+    it 'should use sub-language if language starts with html+' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: coderay
+
+      [source,html+js]
+      ----
+      document.addEventListener('load', function () { console.log('page is loaded!') })
+      ----
+      EOS
+
+      message_text = (pdf.find_text 'page is loaded!')[0]
+      (expect message_text).not_to be_nil
+      (expect message_text[:font_color]).to eql 'CC3300'
+    end
+
     it 'should not crash if source-highlighter attribute is defined outside of document header' do
       (expect do
         to_pdf <<~'EOS'
