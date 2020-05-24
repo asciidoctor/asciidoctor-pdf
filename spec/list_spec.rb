@@ -840,6 +840,19 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect to_file).to visually_match 'list-complex-dlist.pdf'
     end
 
+    it 'should support item with no desc' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      yin:: yang
+      foo::
+      EOS
+
+      (expect pdf.lines).to eql %w(yin yang foo)
+      (expect pdf.find_text 'foo').not_to be_empty
+      yin_text = (pdf.find_text 'yin')[0]
+      foo_text = (pdf.find_text 'foo')[0]
+      (expect foo_text[:x]).to eql yin_text[:x]
+    end
+
     context 'Horizontal' do
       it 'should arrange horizontal list in two columns' do
         pdf = to_pdf <<~'EOS', analyze: true
