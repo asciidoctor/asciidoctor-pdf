@@ -840,6 +840,22 @@ describe 'Asciidoctor::PDF::Converter - Source' do
   end if (ENV.key? 'PYGMENTS_VERSION') && !(Gem.win_platform? && RUBY_ENGINE == 'jruby')
 
   context 'Callouts' do
+    it 'should allow callout to be escaped' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,ruby]
+      ----
+      source = %(before
+      \<1>
+      after)
+      ----
+      EOS
+
+      (expect pdf.lines).to include '<1>'
+      (expect pdf.find_text '①').to be_empty
+    end
+
     it 'should honor font family set on conum category in theme for conum in source block' do
       pdf = to_pdf <<~'EOS', pdf_theme: { code_font_family: 'Courier' }, analyze: true
       :source-highlighter: rouge
