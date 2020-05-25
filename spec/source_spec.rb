@@ -483,6 +483,25 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect lines[1]).to eql %(\u00a0   event_loop();)
       (expect lines[2]).to eql %(\u00a0   return 0;)
     end
+
+    it 'should extract conums so they do not interfere with syntax highlighting' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: coderay
+
+      [source,xml]
+      ----
+      <tag <1>
+        attr="value">
+        content
+      </tag>
+      ----
+      EOS
+
+      attr_name_text = (pdf.find_text 'attr')[0]
+      (expect attr_name_text).not_to be_nil
+      (expect attr_name_text[:font_color]).to eql '4F9FCF'
+      (expect (pdf.find_text '①')[0]).not_to be_nil
+    end
   end
 
   context 'Pygments' do
