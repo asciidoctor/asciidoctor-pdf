@@ -739,6 +739,19 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       end
     end
 
+    it 'should ignore highlight attribute if empty' do
+      pdf = to_pdf <<~'EOS', analyze: :rect
+      :source-highlighter: pygments
+
+      [source,ruby,linenums,highlight=]
+      ----
+      puts "Hello, World!"
+      ----
+      EOS
+
+      (expect pdf.rectangles).to have_size 1
+    end
+
     it 'should highlight selected lines but not the line numbers', visual: true do
       to_file = to_pdf_file <<~'EOS', 'source-pygments-line-highlighting.pdf'
       :source-highlighter: pygments
