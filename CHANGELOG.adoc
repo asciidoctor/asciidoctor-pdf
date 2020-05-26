@@ -75,6 +75,7 @@ Bug Fixes::
 * fix numeric assertions in test suite (#1542)
 * remove poorly-defined (and undocumented) border bottom property for caption
 * fix crash when theme specifies CMYK value for table border color (#1700)
+* fallback gracefully if unrecognized convert-time syntax highlighter is used
 
 Compliance::
 

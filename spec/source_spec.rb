@@ -840,9 +840,33 @@ describe 'Asciidoctor::PDF::Converter - Source' do
   end if (ENV.key? 'PYGMENTS_VERSION') && !(Gem.win_platform? && RUBY_ENGINE == 'jruby')
 
   context 'Unsupported' do
-    it 'should apply specialcharacters substitution for client-side syntax highlighter' do
+    it 'should apply specialcharacters substitution and indentation guards for client-side syntax highlighter' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: highlight.js
+
+      [source,xml]
+      ----
+      <root>
+        <child>content</child>
+      </root>
+      ----
+      EOS
+
+      (expect pdf.lines).to eql ['<root>', %(\u00a0 <child>content</child>), '</root>']
+      (expect pdf.text.map {|it| it[:font_color] }.uniq).to eql ['333333']
+    end
+
+    it 'should apply specialcharacters substitution and indentation guards if syntax highlighter is unsupported' do
+      Class.new Asciidoctor::SyntaxHighlighter::Base do
+        register_for :foobar
+
+        def highlight?
+          true
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: foobar
 
       [source,xml]
       ----

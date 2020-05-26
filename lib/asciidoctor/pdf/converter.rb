@@ -1676,6 +1676,8 @@ module Asciidoctor
               unless defined? ::Rouge::Formatters::Prawn
                 highlighter = nil if (Helpers.require_library RougeRequirePath, 'rouge', :warn).nil?
               end
+            else
+              highlighter = nil
             end
             prev_subs = (subs = node.subs).dup
             # NOTE: the highlight sub is only set for coderay, rouge, and pygments atm
