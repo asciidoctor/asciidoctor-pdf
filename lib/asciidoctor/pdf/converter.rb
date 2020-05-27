@@ -1680,6 +1680,7 @@ module Asciidoctor
               highlighter = nil
             end
             prev_subs = (subs = node.subs).dup
+            callouts_enabled = subs.include? :callouts
             # NOTE: the highlight sub is only set for coderay, rouge, and pygments atm
             highlight_idx = subs.index :highlight
             # NOTE: scratch? here only applies if listing block is nested inside another block
@@ -1705,7 +1706,7 @@ module Asciidoctor
 
           case highlighter
           when 'coderay'
-            source_string, conum_mapping = extract_conums source_string
+            source_string, conum_mapping = extract_conums source_string if callouts_enabled
             srclang = node.attr 'language', 'text'
             begin
               ::CodeRay::Scanners[(srclang = (srclang.start_with? 'html+') ? (srclang.slice 5, srclang.length).to_sym : srclang.to_sym)]
@@ -1726,7 +1727,7 @@ module Asciidoctor
               lexer = (::Pygments::Lexer.find_by_alias node.attr 'language', 'text') || (::Pygments::Lexer.find_by_mimetype 'text/plain')
               lexer_opts = { nowrap: true, noclasses: true, stripnl: false, style: style }
               lexer_opts[:startinline] = !(node.option? 'mixed') if lexer.name == 'PHP'
-              source_string, conum_mapping = extract_conums source_string
+              source_string, conum_mapping = extract_conums source_string if callouts_enabled
               # NOTE: highlight can return nil if something goes wrong; fallback to encoded source string if this happens
               result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
               if node.attr? 'highlight'
@@ -1774,7 +1775,7 @@ module Asciidoctor
                 end
               end
               lexer ||= ::Rouge::Lexers::PlainText
-              source_string, conum_mapping = extract_conums source_string
+              source_string, conum_mapping = extract_conums source_string if callouts_enabled
               if node.attr? 'highlight'
                 unless (hl_lines = (node.resolve_lines_to_highlight source_string, (node.attr 'highlight'))).empty?
                   formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h

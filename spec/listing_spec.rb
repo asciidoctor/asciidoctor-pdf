@@ -340,4 +340,16 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     (expect to_file).to visually_match 'listing-page-split-border-ends.pdf'
   end
+
+  it 'should not substitute conums if callouts sub is absent' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [subs=-callouts]
+    ----
+    not a conum <1>
+    ----
+    EOS
+
+    (expect pdf.lines).to include 'not a conum <1>'
+    (expect pdf.find_text '①').to be_empty
+  end
 end
