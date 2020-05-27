@@ -38,7 +38,25 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     (expect pdf.lines[0]).to end_with '-'
   end
 
-  it 'should hyphenate text in table cell if hyphens attribute is set' do
+  it 'should hyphenate text in table cell in table head if hyphens attribute is set' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :hyphens:
+    :pdf-page-size: A7
+
+    [%header]
+    |===
+    |This story chronicles the inexplicable hazards and tremendously vicious beasts the team must conquer and vanquish.
+    |===
+    EOS
+
+    lines = pdf.lines
+    (expect lines.size).to be > 2
+    (expect lines[0]).to end_with ?\u00ad
+    (expect lines[1]).to end_with ?\u00ad
+    (expect pdf.text[0][:font_name]).to eql 'NotoSerif-Bold'
+  end
+
+  it 'should hyphenate text in table cell in table body if hyphens attribute is set' do
     pdf = to_pdf <<~'EOS', analyze: true
     :hyphens:
 
