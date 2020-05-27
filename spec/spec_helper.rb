@@ -69,6 +69,8 @@ PDF::Inspector::Text.prepend (Module.new do
 end)
 
 class EnhancedPDFTextInspector < PDF::Inspector
+  include ::RSpec::Matchers
+
   attr_accessor :text
   attr_accessor :pages
 
@@ -92,6 +94,12 @@ class EnhancedPDFTextInspector < PDF::Inspector
     else
       @text.select {|candidate| filter <= candidate }
     end
+  end
+
+  def find_unique_text string, filter = {}
+    result = find_text string, filter
+    (expect result).to have_size 1 unless result.empty?
+    result[0]
   end
 
   def strings text = @text

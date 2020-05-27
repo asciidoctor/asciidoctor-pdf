@@ -35,13 +35,13 @@ describe 'Asciidoctor::PDF::Converter - List' do
       prev_it = nil
       %w(one two three).each do |it|
         if prev_it
-          text = (pdf.find_text %(level #{it}))[0]
-          prev_text = (pdf.find_text %(level #{prev_it}))[0]
+          text = pdf.find_unique_text %(level #{it})
+          prev_text = pdf.find_unique_text %(level #{prev_it})
           (expect text[:x]).to be > prev_text[:x]
         end
         prev_it = it
       end
-      (expect (pdf.find_text 'level one')[0][:x]).to eql (pdf.find_text 'back to level one')[0][:x]
+      (expect (pdf.find_unique_text 'level one')[:x]).to eql (pdf.find_unique_text 'back to level one')[:x]
     end
 
     it 'should disable indent for list if outline_list_indent is 0' do
@@ -56,8 +56,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       (expect pdf.lines).to include %(\u2022 a)
-      before_text = (pdf.find_text 'before')[0]
-      list_item_text = (pdf.find_text 'a')[0]
+      before_text = pdf.find_unique_text 'before'
+      list_item_text = pdf.find_unique_text 'a'
       (expect before_text[:x]).to eql list_item_text[:x]
     end
 
@@ -132,8 +132,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       (expect pdf.lines).to include 'a'
-      before_text = (pdf.find_text 'before')[0]
-      list_item_text = (pdf.find_text 'a')[0]
+      before_text = pdf.find_unique_text 'before'
+      list_item_text = pdf.find_unique_text 'a'
       (expect before_text[:x]).to eql list_item_text[:x]
     end
 
@@ -152,12 +152,12 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       (expect pdf.text).to have_size 4
-      left_margin = (pdf.find_text 'reference')[0][:x]
-      unstyled_item = (pdf.find_text 'unstyled')[0]
+      left_margin = (pdf.find_unique_text 'reference')[:x]
+      unstyled_item = pdf.find_unique_text 'unstyled'
       (expect unstyled_item[:x]).to eql left_margin
-      no_bullet_item = (pdf.find_text 'no-bullet')[0]
+      no_bullet_item = pdf.find_unique_text 'no-bullet'
       (expect no_bullet_item[:x]).to eql 56.3805
-      none_item = (pdf.find_text 'none')[0]
+      none_item = pdf.find_unique_text 'none'
       (expect none_item[:x]).to eql 66.24
     end
 
@@ -220,7 +220,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       * missing marker
       EOS
 
-      marker_text = (pdf.find_text ?\u2055)[0]
+      marker_text = pdf.find_unique_text ?\u2055
       (expect marker_text[:width]).to eql 5.25
     end
 
@@ -236,7 +236,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         EOS
 
         (expect pdf.lines).to eql [%(\uf192 bullseye!)]
-        marker_text = (pdf.find_text ?\uf192)[0]
+        marker_text = pdf.find_unique_text ?\uf192
         (expect marker_text).not_to be_nil
         (expect marker_text[:font_name]).to eql 'FontAwesome5Free-Regular'
       end
@@ -280,8 +280,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       mark_texts = pdf.find_text ?\u2022
-      a1_text = (pdf.find_text %r/^A /)[0]
-      b1_text = (pdf.find_text 'B')[0]
+      a1_text = pdf.find_unique_text %r/^A /
+      b1_text = pdf.find_unique_text 'B'
       a_code_phrase_text, b_code_phrase_text = pdf.find_text %r/^code phrase /
       (expect mark_texts).to have_size 3
       item1_to_item2_spacing = (mark_texts[0][:y] - mark_texts[1][:y]).round 2
@@ -328,9 +328,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       * list item
       EOS
 
-      marker_text = (pdf.find_text ?\u2022)[0]
+      marker_text = pdf.find_unique_text ?\u2022
       (expect marker_text[:page_number]).to be 2
-      item_text = (pdf.find_text 'list item')[0]
+      item_text = pdf.find_unique_text 'list item'
       (expect item_text[:page_number]).to be 2
     end
 
@@ -362,7 +362,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       * last
       EOS
 
-      (expect (pdf.find_text 'middle')[0][:page_number]).to be 1
+      (expect (pdf.find_unique_text 'middle')[:page_number]).to be 1
       (expect (pdf.find_text '•')[1][:page_number]).to be 1
       (expect (pdf.find_text '•')[2][:page_number]).to be 2
     end
@@ -432,10 +432,10 @@ describe 'Asciidoctor::PDF::Converter - List' do
         EOS
 
         (expect pdf.lines).to eql [%(\uf096 todo), %(\uf046 done)]
-        unchecked_marker_text = (pdf.find_text ?\uf096)[0]
+        unchecked_marker_text = pdf.find_unique_text ?\uf096
         (expect unchecked_marker_text).not_to be_nil
         (expect unchecked_marker_text[:font_name]).to eql 'FontAwesome5Free-Solid'
-        checked_marker_text = (pdf.find_text ?\uf046)[0]
+        checked_marker_text = pdf.find_unique_text ?\uf046
         (expect checked_marker_text).not_to be_nil
         (expect checked_marker_text[:font_name]).to eql 'FontAwesome5Free-Solid'
       end
@@ -545,13 +545,13 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . ten
       EOS
 
-      nine_text = (pdf.find_text 'nine')[0]
-      ten_text = (pdf.find_text 'ten')[0]
+      nine_text = pdf.find_unique_text 'nine'
+      ten_text = pdf.find_unique_text 'ten'
 
       (expect nine_text[:x]).to eql ten_text[:x]
 
-      no9_text = (pdf.find_text '9.')[0]
-      no10_text = (pdf.find_text '10.')[0]
+      no9_text = pdf.find_unique_text '9.'
+      no10_text = pdf.find_unique_text '10.'
       (expect no9_text[:x]).to be > no10_text[:x]
     end
 
@@ -565,8 +565,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
       lines = pdf.lines
       expect(lines[0]).to eql '10. ten'
       expect(lines[-1]).to eql '1. one'
-      ten_text = (pdf.find_text 'ten')[0]
-      one_text = (pdf.find_text 'one')[0]
+      ten_text = pdf.find_unique_text 'ten'
+      one_text = pdf.find_unique_text 'one'
       (expect ten_text[:x]).to eql one_text[:x]
     end
 
@@ -577,9 +577,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . ten
       EOS
 
-      no1_text = (pdf.find_text '1.')[0]
+      no1_text = pdf.find_unique_text '1.'
       (expect no1_text).to be_nil
-      no9_text = (pdf.find_text '9.')[0]
+      no9_text = pdf.find_unique_text '9.'
       (expect no9_text).not_to be_nil
       (expect no9_text[:order]).to be 1
       (expect pdf.lines).to eql ['9. nine', '10. ten']
@@ -592,9 +592,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . ten
       EOS
 
-      no1_text = (pdf.find_text 'I.')[0]
+      no1_text = pdf.find_unique_text 'I.'
       (expect no1_text).to be_nil
-      no9_text = (pdf.find_text 'IX.')[0]
+      no9_text = pdf.find_unique_text 'IX.'
       (expect no9_text).not_to be_nil
       (expect no9_text[:order]).to be 1
       (expect pdf.lines).to eql ['IX. nine', 'X. ten']
@@ -692,14 +692,14 @@ describe 'Asciidoctor::PDF::Converter - List' do
       EOS
 
       (expect pdf.text).to have_size 5
-      left_margin = (pdf.find_text 'reference')[0][:x]
-      unstyled_item = (pdf.find_text 'unstyled')[0]
+      left_margin = (pdf.find_unique_text 'reference')[:x]
+      unstyled_item = pdf.find_unique_text 'unstyled'
       (expect unstyled_item[:x]).to eql left_margin
-      no_bullet_item = (pdf.find_text 'no-bullet')[0]
+      no_bullet_item = pdf.find_unique_text 'no-bullet'
       (expect no_bullet_item[:x]).to eql 51.6765
-      unnumbered_item = (pdf.find_text 'unnumbered')[0]
+      unnumbered_item = pdf.find_unique_text 'unnumbered'
       (expect unnumbered_item[:x]).to eql 51.6765
-      none_item = (pdf.find_text 'none')[0]
+      none_item = pdf.find_unique_text 'none'
       (expect none_item[:x]).to eql 66.24
     end
 
@@ -715,9 +715,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       . list item
       EOS
 
-      marker_text = (pdf.find_text '1.')[0]
+      marker_text = pdf.find_unique_text '1.'
       (expect marker_text[:page_number]).to be 2
-      item_text = (pdf.find_text 'list item')[0]
+      item_text = pdf.find_unique_text 'list item'
       (expect item_text[:page_number]).to be 2
     end
   end
@@ -774,9 +774,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
       desc
       EOS
 
-      term_text = (pdf.find_text 'term')[0]
+      term_text = pdf.find_unique_text 'term'
       (expect term_text[:page_number]).to be 2
-      desc_text = (pdf.find_text 'desc')[0]
+      desc_text = pdf.find_unique_text 'desc'
       (expect desc_text[:page_number]).to be 2
     end
 
@@ -794,18 +794,18 @@ describe 'Asciidoctor::PDF::Converter - List' do
       desc
       EOS
 
-      term1_text = (pdf.find_text 'term 1')[0]
+      term1_text = pdf.find_unique_text 'term 1'
       (expect term1_text[:page_number]).to be 2
-      term2_text = (pdf.find_text 'term 2')[0]
+      term2_text = pdf.find_unique_text 'term 2'
       (expect term2_text[:page_number]).to be 2
-      desc_text = (pdf.find_text 'desc')[0]
+      desc_text = pdf.find_unique_text 'desc'
       (expect desc_text[:page_number]).to be 2
     end
 
     it 'should style term with italic text using bold italic' do
       pdf = to_pdf '_term_:: desc', analyze: true
 
-      term_text = (pdf.find_text 'term')[0]
+      term_text = pdf.find_unique_text 'term'
       (expect term_text[:font_name]).to eql 'NotoSerif-BoldItalic'
     end
 
@@ -818,7 +818,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       }
       pdf = to_pdf '*term*:: desc', pdf_theme: pdf_theme, analyze: true
 
-      term_text = (pdf.find_text 'TERM')[0]
+      term_text = pdf.find_unique_text 'TERM'
       (expect term_text[:font_name]).to eql 'NotoSerif-BoldItalic'
       (expect term_text[:font_size]).to be 12
       (expect term_text[:font_color]).to eql 'AA0000'
@@ -848,8 +848,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
       (expect pdf.lines).to eql %w(yin yang foo)
       (expect pdf.find_text 'foo').not_to be_empty
-      yin_text = (pdf.find_text 'yin')[0]
-      foo_text = (pdf.find_text 'foo')[0]
+      yin_text = pdf.find_unique_text 'yin'
+      foo_text = pdf.find_unique_text 'foo'
       (expect foo_text[:x]).to eql yin_text[:x]
     end
 
@@ -861,8 +861,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
         yin:: yang
         EOS
 
-        foo_text = (pdf.find_text 'foo')[0]
-        bar_text = (pdf.find_text 'bar')[0]
+        foo_text = pdf.find_unique_text 'foo'
+        bar_text = pdf.find_unique_text 'bar'
         (expect foo_text[:y]).to eql bar_text[:y]
       end
 
@@ -878,7 +878,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect title_text).to have_size 1
         title_text = title_text[0]
         (expect title_text[:font_name]).to eql 'NotoSerif-Italic'
-        list_text = (pdf.find_text 'foo')[0]
+        list_text = pdf.find_unique_text 'foo'
         (expect title_text[:y]).to be > list_text[:y]
       end
 
@@ -918,8 +918,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
         EOS
 
         (expect pdf.find_text 'foo').not_to be_empty
-        yin_text = (pdf.find_text 'yin')[0]
-        foo_text = (pdf.find_text 'foo')[0]
+        yin_text = pdf.find_unique_text 'yin'
+        foo_text = pdf.find_unique_text 'foo'
         (expect foo_text[:x]).to eql yin_text[:x]
       end
 
@@ -934,10 +934,10 @@ describe 'Asciidoctor::PDF::Converter - List' do
         EOS
 
         (expect pdf.lines).to eql ['yin yang', 'foo bar']
-        yin_text = (pdf.find_text 'yin')[0]
-        yang_text = (pdf.find_text 'yang')[0]
-        foo_text = (pdf.find_text 'foo')[0]
-        bar_text = (pdf.find_text 'bar')[0]
+        yin_text = pdf.find_unique_text 'yin'
+        yang_text = pdf.find_unique_text 'yang'
+        foo_text = pdf.find_unique_text 'foo'
+        bar_text = pdf.find_unique_text 'bar'
         (expect yin_text[:y] - foo_text[:y]).to eql yang_text[:y] - bar_text[:y]
       end
 
@@ -954,8 +954,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect pdf.find_text 'bar').not_to be_empty
         (expect pdf.find_text 'baz').not_to be_empty
         (expect pdf.find_text 'desc').not_to be_empty
-        foo_text = (pdf.find_text 'foo')[0]
-        desc_text = (pdf.find_text 'desc')[0]
+        foo_text = pdf.find_unique_text 'foo'
+        desc_text = pdf.find_unique_text 'desc'
         (expect foo_text[:y]).to eql desc_text[:y]
       end
 
@@ -971,10 +971,10 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
         (expect pdf.find_text 'foo').not_to be_empty
         (expect pdf.find_text 'desc').not_to be_empty
-        foo_text = (pdf.find_text 'foo')[0]
-        desc_text = (pdf.find_text 'desc')[0]
+        foo_text = pdf.find_unique_text 'foo'
+        desc_text = pdf.find_unique_text 'desc'
         (expect foo_text[:y]).to eql desc_text[:y]
-        more_desc_text = (pdf.find_text 'more desc')[0]
+        more_desc_text = pdf.find_unique_text 'more desc'
         (expect more_desc_text[:font_name]).to eql 'NotoSerif-Italic'
       end
 
@@ -1037,7 +1037,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
           '• item c:',
           'details about item c',
         ]
-        item_a_subject_text = (pdf.find_text 'item a:')[0]
+        item_a_subject_text = pdf.find_unique_text 'item a:'
         (expect item_a_subject_text).not_to be_nil
         (expect item_a_subject_text[:font_name]).to eql 'NotoSerif-Bold'
       end
@@ -1105,8 +1105,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
         EOS
 
         (expect pdf.find_text 'foo').not_to be_empty
-        yin_text = (pdf.find_text 'yin:')[0]
-        foo_text = (pdf.find_text 'foo')[0]
+        yin_text = pdf.find_unique_text 'yin:'
+        foo_text = pdf.find_unique_text 'foo'
         (expect foo_text[:x]).to eql yin_text[:x]
       end
     end
@@ -1134,7 +1134,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
           '3. item c:',
           'details about item c',
         ]
-        item_a_subject_text = (pdf.find_text 'item a:')[0]
+        item_a_subject_text = pdf.find_unique_text 'item a:'
         (expect item_a_subject_text).not_to be_nil
         (expect item_a_subject_text[:font_name]).to eql 'NotoSerif-Bold'
       end
@@ -1236,7 +1236,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       Unanswerable Question::
       EOS
 
-      unanswerable_q_text = (pdf.find_text 'Unanswerable Question')[0]
+      unanswerable_q_text = pdf.find_unique_text 'Unanswerable Question'
       (expect pdf.lines).to eql ['1. Question', 'Answer', '2. Unanswerable Question']
       (expect unanswerable_q_text[:font_name]).to eql 'NotoSerif-Italic'
     end
@@ -1434,7 +1434,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
       marker_text = (pdf.find_text ?\u2460)[-1]
       (expect marker_text[:page_number]).to be 2
-      item_text = (pdf.find_text 'description')[0]
+      item_text = pdf.find_unique_text 'description'
       (expect item_text[:page_number]).to be 2
     end
   end
