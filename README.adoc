@@ -208,7 +208,7 @@ No problem.
 You can still gain access to these features by installing the unreleased gems directly from GitHub.
 
 To get started, first create a [.path]_Gemfile_ in the root of your project.
-In that file, declare the gem soruce, the {project-handle} gem, and the prawn gem and/or one of its extension gems.
+In that file, declare the gem source, the {project-handle} gem, and the prawn gem and/or one of its extension gems.
 In this example, we'll install both the prawn and prawn-table gems from GitHub.
 
 .Gemfile
