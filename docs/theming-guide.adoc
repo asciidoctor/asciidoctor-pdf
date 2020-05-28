@@ -712,7 +712,7 @@ Even though the built-in fonts require the content to be encoded in WINANSI, _yo
 Asciidoctor PDF encodes the content into WINANSI when building the PDF.
 
 WARNING: Built-in (AFM) fonts do not use the <<fallback-fonts,fallback fonts>>.
-In order for the fallback font to kick in, you must use a TrueType font as the primary font.
+In order for the fallback font to kick in, you must use a TrueType font anywhere you want the fallback font to be used (e.g., the base font family, the code font family, etc).
 
 .WINANSI Encoding Behavior
 ****
