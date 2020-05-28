@@ -487,7 +487,7 @@ The following transforms are recognized:
 [CAUTION#transform-unicode-letters]
 ====
 Ruby 2.5 and better has built-in support for transforming the case of any letter defined by Unicode.
-You no longer need the `activesupport` or `unicode` gem to transform characters beyon the Basic Latin character set (e.g., accented characters).
+You no longer need the `activesupport` or `unicode` gem to transform characters beyond the Basic Latin character set (e.g., accented characters).
 ====
 
 === Colors
@@ -3457,7 +3457,7 @@ The keys in this category control the arrangement of block images.
 |font-style
 |<<font-styles,Font style>> +
 (default: normal)
-|iamge:
+|image:
   alt:
     font-style: italic
 
@@ -4252,7 +4252,7 @@ Since Asciidoctor 2, table stripes are not enabled by default (e.g., `stripes=no
 [#keys-footnotes]
 === Footnotes
 
-The keys in this catagory control the style of the footnotes list at the end of the chapter (book) or document (otherwise).
+The keys in this category control the style of the footnotes list at the end of the chapter (book) or document (otherwise).
 If the `footnotes-title` attribute is specified, it is styled as a block caption.
 The styling of the links is controlled by the global link styles.
 
@@ -4926,7 +4926,7 @@ footer:
 ----
 
 The `&shared_footer` assigns an ID to the YAML subtree under the `recto` key and the `*shared_footer` outputs a copy of it under the `verso` key.
-This technique can be used thoughout the theme file as it's a core feature of YAML.
+This technique can be used throughout the theme file as it's a core feature of YAML.
 
 ==== Attribute References
 
@@ -4948,7 +4948,7 @@ This feature allows you to have alternate lines that are selected when all the a
 One case where this is useful is when referencing the `page-number` attribute.
 If you unset the `pagenums` attribute on the document, any line in the running content that makes reference to `\{page-number}` will be dropped.
 
-You can also built-in AsciiDoc text replacements like `+(C)+`, numeric character references like `+&#169;+`, hexidecimal character references like `+&#x20ac;+`, and inline formatting (e.g., bold, italic, monospace).
+You can also built-in AsciiDoc text replacements like `+(C)+`, numeric character references like `+&#169;+`, hexadecimal character references like `+&#x20ac;+`, and inline formatting (e.g., bold, italic, monospace).
 
 Here's an example that shows how attributes and replacements can be used in the running footer:
 
@@ -5023,7 +5023,7 @@ header:
     center:
       content: $header-recto-center-content
 ----
-<1> You can use the `image-vertical-align` key to slighly nudge the image up or down.
+<1> You can use the `image-vertical-align` key to slightly nudge the image up or down.
 
 CAUTION: By default, the image must fit in the allotted space for the running header or footer.
 Otherwise, you will run into layout issues.
@@ -5357,7 +5357,7 @@ Each style declaration accepts the following properties:
 * `inline_block` - fill the background color to the height of the line (Asciidoctor PDF only)
 * `extend` - extend the background color to the end of the line for a line-oriented match (Asciidoctor PDF only)
 
-Colors are defined using hexidecimal format (e.g., #ff0000 for red).
+Colors are defined using hexadecimal format (e.g., #ff0000 for red).
 
 Use the `Text` token to set the background color of the source block and the default text color.
 
@@ -5417,7 +5417,7 @@ When you override an inline element, you return pseudo-HTML, which is then parse
 
 The pseudo-HTML in Asciidoctor PDF evolved from the inline formatting in Prawn, now supporting the following elements: a, br, button, code, color, del, em, font, img, key, mark, span, strong, sub, sup.
 All decimal and hexadecimal character references are supported, as well as the named entities amp, apos, gt, lt, nbsp, and quot (e.g., `\&apos;`).
-You can change the font color using `rgb` attribue on the `color` element (e.g., `<color rgb="#ff0000">`) and the font family and size using `name` and `size` attributes on the `font` element, respectively (e.g., `<font name="sans" size="12">`).
+You can change the font color using `rgb` attribute on the `color` element (e.g., `<color rgb="#ff0000">`) and the font family and size using `name` and `size` attributes on the `font` element, respectively (e.g., `<font name="sans" size="12">`).
 You can also use the `style` attribute on `span` to control the font color, weight, and style using the relevant CSS property names.
 The pseudo-HTML in Asciidoctor PDF also supports the `class` attribute on any element for applying roles from the theme.
 (Though not recommended, you can pass this pseudo-HTML straight through to Prawn using an inline passthrough in AsciiDoc).
@@ -5437,7 +5437,7 @@ end
 ----
 
 As it stands, the converter doesn't do anything differently than the primary converter because we haven't yet overridden any of its methods.
-Let's do that now, starting by overriding the thematic break (aka horizonal rule) to make it render like a ribbon:
+Let's do that now, starting by overriding the thematic break (aka horizontal rule) to make it render like a ribbon:
 
 [source,ruby]
 ----
