@@ -898,6 +898,22 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect pdf.find_text '①').to be_empty
     end
 
+    it 'should not replace callouts if callouts sub is not present' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,ruby,subs=-callouts]
+      ----
+      source = %(before
+      not a conum <1>
+      after)
+      ----
+      EOS
+
+      (expect pdf.lines).to include 'not a conum <1>'
+      (expect pdf.find_text '①').to be_empty
+    end
+
     it 'should inherit font color if not set in theme' do
       pdf = to_pdf <<~'EOS', pdf_theme: { code_font_color: '111111', conum_font_color: nil }, analyze: true
       [source,ruby]
