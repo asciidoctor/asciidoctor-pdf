@@ -4948,7 +4948,7 @@ This feature allows you to have alternate lines that are selected when all the a
 One case where this is useful is when referencing the `page-number` attribute.
 If you unset the `pagenums` attribute on the document, any line in the running content that makes reference to `\{page-number}` will be dropped.
 
-You can also built-in AsciiDoc text replacements like `+(C)+`, numeric character references like `+&#169;+`, hexadecimal character references like `+&#x20ac;+`, and inline formatting (e.g., bold, italic, monospace).
+You can also use built-in AsciiDoc text replacements like `+(C)+`, numeric character references like `+&#169;+`, hexadecimal character references like `+&#x20ac;+`, and inline formatting (e.g., bold, italic, monospace).
 
 Here's an example that shows how attributes and replacements can be used in the running footer:
 
@@ -5417,7 +5417,7 @@ When you override an inline element, you return pseudo-HTML, which is then parse
 
 The pseudo-HTML in Asciidoctor PDF evolved from the inline formatting in Prawn, now supporting the following elements: a, br, button, code, color, del, em, font, img, key, mark, span, strong, sub, sup.
 All decimal and hexadecimal character references are supported, as well as the named entities amp, apos, gt, lt, nbsp, and quot (e.g., `\&apos;`).
-You can change the font color using `rgb` attribute on the `color` element (e.g., `<color rgb="#ff0000">`) and the font family and size using `name` and `size` attributes on the `font` element, respectively (e.g., `<font name="sans" size="12">`).
+You can change the font color using the `rgb` attribute on the `color` element (e.g., `<color rgb="#ff0000">`) and the font family and size using the `name` and `size` attributes on the `font` element, respectively (e.g., `<font name="sans" size="12">`).
 You can also use the `style` attribute on `span` to control the font color, weight, and style using the relevant CSS property names.
 The pseudo-HTML in Asciidoctor PDF also supports the `class` attribute on any element for applying roles from the theme.
 (Though not recommended, you can pass this pseudo-HTML straight through to Prawn using an inline passthrough in AsciiDoc).
