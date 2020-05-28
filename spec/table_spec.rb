@@ -503,6 +503,40 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[1][:from][:x]).to eql 547.04
     end
 
+    it 'should apply equal width to columns by default when width attribute is set' do
+      pdf = to_pdf <<~'EOS', analyze: :line
+      [frame=sides,grid=cols]
+      |===
+      |a | bbbbb | c
+      |===
+      EOS
+
+      lines = pdf.lines.uniq {|it| [it[:from][:x], it[:from][:y], it[:to][:x], it[:to][:y]] }
+      (expect lines).to have_size 4
+      col1_width = (lines[1][:from][:x] - lines[0][:from][:x]).round 2
+      col2_width = (lines[2][:from][:x] - lines[1][:from][:x]).round 2
+      col3_width = (lines[3][:from][:x] - lines[2][:from][:x]).round 2
+      (expect col1_width).to eql col2_width
+      (expect col2_width).to eql col3_width
+    end
+
+    it 'should apply automatic width to columns by default when autowidth option is set and width attribute is set' do
+      pdf = to_pdf <<~'EOS', analyze: :line
+      [%autowidth,frame=sides,grid=cols]
+      |===
+      |a | bbbbb | a
+      |===
+      EOS
+
+      lines = pdf.lines.uniq {|it| [it[:from][:x], it[:from][:y], it[:to][:x], it[:to][:y]] }
+      (expect lines).to have_size 4
+      col1_width = (lines[1][:from][:x] - lines[0][:from][:x]).round 2
+      col2_width = (lines[2][:from][:x] - lines[1][:from][:x]).round 2
+      col3_width = (lines[3][:from][:x] - lines[2][:from][:x]).round 2
+      (expect col1_width).to eql col3_width
+      (expect col2_width).to be > col1_width
+    end
+
     it 'should allocate remaining width to autowidth column' do
       pdf = to_pdf <<~'EOS', analyze: true
       [cols="10,>~"]
