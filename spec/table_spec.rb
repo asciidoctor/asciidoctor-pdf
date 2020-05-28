@@ -103,7 +103,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect to_file).to visually_match 'table-stripes-even.pdf'
     end
 
-    it 'should apply stripes to specified group of rows as specified by stripes attribute', visual: true do
+    it 'should apply stripes to odd rows as specified by stripes attribute', visual: true do
       to_file = to_pdf_file <<~'EOS', 'table-stripes-odd.pdf'
       [cols=3*,stripes=odd]
       |===
@@ -114,6 +114,19 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       (expect to_file).to visually_match 'table-stripes-odd.pdf'
+    end
+
+    it 'should apply stripes to all rows as specified by stripes attribute', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'table-stripes-all.pdf'
+      [cols=3*,stripes=all]
+      |===
+      |A1 |B1 |C1
+      |A2 |B2 |C2
+      |A3 |B3 |C3
+      |===
+      EOS
+
+      (expect to_file).to visually_match 'table-stripes-all.pdf'
     end
 
     it 'should apply thicker bottom border to table head row' do
