@@ -2434,7 +2434,7 @@ module Asciidoctor
           %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{label}</a>]</sup>)
         elsif node.type == :xref
           # NOTE footnote reference not found
-          %( <color rgb="FF0000">[#{node.text}]</color>)
+          %(<sup><color rgb="FF0000">[#{node.text}]</color></sup>)
         end
       end
 

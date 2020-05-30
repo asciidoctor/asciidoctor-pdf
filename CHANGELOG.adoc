@@ -77,6 +77,7 @@ Bug Fixes::
 * fix crash when theme specifies CMYK value for table border color (#1700)
 * fallback gracefully if unrecognized convert-time syntax highlighter is used
 * allow callouts sub to be disabled on source blocks (#1704)
+* show missing footnote reference in superscript
 
 Compliance::
 

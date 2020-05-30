@@ -307,4 +307,17 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     footnote_ref_start = (pdf.find_text '[')[0][:x]
     (expect footnote_ref_start).to eql foo_text_end
   end
+
+  it 'should show missing footnote reference as ID in red text' do
+    (expect do
+      pdf = to_pdf <<~'EOS', analyze: true
+      bla bla bla.footnote:no-such-id[]
+      EOS
+      (expect pdf.lines).to eql ['bla bla bla.[no-such-id]']
+      annotation_text = pdf.find_unique_text font_color: 'FF0000'
+      (expect annotation_text).not_to be_nil
+      (expect annotation_text[:string]).to eql '[no-such-id]'
+      (expect annotation_text[:font_size]).to be < (pdf.find_unique_text 'bla bla bla.')[:font_size]
+    end).to log_message severity: :WARN, message: 'invalid footnote reference: no-such-id'
+  end
 end
