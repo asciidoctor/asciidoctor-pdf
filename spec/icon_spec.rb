@@ -3,6 +3,11 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Icon' do
+  it 'should display icon name if font-based icons are not set' do
+    pdf = to_pdf 'I icon:heart[] AsciiDoc.', analyze: true
+    (expect pdf.lines).to eql ['I [heart] AsciiDoc.']
+  end
+
   it 'should use icon name from specified icon set' do
     pdf = to_pdf <<~'EOS', analyze: true
     :icons: font
