@@ -171,7 +171,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should add background and border to key as defined in theme', visual: true do
-      to_file = to_pdf_file 'Press kbd:[Ctrl,c] to kill the server.', 'text-formatter-key.pdf', attribute_overrides: { 'experimental' => '' }
+      to_file = to_pdf_file <<~'EOS', 'text-formatter-key.pdf', attribute_overrides: { 'experimental' => '' }
+      Press kbd:[q] to exit.
+
+      Press kbd:[Ctrl,c] to kill the process.
+      EOS
       (expect to_file).to visually_match 'text-formatter-key.pdf'
     end
 
