@@ -170,6 +170,18 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
 
+    it 'should use label as default button content', visual: true do
+      theme_overrides = {
+        button_content: nil,
+        button_background_color: '007BFF',
+        button_border_offset: 3,
+        button_border_radius: 2,
+        button_font_color: 'ffffff',
+      }
+      to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button-default.pdf', pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }
+      (expect to_file).to visually_match 'text-formatter-button.pdf'
+    end
+
     it 'should add background and border to key as defined in theme', visual: true do
       to_file = to_pdf_file <<~'EOS', 'text-formatter-key.pdf', attribute_overrides: { 'experimental' => '' }
       Press kbd:[q] to exit.
