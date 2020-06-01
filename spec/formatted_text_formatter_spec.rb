@@ -182,6 +182,15 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
 
+    it 'should replace %s with button label in button content defined in theme' do
+      theme_overrides = {
+        button_content: '[%s]',
+        button_font_color: '333333',
+      }
+      pdf = to_pdf 'Click btn:[Save] to save your work.', analyze: true, pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }
+      (expect pdf.lines).to eql ['Click [Save] to save your work.']
+    end
+
     it 'should add background and border to key as defined in theme', visual: true do
       to_file = to_pdf_file <<~'EOS', 'text-formatter-key.pdf', attribute_overrides: { 'experimental' => '' }
       Press kbd:[q] to exit.
