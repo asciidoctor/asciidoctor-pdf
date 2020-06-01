@@ -66,7 +66,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     end).to log_message severity: :WARN, message: 'fas-wrench is not a valid icon name in the fab icon set'
   end
 
-  it 'should apply larger font size if size is lg' do
+  it 'should apply larger font size to icon if size is lg' do
     pdf = to_pdf <<~'EOS', analyze: true
     :icons: font
 
@@ -79,6 +79,17 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     (expect wrench_texts[0][:width]).to eql 10.5
     (expect wrench_texts[1][:font_size].round 2).to eql 14.0
     (expect wrench_texts[1][:width].round 2).to eql 14.0
+  end
+
+  it 'should apply specified custom font size to icon' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :icons: font
+
+    I icon:fas-heart[1.2x] AsciiDoc
+    EOS
+
+    heart_text = pdf.find_unique_text ?\uf004
+    (expect heart_text[:font_size]).to eql 12.6
   end
 
   it 'should reserve 1em of space for fw icon' do
