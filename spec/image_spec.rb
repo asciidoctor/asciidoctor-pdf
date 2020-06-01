@@ -803,7 +803,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Remote' do
-    it 'should warn if image is remote and allow-uri-read is not set' do
+    it 'should warn and show alt text with URL if block image is remote and allow-uri-read is not set' do
       (expect do
         image_url = nil
         pdf = with_local_webserver do |base_url|
@@ -811,6 +811,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
           to_pdf %(image::#{image_url}[Remote Image]), analyze: true
         end
         (expect pdf.lines).to eql [%([Remote Image] | #{image_url})]
+      end).to log_message severity: :WARN, message: '~allow-uri-read is not enabled; cannot embed remote image'
+    end
+
+    it 'should warn and show alt text if inline image is remote and allow-uri-read is not set' do
+      (expect do
+        image_url = nil
+        pdf = with_local_webserver do |base_url|
+          image_url = %(#{base_url}/logo.png)
+          to_pdf %(Observe image:#{image_url}[Remote Image]), analyze: true
+        end
+        (expect pdf.lines).to eql ['Observe [Remote Image]']
       end).to log_message severity: :WARN, message: '~allow-uri-read is not enabled; cannot embed remote image'
     end
 
