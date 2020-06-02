@@ -207,6 +207,51 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect pdf.lines).to eql ['Press Ctrl + c to kill the process.']
     end
 
+    it 'should convert menu macro' do
+      pdf = to_pdf <<~'EOS', analyze: true, attribute_overrides: { 'experimental' => '' }
+      Select menu:File[Quit] to exit.
+      EOS
+      menu_texts = pdf.find_text font_name: 'NotoSerif-Bold'
+      (expect menu_texts).to have_size 3
+      (expect menu_texts[0][:string]).to eql 'File '
+      (expect menu_texts[0][:font_color]).to eql '333333'
+      (expect menu_texts[1][:string]).to eql ?\u203a
+      (expect menu_texts[1][:font_color]).to eql 'B12146'
+      (expect menu_texts[2][:string]).to eql ' Quit'
+      (expect menu_texts[2][:font_color]).to eql '333333'
+      (expect pdf.lines).to eql [%(Select File \u203a Quit to exit.)]
+    end
+
+    it 'should support menu macro with only the root level' do
+      pdf = to_pdf <<~'EOS', analyze: true, attribute_overrides: { 'experimental' => '' }
+      The menu:File[] menu is where all the useful stuff is.
+      EOS
+      menu_texts = pdf.find_text font_name: 'NotoSerif-Bold'
+      (expect menu_texts).to have_size 1
+      (expect menu_texts[0][:string]).to eql 'File'
+      (expect menu_texts[0][:font_color]).to eql '333333'
+      (expect pdf.lines).to eql ['The File menu is where all the useful stuff is.']
+    end
+
+    it 'should support menu macro with multiple levels' do
+      pdf = to_pdf <<~'EOS', analyze: true, attribute_overrides: { 'experimental' => '' }
+      Select menu:File[New,Class] to create a new Java class.
+      EOS
+      menu_texts = pdf.find_text font_name: 'NotoSerif-Bold'
+      (expect menu_texts).to have_size 5
+      (expect menu_texts[0][:string]).to eql 'File '
+      (expect menu_texts[0][:font_color]).to eql '333333'
+      (expect menu_texts[1][:string]).to eql ?\u203a
+      (expect menu_texts[1][:font_color]).to eql 'B12146'
+      (expect menu_texts[2][:string]).to eql ' New '
+      (expect menu_texts[2][:font_color]).to eql '333333'
+      (expect menu_texts[3][:string]).to eql ?\u203a
+      (expect menu_texts[3][:font_color]).to eql 'B12146'
+      (expect menu_texts[4][:string]).to eql ' Class'
+      (expect menu_texts[4][:font_color]).to eql '333333'
+      (expect pdf.lines).to eql [%(Select File \u203a New \u203a Class to create a new Java class.)]
+    end
+
     it 'should add background to mark as defined in theme', visual: true do
       to_file = to_pdf_file 'normal #highlight# normal', 'text-formatter-mark.pdf'
       (expect to_file).to visually_match 'text-formatter-mark.pdf'
