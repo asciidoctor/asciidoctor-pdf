@@ -200,6 +200,13 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-key.pdf'
     end
 
+    it 'should use + as key separator if not specified in theme' do
+      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: { key_separator: nil }, attribute_overrides: { 'experimental' => '' }
+      Press kbd:[Ctrl,c] to kill the process.
+      EOS
+      (expect pdf.lines).to eql ['Press Ctrl + c to kill the process.']
+    end
+
     it 'should add background to mark as defined in theme', visual: true do
       to_file = to_pdf_file 'normal #highlight# normal', 'text-formatter-mark.pdf'
       (expect to_file).to visually_match 'text-formatter-mark.pdf'
