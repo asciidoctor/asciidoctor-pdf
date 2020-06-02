@@ -252,6 +252,17 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect pdf.lines).to eql [%(Select File \u203a New \u203a Class to create a new Java class.)]
     end
 
+    it 'should use default caret content if not specified by theme' do
+      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: { menu_caret_content: nil }, attribute_overrides: { 'experimental' => '' }
+      Select menu:File[Quit] to exit.
+      EOS
+      menu_texts = pdf.find_text font_name: 'NotoSerif-Bold'
+      (expect menu_texts).to have_size 1
+      (expect menu_texts[0][:string]).to eql %(File \u203a Quit)
+      (expect menu_texts[0][:font_color]).to eql '333333'
+      (expect pdf.lines).to eql [%(Select File \u203a Quit to exit.)]
+    end
+
     it 'should add background to mark as defined in theme', visual: true do
       to_file = to_pdf_file 'normal #highlight# normal', 'text-formatter-mark.pdf'
       (expect to_file).to visually_match 'text-formatter-mark.pdf'
