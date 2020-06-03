@@ -1081,6 +1081,29 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end).to log_message severity: :WARN, message: %r(footer background image not found or readable.*data/themes/no-such-image\.png$)
     end
 
+    it 'should compute boundary of background image per side if sides have different content width', visual: true do
+      pdf_theme = {
+        page_size: 'Letter',
+        footer_background_image: %(image:#{fixture_file 'footer-bg-letter.svg'}[]),
+        footer_columns: '=100%',
+        footer_border_width: 0,
+        footer_margin: 0,
+        footer_recto_center_content: '',
+        footer_verso_margin: [0, 'inherit'],
+        footer_verso_center_content: '',
+      }
+
+      to_file = to_pdf_file <<~'EOS', 'running-content-background-image-per-side.pdf', pdf_theme: pdf_theme, enable_footer: true
+      recto
+
+      <<<
+
+      verso
+      EOS
+
+      (expect to_file).to visually_match 'running-content-background-image-per-side.pdf'
+    end
+
     it 'should be able to reference page layout in background image path', visual: true do
       pdf_theme = { footer_background_image: 'image:{imagesdir}/square-{page-layout}.svg[]' }
 
