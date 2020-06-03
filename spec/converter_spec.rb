@@ -272,4 +272,34 @@ describe Asciidoctor::PDF::Converter do
       end
     end
   end
+
+  describe 'extend' do
+    it 'should use specified extended converter' do
+      class CustomPDFConverter < (Asciidoctor::Converter.for 'pdf') # rubocop:disable RSpec/LeakyConstantDeclaration
+        register_for :mypdf
+        def convert_paragraph node
+          layout_prose node.content, anchor: 'next-section'
+        end
+      end
+
+      input = <<~'EOS'
+      see next section
+
+      [#next-section]
+      == Next Section
+      EOS
+
+      pdf = to_pdf input, backend: :mypdf, analyze: true
+      para_text = pdf.find_unique_text 'see next section'
+      (expect para_text[:font_color]).to eql '428BCA'
+
+      pdf = to_pdf input, backend: :mypdf
+      (expect get_names pdf).to have_key 'next-section'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to be :Link
+      (expect link_annotation[:Dest]).to eql 'next-section'
+    end
+  end
 end

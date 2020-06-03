@@ -399,21 +399,22 @@ RSpec.configure do |config|
     if (attribute_overrides = opts.delete :attribute_overrides)
       (opts[:attributes] ||= {}).update attribute_overrides
     end
+    opts = opts.merge backend: 'pdf' unless opts.key? :backend
     if Hash === (pdf_theme = opts[:pdf_theme])
       opts[:pdf_theme] = build_pdf_theme pdf_theme, (pdf_theme.delete :extends)
     end
     if Pathname === input
       opts[:to_dir] = output_dir unless opts.key? :to_dir
-      doc = Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)
+      doc = Asciidoctor.convert_file input, (opts.merge safe: :safe)
       if analyze == :document
         return doc.converter
       else
         pdf_io = doc.attr 'outfile'
       end
     elsif analyze == :document
-      return Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, standalone: true)
+      return Asciidoctor.convert input, (opts.merge safe: :safe, standalone: true)
     else
-      Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, to_file: (pdf_io = StringIO.new), standalone: true)
+      Asciidoctor.convert input, (opts.merge safe: :safe, to_file: (pdf_io = StringIO.new), standalone: true)
     end
     analyze ? (PDF_INSPECTOR_CLASS[analyze].analyze pdf_io) : (PDF::Reader.new pdf_io)
   end
