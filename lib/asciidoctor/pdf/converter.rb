@@ -766,7 +766,8 @@ module Asciidoctor
         if icons == 'font' && !(node.attr? 'icon')
           label_text = type.to_sym
           icon_data = admonition_icon_data label_text
-          label_width = label_min_width || ((icon_size = icon_data[:size] || 24) * 1.5)
+          icon_size = icon_data[:size] || 24
+          label_width = label_min_width || (icon_size * 1.5)
         # NOTE: icon_uri will consider icon attribute on node first, then type
         # QUESTION should we use resolve_image_path here?
         elsif icons && (icon_path = node.icon_uri type) &&

@@ -145,7 +145,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect content_text[:string]).to eql 'Look for the warp zone under the bridge.'
     end
 
-    it 'should allow the theme to specify a minimum width for the label' do
+    it 'should allow the theme to specify a minimum width for the text-based label' do
       pdf_theme = {
         admonition_label_min_width: '75',
         admonition_label_align: 'right',
@@ -223,6 +223,38 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect label_text[:font_name]).to eql 'FontAwesome5Free-Regular'
       content_text = text[1]
       (expect content_text[:string]).to eql 'Look for the warp zone under the bridge.'
+    end
+
+    it 'should allow the theme to specify a minimum width for the font-based icon label' do
+      pdf_theme = {
+        admonition_label_min_width: '75',
+        admonition_label_align: 'right',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      :icons: font
+
+      NOTE: Remember the milk.
+
+      TIP: Look for the warp zone under the bridge.
+
+      CAUTION: Slippery when wet.
+
+      WARNING: Beware of dog!
+
+      IMPORTANT: Sign off before stepping away from the computer.
+      EOS
+
+      label_texts = pdf.text.select {|it| it[:font_name].start_with? 'FontAwesome' }
+      (expect label_texts[0][:x]).to be > 100
+      label_right_reference = nil
+      label_texts.each do |it|
+        label_right_reference ||= it[:x] + it[:width]
+        (expect it[:x] + it[:width]).to be_within(1.5).of(label_right_reference)
+      end
+
+      content_texts = pdf.find_text font_name: 'NotoSerif'
+      (expect content_texts.map {|it| it[:x] }.uniq).to eql [content_texts[0][:x]]
     end
 
     it 'should allow theme to control vertical alignment of icon' do
