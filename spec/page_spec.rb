@@ -163,6 +163,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect open_action[2]).to eql (get_page_size pdf, 1)[1]
     end
 
+    it 'should not set initial zoom if value specified in theme is unrecognized or nil' do
+      [nil, 'Auto'].each do |value|
+        pdf = to_pdf 'content', pdf_theme: { page_initial_zoom: value }
+        open_action = pdf.catalog[:OpenAction]
+        (expect open_action).to be_nil
+      end
+    end
+
     it 'should set initial zoom to Fit as specified by theme' do
       pdf = to_pdf 'content', pdf_theme: { page_initial_zoom: 'Fit' }
       open_action = pdf.catalog[:OpenAction]
