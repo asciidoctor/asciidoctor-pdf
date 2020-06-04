@@ -85,6 +85,7 @@ Compliance::
 * drop support for Ruby < 2.5 (which includes JRuby 9.1) (#1681)
 * drop deprecated Pdf module alias in API (leaving only PDF)
 * remove deprecated "ascii" fonts; only bundle the more complete "subset" fonts
+* remove asciidoctor-pdf/converter and asciidoctor-pdf/version shim scripts; use asciidoctor/pdf/converter and asciidoctor/pdf/version instead
 
 == 1.5.3 (2020-02-28) - @mojavelinux
 
