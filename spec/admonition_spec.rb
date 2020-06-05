@@ -343,6 +343,20 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-svg-icon.pdf'
     end
 
+    it 'should use original width of SVG icon if height is less than height of admonition block', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-fit.pdf', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :rect
+      :icons: font
+      :iconsdir:
+
+      [NOTE,icon=green-bar.svg]
+      ====
+      When you see this icon, it means there's additional advice about passing tests.
+      ====
+      EOS
+
+      (expect to_file).to visually_match 'admonition-custom-svg-fit.pdf'
+    end
+
     it 'should use raster icon specified by icon attribute when icons attribute is set', visual: true do
       to_file = to_pdf_file <<~'EOS', 'admonition-custom-raster-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: font
