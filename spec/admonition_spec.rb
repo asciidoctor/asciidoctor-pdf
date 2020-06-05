@@ -99,13 +99,23 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   # TODO: this could use a deeper assertion
   it 'should compute width of label even when glyph is missing' do
     pdf = to_pdf <<~'EOS', analyze: true
-    [NOTE,caption=⏻ Tip]
+    [TIP,caption=⏻ Tip]
     Use bundler!
     EOS
 
     label_text = pdf.text[0]
     (expect label_text[:font_name]).to eql 'NotoSerif-Bold'
     (expect label_text[:string]).to eql '⏻ TIP'
+  end
+
+  # NOTE: this is a negative test until the defect is addressed
+  it 'should not show label if it overflows available space' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_font_size: 18 }, analyze: true
+    [IMPORTANT]
+    Make sure the device is powered off before servicing it.
+    EOS
+
+    (expect pdf.find_unique_text 'IMPORTANT').to be_nil
   end
 
   it 'should not move cursor below block if block ends at top of page' do
