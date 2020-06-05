@@ -513,5 +513,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       (expect to_file).to visually_match 'admonition-background-color.pdf'
     end
+
+    it 'should allow theme to disable column rule by setting color to nil' do
+      pdf_theme = { admonition_column_rule_color: nil }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      TIP: You can use the theme to add a background color.
+      EOS
+
+      (expect pdf.lines).to be_empty
+    end
   end
 end
