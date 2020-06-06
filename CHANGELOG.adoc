@@ -79,6 +79,7 @@ Bug Fixes::
 * allow callouts sub to be disabled on source blocks (#1704)
 * show missing footnote reference in superscript
 * fix crash when icons=font and admonition_label_min_width is set in theme
+* show link to Vimeo video if allow-uri-read attribute is not set
 
 Compliance::
 
