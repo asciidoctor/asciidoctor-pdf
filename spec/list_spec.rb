@@ -1229,6 +1229,29 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect to_file).to visually_match 'list-qanda.pdf'
     end
 
+    it 'should convert question with only block answer in Q & A list' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [qanda]
+      Ultimate Question::
+      +
+      --
+      How much time do you have?
+
+      You must embark on a journey.
+
+      Only at the end will you come to understand that the answer is 42.
+      --
+      EOS
+
+      (expect pdf.lines).to eql ['1. Ultimate Question', 'How much time do you have?', 'You must embark on a journey.', 'Only at the end will you come to understand that the answer is 42.']
+      unanswerable_q_text = pdf.find_unique_text 'Ultimate Question'
+      (expect unanswerable_q_text[:font_name]).to eql 'NotoSerif-Italic'
+      text = pdf.text
+      (expect text[0][:y] - text[1][:y]).to eql 0.0
+      (expect text[1][:y] - text[2][:y]).to be < (text[2][:y] - text[3][:y])
+      (expect text[2][:y] - text[3][:y]).to eql (text[3][:y] - text[4][:y])
+    end
+
     it 'should convert question with no answer in Q & A list' do
       pdf = to_pdf <<~'EOS', analyze: true
       [qanda]
