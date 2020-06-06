@@ -49,6 +49,23 @@ describe 'Asciidoctor::PDF::Converter - Video' do
       (expect link_annotation[:A][:URI]).to eql %(https://www.youtube.com/watch?v=#{video_id})
       (expect to_file).to visually_match 'video-youtube-poster.pdf'
     end
+
+    it 'should replace video with link if allow-uri-read attribute is not set' do
+      video_id = 'EJ09pSuA9hw'
+      input = %(video::#{video_id}[youtube])
+
+      pdf = to_pdf input
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to be :Link
+      (expect link_annotation[:A][:URI]).to eql %(https://www.youtube.com/watch?v=#{video_id})
+
+      pdf = to_pdf input, analyze: true
+      expected_strings = [%(\u25ba\u00a0), %(https://www.youtube.com/watch?v=#{video_id}), ' ', '(YouTube video)']
+      (expect pdf.text.map {|it| it[:string] }).to eql expected_strings
+    end
   end
 
   context 'Vimeo' do
