@@ -1210,6 +1210,19 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect asciidoc_y).to be > ref_above
     end
 
+    it 'should coerce middle vertical alignment on head cell to center' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [%header,width=50%]
+      |===
+      ^.^| Short ^.^| Something Rather Long ^.^| Last
+      |===
+      EOS
+
+      long_text = pdf.find_unique_text 'Something'
+      short_text = pdf.find_unique_text 'Short'
+      (expect long_text[:y]).to be > short_text[:y]
+    end
+
     it 'should apply cell padding to AsciiDoc table cell' do
       pdf = to_pdf <<~'EOS', pdf_theme: { table_cell_padding: 10 }, analyze: true
       |===
