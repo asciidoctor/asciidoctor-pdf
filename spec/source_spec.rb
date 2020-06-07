@@ -371,6 +371,19 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect to_file).to visually_match 'source-rouge-line-highlighting-indent.pdf'
     end
 
+    it 'should ignore highlight attribute if empty' do
+      pdf = to_pdf <<~'EOS', analyze: :rect
+      :source-highlighter: rouge
+
+      [source,ruby,linenums,highlight=]
+      ----
+      puts "Hello, World!"
+      ----
+      EOS
+
+      (expect pdf.rectangles).to be_empty
+    end
+
     it 'should indent wrapped line if line numbers are enabled' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
