@@ -742,6 +742,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     it 'should ignore highlight attribute if empty' do
       pdf = to_pdf <<~'EOS', analyze: :rect
       :source-highlighter: pygments
+      :pygments-style: tango
 
       [source,ruby,linenums,highlight=]
       ----
@@ -749,7 +750,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       ----
       EOS
 
-      (expect pdf.rectangles).to have_size 1
+      (expect pdf.rectangles).to be_empty
     end
 
     it 'should highlight selected lines but not the line numbers', visual: true do
