@@ -879,6 +879,22 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect pdf.lines).to eql ['<root>', %(\u00a0 <child>content</child>), '</root>']
       (expect pdf.text.map {|it| it[:font_color] }.uniq).to eql ['333333']
     end
+
+    it 'should not apply syntax highlighting if specialchars sub is disabled' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,ruby,subs=-specialchars]
+      ----
+      puts "Hello, World!"
+      ----
+      EOS
+
+      text = pdf.text
+      (expect text).to have_size 1
+      (expect text[0][:string]).to eql 'puts "Hello, World!"'
+      (expect text[0][:font_color]).to eql '333333'
+    end
   end
 
   context 'Callouts' do

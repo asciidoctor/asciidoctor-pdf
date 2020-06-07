@@ -80,6 +80,7 @@ Bug Fixes::
 * show missing footnote reference in superscript
 * fix crash when icons=font and admonition_label_min_width is set in theme
 * show link to Vimeo video if allow-uri-read attribute is not set
+* don't apply syntax highlighting to source block if specialchars sub is disabled
 
 Compliance::
 
