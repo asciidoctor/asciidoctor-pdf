@@ -298,7 +298,7 @@ module Asciidoctor
         end
 
         add_outline doc, (doc.attr 'outlinelevels', toc_num_levels), toc_page_nums, num_front_matter_pages[1], has_front_cover
-        if !state.pages.empty? && (initial_zoom = @theme.page_initial_zoom)
+        if (initial_zoom = @theme.page_initial_zoom)
           case initial_zoom.to_sym
           when :Fit
             catalog.data[:OpenAction] = dest_fit state.pages[0]
