@@ -213,9 +213,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       ====
       EOS
 
-      icon_text = (pdf.find_text 'NOTE')[0]
+      label_text = (pdf.find_text 'NOTE')[0]
       content_text = (pdf.find_text font_name: 'NotoSerif')[0]
-      (expect icon_text[:y]).to be > content_text[:y]
+      (expect label_text[:y]).to be > content_text[:y]
     end
 
     it 'should resolve character references in label' do
@@ -249,8 +249,26 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       label_text = text[0]
       (expect label_text[:string]).to eql ?\uf0eb
       (expect label_text[:font_name]).to eql 'FontAwesome5Free-Regular'
+      # NOTE: font size is reduced to fit within available space
+      (expect label_text[:font_size]).to be < 24
       content_text = text[1]
       (expect content_text[:string]).to eql 'Look for the warp zone under the bridge.'
+    end
+
+    it 'should not reduce font size of icon if specified size fits within available space' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_important: { size: 50 } }, analyze: true
+      :icons: font
+
+      [IMPORTANT]
+      ====
+      Always do this.
+
+      And when you do that, always do this too!
+      ====
+      EOS
+
+      label_text = pdf.find_unique_text ?\uf06a
+      (expect label_text[:font_size]).to eql 50
     end
 
     it 'should allow the theme to specify a minimum width for the font-based icon label' do
@@ -446,7 +464,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end
 
       pdf_theme = {
-        admonition_icon_question: { name: 'question-circle', size: 20 },
+        admonition_icon_question: { name: 'question-circle' },
       }
 
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, extensions: extensions, analyze: true
@@ -455,15 +473,17 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       [QUESTION]
       ====
       Are you following along?
+
+      Just checking ;)
       ====
       EOS
 
-      icon_text = (pdf.find_text ?\uf059)[0]
+      icon_text = pdf.find_unique_text ?\uf059
       (expect icon_text).not_to be_nil
       (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
-      (expect icon_text[:font_size]).to be 20
-      question_text = (pdf.find_text 'Are you following along?')
-      (expect question_text).not_to be_nil
+      (expect icon_text[:font_size]).to be 24
+      (expect pdf.find_unique_text 'Are you following along?').not_to be_nil
+      (expect pdf.find_unique_text 'Just checking ;)').not_to be_nil
     end
   end
 
