@@ -54,41 +54,43 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should set page size specified by page_size theme key using dimension array in points' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: [600, 800] }, analyze: :page
-      content
-      EOS
+      pdf = to_pdf 'content', pdf_theme: { page_size: [600, 800] }, analyze: :page
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size].map(&:to_f)).to eql [600.0, 800.0]
     end
 
     it 'should truncate page size array to two dimensions' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: [600, 800, 1000] }, analyze: :page
-      content
-      EOS
+      pdf = to_pdf 'content', pdf_theme: { page_size: [600, 800, 1000] }, analyze: :page
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size].map(&:to_f)).to eql [600.0, 800.0]
     end
 
     it 'should expand page size array to two dimensions' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: [800] }, analyze: :page
-      content
-      EOS
+      pdf = to_pdf 'content', pdf_theme: { page_size: [800] }, analyze: :page
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size].map(&:to_f)).to eql [800.0, 800.0]
     end
 
     it 'should use default page size if page size array is empty' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: [] }, analyze: :page
-      content
-      EOS
+      pdf = to_pdf 'content', pdf_theme: { page_size: [] }, analyze: :page
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['A4']
     end
 
-    it 'should use default page size if page size has unrecognized type' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: true }, analyze: :page
-      content
-      EOS
+    it 'should use default page size if page size is an unrecognized type' do
+      pdf = to_pdf 'content', pdf_theme: { page_size: true }, analyze: :page
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['A4']
+    end
+
+    it 'should use default page size if any dimension of page size is an unrecognized type' do
+      pdf = to_pdf 'content', pdf_theme: { page_size: ['8.5in', true] }, analyze: :page
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['A4']
+    end
+
+    it 'should use default page size if any dimension of page size is an unrecognized measurement' do
+      pdf = to_pdf 'content', pdf_theme: { page_size: ['wide', 'tall'] }, analyze: :page
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['A4']
     end
