@@ -90,7 +90,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should use default page size if any dimension of page size is an unrecognized measurement' do
-      pdf = to_pdf 'content', pdf_theme: { page_size: ['wide', 'tall'] }, analyze: :page
+      pdf = to_pdf 'content', pdf_theme: { page_size: %w(wide tall) }, analyze: :page
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['A4']
     end
