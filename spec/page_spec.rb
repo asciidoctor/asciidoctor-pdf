@@ -849,7 +849,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should read local image relative to SVG', visual: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-with-local-image.pdf'
-      :page-background-image: image:svg-with-local-image.svg[fit=none,position=top]
+      :page-background-image: image:svg-with-local-image.svg[fit=none,pdfwidth=1cm,position=top]
 
       Asciidoctor
       EOS

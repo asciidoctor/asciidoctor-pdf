@@ -1498,10 +1498,8 @@ module Asciidoctor
                   cache_images: cache_uri
               rendered_w = (svg_size = svg_obj.document.sizing).output_width
               if !width && (svg_obj.document.root.attributes.key? 'width')
-                # NOTE: scale native width & height from px to pt and restrict width to available width
-                if (adjusted_w = [available_w, (to_pt rendered_w, :px)].min) != rendered_w
-                  svg_size = svg_obj.resize width: (rendered_w = adjusted_w)
-                end
+                # NOTE: restrict width to available width (prawn-svg already coerces to pixels)
+                svg_size = svg_obj.resize width: (rendered_w = available_w) if rendered_w > available_w
               end
               # NOTE: shrink image so it fits within available space; group image & caption
               if (rendered_h = svg_size.output_height) > (available_h = cursor - caption_h)

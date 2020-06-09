@@ -425,7 +425,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should embed local image in inline image', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-with-local-image.pdf'
-      A sign of a good writer: image:svg-with-local-image.svg[]
+      A sign of a good writer: image:svg-with-local-image.svg[pdfwidth=1.27cm]
       EOS
 
       (expect to_file).to visually_match 'image-svg-with-image.pdf'
@@ -433,6 +433,22 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should embed local image in block image', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-block-svg-with-local-image.pdf'
+      image::svg-with-local-image.svg[pdfwidth=1.27cm]
+      EOS
+
+      (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
+    end
+
+    it 'should use width defined in image if width not specified on inline macro', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-svg-with-own-width.pdf'
+      A sign of a good writer: image:svg-with-local-image.svg[]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-with-image.pdf'
+    end
+
+    it 'should use width defined in image if width not specified on block macro', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-block-svg-with-own-width.pdf'
       image::svg-with-local-image.svg[]
       EOS
 
@@ -451,7 +467,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should embed remote image if allow allow-uri-read attribute is set', visual: true, network: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
-      A sign of a good writer: image:svg-with-remote-image.svg[]
+      A sign of a good writer: image:svg-with-remote-image.svg[pdfwidth=1.27cm]
       EOS
 
       (expect to_file).to visually_match 'image-svg-with-image.pdf'

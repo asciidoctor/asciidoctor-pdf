@@ -61,7 +61,7 @@ module Asciidoctor::PDF::FormattedText
               cache_images: doc.cache_uri
           svg_size = image_w ? svg_obj.document.sizing :
               # NOTE convert intrinsic dimensions to points; constrain to content width
-              (svg_obj.resize width: [(to_pt svg_obj.document.sizing.output_width, :px), available_w].min)
+              (svg_obj.resize width: [svg_obj.document.sizing.output_width, available_w].min)
           # NOTE the best we can do is make the image fit within full height of bounds
           if (image_h = svg_size.output_height) > max_image_h
             image_w = (svg_obj.resize height: (image_h = max_image_h)).output_width
