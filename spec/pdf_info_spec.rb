@@ -138,13 +138,33 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect pdf.info[:CreationDate]).to start_with 'D:20190115000000'
     end
 
-    it 'should use current date as fallback when date attributes cannot be parsed' do
+    it 'should set date attributes to same current date when date attributes cannot be parsed' do
       pdf = to_pdf 'content', attribute_overrides: { 'docdatetime' => 'garbage', 'localdatetime' => 'garbage' }
       (expect pdf.info[:ModDate]).not_to be_nil
       (expect pdf.info[:ModDate]).to start_with 'D:'
       (expect pdf.info[:CreationDate]).not_to be_nil
       (expect pdf.info[:CreationDate]).to start_with 'D:'
       (expect pdf.info[:ModDate]).to eql pdf.info[:CreationDate]
+    end
+
+    it 'should use current date as fallback when docdatetime cannot be parsed' do
+      expected = (Time.now.strftime '%s').to_i
+      pdf = to_pdf 'content', attribute_overrides: { 'docdatetime' => 'garbage' }
+      mod_date = pdf.info[:ModDate]
+      (expect mod_date).not_to be_nil
+      (expect mod_date).to start_with 'D:'
+      actual = ((DateTime.parse (mod_date.slice 2, mod_date.length).gsub ?', '').strftime '%s').to_i
+      (expect actual).to be_within(1).of(expected)
+    end
+
+    it 'should use current date as fallback when localdatetime cannot be parsed' do
+      expected = (Time.now.strftime '%s').to_i
+      pdf = to_pdf 'content', attribute_overrides: { 'localdatetime' => 'garbage' }
+      creation_date = pdf.info[:CreationDate]
+      (expect creation_date).not_to be_nil
+      (expect creation_date).to start_with 'D:'
+      actual = ((DateTime.parse (creation_date.slice 2, creation_date.length).gsub ?', '').strftime '%s').to_i
+      (expect actual).to be_within(1).of(expected)
     end
 
     it 'should not add dates to document if reproducible attribute is set' do
