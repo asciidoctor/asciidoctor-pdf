@@ -946,6 +946,8 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
     it 'should inherit font color if not set in theme' do
       pdf = to_pdf <<~'EOS', pdf_theme: { code_font_color: '111111', conum_font_color: nil }, analyze: true
+      :source-highlighter: rouge
+
       [source,ruby]
       ----
       puts 'Hello, World' <1>
