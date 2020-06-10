@@ -516,6 +516,27 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[1][:from][:x]).to eql 547.04
     end
 
+    it 'should set width of autowidth table if explicit width is specified' do
+      input = <<~'EOS'
+      [%autowidth,width=50%,grid=cols,frame=sides]
+      |===
+      |short |a much wider table column
+      |===
+      EOS
+
+      pdf = to_pdf input, analyze: :line
+
+      lines = pdf.lines.uniq
+      (expect lines).to have_size 3
+      col1_width = lines[1][:from][:x] - lines[0][:from][:x]
+      col2_width = lines[2][:from][:x] - lines[1][:from][:x]
+      (expect col2_width).to be > col1_width
+
+      pdf = to_pdf input, analyze: true
+      # NOTE second column should not wrap
+      (expect pdf.lines).to eql ['short a much wider table column']
+    end
+
     it 'should apply equal width to columns by default when width attribute is set' do
       pdf = to_pdf <<~'EOS', analyze: :line
       [frame=sides,grid=cols]
