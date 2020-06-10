@@ -161,8 +161,9 @@ while (fi < num_copy_fonts)
     SelectMore(0u20ac)
     # Trademark sign (selected from Letterlike Symbols set)
     SelectMore(0u2122)
-    # Mathematical Operators (e.g., infinity, sum, partial differential)
+    # Mathematical Operators (e.g., infinity, sum, partial differential, numero)
     SelectMore(0u2200,0u22ff)
+    SelectMore(0u2116)
     # Geometric Shapes (e.g., list bullets)
     SelectMore(0u25a0,0u25ff)
     # Greek (frequently used for math and bullets)
@@ -184,8 +185,8 @@ while (fi < num_copy_fonts)
       SelectMore(0u21d0,0u21d5)
       # Ballot boxes
       SelectMore(0u2610,0u2611)
-      # Check mark
-      SelectMore(0u2713)
+      # Check marks
+      SelectMore(0u2713,0u2714)
     endif
     if (script == "latin-ext" || script == "latin-ext-cyrillic" || script == "fallback")
       # Latin Extended-B
@@ -388,6 +389,8 @@ while (fi < num_code_fonts)
       SelectMore(0u20ac)
       # Cyrillic
       SelectMore(0u0400,0u04ff)
+      # Check marks
+      SelectMore(0u2713,0u2714)
     endif
     # No-break space
     SelectMore(0u00a0)

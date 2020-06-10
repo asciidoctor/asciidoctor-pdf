@@ -13,7 +13,7 @@ The following changes were made using fontforge to produce the notoserif-*-subse
  ** Greek (U+0370–U+03ff)
  ** Cyrillic (U+0400–U+04ff)
  ** Vietnamese (U+01a0–U01b0, U+1ea0–U1ef9)
- ** Mathematical Operators (U+2200–U+22ff)
+ ** Mathematical Operators (U+2200–U+22ff, U+2116)
  ** General Punctuation (U+2000–U203a)
  ** Geometric Shapes (U+25a0–U25ff)
  ** Assorted Symbols (U+20ac, U+2122, U+21d0, U+21d2, U+2190, U+2192)
