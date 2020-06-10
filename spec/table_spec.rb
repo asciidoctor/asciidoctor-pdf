@@ -999,6 +999,34 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect samsung_text[:font_color]).to eql '333333'
       (expect samsung_text[:font_name]).to eql 'NotoSerif'
     end
+
+    it 'should not set background color on header cell if theme sets background color of table to nil', visual: true do
+      pdf_theme = {
+        page_background_color: 'CCCCCC',
+        table_background_color: nil,
+      }
+
+      to_file = to_pdf_file <<~'EOS', 'table-transparent-header-cell.pdf', pdf_theme: pdf_theme
+      [%header%autowidth,cols="1h,3"]
+      |===
+      | Feature | Value
+
+      | Vendor
+      | Samsung
+
+      | Model
+      | Galaxy s10
+
+      | OS
+      | Android 9.0 Pie
+
+      | Resolution
+      | 3040x1440
+      |===
+      EOS
+
+      (expect to_file).to visually_match 'table-transparent-header-cell.pdf'
+    end
   end
 
   context 'Literal table cell' do
