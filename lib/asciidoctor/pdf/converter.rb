@@ -2198,7 +2198,7 @@ module Asciidoctor
             end
           end
           if grid == 'none' && frame == 'none'
-            rows(table_header_size).tap do |r|
+            rows(table_header_size - 1).tap do |r|
               r.border_bottom_color = head_border_bottom_color
               r.border_bottom_line = head_border_bottom_style
               r.border_bottom_width = head_border_bottom_width

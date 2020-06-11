@@ -183,6 +183,37 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect head_dividing_lines[0][:from][:y]).to eql ys[1]
     end
 
+    it 'should retain border on bottom of table head when grid and frame are disabled' do
+      input = <<~'EOS'
+      [grid=none,frame=none]
+      |===
+      |A |B
+
+      |A1
+      |B1
+
+      |A2
+      |B2
+      |===
+      EOS
+
+      pdf = to_pdf input, analyze: :line
+
+      (expect pdf.lines).to have_size 2
+      line_y = pdf.lines[0][:from][:y]
+      (expect pdf.lines[0][:to][:y]).to eql line_y
+      (expect pdf.lines[1][:from][:y]).to eql line_y
+      (expect pdf.lines[1][:to][:y]).to eql line_y
+      (expect pdf.lines[0][:width]).to eql 1.25
+      (expect pdf.lines[1][:width]).to eql 1.25
+
+      pdf = to_pdf input, analyze: true
+      a_text = pdf.find_unique_text 'A'
+      a1_text = pdf.find_unique_text 'A1'
+      (expect a_text[:y]).to be > line_y
+      (expect a1_text[:y]).to be < line_y
+    end
+
     it 'should allow theme to customize bottom border of table head row', visual: true do
       theme_overrides = {
         table_head_border_bottom_width: 0.5,
