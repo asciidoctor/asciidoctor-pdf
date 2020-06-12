@@ -285,6 +285,26 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_entry[:dest][:label]).to eql '2'
     end
 
+    it 'should not insert toc at location of toc macro if document has no sections' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :toc: macro
+
+      No sections here.
+
+      toc::[]
+
+      No sections here either.
+
+      Fin.
+      EOS
+
+      (expect pdf.lines).to eql ['No sections here.', 'No sections here either.', 'Fin.']
+      p1_text = pdf.find_unique_text 'No sections here.'
+      p2_text = pdf.find_unique_text 'No sections here either.'
+      p3_text = pdf.find_unique_text 'Fin.'
+      (expect (p1_text[:y] - p2_text[:y]).round 2).to eql ((p2_text[:y] - p3_text[:y]).round 2)
+    end
+
     it 'should disable running content periphery on toc page if noheader or nofooer option is set on macro' do
       pdf_theme = {
         header_height: 30,
