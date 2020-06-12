@@ -1081,6 +1081,40 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
   end
 
+  context 'Foot' do
+    it 'should allow theme to configure font properties of foot' do
+      pdf_theme = {
+        table_foot_font_style: 'bold',
+        table_foot_font_size: 11,
+        table_foot_font_family: 'Helvetica',
+        table_foot_font_color: '5d5d5d',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+
+      [%footer]
+      |===
+      |Item |Quantity
+
+      |Item 1
+      |1
+
+      |Item 2
+      |2
+
+      |Item 3
+      |3
+
+      |Total |6
+      |===
+      EOS
+
+      total_text = pdf.find_unique_text 'Total'
+      (expect total_text[:font_name]).to eql 'Helvetica-Bold'
+      (expect total_text[:font_size]).to eql 11
+      (expect total_text[:font_color]).to eql '5D5D5D'
+    end
+  end
+
   context 'Literal table cell' do
     it 'should not apply substitutions' do
       pdf = to_pdf <<~'EOS', analyze: true
