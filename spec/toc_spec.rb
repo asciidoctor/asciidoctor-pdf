@@ -856,7 +856,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     intro_entry_font_color = (pdf.find_unique_text 'Intro', page_number: 2)[:font_color]
     dot_leader_font_color = (pdf.find_text page_number: 2).select {|it| it[:string].start_with? '.' }.map {|it| it[:font_color] }.uniq[0]
-    (expect dot_leader_font_color).to eql dot_leader_font_color
+    (expect dot_leader_font_color).to eql intro_entry_font_color
   end
 
   it 'should not apply bold to italic text if headings are bold in theme' do
