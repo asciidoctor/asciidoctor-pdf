@@ -479,6 +479,22 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images[0].hash[:Height]).to be 240
     end
 
+    it 'should resolve title page logo image specified using path in theme relatvie to themesdir' do
+      pdf_theme = {
+        __dir__: fixtures_dir,
+        title_page_logo_image: 'tux.png',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      = Document Title
+      :doctype: book
+      EOS
+
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].hash[:Width]).to be 204
+      (expect images[0].hash[:Height]).to be 240
+    end
+
     it 'should ignore missing attribute reference when resolve title page logo image from theme' do
       (expect do
         to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: 'image:{no-such-attribute}{attribute-missing}.png[]' }, attribute_overrides: { 'attribute-missing' => 'warn' }
