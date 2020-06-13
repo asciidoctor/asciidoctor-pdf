@@ -881,6 +881,22 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect get_images pdf, 1).to be_empty
     end
 
+    it 'should only display subtitle if document has subtitle and title is disabled' do
+      pdf_theme = {
+        title_page_title_display: 'none',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title: Subtitle
+      :doctype: book
+
+      first page of content
+      EOS
+
+      title_page_lines = pdf.lines pdf.find_text page_number: 1
+      (expect title_page_lines).to eql %w(Subtitle)
+    end
+
     it 'should not remove title page if all elements are disabled' do
       pdf_theme = {
         title_page_title_display: 'none',
