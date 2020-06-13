@@ -212,7 +212,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect (pdf.page 3)[:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
     end
 
-    it 'wip should not switch layout specified by page break if value is unrecognized' do
+    it 'should not switch layout specified by page break if value is unrecognized' do
       pdf = to_pdf <<~EOS, analyze: true
       portrait
 
