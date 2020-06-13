@@ -834,6 +834,31 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect to_file).to visually_match 'toc-running-content-font-color.pdf'
   end
 
+  it 'should use same font color for text and dot leader if dot leader font color is unspecified' do
+    pdf_theme = {
+      extends: 'base',
+      toc_font_color: '4a4a4a',
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    = Document Title
+    Author Name
+    :doctype: book
+    :toc:
+
+    == Intro
+
+    text
+
+    == Conclusion
+
+    text
+    EOS
+
+    intro_entry_font_color = (pdf.find_unique_text 'Intro', page_number: 2)[:font_color]
+    dot_leader_font_color = (pdf.find_text page_number: 2).select {|it| it[:string].start_with? '.' }.map {|it| it[:font_color] }.uniq[0]
+    (expect dot_leader_font_color).to eql dot_leader_font_color
+  end
+
   it 'should not apply bold to italic text if headings are bold in theme' do
     pdf_theme = {
       toc_font_style: 'bold',
