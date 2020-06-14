@@ -2830,6 +2830,47 @@ The keys in this category apply to the menu label (generated from the inline men
   caret-content: ' > '
 |===
 
+[#keys-quotation-marks]
+=== Quotation Marks
+
+The keys in this category define the characters to use for typographic quotation marks.
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-quotation-mark]*Key Prefix:* <<key-prefix-quotation-mark,quotation-mark>>
+
+|double-open
+|<<quoted-string,Quoted string>> +
+(default: &#8220;)
+|quotation-mark:
+  double:
+    open: "\u00ab\u202f"
+
+|double-close
+|<<quoted-string,Quoted string>> +
+(default: &#8221;)
+|quotation-mark:
+  double:
+    close: "\u202f\u00bb"
+
+|single-open
+|<<quoted-string,Quoted string>> +
+(default: &#8216;)
+|quotation-mark:
+  single:
+    open: "\u2039\u202f"
+
+|single-close
+|<<quoted-string,Quoted string>> +
+(default: &#8217;)
+|quotation-mark:
+  single:
+    close: "\u202f\u203a"
+
+|===
+
 [#keys-mark]
 === Mark
 

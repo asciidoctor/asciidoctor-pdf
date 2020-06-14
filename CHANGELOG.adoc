@@ -61,6 +61,7 @@ Enhancements::
 * add support for power operator in theme (with same precedence as multiply and divide) (#1813)
 * include floor and ceil match characters in fallback font (#1832) (*@oddhack*)
 * allow horizontal and vertical lines of table grid to be styled independently (#1875) (*@hextremist*)
+* allow theme to define the characters for typographical quotation marks (#1880) (*@klonfish*)
 
 Bug Fixes::
 

@@ -472,6 +472,10 @@ module Asciidoctor
         theme.title_page_authors_delimiter ||= ', '
         theme.title_page_revision_delimiter ||= ', '
         theme.toc_hanging_indent ||= 0
+        theme.quotation_mark_double_open ||= '&#8220;'
+        theme.quotation_mark_double_close ||= '&#8221;'
+        theme.quotation_mark_single_open ||= '&#8216;'
+        theme.quotation_mark_single_close ||= '&#8217;'
         theme
       end
 
@@ -2660,6 +2664,7 @@ module Asciidoctor
       end
 
       def convert_inline_quoted node
+        load_theme node.document
         case node.type
         when :emphasis
           open, close, is_tag = ['<em>', '</em>', true]
@@ -2672,9 +2677,13 @@ module Asciidoctor
         when :subscript
           open, close, is_tag = ['<sub>', '</sub>', true]
         when :double
-          open, close, is_tag = ['&#8220;', '&#8221;', false]
+          open = @theme.quotation_mark_double_open
+          close = @theme.quotation_mark_double_close
+          is_tag = false
         when :single
-          open, close, is_tag = ['&#8216;', '&#8217;', false]
+          open = @theme.quotation_mark_single_open
+          close = @theme.quotation_mark_single_close
+          is_tag = false
         when :mark
           open, close, is_tag = ['<mark>', '</mark>', true]
         else
@@ -2684,7 +2693,7 @@ module Asciidoctor
         inner_text = node.text
 
         if (role = node.role)
-          if (text_transform = (load_theme node.document)[%(role_#{role}_text_transform)])
+          if (text_transform = @theme[%(role_#{role}_text_transform)])
             inner_text = transform_text inner_text, text_transform
           end
           quoted_text = is_tag ? %(#{open.chop} class="#{role}">#{inner_text}#{close}) : %(<span class="#{role}">#{open}#{inner_text}#{close}</span>)
