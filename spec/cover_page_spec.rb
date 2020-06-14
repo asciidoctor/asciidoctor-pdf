@@ -50,6 +50,19 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
   end
 
+  it 'should not add cover page if value is ~' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+    :doctype: book
+    :front-cover-image: ~
+
+    content page
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    (expect pdf.lines pdf.find_text page_number: 1).to eql ['Document Title']
+  end
+
   it 'should add front cover page if cover_front_image theme key is set' do
     pdf_theme = { cover_front_image: (fixture_file 'cover.jpg') }
     pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
