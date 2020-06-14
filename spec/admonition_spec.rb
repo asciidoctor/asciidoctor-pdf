@@ -344,6 +344,18 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect icon_text[:string]).to eql ?\uf4da
     end
 
+    it 'should be able to use fa- prefix to reference icon in legacy FontAwesome set' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_tip: { name: 'fa-smile-wink' } }, analyze: true
+      :icons: font
+
+      TIP: Time to upgrade your icon set.
+      EOS
+
+      icon_text = pdf.text[0]
+      (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+      (expect icon_text[:string]).to eql ?\uf4da
+    end
+
     it 'should allow icon to come from Foundation icon set' do
       pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_warning: { name: 'fi-alert' } }, analyze: true
       :icons: font
