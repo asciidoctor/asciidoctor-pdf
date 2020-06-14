@@ -1731,6 +1731,28 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect caption_prefix_text[:x]).to be_within(3).of(cell2_text[:x])
       (expect caption_prefix_text[:x]).to eql caption_wrap_text[:x]
     end
+
+    it 'should allow theme to set caption alignment to right and inherit text alignment' do
+      pdf_theme = {
+        table_caption_align: 'right',
+        table_caption_text_align: 'inherit',
+        table_caption_max_width: 'fit-content(50%)',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      .Right-aligned caption
+      [width=25%,align=right]
+      |===
+      |1 |2
+      |3 |4
+      |===
+      EOS
+
+      caption_prefix_text = pdf.find_unique_text 'Table 1.'
+      caption_wrap_text = pdf.find_unique_text 'caption'
+      cell2_text = pdf.find_unique_text '2'
+      (expect caption_prefix_text[:x] - 5).to be > cell2_text[:x]
+      (expect caption_wrap_text[:x]).to be > caption_prefix_text[:x]
+    end
   end
 
   context 'Table alignment' do
