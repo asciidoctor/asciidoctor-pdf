@@ -868,6 +868,27 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-position.pdf'
     end
 
+    it 'should position page background in center if position value is unrecognized' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      = Document Title
+      :page-background-image: image:tux.png[fit=none,pdfwidth=4in,position=center]
+
+      content
+      EOS
+
+      center_coords = pdf.images[0].then {|it| [it[:x], it[:y]] }
+
+      pdf = to_pdf <<~'EOS', analyze: :image
+      = Document Title
+      :page-background-image: image:tux.png[fit=none,pdfwidth=4in,position=droit]
+
+      content
+      EOS
+
+      actual_coords = pdf.images[0].then {|it| [it[:x], it[:y]] }
+      (expect actual_coords).to eql center_coords
+    end
+
     it 'should alternate page background if both verso and recto background images are specified', visual: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
       = Document Title
