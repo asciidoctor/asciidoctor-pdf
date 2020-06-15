@@ -876,7 +876,8 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       content
       EOS
 
-      center_coords = pdf.images[0].then {|it| [it[:x], it[:y]] }
+      bg_image = pdf.images[0]
+      center_coords = [bg_image[:x], bg_image[:y]]
 
       pdf = to_pdf <<~'EOS', analyze: :image
       = Document Title
@@ -885,7 +886,8 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       content
       EOS
 
-      actual_coords = pdf.images[0].then {|it| [it[:x], it[:y]] }
+      bg_image = pdf.images[0]
+      actual_coords = [bg_image[:x], bg_image[:y]]
       (expect actual_coords).to eql center_coords
     end
 
