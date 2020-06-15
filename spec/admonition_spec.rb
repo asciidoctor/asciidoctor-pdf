@@ -370,6 +370,18 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect icon_text[:string]).to eql ?\uf101
     end
 
+    it 'should fall back to note icon if icon name cannot be resolved' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_warning: { name: nil } }, analyze: true
+      :icons: font
+
+      WARNING: If the icon name is nil, the default note icon will be used.
+      EOS
+
+      icon_text = pdf.text[0]
+      (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+      (expect icon_text[:string]).to eql ?\uf05a
+    end
+
     it 'should set color of icon to value of stroke_color key specified in theme' do
       pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_note: { stroke_color: '00ff00' } }, analyze: true
       :icons: font

@@ -3116,11 +3116,13 @@ module Asciidoctor
               logger.info { %(#{key} admonition in theme uses icon from deprecated fa icon set; use fas, far, or fab instead) } unless scratch?
               icon_data[:name] = %(fa-#{icon_name}) unless icon_name.start_with? 'fa-'
             end
+          else
+            icon_data[:name] = AdmonitionIcons[:note][:name]
           end
-          icon_data
         else
-          AdmonitionIcons[key]
+          (icon_data = AdmonitionIcons[key])[:name] ||= AdmonitionIcons[:note][:name]
         end
+        icon_data
       end
 
       # TODO: delegate to layout_page_header and layout_page_footer per page
