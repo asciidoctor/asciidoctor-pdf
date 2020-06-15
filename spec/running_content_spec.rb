@@ -39,6 +39,20 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect p2_text[1][:string]).to eql '2'
       (expect p2_text[1][:order]).to be 2
     end
+
+    it 'should not add running content if all pages are imported' do
+      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      image::red-green-blue.pdf[page=1]
+
+      image::red-green-blue.pdf[page=2]
+
+      image::red-green-blue.pdf[page=3]
+      EOS
+
+      pages = pdf.pages
+      (expect pages).to have_size 3
+      (expect pdf.text).to be_empty
+    end
   end
 
   context 'Footer' do
