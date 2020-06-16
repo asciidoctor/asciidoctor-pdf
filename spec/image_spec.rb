@@ -1171,6 +1171,25 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect link_rect[0]).to eql 48.24
     end
 
+    it 'should add link around block image aligned to right' do
+      input = 'image::tux.png[pdfwidth=1in,link=https://www.linuxfoundation.org/projects/linux/,align=right]'
+
+      pdf = to_pdf input
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to be :Link
+      (expect link_annotation[:A][:URI]).to eql 'https://www.linuxfoundation.org/projects/linux/'
+      link_rect = link_annotation[:Rect]
+      link_coords = { x: link_rect[0], y: link_rect[3], width: ((link_rect[2] - link_rect[0]).round 4), height: ((link_rect[3] - link_rect[1]).round 4) }
+
+      pdf = to_pdf input, analyze: :image
+      image = pdf.images[0]
+      image_coords = { x: image[:x], y: image[:y], width: image[:width], height: image[:height] }
+      (expect link_coords).to eql image_coords
+    end
+
     it 'should add link around block SVG image if link attribute is set' do
       pdf = to_pdf <<~'EOS'
       image::square.svg[pdfwidth=1in,link=https://example.org]
