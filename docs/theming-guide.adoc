@@ -783,7 +783,7 @@ WARNING: Asciidoctor PDF cannot italicize a font dynamically like a browser can,
 Once you've obtained the TTF files, put them in the directory inside your project where you want to store the fonts.
 It's recommended that you name them consistently so it's easier to type the names in the theme file.
 
-Let's assume the name of the font is https://github.com/google/roboto/tree/master/out/RobotoTTF[Roboto].
+Let's assume the name of the font is https://github.com/googlefonts/roboto/releases[Roboto].
 Rename the files as follows:
 
 * roboto-normal.ttf (_originally Roboto-Regular.ttf_)
