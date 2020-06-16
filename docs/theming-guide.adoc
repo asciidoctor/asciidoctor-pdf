@@ -758,7 +758,7 @@ To do so, you can either a) prefix the path of the bundled font in the theme fil
 
 === Custom Fonts
 
-The limited character set of WINANSI, or the bland look of the built-in fonts, may motivate you to load your own font.
+The limited character set of WINANSI, or the plain look of the built-in or bundled fonts, may motivate you to incorporate your own fonts.
 Custom fonts can enhance the look of your PDF theme substantially.
 
 IMPORTANT: In order for a third-party font to work properly with Prawn (and hence Asciidoctor PDF), several modifications are required.
@@ -774,11 +774,11 @@ A collection typically consists of four font styles:
 * bold
 * bold_italic
 
-You'll need all four variants to support AsciiDoc content properly.
-Otherwise, the converter will either crash or revert to the fallback font, depending on how your theme is configured.
-If one of the variants is missing from your collection, you can simply reuse the normal variant in its place.
+You'll need all four variants to support AsciiDoc content properly (unless the font only has a single variant).
+If you do not register the font correctly, the converter may crash or revert to the fallback font, depending on how the theme is configured.
+If one of the variants is missing from your collection, you can simply reuse the normal / single variant in its place.
 
-WARNING: Asciidoctor PDF cannot italicize a font dynamically like a browser can, so the italic styles are required.
+WARNING: Asciidoctor PDF cannot italicize a font dynamically like a browser can, so the italic styles are required to italicize text.
 
 Once you've obtained the TTF files, put them in the directory inside your project where you want to store the fonts.
 It's recommended that you name them consistently so it's easier to type the names in the theme file.
@@ -793,12 +793,14 @@ Rename the files as follows:
 
 ==== Declaring Your Font
 
-Next, declare the font under the `font-catalog` key at the top of your theme file, giving it a unique key (e.g., `Roboto`).
+Next, declare the font under the `font-catalog` key at the top of your theme file.
+Assign each font a unique key (e.g., `Roboto`) and specify the path to each of the four font styles under that key.
 
 [source,yaml]
 ----
 font:
   catalog:
+    merge: false # set value to true to merge catalog with theme you're extending
     Roboto:
       normal: roboto-normal.ttf
       italic: roboto-italic.ttf
@@ -806,8 +808,23 @@ font:
       bold_italic: roboto-bold_italic.ttf
 ----
 
-CAUTION: You must declare all four variants.
+If you use this form, you must declare all four variants.
 If you're missing the font file for one of the variants, configure it to use the same font file as the normal variant.
+
+If your font only has a single variant, assign the font path to the font key directly.
+
+[source,yaml]
+----
+font:
+  catalog:
+    merge: false # set value to true to merge catalog with theme you're extending
+    VLGothic: vlgothic.ttf
+----
+
+Font paths can be absolute or relative.
+Absolute paths are used as is.
+Relative font paths are resolved from the <<Configuring the Font Search Path,font search path>>.
+You can also use the `GEM_FONTS_DIR` keyword to refer to the location of the bundled fonts.
 
 You can add any number of fonts to the catalog.
 Each font must be assigned a unique key, as shown here:
@@ -816,6 +833,7 @@ Each font must be assigned a unique key, as shown here:
 ----
 font:
   catalog:
+    merge: false # set value to true to merge catalog with theme you're extending
     Roboto:
       normal: roboto-normal.ttf
       italic: roboto-italic.ttf
