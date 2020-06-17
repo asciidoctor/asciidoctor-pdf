@@ -2415,6 +2415,56 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect (link_rect[2] - link_rect[0]).round 1).to eql 36.0
     end
 
+    it 'should add link around image aligned to top' do
+      pdf_theme = {
+        __dir__: fixtures_dir,
+        header_height: 36,
+        header_columns: '0% =100% 0%',
+        header_image_vertical_align: 'top',
+        header_recto_center_content: 'image:tux.png[pdfwidth=20.4pt,link=https://www.linuxfoundation.org/projects/linux/]',
+        header_verso_center_content: 'image:tux.png[pdfwidth=20.4pt,link=https://www.linuxfoundation.org/projects/linux/]',
+      }
+      pdf = to_pdf 'body', pdf_theme: pdf_theme
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to be :Link
+      (expect link_annotation[:A][:URI]).to eql 'https://www.linuxfoundation.org/projects/linux/'
+      link_rect = link_annotation[:Rect]
+      link_coords = { x: link_rect[0], y: link_rect[3], width: ((link_rect[2] - link_rect[0]).round 4), height: ((link_rect[3] - link_rect[1]).round 4) }
+
+      pdf = to_pdf 'body', pdf_theme: pdf_theme, analyze: :image
+      image = pdf.images[0]
+      image_coords = { x: image[:x], y: image[:y], width: image[:width], height: image[:height] }
+      (expect link_coords).to eql image_coords
+    end
+
+    it 'should add link around image aligned to bottom' do
+      pdf_theme = {
+        __dir__: fixtures_dir,
+        header_height: 36,
+        header_columns: '0% =100% 0%',
+        header_image_vertical_align: 'bottom',
+        header_recto_center_content: 'image:tux.png[pdfwidth=20.4pt,link=https://www.linuxfoundation.org/projects/linux/]',
+        header_verso_center_content: 'image:tux.png[pdfwidth=20.4pt,link=https://www.linuxfoundation.org/projects/linux/]',
+      }
+      pdf = to_pdf 'body', pdf_theme: pdf_theme
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to be :Link
+      (expect link_annotation[:A][:URI]).to eql 'https://www.linuxfoundation.org/projects/linux/'
+      link_rect = link_annotation[:Rect]
+      link_coords = { x: link_rect[0], y: link_rect[3], width: ((link_rect[2] - link_rect[0]).round 4), height: ((link_rect[3] - link_rect[1]).round 4) }
+
+      pdf = to_pdf 'body', pdf_theme: pdf_theme, analyze: :image
+      image = pdf.images[0]
+      image_coords = { x: image[:x], y: image[:y], width: image[:width], height: image[:height] }
+      (expect link_coords).to eql image_coords
+    end
+
     it 'should replace unrecognized font family in SVG with SVG fallback font family specified in theme' do
       theme_overrides = {
         __dir__: fixtures_dir,
