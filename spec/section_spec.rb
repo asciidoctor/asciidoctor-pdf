@@ -60,6 +60,32 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect text[1][:font_name]).to eql 'NotoSerif-BoldItalic'
   end
 
+  it 'should allow theme to align all section titles' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_align: 'center' }, analyze: true
+    == Drill
+
+    content
+
+    === Down
+
+    content
+
+    ==== Deep
+    EOS
+
+    midpoint = pdf.pages[0][:size][0] * 0.5
+    content_left_margin = (pdf.find_text 'content')[0][:x]
+    drill_text = pdf.find_unique_text 'Drill'
+    down_text = pdf.find_unique_text 'Down'
+    deep_text = pdf.find_unique_text 'Deep'
+    (expect drill_text[:x]).to be > content_left_margin
+    (expect down_text[:x]).to be > content_left_margin
+    (expect deep_text[:x]).to be > content_left_margin
+    (expect (drill_text[:x] + drill_text[:width] * 0.5).round 2).to eql midpoint
+    (expect (down_text[:x] + down_text[:width] * 0.5).round 2).to eql midpoint
+    (expect (deep_text[:x] + deep_text[:width] * 0.5).round 2).to eql midpoint
+  end
+
   it 'should not partition section title by default' do
     pdf = to_pdf <<~'EOS', analyze: true
     == Title: Subtitle
