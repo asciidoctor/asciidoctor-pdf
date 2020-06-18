@@ -482,6 +482,42 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
     end
 
+    it 'should resize icon only if it does not fit within the available space' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
+      :icons: image
+      :iconsdir:
+
+      [TIP]
+      This is Tux.
+      He's the Linux mascot.
+      EOS
+
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:width]).to be < 36.0
+      (expect images[0][:height]).to be < 42.3529
+
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
+      :icons: image
+      :iconsdir:
+
+      [TIP]
+      ====
+      This is Tux.
+      If you spend any amount of time in the Linux world, you'll see him a lot.
+      He's the Linux mascot.
+
+      Thanks to Linux, penguins have receive a lot more attention.
+      Technology can sometimes be a force for good like that.
+      ====
+      EOS
+
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:width]).to eql 36.0
+      (expect images[0][:height]).to eql 42.3529
+    end
+
     it 'should warn and fallback to admonition label if image icon cannot be resolved' do
       (expect do
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: true
