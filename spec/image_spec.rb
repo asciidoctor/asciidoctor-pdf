@@ -1369,6 +1369,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-border.pdf'
     end
 
+    it 'should draw border around left-aligned PNG image if border width and border color are set in the theme', visual: true do
+      pdf_theme = {
+        image_border_width: 0.5,
+        image_border_color: '5D5D5D',
+      }
+
+      to_file = to_pdf_file <<~'EOS', 'image-border-align-left.pdf', pdf_theme: pdf_theme
+      .Tux
+      image::tux.png[]
+      EOS
+
+      (expect to_file).to visually_match 'image-border-align-left.pdf'
+    end
+
     it 'should stretch border around PNG image to bounds if border fit key is auto', visual: true do
       pdf_theme = {
         image_border_width: 0.5,
