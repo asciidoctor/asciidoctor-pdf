@@ -52,6 +52,39 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect line[:from][:y]).to be < before_text[:y]
       (expect line[:from][:y]).to be > after_text[:y]
     end
+
+    it 'should allow theme to configure line width, style, and color of thematic break' do
+      pdf_theme = {
+        thematic_break_border_color: 'AA0000',
+        thematic_break_border_width: 3,
+        thematic_break_border_style: 'double',
+      }
+
+      input = <<~'EOS'
+      before
+
+      '''
+
+      after
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+
+      before_text = (pdf.find_text 'before')[0]
+      after_text = (pdf.find_text 'after')[0]
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      line = lines[0]
+      (expect line[:color]).to eql 'AA0000'
+      (expect line[:width]).to eql 1.0
+      (expect line[:from][:x]).to be < line[:to][:x]
+      (expect line[:from][:y]).to eql line[:to][:y]
+      (expect line[:from][:y]).to be < before_text[:y]
+      (expect line[:from][:y]).to be > after_text[:y]
+      (expect line[:from][:y] - 2).to eql lines[1][:from][:y]
+    end
   end
 
   context 'Page Breaks' do
