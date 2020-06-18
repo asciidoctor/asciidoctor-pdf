@@ -4,6 +4,22 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Source' do
   context 'Rouge' do
+    it 'should use plain text lexer if language is not recognized' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,foobar]
+      ----
+      puts "Hello, World!"
+      ----
+      EOS
+
+      puts_text = (pdf.find_text 'puts')[0]
+      (expect puts_text).to be_nil
+      (expect pdf.text).to have_size 1
+      (expect pdf.text[0][:font_color]).to eql '333333'
+    end
+
     it 'should expand tabs to preserve indentation' do
       pdf = to_pdf <<~EOS, analyze: true
       :source-highlighter: rouge
@@ -113,6 +129,22 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect text).to have_size 1
       (expect text[0][:string]).to eql 'cal_days_in_month(CAL_GREGORIAN, 6, 2019)'
       (expect text[0][:font_color]).to eql '333333'
+    end
+
+    it 'should use plain text lexer if language is not recognized and cgi-style options are present' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,foobar?start_inline=1]
+      ----
+      puts "Hello, World!"
+      ----
+      EOS
+
+      puts_text = (pdf.find_text 'puts')[0]
+      (expect puts_text).to be_nil
+      (expect pdf.text).to have_size 1
+      (expect pdf.text[0][:font_color]).to eql '333333'
     end
 
     it 'should use rouge style specified by rouge-style attribute', visual: true do
