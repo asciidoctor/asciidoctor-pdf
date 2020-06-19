@@ -976,10 +976,25 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect pdf.find_text '①').to be_empty
     end
 
-    it 'should inherit font color if not set in theme' do
+    it 'should inherit font color if not set in theme when source highlighter is enabled' do
       pdf = to_pdf <<~'EOS', pdf_theme: { code_font_color: '111111', conum_font_color: nil }, analyze: true
       :source-highlighter: rouge
 
+      [source,ruby]
+      ----
+      puts 'Hello, World' <1>
+      ----
+      <1> Just a programming saying hi.
+      EOS
+
+      conum_texts = pdf.find_text %r/①/
+      (expect conum_texts).to have_size 2
+      (expect conum_texts[0][:font_color]).to eql '111111'
+      (expect conum_texts[1][:font_color]).to eql '333333'
+    end
+
+    it 'should inherit font color if not set in theme when source highlighter is not enabled' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { code_font_color: '111111', conum_font_color: nil }, analyze: true
       [source,ruby]
       ----
       puts 'Hello, World' <1>
