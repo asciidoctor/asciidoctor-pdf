@@ -53,6 +53,17 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect line[:from][:y]).to be > after_text[:y]
     end
 
+    it 'should use solid style for thematic break if not specified' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { thematic_break_border_style: nil }, analyze: :line
+      '''
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      line = lines[0]
+      (expect line[:width]).to eql 0.5
+    end
+
     it 'should allow theme to configure line width, style, and color of thematic break' do
       pdf_theme = {
         thematic_break_border_color: 'AA0000',
