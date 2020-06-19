@@ -207,6 +207,18 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect logo_image[:page_number]).to eql 1
       (expect logo_image[:y]).to be < 300
     end
+
+    it 'should resize SVG logo to keep it on title page' do
+      pdf = to_pdf <<~'EOS', analyze: :line
+      = Document Title
+      :title-page:
+      :title-logo-image: image:red-blue-squares.svg[pdfwidth=50%,top=70%]
+
+      content
+      EOS
+
+      (expect pdf.lines.map {|it| it[:page_number] }.uniq).to eql [1]
+    end
   end
 
   context 'Background' do
