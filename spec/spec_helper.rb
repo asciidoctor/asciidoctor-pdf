@@ -194,7 +194,7 @@ class ImageInspector < PDF::Inspector
   def initialize
     @images = []
     @x = @y = @width = @height = nil
-    @page_number = 1
+    @page_number = 0
   end
 
   def page= page
@@ -202,6 +202,10 @@ class ImageInspector < PDF::Inspector
     @image_xobjects = page.xobjects.each_with_object({}) do |(name, xobject), accum|
       accum[name] = xobject if xobject.hash[:Subtype] == :Image
     end
+  end
+
+  def page_count
+    @page_number
   end
 
   def concatenate_matrix width, _p2, _p3, height, x, y

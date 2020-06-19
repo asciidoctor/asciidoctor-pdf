@@ -190,6 +190,23 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
       (expect to_file).to visually_match 'title-page-logo-align-left.pdf'
     end
+
+    it 'should resize raster logo to keep it on title page' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      = Document Title
+      :title-page:
+      :title-logo-image: image:cover.jpg[pdfwidth=100%,top=70%]
+
+      content
+      EOS
+
+      (expect pdf.page_count).to eql 2
+      images = pdf.images
+      (expect images).to have_size 1
+      logo_image = images[0]
+      (expect logo_image[:page_number]).to eql 1
+      (expect logo_image[:y]).to be < 300
+    end
   end
 
   context 'Background' do
