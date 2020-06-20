@@ -327,6 +327,29 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_heading_text[:page_number]).to eql 3
     end
 
+    it 'should start macro toc on recto page for prepress book' do
+      pdf = to_pdf <<~EOS, analyze: true
+      = Document Title
+      :doctype: book
+      :media: prepress
+      :toc: macro
+
+      == First Chapter
+
+      #{(['filler'] * 26).join %(\n\n)}
+
+      toc::[]
+
+      == Last Chapter
+
+      Fin.
+      EOS
+
+      (expect pdf.pages).to have_size 7
+      toc_heading_text = pdf.find_unique_text 'Table of Contents'
+      (expect toc_heading_text[:page_number]).to eql 5
+    end
+
     it 'should disable running content periphery on toc page if noheader or nofooer option is set on macro' do
       pdf_theme = {
         header_height: 30,
