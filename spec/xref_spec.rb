@@ -210,6 +210,17 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       (expect first_steps_ref[:A][:URI]).to eql 'book.pdf#_first_steps'
     end
 
+    it 'should use path as fallback text for interdocument xref' do
+      pdf = to_pdf 'Refer to the xref:admin-guide.adoc[] to learn how to configure the system.'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      admin_guide_ref = annotations[0]
+      (expect admin_guide_ref[:Subtype]).to be :Link
+      (expect admin_guide_ref[:A][:S]).to eql :URI
+      (expect admin_guide_ref[:A][:URI]).to eql 'admin-guide.pdf'
+      (expect (pdf.page 1).text).to eql 'Refer to the admin-guide.pdf to learn how to configure the system.'
+    end
+
     it 'should convert interdocument xrefs included in current document to internal references' do
       input_file = Pathname.new fixture_file 'book.adoc'
       pdf = to_pdf input_file
