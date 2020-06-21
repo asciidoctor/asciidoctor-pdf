@@ -52,17 +52,15 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
     (expect lots_text[:font_name]).to eql 'NotoSerif-Bold'
   end
 
-  it 'should uppercase title of name section if other sections are uppercase' do
+  it 'should uppercase title of auto-generated name section if other sections are uppercase' do
     pdf = to_pdf <<~'EOS', doctype: :manpage, analyze: true
     = cmd(1)
     Author Name
     v1.0.0
     :manmanual: CMD
     :mansource: CMD
-
-    == NAME
-
-    cmd - does stuff
+    :manname: cmd
+    :manpurpose: does stuff
 
     == SYNOPSIS
 
@@ -73,8 +71,26 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
     *-v*:: Prints the version.
     EOS
 
-    name_title_text = (pdf.find_text 'NAME')[0]
+    name_title_text = pdf.find_unique_text 'NAME'
     (expect name_title_text).not_to be_nil
     (expect name_title_text[:font_size]).to be 22
+    (expect pdf.lines).to include 'cmd - does stuff'
+  end
+
+  it 'should not uppercase title of auto-generated name section if no other sections are found' do
+    pdf = to_pdf <<~'EOS', doctype: :manpage, analyze: true
+    = cmd(1)
+    Author Name
+    v1.0.0
+    :manmanual: CMD
+    :mansource: CMD
+    :manname: cmd
+    :manpurpose: does stuff
+    EOS
+
+    name_title_text = pdf.find_unique_text 'Name'
+    (expect name_title_text).not_to be_nil
+    (expect name_title_text[:font_size]).to be 22
+    (expect pdf.lines).to include 'cmd - does stuff'
   end
 end
