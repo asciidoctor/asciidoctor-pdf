@@ -2649,9 +2649,8 @@ module Asciidoctor
             end
           end
           logo_image_attrs['target'] = logo_image_path
-          if (logo_align = [(logo_image_attrs.delete 'align'), @theme.title_page_logo_align, title_align.to_s].find {|val| (BlockAlignmentNames.include? val) })
-            logo_image_attrs['align'] = logo_align
-          end
+          # NOTE at the very least, title_align will be a valid alignment value
+          logo_image_attrs['align'] = [(logo_image_attrs.delete 'align'), @theme.title_page_logo_align, title_align.to_s].find {|val| (BlockAlignmentNames.include? val) }
           if (logo_image_top = logo_image_attrs['top'] || @theme.title_page_logo_top)
             initial_y, @y = @y, (resolve_top logo_image_top)
           end

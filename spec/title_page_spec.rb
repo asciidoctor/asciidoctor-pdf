@@ -181,14 +181,20 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect to_file).to visually_match 'title-page-logo-align-left.pdf'
     end
 
-    it 'should ignore align attribute on logo macro if value is invalid', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'title-page-logo-align-invalid.pdf', pdf_theme: { title_page_logo_align: 'left' }
+    it 'should inherit align attribute if value on macro is invalid', visual: true do
+      pdf_theme = {
+        title_page_logo_align: nil,
+        title_page_align: 'left',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[align=foo]
       EOS
 
-      (expect to_file).to visually_match 'title-page-logo-align-left.pdf'
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:x]).to eql 48.24
     end
 
     it 'should resize raster logo to keep it on title page' do
