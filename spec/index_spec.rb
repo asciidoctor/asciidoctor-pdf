@@ -483,4 +483,21 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect baz_texts).to have_size 2
     (expect baz_texts[0][:x]).to eql baz_texts[1][:x]
   end
+
+  it 'should not distribute excess bottom margin at top of next column' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+    :doctype: book
+    :pdf-page-size: A6
+
+    ((foo))((bar))((baz))((boom))((bang))((fee))((fi))((fo))((fum))((fan))((fool))((ying))((yang))((zed))
+
+    [index]
+    == Index
+    EOS
+
+    b_category_text = pdf.find_unique_text 'B', page_number: 3
+    z_category_text = pdf.find_unique_text 'Z', page_number: 3
+    (expect b_category_text[:y]).to eql z_category_text[:y]
+  end
 end
