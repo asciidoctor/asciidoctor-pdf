@@ -3148,7 +3148,7 @@ module Asciidoctor
         is_book = doc.doctype == 'book'
         header = doc.header? ? doc.header : nil
         sectlevels = (@theme[%(#{periphery}_sectlevels)] || 2).to_i
-        sections = doc.find_by(context: :section) {|sect| sect.level <= sectlevels && sect != header } || []
+        sections = doc.find_by(context: :section) {|sect| sect.level <= sectlevels && sect != header }
         if (toc_page_nums = @toc_extent && @toc_extent[:page_nums])
           toc_title = (doc.attr 'toc-title') || ''
         end
