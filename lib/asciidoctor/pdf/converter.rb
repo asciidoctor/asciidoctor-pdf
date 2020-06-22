@@ -2523,9 +2523,8 @@ module Asciidoctor
 
       def convert_inline_indexterm node
         # NOTE indexterms not supported if text gets substituted before PDF is initialized
-        if !(defined? @index)
-          ''
-        elsif scratch?
+        return '' unless defined? @index
+        if scratch?
           node.type == :visible ? node.text : ''
         else
           # NOTE page number (:page key) is added by InlineDestinationMarker
