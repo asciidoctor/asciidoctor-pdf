@@ -729,7 +729,7 @@ module Asciidoctor
 
         # TODO: check if we're within one line of the bottom of the page
         # and advance to the next page if so (similar to logic for section titles)
-        layout_caption node.title if node.title?
+        layout_caption node, labeled: false if node.title?
 
         if lead
           theme_font :lead do
@@ -907,7 +907,7 @@ module Asciidoctor
             end
             pad_box [cpad[0], 0, cpad[2], label_width + lpad[1] + cpad[3]] do
               move_down shift_top
-              layout_caption node.title, category: :admonition if node.title?
+              layout_caption node, category: :admonition, labeled: false if node.title?
               theme_font :admonition do
                 traverse node
               end
@@ -948,7 +948,7 @@ module Asciidoctor
         keep_together_if node.option? 'unbreakable' do
           push_scratch doc if scratch?
           add_dest_for_block node if node.id
-          node.context == :example ? (layout_caption %(\u25bc #{node.title})) : (layout_caption node.title) if node.title?
+          node.context == :example ? (layout_caption %(\u25bc #{node.title})) : (layout_caption node, labeled: false) if node.title?
           traverse node
           pop_scratch doc if scratch?
         end
@@ -970,7 +970,7 @@ module Asciidoctor
           theme_fill_and_stroke_block category, box_height, border_width: b_width if box_height && (b_width || @theme[%(#{category}_background_color)])
           start_page_number = page_number
           start_cursor = cursor
-          caption_height = node.title? ? (layout_caption node, category: category) : 0
+          caption_height = node.title? ? (layout_caption node, category: category, labeled: false) : 0
           pad_box @theme[%(#{category}_padding)] do
             theme_font category do
               if category == :blockquote
@@ -1175,7 +1175,7 @@ module Asciidoctor
         else
           # TODO: check if we're within one line of the bottom of the page
           # and advance to the next page if so (similar to logic for section titles)
-          layout_caption node.title, category: :description_list if node.title?
+          layout_caption node, category: :description_list, labeled: false if node.title?
 
           term_line_height = @theme.description_list_term_line_height || @theme.base_line_height
           line_metrics = theme_font(:description_list_term) { calc_line_metrics term_line_height }
@@ -1276,7 +1276,7 @@ module Asciidoctor
       def convert_outline_list node
         # TODO: check if we're within one line of the bottom of the page
         # and advance to the next page if so (similar to logic for section titles)
-        layout_caption node.title, category: :outline_list if node.title?
+        layout_caption node, category: :outline_list, labeled: false if node.title?
 
         opts = {}
         if (align = resolve_alignment_from_role node.roles)
@@ -1612,7 +1612,7 @@ module Asciidoctor
         audio_path = node.media_uri node.attr 'target'
         play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
         layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0, single_line: true
-        layout_caption node, side: :bottom if node.title?
+        layout_caption node, labeled: false, side: :bottom if node.title?
         theme_margin :block, :bottom
       end
 
@@ -1637,7 +1637,7 @@ module Asciidoctor
           theme_margin :block, :top
           play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
           layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{video_path}">#{video_path}</a> <em>(#{type})</em>), normalize: false, margin: 0, single_line: true
-          layout_caption node, side: :bottom if node.title?
+          layout_caption node, labeled: false, side: :bottom if node.title?
           theme_margin :block, :bottom
         else
           original_attributes = node.attributes.dup
@@ -1793,7 +1793,7 @@ module Asciidoctor
         theme_margin :block, :top
 
         keep_together do |box_height = nil|
-          caption_height = node.title? ? (layout_caption node, category: :code) : 0
+          caption_height = node.title? ? (layout_caption node, category: :code, labeled: false) : 0
           theme_font :code do
             theme_fill_and_stroke_block :code, (box_height - caption_height), background_color: bg_color_override, split_from_top: false if box_height
             pad_box @theme.code_padding do
@@ -2888,6 +2888,11 @@ module Asciidoctor
           return height
         end
         mark = { cursor: cursor, page_number: page_number }
+        if ::Asciidoctor::AbstractBlock === subject
+          string = (opts.delete :labeled) == false ? subject.title : subject.captioned_title
+        else
+          string = subject.to_s
+        end
         case subject
         when ::String
           string = subject
