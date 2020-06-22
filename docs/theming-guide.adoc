@@ -1837,7 +1837,8 @@ The keys in this category control the style of a section body.
 |section:
   indent: [0.5in, 0]
 |===
-. A single value gets applied to both the left and right side (e.g., `0.5in`).
+. Applies to the section body only, excluding section titles and discrete headings.
+A single value gets applied to both the left and right side (e.g., `0.5in`).
 A two-value array configures the left and right side independently (e.g., `[0.5in, 0]`).
 
 [#keys-title-page]
