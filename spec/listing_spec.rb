@@ -74,8 +74,20 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect pdf.text[0][:font_size]).to be < build_pdf_theme.code_font_size
   end
 
-  it 'should not resize font size more than minimum font size' do
+  it 'should not resize font size more than base minimum font size' do
     pdf = to_pdf <<~'EOS', pdf_theme: { base_font_size_min: 8 }, analyze: true
+    [%autofit]
+    ----
+    play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
+    ----
+    EOS
+
+    (expect pdf.text).to have_size 2
+    (expect pdf.text[0][:font_size]).to be 8
+  end
+
+  it 'should not resize font size more than code minimum font size' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_size_min: 0, code_font_size_min: 8 }, analyze: true
     [%autofit]
     ----
     play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
