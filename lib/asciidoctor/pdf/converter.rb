@@ -3222,7 +3222,7 @@ module Asciidoctor
             end
             toc_page_nums = nil if toc_page_nums.end == pgnum
           elsif last_chap == :pre
-            chapters_by_page[pgnum] = pgnum < body_start_page_number ? doc.doctitle : (is_book ? (doc.attr 'preface-title', 'Preface') : nil)
+            chapters_by_page[pgnum] = pgnum < body_start_page_number ? doc.doctitle : (doc.attr 'preface-title', 'Preface')
             sections_by_page[pgnum] = last_sect
           else
             chapters_by_page[pgnum] = last_chap
