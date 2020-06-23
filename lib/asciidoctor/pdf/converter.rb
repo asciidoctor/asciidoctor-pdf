@@ -1576,7 +1576,7 @@ module Asciidoctor
             bb_x = bounds.width - w
           end
           bounding_box [(bb_x || 0), top], width: (bb_width || w), height: h, position: alignment do
-            theme_fill_and_stroke_bounds :image, background_color: nil
+            theme_fill_and_stroke_bounds :image
           end
           true
         end
@@ -3702,8 +3702,7 @@ module Asciidoctor
       end
 
       def theme_fill_and_stroke_bounds category, opts = {}
-        bg_color = (opts.key? :background_color) ? opts[:background_color] : @theme[%(#{category}_background_color)]
-        fill_and_stroke_bounds bg_color, @theme[%(#{category}_border_color)],
+        fill_and_stroke_bounds opts[:background_color], @theme[%(#{category}_border_color)],
             line_width: (@theme[%(#{category}_border_width)] || 0),
             line_style: (@theme[%(#{category}_border_style)] || :solid).to_sym,
             radius: @theme[%(#{category}_border_radius)]
