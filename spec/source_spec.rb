@@ -883,6 +883,34 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       (expect to_file).to visually_match 'source-pygments-highlight-wrapped-line.pdf'
     end
+
+    it 'should guard inner indents' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: pygments
+
+      [source,text]
+      ----
+        lead space
+      flush
+        lead space
+      ----
+      EOS
+
+      (expect pdf.lines).to eql [%(\u00a0 lead space), 'flush', %(\u00a0 lead space)]
+    end
+
+    it 'should ignore fragment if empty' do
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: pygments
+
+      [source,ruby]
+      ----
+      <1>
+      ----
+      EOS
+
+      (expect pdf.lines).to eql ['①']
+    end
   end if (ENV.key? 'PYGMENTS_VERSION') && !(Gem.win_platform? && RUBY_ENGINE == 'jruby')
 
   context 'Unsupported' do
