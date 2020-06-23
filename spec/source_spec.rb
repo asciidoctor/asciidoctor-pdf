@@ -572,11 +572,11 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         :source-highlighter: pygments
 
         [source,yaml]
-        ---
+        ----
         category:
           hash:
             key: "value"
-        ---
+        ----
         EOS
         (expect pdf.find_text 'category:').to have_size 1
         (expect pdf.find_text %(\u00a0 hash:)).to have_size 1
