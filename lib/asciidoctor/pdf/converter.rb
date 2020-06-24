@@ -3306,8 +3306,7 @@ module Asciidoctor
                     end
                   end
                   # FIXME: we need to have a content setting for chapter pages
-                  case content
-                  when ::Array
+                  if ::Array === content
                     # NOTE float ensures cursor position is restored and returns us to current page if we overrun
                     float do
                       # NOTE bounding_box is redundant if both vertical padding and border width are 0
@@ -3325,7 +3324,7 @@ module Asciidoctor
                         end
                       end
                     end
-                  when ::String
+                  else
                     theme_font %(#{periphery}_#{side}_#{position}) do
                       # NOTE minor optimization
                       if content == '{page-number}'
@@ -3492,6 +3491,7 @@ module Asciidoctor
             side_content = {}
             ColumnPositions.each do |position|
               unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
+                val = val.to_s unless ::String === val
                 if (val.include? ':') && val =~ ImageAttributeValueRx
                   attrlist = $2
                   image_attrs = (AttributeList.new attrlist).parse %w(alt width)

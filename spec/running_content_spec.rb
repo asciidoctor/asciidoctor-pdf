@@ -849,6 +849,31 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect p2_text[1][:string]).to eql '2'
     end
 
+    it 'should coerce non-array value to a string' do
+      theme_overrides = {
+        header_font_size: 9,
+        header_height: 30,
+        header_line_height: 1,
+        header_padding: 5,
+        header_recto_right_content: 99,
+        header_verso_left_content: 99,
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      = Document Title
+
+      first page
+
+      <<<
+
+      second page
+      EOS
+
+      p2_text = pdf.find_text page_number: 2
+      (expect p2_text[1][:x]).to be > p2_text[0][:x]
+      (expect p2_text[1][:string]).to eql '99'
+    end
+
     it 'should allow horizontal padding to be negative', visual: true do
       pdf_theme = {
         footer_font_color: '000000',
