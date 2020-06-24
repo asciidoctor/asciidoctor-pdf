@@ -259,8 +259,10 @@ describe Asciidoctor::PDF::Converter do
           'center right' => { position: :right, vposition: :center },
           'left center' => { position: :left, vposition: :center },
           'center center' => { position: :center, vposition: :center },
+          'bogus' => nil,
+          'bogus bogus' => nil,
         }.each do |value, expected|
-          (expect converter.resolve_background_position value).to eql expected
+          (expect converter.resolve_background_position value, nil).to eql expected
         end
       end
 

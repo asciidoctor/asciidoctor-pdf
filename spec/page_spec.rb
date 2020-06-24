@@ -879,16 +879,18 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       bg_image = pdf.images[0]
       center_coords = [bg_image[:x], bg_image[:y]]
 
-      pdf = to_pdf <<~'EOS', analyze: :image
-      = Document Title
-      :page-background-image: image:tux.png[fit=none,pdfwidth=4in,position=droit]
+      ['droit', 'haut droit'].each do |position|
+        pdf = to_pdf <<~EOS, analyze: :image
+        = Document Title
+        :page-background-image: image:tux.png[fit=none,pdfwidth=4in,position=#{position}]
 
-      content
-      EOS
+        content
+        EOS
 
-      bg_image = pdf.images[0]
-      actual_coords = [bg_image[:x], bg_image[:y]]
-      (expect actual_coords).to eql center_coords
+        bg_image = pdf.images[0]
+        actual_coords = [bg_image[:x], bg_image[:y]]
+        (expect actual_coords).to eql center_coords
+      end
     end
 
     it 'should alternate page background if both verso and recto background images are specified', visual: true do
