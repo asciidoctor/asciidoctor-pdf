@@ -1289,7 +1289,7 @@ module Asciidoctor
         end
 
         line_metrics = calc_line_metrics @theme.base_line_height
-        complex = false
+        #complex = false
         # ...or if we want to give all items in the list the same treatment
         #complex = node.items.find(&:compound?) ? true : false
         if (node.context == :ulist && !@list_bullets[-1]) || (node.context == :olist && !@list_numerals[-1])
@@ -1309,9 +1309,10 @@ module Asciidoctor
             convert_outline_list_item item, node, opts
           end
         end
-        # NOTE: Children will provide the necessary bottom margin if last item is complex.
+        # NOTE: children will provide the necessary bottom margin if last item is complex.
         # However, don't leave gap at the bottom if list is nested in an outline list
-        unless complex || (node.nested? && node.parent.parent.outline?)
+        #unless complex || (node.nested? && node.parent.parent.outline?)
+        unless node.nested? && node.parent.parent.outline?
           # correct bottom margin of last item
           margin_bottom((@theme.prose_margin_bottom || 0) - (@theme.outline_list_item_spacing || 0))
         end
