@@ -370,7 +370,6 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
 
     left = lines[0][:from][:x]
-    right = lines[0][:to][:x]
     top = lines[0][:to][:y]
     bottom = lines[1][:to][:y]
     (expect text[0][:x]).to eql (left + 20.0).round 2

@@ -3491,22 +3491,21 @@ module Asciidoctor
           content_dict = PageSides.each_with_object({}) do |side, acc|
             side_content = {}
             ColumnPositions.each do |position|
-              unless (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
-                val = val.to_s unless ::String === val
-                if (val.include? ':') && val =~ ImageAttributeValueRx
-                  attrlist = $2
-                  image_attrs = (AttributeList.new attrlist).parse %w(alt width)
-                  image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
-                  if (image_path = resolve_image_path doc, image_path, image_format, @themesdir) && (::File.readable? image_path)
-                    image_opts = resolve_image_options image_path, image_format, image_attrs, container_size: [colspec_dict[side][position][:width], trim_content_height[side]]
-                    side_content[position] = [image_path, image_opts, image_attrs['link']]
-                  else
-                    # NOTE allows inline image handler to report invalid reference and replace with alt text
-                    side_content[position] = %(image:#{image_path}[#{attrlist}])
-                  end
+              next if (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
+              val = val.to_s unless ::String === val
+              if (val.include? ':') && val =~ ImageAttributeValueRx
+                attrlist = $2
+                image_attrs = (AttributeList.new attrlist).parse %w(alt width)
+                image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
+                if (image_path = resolve_image_path doc, image_path, image_format, @themesdir) && (::File.readable? image_path)
+                  image_opts = resolve_image_options image_path, image_format, image_attrs, container_size: [colspec_dict[side][position][:width], trim_content_height[side]]
+                  side_content[position] = [image_path, image_opts, image_attrs['link']]
                 else
-                  side_content[position] = val
+                  # NOTE allows inline image handler to report invalid reference and replace with alt text
+                  side_content[position] = %(image:#{image_path}[#{attrlist}])
                 end
+              else
+                side_content[position] = val
               end
             end
 
