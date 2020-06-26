@@ -469,6 +469,26 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
     end
 
+    # NOTE this is a pretty flimsy feature and probably needs some rethink
+    it 'should allow theme to control width of admonition icon image using admonition_label_min_width key' do
+      pdf_theme = { admonition_label_min_width: 40 }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
+      :icons: font
+      :iconsdir:
+
+      [TIP,icon=logo.png]
+      ====
+      Use the icon attribute to customize the image for an admonition block.
+
+      Use the admonition_label_min_width key to control the image width.
+      ====
+      EOS
+
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:width]).to eql 40.0
+    end
+
     it 'should resolve icon when icons attribute is set to image', visual: true do
       to_file = to_pdf_file <<~'EOS', 'admonition-image-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: image
