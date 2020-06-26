@@ -416,8 +416,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: font
       :iconsdir:
+      :icontype: svg
 
-      [TIP,icon=square.svg]
+      [TIP,icon=square]
       ====
       Use the icon attribute to customize the image for an admonition block.
       ====
