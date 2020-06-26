@@ -169,6 +169,30 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       (expect after_that_text[0][:font_size]).to eql 10.5
     end
 
+    it 'should ignore abstract with no blocks' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+
+      [abstract]
+      --
+      --
+
+      == First Chapter
+
+      content
+
+      == Second Chapter
+
+      content
+      EOS
+
+      (expect pdf.pages).to have_size 3
+      first_chapter_text = pdf.find_unique_text 'First Chapter'
+      second_chapter_text = pdf.find_unique_text 'Second Chapter'
+      (expect first_chapter_text[:y]).to eql second_chapter_text[:y]
+    end
+
     it 'should promote preamble to preface if preface-title is set' do
       pdf = to_pdf <<~'EOS', analyze: true
       = Document Title
