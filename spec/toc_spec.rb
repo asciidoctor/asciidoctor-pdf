@@ -305,6 +305,34 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect (p1_text[:y] - p2_text[:y]).round 2).to eql ((p2_text[:y] - p3_text[:y]).round 2)
     end
 
+    it 'should not insert toc at location of toc macro if toc attribute is not set' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      == Before
+
+      toc::[]
+
+      == After
+      EOS
+
+      (expect pdf.lines).to eql %w(Before After)
+    end
+
+    it 'should not insert toc at location of toc macro if value of toc attribute is not macro' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :doctype: book
+      :toc:
+
+      == Chapter
+
+      toc::[]
+
+      text
+      EOS
+
+      (expect pdf.find_unique_text 'Table of Contents').not_to be_nil
+      (expect pdf.lines pdf.find_text page_number: 2).to eql %w(Chapter text)
+    end
+
     it 'should not start new page for toc in book if already at top of page' do
       pdf = to_pdf <<~EOS, analyze: true
       = Document Title
