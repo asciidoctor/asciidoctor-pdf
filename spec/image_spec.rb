@@ -345,6 +345,28 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-scale-to-fit-bounds.pdf'
     end
 
+    it 'should not scale SVG if it can fit on next page' do
+      pdf = to_pdf <<~EOS, analyze: true
+      #{(%w(filler) * 6).join %(\n\n)}
+
+      image::tall.svg[]
+
+      below first
+
+      <<<
+
+      image::tall.svg[]
+
+      below second
+      EOS
+
+      below_first_text = pdf.find_unique_text 'below first'
+      below_second_text = pdf.find_unique_text 'below second'
+      (expect below_first_text[:y]).to eql below_second_text[:y]
+      (expect below_first_text[:page_number]).to eql 2
+      (expect below_second_text[:page_number]).to eql 3
+    end
+
     it 'should display text inside link' do
       pdf = to_pdf <<~'EOS', analyze: true
       image::svg-with-link.svg[]
@@ -567,6 +589,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect image[:page_number]).to eql 2
       (expect image[:y]).to eql expected_top
       (expect image[:height]).to eql expected_height
+    end
+
+    it 'should not scale image if it can fit on next page' do
+      reference_width = (to_pdf 'image::cover.jpg[]', analyze: :image).images[0][:width]
+
+      pdf = to_pdf <<~EOS, analyze: :image
+      :pdf-page-size: A5
+
+      #{(%w(filler) * 8).join %(\n\n)}
+
+      image::cover.jpg[]
+      EOS
+
+      (expect pdf.images[0][:width]).to eql reference_width
     end
 
     it 'should fail to embed interlaced PNG image with warning' do
