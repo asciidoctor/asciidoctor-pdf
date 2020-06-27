@@ -170,4 +170,23 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
     (expect to_file).to visually_match 'quote-page-split.pdf'
   end
+
+  it 'should advance to next page if block is split and caption does not fit' do
+    quote = %(Power concedes nothing without a demand. +\nIt never did and it never will.)
+
+    pdf = to_pdf <<~EOS, pdf_theme: { thematic_break_margin_top: 700 }, analyze: true
+    before
+
+    '''
+
+    .Sage advice by Frederick Douglass
+    ____
+    #{([quote] * 18).join %(\n\n)}
+    ____
+    EOS
+
+    advice_text = pdf.find_unique_text 'Sage advice by Frederick Douglass'
+    (expect advice_text[:page_number]).to eql 2
+    (expect advice_text[:y]).to be > 795
+  end
 end
