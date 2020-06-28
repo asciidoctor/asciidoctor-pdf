@@ -3004,10 +3004,10 @@ module Asciidoctor
       end
 
       # NOTE num_front_matter_pages is not used during a dry run
-      def layout_toc doc, num_levels = 2, toc_page_number = 2, start_y = nil, num_front_matter_pages = 0
+      def layout_toc doc, num_levels = 2, toc_page_number = 2, start_y = @y, num_front_matter_pages = 0
         go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
         start_page_number = page_number
-        @y = start_y if start_y
+        @y = start_y
         unless (toc_title = doc.attr 'toc-title').nil_or_empty?
           theme_font :heading, level: 2 do
             theme_font :toc_title do
