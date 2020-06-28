@@ -85,6 +85,8 @@ Bug Fixes::
 * don't apply syntax highlighting to source block if specialchars sub is disabled
 * apply border bottom to correct table row when frame and grid are disabled
 * allow caption max width to be set by theme to fixed value
+* fix crash when footnote is defined in section title with auto-generated ID
+* allow an index term to be defined in section title with auto-generated ID
 
 Compliance::
 

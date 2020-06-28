@@ -385,7 +385,7 @@ module Asciidoctor
         @section_indent = (val = @theme.section_indent) && (expand_indent_value val)
         @toc_max_pagenum_digits = (doc.attr 'toc-max-pagenum-digits', 3).to_i
         @disable_running_content = {}
-        @index = IndexCatalog.new
+        @index ||= IndexCatalog.new
         # NOTE: we have to init Pdfmark class here while we have reference to the doc
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
         @optimize = doc.attr 'optimize'
@@ -2527,11 +2527,11 @@ module Asciidoctor
       end
 
       def convert_inline_indexterm node
-        # NOTE indexterms not supported if text gets substituted before PDF is initialized
-        return '' unless defined? @index
         if scratch?
           node.type == :visible ? node.text : ''
         else
+          # NOTE initialize index in case converter is called before PDF is initialized
+          @index ||= IndexCatalog.new
           # NOTE page number (:page key) is added by InlineDestinationMarker
           dest = { anchor: (anchor_name = @index.next_anchor_name) }
           anchor = %(<a id="#{anchor_name}" type="indexterm">#{DummyText}</a>)
