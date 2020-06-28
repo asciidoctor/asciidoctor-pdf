@@ -1696,18 +1696,20 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should allow theme to constrain caption to fixed width' do
-      pdf_theme = { table_caption_max_width: 144 }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
-      :table-caption!:
+      [144, '144'].each do |it|
+        pdf_theme = { table_caption_max_width: it }
+        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        :table-caption!:
 
-      .A rather long description for this table
-      |===
-      | Col A | Col B
-      |===
-      EOS
+        .A rather long description for this table
+        |===
+        | Col A | Col B
+        |===
+        EOS
 
-      caption_lines = pdf.lines pdf.find_text font_name: 'NotoSerif-Italic'
-      (expect caption_lines).to eql ['A rather long description for', 'this table']
+        caption_lines = pdf.lines pdf.find_text font_name: 'NotoSerif-Italic'
+        (expect caption_lines).to eql ['A rather long description for', 'this table']
+      end
     end
 
     it 'should allow theme to set caption alignment to inherit from table' do

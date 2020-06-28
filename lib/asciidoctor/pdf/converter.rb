@@ -2929,8 +2929,11 @@ module Asciidoctor
               else
                 max_width = (block_width || container_width) * (max_width.slice 12, max_width.length - 1).to_f / 100.0
               end
+            elsif max_width.end_with? '%'
+              max_width = [max_width.to_f / 100 * bounds.width, bounds.width].min
+              block_align = align
             else
-              max_width = [max_width.to_f / 100 * bounds.width, bounds.width].min if max_width.end_with? '%'
+              max_width = [max_width.to_f, bounds.width].min
               block_align = align
             end
           else
