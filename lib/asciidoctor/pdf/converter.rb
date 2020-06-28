@@ -2429,7 +2429,11 @@ module Asciidoctor
       def convert_inline_footnote node
         if (index = node.attr 'index') && (fn = node.document.footnotes.find {|candidate| candidate.index == index })
           anchor = node.type == :xref ? '' : %(<a id="_footnoteref_#{index}">#{DummyText}</a>)
-          label = (@rendered_footnotes.include? fn) ? fn.label : (index - @rendered_footnotes.length)
+          if defined? @rendered_footnotes
+            label = (@rendered_footnotes.include? fn) ? fn.label : (index - @rendered_footnotes.length)
+          else
+            label = index
+          end
           %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{label}</a>]</sup>)
         elsif node.type == :xref
           # NOTE footnote reference not found
