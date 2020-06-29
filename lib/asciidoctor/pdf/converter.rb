@@ -4245,12 +4245,11 @@ module Asciidoctor
               end
             when 'cover'
               # QUESTION should we take explicit width into account?
-              if (image_size = intrinsic_image_dimensions image_path, image_format)
-                if container_width * (image_size[:height].to_f / image_size[:width]) < container_height
-                  image_opts[:height] = container_height
-                else
-                  image_opts[:width] = container_width
-                end
+              image_size = intrinsic_image_dimensions image_path, image_format
+              if container_width * (image_size[:height].to_f / image_size[:width]) < container_height
+                image_opts[:height] = container_height
+              else
+                image_opts[:width] = container_width
               end
             when 'fill'
               image_opts[:width] = container_width
