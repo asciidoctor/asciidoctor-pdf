@@ -87,6 +87,7 @@ Bug Fixes::
 * allow caption max width to be set by theme to fixed value
 * fix crash when footnote is defined in section title with auto-generated ID
 * allow an index term to be defined in section title with auto-generated ID
+* fix alignment of link box for image in running content with numeric vertical alignment
 
 Compliance::
 

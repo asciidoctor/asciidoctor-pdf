@@ -4379,7 +4379,7 @@ module Asciidoctor
         when :bottom
           image_y = bounds.absolute_bottom + image_height
         else
-          image_y = y
+          image_y = y - image_opts[:vposition]
         end unless (image_y = image_opts[:y])
 
         link_annotation [image_x, (image_y - image_height), (image_x + image_width), image_y], Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: uri.as_pdf }

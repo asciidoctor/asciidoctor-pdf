@@ -2483,6 +2483,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       image = pdf.images[0]
       image_coords = { x: image[:x], y: image[:y], width: image[:width], height: image[:height] }
       (expect link_coords).to eql image_coords
+      (expect image_coords[:y]).to eql PDF::Core::PageGeometry::SIZES['A4'][1]
     end
 
     it 'should add link around image aligned to bottom' do
@@ -2508,6 +2509,33 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       image = pdf.images[0]
       image_coords = { x: image[:x], y: image[:y], width: image[:width], height: image[:height] }
       (expect link_coords).to eql image_coords
+    end
+
+    it 'should add link around image offset from top by specific value' do
+      pdf_theme = {
+        __dir__: fixtures_dir,
+        header_height: 36,
+        header_columns: '0% =100% 0%',
+        header_image_vertical_align: 5,
+        header_recto_center_content: 'image:square.png[pdfwidth=18pt,link=https://en.wikipedia.org/wiki/Square]',
+        header_verso_center_content: 'image:square.png[pdfwidth=18pt,link=https://en.wikipedia.org/wiki/Square]',
+      }
+
+      pdf = to_pdf 'body', pdf_theme: pdf_theme
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to be :Link
+      (expect link_annotation[:A][:URI]).to eql 'https://en.wikipedia.org/wiki/Square'
+      link_rect = link_annotation[:Rect]
+      link_coords = { x: link_rect[0], y: link_rect[3], width: ((link_rect[2] - link_rect[0]).round 4), height: ((link_rect[3] - link_rect[1]).round 4) }
+
+      pdf = to_pdf 'body', pdf_theme: pdf_theme, analyze: :image
+      image = pdf.images[0]
+      image_coords = { x: image[:x], y: image[:y], width: image[:width], height: image[:height] }
+      (expect link_coords).to eql image_coords
+      (expect image_coords[:y]).to eql (PDF::Core::PageGeometry::SIZES['A4'][1] - 5)
     end
 
     it 'should replace unrecognized font family in SVG with SVG fallback font family specified in theme' do
