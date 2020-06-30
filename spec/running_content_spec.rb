@@ -102,6 +102,24 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect footer_texts[0][:string]).to eql expected_text
     end
 
+    it 'should allow values in columns spec to be comma-separated' do
+      pdf_theme = {
+        footer_columns: '<25%, =50%, >25%',
+        footer_padding: 0,
+        footer_recto_left_content: 'left',
+        footer_recto_center_content: 'center',
+        footer_recto_right_content: 'right',
+      }
+      pdf = to_pdf 'body', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      midpoint = (get_page_size pdf)[0] * 0.5
+      footer_texts = pdf.find_text font_size: 9
+      (expect footer_texts).to have_size 3
+      (expect footer_texts[0][:x]).to be < midpoint
+      (expect footer_texts[1][:x]).to be < midpoint
+      (expect footer_texts[1][:x] + footer_texts[1][:width]).to be > midpoint
+      (expect footer_texts[2][:x]).to be > midpoint
+    end
+
     it 'should hide page number if pagenums attribute is unset in document' do
       pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
       = Document Title
