@@ -53,7 +53,7 @@ module Asciidoctor
       TextDecorationStyleTable = { 'underline' => :underline, 'line-through' => :strikethrough }
       FontKerningTable = { 'normal' => true, 'none' => false }
       BlockAlignmentNames = %w(left center right)
-      AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }
+      (AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }).default = :left
       ColumnPositions = [:left, :center, :right]
       PageLayouts = [:portrait, :landscape]
       (PageModes = {
@@ -3473,7 +3473,7 @@ module Asciidoctor
               tot_width = 0
               side_colspecs = colspecs.map {|col, spec|
                 if (alignment_char = spec.chr).to_i.to_s != alignment_char
-                  alignment = AlignmentTable[alignment_char] || :left
+                  alignment = AlignmentTable[alignment_char]
                   rel_width = (spec.slice 1, spec.length).to_f
                 else
                   alignment = :left
