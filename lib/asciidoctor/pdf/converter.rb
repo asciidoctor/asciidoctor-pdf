@@ -4430,7 +4430,7 @@ module Asciidoctor
         value
       end
 
-      def promote_author doc, idx = 1
+      def promote_author doc, idx
         doc.remove_attr 'url' if (original_url = doc.attr 'url')
         email = nil
         if idx > 1
