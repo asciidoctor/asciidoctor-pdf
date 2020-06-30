@@ -90,6 +90,18 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
     end
 
+    it 'should use single column that spans width of page if columns value is empty' do
+      pdf_theme = {
+        footer_columns: '',
+        footer_recto_center_content: (expected_text = 'This text is aligned to the left and spans the width of the page.'),
+      }
+      pdf = to_pdf 'body', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+
+      footer_texts = pdf.find_text font_size: 9
+      (expect footer_texts).to have_size 1
+      (expect footer_texts[0][:string]).to eql expected_text
+    end
+
     it 'should hide page number if pagenums attribute is unset in document' do
       pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
       = Document Title
