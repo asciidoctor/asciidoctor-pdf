@@ -3078,7 +3078,6 @@ module Asciidoctor
                 typeset_formatted_text sect_title_fragments, line_metrics, hanging_indent: hanging_indent, normalize_line_height: true
                 start_dots = last_fragment_pos.right + hanging_indent
                 last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
-                # NOTE this will be incorrect if wrapped line is all monospace
                 if (last_fragment_page_number = last_fragment_pos.page_number) > start_page_number ||
                     (start_cursor - last_fragment_cursor) > line_metrics.height
                   start_page_number = last_fragment_page_number
