@@ -593,6 +593,34 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect pdf.find_unique_text 'Are you following along?').not_to be_nil
       (expect pdf.find_unique_text 'Just checking ;)').not_to be_nil
     end
+
+    it 'should use note icon for custom admonition type if theme does not specify icon name' do
+      require 'asciidoctor/extensions'
+
+      extensions = proc do
+        block :FACT do
+          on_context :example
+          process do |parent, reader, attrs|
+            attrs['name'] = 'fact'
+            attrs['caption'] = 'Fact'
+            create_block parent, :admonition, reader.lines, attrs, content_model: :compound
+          end
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', extensions: extensions, analyze: true
+      :icons: font
+
+      [FACT]
+      ====
+      Like all planetary bodies, the Earth is spherical.
+      ====
+      EOS
+
+      (expect pdf.lines).to eql [%(\uf05a Like all planetary bodies, the Earth is spherical.)]
+      icon_text = pdf.find_unique_text ?\uf05a
+      (expect icon_text[:font_color]).to eql '333333'
+    end
   end
 
   context 'Background & Lines' do

@@ -838,7 +838,7 @@ module Asciidoctor
                     icon icon_data[:name],
                         valign: label_valign,
                         align: label_align,
-                        color: icon_data[:stroke_color],
+                        color: (icon_data[:stroke_color] || font_color),
                         size: icon_size
                   elsif icons
                     if (::Asciidoctor::Image.format icon_path) == 'svg'
@@ -3136,7 +3136,7 @@ module Asciidoctor
             icon_data[:name] = AdmonitionIcons[:note][:name]
           end
         else
-          (icon_data = AdmonitionIcons[key])[:name] ||= AdmonitionIcons[:note][:name]
+          (icon_data = AdmonitionIcons[key] || {})[:name] ||= AdmonitionIcons[:note][:name]
         end
         icon_data
       end
