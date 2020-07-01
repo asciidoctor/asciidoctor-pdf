@@ -1794,7 +1794,7 @@ module Asciidoctor
         theme_margin :block, :top
 
         keep_together do |box_height = nil|
-          caption_height = node.title? ? (layout_caption node, category: :code, labeled: false) : 0
+          caption_height = node.title? ? (layout_caption node, category: :code) : 0
           theme_font :code do
             theme_fill_and_stroke_block :code, (box_height - caption_height), background_color: bg_color_override, split_from_top: false if box_height
             pad_box @theme.code_padding do
@@ -2897,14 +2897,6 @@ module Asciidoctor
           string = (opts.delete :labeled) == false ? subject.title : subject.captioned_title
         else
           string = subject.to_s
-        end
-        case subject
-        when ::String
-          string = subject
-        when ::Asciidoctor::AbstractBlock
-          string = subject.captioned_title
-        else
-          raise ArgumentError, 'invalid subject'
         end
         category_caption = (category = opts[:category]) ? %(#{category}_caption) : 'caption'
         container_width = bounds.width
