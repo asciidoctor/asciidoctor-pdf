@@ -1765,7 +1765,7 @@ module Asciidoctor
               if (srclang = node.attr 'language')
                 if srclang.include? '?'
                   if (lexer = ::Rouge::Lexer.find_fancy srclang)
-                    unless lexer.tag != 'php' || (node.option? 'mixed') || ((lexer_opts = lexer.options).key? 'start_inline')
+                    if lexer.tag == 'php' && !(node.option? 'mixed') && !((lexer_opts = lexer.options).key? 'start_inline')
                       lexer = lexer.class.new lexer_opts.merge 'start_inline' => true
                     end
                   end
