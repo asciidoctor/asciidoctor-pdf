@@ -125,11 +125,13 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       ----
       EOS
 
-      echo_text = pdf.find_unique_text 'echo'
-      (expect echo_text).not_to be_nil
-      # NOTE the echo keyword should be highlighted
-      (expect echo_text[:font_color]).to eql '008800'
-    end if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
+      if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
+        echo_text = pdf.find_unique_text 'echo'
+        (expect echo_text).not_to be_nil
+        # NOTE the echo keyword should be highlighted
+        (expect echo_text[:font_color]).to eql '008800'
+      end
+    end
 
     it 'should not enable the start_inline option for PHP if the mixed option is set and other cgi-style options specified' do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -172,10 +174,12 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       ----
       EOS
 
-      prompt_text = pdf.find_unique_text '%'
-      (expect prompt_text).not_to be_nil
-      (expect prompt_text[:font_color]).to eql '555555'
-    end if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
+      if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
+        prompt_text = pdf.find_unique_text '%'
+        (expect prompt_text).not_to be_nil
+        (expect prompt_text[:font_color]).to eql '555555'
+      end
+    end
 
     it 'should use plain text lexer if language is not recognized and cgi-style options are present' do
       pdf = to_pdf <<~'EOS', analyze: true
