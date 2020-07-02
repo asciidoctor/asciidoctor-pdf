@@ -99,7 +99,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       ----
       EOS
 
-      if Rouge.version >= '2.1.0'
+      if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
         funcname_text = (pdf.find_text 'cal_days_in_month')[0]
         (expect funcname_text).not_to be_nil
         (expect funcname_text[:font_color]).to eql '333333'
@@ -129,7 +129,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect echo_text).not_to be_nil
       # NOTE the echo keyword should be highlighted
       (expect echo_text[:font_color]).to eql '008800'
-    end
+    end if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
 
     it 'should not enable the start_inline option for PHP if the mixed option is set and other cgi-style options specified' do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -175,7 +175,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       prompt_text = pdf.find_unique_text '%'
       (expect prompt_text).not_to be_nil
       (expect prompt_text[:font_color]).to eql '555555'
-    end
+    end if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
 
     it 'should use plain text lexer if language is not recognized and cgi-style options are present' do
       pdf = to_pdf <<~'EOS', analyze: true
