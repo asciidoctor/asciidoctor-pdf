@@ -115,6 +115,37 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       end
     end
 
+    it 'should enable start_inline option for PHP if enabled by cgi-style option' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,php?start_inline=1]
+      ----
+      echo "<?php";
+      ----
+      EOS
+
+      echo_text = pdf.find_unique_text 'echo'
+      (expect echo_text).not_to be_nil
+      # NOTE the echo keyword should be highlighted
+      (expect echo_text[:font_color]).to eql '008800'
+    end
+
+    it 'should not enable the start_inline option for PHP if the mixed option is set and other cgi-style options specified' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source%mixed,php?foo=bar]
+      ----
+      echo "<?php";
+      ----
+      EOS
+
+      echo_text = pdf.find_unique_text 'echo'
+      # NOTE the echo keyword should not be highlighted
+      (expect echo_text).to be_nil
+    end
+
     it 'should not enable start_inline option for PHP if disabled by cgi-style option' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
@@ -129,6 +160,21 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect text).to have_size 1
       (expect text[0][:string]).to eql 'cal_days_in_month(CAL_GREGORIAN, 6, 2019)'
       (expect text[0][:font_color]).to eql '333333'
+    end
+
+    it 'should respect cgi-style options for languages other than PHP' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,console?prompt=%]
+      ----
+      % bundle
+      ----
+      EOS
+
+      prompt_text = pdf.find_unique_text '%'
+      (expect prompt_text).not_to be_nil
+      (expect prompt_text[:font_color]).to eql '555555'
     end
 
     it 'should use plain text lexer if language is not recognized and cgi-style options are present' do
