@@ -269,6 +269,20 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect line_gaps[-2]).to eql line_gaps[-3]
   end
 
+  it 'should add numbered label to block title if listing-caption attribute is set' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :listing-caption: Listing
+
+    .Title
+    ----
+    content
+    ----
+    EOS
+
+    title_text = pdf.find_unique_text font_name: 'NotoSerif-Italic'
+    (expect title_text[:string]).to eql 'Listing 1. Title'
+  end
+
   it 'should allow theme to override caption for code blocks' do
     pdf_theme = {
       caption_font_color: '0000ff',
