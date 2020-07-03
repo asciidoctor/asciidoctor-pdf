@@ -3695,8 +3695,8 @@ module Asciidoctor
         end
       end
 
-      def resolve_font_kerning keyword, fallback = default_kerning?
-        keyword && (FontKerningTable.key? keyword) ? FontKerningTable[keyword] : fallback
+      def resolve_font_kerning keyword
+        keyword && (FontKerningTable.key? keyword) ? FontKerningTable[keyword] : nil
       end
 
       def theme_fill_and_stroke_bounds category, opts = {}
@@ -3812,7 +3812,7 @@ module Asciidoctor
           size = @theme[%(#{hlevel_category}_font_size)] || @theme[%(#{category}_font_size)] || @root_font_size
           style = @theme[%(#{hlevel_category}_font_style)] || @theme[%(#{category}_font_style)]
           color = @theme[%(#{hlevel_category}_font_color)] || @theme[%(#{category}_font_color)]
-          kerning = resolve_font_kerning @theme[%(#{hlevel_category}_font_kerning)] || @theme[%(#{category}_font_kerning)], nil
+          kerning = resolve_font_kerning @theme[%(#{hlevel_category}_font_kerning)] || @theme[%(#{category}_font_kerning)]
           # NOTE global text_transform is not currently supported
           transform = @theme[%(#{hlevel_category}_text_transform)] || @theme[%(#{category}_text_transform)]
         else
@@ -3821,7 +3821,7 @@ module Asciidoctor
           size = @theme[%(#{category}_font_size)] || inherited_font[:size]
           style = @theme[%(#{category}_font_style)] || inherited_font[:style]
           color = @theme[%(#{category}_font_color)]
-          kerning = resolve_font_kerning @theme[%(#{category}_font_kerning)], nil
+          kerning = resolve_font_kerning @theme[%(#{category}_font_kerning)]
           # NOTE global text_transform is not currently supported
           transform = @theme[%(#{category}_text_transform)]
         end
