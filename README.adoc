@@ -84,7 +84,9 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 * Page numbering
 * Double-sided (aka prepress) printing mode (i.e., margins alternate on recto and verso pages)
 * Customizable running content (header and footer)
-* “Keep together” blocks such as open blocks specified with the "unbreakable" option `[%unbreakable]` (i.e., page breaks avoided in certain block content)
+* “Keep together” blocks (i.e., page breaks avoided in certain block content):
+** Explicitly delimited blocks other than open blocks, including tables and lists
+** Open blocks with the "unbreakable" option `[%unbreakable]`
 * Orphaned section titles avoided
 * Autofit verbatim blocks (as permitted by base_font_size_min setting)
 * Table border settings honored
