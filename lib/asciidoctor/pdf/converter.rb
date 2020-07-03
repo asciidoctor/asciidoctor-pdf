@@ -217,7 +217,7 @@ module Asciidoctor
 
         indent_section do
           toc_num_levels = (doc.attr 'toclevels', 2).to_i
-          if (insert_toc = (doc.attr? 'toc') && !(doc.attr? 'toc-placement', 'macro') && doc.sections?)
+          if (insert_toc = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && doc.sections?)
             start_new_page if @ppbook && verso_page?
             add_dest_for_block doc, 'toc'
             allocate_toc doc, toc_num_levels, @y, use_title_page
@@ -713,6 +713,7 @@ module Asciidoctor
           first_block.add_role 'lead' unless first_block.role?
         end
         traverse node
+        convert_toc node, placement: 'preamble'
       end
 
       def convert_paragraph node
@@ -2268,16 +2269,19 @@ module Asciidoctor
         theme_margin :thematic_break, :bottom
       end
 
-      def convert_toc node
-        if ((doc = node.document).attr? 'toc-placement', 'macro') && (doc.attr? 'toc') && doc.sections?
+      def convert_toc node, opts = {}
+        is_macro = (placement = opts[:placement] || 'macro') == 'macro'
+        if ((doc = node.document).attr? 'toc-placement', placement) && (doc.attr? 'toc') && doc.sections?
           if (is_book = doc.doctype == 'book')
             start_new_page unless at_page_top?
-            start_new_page if @ppbook && verso_page? && !(node.option? 'nonfacing')
+            start_new_page if @ppbook && verso_page? && !(is_macro && (node.option? 'nonfacing'))
           end
-          add_dest_for_block node, (node.id || 'toc')
+          add_dest_for_block node, (node.id || 'toc') if is_macro
           allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (is_book || (doc.attr? 'title-page'))
-          @disable_running_content[:header] = (@disable_running_content[:header] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'noheader'
-          @disable_running_content[:footer] = (@disable_running_content[:footer] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'nofooter'
+          if is_macro
+            @disable_running_content[:header] = (@disable_running_content[:header] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'noheader'
+            @disable_running_content[:footer] = (@disable_running_content[:footer] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'nofooter'
+          end
         end
         nil
       end

@@ -221,6 +221,30 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[3][:strings]).to include 'Chapter 1'
     end
 
+    it 'should insert toc after preamble if toc attribute is preamble' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :toc: preamble
+
+      This is the preamble.
+
+      == Introduction
+
+      content
+
+      == Conclusion
+
+      content
+      EOS
+
+      toc_title_text = pdf.find_unique_text 'Table of Contents'
+      (expect toc_title_text[:page_number]).to be 1
+      introduction_title_text = pdf.find_unique_text 'Introduction', font_name: 'NotoSerif-Bold'
+      (expect introduction_title_text[:y]).to be < toc_title_text[:y]
+      introduction_toc_text = pdf.find_unique_text 'Introduction', font_name: 'NotoSerif'
+      (expect introduction_toc_text[:y]).to be > introduction_title_text[:y]
+    end
+
     it 'should insert toc at location of toc macro if toc attribute is macro' do
       lorem = ['lorem ipsum'] * 10 * %(\n\n)
       input = <<~EOS
