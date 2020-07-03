@@ -2269,7 +2269,7 @@ module Asciidoctor
       end
 
       def convert_toc node
-        if ((doc = node.document).attr? 'toc-placement', 'macro') && doc.sections?
+        if ((doc = node.document).attr? 'toc-placement', 'macro') && (doc.attr? 'toc') && doc.sections?
           if (is_book = doc.doctype == 'book')
             start_new_page unless at_page_top?
             start_new_page if @ppbook && verso_page? && !(node.option? 'nonfacing')

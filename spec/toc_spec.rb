@@ -317,6 +317,20 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.lines).to eql %w(Before After)
     end
 
+    it 'should not insert toc at location of toc macro if toc-placement attribute is set but not toc attribute' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :toc-placement: macro
+
+      == Before
+
+      toc::[]
+
+      == After
+      EOS
+
+      (expect pdf.lines).to eql %w(Before After)
+    end
+
     it 'should not insert toc at location of toc macro if value of toc attribute is not macro' do
       pdf = to_pdf <<~'EOS', analyze: true
       :doctype: book
