@@ -3709,10 +3709,10 @@ module Asciidoctor
       def theme_fill_and_stroke_block category, block_height, opts = {}
         if (b_width = (opts.key? :border_width) ? opts[:border_width] : @theme[%(#{category}_border_width)])
           if ::Array === b_width
-            b_width = b_width[0] || 0
+            b_width = b_width[0]
             b_radius = 0
           end
-          b_width = nil unless b_width > 0
+          b_width = nil unless b_width && b_width > 0
         end
         if (bg_color = opts[:background_color] || @theme[%(#{category}_background_color)]) == 'transparent'
           bg_color = nil
