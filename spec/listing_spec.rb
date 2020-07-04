@@ -110,21 +110,23 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect pdf.text[0][:font_size]).to be 8
   end
 
-  it 'should allow autofit to shrink text as much as it needs if the minimum font size is 0' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_size_min: 0 }, analyze: true
-    [%autofit]
-    ----
-    +--------------------------------------+----------------------------------------------------+-----------------------------------------------------+
-    | id                                   | name                                               | subnets                                             |
-    +--------------------------------------+----------------------------------------------------+-----------------------------------------------------+
-    ----
-    EOS
+  it 'should allow autofit to shrink text as much as it needs if the minimum font size is 0 or nil' do
+    [0, nil].each do |size|
+      pdf = to_pdf <<~'EOS', pdf_theme: { base_font_size_min: size }, analyze: true
+      [%autofit]
+      ----
+      +--------------------------------------+----------------------------------------------------+-----------------------------------------------------+
+      | id                                   | name                                               | subnets                                             |
+      +--------------------------------------+----------------------------------------------------+-----------------------------------------------------+
+      ----
+      EOS
 
-    expected_line = '+--------------------------------------+----------------------------------------------------+-----------------------------------------------------+'
-    lines = pdf.lines
-    (expect lines).to have_size 3
-    (expect lines[0]).to eql expected_line
-    (expect lines[2]).to eql expected_line
+      expected_line = '+--------------------------------------+----------------------------------------------------+-----------------------------------------------------+'
+      lines = pdf.lines
+      (expect lines).to have_size 3
+      (expect lines[0]).to eql expected_line
+      (expect lines[2]).to eql expected_line
+    end
   end
 
   it 'should allow theme to set different padding per side when autofit is enabled' do
