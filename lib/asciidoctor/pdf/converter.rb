@@ -3858,8 +3858,7 @@ module Asciidoctor
         unless ::Array === (padding = @theme[%(#{category}_padding)])
           padding = ::Array.new 4, padding
         end
-        available_width = bounds.width - (padding[3] || 0) - (padding[1] || 0)
-        if actual_width > available_width
+        if actual_width > (available_width = bounds.width - padding[3].to_f - padding[1].to_f)
           adjusted_font_size = ((available_width * font_size).to_f / actual_width).truncate 4
           if (min = @theme[%(#{category}_font_size_min)] || @theme.base_font_size_min) && adjusted_font_size < min
             min
