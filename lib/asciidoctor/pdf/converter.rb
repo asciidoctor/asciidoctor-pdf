@@ -2860,7 +2860,7 @@ module Asciidoctor
           inline_format_opts[:inherited] = {
             styles: styles,
             text_decoration_color: (opts.delete :text_decoration_color),
-            text_decoration_width: (opts.delete :text_decoration_width)
+            text_decoration_width: (opts.delete :text_decoration_width),
           }.compact
         end
         typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
