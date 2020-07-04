@@ -113,6 +113,25 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
   end
 
+  it 'should apply text decoration to caption' do
+    pdf_theme = {
+      caption_text_decoration: 'underline',
+      caption_text_decoration_color: 'DDDDDD',
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    .Title
+    ====
+    content
+    ====
+    EOS
+
+    underline = pdf.lines.find {|it| it[:color] = 'DDDDDD' }
+    (expect underline).not_to be_nil
+    (expect underline[:from][:y]).to eql underline[:to][:y]
+    (expect underline[:from][:x]).to be < underline[:to][:x]
+  end
+
   it 'should apply border style set by theme' do
     pdf_theme = {
       example_border_style: 'double',

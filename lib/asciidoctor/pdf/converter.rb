@@ -2857,7 +2857,11 @@ module Asciidoctor
         # NOTE normalize makes endlines soft (replaces "\n" with ' ')
         inline_format_opts = { normalize: (opts.delete :normalize) != false }
         if (styles = opts.delete :styles)
-          inline_format_opts[:inherited] = { styles: styles }
+          inline_format_opts[:inherited] = {
+            styles: styles,
+            text_decoration_color: (opts.delete :text_decoration_color),
+            text_decoration_width: (opts.delete :text_decoration_width)
+          }.compact
         end
         typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
           color: @font_color,
@@ -2955,6 +2959,9 @@ module Asciidoctor
               margin = { top: caption_margin_outside, bottom: caption_margin_inside }
             else
               margin = { top: caption_margin_inside, bottom: caption_margin_outside }
+            end
+            if (inherited = apply_text_decoration [], :caption)
+              opts = opts.merge inherited
             end
             indent(*indent_by) do
               layout_prose string, {

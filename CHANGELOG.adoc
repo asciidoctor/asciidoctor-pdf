@@ -41,6 +41,7 @@ Enhancements::
 * add support for id attribute on link macro
 * allow theme to configure width of block border on ends separate from sides (#1693)
 * add additional glyphs to built-in fonts (heavy checkmark to fallback font; both checkmarks to monospaced font; numero sign to prose and fallback fonts) (#1625)
+* allow theme to specify text decoration style, color, and width for captions (globally)
 
 Bug Fixes::
 
