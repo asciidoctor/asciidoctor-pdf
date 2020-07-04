@@ -275,6 +275,20 @@ describe Asciidoctor::PDF::Converter do
     end
   end
 
+  describe 'helpers' do
+    it 'should not drop lines with unresolved attributes when apply_subs_discretely is called without options' do
+      doc = Asciidoctor.load 'yo', backend: :pdf
+      converter = doc.converter
+      input = <<~'EOS'
+      foo
+      {undefined}
+      bar
+      EOS
+      result = converter.apply_subs_discretely doc, input
+      (expect result).to eql input
+    end
+  end
+
   describe 'extend' do
     it 'should use specified extended converter' do
       class CustomPDFConverter < (Asciidoctor::Converter.for 'pdf') # rubocop:disable RSpec/LeakyConstantDeclaration
