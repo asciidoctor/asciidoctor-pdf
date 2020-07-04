@@ -4380,9 +4380,8 @@ module Asciidoctor
 
       def load_open_uri
         if @cache_uri && !(defined? ::OpenURI::Cache)
-          if (Helpers.require_library 'open-uri/cached', 'open-uri-cached', :warn).nil?
-            @cache_uri = false # disable since it failed to load
-          end
+          # disable URI caching if library fails to load
+          @cache_uri = false if (Helpers.require_library 'open-uri/cached', 'open-uri-cached', :warn).nil?
         end
         ::OpenURI
       end
