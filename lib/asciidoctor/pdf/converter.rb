@@ -4236,13 +4236,20 @@ module Asciidoctor
               end
             when 'scale-down'
               # NOTE if width and height aren't set in SVG, real width and height are computed after stretching viewbox to fit page
-              if (image_width = resolve_explicit_width image_attrs, bounds_width: container_width) && image_width > container_width
-                image_opts[:fit] = container_size
-              elsif (image_size = intrinsic_image_dimensions image_path, image_format) &&
-                  (image_width ? image_width * (image_size[:height].to_f / image_size[:width]) > container_height : (to_pt image_size[:width], :px) > container_width || (to_pt image_size[:height], :px) > container_height)
-                image_opts[:fit] = container_size
-              elsif image_width
-                image_opts[:width] = image_width
+              if (image_width = resolve_explicit_width image_attrs, bounds_width: container_width)
+                if image_width > container_width
+                  image_opts[:fit] = container_size
+                else
+                  image_size = intrinsic_image_dimensions image_path, image_format
+                  if image_width * (image_size[:height].to_f / image_size[:width]) > container_height
+                    image_opts[:fit] = container_size
+                  else
+                    image_opts[:width] = image_width
+                  end
+                end
+              else
+                image_size = intrinsic_image_dimensions image_path, image_format
+                image_opts[:fit] = container_size if (to_pt image_size[:width], :px) > container_width || (to_pt image_size[:height], :px) > container_height
               end
             when 'cover'
               # QUESTION should we take explicit width into account?
