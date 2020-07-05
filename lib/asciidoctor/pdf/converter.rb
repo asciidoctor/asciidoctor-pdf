@@ -3723,7 +3723,7 @@ module Asciidoctor
             b_width = b_width[0]
             b_radius = 0
           end
-          b_width = nil unless b_width && b_width > 0
+          b_width = nil unless b_width.to_f > 0
         end
         if (bg_color = opts[:background_color] || @theme[%(#{category}_background_color)]) == 'transparent'
           bg_color = nil
