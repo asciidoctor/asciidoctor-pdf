@@ -4203,7 +4203,7 @@ module Asciidoctor
           if image_format == 'pdf'
             [image_path, page: [((image_attrs || {})['page']).to_i, 1].max, format: image_format]
           else
-            [image_path, (resolve_image_options image_path, image_format, image_attrs, (opts.merge background: true, container_size: [page_width, page_height]))]
+            [image_path, (resolve_image_options image_path, image_format, image_attrs, (({ background: true, container_size: [page_width, page_height] }.merge opts)))]
           end
         end
       end
