@@ -4203,7 +4203,7 @@ module Asciidoctor
           if image_format == 'pdf'
             [image_path, page: [((image_attrs || {})['page']).to_i, 1].max, format: image_format]
           else
-            [image_path, (resolve_image_options image_path, image_format, image_attrs, (opts.merge background: true))]
+            [image_path, (resolve_image_options image_path, image_format, image_attrs, (opts.merge background: true, container_size: [page_width, page_height]))]
           end
         end
       end
@@ -4220,10 +4220,9 @@ module Asciidoctor
         else
           image_opts = {}
         end
-        background = opts[:background]
-        container_size = opts[:container_size] || (background ? [page_width, page_height] : [bounds.width, bounds.height])
+        container_size = opts[:container_size]
         if image_attrs
-          if background && (image_pos = image_attrs['position']) && (image_pos = resolve_background_position image_pos, nil)
+          if (background = opts[:background]) && (image_pos = image_attrs['position']) && (image_pos = resolve_background_position image_pos, nil)
             image_opts.update image_pos
           end
           if (image_fit = image_attrs['fit'] || (background ? 'contain' : nil))
