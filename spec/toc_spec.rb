@@ -1057,6 +1057,34 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect toc_entry_underline[:width]).to eql 0.5
   end
 
+  it 'should allow theme to specify text decoration per heading level in toc' do
+    pdf_theme = {
+      toc_h3_text_decoration: 'underline',
+      toc_h3_text_decoration_color: 'cccccc',
+      toc_h3_text_decoration_width: 0.5,
+    }
+    input = <<~'EOS'
+    = Document Title
+    :toc:
+    :title-page:
+
+    == Plain Title
+
+    === Decorated Title
+    EOS
+
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+    lines = pdf.lines
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    underlined_toc_entry_text = pdf.find_unique_text 'Decorated Title', page_number: 2
+    (expect lines).to have_size 1
+    toc_entry_underline = lines[0]
+    (expect toc_entry_underline[:color]).to eql 'CCCCCC'
+    (expect toc_entry_underline[:width]).to eql 0.5
+    (expect toc_entry_underline[:from][:y]).to be < underlined_toc_entry_text[:y]
+    (expect toc_entry_underline[:from][:y]).to be_within(2).of(underlined_toc_entry_text[:y])
+  end
+
   it 'should allow theme to specify text transform for entries in toc' do
     pdf_theme = {
       toc_text_transform: 'uppercase',
