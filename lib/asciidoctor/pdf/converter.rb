@@ -3159,9 +3159,7 @@ module Asciidoctor
         header = doc.header? ? doc.header : nil
         sectlevels = (@theme[%(#{periphery}_sectlevels)] || 2).to_i
         sections = doc.find_by(context: :section) {|sect| sect.level <= sectlevels && sect != header }
-        if (toc_page_nums = @toc_extent && @toc_extent[:page_nums])
-          toc_title = (doc.attr 'toc-title') || ''
-        end
+        toc_title = (doc.attr 'toc-title').to_s if (toc_page_nums = @toc_extent && @toc_extent[:page_nums])
         disable_on_pages = @disable_running_content[periphery]
 
         title_method = TitleStyles[@theme[%(#{periphery}_title_style)]]
