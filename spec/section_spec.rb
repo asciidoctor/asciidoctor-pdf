@@ -238,6 +238,26 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect underline[:width]).to eql 0.5
   end
 
+  it 'should be able to set text decoration properties per heading level' do
+    pdf_theme = { heading_h3_text_decoration: 'underline', heading_h3_text_decoration_color: 'cccccc', heading_h3_text_decoration_width: 0.5 }
+    input = <<~'EOS'
+    == Plain Title
+
+    === Decorated Title
+    EOS
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+    lines = pdf.lines
+    (expect lines).to have_size 1
+    underline = lines[0]
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    underlined_text = pdf.find_unique_text 'Decorated Title'
+    (expect underlined_text[:font_color]).not_to eql underline[:color]
+    (expect underline[:color]).to eql 'CCCCCC'
+    (expect underline[:width]).to eql 0.5
+    (expect underline[:from][:y]).to be < underlined_text[:y]
+    (expect underline[:from][:y]).to be_within(2).of(underlined_text[:y])
+  end
+
   it 'should support hexidecimal character reference in section title' do
     pdf = to_pdf <<~'EOS', analyze: true
     == &#xb5;Services
