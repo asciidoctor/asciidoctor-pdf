@@ -1228,7 +1228,7 @@ You'll need to define these color roles in your theme if you'd like to make use 
 
 |text-decoration-width
 |<<values,Number>> +
-(default: 1)
+(default: $base-text-decoration-width)
 |role:
   underline:
     text-decoration-width: 0.5
@@ -1553,7 +1553,7 @@ The keys in this category are used to style hyperlink text.
 
 |text-decoration-width
 |<<values,Number>> +
-(default: 1)
+(default: $base-text-decoration-width)
 |link:
   text-decoration-width: 0.5
 |===
@@ -1692,7 +1692,7 @@ The keys in this category control the style of most headings, including part tit
 
 |text-decoration-width
 |<<values,Number>> +
-(default: 1)
+(default: $base-text-decoration-width)
 |heading:
   text-decoration-width: 0.5
 
@@ -4392,7 +4392,7 @@ The keys in this category control the arrangement and style of the table of cont
 
 |text-decoration-width
 |<<values,Number>> +
-(default: 1)
+(default: $base-text-decoration-width)
 |toc:
   text-decoration-width: 0.5
 
