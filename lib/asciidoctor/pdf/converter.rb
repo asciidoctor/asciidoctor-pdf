@@ -3677,11 +3677,11 @@ module Asciidoctor
       end
 
       def apply_text_decoration styles, category, level = nil
-        if (text_decoration_style = TextDecorationStyleTable[level ? @theme[%(#{category}_h#{level}_text_decoration)] : @theme[%(#{category}_text_decoration)]])
+        if (text_decoration_style = TextDecorationStyleTable[level && @theme[%(#{category}_h#{level}_text_decoration)] || @theme[%(#{category}_text_decoration)]])
           {
             styles: (styles << text_decoration_style),
-            text_decoration_color: level ? @theme[%(#{category}_h#{level}_text_decoration_color)] : @theme[%(#{category}_text_decoration_color)],
-            text_decoration_width: level ? @theme[%(#{category}_h#{level}_text_decoration_width)] : @theme[%(#{category}_text_decoration_width)],
+            text_decoration_color: level && @theme[%(#{category}_h#{level}_text_decoration_color)] || @theme[%(#{category}_text_decoration_color)],
+            text_decoration_width: level && @theme[%(#{category}_h#{level}_text_decoration_width)] || @theme[%(#{category}_text_decoration_width)],
           }.compact
         else
           styles.empty? ? {} : { styles: styles }
