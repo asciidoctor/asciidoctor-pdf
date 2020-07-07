@@ -13,7 +13,7 @@ class Prawn::Table::Cell::Text
           height: spanned_content_height + FPTolerance,
           at: [0, @pdf.cursor]).render
       end
-      logger.error %(the table cell on page #{@pdf.page_number} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page) unless remaining_text.empty?
+      logger.error %(the table cell on page #{@pdf.page_number} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page) unless remaining_text.empty? || @pdf.scratch?
     end
   end
 end
