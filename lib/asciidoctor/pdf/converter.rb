@@ -2964,7 +2964,7 @@ module Asciidoctor
             else
               margin = { top: caption_margin_inside, bottom: caption_margin_outside }
             end
-            if (inherited = apply_text_decoration [], :caption)
+            unless (inherited = apply_text_decoration [], :caption).empty?
               opts = opts.merge inherited
             end
             indent(*indent_by) do
