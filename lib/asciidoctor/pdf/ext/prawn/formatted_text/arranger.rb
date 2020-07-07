@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Prawn::Text::Formatted::Arranger.prepend (Module.new do
-  def initialize *args
+  def initialize *_args
     super
     @normalize_line_height = false
   end
