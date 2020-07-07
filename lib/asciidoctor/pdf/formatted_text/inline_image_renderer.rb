@@ -2,6 +2,8 @@
 
 module Asciidoctor::PDF::FormattedText
   module InlineImageRenderer
+    include ::Asciidoctor::Logging
+
     module_function
 
     # Embeds the image object in this fragment into the document in place of the
@@ -34,9 +36,8 @@ module Asciidoctor::PDF::FormattedText
         pdf.float do
           pdf.character_spacing(data[:actual_character_spacing]) { image_obj.draw }
           image_obj.document.warnings.each do |img_warning|
-            # NOTE shim logger can't be imported into a module, so use the one from the PDF document instead
-            pdf.logger.warn %(problem encountered in image: #{data[:image_path]}; #{img_warning})
-          end
+            logger.warn %(problem encountered in image: #{data[:image_path]}; #{img_warning})
+          end unless pdf.scratch?
         end
       else
         pdf.embed_image data[:image_obj], data[:image_info], at: [image_left, image_top], width: data[:image_width], height: data[:image_height]
