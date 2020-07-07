@@ -143,7 +143,7 @@ module Asciidoctor
           result = send method_name, node
         else
           # TODO: delegate to convert_method_missing
-          logger.warn %(missing convert handler for #{name} node in #{@backend} backend) unless scratch?
+          log :warn, %(missing convert handler for #{name} node in #{@backend} backend)
         end
         # NOTE: inline nodes generate pseudo-HTML strings; the remainder write directly to PDF object
         ::Asciidoctor::Inline === node ? result : self
@@ -164,6 +164,10 @@ module Asciidoctor
         end
       ensure
         node.document.instance_variable_set :@converter, prev_converter if prev_converter
+      end
+
+      def log severity, message = nil, &block
+        logger.send severity, message, &block unless scratch?
       end
 
       def convert_document doc
@@ -411,7 +415,7 @@ module Asciidoctor
             message = %(could not locate or load the built-in pdf theme `#{theme_name}')
           end
           message += %( because of #{$!.class} #{$!.message}) unless ::SystemCallError === $!
-          logger.error %(#{message}; reverting to default theme)
+          log :error, %(#{message}; reverting to default theme)
           @themesdir = (theme = ThemeLoader.load_theme).__dir__
           theme
         end
@@ -780,7 +784,7 @@ module Asciidoctor
         else
           if icons
             icons = nil
-            logger.warn %(admonition icon not found or not readable: #{icon_path}) unless scratch?
+            log :warn, %(admonition icon not found or not readable: #{icon_path})
           end
           label_text = sanitize node.caption
           theme_font :admonition_label do
@@ -860,10 +864,10 @@ module Asciidoctor
                         end
                         svg_obj.draw
                         svg_obj.document.warnings.each do |icon_warning|
-                          logger.warn %(problem encountered in image: #{icon_path}; #{icon_warning})
+                          log :warn, %(problem encountered in image: #{icon_path}; #{icon_warning})
                         end unless scratch?
                       rescue
-                        logger.warn %(could not embed admonition icon: #{icon_path}; #{$!.message}) unless scratch?
+                        log :warn, %(could not embed admonition icon: #{icon_path}; #{$!.message})
                       end
                     else
                       begin
@@ -878,7 +882,7 @@ module Asciidoctor
                         embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
                       rescue
                         # QUESTION should we show the label in this case?
-                        logger.warn %(could not embed admonition icon: #{icon_path}; #{$!.message}) unless scratch?
+                        log :warn, %(could not embed admonition icon: #{icon_path}; #{$!.message})
                       end
                     end
                   else
@@ -1254,7 +1258,7 @@ module Asciidoctor
               if Bullets.key? candidate
                 bullet_type = candidate
               else
-                logger.warn %(unknown unordered list style: #{candidate}) unless scratch?
+                log :warn, %(unknown unordered list style: #{candidate})
                 bullet_type = :disc
               end
             end
@@ -1363,7 +1367,7 @@ module Asciidoctor
 
         if marker
           if marker_style[:font_family] == 'fa'
-            logger.info 'deprecated fa icon set found in theme; use fas, far, or fab instead' unless scratch?
+            log :info, 'deprecated fa icon set found in theme; use fas, far, or fab instead'
             marker_style[:font_family] = FontAwesomeIconSets.find {|candidate| (icon_font_data candidate).yaml[candidate].value? marker } || 'fas'
           end
           marker_gap = rendered_width_of_char 'x'
@@ -1428,7 +1432,7 @@ module Asciidoctor
         target, image_format = node.target_and_format
 
         if image_format == 'gif' && !(defined? ::GMagick::Image)
-          logger.warn %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
+          log :warn, %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.)
           image_path = nil
         elsif ::Base64 === target
           image_path = target
@@ -1456,11 +1460,11 @@ module Asciidoctor
               end
               return
             else
-              logger.warn %(pdf to insert not found or not readable: #{image_path}) unless scratch?
+              log :warn, %(pdf to insert not found or not readable: #{image_path})
               image_path = nil
             end
           elsif !(::File.readable? image_path)
-            logger.warn %(image to embed not found or not readable: #{image_path}) unless scratch?
+            log :warn, %(image to embed not found or not readable: #{image_path})
             image_path = nil
           end
         end
@@ -1522,7 +1526,7 @@ module Asciidoctor
               # NOTE: cursor advances automatically
               svg_obj.draw
               svg_obj.document.warnings.each do |img_warning|
-                logger.warn %(problem encountered in image: #{image_path}; #{img_warning})
+                log :warn, %(problem encountered in image: #{image_path}; #{img_warning})
               end unless scratch?
               draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? && (node.has_role? 'noborder')
               if (link = node.attr 'link')
@@ -1585,7 +1589,7 @@ module Asciidoctor
       end
 
       def on_image_error _reason, node, target, opts = {}
-        logger.warn opts[:message] if (opts.key? :message) && !scratch?
+        log :warn, opts[:message] if opts.key? :message
         alt_text_vars = { alt: (node.attr 'alt'), target: target }
         alt_text_template = @theme.image_alt_content || '%{link}[%{alt}]%{/link} | <em>%{target}</em>'
         return if alt_text_template.empty?
@@ -2093,7 +2097,7 @@ module Asciidoctor
 
         # NOTE: Prawn aborts if table data is empty, so ensure there's at least one row
         if table_data.empty?
-          logger.warn message_with_context 'no rows found in table', source_location: node.source_location unless scratch?
+          log(:warn) { message_with_context 'no rows found in table', source_location: node.source_location }
           table_data << ::Array.new([node.columns.size, 1].max) { { content: '' } }
         end
 
@@ -2405,7 +2409,7 @@ module Asciidoctor
           reftext = (reftext = node.reftext) ? %([#{reftext}]) : %([#{node.id}])
           %(<a id="#{node.id}">#{DummyText}</a>#{reftext})
         else
-          logger.warn %(unknown anchor type: #{node.type.inspect}) unless scratch?
+          log :warn, %(unknown anchor type: #{node.type.inspect})
         end
       end
 
@@ -2462,14 +2466,14 @@ module Asciidoctor
               requested_icon_name = icon_name
               icon_set, icon_name = remapped_icon_name.split '-', 2
               glyph = (icon_font_data icon_set).unicode icon_name
-              logger.info { %(#{requested_icon_name} icon found in deprecated fa icon set; using #{icon_name} from #{icon_set} icon set instead) } unless scratch?
+              log(:info) { %(#{requested_icon_name} icon found in deprecated fa icon set; using #{icon_name} from #{icon_set} icon set instead) }
             # new name in Font Awesome >= 5 (but document is configured to use fa icon set)
             else
               font_data = nil
               if (resolved_icon_set = FontAwesomeIconSets.find {|candidate| (font_data = icon_font_data candidate).unicode icon_name rescue nil })
                 icon_set = resolved_icon_set
                 glyph = font_data.unicode icon_name
-                logger.info { %(#{icon_name} icon not found in deprecated fa icon set; using match found in #{resolved_icon_set} icon set instead) } unless scratch?
+                log(:info) { %(#{icon_name} icon not found in deprecated fa icon set; using match found in #{resolved_icon_set} icon set instead) }
               end
             end
           else
@@ -2496,7 +2500,7 @@ module Asciidoctor
             # TODO: support rotate and flip attributes
             %(<font name="#{icon_set}"#{size_attr}#{class_attr}>#{glyph}</font>)
           else
-            logger.warn %(#{icon_name} is not a valid icon name in the #{icon_set} icon set) unless scratch?
+            log :warn, %(#{icon_name} is not a valid icon name in the #{icon_set} icon set)
             %([#{node.attr 'alt'}])
           end
         else
@@ -2511,7 +2515,7 @@ module Asciidoctor
           node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
           target, image_format = node.target_and_format
           if image_format == 'gif' && !(defined? ::GMagick::Image)
-            logger.warn %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.) unless scratch?
+            log :warn, %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.)
             img = %([#{node.attr 'alt'}])
           # NOTE an image with a data URI is handled using a temporary file
           elsif (image_path = resolve_image_path node, target, image_format, true)
@@ -2520,7 +2524,7 @@ module Asciidoctor
               fit_attr = (fit = node.attr 'fit') ? %( fit="#{fit}") : ''
               img = %(<img src="#{image_path}" format="#{image_format}" alt="[#{encode_quotes node.attr 'alt'}]"#{width_attr}#{fit_attr}>)
             else
-              logger.warn %(image to embed not found or not readable: #{image_path}) unless scratch?
+              log :warn, %(image to embed not found or not readable: #{image_path})
               img = %([#{node.attr 'alt'}])
             end
           else
@@ -3131,7 +3135,7 @@ module Asciidoctor
           icon_data = (AdmonitionIcons[key] || {}).merge icon_data
           if (icon_name = icon_data[:name])
             unless icon_name.start_with?(*IconSetPrefixes)
-              logger.info { %(#{key} admonition in theme uses icon from deprecated fa icon set; use fas, far, or fab instead) } unless scratch?
+              log(:info) { %(#{key} admonition in theme uses icon from deprecated fa icon set; use fas, far, or fab instead) }
               icon_data[:name] = %(fa-#{icon_name}) unless icon_name.start_with? 'fa-'
             end
           else
@@ -3328,7 +3332,7 @@ module Asciidoctor
                             add_link_to_image image_link, image_info, image_opts
                           end
                         rescue
-                          logger.warn %(could not embed image in running content: #{content[0]}; #{$!.message})
+                          log :warn, %(could not embed image in running content: #{content[0]}; #{$!.message})
                         end
                       end
                     end
@@ -4133,7 +4137,7 @@ module Asciidoctor
         elsif (node.is_uri? image_path) ||
             (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
           unless allow_uri_read
-            logger.warn %(allow-uri-read is not enabled; cannot embed remote image: #{image_path}) unless scratch?
+            log :warn, %(allow-uri-read is not enabled; cannot embed remote image: #{image_path})
             return
           end
           return @tmp_files[image_path] if @tmp_files.key? image_path
@@ -4145,7 +4149,7 @@ module Asciidoctor
             @tmp_files[image_path] = tmp_image.path
           rescue
             @tmp_files[image_path] = nil
-            logger.warn %(could not retrieve remote image: #{image_path}; #{$!.message}) unless scratch?
+            log :warn, %(could not retrieve remote image: #{image_path}; #{$!.message})
             tmp_image.close
             unlink_tmp_file tmp_image.path
             nil
@@ -4194,7 +4198,7 @@ module Asciidoctor
           return unless image_path
 
           unless ::File.readable? image_path
-            logger.warn %(#{key.to_s.tr '-_', ' '} not found or readable: #{image_path})
+            log :warn, %(#{key.to_s.tr '-_', ' '} not found or readable: #{image_path})
             return
           end
 
@@ -4405,7 +4409,7 @@ module Asciidoctor
         ::File.unlink path if ::File.exist? path
         true
       rescue
-        logger.warn %(could not delete temporary file: #{path}; #{$!.message}) unless scratch?
+        log :warn, %(could not delete temporary file: #{path}; #{$!.message})
         false
       end
 

@@ -24,9 +24,8 @@ module Asciidoctor
           if FormattingSnifferPattern.match? string
             if (parsed = @parser.parse string)
               return @transform.apply parsed.content, [], inherited
-            elsif !@scratch
-              logger.error %(failed to parse formatted text: #{string})
             end
+            logger.error %(failed to parse formatted text: #{string}) unless @scratch
           end
           [inherited ? (inherited.merge text: string) : { text: string }]
         end
