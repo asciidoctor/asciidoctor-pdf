@@ -138,7 +138,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       attrs = { 'pdfwidth' => '50vw' }
       result = subject.resolve_explicit_width attrs, bounds_width: 1000, support_vw: true
       (expect result.to_f).to eql 50.0
-      (expect result.singleton_class).to include Asciidoctor::PDF::Converter::ViewportWidth
+      (expect result).to be_a Asciidoctor::PDF::Converter::ViewportWidth
+    end
+
+    it 'should ignore vw unit if not supported' do
+      attrs = { 'pdfwidth' => '50vw' }
+      result = subject.resolve_explicit_width attrs, bounds_width: 1000
+      (expect result.to_f).to eql 50.0
+      (expect result).not_to be_a Asciidoctor::PDF::Converter::ViewportWidth
     end
 
     it 'should resolve scaledwidth in % to pt' do
@@ -191,6 +198,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       EOS
 
       (expect to_file).to visually_match 'image-full-width.pdf'
+    end
+
+    it 'should interpret vw units as pt if align-to-page opts is not set' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      Follow the image:square.jpg[pdfwidth=50vw].
+      EOS
+
+      (expect pdf.images).to have_size 1
+      (expect pdf.images[0][:width]).to eql 50.0
     end
 
     it 'should scale down image if height exceeds available space', visual: true do
