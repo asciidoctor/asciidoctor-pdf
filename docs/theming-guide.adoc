@@ -3777,8 +3777,8 @@ The subject stop can be customized using the `subject-stop` attribute.
 [source,asciidoc]
 ----
 [unordered]
-* alpha:: partially complete and unstable
-* beta:: feature complete and undergoing testing
+alpha:: partially complete and unstable
+beta:: feature complete and undergoing testing
 ----
 ====
 
