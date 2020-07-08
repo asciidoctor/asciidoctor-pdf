@@ -3770,13 +3770,31 @@ Asciidoctor PDF supports unordered and ordered description lists.
 These are defined as a description list, but get displayed as an unordered or ordered description list with the term as a subject.
 Only one term is supported.
 The subject is shown using the term font style (bold by default).
-The subject is stacked above the description if the "stack" role is present.
-Otherwise, the subject is arranged as a run-in followed by a subject stop (`:` by default).
-The subject stop can be customized using the `subject-stop` attribute.
+
+By default, the subject is arranged as a run-in followed by a subject stop (`:` by default).
 
 [source,asciidoc]
 ----
 [unordered]
+alpha:: partially complete and unstable
+beta:: feature complete and undergoing testing
+----
+
+The subject stop can be customized using the `subject-stop` attribute.
+
+[source,asciidoc]
+----
+[unordered,subject-stop=)]
+alpha:: partially complete and unstable
+beta:: feature complete and undergoing testing
+----
+
+If the `stack` role is present, the subject is stacked above the description.
+In this case, the subject stop is only used if specified explicitly.
+
+[source,asciidoc]
+----
+[unordered.stack]
 alpha:: partially complete and unstable
 beta:: feature complete and undergoing testing
 ----
