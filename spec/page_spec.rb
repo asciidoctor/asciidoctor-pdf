@@ -782,6 +782,15 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-scale-down.pdf'
     end
 
+    it 'should scale down background SVG to fit boundaries of page if intrinsic height is greater than page height', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-scale-down-height.pdf'
+      :pdf-page-size: A5
+      :page-background-image: image:tall.svg[pdfwidth=200,fit=scale-down]
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-svg-scale-down-height.pdf'
+    end
+
     it 'should not scale background SVG with explicit width to fit boundaries of page if fit is scale-down and image fits', visual: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-prescaled.pdf'
       = Document Title
