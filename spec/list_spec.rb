@@ -161,6 +161,23 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect none_item[:x]).to eql 66.24
     end
 
+    it 'should not indent list with no marker if list indent is set to 0 in theme' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { outline_list_indent: 0 }, analyze: true
+      before
+
+      [none]
+      * a
+      * b
+      * c
+
+      after
+      EOS
+
+      left_margin = (pdf.find_unique_text 'before')[:x]
+      none_item = pdf.find_unique_text 'a'
+      (expect none_item[:x]).to eql left_margin
+    end
+
     it 'should allow theme to change marker characters' do
       pdf_theme = {
         ulist_marker_disc_content: ?\u25ca,
