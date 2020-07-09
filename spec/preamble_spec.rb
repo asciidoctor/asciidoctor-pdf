@@ -19,6 +19,26 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       (expect second_paragraph_text[0][:font_size]).to eql 10.5
     end
 
+    it 'should not crash if preamble has no blocks' do
+      doc = Asciidoctor.load <<~'EOS', backend: :pdf, standalone: true
+      = Document Title
+      :nofooter:
+
+      --
+      --
+
+      == Section
+
+      content
+      EOS
+
+      doc.blocks[0].blocks.clear
+      doc.convert.render (pdf_io = StringIO.new)
+      pdf = PDF::Reader.new pdf_io
+      lines = (pdf.page 1).text.strip.squeeze.split ?\n
+      (expect lines).to eql ['Document Title', 'Section', 'content']
+    end
+
     it 'should not style first paragraph of preamble as lead in article with no sections' do
       pdf = to_pdf <<~'EOS', analyze: true
       = Document Title
