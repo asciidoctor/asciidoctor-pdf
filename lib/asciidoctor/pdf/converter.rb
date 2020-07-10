@@ -1428,8 +1428,7 @@ module Asciidoctor
       end
 
       def convert_image node, opts = {}
-        node.extend ::Asciidoctor::Image unless ::Asciidoctor::Image === node
-        target, image_format = node.target_and_format
+        target, image_format = (node.extend ::Asciidoctor::Image).target_and_format
 
         if image_format == 'gif' && !(defined? ::GMagick::Image)
           log :warn, %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.)
