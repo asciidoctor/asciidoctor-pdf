@@ -812,6 +812,20 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-prescaled.pdf'
     end
 
+    it 'should not scale background image without explicit width to fit boundaries of page if fit is scale-down and image fits' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      = Document Title
+      :page-background-image: image:square.png[fit=scale-down]
+
+      This page has a background image.
+      EOS
+
+      (expect pdf.images).to have_size 1
+      bg_image = pdf.images[0]
+      (expect bg_image[:width]).to eql 12.0
+      (expect bg_image[:height]).to eql 12.0
+    end
+
     it 'should not scale background SVG to fit boundaries of page if fit is none', visual: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-none.pdf'
       = Document Title
