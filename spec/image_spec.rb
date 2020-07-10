@@ -672,12 +672,27 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~GIF image format not supported. Install the prawn-gmagick gem or convert tux.gif to PNG.'
     end unless defined? GMagick::Image
 
-    it 'should embed image if prawn-gmagick is available' do
+    it 'should warn and replace inline image with alt text if image format is unsupported' do
+      (expect do
+        pdf = to_pdf 'image:tux.gif[Tux,16] is always a good sign.', analyze: true
+        (expect pdf.lines).to eql ['[Tux] is always a good sign.']
+      end).to log_message severity: :WARN, message: '~GIF image format not supported. Install the prawn-gmagick gem or convert tux.gif to PNG.'
+    end unless defined? GMagick::Image
+
+    it 'should embed block image if prawn-gmagick is available' do
       pdf = to_pdf 'image::tux.gif[Tux]', analyze: :image
       (expect pdf.images).to have_size 1
       image = pdf.images[0]
       (expect image[:implicit_width]).to eql 204
       (expect image[:width]).to eql 153.0
+    end if defined? GMagick::Image
+
+    it 'should embed inline image if prawn-gmagick is available' do
+      pdf = to_pdf 'image:tux.gif[Tux,16] is always a good sign.', analyze: :image
+      (expect pdf.images).to have_size 1
+      image = pdf.images[0]
+      (expect image[:implicit_width]).to eql 204
+      (expect image[:width]).to eql 12.0
     end if defined? GMagick::Image
   end
 
