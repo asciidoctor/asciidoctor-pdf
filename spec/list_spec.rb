@@ -163,7 +163,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
     it 'should not indent list with no marker if list indent is not set or set to 0 in theme' do
       [nil, 0].each do |indent|
-        pdf = to_pdf <<~'EOS', pdf_theme: { outline_list_indent: 0 }, analyze: true
+        pdf = to_pdf <<~'EOS', pdf_theme: { outline_list_indent: indent }, analyze: true
         before
 
         [none]
