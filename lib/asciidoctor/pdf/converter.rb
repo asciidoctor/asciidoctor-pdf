@@ -3102,12 +3102,12 @@ module Asciidoctor
                   # NOTE the same font is used for dot leaders throughout toc
                   set_font toc_font_info[:font], toc_font_info[:size]
                   font_style dot_leader[:font_style]
-                  num_dots = ((bounds.width - start_dots - dot_leader[:spacer_width] - pgnum_label_width) / dot_leader[:width]).floor
+                  num_dots = [((bounds.width - start_dots - dot_leader[:spacer_width] - pgnum_label_width) / dot_leader[:width]).floor, 0].max
                   # FIXME: dots don't line up in columns if width of page numbers differ
                   typeset_formatted_text [
-                    { text: (dot_leader[:text] * (num_dots < 0 ? 0 : num_dots)), color: dot_leader[:font_color] },
+                    { text: dot_leader[:text] * num_dots, color: dot_leader[:font_color] },
                     dot_leader[:spacer],
-                    { text: pgnum_label, anchor: sect_anchor }.merge(pgnum_label_font_settings),
+                    ({ text: pgnum_label, anchor: sect_anchor }.merge pgnum_label_font_settings),
                   ], line_metrics, align: :right
                 end
               else

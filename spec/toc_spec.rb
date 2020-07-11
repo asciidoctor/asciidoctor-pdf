@@ -506,6 +506,21 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect outline[1][:title]).to eql 'Beginning'
     end
 
+    it 'should not attempt to create dots if number of dots is less than 0' do
+      section_title = (%w(verylongsectiontitle) * 5).join
+      pdf = to_pdf <<~EOS, doctype: :book, analyze: true
+      :toc:
+      :toc-max-pagenum-digits: 0
+
+      == #{section_title}
+      EOS
+
+      toc_lines = pdf.lines pdf.find_text page_number: 1
+      (expect toc_lines).to have_size 2
+      (expect toc_lines[0]).to eql 'Table of Contents'
+      (expect toc_lines[1]).to eql %(#{section_title}\u00a01)
+    end
+
     it 'should line up dots and page number with wrapped line' do
       pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
       = Document Title
