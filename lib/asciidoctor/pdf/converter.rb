@@ -297,8 +297,8 @@ module Asciidoctor
         end
 
         unless page_count < body_start_page_number
-          layout_running_content :header, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number unless doc.noheader || @theme.header_height.to_f == 0
-          layout_running_content :footer, doc, skip: num_front_matter_pages, body_start_page_number: body_start_page_number unless doc.nofooter || @theme.footer_height.to_f == 0
+          layout_running_content :header, doc, num_front_matter_pages, body_start_page_number unless doc.noheader || @theme.header_height.to_f == 0
+          layout_running_content :footer, doc, num_front_matter_pages, body_start_page_number unless doc.nofooter || @theme.footer_height.to_f == 0
         end
 
         add_outline doc, (doc.attr 'outlinelevels', toc_num_levels), toc_page_nums, num_front_matter_pages[1], has_front_cover
@@ -3147,12 +3147,11 @@ module Asciidoctor
       end
 
       # TODO: delegate to layout_page_header and layout_page_footer per page
-      def layout_running_content periphery, doc, opts = {}
-        skip, skip_pagenums = opts[:skip] || [1, 1]
-        body_start_page_number = opts[:body_start_page_number] || 1
+      def layout_running_content periphery, doc, skip = [1, 1], body_start_page_number = 1
+        skip_pages, skip_pagenums = skip
         # NOTE find and advance to first non-imported content page to use as model page
-        return unless (content_start_page = state.pages[skip..-1].index {|it| !it.imported_page? })
-        content_start_page += (skip + 1)
+        return unless (content_start_page = state.pages[skip_pages..-1].index {|it| !it.imported_page? })
+        content_start_page += (skip_pages + 1)
         num_pages = page_count
         prev_page_number = page_number
         go_to_page content_start_page
