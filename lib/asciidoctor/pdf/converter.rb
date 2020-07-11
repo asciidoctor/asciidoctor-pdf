@@ -2517,7 +2517,7 @@ module Asciidoctor
             log :warn, %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.)
             img = %([#{node.attr 'alt'}])
           # NOTE an image with a data URI is handled using a temporary file
-          elsif (image_path = resolve_image_path node, target, image_format, true)
+          elsif (image_path = resolve_image_path node, target, image_format)
             if ::File.readable? image_path
               width_attr = (width = resolve_explicit_width node.attributes) ? %( width="#{width}") : ''
               fit_attr = (fit = node.attr 'fit') ? %( fit="#{fit}") : ''
