@@ -148,6 +148,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect result).not_to be_a Asciidoctor::PDF::Converter::ViewportWidth
     end
 
+    it 'should ignore vw unit used in fallback if not supported' do
+      converter = subject
+      converter.instance_variable_set :@theme, build_pdf_theme({ image_width: '50vw' })
+      attrs = {}
+      result = subject.resolve_explicit_width attrs, bounds_width: 1000, use_fallback: true
+      (expect result.to_f).to eql 50.0
+      (expect result).not_to be_a Asciidoctor::PDF::Converter::ViewportWidth
+    end
+
     it 'should resolve scaledwidth in % to pt' do
       attrs = { 'scaledwidth' => '25%' }
       (expect subject.resolve_explicit_width attrs, bounds_width: 1000).to eql 250.0
