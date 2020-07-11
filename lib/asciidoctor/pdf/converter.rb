@@ -4365,6 +4365,33 @@ module Asciidoctor
         end
       end
 
+      def apply_subs_discretely doc, value, opts = {}
+        imagesdir = doc.attr 'imagesdir'
+        doc.set_attr 'imagesdir', @themesdir
+        # FIXME: get sub_attributes to handle drop-line w/o a warning
+        doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
+        value = value.gsub '\{', '\\\\\\{' if (escaped_attr_ref = value.include? '\{')
+        value = doc.apply_subs value
+        value = (value.split LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
+        value = value.gsub '\{', '{' if escaped_attr_ref
+        doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
+        if imagesdir
+          doc.set_attr 'imagesdir', imagesdir
+        else
+          doc.remove_attr 'imagesdir'
+        end
+        value
+      end
+
+      def sub_attributes_discretely doc, value
+        doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
+        value = doc.apply_subs value, [:attributes]
+        doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
+        value
+      end
+
+      private
+
       def add_link_to_image uri, image_info, image_opts
         image_width = image_info[:width]
         image_height = image_info[:height]
@@ -4410,31 +4437,6 @@ module Asciidoctor
       rescue
         log :warn, %(could not delete temporary file: #{path}; #{$!.message})
         false
-      end
-
-      def apply_subs_discretely doc, value, opts = {}
-        imagesdir = doc.attr 'imagesdir'
-        doc.set_attr 'imagesdir', @themesdir
-        # FIXME: get sub_attributes to handle drop-line w/o a warning
-        doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
-        value = value.gsub '\{', '\\\\\\{' if (escaped_attr_ref = value.include? '\{')
-        value = doc.apply_subs value
-        value = (value.split LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
-        value = value.gsub '\{', '{' if escaped_attr_ref
-        doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
-        if imagesdir
-          doc.set_attr 'imagesdir', imagesdir
-        else
-          doc.remove_attr 'imagesdir'
-        end
-        value
-      end
-
-      def sub_attributes_discretely doc, value
-        doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
-        value = doc.apply_subs value, [:attributes]
-        doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
-        value
       end
 
       def promote_author doc, idx
