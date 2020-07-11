@@ -3125,7 +3125,7 @@ module Asciidoctor
 
       # Reduce icon height to fit inside bounds.height. Icons will not render
       # properly if they are larger than the current bounds.height.
-      def fit_icon_to_bounds preferred_size = 24
+      def fit_icon_to_bounds preferred_size
         (max_height = bounds.height) < preferred_size ? max_height : preferred_size
       end
 
