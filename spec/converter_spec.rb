@@ -150,7 +150,7 @@ describe Asciidoctor::PDF::Converter do
         :page-background-image: image:data:image/png;base64,#{encoded_image_data}[Square,fit=cover]
         EOS
         pdf_doc = doc.convert
-        tmp_files = (converter = doc.converter).instance_variable_get :@tmp_files
+        tmp_files = doc.converter.instance_variable_get :@tmp_files
         (expect tmp_files).to have_size 1
         tmp_file_paths = tmp_files.map do |_, path|
           FileUtils.mv path, (tmp_path = %(#{path}-tmp))
