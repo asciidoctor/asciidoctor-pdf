@@ -142,6 +142,29 @@ describe Asciidoctor::PDF::Converter do
       (expect get_images pdf).to have_size 1
     end
 
+    it 'should not fail to remove tmp files if they are not writable' do
+      (expect do
+        image_data = File.read (fixture_file 'square.jpg'), mode: 'r:UTF-8'
+        encoded_image_data = Base64.strict_encode64 image_data
+        doc = Asciidoctor.load <<~EOS, backend: 'pdf'
+        :page-background-image: image:data:image/png;base64,#{encoded_image_data}[Square,fit=cover]
+        EOS
+        pdf_doc = doc.convert
+        tmp_files = (converter = doc.converter).instance_variable_get :@tmp_files
+        (expect tmp_files).to have_size 1
+        tmp_file_paths = tmp_files.map do |_, path|
+          FileUtils.mv path, (tmp_path = %(#{path}-tmp))
+          Dir.mkdir path
+          FileUtils.mv tmp_path, (File.join path, (File.basename path))
+          path
+        end
+        doc.write pdf_doc, (pdf_io = StringIO.new)
+        pdf = PDF::Reader.new pdf_io
+        (expect get_images pdf).to have_size 1
+        tmp_file_paths.each {|path| FileUtils.rm_r path, force: true, secure: true }
+      end).to log_message severity: :WARN, message: '~could not delete temporary file'
+    end
+
     context 'theme' do
       it 'should apply the theme at the path specified by pdf-theme' do
         %w(theme style).each do |term|
