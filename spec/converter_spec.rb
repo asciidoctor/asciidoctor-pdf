@@ -127,6 +127,21 @@ describe Asciidoctor::PDF::Converter do
       (expect doc.attr? 'data-uri').to be true
     end
 
+    it 'should not fail to remove tmp files if already removed' do
+      image_data = File.read (fixture_file 'square.jpg'), mode: 'r:UTF-8'
+      encoded_image_data = Base64.strict_encode64 image_data
+      doc = Asciidoctor.load <<~EOS, backend: 'pdf'
+      :page-background-image: image:data:image/png;base64,#{encoded_image_data}[Square,fit=cover]
+      EOS
+      pdf_doc = doc.convert
+      tmp_files = (converter = doc.converter).instance_variable_get :@tmp_files
+      (expect tmp_files).to have_size 1
+      tmp_files.each {|_, path| converter.send :unlink_tmp_file, path }
+      doc.write pdf_doc, (pdf_io = StringIO.new)
+      pdf = PDF::Reader.new pdf_io
+      (expect get_images pdf).to have_size 1
+    end
+
     context 'theme' do
       it 'should apply the theme at the path specified by pdf-theme' do
         %w(theme style).each do |term|
