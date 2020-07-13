@@ -69,7 +69,6 @@ describe 'Asciidoctor::PDF::Converter - Video' do
   end
 
   context 'Vimeo' do
-    # NOTE: this test fails randomly in Travis, so it is disable in that environment until a solution is found
     it 'should replace video with poster image if allow-uri-read attribute is set', visual: true, network: true do
       video_id = '77477140'
       to_file = to_pdf_file <<~EOS, 'video-vimeo-poster.pdf', attribute_overrides: { 'allow-uri-read' => '' }
@@ -82,8 +81,14 @@ describe 'Asciidoctor::PDF::Converter - Video' do
       link_annotation = annotations[0]
       (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql %(https://vimeo.com/#{video_id})
-      (expect to_file).to visually_match 'video-vimeo-poster.pdf'
-    end unless ENV['TRAVIS']
+
+      # NOTE: Vimeo sometimes returns a skeleton XML document, perhaps due to rate limiting
+      if (get_images pdf, 1).size == 1
+        (expect to_file).to visually_match 'video-vimeo-poster.pdf'
+      else
+        (expect (pdf.page 1).text).to eql %(\u25ba\u00a0https://vimeo.com/#{video_id} (Vimeo video))
+      end
+    end
 
     it 'should replace video with link if allow-uri-read attribute is not set' do
       video_id = '77477140'

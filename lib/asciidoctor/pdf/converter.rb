@@ -1630,6 +1630,7 @@ module Asciidoctor
           type = 'YouTube video'
         when 'vimeo'
           video_path = %(https://vimeo.com/#{video_id = node.attr 'target'})
+          # NOTE: Vimeo sometimes returns a skeleton XML document, perhaps due to rate limiting
           poster = allow_uri_read ? load_open_uri.open_uri(%(http://vimeo.com/api/v2/video/#{video_id}.xml), 'r') {|f| VimeoThumbnailRx =~ f.read && $1 } : nil
           type = 'Vimeo video'
         else
@@ -1648,7 +1649,6 @@ module Asciidoctor
           original_attributes = node.attributes.dup
           begin
             node.update_attributes 'target' => poster, 'link' => video_path
-            #node.set_attr 'pdfwidth', '100%' unless (node.attr? 'width') || (node.attr? 'pdfwidth')
             convert_image node
           ensure
             node.attributes.replace original_attributes
