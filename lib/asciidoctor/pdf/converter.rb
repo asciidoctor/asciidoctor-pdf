@@ -4118,7 +4118,7 @@ module Asciidoctor
         # NOTE base64 logic currently used for inline images
         if ::Base64 === image_path
           return @tmp_files[image_path] if @tmp_files.key? image_path
-          tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
+          tmp_image = ::Tempfile.create ['image-', %(.#{image_format})]
           tmp_image.binmode unless image_format == 'svg'
           begin
             tmp_image.write ::Base64.decode64 image_path
