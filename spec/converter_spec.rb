@@ -165,6 +165,26 @@ describe Asciidoctor::PDF::Converter do
       end).to log_message severity: :WARN, message: '~could not delete temporary file'
     end
 
+    it 'should keep tmp files if KEEP_ARTIFACTS environment variable is set' do
+      image_data = File.read (fixture_file 'square.jpg'), mode: 'r:UTF-8'
+      encoded_image_data = Base64.strict_encode64 image_data
+      doc = Asciidoctor.load <<~EOS, backend: 'pdf'
+      :page-background-image: image:data:image/png;base64,#{encoded_image_data}[Square,fit=cover]
+      EOS
+      pdf_doc = doc.convert
+      tmp_files = doc.converter.instance_variable_get :@tmp_files
+      (expect tmp_files).to have_size 1
+      ENV['KEEP_ARTIFACTS'] = 'true'
+      doc.write pdf_doc, (pdf_io = StringIO.new)
+      pdf = PDF::Reader.new pdf_io
+      (expect get_images pdf).to have_size 1
+      (expect tmp_files).to have_size 1
+      tmp_files.each do |_, path|
+        (expect Pathname.new path).to exist
+        File.unlink path
+      end
+    end
+
     context 'theme' do
       it 'should apply the theme at the path specified by pdf-theme' do
         %w(theme style).each do |term|
