@@ -4115,7 +4115,6 @@ module Asciidoctor
       def resolve_image_path node, image_path, image_format, relative_to = true
         doc = node.document
         imagesdir = relative_to == true ? (resolve_imagesdir doc) : relative_to
-        #image_format ||= ::Asciidoctor::Image.format image_path, (::Asciidoctor::Image === node ? node.attributes : nil)
         # NOTE base64 logic currently used for inline images
         if ::Base64 === image_path
           return @tmp_files[image_path] if @tmp_files.key? image_path
