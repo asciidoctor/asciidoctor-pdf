@@ -176,6 +176,7 @@ describe Asciidoctor::PDF::Converter do
       (expect tmp_files).to have_size 1
       ENV['KEEP_ARTIFACTS'] = 'true'
       doc.write pdf_doc, (pdf_io = StringIO.new)
+      ENV.delete 'KEEP_ARTIFACTS'
       pdf = PDF::Reader.new pdf_io
       (expect get_images pdf).to have_size 1
       (expect tmp_files).to have_size 1
