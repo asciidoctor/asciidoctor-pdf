@@ -2182,6 +2182,22 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect image_positions['center']).to be > image_positions['bottom']
     end
 
+    it 'should skip image macro if target is remote and allow-uri-read attribute is not set' do
+      with_local_webserver do |base_url|
+        pdf_theme = {
+          footer_font_color: '0000FF',
+          footer_columns: '=100%',
+          footer_recto_center_content: %(image:#{base_url}/tux.png[fit=contain]),
+        }
+
+        (expect do
+          pdf = to_pdf 'body', analyze: true, pdf_theme: pdf_theme, enable_footer: true
+          footer_text = pdf.find_unique_text font_color: '0000FF'
+          (expect footer_text[:string]).to eql 'image:[fit=contain]'
+        end).to log_message severity: :WARN, message: '~allow-uri-read is not enabled; cannot embed remote image'
+      end
+    end
+
     it 'should support remote image if allow-uri-read attribute is set', visual: true do
       with_local_webserver do |base_url|
         pdf_theme = {
