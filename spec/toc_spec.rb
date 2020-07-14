@@ -585,6 +585,19 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect page_number_text).to have_size 1
     end
 
+    it 'should allow theme to control font style of dot leader' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_font_style: 'bold' }, analyze: true
+      = Book Title
+      :doctype: book
+      :toc:
+
+      == Foo
+      EOS
+
+      dot_leader_text = pdf.find_unique_text %r/(?:\. )+/
+      (expect dot_leader_text[:font_name]).to eql 'NotoSerif-Bold'
+    end
+
     it 'should allow theme to disable dot leader by setting content to empty string' do
       pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_content: '' }, analyze: true
       = Book Title
