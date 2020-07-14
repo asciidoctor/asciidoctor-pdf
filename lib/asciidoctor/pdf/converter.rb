@@ -3084,17 +3084,11 @@ module Asciidoctor
                 typeset_formatted_text sect_title_fragments, line_metrics, hanging_indent: hanging_indent, normalize_line_height: true
                 start_dots = last_fragment_pos.right + hanging_indent
                 last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
-                if (last_fragment_page_number = last_fragment_pos.page_number) > start_page_number ||
-                    (start_cursor - last_fragment_cursor) > line_metrics.height
-                  start_page_number = last_fragment_page_number
-                  start_cursor = last_fragment_cursor
-                end
+                start_cursor = last_fragment_cursor if last_fragment_pos.page_number > start_page_number || (start_cursor - last_fragment_cursor) > line_metrics.height
               end
-              end_page_number = page_number
               end_cursor = cursor
-              # TODO: it would be convenient to have a cursor mark / placement utility that took page number into account
-              go_to_page start_page_number if start_page_number != end_page_number
               move_cursor_to start_cursor
+              # NOTE: we're guaranteed to be on the same page as the final line of the entry
               if dot_leader[:width] > 0 && (dot_leader[:levels].include? sect.level)
                 pgnum_label_width = rendered_width_of_string pgnum_label
                 pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
@@ -3113,7 +3107,6 @@ module Asciidoctor
               else
                 typeset_formatted_text [{ text: pgnum_label, color: @font_color, anchor: sect_anchor }], line_metrics, align: :right
               end
-              go_to_page end_page_number if page_number != end_page_number
               move_cursor_to end_cursor
             end
           end
