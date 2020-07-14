@@ -5299,6 +5299,7 @@ Asciidoctor PDF provides the following behaviors to assist with printing:
 
 * Shows the URL for links (unless the linked text matches the URL)
 * Consolidates page ranges in the index
+* Disables links from page numbers in index to location of term in document
 
 You activate these printing features by setting the `media` attribute to `print` in the header of your AsciiDoc document (e.g., `:media: print`) or from the API or CLI (e.g., `-a media=print`).
 
