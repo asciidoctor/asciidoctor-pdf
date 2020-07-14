@@ -793,7 +793,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect doctitle_text[:y]).to be > toc_title_text[:y]
       (expect toc_title_text[:y]).to be > content_top_text[:y]
       (expect toc_bottom_text[:y]).to be > content_top_text[:y]
-      # NOTE assert there's no excess gap between end of toc and start of content
+      # NOTE: assert there's no excess gap between end of toc and start of content
       (expect toc_bottom_text[:y] - content_top_text[:y]).to be < 35
     end
 
@@ -837,7 +837,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
         idx_content_top = idx if candidate[:string] == 'Section 1' && candidate[:font_size] == 22
       end
       (expect text[idx_toc_bottom][:y]).to be > text[idx_content_top][:y]
-      # NOTE assert there's no excess gap between end of toc and start of content
+      # NOTE: assert there's no excess gap between end of toc and start of content
       (expect text[idx_toc_bottom][:y] - text[idx_content_top][:y]).to be < 50
     end
 

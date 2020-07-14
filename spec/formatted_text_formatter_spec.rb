@@ -89,7 +89,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
   end
 
-  # QUESTION should these go in a separate file?
+  # QUESTION: should these go in a separate file?
   context 'integration' do
     it 'should format constrained strong phrase' do
       pdf = to_pdf '*strong*', analyze: true

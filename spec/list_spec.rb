@@ -756,7 +756,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql ['• l1', '1. l2', '▪ l3', 'a. l4', '▪ l5', 'i. l6', '• l1']
     end
 
-    # NOTE expand this test as necessary to cover the various permutations
+    # NOTE: expand this test as necessary to cover the various permutations
     it 'should not insert excess space between nested lists or list items with block content', visual: true do
       to_file = to_pdf_file <<~'EOS', 'list-complex-nested.pdf'
       * list item
@@ -1365,7 +1365,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         colist_num_top_y = colist_num_text[:y] + colist_num_text[:font_size]
 
         gap = bottom_line_y - colist_num_top_y
-        # NOTE default outline list spacing is 6
+        # NOTE: default outline list spacing is 6
         (expect gap).to be > 6
         (expect gap).to be < 8
       end

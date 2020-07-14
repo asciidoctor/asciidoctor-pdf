@@ -20,7 +20,7 @@ grammar Markup
     # void_element / start_tag complex end_tag &{|seq| seq[0].name == seq[2].name } {
 
     void_element / start_tag complex end_tag {
-      # NOTE content only applies to non-void elements (second part of rule)
+      # NOTE: content only applies to non-void elements (second part of rule)
       def content
         { type: :element, name: (tag_element = elements[0]).name.to_sym, attributes: tag_element.attributes, pcdata: elements[1].content }
       end
@@ -48,8 +48,8 @@ grammar Markup
   end
 
   rule tag_name
-    # QUESTION faster to do regex?
-    # QUESTION what about supporting hr?
+    # QUESTION: faster to do regex?
+    # QUESTION: what about supporting hr?
     'a' / 'strong' / 'em' / 'code' / 'color' / 'font' / 'span' / 'button' / 'key' / 'sup' / 'sub' / 'mark' / 'del'
   end
 

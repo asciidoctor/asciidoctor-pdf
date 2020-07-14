@@ -45,7 +45,7 @@ module Asciidoctor
           img_size = img_obj.document.sizing
           { width: img_size.output_width, height: img_size.output_height }
         else
-          # NOTE build_image_object caches image data previously loaded
+          # NOTE: build_image_object caches image data previously loaded
           _, img_size = ::File.open(path, 'rb') {|fd| build_image_object fd }
           { width: img_size.width, height: img_size.height }
         end

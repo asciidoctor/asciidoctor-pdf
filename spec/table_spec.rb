@@ -326,7 +326,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      # NOTE it appears Prawn table is drawing the same grid line multiple times
+      # NOTE: it appears Prawn table is drawing the same grid line multiple times
       lines = pdf.lines.uniq
       (expect lines).to have_size 4
       lines.each do |line|
@@ -564,7 +564,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect col2_width).to be > col1_width
 
       pdf = to_pdf input, analyze: true
-      # NOTE second column should not wrap
+      # NOTE: second column should not wrap
       (expect pdf.lines).to eql ['short a much wider table column']
     end
 
@@ -737,7 +737,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       reference_pdf = to_pdf input, analyze: :line
       pdf = to_pdf input, pdf_theme: { table_cell_padding: [10, 3, 10, 3] }, analyze: :line
 
-      # NOTE the line under the head row should moved down
+      # NOTE: the line under the head row should moved down
       (expect pdf.lines[0][:from][:y]).to be < reference_pdf.lines[0][:from][:y]
     end
 
@@ -758,7 +758,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       reference_a1_text = (reference_pdf.find_text 'A1')[0]
       a1_text = (pdf.find_text 'A1')[0]
 
-      # NOTE the first body row should be moved down
+      # NOTE: the first body row should be moved down
       (expect a1_text[:y]).to be < reference_a1_text[:y]
     end
 
@@ -1853,7 +1853,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect a3_text[:page_number]).to be 2
       first_list_item_text = (pdf.find_text 'list item', page_number: 2)[0]
       last_list_item_text = (pdf.find_text 'list item', page_number: 3)[-1]
-      # NOTE if this is off, the margin box got mangled
+      # NOTE: if this is off, the margin box got mangled
       (expect last_list_item_text[:x]).to eql first_list_item_text[:x]
     end
 

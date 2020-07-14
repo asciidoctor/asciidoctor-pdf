@@ -65,7 +65,7 @@ module Rouge
               line_numbers ? (fragments << (create_linenum_fragment linenum)) : (start_of_line = true)
               fragments << @highlight_line_fragment.dup if highlight_lines && highlight_lines[linenum]
             elsif val.include? LF
-              # NOTE we assume if the fragment ends in a line feed, the intention was to match a line-oriented form
+              # NOTE: we assume if the fragment ends in a line feed, the intention was to match a line-oriented form
               line_oriented = val.end_with? LF
               base_fragment = create_fragment tok, val
               val.each_line do |line|
@@ -75,7 +75,7 @@ module Rouge
                 end
                 fragments << (line_oriented ? (base_fragment.merge text: line, inline_block: true) : (base_fragment.merge text: line))
                 next unless line.end_with? LF
-                # NOTE eagerly append linenum fragment or line highlight if there's a next line
+                # NOTE: eagerly append linenum fragment or line highlight if there's a next line
                 linenum += 1
                 line_numbers ? (fragments << (create_linenum_fragment linenum)) : (start_of_line = true)
                 fragments << @highlight_line_fragment.dup if highlight_lines && highlight_lines[linenum]
@@ -88,10 +88,10 @@ module Rouge
               fragments << (create_fragment tok, val)
             end
           end
-          # NOTE pad numbers that have less digits than the largest line number
-          # FIXME we could store these fragments so we don't have find them again
+          # NOTE: pad numbers that have less digits than the largest line number
+          # FIXME: we could store these fragments so we don't have find them again
           if line_numbers && (linenum_w = linenum.to_s.length) > 1
-            # NOTE extra column is the trailing space after the line number
+            # NOTE: extra column is the trailing space after the line number
             linenum_w += 1
             fragments.each do |fragment|
               fragment[:text] = (fragment[:text].rjust linenum_w, NoBreakSpace).to_s if fragment[:linenum]
@@ -108,10 +108,10 @@ module Rouge
             else
               val[0] = GuardedIndent if start_of_line && (val.start_with? ' ')
               val.gsub! InnerIndent, GuardedInnerIndent if val.include? InnerIndent
-              # QUESTION do we need the call to create_fragment if val contains only spaces? consider bg
+              # QUESTION: do we need the call to create_fragment if val contains only spaces? consider bg
               #fragment = create_fragment tok, val
               fragment = val.rstrip.empty? ? { text: val } : (create_fragment tok, val)
-              # NOTE we assume if the fragment ends in a line feed, the intention was to match a line-oriented form
+              # NOTE: we assume if the fragment ends in a line feed, the intention was to match a line-oriented form
               fragment[:inline_block] = true if (start_of_line = val.end_with? LF)
               fragment
             end

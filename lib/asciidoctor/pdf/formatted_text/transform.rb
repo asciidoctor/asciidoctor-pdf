@@ -135,15 +135,15 @@ module Asciidoctor
 
         def apply parsed, fragments = [], inherited = nil
           previous_fragment_is_text = false
-          # NOTE we use each since using inject is slower than a manual loop
+          # NOTE: we use each since using inject is slower than a manual loop
           parsed.each do |node|
             case node[:type]
             when :element
               # case 1: non-void element
               if node.key? :pcdata
-                # NOTE skip element if it has no children
+                # NOTE: skip element if it has no children
                 if (pcdata = node[:pcdata]).empty?
-                  ## NOTE handle an empty anchor element (i.e., <a ...></a>)
+                  ## NOTE: handle an empty anchor element (i.e., <a ...></a>)
                   #if (tag_name = node[:name]) == :a
                   #  seed = clone_fragment inherited, text: DummyText
                   #  fragments << build_fragment(seed, tag_name, node[:attributes])
@@ -153,7 +153,7 @@ module Asciidoctor
                   tag_name = node[:name]
                   attributes = node[:attributes]
                   parent = clone_fragment inherited
-                  # NOTE decorate child fragments with inherited properties from this element
+                  # NOTE: decorate child fragments with inherited properties from this element
                   apply pcdata, fragments, (build_fragment parent, tag_name, attributes)
                   previous_fragment_is_text = false
                 end
@@ -244,7 +244,7 @@ module Asciidoctor
               else
                 fragment[:color] = rgb
               end
-            # QUESTION should we even support r,g,b and c,m,y,k as individual values?
+            # QUESTION: should we even support r,g,b and c,m,y,k as individual values?
             elsif (r_val = attrs[:r]) && (g_val = attrs[:g]) && (b_val = attrs[:b])
               fragment[:color] = [r_val, g_val, b_val].map {|e| '%02X' % e.to_i }.join
             elsif (c_val = attrs[:c]) && (m_val = attrs[:m]) && (y_val = attrs[:y]) && (k_val = attrs[:k])
@@ -262,7 +262,7 @@ module Asciidoctor
                 fragment[:size] = value
               end
             end
-            # NOTE width is used for font-based icons
+            # NOTE: width is used for font-based icons
             if (value = attrs[:width])
               fragment[:width] = value
               fragment[:align] = :center
@@ -275,7 +275,7 @@ module Asciidoctor
             visible = true
             # a element can have no attributes, so short-circuit if that's the case
             unless attrs.empty?
-              # NOTE href, anchor, and name are mutually exclusive; nesting is not supported
+              # NOTE: href, anchor, and name are mutually exclusive; nesting is not supported
               if (value = attrs[:anchor])
                 fragment[:anchor] = value
               elsif (value = attrs[:href])
@@ -283,7 +283,7 @@ module Asciidoctor
                   $1 ? CharEntityTable[$1.to_sym] : [$2 ? $2.to_i : ($3.to_i 16)].pack('U1')
                 end) : value
               elsif (value = attrs[:id] || attrs[:name])
-                # NOTE text is null character, which is used as placeholder text so Prawn doesn't drop fragment
+                # NOTE: text is null character, which is used as placeholder text so Prawn doesn't drop fragment
                 fragment = { name: value, callback: [InlineDestinationMarker] }
                 if (type = attrs[:type])
                   fragment[:type] = type.to_sym
@@ -299,7 +299,7 @@ module Asciidoctor
           when :del
             styles << :strikethrough
           when :span
-            # NOTE spaces in style value are superfluous for our purpose; split drops record after trailing ;
+            # NOTE: spaces in style value are superfluous for our purpose; split drops record after trailing ;
             attrs[:style].tr(' ', '').split(';').each do |style|
               pname, pvalue = style.split ':', 2
               # TODO: text-transform
@@ -312,7 +312,7 @@ module Asciidoctor
                 when 7
                   fragment[:color] = pvalue.slice 1, 6 if pvalue.start_with? '#'
                 end
-                # QUESTION should we support the 3 character form?
+                # QUESTION: should we support the 3 character form?
                 #when 3
                 #  fragment[:color] = pvalue.each_char.map {|c| c * 2 }.join
                 #when 4
@@ -325,7 +325,7 @@ module Asciidoctor
                 fragment[:align] = pvalue.to_sym
                 fragment[:callback] = (fragment[:callback] || []) | [InlineTextAligner]
               when 'width'
-                # NOTE implicitly activates inline-block behavior
+                # NOTE: implicitly activates inline-block behavior
                 fragment[:width] = pvalue
               when 'background-color' # background-color needed to support syntax highlighters
                 if (pvalue.start_with? '#') && (HexColorRx.match? pvalue)

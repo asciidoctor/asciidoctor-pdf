@@ -394,7 +394,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should add chapter signifier to chapter title if section numbering is enabled and chapter-signifier attribute is set' do
-    # NOTE chapter-label is the legacy name
+    # NOTE: chapter-label is the legacy name
     { 'chapter-label' => 'Ch', 'chapter-signifier' => 'Ch' }.each do |attr_name, attr_val|
       pdf = to_pdf <<~EOS, analyze: true
       = Book Title
@@ -413,7 +413,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should add chapter signifier to chapter title if section numbering and toc are enabled and chapter-signifier attribute is set' do
-    # NOTE chapter-label is the legacy name
+    # NOTE: chapter-label is the legacy name
     { 'chapter-label' => 'Ch', 'chapter-signifier' => 'Ch' }.each do |attr_name, attr_val|
       pdf = to_pdf <<~EOS, analyze: true
       = Book Title
@@ -433,7 +433,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not add chapter label to chapter title if section numbering is enabled and chapter-signifier attribute is empty' do
-    # NOTE chapter-label is the legacy name
+    # NOTE: chapter-label is the legacy name
     %w(chapter-label chapter-signifier).each do |attr_name|
       pdf = to_pdf <<~EOS, analyze: true
       = Book Title
@@ -495,7 +495,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect text[1][:font_size]).to be 13
   end
 
-  # QUESTION is this the right behavior? should the value default to Preface instead?
+  # QUESTION: is this the right behavior? should the value default to Preface instead?
   it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is empty' do
     input = <<~'EOS'
     = Book Title

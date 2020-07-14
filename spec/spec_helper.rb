@@ -19,7 +19,7 @@ require 'pathname' unless defined? Pathname
 require 'pdf/inspector'
 require 'socket'
 
-# NOTE fix invalid bits for PNG in Gmagick
+# NOTE: fix invalid bits for PNG in Gmagick
 Gmagick.prepend (Module.new do
   def initialize image_blob
     super
@@ -27,7 +27,7 @@ Gmagick.prepend (Module.new do
   end
 end) if defined? ::GMagick::Image
 
-# NOTE fix warning in Prawn::Font:TTF
+# NOTE: fix warning in Prawn::Font:TTF
 Prawn::Font::TTF.prepend (Module.new do
   def initialize *args
     @italic_angle = nil
@@ -35,7 +35,7 @@ Prawn::Font::TTF.prepend (Module.new do
   end
 end)
 
-# NOTE fix warning in TTFunk::Table
+# NOTE: fix warning in TTFunk::Table
 TTFunk::Table.prepend (Module.new do
   def initialize *args
     @offset = nil
@@ -163,7 +163,7 @@ class EnhancedPDFTextInspector < PDF::Inspector
   end
 
   def show_text text, kerned = false
-    # NOTE this may be a rough approximation
+    # NOTE: this may be a rough approximation
     text_width = (@state.current_font.unpack text).reduce 0 do |width, code|
       width + (@state.current_font.glyph_width code) * @font_settings[:size] / 1000.0
     end
@@ -284,7 +284,7 @@ class LineInspector < PDF::Inspector
         @style = :solid
       end
     else
-      # NOTE we can only guess because we don't know the width of the line
+      # NOTE: we can only guess because we don't know the width of the line
       @style = :dashed
     end
   end
@@ -690,7 +690,7 @@ end
 RSpec::Matchers.define :visually_match do |reference_filename|
   reference_path = (Pathname.new reference_filename).absolute? ? reference_filename : (File.join __dir__, 'reference', reference_filename)
   match do |actual_path|
-    # NOTE uncomment this line and run `bundle exec rspec -t ~visual` to detect which tests use a visual match
+    # NOTE: uncomment this line and run `bundle exec rspec -t ~visual` to detect which tests use a visual match
     #warn caller.find {|it| it.include? '_spec.rb:' }
     return false unless File.exist? reference_path
     images_output_dir = output_file 'visual-comparison-workdir'

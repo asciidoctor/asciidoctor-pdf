@@ -303,7 +303,7 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should not inherit from base theme when loading default theme' do
       theme = subject.load_theme
-      # NOTE table_border_style is only set in the base theme
+      # NOTE: table_border_style is only set in the base theme
       (expect theme.table_border_style).to be_nil
     end
 
@@ -494,7 +494,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.page_background_color).to be_a subject::HexColorValue
       (expect theme.base_font_color).to eql '000000'
       (expect theme.base_font_color).to be_a subject::HexColorValue
-      # NOTE this assertion tests that the value can be an integer, not a string
+      # NOTE: this assertion tests that the value can be an integer, not a string
       (expect theme.heading_font_color).to eql '333333'
       (expect theme.heading_font_color).to be_a subject::HexColorValue
       (expect theme.link_font_color).to eql '428BCA'
@@ -554,7 +554,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.menu_caret_content).not_to be_a subject::HexColorValue
     end
 
-    # NOTE this only works when the theme is read from a file
+    # NOTE: this only works when the theme is read from a file
     it 'should allow hex color values to be prefixed with # for any key' do
       theme = subject.load_theme 'hex-color-shorthand', fixtures_dir
       (expect theme.base_font_color).to eql '222222'
@@ -566,7 +566,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.footer_background_color).to be_nil
     end
 
-    # NOTE this is only relevant when the theme is read from a file
+    # NOTE: this is only relevant when the theme is read from a file
     it 'should not coerce color-like values to string if key does not end with color' do
       theme = subject.load_theme 'color-like-value', fixtures_dir
       (expect theme.footer_height).to be 100

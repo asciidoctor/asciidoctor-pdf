@@ -22,7 +22,7 @@ module Asciidoctor
         italic: [:italic].to_set,
         bold_italic: [:bold, :italic].to_set,
       }).default = ::Set.new
-      # NOTE must use a visible char for placeholder or else Prawn won't reserve space for the fragment
+      # NOTE: must use a visible char for placeholder or else Prawn won't reserve space for the fragment
       PlaceholderChar = ?\u2063
 
       # - :height is the height of a line
@@ -245,7 +245,7 @@ module Asciidoctor
       # implementation to carry out the built-in functionality.
       #
       #--
-      # QUESTION should we round the result?
+      # QUESTION: should we round the result?
       def font_size points = nil
         return @font_size unless points
         if points == 1
@@ -371,7 +371,7 @@ module Asciidoctor
         end
       end
 
-      # NOTE override built-in fill_formatted_text_box to insert leading before second line when :first_line is true
+      # NOTE: override built-in fill_formatted_text_box to insert leading before second line when :first_line is true
       def fill_formatted_text_box text, opts
         merge_text_box_positioning_options opts
         box = ::Prawn::Text::Formatted::Box.new text, opts
@@ -388,7 +388,7 @@ module Asciidoctor
         remaining_text
       end
 
-      # NOTE override built-in draw_indented_formatted_line to set first_line flag
+      # NOTE: override built-in draw_indented_formatted_line to set first_line flag
       def draw_indented_formatted_line string, opts
         super string, (opts.merge first_line: true)
       end
@@ -399,7 +399,7 @@ module Asciidoctor
       def text_with_formatted_first_line string, first_line_opts, opts
         color = opts.delete :color
         fragments = parse_text string, opts
-        # NOTE the low-level APIs we're using don't recognize the :styles option, so we must resolve
+        # NOTE: the low-level APIs we're using don't recognize the :styles option, so we must resolve
         if (styles = opts.delete :styles)
           opts[:style] = resolve_font_style styles
         end
@@ -408,10 +408,10 @@ module Asciidoctor
         end
         first_line_color = (first_line_opts.delete :color) || color
         opts = opts.merge document: self
-        # QUESTION should we merge more carefully here? (hand-select keys?)
+        # QUESTION: should we merge more carefully here? (hand-select keys?)
         first_line_opts = opts.merge(first_line_opts).merge single_line: true, first_line: true
         box = ::Prawn::Text::Formatted::Box.new fragments, first_line_opts
-        # NOTE get remaining_fragments before we add color to fragments on first line
+        # NOTE: get remaining_fragments before we add color to fragments on first line
         if (text_indent = opts.delete :indent_paragraphs)
           remaining_fragments = indent text_indent do
             box.render dry_run: true
@@ -419,7 +419,7 @@ module Asciidoctor
         else
           remaining_fragments = box.render dry_run: true
         end
-        # NOTE color must be applied per-fragment
+        # NOTE: color must be applied per-fragment
         fragments.each {|fragment| fragment[:color] ||= first_line_color } if first_line_color
         if text_indent
           indent text_indent do
@@ -429,7 +429,7 @@ module Asciidoctor
           fill_formatted_text_box fragments, first_line_opts
         end
         unless remaining_fragments.empty?
-          # NOTE color must be applied per-fragment
+          # NOTE: color must be applied per-fragment
           remaining_fragments.each {|fragment| fragment[:color] ||= color } if color
           remaining_fragments = fill_formatted_text_box remaining_fragments, opts
           draw_remaining_formatted_text_on_new_pages remaining_fragments, opts
@@ -473,7 +473,7 @@ module Asciidoctor
       # Override built-in move_text_position method to prevent Prawn from advancing
       # to next page if image doesn't fit before rendering image.
       #--
-      # NOTE could use :at option when calling image/embed_image instead
+      # NOTE: could use :at option when calling image/embed_image instead
       def move_text_position h; end
 
       # Short-circuits the call to the built-in move_down operation
@@ -526,9 +526,9 @@ module Asciidoctor
             bounds.add_left_padding p_left
             bounds.add_right_padding p_right
             yield
-            # NOTE support negative bottom padding for use with quote block
+            # NOTE: support negative bottom padding for use with quote block
             if p_bottom < 0
-              # QUESTION should we return to previous page if top of page is reached?
+              # QUESTION: should we return to previous page if top of page is reached?
               p_bottom < cursor - reference_bounds.top ? (move_cursor_to reference_bounds.top) : (move_down p_bottom)
             else
               p_bottom < cursor ? (move_down p_bottom) : reference_bounds.move_past_bottom
@@ -598,7 +598,7 @@ module Asciidoctor
       #
       def flow_bounding_box left = 0, opts = {}
         original_y = y
-        # QUESTION should preserving original_x be an option?
+        # QUESTION: should preserving original_x be an option?
         original_x = bounds.absolute_left - margin_box.absolute_left
         canvas do
           bounding_box [margin_box.absolute_left + original_x + left, margin_box.absolute_top], opts do
@@ -808,19 +808,19 @@ module Asciidoctor
         state.compress = false if state.compress # can't use compression if using template
         prev_text_rendering_mode = (defined? @text_rendering_mode) ? @text_rendering_mode : nil
         delete_page if opts[:replace]
-        # NOTE use functionality provided by prawn-templates
+        # NOTE: use functionality provided by prawn-templates
         start_new_page_discretely template: file, template_page: opts[:page]
         # prawn-templates sets text_rendering_mode to :unknown, which breaks running content; revert
         @text_rendering_mode = prev_text_rendering_mode
         if page.imported_page?
           yield if block_given?
-          # NOTE set page size & layout explicitly in case imported page differs
+          # NOTE: set page size & layout explicitly in case imported page differs
           # I'm not sure it's right to start a new page here, but unfortunately there's no other
           # way atm to prevent the size & layout of the imported page from affecting subsequent pages
           advance_page size: prev_page_size, layout: prev_page_layout if opts.fetch :advance, true
         elsif opts.fetch :advance, true
           delete_page
-          # NOTE see previous comment
+          # NOTE: see previous comment
           advance_page size: prev_page_size, layout: prev_page_layout
         else
           delete_page
@@ -838,7 +838,7 @@ module Asciidoctor
         else
           image file, (options.merge position: :center, vposition: :center, fit: [bounds.width, bounds.height])
         end
-        # NOTE advance to newly created page just in case the image function threw off the cursor
+        # NOTE: advance to newly created page just in case the image function threw off the cursor
         go_to_page image_page_number
         nil
       end
@@ -907,13 +907,13 @@ module Asciidoctor
       def scratch?
         (@_label ||= (state.store.info.data[:Scratch] ? :scratch : :primary)) == :scratch
       rescue
-        false # NOTE this method may get called before the state is initialized
+        false # NOTE: this method may get called before the state is initialized
       end
       alias is_scratch? scratch?
 
       def dry_run &block
         scratch = get_scratch_document
-        # QUESTION should we use scratch.advance_page instead?
+        # QUESTION: should we use scratch.advance_page instead?
         scratch.start_new_page
         start_page_number = scratch.page_number
         start_y = scratch.y
@@ -927,7 +927,7 @@ module Asciidoctor
           scratch.instance_exec(&block)
         end
         scratch.font_scale = prev_font_scale
-        # NOTE don't count excess if cursor exceeds writable area (due to padding)
+        # NOTE: don't count excess if cursor exceeds writable area (due to padding)
         full_page_height = scratch.effective_page_height
         partial_page_height = [full_page_height, start_y - scratch.y].min
         scratch_bounds.instance_variable_set :@x, original_x
@@ -942,7 +942,7 @@ module Asciidoctor
       def keep_together &block
         available_space = cursor
         total_height, = dry_run(&block)
-        # NOTE technically, if we're at the page top, we don't even need to do the
+        # NOTE: technically, if we're at the page top, we don't even need to do the
         # dry run, except several uses of this method rely on the calculated height
         if total_height > available_space && !at_page_top? && total_height <= effective_page_height
           advance_page

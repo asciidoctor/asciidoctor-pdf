@@ -29,7 +29,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       content
       EOS
       (expect pdf.pages).to have_size 1
-      # NOTE pdf-core 0.8 coerces whole number floats to integers
+      # NOTE: pdf-core 0.8 coerces whole number floats to integers
       (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
@@ -364,7 +364,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       = Book Title
       :media: prepress
       :doctype: book
-      // NOTE setting front-cover-image to ~ informs converter cover page will be added later
+      // NOTE: setting front-cover-image to ~ informs converter cover page will be added later
       :front-cover-image: ~
 
       == First Chapter

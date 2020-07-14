@@ -99,7 +99,7 @@ module Markup
   end
 
   module Element1
-    # NOTE content only applies to non-void elements (second part of rule)
+    # NOTE: content only applies to non-void elements (second part of rule)
     def content
       { type: :element, name: (tag_element = elements[0]).name.to_sym, attributes: tag_element.attributes, pcdata: elements[1].content }
     end

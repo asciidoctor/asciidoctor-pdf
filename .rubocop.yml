@@ -82,6 +82,13 @@ Style/CharacterLiteral:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
+Style/CommentAnnotation:
+  Keywords:
+  - TODO
+  - FIXME
+  - HACK
+  - NOTE
+  - QUESTION
 Style/ConditionalAssignment:
   EnforcedStyle: assign_inside_condition
   IncludeTernaryExpressions: false

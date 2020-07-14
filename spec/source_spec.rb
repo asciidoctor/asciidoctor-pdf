@@ -70,7 +70,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       echo_text = (pdf.find_text 'echo')[0]
       (expect echo_text).not_to be_nil
-      # NOTE the echo keyword should be highlighted
+      # NOTE: the echo keyword should be highlighted
       (expect echo_text[:font_color]).to eql '008800'
     end
 
@@ -85,7 +85,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
 
       echo_text = (pdf.find_text 'echo')[0]
-      # NOTE the echo keyword should not be highlighted
+      # NOTE: the echo keyword should not be highlighted
       (expect echo_text).to be_nil
     end
 
@@ -128,7 +128,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
         echo_text = pdf.find_unique_text 'echo'
         (expect echo_text).not_to be_nil
-        # NOTE the echo keyword should be highlighted
+        # NOTE: the echo keyword should be highlighted
         (expect echo_text[:font_color]).to eql '008800'
       end
     end
@@ -144,7 +144,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
 
       echo_text = pdf.find_unique_text 'echo'
-      # NOTE the echo keyword should not be highlighted
+      # NOTE: the echo keyword should not be highlighted
       (expect echo_text).to be_nil
     end
 
@@ -681,7 +681,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       echo_text = (pdf.find_text 'echo')[0]
       (expect echo_text).not_to be_nil
-      # NOTE the echo keyword should be highlighted
+      # NOTE: the echo keyword should be highlighted
       (expect echo_text[:font_color]).to eql '008800'
     end
 
@@ -696,7 +696,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
 
       echo_text = (pdf.find_text 'echo')[0]
-      # NOTE the echo keyword should not be highlighted
+      # NOTE: the echo keyword should not be highlighted
       (expect echo_text).to be_nil
     end
 

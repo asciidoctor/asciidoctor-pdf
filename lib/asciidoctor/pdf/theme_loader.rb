@@ -39,7 +39,7 @@ module Asciidoctor
       end
 
       def self.resolve_theme_file theme_name = nil, theme_dir = nil
-        # NOTE if .yml extension is given, assume it's a path (don't append -theme.yml)
+        # NOTE: if .yml extension is given, assume it's a path (don't append -theme.yml)
         if theme_name && (theme_name.end_with? '.yml')
           # FIXME: restrict to jail!
           if theme_dir
@@ -59,7 +59,7 @@ module Asciidoctor
         ::File.absolute_path asset_path, (theme_dir || ThemesDir)
       end
 
-      # NOTE base theme is loaded "as is" (no post-processing)
+      # NOTE: base theme is loaded "as is" (no post-processing)
       def self.load_base_theme
         (::OpenStruct.new ::SafeYAML.load_file BaseThemePath).tap {|theme| theme.__dir__ = ThemesDir }
       end
@@ -153,7 +153,7 @@ module Asciidoctor
             process_entry %(#{key}_#{key == 'role' || !(subkey.include? '-') ? subkey : (subkey.tr '-', '_')}), subval, data
           end
         elsif key.end_with? '_color'
-          # QUESTION do we really need to evaluate_math in this case?
+          # QUESTION: do we really need to evaluate_math in this case?
           data[key] = to_color evaluate val, data
         elsif key.end_with? '_content'
           data[key] = (expand_vars val.to_s, data).to_s
@@ -174,7 +174,7 @@ module Asciidoctor
         end
       end
 
-      # NOTE we assume expr is a String
+      # NOTE: we assume expr is a String
       def expand_vars expr, vars
         if (idx = (expr.index '$'))
           if idx == 0 && expr =~ LoneVariableRx
@@ -208,8 +208,8 @@ module Asciidoctor
       def evaluate_math expr
         return expr if !(::String === expr) || ColorValue === expr
         # resolve measurement values (e.g., 0.5in => 36)
-        # QUESTION should we round the value? perhaps leave that to the precision functions
-        # NOTE leave % as a string; handled by converter for now
+        # QUESTION: should we round the value? perhaps leave that to the precision functions
+        # NOTE: leave % as a string; handled by converter for now
         original, expr = expr, (resolve_measurement_values expr)
         loop do
           if (expr.count '*/') > 0

@@ -43,7 +43,7 @@ module Asciidoctor::PDF::FormattedText
         drop = scratch
         image_path = fragment[:image_path]
 
-        # NOTE only attempt to convert an unresolved (i.e., String) value
+        # NOTE: only attempt to convert an unresolved (i.e., String) value
         if ::String === (image_w = fragment[:image_width])
           image_w = [available_w, (image_w.end_with? '%') ? (image_w.to_f / 100 * available_w) : image_w.to_f].min
         end
@@ -60,9 +60,9 @@ module Asciidoctor::PDF::FormattedText
               enable_file_requests_with_root: (::File.dirname image_path),
               cache_images: doc.cache_uri
           svg_size = image_w ? svg_obj.document.sizing :
-              # NOTE convert intrinsic dimensions to points; constrain to content width
+              # NOTE: convert intrinsic dimensions to points; constrain to content width
               (svg_obj.resize width: [svg_obj.document.sizing.output_width, available_w].min)
-          # NOTE the best we can do is make the image fit within full height of bounds
+          # NOTE: the best we can do is make the image fit within full height of bounds
           if (image_h = svg_size.output_height) > max_image_h
             image_w = (svg_obj.resize height: (image_h = max_image_h)).output_width
           else
@@ -71,7 +71,7 @@ module Asciidoctor::PDF::FormattedText
           fragment[:image_obj] = svg_obj
         else
           # TODO: cache image info based on path (Prawn caches based on SHA1 of content)
-          # NOTE image_obj is constrained to image_width by renderer
+          # NOTE: image_obj is constrained to image_width by renderer
           image_obj, image_info = ::File.open(image_path, 'rb') {|fd| doc.build_image_object fd }
           if image_w
             if image_w == image_info.width
@@ -79,20 +79,20 @@ module Asciidoctor::PDF::FormattedText
             else
               image_h = image_w * (image_info.height.fdiv image_info.width)
             end
-          # NOTE convert intrinsic dimensions to points; constrain to content width
+          # NOTE: convert intrinsic dimensions to points; constrain to content width
           elsif (image_w = to_pt image_info.width, :px) > available_w
             image_h = (image_w = available_w) * (image_info.height.fdiv image_info.width)
           else
             image_h = to_pt image_info.height, :px
           end
-          # NOTE the best we can do is make the image fit within full height of bounds
+          # NOTE: the best we can do is make the image fit within full height of bounds
           image_w = (image_h = max_image_h) * (image_info.width.fdiv image_info.height) if image_h > max_image_h
           fragment[:image_obj] = image_obj
           fragment[:image_info] = image_info
         end
 
         doc.fragment_font fragment do
-          # NOTE if image height exceeds line height by more than 1.5x, increase the line height
+          # NOTE: if image height exceeds line height by more than 1.5x, increase the line height
           # FIXME: we could really use a nicer API from Prawn here; this is an ugly hack
           if (f_height = image_h) > (line_font = doc.font).height * 1.5
             # align with descender (equivalent to vertical-align: bottom in CSS)
@@ -106,7 +106,7 @@ module Asciidoctor::PDF::FormattedText
           end
         end
 
-        # NOTE we can't rely on the fragment width because the line wrap mechanism ignores it;
+        # NOTE: we can't rely on the fragment width because the line wrap mechanism ignores it;
         # it only considers the text (string) and character spacing, rebuilding the string several times
         fragment[:text] = PlaceholderChar
         fragment[:actual_character_spacing] = doc.character_spacing
@@ -117,11 +117,11 @@ module Asciidoctor::PDF::FormattedText
         logger.warn %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}) unless scratch
         drop = true # delegate to cleanup logic in ensure block
       ensure
-        # NOTE skip rendering image in scratch document or if image can't be loaded
+        # NOTE: skip rendering image in scratch document or if image can't be loaded
         if drop
           fragment.delete :callback
           fragment.delete :image_info
-          # NOTE retain key to indicate we've visited fragment already
+          # NOTE: retain key to indicate we've visited fragment already
           fragment[:image_obj] = nil
         end
       end

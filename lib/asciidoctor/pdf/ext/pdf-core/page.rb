@@ -18,7 +18,7 @@ class PDF::Core::Page
     document.open_graphics_state
   end unless method_defined? :new_content_stream
 
-  # NOTE alias method to avoid warning if another gem replaces this method
+  # NOTE: alias method to avoid warning if another gem replaces this method
   alias __new_content_stream new_content_stream
 
   # Restore the imported_page? method from PDF::Core::Page

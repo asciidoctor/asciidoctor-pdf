@@ -739,7 +739,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
       (expect pages[0][:text][-1][:string]).to eql '1'
       (expect pages[1][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
-      # NOTE no running content on imported pages
+      # NOTE: no running content on imported pages
       (expect pages[1][:text]).to be_empty
       (expect pages[2][:text][-1][:string]).to eql '3'
     end
@@ -764,7 +764,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
       (expect pages[0][:text][-1][:string]).to eql '1'
       (expect pages[1][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
-      # NOTE no running content on imported pages
+      # NOTE: no running content on imported pages
       (expect pages[1][:text]).to be_empty
       (expect pages[2][:text][-1][:string]).to eql '3'
     end
@@ -1151,7 +1151,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end unless windows?
 
-    # NOTE this test also verifies space is allocated for an inline image at the start of a line
+    # NOTE: this test also verifies space is allocated for an inline image at the start of a line
     it 'should convert multiple images on the same line', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-multiple-inline.pdf'
       image:logo.png[Asciidoctor,12] is developed on image:tux.png[Linux,12].
@@ -1429,7 +1429,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Border' do
-    # NOTE tests center alignment
+    # NOTE: tests center alignment
     it 'should draw border around PNG image if border width and border color are set in the theme', visual: true do
       pdf_theme = {
         image_border_width: 0.5,
@@ -1475,7 +1475,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-border-fit-page.pdf'
     end
 
-    # NOTE tests right alignment
+    # NOTE: tests right alignment
     it 'should draw border around SVG if border width and border color are set in the theme', visual: true do
       pdf_theme = {
         image_border_width: 1,

@@ -934,7 +934,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'text right',
       }
 
-      # NOTE the exact y position is affected by the font height and line metrics, so use a fuzzy check
+      # NOTE: the exact y position is affected by the font height and line metrics, so use a fuzzy check
       { 'top' => 72, 'middle' => 42, 'bottom' => 12, ['top', 10] => 62, ['bottom', -10] => 22 }.each do |valign, expected_y|
         pdf = to_pdf 'body', pdf_theme: (pdf_theme.merge footer_vertical_align: valign), enable_footer: true, analyze: true
         left_text = (pdf.find_text 'text left')[0]
