@@ -26,7 +26,7 @@ jobs:
     addons: ~
     rvm: &default_ruby 2.7.1
     script: bundle exec rake lint
-  - rvm: jruby-9.2.11.1
+  - rvm: jruby-9.2.12.0
     dist: trusty
   - rvm: *default_ruby
     env: PRAWN_GMAGICK_VERSION='0.0.9'
