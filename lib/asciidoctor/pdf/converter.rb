@@ -772,10 +772,8 @@ module Asciidoctor
           icon_size = icon_data[:size] || 24
           label_width = label_min_width || (icon_size * 1.5)
         # NOTE: icon_uri will consider icon attribute on node first, then type
-        # QUESTION: should we use resolve_image_path here?
-        elsif icons && (icon_path = node.icon_uri type) &&
-            (icon_path = node.normalize_system_path icon_path, nil, nil, target_name: 'admonition icon') &&
-            (::File.readable? icon_path)
+        elsif icons && (icon_path, icon_format = ::Asciidoctor::Image.target_and_format node.icon_uri type) &&
+            (icon_path = resolve_image_path node, icon_path, icon_format, nil) && (::File.readable? icon_path)
           icons = true
           # TODO: introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
           label_width = label_min_width || 36.0

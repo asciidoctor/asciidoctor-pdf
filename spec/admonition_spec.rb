@@ -503,6 +503,21 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
     end
 
+    it 'should resolve remote icon when icons attribute is set to image and allow-uri-read is set', visual: true do
+      to_file = with_local_webserver do |base_url|
+        to_pdf_file <<~EOS, 'admonition-remote-image-icon.pdf', attribute_overrides: { 'allow-uri-read' => '', 'iconsdir' => base_url }
+        :icons: image
+
+        [TIP]
+        ====
+        Use the icon attribute to customize the image for an admonition block.
+        ====
+        EOS
+      end
+
+      (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
+    end
+
     it 'should resize icon only if it does not fit within the available space' do
       pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
       :icons: image
