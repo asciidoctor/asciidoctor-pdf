@@ -100,7 +100,11 @@ To run the tests, simply invoke rspec via bundler.
 
  $ bundle exec rspec
 
-To disable the visual integration tests, pass the `` option:
+To disable tests that access the network, pass the `-t ~network` option:
+
+ $ bundle exec rspec -t ~network
+
+Similarly, to disable the visual integration tests, pass the `-t ~visual` option:
 
  $ bundle exec rspec -t ~visual
 
