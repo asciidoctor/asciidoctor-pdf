@@ -503,6 +503,25 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
     end
 
+    it 'should not unset data-uri attribute when resolving icon image if already unset', visual: true do
+      doc = Asciidoctor.load <<~'EOS', backend: :pdf, safe: :safe, standalone: true, attributes: { 'docdir' => fixtures_dir, 'nofooter' => '' }
+      :icons: image
+      :iconsdir:
+
+      [TIP]
+      ====
+      Use the icon attribute to customize the image for an admonition block.
+      ====
+      EOS
+
+      (expect doc.converter).not_to be_nil
+      doc.remove_attr 'data-uri'
+      to_file = File.join output_dir, 'admonition-image-icon-no-data-uri.pdf'
+      doc.converter.write doc.convert, to_file
+
+      (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
+    end
+
     it 'should resolve remote icon when icons attribute is set to image and allow-uri-read is set', visual: true do
       to_file = with_local_webserver do |base_url|
         to_pdf_file <<~EOS, 'admonition-remote-image-icon.pdf', attribute_overrides: { 'allow-uri-read' => '', 'iconsdir' => base_url }
