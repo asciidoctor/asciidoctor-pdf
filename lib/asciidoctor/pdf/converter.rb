@@ -765,9 +765,7 @@ module Asciidoctor
           label_min_width = label_min_width.to_f
         end
         icons = ((doc = node.document).attr? 'icons') ? (doc.attr 'icons') : nil
-        if (data_uri_enabled = doc.attr? 'data-uri')
-          doc.remove_attr 'data-uri'
-        end
+        doc.remove_attr 'data-uri' if (data_uri_enabled = doc.attr? 'data-uri')
         if icons == 'font' && !(node.attr? 'icon')
           label_text = type.to_sym
           icon_data = admonition_icon_data label_text
