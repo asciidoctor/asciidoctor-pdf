@@ -765,7 +765,6 @@ module Asciidoctor
           label_min_width = label_min_width.to_f
         end
         icons = ((doc = node.document).attr? 'icons') ? (doc.attr 'icons') : nil
-        doc.remove_attr 'data-uri' if (data_uri_enabled = doc.attr? 'data-uri')
         if icons == 'font' && !(node.attr? 'icon')
           label_text = type.to_sym
           icon_data = admonition_icon_data label_text
@@ -789,7 +788,6 @@ module Asciidoctor
             end
           end
         end
-        doc.set_attr 'data-uri', '' if data_uri_enabled
         unless ::Array === (cpad = @theme.admonition_padding)
           cpad = ::Array.new 4, cpad
         end
