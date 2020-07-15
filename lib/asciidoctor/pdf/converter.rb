@@ -771,9 +771,7 @@ module Asciidoctor
           icon_data = admonition_icon_data label_text
           icon_size = icon_data[:size] || 24
           label_width = label_min_width || (icon_size * 1.5)
-        # NOTE: icon_uri will consider icon attribute on node first, then type
-        elsif icons && (icon_path, icon_format = ::Asciidoctor::Image.target_and_format node.icon_uri type) &&
-            (icon_path = resolve_image_path node, icon_path, icon_format, nil) && (::File.readable? icon_path)
+        elsif icons && (icon_path = resolve_icon_image_path node, type) && (::File.readable? icon_path)
           icons = true
           # TODO: introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
           label_width = label_min_width || 36.0
@@ -4144,6 +4142,16 @@ module Asciidoctor
         else
           node.normalize_system_path image_path, imagesdir, nil, target_name: 'image'
         end
+      end
+
+      def resolve_icon_image_path node, type
+        if (data_uri_enabled = (doc = node.document).attr? 'data-uri')
+          doc.remove_attr 'data-uri' 
+        end
+        # NOTE: icon_uri will consider icon attribute on node first, then type
+        icon_path, icon_format = ::Asciidoctor::Image.target_and_format node.icon_uri type
+        doc.set_attr 'data-uri', '' if data_uri_enabled
+        resolve_image_path node, icon_path, icon_format, nil
       end
 
       # Resolve the path and sizing of the background image either from a document attribute or theme key.
