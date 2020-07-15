@@ -166,7 +166,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         pdf = to_pdf <<~'EOS', pdf_theme: { outline_list_indent: indent }, analyze: true
         before
 
-        [none]
+        [no-bullet]
         * a
         * b
         * c
