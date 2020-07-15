@@ -4144,7 +4144,7 @@ module Asciidoctor
 
       def resolve_icon_image_path node, type
         if (data_uri_enabled = (doc = node.document).attr? 'data-uri')
-          doc.remove_attr 'data-uri' 
+          doc.remove_attr 'data-uri'
         end
         # NOTE: icon_uri will consider icon attribute on node first, then type
         icon_path, icon_format = ::Asciidoctor::Image.target_and_format node.icon_uri type
