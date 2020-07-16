@@ -25,6 +25,6 @@ group :lint do
 end
 
 group :coverage do
-  gem 'deep-cover-core', '~> 0.8.0', require: false
+  gem 'deep-cover-core', '~> 1.0.0', require: false
   gem 'simplecov', '~> 0.18.0', require: false
 end
