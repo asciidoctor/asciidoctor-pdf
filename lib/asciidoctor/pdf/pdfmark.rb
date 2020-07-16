@@ -17,7 +17,7 @@ module Asciidoctor
           mod_date = (::Time.parse doc.attr 'docdatetime') rescue (now ||= ::Time.now)
           creation_date = (::Time.parse doc.attr 'localdatetime') rescue (now || ::Time.now)
         end
-        content = <<~EOS
+        <<~EOS
         [ /Title #{(sanitize doc.doctitle use_fallback: true).to_pdf_object}
           /Author #{((doc.attr? 'authors') ? (sanitize doc.attr 'authors') : nil).to_pdf_object}
           /Subject #{((doc.attr? 'subject') ? (sanitize doc.attr 'subject') : nil).to_pdf_object}
@@ -28,7 +28,6 @@ module Asciidoctor
           /Producer #{((doc.attr? 'publisher') ? (sanitize doc.attr 'publisher') : nil).to_pdf_object}
           /DOCINFO pdfmark
         EOS
-        content
       end
 
       def generate_file pdf_file

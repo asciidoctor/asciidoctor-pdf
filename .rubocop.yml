@@ -6,6 +6,8 @@ Layout/ArgumentAlignment:
   IndentationWidth: 4
 Layout/CaseIndentation:
   EnforcedStyle: end
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
 Layout/SpaceInsideBlockBraces:
   SpaceBeforeBlockParameters: false
 Layout/SpaceAroundMethodCallOperator:
@@ -29,8 +31,14 @@ Layout/RescueEnsureAlignment:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
   Enabled: false
+Lint/DeprecatedOpenSSLConstant:
+  Enabled: true
+Lint/DuplicateElsifCondition:
+  Enabled: true
 Lint/EmptyWhen:
   Enabled: false
+Lint/MixedRegexpCaptureTypes:
+  Enabled: true
 Lint/ParenthesesAsGroupedExpression:
   Enabled: false
 Lint/RaiseException:
@@ -70,14 +78,23 @@ Naming/MethodParameterName:
   Enabled: false
 Security/Open:
   Enabled: false
+Style/AccessorGrouping:
+  Enabled: true
+  EnforcedStyle: separated
+Style/ArrayCoercion:
+  Enabled: true
 Style/Attr:
   Enabled: false
+Style/BisectedAttrAccessor:
+  Enabled: true
 Style/BlockComments:
   Enabled: false
 Style/BlockDelimiters:
   EnforcedStyle: braces_for_chaining
 Style/CaseEquality:
   Enabled: false
+Style/CaseLikeIf:
+  Enabled: true
 Style/CharacterLiteral:
   Enabled: false
 Style/ClassAndModuleChildren:
@@ -96,6 +113,8 @@ Style/Documentation:
   Enabled: false # FIXME reenable me
 Style/DoubleNegation:
   Enabled: false
+Style/EmptyLiteral:
+  Enabled: false
 Style/ExponentialNotation:
   Enabled: true
 Style/FormatString:
@@ -105,6 +124,10 @@ Style/FormatStringToken:
 Style/GuardClause:
   Enabled: false
 Style/HashEachMethods:
+  Enabled: true
+Style/HashAsLastArrayItem:
+  Enabled: false
+Style/HashLikeCase:
   Enabled: true
 Style/HashSyntax:
   EnforcedStyle: ruby19
@@ -151,6 +174,18 @@ Style/RescueStandardError:
   EnforcedStyle: implicit
 Style/SpecialGlobalVars:
   EnforcedStyle: use_perl_names
+Style/RedundantAssignment:
+  Enabled: true
+Style/RedundantFetchBlock:
+  Enabled: true
+Style/RedundantFileExtensionInRequire:
+  Enabled: true
+Style/RedundantRegexpCharacterClass:
+  Enabled: true
+Style/RedundantRegexpEscape:
+  Enabled: true
+Style/SlicingWithRange:
+  Enabled: false
 Style/SymbolArray:
   EnforcedStyle: brackets
 Style/TernaryParentheses:

@@ -8,10 +8,11 @@ class Asciidoctor::Section
       if @numbered && !@caption && slevel <= (@document.attr 'sectnumlevels', 3).to_i
         @is_numbered = true
         if @document.doctype == 'book'
-          if slevel == 0
+          case slevel
+          when 0
             @cached_numbered_title = %(#{sectnum nil, ':'} #{title})
             @cached_formal_numbered_title = %(#{@document.attr 'part-signifier', 'Part'} #{@cached_numbered_title}).lstrip
-          elsif slevel == 1
+          when 1
             @cached_numbered_title = %(#{sectnum} #{title})
             @cached_formal_numbered_title = %(#{@document.attr 'chapter-signifier', (@document.attr 'chapter-label', 'Chapter')} #{@cached_numbered_title}).lstrip
           else

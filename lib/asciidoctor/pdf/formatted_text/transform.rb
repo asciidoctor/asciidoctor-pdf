@@ -381,14 +381,15 @@ module Asciidoctor
 
         def update_fragment fragment, props
           fragment.update props do |k, oval, nval|
-            if k == :styles
+            case k
+            when :styles
               if nval
                 oval.subtract [:bold, :italic] if nval.delete? :normal
                 oval.merge nval
               else
                 oval.clear
               end
-            elsif k == :callback
+            when :callback
               oval | nval
             else
               nval
