@@ -75,6 +75,21 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       (expect (pdf.page 2).text).to include 'Chapter B'
     end
 
+    it 'should short-circuit circular reference in section title' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [#a]
+      == A <<b>>
+
+      [#b]
+      == B <<a>>
+      EOS
+
+      (expect pdf.lines).to eql ['A B [a]', 'B [a]']
+      lines = pdf.text.map {|it| it[:y] }.uniq
+      (expect pdf.find_unique_text 'B [a]', font_color: '428BCA', y: lines[0]).not_to be_nil
+      (expect pdf.find_unique_text '[a]', font_color: '428BCA', y: lines[1]).not_to be_nil
+    end
+
     it 'should reference section with ID that contains non-ASCII characters' do
       pdf = to_pdf <<~'EOS'
       == Über Étudier

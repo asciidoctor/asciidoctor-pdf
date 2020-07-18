@@ -117,6 +117,7 @@ module Asciidoctor
       ValueSeparatorRx = /;|,/
       HexColorRx = /^#[a-fA-F0-9]{6}$/
       VimeoThumbnailRx = /<thumbnail_large>(.*?)<\/thumbnail_large>/
+      DropAnchorRx = /<(?:a\b[^>]*|\/a)>/
       SourceHighlighters = %w(coderay pygments rouge).to_set
       ViewportWidth = ::Module.new
       (TitleStyles = {
@@ -2383,9 +2384,11 @@ module Asciidoctor
             %(<a href="#{target}">#{node.text || path}</a>)
           elsif (refid = node.attributes['refid'])
             unless (text = node.text)
-              refs = doc.catalog[:refs]
-              if ::Asciidoctor::AbstractNode === (ref = refs[refid])
-                text = ref.xreftext node.attr 'xrefstyle', nil, true
+              if AbstractNode === (ref = doc.catalog[:refs][refid]) && (@resolving_xref ||= (outer = true)) && outer
+                if (text = ref.xreftext node.attr 'xrefstyle', nil, true) && (text.include? '<a')
+                  text = text.gsub DropAnchorRx, ''
+                end
+                @resolving_xref = nil
               end
             end
             %(<a anchor="#{derive_anchor_from_id refid}">#{text || "[#{refid}]"}</a>).gsub ']', '&#93;'
