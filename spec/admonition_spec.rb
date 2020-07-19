@@ -427,6 +427,39 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-svg-icon.pdf'
     end
 
+    it 'should warn if SVG icon specified by icon attribute has errors' do
+      (expect do
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: :rect
+        :icons: font
+        :icontype: svg
+
+        [TIP,icon=faulty]
+        ====
+        Use the icon attribute to customize the image for an admonition block.
+        ====
+        EOS
+        (expect pdf.rectangles).to have_size 1
+        # NOTE: width and height of rectangle match what's defined in SVG
+        (expect pdf.rectangles[0][:width]).to eql 200.0
+        (expect pdf.rectangles[0][:height]).to eql 200.0
+      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'faulty.svg'}; Unknown tag 'foobar')
+    end
+
+    it 'should warn if SVG icon specified by icon attribute cannot be embedded' do
+      (expect do
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: :rect
+        :icons: font
+        :icontype: svg
+
+        [TIP,icon=broken]
+        ====
+        Use the icon attribute to customize the image for an admonition block.
+        ====
+        EOS
+        (expect pdf.rectangles).to be_empty
+      end).to log_message severity: :WARN, message: %(~could not embed admonition icon: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
+    end
+
     it 'should embed remote image in icon if allow-uri-read attribute is set', visual: true do
       to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-icon-with-remote-image.pdf', attribute_overrides: { 'docdir' => fixtures_dir, 'allow-uri-read' => '' }
       :icons: font
