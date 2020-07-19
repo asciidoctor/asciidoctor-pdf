@@ -633,7 +633,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       xml_lexer = Pygments::Lexer.find_by_alias 'xml'
       # emulate highlight returning nil
       class << xml_lexer
-        alias _highlight highlight
+        alias_method :_highlight, :highlight
         def highlight *_args; end
       end
 
@@ -653,7 +653,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     ensure
       class << xml_lexer
         undef_method :highlight
-        alias highlight _highlight
+        alias_method :highlight, :_highlight
       end
     end
 
