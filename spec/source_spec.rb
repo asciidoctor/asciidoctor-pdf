@@ -616,6 +616,47 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect hello_text[:font_name]).to eql 'mplus1mn-regular'
     end
 
+    it 'should display encoded source without highlighting if lexer fails to return a value' do
+      input = <<~'EOS'
+      :source-highlighter: pygments
+
+      [source,xml]
+      ----
+      <payload>&amp;</payload>
+      ----
+      EOS
+
+      # warm up pygments
+      pdf = to_pdf input, analyze: true
+      (expect pdf.text).to have_size 3
+
+      xml_lexer = Pygments::Lexer.find_by_alias 'xml'
+      # emulate highlight returning nil
+      class << xml_lexer
+        alias _highlight highlight
+        def highlight *_args; end
+      end
+
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: pygments
+
+      [source,xml]
+      ----
+      <payload>&amp;</payload>
+      ----
+      EOS
+
+      (expect pdf.text).to have_size 1
+      source_text = pdf.text[0]
+      (expect source_text[:string]).to eql '<payload>&amp;</payload>'
+      (expect source_text[:font_color]).to eql '333333'
+    ensure
+      class << xml_lexer
+        undef_method :highlight
+        alias highlight _highlight
+      end
+    end
+
     it 'should not crash when adding indentation guards' do
       (expect do
         pdf = to_pdf <<~'EOS', analyze: true
