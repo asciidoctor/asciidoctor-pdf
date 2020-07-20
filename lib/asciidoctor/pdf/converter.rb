@@ -252,7 +252,6 @@ module Asciidoctor
               page_numbering_start_at = 'toc' if page_numbering_start_at == 'title' && !has_title_page
               page_numbering_start_at = 'body' if page_numbering_start_at == 'toc' && !insert_toc
             end
-            front_matter_sig = [running_content_start_at, page_numbering_start_at]
             # table values are number of pages to skip before starting running content and page numbering, respectively
             num_front_matter_pages = {
               %w(title title) => [zero_page_offset, zero_page_offset],
@@ -263,7 +262,7 @@ module Asciidoctor
               %w(toc body) => [first_page_offset, page_numbering_body_offset],
               %w(body title) => [running_content_body_offset, zero_page_offset],
               %w(body toc) => [running_content_body_offset, first_page_offset],
-            }[front_matter_sig] || [running_content_body_offset, page_numbering_body_offset]
+            }[[running_content_start_at, page_numbering_start_at]] || [running_content_body_offset, page_numbering_body_offset]
           else
             body_offset = body_start_page_number - 1
             if ::Integer === (running_content_start_at = @theme.running_content_start_at || 'body')
