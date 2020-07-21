@@ -31,7 +31,7 @@ describe Asciidoctor::PDF::Converter do
       (expect pdf.page_count).to be > 0
     end
 
-    it 'should convert file in secure mode' do
+    it 'should convert file to target dir in secure mode' do
       input_file = fixture_file 'secure.adoc'
       target_file = output_file 'secure.pdf'
       doc = Asciidoctor.convert_file input_file, backend: 'pdf', to_dir: output_dir, safe: 'secure'
@@ -44,7 +44,20 @@ describe Asciidoctor::PDF::Converter do
       (expect images).to have_size 1
     end
 
-    it 'should be able to load and convert in separate steps' do
+    it 'should convert file to target file in secure mode' do
+      input_file = fixture_file 'secure.adoc'
+      target_file = output_file 'secure-alt.pdf'
+      doc = Asciidoctor.convert_file input_file, backend: 'pdf', to_file: target_file, safe: 'secure'
+      (expect Pathname.new target_file).to exist
+      pdf = PDF::Reader.new target_file
+      (expect pdf.pages).to have_size 2
+      (expect pdf.pages[0].text).to include 'Book Title'
+      (expect pdf.pages[1].text).to include 'Chapter'
+      images = get_images pdf
+      (expect images).to have_size 1
+    end
+
+    it 'should be able to load, convert, and write in separate steps' do
       input_file = fixture_file 'hello.adoc'
       target_file = output_file 'hello.pdf'
       doc = Asciidoctor.load_file input_file, backend: 'pdf'
