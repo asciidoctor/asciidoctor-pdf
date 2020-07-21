@@ -47,7 +47,7 @@ describe Asciidoctor::PDF::Converter do
     it 'should convert file to target file in secure mode' do
       input_file = fixture_file 'secure.adoc'
       target_file = output_file 'secure-alt.pdf'
-      doc = Asciidoctor.convert_file input_file, backend: 'pdf', to_file: target_file, safe: 'secure'
+      Asciidoctor.convert_file input_file, backend: 'pdf', to_file: target_file, safe: 'secure'
       (expect Pathname.new target_file).to exist
       pdf = PDF::Reader.new target_file
       (expect pdf.pages).to have_size 2
