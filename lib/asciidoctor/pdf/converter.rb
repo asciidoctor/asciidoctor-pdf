@@ -3304,6 +3304,7 @@ module Asciidoctor
                   end
                   # FIXME: we need to have a content setting for chapter pages
                   if ::Array === content
+                    redo_with_content = nil
                     # NOTE: float ensures cursor position is restored and returns us to current page if we overrun
                     float do
                       # NOTE: bounding_box is redundant if both vertical padding and border width are 0
@@ -3317,9 +3318,14 @@ module Asciidoctor
                             add_link_to_image image_link, image_info, image_opts
                           end
                         rescue
+                          redo_with_content = image_opts[:alt]
                           log :warn, %(could not embed image in running content: #{content[0]}; #{$!.message})
                         end
                       end
+                    end
+                    if redo_with_content
+                      content_by_position[position] = redo_with_content
+                      redo
                     end
                   else
                     theme_font %(#{periphery}_#{side}_#{position}) do
@@ -4218,6 +4224,9 @@ module Asciidoctor
         end
         container_size = opts[:container_size]
         if image_attrs
+          if (alt = image_attrs['alt'])
+            image_opts[:alt] = %([#{alt}])
+          end
           if (background = opts[:background]) && (image_pos = image_attrs['position']) && (image_pos = resolve_background_position image_pos, nil)
             image_opts.update image_pos
           end

@@ -2219,17 +2219,17 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
     end
 
-    it 'should warn if image cannot be embedded' do
+    it 'should warn and show alt text if image cannot be embedded' do
       pdf_theme = {
         footer_font_color: '0000FF',
         footer_columns: '=100%',
-        footer_recto_center_content: %(image:#{fixture_file 'broken.svg'}[]),
+        footer_recto_center_content: %(image:#{fixture_file 'broken.svg'}[no worky]),
       }
 
       (expect do
         pdf = to_pdf 'body', analyze: true, pdf_theme: pdf_theme, enable_footer: true
-        footer_text = pdf.find_text font_color: '0000FF'
-        (expect footer_text).to be_empty
+        footer_text = pdf.find_unique_text font_color: '0000FF'
+        (expect footer_text[:string]).to eql '[no worky]'
       end).to log_message severity: :WARN, message: %(~could not embed image in running content: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
     end
 
