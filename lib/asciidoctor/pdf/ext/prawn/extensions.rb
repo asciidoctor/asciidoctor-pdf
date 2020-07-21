@@ -776,14 +776,9 @@ module Asciidoctor
       def delete_page
         pg = page_number
         pdf_store = state.store
-        pdf_objs = pdf_store.instance_variable_get :@objects
-        pdf_ids = pdf_store.instance_variable_get :@identifiers
-        page_id = pdf_store.object_id_for_page pg
         content_id = page.content.identifier
-        [page_id, content_id].each do |key|
-          pdf_objs.delete key
-          pdf_ids.delete key
-        end
+        # NOTE: cannot delete objects and IDs, otherwise references get corrupted; so just reset the value
+        (pdf_store.instance_variable_get :@objects)[content_id] = ::PDF::Core::Reference.new content_id, {}
         pdf_store.pages.data[:Kids].pop
         pdf_store.pages.data[:Count] -= 1
         state.pages.pop

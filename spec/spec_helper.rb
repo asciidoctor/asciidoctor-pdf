@@ -474,8 +474,12 @@ RSpec.configure do |config|
   end
 
   def get_names pdf
-    objects = pdf.objects
-    Hash[*objects[objects[pdf.catalog[:Names]][:Dests]][:Names]]
+    if (names = pdf.catalog[:Names])
+      objects = pdf.objects
+      Hash[*objects[objects[names][:Dests]][:Names]]
+    else
+      {}
+    end
   end
 
   def get_page_labels pdf

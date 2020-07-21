@@ -3,6 +3,15 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Dest' do
+  it 'should not define a dest named __anchor-top if document has no body pages' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :doctype: book
+    EOS
+    names = get_names pdf
+    (expect names).to be_empty
+  end
+
   it 'should define a dest named __anchor-top at top of the first body page' do
     pdf = to_pdf <<~'EOS'
     = Document Title

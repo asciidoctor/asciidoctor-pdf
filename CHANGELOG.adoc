@@ -92,6 +92,7 @@ Bug Fixes::
 * allow an index term to be defined in section title with auto-generated ID
 * fix alignment of link box for image in running content with numeric vertical alignment
 * short-circuit xreftext containing a circular reference path
+* prevent PDF page import from corrupting references in PDF (#1726)
 
 Compliance::
 
