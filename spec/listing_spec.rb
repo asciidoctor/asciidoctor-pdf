@@ -335,6 +335,22 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect conum_text[:font_name]).not_to eql 'Courier'
   end
 
+  it 'should allow theme to set conum color using CMYK value' do
+    cmyk_color = [0, 100, 100, 60].extend Asciidoctor::PDF::ThemeLoader::CMYKColorValue
+    pdf = to_pdf <<~'EOS', pdf_theme: { conum_font_color: cmyk_color }, analyze: true
+    ----
+    foo <1>
+    ----
+    <1> the counterpart of bar
+    EOS
+
+    conum_texts = pdf.find_text '①'
+    (expect conum_texts).to have_size 2
+    # NOTE: yes, the hex color is all weird here; could be a parser issue
+    (expect conum_texts[0][:font_color]).to eql '00FFFF99'
+    (expect conum_texts[1][:font_color]).to eql '00FFFF99'
+  end
+
   it 'should allow width of border to be set only on ends' do
     pdf_theme = {
       code_border_color: 'AA0000',
