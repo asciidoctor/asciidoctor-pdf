@@ -347,8 +347,8 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     conum_texts = pdf.find_text '①'
     (expect conum_texts).to have_size 2
     # NOTE: yes, the hex color is all weird here; could be a parser issue
-    (expect conum_texts[0][:font_color]).to eql '00FFFF99'
-    (expect conum_texts[1][:font_color]).to eql '00FFFF99'
+    (expect conum_texts[0][:font_color]).to eql cmyk_color.map(&:to_f)
+    (expect conum_texts[1][:font_color]).to eql cmyk_color.map(&:to_f)
   end
 
   it 'should allow width of border to be set only on ends' do

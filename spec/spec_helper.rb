@@ -147,12 +147,12 @@ class EnhancedPDFTextInspector < PDF::Inspector
 
   # scn (used for font color in SVG)
   def set_color_for_nonstroking_and_special *params
-    @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
+    @color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| '%02X' % (it.to_f * 255).round }.join
   end
 
   # SCN
   def set_color_for_stroking_and_special *params
-    @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
+    @color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| '%02X' % (it.to_f * 255).round }.join
   end
 
   def move_text_position x, y
@@ -261,7 +261,7 @@ class LineInspector < PDF::Inspector
 
   # SCN
   def set_color_for_stroking_and_special *params
-    @color = params.map {|it| '%02X' % (it.to_f * 255).round }.join
+    @color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| '%02X' % (it.to_f * 255).round }.join
   end
 
   # gs

@@ -308,7 +308,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       pdf.lines.uniq.each do |line|
-        (expect line[:color]).to eql '30170099'
+        (expect line[:color]).to eql cmyk_color.map(&:to_f)
       end
     end
 
