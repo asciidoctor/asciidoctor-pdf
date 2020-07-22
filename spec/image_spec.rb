@@ -1213,6 +1213,36 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-inline-scale-down.pdf'
     end
 
+    it 'should compute scaled width relative to container size' do
+      midpoint = (get_page_size to_pdf 'body', analyze: true)[0] * 0.5
+
+      input = <<~'EOS'
+      ****
+      ====
+      ******
+      ========
+      left
+
+      image:tux.png[scaledwidth=50%]midpoint
+      ========
+      ******
+      ====
+      ****
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      midpoint_text = pdf.find_unique_text 'midpoint'
+      (expect midpoint_text[:x]).to eql midpoint
+      left_text = pdf.find_unique_text 'left'
+
+      pdf = to_pdf input, analyze: :image
+      images = pdf.images
+      (expect images).to have_size 1
+      image = images[0]
+      (expect image[:x]).to eql left_text[:x]
+      (expect image[:width]).to eql ((midpoint_text[:x] - left_text[:x]).round 2)
+    end
+
     it 'should scale image down to fit line if fit=line', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-inline-fit-line.pdf'
       See image:tux.png[fit=line] run.
