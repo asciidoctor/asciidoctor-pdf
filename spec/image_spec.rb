@@ -769,6 +769,40 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pages[2][:text][-1][:string]).to eql '3'
     end
 
+    it 'should not break internal references when PDF is imported on first page' do
+      pdf = to_pdf <<~'EOS', enable_footer: true, attribute_overrides: { 'pdf-page-size' => 'Letter' }
+      image::blue-letter.pdf[]
+
+      see <<Section>>
+
+      <<<
+
+      == Section
+
+      go to <<__anchor-top,top>>
+
+      go to <<last>>
+
+      <<<
+
+      [#last]
+      last
+      EOS
+
+      names = get_names pdf
+      (expect names).to have_size 3
+      (expect names.keys).to eql %w(__anchor-top _section last)
+      top_dest = pdf.objects[names['__anchor-top']]
+      top_page_num = get_page_number pdf, top_dest[0]
+      (expect top_page_num).to be 1
+      last_dest = pdf.objects[names['last']]
+      last_page_num = get_page_number pdf, last_dest[0]
+      (expect last_page_num).to be 4
+      annotations = get_annotations pdf
+      (expect annotations).to have_size 3
+      (expect annotations.map {|it| it[:Dest] }).to eql %w(_section __anchor-top last)
+    end
+
     it 'should only import first page of multi-page PDF file by default' do
       pdf = to_pdf 'image::red-green-blue.pdf[]'
       (expect pdf.pages).to have_size 1

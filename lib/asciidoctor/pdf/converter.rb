@@ -279,8 +279,8 @@ module Asciidoctor
           end
 
           @index.start_page_number = num_front_matter_pages[1] + 1
-          doc.set_attr 'pdf-anchor', (doc_anchor = derive_anchor_from_id doc.id, 'top')
-          add_dest_for_block doc, doc_anchor
+          doc.set_attr 'pdf-anchor', (derive_anchor_from_id doc.id, 'top')
+          doc.set_attr 'pdf-page-start', page_number
 
           convert_section generate_manname_section doc if doc.doctype == 'manpage' && (doc.attr? 'manpurpose')
 
@@ -316,6 +316,7 @@ module Asciidoctor
 
         stamp_foreground_image doc, has_front_cover
         layout_cover_page doc, :back
+        add_dest_for_top doc
         nil
       end
 
@@ -4052,6 +4053,16 @@ module Asciidoctor
         else
           %(__anchor-#{default_value})
         end
+      end
+
+      def add_dest_for_top doc
+        unless (top_page = doc.attr 'pdf-page-start') > page_count
+          pg = page_number
+          go_to_page top_page
+          add_dest_for_block doc, (doc.attr 'pdf-anchor')
+          go_to_page pg
+        end
+        nil
       end
 
       # If an id is provided or the node passed as the first argument has an id,
