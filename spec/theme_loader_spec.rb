@@ -428,6 +428,12 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
   end
 
+  describe '.resolve_theme_asset' do
+    it 'should resolve theme asset relative to built-in themes dir by default' do
+      (expect subject.resolve_theme_asset 'base-theme.yml').to eql (File.join subject::ThemesDir, 'base-theme.yml')
+    end
+  end
+
   context 'data types' do
     it 'should resolve null color value as nil' do
       theme_data = SafeYAML.load <<~'EOS'
