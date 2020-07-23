@@ -247,19 +247,25 @@ module Asciidoctor
             if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at || 'body')
               page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 1].max
               page_numbering_start_at = 'body'
+            elsif page_numbering_start_at == 'cover' && has_front_cover
+              page_numbering_body_offset = 0
             else
               page_numbering_body_offset = body_offset
+              page_numbering_start_at = 'title' if page_numbering_start_at == 'cover' && !has_front_cover
               page_numbering_start_at = 'toc' if page_numbering_start_at == 'title' && !has_title_page
               page_numbering_start_at = 'body' if page_numbering_start_at == 'toc' && !insert_toc
             end
             # table values are number of pages to skip before starting running content and page numbering, respectively
             num_front_matter_pages = {
+              %w(title cover) => [zero_page_offset, page_numbering_body_offset],
               %w(title title) => [zero_page_offset, zero_page_offset],
               %w(title toc) => [zero_page_offset, first_page_offset],
               %w(title body) => [zero_page_offset, page_numbering_body_offset],
+              %w(toc cover) => [first_page_offset, page_numbering_body_offset],
               %w(toc title) => [first_page_offset, zero_page_offset],
               %w(toc toc) => [first_page_offset, first_page_offset],
               %w(toc body) => [first_page_offset, page_numbering_body_offset],
+              %w(body cover) => [running_content_body_offset, page_numbering_body_offset],
               %w(body title) => [running_content_body_offset, zero_page_offset],
               %w(body toc) => [running_content_body_offset, first_page_offset],
             }[[running_content_start_at, page_numbering_start_at]] || [running_content_body_offset, page_numbering_body_offset]
@@ -272,6 +278,8 @@ module Asciidoctor
             end
             if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at || 'body')
               page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 1].max
+            elsif page_numbering_start_at == 'cover' && has_front_cover
+              page_numbering_body_offset = 0
             else
               page_numbering_body_offset = body_offset
             end

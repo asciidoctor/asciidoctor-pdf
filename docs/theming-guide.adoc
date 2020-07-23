@@ -1344,7 +1344,7 @@ See <<Title Page>> for details.
   size: Letter
 
 |numbering-start-at^[5]^
-|title {vbar} toc {vbar} body {vbar} Integer +
+|cover {vbar} title {vbar} toc {vbar} body {vbar} Integer +
 (default: body)
 |page:
   numbering-start-at: toc
@@ -1363,7 +1363,8 @@ To disable the image, use the value `none`.
 These margins and used when the value `prepress` is assigned to the `media` document attribute.
 If no cover is specified, the recto margin is not applied to the title page.
 To apply the recto margin to the title page, but not include a cover, assign the value `~` to the `front-cover-image` attribute.
-. The `title` and `toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
+. The `cover` value is only recognized if the documet has a front cover page (i.e., `front-cover-image`).
+The `title` and `toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
 The `toc` value only applies if the toc is in the default location (before the first page of the body).
 If the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
 If value is an integer, page numbering will start at the specified page of the body (i.e., 1 is first page, 2 is second page, etc.)

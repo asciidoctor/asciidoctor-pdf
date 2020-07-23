@@ -576,6 +576,80 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect pgnum_labels).to eql %w(i 1 2 3)
     end
 
+    it 'should start page numbering at cover page of article if page_numbering_start_at is cover' do
+      theme_overrides = { page_numbering_start_at: 'cover' }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides)
+      = Document Title
+      :front-cover-image: image:tux.png[]
+
+      == First Section
+
+      == Second Section
+
+      == Third Section
+      EOS
+
+      page_labels = get_page_labels pdf
+      (expect page_labels).to eql %w(1 2)
+    end
+
+    it 'should start page numbering at cover page of book if page_numbering_start_at is cover' do
+      theme_overrides = { page_numbering_start_at: 'cover' }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides)
+      = Document Title
+      :doctype: book
+      :front-cover-image: image:tux.png[]
+      :toc:
+
+      == First Chapter
+
+      == Second Chapter
+
+      == Third Chapter
+      EOS
+
+      page_labels = get_page_labels pdf
+      (expect page_labels).to eql %w(1 2 3 4 5 6)
+    end
+
+    it 'should start page numbering at title page of book if page_numbering_start_at is cover and document has no cover' do
+      theme_overrides = { page_numbering_start_at: 'cover' }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides)
+      = Document Title
+      :doctype: book
+      :toc:
+
+      == First Chapter
+
+      == Second Chapter
+
+      == Third Chapter
+      EOS
+
+      page_labels = get_page_labels pdf
+      (expect page_labels).to eql %w(1 2 3 4 5)
+    end
+
+    it 'should start page numbering at body of article if page_numbering_start_at is cover and document has no cover' do
+      theme_overrides = { page_numbering_start_at: 'cover' }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides)
+      = Document Title
+
+      == First Section
+
+      == Second Section
+
+      == Third Section
+      EOS
+
+      page_labels = get_page_labels pdf
+      (expect page_labels).to eql %w(1)
+    end
+
     it 'should start page numbering at title page if page_numbering_start_at is title' do
       theme_overrides = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
 
