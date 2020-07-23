@@ -395,6 +395,14 @@ describe Asciidoctor::PDF::ThemeLoader do
   end
 
   describe '.resolve_theme_file' do
+    it 'should resolve built-in default theme by default' do
+      expected_dir = subject::ThemesDir
+      expected_path = File.join expected_dir, 'default-theme.yml'
+      theme_path, theme_dir = subject.resolve_theme_file
+      (expect theme_path).to eql expected_path
+      (expect theme_dir).to eql expected_dir
+    end
+
     it 'should expand reference to home directory in theme dir when resolving theme file from name' do
       expected_path = File.join home_dir, '.local/share/asciidoctor-pdf/custom-theme.yml'
       expected_dir = File.dirname expected_path
