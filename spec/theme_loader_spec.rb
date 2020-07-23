@@ -444,6 +444,16 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.page_background_color).to be_nil
     end
 
+    it 'should resolve transparent color value' do
+      theme_data = SafeYAML.load <<~'EOS'
+      sidebar:
+        background_color: transparent
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.sidebar_background_color).to eql 'transparent'
+      (expect theme.sidebar_background_color).to be_a subject::TransparentColorValue
+    end
+
     it 'should expand color value to 6 hexadecimal digits' do
       {
         '0' => '000000',

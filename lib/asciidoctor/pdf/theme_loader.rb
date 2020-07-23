@@ -25,10 +25,6 @@ module Asciidoctor
       # TODO: implement white? & black? methods
       module ColorValue; end
 
-      class HexColorValue < String
-        include ColorValue
-      end
-
       # A marker module for a normalized CMYK array
       # Prevents normalizing CMYK value more than once
       module CMYKColorValue
@@ -36,6 +32,14 @@ module Asciidoctor
         def to_s
           %([#{join ', '}])
         end
+      end
+
+      class HexColorValue < String
+        include ColorValue
+      end
+
+      class TransparentColorValue < String
+        include ColorValue
       end
 
       def self.resolve_theme_file theme_name = nil, theme_dir = nil
@@ -278,8 +282,7 @@ module Asciidoctor
           end
         when ::String
           if value == 'transparent'
-            # FIXME: should we have a TransparentColorValue class?
-            return HexColorValue.new value
+            return TransparentColorValue.new value
           elsif value.length == 6
             return HexColorValue.new value.upcase
           end
