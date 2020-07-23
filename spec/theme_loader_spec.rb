@@ -378,6 +378,14 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.to_h.keys).to have_size 6
     end
 
+    it 'should link code and conum font family to literal font family by default' do
+      theme = subject.load_theme 'literal-font-family-theme.yml', fixtures_dir
+      (expect theme.__dir__).to eql fixtures_dir
+      (expect theme.literal_font_family).to eql 'M+ 1mn'
+      (expect theme.code_font_family).to eql 'M+ 1mn'
+      (expect theme.conum_font_family).to eql 'M+ 1mn'
+    end
+
     it 'should link sidebar and abstract title font family to heading font family if only latter is set' do
       theme = subject.load_theme 'heading-font-family-theme.yml', fixtures_dir
       (expect theme.__dir__).to eql fixtures_dir
