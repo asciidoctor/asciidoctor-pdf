@@ -264,6 +264,13 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_color).to eql '0000FF'
     end
 
+    it 'should extend built-in base theme last if listed last in extends entry' do
+      input_file = fixture_file 'extends-base-last-theme.yml'
+      theme = subject.load_file input_file, nil, fixtures_dir
+      (expect theme.heading_font_color).to eql 'AA0000'
+      (expect theme.base_font_family).to eql 'Helvetica'
+    end
+
     it 'should allow font catalog to be merged with font catalog from theme being extended' do
       input_file = fixture_file 'extra-fonts-theme.yml'
       theme = subject.load_file input_file, nil, fixtures_dir
