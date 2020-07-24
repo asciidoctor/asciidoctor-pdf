@@ -13,7 +13,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.to_h).to be_empty
     end
 
-    it 'should not fail if theme data is false' do
+    it 'should not fail if theme data is falsy' do
       theme = subject.new.load false
       (expect theme).not_to be_nil
       (expect theme).to be_an OpenStruct
@@ -241,6 +241,12 @@ describe Asciidoctor::PDF::ThemeLoader do
   describe '.load_file' do
     it 'should not fail if theme file is empty' do
       theme = subject.load_file fixture_file 'empty-theme.yml'
+      (expect theme).to be_an OpenStruct
+      (expect theme).to eql OpenStruct.new
+    end
+
+    it 'should not fail if theme file resolves to nil' do
+      theme = subject.load_file fixture_file 'nil-theme.yml'
       (expect theme).to be_an OpenStruct
       (expect theme).to eql OpenStruct.new
     end
