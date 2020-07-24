@@ -155,6 +155,16 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.footer_verso_right_content).to eql 'A4'
     end
 
+    it 'should ignore font key if value is not a Hash' do
+      theme_data = SafeYAML.load <<~'EOS'
+      font: ~
+      base_font_color: 333333
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.font_catalog).to be_nil
+      (expect theme.base_font_color).to eql '333333'
+    end
+
     it 'should allow font to be declared once for all styles using string value' do
       theme_data = SafeYAML.load <<~'EOS'
       font:
