@@ -236,6 +236,21 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.font_fallbacks).to be_a Array
       (expect theme.font_fallbacks).to eql ['Fallback']
     end
+
+    it 'should set font fallbacks to empty array if value is falsy' do
+      theme_data = SafeYAML.load <<~'EOS'
+      font_catalog:
+        Serif:
+          normal: /path/to/serif-font.ttf
+      font_fallbacks: ~
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.font_catalog).to be_a Hash
+      (expect theme.font_catalog['Serif']).to be_a Hash
+      (expect theme.font_catalog['Serif']['normal']).to eql '/path/to/serif-font.ttf'
+      (expect theme.font_fallbacks).to be_a Array
+      (expect theme.font_fallbacks).to be_empty
+    end
   end
 
   describe '.load_file' do
