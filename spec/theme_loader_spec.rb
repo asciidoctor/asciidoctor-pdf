@@ -367,6 +367,12 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_size).to be_nil
     end
 
+    it 'should not inherit from base theme if custom theme extends theme that resolves to nil' do
+      theme = subject.load_theme 'extends-nil-theme.yml', fixtures_dir
+      (expect theme.base_font_color).to eql '000000'
+      (expect theme.base_font_family).to be_nil
+    end
+
     it 'should inherit from base theme if custom theme extends base' do
       base_theme = subject.load_base_theme
       theme = subject.load_theme fixture_file 'extended-base-theme.yml'
