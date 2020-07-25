@@ -339,6 +339,18 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.font_fallbacks).to be_a Array
       (expect theme.font_fallbacks).to eql ['VLGothic']
     end
+
+    it 'should not fail to merge font catalog if inherited theme does not define a font catalog' do
+      input_file = fixture_file 'fonts-theme.yml'
+      theme = subject.load_file input_file, nil, fixtures_dir
+      (expect theme.font_catalog).to be_a Hash
+      (expect theme.font_catalog).to have_size 2
+      (expect theme.font_catalog).to have_key 'M+ 1p'
+      (expect theme.font_catalog).to have_key 'VLGothic'
+      (expect theme.font_fallbacks).to be_a Array
+      (expect theme.font_fallbacks).to eql ['VLGothic']
+      (expect theme.base_font_family).to eql 'M+ 1p'
+    end
   end
 
   describe '.load_theme' do
