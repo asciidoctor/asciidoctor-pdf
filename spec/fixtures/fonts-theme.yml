@@ -1,0 +1,15 @@
+extends: extends-no-theme.yml
+font:
+  catalog:
+    merge: true
+    M+ 1p:
+      normal: /path/to/mplus1p-regular.ttf
+    VLGothic:
+      normal: &VLGothic /path/to/vlgothic-regular.ttf
+      bold: *VLGothic
+      italic: *VLGothic
+      bold_italic: *VLGothic
+  fallbacks:
+  - VLGothic
+base:
+  font_family: M+ 1p
