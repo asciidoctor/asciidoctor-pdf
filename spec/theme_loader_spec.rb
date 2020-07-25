@@ -165,6 +165,26 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_color).to eql '333333'
     end
 
+    it 'should ignore unrecognized font subkeys' do
+      theme_data = SafeYAML.load <<~'EOS'
+      font:
+        catalog:
+          Yolo:
+            normal: /path/to/yolo.ttf
+        foo:
+        - bar
+        - baz
+        yin: yang
+      base:
+        font_family: Yolo
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.foo).to be_nil
+      (expect theme.yin).to be_nil
+      (expect theme.base_font_family).to eql 'Yolo'
+      (expect theme.font_catalog).to eql 'Yolo' => { 'normal' => '/path/to/yolo.ttf' }
+    end
+
     it 'should allow font to be declared once for all styles using string value' do
       theme_data = SafeYAML.load <<~'EOS'
       font:
