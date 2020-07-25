@@ -165,6 +165,17 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_color).to eql '333333'
     end
 
+    it 'should ignore font_catalog key if value is not a Hash' do
+      theme_data = SafeYAML.load <<~'EOS'
+      font:
+        catalog: ~
+      base_font_color: 333333
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.font_catalog).to be_nil
+      (expect theme.base_font_color).to eql '333333'
+    end
+
     it 'should ignore unrecognized font subkeys' do
       theme_data = SafeYAML.load <<~'EOS'
       font:

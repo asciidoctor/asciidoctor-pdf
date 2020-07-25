@@ -145,7 +145,7 @@ module Asciidoctor
               subaccum
             end if ::Hash === styles
             accum
-          end) : {}
+          end) : nil
         elsif key == 'font_fallbacks'
           data[key] = ::Array === val ? val.map {|name| expand_vars name.to_s, data } : []
         elsif key.start_with? 'admonition_icon_'
