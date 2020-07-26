@@ -20,6 +20,14 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.to_h).to be_empty
     end
 
+    # NOTE: this API is not used by the converter
+    it 'should use specified theme data if raw theme data is nil' do
+      theme_data = OpenStruct.new
+      theme_data.base_font_color = '222222'
+      theme = subject.new.load nil, theme_data
+      (expect theme).to be theme_data
+    end
+
     it 'should store flattened keys in OpenStruct' do
       theme_data = SafeYAML.load <<~'EOS'
       page:
