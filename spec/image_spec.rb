@@ -134,6 +134,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect subject.resolve_explicit_width attrs, bounds_width: 1000).to eql 108.0
     end
 
+    it 'should resolve pdfwidth in pc to pt' do
+      attrs = { 'pdfwidth' => '12pc' }
+      (expect subject.resolve_explicit_width attrs, bounds_width: 1000).to eql 144.0
+    end
+
     it 'should resolve pdfwidth in vw' do
       attrs = { 'pdfwidth' => '50vw' }
       result = subject.resolve_explicit_width attrs, bounds_width: 1000, support_vw: true
@@ -229,7 +234,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should use the numeric width defined in the theme if an explicit width is not specified', visual: true do
-      [72, '72'].each do |image_width|
+      [72, '72', '1in', '6pc'].each do |image_width|
         to_file = to_pdf_file <<~'EOS', 'image-numeric-fallback-width.pdf', pdf_theme: { image_width: image_width }
         image::tux.png[pdfwidth=204px]
 
@@ -1361,7 +1366,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should add link around inline image if link attribute is set' do
       pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir }
-      image:sample-logo.jpg[ACME,pdfwidth=12pt,link=https://example.org] is a sign of quality!
+      image:sample-logo.jpg[ACME,pdfwidth=1pc,link=https://example.org] is a sign of quality!
       EOS
 
       annotations = get_annotations pdf, 1
