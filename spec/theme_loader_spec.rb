@@ -196,6 +196,21 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.font_catalog).to eql 'Yolo' => { 'normal' => '/path/to/yolo.ttf' }
     end
 
+    it 'should ignore font if value is falsy' do
+      theme_data = SafeYAML.load <<~'EOS'
+      font:
+        catalog:
+          Fancy:
+            normal: /path/to/fancy.ttf
+          Yolo: ~
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.font_catalog).to have_size 1
+      (expect theme.font_catalog).to have_key 'Fancy'
+      (expect theme.font_catalog['Fancy']).to be_a Hash
+      (expect theme.font_catalog).not_to have_key 'Yolo'
+    end
+
     it 'should allow font to be declared once for all styles using string value' do
       theme_data = SafeYAML.load <<~'EOS'
       font:
