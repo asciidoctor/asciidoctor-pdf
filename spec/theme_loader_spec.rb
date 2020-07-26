@@ -61,6 +61,17 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.admonition_icon_note).to eql name: 'far-sticky-note', stroke_color: '0000FF', size: 24
     end
 
+    it 'should ignore admonition icon type def if value is falsy' do
+      theme_data = SafeYAML.load <<~'EOS'
+      admonition:
+        icon:
+          advice: ~
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme).to be_an OpenStruct
+      (expect theme.admonition_icon_advice).to be_nil
+    end
+
     it 'should replace hyphens in key names with underscores' do
       theme_data = SafeYAML.load <<~'EOS'
       page-size: A4

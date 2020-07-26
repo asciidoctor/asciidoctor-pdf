@@ -149,10 +149,10 @@ module Asciidoctor
         elsif key == 'font_fallbacks'
           data[key] = ::Array === val ? val.map {|name| expand_vars name.to_s, data } : []
         elsif key.start_with? 'admonition_icon_'
-          data[key] = val ? val.map {|(key2, val2)|
+          data[key] = val.map {|(key2, val2)|
             key2 = key2.tr '-', '_' if key2.include? '-'
             [key2.to_sym, (key2.end_with? '_color') ? (to_color evaluate val2, data) : (evaluate val2, data)]
-          }.to_h : {}
+          }.to_h if val
         elsif ::Hash === val
           val.each do |subkey, subval|
             process_entry %(#{key}_#{key == 'role' || !(subkey.include? '-') ? subkey : (subkey.tr '-', '_')}), subval, data
