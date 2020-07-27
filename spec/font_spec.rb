@@ -105,7 +105,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
   context 'custom' do
     it 'should resolve fonts in specified fonts dir' do
       pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => (fixture_file 'bundled-fonts-theme.yml'), 'pdf-fontsdir' => Asciidoctor::PDF::ThemeLoader::FontsDir }
-      fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
+      fonts = pdf.objects.values.select {|it| Hash === it && it[:Type] == :Font }
       (expect fonts).to have_size 1
       (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
     end
@@ -113,7 +113,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     it 'should look for font file in all specified font dirs' do
       %w(; ,).each do |separator|
         pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => (fixture_file 'bundled-fonts-theme.yml'), 'pdf-fontsdir' => ([fixtures_dir, Asciidoctor::PDF::ThemeLoader::FontsDir].join separator) }
-        fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
+        fonts = pdf.objects.values.select {|it| Hash === it && it[:Type] == :Font }
         (expect fonts).to have_size 1
         (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
       end
@@ -121,21 +121,21 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
     it 'should look for font file in gem fonts dir if path entry is empty' do
       pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => (fixture_file 'bundled-fonts-theme.yml'), 'pdf-fontsdir' => ([fixtures_dir, ''].join ';') }
-      fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
+      fonts = pdf.objects.values.select {|it| Hash === it && it[:Type] == :Font }
       (expect fonts).to have_size 1
       (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
     end
 
     it 'should look for font file in gem fonts dir if path entry includes GEM_FONTS_DIR' do
       pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => (fixture_file 'bundled-fonts-theme.yml'), 'pdf-fontsdir' => ([fixtures_dir, 'GEM_FONTS_DIR'].join ';') }
-      fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
+      fonts = pdf.objects.values.select {|it| Hash === it && it[:Type] == :Font }
       (expect fonts).to have_size 1
       (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
     end
 
     it 'should allow built-in theme to be extended when using custom fonts dir' do
       pdf = to_pdf %(content\n\n content), attribute_overrides: { 'pdf-theme' => (fixture_file 'custom-fonts-theme.yml'), 'pdf-fontsdir' => fixtures_dir }
-      fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
+      fonts = pdf.objects.values.select {|it| Hash === it && it[:Type] == :Font }
       (expect fonts).to have_size 2
       (expect fonts[0][:BaseFont]).to end_with '+mplus-1p-regular'
       (expect fonts[1][:BaseFont]).to end_with '+mplus1mn-regular'
@@ -143,14 +143,14 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
     it 'should expand GEM_FONTS_DIR in theme file' do
       pdf = to_pdf 'content'
-      fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
+      fonts = pdf.objects.values.select {|it| Hash === it && it[:Type] == :Font }
       (expect fonts).to have_size 1
       (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
     end
 
     it 'should expand GEM_FONTS_DIR in theme file when custom fonts dir is specified' do
       pdf = to_pdf 'content', attribute_overrides: { 'pdf-fontsdir' => fixtures_dir }
-      fonts = pdf.objects.values.select {|it| ::Hash === it && it[:Type] == :Font }
+      fonts = pdf.objects.values.select {|it| Hash === it && it[:Type] == :Font }
       (expect fonts).to have_size 1
       (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
     end

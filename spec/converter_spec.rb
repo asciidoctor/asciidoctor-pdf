@@ -87,7 +87,7 @@ describe Asciidoctor::PDF::Converter do
         after
         EOS
         doc.blocks[1].context = :chart
-        pdf_stream = ::StringIO.new
+        pdf_stream = StringIO.new
         doc.write doc.convert, pdf_stream
         pdf = PDF::Reader.new pdf_stream
         pages = pdf.pages
@@ -110,7 +110,7 @@ describe Asciidoctor::PDF::Converter do
         after
         EOS
         doc.blocks[1].blocks[0].context = :chart
-        pdf_stream = ::StringIO.new
+        pdf_stream = StringIO.new
         doc.write doc.convert, pdf_stream
         pdf = PDF::Reader.new pdf_stream
         pages = pdf.pages

@@ -63,9 +63,9 @@ describe Asciidoctor::PDF::ThemeLoader do
       EOS
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
-      (expect theme.admonition_icon_tip).to be_a ::Hash
+      (expect theme.admonition_icon_tip).to be_a Hash
       (expect theme.admonition_icon_tip).to eql name: 'far-lightbulb', stroke_color: 'FFFF00', size: 24
-      (expect theme.admonition_icon_note).to be_a ::Hash
+      (expect theme.admonition_icon_note).to be_a Hash
       (expect theme.admonition_icon_note).to eql name: 'far-sticky-note', stroke_color: '0000FF', size: 24
     end
 
@@ -98,7 +98,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme).to respond_to :base_font_family
       (expect theme).to respond_to :abstract_title_font_size
       (expect theme).to respond_to :admonition_icon_tip
-      (expect theme.admonition_icon_tip).to be_a ::Hash
+      (expect theme.admonition_icon_tip).to be_a Hash
       (expect theme.admonition_icon_tip).to have_key :stroke_color
     end
 

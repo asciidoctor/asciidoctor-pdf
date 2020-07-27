@@ -1736,7 +1736,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       footer_y = (pdf.find_text 'FOOTER')[0][:y]
-      titles_by_page = (pdf.find_text y: footer_y).each_with_object ::Hash.new do |it, accum|
+      titles_by_page = (pdf.find_text y: footer_y).each_with_object Hash.new do |it, accum|
         accum[it[:page_number]] = it[:string] unless it[:string] == 'FOOTER'
       end
       (expect titles_by_page[2]).to eql '[Part I||]'

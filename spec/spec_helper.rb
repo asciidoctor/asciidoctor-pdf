@@ -26,7 +26,7 @@ Gmagick.prepend (Module.new do
     super
     @bits = [@bits, 8].max
   end
-end) if defined? ::GMagick::Image
+end) if defined? GMagick::Image
 
 # NOTE: fix warning in Prawn::Font:TTF
 Prawn::Font::TTF.prepend (Module.new do
@@ -505,7 +505,7 @@ RSpec.configure do |config|
   end
 
   def get_page_size pdf, page_num = 1
-    if ::PDF::Reader === pdf
+    if PDF::Reader === pdf
       (pdf.page page_num).attributes[:MediaBox].slice 2, 2
     else
       pdf.pages[page_num - 1][:size]
