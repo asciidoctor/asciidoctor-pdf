@@ -359,6 +359,13 @@ describe Asciidoctor::PDF::Converter do
       result = converter.apply_subs_discretely doc, input
       (expect result).to eql input
     end
+
+    it 'should raise exception if an unsupported unit of measurement is passed to to_pt' do
+      (expect do
+        converter = (Asciidoctor.load 'yo', backend: :pdf).converter
+        converter.to_pt 3, 'ft'
+      end).to raise_exception ArgumentError, /unknown unit of measurement: ft/
+    end
   end
 
   describe 'extend' do
