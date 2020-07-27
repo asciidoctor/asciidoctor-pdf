@@ -577,8 +577,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
     it 'should number list in reverse order for each style if reversed option is set' do
       items = %w(ten nine eight seven six five four three two one)
       {
-        '' => ['10', '1'],
-        'lowergreek' => [?\u03ba, ?\u03b1],
+        '' => %w(10 1),
+        'lowergreek' => %W(\u03ba \u03b1),
         'loweralpha' => %w(j a),
         'upperalpha' => %w(J A),
       }.each do |style, (last, first)|
