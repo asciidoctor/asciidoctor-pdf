@@ -214,6 +214,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-full-width.pdf'
     end
 
+    it 'should interpret unrecognized units as pt' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      Follow the image:square.jpg[pdfwidth=12ft].
+      EOS
+
+      (expect pdf.images).to have_size 1
+      (expect pdf.images[0][:width]).to eql 12.0
+    end
+
     it 'should interpret vw units as pt if align-to-page opts is not set' do
       pdf = to_pdf <<~'EOS', analyze: :image
       Follow the image:square.jpg[pdfwidth=50vw].
