@@ -19,7 +19,7 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
     (expect horizontal_rule[:to][:x]).to be > horizontal_rule[:from][:x]
   end
 
-  it 'should draw two dashed line if the border style is dashed', visual: true do
+  it 'should draw dashed line if the border style is dashed', visual: true do
     pdf_theme = {
       thematic_break_border_width: 0.5,
       thematic_break_border_style: 'dashed',
@@ -34,6 +34,23 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
     EOS
 
     (expect to_file).to visually_match 'thematic-break-line-style-dashed.pdf'
+  end
+
+  it 'should draw dotted line if the border style is dotted', visual: true do
+    pdf_theme = {
+      thematic_break_border_width: 0.5,
+      thematic_break_border_style: 'dotted',
+      thematic_break_border_color: 'aa0000',
+    }
+    to_file = to_pdf_file <<~'EOS', 'thematic-break-line-style-dotted.pdf', pdf_theme: pdf_theme
+    before
+
+    ---
+
+    after
+    EOS
+
+    (expect to_file).to visually_match 'thematic-break-line-style-dotted.pdf'
   end
 
   it 'should draw two parallel lines that span the border width if the border style is double', visual: true do
