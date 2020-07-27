@@ -574,19 +574,25 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect no9_text[:x]).to be > no10_text[:x]
     end
 
-    it 'should number list in reverse order if reversed option is set' do
+    it 'should number list in reverse order for each style if reversed option is set' do
       items = %w(ten nine eight seven six five four three two one)
-      pdf = to_pdf <<~EOS, analyze: true
-      [%reversed]
-      #{items.map {|it| %(. #{it}) }.join ?\n}
-      EOS
-
-      lines = pdf.lines
-      expect(lines[0]).to eql '10. ten'
-      expect(lines[-1]).to eql '1. one'
-      ten_text = pdf.find_unique_text 'ten'
-      one_text = pdf.find_unique_text 'one'
-      (expect ten_text[:x]).to eql one_text[:x]
+      {
+        '' => ['10', '1'],
+        'lowergreek' => [?\u03ba, ?\u03b1],
+        'loweralpha' => %w(j a),
+        'upperalpha' => %w(J A),
+      }.each do |style, (last, first)|
+        pdf = to_pdf <<~EOS, analyze: true
+        [#{style}%reversed]
+        #{items.map {|it| %(. #{it}) }.join ?\n}
+        EOS
+        lines = pdf.lines
+        expect(lines[0]).to eql %(#{last}. ten)
+        expect(lines[-1]).to eql %(#{first}. one)
+        ten_text = pdf.find_unique_text 'ten'
+        one_text = pdf.find_unique_text 'one'
+        (expect ten_text[:x]).to eql one_text[:x]
+      end
     end
 
     it 'should start numbering at value of start attribute if specified' do
