@@ -44,6 +44,7 @@ Enhancements::
 * add additional glyphs to built-in fonts (heavy checkmark to fallback font; both checkmarks to monospaced font; numero sign to prose and fallback fonts) (#1625)
 * allow theme to specify text decoration style, color, and width for captions (globally)
 * allow admonition icon image to be remote (if allow-uri-read is set) or data URI
+* allow theme to configure font color of unresolved footnote using unresolved role
 
 Bug Fixes::
 

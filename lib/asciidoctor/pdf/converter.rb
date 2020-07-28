@@ -2447,8 +2447,9 @@ module Asciidoctor
           end
           %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{label}</a>]</sup>)
         elsif node.type == :xref
-          # NOTE: footnote reference not found
-          %(<sup><color rgb="FF0000">[#{node.text}]</color></sup>)
+          %(<sup><color rgb="#{theme.role_unresolved_font_color || 'FF0000'}">[#{node.text}]</color></sup>)
+        else
+          log :warn, %(unknown footnote type: #{node.type.inspect})
         end
       end
 

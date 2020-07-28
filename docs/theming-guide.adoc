@@ -1140,6 +1140,7 @@ The converter provides several predefined roles, which can can all be redefined.
 The `big` and `small` roles map the font size to the $base-font-size-large and $base-font-size-small values, respectively.
 The `underline` and `line-through` roles add the underline and strikethrough decorations, respectively.
 The `subtitle` role is used to configure the font properties of the subtitle of a section title.
+The `unresolved` role is applied to the text of an unresolved reference (currently footnotes only).
 The color roles (e.g., `blue`), which you may be familiar with from the HTML converter, are not mapped by default.
 You'll need to define these color roles in your theme if you'd like to make use of them when converting to PDF.
 
