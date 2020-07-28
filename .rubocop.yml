@@ -164,6 +164,7 @@ Style/PercentLiteralDelimiters:
     '%i': ()
     '%r': //
     '%w': ()
+    '%W': ()
 Style/PerlBackrefs:
   Enabled: false
 Style/RegexpLiteral:
