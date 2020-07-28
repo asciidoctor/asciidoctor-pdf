@@ -24,9 +24,5 @@ class Prawn::Font::AFM
     logger.warn %(The following text could not be fully converted to the Windows-1252 character set:
 #{text.gsub(/^/, '| ').rstrip}) if logger.info? && !@document.scratch?
     text.encode 'windows-1252', undef: :replace, replace: ?\u00ac
-  rescue ::Encoding::InvalidByteSequenceError
-    raise Prawn::Errors::IncompatibleStringEncoding,
-        'Your document includes text which is not compatible with the Windows-1252 character set.
-If you need full UTF-8 support, use TTF fonts instead of the built-in PDF (AFM) fonts.'
   end
 end
