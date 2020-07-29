@@ -536,6 +536,19 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect lines[-1]).to eql '26. z'
     end
 
+    it 'should support decimal marker style when start value has two digits' do
+      blank_line = %(\n\n)
+      pdf = to_pdf <<~EOS, analyze: true
+      [decimal,start=10]
+      #{(?a..?z).map {|c| '. ' + c }.join blank_line}
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 26
+      (expect lines[0]).to eql '10. a'
+      (expect lines[-1]).to eql '35. z'
+    end
+
     it 'should use consistent line height even if list item is entirely monospace' do
       pdf = to_pdf <<~'EOS', analyze: true
       . foo
@@ -578,6 +591,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       items = %w(ten nine eight seven six five four three two one)
       {
         '' => %w(10 1),
+        'decimal' => %w(10 01),
         'lowergreek' => %W(\u03ba \u03b1),
         'loweralpha' => %w(j a),
         'upperalpha' => %w(J A),

@@ -41,6 +41,8 @@ module Asciidoctor
       PygmentsRequirePath = ::File.join __dir__, 'ext/pygments'
       OptimizerRequirePath = ::File.join __dir__, 'optimizer'
 
+      DecimalWithLeadingZero = ::Module.new
+
       AdmonitionIcons = {
         caution: { name: 'fas-fire', stroke_color: 'BF3400', size: 24 },
         important: { name: 'fas-exclamation-circle', stroke_color: 'BF0000', size: 24 },
@@ -1209,10 +1211,8 @@ module Asciidoctor
         add_dest_for_block node if node.id
         # TODO: move list_numeral resolve to a method
         case node.style
-        when 'arabic'
-          list_numeral = 1
         when 'decimal'
-          list_numeral = '01'
+          list_numeral = 1
         when 'loweralpha'
           list_numeral = 'a'
         when 'upperalpha'
@@ -1334,7 +1334,7 @@ module Asciidoctor
         marker_style[:line_height] = @theme.base_line_height
         case (list_type = list.context)
         when :dlist
-          # NOTE: list.style is 'qanda'
+          # NOTE: list.style is always 'qanda'
           complex = node[1]&.compound?
           @list_numerals << (index = @list_numerals.pop).next
           marker = %(#{index}.)
@@ -1344,7 +1344,7 @@ module Asciidoctor
             if index == ''
               marker = ''
             else
-              marker = %(#{index}.)
+              marker = node.parent.style == 'decimal' && index.abs < 10 ? %(#{index.negative? ? '-' : ''}0#{index.abs}.) : %(#{index}.)
               dir = (node.parent.option? 'reversed') ? :pred : :next
               @list_numerals << (index.public_send dir)
             end
