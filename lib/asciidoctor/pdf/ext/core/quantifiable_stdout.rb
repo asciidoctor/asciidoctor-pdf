@@ -21,8 +21,5 @@ class QuantifiableStdout < SimpleDelegator
     super
   end
 
-  def write content
-    @size += content.to_s.bytesize
-    super
-  end
+  alias write <<
 end
