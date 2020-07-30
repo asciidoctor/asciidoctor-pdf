@@ -1344,7 +1344,7 @@ module Asciidoctor
             if index == ''
               marker = ''
             else
-              marker = node.parent.style == 'decimal' && index.abs < 10 ? %(#{index.negative? ? '-' : ''}0#{index.abs}.) : %(#{index}.)
+              marker = node.parent.style == 'decimal' && index.abs < 10 ? %(#{index < 0 ? '-' : ''}0#{index.abs}.) : %(#{index}.)
               dir = (node.parent.option? 'reversed') ? :pred : :next
               @list_numerals << (index.public_send dir)
             end
