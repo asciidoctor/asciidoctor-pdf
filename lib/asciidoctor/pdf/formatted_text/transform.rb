@@ -142,14 +142,7 @@ module Asciidoctor
               # case 1: non-void element
               if node.key? :pcdata
                 # NOTE: skip element if it has no children
-                if (pcdata = node[:pcdata]).empty?
-                  ## NOTE: handle an empty anchor element (i.e., <a ...></a>)
-                  #if (tag_name = node[:name]) == :a
-                  #  seed = clone_fragment inherited, text: DummyText
-                  #  fragments << build_fragment(seed, tag_name, node[:attributes])
-                  #  previous_fragment_is_text = false
-                  #end
-                else
+                unless (pcdata = node[:pcdata]).empty?
                   tag_name = node[:name]
                   attributes = node[:attributes]
                   parent = clone_fragment inherited
