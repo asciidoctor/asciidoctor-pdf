@@ -54,6 +54,15 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     (expect fragments[1][:text]).to eql 'new'
   end
 
+  it 'should not create fragment for empty element' do
+    input = 'foo <strong></strong> bar'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 2
+    (expect fragments[0][:text]).to eql 'foo'
+    (expect fragments[1][:text]).to eql ' bar'
+  end
+
   it 'should create fragment with custom font name' do
     input = '<font name="Helvetica">Helvetica</font>'
     parsed = parser.parse input

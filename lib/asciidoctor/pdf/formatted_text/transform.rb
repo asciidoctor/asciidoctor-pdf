@@ -142,7 +142,12 @@ module Asciidoctor
               # case 1: non-void element
               if node.key? :pcdata
                 # NOTE: skip element if it has no children
-                unless (pcdata = node[:pcdata]).empty?
+                if (pcdata = node[:pcdata]).empty?
+                  # QUESTION should this be handled by the formatter after the transform is complete?
+                  if previous_fragment_is_text && ((previous_fragment_text = fragments[-1][:text]).end_with? ' ')
+                    fragments[-1][:text] = previous_fragment_text.chomp ' '
+                  end
+                else
                   tag_name = node[:name]
                   attributes = node[:attributes]
                   parent = clone_fragment inherited

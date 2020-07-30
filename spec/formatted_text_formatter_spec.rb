@@ -124,6 +124,13 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect pdf.text[1].values_at :string, :font_name).to eql %w(ed NotoSerif)
     end
 
+    it 'should ignore empty formatted phrase' do
+      pdf = to_pdf 'before *{empty}* after', analyze: true
+      text = pdf.text
+      (expect text).to have_size 1
+      (expect text[0][:string]).to eql 'before after'
+    end
+
     it 'should format stem equation as monospace' do
       pdf = to_pdf 'Use stem:[x^2] to square the value.', analyze: true
       equation_text = (pdf.find_text 'x^2')[0]
