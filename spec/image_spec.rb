@@ -1187,6 +1187,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
+    it 'should not fail to parse inline image if alt text contains a double quote character' do
+      (expect do
+        pdf = to_pdf 'Look for image:logo.png[the "no cow" brand] when you buy.', analyze: :image
+        (expect pdf.images).to have_size 1
+      end).to not_log_message
+    end
+
     it 'should warn instead of crash if inline image is unreadable' do
       (expect do
         image_file = fixture_file 'logo.png'
