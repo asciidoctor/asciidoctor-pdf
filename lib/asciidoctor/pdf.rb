@@ -3,6 +3,7 @@
 require_relative 'pdf/version'
 require 'asciidoctor' unless defined? Asciidoctor.load
 require 'prawn'
+require 'prawn/templates'
 begin
   require 'prawn/gmagick'
 rescue LoadError
