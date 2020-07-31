@@ -451,6 +451,26 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
   end
 
+  it 'should number sections in article when sectnums attribute is set' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+    :sectnums:
+
+    == Beginning
+
+    == Middle
+
+    === Detail
+
+    === More Detail
+
+    == End
+    EOS
+
+    (expect pdf.find_unique_text '1. Beginning', font_size: 22).not_to be_nil
+    (expect pdf.find_unique_text '2.1. Detail', font_size: 18).not_to be_nil
+  end
+
   it 'should number subsection of appendix based on appendix letter' do
     pdf = to_pdf <<~'EOS', analyze: true
 		= Book Title
