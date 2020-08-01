@@ -361,6 +361,20 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       to_file = to_pdf_file '|+++<span style="width: 1in; align: center; background-color: #ffff00">hi</span>+++|', 'text-formatter-width-text-alignment.pdf'
       (expect to_file).to visually_match 'text-formatter-width-text-alignment.pdf'
     end
+
+    it 'should not warn if text contains invalid markup in scratch document' do
+      # NOTE: this assertion will fail if the message is logged multiple times
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [%unbreakable]
+        --
+        before +++<foo>bar</foo>+++ after
+        --
+        EOS
+
+        (expect pdf.lines).to eql ['before <foo>bar</foo> after']
+      end).to log_message severity: :ERROR, message: /^failed to parse formatted text:/
+    end
   end
 
   context 'Roles' do
