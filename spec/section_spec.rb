@@ -494,6 +494,33 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.lines).to include 'A.1. Appendix Subsection'
   end
 
+  it 'should treat level-0 special section as chapter in multipart book' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h2_font_color: 'AA0000' }, analyze: true
+    = Document Title
+    :doctype: book
+
+    = Part
+
+    == Chapter
+
+    content
+
+    [appendix]
+    = Details
+
+    We let you know.
+    EOS
+
+    chapter_texts = pdf.find_text font_color: 'AA0000'
+    (expect chapter_texts).to have_size 2
+    chapter_text = chapter_texts[0]
+    (expect chapter_text[:string]).to eql 'Chapter'
+    (expect chapter_text[:page_number]).to eql 3
+    appendix_text = chapter_texts[1]
+    (expect appendix_text[:string]).to eql 'Appendix A: Details'
+    (expect appendix_text[:page_number]).to eql 4
+  end
+
   it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is not set' do
     input = <<~'EOS'
     = Book Title
