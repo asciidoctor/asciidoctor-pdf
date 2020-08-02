@@ -159,7 +159,6 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         literal_border_color: 'dddddd',
         literal_border_width: 0.25,
         literal_border_offset: 2.5,
-        literal_border_radius: 3,
       }
       to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: theme_overrides
       (expect to_file).to visually_match 'text-formatter-code.pdf'

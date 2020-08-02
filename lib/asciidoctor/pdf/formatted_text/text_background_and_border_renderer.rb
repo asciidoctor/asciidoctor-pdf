@@ -41,11 +41,7 @@ module Asciidoctor::PDF::FormattedText
         prev_line_width = pdf.line_width
         pdf.stroke_color border_color
         pdf.line_width border_width
-        if border_radius
-          pdf.stroke_rounded_rectangle at, width, height, border_radius
-        else
-          pdf.stroke_rectangle at, width, height
-        end
+        border_radius ? (pdf.stroke_rounded_rectangle at, width, height, border_radius) : (pdf.stroke_rectangle at, width, height)
         pdf.stroke_color prev_stroke_color
         pdf.line_width prev_line_width
       end
