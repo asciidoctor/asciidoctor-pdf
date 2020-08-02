@@ -314,9 +314,9 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should allow theme to set color, width, and style of grid' do
       pdf_theme = {
-        table_grid_color: 'AAAAAA',
-        table_grid_width: 3,
-        table_grid_style: 'dashed',
+        table_grid_color: 'BBBBBB',
+        table_grid_width: 2,
+        table_grid_style: 'dotted',
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
       [frame=none,grid=all]
@@ -330,9 +330,9 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       lines = pdf.lines.uniq
       (expect lines).to have_size 4
       lines.each do |line|
-        (expect line[:color]).to eql 'AAAAAA'
-        (expect line[:width]).to eql 3
-        (expect line[:style]).to eql :dashed
+        (expect line[:color]).to eql 'BBBBBB'
+        (expect line[:width]).to eql 2
+        (expect line[:style]).to eql :dotted
       end
     end
 

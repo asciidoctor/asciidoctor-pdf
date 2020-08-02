@@ -42,7 +42,7 @@ Prawn::Table::Cell.prepend (Module.new do
         when :dashed
           @pdf.dash border_width * 4
         when :dotted
-          @pdf.dash border_width, space: border_width * 2
+          @pdf.dash border_width
         when :solid
           # normal line style
         else
