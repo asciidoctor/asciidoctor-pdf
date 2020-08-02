@@ -164,6 +164,19 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-code.pdf'
     end
 
+    it 'should add border to phrase even when no background color is set', visual: true do
+      theme_overrides = {
+        literal_font_color: '444444',
+        literal_font_size: '0.75em',
+        literal_border_color: 'E83E8C',
+        literal_border_width: 0.25,
+        literal_border_offset: 2.5,
+        literal_border_radius: 3,
+      }
+      to_file = to_pdf_file 'Type `bundle install` to install dependencies', 'text-formatter-border-only.pdf', pdf_theme: theme_overrides
+      (expect to_file).to visually_match 'text-formatter-border-only.pdf'
+    end
+
     it 'should add background and border to button as defined in theme', visual: true do
       theme_overrides = {
         button_content: '%s',
