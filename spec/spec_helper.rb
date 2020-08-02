@@ -233,7 +233,7 @@ class LineInspector < PDF::Inspector
     @graphic_states = {}
     @page_number = 1
     @width = nil
-    @style = :solid
+    @dash = nil
   end
 
   def append_curved_segment *args
@@ -242,7 +242,8 @@ class LineInspector < PDF::Inspector
   end
 
   def append_line x, y
-    @lines << { page_number: @page_number, from: @from, to: { x: x, y: y }, color: @color, width: @width, style: @style } unless @color.nil? && @width.nil?
+    style = @dash ? (@dash[0] > @width ? :dashed : :dotted) : :solid
+    @lines << { page_number: @page_number, from: @from, to: { x: x, y: y }, color: @color, width: @width, style: style } unless @color.nil? && @width.nil?
     @from = { x: x, y: y }
   end
 
@@ -272,22 +273,9 @@ class LineInspector < PDF::Inspector
   end
 
   # d
+  # NOTE: dash is often set before line width, so we must defer resolving until line is appended
   def set_line_dash a, _b
-    if a.empty?
-      @style = :solid
-    elsif @width
-      gap = a[0]
-      if gap == @width
-        @style = :dotted
-      elsif gap > @width
-        @style = :dashed
-      else
-        @style = :solid
-      end
-    else
-      # NOTE: we can only guess because we don't know the width of the line
-      @style = :dashed
-    end
+    @dash = a.empty? ? nil : a
   end
 
   # w
