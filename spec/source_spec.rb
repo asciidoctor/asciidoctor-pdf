@@ -308,6 +308,23 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect pdf.lines).to eql expected_lines
     end
 
+    it 'should coerce start value for line numbering to 1 if less than 1' do
+      expected_lines = <<~'EOS'.split ?\n
+      1 puts 'Hello, World!'
+      EOS
+
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,xml,linenums,start=0]
+      ----
+      puts 'Hello, World!'
+      ----
+      EOS
+
+      (expect pdf.lines).to eql expected_lines
+    end
+
     it 'should not add line number to first line if source is empty' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
