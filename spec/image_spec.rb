@@ -554,16 +554,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
     end
 
-    it 'should pass SVG warnings to logger' do
+    it 'should pass SVG warnings in main document to logger' do
       { '::' => [48.24, 605.89], ':' => [48.24, 605.14] }.each do |macro_delim, point|
-        (expect do
-          pdf = to_pdf %(image#{macro_delim}faulty.svg[Faulty SVG]), analyze: :rect
-          (expect pdf.rectangles).to have_size 1
-          rect = pdf.rectangles[0]
-          (expect rect[:point]).to eql point
-          (expect rect[:width]).to eql 200.0
-          (expect rect[:height]).to eql 200.0
-        end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'faulty.svg'}; Unknown tag 'foobar')
+        [true, false].each do |in_block|
+          (expect do
+            input = %(image#{macro_delim}faulty.svg[Faulty SVG])
+            input = %([%unbreakable]\n--\n#{input}\n--) if in_block
+            pdf = to_pdf input, analyze: :rect
+            (expect pdf.rectangles).to have_size 1
+            rect = pdf.rectangles[0]
+            (expect rect[:point]).to eql point
+            (expect rect[:width]).to eql 200.0
+            (expect rect[:height]).to eql 200.0
+          end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'faulty.svg'}; Unknown tag 'foobar')
+        end
       end
     end
 
