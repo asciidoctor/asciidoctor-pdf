@@ -545,7 +545,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect rect[:height]).to eql 200.0
     end
 
-    it 'should fail to embed broke SVG with warning' do
+    it 'should fail to embed broken SVG with warning' do
       { '::' => '[Broken SVG] | broken.svg', ':' => '[Broken SVG]' }.each do |macro_delim, alt_text|
         (expect do
           pdf = to_pdf %(image#{macro_delim}broken.svg[Broken SVG]), analyze: true
