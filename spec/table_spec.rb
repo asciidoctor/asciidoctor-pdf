@@ -1303,25 +1303,28 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect after_block_text[:y]).to be < border_bottom_y
     end
 
-    it 'should honor vertical alignment' do
+    it 'should honor vertical alignment on cell' do
       pdf = to_pdf <<~'EOS', analyze: true
-      [cols=2*]
+      [cols=3*]
       |===
-      | 1 +
+      a| 1 +
       2 +
-      3 +
-      4
+      3
 
       .^a|
-      AsciiDoc cell
+      middle
+
+      .>a|
+      bottom
       |===
       EOS
 
-      ref_below = (pdf.find_text '2')[0][:y]
-      ref_above = (pdf.find_text '3')[0][:y]
-      asciidoc_y = (pdf.find_text 'AsciiDoc cell')[0][:y]
-      (expect asciidoc_y).to be < ref_below
-      (expect asciidoc_y).to be > ref_above
+      ref_middle = (pdf.find_text '2')[0][:y]
+      ref_bottom = (pdf.find_text '3')[0][:y]
+      middle_y = (pdf.find_text 'middle')[0][:y]
+      bottom_y = (pdf.find_text 'bottom')[0][:y]
+      (expect middle_y).to eql ref_middle
+      (expect bottom_y).to eql ref_bottom
     end
 
     it 'should coerce middle vertical alignment on head cell to center' do
