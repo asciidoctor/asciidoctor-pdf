@@ -320,6 +320,26 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:y]).to eql 276.036
     end
 
+    it 'should not allow inline image to affect the cursor position of the following paragraph' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      before
+
+      next
+      EOS
+
+      expected_gap = ((pdf.find_unique_text 'before')[:y] - (pdf.find_unique_text 'next')[:y]).round 2
+
+      pdf = to_pdf <<~'EOS', analyze: true
+      before image:tall.svg[pdfwidth=0.5in] after
+
+      next
+      EOS
+
+      actual_gap = ((pdf.find_unique_text %r/before/)[:y] - (pdf.find_unique_text 'next')[:y]).round 2
+      (expect actual_gap).to eql expected_gap
+      (expect (pdf.find_unique_text %r/before/)[:y]).to eql (pdf.find_unique_text %r/after/)[:y]
+    end
+
     it 'should set color space on page that only has image and stamp' do
       pdf = to_pdf <<~'EOS', pdf_theme: { footer_recto_right_content: 'pg {page-number}' }, enable_footer: true
       image::square.svg[]
