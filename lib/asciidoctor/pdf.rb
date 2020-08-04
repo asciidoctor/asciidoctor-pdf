@@ -8,6 +8,7 @@ begin
   require 'prawn/gmagick'
 rescue LoadError
 end unless defined? GMagick::Image
+autoload :Set, 'set'
 require_relative 'pdf/measurements'
 require_relative 'pdf/sanitizer'
 require_relative 'pdf/text_transformer'
