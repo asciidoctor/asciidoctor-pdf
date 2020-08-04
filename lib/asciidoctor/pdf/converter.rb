@@ -1523,7 +1523,6 @@ module Asciidoctor
               # breakage occurs when running content (stamps) are added to page
               # seems to be resolved as of Prawn 2.2.2
               #update_colors if graphic_state.color_space.empty?
-              # NOTE: prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
               # NOTE: cursor advances automatically
               svg_obj.draw
               svg_obj.document.warnings.each do |img_warning|

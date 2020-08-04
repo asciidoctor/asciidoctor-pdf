@@ -32,7 +32,6 @@ module Asciidoctor::PDF::FormattedText
       when 'svg'
         (image_obj = data[:image_obj]).options[:at] = [image_left, image_top]
         # NOTE: prawn-svg messes with the cursor; use float to workaround
-        # NOTE: prawn-svg 0.24.0, 0.25.0, & 0.25.1 didn't restore font after call to draw (see mogest/prawn-svg#80)
         pdf.float do
           pdf.character_spacing(data[:actual_character_spacing]) { image_obj.draw }
           image_obj.document.warnings.each {|img_warning| logger.warn %(problem encountered in image: #{data[:image_path]}; #{img_warning}) }
