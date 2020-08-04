@@ -226,6 +226,25 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
   end
 
+  it 'should not group terms with different casing' do
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+    = Document Title
+
+    ((This)) is not the same as ((this)) or ((that)).
+
+    [index]
+    == Index
+    EOS
+
+    (expect (pdf.lines pdf.find_text page_number: 3).join ?\n).to eql <<~'EOS'.chomp
+    Index
+    T
+    that, 1
+    This, 1
+    this, 1
+    EOS
+  end
+
   it 'should sort capitalized terms ahead of non-capitalized terms' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
