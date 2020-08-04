@@ -93,7 +93,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect index_lines).to include 'custom behavior, 1'
   end
 
-  it 'should not add index entries in delimited block to index twice' do
+  it 'should not add index entries inside delimited block to index twice' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
 
@@ -223,6 +223,24 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     cats
     big cats, 1
     lion, 1
+    EOS
+  end
+
+  it 'should sort capitalized terms ahead of non-capitalized terms' do
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+    = Document Title
+
+    ((O.A.R.)) is a band, whereas ((oar)) is something you use to propel a boat.
+
+    [index]
+    == Index
+    EOS
+
+    (expect (pdf.lines pdf.find_text page_number: 3).join ?\n).to eql <<~'EOS'.chomp
+    Index
+    O
+    O.A.R., 1
+    oar, 1
     EOS
   end
 
