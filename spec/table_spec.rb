@@ -359,6 +359,23 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       end
     end
 
+    it 'should raise exception if border style is invalid' do
+      pdf_theme = {
+        table_border_color: '3A3A3A',
+        table_border_width: 2,
+        table_border_style: 'double',
+      }
+      (expect do
+        to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+        [frame=all,grid=none]
+        |===
+        | A | B
+        | C | D
+        |===
+        EOS
+      end).to raise_exception ArgumentError, 'border_line must be :solid, :dotted or :dashed'
+    end
+
     it 'should honor cellbgcolor attribute in table cell to set background color of cell', visual: true do
       to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor.pdf'
       :attribute-undefined: drop
