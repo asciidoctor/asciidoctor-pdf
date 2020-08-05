@@ -604,7 +604,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect images).to have_size 1
       image = pdf.images[0]
       (expect image[:page_number]).to eql 1
-      (expect image[:implicit_width]).to eql 287
+      (expect image[:intrinsic_width]).to eql 287
       (expect image[:x]).to eql 48.24
       (expect image[:y]).to eql 756.0
       (expect image[:width]).to eql 287 * 0.75
@@ -706,7 +706,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       pdf = to_pdf 'image::waterfall.bmp[Waterfall,240]', analyze: :image
       (expect pdf.images).to have_size 1
       image = pdf.images[0]
-      (expect image[:implicit_width]).to eql 240
+      (expect image[:intrinsic_width]).to eql 240
       (expect image[:width]).to eql 180.0
     end if defined? GMagick::Image
   end
@@ -730,7 +730,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       pdf = to_pdf 'image::tux.gif[Tux]', analyze: :image
       (expect pdf.images).to have_size 1
       image = pdf.images[0]
-      (expect image[:implicit_width]).to eql 204
+      (expect image[:intrinsic_width]).to eql 204
       (expect image[:width]).to eql 153.0
     end if defined? GMagick::Image
 
@@ -738,7 +738,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       pdf = to_pdf 'image:tux.gif[Tux,16] is always a good sign.', analyze: :image
       (expect pdf.images).to have_size 1
       image = pdf.images[0]
-      (expect image[:implicit_width]).to eql 204
+      (expect image[:intrinsic_width]).to eql 204
       (expect image[:width]).to eql 12.0
     end if defined? GMagick::Image
   end
@@ -1289,8 +1289,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       images = pdf.images
       (expect images).to have_size 1
       image = images[0]
-      (expect image[:implicit_width].to_f).to eql image[:width].to_f
-      (expect image[:implicit_height].to_f).to eql image[:height].to_f
+      (expect image[:width]).to eql image[:intrinsic_width].to_f
+      (expect image[:height]).to eql image[:intrinsic_height].to_f
     end
 
     it 'should scale image down to fit available height', visual: true do
