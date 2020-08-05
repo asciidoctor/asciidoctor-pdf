@@ -1281,6 +1281,18 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect line1_spacing).to eql line2_spacing
     end
 
+    it 'should not scale image if pdfwidth matches intrinsic width' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      see image:tux.png[pdfwidth=204] run
+      EOS
+
+      images = pdf.images
+      (expect images).to have_size 1
+      image = images[0]
+      (expect image[:implicit_width].to_f).to eql image[:width].to_f
+      (expect image[:implicit_height].to_f).to eql image[:height].to_f
+    end
+
     it 'should scale image down to fit available height', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-inline-scale-down.pdf'
       :pdf-page-size: A6
