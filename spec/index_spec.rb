@@ -336,6 +336,17 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect terms).to eql %w(anchor AsciiDoc Asciidoctor authoring)
   end
 
+  it 'should start with no categories' do
+    index = Asciidoctor::PDF::IndexCatalog.new
+    (expect index).to be_empty
+  end
+
+  it 'should initiate category with no terms' do
+    index = Asciidoctor::PDF::IndexCatalog.new
+    index.init_category 'C'
+    (expect (index.find_category 'C').terms).to be_empty
+  end
+
   it 'should sort arabic page numbers in index term numerically' do
     index = Asciidoctor::PDF::IndexCatalog.new
     [11, 10, 100].each do |pgnum|
