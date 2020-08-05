@@ -597,7 +597,7 @@ The `transparent` keyword can be used for the background or border color, but no
 An image is specified either as a bare image path or as an inline image macro as found in the AsciiDoc syntax.
 Images in the theme file are currently resolved relative to the value of the `pdf-themesdir` attribute.
 (If `pdf-theme` is a path that ends in `.yml`, and `pdf-themesdir` is not set, then the images are resolved relative to the directory of the path specified by `pdf-theme`).
-If you want to use an image in your theme that's relative to the document you're converting, you can prefix the target with the `{docdir}` attribute reference.
+If you want to use an image in your theme that's relative to the document you're converting, you can prefix the target with the `\{docdir}` attribute reference.
 
 The following image types (and corresponding file extensions) are supported:
 
@@ -625,7 +625,7 @@ title-page:
 ----
 
 In either case, the image is resolved relative to the value of the `pdf-themesdir` attribute, as previously described.
-If you want to instead reference an image relative to the document you're converting, then prefix the target with the `{docdir}` attribute reference.
+If you want to instead reference an image relative to the document you're converting, then prefix the target with the `\{docdir}` attribute reference.
 
 [source,yaml]
 ----
