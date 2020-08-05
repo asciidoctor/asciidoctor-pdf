@@ -2324,9 +2324,7 @@ module Asciidoctor
                 margin_top: 0,
                 margin_bottom: @theme.description_list_term_spacing,
                 style: @theme.description_list_term_font_style.to_sym
-            category.terms.each do |term|
-              convert_index_list_item term
-            end
+            category.terms.each {|term| convert_index_list_item term }
             if @theme.prose_margin_bottom > y - reference_bounds.absolute_bottom
               bounds.move_past_bottom
             else
