@@ -28,12 +28,28 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       end).to log_message severity: :ERROR, message: /^failed to parse formatted text:/
     end
 
-    it 'should allow span tag to control width and text alignment' do
+    it 'should allow span tag to control width' do
+      output = subject.format '<span style="width: 1in">hi</span>'
+      (expect output).to have_size 1
+      (expect output[0][:text]).to eql 'hi'
+      (expect output[0][:width]).to eql '1in'
+      (expect output[0][:align]).to be_nil
+    end
+
+    it 'should allow span tag to align text to center within width' do
       output = subject.format '<span style="width: 1in; align: center">hi</span>'
       (expect output).to have_size 1
       (expect output[0][:text]).to eql 'hi'
       (expect output[0][:width]).to eql '1in'
       (expect output[0][:align]).to eql :center
+    end
+
+    it 'should allow span tag to align text to right within width' do
+      output = subject.format '<span style="width: 1in; align: right">hi</span>'
+      (expect output).to have_size 1
+      (expect output[0][:text]).to eql 'hi'
+      (expect output[0][:width]).to eql '1in'
+      (expect output[0][:align]).to eql :right
     end
   end
 
@@ -370,8 +386,12 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should apply width and alignment specified by span tag', visual: true do
-      to_file = to_pdf_file '|+++<span style="width: 1in; align: center; background-color: #ffff00">hi</span>+++|', 'text-formatter-width-text-alignment.pdf'
-      (expect to_file).to visually_match 'text-formatter-width-text-alignment.pdf'
+      %w(center right).each do |align|
+        to_file = to_pdf_file <<~EOS, %(text-formatter-align-#{align}-within-width.pdf)
+        |+++<span style="width: 1in; align: #{align}; background-color: #ffff00">hi</span>+++|
+        EOS
+        (expect to_file).to visually_match %(text-formatter-align-#{align}-within-width.pdf)
+      end
     end
 
     it 'should not warn if text contains invalid markup in scratch document' do
