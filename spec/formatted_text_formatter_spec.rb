@@ -513,6 +513,16 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[2][:font_size].to_f.round 2).to eql 10.0
     end
 
+    it 'should base font size roles on large and small theme keys if not specified in theme' do
+      pdf_theme = build_pdf_theme({ base_font_size: 12, base_font_size_large: 18, base_font_size_small: 9 }, (fixture_file 'extends-no-theme.yml'))
+      pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: pdf_theme, analyze: true
+      text = pdf.text
+      (expect text).to have_size 3
+      (expect text[0][:font_size].to_f.round 2).to eql 18.0
+      (expect text[1][:font_size]).to be 12
+      (expect text[2][:font_size].to_f.round 2).to eql 9.0
+    end
+
     it 'should allow theme to control formatting applied to phrase by role' do
       pdf_theme = {
         role_red_font_color: 'ff0000',
