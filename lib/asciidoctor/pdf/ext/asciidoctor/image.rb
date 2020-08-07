@@ -19,10 +19,6 @@ module Asciidoctor
       end
     end
 
-    def format
-      (attr 'format', nil, false) || ((ext = ::File.extname(inline? ? target : (attr 'target'))).downcase.slice 1, ext.length)
-    end
-
     def target_and_format
       image_path = inline? ? target : (attr 'target')
       if (image_path.start_with? 'data:') && (m = DataUriRx.match image_path)
