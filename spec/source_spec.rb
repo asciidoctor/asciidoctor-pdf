@@ -835,10 +835,11 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     it 'should support background color on highlighted tokens', visual: true do
       to_file = to_pdf_file <<~'EOS', 'source-pygments-token-background-color.pdf'
       :source-highlighter: pygments
-      :pygments-style: colorful
+      :pygments-style: murphy
 
       [source,ruby]
       ----
+      # Matches a hex color value like #FF0000
       if /^#[a-fA-F0-9]{6}$/.match? color
         puts 'hex color'
       end
