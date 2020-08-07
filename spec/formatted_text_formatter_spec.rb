@@ -19,6 +19,22 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect output[1][:color]).to eql '0000FF'
     end
 
+    it 'should allow font weight to be set on nested phrase' do
+      input = '<span style="font-weight: bold">new</span> release'
+      output = subject.format input
+      (expect output).to have_size 2
+      (expect output[0][:text]).to eql 'new'
+      (expect output[0][:styles].to_a).to eql [:bold]
+    end
+
+    it 'should allow font style to be set on nested phrase' do
+      input = 'This is <span style="font-style: italic">so</span> easy'
+      output = subject.format input
+      (expect output).to have_size 3
+      (expect output[1][:text]).to eql 'so'
+      (expect output[1][:styles].to_a).to eql [:italic]
+    end
+
     it 'should warn if text contains invalid markup' do
       (expect do
         input = 'before <foo>bar</foo> after'
