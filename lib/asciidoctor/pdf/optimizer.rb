@@ -15,6 +15,9 @@ module Asciidoctor
         'prepress' => :prepress,
       }).default = :default
 
+      attr_reader :quality
+      attr_reader :compatibility_level
+
       def initialize quality = 'default', compatibility_level = '1.4'
         @quality = QUALITY_NAMES[quality]
         @compatibility_level = compatibility_level

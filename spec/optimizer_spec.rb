@@ -18,6 +18,11 @@ describe 'Asciidoctor::PDF::Optimizer' do
     (expect pdf_info[:Title]).to eql 'Document Title'
     (expect pdf_info[:Author]).to eql 'Doc Writer'
     (expect pdf_info[:Subject]).to eql 'Example'
+    (expect defined? Asciidoctor::PDF::Optimizer).to be_truthy
+    # NOTE assert constructor behavior once we know the class has been loaded
+    optimizer = Asciidoctor::PDF::Optimizer.new
+    (expect optimizer.quality).to eql :default
+    (expect optimizer.compatibility_level).to eql '1.4'
   end
 
   it 'should use existing pdfmark file if present when optimizing' do
