@@ -578,6 +578,20 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       end).not_to raise_exception
     end
 
+    it 'should add indentation guards at start of line that begins with space to preserve indentation' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: coderay
+
+      [source,yaml]
+      ----
+      category:
+        hash:
+          key: "value"
+      ----
+      EOS
+      (expect pdf.lines).to eql ['category:', %(\u00a0 hash:), %(\u00a0   key: "value")]
+    end
+
     it 'should expand tabs to preserve indentation' do
       pdf = to_pdf <<~EOS, analyze: true
       :source-highlighter: coderay
