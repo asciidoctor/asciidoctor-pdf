@@ -780,7 +780,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect formatted_text[:font_name]).to eql 'NotoSerif'
     end
 
-    it 'should allow theme to override background and border for custom role', visual: true do
+    it 'should allow theme to set background and border for custom role', visual: true do
       pdf_theme = {
         role_variable_font_family: 'Courier',
         role_variable_font_size: '1.15em',
@@ -793,6 +793,18 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       }
       to_file = to_pdf_file 'reads value from the [.variable]#counter# variable', 'text-formatter-inline-role-bg.pdf', pdf_theme: pdf_theme
       (expect to_file).to visually_match 'text-formatter-inline-role-bg.pdf'
+    end
+
+    it 'should allow theme to set only border for custom role', visual: true do
+      pdf_theme = {
+        role_cmd_font_family: 'Courier',
+        role_cmd_font_size: '1.15em',
+        role_cmd_border_color: '222222',
+        role_cmd_border_offset: 2,
+        role_cmd_border_width: 0.5,
+      }
+      to_file = to_pdf_file 'use the [.cmd]#man# command to get help', 'text-formatter-inline-role-border.pdf', pdf_theme: pdf_theme
+      (expect to_file).to visually_match 'text-formatter-inline-role-border.pdf'
     end
 
     it 'should support role that sets font color in section title and toc' do
