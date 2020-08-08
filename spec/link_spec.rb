@@ -217,6 +217,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
   context 'Theming' do
     it 'should apply text decoration to link defined by theme' do
       pdf_theme = {
+        link_font_style: 'italic',
         link_text_decoration: 'underline',
       }
       input = 'The home page for Asciidoctor is located at https://asciidoctor.org.'
@@ -226,6 +227,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       underline = lines[0]
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
       link_text = (pdf.find_text 'https://asciidoctor.org')[0]
+      (expect link_text[:font_name]).to eql 'NotoSerif-Italic'
       (expect link_text[:font_color]).to eql underline[:color]
       (expect underline[:width]).to be_nil
     end
