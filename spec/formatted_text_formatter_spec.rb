@@ -637,6 +637,21 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect lines[1][:width]).to be 2
     end
 
+    it 'should allow custom role to specify font style and text decoration' do
+      pdf_theme = { role_heavy_text_decoration: 'underline', role_heavy_font_style: 'bold' }
+      input = '[.heavy]#kick#, bass, and trance'
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      underline = lines[0]
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      text = pdf.text
+      (expect text).to have_size 2
+      underlined_text = text[0]
+      (expect underlined_text[:font_name]).to eql 'NotoSerif-Bold'
+      (expect underline[:from][:x]).to eql underlined_text[:x]
+    end
+
     it 'should allow custom role to apply text transform' do
       pdf_theme = {
         role_lower_text_transform: 'lowercase',
