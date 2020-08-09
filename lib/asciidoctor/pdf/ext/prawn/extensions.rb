@@ -93,7 +93,7 @@ module Asciidoctor
       # Returns the margins for the current page as a 4 element array (top, right, bottom, left)
       #
       def page_margin
-        [page.margins[:top], page.margins[:right], page.margins[:bottom], page.margins[:left]]
+        [page_margin_top, page_margin_right, page_margin_bottom, page_margin_left]
       end
 
       # Returns the width of the left margin for the current page
