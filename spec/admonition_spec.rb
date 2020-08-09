@@ -96,15 +96,17 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect label_text[:string]).to eql 'PRO TIP'
   end
 
-  it 'should not transform label text if admonition_label_text_transform key is nil' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_text_transform: nil }, analyze: true
-    [NOTE,caption=Pro Tip]
-    Use bundler!
-    EOS
+  it 'should not transform label text if admonition_label_text_transform key is nil, none, or invalid' do
+    [nil, 'none', 'invalid'].each do |transform|
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_text_transform: transform }, analyze: true
+      [NOTE,caption=Pro Tip]
+      Use bundler!
+      EOS
 
-    label_text = pdf.text[0]
-    (expect label_text[:font_name]).to eql 'NotoSerif-Bold'
-    (expect label_text[:string]).to eql 'Pro Tip'
+      label_text = pdf.text[0]
+      (expect label_text[:font_name]).to eql 'NotoSerif-Bold'
+      (expect label_text[:string]).to eql 'Pro Tip'
+    end
   end
 
   # TODO: this could use a deeper assertion
