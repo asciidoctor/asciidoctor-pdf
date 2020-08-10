@@ -485,21 +485,7 @@ module Asciidoctor
 
       # Bounds
 
-      # Overrides the built-in pad operation to allow for asymmetric paddings.
-      #
-      # Example:
-      #
-      #  pad 20, 10 do
-      #    text 'A paragraph with twice as much top padding as bottom padding.'
-      #  end
-      #
-      def pad top, bottom = nil
-        move_down top
-        yield
-        move_down(bottom || top)
-      end
-
-      # Combines the built-in pad and indent operations into a single method.
+      # Augments the built-in pad method by adding support for specifying padding on all four sizes.
       #
       # Padding may be specified as an array of four values, or as a single value.
       # The single value is used as the padding around all four sides of the box.
@@ -526,9 +512,9 @@ module Asciidoctor
             bounds.add_left_padding p_left
             bounds.add_right_padding p_right
             yield
-            # NOTE: support negative bottom padding for use with quote block
+            # NOTE: support negative bottom padding to shave bottom margin of last child
+            # NOTE: this doesn't work well at a page boundary since not all of the bottom margin may have been applied
             if p_bottom < 0
-              # QUESTION: should we return to previous page if top of page is reached?
               p_bottom < cursor - reference_bounds.top ? (move_cursor_to reference_bounds.top) : (move_down p_bottom)
             else
               p_bottom < cursor ? (move_down p_bottom) : reference_bounds.move_past_bottom
@@ -540,13 +526,6 @@ module Asciidoctor
         else
           yield
         end
-
-        # alternate, delegated logic
-        #pad padding[0], padding[2] do
-        #  indent padding[1], padding[3] do
-        #    yield
-        #  end
-        #end
       end
 
       def expand_indent_value value
