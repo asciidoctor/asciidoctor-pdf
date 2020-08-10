@@ -258,5 +258,29 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect stream.hash[:Filter]).to eql [:FlateDecode]
       (expect stream.data).not_to include '/DeviceRGB'
     end
+
+    it 'should not compress streams when compress attribute is set on document and page is imported' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'compress' => '' }
+      before
+
+      image::red-green-blue.pdf[page=1]
+
+      after
+      EOS
+      objects = pdf.objects
+      pages = pdf.objects.values.find {|it| Hash === it && it[:Type] == :Pages }
+      objects[pages[:Kids][1]][:Contents].map {|it| objects[it] }.each do |stream|
+        (expect stream.hash[:Filter]).to be_nil
+        (expect stream.data).to include '/DeviceRGB'
+      end
+
+      stream = objects[objects[pages[:Kids][0]][:Contents]]
+      (expect stream.hash[:Filter]).to be_nil
+      (expect stream.data).to include '/DeviceRGB'
+
+      stream = objects[objects[pages[:Kids][2]][:Contents]]
+      (expect stream.hash[:Filter]).to be_nil
+      (expect stream.data).to include '/DeviceRGB'
+    end
   end
 end
