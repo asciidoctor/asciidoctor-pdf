@@ -3,7 +3,7 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Cover Page' do
-  it 'should add front cover page if front-cover-image attribute is set to raw path' do
+  it 'should add front cover page if front-cover-image attribute is set to bare path' do
     pdf = to_pdf <<~EOS
     = Document Title
     :front-cover-image: #{fixture_file 'cover.jpg', relative: true}
@@ -48,6 +48,21 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     images = get_images pdf, 1
     (expect images).to have_size 1
     (expect images[0].data).to eql File.binread fixture_file 'cover.jpg'
+  end
+
+  it 'should not add cover page if file cannot be resolved' do
+    (expect do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+      :front-cover-image: image:no-such-file.jpg[]
+
+      content page
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      (expect pdf.lines pdf.find_text page_number: 1).to eql ['Document Title']
+    end).to log_message severity: :WARN, message: %(front cover image not found or readable: #{fixture_file 'no-such-file.jpg'})
   end
 
   it 'should not add cover page if value is ~' do
