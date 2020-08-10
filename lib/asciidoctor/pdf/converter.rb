@@ -1991,6 +1991,7 @@ module Asciidoctor
             text_color: @font_color,
           }
           body_cell_line_metrics = calc_line_metrics theme.base_line_height
+          body_cell_padding = ::Array === (body_cell_padding = theme.table_cell_padding) && body_cell_padding.size == 4 ? body_cell_padding.dup : (expand_padding_value body_cell_padding)
           (body_rows + node.rows[:foot]).each do |row|
             table_data << (row.map do |cell|
               cell_data = base_cell_data.merge \
@@ -2056,12 +2057,13 @@ module Asciidoctor
                   cell_data.delete :size
                   cell_data.delete :text_color
                 end
+                # NOTE: line metrics get applied when AsciiDoc content is converted
                 cell_line_metrics = nil
-                asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self, (cell_data.merge content: cell.inner_document, padding: theme.table_cell_padding)
+                asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self, (cell_data.merge content: cell.inner_document, padding: body_cell_padding.dup)
                 cell_data = { content: asciidoc_cell }
               end
               if cell_line_metrics
-                cell_padding = ::Array === (cell_padding = theme.table_cell_padding) && cell_padding.size == 4 ? cell_padding.dup : (expand_padding_value cell_padding)
+                cell_padding = body_cell_padding.dup
                 cell_padding[0] += cell_line_metrics.padding_top
                 cell_padding[2] += cell_line_metrics.padding_bottom
                 cell_data[:leading] = cell_line_metrics.leading
