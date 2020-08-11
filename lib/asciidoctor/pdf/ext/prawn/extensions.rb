@@ -138,7 +138,7 @@ module Asciidoctor
         if invert
           (recto_page? pgnum) ? :verso : :recto
         else
-          (recto_page? pgnum) ? :recto : :verso
+          (verso_page? pgnum) ? :verso : :recto
         end
       end
 
