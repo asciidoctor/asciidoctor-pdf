@@ -708,22 +708,49 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
   context 'Background & Lines' do
     it 'should allow theme to customize color, width, and style of column rule' do
+      %w(dotted dashed).each do |style|
+        pdf_theme = {
+          admonition_column_rule_color: '222222',
+          admonition_column_rule_width: 1,
+          admonition_column_rule_style: style,
+        }
+        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+        TIP: You can use the theme to customize the color and width of the column rule.
+        EOS
+
+        lines = pdf.lines
+        (expect lines).to have_size 1
+        column_rule = lines[0]
+        (expect column_rule[:from][:x]).to eql column_rule[:to][:x]
+        (expect column_rule[:color]).to eql '222222'
+        (expect column_rule[:width]).to eql 1
+        (expect column_rule[:style]).to eql style.to_sym
+      end
+    end
+
+    it 'should allow theme to specify double style for column rule' do
       pdf_theme = {
         admonition_column_rule_color: '222222',
-        admonition_column_rule_width: 2,
-        admonition_column_rule_style: 'dotted',
+        admonition_column_rule_width: 1,
+        admonition_column_rule_style: 'double',
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
       TIP: You can use the theme to customize the color and width of the column rule.
       EOS
 
       lines = pdf.lines
-      (expect lines).to have_size 1
-      column_rule = lines[0]
-      (expect column_rule[:from][:x]).to eql column_rule[:to][:x]
-      (expect column_rule[:color]).to eql '222222'
-      (expect column_rule[:width]).to eql 2
-      (expect column_rule[:style]).to eql :dotted
+      (expect lines).to have_size 2
+      column_rule1 = lines[0]
+      (expect column_rule1[:from][:x]).to eql column_rule1[:to][:x]
+      (expect column_rule1[:color]).to eql '222222'
+      (expect column_rule1[:width]).to eql 1
+      (expect column_rule1[:style]).to eql :solid
+      column_rule2 = lines[1]
+      (expect column_rule2[:from][:x]).to eql column_rule2[:to][:x]
+      (expect column_rule2[:color]).to eql '222222'
+      (expect column_rule2[:width]).to eql 1
+      (expect column_rule2[:style]).to eql :solid
+      (expect column_rule2[:from][:x] - column_rule1[:from][:x]).to eql 2.0
     end
 
     it 'should use base border width for column rule if column rule width is nil' do
