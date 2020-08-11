@@ -849,17 +849,6 @@ module Asciidoctor
 
       # Grouping
 
-      # Conditional group operation
-      #
-      def group_if verdict
-        if verdict
-          state.optimize_objects = false # optimize_objects breaks group
-          group { yield }
-        else
-          yield
-        end
-      end
-
       def get_scratch_document
         # marshal if not using transaction feature
         #Marshal.load Marshal.dump @prototype
