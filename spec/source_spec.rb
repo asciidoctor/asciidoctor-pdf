@@ -93,6 +93,11 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
 
+      [source,php?funcnamehighlighting=1]
+      ----
+      cal_days_in_month(CAL_GREGORIAN, 6, 2019)
+      ----
+
       [source,php?funcnamehighlighting=0]
       ----
       cal_days_in_month(CAL_GREGORIAN, 6, 2019)
@@ -100,18 +105,27 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
 
       if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
-        funcname_text = (pdf.find_text 'cal_days_in_month')[0]
-        (expect funcname_text).not_to be_nil
-        (expect funcname_text[:font_color]).to eql '333333'
+        ref_funcname_text = (pdf.find_text 'cal_days_in_month')[0]
+        (expect ref_funcname_text).not_to be_nil
+        ref_year_text = (pdf.find_text '2019')[0]
+        (expect ref_year_text).not_to be_nil
 
-        year_text = (pdf.find_text '2019')[0]
+        funcname_text = (pdf.find_text 'cal_days_in_month')[1]
+        (expect funcname_text).not_to be_nil
+        year_text = (pdf.find_text '2019')[1]
         (expect year_text).not_to be_nil
-        (expect year_text[:font_color]).to eql '0000DD'
+        
+        (expect funcname_text[:font_color]).not_to eql ref_funcname_text[:font_color]
+        (expect funcname_text[:font_name]).not_to eql ref_funcname_text[:font_name]
+        (expect year_text[:font_color]).to eql ref_year_text[:font_color]
+        (expect year_text[:font_name]).to eql ref_year_text[:font_name]
       else
         text = pdf.text
-        (expect text).to have_size 1
+        (expect text).to have_size 2
         (expect text[0][:string]).to eql 'cal_days_in_month(CAL_GREGORIAN, 6, 2019)'
         (expect text[0][:font_color]).to eql '333333'
+        (expect text[1][:string]).to eql 'cal_days_in_month(CAL_GREGORIAN, 6, 2019)'
+        (expect text[1][:font_color]).to eql '333333'
       end
     end
 
