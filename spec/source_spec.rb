@@ -229,7 +229,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       end).not_to raise_exception
     end
 
-    it 'should apply bw style' do
+    it 'should apply bw style if specified' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
       :rouge-style: bw
@@ -481,6 +481,22 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
 
       (expect pdf.rectangles).to be_empty
+    end
+
+    it 'should preserve indentation of highlighted line' do
+      input = <<~'EOS'
+      :source-highlighter: rouge
+
+      [source,text,highlight=1]
+      ----
+        indented line
+      ----
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      (expect pdf.lines).to eql [%(\u00a0 indented line)]
+      pdf = to_pdf input, analyze: :rect
+      (expect pdf.rectangles).to have_size 1
     end
 
     it 'should indent wrapped line if line numbers are enabled' do
