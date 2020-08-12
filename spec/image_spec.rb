@@ -426,6 +426,19 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect below_second_text[:page_number]).to eql 3
     end
 
+    it 'should scale down inline SVG to fit height of page' do
+      input = <<~'EOS'
+      :pdf-page-size: 200x350
+      :pdf-page-margin: 0
+
+      image:tall.svg[]
+      EOS
+
+      pdf = to_pdf input, analyze: :line
+      image_h = pdf.lines[1][:to][:y] - pdf.lines[1][:from][:y]
+      (expect image_h).to be_within(1).of(350)
+    end
+
     it 'should display text inside link' do
       pdf = to_pdf <<~'EOS', analyze: true
       image::svg-with-link.svg[]
