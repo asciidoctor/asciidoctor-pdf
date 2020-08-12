@@ -114,7 +114,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         (expect funcname_text).not_to be_nil
         year_text = (pdf.find_text '2019')[1]
         (expect year_text).not_to be_nil
-        
+
         (expect funcname_text[:font_color]).not_to eql ref_funcname_text[:font_color]
         (expect funcname_text[:font_name]).not_to eql ref_funcname_text[:font_name]
         (expect year_text[:font_color]).to eql ref_year_text[:font_color]
