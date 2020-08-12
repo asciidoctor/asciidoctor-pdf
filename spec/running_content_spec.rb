@@ -1443,6 +1443,39 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-end-margin.pdf'
     end
 
+    it 'should allow theme to specify margin as single element array' do
+      page_w, page_h = get_page_size to_pdf '', analyze: true
+
+      pdf_theme = {
+        header_height: 36,
+        header_columns: '<50% >50%',
+        header_line_height: 1,
+        header_padding: 0,
+        header_recto_margin: [10],
+        header_recto_content_margin: [0],
+        header_recto_left_content: %(image:#{fixture_file 'square.png'}[fit=contain]),
+        header_verso_margin: [10],
+        header_verso_content_margin: [0],
+        header_verso_right_content: %(image:#{fixture_file 'square.png'}[fit=contain]),
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
+      page one
+
+      <<<
+
+      page two
+      EOS
+
+      recto_image, verso_image = pdf.images
+      (expect recto_image[:width]).to eql 36.0
+      (expect verso_image[:width]).to eql 36.0
+      (expect recto_image[:x]).to eql 10.0
+      (expect recto_image[:y]).to eql (page_h - 10.0)
+      (expect verso_image[:x]).to eql (page_w - 10.0 - verso_image[:width])
+      (expect verso_image[:y]).to eql (page_h - 10.0)
+    end
+
     it 'should draw column rule between columns using specified width and spacing', visual: true do
       pdf_theme = build_pdf_theme \
         header_height: 36,
