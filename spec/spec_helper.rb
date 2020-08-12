@@ -242,7 +242,7 @@ class LineInspector < PDF::Inspector
   end
 
   def append_line x, y
-    style = @dash ? (@dash[0] > @width ? :dashed : :dotted) : :solid
+    style = @dash && @width ? (@dash[0] > @width ? :dashed : :dotted) : :solid
     @lines << { page_number: @page_number, from: @from, to: { x: x, y: y }, color: @color, width: @width, style: style } unless @color.nil? && @width.nil?
     @from = { x: x, y: y }
   end
