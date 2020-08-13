@@ -86,6 +86,34 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect (deep_text[:x] + deep_text[:width] * 0.5).round 2).to eql midpoint
   end
 
+  it 'should allow theme to align section title for specific level' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_align: 'center' }, analyze: true
+    = Document Title
+    :notitle:
+    :doctype: book
+
+    = Part A
+
+    == First Chapter
+
+    content
+
+    = Part B
+
+    == Last Chapter
+
+    content
+    EOS
+
+    midpoint = pdf.pages[0][:size][0] * 0.5
+    left_content_margin = (pdf.find_text 'content')[0][:x]
+    part_a_text = pdf.find_unique_text 'Part A'
+    first_chapter_text = pdf.find_unique_text 'First Chapter'
+    (expect part_a_text[:x]).to be > left_content_margin
+    (expect (part_a_text[:x] + part_a_text[:width] * 0.5).round 2).to eql midpoint
+    (expect first_chapter_text[:x]).to eql left_content_margin
+  end
+
   it 'should not partition section title by default' do
     pdf = to_pdf <<~'EOS', analyze: true
     == Title: Subtitle
