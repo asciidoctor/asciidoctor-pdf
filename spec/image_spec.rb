@@ -608,6 +608,24 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       to_file = to_pdf_file 'image::gradient.svg[pdfwidth=100%]', 'image-svg-with-gradient.pdf'
       (expect to_file).to visually_match 'image-svg-with-gradient.pdf'
     end
+
+    it 'should set graphic state for running content when image occupies whole page' do
+      pdf_theme = {
+        footer_recto_right_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
+        footer_verso_left_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true
+      before
+
+      image::tall.svg[pdfwidth=50%]
+
+      after
+      EOS
+
+      (expect pdf.pages).to have_size 3
+      page_contents = pdf.objects[(pdf.page 2).page_object[:Contents]].data
+      (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 0.0 scn']
+    end
   end
 
   context 'Raster' do
@@ -705,6 +723,26 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'lorem-ipsum.yml'}; image file is an unrecognised format)
       end
     end if defined? GMagick::Image
+
+    it 'should set graphic state for running content when image occupies whole page' do
+      pdf_theme = {
+        footer_recto_right_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
+        footer_verso_left_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true
+      :pdf-page-size: Letter
+
+      before
+
+      image::cover.jpg[pdfwidth=100%]
+
+      after
+      EOS
+
+      (expect pdf.pages).to have_size 3
+      page_contents = pdf.objects[(pdf.page 2).page_object[:Contents]].data
+      (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 0.0 scn']
+    end
   end
 
   context 'BMP' do

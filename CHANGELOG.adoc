@@ -97,6 +97,7 @@ Bug Fixes::
 * prevent PDF page import from corrupting references in PDF (#1726)
 * display decimal list marker correctly when list is reversed (e.g., 10., 09., 08., etc)
 * use correct spacing for dotted border dash on table (length and spacing should match width)
+* set color space on page with only image so font color is preserved in running content (#1742)
 
 Compliance::
 
