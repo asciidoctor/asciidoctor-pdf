@@ -197,6 +197,38 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images[0][:x]).to eql 48.24
     end
 
+    it 'should allow left margin to be set for left-aligned logo image' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_margin_left: 10 }, analyze: :image
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[align=left]
+      EOS
+
+      left_margin = 0.67 * 72
+
+      images = pdf.images
+      (expect images).to have_size 1
+      title_page_image = images[0]
+      (expect title_page_image[:page_number]).to be 1
+      (expect title_page_image[:x]).to eql left_margin + 10.0
+    end
+
+    it 'should allow right margin to be set for right-aligned logo image' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_margin_right: 10 }, analyze: :image
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[align=right]
+      EOS
+
+      right_margin = (8.27 - 0.67) * 72
+
+      images = pdf.images
+      (expect images).to have_size 1
+      title_page_image = images[0]
+      (expect title_page_image[:page_number]).to be 1
+      (expect title_page_image[:x]).to be_within(0.5).of(right_margin - 10.0 - title_page_image[:width])
+    end
+
     it 'should resize raster logo to keep it on title page' do
       pdf = to_pdf <<~'EOS', analyze: :image
       = Document Title
