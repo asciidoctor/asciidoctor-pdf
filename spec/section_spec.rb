@@ -209,6 +209,34 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect y1).to be > y2
   end
 
+  it 'should allow theme to specify different top margin for part titles' do
+    pdf_theme = {
+      heading_h1_font_size: 20,
+      heading_h1_margin_page_top: 100,
+      heading_h2_font_size: 20,
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    = Document Title
+    :doctype: book
+
+    = Part A
+
+    == First Chapter
+
+    content
+
+    = Part B
+
+    == Last Chapter
+
+    content
+    EOS
+
+    part_a_text = pdf.find_unique_text 'Part A'
+    first_chapter_text = pdf.find_unique_text 'First Chapter'
+    (expect part_a_text[:y]).to eql first_chapter_text[:y] - 100.0
+  end
+
   it 'should uppercase section titles if text_transform key in theme is set to uppercase' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     = Document Title
