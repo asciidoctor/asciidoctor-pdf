@@ -683,7 +683,20 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect pdf.lines).to eql ['-1. negative one', '0. zero', 'i. positive one']
     end
 
-    # TODO: this should be -1, 0, a
+    it 'should allow start value to be less than 1 for list with decimal numbering' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [decimal,start=-3]
+      . on
+      . our
+      . way
+      . to
+      . one
+      EOS
+
+      (expect pdf.lines).to eql ['-03. on', '-02. our', '-01. way', '00. to', '01. one']
+    end
+
+    # FIXME: this should be -1, 0, a
     it 'should ignore start value less than 1 for list with alpha numbering' do
       pdf = to_pdf <<~'EOS', analyze: true
       [loweralpha,start=-1]
