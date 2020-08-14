@@ -250,7 +250,7 @@ module Asciidoctor
         return @font_size unless points
         if points == 1
           super @font_size
-        elsif String === points
+        elsif ::String === points
           if points.end_with? 'rem'
             super @root_font_size * points.to_f
           elsif points.end_with? 'em'
