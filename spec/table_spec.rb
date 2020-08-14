@@ -154,6 +154,31 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[3][:width]).to eql 0.5
     end
 
+    it 'should apply table border width to bottom border of table head row if override not specified' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_head_border_bottom_width: nil }, analyze: :line
+      [frame=none,grid=rows]
+      |===
+      | Col A | Col B
+
+      | A1
+      | B1
+
+      | A2
+      | B2
+      |===
+      EOS
+
+      lines = pdf.lines.uniq
+      (expect lines).to have_size 4
+      (expect lines[0][:width]).to eql 0.5
+      (expect lines[1][:width]).to eql 0.5
+      (expect lines[0][:from][:y]).to eql lines[0][:to][:y]
+      (expect lines[1][:from][:y]).to eql lines[1][:to][:y]
+      (expect lines[0][:from][:y]).to eql lines[1][:from][:y]
+      (expect lines[2][:width]).to eql 0.5
+      (expect lines[3][:width]).to eql 0.5
+    end
+
     it 'should apply thicker bottom border to last table head row when table has multiple head rows' do
       tree_processor_impl = proc do
         process do |doc|
