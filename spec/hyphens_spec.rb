@@ -15,7 +15,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     (expect lines[0]).to end_with ?\u00ad
     (expect lines[0].count ?\u00ad).to be 1
 
-    (expect Text::Hyphen).to be_truthy
+    (expect defined? Text::Hyphen).to be_truthy
   end
 
   it 'should hyphenate text split across multiple lines' do
