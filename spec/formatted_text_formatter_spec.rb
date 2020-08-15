@@ -177,12 +177,26 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[0][:y]).to be < text[1][:y]
     end
 
+    it 'should compute font size for superscript phrase correctly when parent element uses em units' do
+      pdf = to_pdf '`x^2^` represents exponential growth', pdf_theme: { base_font_size: 14, literal_font_size: '0.8em' }, analyze: true
+      expected_font_size = 14 * 0.8 * 0.583
+      superscript_text = pdf.find_unique_text '2'
+      (expect superscript_text[:font_size]).to eql expected_font_size
+    end
+
     it 'should format subscript phrase' do
       pdf = to_pdf 'O~2~', analyze: true
       (expect pdf.strings).to eql %w(O 2)
       text = pdf.text
       (expect text[0][:font_size]).to be > text[1][:font_size]
       (expect text[0][:y]).to be > text[1][:y]
+    end
+
+    it 'should compute font size for subscript phrase correctly when parent element uses em units' do
+      pdf = to_pdf 'The formula `O~2~` is oxygen', pdf_theme: { base_font_size: 14, literal_font_size: '0.8em' }, analyze: true
+      expected_font_size = 14 * 0.8 * 0.583
+      subscript_text = pdf.find_unique_text '2'
+      (expect subscript_text[:font_size]).to eql expected_font_size
     end
 
     it 'should add background and border to code as defined in theme', visual: true do
