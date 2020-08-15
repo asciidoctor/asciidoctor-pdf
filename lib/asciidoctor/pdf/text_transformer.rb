@@ -6,10 +6,10 @@ module Asciidoctor
       XMLMarkupRx = /&#?[a-z\d]+;|</
       PCDATAFilterRx = /(&#?[a-z\d]+;|<[^>]+>)|([^&<]+)/
       TagFilterRx = /(<[^>]+>)|([^<]+)/
-      WordRx = /\S+/
+      ContiguousCharsRx = /\p{Graph}+/
+      WordRx = /\p{Word}+/
       Hyphen = '-'
       SoftHyphen = ?\u00ad
-      HyphenatedHyphen = '-' + SoftHyphen
 
       def capitalize_words_pcdata string
         if XMLMarkupRx.match? string
@@ -20,7 +20,7 @@ module Asciidoctor
       end
 
       def capitalize_words string
-        string.gsub(WordRx) { $&.capitalize }
+        string.gsub(ContiguousCharsRx) { $&.capitalize }
       end
 
       def hyphenate_words_pcdata string, hyphenator
@@ -32,7 +32,7 @@ module Asciidoctor
       end
 
       def hyphenate_words string, hyphenator
-        string.gsub(WordRx) { (hyphenator.visualize $&, SoftHyphen).gsub HyphenatedHyphen, Hyphen }
+        string.gsub(WordRx) { hyphenator.visualize $&, SoftHyphen }
       end
 
       def lowercase_pcdata string
