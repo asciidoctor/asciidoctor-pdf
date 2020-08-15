@@ -1400,6 +1400,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect to_file).to visually_match 'image-inline-svg-with-text.pdf'
     end
+
+    it 'should size inline image with percentage width relative to page width' do
+      pdf = to_pdf 'see image:tux.png[,50%] run', attribute_overrides: { 'pdf-page-size' => 'Letter' }, analyze: :image
+      expected_width = (8.5 * 72 - (0.67 * 2 * 72)) * 0.5
+      images = pdf.images
+      (expect images).to have_size 1
+      image = images[0]
+      (expect image[:width]).to eql expected_width
+    end
   end
 
   context 'Link' do
