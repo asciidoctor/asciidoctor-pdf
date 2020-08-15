@@ -40,6 +40,24 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
     (expect pdf.lines[0]).to end_with '-'
   end
 
+  it 'should honor hyphenation exceptions when word is adjacent to a non-word character' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :hyphens:
+    :lang: nl
+
+    [width=15%]
+    |===
+    | souveniertjes!
+    |===
+    EOS
+
+    (expect pdf.lines).to eql [%(souve\u00ad), 'niertjes!']
+
+    converter = Asciidoctor::Converter.create 'pdf'
+    result = converter.hyphenate_words 'souveniertjes!', (Text::Hyphen.new language: 'nl')
+    (expect result).to eql %(sou\u00adve\u00adniertjes!)
+  end
+
   it 'should hyphenate text in table cell in table head if hyphens attribute is set' do
     pdf = to_pdf <<~'EOS', analyze: true
     :hyphens:
