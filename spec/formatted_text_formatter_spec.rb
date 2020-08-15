@@ -391,6 +391,14 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       end
     end
 
+    it 'should apply capitalization to contiguous characters' do
+      pdf = to_pdf %(== foo-bar baz), pdf_theme: { heading_text_transform: 'capitalize' }, analyze: true
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      (expect lines[0]).to eql 'Foo-bar Baz'
+      (expect pdf.text[0][:font_name]).to eql 'NotoSerif-Bold'
+    end
+
     it 'should not lowercase tags when applying lowercase text transform' do
       pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_text_transform: 'lowercase' }
       ****
