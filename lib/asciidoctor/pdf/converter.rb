@@ -776,21 +776,22 @@ module Asciidoctor
         if (label_min_width = @theme.admonition_label_min_width)
           label_min_width = label_min_width.to_f
         end
-        icons = ((doc = node.document).attr? 'icons') ? (doc.attr 'icons') : nil
-        if icons == 'font' && !(node.attr? 'icon')
-          label_text = type.to_sym
-          icon_data = admonition_icon_data label_text
-          icon_size = icon_data[:size] || 24
-          label_width = label_min_width || (icon_size * 1.5)
-        elsif icons && (icon_path = resolve_icon_image_path node, type) && (::File.readable? icon_path)
-          icons = true
-          # TODO: introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
-          label_width = label_min_width || 36.0
-        else
-          if icons
-            icons = nil
+        if (doc = node.document).attr? 'icons'
+          if (doc.attr 'icons') == 'font' && !(node.attr? 'icon')
+            icons = 'font'
+            label_text = type.to_sym
+            icon_data = admonition_icon_data label_text
+            icon_size = icon_data[:size] || 24
+            label_width = label_min_width || (icon_size * 1.5)
+          elsif (icon_path = resolve_icon_image_path node, type) && (::File.readable? icon_path)
+            icons = true
+            # TODO: introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
+            label_width = label_min_width || 36.0
+          else
             log :warn, %(admonition icon not found or not readable: #{icon_path})
           end
+        end
+        unless icons
           label_text = sanitize node.caption
           theme_font :admonition_label do
             theme_font %(admonition_label_#{type}) do
