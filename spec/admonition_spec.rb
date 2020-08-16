@@ -447,6 +447,23 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'faulty.svg'}; Unknown tag 'foobar')
     end
 
+    it 'should warn and fall back to admonition label if SVG icon cannot be found' do
+      (expect do
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
+        :icons:
+        :icontype: svg
+
+        [WARNING]
+        ====
+        The admonition label will be used if the image cannot be resolved.
+        ====
+        EOS
+        label_text = pdf.find_unique_text 'WARNING'
+        (expect label_text).not_to be_nil
+        (expect label_text[:font_name]).to include 'Bold'
+      end).to log_message severity: :WARN, message: %(admonition icon not found or not readable: #{fixture_file 'warning.svg'})
+    end
+
     it 'should warn if SVG icon specified by icon attribute cannot be embedded' do
       (expect do
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: :rect
@@ -460,6 +477,22 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         EOS
         (expect pdf.rectangles).to be_empty
       end).to log_message severity: :WARN, message: %(~could not embed admonition icon: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
+    end
+
+    it 'should warn and fall back to admonition label if raster icon cannot be found' do
+      (expect do
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
+        :icons:
+
+        [WARNING]
+        ====
+        The admonition label will be used if the image cannot be resolved.
+        ====
+        EOS
+        label_text = pdf.find_unique_text 'WARNING'
+        (expect label_text).not_to be_nil
+        (expect label_text[:font_name]).to include 'Bold'
+      end).to log_message severity: :WARN, message: %(admonition icon not found or not readable: #{fixture_file 'warning.png'})
     end
 
     it 'should warn if raster icon specified by icon attribute cannot be embedded' do
@@ -622,7 +655,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect images[0][:height]).to eql 42.3529
     end
 
-    it 'should warn and fallback to admonition label if image icon cannot be resolved' do
+    it 'should warn and fall back to admonition label if image icon cannot be resolved' do
       (expect do
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: true
         :icons: image
@@ -634,7 +667,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         ====
         EOS
 
-        note_text = (pdf.find_text 'NOTE')[0]
+        note_text = pdf.find_unique_text 'NOTE'
         (expect note_text).not_to be_nil
         (expect note_text[:font_name]).to include 'Bold'
       end).to log_message severity: :WARN, message: '~admonition icon not found or not readable'
