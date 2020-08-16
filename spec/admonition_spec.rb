@@ -464,9 +464,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end).to log_message severity: :WARN, message: %(admonition icon not found or not readable: #{fixture_file 'warning.svg'})
     end
 
-    it 'should warn if SVG icon specified by icon attribute cannot be embedded' do
+    it 'should warn and fall back to admonition label if SVG icon specified by icon attribute cannot be embedded' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: :rect
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
         :icons: font
         :icontype: svg
 
@@ -475,7 +475,26 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         Use the icon attribute to customize the image for an admonition block.
         ====
         EOS
-        (expect pdf.rectangles).to be_empty
+        label_text = pdf.find_unique_text 'TIP'
+        (expect label_text).not_to be_nil
+        (expect label_text[:font_name]).to include 'Bold'
+      end).to log_message severity: :WARN, message: %(~could not embed admonition icon: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
+    end
+
+    it 'should resize fallback admonition label to fit in available space if icon fails to embed' do
+      (expect do
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
+        :icons: font
+        :icontype: svg
+
+        [WARNING,icon=broken]
+        ====
+        Use the icon attribute to customize the image for an admonition block.
+        ====
+        EOS
+        label_text = pdf.find_unique_text 'WARNING'
+        (expect label_text).not_to be_nil
+        (expect label_text[:font_size]).to be < 10.5
       end).to log_message severity: :WARN, message: %(~could not embed admonition icon: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
     end
 
@@ -495,9 +514,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end).to log_message severity: :WARN, message: %(admonition icon not found or not readable: #{fixture_file 'warning.png'})
     end
 
-    it 'should warn if raster icon specified by icon attribute cannot be embedded' do
+    it 'should warn and fall back to admonition label if raster icon specified by icon attribute cannot be embedded' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: :image
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
         :icons:
 
         [TIP,icon=corrupt.png]
@@ -505,7 +524,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         Use the icon attribute to customize the image for an admonition block.
         ====
         EOS
-        (expect pdf.images).to be_empty
+        label_text = pdf.find_unique_text 'TIP'
+        (expect label_text).not_to be_nil
+        (expect label_text[:font_name]).to include 'Bold'
       end).to log_message severity: :WARN, message: %(~could not embed admonition icon: #{fixture_file 'corrupt.png'}; image file is an unrecognised format)
     end
 

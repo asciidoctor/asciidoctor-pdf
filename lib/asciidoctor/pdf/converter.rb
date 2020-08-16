@@ -834,6 +834,7 @@ module Asciidoctor
                 end
               end
               float do
+                adjusted_font_size = nil
                 bounding_box [0, cursor], width: label_width, height: label_height do
                   if icons == 'font'
                     # FIXME: we assume icon is square
@@ -869,6 +870,7 @@ module Asciidoctor
                         end unless scratch?
                       rescue
                         log :warn, %(could not embed admonition icon: #{icon_path}; #{$!.message})
+                        icons = nil
                       end
                     else
                       begin
@@ -883,13 +885,28 @@ module Asciidoctor
                       rescue
                         # QUESTION: should we show the label in this case?
                         log :warn, %(could not embed admonition icon: #{icon_path}; #{$!.message})
+                        icons = nil
                       end
+                    end
+                    unless icons
+                      label_text = sanitize node.caption
+                      theme_font :admonition_label do
+                        theme_font %(admonition_label_#{type}) do
+                          label_text = transform_text label_text, @text_transform if @text_transform
+                          # NOTE: make sure the textual label fits in space already reserved
+                          if (actual_label_width = rendered_width_of_string label_text) > label_width
+                            adjusted_font_size = font_size * label_width / actual_label_width
+                          end
+                        end
+                      end
+                      redo
                     end
                   else
                     # NOTE: the label must fit in the alotted space or it shows up on another page!
                     # QUESTION: anyway to prevent text overflow in the case it doesn't fit?
                     theme_font :admonition_label do
                       theme_font %(admonition_label_#{type}) do
+                        font_size adjusted_font_size if adjusted_font_size
                         # NOTE: Prawn's vertical center is not reliable, so calculate it manually
                         if label_valign == :center
                           label_valign = :top
