@@ -861,11 +861,7 @@ module Asciidoctor
                             enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
                             enable_file_requests_with_root: (::File.dirname icon_path),
                             cache_images: cache_uri
-                        if (icon_height = (svg_size = svg_obj.document.sizing).output_height) > label_height
-                          icon_width = (svg_obj.resize height: (icon_height = label_height)).output_width
-                        else
-                          icon_width = svg_size.output_width
-                        end
+                        svg_obj.resize height: label_height if svg_obj.document.sizing.output_height > label_height
                         svg_obj.draw
                         svg_obj.document.warnings.each do |icon_warning|
                           log :warn, %(problem encountered in image: #{icon_path}; #{icon_warning})
@@ -881,7 +877,6 @@ module Asciidoctor
                         icon_width = [(to_pt image_info.width, :px), label_width].min
                         if (icon_height = icon_width * (1 / icon_aspect_ratio)) > label_height
                           icon_width *= label_height / icon_height
-                          icon_height = label_height # rubocop:disable Lint/UselessAssignment
                         end
                         embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
                       rescue
