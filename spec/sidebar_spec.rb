@@ -42,11 +42,19 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     sidebar_border_top = pdf.lines.find {|it| it[:color] == 'E1E1E1' }[:from][:y]
 
     pdf = to_pdf input, analyze: true
-    title_text = (pdf.find_text 'Sidebar Title')[0]
+    title_text = pdf.find_unique_text 'Sidebar Title'
     (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
     (expect title_text[:font_size]).to be 13
     (expect title_text[:x]).to be > 100
     (expect title_text[:y]).to be < sidebar_border_top
+
+    pdf = to_pdf input, pdf_theme: { sidebar_title_align: nil, heading_align: 'center' }, analyze: true
+    title_text = pdf.find_unique_text 'Sidebar Title'
+    (expect title_text[:x]).to be > 100
+
+    pdf = to_pdf input, pdf_theme: { sidebar_title_align: nil, heading_align: nil }, analyze: true
+    title_text = pdf.find_unique_text 'Sidebar Title'
+    (expect title_text[:x]).to be < 100
   end
 
   it 'should render adjacent sidebars without overlapping', visual: true do

@@ -1050,7 +1050,7 @@ module Asciidoctor
           pad_box @theme.sidebar_padding do
             theme_font :sidebar_title do
               # QUESTION: should we allow margins of sidebar title to be customized?
-              layout_prose node.title, align: (@theme.sidebar_title_align || @base_align).to_sym, margin_top: 0, margin_bottom: (@theme.heading_margin_bottom || 0), line_height: @theme.heading_line_height
+              layout_prose node.title, align: (@theme.sidebar_title_align || @theme.heading_align || @base_align).to_sym, margin_top: 0, margin_bottom: (@theme.heading_margin_bottom || 0), line_height: @theme.heading_line_height
             end if node.title?
             theme_font :sidebar do
               traverse node
