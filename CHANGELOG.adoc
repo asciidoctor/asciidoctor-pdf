@@ -45,6 +45,7 @@ Enhancements::
 * allow theme to specify text decoration style, color, and width for captions (globally)
 * allow admonition icon image to be remote (if allow-uri-read is set) or data URI
 * allow theme to configure font color of unresolved footnote using unresolved role
+* show textual label on admonition if icon image fails to embed (#1741)
 
 Bug Fixes::
 
