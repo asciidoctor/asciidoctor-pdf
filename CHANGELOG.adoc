@@ -102,6 +102,7 @@ Bug Fixes::
 * compute font size for superscript and subscript correctly when parent element uses em units (#1745)
 * respect hyphenation exceptions when word is adjacent to non-word character (#1715)
 * fix crash when TOC is enabled and index is empty
+* align TOC section properly when index exceeds one page and section_indent is positive (#1735)
 
 Compliance::
 
