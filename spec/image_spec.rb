@@ -626,6 +626,30 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       page_contents = pdf.objects[(pdf.page 2).page_object[:Contents]].data
       (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 0.0 scn']
     end
+
+    it 'should set graphic state for running content when image does not occupy whole page' do
+      pdf_theme = {
+        footer_recto_right_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
+        footer_verso_left_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true
+      first
+
+      <<<
+
+      before
+
+      image::tall.svg[pdfwidth=25%]
+
+      after
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      [1, 2].each do |pagenum|
+        page_contents = pdf.objects[(pdf.page pagenum).page_object[:Contents]].data
+        (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.2 0.2 0.2 scn']
+      end
+    end
   end
 
   context 'Raster' do
