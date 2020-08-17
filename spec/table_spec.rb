@@ -361,6 +361,23 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       end
     end
 
+    it 'should use grid color as fallback for table border color' do
+      pdf_theme = {
+        table_border_color: nil,
+        table_grid_color: '3D3D3D',
+        table_grid_width: 0.5,
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      |===
+      | A | B
+      | C | D
+      |===
+      EOS
+
+      line_colors = pdf.lines.map {|l| l[:color] }.uniq
+      (expect line_colors).to eql %w(3D3D3D)
+    end
+
     it 'should allow theme to set color, width, and style of frame' do
       pdf_theme = {
         table_border_color: 'AAAAAA',
