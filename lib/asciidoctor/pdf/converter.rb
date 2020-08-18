@@ -569,7 +569,10 @@ module Asciidoctor
           sect.context = :open
           return convert_abstract sect
         elsif (index_section = sect.sectname == 'index')
-          return if @index.empty?
+          if @index.empty?
+            sect.parent.blocks.delete sect
+            return
+          end
         end
 
         type = nil

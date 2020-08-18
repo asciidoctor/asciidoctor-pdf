@@ -101,6 +101,7 @@ Bug Fixes::
 * set color space on page with only image so font color is preserved in running content (#1742)
 * compute font size for superscript and subscript correctly when parent element uses em units (#1745)
 * respect hyphenation exceptions when word is adjacent to non-word character (#1715)
+* fix crash when TOC is enabled and index is empty
 
 Compliance::
 

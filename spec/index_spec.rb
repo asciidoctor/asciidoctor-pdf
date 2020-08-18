@@ -26,6 +26,23 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect pdf.find_text 'Index').to be_empty
   end
 
+  it 'should not include index section in TOC if index is empty' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == Chapter
+
+    content
+
+    [index]
+    == Index
+    EOS
+
+    (expect (pdf.page 2).text).not_to include 'Index'
+  end
+
   it 'should add the index entries to the section with the index style' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
