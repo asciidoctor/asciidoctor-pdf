@@ -3100,7 +3100,7 @@ module Asciidoctor
               # NOTE: use text formatter to add anchor overlay to avoid using inline format with synthetic anchor tag
               sect_title_fragments = text_formatter.format sect_title, inherited: sect_title_inherited
               indent 0, pgnum_label_placeholder_width do
-                sect_title_fragments[-1][:callback] = (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
+                (sect_title_fragments[-1][:callback] ||= []) << (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
                 typeset_formatted_text sect_title_fragments, line_metrics, hanging_indent: hanging_indent, normalize_line_height: true
                 start_dots = last_fragment_pos.right + hanging_indent
                 last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
