@@ -46,6 +46,7 @@ Enhancements::
 * allow admonition icon image to be remote (if allow-uri-read is set) or data URI
 * allow theme to configure font color of unresolved footnote using unresolved role
 * show textual label on admonition if icon image fails to embed (#1741)
+* allow theme to disable title page by assigning false to title_page category key (#1754)
 
 Bug Fixes::
 
