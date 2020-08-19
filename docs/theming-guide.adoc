@@ -3504,6 +3504,8 @@ The keys in this category control the arrangement of block images.
   alt:
     font-style: italic
 
+3+|[#key-prefix-image-caption]*Key Prefix:* <<key-prefix-image-caption,image-caption>>
+
 |caption-align
 |<<text-alignments,Text alignment>> {vbar} inherit +
 (default: $caption-align)
