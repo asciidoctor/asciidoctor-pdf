@@ -1157,4 +1157,21 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     first_chapter_text = (pdf.find_text font_name: 'NotoSerif-Bold', font_size: 22, string: /^A long chapter title/)[0]
     (expect first_chapter_text[:page_number]).to be last_pagenum_text[:page_number].next
   end
+
+  it 'should render image at end of section title in toc entry' do
+    pdf = to_pdf <<~'EOS', analyze: :image
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == Chapter image:tux.png[,16]
+    EOS
+
+    images = pdf.images
+    (expect images).to have_size 2
+    (expect images[0][:page_number]).to eql 2
+    (expect images[1][:page_number]).to eql 3
+    (expect images[0][:data]).to eql images[1][:data]
+    (expect images[0][:width]).to eql images[1][:width]
+  end
 end
