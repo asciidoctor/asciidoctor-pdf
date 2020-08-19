@@ -588,4 +588,31 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     z_category_text = pdf.find_unique_text 'Z', page_number: 3
     (expect b_category_text[:y]).to eql z_category_text[:y]
   end
+
+  it 'should indent TOC title properly when index exceeds a page and section indent is positive' do
+    pdf = to_pdf <<~EOS, pdf_theme: { section_indent: 50 }, analyze: true
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == Chapter A
+
+    This is the first chapter.
+    #{(0...50).map {|it| %[(((A#{it})))] }.join}
+
+    == Chapter B
+
+    This is the second and last chapter.
+    #{(0...50).map {|it| %[(((B#{it})))] }.join}
+
+    [index]
+    == Index
+    EOS
+
+    toc_title_text = pdf.find_unique_text 'Table of Contents'
+    (expect toc_title_text[:x]).to eql 48.24
+
+    chapter_a_toc_text = pdf.find_unique_text 'Chapter A', page_number: 2
+    (expect chapter_a_toc_text[:x]).to eql 98.24
+  end
 end

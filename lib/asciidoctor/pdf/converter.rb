@@ -623,7 +623,10 @@ module Asciidoctor
         end
 
         if index_section
+          old_margin_box = @margin_box.dup
           outdent_section { convert_index_section sect }
+          # NOTE: column_box can mess with margin_box, so restore it
+          @margin_box = old_margin_box
         else
           traverse sect
         end
