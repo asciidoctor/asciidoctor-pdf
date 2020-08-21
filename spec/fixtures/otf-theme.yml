@@ -1,0 +1,9 @@
+extends: default
+font:
+  catalog:
+    merge: true
+    Quicksand: Quicksand-Regular.otf
+base:
+  font-family: Quicksand
+heading:
+  font-style: normal

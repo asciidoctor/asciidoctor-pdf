@@ -70,7 +70,7 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 
 * Direct AsciiDoc to PDF conversion
 * <<docs/theming-guide.adoc#,Configuration-driven theme (style and layout)>>
-* Custom (TTF) fonts
+* Custom fonts (TTF or OTF)
 * Full SVG support (thanks to https://github.com/mogest/prawn-svg[prawn-svg])
 * PDF document outline (i.e., bookmarks)
 * Title page

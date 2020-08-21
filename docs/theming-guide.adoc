@@ -669,7 +669,7 @@ Additionally, normal substitutions are applied to the value of content keys for 
 
 == Fonts
 
-You can select from <<built-in-afm-fonts,built-in PDF fonts>>, <<bundled-fonts,fonts bundled with Asciidoctor PDF>> or <<custom-fonts,custom fonts>> loaded from TrueType font (TTF) files.
+You can select from <<built-in-afm-fonts,built-in PDF fonts>>, <<bundled-fonts,fonts bundled with Asciidoctor PDF>> or <<custom-fonts,custom fonts>> loaded from TrueType (TTF) or OpenType (OTF) font files.
 If you want to use custom fonts, you must first declare them in your theme file.
 
 IMPORTANT: Asciidoctor has no challenge working with Unicode.
@@ -784,7 +784,7 @@ If one of the variants is missing from your collection, you can simply reuse the
 
 WARNING: Asciidoctor PDF cannot italicize a font dynamically like a browser can, so the italic styles are required to italicize text.
 
-Once you've obtained the TTF files, put them in the directory inside your project where you want to store the fonts.
+Once you've obtained the TTF (or OTF) files, put them in the directory inside your project where you want to store the fonts.
 It's recommended that you name them consistently so it's easier to type the names in the theme file.
 
 Let's assume the name of the font is https://github.com/googlefonts/roboto/releases[Roboto].
@@ -912,7 +912,7 @@ If the character isn't found in the fallback font, it will mostly likely be repl
 
 IMPORTANT: When defining the fallback font, you *must specify all four variants* (normal, bold, italic, bold_italic), even if you use the same font file for each.
 
-IMPORTANT: The fallback font only gets used when the primary font is a TrueType font (i.e., TTF, DFont, TTC).
+IMPORTANT: The fallback font only gets used when the primary font is a TrueType or OpenType font (i.e., TTF, DFont, TTC, OTF).
 Any glyph missing from an AFM font is simply replaced with the "`not`" glyph (`&#172;`).
 
 CAUTION: The `default` theme does not use a fallback font.
@@ -981,7 +981,7 @@ base:
 
 That's it!
 Now you're covered.
-If your custom TTF font is missing a glyph, Asciidoctor PDF will look in your fallback font.
+If your custom font is missing a glyph, Asciidoctor PDF will look in your fallback font.
 You don't need to reference the fallback font anywhere else in your theme file.
 
 Here's another example that shows how to use an alternative emoji font (Symbola):
@@ -5579,14 +5579,15 @@ Now you're hacking the typesetting!
 [appendix]
 == Preparing a Custom Font
 
-Any TTF font can be used with Prawn--and hence Asciidoctor PDF--without modifications (unless, of course, it's corrupt or contains errors).
+Any TTF or OTF font can be used with Prawn--and hence Asciidoctor PDF--without modifications (unless, of course, it's corrupt or contains errors).
 However, you may discover that kerning is disabled and certain required glyphs are missing (or replaced with boxes).
 To address these problems, you need to prepare the font using a font program such as {url-fontforge}[FontForge].
+These instructions will cover how to prepare a TTF font, but the same applies for an OTF font.
 
 === Validate the Font
 
 Before using the font, you may want to check that the font is valid.
-To do so, create the following script, which will verify that the TTF font is free from errors.
+To do so, create the following script, which will verify that the font is free from errors.
 
 .validate-font.rb
 [source,ruby]
@@ -5619,7 +5620,7 @@ You can find a crash course in how to use the program on the FontForge project s
 
 Here are the modifications you need to apply to a custom font for it to work best with Asciidoctor PDF:
 
-* Convert the font to TTF (only required if the font is not already a TTF, such as an OTF or TTC).
+* Convert the font to TTF or OTF (only required if the font is a TTC or other format not supported by Prawn).
 * Add the glyphs for the required characters if missing from the font (optional if using a fallback font).
 * Subset the font to exclude unused characters to reduce the file size (optional).
 * Save the file using the old-style kern table to activate kerning.
