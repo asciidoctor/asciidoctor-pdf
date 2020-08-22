@@ -54,14 +54,6 @@ module Asciidoctor
         page.dimensions[2]
       end
 
-      # Returns the effective (writable) width of the page
-      #
-      # If inside a bounding box, returns width of box.
-      #
-      def effective_page_width
-        reference_bounds.width
-      end
-
       # Returns the height of the current page from edge-to-edge
       #
       def page_height
