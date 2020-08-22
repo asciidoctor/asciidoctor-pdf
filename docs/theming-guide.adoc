@@ -1857,7 +1857,7 @@ If you want to enable the title page when using a different doctype (such as the
 
 NOTE: Subtitle partitioning of the doctitle is only enabled when the title page is also enabled.
 
-TIP: The title page can be disabled for the book doctype by setting the `notitle` attribute in the AsciiDoc document header (i.e., `:notitle:`).
+TIP: The title page can be disabled for the book doctype by setting the `notitle` attribute in the AsciiDoc document header (i.e., `:notitle:`) or setting the value of the `title_page` category key in the theme to `false`.
 (It's analogue, `:!showtitle:`, does not work with this converter).
 For other doctypes, the same result can be achieved by not setting the `title-page` attribute.
 

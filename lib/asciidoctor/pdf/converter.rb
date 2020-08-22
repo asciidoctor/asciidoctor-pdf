@@ -2631,7 +2631,7 @@ module Asciidoctor
       end
 
       def layout_title_page doc
-        return unless doc.header? && !doc.notitle
+        return unless doc.header? && !doc.notitle && @theme.title_page != false
 
         # NOTE: a new page may have already been started at this point, so decide what to do with it
         if page.empty?
