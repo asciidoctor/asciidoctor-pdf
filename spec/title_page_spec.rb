@@ -70,6 +70,20 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     (expect body_lines).to eql %w(https://opensource.org)
   end
 
+  it 'should apply base font style when document has title page' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_style: 'bold' }, analyze: true
+    = Document Title
+    Author Name
+    v1.0, 2020-01-01
+    :doctype: book
+
+    bold body
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    (expect pdf.text.map {|it| it[:font_name] }.uniq).to eql %w(NotoSerif-Bold)
+  end
+
   context 'title-page' do
     it 'should place document title on title page if title-page attribute is set' do
       pdf = to_pdf <<~'EOS', analyze: :page

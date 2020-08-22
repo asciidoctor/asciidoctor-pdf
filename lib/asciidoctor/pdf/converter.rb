@@ -209,9 +209,10 @@ module Asciidoctor
 
         @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress' && page_number == 0
 
-        # NOTE: font must be set before content is written to the main or scratch document
         start_new_page unless page.empty?
-        font @theme.base_font_family, size: @root_font_size, style: (@theme.base_font_style || :normal).to_sym
+
+        # NOTE: font must be set before content is written to the main or scratch document
+        font @theme.base_font_family, size: @root_font_size, style: (@theme.base_font_style || :normal).to_sym unless has_title_page
 
         unless use_title_page
           body_start_page_number = page_number
@@ -2654,7 +2655,7 @@ module Asciidoctor
         @page_bg_color = prev_bg_color if bg_color
 
         # NOTE: this is the first page created, so we must set the base font
-        font @theme.base_font_family, @root_font_size
+        font @theme.base_font_family, size: @root_font_size, style: (@theme.base_font_style || :normal).to_sym
 
         # QUESTION: allow alignment per element on title page?
         title_align = (@theme.title_page_align || @base_align).to_sym
