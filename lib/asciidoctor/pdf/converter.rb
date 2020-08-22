@@ -1392,7 +1392,7 @@ module Asciidoctor
             marker_style[:font_family] = FontAwesomeIconSets.find {|candidate| (icon_font_data candidate).yaml[candidate].value? marker } || 'fas'
           end
           marker_gap = rendered_width_of_char 'x'
-          font marker_style[:font_family], size: marker_style[:font_size] do
+          font marker_style[:font_family], marker_style[:font_size] do
             marker_width = rendered_width_of_string marker
             # NOTE: compensate if character_spacing is not applied to first character
             # see https://github.com/prawnpdf/prawn/commit/c61c5d48841910aa11b9e3d6f0e01b68ce435329
@@ -2654,7 +2654,7 @@ module Asciidoctor
         @page_bg_color = prev_bg_color if bg_color
 
         # NOTE: this is the first page created, so we must set the base font
-        font @theme.base_font_family, size: @root_font_size
+        font @theme.base_font_family, @root_font_size
 
         # QUESTION: allow alignment per element on title page?
         title_align = (@theme.title_page_align || @base_align).to_sym
