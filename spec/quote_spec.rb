@@ -66,7 +66,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     end).to not_log_message
   end
 
-  it 'should render character reference in attribute if enclosed in single quotes' do
+  it 'should render character reference in attribution' do
     (expect do
       pdf = to_pdf <<~'EOS', analyze: true
       [quote, J. Helliwell & B. McMahon &#169; IUCr]
@@ -75,6 +75,30 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
       (expect pdf.lines[-1]).to eql %(\u2014 J. Helliwell & B. McMahon \u00a9 IUCr)
     end).to not_log_message
+  end
+
+  it 'should apply substitutions to attribution and citetitle if enclosed in single quotes' do
+    input = <<~'EOS'
+    [, 'Author--aka Alias', 'https://asciidoctor.org[Source]']
+    ____
+    Use the attribution and citetitle attributes to credit the author and identify the source of the quote, respectively.
+    ____
+    EOS
+
+    pdf = to_pdf input, analyze: true
+    attribution_text, citetitle_text = (pdf.find_text font_size: 9)
+    (expect attribution_text[:string]).to eql %(\u2014 Author\u2014aka Alias, )
+    (expect citetitle_text[:string]).to eql 'Source'
+    (expect citetitle_text[:font_color]).to eql '428BCA'
+
+    pdf = to_pdf input
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link_annotation = annotations[0]
+    (expect link_annotation[:Subtype]).to be :Link
+    (expect link_annotation[:A][:URI]).to eql 'https://asciidoctor.org'
+    (expect link_annotation[:Rect][0]).to eql citetitle_text[:x]
+    (expect link_annotation[:Rect][2]).to eql (citetitle_text[:x] + citetitle_text[:width])
   end
 
   it 'should not draw left border if border_left_width is 0' do
