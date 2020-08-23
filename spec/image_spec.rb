@@ -1515,6 +1515,22 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect (link_rect[3] - link_rect[1]).round 1).to eql 14.3
       (expect link_rect[0]).to eql 48.24
     end
+
+    it 'should add link around inline image if image macro is enclosed in link macro' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir }
+      https://example.org[image:sample-logo.jpg[ACME,pdfwidth=1pc]] is a sign of quality!
+      EOS
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to be :Link
+      (expect link_annotation[:A][:URI]).to eql 'https://example.org'
+      link_rect = link_annotation[:Rect]
+      (expect (link_rect[2] - link_rect[0]).round 1).to eql 12.0
+      (expect (link_rect[3] - link_rect[1]).round 1).to eql 14.3
+      (expect link_rect[0]).to eql 48.24
+    end
   end
 
   context 'Caption' do
