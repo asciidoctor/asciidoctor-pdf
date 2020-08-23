@@ -212,7 +212,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should use rouge style specified by rouge-style attribute', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'source-rouge-style.pdf'
+      input = <<~'EOS'
       :source-highlighter: rouge
       :rouge-style: molokai
 
@@ -225,6 +225,10 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       ----
       EOS
 
+      to_file = to_pdf_file input, 'source-rouge-style.pdf'
+      (expect to_file).to visually_match 'source-rouge-style.pdf'
+
+      to_file = to_pdf_file input, 'source-rouge-style.pdf', attribute_overrides: { 'rouge-style' => (Rouge::Theme.find 'molokai').new }
       (expect to_file).to visually_match 'source-rouge-style.pdf'
     end
 
