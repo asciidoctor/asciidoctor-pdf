@@ -659,28 +659,6 @@ module Asciidoctor
         end
       end
 
-      # Fills and, optionally, strokes the current bounds using the fill and
-      # stroke color specified, then yields to the block. The only_if option can
-      # be used to conditionally disable this behavior.
-      #
-      def shade_box color, line_color = nil, options = {}
-        if (!options.key? :only_if) || options[:only_if]
-          # FIXME: could use save_graphics_state here
-          previous_fill_color = current_fill_color
-          fill_color color
-          fill_rectangle [bounds.left, bounds.top], bounds.right, bounds.top - bounds.bottom
-          fill_color previous_fill_color
-          if line_color
-            line_width 0.5
-            previous_stroke_color = current_stroke_color
-            stroke_color line_color
-            stroke_bounds
-            stroke_color previous_stroke_color
-          end
-        end
-        yield
-      end
-
       # Strokes a horizontal line using the current bounds. The width of the line
       # can be specified using the line_width option. The offset from the cursor
       # can be set using the at option.
