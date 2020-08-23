@@ -172,8 +172,8 @@ module Asciidoctor
                   fragment = {
                     image_path: attributes[:src],
                     image_format: attributes[:format],
-                    # a zero-width space in the text will cause the image to be duplicated
-                    text: (attributes[:alt].delete ZeroWidthSpace),
+                    # NOTE: add enclosing square brackets here to avoid errors in parsing
+                    text: %([#{attributes[:alt].delete ZeroWidthSpace}]),
                     callback: [InlineImageRenderer],
                   }
                   if inherited && (link = inherited[:link])
