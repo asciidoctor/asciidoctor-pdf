@@ -1348,11 +1348,14 @@ See <<Title Page>> for details.
 |page:
   size: Letter
 
-|numbering-start-at^[5]^
+3+|[#key-prefix-page-numbering]*Key Prefix:* <<key-prefix-page-numbering,numbering>>
+
+|start-at^[5]^
 |cover {vbar} title {vbar} toc {vbar} body {vbar} Integer +
 (default: body)
 |page:
-  numbering-start-at: toc
+  numbering:
+    start-at: toc
 |===
 
 . To disable the background color for the page, set the value to white (i.e., FFFFFF).
