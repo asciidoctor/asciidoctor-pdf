@@ -698,8 +698,8 @@ module Asciidoctor
                 prose_opts[:indent_paragraphs] = text_indent
               end
               # FIXME: allow theme to control more first line options
-              if (line1_font_style = @theme.abstract_first_line_font_style) && line1_font_style.to_sym != font_style
-                first_line_options = { styles: [font_style, line1_font_style.to_sym] }
+              if (line1_font_style = @theme.abstract_first_line_font_style) && (line1_font_style = line1_font_style.to_sym) != font_style
+                first_line_options = { styles: line1_font_style == :normal ? [] : [font_style, line1_font_style] }
               end
               if (line1_font_color = @theme.abstract_first_line_font_color)
                 (first_line_options ||= {})[:color] = line1_font_color

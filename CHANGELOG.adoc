@@ -106,6 +106,7 @@ Bug Fixes::
 * align TOC section properly when index exceeds one page and section_indent is positive (#1735)
 * render image at end of section title in corresponding toc entry (#1752)
 * allow inline image to be enclosed in link macro (alt text was breaking parsing)
+* allow theme to set font style of first line of abstract to normal
 
 Compliance::
 
