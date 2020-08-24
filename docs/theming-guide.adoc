@@ -5307,18 +5307,18 @@ These page numbers are available as metadata and determine folio placement (rect
 
 By default, the converter assigns the page number 1 to the first body page of the document.
 It then increments the page number for each page thereafter.
-All front matter pages that precede the first body page (e.g., cover page, title page, and toc pages) are numbered using roman numerals (e.g., i, ii, iii, etc).
+All front matter pages that precede the first body page in the book doctype (or when the `title-page` attribute is set) (e.g., cover page, title page, and toc pages) are numbered using roman numerals (e.g., i, ii, iii, etc).
 Since these computed page numbers can differ from the physical page numbers, we refer to them as [.term]_virtual page numbers_.
 
 By default, the folio placement is derived from the virtual page number.
 Odd page numbers (e.g., 1, 3, 5, ...) designate recto pages and even page numbers (e.g., 2, 4, 6, ...) designate verso pages.
 
-Using the theme and document attributes, it's possible to influence the virtual page numbering.
-One way is to control where the transition from roman numerals to integers occurs.
+It's possible to influence the virtual page numbering using a combination of the theme and document attributes.
+One such customization is to control where the transition from roman numerals to integers occurs.
 
 The theme can specify the page where the integer (1-based) page numbering should begin using the `page-numbering-start-at` key.
-For instance, the theme can specify `page-numbering-start-at: title`, which will make the integer page numbering start at the title page (i.e., the title page will be assigned the virtual page number 1).
-Alternately, the theme can specify an offset from the first body page where the page numbering should begin.
+For instance, the theme can specify `page-numbering-start-at: title`, which will make the integer page numbering start at the title page when enabled (i.e., the title page will be assigned the virtual page number 1).
+Alternately, the theme can specify an offset from the first body page where the page numbering should begin (all doctypes).
 For instance, `page-numbering-start-at: 2` tells the converter to assign the virtual page number 1 to the second page of the body.
 Any page that precedes that page will be numbered using roman numerals.
 
@@ -5340,7 +5340,7 @@ footer:
 ----
 
 If you want the running content to also appear on front matter pages, you can use the theme to change the page on which the running content starts with the `running-content-start-at` key.
-For instance, to start the running content on the title page, set `running-content-start-at: title` in your theme file.
+For instance, to start the running content on the title page, assuming the title page is enabled, set `running-content-start-at: title` in your theme file.
 
 Aside from the configurability mentioned, the page numbering logic is computed automatically.
 
