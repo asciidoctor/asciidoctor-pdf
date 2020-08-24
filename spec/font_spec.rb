@@ -349,13 +349,72 @@ describe 'Asciidoctor::PDF::Converter - Font' do
   end
 
   context 'font sizes' do
-    it 'should resolve font size of inline element specified in rem' do
+    it 'should resolve font size of inline element specified in em units' do
       pdf_theme = {
         base_font_size: 12,
+        sidebar_font_size: 10,
+        link_font_size: '0.75em',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      ****
+      Check out https://asciidoctor.org[Asciidoctor]'
+      ****
+      EOS
+      normal_text = pdf.find_unique_text 'Check out '
+      (expect normal_text[:font_size].to_f).to eql 10.0
+      linked_text = pdf.find_unique_text 'Asciidoctor'
+      (expect linked_text[:font_size].to_f).to eql 7.5
+    end
+
+    it 'should imply em units if font size is less than 1' do
+      pdf_theme = {
+        base_font_size: 12,
+        sidebar_font_size: 10,
+        link_font_size: 0.75
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      ****
+      Check out https://asciidoctor.org[Asciidoctor]'
+      ****
+      EOS
+      normal_text = pdf.find_unique_text 'Check out '
+      (expect normal_text[:font_size].to_f).to eql 10.0
+      linked_text = pdf.find_unique_text 'Asciidoctor'
+      (expect linked_text[:font_size].to_f).to eql 7.5
+    end
+
+    it 'should resolve font size of inline element specified in rem units' do
+      pdf_theme = {
+        base_font_size: 12,
+        sidebar_font_size: 10,
         link_font_size: '0.75rem',
       }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      ****
+      https://asciidoctor.org[Asciidoctor]
+      ****
+      EOS
+      linked_text = pdf.find_unique_text 'Asciidoctor'
+      (expect linked_text[:font_size].to_f).to eql 9.0
+    end
+
+    it 'should resolve font size of inline element specified in percentage' do
+      pdf_theme = {
+        base_font_size: 12,
+        link_font_size: '75%',
+      }
       pdf = to_pdf 'https://asciidoctor.org[Asciidoctor]', pdf_theme: pdf_theme, analyze: true
-      linked_text = (pdf.find_text 'Asciidoctor')[0]
+      linked_text = pdf.find_unique_text 'Asciidoctor'
+      (expect linked_text[:font_size].to_f).to eql 9.0
+    end
+
+    it 'should resolve font size of inline element specified in points as a String' do
+      pdf_theme = {
+        base_font_size: 12,
+        link_font_size: '9',
+      }
+      pdf = to_pdf 'https://asciidoctor.org[Asciidoctor]', pdf_theme: pdf_theme, analyze: true
+      linked_text = pdf.find_unique_text 'Asciidoctor'
       (expect linked_text[:font_size].to_f).to eql 9.0
     end
   end
