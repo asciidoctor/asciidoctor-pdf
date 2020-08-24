@@ -370,7 +370,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       pdf_theme = {
         base_font_size: 12,
         sidebar_font_size: 10,
-        link_font_size: 0.75
+        link_font_size: 0.75,
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       ****
