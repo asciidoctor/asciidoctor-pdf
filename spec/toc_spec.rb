@@ -390,7 +390,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       (expect pdf.pages).to have_size 4
       toc_heading_text = pdf.find_unique_text 'Table of Contents'
-      (expect toc_heading_text[:page_number]).to eql 3
+      (expect toc_heading_text[:page_number]).to be 3
     end
 
     it 'should start macro toc on recto page for prepress book' do
@@ -413,7 +413,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       (expect pdf.pages).to have_size 7
       toc_heading_text = pdf.find_unique_text 'Table of Contents'
-      (expect toc_heading_text[:page_number]).to eql 5
+      (expect toc_heading_text[:page_number]).to be 5
     end
 
     it 'should not advance toc to recto page for prepress book when nonfacing option is specified on macro' do
@@ -436,7 +436,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
       (expect pdf.pages).to have_size 5
       toc_heading_text = pdf.find_unique_text 'Table of Contents'
-      (expect toc_heading_text[:page_number]).to eql 4
+      (expect toc_heading_text[:page_number]).to be 4
     end
 
     it 'should disable running content periphery on toc page if noheader or nofooer option is set on macro' do
@@ -1169,8 +1169,8 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     images = pdf.images
     (expect images).to have_size 2
-    (expect images[0][:page_number]).to eql 2
-    (expect images[1][:page_number]).to eql 3
+    (expect images[0][:page_number]).to be 2
+    (expect images[1][:page_number]).to be 3
     (expect images[0][:data]).to eql images[1][:data]
     (expect images[0][:width]).to eql images[1][:width]
   end

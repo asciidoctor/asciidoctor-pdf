@@ -102,9 +102,9 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
 
     index_title_text = pdf.find_unique_text 'Index'
-    (expect index_title_text[:page_number]).to eql 3
+    (expect index_title_text[:page_number]).to be 3
     c_text = pdf.find_unique_text 'C'
-    (expect c_text[:page_number]).to eql 3
+    (expect c_text[:page_number]).to be 3
     index_lines = pdf.lines pdf.find_text page_number: 3
     (expect index_lines).to include 'Custom Pipelines, 1'
     (expect index_lines).to include 'custom behavior, 1'
@@ -516,8 +516,8 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
     category_a_text = (pdf.find_text 'A')[0]
     category_p_text = (pdf.find_text 'P')[0]
-    (expect category_a_text[:page_number]).to eql 2
-    (expect category_p_text[:page_number]).to eql 2
+    (expect category_a_text[:page_number]).to be 2
+    (expect category_p_text[:page_number]).to be 2
     (expect category_p_text[:y]).to eql category_a_text[:y]
     (expect category_p_text[:x]).to be > category_a_text[:x]
   end
@@ -537,9 +537,9 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     category_a_text = (pdf.find_text 'A')[0]
     category_l_text = (pdf.find_text 'L')[0]
     category_w_text = (pdf.find_text 'W')[0]
-    (expect category_a_text[:page_number]).to eql 2
-    (expect category_l_text[:page_number]).to eql 2
-    (expect category_w_text[:page_number]).to eql 2
+    (expect category_a_text[:page_number]).to be 2
+    (expect category_l_text[:page_number]).to be 2
+    (expect category_w_text[:page_number]).to be 2
     (expect category_l_text[:y]).to eql category_a_text[:y]
     (expect category_w_text[:y]).to eql category_a_text[:y]
     (expect category_w_text[:x]).to be > category_l_text[:x]

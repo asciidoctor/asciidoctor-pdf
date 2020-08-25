@@ -210,7 +210,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     EOS
 
     advice_text = pdf.find_unique_text 'Sage advice by Frederick Douglass'
-    (expect advice_text[:page_number]).to eql 2
+    (expect advice_text[:page_number]).to be 2
     (expect advice_text[:y]).to be > 795
   end
 end

@@ -1418,8 +1418,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
       key_val_texts = pdf.find_text 'key-value pair'
       (expect key_val_texts).to have_size 2
-      (expect key_val_texts[0][:page_number]).to eql 1
-      (expect key_val_texts[1][:page_number]).to eql 2
+      (expect key_val_texts[0][:page_number]).to be 1
+      (expect key_val_texts[1][:page_number]).to be 2
       (expect key_val_texts[0][:y]).to eql key_val_texts[1][:y]
     end
 

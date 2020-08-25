@@ -256,7 +256,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       images = pdf.images
       (expect images).to have_size 1
       logo_image = images[0]
-      (expect logo_image[:page_number]).to eql 1
+      (expect logo_image[:page_number]).to be 1
       (expect logo_image[:y]).to be < 300
     end
 

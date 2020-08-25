@@ -571,10 +571,10 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect chapter_texts).to have_size 2
     chapter_text = chapter_texts[0]
     (expect chapter_text[:string]).to eql 'Chapter'
-    (expect chapter_text[:page_number]).to eql 3
+    (expect chapter_text[:page_number]).to be 3
     appendix_text = chapter_texts[1]
     (expect appendix_text[:string]).to eql 'Appendix A: Details'
-    (expect appendix_text[:page_number]).to eql 4
+    (expect appendix_text[:page_number]).to be 4
   end
 
   it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is not set' do

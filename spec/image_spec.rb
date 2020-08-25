@@ -422,8 +422,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       below_first_text = pdf.find_unique_text 'below first'
       below_second_text = pdf.find_unique_text 'below second'
       (expect below_first_text[:y]).to eql below_second_text[:y]
-      (expect below_first_text[:page_number]).to eql 2
-      (expect below_second_text[:page_number]).to eql 3
+      (expect below_first_text[:page_number]).to be 2
+      (expect below_second_text[:page_number]).to be 3
     end
 
     it 'should scale down inline SVG to fit height of page' do
@@ -658,7 +658,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       images = pdf.images
       (expect images).to have_size 1
       image = pdf.images[0]
-      (expect image[:page_number]).to eql 1
+      (expect image[:page_number]).to be 1
       (expect image[:intrinsic_width]).to eql 287
       (expect image[:x]).to eql 48.24
       (expect image[:y]).to eql 756.0
@@ -704,7 +704,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       images = pdf.images
       (expect images).to have_size 1
       image = images[0]
-      (expect image[:page_number]).to eql 2
+      (expect image[:page_number]).to be 2
       (expect image[:y]).to eql expected_top
       (expect image[:height]).to eql expected_height
     end

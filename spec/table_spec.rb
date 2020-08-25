@@ -992,14 +992,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
         (expect pdf.pages.size).to eql 3
         before_text = (pdf.find_text 'before')[0]
-        (expect before_text[:page_number]).to eql 1
+        (expect before_text[:page_number]).to be 1
         start_text = (pdf.find_text 'start')[0]
-        (expect start_text[:page_number]).to eql 2
+        (expect start_text[:page_number]).to be 2
         end_text = (pdf.find_text 'end')[0]
         (expect end_text).to be_nil
         (expect (pdf.find_text 'middle').map {|it| it[:page_number] }.uniq).to eql [2]
         after_text = (pdf.find_text 'after')[0]
-        (expect after_text[:page_number]).to eql 3
+        (expect after_text[:page_number]).to be 3
       end).to log_message severity: :ERROR, message: 'the table cell on page 2 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page'
     end
   end
@@ -1572,14 +1572,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
         (expect pdf.pages.size).to eql 3
         before_text = (pdf.find_text 'before')[0]
-        (expect before_text[:page_number]).to eql 1
+        (expect before_text[:page_number]).to be 1
         start_text = (pdf.find_text 'start')[0]
-        (expect start_text[:page_number]).to eql 2
+        (expect start_text[:page_number]).to be 2
         end_text = (pdf.find_text 'end')[0]
         (expect end_text).to be_nil
         (expect (pdf.find_text 'middle').map {|it| it[:page_number] }.uniq).to eql [2]
         after_text = (pdf.find_text 'after')[0]
-        (expect after_text[:page_number]).to eql 3
+        (expect after_text[:page_number]).to be 3
       end).to log_message severity: :ERROR, message: 'the table cell on page 2 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page'
     end
   end
