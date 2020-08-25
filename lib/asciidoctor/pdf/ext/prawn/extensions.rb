@@ -74,6 +74,27 @@ module Asciidoctor
         page_height - page_margin_top - page_margin_bottom
       end
 
+      # remove once fixed upstream; see https://github.com/prawnpdf/prawn/pull/1122
+      def generate_margin_box
+        page_w, page_h = (page = state.page).dimensions.slice 2, 2
+        page_m = page.margins
+        prev_margin_box, @margin_box = @margin_box, (::Prawn::Document::BoundingBox.new self, nil, [page_m[:left], page_h - page_m[:top]], width: page_w - page_m[:left] - page_m[:right], height: page_h - page_m[:top] - page_m[:bottom])
+
+        # update bounding box if not flowing from the previous page
+        unless @bounding_box && @bounding_box.parent
+          prev_margin_box = @bounding_box
+          @bounding_box = @margin_box
+        end
+
+        # maintains indentation settings across page breaks
+        if prev_margin_box
+          @margin_box.add_left_padding prev_margin_box.total_left_padding
+          @margin_box.add_right_padding prev_margin_box.total_right_padding
+        end
+
+        nil
+      end
+
       # Set the margins for the current page.
       #
       def set_page_margin margin
