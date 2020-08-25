@@ -100,7 +100,7 @@ Bug Fixes::
 * display decimal list marker correctly when list is reversed (e.g., 10., 09., 08., etc)
 * use correct spacing for dotted border dash on table (length and spacing should match width)
 * set color space on page with only image so font color is preserved in running content (#1742)
-* compute font size for superscript and subscript correctly when parent element uses em units (#1745)
+* compute font size for superscript and subscript correctly when parent element uses em and % units (#1745)
 * respect hyphenation exceptions when word is adjacent to non-word character (#1715)
 * fix crash when TOC is enabled and index is empty
 * align TOC section properly when index exceeds one page and section_indent is positive (#1735)

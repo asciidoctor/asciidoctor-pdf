@@ -21,8 +21,12 @@ Prawn::Text::Formatted::Arranger.prepend (Module.new do
   def apply_font_size size, styles
     if (subscript? styles) || (superscript? styles)
       size ||= @document.font_size
-      units = (size.end_with? 'em') ? 'em' : '' if String === size
-      size = units ? %(#{size.to_f * SUB_N_SUP_RELATIVE_SIZE}#{units}) : size * SUB_N_SUP_RELATIVE_SIZE
+      if String === size
+        units = (size.end_with? 'em', '%') ? ((size.end_with? '%') ? '%' : 'em') : ''
+        size = %(#{size.to_f * SUB_N_SUP_RELATIVE_SIZE}#{units})
+      else
+        size *= SUB_N_SUP_RELATIVE_SIZE
+      end
       @document.font_size(size) { yield }
     elsif size
       @document.font_size(size) { yield }
