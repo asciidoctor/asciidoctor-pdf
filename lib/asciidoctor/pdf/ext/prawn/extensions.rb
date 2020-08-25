@@ -81,7 +81,7 @@ module Asciidoctor
         prev_margin_box, @margin_box = @margin_box, (::Prawn::Document::BoundingBox.new self, nil, [page_m[:left], page_h - page_m[:top]], width: page_w - page_m[:left] - page_m[:right], height: page_h - page_m[:top] - page_m[:bottom])
 
         # update bounding box if not flowing from the previous page
-        unless @bounding_box && @bounding_box.parent
+        unless @bounding_box&.parent
           prev_margin_box = @bounding_box
           @bounding_box = @margin_box
         end
