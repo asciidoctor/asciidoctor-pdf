@@ -1108,6 +1108,40 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect link_annotation[:A][:URI]).to eql 'https://asciidoctor.org'
     end
 
+    it 'should process custom inline macros in content' do
+      pdf_theme = {
+        footer_font_color: 'AA0000',
+        footer_recto_right_content: 'offset:{page-number}[2]',
+        footer_verso_left_content: 'offset:{page-number}[2]',
+      }
+
+      input = <<~'EOS'
+      first
+
+      <<<
+
+      last
+      EOS
+
+      extension_registry = Asciidoctor::Extensions.create do
+        inline_macro :offset do
+          resolve_attributes '1:amount'
+          process do |parent, target, attrs|
+            create_inline parent, :quoted, (target.to_i + attrs['amount'].to_i)
+          end
+        end
+      end
+
+      pdf = to_pdf input, enable_footer: true, pdf_theme: pdf_theme, extension_registry: extension_registry, analyze: true
+
+      footer_texts = pdf.find_text font_color: 'AA0000'
+      (expect footer_texts).to have_size 2
+      (expect footer_texts[0][:page_number]).to be 1
+      (expect footer_texts[0][:string]).to eql '3'
+      (expect footer_texts[1][:page_number]).to be 2
+      (expect footer_texts[1][:string]).to eql '4'
+    end
+
     it 'should allow theme to control border style', visual: true do
       pdf_theme = {
         footer_border_width: 1,
