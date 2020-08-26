@@ -3360,7 +3360,7 @@ module Asciidoctor
                         content = apply_subs_discretely doc, content, drop_lines_with_unresolved_attributes: true
                         content = transform_text content, @text_transform if @text_transform
                       end
-                      formatted_text_box parse_text(content, color: @font_color, inline_format: [normalize: true]),
+                      formatted_text_box (parse_text content, color: @font_color, inline_format: [normalize: true]),
                           at: [left, bounds.top - trim_styles[:padding][side][0] - trim_styles[:content_offset] + ((Array trim_styles[:valign])[0] == :center ? font.descender * 0.5 : 0)],
                           width: colwidth,
                           height: trim_styles[:prose_content_height][side],
