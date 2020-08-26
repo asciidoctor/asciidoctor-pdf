@@ -237,16 +237,10 @@ module Asciidoctor
         { family: font.options[:family], style: (font.options[:style] || :normal), size: @font_size }
       end
 
-      # Sets the font style for the scope of the block to which this method
-      # yields. If the style is nil and no block is given, return the current
-      # font style.
+      # Set the font style on the document, if a style is given, otherwise return the current font style.
       #
       def font_style style = nil
-        if block_given?
-          font font.options[:family], style: style do
-            yield
-          end
-        elsif style
+        if style
           font font.options[:family], style: style
         else
           font.options[:style] || :normal
