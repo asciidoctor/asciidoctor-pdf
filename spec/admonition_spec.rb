@@ -168,6 +168,25 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect top_of_page_texts[0][:y]).to eql top_of_page_texts[0][:y]
   end
 
+  it 'should pad content box based on prose_margin_bottom value' do
+    input = <<~'EOS'
+    NOTE: The prose_margin_bottom value controls the padding around the content box.
+    EOS
+
+    pdf = to_pdf input, pdf_theme: { prose_margin_bottom: 12 }, analyze: :line
+    reference_line = pdf.lines[0]
+    reference_text = (to_pdf input, pdf_theme: { prose_margin_bottom: 12 }, analyze: true).text[0]
+
+    pdf = to_pdf input, pdf_theme: { prose_margin_bottom: 0 }, analyze: :line
+    line = pdf.lines[0]
+    text = (to_pdf input, pdf_theme: { prose_margin_bottom: 0 }, analyze: true).text[0]
+
+    (expect line[:from][:y]).to eql reference_line[:from][:y]
+    (expect line[:to][:y]).to eql (reference_line[:to][:y] + 8)
+    # NOTE: verify text moves up by half the change in line size
+    (expect text[:y]).to eql (reference_text[:y] + 4)
+  end
+
   context 'Text' do
     it 'should show admonition label in bold by default' do
       pdf = to_pdf <<~'EOS', analyze: true
