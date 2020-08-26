@@ -261,9 +261,7 @@ module Asciidoctor
       # QUESTION: should we round the result?
       def font_size points = nil
         return @font_size unless points
-        if points == 1
-          super @font_size
-        elsif ::String === points
+        if ::String === points
           if points.end_with? 'rem'
             super @root_font_size * points.to_f
           elsif points.end_with? 'em'
@@ -273,8 +271,8 @@ module Asciidoctor
           else
             super points.to_f
           end
-        # FIXME: HACK assume em value
-        elsif points < 1
+        # NOTE: assume em value (since a font size of 1 is extremely unlikely)
+        elsif points <= 1
           super @font_size * points
         else
           super points
