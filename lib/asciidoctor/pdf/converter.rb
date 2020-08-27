@@ -2791,7 +2791,7 @@ module Asciidoctor
           if image_opts[:format] == 'pdf'
             import_page image_path, (image_opts.merge advance: face != :back)
           else
-            image_page image_path, (image_opts.merge canvas: true)
+            image_page image_path, image_opts
           end
         end
       end

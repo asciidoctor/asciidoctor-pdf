@@ -785,18 +785,16 @@ module Asciidoctor
         nil
       end
 
-      # Create a new page for the specified image. If the canvas option is true,
-      # the image is positioned relative to the boundaries of the page.
+      # Create a new page for the specified image.
+      #
+      # The image is positioned relative to the boundaries of the page.
       def image_page file, options = {}
         start_new_page_discretely
-        image_page_number = page_number
-        if options.delete :canvas
-          canvas { image file, ({ position: :center, vposition: :center }.merge options) }
-        else
-          image file, (options.merge position: :center, vposition: :center, fit: [bounds.width, bounds.height])
+        float do
+          canvas do
+            image file, ({ position: :center, vposition: :center }.merge options)
+          end
         end
-        # NOTE: advance to newly created page just in case the image function threw off the cursor
-        go_to_page image_page_number
         nil
       end
 
