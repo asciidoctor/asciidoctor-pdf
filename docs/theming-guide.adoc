@@ -72,14 +72,14 @@ Some of these properties have different names from those found in CSS.
 
 * An underscore (`_`) may be used in place of a hyphen (`-`) in all property names (so you may use `font_family` or `font-family`).
 * An underscore (`_`) may be used in place of a hyphen (`-`) in all variable names (so you may use `$base_font_family` or `$base-font-family`).
-* Instead of separate properties for font weight and font style, the theme language combines these settings in the `font-style` property (allowed values: `normal`, `bold`, `italic` and `bold_italic`).
+* Instead of separate properties for font weight and font style, the theme language combines these settings in the `font-style` property (allowed values: `normal`, `bold`, `italic`, and `bold_italic`).
 * The `align` property in the theme language is roughly equivalent to the `text-align` property in CSS.
 * The `font-color` property in the theme language is equivalent to the `color` property in CSS.
 ====
 
 A theme is described in a YAML-based data format and stored in a dedicated theme file.
 YAML is a human-friendly data format that resembles CSS and helps to describe the theme.
-The theme language adds some extra features to YAML, such as variables, basic math, measurements and color values.
+The theme language adds some extra features to YAML, such as variables, basic math, measurements, and color values.
 These enhancements will be explained in detail in later sections.
 
 === Basic Theme
@@ -326,7 +326,7 @@ base:
 === Math Expressions & Functions
 
 The theme language supports basic math operations to support calculated values.
-Like programming languages, multiply and divide take precedence over add and subtract.
+Like programming languages, the multiply and divide operators take precedence over the add and subtract operators.
 
 The following table lists the supported operations and the corresponding operator for each.
 
@@ -749,7 +749,7 @@ http://www.google.com/get/noto/#/family/noto-serif[Noto Serif]::
 A serif font that can be styled as normal, italic, bold or bold_italic.
 
 http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1mn[M+ 1mn]::
-A monospaced font that maps different thicknesses to the styles normal, italic, bold and bold_italic.
+A monospaced font that maps different thicknesses to the styles normal, italic, bold, and bold_italic.
 Also provides the circuled numbers used in callouts.
 
 http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1p[M+ 1p Fallback]::
@@ -1268,7 +1268,7 @@ The page from the PDF file will be imported as is.
 [#keys-page]
 === Page
 
-The keys in this category control the size, margins and background of each page (i.e., canvas).
+The keys in this category control the size, margins, and background of each page (i.e., canvas).
 We recommended that you define this category before all other categories.
 
 NOTE: The background of the title page can be styled independently of other pages.
@@ -1642,7 +1642,7 @@ It does not affect the distance between the formatted phrase and the phrases tha
 [#keys-heading]
 === Heading
 
-The keys in this category control the style of most headings, including part titles, chapter titles, sections titles, the table of contents title and discrete headings.
+The keys in this category control the style of most headings, including part titles, chapter titles, sections titles, the table of contents title, and discrete headings.
 
 [cols="3,4,5l"]
 |===
@@ -2446,7 +2446,7 @@ The value `inherit` resolves to the alignment of the block image.
 [#keys-code]
 === Code
 
-The keys in this category are used to control the style of literal, listing and source blocks.
+The keys in this category are used to control the style of literal, listing, and source blocks.
 
 [cols="3,4,5l"]
 |===
