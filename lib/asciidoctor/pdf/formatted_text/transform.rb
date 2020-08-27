@@ -75,6 +75,10 @@ module Asciidoctor
                 styles: (to_styles theme.link_font_style, theme.link_text_decoration),
                 text_decoration_color: theme.link_text_decoration_color,
                 text_decoration_width: theme.link_text_decoration_width,
+                background_color: (link_bg_color = theme.link_background_color),
+                border_offset: (link_border_offset = link_bg_color && theme.link_border_offset),
+                align: link_border_offset && :center,
+                callback: link_bg_color && [TextBackgroundAndBorderRenderer],
               }.compact,
               mark: {
                 color: theme.mark_font_color,
