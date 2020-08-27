@@ -16,6 +16,7 @@ Enhancements::
 * allow theme to control margin and content margin of running content per periphery (header or footer) and per side (recto or verso) (#994)
 * allow theme to control border style of delimited blocks (example, sidebar, code, admonition, verse, quote) (#1586)
 * allow theme to control font color of first line of abstract
+* allow theme to control background color and border offset (only for background) for links (#1705)
 * don't render index section if index is empty (i.e., there are no index entries)
 * stabilize font paths in built-in themes by prefixing paths with GEM_FONTS_DIR (#1568)
 * assign page-layout attribute in running content so it can be used select background per layout (#1570)

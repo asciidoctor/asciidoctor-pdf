@@ -722,6 +722,15 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect max_text[:font_size].to_f).to eql 21.0
     end
 
+    it 'should add background to link as defined in theme', visual: true do
+      pdf_theme = {
+        link_background_color: 'EFEFEF',
+        link_border_offset: 1,
+      }
+      to_file = to_pdf_file 'Check out https://asciidoctor.org[Asciidoctor].', 'text-formatter-link-background.pdf', pdf_theme: pdf_theme
+      (expect to_file).to visually_match 'text-formatter-link-background.pdf'
+    end
+
     it 'should allow custom role to override styles of link' do
       pdf_theme = {
         heading_font_color: '000000',

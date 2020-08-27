@@ -1524,6 +1524,18 @@ The keys in this category are used to style hyperlink text.
 
 3+|[#key-prefix-link]*Key Prefix:* <<key-prefix-link,link>>
 
+|background-color
+|<<colors,Color>> +
+(default: _not set_)
+|link:
+  background-color: #efefef
+
+|border-offset
+|<<values,Number>> +
+(default: 0)
+|link:
+  border-offset: 2
+
 |font-color
 |<<colors,Color>> +
 (default: #0000ee)
