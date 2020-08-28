@@ -803,7 +803,7 @@ module Asciidoctor
       def perform_discretely
         if (saved_callback = state.on_page_create_callback)
           begin
-            # equivalent to calling `on_page_create`
+            # equivalent to calling `on_page_create` with no arguments
             state.on_page_create_callback = nil
             yield
           ensure
