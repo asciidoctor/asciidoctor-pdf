@@ -792,7 +792,7 @@ module Asciidoctor
             # TODO: introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
             label_width = label_min_width || 36.0
           else
-            log :warn, %(admonition icon not found or not readable: #{icon_path})
+            log :warn, %(admonition icon not found or not readable: #{icon_path || (resolve_icon_image_path node, type, false)})
           end
         end
         unless icons
@@ -4184,14 +4184,14 @@ module Asciidoctor
         end
       end
 
-      def resolve_icon_image_path node, type
+      def resolve_icon_image_path node, type, resolve = true
         if (data_uri_enabled = (doc = node.document).attr? 'data-uri')
           doc.remove_attr 'data-uri'
         end
         # NOTE: icon_uri will consider icon attribute on node first, then type
         icon_path, icon_format = ::Asciidoctor::Image.target_and_format node.icon_uri type
         doc.set_attr 'data-uri', '' if data_uri_enabled
-        resolve_image_path node, icon_path, icon_format, nil
+        resolve ? (resolve_image_path node, icon_path, icon_format, nil) : icon_path
       end
 
       # Resolve the path and sizing of the background image either from a document attribute or theme key.

@@ -644,9 +644,60 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
     end
 
+    it 'should not resolve remote icon when icons attribute is set to image and allow-uri-read is not set' do
+      with_local_webserver do |base_url|
+        with_memory_logger do |logger|
+          pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => base_url }, analyze: true
+          :icons: image
+
+          [TIP]
+          ====
+          Use the icon attribute to customize the image for an admonition block.
+          ====
+          EOS
+
+          label_text = pdf.find_unique_text 'TIP'
+          (expect label_text).not_to be_nil
+          (expect pdf.lines).to eql ['TIP Use the icon attribute to customize the image for an admonition block.']
+          messages = logger.messages
+          (expect messages).to have_size 2
+          (expect messages[0][:severity]).to equal :WARN
+          (expect messages[0][:message]).to eql %(allow-uri-read is not enabled; cannot embed remote image: #{base_url}/tip.png)
+          (expect messages[1][:severity]).to equal :WARN
+          (expect messages[1][:message]).to eql %(admonition icon not found or not readable: #{base_url}/tip.png)
+        end
+      end
+    end
+
+    it 'should not resolve remote icon when icons attribute is set to image, allow-uri-read is set, and image is missing' do
+      with_local_webserver do |base_url|
+        base_url += '/nada'
+        with_memory_logger do |logger|
+          pdf = to_pdf <<~'EOS', attribute_overrides: { 'allow-uri-read' => '', 'iconsdir' => base_url }, analyze: true
+          :icons: image
+
+          [TIP]
+          ====
+          Use the icon attribute to customize the image for an admonition block.
+          ====
+          EOS
+
+          label_text = pdf.find_unique_text 'TIP'
+          (expect label_text).not_to be_nil
+          (expect pdf.lines).to eql ['TIP Use the icon attribute to customize the image for an admonition block.']
+          messages = logger.messages
+          (expect messages).to have_size 2
+          (expect messages[0][:severity]).to equal :WARN
+          (expect messages[0][:message]).to eql %(could not retrieve remote image: #{base_url}/tip.png; 404 Not Found)
+          (expect messages[1][:severity]).to equal :WARN
+          (expect messages[1][:message]).to eql %(admonition icon not found or not readable: #{base_url}/tip.png)
+        end
+      end
+    end
+
     it 'should resolve remote icon when icons attribute is set to image and allow-uri-read is set', visual: true do
       to_file = with_local_webserver do |base_url|
-        to_pdf_file <<~EOS, 'admonition-remote-image-icon.pdf', attribute_overrides: { 'allow-uri-read' => '', 'iconsdir' => base_url }
+        to_pdf_file <<~'EOS', 'admonition-remote-image-icon.pdf', attribute_overrides: { 'allow-uri-read' => '', 'iconsdir' => base_url }
         :icons: image
 
         [TIP]
