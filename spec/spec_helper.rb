@@ -654,12 +654,10 @@ RSpec::Matchers.define :log_message do |expected|
     end
     with_memory_logger log_level_override do |logger|
       actual.call
-      if logger
-        if expected
-          (expect logger).to have_message expected
-        else
-          (expect logger).not_to be_empty
-        end
+      if expected
+        (expect logger).to have_message expected
+      else
+        (expect logger).not_to be_empty
       end
       true
     end
