@@ -646,7 +646,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should not resolve remote icon when icons attribute is set to image and allow-uri-read is not set' do
       with_local_webserver do |base_url|
-        with_memory_logger do |logger|
+        (expect do
           pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => base_url }, analyze: true
           :icons: image
 
@@ -659,20 +659,17 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
           label_text = pdf.find_unique_text 'TIP'
           (expect label_text).not_to be_nil
           (expect pdf.lines).to eql ['TIP Use the icon attribute to customize the image for an admonition block.']
-          messages = logger.messages
-          (expect messages).to have_size 2
-          (expect messages[0][:severity]).to equal :WARN
-          (expect messages[0][:message]).to eql %(allow-uri-read is not enabled; cannot embed remote image: #{base_url}/tip.png)
-          (expect messages[1][:severity]).to equal :WARN
-          (expect messages[1][:message]).to eql %(admonition icon not found or not readable: #{base_url}/tip.png)
-        end
+        end).to log_messages [[
+          { severity: :WARN, message: %(allow-uri-read is not enabled; cannot embed remote image: #{base_url}/tip.png) },
+          { severity: :WARN, message: %(admonition icon not found or not readable: #{base_url}/tip.png) },
+        ]]
       end
     end
 
     it 'should not resolve remote icon when icons attribute is set to image, allow-uri-read is set, and image is missing' do
       with_local_webserver do |base_url|
         base_url += '/nada'
-        with_memory_logger do |logger|
+        (expect do
           pdf = to_pdf <<~'EOS', attribute_overrides: { 'allow-uri-read' => '', 'iconsdir' => base_url }, analyze: true
           :icons: image
 
@@ -685,13 +682,10 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
           label_text = pdf.find_unique_text 'TIP'
           (expect label_text).not_to be_nil
           (expect pdf.lines).to eql ['TIP Use the icon attribute to customize the image for an admonition block.']
-          messages = logger.messages
-          (expect messages).to have_size 2
-          (expect messages[0][:severity]).to equal :WARN
-          (expect messages[0][:message]).to eql %(could not retrieve remote image: #{base_url}/tip.png; 404 Not Found)
-          (expect messages[1][:severity]).to equal :WARN
-          (expect messages[1][:message]).to eql %(admonition icon not found or not readable: #{base_url}/tip.png)
-        end
+        end).to log_messages [[
+          { severity: :WARN, message: %(could not retrieve remote image: #{base_url}/tip.png; 404 Not Found) },
+          { severity: :WARN, message: %(admonition icon not found or not readable: #{base_url}/tip.png) },
+        ]]
       end
     end
 

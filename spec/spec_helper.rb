@@ -675,6 +675,22 @@ RSpec::Matchers.define :log_message do |expected|
   supports_block_expectations
 end
 
+# NOTE: expected messages must be enclosed in nested array
+RSpec::Matchers.define :log_messages do |expected, opts = {}|
+  match notify_expectation_failures: true do |actual|
+    log_level_override = opts[:using_log_level]
+    with_memory_logger log_level_override do |logger|
+      actual.call
+      expected.each_with_index do |it, idx|
+        (expect logger).to have_message (it.merge index: idx)
+      end if logger
+      true
+    end
+  end
+
+  supports_block_expectations
+end
+
 # define matcher to replace `.not_to log_message` until notify_expectation_failures is supported for negated match
 # see https://github.com/rspec/rspec-expectations/issues/1124
 RSpec::Matchers.define :not_log_message do |expected|
