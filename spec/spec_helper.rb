@@ -611,6 +611,14 @@ RSpec::Matchers.define :have_size do |expected|
   failure_message {|actual| %(expected #{actual} to have size #{expected}, but was #{actual.size}) }
 end
 
+RSpec::Matchers.define :annotate do |text|
+  match do |subject|
+    left, bottom, right, top = subject[:Rect]
+    left == text[:x] && right == (text[:x] + text[:width]) && bottom < text[:y] && top > (text[:y] + text[:font_size])
+  end
+  failure_message {|subject| %(expected #{subject} to annotate #{text}) }
+end
+
 RSpec::Matchers.define :have_message do |expected|
   actual = nil
   match do |logger|

@@ -17,7 +17,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       link_text = (pdf.find_text 'https://asciidoctor.org')[0]
       (expect link_text).not_to be_nil
       (expect link_text[:font_color]).to eql '428BCA'
-      (expect link_text[:x]).to eql link_annotation[:Rect][0]
+      (expect link_annotation).to annotate link_text
     end
 
     it 'should decode character references in the href' do
@@ -143,22 +143,34 @@ describe 'Asciidoctor::PDF::Converter - Link' do
 
   context 'Email' do
     it 'should convert bare email address to link' do
-      pdf = to_pdf 'Send a message to doc.writer@example.org.'
+      input = 'Send a message to doc.writer@example.org.'
+      pdf = to_pdf input
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       link_annotation = annotations[0]
       (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql 'mailto:doc.writer@example.org'
+      pdf = to_pdf input, analyze: true
+      link_text = pdf.find_unique_text 'doc.writer@example.org'
+      (expect link_text).not_to be_nil
+      (expect link_text[:font_color]).to eql '428BCA'
+      (expect link_annotation).to annotate link_text
     end
 
     it 'should create email address link' do
-      pdf = to_pdf 'Send a message to mailto:doc.writer@example.org[Doc Writer].'
+      input = 'Send a message to mailto:doc.writer@example.org[Doc Writer].'
+      pdf = to_pdf input
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       link_annotation = annotations[0]
       (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql 'mailto:doc.writer@example.org'
       (expect (pdf.page 1).text).to include 'Doc Writer'
+      pdf = to_pdf input, analyze: true
+      link_text = pdf.find_unique_text 'Doc Writer'
+      (expect link_text).not_to be_nil
+      (expect link_text[:font_color]).to eql '428BCA'
+      (expect link_annotation).to annotate link_text
     end
 
     it 'should show mailto address of bare email when media=prepress' do
