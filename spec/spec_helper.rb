@@ -623,8 +623,8 @@ RSpec::Matchers.define :have_message do |expected|
   actual = nil
   match do |logger|
     result = false
-    if (messages = logger.messages).size == 1
-      if (message = messages[0])[:severity] == expected[:severity]
+    if (message = logger.messages[expected[:index] || 0])
+      if message[:severity] == expected[:severity]
         if Hash === (message_text = message[:message])
           message_text = message_text[:text]
         end
