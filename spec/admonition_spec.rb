@@ -518,9 +518,10 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end).to log_message severity: :WARN, message: %(~could not embed admonition icon: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
     end
 
+    # NOTE: this test also verifies the text transform is applied as requested by theme
     it 'should warn and fall back to admonition label if raster icon cannot be found' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, pdf_theme: { admonition_label_text_transform: 'uppercase' }, analyze: true
         :icons:
 
         [WARNING]
@@ -534,9 +535,10 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end).to log_message severity: :WARN, message: %(admonition icon not found or not readable: #{fixture_file 'warning.png'})
     end
 
+    # NOTE: this test also verifies the text transform is not applied if disabled by the theme
     it 'should warn and fall back to admonition label if raster icon specified by icon attribute cannot be embedded' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, pdf_theme: { admonition_label_text_transform: 'none' }, analyze: true
         :icons:
 
         [TIP,icon=corrupt.png]
@@ -544,7 +546,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         Use the icon attribute to customize the image for an admonition block.
         ====
         EOS
-        label_text = pdf.find_unique_text 'TIP'
+        label_text = pdf.find_unique_text 'Tip'
         (expect label_text).not_to be_nil
         (expect label_text[:font_name]).to include 'Bold'
       end).to log_message severity: :WARN, message: %(~could not embed admonition icon: #{fixture_file 'corrupt.png'}; image file is an unrecognised format)
