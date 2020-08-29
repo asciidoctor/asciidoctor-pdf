@@ -5473,7 +5473,21 @@ You can check on the status of this defect by following https://github.com/ascii
 
 == Source Highlighting Theme
 
-You can define and apply your own source highlighting theme to source blocks when using Rouge as the source highlighter.
+=== Using a Highlighting Theme
+
+When using Rouge as the source highlighter, you can select the colour theme to use with source blocks. To do so first set `rouge` as your code highlighter, then set the desired theme using the `rouge-style` document attribute.
+
+[source,asciidoc]
+----
+:source-highlighter: rouge
+:rouge-style: monokai
+----
+
+These themes are bundled with Rouge, you can see a list of all available themes at https://github.com/jneen/rouge/tree/master/lib/rouge/themes[Rouge's themes directory].
+
+=== Custom Highlighting Theme
+
+You can also define and apply your own source highlighting theme to source blocks.
 This section explains how.
 
 A custom theme for Rouge is defined using a Ruby class.
