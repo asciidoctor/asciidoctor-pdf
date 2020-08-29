@@ -121,14 +121,15 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect label_text[:string]).to eql '⏻ TIP'
   end
 
-  # NOTE: this is a negative test until the defect is addressed
-  it 'should not show label if it overflows available space' do
+  it 'should resize label text to fit if it overflows available space' do
     pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_font_size: 18 }, analyze: true
     [IMPORTANT]
     Make sure the device is powered off before servicing it.
     EOS
 
-    (expect pdf.find_unique_text 'IMPORTANT').to be_nil
+    label_text = pdf.find_unique_text 'IMPORTANT'
+    (expect label_text).not_to be_nil
+    (expect label_text[:font_size]).to be < 18
   end
 
   it 'should allow padding to be specified for label and content using single value' do

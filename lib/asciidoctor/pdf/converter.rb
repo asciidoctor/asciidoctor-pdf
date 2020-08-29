@@ -924,7 +924,9 @@ module Asciidoctor
                             valign: label_valign,
                             line_height: 1,
                             margin: 0,
-                            inline_format: false # already replaced character references
+                            inline_format: false, # already replaced character references
+                            overflow: :shrink_to_fit,
+                            disable_wrap_by_char: true
                       end
                     end
                   end
