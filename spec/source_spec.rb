@@ -230,6 +230,9 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       to_file = to_pdf_file input, 'source-rouge-style.pdf', attribute_overrides: { 'rouge-style' => (Rouge::Theme.find 'molokai').new }
       (expect to_file).to visually_match 'source-rouge-style.pdf'
+
+      to_file = to_pdf_file input, 'source-rouge-style.pdf', attribute_overrides: { 'rouge-style' => (Rouge::Theme.find 'molokai') }
+      (expect to_file).to visually_match 'source-rouge-style.pdf'
     end
 
     it 'should not crash if source-highlighter attribute is defined outside of document header' do

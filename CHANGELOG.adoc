@@ -48,6 +48,7 @@ Enhancements::
 * allow theme to configure font color of unresolved footnote using unresolved role
 * show textual label on admonition if icon image fails to embed (#1741)
 * allow theme to disable title page by assigning false to title_page category key (#1754)
+* allow Rouge theme to be specified as theme class or instance (API only)
 
 Bug Fixes::
 

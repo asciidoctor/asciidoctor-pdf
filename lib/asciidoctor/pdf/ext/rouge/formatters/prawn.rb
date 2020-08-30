@@ -28,7 +28,7 @@ module Rouge
 
       def initialize opts = {}
         unless ::Rouge::Theme === (theme = opts[:theme])
-          unless theme && (theme = ::Rouge::Theme.find theme)
+          unless theme && ((::Class === theme && theme < ::Rouge::Theme) || (theme = ::Rouge::Theme.find theme))
             theme = ::Rouge::Themes::AsciidoctorPDFDefault
           end
           theme = theme.new
