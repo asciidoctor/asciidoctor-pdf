@@ -600,7 +600,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       dot_leader_texts = pdf.find_text %r/(?:\. )+/, page_number: 2
       (expect dot_leader_texts).not_to be_empty
       dot_leader_texts.each do |text|
-        (expect text[:font_size]).to be (reference_text[:font_size] * 0.5)
+        (expect text[:font_size]).to eql (reference_text[:font_size] * 0.5)
       end
     end
 
