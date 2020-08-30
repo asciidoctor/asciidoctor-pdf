@@ -585,6 +585,25 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect page_number_text).to have_size 1
     end
 
+    it 'should allow theme to control font size of dot leader' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_font_size: '0.5em' }, analyze: true
+      = Book Title
+      :doctype: book
+      :toc:
+
+      == Foo
+
+      == Bar
+      EOS
+
+      reference_text = pdf.find_unique_text 'Foo', page_number: 2
+      dot_leader_texts = pdf.find_text %r/(?:\. )+/, page_number: 2
+      (expect dot_leader_texts).not_to be_empty
+      dot_leader_texts.each do |text|
+        (expect text[:font_size]).to be (reference_text[:font_size] * 0.5)
+      end
+    end
+
     it 'should allow theme to control font style of dot leader' do
       pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_font_style: 'bold' }, analyze: true
       = Book Title

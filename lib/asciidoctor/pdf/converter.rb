@@ -3049,9 +3049,13 @@ module Asciidoctor
             if (dot_leader_font_style = (@theme.toc_dot_leader_font_style || :normal).to_sym) != font_style
               font_style dot_leader_font_style
             end
+            if (dot_leader_font_size = @theme.toc_dot_leader_font_size) != font_size
+              font_size dot_leader_font_size
+            end
             {
               font_color: @theme.toc_dot_leader_font_color || @font_color,
               font_style: dot_leader_font_style,
+              font_size: font_size,
               levels: ((dot_leader_l = @theme.toc_dot_leader_levels) == 'none' ? ::Set.new :
                   (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (0..num_levels).to_set)),
               text: (dot_leader_text = @theme.toc_dot_leader_content || DotLeaderTextDefault),
@@ -3114,7 +3118,7 @@ module Asciidoctor
                 pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
                 save_font do
                   # NOTE: the same font is used for dot leaders throughout toc
-                  set_font toc_font_info[:font], toc_font_info[:size]
+                  set_font toc_font_info[:font], dot_leader[:font_size]
                   font_style dot_leader[:font_style]
                   num_dots = [((bounds.width - start_dots - dot_leader[:spacer_width] - pgnum_label_width) / dot_leader[:width]).floor, 0].max
                   # FIXME: dots don't line up in columns if width of page numbers differ
