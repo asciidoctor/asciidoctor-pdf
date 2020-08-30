@@ -3,10 +3,8 @@
 module Asciidoctor
   module Prawn
     module Images
-      class << self
-        def extended base
-          base.class.__send__ :alias_method, :_initial_image, :image
-        end
+      def self.extended base
+        base.class.__send__ :alias_method, :_initial_image, :image
       end
 
       # Dispatch to suitable image method in Prawn based on file extension.
