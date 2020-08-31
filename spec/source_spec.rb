@@ -571,6 +571,26 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect hello_text[:font_name]).to eql 'mplus1mn-regular'
     end
 
+    it 'should not crash if token text is nil' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        :source-highlighter: coderay
+
+        [source,sass]
+        ----
+        $icon-font-path: "node_modules/package-name/icon-fonts/";
+
+        body {
+          background: #fafafa;
+        }
+        ----
+        EOS
+
+        closing_bracket_text = pdf.find_unique_text '}'
+        (expect closing_bracket_text[:font_color]).to eql 'CC3300'
+      end).not_to raise_exception
+    end
+
     it 'should use sub-language if language starts with html+' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: coderay
