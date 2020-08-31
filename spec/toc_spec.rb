@@ -393,6 +393,29 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_heading_text[:page_number]).to be 3
     end
 
+    it 'should start preamble toc on recto page for prepress book' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+      :media: prepress
+      :toc: preamble
+
+      In a land far away...
+
+      == First Chapter
+
+      There was a hero...
+
+      == Last Chapter
+
+      Fin.
+      EOS
+
+      (expect pdf.pages).to have_size 9
+      toc_heading_text = pdf.find_unique_text 'Table of Contents'
+      (expect toc_heading_text[:page_number]).to be 5
+    end
+
     it 'should start macro toc on recto page for prepress book' do
       pdf = to_pdf <<~EOS, analyze: true
       = Document Title
@@ -416,7 +439,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_heading_text[:page_number]).to be 5
     end
 
-    it 'should not advance toc to recto page for prepress book when nonfacing option is specified on macro' do
+    it 'should not advance macro toc to recto page for prepress book when nonfacing option is specified on macro' do
       pdf = to_pdf <<~EOS, analyze: true
       = Document Title
       :doctype: book
