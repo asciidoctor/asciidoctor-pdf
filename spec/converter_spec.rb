@@ -349,13 +349,14 @@ describe Asciidoctor::PDF::Converter do
 
   describe 'helpers' do
     it 'should not drop lines with unresolved attributes when apply_subs_discretely is called without options' do
-      doc = Asciidoctor.load 'yo', backend: :pdf
-      converter = doc.converter
       input = <<~'EOS'
       foo
       {undefined}
       bar
       EOS
+      doc = Asciidoctor.load 'yo', backend: :pdf
+      converter = doc.converter
+      converter.load_theme doc
       result = converter.apply_subs_discretely doc, input
       (expect result).to eql input
     end
