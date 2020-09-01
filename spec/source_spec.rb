@@ -273,6 +273,23 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       end
     end
 
+    it 'should allow token to be formatted in bold and italic' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+      :rouge-style: github
+
+      [source,d]
+      ----
+      int #line 6 "pkg/mod.d"
+      x; // this is now line 6 of file pkg/mod.d
+      ----
+      EOS
+
+      line_text = pdf.find_unique_text %r/^#line 6 /
+      (expect line_text).not_to be_empty
+      (expect line_text[:font_name]).to eql 'mplus1mn-bold_italic'
+    end
+
     it 'should add line numbers to start of line if linenums option is enabled' do
       expected_lines = <<~'EOS'.split ?\n
        1 <?xml version="1.0" encoding="UTF-8"?>
