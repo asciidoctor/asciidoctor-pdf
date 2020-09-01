@@ -2793,7 +2793,11 @@ module Asciidoctor
           if image_opts[:format] == 'pdf'
             import_page image_path, (image_opts.merge advance: face != :back)
           else
-            image_page image_path, image_opts
+            begin
+              image_page image_path, image_opts
+            rescue
+              log :warn, %(could not embed #{face} cover image: #{image_path}; #{$!.message})
+            end
           end
         end
       end

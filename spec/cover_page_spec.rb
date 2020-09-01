@@ -65,6 +65,19 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     end).to log_message severity: :WARN, message: %(front cover image not found or readable: #{fixture_file 'no-such-file.jpg'})
   end
 
+  it 'should not add cover page if image cannot be embedded' do
+    (expect do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :front-cover-image: image:broken.svg[]
+
+      content page
+      EOS
+
+      (expect pdf.pages).to have_size 1
+      (expect pdf.lines pdf.find_text page_number: 1).to eql ['content page']
+    end).to log_message severity: :WARN, message: %(~could not embed front cover image: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
+  end
+
   it 'should not add cover page if value is ~' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Document Title

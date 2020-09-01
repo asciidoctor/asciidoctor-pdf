@@ -790,11 +790,15 @@ module Asciidoctor
       # The image is positioned relative to the boundaries of the page.
       def image_page file, options = {}
         start_new_page_discretely
+        ex = nil
         float do
           canvas do
             image file, ({ position: :center, vposition: :center }.merge options)
+          rescue
+            ex = $!
           end
         end
+        raise ex if ex
         nil
       end
 

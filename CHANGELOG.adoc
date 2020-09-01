@@ -55,6 +55,7 @@ Bug Fixes::
 
 * do not crash if item in horizontal desciption list has no desc
 * do not crash if item in unordered desciption list has no desc and do not append subject stop to term
+* log warning rather than crash if front cover image cannot be embedded (such as a broken SVG)
 * do not hyphenate a hyphen when hyphenation is enabled (#1562)
 * do not insert blank line in index when term is forced to break (#1665)
 * use more robust strategy for line height normalization that accounts for line contains only monospaced text (#1650)
