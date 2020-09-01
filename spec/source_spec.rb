@@ -290,6 +290,26 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect line_text[:font_name]).to eql 'mplus1mn-bold_italic'
     end
 
+    it 'should draw background color across whole line for line-oriented tokens', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'source-rouge-bg-line.pdf'
+      :source-highlighter: rouge
+
+      [source,diff]
+      ----
+      --- /tmp/list1.txt
+      +++ /tmp/list2.txt
+      @@ -1,4 +1,4 @@
+       apples
+      -oranges
+       kiwis
+       carrots
+      +grapefruits
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-rouge-bg-line.pdf'
+    end
+
     it 'should add line numbers to start of line if linenums option is enabled' do
       expected_lines = <<~'EOS'.split ?\n
        1 <?xml version="1.0" encoding="UTF-8"?>
