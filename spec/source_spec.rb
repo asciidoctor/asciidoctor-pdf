@@ -307,7 +307,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       ----
       EOS
 
-      (expect to_file).to visually_match 'source-rouge-bg-line.pdf'
+      (expect to_file).to visually_match 'source-rouge-bg-line.pdf' if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
     end
 
     it 'should add line numbers to start of line if linenums option is enabled' do
