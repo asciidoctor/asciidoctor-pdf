@@ -5227,9 +5227,9 @@ These settings override equivalent keys defined in the theme file, where applica
 |flag (default: _not set_)
 |:autofit-option:
 
-|chapter-label
+|chapter-signifier
 |string (default: Chapter)
-|:chapter-label: Chapitre
+|:chapter-signifier: Chapitre
 
 |<face>-cover-image^[1]^
 |path^[2]^ {vbar} image macro^[3]^ +
@@ -5271,6 +5271,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |pagenums^[5]^
 |flag (default: _set_)
 |:pagenums:
+
+|part-signifier
+|string (default: Part)
+|:part-signifier: Partie
 
 |pdf-page-layout
 |portrait {vbar} landscape

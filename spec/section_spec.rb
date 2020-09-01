@@ -450,8 +450,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should add chapter signifier to chapter title if section numbering is enabled and chapter-signifier attribute is set' do
-    # NOTE: chapter-label is the legacy name
-    { 'chapter-label' => 'Ch', 'chapter-signifier' => 'Ch' }.each do |attr_name, attr_val|
+    { 'chapter-signifier' => 'Ch' }.each do |attr_name, attr_val|
       pdf = to_pdf <<~EOS, analyze: true
       = Book Title
       :doctype: book
@@ -469,8 +468,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should add chapter signifier to chapter title if section numbering and toc are enabled and chapter-signifier attribute is set' do
-    # NOTE: chapter-label is the legacy name
-    { 'chapter-label' => 'Ch', 'chapter-signifier' => 'Ch' }.each do |attr_name, attr_val|
+    { 'chapter-signifier' => 'Ch' }.each do |attr_name, attr_val|
       pdf = to_pdf <<~EOS, analyze: true
       = Book Title
       :doctype: book
@@ -489,8 +487,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not add chapter label to chapter title if section numbering is enabled and chapter-signifier attribute is empty' do
-    # NOTE: chapter-label is the legacy name
-    %w(chapter-label chapter-signifier).each do |attr_name|
+    %w(chapter-signifier).each do |attr_name|
       pdf = to_pdf <<~EOS, analyze: true
       = Book Title
       :doctype: book

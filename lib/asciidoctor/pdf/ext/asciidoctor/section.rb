@@ -14,7 +14,7 @@ class Asciidoctor::Section
             @cached_formal_numbered_title = %(#{@document.attr 'part-signifier', 'Part'} #{@cached_numbered_title}).lstrip
           when 1
             @cached_numbered_title = %(#{sectnum} #{title})
-            @cached_formal_numbered_title = %(#{@document.attr 'chapter-signifier', (@document.attr 'chapter-label', 'Chapter')} #{@cached_numbered_title}).lstrip
+            @cached_formal_numbered_title = %(#{@document.attr 'chapter-signifier', 'Chapter'} #{@cached_numbered_title}).lstrip
           else
             @cached_formal_numbered_title = @cached_numbered_title = %(#{sectnum} #{title})
           end
