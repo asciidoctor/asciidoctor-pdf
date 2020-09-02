@@ -290,6 +290,27 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect line_text[:font_name]).to eql 'mplus1mn-bold_italic'
     end
 
+    it 'should expand color value for token' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+      :rouge-style: colorful
+
+      [source,ruby]
+      ----
+      class Type; end
+      ----
+      EOS
+
+      pdf.text.each do |text|
+        (expect text[:font_color].length).to be 6
+        (expect text[:font_color].upcase).to eql text[:font_color]
+      end
+
+      classname_text = pdf.find_unique_text 'Type'
+      (expect ((::Rouge::Theme.find 'colorful').new.style_for ::Rouge::Token::Tokens::Name::Class)[:fg]).to eql '#B06'
+      (expect classname_text[:font_color]).to eql 'BB0066'
+    end
+
     it 'should draw background color around token', visual: true do
       to_file = to_pdf_file <<~'EOS', 'source-rouge-bg.pdf'
       :source-highlighter: rouge
