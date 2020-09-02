@@ -290,6 +290,26 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect line_text[:font_name]).to eql 'mplus1mn-bold_italic'
     end
 
+    it 'should draw background color around token', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'source-rouge-bg.pdf'
+      :source-highlighter: rouge
+      :rouge-style: pastie
+      
+      [source,ruby]
+      ----
+      type, name = ARGV
+      case type
+      when :hello
+      	puts %(Hello, #{name}!)
+      when :goodbye
+      	puts 'See ya, ' + name + '!'
+      end
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-rouge-bg.pdf' if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
+    end
+
     it 'should draw background color across whole line for line-oriented tokens', visual: true do
       to_file = to_pdf_file <<~'EOS', 'source-rouge-bg-line.pdf'
       :source-highlighter: rouge
