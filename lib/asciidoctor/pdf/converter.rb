@@ -3617,13 +3617,14 @@ module Asciidoctor
 
       def add_outline_level outline, sections, num_levels, expand_levels
         sections.each do |sect|
+          next if (num_levels_for_sect = (sect.attr 'outlinelevels', num_levels).to_i) < sect.level
           sect_title = sanitize sect.numbered_title formal: true
           sect_destination = sect.attr 'pdf-destination'
-          if (level = sect.level) == num_levels || !sect.sections?
+          if (level = sect.level) == num_levels_for_sect || !sect.sections?
             outline.page title: sect_title, destination: sect_destination
-          elsif level <= num_levels
+          elsif level <= num_levels_for_sect
             outline.section sect_title, destination: sect_destination, closed: expand_levels < 1 do
-              add_outline_level outline, sect.sections, num_levels, (expand_levels - 1)
+              add_outline_level outline, sect.sections, num_levels_for_sect, (expand_levels - 1)
             end
           end
         end

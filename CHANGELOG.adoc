@@ -50,6 +50,7 @@ Enhancements::
 * allow theme to disable title page by assigning false to title_page category key (#1754)
 * allow Rouge theme to be specified as theme class or instance (API only)
 * allow theme to control font size of dot leader in TOC
+* allow section to override outlinelevels for self and children using outlinelevels attribute on section
 
 Bug Fixes::
 

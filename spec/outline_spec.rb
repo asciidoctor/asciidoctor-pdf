@@ -233,6 +233,34 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline[1][:children]).to be_empty
     end
 
+    it 'should limit outline depth per section if value of outlinelevels attribute is specified on section' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :doctype: book
+
+      == First Chapter
+
+      [outlinelevels=2]
+      === Chapter Section
+
+      ==== Nested Section
+
+      == Middle Chapter
+
+      == Last Chapter
+      EOS
+
+      outline = extract_outline pdf
+      (expect outline).to have_size 4
+      (expect outline[1][:title]).to eql 'First Chapter'
+      (expect outline[1][:children]).not_to be_empty
+      first_chapter_children = outline[1][:children]
+      (expect first_chapter_children).to have_size 1
+      chapter_section = first_chapter_children[0]
+      (expect chapter_section[:title]).to eql 'Chapter Section'
+      (expect chapter_section[:children]).to be_empty
+    end
+
     it 'should not include parts in outline if outlinelevels is less than 0' do
       pdf = to_pdf <<~'EOS'
       = Document Title
