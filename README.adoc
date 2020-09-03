@@ -1049,6 +1049,7 @@ If a placement is not specifie, that location is between the document title and 
 While the table of contents is not included by default, the PDF outline is always included.
 The `toclevels` attribute controls the depth of both the TOC and the PDF outline (regardless of whether the TOC is enabled).
 The depth of the outline can be controlled independently using the `outlinelevels` attribute.
+Both attributes can also be set on individual sections to override the depth for a given section and its children.
 
 NOTE: If a document that has the book doctype includes a preface, an entry for the preface is only included in the TOC if the `preface-title` is assigned a value (e.g., `preface-title=Preface`).
 This value is used as the heading of the preface and as the text of the entry in the TOC.
