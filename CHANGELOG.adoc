@@ -113,6 +113,7 @@ Bug Fixes::
 * allow inline image to be enclosed in link macro (alt text was breaking parsing)
 * allow theme to set font style of first line of abstract to normal
 * resize admonition label to fit if height exceeds height of content box
+* fix crash when underline style is used in Rouge theme
 
 Compliance::
 

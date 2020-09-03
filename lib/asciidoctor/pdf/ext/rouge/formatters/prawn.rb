@@ -144,7 +144,7 @@ module Rouge
           end
           if style_rules[:underline]
             if fragment.key? :styles
-              fragment[:styles] << UnderlineStyle[0]
+              fragment[:styles] |= UnderlineStyle
             else
               fragment[:styles] = UnderlineStyle.dup
             end

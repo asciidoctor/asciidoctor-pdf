@@ -290,6 +290,35 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect line_text[:font_name]).to eql 'mplus1mn-bold_italic'
     end
 
+    it 'should allow token to add underline style to token', visual: true do
+      input = <<~'EOS'
+      :source-highlighter: rouge
+
+      [source,ruby]
+      ----
+      class Beer
+        attr_reader :style
+
+        def drink
+          puts 'aaaaaaaaah'
+        end
+      end
+      ----
+      EOS
+
+      # NOTE: convert to load Rouge
+      to_pdf input
+
+      rouge_style = Class.new Rouge::Theme.find 'molokai' do
+        style Rouge::Token::Tokens::Name::Class, fg: :green, bold: true, underline: true
+        style Rouge::Token::Tokens::Name::Function, fg: :green, underline: true
+      end
+
+      to_file = to_pdf_file input, 'source-rouge-underline-style.pdf', attribute_overrides: { 'rouge-style' => rouge_style }, analyze: true
+
+      (expect to_file).to visually_match 'source-rouge-underline-style.pdf'
+    end
+
     it 'should expand color value for token' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
