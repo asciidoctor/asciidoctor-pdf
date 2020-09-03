@@ -598,6 +598,28 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect pdf.rectangles).to have_size 1
     end
 
+    it 'should highlight lines using default color if color in theme is nil', visual: true do
+      pdf_theme = { code_highlight_background_color: nil }
+      to_file = to_pdf_file <<~'EOS', 'source-rouge-highlight-background-color.pdf', pdf_theme: pdf_theme
+      :source-highlighter: rouge
+
+      [source,c,highlight=4]
+      ----
+      /**
+       * A program that prints "Hello, World!"
+       **/
+      #include <stdio.h>
+
+      int main(void) {
+        printf("Hello, World!\n");
+        return 0;
+      }
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-rouge-highlight-background-color.pdf'
+    end
+
     it 'should indent wrapped line if line numbers are enabled' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
