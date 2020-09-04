@@ -174,9 +174,8 @@ module Rouge
         if (normalized = @normalized_colors[raw])
           normalized
         else
-          normalized = (raw.start_with? '#') ? (raw.slice 1, raw.length) : raw
-          normalized = normalized.each_char.map {|c| c * 2 }.join if normalized.length == 3
-          @normalized_colors[raw] = normalized
+          normalized = raw.slice 1, raw.length
+          @normalized_colors[raw] = normalized.length == 3 ? normalized.each_char.map {|c| c * 2 }.join : normalized
         end
       end
 
