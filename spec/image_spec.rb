@@ -1369,14 +1369,24 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should scale image down to fit available height', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-inline-scale-down.pdf'
+      to_file = to_pdf_file <<~'EOS', 'image-inline-scale-down-height.pdf'
       :pdf-page-size: A6
       :pdf-page-layout: landscape
 
       image:cover.jpg[]
       EOS
 
-      (expect to_file).to visually_match 'image-inline-scale-down.pdf'
+      (expect to_file).to visually_match 'image-inline-scale-down-height.pdf'
+    end
+
+    it 'should scale image down to fit available width', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-inline-scale-down-width.pdf'
+      :pdf-page-size: A6
+
+      image:cover.jpg[]
+      EOS
+
+      (expect to_file).to visually_match 'image-inline-scale-down-width.pdf'
     end
 
     it 'should compute scaled width relative to container size' do
