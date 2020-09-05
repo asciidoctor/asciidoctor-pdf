@@ -330,10 +330,17 @@ You can get such a theme by installing the `asciidoctor-pdf-cjk-kai_gen_gothic` 
 The https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project provides themes optimized for CJK languages based on the kai_gen_gothic font.
 See the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project README for detailed setup instructions.
 
+WARNING: The theme provided by the `asciidoctor-pdf-cjk-kai_gen_gothic` gem is no longer compatiable with the stable release of Asciidoctor PDF.
+However, you can still use it to create a <<Create a Custom CJK Theme,custom CJK theme>>.
+
 Once you have that gem installed (and the fonts), you need to tell Asciidoctor PDF to use one of the themes.
 If you're converting a document that is primarily written in Japanese, you'd run Asciidoctor PDF as follows:
 
  asciidoctor-pdf -r asciidoctor-pdf-cjk-kai_gen_gothic -a pdf-theme=KaiGenGothicJP document.adoc
+
+If that command fails, you may have better luck creating your own CJK theme.
+
+=== Create a Custom CJK Theme
 
 You also have to option of creating your own theme gem that uses fonts of your choice.
 For example, if you want to use the `asciidoctor-pdf-cjk-kai_gen_gothic` gem to fetch fonts, but then use them in your own theme, here's how you'd do it.
@@ -346,27 +353,23 @@ For example, if you want to use the `asciidoctor-pdf-cjk-kai_gen_gothic` gem to 
 
  $ asciidoctor-pdf-cjk-kai_gen_gothic-install
 
-. Create a theme that extends the default theme:
+. Create a theme file named [.path]_cjk-theme.yml_ that extends the default theme to override the fonts:
 +
 [source,yml]
 ----
 extends: default
 font:
   catalog:
-    KaiGen Gothic JP:
-      normal: KaiGenGothicJP-Regular.ttf
-      bold: KaiGenGothicJP-Bold.ttf
-      italic: KaiGenGothicJP-Regular-Italic.ttf
-      bold_italic: KaiGenGothicJP-Bold-Italic.ttf
-    M+ 1mn:
-      normal: GEM_FONTS_DIR/mplus1mn-regular-subset.ttf
-      bold: GEM_FONTS_DIR/mplus1mn-bold-subset.ttf
-      italic: GEM_FONTS_DIR/mplus1mn-italic-subset.ttf
-      bold_italic: GEM_FONTS_DIR/mplus1mn-bold_italic-subset.ttf
+    merge: true
+    KaiGen Gothic CN:
+      normal: KaiGenGothicCN-Regular.ttf
+      bold: KaiGenGothicCN-Bold.ttf
+      italic: KaiGenGothicCN-Regular-Italic.ttf
+      bold_italic: KaiGenGothicCN-Bold-Italic.ttf
   fallbacks:
-  - KaiGen Gothic JP
+  - KaiGen Gothic CN
 base:
-  font-family: KaiGen Gothic JP
+  font-family: KaiGen Gothic CN
 heading:
   font-family: $base-font-family
 abstract:
@@ -379,9 +382,10 @@ sidebar:
 
 . Load your theme when running Asciidoctor PDF:
 
- $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=./jp-theme.yml -a pdf-fontsdir=`ruby -r asciidoctor-pdf-cjk-kai_gen_gothic -e "print File.expand_path '../fonts', (Gem.datadir 'asciidoctor-pdf-cjk-kai_gen_gothic')"` document.adoc
+ $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=./cjk-theme.yml -a pdf-fontsdir=GEM_FONTS_DIR,`ruby -r asciidoctor-pdf-cjk-kai_gen_gothic -e "print File.expand_path '../fonts', (Gem.datadir 'asciidoctor-pdf-cjk-kai_gen_gothic')"` document.adoc
 
 The `-a pdf-fontsdir` option is important to tell Asciidoctor PDF where to find your custom fonts.
+(Note that the inclusion of GEM_FONTS_DIR in the value is only required when using Asciidoctor PDF 1.5).
 
 Rather than using the installer from the `asciidoctor-pdf-cjk-kai_gen_gothic` gem, you can download fonts whatever way you choose.
 When using your own fonts, be sure to consult the <<docs/theming-guide.adoc#preparing-a-custom-font,Preparing a Custom Font>> section of the theming guide to find recommended modifications.
@@ -544,7 +548,7 @@ The pdfwidth attribute supports the following units:
 
 In all cases, the width is converted to pt.
 
-=== Specifying a default width
+=== Specifying a Default Width
 
 If you want to scale all block images that don't have a pdfwidth or scaledwidth attribute specified, assign a value to the image_width key in your theme.
 
@@ -1129,7 +1133,7 @@ If you don't do this step, the platform may reject your upload or fail to displa
 (For KDP, `-a optimize` works best.
 For GitLab repository preview, either `-a optimize` or `hexapdf optimize` will do the trick.)
 
-=== Enable stream compression
+=== Enable Stream Compression
 
 The simplest way to reduce the size of the PDF file is to enable stream compression (using the FlateDecode method).
 You can enable this feature by setting the `compress` attribute on the document:
