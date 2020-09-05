@@ -279,6 +279,137 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   end
 
   context 'Start at' do
+    it 'should start running content at body by default' do
+      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+      :toc:
+
+      == First Chapter
+
+      == Second Chapter
+
+      == Third Chapter
+      EOS
+
+      (expect pdf.pages).to have_size 5
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels).to eql [nil, nil, '1', '2', '3']
+    end
+
+    it 'should start running content at body when start at is after-toc and toc is not enabled' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+
+      == First Chapter
+
+      == Second Chapter
+
+      == Third Chapter
+      EOS
+
+      (expect pdf.pages).to have_size 4
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels).to eql [nil, '1', '2', '3']
+    end
+
+    it 'should start running content at body when start at is after-toc and toc is enabled with default placement' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+      :toc:
+
+      == First Chapter
+
+      == Second Chapter
+
+      == Third Chapter
+      EOS
+
+      (expect pdf.pages).to have_size 5
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels).to eql [nil, nil, '1', '2', '3']
+    end
+
+    it 'should start running content after toc in body of book when start at is after-toc and macro toc is used' do
+      filler = (1..20).map {|it| %(== #{['Filler'] * 20 * ' '} #{it}\n\ncontent) }.join %(\n\n)
+      pdf = to_pdf <<~EOS, pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+      :toc: macro
+
+      == First Chapter
+
+      toc::[]
+
+      == Second Chapter
+
+      == Third Chapter
+
+      #{filler}
+      EOS
+
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels.slice 0, 5).to eql [nil, nil, nil, nil, '4']
+    end
+
+    it 'should start running content after toc in body of article with title page when start at is after-toc and macro toc is used' do
+      filler = (1..20).map {|it| %(== #{['Filler'] * 20 * ' '} #{it}\n\ncontent) }.join %(\n\n)
+      pdf = to_pdf <<~EOS, pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      = Document Title
+      :title-page:
+      :toc: macro
+
+      == First Section
+
+      toc::[]
+
+      == Second Section
+
+      == Third Section
+
+      #{filler}
+      EOS
+
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels.slice 0, 5).to eql [nil, nil, nil, '3', '4']
+    end
+
+    it 'should start running content and page numbering after toc in body when both start at keys are after-toc and macro toc is used' do
+      filler = (1..20).map {|it| %(== #{['Filler'] * 20 * ' '} #{it}\n\ncontent) }.join %(\n\n)
+      pdf = to_pdf <<~EOS, pdf_theme: { running_content_start_at: 'after-toc', page_numbering_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+      :toc: macro
+
+      == First Chapter
+
+      toc::[]
+
+      == Second Chapter
+
+      == Third Chapter
+
+      #{filler}
+      EOS
+
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels.slice 0, 5).to eql [nil, nil, nil, nil, '1']
+    end
+
     it 'should start running content at title page if running_content_start_at key is title' do
       theme_overrides = { running_content_start_at: 'title' }
 
@@ -429,6 +560,26 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect pgnum_labels).to eql [nil, '1', '2', '3']
     end
 
+    it 'should start running content at body if running_content_start_at key is after-toc and toc is disabled' do
+      theme_overrides = { running_content_start_at: 'after-toc' }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      = Document Title
+      :doctype: book
+
+      == First Chapter
+
+      == Second Chapter
+
+      == Third Chapter
+      EOS
+
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels).to eql [nil, '1', '2', '3']
+    end
+
     it 'should start running content at specified page of body of book if running_content_start_at is an integer' do
       pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 3 }, analyze: true
       = Book Title
@@ -479,6 +630,143 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         accum << ((pdf.find_text page_number: page_number, font_color: '0000FF')[0] || {})[:string]
       end
       (expect pgnum_labels).to eql [nil, nil, '3']
+    end
+
+    it 'should start page numbering at body by default' do
+      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      = Book Title
+      :doctype: book
+      :toc:
+
+      == Dedication
+
+      To the only person who gets me.
+
+      == Acknowledgements
+
+      Thanks all to all who made this possible!
+
+      == Chapter One
+
+      content
+      EOS
+
+      (expect pdf.pages).to have_size 5
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels).to eql [nil, nil, '1', '2', '3']
+    end
+
+    it 'should start page numbering at body when start at is after-toc and toc is enabled' do
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
+      = Book Title
+      :doctype: book
+      :toc:
+
+      == Dedication
+
+      To the only person who gets me.
+
+      == Acknowledgements
+
+      Thanks all to all who made this possible!
+
+      == Chapter One
+
+      content
+      EOS
+
+      (expect pdf.pages).to have_size 5
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels).to eql [nil, nil, '1', '2', '3']
+    end
+
+    it 'should start page numbering at body when start at is after-toc and toc is not enabled' do
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
+      = Book Title
+      :doctype: book
+
+      == Dedication
+
+      To the only person who gets me.
+
+      == Acknowledgements
+
+      Thanks all to all who made this possible!
+
+      == Chapter One
+
+      content
+      EOS
+
+      (expect pdf.pages).to have_size 4
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels).to eql [nil, '1', '2', '3']
+    end
+
+    it 'should start page numbering after toc in body of book when start at is after-toc and toc macro is used' do
+      filler = (1..20).map {|it| %(== #{['Filler'] * 20 * ' '} #{it}\n\ncontent) }.join %(\n\n)
+      pdf = to_pdf <<~EOS, enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
+      = Book Title
+      :doctype: book
+      :toc: macro
+
+      == Dedication
+
+      To the only person who gets me.
+
+      toc::[]
+
+      == Acknowledgements
+
+      Thanks all to all who made this possible!
+
+      == Chapter One
+
+      content
+
+      #{filler}
+      EOS
+
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels.slice 0, 5).to eql [nil, 'ii', 'iii', 'iv', '1']
+    end
+
+    it 'should start page numbering after toc in body of article with title page when start at is after-toc and toc macro is used' do
+      filler = (1..20).map {|it| %(== #{['Filler'] * 20 * ' '} #{it}\n\ncontent) }.join %(\n\n)
+      pdf = to_pdf <<~EOS, enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
+      = Document Title
+      :title-page:
+      :toc: macro
+
+      == Dedication
+
+      To the only person who gets me.
+
+      toc::[]
+
+      == Acknowledgements
+
+      Thanks all to all who made this possible!
+
+      == Section One
+
+      content
+
+      #{filler}
+      EOS
+
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels.slice 0, 5).to eql [nil, 'ii', 'iii', '1', '2']
     end
 
     it 'should start page numbering and running content at specified page of body' do

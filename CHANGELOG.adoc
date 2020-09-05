@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 Enhancements::
 
 * allow page numbering and running content to start after first page of a document without a title page by assigning an integer to the respective start_at theme key (#1644)
+* allow page numbering and running content to start after toc (wherever it is placed) by assigning the keyword "after-toc" to the respective start_at theme key (#1763)
 * allow theme to configure page numbering to start at cover (#1727)
 * allow theme to define the front and back cover images (#1584)
 * allow the front and back cover images to be defined using a data URI (#1584)

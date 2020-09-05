@@ -1351,7 +1351,7 @@ See <<Title Page>> for details.
 3+|[#key-prefix-page-numbering]*Key Prefix:* <<key-prefix-page-numbering,numbering>>
 
 |start-at^[5]^
-|cover {vbar} title {vbar} toc {vbar} body {vbar} Integer +
+|cover {vbar} title {vbar} toc {vbar} after-toc {vbar} body {vbar} Integer +
 (default: body)
 |page:
   numbering:
@@ -1372,10 +1372,11 @@ These margins and used when the value `prepress` is assigned to the `media` docu
 If no cover is specified, the recto margin is not applied to the title page.
 To apply the recto margin to the title page, but not include a cover, assign the value `~` to the `front-cover-image` attribute.
 . The `cover` value is only recognized if the documet has a front cover page (i.e., `front-cover-image`).
-The `title` and `toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
+The `title`, `toc`, and `after-toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
 The `toc` value only applies if the toc is in the default location (before the first page of the body).
-If the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
+If value is `toc`, and the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
 If value is an integer, page numbering will start at the specified page of the body (i.e., 1 is first page, 2 is second page, etc.)
+If value is `after-toc`, the page numbering will start after the toc, no matter where it's placed in the document.
 
 [#keys-base]
 === Base
@@ -4961,7 +4962,7 @@ To avoid this problem, reduce the height of the running content periphery or mak
 3+|[#key-prefix-running-content]*Key Prefix:* <<key-prefix-running-content,running-content>>
 
 |start-at^[7]^
-|title {vbar} toc {vbar} body {vbar} Integer +
+|title {vbar} toc {vbar} after-toc {vbar} body {vbar} Integer +
 (default: body)
 |running-content:
   start-at: toc
@@ -4976,9 +4977,10 @@ Instead, adjust the values of the margin and content-margin keys.
 The `columns` key can also be defined one level up (on `header` or `footer`), in which case the setting will be inherited.
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
 . `<position>` can be `left`, `center` or `right`.
-. The `title` and `toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
+. The `title`, `toc`, and `after-toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
 The `toc` value only applies if the toc is in the default location (before the first page of the body).
-If the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
+If value is `toc`, and the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
+If value is `after-toc`, the running content will start after the toc, no matter where it's placed in the document.
 To disable the running content on toc pages inserted by the toc macro, set the noheader and/or nofooter options on the macro (e.g., `toc::[opts=nofooter]`).
 If value is an integer, the running content will start at the specified page of the body (i.e., 1 is first page, 2 is second page, etc.)
 
