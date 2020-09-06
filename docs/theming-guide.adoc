@@ -4979,6 +4979,7 @@ Where the page sides fall in relation to the physical or printed page number is 
 . The `title` and `toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
 The `toc` value only applies if the toc is in the default location (before the first page of the body).
 If the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
+To disable the running content on toc pages inserted by the toc macro, set the noheader and/or nofooter options on the macro (e.g., `toc::[opts=nofooter]`).
 If value is an integer, the running content will start at the specified page of the body (i.e., 1 is first page, 2 is second page, etc.)
 
 IMPORTANT: If you don't specify a height for either the header or footer key, it effectively disables the content at that periphery.
