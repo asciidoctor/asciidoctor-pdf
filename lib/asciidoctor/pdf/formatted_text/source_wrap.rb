@@ -6,6 +6,7 @@ module Asciidoctor
       module SourceWrap
         NoBreakSpace = ?\u00a0
 
+        # Override Prawn::Text::Formatted::Box#wrap method to add line numbers in source blocks.
         def wrap array
           initialize_wrap array
           stop = nil
