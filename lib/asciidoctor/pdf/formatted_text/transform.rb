@@ -8,7 +8,7 @@ module Asciidoctor
         ZeroWidthSpace = ?\u200b
         CharEntityTable = { amp: ?&, apos: ?', gt: ?>, lt: ?<, nbsp: ?\u00a0, quot: ?" }
         CharRefRx = /&(?:(#{CharEntityTable.keys.join ?|})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
-        HexColorRx = /^#[a-fA-F0-9]{6}$/
+        HexColorRx = /^#[a-fA-F0-9]{3,6}$/
         TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
         ThemeKeyToFragmentProperty = {
           'background_color' => :background_color,
@@ -307,19 +307,8 @@ module Asciidoctor
               pname, pvalue = style.split ':', 2
               # TODO: text-transform
               case pname
-              when 'color'
-                # TODO: check whether the value is a valid hex color?
-                case pvalue.length
-                when 6
-                  fragment[:color] = pvalue
-                when 7
-                  fragment[:color] = pvalue.slice 1, 6 if pvalue.start_with? '#'
-                end
-                # QUESTION: should we support the 3 character form?
-                #when 3
-                #  fragment[:color] = pvalue.each_char.map {|c| c * 2 }.join
-                #when 4
-                #  fragment[:color] = pvalue.slice(1, 3).each_char.map {|c| c * 2 }.join if pvalue.start_with?('#')
+              when 'color' # color needed to support syntax highlighters
+                fragment[:color] = pvalue.length == 7 ? (pvalue.slice 1, 6) : (pvalue.slice 1, 3).each_char.map {|c| c * 2 }.join if (pvalue.start_with? '#') && (HexColorRx.match? pvalue)
               when 'font-weight'
                 styles << :bold if pvalue == 'bold'
               when 'font-style'
@@ -332,7 +321,7 @@ module Asciidoctor
                 fragment[:width] = pvalue
               when 'background-color' # background-color needed to support syntax highlighters
                 if (pvalue.start_with? '#') && (HexColorRx.match? pvalue)
-                  fragment[:background_color] = pvalue.slice 1, pvalue.length
+                  fragment[:background_color] = pvalue.length == 7 ? (pvalue.slice 1, 6) : (pvalue.slice 1, 3).each_char.map {|c| c * 2 }.join
                   fragment[:callback] = [TextBackgroundAndBorderRenderer] | (fragment[:callback] || [])
                 end
               end

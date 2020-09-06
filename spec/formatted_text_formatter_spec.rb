@@ -11,12 +11,48 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect output[0][:styles]).to eql [:bold].to_set
     end
 
+    it 'should ignore font color if not a valid hex value' do
+      input = %(<span style="color: red">hot</span>)
+      output = subject.format input
+      (expect output).to have_size 1
+      (expect output[0][:text]).to eql 'hot'
+      (expect output[0][:color]).to be_nil
+    end
+
+    it 'should allow font color to be set on phrase using hex value' do
+      ['#F00', '#FF0000'].each do |color|
+        input = %(<span style="color: #{color}">hot</span>)
+        output = subject.format input
+        (expect output).to have_size 1
+        (expect output[0][:text]).to eql 'hot'
+        (expect output[0][:color]).to eql 'FF0000'
+      end
+    end
+
     it 'should allow font color to be set on nested phrase' do
       input = '<span style="color: #FF0000">hot <span style="color: #0000FF">cold</span> hot</span>'
       output = subject.format input
       (expect output).to have_size 3
       (expect output[1][:text]).to eql 'cold'
       (expect output[1][:color]).to eql '0000FF'
+    end
+
+    it 'should ignore background color if not a valid hex value' do
+      input = %(<span style="background-color: yellow">highlight</span>)
+      output = subject.format input
+      (expect output).to have_size 1
+      (expect output[0][:text]).to eql 'highlight'
+      (expect output[0][:background_color]).to be_nil
+    end
+
+    it 'should allow background color to be set on phrase using hex value' do
+      ['#FF0', '#FFFF00'].each do |color|
+        input = %(<span style="background-color: #{color}">highlight</span>)
+        output = subject.format input
+        (expect output).to have_size 1
+        (expect output[0][:text]).to eql 'highlight'
+        (expect output[0][:background_color]).to eql 'FFFF00'
+      end
     end
 
     it 'should allow font weight to be set on nested phrase' do
