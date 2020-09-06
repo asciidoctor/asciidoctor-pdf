@@ -1107,6 +1107,28 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect pdf.rectangles).to be_empty
     end
 
+    it 'should fall back to pastie style if style is not recognized' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        :source-highlighter: pygments
+        :pygments-style: not-recognized
+
+        [source,ruby]
+        ----
+        # Matches a hex color value like #FF0000
+        if /^#[a-fA-F0-9]{6}$/.match? color
+          puts 'hex color'
+        end
+        ----
+        EOS
+
+        comment_text = pdf.find_unique_text %r/^#/
+        (expect comment_text[:font_color]).to eql '888888'
+        rx_text = pdf.find_unique_text %r/^\/\^/
+        (expect rx_text[:font_color]).to eql '008800'
+      end).not_to raise_exception
+    end
+
     it 'should highlight selected lines but not the line numbers', visual: true do
       to_file = to_pdf_file <<~'EOS', 'source-pygments-line-highlighting.pdf'
       :source-highlighter: pygments

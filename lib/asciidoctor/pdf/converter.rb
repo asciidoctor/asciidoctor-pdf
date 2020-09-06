@@ -1737,7 +1737,9 @@ module Asciidoctor
             fragments = (::CodeRay.scan source_string, srclang).to_prawn
             source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
           when 'pygments'
-            style = (node.document.attr 'pygments-style') || 'pastie'
+            unless (style = (node.document.attr 'pygments-style')) && (::Pygments::Ext::BlockStyles.available? style)
+              style = 'pastie'
+            end
             # QUESTION: allow border color to be set by theme for highlighted block?
             pg_block_styles = ::Pygments::Ext::BlockStyles.for style
             bg_color_override = pg_block_styles[:background_color]

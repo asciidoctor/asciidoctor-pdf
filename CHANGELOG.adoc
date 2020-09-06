@@ -114,6 +114,7 @@ Bug Fixes::
 * allow theme to set font style of first line of abstract to normal
 * resize admonition label to fit if height exceeds height of content box
 * fix crash when underline style is used in Rouge theme
+* fix crash when Pygments style is not recognized; falll back to pastie style
 
 Compliance::
 

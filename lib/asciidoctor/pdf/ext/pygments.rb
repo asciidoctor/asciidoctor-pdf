@@ -27,6 +27,10 @@ module Pygments
         styles
       end
 
+      def self.available? style
+        (@available ||= ::Pygments.styles.to_set).include? style
+      end
+
       def self.for style
         @cache[style]
       end
