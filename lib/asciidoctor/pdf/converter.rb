@@ -2450,7 +2450,7 @@ module Asciidoctor
         end
         if (conum_font_color = @theme.conum_font_color)
           # NOTE: CMYK value gets flattened here, but is restored by formatted text parser
-          result = %(<color rgb="#{conum_font_color}">#{result}</color>)
+          result = %(<font color="#{conum_font_color}">#{result}</font>)
         end
         result
       end
@@ -2465,7 +2465,7 @@ module Asciidoctor
           end
           %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{label}</a>]</sup>)
         elsif node.type == :xref
-          %(<sup><color rgb="#{theme.role_unresolved_font_color || 'FF0000'}">[#{node.text}]</color></sup>)
+          %(<sup><font color="#{theme.role_unresolved_font_color || 'FF0000'}">[#{node.text}]</font></sup>)
         else
           log :warn, %(unknown footnote type: #{node.type.inspect})
         end

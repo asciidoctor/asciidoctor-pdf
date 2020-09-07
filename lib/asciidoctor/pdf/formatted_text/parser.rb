@@ -389,108 +389,96 @@ module Markup
             r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
             r0 = r4
           else
-            if (match_len = has_terminal?('color', false, index))
+            if (match_len = has_terminal?('font', false, index))
               r5 = instantiate_node(SyntaxNode,input, index...(index + match_len))
               @index += match_len
             else
-              terminal_parse_failure('\'color\'')
+              terminal_parse_failure('\'font\'')
               r5 = nil
             end
             if r5
               r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
               r0 = r5
             else
-              if (match_len = has_terminal?('font', false, index))
+              if (match_len = has_terminal?('span', false, index))
                 r6 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                 @index += match_len
               else
-                terminal_parse_failure('\'font\'')
+                terminal_parse_failure('\'span\'')
                 r6 = nil
               end
               if r6
                 r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
                 r0 = r6
               else
-                if (match_len = has_terminal?('span', false, index))
+                if (match_len = has_terminal?('button', false, index))
                   r7 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                   @index += match_len
                 else
-                  terminal_parse_failure('\'span\'')
+                  terminal_parse_failure('\'button\'')
                   r7 = nil
                 end
                 if r7
                   r7 = SyntaxNode.new(input, (index-1)...index) if r7 == true
                   r0 = r7
                 else
-                  if (match_len = has_terminal?('button', false, index))
+                  if (match_len = has_terminal?('key', false, index))
                     r8 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                     @index += match_len
                   else
-                    terminal_parse_failure('\'button\'')
+                    terminal_parse_failure('\'key\'')
                     r8 = nil
                   end
                   if r8
                     r8 = SyntaxNode.new(input, (index-1)...index) if r8 == true
                     r0 = r8
                   else
-                    if (match_len = has_terminal?('key', false, index))
+                    if (match_len = has_terminal?('sup', false, index))
                       r9 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                       @index += match_len
                     else
-                      terminal_parse_failure('\'key\'')
+                      terminal_parse_failure('\'sup\'')
                       r9 = nil
                     end
                     if r9
                       r9 = SyntaxNode.new(input, (index-1)...index) if r9 == true
                       r0 = r9
                     else
-                      if (match_len = has_terminal?('sup', false, index))
+                      if (match_len = has_terminal?('sub', false, index))
                         r10 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                         @index += match_len
                       else
-                        terminal_parse_failure('\'sup\'')
+                        terminal_parse_failure('\'sub\'')
                         r10 = nil
                       end
                       if r10
                         r10 = SyntaxNode.new(input, (index-1)...index) if r10 == true
                         r0 = r10
                       else
-                        if (match_len = has_terminal?('sub', false, index))
+                        if (match_len = has_terminal?('mark', false, index))
                           r11 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                           @index += match_len
                         else
-                          terminal_parse_failure('\'sub\'')
+                          terminal_parse_failure('\'mark\'')
                           r11 = nil
                         end
                         if r11
                           r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
                           r0 = r11
                         else
-                          if (match_len = has_terminal?('mark', false, index))
+                          if (match_len = has_terminal?('del', false, index))
                             r12 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                             @index += match_len
                           else
-                            terminal_parse_failure('\'mark\'')
+                            terminal_parse_failure('\'del\'')
                             r12 = nil
                           end
                           if r12
                             r12 = SyntaxNode.new(input, (index-1)...index) if r12 == true
                             r0 = r12
                           else
-                            if (match_len = has_terminal?('del', false, index))
-                              r13 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                              @index += match_len
-                            else
-                              terminal_parse_failure('\'del\'')
-                              r13 = nil
-                            end
-                            if r13
-                              r13 = SyntaxNode.new(input, (index-1)...index) if r13 == true
-                              r0 = r13
-                            else
-                              @index = i0
-                              r0 = nil
-                            end
+                            @index = i0
+                            r0 = nil
                           end
                         end
                       end

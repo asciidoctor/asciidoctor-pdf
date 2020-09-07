@@ -229,18 +229,6 @@ module Asciidoctor
             styles << :italic
           when :button, :code, :key, :mark
             update_fragment fragment, @theme_settings[tag_name]
-          when :color
-            if (rgb = attrs[:rgb])
-              case rgb.chr
-              when '#'
-                fragment[:color] = rgb.slice 1, rgb.length
-              when '['
-                # treat value as CMYK array (e.g., "[50, 100, 0, 0]")
-                fragment[:color] = rgb.slice(1, rgb.length).chomp(']').split(', ').map {|it| (ival = it.to_i) == (fval = it.to_f) ? ival : fval }
-              else
-                fragment[:color] = rgb
-              end
-            end
           when :font
             if (value = attrs[:name])
               fragment[:font] = value
@@ -258,6 +246,16 @@ module Asciidoctor
               fragment[:width] = value
               fragment[:align] = :center
               fragment[:callback] = (fragment[:callback] || []) | [InlineTextAligner]
+            end
+            if (value = attrs[:color])
+              case value.chr
+              when '#' # hex string (e.g., #FF0000)
+                fragment[:color] = value.length == 7 ? (value.slice 1, 6) : (value.slice 1, 3).each_char.map {|c| c * 2 }.join if HexColorRx.match? value
+              when '[' # CMYK array (e.g., [50, 100, 0, 0])
+                if (value.end_with? ']') && (values = (value.slice 1, value.length).chop.split ', ').length == 4
+                  fragment[:color] = values.map {|it| (ival = it.to_i) == (fval = it.to_f) ? ival : fval }
+                end
+              end
             end
             #if (value = attrs[:character_spacing])
             #  fragment[:character_spacing] = value.to_f

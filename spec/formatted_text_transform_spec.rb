@@ -82,7 +82,7 @@ describe Asciidoctor::PDF::FormattedText::Transform do
   end
 
   it 'should create fragment with custom hex color' do
-    input = '<color rgb="#ff0000">red</color>'
+    input = '<font color="#ff0000">red</font>'
     parsed = parser.parse input
     fragments = subject.apply parsed.content
     (expect fragments).to have_size 1
@@ -91,7 +91,7 @@ describe Asciidoctor::PDF::FormattedText::Transform do
   end
 
   it 'should create fragment with custom cmyk color' do
-    input = '<color rgb="[50.5, 100, 0, 0]">color</color>'
+    input = '<font color="[50.5, 100, 0, 0]">color</font>'
     parsed = parser.parse input
     fragments = subject.apply parsed.content
     (expect fragments).to have_size 1

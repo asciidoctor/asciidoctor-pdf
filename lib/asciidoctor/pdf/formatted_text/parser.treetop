@@ -50,7 +50,7 @@ grammar Markup
   rule tag_name
     # QUESTION: faster to do regex?
     # QUESTION: what about supporting hr?
-    'a' / 'strong' / 'em' / 'code' / 'color' / 'font' / 'span' / 'button' / 'key' / 'sup' / 'sub' / 'mark' / 'del'
+    'a' / 'strong' / 'em' / 'code' / 'font' / 'span' / 'button' / 'key' / 'sup' / 'sub' / 'mark' / 'del'
   end
 
   rule void_tag_name
