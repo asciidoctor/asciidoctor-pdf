@@ -115,6 +115,7 @@ Bug Fixes::
 * resize admonition label to fit if height exceeds height of content box
 * fix crash when underline style is used in Rouge theme
 * fix crash when Pygments style is not recognized; falll back to pastie style
+* avoid loss of precision in CMYK color value for conum or footnote font
 
 Compliance::
 

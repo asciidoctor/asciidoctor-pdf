@@ -236,7 +236,7 @@ module Asciidoctor
                 fragment[:color] = rgb.slice 1, rgb.length
               when '['
                 # treat value as CMYK array (e.g., "[50, 100, 0, 0]")
-                fragment[:color] = rgb.slice(1, rgb.length).chomp(']').split(', ').map(&:to_i)
+                fragment[:color] = rgb.slice(1, rgb.length).chomp(']').split(', ').map {|it| (ival = it.to_i) == (fval = it.to_f) ? ival : fval }
                 # ...or we could honor an rgb array too
                 #case (vals = rgb.slice(1, rgb.length).chomp(']').split(', ')).size
                 #when 4

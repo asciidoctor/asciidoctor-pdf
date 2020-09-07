@@ -91,12 +91,12 @@ describe Asciidoctor::PDF::FormattedText::Transform do
   end
 
   it 'should create fragment with custom cmyk color' do
-    input = '<color rgb="[50, 100, 0, 0]">color</color>'
+    input = '<color rgb="[50.5, 100, 0, 0]">color</color>'
     parsed = parser.parse input
     fragments = subject.apply parsed.content
     (expect fragments).to have_size 1
     (expect fragments[0][:text]).to eql 'color'
-    (expect fragments[0][:color]).to eql [50, 100, 0, 0]
+    (expect fragments[0][:color]).to eql [50.5, 100, 0, 0]
   end
 
   it 'should return nil if text contains invalid markup' do
