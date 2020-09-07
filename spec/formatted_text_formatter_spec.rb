@@ -71,13 +71,22 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect output[1][:styles].to_a).to eql [:italic]
     end
 
-    it 'should warn if text contains invalid markup' do
+    it 'should warn if text contains unrecognized tag' do
+      input = 'before <foo>bar</foo> after'
       (expect do
-        input = 'before <foo>bar</foo> after'
         output = subject.format input
         (expect output).to have_size 1
         (expect output[0][:text]).to eql input
-      end).to log_message severity: :ERROR, message: /^failed to parse formatted text:/
+      end).to log_message severity: :ERROR, message: /^failed to parse formatted text: #{Regexp.escape input} \(reason: Expected one of .* after < at byte 9\)/
+    end
+
+    it 'should warn if text contains unrecognized entity' do
+      input = 'a &daggar; in the back'
+      (expect do
+        output = subject.format input
+        (expect output).to have_size 1
+        (expect output[0][:text]).to eql input
+      end).to log_message severity: :ERROR, message: /^failed to parse formatted text: #{Regexp.escape input} \(reason: Expected one of .* after & at byte 4\)/
     end
 
     it 'should allow span tag to control width' do
