@@ -283,4 +283,5 @@ Use the following command to regenerate the parser:
 
  bundle exec tt lib/asciidoctor/pdf/formatted_text/parser.treetop
 
-You then need to commit both files.
+Then look for any places that a type is mixed into an object multiple times and remove the duplicate.
+Finally, you then need to commit both files.
