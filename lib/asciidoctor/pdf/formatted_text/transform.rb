@@ -237,21 +237,9 @@ module Asciidoctor
               when '['
                 # treat value as CMYK array (e.g., "[50, 100, 0, 0]")
                 fragment[:color] = rgb.slice(1, rgb.length).chomp(']').split(', ').map {|it| (ival = it.to_i) == (fval = it.to_f) ? ival : fval }
-                # ...or we could honor an rgb array too
-                #case (vals = rgb.slice(1, rgb.length).chomp(']').split(', ')).size
-                #when 4
-                #  fragment[:color] = vals.map(&:to_i)
-                #when 3
-                #  fragment[:color] = vals.map {|e| '%02X' % e.to_i }.join
-                #end
               else
                 fragment[:color] = rgb
               end
-            # QUESTION: should we even support r,g,b and c,m,y,k as individual values?
-            elsif (r_val = attrs[:r]) && (g_val = attrs[:g]) && (b_val = attrs[:b])
-              fragment[:color] = [r_val, g_val, b_val].map {|e| '%02X' % e.to_i }.join
-            elsif (c_val = attrs[:c]) && (m_val = attrs[:m]) && (y_val = attrs[:y]) && (k_val = attrs[:k])
-              fragment[:color] = [c_val.to_i, m_val.to_i, y_val.to_i, k_val.to_i]
             end
           when :font
             if (value = attrs[:name])
