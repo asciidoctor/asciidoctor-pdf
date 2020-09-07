@@ -2450,7 +2450,7 @@ module Asciidoctor
         end
         if (conum_font_color = @theme.conum_font_color)
           # NOTE: CMYK value gets flattened here, but is restored by formatted text parser
-          result = %(<color rgb="#{conum_font_color}">#{result}</font>)
+          result = %(<color rgb="#{conum_font_color}">#{result}</color>)
         end
         result
       end
