@@ -125,6 +125,7 @@ Compliance::
 * upgrade to Prawn 2.3.0 (which adds OTF font support)
 * drop deprecated Pdf module alias in API (leaving only PDF)
 * remove deprecated "ascii" fonts; only bundle the more complete "subset" fonts
+* remove support for `<color>` tag in passthrough content; use `<font color="...">` instead (may affect themes)
 * remove asciidoctor-pdf/converter and asciidoctor-pdf/version shim scripts; use asciidoctor/pdf/converter and asciidoctor/pdf/version instead
 
 == 1.5.3 (2020-02-28) - @mojavelinux
