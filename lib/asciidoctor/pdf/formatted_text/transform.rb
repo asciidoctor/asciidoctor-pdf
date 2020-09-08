@@ -234,11 +234,10 @@ module Asciidoctor
               fragment[:font] = value
             end
             if (value = attrs[:size])
-              # FIXME: can we make this comparison more robust / accurate?
-              if (f_value = value.to_f).to_s == value || value.to_i.to_s == value
-                fragment[:size] = f_value
-              elsif value != '1em'
-                fragment[:size] = value
+              if value.end_with? 'em'
+                fragment[:size] = value unless value == '1em'
+              else
+                fragment[:size] = value.to_f
               end
             end
             # NOTE: width is used for font-based icons
