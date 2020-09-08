@@ -31,7 +31,7 @@ button_font_family: Courier
 button_font_style: bold
 key_font_family: Courier
 key_font_style: italic
-mark_background_color: ffff00
+mark_background_color: 'FFFF00'
 mark_border_offset: 1
 link_font_color: '0000EE'
 literal_font_family: Courier
