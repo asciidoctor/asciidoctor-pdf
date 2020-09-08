@@ -255,6 +255,8 @@ module Asciidoctor
                 if (value.end_with? ']') && (values = (value.slice 1, value.length).chop.split ', ').length == 4
                   fragment[:color] = values.map {|it| (ival = it.to_i) == (fval = it.to_f) ? ival : fval }
                 end
+              else # assume a 6-character hex color (internal only)
+                fragment[:color] = value
               end
             end
             #if (value = attrs[:character_spacing])
