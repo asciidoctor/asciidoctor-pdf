@@ -244,19 +244,34 @@ module Asciidoctor
               running_content_start_at = 'body'
             else
               running_content_body_offset = body_offset
-              running_content_start_at = 'toc' if running_content_start_at == 'title' && !has_title_page
-              running_content_start_at = 'body' if running_content_start_at == 'toc' && !insert_toc
+              case running_content_start_at
+              when 'title'
+                running_content_start_at = 'toc' unless has_title_page
+              when 'toc'
+                running_content_start_at = 'body' unless insert_toc
+              when 'after-toc'
+                running_content_start_at = 'body'
+              end
             end
             if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at || 'body')
               page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 1].max
               page_numbering_start_at = 'body'
-            elsif page_numbering_start_at == 'cover' && has_front_cover
-              page_numbering_body_offset = 0
             else
               page_numbering_body_offset = body_offset
-              page_numbering_start_at = 'title' if page_numbering_start_at == 'cover' && !has_front_cover
-              page_numbering_start_at = 'toc' if page_numbering_start_at == 'title' && !has_title_page
-              page_numbering_start_at = 'body' if page_numbering_start_at == 'toc' && !insert_toc
+              case page_numbering_start_at
+              when 'cover'
+                if has_front_cover
+                  page_numbering_body_offset = 0
+                else
+                  page_numbering_start_at = 'title'
+                end
+              when 'title'
+                page_numbering_start_at = 'toc' unless has_title_page
+              when 'toc'
+                page_numbering_start_at = 'body' unless insert_toc
+              when 'after-toc'
+                page_numbering_start_at = 'body'
+              end
             end
             # table values are number of pages to skip before starting running content and page numbering, respectively
             num_front_matter_pages = {
@@ -300,7 +315,15 @@ module Asciidoctor
           # NOTE: for a book, these are leftover footnotes; for an article this is everything
           outdent_section { layout_footnotes doc }
 
-          toc_page_nums = @toc_extent ? (layout_toc doc, toc_num_levels, @toc_extent[:page_nums].first, @toc_extent[:start_y], num_front_matter_pages[1]) : []
+          if @toc_extent
+            if use_title_page && !insert_toc
+              num_front_matter_pages[0] = @toc_extent[:page_nums].last if @theme.running_content_start_at == 'after-toc'
+              num_front_matter_pages[1] = @toc_extent[:page_nums].last if @theme.page_numbering_start_at == 'after-toc'
+            end
+            toc_page_nums = layout_toc doc, toc_num_levels, @toc_extent[:page_nums].first, @toc_extent[:start_y], num_front_matter_pages[1]
+          else
+            toc_page_nums = []
+          end
 
           # NOTE: delete orphaned page (a page was created but there was no additional content)
           # QUESTION: should we delete page if document is empty? (leaving no pages?)
@@ -2302,7 +2325,8 @@ module Asciidoctor
             start_new_page if @ppbook && verso_page? && !(is_macro && (node.option? 'nonfacing'))
           end
           add_dest_for_block node, (node.id || 'toc') if is_macro
-          allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (is_book || (doc.attr? 'title-page'))
+          allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (use_title_page = is_book || (doc.attr? 'title-page'))
+          @index.start_page_number = @toc_extent[:page_nums].last + 1 if use_title_page && @theme.page_numbering_start_at == 'after-toc'
           if is_macro
             @disable_running_content[:header] = (@disable_running_content[:header] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'noheader'
             @disable_running_content[:footer] = (@disable_running_content[:footer] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'nofooter'
