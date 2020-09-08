@@ -201,11 +201,18 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect pdf.text[1].values_at :string, :font_name).to eql %w(ed NotoSerif)
     end
 
-    it 'should ignore empty formatted phrase' do
+    it 'should ignore empty formatted phrase surrounded by text' do
       pdf = to_pdf 'before *{empty}* after', analyze: true
       text = pdf.text
       (expect text).to have_size 1
       (expect text[0][:string]).to eql 'before after'
+    end
+
+    it 'should ignore empty formatted phrase at extrema of line' do
+      pdf = to_pdf '*{empty}* between *{empty}*', analyze: true
+      text = pdf.text
+      (expect text).to have_size 1
+      (expect text[0][:string]).to eql 'between'
     end
 
     it 'should format stem equation as monospace' do
