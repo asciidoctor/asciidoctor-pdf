@@ -79,6 +79,7 @@ Bug Fixes::
 * use conum font family defined in theme for conum in verbatim block (#1611)
 * prevent content of AsciiDoc table cell from overrunning content on subsequent pages (#1623)
 * log error message if table cell is truncated (#1626)
+* take hard line breaks into account when computing natural width of table cell (#1764)
 * use "toc" as the default dest name for the macro toc
 * position page split indicator correctly when block has transparent border
 * replace block macro with missing PDF target with alt text
