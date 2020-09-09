@@ -63,12 +63,28 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect output[0][:styles].to_a).to eql [:bold]
     end
 
+    it 'should ignore unknown font weight on phrase' do
+      input = '<span style="font-weight: lighter">new</span> release'
+      output = subject.format input
+      (expect output).to have_size 2
+      (expect output[0][:text]).to eql 'new'
+      (expect output[0][:styles]).to be_nil
+    end
+
     it 'should allow font style to be set on nested phrase' do
       input = 'This is <span style="font-style: italic">so</span> easy'
       output = subject.format input
       (expect output).to have_size 3
       (expect output[1][:text]).to eql 'so'
       (expect output[1][:styles].to_a).to eql [:italic]
+    end
+
+    it 'should ignore unknown font style on phrase' do
+      input = 'This is <span style="font-style: oblique">so</span> easy'
+      output = subject.format input
+      (expect output).to have_size 3
+      (expect output[1][:text]).to eql 'so'
+      (expect output[1][:styles]).to be_nil
     end
 
     it 'should warn if text contains unrecognized tag' do
