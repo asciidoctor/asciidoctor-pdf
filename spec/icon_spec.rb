@@ -92,6 +92,17 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     (expect heart_text[:font_size]).to eql 12.6
   end
 
+  it 'should use inherited size if font size is 1x' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :icons: font
+
+    I icon:fas-heart[1x] AsciiDoc
+    EOS
+
+    heart_text = pdf.find_unique_text ?\uf004
+    (expect heart_text[:font_size]).to eql pdf.text[0][:font_size]
+  end
+
   it 'should reserve 1em of space for fw icon' do
     pdf = to_pdf <<~'EOS', analyze: true
     :icons: font
