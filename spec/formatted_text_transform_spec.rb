@@ -90,6 +90,15 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     (expect fragments[0][:color]).to eql 'ff0000'
   end
 
+  it 'should create fragment with custom shorthand hex color' do
+    input = '<font color="#f00">red</font>'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 1
+    (expect fragments[0][:text]).to eql 'red'
+    (expect fragments[0][:color]).to eql 'ff0000'
+  end
+
   it 'should create fragment with custom cmyk color' do
     input = '<font color="[50.5, 100, 0, 0]">color</font>'
     parsed = parser.parse input
