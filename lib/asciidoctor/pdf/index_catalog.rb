@@ -70,7 +70,7 @@ module Asciidoctor
       end
 
       def categories
-        @categories.empty? ? [] : @categories.values.sort
+        @categories.values.sort
       end
     end
 
