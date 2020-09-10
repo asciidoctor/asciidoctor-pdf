@@ -251,7 +251,7 @@ module Asciidoctor
               when '#' # hex string (e.g., #FF0000)
                 fragment[:color] = value.length == 7 ? (value.slice 1, 6) : (value.slice 1, 3).each_char.map {|c| c * 2 }.join if HexColorRx.match? value
               when '[' # CMYK array (e.g., [50, 100, 0, 0])
-                if (value.end_with? ']') && (values = (value.slice 1, value.length).chop.split ', ').length == 4
+                if (values = ((value.slice 1, value.length).chomp ']').split ', ').length == 4
                   fragment[:color] = values.map {|it| (ival = it.to_i) == (fval = it.to_f) ? ival : fval }
                 end
               else # assume a 6-character hex color (internal only)
