@@ -592,6 +592,21 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[1][:from][:x]).to be < 100
     end
 
+    it 'should account for hard line breaks when computing natural width of table cell' do
+      pdf = to_pdf <<~'EOS', analyze: :line
+      [%autowidth,grid=none,frame=sides]
+      |===
+      |Everywhere that Mary went, +
+      the lamb was sure to go.
+      |===
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[0][:from][:x]).to eql 48.24
+      (expect lines[1][:from][:x]).to be < 200
+    end
+
     it 'should stretch autowidth table with stretch role to width of bounds' do
       pdf = to_pdf <<~'EOS', analyze: :line
       [%autowidth.stretch,grid=none,frame=sides]
