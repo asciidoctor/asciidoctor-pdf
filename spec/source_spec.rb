@@ -627,8 +627,8 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect pdf.rectangles).to have_size 1
     end
 
-    it 'should highlight lines using default color if color in theme is nil', visual: true do
-      pdf_theme = { code_highlight_background_color: nil }
+    it 'should highlight lines using custom color specified in theme', visual: true do
+      pdf_theme = { code_highlight_background_color: 'FFFF00' }
       to_file = to_pdf_file <<~'EOS', 'source-rouge-highlight-background-color.pdf', pdf_theme: pdf_theme
       :source-highlighter: rouge
 
