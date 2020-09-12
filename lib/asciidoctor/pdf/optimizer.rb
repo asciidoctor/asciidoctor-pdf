@@ -25,20 +25,15 @@ module Asciidoctor
 
       def generate_file target
         ::Dir::Tmpname.create ['asciidoctor-pdf-', '.pdf'] do |tmpfile|
-          filename = Pathname.new target
-          filename_o = Pathname.new tmpfile
-          pdfmark = filename.sub_ext '.pdfmark'
+          filename_o = Pathname.new target
+          filename_tmp = Pathname.new tmpfile
+          pdfmark = filename_o.sub_ext '.pdfmark'
           inputs = pdfmark.file? ? [target, pdfmark.to_s] : target
           (::RGhost::Convert.new inputs).to :pdf,
-              filename: filename_o.to_s,
+              filename: filename_tmp.to_s,
               quality: @quality,
               d: { Printed: false, CannotEmbedFontPolicy: '/Warning', CompatibilityLevel: @compatibility_level }
-          begin
-            filename_o.rename target
-          rescue ::Errno::EXDEV
-            filename.binwrite filename_o.binread
-            filename_o.unlink
-          end
+          filename_o.binwrite filename_tmp.binread
         end
         nil
       end
