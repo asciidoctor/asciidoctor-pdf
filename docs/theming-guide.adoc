@@ -418,7 +418,7 @@ The following units are supported:
 |pt (default)
 |===
 
-. A percentage with the % unit is calculated relative to the width or height of the content area.
+1. A percentage with the % unit is calculated relative to the width or height of the content area.
 Viewport-relative percentages (vw or vh units) are calculated as a percentage of the page width or height, respectively.
 Currently, percentage units can only be used for placing elements on the title page or for setting the width of a block image.
 
@@ -1258,8 +1258,8 @@ Currently, the only supported feature is setting the image per side.
   front:
     image: image:cover.pdf[page=2]
 |===
-. `<face>` can be `front` or `back`.
-. The value may be an image file or a PDF file.
+1. `<face>` can be `front` or `back`.
+2. The value may be an image file or a PDF file.
 A relative path will be resolved relative to the value of the `pdf-themesdir` attribute.
 An image files is handled just like a background image.
 If a PDF file is specified, the first page is used unless another page is specified by the `page` attribute.
@@ -1358,20 +1358,20 @@ See <<Title Page>> for details.
     start-at: toc
 |===
 
-. To disable the background color for the page, set the value to white (i.e., FFFFFF).
+1. To disable the background color for the page, set the value to white (i.e., FFFFFF).
 The color keyword `transparent` is not recognized in this context.
-. By default, page background and foreground images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+2. By default, page background and foreground images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
 The size of the image can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width) when `fit=none`.
 The position of the image can be controlled using the `position` attribute.
 If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background image is specified, it will be used only for that side (not available for the foreground image).
 If you define the keys using the flatten structure (e.g., `page-background-image-recto`), you can also set the default page background image (`page-background-image`), which will then be used as a fallback if a background image isn't specified for a given side.
 To disable the image, use the value `none`.
-. Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
-. The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin-inner and margin-outer values.
+3. Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
+4. The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin-inner and margin-outer values.
 These margins and used when the value `prepress` is assigned to the `media` document attribute.
 If no cover is specified, the recto margin is not applied to the title page.
 To apply the recto margin to the title page, but not include a cover, assign the value `~` to the `front-cover-image` attribute.
-. The `cover` value is only recognized if the documet has a front cover page (i.e., `front-cover-image`).
+5. The `cover` value is only recognized if the documet has a front cover page (i.e., `front-cover-image`).
 The `title`, `toc`, and `after-toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
 The `toc` value only applies if the toc is in the default location (before the first page of the body).
 If value is `toc`, and the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
@@ -1491,10 +1491,10 @@ NOTE: While it's common to define additional keys in this category (e.g., `base-
   text-decoration-width: 0.5
 |===
 
-. The `text-transform` key cannot be set globally.
+1. The `text-transform` key cannot be set globally.
 Therefore, this key should not be used.
 The value of `none` is implicit and is documented here for completeness.
-. `line-height-length` is a utility property that's internal to the theme.
+2. `line-height-length` is a utility property that's internal to the theme.
 It's used as an intermediate property for computing the `base-line-height` from the base font size and the desired line height size.
 For instance, if you set `base-line-height-length`, you can use `$base-line-height-length / $base-font-size` to set the value of `base-line-height`.
 You don't have to go about it this way in your own theme.
@@ -1646,10 +1646,10 @@ The keys in this category are used for inline monospaced text in prose and table
   font-style: bold
 |===
 
-. The border is only used if a border color is specified and the border width is not explicitly set to 0.
+1. The border is only used if a border color is specified and the border width is not explicitly set to 0.
 The border only works properly if the literal phrase does not have nested formatting.
 Otherwise, the border will be inherited, producing a less than desirable result.
-. The border offset is the amount that the background and border swells around the text.
+2. The border offset is the amount that the background and border swells around the text.
 It does not affect the distance between the formatted phrase and the phrases that surround it.
 
 [#keys-heading]
@@ -1838,8 +1838,8 @@ The keys in this category control the style of most headings, including part tit
   h2-margin-bottom: 10
 |===
 
-. `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
-. A font size is assigned to each heading level by the base theme.
+1. `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
+2. A font size is assigned to each heading level by the base theme.
 If you want the font size of a specific level to be inherited, you must assign the value `null` (or `~` for short).
 
 [#keys-section]
@@ -1859,7 +1859,7 @@ The keys in this category control the style of a section body.
 |section:
   indent: [0.5in, 0]
 |===
-. Applies to the section body only, excluding section titles and discrete headings.
+1. Applies to the section body only, excluding section titles and discrete headings.
 A single value gets applied to both the left and right side (e.g., `0.5in`).
 A two-value array configures the left and right side independently (e.g., `[0.5in, 0]`).
 
@@ -2273,13 +2273,13 @@ For other doctypes, the same result can be achieved by not setting the `title-pa
     margin-bottom: 5
 |===
 
-. To disable the background color for the title page, set the value to white (i.e., FFFFFF).
+1. To disable the background color for the title page, set the value to white (i.e., FFFFFF).
 The color keyword `transparent` is not recognized in this context.
-. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+2. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
 The size of the background image can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width) when `fit=none`.
 The position of the background image can be controlled using the `position` attribute.
-. Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
-. % unit is relative to content height; vh unit is relative to page height.
+3. Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
+4. % unit is relative to content height; vh unit is relative to page height.
 
 [#keys-prose]
 === Prose
@@ -2318,7 +2318,7 @@ Typically, all the margin is placed on the bottom.
   text-indent: 18
 |===
 
-. Controls the margin between adjacent paragraphs.
+1. Controls the margin between adjacent paragraphs.
 Useful when using indented paragraphs.
 
 [#keys-block]
@@ -2453,7 +2453,7 @@ In addition to the generic caption category, each of these keys (except for text
   margin-outside: 0
 |===
 
-. When nested inside the `image` key (i.e., `image-caption-align`), the value `inherit` is also accepted.
+1. When nested inside the `image` key (i.e., `image-caption-align`), the value `inherit` is also accepted.
 The value `inherit` resolves to the alignment of the block image.
 
 [#keys-code]
@@ -2550,10 +2550,10 @@ The keys in this category are used to control the style of literal, listing, and
   linenum-font-color: #ccc
 |===
 
-. The line-gap property is used to tune the height of the background color applied to a span of block text highlighted using Rouge.
-. The code-highlight category only applies when using Rouge as the source highlighter.
+1. The line-gap property is used to tune the height of the background color applied to a span of block text highlighted using Rouge.
+2. The code-highlight category only applies when using Rouge as the source highlighter.
 Otherwise, the styles are controlled by the source highlighter theme.
-. The code-linenum category only applies when using Pygments as the source highlighter.
+3. The code-linenum category only applies when using Pygments as the source highlighter.
 Otherwise, the styles are controlled by the source highlighter theme.
 
 [#keys-callout-numbers]
@@ -2610,10 +2610,10 @@ The keys in this category are used to control the style of callout numbers (i.e.
   glyphs: \u0031-\u0039
 |===
 
-. Currently, the font must contain the circle numbers starting at glyph U+2460.
-. font-family, font-kerning, font-size, font-style, and line-height are only used for markers in a colist.
+1. Currently, the font must contain the circle numbers starting at glyph U+2460.
+2. font-family, font-kerning, font-size, font-style, and line-height are only used for markers in a colist.
 These properties are inherited for conums inside a verbatim block.
-. The font must provide the required glyphs.
+3. The font must provide the required glyphs.
 The glyphs can be specified as a comma-separated list of ranges, where the range values are Unicode numbers (e.g., \u2460).
 Unicode escape sequences are recognized even if the value is not enclosed in double quotes.
 
@@ -2689,10 +2689,10 @@ The keys in this category apply to a button reference (generated from the inline
   font-style: normal
 |===
 
-. The border is only used if a border color is specified and the border width is not explicitly set to 0.
-. The border offset is the amount that the background and border swells around the text.
+1. The border is only used if a border color is specified and the border width is not explicitly set to 0.
+2. The border offset is the amount that the background and border swells around the text.
 It does not affect the distance between the formatted phrase and the phrases that surround it.
-. The character sequence `%s` in the content key gets replaced with the button label.
+3. The character sequence `%s` in the content key gets replaced with the button label.
 
 [#keys-key]
 === Key
@@ -2766,10 +2766,10 @@ The keys in this category apply to a key reference (generated from the inline kb
   font-style: normal
 |===
 
-. The border is only used if a border color is specified and the border width is not explicitly set to 0.
-. The border offset is the amount that the background and border swells around the text.
+1. The border is only used if a border color is specified and the border width is not explicitly set to 0.
+2. The border offset is the amount that the background and border swells around the text.
 It does not affect the distance between the formatted phrase and the phrases that surround it.
-. The separator is only used for multi-key sequences.
+3. The separator is only used for multi-key sequences.
 
 [#keys-menu]
 === Menu
@@ -2947,7 +2947,7 @@ The keys in this category control the arrangement and style of quote blocks.
     text-transform: uppercase
 |===
 
-. If border-left-width is non-zero, the border is only applied to the left side.
+1. If border-left-width is non-zero, the border is only applied to the left side.
 Otherwise, if border-width is non-zero, the border is drawn around the whole block.
 
 [#keys-verse]
@@ -3072,9 +3072,9 @@ The keys in this category control the arrangement and style of verse blocks.
     text-transform: uppercase
 |===
 
-. If border-left-width is non-zero, the border is only applied to the left side.
+1. If border-left-width is non-zero, the border is only applied to the left side.
 Otherwise, if border-width is non-zero, the border is drawn around the whole block.
-. The verse block does not use a fixed-width font by default, which can affect the layout if the content relies on columns.
+2. The verse block does not use a fixed-width font by default, which can affect the layout if the content relies on columns.
 You can change verse blocks to use a fixed-width font (not necessarily a monospaced font) using this setting.
 
 [#keys-sidebar]
@@ -3455,12 +3455,12 @@ The keys in this category control the arrangement and style of admonition blocks
       size: 24
 |===
 
-. The top and bottom padding values are ignored on admonition-label-padding.
-. `<name>` can be `note`, `tip`, `warning`, `important`, or `caution`.
+1. The top and bottom padding values are ignored on admonition-label-padding.
+2. `<name>` can be `note`, `tip`, `warning`, `important`, or `caution`.
 All icon types must be grouped under a single `icons` category.
 In other words, _do not_ declare the `icons` category multiple times.
 The subkeys in the icon category cannot be flattened (e.g., `tip-name: far-lightbulb` is not valid syntax).
-. Required.
+3. Required.
 See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository] for a list of valid icon names.
 The prefix (e.g., `fas-`) determines which font set to use.
 If the prefix is not specified, `fa-` is assumed.
@@ -3580,13 +3580,13 @@ The keys in this category control the arrangement of block images.
     max-width: fit-content
 |===
 
-. Only applies to block images.
+1. Only applies to block images.
 If specified, this value takes precedence over the value of the `width` attribute on the image macro, but not over the value of the `pdfwidth` attribute.
-. The border is only used if a border color is specified, the border width is specified, the border width is greater than 0, and the `noborder` role is not present.
+2. The border is only used if a border color is specified, the border width is specified, the border width is greater than 0, and the `noborder` role is not present.
 The border is drawn above the image on the inside of the box reserved for the image.
-. The value `auto` means the border should expand to fit the width of the container (i.e., full width) instead of the image.
-. Use the placeholders `%\{alt}`, `%\{target}`, `%\{link}`, and `%{/link}` to insert the alt text, image target, and link open/close tags into the content template.
-. In order for the image to be sized correctly when max-width is fit-content, a width should always be specified on the image.
+3. The value `auto` means the border should expand to fit the width of the container (i.e., full width) instead of the image.
+4. Use the placeholders `%\{alt}`, `%\{target}`, `%\{link}`, and `%{/link}` to insert the alt text, image target, and link open/close tags into the content template.
+5. In order for the image to be sized correctly when max-width is fit-content, a width should always be specified on the image.
 
 [#keys-svg]
 === SVG
@@ -3606,7 +3606,7 @@ The keys in this category control the SVG integration.
   fallback_font_family: Times-Roman
 |===
 
-. The fallback font family is only used when the font family in the SVG does not map to a known font name from the font catalog.
+1. The fallback font family is only used when the font family in the SVG does not map to a known font name from the font catalog.
 
 [#keys-lead]
 === Lead
@@ -3957,8 +3957,8 @@ The keys in this category control the arrangement and style of outline list item
   text-align: left
 |===
 
-. Controls the color of the bullet glyph that marks items in unordered lists and the number for items in ordered lists.
-. Controls the alignment of the list text only, not nested content (blocks or lists).
+1. Controls the color of the bullet glyph that marks items in unordered lists and the number for items in ordered lists.
+2. Controls the alignment of the list text only, not nested content (blocks or lists).
 
 [#keys-ulist]
 === Unordered List
@@ -4046,7 +4046,7 @@ The keys in this category control the arrangement and style of unordered list it
       line-height: 2
 |===
 
-. <type> is one of disc, square, circle, checked, unchecked
+1. <type> is one of disc, square, circle, checked, unchecked
 
 [#keys-table]
 === Table
@@ -4358,7 +4358,7 @@ The keys in this category control the arrangement and style of tables and table 
     text-transform: uppercase
 |===
 
-. This key only controls the color that is used for stripes.
+1. This key only controls the color that is used for stripes.
 The appearance of stripes is controlled using the `stripes` table attribute, the `table-stripes` document attribute (since Asciidoctor 2), or the `stripes` document attribute (prior to Asciidoctor 2).
 Permitted attribute values are even, odd, all, and none.
 Prior to Asciidoctor 2, even rows are shaded by default (e.g., `stripes=even`).
@@ -4624,9 +4624,9 @@ The keys in this category control the arrangement and style of the table of cont
     levels: 2 3
 |===
 
-. `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
-. The dot leader inherits all font properties except `font-style` from the root `toc` category.
-. 0-based levels (e.g., part = 0, chapter = 1).
+1. `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
+2. The dot leader inherits all font properties except `font-style` from the root `toc` category.
+3. 0-based levels (e.g., part = 0, chapter = 1).
 Dot leaders are only shown for the specified levels.
 If value is not specified, dot leaders are shown for all levels.
 
@@ -4968,16 +4968,16 @@ To avoid this problem, reduce the height of the running content periphery or mak
   start-at: toc
 |===
 
-. To make the background color and border span the width of the page, set the margin to 0 (and adjust the content-margin accordingly).
-. *If the height is not set, the running content at this periphery is disabled.*
-. Do not use negative margins.
+1. To make the background color and border span the width of the page, set the margin to 0 (and adjust the content-margin accordingly).
+2. *If the height is not set, the running content at this periphery is disabled.*
+3. Do not use negative margins.
 Instead, adjust the values of the margin and content-margin keys.
-. The maximum section level considered when assigning the implicit `section-title` attribute (and related) available to the running content.
-. `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
+4. The maximum section level considered when assigning the implicit `section-title` attribute (and related) available to the running content.
+5. `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
 The `columns` key can also be defined one level up (on `header` or `footer`), in which case the setting will be inherited.
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
-. `<position>` can be `left`, `center` or `right`.
-. The `title`, `toc`, and `after-toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
+6. `<position>` can be `left`, `center` or `right`.
+7. The `title`, `toc`, and `after-toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
 The `toc` value only applies if the toc is in the default location (before the first page of the body).
 If value is `toc`, and the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
 If value is `after-toc`, the running content will start after the toc, no matter where it's placed in the document.
