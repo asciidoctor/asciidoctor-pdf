@@ -5243,6 +5243,10 @@ These settings override equivalent keys defined in the theme file, where applica
 |language code {vbar} _blank_ to default to en_us (default: _not set_)
 |:hyphens: de
 
+|icons^[13]^
+|font {vbar} image (default: _not set_)
+|:icons: font
+
 |media
 |screen {vbar} print {vbar} prepress
 |:media: prepress
@@ -5357,6 +5361,12 @@ To force the title page to be used for other doctypes, set the `title-page` attr
 11. If the TOC overlaps the first page of content, increase this number.
 12. The second number in the value of `outlinelevels` is the number of levels of the outline to expand (e.g., `3:1`).
 If the second number is not present, all levels are expanded.
+13. By default, admonitions have a text-based label that matches the admonition type.
+To use icons instead, set the `icons` attribute to `font`.
+This setting allows the theme to control the icon used for each type (see the <<key-prefix-admonition-icon,admonition-icon key>>).
+It also enables the `icon` macro (covered in the README).
+To use local image filees, set the `icons` attribute to `image`.
+Note that if the value of the `icons` attribute is `image`, the `icon` macro will produce text-based output.
 
 == Page Numbering
 
