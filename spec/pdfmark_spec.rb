@@ -81,6 +81,22 @@ describe Asciidoctor::PDF::Pdfmark do
       (expect contents).to end_with %(/DOCINFO pdfmark\n)
     end
 
+    it 'should fallback to current date if only localdatetime is not parsable' do
+      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      = Document Title
+      Author Name
+      :localdatetime: garbage
+
+      body
+      EOS
+
+      expected_date = Time.now.to_pdf_object.slice 0, 11
+      contents = (subject.new doc).generate
+      (expect contents).to include '/Title (Document Title)'
+      (expect contents).to include %(/CreationDate #{expected_date})
+      (expect contents).to end_with %(/DOCINFO pdfmark\n)
+    end
+
     it 'should set mod and creation dates to match SOURCE_DATE_EPOCH environment variable' do
       old_source_date_epoch = ENV.delete 'SOURCE_DATE_EPOCH'
       ENV['SOURCE_DATE_EPOCH'] = '1234123412'
