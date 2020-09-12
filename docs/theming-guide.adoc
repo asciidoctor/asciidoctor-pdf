@@ -5255,7 +5255,7 @@ These settings override equivalent keys defined in the theme file, where applica
 |screen {vbar} ebook {vbar} printer {vbar} prepress {vbar} default (default: default)
 |:optimize: prepress
 
-|outlinelevels^[10]^
+|outlinelevels^[12]^
 |Integer {vbar} Integer:Integer (default: same as _toclevels_)
 |:outlinelevels: 2
 
@@ -5307,11 +5307,11 @@ These settings override equivalent keys defined in the theme file, where applica
 |flag (default: _not set_)
 |:pdfmark:
 
-|scripts^[7]^
+|scripts^[8]^
 |cjk (default: _not set_)
 |:scripts: cjk
 
-|text-align^[8]^
+|text-align^[9]^
 |<<text-alignments,Text alignment>>
 |:text-align: left
 
@@ -5319,7 +5319,7 @@ These settings override equivalent keys defined in the theme file, where applica
 |path^[2]^ {vbar} image macro^[3]^
 |:title-logo-image: image:logo.png[top=25%, align=center, pdfwidth=0.5in]
 
-|title-page^[9]^
+|title-page^[10]^
 |flag (default: _not set_)
 |:title-page:
 
@@ -5327,35 +5327,35 @@ These settings override equivalent keys defined in the theme file, where applica
 |path^[2]^ {vbar} image macro^[3]^
 |:title-page-background-image: image:title-bg.jpg[]
 
-|toc-max-pagenum-digits^[10]^
+|toc-max-pagenum-digits^[11]^
 |Integer (default: 3)
 |:toc-max-pagenum-digits: 4
 |===
 
-. `<face>` can be `front` or `back`.
-. The path is resolved relative to base_dir.
-. In this case, the target of the image macro is resolved relative to `imagesdir` since it's defined in an AsciiDoc document attribute (unlike in the theme, where it is resolved relative to the value of `pdf-themesdir`).
-If the image macro syntax is not used, the value is resolved relative to the base directory, which defaults to the document directory.
-. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+1. `<face>` can be `front` or `back`.
+2. A bare path is resolved relative to base_dir, which defaults to the document directory.
+3. The target of the image macro is resolved relative to `imagesdir` since it's defined in the AsciiDoc document (unlike in the theme, where it is resolved relative to the value of `pdf-themesdir`).
+4. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
 The size of the background image can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width) when `fit=none`.
 The position of the background image can be controlled using the `position` attribute.
 If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background is specified, it will be used only for that side.
 If a background image isn't specified for a side, the converter will use the default page background image (`page-background-image`), if specified.
 To disable the background image for a side, use the value `none`.
-. Controls whether the implicit `page-number` attribute is to the running header and footer content specified in the theme file.
+5. Controls whether the implicit `page-number` attribute is to the running header and footer content specified in the theme file.
 Instead of disabling page numbers, you can use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively.
-. Enables generation of the http://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark] file, which contains metadata that is fed to Ghostscript when optimizing the PDF file.
-. Activates line break rules for CJK languages (specifically Chinese and Japanese).
+6. Enables generation of the http://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark] file, which contains metadata that is fed to Ghostscript when optimizing the PDF file.
+7. Activates hyphenation for the language code specified (defaults to en_us).
+8. Activates line break rules for CJK languages (specifically Chinese and Japanese).
 Chinese and Japanese are written without spaces (and may not use spaces when mixing with English words either).
 This setting allows a line break to be placed between any two CJK characters to accommodate wrapping.
 These languages also use different punctuation for pause, full stop, and dash, which are taken into account when breaking lines.
-. _(Experimental)_ The `text-align` document attribute is intended as a simple way to toggle text justification.
+9. _(Experimental)_ The `text-align` document attribute is intended as a simple way to toggle text justification.
 The value of this attribute overrides the `base-align` key set by the theme.
 For more fine-grained control, you should customize using the theme.
-. The title page is only enabled by default for the book doctype.
+10. The title page is only enabled by default for the book doctype.
 To force the title page to be used for other doctypes, set the `title-page` attribute in the document header.
-. If the TOC overlaps the first page of content, increase this number.
-. The second number in the value of `outlinelevels` is the number of levels of the outline to expand (e.g., `3:1`).
+11. If the TOC overlaps the first page of content, increase this number.
+12. The second number in the value of `outlinelevels` is the number of levels of the outline to expand (e.g., `3:1`).
 If the second number is not present, all levels are expanded.
 
 == Page Numbering
