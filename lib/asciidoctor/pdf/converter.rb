@@ -1993,8 +1993,7 @@ module Asciidoctor
             table_header_size = head_rows.size
             head_font_info = font_info
             head_line_metrics = calc_line_metrics theme.base_line_height
-            head_cell_padding = theme.table_head_cell_padding || theme.table_cell_padding
-            head_cell_padding = ::Array === head_cell_padding && head_cell_padding.size == 4 ? head_cell_padding.dup : (expand_padding_value head_cell_padding)
+            head_cell_padding = expand_padding_value theme.table_head_cell_padding || theme.table_cell_padding
             head_cell_padding[0] += head_line_metrics.padding_top
             head_cell_padding[2] += head_line_metrics.padding_bottom
             # QUESTION: why doesn't text transform inherit from table?
@@ -2033,7 +2032,7 @@ module Asciidoctor
             text_color: @font_color,
           }
           body_cell_line_metrics = calc_line_metrics theme.base_line_height
-          body_cell_padding = ::Array === (body_cell_padding = theme.table_cell_padding) && body_cell_padding.size == 4 ? body_cell_padding.dup : (expand_padding_value body_cell_padding)
+          body_cell_padding = expand_padding_value theme.table_cell_padding
           (body_rows + node.rows[:foot]).each do |row|
             table_data << (row.map do |cell|
               cell_data = base_cell_data.merge \
