@@ -712,6 +712,27 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect ok_text[:x].floor).to be 135
     end
 
+    it 'should not apply padding to cell if padding is nil' do
+      input = <<~'EOS'
+      [cols=2*]
+      |===
+      |A1
+      |B1
+
+      |A2
+      |B2
+      |===
+      EOS
+
+      pdf = to_pdf input, pdf_theme: { table_cell_padding: 0 }, analyze: true
+      b1_x = (pdf.find_unique_text 'B1')[:x]
+      a2_y = (pdf.find_unique_text 'A2')[:y]
+
+      pdf = to_pdf input, pdf_theme: { table_cell_padding: nil }, analyze: true
+      (expect (pdf.find_unique_text 'B1')[:x]).to eql b1_x
+      (expect (pdf.find_unique_text 'A2')[:y]).to eql a2_y
+    end
+
     it 'should account for line metrics in cell padding' do
       input = <<~'EOS'
       |===
