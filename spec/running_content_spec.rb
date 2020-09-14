@@ -1023,6 +1023,26 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect pgnum_labels).to eql %w(i 1 2 3 4)
     end
 
+    it 'should start page numbering at body if page_numbering_start_at is toc and toc is disabled' do
+      theme_overrides = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      = Document Title
+      :doctype: book
+
+      == First Chapter
+
+      == Second Chapter
+
+      == Third Chapter
+      EOS
+
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
+      end
+      (expect pgnum_labels).to eql %w(i 1 2 3)
+    end
+
     it 'should start page numbering at toc page if page_numbering_start_at is toc and title page is disabled' do
       theme_overrides = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
 
