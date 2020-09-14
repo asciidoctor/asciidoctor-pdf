@@ -237,6 +237,36 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect part_a_text[:y]).to eql first_chapter_text[:y] - 100.0
   end
 
+  it 'should allow theme to specify different margin top and bottom values for a given section level' do
+    pdf_theme = {
+      heading_h2_font_size: 28,
+      heading_h2_margin_top: 10,
+      heading_h2_margin_bottom: 10,
+      heading_h3_font_size: 28,
+      heading_h3_margin_top: 5,
+      heading_h3_margin_bottom: 5,
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    preamble
+
+    == Level 1
+
+    content for level 1
+
+    === Level 2
+
+    content for level 2
+    EOS
+
+    l1_title_text = pdf.find_unique_text 'Level 1'
+    l1_content_text = pdf.find_unique_text 'content for level 1'
+    l2_title_text = pdf.find_unique_text 'Level 2'
+    l2_content_text = pdf.find_unique_text 'content for level 2'
+    l1_gap = l1_title_text[:y] - l1_content_text[:y]
+    l2_gap = l2_title_text[:y] - l2_content_text[:y]
+    (expect l1_gap - 5).to eql l2_gap
+  end
+
   it 'should uppercase section titles if text_transform key in theme is set to uppercase' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     = Document Title
