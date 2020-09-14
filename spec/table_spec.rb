@@ -747,7 +747,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       last_y = nil
-      [5, [5, 5, 5, 5]].each do |cell_padding|
+      [5, [5, 5, 5, 5], [5, 5, 5, 5, 5]].each do |cell_padding|
         pdf = to_pdf input, pdf_theme: { table_cell_padding: cell_padding }, analyze: true
         a2_text = (pdf.find_text 'A2')[0]
         (expect a2_text[:y]).to eql last_y if last_y
@@ -1436,7 +1436,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should apply cell padding to AsciiDoc table cell' do
-      [10, [10]].each do |padding|
+      [10, [10], [10, 10, 10, 10, 10]].each do |padding|
         pdf = to_pdf <<~'EOS', pdf_theme: { table_cell_padding: padding }, analyze: true
         |===
         | a a| b | c
