@@ -467,6 +467,27 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'faulty.svg'}; Unknown tag 'foobar')
     end
 
+    it 'should not warn if SVG icon specified by icon attribute in scratch document has errors' do
+      (expect do
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: :rect
+        :icons: font
+        :icontype: svg
+
+        [%unbreakable]
+        --
+        [TIP,icon=faulty]
+        ====
+        Use the icon attribute to customize the image for an admonition block.
+        ====
+        --
+        EOS
+        (expect pdf.rectangles).to have_size 1
+        # NOTE: width and height of rectangle match what's defined in SVG
+        (expect pdf.rectangles[0][:width]).to eql 200.0
+        (expect pdf.rectangles[0][:height]).to eql 200.0
+      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'faulty.svg'}; Unknown tag 'foobar')
+    end
+
     it 'should warn and fall back to admonition label if SVG icon cannot be found' do
       (expect do
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
