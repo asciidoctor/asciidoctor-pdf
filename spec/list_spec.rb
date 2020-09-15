@@ -1423,6 +1423,37 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect key_val_texts[0][:y]).to eql key_val_texts[1][:y]
     end
 
+    it 'should not collapse top margin if previous block is not a verbatim block' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      before
+
+      ----
+      key: val
+      ----
+
+      '''
+
+      key-value pair
+      EOS
+
+      reference_y = (pdf.find_unique_text 'key-value pair')[:y]
+
+      pdf = to_pdf <<~'EOS', analyze: true
+      before
+
+      ----
+      key: val # <1>
+      ----
+      
+      '''
+
+      <1> key-value pair
+      EOS
+
+      actual_y = (pdf.find_unique_text 'key-value pair')[:y]
+      (expect actual_y).to eql reference_y
+    end
+
     it 'should allow conum font color to be customized by theme' do
       pdf = to_pdf <<~'EOS', pdf_theme: { conum_font_color: '0000ff' }, analyze: true
       ....
