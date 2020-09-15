@@ -1110,8 +1110,7 @@ module Asciidoctor
       def convert_colist node
         # HACK: undo the margin below previous listing or literal block
         # TODO: allow this to be set using colist_margin_top
-        if (self_idx = (node.parent.blocks.index node) || -1) > 0 &&
-            [:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
+        if (self_idx = node.parent.blocks.index node) > 0 && [:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
           move_up @theme.block_margin_bottom - @theme.outline_list_item_spacing
         end unless at_page_top?
         add_dest_for_block node if node.id
