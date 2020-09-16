@@ -3080,9 +3080,7 @@ module Asciidoctor
             if (dot_leader_font_style = (@theme.toc_dot_leader_font_style || :normal).to_sym) != font_style
               font_style dot_leader_font_style
             end
-            if (dot_leader_font_size = @theme.toc_dot_leader_font_size) != font_size
-              font_size dot_leader_font_size
-            end
+            font_size @theme.toc_dot_leader_font_size
             {
               font_color: @theme.toc_dot_leader_font_color || @font_color,
               font_style: dot_leader_font_style,
