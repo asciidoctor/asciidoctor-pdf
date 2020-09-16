@@ -108,5 +108,22 @@ describe 'Asciidoctor::PDF::Converter - Video' do
       expected_strings = [%(\u25ba\u00a0), %(https://vimeo.com/#{video_id}), ' ', '(Vimeo video)']
       (expect pdf.text.map {|it| it[:string] }).to eql expected_strings
     end
+
+    it 'should replace video with link if allow-uri-read attribute is set and video is not found' do
+      video_id = '0'
+      input = %(video::#{video_id}[vimeo])
+
+      pdf = to_pdf input, attribute_overrides: { 'allow-uri-read' => '' }
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to be :Link
+      (expect link_annotation[:A][:URI]).to eql %(https://vimeo.com/#{video_id})
+
+      pdf = to_pdf input, attribute_overrides: { 'allow-uri-read' => '' }, analyze: true
+      expected_strings = [%(\u25ba\u00a0), %(https://vimeo.com/#{video_id}), ' ', '(Vimeo video)']
+      (expect pdf.text.map {|it| it[:string] }).to eql expected_strings
+    end
   end
 end

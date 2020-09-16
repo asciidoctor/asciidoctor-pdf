@@ -1670,7 +1670,11 @@ module Asciidoctor
           type = 'YouTube video'
         when 'vimeo'
           video_path = %(https://vimeo.com/#{video_id = node.attr 'target'})
-          poster = allow_uri_read ? load_open_uri.open_uri(%(https://vimeo.com/api/oembed.xml?url=https%3A//vimeo.com/#{video_id}&width=1280), 'r') {|f| VimeoThumbnailRx =~ f.read && $1 } : nil
+          if allow_uri_read
+            poster = load_open_uri.open_uri(%(https://vimeo.com/api/oembed.xml?url=https%3A//vimeo.com/#{video_id}&width=1280), 'r') {|f| (VimeoThumbnailRx.match f.read)[1] } rescue nil
+          else
+            poster = nil
+          end
           type = 'Vimeo video'
         else
           video_path = node.media_uri node.attr 'target'
