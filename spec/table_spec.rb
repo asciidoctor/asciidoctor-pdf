@@ -307,7 +307,9 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      pdf.lines.uniq.each do |line|
+      lines = pdf.lines.uniq
+      (expect lines).not_to be_empty
+      lines.each do |line|
         (expect line[:color]).to eql '00000000'
       end
     end
@@ -332,7 +334,9 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      pdf.lines.uniq.each do |line|
+      lines = pdf.lines.uniq
+      (expect lines).not_to be_empty
+      lines.each do |line|
         (expect line[:color]).to eql cmyk_color.map(&:to_f)
       end
     end
@@ -375,6 +379,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       line_colors = pdf.lines.map {|l| l[:color] }.uniq
+      (expect line_colors).not_to be_empty
       (expect line_colors).to eql %w(3D3D3D)
     end
 
