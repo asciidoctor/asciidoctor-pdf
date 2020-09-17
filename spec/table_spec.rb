@@ -365,6 +365,32 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       end
     end
 
+    it 'should base base border color if table border and grid colors are not set' do
+      pdf_theme = {
+        base_border_color: '0000FF',
+        table_border_color: nil,
+        table_grid_color: nil,
+      }
+
+      pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: pdf_theme
+      |===
+      | Col A | Col B
+
+      | A1
+      | B1
+
+      | A2
+      | B2
+      |===
+      EOS
+
+      lines = pdf.lines.uniq
+      (expect lines).not_to be_empty
+      lines.each do |line|
+        (expect line[:color]).to eql '0000FF'
+      end
+    end
+
     it 'should use grid color as fallback for table border color' do
       pdf_theme = {
         table_border_color: nil,
