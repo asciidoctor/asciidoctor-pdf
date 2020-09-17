@@ -129,6 +129,22 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     end
   end
 
+  it 'should use base font color if font color is not specified' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_color: 'AA0000', code_font_color: nil }, analyze: true
+    before
+
+    ----
+    in the mix
+    ----
+    EOS
+
+    before_text = pdf.find_unique_text 'before'
+    (expect before_text[:font_color]).to eql 'AA0000'
+
+    code_text = pdf.find_unique_text 'in the mix'
+    (expect code_text[:font_color]).to eql 'AA0000'
+  end
+
   it 'should allow theme to set different padding per side when autofit is enabled' do
     pdf_theme = {
       code_border_radius: 0,
