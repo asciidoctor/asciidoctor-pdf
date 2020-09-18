@@ -828,14 +828,14 @@ module Asciidoctor
             end
           end
         end
-        unless ::Array === (cpad = @theme.admonition_padding)
+        unless ::Array === (cpad = @theme.admonition_padding || 0)
           cpad = ::Array.new 4, cpad
         end
         unless ::Array === (lpad = @theme.admonition_label_padding || cpad)
           lpad = ::Array.new 4, lpad
         end
         # FIXME: this shift stuff is a real hack until we have proper margin collapsing
-        shift_base = @theme.prose_margin_bottom
+        shift_base = @theme.prose_margin_bottom || 0
         shift_top = shift_base / 3.0
         shift_bottom = (shift_base * 2) / 3.0
         keep_together do |box_height = nil|
@@ -1111,7 +1111,7 @@ module Asciidoctor
         # HACK: undo the margin below previous listing or literal block
         # TODO: allow this to be set using colist_margin_top
         if (self_idx = node.parent.blocks.index node) > 0 && [:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
-          move_up @theme.block_margin_bottom - @theme.outline_list_item_spacing
+          move_up (@theme.block_margin_bottom || 0) - (@theme.outline_list_item_spacing || 0)
         end unless at_page_top?
         add_dest_for_block node if node.id
         @list_numerals << 1
@@ -1122,8 +1122,7 @@ module Asciidoctor
         end
         @list_numerals.pop
         # correct bottom margin of last item
-        list_margin_bottom = @theme.prose_margin_bottom
-        margin_bottom list_margin_bottom - @theme.outline_list_item_spacing
+        margin_bottom (@theme.prose_margin_bottom || 0) - (@theme.outline_list_item_spacing || 0)
       end
 
       def convert_colist_item node
@@ -1362,7 +1361,7 @@ module Asciidoctor
         #unless complex || (node.nested? && node.parent.parent.outline?)
         unless node.nested? && node.parent.parent.outline?
           # correct bottom margin of last item
-          margin_bottom((@theme.prose_margin_bottom || 0) - (@theme.outline_list_item_spacing || 0))
+          margin_bottom (@theme.prose_margin_bottom || 0) - (@theme.outline_list_item_spacing || 0)
         end
       end
 

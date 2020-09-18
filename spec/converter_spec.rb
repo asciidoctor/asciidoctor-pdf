@@ -304,11 +304,17 @@ describe Asciidoctor::PDF::Converter do
         .ulist
         * one
         * two
-        * three
+
+        ----
+        key=val <1>
+        ----
+        <1> A variable assignment
+
+        NOTE: That's all, folks!
         EOS
 
         (expect pdf.pages).to have_size 3
-        (expect pdf.find_text font_name: 'Helvetica', font_size: 12).to have_size pdf.text.size
+        (expect pdf.find_text font_name: 'Helvetica', font_size: 12).not_to be_empty
         (expect (pdf.find_text 'Document Title')[0]).not_to be_nil
         (expect (pdf.find_text 'Chapter Title')[0]).not_to be_nil
         (expect (pdf.find_text 'Section Title')[0]).not_to be_nil
