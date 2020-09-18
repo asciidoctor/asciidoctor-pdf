@@ -249,8 +249,12 @@ describe Asciidoctor::PDF::Converter do
 
       it 'should use theme passed in through :pdf_theme option' do
         theme = Asciidoctor::PDF::ThemeLoader.load_theme 'custom', fixtures_dir
+        theme.base_font_size = 14
+        theme.base_font_color = '1a1a1a'
         pdf = Asciidoctor.convert 'content', backend: 'pdf', pdf_theme: theme
-        (expect pdf.instance_variable_get :@theme).to be theme
+        converter_theme = pdf.instance_variable_get :@theme
+        (expect converter_theme.base_font_size).to eql theme.base_font_size
+        (expect converter_theme.base_font_color).to eql theme.base_font_color
       end
 
       it 'should set themesdir theme with __dir__ is passed via :pdf_theme option' do

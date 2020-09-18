@@ -212,7 +212,7 @@ module Asciidoctor
         start_new_page unless page.empty?
 
         # NOTE: font must be set before content is written to the main or scratch document
-        font @theme.base_font_family, size: @root_font_size, style: (@theme.base_font_style || :normal).to_sym unless has_title_page
+        font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style unless has_title_page
 
         unless use_title_page
           body_start_page_number = page_number
@@ -239,7 +239,7 @@ module Asciidoctor
             zero_page_offset = has_front_cover ? 1 : 0
             first_page_offset = has_title_page ? zero_page_offset.next : zero_page_offset
             body_offset = (body_start_page_number = page_number) - 1
-            if ::Integer === (running_content_start_at = @theme.running_content_start_at || 'body')
+            if ::Integer === (running_content_start_at = @theme.running_content_start_at)
               running_content_body_offset = body_offset + [running_content_start_at.pred, 1].max
               running_content_start_at = 'body'
             else
@@ -253,7 +253,7 @@ module Asciidoctor
                 running_content_start_at = 'body'
               end
             end
-            if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at || 'body')
+            if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at)
               page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 1].max
               page_numbering_start_at = 'body'
             else
@@ -289,12 +289,12 @@ module Asciidoctor
             }[[running_content_start_at, page_numbering_start_at]] || [running_content_body_offset, page_numbering_body_offset]
           else
             body_offset = body_start_page_number - 1
-            if ::Integer === (running_content_start_at = @theme.running_content_start_at || 'body')
+            if ::Integer === (running_content_start_at = @theme.running_content_start_at)
               running_content_body_offset = body_offset + [running_content_start_at.pred, 1].max
             else
               running_content_body_offset = body_offset
             end
-            if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at || 'body')
+            if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at)
               page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 1].max
             elsif page_numbering_start_at == 'cover' && has_front_cover
               page_numbering_body_offset = 0
@@ -400,9 +400,9 @@ module Asciidoctor
           @page_bg_image[:recto] = bg_image[0] && bg_image
         end
         @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
-        @root_font_size = theme.base_font_size || 12
+        @root_font_size = theme.base_font_size
         @font_scale = 1
-        @font_color = theme.base_font_color || '000000'
+        @font_color = theme.base_font_color
         @text_decoration_width = theme.base_text_decoration_width
         @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
         @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
@@ -435,6 +435,7 @@ module Asciidoctor
       def load_theme doc
         @theme ||= begin # rubocop:disable Naming/MemoizedInstanceVariableName
           if (theme = doc.options[:pdf_theme])
+            theme = theme.dup
             @themesdir = ::File.expand_path theme.__dir__ || (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir') || ::Dir.pwd
           elsif (theme_name = (doc.attr 'pdf-theme') || (doc.attr 'pdf-style'))
             theme = ThemeLoader.load_theme theme_name, (user_themesdir = (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir'))
@@ -442,7 +443,7 @@ module Asciidoctor
           else
             @themesdir = (theme = ThemeLoader.load_theme).__dir__
           end
-          theme
+          prepare_theme theme
         rescue
           if user_themesdir
             message = %(could not locate or load the pdf theme `#{theme_name}' in #{user_themesdir})
@@ -452,8 +453,37 @@ module Asciidoctor
           message += %( because of #{$!.class} #{$!.message}) unless ::SystemCallError === $!
           log :error, %(#{message}; reverting to default theme)
           @themesdir = (theme = ThemeLoader.load_theme).__dir__
-          theme
+          prepare_theme theme
         end
+      end
+
+      def prepare_theme theme
+        theme.base_border_width || 0
+        theme.base_font_color ||= '000000'
+        theme.base_font_size ||= 12
+        theme.base_font_style = (theme.base_font_style || :normal).to_sym
+        theme.page_numbering_start_at ||= 'body'
+        theme.running_content_start_at ||= 'body'
+        theme.heading_margin_page_top ||= 0
+        theme.heading_margin_top ||= 0
+        theme.heading_margin_bottom ||= 0
+        theme.prose_text_indent ||= 0
+        theme.prose_margin_bottom ||= 0
+        theme.block_margin_bottom ||= 0
+        theme.outline_list_indent ||= 0
+        theme.outline_list_item_spacing ||= 0
+        theme.description_list_term_spacing ||= 0
+        theme.description_list_description_indent ||= 0
+        theme.image_border_width ||= 0
+        theme.code_linenum_font_color ||= '999999'
+        theme.role_unresolved_font_color ||= 'FF0000'
+        theme.index_columns ||= 2
+        theme.footnotes_item_spacing ||= 0
+        theme.key_separator ||= '+'
+        theme.title_page_authors_delimiter ||= ', '
+        theme.title_page_revision_delimiter ||= ', '
+        theme.toc_hanging_indent ||= 0
+        theme
       end
 
       def build_pdf_options doc, theme
@@ -625,9 +655,9 @@ module Asciidoctor
             # FIXME: this height doesn't account for impact of text transform or inline formatting
             heading_height =
               (height_of_typeset_text title, line_height: (@theme[%(heading_h#{hlevel}_line_height)] || @theme.heading_line_height)) +
-              (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top || 0) +
-              (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom || 0)
-            heading_height += (@theme.heading_min_height_after || 0) if sect.blocks?
+              (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
+              (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom)
+            heading_height += @theme.heading_min_height_after if sect.blocks? && @theme.heading_min_height_after
             start_new_page unless cursor > heading_height
           end
           # QUESTION: should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
@@ -677,7 +707,7 @@ module Asciidoctor
         theme_margin :footnotes, :top
         theme_font :footnotes do
           (title = doc.attr 'footnotes-title') && (layout_caption title, category: :footnotes)
-          item_spacing = @theme.footnotes_item_spacing || 0
+          item_spacing = @theme.footnotes_item_spacing
           index_offset = @rendered_footnotes.length
           sect_xreftext = node.context == :section && (node.xreftext node.document.attr 'xrefstyle')
           fns.each do |fn|
@@ -710,11 +740,11 @@ module Asciidoctor
         outdent_section do
           pad_box @theme.abstract_padding do
             theme_font :abstract_title do
-              layout_prose node.title, align: (@theme.abstract_title_align || @base_align).to_sym, margin_top: (@theme.heading_margin_top || 0), margin_bottom: (@theme.heading_margin_bottom || 0), line_height: @theme.heading_line_height
+              layout_prose node.title, align: (@theme.abstract_title_align || @base_align).to_sym, margin_top: @theme.heading_margin_top, margin_bottom: @theme.heading_margin_bottom, line_height: @theme.heading_line_height
             end if node.title?
             theme_font :abstract do
               prose_opts = { line_height: @theme.abstract_line_height, align: (@theme.abstract_align || @base_align).to_sym, hyphenate: true }
-              if (text_indent = @theme.prose_text_indent || 0) > 0
+              if (text_indent = @theme.prose_text_indent) > 0
                 prose_opts[:indent_paragraphs] = text_indent
               end
               # FIXME: allow theme to control more first line options
@@ -767,7 +797,7 @@ module Asciidoctor
           prose_opts[:align] = align
         end
 
-        if (text_indent = @theme.prose_text_indent || 0) > 0
+        if (text_indent = @theme.prose_text_indent) > 0
           prose_opts[:indent_paragraphs] = text_indent
         end
 
@@ -835,7 +865,7 @@ module Asciidoctor
           lpad = ::Array.new 4, lpad
         end
         # FIXME: this shift stuff is a real hack until we have proper margin collapsing
-        shift_base = @theme.prose_margin_bottom || 0
+        shift_base = @theme.prose_margin_bottom
         shift_top = shift_base / 3.0
         shift_bottom = (shift_base * 2) / 3.0
         keep_together do |box_height = nil|
@@ -1096,7 +1126,7 @@ module Asciidoctor
           pad_box @theme.sidebar_padding do
             theme_font :sidebar_title do
               # QUESTION: should we allow margins of sidebar title to be customized?
-              layout_prose node.title, align: (@theme.sidebar_title_align || @theme.heading_align || @base_align).to_sym, margin_top: 0, margin_bottom: (@theme.heading_margin_bottom || 0), line_height: @theme.heading_line_height
+              layout_prose node.title, align: (@theme.sidebar_title_align || @theme.heading_align || @base_align).to_sym, margin_top: 0, margin_bottom: @theme.heading_margin_bottom, line_height: @theme.heading_line_height
             end if node.title?
             theme_font :sidebar do
               traverse node
@@ -1111,7 +1141,7 @@ module Asciidoctor
         # HACK: undo the margin below previous listing or literal block
         # TODO: allow this to be set using colist_margin_top
         if (self_idx = node.parent.blocks.index node) > 0 && [:listing, :literal].include?(node.parent.blocks[self_idx - 1].context)
-          move_up (@theme.block_margin_bottom || 0) - (@theme.outline_list_item_spacing || 0)
+          move_up @theme.block_margin_bottom - @theme.outline_list_item_spacing
         end unless at_page_top?
         add_dest_for_block node if node.id
         @list_numerals << 1
@@ -1122,7 +1152,7 @@ module Asciidoctor
         end
         @list_numerals.pop
         # correct bottom margin of last item
-        margin_bottom (@theme.prose_margin_bottom || 0) - (@theme.outline_list_item_spacing || 0)
+        margin_bottom @theme.prose_margin_bottom - @theme.outline_list_item_spacing
       end
 
       def convert_colist_item node
@@ -1179,8 +1209,8 @@ module Asciidoctor
           theme_font :description_list_term do
             term_inline_format = (term_font_styles = font_styles).empty? ? true : [inherited: { styles: term_font_styles }]
             term_line_metrics = calc_line_metrics @theme.description_list_term_line_height || @theme.base_line_height
-            term_padding = [term_line_metrics.padding_top, 10, (@theme.prose_margin_bottom || 0) * 0.5 + term_line_metrics.padding_bottom, 10]
-            desc_padding = [0, 10, (@theme.prose_margin_bottom || 0) * 0.5, 10]
+            term_padding = [term_line_metrics.padding_top, 10, @theme.prose_margin_bottom * 0.5 + term_line_metrics.padding_bottom, 10]
+            desc_padding = [0, 10, @theme.prose_margin_bottom * 0.5, 10]
             term_kerning = default_kerning?
           end
           node.items.each do |terms, desc|
@@ -1216,7 +1246,7 @@ module Asciidoctor
           table table_data, position: :left, cell_style: { border_width: 0 }, column_widths: [term_column_width] do
             @pdf.layout_table_caption node if node.title?
           end
-          margin_bottom (@theme.prose_margin_bottom || 0) * 0.5
+          margin_bottom @theme.prose_margin_bottom * 0.5
         when 'qanda'
           @list_numerals << '1'
           convert_outline_list node
@@ -1230,7 +1260,7 @@ module Asciidoctor
           line_metrics = theme_font(:description_list_term) { calc_line_metrics term_line_height }
           node.items.each do |terms, desc|
             # NOTE: don't orphan the terms (keep together terms and at least one line of content)
-            allocate_space_for_list_item line_metrics, (terms.size + 1), ((@theme.description_list_term_spacing || 0) + 0.05)
+            allocate_space_for_list_item line_metrics, (terms.size + 1), (@theme.description_list_term_spacing + 0.05)
             theme_font :description_list_term do
               if (term_font_styles = font_styles).empty?
                 term_font_styles = nil
@@ -1240,7 +1270,7 @@ module Asciidoctor
                 layout_prose term.text, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left, line_height: term_line_height, normalize_line_height: true, styles: term_font_styles
               end
             end
-            indent(@theme.description_list_description_indent || 0) do
+            indent @theme.description_list_description_indent do
               traverse_list_item desc, :dlist_desc, normalize_line_height: true
             end if desc
           end
@@ -1343,12 +1373,12 @@ module Asciidoctor
           if node.style == 'unstyled'
             # unstyled takes away all indentation
             list_indent = 0
-          elsif (list_indent = @theme.outline_list_indent || 0) > 0
+          elsif (list_indent = @theme.outline_list_indent) > 0
             # no-bullet aligns text with left-hand side of bullet position (as though there's no bullet)
             list_indent = [list_indent - (rendered_width_of_string %(#{node.context == :ulist ? ?\u2022 : '1.'}x)), 0].max
           end
         else
-          list_indent = @theme.outline_list_indent || 0
+          list_indent = @theme.outline_list_indent
         end
         indent list_indent do
           node.items.each do |item|
@@ -1361,7 +1391,7 @@ module Asciidoctor
         #unless complex || (node.nested? && node.parent.parent.outline?)
         unless node.nested? && node.parent.parent.outline?
           # correct bottom margin of last item
-          margin_bottom (@theme.prose_margin_bottom || 0) - (@theme.outline_list_item_spacing || 0)
+          margin_bottom @theme.prose_margin_bottom - @theme.outline_list_item_spacing
         end
       end
 
@@ -1611,7 +1641,7 @@ module Asciidoctor
       end
 
       def draw_image_border top, w, h, alignment
-        if (@theme.image_border_width || 0) > 0 && @theme.image_border_color
+        if @theme.image_border_width > 0 && @theme.image_border_color
           if (@theme.image_border_fit || 'content') == 'auto'
             bb_width = bounds.width
           elsif alignment == :center
@@ -1787,7 +1817,6 @@ module Asciidoctor
               end
               if node.attr? 'linenums'
                 linenums = (node.attr 'start', 1).to_i
-                @theme.code_linenum_font_color ||= '999999'
                 postprocess = true
                 wrap_ext = FormattedText::SourceWrap
               elsif conum_mapping || highlight_lines
@@ -2359,7 +2388,7 @@ module Asciidoctor
 
       def convert_index_section _node
         space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
-        column_box [0, cursor], columns: (@theme.index_columns || 2), width: bounds.width, reflow_margins: true do
+        column_box [0, cursor], columns: @theme.index_columns, width: bounds.width, reflow_margins: true do
           @index.categories.each do |category|
             # NOTE: cursor method always returns 0 inside column_box; breaks reference_bounds.move_past_bottom
             bounds.move_past_bottom if space_needed_for_category > y - reference_bounds.absolute_bottom
@@ -2489,7 +2518,7 @@ module Asciidoctor
           end
           %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{label}</a>]</sup>)
         elsif node.type == :xref
-          %(<sup><font color="#{theme.role_unresolved_font_color || 'FF0000'}">[#{node.text}]</font></sup>)
+          %(<sup><font color="#{theme.role_unresolved_font_color}">[#{node.text}]</font></sup>)
         else
           log :warn, %(unknown footnote type: #{node.type.inspect})
         end
@@ -2603,7 +2632,7 @@ module Asciidoctor
         if (keys = node.attr 'keys').size == 1
           %(<key>#{keys[0]}</key>)
         else
-          keys.map {|key| %(<key>#{key}</key>) }.join (load_theme node.document).key_separator || '+'
+          keys.map {|key| %(<key>#{key}</key>) }.join (load_theme node.document).key_separator
         end
       end
 
@@ -2680,7 +2709,7 @@ module Asciidoctor
         @page_bg_color = prev_bg_color if bg_color
 
         # NOTE: this is the first page created, so we must set the base font
-        font @theme.base_font_family, size: @root_font_size, style: (@theme.base_font_style || :normal).to_sym
+        font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
 
         # QUESTION: allow alignment per element on title page?
         title_align = (@theme.title_page_align || @base_align).to_sym
@@ -2769,7 +2798,7 @@ module Asciidoctor
                     doc.attr 'author'
                   end
                 end
-              }.join (@theme.title_page_authors_delimiter || ', ')
+              }.join @theme.title_page_authors_delimiter
               theme_font :title_page_authors do
                 layout_prose authors,
                     align: title_align,
@@ -2781,7 +2810,7 @@ module Asciidoctor
           end
           unless @theme.title_page_revision_display == 'none' || (revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact).empty?
             move_down(@theme.title_page_revision_margin_top || 0)
-            revision_text = revision_info.join (@theme.title_page_revision_delimiter || ', ')
+            revision_text = revision_info.join @theme.title_page_revision_delimiter
             if (revremark = doc.attr 'revremark')
               revision_text = %(#{revision_text}: #{revremark})
             end
@@ -2865,7 +2894,7 @@ module Asciidoctor
         hlevel = opts[:level]
         unless (top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top))
           if at_page_top?
-            if hlevel && (top_margin = @theme[%(heading_h#{hlevel}_margin_page_top)] || @theme.heading_margin_page_top || 0) > 0
+            if hlevel && (top_margin = @theme[%(heading_h#{hlevel}_margin_page_top)] || @theme.heading_margin_page_top) > 0
               move_down top_margin
             end
             top_margin = 0
@@ -3108,7 +3137,7 @@ module Asciidoctor
         toc_font_info = theme_font :toc do
           { font: font, size: @font_size }
         end
-        hanging_indent = @theme.toc_hanging_indent || 0
+        hanging_indent = @theme.toc_hanging_indent
         sections.each do |sect|
           next if (num_levels_for_sect = (sect.attr 'toclevels', num_levels).to_i) < sect.level
           theme_font :toc, level: (sect.level + 1) do
@@ -3452,7 +3481,7 @@ module Asciidoctor
             bg_color: (resolve_theme_color %(#{periphery}_background_color).to_sym),
             border_color: (trim_border_color = resolve_theme_color %(#{periphery}_border_color).to_sym),
             border_style: (@theme[%(#{periphery}_border_style)] || :solid).to_sym,
-            border_width: (trim_border_width = trim_border_color ? @theme[%(#{periphery}_border_width)] || @theme.base_border_width || 0 : 0),
+            border_width: (trim_border_width = trim_border_color ? @theme[%(#{periphery}_border_width)] || @theme.base_border_width : 0),
             column_rule_color: (trim_column_rule_color = resolve_theme_color %(#{periphery}_column_rule_color).to_sym),
             column_rule_style: (@theme[%(#{periphery}_column_rule_style)] || :solid).to_sym,
             column_rule_width: (trim_column_rule_color ? @theme[%(#{periphery}_column_rule_width)] || 0 : 0),
