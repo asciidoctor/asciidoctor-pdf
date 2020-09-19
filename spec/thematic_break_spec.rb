@@ -3,6 +3,24 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Thematic Break' do
+  it 'should apply margin bottom to thematic break' do
+    input = <<~'EOS'
+    before
+
+    '''
+
+    ****
+    after
+    ****
+    EOS
+    { 'base' => 12.0, 'default' => 18.0 }.each do |theme, bottom_margin|
+      lines = (to_pdf input, attribute_overrides: { 'pdf-theme' => theme }, analyze: :line).lines
+      break_line = lines[0]
+      sidebar_line = lines[1]
+      (expect break_line[:from][:y] - sidebar_line[:from][:y]).to eql bottom_margin
+    end
+  end
+
   it 'should draw a horizonal rule at the location of a thematic break' do
     pdf = to_pdf <<~'EOS', analyze: :line
     before
