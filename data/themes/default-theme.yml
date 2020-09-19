@@ -70,8 +70,6 @@ role:
 # correct line height for Noto Serif metrics (comes with built-in line height)
 vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
-# QUESTION should vertical_spacing be block_spacing instead?
-vertical_spacing: $vertical_rhythm
 link:
   font_color: 428BCA
 # literal is currently used for inline monospaced in prose and table cells
@@ -132,7 +130,6 @@ title_page:
   revision:
     margin_top: $base_font_size * 1.25
 block:
-  margin_top: 0
   margin_bottom: $vertical_rhythm
 caption:
   align: left
@@ -214,7 +211,6 @@ example:
 image:
   align: left
 prose:
-  margin_top: $block_margin_top
   margin_bottom: $block_margin_bottom
 sidebar:
   background_color: EEEEEE

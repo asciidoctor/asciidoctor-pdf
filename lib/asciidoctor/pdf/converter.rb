@@ -3888,11 +3888,9 @@ module Asciidoctor
       end
 
       # Lookup margin for theme element and side, then delegate to margin method.
-      # If margin value is not found, assume:
-      # - 0 when side == :top
-      # - @theme.vertical_spacing when side == :bottom
+      # If margin value is not found, assume 0.
       def theme_margin category, side
-        margin (@theme[%(#{category}_margin_#{side})] || (side == :bottom ? @theme.vertical_spacing : 0)), side
+        margin (@theme[%(#{category}_margin_#{side})] || 0), side
       end
 
       def theme_font category, opts = {}

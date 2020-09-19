@@ -1,6 +1,4 @@
 # NOTE file is read "as is"; variables are not parsed; key layout must be flat
-# QUESTION should vertical_spacing be block_spacing instead?
-vertical_spacing: 12
 page_background_color: 'FFFFFF'
 page_layout: portrait
 page_initial_zoom: FitH
@@ -58,7 +56,6 @@ outline_list_item_spacing: 6
 description_list_description_indent: 30
 description_list_term_font_style: bold
 description_list_term_spacing: 4
-block_margin_top: 0
 block_margin_bottom: 12
 caption_align: left
 caption_font_style: italic
@@ -96,7 +93,6 @@ example_padding: [12, 12, 0, 12]
 image_align: left
 lead_font_size: 13.5
 lead_line_height: 1.4
-prose_margin_top: 0
 prose_margin_bottom: 12
 sidebar_background_color: 'EEEEEE'
 # FIXME reenable margin bottom once margin collapsing is implemented
@@ -113,6 +109,7 @@ table_body_stripe_background_color: 'EEEEEE'
 thematic_break_border_color: 'EEEEEE'
 thematic_break_border_style: solid
 thematic_break_border_width: 0.5
+thematic_break_margin_bottom: 12
 toc_indent: 15
 toc_line_height: 1.4
 footnotes_font_size: 9
