@@ -1214,7 +1214,7 @@ module Asciidoctor
             term_kerning = default_kerning?
           end
           node.items.each do |terms, desc|
-            term_text = (terms.map &:text).join ?\n
+            term_text = terms.map(&:text).join ?\n
             if (term_width = width_of term_text, inline_format: term_inline_format, kerning: term_kerning) > max_term_width
               max_term_width = term_width
             end
@@ -2367,7 +2367,7 @@ module Asciidoctor
       # NOTE: to insert sequential page breaks, you must put {nbsp} between page breaks
       def convert_page_break node
         if (page_layout = node.attr 'page-layout').nil_or_empty?
-          unless node.role? && (page_layout = ((node.roles.map &:to_sym) & PageLayouts)[-1])
+          unless node.role? && (page_layout = (node.roles.map(&:to_sym) & PageLayouts)[-1])
             page_layout = nil
           end
         elsif !PageLayouts.include?(page_layout = page_layout.to_sym)
@@ -3114,7 +3114,7 @@ module Asciidoctor
               font_style: dot_leader_font_style,
               font_size: font_size,
               levels: ((dot_leader_l = @theme.toc_dot_leader_levels) == 'none' ? ::Set.new :
-                  (dot_leader_l && dot_leader_l != 'all' ? (dot_leader_l.to_s.split.map &:to_i).to_set : (0..num_levels).to_set)),
+                  (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (0..num_levels).to_set)),
               text: (dot_leader_text = @theme.toc_dot_leader_content || DotLeaderTextDefault),
               width: dot_leader_text.empty? ? 0 : (rendered_width_of_string dot_leader_text),
               # TODO: spacer gives a little bit of room between dots and page number
