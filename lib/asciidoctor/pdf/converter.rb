@@ -911,7 +911,7 @@ module Asciidoctor
                   elsif icons
                     if (::Asciidoctor::Image.format icon_path) == 'svg'
                       begin
-                        svg_obj = ::Prawn::SVG::Interface.new ::File.read(icon_path, mode: 'r:UTF-8'), self,
+                        svg_obj = ::Prawn::SVG::Interface.new (::File.read icon_path, mode: 'r:UTF-8'), self,
                             position: label_align,
                             vposition: label_valign,
                             width: label_width,
@@ -1214,7 +1214,7 @@ module Asciidoctor
             term_kerning = default_kerning?
           end
           node.items.each do |terms, desc|
-            term_text = terms.map(&:text).join ?\n
+            term_text = (terms.map &:text).join ?\n
             if (term_width = width_of term_text, inline_format: term_inline_format, kerning: term_kerning) > max_term_width
               max_term_width = term_width
             end
@@ -1905,7 +1905,7 @@ module Asciidoctor
       def extract_conums string
         conum_mapping = {}
         auto_num = 0
-        string = string.split(LF).map.with_index {|line, line_num|
+        string = (string.split LF).map.with_index {|line, line_num|
           # FIXME: we get extra spaces before numbers if more than one on a line
           if line.include? '<'
             line = line.gsub CalloutExtractRx do
@@ -1943,7 +1943,7 @@ module Asciidoctor
           if (text = fragment[:text]) == LF
             lines[line_num += 1] ||= []
           elsif text.include? LF
-            text.split(LF, -1).each_with_index do |line_in_fragment, idx|
+            (text.split LF, -1).each_with_index do |line_in_fragment, idx|
               line = (lines[line_num += 1] ||= []) unless idx == 0
               line << (fragment.merge text: line_in_fragment) unless line_in_fragment.empty?
             end
@@ -2277,7 +2277,7 @@ module Asciidoctor
             end
           end
           if grid == 'none' && frame == 'none'
-            rows(table_header_size - 1).tap do |r|
+            (rows table_header_size - 1).tap do |r|
               r.border_bottom_color = head_border_bottom_color
               r.border_bottom_line = head_border_bottom_style
               r.border_bottom_width = head_border_bottom_width
@@ -2287,12 +2287,12 @@ module Asciidoctor
             cells.border_width = [border_width[:rows], border_width[:cols], border_width[:rows], border_width[:cols]]
 
             if table_header_size
-              rows(table_header_size - 1).tap do |r|
+              (rows table_header_size - 1).tap do |r|
                 r.border_bottom_color = head_border_bottom_color
                 r.border_bottom_line = head_border_bottom_style
                 r.border_bottom_width = head_border_bottom_width
               end
-              rows(table_header_size).tap do |r|
+              (rows table_header_size).tap do |r|
                 r.border_top_color = head_border_bottom_color
                 r.border_top_line = head_border_bottom_style
                 r.border_top_width = head_border_bottom_width
@@ -2300,19 +2300,19 @@ module Asciidoctor
             end
 
             # top edge of table
-            rows(0).tap do |r|
+            (rows 0).tap do |r|
               r.border_top_color, r.border_top_line, r.border_top_width = table_border_color, table_border_style, border_width[:top]
             end
             # right edge of table
-            columns(num_cols - 1).tap do |r|
+            (columns num_cols - 1).tap do |r|
               r.border_right_color, r.border_right_line, r.border_right_width = table_border_color, table_border_style, border_width[:right]
             end
             # bottom edge of table
-            rows(num_rows - 1).tap do |r|
+            (rows num_rows - 1).tap do |r|
               r.border_bottom_color, r.border_bottom_line, r.border_bottom_width = table_border_color, table_border_style, border_width[:bottom]
             end
             # left edge of table
-            columns(0).tap do |r|
+            (columns 0).tap do |r|
               r.border_left_color, r.border_left_line, r.border_left_width = table_border_color, table_border_style, border_width[:left]
             end
           end
@@ -2367,7 +2367,7 @@ module Asciidoctor
       # NOTE: to insert sequential page breaks, you must put {nbsp} between page breaks
       def convert_page_break node
         if (page_layout = node.attr 'page-layout').nil_or_empty?
-          unless node.role? && (page_layout = (node.roles.map(&:to_sym) & PageLayouts)[-1])
+          unless node.role? && (page_layout = ((node.roles.map &:to_sym) & PageLayouts)[-1])
             page_layout = nil
           end
         elsif !PageLayouts.include?(page_layout = page_layout.to_sym)
@@ -2622,7 +2622,7 @@ module Asciidoctor
             @index.store_primary_term (sanitize visible_term), dest
             %(#{anchor}#{visible_term})
           else
-            @index.store_term((node.attr 'terms').map {|term| sanitize term }, dest)
+            @index.store_term (node.attr 'terms').map {|term| sanitize term }, dest
             anchor
           end
         end
@@ -2756,7 +2756,7 @@ module Asciidoctor
           end
           unless @theme.title_page_title_display == 'none'
             doctitle = doc.doctitle partition: true
-            move_down(@theme.title_page_title_margin_top || 0)
+            move_down @theme.title_page_title_margin_top || 0
             indent (@theme.title_page_title_margin_left || 0), (@theme.title_page_title_margin_right || 0) do
               theme_font :title_page_title do
                 layout_prose doctitle.main,
@@ -2765,10 +2765,10 @@ module Asciidoctor
                     line_height: @theme.title_page_title_line_height
               end
             end
-            move_down(@theme.title_page_title_margin_bottom || 0)
+            move_down @theme.title_page_title_margin_bottom || 0
           end
           if @theme.title_page_subtitle_display != 'none' && (subtitle = (doctitle || (doc.doctitle partition: true)).subtitle)
-            move_down(@theme.title_page_subtitle_margin_top || 0)
+            move_down @theme.title_page_subtitle_margin_top || 0
             indent (@theme.title_page_subtitle_margin_left || 0), (@theme.title_page_subtitle_margin_right || 0) do
               theme_font :title_page_subtitle do
                 layout_prose subtitle,
@@ -2777,10 +2777,10 @@ module Asciidoctor
                     line_height: @theme.title_page_subtitle_line_height
               end
             end
-            move_down(@theme.title_page_subtitle_margin_bottom || 0)
+            move_down @theme.title_page_subtitle_margin_bottom || 0
           end
           if @theme.title_page_authors_display != 'none' && (doc.attr? 'authors')
-            move_down(@theme.title_page_authors_margin_top || 0)
+            move_down @theme.title_page_authors_margin_top || 0
             indent (@theme.title_page_authors_margin_left || 0), (@theme.title_page_authors_margin_right || 0) do
               generic_authors_content = @theme.title_page_authors_content
               authors_content = {
@@ -2806,10 +2806,10 @@ module Asciidoctor
                     normalize: true
               end
             end
-            move_down(@theme.title_page_authors_margin_bottom || 0)
+            move_down @theme.title_page_authors_margin_bottom || 0
           end
           unless @theme.title_page_revision_display == 'none' || (revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact).empty?
-            move_down(@theme.title_page_revision_margin_top || 0)
+            move_down @theme.title_page_revision_margin_top || 0
             revision_text = revision_info.join @theme.title_page_revision_delimiter
             if (revremark = doc.attr 'revremark')
               revision_text = %(#{revision_text}: #{revremark})
@@ -2822,7 +2822,7 @@ module Asciidoctor
                     normalize: false
               end
             end
-            move_down(@theme.title_page_revision_margin_bottom || 0)
+            move_down @theme.title_page_revision_margin_bottom || 0
           end
         end
 
@@ -3114,7 +3114,7 @@ module Asciidoctor
               font_style: dot_leader_font_style,
               font_size: font_size,
               levels: ((dot_leader_l = @theme.toc_dot_leader_levels) == 'none' ? ::Set.new :
-                  (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (0..num_levels).to_set)),
+                  (dot_leader_l && dot_leader_l != 'all' ? (dot_leader_l.to_s.split.map &:to_i).to_set : (0..num_levels).to_set)),
               text: (dot_leader_text = @theme.toc_dot_leader_content || DotLeaderTextDefault),
               width: dot_leader_text.empty? ? 0 : (rendered_width_of_string dot_leader_text),
               # TODO: spacer gives a little bit of room between dots and page number
@@ -3892,7 +3892,7 @@ module Asciidoctor
       # - 0 when side == :top
       # - @theme.vertical_spacing when side == :bottom
       def theme_margin category, side
-        margin((@theme[%(#{category}_margin_#{side})] || (side == :bottom ? @theme.vertical_spacing : 0)), side)
+        margin (@theme[%(#{category}_margin_#{side})] || (side == :bottom ? @theme.vertical_spacing : 0)), side
       end
 
       def theme_font category, opts = {}
