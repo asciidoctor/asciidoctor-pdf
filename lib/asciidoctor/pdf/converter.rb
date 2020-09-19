@@ -4211,16 +4211,9 @@ module Asciidoctor
           return @tmp_files[image_path] if @tmp_files.key? image_path
           tmp_image = ::Tempfile.create ['image-', %(.#{image_format})]
           tmp_image.binmode unless image_format == 'svg'
-          begin
-            tmp_image.write ::Base64.decode64 image_path
-            tmp_image.close
-            @tmp_files[image_path] = tmp_image.path
-          rescue
-            @tmp_files[image_path] = nil
-            tmp_image.close
-            unlink_tmp_file tmp_image.path
-            nil
-          end
+          tmp_image.write ::Base64.decode64 image_path
+          tmp_image.close
+          @tmp_files[image_path] = tmp_image.path
         # handle case when image is a URI
         elsif (node.is_uri? image_path) ||
             (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
