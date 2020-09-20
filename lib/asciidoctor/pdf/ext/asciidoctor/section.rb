@@ -4,8 +4,7 @@ class Asciidoctor::Section
   def numbered_title opts = {}
     @cached_numbered_title ||= nil
     unless @cached_numbered_title
-      slevel = @level == 0 && @special ? 1 : @level
-      if @numbered && !@caption && slevel <= (@document.attr 'sectnumlevels', 3).to_i
+      if @numbered && !@caption && (slevel = @level) <= (@document.attr 'sectnumlevels', 3).to_i
         @is_numbered = true
         if @document.doctype == 'book'
           case slevel
@@ -21,7 +20,7 @@ class Asciidoctor::Section
         else
           @cached_formal_numbered_title = @cached_numbered_title = %(#{sectnum} #{title})
         end
-      elsif slevel == 0
+      elsif @level == 0
         @is_numbered = false
         @cached_numbered_title = @cached_formal_numbered_title = title
       else
@@ -33,11 +32,11 @@ class Asciidoctor::Section
   end unless method_defined? :numbered_title
 
   def part?
-    @document.doctype == 'book' && @level == 0 && !@special
+    @document.doctype == 'book' && @level == 0
   end unless method_defined? :part?
 
   def chapter?
-    @document.doctype == 'book' && (@level == 1 || (@special && @level == 0))
+    @document.doctype == 'book' && @level == 1
   end unless method_defined? :chapter?
 
   def part_or_chapter?
