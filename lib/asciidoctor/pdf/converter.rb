@@ -3314,7 +3314,7 @@ module Asciidoctor
           end
         end
 
-        doctitle = doc.doctitle partition: true, use_fallback: true
+        doctitle = doc.header? ? (doc.doctitle partition: true) : (::Asciidoctor::Document::Title.new (doc.attr 'untitled-label'), separator: (doc.attr 'title-separator'))
         # NOTE: set doctitle again so it's properly escaped
         doc.set_attr 'doctitle', doctitle.combined
         doc.set_attr 'document-title', doctitle.main

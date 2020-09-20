@@ -2080,6 +2080,27 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
     end
 
+    it 'should use untitled-label for document-title if document does not have doctitle' do
+      pdf_theme = {
+        footer_font_color: 'CCCCCC',
+        footer_recto_right_content: '({document-title})',
+        footer_verso_left_content: '({document-title})',
+      }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      :doctype: book
+
+      == Beginning
+
+      == End
+      EOS
+
+      [1, 2].each do |pgnum|
+        doctitle_text = pdf.find_unique_text page_number: pgnum, font_color: 'CCCCCC', string: '(Untitled)'
+        (expect doctitle_text).not_to be_nil
+      end
+    end
+
     it 'should set part-title, chapter-title, and section-title based on context of current page' do
       pdf_theme = {
         footer_columns: '<25% >70%',
