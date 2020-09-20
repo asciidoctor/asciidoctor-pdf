@@ -40,8 +40,8 @@ module Asciidoctor
         (store_primary_term primary_name).store_term secondary_name, dest
       end
 
-      def store_tertiary_term primary_name, secondary_name, tertiary_name, dest = nil
-        store_dest dest if dest
+      def store_tertiary_term primary_name, secondary_name, tertiary_name, dest
+        store_dest dest
         (store_secondary_term primary_name, secondary_name).store_term tertiary_name, dest
       end
 
