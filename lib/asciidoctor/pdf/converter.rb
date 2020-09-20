@@ -3653,7 +3653,7 @@ module Asciidoctor
           initial_pagenum = has_front_cover ? 2 : 1
           # FIXME: use sanitize: :plain_text once available
           if document.page_count >= initial_pagenum && (doctitle = doc.header? ? doc.doctitle : (doc.attr 'untitled-label'))
-            page title: (document.sanitize doctitle), destination: (document.dest_top has_front_cover ? 2 : 1)
+            page title: (document.sanitize doctitle), destination: (document.dest_top initial_pagenum)
           end
           # QUESTION: is there any way to get add_outline_level to invoke in the context of the outline?
           document.add_outline_level self, doc.sections, num_levels, expand_levels
