@@ -89,10 +89,6 @@ module Asciidoctor
         term
       end
 
-      def find_term name
-        @terms[name]
-      end
-
       def terms
         @terms.empty? ? [] : @terms.values.sort
       end
