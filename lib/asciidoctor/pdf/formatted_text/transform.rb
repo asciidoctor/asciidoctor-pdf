@@ -244,7 +244,6 @@ module Asciidoctor
             if (value = attrs[:width])
               fragment[:width] = value
               fragment[:align] = :center
-              fragment[:callback] = (fragment[:callback] || []) | [InlineTextAligner]
             end
             if (value = attrs[:color])
               case value.chr
@@ -302,7 +301,6 @@ module Asciidoctor
                 styles << :italic if pvalue == 'italic'
               when 'align', 'text-align'
                 fragment[:align] = pvalue.to_sym
-                fragment[:callback] = (fragment[:callback] || []) | [InlineTextAligner]
               when 'width'
                 # NOTE: implicitly activates inline-block behavior
                 fragment[:width] = pvalue
