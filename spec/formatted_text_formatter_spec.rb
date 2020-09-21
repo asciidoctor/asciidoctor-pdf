@@ -128,6 +128,14 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect output[0][:width]).to eql '1in'
       (expect output[0][:align]).to eql :right
     end
+
+    it 'should allow span tag to align text to left within width' do
+      output = subject.format '<span style="width: 1in; align: left">hi</span>'
+      (expect output).to have_size 1
+      (expect output[0][:text]).to eql 'hi'
+      (expect output[0][:width]).to eql '1in'
+      (expect output[0][:align]).to eql :left
+    end
   end
 
   context 'character references' do
@@ -510,7 +518,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should apply width and alignment specified by span tag', visual: true do
-      %w(center right).each do |align|
+      %w(left center right).each do |align|
         to_file = to_pdf_file <<~EOS, %(text-formatter-align-#{align}-within-width.pdf)
         |+++<span style="width: 1in; align: #{align}; background-color: #ffff00">hi</span>+++|
         EOS
