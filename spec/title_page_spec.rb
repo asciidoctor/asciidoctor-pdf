@@ -3,88 +3,90 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Title Page' do
-  it 'should place document title on title page when doctype is book' do
-    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
-    = Document Title
+  context 'book doctype' do
+    it 'should place document title on title page when doctype is book' do
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+      = Document Title
 
-    body
-    EOS
+      body
+      EOS
 
-    (expect pdf.pages).to have_size 2
-    text = pdf.text
-    (expect text).to have_size 2
-    (expect pdf.pages[0][:text]).to have_size 1
-    doctitle_text = pdf.pages[0][:text][0]
-    (expect doctitle_text[:string]).to eql 'Document Title'
-    (expect doctitle_text[:font_size]).to be 27
-    (expect pdf.pages[1][:text]).to have_size 1
+      (expect pdf.pages).to have_size 2
+      text = pdf.text
+      (expect text).to have_size 2
+      (expect pdf.pages[0][:text]).to have_size 1
+      doctitle_text = pdf.pages[0][:text][0]
+      (expect doctitle_text[:string]).to eql 'Document Title'
+      (expect doctitle_text[:font_size]).to be 27
+      (expect pdf.pages[1][:text]).to have_size 1
+    end
+
+    it 'should create book with only a title page if doctitle is specified and body is empty' do
+      pdf = to_pdf '= Title Page Only', doctype: :book, analyze: true
+      (expect pdf.pages).to have_size 1
+      (expect pdf.lines).to eql ['Title Page Only']
+    end
+
+    it 'should include revision number, date, and remark on title page' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      Author Name
+      v1.0, 2019-01-01: Draft
+      :doctype: book
+      EOS
+
+      (expect pdf.lines).to include 'Version 1.0, 2019-01-01: Draft'
+    end
+
+    it 'should display author names under document title on title page' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      Doc Writer; Antonín Dvořák
+      :doctype: book
+
+      body
+      EOS
+
+      title_page_lines = pdf.lines pdf.find_text page_number: 1
+      (expect title_page_lines).to eql ['Document Title', 'Doc Writer, Antonín Dvořák']
+    end
+
+    it 'should not overwrite url property when promoting authors for use on title page' do
+      pdf_theme = {
+        title_page_authors_content_with_email: '{author} // {email}',
+        title_page_authors_content_with_url: '{author} // {url}',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      Doc Writer <https://example.org/doc>; Junior Writer <jr@example.org>
+      :doctype: book
+      :url: https://opensource.org
+
+      {url}
+      EOS
+
+      title_page_lines = pdf.lines pdf.find_text page_number: 1
+      (expect title_page_lines).to eql ['Document Title', 'Doc Writer // https://example.org/doc, Junior Writer // jr@example.org']
+      body_lines = pdf.lines pdf.find_text page_number: 2
+      (expect body_lines).to eql %w(https://opensource.org)
+    end
+
+    it 'should apply base font style when document has title page' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { base_font_style: 'bold' }, analyze: true
+      = Document Title
+      Author Name
+      v1.0, 2020-01-01
+      :doctype: book
+
+      bold body
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      (expect pdf.text.map {|it| it[:font_name] }.uniq).to eql %w(NotoSerif-Bold)
+    end
   end
 
-  it 'should create book with only a title page if doctitle is specified and body is empty' do
-    pdf = to_pdf '= Title Page Only', doctype: :book, analyze: true
-    (expect pdf.pages).to have_size 1
-    (expect pdf.lines).to eql ['Title Page Only']
-  end
-
-  it 'should include revision number, date, and remark on title page' do
-    pdf = to_pdf <<~'EOS', analyze: true
-    = Document Title
-    Author Name
-    v1.0, 2019-01-01: Draft
-    :doctype: book
-    EOS
-
-    (expect pdf.lines).to include 'Version 1.0, 2019-01-01: Draft'
-  end
-
-  it 'should display author names under document title on title page' do
-    pdf = to_pdf <<~'EOS', analyze: true
-    = Document Title
-    Doc Writer; Antonín Dvořák
-    :doctype: book
-
-    body
-    EOS
-
-    title_page_lines = pdf.lines pdf.find_text page_number: 1
-    (expect title_page_lines).to eql ['Document Title', 'Doc Writer, Antonín Dvořák']
-  end
-
-  it 'should not overwrite url property when promoting authors for use on title page' do
-    pdf_theme = {
-      title_page_authors_content_with_email: '{author} // {email}',
-      title_page_authors_content_with_url: '{author} // {url}',
-    }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
-    = Document Title
-    Doc Writer <https://example.org/doc>; Junior Writer <jr@example.org>
-    :doctype: book
-    :url: https://opensource.org
-
-    {url}
-    EOS
-
-    title_page_lines = pdf.lines pdf.find_text page_number: 1
-    (expect title_page_lines).to eql ['Document Title', 'Doc Writer // https://example.org/doc, Junior Writer // jr@example.org']
-    body_lines = pdf.lines pdf.find_text page_number: 2
-    (expect body_lines).to eql %w(https://opensource.org)
-  end
-
-  it 'should apply base font style when document has title page' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_style: 'bold' }, analyze: true
-    = Document Title
-    Author Name
-    v1.0, 2020-01-01
-    :doctype: book
-
-    bold body
-    EOS
-
-    (expect pdf.pages).to have_size 2
-    (expect pdf.text.map {|it| it[:font_name] }.uniq).to eql %w(NotoSerif-Bold)
-  end
-
-  context 'title-page' do
+  context 'title-page attribute' do
     it 'should place document title on title page if title-page attribute is set' do
       pdf = to_pdf <<~'EOS', analyze: :page
       = Document Title
