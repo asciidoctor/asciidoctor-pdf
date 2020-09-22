@@ -24,37 +24,6 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect subtitle_text[:font_name]).to eql 'NotoSerif-BoldItalic'
       (expect subtitle_text[:y]).to be < main_title_text[:y]
     end
-
-    it 'should not include title page if notitle attribute is set' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
-      = Document Title
-      :notitle:
-
-      body
-      EOS
-      (expect pdf.pages).to have_size 1
-      (expect pdf.pages[0][:strings]).not_to include 'Document Title'
-    end
-
-    it 'should not include title page if title_page key in theme is false' do
-      pdf = to_pdf <<~'EOS', doctype: :book, pdf_theme: { title_page: false }, analyze: :page
-      = Document Title
-
-      body
-      EOS
-      (expect pdf.pages).to have_size 1
-      (expect pdf.pages[0][:strings]).not_to include 'Document Title'
-    end
-
-    it 'should include title page if showtitle attribute is unset (as it has no effect)' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
-      = Document Title
-      :!showtitle:
-
-      body
-      EOS
-      (expect pdf.pages[0][:strings]).to include 'Document Title'
-    end
   end
 
   context 'article' do

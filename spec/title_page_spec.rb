@@ -4,6 +4,37 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Title Page' do
   context 'book doctype' do
+    it 'should not include title page if notitle attribute is set' do
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
+      = Document Title
+      :notitle:
+
+      body
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:strings]).not_to include 'Document Title'
+    end
+
+    it 'should not include title page if title_page key in theme is false' do
+      pdf = to_pdf <<~'EOS', doctype: :book, pdf_theme: { title_page: false }, analyze: :page
+      = Document Title
+
+      body
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:strings]).not_to include 'Document Title'
+    end
+
+    it 'should include title page if showtitle attribute is unset (as it has no effect)' do
+      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
+      = Document Title
+      :!showtitle:
+
+      body
+      EOS
+      (expect pdf.pages[0][:strings]).to include 'Document Title'
+    end
+
     it 'should place document title on title page when doctype is book' do
       pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
       = Document Title
