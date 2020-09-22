@@ -87,6 +87,18 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
   end
 
   context 'title-page attribute' do
+    it 'should not include title page if notitle attribute is set' do
+      pdf = to_pdf <<~'EOS', analyze: :page
+      = Document Title
+      :title-page:
+      :notitle:
+
+      what's it gonna do?
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.pages[0][:strings]).not_to include 'Document Title'
+    end
+
     it 'should place document title on title page if title-page attribute is set' do
       pdf = to_pdf <<~'EOS', analyze: :page
       = Document Title
