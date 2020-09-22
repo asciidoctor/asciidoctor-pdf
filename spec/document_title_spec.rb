@@ -24,6 +24,28 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect subtitle_text[:font_name]).to eql 'NotoSerif-BoldItalic'
       (expect subtitle_text[:y]).to be < main_title_text[:y]
     end
+
+    it 'should use custom separator to partition document title' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [separator=" -"]
+      = Main Title - Subtitle
+      :doctype: book
+
+      body
+      EOS
+
+      title_page_texts = pdf.find_text page_number: 1
+      (expect title_page_texts).to have_size 2
+      main_title_text = title_page_texts[0]
+      subtitle_text = title_page_texts[1]
+      (expect main_title_text[:string]).to eql 'Main Title'
+      (expect main_title_text[:font_color]).to eql '999999'
+      (expect main_title_text[:font_name]).to eql 'NotoSerif'
+      (expect subtitle_text[:string]).to eql 'Subtitle'
+      (expect subtitle_text[:font_color]).to eql '333333'
+      (expect subtitle_text[:font_name]).to eql 'NotoSerif-BoldItalic'
+      (expect subtitle_text[:y]).to be < main_title_text[:y]
+    end
   end
 
   context 'article' do
