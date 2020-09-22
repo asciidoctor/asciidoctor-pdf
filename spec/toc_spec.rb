@@ -329,6 +329,43 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect (p1_text[:y] - p2_text[:y]).round 2).to eql ((p2_text[:y] - p3_text[:y]).round 2)
     end
 
+    it 'should only insert macro toc at location of first toc macro' do
+      lorem = ['lorem ipsum'] * 10 * %(\n\n)
+      input = <<~EOS
+      = Document Title
+      :doctype: book
+      :toc: macro
+
+      Preamble
+
+      == Introduction
+
+      #{lorem}
+
+      toc::[]
+
+      == Main
+
+      #{lorem}
+
+      toc::[]
+
+      == Conclusion
+
+      #{lorem}
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      (expect pdf.pages).to have_size 6
+      toc_title_text = (pdf.find_text 'Table of Contents')[0]
+      (expect toc_title_text[:page_number]).to be 4
+      toc_lines = pdf.lines pdf.find_text page_number: 4
+      (expect toc_lines).to have_size 4
+      ['Table of Contents', 'Introduction', 'Main', 'Conclusion'].each_with_index do |title, idx|
+        (expect toc_lines[idx]).to start_with title
+      end
+    end
+
     it 'should not insert toc at location of toc macro if toc attribute is not set' do
       pdf = to_pdf <<~'EOS', analyze: true
       == Before

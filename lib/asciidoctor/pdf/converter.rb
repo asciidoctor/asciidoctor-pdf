@@ -2347,6 +2347,8 @@ module Asciidoctor
       end
 
       def convert_toc node, opts = {}
+        # NOTE: only allow document to have a single toc
+        return if @toc_extent
         is_macro = (placement = opts[:placement] || 'macro') == 'macro'
         if ((doc = node.document).attr? 'toc-placement', placement) && (doc.attr? 'toc') && doc.sections?
           if (is_book = doc.doctype == 'book')
