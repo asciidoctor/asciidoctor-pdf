@@ -576,7 +576,7 @@ module Asciidoctor
       # FIXME: Pdfmark should use the PDF info result
       def build_pdf_info doc
         info = {}
-        if (doctitle = doc.header? ? doc.doctitle : (doc.attr 'untitled-label'))
+        if (doctitle = resolve_doctitle doc)
           info[:Title] = (sanitize doctitle).as_pdf
         end
         info[:Author] = (sanitize doc.attr 'authors').as_pdf if doc.attr? 'authors'
@@ -3316,7 +3316,7 @@ module Asciidoctor
           end
         end
 
-        doctitle = doc.doctitle partition: true, use_fallback: true
+        doctitle = resolve_doctitle doc, true
         # NOTE: set doctitle again so it's properly escaped
         doc.set_attr 'doctitle', doctitle.combined
         doc.set_attr 'document-title', doctitle.main
@@ -3653,8 +3653,8 @@ module Asciidoctor
 
         outline.define do
           initial_pagenum = has_front_cover ? 2 : 1
-          # FIXME: use sanitize: :plain_text once available
-          if document.page_count >= initial_pagenum && (doctitle = doc.header? ? doc.doctitle : (doc.attr 'untitled-label'))
+          # FIXME: use sanitize: :plain_text on Document#doctitle once available
+          if document.page_count >= initial_pagenum && (doctitle = document.resolve_doctitle doc)
             page title: (document.sanitize doctitle), destination: (document.dest_top initial_pagenum)
           end
           # QUESTION: is there any way to get add_outline_level to invoke in the context of the outline?
@@ -4173,6 +4173,16 @@ module Asciidoctor
           add_dest id, node_dest
         end
         nil
+      end
+
+      def resolve_doctitle doc, partition = nil
+        if doc.header?
+          doc.doctitle partition: partition
+        elsif partition
+          ::Asciidoctor::Document::Title.new (doc.attr 'untitled-label'), separator: (doc.attr 'title-separator')
+        else
+          doc.attr 'untitled-label'
+        end
       end
 
       def resolve_alignment_from_role roles
