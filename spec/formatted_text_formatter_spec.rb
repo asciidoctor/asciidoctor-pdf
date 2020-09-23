@@ -327,7 +327,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
 
-    it 'should use base border color if border not defined for button', visual: true do
+    it 'should use base border color if theme does not defined border color for button', visual: true do
       theme_overrides = {
         base_border_color: '333333',
         button_content: '%s',
@@ -366,6 +366,20 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
 
     it 'should add background and border to key as defined in theme', visual: true do
       to_file = to_pdf_file <<~'EOS', 'text-formatter-key.pdf', attribute_overrides: { 'experimental' => '' }
+      Press kbd:[q] to exit.
+
+      Press kbd:[Ctrl,c] to kill the process.
+      EOS
+      (expect to_file).to visually_match 'text-formatter-key.pdf'
+    end
+
+    it 'should use base border color if theme does not define border color for key', visual: true do
+      pdf_theme = {
+        base_border_color: 'CCCCCC',
+        key_border_color: nil,
+      }
+
+      to_file = to_pdf_file <<~'EOS', 'text-formatter-key.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
       Press kbd:[q] to exit.
 
       Press kbd:[Ctrl,c] to kill the process.
