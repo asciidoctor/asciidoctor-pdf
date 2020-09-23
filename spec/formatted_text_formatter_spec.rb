@@ -327,6 +327,20 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
 
+    it 'should use base border color if border not defined for button', visual: true do
+      theme_overrides = {
+        base_border_color: '333333',
+        button_content: '%s',
+        button_background_color: '007BFF',
+        button_border_offset: 2.5,
+        button_border_radius: 2,
+        button_border_width: 0.5,
+        button_font_color: 'ffffff',
+      }
+      to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button.pdf', pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }
+      (expect to_file).to visually_match 'text-formatter-button.pdf'
+    end
+
     it 'should use label as default button content', visual: true do
       theme_overrides = {
         button_content: nil,
