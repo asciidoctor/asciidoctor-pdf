@@ -117,7 +117,8 @@ Bug Fixes::
 * allow theme to set font style of first line of abstract to normal
 * resize admonition label to fit if height exceeds height of content box
 * fix crash when underline style is used in Rouge theme
-* fix crash when Pygments style is not recognized; falll back to pastie style
+* fix crash when Text token is not defined in custom Rouge theme
+* fix crash when Pygments style is not recognized; fall back to pastie style
 * avoid loss of precision in CMYK color value for conum or footnote font
 * use value of untitled-label as fallback value for doctitle in running content (#1772)
 

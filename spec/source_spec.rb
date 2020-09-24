@@ -319,6 +319,29 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect to_file).to visually_match 'source-rouge-underline-style.pdf' if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
     end
 
+    it 'should not crash if theme does not define style for Text token' do
+      input = <<~'EOS'
+      :source-highlighter: rouge
+
+      [source,ruby]
+      ----
+      puts "Hello, World!"
+      ----
+      EOS
+
+      # NOTE: convert to load Rouge
+      to_pdf input
+
+      rouge_style = Class.new Rouge::CSSTheme do
+        name 'foobar'
+        style Rouge::Token::Tokens::Literal::String, italic: true
+      end
+
+      pdf = to_pdf input, attribute_overrides: { 'rouge-style' => rouge_style }, analyze: true
+      hello_world_text = pdf.find_unique_text '"Hello, World!"'
+      (expect hello_world_text[:font_name]).to eql 'mplus1mn-italic'
+    end
+
     it 'should expand color value for token' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: rouge
