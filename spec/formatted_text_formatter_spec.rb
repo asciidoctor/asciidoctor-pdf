@@ -300,6 +300,17 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-code.pdf'
     end
 
+    it 'should use base border color if theme does not define border color for code', visual: true do
+      theme_overrides = {
+        base_border_color: 'dddddd',
+        literal_background_color: 'f5f5f5',
+        literal_border_width: 0.25,
+        literal_border_offset: 2.5,
+      }
+      to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: theme_overrides
+      (expect to_file).to visually_match 'text-formatter-code.pdf'
+    end
+
     it 'should add border to phrase even when no background color is set', visual: true do
       theme_overrides = {
         literal_font_color: '444444',
