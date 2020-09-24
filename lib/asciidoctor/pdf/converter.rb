@@ -108,6 +108,7 @@ module Asciidoctor
       WhitespaceChars = ' ' + TAB + LF
       ValueSeparatorRx = /;|,/
       HexColorRx = /^#[a-fA-F0-9]{6}$/
+      VimeoThumbnailRx = /<thumbnail_url>(.*?)<\/thumbnail_url>/
       SourceHighlighters = %w(coderay pygments rouge).to_set
       ViewportWidth = ::Module.new
       (TitleStyles = {
@@ -1602,8 +1603,8 @@ module Asciidoctor
             else
               ::OpenURI
             end
-            poster = ::OpenURI.open_uri %(http://vimeo.com/api/v2/video/#{video_id}.xml), 'r' do |f|
-              /<thumbnail_large>(.*?)<\/thumbnail_large>/ =~ f.read && $1
+            poster = ::OpenURI.open_uri %(https://vimeo.com/api/oembed.xml?url=https%3A//vimeo.com/#{video_id}&width=1280), 'r' do |f|
+              VimeoThumbnailRx =~ f.read && $1
             end
           end
           type = 'Vimeo video'

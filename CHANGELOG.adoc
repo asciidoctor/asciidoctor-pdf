@@ -14,6 +14,7 @@ Bug Fixes::
 * disable hyphen tests if text-hyphen gem is not available
 * compensate for change in how character_spacing is applied in FontMetricCache#width_of after Prawn 2.2.2
 * allow inline image to be enclosed in link macro (alt text was breaking parsing)
+* use oembed API over HTTPS to get thumbnail for Vimeo video
 
 == 1.5.3 (2020-02-28) - @mojavelinux
 
