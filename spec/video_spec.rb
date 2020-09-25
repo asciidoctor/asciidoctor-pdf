@@ -83,13 +83,6 @@ describe 'Asciidoctor::PDF::Converter - Video' do
       (expect link_annotation[:A][:URI]).to eql %(https://vimeo.com/#{video_id})
 
       (expect to_file).to visually_match 'video-vimeo-poster.pdf'
-
-      # NOTE: Vimeo sometimes returns a skeleton XML document, perhaps due to rate limiting
-      #if (get_images pdf, 1).size == 1
-      #  (expect to_file).to visually_match 'video-vimeo-poster.pdf'
-      #else
-      #  (expect (pdf.page 1).text).to eql %(\u25ba\u00a0https://vimeo.com/#{video_id} (Vimeo video))
-      #end
     end
 
     it 'should replace video with link if allow-uri-read attribute is not set' do
