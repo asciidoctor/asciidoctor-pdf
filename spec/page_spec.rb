@@ -1051,6 +1051,18 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     ensure
       File.unlink dest_file
     end
+
+    it 'should warn instead of crash if image is unreadable' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: :image
+        = Document Title
+        :page-background-image: image:does-not-exist.png[fit=cover]
+
+        content
+        EOS
+        (expect pdf.images).to be_empty
+      end).to log_message severity: :WARN, message: '~page background image not found or readable'
+    end
   end
 
   context 'Watermark' do
