@@ -122,6 +122,7 @@ Bug Fixes::
 * fix crash when Pygments style is not recognized; fall back to pastie style
 * avoid loss of precision in CMYK color value for conum or footnote font
 * use value of untitled-label as fallback value for doctitle in running content (#1772)
+* show sensible error message if background image cannot be loaded (e.g., data is corrupt)
 
 Compliance::
 

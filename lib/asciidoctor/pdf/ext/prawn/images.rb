@@ -48,6 +48,8 @@ module Asciidoctor
           { width: img_size.width, height: img_size.height }
         end
       rescue
+        # NOTE: image cannot be read, so it won't be used anyway
+        { width: 0, height: 0 }
       end
     end
 
