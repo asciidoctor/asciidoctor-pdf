@@ -16,11 +16,11 @@ module Asciidoctor
             #opts[:enable_web_requests] = allow_uri_read if !(opts.key? :enable_web_requests) && (respond_to? :allow_uri_read)
             #opts[:cache_images] = cache_uri if !(opts.key? :cache_images) && (respond_to? :cache_uri)
             #opts[:fallback_font_name] = fallback_svg_font_name if !(opts.key? :fallback_font_name) && (respond_to? :fallback_svg_font_name)
-            if (opts.key? :fit) && (fit = opts.delete :fit) && !opts[:width] && !opts[:height]
+            if (fit = opts.delete :fit) && !(opts[:width] || opts[:height])
               svg (::File.read file, mode: 'r:UTF-8'), opts do |svg_doc|
-                max_width, max_height = fit
-                svg_doc.calculate_sizing requested_width: max_width if max_width && svg_doc.sizing.output_width != max_width
-                svg_doc.calculate_sizing requested_height: max_height if max_height && svg_doc.sizing.output_height > max_height
+                # NOTE: fit to specified width, then reduce size if height exceeds bounds
+                svg_doc.calculate_sizing requested_width: fit[0] if svg_doc.sizing.output_width != fit[0]
+                svg_doc.calculate_sizing requested_height: fit[1] if svg_doc.sizing.output_height > fit[1]
               end
             else
               svg (::File.read file, mode: 'r:UTF-8'), opts
