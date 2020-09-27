@@ -7,7 +7,7 @@ Prawn::SVG::Loaders::Web.prepend (Module.new do
 
   def from_url url
     return unless url && (url.start_with? 'http://', 'https://')
-    load_open_uri.open_uri(url, 'rb', &:read)
+    load_open_uri.open_uri url, 'rb', &:read
   rescue
     raise Prawn::SVG::UrlLoader::Error, $!.message
   end
