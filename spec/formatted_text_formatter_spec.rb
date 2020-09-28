@@ -964,7 +964,6 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         role_cmd_font_family: 'Courier',
         role_cmd_font_size: '1.15em',
         role_cmd_border_color: '222222',
-        role_cmd_border_offset: 2,
         role_cmd_border_width: 0.5,
       }
       to_file = to_pdf_file 'use the [.cmd]#man# command to get help', 'text-formatter-inline-role-border.pdf', pdf_theme: pdf_theme
