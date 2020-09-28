@@ -316,6 +316,7 @@ module Asciidoctor
           attrs[:class].split.each do |class_name|
             next unless @theme_settings.key? class_name
             update_fragment fragment, @theme_settings[class_name]
+            # NOTE: defer assignment of callback since we must look at combined styles of element and role
             if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
               fragment[:callback] = [TextBackgroundAndBorderRenderer] | (fragment[:callback] || [])
               fragment[:align] = :center if fragment[:border_offset]
@@ -366,8 +367,8 @@ module Asciidoctor
               else
                 oval.clear
               end
-            when :callback
-              oval | nval
+            #when :callback
+            #  oval | nval
             else
               nval
             end
