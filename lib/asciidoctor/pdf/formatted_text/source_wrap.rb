@@ -7,6 +7,7 @@ module Asciidoctor
         NoBreakSpace = ?\u00a0
 
         # Override Prawn::Text::Formatted::Box#wrap method to add line numbers in source blocks.
+        # Note that this implementation assumes that the :single_line option is falsy.
         def wrap array
           initialize_wrap array
           stop = nil
@@ -32,7 +33,7 @@ module Asciidoctor
             else
               stop = true
             end
-            stop ||= @single_line || @arranger.finished?
+            stop ||= @arranger.finished?
           end
           @text = @printed_lines.join ?\n
           @everything_printed = @arranger.finished?
