@@ -442,6 +442,23 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect linenum_text[:font_color]).to eql '888888'
     end
 
+    it 'should continue to add line numbers after page split' do
+      source_lines = (1..55).map {|it| %(puts "Please come forward if your number is #{it}.") }
+
+      pdf = to_pdf <<~EOS, analyze: true
+      :source-highlighter: rouge
+
+      [source%linenums,ruby]
+      ----
+      #{source_lines.join ?\n}
+      ----
+      EOS
+
+      lines_after_split = pdf.lines pdf.find_text page_number: 2
+      (expect lines_after_split).not_to be_empty
+      (expect lines_after_split[0]).to eql '51 puts "Please come forward if your number is 51."'
+    end
+
     it 'should honor start value for line numbering' do
       expected_lines = <<~'EOS'.split ?\n
       5 puts 'Hello, World!'
