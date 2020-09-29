@@ -780,52 +780,56 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'BMP' do
-    it 'should warn and replace block image with alt text if image format is unsupported' do
-      (expect do
-        pdf = to_pdf 'image::waterfall.bmp[Waterfall,240]', analyze: true
-        (expect pdf.lines).to eql ['[Waterfall] | waterfall.bmp']
-      end).to log_message severity: :WARN, message: '~could not embed image'
-    end unless defined? GMagick::Image
-
-    it 'should embed image if prawn-gmagick is available' do
-      pdf = to_pdf 'image::waterfall.bmp[Waterfall,240]', analyze: :image
-      (expect pdf.images).to have_size 1
-      image = pdf.images[0]
-      (expect image[:intrinsic_width]).to eql 240
-      (expect image[:width]).to eql 180.0
-    end if defined? GMagick::Image
+    if defined? GMagick::Image
+      it 'should embed image if prawn-gmagick is available' do
+        pdf = to_pdf 'image::waterfall.bmp[Waterfall,240]', analyze: :image
+        (expect pdf.images).to have_size 1
+        image = pdf.images[0]
+        (expect image[:intrinsic_width]).to eql 240
+        (expect image[:width]).to eql 180.0
+      end
+    else
+      it 'should warn and replace block image with alt text if image format is unsupported' do
+        (expect do
+          pdf = to_pdf 'image::waterfall.bmp[Waterfall,240]', analyze: true
+          (expect pdf.lines).to eql ['[Waterfall] | waterfall.bmp']
+        end).to log_message severity: :WARN, message: '~could not embed image'
+      end
+    end
   end
 
   context 'GIF' do
-    it 'should warn and replace block image with alt text if image format is unsupported' do
-      (expect do
-        pdf = to_pdf 'image::tux.gif[Tux]', analyze: true
-        (expect pdf.lines).to eql ['[Tux] | tux.gif']
-      end).to log_message severity: :WARN, message: '~GIF image format not supported. Install the prawn-gmagick gem or convert tux.gif to PNG.'
-    end unless defined? GMagick::Image
+    if defined? GMagick::Image
+      it 'should embed block image if prawn-gmagick is available' do
+        pdf = to_pdf 'image::tux.gif[Tux]', analyze: :image
+        (expect pdf.images).to have_size 1
+        image = pdf.images[0]
+        (expect image[:intrinsic_width]).to eql 204
+        (expect image[:width]).to eql 153.0
+      end
 
-    it 'should warn and replace inline image with alt text if image format is unsupported' do
-      (expect do
-        pdf = to_pdf 'image:tux.gif[Tux,16] is always a good sign.', analyze: true
-        (expect pdf.lines).to eql ['[Tux] is always a good sign.']
-      end).to log_message severity: :WARN, message: '~GIF image format not supported. Install the prawn-gmagick gem or convert tux.gif to PNG.'
-    end unless defined? GMagick::Image
+      it 'should embed inline image if prawn-gmagick is available' do
+        pdf = to_pdf 'image:tux.gif[Tux,16] is always a good sign.', analyze: :image
+        (expect pdf.images).to have_size 1
+        image = pdf.images[0]
+        (expect image[:intrinsic_width]).to eql 204
+        (expect image[:width]).to eql 12.0
+      end
+    else
+      it 'should warn and replace block image with alt text if image format is unsupported' do
+        (expect do
+          pdf = to_pdf 'image::tux.gif[Tux]', analyze: true
+          (expect pdf.lines).to eql ['[Tux] | tux.gif']
+        end).to log_message severity: :WARN, message: '~GIF image format not supported. Install the prawn-gmagick gem or convert tux.gif to PNG.'
+      end
 
-    it 'should embed block image if prawn-gmagick is available' do
-      pdf = to_pdf 'image::tux.gif[Tux]', analyze: :image
-      (expect pdf.images).to have_size 1
-      image = pdf.images[0]
-      (expect image[:intrinsic_width]).to eql 204
-      (expect image[:width]).to eql 153.0
-    end if defined? GMagick::Image
-
-    it 'should embed inline image if prawn-gmagick is available' do
-      pdf = to_pdf 'image:tux.gif[Tux,16] is always a good sign.', analyze: :image
-      (expect pdf.images).to have_size 1
-      image = pdf.images[0]
-      (expect image[:intrinsic_width]).to eql 204
-      (expect image[:width]).to eql 12.0
-    end if defined? GMagick::Image
+      it 'should warn and replace inline image with alt text if image format is unsupported' do
+        (expect do
+          pdf = to_pdf 'image:tux.gif[Tux,16] is always a good sign.', analyze: true
+          (expect pdf.lines).to eql ['[Tux] is always a good sign.']
+        end).to log_message severity: :WARN, message: '~GIF image format not supported. Install the prawn-gmagick gem or convert tux.gif to PNG.'
+      end
+    end
   end
 
   context 'PDF' do

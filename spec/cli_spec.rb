@@ -62,8 +62,8 @@ describe 'asciidoctor-pdf' do
       run_command asciidoctor_pdf_bin, '-o', '-', (fixture_file 'book.adoc'), out: (to_file = output_file 'book.pdf')
       (expect Pathname.new to_file).to exist
       (expect { PDF::Reader.new to_file }).not_to raise_exception
-    end unless windows? && RUBY_ENGINE == 'jruby'
-  end
+    end
+  end unless windows? && RUBY_ENGINE == 'jruby'
 
   context 'pdfmark' do
     it 'should generate pdfmark file if pdfmark attribute is set', cli: true do
