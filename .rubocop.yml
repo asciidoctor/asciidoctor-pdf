@@ -4,6 +4,10 @@ require: rubocop-rspec
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 4
+Layout/BeginEndAlignment:
+  Enabled: true
+Lint/BinaryOperatorWithIdenticalOperands:
+  Enabled: true
 Layout/CaseIndentation:
   EnforcedStyle: end
 Layout/EmptyLinesAroundAttributeAccessor:
@@ -31,22 +35,52 @@ Layout/RescueEnsureAlignment:
   Enabled: false
 Lint/AmbiguousBlockAssociation:
   Enabled: false
+Lint/ConstantDefinitionInBlock:
+  Enabled: false
 Lint/DeprecatedOpenSSLConstant:
   Enabled: true
 Lint/DuplicateElsifCondition:
   Enabled: true
+Lint/DuplicateRequire:
+  Enabled: true
+Lint/DuplicateRescueException:
+  Enabled: true
+Lint/EmptyConditionalBody:
+  Enabled: true
+Lint/EmptyFile:
+  Enabled: true
 Lint/EmptyWhen:
   Enabled: false
+Lint/FloatComparison:
+  Enabled: false
+Lint/IdentityComparison:
+  Enabled: true
+Lint/MissingSuper:
+  Enabled: false
 Lint/MixedRegexpCaptureTypes:
+  Enabled: true
+Lint/OutOfRangeRegexpRef:
   Enabled: true
 Lint/ParenthesesAsGroupedExpression:
   Enabled: false
 Lint/RaiseException:
   Enabled: true
+Lint/SelfAssignment:
+  Enabled: true
 Lint/StructNewOverride:
   Enabled: true
 Lint/SuppressedException:
   Enabled: false
+Lint/TopLevelReturnWithArgument:
+  Enabled: true
+Lint/TrailingCommaInAttributeDeclaration:
+  Enabled: true
+Lint/UnreachableLoop: 
+  Enabled: true
+Lint/UselessMethodDefinition:
+  Enabled: true
+Lint/UselessTimes:
+  Enabled: true
 Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
@@ -99,6 +133,8 @@ Style/CharacterLiteral:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
+Style/CombinableLoops:
+  Enabled: true
 Style/CommentAnnotation:
   Keywords:
   - TODO
@@ -115,12 +151,16 @@ Style/DoubleNegation:
   Enabled: false
 Style/EmptyLiteral:
   Enabled: false
+Style/ExplicitBlockArgument:
+  Enabled: false
 Style/ExponentialNotation:
   Enabled: true
 Style/FormatString:
   EnforcedStyle: percent
 Style/FormatStringToken:
   Enabled: false
+Style/GlobalStdStream:
+  Enabled: true
 Style/GuardClause:
   Enabled: false
 Style/HashEachMethods:
@@ -137,6 +177,8 @@ Style/HashTransformValues:
   Enabled: true
 Style/IfUnlessModifierOfIfUnless:
   Enabled: false
+Style/KeywordParametersOrder:
+  Enabled: true
 Style/MethodCallWithArgsParentheses:
   Enabled: true
   EnforcedStyle: omit_parentheses
@@ -156,6 +198,8 @@ Style/NestedTernaryOperator:
   Enabled: false
 Style/NumericPredicate:
   EnforcedStyle: comparison
+Style/OptionalBooleanParameter:
+  Enabled: false # TODO consider enabling
 Style/ParallelAssignment:
   Enabled: false
 Style/PercentLiteralDelimiters:
@@ -167,14 +211,6 @@ Style/PercentLiteralDelimiters:
     '%W': ()
 Style/PerlBackrefs:
   Enabled: false
-Style/RegexpLiteral:
-  Enabled: false
-Style/RescueModifier:
-  Enabled: false
-Style/RescueStandardError:
-  EnforcedStyle: implicit
-Style/SpecialGlobalVars:
-  EnforcedStyle: use_perl_names
 Style/RedundantAssignment:
   Enabled: true
 Style/RedundantFetchBlock:
@@ -185,6 +221,22 @@ Style/RedundantRegexpCharacterClass:
   Enabled: true
 Style/RedundantRegexpEscape:
   Enabled: true
+Style/RedundantSelfAssignment:
+  Enabled: true
+Style/RegexpLiteral:
+  Enabled: false
+Style/RescueModifier:
+  Enabled: false
+Style/RescueStandardError:
+  EnforcedStyle: implicit
+Style/SingleArgumentDig:
+  Enabled: true
+Style/SoleNestedConditional:
+  Enabled: false
+Style/SpecialGlobalVars:
+  EnforcedStyle: use_perl_names
+Style/StringConcatenation:
+  Enabled: false
 Style/SlicingWithRange:
   Enabled: false
 Style/SymbolArray:
@@ -200,6 +252,8 @@ RSpec/BeforeAfterAll:
 RSpec/ContextWording:
   Enabled: false
 RSpec/DescribeClass:
+  Enabled: false
+RSpec/EmptyExampleGroup:
   Enabled: false
 RSpec/ExampleLength:
   Enabled: false

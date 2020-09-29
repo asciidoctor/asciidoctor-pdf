@@ -924,8 +924,6 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       idx_content_top = nil
       text.each_with_index do |candidate, idx|
         idx_toc_bottom = idx if candidate[:string] == 'Section 40' && candidate[:font_size] == 10.5
-      end
-      text.each_with_index do |candidate, idx|
         idx_content_top = idx if candidate[:string] == 'Section 1' && candidate[:font_size] == 22
       end
       (expect text[idx_toc_bottom][:y]).to be > text[idx_content_top][:y]

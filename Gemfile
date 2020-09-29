@@ -20,11 +20,11 @@ group :docs do
 end
 
 group :lint do
-  gem 'rubocop', '~> 0.88.0', require: false
-  gem 'rubocop-rspec', '~> 1.42.0', require: false
+  gem 'rubocop', '~> 0.92.0', require: false
+  gem 'rubocop-rspec', '~> 1.43.0', require: false
 end
 
 group :coverage do
   gem 'deep-cover-core', '~> 1.0.0', require: false
-  gem 'simplecov', '~> 0.18.0', require: false
+  gem 'simplecov', '~> 0.19.0', require: false
 end

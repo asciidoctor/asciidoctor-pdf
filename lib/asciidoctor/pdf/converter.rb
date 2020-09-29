@@ -3711,7 +3711,7 @@ module Asciidoctor
 
       def write pdf_doc, target
         if target.respond_to? :write
-          target = ::QuantifiableStdout.new STDOUT if target == STDOUT
+          target = ::QuantifiableStdout.new $stdout if target == $stdout
           pdf_doc.render target
         else
           pdf_doc.render_file target
