@@ -25,6 +25,14 @@ describe 'Asciidoctor::PDF::Optimizer' do
     (expect optimizer.compatibility_level).to eql '1.4'
   end
 
+  it 'should generate optimized PDF using PDF version specified by pdf-version attribute' do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    to_file = to_pdf_file input_file, 'optimizer-pdf-version.pdf', attribute_overrides: { 'optimize' => '', 'pdf-version' => '1.3' }
+    pdf = PDF::Reader.new to_file
+    (expect pdf.pdf_version).to eql 1.3
+    (expect pdf.catalog).not_to have_key :Metadata
+  end
+
   it 'should use existing pdfmark file if present when optimizing' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     pdfmark_file = Pathname.new output_file 'optimizer-pdfmark.pdfmark'
