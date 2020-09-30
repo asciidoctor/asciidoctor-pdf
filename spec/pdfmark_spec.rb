@@ -28,6 +28,18 @@ describe Asciidoctor::PDF::Pdfmark do
       (expect contents).to end_with %(/DOCINFO pdfmark\n)
     end
 
+    it 'should use value of untitled-label as title if document has no header' do
+      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      == Section
+
+      content
+      EOS
+
+      contents = (subject.new doc).generate
+      (expect contents).to include '/Title (Untitled)'
+      (expect contents).to end_with %(/DOCINFO pdfmark\n)
+    end
+
     it 'should sanitize values of Author, Subject, Keywords, and Producer fields' do
       doc = Asciidoctor.load <<~'EOS', safe: :safe
       = Document Title

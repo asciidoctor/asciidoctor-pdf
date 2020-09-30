@@ -18,7 +18,7 @@ module Asciidoctor
           creation_date = (::Time.parse doc.attr 'localdatetime') rescue (now || ::Time.now)
         end
         <<~EOS
-        [ /Title #{(sanitize doc.doctitle use_fallback: true).to_pdf_object}
+        [ /Title #{(sanitize doc.header? ? doc.doctitle : (doc.attr 'untitled-label')).to_pdf_object}
           /Author #{((doc.attr? 'authors') ? (sanitize doc.attr 'authors') : nil).to_pdf_object}
           /Subject #{((doc.attr? 'subject') ? (sanitize doc.attr 'subject') : nil).to_pdf_object}
           /Keywords #{((doc.attr? 'keywords') ? (sanitize doc.attr 'keywords') : nil).to_pdf_object}
