@@ -32,7 +32,8 @@ module Asciidoctor
 
       def generate_file pdf_file
         # QUESTION: should we use the extension pdfmeta to be more clear?
-        ::File.write %(#{pdf_file}mark), generate
+        ::File.write (pdfmark_file = %(#{pdf_file}mark)), generate
+        pdfmark_file
       end
     end
   end
