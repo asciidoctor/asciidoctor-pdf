@@ -5347,7 +5347,8 @@ If a background image isn't specified for a side, the converter will use the def
 To disable the background image for a side, use the value `none`.
 5. Controls whether the implicit `page-number` attribute is to the running header and footer content specified in the theme file.
 Instead of disabling page numbers, you can use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively.
-6. Enables generation of the http://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark] file, which contains metadata that is fed to Ghostscript when optimizing the PDF file.
+6. Enables generation of the http://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark] file, which contains metadata that can be fed to Ghostscript when optimizing the PDF file.
+If you're using Ghostscript >= 8.54, this feature is not needed.
 7. Activates hyphenation for the language code specified (defaults to en_us).
 8. Activates line break rules for CJK languages (specifically Chinese and Japanese).
 Chinese and Japanese are written without spaces (and may not use spaces when mixing with English words either).

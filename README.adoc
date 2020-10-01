@@ -1173,9 +1173,10 @@ The command will overwrite the PDF file with an optimized version.
 You can also try reducing the quality of the output file using the `--quality` flag (e.g., `--quality screen`).
 The `--quality` flag accepts the following keywords: `default` (default), `screen`, `ebook`, `printer`, and `prepress`.
 
-In both cases, if a file is found with the extension `.pdfmark` and the same rootname as the input file, it is used to add metadata to the generated PDF document.
-This file is necessary to preserve the document metadata since Ghostscript will otherwise drop it.
-That's why {project-name} always creates this file in addition to the PDF.
+In both cases, if a file is found with the extension `.pdfmark` and the same rootname as the input file, it will be used to add metadata to the generated PDF document.
+This file is necessary when using versions of Ghostscript < 8.54, which did not automatically preserve this metadata.
+You can instruct the converter to automatically generate a pdfmark file by setting the `pdfmark` attribute (i.e., `-a pdfmark`)
+When using a more recent version of Ghostscript, you do not need to generate a `.pdfmark` file for this purpose.
 
 IMPORTANT: The `asciidoctor-pdf-optimize` is not guaranteed to reduce the size of the PDF file.
 It may actually make the PDF larger.
