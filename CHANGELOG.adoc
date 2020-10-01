@@ -102,6 +102,7 @@ Bug Fixes::
 * apply border bottom to correct table row when frame and grid are disabled
 * allow caption max width to be set by theme to fixed value
 * fix crash when footnote is defined in section title with auto-generated ID
+* do not duplicate footnotes in desc of horizontal description list (#1775)
 * allow an index term to be defined in section title with auto-generated ID
 * fix alignment of link box for image in running content with numeric vertical alignment
 * short-circuit xreftext containing a circular reference path
