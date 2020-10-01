@@ -3,7 +3,6 @@ Victor Hugo
 :doctype: book
 :subject: June Rebellion
 :keywords: france, poor, rebellion
-:pdfmark:
 
 == Beginning
 
