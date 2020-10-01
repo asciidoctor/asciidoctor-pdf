@@ -1734,7 +1734,7 @@ module Asciidoctor
         wrap_ext = source_chunks = bg_color_override = font_color_override = adjusted_font_size = nil
         theme_font :code do
           # HACK: disable built-in syntax highlighter; must be done before calling node.content!
-          if node.style == 'source' && (highlighter = (syntax_hl = node.document.syntax_highlighter) && syntax_hl.highlight? && syntax_hl.name)
+          if node.style == 'source' && (highlighter = (syntax_hl = node.document.syntax_highlighter)&.highlight? && syntax_hl.name)
             case highlighter
             when 'coderay'
               unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
