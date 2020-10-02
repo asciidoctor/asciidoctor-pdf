@@ -298,6 +298,20 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect combined_text.scan '[3]').to be_empty
   end
 
+  it 'should not duplicate footnotes included in the desc of a horizontal dlist' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [horizontal]
+    ctrl-r::
+    Make it rain.footnote:[money]
+
+    ctrl-d::
+    Make it snow.footnote:[dollar bills]
+    EOS
+
+    lines = pdf.lines pdf.text
+    (expect lines).to eql ['ctrl-r Make it rain.[1]', 'ctrl-d Make it snow.[2]', '[1] money', '[2] dollar bills']
+  end
+
   it 'should allow a bibliography ref to be used inside the text of a footnote' do
     pdf = to_pdf <<~'EOS', analyze: true
     There are lots of things to know.footnote:[Be sure to read <<wells>> to learn about it.]
