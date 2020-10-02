@@ -11,6 +11,13 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect output[0][:styles]).to eql [:bold].to_set
     end
 
+    it 'should ignore unsupported style property' do
+      input = %(<span style="text-transform: uppercase">hot</span>)
+      output = subject.format input
+      (expect output).to have_size 1
+      (expect output[0][:text]).to eql 'hot'
+    end
+
     it 'should ignore font color if not a valid hex value' do
       input = %(<span style="color: red">hot</span>)
       output = subject.format input
