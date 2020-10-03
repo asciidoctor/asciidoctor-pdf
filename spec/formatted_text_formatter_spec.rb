@@ -62,6 +62,26 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       end
     end
 
+    it 'should only register callback to apply background color once when background color specified on both style and role' do
+      pdf_theme = build_pdf_theme role_hl_background_color: 'FFFF00'
+      input = %(<span class="hl" style="background-color: #EEEEEE">highlight</span>)
+      output = (subject.class.new theme: pdf_theme).format input
+      (expect output).to have_size 1
+      (expect output[0][:text]).to eql 'highlight'
+      (expect output[0][:background_color]).to eql 'FFFF00'
+      (expect output[0][:callback]).to have_size 1
+    end
+
+    it 'should only register callback to apply background color once when background color specified on both element and role' do
+      pdf_theme = build_pdf_theme literal_background_color: 'CCCCCC', role_hl_background_color: 'FFFF00'
+      input = %(<code class="hl">code</span>)
+      output = (subject.class.new theme: pdf_theme).format input
+      (expect output).to have_size 1
+      (expect output[0][:text]).to eql 'code'
+      (expect output[0][:background_color]).to eql 'FFFF00'
+      (expect output[0][:callback]).to have_size 1
+    end
+
     it 'should allow font weight to be set on nested phrase' do
       input = '<span style="font-weight: bold">new</span> release'
       output = subject.format input
