@@ -307,7 +307,9 @@ module Asciidoctor
               when 'background-color' # background-color needed to support syntax highlighters
                 if (pvalue.start_with? '#') && (HexColorRx.match? pvalue)
                   fragment[:background_color] = pvalue.length == 7 ? (pvalue.slice 1, 6) : (pvalue.slice 1, 3).each_char.map {|c| c * 2 }.join
-                  fragment[:callback] = [TextBackgroundAndBorderRenderer] | (fragment[:callback] || [])
+                  # Q: is it possible that callback would already be set?
+                  #fragment[:callback] = [TextBackgroundAndBorderRenderer] | (fragment[:callback] || [])
+                  fragment[:callback] = [TextBackgroundAndBorderRenderer]
                 end
               end
             end if attrs.key? :style
