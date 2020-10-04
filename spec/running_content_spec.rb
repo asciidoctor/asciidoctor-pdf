@@ -1323,7 +1323,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         'bottom' => 12,
         ['top', 10] => 62,
         ['bottom', -10] => 22,
-        ['center', -2] => 44
+        ['center', -2] => 44,
       }.each do |valign, expected_y|
         pdf = to_pdf 'body', pdf_theme: (pdf_theme.merge footer_vertical_align: valign), enable_footer: true, analyze: true
         left_text = (pdf.find_text 'text left')[0]
