@@ -24,7 +24,7 @@ jobs:
   - stage: test
     name: Lint
     addons: ~
-    rvm: &default_ruby 2.7.1
+    rvm: &default_ruby 2.7.2
     script: bundle exec rake lint
   - rvm: jruby-9.2.13.0
     dist: trusty
