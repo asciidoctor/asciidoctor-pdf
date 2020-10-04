@@ -17,10 +17,15 @@ module Asciidoctor
           mod_date = (::Time.parse doc.attr 'docdatetime') rescue (now ||= ::Time.now)
           creation_date = (::Time.parse doc.attr 'localdatetime') rescue (now || ::Time.now)
         end
+        if (doc.attribute_locked? 'author') && !(doc.attribute_locked? 'authors')
+          author = sanitize doc.attr 'author'
+        elsif doc.attr? 'authors'
+          author = sanitize doc.attr 'authors'
+        end
         # see https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/pdfmark_reference.pdf
         <<~EOS
         [ /Title #{(sanitize doc.header? ? doc.doctitle : (doc.attr 'untitled-label')).to_pdf_object}
-          /Author #{((doc.attr? 'authors') ? (sanitize doc.attr 'authors') : nil).to_pdf_object}
+          /Author #{author.to_pdf_object}
           /Subject #{((doc.attr? 'subject') ? (sanitize doc.attr 'subject') : nil).to_pdf_object}
           /Keywords #{((doc.attr? 'keywords') ? (sanitize doc.attr 'keywords') : nil).to_pdf_object}
           /ModDate #{mod_date.to_pdf_object}

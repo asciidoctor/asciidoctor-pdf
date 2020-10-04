@@ -80,6 +80,36 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       end
     end
 
+    it 'should set Author field to value of author attribute if locked by the API' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'author' => 'Doc Writer' }
+      = Document Title
+      Author Name
+
+      content
+      EOS
+      (expect pdf.info[:Author]).to eql 'Doc Writer'
+    end
+
+    it 'should set Author field to value of authors attribute if locked by the API' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'authors' => 'Doc Writer' }
+      = Document Title
+      Author Name
+
+      content
+      EOS
+      (expect pdf.info[:Author]).to eql 'Doc Writer'
+    end
+
+    it 'should set Author field to value of authors attribute if both author and authors attributes are locked by the API' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'authors' => 'Doc Writer', 'author' => 'Anonymous' }
+      = Document Title
+      Author Name
+
+      content
+      EOS
+      (expect pdf.info[:Author]).to eql 'Doc Writer'
+    end
+
     it 'should set Producer field to value of publisher attribute if set' do
       pdf = to_pdf <<~'EOS'
       = Document Title
