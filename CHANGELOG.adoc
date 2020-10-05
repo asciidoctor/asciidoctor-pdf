@@ -126,6 +126,7 @@ Bug Fixes::
 * use value of untitled-label as fallback value for Title field in pdfmark (follow-up to #1772)
 * show sensible error message if background image cannot be loaded (e.g., data is corrupt)
 * honor alignment role when aligning alt text for missing block image
+* don't crash when rendering alt text for block image if value of align attribute is invalid (#1781)
 
 Compliance::
 
