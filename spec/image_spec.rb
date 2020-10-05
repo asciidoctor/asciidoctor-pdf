@@ -577,7 +577,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-with-image.pdf'
     end
 
-    it 'should warn if remote image is missing and allow allow-uri-read attribute is set', network: true do
+    it 'should warn if remote image is missing and allow-uri-read attribute is set', network: true do
       (expect do
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'allow-uri-read' => '' }
         See the logo in image:svg-with-missing-remote-image.svg[pdfwidth=16]
@@ -585,6 +585,16 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         (expect get_images pdf, 1).to be_empty
         (expect (pdf.page 1).text).to include 'See the logo in'
       end).to log_message severity: :WARN, message: %(problem encountered in image: #{fixture_file 'svg-with-missing-remote-image.svg'}; Error retrieving URL https://example.org/no-such-image.png: 404 Not Found)
+    end
+
+    it 'should warn if remote image is not a valid URL and allow-uri-read attribute is set', network: true do
+      (expect do
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'allow-uri-read' => '' }
+        See the logo in image:svg-with-non-url-image.svg[pdfwidth=16]
+        EOS
+        (expect get_images pdf, 1).to be_empty
+        (expect (pdf.page 1).text).to include 'See the logo in'
+      end).to log_message severity: :WARN, message: %(problem encountered in image: #{fixture_file 'svg-with-non-url-image.svg'}; Error retrieving URL s3://foobar/tux.png: No handler available for this URL scheme)
     end
 
     it 'should ignore inline option for SVG on image macro' do
