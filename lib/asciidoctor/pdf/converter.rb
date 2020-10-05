@@ -1547,7 +1547,9 @@ module Asciidoctor
 
         return on_image_error :missing, node, target, opts unless image_path
 
-        alignment = ((node.attr 'align') || (resolve_alignment_from_role node.roles) || @theme.image_align || :left).to_sym
+        alignment = (alignment = node.attr 'align') ?
+          ((BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left) :
+          (resolve_alignment_from_role node.roles) || (@theme.image_align || :left).to_sym
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
         width = resolve_explicit_width node.attributes, bounds_width: (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
         # TODO: add `to_pt page_width` method to ViewportWidth type
@@ -1672,8 +1674,11 @@ module Asciidoctor
           alt_text_vars[:'/link'] = ''
         end
         theme_font :image_alt do
+          alignment = (alignment = node.attr 'align') ?
+            ((BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left) :
+            (resolve_alignment_from_role node.roles) || (@theme.image_align || :left).to_sym
           layout_prose alt_text_template % alt_text_vars,
-              align: ((node.attr 'align') || (resolve_alignment_from_role node.roles) || @theme.image_align || :left).to_sym,
+              align: alignment,
               margin: 0,
               normalize: false,
               single_line: true

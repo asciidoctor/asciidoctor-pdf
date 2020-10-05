@@ -57,6 +57,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
     end
 
+    it 'should not crash when rendering alt text for missing image if align value is invalid' do
+      (expect do
+        pdf = to_pdf 'image::no-such-image.png[,align=middle]', analyze: true
+        (expect pdf.lines).to eql ['[no such image] | no-such-image.png']
+        (expect pdf.text[0][:x]).to eql 48.24
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+    end
+
     it 'should skip block if image is missing an alt text is empty' do
       pdf_theme = { image_alt_content: '' }
       (expect do
