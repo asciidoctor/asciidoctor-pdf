@@ -1673,7 +1673,7 @@ module Asciidoctor
         end
         theme_font :image_alt do
           layout_prose alt_text_template % alt_text_vars,
-              align: ((node.attr 'align') || @theme.image_align).to_sym,
+              align: ((node.attr 'align') || (resolve_alignment_from_role node.roles) || @theme.image_align || :left).to_sym,
               margin: 0,
               normalize: false,
               single_line: true

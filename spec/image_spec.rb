@@ -47,6 +47,16 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
+    it 'should align alt text using alignment specified on image' do
+      [',align=center', ',role=text-center'].each do |attrlist|
+        (expect do
+          pdf = to_pdf %(image::no-such-image.png[#{attrlist}]), analyze: true
+          (expect pdf.lines).to eql ['[no such image] | no-such-image.png']
+          (expect pdf.text[0][:x]).to be > 50
+        end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      end
+    end
+
     it 'should skip block if image is missing an alt text is empty' do
       pdf_theme = { image_alt_content: '' }
       (expect do
