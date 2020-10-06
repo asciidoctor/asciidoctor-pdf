@@ -582,7 +582,11 @@ module Asciidoctor
         if (doctitle = resolve_doctitle doc)
           info[:Title] = (sanitize doctitle).as_pdf
         end
-        info[:Author] = (sanitize doc.attr 'authors').as_pdf if doc.attr? 'authors'
+        if (doc.attribute_locked? 'author') && !(doc.attribute_locked? 'authors')
+          info[:Author] = (sanitize doc.attr 'author').as_pdf
+        elsif doc.attr? 'authors'
+          info[:Author] = (sanitize doc.attr 'authors').as_pdf
+        end
         info[:Subject] = (sanitize doc.attr 'subject').as_pdf if doc.attr? 'subject'
         info[:Keywords] = (sanitize doc.attr 'keywords').as_pdf if doc.attr? 'keywords'
         info[:Producer] = (sanitize doc.attr 'publisher').as_pdf if doc.attr? 'publisher'

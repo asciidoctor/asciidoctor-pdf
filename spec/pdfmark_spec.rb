@@ -59,6 +59,45 @@ describe Asciidoctor::PDF::Pdfmark do
       (expect contents).to end_with %(/DOCINFO pdfmark\n)
     end
 
+    it 'should set Author field to value of author attribute if locked by the API' do
+      doc = Asciidoctor.load <<~'EOS', safe: :safe, attributes: { 'author' => 'Doc Writer' }
+      = Document Title
+      Author Name
+
+      content
+      EOS
+
+      contents = (subject.new doc).generate
+      (expect contents).to include '/Author (Doc Writer)'
+      (expect contents).to end_with %(/DOCINFO pdfmark\n)
+    end
+
+    it 'should set Author field to value of authors attribute if locked by the API' do
+      doc = Asciidoctor.load <<~'EOS', safe: :safe, attributes: { 'authors' => 'Doc Writer' }
+      = Document Title
+      Author Name
+
+      content
+      EOS
+
+      contents = (subject.new doc).generate
+      (expect contents).to include '/Author (Doc Writer)'
+      (expect contents).to end_with %(/DOCINFO pdfmark\n)
+    end
+
+    it 'should set Author field to value of authors attribute if both author and authors attribute locked by the API' do
+      doc = Asciidoctor.load <<~'EOS', safe: :safe, attributes: { 'authors' => 'Doc Writer', 'author' => 'Anonymous' }
+      = Document Title
+      Author Name
+
+      content
+      EOS
+
+      contents = (subject.new doc).generate
+      (expect contents).to include '/Author (Doc Writer)'
+      (expect contents).to end_with %(/DOCINFO pdfmark\n)
+    end
+
     it 'should set date to Unix epoch in UTC if reproducible attribute is set' do
       doc = Asciidoctor.load <<~'EOS', safe: :safe
       = Document Title
