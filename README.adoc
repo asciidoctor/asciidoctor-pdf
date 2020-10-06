@@ -1196,17 +1196,38 @@ First, install the hexapdf gem using the following command:
 
 You can then use it to optimize your PDF as follows:
 
- $ hexapdf optimize --compress-pages --force basic-example.pdf basic-example-optimized.pdf
+ $ hexapdf optimize --compress-pages --force basic-example.pdf basic-example.pdf
 
 This command does not manipulate the images in any way.
 It merely compresses the objects in the PDF and prunes any unreachable references.
 But given how much waste Prawn leaves behind, this turns out to reduce the file size substantially.
 
-To see more options, run:
+You can hook this command directly into the converter by providing your own implementation of the `Optimizer` class.
+Start by creating a Ruby file named [.path]_hexapdf-optimizer.rb_, then populate it with the following code:
+
+[source,ruby]
+----
+class Asciidoctor::PDF::Optimizer
+  def initialize *args; end
+
+  def generate_file target
+    system 'hexapdf', 'optimize', '--compress-pages', '--force', target, target, exception: true
+    nil
+  end
+end
+----
+
+To activate your custom optimizer, load this file when invoking the `asciidoctor-pdf` using the `-r` flag and set the `optimize` attribute as well using the `-a` flag.
+
+ $ asciidoctor-pdf -r ./hexapdf-optimizer.rb -a optimize basic-example.adoc
+
+Now you can convert and optimize all in one go.
+
+To see more options that `hexapdf optimize` offers, run:
 
  $ hexapdf help optimize
 
-For example, to make the source of the PDF a bit more readable, set the stream-related options to `preserve`.
+For example, to make the source of the PDF a bit more readable, set the stream-related options to `preserve` (i.e., `--streams preserve`).
 
 hexapdf also allows you to add password protection to your PDF, if that's something you're interested in doing.
 
