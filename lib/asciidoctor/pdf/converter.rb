@@ -182,8 +182,8 @@ module Asciidoctor
 
         # promote anonymous preface (defined using preamble block) to preface section
         # FIXME: this should be done in core
-        if doc.doctype == 'book' && (blk0 = doc.blocks[0]) && blk0.context == :preamble && blk0.title? &&
-            !blk0.title.nil_or_empty? && blk0.blocks[0].style != 'abstract' && (blk1 = doc.blocks[1]) && blk1.context == :section
+        if doc.doctype == 'book' && (blk0 = doc.blocks[0])&.context == :preamble && blk0.title? &&
+            !blk0.title.nil_or_empty? && blk0.blocks[0].style != 'abstract' && (blk1 = doc.blocks[1])&.context == :section
           preface = Section.new doc, blk1.level, false, attributes: { 1 => 'preface', 'style' => 'preface' }
           preface.special = true
           preface.sectname = 'preface'
