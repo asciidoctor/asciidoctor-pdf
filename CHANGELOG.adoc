@@ -139,6 +139,7 @@ Compliance::
 * remove deprecated "ascii" fonts; only bundle the more complete "subset" fonts
 * remove support for `<color>` tag in passthrough content; use `<font color="...">` instead (may affect themes)
 * remove asciidoctor-pdf/converter and asciidoctor-pdf/version shim scripts; use asciidoctor/pdf/converter and asciidoctor/pdf/version instead
+* rename Optimizer#generate_file method to Optimizer#optimize_file
 * drop use of the undocumented vertical_spacing key from the built-in themes
 
 == 1.5.3 (2020-02-28) - @mojavelinux

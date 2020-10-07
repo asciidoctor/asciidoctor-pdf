@@ -1208,10 +1208,10 @@ Start by creating a Ruby file named [.path]_hexapdf-optimizer.rb_, then populate
 [source,ruby]
 ----
 class Asciidoctor::PDF::Optimizer
-  def initialize *args; end
+  def initialize *; end
 
-  def generate_file target
-    system 'hexapdf', 'optimize', '--compress-pages', '--force', target, target, exception: true
+  def optimize_file path
+    system 'hexapdf', 'optimize', '--compress-pages', '--force', path, path, exception: true
     nil
   end
 end

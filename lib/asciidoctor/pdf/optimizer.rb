@@ -23,7 +23,7 @@ module Asciidoctor
         @compatibility_level = compatibility_level
       end
 
-      def generate_file target
+      def optimize_file target
         ::Dir::Tmpname.create ['asciidoctor-pdf-', '.pdf'] do |tmpfile|
           filename_o = Pathname.new target
           filename_tmp = Pathname.new tmpfile
