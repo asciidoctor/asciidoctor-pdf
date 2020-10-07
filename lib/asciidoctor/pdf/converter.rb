@@ -428,7 +428,7 @@ module Asciidoctor
         # NOTE: we have to init Pdfmark class here while we have reference to the doc
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
         # NOTE: defer instantiating optimizer until we know min pdf version
-        if (@optimize = (doc.attr 'optimize'))
+        if (@optimize = doc.attr 'optimize')
           @optimize = nil unless (defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?
         end
         init_scratch_prototype
