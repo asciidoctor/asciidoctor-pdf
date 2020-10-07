@@ -235,9 +235,26 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect to_file).to visually_match 'source-rouge-style.pdf'
     end
 
+    it 'should disable highlighting instead of crashing if lexer fails to lex source' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        :source-highlighter: rouge
+
+        [source,console]
+        ----
+        $ cd couchbase-autonomous-operator-kubernetes_x.x.x-windows_x86_64\bin\
+        ----
+        EOS
+
+        source_text = pdf.find_unique_text font_name: 'mplus1mn-regular'
+        (expect source_text).not_to be_nil
+        (expect source_text[:string]).to start_with '$ cd'
+      end).not_to raise_exception
+    end
+
     it 'should not crash if source-highlighter attribute is defined outside of document header' do
       (expect do
-        to_pdf <<~'EOS'
+        pdf = to_pdf <<~'EOS', analyze: true
         = Document Title
 
         :source-highlighter: rouge
@@ -247,6 +264,10 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         puts 'yo, world!'
         ----
         EOS
+
+        source_text = pdf.find_unique_text font_name: 'mplus1mn-regular'
+        (expect source_text).not_to be_nil
+        (expect source_text[:string]).to start_with 'puts '
       end).not_to raise_exception
     end
 

@@ -99,6 +99,7 @@ Bug Fixes::
 * fix crash when icons=font and admonition_label_min_width is set in theme
 * use oembed API over HTTPS to get thumbnail for Vimeo video
 * show link to Vimeo video if allow-uri-read attribute is not set
+* don't apply syntax highlighting if Rouge lexer fails to highlight source; show plain source instead
 * don't apply syntax highlighting to source block if specialchars sub is disabled
 * apply border bottom to correct table row when frame and grid are disabled
 * allow caption max width to be set by theme to fixed value

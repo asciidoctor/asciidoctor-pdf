@@ -1869,7 +1869,7 @@ module Asciidoctor
                   formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
                 end
               end
-              fragments = formatter.format (lexer.lex source_string), formatter_opts
+              fragments = formatter.format (lexer.lex source_string), formatter_opts rescue [text: source_string]
               source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
             end
           else
