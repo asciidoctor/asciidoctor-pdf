@@ -242,13 +242,13 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
         [source,console]
         ----
-        $ cd couchbase-autonomous-operator-kubernetes_x.x.x-windows_x86_64\bin\
+        $ cd application-name\bin\
         ----
         EOS
 
-        source_text = pdf.find_unique_text font_name: 'mplus1mn-regular'
-        (expect source_text).not_to be_nil
-        (expect source_text[:string]).to start_with '$ cd'
+        source_lines = pdf.lines pdf.text {|it| it.font_name.start_with? 'mplus1mn-' }
+        (expect source_lines).not_to be_empty
+        (expect source_lines[0]).to start_with '$ cd'
       end).not_to raise_exception
     end
 
