@@ -287,7 +287,7 @@ module Asciidoctor
             styles << :superscript
           when :del
             styles << :strikethrough
-          when :span
+          else # :span
             # NOTE: spaces in style value are superfluous for our purpose; split drops record after trailing ;
             attrs[:style].tr(' ', '').split(';').each do |style|
               pname, pvalue = style.split ':', 2
