@@ -108,6 +108,16 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     (expect fragments[0][:color]).to eql [50.5, 100, 0, 0]
   end
 
+  it 'should process a with only class attribute' do
+    pdf_theme = build_pdf_theme role_symlink_font_color: '0000AA'
+    input = '<a class="symlink">Asciidoctor</a>'
+    parsed = parser.parse input
+    fragments = (subject.class.new theme: pdf_theme).apply parsed.content
+    (expect fragments).to have_size 1
+    (expect fragments[0][:text]).to eql 'Asciidoctor'
+    (expect fragments[0][:color]).to eql '0000AA'
+  end
+
   it 'should return nil if text contains invalid markup' do
     input = 'before <foo>bar</foo> after'
     (expect parser.parse input).to be_nil
