@@ -217,7 +217,7 @@ module Asciidoctor
         unless use_title_page
           body_start_page_number = page_number
           theme_font :heading, level: 1 do
-            layout_heading doc.doctitle, align: (@theme.heading_h1_align || :center).to_sym, level: 1
+            layout_heading doc.doctitle, align: (@theme.heading_h1_align&.to_sym || :center), level: 1
           end if doc.header? && !doc.notitle
         end
 
@@ -336,8 +336,8 @@ module Asciidoctor
         end
 
         add_outline doc, (doc.attr 'outlinelevels', toc_num_levels), toc_page_nums, num_front_matter_pages[1], has_front_cover
-        if (initial_zoom = @theme.page_initial_zoom)
-          case initial_zoom.to_sym
+        if (initial_zoom = @theme.page_initial_zoom&.to_sym)
+          case initial_zoom
           when :Fit
             catalog.data[:OpenAction] = dest_fit state.pages[0]
           when :FitV
@@ -388,7 +388,7 @@ module Asciidoctor
         @allow_uri_read = doc.attr? 'allow-uri-read'
         @cache_uri = doc.attr? 'cache-uri'
         @tmp_files = {}
-        if (bg_image = resolve_background_image doc, theme, 'page-background-image') && bg_image[0]
+        if (bg_image = resolve_background_image doc, theme, 'page-background-image')&.first
           @page_bg_image = { verso: bg_image, recto: bg_image }
         else
           @page_bg_image = { verso: nil, recto: nil }
@@ -464,7 +464,7 @@ module Asciidoctor
         theme.base_border_width || 0
         theme.base_font_color ||= '000000'
         theme.base_font_size ||= 12
-        theme.base_font_style = (theme.base_font_style || :normal).to_sym
+        theme.base_font_style = theme.base_font_style&.to_sym || :normal
         theme.page_numbering_start_at ||= 'body'
         theme.running_content_start_at ||= 'body'
         theme.heading_margin_page_top ||= 0
@@ -561,7 +561,7 @@ module Asciidoctor
         end
 
         if (page_layout = (doc.attr 'pdf-page-layout') || theme.page_layout).nil_or_empty? ||
-            !PageLayouts.include?(page_layout = page_layout.to_sym)
+            !(PageLayouts.include? (page_layout = page_layout.to_sym))
           page_layout = nil
         end
 
@@ -755,7 +755,7 @@ module Asciidoctor
                 prose_opts[:indent_paragraphs] = text_indent
               end
               # FIXME: allow theme to control more first line options
-              if (line1_font_style = @theme.abstract_first_line_font_style) && (line1_font_style = line1_font_style.to_sym) != font_style
+              if (line1_font_style = @theme.abstract_first_line_font_style&.to_sym) && line1_font_style != font_style
                 first_line_options = { styles: line1_font_style == :normal ? [] : [font_style, line1_font_style] }
               end
               if (line1_font_color = @theme.abstract_first_line_font_color)
@@ -832,9 +832,9 @@ module Asciidoctor
         add_dest_for_block node if node.id
         theme_margin :block, :top
         type = node.attr 'name'
-        label_align = (@theme.admonition_label_align || :center).to_sym
+        label_align = @theme.admonition_label_align&.to_sym || :center
         # TODO: allow vertical_align to be a number
-        if (label_valign = (@theme.admonition_label_vertical_align || :middle).to_sym) == :middle
+        if (label_valign = @theme.admonition_label_vertical_align&.to_sym || :middle) == :middle
           label_valign = :center
         end
         if (label_min_width = @theme.admonition_label_min_width)
@@ -890,7 +890,7 @@ module Asciidoctor
                     bounding_box [0, cursor], width: label_width + lpad[1], height: rule_segment_height do
                       stroke_vertical_rule rule_color,
                           at: bounds.right,
-                          line_style: (@theme.admonition_column_rule_style || :solid).to_sym,
+                          line_style: (@theme.admonition_column_rule_style&.to_sym || :solid),
                           line_width: rule_width
                     end
                     advance_page if (rule_height -= rule_segment_height) > 0
@@ -1333,8 +1333,7 @@ module Asciidoctor
             when 'unstyled', 'no-bullet'
               bullet_type = nil
             else
-              candidate = style.to_sym
-              if Bullets.key? candidate
+              if Bullets.key? (candidate = style.to_sym)
                 bullet_type = candidate
               else
                 log :warn, %(unknown unordered list style: #{candidate})
@@ -1367,9 +1366,9 @@ module Asciidoctor
           opts[:align] = align
         elsif node.style == 'bibliography'
           opts[:align] = :left
-        elsif (align = @theme.outline_list_text_align)
+        elsif (align = @theme.outline_list_text_align&.to_sym)
           # NOTE: theme setting only affects alignment of list text (not nested blocks)
-          opts[:align] = align.to_sym
+          opts[:align] = align
         end
 
         line_metrics = calc_line_metrics @theme.base_line_height
@@ -1553,7 +1552,7 @@ module Asciidoctor
 
         alignment = (alignment = node.attr 'align') ?
           ((BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left) :
-          (resolve_alignment_from_role node.roles) || (@theme.image_align || :left).to_sym
+          (resolve_alignment_from_role node.roles) || (@theme.image_align&.to_sym || :left)
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
         width = resolve_explicit_width node.attributes, bounds_width: (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
         # TODO: add `to_pt page_width` method to ViewportWidth type
@@ -1680,7 +1679,7 @@ module Asciidoctor
         theme_font :image_alt do
           alignment = (alignment = node.attr 'align') ?
             ((BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left) :
-            (resolve_alignment_from_role node.roles) || (@theme.image_align || :left).to_sym
+            (resolve_alignment_from_role node.roles) || (@theme.image_align&.to_sym || :left)
           layout_prose alt_text_template % alt_text_vars,
               align: alignment,
               margin: 0,
@@ -2188,7 +2187,7 @@ module Asciidoctor
 
         border_width = {}
         table_border_color = theme.table_border_color || theme.table_grid_color || theme.base_border_color
-        table_border_style = (theme.table_border_style || :solid).to_sym
+        table_border_style = theme.table_border_style&.to_sym || :solid
         table_border_width = theme.table_border_width
         if table_header_size
           head_border_bottom_color = theme.table_head_border_bottom_color || table_border_color
@@ -2236,10 +2235,10 @@ module Asciidoctor
             (alignment = (node.roles & BlockAlignmentNames)[-1])
           alignment = alignment.to_sym
         else
-          alignment = (theme.table_align || :left).to_sym
+          alignment = theme.table_align&.to_sym || :left
         end
 
-        caption_side = (theme.table_caption_side || :top).to_sym
+        caption_side = theme.table_caption_side&.to_sym || :top
         caption_max_width = theme.table_caption_max_width || 'fit-content'
 
         table_settings = {
@@ -2354,7 +2353,7 @@ module Asciidoctor
 
       def convert_thematic_break _node
         theme_margin :thematic_break, :top
-        stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width, line_style: (@theme.thematic_break_border_style || :solid).to_sym
+        stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width, line_style: (@theme.thematic_break_border_style&.to_sym || :solid)
         theme_margin :thematic_break, :bottom
       end
 
@@ -2384,7 +2383,7 @@ module Asciidoctor
           unless node.role? && (page_layout = (node.roles.map(&:to_sym) & PageLayouts)[-1])
             page_layout = nil
           end
-        elsif !PageLayouts.include?(page_layout = page_layout.to_sym)
+        elsif !(PageLayouts.include? (page_layout = page_layout.to_sym))
           page_layout = nil
         end
 
@@ -2478,7 +2477,7 @@ module Asciidoctor
           elsif (refid = node.attributes['refid'])
             unless (text = node.text)
               if AbstractNode === (ref = doc.catalog[:refs][refid]) && (@resolving_xref ||= (outer = true)) && outer
-                if (text = ref.xreftext node.attr 'xrefstyle', nil, true) && (text.include? '<a')
+                if (text = ref.xreftext node.attr 'xrefstyle', nil, true)&.include? '<a'
                   text = text.gsub DropAnchorRx, ''
                 end
                 @resolving_xref = nil
@@ -2969,7 +2968,7 @@ module Asciidoctor
 
       def generate_manname_section node
         title = node.attr 'manname-title', 'Name'
-        if (next_section = node.sections[0]) && (next_section_title = next_section.title) == next_section_title.upcase
+        if (next_section_title = node.sections[0]&.title) && next_section_title.upcase == next_section_title
           title = title.upcase
         end
         sect = Section.new node, 1
@@ -3119,7 +3118,7 @@ module Asciidoctor
         unless num_levels < 0
           dot_leader = theme_font :toc do
             # TODO: we could simplify by using nested theme_font :toc_dot_leader
-            if (dot_leader_font_style = (@theme.toc_dot_leader_font_style || :normal).to_sym) != font_style
+            if (dot_leader_font_style = @theme.toc_dot_leader_font_style&.to_sym || :normal) != font_style
               font_style dot_leader_font_style
             end
             font_size @theme.toc_dot_leader_font_size
@@ -3249,7 +3248,7 @@ module Asciidoctor
         header = doc.header? ? doc.header : nil
         sectlevels = (@theme[%(#{periphery}_sectlevels)] || 2).to_i
         sections = doc.find_by(context: :section) {|sect| sect.level <= sectlevels && sect != header }
-        toc_title = (doc.attr 'toc-title').to_s if (toc_page_nums = @toc_extent && @toc_extent[:page_nums])
+        toc_title = (doc.attr 'toc-title').to_s if (toc_page_nums = @toc_extent&.fetch :page_nums)
         disable_on_pages = @disable_running_content[periphery]
 
         title_method = TitleStyles[@theme[%(#{periphery}_title_style)]]
@@ -3485,7 +3484,7 @@ module Asciidoctor
             trim_padding_verso = trim_content_margin_verso
           end
           valign, valign_offset = @theme[%(#{periphery}_vertical_align)]
-          if (valign = (valign || :middle).to_sym) == :middle
+          if (valign = valign&.to_sym || :middle) == :middle
             valign = :center
           end
           trim_styles = {
@@ -3494,10 +3493,10 @@ module Asciidoctor
             height: (trim_height = @theme[%(#{periphery}_height)]),
             bg_color: (resolve_theme_color %(#{periphery}_background_color).to_sym),
             border_color: (trim_border_color = resolve_theme_color %(#{periphery}_border_color).to_sym),
-            border_style: (@theme[%(#{periphery}_border_style)] || :solid).to_sym,
+            border_style: (@theme[%(#{periphery}_border_style)]&.to_sym || :solid),
             border_width: (trim_border_width = trim_border_color ? @theme[%(#{periphery}_border_width)] || @theme.base_border_width : 0),
             column_rule_color: (trim_column_rule_color = resolve_theme_color %(#{periphery}_column_rule_color).to_sym),
-            column_rule_style: (@theme[%(#{periphery}_column_rule_style)] || :solid).to_sym,
+            column_rule_style: (@theme[%(#{periphery}_column_rule_style)]&.to_sym || :solid),
             column_rule_width: (trim_column_rule_color ? @theme[%(#{periphery}_column_rule_width)] || 0 : 0),
             column_rule_spacing: (@theme[%(#{periphery}_column_rule_spacing)] || 0),
             valign: valign_offset ? [valign, valign_offset] : valign,
@@ -3546,7 +3545,7 @@ module Asciidoctor
             trim_styles[:img_valign] = trim_styles[:img_valign].to_sym
           end
 
-          if (trim_bg_image_recto = resolve_background_image doc, @theme, %(#{periphery}_background_image).to_sym, container_size: [trim_width_recto, trim_height]) && trim_bg_image_recto[0]
+          if (trim_bg_image_recto = resolve_background_image doc, @theme, %(#{periphery}_background_image).to_sym, container_size: [trim_width_recto, trim_height])&.first
             trim_bg_image = { recto: trim_bg_image_recto }
             if trim_width_recto == trim_width_verso
               trim_bg_image[:verso] = trim_bg_image_recto
@@ -3808,7 +3807,7 @@ module Asciidoctor
       def theme_fill_and_stroke_bounds category, opts = {}
         fill_and_stroke_bounds opts[:background_color], @theme[%(#{category}_border_color)],
             line_width: (@theme[%(#{category}_border_width)] || 0),
-            line_style: (@theme[%(#{category}_border_style)] || :solid).to_sym,
+            line_style: (@theme[%(#{category}_border_style)]&.to_sym || :solid),
             radius: @theme[%(#{category}_border_radius)]
       end
 
@@ -3934,7 +3933,7 @@ module Asciidoctor
         prev_kerning, self.default_kerning = default_kerning?, kerning unless kerning.nil?
         prev_transform, @text_transform = @text_transform, (transform == 'none' ? nil : transform) if transform
 
-        font family, size: size * @font_scale, style: (style && style.to_sym) do
+        font family, size: size * @font_scale, style: style&.to_sym do
           result = yield
         end
 
