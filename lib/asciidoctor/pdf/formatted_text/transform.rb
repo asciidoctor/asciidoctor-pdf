@@ -220,7 +220,7 @@ module Asciidoctor
           fragments
         end
 
-        def build_fragment fragment, tag_name, attrs = {}
+        def build_fragment fragment, tag_name, attrs
           styles = (fragment[:styles] ||= ::Set.new)
           case tag_name
           when :strong
