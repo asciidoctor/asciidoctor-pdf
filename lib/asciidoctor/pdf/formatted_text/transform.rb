@@ -192,13 +192,6 @@ module Asciidoctor
                   previous_fragment_is_text = false
                 end
               end
-            when :text
-              if @merge_adjacent_text_nodes && previous_fragment_is_text
-                fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{node[:value]}))
-              else
-                fragments << (clone_fragment inherited, text: node[:value])
-              end
-              previous_fragment_is_text = true
             when :charref
               if (ref_type = node[:reference_type]) == :name
                 text = CharEntityTable[node[:value]]
@@ -213,6 +206,13 @@ module Asciidoctor
                 fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{text}))
               else
                 fragments << (clone_fragment inherited, text: text)
+              end
+              previous_fragment_is_text = true
+            else # :text
+              if @merge_adjacent_text_nodes && previous_fragment_is_text
+                fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{node[:value]}))
+              else
+                fragments << (clone_fragment inherited, text: node[:value])
               end
               previous_fragment_is_text = true
             end
