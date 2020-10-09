@@ -21,6 +21,9 @@ module Asciidoctor
       def initialize quality = 'default', compatibility_level = '1.4'
         @quality = QUALITY_NAMES[quality]
         @compatibility_level = compatibility_level
+        if (gs_path = ::ENV['GS'])
+          ::RGhost::Config::GS[:path] = gs_path
+        end
       end
 
       def optimize_file target
