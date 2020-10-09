@@ -95,6 +95,18 @@ describe 'Asciidoctor::PDF::Optimizer' do
     (expect pdf_info[:Producer]).to include 'Ghostscript'
   end
 
+  it 'should use ghostscript command specified by GS environment variable', cli: true do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    to_file = to_pdf_file input_file, 'optimizer-cli-with-custom-gs.pdf'
+    env = windows? ? {} : { 'GS' => '/usr/bin/gs' }
+    out, err, res = run_command asciidoctor_pdf_optimize_bin, '--quality', 'prepress', to_file, env: env
+    (expect res.exitstatus).to be 0
+    (expect out).to be_empty
+    (expect err).to be_empty
+    pdf_info = (PDF::Reader.new to_file).info
+    (expect pdf_info[:Producer]).to include 'Ghostscript'
+  end
+
   it 'should not crash if quality passed to asciidoctor-pdf-optimizer CLI is not recognized', cli: true do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-cli-fallback-quality.pdf'

@@ -54,6 +54,7 @@ Enhancements::
 * allow theme to control font size of dot leader in TOC
 * allow section to override outlinelevels for self and children using outlinelevels attribute on section
 * use value of author attribute for PDF info and pdfmark if locked by the API (#1778)
+* allow path of ghostscript command to be controlled using `GS` env var (#1791)
 
 Bug Fixes::
 
