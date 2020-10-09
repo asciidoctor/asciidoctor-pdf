@@ -1307,8 +1307,7 @@ module Asciidoctor
         else
           list_numeral = 1
         end
-        if list_numeral && list_numeral != '' &&
-            (start = (node.attr 'start') || ((node.option? 'reversed') ? node.items.size : nil))
+        if !list_numeral.nil_or_empty? && (start = (node.attr 'start') || ((node.option? 'reversed') ? node.items.size : nil))
           if (start = start.to_i) > 1
             (start - 1).times { list_numeral = list_numeral.next }
           elsif start < 1 && !(::String === list_numeral)

@@ -48,15 +48,14 @@ module Asciidoctor
         1000 => 'M',
       }
 
-      def initialize initial_value, letter_case = nil
-        initial_value ||= 1
+      def initialize initial_value = 1, letter_case = nil
         if ::Integer === initial_value
           @integer_value = initial_value
+          @letter_case = letter_case || :upper
         else
           @integer_value = RomanNumeral.roman_to_int initial_value
-          letter_case = :lower if letter_case.nil? && initial_value.upcase != initial_value
+          @letter_case = letter_case || (initial_value == initial_value.upcase ? :upper : :lower)
         end
-        @letter_case = letter_case.nil? ? :upper : letter_case
       end
 
       def to_s
@@ -69,18 +68,6 @@ module Asciidoctor
         end
         roman = RomanNumeral.int_to_roman int
         @letter_case == :lower ? roman.downcase : roman
-      end
-
-      def to_i
-        @integer_value
-      end
-
-      def odd?
-        to_i.odd?
-      end
-
-      def even?
-        to_i.even?
       end
 
       def next
@@ -96,7 +83,7 @@ module Asciidoctor
         RomanNumeral.new @integer_value - 1, @letter_case
       end
 
-      def empty?
+      def nil_or_empty?
         false
       end
 
