@@ -2,7 +2,30 @@
 
 require 'pathname'
 require 'rghost'
+require 'rghost/gs_alone'
 require 'tmpdir'
+
+RGhost::GSAlone.prepend (Module.new do
+  WindowsRx = /win|ming/
+
+  def initialize params, debug = false
+    (@params = params.dup).push(*(@params.pop.split File::PATH_SEPARATOR))
+    @debug = debug
+  end
+
+  def run
+    RGhost::Config.config_platform unless File.exist? RGhost::Config::GS[:path].to_s
+    (cmd = @params.slice 1, @params.length).unshift RGhost::Config::GS[:path].to_s
+    puts cmd.join ' ' if @debug
+    system(*cmd)
+  end
+end)
+
+RGhost::Engine.prepend (Module.new do
+  def shellescape str
+    str
+  end
+end)
 
 module Asciidoctor
   module PDF
@@ -30,8 +53,11 @@ module Asciidoctor
         ::Dir::Tmpname.create ['asciidoctor-pdf-', '.pdf'] do |tmpfile|
           filename_o = Pathname.new target
           filename_tmp = Pathname.new tmpfile
-          pdfmark = filename_o.sub_ext '.pdfmark'
-          inputs = pdfmark.file? ? [target, pdfmark.to_s] : target
+          if (pdfmark = filename_o.sub_ext '.pdfmark').file?
+            inputs = [target, pdfmark.to_s].join ::File::PATH_SEPARATOR
+          else
+            inputs = target
+          end
           (::RGhost::Convert.new inputs).to :pdf,
               filename: filename_tmp.to_s,
               quality: @quality,
