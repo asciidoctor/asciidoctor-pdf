@@ -174,26 +174,12 @@ module Asciidoctor
       end
 
       def convert_document doc
+        doc.promote_preface_block
         init_pdf doc
         # set default value for outline and pagenums if not otherwise set
         doc.attributes['outline'] = '' unless (doc.attribute_locked? 'outline') || ((doc.instance_variable_get :@attributes_modified).include? 'outline')
         doc.attributes['pagenums'] = '' unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
         #assign_missing_section_ids doc
-
-        # promote anonymous preface (defined using preamble block) to preface section
-        # FIXME: this should be done in core
-        if doc.doctype == 'book' && (blk0 = doc.blocks[0])&.context == :preamble && blk0.title? &&
-            !blk0.title.nil_or_empty? && blk0.blocks[0].style != 'abstract' && (blk1 = doc.blocks[1])&.context == :section
-          preface = Section.new doc, blk1.level, false, attributes: { 1 => 'preface', 'style' => 'preface' }
-          preface.special = true
-          preface.sectname = 'preface'
-          preface.title = blk0.instance_variable_get :@title
-          # QUESTION: should ID be generated from raw or converted title? core is not clear about this
-          preface.id = preface.generate_id
-          preface.blocks.replace blk0.blocks.map {|b| b.parent = preface; b } # rubocop:disable Style/Semicolon
-          doc.blocks[0] = preface
-          blk0 = blk1 = preface = nil # rubocop:disable Lint/UselessAssignment
-        end
 
         on_page_create(&(method :init_page))
 
