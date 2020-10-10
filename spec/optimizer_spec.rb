@@ -25,6 +25,14 @@ describe 'Asciidoctor::PDF::Optimizer' do
     (expect optimizer.compatibility_level).to eql '1.4'
   end
 
+  it 'should generate optimized PDF when filename contains spaces' do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    to_file = to_pdf_file input_file, 'optimizer filename with spaces.pdf', attribute_overrides: { 'optimize' => '' }
+    pdf = PDF::Reader.new to_file
+    pdf_info = pdf.info
+    (expect pdf_info[:Producer]).to include 'Ghostscript'
+  end
+
   it 'should generate optimized PDF using PDF version specified by pdf-version attribute' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-pdf-version.pdf', attribute_overrides: { 'optimize' => '', 'pdf-version' => '1.3' }
