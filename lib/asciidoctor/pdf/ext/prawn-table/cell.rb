@@ -34,7 +34,7 @@ Prawn::Table::Cell.prepend (Module.new do
                      [[x, y - height], [x + width, y - height]]
                    when :left
                      [[x, y + (border_top_width / 2.0)], [x, y - height - (border_bottom_width / 2.0)]]
-                   when :right
+                   else # :right
                      [[x + width, y + (border_top_width / 2.0)], [x + width, y - height - (border_bottom_width / 2.0)]]
                    end
 
