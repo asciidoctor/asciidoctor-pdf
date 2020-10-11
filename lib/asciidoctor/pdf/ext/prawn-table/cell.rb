@@ -27,16 +27,16 @@ Prawn::Table::Cell.prepend (Module.new do
 
         # Left and right borders are drawn one-half border beyond the center
         # of the corner, so that the corners end up square.
-        from, to = case border
-                   when :top
-                     [[x, y], [x + width, y]]
-                   when :bottom
-                     [[x, y - height], [x + width, y - height]]
-                   when :left
-                     [[x, y + (border_top_width / 2.0)], [x, y - height - (border_bottom_width / 2.0)]]
-                   else # :right
-                     [[x + width, y + (border_top_width / 2.0)], [x + width, y - height - (border_bottom_width / 2.0)]]
-                   end
+        case border
+        when :top
+          from, to = [[x, y], [x + width, y]]
+        when :bottom
+          from, to = [[x, y - height], [x + width, y - height]]
+        when :left
+          from, to = [[x, y + (border_top_width / 2.0)], [x, y - height - (border_bottom_width / 2.0)]]
+        else # :right
+          from, to = [[x + width, y + (border_top_width / 2.0)], [x + width, y - height - (border_bottom_width / 2.0)]]
+        end
 
         case border_line
         when :dashed
