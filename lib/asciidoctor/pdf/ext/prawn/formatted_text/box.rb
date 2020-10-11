@@ -64,6 +64,7 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
     end
   end
 
+  # Override method in super class to provide support for a tuple consisting of alignment and offset
   def process_vertical_alignment text
     return super if ::Symbol === (valign = @vertical_align)
 
@@ -72,21 +73,19 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
 
     valign, offset = valign
 
-    if valign == :top
-      @at[1] -= offset
-      return
-    end
-
-    wrap text
-    h = height
-
     case valign
     when :center
-      @at[1] -= (@height - h + @descender) * 0.5 + offset
+      wrap text
+      @at[1] -= (@height - (rendered_height = height) + @descender) * 0.5 + offset
+      @height = rendered_height
     when :bottom
-      @at[1] -= (@height - h) + offset
+      wrap text
+      @at[1] -= (@height - (rendered_height = height)) + offset
+      @height = rendered_height
+    else # :top
+      @at[1] -= offset
     end
 
-    @height = h
+    nil
   end
 end)
