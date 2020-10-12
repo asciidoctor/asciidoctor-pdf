@@ -8,7 +8,7 @@ require 'tmpdir'
 RGhost::GSAlone.prepend (Module.new do
   WindowsRx = /win|ming/
 
-  def initialize params, debug = false
+  def initialize params, debug
     (@params = params.dup).push(*(@params.pop.split File::PATH_SEPARATOR))
     @debug = debug
   end
@@ -16,7 +16,7 @@ RGhost::GSAlone.prepend (Module.new do
   def run
     RGhost::Config.config_platform unless File.exist? RGhost::Config::GS[:path].to_s
     (cmd = @params.slice 1, @params.length).unshift RGhost::Config::GS[:path].to_s
-    puts cmd.join ' ' if @debug
+    #puts cmd if @debug
     system(*cmd)
   end
 end)
