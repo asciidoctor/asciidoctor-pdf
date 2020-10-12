@@ -937,6 +937,26 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect foo_text[:y]).to eql bar_text[:y]
       end
 
+      it 'should allow theme to control line height of term' do
+        input = <<~'EOS'
+        [horizontal]
+        first term::
+        second term::
+        description
+        EOS
+
+        pdf = to_pdf input, analyze: true
+
+        reference_line_height = (pdf.find_unique_text 'first term')[:y] - (pdf.find_unique_text 'second term')[:y]
+
+        pdf = to_pdf input, analyze: true, pdf_theme: { description_list_term_line_height: 2 }
+
+        term_line_height = (pdf.find_unique_text 'first term')[:y] - (pdf.find_unique_text 'second term')[:y]
+
+        (expect term_line_height).to be > reference_line_height
+        (expect (term_line_height - reference_line_height).round 2).to eql 9.0
+      end
+
       it 'should include title above horizontal list' do
         pdf = to_pdf <<~'EOS', analyze: true
         .Balance
