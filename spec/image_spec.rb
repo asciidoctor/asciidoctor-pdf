@@ -48,11 +48,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should align alt text using alignment specified on image' do
-      [',align=center', ',role=text-center'].each do |attrlist|
+      [
+        ['', { image_align: nil }],
+        [',align=center', {}],
+        [',role=text-center', {}],
+        ['', { image_align: 'center' }],
+      ].each do |attrlist, pdf_theme|
         (expect do
-          pdf = to_pdf %(image::no-such-image.png[#{attrlist}]), analyze: true
+          pdf = to_pdf %(image::no-such-image.png[#{attrlist}]), analyze: true, pdf_theme: pdf_theme
           (expect pdf.lines).to eql ['[no such image] | no-such-image.png']
-          (expect pdf.text[0][:x]).to be > 50
+          if attrlist.empty? && !pdf_theme[:image_align]
+            (expect pdf.text[0][:x]).to eql 48.24
+          else
+            (expect pdf.text[0][:x]).to be > 50
+          end
         end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
       end
     end
