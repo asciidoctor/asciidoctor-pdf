@@ -1155,14 +1155,24 @@ Here's an example usage that converts your document and optimizes it:
 The command will generate an optimized PDF 1.4 file.
 In addition to optimizing the PDF file, it also converts it from plain PDF to a PDF/X-1a.
 
+If this command fails because the `gs` command cannot be found, you'll need to set it using the `GS` environment variable.
+On Windows, this step is almost always required since the Ghostscript installer does not install the `gs` command into a standard location.
+Here's an example that shows how you can override the `gs` command path:
+
+ $ GS=/path/to/gs asciidoctor-pdf -a optimize basic-example.adoc
+
+You'll need to use the technique for assigning an environment variable that's relevant for your system.
+
 The one limitation of generating a PDF/X-1a file is that it does not allow non-ASCII characters in the document metadata fields (i.e., title, author, subject, etc).
 To workaround this limitation, you can force Ghostscript to generate a PDF 1.3 file using the `pdf-version` attribute:
 
  $ asciidoctor-pdf -a optimize -a pdf-version=1.3 basic-example.adoc
 
-Downgrading the version works as long as the PDF does not include color blending or transparency.
+CAUTION: Downgrading the PDF version may break the PDF if it contains an image that uses color blending or transparency.
+Specifically, the text on the page can become rasterized, which causes links to stop working and prevents text from being selected.
+If you're in this sitatuion, it might be best to try <<hexapdf>> instead.
 
-If you are looking for a smaller file size, you can try reducing the quality of the output file by passing a quality keyword to the `optimize` attribute (e.g., `--optimize=screen`).
+If you're looking for a smaller file size, you can try reducing the quality of the output file by passing a quality keyword to the `optimize` attribute (e.g., `--optimize=screen`).
 The `optimize` attribute accepts the following keywords: `default` (default, same if value is empty), `screen`, `ebook`, `printer`, and `prepress`.
 
 If you've already generated the PDF, and want to optimize it directly, you can use the bin script:
