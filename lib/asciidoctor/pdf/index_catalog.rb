@@ -20,7 +20,7 @@ module Asciidoctor
         %(__indexterm-#{@sequence += 1})
       end
 
-      def store_term names, dest = nil
+      def store_term names, dest
         if (num_terms = names.size) > 2
           store_tertiary_term names[0], names[1], names[2], dest
         elsif num_terms == 2
@@ -83,7 +83,7 @@ module Asciidoctor
         @terms = {}
       end
 
-      def store_term name, dest = nil
+      def store_term name, dest
         term = (@terms[name] ||= (IndexTerm.new name))
         term.add_dest dest if dest
         term
