@@ -130,6 +130,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-align-right.pdf'
     end
 
+    it 'should align image to left if value of align attribute is invalid' do
+      pdf = to_pdf 'image::wolpertinger.jpg[,align=middle]', analyze: :image, attribute_overrides: { 'imagesdir' => examples_dir }
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:x]).to eql 48.24
+    end
+
     it 'should align block image as indicated by text alignment role on macro', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-align-right-attribute.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       [.text-right]
