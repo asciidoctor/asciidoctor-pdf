@@ -37,6 +37,21 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
     (expect horizontal_rule[:to][:x]).to be > horizontal_rule[:from][:x]
   end
 
+  it 'should set width of thematic break to 0.5 if not set in theme' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { thematic_break_border_width: nil }, analyze: :line
+    before
+
+    ---
+
+    after
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 1
+    horizontal_rule = lines[0]
+    (expect horizontal_rule[:width]).to eql 0.5
+  end
+
   it 'should draw dashed line if the border style is dashed', visual: true do
     pdf_theme = {
       thematic_break_border_width: 0.5,
