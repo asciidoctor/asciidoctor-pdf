@@ -243,6 +243,19 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
   end
 
+  it 'wip should ignore empty list of terms' do
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+    Not worth indexing.
+    indexterm:[ ]
+
+    [index]
+    == Index
+    EOS
+
+    (expect pdf.pages).to have_size 1
+    (expect pdf.find_text 'Index').to be_empty
+  end
+
   it 'should not group terms with different casing' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
