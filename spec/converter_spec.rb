@@ -377,6 +377,17 @@ describe Asciidoctor::PDF::Converter do
         converter.to_pt 3, 'ft'
       end).to raise_exception ArgumentError, /unknown unit of measurement: ft/
     end
+
+    it 'should return previous integer as string when pred is invoked on integer string' do
+      {
+        '1' => '0',
+        '10' => '9',
+        '0' => '-1',
+        '-9' => '-10',
+      }.each do |curr, pred|
+        (expect curr.pred).to eql pred
+      end
+    end
   end
 
   describe 'extend' do
