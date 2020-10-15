@@ -243,7 +243,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
   end
 
-  it 'wip should ignore empty list of terms' do
+  it 'should ignore empty list of terms' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     Not worth indexing.
     indexterm:[ ]
