@@ -44,7 +44,7 @@ module Asciidoctor
 
       def self.resolve_theme_file theme_name = nil, theme_dir = nil
         # NOTE: if .yml extension is given, assume it's a path (don't append -theme.yml)
-        if theme_name && (theme_name.end_with? '.yml')
+        if theme_name&.end_with? '.yml'
           # FIXME: restrict to jail!
           if theme_dir
             theme_path = ::File.absolute_path theme_name, (theme_dir = ::File.expand_path theme_dir)
