@@ -181,8 +181,19 @@ module Asciidoctor
 
       # NOTE: we assume expr is a String
       def expand_vars expr, vars
-        if (idx = (expr.index '$'))
-          if idx == 0 && expr =~ LoneVariableRx
+        return expr unless (idx = expr.index '$')
+        if idx == 0 && expr =~ LoneVariableRx
+          if (key = $1).include? '-'
+            key = key.tr '-', '_'
+          end
+          if vars.respond_to? key
+            vars[key]
+          else
+            logger.warn %(unknown variable reference in PDF theme: $#{$1})
+            expr
+          end
+        else
+          expr.gsub VariableRx do
             if (key = $1).include? '-'
               key = key.tr '-', '_'
             end
@@ -190,23 +201,9 @@ module Asciidoctor
               vars[key]
             else
               logger.warn %(unknown variable reference in PDF theme: $#{$1})
-              expr
-            end
-          else
-            expr.gsub VariableRx do
-              if (key = $1).include? '-'
-                key = key.tr '-', '_'
-              end
-              if vars.respond_to? key
-                vars[key]
-              else
-                logger.warn %(unknown variable reference in PDF theme: $#{$1})
-                $&
-              end
+              $&
             end
           end
-        else
-          expr
         end
       end
 
@@ -261,7 +258,7 @@ module Asciidoctor
               if ::Numeric === e
                 e *= 100.0 unless e > 1
               else
-                e = e.to_s.chomp('%').to_f
+                e = (e.to_s.chomp '%').to_f
               end
               e == (int_e = e.to_i) ? int_e : e
             end
