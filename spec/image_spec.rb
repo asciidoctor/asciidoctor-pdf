@@ -780,7 +780,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should fail to embed interlaced PNG image with warning' do
       { '::' => '[Interlaced PNG] | interlaced.png', ':' => '[Interlaced PNG]' }.each do |macro_delim, alt_text|
         (expect do
-          pdf = to_pdf %(image#{macro_delim}interlaced.png[Interlaced PNG]), analyze: true
+          input = <<~EOS
+          [%unbreakable]
+          --
+          image#{macro_delim}interlaced.png[Interlaced PNG]
+          --
+          EOS
+          pdf = to_pdf input, analyze: true
           (expect pdf.lines).to eql [alt_text]
         end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'interlaced.png'}; PNG uses unsupported interlace method; install prawn-gmagick gem to add support)
       end
@@ -796,7 +802,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should not suggest installing prawn-gmagick if gem has already been loaded' do
       ['::', ':'].each do |macro_delim|
         (expect do
-          pdf = to_pdf %(image#{macro_delim}lorem-ipsum.yml[Unrecognized image format]), analyze: :image
+          input = <<~EOS
+          [%unbreakable]
+          --
+          image#{macro_delim}lorem-ipsum.yml[Unrecognized image format]
+          --
+          EOS
+          pdf = to_pdf input, analyze: :image
           (expect pdf.images).to have_size 0
         end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'lorem-ipsum.yml'}; image file is an unrecognised format)
       end
