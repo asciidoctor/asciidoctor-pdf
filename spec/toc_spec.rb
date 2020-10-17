@@ -1177,7 +1177,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
         toc_title_align: nil,
         heading_h2_align: nil,
         heading_align: nil,
-        base_align: 'center'
+        base_align: 'center',
       },
     ].each do |pdf_theme|
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
