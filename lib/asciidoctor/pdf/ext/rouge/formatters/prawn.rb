@@ -44,12 +44,6 @@ module Rouge
         @background_color ||= (normalize_color ((@theme.style_for Tokens::Text) || (::Rouge::Theme::Style.new @theme)).bg)
       end
 
-      # Override format method so fragments don't get flatted to a string
-      # and to add an options Hash.
-      def format tokens, opts = {}
-        stream tokens, opts
-      end
-
       def stream tokens, opts = {}
         line_numbers = opts[:line_numbers]
         highlight_lines = opts[:highlight_lines]
@@ -118,6 +112,10 @@ module Rouge
           end
         end
       end
+
+      # Override format method so fragments don't get flatted to a string
+      # and to add an options Hash.
+      alias format stream
 
       # TODO: method could still be optimized (for instance, check if val is LF or empty)
       def create_fragment tok, val = nil
