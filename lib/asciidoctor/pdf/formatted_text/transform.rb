@@ -162,13 +162,6 @@ module Asciidoctor
               # case 2: void element
               else
                 case node[:name]
-                when :br
-                  if @merge_adjacent_text_nodes && previous_fragment_is_text
-                    fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{LF}))
-                  else
-                    fragments << { text: LF }
-                  end
-                  previous_fragment_is_text = true
                 when :img
                   attributes = node[:attributes]
                   fragment = {
@@ -190,6 +183,13 @@ module Asciidoctor
                   end
                   fragments << fragment
                   previous_fragment_is_text = false
+                else # :br
+                  if @merge_adjacent_text_nodes && previous_fragment_is_text
+                    fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{LF}))
+                  else
+                    fragments << { text: LF }
+                  end
+                  previous_fragment_is_text = true
                 end
               end
             when :charref
