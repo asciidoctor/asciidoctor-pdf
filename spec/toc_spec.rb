@@ -1162,6 +1162,38 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect toc_entry_underline[:width]).to eql 0.5
   end
 
+  it 'should use fallback value to align toc title if alignment not specified in theme' do
+    [
+      {
+        toc_title_align: nil,
+        heading_h2_align: 'center',
+      },
+      {
+        toc_title_align: nil,
+        heading_h2_align: nil,
+        heading_align: 'center',
+      },
+      {
+        toc_title_align: nil,
+        heading_h2_align: nil,
+        heading_align: nil,
+        base_align: 'center'
+      },
+    ].each do |pdf_theme|
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :toc:
+      :doctype: book
+
+      == Section A
+
+      == Section B
+      EOS
+      toc_title_text = pdf.find_unique_text 'Table of Contents'
+      (expect toc_title_text[:x]).to be > 48.24
+    end
+  end
+
   it 'should allow theme to specify text decoration per heading level in toc' do
     pdf_theme = {
       toc_h3_text_decoration: 'underline',
