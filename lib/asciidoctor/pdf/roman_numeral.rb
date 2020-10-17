@@ -48,7 +48,7 @@ module Asciidoctor
         1000 => 'M',
       }
 
-      def initialize initial_value = 1, letter_case = nil
+      def initialize initial_value, letter_case = nil
         if ::Integer === initial_value
           @integer_value = initial_value
           @letter_case = letter_case || :upper
