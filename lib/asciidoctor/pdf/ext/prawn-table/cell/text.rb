@@ -22,7 +22,7 @@ class Prawn::Table::Cell::Text
   def styled_width_of text
     # NOTE: remove :style since it's handled by with_font
     options = @text_options.reject {|k| k == :style }
-    if text.length > 3 && (text.include? '<br>')
+    if (@text_options.key? :inline_format) && text.length > 3 && (text.include? '<br>')
       (text.split '<br>').map {|line| (line = line.strip).empty? ? 0 : with_font { @pdf.width_of line, options } }.max
     else
       with_font { @pdf.width_of text, options }
