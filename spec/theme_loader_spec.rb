@@ -332,12 +332,14 @@ describe Asciidoctor::PDF::ThemeLoader do
     it 'should not fail if theme file is empty' do
       theme = subject.load_file fixture_file 'empty-theme.yml'
       (expect theme).to be_an OpenStruct
+      theme.delete_field :__loaded__
       (expect theme).to eql OpenStruct.new
     end
 
     it 'should not fail if theme file resolves to nil' do
       theme = subject.load_file fixture_file 'nil-theme.yml'
       (expect theme).to be_an OpenStruct
+      theme.delete_field :__loaded__
       (expect theme).to eql OpenStruct.new
     end
 
@@ -365,6 +367,19 @@ describe Asciidoctor::PDF::ThemeLoader do
       theme = subject.load_file input_file, nil, fixtures_dir
       (expect theme.heading_font_color).to eql 'AA0000'
       (expect theme.base_font_family).to eql 'Helvetica'
+    end
+
+    it 'should only extend theme once by default' do
+      input_file = fixture_file 'extends-once-theme.yml'
+      theme = subject.load_file input_file, nil, fixtures_dir
+      (expect theme.base_font_color).to eql '222222'
+      (expect theme.heading_font_family).to eql 'M+ 1mn'
+    end
+
+    it 'should force theme to be loaded if qualified with !important' do
+      input_file = fixture_file 'force-extends-theme.yml'
+      theme = subject.load_file input_file, nil, fixtures_dir
+      (expect theme.base_font_color).to eql '333333'
     end
 
     it 'should allow font catalog to be merged with font catalog from theme being extended' do

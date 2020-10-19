@@ -140,6 +140,9 @@ base:
 You can also point the extends key at another custom theme to extend from it.
 If you don't want to extend any theme, including the base theme, omit the `extends` key or assign the value `~` to the `extends` key (i.e., `extends: ~`).
 
+If the same theme appears multiple times in the theme hierarchy, it will only be loaded once by default.
+You can force the theme to be loaded, even if it has already been loaded, by adding the `!important` keyword at the end of the value offset by a space.
+
 WARNING: If you start a new theme from scratch, we strongly recommend defining TrueType fonts and specifying them in the `base` and `literal` categories.
 Otherwise, Asciidoctor PDF will use built-in AFM fonts, which can result in missing functionality and warnings.
 
