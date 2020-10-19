@@ -528,6 +528,19 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.strings.index 'Ccccc').to be 1
     end
 
+    it 'should not fail to fit image with no explicit width in cell' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      [width=10%]
+      |===
+      |image:tux.png[]
+      |===
+      EOS
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:intrinsic_width]).to eql 204
+      (expect images[0][:width]).to eql 44.88
+    end
+
     it 'should not break words in head row when autowidth option is set' do
       pdf = to_pdf <<~'EOS', analyze: true
       [%autowidth]
