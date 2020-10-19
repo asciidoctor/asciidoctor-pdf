@@ -3,6 +3,8 @@
 class Prawn::Table::Cell::Text
   include ::Asciidoctor::Logging
 
+  ImageTagRx = /<img(?: [^>]+ )?width="([^"]+)"[^>]*>/
+
   # Override draw_content method to drop cursor advancement
   remove_method :draw_content
   def draw_content
@@ -17,15 +19,31 @@ class Prawn::Table::Cell::Text
     end
   end
 
-  # Override the styled_width_of to account for hard line breaks
+  # Override the styled_width_of to account for image widths and hard line breaks.
+  # This method computes the width of the text without wrapping (so InlineImageArranger is not called).
   remove_method :styled_width_of
   def styled_width_of text
     # NOTE: remove :style since it's handled by with_font
     options = @text_options.reject {|k| k == :style }
-    if (@text_options.key? :inline_format) && text.length > 3 && (text.include? '<br>')
-      (text.split '<br>').map {|line| (line = line.strip).empty? ? 0 : with_font { @pdf.width_of line, options } }.max
+    width_of_images = 0
+    if (inline_format = @text_options.key? :inline_format) && (text.include? '<img ')
+      placeholder_width = styled_width_of 'M'
+      text = text.gsub ImageTagRx do
+        if (pctidx = $1.index '%')
+          return $& unless pctidx < $1.length - 1
+          width_of_images += (($1.slice pctidx + 1, $1.length).to_f - placeholder_width)
+        else
+          width_of_images += ($1.to_f - placeholder_width)
+        end
+        'M'
+      end
+    end
+    if inline_format && text.length > 3 && (text.include? '<br>')
+      (text.split '<br>').map {|line|
+        (line = line.strip).empty? ? 0 : with_font { @pdf.width_of line, options }
+      }.max + width_of_images
     else
-      with_font { @pdf.width_of text, options }
+      with_font { @pdf.width_of text, options } + width_of_images
     end
   end
 end

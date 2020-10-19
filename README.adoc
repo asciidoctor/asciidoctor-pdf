@@ -101,8 +101,6 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 * Footnotes are always displayed as endnotes (at the end of chapter for books; at the end of document for all other doctypes).
 *Footnotes cannot be displayed at the bottom of the page because the PDF generator does not support content reflows* (see https://github.com/asciidoctor/asciidoctor-pdf/issues/85#issuecomment-577412975[#85] for reasoning).
 * Table cells that exceed the height of a single page will be truncated (see https://github.com/prawnpdf/prawn-table/issues/41[prawn-table#41]).
-* If, for some reason, an inline image cannot be resized to fit within the space allocated to a table cell, a Prawn::Errors::CannotFit error will be thrown (see https://github.com/asciidoctor/asciidoctor-pdf/issues/1608 for workarounds).
-This problem should have been solved, but we're still on the lookout for edge cases.
 * Columns cannot be assigned a 0% width (or a width less than the width of a single character); in the same vein, a column cannot be set to autowidth if width of all other columns meets or exceeds 100%; the result is that the converter with throw a Prawn::Errors::CannotFit error.
 * An inline image in a table cell will not force the column wider if the width of the image exceeds the width of the column; either reduce the image width using `pdfwidth` or increase the width of the column using `cols`; another solution is to convert the cell to an AsciiDoc table cell (see https://github.com/asciidoctor/asciidoctor-pdf/issues/830).
 * Must use development version of prawn-table for autowidth to work on table head row.
@@ -115,7 +113,9 @@ This problem should have been solved, but we're still on the lookout for edge ca
 * You cannot use inline HTML (like a link or emphasized text) in a source block that also uses syntax highlighting.
 These two technologies just don't combine in the PDF generation process due to how the syntax highlighters work.
 * Verse blocks do not use a fixed-width font by default, but you can control this setting using the theme.
-//* Must use Ruby >= 2.4 for natural cross references to work with non-ASCII titles.
+* An inline image with a percentage width value in an autowidth table cell is resized relative to its intrinsic width.
+The space reserved for the image matches its intrinsic width.
+This matches the behavior of HTML.
 
 == Prerequisites
 
