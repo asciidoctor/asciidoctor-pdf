@@ -56,6 +56,7 @@ Enhancements::
 * use value of author attribute for PDF info and pdfmark if locked by the API (#1778)
 * allow path of ghostscript command to be controlled using `GS` env var (#1791)
 * only extend theme in extends hierarchy once unless modified with !important (#1800)
+* add print-optimized themes (default-for-print and default-for-print-with-fallback-font) (#1699)
 
 Bug Fixes::
 

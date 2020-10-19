@@ -247,6 +247,19 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
+      it 'should set text color to black when default-for-print theme is specified' do
+        %w(theme style).each do |term|
+          pdf = to_pdf <<~EOS, analyze: true
+          = Document Title
+          :pdf-#{term}: default-for-print
+
+          black text
+          EOS
+
+          (expect pdf.find_text font_color: '000000').to have_size pdf.text.size
+        end
+      end
+
       it 'should use theme passed in through :pdf_theme option' do
         theme = Asciidoctor::PDF::ThemeLoader.load_theme 'custom', fixtures_dir
         theme.base_font_size = 14
