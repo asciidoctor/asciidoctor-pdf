@@ -117,7 +117,7 @@ title_page:
   title:
     top: 55%
     font_size: $heading_h1_font_size
-    font_color: 999999
+    font_color: $role_subtitle_font_color
     line_height: 0.9
   subtitle:
     font_size: $heading_h3_font_size
@@ -172,16 +172,18 @@ blockquote:
   border_left_width: 5
   # FIXME disable negative padding bottom once margin collapsing is implemented
   padding: [0, $horizontal_rhythm, $block_margin_bottom * -0.75, $horizontal_rhythm + $blockquote_border_left_width / 2]
-  cite_font_size: $base_font_size_small
-  cite_font_color: 999999
+  cite:
+    font_size: $base_font_size_small
+    font_color: $role_subtitle_font_color
 verse:
   font_size: $blockquote_font_size
   border_color: $blockquote_border_color
   border_width: $blockquote_border_width
   border_left_width: $blockquote_border_left_width
   padding: $blockquote_padding
-  cite_font_size: $blockquote_cite_font_size
-  cite_font_color: $blockquote_cite_font_color
+  cite:
+    font_size: $blockquote_cite_font_size
+    font_color: $blockquote_cite_font_color
 # code is used for source blocks (perhaps change to source or listing?)
 code:
   font_color: $base_font_color
