@@ -111,6 +111,8 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 * Orphan / widow support is limited; a page break can occur between a section title and its section content, a table caption and the caption, etc.; use a manual page break to avoid.
 * If a no-break hyphen is surrounded by formatted text on both sides (or is formatted individually), it will not prevent a line break.
 * Images cannot float.
+* You cannot use inline HTML (like a link or emphasized text) in a source block that also uses syntax highlighting.
+These two technologies just don't combine in the PDF generation process due to how the syntax highlighters work.
 * Verse blocks do not use a fixed-width font by default, but you can control this setting using the theme.
 //* Must use Ruby >= 2.4 for natural cross references to work with non-ASCII titles.
 
