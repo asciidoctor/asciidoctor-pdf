@@ -4350,7 +4350,7 @@ module Asciidoctor
                 end
               else
                 image_size = intrinsic_image_dimensions image_path, image_format
-                image_opts[:fit] = container_size if (to_pt image_size[:width], :px) > container_width || (to_pt image_size[:height], :px) > container_height
+                image_opts[:fit] = container_size if image_size[:width] > container_width || image_size[:height] > container_height
               end
             when 'cover'
               # QUESTION: should we take explicit width into account?

@@ -693,6 +693,24 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-width.pdf'
     end
 
+    it 'should scale down background PNG to fit boundaries of page if fit is scale-down and width slightly exceeds available width', visual: true do
+      reference_file = to_pdf_file <<~'EOS', 'page-background-image-fit-scale-down-reference.pdf'
+      = Document Title
+      :page-background-image: image:wide.png[fit=contain]
+
+      content
+      EOS
+
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-fit-scale-down-slightly.pdf'
+      = Document Title
+      :page-background-image: image:wide.png[fit=scale-down]
+
+      content
+      EOS
+
+      (expect to_file).to visually_match reference_file
+    end
+
     it 'should scale up background SVG to fit boundaries of page if value is path', visual: true do
       to_file = to_pdf_file <<~EOS, 'page-background-image-svg-scale-up-from-path.pdf'
       = Document Title
@@ -780,6 +798,24 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       EOS
 
       (expect to_file).to visually_match 'page-background-image-svg-scale-down.pdf'
+    end
+
+    it 'should scale down background SVG to fit boundaries of page if fit is scale-down and width slightly exceeds available width', visual: true do
+      reference_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-scale-down-reference.pdf'
+      = Document Title
+      :page-background-image: image:wide.svg[fit=contain]
+
+      content
+      EOS
+
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-scale-down-slightly.pdf'
+      = Document Title
+      :page-background-image: image:wide.svg[fit=scale-down]
+
+      content
+      EOS
+
+      (expect to_file).to visually_match reference_file
     end
 
     it 'should scale down background SVG to fit boundaries of page if computed height is greater than page height', visual: true do

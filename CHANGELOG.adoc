@@ -130,6 +130,7 @@ Bug Fixes::
 * show sensible error message if background image cannot be loaded (e.g., data is corrupt)
 * honor alignment role when aligning alt text for missing block image
 * don't crash when rendering alt text for block image if value of align attribute is invalid (#1781)
+* correctly scale down SVG that only marginally exceeds bounds of page when fit=scale-down
 
 Compliance::
 
