@@ -37,7 +37,7 @@ module Asciidoctor::PDF::FormattedText
       doc = @document
       return if (raw_image_fragments = fragments.select {|f| (f.key? :image_path) && !(f.key? :image_obj) }).empty?
       scratch = doc.scratch?
-      available_w = doc.bounds.width
+      available_w = available_width
       available_h = doc.page.empty? ? doc.cursor : doc.bounds.height
       raw_image_fragments.each do |fragment|
         drop = scratch
@@ -45,7 +45,14 @@ module Asciidoctor::PDF::FormattedText
 
         # NOTE: only attempt to convert an unresolved (i.e., String) value
         if ::String === (image_w = fragment[:image_width])
-          image_w = [available_w, (image_w.end_with? '%') ? (image_w.to_f / 100 * available_w) : image_w.to_f].min
+          # NOTE: intrinsic width is stored behind % symbol
+          if (pctidx = image_w.index '%') && pctidx + 1 < image_w.length
+            pct = (image_w.slice 0, pctidx).to_f / 100
+            intrinsic_w = (image_w.slice pctidx + 1, image_w.length).to_f
+            image_w = [available_w, pct * intrinsic_w].min
+          else
+            image_w = [available_w, pctidx ? (image_w.to_f / 100 * available_w) : image_w.to_f].min
+          end
         end
 
         max_image_h = fragment[:image_fit] == 'line' ? [available_h, doc.font.height].min : available_h

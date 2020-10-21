@@ -2592,7 +2592,12 @@ module Asciidoctor
           # NOTE: an image with a data URI is handled using a temporary file
           elsif (image_path = resolve_image_path node, target, image_format)
             if ::File.readable? image_path
-              width_attr = (width = resolve_explicit_width node.attributes) ? %( width="#{width}") : ''
+              if (width = resolve_explicit_width node.attributes)
+                width += (intrinsic_image_dimensions image_path, image_format)[:width].to_s if node.parent.context == :table_cell && ::String === width && (width.end_with? '%')
+              else
+                width = (intrinsic_image_dimensions image_path, image_format)[:width]
+              end
+              width_attr = %( width="#{width}")
               fit_attr = (fit = node.attr 'fit') ? %( fit="#{fit}") : ''
               img = %(<img src="#{image_path}" format="#{image_format}" alt="#{encode_quotes node.attr 'alt'}"#{width_attr}#{fit_attr}>)
             else

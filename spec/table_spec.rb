@@ -528,6 +528,61 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.strings.index 'Ccccc').to be 1
     end
 
+    it 'should not fail to fit image with no explicit width in cell' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      [width=10%]
+      |===
+      |image:tux.png[]
+      |===
+      EOS
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:intrinsic_width]).to eql 204
+      (expect images[0][:width]).to eql 44.88
+    end
+
+    it 'should fit image using intrinsic width in autowidth cell' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      [%autowidth]
+      |===
+      |image:tux.png[]
+      |===
+      EOS
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:intrinsic_width]).to eql 204
+      (expect images[0][:width]).to eql 153.0
+    end
+
+    it 'should fit image using explicit width in autowidth cell' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      [%autowidth]
+      |===
+      |image:tux.png[pdfwidth=1.5in]
+      |===
+      EOS
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:intrinsic_width]).to eql 204
+      (expect images[0][:width]).to eql 108.0
+    end
+
+    it 'should fit image using percentage width in autowidth cell' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_cell_padding: 0 }, analyze: :image
+      [%autowidth]
+      |===
+      |image:tux.png[width=25%] | image:tux.png[]
+      |===
+      EOS
+      images = pdf.images
+      (expect images).to have_size 2
+      (expect images[0][:intrinsic_width]).to eql 204
+      (expect images[0][:width]).to eql 38.25
+      (expect images[1][:intrinsic_width]).to eql 204
+      (expect images[1][:width]).to eql 153.0
+      (expect images[1][:x]).to eql (images[0][:x] + images[1][:width])
+    end
+
     it 'should not break words in head row when autowidth option is set' do
       pdf = to_pdf <<~'EOS', analyze: true
       [%autowidth]
