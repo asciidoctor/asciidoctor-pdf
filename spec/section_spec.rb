@@ -114,6 +114,31 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect first_chapter_text[:x]).to eql left_content_margin
   end
 
+  it 'should allow theme to control line height per section level' do
+    pdf_theme = {
+      heading_line_height: 1,
+      heading_h2_line_height: 2,
+      heading_h2_font_size: 20,
+      heading_h3_font_size: 20,
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    before
+
+    == Drill
+
+    content
+
+    === Down
+
+    content
+    EOS
+
+    drill_title_text = pdf.find_unique_text 'Drill'
+    down_title_text = pdf.find_unique_text 'Down'
+    drill_section_text, down_section_text = pdf.find_text 'content'
+    (expect drill_title_text[:y] - drill_section_text[:y]).to eql (down_title_text[:y] - down_section_text[:y] + down_title_text[:font_size] * 0.5)
+  end
+
   it 'should not partition section title by default' do
     pdf = to_pdf <<~'EOS', analyze: true
     == Title: Subtitle
