@@ -376,6 +376,14 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.heading_font_family).to eql 'M+ 1mn'
     end
 
+    it 'should only extend base theme once by default' do
+      input_file = fixture_file 'extends-extended-base-theme.yml'
+      theme = subject.load_file input_file, nil, fixtures_dir
+      (expect theme.base_font_color).to eql '333333'
+      (expect theme.base_font_family).to eql 'Times-Roman'
+      (expect theme.link_font_color).to eql '0000FF'
+    end
+
     it 'should force base theme to be loaded if qualified with !important' do
       input_file = fixture_file 'force-extends-base-theme.yml'
       theme = subject.load_file input_file, nil, fixtures_dir

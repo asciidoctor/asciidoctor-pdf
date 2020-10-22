@@ -1,0 +1,5 @@
+extends:
+- ./extended-base-theme.yml
+- base
+link:
+  font_color: 0000FF
