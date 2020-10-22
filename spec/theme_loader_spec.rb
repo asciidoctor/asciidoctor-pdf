@@ -376,8 +376,15 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.heading_font_family).to eql 'M+ 1mn'
     end
 
-    it 'should force theme to be loaded if qualified with !important' do
-      input_file = fixture_file 'force-extends-theme.yml'
+    it 'should force base theme to be loaded if qualified with !important' do
+      input_file = fixture_file 'force-extends-base-theme.yml'
+      theme = subject.load_file input_file, nil, fixtures_dir
+      (expect theme.base_font_color).to eql '000000'
+      (expect theme.base_font_family).to eql 'Helvetica'
+    end
+
+    it 'should force default theme to be loaded if qualified with !important' do
+      input_file = fixture_file 'force-extends-default-theme.yml'
       theme = subject.load_file input_file, nil, fixtures_dir
       (expect theme.base_font_color).to eql '333333'
     end
