@@ -42,17 +42,15 @@ module Asciidoctor::PDF::FormattedText
       raw_image_fragments.each do |fragment|
         drop = scratch
         image_path = fragment[:image_path]
+        image_w = fragment[:image_width]
 
-        # NOTE: only attempt to convert an unresolved (i.e., String) value
-        if ::String === (image_w = fragment[:image_width])
-          # NOTE: intrinsic width is stored behind % symbol
-          if (pctidx = image_w.index '%') && pctidx + 1 < image_w.length
-            pct = (image_w.slice 0, pctidx).to_f / 100
-            intrinsic_w = (image_w.slice pctidx + 1, image_w.length).to_f
-            image_w = [available_w, pct * intrinsic_w].min
-          else
-            image_w = [available_w, pctidx ? (image_w.to_f / 100 * available_w) : image_w.to_f].min
-          end
+        # NOTE: intrinsic width is stored behind % symbol
+        if (pctidx = image_w.index '%') && pctidx + 1 < image_w.length
+          pct = (image_w.slice 0, pctidx).to_f / 100
+          intrinsic_w = (image_w.slice pctidx + 1, image_w.length).to_f
+          image_w = [available_w, pct * intrinsic_w].min
+        else
+          image_w = [available_w, pctidx ? (image_w.to_f / 100 * available_w) : image_w.to_f].min
         end
 
         max_image_h = fragment[:image_fit] == 'line' ? [available_h, doc.font.height].min : available_h
@@ -66,9 +64,7 @@ module Asciidoctor::PDF::FormattedText
               enable_web_requests: doc.allow_uri_read ? (doc.method :load_open_uri).to_proc : false,
               enable_file_requests_with_root: (::File.dirname image_path),
               cache_images: doc.cache_uri
-          svg_size = image_w ? svg_obj.document.sizing :
-              # NOTE: convert intrinsic dimensions to points; constrain to content width
-              (svg_obj.resize width: [svg_obj.document.sizing.output_width, available_w].min)
+          svg_size = svg_obj.document.sizing
           # NOTE: the best we can do is make the image fit within full height of bounds
           if (image_h = svg_size.output_height) > max_image_h
             image_w = (svg_obj.resize height: (image_h = max_image_h)).output_width
@@ -80,17 +76,10 @@ module Asciidoctor::PDF::FormattedText
           # TODO: cache image info based on path (Prawn caches based on SHA1 of content)
           # NOTE: image_obj is constrained to image_width by renderer
           image_obj, image_info = ::File.open(image_path, 'rb') {|fd| doc.build_image_object fd }
-          if image_w
-            if image_w == image_info.width
-              image_h = image_info.height.to_f
-            else
-              image_h = image_w * (image_info.height.fdiv image_info.width)
-            end
-          # NOTE: convert intrinsic dimensions to points; constrain to content width
-          elsif (image_w = to_pt image_info.width, :px) > available_w
-            image_h = (image_w = available_w) * (image_info.height.fdiv image_info.width)
+          if image_w == image_info.width
+            image_h = image_info.height.to_f
           else
-            image_h = to_pt image_info.height, :px
+            image_h = image_w * (image_info.height.fdiv image_info.width)
           end
           # NOTE: the best we can do is make the image fit within full height of bounds
           image_w = (image_h = max_image_h) * (image_info.width.fdiv image_info.height) if image_h > max_image_h
