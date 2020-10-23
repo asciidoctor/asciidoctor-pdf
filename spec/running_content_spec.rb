@@ -1261,6 +1261,31 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect p2_text[1][:string]).to eql '2'
     end
 
+    it 'should allow theme to set padding per side' do
+      pdf_theme = {
+        footer_columns: '<100%',
+        footer_font_color: 'ff0000',
+        footer_recto_padding: 4,
+        footer_verso_padding: 2,
+        footer_recto_center_content: '{page-number}',
+        footer_verso_center_content: '{page-number}',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      first page
+
+      <<<
+
+      second page
+      EOS
+
+      footer_texts = pdf.find_text font_color: 'FF0000'
+      (expect footer_texts).to have_size 2
+      (expect footer_texts[0][:string]).to eql '1'
+      (expect footer_texts[0][:x]).to eql 52.24
+      (expect footer_texts[1][:string]).to eql '2'
+      (expect footer_texts[1][:x]).to eql 50.24
+    end
+
     it 'should coerce non-array value to a string' do
       theme_overrides = {
         header_font_size: 9,
