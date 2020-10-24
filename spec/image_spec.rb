@@ -567,6 +567,22 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
     end
 
+    it 'should embed image from data-uri in inline image', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-svg-with-data-uri-image.pdf'
+      A sign of a good writer: image:svg-with-data-uri-image.svg[pdfwidth=1.27cm]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-with-image.pdf'
+    end
+
+    it 'should embed image from data-uri in block image', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-block-svg-with-data-uri-image.pdf'
+      image::svg-with-data-uri-image.svg[pdfwidth=1.27cm]
+      EOS
+
+      (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
+    end
+
     it 'should use width defined in image if width not specified on inline macro', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-with-own-width.pdf'
       A sign of a good writer: image:svg-with-local-image.svg[]
