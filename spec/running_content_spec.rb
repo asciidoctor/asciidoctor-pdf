@@ -1489,7 +1489,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_border_color: '000000',
       }
 
-      to_file = to_pdf_file 'content', 'running-content-border-style.pdf', enable_footer: true, pdf_theme: pdf_theme, analyze: :line
+      to_file = to_pdf_file 'content', 'running-content-border-style.pdf', enable_footer: true, pdf_theme: pdf_theme
 
       (expect to_file).to visually_match 'running-content-border-style.pdf'
     end

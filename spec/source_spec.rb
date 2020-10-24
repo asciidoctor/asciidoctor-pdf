@@ -335,7 +335,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         style Rouge::Token::Tokens::Name::Function, fg: :green, underline: true
       end
 
-      to_file = to_pdf_file input, 'source-rouge-underline-style.pdf', attribute_overrides: { 'rouge-style' => rouge_style }, analyze: true
+      to_file = to_pdf_file input, 'source-rouge-underline-style.pdf', attribute_overrides: { 'rouge-style' => rouge_style }
 
       (expect to_file).to visually_match 'source-rouge-underline-style.pdf' if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
     end

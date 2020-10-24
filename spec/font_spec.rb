@@ -38,7 +38,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
     it 'should use notdef from original font of glyph not found in any fallback font', visual: true do
       input = ?\u0278 * 10
-      to_file = to_pdf_file input, 'font-notdef-glyph.pdf', analyze: true, attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      to_file = to_pdf_file input, 'font-notdef-glyph.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
       (expect to_file).to visually_match 'font-notdef-glyph.pdf'
     end
 

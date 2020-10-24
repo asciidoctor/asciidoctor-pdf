@@ -588,7 +588,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should use original width of SVG icon if height is less than height of admonition block', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-fit.pdf', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :rect
+      to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-fit.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: font
       :iconsdir:
 
