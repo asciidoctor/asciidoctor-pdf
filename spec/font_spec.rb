@@ -42,6 +42,32 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-notdef-glyph.pdf'
     end
 
+    it 'should use glyph from fallback font if not present in primary font', visual: true do
+      to_file = to_pdf_file '*を*', 'font-fallback-font.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      (expect to_file).to visually_match 'font-fallback-font.pdf'
+    end
+
+    it 'should look for glyph in font for the specified font style when fallback font is enabled' do
+      pdf_theme = {
+        extends: 'default',
+        font_catalog: {
+          'Noto Serif' => {
+            'normal' => 'notoemoji-subset.ttf',
+            'bold' => 'notoserif-bold-subset.ttf',
+          },
+          'M+ 1p Fallback' => {
+            'normal' => 'mplus1p-regular-fallback.ttf',
+            'bold' => 'mplus1p-regular-fallback.ttf',
+          },
+        },
+        font_fallbacks: ['M+ 1p Fallback'],
+      }
+      pdf = to_pdf %(**\u03a9**), analyze: true, pdf_theme: pdf_theme
+      text = (pdf.find_text ?\u03a9)[0]
+      (expect text).not_to be_nil
+      (expect text[:font_name]).to eql 'NotoSerif-Bold'
+    end
+
     it 'should include box drawing glyphs in bundled monospace font', visual: true do
       input_file = Pathname.new fixture_file 'box-drawing.adoc'
       to_file = to_pdf_file input_file, 'font-box-drawing.pdf'
