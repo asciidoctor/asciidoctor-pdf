@@ -583,6 +583,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
     end
 
+    it 'should support non-standard image/jpg MIME type', visual: true do
+      image_data = File.binread fixture_file 'square.jpg'
+      pdf = to_pdf 'image::svg-with-data-uri-jpg-image.svg[pdfwidth=1.27cm]', analyze: :image
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:data]).to eql image_data
+    end
+
     it 'should use width defined in image if width not specified on inline macro', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-with-own-width.pdf'
       A sign of a good writer: image:svg-with-local-image.svg[]
