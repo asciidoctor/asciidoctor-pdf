@@ -47,6 +47,11 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-fallback-font.pdf'
     end
 
+    it 'should use black glyph from fallback font if not present in primary font and theme is default-for-print-with-fallback-font', visual: true do
+      to_file = to_pdf_file '*を*', 'font-fallback-font-for-print.pdf', attribute_overrides: { 'pdf-theme' => 'default-for-print-with-fallback-font' }
+      (expect to_file).to visually_match 'font-fallback-font-for-print.pdf'
+    end
+
     it 'should look for glyph in font for the specified font style when fallback font is enabled' do
       pdf_theme = {
         extends: 'default',

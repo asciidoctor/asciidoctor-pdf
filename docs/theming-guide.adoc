@@ -5426,6 +5426,7 @@ Asciidoctor PDF provides the following behaviors to assist with printing:
 * Disables links from page numbers in index to location of term in document
 
 You activate these printing features by setting the `media` attribute to `print` in the header of your AsciiDoc document (e.g., `:media: print`) or from the API or CLI (e.g., `-a media=print`).
+You may also want to consider using the print-optimized theme, which uses darker, grayscale colors for text and borders (e.g., `-a pdf-theme=default-for-print`).
 
 [#prepress]
 == Publishing Mode (prepress)
@@ -5437,6 +5438,7 @@ In addition to the <<print,printing mode behaviors>>, Asciidoctor PDF provides t
 
 You activate these publishing (aka prepress) features by setting the `media` attribute to `prepress` in the header of your AsciiDoc document (e.g., `:media: prepress`) or from the API or CLI (e.g., `-a media=prepress`).
 The following sections describe the behaviors that this setting activates.
+You may also want to consider using the print-optimized theme, which uses darker, grayscale colors for text and borders (e.g., `-a pdf-theme=default-for-print`).
 
 === Double-Sided Page Margins
 
