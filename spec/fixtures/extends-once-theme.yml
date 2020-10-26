@@ -1,3 +1,0 @@
-extends:
-- ./extended-default-theme.yml
-- ./heading-font-family-theme.yml

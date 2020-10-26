@@ -201,15 +201,20 @@ describe Asciidoctor::PDF::Converter do
 
     context 'theme' do
       it 'should apply the theme at the path specified by pdf-theme' do
-        %w(theme style).each do |term|
-          pdf = to_pdf <<~EOS, analyze: true
-          = Document Title
-          :pdf-#{term}: #{fixture_file 'red-theme.yml', relative: true}
+        with_pdf_theme_file <<~'EOS' do |theme_path|
+        base:
+          font-color: ff0000
+        EOS
+          %w(theme style).each do |term|
+            pdf = to_pdf <<~EOS, analyze: true
+            = Document Title
+            :pdf-#{term}: #{theme_path}
 
-          red text
-          EOS
+            red text
+            EOS
 
-          (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
+            (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
+          end
         end
       end
 
@@ -234,16 +239,21 @@ describe Asciidoctor::PDF::Converter do
       end
 
       it 'should apply the named theme specified by pdf-theme located in the specified pdf-themesdir' do
-        %w(theme style).each do |term|
-          pdf = to_pdf <<~EOS, analyze: true
-          = Document Title
-          :pdf-#{term}: red
-          :pdf-#{term}sdir: #{fixtures_dir}
+        with_pdf_theme_file <<~'EOS' do |theme_path|
+        base:
+          font-color: ff0000
+        EOS
+          %w(theme style).each do |term|
+            pdf = to_pdf <<~EOS, analyze: true
+            = Document Title
+            :pdf-#{term}: #{File.basename theme_path, '-theme.yml'}
+            :pdf-#{term}sdir: #{File.dirname theme_path}
 
-          red text
-          EOS
+            red text
+            EOS
 
-          (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
+            (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
+          end
         end
       end
 
@@ -305,7 +315,7 @@ describe Asciidoctor::PDF::Converter do
       end
 
       it 'should not crash if theme does not specify any keys' do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'extends-nil-empty-theme.yml') }, analyze: true
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'bare-theme.yml') }, analyze: true
         = Document Title
         :doctype: book
 

@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Image' do
   it 'should not crash when converting block image if theme is blank' do
     image_data = File.binread example_file 'wolpertinger.jpg'
-    pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'extends-nil-empty-theme.yml'), 'imagesdir' => examples_dir }
+    pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'bare-theme.yml'), 'imagesdir' => examples_dir }
     image::wolpertinger.jpg[]
     EOS
     images = get_images pdf, 1

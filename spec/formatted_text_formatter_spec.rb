@@ -710,7 +710,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should support font size roles (big and small) using fallback values if not specified in theme' do
-      pdf_theme = build_pdf_theme({ base_font_size: 12 }, (fixture_file 'extends-no-theme.yml'))
+      pdf_theme = build_pdf_theme({ base_font_size: 12 }, (fixture_file 'bare-theme.yml'))
       pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: pdf_theme, analyze: true
       text = pdf.text
       (expect text).to have_size 3
@@ -720,7 +720,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should base font size roles on large and small theme keys if not specified in theme' do
-      pdf_theme = build_pdf_theme({ base_font_size: 12, base_font_size_large: 18, base_font_size_small: 9 }, (fixture_file 'extends-no-theme.yml'))
+      pdf_theme = build_pdf_theme({ base_font_size: 12, base_font_size_large: 18, base_font_size_small: 9 }, (fixture_file 'bare-theme.yml'))
       pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: pdf_theme, analyze: true
       text = pdf.text
       (expect text).to have_size 3

@@ -435,6 +435,17 @@ RSpec.configure do |config|
     (Asciidoctor::PDF::ThemeLoader.load_theme extends).tap {|theme| overrides.each {|k, v| theme[k] = v } }
   end
 
+  def with_pdf_theme_file data
+    theme_path = (theme_file = Tempfile.create ['', '-theme.yml']).path
+    theme_file.write data
+    theme_file.close
+    begin
+      yield theme_path
+    ensure
+      File.unlink theme_path if File.exist? theme_path
+    end
+  end
+
   def extract_outline pdf, list = pdf.outlines
     result = []
     objects = pdf.objects

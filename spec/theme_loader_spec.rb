@@ -344,87 +344,222 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should throw error that includes filename and reason if theme is indented using tabs' do
-      expect { subject.load_file fixture_file 'tab-indentation-theme.yml' }.to raise_exception RuntimeError, /tab-indentation-theme\.yml\): found character .*that cannot start any token/
+      (expect do
+        subject.load_file fixture_file 'tab-indentation-theme.yml'
+      end).to raise_exception RuntimeError, /tab-indentation-theme\.yml\): found character .*that cannot start any token/
     end
 
     it 'should load and extend themes specified by extends array' do
-      input_file = fixture_file 'extended-custom-theme.yml'
-      theme = subject.load_file input_file, nil, fixtures_dir
-      (expect theme.base_align).to eql 'justify'
-      (expect theme.base_font_family).to eql 'Times-Roman'
-      (expect theme.base_font_color).to eql 'FF0000'
+      with_pdf_theme_file <<~'EOS' do |custom_theme_path|
+      base:
+        font-family: Times-Roman
+      EOS
+        with_pdf_theme_file <<~'EOS' do |red_theme_path|
+        base:
+          font-color: ff0000
+        EOS
+          with_pdf_theme_file <<~EOS do |theme_path|
+          extends:
+          - #{File.basename custom_theme_path}
+          - #{File.basename red_theme_path}
+          base:
+            align: justify
+          EOS
+            theme = subject.load_file theme_path, nil, (File.dirname theme_path)
+            (expect theme.base_align).to eql 'justify'
+            (expect theme.base_font_family).to eql 'Times-Roman'
+            (expect theme.base_font_color).to eql 'FF0000'
+          end
+        end
+      end
     end
 
     it 'should extend built-in default theme if value of extends entry is default' do
-      input_file = fixture_file 'extended-red-theme.yml'
-      theme = subject.load_file input_file, nil, fixtures_dir
-      (expect theme.base_font_family).to eql 'Noto Serif'
-      (expect theme.base_font_color).to eql '0000FF'
+      with_pdf_theme_file <<~'EOS' do |red_theme_path|
+      base:
+        font-color: ff0000
+      EOS
+        with_pdf_theme_file <<~EOS do |theme_path|
+        extends:
+        - default
+        - #{File.basename red_theme_path}
+        base:
+          font-color: 0000ff
+        EOS
+          theme = subject.load_file theme_path, nil, (File.dirname theme_path)
+          (expect theme.base_font_family).to eql 'Noto Serif'
+          (expect theme.base_font_color).to eql '0000FF'
+        end
+      end
     end
 
     it 'should extend built-in base theme last if listed last in extends entry' do
-      input_file = fixture_file 'extends-base-last-theme.yml'
-      theme = subject.load_file input_file, nil, fixtures_dir
-      (expect theme.heading_font_color).to eql 'AA0000'
-      (expect theme.base_font_family).to eql 'Helvetica'
+      with_pdf_theme_file <<~'EOS' do |heading_font_color_theme_path|
+      heading:
+        font-color: #AA0000
+      EOS
+        with_pdf_theme_file <<~EOS do |theme_path|
+          extends:
+          - #{File.basename heading_font_color_theme_path}
+          - base
+        EOS
+          theme = subject.load_file theme_path, nil, (File.dirname theme_path)
+          (expect theme.heading_font_color).to eql 'AA0000'
+          (expect theme.base_font_family).to eql 'Helvetica'
+        end
+      end
     end
 
     it 'should only extend theme once by default' do
-      input_file = fixture_file 'extends-once-theme.yml'
-      theme = subject.load_file input_file, nil, fixtures_dir
-      (expect theme.base_font_color).to eql '222222'
-      (expect theme.heading_font_family).to eql 'M+ 1mn'
+      with_pdf_theme_file <<~'EOS' do |extended_default_theme_path|
+      extends: default
+      base:
+        font-color: 222222
+      EOS
+        with_pdf_theme_file <<~'EOS' do |heading_font_family_theme_path|
+        extends: default
+        heading:
+          font-family: M+ 1mn
+        EOS
+          with_pdf_theme_file <<~EOS do |theme_path|
+          extends:
+          - #{File.basename extended_default_theme_path}
+          - #{File.basename heading_font_family_theme_path}
+          EOS
+            theme = subject.load_file theme_path, nil, (File.dirname theme_path)
+            (expect theme.base_font_color).to eql '222222'
+            (expect theme.heading_font_family).to eql 'M+ 1mn'
+          end
+        end
+      end
     end
 
     it 'should only extend base theme once by default' do
-      input_file = fixture_file 'extends-extended-base-theme.yml'
-      theme = subject.load_file input_file, nil, fixtures_dir
-      (expect theme.base_font_color).to eql '333333'
-      (expect theme.base_font_family).to eql 'Times-Roman'
-      (expect theme.link_font_color).to eql '0000FF'
+      with_pdf_theme_file <<~'EOS' do |extended_base_theme_path|
+      extends: base
+      base:
+        font-family: Times-Roman
+        font-color: 333333
+      EOS
+        with_pdf_theme_file <<~EOS do |theme_path|
+        extends:
+        - #{File.basename extended_base_theme_path}
+        - base
+        link:
+          font-color: 0000FF
+        EOS
+          theme = subject.load_file theme_path, nil, (File.dirname theme_path)
+          (expect theme.base_font_color).to eql '333333'
+          (expect theme.base_font_family).to eql 'Times-Roman'
+          (expect theme.link_font_color).to eql '0000FF'
+        end
+      end
     end
 
     it 'should force base theme to be loaded if qualified with !important' do
-      input_file = fixture_file 'force-extends-base-theme.yml'
-      theme = subject.load_file input_file, nil, fixtures_dir
-      (expect theme.base_font_color).to eql '000000'
-      (expect theme.base_font_family).to eql 'Helvetica'
+      with_pdf_theme_file <<~'EOS' do |extended_base_theme_path|
+      extends: base
+      base:
+        font-color: 222222
+        font-family: Times-Roman
+      EOS
+        with_pdf_theme_file <<~EOS do |theme_path|
+        extends:
+        - #{File.basename extended_base_theme_path}
+        - base !important
+        EOS
+          theme = subject.load_file theme_path, nil, (File.dirname theme_path)
+          (expect theme.base_font_color).to eql '000000'
+          (expect theme.base_font_family).to eql 'Helvetica'
+        end
+      end
     end
 
     it 'should force default theme to be loaded if qualified with !important' do
-      input_file = fixture_file 'force-extends-default-theme.yml'
-      theme = subject.load_file input_file, nil, fixtures_dir
-      (expect theme.base_font_color).to eql '333333'
+      with_pdf_theme_file <<~'EOS' do |extended_default_theme_path|
+      extends: default
+      base:
+        font-color: 222222
+        font-family: Times-Roman
+      EOS
+        with_pdf_theme_file <<~EOS do |theme_path|
+        extends:
+        - #{File.basename extended_default_theme_path}
+        - default !important
+        EOS
+          theme = subject.load_file theme_path, nil, (File.dirname theme_path)
+          (expect theme.base_font_color).to eql '333333'
+          (expect theme.base_font_family).to eql 'Noto Serif'
+        end
+      end
     end
 
     it 'should allow font catalog to be merged with font catalog from theme being extended' do
-      input_file = fixture_file 'extra-fonts-theme.yml'
-      theme = subject.load_file input_file, nil, fixtures_dir
-      (expect theme.font_catalog).to be_a Hash
-      (expect theme.font_catalog).to have_size 3
-      (expect theme.font_catalog).to have_key 'Noto Serif'
-      (expect theme.font_catalog).to have_key 'M+ 1mn'
-      (expect theme.font_catalog['Noto Serif']).to have_size 4
-      (expect theme.font_catalog['M+ 1mn']).to have_size 1
-      (expect theme.font_catalog['M+ 1mn']['normal']).to eql '/path/to/mplus1mn-regular.ttf'
-      (expect theme.font_catalog).to have_key 'VLGothic'
-      (expect theme.font_catalog['VLGothic']).to have_size 4
-      (expect theme.font_catalog['VLGothic'].values.uniq).to have_size 1
-      (expect theme.font_catalog['VLGothic']['normal']).to eql '/path/to/vlgothic-regular.ttf'
-      (expect theme.font_fallbacks).to be_a Array
-      (expect theme.font_fallbacks).to eql ['VLGothic']
+      with_pdf_theme_file <<~'EOS' do |theme_path|
+      extends: default
+      font:
+        catalog:
+          merge: true
+          M+ 1mn:
+            normal: /path/to/mplus1mn-regular.ttf
+          VLGothic:
+            normal: &VLGothic /path/to/vlgothic-regular.ttf
+            bold: *VLGothic
+            italic: *VLGothic
+            bold_italic: *VLGothic
+        fallbacks:
+        - VLGothic
+      EOS
+        theme = subject.load_file theme_path
+        (expect theme.font_catalog).to be_a Hash
+        (expect theme.font_catalog).to have_size 3
+        (expect theme.font_catalog).to have_key 'Noto Serif'
+        (expect theme.font_catalog).to have_key 'M+ 1mn'
+        (expect theme.font_catalog['Noto Serif']).to have_size 4
+        (expect theme.font_catalog['M+ 1mn']).to have_size 1
+        (expect theme.font_catalog['M+ 1mn']['normal']).to eql '/path/to/mplus1mn-regular.ttf'
+        (expect theme.font_catalog).to have_key 'VLGothic'
+        (expect theme.font_catalog['VLGothic']).to have_size 4
+        (expect theme.font_catalog['VLGothic'].values.uniq).to have_size 1
+        (expect theme.font_catalog['VLGothic']['normal']).to eql '/path/to/vlgothic-regular.ttf'
+        (expect theme.font_fallbacks).to be_a Array
+        (expect theme.font_fallbacks).to eql ['VLGothic']
+      end
     end
 
     it 'should not fail to merge font catalog if inherited theme does not define a font catalog' do
-      input_file = fixture_file 'fonts-theme.yml'
-      theme = subject.load_file input_file, nil, fixtures_dir
-      (expect theme.font_catalog).to be_a Hash
-      (expect theme.font_catalog).to have_size 2
-      (expect theme.font_catalog).to have_key 'M+ 1p'
-      (expect theme.font_catalog).to have_key 'VLGothic'
-      (expect theme.font_fallbacks).to be_a Array
-      (expect theme.font_fallbacks).to eql ['VLGothic']
-      (expect theme.base_font_family).to eql 'M+ 1p'
+      with_pdf_theme_file <<~'EOS' do |extends_no_theme_path|
+      extends: ~
+      base:
+        font_family: Times-Roman
+      EOS
+        with_pdf_theme_file <<~EOS do |theme_path|
+        extends: #{File.basename extends_no_theme_path}
+        font:
+          catalog:
+            merge: true
+            M+ 1p:
+              normal: /path/to/mplus1p-regular.ttf
+            VLGothic:
+              normal: &VLGothic /path/to/vlgothic-regular.ttf
+              bold: *VLGothic
+              italic: *VLGothic
+              bold_italic: *VLGothic
+          fallbacks:
+          - VLGothic
+        base:
+          font_family: M+ 1p
+        EOS
+          theme = subject.load_file theme_path, nil, (File.dirname theme_path)
+          (expect theme.font_catalog).to be_a Hash
+          (expect theme.font_catalog).to have_size 2
+          (expect theme.font_catalog).to have_key 'M+ 1p'
+          (expect theme.font_catalog).to have_key 'VLGothic'
+          (expect theme.font_fallbacks).to be_a Array
+          (expect theme.font_fallbacks).to eql ['VLGothic']
+          (expect theme.base_font_family).to eql 'M+ 1p'
+        end
+      end
     end
   end
 
@@ -458,34 +593,61 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not inherit from base theme if custom theme extends nothing' do
-      theme = subject.load_theme fixture_file 'extends-nil-empty-theme.yml'
+      theme = subject.load_theme fixture_file 'bare-theme.yml'
       (expect theme.table_border_style).to be_nil
     end
 
     it 'should not inherit from base theme if custom theme extends default' do
-      theme = subject.load_theme 'extended-default-theme.yml', fixtures_dir
-      (expect theme.table_border_style).to be_nil
+      with_pdf_theme_file <<~'EOS' do |theme_path|
+      extends: default
+      base:
+        font-color: 222222
+      EOS
+        theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
+        (expect theme.table_border_style).to be_nil
+      end
     end
 
     it 'should not inherit from base theme if custom theme extends nil' do
-      theme = subject.load_theme 'extended-extends-nil-theme.yml', fixtures_dir
-      (expect theme.base_font_family).to eql 'Times-Roman'
-      (expect theme.heading_font_family).to eql 'Times-Roman'
-      (expect theme.base_font_size).to be_nil
+      with_pdf_theme_file <<~'EOS' do |extends_no_theme_path|
+      extends: ~
+      base:
+        font-family: Times-Roman
+      EOS
+        with_pdf_theme_file <<~EOS do |theme_path|
+        extends: #{File.basename extends_no_theme_path}
+        heading:
+          font-family: $base-font-family
+        EOS
+          theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
+          (expect theme.base_font_family).to eql 'Times-Roman'
+          (expect theme.heading_font_family).to eql 'Times-Roman'
+          (expect theme.base_font_size).to be_nil
+        end
+      end
     end
 
     it 'should not inherit from base theme if custom theme extends theme that resolves to nil' do
-      theme = subject.load_theme 'extends-nil-theme.yml', fixtures_dir
-      (expect theme.base_font_color).to eql '000000'
-      (expect theme.base_font_family).to be_nil
+      with_pdf_theme_file %(extends: #{fixture_file 'nil-theme.yml'}) do |theme_path|
+        theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
+        (expect theme.base_font_color).to eql '000000'
+        (expect theme.base_font_family).to be_nil
+      end
     end
 
     it 'should inherit from base theme if custom theme extends base' do
       base_theme = subject.load_base_theme
-      theme = subject.load_theme fixture_file 'extended-base-theme.yml'
-      (expect theme.base_font_family).not_to eql base_theme.base_font_family
-      (expect theme.base_font_color).not_to eql base_theme.base_font_color
-      (expect theme.base_font_size).to eql base_theme.base_font_size
+      with_pdf_theme_file <<~'EOS' do |theme_path|
+      extends: base
+      base:
+        font_family: Times-Roman
+        font_color: 333333
+      EOS
+        theme = subject.load_theme theme_path
+        (expect theme.base_font_family).not_to eql base_theme.base_font_family
+        (expect theme.base_font_color).not_to eql base_theme.base_font_color
+        (expect theme.base_font_size).to eql base_theme.base_font_size
+      end
     end
 
     it 'should look for file ending in -theme.yml when resolving custom theme' do
@@ -511,15 +673,33 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should load extended themes relative to theme file when theme_path is not specified' do
-      theme = subject.load_theme fixture_file 'extended-custom-theme.yml'
-      (expect theme.__dir__).to eql fixtures_dir
-      (expect theme.base_align).to eql 'justify'
-      (expect theme.base_font_family).to eql 'Times-Roman'
-      (expect theme.base_font_color).to eql 'FF0000'
+      with_pdf_theme_file <<~'EOS' do |custom_theme_path|
+      base:
+        font-family: Times-Roman
+      EOS
+        with_pdf_theme_file <<~'EOS' do |red_theme_path|
+        base:
+          font-color: ff0000
+        EOS
+          with_pdf_theme_file <<~EOS do |theme_path|
+          extends:
+          - #{File.basename custom_theme_path}
+          - #{File.basename red_theme_path}
+          base:
+            align: justify
+          EOS
+            theme = subject.load_theme theme_path
+            (expect theme.__dir__).to eql File.dirname theme_path
+            (expect theme.base_align).to eql 'justify'
+            (expect theme.base_font_family).to eql 'Times-Roman'
+            (expect theme.base_font_color).to eql 'FF0000'
+          end
+        end
+      end
     end
 
     it 'should ensure required keys are set in non-built-in theme' do
-      theme = subject.load_theme 'extends-nil-empty-theme.yml', fixtures_dir
+      theme = subject.load_theme 'bare-theme.yml', fixtures_dir
       (expect theme.__dir__).to eql fixtures_dir
       (expect theme.base_align).to eql 'left'
       (expect theme.base_line_height).to be 1
@@ -530,26 +710,44 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should link code and conum font family to literal font family by default' do
-      theme = subject.load_theme 'literal-font-family-theme.yml', fixtures_dir
-      (expect theme.__dir__).to eql fixtures_dir
-      (expect theme.literal_font_family).to eql 'M+ 1mn'
-      (expect theme.code_font_family).to eql 'M+ 1mn'
-      (expect theme.conum_font_family).to eql 'M+ 1mn'
+      with_pdf_theme_file <<~'EOS' do |theme_path|
+      extends: ~
+      literal:
+        font-family: M+ 1mn
+      EOS
+        theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
+        (expect theme.__dir__).to eql (File.dirname theme_path)
+        (expect theme.literal_font_family).to eql 'M+ 1mn'
+        (expect theme.code_font_family).to eql 'M+ 1mn'
+        (expect theme.conum_font_family).to eql 'M+ 1mn'
+      end
     end
 
     it 'should link sidebar and abstract title font family to heading font family if only latter is set' do
-      theme = subject.load_theme 'heading-font-family-theme.yml', fixtures_dir
-      (expect theme.__dir__).to eql fixtures_dir
-      (expect theme.heading_font_family).to eql 'M+ 1mn'
-      (expect theme.abstract_title_font_family).to eql 'M+ 1mn'
-      (expect theme.sidebar_title_font_family).to eql 'M+ 1mn'
+      with_pdf_theme_file <<~'EOS' do |theme_path|
+      extends: default
+      heading:
+        font-family: M+ 1mn
+      EOS
+        theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
+        (expect theme.__dir__).to eql (File.dirname theme_path)
+        (expect theme.heading_font_family).to eql 'M+ 1mn'
+        (expect theme.abstract_title_font_family).to eql 'M+ 1mn'
+        (expect theme.sidebar_title_font_family).to eql 'M+ 1mn'
+      end
     end
 
     it 'should not overwrite required keys with default values if already set' do
-      theme = subject.load_theme 'extended-default-theme.yml', fixtures_dir
-      (expect theme.base_align).to eql 'justify'
-      (expect theme.code_font_family).to eql 'M+ 1mn'
-      (expect theme.conum_font_family).to eql 'M+ 1mn'
+      with_pdf_theme_file <<~'EOS' do |theme_path|
+      extends: default
+      base:
+        font-color: 222222
+      EOS
+        theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
+        (expect theme.base_align).to eql 'justify'
+        (expect theme.code_font_family).to eql 'M+ 1mn'
+        (expect theme.conum_font_family).to eql 'M+ 1mn'
+      end
     end
   end
 
