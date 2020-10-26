@@ -361,7 +361,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           with_pdf_theme_file <<~EOS do |theme_path|
           extends:
           - #{File.basename custom_theme_path}
-          - #{File.basename red_theme_path}
+          - ./#{File.basename red_theme_path}
           base:
             align: justify
           EOS
