@@ -2,6 +2,6 @@
 /bin/* eol=lf
 *.adoc eol=lf
 *.pdf -text
-*.rb eol=lf
+*.rb eol=lf diff=ruby
 *.svg eol=lf
 *.yml eol=lf
