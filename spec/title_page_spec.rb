@@ -441,6 +441,18 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect to_file).to visually_match 'title-page-background-image-svg-with-cover.pdf'
     end
 
+    it 'should not create extra blank page when document has PDF cover page and doctype is book' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+      :front-cover-image: image:red-green-blue.pdf[page=1]
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      doctitle_text = pdf.find_unique_text 'Document Title'
+      (expect doctitle_text[:page_number]).to eql 2
+    end
+
     it 'should be able to set size and position of title page background image', visual: true do
       to_file = to_pdf_file <<~'EOS', 'title-page-background-image-size-position.pdf'
       = Document Title
