@@ -2436,9 +2436,9 @@ module Asciidoctor
           if (role = node.role)
             attrs << %( class="#{role}")
           end
-          if (@media ||= doc.attr 'media', 'screen') != 'screen' && (target.start_with? 'mailto:') && (doc.attr? 'hide-uri-scheme')
-            bare_target = target.slice 7, target.length
-            node.add_role 'bare' if (text = node.text) == bare_target
+          if (@media ||= doc.attr 'media', 'screen') != 'screen' && (target.start_with? 'mailto:')
+            node.add_role 'bare' if (bare_target = target.slice 7, target.length) == (text = node.text)
+            bare_target = target unless doc.attr? 'hide-uri-scheme'
           else
             bare_target = target
             text = node.text

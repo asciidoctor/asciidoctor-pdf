@@ -183,7 +183,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       (expect link_annotation[:A][:URI]).to eql 'mailto:doc.writer@example.org'
 
       pdf = to_pdf input, attribute_overrides: { 'media' => 'prepress' }, analyze: true
-      (expect pdf.lines[0]).to eql 'Send message to doc.writer@example.org [mailto:doc.writer@example.org].'
+      (expect pdf.lines[0]).to eql 'Send message to doc.writer@example.org.'
     end
 
     it 'should show mailto address of email link when media=prepress' do
