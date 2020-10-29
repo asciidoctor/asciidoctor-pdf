@@ -1050,14 +1050,50 @@ Each time a theme is loaded, the keys are overlaid onto the keys from the previo
 |Key |Value Type |Example
 
 |extends
-|String or Array
+|String or Array +
 (default: [])
 |extends:
 - default
 - ./brand-theme.yml
 |===
 
-=== Extending the Font Catalog
+=== Font
+
+The font key is where you declare custom fonts (`catalog` key) and configure the fallback fonts (`fallbacks` key).
+
+The data format of the `catalog` key is a map.
+Each key is the name of the font that you can use to refer to the font elsewhere in the theme.
+The value is either a font path (which is used for all font styles) or another map that specifies a font path to each of the four font styles.
+You can also configure the `catalog` to merge entries from an inherited font catalog.
+See <<Extending the Font Catalog>>.
+
+The data format of the `fallbacks` key is an array.
+The values of the array are the font names declared in the `catalog` (or a name inherited from another theme).
+These fallbacks are used, in the order listed, when a glyph cannot be found in the primary font for a given element.
+
+[cols="1,2,5l"]
+|===
+|Key |Value Type |Example
+
+|catalog
+|Map
+|font:
+  catalog:
+    Noto Serif:
+      normal: GEM_FONTS_DIR/notoserif-regular-subset.ttf
+      bold: GEM_FONTS_DIR/notoserif-bold-subset.ttf
+      italic: GEM_FONTS_DIR/notoserif-italic-subset.ttf
+      bold_italic: GEM_FONTS_DIR/notoserif-bold_italic-subset.ttf
+
+|fallbacks
+|Array
+|font:
+  fallbacks:
+  - M+ 1p Fallback
+  - Noto Emoji
+|===
+
+==== Extending the Font Catalog
 
 If you define a <<Custom fonts,font catalog>> in a theme that extends from `default`, and you want to continue to use the bundled fonts in your theme, you either have to redeclare the bundled fonts:
 
