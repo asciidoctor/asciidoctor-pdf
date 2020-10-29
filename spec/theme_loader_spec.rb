@@ -374,6 +374,19 @@ describe Asciidoctor::PDF::ThemeLoader do
       end
     end
 
+    it 'should be able to extend them from absolute path' do
+      with_pdf_theme_file <<~EOS do |theme_path|
+      extends:
+      - #{fixture_file 'custom-theme.yml'}
+      base:
+        align: justify
+      EOS
+        theme = subject.load_file theme_path
+        (expect theme.base_align).to eql 'justify'
+        (expect theme.base_font_family).to eql 'Times-Roman'
+      end
+    end
+
     it 'should extend built-in default theme if value of extends entry is default' do
       with_pdf_theme_file <<~'EOS' do |red_theme_path|
       base:
