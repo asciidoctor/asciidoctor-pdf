@@ -1221,11 +1221,27 @@ Start by creating a Ruby file named [.path]_optimizer-hexapdf.rb_, then populate
 .optimizer-hexapdf.rb
 [source,ruby]
 ----
+require 'hexapdf/cli'
+
 class Asciidoctor::PDF::Optimizer
-  def initialize *; end
+  def initialize(*)
+    app = HexaPDF::CLI::Application.new
+    app.instance_variable_set :@force, true
+    @optimize = app.main_command.commands['optimize']
+  end
 
   def optimize_file path
-    system 'hexapdf', 'optimize', '--compress-pages', '--force', path, path, exception: true
+    options = @optimize.instance_variable_get :@out_options
+    options.compress_pages = true
+    #options.object_streams = :preserve
+    #options.xref_streams = :preserve
+    #options.streams = :preserve # or :uncompress
+    @optimize.execute path, path
+    nil
+  rescue
+    # retry without page compression, which can sometimes fail
+    options.compress_pages = false
+    @optimize.execute path, path
     nil
   end
 end
@@ -1241,7 +1257,8 @@ To see more options that `hexapdf optimize` offers, run:
 
  $ hexapdf help optimize
 
-For example, to make the source of the PDF a bit more readable, set the stream-related options to `preserve` (i.e., `--streams preserve`).
+For example, to make the source of the PDF a bit more readable (though less optimized), set the stream-related options to `preserve` (e.g.,, `--streams preserve` from the CLI or `options.streams = :preserve` from the API).
+You can also disable page compressioin (e.g., `--no-compress-pages` from the CLI or `options.compress_pages = false` from the API).
 
 hexapdf also allows you to add password protection to your PDF, if that's something you're interested in doing.
 
