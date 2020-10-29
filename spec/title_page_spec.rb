@@ -432,7 +432,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       Author Name
       :doctype: book
       :front-cover-image: image:blue-letter.pdf[]
-      :title-page-background-image: image:example-watermark.svg[]
+      :title-page-background-image: image:example-stamp.svg[]
       :page-background-image: image:watermark.svg[]
 
       content
