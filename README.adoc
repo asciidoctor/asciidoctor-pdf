@@ -1216,8 +1216,9 @@ It merely compresses the objects in the PDF and prunes any unreachable reference
 But given how much waste Prawn leaves behind, this turns out to reduce the file size substantially.
 
 You can hook this command directly into the converter by providing your own implementation of the `Optimizer` class.
-Start by creating a Ruby file named [.path]_hexapdf-optimizer.rb_, then populate it with the following code:
+Start by creating a Ruby file named [.path]_optimizer-hexapdf.rb_, then populate it with the following code:
 
+.optimizer-hexapdf.rb
 [source,ruby]
 ----
 class Asciidoctor::PDF::Optimizer
@@ -1232,7 +1233,7 @@ end
 
 To activate your custom optimizer, load this file when invoking the `asciidoctor-pdf` using the `-r` flag and set the `optimize` attribute as well using the `-a` flag.
 
- $ asciidoctor-pdf -r ./hexapdf-optimizer.rb -a optimize basic-example.adoc
+ $ asciidoctor-pdf -r ./optimizer-hexapdf.rb -a optimize basic-example.adoc
 
 Now you can convert and optimize all in one go.
 
