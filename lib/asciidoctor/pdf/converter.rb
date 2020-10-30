@@ -4276,7 +4276,7 @@ module Asciidoctor
         end
         symbolic_paths = opts.delete :symbolic_paths
         if image_path
-          if symbolic_paths && (symbolic_paths.include? image_path)
+          if symbolic_paths&.include? image_path
             return [image_path, {}]
           elsif image_path == 'none'
             return []
