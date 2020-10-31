@@ -35,6 +35,8 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'asciidoctor', '>= 1.5.3', '< 3.0.0'
   s.add_runtime_dependency 'prawn', '~> 2.2.0'
+  # NOTE ttfunk 1.6 is not compatible with Ruby 2.3, so lock version to 1.5 for consistency
+  s.add_runtime_dependency 'ttfunk', ['~> 1.5.0'], ['>= 1.5.1']
   # NOTE must use prawn-table from master branch (defined in Gemfile) for full functionality
   s.add_runtime_dependency 'prawn-table', '~> 0.2.0'
   s.add_runtime_dependency 'prawn-templates', '~> 0.1.0'

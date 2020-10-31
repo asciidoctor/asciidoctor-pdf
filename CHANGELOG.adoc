@@ -17,10 +17,6 @@ Bug Fixes::
 * use oembed API over HTTPS to get thumbnail for Vimeo video
 * use conum font family defined in theme for conum in verbatim block (#1611)
 
-Compliance::
-
-* release lock on ttfunk version (1.6 produces slightly different output from 1.5 for certain missing glyphs)
-
 == 1.5.3 (2020-02-28) - @mojavelinux
 
 Bug Fixes::
