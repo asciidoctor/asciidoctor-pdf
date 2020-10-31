@@ -49,6 +49,8 @@ jobs:
     - bundle exec ruby scripts/switch-to-prawn-master.rb
     - rm -f Gemfile.lock
     - bundle --jobs 3 --retry 3
+  - rvm: *default_ruby
+    env: PRAWN_VERSION='~> 2.3'
   - stage: release gem
     rvm: *default_ruby
     script: skip
