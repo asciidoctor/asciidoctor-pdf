@@ -42,7 +42,7 @@ module Asciidoctor::PDF::FormattedText
       raw_image_fragments.each do |fragment|
         drop = scratch
         image_path = fragment[:image_path]
-        image_w = fragment[:image_width]
+        image_w = fragment[:image_width] || '100%'
 
         # NOTE: intrinsic width is stored behind % symbol
         if (pctidx = image_w.index '%') && pctidx + 1 < image_w.length

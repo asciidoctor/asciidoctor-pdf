@@ -1537,6 +1537,16 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       image = images[0]
       (expect image[:width]).to eql expected_width
     end
+
+    it 'should not fail to parse raw image HTML if width attribute not specified' do
+      pdf = to_pdf <<~EOS, analyze: :image
+      Look for pass:[<img src="#{fixture_file 'logo.png'}" alt="no cow">] when you buy.
+      EOS
+
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:width]).to eql 498.8
+    end
   end
 
   context 'Link' do
