@@ -25,14 +25,18 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect pdf.pages[0][:strings]).not_to include 'Document Title'
     end
 
-    it 'should include title page if showtitle attribute is unset (as it has no effect)' do
+    it 'should not include title page if showtitle attribute is unset when Asciidoctor >= 2.0.11' do
       pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
       = Document Title
       :!showtitle:
 
       body
       EOS
-      (expect pdf.pages[0][:strings]).to include 'Document Title'
+      if (Gem::Version.new Asciidoctor::VERSION) >= (Gem::Version.new '2.0.11')
+        (expect pdf.pages[0][:strings]).not_to include 'Document Title'
+      else
+        (expect pdf.pages[0][:strings]).to include 'Document Title'
+      end
     end
 
     it 'should place document title on title page when doctype is book' do
