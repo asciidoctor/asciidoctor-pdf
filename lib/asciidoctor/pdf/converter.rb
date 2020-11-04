@@ -2515,7 +2515,8 @@ module Asciidoctor
             label = index
           end
           %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{label}</a>]</sup>)
-        elsif node.type == :xref
+        # NOTE: Asciidoctor 2.0.11 does not set type for unresolved footnote reference
+        elsif (node.type || :xref) == :xref
           %(<sup><font color="#{theme.role_unresolved_font_color}">[#{node.text}]</font></sup>)
         else
           log :warn, %(unknown footnote type: #{node.type.inspect})
