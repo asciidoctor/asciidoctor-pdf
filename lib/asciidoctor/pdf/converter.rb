@@ -2519,6 +2519,7 @@ module Asciidoctor
           %(<sup><font color="#{theme.role_unresolved_font_color}">[#{node.text}]</font></sup>)
         else
           log :warn, %(unknown footnote type: #{node.type.inspect})
+          nil
         end
       end
 
