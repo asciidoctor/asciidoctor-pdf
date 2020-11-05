@@ -28,16 +28,15 @@ module Asciidoctor::PDF::FormattedText
         image_top = fragment.top - ((fragment.height - data[:image_height]) / 2.0)
       end
       image_left = fragment.left + ((fragment.width - data[:image_width]) / 2.0)
-      case data[:image_format]
-      when 'svg'
-        (image_obj = data[:image_obj]).options[:at] = [image_left, image_top]
+      if Prawn::SVG::Interface === (image_obj = data[:image_obj])
+        image_obj.options[:at] = [image_left, image_top]
         # NOTE: prawn-svg messes with the cursor; use float to workaround
         pdf.float do
           pdf.character_spacing(data[:actual_character_spacing]) { image_obj.draw }
           image_obj.document.warnings.each {|img_warning| logger.warn %(problem encountered in image: #{data[:image_path]}; #{img_warning}) }
         end
       else
-        pdf.embed_image data[:image_obj], data[:image_info], at: [image_left, image_top], width: data[:image_width], height: data[:image_height]
+        pdf.embed_image image_obj, data[:image_info], at: [image_left, image_top], width: data[:image_width], height: data[:image_height]
       end
       # ...or use the public interface, loading the image again
       #pdf.image data[:image_path], at: [image_left, image_top], width: data[:image_width]
