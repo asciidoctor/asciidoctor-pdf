@@ -76,13 +76,10 @@ module Asciidoctor::PDF::FormattedText
           # TODO: cache image info based on path (Prawn caches based on SHA1 of content)
           # NOTE: image_obj is constrained to image_width by renderer
           image_obj, image_info = ::File.open(image_path, 'rb') {|fd| doc.build_image_object fd }
-          if image_w == image_info.width
-            image_h = image_info.height.to_f
-          else
-            image_h = image_w * (image_info.height.fdiv image_info.width)
+          if (image_h = image_w * (image_info.height.fdiv image_info.width)) > max_image_h
+            # NOTE: the best we can do is make the image fit within full height of bounds
+            image_w = (image_h = max_image_h) * (image_info.width.fdiv image_info.height)
           end
-          # NOTE: the best we can do is make the image fit within full height of bounds
-          image_w = (image_h = max_image_h) * (image_info.width.fdiv image_info.height) if image_h > max_image_h
           fragment[:image_obj] = image_obj
           fragment[:image_info] = image_info
         end
