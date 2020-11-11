@@ -38,8 +38,7 @@ endif::[]
 :url-graphicsmagick: http://www.graphicsmagick.org
 
 ifdef::status[]
-image:https://img.shields.io/travis/asciidoctor/asciidoctor-pdf/master.svg[Build Status (Travis CI),link=https://travis-ci.org/asciidoctor/asciidoctor-pdf]
-image:https://github.com/asciidoctor/asciidoctor-pdf/workflows/CI/badge.svg[Build Status (GitHub Actions),link=https://github.com/asciidoctor/asciidoctor-pdf/actions?query=workflow%3ACI]
+image:{url-project-repo}/workflows/CI/badge.svg[Build Status (GitHub Actions),link={url-project-repo}/actions?query=workflow%3ACI]
 image:https://img.shields.io/gem/v/asciidoctor-pdf.svg[Latest Release, link={url-gem}]
 image:https://img.shields.io/badge/license-MIT-blue.svg[MIT License, link=#copyright]
 endif::[]
