@@ -522,7 +522,7 @@ RSpec.configure do |config|
   end
 
   def windows?
-    RbConfig::CONFIG['host_os'] =~ /win|ming/
+    /mswin|msys|mingw/.match? RbConfig::CONFIG['host_os']
   end
 
   def home_dir
