@@ -1464,7 +1464,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       ----
       key: val # <1>
       ----
-      
+
       '''
 
       <1> key-value pair

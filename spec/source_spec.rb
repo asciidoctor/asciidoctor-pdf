@@ -388,7 +388,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       to_file = to_pdf_file <<~'EOS', 'source-rouge-bg.pdf'
       :source-highlighter: rouge
       :rouge-style: pastie
-      
+
       [source,ruby]
       ----
       type, name = ARGV

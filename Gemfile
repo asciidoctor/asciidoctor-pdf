@@ -20,8 +20,8 @@ group :docs do
 end
 
 group :lint do
-  gem 'rubocop', '~> 0.92.0', require: false
-  gem 'rubocop-rspec', '~> 1.43.0', require: false
+  gem 'rubocop', '~> 1.2.0', require: false
+  gem 'rubocop-rspec', '~> 2.0.0', require: false
 end
 
 group :coverage do

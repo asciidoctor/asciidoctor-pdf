@@ -2494,11 +2494,7 @@ module Asciidoctor
       end
 
       def convert_inline_callout node
-        if (conum_font_family = @theme.conum_font_family) != font_name
-          result = %(<font name="#{conum_font_family}">#{conum_glyph node.text.to_i}</font>)
-        else
-          result = conum_glyph node.text.to_i
-        end
+        result = (conum_font_family = @theme.conum_font_family) == font_name ? (conum_glyph node.text.to_i) : %(<font name="#{conum_font_family}">#{conum_glyph node.text.to_i}</font>)
         if (conum_font_color = @theme.conum_font_color)
           # NOTE: CMYK value gets flattened here, but is restored by formatted text parser
           result = %(<font color="#{conum_font_color}">#{result}</font>)
@@ -3558,12 +3554,12 @@ module Asciidoctor
               end
               tot_width = 0
               side_colspecs = colspecs.map {|col, spec|
-                if (alignment_char = spec.chr).to_i.to_s != alignment_char
-                  alignment = AlignmentTable[alignment_char]
-                  rel_width = (spec.slice 1, spec.length).to_f
-                else
+                if (alignment_char = spec.chr).to_i.to_s == alignment_char
                   alignment = :left
                   rel_width = spec.to_f
+                else
+                  alignment = AlignmentTable[alignment_char]
+                  rel_width = (spec.slice 1, spec.length).to_f
                 end
                 tot_width += rel_width
                 [col, { align: alignment, width: rel_width, x: 0 }]

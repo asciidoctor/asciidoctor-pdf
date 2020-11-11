@@ -10,6 +10,16 @@ Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 Layout/CaseIndentation:
   EnforcedStyle: end
+Lint/DuplicateRegexpCharacterClassElement:
+  Enabled: true
+Lint/EmptyBlock:
+  Enabled: false
+Lint/NoReturnInBeginEndBlocks:
+  Enabled: true
+Lint/ToEnumArguments:
+  Enabled: true
+Lint/UnmodifiedReduceAccumulator:
+  Enabled: true
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
 Layout/SpaceInsideBlockBraces:
@@ -115,6 +125,8 @@ Security/Open:
 Style/AccessorGrouping:
   Enabled: true
   EnforcedStyle: separated
+Style/ArgumentsForwarding:
+  Enabled: true
 Style/ArrayCoercion:
   Enabled: true
 Style/Attr:
@@ -133,6 +145,8 @@ Style/CharacterLiteral:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
+Style/CollectionCompact:
+  Enabled: true
 Style/CombinableLoops:
   Enabled: true
 Style/CommentAnnotation:
@@ -145,6 +159,8 @@ Style/CommentAnnotation:
 Style/ConditionalAssignment:
   EnforcedStyle: assign_inside_condition
   IncludeTernaryExpressions: false
+Style/DocumentDynamicEvalDefinition:
+  Enabled: true
 Style/Documentation:
   Enabled: false # FIXME reenable me
 Style/DoubleNegation:
@@ -194,6 +210,8 @@ Style/MultilineTernaryOperator:
   Enabled: false
 Style/MultipleComparison:
   Enabled: false
+Style/NegatedIfElseCondition:
+  Enabled: true
 Style/NestedTernaryOperator:
   Enabled: false
 Style/NumericPredicate:
@@ -239,6 +257,8 @@ Style/StringConcatenation:
   Enabled: false
 Style/SlicingWithRange:
   Enabled: false
+Style/SwapValues:
+  Enabled: true
 Style/SymbolArray:
   EnforcedStyle: brackets
 Style/TernaryParentheses:
