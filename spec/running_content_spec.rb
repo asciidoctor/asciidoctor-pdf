@@ -1546,7 +1546,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
         (expect to_file).to visually_match 'running-content-image-fit.pdf'
       end
-    end
+    end unless !windows? && RUBY_ENGINE == 'jruby' && (Gem::Version.new JRUBY_VERSION) < (Gem::Version.new '9.2.0.0')
 
     it 'should not overlap border when scaling image to fit content area', visual: true do
       pdf_theme = build_pdf_theme \
@@ -1585,7 +1585,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
         (expect to_file).to visually_match 'running-content-image-fit.pdf'
       end
-    end
+    end unless !windows? && RUBY_ENGINE == 'jruby' && (Gem::Version.new JRUBY_VERSION) < (Gem::Version.new '9.2.0.0')
 
     it 'should scale image down to height when fit=scale-down', visual: true do
       %w(pdfwidth=30.60 fit=scale-down).each_with_index do |image_attrlist, idx|
