@@ -151,6 +151,10 @@ Compliance::
 * rename Optimizer#generate_file method to Optimizer#optimize_file
 * drop use of the undocumented vertical_spacing key from the built-in themes
 
+Build / Infrastructure::
+
+* Migrate Linux CI jobs to GitHub Actions (#1814)
+
 == 1.5.3 (2020-02-28) - @mojavelinux
 
 Bug Fixes::

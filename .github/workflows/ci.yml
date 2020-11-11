@@ -1,27 +1,69 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+    branches:
+    - '**'
+    tags-ignore:
+    - '**'
+  pull_request:
+  schedule:
+  - cron: '0 2 * * *'
 jobs:
   activate:
+    if: "!endsWith(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
-    if: "! endsWith(github.event.head_commit.message, '[skip ci]')"
     steps:
-    - run: echo ok go
-  build:
+    - name: Proceed
+      run: echo ok go
+  lint:
     needs: activate
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 5
+    - name: Install Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '2.7'
+    - name: Configure Bundler
+      run: |
+        bundle config --local path .bundle/gems
+        bundle config --local without coverage docs
+    - name: Install dependencies
+      run: bundle --jobs 3 --retry 3
+    - name: Run linter
+      run: bundle exec rake lint
+  build:
+    needs: lint
     strategy:
       matrix:
-        ruby: [jruby, '2.7', '2.6', '2.5']
+        os: [ubuntu-latest, windows-latest]
+        ruby: [jruby-9.2, '2.5', '2.6', '2.7']
+        prawn: [~]
+        exclude:
+        - os: ubuntu-latest
+          ruby: '2.7'
+        include:
+        - os: ubuntu-latest
+          ruby: '2.5'
+          rouge-version: '~> 2.0.0'
+        - os: ubuntu-latest
+          ruby: '2.7'
+          prawn: dev
+        - os: ubuntu-latest
+          ruby: '2.7'
+          primary: true
+    runs-on: ${{ matrix.os }}
     env:
-      PYGMENTS_VERSION: '~> 1.2.0'
+      JRUBY_OPTS: '-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-Xss2m -Xcompile.invokedynamic=false'
       RGHOST_VERSION: '0.9.7'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Install Ghostscript
-      uses: crazy-max/ghaction-chocolatey@v1
       with:
-        args: install --no-progress ghostscript
+        fetch-depth: 5
     - name: Install Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -29,14 +71,35 @@ jobs:
     - name: Configure Bundler
       run: |
         bundle config --local path .bundle/gems
-        bundle config --local without docs lint coverage
+        bundle config --local without coverage docs lint
+    - name: Set Pygments version
+      if: "!(matrix.os == 'windows-latest' && contains(matrix.ruby, 'jruby'))"
+      run: echo 'PYGMENTS_VERSION=~> 1.2.0' >> $GITHUB_ENV
+      shell: bash
+    - name: Activate Gmagick
+      if: matrix.primary
+      run: |
+        echo 'PRAWN_GMAGICK_VERSION=0.0.9' >> $GITHUB_ENV
+        sudo apt-get install libgraphicsmagick1-dev
+    - name: Install Ghostscript (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get install ghostscript poppler-utils
+    - name: Install Ghostscript (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: crazy-max/ghaction-chocolatey@v1
+      with:
+        args: install --no-progress ghostscript
+    - name: Set Ghostscript path (Windows)
+      if: matrix.os == 'windows-latest'
+      run: echo "GS=$(& where.exe /R 'C:\Program Files\gs' gswin64c.exe)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Install dependencies
+      run: bundle --jobs 3 --retry 3
+    - name: Switch to Prawn master
+      if: matrix.prawn == 'dev'
       run: |
-        # Prevent use of non-default value (Stop) by GitHub Actions, which can terminate step
-        # see https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_preference_variables?view=powershell-7#erroractionpreference
-        $ErrorActionPreference = 'Continue'
+        bundle exec ruby scripts/switch-to-prawn-master.rb
+        rm -f Gemfile.lock
+        bundle config --local clean true
         bundle --jobs 3 --retry 3
-    - name: Test
-      run: |
-        $env:GS = & where.exe /R 'C:\Program Files\gs' gswin64c.exe
-        bundle exec ruby -w $(bundle exec ruby -e 'print File.join Gem.bindir, %q(rake)') spec
+    - name: Run tests
+      run: bundle exec ruby -w $(bundle exec ruby -e 'print File.join Gem.bindir, %q(rake)') spec
