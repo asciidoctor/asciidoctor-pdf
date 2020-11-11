@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'pygments.rb'
+require 'pygments.rb' # rubocop:disable Style/RedundantFileExtensionInRequire
 
 module Pygments
   module Ext
@@ -14,9 +14,10 @@ module Pygments
         if BlockSelectorRx =~ (css = ::Pygments.css '.highlight', style: key)
           ($1.strip.split ';').each do |style|
             pname, pval = (style.split ':', 2).map(&:strip)
-            if pname == 'background' || pname == 'background-color'
+            case pname
+            when 'background', 'background-color'
               styles[:background_color] = pval.slice 1, pval.length if HexColorRx.match? pval
-            elsif pname == 'color'
+            when 'color'
               styles[:font_color] = pval.slice 1, pval.length if HexColorRx.match? pval
             end
           end

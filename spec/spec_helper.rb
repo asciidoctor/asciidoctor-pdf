@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 require_relative 'ignore-gem-warnings' if $VERBOSE
-if ENV['COVERAGE'] == 'deep'
+case ENV['COVERAGE']
+when 'deep'
   ENV['DEEP_COVER'] = 'true'
   require 'deep_cover'
-elsif ENV['COVERAGE'] == 'true'
+when 'true'
   require 'deep_cover/builtin_takeover'
   require 'simplecov'
 end

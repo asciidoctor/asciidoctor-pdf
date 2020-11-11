@@ -92,7 +92,7 @@ module Asciidoctor
         'circled' => (?\u2460..?\u2473).to_a,
         'filled' => (?\u2776..?\u277f).to_a + (?\u24eb..?\u24f4).to_a,
       }
-      SimpleAttributeRefRx = /(?<!\\)\{\w+(?:[\-]\w+)*\}/
+      SimpleAttributeRefRx = /(?<!\\)\{\w+(?:-\w+)*\}/
       MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'
       MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|p[txc])?$/
       PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
@@ -572,9 +572,10 @@ module Asciidoctor
           # NOTE: section must have pdf-anchor in order to be listed in the TOC
           sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_pgnum}-#{y.ceil}))
           add_dest_for_block sect, sect_anchor
-          if type == :part
+          case type
+          when :part
             layout_part_title sect, title, align: align, level: hlevel
-          elsif type == :chapter
+          when :chapter
             layout_chapter_title sect, title, align: align, level: hlevel
           else
             layout_heading title, align: align, level: hlevel, outdent: true
@@ -3600,7 +3601,7 @@ module Asciidoctor
 
       def write pdf_doc, target
         if target.respond_to? :write
-          target = ::QuantifiableStdout.new STDOUT if target == STDOUT
+          target = ::QuantifiableStdout.new $stdout if target == $stdout
           pdf_doc.render target
         else
           pdf_doc.render_file target
@@ -4302,11 +4303,12 @@ module Asciidoctor
           result = {}
           center = nil
           (value.split ' ', 2).each do |keyword|
-            if keyword == 'left' || keyword == 'right'
+            case keyword
+            when 'left', 'right'
               result[:position] = keyword.to_sym
-            elsif keyword == 'top' || keyword == 'bottom'
+            when 'top', 'bottom'
               result[:vposition] = keyword.to_sym
-            elsif keyword == 'center'
+            when 'center'
               center = true
             end
           end

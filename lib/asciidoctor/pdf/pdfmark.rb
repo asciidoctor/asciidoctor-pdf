@@ -18,7 +18,7 @@ module Asciidoctor
           creation_date = (::Time.parse doc.attr 'localdatetime') rescue (now || ::Time.now)
         end
         # FIXME: use sanitize: :plain_text once available
-        content = <<~EOS
+        <<~EOS
         [ /Title #{(sanitize doc.doctitle use_fallback: true).to_pdf_object}
           /Author #{(doc.attr 'authors').to_pdf_object}
           /Subject #{(doc.attr 'subject').to_pdf_object}
@@ -29,7 +29,6 @@ module Asciidoctor
           /Producer #{(doc.attr 'publisher').to_pdf_object}
           /DOCINFO pdfmark
         EOS
-        content
       end
 
       def generate_file pdf_file

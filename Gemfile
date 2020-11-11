@@ -23,9 +23,10 @@ group :docs do
 end
 
 group :lint do
-  unless Gem.win_platform? && RUBY_ENGINE == 'ruby' && (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
-    gem 'rubocop', '~> 0.78.0', require: false
-    gem 'rubocop-rspec', '~> 1.37.0', require: false
+  unless (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
+    gem 'parallel', '~> 1.19.0', require: false
+    gem 'rubocop', '~> 1.2.0', require: false
+    gem 'rubocop-rspec', '~> 2.0.0', require: false
   end
 end
 
