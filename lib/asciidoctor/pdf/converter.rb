@@ -1709,7 +1709,7 @@ module Asciidoctor
             # NOTE: highlight can return nil if something goes wrong; fallback to encoded source string if this happens
             result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
             if node.attr? 'highlight', nil, false
-              if (highlight_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
+              if (highlight_lines = (node.method :resolve_lines_to_highlight).arity.abs > 1 ?
                   (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
                   (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
                 highlight_lines = nil
@@ -1757,7 +1757,7 @@ module Asciidoctor
             lexer ||= ::Rouge::Lexers::PlainText
             source_string, conum_mapping = extract_conums source_string
             if node.attr? 'highlight', nil, false
-              unless (hl_lines = (node.method :resolve_lines_to_highlight).arity > 1 ?
+              unless (hl_lines = (node.method :resolve_lines_to_highlight).arity.abs > 1 ?
                   (node.resolve_lines_to_highlight source_string, (node.attr 'highlight')) :
                   (node.resolve_lines_to_highlight node.attr 'highlight')).empty?
                 formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
