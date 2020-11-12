@@ -154,6 +154,7 @@ Compliance::
 Build / Infrastructure::
 
 * Migrate Linux CI jobs to GitHub Actions (#1814)
+* Enable CI job on macOS (#1817)
 
 == 1.5.3 (2020-02-28) - @mojavelinux
 
