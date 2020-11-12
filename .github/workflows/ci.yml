@@ -1,10 +1,8 @@
 name: CI
 on:
   push:
-    branches:
-    - '**'
-    tags-ignore:
-    - '**'
+    branches: ['**']
+    tags-ignore: ['**']
   pull_request:
   schedule:
   - cron: '0 2 * * *'
@@ -58,6 +56,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       JRUBY_OPTS: '-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-Xss2m -Xcompile.invokedynamic=false'
+      PYGMENTS_VERSION: '~> 1.2.0' # NOTE: test runner will automatically disable Pygments tests on JRuby for Windows
       RGHOST_VERSION: '0.9.7'
     steps:
     - name: Checkout
@@ -72,10 +71,6 @@ jobs:
       run: |
         bundle config --local path .bundle/gems
         bundle config --local without coverage docs lint
-    - name: Set Pygments version
-      if: "!(matrix.os == 'windows-latest' && contains(matrix.ruby, 'jruby'))"
-      run: echo 'PYGMENTS_VERSION=~> 1.2.0' >> $GITHUB_ENV
-      shell: bash
     - name: Activate Gmagick
       if: matrix.primary
       run: |
