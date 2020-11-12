@@ -1,10 +1,8 @@
 name: CI
 on:
   push:
-    branches:
-    - '**'
-    tags-ignore:
-    - '**'
+    branches: ['**']
+    tags-ignore: ['**']
   pull_request:
 jobs:
   activate:
@@ -60,6 +58,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       JRUBY_OPTS: '-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-Xss2m -Xcompile.invokedynamic=false'
+      PYGMENTS_VERSION: '~> 1.2.0' # test runner will automatically disable Pygments tests on JRuby for Windows
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -77,11 +76,7 @@ jobs:
       if: matrix.asciidoctor-version
       run: echo 'ASCIIDOCTOR_VERSION=${{ matrix.asciidoctor-version }}' >> $GITHUB_ENV
       shell: bash
-    - name: Set Pygments version
-      if: "!(matrix.os == 'windows-latest' && contains(matrix.ruby, 'jruby'))"
-      run: echo 'PYGMENTS_VERSION=~> 1.2.0' >> $GITHUB_ENV
-      shell: bash
-    - name: Activate Gmagick
+    - name: Set Prawn Gmagick version / Install GraphicsMagick (Linux only)
       if: matrix.primary
       run: |
         echo 'PRAWN_GMAGICK_VERSION=0.0.9' >> $GITHUB_ENV
