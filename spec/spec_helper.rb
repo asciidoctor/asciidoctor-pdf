@@ -334,7 +334,7 @@ RSpec.configure do |config|
         env_override['RUBYOPT'] = nil
         if defined? Bundler
           rubylib = []
-          if (prawn_table_spec = Gem::Specification.find_by_name 'prawn-table')
+          if (prawn_table_spec = Gem.loaded_specs['prawn-table'])
             rubylib << (prawn_table_spec.source.path + 'lib').to_s
           end
           env_override['RUBYLIB'] = rubylib.join File::PATH_SEPARATOR unless rubylib.empty?
@@ -522,7 +522,15 @@ RSpec.configure do |config|
   end
 
   def windows?
-    /mswin|msys|mingw/.match? RbConfig::CONFIG['host_os']
+    Gem.win_platform?
+  end
+
+  def jruby?
+    RUBY_ENGINE == 'jruby'
+  end
+
+  def gem_available? gem_name
+    Gem.loaded_specs.key? gem_name
   end
 
   def home_dir

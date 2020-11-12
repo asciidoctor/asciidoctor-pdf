@@ -94,7 +94,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
-    it 'should warn instead of crash if block image is unreadable' do
+    it 'should warn instead of crash if block image is unreadable', unless: windows? do
       (expect do
         image_file = fixture_file 'logo.png'
         old_mode = (File.stat image_file).mode
@@ -104,7 +104,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       ensure
         FileUtils.chmod old_mode, image_file
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
-    end unless windows?
+    end
 
     it 'should respect value of imagesdir if changed mid-document' do
       pdf = to_pdf <<~EOS, enable_footer: true, attributes: {}
@@ -801,7 +801,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pdf.images[0][:width]).to eql reference_width
     end
 
-    it 'should fail to embed interlaced PNG image with warning' do
+    it 'should fail to embed interlaced PNG image with warning', unless: (defined? GMagick::Image) do
       { '::' => '[Interlaced PNG] | interlaced.png', ':' => '[Interlaced PNG]' }.each do |macro_delim, alt_text|
         (expect do
           input = <<~EOS
@@ -814,16 +814,16 @@ describe 'Asciidoctor::PDF::Converter - Image' do
           (expect pdf.lines).to eql [alt_text]
         end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'interlaced.png'}; PNG uses unsupported interlace method; install prawn-gmagick gem to add support)
       end
-    end unless defined? GMagick::Image
+    end
 
-    it 'should embed interlaced PNG image if prawn-gmagick is available' do
+    it 'should embed interlaced PNG image if prawn-gmagick is available', if: (defined? GMagick::Image) do
       ['::', ':'].each do |macro_delim|
         pdf = to_pdf %(image#{macro_delim}interlaced.png[Interlaced PNG]), analyze: :image
         (expect pdf.images).to have_size 1
       end
-    end if defined? GMagick::Image
+    end
 
-    it 'should not suggest installing prawn-gmagick if gem has already been loaded' do
+    it 'should not suggest installing prawn-gmagick if gem has already been loaded', if: (defined? GMagick::Image) do
       ['::', ':'].each do |macro_delim|
         (expect do
           input = <<~EOS
@@ -836,7 +836,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
           (expect pdf.images).to have_size 0
         end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'lorem-ipsum.yml'}; image file is an unrecognised format)
       end
-    end if defined? GMagick::Image
+    end
 
     it 'should set graphic state for running content when image occupies whole page' do
       pdf_theme = {
@@ -1325,7 +1325,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: %(~image file is an unrecognised format)
     end
 
-    context 'Cache' do
+    context 'Cache', if: (gem_available? 'open-uri-cached'), &(proc do
       before :context do
         (expect defined? OpenURI::Cache).to be_falsy
         with_local_webserver do |base_url|
@@ -1361,7 +1361,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
           OpenURI::Cache.invalidate image_url
         end
       end
-    end unless (Gem::Specification.stubs_for 'open-uri-cached').empty?
+    end)
   end
 
   context 'Inline' do
@@ -1387,7 +1387,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to not_log_message
     end
 
-    it 'should warn instead of crash if inline image is unreadable' do
+    it 'should warn instead of crash if inline image is unreadable', unless: windows? do
       (expect do
         image_file = fixture_file 'logo.png'
         old_mode = (File.stat image_file).mode
@@ -1397,7 +1397,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       ensure
         FileUtils.chmod old_mode, image_file
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
-    end unless windows?
+    end
 
     # NOTE: this test also verifies space is allocated for an inline image at the start of a line
     it 'should convert multiple images on the same line', visual: true do

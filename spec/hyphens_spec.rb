@@ -2,7 +2,8 @@
 
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::PDF::Converter - Hyphens' do
+# NOTE: text-hyphen may not be available when building RPM, so check for it
+describe 'Asciidoctor::PDF::Converter - Hyphens', if: (gem_available? 'text-hyphen'), &(proc do
   it 'should hyphenate text in paragraph if hyphens attribute is set' do
     pdf = to_pdf <<~'EOS', analyze: true
     :hyphens:
@@ -194,4 +195,4 @@ describe 'Asciidoctor::PDF::Converter - Hyphens' do
 
     (expect to_file).to visually_match 'hyphens-word-break.pdf'
   end
-end unless (Gem::Specification.stubs_for 'text-hyphen').empty?
+end)
