@@ -19,7 +19,7 @@ describe 'asciidoctor-pdf' do
     end
   end
 
-  context 'Require' do
+  context 'Require', if: (defined? Bundler) do
     it 'should load converter if backend is pdf and require is asciidoctor-pdf', cli: true do
       out, err, res = run_command asciidoctor_bin, '-r', 'asciidoctor-pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc'), use_bundler: true
       (expect res.exitstatus).to be 0
@@ -35,7 +35,7 @@ describe 'asciidoctor-pdf' do
       (expect err).to be_empty
       (expect Pathname.new output_file 'hello.pdf').to exist
     end
-  end if defined? Bundler
+  end
 
   context 'Examples' do
     it 'should convert the basic example', cli: true, visual: true do
@@ -47,23 +47,23 @@ describe 'asciidoctor-pdf' do
       (expect output_file 'basic-example.pdf').to visually_match reference_file
     end
 
-    it 'should convert the chronicles example', cli: true, visual: true do
+    it 'should convert the chronicles example', cli: true, visual: true, unless: Gem.loaded_specs['rouge'].version < (Gem::Version.new '2.1.0'), &(proc do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (example_file 'chronicles-example.adoc')
       (expect res.exitstatus).to be 0
       (expect out).to be_empty
       (expect err).to be_empty
       reference_file = File.absolute_path example_file 'chronicles-example.pdf'
       (expect output_file 'chronicles-example.pdf').to visually_match reference_file
-    end unless ENV['ROUGE_VERSION'] && ENV['ROUGE_VERSION'].split[-1] < '2.1.0'
+    end)
   end
 
-  context 'redirection' do
+  context 'redirection', unless: windows? && jruby? do
     it 'should be able to write output to file via stdout', cli: true do
       run_command asciidoctor_pdf_bin, '-o', '-', (fixture_file 'book.adoc'), out: (to_file = output_file 'book.pdf')
       (expect Pathname.new to_file).to exist
       (expect { PDF::Reader.new to_file }).not_to raise_exception
     end
-  end unless windows? && RUBY_ENGINE == 'jruby'
+  end
 
   context 'pdfmark' do
     it 'should generate pdfmark file if pdfmark attribute is set', cli: true do

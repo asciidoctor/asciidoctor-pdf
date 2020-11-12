@@ -877,7 +877,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
   end
 
-  context 'Pygments' do
+  context 'Pygments', if: (gem_available? 'pygments.rb') && !(windows? && jruby?), &(proc do
     it 'should highlight source using Pygments if source-highlighter is pygments' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: pygments
@@ -1303,7 +1303,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       (expect pdf.lines).to eql ['①']
     end
-  end if (ENV.key? 'PYGMENTS_VERSION') && !(Gem.win_platform? && RUBY_ENGINE == 'jruby')
+  end)
 
   context 'Unsupported' do
     it 'should apply specialcharacters substitution and indentation guards for client-side syntax highlighter' do
@@ -1491,7 +1491,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should preserve space before callout on final line' do
-      ['rouge', (ENV.key? 'PYGMENTS_VERSION') && !(Gem.win_platform? && RUBY_ENGINE == 'jruby') ? 'pygments' : nil].compact.each do |highlighter|
+      ['rouge', (gem_available? 'pygments.rb') && !(windows? && jruby?) ? 'pygments' : nil].compact.each do |highlighter|
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'source-highlighter' => highlighter }, analyze: true
         [source,java]
         ----
