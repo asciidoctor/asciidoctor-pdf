@@ -56,7 +56,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       JRUBY_OPTS: '-J-XX:+TieredCompilation -J-XX:TieredStopAtLevel=1 -J-Xss2m -Xcompile.invokedynamic=false'
-      PYGMENTS_VERSION: '~> 1.2.0' # NOTE: test runner will automatically disable Pygments tests on JRuby for Windows
+      PYGMENTS_VERSION: '~> 1.2.0' # test runner will automatically disable Pygments tests on JRuby for Windows
       RGHOST_VERSION: '0.9.7'
     steps:
     - name: Checkout
@@ -79,14 +79,11 @@ jobs:
     - name: Install Ghostscript (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get install ghostscript poppler-utils
-    - name: Install Ghostscript (Windows)
+    - name: Install Ghostscript and add path to env (Windows)
       if: matrix.os == 'windows-latest'
-      uses: crazy-max/ghaction-chocolatey@v1
-      with:
-        args: install --no-progress ghostscript
-    - name: Set Ghostscript path (Windows)
-      if: matrix.os == 'windows-latest'
-      run: echo "GS=$(& where.exe /R 'C:\Program Files\gs' gswin64c.exe)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      run: |
+        choco install --no-progress ghostscript
+        echo "GS=$(& where.exe /R 'C:\Program Files\gs' gswin64c.exe)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Install dependencies
       run: bundle --jobs 3 --retry 3
     - name: Switch to Prawn master
