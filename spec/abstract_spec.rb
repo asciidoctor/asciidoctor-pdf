@@ -188,6 +188,45 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect abstract_text[:x]).to be > main_text[:x]
   end
 
+  it 'should allow theme to set text alignment of abstract title' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_title_align: 'center' }, analyze: true
+    = Document Title
+    :doctype: book
+
+    .Abstract
+    [abstract]
+    This is the abstract.
+
+    == Chapter
+
+    This is the main content.
+    EOS
+
+    abstract_text = pdf.find_unique_text 'This is the abstract.'
+    abstract_title_text = pdf.find_unique_text 'Abstract'
+    (expect abstract_title_text[:x]).to be > abstract_text[:x]
+  end
+
+  it 'should use base align to align abstract title if theme does not specify alignment' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { base_align: 'center', abstract_title_align: nil }, analyze: true
+    = Document Title
+    :doctype: book
+
+    .Abstract
+    [abstract]
+    This is the abstract.
+
+    == Chapter
+
+    [.text-left]
+    This is the main content.
+    EOS
+
+    abstract_title_text = pdf.find_unique_text 'Abstract'
+    main_text = pdf.find_unique_text 'This is the main content.'
+    (expect abstract_title_text[:x]).to be > main_text[:x]
+  end
+
   it 'should use consistent spacing between lines in abstract when theme uses AFM font' do
     pdf = to_pdf <<~'EOS', pdf_theme: { extends: 'base', abstract_first_line_font_color: 'AA0000' }, analyze: true
     = Document Title
