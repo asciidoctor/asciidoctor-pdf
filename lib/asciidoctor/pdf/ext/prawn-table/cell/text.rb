@@ -30,8 +30,13 @@ class Prawn::Table::Cell::Text
       placeholder_width = styled_width_of 'M'
       text = text.gsub ImageTagRx do
         if (pctidx = $1.index '%')
-          return $& unless pctidx < $1.length - 1
-          width_of_images += (($1.slice pctidx + 1, $1.length).to_f - placeholder_width)
+          if pctidx == $1.length - 1
+            # TODO: look up the intrinsic image width in pixels
+            #width_of_images += (<image width> - placeholder_width)
+            next ''
+          else
+            width_of_images += (($1.slice pctidx + 1, $1.length).to_f - placeholder_width)
+          end
         else
           width_of_images += ($1.to_f - placeholder_width)
         end

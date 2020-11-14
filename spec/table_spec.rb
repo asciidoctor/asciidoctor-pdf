@@ -583,6 +583,25 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect images[1][:x]).to eql (images[0][:x] + images[1][:width])
     end
 
+    it 'should fit passthrough image using percentage width in autowidth cell' do
+      input = <<~EOS
+      [%autowidth]
+      |===
+      |see pass:[<img src="#{fixture_file 'tux.png'}" alt="tux" width="75%">] run
+      |===
+      EOS
+      pdf = to_pdf input, pdf_theme: { table_cell_padding: 0 }, analyze: true
+      text = pdf.text
+      (expect text).to have_size 2
+      pdf = to_pdf input, pdf_theme: { table_cell_padding: 0 }, analyze: :image
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:intrinsic_width]).to eql 204
+      (expect images[0][:width]).to be < 150
+      (expect text[0][:y]).to be > images[0][:y]
+      (expect images[0][:y]).to be > text[1][:y]
+    end
+
     it 'should not break words in head row when autowidth option is set' do
       pdf = to_pdf <<~'EOS', analyze: true
       [%autowidth]
