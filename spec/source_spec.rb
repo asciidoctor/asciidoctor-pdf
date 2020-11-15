@@ -742,6 +742,36 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       (expect to_file).to visually_match 'source-rouge-highlight-wrapped-line.pdf'
     end
+
+    it 'should not apply syntax highlighting in scratch document' do
+      scratch_doc = nil
+      postprocessor_impl = proc do
+        process do |doc, output|
+          scratch_doc = doc.converter.get_scratch_document
+          output
+        end
+      end
+
+      opts = { extension_registry: Asciidoctor::Extensions.create { postprocessor(&postprocessor_impl) } }
+      main_pdf = to_pdf <<~'EOS', (opts.merge analyze: true)
+      :source-highlighter: rouge
+
+      [%unbreakable]
+      --
+      [source,ruby]
+      ----
+      puts "Hello, World!"
+      ----
+      --
+      EOS
+
+      main_pdf_text = main_pdf.text
+      (expect main_pdf_text[0][:string]).to eql 'puts'
+      (expect main_pdf_text[0][:font_color]).not_to eql '333333'
+      scratch_pdf_text = (EnhancedPDFTextInspector.analyze scratch_doc.render).text
+      (expect scratch_pdf_text[0][:string]).to eql 'puts "Hello, World!"'
+      (expect scratch_pdf_text[0][:font_color]).to eql '333333'
+    end
   end
 
   context 'CodeRay' do
@@ -1360,6 +1390,34 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect text).to have_size 1
       (expect text[0][:string]).to eql 'puts "Hello, World!"'
       (expect text[0][:font_color]).to eql '333333'
+    end
+
+    it 'should not apply syntax highlighting in scratch document if specialchars sub is disabled' do
+      scratch_doc = nil
+      postprocessor_impl = proc do
+        process do |doc, output|
+          scratch_doc = doc.converter.get_scratch_document
+          output
+        end
+      end
+
+      opts = { extension_registry: Asciidoctor::Extensions.create { postprocessor(&postprocessor_impl) } }
+      pdf = to_pdf <<~'EOS', (opts.merge analyze: true)
+      :source-highlighter: rouge
+
+      [%unbreakable]
+      --
+      [source,ruby,subs=-specialchars]
+      ----
+      puts "Hello, World!"
+      ----
+      --
+      EOS
+
+      [pdf.text, (EnhancedPDFTextInspector.analyze scratch_doc.render).text].each do |text|
+        (expect text[0][:string]).to eql 'puts "Hello, World!"'
+        (expect text[0][:font_color]).to eql '333333'
+      end
     end
   end
 

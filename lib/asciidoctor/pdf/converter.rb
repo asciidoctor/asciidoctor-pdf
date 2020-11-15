@@ -1749,7 +1749,6 @@ module Asciidoctor
             end
             prev_subs = (subs = node.subs).dup
             callouts_enabled = subs.include? :callouts
-            # NOTE: the highlight sub is only set for coderay, rouge, and pygments atm
             highlight_idx = subs.index :highlight
             # NOTE: scratch? here only applies if listing block is nested inside another block
             if !highlighter || scratch?
