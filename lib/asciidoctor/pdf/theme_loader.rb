@@ -18,7 +18,7 @@ module Asciidoctor
       VariableRx = /\$([a-z0-9_-]+)/
       LoneVariableRx = /^\$([a-z0-9_-]+)$/
       HexColorEntryRx = /^(?<k> *\p{Graph}+): +(?!null$)(?<q>["']?)(?<h>#)?(?<v>[a-fA-F0-9]{3,6})\k<q> *(?:#.*)?$/
-      MultiplyDivideOpRx = /(-?\d+(?:\.\d+)?) +([*\/]) +(-?\d+(?:\.\d+)?)/
+      MultiplyDivideOpRx = /(-?\d+(?:\.\d+)?) +([*\/^]) +(-?\d+(?:\.\d+)?)/
       AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+\-]) +(-?\d+(?:\.\d+)?)/
       PrecisionFuncRx = /^(round|floor|ceil)\(/
 
@@ -218,8 +218,8 @@ module Asciidoctor
         # NOTE: leave % as a string; handled by converter for now
         original, expr = expr, (resolve_measurement_values expr)
         loop do
-          if (expr.count '*/') > 0
-            result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
+          if (expr.count '*/^') > 0
+            result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send ($2 == '^' ? '**' : $2).to_sym, $3.to_f }
             unchanged = (result == expr)
             expr = result
             break if unchanged
