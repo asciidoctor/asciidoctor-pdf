@@ -78,12 +78,12 @@ jobs:
       run: |
         echo 'PRAWN_GMAGICK_VERSION=0.0.9' >> $GITHUB_ENV
         sudo apt-get install libgraphicsmagick1-dev
-    - name: Install Ghostscript (Linux)
+    - name: Install Ghostscript and Poppler (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get install ghostscript poppler-utils
-    - name: Install Ghostscript (macOS)
+    - name: Install Ghostscript and Poppler (macOS)
       if: matrix.os == 'macos-latest'
-      run: brew install ghostscript
+      run: brew install ghostscript poppler
     - name: Install Ghostscript and add path to env (Windows)
       if: matrix.os == 'windows-latest'
       run: |
