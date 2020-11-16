@@ -84,10 +84,10 @@ jobs:
     - name: Install Ghostscript and Poppler (macOS)
       if: matrix.os == 'macos-latest'
       run: brew install ghostscript poppler
-    - name: Install Ghostscript and add path to env (Windows)
+    - name: Install Ghostscript and Poppler and set GS env var (Windows)
       if: matrix.os == 'windows-latest'
       run: |
-        choco install --no-progress ghostscript
+        choco install --no-progress ghostscript poppler
         echo "GS=$(& where.exe /R 'C:\Program Files\gs' gswin64c.exe)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Install dependencies
       run: bundle --jobs 3 --retry 3
