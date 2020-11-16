@@ -1733,17 +1733,11 @@ module Asciidoctor
           if node.style == 'source' && (highlighter = (syntax_hl = node.document.syntax_highlighter)&.highlight? && syntax_hl.name)
             case highlighter
             when 'coderay'
-              unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
-                highlighter = nil if (Helpers.require_library CodeRayRequirePath, 'coderay', :warn).nil?
-              end
+              Helpers.require_library CodeRayRequirePath, 'coderay' unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
             when 'pygments'
-              unless defined? ::Pygments::Ext::BlockStyles
-                highlighter = nil if (Helpers.require_library PygmentsRequirePath, 'pygments.rb', :warn).nil?
-              end
+              Helpers.require_library PygmentsRequirePath, 'pygments.rb' unless defined? ::Pygments::Ext::BlockStyles
             when 'rouge'
-              unless defined? ::Rouge::Formatters::Prawn
-                highlighter = nil if (Helpers.require_library RougeRequirePath, 'rouge', :warn).nil?
-              end
+              Helpers.require_library RougeRequirePath, 'rouge' unless defined? ::Rouge::Formatters::Prawn
             else
               highlighter = nil
             end

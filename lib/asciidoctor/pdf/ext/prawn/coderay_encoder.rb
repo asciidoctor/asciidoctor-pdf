@@ -23,8 +23,6 @@
 #
 ######################################################################
 
-require 'coderay'
-
 # Registers a to_prawn method with CodeRay. The method returns an array of hashes to be
 # used with Prawn::Text.formatted_text(array).
 #

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pygments.rb' # rubocop:disable Style/RedundantFileExtensionInRequire
-
 module Pygments
   module Ext
     module BlockStyles
