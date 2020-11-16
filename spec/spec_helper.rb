@@ -729,15 +729,18 @@ RSpec::Matchers.define :visually_match do |reference_filename|
     images_output_dir = output_file 'visual-comparison-workdir'
     Dir.mkdir images_output_dir unless Dir.exist? images_output_dir
     output_basename = File.join images_output_dir, (File.basename actual_path, '.pdf')
-    system 'pdftocairo', '-png', actual_path, %(#{output_basename}-actual)
+    pdftocairo_result = system 'pdftocairo', '-png', actual_path, %(#{output_basename}-actual)
+    raise Errno::ENOENT, 'pdftocairo' if pdftocairo_result.nil?
     system 'pdftocairo', '-png', reference_path, %(#{output_basename}-reference)
 
     pixels = 0
     tmp_files = [actual_path]
 
-    Dir[%(#{output_basename}-{actual,reference}-*.png)].map {|filename|
+    files = Dir[%(#{output_basename}-{actual,reference}-*.png)].map {|filename|
       (/-(?:actual|reference)-(\d+)\.png$/.match filename)[1]
-    }.sort.uniq.each do |idx|
+    }.sort.uniq
+    return false if files.empty?
+    files.each do |idx|
       reference_page_filename = %(#{output_basename}-reference-#{idx}.png)
       reference_page_filename = nil unless File.exist? reference_page_filename
       tmp_files << reference_page_filename if reference_page_filename
