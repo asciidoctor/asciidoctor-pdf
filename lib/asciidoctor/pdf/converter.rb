@@ -611,18 +611,18 @@ module Asciidoctor
       end
 
       def convert_section sect, _opts = {}
-        if sect.sectname == 'abstract'
+        if (sectname = sect.sectname) == 'abstract'
           # HACK: cheat a bit to hide this section from TOC; TOC should filter these sections
           sect.context = :open
           return convert_abstract sect
-        elsif (index_section = sect.sectname == 'index')
+        elsif (index_section = sectname == 'index')
           if @index.empty?
             sect.parent.blocks.delete sect
             return
           end
         end
 
-        type = nil
+        chapterlike = nil
         title = sect.numbered_title formal: true
         sep = (sect.attr 'separator') || (sect.document.attr 'title-separator') || ''
         if !sep.empty? && title.include?(sep = %(#{sep} ))
@@ -631,17 +631,13 @@ module Asciidoctor
         end
         theme_font :heading, level: (hlevel = sect.level + 1) do
           align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
-          if sect.part_or_chapter?
-            if sect.chapter?
-              type = :chapter
-              if @theme.heading_chapter_break_before == 'auto'
-                start_new_chapter sect if @theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0]
-              else
-                start_new_chapter sect
-              end
+          if sectname == 'part'
+            start_new_part sect unless @theme.heading_part_break_before == 'auto'
+          elsif (chapterlike = sectname == 'chapter' || (sect.document.doctype == 'book' && sect.level == 1))
+            if @theme.heading_chapter_break_before == 'auto'
+              start_new_chapter sect if @theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0]
             else
-              type = :part
-              start_new_part sect unless @theme.heading_part_break_before == 'auto'
+              start_new_chapter sect
             end
           end
           unless at_page_top?
@@ -659,10 +655,9 @@ module Asciidoctor
           # NOTE: section must have pdf-anchor in order to be listed in the TOC
           sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_pgnum}-#{y.ceil}))
           add_dest_for_block sect, sect_anchor
-          case type
-          when :part
+          if sectname == 'part'
             layout_part_title sect, title, align: align, level: hlevel
-          when :chapter
+          elsif chapterlike
             layout_chapter_title sect, title, align: align, level: hlevel
           else
             layout_heading title, align: align, level: hlevel, outdent: true
@@ -674,7 +669,7 @@ module Asciidoctor
         else
           traverse sect
         end
-        outdent_section { layout_footnotes sect } if type == :chapter
+        outdent_section { layout_footnotes sect } if chapterlike
         sect.set_attr 'pdf-page-end', page_number
       end
 
@@ -3241,7 +3236,7 @@ module Asciidoctor
         trailing_section_start_pages = {}
         sections.each do |sect|
           pgnum = (sect.attr 'pdf-page-start').to_i
-          if is_book && ((sect_is_part = sect.part?) || sect.chapter?)
+          if is_book && ((sect_is_part = sect.sectname == 'part') || sect.level == 1)
             if sect_is_part
               part_start_pages[pgnum] ||= sect
             else

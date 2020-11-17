@@ -30,16 +30,4 @@ class Asciidoctor::Section
     end
     opts[:formal] ? @cached_formal_numbered_title : @cached_numbered_title
   end unless method_defined? :numbered_title
-
-  def part?
-    @document.doctype == 'book' && @level == 0
-  end unless method_defined? :part?
-
-  def chapter?
-    @document.doctype == 'book' && @level == 1
-  end unless method_defined? :chapter?
-
-  def part_or_chapter?
-    @document.doctype == 'book' && @level < 2
-  end unless method_defined? :part_or_chapter?
 end
