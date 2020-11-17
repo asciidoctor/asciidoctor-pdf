@@ -57,6 +57,7 @@ Enhancements::
 * allow path of ghostscript command to be controlled using `GS` env var (#1791)
 * only extend theme in extends hierarchy once unless modified with !important (#1800)
 * add print-optimized themes (default-for-print and default-for-print-with-fallback-font) (#1699)
+* add support for power operator in theme (with same precedence as multiply and divide) (#1813)
 
 Bug Fixes::
 
