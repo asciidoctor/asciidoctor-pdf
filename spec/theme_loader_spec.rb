@@ -685,7 +685,33 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_family).to eql 'Times-Roman'
     end
 
-    it 'should load extended themes relative to theme file when theme_path is not specified' do
+    it 'should load extended themes relative to theme file if they start with ./' do
+      with_pdf_theme_file <<~'EOS' do |custom_theme_path|
+      base:
+        font-family: Times-Roman
+      EOS
+        with_pdf_theme_file <<~'EOS' do |red_theme_path|
+        base:
+          font-color: ff0000
+        EOS
+          with_pdf_theme_file <<~EOS do |theme_path|
+          extends:
+          - ./#{File.basename custom_theme_path}
+          - ./#{File.basename red_theme_path}
+          base:
+            align: justify
+          EOS
+            theme = subject.load_theme theme_path, fixtures_dir
+            (expect theme.__dir__).to eql fixtures_dir
+            (expect theme.base_align).to eql 'justify'
+            (expect theme.base_font_family).to eql 'Times-Roman'
+            (expect theme.base_font_color).to eql 'FF0000'
+          end
+        end
+      end
+    end
+
+    it 'should load extended themes relative to theme file when theme_dir is not specified' do
       with_pdf_theme_file <<~'EOS' do |custom_theme_path|
       base:
         font-family: Times-Roman
