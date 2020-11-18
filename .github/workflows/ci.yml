@@ -37,7 +37,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         ruby: [jruby-9.2, '2.5', '2.6', '2.7']
-        prawn: [~]
+        upstream: [~]
         exclude:
         - os: ubuntu-latest
           ruby: '2.7'
@@ -49,10 +49,10 @@ jobs:
           rouge-version: '~> 2.0.0'
         - os: ubuntu-latest
           ruby: '2.7'
-          prawn: dev
+          upstream: upstream
         - os: ubuntu-latest
           ruby: '2.7'
-          primary: true
+          primary: primary
     runs-on: ${{ matrix.os }}
     env:
       MENTOS_TIMEOUT: 30 # give pygments.rb calls more time to execute (in seconds)
@@ -89,9 +89,10 @@ jobs:
         echo "GS=$(& where.exe /R 'C:\Program Files\gs' gswin64c.exe)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Install dependencies
       run: bundle --jobs 3 --retry 3
-    - name: Switch to Prawn master
-      if: matrix.prawn == 'dev'
+    - name: Switch to upstream dependencies
+      if: matrix.upstream
       run: |
+        bundle exec ruby scripts/switch-to-asciidoctor-master.rb
         bundle exec ruby scripts/switch-to-prawn-master.rb
         rm -f Gemfile.lock
         bundle config --local clean true
