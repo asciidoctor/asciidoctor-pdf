@@ -1,4 +1,4 @@
-name: Test Upstream
+name: Upstream Dispatch
 on: repository_dispatch
 jobs:
   build:
