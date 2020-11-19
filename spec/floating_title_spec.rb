@@ -10,6 +10,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
       heading_align: nil,
     }
     pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    [discrete]
     == Discrete Heading
 
     [.text-left]
