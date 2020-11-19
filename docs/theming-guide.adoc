@@ -5211,11 +5211,11 @@ This is done using AsciiDoc attributes.
 
 There are three AsciiDoc attributes that tell Asciidoctor PDF how to locate and apply your theme.
 
-pdf-theme (or pdf-style):: The name of the YAML theme file to load.
+pdf-theme:: The name of the YAML theme file to load.
 If the name ends with `.yml`, it's assumed to be the complete name of a file and is resolved relative to `pdf-themesdir`, if specified, otherwise the current directory.
 Otherwise, `-theme.yml` is appended to the name to make the file name (i.e., `<name>-theme.yml`) and is resolved relative to `pdf-themesdir`, if specified, otherwise the built-in themes dir.
 
-pdf-themesdir (or pdf-stylesdir):: The directory where the theme file is located.
+pdf-themesdir:: The directory where the theme file is located.
 _Specifying an absolute path is recommended._
 +
 If you use images in your theme, image paths are resolved relative to this directory.

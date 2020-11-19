@@ -205,36 +205,32 @@ describe Asciidoctor::PDF::Converter do
         base:
           font-color: ff0000
         EOS
-          %w(theme style).each do |term|
-            pdf = to_pdf <<~EOS, analyze: true
-            = Document Title
-            :pdf-#{term}: #{theme_path}
+          pdf = to_pdf <<~EOS, analyze: true
+          = Document Title
+          :pdf-theme: #{theme_path}
 
-            red text
-            EOS
+          red text
+          EOS
 
-            (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
-          end
+          (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
         end
       end
 
       it 'should only load theme from pdf-themesdir if pdf-theme attribute specified' do
-        %w(theme style).each do |term|
-          [nil, 'default'].each do |theme|
-            to_pdf_opts = { analyze: true }
-            to_pdf_opts[:attribute_overrides] = { %(pdf-#{term}) => theme } if theme
-            pdf = to_pdf <<~EOS, to_pdf_opts
-            = Document Title
-            :pdf-#{term}sdir: #{fixtures_dir}
+        [nil, 'default'].each do |theme|
+          to_pdf_opts = { analyze: true }
+          to_pdf_opts[:attribute_overrides] = { 'pdf-theme' => theme } if theme
+          pdf = to_pdf <<~EOS, to_pdf_opts
+          = Document Title
+          :pdf-themesdir: #{fixtures_dir}
 
-            body text
-            EOS
+          body text
+          EOS
 
-            expected_font_color = theme ? 'AA0000' : '333333'
-            body_text = (pdf.find_text 'body text')[0]
-            (expect body_text).not_to be_nil
-            (expect body_text[:font_color]).to eql expected_font_color
-          end
+          expected_font_color = theme ? 'AA0000' : '333333'
+          body_text = (pdf.find_text 'body text')[0]
+          (expect body_text).not_to be_nil
+          (expect body_text[:font_color]).to eql expected_font_color
         end
       end
 
@@ -243,31 +239,27 @@ describe Asciidoctor::PDF::Converter do
         base:
           font-color: ff0000
         EOS
-          %w(theme style).each do |term|
-            pdf = to_pdf <<~EOS, analyze: true
-            = Document Title
-            :pdf-#{term}: #{File.basename theme_path, '-theme.yml'}
-            :pdf-#{term}sdir: #{File.dirname theme_path}
+          pdf = to_pdf <<~EOS, analyze: true
+          = Document Title
+          :pdf-theme: #{File.basename theme_path, '-theme.yml'}
+          :pdf-themesdir: #{File.dirname theme_path}
 
-            red text
-            EOS
+          red text
+          EOS
 
-            (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
-          end
+          (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
         end
       end
 
       it 'should set text color to black when default-for-print theme is specified' do
-        %w(theme style).each do |term|
-          pdf = to_pdf <<~EOS, analyze: true
-          = Document Title
-          :pdf-#{term}: default-for-print
+        pdf = to_pdf <<~EOS, analyze: true
+        = Document Title
+        :pdf-theme: default-for-print
 
-          black text
-          EOS
+        black text
+        EOS
 
-          (expect pdf.find_text font_color: '000000').to have_size pdf.text.size
-        end
+        (expect pdf.find_text font_color: '000000').to have_size pdf.text.size
       end
 
       it 'should use theme passed in through :pdf_theme option' do

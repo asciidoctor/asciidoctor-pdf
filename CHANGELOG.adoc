@@ -150,6 +150,7 @@ Compliance::
 * remove support for `<color>` tag in passthrough content; use `<font color="...">` instead (may affect themes)
 * remove asciidoctor-pdf/converter and asciidoctor-pdf/version shim scripts; use asciidoctor/pdf/converter and asciidoctor/pdf/version instead
 * rename Optimizer#generate_file method to Optimizer#optimize_file
+* drop support for deprecated pdf-style and pdf-stylesdir attributes (#1827)
 * drop use of the undocumented vertical_spacing key from the built-in themes
 
 Build / Infrastructure::

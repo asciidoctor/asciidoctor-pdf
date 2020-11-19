@@ -425,9 +425,9 @@ module Asciidoctor
         @theme ||= begin # rubocop:disable Naming/MemoizedInstanceVariableName
           if (theme = doc.options[:pdf_theme])
             theme = theme.dup
-            @themesdir = ::File.expand_path theme.__dir__ || (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir') || ::Dir.pwd
-          elsif (theme_name = (doc.attr 'pdf-theme') || (doc.attr 'pdf-style'))
-            theme = ThemeLoader.load_theme theme_name, (user_themesdir = (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir'))
+            @themesdir = ::File.expand_path theme.__dir__ || (doc.attr 'pdf-themesdir') || ::Dir.pwd
+          elsif (theme_name = doc.attr 'pdf-theme')
+            theme = ThemeLoader.load_theme theme_name, (user_themesdir = doc.attr 'pdf-themesdir')
             @themesdir = theme.__dir__
           else
             @themesdir = (theme = ThemeLoader.load_theme).__dir__
