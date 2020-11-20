@@ -3,6 +3,39 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Floating Title' do
+  it 'should apply alignment defined for headings in theme' do
+    pdf_theme = {
+      heading_align: 'center',
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    [discrete]
+    == Discrete Heading
+
+    main content
+    EOS
+
+    discrete_heading_text = pdf.find_unique_text 'Discrete Heading'
+    main_text = pdf.find_unique_text 'main content'
+    (expect discrete_heading_text[:x]).to be > main_text[:x]
+  end
+
+  it 'should apply alignment defined for heading level in theme' do
+    pdf_theme = {
+      heading_align: 'left',
+      heading_h2_align: 'center',
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    [discrete]
+    == Discrete Heading
+
+    main content
+    EOS
+
+    discrete_heading_text = pdf.find_unique_text 'Discrete Heading'
+    main_text = pdf.find_unique_text 'main content'
+    (expect discrete_heading_text[:x]).to be > main_text[:x]
+  end
+
   it 'should use base align to align floating title if theme does not specify alignemnt' do
     pdf_theme = {
       base_align: 'center',
