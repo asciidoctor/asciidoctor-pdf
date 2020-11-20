@@ -66,7 +66,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     pdf = to_pdf <<~'EOS', analyze: true
     [%autofit]
     ----
-    theme = ThemeLoader.load_theme theme_name, (theme_dir = (doc.attr 'pdf-themesdir') || (doc.attr 'pdf-stylesdir'))
+    @themesdir = ::File.expand_path theme.__dir__ || (doc.attr 'pdf-themesdir') || ::Dir.pwd
     ----
     EOS
 
