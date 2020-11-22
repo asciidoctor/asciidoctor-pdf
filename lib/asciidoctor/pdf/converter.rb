@@ -2818,9 +2818,8 @@ module Asciidoctor
       end
 
       def layout_cover_page doc, face
-        bg_image = resolve_background_image doc, @theme, %(#{face}-cover-image), theme_key: %(cover_#{face}_image).to_sym, symbolic_paths: ['', '~']
-        if bg_image && bg_image[0]
-          image_path, image_opts = bg_image
+        image_path, image_opts = resolve_background_image doc, @theme, %(#{face}-cover-image), theme_key: %(cover_#{face}_image).to_sym, symbolic_paths: ['', '~']
+        if image_path
           if image_path.empty?
             go_to_page page_count if face == :back
             start_new_page_discretely
@@ -3284,7 +3283,7 @@ module Asciidoctor
             end
           end
           parts_by_page[pgnum] = last_part
-          if toc_page_nums && (toc_page_nums.cover? pgnum)
+          if toc_page_nums&.cover? pgnum
             if is_book
               chapters_by_page[pgnum] = toc_title
               sections_by_page[pgnum] = nil
