@@ -409,7 +409,7 @@ module Asciidoctor
         }.flatten
         @section_indent = (val = @theme.section_indent) && (expand_indent_value val)
         @toc_max_pagenum_digits = (doc.attr 'toc-max-pagenum-digits', 3).to_i
-        @disable_running_content = {}
+        @disable_running_content = { header: ::Set.new, footer: ::Set.new }
         @index ||= IndexCatalog.new
         # NOTE: we have to init Pdfmark class here while we have reference to the doc
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
@@ -2343,8 +2343,8 @@ module Asciidoctor
           allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (use_title_page = is_book || (doc.attr? 'title-page'))
           @index.start_page_number = @toc_extent[:page_nums].last + 1 if use_title_page && @theme.page_numbering_start_at == 'after-toc'
           if is_macro
-            @disable_running_content[:header] = (@disable_running_content[:header] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'noheader'
-            @disable_running_content[:footer] = (@disable_running_content[:footer] || ::Set.new) + @toc_extent[:page_nums] if node.option? 'nofooter'
+            @disable_running_content[:header] += @toc_extent[:page_nums] if node.option? 'noheader'
+            @disable_running_content[:footer] += @toc_extent[:page_nums] if node.option? 'nofooter'
           end
         end
         nil
@@ -3325,7 +3325,7 @@ module Asciidoctor
         repeat (content_start_page..num_pages), dynamic: true do
           pgnum = page_number
           # NOTE: don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
-          next if page.imported_page? || (disable_on_pages && (disable_on_pages.include? pgnum))
+          next if page.imported_page? || (disable_on_pages.include? pgnum)
           virtual_pgnum = pgnum - skip_pagenums
           pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new pgnum, :lower) : virtual_pgnum).to_s
           side = page_side((folio_basis == :physical ? pgnum : virtual_pgnum), invert_folio)
