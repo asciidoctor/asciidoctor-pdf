@@ -4209,14 +4209,19 @@ module Asciidoctor
           tmp_image.write ::Base64.decode64 image_path
           tmp_image.close
           @tmp_files[image_path] = tmp_image.path
+        # NOTE: this will catch a classloader resource path on JRuby (e.g., uri:classloader:/path/to/image)
+        elsif ::File.absolute_path? image_path
+          ::File.absolute_path image_path
+        elsif !(is_uri = node.is_uri? image_path) && imagesdir && (::File.absolute_path? imagesdir)
+          ::File.absolute_path image_path, imagesdir
         # handle case when image is a URI
-        elsif (node.is_uri? image_path) ||
-            (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
-          unless allow_uri_read
+        elsif is_uri || (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
+          if !allow_uri_read
             log :warn, %(allow-uri-read is not enabled; cannot embed remote image: #{image_path})
             return
+          elsif @tmp_files.key? image_path
+            return @tmp_files[image_path]
           end
-          return @tmp_files[image_path] if @tmp_files.key? image_path
           tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
           tmp_image.binmode if (binary = image_format != 'svg')
           begin

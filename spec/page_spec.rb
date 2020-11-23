@@ -590,6 +590,32 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       end
     end
 
+    it 'should resolve background image in theme relative to themesdir in classloader', if: RUBY_ENGINE == 'jruby' do
+      require fixture_file 'pdf-themes.jar'
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/page-background-image-theme.yml' }
+      = Document Title
+      :doctype: book
+
+      content
+      EOS
+
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+    end
+
+    it 'should resolve background image with absolute path for theme loaded from classloader', if: RUBY_ENGINE == 'jruby' do
+      require fixture_file 'pdf-themes.jar'
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/page-background-image-from-fixturesdir-theme.yml', 'fixturesdir' => fixtures_dir }
+      = Document Title
+      :doctype: book
+
+      content
+      EOS
+
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+    end
+
     it 'should resolve background image in theme relative to themesdir', visual: true do
       attribute_overrides = {
         'pdf-theme' => 'page-background-image',

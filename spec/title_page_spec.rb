@@ -621,12 +621,38 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images[0].hash[:Height]).to be 240
     end
 
-    it 'should resolve title page logo image specified using path in theme relatvie to themesdir' do
+    it 'should resolve title page logo image specified using path in theme relative to themesdir' do
       pdf_theme = {
         __dir__: fixtures_dir,
         title_page_logo_image: 'tux.png',
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      = Document Title
+      :doctype: book
+      EOS
+
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].hash[:Width]).to be 204
+      (expect images[0].hash[:Height]).to be 240
+    end
+
+    it 'should resolve title page logo image specified using path in theme relative to themesdir in classloader', if: RUBY_ENGINE == 'jruby' do
+      require fixture_file 'pdf-themes.jar'
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/title-page-logo-image-theme.yml' }
+      = Document Title
+      :doctype: book
+      EOS
+
+      images = get_images pdf, 1
+      (expect images).to have_size 1
+      (expect images[0].hash[:Width]).to be 204
+      (expect images[0].hash[:Height]).to be 240
+    end
+
+    it 'should resolve title page logo image with absolute path for theme loaded from classloader', if: RUBY_ENGINE == 'jruby' do
+      require fixture_file 'pdf-themes.jar'
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/title-page-logo-image-from-fixturesdir-theme.yml', 'fixturesdir' => fixtures_dir }
       = Document Title
       :doctype: book
       EOS
