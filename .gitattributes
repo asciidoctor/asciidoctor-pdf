@@ -1,7 +1,2 @@
-/*file eol=lf
-/bin/* eol=lf
-*.adoc eol=lf
-*.pdf -text
-*.rb eol=lf diff=ruby
-*.svg eol=lf
-*.yml eol=lf
+* text=auto eol=lf
+*.rb diff=ruby
