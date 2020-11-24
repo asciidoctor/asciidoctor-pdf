@@ -878,34 +878,38 @@ In other words, it encodes the complete information about the reference so the c
 
 Unlike the built-in HTML converter, Asciidoctor PDF does not provide native support for STEM blocks and inline macros (i.e., asciimath and latexmath).
 That's because Asciidoctor core doesn't process the STEM content itself.
-It just passes it through to the converter.
-In the HTML output, Asciidoctor relies on the JavaScript-based MathJax library to parse and render the equations in the browser when the page is loaded.
-The HTML converter simply wraps the equations in special markup so MathJax can find them.
+It simply passes it through to the converter.
+When converting to HTML, Asciidoctor relies on the JavaScript-based MathJax library to parse and render the STEM expressions in the browser when the page is loaded.
+The HTML converter wraps the expressions in special markup so MathJax can find and process them.
 
-In order to insert a rendered equation into the PDF, the toolchain has to parse the equations and convert them to a format the PDF writer (Prawn) can understand.
+In order to insert a rendered expression into the PDF, the toolchain must parse the expressions and convert them to a format the PDF writer (Prawn) can understand.
 That typically means converting to an image.
 
-The recommended solution is an extension named Asciidoctor Mathematical, which we'll cover in this document.
+One solution that provides this capability is an extension named Asciidoctor Mathematical, which we'll cover in the next section.
 
+////
 Another solution, which is still under development, uses Mathoid to convert STEM equations to images.
 Mathoid is a library that invokes MathJax using a headless browser, so it supports both asciimath and latexmath equations.
 That prototype can be found in the https://github.com/asciidoctor/asciidoctor-extensions-lab#extension-catalog[Asciidoctor extensions lab].
+////
 
 === Asciidoctor Mathematical
 
-{url-asciidoctor-mathematical}[Asciidoctor Mathematical] is an extension for Asciidoctor that provides alternate processing of STEM blocks and inline macros (currently only latexmath).
-After the document has been parsed, the extension locates all the latexmath blocks and inline macros, converts the equations to images using Mathematical, then replaces them with image nodes.
+{url-asciidoctor-mathematical}[Asciidoctor Mathematical] is an extension for Asciidoctor that provides alternate processing of STEM blocks and inline macros.
+After the document has been parsed, the extension locates each asciimath, latexmath, and stem block and inline macro, converts the expression to an image, and replaces the expression with an image.
+It uses Mathematical to render the LaTeX notation as an image.
+If the expression is AsciiMath, it first uses AsciiMath gem to convert to LaTeX.
 Conversion then proceeds as normal.
 
 Asciidoctor Mathematical is a Ruby gem that uses native extensions.
-It has a few system prerequisites which limit installation to Linux and OSX.
+It has a few system prerequisites which limit installation to Linux and macOS.
 Please refer to the {url-asciidoctor-mathematical}#installation[installation section] in the Asciidoctor Mathematical README to learn how to install it.
 
-Once Asciidoctor Mathematical is installed, you just need to enable it when invoking Asciidoctor PDF using the `-r` flag:
+Once Asciidoctor Mathematical is installed, you can enable it when invoking Asciidoctor PDF using the `-r` flag:
 
  $ asciidoctor-pdf -r asciidoctor-mathematical sample.adoc
 
-If you're invoking Asciidoctor via the API, all you need to do is require the gem before invoking Asciidoctor:
+If you're invoking Asciidoctor via the API, you need to require the gem before invoking Asciidoctor:
 
 [source,ruby]
 ----
@@ -914,7 +918,7 @@ require 'asciidoctor-mathematical'
 Asciidoctor.convert_file 'sample.adoc', safe: :safe
 ----
 
-To get the best quality equations, and the maximize speed of conversion, we recommend configuring Asciidoctor Mathematical to convert equations to SVG.
+To get the best quality output and maximize speed of conversion, we recommend configuring Asciidoctor Mathematical to convert equations to SVG.
 You control this setting using the `mathematical-format` AsciiDoc attribute:
 
  $ asciidoctor-pdf -r asciidoctor-mathematical -a mathematical-format=svg sample.adoc
