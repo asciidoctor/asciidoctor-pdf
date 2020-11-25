@@ -914,8 +914,9 @@ If you're invoking Asciidoctor via the API, you need to require the gem before i
 [source,ruby]
 ----
 require 'asciidoctor-mathematical'
+require 'asciidoctor-pdf'
 
-Asciidoctor.convert_file 'sample.adoc', safe: :safe
+Asciidoctor.convert_file 'sample.adoc', backend: 'pdf', safe: :safe
 ----
 
 To get the best quality output and maximize speed of conversion, we recommend configuring Asciidoctor Mathematical to convert equations to SVG.
