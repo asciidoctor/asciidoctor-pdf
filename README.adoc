@@ -40,7 +40,6 @@ endif::[]
 ifdef::status[]
 image:{url-project-repo}/workflows/CI/badge.svg[Build Status (GitHub Actions),link={url-project-repo}/actions?query=workflow%3ACI+branch%3Amaster]
 image:https://img.shields.io/gem/v/asciidoctor-pdf.svg[Latest Release, link={url-gem}]
-image:https://img.shields.io/badge/license-MIT-blue.svg[MIT License, link=#copyright]
 endif::[]
 
 Asciidoctor PDF is a native PDF converter for AsciiDoc.
@@ -1286,5 +1285,5 @@ To help develop {project-name}, or to simply use the development version, refer 
 Copyright (C) 2014-2020 OpenDevise Inc. and the Asciidoctor Project.
 Free use of this software is granted under the terms of the MIT License.
 
-For the full text of the license, see the <<LICENSE.adoc#,LICENSE>> file.
+For the full text of the license, see the link:LICENSE[] file.
 Refer to the <<NOTICE.adoc#,NOTICE>> file for information about third-party Open Source software in use.
