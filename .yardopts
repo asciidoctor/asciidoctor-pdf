@@ -8,5 +8,5 @@
 lib/**/*.rb
 -
 CHANGELOG.adoc
-LICENSE.adoc
+LICENSE
 NOTICE.adoc
