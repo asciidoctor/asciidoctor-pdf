@@ -1165,8 +1165,14 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
   it 'should use fallback value to align toc title if alignment not specified in theme' do
     [
       {
+        toc_title_align: 'center',
+        heading_h2_align: 'left',
+        heading_align: 'left',
+      },
+      {
         toc_title_align: nil,
         heading_h2_align: 'center',
+        heading_align: 'left',
       },
       {
         toc_title_align: nil,

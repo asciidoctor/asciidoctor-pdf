@@ -230,7 +230,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     it 'should show warning if anchor type is unknown' do
       linkme_inline_macro_impl = proc do
         named 'linkme'
-        process do |parent, target, attrs|
+        process do |parent, target|
           create_anchor parent, target, type: :unknown
         end
       end
