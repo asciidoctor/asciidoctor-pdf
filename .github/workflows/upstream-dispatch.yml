@@ -20,7 +20,9 @@ jobs:
         bundle config --local path .bundle/gems
         bundle config --local without coverage docs lint
     - name: Install system dependencies
-      run: sudo apt-get install ghostscript libgraphicsmagick1-dev poppler-utils
+      run: |
+        sudo apt-get update
+        sudo apt-get install ghostscript libgraphicsmagick1-dev poppler-utils
     - name: Install dependencies
       run: |
         bundle --jobs 3 --retry 3

@@ -71,14 +71,11 @@ jobs:
       run: |
         bundle config --local path .bundle/gems
         bundle config --local without coverage docs lint
-    - name: Set Prawn Gmagick version / Install GraphicsMagick (Linux only)
-      if: matrix.primary
-      run: |
-        echo 'PRAWN_GMAGICK_VERSION=0.0.9' >> $GITHUB_ENV
-        sudo apt-get install libgraphicsmagick1-dev
     - name: Install Ghostscript and Poppler (Linux)
       if: matrix.os == 'ubuntu-latest'
-      run: sudo apt-get install ghostscript poppler-utils
+      run: |
+        sudo apt-get update
+        sudo apt-get install ghostscript poppler-utils
     - name: Install Ghostscript and Poppler (macOS)
       if: matrix.os == 'macos-latest'
       run: brew install ghostscript poppler
@@ -87,6 +84,11 @@ jobs:
       run: |
         choco install --no-progress ghostscript poppler
         echo "GS=$(& where.exe /R 'C:\Program Files\gs' gswin64c.exe)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    - name: Set Prawn Gmagick version / Install GraphicsMagick (Linux only)
+      if: matrix.primary
+      run: |
+        echo 'PRAWN_GMAGICK_VERSION=0.0.9' >> $GITHUB_ENV
+        sudo apt-get install libgraphicsmagick1-dev
     - name: Install dependencies
       run: bundle --jobs 3 --retry 3
     - name: Switch to upstream dependencies
