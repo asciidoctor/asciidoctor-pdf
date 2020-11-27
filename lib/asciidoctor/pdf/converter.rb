@@ -2468,6 +2468,7 @@ module Asciidoctor
           %(<a id="#{node.id}">#{DummyText}</a>#{reftext})
         else
           log :warn, %(unknown anchor type: #{node.type.inspect})
+          nil
         end
       end
 

@@ -226,6 +226,22 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     end
   end
 
+  context 'Unknown' do
+    it 'should show warning if anchor type is unknown' do
+      linkme_inline_macro_impl = proc do
+        named 'linkme'
+        process do |parent, target, attrs|
+          create_anchor parent, target, type: :unknown
+        end
+      end
+      opts = { extension_registry: Asciidoctor::Extensions.create { inline_macro(&linkme_inline_macro_impl) } }
+      (expect do
+        pdf = to_pdf 'before linkme:foobar[] after', (opts.merge analyze: true)
+        (expect pdf.lines).to eql ['before after']
+      end).to log_message severity: :WARN, message: 'unknown anchor type: :unknown'
+    end
+  end
+
   context 'Theming' do
     it 'should apply text decoration to link defined by theme' do
       pdf_theme = {
