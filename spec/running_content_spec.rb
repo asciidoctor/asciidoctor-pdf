@@ -1904,7 +1904,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_column_rule_spacing: 8,
         footer_recto_left_content: 'left',
         footer_recto_center_content: 'center',
-        footer_recto_right_content: 'right'
+        footer_recto_right_content: 'right',
       }
 
       pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: :line
