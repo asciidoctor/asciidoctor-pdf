@@ -1893,6 +1893,34 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-column-rule.pdf'
     end
 
+    it 'should be able to use them to change style of column rule', visual: true do
+      pdf_theme = {
+        footer_border_width: 0,
+        footer_padding: [8, 0],
+        footer_columns: '>40% =10% <40%',
+        footer_column_rule_width: 1,
+        footer_column_rule_color: '333333',
+        footer_column_rule_style: 'dashed',
+        footer_column_rule_spacing: 8,
+        footer_recto_left_content: 'left',
+        footer_recto_center_content: 'center',
+        footer_recto_right_content: 'right'
+      }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: :line
+      = Document Title
+
+      content
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[0][:style]).to eql :dashed
+      (expect lines[1][:style]).to eql :dashed
+      (expect lines[0][:from][:x]).to eql lines[0][:to][:x]
+      (expect lines[0][:from][:x]).to be < lines[1][:from][:x]
+    end
+
     it 'should not draw column rule if there is only one column', visual: true do
       pdf_theme = build_pdf_theme \
         header_height: 36,
