@@ -1642,7 +1642,7 @@ module Asciidoctor
         end
       end
 
-      def on_image_error _reason, node, target, opts = {}
+      def on_image_error _reason, node, target, opts
         log :warn, opts[:message] if opts.key? :message
         alt_text_vars = { alt: (node.attr 'alt'), target: target }
         alt_text_template = @theme.image_alt_content || '%{link}[%{alt}]%{/link} | <em>%{target}</em>'
