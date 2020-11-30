@@ -27,6 +27,25 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end).to not_raise_exception & (log_message severity: :WARN, message: 'no rows found in table')
   end
 
+  it 'wip should not crash when rows have cells with colspans of varying length' do
+    (expect do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=3*]
+      |===
+      3+|X
+
+      |Y
+      2+|Z
+      |===
+      EOS
+
+      y_text = pdf.find_unique_text 'Y'
+      z_text = pdf.find_unique_text 'Z'
+      (expect y_text[:y]).to eql z_text[:y]
+      (expect y_text[:x]).to be < z_text[:x]
+    end).to not_raise_exception
+  end
+
   context 'Decoration' do
     it 'should apply frame all and grid all by default' do
       pdf = to_pdf <<~'EOS', analyze: :line

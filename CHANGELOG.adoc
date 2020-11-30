@@ -16,6 +16,7 @@ Bug Fixes::
 * allow inline image to be enclosed in link macro (alt text was breaking parsing)
 * use oembed API over HTTPS to get thumbnail for Vimeo video
 * use conum font family defined in theme for conum in verbatim block (#1611)
+* patch float precision constant so prawn-table does not fail to arrange cells that span columns (#1835)
 
 Build / Infrastructure::
 
