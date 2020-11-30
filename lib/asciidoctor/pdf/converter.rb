@@ -4094,9 +4094,12 @@ module Asciidoctor
             unlink_tmp_file tmp_image.path
             nil
           end
-        # handle case when image is a URI
-        elsif (node.is_uri? image_path) ||
-            (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
+        # NOTE: this will catch a classloader resource path on JRuby (e.g., uri:classloader:/path/to/image)
+        elsif ::File.absolute_path? image_path
+          ::File.absolute_path image_path
+        elsif !(is_uri = node.is_uri? image_path) && imagesdir && (::File.absolute_path? imagesdir)
+          ::File.absolute_path image_path, imagesdir
+        elsif is_uri || (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
           if !allow_uri_read
             logger.warn %(allow-uri-read is not enabled; cannot embed remote image: #{image_path}) unless scratch?
             return

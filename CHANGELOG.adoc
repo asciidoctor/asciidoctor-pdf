@@ -17,6 +17,7 @@ Bug Fixes::
 * use oembed API over HTTPS to get thumbnail for Vimeo video
 * use conum font family defined in theme for conum in verbatim block (#1611)
 * patch float precision constant so prawn-table does not fail to arrange cells that span columns (#1835)
+* resolve images in theme correctly when theme is loaded from classloader (JRuby only) (#1829)
 
 Build / Infrastructure::
 
