@@ -3,6 +3,8 @@
 require_relative 'pdf/version'
 require 'asciidoctor' unless defined? Asciidoctor.load
 require 'prawn'
+Prawn.send :remove_const, :FLOAT_PRECISION
+Prawn::FLOAT_PRECISION = 1e-3
 require 'prawn/templates'
 begin
   require 'prawn/gmagick'

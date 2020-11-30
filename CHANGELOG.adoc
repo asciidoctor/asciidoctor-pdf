@@ -138,6 +138,7 @@ Bug Fixes::
 * don't suppress actual error message when theme cannot be loaded; may contain information about theme being extended
 * force inline image to fit within table cell when width is larger than available space (#1798)
 * hide print annotation for bare email address (#1806)
+* patch float precision constant so prawn-table does not fail to arrange cells that span columns (#1835)
 
 Compliance::
 
