@@ -44,7 +44,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect y_text[:y]).to eql z_text[:y]
       (expect y_text[:x]).to be < z_text[:x]
     end).to not_raise_exception
-  end
+  end unless (Gem::Version.new Asciidoctor::VERSION) < (Gem::Version.new '2.0.0')
 
   context 'Decoration' do
     it 'should apply frame all and grid all by default' do
