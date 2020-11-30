@@ -1599,14 +1599,9 @@ module Asciidoctor
         when 'vimeo'
           video_path = %(https://vimeo.com/#{video_id = node.attr 'target'})
           if allow_uri_read
-            if cache_uri
-              Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
-            else
-              ::OpenURI
-            end
-            poster = ::OpenURI.open_uri %(https://vimeo.com/api/oembed.xml?url=https%3A//vimeo.com/#{video_id}&width=1280), 'r' do |f|
-              VimeoThumbnailRx =~ f.read && $1
-            end
+            poster = load_open_uri.open_uri(%(https://vimeo.com/api/oembed.xml?url=https%3A//vimeo.com/#{video_id}&width=1280), 'r') {|f| (VimeoThumbnailRx.match f.read)[1] } rescue nil
+          else
+            poster = nil
           end
           type = 'Vimeo video'
         else
@@ -4102,21 +4097,16 @@ module Asciidoctor
         # handle case when image is a URI
         elsif (node.is_uri? image_path) ||
             (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
-          unless allow_uri_read
+          if !allow_uri_read
             logger.warn %(allow-uri-read is not enabled; cannot embed remote image: #{image_path}) unless scratch?
             return
-          end
-          if @tmp_files.key? image_path
+          elsif @tmp_files.key? image_path
             return @tmp_files[image_path]
-          elsif cache_uri
-            Helpers.require_library 'open-uri/cached', 'open-uri-cached' unless defined? ::OpenURI::Cache
-          else
-            ::OpenURI
           end
           tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
           tmp_image.binmode if (binary = image_format != 'svg')
           begin
-            ::OpenURI.open_uri(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
+            load_open_uri.open_uri(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
             tmp_image.close
             @tmp_files[image_path] = tmp_image.path
           rescue
@@ -4365,6 +4355,14 @@ module Asciidoctor
         end unless (image_y = image_opts[:y])
 
         link_annotation [image_x, (image_y - image_height), (image_x + image_width), image_y], Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: uri.as_pdf }
+      end
+
+      def load_open_uri
+        if @cache_uri && !(defined? ::OpenURI::Cache)
+          # disable URI caching if library fails to load
+          @cache_uri = false if (Helpers.require_library 'open-uri/cached', 'open-uri-cached', :warn).nil?
+        end
+        ::OpenURI
       end
 
       def remove_tmp_files
