@@ -1921,6 +1921,29 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect lines[0][:from][:x]).to be < lines[1][:from][:x]
     end
 
+    it 'should not draw column rule if color is nil' do
+      pdf_theme = {
+        footer_border_width: 0,
+        footer_padding: [8, 0],
+        footer_columns: '>40% =10% <40%',
+        footer_column_rule_width: 1,
+        footer_column_rule_color: nil,
+        footer_column_rule_style: 'solid',
+        footer_column_rule_spacing: 8,
+        footer_recto_left_content: 'left',
+        footer_recto_center_content: 'center',
+        footer_recto_right_content: 'right',
+      }
+
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: :line
+      = Document Title
+
+      content
+      EOS
+
+      (expect pdf.lines).to have_size 0
+    end
+
     it 'should not draw column rule if there is only one column', visual: true do
       pdf_theme = build_pdf_theme \
         header_height: 36,
