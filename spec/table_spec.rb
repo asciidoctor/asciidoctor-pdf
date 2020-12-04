@@ -27,7 +27,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end).to not_raise_exception & (log_message severity: :WARN, message: 'no rows found in table')
   end
 
-  it 'wip should not crash when rows have cells with colspans of varying length' do
+  it 'should not crash when rows have cells with colspans of varying length' do
     (expect do
       pdf = to_pdf <<~'EOS', analyze: true
       [cols=3*]
