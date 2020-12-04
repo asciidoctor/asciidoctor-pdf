@@ -1893,7 +1893,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-column-rule.pdf'
     end
 
-    it 'should be able to use them to change style of column rule', visual: true do
+    it 'should be able to use them to change style of column rule' do
       pdf_theme = {
         footer_border_width: 0,
         footer_padding: [8, 0],
