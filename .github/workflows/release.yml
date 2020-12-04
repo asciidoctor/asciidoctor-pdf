@@ -1,14 +1,14 @@
 name: Release
 on:
   push:
-    tags:
-    - 'v*'
+    tags: ['v*']
 jobs:
   activate:
     if: github.repository == 'asciidoctor/asciidoctor-pdf'
     runs-on: ubuntu-latest
     steps:
-    - run: echo ok go
+    - name: Proceed
+      run: echo ok go
   build:
     needs: activate
     runs-on: ubuntu-latest
