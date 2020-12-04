@@ -22,6 +22,7 @@ Enhancements::
 * stabilize font paths in built-in themes by prefixing paths with GEM_FONTS_DIR (#1568)
 * assign page-layout attribute in running content so it can be used select background per layout (#1570)
 * reset numbering of footnotes in each chapter; add chapter xreftext to label of footnote reference that refers to previous chapter (#1639)
+* align footnotes block to the bottom of the page it is placed on (#1833)
 * add support for assigning the same font file to all font variants (i.e., styles) using the wildcard key (`*`) (#1588)
 * allow caption max-width to be set to percentage of content by passing argument to fit-content function (#1494)
 * allow theme to control text alignment of caption independent of box alignment (#1493)
