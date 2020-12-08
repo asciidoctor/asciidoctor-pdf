@@ -607,13 +607,18 @@ module Asciidoctor
       def layout_footnotes node
         return if (fns = (doc = node.document).footnotes - @footnotes).empty?
         theme_margin :footnotes, :top
-        theme_font :footnotes do
-          (title = doc.attr 'footnotes-title') && (layout_caption title, category: :footnotes)
-          item_spacing = @theme.footnotes_item_spacing || 0
-          fns.each do |fn|
-            layout_prose %(<a id="_footnotedef_#{index = fn.index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{index}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
+        with_dry_run do |box_height = nil|
+          if box_height && (delta = cursor - box_height) > 0
+            move_down delta
           end
-          @footnotes += fns
+          theme_font :footnotes do
+            (title = doc.attr 'footnotes-title') && (layout_caption title, category: :footnotes)
+            item_spacing = @theme.footnotes_item_spacing
+            fns.each do |fn|
+              layout_prose %(<a id="_footnotedef_#{index = fn.index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{index}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
+            end
+            @footnotes += fns unless scratch?
+          end
         end
         nil
       end

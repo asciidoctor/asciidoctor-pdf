@@ -24,6 +24,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     # footnote item
     (expect (strings.slice 6, 3).join).to eql '[1] More about that thing.'
     (expect text[6][:y]).to be < text[5][:y]
+    (expect text[6][:y]).to be < 60
     (expect text[6][:page_number]).to be 1
     (expect text[6][:font_size]).to be 8
     (expect (text.slice 6, 3).map {|it| [it[:y], it[:font_size]] }.uniq).to have_size 1
@@ -58,6 +59,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect strings.slice(-3, 3).join).to eql '[1] More about that thing.'
     (expect text[-1][:page_number]).to be 2
     (expect text[-1][:font_size]).to be 8
+    (expect text[-1][:y]).to be < 60
   end
 
   it 'should add title to footnotes block if footnotes-title is set' do

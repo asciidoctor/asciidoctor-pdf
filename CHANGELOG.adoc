@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/v1.6.x[commit history] on GitHub.
 
+== Unreleased
+
+Enhancements::
+
+* align footnotes block to the bottom of the page it is placed on (#1833)
+
 == 1.6.0 (2021-05-10) - @mojavelinux
 
 Enhancements::

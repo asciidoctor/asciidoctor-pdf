@@ -903,6 +903,11 @@ module Asciidoctor
         [(whole_pages * full_page_height + partial_page_height), whole_pages, partial_page_height]
       end
 
+      def with_dry_run &block
+        total_height, = dry_run(&block)
+        instance_exec total_height, &block
+      end
+
       # Attempt to keep the objects generated in the block on the same page
       #
       # TODO: short-circuit nested usage
