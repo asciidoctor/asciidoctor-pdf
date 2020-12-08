@@ -693,20 +693,25 @@ module Asciidoctor
       def layout_footnotes node
         return if (fns = (doc = node.document).footnotes - @rendered_footnotes).empty?
         theme_margin :footnotes, :top
-        theme_font :footnotes do
-          (title = doc.attr 'footnotes-title') && (layout_caption title, category: :footnotes)
-          item_spacing = @theme.footnotes_item_spacing
-          index_offset = @rendered_footnotes.length
-          sect_xreftext = node.context == :section && (node.xreftext node.document.attr 'xrefstyle')
-          fns.each do |fn|
-            label = (index = fn.index) - index_offset
-            if sect_xreftext
-              fn.singleton_class.send :attr_accessor, :label unless fn.respond_to? :label=
-              fn.label = %(#{label} - #{sect_xreftext})
-            end
-            layout_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{label}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
+        with_dry_run do |box_height = nil|
+          if box_height && (delta = cursor - box_height) > 0
+            move_down delta
           end
-          @rendered_footnotes += fns
+          theme_font :footnotes do
+            (title = doc.attr 'footnotes-title') && (layout_caption title, category: :footnotes)
+            item_spacing = @theme.footnotes_item_spacing
+            index_offset = @rendered_footnotes.length
+            sect_xreftext = node.context == :section && (node.xreftext node.document.attr 'xrefstyle')
+            fns.each do |fn|
+              label = (index = fn.index) - index_offset
+              if sect_xreftext
+                fn.singleton_class.send :attr_accessor, :label unless fn.respond_to? :label=
+                fn.label = %(#{label} - #{sect_xreftext})
+              end
+              layout_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{label}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
+            end
+            @rendered_footnotes += fns unless scratch?
+          end
         end
         nil
       end
