@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 Bug Fixes::
 
+* restore compatiblity with Asciidoctor 2.0.12 when using Pygments
 * fix numeric assertions in test suite (#1542)
 * disable cache tests if open-uri-cache gem is not available
 * disable hyphen tests if text-hyphen gem is not available
