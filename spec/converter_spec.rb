@@ -408,7 +408,7 @@ describe Asciidoctor::PDF::Converter do
   describe 'extend' do
     it 'should use specified extended converter' do
       class CustomPDFConverter < (Asciidoctor::Converter.for 'pdf') # rubocop:disable RSpec/LeakyConstantDeclaration
-        register_for :mypdf
+        register_for :custom_pdf
         def convert_paragraph node
           layout_prose node.content, anchor: 'next-section'
         end
@@ -421,17 +421,61 @@ describe Asciidoctor::PDF::Converter do
       == Next Section
       EOS
 
-      pdf = to_pdf input, backend: :mypdf, analyze: true
+      pdf = to_pdf input, backend: :custom_pdf, analyze: true
       para_text = pdf.find_unique_text 'see next section'
       (expect para_text[:font_color]).to eql '428BCA'
 
-      pdf = to_pdf input, backend: :mypdf
+      pdf = to_pdf input, backend: :custom_pdf
       (expect get_names pdf).to have_key 'next-section'
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
       link_annotation = annotations[0]
       (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:Dest]).to eql 'next-section'
+    end
+
+    it 'should allow custom converter to invoke layout_heading without any opts' do
+      class LayoutHeadingPDFConverter < (Asciidoctor::Converter.for 'pdf') # rubocop:disable RSpec/LeakyConstantDeclaration
+        register_for :layout_heading_pdf
+        def convert_paragraph node
+          layout_heading 'Heading' if node.role? 'first'
+          super
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: :layout_heading_pdf, pdf_theme: { heading_margin_bottom: 0 }, analyze: true
+      [.first]
+      paragraph
+
+      [.second]
+      paragraph
+      EOS
+
+      heading_text = pdf.find_unique_text 'Heading'
+      (expect heading_text).not_to be_nil
+      (expect heading_text[:font_size]).to eql 10.5
+      (expect heading_text[:font_color]).to eql '333333'
+      text = pdf.text
+      (expect text[0][:y] - text[1][:y]).to be < text[1][:y] - text[2][:y]
+    end
+
+    it 'should allow custom converter to invoke layout_heading with opts' do
+      class LayoutHeadingWithOptsPDFConverter < (Asciidoctor::Converter.for 'pdf') # rubocop:disable RSpec/LeakyConstantDeclaration
+        register_for :layout_heading_with_opts_pdf
+        def convert_paragraph node
+          layout_heading 'Heading', text_transform: 'uppercase', size: 100, color: 'AA0000'
+          super
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: :layout_heading_with_opts_pdf, analyze: true
+      paragraph
+      EOS
+
+      heading_text = pdf.find_unique_text 'HEADING'
+      (expect heading_text).not_to be_nil
+      (expect heading_text[:font_size]).to eql 100
+      (expect heading_text[:font_color]).to eql 'AA0000'
     end
   end
 end
