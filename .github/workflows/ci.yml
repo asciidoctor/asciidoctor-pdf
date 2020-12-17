@@ -53,6 +53,7 @@ jobs:
         - os: ubuntu-latest
           ruby: '2.7'
           primary: primary
+      fail-fast: false
     runs-on: ${{ matrix.os }}
     env:
       MENTOS_TIMEOUT: 30 # give pygments.rb calls more time to execute (in seconds)
