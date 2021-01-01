@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   #s.test_files = files.grep %r/^(?:test|spec|feature)\/.*$/
 
   s.add_runtime_dependency 'asciidoctor', '~> 2.0'
-  s.add_runtime_dependency 'prawn', '~> 2.3.0'
+  s.add_runtime_dependency 'prawn', '~> 2.4.0'
   # NOTE must use prawn-table from master branch (defined in Gemfile) for full functionality
   s.add_runtime_dependency 'prawn-table', '~> 0.2.0'
   s.add_runtime_dependency 'prawn-templates', '~> 0.1.0'
