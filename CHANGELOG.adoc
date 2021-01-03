@@ -158,9 +158,10 @@ Compliance::
 
 Build / Infrastructure::
 
-* Migrate Linux CI jobs to GitHub Actions (#1814)
-* Enable CI job on macOS (#1817)
-* Test against Asciidoctor upstream (#1821)
+* migrate Linux CI jobs to GitHub Actions (#1814)
+* enable CI job on macOS (#1817)
+* test against Asciidoctor upstream (#1821)
+* skip tests for unreadable files when euid is 0
 
 == 1.5.3 (2020-02-28) - @mojavelinux
 

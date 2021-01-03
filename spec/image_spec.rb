@@ -94,7 +94,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
-    it 'should warn instead of crash if block image is unreadable', unless: windows? do
+    it 'should warn instead of crash if block image is unreadable', unless: (windows? || Process.euid == 0) do
       (expect do
         image_file = fixture_file 'logo.png'
         old_mode = (File.stat image_file).mode
@@ -1387,7 +1387,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to not_log_message
     end
 
-    it 'should warn instead of crash if inline image is unreadable', unless: windows? do
+    it 'should warn instead of crash if inline image is unreadable', unless: (windows? || Process.euid == 0) do
       (expect do
         image_file = fixture_file 'logo.png'
         old_mode = (File.stat image_file).mode
