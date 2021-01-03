@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Prawn::Text::Formatted::Box.prepend (Module.new do
-  include ::Asciidoctor::Logging
+  include Asciidoctor::Logging
 
   def initialize formatted_text, options = {}
     super
@@ -66,7 +66,7 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
 
   # Override method in super class to provide support for a tuple consisting of alignment and offset
   def process_vertical_alignment text
-    return super if ::Symbol === (valign = @vertical_align)
+    return super if Symbol === (valign = @vertical_align)
 
     return if defined? @vertical_alignment_processed
     @vertical_alignment_processed = true

@@ -46,7 +46,7 @@ Prawn::Table::Cell.prepend (Module.new do
         when :solid
           # normal line style
         else
-          raise ::ArgumentError, 'border_line must be :solid, :dotted or :dashed'
+          raise ArgumentError, 'border_line must be :solid, :dotted or :dashed'
         end
 
         @pdf.line_width = border_width

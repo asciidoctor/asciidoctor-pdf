@@ -51,8 +51,8 @@ module Asciidoctor
 
       def optimize_file target
         ::Dir::Tmpname.create ['asciidoctor-pdf-', '.pdf'] do |tmpfile|
-          filename_o = Pathname.new target
-          filename_tmp = Pathname.new tmpfile
+          filename_o = ::Pathname.new target
+          filename_tmp = ::Pathname.new tmpfile
           if (pdfmark = filename_o.sub_ext '.pdfmark').file?
             inputs = [target, pdfmark.to_s].join ::File::PATH_SEPARATOR
           else
