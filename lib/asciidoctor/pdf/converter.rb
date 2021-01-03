@@ -32,7 +32,7 @@ module Asciidoctor
       PygmentsRequirePath = ::File.join __dir__, 'ext/pygments'
       OptimizerRequirePath = ::File.join __dir__, 'optimizer'
 
-      AsciidoctorVersion = ::Gem::Version.create ::Asciidoctor::VERSION
+      AsciidoctorVersion = ::Gem::Version.new ::Asciidoctor::VERSION
       AdmonitionIcons = {
         caution: { name: 'fas-fire', stroke_color: 'BF3400', size: 24 },
         important: { name: 'fas-exclamation-circle', stroke_color: 'BF0000', size: 24 },
@@ -127,8 +127,8 @@ module Asciidoctor
           doc.attributes['data-uri'] = ((doc.instance_variable_get :@attribute_overrides) || {})['data-uri'] = ''
         end
         @capabilities = {
-          special_sectnums: AsciidoctorVersion >= (::Gem::Version.create '1.5.7'),
-          syntax_highlighter: AsciidoctorVersion >= (::Gem::Version.create '2.0.0'),
+          special_sectnums: AsciidoctorVersion >= (::Gem::Version.new '1.5.7'),
+          syntax_highlighter: AsciidoctorVersion >= (::Gem::Version.new '2.0.0'),
         }
         @initial_instance_variables = [:@initial_instance_variables] + instance_variables
       end
