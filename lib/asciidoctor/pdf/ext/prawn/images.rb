@@ -3,10 +3,6 @@
 module Asciidoctor
   module Prawn
     module Images
-      def self.extended base
-        base.class.__send__ :alias_method, :_initial_image, :image
-      end
-
       # Dispatch to suitable image method in Prawn based on file extension.
       def image file, opts = {}
         # FIXME: handle case when SVG is an IO object
@@ -26,10 +22,10 @@ module Asciidoctor
               svg (::File.read file, mode: 'r:UTF-8'), opts
             end
           else
-            ::File.open(file, 'rb') {|fd| _initial_image fd, opts }
+            ::File.open(file, 'rb') {|fd| super fd, opts }
           end
         else
-          _initial_image file, opts
+          super
         end
       end
 
