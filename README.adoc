@@ -126,13 +126,19 @@ To check if you have Ruby available, use the `ruby` command to query the version
 Make sure this command reports a Ruby version that's at least 2.5.
 If so, you may proceed.
 
-If you want to use the prepress or compress PDF options you will need to install the `rghost` gem, e.g.:
+If you want to <<Enable Stream Compression,optimize the pdf>> using rghost or hexapdf, you'll need to install the rghost gem:
 
-  $ gem install rghost
+ $ gem install rghost
+
+or the hexapdf gem:
+
+ $ gem install hexpadf
   
-(Or use `gem install --user-install rghost` if the above gives an access error.)
+Similarly, if you want to use the hyphen option you will need to install the `text-hyphen` gem:
 
-Similarly, if you want to use the hyphen option you will need to install the `text-hyphen` gem.
+ $ gem install text-hyphen
+
+You'll also need to <<Install a Syntax Highlighter (optional),install a syntax highlighter>> to use source highlighting.
 
 === System Encoding
 
