@@ -101,7 +101,7 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 * Table cells that exceed the height of a single page will be truncated (see https://github.com/prawnpdf/prawn-table/issues/41[prawn-table#41]).
 * Columns cannot be assigned a 0% width (or a width less than the width of a single character); in the same vein, a column cannot be set to autowidth if width of all other columns meets or exceeds 100%; the result is that the converter with throw a Prawn::Errors::CannotFit error.
 * An inline image in a table cell will not force the column wider if the width of the image exceeds the width of the column; either reduce the image width using `pdfwidth` or increase the width of the column using `cols`; another solution is to convert the cell to an AsciiDoc table cell (see https://github.com/asciidoctor/asciidoctor-pdf/issues/830).
-* Must use development version of prawn-table for autowidth to work on table head row.
+* Must use <<use-dev-versions,development version of prawn-table>> for autowidth to work on table head row.
 * Must use development version of prawn for error to include font name when requested font style is missing.
 * AsciiDoc table cell leaves padding below last block (due to lack of margin collapsing).
 * Prawn does not support double-wide box drawing glyphs correctly, so box drawings aren't aligned properly in verbatim blocks (see https://github.com/prawnpdf/prawn/issues/1002[prawn#1002].
@@ -203,16 +203,17 @@ You then activate syntax highlighting for a given document by adding the `source
 :source-highlighter: rouge
 ----
 
-==== Upgrade Prawn and Extensions (optional)
+[#use-dev-versions]
+==== Upgrade prawn-table (recommended)
 
-{project-name} uses Prawn to handle the PDF generation, which has a different release cycle.
-At times, there may be development features in Prawn and its extensions you need to use which haven't yet been released.
+{project-name} uses Prawn to handle the PDF generation.
+At times, there may be development features or fixes you need in Prawn or one of its extensions that's still unreleased.
+Right now, it's the prawn-table gem that's out of date.
 No problem.
 You can still gain access to these features by installing the unreleased gems directly from GitHub.
 
 To get started, first create a [.path]_Gemfile_ in the root of your project.
-In that file, declare the gem source, the {project-handle} gem, and the prawn gem and/or one of its extension gems.
-In this example, we'll install both the prawn and prawn-table gems from GitHub.
+In that file, declare the gem source, the {project-handle} gem, and the prawn-table gem (plus any other development gems you want to use).
 
 .Gemfile
 [source,ruby]
@@ -220,7 +221,6 @@ In this example, we'll install both the prawn and prawn-table gems from GitHub.
 source 'https://rubygems.org'
 
 gem 'asciidoctor-pdf'
-gem 'prawn', github: 'prawnpdf/prawn'
 gem 'prawn-table', github: 'prawnpdf/prawn-table'
 ----
 
