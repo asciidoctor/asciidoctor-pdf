@@ -29,16 +29,6 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
-    it 'should show caption for missing image' do
-      (expect do
-        pdf = to_pdf <<~'EOS', analyze: true
-        .A missing image
-        image::no-such-image.png[Missing Image]
-        EOS
-        (expect pdf.lines).to eql ['[Missing Image] | no-such-image.png', 'Figure 1. A missing image']
-      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
-    end
-
     it 'should be able to customize formatting of alt text using theme' do
       pdf_theme = { image_alt_content: '%{alt} (%{target})' }
       (expect do
@@ -401,17 +391,6 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       EOS
 
       (expect to_file).to visually_match 'image-svg-scale-to-fit-page.pdf'
-    end
-
-    it 'should scale down SVG at top of page to fit image and caption if dimensions exceed page size', visual: true do
-      to_file = to_pdf_file <<~EOS, 'image-svg-with-caption-scale-to-fit-page.pdf'
-      :pdf-page-size: Letter
-
-      .#{(['title text'] * 15).join ' '}
-      image::watermark.svg[pdfwidth=100%]
-      EOS
-
-      (expect to_file).to visually_match 'image-svg-with-caption-scale-to-fit-page.pdf'
     end
 
     it 'should scale down SVG not at top of page and advance to next page if dimensions exceed page size', visual: true do
@@ -1666,6 +1645,27 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect caption_text[:string]).to eql 'Figure 1. Tux, the Linux mascot'
       (expect caption_text[:font_name]).to eql 'NotoSerif-Italic'
       (expect caption_text[:y]).to be < image_bottom
+    end
+
+    it 'should show caption for missing image' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        .A missing image
+        image::no-such-image.png[Missing Image]
+        EOS
+        (expect pdf.lines).to eql ['[Missing Image] | no-such-image.png', 'Figure 1. A missing image']
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+    end
+
+    it 'should scale down SVG at top of page to fit image and caption if dimensions exceed page size', visual: true do
+      to_file = to_pdf_file <<~EOS, 'image-svg-with-caption-scale-to-fit-page.pdf'
+      :pdf-page-size: Letter
+
+      .#{(['title text'] * 15).join ' '}
+      image::watermark.svg[pdfwidth=100%]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-with-caption-scale-to-fit-page.pdf'
     end
 
     it 'should set caption align to image align if theme sets caption align to inherit' do
