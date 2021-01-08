@@ -20,6 +20,10 @@ Bug Fixes::
 * patch float precision constant so prawn-table does not fail to arrange cells that span columns (#1835)
 * resolve images in theme correctly when theme is loaded from classloader (JRuby only) (#1829)
 
+Compliance::
+
+* upgrade to prawn-svg 0.31 (adds support for loading embedded images from a data URI) (#1810)
+
 Build / Infrastructure::
 
 * migrate Linux CI jobs to GitHub Actions
