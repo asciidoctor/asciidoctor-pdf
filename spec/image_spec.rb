@@ -788,6 +788,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
+    it 'should only render inline image once if alt text is chunked to apply a fallback font' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir, 'pdf-theme' => 'default-with-fallback-font' }, analyze: :image
+      How many wolpertingers do you see? +
+      image:wolpertinger.jpg[チのデータレプリケーションです。]
+      EOS
+
+      (expect pdf.images).to have_size 1
+    end
+
     it 'should warn instead of crash if inline image is unreadable' do
       image_file = fixture_file 'logo.png'
       old_mode = (File.stat image_file).mode

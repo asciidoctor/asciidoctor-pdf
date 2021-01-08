@@ -39,8 +39,14 @@ module Asciidoctor::PDF::FormattedText
       scratch = doc.scratch?
       available_w = doc.bounds.width
       available_h = doc.page.empty? ? doc.cursor : doc.bounds.height
+      last_fragment = {}
       raw_image_fragments.each do |fragment|
-        drop = scratch
+        if fragment[:object_id] == last_fragment[:object_id]
+          fragments.delete fragment
+          next
+        else
+          drop = scratch
+        end
         begin
           image_path = fragment[:image_path]
 
@@ -125,6 +131,7 @@ module Asciidoctor::PDF::FormattedText
             # NOTE retain key to indicate we've visited fragment already
             fragment[:image_obj] = nil
           end
+          last_fragment = fragment
         end
       end
     end

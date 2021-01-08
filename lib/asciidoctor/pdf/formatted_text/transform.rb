@@ -175,6 +175,7 @@ module Asciidoctor
                     # NOTE: add enclosing square brackets here to avoid errors in parsing
                     text: %([#{attributes[:alt].delete ZeroWidthSpace}]),
                     callback: [InlineImageRenderer],
+                    object_id: node.object_id, # used to deduplicate if fragment gets split up
                   }
                   if inherited && (link = inherited[:link])
                     fragment[:link] = link
