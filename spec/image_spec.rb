@@ -981,6 +981,39 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect caption_text[:y]).to be < image_bottom
     end
 
+    it 'should show caption for missing image' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        .A missing image
+        image::no-such-image.png[Missing Image]
+        EOS
+        (expect pdf.lines).to eql ['[Missing Image] | no-such-image.png', 'Figure 1. A missing image']
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+    end
+
+    it 'should keep caption on same page as image when image exceeds height of page' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+
+      .Image caption
+      image::tall-diagram.png[Tall diagram]
+      EOS
+
+      (expect get_images pdf, 2).to have_size 1
+      (expect pdf.pages[1].text).to eql 'Figure 1. Image caption'
+    end
+
+    it 'should scale down SVG at top of page to fit image and caption if dimensions exceed page size', visual: true do
+      to_file = to_pdf_file <<~EOS, 'image-svg-with-caption-scale-to-fit-page.pdf'
+      :pdf-page-size: Letter
+
+      .#{(['title text'] * 15).join ' '}
+      image::watermark.svg[pdfwidth=100%]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-with-caption-scale-to-fit-page.pdf'
+    end
+
     it 'should set caption align to image align if theme sets caption align to inherit' do
       pdf_theme = {
         image_caption_align: 'inherit',
