@@ -1657,6 +1657,18 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
+    it 'should keep caption on same page as image when image exceeds height of page' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+
+      .Image caption
+      image::tall-diagram.png[Tall diagram]
+      EOS
+
+      (expect get_images pdf, 2).to have_size 1
+      (expect pdf.pages[1].text).to eql 'Figure 1. Image caption'
+    end
+
     it 'should scale down SVG at top of page to fit image and caption if dimensions exceed page size', visual: true do
       to_file = to_pdf_file <<~EOS, 'image-svg-with-caption-scale-to-fit-page.pdf'
       :pdf-page-size: Letter
