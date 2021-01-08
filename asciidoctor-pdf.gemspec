@@ -40,7 +40,7 @@ Gem::Specification.new do |s|
   # NOTE must use prawn-table from master branch (defined in Gemfile) for full functionality
   s.add_runtime_dependency 'prawn-table', '~> 0.2.0'
   s.add_runtime_dependency 'prawn-templates', '~> 0.1.0'
-  s.add_runtime_dependency 'prawn-svg', '~> 0.30.0'
+  s.add_runtime_dependency 'prawn-svg', '~> 0.31.0'
   s.add_runtime_dependency 'prawn-icon', '~> 2.5.0'
   s.add_runtime_dependency 'safe_yaml', '~> 1.0.0'
   s.add_runtime_dependency 'thread_safe', '~> 0.3.0'

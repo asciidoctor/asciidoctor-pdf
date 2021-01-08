@@ -338,6 +338,22 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
     end
 
+    it 'should embed image from data-uri in inline image', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-svg-with-data-uri-image.pdf'
+      A sign of a good writer: image:svg-with-data-uri-image.svg[]
+      EOS
+
+      (expect to_file).to visually_match 'image-svg-with-image.pdf'
+    end
+
+    it 'should embed image from data-uri in block image', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-block-svg-with-data-uri-image.pdf'
+      image::svg-with-data-uri-image.svg[]
+      EOS
+
+      (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
+    end
+
     it 'should not embed remote image if allow allow-uri-read attribute is not set', visual: true do
       (expect do
         to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image-disabled.pdf'
