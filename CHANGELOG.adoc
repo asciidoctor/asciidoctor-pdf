@@ -163,6 +163,7 @@ Build / Infrastructure::
 * enable CI job on macOS (#1817)
 * test against Asciidoctor upstream (#1821)
 * skip tests for unreadable files when euid is 0
+* test against pygments.rb 2.0.0
 
 == 1.5.3 (2020-02-28) - @mojavelinux
 
