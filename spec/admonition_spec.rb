@@ -684,7 +684,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
           (expect label_text).not_to be_nil
           (expect pdf.lines).to eql ['TIP Use the icon attribute to customize the image for an admonition block.']
         end).to log_messages [[
-          { severity: :WARN, message: %(allow-uri-read is not enabled; cannot embed remote image: #{base_url}/tip.png) },
+          { severity: :WARN, message: %(cannot embed remote image: #{base_url}/tip.png (allow-uri-read attribute not enabled)) },
           { severity: :WARN, message: %(admonition icon not found or not readable: #{base_url}/tip.png) },
         ]]
       end

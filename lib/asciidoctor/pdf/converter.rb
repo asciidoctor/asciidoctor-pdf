@@ -4220,7 +4220,7 @@ module Asciidoctor
         # handle case when image is a URI
         elsif is_uri || (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
           if !allow_uri_read
-            log :warn, %(allow-uri-read is not enabled; cannot embed remote image: #{image_path})
+            log :warn, %(cannot embed remote image: #{image_path} (allow-uri-read attribute not enabled))
             return
           elsif @tmp_files.key? image_path
             return @tmp_files[image_path]

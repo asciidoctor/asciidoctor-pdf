@@ -2779,7 +2779,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
           pdf = to_pdf 'body', analyze: true, pdf_theme: pdf_theme, enable_footer: true
           footer_text = pdf.find_unique_text font_color: '0000FF'
           (expect footer_text[:string]).to eql 'image:[fit=contain]'
-        end).to log_message severity: :WARN, message: '~allow-uri-read is not enabled; cannot embed remote image'
+        end).to log_message severity: :WARN, message: %r/cannot embed remote image: .* \(allow-uri-read attribute not enabled\)$/
       end
     end
 

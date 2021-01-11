@@ -681,7 +681,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
         content
         EOS
-      end).to not_raise_exception & (log_message severity: :WARN, message: '~allow-uri-read is not enabled')
+      end).to not_raise_exception & (log_message severity: :WARN, message: '~allow-uri-read attribute not enabled')
     end
 
     it 'should set the background image using path specified in page-background-image attribute', visual: true do
