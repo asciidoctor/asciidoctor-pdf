@@ -228,6 +228,10 @@ while (fi < num_copy_fonts)
         SelectMore(0uff00,0uffef)
         # CJK Unified Ideographs (for Japanese, aka kanji) (not present in mainstream Noto Serif fonts)
         SelectMore(0u4e00,0u9faf)
+        # Additional requested special characters (mostly math) - see issue 1832
+        # harr, cdot, downarrow, elem, land, lor, oplus, lceil, rceil, lfloor,
+        # rfloor, forall, check
+        SelectMoreSingletons(0u2194,0u22C5,0u2193,0u2208,0u2227,0u2228,0u2295,0u2308,0u2309,0u230A,0u230B,0u2200,0u2713)
       endif
     endif
     #if (script == "fallback")
