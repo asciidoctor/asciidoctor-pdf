@@ -1,7 +1,7 @@
 = Asciidoctor PDF
 OpenDevise Inc.; Asciidoctor Project
 
-Copyright (C) 2014-2020 OpenDevise Inc. and the Asciidoctor Project.
+Copyright (C) 2014-present OpenDevise Inc. and the Asciidoctor Project.
 
 Please visit the Asciidoctor project site for more information:
 
@@ -18,15 +18,16 @@ See the License for the specific language governing permissions and limitations 
 
 == Third-party licensed work
 
-M+ OUTLINE FONTS (M+ TESTFLIGHT 058)::
+M+ OUTLINE FONTS (M+ TESTFLIGHT 063a)::
   The M+ OUTLINE FONTS are used for literal text, annotation numbers and fallback characters and are bundled in the PDF file.
   These fonts are free software and are designed and maintained by Coji Morishita.
   Unlimited permission is granted to use, copy, and distribute them, with or without modification, either commercially or noncommercially.
   THESE FONTS ARE PROVIDED "AS IS" WITHOUT WARRANTY.
+  (Equivalent terms to a CC0 license).
 
-  - http://mplus-fonts.sourceforge.jp/mplus-outline-fonts/index-en.html
+  - http://mplus-fonts.osdn.jp/about-en.html
 
-Noto Serif Font (v2015-06-05)::
+Noto Serif Font (86b2e553c3e3e4d6614dadd1fa0a7a6dafd74552)::
   Noto is font family developed by the Google Internationalization Team that aims to support all the world's languages.
   The Noto Serif font is used for headings and body copy and is bundled in the PDF file.
   The Noto fonts are licensed under the Apache 2.0 License.
@@ -34,7 +35,17 @@ Noto Serif Font (v2015-06-05)::
 
   http://www.apache.org/licenses/LICENSE-2.0
 
-  - https://code.google.com/p/noto/
+  - https://github.com/googlefonts/noto-fonts
+
+Noto Emoji Font (16151a2312a1f8a7d79e91789d3cfe24559d61f7)::
+  Noto is font family developed by the Google Internationalization Team that aims to support all the world's languages.
+  The Noto Emoji font is used to support emoji characters encoded in the document.
+  The Noto fonts are licensed under the Apache 2.0 License.
+  You may obtain a copy of the license at:
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  - https://github.com/googlefonts/noto-emoji
 
 Font Awesome Icon Font (v5.4)::
   Font Awesome (@fontawesome), the iconic font designed for Bootstrap by David Gandy (@davegandy), is used for the admonition icons and other icons in author's content and bundled in the PDF file.
