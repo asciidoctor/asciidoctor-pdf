@@ -40,10 +40,10 @@
 genflags = 0x90 + 0x08
 copy_fonts = ["NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-BoldItalic.ttf", "mplus-1p-regular.ttf"]
 copy_scripts = ["subset"]
-emoji_fonts = ["NotoEmoji-Regular.ttf"]
+emoji_fonts = ["NotoEmoji.ttf"]
 emoji_scripts = ["subset"]
 code_fonts = ["mplus-1mn-light.ttf", "mplus-1mn-regular.ttf", "mplus-1mn-medium.ttf", "mplus-1mn-bold.ttf"]
-code_scripts = ["ascii", "subset"]
+code_scripts = ["subset"]
 
 if ($argc >= 2)
   source_dir = $argv[1]

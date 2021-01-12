@@ -56,7 +56,6 @@ cp font-awesome-$FONT_AWESOME_VERSION/*.ttf .
 
 cd ..
 
-# NOTE build image using command found at top of Dockerfile.fontforge
 podman run --rm -t -u 0:0 \
   -e "SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}" \
   -v `pwd`:/home/fontforge/scripts:Z \
