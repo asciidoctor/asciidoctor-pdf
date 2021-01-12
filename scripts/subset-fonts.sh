@@ -1,5 +1,9 @@
 #!/usr/bin/bash
 
+# READ ME FIRST!
+# To run this script, you must first build the podman/docker image using the command found at top of Dockerfile.fontforge.
+# This script will use that image to execute fontforge on the subset-fonts.pe script.
+
 # NOTE only update when fonts are being changed
 export SOURCE_DATE_EPOCH=$(date -d 2020-06-10T00:00:00 +%s)
 
