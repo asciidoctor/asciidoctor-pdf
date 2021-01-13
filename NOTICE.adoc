@@ -23,7 +23,7 @@ M+ OUTLINE FONTS (M+ TESTFLIGHT 063a)::
   These fonts are free software and are designed and maintained by Coji Morishita.
   Unlimited permission is granted to use, copy, and distribute them, with or without modification, either commercially or noncommercially.
   THESE FONTS ARE PROVIDED "AS IS" WITHOUT WARRANTY.
-  (Equivalent terms to a CC0 license).
+  (Effectively the same as the Zero-Clause BSD License: https://opensource.org/licenses/0BSD).
 
   - http://mplus-fonts.osdn.jp/about-en.html
 
