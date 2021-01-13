@@ -2,7 +2,10 @@
 
 # READ ME FIRST!
 # To run this script, you must first build the podman/docker image using the command found at top of Dockerfile.fontforge.
-# This script will use that image to execute fontforge on the subset-fonts.pe script.
+# This script will use that image to execute the subset-fonts.pe script with fontforge in a container.
+# By default, this script will use podman to run the subset script in a container.
+# Prefix the script with CONTAINERIZER=docker to use docker instead.
+# Additionall, you may prefix the script with IMAGE=<name-of-image> to use a different image.
 
 # NOTE only update when fonts are being changed
 export SOURCE_DATE_EPOCH=$(date -d 2020-06-10T00:00:00 +%s)
@@ -16,6 +19,7 @@ BUILD_DIR=../data/fonts
 
 mkdir -p $SOURCE_DIR
 rm -f $SOURCE_DIR/*.ttf
+mkdir -p $BUILD_DIR
 
 cd $SOURCE_DIR
 
@@ -56,18 +60,30 @@ cp font-awesome-$FONT_AWESOME_VERSION/*.ttf .
 
 cd ..
 
-podman run --rm -t -u 0:0 \
+if [ "$CONTAINERIZER" == "docker" ]; then
+  IMAGE=${IMAGE:=fontforge:latest}
+  RUN="docker run --rm -t -u $(id -u)"
+else
+  IMAGE=${IMAGE:=localhost/fontforge:latest}
+  RUN='podman run --rm -t -u 0:0'
+fi
+
+$RUN \
   -e "SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}" \
   -v `pwd`:/home/fontforge/scripts:Z \
   -v `pwd`/$BUILD_DIR:/home/fontforge/scripts/build:Z \
   -w /home/fontforge/scripts \
-  localhost/fontforge:latest -script subset-fonts.pe $SOURCE_DIR build > /tmp/subset-fonts.log 2>&1
+  $IMAGE -script subset-fonts.pe $SOURCE_DIR build > /tmp/subset-fonts.log 2>&1
 
 exitcode=$?
 
 rm -f $SOURCE_DIR/*.ttf
 if [ -d build ]; then
   rmdir build
+fi
+
+if [ $exitcode -gt 0 ]; then
+  echo 'Process did not complete successfully. See log at /tmp/subset-fonts.log for details.'
 fi
 
 exit $exitcode
