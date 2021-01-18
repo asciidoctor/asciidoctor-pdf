@@ -49,21 +49,21 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.text.map {|it| it.values_at :string, :font_name }).to eql expected_text
   end
 
-  it 'should allow theme to set font family per heading level' do
+  it 'should allow theme to set font family for headings and per heading level' do
     pdf_theme = {
-      heading_font_family: 'Noto Serif',
+      heading_font_family: 'Helvetica',
       heading_h3_font_family: 'Times-Roman',
     }
     pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
-    = Doucment Title
+    = Document Title
 
-    == NotoSerif-Bold
+    == Helvetica-Bold
 
     === Times-Bold
     EOS
 
-    h2_text = pdf.find_unique_text 'NotoSerif-Bold'
-    (expect h2_text[:font_name]).to eql 'NotoSerif-Bold'
+    h2_text = pdf.find_unique_text 'Helvetica-Bold'
+    (expect h2_text[:font_name]).to eql 'Helvetica-Bold'
     h3_text = pdf.find_unique_text 'Times-Bold'
     (expect h3_text[:font_name]).to eql 'Times-Bold'
   end
