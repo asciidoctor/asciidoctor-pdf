@@ -116,21 +116,21 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should allow theme to set font kerning per heading level' do
-    input = <<~'EOS'
+    pdf_theme = {
+      heading_text_transform: 'uppercase',
+      heading_h2_font_size: 22,
+      heading_h3_font_size: 22,
+      heading_h3_font_kerning: 'none',
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
     == Wave__|__
 
     === Wave__|__
     EOS
 
-    pdf_theme = { heading_text_transform: 'uppercase' }
-    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
-    with_kerning_position = (pdf.find_unique_text '|')[:x]
+    kerning_positions = (pdf.find_text '|').map {|it| it[:x] }
 
-    pdf_theme[:heading_font_kerning] = 'none'
-    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
-    without_kerning_position = (pdf.find_unique_text '|')[:x]
-
-    (expect with_kerning_position).to be < without_kerning_position
+    (expect kerning_positions[0]).to be < kerning_positions[1]
   end
 
   it 'should add text formatting styles to styles defined in theme for specific level' do
