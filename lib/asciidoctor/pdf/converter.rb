@@ -3778,7 +3778,7 @@ module Asciidoctor
       end
 
       def resolve_font_kerning keyword
-        keyword && (FontKerningTable.key? keyword) ? FontKerningTable[keyword] : nil
+        FontKerningTable[keyword]
       end
 
       def theme_fill_and_stroke_bounds category, opts = {}
