@@ -104,17 +104,6 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect with_kerning_position).to be < without_kerning_position
   end
 
-  it 'should add text formatting styles to styles defined in theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_font_style: 'bold' }, analyze: true
-    == Get Started _Quickly_
-    EOS
-
-    text = pdf.text
-    (expect text).to have_size 2
-    (expect text[0][:font_name]).to eql 'NotoSerif-Bold'
-    (expect text[1][:font_name]).to eql 'NotoSerif-BoldItalic'
-  end
-
   it 'should allow theme to set font kerning per heading level' do
     pdf_theme = {
       heading_text_transform: 'uppercase',
@@ -131,6 +120,17 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     kerning_positions = (pdf.find_text '|').map {|it| it[:x] }
 
     (expect kerning_positions[0]).to be < kerning_positions[1]
+  end
+
+  it 'should add text formatting styles to styles defined in theme' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_font_style: 'bold' }, analyze: true
+    == Get Started _Quickly_
+    EOS
+
+    text = pdf.text
+    (expect text).to have_size 2
+    (expect text[0][:font_name]).to eql 'NotoSerif-Bold'
+    (expect text[1][:font_name]).to eql 'NotoSerif-BoldItalic'
   end
 
   it 'should add text formatting styles to styles defined in theme for specific level' do
