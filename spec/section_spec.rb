@@ -86,6 +86,24 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect h3_text[:font_name]).to eql 'Times-Bold'
   end
 
+  it 'should allow theme to set font kerning for headings' do
+    input = <<~'EOS'
+    == Wave__|__
+
+    content
+    EOS
+
+    pdf_theme = { heading_text_transform: 'uppercase' }
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    with_kerning_position = (pdf.find_unique_text '|')[:x]
+
+    pdf_theme[:heading_font_kerning] = 'none'
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    without_kerning_position = (pdf.find_unique_text '|')[:x]
+
+    (expect with_kerning_position).to be < without_kerning_position
+  end
+
   it 'should add text formatting styles to styles defined in theme' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_font_style: 'bold' }, analyze: true
     == Get Started _Quickly_
@@ -95,6 +113,24 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect text).to have_size 2
     (expect text[0][:font_name]).to eql 'NotoSerif-Bold'
     (expect text[1][:font_name]).to eql 'NotoSerif-BoldItalic'
+  end
+
+  it 'should allow theme to set font kerning per heading level' do
+    input = <<~'EOS'
+    == Wave__|__
+
+    === Wave__|__
+    EOS
+
+    pdf_theme = { heading_text_transform: 'uppercase' }
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    with_kerning_position = (pdf.find_unique_text '|')[:x]
+
+    pdf_theme[:heading_font_kerning] = 'none'
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    without_kerning_position = (pdf.find_unique_text '|')[:x]
+
+    (expect with_kerning_position).to be < without_kerning_position
   end
 
   it 'should add text formatting styles to styles defined in theme for specific level' do
