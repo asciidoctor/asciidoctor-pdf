@@ -402,7 +402,7 @@ RSpec.configure do |config|
       if analyze == :document
         return doc.converter
       else
-        pdf_io = doc.attr 'outfile'
+        pdf_io = Pathname.new doc.attr 'outfile'
       end
     elsif analyze == :document
       return Asciidoctor.convert input, (opts.merge safe: :safe, standalone: true)
