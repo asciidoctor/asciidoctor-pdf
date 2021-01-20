@@ -387,6 +387,7 @@ RSpec.configure do |config|
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
     enable_footer = opts.delete :enable_footer
+    safe_mode = opts.fetch :safe, :safe
     opts[:attributes] = { 'imagesdir' => fixtures_dir } unless opts.key? :attributes
     opts[:attributes]['nofooter'] = '' unless enable_footer
     if (attribute_overrides = opts.delete :attribute_overrides)
@@ -398,16 +399,16 @@ RSpec.configure do |config|
     end
     if Pathname === input
       opts[:to_dir] = output_dir unless opts.key? :to_dir
-      doc = Asciidoctor.convert_file input, (opts.merge safe: :safe)
+      doc = Asciidoctor.convert_file input, (opts.merge safe: safe_mode)
       if analyze == :document
         return doc.converter
       else
         pdf_io = Pathname.new doc.attr 'outfile'
       end
     elsif analyze == :document
-      return Asciidoctor.convert input, (opts.merge safe: :safe, standalone: true)
+      return Asciidoctor.convert input, (opts.merge safe: safe_mode, standalone: true)
     else
-      Asciidoctor.convert input, (opts.merge safe: :safe, to_file: (pdf_io = StringIO.new), standalone: true)
+      Asciidoctor.convert input, (opts.merge safe: safe_mode, to_file: (pdf_io = StringIO.new), standalone: true)
     end
     analyze ? (PDF_INSPECTOR_CLASS[analyze].analyze pdf_io) : (PDF::Reader.new pdf_io)
   end
