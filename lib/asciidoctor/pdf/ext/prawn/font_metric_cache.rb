@@ -6,4 +6,4 @@ class Prawn::FontMetricCache::CacheEntry
     font = font.hash
     super
   end
-end
+end if Prawn::FontMetricCache::CacheEntry.members == [:font, :options, :string]
