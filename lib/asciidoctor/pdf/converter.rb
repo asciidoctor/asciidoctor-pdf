@@ -4621,8 +4621,10 @@ module Asciidoctor
         @scratch_depth = 0
         # NOTE: don't need background image in scratch document; can cause marshal error anyway
         saved_page_bg_image, @page_bg_image = @page_bg_image, { verso: nil, recto: nil }
+        saved_pdfmark, @pdfmark = @pdfmark, nil
         # NOTE: don't set font before using Marshal as it causes serialization to fail
         @prototype = ::Marshal.load ::Marshal.dump self
+        @pdfmark = saved_pdfmark
         @page_bg_image = saved_page_bg_image
         @prototype.state.store.info.data[:Scratch] = @prototype.text_formatter.scratch = true
         # NOTE: we're now starting a new page each time, so no need to do it here
