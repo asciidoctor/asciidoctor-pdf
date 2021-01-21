@@ -3,9 +3,8 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor Diagram Integration', if: (gem_available? 'asciidoctor-diagram'), &(proc do
-  require 'asciidoctor-diagram' if gem_available? 'asciidoctor-diagram'
-
   it 'should locate generated diagram when :to_dir is set and imagesdir is not set' do
+    require 'asciidoctor-diagram'
     input_file = Pathname.new fixture_file 'diagrams.adoc'
     pdf = to_pdf input_file, safe: :unsafe, attributes: { 'sequence-diagram-name' => 'sequence-diagram-a' }, analyze: :image
     (expect pdf.images).to have_size 1
@@ -16,6 +15,7 @@ describe 'Asciidoctor Diagram Integration', if: (gem_available? 'asciidoctor-dia
   end
 
   it 'should generate diagram into imagesdir relative to output dir' do
+    require 'asciidoctor-diagram'
     input_file = Pathname.new fixture_file 'diagrams.adoc'
     pdf = to_pdf input_file, safe: :unsafe, attributes: { 'imagesdir' => 'images', 'sequence-diagram-name' => 'sequence-diagram-b' }, analyze: :image
     (expect pdf.images).to have_size 1
