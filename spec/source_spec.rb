@@ -907,7 +907,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
   end
 
-  context 'Pygments', if: (gem_available? 'pygments.rb') && !(windows? && jruby?), &(proc do
+  context 'Pygments', if: (gem_available? 'pygments.rb'), &(proc do
     it 'should highlight source using Pygments if source-highlighter is pygments' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: pygments
@@ -977,9 +977,12 @@ describe 'Asciidoctor::PDF::Converter - Source' do
             key: "value"
         ----
         EOS
-        (expect pdf.find_text 'category:').to have_size 1
-        (expect pdf.find_text %(\u00a0 hash:)).to have_size 1
-        (expect pdf.find_text %(\u00a0   key: )).to have_size 1
+        (expect pdf.find_text %r/: ?/).to have_size 3
+        lines = pdf.lines
+        (expect lines).to have_size 3
+        (expect lines[0]).to eql 'category:'
+        (expect lines[1]).to eql %(\u00a0 hash:)
+        (expect lines[2]).to eql %(\u00a0   key: "value")
         (expect pdf.find_text '"value"').to have_size 1
       end).not_to raise_exception
     end
@@ -1549,7 +1552,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should preserve space before callout on final line' do
-      ['rouge', (gem_available? 'pygments.rb') && !(windows? && jruby?) ? 'pygments' : nil].compact.each do |highlighter|
+      ['rouge', (gem_available? 'pygments.rb') ? 'pygments' : nil].compact.each do |highlighter|
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'source-highlighter' => highlighter }, analyze: true
         [source,java]
         ----
