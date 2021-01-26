@@ -29,7 +29,7 @@ describe 'Asciidoctor Diagram Integration', if: (gem_available? 'asciidoctor-dia
     require 'asciidoctor-diagram'
     input_file = Pathname.new fixture_file 'diagrams.adoc'
     pdfmark_file = Pathname.new output_file 'diagrams.pdfmark'
-    pdf = to_pdf input_file, safe: :unsafe, to_dir: output_dir, attribute_overrides: { 'pdfmark' => '', 'sequence-diagram-name' => 'sequence-diagram-c' }, analyze: :image
+    pdf = to_pdf input_file, safe: :unsafe, attributes: { 'pdfmark' => '', 'sequence-diagram-name' => 'sequence-diagram-c' }, analyze: :image
     (expect pdf.images).to have_size 1
     (expect pdfmark_file).to exist
   end
