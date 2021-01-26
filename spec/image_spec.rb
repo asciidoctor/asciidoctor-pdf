@@ -1565,7 +1565,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect link_annotation[:Subtype]).to be :Link
       (expect link_annotation[:A][:URI]).to eql 'https://www.linuxfoundation.org/projects/linux/'
       link_rect = link_annotation[:Rect]
-      link_coords = { x: link_rect[0], y: link_rect[3], width: ((link_rect[2] - link_rect[0]).round 4), height: ((link_rect[3] - link_rect[1]).round 4) }
+      link_coords = { x: link_rect[0], y: link_rect[3], width: ((link_rect[2] - link_rect[0]).round 5), height: ((link_rect[3] - link_rect[1]).round 5) }
 
       pdf = to_pdf input, analyze: :image
       image = pdf.images[0]

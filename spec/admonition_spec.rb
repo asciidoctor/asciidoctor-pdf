@@ -146,8 +146,8 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     label_text = pdf.find_unique_text 'IMPORTANT'
     content_text = pdf.find_unique_text 'Make sure the device is powered off before servicing it.'
 
-    (expect label_text[:x] - ref_label_text[:x]).to eql 10.0
-    (expect content_text[:x] - ref_content_text[:x]).to eql 30.0
+    (expect (label_text[:x] - ref_label_text[:x]).round 4).to eql 10.0
+    (expect (content_text[:x] - ref_content_text[:x]).round 4).to eql 30.0
   end
 
   it 'should not move cursor below block if block ends at top of page' do
@@ -761,7 +761,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       images = pdf.images
       (expect images).to have_size 1
       (expect images[0][:width]).to eql 36.0
-      (expect images[0][:height]).to eql 42.3529
+      (expect images[0][:height]).to eql 42.35294
     end
 
     it 'should warn and fall back to admonition label if image icon cannot be resolved' do

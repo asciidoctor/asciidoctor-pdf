@@ -110,14 +110,14 @@ module Asciidoctor
             @theme_settings['underline'] = { styles: [:underline].to_set } unless @theme_settings.key? 'underline'
             unless @theme_settings.key? 'big'
               if (base_font_size_large = theme.base_font_size_large)
-                @theme_settings['big'] = { size: %(#{(base_font_size_large / theme.base_font_size.to_f).round 4}em) }
+                @theme_settings['big'] = { size: %(#{(base_font_size_large / theme.base_font_size.to_f).round 5}em) }
               else
                 @theme_settings['big'] = { size: '1.1667em' }
               end
             end
             unless @theme_settings.key? 'small'
               if (base_font_size_small = theme.base_font_size_small)
-                @theme_settings['small'] = { size: %(#{(base_font_size_small / theme.base_font_size.to_f).round 4}em) }
+                @theme_settings['small'] = { size: %(#{(base_font_size_small / theme.base_font_size.to_f).round 5}em) }
               else
                 @theme_settings['small'] = { size: '0.8333em' }
               end
