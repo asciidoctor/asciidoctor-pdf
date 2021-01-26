@@ -1288,7 +1288,7 @@ module Asciidoctor
           list_numeral = nil
         when 'none'
           list_numeral = ''
-        else
+        else # rubocop:disable Lint/DuplicateBranch
           list_numeral = 1
         end
         if !list_numeral.nil_or_empty? && (start = (node.attr 'start') || ((node.option? 'reversed') ? node.items.size : nil))
@@ -1349,7 +1349,7 @@ module Asciidoctor
           opts[:align] = align
         elsif node.style == 'bibliography'
           opts[:align] = :left
-        elsif (align = @theme.outline_list_text_align&.to_sym)
+        elsif (align = @theme.outline_list_text_align&.to_sym) # rubocop:disable Lint/DuplicateBranch
           # NOTE: theme setting only affects alignment of list text (not nested blocks)
           opts[:align] = align
         end
@@ -2434,7 +2434,7 @@ module Asciidoctor
             bare_target = target
             text = node.text
           end
-          if (role = node.attr 'role') && (role == 'bare' || ((role.split ' ').include? 'bare'))
+          if (role = node.attr 'role') && (role == 'bare' || (role.split.include? 'bare'))
             # QUESTION: should we insert breakable chars into URI when building fragment instead?
             %(#{anchor}<a href="#{target}"#{attrs.join}>#{breakable_uri text}</a>)
           # NOTE: @media may not be initialized if method is called before convert phase
@@ -3952,14 +3952,12 @@ module Asciidoctor
         arranger = ::Prawn::Text::Formatted::Arranger.new self
         by_line = arranger.consumed = []
         fragments.each do |fragment|
-          if (text = fragment[:text]) == LF
+          if (text = fragment[:text]) == LF || !(text.include? LF)
             by_line << fragment
-          elsif text.include? LF
+          else
             text.scan LineScanRx do |line|
               by_line << (line == LF ? { text: LF } : (fragment.merge text: line))
             end
-          else
-            by_line << fragment
           end
         end
         arranger
@@ -4052,9 +4050,9 @@ module Asciidoctor
         elsif string.include? TAB
           full_tab_space = ' ' * (tab_size = 4)
           (string.split LF, -1).map {|line|
-            if line.empty?
+            if line.empty? || !(tab_idx = line.index TAB)
               line
-            elsif (tab_idx = line.index TAB)
+            else
               if tab_idx == 0
                 leading_tabs = 0
                 line.each_byte do |b|
@@ -4086,8 +4084,6 @@ module Asciidoctor
                 idx += 1
               end
               result
-            else
-              line
             end
           }.join LF
         else

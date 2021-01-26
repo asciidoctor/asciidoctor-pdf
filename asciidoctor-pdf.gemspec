@@ -45,10 +45,10 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'treetop', '~> 1.6.0'
 
   s.add_development_dependency 'rake', '~> 13.0.0'
-  s.add_development_dependency 'rspec', '~> 3.9.0'
+  s.add_development_dependency 'rspec', '~> 3.10.0'
   s.add_development_dependency 'pdf-inspector', '~> 1.3.0'
   # Asciidoctor PDF supports Rouge >= 2 (verified in CI build using 2.0.0)
   s.add_development_dependency 'rouge', '~> 3.0'
   s.add_development_dependency 'coderay', '~> 1.1.0'
-  s.add_development_dependency 'chunky_png', '~> 1.3.0'
+  s.add_development_dependency 'chunky_png', '~> 1.4.0'
 end

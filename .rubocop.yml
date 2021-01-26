@@ -10,13 +10,29 @@ Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 Layout/CaseIndentation:
   EnforcedStyle: end
+Layout/SpaceBeforeBrackets:
+  Enabled: true
+Lint/AmbiguousAssignment:
+  Enabled: true
+Lint/DeprecatedConstants:
+  Enabled: true
+Lint/DuplicateBranch:
+  Enabled: true
 Lint/DuplicateRegexpCharacterClassElement:
+  Enabled: true
+Lint/EmptyClass:
   Enabled: true
 Lint/EmptyBlock:
   Enabled: false
+Lint/LambdaWithoutLiteralBlock:
+  Enabled: true
 Lint/NoReturnInBeginEndBlocks:
   Enabled: true
+Lint/RedundantDirGlobSort:
+  Enabled: true
 Lint/ToEnumArguments:
+  Enabled: true
+Lint/UnexpectedBlockArity:
   Enabled: true
 Lint/UnmodifiedReduceAccumulator:
   Enabled: true
@@ -108,6 +124,7 @@ Metrics/ModuleLength:
   Enabled: false
 Metrics/ParameterLists:
   Max: 10
+  MaxOptionalParameters: 10
 Metrics/PerceivedComplexity:
   Enabled: false
 Naming/AccessorMethodName:
@@ -167,6 +184,8 @@ Style/DoubleNegation:
   Enabled: false
 Style/EmptyLiteral:
   Enabled: false
+Style/EndlessMethod:
+  Enabled: true
 Style/ExplicitBlockArgument:
   Enabled: false
 Style/ExponentialNotation:
@@ -180,6 +199,8 @@ Style/GlobalStdStream:
 Style/GuardClause:
   Enabled: false
 Style/HashEachMethods:
+  Enabled: true
+Style/HashExcept:
   Enabled: true
 Style/HashAsLastArrayItem:
   Enabled: false
@@ -214,6 +235,8 @@ Style/NegatedIfElseCondition:
   Enabled: true
 Style/NestedTernaryOperator:
   Enabled: false
+Style/NilLambda:
+  Enabled: true
 Style/NumericPredicate:
   EnforcedStyle: comparison
 Style/OptionalBooleanParameter:
@@ -229,6 +252,8 @@ Style/PercentLiteralDelimiters:
     '%W': ()
 Style/PerlBackrefs:
   Enabled: false
+Style/RedundantArgument:
+  Enabled: true
 Style/RedundantAssignment:
   Enabled: true
 Style/RedundantFetchBlock:
