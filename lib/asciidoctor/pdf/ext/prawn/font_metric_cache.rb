@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# TODO remove when upgrading to prawn-2.5.0
+# TODO: remove when upgrading to prawn-2.5.0
 class Prawn::FontMetricCache::CacheEntry
   def initialize font, options, size
     font = font.hash

@@ -1,75 +1,63 @@
+require: rubocop-rspec
 AllCops:
   TargetRubyVersion: 2.5
-require: rubocop-rspec
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 4
 Layout/BeginEndAlignment:
   Enabled: true
-Lint/BinaryOperatorWithIdenticalOperands:
-  Enabled: true
 Layout/CaseIndentation:
   EnforcedStyle: end
-Layout/SpaceBeforeBrackets:
-  Enabled: true
-Lint/AmbiguousAssignment:
-  Enabled: true
-Lint/DeprecatedConstants:
-  Enabled: true
-Lint/DuplicateBranch:
-  Enabled: true
-Lint/DuplicateRegexpCharacterClassElement:
-  Enabled: true
-Lint/EmptyClass:
-  Enabled: true
-Lint/EmptyBlock:
+Layout/EmptyLineAfterGuardClause:
   Enabled: false
-Lint/LambdaWithoutLiteralBlock:
-  Enabled: true
-Lint/NoReturnInBeginEndBlocks:
-  Enabled: true
-Lint/RedundantDirGlobSort:
-  Enabled: true
-Lint/ToEnumArguments:
-  Enabled: true
-Lint/UnexpectedBlockArity:
-  Enabled: true
-Lint/UnmodifiedReduceAccumulator:
-  Enabled: true
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
-Layout/SpaceInsideBlockBraces:
-  SpaceBeforeBlockParameters: false
-Layout/SpaceAroundMethodCallOperator:
-  Enabled: true
-Layout/EmptyLineAfterGuardClause:
+Layout/FirstArgumentIndentation:
   Enabled: false
 Layout/HeredocIndentation:
   Enabled: false
+Layout/LeadingCommentSpace:
+  Enabled: false
 Layout/LineLength:
-  Enabled: false # TODO reenable me
+  Enabled: false # TODO enable
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
 Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 4
-Layout/FirstArgumentIndentation:
-  Enabled: false
-Layout/LeadingCommentSpace:
-  Enabled: false
-Layout/MultilineOperationIndentation:
-  EnforcedStyle: indented
 Layout/RescueEnsureAlignment:
   Enabled: false
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
+Layout/SpaceBeforeBrackets:
+  Enabled: true
+Layout/SpaceInsideBlockBraces:
+  SpaceBeforeBlockParameters: false
+Lint/AmbiguousAssignment:
+  Enabled: true
 Lint/AmbiguousBlockAssociation:
   Enabled: false
+Lint/BinaryOperatorWithIdenticalOperands:
+  Enabled: true
 Lint/ConstantDefinitionInBlock:
   Enabled: false
+Lint/DeprecatedConstants:
+  Enabled: true
 Lint/DeprecatedOpenSSLConstant:
   Enabled: true
+Lint/DuplicateBranch:
+  Enabled: true
 Lint/DuplicateElsifCondition:
+  Enabled: true
+Lint/DuplicateRegexpCharacterClassElement:
   Enabled: true
 Lint/DuplicateRequire:
   Enabled: true
 Lint/DuplicateRescueException:
+  Enabled: true
+Lint/EmptyBlock:
+  Enabled: false
+Lint/EmptyClass:
   Enabled: true
 Lint/EmptyConditionalBody:
   Enabled: true
@@ -81,9 +69,13 @@ Lint/FloatComparison:
   Enabled: false
 Lint/IdentityComparison:
   Enabled: true
+Lint/LambdaWithoutLiteralBlock:
+  Enabled: true
 Lint/MissingSuper:
   Enabled: false
 Lint/MixedRegexpCaptureTypes:
+  Enabled: true
+Lint/NoReturnInBeginEndBlocks:
   Enabled: true
 Lint/OutOfRangeRegexpRef:
   Enabled: true
@@ -91,17 +83,25 @@ Lint/ParenthesesAsGroupedExpression:
   Enabled: false
 Lint/RaiseException:
   Enabled: true
+Lint/RedundantDirGlobSort:
+  Enabled: true
 Lint/SelfAssignment:
   Enabled: true
 Lint/StructNewOverride:
   Enabled: true
 Lint/SuppressedException:
   Enabled: false
+Lint/ToEnumArguments:
+  Enabled: true
 Lint/TopLevelReturnWithArgument:
   Enabled: true
 Lint/TrailingCommaInAttributeDeclaration:
   Enabled: true
-Lint/UnreachableLoop: 
+Lint/UnexpectedBlockArity:
+  Enabled: true
+Lint/UnmodifiedReduceAccumulator:
+  Enabled: true
+Lint/UnreachableLoop:
   Enabled: true
 Lint/UselessMethodDefinition:
   Enabled: true
@@ -117,7 +117,6 @@ Metrics/ClassLength:
   Enabled: false
 Metrics/CyclomaticComplexity:
   Enabled: false
-#  Max: 120
 Metrics/MethodLength:
   Enabled: false
 Metrics/ModuleLength:
@@ -136,6 +135,30 @@ Naming/FileName:
 Naming/HeredocDelimiterNaming:
   Enabled: false
 Naming/MethodParameterName:
+  Enabled: false
+RSpec/BeEql:
+  Enabled: false
+RSpec/BeforeAfterAll:
+  Enabled: false
+RSpec/ContextWording:
+  Enabled: false
+RSpec/DescribeClass:
+  Enabled: false
+RSpec/EmptyExampleGroup:
+  Enabled: false
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/ExampleWording:
+  Enabled: false
+RSpec/ExpectInHook:
+  Enabled: false
+RSpec/FilePath:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/NamedSubject:
+  Enabled: false
+RSpec/VoidExpect:
   Enabled: false
 Security/Open:
   Enabled: false
@@ -179,7 +202,7 @@ Style/ConditionalAssignment:
 Style/DocumentDynamicEvalDefinition:
   Enabled: true
 Style/Documentation:
-  Enabled: false # FIXME reenable me
+  Enabled: false # FIXME enable me
 Style/DoubleNegation:
   Enabled: false
 Style/EmptyLiteral:
@@ -198,12 +221,12 @@ Style/GlobalStdStream:
   Enabled: true
 Style/GuardClause:
   Enabled: false
+Style/HashAsLastArrayItem:
+  Enabled: false
 Style/HashEachMethods:
   Enabled: true
 Style/HashExcept:
   Enabled: true
-Style/HashAsLastArrayItem:
-  Enabled: false
 Style/HashLikeCase:
   Enabled: true
 Style/HashSyntax:
@@ -221,8 +244,6 @@ Style/MethodCallWithArgsParentheses:
   EnforcedStyle: omit_parentheses
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
-Style/MutableConstant:
-  Enabled: false
 Style/MultilineBlockChain:
   Enabled: false
 Style/MultilineIfModifier:
@@ -230,6 +251,8 @@ Style/MultilineIfModifier:
 Style/MultilineTernaryOperator:
   Enabled: false
 Style/MultipleComparison:
+  Enabled: false
+Style/MutableConstant:
   Enabled: false
 Style/NegatedIfElseCondition:
   Enabled: true
@@ -240,16 +263,16 @@ Style/NilLambda:
 Style/NumericPredicate:
   EnforcedStyle: comparison
 Style/OptionalBooleanParameter:
-  Enabled: false # TODO consider enabling
+  Enabled: false
 Style/ParallelAssignment:
   Enabled: false
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
-    default: ()
-    '%i': ()
-    '%r': //
-    '%w': ()
-    '%W': ()
+    default: "()"
+    "%i": "()"
+    "%r": "//"
+    "%w": "()"
+    "%W": "()"
 Style/PerlBackrefs:
   Enabled: false
 Style/RedundantArgument:
@@ -274,45 +297,21 @@ Style/RescueStandardError:
   EnforcedStyle: implicit
 Style/SingleArgumentDig:
   Enabled: true
+Style/SlicingWithRange:
+  Enabled: false
 Style/SoleNestedConditional:
   Enabled: false
 Style/SpecialGlobalVars:
   EnforcedStyle: use_perl_names
 Style/StringConcatenation:
   Enabled: false
-Style/SlicingWithRange:
-  Enabled: false
 Style/SwapValues:
   Enabled: true
 Style/SymbolArray:
   EnforcedStyle: brackets
 Style/TernaryParentheses:
-  Enabled: false # TODO consider reenabling
+  Enabled: false # TODO reenable
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma
-RSpec/BeforeAfterAll:
-  Enabled: false
-RSpec/ContextWording:
-  Enabled: false
-RSpec/DescribeClass:
-  Enabled: false
-RSpec/EmptyExampleGroup:
-  Enabled: false
-RSpec/ExampleLength:
-  Enabled: false
-RSpec/ExpectInHook:
-  Enabled: false
-RSpec/FilePath:
-  Enabled: false
-RSpec/ExampleWording:
-  Enabled: false
-RSpec/MultipleExpectations:
-  Enabled: false
-RSpec/NamedSubject:
-  Enabled: false
-RSpec/VoidExpect:
-  Enabled: false
-RSpec/BeEql:
-  Enabled: false # NOTE: can't enable since be <float> doesn't work on JRuby
