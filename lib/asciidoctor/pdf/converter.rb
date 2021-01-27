@@ -1279,9 +1279,9 @@ module Asciidoctor
         when 'upperalpha'
           list_numeral = 'A'
         when 'lowerroman'
-          list_numeral = RomanNumeral.new 'i'
+          list_numeral = RomanNumeral.new 'i', :lower
         when 'upperroman'
-          list_numeral = RomanNumeral.new 'I'
+          list_numeral = RomanNumeral.new 'I', :upper
         when 'lowergreek'
           list_numeral = LowercaseGreekA
         when 'unstyled', 'unnumbered', 'no-bullet'

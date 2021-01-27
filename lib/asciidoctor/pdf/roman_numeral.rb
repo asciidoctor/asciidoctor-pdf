@@ -48,14 +48,9 @@ module Asciidoctor
         1000 => 'M',
       }
 
-      def initialize initial_value, letter_case = nil
-        if ::Integer === initial_value
-          @integer_value = initial_value
-          @letter_case = letter_case || :upper
-        else
-          @integer_value = RomanNumeral.roman_to_int initial_value
-          @letter_case = letter_case || (initial_value == initial_value.upcase ? :upper : :lower)
-        end
+      def initialize initial_value, letter_case
+        @integer_value = ::Integer === initial_value ? initial_value : (RomanNumeral.roman_to_int initial_value)
+        @letter_case = letter_case
       end
 
       def to_s
