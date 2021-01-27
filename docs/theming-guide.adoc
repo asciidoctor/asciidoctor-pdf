@@ -18,7 +18,6 @@ endif::[]
 :window: _blank
 // Aliases:
 :conum-guard-yaml: #
-ifndef::icons[:conum-guard-yaml: # #]
 ifdef::backend-pdf[:conum-guard-yaml: # #]
 :url-fontforge: https://fontforge.github.io/en-US/
 :url-fontforge-scripting: https://fontforge.github.io/en-US/documentation/scripting/
@@ -803,30 +802,32 @@ Rename the files as follows:
 Next, declare the font under the `font-catalog` key at the top of your theme file.
 Assign each font a unique key (e.g., `Roboto`) and specify the path to each of the four font styles under that key.
 
-[source,yaml]
+[source,yaml,subs=attributes+]
 ----
 font:
   catalog:
-    merge: false # set value to true to merge catalog with theme you're extending
+    merge: false {conum-guard-yaml} <1>
     Roboto:
       normal: roboto-normal.ttf
       italic: roboto-italic.ttf
       bold: roboto-bold.ttf
       bold_italic: roboto-bold_italic.ttf
 ----
+<1> Set value to true to merge catalog with theme you're extending.
 
 If you use this form, you must declare all four variants.
 If you're missing the font file for one of the variants, configure it to use the same font file as the normal variant.
 
 If your font only has a single variant, assign the font path to the font key directly.
 
-[source,yaml]
+[source,yaml,subs=attributes+]
 ----
 font:
   catalog:
-    merge: false # set value to true to merge catalog with theme you're extending
+    merge: false {conum-guard-yaml} <1>
     VLGothic: vlgothic.ttf
 ----
+<1> Set value to true to merge catalog with theme you're extending.
 
 Font paths can be absolute or relative.
 Absolute paths are used as is.
@@ -836,11 +837,11 @@ You can also use the `GEM_FONTS_DIR` keyword to refer to the location of the bun
 You can add any number of fonts to the catalog.
 Each font must be assigned a unique key, as shown here:
 
-[source,yaml]
+[source,yaml,subs=attributes+]
 ----
 font:
   catalog:
-    merge: false # set value to true to merge catalog with theme you're extending
+    merge: false {conum-guard-yaml} <1>
     Roboto:
       normal: roboto-normal.ttf
       italic: roboto-italic.ttf
@@ -852,6 +853,7 @@ font:
       bold: roboto-light-bold.ttf
       bold_italic: roboto-light-bold_italic.ttf
 ----
+<1> Set value to true to merge catalog with theme you're extending.
 
 You can use the key that you assign to the font in the font catalog anywhere the `font-family` property is accepted in the theme file.
 For example, to use the Roboto font for all headings (section titles and discrete headings), use:
