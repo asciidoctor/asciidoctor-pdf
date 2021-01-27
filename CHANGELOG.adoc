@@ -82,6 +82,7 @@ Bug Fixes::
 * convert blocks inside abstract, not just the contents of the blocks
 * only suggest installing prawn-gmagick gem if not loaded (#1578)
 * applying double border style to thematic break should honor border width
+* warn once instead of crashing if page background image cannot be embedded (#1780)
 * warn once instead of crashing if cache-uri is set but library is not available
 * sanitize values of PDF info values (#1594)
 * configure headings to inherit font styles from theme (#1604)

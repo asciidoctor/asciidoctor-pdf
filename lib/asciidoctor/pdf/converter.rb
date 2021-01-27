@@ -605,7 +605,16 @@ module Asciidoctor
         if (bg_image = @page_bg_image[page_side])
           tare = true
           # NOTE: float is necessary since prawn-svg may mess with cursor position
-          float { canvas { image bg_image[0], ({ position: :center, vposition: :center }.merge bg_image[1]) } }
+          float do
+            canvas do
+              image bg_image[0], ({ position: :center, vposition: :center }.merge bg_image[1])
+            rescue
+              facing_page_side = (PageSides - [page_side])[0]
+              @page_bg_image[facing_page_side] = nil if @page_bg_image[facing_page_side] == @page_bg_image[page_side]
+              @page_bg_image[page_side] = nil
+              log :warn, %(could not embed page background image: #{bg_image[0]}; #{$!.message})
+            end
+          end
         end
         page.tare_content_stream if tare
       end
