@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+# TODO remove when upgrading to prawn-2.5.0
 class Prawn::FontMetricCache::CacheEntry
-  # workaround for https://github.com/prawnpdf/prawn/issues/1140
   def initialize font, options, size
     font = font.hash
     super
