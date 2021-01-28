@@ -1126,8 +1126,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       end).to log_message severity: :WARN, message: '~page background image not found or readable'
     end
 
-    # FIXME: should this warn instead of crash?
-    it 'should raise sensible error if background image cannot be loaded' do
+    it 'should warn instead of crash if background image is invalid' do
       (expect do
         pdf = to_pdf <<~'EOS', analyze: :image
         = Document Title
@@ -1136,7 +1135,39 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         content
         EOS
         (expect pdf.images).to be_empty
-      end).to raise_exception Prawn::Errors::UnsupportedImageType, 'image file is an unrecognised format'
+      end).to log_message severity: :WARN, message: '~image file is an unrecognised format'
+    end
+
+    it 'should warn instead of crash if background image cannot be parsed' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: :image
+        = Document Title
+        :page-background-image: image:broken.svg[fit=cover]
+
+        content
+        EOS
+        (expect pdf.images).to be_empty
+      end).to log_message severity: :WARN, message: %(~Missing end tag for 'rect')
+    end
+
+    it 'should only warn once if background image cannot be loaded' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: :image
+        = Document Title
+        :page-background-image: image:corrupt.png[fit=cover]
+
+        content
+
+        <<<
+
+        more content
+
+        <<<
+
+        even more content
+        EOS
+        (expect pdf.images).to be_empty
+      end).to log_messages [[severity: :WARN, message: '~image file is an unrecognised format']]
     end
   end
 
