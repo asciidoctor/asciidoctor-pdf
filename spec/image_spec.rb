@@ -1043,6 +1043,22 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect (p3_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
     end
 
+    it 'should not create empty page if imported PDF has no pages' do
+      pdf = to_pdf <<~'EOS'
+      == Before
+
+      image::no-pages.pdf[]
+
+      == After
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      (expect (pdf.page 2).text).to eql 'After'
+      outline = extract_outline pdf
+      (expect outline.find {|it| it[:title] == 'Before' }[:dest][:label]).to eql '1'
+      (expect outline.find {|it| it[:title] == 'After' }[:dest][:label]).to eql '2'
+    end
+
     it 'should add destination to top of imported page if ID is specified' do
       pdf = to_pdf <<~'EOS'
       go to <<red>>
