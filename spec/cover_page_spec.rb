@@ -406,4 +406,15 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     page_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
     (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
   end
+
+  it 'should not add back cover if PDF file has no pages' do
+    pdf = to_pdf <<~'EOS'
+    :back-cover-image: image:no-pages.pdf[]
+
+    content
+    EOS
+
+    (expect pdf.pages).to have_size 1
+    (expect (pdf.page 1).text).to eql 'content'
+  end
 end
