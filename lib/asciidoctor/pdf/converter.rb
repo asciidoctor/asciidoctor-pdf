@@ -195,7 +195,7 @@ module Asciidoctor
 
         @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress' && page_number == 0
 
-        start_new_page unless page.empty?
+        start_new_page unless page&.empty?
 
         # NOTE: font must be set before content is written to the main or scratch document
         font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style unless has_title_page
@@ -2845,7 +2845,7 @@ module Asciidoctor
 
           go_to_page page_count if face == :back
           if image_opts[:format] == 'pdf'
-            import_page image_path, (image_opts.merge advance: face != :back)
+            import_page image_path, (image_opts.merge advance: face != :back, advance_if_missing: false)
           else
             begin
               image_page image_path, image_opts

@@ -775,7 +775,7 @@ module Asciidoctor
           # I'm not sure it's right to start a new page here, but unfortunately there's no other
           # way atm to prevent the size & layout of the imported page from affecting subsequent pages
           advance_page size: prev_page_size, layout: prev_page_layout if opts.fetch :advance, true
-        elsif opts.fetch :advance, true
+        elsif opts.fetch :advance_if_missing, true
           delete_page
           # NOTE: see previous comment
           advance_page size: prev_page_size, layout: prev_page_layout

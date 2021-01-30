@@ -407,6 +407,24 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
   end
 
+  it 'should not add front cover if PDF file has no pages' do
+    pdf = to_pdf <<~'EOS'
+    :front-cover-image: image:no-pages.pdf[]
+
+    one
+
+    <<<
+
+    two
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    (expect (pdf.page 1).text).to eql 'one'
+    outline = extract_outline pdf
+    (expect outline[0][:title]).to eql 'Untitled'
+    (expect outline[0][:dest][:label]).to eql '1'
+  end
+
   it 'should not add back cover if PDF file has no pages' do
     pdf = to_pdf <<~'EOS'
     :back-cover-image: image:no-pages.pdf[]
