@@ -425,7 +425,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect outline[0][:dest][:label]).to eql '1'
   end
 
-  it 'should not add back cover if PDF file has no pages' do
+  it 'should not add back cover if referenced page in PDF file does not exist' do
     pdf = to_pdf <<~'EOS'
     :back-cover-image: image:red-green-blue.pdf[page=10]
 
