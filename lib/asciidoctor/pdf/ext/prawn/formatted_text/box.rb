@@ -22,6 +22,7 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
     end
   end
 
+  # TODO: remove when upgrading to prawn-2.5.0
   def analyze_glyphs_for_fallback_font_support fragment_hash
     fragment_font = fragment_hash[:font] || (original_font = @document.font.family)
     if (fragment_font_styles = fragment_hash[:styles])
