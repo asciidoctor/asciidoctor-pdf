@@ -2180,10 +2180,21 @@ module Asciidoctor
           head_border_bottom_width = theme.table_head_border_bottom_width || table_border_width
         end
         [:top, :bottom, :left, :right].each {|edge| border_width[edge] = table_border_width }
+
         table_grid_color = theme.table_grid_color || table_border_color
-        table_grid_style = (theme.table_grid_style || table_border_style).to_sym
+        table_grid_style = theme.table_grid_style || table_border_style
+        if ::Array === table_grid_style
+          table_grid_style = table_grid_style.map(&:to_sym)
+        else
+          table_grid_style = [table_grid_style.to_sym]
+        end
         table_grid_width = theme.table_grid_width || theme.table_border_width
-        [:cols, :rows].each {|edge| border_width[edge] = table_grid_width }
+        if ::Array === table_grid_width
+          border_width[:rows] = table_grid_width[0]
+          border_width[:cols] = table_grid_width[1]
+        else
+          [:cols, :rows].each {|edge| border_width[edge] = table_grid_width }
+        end
 
         case (grid = node.attr 'grid', 'all', 'table-grid')
         when 'all'
@@ -2233,7 +2244,7 @@ module Asciidoctor
           cell_style: {
             # NOTE: the border color and style of the outer frame is set later
             border_color: table_grid_color,
-            border_lines: [table_grid_style],
+            border_lines: table_grid_style,
             # NOTE: the border width is set later
             border_width: 0,
           },
