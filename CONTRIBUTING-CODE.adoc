@@ -232,6 +232,17 @@ or
 
 These instructions work for testing any development version of {project-name} directly from GitHub.
 
+=== Run the Code Linter
+
+Before you commit code, you should run it through the linter to make sure it adheres to the coding style.
+You can run the linter using the following command:
+
+ $ bundle exec rake lint
+
+The coding style is enforced by https://rubocop.org/[RuboCop].
+The rules are defined in [.path]_.rubocop.yml_.
+These rules extend from the default rule set to match the style of the project.
+
 === Generate Code Coverage Report
 
 To generate a code coverage report when running tests using simplecov, set the `COVERAGE` environment variable as follows when running the tests:
