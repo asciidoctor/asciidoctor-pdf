@@ -524,20 +524,20 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect to_file).to visually_match 'table-cellbgcolor-override.pdf'
     end
 
-    it 'should allow theme to style horizontal and vertical lines separately', visual: true do
+    it 'should allow theme to style horizontal and vertical lines of table grid independently', visual: true do
       pdf_theme = {
         table_grid_color: %w(77AA77 AAAAAA),
         table_grid_width: [0.5, 1.2],
         table_grid_style: %w(dashed solid),
       }
-      to_file = to_pdf_file <<~'EOS', 'table-grid-directions.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'EOS', 'table-grid-axes.pdf', pdf_theme: pdf_theme
       |===
       | A | B
       | C | D
       |===
       EOS
 
-      (expect to_file).to visually_match 'table-grid-directions.pdf'
+      (expect to_file).to visually_match 'table-grid-axes.pdf'
     end
   end
 

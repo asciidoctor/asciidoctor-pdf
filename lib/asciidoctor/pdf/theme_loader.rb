@@ -161,13 +161,12 @@ module Asciidoctor
           val.each do |subkey, subval|
             process_entry %(#{key}_#{key == 'role' || !(subkey.include? '-') ? subkey : (subkey.tr '-', '_')}), subval, data
           end
+        # QUESTION: do we really need to evaluate_math in this case?
         elsif key.end_with? '_color'
-          # QUESTION: do we really need to evaluate_math in this case?
-          val = evaluate val, data
-          if key == 'table_grid_color' && ::Array === val && val.size == 2 # x,y
-            data[key] = val.map {|e| to_color e }
+          if key == 'table_grid_color' && ::Array === val
+            data[key] = val.map {|it| to_color evaluate it, data }
           else
-            data[key] = to_color val
+            data[key] = to_color evaluate val, data
           end
         elsif key.end_with? '_content'
           data[key] = (expand_vars val.to_s, data).to_s
