@@ -358,7 +358,7 @@ We already showed you an XML example in <<ravages>>, a language we often rant ab
 
 I'll trade you a little table for some of that bark.
 
-[cols=4,frame=topbot,grid=rows]
+[cols=4,frame=ends,grid=rows]
 |===
 |Column 1 |Column 2 |Column 3 |Column 4
 
@@ -493,7 +493,7 @@ Here's some content inside an open block.
 == Credits
 
 .Brought to you with icon:heart[set=fas,role=love] by OpenDevise
-[%header%footer,cols="2,2s,^4",grid=rows,frame=end,width=75%,caption=]
+[%header%footer,cols="2,2s,^4",grid=rows,frame=ends,width=75%,caption=]
 |===
 |Name |Title |Alias
 
