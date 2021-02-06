@@ -4180,19 +4180,19 @@ The keys in this category control the arrangement and style of tables and table 
   font-style: italic
 
 |grid-color
-|<<colors,Color>> +
+|<<colors,Color>> {vbar} <<colors,Color[x,y]>> +
 (default: $table-border-color)
 |table:
   grid-color: #eeeeee
 
 |grid-style
-|solid {vbar} dashed {vbar} dotted +
+|solid {vbar} dashed {vbar} dotted {vbar} Style[x,y] +
 (default: solid)
 |table:
   grid-style: dashed
 
 |grid-width
-|<<values,Number>> +
+|<<values,Number>> {vbar} <<values,Number[x,y]>> +
 (default: $table-border-width)
 |table:
   grid-width: 0.5

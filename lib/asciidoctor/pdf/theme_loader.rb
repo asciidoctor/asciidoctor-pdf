@@ -163,7 +163,12 @@ module Asciidoctor
           end
         elsif key.end_with? '_color'
           # QUESTION: do we really need to evaluate_math in this case?
-          data[key] = to_color evaluate val, data
+          val = evaluate val, data
+          if key == 'table_grid_color' && ::Array === val && val.size == 2 # x,y
+            data[key] = val.map {|e| to_color e }
+          else
+            data[key] = to_color val
+          end
         elsif key.end_with? '_content'
           data[key] = (expand_vars val.to_s, data).to_s
         else
