@@ -75,7 +75,12 @@ jobs:
     - name: Configure Bundler
       run: |
         bundle config --local path .bundle/gems
-        bundle config --local without coverage docs lint
+        if [ -n "${{ matrix.primary }}" ]; then
+          bundle config --local without docs lint
+          echo 'COVERAGE=deep' >> $GITHUB_ENV
+        else
+          bundle config --local without coverage docs lint
+        fi
     - name: Install Ghostscript and Poppler (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
