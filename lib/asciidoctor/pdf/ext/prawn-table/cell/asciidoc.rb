@@ -34,10 +34,11 @@ module Prawn
         def dry_run
           cell = self
           doc = content.document
+          parent_doc = doc.nested? ? doc.parent_document : doc
           height = nil
           apply_font_properties do
             @pdf.dry_run do
-              push_scratch doc
+              push_scratch parent_doc
               start_page = page
               start_cursor = cursor
               max_height = bounds.height
@@ -50,7 +51,7 @@ module Prawn
               end
               # FIXME: prawn-table doesn't support cells that exceed the height of a single page
               height = page == start_page ? start_cursor - (cursor + 0.0001) : max_height
-              pop_scratch doc
+              pop_scratch parent_doc
             end
           end
           height
