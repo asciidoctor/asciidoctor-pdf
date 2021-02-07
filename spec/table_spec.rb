@@ -1477,6 +1477,28 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect nested_cell1[:x]).to be < nested_cell2[:x]
     end
 
+    it 'should capture footnotes in AsciiDoc table cell and render them with other footnotes' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      before{empty}footnote:[Footnote before table]
+
+      |===
+      a|inside{empty}footnote:[Footnote inside table]
+      |===
+
+      after{empty}footnote:[Footnote after table]
+      EOS
+
+      expected_lines = [
+        'before[1]',
+        'inside[2]',
+        'after[3]',
+        '[1] Footnote before table',
+        '[2] Footnote inside table',
+        '[3] Footnote after table',
+      ]
+      (expect pdf.lines).to eql expected_lines
+    end
+
     it 'should not fail to fit content in table cell and create blank page when margin bottom is 0' do
       pdf_theme = {
         base_font_family: 'M+ 1mn',
