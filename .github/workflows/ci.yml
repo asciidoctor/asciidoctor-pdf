@@ -79,7 +79,7 @@ jobs:
     - name: Enable coverage
       if: matrix.primary
       run: |
-        bundle config --local unset without
+        bundle config unset --local without
         bundle config --local without docs lint
         echo 'COVERAGE=deep' >> $GITHUB_ENV
     - name: Install Ghostscript and Poppler (Linux)
