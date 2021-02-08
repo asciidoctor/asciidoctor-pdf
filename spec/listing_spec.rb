@@ -370,7 +370,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   it 'should allow width of border to be set only on ends' do
     pdf_theme = {
       code_border_color: 'AA0000',
-      code_border_width: [1, 0],
+      code_border_width: [1, nil],
     }
     pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
     ----
@@ -389,7 +389,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   it 'should allow width of border to be set only on sides' do
     pdf_theme = {
       code_border_color: 'AA0000',
-      code_border_width: [0, 1],
+      code_border_width: [nil, 1],
     }
     pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
     ----
