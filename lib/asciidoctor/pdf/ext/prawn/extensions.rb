@@ -621,7 +621,7 @@ module Asciidoctor
       def fill_and_stroke_bounds f_color = fill_color, s_color = stroke_color, options = {}
         no_fill = !f_color || f_color == 'transparent'
         if ::Array === (s_width = options[:line_width] || 0.5)
-          s_width_max = s_width.max {|it| it || 0 }
+          s_width_max = s_width.map(&:to_i).max
           radius = 0
         else
           radius = options[:radius] || 0
