@@ -2171,7 +2171,7 @@ module Asciidoctor
         end
 
         border_width = {}
-        table_border_color = theme.table_border_color || (::Array === theme.table_grid_color ? nil : theme.table_grid_color) || theme.base_border_color
+        table_border_color = theme.table_border_color || ((Array theme.table_grid_color).size == 2 ? nil : theme.table_grid_color) || theme.base_border_color
         table_border_style = theme.table_border_style&.to_sym || :solid
         table_border_width = theme.table_border_width
         if table_header_size

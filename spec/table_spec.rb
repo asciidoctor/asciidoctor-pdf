@@ -384,6 +384,28 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       end
     end
 
+    it 'should allow theme to set grid color using CMYK array' do
+      cmyk_color = [0, 0, 0, 27].extend Asciidoctor::PDF::ThemeLoader::CMYKColorValue
+      pdf_theme = {
+        table_grid_color: cmyk_color,
+        table_grid_width: 1,
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      [frame=none,grid=all]
+      |===
+      | A | B
+      | C | D
+      |===
+      EOS
+
+      # NOTE: it appears Prawn table is drawing the same grid line multiple times
+      lines = pdf.lines.uniq
+      (expect lines).to have_size 4
+      lines.each do |line|
+        (expect line[:color]).to eql cmyk_color.map(&:to_f)
+      end
+    end
+
     it 'should base base border color if table border and grid colors are not set' do
       pdf_theme = {
         base_border_color: '0000FF',

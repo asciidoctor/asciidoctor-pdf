@@ -882,6 +882,8 @@ describe Asciidoctor::PDF::ThemeLoader do
         font-color: [67.33%, 31.19%, 0, 20.78%]
       literal:
         font-color: [0%, 0%, 0%, 0.87]
+      table:
+        grid-color: [0, 0, 0, 27]
       EOS
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to eql 'FFFFFF'
@@ -894,6 +896,8 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.link_font_color).to be_a subject::CMYKColorValue
       (expect theme.literal_font_color).to eql [0, 0, 0, 87]
       (expect theme.literal_font_color).to be_a subject::CMYKColorValue
+      (expect theme.table_grid_color).to eql [0, 0, 0, 27]
+      (expect theme.table_grid_color).to be_a subject::CMYKColorValue
     end
 
     it 'should wrap hex color values in color type if key ends with _color' do
@@ -935,6 +939,8 @@ describe Asciidoctor::PDF::ThemeLoader do
         font-color: [66, 139, 202]
       literal:
         font-color: ['34', '34', '34']
+      table:
+        grid-color: [187, 187, 187]
       EOS
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to eql 'FFFFFF'
@@ -947,6 +953,28 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.link_font_color).to be_a subject::HexColorValue
       (expect theme.literal_font_color).to eql '222222'
       (expect theme.literal_font_color).to be_a subject::HexColorValue
+      (expect theme.table_grid_color).to eql 'BBBBBB'
+      (expect theme.table_grid_color).to be_a subject::HexColorValue
+    end
+
+    it 'should coerce rgb color values for each axis of table grid' do
+      theme_data = SafeYAML.load <<~'EOS'
+      table:
+        grid-color: [[255, 0, 0], [0, 255, 0]]
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.table_grid_color).to eql %w(FF0000 00FF00)
+    end
+
+    it 'should coerce cmyk color values for each axis of table grid' do
+      theme_data = SafeYAML.load <<~'EOS'
+      table:
+        grid-color: [[0, 1, 1, 0], [1, 0, 1, 0]]
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.table_grid_color).to eql [[0, 100, 100, 0], [100, 0, 100, 0]]
+      (expect theme.table_grid_color[0]).to be_a subject::CMYKColorValue
+      (expect theme.table_grid_color[1]).to be_a subject::CMYKColorValue
     end
 
     it 'should flatten array color value of unsupported length to string if key ends with _color' do

@@ -163,7 +163,7 @@ module Asciidoctor
           end
         # QUESTION: do we really need to evaluate_math in this case?
         elsif key.end_with? '_color'
-          if key == 'table_grid_color' && ::Array === val
+          if key == 'table_grid_color' && (Array val).size == 2
             data[key] = val.map {|it| to_color evaluate it, data }
           else
             data[key] = to_color evaluate val, data
