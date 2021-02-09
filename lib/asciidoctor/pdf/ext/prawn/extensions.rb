@@ -810,7 +810,7 @@ module Asciidoctor
         yield
       ensure
         # equivalent to calling `on_page_create &saved_callback`
-        state.on_page_create_callback = saved_callback if saved_callback
+        state.on_page_create_callback = saved_callback
       end
 
       # This method is a smarter version of start_new_page. It calls start_new_page
