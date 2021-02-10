@@ -829,11 +829,6 @@ module Asciidoctor
       # Grouping
 
       def get_scratch_document
-        # marshal if not using transaction feature
-        #Marshal.load Marshal.dump @prototype
-
-        # use cached instance, tests show it's faster
-        #@prototype ||= ::Prawn::Document.new
         @scratch ||= if defined? @prototype # rubocop:disable Naming/MemoizedInstanceVariableName
                        scratch = Marshal.load Marshal.dump @prototype
                        scratch.instance_variable_set :@prototype, @prototype
