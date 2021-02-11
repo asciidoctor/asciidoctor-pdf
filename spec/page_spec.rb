@@ -1169,6 +1169,28 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         (expect pdf.images).to be_empty
       end).to log_messages [[severity: :WARN, message: '~image file is an unrecognised format']]
     end
+
+    it 'should still render different facing background image when background image cannot be loaded' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: :image
+        = Document Title
+        :page-background-image: image:corrupt.png[fit=cover]
+        :page-background-image-verso: image:bg.png[]
+
+        content
+
+        <<<
+
+        more content
+
+        <<<
+
+        even more content
+        EOS
+        (expect pdf.images).to have_size 1
+        (expect pdf.images[0][:page_number]).to be 2
+      end).to log_messages [[severity: :WARN, message: '~image file is an unrecognised format']]
+    end
   end
 
   context 'Watermark' do
