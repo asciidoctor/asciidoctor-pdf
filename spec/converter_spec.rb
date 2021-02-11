@@ -463,12 +463,20 @@ describe Asciidoctor::PDF::Converter do
       class LayoutHeadingWithOptsPDFConverter < (Asciidoctor::Converter.for 'pdf') # rubocop:disable RSpec/LeakyConstantDeclaration
         register_for :layout_heading_with_opts_pdf
         def convert_paragraph node
-          layout_heading 'Heading', text_transform: 'uppercase', size: 100, color: 'AA0000'
-          super
+          if node.has_role? 'heading'
+            layout_heading node.source, text_transform: 'uppercase', size: 100, color: 'AA0000', line_height: 1.2, margin: 20
+          else
+            super
+          end
         end
       end
 
       pdf = to_pdf <<~'EOS', backend: :layout_heading_with_opts_pdf, analyze: true
+      before
+
+      [.heading]
+      heading
+
       paragraph
       EOS
 
@@ -476,6 +484,8 @@ describe Asciidoctor::PDF::Converter do
       (expect heading_text).not_to be_nil
       (expect heading_text[:font_size]).to eql 100
       (expect heading_text[:font_color]).to eql 'AA0000'
+      (expect heading_text[:y].floor).to eql 650
+      (expect (pdf.find_unique_text 'paragraph')[:y].floor).to eql 588
     end
   end
 end
