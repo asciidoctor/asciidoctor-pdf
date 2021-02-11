@@ -4642,8 +4642,6 @@ module Asciidoctor
         @pdfmark = saved_pdfmark
         @page_bg_image = saved_page_bg_image
         @prototype.state.store.info.data[:Scratch] = @prototype.text_formatter.scratch = true
-        # NOTE: we're now starting a new page each time, so no need to do it here
-        #@prototype.start_new_page if @prototype.page_number == 0
       end
 
       def push_scratch doc
