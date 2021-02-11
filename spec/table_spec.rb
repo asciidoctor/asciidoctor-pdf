@@ -454,7 +454,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       pdf_theme = {
         base_border_color: 'DDDDDD',
         table_border_color: nil,
-        table_grid_color: ['3D3D3D', 'D3D3D3'],
+        table_grid_color: %w(3D3D3D D3D3D3),
         table_grid_width: 0.5,
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
