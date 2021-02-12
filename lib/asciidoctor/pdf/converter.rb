@@ -1200,7 +1200,7 @@ module Asciidoctor
             end
             list << list_item
           end
-          convert_outline_list list
+          convert_list list
           markers.pop
         when 'horizontal'
           table_data = []
@@ -1249,7 +1249,7 @@ module Asciidoctor
           margin_bottom @theme.prose_margin_bottom * 0.5
         when 'qanda'
           @list_numerals << '1'
-          convert_outline_list node
+          convert_list node
           @list_numerals.pop
         else
           # TODO: check if we're within one line of the bottom of the page
@@ -1308,7 +1308,7 @@ module Asciidoctor
           end
         end
         @list_numerals << list_numeral
-        convert_outline_list node
+        convert_list node
         @list_numerals.pop
       end
 
@@ -1344,11 +1344,11 @@ module Asciidoctor
           end
           @list_bullets << bullet_type
         end
-        convert_outline_list node
+        convert_list node
         @list_bullets.pop
       end
 
-      def convert_outline_list node
+      def convert_list node
         # TODO: check if we're within one line of the bottom of the page
         # and advance to the next page if so (similar to logic for section titles)
         layout_caption node, category: :outline_list, labeled: false if node.title?
@@ -1381,7 +1381,7 @@ module Asciidoctor
         indent list_indent do
           node.items.each do |item|
             allocate_space_for_list_item line_metrics
-            convert_outline_list_item item, node, opts
+            convert_list_item item, node, opts
           end
         end
         # NOTE: children will provide the necessary bottom margin if last item is complex.
@@ -1393,7 +1393,7 @@ module Asciidoctor
         end
       end
 
-      def convert_outline_list_item node, list, opts = {}
+      def convert_list_item node, list, opts = {}
         # TODO: move this to a draw_bullet (or draw_marker) method
         marker_style = {}
         marker_style[:font_color] = @theme.outline_list_marker_font_color || @font_color
