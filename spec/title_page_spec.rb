@@ -471,6 +471,42 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
   end
 
   context 'Theming' do
+    it 'should allow theme to control margins around elements' do
+      reference_pdf_theme = {
+        title_page_authors_margin_top: 5,
+        title_page_revision_margin_top: 5,
+      }
+
+      pdf_theme = {
+        title_page_title_margin_top: 10,
+        title_page_title_margin_bottom: 5,
+        title_page_subtitle_margin_top: 5,
+        title_page_subtitle_margin_bottom: 10,
+        title_page_authors_margin_top: nil,
+        title_page_authors_margin_bottom: 10,
+        title_page_revision_margin_top: nil,
+        title_page_revision_margin_bottom: 10,
+      }
+
+      input = <<~'EOS'
+      = Document Title: Subtitle
+      :doctype: book
+      Author Name
+      v1.0
+      EOS
+
+      reference_pdf = to_pdf input, pdf_theme: reference_pdf_theme, analyze: true
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+
+      reference_title_page_texts = reference_pdf.find_text page_number: 1
+      title_page_texts = pdf.find_text page_number: 1
+
+      (expect title_page_texts[0][:y]).to eql (reference_title_page_texts[0][:y] - 10)
+      (expect title_page_texts[1][:y]).to eql (reference_title_page_texts[1][:y] - 20)
+      (expect title_page_texts[2][:y]).to eql (reference_title_page_texts[2][:y] - 25)
+      (expect title_page_texts[3][:y]).to eql (reference_title_page_texts[3][:y] - 30)
+    end
+
     it 'should allow theme to customize content of authors line' do
       pdf = to_pdf <<~'EOS', pdf_theme: { title_page_authors_content: '{url}[{author}]' }
       = Document Title
