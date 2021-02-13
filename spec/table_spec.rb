@@ -1841,6 +1841,30 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       end).to log_message severity: :ERROR, message: 'the table cell on page 2 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page'
     end
 
+    it 'should not warn if cell exceeds page height in scratch document' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [%unbreakable]
+        --
+        |===
+        a|
+        page one
+
+        <<<
+
+        page two
+        |===
+        --
+
+        after
+        EOS
+
+        (expect pdf.pages).to have_size 2
+        (expect pdf.find_unique_text 'page two').to be_nil
+        (expect pdf.lines pdf.find_text page_number: 2).to eql %w(after)
+      end).to log_message severity: :ERROR, message: 'the table cell on page 1 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page'
+    end
+
     it 'should not warn if cell exceeds page height without adding content to subsequent page' do
       (expect do
         pdf = to_pdf <<~'EOS', analyze: true
