@@ -86,6 +86,7 @@ module Prawn
           end
           # FIXME: prawn-table doesn't support cells that exceed the height of a single page
           if (additional_pages = (end_page = pdf.page_number) - start_page) > 0
+            pdf.move_up @padding[0]
             logger.error %(the table cell on page #{end_page - additional_pages} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page) unless (additional_pages == 1 && pdf.at_page_top?) || pdf.scratch?
             additional_pages.times { pdf.delete_page }
           end
