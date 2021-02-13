@@ -1875,7 +1875,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         <<<
         |===
         EOS
-        
+
         (expect pdf.pages).to have_size 1
       end).to not_log_message
     end
