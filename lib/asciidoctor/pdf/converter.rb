@@ -2941,7 +2941,7 @@ module Asciidoctor
         string = hyphenate_text string, @hyphenator if (opts.delete :hyphenate) && (defined? @hyphenator)
         # NOTE: used by extensions; ensures linked text gets formatted using the link styles
         if (anchor = opts.delete :anchor)
-          string = %(<a anchor="#{anchor}">#{string}</a>)
+          string = anchor == true ? %(<a>#{string}</a>) : %(<a anchor="#{anchor}">#{string}</a>)
         end
         margin_top top_margin
         # NOTE: normalize makes endlines soft (replaces "\n" with ' ')
@@ -3130,9 +3130,8 @@ module Asciidoctor
               spacer_width: (rendered_width_of_char NoBreakSpace, size: spacer_font_size),
             }
           end
-          line_metrics = calc_line_metrics @theme.toc_line_height
           theme_margin :toc, :top
-          layout_toc_level doc.sections, num_levels, line_metrics, dot_leader, num_front_matter_pages
+          layout_toc_level doc.sections, num_levels, dot_leader, num_front_matter_pages
         end
         # NOTE: range must be calculated relative to toc_page_number; absolute page number in scratch document is arbitrary
         toc_page_numbers = (toc_page_number..(toc_page_number + (page_number - start_page_number)))
@@ -3140,7 +3139,7 @@ module Asciidoctor
         toc_page_numbers
       end
 
-      def layout_toc_level sections, num_levels, line_metrics, dot_leader, num_front_matter_pages = 0
+      def layout_toc_level sections, num_levels, dot_leader, num_front_matter_pages = 0
         # NOTE: font options aren't always reliable, so store size separately
         toc_font_info = theme_font :toc do
           { font: font, size: @font_size }
@@ -3154,9 +3153,8 @@ module Asciidoctor
             # NOTE: only write section title (excluding dots and page number) if this is a dry run
             if scratch?
               indent 0, pgnum_label_placeholder_width do
-                # FIXME: use layout_prose
                 # NOTE: must wrap title in empty anchor element in case links are styled with different font family / size
-                typeset_text %(<a>#{sect_title}</a>), line_metrics, inline_format: true, hanging_indent: hanging_indent, normalize_line_height: true
+                layout_prose sect_title, anchor: true, line_height: @theme.toc_line_height, normalize: false, hanging_indent: hanging_indent, normalize_line_height: true, margin: 0
               end
             else
               physical_pgnum = sect.attr 'pdf-page-start'
@@ -3168,6 +3166,7 @@ module Asciidoctor
               sect_title_inherited = (apply_text_decoration ::Set.new, :toc, sect.level.next).merge anchor: (sect_anchor = sect.attr 'pdf-anchor'), color: @font_color
               # NOTE: use text formatter to add anchor overlay to avoid using inline format with synthetic anchor tag
               sect_title_fragments = text_formatter.format sect_title, inherited: sect_title_inherited
+              line_metrics = calc_line_metrics @theme.toc_line_height
               indent 0, pgnum_label_placeholder_width do
                 (sect_title_fragments[-1][:callback] ||= []) << (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
                 typeset_formatted_text sect_title_fragments, line_metrics, hanging_indent: hanging_indent, normalize_line_height: true
@@ -3200,7 +3199,7 @@ module Asciidoctor
             end
           end
           indent @theme.toc_indent do
-            layout_toc_level sect.sections, num_levels_for_sect, line_metrics, dot_leader, num_front_matter_pages
+            layout_toc_level sect.sections, num_levels_for_sect, dot_leader, num_front_matter_pages
           end if num_levels_for_sect > sect.level
         end
       end
