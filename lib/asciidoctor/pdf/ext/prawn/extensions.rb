@@ -405,9 +405,10 @@ module Asciidoctor
         color = opts.delete :color
         fragments = parse_text string, opts
         # NOTE: the low-level APIs we're using don't recognize the :styles option, so we must resolve
-        if (styles = opts.delete :styles)
-          opts[:style] = resolve_font_style styles
-        end
+        # NOTE: disabled until we have a need for it
+        #if (styles = opts.delete :styles)
+        #  opts[:style] = resolve_font_style styles
+        #end
         if (first_line_styles = first_line_opts.delete :styles)
           first_line_opts[:style] = resolve_font_style first_line_styles
         end
