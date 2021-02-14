@@ -1821,6 +1821,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   context 'Border' do
+    it 'should not draw border if color is transparent' do
+      pdf_theme = {
+        image_border_width: 0.5,
+        image_border_color: 'transparent',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      .Tux
+      image::tux.png[align=center]
+      EOS
+
+      (expect pdf.lines).to be_empty
+    end
+
     # NOTE: tests center alignment
     it 'should draw border around PNG image if border width and border color are set in the theme', visual: true do
       pdf_theme = {
