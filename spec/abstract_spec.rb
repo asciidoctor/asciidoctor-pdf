@@ -173,6 +173,23 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect second_line_text[:font_name]).to eql 'NotoSerif'
   end
 
+  it 'should use base font color if font color is not defined for abstract in theme' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_font_color: nil }, analyze: true
+    = Document Title
+
+    [abstract]
+    This is the abstract. +
+    This is the second line.
+
+    This is the main content.
+    EOS
+
+    abstract_first_line_text, abstract_second_line_text = pdf.find_text font_size: 13
+    main_text = pdf.find_unique_text 'This is the main content.'
+    (expect abstract_first_line_text[:font_color]).to eql main_text[:font_color]
+    (expect abstract_second_line_text[:font_color]).to eql main_text[:font_color]
+  end
+
   it 'should allow theme to set text alignment of abstract' do
     pdf = to_pdf <<~'EOS', pdf_theme: { abstract_align: 'center' }, analyze: true
     = Document Title

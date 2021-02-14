@@ -426,7 +426,7 @@ module Asciidoctor
           remaining_fragments = box.render dry_run: true
         end
         # NOTE: color must be applied per-fragment
-        fragments.each {|fragment| fragment[:color] ||= first_line_color } if first_line_color
+        fragments.each {|fragment| fragment[:color] ||= first_line_color }
         if text_indent
           indent text_indent do
             fill_formatted_text_box fragments, first_line_opts
@@ -436,7 +436,7 @@ module Asciidoctor
         end
         unless remaining_fragments.empty?
           # NOTE: color must be applied per-fragment
-          remaining_fragments.each {|fragment| fragment[:color] ||= color } if color
+          remaining_fragments.each {|fragment| fragment[:color] ||= color }
           remaining_fragments = fill_formatted_text_box remaining_fragments, opts
           draw_remaining_formatted_text_on_new_pages remaining_fragments, opts
         end
