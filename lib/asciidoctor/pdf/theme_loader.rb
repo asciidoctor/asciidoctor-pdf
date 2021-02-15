@@ -22,7 +22,6 @@ module Asciidoctor
       AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+\-]) +(-?\d+(?:\.\d+)?)/
       PrecisionFuncRx = /^(round|floor|ceil)\(/
 
-      # TODO: implement white? & black? methods
       module ColorValue; end
 
       # A marker module for a normalized CMYK array
