@@ -3000,7 +3000,7 @@ module Asciidoctor
         container_width = bounds.width
         block_align = opts.delete :block_align
         if (align = @theme[%(#{category_caption}_align)] || @theme.caption_align)
-          align = align == 'inherit' ? (block_align || @base_align) : align.to_sym
+          align = align == 'inherit' ? (block_align || @base_align.to_sym) : align.to_sym
         else
           align = @base_align.to_sym
         end

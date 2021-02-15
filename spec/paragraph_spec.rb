@@ -88,4 +88,17 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     disclaimer_text = (pdf.find_text 'Disclaimer')[0]
     (expect disclaimer_text[:font_name]).to eql 'NotoSerif-Italic'
   end
+
+  it 'should use base align if caption align is set to inherit' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { base_align: 'right', caption_align: 'inherit' }, analyze: true
+    .Title
+    Text
+    EOS
+
+    center_x = (pdf.page 1)[:size][1] * 0.5
+    title_text = pdf.find_unique_text 'Title'
+    paragraph_text = pdf.find_unique_text 'Text'
+    (expect title_text[:x]).to be > center_x
+    (expect paragraph_text[:x]).to be > center_x
+  end
 end
