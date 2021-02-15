@@ -834,7 +834,6 @@ module Asciidoctor
                        scratch = Marshal.load Marshal.dump @prototype
                        scratch.instance_variable_set :@prototype, @prototype
                        scratch.instance_variable_set :@tmp_files, @tmp_files
-                       # TODO: set scratch number on scratch document
                        scratch
                      else
                        logger.warn 'no scratch prototype available; instantiating fresh scratch document'
