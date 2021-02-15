@@ -490,6 +490,19 @@ describe 'Asciidoctor::PDF::Converter - Page' do
   end
 
   context 'Background' do
+    it 'should set page background to white if value is not defined or transparent', visual: true do
+      [nil, 'transparent'].each do |bg_color|
+        to_file = to_pdf_file <<~'EOS', %(page-background-color-#{bg_color || 'undefined'}.pdf), pdf_theme: { page_background_color: bg_color }
+        = Document Title
+        :doctype: book
+
+        content
+        EOS
+
+        (expect to_file).to visually_match 'page-background-color-default.pdf'
+      end
+    end
+
     it 'should set page background color specified by page_background_color key in theme', visual: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-color.pdf', pdf_theme: { page_background_color: 'ECFBF4' }
       = Document Title
