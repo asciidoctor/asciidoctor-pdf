@@ -425,6 +425,19 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect outline[0][:dest][:label]).to eql '1'
   end
 
+  it 'should add back cover using referenced page in PDF file' do
+    pdf = to_pdf <<~'EOS'
+    :back-cover-image: image:red-green-blue.pdf[page=3]
+
+    content
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    (expect (pdf.page 1).text).to eql 'content'
+    page_contents = pdf.objects[(pdf.page 2).page_object[:Contents][0]].data
+    (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
+  end
+
   it 'should not add back cover if referenced page in PDF file does not exist' do
     pdf = to_pdf <<~'EOS'
     :back-cover-image: image:red-green-blue.pdf[page=10]
