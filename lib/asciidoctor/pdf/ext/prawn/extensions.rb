@@ -369,7 +369,7 @@ module Asciidoctor
 
         if (color = options.delete :color)
           fragments.map do |fragment|
-            fragment[:color] ? fragment : fragment.merge(color: color)
+            fragment[:color] ? fragment : (fragment.merge color: color)
           end
         else
           fragments
@@ -415,7 +415,7 @@ module Asciidoctor
         first_line_color = (first_line_opts.delete :color) || color
         opts = opts.merge document: self
         # QUESTION: should we merge more carefully here? (hand-select keys?)
-        first_line_opts = opts.merge(first_line_opts).merge single_line: true, first_line: true
+        first_line_opts = (opts.merge first_line_opts).merge single_line: true, first_line: true
         box = ::Prawn::Text::Formatted::Box.new fragments, first_line_opts
         # NOTE: get remaining_fragments before we add color to fragments on first line
         if (text_indent = opts.delete :indent_paragraphs)
