@@ -5,7 +5,7 @@ jobs:
     name: ${{ github.event.client_payload.message }}
     runs-on: ubuntu-latest
     env:
-      PYGMENTS_VERSION: '~> 2.0.0'
+      PYGMENTS_VERSION: '~> 2.1.0'
       RGHOST_VERSION: '0.9.7'
       PRAWN_GMAGICK_VERSION: '0.0.9'
     steps:
