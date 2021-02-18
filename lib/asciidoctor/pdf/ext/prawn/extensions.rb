@@ -377,14 +377,14 @@ module Asciidoctor
       end
 
       # NOTE: override built-in fill_formatted_text_box to insert leading before second line when :first_line is true
-      def fill_formatted_text_box text, opts
-        merge_text_box_positioning_options opts
-        box = ::Prawn::Text::Formatted::Box.new text, opts
+      def fill_formatted_text_box text, options
+        merge_text_box_positioning_options options
+        box = ::Prawn::Text::Formatted::Box.new text, options
         remaining_text = box.render
         @no_text_printed = box.nothing_printed?
         @all_text_printed = box.everything_printed?
 
-        if ((defined? @final_gap) && @final_gap) || (opts[:first_line] && !(@no_text_printed || @all_text_printed))
+        if ((defined? @final_gap) && @final_gap) || (options[:first_line] && !(@no_text_printed || @all_text_printed))
           self.y -= box.height + box.line_gap + box.leading
         else
           self.y -= box.height
@@ -394,31 +394,31 @@ module Asciidoctor
       end
 
       # NOTE: override built-in draw_indented_formatted_line to set first_line flag
-      def draw_indented_formatted_line string, opts
-        super string, (opts.merge first_line: true)
+      def draw_indented_formatted_line string, options
+        super string, (options.merge first_line: true)
       end
 
-      # Performs the same work as Prawn::Text.text except that the first_line_opts are applied to the first line of text
+      # Performs the same work as Prawn::Text.text except that the first_line_options are applied to the first line of text
       # renderered. It's necessary to use low-level APIs in this method so we only style the first line and not the
       # remaining lines (which is the default behavior in Prawn).
-      def text_with_formatted_first_line string, first_line_opts, opts
-        color = opts.delete :color
-        fragments = parse_text string, opts
+      def text_with_formatted_first_line string, first_line_options, options
+        color = options.delete :color
+        fragments = parse_text string, options
         # NOTE: the low-level APIs we're using don't recognize the :styles option, so we must resolve
         # NOTE: disabled until we have a need for it
-        #if (styles = opts.delete :styles)
-        #  opts[:style] = resolve_font_style styles
+        #if (styles = options.delete :styles)
+        #  options[:style] = resolve_font_style styles
         #end
-        if (first_line_styles = first_line_opts.delete :styles)
-          first_line_opts[:style] = resolve_font_style first_line_styles
+        if (first_line_styles = first_line_options.delete :styles)
+          first_line_options[:style] = resolve_font_style first_line_styles
         end
-        first_line_color = (first_line_opts.delete :color) || color
-        opts = opts.merge document: self
+        first_line_color = (first_line_options.delete :color) || color
+        options = options.merge document: self
         # QUESTION: should we merge more carefully here? (hand-select keys?)
-        first_line_opts = (opts.merge first_line_opts).merge single_line: true, first_line: true
-        box = ::Prawn::Text::Formatted::Box.new fragments, first_line_opts
+        first_line_options = (options.merge first_line_options).merge single_line: true, first_line: true
+        box = ::Prawn::Text::Formatted::Box.new fragments, first_line_options
         # NOTE: get remaining_fragments before we add color to fragments on first line
-        if (text_indent = opts.delete :indent_paragraphs)
+        if (text_indent = options.delete :indent_paragraphs)
           remaining_fragments = indent text_indent do
             box.render dry_run: true
           end
@@ -429,16 +429,16 @@ module Asciidoctor
         fragments.each {|fragment| fragment[:color] ||= first_line_color }
         if text_indent
           indent text_indent do
-            fill_formatted_text_box fragments, first_line_opts
+            fill_formatted_text_box fragments, first_line_options
           end
         else
-          fill_formatted_text_box fragments, first_line_opts
+          fill_formatted_text_box fragments, first_line_options
         end
         unless remaining_fragments.empty?
           # NOTE: color must be applied per-fragment
           remaining_fragments.each {|fragment| fragment[:color] ||= color }
-          remaining_fragments = fill_formatted_text_box remaining_fragments, opts
-          draw_remaining_formatted_text_on_new_pages remaining_fragments, opts
+          remaining_fragments = fill_formatted_text_box remaining_fragments, options
+          draw_remaining_formatted_text_on_new_pages remaining_fragments, options
         end
       end
 
@@ -581,12 +581,12 @@ module Asciidoctor
       # at the top of the page instead of the original cursor position. Similar to span, except
       # you can specify an absolute left position and pass additional options through to bounding_box.
       #
-      def flow_bounding_box left = 0, opts = {}
+      def flow_bounding_box left = 0, options = {}
         original_y = y
         # QUESTION: should preserving original_x be an option?
         original_x = bounds.absolute_left - margin_box.absolute_left
         canvas do
-          bounding_box [margin_box.absolute_left + original_x + left, margin_box.absolute_top], opts do
+          bounding_box [margin_box.absolute_left + original_x + left, margin_box.absolute_top], options do
             self.y = original_y
             yield
           end
@@ -760,14 +760,14 @@ module Asciidoctor
       # However, due to how page creation works in Prawn, understand that advancing
       # to the next page is necessary to prevent the size & layout of the imported
       # page from affecting a newly created page.
-      def import_page file, opts = {}
+      def import_page file, options = {}
         prev_page_layout = page.layout
         prev_page_size = page.size
         state.compress = false if state.compress # can't use compression if using template
         prev_text_rendering_mode = (defined? @text_rendering_mode) ? @text_rendering_mode : nil
-        delete_page if opts[:replace]
+        delete_page if options[:replace]
         # NOTE: use functionality provided by prawn-templates
-        start_new_page_discretely template: file, template_page: opts[:page]
+        start_new_page_discretely template: file, template_page: options[:page]
         # prawn-templates sets text_rendering_mode to :unknown, which breaks running content; revert
         @text_rendering_mode = prev_text_rendering_mode
         if page.imported_page?
@@ -775,8 +775,8 @@ module Asciidoctor
           # NOTE: set page size & layout explicitly in case imported page differs
           # I'm not sure it's right to start a new page here, but unfortunately there's no other
           # way atm to prevent the size & layout of the imported page from affecting subsequent pages
-          advance_page size: prev_page_size, layout: prev_page_layout if opts.fetch :advance, true
-        elsif opts.fetch :advance_if_missing, true
+          advance_page size: prev_page_size, layout: prev_page_layout if options.fetch :advance, true
+        elsif options.fetch :advance_if_missing, true
           delete_page
           # NOTE: see previous comment
           advance_page size: prev_page_size, layout: prev_page_layout
@@ -817,8 +817,8 @@ module Asciidoctor
       # This method is a smarter version of start_new_page. It calls start_new_page
       # if the current page is the last page of the document. Otherwise, it simply
       # advances to the next existing page.
-      def advance_page opts = {}
-        last_page? ? (start_new_page opts) : (go_to_page page_number + 1)
+      def advance_page options = {}
+        last_page? ? (start_new_page options) : (go_to_page page_number + 1)
       end
 
       # Start a new page without triggering the on_page_create callback
