@@ -164,6 +164,16 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect footnote_text[:y]).to be < 60
   end
 
+  it 'should support text formatting in a footnote' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    You can download patches from the product page.footnote:sub[Only available if you have an _active_ subscription.]
+    EOS
+
+    (expect pdf.lines[-1]).to eql '[1] Only available if you have an active subscription.'
+    active_text = pdf.find_unique_text 'active'
+    (expect active_text[:font_name]).to eql 'NotoSerif-Italic'
+  end
+
   it 'should show unresolved footnote reference in red text' do
     (expect do
       pdf = to_pdf <<~'EOS', analyze: true
