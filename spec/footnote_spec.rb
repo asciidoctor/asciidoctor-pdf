@@ -144,6 +144,26 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect text[-1][:y]).to be < 60
   end
 
+  it 'should allow footnote to be externalized so it can be used multiple times' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :fn-disclaimer: footnote:disclaimer[Opinions are my own.]
+
+    A bold statement.{fn-disclaimer}
+
+    Another audacious statement.{fn-disclaimer}
+    EOS
+
+    expected_lines = <<~'EOS'.lines.map(&:chomp)
+    A bold statement.[1]
+    Another audacious statement.[1]
+    [1] Opinions are my own.
+    EOS
+
+    (expect pdf.lines).to eql expected_lines
+    footnote_text = pdf.find_unique_text %r/Opinions/
+    (expect footnote_text[:y]).to be < 60
+  end
+
   it 'should show unresolved footnote reference in red text' do
     (expect do
       pdf = to_pdf <<~'EOS', analyze: true
