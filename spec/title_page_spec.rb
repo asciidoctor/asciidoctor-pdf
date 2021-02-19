@@ -224,7 +224,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         :title-logo-image: image:red-green-blue.pdf[page=1]
         EOS
 
-        # QUESTION should we validate page background color?
+        # QUESTION: should we validate page background color?
         (expect pdf.pages).to have_size 1
       end).to log_message severity: :ERROR, message: '~PDF format not supported for title page logo image'
     end
