@@ -2723,7 +2723,6 @@ module Asciidoctor
         # QUESTION: allow alignment per element on title page?
         title_align = (@theme.title_page_align || @base_align).to_sym
 
-        # FIXME: disallow .pdf as image type
         if @theme.title_page_logo_display != 'none' && (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
           if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
             logo_image_attrs = (AttributeList.new $2).parse %w(alt width height)
@@ -2743,19 +2742,22 @@ module Asciidoctor
               logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
             end
           end
-          logo_image_attrs['target'] = logo_image_path
-          # NOTE: at the very least, title_align will be a valid alignment value
-          logo_image_attrs['align'] = [(logo_image_attrs.delete 'align'), @theme.title_page_logo_align, title_align.to_s].find {|val| (BlockAlignmentNames.include? val) }
-          if (logo_image_top = logo_image_attrs['top'] || @theme.title_page_logo_top)
-            initial_y, @y = @y, (resolve_top logo_image_top)
+          if (::Asciidoctor::Image.target_and_format logo_image_path)[1] == 'pdf'
+            log :error, %(PDF format not supported for title page logo image: #{logo_image_path})
+          else
+            logo_image_attrs['target'] = logo_image_path
+            # NOTE: at the very least, title_align will be a valid alignment value
+            logo_image_attrs['align'] = [(logo_image_attrs.delete 'align'), @theme.title_page_logo_align, title_align.to_s].find {|val| (BlockAlignmentNames.include? val) }
+            if (logo_image_top = logo_image_attrs['top'] || @theme.title_page_logo_top)
+              initial_y, @y = @y, (resolve_top logo_image_top)
+            end
+            # NOTE: pinned option keeps image on same page
+            indent (@theme.title_page_logo_margin_left || 0), (@theme.title_page_logo_margin_right || 0) do
+              # FIXME: add API to Asciidoctor for creating blocks outside of extensions
+              convert_image (::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs), relative_to_imagesdir: relative_to_imagesdir, pinned: true
+            end
+            @y = initial_y if initial_y
           end
-          # FIXME: add API to Asciidoctor for creating blocks like this (extract from extensions module?)
-          image_block = ::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs
-          # NOTE: pinned option keeps image on same page
-          indent (@theme.title_page_logo_margin_left || 0), (@theme.title_page_logo_margin_right || 0) do
-            convert_image image_block, relative_to_imagesdir: relative_to_imagesdir, pinned: true
-          end
-          @y = initial_y if initial_y
         end
 
         # TODO: prevent content from spilling to next page

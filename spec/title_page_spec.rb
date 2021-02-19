@@ -216,6 +216,19 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       File.unlink dest_file
     end
 
+    it 'should not allow PDF to be used as title logo image' do
+      (expect do
+        pdf = to_pdf <<~'EOS'
+        = Document Title
+        :doctype: book
+        :title-logo-image: image:red-green-blue.pdf[page=1]
+        EOS
+
+        # QUESTION should we validate page background color?
+        (expect pdf.pages).to have_size 1
+      end).to log_message severity: :ERROR, message: '~PDF format not supported for title page logo image'
+    end
+
     it 'should position logo using value of top attribute on image macro in title-logo-image attribute' do
       pdf = to_pdf <<~'EOS', analyze: :image
       = Document Title

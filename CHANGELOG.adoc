@@ -145,6 +145,7 @@ Bug Fixes::
 * hide print annotation for bare email address (#1806)
 * patch float precision constant so prawn-table does not fail to arrange cells that span columns (#1835)
 * capture footnotes in AsciiDoc table cell and render them with other footnotes at end of article/chapter (#1777)
+* prevent PDF from being used as logo image on title page (since it cannot work properly anyway)
 
 Compliance::
 
