@@ -2728,7 +2728,7 @@ module Asciidoctor
             logo_image_attrs = (AttributeList.new $2).parse %w(alt width height)
             if logo_image_from_theme
               relative_to_imagesdir = false
-              logo_image_path = sub_attributes_discretely doc, $1
+              logo_image_path = apply_subs_discretely doc, $1, subs: [:attributes]
               logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
             else
               relative_to_imagesdir = true
@@ -2738,7 +2738,7 @@ module Asciidoctor
             logo_image_attrs = {}
             relative_to_imagesdir = false
             if logo_image_from_theme
-              logo_image_path = sub_attributes_discretely doc, logo_image_path
+              logo_image_path = apply_subs_discretely doc, logo_image_path, subs: [:attributes]
               logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
             end
           end
@@ -2804,7 +2804,7 @@ module Asciidoctor
                 promote_author doc, idx do
                   author_content_key = (url = doc.attr 'url') ? ((url.start_with? 'mailto:') ? :with_email : :with_url) : :name_only
                   if (author_content = authors_content[author_content_key])
-                    apply_subs_discretely doc, author_content, drop_lines_with_unresolved_attributes: true
+                    apply_subs_discretely doc, author_content, drop_lines_with_unresolved_attributes: true, imagesdir: @themesdir
                   else
                     doc.attr 'author'
                   end
@@ -3429,7 +3429,7 @@ module Asciidoctor
                       if content == '{page-number}'
                         content = pagenums_enabled ? pgnum_label : nil
                       else
-                        content = apply_subs_discretely doc, content, drop_lines_with_unresolved_attributes: true
+                        content = apply_subs_discretely doc, content, drop_lines_with_unresolved_attributes: true, imagesdir: @themesdir
                         content = transform_text content, @text_transform if @text_transform
                       end
                       formatted_text_box (parse_text content, color: @font_color, inline_format: [normalize: true]),
@@ -4290,14 +4290,14 @@ module Asciidoctor
           elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
             image_attrs = (AttributeList.new $2).parse %w(alt width)
             if from_theme
-              image_path = sub_attributes_discretely doc, $1
+              image_path = apply_subs_discretely doc, $1, subs: [:attributes]
               image_relative_to = @themesdir
             else
               image_path = $1
               image_relative_to = true
             end
           elsif from_theme
-            image_path = sub_attributes_discretely doc, image_path
+            image_path = apply_subs_discretely doc, image_path, subs: [:attributes]
             image_relative_to = @themesdir
           end
 
@@ -4480,27 +4480,24 @@ module Asciidoctor
       end
 
       def apply_subs_discretely doc, value, opts = {}
-        imagesdir = doc.attr 'imagesdir'
-        doc.set_attr 'imagesdir', @themesdir
+        if (imagesdir = opts[:imagesdir])
+          imagesdir_to_restore = doc.attr 'imagesdir'
+          doc.set_attr 'imagesdir', imagesdir
+        end
         # FIXME: get sub_attributes to handle drop-line w/o a warning
         doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
         value = value.gsub '\{', '\\\\\\{' if (escaped_attr_ref = value.include? '\{')
-        value = doc.apply_subs value
+        value = (subs = opts[:subs]) ? (doc.apply_subs value, subs) : (doc.apply_subs value)
         value = (value.split LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
         value = value.gsub '\{', '{' if escaped_attr_ref
         doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
         if imagesdir
-          doc.set_attr 'imagesdir', imagesdir
-        else
-          doc.remove_attr 'imagesdir'
+          if imagesdir_to_restore
+            doc.set_attr 'imagesdir', imagesdir_to_restore
+          else
+            doc.remove_attr 'imagesdir'
+          end
         end
-        value
-      end
-
-      def sub_attributes_discretely doc, value
-        doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
-        value = doc.apply_subs value, [:attributes]
-        doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
         value
       end
 
