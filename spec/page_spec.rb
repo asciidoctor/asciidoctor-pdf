@@ -1204,6 +1204,16 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         (expect pdf.images[0][:page_number]).to be 2
       end).to log_messages [[severity: :WARN, message: '~image file is an unrecognised format']]
     end
+
+    it 'should support PDF as background image', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-pdf.pdf', enable_footer: true
+      :page-background-image: image:tux-bg.pdf[]
+
+      Tux has left is mark on this page.
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-pdf.pdf'
+    end
   end
 
   context 'Watermark' do
