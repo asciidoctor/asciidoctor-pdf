@@ -590,7 +590,7 @@ module Asciidoctor
         info
       end
 
-      # NOTE: init_page is called within a float context
+      # NOTE: init_page is called within a float context; this will suppress prawn-svg messing with the cursor
       # NOTE: init_page is not called for imported pages, front and back cover pages, and other image pages
       def init_page *_args
         # NOTE: we assume in prepress that physical page number reflects page side
@@ -609,12 +609,7 @@ module Asciidoctor
               # IMPORTANT: the background PDF must have the same dimensions as the current PDF
               import_page bg_image_path, (bg_image_opts.merge replace: true, advance: false, advance_if_missing: false)
             else
-              # NOTE: float is necessary since prawn-svg may mess with cursor position
-              float do
-                canvas do
-                  image bg_image_path, ({ position: :center, vposition: :center }.merge bg_image_opts)
-                end
-              end
+              canvas { image bg_image_path, ({ position: :center, vposition: :center }.merge bg_image_opts) }
             end
           rescue
             facing_page_side = (PageSides - [page_side])[0]
@@ -2720,7 +2715,7 @@ module Asciidoctor
         if (bg_color = resolve_theme_color :title_page_background_color)
           @page_bg_color = bg_color
         end
-        recycle ? (init_page self) : start_new_page
+        recycle ? float { init_page self } : start_new_page
         @page_bg_image[side] = prev_bg_image if bg_image
         @page_bg_color = prev_bg_color if bg_color
 
