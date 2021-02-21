@@ -594,8 +594,7 @@ module Asciidoctor
       # NOTE: init_page is not called for imported pages, front and back cover pages, and other image pages
       def init_page *_args
         # NOTE: we assume in prepress that physical page number reflects page side
-        if @media == 'prepress' &&
-            (next_page_margin = @page_margin_by_side[page_number == 1 ? :cover : page_side]) != page_margin
+        if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_number == 1 ? :cover : page_side]) != page_margin
           set_page_margin next_page_margin
         end
         unless @page_bg_color == 'FFFFFF'
