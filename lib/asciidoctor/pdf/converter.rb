@@ -602,18 +602,26 @@ module Asciidoctor
           tare = true
           fill_absolute_bounds @page_bg_color
         end
-        if (bg_image = @page_bg_image[page_side])
+        if (bg_image_path, bg_image_opts = @page_bg_image[page_side])
           tare = true
-          # NOTE: float is necessary since prawn-svg may mess with cursor position
-          float do
-            canvas do
-              image bg_image[0], ({ position: :center, vposition: :center }.merge bg_image[1])
-            rescue
-              facing_page_side = (PageSides - [page_side])[0]
-              @page_bg_image[facing_page_side] = nil if @page_bg_image[facing_page_side] == @page_bg_image[page_side]
-              @page_bg_image[page_side] = nil
-              log :warn, %(could not embed page background image: #{bg_image[0]}; #{$!.message})
+          begin
+            if bg_image_opts[:format] == 'pdf'
+              # NOTE: pages that use PDF for the background do not support a background color or running content
+              # IMPORTANT: the background PDF must have the same dimensions as the current PDF
+              import_page bg_image_path, (bg_image_opts.merge replace: true, advance: false, advance_if_missing: false)
+            else
+              # NOTE: float is necessary since prawn-svg may mess with cursor position
+              float do
+                canvas do
+                  image bg_image_path, ({ position: :center, vposition: :center }.merge bg_image_opts)
+                end
+              end
             end
+          rescue
+            facing_page_side = (PageSides - [page_side])[0]
+            @page_bg_image[facing_page_side] = nil if @page_bg_image[facing_page_side] == @page_bg_image[page_side]
+            @page_bg_image[page_side] = nil
+            log :warn, %(could not embed page background image: #{bg_image_path}; #{$!.message})
           end
         end
         page.tare_content_stream if tare

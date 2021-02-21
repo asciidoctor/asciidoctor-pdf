@@ -1206,10 +1206,15 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should support PDF as background image', visual: true do
+      # NOTE: the running content is automatically disabled since this becomes an imported page
       to_file = to_pdf_file <<~'EOS', 'page-background-image-pdf.pdf', enable_footer: true
-      :page-background-image: image:tux-bg.pdf[]
+      :page-background-image-recto: image:tux-bg.pdf[]
 
-      Tux has left is mark on this page.
+      Tux has left his mark on this page.
+
+      <<<
+
+      But not on this page.
       EOS
 
       (expect to_file).to visually_match 'page-background-image-pdf.pdf'
