@@ -1219,6 +1219,26 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       (expect to_file).to visually_match 'page-background-image-pdf.pdf'
     end
+
+    it 'should only warn once if PDF for background image cannot be found' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: :image
+        = Document Title
+        :page-background-image: image:no-such-file.pdf[]
+
+        content
+
+        <<<
+
+        more content
+
+        <<<
+
+        even more content
+        EOS
+        (expect pdf.images).to be_empty
+      end).to log_messages [[severity: :WARN, message: '~page background image not found or readable']]
+    end
   end
 
   context 'Watermark' do
