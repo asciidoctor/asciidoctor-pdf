@@ -438,12 +438,12 @@ describe Asciidoctor::PDF::Converter do
       class LayoutHeadingPDFConverter < (Asciidoctor::Converter.for 'pdf') # rubocop:disable RSpec/LeakyConstantDeclaration
         register_for :layout_heading_pdf
         def convert_paragraph node
-          layout_heading 'Heading' if node.role? 'first'
+          layout_heading %(#{node.role.capitalize} Heading) if node.role?
           super
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: :layout_heading_pdf, pdf_theme: { heading_margin_bottom: 0 }, analyze: true
+      pdf = to_pdf <<~'EOS', backend: :layout_heading_pdf, pdf_theme: { heading_margin_bottom: 0, heading_margin_top: 100 }, analyze: true
       [.first]
       paragraph
 
@@ -451,10 +451,15 @@ describe Asciidoctor::PDF::Converter do
       paragraph
       EOS
 
-      heading_text = pdf.find_unique_text 'Heading'
-      (expect heading_text).not_to be_nil
-      (expect heading_text[:font_size]).to eql 10.5
-      (expect heading_text[:font_color]).to eql '333333'
+      first_heading_text = pdf.find_unique_text 'First Heading'
+      (expect first_heading_text).not_to be_nil
+      (expect first_heading_text[:font_size]).to eql 10.5
+      (expect first_heading_text[:font_color]).to eql '333333'
+      second_heading_text = pdf.find_unique_text 'Second Heading'
+      (expect second_heading_text).not_to be_nil
+      (expect second_heading_text[:font_size]).to eql 10.5
+      (expect second_heading_text[:font_color]).to eql '333333'
+      (expect second_heading_text[:y]).to be < 700
       text = pdf.text
       (expect text[0][:y] - text[1][:y]).to be < text[1][:y] - text[2][:y]
     end
