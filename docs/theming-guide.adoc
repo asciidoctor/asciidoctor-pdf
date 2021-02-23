@@ -1555,6 +1555,27 @@ The keys in this category control the general spacing between elements where a m
 |vertical-spacing: 10
 |===
 
+[#keys-quotes]
+=== Quotes
+
+The keys in this category define the characters to use for typographic quotation marks (i.e., quotes).
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-quotes]*Key Prefix:* <<key-prefix-quotes,quotes>>
+
+|quotes
+|<<quoted-string,Quoted string[double-open, double-close, single-open, single-close]>> +
+(default: ['\&#8220;', '\&#8221;', '\&#8216;', '\&#8217;'])
+|quotes:
+- '&#x00ab;'
+- '&#x00bb;'
+- '&#x2039;'
+- '&#x203a;'
+|===
+
 [#keys-link]
 === Link
 
@@ -2828,47 +2849,6 @@ The keys in this category apply to the menu label (generated from the inline men
 (default: " \u203a ")
 |menu:
   caret-content: ' > '
-|===
-
-[#keys-quotation-marks]
-=== Quotation Marks
-
-The keys in this category define the characters to use for typographic quotation marks.
-
-[cols="3,4,5l"]
-|===
-|Key |Value Type |Example
-
-3+|[#key-prefix-quotation-mark]*Key Prefix:* <<key-prefix-quotation-mark,quotation-mark>>
-
-|double-open
-|<<quoted-string,Quoted string>> +
-(default: &#8220;)
-|quotation-mark:
-  double:
-    open: "\u00ab\u202f"
-
-|double-close
-|<<quoted-string,Quoted string>> +
-(default: &#8221;)
-|quotation-mark:
-  double:
-    close: "\u202f\u00bb"
-
-|single-open
-|<<quoted-string,Quoted string>> +
-(default: &#8216;)
-|quotation-mark:
-  single:
-    open: "\u2039\u202f"
-
-|single-close
-|<<quoted-string,Quoted string>> +
-(default: &#8217;)
-|quotation-mark:
-  single:
-    close: "\u202f\u203a"
-
 |===
 
 [#keys-mark]

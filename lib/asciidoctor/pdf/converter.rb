@@ -472,10 +472,12 @@ module Asciidoctor
         theme.title_page_authors_delimiter ||= ', '
         theme.title_page_revision_delimiter ||= ', '
         theme.toc_hanging_indent ||= 0
-        theme.quotation_mark_double_open ||= '&#8220;'
-        theme.quotation_mark_double_close ||= '&#8221;'
-        theme.quotation_mark_single_open ||= '&#8216;'
-        theme.quotation_mark_single_close ||= '&#8217;'
+        if ::Array === (quotes = theme.quotes)
+          quotes[2] ||= quotes[0]
+          quotes[1] ||= quotes[1]
+        else
+          theme.quotes = %w(&#8220; &#8221; &#8216; &#8217;)
+        end
         theme
       end
 
@@ -2664,7 +2666,7 @@ module Asciidoctor
       end
 
       def convert_inline_quoted node
-        load_theme node.document
+        theme = load_theme node.document
         case node.type
         when :emphasis
           open, close, is_tag = ['<em>', '</em>', true]
@@ -2677,12 +2679,12 @@ module Asciidoctor
         when :subscript
           open, close, is_tag = ['<sub>', '</sub>', true]
         when :double
-          open = @theme.quotation_mark_double_open
-          close = @theme.quotation_mark_double_close
+          open = theme.quotes[0]
+          close = theme.quotes[1]
           is_tag = false
         when :single
-          open = @theme.quotation_mark_single_open
-          close = @theme.quotation_mark_single_close
+          open = theme.quotes[2]
+          close = theme.quotes[3]
           is_tag = false
         when :mark
           open, close, is_tag = ['<mark>', '</mark>', true]
@@ -2693,7 +2695,7 @@ module Asciidoctor
         inner_text = node.text
 
         if (role = node.role)
-          if (text_transform = @theme[%(role_#{role}_text_transform)])
+          if (text_transform = theme[%(role_#{role}_text_transform)])
             inner_text = transform_text inner_text, text_transform
           end
           quoted_text = is_tag ? %(#{open.chop} class="#{role}">#{inner_text}#{close}) : %(<span class="#{role}">#{open}#{inner_text}#{close}</span>)
