@@ -2816,6 +2816,7 @@ It does not affect the distance between the formatted phrase and the phrases tha
 === Menu
 
 The keys in this category apply to the menu label (generated from the inline menu macro).
+Keep in mind that the styles for the caret can be controlled independently using the `<font>` tag.
 
 [cols="3,4,5l"]
 |===
@@ -2828,6 +2829,30 @@ The keys in this category apply to the menu label (generated from the inline men
 (default: " \u203a ")
 |menu:
   caret-content: ' > '
+
+|font-color
+|<<colors,Color>> +
+(default: _inherit_)
+|menu:
+  font-color: #AA0000
+
+|font-family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|menu:
+  font-family: M+ 1mn
+
+|font-size
+|<<values,Number>> +
+(default: _inherit_)
+|menu:
+  font-size: 8
+
+|font-style
+|<<font-styles,Font style>> +
+(default: bold)
+|menu:
+  font-style: bold_italic
 |===
 
 [#keys-mark]

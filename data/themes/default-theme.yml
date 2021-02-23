@@ -92,6 +92,7 @@ mark:
   border_offset: 1
 menu:
   caret_content: " <font size=\"1.15em\" color=\"#B12146\">\u203a</font> "
+  font_style: bold
 heading:
   align: left
   font_color: $base_font_color
