@@ -3,6 +3,7 @@
 require_relative 'pdf/version'
 require 'asciidoctor'
 require 'prawn'
+# NOTE: patch float precision constant so prawn-table does not fail to arrange cells that span columns (see #1835)
 Prawn.send :remove_const, :FLOAT_PRECISION
 Prawn::FLOAT_PRECISION = 1e-3
 require 'prawn/templates'
