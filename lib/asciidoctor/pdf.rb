@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'pdf/version'
-require 'asciidoctor' unless defined? Asciidoctor.load
+require 'asciidoctor'
 require 'prawn'
 Prawn.send :remove_const, :FLOAT_PRECISION
 Prawn::FLOAT_PRECISION = 1e-3
