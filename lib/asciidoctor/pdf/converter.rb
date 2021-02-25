@@ -2651,11 +2651,11 @@ module Asciidoctor
         menu = node.attr 'menu'
         caret = (load_theme node.document).menu_caret_content || %( \u203a )
         if !(submenus = node.attr 'submenus').empty?
-          %(<strong>#{[menu, *submenus, (node.attr 'menuitem')].join caret}</strong>)
+          %(<menu>#{[menu, *submenus, (node.attr 'menuitem')].join caret}</menu>)
         elsif (menuitem = node.attr 'menuitem')
-          %(<strong>#{menu}#{caret}#{menuitem}</strong>)
+          %(<menu>#{menu}#{caret}#{menuitem}</menu>)
         else
-          %(<strong>#{menu}</strong>)
+          %(<menu>#{menu}</menu>)
         end
       end
 

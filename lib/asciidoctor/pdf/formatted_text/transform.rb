@@ -88,6 +88,12 @@ module Asciidoctor
                 align: mark_border_offset && :center,
                 callback: mark_bg_color && [TextBackgroundAndBorderRenderer],
               }.compact,
+              menu: {
+                color: theme.menu_font_color,
+                font: theme.menu_font_family,
+                size: theme.menu_font_size,
+                styles: (to_styles theme.menu_font_style),
+              }.compact,
             }
             revise_roles = [].to_set
             theme.each_pair.each_with_object @theme_settings do |(key, val), accum|
@@ -129,6 +135,7 @@ module Asciidoctor
               key: { font: 'Courier', styles: [:italic].to_set },
               link: { color: '0000FF' },
               mark: { background_color: 'FFFF00', callback: [TextBackgroundAndBorderRenderer] },
+              menu: { styles: [:bold].to_set },
               'line-through' => { styles: [:strikethrough].to_set },
               'underline' => { styles: [:underline].to_set },
               'big' => { size: '1.667em' },
@@ -228,7 +235,7 @@ module Asciidoctor
             styles << :bold
           when :em
             styles << :italic
-          when :button, :code, :key, :mark
+          when :button, :code, :key, :mark, :menu
             update_fragment fragment, @theme_settings[tag_name]
           when :font
             if (value = attrs[:name])
