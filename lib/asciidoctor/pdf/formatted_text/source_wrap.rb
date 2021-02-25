@@ -13,16 +13,14 @@ module Asciidoctor
           highlight_line = stop = nil
           unconsumed = @arranger.unconsumed
           until stop
-            if (first_fragment = unconsumed[0])
-              if first_fragment[:linenum]
-                linenum_spacer ||= { text: NoBreakSpace + (' ' * (first_fragment[:text].length - 1)) }
-                highlight_line = ((second_fragment = unconsumed[1])&.[] :highlight) ? second_fragment.dup : nil
-              else
-                # NOTE: a wrapped line
-                first_fragment[:text] = first_fragment[:text].lstrip
-                @arranger.unconsumed.unshift highlight_line if highlight_line
-                @arranger.unconsumed.unshift linenum_spacer.dup
-              end
+            if (first_fragment = unconsumed[0])[:linenum]
+              linenum_spacer ||= { text: NoBreakSpace + (' ' * (first_fragment[:text].length - 1)) }
+              highlight_line = (second_fragment = unconsumed[1])[:highlight] ? second_fragment.dup : nil
+            else
+              # NOTE: a wrapped line
+              first_fragment[:text] = first_fragment[:text].lstrip
+              @arranger.unconsumed.unshift highlight_line if highlight_line
+              @arranger.unconsumed.unshift linenum_spacer.dup
             end
             @line_wrap.wrap_line document: @document, kerning: @kerning, width: available_width, arranger: @arranger, disable_wrap_by_char: @disable_wrap_by_char
             if enough_height_for_this_line?
