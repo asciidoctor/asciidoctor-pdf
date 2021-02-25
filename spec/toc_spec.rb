@@ -1256,6 +1256,20 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect pdf.find_text %(Paper Clips \u2116\u00a04)).to have_size 2
   end
 
+  it 'should not crash if section title is empty' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    :toc:
+
+    == {empty}
+
+    content
+    EOS
+
+    (expect pdf.text).to have_size 2
+    (expect pdf.find_unique_text 'content').not_to be_nil
+    (expect pdf.find_unique_text 'Table of Contents').not_to be_nil
+  end
+
   it 'should allocate correct number of pages for toc if line numbers cause lines to wrap' do
     chapter_title = %(\n\n== A long chapter title that wraps to a second line in the toc when the page number exceeds one digit)
 

@@ -3153,6 +3153,7 @@ module Asciidoctor
           next if (num_levels_for_sect = (sect.attr 'toclevels', num_levels).to_i) < sect.level
           theme_font :toc, level: (sect.level + 1) do
             sect_title = @text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title
+            next if sect_title.empty?
             pgnum_label_placeholder_width = rendered_width_of_string '0' * @toc_max_pagenum_digits
             # NOTE: only write section title (excluding dots and page number) if this is a dry run
             if scratch?
