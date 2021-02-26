@@ -1789,6 +1789,26 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect caption_text_l1[:x] + caption_text_l1[:width]).to be_within(1).of caption_text_l2[:x] + caption_text_l2[:width]
     end
 
+    it 'should restrict caption width to percentage of image width if max-width is fit-content function' do
+      pdf_theme = {
+        image_caption_align: 'inherit',
+        image_caption_max_width: 'fit-content(50%)',
+      }
+
+      input = <<~'EOS'
+      .This is a picture of our beloved Tux.
+      image::tux.png[pdfwidth=150pt,align=right]
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+
+      caption_texts = pdf.text
+      (expect caption_texts).to have_size 3
+      (expect caption_texts[0][:width]).to be < 75.0
+      (expect caption_texts[1][:width]).to be < 75.0
+      (expect caption_texts[2][:width]).to be < 75.0
+    end
+
     it 'should align caption within width of image if alignment is fixed and max-width is fit-content' do
       pdf_theme = {
         image_caption_align: 'left',
