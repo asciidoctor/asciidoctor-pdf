@@ -2667,6 +2667,7 @@ module Asciidoctor
 
       def convert_inline_quoted node
         theme = load_theme node.document
+
         case node.type
         when :emphasis
           open, close, is_tag = ['<em>', '</em>', true]
@@ -2679,13 +2680,9 @@ module Asciidoctor
         when :subscript
           open, close, is_tag = ['<sub>', '</sub>', true]
         when :double
-          open = theme.quotes[0]
-          close = theme.quotes[1]
-          is_tag = false
+          open, close, is_tag = [theme.quotes[0], theme.quotes[1], false]
         when :single
-          open = theme.quotes[2]
-          close = theme.quotes[3]
-          is_tag = false
+          open, close, is_tag = [theme.quotes[2], theme.quotes[3], false]
         when :mark
           open, close, is_tag = ['<mark>', '</mark>', true]
         else
