@@ -340,6 +340,31 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect to_file).to visually_match 'source-rouge-underline-style.pdf' if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
     end
 
+    it 'should allow token to extend to width of block', visual: true do
+      input = <<~'EOS'
+      :source-highlighter: rouge
+      :rouge-style: github
+
+      [source,ruby]
+      ----
+      puts 'string'
+      ----
+      EOS
+
+      # NOTE: convert to load Rouge
+      to_pdf input
+
+      rouge_style = Class.new Rouge::Theme.find 'github' do
+        style Rouge::Token::Tokens::Literal::String::Single, fg: '#333333', bg: '#ff4dcd', extend: true, inline_block: true
+      end
+
+      pdf = to_pdf input, attribute_overrides: { 'rouge-style' => rouge_style }, analyze: :rect
+      rects = pdf.rectangles
+      (expect rects).to have_size 1
+      (expect rects[0][:width]).to be > 44
+      (expect rects[0][:height]).to be > 11
+    end
+
     it 'should not crash if theme does not define style for Text token' do
       input = <<~'EOS'
       :source-highlighter: rouge
