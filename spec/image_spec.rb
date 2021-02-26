@@ -1934,5 +1934,44 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect pdf.lines.select {|it| it[:color] == 'DEDEDE' }).to be_empty
     end
+
+    it 'should ignore :fit option for SVG image if :width is set' do
+      doc = Prawn::Document.new do
+        text 'start'
+        text 'before'
+        image (fixture_file 'square.svg'), fit: [150, 150], width: 50
+        text 'after'
+      end
+      pdf = EnhancedPDFTextInspector.analyze StringIO.new doc.render
+      text = pdf.text
+      tare = text[0][:y] - text[1][:y]
+      (expect (text[1][:y] - pdf.text[2][:y] - tare).round 2).to eql 50.0
+    end
+
+    it 'should ignore :fit option for SVG image if :height is set' do
+      doc = Prawn::Document.new do
+        text 'start'
+        text 'before'
+        image (fixture_file 'square.svg'), fit: [150, 150], height: 25
+        text 'after'
+      end
+      pdf = EnhancedPDFTextInspector.analyze StringIO.new doc.render
+      text = pdf.text
+      tare = text[0][:y] - text[1][:y]
+      (expect (text[1][:y] - pdf.text[2][:y] - tare).round 2).to eql 25.0
+    end
+
+    it 'should honor :fit option for SVG image if :width and :height are not set' do
+      doc = Prawn::Document.new do
+        text 'start'
+        text 'before'
+        image (fixture_file 'square.svg'), fit: [150, 150]
+        text 'after'
+      end
+      pdf = EnhancedPDFTextInspector.analyze StringIO.new doc.render
+      text = pdf.text
+      tare = text[0][:y] - text[1][:y]
+      (expect (text[1][:y] - pdf.text[2][:y] - tare).round 2).to eql 150.0
+    end
   end
 end
