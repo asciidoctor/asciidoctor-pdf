@@ -1047,6 +1047,12 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect pdf.text[0][:string]).to eql %(\u2039Single quoted\u203a)
     end
 
+    it 'should use single curved quotes by default if theme only specifies double quotation marks' do
+      pdf_theme = { quotes: %w(&#x00ab; &#x00bb;) }
+      pdf = to_pdf '\'`Single quoted`\'', pdf_theme: pdf_theme, analyze: true
+      (expect pdf.text[0][:string]).to eql %(\u2018Single quoted\u2019)
+    end
+
     it 'should not use the closing single quotation mark as apostrophe' do
       pdf_theme = { quotes: %w(&#x00ab; &#x00bb; &#x2039; &#x203a;) }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true

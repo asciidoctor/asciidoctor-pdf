@@ -102,6 +102,7 @@ module Asciidoctor
         'circled' => (?\u2460..?\u2473).to_a,
         'filled' => (?\u2776..?\u277f).to_a + (?\u24eb..?\u24f4).to_a,
       }
+      TypographicQuotes = %w(&#8220; &#8221; &#8216; &#8217;)
       SimpleAttributeRefRx = /(?<!\\)\{\w+(?:-\w+)*\}/
       MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'
       MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|p[txc])?$/
@@ -473,10 +474,9 @@ module Asciidoctor
         theme.title_page_revision_delimiter ||= ', '
         theme.toc_hanging_indent ||= 0
         if ::Array === (quotes = theme.quotes)
-          quotes[2] ||= quotes[0]
-          quotes[1] ||= quotes[1]
+          TypographicQuotes.each_with_index {|char, idx| quotes[idx] ||= char }
         else
-          theme.quotes = %w(&#8220; &#8221; &#8216; &#8217;)
+          theme.quotes = TypographicQuotes
         end
         theme
       end
