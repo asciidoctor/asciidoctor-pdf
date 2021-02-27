@@ -4759,6 +4759,30 @@ To avoid this problem, reduce the height of the running content periphery or mak
 |header:
   border-width: 0.25
 
+|column-rule-color
+|<<colors,Color>> +
+(default: _not set_)
+|header:
+  column-rule-color: #CCCCCC
+
+|column-rule-spacing
+|<<measurement-units,Measurement>> +
+(default: 0)
+|header:
+  column-rule-spacing: 5
+
+|column-rule-style
+|solid {vbar} double {vbar} dashed {vbar} dotted +
+(default: solid)
+|header:
+  column-rule-style: dashed
+
+|column-rule-width
+|<<measurement-units,Measurement>> +
+(default: _not set_)
+|header:
+  column-rule-width: 0.25
+
 |font-color
 |<<colors,Color>> +
 (default: _inherit_)
@@ -4917,6 +4941,30 @@ To avoid this problem, reduce the height of the running content periphery or mak
 |footer:
   border-width: 0.25
 
+|column-rule-color
+|<<colors,Color>> +
+(default: _not set_)
+|footer:
+  column-rule-color: #CCCCCC
+
+|column-rule-spacing
+|<<measurement-units,Measurement>> +
+(default: 0)
+|footer:
+  column-rule-spacing: 5
+
+|column-rule-style
+|solid {vbar} double {vbar} dashed {vbar} dotted +
+(default: solid)
+|footer:
+  column-rule-style: dashed
+
+|column-rule-width
+|<<measurement-units,Measurement>> +
+(default: _not set_)
+|footer:
+  column-rule-width: 0.25
+
 |font-color
 |<<colors,Color>> +
 (default: _inherit_)
@@ -5060,6 +5108,7 @@ Instead, adjust the values of the margin and content-margin keys.
 5. `<side>` can be `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
 The `columns` key can also be defined one level up (on `header` or `footer`), in which case the setting will be inherited.
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
+The column rules are only added if the `columns` key is specified.
 6. `<position>` can be `left`, `center` or `right`.
 7. The `title`, `toc`, and `after-toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
 The `toc` value only applies if the toc is in the default location (before the first page of the body).
