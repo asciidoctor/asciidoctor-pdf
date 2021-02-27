@@ -138,7 +138,6 @@ caption:
   font_style: italic
   # FIXME perhaps set line_height instead of / in addition to margins?
   margin_inside: $vertical_rhythm / 3
-  #margin_inside: $vertical_rhythm / 4
   margin_outside: 0
 lead:
   font_size: $base_font_size_large
@@ -278,10 +277,8 @@ footer:
   padding: [$base_line_height_length / 2, 1, 0, 1]
   vertical_align: top
   recto:
-    #columns: "<50% =0% >50%"
     right:
       content: '{page-number}'
   verso:
-    #columns: $footer_recto_columns
     left:
       content: $footer_recto_right_content
