@@ -1555,6 +1555,27 @@ The keys in this category control the general spacing between elements where a m
 |vertical-spacing: 10
 |===
 
+[#keys-quotes]
+=== Quotes
+
+The keys in this category define the characters to use for typographic quotation marks (i.e., quotes).
+
+[cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-quotes]*Key Prefix:* <<key-prefix-quotes,quotes>>
+
+|quotes
+|<<quoted-string,Quoted string[double-open, double-close, single-open, single-close]>> +
+(default: ['\&#8220;', '\&#8221;', '\&#8216;', '\&#8217;'])
+|quotes:
+- '&#x00ab;'
+- '&#x00bb;'
+- '&#x2039;'
+- '&#x203a;'
+|===
+
 [#keys-link]
 === Link
 

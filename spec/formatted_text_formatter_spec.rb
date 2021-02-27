@@ -1035,4 +1035,59 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect default_section_text[1][:font_color]).to eql '333333'
     end
   end
+
+  describe 'typographic quotes' do
+    it 'should use double curved quotes by default' do
+      pdf = to_pdf '"`Double quoted`"', analyze: true
+      (expect pdf.text[0][:string]).to eql %(\u201cDouble quoted\u201d)
+    end
+
+    it 'should use single curved quotes by default' do
+      pdf = to_pdf '\'`Single quoted`\'', analyze: true
+      (expect pdf.text[0][:string]).to eql %(\u2018Single quoted\u2019)
+    end
+
+    it 'should use user-defined double quotation marks if specified' do
+      pdf_theme = { quotes: %w(&#x00ab; &#x00bb;) }
+      pdf = to_pdf '"`Double quoted`"', pdf_theme: pdf_theme, analyze: true
+      (expect pdf.text[0][:string]).to eql %(\u00abDouble quoted\u00bb)
+    end
+
+    it 'should use user-defined single quotation marks if specified' do
+      pdf_theme = { quotes: %w(&#x00ab; &#x00bb; &#x2039; &#x203a;) }
+      pdf = to_pdf '\'`Single quoted`\'', pdf_theme: pdf_theme, analyze: true
+      (expect pdf.text[0][:string]).to eql %(\u2039Single quoted\u203a)
+    end
+
+    it 'should use single curved quotes by default if theme only specifies double quotation marks' do
+      pdf_theme = { quotes: %w(&#x00ab; &#x00bb;) }
+      pdf = to_pdf '\'`Single quoted`\'', pdf_theme: pdf_theme, analyze: true
+      (expect pdf.text[0][:string]).to eql %(\u2018Single quoted\u2019)
+    end
+
+    it 'should not use the closing single quotation mark as apostrophe' do
+      pdf_theme = { quotes: %w(&#x00ab; &#x00bb; &#x2039; &#x203a;) }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      Apostrophes`' substitution shouldn`'t match '`single quoted`'
+      EOS
+      (expect pdf.text[0][:string]).to eql %(Apostrophes\u2019 substitution shouldn\u2019t match \u2039single quoted\u203a)
+    end
+
+    it 'should use user-defined quotation marks in the TOC' do
+      pdf_theme = { quotes: %w(&#x00ab; &#x00bb; &#x2039; &#x203a;) }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document '`Title`'
+      :doctype: book
+      :toc:
+
+      == "`Double Quoted`"
+
+      == '`Single Quoted`'
+
+      EOS
+      (expect (pdf.find_text %(Document \u2039Title\u203a))).to have_size 1
+      (expect (pdf.find_text %(\u00abDouble Quoted\u00bb))).to have_size 2
+      (expect (pdf.find_text %(\u2039Single Quoted\u203a))).to have_size 2
+    end
+  end
 end

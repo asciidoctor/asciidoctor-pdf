@@ -102,6 +102,7 @@ module Asciidoctor
         'circled' => (?\u2460..?\u2473).to_a,
         'filled' => (?\u2776..?\u277f).to_a + (?\u24eb..?\u24f4).to_a,
       }
+      TypographicQuotes = %w(&#8220; &#8221; &#8216; &#8217;)
       SimpleAttributeRefRx = /(?<!\\)\{\w+(?:-\w+)*\}/
       MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'
       MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|p[txc])?$/
@@ -472,6 +473,11 @@ module Asciidoctor
         theme.title_page_authors_delimiter ||= ', '
         theme.title_page_revision_delimiter ||= ', '
         theme.toc_hanging_indent ||= 0
+        if ::Array === (quotes = theme.quotes)
+          TypographicQuotes.each_with_index {|char, idx| quotes[idx] ||= char }
+        else
+          theme.quotes = TypographicQuotes
+        end
         theme
       end
 
@@ -2660,6 +2666,8 @@ module Asciidoctor
       end
 
       def convert_inline_quoted node
+        theme = load_theme node.document
+
         case node.type
         when :emphasis
           open, close, is_tag = ['<em>', '</em>', true]
@@ -2672,9 +2680,9 @@ module Asciidoctor
         when :subscript
           open, close, is_tag = ['<sub>', '</sub>', true]
         when :double
-          open, close, is_tag = ['&#8220;', '&#8221;', false]
+          open, close, is_tag = [theme.quotes[0], theme.quotes[1], false]
         when :single
-          open, close, is_tag = ['&#8216;', '&#8217;', false]
+          open, close, is_tag = [theme.quotes[2], theme.quotes[3], false]
         when :mark
           open, close, is_tag = ['<mark>', '</mark>', true]
         else
@@ -2684,7 +2692,7 @@ module Asciidoctor
         inner_text = node.text
 
         if (role = node.role)
-          if (text_transform = (load_theme node.document)[%(role_#{role}_text_transform)])
+          if (text_transform = theme[%(role_#{role}_text_transform)])
             inner_text = transform_text inner_text, text_transform
           end
           quoted_text = is_tag ? %(#{open.chop} class="#{role}">#{inner_text}#{close}) : %(<span class="#{role}">#{open}#{inner_text}#{close}</span>)
