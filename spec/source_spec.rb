@@ -449,6 +449,34 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect to_file).to visually_match 'source-rouge-bg-line.pdf' if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
     end
 
+    it 'should not draw background color across whole line for line-oriented tokens if disabled in theme' do
+      input = <<~'EOS'
+      :source-highlighter: rouge
+
+      [source,diff]
+      ----
+      -oranges
+      +grapefruits
+      ----
+      EOS
+
+      # NOTE: convert to load Rouge
+      to_pdf input
+
+      rouge_style = Class.new Rouge::Theme.find 'asciidoctor_pdf_default' do
+        style Rouge::Token::Tokens::Generic::Deleted, fg: '#000000', bg: '#ffdddd', extend: false, inline_block: false
+        style Rouge::Token::Tokens::Generic::Inserted, fg: '#000000', bg: '#ddffdd', extend: false, inline_block: false
+      end
+
+      pdf = to_pdf input, attribute_overrides: { 'rouge-style' => rouge_style }, analyze: :rect
+      rects = pdf.rectangles
+      (expect rects).to have_size 2
+      (expect rects[0][:width]).to be < 100
+      # FIXME: the first token ends in a newline, so it gets coerced to an inline block
+      (expect rects[0][:height]).to eql 14.8
+      (expect rects[1][:height]).to be < 14.8
+    end
+
     it 'should fall back to default line gap if line gap is not specified in theme', visual: true do
       to_file = to_pdf_file <<~'EOS', 'source-rouge-bg-line-no-gap.pdf', pdf_theme: { code_line_gap: nil }
       :source-highlighter: rouge
