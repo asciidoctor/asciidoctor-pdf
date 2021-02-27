@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   #s.required_ruby_version = '>= 2.3.0'
   s.metadata = {
     'bug_tracker_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/issues',
-    'changelog_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/blob/master/CHANGELOG.adoc',
+    'changelog_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/blob/main/CHANGELOG.adoc',
     'mailing_list_uri' => 'http://discuss.asciidoctor.org',
     'source_code_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf'
   }
@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'prawn', '~> 2.2.0'
   # NOTE ttfunk 1.6 is not compatible with Ruby 2.3, so lock version to 1.5 for consistency
   s.add_runtime_dependency 'ttfunk', ['~> 1.5.0'], ['>= 1.5.1']
-  # NOTE must use prawn-table from master branch (defined in Gemfile) for full functionality
+  # NOTE must use prawn-table from head (defined in Gemfile) for full functionality
   s.add_runtime_dependency 'prawn-table', '~> 0.2.0'
   s.add_runtime_dependency 'prawn-templates', '~> 0.1.0'
   s.add_runtime_dependency 'prawn-svg', '~> 0.31.0'

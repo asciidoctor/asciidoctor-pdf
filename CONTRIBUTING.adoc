@@ -37,7 +37,7 @@ Here are just a few of the ways you can contribute to the project:
 * Writing, editing or maintaining the documentation
 * Organizing the content (information architecture & content strategy)
 * Using or extending the software in a creative way
-* Testing a prerelease, a pull request or master
+* Testing a prerelease, a pull request, or the development branch
 * Reviewing or providing feedback on pull requests
 * Writing code (_No patch is too small!_)
 ** Fixing typos
