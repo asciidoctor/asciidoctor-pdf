@@ -105,8 +105,8 @@ jobs:
     - name: Switch to upstream dependencies
       if: matrix.upstream
       run: |
-        bundle exec ruby scripts/switch-to-asciidoctor-master.rb
-        bundle exec ruby scripts/switch-to-prawn-master.rb
+        bundle exec ruby scripts/switch-to-asciidoctor-head.rb
+        bundle exec ruby scripts/switch-to-prawn-head.rb
         rm -f Gemfile.lock
         bundle config --local clean true
         bundle --jobs 3 --retry 3

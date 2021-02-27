@@ -50,7 +50,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     end
 
     it 'should not encode hash that precedes the fragment in a URL' do
-      url_with_hash = 'https://github.com/asciidoctor/asciidoctor-pdf/blob/master/docs/theming-guide.adoc#fonts'
+      url_with_hash = 'https://github.com/asciidoctor/asciidoctor-pdf/blob/main/docs/theming-guide.adoc#fonts'
       pdf = to_pdf %(Learn how to configure #{url_with_hash}[].)
       text = (pdf.page 1).text
       (expect text).to eql %(Learn how to configure #{url_with_hash.sub 'theming-guide', "theming-\nguide"}.)

@@ -27,7 +27,7 @@ jobs:
       run: |
         bundle --jobs 3 --retry 3
         # FIXME: should switch to branch specified in payload
-        bundle exec ruby scripts/switch-to-asciidoctor-master.rb
+        bundle exec ruby scripts/switch-to-asciidoctor-head.rb
         rm -f Gemfile.lock
         bundle --jobs 3 --retry 3
     - name: Run tests

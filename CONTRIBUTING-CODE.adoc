@@ -195,9 +195,9 @@ Now you can run the application as modified by the PR:
 
  $ bundle exec asciidoctor-pdf /path/to/sample.adoc
 
-To switch back to master, just type:
+To switch back to main just type:
 
- $ git checkout master
+ $ git checkout main
 
 ==== In Your Application
 

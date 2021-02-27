@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   #s.required_ruby_version = '>= 2.5.0'
   s.metadata = {
     'bug_tracker_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/issues',
-    'changelog_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/blob/master/CHANGELOG.adoc',
+    'changelog_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/blob/main/CHANGELOG.adoc',
     'mailing_list_uri' => 'http://discuss.asciidoctor.org',
     'source_code_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf'
   }
@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'asciidoctor', '~> 2.0'
   s.add_runtime_dependency 'prawn', '~> 2.4.0'
-  # NOTE must use prawn-table from master branch (defined in Gemfile) for full functionality
+  # NOTE must use prawn-table from head (defined in Gemfile) for full functionality
   s.add_runtime_dependency 'prawn-table', '~> 0.2.0'
   s.add_runtime_dependency 'prawn-templates', '~> 0.1.0'
   s.add_runtime_dependency 'prawn-svg', '~> 0.31.0'
