@@ -449,6 +449,26 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect to_file).to visually_match 'source-rouge-bg-line.pdf' if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
     end
 
+    it 'should fall back to default line gap if line gap is not specified in theme', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'source-rouge-bg-line-no-gap.pdf', pdf_theme: { code_line_gap: nil }
+      :source-highlighter: rouge
+
+      [source,diff]
+      ----
+      --- /tmp/list1.txt
+      +++ /tmp/list2.txt
+      @@ -1,4 +1,4 @@
+       apples
+      -oranges
+       kiwis
+       carrots
+      +grapefruits
+      ----
+      EOS
+
+      (expect to_file).to visually_match 'source-rouge-bg-line-no-gap.pdf' if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
+    end
+
     it 'should add line numbers to start of line if linenums option is enabled' do
       expected_lines = <<~'EOS'.split ?\n
        1 <?xml version="1.0" encoding="UTF-8"?>
