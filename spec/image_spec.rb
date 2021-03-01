@@ -1797,7 +1797,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       input = <<~'EOS'
       .This is a picture of our beloved Tux.
-      image::tux.png[pdfwidth=150pt,align=right]
+      image::tux.png[align=right]
       EOS
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
