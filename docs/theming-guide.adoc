@@ -760,8 +760,10 @@ A sans-serif font that provides a very complete set of Unicode glyphs.
 Cannot be styled as italic, bold or bold_italic.
 Used as the fallback font in the `default-with-fallback-font` theme.
 
-TIP: If you want to specify the location of custom fonts using the `pdf-fontsdir` attribute, yet still be able to reference the bundled fonts, you need to refer to the bundled fonts using the `GEM_FONTS_DIR` token.
-To do so, you can either a) prefix the path of the bundled font in the theme file with the segment `GEM_FONTS_DIR` (e.g., `GEM_FONTS_DIR/mplus1p-regular-fallback.ttf`, or b) use relative paths in the theme file and include `GEM_FONT_DIR` in the value of the `pdf-fontsdir` attribute separated by the location of your custom fonts using a comma (e.g., `path/to/your/fonts,GEM_FONTS_DIR`) or a semi-colon (e.g., `path/to/your/fonts;GEM_FONTS_DIR`).
+TIP: The default themes refer to the bundled fonts using the `GEM_FONTS_DIR` prefix.
+That means you can extend a default theme and not have to worry about how the bundled fonts get resolved.
+If you redeclare the bundled fonts in your custom theme, be sure to prefix the path with the `GEM_FONTS_DIR` token.
+An alternative approach is to include `GEM_FONT_DIR` in the value of the `pdf-fontsdir` attribute separated by the location of your custom fonts using a comma (e.g., `path/to/your/fonts,GEM_FONTS_DIR`) or a semi-colon (e.g., `path/to/your/fonts;GEM_FONTS_DIR`).
 
 === Custom Fonts
 
