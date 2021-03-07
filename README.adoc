@@ -38,6 +38,7 @@ endif::[]
 :url-graphicsmagick: http://www.graphicsmagick.org
 
 ifdef::status[]
+image:https://img.shields.io/badge/zulip-join_chat-brightgreen.svg[project chat,link=https://asciidoctor.zulipchat.com/]
 image:{url-project-repo}/workflows/CI/badge.svg[Build Status (GitHub Actions),link={url-project-repo}/actions?query=workflow%3ACI+branch%3Amain]
 image:https://img.shields.io/gem/v/asciidoctor-pdf.svg[Latest Release, link={url-gem}]
 endif::[]
