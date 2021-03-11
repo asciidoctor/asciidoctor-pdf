@@ -403,6 +403,30 @@ describe Asciidoctor::PDF::Converter do
         (expect curr.pred).to eql pred
       end
     end
+
+    it 'should not delegate to formatter when parse_text is called without options' do
+      doc = Asciidoctor.load 'text', backend: :pdf
+      converter = doc.converter
+      converter.init_pdf doc
+      result = converter.parse_text 'text'
+      (expect result).to eql [text: 'text']
+    end
+
+    it 'should not delegate to formatter with default options when parse_text is called with inline_format: true' do
+      doc = Asciidoctor.load 'text', backend: :pdf
+      converter = doc.converter
+      converter.init_pdf doc
+      result = converter.parse_text %(foo\n<strong>bar</strong>), inline_format: true
+      (expect result).to eql [{ text: %(foo\n) }, { text: 'bar', styles: [:bold].to_set }]
+    end
+
+    it 'should not delegate to formatter with specified options when parse_text is called with inline_format: Array' do
+      doc = Asciidoctor.load 'text', backend: :pdf
+      converter = doc.converter
+      converter.init_pdf doc
+      result = converter.parse_text %(foo\n<strong>bar</strong>), inline_format: [normalize: true]
+      (expect result).to eql [{ text: 'foo ' }, { text: 'bar', styles: [:bold].to_set }]
+    end
   end
 
   describe 'extend' do
