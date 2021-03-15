@@ -292,9 +292,6 @@ module Asciidoctor
 
       # Apply the font settings (family, size, styles and character spacing) from
       # the fragment to the document, then yield to the block.
-      #
-      # The original font settings are restored before this method returns.
-      #
       def fragment_font fragment
         f_info = font_info
         f_family = fragment[:font] || f_info[:family]
