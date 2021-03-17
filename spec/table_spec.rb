@@ -1644,6 +1644,20 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect bottom_y).to eql ref_bottom
     end
 
+    it 'should align middle vertical alignment on cell to center' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [%autowidth]
+      |===
+      .<| Ay<
+
+      Ay< .^| Ay^
+      |===
+      EOS
+
+      expected = pdf.text[0][:y] - (pdf.text[0][:y] - pdf.text[1][:y]) * 0.5
+      (expect expected - pdf.text[2][:y]).to be_between 0, 0.5
+    end
+
     it 'should coerce middle vertical alignment on head cell to center' do
       pdf = to_pdf <<~'EOS', analyze: true
       [%header,width=50%]

@@ -117,6 +117,7 @@ Bug Fixes::
 * do not duplicate footnotes in desc of horizontal description list (#1775)
 * allow an index term to be defined in section title with auto-generated ID
 * fix alignment of link box for image in running content with numeric vertical alignment
+* fix vertical center alignment of normal table cell
 * short-circuit xreftext containing a circular reference path
 * prevent PDF page import from corrupting references in PDF (#1726)
 * display decimal list marker correctly when list is reversed (e.g., 10., 09., 08., etc)

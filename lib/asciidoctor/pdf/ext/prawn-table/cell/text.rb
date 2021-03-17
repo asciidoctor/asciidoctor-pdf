@@ -9,6 +9,7 @@ class Prawn::Table::Cell::Text
   remove_method :draw_content
   def draw_content
     with_font do
+      self.valign = [:center, -font.descender * 0.5] if valign == :center
       remaining_text = with_text_color do
         (text_box \
           width: spanned_content_width + FPTolerance,
