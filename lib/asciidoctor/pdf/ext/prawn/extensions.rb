@@ -833,12 +833,12 @@ module Asciidoctor
 
       # Grouping
 
-      def get_scratch_document
-        @scratch ||= if defined? @prototype # rubocop:disable Naming/MemoizedInstanceVariableName
-                       scratch = Marshal.load Marshal.dump @prototype
-                       scratch.instance_variable_set :@prototype, @prototype
-                       scratch.instance_variable_set :@tmp_files, @tmp_files
-                       scratch
+      def scratch
+        @scratch ||= if defined? @prototype
+                       instance = Marshal.load Marshal.dump @prototype
+                       instance.instance_variable_set :@prototype, @prototype
+                       instance.instance_variable_set :@tmp_files, @tmp_files
+                       instance
                      else
                        logger.warn 'no scratch prototype available; instantiating fresh scratch document'
                        ::Prawn::Document.new
@@ -853,27 +853,27 @@ module Asciidoctor
       alias is_scratch? scratch?
 
       def dry_run &block
-        scratch = get_scratch_document
-        # QUESTION: should we use scratch.advance_page instead?
-        scratch.start_new_page
-        start_page_number = scratch.page_number
-        start_y = scratch.y
-        scratch_bounds = scratch.bounds
+        scratch_pdf = scratch
+        # QUESTION: should we use scratch_pdf.advance_page instead?
+        scratch_pdf.start_new_page
+        start_page_number = scratch_pdf.page_number
+        start_y = scratch_pdf.y
+        scratch_bounds = scratch_pdf.bounds
         original_x = scratch_bounds.absolute_left
         original_width = scratch_bounds.width
         scratch_bounds.instance_variable_set :@x, bounds.absolute_left
         scratch_bounds.instance_variable_set :@width, bounds.width
-        prev_font_scale, scratch.font_scale = scratch.font_scale, font_scale
-        scratch.font font_family, style: font_style, size: font_size do
-          scratch.instance_exec(&block)
+        prev_font_scale, scratch_pdf.font_scale = scratch_pdf.font_scale, font_scale
+        scratch_pdf.font font_family, style: font_style, size: font_size do
+          scratch_pdf.instance_exec(&block)
         end
-        scratch.font_scale = prev_font_scale
+        scratch_pdf.font_scale = prev_font_scale
         # NOTE: don't count excess if cursor exceeds writable area (due to padding)
-        full_page_height = scratch.effective_page_height
-        partial_page_height = [full_page_height, start_y - scratch.y].min
+        full_page_height = scratch_pdf.effective_page_height
+        partial_page_height = [full_page_height, start_y - scratch_pdf.y].min
         scratch_bounds.instance_variable_set :@x, original_x
         scratch_bounds.instance_variable_set :@width, original_width
-        whole_pages = scratch.page_number - start_page_number
+        whole_pages = scratch_pdf.page_number - start_page_number
         [(whole_pages * full_page_height + partial_page_height), whole_pages, partial_page_height]
       end
 

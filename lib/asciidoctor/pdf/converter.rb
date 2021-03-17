@@ -3742,7 +3742,7 @@ module Asciidoctor
           remove_tmp_files
         elsif to_file
           scratch_target = (target.slice 0, target.length - (target_ext = ::File.extname target).length) + '-scratch' + target_ext
-          get_scratch_document.render_file scratch_target
+          scratch.render_file scratch_target
         end
         clear_scratch
         nil

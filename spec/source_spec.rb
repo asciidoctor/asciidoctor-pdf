@@ -817,10 +817,10 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should not apply syntax highlighting in scratch document' do
-      scratch_doc = nil
+      scratch_pdf = nil
       postprocessor_impl = proc do
         process do |doc, output|
-          scratch_doc = doc.converter.get_scratch_document
+          scratch_pdf = doc.converter.scratch
           output
         end
       end
@@ -841,7 +841,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       main_pdf_text = main_pdf.text
       (expect main_pdf_text[0][:string]).to eql 'puts'
       (expect main_pdf_text[0][:font_color]).not_to eql '333333'
-      scratch_pdf_text = (EnhancedPDFTextInspector.analyze scratch_doc.render).text
+      scratch_pdf_text = (EnhancedPDFTextInspector.analyze scratch_pdf.render).text
       (expect scratch_pdf_text[0][:string]).to eql 'puts "Hello, World!"'
       (expect scratch_pdf_text[0][:font_color]).to eql '333333'
     end
@@ -1469,10 +1469,10 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should not apply syntax highlighting in scratch document if specialchars sub is disabled' do
-      scratch_doc = nil
+      scratch_pdf = nil
       postprocessor_impl = proc do
         process do |doc, output|
-          scratch_doc = doc.converter.get_scratch_document
+          scratch_pdf = doc.converter.scratch
           output
         end
       end
@@ -1490,7 +1490,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       --
       EOS
 
-      [pdf.text, (EnhancedPDFTextInspector.analyze scratch_doc.render).text].each do |text|
+      [pdf.text, (EnhancedPDFTextInspector.analyze scratch_pdf.render).text].each do |text|
         (expect text[0][:string]).to eql 'puts "Hello, World!"'
         (expect text[0][:font_color]).to eql '333333'
       end
