@@ -834,15 +834,12 @@ module Asciidoctor
       # Grouping
 
       def scratch
-        @scratch ||= if defined? @prototype
-                       instance = Marshal.load Marshal.dump @prototype
-                       instance.instance_variable_set :@prototype, @prototype
-                       instance.instance_variable_set :@tmp_files, @tmp_files
-                       instance
-                     else
-                       logger.warn 'no scratch prototype available; instantiating fresh scratch document'
-                       ::Prawn::Document.new
-                     end
+        @scratch ||= begin
+          instance = Marshal.load Marshal.dump @prototype
+          instance.instance_variable_set :@prototype, @prototype
+          instance.instance_variable_set :@tmp_files, @tmp_files
+          instance
+        end
       end
 
       def scratch?
