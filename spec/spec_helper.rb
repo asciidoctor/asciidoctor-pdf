@@ -476,7 +476,7 @@ RSpec.configure do |config|
   def get_names pdf
     if (names = pdf.catalog[:Names])
       objects = pdf.objects
-      Hash[*objects[objects[names][:Dests]][:Names]] # rubocop:disable Style/HashConversion
+      Hash[*objects[objects[names][:Dests]][:Names]]
     else
       {}
     end
@@ -484,7 +484,7 @@ RSpec.configure do |config|
 
   def get_page_labels pdf
     objects = pdf.objects
-    Hash[*objects[pdf.catalog[:PageLabels]][:Nums]].each_with_object([]) {|(idx, val), accum| accum[idx] = val[:P] } # rubocop:disable Style/HashConversion
+    Hash[*objects[pdf.catalog[:PageLabels]][:Nums]].each_with_object([]) {|(idx, val), accum| accum[idx] = val[:P] }
   end
 
   def get_annotations pdf, page_num = nil
