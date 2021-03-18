@@ -156,7 +156,7 @@ Compliance::
 * drop support for Ruby < 2.5 (which includes JRuby 9.1) (#1681)
 * release lock on ttfunk version (1.6 produces slightly different output from 1.5 for certain missing glyphs)
 * upgrade to Prawn 2.3.0 (which adds OTF font support), then to Prawn 2.4.0
-* upgrade to prawn-svg 0.31 (adds support for loading embedded images from a data URI)
+* upgrade to prawn-svg 0.32 (adds support for Ruby 3 without a patch and for loading embedded images from a data URI)
 * drop deprecated Pdf module alias in API (leaving only PDF)
 * remove deprecated "ascii" fonts; only bundle the more complete "subset" fonts
 * remove support for `<color>` tag in passthrough content; use `<font color="...">` instead (may affect themes)
