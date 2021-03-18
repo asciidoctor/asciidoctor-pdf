@@ -602,19 +602,17 @@ module Asciidoctor
       # Fills the current bounding box with the specified fill color. Before
       # returning from this method, the original fill color on the document is
       # restored.
-      def fill_bounds f_color = fill_color
-        if f_color && f_color != 'transparent'
-          prev_fill_color = fill_color
-          fill_color f_color
-          fill_rectangle bounds.top_left, bounds.width, bounds.height
-          fill_color prev_fill_color
-        end
+      def fill_bounds f_color
+        prev_fill_color = fill_color
+        fill_color f_color
+        fill_rectangle bounds.top_left, bounds.width, bounds.height
+        fill_color prev_fill_color
       end
 
       # Fills the absolute bounding box with the specified fill color. Before
       # returning from this method, the original fill color on the document is
       # restored.
-      def fill_absolute_bounds f_color = fill_color
+      def fill_absolute_bounds f_color
         canvas { fill_bounds f_color }
       end
 
