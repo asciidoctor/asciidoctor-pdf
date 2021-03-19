@@ -3151,7 +3151,7 @@ module Asciidoctor
         toc_page_numbers
       end
 
-      def layout_toc_level sections, num_levels, dot_leader, num_front_matter_pages = 0
+      def layout_toc_level sections, num_levels, dot_leader, num_front_matter_pages
         # NOTE: font options aren't always reliable, so store size separately
         toc_font_info = theme_font :toc do
           { font: font, size: @font_size }
