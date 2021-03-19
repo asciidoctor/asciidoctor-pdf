@@ -7,7 +7,7 @@ class String
   rescue ::ArgumentError
     # chars (upper alpha, lower alpha, lower greek)
     ([65, 97, 945].include? ord) ? '0' : ([ord - 1].pack 'U1')
-  end unless method_defined? :pred
+  end
 
   # If the string is ASCII only, convert it to a PDF LiteralString object. Otherwise, return self.
   def as_pdf
