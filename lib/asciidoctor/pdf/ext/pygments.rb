@@ -5,18 +5,17 @@ module Pygments
     module BlockStyles
       BlockSelectorRx = /^\.highlight *\{([^}]+?)\}/
       HighlightBackgroundColorRx = /^\.highlight +\.hll +{ *background(?:-color)?: *#([a-fA-F0-9]{6})/
-      HexColorRx = /^#[a-fA-F0-9]{6}$/
+      ColorPropertiesRx = /(?:^|;) *(background(?:-color)?|color): *#?([a-fA-F0-9]{6}) *(?=$|;)/
 
       @cache = ::Hash.new do |cache, key|
         styles = {}
         if BlockSelectorRx =~ (css = ::Pygments.css '.highlight', style: key)
-          ($1.strip.split ';').each do |style|
-            pname, pval = (style.split ':', 2).map(&:strip)
+          $1.scan ColorPropertiesRx do |pname, pval|
             case pname
             when 'background', 'background-color'
-              styles[:background_color] = pval.slice 1, pval.length if HexColorRx.match? pval
+              styles[:background_color] = pval
             when 'color'
-              styles[:font_color] = pval.slice 1, pval.length if HexColorRx.match? pval
+              styles[:font_color] = pval
             end
           end
         end
