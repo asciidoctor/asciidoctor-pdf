@@ -290,38 +290,6 @@ module Asciidoctor
         FontStyleToSet[style].dup
       end
 
-      # Apply the font settings (family, size, styles and character spacing) from
-      # the fragment to the document, then yield to the block.
-      #
-      # Used to arrange an inline image
-      def fragment_font fragment
-        f_info = font_info
-        f_family = fragment[:font] || f_info[:family]
-        f_size = fragment[:size] || f_info[:size]
-        if (f_styles = fragment[:styles])
-          f_style = resolve_font_style f_styles
-        else
-          f_style = :normal
-        end
-
-        # character_spacing logic not currently used
-        #if (c_spacing = fragment[:character_spacing])
-        #  character_spacing c_spacing do
-        #    font f_family, size: f_size, style: f_style do
-        #      yield
-        #    end
-        #  end
-        #else
-        #  font f_family, size: f_size, style: f_style do
-        #    yield
-        #  end
-        #end
-
-        font f_family, size: f_size, style: f_style do
-          yield
-        end
-      end
-
       # Override width of string to check for placeholder char, which uses character spacing to control width
       #
       def width_of_string string, options = {}

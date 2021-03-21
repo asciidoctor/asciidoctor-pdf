@@ -90,7 +90,7 @@ module Asciidoctor::PDF::FormattedText
           fragment[:image_info] = image_info
         end
 
-        doc.fragment_font fragment do
+        doc.save_font do
           # NOTE: if image height exceeds line height by more than 1.5x, increase the line height
           # FIXME: we could really use a nicer API from Prawn here; this is an ugly hack
           if (f_height = image_h) > (line_font = doc.font).height * 1.5
