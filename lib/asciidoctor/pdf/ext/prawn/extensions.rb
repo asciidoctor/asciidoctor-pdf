@@ -304,7 +304,7 @@ module Asciidoctor
         ::Prawn::Icon::Compatibility::SHIMS[%(fa-#{name})]
       end
 
-      def calc_line_metrics line_height = 1, font = self.font, font_size = self.font_size
+      def calc_line_metrics line_height, font = self.font, font_size = self.font_size
         line_height_length = line_height * font_size
         leading = line_height_length - font_size
         half_leading = leading / 2
