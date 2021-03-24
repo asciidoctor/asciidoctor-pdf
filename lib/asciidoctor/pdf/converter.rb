@@ -3813,7 +3813,7 @@ module Asciidoctor
 
       def theme_fill_and_stroke_bounds category, opts = {}
         fill_and_stroke_bounds opts[:background_color], @theme[%(#{category}_border_color)],
-            line_width: (@theme[%(#{category}_border_width)] || 0),
+            line_width: @theme[%(#{category}_border_width)],
             line_style: (@theme[%(#{category}_border_style)]&.to_sym || :solid),
             radius: @theme[%(#{category}_border_radius)]
       end
