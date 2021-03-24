@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   rescue
     files = Dir['**/*']
   end
-  s.files = files.grep %r/^(?:(?:data|lib)\/.+|docs\/theming-guide\.adoc|(?:CHANGELOG|LICENSE|NOTICE|README)\.adoc|\.yardopts|#{s.name}\.gemspec)$/
+  s.files = files.grep %r/^(?:(?:data|lib)\/.+|docs\/theming-guide\.adoc|LICENSE|(?:CHANGELOG|NOTICE|README)\.adoc|\.yardopts|#{s.name}\.gemspec)$/
   s.executables = (files.grep %r/^bin\//).map {|f| File.basename f }
   s.require_paths = ['lib']
   #s.test_files = files.grep %r/^(?:test|spec|feature)\/.*$/
