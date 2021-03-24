@@ -62,6 +62,7 @@ Enhancements::
 * include floor and ceil match characters in fallback font (#1832) (*@oddhack*)
 * allow horizontal and vertical lines of table grid to be styled independently (#1875) (*@hextremist*)
 * allow theme to define the characters for typographical quotation marks (#1880) (*@klonfish*)
+* allow theme to control top margin of callout lists (#1895)
 
 Bug Fixes::
 

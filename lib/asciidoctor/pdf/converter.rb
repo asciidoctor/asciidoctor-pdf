@@ -473,6 +473,7 @@ module Asciidoctor
         theme.title_page_authors_delimiter ||= ', '
         theme.title_page_revision_delimiter ||= ', '
         theme.toc_hanging_indent ||= 0
+        theme.colist_margin_top ||= 0
         if ::Array === (quotes = theme.quotes)
           TypographicQuotes.each_with_index {|char, idx| quotes[idx] ||= char }
         else
@@ -1149,8 +1150,8 @@ module Asciidoctor
 
       def convert_colist node
         # HACK: undo the margin below previous listing or literal block
-        # TODO: allow this to be set using colist_margin_top
-        move_up @theme.block_margin_bottom - @theme.outline_list_item_spacing if !at_page_top? && ([:listing, :literal].include? node.parent.blocks[(node.parent.blocks.index node) - 1].context)
+        # HACK: allow this to be set using colist_margin_top
+        move_up @theme.block_margin_bottom - @theme.colist_margin_top if !at_page_top? && ([:listing, :literal].include? node.parent.blocks[(node.parent.blocks.index node) - 1].context)
         add_dest_for_block node if node.id
         @list_numerals << 1
         line_metrics = theme_font(:conum) { calc_line_metrics @theme.base_line_height }
