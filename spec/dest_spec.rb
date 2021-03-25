@@ -97,6 +97,69 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect names).to have_key 'macro-toc'
   end
 
+  it 'should define a dest at the top of a chapter page' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :doctype: book
+
+    == Chapter
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key '_chapter'
+    chapter_dest = pdf.objects[names['_chapter']]
+    chapter_page_num = get_page_number pdf, chapter_dest[0]
+    chapter_y = chapter_dest[3]
+    (expect chapter_page_num).to be 2
+    _, page_height = get_page_size pdf, chapter_page_num
+    (expect chapter_y).to eql page_height
+  end
+
+  it 'should define a dest at the top of a part page' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :doctype: book
+
+    = Part 1
+
+    == Chapter
+
+    content
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key '_part_1'
+    part_dest = pdf.objects[names['_part_1']]
+    part_page_num = get_page_number pdf, part_dest[0]
+    part_y = part_dest[3]
+    (expect part_page_num).to be 2
+    _, page_height = get_page_size pdf, part_page_num
+    (expect part_y).to eql page_height
+  end
+
+  it 'should define a dest at the top of page for section if section is at top of page' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+
+    content
+
+    <<<
+
+    == Section
+
+    content
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key '_section'
+    sect_dest = pdf.objects[names['_section']]
+    sect_page_num = get_page_number pdf, sect_dest[0]
+    sect_y = sect_dest[3]
+    (expect sect_page_num).to be 2
+    _, page_height = get_page_size pdf, sect_page_num
+    (expect sect_y).to eql page_height
+  end
+
   it 'should register dest for every block that has an ID' do
     ['', 'abstract', 'example', 'open', 'sidebar', 'quote', 'verse', 'listing', 'literal', 'NOTE'].each do |style|
       pdf = to_pdf <<~EOS

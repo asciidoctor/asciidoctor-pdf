@@ -214,7 +214,7 @@ module Asciidoctor
           toc_num_levels = (doc.attr 'toclevels', 2).to_i
           if (insert_toc = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && doc.sections?)
             start_new_page if @ppbook && verso_page?
-            add_dest_for_block doc, id: 'toc'
+            add_dest_for_block doc, id: 'toc', y: (at_page_top? ? page_height : nil)
             allocate_toc doc, toc_num_levels, @y, use_title_page
           else
             @toc_extent = nil
@@ -671,7 +671,7 @@ module Asciidoctor
           # QUESTION: should we just assign the section this generated id?
           # NOTE: section must have pdf-anchor in order to be listed in the TOC
           sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_pgnum}-#{y.ceil}))
-          add_dest_for_block sect, id: sect_anchor
+          add_dest_for_block sect, id: sect_anchor, y: (at_page_top? ? page_height : nil)
           if sectname == 'part'
             layout_part_title sect, title, align: align, level: hlevel
           elsif chapterlike
@@ -4160,7 +4160,7 @@ module Asciidoctor
         unless (top_page = doc.attr 'pdf-page-start') > page_count
           pg = page_number
           go_to_page top_page
-          add_dest_for_block doc, id: (doc.attr 'pdf-anchor')
+          add_dest_for_block doc, id: (doc.attr 'pdf-anchor'), y: page_height
           go_to_page pg
         end
         nil
@@ -4176,12 +4176,12 @@ module Asciidoctor
       # experience. If the current x position is at or inside the left margin, set
       # the x position equal to 0 (left edge of page) to improve the navigation
       # experience.
-      def add_dest_for_block node, id: nil
+      def add_dest_for_block node, id: nil, y: nil
         if !scratch? && (id ||= node.id)
           dest_x = bounds.absolute_left.truncate 4
           # QUESTION: when content is aligned to left margin, should we keep precise x value or just use 0?
           dest_x = 0 if dest_x <= page_margin_left
-          dest_y = at_page_top? && (node.context == :section || node.context == :document) ? page_height : y
+          dest_y = y || @y
           # TODO: find a way to store only the ref of the destination; look it up when we need it
           node.set_attr 'pdf-destination', (node_dest = (dest_xyz dest_x, dest_y))
           add_dest id, node_dest
