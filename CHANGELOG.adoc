@@ -104,6 +104,7 @@ Bug Fixes::
 * remove poorly-defined (and undocumented) border bottom property for caption
 * fix crash when theme specifies CMYK value for table border color (#1700)
 * fallback gracefully if unrecognized convert-time syntax highlighter is used
+* correctly process a sequence of two or more callouts separated by spaces in a source block (#1898)
 * allow callouts sub to be disabled on source blocks (#1704)
 * show missing footnote reference in superscript
 * fix crash when icons=font and admonition_label_min_width is set in theme
