@@ -214,7 +214,7 @@ module Asciidoctor
           toc_num_levels = (doc.attr 'toclevels', 2).to_i
           if (insert_toc = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && doc.sections?)
             start_new_page if @ppbook && verso_page?
-            add_dest_for_block doc, 'toc'
+            add_dest_for_block doc, id: 'toc'
             allocate_toc doc, toc_num_levels, @y, use_title_page
           else
             @toc_extent = nil
@@ -671,7 +671,7 @@ module Asciidoctor
           # QUESTION: should we just assign the section this generated id?
           # NOTE: section must have pdf-anchor in order to be listed in the TOC
           sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_pgnum}-#{y.ceil}))
-          add_dest_for_block sect, sect_anchor
+          add_dest_for_block sect, id: sect_anchor
           if sectname == 'part'
             layout_part_title sect, title, align: align, level: hlevel
           elsif chapterlike
@@ -2368,7 +2368,7 @@ module Asciidoctor
             start_new_page unless at_page_top?
             start_new_page if @ppbook && verso_page? && !(is_macro && (node.option? 'nonfacing'))
           end
-          add_dest_for_block node, (node.id || 'toc') if is_macro
+          add_dest_for_block node, id: (node.id || 'toc') if is_macro
           allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (use_title_page = is_book || (doc.attr? 'title-page'))
           @index.start_page_number = @toc_extent[:page_nums].last + 1 if use_title_page && @theme.page_numbering_start_at == 'after-toc'
           if is_macro
@@ -4160,7 +4160,7 @@ module Asciidoctor
         unless (top_page = doc.attr 'pdf-page-start') > page_count
           pg = page_number
           go_to_page top_page
-          add_dest_for_block doc, (doc.attr 'pdf-anchor')
+          add_dest_for_block doc, id: (doc.attr 'pdf-anchor')
           go_to_page pg
         end
         nil
@@ -4176,7 +4176,7 @@ module Asciidoctor
       # experience. If the current x position is at or inside the left margin, set
       # the x position equal to 0 (left edge of page) to improve the navigation
       # experience.
-      def add_dest_for_block node, id = nil
+      def add_dest_for_block node, id: nil
         if !scratch? && (id ||= node.id)
           dest_x = bounds.absolute_left.truncate 4
           # QUESTION: when content is aligned to left margin, should we keep precise x value or just use 0?
