@@ -3896,14 +3896,16 @@ module Asciidoctor
       # the page. Start a new page if amount is greater than the remaining space on
       # the page.
       def margin amount, _side
-        unless (amount || 0) == 0 || at_page_top?
-          # NOTE: use low-level cursor calculation to workaround cursor bug in column_box context
-          if y - reference_bounds.absolute_bottom > amount
-            move_down amount
-          else
-            # set cursor at top of next page
-            reference_bounds.move_past_bottom
-          end
+        if (amount || 0) == 0 || at_page_top?
+          0
+        # NOTE: use low-level cursor calculation to workaround cursor bug in column_box context
+        elsif y - reference_bounds.absolute_bottom > amount
+          move_down amount
+          amount
+        else
+          # set cursor at top of next page
+          reference_bounds.move_past_bottom
+          0
         end
       end
 
