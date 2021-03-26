@@ -33,6 +33,46 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect listing_page_numbers).to eql [2]
   end
 
+  it 'should keep anchor together with block when block is moved to next page' do
+    pdf = to_pdf <<~EOS
+    #{(['paragraph'] * 20).join (?\n * 2)}
+
+    [#listing-1]
+    ----
+    #{(['listing'] * 20).join ?\n}
+    ----
+    EOS
+
+    (expect (pdf.page 1).text).not_to include 'listing'
+    (expect (pdf.page 2).text).to include 'listing'
+    names = get_names pdf
+    (expect names).to have_key 'listing-1'
+    dest = pdf.objects[names['listing-1']]
+    dest_page_num = get_page_number pdf, dest[0]
+    (expect dest_page_num).to be 2
+    (expect dest[3]).to eql 805.89
+  end
+
+  it 'should place anchor above top margin of block' do
+    input = <<~'EOS'
+    paragraph
+
+    [#listing-1]
+    ----
+    listing
+    ----
+    EOS
+
+    pdf_theme = { block_margin_top: 10 }
+
+    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+    pdf = to_pdf input, pdf_theme: pdf_theme
+    names = get_names pdf
+    (expect names).to have_key 'listing-1'
+    dest = pdf.objects[names['listing-1']]
+    (expect dest[3]).to eql lines[0][:from][:y] + 10
+  end
+
   it 'should split block if it cannot fit on a whole page' do
     pdf = to_pdf <<~EOS, analyze: true
     #{(['paragraph'] * 20).join (?\n * 2)}
