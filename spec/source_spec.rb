@@ -1562,6 +1562,44 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect conum_texts[1][:font_color]).to eql '333333'
     end
 
+    it 'should process a sequence of two or more callouts when not separated by spaces' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,java]
+      ----
+      public interface Person {
+        String getName(); // <1><2>
+        String getDob();
+        int getAge(); // <3><4><5>
+      }
+      ----
+      EOS
+
+      lines = pdf.lines
+      (expect lines[1]).to end_with '; ① ②'
+      (expect lines[3]).to end_with '; ③ ④ ⑤'
+    end
+
+    it 'should process a sequence of two or more callouts when separated by spaces' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,java]
+      ----
+      public interface Person {
+        String getName(); // <1> <2>
+        String getDob();
+        int getAge(); // <3> <4> <5>
+      }
+      ----
+      EOS
+
+      lines = pdf.lines
+      (expect lines[1]).to end_with '; ① ②'
+      (expect lines[3]).to end_with '; ③ ④ ⑤'
+    end
+
     it 'should honor font family set on conum category in theme for conum in source block' do
       pdf = to_pdf <<~'EOS', pdf_theme: { code_font_family: 'Courier' }, analyze: true
       :source-highlighter: rouge
