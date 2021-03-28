@@ -1741,7 +1741,6 @@ module Asciidoctor
 
       # QUESTION: can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
       def convert_listing_or_literal node
-        add_dest_for_block node if node.id
         wrap_ext = source_chunks = bg_color_override = font_color_override = adjusted_font_size = nil
         theme_font :code do
           # HACK: disable built-in syntax highlighter; must be done before calling node.content!
@@ -1872,9 +1871,10 @@ module Asciidoctor
           adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ? (compute_autofit_font_size source_chunks, :code) : nil
         end
 
-        theme_margin :block, :top
+        top_margin = theme_margin :block, :top
 
         keep_together do |box_height = nil|
+          add_dest_for_block node, y: @y + top_margin if node.id
           caption_height = node.title? ? (layout_caption node, category: :code) : 0
           theme_font :code do
             theme_fill_and_stroke_block :code, (box_height - caption_height), background_color: bg_color_override, split_from_top: false if box_height

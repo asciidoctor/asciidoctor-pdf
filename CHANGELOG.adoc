@@ -101,6 +101,7 @@ Bug Fixes::
 * don't apply border, shading, or padding to collapsible block (#1660)
 * escape bare ampersand in attribution and citetitle of quote or verse block (#1662)
 * fix numeric assertions in test suite (#1542)
+* keep block anchor with source/listing/literal block when block is moved to next page (#1897)
 * remove poorly-defined (and undocumented) border bottom property for caption
 * fix crash when theme specifies CMYK value for table border color (#1700)
 * fallback gracefully if unrecognized convert-time syntax highlighter is used
