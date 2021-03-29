@@ -466,6 +466,7 @@ module Asciidoctor
         theme.description_list_description_indent ||= 0
         theme.image_border_width ||= 0
         theme.code_linenum_font_color ||= '999999'
+        theme.code_callout_list_margin_top ||= 0
         theme.role_unresolved_font_color ||= 'FF0000'
         theme.index_columns ||= 2
         theme.footnotes_item_spacing ||= 0
@@ -1148,9 +1149,7 @@ module Asciidoctor
       end
 
       def convert_colist node
-        # HACK: undo the margin below previous listing or literal block
-        # TODO: allow this to be set using colist_margin_top
-        move_up @theme.block_margin_bottom - @theme.outline_list_item_spacing if !at_page_top? && ([:listing, :literal].include? node.parent.blocks[(node.parent.blocks.index node) - 1].context)
+        move_down @theme.code_callout_list_margin_top if !at_page_top? && ([:listing, :literal].include? node.parent.blocks[(node.parent.blocks.index node) - 1].context)
         add_dest_for_block node if node.id
         @list_numerals << 1
         line_metrics = theme_font(:conum) { calc_line_metrics @theme.base_line_height }

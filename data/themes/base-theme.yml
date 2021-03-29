@@ -84,6 +84,7 @@ code_line_height: 1.2
 code_padding: 9
 code_border_color: 'EEEEEE'
 code_border_width: 0.5
+code_callout_list_margin_top: -6
 conum_line_height: 1.15
 conum_glyphs: circled
 example_background_color: 'FFFFFF'
