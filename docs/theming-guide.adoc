@@ -2613,6 +2613,13 @@ The keys in this category are used to control the style of literal, listing, and
 (default: #999999)
 |code:
   linenum-font-color: #ccc
+
+|callout-list-margin-top
+|<<measurement-units,Measurement>> +
+(default: -$block-margin-bottom)
+|code:
+  callout-list:
+    margin-top: 0
 |===
 
 1. The line-gap property is used to tune the height of the background color applied to a span of block text highlighted using Rouge.
@@ -2681,24 +2688,6 @@ These properties are inherited for conums inside a verbatim block.
 3. The font must provide the required glyphs.
 The glyphs can be specified as a comma-separated list of ranges, where the range values are Unicode numbers (e.g., \u2460).
 Unicode escape sequences are recognized even if the value is not enclosed in double quotes.
-
-[#keys-callout-lists]
-=== Callout Lists
-
-The keys in this category are used to control the style of callout lists (i.e., colists).
-
-[cols="3,4,5l"]
-|===
-|Key |Value Type |Example
-
-3+|[#key-prefix-colist]*Key Prefix:* <<key-prefix-colist,colist>>
-
-|margin-top
-|<<values,Number>> +
-(default: $outline-list-item-spacing)
-|colist:
-  margin-top: 10
-|===
 
 [#keys-button]
 === Button

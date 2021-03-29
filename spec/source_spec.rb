@@ -1659,17 +1659,5 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect none_text).not_to be_nil
       (expect none_text[:font_color]).to eql 'AA6600'
     end
-
-    it 'should custom callout lists top margin', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'source-colist-margin-top.pdf', pdf_theme: { colist_margin_top: 20 }
-      [source,ruby]
-      ----
-      puts 'Hello, World' <1>
-      ----
-      <1> Just a programming saying hi.
-      EOS
-
-      (expect to_file).to visually_match 'source-colist-margin-top.pdf'
-    end
   end
 end

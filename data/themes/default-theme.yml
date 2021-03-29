@@ -197,6 +197,8 @@ code:
   border_color: CCCCCC
   border_radius: $base_border_radius
   border_width: 0.75
+  callout_list:
+    margin_top: -$block_margin_bottom / 2
 conum:
   font_family: $literal_font_family
   font_color: $literal_font_color
@@ -241,8 +243,6 @@ outline_list:
   #marker_font_color: 404040
   # NOTE outline_list_item_spacing applies to list items that do not have complex content
   item_spacing: $vertical_rhythm / 2
-colist:
-  margin_top: $outline_list_item_spacing
 table:
   background_color: $page_background_color
   border_color: DDDDDD

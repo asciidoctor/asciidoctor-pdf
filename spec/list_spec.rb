@@ -1424,6 +1424,31 @@ describe 'Asciidoctor::PDF::Converter - List' do
       end
     end
 
+    it 'should allow theme to control top margin of callout lists that immediately follows a code block', visual: true do
+      input = <<~'EOS'
+      ----
+      line one <1>
+      line two
+      line three <2>
+      ----
+      <1> First line
+      <2> Last line
+      EOS
+
+      pdf_theme = { code_callout_list_margin_top: 0 }
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+      bottom_line_y = pdf.lines[2][:from][:y]
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      colist_num_text = (pdf.find_text ?\u2460)[-1]
+      colist_num_top_y = colist_num_text[:y] + colist_num_text[:font_size]
+
+      gap = bottom_line_y - colist_num_top_y
+      (expect gap).to be > 12
+      (expect gap).to be < 14
+    end
+
     it 'should not move cursor if callout list appears at top of page' do
       pdf = to_pdf <<~EOS, analyze: true
       key-value pair
