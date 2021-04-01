@@ -899,7 +899,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         old_gmagick_image = GMagick.send :remove_const, :Image
         old_gmagick_can_render = Gmagick.singleton_method :can_render?
         Gmagick.singleton_class.remove_method :can_render?
-        Gmagick.singleton_class.define_method :can_render? do |image_blob|
+        Gmagick.singleton_class.define_method :can_render? do |_image_blob|
           false
         end
         (expect do
