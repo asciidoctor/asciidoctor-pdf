@@ -549,16 +549,15 @@ module Asciidoctor
         end
       end
 
-      # A flowing version of the bounding_box. If the content runs to another page, the cursor starts
-      # at the top of the page instead of the original cursor position. Similar to span, except
-      # you can specify an absolute left position and pass additional options through to bounding_box.
+      # A flowing version of bounding_box. If the content runs to another page, the cursor starts at
+      # the top of the page instead of from the original cursor position. Similar to span, except
+      # the :position option is limited to a numeric value and additional options are passed through
+      # to bounding_box.
       #
-      def flow_bounding_box left = 0, options = {}
+      def flow_bounding_box options = {}
         original_y = y
-        # QUESTION: should preserving original_x be an option?
-        original_x = bounds.absolute_left - margin_box.absolute_left
         canvas do
-          bounding_box [margin_box.absolute_left + original_x + left, margin_box.absolute_top], options do
+          bounding_box [margin_box.absolute_left + (options.delete :position).to_f, margin_box.absolute_top], options do
             self.y = original_y
             yield
           end
