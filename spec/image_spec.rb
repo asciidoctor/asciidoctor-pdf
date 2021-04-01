@@ -894,6 +894,23 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       ensure
         GMagick.const_set :Image, old_gmagick_image
       end
+
+      it 'should warn and replace inline image with alt text if image format is unrecognized (emulated)' do
+        old_gmagick_image = GMagick.send :remove_const, :Image
+        old_gmagick_can_render = Gmagick.singleton_method :can_render?
+        Gmagick.singleton_class.remove_method :can_render?
+        Gmagick.singleton_class.define_method :can_render? do |image_blob|
+          false
+        end
+        (expect do
+          pdf = to_pdf 'image:waterfall.bmp[waterfall,16] is not agile.', analyze: true
+          (expect pdf.lines).to eql ['[waterfall] is not agile.']
+        end).to log_message severity: :WARN, message: '~image file is an unrecognised format; install prawn-gmagick gem to add support'
+      ensure
+        GMagick.const_set :Image, old_gmagick_image
+        Gmagick.singleton_class.remove_method :can_render?
+        Gmagick.singleton_class.define_method :can_render?, &old_gmagick_can_render
+      end
     else
       it 'should warn and replace block image with alt text if image format is unsupported' do
         (expect do
