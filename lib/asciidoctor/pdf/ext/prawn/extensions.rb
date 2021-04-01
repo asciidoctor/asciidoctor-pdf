@@ -292,7 +292,7 @@ module Asciidoctor
 
       # Override width of string to check for placeholder char, which uses character spacing to control width
       #
-      def width_of_string string, options = {}
+      def width_of_string string, options
         string == PlaceholderChar ? @character_spacing : super
       end
 
