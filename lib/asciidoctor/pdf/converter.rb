@@ -1874,8 +1874,8 @@ module Asciidoctor
 
         top_margin = theme_margin :block, :top
 
-        keep_together do |box_height = nil|
-          add_dest_for_block node, y: @y + top_margin if node.id
+        keep_together do |box_height = nil, advanced = nil|
+          add_dest_for_block node, y: (advanced ? nil : @y + top_margin) if node.id
           caption_height = node.title? ? (layout_caption node, category: :code) : 0
           theme_font :code do
             theme_fill_and_stroke_block :code, (box_height - caption_height), background_color: bg_color_override, split_from_top: false if box_height
