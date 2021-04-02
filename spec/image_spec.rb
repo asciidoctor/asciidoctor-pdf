@@ -13,6 +13,43 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     (expect images[0].data).to eql image_data
   end
 
+  it 'should place anchor above top margin of block image' do
+    input = <<~'EOS'
+    paragraph
+
+    [#tux]
+    image::tux.png[Tux]
+    EOS
+
+    pdf_theme = { block_margin_top: 10 }
+
+    images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
+    pdf = to_pdf input, pdf_theme: pdf_theme
+    names = get_names pdf
+    (expect names).to have_key 'tux'
+    dest = pdf.objects[names['tux']]
+    (expect dest[3]).to eql images[0][:y] + 10
+  end
+
+  it 'should place anchor at top of block image if advanced to next page' do
+    input = <<~'EOS'
+    paragraph
+
+    [#tall-diagram]
+    image::tall-diagram.png[Tall Diagram]
+    EOS
+
+    pdf_theme = { block_margin_top: 10 }
+
+    images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
+    pdf = to_pdf input, pdf_theme: pdf_theme
+    names = get_names pdf
+    (expect names).to have_key 'tall-diagram'
+    dest = pdf.objects[names['tall-diagram']]
+    (expect get_page_number pdf, dest[0]).to be 2
+    (expect dest[3]).to eql images[0][:y]
+  end
+
   context 'imagesdir' do
     it 'should resolve target of block image relative to imagesdir', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-wolpertinger.pdf', attribute_overrides: { 'imagesdir' => examples_dir }

@@ -1545,7 +1545,7 @@ module Asciidoctor
           end
         end
 
-        theme_margin :block, :top unless (pinned = opts[:pinned])
+        top_margin = (pinned = opts[:pinned]) ? 0 : (theme_margin :block, :top)
 
         return on_image_error :missing, node, target, opts unless image_path
 
@@ -1590,12 +1590,13 @@ module Asciidoctor
                 unless pinned || at_page_top?
                   advance_page
                   available_h = cursor - caption_h
+                  top_margin = 0
                 end
                 rendered_w = (svg_obj.resize height: (rendered_h = available_h)).output_width if rendered_h > available_h
               end
               image_y = y
               image_cursor = cursor
-              add_dest_for_block node if node.id
+              add_dest_for_block node, y: image_y + top_margin if node.id
               # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
               # breakage occurs when running content (stamps) are added to page
               update_colors if graphic_state.color_space.empty?
@@ -1621,12 +1622,13 @@ module Asciidoctor
                 unless pinned || at_page_top?
                   advance_page
                   available_h = cursor - caption_h
+                  top_margin = 0
                 end
                 rendered_w, rendered_h = image_info.calc_image_dimensions height: available_h if rendered_h > available_h
               end
               image_y = y
               image_cursor = cursor
-              add_dest_for_block node if node.id
+              add_dest_for_block node, y: image_y + top_margin if node.id
               # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
               # breakage occurs when running content (stamps) are added to page
               update_colors if graphic_state.color_space.empty?
