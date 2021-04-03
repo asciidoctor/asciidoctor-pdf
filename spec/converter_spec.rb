@@ -519,5 +519,85 @@ describe Asciidoctor::PDF::Converter do
       (expect heading_text[:y].floor).to eql 650
       (expect (pdf.find_unique_text 'paragraph')[:y].floor).to eql 588
     end
+
+    it 'should allow custom converter to invoke layout_general_heading without any opts' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def convert_paragraph node
+          layout_general_heading node, %(#{node.role.capitalize} Heading) if node.role?
+          super
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: backend, pdf_theme: { heading_margin_bottom: 0, heading_margin_top: 100 }, analyze: true
+      [.first]
+      paragraph
+
+      [.second]
+      paragraph
+      EOS
+
+      first_heading_text = pdf.find_unique_text 'First Heading'
+      (expect first_heading_text).not_to be_nil
+      (expect first_heading_text[:font_size]).to eql 10.5
+      (expect first_heading_text[:font_color]).to eql '333333'
+      second_heading_text = pdf.find_unique_text 'Second Heading'
+      (expect second_heading_text).not_to be_nil
+      (expect second_heading_text[:font_size]).to eql 10.5
+      (expect second_heading_text[:font_color]).to eql '333333'
+      (expect second_heading_text[:y]).to be < 700
+      text = pdf.text
+      (expect text[0][:y] - text[1][:y]).to be < text[1][:y] - text[2][:y]
+    end
+
+    it 'should allow custom converter to invoke layout_general_heading with opts' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def convert_paragraph node
+          if node.has_role? 'heading'
+            layout_general_heading node, node.source, text_transform: 'uppercase', size: 100, color: 'AA0000', line_height: 1.2, margin: 20
+          else
+            super
+          end
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      before
+
+      [.heading]
+      heading
+
+      paragraph
+      EOS
+
+      heading_text = pdf.find_unique_text 'HEADING'
+      (expect heading_text).not_to be_nil
+      (expect heading_text[:font_size]).to eql 100
+      (expect heading_text[:font_color]).to eql 'AA0000'
+      (expect heading_text[:y].floor).to eql 650
+      (expect (pdf.find_unique_text 'paragraph')[:y].floor).to eql 588
+    end
+
+    it 'should allow custom converter to override layout_general_heading for section title' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def layout_general_heading node, title, opts = {}
+          title = title.send (node.attr :transform).to_sym
+          layout_heading title, opts
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      [transform=upcase]
+      == Section Title
+      EOS
+
+      heading_text = pdf.find_unique_text 'SECTION TITLE'
+      (expect heading_text).not_to be_nil
+    end
   end
 end
