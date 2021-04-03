@@ -431,8 +431,9 @@ describe Asciidoctor::PDF::Converter do
 
   describe 'extend' do
     it 'should use specified extended converter' do
+      backend = nil
       create_class (Asciidoctor::Converter.for 'pdf') do
-        register_for :custom_pdf
+        register_for (backend = %(pdf#{object_id}).to_sym)
         def convert_paragraph node
           layout_prose node.content, anchor: 'next-section'
         end
@@ -445,11 +446,11 @@ describe Asciidoctor::PDF::Converter do
       == Next Section
       EOS
 
-      pdf = to_pdf input, backend: :custom_pdf, analyze: true
+      pdf = to_pdf input, backend: backend, analyze: true
       para_text = pdf.find_unique_text 'see next section'
       (expect para_text[:font_color]).to eql '428BCA'
 
-      pdf = to_pdf input, backend: :custom_pdf
+      pdf = to_pdf input, backend: backend
       (expect get_names pdf).to have_key 'next-section'
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
@@ -459,15 +460,16 @@ describe Asciidoctor::PDF::Converter do
     end
 
     it 'should allow custom converter to invoke layout_heading without any opts' do
+      backend = nil
       create_class (Asciidoctor::Converter.for 'pdf') do
-        register_for :layout_heading_pdf
+        register_for (backend = %(pdf#{object_id}).to_sym)
         def convert_paragraph node
           layout_heading %(#{node.role.capitalize} Heading) if node.role?
           super
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: :layout_heading_pdf, pdf_theme: { heading_margin_bottom: 0, heading_margin_top: 100 }, analyze: true
+      pdf = to_pdf <<~'EOS', backend: backend, pdf_theme: { heading_margin_bottom: 0, heading_margin_top: 100 }, analyze: true
       [.first]
       paragraph
 
@@ -489,8 +491,9 @@ describe Asciidoctor::PDF::Converter do
     end
 
     it 'should allow custom converter to invoke layout_heading with opts' do
+      backend = nil
       create_class (Asciidoctor::Converter.for 'pdf') do
-        register_for :layout_heading_with_opts_pdf
+        register_for (backend = %(pdf#{object_id}).to_sym)
         def convert_paragraph node
           if node.has_role? 'heading'
             layout_heading node.source, text_transform: 'uppercase', size: 100, color: 'AA0000', line_height: 1.2, margin: 20
@@ -500,7 +503,7 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: :layout_heading_with_opts_pdf, analyze: true
+      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
       before
 
       [.heading]

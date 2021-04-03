@@ -378,7 +378,7 @@ RSpec.configure do |config|
 
   def create_class super_class, &block
     klass = Class.new super_class, &block
-    Kernel.const_set %(AnonymousClass#{klass.object_id}).to_sym, klass
+    Object.const_set %(AnonymousClass#{klass.object_id}).to_sym, klass
     klass
   end
 
