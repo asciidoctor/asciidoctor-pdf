@@ -176,7 +176,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
     .((node.install))
     [[node-install]]
-     $ nvm install node 
+     $ nvm install node
 
     == Version
 
