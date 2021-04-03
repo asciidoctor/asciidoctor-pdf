@@ -166,6 +166,43 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect term_pgnum).to be 2
   end
 
+  it 'should target first occurance of index term, not in xreftext' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+    :doctype: book
+    :notitle:
+
+    == Install
+
+    .((node.install))
+    [[node-install]]
+     $ nvm install node 
+
+    == Version
+
+    .((node.version))
+    [[node-version]]
+     $ node -v
+
+    <<node-install>>
+
+    == Uninstall
+
+    .((node.uninstall)
+    [[node-uninstall]]
+     $ nvm uninstall node
+
+    <<node-install>>
+
+    [index]
+    == Index
+    EOS
+
+    index_pgnum = (pdf.find_text 'Index')[0][:page_number]
+    index_lines = pdf.lines pdf.find_text page_number: index_pgnum
+    (expect index_lines).to eql ['Index', 'N', 'node.install, 1', 'node.version, 2']
+  end
+
   it 'should not assign number or chapter label to index section' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Cats & Dogs
