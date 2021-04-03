@@ -431,7 +431,7 @@ describe Asciidoctor::PDF::Converter do
 
   describe 'extend' do
     it 'should use specified extended converter' do
-      class CustomPDFConverter < (Asciidoctor::Converter.for 'pdf') # rubocop:disable RSpec/LeakyConstantDeclaration
+      create_class (Asciidoctor::Converter.for 'pdf') do
         register_for :custom_pdf
         def convert_paragraph node
           layout_prose node.content, anchor: 'next-section'
@@ -459,7 +459,7 @@ describe Asciidoctor::PDF::Converter do
     end
 
     it 'should allow custom converter to invoke layout_heading without any opts' do
-      class LayoutHeadingPDFConverter < (Asciidoctor::Converter.for 'pdf') # rubocop:disable RSpec/LeakyConstantDeclaration
+      create_class (Asciidoctor::Converter.for 'pdf') do
         register_for :layout_heading_pdf
         def convert_paragraph node
           layout_heading %(#{node.role.capitalize} Heading) if node.role?
@@ -489,7 +489,7 @@ describe Asciidoctor::PDF::Converter do
     end
 
     it 'should allow custom converter to invoke layout_heading with opts' do
-      class LayoutHeadingWithOptsPDFConverter < (Asciidoctor::Converter.for 'pdf') # rubocop:disable RSpec/LeakyConstantDeclaration
+      create_class (Asciidoctor::Converter.for 'pdf') do
         register_for :layout_heading_with_opts_pdf
         def convert_paragraph node
           if node.has_role? 'heading'
