@@ -833,8 +833,7 @@ module Asciidoctor
       end
 
       def convert_admonition node
-        add_dest_for_block node if node.id
-        theme_margin :block, :top
+        top_margin = theme_margin :block, :top
         type = node.attr 'name'
         label_align = @theme.admonition_label_align&.to_sym || :center
         # TODO: allow vertical_align to be a number
@@ -879,7 +878,8 @@ module Asciidoctor
         shift_base = @theme.prose_margin_bottom
         shift_top = shift_base / 3.0
         shift_bottom = (shift_base * 2) / 3.0
-        keep_together do |box_height = nil|
+        keep_together do |box_height = nil, advanced = nil|
+          add_dest_for_block node, y: (advanced ? nil : @y + top_margin) if node.id
           push_scratch doc if scratch?
           theme_fill_and_stroke_block :admonition, box_height if box_height
           pad_box [0, cpad[1], 0, lpad[3]] do
