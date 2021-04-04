@@ -188,7 +188,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
     == Uninstall
 
-    .((node.uninstall)
+    .((node.uninstall))
     [[node-uninstall]]
      $ nvm uninstall node
 
@@ -200,7 +200,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
     index_pgnum = (pdf.find_text 'Index')[0][:page_number]
     index_lines = pdf.lines pdf.find_text page_number: index_pgnum
-    (expect index_lines).to eql ['Index', 'N', 'node.install, 1', 'node.version, 2']
+    (expect index_lines).to eql ['Index', 'N', 'node.install, 1', 'node.uninstall, 3', 'node.version, 2']
   end
 
   it 'should not assign number or chapter label to index section' do
