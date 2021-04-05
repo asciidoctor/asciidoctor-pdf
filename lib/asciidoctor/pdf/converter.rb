@@ -204,7 +204,7 @@ module Asciidoctor
         unless use_title_page
           body_start_page_number = page_number
           theme_font :heading, level: 1 do
-            layout_heading doc.doctitle, align: (@theme.heading_h1_align&.to_sym || :center), level: 1
+            layout_general_heading doc, doc.doctitle, align: (@theme.heading_h1_align&.to_sym || :center), level: 1, role: :doctitle
           end if doc.header? && !doc.notitle
         end
 
@@ -678,7 +678,7 @@ module Asciidoctor
           elsif chapterlike
             layout_chapter_title sect, title, align: align, level: hlevel
           else
-            layout_heading title, align: align, level: hlevel, outdent: true
+            layout_general_heading sect, title, align: align, level: hlevel, outdent: true
           end
         end
 
@@ -742,7 +742,7 @@ module Asciidoctor
         end
         # QUESTION: should we decouple styles from section titles?
         theme_font :heading, level: hlevel do
-          layout_heading node.title, align: align, level: hlevel, outdent: (node.parent.context == :section)
+          layout_general_heading node, node.title, align: align, level: hlevel, outdent: (node.parent.context == :section)
         end
       end
 
@@ -2903,14 +2903,17 @@ module Asciidoctor
 
       alias start_new_part start_new_chapter
 
-      def layout_chapter_title _node, title, opts = {}
-        layout_heading title, (opts.merge outdent: true)
+      def layout_chapter_title node, title, opts = {}
+        layout_general_heading node, title, (opts.merge outdent: true)
       end
 
       alias layout_part_title layout_chapter_title
 
+      def layout_general_heading _node, title, opts = {}
+        layout_heading title, opts
+      end
+
       # NOTE: layout_heading doesn't set the theme font because it's used for various types of headings
-      # QUESTION: why doesn't layout_heading accept a node?
       def layout_heading string, opts = {}
         hlevel = opts[:level]
         unless (top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top))
@@ -3118,7 +3121,7 @@ module Asciidoctor
           theme_font :heading, level: 2 do
             theme_font :toc_title do
               toc_title_align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
-              layout_heading toc_title, align: toc_title_align, level: 2, outdent: true
+              layout_general_heading doc, toc_title, align: toc_title_align, level: 2, outdent: true, role: :toctitle
             end
           end
         end

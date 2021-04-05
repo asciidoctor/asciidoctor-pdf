@@ -63,6 +63,7 @@ Enhancements::
 * allow horizontal and vertical lines of table grid to be styled independently (#1875) (*@hextremist*)
 * allow theme to define the characters for typographical quotation marks (#1880) (*@klonfish*)
 * allow theme to control top margin of callout lists that immediately follow a code (i.e., listing, literal, or source) block (#1895)
+* introduce layout_general_heading to allow extended converter to access node (#1904)
 
 Bug Fixes::
 
