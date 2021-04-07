@@ -67,9 +67,7 @@ RomanNumeral class::
 
 Asciidoctor::Prawn::CodeRayEncoder class::
   The Asciidoctor::Prawn::CodeRayEncoder class, which is used for syntax highlighting source code for use with Prawn, is borrowed from the Prawn project and modified for the purpose of this application.
-  The PrawnEncoder was written by Felipe Doria and is licensed under the GPLv3 license.
-
-  http://www.gnu.org/licenses/gpl-3.0.html 
+  The PrawnEncoder was written by Felipe Doria and may be used under Matz's original licensing terms for Ruby, the GPLv2 license, or the GPLv3 license.
 
   - https://github.com/prawnpdf/prawn
 

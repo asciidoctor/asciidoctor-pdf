@@ -5,21 +5,12 @@
 # This file was copied from Prawn (manual/syntax_highlight.rb) and
 # modified for use with Asciidoctor PDF.
 #
-# Prawn is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Prawn is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Prawn. If not, see <http://www.gnu.org/licenses/>.
+# Since the file originates from the Prawn project, it shares the Prawn
+# license. Thus, the file may be used under Matz's original licensing terms for
+# Ruby, the GPLv2 license, or the GPLv3 license.
 #
 # Copyright (C) Felipe Doria
-# Copyright (C) 2014 OpenDevise Inc. and the Asciidoctor Project
+# Copyright (C) 2014-present OpenDevise Inc. and the Asciidoctor Project
 #
 ######################################################################
 
