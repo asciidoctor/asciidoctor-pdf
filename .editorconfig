@@ -1,0 +1,3 @@
+[*]
+# this matches the setting in .gitattributes
+end_of_line = lf

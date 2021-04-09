@@ -10,6 +10,9 @@ Layout/BeginEndAlignment:
   Enabled: true
 Layout/CaseIndentation:
   EnforcedStyle: end
+Layout/EndOfLine:
+  # this matches the setting in .gitattributes
+  EnforcedStyle: lf
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 Layout/EmptyLinesAroundAttributeAccessor:
