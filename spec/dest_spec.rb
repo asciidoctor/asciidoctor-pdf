@@ -160,6 +160,24 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     (expect sect_y).to eql page_height
   end
 
+  it 'should define a dest at the top of content area if page does not start with a section' do
+    pdf_theme = { page_margin: 15 }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+    [#p1]
+    content
+    EOS
+
+    names = get_names pdf
+    (expect names).to have_key 'p1'
+    p1_dest = pdf.objects[names['p1']]
+    p1_page_num = get_page_number pdf, p1_dest[0]
+    p1_y = p1_dest[3]
+    (expect p1_page_num).to be 1
+    _, page_height = get_page_size pdf, p1_page_num
+    (expect p1_y).to eql page_height - 15
+  end
+
   it 'should register dest for every block that has an ID' do
     ['', 'abstract', 'example', 'open', 'sidebar', 'quote', 'verse', 'listing', 'literal', 'NOTE'].each do |style|
       pdf = to_pdf <<~EOS
