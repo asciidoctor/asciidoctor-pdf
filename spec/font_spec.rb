@@ -95,7 +95,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         input = input_lines.join %(\n\n)
         pdf = to_pdf input, attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }, analyze: true
         (expect pdf.lines).to eql input_lines
-      end).to log_message severity: :WARN, message: %(Could not locate the character `\u20bf' in the following fonts: Noto Serif, M+ 1p Fallback, Noto Emoji), using_log_level: :INFO
+      end).to log_message severity: :WARN, message: %(Could not locate the character `\u20bf' (\\u20bf) in the following fonts: Noto Serif, M+ 1p Fallback, Noto Emoji), using_log_level: :INFO
     end
   end
 
