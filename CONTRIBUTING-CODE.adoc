@@ -53,7 +53,7 @@ You can retrieve the source of {project-name} in one of two ways:
 
 ==== Option 1: Fetch Using Git
 
-If you want to clone the git repository, simply copy the {url-project-repo}[GitHub repository URL] and pass it to the `git clone` command:
+If you want to clone the git repository, copy the {url-project-repo}[GitHub repository URL] and pass it to the `git clone` command:
 
  $ git clone https://github.com/asciidoctor/asciidoctor-pdf
 
@@ -66,7 +66,7 @@ Next, change to the project directory:
 If you want to download a zip archive, click the btn:[Download Zip] button on the right-hand side of the repository page on GitHub.
 Once the download finishes, extract the archive, open a console and change to that directory.
 
-TIP: Instead of working out of the {project-handle} directory, you can simply add the absolute path of the [path]_bin_ directory to your `PATH` environment variable.
+TIP: Instead of working out of the {project-handle} directory, you can add the absolute path of the [path]_bin_ directory to your `PATH` environment variable.
 
 We'll leverage the project configuration to install the necessary dependencies.
 
@@ -96,7 +96,7 @@ NOTE: You must call `bundle` from the project directory so that it can find the 
 === Run the Tests
 
 Tests are written using RSpec.
-To run the tests, simply invoke rspec via bundler.
+To run the tests, invoke rspec via bundler.
 
  $ bundle exec rspec
 
@@ -195,7 +195,7 @@ Now you can run the application as modified by the PR:
 
  $ bundle exec asciidoctor-pdf /path/to/sample.adoc
 
-To switch back to main just type:
+To switch back to main type:
 
  $ git checkout main
 
