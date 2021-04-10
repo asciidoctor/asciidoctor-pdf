@@ -56,7 +56,7 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
             (doc.instance_variable_get :@missing_chars) : (doc.instance_variable_set :@missing_chars, {})
         previous_fonts_checked = (missing_chars[char] ||= [])
         if previous_fonts_checked.empty? && !(previous_fonts_checked.include? fonts_checked)
-          logger.warn %(Could not locate the character `#{char}' in the following fonts: #{fonts_checked.join ', '})
+          logger.warn %(Could not locate the character `#{char}' (#{char.unpack('U*').map {|it| "\\u#{(it.to_s 16).rjust 4, '0'}" }.join}) in the following fonts: #{fonts_checked.join ', '})
           previous_fonts_checked << fonts_checked
         end
       end
