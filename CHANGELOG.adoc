@@ -64,6 +64,7 @@ Enhancements::
 * allow theme to define the characters for typographical quotation marks (#1880) (*@klonfish*)
 * allow theme to control top margin of callout lists that immediately follow a code (i.e., listing, literal, or source) block (#1895)
 * introduce layout_general_heading to allow extended converter to access node (#1904)
+* use Document#authors to retrieve authors instead of extracting the information from the indexed document attributes
 
 Bug Fixes::
 

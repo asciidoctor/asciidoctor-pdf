@@ -69,7 +69,7 @@ module Asciidoctor
       }).default = :UseOutlines
       PageSides = [:recto, :verso]
       (PDFVersions = { '1.3' => 1.3, '1.4' => 1.4, '1.5' => 1.5, '1.6' => 1.6, '1.7' => 1.7 }).default = 1.4
-      AuthorAttributeNames = %w(author authorinitials firstname middlename lastname email)
+      AuthorAttributeNames = { name: 'author', initials: 'authorinitials', firstname: 'firstname', middlename: 'middlename', lastname: 'lastname', email: 'email' }
       LF = ?\n
       DoubleLF = LF * 2
       TAB = ?\t
@@ -2810,9 +2810,8 @@ module Asciidoctor
                 with_email: @theme.title_page_authors_content_with_email || generic_authors_content,
                 with_url: @theme.title_page_authors_content_with_url || generic_authors_content,
               }
-              # TODO: provide an API in core to get authors as an array
-              authors = (1..(doc.attr 'authorcount', 1).to_i).map {|idx|
-                promote_author doc, idx do
+              authors = doc.authors.map.with_index {|author, idx|
+                with_author doc, author, idx == 0 do
                   author_content_key = (url = doc.attr 'url') ? ((url.start_with? 'mailto:') ? :with_email : :with_url) : :name_only
                   if (author_content = authors_content[author_content_key])
                     apply_subs_discretely doc, author_content, drop_lines_with_unresolved_attributes: true, imagesdir: @themesdir
@@ -4567,28 +4566,29 @@ module Asciidoctor
         false
       end
 
-      def promote_author doc, idx
+      # Promotes author to primary author attributes around block; restores original attributes after block executes
+      def with_author doc, author, primary
         doc.remove_attr 'url' if (original_url = doc.attr 'url')
         email = nil
-        if idx > 1
-          original_attrs = AuthorAttributeNames.each_with_object({}) do |name, accum|
-            accum[name] = doc.attr name
-            if (val = doc.attr %(#{name}_#{idx}))
-              doc.set_attr name, val
+        if primary
+          if (email = doc.attr 'email')
+            doc.set_attr 'url', ((email.include? '@') ? %(mailto:#{email}) : email)
+          end
+          result = yield
+        else
+          original_attrs = AuthorAttributeNames.each_with_object({}) do |(prop_name, attr_name), accum|
+            accum[attr_name] = doc.attr attr_name
+            if (val = author[prop_name])
+              doc.set_attr attr_name, val
               # NOTE: email holds url as well
-              email = val if name == 'email'
+              email = val if prop_name == :email
             else
-              doc.remove_attr name
+              doc.remove_attr attr_name
             end
           end
           doc.set_attr 'url', ((email.include? '@') ? %(mailto:#{email}) : email) if email
           result = yield
           original_attrs.each {|name, val| val ? (doc.set_attr name, val) : (doc.remove_attr name) }
-        else
-          if (email = doc.attr 'email')
-            doc.set_attr 'url', ((email.include? '@') ? %(mailto:#{email}) : email)
-          end
-          result = yield
         end
         if original_url
           doc.set_attr 'url', original_url
