@@ -4569,18 +4569,18 @@ module Asciidoctor
       # Promotes author to primary author attributes around block; restores original attributes after block executes
       def with_author doc, author, primary
         doc.remove_attr 'url' if (original_url = doc.attr 'url')
-        email = nil
         if primary
           if (email = doc.attr 'email')
             doc.set_attr 'url', ((email.include? '@') ? %(mailto:#{email}) : email)
           end
           result = yield
         else
+          email = nil
           original_attrs = AuthorAttributeNames.each_with_object({}) do |(prop_name, attr_name), accum|
             accum[attr_name] = doc.attr attr_name
             if (val = author[prop_name])
               doc.set_attr attr_name, val
-              # NOTE: email holds url as well
+              # NOTE: email attribute could be a url
               email = val if prop_name == :email
             else
               doc.remove_attr attr_name

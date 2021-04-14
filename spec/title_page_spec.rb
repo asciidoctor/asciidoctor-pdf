@@ -106,6 +106,23 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect body_lines).to eql %w(https://opensource.org)
     end
 
+    it 'should not carry over url from one author to the next' do
+      pdf_theme = { title_page_authors_content_with_url: '{author} // {url}' }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      Doc Writer <https://example.org/doc>; Junior Writer
+      :doctype: book
+      :url: https://opensource.org
+
+      {url}
+      EOS
+
+      title_page_lines = pdf.lines pdf.find_text page_number: 1
+      (expect title_page_lines).to eql ['Document Title', 'Doc Writer // https://example.org/doc, Junior Writer']
+      body_lines = pdf.lines pdf.find_text page_number: 2
+      (expect body_lines).to eql %w(https://opensource.org)
+    end
+
     it 'should apply base font style when document has title page' do
       pdf = to_pdf <<~'EOS', pdf_theme: { base_font_style: 'bold' }, analyze: true
       = Document Title
