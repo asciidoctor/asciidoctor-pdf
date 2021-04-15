@@ -5384,119 +5384,147 @@ This only works when running Asciidoctor PDF on the JVM.
 == Theme-Related Document Attributes
 
 There are various settings in the theme you control using document attributes.
-These settings override equivalent keys defined in the theme file, where applicable.
+If an attribute is marked as "Header Only", it only takes effect if defined in the AsciiDoc document header or via the API.
+If an attribute matches a key in the theme file, the attribute takes precedence.
 
-[cols="2,3,6l"]
+[cols="2,3,^1,6l"]
 |===
-|Attribute |Value Type |Example
+|Attribute |Value Type | Header Only |Example
 
 |autofit-option
 |flag (default: _not set_)
+|No
 |:autofit-option:
 
 |chapter-signifier
 |string (default: Chapter)
+|Yes
 |:chapter-signifier: Chapitre
 
 |<face>-cover-image^[1]^
 |path^[2]^ {vbar} image macro^[3]^ +
 (format can be image or PDF)
+|Yes
 |:front-cover-image: image:front-cover.pdf[]
 
 |hyphens^[7]^
 |language code {vbar} _blank_ to default to en_us (default: _not set_)
+|Yes
 |:hyphens: de
 
 |icons^[13]^
 |font {vbar} image (default: _not set_)
+|No
 |:icons: font
 
 |media
 |screen {vbar} print {vbar} prepress
+|Yes
 |:media: prepress
 
 |compress
 |flag (default: _not set_)
+|Yes
 |:compress:
 
 |optimize
 |screen {vbar} ebook {vbar} printer {vbar} prepress {vbar} default (default: default)
+|Yes
 |:optimize: prepress
 
 |outlinelevels^[12]^
 |Integer {vbar} Integer:Integer (default: same as _toclevels_)
+|Yes
 |:outlinelevels: 2
 
 |page-background-image^[4]^
 |path^[2]^ {vbar} image macro^[3]^
+|Yes
 |:page-background-image: image:bg.jpg[]
 
 |page-background-image-(recto{vbar}verso)^[4]^
 |path^[2]^ {vbar} image macro^[3]^
+|Yes
 |:page-background-image-recto: image:bg-recto.jpg[]
 
 |page-foreground-image
 |path^[2]^ {vbar} image macro^[3]^
+|Yes
 |:page-foreground-image: image:watermark.svg[]
 
 |pagenums^[5]^
 |flag (default: _set_)
+|Yes
 |:pagenums:
 
 |part-signifier
 |string (default: Part)
+|Yes
 |:part-signifier: Partie
 
 |pdf-page-layout
 |portrait {vbar} landscape
+|Yes
 |:pdf-page-layout: landscape
 
 |pdf-page-margin
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>>
+|Yes
 |:pdf-page-margin: [1in, 0.5in]
 
 |pdf-page-mode
 |outline {vbar} none {vbar} thumbs {vbar} fullscreen {vbar} fullscreen outline {vbar} fullscreen none {vbar} fullscreen thumbs (default: outline)
+|Yes
 |:pdf-page-mode: fullscreen none
 
 |pdf-page-size
 |https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} <<measurement-units,Measurement[width, height]>>
+|Yes
 |:pdf-page-size: [6in, 9in]
 
 |pdf-folio-placement
 |virtual {vbar} virtual-inverted {vbar} physical {vbar} physical-inverted
+|Yes
 |:pdf-folio-placement: physical
 
 |pdf-version
 |1.3 {vbar} 1.4 {vbar} 1.5 {vbar} 1.6 {vbar} 1.7 (default: 1.4)
+|Yes
 |:pdf-version: 1.7
 
 |pdfmark^[6]^
 |flag (default: _not set_)
+|Yes
 |:pdfmark:
 
 |scripts^[8]^
 |cjk (default: _not set_)
+|Yes
 |:scripts: cjk
 
 |text-align^[9]^
 |<<text-alignments,Text alignment>>
+|Yes
 |:text-align: left
 
 |title-logo-image
 |path^[2]^ {vbar} image macro^[3]^
+|Yes
 |:title-logo-image: image:logo.png[top=25%, align=center, pdfwidth=0.5in]
 
 |title-page^[10]^
 |flag (default: _not set_)
+|Yes
 |:title-page:
 
 |title-page-background-image
 |path^[2]^ {vbar} image macro^[3]^
+|Yes
 |:title-page-background-image: image:title-bg.jpg[]
 
 |toc-max-pagenum-digits^[11]^
 |Integer (default: 3)
+|Yes
 |:toc-max-pagenum-digits: 4
 |===
 
