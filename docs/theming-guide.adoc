@@ -5396,11 +5396,6 @@ If an attribute matches a key in the theme file, the attribute takes precedence.
 |No
 |:autofit-option:
 
-|chapter-signifier
-|string (default: Chapter)
-|Yes
-|:chapter-signifier: Chapitre
-
 |<face>-cover-image^[1]^
 |path^[2]^ {vbar} image macro^[3]^ +
 (format can be image or PDF)
@@ -5456,11 +5451,6 @@ If an attribute matches a key in the theme file, the attribute takes precedence.
 |flag (default: _set_)
 |Yes
 |:pagenums:
-
-|part-signifier
-|string (default: Part)
-|Yes
-|:part-signifier: Partie
 
 |pdf-page-layout
 |portrait {vbar} landscape
