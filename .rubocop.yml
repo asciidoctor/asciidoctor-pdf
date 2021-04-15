@@ -23,7 +23,7 @@ Layout/HeredocIndentation:
 Layout/LeadingCommentSpace:
   Enabled: false
 Layout/LineLength:
-  Enabled: false # TODO enable
+  Enabled: false # FIXME enable me
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
 Layout/ParameterAlignment:
@@ -326,7 +326,8 @@ Style/SwapValues:
 Style/SymbolArray:
   EnforcedStyle: brackets
 Style/TernaryParentheses:
-  Enabled: false # TODO reenable
+  Enabled: true
+  EnforcedStyle: require_parentheses_when_complex
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInHashLiteral:
