@@ -3644,7 +3644,7 @@ module Asciidoctor
         end
       end
 
-      def add_outline doc, num_levels = 2, toc_page_nums = [], num_front_matter_pages = 0, has_front_cover = false
+      def add_outline doc, num_levels, toc_page_nums, num_front_matter_pages, has_front_cover
         if ::String === num_levels
           if num_levels.include? ':'
             num_levels, expand_levels = num_levels.split ':', 2
