@@ -3111,8 +3111,8 @@ module Asciidoctor
         @toc_extent = { page_nums: toc_page_nums, start_y: toc_start_y }
       end
 
-      # NOTE: num_front_matter_pages is not used during a dry run
-      def layout_toc doc, num_levels = 2, toc_page_number = 2, start_y = @y, num_front_matter_pages = 0
+      # NOTE: num_front_matter_pages not used during a dry run
+      def layout_toc doc, num_levels, toc_page_number, start_y, num_front_matter_pages = 0
         go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
         start_page_number = page_number
         @y = start_y
