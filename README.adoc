@@ -22,7 +22,8 @@ endif::[]
 :project-name: Asciidoctor PDF
 :project-handle: asciidoctor-pdf
 // Variables:
-:release-version: 1.5.0
+:release-line: 2.0.x
+:release-version: 2.0.0
 // URIs:
 :url-asciidoctor: http://asciidoctor.org
 :url-gem: http://rubygems.org/gems/asciidoctor-pdf
@@ -47,6 +48,10 @@ Asciidoctor PDF is a native PDF converter for AsciiDoc.
 It bypasses the requirement to generate an intermediary format such as DocBook, Apache FO, or LaTeX.
 Instead, you can use this extension to convert your documents directly from AsciiDoc to PDF.
 Its aim is to take the pain out of creating PDF documents from AsciiDoc.
+
+NOTE: You're viewing the documentation for the (unreleased) {release-line} release line.
+If you're looking for the documentation for another release line, please refer to one of the following branches: +
+{url-project-repo}/tree/v1.5.x#readme[1.5.x]
 
 toc::[]
 
