@@ -56,8 +56,8 @@ jobs:
           primary: primary
     runs-on: ${{ matrix.os }}
     env:
-      ASCIIDOCTOR_DIAGRAM_VERSION: '~> 2.1.0'
-      PYGMENTS_VERSION: '~> 2.1.0'
+      ASCIIDOCTOR_DIAGRAM_VERSION: '~> 2.1'
+      PYGMENTS_VERSION: '~> 2.0'
       RGHOST_VERSION: '0.9.7'
     steps:
     - name: Checkout
