@@ -3,7 +3,7 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Icon' do
-  it 'should display icon name if font-based icons are not set' do
+  it 'should display icon name if font-based icons are not enabled' do
     pdf = to_pdf 'I icon:heart[] AsciiDoc.', analyze: true
     (expect pdf.lines).to eql ['I [heart] AsciiDoc.']
   end
@@ -169,6 +169,48 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       (expect wink_text).to have_size 1
       (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Regular'
     end).to log_message severity: :INFO, message: 'smile-wink icon not found in deprecated fa icon set; using match found in far icon set instead', using_log_level: :INFO
+  end
+
+  it 'should apply link to icon if link attribute is set and font-based icons are enabled' do
+    input = <<~'EOS'
+    :icons: font
+
+    gem icon:download[link=https://rubygems.org/downloads/asciidoctor-pdf-1.5.4.gem, window=_blank]
+    EOS
+
+    pdf = to_pdf input
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link_annotation = annotations[0]
+    (expect link_annotation[:Subtype]).to be :Link
+    (expect link_annotation[:A][:URI]).to eql 'https://rubygems.org/downloads/asciidoctor-pdf-1.5.4.gem'
+
+    pdf = to_pdf input, analyze: true
+    link_text = (pdf.find_text ?\uf019)[0]
+    (expect link_text).not_to be_nil
+    (expect link_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+    (expect link_text[:font_color]).to eql '428BCA'
+    link_text[:font_size] -= 1.5 # box appox is a little off
+    (expect link_annotation).to annotate link_text
+  end
+
+  it 'should apply link to alt text if link attribute is set and font-based icons are not enabled' do
+    input = <<~'EOS'
+    gem icon:download[link=https://rubygems.org/downloads/asciidoctor-pdf-1.5.4.gem, window=_blank]
+    EOS
+
+    pdf = to_pdf input
+    annotations = get_annotations pdf, 1
+    (expect annotations).to have_size 1
+    link_annotation = annotations[0]
+    (expect link_annotation[:Subtype]).to be :Link
+    (expect link_annotation[:A][:URI]).to eql 'https://rubygems.org/downloads/asciidoctor-pdf-1.5.4.gem'
+
+    pdf = to_pdf input, analyze: true
+    link_text = (pdf.find_text '[download]')[0]
+    (expect link_text).not_to be_nil
+    (expect link_text[:font_color]).to eql '428BCA'
+    (expect link_annotation).to annotate link_text
   end
 
   it 'should apply styles from role to icon' do
