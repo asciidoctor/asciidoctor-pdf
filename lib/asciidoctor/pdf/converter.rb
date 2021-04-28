@@ -2590,10 +2590,10 @@ module Asciidoctor
             %(<font name="#{icon_set}"#{size_attr}#{class_attr}>#{glyph}</font>)
           else
             log :warn, %(#{icon_name} is not a valid icon name in the #{icon_set} icon set)
-            %([#{node.attr 'alt'}])
+            %([#{node.attr 'alt'}&#93;)
           end
         else
-          %([#{node.attr 'alt'}])
+          %([#{node.attr 'alt'}&#93;)
         end
       end
 
@@ -2604,7 +2604,7 @@ module Asciidoctor
           target, image_format = (node.extend ::Asciidoctor::Image).target_and_format
           if image_format == 'gif' && !(defined? ::GMagick::Image)
             log :warn, %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.)
-            img = %([#{node.attr 'alt'}])
+            img = %([#{node.attr 'alt'}&#93;)
           # NOTE: an image with a data URI is handled using a temporary file
           elsif (image_path = resolve_image_path node, target, image_format)
             if ::File.readable? image_path
@@ -2617,10 +2617,10 @@ module Asciidoctor
               img = %(<img src="#{image_path}" format="#{image_format}" alt="#{encode_quotes node.attr 'alt'}" width="#{width}"#{fit_attr}>)
             else
               log :warn, %(image to embed not found or not readable: #{image_path})
-              img = %([#{node.attr 'alt'}])
+              img = %([#{node.attr 'alt'}&#93;)
             end
           else
-            img = %([#{node.attr 'alt'}])
+            img = %([#{node.attr 'alt'}&#93;)
           end
           (node.attr? 'link') ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
         end

@@ -1708,6 +1708,31 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect link_rect[0]).to eql 48.24
     end
 
+    it 'should add link around alt text of inline image if link attribute is set and image is not found' do
+      input = <<~'EOS'
+      image:sample-logo.jpg[ACME,pdfwidth=1pc,link=https://example.org] is a sign of quality!
+      EOS
+
+      pdf = nil
+      (expect do
+        pdf = to_pdf input
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to be :Link
+      (expect link_annotation[:A][:URI]).to eql 'https://example.org'
+
+      (expect do
+        pdf = to_pdf input, analyze: true
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+      link_text = pdf.find_unique_text '[ACME]'
+      (expect link_text).not_to be_nil
+      (expect link_annotation[:Rect][2]).to be_within(0.5).of(link_text[:x] + link_text[:width])
+      link_annotation[:Rect][2] = link_text[:x] + link_text[:width] # box appox is a little off
+      (expect link_annotation).to annotate link_text
+    end
+
     it 'should add link around inline image if image macro is enclosed in link macro' do
       pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir }
       https://example.org[image:sample-logo.jpg[ACME,pdfwidth=1pc]] is a sign of quality!

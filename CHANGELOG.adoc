@@ -155,6 +155,7 @@ Bug Fixes::
 * capture footnotes in AsciiDoc table cell and render them with other footnotes at end of article/chapter (#1777)
 * prevent PDF from being used as logo image on title page (since it cannot work properly anyway)
 * don't crash when generating TOC if section title is empty
+* escape closing square bracket around alt text of missing image so it doesn't get matched as part of a link macro
 
 Compliance::
 
