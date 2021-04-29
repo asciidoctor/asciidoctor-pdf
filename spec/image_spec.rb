@@ -1728,8 +1728,6 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
       link_text = pdf.find_unique_text '[ACME]'
       (expect link_text).not_to be_nil
-      (expect link_annotation[:Rect][2]).to be_within(0.5).of(link_text[:x] + link_text[:width])
-      link_annotation[:Rect][2] = link_text[:x] + link_text[:width] # box appox is a little off
       (expect link_annotation).to annotate link_text
     end
 

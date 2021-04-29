@@ -2599,7 +2599,7 @@ module Asciidoctor
 
       def convert_inline_image node
         if node.type == 'icon'
-          convert_inline_icon node
+          img = convert_inline_icon node
         else
           target, image_format = (node.extend ::Asciidoctor::Image).target_and_format
           if image_format == 'gif' && !(defined? ::GMagick::Image)
@@ -2622,8 +2622,8 @@ module Asciidoctor
           else
             img = %([#{node.attr 'alt'}&#93;)
           end
-          (node.attr? 'link') ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
         end
+        (node.attr? 'link') ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
       end
 
       def convert_inline_indexterm node
