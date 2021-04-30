@@ -1,4 +1,6 @@
-require: rubocop-rspec
+require:
+- rubocop-rspec
+- rubocop-rake
 AllCops:
   TargetRubyVersion: 2.5
 Gemspec/DateAssignment:
