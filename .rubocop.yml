@@ -203,6 +203,8 @@ Style/CollectionCompact:
   Enabled: true
 Style/CombinableLoops:
   Enabled: true
+Style/CommandLiteral:
+  EnforcedStyle: percent_x
 Style/CommentAnnotation:
   Keywords:
   - TODO
