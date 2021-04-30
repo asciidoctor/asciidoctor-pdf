@@ -319,6 +319,8 @@ Style/SoleNestedConditional:
   Enabled: false
 Style/SpecialGlobalVars:
   EnforcedStyle: use_perl_names
+Style/StringChars:
+  Enabled: true
 Style/StringConcatenation:
   Enabled: false
 Style/SwapValues:
