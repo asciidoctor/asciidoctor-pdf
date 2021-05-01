@@ -1196,7 +1196,7 @@ To workaround this limitation, you can force Ghostscript to generate a PDF 1.3 f
 
 CAUTION: Downgrading the PDF version may break the PDF if it contains an image that uses color blending or transparency.
 Specifically, the text on the page can become rasterized, which causes links to stop working and prevents text from being selected.
-If you're in this sitatuion, it might be best to try <<hexapdf>> instead.
+If you're in this situation, it might be best to try <<hexapdf>> instead.
 
 If you're looking for a smaller file size, you can try reducing the quality of the output file by passing a quality keyword to the `optimize` attribute (e.g., `--optimize=screen`).
 The `optimize` attribute accepts the following keywords: `default` (default, same if value is empty), `screen`, `ebook`, `printer`, and `prepress`.
