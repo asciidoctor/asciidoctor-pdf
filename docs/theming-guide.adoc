@@ -5882,8 +5882,8 @@ Let's customize the part title page by making the background orange, making the 
 The method `typeset_text` and `calc_line_metrics` are provided by Asciidoctor PDF to make writing text easier.
 If you wanted, you could just use the low-level `text` method provided by Prawn.
 
-To find all the available methods to override, consult the https://www.rubydoc.info/github/asciidoctor/asciidoctor-pdf/Asciidoctor/Pdf/Converter[API docs].
-For deeper examples of how to override the behavior of the converter, refer to the extended converter in the https://github.com/mraible/infoq-mini-book/blob/master/src/main/ruby/asciidoctor-pdf-extensions.rb[InfoQ Mini-Book template].
+To find all the available methods to override, consult the https://www.rubydoc.info/github/asciidoctor/asciidoctor-pdf/main/Asciidoctor/PDF/Converter[API docs].
+For deeper examples of how to override the behavior of the converter, refer to the extended converter in the https://github.com/mraible/infoq-mini-book/blob/main/src/main/ruby/asciidoctor-pdf-extensions.rb[InfoQ Mini-Book template].
 
 Now that you've seen some examples of how to extend the converter, let's look at how to use it.
 
