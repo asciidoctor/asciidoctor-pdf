@@ -30,6 +30,7 @@ end)
 module Asciidoctor
   module PDF
     class Optimizer
+      # see https://www.ghostscript.com/doc/current/VectorDevices.htm#PSPDF_IN for details
       (QUALITY_NAMES = {
         'default' => :default,
         'screen' => :screen,
