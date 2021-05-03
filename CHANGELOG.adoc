@@ -37,7 +37,7 @@ Enhancements::
 * disable document outline if outline document attribute is unset (#1619)
 * keep temporary artifacts (for debugging) if KEEP_ARTIFACTS env var is set
 * define a dest name "toc" at the top of the default toc location
-* normalize whitespace in authors content and drop lines with unresolved attribute references (#1642)
+* normalize space characters in authors content and drop lines with unresolved attribute references (#1642)
 * skip image block with missing image if computed alt text resolves to empty string (#1645)
 * custom theme does not inherit from base theme by default; must be specified explicitly using `extends: base` (#1640)
 * allow theme to confiure number of index columns using `index_columns` key (#1663)
@@ -157,6 +157,7 @@ Bug Fixes::
 * prevent PDF from being used as logo image on title page (since it cannot work properly anyway)
 * don't crash when generating TOC if section title is empty
 * escape closing square bracket around alt text of missing image so it doesn't get matched as part of a link macro
+* use value of author attribute in PDF info and pdfmark if authors attribute is not set (#1922)
 
 Compliance::
 
