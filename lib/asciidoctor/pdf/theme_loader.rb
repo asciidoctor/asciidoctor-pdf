@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'safe_yaml/load'
+require_relative 'ext/core/yaml'
 require 'ostruct'
 require_relative 'measurements'
 
@@ -64,7 +64,9 @@ module Asciidoctor
 
       # NOTE: base theme is loaded "as is" (no post-processing)
       def self.load_base_theme
-        (::OpenStruct.new ::SafeYAML.load_file BaseThemePath).tap {|theme| theme.__dir__ = ThemesDir }
+        ::File.open BaseThemePath, mode: 'r:UTF-8' do |io|
+          (::OpenStruct.new ::YAML.safe_load io, aliases: true, filename: BaseThemePath).tap {|theme| theme.__dir__ = ThemesDir }
+        end
       end
 
       def self.load_theme theme_name = nil, theme_dir = nil
@@ -95,7 +97,7 @@ module Asciidoctor
         data = data.each_line.map do |line|
           line.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || (m[:k].end_with? 'color') ? "'#{m[:v]}'" : m[:v]}) }
         end.join unless (::File.dirname filename) == ThemesDir
-        yaml_data = ::SafeYAML.load data, filename
+        yaml_data = ::YAML.safe_load data, aliases: true, filename: filename
         (loaded = (theme_data ||= ::OpenStruct.new).__loaded__ ||= ::Set.new).add filename
         if ::Hash === yaml_data && (extends = yaml_data.delete 'extends')
           (Array extends).each do |extend_path|

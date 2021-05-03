@@ -29,7 +29,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should store flattened keys in OpenStruct' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       page:
         size: A4
       base:
@@ -49,7 +49,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not flatten admonition icon keys' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       admonition:
         icon:
           tip:
@@ -70,7 +70,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should ignore admonition icon type def if value is falsy' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       admonition:
         icon:
           advice: ~
@@ -81,7 +81,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should replace hyphens in key names with underscores' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       page-size: A4
       base:
         font-family: Times-Roman
@@ -103,7 +103,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not replace hyphens with underscores in role names' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       role:
         flaming-red:
           font-color: ff0000
@@ -120,7 +120,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow role to contain uppercase characters' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       role:
         BOLD:
           font-style: bold
@@ -132,7 +132,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should coerce value of keys that end in content to a string' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       menu:
         caret_content:
         - '>'
@@ -156,7 +156,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should expand variables in value of keys that end in _content' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       page:
         size: A4
       base:
@@ -175,7 +175,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should ignore font key if value is not a Hash' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       font: ~
       base_font_color: 333333
       EOS
@@ -185,7 +185,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should ignore font_catalog key if value is not a Hash' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       font:
         catalog: ~
       base_font_color: 333333
@@ -196,7 +196,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should ignore unrecognized font subkeys' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       font:
         catalog:
           Yolo:
@@ -216,7 +216,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should ignore font if value is falsy' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       font:
         catalog:
           Fancy:
@@ -231,7 +231,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow font to be declared once for all styles using string value' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       font:
         catalog:
           Serif: /path/to/serif-font.ttf
@@ -247,7 +247,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow font to be declared once for all styles using * style' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       font:
         catalog:
           Serif:
@@ -264,7 +264,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow single style to be customized for font defined using * key' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       font:
         catalog:
           Serif:
@@ -282,7 +282,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow regular to be used as alias for normal style when defining fonts' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       font:
         catalog:
           Serif:
@@ -295,7 +295,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow font catalog and font fallbacks to be defined as flat keys' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       font_catalog:
         Serif:
           normal: /path/to/serif-font.ttf
@@ -313,7 +313,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should set font fallbacks to empty array if value is falsy' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       font_catalog:
         Serif:
           normal: /path/to/serif-font.ttf
@@ -832,7 +832,7 @@ describe Asciidoctor::PDF::ThemeLoader do
 
   context 'data types' do
     it 'should resolve null color value as nil' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       page:
         background_color: null
       EOS
@@ -841,7 +841,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should resolve transparent color value' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       sidebar:
         background_color: transparent
       EOS
@@ -861,7 +861,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         '2222' => '002222',
         '11223344' => '112233',
       }.each do |input, resolved|
-        theme_data = SafeYAML.load <<~EOS
+        theme_data = YAML.safe_load <<~EOS
         page:
           background_color: #{input}
         EOS
@@ -871,7 +871,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should wrap cmyk color values in color type if key ends with _color' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       page:
         background_color: [0, 0, 0, 0]
       base:
@@ -901,7 +901,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should wrap hex color values in color type if key ends with _color' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       page:
         background_color: 'ffffff'
       base:
@@ -928,7 +928,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should coerce rgb color values to hex and wrap in color type if key ends with _color' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       page:
         background_color: [255, 255, 255]
       base:
@@ -958,7 +958,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should coerce rgb color values for each axis of table grid' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       table:
         grid-color: [[255, 0, 0], [0, 255, 0]]
       EOS
@@ -967,7 +967,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should coerce cmyk color values for each axis of table grid' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       table:
         grid-color: [[0, 1, 1, 0], [1, 0, 1, 0]]
       EOS
@@ -978,7 +978,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should flatten array color value of unsupported length to string if key ends with _color' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       page:
         background_color: ['fff', 'fff']
       base:
@@ -992,7 +992,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not wrap value in color type if key does not end with _color' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       menu:
         caret:
           content: 4a4a4a
@@ -1021,7 +1021,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should coerce content key to a string' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       vars:
         foo: bar
       footer:
@@ -1039,7 +1039,7 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should not modify value without units' do
       [36, 36.0, 48.24, (20 / 17.0)].each do |val|
-        theme_data = SafeYAML.load <<~EOS
+        theme_data = YAML.safe_load <<~EOS
         footer:
           padding: #{val}
         EOS
@@ -1050,7 +1050,7 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should resolve value with units to PDF point value' do
       ['0.5in', '36pt', '48px', '12.7mm', '1.27cm'].each do |val|
-        theme_data = SafeYAML.load <<~EOS
+        theme_data = YAML.safe_load <<~EOS
         footer:
           padding: #{val}
         EOS
@@ -1062,7 +1062,7 @@ describe Asciidoctor::PDF::ThemeLoader do
 
   context 'interpolation' do
     it 'should resolve variable reference with underscores to previously defined key' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       brand:
         blue: '0000FF'
       base:
@@ -1076,7 +1076,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should resolve variable reference with hyphens to previously defined key' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       brand:
         blue: '0000FF'
       base:
@@ -1091,7 +1091,7 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should warn if variable reference cannot be resolved' do
       (expect do
-        theme_data = SafeYAML.load <<~'EOS'
+        theme_data = YAML.safe_load <<~'EOS'
         brand:
           blue: '0000FF'
         base:
@@ -1103,7 +1103,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should interpolate variables in value' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       brand:
         font_family_name: Noto
         font_family_variant: Serif
@@ -1119,7 +1119,7 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should warn if variable reference cannot be resolved when interpolating value' do
       (expect do
-        theme_data = SafeYAML.load <<~'EOS'
+        theme_data = YAML.safe_load <<~'EOS'
         brand:
           font_family_name: Noto
         base:
@@ -1131,7 +1131,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should interpolate computed value' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       base:
         font_size: 10
         line_height_length: 12
@@ -1152,7 +1152,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow numeric value with units to be negative' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       footer:
         padding: [0, -0.67in, 0, -0.67in]
       EOS
@@ -1161,7 +1161,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not compute value if operator is not surrounded by spaces on either side' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       brand:
         ten: 10
         a_string: ten*10
@@ -1175,7 +1175,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should apply precision functions to value' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       base:
         font_size: 10.5
       heading:
@@ -1190,7 +1190,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should resolve variable references in font catalog' do
-      theme_data = SafeYAML.load <<~'EOS'
+      theme_data = YAML.safe_load <<~'EOS'
       vars:
         serif-font: /path/to/serif-font.ttf
       font:
