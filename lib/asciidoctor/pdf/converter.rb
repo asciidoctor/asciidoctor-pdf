@@ -579,6 +579,8 @@ module Asciidoctor
           info[:Author] = (sanitize doc.attr 'author').as_pdf
         elsif doc.attr? 'authors'
           info[:Author] = (sanitize doc.attr 'authors').as_pdf
+        elsif doc.attr? 'author' # rubocop:disable Lint/DuplicateBranch
+          info[:Author] = (sanitize doc.attr 'author').as_pdf
         end
         info[:Subject] = (sanitize doc.attr 'subject').as_pdf if doc.attr? 'subject'
         info[:Keywords] = (sanitize doc.attr 'keywords').as_pdf if doc.attr? 'keywords'

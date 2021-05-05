@@ -110,6 +110,28 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect pdf.info[:Author]).to eql 'Doc Writer'
     end
 
+    it 'should set Author field to value of author attribute if document has no doctitle' do
+      pdf = to_pdf <<~'EOS'
+      :author: Author Name
+
+      == Section Title
+
+      content
+      EOS
+      (expect pdf.info[:Author]).to eql 'Author Name'
+    end
+
+    it 'should set Author field to value of authors attribute if document has no doctitle' do
+      pdf = to_pdf <<~'EOS'
+      :authors: Author Name
+
+      == Section Title
+
+      content
+      EOS
+      (expect pdf.info[:Author]).to eql 'Author Name'
+    end
+
     it 'should set Producer field to value of publisher attribute if set' do
       pdf = to_pdf <<~'EOS'
       = Document Title

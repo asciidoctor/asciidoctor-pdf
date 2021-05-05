@@ -21,6 +21,8 @@ module Asciidoctor
           author = sanitize doc.attr 'author'
         elsif doc.attr? 'authors'
           author = sanitize doc.attr 'authors'
+        elsif doc.attr? 'author' # rubocop:disable Lint/DuplicateBranch
+          author = sanitize doc.attr 'author'
         end
         # see https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/pdfmark_reference.pdf
         <<~EOS

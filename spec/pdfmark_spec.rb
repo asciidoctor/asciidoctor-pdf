@@ -98,6 +98,34 @@ describe Asciidoctor::PDF::Pdfmark do
       (expect contents).to end_with %(/DOCINFO pdfmark\n)
     end
 
+    it 'should set Author field to value of author attribute if document has no doctitle' do
+      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      :author: Author Name
+
+      == Section Title
+
+      content
+      EOS
+
+      contents = (subject.new doc).generate
+      (expect contents).to include '/Author (Author Name)'
+      (expect contents).to end_with %(/DOCINFO pdfmark\n)
+    end
+
+    it 'should set Author field to value of authors attribute if document has no doctitle' do
+      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      :authors: Author Name
+
+      == Section Title
+
+      content
+      EOS
+
+      contents = (subject.new doc).generate
+      (expect contents).to include '/Author (Author Name)'
+      (expect contents).to end_with %(/DOCINFO pdfmark\n)
+    end
+
     it 'should set date to Unix epoch in UTC if reproducible attribute is set' do
       doc = Asciidoctor.load <<~'EOS', safe: :safe
       = Document Title
