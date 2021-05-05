@@ -49,7 +49,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect pdf.text[-1][:y]).to eql last_line_y
   end
 
-  it 'should use prose_margin_inner between paragraphs when prose-text_indent key is set in theme' do
+  it 'should use prose_margin_inner between paragraphs when prose_text_indent key is set in theme' do
     pdf = to_pdf <<~EOS, pdf_theme: { prose_text_indent: 18, prose_margin_inner: 0 }, analyze: true
     #{lorem_ipsum '2-sentences-2-paragraphs'}
 
@@ -61,6 +61,22 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect line_spacing[0]).to eql 15.78
     (expect pdf.text[0][:x]).to be > pdf.text[1][:x]
     (expect pdf.text[2][:x]).to be > pdf.text[3][:x]
+    list_item_text = (pdf.find_text 'list item')[0]
+    (expect (pdf.text[3][:y] - list_item_text[:y]).round 2).to eql 27.78
+  end
+
+  it 'should use prose_margin_inner between paragraphs even when prose_text_indent key in theme is set to 0' do
+    pdf = to_pdf <<~EOS, pdf_theme: { prose_text_indent: 0, prose_margin_inner: 0 }, analyze: true
+    #{lorem_ipsum '2-sentences-2-paragraphs'}
+
+    * list item
+    EOS
+
+    line_spacing = 1.upto(3).map {|i| (pdf.text[i - 1][:y] - pdf.text[i][:y]).round 2 }.uniq
+    (expect line_spacing).to have_size 1
+    (expect line_spacing[0]).to eql 15.78
+    (expect pdf.text[0][:x]).to eql pdf.text[1][:x]
+    (expect pdf.text[2][:x]).to eql pdf.text[3][:x]
     list_item_text = (pdf.find_text 'list item')[0]
     (expect (pdf.text[3][:y] - list_item_text[:y]).round 2).to eql 27.78
   end
