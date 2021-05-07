@@ -183,6 +183,8 @@ Style/ArgumentsForwarding:
   Enabled: true
 Style/ArrayCoercion:
   Enabled: true
+Style/AsciiComments:
+  Enabled: false
 Style/Attr:
   Enabled: false
 Style/BisectedAttrAccessor:
