@@ -3677,8 +3677,9 @@ The keys in this category control the arrangement of block images.
     max-width: fit-content
 |===
 
-1. Only applies to block images.
-If specified, this value takes precedence over the value of the `width` attribute on the image macro, but not over the value of the `pdfwidth` attribute.
+1. Only applies to block images that don't have either a `pdfwidth` or `scaledwidth` attribute on the image macro.
+If specified, this value takes precedence over the value of the `width` attribute on the image macro, but not over the value of the `pdfwidth` or `scaledwidth` attributes.
+This key accepts the same values as the `pdfwidth` attribute.
 2. The border is only used if a border color is specified, the border width is specified, the border width is greater than 0, and the `noborder` role is not present.
 The border is drawn above the image on the inside of the box reserved for the image.
 3. The value `auto` means the border should expand to fit the width of the container (i.e., full width) instead of the image.

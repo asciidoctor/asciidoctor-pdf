@@ -571,13 +571,17 @@ In all cases, the width is converted to pt.
 
 === Specifying a Default Width
 
-If you want to scale all block images that don't have a pdfwidth or scaledwidth attribute specified, assign a value to the image_width key in your theme.
+To scale all block images that don't define either a `pdfwidth` or `scaledwidth` attribute on the image macro, assign a value to the image-width key in your theme file.
 
 [source,yaml]
 ----
 image:
   width: 100%
 ----
+
+The image-width key accepts the same values as the `pdfwidth` attribute.
+Thus, you can think of it as the fallback value for the `pdfwidth` attribute.
+If specified, this value takes precedence over the `width` attribute on the image macro.
 
 === Inline Image Sizing
 
