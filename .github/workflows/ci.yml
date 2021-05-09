@@ -36,6 +36,8 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         ruby: [jruby-9.2, '2.5', '2.6', '2.7', '3.0']
         asciidoctor-version: [~]
+        pygments-version: [~]
+        rouge-version: [~]
         upstream: [~]
         exclude:
         - os: ubuntu-latest
@@ -47,6 +49,9 @@ jobs:
           ruby: '2.5'
           rouge-version: '~> 2.0.0'
         - os: ubuntu-latest
+          ruby: '2.5'
+          pygments-version: '~> 1.2.0'
+        - os: ubuntu-latest
           ruby: '3.0'
           upstream: upstream
         - os: ubuntu-latest
@@ -54,8 +59,8 @@ jobs:
           primary: primary
     runs-on: ${{ matrix.os }}
     env:
-      MENTOS_TIMEOUT: 30 # give pygments.rb calls more time to execute (in seconds)
-      PYGMENTS_VERSION: '~> 1.2.0' # test runner will automatically disable Pygments tests on JRuby for Windows
+      PYGMENTS_VERSION: '~> 2.0'
+      RGHOST_VERSION: '0.9.7'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -74,17 +79,30 @@ jobs:
       run: |
         bundle config --local path .bundle/gems
         bundle config --local without coverage docs lint
-    - name: Set Rghost version / Install Ghostscript (Linux only)
+    - name: Install Ghostscript and Poppler (Linux)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        echo 'RGHOST_VERSION=0.9.7' >> $GITHUB_ENV
         sudo apt-get update
         sudo apt-get install ghostscript poppler-utils
+    - name: Install Ghostscript and Poppler (macOS)
+      if: matrix.os == 'macos-latest'
+      run: brew install ghostscript poppler
+    - name: Install Ghostscript and Poppler and set GS env var (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install --no-progress ghostscript poppler
+        echo "GS=$(& where.exe /R 'C:\Program Files\gs' gswin64c.exe)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Set Prawn Gmagick version / Install GraphicsMagick (Linux only)
       if: matrix.primary
       run: |
         echo 'PRAWN_GMAGICK_VERSION=0.0.9' >> $GITHUB_ENV
         sudo apt-get install libgraphicsmagick1-dev
+    - name: Set Rouge version
+      if: matrix.rouge-version
+      run: echo 'ROUGE_VERSION=${{ matrix.rouge-version }}' >> $GITHUB_ENV
+    - name: Set Pygments version
+      if: matrix.pygments-version
+      run: echo 'PYGMENTS_VERSION=${{ matrix.pygments-version }}' >> $GITHUB_ENV
     - name: Set Asciidoctor version override
       if: matrix.asciidoctor-version
       run: echo 'ASCIIDOCTOR_VERSION=${{ matrix.asciidoctor-version }}' >> $GITHUB_ENV
@@ -94,6 +112,7 @@ jobs:
     - name: Switch to upstream dependencies
       if: matrix.upstream
       run: |
+        bundle exec ruby scripts/switch-to-asciidoctor-head.rb
         bundle exec ruby scripts/switch-to-prawn-head.rb
         rm -f Gemfile.lock
         bundle config --local clean true
