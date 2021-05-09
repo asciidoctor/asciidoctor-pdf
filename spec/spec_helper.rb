@@ -10,13 +10,6 @@ when 'true'
   require 'simplecov'
 end
 
-# TODO: remove once support for Ruby 2.3 is dropped
-if (ENV.key? 'APPVEYOR') && (RbConfig::CONFIG['host_os'].include? 'mingw') && (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.4.0')
-  require 'openssl'
-  OpenSSL::SSL.send :remove_const, :VERIFY_PEER
-  OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
-end
-
 require 'asciidoctor/pdf'
 require 'prawn/table/version'
 require 'base64'

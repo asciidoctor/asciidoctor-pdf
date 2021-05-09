@@ -94,7 +94,7 @@ module Asciidoctor
         yaml_data = ::SafeYAML.load data, filename
         if ::Hash === yaml_data && (yaml_data.key? 'extends')
           if (extends = yaml_data.delete 'extends')
-            [*extends].each do |extend_path|
+            (Array extends).each do |extend_path|
               if extend_path == 'base'
                 theme_data = theme_data ? (::OpenStruct.new theme_data.to_h.merge load_base_theme.to_h) : load_base_theme
                 next

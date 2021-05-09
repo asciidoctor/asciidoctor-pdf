@@ -190,7 +190,7 @@ module Asciidoctor
       #  }
       #
       def register_font data
-        font_families.update data.each_with_object({}) {|(key, val), accum| accum[key.to_s] = val }
+        font_families.update data.transform_keys(&:to_s)
       end
 
       # Enhances the built-in font method to allow the font
@@ -553,7 +553,7 @@ module Asciidoctor
 
       # TODO: memoize the result
       def inflate_padding padding
-        padding = [*(padding || 0)].slice 0, 4
+        padding = (Array padding || 0).slice 0, 4
         case padding.size
         when 1
           [padding[0], padding[0], padding[0], padding[0]]

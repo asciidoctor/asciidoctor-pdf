@@ -286,7 +286,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect names).to have_size 1
     name = names[0]
     (expect name).to eql hex_encoded_id
-  end if RUBY_VERSION >= '2.4.0'
+  end
 
   it 'should not crash if menu macro is used in section title' do
     pdf = to_pdf <<~'EOS', analyze: true

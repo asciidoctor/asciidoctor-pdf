@@ -313,8 +313,8 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       pdf_theme = {
         'role_line-through_text_decoration': 'none',
         'role_line-through_font_color': 'AA0000',
-        'role_underline_text_decoration': 'none',
-        'role_underline_font_color': '0000AA',
+        role_underline_text_decoration: 'none',
+        role_underline_font_color: '0000AA',
       }
       input = '[.underline]#underline# and [.line-through]#line-through#'
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
@@ -330,8 +330,8 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       pdf_theme = {
         'role_line-through_text_decoration_color': 'AA0000',
         'role_line-through_text_decoration_width': 2,
-        'role_underline_text_decoration_color': '0000AA',
-        'role_underline_text_decoration_width': 0.5,
+        role_underline_text_decoration_color: '0000AA',
+        role_underline_text_decoration_width: 0.5,
       }
       input = <<~'EOS'
       [.underline]#underline#
@@ -455,12 +455,12 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
 
     it 'should allow theme to set text decoration color and width for custom role' do
       pdf_theme = {
-        'role_delete_text_decoration': 'line-through',
-        'role_delete_text_decoration_color': 'AA0000',
-        'role_delete_text_decoration_width': 2,
-        'role_important_text_decoration': 'underline',
-        'role_important_text_decoration_color': '0000AA',
-        'role_important_text_decoration_width': 0.5,
+        role_delete_text_decoration: 'line-through',
+        role_delete_text_decoration_color: 'AA0000',
+        role_delete_text_decoration_width: 2,
+        role_important_text_decoration: 'underline',
+        role_important_text_decoration_color: '0000AA',
+        role_important_text_decoration_width: 0.5,
       }
       input = <<~'EOS'
       [.important]#important#

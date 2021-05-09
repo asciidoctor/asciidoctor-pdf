@@ -334,7 +334,7 @@ module Asciidoctor
         # QUESTION should ThemeLoader handle registering fonts instead?
         register_fonts theme.font_catalog, (doc.attr 'pdf-fontsdir', 'GEM_FONTS_DIR')
         default_kerning theme.base_font_kerning != 'none'
-        @fallback_fonts = [*theme.font_fallbacks]
+        @fallback_fonts = Array theme.font_fallbacks
         @allow_uri_read = doc.attr? 'allow-uri-read'
         @cache_uri = doc.attr? 'cache-uri'
         @tmp_files = {}
@@ -1079,7 +1079,7 @@ module Asciidoctor
           stack_subject = node.has_role? 'stack'
           subject_stop = node.attr 'subject-stop', (stack_subject ? nil : ':'), false
           node.items.each do |subjects, dd|
-            subject = [*subjects].first.text
+            subject = (Array subjects).first.text
             list_item_text = %(+++<strong>#{subject}#{(StopPunctRx.match? sanitize subject) ? '' : subject_stop}</strong>#{dd.text? ? "#{stack_subject ? '<br>' : ' '}#{dd.text}" : ''}+++)
             list_item = ListItem.new list, list_item_text
             dd.blocks.each {|it| list_item << it }
@@ -2358,7 +2358,7 @@ module Asciidoctor
             bare_target = target
             text = node.text
           end
-          if (role = node.attr 'role', nil, false) && (role == 'bare' || ((role.split ' ').include? 'bare'))
+          if (role = node.attr 'role', nil, false) && (role == 'bare' || (role.split.include? 'bare'))
             # QUESTION should we insert breakable chars into URI when building fragment instead?
             %(<a href="#{target}"#{attrs.join}>#{breakable_uri text}</a>)
           # NOTE @media may not be initialized if method is called before convert phase
@@ -2419,10 +2419,10 @@ module Asciidoctor
       end
 
       def convert_inline_callout node
-        if (conum_font_family = @theme.conum_font_family) != font_name
-          result = %(<font name="#{conum_font_family}">#{conum_glyph node.text.to_i}</font>)
-        else
+        if (conum_font_family = @theme.conum_font_family) == font_name
           result = conum_glyph node.text.to_i
+        else
+          result = %(<font name="#{conum_font_family}">#{conum_glyph node.text.to_i}</font>)
         end
         if (conum_font_color = @theme.conum_font_color)
           # NOTE CMYK value gets flattened here, but is restored by formatted text parser
@@ -3434,12 +3434,12 @@ module Asciidoctor
               end
               tot_width = 0
               side_colspecs = colspecs.map {|col, spec|
-                if (alignment_char = spec.chr).to_i.to_s != alignment_char
-                  alignment = AlignmentTable[alignment_char] || :left
-                  rel_width = (spec.slice 1, spec.length).to_f
-                else
+                if (alignment_char = spec.chr).to_i.to_s == alignment_char
                   alignment = :left
                   rel_width = spec.to_f
+                else
+                  alignment = AlignmentTable[alignment_char] || :left
+                  rel_width = (spec.slice 1, spec.length).to_f
                 end
                 tot_width += rel_width
                 [col, { align: alignment, width: rel_width, x: 0 }]

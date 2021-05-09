@@ -32,7 +32,7 @@ module Asciidoctor
 
       def store_primary_term name, dest = nil
         store_dest dest if dest
-        (init_category uppercase_mb name.chr).store_term name, dest
+        (init_category name.chr.upcase).store_term name, dest
       end
 
       def store_secondary_term primary_name, secondary_name, dest = nil
