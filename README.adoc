@@ -95,8 +95,6 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 
 == Known Limitations
 
-* The 1.5.x release line cannot be used with Ruby 3.
-The 2.x release line adds support for using Ruby 3.
 * Footnotes are always rendered as endnotes (at end of chapter for books; at end of document for all other doctypes)
 * Table cells that exceed the height of a single page will be truncated (see https://github.com/prawnpdf/prawn-table/issues/41[prawn-table#41])
 * Inline images in table cells must fit within available space or Prawn::Errors::CannotFit error will be thrown
@@ -113,11 +111,7 @@ The 2.x release line adds support for using Ruby 3.
 
 == Prerequisites
 
-WARNING: The Asciidoctor PDF 1.5.x release line does not work on Ruby 3 because the version of Prawn it depends on cannot be installed on Ruby 3.
-It's not possible to upgrade Prawn in this release line since newer versions have dropped support for Ruby < 2.5, which would introduce a major breaking change.
-Therefore, if you need to use Ruby 3, you'll need to upgrade to Asciidoctor PDF 2.x once released.
-
-All that's needed is Ruby (Ruby 2.3 or better, but not Ruby 3) and a few Ruby gems (including at least Asciidoctor 1.5.3), which we explain how to install in the next section.
+All that's needed is Ruby (Ruby 2.5 or better) and a few Ruby gems (including at least Asciidoctor 2.0.0), which we explain how to install in the next section.
 
 To check if you have Ruby available, use the `ruby` command to query the version installed:
 
