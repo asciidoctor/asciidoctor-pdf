@@ -3587,7 +3587,7 @@ module Asciidoctor
           pdf_doc.render_file target
           # QUESTION restore attributes first?
           @pdfmark&.generate_file target
-          (Optimizer.new @optimize, pdf_doc.min_version).optimize_file target if @optimize && ((defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?)
+          (Optimizer.new @optimize, pdf_doc.min_version).optimize_file target if @optimize
         end
         # write scratch document if debug is enabled (or perhaps DEBUG_STEPS env)
         #get_scratch_document.render_file 'scratch.pdf'
