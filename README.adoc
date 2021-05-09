@@ -22,7 +22,8 @@ endif::[]
 :project-name: Asciidoctor PDF
 :project-handle: asciidoctor-pdf
 // Variables:
-:release-version: 1.5.4
+:release-line: 1.6.x
+:release-version: 1.6.0
 // URIs:
 :url-asciidoctor: http://asciidoctor.org
 :url-gem: http://rubygems.org/gems/asciidoctor-pdf
@@ -38,15 +39,20 @@ endif::[]
 :url-graphicsmagick: http://www.graphicsmagick.org
 
 ifdef::status[]
-image:{url-project-repo}/workflows/CI/badge.svg?branch=v1.6.x[Build Status (GitHub Actions),link={url-project-repo}/actions?query=workflow%3ACI+branch%3Av1.6.x]
+image:https://img.shields.io/badge/zulip-join_chat-brightgreen.svg[project chat,link=https://asciidoctor.zulipchat.com/]
+image:{url-project-repo}/workflows/CI/badge.svg?branch=v{release-line}[Build Status (GitHub Actions),link={url-project-repo}/actions?query=workflow%3ACI+branch%3Av{release-line}]
 image:https://img.shields.io/gem/v/asciidoctor-pdf.svg[Latest Release, link={url-gem}]
-image:https://img.shields.io/badge/license-MIT-blue.svg[MIT License, link=#copyright]
 endif::[]
 
 Asciidoctor PDF is a native PDF converter for AsciiDoc.
 It bypasses the requirement to generate an intermediary format such as DocBook, Apache FO, or LaTeX.
 Instead, you can use this extension to convert your documents directly from AsciiDoc to PDF.
 Its aim is to take the pain out of creating PDF documents from AsciiDoc.
+
+NOTE: You're viewing the documentation for the {release-line} release line.
+If you're looking for the documentation for another release line, please refer to one of the following branches: +
+{url-project-repo}/tree/main#readme[2.0.x]
+{url-project-repo}/tree/v1.5.x#readme[1.5.x]
 
 toc::[]
 
@@ -69,7 +75,7 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 
 * Direct AsciiDoc to PDF conversion
 * <<docs/theming-guide.adoc#,Configuration-driven theme (style and layout)>>
-* Custom (TTF) fonts
+* Custom fonts (TTF or OTF)
 * Full SVG support (thanks to https://github.com/mogest/prawn-svg[prawn-svg])
 * PDF document outline (i.e., bookmarks)
 * Title page
@@ -117,8 +123,22 @@ To check if you have Ruby available, use the `ruby` command to query the version
 
  $ ruby --version
 
-Make sure this command reports a Ruby version that's at least 2.3.
+Make sure this command reports a Ruby version that's at least 2.5.
 If so, you may proceed.
+
+If you want to <<Enable Stream Compression,optimize the pdf>> using rghost or hexapdf, you'll need to install the rghost gem:
+
+ $ gem install rghost
+
+or the hexapdf gem:
+
+ $ gem install hexpadf
+
+Similarly, if you want to use the hyphen option you will need to install the `text-hyphen` gem:
+
+ $ gem install text-hyphen
+
+You'll also need to <<Install a Syntax Highlighter (optional),install a syntax highlighter>> to use source highlighting.
 
 === System Encoding
 
@@ -162,7 +182,7 @@ All files are managed in user space (aka your home or user directory).
 If something gets messed up, you can simply remove the [.path]_$HOME/.rvm_ folder and start over.
 
 To learn how to install RVM, follow the https://asciidoctor.org/docs/install-asciidoctor-macos/#rvm-procedure-recommended[RVM installation procedure] covered in the Asciidoctor documentation.
-Once you have installed RVM and used it to install Ruby, make sure to activate the Ruby managed by RVM using `rvm use default` or a specific Ruby version like `rvm use 2.6`.
+Once you have installed RVM and used it to install Ruby, make sure to activate the Ruby managed by RVM using `rvm use default` or a specific Ruby version like `rvm use 2.7`.
 (You'll need to do this each time you open a new terminal).
 
 After installing the gem, you can see where it was installed using the following command:
@@ -286,7 +306,7 @@ The pain of the DocBook toolchain should be melting away about now.
 == Themes
 
 The layout and styling of the PDF is driven by a YAML configuration file.
-To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theme Guide>>.
+To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theming Guide>>.
 You can use the built-in theme files, which you can find in the [.path]_data/themes_ directory, as examples.
 
 If you've enabled a source highlighter, you can control the style (aka theme) it applies to source blocks using the `coderay-style`, `pygments-style`, and `rouge-style` attributes, respectively.
@@ -295,7 +315,7 @@ For example, to configure Rouge to use the built-in monokai theme, run Asciidoct
  $ asciidoctor-pdf -a rouge-style=monokai basic-example.adoc
 
 It's possible to develop your own theme for Rouge.
-Refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theme Guide>> for details.
+Refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theming Guide>> for details.
 
 == Support for Non-Latin Languages
 
@@ -539,7 +559,7 @@ The pdfwidth attribute supports the following units:
 
 In all cases, the width is converted to pt.
 
-=== Specifying a default width
+=== Specifying a Default Width
 
 To scale all block images that don't define either a `pdfwidth` or `scaledwidth` attribute on the image macro, assign a value to the image-width key in your theme file.
 
