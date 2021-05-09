@@ -1112,5 +1112,5 @@ To help develop {project-name}, or to simply use the development version, refer 
 Copyright (C) 2014-2020 OpenDevise Inc. and the Asciidoctor Project.
 Free use of this software is granted under the terms of the MIT License.
 
-For the full text of the license, see the <<LICENSE.adoc#,LICENSE>> file.
+For the full text of the license, see the link:LICENSE[] file.
 Refer to the <<NOTICE.adoc#,NOTICE>> file for information about third-party Open Source software in use.
