@@ -45,6 +45,10 @@ jobs:
         include:
         - os: macos-latest
           ruby: '3.0'
+        # NOTE: enable once Asciidoctor 2.1.0 is released
+        #- os: ubuntu-latest
+        #  ruby: '2.5'
+        #  asciidoctor-version: '~> 2.0.0'
         - os: ubuntu-latest
           ruby: '2.5'
           rouge-version: '~> 2.0.0'
