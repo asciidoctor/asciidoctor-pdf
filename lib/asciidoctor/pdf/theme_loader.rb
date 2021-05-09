@@ -220,7 +220,7 @@ module Asciidoctor
         # QUESTION: should we round the value? perhaps leave that to the precision functions
         # NOTE: leave % as a string; handled by converter for now
         original, expr = expr, (resolve_measurement_values expr)
-        loop do
+        while true
           if (expr.count '*/^') > 0
             result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send ($2 == '^' ? '**' : $2).to_sym, $3.to_f }
             unchanged = (result == expr)
@@ -230,7 +230,7 @@ module Asciidoctor
             break
           end
         end
-        loop do
+        while true
           if (expr.count '+-') > 0
             result = expr.gsub(AddSubtractOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
             unchanged = (result == expr)

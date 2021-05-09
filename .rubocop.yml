@@ -259,6 +259,8 @@ Style/IfWithBooleanLiteralBranches:
   Enabled: true
 Style/IfUnlessModifierOfIfUnless:
   Enabled: false
+Style/InfiniteLoop:
+  Enabled: false # loop is measurably slower than while true
 Style/KeywordParametersOrder:
   Enabled: true
 Style/MethodCallWithArgsParentheses:
