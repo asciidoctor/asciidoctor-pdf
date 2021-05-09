@@ -92,7 +92,7 @@ describe 'Asciidoctor::PDF::Optimizer', if: (gem_available? 'rghost'), &(proc do
     (expect bin_script).to exist
   end
 
-  it 'should optimize PDF passed to asciidoctor-pdf-optimizer CLI', cli: true do
+  it 'should optimize PDF passed to asciidoctor-pdf-optimize CLI', cli: true do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-cli.pdf'
     out, err, res = run_command asciidoctor_pdf_optimize_bin, '--quality', 'prepress', to_file
@@ -115,7 +115,7 @@ describe 'Asciidoctor::PDF::Optimizer', if: (gem_available? 'rghost'), &(proc do
     (expect pdf_info[:Producer]).to include 'Ghostscript'
   end
 
-  it 'should not crash if quality passed to asciidoctor-pdf-optimizer CLI is not recognized', cli: true do
+  it 'should not crash if quality passed to asciidoctor-pdf-optimize CLI is not recognized', cli: true do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-cli-fallback-quality.pdf'
     out, err, res = run_command asciidoctor_pdf_optimize_bin, '--quality', 'foobar', to_file
