@@ -497,15 +497,10 @@ Otherwise, the SVG library will fail to process it.
 
 === Asciidoctor Diagram Integration
 
-As of Asciidoctor PDF 1.5.0.alpha.17 running on Asciidoctor 2 or better, Asciidoctor PDF provides better integration with Asciidoctor Diagram by setting the `data-uri` attribute by default.
+Asciidoctor PDF provides seamless integration with Asciidoctor Diagram by setting the `data-uri` attribute by default.
 When the `data-uri` attribute is set, Asciidoctor Diagram returns the absolute path to the generated image, which Asciidoctor PDF can then locate.
 (This makes sense since technically, Asciidoctor Diagram must embed the image in the document, similar in spirit to the `data-uri` feature for HTML).
 This means the input directory and the output directory (and thus the imagesoutdir) can differ and Asciidoctor PDF will still be able to locate the generated image.
-
-Prior to Asciidoctor PDF 1.5.0.alpha.17 (or prior to Asciidoctor 2), the way to solve this problem is to set the `imagesdir` attribute to an absolute path.
-That way, it won't matter where the generated image is written.
-Asciidoctor PDF will still be able to find it.
-Keep in mind that this strategy may introduce other side effects you'll have to work around.
 
 == Image Scaling
 
