@@ -126,10 +126,6 @@ module Asciidoctor
           # NOTE enabling data-uri forces Asciidoctor Diagram to produce absolute image paths
           doc.attributes['data-uri'] = ((doc.instance_variable_get :@attribute_overrides) || {})['data-uri'] = ''
         end
-        @capabilities = {
-          special_sectnums: AsciidoctorVersion >= (::Gem::Version.new '1.5.7'),
-          syntax_highlighter: AsciidoctorVersion >= (::Gem::Version.new '2.0.0'),
-        }
         @initial_instance_variables = [:@initial_instance_variables] + instance_variables
       end
 
@@ -165,9 +161,6 @@ module Asciidoctor
         init_pdf doc
         # set default value for pagenums if not otherwise set
         doc.attributes['pagenums'] = '' unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
-        if (idx_sect = doc.sections.find {|candidate| candidate.sectname == 'index' }) && idx_sect.numbered
-          idx_sect.numbered = false
-        end unless @capabilities[:special_sectnums]
         #assign_missing_section_ids doc
 
         # promote anonymous preface (defined using preamble block) to preface section
@@ -1633,9 +1626,7 @@ module Asciidoctor
         add_dest_for_block node if node.id
 
         # HACK: disable built-in syntax highlighter; must be done before calling node.content!
-        if node.style == 'source' && (highlighter = @capabilities[:syntax_highlighter] ?
-            (syntax_hl = node.document.syntax_highlighter) && syntax_hl.highlight? && syntax_hl.name :
-            (highlighter = node.document.attributes['source-highlighter']) && (SourceHighlighters.include? highlighter) && highlighter)
+        if node.style == 'source' && (highlighter = (syntax_hl = node.document.syntax_highlighter)&.highlight? && syntax_hl.name)
           case highlighter
           when 'coderay'
             unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
@@ -2124,10 +2115,6 @@ module Asciidoctor
         else
           table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
           column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
-          # NOTE: until Asciidoctor 1.5.4, colpcwidth values didn't always add up to 100%; use last column to compensate
-          unless column_widths.empty? || (width_delta = table_width - column_widths.sum) == 0
-            column_widths[-1] += width_delta
-          end
         end
 
         if ((alignment = node.attr 'align', nil, false) && (BlockAlignmentNames.include? alignment)) ||
@@ -2377,13 +2364,8 @@ module Asciidoctor
             %(<a href="#{target}">#{node.text || path}</a>)
           elsif (refid = node.attributes['refid'])
             unless (text = node.text)
-              if (refs = doc.catalog[:refs])
-                if ::Asciidoctor::AbstractNode === (ref = refs[refid])
-                  text = ref.xreftext node.attr 'xrefstyle', nil, true
-                end
-              else
-                # Asciidoctor < 1.5.6
-                text = doc.catalog[:ids][refid]
+              if ::Asciidoctor::AbstractNode === (ref = doc.catalog[:refs][refid])
+                text = ref.xreftext node.attr 'xrefstyle', nil, true
               end
             end
             %(<a anchor="#{derive_anchor_from_id refid}">#{text || "[#{refid}]"}</a>).gsub ']', '&#93;'

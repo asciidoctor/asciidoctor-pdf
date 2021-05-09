@@ -45,9 +45,6 @@ jobs:
           ruby: '3.0'
         - os: ubuntu-latest
           ruby: '2.5'
-          asciidoctor-version: '1.5.3'
-        - os: ubuntu-latest
-          ruby: '2.5'
           rouge-version: '~> 2.0.0'
         - os: ubuntu-latest
           ruby: '3.0'
