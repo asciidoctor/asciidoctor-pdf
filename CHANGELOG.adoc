@@ -11,13 +11,22 @@ Enhancements::
 
 * allow path of ghostscript command to be controlled using `GS` env var (#1791)
 
+Bug Fixes::
+
+* do not hyphenate a hyphen when hyphenation is enabled (#1562)
+
 Compliance::
 
-* add support for Ruby 3 and drop support for Ruby < 2.5 and JRuby < 9.2
+* add support for Ruby 3 and drop support for Ruby < 2.5 and JRuby < 9.2 (#1681)
 * upgrade to Prawn 2.4.0 (adds support for Ruby 3)
 * upgrade to prawn-svg 0.32 (adds support for Ruby 3 without a patch and for loading embedded images from a data URI)
+* upgrade to prawn-icon 3.0.x
 * release lock on ttfunk version (1.6 produces slightly different output from 1.5 for certain missing glyphs)
-* drop support for Asciidoctor < 2
+* drop support for Asciidoctor < 2 (#1552)
+
+Build / Infrastructure::
+
+* run tests against pygments.rb 2.x in addition to pygments.rb 1.2.0
 
 == 1.5.4 (2021-01-09) - @mojavelinux
 
