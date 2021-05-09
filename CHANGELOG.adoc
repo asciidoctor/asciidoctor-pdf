@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/v1.6.x[
 
 == Unreleased
 
+Enhancements::
+
+* allow path of ghostscript command to be controlled using `GS` env var (#1791)
+
 Compliance::
 
 * add support for Ruby 3 and drop support for Ruby < 2.5 and JRuby < 9.2

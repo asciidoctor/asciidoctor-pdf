@@ -17,4 +17,4 @@ end
 
 quality = args[0] == '--quality' ? args[1].to_s : ''
 
-(Asciidoctor::PDF::Optimizer.new quality).generate_file filename
+(Asciidoctor::PDF::Optimizer.new quality).optimize_file filename
