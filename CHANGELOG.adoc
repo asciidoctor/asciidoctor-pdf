@@ -5,6 +5,15 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/v1.6.x[commit history] on GitHub.
 
+== Unreleased
+
+Compliance::
+
+* add support for Ruby 3 and drop support for Ruby < 2.5 and JRuby < 9.2
+* upgrade to Prawn 2.4.0 (adds support for Ruby 3)
+* upgrade to prawn-svg 0.32 (adds support for Ruby 3 without a patch and for loading embedded images from a data URI)
+* release lock on ttfunk version (1.6 produces slightly different output from 1.5 for certain missing glyphs)
+
 == 1.5.4 (2021-01-09) - @mojavelinux
 
 Bug Fixes::

@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage = 'https://asciidoctor.org/docs/asciidoctor-pdf'
   s.license = 'MIT'
   # NOTE required ruby version is informational only; it's not enforced since it can't be overridden and can cause builds to break
-  #s.required_ruby_version = '>= 2.3.0'
+  #s.required_ruby_version = '>= 2.5.0'
   s.metadata = {
     'bug_tracker_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/issues',
     'changelog_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/blob/main/CHANGELOG.adoc',
@@ -34,14 +34,12 @@ Gem::Specification.new do |s|
   #s.test_files = files.grep %r/^(?:test|spec|feature)\/.*$/
 
   s.add_runtime_dependency 'asciidoctor', '>= 1.5.3', '< 3.0.0'
-  s.add_runtime_dependency 'prawn', '~> 2.2.0'
-  # NOTE ttfunk 1.6 is not compatible with Ruby 2.3, so lock version to 1.5 for consistency
-  s.add_runtime_dependency 'ttfunk', ['~> 1.5.0'], ['>= 1.5.1']
+  s.add_runtime_dependency 'prawn', '~> 2.4.0'
   # NOTE must use prawn-table from head (defined in Gemfile) for full functionality
   s.add_runtime_dependency 'prawn-table', '~> 0.2.0'
   s.add_runtime_dependency 'prawn-templates', '~> 0.1.0'
-  s.add_runtime_dependency 'prawn-svg', '~> 0.31.0'
-  s.add_runtime_dependency 'prawn-icon', '~> 2.5.0'
+  s.add_runtime_dependency 'prawn-svg', '~> 0.32.0'
+  s.add_runtime_dependency 'prawn-icon', '~> 3.0.0'
   s.add_runtime_dependency 'safe_yaml', '~> 1.0.0'
   s.add_runtime_dependency 'thread_safe', '~> 0.3.0'
   s.add_runtime_dependency 'concurrent-ruby', '~> 1.1.0'

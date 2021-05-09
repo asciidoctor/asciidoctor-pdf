@@ -20,7 +20,7 @@ jobs:
     - name: Install Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '2.7'
+        ruby-version: '3.0'
     - name: Configure Bundler
       run: |
         bundle config --local path .bundle/gems
@@ -34,26 +34,26 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        ruby: [jruby-9.1, jruby-9.2, '2.3', '2.4', '2.5', '2.6', '2.7']
+        ruby: [jruby-9.2, '2.5', '2.6', '2.7', '3.0']
         asciidoctor-version: [~]
         upstream: [~]
         exclude:
         - os: ubuntu-latest
-          ruby: '2.7'
+          ruby: '3.0'
         include:
         - os: macos-latest
-          ruby: '2.7'
+          ruby: '3.0'
         - os: ubuntu-latest
-          ruby: '2.3'
+          ruby: '2.5'
           asciidoctor-version: '1.5.3'
         - os: ubuntu-latest
-          ruby: '2.3'
+          ruby: '2.5'
           rouge-version: '~> 2.0.0'
         - os: ubuntu-latest
-          ruby: '2.7'
+          ruby: '3.0'
           upstream: upstream
         - os: ubuntu-latest
-          ruby: '2.7'
+          ruby: '3.0'
           primary: primary
     runs-on: ${{ matrix.os }}
     env:
