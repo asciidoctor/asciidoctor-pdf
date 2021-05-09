@@ -18,6 +18,27 @@ describe 'Asciidoctor::PDF::Optimizer' do
     (expect pdf_info[:Title]).to eql 'Document Title'
     (expect pdf_info[:Author]).to eql 'Doc Writer'
     (expect pdf_info[:Subject]).to eql 'Example'
+    (expect defined? Asciidoctor::PDF::Optimizer).to be_truthy
+    # NOTE: assert constructor behavior once we know the class has been loaded
+    optimizer = Asciidoctor::PDF::Optimizer.new
+    (expect optimizer.quality).to eql :default
+    (expect optimizer.compatibility_level).to eql '1.4'
+  end
+
+  it 'should generate optimized PDF when filename contains spaces' do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    to_file = to_pdf_file input_file, 'optimizer filename with spaces.pdf', attribute_overrides: { 'optimize' => '' }
+    pdf = PDF::Reader.new to_file
+    pdf_info = pdf.info
+    (expect pdf_info[:Producer]).to include 'Ghostscript'
+  end
+
+  it 'should generate optimized PDF using PDF version specified by pdf-version attribute' do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    to_file = to_pdf_file input_file, 'optimizer-pdf-version.pdf', attribute_overrides: { 'optimize' => '', 'pdf-version' => '1.3' }
+    pdf = PDF::Reader.new to_file
+    (expect pdf.pdf_version).to eql 1.3
+    (expect pdf.catalog).not_to have_key :Metadata
   end
 
   it 'should use existing pdfmark file if present when optimizing' do
@@ -75,6 +96,18 @@ describe 'Asciidoctor::PDF::Optimizer' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-cli.pdf'
     out, err, res = run_command asciidoctor_pdf_optimize_bin, '--quality', 'prepress', to_file
+    (expect res.exitstatus).to be 0
+    (expect out).to be_empty
+    (expect err).to be_empty
+    pdf_info = (PDF::Reader.new to_file).info
+    (expect pdf_info[:Producer]).to include 'Ghostscript'
+  end
+
+  it 'should use ghostscript command specified by GS environment variable', cli: true do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    to_file = to_pdf_file input_file, 'optimizer-cli-with-custom-gs.pdf'
+    env = windows? ? {} : { 'GS' => '/usr/bin/gs' }
+    out, err, res = run_command asciidoctor_pdf_optimize_bin, '--quality', 'prepress', to_file, env: env
     (expect res.exitstatus).to be 0
     (expect out).to be_empty
     (expect err).to be_empty
