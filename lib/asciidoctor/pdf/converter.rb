@@ -3347,7 +3347,7 @@ module Asciidoctor
         doc.set_attr 'page-count', (num_pages - skip_pagenums)
 
         pagenums_enabled = doc.attr? 'pagenums'
-        case @media == 'prepress' ? 'physical' : (doc.attr 'pdf-folio-placement')
+        case doc.attr 'pdf-folio-placement', (@media == 'prepress' ? 'physical' : 'virtual')
         when 'physical'
           folio_basis, invert_folio = :physical, false
         when 'physical-inverted'
