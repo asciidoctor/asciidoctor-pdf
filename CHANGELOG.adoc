@@ -40,7 +40,7 @@ Enhancements::
 * normalize space characters in authors content and drop lines with unresolved attribute references (#1642)
 * skip image block with missing image if computed alt text resolves to empty string (#1645)
 * custom theme does not inherit from base theme by default; must be specified explicitly using `extends: base` (#1640)
-* allow theme to confiure number of index columns using `index_columns` key (#1663)
+* allow theme to configure number of index columns using `index_columns` key (#1663)
 * configure AsciiDoc table cell to inherit font properties from table and scale font size of nested blocks (#926)
 * scale font size of literal table cell (#1696)
 * add support for id attribute on link macro
@@ -69,8 +69,8 @@ Enhancements::
 
 Bug Fixes::
 
-* do not crash if item in horizontal desciption list has no desc
-* do not crash if item in unordered desciption list has no desc and do not append subject stop to term
+* do not crash if item in horizontal description list has no desc
+* do not crash if item in unordered description list has no desc and do not append subject stop to term
 * resolve images in theme correctly when theme is loaded from classloader (JRuby only) (#1829)
 * log warning rather than crash if front cover image cannot be embedded (such as a broken SVG)
 * do not hyphenate a hyphen when hyphenation is enabled (#1562)
@@ -253,7 +253,7 @@ Bug Fixes::
 
 == 1.5.0.rc.2 (2020-01-09) - @mojavelinux
 
-* patch Prawn to fix incompatibilty with Ruby 2.7 (to fix text wrapping)
+* patch Prawn to fix incompatibility with Ruby 2.7 (to fix text wrapping)
 * fix crash when assigning font style to header cell in table body (#1468)
 * fix parsing of array value of pdf-page-margin attribute (#1475)
 * fix warning when reading data from a remote URL when running with Ruby 2.7 (#1477)
@@ -618,7 +618,7 @@ Bug Fixes::
 * look for correct file to require in bin script
 * upgrade prawn-icon from 1.3.0 to 1.4.0
 * upgrade rouge to 2.2.1 
-* add concurrent-ruby to runtime dependencies for compatiblity w/ Asciidoctor 1.5.8
+* add concurrent-ruby to runtime dependencies for compatibility w/ Asciidoctor 1.5.8
 
 == 1.5.0.alpha.16 (2017-07-30) - @mojavelinux
 
