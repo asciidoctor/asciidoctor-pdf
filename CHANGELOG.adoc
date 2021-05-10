@@ -32,7 +32,7 @@ Build / Infrastructure::
 
 Bug Fixes::
 
-* restore compatiblity with Asciidoctor 2.0.12 when using Pygments (#1846)
+* restore compatibility with Asciidoctor 2.0.12 when using Pygments (#1846)
 * fix numeric assertions in test suite (#1542)
 * keep caption with image when image is scaled down to fit page (#1803)
 * prevent inline image from rendering multiple times if fallback font is used for alt text (#1858)
