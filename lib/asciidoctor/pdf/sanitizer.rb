@@ -4,21 +4,21 @@ module Asciidoctor
   module PDF
     module Sanitizer
       XMLSpecialChars = {
-        '&lt;' => ?<,
-        '&gt;' => ?>,
-        '&amp;' => ?&,
+        '&lt;' => '<',
+        '&gt;' => '>',
+        '&amp;' => '&',
       }
-      XMLSpecialCharsRx = /(?:#{XMLSpecialChars.keys.join ?|})/
+      XMLSpecialCharsRx = /(?:#{XMLSpecialChars.keys.join '|'})/
       InverseXMLSpecialChars = XMLSpecialChars.invert
       InverseXMLSpecialCharsRx = /[#{InverseXMLSpecialChars.keys.join}]/
       (BuiltInNamedEntities = {
-        'amp' => ?&,
+        'amp' => '&',
         'apos' => ?',
-        'gt' => ?>,
-        'lt' => ?<,
+        'gt' => '>',
+        'lt' => '<',
         'nbsp' => ' ',
-        'quot' => ?",
-      }).default = ??
+        'quot' => '"',
+      }).default = '?'
       SanitizeXMLRx = /<[^>]+>/
       CharRefRx = /&(?:amp;)?(?:([a-z][a-z]+\d{0,2})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
       UnescapedAmpersandRx = /&(?!(?:[a-z][a-z]+\d{0,2}|#(?:\d\d\d{0,4}|x[a-f\d][a-f\d][a-f\d]{0,3}));)/
@@ -43,7 +43,7 @@ module Asciidoctor
       end
 
       def encode_quotes string
-        (string.include? ?") ? (string.gsub ?", '&quot;') : string
+        (string.include? '"') ? (string.gsub '"', '&quot;') : string
       end
     end
   end

@@ -6,8 +6,8 @@ module Asciidoctor
       class Transform
         LF = ?\n
         ZeroWidthSpace = ?\u200b
-        CharEntityTable = { amp: ?&, apos: ?', gt: ?>, lt: ?<, nbsp: ?\u00a0, quot: ?" }
-        CharRefRx = /&(?:(#{CharEntityTable.keys.join ?|})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
+        CharEntityTable = { amp: '&', apos: ?', gt: '>', lt: '<', nbsp: ?\u00a0, quot: '"' }
+        CharRefRx = /&(?:(#{CharEntityTable.keys.join '|'})|#(?:(\d\d\d{0,4})|x([a-f\d][a-f\d][a-f\d]{0,3})));/
         HexColorRx = /^#[a-fA-F0-9]{3,6}$/
         TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
         ThemeKeyToFragmentProperty = {
