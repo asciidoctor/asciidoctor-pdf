@@ -639,6 +639,53 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect b_category_text[:y]).to eql z_category_text[:y]
   end
 
+  it 'should apply prepress margins to subsequent pages in index' do
+    pdf_theme = {
+      page_margin: [48.24, 48.24, 48.24, 48.24],
+      page_margin_inner: 72,
+      page_margin_outer: 36,
+      index_columns: 1,
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    = Document Title
+    :doctype: book
+    :notitle:
+    :media: prepress
+    :pdf-page-size: A5
+
+    == Chapter
+
+    ((foo)) and ((bar))
+
+    ((yin)) and ((yang))
+
+    ((tea)) and ((coffee))
+
+    ((left)) and ((right))
+
+    ((salt)) and ((pepper))
+
+    ((up)) and ((down))
+
+    ((sugar)) and ((spice))
+
+    ((day)) and ((night))
+
+    ((melody)) and ((harmony))
+
+
+    [index]
+    == Index
+    EOS
+
+    d_category_text = pdf.find_unique_text 'D', page_number: 3
+    s_category_text = pdf.find_unique_text 'S', page_number: 4
+    (expect d_category_text).not_to be_nil
+    (expect s_category_text).not_to be_nil
+    (expect d_category_text[:x]).to eql 72.0
+    (expect s_category_text[:x]).to eql 36.0
+  end
+
   it 'should indent TOC title properly when index exceeds a page and section indent is positive' do
     pdf = to_pdf <<~EOS, pdf_theme: { section_indent: 50 }, analyze: true
     = Document Title
