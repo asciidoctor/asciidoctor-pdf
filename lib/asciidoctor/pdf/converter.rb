@@ -2407,6 +2407,10 @@ module Asciidoctor
       def convert_index_section _node
         space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
         column_box [0, cursor], columns: @theme.index_columns, width: bounds.width, reflow_margins: true do
+          def @bounding_box.move_past_bottom *args # rubocop:disable Lint/NestedMethodDefinition
+            super(*args)
+            @document.bounds = @parent = @document.margin_box if @current_column == 0 && @reflow_margins
+          end
           @index.categories.each do |category|
             # NOTE: cursor method always returns 0 inside column_box; breaks reference_bounds.move_past_bottom
             bounds.move_past_bottom if space_needed_for_category > y - reference_bounds.absolute_bottom

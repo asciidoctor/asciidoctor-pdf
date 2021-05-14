@@ -75,6 +75,7 @@ Bug Fixes::
 * log warning rather than crash if front cover image cannot be embedded (such as a broken SVG)
 * do not hyphenate a hyphen when hyphenation is enabled (#1562)
 * do not insert blank line in index when term is forced to break (#1665)
+* honor prepress page margins on subsequent pages in index (#1929)
 * use more robust strategy for line height normalization that accounts for line contains only monospaced text (#1650)
 * prevent generator from allocating space for placeholder null char (used for anchors) if font is missing glyph (#1672)
 * ensure background and admonition icon image files are closed after being read (#1566)
