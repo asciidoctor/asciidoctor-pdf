@@ -850,6 +850,21 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect lines[0]).to eql 'whisper SHOUT Here Me Roar'
     end
 
+    it 'should allow custom role to apply text transform when it is not the only role on the phrase' do
+      pdf_theme = {
+        role_red_font_color: 'FF0000',
+        role_upper_text_transform: 'uppercase',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      [.upper.red]#shout#
+      EOS
+
+      shout_text = pdf.text[0]
+      (expect shout_text[:font_color]).to eql 'FF0000'
+      (expect shout_text[:string]).to eql 'SHOUT'
+    end
+
     it 'should allow custom role to specify relative font size' do
       pdf_theme = {
         heading_h2_font_size: 24,

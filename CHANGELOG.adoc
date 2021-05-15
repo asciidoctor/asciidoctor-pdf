@@ -83,6 +83,7 @@ Bug Fixes::
 * fix spacing after first line of indented paragraph (#1557)
 * fix crash if btn or kbd macro is used in section title (#1563)
 * fix crash when applying text transform to heading cell in table body (#1575)
+* allow custom inline role to control text transform when it's not the only role on the phrase
 * do not convert already converted intrinsic width for block and inline SVG
 * honor font style when looking for glyph in font
 * resolve character references in custom admonition label (as defined via caption attribute)

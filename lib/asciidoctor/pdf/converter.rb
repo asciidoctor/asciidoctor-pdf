@@ -2698,11 +2698,13 @@ module Asciidoctor
 
         inner_text = node.text
 
-        if (role = node.role)
-          if (text_transform = theme[%(role_#{role}_text_transform)])
-            inner_text = transform_text inner_text, text_transform
+        if (roles = node.role)
+          roles.split.each do |role|
+            if (text_transform = theme[%(role_#{role}_text_transform)])
+              inner_text = transform_text inner_text, text_transform
+            end
           end
-          quoted_text = is_tag ? %(#{open.chop} class="#{role}">#{inner_text}#{close}) : %(<span class="#{role}">#{open}#{inner_text}#{close}</span>)
+          quoted_text = is_tag ? %(#{open.chop} class="#{roles}">#{inner_text}#{close}) : %(<span class="#{roles}">#{open}#{inner_text}#{close}</span>)
         else
           quoted_text = %(#{open}#{inner_text}#{close})
         end
