@@ -161,6 +161,7 @@ Bug Fixes::
 * escape closing square bracket around alt text of missing image so it doesn't get matched as part of a link macro
 * use value of author attribute in PDF info and pdfmark if authors attribute is not set (#1922)
 * honor pdf-folio-placement setting even when media=prepress (#1917)
+* honor pre-wrap role on phrase (#1927)
 
 Compliance::
 

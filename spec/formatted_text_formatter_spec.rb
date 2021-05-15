@@ -741,6 +741,15 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[2][:font_size].to_f.round 2).to eql 9.0
     end
 
+    it 'should support built-in pre-wrap role on phrase' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [.pre-wrap]`0 1  2   3     5`
+      EOS
+
+      shout_text = pdf.text[0]
+      (expect shout_text[:string]).to eql '0 1  2   3     5'
+    end
+
     it 'should allow theme to control formatting applied to phrase by role' do
       pdf_theme = {
         role_red_font_color: 'ff0000',
