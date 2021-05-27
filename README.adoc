@@ -243,7 +243,7 @@ In that file, declare the gem source, the {project-handle} gem, and the prawn-ta
 source 'https://rubygems.org'
 
 gem 'asciidoctor-pdf'
-gem 'prawn-table', github: 'prawnpdf/prawn-table'
+gem 'prawn-table', github: 'prawnpdf/prawn-table', branch: 'HEAD'
 ----
 
 You can then install the gems into your project using the `bundle` command:
