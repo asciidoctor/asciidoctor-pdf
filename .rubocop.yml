@@ -7,7 +7,7 @@ Gemspec/DateAssignment:
   Enabled: true
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
-  IndentationWidth: 4
+  IndentationWidth: 2 # FIXME: core uses 4, so align one way or the other
 Layout/BeginEndAlignment:
   Enabled: true
 Layout/CaseIndentation:
@@ -68,6 +68,8 @@ Lint/EmptyClass:
 Lint/EmptyConditionalBody:
   Enabled: true
 Lint/EmptyFile:
+  Enabled: true
+Lint/EmptyInPattern:
   Enabled: true
 Lint/EmptyWhen:
   Enabled: false
@@ -259,6 +261,8 @@ Style/IfWithBooleanLiteralBranches:
   Enabled: true
 Style/IfUnlessModifierOfIfUnless:
   Enabled: false
+Style/InPatternThen:
+  Enabled: true
 Style/InfiniteLoop:
   Enabled: false # loop is measurably slower than while true
 Style/KeywordParametersOrder:
@@ -270,6 +274,8 @@ Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
 Style/MultilineBlockChain:
   Enabled: false
+Style/MultilineInPatternThen:
+  Enabled: true
 Style/MultilineIfModifier:
   Enabled: false
 Style/MultilineTernaryOperator:
@@ -299,6 +305,8 @@ Style/PercentLiteralDelimiters:
     "%W": "()"
 Style/PerlBackrefs:
   Enabled: false
+Style/QuotedSymbols:
+  Enabled: true
 Style/RedundantArgument:
   Enabled: true
 Style/RedundantAssignment:

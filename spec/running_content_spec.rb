@@ -2814,11 +2814,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         }
 
         doc = to_pdf 'body',
-            analyze: :document,
-            to_file: (to_file = output_file 'running-content-remote-image.pdf'),
-            pdf_theme: pdf_theme,
-            enable_footer: true,
-            attribute_overrides: { 'allow-uri-read' => '' }
+          analyze: :document,
+          to_file: (to_file = output_file 'running-content-remote-image.pdf'),
+          pdf_theme: pdf_theme,
+          enable_footer: true,
+          attribute_overrides: { 'allow-uri-read' => '' }
 
         (expect to_file).to visually_match 'running-content-image-alignment.pdf'
         # NOTE: we could assert no log messages instead, but that assumes the remove_tmp_files method is even called

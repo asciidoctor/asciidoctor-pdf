@@ -60,9 +60,9 @@ module Asciidoctor
             inputs = target
           end
           (::RGhost::Convert.new inputs).to :pdf,
-              filename: filename_tmp.to_s,
-              quality: @quality,
-              d: { Printed: false, CannotEmbedFontPolicy: '/Warning', CompatibilityLevel: @compatibility_level }
+            filename: filename_tmp.to_s,
+            quality: @quality,
+            d: { Printed: false, CannotEmbedFontPolicy: '/Warning', CompatibilityLevel: @compatibility_level }
           filename_o.binwrite filename_tmp.binread
         end
         nil

@@ -897,9 +897,9 @@ module Asciidoctor
                     rule_segment_height = [rule_height, cursor].min
                     bounding_box [0, cursor], width: label_width + lpad[1], height: rule_segment_height do
                       stroke_vertical_rule rule_color,
-                          at: bounds.right,
-                          line_style: (@theme.admonition_column_rule_style&.to_sym || :solid),
-                          line_width: rule_width
+                        at: bounds.right,
+                        line_style: (@theme.admonition_column_rule_style&.to_sym || :solid),
+                        line_width: rule_width
                     end
                     advance_page if (rule_height -= rule_segment_height) > 0
                   end
@@ -919,22 +919,22 @@ module Asciidoctor
                       end
                     end
                     icon icon_data[:name],
-                        valign: label_valign,
-                        align: label_align,
-                        color: (icon_data[:stroke_color] || font_color),
-                        size: icon_size
+                      valign: label_valign,
+                      align: label_align,
+                      color: (icon_data[:stroke_color] || font_color),
+                      size: icon_size
                   elsif icons
                     if (::Asciidoctor::Image.format icon_path) == 'svg'
                       begin
                         svg_obj = ::Prawn::SVG::Interface.new (::File.read icon_path, mode: 'r:UTF-8'), self,
-                            position: label_align,
-                            vposition: label_valign,
-                            width: label_width,
-                            height: label_height,
-                            fallback_font_name: fallback_svg_font_name,
-                            enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
-                            enable_file_requests_with_root: (::File.dirname icon_path),
-                            cache_images: cache_uri
+                          position: label_align,
+                          vposition: label_valign,
+                          width: label_width,
+                          height: label_height,
+                          fallback_font_name: fallback_svg_font_name,
+                          enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
+                          enable_file_requests_with_root: (::File.dirname icon_path),
+                          cache_images: cache_uri
                         svg_obj.resize height: label_height if svg_obj.document.sizing.output_height > label_height
                         svg_obj.draw
                         svg_obj.document.warnings.each do |icon_warning|
@@ -988,13 +988,13 @@ module Asciidoctor
                         end
                         @text_transform = nil # already applied to label
                         layout_prose label_text,
-                            align: label_align,
-                            valign: label_valign,
-                            line_height: 1,
-                            margin: 0,
-                            inline_format: false, # already replaced character references
-                            overflow: :shrink_to_fit,
-                            disable_wrap_by_char: true
+                          align: label_align,
+                          valign: label_valign,
+                          line_height: 1,
+                          margin: 0,
+                          inline_format: false, # already replaced character references
+                          overflow: :shrink_to_fit,
+                          disable_wrap_by_char: true
                       end
                     end
                   end
@@ -1466,14 +1466,14 @@ module Asciidoctor
               start_new_page if @media == 'prepress' && cursor < marker_height
               flow_bounding_box position: start_position, width: marker_width do
                 layout_prose marker,
-                    align: :right,
-                    character_spacing: -0.5,
-                    color: marker_style[:font_color],
-                    inline_format: false,
-                    line_height: marker_style[:line_height],
-                    margin: 0,
-                    normalize: false,
-                    single_line: true
+                  align: :right,
+                  character_spacing: -0.5,
+                  color: marker_style[:font_color],
+                  inline_format: false,
+                  line_height: marker_style[:line_height],
+                  margin: 0,
+                  normalize: false,
+                  single_line: true
               end
             end
           end
@@ -1578,12 +1578,12 @@ module Asciidoctor
                 file_request_root = ::File.dirname image_path
               end
               svg_obj = ::Prawn::SVG::Interface.new svg_data, self,
-                  position: alignment,
-                  width: width,
-                  fallback_font_name: fallback_svg_font_name,
-                  enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
-                  enable_file_requests_with_root: file_request_root,
-                  cache_images: cache_uri
+                position: alignment,
+                width: width,
+                fallback_font_name: fallback_svg_font_name,
+                enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
+                enable_file_requests_with_root: file_request_root,
+                cache_images: cache_uri
               rendered_w = (svg_size = svg_obj.document.sizing).output_width
               if !width && (svg_obj.document.root.attributes.key? 'width')
                 # NOTE: restrict width to available width (prawn-svg already coerces to pixels)
@@ -1685,11 +1685,7 @@ module Asciidoctor
           alignment = (alignment = node.attr 'align') ?
             ((BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left) :
             (resolve_alignment_from_role node.roles) || (@theme.image_align&.to_sym || :left)
-          layout_prose alt_text_template % alt_text_vars,
-              align: alignment,
-              margin: 0,
-              normalize: false,
-              single_line: true
+          layout_prose alt_text_template % alt_text_vars, align: alignment, margin: 0, normalize: false, single_line: true
         end
         layout_caption node, category: :image, side: :bottom if node.title?
         theme_margin :block, :bottom unless opts[:pinned]
@@ -1886,8 +1882,8 @@ module Asciidoctor
             pad_box @theme.code_padding do
               ::Prawn::Text::Formatted::Box.extensions << wrap_ext if wrap_ext
               typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height || @theme.base_line_height),
-                  color: (font_color_override || @theme.code_font_color || @font_color),
-                  size: adjusted_font_size
+                color: (font_color_override || @theme.code_font_color || @font_color),
+                size: adjusted_font_size
               ::Prawn::Text::Formatted::Box.extensions.pop if wrap_ext
             end
           end
@@ -2417,11 +2413,11 @@ module Asciidoctor
             # NOTE: cursor method always returns 0 inside column_box; breaks reference_bounds.move_past_bottom
             bounds.move_past_bottom if space_needed_for_category > y - reference_bounds.absolute_bottom
             layout_prose category.name,
-                align: :left,
-                inline_format: false,
-                margin_top: 0,
-                margin_bottom: @theme.description_list_term_spacing,
-                style: @theme.description_list_term_font_style.to_sym
+              align: :left,
+              inline_format: false,
+              margin_top: 0,
+              margin_bottom: @theme.description_list_term_spacing,
+              style: @theme.description_list_term_font_style.to_sym
             category.terms.each {|term| convert_index_list_item term }
             if @theme.prose_margin_bottom > y - reference_bounds.absolute_bottom
               bounds.move_past_bottom
@@ -2792,10 +2788,7 @@ module Asciidoctor
             move_down @theme.title_page_title_margin_top || 0
             indent (@theme.title_page_title_margin_left || 0), (@theme.title_page_title_margin_right || 0) do
               theme_font :title_page_title do
-                layout_prose doctitle.main,
-                    align: title_align,
-                    margin: 0,
-                    line_height: @theme.title_page_title_line_height
+                layout_prose doctitle.main, align: title_align, margin: 0, line_height: @theme.title_page_title_line_height
               end
             end
             move_down @theme.title_page_title_margin_bottom || 0
@@ -2804,10 +2797,7 @@ module Asciidoctor
             move_down @theme.title_page_subtitle_margin_top || 0
             indent (@theme.title_page_subtitle_margin_left || 0), (@theme.title_page_subtitle_margin_right || 0) do
               theme_font :title_page_subtitle do
-                layout_prose subtitle,
-                    align: title_align,
-                    margin: 0,
-                    line_height: @theme.title_page_subtitle_line_height
+                layout_prose subtitle, align: title_align, margin: 0, line_height: @theme.title_page_subtitle_line_height
               end
             end
             move_down @theme.title_page_subtitle_margin_bottom || 0
@@ -2832,10 +2822,7 @@ module Asciidoctor
                 end
               }.join @theme.title_page_authors_delimiter
               theme_font :title_page_authors do
-                layout_prose authors,
-                    align: title_align,
-                    margin: 0,
-                    normalize: true
+                layout_prose authors, align: title_align, margin: 0, normalize: true
               end
             end
             move_down @theme.title_page_authors_margin_bottom || 0
@@ -2848,10 +2835,7 @@ module Asciidoctor
             end
             indent (@theme.title_page_revision_margin_left || 0), (@theme.title_page_revision_margin_right || 0) do
               theme_font :title_page_revision do
-                layout_prose revision_text,
-                    align: title_align,
-                    margin: 0,
-                    normalize: false
+                layout_prose revision_text, align: title_align, margin: 0, normalize: false
               end
             end
             move_down @theme.title_page_revision_margin_bottom || 0
@@ -3458,14 +3442,14 @@ module Asciidoctor
                         content = transform_text content, @text_transform if @text_transform
                       end
                       formatted_text_box (parse_text content, color: @font_color, inline_format: [normalize: true]),
-                          at: [left, bounds.top - trim_styles[:padding][side][0] - trim_styles[:content_offset] + ((Array trim_styles[:valign])[0] == :center ? font.descender * 0.5 : 0)],
-                          width: colwidth,
-                          height: trim_styles[:prose_content_height][side],
-                          align: colspec[:align],
-                          valign: trim_styles[:valign],
-                          leading: trim_styles[:line_metrics].leading,
-                          final_gap: false,
-                          overflow: :truncate
+                        at: [left, bounds.top - trim_styles[:padding][side][0] - trim_styles[:content_offset] + ((Array trim_styles[:valign])[0] == :center ? font.descender * 0.5 : 0)],
+                        width: colwidth,
+                        height: trim_styles[:prose_content_height][side],
+                        align: colspec[:align],
+                        valign: trim_styles[:valign],
+                        leading: trim_styles[:line_metrics].leading,
+                        final_gap: false,
+                        overflow: :truncate
                     end
                   end
                   bounding_box [colspec[:x], bounds.top - trim_styles[:padding][side][0] - trim_styles[:content_offset]], width: colspec[:width], height: trim_styles[:content_height][side] do
@@ -3827,9 +3811,9 @@ module Asciidoctor
 
       def theme_fill_and_stroke_bounds category, opts = {}
         fill_and_stroke_bounds opts[:background_color], @theme[%(#{category}_border_color)],
-            line_width: @theme[%(#{category}_border_width)],
-            line_style: (@theme[%(#{category}_border_style)]&.to_sym || :solid),
-            radius: @theme[%(#{category}_border_radius)]
+          line_width: @theme[%(#{category}_border_width)],
+          line_style: (@theme[%(#{category}_border_style)]&.to_sym || :solid),
+          radius: @theme[%(#{category}_border_radius)]
       end
 
       def theme_fill_and_stroke_block category, block_height, opts = {}

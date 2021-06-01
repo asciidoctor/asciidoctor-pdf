@@ -64,12 +64,12 @@ module Asciidoctor::PDF::FormattedText
         # TODO: make helper method to calculate width and height of image
         if fragment[:image_format] == 'svg'
           svg_obj = ::Prawn::SVG::Interface.new ::File.read(image_path, mode: 'r:UTF-8'), doc,
-              at: doc.bounds.top_left,
-              width: image_w,
-              fallback_font_name: doc.fallback_svg_font_name,
-              enable_web_requests: doc.allow_uri_read ? (doc.method :load_open_uri).to_proc : false,
-              enable_file_requests_with_root: (::File.dirname image_path),
-              cache_images: doc.cache_uri
+            at: doc.bounds.top_left,
+            width: image_w,
+            fallback_font_name: doc.fallback_svg_font_name,
+            enable_web_requests: doc.allow_uri_read ? (doc.method :load_open_uri).to_proc : false,
+            enable_file_requests_with_root: (::File.dirname image_path),
+            cache_images: doc.cache_uri
           svg_size = svg_obj.document.sizing
           # NOTE: the best we can do is make the image fit within full height of bounds
           if (image_h = svg_size.output_height) > max_image_h
