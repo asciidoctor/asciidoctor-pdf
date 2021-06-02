@@ -279,7 +279,7 @@ module Asciidoctor
             end
           # RGB value
           when 3
-            return HexColorValue.new value.map {|e| '%02X' % e }.join
+            return HexColorValue.new value.map {|e| sprintf '%02X', e }.join
           # Nonsense array value; flatten to string
           else
             value = value.join

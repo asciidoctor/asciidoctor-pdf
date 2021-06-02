@@ -7,7 +7,6 @@ Gemspec/DateAssignment:
   Enabled: true
 Layout/ArgumentAlignment:
   EnforcedStyle: with_fixed_indentation
-  IndentationWidth: 2 # FIXME: core uses 4, so align one way or the other
 Layout/BeginEndAlignment:
   Enabled: true
 Layout/CaseIndentation:
@@ -26,15 +25,20 @@ Layout/LeadingCommentSpace:
   Enabled: false
 Layout/LineLength:
   Enabled: false # FIXME enable me
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
 Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 4
 Layout/RescueEnsureAlignment:
-  Enabled: false
+  Enabled: true
 Layout/SpaceAroundMethodCallOperator:
   Enabled: true
+Layout/SpaceAroundOperators:
+  Enabled: true
+  EnforcedStyleForExponentOperator: space
 Layout/SpaceBeforeBrackets:
   Enabled: true
 Layout/SpaceInsideBlockBraces:
@@ -42,11 +46,11 @@ Layout/SpaceInsideBlockBraces:
 Lint/AmbiguousAssignment:
   Enabled: true
 Lint/AmbiguousBlockAssociation:
-  Enabled: false
+  Enabled: false # FIXME enable
 Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 Lint/ConstantDefinitionInBlock:
-  Enabled: false
+  Enabled: false # NOTE needed for tests
 Lint/DeprecatedConstants:
   Enabled: true
 Lint/DeprecatedOpenSSLConstant:
@@ -62,7 +66,7 @@ Lint/DuplicateRequire:
 Lint/DuplicateRescueException:
   Enabled: true
 Lint/EmptyBlock:
-  Enabled: false
+  Enabled: true
 Lint/EmptyClass:
   Enabled: true
 Lint/EmptyConditionalBody:
@@ -74,7 +78,7 @@ Lint/EmptyInPattern:
 Lint/EmptyWhen:
   Enabled: false
 Lint/FloatComparison:
-  Enabled: false
+  Enabled: false # NOTE needed for tests
 Lint/IdentityComparison:
   Enabled: true
 Lint/LambdaWithoutLiteralBlock:
@@ -118,6 +122,8 @@ Lint/UnexpectedBlockArity:
 Lint/UnmodifiedReduceAccumulator:
   Enabled: true
 Lint/UnreachableLoop:
+  Enabled: true
+Lint/UnusedMethodArgument:
   Enabled: true
 Lint/UselessMethodDefinition:
   Enabled: true
@@ -181,10 +187,13 @@ Security/Open:
 Style/AccessorGrouping:
   Enabled: true
   EnforcedStyle: separated
+Style/Alias:
+  Enabled: true
+  EnforcedStyle: prefer_alias
 Style/ArgumentsForwarding:
   Enabled: true
 Style/ArrayCoercion:
-  Enabled: true
+  Enabled: false
 Style/AsciiComments:
   Enabled: false
 Style/Attr:
@@ -194,7 +203,7 @@ Style/BisectedAttrAccessor:
 Style/BlockComments:
   Enabled: false
 Style/BlockDelimiters:
-  EnforcedStyle: braces_for_chaining
+  EnforcedStyle: braces_for_chaining # FIXME we want this to be line_count_based except when chaining
 Style/CaseEquality:
   Enabled: false
 Style/CaseLikeIf:
@@ -234,9 +243,9 @@ Style/ExplicitBlockArgument:
 Style/ExponentialNotation:
   Enabled: true
 Style/FormatString:
-  EnforcedStyle: percent
+  EnforcedStyle: sprintf
 Style/FormatStringToken:
-  Enabled: false
+  Enabled: false # NOTE annotated style needed to support theming language
 Style/GlobalStdStream:
   Enabled: true
 Style/GuardClause:
@@ -259,12 +268,14 @@ Style/HashTransformValues:
   Enabled: true
 Style/IfWithBooleanLiteralBranches:
   Enabled: true
+Style/IfUnlessModifier:
+  Enabled: false
 Style/IfUnlessModifierOfIfUnless:
   Enabled: false
 Style/InPatternThen:
   Enabled: true
 Style/InfiniteLoop:
-  Enabled: false # loop is measurably slower than while true
+  Enabled: false # NOTE loop is measurably slower than while true
 Style/KeywordParametersOrder:
   Enabled: true
 Style/MethodCallWithArgsParentheses:
@@ -327,6 +338,8 @@ Style/RescueModifier:
   Enabled: false
 Style/RescueStandardError:
   EnforcedStyle: implicit
+Style/SafeNavigation:
+  Enabled: true
 Style/SingleArgumentDig:
   Enabled: true
 Style/SlicingWithRange:

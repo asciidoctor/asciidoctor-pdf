@@ -147,12 +147,12 @@ class EnhancedPDFTextInspector < PDF::Inspector
 
   # scn (used for font color in SVG)
   def set_color_for_nonstroking_and_special *params
-    @color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| '%02X' % (it.to_f * 255).round }.join
+    @color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| sprintf '%02X', (it.to_f * 255).round }.join
   end
 
   # SCN
   def set_color_for_stroking_and_special *params
-    @color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| '%02X' % (it.to_f * 255).round }.join
+    @color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| sprintf '%02X', (it.to_f * 255).round }.join
   end
 
   def move_text_position x, y
@@ -262,13 +262,13 @@ class LineInspector < PDF::Inspector
 
   # SCN
   def set_color_for_stroking_and_special *params
-    @color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| '%02X' % (it.to_f * 255).round }.join
+    @color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| sprintf '%02X', (it.to_f * 255).round }.join
   end
 
   # gs
   def set_graphics_state_parameters ref
     if (opacity = @graphic_states[ref][:ca])
-      @color += '%02X' % (opacity * 255).round
+      @color += (sprintf '%02X', (opacity * 255).round)
     end
   end
 
@@ -341,7 +341,7 @@ RSpec.configure do |config|
         end
       end
       if (out = kw_args[:out])
-        Open3.pipeline_w([env_override, cmd, *args, { out: out }]) {}
+        Open3.pipeline_w([env_override, cmd, *args, { out: out }]) {} # rubocop:disable Lint/EmptyBlock
       else
         Open3.capture3 env_override, cmd, *args
       end
