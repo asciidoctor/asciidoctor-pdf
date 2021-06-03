@@ -46,7 +46,7 @@ Layout/SpaceInsideBlockBraces:
 Lint/AmbiguousAssignment:
   Enabled: true
 Lint/AmbiguousBlockAssociation:
-  Enabled: false # FIXME enable
+  Enabled: false # FIXME reenable
 Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 Lint/ConstantDefinitionInBlock:
@@ -231,7 +231,7 @@ Style/ConditionalAssignment:
 Style/DocumentDynamicEvalDefinition:
   Enabled: true
 Style/Documentation:
-  Enabled: false # FIXME enable me
+  Enabled: false # FIXME reenable
 Style/DoubleNegation:
   Enabled: false
 Style/EmptyLiteral:
@@ -297,10 +297,14 @@ Style/MutableConstant:
   Enabled: false
 Style/NegatedIfElseCondition:
   Enabled: true
+Style/NestedParenthesizedCalls:
+  Enabled: true
 Style/NestedTernaryOperator:
   Enabled: false
 Style/NilLambda:
   Enabled: true
+Style/NumericLiterals:
+  Enabled: false
 Style/NumericPredicate:
   EnforcedStyle: comparison
 Style/OptionalBooleanParameter:
@@ -356,6 +360,8 @@ Style/SwapValues:
   Enabled: true
 Style/SymbolArray:
   EnforcedStyle: brackets
+Style/SymbolProc:
+  Enabled: true
 Style/TernaryParentheses:
   Enabled: true
   EnforcedStyle: require_parentheses_when_complex
