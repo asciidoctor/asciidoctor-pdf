@@ -799,6 +799,33 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect start_texts).to have_size 2
       (expect start_texts[0][:x]).to eql start_texts[1][:x]
       (expect start_texts[0][:x]).to be > linenum_text[:x]
+      indent_texts = pdf.find_text %r/\u00a0/
+      (expect indent_texts).to have_size 1
+      (expect indent_texts[0][:x]).to eql linenum_text[:x]
+      (expect indent_texts[0][:string]).to eql %(\u00a0 )
+    end
+
+    it 'should indent wrapped line if line numbers are enabled and block has an AFM font' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+      :pdf-theme: base
+
+      [,text,linenums]
+      ----
+      Here we go again here we go again here we go again here we go again here we go again Here we go again
+      ----
+      EOS
+
+      linenum_text = (pdf.find_text '1 ')[0]
+      (expect linenum_text[:x]).not_to be_nil
+      start_texts = pdf.find_text %r/Here we go/
+      (expect start_texts).to have_size 2
+      (expect start_texts[0][:x]).to eql start_texts[1][:x]
+      (expect start_texts[0][:x]).to be > linenum_text[:x]
+      indent_texts = pdf.find_text %r/\u00a0/
+      (expect indent_texts).to have_size 1
+      (expect indent_texts[0][:x]).to eql linenum_text[:x]
+      (expect indent_texts[0][:string]).to eql %(\u00a0 )
     end
 
     it 'should highlight and indent wrapped line', visual: true do
