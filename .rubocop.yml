@@ -215,6 +215,8 @@ Style/CharacterLiteral:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
+Style/ClassVars:
+  Enabled: false # NOTE we think they are an important language feature
 Style/CollectionCompact:
   Enabled: true
 Style/CombinableLoops:
@@ -222,6 +224,7 @@ Style/CombinableLoops:
 Style/CommandLiteral:
   EnforcedStyle: percent_x
 Style/CommentAnnotation:
+  Enabled: true
   Keywords:
   - TODO
   - FIXME
