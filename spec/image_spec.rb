@@ -76,10 +76,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should align alt text using alignment specified on image' do
       [
-        ['', { image_align: nil }],
+        ['', image_align: nil],
         [',align=center', {}],
         [',role=text-center', {}],
-        ['', { image_align: 'center' }],
+        ['', image_align: 'center'],
       ].each do |attrlist, pdf_theme|
         (expect do
           pdf = to_pdf %(image::no-such-image.png[#{attrlist}]), analyze: true, pdf_theme: pdf_theme

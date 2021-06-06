@@ -254,7 +254,8 @@ Style/GuardClause:
 Style/HashConversion:
   Enabled: true
 Style/HashAsLastArrayItem:
-  Enabled: false
+  Enabled: true
+  EnforcedStyle: no_braces
 Style/HashEachMethods:
   Enabled: true
 Style/HashExcept:

@@ -341,7 +341,7 @@ RSpec.configure do |config|
         end
       end
       if (out = kw_args[:out])
-        Open3.pipeline_w([env_override, cmd, *args, { out: out }]) {} # rubocop:disable Lint/EmptyBlock
+        Open3.pipeline_w([env_override, cmd, *args, out: out]) {} # rubocop:disable Lint/EmptyBlock
       else
         Open3.capture3 env_override, cmd, *args
       end

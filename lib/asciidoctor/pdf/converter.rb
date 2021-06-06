@@ -3580,7 +3580,7 @@ module Asciidoctor
                   rel_width = (spec.slice 1, spec.length).to_f
                 end
                 tot_width += rel_width
-                [col, { align: alignment, width: rel_width, x: 0 }]
+                [col, align: alignment, width: rel_width, x: 0]
               }.to_h
               # QUESTION: should we allow the columns to overlap (capping width at 100%)?
               side_colspecs.each {|_, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
