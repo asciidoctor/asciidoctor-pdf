@@ -11,7 +11,10 @@ class Asciidoctor::Document
       preface.sectname = 'preface'
       preface.title = blk0.instance_variable_get :@title
       preface.id = preface.generate_id
-      preface.blocks.replace blk0.blocks.map {|b| b.parent = preface; b } # rubocop:disable Style/Semicolon
+      preface.blocks.replace (blk0.blocks.map do |b|
+        b.parent = preface
+        b
+      end)
       blocks[0] = preface
     end
     nil

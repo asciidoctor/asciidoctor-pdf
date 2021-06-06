@@ -2435,7 +2435,7 @@ module Asciidoctor
           if @media == 'screen'
             pagenums = term.dests.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
           else
-            pagenums = consolidate_ranges term.dests.uniq {|dest| dest[:page] }.map {|dest| dest[:page] }
+            pagenums = consolidate_ranges term.dests.uniq {|dest| dest[:page] }.map {|dest| dest[:page] } # rubocop:disable Lint/AmbiguousBlockAssociation
           end
           text = %(#{text}, #{pagenums.join ', '})
         end

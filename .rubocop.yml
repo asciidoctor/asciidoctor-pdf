@@ -46,7 +46,8 @@ Layout/SpaceInsideBlockBraces:
 Lint/AmbiguousAssignment:
   Enabled: true
 Lint/AmbiguousBlockAssociation:
-  Enabled: false # FIXME reenable
+  Enabled: true # NOTE this is pedantic when using braces for single-line blocks
+  Exclude: [ spec/*.rb ]
 Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 Lint/ConstantDefinitionInBlock:
