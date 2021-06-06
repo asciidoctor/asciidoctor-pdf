@@ -333,10 +333,14 @@ Style/RedundantArgument:
   Enabled: true
 Style/RedundantAssignment:
   Enabled: true
+Style/RedundantBegin:
+  Enabled: true
 Style/RedundantFetchBlock:
   Enabled: true
 Style/RedundantFileExtensionInRequire:
   Enabled: true
+Style/RedundantPercentQ:
+  Enabled: false
 Style/RedundantRegexpCharacterClass:
   Enabled: true
 Style/RedundantRegexpEscape:
@@ -359,6 +363,8 @@ Style/SoleNestedConditional:
   Enabled: false
 Style/SpecialGlobalVars:
   EnforcedStyle: use_perl_names
+Style/StderrPuts:
+  Enabled: true
 Style/StringChars:
   Enabled: true
 Style/StringConcatenation:
@@ -376,3 +382,5 @@ Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma
+Style/WordArray:
+  Enabled: true
