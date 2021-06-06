@@ -10,10 +10,8 @@ module Asciidoctor::PDF::FormattedText
       x = fragment.left
       y = fragment.baseline
       align = fragment.format_state[:align]
-      if align == :center || align == :right
-        if (gap_width = fragment.width - (document.width_of text)) != 0
-          x += gap_width * (align == :center ? 0.5 : 1)
-        end
+      if (align == :center || align == :right) && (gap_width = fragment.width - (document.width_of text)) != 0
+        x += gap_width * (align == :center ? 0.5 : 1)
       end
       document.draw_text! text, at: [x, y]
       fragment.conceal

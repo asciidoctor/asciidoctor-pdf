@@ -418,7 +418,7 @@ module Asciidoctor
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
         # NOTE: defer instantiating optimizer until we know min pdf version
         if (@optimize = doc.attr 'optimize')
-          @optimize = nil unless (defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?
+          @optimize = nil unless (defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil? # rubocop:disable Style/SoleNestedConditional
         end
         init_scratch_prototype
         self
@@ -797,8 +797,8 @@ module Asciidoctor
 
       def convert_preamble node
         # FIXME: core should not be promoting paragraph to preamble if there are no sections
-        if node.blocks? && (first_block = node.blocks[0]).context == :paragraph && node.document.sections?
-          first_block.add_role 'lead' unless first_block.role?
+        if node.blocks? && (first_block = node.blocks[0]).context == :paragraph && node.document.sections? && !first_block.role?
+          first_block.add_role 'lead'
         end
         traverse node
         convert_toc node, placement: 'preamble'
@@ -1057,9 +1057,7 @@ module Asciidoctor
         # NOTE: b_width and b_left_width are mutually exclusive
         unless (b_left_width = @theme[%(#{category}_border_left_width)]) && b_left_width > 0
           b_left_width = nil
-          if (b_width = @theme[%(#{category}_border_width)])
-            b_width = nil unless b_width > 0
-          end
+          b_width = nil if (b_width = @theme[%(#{category}_border_width)]) == 0
         end
         keep_together do |box_height = nil|
           push_scratch node.document if scratch?
@@ -1585,9 +1583,9 @@ module Asciidoctor
                 enable_file_requests_with_root: file_request_root,
                 cache_images: cache_uri
               rendered_w = (svg_size = svg_obj.document.sizing).output_width
-              if !width && (svg_obj.document.root.attributes.key? 'width')
+              if !width && (svg_obj.document.root.attributes.key? 'width') && rendered_w > available_w
                 # NOTE: restrict width to available width (prawn-svg already coerces to pixels)
-                svg_size = svg_obj.resize width: (rendered_w = available_w) if rendered_w > available_w
+                svg_size = svg_obj.resize width: (rendered_w = available_w)
               end
               # NOTE: shrink image so it fits within available space; group image & caption
               if (rendered_h = svg_size.output_height) > (available_h = cursor - caption_h)
@@ -1845,10 +1843,8 @@ module Asciidoctor
               end
               if (srclang = node.attr 'language')
                 if srclang.include? '?'
-                  if (lexer = ::Rouge::Lexer.find_fancy srclang)
-                    if lexer.tag == 'php' && !(node.option? 'mixed') && !((lexer_opts = lexer.options).key? 'start_inline')
-                      lexer = lexer.class.new lexer_opts.merge 'start_inline' => true
-                    end
+                  if (lexer = ::Rouge::Lexer.find_fancy srclang) && lexer.tag == 'php' && !(node.option? 'mixed') && !((lexer_opts = lexer.options).key? 'start_inline')
+                    lexer = lexer.class.new lexer_opts.merge 'start_inline' => true
                   end
                 elsif (lexer = ::Rouge::Lexer.find srclang)
                   lexer = lexer.new start_inline: true if lexer.tag == 'php' && !(node.option? 'mixed')
@@ -1856,10 +1852,8 @@ module Asciidoctor
               end
               lexer ||= ::Rouge::Lexers::PlainText
               source_string, conum_mapping = extract_conums source_string if callouts_enabled
-              if node.attr? 'highlight'
-                unless (hl_lines = (node.resolve_lines_to_highlight source_string, (node.attr 'highlight'))).empty?
-                  formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
-                end
+              if (node.attr? 'highlight') && !(hl_lines = (node.resolve_lines_to_highlight source_string, (node.attr 'highlight'))).empty?
+                formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
               end
               fragments = formatter.format (lexer.lex source_string), formatter_opts rescue [text: source_string]
               source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
@@ -2482,13 +2476,11 @@ module Asciidoctor
             # NOTE: we don't use local as that doesn't work on the web
             %(<a href="#{target}">#{node.text || path}</a>)
           elsif (refid = node.attributes['refid'])
-            unless (text = node.text)
-              if AbstractNode === (ref = doc.catalog[:refs][refid]) && (@resolving_xref ||= (outer = true)) && outer
-                if (text = ref.xreftext node.attr 'xrefstyle', nil, true)&.include? '<a'
-                  text = text.gsub DropAnchorRx, ''
-                end
-                @resolving_xref = nil
+            if !(text = node.text) && AbstractNode === (ref = doc.catalog[:refs][refid]) && (@resolving_xref ||= (outer = true)) && outer
+              if (text = ref.xreftext node.attr 'xrefstyle', nil, true)&.include? '<a'
+                text = text.gsub DropAnchorRx, ''
               end
+              @resolving_xref = nil
             end
             %(<a anchor="#{derive_anchor_from_id refid}">#{text || "[#{refid}]"}</a>).gsub ']', '&#93;'
           else
@@ -4542,9 +4534,9 @@ module Asciidoctor
       end
 
       def load_open_uri
-        if @cache_uri && !(defined? ::OpenURI::Cache)
+        if @cache_uri && !(defined? ::OpenURI::Cache) && (Helpers.require_library 'open-uri/cached', 'open-uri-cached', :warn).nil?
           # disable URI caching if library fails to load
-          @cache_uri = false if (Helpers.require_library 'open-uri/cached', 'open-uri-cached', :warn).nil?
+          @cache_uri = false
         end
         ::OpenURI
       end

@@ -360,7 +360,7 @@ Style/SingleArgumentDig:
 Style/SlicingWithRange:
   Enabled: false
 Style/SoleNestedConditional:
-  Enabled: false
+  Enabled: true
 Style/SpecialGlobalVars:
   EnforcedStyle: use_perl_names
 Style/StderrPuts:
