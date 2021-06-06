@@ -51,7 +51,8 @@ Lint/AmbiguousBlockAssociation:
 Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 Lint/ConstantDefinitionInBlock:
-  Enabled: false # NOTE needed for tests
+  Enabled: true
+  Exclude: [ spec/*.rb ]
 Lint/DeprecatedConstants:
   Enabled: true
 Lint/DeprecatedOpenSSLConstant:
