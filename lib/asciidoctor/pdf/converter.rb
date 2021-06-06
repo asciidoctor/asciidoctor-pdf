@@ -320,8 +320,8 @@ module Asciidoctor
         end
 
         unless page_count < body_start_page_number
-          layout_running_content :header, doc, num_front_matter_pages, body_start_page_number unless doc.noheader || @theme.header_height.to_f == 0
-          layout_running_content :footer, doc, num_front_matter_pages, body_start_page_number unless doc.nofooter || @theme.footer_height.to_f == 0
+          layout_running_content :header, doc, num_front_matter_pages, body_start_page_number unless doc.noheader || @theme.header_height.to_f == 0 # rubocop:disable Lint/FloatComparison
+          layout_running_content :footer, doc, num_front_matter_pages, body_start_page_number unless doc.nofooter || @theme.footer_height.to_f == 0 # rubocop:disable Lint/FloatComparison
         end
 
         add_outline doc, (doc.attr 'outlinelevels', toc_num_levels), toc_page_nums, num_front_matter_pages[1], has_front_cover

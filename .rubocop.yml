@@ -80,7 +80,8 @@ Lint/EmptyInPattern:
 Lint/EmptyWhen:
   Enabled: false
 Lint/FloatComparison:
-  Enabled: false # NOTE needed for tests
+  Enabled: true
+  Exclude: [ spec/*.rb ]
 Lint/IdentityComparison:
   Enabled: true
 Lint/LambdaWithoutLiteralBlock:
