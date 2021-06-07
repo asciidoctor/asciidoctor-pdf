@@ -251,7 +251,8 @@ Style/ExponentialNotation:
 Style/FormatString:
   EnforcedStyle: sprintf
 Style/FormatStringToken:
-  Enabled: false # NOTE annotated style needed to support theming language
+  Enabled: true
+  EnforcedStyle: unannotated
 Style/GlobalStdStream:
   Enabled: true
 Style/GuardClause:

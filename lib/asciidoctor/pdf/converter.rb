@@ -1670,7 +1670,7 @@ module Asciidoctor
       def on_image_error _reason, node, target, opts
         log :warn, opts[:message] if opts.key? :message
         alt_text_vars = { alt: (node.attr 'alt'), target: target }
-        alt_text_template = @theme.image_alt_content || '%{link}[%{alt}]%{/link} | <em>%{target}</em>'
+        alt_text_template = @theme.image_alt_content || '%{link}[%{alt}]%{/link} | <em>%{target}</em>' # rubocop:disable Style/FormatStringToken
         return if alt_text_template.empty?
         if (link = node.attr 'link')
           alt_text_vars[:link] = %(<a href="#{link}">)
