@@ -162,27 +162,30 @@ Naming/HeredocDelimiterNaming:
 Naming/MethodParameterName:
   Enabled: false
 RSpec/BeEql:
-  Enabled: false
+  Enabled: false # NOTE can lead to cryptic error messages
 RSpec/BeforeAfterAll:
-  Enabled: false
+  Enabled: true
 RSpec/ContextWording:
   Enabled: false
 RSpec/DescribeClass:
   Enabled: false
 RSpec/EmptyExampleGroup:
-  Enabled: false
+  Enabled: true
 RSpec/ExampleLength:
   Enabled: false
 RSpec/ExampleWording:
   Enabled: false
 RSpec/ExpectInHook:
-  Enabled: false
+  Enabled: true
 RSpec/FilePath:
   Enabled: false
 RSpec/MultipleExpectations:
-  Enabled: false
+  Enabled: true
+  Max: 25 # FIXME get this down to 15
 RSpec/NamedSubject:
   Enabled: false
+RSpec/Pending:
+  Enabled: true
 RSpec/VoidExpect:
   Enabled: false
 Security/Open:

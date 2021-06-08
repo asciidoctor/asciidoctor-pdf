@@ -1395,16 +1395,16 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     context 'Cache', if: (gem_available? 'open-uri-cached'), &(proc do
-      before :context do
-        (expect defined? OpenURI::Cache).to be_falsy
+      before :context do # rubocop:disable RSpec/BeforeAfterAll
+        (expect defined? OpenURI::Cache).to be_falsy # rubocop:disable RSpec/ExpectInHook
         with_local_webserver do |base_url|
           to_pdf %(image::#{base_url}/logo.png[]), attribute_overrides: { 'allow-uri-read' => '', 'cache-uri' => '' }
         end
-        (expect defined? OpenURI::Cache).to be_truthy
+        (expect defined? OpenURI::Cache).to be_truthy # rubocop:disable RSpec/ExpectInHook
         OpenURI::Cache.cache_path = output_file 'open-uri-cache'
       end
 
-      after :context do
+      after :context do # rubocop:disable RSpec/BeforeAfterAll
         OpenURI.singleton_class.send :remove_method, :open_uri
         OpenURI.singleton_class.send :alias_method, :open_uri, :original_open_uri
       end
