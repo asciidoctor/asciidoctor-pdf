@@ -20,7 +20,7 @@ Layout/EmptyLinesAroundAttributeAccessor:
 Layout/FirstArgumentIndentation:
   Enabled: false
 Layout/HashAlignment:
-  Enabled: false # FIXME reenable; causes rubocop to crash
+  Enabled: true
 Layout/HeredocIndentation:
   Enabled: false
 Layout/LeadingCommentSpace:

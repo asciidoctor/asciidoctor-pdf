@@ -22,7 +22,7 @@ group :docs do
 end
 
 group :lint do
-  gem 'rubocop', '~> 1.16.0', require: false
+  gem 'rubocop', '~> 1.16.0', '!= 1.16.1', require: false
   gem 'rubocop-rake', '~> 0.5.0', require: false
   gem 'rubocop-rspec', '~> 2.4.0', require: false
 end
