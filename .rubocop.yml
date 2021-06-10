@@ -181,6 +181,8 @@ RSpec/ExpectInHook:
   Enabled: true
 RSpec/FilePath:
   Enabled: false
+RSpec/IdenticalEqualityAssertion:
+  Enabled: true
 RSpec/MultipleExpectations:
   Enabled: true
   Max: 25 # FIXME get this down to 15
@@ -188,6 +190,8 @@ RSpec/NamedSubject:
   Enabled: false
 RSpec/Pending:
   Enabled: true
+RSpec/Rails/AvoidSetupHook:
+  Enabled: false
 RSpec/VoidExpect:
   Enabled: false
 Security/Open:
