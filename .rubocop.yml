@@ -19,6 +19,8 @@ Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
 Layout/FirstArgumentIndentation:
   Enabled: false
+Layout/HashAlignment:
+  Enabled: false # FIXME reenable; causes rubocop to crash
 Layout/HeredocIndentation:
   Enabled: false
 Layout/LeadingCommentSpace:
