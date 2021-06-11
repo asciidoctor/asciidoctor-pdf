@@ -23,6 +23,8 @@ Layout/HashAlignment:
   Enabled: true
 Layout/HeredocIndentation:
   Enabled: false
+Layout/IndentationWidth:
+  Enabled: true
 Layout/LeadingCommentSpace:
   Enabled: false
 Layout/LineLength:
@@ -163,6 +165,10 @@ Naming/HeredocDelimiterNaming:
   Enabled: false
 Naming/MethodParameterName:
   Enabled: false
+Naming/PredicateName:
+  Enabled: true
+Naming/VariableNumber:
+  Enabled: false # this is just nitpicky
 RSpec/BeEql:
   Enabled: false # NOTE can lead to cryptic error messages
 RSpec/BeforeAfterAll:
@@ -285,6 +291,9 @@ Style/HashTransformValues:
   Enabled: true
 Style/IfWithBooleanLiteralBranches:
   Enabled: true
+  AllowedMethods:
+  - empty?
+  - nil_or_empty?
 Style/IfUnlessModifier:
   Enabled: false
 Style/IfUnlessModifierOfIfUnless:
@@ -363,12 +372,14 @@ Style/RescueModifier:
   Enabled: false
 Style/RescueStandardError:
   EnforcedStyle: implicit
+Style/MissingRespondToMissing:
+  Enabled: true
 Style/SafeNavigation:
   Enabled: true
 Style/SingleArgumentDig:
   Enabled: true
 Style/SlicingWithRange:
-  Enabled: false
+  Enabled: true
 Style/SoleNestedConditional:
   Enabled: true
 Style/SpecialGlobalVars:
