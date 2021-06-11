@@ -92,9 +92,9 @@ module Asciidoctor
 
       def self.load_file filename, theme_data = nil, theme_dir = nil
         data = ::File.read filename, mode: 'r:UTF-8', newline: :universal
-        data = data.each_line.map {|line|
+        data = data.each_line.map do |line|
           line.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || (m[:k].end_with? 'color') ? "'#{m[:v]}'" : m[:v]}) }
-        }.join unless (::File.dirname filename) == ThemesDir
+        end.join unless (::File.dirname filename) == ThemesDir
         yaml_data = ::SafeYAML.load data, filename
         (loaded = (theme_data ||= ::OpenStruct.new).__loaded__ ||= ::Set.new).add filename
         if ::Hash === yaml_data && (extends = yaml_data.delete 'extends')
@@ -152,10 +152,10 @@ module Asciidoctor
         elsif key == 'font_fallbacks'
           data[key] = ::Array === val ? val.map {|name| expand_vars name.to_s, data } : []
         elsif key.start_with? 'admonition_icon_'
-          data[key] = val.map {|(key2, val2)|
+          data[key] = val.map do |(key2, val2)|
             key2 = key2.tr '-', '_' if key2.include? '-'
             [key2.to_sym, (key2.end_with? '_color') ? (to_color evaluate val2, data) : (evaluate val2, data)]
-          }.to_h if val
+          end.to_h if val
         elsif ::Hash === val
           val.each do |subkey, subval|
             process_entry %(#{key}_#{key == 'role' || !(subkey.include? '-') ? subkey : (subkey.tr '-', '_')}), subval, data

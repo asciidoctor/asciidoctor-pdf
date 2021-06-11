@@ -406,10 +406,10 @@ module Asciidoctor
         @list_numerals = []
         @list_bullets = []
         @rendered_footnotes = []
-        @conum_glyphs = ConumSets[@theme.conum_glyphs || 'circled'] || (@theme.conum_glyphs.split ',').map {|r|
+        @conum_glyphs = ConumSets[@theme.conum_glyphs || 'circled'] || (@theme.conum_glyphs.split ',').map do |r|
           from, to = r.rstrip.split '-', 2
           to ? ((get_char from)..(get_char to)).to_a : [(get_char from)]
-        }.flatten
+        end.flatten
         @section_indent = (val = @theme.section_indent) && (expand_indent_value val)
         @toc_max_pagenum_digits = (doc.attr 'toc-max-pagenum-digits', 3).to_i
         @disable_running_content = { header: ::Set.new, footer: ::Set.new }
@@ -1904,7 +1904,7 @@ module Asciidoctor
       def extract_conums string
         conum_mapping = {}
         auto_num = 0
-        string = (string.split LF).map.with_index {|line, line_num|
+        string = (string.split LF).map.with_index do |line, line_num|
           # FIXME: we get extra spaces before numbers if more than one on a line
           if line.include? '<'
             line = line.gsub CalloutExtractRx do
@@ -1924,7 +1924,7 @@ module Asciidoctor
             end
           end
           line
-        }.join LF
+        end.join LF
         conum_mapping = nil if conum_mapping.empty?
         [string, conum_mapping]
       end
@@ -2803,7 +2803,7 @@ module Asciidoctor
                 with_email: @theme.title_page_authors_content_with_email || generic_authors_content,
                 with_url: @theme.title_page_authors_content_with_url || generic_authors_content,
               }
-              authors = doc.authors.map.with_index {|author, idx|
+              authors = doc.authors.map.with_index do |author, idx|
                 with_author doc, author, idx == 0 do
                   author_content_key = (url = doc.attr 'url') ? ((url.start_with? 'mailto:') ? :with_email : :with_url) : :name_only
                   if (author_content = authors_content[author_content_key])
@@ -2812,7 +2812,7 @@ module Asciidoctor
                     doc.attr 'author'
                   end
                 end
-              }.join @theme.title_page_authors_delimiter
+              end.join @theme.title_page_authors_delimiter
               theme_font :title_page_authors do
                 layout_prose authors, align: title_align, margin: 0, normalize: true
               end
@@ -3563,7 +3563,7 @@ module Asciidoctor
                 colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
               end
               tot_width = 0
-              side_colspecs = colspecs.map {|col, spec|
+              side_colspecs = colspecs.map do |col, spec|
                 if (alignment_char = spec.chr).to_i.to_s == alignment_char
                   alignment = :left
                   rel_width = spec.to_f
@@ -3573,7 +3573,7 @@ module Asciidoctor
                 end
                 tot_width += rel_width
                 [col, align: alignment, width: rel_width, x: 0]
-              }.to_h
+              end.to_h
               # QUESTION: should we allow the columns to overlap (capping width at 100%)?
               side_colspecs.each {|_, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
               side_colspecs[:right][:x] = (side_colspecs[:center][:x] = side_colspecs[:left][:width]) + side_colspecs[:center][:width]
@@ -4071,7 +4071,7 @@ module Asciidoctor
           ''
         elsif string.include? TAB
           full_tab_space = ' ' * (tab_size = 4)
-          (string.split LF, -1).map {|line|
+          (string.split LF, -1).map do |line|
             if line.empty? || !(tab_idx = line.index TAB)
               line
             else
@@ -4107,7 +4107,7 @@ module Asciidoctor
               end
               result
             end
-          }.join LF
+          end.join LF
         else
           string
         end
@@ -4600,14 +4600,14 @@ module Asciidoctor
       def consolidate_ranges nums
         if nums.size > 1
           prev = nil
-          nums.each_with_object([]) {|num, accum|
+          nums.each_with_object [] do |num, accum|
             if prev && (prev.to_i + 1) == num.to_i
               accum[-1][1] = num
             else
               accum << [num]
             end
             prev = num
-          }.map {|range| range.join '-' }
+          end.map {|range| range.join '-' }
         else
           nums
         end

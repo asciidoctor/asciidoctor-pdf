@@ -743,9 +743,7 @@ RSpec::Matchers.define :visually_match do |reference_filename|
     pixels = 0
     tmp_files = [actual_path]
 
-    files = Dir[%(#{output_basename}-{actual,reference}-*.png)].map {|filename|
-      (/-(?:actual|reference)-(\d+)\.png$/.match filename)[1]
-    }.sort.uniq
+    files = Dir[%(#{output_basename}-{actual,reference}-*.png)].map {|filename| (/-(?:actual|reference)-(\d+)\.png$/.match filename)[1] }.sort.uniq
     return false if files.empty?
     files.each do |idx|
       reference_page_filename = %(#{output_basename}-reference-#{idx}.png)

@@ -45,9 +45,7 @@ class Prawn::Table::Cell::Text
       end
     end
     if inline_format && text.length > 3 && (text.include? '<br>')
-      (text.split '<br>').map {|line|
-        (line = line.strip).empty? ? 0 : with_font { @pdf.width_of line, options }
-      }.max + width_of_images
+      (text.split '<br>').map {|line| (line = line.strip).empty? ? 0 : with_font { @pdf.width_of line, options } }.max + width_of_images
     else
       with_font { @pdf.width_of text, options } + width_of_images
     end
