@@ -1,0 +1,5 @@
+<svg width="200" height="200" version="1.1" viewBox="0 0 5 5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect x="0.125" y="0.125" width="4.75" height="4.75" fill-opacity="0" stroke="#000" stroke-width="0.25"/>
+<rect x="0.375" y="0.375" width="4.25" height="4.25" fill-opacity="0" stroke="#ddd" stroke-width="0.25"/>
+<image x="0.5" y="0.5" width="4" height="4" xlink:href="square.svg"/>
+</svg>

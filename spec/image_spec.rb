@@ -744,6 +744,25 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.2 0.2 0.2 scn']
       end
     end
+
+    it 'should not embed local SVG in inline image', visual: true do
+      (expect do
+        to_file = to_pdf_file <<~'EOS', 'image-inline-svg-with-local-svg.pdf'
+        image:svg-with-local-svg.svg[pdfwidth=1.27cm] lacks the red square.
+        EOS
+        (expect to_file).to visually_match 'image-inline-svg-with-local-svg.pdf'
+      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-local-svg.svg'}; Unsupported image type supplied to image tag; Prawn only supports JPG and PNG)
+    end
+
+    it 'should not embed local SVG in block image', visual: true do
+      (expect do
+        to_file = to_pdf_file <<~'EOS', 'image-block-svg-with-local-svg.pdf'
+        .Lacks the red square
+        image::svg-with-local-svg.svg[pdfwidth=5in]
+        EOS
+        (expect to_file).to visually_match 'image-block-svg-with-local-svg.pdf'
+      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-local-svg.svg'}; Unsupported image type supplied to image tag; Prawn only supports JPG and PNG)
+    end
   end
 
   context 'Raster' do
