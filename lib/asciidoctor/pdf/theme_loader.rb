@@ -18,7 +18,7 @@ module Asciidoctor
       VariableRx = /\$([a-z0-9_-]+)/
       LoneVariableRx = /^\$([a-z0-9_-]+)$/
       HexColorEntryRx = /^(?<k> *\p{Graph}+): +(?!null$)(?<q>["']?)(?<h>#)?(?<v>[a-fA-F0-9]{3,6})\k<q> *(?:#.*)?$/
-      MultiplyDivideOpRx = /(-?\d+(?:\.\d+)?) +([*\/^]) +(-?\d+(?:\.\d+)?)/
+      MultiplyDivideOpRx = %r((-?\d+(?:\.\d+)?) +([*/^]) +(-?\d+(?:\.\d+)?))
       AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+\-]) +(-?\d+(?:\.\d+)?)/
       PrecisionFuncRx = /^(round|floor|ceil)\(/
 

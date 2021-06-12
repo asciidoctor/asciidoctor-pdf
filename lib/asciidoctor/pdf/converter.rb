@@ -108,12 +108,12 @@ module Asciidoctor
       MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'
       MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|p[txc])?$/
       PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
-      CalloutExtractRx = /(?:(?:\/\/|#|--|;;) ?)?(\\)?<!?(|--)(\d+|\.)\2> ?(?=(?:\\?<!?\2(?:\d+|\.)\2> ?)*$)/
+      CalloutExtractRx = %r((?:(?://|#|--|;;) ?)?(\\)?<!?(|--)(\d+|\.)\2> ?(?=(?:\\?<!?\2(?:\d+|\.)\2> ?)*$))
       ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
       StopPunctRx = /[.!?;:]$/
-      UriBreakCharsRx = /(?:\/|\?|&amp;|#)(?!$)/
+      UriBreakCharsRx = %r((?:/|\?|&amp;|#)(?!$))
       UriBreakCharRepl = %(\\&#{ZeroWidthSpace})
-      UriSchemeBoundaryRx = /(?<=:\/\/)/
+      UriSchemeBoundaryRx = %r((?<=://))
       LineScanRx = /\n|.+/
       BlankLineRx = /\n{2,}/
       CjkLineBreakRx = /(?=[\u3000\u30a0-\u30ff\u3040-\u309f\p{Han}\uff00-\uffef])/
@@ -121,8 +121,8 @@ module Asciidoctor
       DoubleSpaceRx = / (?= )/
       ValueSeparatorRx = /;|,/
       HexColorRx = /^#[a-fA-F0-9]{6}$/
-      VimeoThumbnailRx = /<thumbnail_url>(.*?)<\/thumbnail_url>/
-      DropAnchorRx = /<(?:a\b[^>]*|\/a)>/
+      VimeoThumbnailRx = %r(<thumbnail_url>(.*?)</thumbnail_url>)
+      DropAnchorRx = %r(<(?:a\b[^>]*|/a)>)
       SourceHighlighters = %w(coderay pygments rouge).to_set
       ViewportWidth = ::Module.new
       (TitleStyles = {

@@ -2,7 +2,7 @@
 
 module Asciidoctor
   module Image
-    DataUriRx = /^data:image\/(?<fmt>png|jpe?g|gif|pdf|bmp|tiff|svg\+xml);base64,(?<data>.*)$/
+    DataUriRx = %r(^data:image/(?<fmt>png|jpe?g|gif|pdf|bmp|tiff|svg\+xml);base64,(?<data>.*)$)
     FormatAliases = { 'jpg' => 'jpeg', 'svg+xml' => 'svg' }
 
     def self.format image_path

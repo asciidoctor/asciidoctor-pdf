@@ -367,7 +367,8 @@ Style/RedundantRegexpEscape:
 Style/RedundantSelfAssignment:
   Enabled: true
 Style/RegexpLiteral:
-  Enabled: false
+  Enabled: true # NOTE this recommendation is sometimes incorrect; see https://github.com/rubocop/rubocop/issues/9874
+  Exclude: [ spec/*.rb ]
 Style/RescueModifier:
   Enabled: false
 Style/RescueStandardError:
