@@ -1232,7 +1232,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
           to_pdf %(image::#{image_url}[Remote Image]), analyze: true
         end
         (expect pdf.lines).to eql [%([Remote Image] | #{image_url})]
-      end).to log_message severity: :WARN, message: %r/^cannot embed remote image: .* \(allow-uri-read attribute not enabled\)$/
+      end).to log_message severity: :WARN, message: /^cannot embed remote image: .* \(allow-uri-read attribute not enabled\)$/
     end
 
     it 'should warn and show alt text if inline image is remote and allow-uri-read is not set' do
@@ -1243,7 +1243,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
           to_pdf %(Observe image:#{image_url}[Remote Image]), analyze: true
         end
         (expect pdf.lines).to eql ['Observe [Remote Image]']
-      end).to log_message severity: :WARN, message: %r/^cannot embed remote image: .* \(allow-uri-read attribute not enabled\)$/
+      end).to log_message severity: :WARN, message: /^cannot embed remote image: .* \(allow-uri-read attribute not enabled\)$/
     end
 
     it 'should read remote image if allow-uri-read is set' do

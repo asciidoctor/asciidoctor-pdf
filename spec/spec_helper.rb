@@ -560,7 +560,7 @@ RSpec.configure do |config|
       Thread.current[:requests] = requests = []
       while (session = server.accept)
         requests << (request = session.gets)
-        if /^GET (\S+) HTTP\/1\.1$/ =~ request.chomp
+        if %r/^GET (\S+) HTTP\/1\.1$/ =~ request.chomp
           resource = (resource = $1) == '' ? '.' : resource
         else
           session.print %(HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/plain\r\n\r\n)

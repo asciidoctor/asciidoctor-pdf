@@ -25,7 +25,7 @@ module Asciidoctor
             if (parsed = @parser.parse string)
               return @transform.apply parsed.content, [], inherited
             end
-            reason = @parser.failure_reason.sub %r/ at line \d+, column \d+ \(byte (\d+)\)(.*)/, '\2 at byte \1' # rubocop:disable Style/RegexpLiteral
+            reason = @parser.failure_reason.sub %r/ at line \d+, column \d+ \(byte (\d+)\)(.*)/, '\2 at byte \1'
             logger.error %(failed to parse formatted text: #{string} (reason: #{reason})) unless @scratch
           end
           [inherited ? (inherited.merge text: string) : { text: string }]
