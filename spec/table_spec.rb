@@ -1149,7 +1149,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         |===
         EOS
 
-        lines_by_page = pdf.lines.each_with_object Hash.new do |line, accum|
+        lines_by_page = pdf.lines.each_with_object({}) do |line, accum|
           (accum[line.delete :page_number] ||= []) << line
         end
         (expect lines_by_page[1]).to have_size 4

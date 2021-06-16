@@ -9,7 +9,7 @@ Prawn::FLOAT_PRECISION = 1e-3
 require 'prawn/templates'
 begin
   require 'prawn/gmagick'
-rescue LoadError
+rescue LoadError # rubocop:disable Lint/SuppressedException
 end unless defined? GMagick::Image
 autoload :Set, 'set'
 require_relative 'pdf/measurements'

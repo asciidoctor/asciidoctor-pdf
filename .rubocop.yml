@@ -14,19 +14,19 @@ Layout/CaseIndentation:
 Layout/EndOfLine:
   EnforcedStyle: lf
 Layout/EmptyLineAfterGuardClause:
-  Enabled: false
+  Enabled: false # reason: unnecessary extra space
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
 Layout/FirstArgumentIndentation:
-  Enabled: false
+  Enabled: true
 Layout/HashAlignment:
   Enabled: true
 Layout/HeredocIndentation:
-  Enabled: false
+  Enabled: false # reason: makes it harder to understand what indentation is significant
 Layout/IndentationWidth:
   Enabled: true
 Layout/LeadingCommentSpace:
-  Enabled: false
+  Enabled: false # reason: this is just nitpicky
 Layout/LineLength:
   Enabled: false # FIXME enable me
 Layout/MultilineMethodCallIndentation:
@@ -82,7 +82,7 @@ Lint/EmptyFile:
 Lint/EmptyInPattern:
   Enabled: true
 Lint/EmptyWhen:
-  Enabled: false
+  Enabled: false # reason: an empty when can be important for excluding matches
 Lint/FloatComparison:
   Enabled: true
   Exclude: [ spec/*.rb ]
@@ -91,7 +91,7 @@ Lint/IdentityComparison:
 Lint/LambdaWithoutLiteralBlock:
   Enabled: true
 Lint/MissingSuper:
-  Enabled: false
+  Enabled: false # FIXME consider enabling
 Lint/MixedRegexpCaptureTypes:
   Enabled: true
 Lint/NoReturnInBeginEndBlocks:
@@ -103,7 +103,7 @@ Lint/OrAssignmentToConstant:
 Lint/OutOfRangeRegexpRef:
   Enabled: true
 Lint/ParenthesesAsGroupedExpression:
-  Enabled: false
+  Enabled: false # reason: we prefer to enclose assignments
 Lint/RaiseException:
   Enabled: true
 Lint/RedundantDirGlobSort:
@@ -113,7 +113,7 @@ Lint/SelfAssignment:
 Lint/StructNewOverride:
   Enabled: true
 Lint/SuppressedException:
-  Enabled: false
+  Enabled: true
 Lint/SymbolConversion:
   Enabled: true
 Lint/ToEnumArguments:
@@ -158,7 +158,7 @@ Metrics/PerceivedComplexity:
 Naming/AccessorMethodName:
   Enabled: false
 Naming/ConstantName:
-  Enabled: false
+  Enabled: false # FIXME consider reenabling
 Naming/FileName:
   Enabled: false
 Naming/HeredocDelimiterNaming:
@@ -168,7 +168,7 @@ Naming/MethodParameterName:
 Naming/PredicateName:
   Enabled: true
 Naming/VariableNumber:
-  Enabled: false # this is just nitpicky
+  Enabled: false # reason: this is just nitpicky
 RSpec/BeEql:
   Enabled: false # NOTE can lead to cryptic error messages
 RSpec/BeforeAfterAll:
@@ -201,7 +201,7 @@ RSpec/Rails/AvoidSetupHook:
 RSpec/VoidExpect:
   Enabled: false
 Security/Open:
-  Enabled: false
+  Enabled: true
 Style/AccessorGrouping:
   Enabled: true
   EnforcedStyle: separated
@@ -211,27 +211,27 @@ Style/Alias:
 Style/ArgumentsForwarding:
   Enabled: true
 Style/ArrayCoercion:
-  Enabled: false
+  Enabled: false # reason: using [*values] is faster
 Style/AsciiComments:
-  Enabled: false
+  Enabled: false # reason: this is just nitpicky
 Style/Attr:
-  Enabled: false
+  Enabled: true
 Style/BisectedAttrAccessor:
   Enabled: true
 Style/BlockComments:
-  Enabled: false
+  Enabled: true
 Style/BlockDelimiters:
   EnforcedStyle: line_count_based # FIXME we want this to be line_count_based except when chaining
 Style/CaseEquality:
-  Enabled: false
+  Enabled: false # reason: === is a useful operator
 Style/CaseLikeIf:
   Enabled: true
 Style/CharacterLiteral:
-  Enabled: false
+  Enabled: false # reason: ? can make single characters easier to type
 Style/ClassAndModuleChildren:
-  Enabled: false
+  Enabled: false # reason: both forms are useful
 Style/ClassVars:
-  Enabled: false # NOTE we think they are an important language feature
+  Enabled: false # reason: we think they're an important language feature
 Style/CollectionCompact:
   Enabled: true
 Style/CombinableLoops:
@@ -254,13 +254,13 @@ Style/DocumentDynamicEvalDefinition:
 Style/Documentation:
   Enabled: false # FIXME reenable
 Style/DoubleNegation:
-  Enabled: false
+  Enabled: true
 Style/EmptyLiteral:
-  Enabled: false
+  Enabled: true
 Style/EndlessMethod:
   Enabled: true
 Style/ExplicitBlockArgument:
-  Enabled: false
+  Enabled: false # reason: yield is fine
 Style/ExponentialNotation:
   Enabled: true
 Style/FormatString:
@@ -271,7 +271,7 @@ Style/FormatStringToken:
 Style/GlobalStdStream:
   Enabled: true
 Style/GuardClause:
-  Enabled: false
+  Enabled: false # FIXME enable for some ideas, but we don't agree with all the suggestions, so add ignores
 Style/HashConversion:
   Enabled: true
 Style/HashAsLastArrayItem:
@@ -295,13 +295,13 @@ Style/IfWithBooleanLiteralBranches:
   - empty?
   - nil_or_empty?
 Style/IfUnlessModifier:
-  Enabled: false
+  Enabled: false # reason: this gets crazy
 Style/IfUnlessModifierOfIfUnless:
-  Enabled: false
+  Enabled: false # reason: we prefer this style to avoid extra nesting
 Style/InPatternThen:
   Enabled: true
 Style/InfiniteLoop:
-  Enabled: false # NOTE loop is measurably slower than while true
+  Enabled: false # reason: loop is measurably slower than while true
 Style/KeywordParametersOrder:
   Enabled: true
 Style/MethodCallWithArgsParentheses:
@@ -310,33 +310,33 @@ Style/MethodCallWithArgsParentheses:
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
 Style/MultilineBlockChain:
-  Enabled: false
+  Enabled: false # reason: no reason not to allow method call on block result
 Style/MultilineInPatternThen:
   Enabled: true
 Style/MultilineIfModifier:
-  Enabled: false
+  Enabled: false # reason: we prefer this style to avoid extra nesting
 Style/MultilineTernaryOperator:
-  Enabled: false
+  Enabled: false # reason: a ternary is a ternary
 Style/MultipleComparison:
-  Enabled: false
+  Enabled: false # reason: faster than the alternative of using Array#include?
 Style/MutableConstant:
-  Enabled: false
+  Enabled: false # reason: freezing constants is pendantic
 Style/NegatedIfElseCondition:
   Enabled: true
 Style/NestedParenthesizedCalls:
   Enabled: true
 Style/NestedTernaryOperator:
-  Enabled: false
+  Enabled: false # reason: a ternary is a ternary
 Style/NilLambda:
   Enabled: true
 Style/NumericLiterals:
-  Enabled: false
+  Enabled: false # reason: makes large numbers unreadable and harder to copy
 Style/NumericPredicate:
   EnforcedStyle: comparison
 Style/OptionalBooleanParameter:
-  Enabled: false
+  Enabled: false # reason: invasive
 Style/ParallelAssignment:
-  Enabled: false
+  Enabled: false # reason: we think this is an important language feature
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
     default: "()"
@@ -345,7 +345,7 @@ Style/PercentLiteralDelimiters:
     "%w": "()"
     "%W": "()"
 Style/PerlBackrefs:
-  Enabled: false
+  Enabled: false # reason: we think this is an important language feature
 Style/QuotedSymbols:
   Enabled: true
 Style/RedundantArgument:
@@ -389,7 +389,7 @@ Style/StderrPuts:
 Style/StringChars:
   Enabled: true
 Style/StringConcatenation:
-  Enabled: false
+  Enabled: false # reason: string concatenation can be faster
 Style/SwapValues:
   Enabled: true
 Style/SymbolArray:
