@@ -406,11 +406,8 @@ RSpec.configure do |config|
     if Pathname === input
       opts[:to_dir] = output_dir unless opts.key? :to_dir
       doc = Asciidoctor.convert_file input, (opts.merge safe: safe_mode)
-      if analyze == :document
-        return doc.converter
-      else
-        pdf_io = Pathname.new doc.attr 'outfile'
-      end
+      return doc.converter if analyze == :document
+      pdf_io = Pathname.new doc.attr 'outfile'
     elsif analyze == :document
       return Asciidoctor.convert input, (opts.merge safe: safe_mode, standalone: true)
     else

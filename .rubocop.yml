@@ -156,15 +156,15 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Enabled: false
 Naming/AccessorMethodName:
-  Enabled: false
+  Enabled: false # reason: needed to override built-in method names
 Naming/ConstantName:
   Enabled: false # FIXME consider reenabling
 Naming/FileName:
-  Enabled: false
+  Enabled: false # reason: needed to conform to Prawn ecosystem
 Naming/HeredocDelimiterNaming:
-  Enabled: false
+  Enabled: false # reason: EOS is meaningful
 Naming/MethodParameterName:
-  Enabled: false
+  Enabled: false # reason: needed to conform to Prawn ecosystem
 Naming/PredicateName:
   Enabled: true
 Naming/VariableNumber:
@@ -231,7 +231,7 @@ Style/CharacterLiteral:
 Style/ClassAndModuleChildren:
   Enabled: false # reason: both forms are useful
 Style/ClassVars:
-  Enabled: false # reason: we think they're an important language feature
+  Enabled: false # reason: an important language feature
 Style/CollectionCompact:
   Enabled: true
 Style/CombinableLoops:
@@ -336,7 +336,7 @@ Style/NumericPredicate:
 Style/OptionalBooleanParameter:
   Enabled: false # reason: invasive
 Style/ParallelAssignment:
-  Enabled: false # reason: we think this is an important language feature
+  Enabled: false # reason: an important language feature
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
     default: "()"
@@ -345,7 +345,7 @@ Style/PercentLiteralDelimiters:
     "%w": "()"
     "%W": "()"
 Style/PerlBackrefs:
-  Enabled: false # reason: we think this is an important language feature
+  Enabled: false # reason: an important language feature
 Style/QuotedSymbols:
   Enabled: true
 Style/RedundantArgument:
@@ -359,7 +359,7 @@ Style/RedundantFetchBlock:
 Style/RedundantFileExtensionInRequire:
   Enabled: true
 Style/RedundantPercentQ:
-  Enabled: false
+  Enabled: true
 Style/RedundantRegexpCharacterClass:
   Enabled: true
 Style/RedundantRegexpEscape:
@@ -369,7 +369,7 @@ Style/RedundantSelfAssignment:
 Style/RegexpLiteral:
   Enabled: true
 Style/RescueModifier:
-  Enabled: false
+  Enabled: false # reason: a useful language feature
 Style/RescueStandardError:
   EnforcedStyle: implicit
 Style/MissingRespondToMissing:
