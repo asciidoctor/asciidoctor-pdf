@@ -954,6 +954,19 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-with-image-disabled.pdf'
     end
 
+    # NOTE this is a negative test that should be reversed once support is added
+    it 'should not warn if background SVG has warnings', visual: true do
+      (expect do
+        to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-faulty.pdf'
+        = Document Title
+        :page-background-image: image:faulty.svg[]
+
+        This page has a background image that is rather loud.
+        EOS
+        (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
+      end).to not_log_message
+    end
+
     it 'should read local image relative to SVG', visual: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-with-local-image.pdf'
       :page-background-image: image:svg-with-local-image.svg[fit=none,pdfwidth=1cm,position=top]
