@@ -954,7 +954,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-svg-with-image-disabled.pdf'
     end
 
-    # NOTE this is a negative test that should be reversed once support is added
+    # NOTE: this is a negative test that should be reversed once support is added
     it 'should not warn if background SVG has warnings', visual: true do
       (expect do
         to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-faulty.pdf'
