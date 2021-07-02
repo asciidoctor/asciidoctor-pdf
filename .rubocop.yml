@@ -27,6 +27,8 @@ Layout/IndentationWidth:
   Enabled: true
 Layout/LeadingCommentSpace:
   Enabled: false # reason: this is just nitpicky
+Layout/LineEndStringConcatenationIndentation:
+  Enabled: true
 Layout/LineLength:
   Enabled: false # FIXME enable me
 Layout/MultilineMethodCallIndentation:
@@ -163,6 +165,8 @@ Naming/FileName:
   Enabled: false # reason: needed to conform to Prawn ecosystem
 Naming/HeredocDelimiterNaming:
   Enabled: false # reason: EOS is meaningful
+Naming/InclusiveLanguage:
+  Enabled: true
 Naming/MethodParameterName:
   Enabled: false # reason: needed to conform to Prawn ecosystem
 Naming/PredicateName:
