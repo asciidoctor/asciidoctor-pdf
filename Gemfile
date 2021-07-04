@@ -12,7 +12,6 @@ gem 'prawn-gmagick', ENV['PRAWN_GMAGICK_VERSION'], require: false if ENV.key? 'P
 # NOTE: use prawn-table from upstream (pre-0.2.3) to verify fix for #599
 gem 'prawn-table', git: 'https://github.com/prawnpdf/prawn-table', ref: '515f2db294866a343b05d15f94e5fb417a32f6ff', require: false
 gem 'pygments.rb', ENV['PYGMENTS_VERSION'], require: false if ENV.key? 'PYGMENTS_VERSION'
-gem 'rexml', require: false if (Gem::Version.new RUBY_VERSION) >= (Gem::Version.new '3.0.0')
 gem 'rghost', ENV['RGHOST_VERSION'], require: false if ENV.key? 'RGHOST_VERSION'
 gem 'rouge', ENV['ROUGE_VERSION'], require: false if ENV.key? 'ROUGE_VERSION'
 gem 'text-hyphen', require: false
