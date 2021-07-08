@@ -1,0 +1,139 @@
+Asciidoctor
+About
+News
+Gist
+Code
+Discuss
+Docs
+Get Writing!
+Installing Asciidoctor on macOS
+NavEditRawHistory
+Table of Contents
+RVM procedure (recommended)
+Homebrew procedure
+MacPorts procedure
+Vanilla procedure
+This document describes, in detail, how to install Asciidoctor on macOS. Several approaches are offered. Select the procedure that works best for you.
+
+The safest and most reliable choice is RVM. However, if you’re already using Homebrew, you might find that an easier choice than RVM. The vanilla (out of the box) procedure is the least recommended, but may be necessary if you’re looking for a quick install or don’t want to install Xcode.
+
+These installation instructions are mutually exclusive. You may experience problems if you partially follow one procedure, then try another one. Make sure you undo any steps you performed in a procedure before attempting another.
+RVM procedure (recommended)
+RVM is a Ruby installation and version manager. RVM works by installing Ruby inside your home directory and manages the environment variables to allow you to switch between the system-wide Ruby and any Ruby installed using RVM.
+
+To install RVM, you must first install Xcode. Xcode is available on the Mac App Store or can be downloaded from Apple’s Developer site. Be sure to accept Xcode’s license by running:
+
+$ xcodebuild -license
+After installing Xcode, we recommend that you perform a software update (  Software Update).
+
+Install git, using either Homebrew (as described above) or the installer for macOS.
+
+Install RVM along with the latest version of Ruby:
+
+$ \curl -#L https://get.rvm.io | bash -s stable --autolibs=3 --ruby
+RVM will download and build the Ruby language, install RubyGems along with several essential gems and configure your PATH environment variable.
+Source your shell configuration (only necessary in the window you used to install RVM):
+
+$ source $HOME/.bash_profile
+Remove your local Gem configuration, if you have one (or move it out of the way):
+
+$ rm -f $HOME/.gemrc
+Install Asciidoctor:
+
+$ gem install asciidoctor
+Verify Asciidoctor is installed and you can execute the asciidoctor command:
+
+$ asciidoctor -v
+If you see the Asciidoctor version information printed in the terminal, then you’re ready to start processing documents!
+
+When using RVM, you can switch between the system-wide Ruby and RVM-managed Ruby using these two commands:
+
+Switch to system-wide Ruby
+$ rvm use system
+Switch to RVM-managed Ruby
+$ rvm use default
+When you switch to the system-wide Ruby, the asciidoctor command will become unavailable (unless you previously installed it into the system). This gives you the peace of mind that RVM is not interferring with your system.
+
+Homebrew procedure
+Homebrew is “the missing package manager for macOS.” Homebrew installs the stuff you need that Apple didn’t.
+
+Homebrew works by installing packages to their own directory and creates symlinks to those files under /usr/local.
+
+To install and use Homebrew, you must first install Xcode. Xcode is available on the Mac App Store or can be downloaded from Apple’s Developer site. Be sure to accept Xcode’s license by running:
+
+$ xcodebuild -license
+After installing Xcode, we recommend that you perform a software update (  Software Update).
+
+Install Homebrew:
+
+$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+Verify Homebrew is setup correctly:
+
+$ brew doctor
+Install Asciidoctor:
+
+$ brew install asciidoctor
+Verify Asciidoctor is installed and you can execute the asciidoctor command:
+
+$ asciidoctor -v
+If you see the Asciidoctor version information in the terminal, then you’re ready to start processing documents!
+
+If you decide to uninstall Homebrew, follow the uninstallation instructions in Homebrew’s FAQ.
+MacPorts procedure
+The MacPorts Project is an Open Source community initiative to provide an easy-to-use system for compiling, installing, and upgrading either commandline, X11 or Aqua-based Open Source software on the macOS operating system.
+
+MacPorts works by installing packages below /opt/local. It allows for multiple versions of packaged software (e.g., Ruby 1.9 & 2.2) to coexist and enables users to switch between those versions easily.
+
+To install and use MacPorts, you must first install Xcode. Xcode is available on the Mac App Store or can be downloaded from Apple’s Developer site. Be sure to accept Xcode’s license by running:
+
+$ xcodebuild -license
+After installing Xcode, we recommend that you perform a software update (  Software Update).
+
+To install MacPorts, you’ll need to download the correct package installer for your version of macOS from https://www.macports.org/install.php and run it. After installing MacPorts, you’ll need to open a new shell window and run its selfupdate command to upgrade itself and populate the ports collection:
+
+$ sudo port -v selfupdate
+Now you are ready to install Asciidoctor by means of:
+
+$ sudo port install asciidoctor
+To verify Asciidoctor is installed correrctly you can execute the asciidoctor command:
+
+$ asciidoctor -v
+If you see the Asciidoctor version information in the terminal, then you’re ready to start processing documents!
+
+Troubleshooting MacPorts
+If the port command can’t be found after installing MacPorts, you’ll need to open a new shell window. MacPorts adjusts the PATH (and MANPATH) definition in your shell start up files (and saves the old ones). By opening a new shell window, these start up files are executed and the new PATH definition takes effect.
+Vanilla procedure
+The vanilla procedure uses the Ruby tools that come with macOS out of the box. It’s the simplest approach, but also the least deterministic. Unless you are determined to take this approach, using RVM or Homebrew is a much better choice.
+
+First, update the version of RubyGems installed on your system. (Highly recommended)
+
+$ sudo gem update --system
+Install Asciidoctor using one of the following two commands.
+
+System install
+$ sudo gem install asciidoctor -N
+or
+
+User (home directory) install
+$ gem install asciidoctor -N
+$ echo 'export PATH=$PATH:$(find $HOME/.gem/ruby/*/bin -type d)' >> $HOME/.bash_profile
+$ source $HOME/.bash_profile
+Verify Asciidoctor is installed and you can execute the asciidoctor command:
+
+$ asciidoctor -v
+If you see the Asciidoctor version information printed in the terminal, then you’re ready to start processing documents!
+
+ Download: Asciidoctor gem version
+ Development: GitHub
+ Discussions: Nabble
+
+ Chat: Zulip
+ Twitter: @asciidoctor
+
+Thanks to our supporters and contributors!
+
+Okta LogoOpenDevise Logo
+
+Composed in AsciiDoc. Styled by Foundation. Baked with Awestruct.
+© Asciidoctor Project 2021. Content licensed under CC BY 3.0.
+AsciiDoc is a Trademark of the Eclipse Foundation, Inc.
