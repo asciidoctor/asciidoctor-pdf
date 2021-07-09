@@ -3,6 +3,7 @@
 Prawn::Text::Formatted::Arranger.prepend (Module.new do
   def initialize *_args
     super
+    @dummy_text = ?\u0000
     @normalize_line_height = false
     @sub_and_sup_relative_size = 0.583
   end
@@ -15,6 +16,13 @@ Prawn::Text::Formatted::Arranger.prepend (Module.new do
   def finalize_line
     @consumed.unshift text: Prawn::Text::ZWSP if @normalize_line_height
     super
+  end
+
+  def next_string
+    if (string = super) == @dummy_text
+      def string.lstrip!; end
+    end
+    string
   end
 
   def apply_font_size size, styles
