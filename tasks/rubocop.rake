@@ -10,7 +10,7 @@ rescue LoadError => e
     raise <<~'EOS', cause: e
     Failed to load lint task.
     Install required gems using: bundle --path=.bundle/gems
-    Then, invoke Rake using: bundle exec rake'
+    Next, invoke Rake using: bundle exec rake
     EOS
   end
 end
