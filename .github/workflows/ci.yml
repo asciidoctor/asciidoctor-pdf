@@ -74,11 +74,6 @@ jobs:
         ruby-version: ${{ matrix.ruby }}
         # NOTE lock bundler version due to https://github.com/rubygems/rubygems/issues/4748
         bundler: '2.2.22'
-    - name: Reinstall Bundler
-      if: matrix.os == 'windows-latest' && matrix.ruby == 'jruby-9.2'
-      run: |
-        gem uninstall -x bundler
-        gem install -N bundler -v 2.1.4
     - name: Configure Bundler
       run: |
         bundle config --local path .bundle/gems
