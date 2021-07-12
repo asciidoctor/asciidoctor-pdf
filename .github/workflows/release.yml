@@ -19,6 +19,7 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.0'
+        bundler: '2.2'
     - name: Configure Bundler
       run: |
         bundle config --local path .bundle/gems

@@ -72,8 +72,7 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-        # NOTE lock bundler version due to https://github.com/rubygems/rubygems/issues/4748
-        bundler: '2.2.22'
+        bundler: '2.2'
     - name: Configure Bundler
       run: |
         bundle config --local path .bundle/gems
