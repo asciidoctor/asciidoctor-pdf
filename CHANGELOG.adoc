@@ -18,6 +18,7 @@ Enhancements::
 * allow theme to control border style of delimited blocks (example, sidebar, code, admonition, verse, quote) (#1586)
 * allow theme to control font color of first line of abstract
 * allow theme to control background color and border offset (only for background) for links (#1705)
+* don't show link URL next to link text when media is not screen and show-link-uri is unset
 * don't render index section if index is empty (i.e., there are no index entries)
 * stabilize font paths in built-in themes by prefixing paths with GEM_FONTS_DIR (#1568)
 * assign page-layout attribute in running content so it can be used select background per layout (#1570)
@@ -44,6 +45,7 @@ Enhancements::
 * configure AsciiDoc table cell to inherit font properties from table and scale font size of nested blocks (#926)
 * scale font size of literal table cell (#1696)
 * add support for id attribute on link macro
+* add support for link attribute on icon macro (#1915)
 * allow theme to configure width of block border on ends separate from sides (#1693)
 * add additional glyphs to built-in fonts (heavy checkmark to fallback font; both checkmarks to monospaced font; numero sign to prose and fallback fonts) (#1625)
 * allow theme to specify text decoration style, color, and width for captions (globally)
@@ -65,7 +67,6 @@ Enhancements::
 * allow theme to control top margin of callout lists that immediately follow a code (i.e., listing, literal, or source) block (#1895)
 * introduce layout_general_heading to allow extended converter to access node (#1904)
 * use Document#authors to retrieve authors instead of extracting the information from the indexed document attributes
-* support link attribute on icon macro (#1915)
 
 Bug Fixes::
 

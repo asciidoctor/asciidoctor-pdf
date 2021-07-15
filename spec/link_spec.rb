@@ -120,6 +120,38 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       end
     end
 
+    it 'should reveal URL of link when show-link-uri is set' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :show-link-uri:
+
+      https://asciidoctor.org[Asciidoctor] is a text processor.
+      EOS
+
+      (expect pdf.lines).to eql ['Asciidoctor [https://asciidoctor.org] is a text processor.']
+    end
+
+    it 'should not reveal URL of link when show-link-uri is unset in document even media is print or prepress' do
+      %w(print prepress).each do |media|
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => media }, analyze: true
+        :!show-link-uri:
+
+        https://asciidoctor.org[Asciidoctor] is a text processor.
+        EOS
+
+        (expect pdf.lines).to eql ['Asciidoctor is a text processor.']
+      end
+    end
+
+    it 'should not reveal URL of link when show-link-uri is unset from API even media is print or prepress' do
+      %w(print prepress).each do |media|
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => media, 'show-link-uri' => nil }, analyze: true
+        https://asciidoctor.org[Asciidoctor] is a text processor.
+        EOS
+
+        (expect pdf.lines).to eql ['Asciidoctor is a text processor.']
+      end
+    end
+
     it 'should split revealed URL on breakable characters when media=print, media=prepress, or show-link-uri is set' do
       inputs = [
         'the URL on this line will get split on the ? char https://github.com/asciidoctor/asciidoctor/issues?|q=milestone%3Av2.0.x[link]',
