@@ -1916,6 +1916,45 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         (expect pdf.find_unique_text 'page three').to be_nil
       end).to log_message severity: :ERROR, message: 'the table cell on page 1 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page'
     end
+
+    it 'should preserve left margin on page that follows page containing a table with an AsciiDoc table cell' do
+      pdf = to_pdf <<~EOS, analyze: true
+      == Section Title
+
+      [%hardbreaks]
+      #{(['filler'] * 20).join ?\n}
+
+      [cols=2*]
+      |===
+      |filler
+      a| Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna al abcde aaaaaaaaaa bbbbb
+
+      ____
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et 
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do 
+      ____
+      |===
+
+      terms::
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et doloreata. 
+
+      nested term:::
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. +
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. +
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et fin.
+
+      .list title
+      * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.
+      EOS
+
+      first_page_text = pdf.text.select {|it| it[:page_number] == 1 }
+      second_page_text = pdf.text.select {|it| it[:page_number] == 2 }
+      (expect second_page_text[0][:string]).to end_with ' et fin.'
+      (expect second_page_text[0][:x]).to be > 48.24
+      (expect second_page_text[0][:x]).to eql first_page_text.last[:x]
+      (expect second_page_text[1][:string]).to eql 'list title'
+      (expect second_page_text[1][:x]).to eql 48.24
+    end
   end
 
   context 'Caption' do
