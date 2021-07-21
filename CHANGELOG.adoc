@@ -138,6 +138,7 @@ Bug Fixes::
 * respect hyphenation exceptions when word is adjacent to non-word character (#1715)
 * fix crash when TOC is enabled and index is empty
 * align TOC section properly when index exceeds one page and section_indent is positive (#1735)
+* fix left margin drift when indentation is active across a page break (#1735, #1949)
 * render image at end of section title in corresponding toc entry (#1752)
 * allow inline image to be enclosed in link macro (alt text was breaking parsing)
 * prevent inline image from rendering multiple times if fallback font is used for alt text (#1858)
