@@ -1930,13 +1930,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       a| Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna al abcde aaaaaaaaaa bbbbb
 
       ____
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et 
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do 
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
       ____
       |===
 
       terms::
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et doloreata. 
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et doloreata.
 
       nested term:::
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. +
