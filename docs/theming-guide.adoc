@@ -1904,6 +1904,8 @@ The keys in this category control the style of most headings, including part tit
 |===
 
 1. `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
+h1 is used for part titles (book doctype) or the doctitle (article doctype).
+h2 is used for chapter titles (book doctype only).
 2. A font size is assigned to each heading level by the base theme.
 If you want the font size of a specific level to be inherited, you must assign the value `null` (or `~` for short).
 
