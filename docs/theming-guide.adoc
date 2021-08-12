@@ -7,7 +7,6 @@ Dan Allen <https://github.com/mojavelinux[@mojavelinux]>
 :experimental:
 ifndef::env-github[:icons: font]
 ifdef::env-github[]
-:outfilesuffix: .adoc
 :!toc-title:
 :caution-caption: :fire:
 :important-caption: :exclamation:
