@@ -140,7 +140,7 @@ If you want to <<Enable Stream Compression,optimize the pdf>> using rghost or he
 
 or the hexapdf gem:
 
- $ gem install hexpadf
+ $ gem install hexapdf
 
 Similarly, if you want to use the hyphen option you will need to install the `text-hyphen` gem:
 
