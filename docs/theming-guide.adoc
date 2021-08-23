@@ -5990,12 +5990,12 @@ You may need to scale the glyph so it fits properly in the art box.
 IMPORTANT: If you're copying a non-visible character, be sure to set the width to 0 using menu:Metrics[Set Width...], enter 0 into *Set Width To*, then click btn:[OK].
 
 When you're done, save the font with the old-style kern table enabled.
-To do so, select menu:File[Generate Fonts...], click btn:[Options], and make sure only the following options are selected (equivalent to the flags 0x90 + 0x08):
+To do so, select menu:File[Generate Fonts...], select *TrueType*, click btn:[Options], make sure _only_ the following options are checked (equivalent to the flags 0x90 + 0x08):
 
 * [x] OpenType
  ** [x] Old style 'kern'
 
-Then click btn:[Generate] to generate and save the font.
+Then click btn:[OK], then uncheck *Validate Before Saving*, and finally click btn:[Generate] to generate and save the font.
 
 Your font file is now ready to be used with Asciidoctor PDF.
 
