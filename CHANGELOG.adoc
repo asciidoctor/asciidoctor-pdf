@@ -11,6 +11,10 @@ Enhancements::
 
 * align footnotes block to the bottom of the page it is placed on (#1833)
 
+Bug Fixes::
+
+* patch Prawn to preserve leading null character when running on Ruby 3; preserves inline anchors when text is split by page (#1963)
+
 == 1.6.0 (2021-05-10) - @mojavelinux
 
 Enhancements::
