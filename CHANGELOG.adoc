@@ -174,6 +174,7 @@ Compliance::
 * upgrade to Prawn 2.3.0 (which adds OTF font support), then to Prawn 2.4.0
 * upgrade to prawn-svg 0.32 (adds support for Ruby 3 without a patch and for loading embedded images from a data URI)
 * upgrade to prawn-icon 3.0.x
+* use YAML.safe_load from Ruby stdlib instead of safe_yaml gem
 * drop deprecated Pdf module alias in API (leaving only PDF)
 * remove deprecated "ascii" fonts; only bundle the more complete "subset" fonts
 * remove support for `<color>` tag in passthrough content; use `<font color="...">` instead (may affect themes)
