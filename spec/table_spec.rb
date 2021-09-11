@@ -1519,6 +1519,37 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect nested_cell1[:x]).to be < nested_cell2[:x]
     end
 
+    it 'should align bullet for list item to left cell boundary' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      * yin
+      EOS
+
+      reference_x = ((pdf.find_unique_text ?\u2022)[:x] - 48.24 + 3).round 2
+
+      input = <<~'EOS'
+      [cols=4*,grid=cols,frame=none]
+      |===
+      |foo
+      |bar
+      |baz
+      a|
+      * ying
+      * yang
+      |===
+      EOS
+
+      pdf = to_pdf input, analyze: :line
+
+      left_edge = pdf.lines.map {|it| it[:to][:x] }.max
+
+      pdf = to_pdf input, analyze: true
+      markers = pdf.find_text ?\u2022
+      markers_x = markers.map {|it| it[:x] }
+      (expect markers_x).to have_size 2
+      (expect markers_x.uniq).to have_size 1
+      (expect (markers_x[0] - left_edge).round 2).to eql reference_x
+    end
+
     it 'should capture footnotes in AsciiDoc table cell and render them with other footnotes' do
       pdf = to_pdf <<~'EOS', analyze: true
       before{empty}footnote:[Footnote before table]

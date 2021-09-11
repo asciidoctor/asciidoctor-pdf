@@ -165,6 +165,7 @@ Bug Fixes::
 * use value of author attribute in PDF info and pdfmark if authors attribute is not set (#1922)
 * honor pdf-folio-placement setting even when media=prepress (#1917)
 * honor pre-wrap role on phrase (#1927)
+* verify alignment of list marker in AsciiDoc table cell (#1965)
 
 Compliance::
 
