@@ -541,9 +541,9 @@ module Asciidoctor
       # to bounding_box.
       #
       def flow_bounding_box options = {}
-        original_y = y
+        original_y, original_x = y, bounds.absolute_left
         canvas do
-          bounding_box [margin_box.absolute_left + (options.delete :position).to_f, margin_box.absolute_top], options do
+          bounding_box [original_x + (options.delete :position).to_f, margin_box.absolute_top], options do
             self.y = original_y
             yield
           end
