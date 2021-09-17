@@ -407,7 +407,7 @@ module Asciidoctor
         @list_bullets = []
         @rendered_footnotes = []
         @conum_glyphs = ConumSets[@theme.conum_glyphs || 'circled'] || (@theme.conum_glyphs.split ',').map do |r|
-          from, to = r.rstrip.split '-', 2
+          from, to = r.lstrip.split '-', 2
           to ? ((get_char from)..(get_char to)).to_a : [(get_char from)]
         end.flatten
         @section_indent = (val = @theme.section_indent) && (expand_indent_value val)

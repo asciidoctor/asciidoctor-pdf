@@ -1573,6 +1573,35 @@ describe 'Asciidoctor::PDF::Converter - List' do
       end
     end
 
+    it 'should allow conum glyphs to be specified explicitly using multiple unicode ranges' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { conum_glyphs: '\u2776-\u277a, \u2465-\u2468' }, analyze: true
+      ----
+      1 <1>
+      2 <2>
+      3 <3>
+      4 <4>
+      5 <5>
+      6 <6>
+      7 <7>
+      8 <8>
+      9 <9>
+      ----
+      <1> 1
+      <2> 2
+      <3> 3
+      <4> 4
+      <5> 5
+      <6> 6
+      <7> 7
+      <8> 8
+      <9> 9
+      EOS
+
+      conum_lines = pdf.lines.map {|l| l.delete ' 1-9' }
+      (expect conum_lines).to have_size 18
+      (expect conum_lines).to eql [?\u2776, ?\u2777, ?\u2778, ?\u2779, ?\u277a, ?\u2465, ?\u2466, ?\u2467, ?\u2468] * 2
+    end
+
     it 'should allow conum glyphs to be specified as single unicode character' do
       pdf = to_pdf <<~'EOS', pdf_theme: { conum_glyphs: '\u2776' }, analyze: true
       ....
