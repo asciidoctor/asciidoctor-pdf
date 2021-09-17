@@ -1606,8 +1606,10 @@ describe 'Asciidoctor::PDF::Converter - List' do
       pdf = to_pdf <<~'EOS', pdf_theme: { conum_glyphs: '\u2776' }, analyze: true
       ....
       the one and only line <1>
+      no conum here <2>
       ....
       <1> That's all we have time for
+      <2> This conum is not supported
       EOS
 
       one_text = pdf.find_text ?\u2776
@@ -1616,6 +1618,9 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect text[:font_name]).to eql 'mplus1mn-regular'
         (expect text[:font_color]).to eql 'B12146'
       end
+
+      lines_without_conum = pdf.lines.reject {|l| l.include? ?\u2776 }
+      (expect lines_without_conum).to eql ['no conum here', 'This conum is not supported']
     end
 
     it 'should keep list marker with primary text' do
