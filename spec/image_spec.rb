@@ -243,6 +243,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect subject.resolve_explicit_width attrs, bounds_width: 1000).to eql 75.0
     end
 
+    it 'should ignore width that has non digits' do
+      attrs = { 'width' => 'text' }
+      (expect subject.resolve_explicit_width attrs, bounds_width: 1000).to be_nil
+    end
+
     it 'should size image using percentage width specified by pdfwidth', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-pdfwidth-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[,144,pdfwidth=25%,scaledwidth=50%]
@@ -323,6 +328,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       EOS
 
       (expect to_file).to visually_match 'image-percentage-fallback-width.pdf'
+    end
+
+    it 'should use intrinsic width if value of width is not numeric', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-block-intrinsic-width.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      image::wolpertinger.jpg[,invalid]
+      EOS
+
+      (expect to_file).to visually_match 'image-block-intrinsic-width.pdf'
     end
 
     it 'should use the vw width defined in theme if explicit width is not specified', visual: true do
@@ -1643,6 +1656,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       images = pdf.images
       (expect images).to have_size 1
       (expect images[0][:width]).to eql 498.8
+    end
+
+    it 'should use intrinsic width if value of width is not numeric', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-inline-intrinsic-width.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      image:wolpertinger.jpg[,invalid]
+      EOS
+
+      (expect to_file).to visually_match 'image-inline-intrinsic-width.pdf'
     end
   end
 

@@ -84,6 +84,7 @@ module Asciidoctor
       NoBreakSpace = ?\u00a0
       ZeroWidthSpace = ?\u200b
       DummyText = ?\u0000
+      DigitsRx = /^\d+$/
       DotLeaderTextDefault = '. '
       EmDash = ?\u2014
       RightPointer = ?\u25ba
@@ -4433,8 +4434,10 @@ module Asciidoctor
         elsif attrs.key? 'width'
           if (width = attrs['width']).end_with? '%'
             width = (width.to_f / 100) * bounds_width if bounds_width
-          else
+          elsif DigitsRx.match? width
             width = to_pt width.to_f, :px
+          else
+            return
           end
           bounds_width && opts[:constrain_to_bounds] ? [bounds_width, width].min : width
         end
