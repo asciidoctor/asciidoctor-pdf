@@ -5309,10 +5309,12 @@ header:
 ----
 <1> You can use the `image-vertical-align` key to slightly nudge the image up or down.
 
-CAUTION: By default, the image must fit in the allotted space for the running header or footer.
-Otherwise, you will run into layout issues.
-Adjust the width attribute accordingly using the `pdfwidth` attribute.
-Alternatively, you can set the `fit` attribute to `scale-down` (e.g., `fit=scale-down`) to reduce the image size to fit in the available space or `contain` (i.e., `fit=contain`) to scale the image (up or down) to fit the available space.
+CAUTION: The image must fit in the allotted space for the running header or footer.
+Otherwise, you'll run into layout issues or the image may not display.
+You can adjust the width of the image to a fixed value using the `pdfwidth` attribute.
+Alternatively, you can use the `fit` attribute to set the size of the image dynamically based on the available space.
+Set the `fit` attribute to `scale-down` (e.g., `fit=scale-down`) to reduce the image size to fit in the available space or `contain` (i.e., `fit=contain`) to scale the image (up or down) to fit the available space.
+You should not rely on the `width` attribute to set the image width when converting to PDF.
 
 == Applying Your Theme
 
