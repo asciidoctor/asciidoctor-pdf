@@ -641,7 +641,7 @@ For example:
 [source,yaml]
 ----
 title-page:
-  logo-image: image:logo.png[width=250,align=center]
+  logo-image: image:logo.png[pdfwidth=2.5in,align=center]
 ----
 
 === Quoted String
@@ -5302,7 +5302,7 @@ header:
   image-vertical-align: 2 {conum-guard-yaml} <1>
   recto:
     center:
-      content: image:footer-logo.png[width=80]
+      content: image:footer-logo.png[pdfwidth=15pt]
   verso:
     center:
       content: $header-recto-center-content
