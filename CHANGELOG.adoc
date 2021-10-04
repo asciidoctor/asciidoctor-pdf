@@ -184,6 +184,7 @@ Compliance::
 * rename Optimizer#generate_file method to Optimizer#optimize_file
 * drop support for deprecated pdf-style and pdf-stylesdir attributes (#1827)
 * drop use of the undocumented vertical_spacing key from the built-in themes
+* remove unneeded _mb functions (e.g., `uppercase_mb`); multibyte support for upcase, downcase, and capitalize is now provided by corelib
 
 Build / Infrastructure::
 
