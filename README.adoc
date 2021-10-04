@@ -1128,7 +1128,7 @@ module Asciidoctor::PDF
   IndexCatalog.prepend (::Module.new do
     def store_primary_term name, dest = nil
       store_dest dest if dest
-      category = uppercase_mb (name.delete_prefix 'fn').chr
+      category = (name.delete_prefix 'fn').upcase.chr
       (init_category category).store_term name, dest
     end
   end)
