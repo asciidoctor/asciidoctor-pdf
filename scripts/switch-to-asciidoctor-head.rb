@@ -1,6 +1,6 @@
 require 'fileutils'
 
-branch = ARGV[0] || 'master'
+branch = ARGV[0] || 'main'
 # NOTE it's necessary to hot patch the installed gem so that RubyGems can find it without Bundler
 asciidoctor_spec = Gem::Specification.find_by_name 'asciidoctor'
 FileUtils.rm_r asciidoctor_spec.gem_dir, secure: true if Dir.exist? asciidoctor_spec.gem_dir
