@@ -20,6 +20,7 @@ Enhancements::
 * allow theme to control background color and border offset (only for background) for links (#1705)
 * don't show link URL next to link text when media is not screen and show-link-uri is unset
 * don't render index section if index is empty (i.e., there are no index entries)
+* allow title of special section to be hidden by setting "untitled" option on section
 * stabilize font paths in built-in themes by prefixing paths with GEM_FONTS_DIR (#1568)
 * assign page-layout attribute in running content so it can be used select background per layout (#1570)
 * reset numbering of footnotes in each chapter; add chapter xreftext to label of footnote reference that refers to previous chapter (#1639)

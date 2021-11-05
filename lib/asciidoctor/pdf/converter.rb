@@ -681,7 +681,7 @@ module Asciidoctor
           if sectname == 'part'
             layout_part_title sect, title, align: align, level: hlevel
           elsif chapterlike
-            layout_chapter_title sect, title, align: align, level: hlevel
+            layout_chapter_title sect, title, align: align, level: hlevel unless sect.special && (sect.option? 'untitled')
           else
             layout_general_heading sect, title, align: align, level: hlevel, outdent: true
           end
