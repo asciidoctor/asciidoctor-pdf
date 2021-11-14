@@ -3,13 +3,15 @@
 module PDF::Core
   class << self
     alias _initial_real real
-    def real num
-      num.to_f.round 4
+
+    # NOTE Makes v1.6.x work with the modified precision settings (0.5f) in Prawn 2.4 while preserving existing behavior
+    def real num, precision = 4
+      ("%.#{precision}f" % num).sub(/((?<!\.)0)+\z/, '')
     end
 
     alias _initial_real_params real_params
     def real_params array
-      return array.map {|it| it.to_f.round 5 }.join ' ' if (caller_locations 1, 1)[0].base_label == 'transformation_matrix'
+      return array.map {|e| real e, 5 }.join(' ') if (caller_locations 1, 1)[0].base_label == 'transformation_matrix'
       _initial_real_params array
     end
   end

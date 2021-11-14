@@ -244,6 +244,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-scale-to-fit-bounds.pdf'
     end
 
+    it 'should output fixed precision numbers even when set width differs to viewBox with small amount', visual: true do
+      to_file = to_pdf_file 'image::green-bar-width-diff.svg[]', 'image-svg-fixed-precision.pdf'
+
+      (expect to_file).to visually_match 'image-svg-fixed-precision.pdf'
+    end
+
     it 'should display text inside link' do
       pdf = to_pdf <<~'EOS', analyze: true
       image::svg-with-link.svg[]
