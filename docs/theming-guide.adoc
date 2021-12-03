@@ -752,8 +752,8 @@ A sans-serif font that provides a very complete set of Unicode glyphs.
 Cannot be styled as italic, bold or bold_italic.
 Used as the fallback font in the `default-with-fallback-font` theme.
 
-TIP: The default themes in 1.5.x do not include the `GEM_FONTS_DIR` prefix in the path of the bundled font files.
-Therefore, if you want to specify the location of custom fonts using the `pdf-fontsdir` attribute, yet still be able to use the bundled fonts, you need to refer to the bundled fonts using the `GEM_FONTS_DIR` token.
+TIP: The default themes in Asciidoctor PDF < 2 do not include the `GEM_FONTS_DIR` prefix in the path of the bundled font files.
+Therefore, if you want to specify the location of custom fonts using the `pdf-fontsdir` attribute, yet still be able to use the bundled fonts, you need to qualify the path of the bundled fonts using the `GEM_FONTS_DIR` token.
 To do so, you can either a) redeclare the bundle fonts in your theme and prefix the path with the segment `GEM_FONTS_DIR` (e.g., `GEM_FONTS_DIR/mplus1p-regular-fallback.ttf`, or b) include `GEM_FONT_DIR` in the value of the `pdf-fontsdir` attribute separated by the location of your custom fonts using a semi-colon (e.g., `"path/to/your/fonts;GEM_FONTS_DIR"`).
 
 === Custom Fonts
