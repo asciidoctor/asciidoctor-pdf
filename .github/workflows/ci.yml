@@ -27,7 +27,7 @@ jobs:
     - name: Install Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.0'
+        ruby-version: '3.1'
     - name: Configure Bundler
       run: |
         bundle config --local path .bundle/gems
@@ -41,15 +41,19 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        ruby: [jruby-9.2, '2.5', '2.6', '2.7', '3.0']
+        ruby: [jruby-9.2, '2.5', '2.6', '2.7', '3.0', '3.1']
         rouge-version: [~]
         upstream: [~]
         exclude:
+        # remove 3.1 on ubuntu-latest to mark as primary
         - os: ubuntu-latest
-          ruby: '3.0'
+          ruby: '3.1'
+        # remove 3.1 on windows as it's not yet available
+        - os: windows-latest
+          ruby: '3.1'
         include:
         - os: macos-latest
-          ruby: '3.0'
+          ruby: '3.1'
         # NOTE: enable once Asciidoctor 2.1.0 is released
         #- os: ubuntu-latest
         #  ruby: '2.5'
@@ -61,7 +65,7 @@ jobs:
           ruby: '3.0'
           upstream: upstream
         - os: ubuntu-latest
-          ruby: '3.0'
+          ruby: '3.1'
           primary: primary
     runs-on: ${{ matrix.os }}
     env:
