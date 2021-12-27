@@ -444,7 +444,7 @@ module Asciidoctor
             message = %(could not locate or load the built-in pdf theme `#{theme_name}')
           end
           message += %( because of #{$!.class} #{$!.message})
-          log :error, %(#{message}; reverting to default theme)
+          log :error, (message.sub %r/$/, '; reverting to default theme')
           @themesdir = (theme = ThemeLoader.load_theme).__dir__
           prepare_theme theme
         end

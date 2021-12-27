@@ -1426,6 +1426,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: %(~image file is an unrecognised format)
     end
 
+    # TODO reenable once Asciidoctor 2.0.17 is available
     context 'Cache', if: (gem_available? 'open-uri-cached'), &(proc do
       before :context do # rubocop:disable RSpec/BeforeAfterAll
         (expect defined? OpenURI::Cache).to be_falsy # rubocop:disable RSpec/ExpectInHook

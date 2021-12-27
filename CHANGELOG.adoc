@@ -191,6 +191,7 @@ Build / Infrastructure::
 
 * migrate Linux CI jobs to GitHub Actions (#1814)
 * enable CI job on macOS (#1817)
+* add Ruby 3.1 to CI matrix; use as primary Ruby
 * test against Asciidoctor upstream (#1821)
 * skip tests for unreadable files when euid is 0
 * test against pygments.rb 2.0.0
