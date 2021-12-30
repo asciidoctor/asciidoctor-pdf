@@ -2357,7 +2357,7 @@ module Asciidoctor
             # QUESTION should we insert breakable chars into URI when building fragment instead?
             %(<a href="#{target}"#{attrs.join}>#{breakable_uri text}</a>)
           # NOTE @media may not be initialized if method is called before convert phase
-          elsif @media != 'screen' || (doc.attr? 'show-link-uri')
+          elsif (doc.attr? 'show-link-uri') || !(@media == 'screen' || (doc.attribute_locked? 'show-link-uri') || ((doc.instance_variable_get :@attributes_modified).include? 'show-link-uri'))
             # QUESTION should we insert breakable chars into URI when building fragment instead?
             # TODO: allow style of printed link to be controlled by theme
             %(<a href="#{target}"#{attrs.join}>#{text}</a> [<font size="0.85em">#{breakable_uri bare_target}</font>&#93;)

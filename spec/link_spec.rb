@@ -82,13 +82,45 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       (expect lines[1]).to eql 'https://goo.gl/search/asciidoctor'
     end
 
-    it 'should reveal URL of link when media=print or media=prepress' do
+    it 'should reveal URL of link by default when media=print or media=prepress' do
       %w(print prepress).each do |media|
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => media }, analyze: true
         https://asciidoctor.org[Asciidoctor] is a text processor.
         EOS
 
         (expect pdf.lines).to eql ['Asciidoctor [https://asciidoctor.org] is a text processor.']
+      end
+    end
+
+    it 'should reveal URL of link when show-link-uri is set' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :show-link-uri:
+
+      https://asciidoctor.org[Asciidoctor] is a text processor.
+      EOS
+
+      (expect pdf.lines).to eql ['Asciidoctor [https://asciidoctor.org] is a text processor.']
+    end
+
+    it 'should not reveal URL of link when show-link-uri is unset in document even media is print or prepress' do
+      %w(print prepress).each do |media|
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => media }, analyze: true
+        :!show-link-uri:
+
+        https://asciidoctor.org[Asciidoctor] is a text processor.
+        EOS
+
+        (expect pdf.lines).to eql ['Asciidoctor is a text processor.']
+      end
+    end
+
+    it 'should not reveal URL of link when show-link-uri is unset from API even media is print or prepress' do
+      %w(print prepress).each do |media|
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => media, 'show-link-uri' => nil }, analyze: true
+        https://asciidoctor.org[Asciidoctor] is a text processor.
+        EOS
+
+        (expect pdf.lines).to eql ['Asciidoctor is a text processor.']
       end
     end
 

@@ -5,6 +5,13 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/v1.6.x[commit history] on GitHub.
 
+== Unreleased
+
+Enhancements::
+
+* show URL of link for any media type when show-link-uri is set (#951)
+* do not show URL of link when media type is screen or prepress when show-link-uri is unset (#951)
+
 == 1.6.1 (2021-09-04) - @mojavelinux
 
 Enhancements::
