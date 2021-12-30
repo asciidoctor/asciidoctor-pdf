@@ -18,7 +18,6 @@ Enhancements::
 * allow theme to control border style of delimited blocks (example, sidebar, code, admonition, verse, quote) (#1586)
 * allow theme to control font color of first line of abstract
 * allow theme to control background color and border offset (only for background) for links (#1705)
-* don't show link URL next to link text when media is not screen and show-link-uri is unset (#951)
 * don't render index section if index is empty (i.e., there are no index entries)
 * allow title of special section to be hidden by setting "untitled" option on section
 * stabilize font paths in built-in themes by prefixing paths with GEM_FONTS_DIR (#1568)
@@ -186,6 +185,17 @@ Build / Infrastructure::
 * add Ruby 3.1 to CI matrix; use as primary Ruby
 * test against Asciidoctor upstream (#1821)
 * skip tests for unreadable files when euid is 0
+
+== 1.6.2 (2021-12-31) - @mojavelinux
+
+Enhancements::
+
+* show URL of link for any media type when show-link-uri is set (#951)
+* do not show URL of link when media type is screen or prepress when show-link-uri is unset (#951)
+
+Bug Fixes::
+
+* update patches for `PDF::Core.real` and `PDF::Core.real_params` to prevent scientific notation ending up in PDF (#1983) (@rillbert)
 
 == 1.6.1 (2021-09-04) - @mojavelinux
 
