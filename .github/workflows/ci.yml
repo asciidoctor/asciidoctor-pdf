@@ -4,6 +4,9 @@ on:
     branches: ['**']
     tags-ignore: ['**']
   pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   activate:
     if: "!endsWith(github.event.head_commit.message, '[skip ci]')"
@@ -20,7 +23,7 @@ jobs:
     - name: Install Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.0'
+        ruby-version: '3.1'
     - name: Configure Bundler
       run: |
         bundle config --local path .bundle/gems
@@ -34,17 +37,21 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        ruby: [jruby-9.2, '2.5', '2.6', '2.7', '3.0']
+        ruby: [jruby-9.2, '2.5', '2.7', '3.0', '3.1']
         asciidoctor-version: [~]
         pygments-version: [~]
         rouge-version: [~]
         upstream: [~]
         exclude:
+        # remove 3.1 on ubuntu-latest to mark as primary
         - os: ubuntu-latest
-          ruby: '3.0'
+          ruby: '3.1'
+        # remove 3.1 on windows as it's not yet available
+        - os: windows-latest
+          ruby: '3.1'
         include:
         - os: macos-latest
-          ruby: '3.0'
+          ruby: '3.1'
         - os: ubuntu-latest
           ruby: '2.5'
           rouge-version: '~> 2.0.0'
@@ -55,7 +62,7 @@ jobs:
           ruby: '3.0'
           upstream: upstream
         - os: ubuntu-latest
-          ruby: '3.0'
+          ruby: '3.1'
           primary: primary
     runs-on: ${{ matrix.os }}
     env:
@@ -70,11 +77,6 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-    - name: Reinstall Bundler
-      if: matrix.os == 'windows-latest' && matrix.ruby == 'jruby-9.2'
-      run: |
-        gem uninstall -x bundler
-        gem install -N bundler -v 2.1.4
     - name: Configure Bundler
       run: |
         bundle config --local path .bundle/gems
