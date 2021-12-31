@@ -12,6 +12,10 @@ Enhancements::
 * show URL of link for any media type when show-link-uri is set (#951)
 * do not show URL of link when media type is screen or prepress when show-link-uri is unset (#951)
 
+Bug Fixes::
+
+* update patches for `PDF::Core.real` and `PDF::Core.real_params` to prevent scientific notation ending up in PDF (#1983) (@rillbert)
+
 == 1.6.1 (2021-09-04) - @mojavelinux
 
 Enhancements::
