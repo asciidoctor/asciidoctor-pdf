@@ -81,7 +81,6 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-        bundler: '2.2'
     - name: Configure Bundler
       run: |
         bundle config --local path .bundle/gems
