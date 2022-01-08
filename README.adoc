@@ -52,7 +52,7 @@ Its aim is to take the pain out of creating PDF documents from AsciiDoc.
 NOTE: You're viewing the documentation for the (unreleased) {release-line} release line.
 If you're looking for the documentation for another release line, please refer to one of the following branches: +
 {url-project-repo}/tree/v1.5.x#readme[1.5.x]
-&hybull;
+&#8259;
 {url-project-repo}/tree/v1.6.x#readme[1.6.x]
 
 toc::[]
@@ -1286,6 +1286,31 @@ For example, to make the source of the PDF a bit more readable (though less opti
 You can also disable page compressioin (e.g., `--no-compress-pages` from the CLI or `options.compress_pages = false` from the API).
 
 hexapdf also allows you to add password protection to your PDF, if that's something you're interested in doing.
+
+=== Rasterizing the PDF
+
+Instead of optimizing the objects in the vector PDF, you may want to rasterize the PDF instead.
+Rasterizing the PDF prevents any of the text or other objects from being selected, similar to a scanned document.
+
+Asciidoctor PDF doesn't provide built-in support for rasterizing the generated PDF.
+However, you can use Ghostscript to flatten all the text in the PDF, thus preventing it from being selected.
+
+ $ gs -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -dNoOutputFonts -r300 -o output.pdf input.pdf
+
+You can adjust the value of the `-r` option (the density) to get a higher or lower quality result.
+
+Alternately, you can use the `convert` command from ImageMagick to convert each page in the PDF to an image.
+
+ $ convert -density 300 -quality 100 input.pdf output.pdf
+
+Yet another option is to combine Ghostscript and ImageMagick to produce a PDF with pages converted to images.
+
+ $ gs -dBATCH -dNOPAUSE -sDEVICE=png16m -o /tmp/tmp-%02d.png -r300 input.pdf
+   convert /tmp/tmp-*.png output.pdf
+   rm -f /tmp/tmp-*.png
+
+Using Ghostscript to handle the rasterization produces a much smaller output file.
+The drawback of using Ghostscript in this way is that it has to use intermediate files.
 
 ifndef::env-site[]
 == Contributing
