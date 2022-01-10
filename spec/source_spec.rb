@@ -405,7 +405,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       end
 
       classname_text = pdf.find_unique_text 'Type'
-      (expect ((::Rouge::Theme.find 'colorful').new.style_for ::Rouge::Token::Tokens::Name::Class)[:fg]).to eql '#B06'
+      (expect ((Rouge::Theme.find 'colorful').new.style_for Rouge::Token::Tokens::Name::Class)[:fg]).to eql '#B06'
       (expect classname_text[:font_color]).to eql 'BB0066'
     end
 
