@@ -183,6 +183,8 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         '&#x27;' => ?',
         '&#xa9;' => ?\u00a9,
         '&#x1f603;' => ([0x1f603].pack 'U1'),
+        '&#xA9;' => ?\u00a9,
+        '&#x1F603;' => ([0x1f603].pack 'U1'),
       }.each do |ref, chr|
         output = subject.format ref
         (expect output).to have_size 1
