@@ -1002,11 +1002,11 @@ module Markup
 
     s0, i0 = [], index
     loop do
-      if has_terminal?(@regexps[gr = '\A[0-9A-Fa-f]'] ||= Regexp.new(gr), :regexp, index)
+      if has_terminal?(@regexps[gr = '\A[0-9a-fA-F]'] ||= Regexp.new(gr), :regexp, index)
         r1 = true
         @index += 1
       else
-        terminal_parse_failure('[0-9A-Fa-f]')
+        terminal_parse_failure('[0-9a-fA-F]')
         r1 = nil
       end
       if r1
