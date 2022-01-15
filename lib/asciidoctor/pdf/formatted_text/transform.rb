@@ -7,8 +7,8 @@ module Asciidoctor
         LF = ?\n
         ZeroWidthSpace = ?\u200b
         CharEntityTable = { amp: '&', apos: ?', gt: '>', lt: '<', nbsp: ?\u00a0, quot: '"' }
-        CharRefRx = /&(?:(#{CharEntityTable.keys.join '|'})|#(?:(\d{2,6})|x(\h{2,5})));/
-        HexColorRx = /^#[a-fA-F0-9]{3,6}$/
+        CharRefRx = /&(?:(#{CharEntityTable.keys.join '|'})|#(?:(\d\d\d{0,4})|x(\h\h\h{0,3})));/
+        HexColorRx = /^#\h\h\h\h{0,3}$/
         TextDecorationTable = { 'underline' => :underline, 'line-through' => :strikethrough }
         ThemeKeyToFragmentProperty = {
           'background_color' => :background_color,
