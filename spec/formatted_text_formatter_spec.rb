@@ -213,7 +213,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should decode hexadecimal character references in link href' do
-      output = subject.format '<a href="https://cast.you?v=999999&#x26;list&#x3d;abcde&#x26;index&#x3d;1">My Playlist</a>'
+      output = subject.format '<a href="https://cast.you?v=999999&#x26;list=abcde&#x26;index=1">My Playlist</a>'
       (expect output).to have_size 1
       (expect output[0][:link]).to eql 'https://cast.you?v=999999&list=abcde&index=1'
     end
