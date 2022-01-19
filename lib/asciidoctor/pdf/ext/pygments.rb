@@ -4,8 +4,8 @@ module Pygments
   module Ext
     module BlockStyles
       BlockSelectorRx = /^\.highlight *\{([^}]+?)\}/
-      HighlightBackgroundColorRx = /^\.highlight +\.hll +{ *background(?:-color)?: *#([a-fA-F0-9]{6})/
-      ColorPropertiesRx = /(?:^|;) *(background(?:-color)?|color): *#?([a-fA-F0-9]{6}) *(?=$|;)/
+      HighlightBackgroundColorRx = /^\.highlight +\.hll +{ *background(?:-color)?: *#(\h{6})/
+      ColorPropertiesRx = /(?:^|;) *(background(?:-color)?|color): *#?(\h{6}) *(?=$|;)/
 
       @cache = ::Hash.new do |cache, key|
         styles = {}

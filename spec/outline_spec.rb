@@ -670,13 +670,13 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       = ACME(TM) Catalog <&#8470;&nbsp;1>
       :doctype: book
 
-      == Paper Clips &#x2116;&nbsp;4
+      == Paper Clips &#x20Ac;&nbsp;4
       EOS
 
       outline = extract_outline pdf
       (expect outline).to have_size 2
       (expect outline[0][:title]).to eql %(ACME\u2122 Catalog <\u2116 1>)
-      (expect outline[1][:title]).to eql %(Paper Clips \u2116 4)
+      (expect outline[1][:title]).to eql %(Paper Clips \u20ac 4)
     end
   end
 end

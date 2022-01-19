@@ -183,6 +183,8 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         '&#x27;' => ?',
         '&#xa9;' => ?\u00a9,
         '&#x1f603;' => ([0x1f603].pack 'U1'),
+        '&#xA9;' => ?\u00a9,
+        '&#x1F603;' => ([0x1f603].pack 'U1'),
       }.each do |ref, chr|
         output = subject.format ref
         (expect output).to have_size 1
@@ -210,7 +212,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect output[0][:link]).to eql 'https://cast.you?v=999999&list=abcde&index=1'
     end
 
-    it 'should decode hexidecimal character references in link href' do
+    it 'should decode hexadecimal character references in link href' do
       output = subject.format '<a href="https://cast.you?v=999999&#x26;list=abcde&#x26;index=1">My Playlist</a>'
       (expect output).to have_size 1
       (expect output[0][:link]).to eql 'https://cast.you?v=999999&list=abcde&index=1'

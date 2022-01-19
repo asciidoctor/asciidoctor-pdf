@@ -453,7 +453,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect underline[:from][:y]).to be_within(2).of(underlined_text[:y])
   end
 
-  it 'should support hexidecimal character reference in section title' do
+  it 'should support hexadecimal character reference in section title' do
     pdf = to_pdf <<~'EOS', analyze: true
     == &#xb5;Services
     EOS
@@ -477,7 +477,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.lines[0]).to eql 'ÜBER ÉTUDIER'
   end
 
-  it 'should ignore letters in hexidecimal character reference in section title when transforming to uppercase' do
+  it 'should ignore letters in hexadecimal character reference in section title when transforming to uppercase' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     == &#xb5;Services
     EOS

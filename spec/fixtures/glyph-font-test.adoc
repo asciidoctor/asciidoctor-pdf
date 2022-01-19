@@ -10,7 +10,7 @@ a--b `c--d`
 // ellipsis
 so... `well...`
 // euro sign
-99,99 &#x20ac; `-5,00 &#x20ac;`
+99,99 &#x20ac; `-5,00 &#x20AC;`
 // trademark sign
 YOLO&#x2122; `ACME&#x2122;`
 // math operators
