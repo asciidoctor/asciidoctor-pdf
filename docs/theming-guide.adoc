@@ -2242,7 +2242,7 @@ Block styles are applied to the following block types:
 === Caption
 
 The keys in this category control the arrangement and style of block captions.
-In addition to the generic caption category, each of these keys can be set on the caption key nested inside the following block categories: blockquote, code, example, footnotes, image, listing, table, and verse.
+In addition to the generic caption category, each of these keys can be set on the caption key nested inside the following block categories: blockquote, code (applies to listeral, listing, and blocks), example, footnotes, image, table, and verse.
 
 [cols="3,4,5l"]
 |===
@@ -2311,7 +2311,7 @@ The value `inherit` resolves to the alignment of the block image.
 [#keys-code]
 === Code
 
-The keys in this category are used to control the style of literal, listing and source blocks.
+The keys in this category are used to control the style of literal, listing, and source blocks.
 
 [cols="3,4,5l"]
 |===
