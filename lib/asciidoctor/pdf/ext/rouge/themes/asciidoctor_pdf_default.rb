@@ -10,6 +10,7 @@ module Rouge
       # Deviate from pastie here since our italic is actually a thinner font
       style Comment,                   fg: '#888888' #, italic: true
       style Comment::Preproc,          fg: '#cc0000', bold: true
+      style Comment::PreprocFile,      fg: '#cc0000', bold: true
       # Deviate from pastie here by not using a background color
       style Comment::Special,          fg: '#cc0000', bold: true #, bg: '#fff0f0'
 
