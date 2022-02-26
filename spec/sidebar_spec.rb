@@ -99,6 +99,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     #{(['filler'] * 15).join %(\n\n)}
 
     .Sidebar
+    [%unbreakable]
     ****
     #{(['content'] * 15).join %(\n\n)}
     ****

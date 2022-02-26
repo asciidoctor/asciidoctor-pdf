@@ -129,7 +129,7 @@ class EnhancedPDFTextInspector < PDF::Inspector
   end
 
   def page= page
-    @pages << { size: (page.attributes[:MediaBox].slice 2, 2), text: [] }
+    @pages << { size: (page.attributes[:MediaBox].slice 2, 2), text: [], raw_content: page.raw_content }
     @page_number = page.number
     @state = ::PDF::Reader::PageState.new page
     page.fonts.each do |label, stream|
@@ -137,6 +137,11 @@ class EnhancedPDFTextInspector < PDF::Inspector
       base_font = (base_font.partition '+')[-1] if base_font.include? '+'
       @fonts[label] = base_font
     end
+  end
+
+  def extract_graphic_states content
+    content = (content.delete_prefix %(q\n)).delete_suffix %(\nQ)
+    (content.scan %r/^q\n(.*?)\nQ$/m).map {|it| it[0].split ?\n }
   end
 
   # Tf
@@ -289,7 +294,15 @@ class LineInspector < PDF::Inspector
   end
 end
 
+module TareFirstPageContentStreamNoop
+  def tare_first_page_content_stream
+    yield
+  end
+end
+
 RSpec.configure do |config|
+  config.filter_run_excluding breakable: true unless ENV['CI']
+
   config.before :suite do
     FileUtils.rm_r output_dir, force: true, secure: true
     FileUtils.mkdir output_dir
@@ -651,6 +664,19 @@ RSpec::Matchers.define_negated_matcher :not_raise_exception, :raise_exception
 RSpec::Matchers.define :have_size do |expected|
   match {|actual| actual.size == expected }
   failure_message {|actual| %(expected #{actual} to have size #{expected}, but was #{actual.size}) }
+end
+
+RSpec::Matchers.define :have_background do |expected|
+  match do |actual|
+    color = ((expected[:color].scan %r/../).map {|it| ((it.to_i 16) / 255.0).round 5 }.join ' ') + ' scn'
+    # FIXME: shave off lines before this line
+    (expect actual).to include color
+    x1, y1 = expected[:top_left]
+    x2, y2 = expected[:bottom_right]
+    (expect actual).to include %(#{x2} #{y1} #{x2} #{y1} #{x2} #{y1} c)
+    (expect actual).to include %(#{x1} #{y2} #{x1} #{y2} #{x1} #{y2} c)
+  end
+  failure_message {|actual| %(expected #{actual} to have background #{expected}, but was \n#{actual.join ?\n}) }
 end
 
 RSpec::Matchers.define :annotate do |text|

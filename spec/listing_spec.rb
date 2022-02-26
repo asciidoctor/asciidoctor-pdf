@@ -20,10 +20,11 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect lines[1][:from][:y] - lines[1][:to][:y]).to be <= 1
   end
 
-  it 'should move block to next page if it will fit to avoid splitting it' do
+  it 'should move unbreakable block shorter than page to next page to avoid splitting it' do
     pdf = to_pdf <<~EOS, analyze: true
     #{(['paragraph'] * 20).join (?\n * 2)}
 
+    [%unbreakable]
     ----
     #{(['listing'] * 20).join ?\n}
     ----
@@ -37,7 +38,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     pdf = to_pdf <<~EOS
     #{(['paragraph'] * 20).join (?\n * 2)}
 
-    [#listing-1]
+    [#listing-1%unbreakable]
     ----
     #{(['listing'] * 20).join ?\n}
     ----
@@ -50,7 +51,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect dest[:y]).to eql 805.89
   end
 
-  it 'should place anchor above top margin of block' do
+  it 'should place anchor below top margin of block' do
     input = <<~'EOS'
     paragraph
 
@@ -66,14 +67,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     pdf = to_pdf input, pdf_theme: pdf_theme
     (expect (dest = get_dest pdf, 'listing-1')).not_to be_nil
     (expect dest[:page_number]).to be 1
-    (expect dest[:y]).to eql lines[0][:from][:y] + 10
+    (expect dest[:y]).to eql lines[0][:from][:y]
   end
 
   it 'should place anchor at top of block if advanced to next page' do
     input = <<~EOS
     paragraph
 
-    [#listing-1]
+    [#listing-1%unbreakable]
     ----
     #{(['filler'] * 25).join %(\n\n)}
     ----
@@ -117,7 +118,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect to_file).to visually_match 'listing-page-split.pdf'
   end
 
-  it 'should resize font size to prevent wrapping if autofit option is set' do
+  it 'should resize font to prevent wrapping if autofit option is set' do
     pdf = to_pdf <<~'EOS', analyze: true
     [%autofit]
     ----
@@ -129,7 +130,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect pdf.text[0][:font_size]).to be < build_pdf_theme.code_font_size
   end
 
-  it 'should not resize font size if not necessary' do
+  it 'should not resize font if not necessary' do
     pdf = to_pdf <<~'EOS', analyze: true
     [%autofit]
     ----
@@ -141,7 +142,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect pdf.text[0][:font_size]).to eql 11
   end
 
-  it 'should not resize font size more than base minimum font size' do
+  it 'should not resize font more than base minimum font size' do
     pdf = to_pdf <<~'EOS', pdf_theme: { base_font_size_min: 8 }, analyze: true
     [%autofit]
     ----
@@ -153,7 +154,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect pdf.text[0][:font_size]).to be 8
   end
 
-  it 'should not resize font size more than code minimum font size' do
+  it 'should not resize font more than code minimum font size' do
     pdf = to_pdf <<~'EOS', pdf_theme: { base_font_size_min: 0, code_font_size_min: 8 }, analyze: true
     [%autofit]
     ----

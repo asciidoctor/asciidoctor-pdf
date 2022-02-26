@@ -297,7 +297,7 @@ code {
 Where could we go without some Java(TM)?
 Naturally, some autosizing is necessary.
 
-[source%autofit,java]
+[source%autofit%unbreakable,java]
 ----
 package org.javaee7.cdi.events;
 
@@ -416,7 +416,7 @@ its
 breaking
 point.
 
-[NOTE]
+[NOTE%unbreakable]
 .What happens if there is both a field and a method with the same name?
 ====
 Back to the previous example, suppose that we have both a field and a method with the same name, as in:

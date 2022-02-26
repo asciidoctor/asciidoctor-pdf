@@ -7,6 +7,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     pdf = to_pdf <<~EOS, analyze: true
     #{(['filler'] * 15).join %(\n\n)}
 
+    [%unbreakable]
     ====
     #{(['content'] * 15).join %(\n\n)}
     ====
@@ -45,6 +46,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     #{(['filler'] * 15).join %(\n\n)}
 
     .Title
+    [%unbreakable]
     ====
     #{(['content'] * 15).join %(\n\n)}
     ====
@@ -59,6 +61,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
   it 'should split block if it cannot fit on one page' do
     pdf = to_pdf <<~EOS, analyze: true
     .Title
+    [%unbreakable]
     ====
     #{(['content'] * 30).join %(\n\n)}
     ====
@@ -74,12 +77,33 @@ describe 'Asciidoctor::PDF::Converter - Example' do
   it 'should split border when block is split across pages', visual: true do
     to_file = to_pdf_file <<~EOS, 'example-page-split.pdf'
     .Title
+    [%unbreakable]
     ====
     #{(['content'] * 30).join %(\n\n)}
     ====
     EOS
 
     (expect to_file).to visually_match 'example-page-split.pdf'
+  end
+
+  it 'should draw border around whole block when block contains nested unbreakable block', visual: true do
+    to_file = to_pdf_file <<~EOS, 'example-with-nested-block-page-split.pdf'
+    .Title
+    ====
+    #{(['content'] * 25).join %(\n\n)}
+
+    [NOTE%unbreakable]
+    ======
+    This block does not fit on a single page.
+
+    Therefore, it is split across multiple pages.
+    ======
+
+    #{(['content'] * 5).join %(\n\n)}
+    ====
+    EOS
+
+    (expect to_file).to visually_match 'example-with-nested-block-page-split.pdf'
   end
 
   it 'should not add signifier and numeral to caption if example-caption attribute is unset' do

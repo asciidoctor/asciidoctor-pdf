@@ -856,6 +856,8 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       main_pdf = to_pdf <<~'EOS', (opts.merge analyze: true)
       :source-highlighter: rouge
 
+      filler
+
       [%unbreakable]
       --
       [source,ruby]
@@ -865,7 +867,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       --
       EOS
 
-      main_pdf_text = main_pdf.text
+      main_pdf_text = main_pdf.text.reject {|it| it[:string] == 'filler' }
       (expect main_pdf_text[0][:string]).to eql 'puts'
       (expect main_pdf_text[0][:font_color]).not_to eql '333333'
       scratch_pdf_output = scratch_pdf.render

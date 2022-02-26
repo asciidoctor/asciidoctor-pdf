@@ -144,6 +144,40 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect text[-1][:y]).to be < 60
   end
 
+  it 'should place footnotes at end of page if start on following page' do
+    pdf = with_content_spacer 10, 700 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: { page_margin: 50 }, analyze: true
+      image::#{spacer_path}[]
+
+      About this thing.footnote:[More about this thing.]
+      About that thing.footnote:[More about that thing.]
+      And so on.
+      EOS
+    end
+
+    (expect pdf.pages).to have_size 2
+    last_text = pdf.find_unique_text %r/And so on/
+    (expect last_text[:page_number]).to be 1
+    first_footnote = pdf.find_unique_text %r/More about this thing/
+    (expect first_footnote[:page_number]).to be 2
+    last_page_texts = pdf.find_text page_number: 2
+    footnotes_height = (last_page_texts[0][:y] + last_page_texts[0][:font_size]) - last_page_texts[-1][:y]
+    (expect first_footnote[:y]).to be < (footnotes_height + 50)
+  end
+
+  it 'should not move footnotes down if height exceeds height of page' do
+    footnotes = ['footnote:[Lots more about this thing.]'] * 50
+    pdf = to_pdf <<~EOS, analyze: true
+    About this thing.#{footnotes}
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    main_text = (pdf.find_text %r/About this thing\./)[0]
+    first_footnote_text = (pdf.find_text %r/Lots more/)[0]
+    delta = main_text[:y] - first_footnote_text[:y]
+    (expect delta).to be < 60
+  end
+
   it 'should allow footnote to be externalized so it can be used multiple times' do
     pdf = to_pdf <<~'EOS', analyze: true
     :fn-disclaimer: footnote:disclaimer[Opinions are my own.]
@@ -346,9 +380,13 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect f1).to eql '[1] Only available if you have an active subscription.'
   end
 
-  it 'should not duplicate footnotes that are included in keep together content' do
+  it 'should not duplicate footnotes that are included in unbreakable blocks' do
     pdf = to_pdf <<~'EOS', analyze: true
+    Here we go.
+
+    [%unbreakable]
     ****
+    [%unbreakable]
     ____
     Make it rain.footnote:[money]
     ____
