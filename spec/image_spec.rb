@@ -1826,6 +1826,18 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pdf.pages[1].text).to eql 'Figure 1. Image caption'
     end
 
+    it 'should raise error if caption does not fit on a single page' do
+      (expect do
+        caption = (['excessive caption'] * 300).join ' '
+        to_pdf <<~EOS
+        before image
+
+        .#{caption}
+        image::tall-diagram.png[Tall diagram]
+        EOS
+      end).to raise_exception Prawn::Errors::CannotFit
+    end
+
     it 'should scale down SVG at top of page to fit image and caption if dimensions exceed page size', visual: true do
       to_file = to_pdf_file <<~EOS, 'image-svg-with-caption-scale-to-fit-page.pdf'
       :pdf-page-size: Letter

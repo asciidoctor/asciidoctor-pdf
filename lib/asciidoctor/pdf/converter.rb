@@ -216,7 +216,7 @@ module Asciidoctor
           if (insert_toc = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && doc.sections?)
             start_new_page if @ppbook && verso_page?
             add_dest_for_block doc, id: 'toc', y: (at_page_top? ? page_height : nil)
-            allocate_toc doc, toc_num_levels, @y, use_title_page
+            allocate_toc doc, toc_num_levels, cursor, use_title_page
           else
             @toc_extent = nil
           end
@@ -305,10 +305,10 @@ module Asciidoctor
 
           if @toc_extent
             if use_title_page && !insert_toc
-              num_front_matter_pages[0] = @toc_extent[:page_nums].last if @theme.running_content_start_at == 'after-toc'
-              num_front_matter_pages[1] = @toc_extent[:page_nums].last if @theme.page_numbering_start_at == 'after-toc'
+              num_front_matter_pages[0] = @toc_extent.to.page if @theme.running_content_start_at == 'after-toc'
+              num_front_matter_pages[1] = @toc_extent.to.page if @theme.page_numbering_start_at == 'after-toc'
             end
-            toc_page_nums = layout_toc doc, toc_num_levels, @toc_extent[:page_nums].first, @toc_extent[:start_y], num_front_matter_pages[1]
+            toc_page_nums = layout_toc doc, toc_num_levels, @toc_extent.from.page, @toc_extent.from.cursor, num_front_matter_pages[1]
           else
             toc_page_nums = []
           end
@@ -714,8 +714,8 @@ module Asciidoctor
       def layout_footnotes node
         return if (fns = (doc = node.document).footnotes - @rendered_footnotes).empty?
         theme_margin :footnotes, :top
-        with_dry_run do |box_height = nil|
-          if box_height && (delta = cursor - box_height) > 0
+        with_dry_run do |extent|
+          if (single_page_height = extent&.single_page_height) && (delta = cursor - single_page_height - 0.0001) > 0
             move_down delta
           end
           theme_font :footnotes do
@@ -731,7 +731,7 @@ module Asciidoctor
               end
               layout_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{label}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
             end
-            @rendered_footnotes += fns unless scratch?
+            @rendered_footnotes += fns if extent
           end
         end
         nil
@@ -836,7 +836,7 @@ module Asciidoctor
       end
 
       def convert_admonition node
-        top_margin = theme_margin :block, :top
+        theme_margin :block, :top
         type = node.attr 'name'
         label_align = @theme.admonition_label_align&.to_sym || :center
         # TODO: allow vertical_align to be a number
@@ -881,26 +881,23 @@ module Asciidoctor
         shift_base = @theme.prose_margin_bottom
         shift_top = shift_base / 3.0
         shift_bottom = (shift_base * 2) / 3.0
-        keep_together do |box_height = nil, advanced = nil|
-          add_dest_for_block node, y: (advanced ? nil : @y + top_margin) if node.id
-          push_scratch doc if scratch?
-          theme_fill_and_stroke_block :admonition, box_height if box_height
+        arrange_block node do |extent|
+          add_dest_for_block node if node.id
+          theme_fill_and_stroke_block :admonition, extent if extent
           pad_box [0, cpad[1], 0, lpad[3]] do
-            if box_height
-              label_height = [box_height, cursor].min
+            if extent
+              label_height = extent.single_page_height || cursor
               if (rule_color = @theme.admonition_column_rule_color) &&
                   (rule_width = @theme.admonition_column_rule_width || @theme.base_border_width) && rule_width > 0
+                rule_style = @theme.admonition_column_rule_style&.to_sym || :solid
                 float do
-                  rule_height = box_height
-                  while rule_height > 0
-                    rule_segment_height = [rule_height, cursor].min
-                    bounding_box [0, cursor], width: label_width + lpad[1], height: rule_segment_height do
-                      stroke_vertical_rule rule_color,
-                        at: bounds.right,
-                        line_style: (@theme.admonition_column_rule_style&.to_sym || :solid),
-                        line_width: rule_width
+                  extent.each_page do |first_page, last_page|
+                    advance_page unless first_page
+                    rule_segment_height = start_cursor = cursor
+                    rule_segment_height -= last_page.cursor if last_page
+                    bounding_box [0, start_cursor], width: label_width + lpad[1], height: rule_segment_height do
+                      stroke_vertical_rule rule_color, at: bounds.right, line_style: rule_style, line_width: rule_width
                     end
-                    advance_page if (rule_height -= rule_segment_height) > 0
                   end
                 end
               end
@@ -954,7 +951,6 @@ module Asciidoctor
                         end
                         embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
                       rescue
-                        # QUESTION: should we show the label in this case?
                         log :warn, %(could not embed admonition icon: #{icon_path}; #{$!.message})
                         icons = nil
                       end
@@ -1010,60 +1006,73 @@ module Asciidoctor
               move_up shift_bottom unless at_page_top?
             end
           end
-          pop_scratch doc if scratch?
         end
         theme_margin :block, :bottom
       end
 
       def convert_example node
         return convert_open node if node.option? 'collapsible'
-        add_dest_for_block node if node.id
         theme_margin :block, :top
-        caption_height = node.title? ? (layout_caption node, category: :example, dry_run: true) : 0
-        keep_together do |box_height = nil|
-          push_scratch node.document if scratch?
-          if box_height
-            theme_fill_and_stroke_block :example, box_height, caption_node: node
-          else
-            move_down caption_height
+        arrange_block node do |extent|
+          add_dest_for_block node if node.id # Q: do we want to put anchor above top margin instead?
+          tare_first_page_content_stream do
+            theme_fill_and_stroke_block :example, extent, caption_node: node
           end
           pad_box @theme.example_padding do
             theme_font :example do
               traverse node
             end
           end
-          pop_scratch node.document if scratch?
         end
         theme_margin :block, :bottom
       end
 
       def convert_open node
         return convert_abstract node if node.style == 'abstract'
-        doc = node.document
-        keep_together_if node.option? 'unbreakable' do
-          push_scratch doc if scratch?
-          add_dest_for_block node if node.id
-          node.context == :example ? (layout_caption %(\u25bc #{node.title})) : (layout_caption node, labeled: false) if node.title?
+        id = node.id
+        has_title = node.title?
+        if !at_page_top? && (has_title || id || (node.option? 'unbreakable'))
+          arrange_block node do
+            add_dest_for_block node if id
+            tare_first_page_content_stream do
+              node.context == :example ? (layout_caption %(\u25bc #{node.title})) : (layout_caption node, labeled: false)
+            end if has_title
+            traverse node
+          end
+        else
+          add_dest_for_block node if id
+          node.context == :example ? (layout_caption %(\u25bc #{node.title})) : (layout_caption node, labeled: false) if has_title
           traverse node
-          pop_scratch doc if scratch?
         end
       end
 
       def convert_quote_or_verse node
-        add_dest_for_block node if node.id
         theme_margin :block, :top
         category = node.context == :quote ? :blockquote : :verse
         # NOTE: b_width and b_left_width are mutually exclusive
-        unless (b_left_width = @theme[%(#{category}_border_left_width)]) && b_left_width > 0
+        if (b_left_width = @theme[%(#{category}_border_left_width)]) && b_left_width > 0
+          b_color = @theme[%(#{category}_border_color)]
+        else
           b_left_width = nil
           b_width = nil if (b_width = @theme[%(#{category}_border_width)]) == 0
         end
-        keep_together do |box_height = nil|
-          push_scratch node.document if scratch?
-          theme_fill_and_stroke_block category, box_height, border_width: b_width if box_height && (b_width || @theme[%(#{category}_background_color)])
-          start_page_number = page_number
-          start_cursor = cursor
-          caption_height = node.title? ? (layout_caption node, category: category, labeled: false) : 0
+        arrange_block node do |extent|
+          add_dest_for_block node if node.id
+          tare_first_page_content_stream do
+            theme_fill_and_stroke_block category, extent, border_width: b_width, caption_node: node
+          end
+          if extent && b_left_width
+            float do
+              extent.each_page do |first_page, last_page|
+                advance_page unless first_page
+                b_height = start_cursor = cursor
+                b_height -= last_page.cursor if last_page
+                bounding_box [0, start_cursor], width: bounds.width, height: b_height do
+                  stroke_vertical_rule b_color, line_width: b_left_width, at: b_left_width * 0.5
+                end
+              end
+            end
+          end
           pad_box @theme[%(#{category}_padding)] do
             theme_font category do
               if category == :blockquote
@@ -1087,41 +1096,6 @@ module Asciidoctor
               end
             end
           end
-          # FIXME: we want to draw graphics before content, but box_height is not reliable when spanning pages
-          # FIXME: border extends to bottom of content area if block terminates at bottom of page
-          if box_height && b_left_width
-            b_color = @theme[%(#{category}_border_color)]
-            page_spread = page_number - start_page_number + 1
-            end_cursor = cursor
-            go_to_page start_page_number
-            move_cursor_to start_cursor
-            page_spread.times do |i|
-              if i == 0
-                y_draw = cursor
-                b_height = page_spread > 1 ? y_draw : (y_draw - end_cursor)
-              else
-                bounds.move_past_bottom
-                y_draw = cursor
-                b_height = page_spread - 1 == i ? (y_draw - end_cursor) : y_draw
-              end
-              # NOTE: skip past caption if present
-              if caption_height > 0
-                if caption_height > cursor
-                  caption_height -= cursor
-                  next # keep skipping, caption is on next page
-                end
-                y_draw -= caption_height
-                b_height -= caption_height
-                caption_height = 0
-              end
-              # NOTE: b_height is 0 when block terminates at bottom of page
-              next if b_height == 0
-              bounding_box [0, y_draw], width: bounds.width, height: b_height do
-                stroke_vertical_rule b_color, line_width: b_left_width, at: b_left_width * 0.5
-              end
-            end
-          end
-          pop_scratch node.document if scratch?
         end
         theme_margin :block, :bottom
       end
@@ -1130,11 +1104,10 @@ module Asciidoctor
       alias convert_verse convert_quote_or_verse
 
       def convert_sidebar node
-        add_dest_for_block node if node.id
         theme_margin :block, :top
-        keep_together do |box_height = nil|
-          push_scratch node.document if scratch?
-          theme_fill_and_stroke_block :sidebar, box_height if box_height
+        arrange_block node do |extent|
+          add_dest_for_block node if node.id
+          theme_fill_and_stroke_block :sidebar, extent if extent
           pad_box @theme.sidebar_padding do
             theme_font :sidebar_title do
               # QUESTION: should we allow margins of sidebar title to be customized?
@@ -1144,7 +1117,6 @@ module Asciidoctor
               traverse node
             end
           end
-          pop_scratch node.document if scratch?
         end
         theme_margin :block, :bottom
       end
@@ -1646,6 +1618,7 @@ module Asciidoctor
           layout_caption node, category: :image, side: :bottom, block_align: alignment, block_width: rendered_w, max_width: @theme.image_caption_max_width if node.title?
           theme_margin :block, :bottom unless pinned
         rescue => e
+          raise if ::StopIteration === e
           on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{e.message}#{::Prawn::Errors::UnsupportedImageType === e && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}))
         end
       end
@@ -1865,14 +1838,15 @@ module Asciidoctor
           adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ? (compute_autofit_font_size source_chunks, :code) : nil
         end
 
-        top_margin = theme_margin :block, :top
+        theme_margin :block, :top
 
-        keep_together do |box_height = nil, advanced = nil|
-          add_dest_for_block node, y: (advanced ? nil : @y + top_margin) if node.id
-          caption_height = node.title? ? (layout_caption node, category: :code) : 0
-          theme_font :code do
-            theme_fill_and_stroke_block :code, (box_height - caption_height), background_color: bg_color_override, split_from_top: false if box_height
-            pad_box @theme.code_padding do
+        arrange_block node do |extent|
+          add_dest_for_block node if node.id
+          tare_first_page_content_stream do
+            theme_fill_and_stroke_block :code, extent, background_color: bg_color_override, caption_node: node
+          end
+          pad_box @theme.code_padding do
+            theme_font :code do
               ::Prawn::Text::Formatted::Box.extensions << wrap_ext if wrap_ext
               typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height || @theme.base_line_height),
                 color: (font_color_override || @theme.code_font_color || @font_color),
@@ -2364,11 +2338,11 @@ module Asciidoctor
             start_new_page if @ppbook && verso_page? && !(is_macro && (node.option? 'nonfacing'))
           end
           add_dest_for_block node, id: (node.id || 'toc') if is_macro
-          allocate_toc doc, (doc.attr 'toclevels', 2).to_i, @y, (use_title_page = is_book || (doc.attr? 'title-page'))
-          @index.start_page_number = @toc_extent[:page_nums].last + 1 if use_title_page && @theme.page_numbering_start_at == 'after-toc'
+          allocate_toc doc, (doc.attr 'toclevels', 2).to_i, cursor, (use_title_page = is_book || (doc.attr? 'title-page'))
+          @index.start_page_number = @toc_extent.to.page + 1 if use_title_page && @theme.page_numbering_start_at == 'after-toc'
           if is_macro
-            @disable_running_content[:header] += @toc_extent[:page_nums] if node.option? 'noheader'
-            @disable_running_content[:footer] += @toc_extent[:page_nums] if node.option? 'nofooter'
+            @disable_running_content[:header] += @toc_extent.page_range if node.option? 'noheader'
+            @disable_running_content[:footer] += @toc_extent.page_range if node.option? 'nofooter'
           end
         end
         nil
@@ -2976,23 +2950,20 @@ module Asciidoctor
         sect
       end
 
-      # Render the caption and return the height of the rendered content
+      # Render the caption in the current document. If the dry_run option is true, return the height.
       #
       # The subject argument can either be a String or an AbstractNode. If
       # subject is an AbstractNode, only call this method if the node has a
-      # title (i.e., subject.title? return true).
+      # title (i.e., subject.title? returns true).
       def layout_caption subject, opts = {}
         if opts.delete :dry_run
           force_top_margin = !at_page_top? if (force_top_margin = opts.delete :force_top_margin).nil?
-          height = nil
-          dry_run do
+          return (dry_run keep_together: true, single_page: :enforce do
             # TODO: encapsulate this logic to force top margin to be applied
             margin_box.instance_variable_set :@y, margin_box.absolute_top + 0.0001 if force_top_margin
-            height = layout_caption subject, opts
-          end
-          return height
+            layout_caption subject, opts
+          end).single_page_height
         end
-        mark = { cursor: cursor, page_number: page_number }
         if ::Asciidoctor::AbstractBlock === subject
           string = (opts.delete :labeled) == false ? subject.title : subject.captioned_title
         else
@@ -3056,23 +3027,18 @@ module Asciidoctor
               opts = opts.merge inherited
             end
             indent(*indent_by) do
-              layout_prose string, {
+              layout_prose string, ({
                 margin_top: margin[:top],
                 margin_bottom: margin[:bottom],
                 align: text_align,
                 normalize: false,
                 normalize_line_height: true,
                 hyphenate: true,
-              }.merge(opts)
+              }.merge opts)
             end
           end
         end
-        # NOTE: we assume we don't clear more than one page
-        if page_number > mark[:page_number]
-          mark[:cursor] + (bounds.top - cursor)
-        else
-          mark[:cursor] - cursor
-        end
+        nil
       end
 
       # Render the caption for a table and return the height of the rendered content
@@ -3080,29 +3046,27 @@ module Asciidoctor
         layout_caption node, category: :table, side: side, block_align: table_alignment, block_width: table_width, max_width: max_width
       end
 
-      def allocate_toc doc, toc_num_levels, toc_start_y, use_title_page
-        toc_page_nums = page_number
-        toc_end = nil
-        dry_run do
-          toc_page_nums = layout_toc doc, toc_num_levels, toc_page_nums, toc_start_y
+      def allocate_toc doc, toc_num_levels, toc_start_cursor, use_title_page
+        toc_start_page = page_number
+        extent = dry_run onto: self do
+          layout_toc doc, toc_num_levels, toc_start_page, toc_start_cursor
           move_down @theme.block_margin_bottom unless use_title_page
-          toc_end = @y
         end
         # NOTE: reserve pages for the toc; leaves cursor on page after last page in toc
         if use_title_page
-          toc_page_nums.each { start_new_page }
+          extent.each_page { start_new_page }
         else
-          (toc_page_nums.size - 1).times { start_new_page }
-          @y = toc_end
+          extent.each_page {|first_page| start_new_page unless first_page }
+          move_cursor_to extent.to.cursor
         end
-        @toc_extent = { page_nums: toc_page_nums, start_y: toc_start_y }
+        @toc_extent = extent
       end
 
       # NOTE: num_front_matter_pages not used during a dry run
-      def layout_toc doc, num_levels, toc_page_number, start_y, num_front_matter_pages = 0
+      def layout_toc doc, num_levels, toc_page_number, start_cursor, num_front_matter_pages = 0
         go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
         start_page_number = page_number
-        @y = start_y
+        move_cursor_to start_cursor
         unless (toc_title = doc.attr 'toc-title').nil_or_empty?
           theme_font :heading, level: 2 do
             theme_font :toc_title do
@@ -3245,7 +3209,7 @@ module Asciidoctor
         header = doc.header? ? doc.header : nil
         sectlevels = (@theme[%(#{periphery}_sectlevels)] || 2).to_i
         sections = doc.find_by(context: :section) {|sect| sect.level <= sectlevels && sect != header }
-        toc_title = (doc.attr 'toc-title').to_s if (toc_page_nums = @toc_extent&.[] :page_nums)
+        toc_title = (doc.attr 'toc-title').to_s if (toc_page_nums = @toc_extent&.page_range)
         disable_on_pages = @disable_running_content[periphery]
 
         title_method = TitleStyles[@theme[%(#{periphery}_title_style)]]
@@ -3808,7 +3772,12 @@ module Asciidoctor
           radius: @theme[%(#{category}_border_radius)]
       end
 
-      def theme_fill_and_stroke_block category, block_height, opts = {}
+      def theme_fill_and_stroke_block category, extent, opts = {}
+        node_with_caption = nil unless (node_with_caption = opts[:caption_node])&.title?
+        unless extent
+          layout_caption node_with_caption, category: category if node_with_caption
+          return
+        end
         if (b_width = (opts.key? :border_width) ? opts[:border_width] : @theme[%(#{category}_border_width)])
           if ::Array === b_width
             b_width = b_width[0]
@@ -3820,7 +3789,7 @@ module Asciidoctor
           bg_color = nil
         end
         unless b_width || bg_color
-          (node = opts[:caption_node]) && node.title? && (layout_caption node, category: category)
+          layout_caption node_with_caption, category: category if node_with_caption
           return
         end
         if (b_color = @theme[%(#{category}_border_color)]) == 'transparent'
@@ -3835,37 +3804,35 @@ module Asciidoctor
           else # let page background cut into border
             b_gap_color, b_shift = @page_bg_color, 0
           end
-        else # let page background cut into block background
+        else # let page background cut into block background; guarantees b_width is set
           b_shift, b_gap_color = (b_width ||= 0.5) * 0.5, @page_bg_color
         end
-        # FIXME: due to the calculation error logged in #789, we must advance page even when content is split across pages
-        advance_page if (opts.fetch :split_from_top, true) && block_height > cursor && !at_page_top?
-        caption_height = (node = opts[:caption_node]) && node.title? ? (layout_caption node, category: category) : 0
+        layout_caption node_with_caption, category: category if node_with_caption
+        extent.from.page += 1 unless extent.from.page == page_number # sanity check
         float do
-          remaining_height = block_height - caption_height
-          initial_page = true
-          while remaining_height > 0
-            advance_page unless initial_page
-            chunk_height = [(available_height = cursor), remaining_height].min
-            bounding_box [0, available_height], width: bounds.width, height: chunk_height do
+          extent.each_page do |first_page, last_page|
+            advance_page unless first_page
+            chunk_height = start_cursor = cursor
+            chunk_height -= last_page.cursor if last_page
+            bounding_box [0, start_cursor], width: bounds.width, height: chunk_height do
               theme_fill_and_stroke_bounds category, background_color: bg_color
-              # NOTE: b_width is always set; if no border is set, split indicator is cut into background
-              indent b_radius, b_radius do
-                # dashed line indicates continuation from previous page; swell line slightly to cover background
-                stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed, at: b_shift
-              end unless initial_page
-              if remaining_height > chunk_height
-                move_down chunk_height - b_shift
+              unless first_page
                 indent b_radius, b_radius do
                   # dashed line indicates continuation from previous page; swell line slightly to cover background
-                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed
+                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed, at: b_shift
+                end
+              end
+              unless last_page
+                move_down chunk_height
+                indent b_radius, b_radius do
+                  # dashed line indicates continuation from previous page; swell line slightly to cover background
+                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed, at: -b_shift
                 end
               end
             end
-            initial_page = false
-            remaining_height -= chunk_height
           end
         end
+        nil
       end
 
       # Insert a top margin equal to amount if cursor is not at the top of the

@@ -196,21 +196,56 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
   end
 
   it 'should advance to next page if block is split and caption does not fit' do
-    quote = %(Power concedes nothing without a demand. +\nIt never did and it never will.)
+    quote = ['Power concedes nothing without a demand.', 'It never did and it never will.'].join %( +\n)
+    with_content_spacer 10, 705 do |spacer_path|
+      input = <<~EOS
+      before
 
-    pdf = to_pdf <<~EOS, pdf_theme: { thematic_break_margin_top: 700 }, analyze: true
-    before
+      image::#{spacer_path}[]
 
-    '''
+      .Sage advice by Frederick Douglass
+      ____
+      #{([quote] * 18).join %(\n\n)}
+      ____
+      EOS
 
-    .Sage advice by Frederick Douglass
-    ____
-    #{([quote] * 18).join %(\n\n)}
-    ____
-    EOS
+      pdf = to_pdf input, analyze: true
+      advice_text = pdf.find_unique_text 'Sage advice by Frederick Douglass'
+      (expect advice_text[:page_number]).to be 2
+      (expect advice_text[:y] + advice_text[:font_size]).to ((be_within 1).of 805)
+    end
+  end
 
-    advice_text = pdf.find_unique_text 'Sage advice by Frederick Douglass'
-    (expect advice_text[:page_number]).to be 2
-    (expect advice_text[:y]).to be > 795
+  it 'should keep caption with block and draw border across extent if only caption fits on current page' do
+    block_content = ['text of quote'] * 15 * %(\n\n)
+    pdf_theme = { prose_margin_bottom: 12, blockquote_padding: [0, 0, -12, 15] }
+    with_content_spacer 10, 690 do |spacer_path|
+      input = <<~EOS
+      before
+
+      image::#{spacer_path}[]
+
+      .Sage advice
+      ____
+      #{block_content}
+      ____
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      (expect pdf.pages).to have_size 2
+      advice_text = pdf.find_unique_text 'Sage advice'
+      (expect advice_text[:page_number]).to be 2
+      (expect advice_text[:y] + advice_text[:font_size]).to ((be_within 1).of 805)
+      quote_text = (pdf.find_text 'text of quote')
+      # NOTE: y location of text does not include descender
+      quote_text_start_y = quote_text[0][:y] + quote_text[0][:font_size] + 1.5
+      quote_text_end_y = quote_text[-1][:y] - 4.5
+      border_left_line = lines.find {|it| it[:color] == 'EEEEEE' }
+      (expect border_left_line[:page_number]).to be 2
+      border_left_line_start_y, border_left_line_end_y = [border_left_line[:from][:y], border_left_line[:to][:y]].sort.reverse
+      (expect border_left_line_start_y).to (be_within 0.5).of (quote_text_start_y)
+      (expect border_left_line_end_y).to (be_within 0.5).of (quote_text_end_y)
+    end
   end
 end

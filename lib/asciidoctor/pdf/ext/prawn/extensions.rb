@@ -32,6 +32,91 @@ module Asciidoctor
       # - :final_gap determines whether a gap is added below the last line
       LineMetrics = ::Struct.new :height, :leading, :padding_top, :padding_bottom, :final_gap
 
+      Position = ::Struct.new :page, :cursor
+
+      Extent = ::Struct.new :current, :from, :to do
+        def initialize current_page, current_cursor, start_page, start_cursor, end_page, end_cursor
+          self.from = self.current = Position.new current_page, current_cursor
+          self.from = Position.new start_page, start_cursor unless start_page == current_page && start_cursor == current_cursor
+          self.to = Position.new end_page, end_cursor
+        end
+
+        def each_page
+          from.page.upto to.page do |pgnum|
+            yield pgnum == from.page && from, pgnum == to.page && to, pgnum
+          end
+        end
+
+        def single_page?
+          from.page == to.page
+        end
+
+        def single_page_height
+          single_page? ? from.cursor - to.cursor : nil
+        end
+
+        def page_range
+          (from.page..to.page)
+        end
+      end
+
+      ScratchExtent = ::Struct.new :from, :to do
+        def initialize start_page, start_cursor, end_page, end_cursor
+          self.from = Position.new start_page, start_cursor
+          self.to = Position.new end_page, end_cursor
+        end
+
+        def position_onto pdf, keep_together = nil
+          current_page = pdf.page_number
+          current_cursor = pdf.cursor
+          from_page = current_page + (advance_by = from.page - 1)
+          to_page = current_page + (to.page - 1)
+          if advance_by > 0
+            advance_by.times { pdf.advance_page }
+          elsif keep_together && single_page? && !(try_to_fit_on_previous current_cursor)
+            pdf.advance_page
+            from_page += 1
+            to_page += 1
+          end
+          Extent.new current_page, current_cursor, from_page, from.cursor, to_page, to.cursor
+        end
+
+        def single_page?
+          from.page == to.page
+        end
+
+        def single_page_height
+          single_page? ? from.cursor - to.cursor : nil
+        end
+
+        def try_to_fit_on_previous reference_cursor
+          if (height = from.cursor - to.cursor) <= reference_cursor
+            from.cursor = reference_cursor
+            to.cursor = reference_cursor - height
+            true
+          else
+            false
+          end
+        end
+      end
+
+      NewPageRequiredError = ::Class.new ::StopIteration
+
+      InhibitNewPageProc = proc do |pdf|
+        pdf.delete_page
+        raise NewPageRequiredError
+      end
+
+      DetectEmptyFirstPage = ::Module.new
+
+      DetectEmptyFirstPageProc = proc do |delegate, pdf|
+        if pdf.state.pages[pdf.page_number - 2].empty?
+          pdf.delete_page
+          raise NewPageRequiredError
+        end
+        delegate.call pdf if (pdf.state.on_page_create_callback = delegate)
+      end
+
       # Core
 
       # Retrieves the catalog reference data for the PDF.
@@ -66,12 +151,6 @@ module Asciidoctor
       #
       def effective_page_height
         reference_bounds.height
-      end
-
-      # Returns the height of the content area of the page
-      #
-      def page_content_height
-        page_height - page_margin_top - page_margin_bottom
       end
 
       # remove once fixed upstream; see https://github.com/prawnpdf/prawn/pull/1122
@@ -761,7 +840,7 @@ module Asciidoctor
       # Perform an operation (such as creating a new page) without triggering the on_page_create callback
       #
       def perform_discretely
-        saved_callback, state.on_page_create_callback = state.on_page_create_callback, nil
+        state.on_page_create_callback = nil if (saved_callback = state.on_page_create_callback) != InhibitNewPageProc
         yield
       ensure
         state.on_page_create_callback = saved_callback
@@ -795,62 +874,169 @@ module Asciidoctor
       end
       alias is_scratch? scratch?
 
-      def dry_run &block
-        scratch_pdf = scratch
-        # QUESTION: should we use scratch_pdf.advance_page instead?
-        scratch_pdf.start_new_page
-        start_page_number = scratch_pdf.page_number
-        start_y = scratch_pdf.y
+      def with_dry_run &block
+        yield dry_run(&block).position_onto self, cursor
+      end
+
+      # Yields to the specified block multiple times, first to determine where to render the content
+      # so it fits properly, then once more, this time providing access to the content's extent, to
+      # ink the content in the primary document.
+      #
+      # This method yields to the specified block in a scratch document by calling dry_run to
+      # determine where the content should start in the primary document. In the process, it also
+      # computes the extent of the content. It then returns to the primary document and yields to
+      # the block again, this time passing in the extent of the content. The extent can be used to
+      # draw a border and/or background under the content before inking it.
+      #
+      # This method is intended to enclose the conversion of a single content block, such as a
+      # sidebar or example block. The arrange logic attempts to keep unbreakable content on the same
+      # page, keeps the top caption pinned to the top of the content, computes the extent of the
+      # content for the purpose of drawing a border and/or background underneath it, and ensures
+      # that the extent does not begin near the bottom of a page if the first line of content
+      # doesn't fit. If unbreakable content does not fit on a single page, the content is treated as
+      # breakable.
+      #
+      # The block passed to this method should use advance_page to move to the next page rather than
+      # start_new_page. Using start_new_page can mangle the calculation of content block's extent.
+      #
+      def arrange_block node, &block
+        #keep_together = (node.option? 'unbreakable') && !at_page_top?
+        keep_together = ENV['CI'] ? (node.option? 'unbreakable') && !at_page_top? : !at_page_top?
+        doc = node.document
+        block_for_scratch = proc do
+          push_scratch doc
+          instance_exec(&block)
+        ensure
+          pop_scratch doc
+        end
+        extent = dry_run keep_together: keep_together, onto: [self, keep_together], &block_for_scratch
+        scratch? ? block_for_scratch.call : (yield extent)
+      end
+
+      def perform_on_single_page
+        saved_callback, state.on_page_create_callback = state.on_page_create_callback, InhibitNewPageProc
+        yield
+        false
+      rescue NewPageRequiredError
+        true
+      ensure
+        state.on_page_create_callback = saved_callback
+      end
+
+      def stop_if_first_page_empty
+        delegate = state.on_page_create_callback
+        state.on_page_create_callback = DetectEmptyFirstPageProc.curry[delegate].extend DetectEmptyFirstPage
+        yield
+        false
+      rescue NewPageRequiredError
+        true
+      ensure
+        state.on_page_create_callback = delegate
+      end
+
+      # NOTE: only used in dry_run since that's when DetectEmptyFirstPage is active
+      def tare_first_page_content_stream
+        return yield unless DetectEmptyFirstPage === (delegate = state.on_page_create_callback)
+        on_page_create_called = nil
+        state.on_page_create_callback = proc do |pdf|
+          on_page_create_called = true
+          pdf.state.pages[pdf.page_number - 2].tare_content_stream
+          delegate.call pdf
+        end
+        begin
+          yield
+        ensure
+          page.tare_content_stream unless on_page_create_called
+          state.on_page_create_callback = delegate
+        end
+      end
+
+      # Yields to the specified block in a scratch document up to three times to acertain the extent
+      # of the content.
+      #
+      # The purpose of this method is two-fold. First, it works out the position where the rendered
+      # content should start in the calling document. Then, it precomputes the extent of the content
+      # starting from that position.
+      #
+      # The method communicates the extent of the content (the range from the start page and cursor
+      # to the end page and cursor) as a ScratchExtent instance. The ScratchExtent always starts the
+      # page range at 1. When the ScratchExtent is positioned onto the primary document using
+      # ScratchExtent#position_onto, that's when the cursor may be advanced to the next page.
+      #
+      # This method performs all work in a scratch document (or documents). It begins by starting a
+      # new page in the scratch document, first creating the scratch document if necessary. It then
+      # applies all the settings from the main document to the scratch document that impact
+      # rendering. This includes the bounds, the cursor position, and the font settings.
+      #
+      # From this point, the number of attempts the method makes is determined by the value of the
+      # keep_together keyword parameter. If the value is true (or the parent document is inhibiting
+      # page creation), it starts from the top of the page, yields to the block, and tries to fit
+      # the content on the current page. If the content fits, it computes and returns the
+      # ScratchExtent. If the content does not fit, it first checks if this scenario should stop the
+      # operation. If the parent document is inhibiting page creation, it bubbles the error. If the
+      # single_page keyword argument is :enforce, it raises a CannotFit error. If the single_page
+      # keyword argument is true, it returns a ScratchExtent that represents a full page. If none of
+      # those conditions are met, it restarts with the keep_together parameter unset.
+      #
+      # If the keep_together parameter is not true, the method tries to render the content in the
+      # scratch document from the location of the cursor in the main document. If the cursor is at
+      # the top of the page, no special conditions are applied (this is the last attempt). The
+      # content is rendered and the extent is computed based on where the content ended up (minus a
+      # trailing empty page). If the cursor is not at the top of the page, the method renders the
+      # content while listening for a page creation event before any content is written. If a new
+      # page is created, and no content is written on the first page, the method restarts with the
+      # cursor at the top of the page.
+      #
+      # Note that if the block has content that itself requires a dry run, that nested dry run will
+      # be performed in a separate scratch document.
+      def dry_run keep_together: nil, pages_advanced: 0, single_page: nil, onto: nil, &block
+        (scratch_pdf = scratch).start_new_page
         scratch_bounds = scratch_pdf.bounds
-        original_x = scratch_bounds.absolute_left
-        original_width = scratch_bounds.width
-        scratch_bounds.instance_variable_set :@x, bounds.absolute_left
-        scratch_bounds.instance_variable_set :@total_left_padding, bounds.total_left_padding
-        scratch_bounds.instance_variable_set :@total_right_padding, bounds.total_right_padding
-        scratch_bounds.instance_variable_set :@width, bounds.width
-        prev_font_scale, scratch_pdf.font_scale = scratch_pdf.font_scale, font_scale
-        scratch_pdf.font font_family, style: font_style, size: font_size do
-          scratch_pdf.instance_exec(&block)
+        restore_bounds = [:@total_left_padding, :@total_right_padding, :@width, :@x].each_with_object({}) do |name, accum|
+          accum[name] = scratch_bounds.instance_variable_get name
+          scratch_bounds.instance_variable_set name, (bounds.instance_variable_get name)
+        end
+        scratch_pdf.move_cursor_to cursor unless (scratch_start_at_top = keep_together || pages_advanced > 0 || at_page_top?)
+        scratch_start_cursor = scratch_pdf.cursor
+        scratch_start_page = scratch_pdf.page_number
+        inhibit_new_page = state.on_page_create_callback == InhibitNewPageProc
+        restart = nil
+        scratch_pdf.font font_family, size: font_size, style: font_style do
+          prev_font_scale, scratch_pdf.font_scale = scratch_pdf.font_scale, font_scale
+          if keep_together || inhibit_new_page
+            if (restart = scratch_pdf.perform_on_single_page { scratch_pdf.instance_exec(&block) })
+              # NOTE: propogate NewPageRequiredError from nested block, which is rendered in separate scratch document
+              raise NewPageRequiredError if inhibit_new_page
+              if single_page
+                raise ::Prawn::Errors::CannotFit if single_page == :enforce
+                # single_page and onto are mutually exclusive
+                return ScratchExtent.new scratch_start_page, scratch_start_cursor, scratch_start_page, 0
+              end
+            end
+          elsif scratch_start_at_top
+            scratch_pdf.instance_exec(&block)
+          elsif (restart = scratch_pdf.stop_if_first_page_empty { scratch_pdf.instance_exec(&block) })
+            pages_advanced += 1
+          end
         ensure
           scratch_pdf.font_scale = prev_font_scale
         end
-        # NOTE: don't count excess if cursor exceeds writable area (due to padding)
-        full_page_height = scratch_pdf.effective_page_height
-        partial_page_height = [full_page_height, start_y - scratch_pdf.y].min
-        scratch_bounds.instance_variable_set :@x, original_x
-        scratch_bounds.instance_variable_set :@total_left_padding, 0
-        scratch_bounds.instance_variable_set :@total_right_padding, 0
-        scratch_bounds.instance_variable_set :@width, original_width
-        whole_pages = scratch_pdf.page_number - start_page_number
-        [(whole_pages * full_page_height + partial_page_height), whole_pages, partial_page_height]
-      end
-
-      def with_dry_run &block
-        total_height, = dry_run(&block)
-        instance_exec total_height, &block
-      end
-
-      # Attempt to keep the objects generated in the block on the same page
-      #
-      # TODO: short-circuit nested usage
-      def keep_together &block
-        available_space = cursor
-        total_height, = dry_run(&block)
-        # NOTE: technically, if we're at the page top, we don't even need to do the
-        # dry run, except several uses of this method rely on the calculated height
-        if total_height > available_space && !at_page_top? && total_height <= effective_page_height
-          advance_page
-          started_new_page = true
+        return dry_run pages_advanced: pages_advanced, onto: onto, &block if restart
+        scratch_end_page = scratch_pdf.page_number - scratch_start_page + (scratch_start_page = 1)
+        if pages_advanced > 0
+          scratch_start_page += pages_advanced
+          scratch_end_page += pages_advanced
         end
-
-        scratch? ? instance_exec(&block) : (instance_exec total_height, started_new_page, &block)
-      end
-
-      # Attempt to keep the objects generated in the block on the same page
-      # if the verdict parameter is true.
-      #
-      def keep_together_if verdict, &block
-        verdict ? keep_together(&block) : yield
+        scratch_end_cursor = scratch_pdf.cursor
+        # NOTE: drop trailing blank page and move cursor to end of previous page
+        if scratch_end_page > scratch_start_page && scratch_pdf.at_page_top?
+          scratch_end_page -= 1
+          scratch_end_cursor = 0
+        end
+        extent = ScratchExtent.new scratch_start_page, scratch_start_cursor, scratch_end_page, scratch_end_cursor
+        onto ? extent.position_onto(*onto) : extent
+      ensure
+        restore_bounds.each {|name, val| scratch_bounds.instance_variable_set name, val }
       end
     end
   end

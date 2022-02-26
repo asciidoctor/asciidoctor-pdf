@@ -3,11 +3,11 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Admonition' do
-  it 'should advance block to next page to avoid splitting it if it will fit on page' do
+  it 'should advance unbreakable block shorter than page to next page to avoid splitting it' do
     pdf = to_pdf <<~EOS, analyze: true
     #{(['paragraph'] * 20).join %(\n\n)}
 
-    [NOTE]
+    [NOTE%unbreakable]
     ====
     #{(['admonition'] * 20).join %(\n\n)}
     ====
@@ -17,7 +17,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect admon_page_numbers).to eql [2]
   end
 
-  it 'should place anchor above top margin of block' do
+  it 'should place anchor below top margin of block' do
     input = <<~EOS
     paragraph
 
@@ -31,14 +31,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     pdf = to_pdf input, pdf_theme: pdf_theme
     (expect (dest = get_dest pdf, 'admon-1')).not_to be_nil
-    (expect dest[:y]).to eql lines[0][:from][:y] + 10
+    (expect dest[:y]).to eql lines[0][:from][:y]
   end
 
   it 'should keep anchor with block if block is advanced to next page' do
     input = <<~EOS
     paragraph
 
-    [NOTE#admon-1]
+    [NOTE#admon-1%unbreakable]
     ====
     #{(['filler'] * 27).join %(\n\n)}
     ====
@@ -82,7 +82,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect lines[1][:to][:y]).to be > 36.0
   end
 
-  it 'should draw border and background on all pages if block is split across pages', visual: true do
+  it 'should draw border and background on all pages if block is split across pages', visual: true, breakable: true do
     pdf_theme = {
       admonition_background_color: 'F5A9A9',
       admonition_border_width: 0.5,

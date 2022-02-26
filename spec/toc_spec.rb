@@ -510,13 +510,14 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
         footer_verso_right_content: 'Page {page-number}',
       }
 
-      sections = (1..37).map {|num| %(\n\n== Section #{num}) }.join
+      sections = (1..37).map {|num| %(== Section #{num}) }.join %(\n\n)
       pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :toc: macro
 
       == First Chapter
+
       #{sections}
 
       [%noheader%nofooter]
