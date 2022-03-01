@@ -28,7 +28,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     (expect title_texts).to have_size 1
   end
 
-  it 'should include title if specified and background and border are not' do
+  it 'should include title if specified and background and border are not set' do
     pdf = to_pdf <<~'EOS', pdf_theme: { example_background_color: 'transparent', example_border_width: 0 }, analyze: true
     .Title
     ====
