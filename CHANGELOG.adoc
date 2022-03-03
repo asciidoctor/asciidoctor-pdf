@@ -107,6 +107,7 @@ Bug Fixes::
 * don't apply border, shading, or padding to collapsible block (#1660)
 * escape bare ampersand in attribution and citetitle of quote or verse block (#1662)
 * fix numeric assertions in test suite (#1542)
+* prevent converter for list item from inserting new page to position marker when next page is already instantiated (#2001)
 * keep block anchor with source/listing/literal block when block is moved to next page (#1897)
 * keep block anchor with admonition block when block is moved to next page
 * remove poorly-defined (and undocumented) border bottom property for caption
