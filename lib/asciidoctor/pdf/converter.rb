@@ -1345,7 +1345,7 @@ module Asciidoctor
             marker_height = height_of_typeset_text marker, line_height: marker_style[:line_height], single_line: true
             start_position = -marker_width + -marker_gap + character_spacing_correction
             float do
-              start_new_page if @media == 'prepress' && cursor < marker_height
+              advance_page if @media == 'prepress' && cursor < marker_height
               flow_bounding_box start_position, width: marker_width do
                 layout_prose marker,
                     align: :right,

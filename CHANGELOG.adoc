@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/v1.6.x[commit history] on GitHub.
 
+== Unreleased
+
+Bug Fixes::
+
+* prevent converter for list item from inserting new page to position marker when next page is already instantiated (#2001)
+
 == 1.6.2 (2021-12-31) - @mojavelinux
 
 Enhancements::

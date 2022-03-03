@@ -201,6 +201,47 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect (pdf.find_text '•')[1][:page_number]).to be 1
       (expect (pdf.find_text '•')[2][:page_number]).to be 2
     end
+
+    it 'should reuse next page of block with background when positioning marker when media is prepress' do
+      filler = ['filler']
+      filler_list_item = ['* Ex nam suas nemore dignissim, vel apeirian democritum et. At ornatus splendide sed, phaedrum omittantur usu an, vix an noster voluptatibus.']
+      pdf = to_pdf <<~EOS
+      :media: prepress
+
+      .Sidebar
+      ****
+      [%hardbreaks]
+      #{filler * 10 * ?\n}
+
+      image::tux.png[pdfwidth=54.75mm]
+
+      #{filler_list_item * 15 * ?\n}
+
+      [%hardbreaks]
+      #{filler * 5 * ?\n}
+      ****
+
+      [%hardbreaks]
+      #{filler * 5 * ?\n}
+
+      <<<
+
+      [%hardbreaks]
+      #{filler * 5 * ?\n}
+      EOS
+
+      pages = pdf.pages
+      (expect pages).to have_size 3
+      3.times do |idx|
+        page_content = pages[idx].raw_content
+        page_content = page_content.delete_prefix %(q\n) while page_content.start_with? %(q\n)
+        if idx == 2
+          (expect page_content).not_to start_with %(/DeviceRGB cs\n0.9333 0.9333 0.9333 scn\n)
+        else
+          (expect page_content).to start_with %(/DeviceRGB cs\n0.9333 0.9333 0.9333 scn\n)
+        end
+      end
+    end
   end
 
   context 'Checklist' do
