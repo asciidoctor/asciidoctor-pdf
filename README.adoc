@@ -30,7 +30,6 @@ endif::[]
 :url-project: https://github.com/asciidoctor/asciidoctor-pdf
 :url-project-repo: {url-project}
 :url-project-issues: {url-project-repo}/issues
-:url-project-list: http://discuss.asciidoctor.org
 :url-prawn: http://prawnpdf.org
 :url-prawn-gmagick: https://github.com/packetmonkey/prawn-gmagick
 :url-prawn-svg: https://github.com/mogest/prawn-svg

@@ -6,7 +6,7 @@
 // URLs:
 :url-project-repo: https://github.com/asciidoctor/asciidoctor-pdf
 :url-project-issues: {url-project-repo}/issues
-:url-project-list: https://discuss.asciidoctor.org
+:url-project-chat: https://asciidoctor.zulipchat.com
 
 In the spirit of free software, _everyone_ is encouraged to help improve this project.
 And we want you to help.
@@ -27,7 +27,7 @@ We also need documentation, automation, design, marketing, communication, advoca
 Here are just a few of the ways you can contribute to the project:
 
 * Reporting bugs (_The easiest way to get started!_)
-* Sharing ideas on {url-project-list}
+* Sharing ideas in the *#users/asciidoctor-pdf* stream of the {url-project-chat}[project chat]
 * Suggesting new feature or improvements in the issue tracker
 * Speaking about the technology
 * Advocating for the technology

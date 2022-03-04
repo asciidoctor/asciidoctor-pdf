@@ -24,7 +24,7 @@ endif::[]
 :url-project: https://github.com/asciidoctor/asciidoctor-pdf
 :url-project-repo: {url-project}
 :url-project-issues: {url-project-repo}/issues
-:url-project-list: https://discuss.asciidoctor.org
+:url-project-chat: https://asciidoctor.zulipchat.com
 :url-rvm: http://rvm.io
 
 This guide provides all the information you need to become a successful Asciidoctor PDF developer and code contributor!
@@ -36,9 +36,14 @@ toc::[]
 
 To contribute code, fork the project on GitHub, hack away, and send a pull request with your proposed changes.
 *All pull requests must include a) tests that verify the code change and b) an entry in the CHANGELOG.adoc file to document what changed.*
-If a pull request is missing tests or a CHANGELOG entry, *it will not be merged*.
+If a pull request is missing tests or a CHANGELOG entry, *it will not be merged* and may be closed.
 
-Feel free to use the {url-project-issues}[issue tracker] or {url-project-list}[Asciidoctor mailing list] to provide feedback or suggestions in other ways.
+Feel free to share ideas in the *#users/asciidoctor-pdf* stream of the {url-project-chat}[project chat] or report issues in the {url-project-issues}[issue tracker].
+
+IMPORTANT: When filing an issue, you must include the AsciiDoc source and theme file (if relevant) that demonstrates the problem.
+Sharing a screenshot of the output is not sufficient information to reproduce the issue and therefore not actionable.
+If the AsciiDoc source is not provided within 24 hours of filing the issue, the issue will be closed.
+A reproducible test case is required (in any form you can provide it) so we can concentrate our time on fixing the problem instead of trying to reverse engineer the scenario.
 
 Follow the instructions below to learn how to clone the source and run it from your local copy.
 
