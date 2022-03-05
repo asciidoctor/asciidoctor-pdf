@@ -45,12 +45,9 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     (expect (pdf.page 1).text).not_to include 'listing'
     (expect (pdf.page 2).text).to include 'listing'
-    names = get_names pdf
-    (expect names).to have_key 'listing-1'
-    dest = pdf.objects[names['listing-1']]
-    dest_page_num = get_page_number pdf, dest[0]
-    (expect dest_page_num).to be 2
-    (expect dest[3]).to eql 805.89
+    (expect (dest = get_dest pdf, 'listing-1')).not_to be_nil
+    (expect dest[:page_number]).to be 2
+    (expect dest[:y]).to eql 805.89
   end
 
   it 'should place anchor above top margin of block' do
@@ -67,10 +64,9 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     pdf = to_pdf input, pdf_theme: pdf_theme
-    names = get_names pdf
-    (expect names).to have_key 'listing-1'
-    dest = pdf.objects[names['listing-1']]
-    (expect dest[3]).to eql lines[0][:from][:y] + 10
+    (expect (dest = get_dest pdf, 'listing-1')).not_to be_nil
+    (expect dest[:page_number]).to be 1
+    (expect dest[:y]).to eql lines[0][:from][:y] + 10
   end
 
   it 'should place anchor at top of block if advanced to next page' do
@@ -87,11 +83,9 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     pdf = to_pdf input, pdf_theme: pdf_theme
-    names = get_names pdf
-    (expect names).to have_key 'listing-1'
-    dest = pdf.objects[names['listing-1']]
-    (expect get_page_number pdf, dest[0]).to be 2
-    (expect dest[3]).to eql lines[0][:from][:y]
+    (expect (dest = get_dest pdf, 'listing-1')).not_to be_nil
+    (expect dest[:page_number]).to be 2
+    (expect dest[:y]).to eql lines[0][:from][:y]
   end
 
   it 'should split block if it cannot fit on a whole page' do

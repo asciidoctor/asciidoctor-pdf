@@ -311,9 +311,10 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect annotations).to have_size 2
     footnote_label_y = annotations[0][:Rect][3]
     footnote_item_y = annotations[1][:Rect][3]
-    names = get_names pdf
-    (expect footnote_label_y - pdf.objects[names['_footnoteref_1']][3]).to be < 1
-    (expect pdf.objects[names['_footnotedef_1']][3]).to eql footnote_item_y
+    (expect (footnoteref_dest = get_dest pdf, '_footnoteref_1')).not_to be_nil
+    (expect footnote_label_y - footnoteref_dest[:y]).to be < 1
+    (expect (footnotedef_dest = get_dest pdf, '_footnotedef_1')).not_to be_nil
+    (expect footnotedef_dest[:y]).to eql footnote_item_y
   end
 
   it 'should render footnotes in table cell that are directly adjacent to text' do

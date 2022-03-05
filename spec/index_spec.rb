@@ -158,12 +158,10 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     pdf = to_pdf input
     annotations = get_annotations pdf, 3
     (expect annotations).to have_size 1
-    dest = annotations[0][:Dest]
-    names = get_names pdf
-    (expect names).to have_key dest
-    (expect pdf.objects[names[dest]][2]).to eql dogs_text[:x]
-    term_pgnum = get_page_number pdf, pdf.objects[pdf.objects[names[dest]][0]]
-    (expect term_pgnum).to be 2
+    dest_name = annotations[0][:Dest]
+    (expect (dest = get_dest pdf, dest_name)).not_to be_nil
+    (expect dest[:x]).to eql dogs_text[:x]
+    (expect dest[:page_number]).to be 2
   end
 
   it 'should target first occurance of index term, not in xreftext' do

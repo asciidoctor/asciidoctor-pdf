@@ -25,10 +25,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
     pdf = to_pdf input, pdf_theme: pdf_theme
-    names = get_names pdf
-    (expect names).to have_key 'tux'
-    dest = pdf.objects[names['tux']]
-    (expect dest[3]).to eql images[0][:y] + 10
+    (expect (image_dest = get_dest pdf, 'tux')).not_to be_nil
+    (expect image_dest[:y]).to eql images[0][:y] + 10
   end
 
   it 'should place anchor at top of block image if advanced to next page' do
@@ -43,11 +41,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
     pdf = to_pdf input, pdf_theme: pdf_theme
-    names = get_names pdf
-    (expect names).to have_key 'tall-diagram'
-    dest = pdf.objects[names['tall-diagram']]
-    (expect get_page_number pdf, dest[0]).to be 2
-    (expect dest[3]).to eql images[0][:y]
+    (expect (image_dest = get_dest pdf, 'tall-diagram')).not_to be_nil
+    (expect image_dest[:page_number]).to be 2
+    (expect image_dest[:y]).to eql images[0][:y]
   end
 
   context 'imagesdir' do
@@ -1084,12 +1080,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       names = get_names pdf
       (expect names).to have_size 3
       (expect names.keys).to eql %w(__anchor-top _section last)
-      top_dest = pdf.objects[names['__anchor-top']]
-      top_page_num = get_page_number pdf, top_dest[0]
-      (expect top_page_num).to be 1
-      last_dest = pdf.objects[names['last']]
-      last_page_num = get_page_number pdf, last_dest[0]
-      (expect last_page_num).to be 4
+      (expect (top_dest = get_dest pdf, '__anchor-top')).not_to be_nil
+      (expect top_dest[:page_number]).to be 1
+      (expect (last_dest = get_dest pdf, 'last')).not_to be_nil
+      (expect last_dest[:page_number]).to be 4
       annotations = get_annotations pdf
       (expect annotations).to have_size 3
       (expect annotations.map {|it| it[:Dest] }).to eql %w(_section __anchor-top last)

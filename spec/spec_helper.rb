@@ -485,6 +485,12 @@ RSpec.configure do |config|
     end
   end
 
+  def get_dest pdf, name
+    if (name_ref = (get_names pdf)[name]) && (dest = pdf.objects[name_ref])
+      { page: pdf.objects[(page_ref = dest[0])], page_number: (get_page_number pdf, page_ref), x: dest[2], y: dest[3] }
+    end
+  end
+
   def get_page_labels pdf
     objects = pdf.objects
     Hash[*objects[pdf.catalog[:PageLabels]][:Nums]].each_with_object([]) {|(idx, val), accum| accum[idx] = val[:P] }

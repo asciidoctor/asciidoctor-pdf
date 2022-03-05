@@ -806,9 +806,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     EOS
 
     pdf = to_pdf input
-    names = get_names pdf
-    (expect names).to have_key '_prelude'
-    (expect pdf.objects[names['_prelude']][3]).to eql (get_page_size pdf, 2)[1]
+    (expect (preface_dest = get_dest pdf, '_prelude')).not_to be_nil
+    _, page_height = get_page_size pdf, preface_dest[:page_number]
+    (expect preface_dest[:y]).to eql page_height
 
     text = (to_pdf input, analyze: true).text
     (expect text[1][:string]).to eql 'Prelude'

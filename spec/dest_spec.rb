@@ -8,8 +8,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     = Document Title
     :doctype: book
     EOS
-    names = get_names pdf
-    (expect names).to be_empty
+    (expect get_names pdf).to be_empty
   end
 
   it 'should define a dest named __anchor-top at top of the first body page' do
@@ -25,14 +24,10 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     content
     EOS
 
-    names = get_names pdf
-    (expect names).to have_key '__anchor-top'
-    top_dest = pdf.objects[names['__anchor-top']]
-    top_page_num = get_page_number pdf, top_dest[0]
-    top_y = top_dest[3]
-    (expect top_page_num).to be 3
-    _, page_height = get_page_size pdf, top_page_num
-    (expect top_y).to eql page_height
+    (expect (top_dest = get_dest pdf, '__anchor-top')).not_to be_nil
+    (expect (top_dest[:page_number])).to be 3
+    _, page_height = get_page_size pdf, top_dest[:page_number]
+    (expect top_dest[:y]).to eql page_height
   end
 
   it 'should define a dest named toc at the top of the first toc page' do
@@ -44,14 +39,10 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     == Chapter
     EOS
 
-    names = get_names pdf
-    (expect names).to have_key 'toc'
-    toc_dest = pdf.objects[names['toc']]
-    toc_page_num = get_page_number pdf, toc_dest[0]
-    toc_y = toc_dest[3]
-    (expect toc_page_num).to be 2
-    _, page_height = get_page_size pdf, toc_page_num
-    (expect toc_y).to eql page_height
+    (expect (toc_dest = get_dest pdf, 'toc')).not_to be_nil
+    (expect toc_dest[:page_number]).to be 2
+    _, page_height = get_page_size pdf, toc_dest[:page_number]
+    (expect toc_dest[:y]).to eql page_height
   end
 
   it 'should define a dest named toc at the location where the macro toc starts' do
@@ -68,14 +59,10 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     == Another Chapter
     EOS
 
-    names = get_names pdf
-    (expect names).to have_key 'toc'
-    toc_dest = pdf.objects[names['toc']]
-    toc_page_num = get_page_number pdf, toc_dest[0]
-    toc_y = toc_dest[3]
-    (expect toc_page_num).to be 1
-    _, page_height = get_page_size pdf, toc_page_num
-    (expect toc_y).to be < page_height
+    (expect (toc_dest = get_dest pdf, 'toc')).not_to be_nil
+    (expect (toc_dest[:page_number])).to be 1
+    _, page_height = get_page_size pdf, toc_dest[:page_number]
+    (expect toc_dest[:y]).to be < page_height
   end
 
   it 'should use the toc macro ID as the name of the dest for the macro toc' do
@@ -93,8 +80,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     == Another Chapter
     EOS
 
-    names = get_names pdf
-    (expect names).to have_key 'macro-toc'
+    (expect get_names pdf).to have_key 'macro-toc'
   end
 
   it 'should define a dest at the top of a chapter page' do
@@ -105,14 +91,10 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     == Chapter
     EOS
 
-    names = get_names pdf
-    (expect names).to have_key '_chapter'
-    chapter_dest = pdf.objects[names['_chapter']]
-    chapter_page_num = get_page_number pdf, chapter_dest[0]
-    chapter_y = chapter_dest[3]
-    (expect chapter_page_num).to be 2
-    _, page_height = get_page_size pdf, chapter_page_num
-    (expect chapter_y).to eql page_height
+    (expect (chapter_dest = get_dest pdf, '_chapter')).not_to be_nil
+    (expect (chapter_dest[:page_number])).to be 2
+    _, page_height = get_page_size pdf, chapter_dest[:page_number]
+    (expect chapter_dest[:y]).to eql page_height
   end
 
   it 'should define a dest at the top of a part page' do
@@ -127,14 +109,10 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     content
     EOS
 
-    names = get_names pdf
-    (expect names).to have_key '_part_1'
-    part_dest = pdf.objects[names['_part_1']]
-    part_page_num = get_page_number pdf, part_dest[0]
-    part_y = part_dest[3]
-    (expect part_page_num).to be 2
-    _, page_height = get_page_size pdf, part_page_num
-    (expect part_y).to eql page_height
+    (expect (part_dest = get_dest pdf, '_part_1')).not_to be_nil
+    (expect (part_dest[:page_number])).to be 2
+    _, page_height = get_page_size pdf, part_dest[:page_number]
+    (expect part_dest[:y]).to eql page_height
   end
 
   it 'should define a dest at the top of page for section if section is at top of page' do
@@ -150,14 +128,10 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     content
     EOS
 
-    names = get_names pdf
-    (expect names).to have_key '_section'
-    sect_dest = pdf.objects[names['_section']]
-    sect_page_num = get_page_number pdf, sect_dest[0]
-    sect_y = sect_dest[3]
-    (expect sect_page_num).to be 2
-    _, page_height = get_page_size pdf, sect_page_num
-    (expect sect_y).to eql page_height
+    (expect (sect_dest = get_dest pdf, '_section')).not_to be_nil
+    (expect (sect_dest[:page_number])).to be 2
+    _, page_height = get_page_size pdf, sect_dest[:page_number]
+    (expect sect_dest[:y]).to eql page_height
   end
 
   it 'should define a dest at the top of content area if page does not start with a section' do
@@ -168,14 +142,10 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     content
     EOS
 
-    names = get_names pdf
-    (expect names).to have_key 'p1'
-    p1_dest = pdf.objects[names['p1']]
-    p1_page_num = get_page_number pdf, p1_dest[0]
-    p1_y = p1_dest[3]
-    (expect p1_page_num).to be 1
-    _, page_height = get_page_size pdf, p1_page_num
-    (expect p1_y).to eql page_height - 15
+    (expect (para_dest = get_dest pdf, 'p1')).not_to be_nil
+    (expect (para_dest[:page_number])).to be 1
+    _, page_height = get_page_size pdf, para_dest[:page_number]
+    (expect para_dest[:y]).to eql page_height - 15
   end
 
   it 'should register dest for every block that has an ID' do
@@ -185,8 +155,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
       All views expressed are my own.
       EOS
 
-      names = get_names pdf
-      (expect names).to have_key 'disclaimer'
+      (expect get_names pdf).to have_key 'disclaimer'
     end
   end
 
@@ -200,8 +169,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     |===
     EOS
 
-    names = get_names pdf
-    (expect names).to have_key 'props'
+    (expect get_names pdf).to have_key 'props'
   end
 
   it 'should register dest for media macro that has an ID' do
@@ -216,8 +184,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
       #{macro_name == :svg ? 'image' : macro_name.to_s}::#{target}[]
       EOS
 
-      names = get_names pdf
-      (expect names).to have_key 'media'
+      (expect get_names pdf).to have_key 'media'
     end
   end
 
@@ -373,10 +340,8 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     https://asciidoctor.org[Asciidoctor,id=link]
     EOS
 
-    dests = get_names pdf
-    (expect dests).to have_key 'link'
-    link_dest_page = pdf.objects[dests['link']][0]
-    (expect get_page_number pdf, link_dest_page).to eql 2
+    (expect (link_dest = get_dest pdf, 'link')).not_to be_nil
+    (expect link_dest[:page_number]).to be 2
   end
 
   it 'should hex encode name for ID that contains non-ASCII characters' do
@@ -398,11 +363,8 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
       Here are all the #{details}.
       EOS
 
-      names = get_names pdf
-      (expect names).to have_key 'details'
-      details_dest = pdf.objects[names['details']]
-      details_dest_pagenum = get_page_number pdf, details_dest[0]
-      (expect details_dest_pagenum).to be 2
+      (expect (phrase_dest = get_dest pdf, 'details')).not_to be_nil
+      (expect phrase_dest[:page_number]).to be 2
     end
   end
 
@@ -415,12 +377,9 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     #{(['paragraph'] * 16).join ' '} [#anchor]#supercalifragilisticexpialidocious#
     EOS
 
-    names = get_names pdf
-    (expect names).to have_key 'anchor'
-    anchor_dest = pdf.objects[names['anchor']]
-    anchor_dest_pagenum = get_page_number pdf, anchor_dest[0]
-    (expect anchor_dest_pagenum).to be 2
-    (expect (pdf.page 2).text).to eql 'supercalifragilisticexpialidocious'
+    (expect (phrase_dest = get_dest pdf, 'anchor')).not_to be_nil
+    (expect phrase_dest[:page_number]).to be 2
+    (expect (pdf.page phrase_dest[:page_number]).text).to eql 'supercalifragilisticexpialidocious'
   end
 
   it 'should not allocate space for anchor if font is missing glyph for null character' do

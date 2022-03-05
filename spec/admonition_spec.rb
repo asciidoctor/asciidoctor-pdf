@@ -30,10 +30,8 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     pdf_theme = { block_margin_top: 10 }
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     pdf = to_pdf input, pdf_theme: pdf_theme
-    names = get_names pdf
-    (expect names).to have_key 'admon-1'
-    dest = pdf.objects[names['admon-1']]
-    (expect dest[3]).to eql lines[0][:from][:y] + 10
+    (expect (dest = get_dest pdf, 'admon-1')).not_to be_nil
+    (expect dest[:y]).to eql lines[0][:from][:y] + 10
   end
 
   it 'should keep anchor with block if block is advanced to next page' do
@@ -49,11 +47,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     pdf_theme = { block_margin_top: 10 }
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     pdf = to_pdf input, pdf_theme: pdf_theme
-    names = get_names pdf
-    (expect names).to have_key 'admon-1'
-    dest = pdf.objects[names['admon-1']]
-    (expect get_page_number pdf, dest[0]).to be 2
-    (expect dest[3]).to eql lines[0][:from][:y]
+    (expect (dest = get_dest pdf, 'admon-1')).not_to be_nil
+    (expect dest[:page_number]).to be 2
+    (expect dest[:y]).to eql lines[0][:from][:y]
   end
 
   it 'should vertically center label on first page if block is split across pages' do
