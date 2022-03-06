@@ -36,22 +36,27 @@ module Prawn
           doc = content.document
           parent_doc = doc.nested? ? doc.parent_document : doc
           height = nil
+          padding_y = cell.padding_top + cell.padding_bottom
+          max_height = @pdf.bounds.height - padding_y
           apply_font_properties do
             @pdf.dry_run do
               push_scratch parent_doc
               doc.catalog[:footnotes] = parent_doc.catalog[:footnotes]
               start_page = page
+              if padding_y > 0
+                move_down padding_y
+              else
+                margin_box.instance_variable_set :@y, margin_box.absolute_top + 0.0001
+              end
               start_cursor = cursor
-              max_height = bounds.height
               # NOTE: we should be able to use cell.max_width, but returns 0 in some conditions (like when colspan > 1)
               indent cell.padding_left, bounds.width - cell.width + cell.padding_right do
-                # HACK: force margin_top to be applied
-                move_down 0.0001
                 # TODO: truncate margin bottom of last block
                 traverse cell.content
               end
               # FIXME: prawn-table doesn't support cells that exceed the height of a single page
-              height = page == start_page ? start_cursor - (cursor + 0.0001) : max_height
+              # NOTE: height does not include top/bottom padding, but must account for it when checking for overrun
+              height = (page == start_page ? start_cursor - cursor : max_height)
               pop_scratch parent_doc
               doc.catalog[:footnotes] = parent_doc.catalog[:footnotes]
             end

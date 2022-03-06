@@ -96,6 +96,7 @@ Bug Fixes::
 * configure headings to inherit font styles from theme (#1604)
 * use conum font family defined in theme for conum in verbatim block (#1611)
 * prevent content of AsciiDoc table cell from overrunning content on subsequent pages (#1623)
+* account for top/bottom padding when computing height of AsciiDoc table cell
 * log error message if table cell is truncated (#1626)
 * take hard line breaks into account when computing natural width of table cell (#1762)
 * use "toc" as the default dest name for the macro toc
