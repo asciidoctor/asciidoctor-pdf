@@ -1911,7 +1911,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       end).to log_message severity: :ERROR, message: 'the table cell on page 1 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page'
     end
 
-    it 'should not warn if cell exceeds page height without adding content to subsequent page' do
+    it 'should not warn if cell explicitly advances to new page without adding content to subsequent page' do
       (expect do
         pdf = to_pdf <<~'EOS', analyze: true
         |===
@@ -1919,6 +1919,23 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         paragraph
 
         <<<
+        |===
+        EOS
+
+        (expect pdf.pages).to have_size 1
+      end).to not_log_message
+    end
+
+    it 'should not warn if cell overflows page without adding content to subsequent page' do
+      (expect do
+        pdf = to_pdf <<~EOS, analyze: true
+        |===
+        a|
+        paragraph
+
+        image::tux.png[pdfwidth=208mm]
+
+        paragraph
         |===
         EOS
 
