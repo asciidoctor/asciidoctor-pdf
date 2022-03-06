@@ -2004,6 +2004,33 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect second_page_text[1][:string]).to eql 'list title'
       (expect second_page_text[1][:x]).to eql 48.24
     end
+
+    it 'should account for top and bottom padding when computing natural height of table cell' do
+      pdf_theme = { page_margin: 36, page_size: 'Letter', table_cell_padding: 50, block_margin_bottom: 10 }
+      with_content_spacer 10, 575 do |spacer_path|
+        input = <<~EOS
+        |===
+        a|
+        before image
+
+        image::#{spacer_path}[]
+
+        after image
+        |===
+        EOS
+
+        (expect do
+          pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+          lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+          cell_borders = lines.select {|it| it[:color] == 'DDDDDD' }
+          other_lines = lines - cell_borders
+          border_bottom_edge = cell_borders.map {|it| [it[:from][:y], it[:to][:y]] }.flatten.min
+          (expect border_bottom_edge).to ((be_within 1).of 36)
+          (expect pdf.find_unique_text 'after image').to be_nil
+          (expect other_lines).not_to be_empty
+        end).to log_message severity: :ERROR, message: 'the table cell on page 1 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page'
+      end
+    end
   end
 
   context 'Caption' do

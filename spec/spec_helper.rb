@@ -439,6 +439,29 @@ RSpec.configure do |config|
     (Asciidoctor::PDF::ThemeLoader.load_theme extends).tap {|theme| overrides.each {|k, v| theme[k] = v } }
   end
 
+  def with_tmp_file ext, contents = nil
+    Tempfile.create %W(asciidoctor-pdf- #{ext}), encoding: 'UTF-8', newline: :universal do |tmp_file|
+      if contents
+        tmp_file.write contents
+        tmp_file.close
+      end
+      yield tmp_file
+    end
+  end
+
+  def with_content_spacer width, height, units = 'pt'
+    contents = <<~EOS
+    <svg width="#{width}#{units}" height="#{height}#{units}" viewBox="0 0 #{width} #{height}" version="1.0" xmlns="http://www.w3.org/2000/svg">
+    <g>
+    <rect style="fill:#999999" width="#{width}" height="#{height}" x="0" y="0"></rect>
+    </g>
+    </svg>
+    EOS
+    with_tmp_file '.svg', contents do |spacer_file|
+      yield spacer_file.path
+    end
+  end
+
   def with_pdf_theme_file data
     theme_path = (theme_file = Tempfile.create ['', '-theme.yml']).path
     theme_file.write data
