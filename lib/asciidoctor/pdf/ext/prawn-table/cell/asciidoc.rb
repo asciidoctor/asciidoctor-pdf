@@ -73,8 +73,8 @@ module Prawn
           pdf = @pdf
           # NOTE: draw_bounded_content automatically adds FPTolerance to width and height
           pdf.bounds.instance_variable_set :@width, spanned_content_width
-          # NOTE: we've already reserved the space, so just let the box stretch to the bottom of the page to avoid overflow
-          pdf.bounds.instance_variable_set :@height, pdf.page_content_height
+          # NOTE: we've already reserved the space, so just let the box stretch to bottom of the content area
+          pdf.bounds.instance_variable_set :@height, (pdf.y - pdf.page.margins[:bottom])
           if @valign != :top && (excess_y = spanned_content_height - natural_content_height) > 0
             pdf.move_down(@valign == :center ? (excess_y.fdiv 2) : excess_y)
           end

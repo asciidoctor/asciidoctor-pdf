@@ -1576,6 +1576,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       pdf_theme = {
         base_font_family: 'M+ 1mn',
         prose_margin_bottom: 0,
+        table_cell_padding: [5, 0, 0, 0],
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       |===
