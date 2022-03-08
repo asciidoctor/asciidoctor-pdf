@@ -456,13 +456,8 @@ RSpec.configure do |config|
   end
 
   def with_pdf_theme_file data
-    theme_path = (theme_file = Tempfile.create ['', '-theme.yml']).path
-    theme_file.write data
-    theme_file.close
-    begin
-      yield theme_path
-    ensure
-      File.unlink theme_path if File.exist? theme_path
+    with_tmp_file '-theme.yml', data do |theme_file|
+      yield theme_file.path
     end
   end
 
