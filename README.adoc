@@ -107,7 +107,6 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 * Inline images in table cells must fit within available space or Prawn::Errors::CannotFit error will be thrown
 * Columns cannot be assigned a 0% width (or a width less than the width of a single character); in the same vein, a column cannot be set to autowidth if width of all other columns meets or exceeds 100%; the result is that the converter with throw a Prawn::Errors::CannotFit error
 * An inline image in a table cell will not force the column wider if the width of the image exceeds the width of the column; either reduce the image width using `pdfwidth` or increase the width of the column using `cols`; another solution is to convert the cell to an AsciiDoc table cell (see https://github.com/asciidoctor/asciidoctor-pdf/issues/830)
-* Must use development version of prawn-table for autowidth to work on table head row
 * Must use development version of prawn for error to include font name when requested font style is missing
 * Must use Ruby >= 2.4 for natural cross references to work with non-ASCII titles
 * AsciiDoc table cell leaves padding below last block (due to lack of margin collapsing)
@@ -227,7 +226,7 @@ You can still gain access to these features by installing the unreleased gems di
 
 To get started, first create a [.path]_Gemfile_ in the root of your project.
 In that file, declare the gem source, the {project-handle} gem, and the prawn gem and/or one of its extension gems.
-In this example, we'll install both the prawn and prawn-table gems from GitHub.
+In this example, we'll install the prawn gem from GitHub.
 
 .Gemfile
 [source,ruby]
@@ -236,7 +235,6 @@ source 'https://rubygems.org'
 
 gem 'asciidoctor-pdf'
 gem 'prawn', github: 'prawnpdf/prawn'
-gem 'prawn-table', github: 'prawnpdf/prawn-table'
 ----
 
 You can then install the gems into your project using the `bundle` command:

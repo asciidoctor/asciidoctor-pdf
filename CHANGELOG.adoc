@@ -11,6 +11,10 @@ Bug Fixes::
 
 * prevent converter for list item from inserting new page to position marker when next page is already instantiated (#2001)
 
+Build / Infrastructure::
+
+* use prawn-table release and drop recommendation to use the development version
+
 == 1.6.2 (2021-12-31) - @mojavelinux
 
 Enhancements::

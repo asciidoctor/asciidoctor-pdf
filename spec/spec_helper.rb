@@ -11,7 +11,6 @@ when 'true'
 end
 
 require 'asciidoctor/pdf'
-require 'prawn/table/version'
 require 'base64'
 require 'chunky_png'
 require 'fileutils' unless defined? FileUtils
@@ -320,9 +319,6 @@ RSpec.configure do |config|
         env_override = {}
       else
         env_override = { 'RUBYOPT' => nil }
-        if (defined? Bundler) && (prawn_table = Bundler.definition.dependencies.find {|it| it.name == 'prawn-table' })
-          env_override['PRAWN_TABLE_REQUIRE_PATH'] = (prawn_table.source.path + 'lib/prawn/table').to_s
-        end
       end
       if (out = kw_args[:out])
         Open3.pipeline_w([env_override, cmd, *args, { out: out }]) {}

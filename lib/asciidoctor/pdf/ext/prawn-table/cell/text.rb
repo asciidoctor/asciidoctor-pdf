@@ -13,4 +13,11 @@ class Prawn::Table::Cell::Text
       end
     end
   end
+
+  # Override styled_width_of method to backport fix for prawn-table#42
+  remove_method :styled_width_of
+  def styled_width_of text
+    options = @text_options.reject {|k| k == :style }
+    with_font { @pdf.width_of text, options }
+  end
 end
