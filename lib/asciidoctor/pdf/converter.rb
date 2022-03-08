@@ -3912,7 +3912,7 @@ module Asciidoctor
         if opts.key? :level
           hlevel_category = %(#{category}_h#{opts[:level]})
           family = @theme[%(#{hlevel_category}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family || font_family
-          size = @theme[%(#{hlevel_category}_font_size)] || @theme[%(#{category}_font_size)] || @root_font_size
+          size = (@theme[%(#{hlevel_category}_font_size)] || @theme[%(#{category}_font_size)] || @root_font_size) * @font_scale
           style = @theme[%(#{hlevel_category}_font_style)] || @theme[%(#{category}_font_style)]
           color = @theme[%(#{hlevel_category}_font_color)] || @theme[%(#{category}_font_color)]
           kerning = resolve_font_kerning @theme[%(#{hlevel_category}_font_kerning)] || @theme[%(#{category}_font_kerning)]
@@ -3921,7 +3921,7 @@ module Asciidoctor
         else
           inherited_font = font_info
           family = @theme[%(#{category}_font_family)] || inherited_font[:family]
-          size = @theme[%(#{category}_font_size)] || inherited_font[:size]
+          size = (size = @theme[%(#{category}_font_size)]) ? size * @font_scale : inherited_font[:size]
           style = @theme[%(#{category}_font_style)] || inherited_font[:style]
           color = @theme[%(#{category}_font_color)]
           kerning = resolve_font_kerning @theme[%(#{category}_font_kerning)]
@@ -3933,7 +3933,7 @@ module Asciidoctor
         prev_kerning, self.default_kerning = default_kerning?, kerning unless kerning.nil?
         prev_transform, @text_transform = @text_transform, (transform == 'none' ? nil : transform) if transform
 
-        font family, size: size * @font_scale, style: style&.to_sym do
+        font family, size: size, style: style&.to_sym do
           result = yield
         end
 
