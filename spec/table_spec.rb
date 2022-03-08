@@ -699,15 +699,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      if (Gem::Version.new Prawn::Table::VERSION) > (Gem::Version.new '0.2.2')
-        (expect pdf.find_text 'Operation').not_to be_empty
-        (expect pdf.find_text 'Operator').not_to be_empty
-      else
-        (expect pdf.find_text 'Operation').to be_empty
-        (expect pdf.find_text 'Operatio').not_to be_empty
-        (expect pdf.find_text 'Operator').to be_empty
-        (expect pdf.find_text 'Operato').not_to be_empty
-      end
+      (expect pdf.find_text 'Operation').not_to be_empty
+      (expect pdf.find_text 'Operator').not_to be_empty
     end
 
     it 'should not break words in body rows when autowidth option is set' do

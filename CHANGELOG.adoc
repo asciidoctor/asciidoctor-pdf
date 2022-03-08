@@ -188,6 +188,7 @@ Build / Infrastructure::
 * add Ruby 3.1 to CI matrix; use as primary Ruby
 * test against Asciidoctor upstream (#1821)
 * skip tests for unreadable files when euid is 0
+* use prawn-table release and drop recommendation to use the development version
 
 == 1.6.2 (2021-12-31) - @mojavelinux
 

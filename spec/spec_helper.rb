@@ -332,13 +332,6 @@ RSpec.configure do |config|
       env_override = kw_args[:env] || {}
       unless kw_args[:use_bundler]
         env_override['RUBYOPT'] = nil
-        if defined? Bundler
-          rubylib = []
-          if (prawn_table_spec = Gem.loaded_specs['prawn-table'])
-            rubylib << (prawn_table_spec.source.path + 'lib').to_s
-          end
-          env_override['RUBYLIB'] = rubylib.join File::PATH_SEPARATOR unless rubylib.empty?
-        end
       end
       if (out = kw_args[:out])
         Open3.pipeline_w([env_override, cmd, *args, out: out]) {} # rubocop:disable Lint/EmptyBlock
