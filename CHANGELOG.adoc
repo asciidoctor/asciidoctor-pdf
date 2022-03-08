@@ -154,6 +154,7 @@ Bug Fixes::
 * honor alignment role when aligning alt text for missing block image
 * don't crash when rendering alt text for block image if value of align attribute is invalid (#1781)
 * correctly scale down SVG that only marginally exceeds bounds of page when fit=scale-down
+* prevent font scale from compounding for nested blocks in AsciiDoc table cell (#2007)
 * don't suppress actual error message when theme cannot be loaded; may contain information about theme being extended
 * force inline image to fit within table cell when width is larger than available space (#1798)
 * hide print annotation for bare email address (#1806)

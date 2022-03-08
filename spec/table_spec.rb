@@ -1797,6 +1797,36 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect outside_text[:font_size]).to eql 7.5
     end
 
+    it 'should not compound font scale when computing font size for nested blocks' do
+      pdf_theme = { heading_h2_font_size: 20, table_font_size: 5.25 }
+      input = <<~'EOS'
+      before table
+
+      |===
+      a|
+      before block
+
+      ====
+      [discrete]
+      == Heading
+
+      example block content
+
+      ****
+      sidebar block content
+      ****
+      ====
+      |===
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      (expect (pdf.find_unique_text 'before table')[:font_size]).to eql 10.5
+      (expect (pdf.find_unique_text 'before block')[:font_size]).to eql 5.25
+      (expect (pdf.find_unique_text 'Heading')[:font_size]).to eql 10
+      (expect (pdf.find_unique_text 'example block content')[:font_size]).to eql 5.25
+      (expect (pdf.find_unique_text 'sidebar block content')[:font_size]).to eql 5.25
+    end
+
     it 'should not inherit font properties from table if table_asciidoc_cell_style key is set to initial in theme' do
       pdf_theme = {
         table_asciidoc_cell_style: 'initial',
