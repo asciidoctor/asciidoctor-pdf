@@ -761,11 +761,9 @@ module Asciidoctor
       # Perform an operation (such as creating a new page) without triggering the on_page_create callback
       #
       def perform_discretely
-        # equivalent to calling `on_page_create` with no arguments
         saved_callback, state.on_page_create_callback = state.on_page_create_callback, nil
         yield
       ensure
-        # equivalent to calling `on_page_create &saved_callback`
         state.on_page_create_callback = saved_callback
       end
 
