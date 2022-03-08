@@ -22,6 +22,7 @@ class Prawn::Table::Cell::Text
 
   # Override the styled_width_of to account for image widths and hard line breaks.
   # This method computes the width of the text without wrapping (so InlineImageArranger is not called).
+  # This override also effectively backports the fix for prawn-table#42.
   remove_method :styled_width_of
   def styled_width_of text
     # NOTE: remove :style since it's handled by with_font
