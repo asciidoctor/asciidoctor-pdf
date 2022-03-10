@@ -3907,7 +3907,6 @@ module Asciidoctor
       end
 
       def theme_font category, opts = {}
-        result = nil
         # TODO: inheriting from generic category should be an option
         if opts.key? :level
           hlevel_category = %(#{category}_h#{opts[:level]})
@@ -3933,13 +3932,14 @@ module Asciidoctor
         prev_kerning, self.default_kerning = default_kerning?, kerning unless kerning.nil?
         prev_transform, @text_transform = @text_transform, (transform == 'none' ? nil : transform) if transform
 
+        result = nil
         font family, size: size, style: style&.to_sym do
           result = yield
+        ensure
+          @font_color = prev_color if color
+          default_kerning prev_kerning unless kerning.nil?
+          @text_transform = prev_transform if transform
         end
-
-        @font_color = prev_color if color
-        default_kerning prev_kerning unless kerning.nil?
-        @text_transform = prev_transform if transform
         result
       end
 

@@ -811,8 +811,9 @@ module Asciidoctor
         prev_font_scale, scratch_pdf.font_scale = scratch_pdf.font_scale, font_scale
         scratch_pdf.font font_family, style: font_style, size: font_size do
           scratch_pdf.instance_exec(&block)
+        ensure
+          scratch_pdf.font_scale = prev_font_scale
         end
-        scratch_pdf.font_scale = prev_font_scale
         # NOTE: don't count excess if cursor exceeds writable area (due to padding)
         full_page_height = scratch_pdf.effective_page_height
         partial_page_height = [full_page_height, start_y - scratch_pdf.y].min

@@ -114,9 +114,10 @@ module Prawn
           font_style ||= font_info[:style]
           pdf.font font_family, size: font_size, style: font_style do
             yield
+          ensure
+            pdf.font_color = prev_font_color if prev_font_color
+            pdf.font_scale = prev_font_scale if prev_font_scale
           end
-          pdf.font_color = prev_font_color if prev_font_color
-          pdf.font_scale = prev_font_scale if prev_font_scale
         end
       end
     end
