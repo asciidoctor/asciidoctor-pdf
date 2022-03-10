@@ -783,7 +783,7 @@ module Asciidoctor
       # Grouping
 
       def allocate_prototype
-        @prototype = init_prototype { ::Marshal.load ::Marshal.dump self }
+        @prototype = create_prototype { ::Marshal.load ::Marshal.dump self }
       end
 
       def scratch

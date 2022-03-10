@@ -4634,7 +4634,7 @@ module Asciidoctor
         (code.start_with? '\u') ? ([((code.slice 2, code.length).to_i 16)].pack 'U1') : code
       end
 
-      def init_prototype
+      def create_prototype
         @label = :scratch
         @save_state = nil
         @scratch_depth = 0
