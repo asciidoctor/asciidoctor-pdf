@@ -782,14 +782,12 @@ module Asciidoctor
 
       # Grouping
 
+      def allocate_prototype
+        @prototype = init_prototype { ::Marshal.load ::Marshal.dump self }
+      end
+
       def scratch
-        @scratch ||= begin
-          instance = Marshal.load Marshal.dump @prototype
-          instance.instance_variable_set :@label, :scratch
-          instance.instance_variable_set :@prototype, @prototype
-          instance.instance_variable_set :@tmp_files, @tmp_files
-          instance
-        end
+        @scratch ||= ((Marshal.load Marshal.dump @prototype).send :init_scratch, self)
       end
 
       def scratch?

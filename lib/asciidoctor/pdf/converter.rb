@@ -421,7 +421,7 @@ module Asciidoctor
         if (@optimize = doc.attr 'optimize')
           @optimize = nil unless (defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil? # rubocop:disable Style/SoleNestedConditional
         end
-        init_scratch_prototype
+        allocate_prototype
         self
       end
 
@@ -4634,20 +4634,27 @@ module Asciidoctor
         (code.start_with? '\u') ? ([((code.slice 2, code.length).to_i 16)].pack 'U1') : code
       end
 
-      # QUESTION: move to prawn/extensions.rb?
-      def init_scratch_prototype
+      def init_prototype
+        @label = :scratch
         @save_state = nil
         @scratch_depth = 0
-        @label = :primary
         # NOTE: don't need background image in scratch document; can cause marshal error anyway
         saved_page_bg_image, @page_bg_image = @page_bg_image, { verso: nil, recto: nil }
         # NOTE: pdfmark has a reference to the Asciidoctor::Document, which we don't want to serialize
         saved_pdfmark, @pdfmark = @pdfmark, nil
-        # NOTE: don't set font before using Marshal as it causes serialization to fail
-        @prototype = ::Marshal.load ::Marshal.dump self
+        # IMPORTANT: don't set font before using marshal as it causes serialization to fail
+        result = yield
         @pdfmark = saved_pdfmark
         @page_bg_image = saved_page_bg_image
-        @prototype.text_formatter.scratch = true
+        @label = :primary
+        result
+      end
+
+      def init_scratch originator
+        @prototype = originator.instance_variable_get :@prototype
+        @tmp_files = originator.instance_variable_get :@tmp_files
+        text_formatter.scratch = true
+        self
       end
 
       def push_scratch doc
