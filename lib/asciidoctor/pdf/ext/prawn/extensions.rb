@@ -785,6 +785,7 @@ module Asciidoctor
       def scratch
         @scratch ||= begin
           instance = Marshal.load Marshal.dump @prototype
+          instance.instance_variable_set :@label, :scratch
           instance.instance_variable_set :@prototype, @prototype
           instance.instance_variable_set :@tmp_files, @tmp_files
           instance
@@ -792,9 +793,7 @@ module Asciidoctor
       end
 
       def scratch?
-        (@_label ||= (state.store.info.data[:Scratch] ? :scratch : :primary)) == :scratch
-      rescue
-        false # NOTE: this method may get called before the state is initialized
+        @label == :scratch
       end
       alias is_scratch? scratch?
 

@@ -4638,6 +4638,7 @@ module Asciidoctor
       def init_scratch_prototype
         @save_state = nil
         @scratch_depth = 0
+        @label = :primary
         # NOTE: don't need background image in scratch document; can cause marshal error anyway
         saved_page_bg_image, @page_bg_image = @page_bg_image, { verso: nil, recto: nil }
         # NOTE: pdfmark has a reference to the Asciidoctor::Document, which we don't want to serialize
@@ -4646,7 +4647,7 @@ module Asciidoctor
         @prototype = ::Marshal.load ::Marshal.dump self
         @pdfmark = saved_pdfmark
         @page_bg_image = saved_page_bg_image
-        @prototype.state.store.info.data[:Scratch] = @prototype.text_formatter.scratch = true
+        @prototype.text_formatter.scratch = true
       end
 
       def push_scratch doc
