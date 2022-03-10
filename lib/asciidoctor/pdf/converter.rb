@@ -157,7 +157,7 @@ module Asciidoctor
       end
 
       def traverse node, opts = {}
-        # NOTE: converter instance in scratch document gets duplicated; must be rewired to this one
+        # NOTE: need to reconfigure document to use scratch converter in scratch document
         if self == (prev_converter = node.document.converter)
           prev_converter = nil
         else
