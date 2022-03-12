@@ -499,7 +499,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_heading_text[:page_number]).to be 4
     end
 
-    it 'should disable running content periphery on toc page if noheader or nofooer option is set on macro' do
+    it 'should disable running content periphery on toc page if noheader or nofooter option is set on macro' do
       pdf_theme = {
         header_height: 30,
         header_font_color: 'FF0000',
