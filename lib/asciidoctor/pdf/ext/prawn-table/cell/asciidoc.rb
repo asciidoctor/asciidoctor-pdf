@@ -74,8 +74,12 @@ module Prawn
           @natural_content_height ||= dry_run
         end
 
+        # FIXME: prawn-table doesn't support cells that exceed the height of a single page
         def draw_content
-          pdf = @pdf
+          if (pdf = @pdf).scratch?
+            pdf.move_down natural_content_height
+            return
+          end
           # NOTE: draw_bounded_content automatically adds FPTolerance to width and height
           pdf.bounds.instance_variable_set :@width, spanned_content_width
           # NOTE: we've already reserved the space, so just let the box stretch to bottom of the content area
@@ -85,15 +89,10 @@ module Prawn
           end
           start_page = pdf.page_number
           # TODO: apply horizontal alignment (right now must use alignment on content block)
-          # QUESTION: inherit table cell font properties?
-          apply_font_properties do
-            pdf.traverse content
-          end
-          # FIXME: prawn-table doesn't support cells that exceed the height of a single page
-          if (additional_pages = (end_page = pdf.page_number) - start_page) > 0
-            pdf.move_up padding_top
-            logger.error %(the table cell on page #{end_page - additional_pages} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page) unless (additional_pages == 1 && pdf.at_page_top?) || pdf.scratch?
-            additional_pages.times { pdf.delete_page }
+          apply_font_properties { pdf.traverse content }
+          if (extra_pages = pdf.page_number - start_page) > 0
+            logger.error %(the table cell on page #{start_page} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page) unless extra_pages == 1 && pdf.page.empty?
+            extra_pages.times { pdf.delete_page }
           end
           nil
         end
@@ -102,6 +101,7 @@ module Prawn
 
         def apply_font_properties
           # NOTE: font_info holds font properties outside table; used as fallback values
+          # QUESTION: inherit table cell font properties?
           font_info = (pdf = @pdf).font_info
           font_color, font_family, font_size, font_style = @font_options.values_at :color, :family, :size, :style
           prev_font_color, pdf.font_color = pdf.font_color, font_color if font_color
