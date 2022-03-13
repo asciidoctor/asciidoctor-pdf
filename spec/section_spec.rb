@@ -665,22 +665,22 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   it 'should number subsection of appendix based on appendix letter' do
     pdf = to_pdf <<~'EOS', analyze: true
-		= Book Title
-		:doctype: book
-		:sectnums:
+    = Book Title
+    :doctype: book
+    :sectnums:
 
-		== Chapter
+    == Chapter
 
-		content
+    content
 
-		[appendix]
-		= Appendix
+    [appendix]
+    = Appendix
 
-		content
+    content
 
-		=== Appendix Subsection
+    === Appendix Subsection
 
-		content
+    content
     EOS
 
     (expect pdf.lines).to include 'A.1. Appendix Subsection'
