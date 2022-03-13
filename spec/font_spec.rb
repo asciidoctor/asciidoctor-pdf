@@ -280,7 +280,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         'heading' => '== AV T. ij WA *guideline*',
         'table' => %(|===\n| AV T. ij WA *guideline*\n|===),
         'table_head' => %([%header]\n|===\n| AV T. ij WA *guideline*\n|===),
-        'caption' => %(.AV T. ij WA *guideline*'\n--\ncontent\n--),
+        'caption' => %(.AV T. ij WA *guideline*'\n|===\n|content\n|===),
       }.each do |category, input|
         pdf = to_pdf input, analyze: true
         guideline_column_with_kerning = (pdf.find_text 'guideline')[0][:x]
