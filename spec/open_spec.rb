@@ -54,4 +54,36 @@ describe 'Asciidoctor::PDF::Converter - Open' do
 
     (expect to_file).to visually_match 'open-unbreakable-option-break.pdf'
   end
+
+  it 'should include title if specified' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    .Title
+    --
+    content
+    --
+    EOS
+
+    title_texts = pdf.find_text 'Title'
+    (expect title_texts).to have_size 1
+    title_text = title_texts[0]
+    (expect title_text[:font_name]).to eql 'NotoSerif-Italic'
+    (expect title_text[:y]).to be > (pdf.find_unique_text 'content')[:y]
+  end
+
+  it 'should keep title with content if content is advanced to new page' do
+    pdf = with_content_spacer 10, 700 do |spacer_path|
+      to_pdf <<~EOS, analyze: true
+      image::#{spacer_path}[]
+
+      .Title
+      [%unbreakable]
+      --
+      content
+      --
+      EOS
+    end
+    (expect pdf.pages).to have_size 2
+    (expect (pdf.find_unique_text 'content')[:page_number]).to be 2
+    (expect (pdf.find_unique_text 'Title')[:page_number]).to be 2
+  end
 end
