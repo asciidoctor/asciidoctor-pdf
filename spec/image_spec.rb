@@ -1815,12 +1815,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should keep caption on same page as image when image exceeds height of page' do
       pdf = to_pdf <<~'EOS'
-      = Document Title
+      before image
 
       .Image caption
       image::tall-diagram.png[Tall diagram]
       EOS
 
+      (expect pdf.pages).to have_size 2
       (expect get_images pdf, 2).to have_size 1
       (expect pdf.pages[1].text).to eql 'Figure 1. Image caption'
     end

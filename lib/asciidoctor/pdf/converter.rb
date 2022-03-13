@@ -1559,7 +1559,7 @@ module Asciidoctor
         width = (width.to_f / 100) * page_width if ViewportWidth === width
 
         # NOTE: if width is not set explicitly and max-width is fit-content, caption height may not be accurate
-        caption_h = node.title? ? (layout_caption node, category: :image, side: :bottom, block_align: alignment, block_width: width, max_width: @theme.image_caption_max_width, dry_run: true) : 0
+        caption_h = node.title? ? (layout_caption node, category: :image, side: :bottom, block_align: alignment, block_width: width, max_width: @theme.image_caption_max_width, dry_run: true, force_top_margin: true) : 0
 
         align_to_page = node.option? 'align-to-page'
 
@@ -2981,13 +2981,13 @@ module Asciidoctor
       # The subject argument can either be a String or an AbstractNode. If
       # subject is an AbstractNode, only call this method if the node has a
       # title (i.e., subject.title? return true).
-      #--
-      # TODO: allow margin to be zeroed
       def layout_caption subject, opts = {}
         if opts.delete :dry_run
+          force_top_margin = !at_page_top? if (force_top_margin = opts.delete :force_top_margin).nil?
           height = nil
           dry_run do
-            move_down 0.001 # HACK: force top margin to be applied
+            # TODO: encapsulate this logic to force top margin to be applied
+            margin_box.instance_variable_set :@y, margin_box.absolute_top + 0.0001 if force_top_margin
             height = layout_caption subject, opts
           end
           return height
