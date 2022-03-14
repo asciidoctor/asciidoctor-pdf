@@ -843,7 +843,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect to_file).to visually_match 'source-rouge-highlight-wrapped-line.pdf'
     end
 
-    it 'should not apply syntax highlighting in scratch document' do
+    it 'should not apply syntax highlighting or borders and backgrounds in scratch document' do
       scratch_pdf = nil
       postprocessor_impl = proc do
         process do |doc, output|
@@ -868,9 +868,12 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       main_pdf_text = main_pdf.text
       (expect main_pdf_text[0][:string]).to eql 'puts'
       (expect main_pdf_text[0][:font_color]).not_to eql '333333'
-      scratch_pdf_text = (EnhancedPDFTextInspector.analyze scratch_pdf.render).text
+      scratch_pdf_output = scratch_pdf.render
+      scratch_pdf_text = (EnhancedPDFTextInspector.analyze scratch_pdf_output).text
       (expect scratch_pdf_text[0][:string]).to eql 'puts "Hello, World!"'
       (expect scratch_pdf_text[0][:font_color]).to eql '333333'
+      scratch_pdf_lines = (LineInspector.analyze scratch_pdf_output).lines
+      (expect scratch_pdf_lines).to be_empty
     end
   end
 

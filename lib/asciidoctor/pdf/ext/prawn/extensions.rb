@@ -841,13 +841,9 @@ module Asciidoctor
         if total_height > available_space && !at_page_top? && total_height <= effective_page_height
           advance_page
           started_new_page = true
-        else
-          started_new_page = false
         end
 
-        # HACK: yield doesn't work here on JRuby (at least not when called from AsciidoctorJ)
-        #yield remainder, started_new_page
-        instance_exec total_height, started_new_page, &block
+        scratch? ? instance_exec(&block) : (instance_exec total_height, started_new_page, &block)
       end
 
       # Attempt to keep the objects generated in the block on the same page

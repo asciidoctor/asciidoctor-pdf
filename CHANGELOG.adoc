@@ -168,6 +168,7 @@ Bug Fixes::
 * honor pre-wrap role on phrase (#1927)
 * verify alignment of list marker in AsciiDoc table cell (#1965)
 * don't crash if valud of width attribute on image has invalid format (#1970)
+* don't render borders and backgrounds in scratch document
 
 Compliance::
 
