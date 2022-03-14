@@ -3343,7 +3343,7 @@ module Asciidoctor
           folio_basis, invert_folio = :virtual, false
         end
         periphery_layout_cache = {}
-        # NOTE: this block is invoked during PDF generation, after convert_document has returned
+        # NOTE: this block is invoked during PDF generation, after #write -> #render_file and thus after #convert_document
         repeat (content_start_page..num_pages), dynamic: true do
           pgnum = page_number
           # NOTE: don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)

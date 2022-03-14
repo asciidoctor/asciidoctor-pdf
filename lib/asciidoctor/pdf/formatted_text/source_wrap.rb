@@ -9,6 +9,7 @@ module Asciidoctor
         # Override Prawn::Text::Formatted::Box#wrap method to add line numbers in source blocks.
         # Note that this implementation assumes that the :single_line option is falsy.
         def wrap array
+          return super unless array[0][:linenum] # sanity check
           initialize_wrap array
           highlight_line = stop = nil
           unconsumed = @arranger.unconsumed

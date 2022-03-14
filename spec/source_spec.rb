@@ -875,6 +875,34 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       scratch_pdf_lines = (LineInspector.analyze scratch_pdf_output).lines
       (expect scratch_pdf_lines).to be_empty
     end
+
+    it 'should not leak patch for linenums if unbreakable block is split across pages' do
+      formatted_text_box_extensions_count = nil
+      extensions = proc do
+        postprocessor do
+          process do |_, output|
+            formatted_text_box_extensions_count = Prawn::Text::Formatted::Box.extensions.size
+            output
+          end
+        end
+      end
+      source_file = fixture_file 'TicTacToeGame.java'
+      pdf = to_pdf <<~EOS, extensions: extensions, enable_footer: true, analyze: true
+      :source-highlighter: rouge
+
+      before block
+
+      [%linenums%autofit%unbreakable,java]
+      ----
+      include::#{source_file}[]
+      ----
+      EOS
+      (expect (pdf.find_unique_text 'before block')[:page_number]).to be 1
+      (expect (pdf.find_unique_text 'package')[:page_number]).to be 1
+      (expect (pdf.find_unique_text 'package')[:font_color]).not_to be '333333'
+      (expect (pdf.find_unique_text %r/^\s*70\s*$/)[:page_number]).to be 2
+      (expect formatted_text_box_extensions_count).to be 0
+    end
   end
 
   context 'CodeRay' do
