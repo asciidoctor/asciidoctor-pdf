@@ -41,8 +41,6 @@ module Asciidoctor
       PygmentsRequirePath = ::File.join __dir__, 'ext/pygments'
       OptimizerRequirePath = ::File.join __dir__, 'optimizer'
 
-      DecimalWithLeadingZero = ::Module.new
-
       AdmonitionIcons = {
         caution: { name: 'fas-fire', stroke_color: 'BF3400', size: 24 },
         important: { name: 'fas-exclamation-circle', stroke_color: 'BF0000', size: 24 },
