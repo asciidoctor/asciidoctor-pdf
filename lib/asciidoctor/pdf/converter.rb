@@ -1879,6 +1879,7 @@ module Asciidoctor
               typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height || @theme.base_line_height),
                 color: (font_color_override || @theme.code_font_color || @font_color),
                 size: adjusted_font_size
+            ensure
               ::Prawn::Text::Formatted::Box.extensions.pop if wrap_ext
             end
           end
