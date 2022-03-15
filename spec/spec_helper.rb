@@ -18,6 +18,7 @@ require 'open3' unless defined? Open3
 require 'pathname' unless defined? Pathname
 require 'pdf/inspector'
 require 'socket'
+require 'tmpdir'
 
 # NOTE: fix invalid bits for PNG in Gmagick
 Gmagick.prepend (Module.new do
@@ -384,6 +385,7 @@ RSpec.configure do |config|
 
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
+    debug = opts.delete :debug
     enable_footer = opts.delete :enable_footer
     safe_mode = opts.fetch :safe, :safe
     opts[:attributes] = { 'imagesdir' => fixtures_dir } unless opts.key? :attributes
@@ -405,6 +407,7 @@ RSpec.configure do |config|
     else
       Asciidoctor.convert input, (opts.merge safe: safe_mode, to_file: (pdf_io = StringIO.new), standalone: true)
     end
+    File.write (File.join Dir.tmpdir, 'debug.pdf'), pdf_io.string if debug
     analyze ? (PDF_INSPECTOR_CLASS[analyze].analyze pdf_io) : (PDF::Reader.new pdf_io)
   end
 
