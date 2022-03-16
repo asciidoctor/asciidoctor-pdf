@@ -4150,10 +4150,11 @@ module Asciidoctor
 
       def add_dest_for_top doc
         unless (top_page = doc.attr 'pdf-page-start') > page_count
-          pg = page_number
-          go_to_page top_page
-          add_dest_for_block doc, id: (doc.attr 'pdf-anchor'), y: page_height
-          go_to_page pg
+          float do
+            go_to_page top_page
+            move_cursor_to bounds.top + page_margin_top
+            add_dest_for_block doc, id: (doc.attr 'pdf-anchor')
+          end
         end
         nil
       end
