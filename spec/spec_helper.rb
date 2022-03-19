@@ -715,11 +715,10 @@ RSpec::Matchers.define :log_message do |expected|
   supports_block_expectations
 end
 
-# NOTE: expected messages must be enclosed in nested array
-RSpec::Matchers.define :log_messages do |expected, opts = {}|
+RSpec::Matchers.define :log_messages do |*expecteds, **opts|
+  expecteds.empty? ? (expecteds, opts = [opts], {}) : (expecteds = expecteds.flatten)
   match notify_expectation_failures: true do |actual|
-    log_level_override = opts[:using_log_level]
-    with_memory_logger log_level_override do |logger|
+    with_memory_logger opts[:using_log_level] do |logger|
       actual.call
       expected.each_with_index do |it, idx|
         (expect logger).to have_message (it.merge index: idx)

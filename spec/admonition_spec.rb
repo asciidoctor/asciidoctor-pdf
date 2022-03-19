@@ -718,10 +718,10 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
           label_text = pdf.find_unique_text 'TIP'
           (expect label_text).not_to be_nil
           (expect pdf.lines).to eql ['TIP Use the icon attribute to customize the image for an admonition block.']
-        end).to log_messages [[
+        end).to log_messages [
           { severity: :WARN, message: %(cannot embed remote image: #{base_url}/tip.png (allow-uri-read attribute not enabled)) },
           { severity: :WARN, message: %(admonition icon not found or not readable: #{base_url}/tip.png) },
-        ]]
+        ]
       end
     end
 
@@ -741,10 +741,10 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
           label_text = pdf.find_unique_text 'TIP'
           (expect label_text).not_to be_nil
           (expect pdf.lines).to eql ['TIP Use the icon attribute to customize the image for an admonition block.']
-        end).to log_messages [[
+        end).to log_messages [
           { severity: :WARN, message: %(could not retrieve remote image: #{base_url}/tip.png; 404 Not Found) },
           { severity: :WARN, message: %(admonition icon not found or not readable: #{base_url}/tip.png) },
-        ]]
+        ]
       end
     end
 
