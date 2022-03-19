@@ -720,7 +720,7 @@ RSpec::Matchers.define :log_messages do |*expecteds, **opts|
   match notify_expectation_failures: true do |actual|
     with_memory_logger opts[:using_log_level] do |logger|
       actual.call
-      expected.each_with_index do |it, idx|
+      expecteds.each_with_index do |it, idx|
         (expect logger).to have_message (it.merge index: idx)
       end if logger
       true
