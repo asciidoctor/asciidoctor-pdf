@@ -1,0 +1,2313 @@
+= Arrange Block Test Cases
+
+== Below Top, Fits
+
+Blocks aren't at the top of the page, but should fit on the page. (AKA not break)
+
+=== Admonitions, Below Top, Fits
+
+// Below top, fits, admonition, bare
+TIP: #Admonition, below top, fits.# Check out this helpful tip. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of admonition.
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, fits, admonition, anchor
+[#below-important-with-anchor]
+IMPORTANT: #Admonition, below top, fits, with anchor.# This is fabulously, fantastically, and fiercely important! This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of admonition.
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, fits, admonition, anchor, title
+.Every single light, whistle, bell, and whirlygig is at full tilt.
+[#below-warning-with-anchor-and-title]
+WARNING: #Admonition, below top, fits, with anchor and title.# *Do not press the red button, Sarah.* This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. <<below-important-with-anchor,Check anchor of previous important admonition>>. *Seriously, don't press it!* End of admonition.
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, fits, admonition, title
+.Pay attention to me right NOW!!!
+IMPORTANT: *Admonition, below top, fits, with title.* This is fabulously, fantastically, and fiercely important! This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. Check anchor of <<below-warning-with-anchor-and-title>>. End of admonition.
+
+<<<
+
+=== Masquerading Admonition Blocks, Below Top, Fits
+
+// Below top, fits, masquerading admonition, bare
+[NOTE]
+====
+Masquerading admonition, below top, fits.
+
+Paragraph 2 in a masquerading admonition. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This little note is a masquerade. Are you going to the party, too?
+
+Paragraph 3 in a masquerading admonition. End of masquerading admonition.
+====
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, fits, masquerading admonition, anchor
+[NOTE#below-masqued-with-anchor]
+====
+*Masquerading admonition, below top, fits, with anchor.* Paragraph 1. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This little note is a masquerade. Are you going to the party, too?
+
+Paragraph 2 in a masquerading admonition. End of masquerading admonition.
+====
+
+<<<
+
+image::tall.svg[pdfwidth=30mm]
+
+// Below top, fits, masquerading admonition, anchor, title
+.This is fabulously, fantastically, and fiercely important!
+[IMPORTANT#below-masqued-with-anchor-and-title]
+====
+*Masquerading admonition, below top, fits, with anchor and title.* Paragraph 1. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 2 in a masquerading admonition. <<below-masqued-with-anchor,Check anchor of previous masquerading note admonition>>. End of masquerading admonition.
+====
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, fits, masquerading admonition, title
+.This is fabulously, fantastically, and fiercely important!
+[IMPORTANT]
+====
+#Masquerading admonition, below top, fits, with title.# Paragraph 1. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 2 in a masquerading admonition. Check anchor of <<below-masqued-with-anchor-and-title>>. End of masquerading admonition.
+====
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, fits masquerading admonition, anchor, nested
+[IMPORTANT#below-masqued-with-anchor-and-nested]
+====
+#Masquerading admonition, below top, fits, with anchor and nested blocks#. Paragraph 1. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+======
+Paragraph 1 in a delimited example block nested in a masquerading admonition block. This is content. This is content. This is content.
+
+.Title of nested block image
+image::red-blue-squares.svg[pdfwidth=5mm,align=text-right]
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+[source#below-source-with-anchor-nested-in-masqued,html]
+----
+<!-- This is a delimited source block with an anchor and syntax highlighting. -->
+
+<article>
+  <div>
+    <main>
+
+      <!-- This is awesome! -->
+
+    </main>
+  </div>
+</article>
+
+<!-- End of nested source block. -->
+----
+
+Paragraph 2 in a delimited example block nested in masquerading admonition block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. _End of nested example block_.
+======
+
+Paragraph 2 in a masquerading admonition block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of masquerading admonition.
+====
+
+<<<
+
+image::tall.svg[pdfwidth=20mm]
+
+// Below top, fits, masquerading admonition, anchor, title, nested
+.Title of masquerading admonition block with nested blocks
+[IMPORTANT#below-masqued-with-anchor-and-title-and-nested]
+====
+#Masquerading admonition, below top, fits, with anchor, title, and nested blocks#. Paragraph 1. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+======
+Paragraph 1 in a delimited example block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+[source#below-source-nested-in-masqued-with-anchor-and-title,html]
+----
+<!-- This is a delimited source block with an anchor and syntax highlighting. -->
+
+<article>
+  <div>
+    <main>
+
+      <!-- This is awesome! -->
+
+    </main>
+  </div>
+</article>
+
+<!-- End of nested source block. -->
+----
+
+Paragraph 2 in a delimited example block. This is content. This is content. This is content. This is content. End of nested example block.
+======
+
+Paragraph 2 in a masquerading admonition block. This is content. This is content. This is content. This is content. <<below-masqued-with-anchor-and-nested,Check anchor of previous masquerading important admonition with nested blocks>>. <<below-source-with-anchor-nested-in-masqued,Check nested source block in previous masquerading admonition>>. End of masquerading admonition.
+====
+
+<<<
+
+image::tall.svg[pdfwidth=20mm]
+
+// Below top, fits, masquerading admonition, title, nested
+.Title of masquerading admonition block with nested blocks
+[NOTE]
+====
+*Masquerading admonition, below top, fits, with title and nested blocks*. Paragraph 1 in a masquerading admonition block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+======
+Paragraph 1 in a delimited example block nested in masquerading admonition block. <<below-masqued-with-anchor-and-title-and-nested,Check anchor of previous masquerading admonition with nested blocks>>. <<below-source-nested-in-masqued-with-anchor-and-title,Check nested source block in previous masquerading admonition>>.
+
+[source,html]
+----
+<!-- This is a delimited source block with syntax highlighting. -->
+
+<article>
+  <div>
+    <main>
+
+      <!-- This is awesome! -->
+
+    </main>
+  </div>
+</article>
+
+<!-- End of nested source block. -->
+----
+
+Paragraph 2 in a nested delimited example block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. <<below-masqued-with-anchor-and-long-title,Check the next admonition block's anchor>>. End of nested example block.
+======
+
+Paragraph 2 in a masquerading admonition block. This is content. This is content. This is content. This is content. This is content. End of masquerading admonition.
+====
+
+<<<
+
+image::tall.svg[pdfwidth=25mm]
+
+// Below top, fits, masquerading admonition, anchor, long title
+.Title of masquerading admonition block. This is title content. *This title content is bold on purpose! This title content is bold on purpose! This title content is bold on purpose! This title content is bold on purpose! This title content is bold on purpose! This title content is bold on purpose!* End of long title.
+[CAUTION#below-masqued-with-anchor-and-long-title]
+====
+#Masquerading admonition, below top, fits, with anchor and too-long title.# Paragraph 1.
+
+Paragraph 2 in a masquerading admonition. End of masquerading admonition.
+====
+
+<<<
+
+=== Example Blocks, Below Top, Fits
+
+// Below top, fits, example, bare
+====
+*Example, below top, fits.* Paragraph 1 in a delimited example block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 2. This is content. End of example.
+====
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, fits, example, anchor
+[#below-example-with-anchor]
+====
+Paragraph 1 in a delimited example block. *Example, below top, fits, with anchor.*
+
+.Title of list
+* List item
+** List item
+*** List item
+** List item
+* List item
+** List item
+** Last list item of list 1
+
+Paragraph 2. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of example.
+====
+
+<<<
+
+image::tall.svg[pdfwidth=25mm]
+
+// Below top, example, anchor, title
+.Title of delimited example block with list
+[#below-example-with-anchor-and-title]
+====
+Paragraph 1 in a delimited example block. *Example, below top, fits, with anchor and title.* This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+.Title of list
+* List item
+* List item
+.. List item
+... List item
+* List item
+* Last list item and end of example block
+====
+
+<<<
+
+image::tall.svg[pdfwidth=10mm]
+
+// Below top, fits, example, title
+.Title of delimited example block
+====
+Paragraph 1 in a delimited example block. #Example, below top, fits, with title.# This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+* List item
+* List item
+* List item
+* Last list item of list 1
+
+Paragraph 2 in a delimited example block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+[#below-ordered-list-with-anchor-and-title-in-example]
+.Title of list 2
+. List item
+.. List item
+... List item
+.. List item
+... List item
+... List item
+.... List item
+.... List item
+..... Last list item of list 2
+
+Paragraph 3 in a delimited example block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of example.
+====
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, fits, example, bare, nested
+====
+*Example, below top, fits, with nested blocks.* Delimited example block ends directly after nested sidebar ends.
+
+.Title of delimited sidebar block
+[#below-sidebar-with-anchor-and-title-nested-in-example-bare]
+****
+.Title of delimited source block with callouts
+[source#below-source-nested-in-sidebar-nested-in-example-bare,javascript]
+----
+/** This is a delimited source block with an anchor, title, syntax highlighting, and callouts that's nested in a sidebar that's nested in an example. */
+
+function createExtensionRegistry (Asciidoctor, callbacks) { <1>
+  const registry = Asciidoctor.Extensions.create()
+  registry.includeProcessor(IncludeProcessor.$new(callbacks.onInclude))
+  return registry <2>
+}
+
+module.exports = createExtensionRegistry <3>
+
+/** End of source. */
+----
+<1> Source callout 1 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of source callout 1.
+<2> Source callout 2 content. End of source callout 2.
+<3> Source callout 3 content for the big disco WIN! Who loves disco? We love disco! *Who loves disco? We love disco!*  End of source callout 3.
+
+Paragraph 1 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. <<below-sidebar-with-anchor-and-title-nested-in-example-bare,Check anchor of nested sidebar>>. <<below-source-nested-in-sidebar-nested-in-example-bare,Check anchor of nested source block>>. End of nested sidebar.
+****
+====
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, fits, example, anchor, nested
+[#below-example-with-anchor-and-nested]
+====
+_Example, below top, fits, with anchor and nested blocks._ Paragraph 1 in a delimited example block.
+
+.Title of delimited sidebar block nested in an example block
+[#below-sidebar-with-anchor-and-title-nested-in-example-with-anchor]
+****
+Paragraph 1 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content.
+
+.Title of delimited source block with callouts
+[source,javascript]
+----
+/** This is a delimited source block with a title, syntax highlighting, and callouts that's nested in a sidebar that's nested in an example. */
+
+function createExtensionRegistry (Asciidoctor, callbacks) { <1>
+  const registry = Asciidoctor.Extensions.create()
+  registry.includeProcessor(IncludeProcessor.$new(callbacks.onInclude))
+  return registry <2>
+}
+
+/** End of source. */
+----
+<1> Source callout 1 content. Callout content. Callout content. Callout content. Callout content. Callout content. End of source callout 1.
+<2> Source callout 2 content for the big disco WIN! Who loves disco? We love disco! *Who loves disco? We love disco!*  End of source callout 2.
+
+======
+Nested delimited example block. This is content. This is content. This is content. <<below-example-with-anchor-and-nested,Check anchor of parent example block>>. End of nested example.
+======
+
+.Title of delimited literal block with callouts
+[#below-literal-with-anchor-and-title-nested-in-sidebar-in-example]
+....
+This is a delimited literal block with an anchor, title, and callouts that's nested in a sidebar that's nested in an example. <1>
+                                                                End of nested literal.
+....
+<1> Literal callout content. #End of literal callout.#
+
+Paragraph 2 in a delimited sidebar block. End of nested sidebar.
+****
+
+Paragraph 2 in a delimited example block. This is content. This is content. This is content. This is content. End of example.
+====
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, fits, example, anchor, title, nested
+.Title of delimited example block with nested blocks
+[#below-example-with-anchor-and-title-and-nested]
+====
+`Example, below top, fits, with anchor and title and nested blocks.` Paragraph 1 in a delimited example block.
+
+.Title of delimited sidebar block nested in an example block
+[#below-sidebar-with-anchor-and-title-nested-in-example-with-anchor-and-title]
+****
+Paragraph 1 in a delimited sidebar block. #Sidebar block has an anchor, title, and nested blocks.# This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+.Title of delimited literal block with callouts
+[#below-literal-with-anchor-and-title-and-callouts-nested-in-sidebar-nested-in-example]
+....
+This is a delimited literal block with an anchor, title, and callouts that's nested in a sidebar that's nested in an example.
+
+This is content. <1>
+     This is content. <2>
+
+End of literal.
+....
+<1> Literal callout 1 content. End of literal callout 1.
+<2> Literal callout 2 content. Callout 2 content. Callout 2 content. End of literal callout 2.
+
+Paragraph 2 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+======
+Paragraph 1 in a delimited example block nested in a sidebar nested in another example block.
+
+Paragraph 2 in a nested delimited example block. End of nested example.
+======
+
+Paragraph 3 in a delimited sidebar block. End of nested sidebar.
+****
+
+Paragraph 2 in a delimited example block. <<below-literal-with-anchor-and-title-and-callouts-nested-in-sidebar-nested-in-example,Check nested literal anchor>>. <<below-sidebar-with-anchor-and-title-nested-in-example-with-anchor-and-title,Check nested sidebar anchor>>. Check <<below-example-with-anchor-and-title-and-nested>>. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of example.
+====
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, fits, example, title, nested
+.Title of delimited example block with nested blocks
+====
+#Example, below top, fits, with title and nested blocks.# Delimited example block ends directly after nested sidebar ends.
+
+.Title of delimited sidebar block with an anchor that's nested in example block
+[#below-sidebar-with-anchor-and-title-nested-in-example-with-title]
+****
+.Title of delimited source block with callouts
+[source,javascript]
+----
+/** This is a delimited source block with a title, syntax highlighting, and callouts that's nested in a sidebar that's nested in an example. */
+
+function createExtensionRegistry (Asciidoctor, callbacks) { <1>
+  const registry = Asciidoctor.Extensions.create()
+  registry.includeProcessor(IncludeProcessor.$new(callbacks.onInclude))
+  return registry <2>
+}
+
+module.exports = createExtensionRegistry <3>
+
+/** End of source. */
+----
+<1> Source callout 1 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of source callout 1.
+<2> Source callout 2 content. End of source callout 2.
+<3> Source callout 3 content for the big disco WIN! Who loves disco? We love disco! *Who loves disco? We love disco!*  End of source callout 3.
+
+Check <<below-sidebar-with-anchor-and-title-nested-in-example-with-title>>. Paragraph 1 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of nested sidebar. End of example block directly following.
+****
+====
+
+<<<
+
+=== Listing Blocks, Below Top, Fits
+
+// Below top, fits, listing, bare
+----
+Listing, below top, fits.
+
+This is a delimited listing block.
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+End of listing.
+----
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, fits, listing, anchor
+[#below-listing-anchor]
+----
+Listing, below top, fits, with an anchor.
+
+This is a delimited listing block.
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+End of listing.
+----
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, fits, listing, anchor, title
+.Title of delimited listing block
+[#below-listing-with-anchor-and-title]
+----
+Listing, below top, fits, with an anchor and title.
+
+This is a delimited listing block.
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+End of listing.
+----
+
+<<<
+
+image::tall.svg[pdfwidth=10mm]
+
+// Below top, fits, listing, title
+.Title of delimited listing block
+----
+Listing, below top, fits, with a title.
+
+This is a delimited listing block.
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+End of listing.
+----
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, fits, listing, bare, nested
+----
+Listing, below top, fits, with nested block.
+
+This is a delimited listing block.
+     This is content.
+
+     This is content.
+            This is content.
+
+[source,javascript]
+------
+/** This is a delimited source block nested in a listing block. */
+
+const IncludeProcessor = require('./include/include-processor')
+
+function createExtensionRegistry (Asciidoctor, callbacks) {
+const registry = Asciidoctor.Extensions.create()
+registry.includeProcessor(IncludeProcessor.$new(callbacks.onInclude))
+return registry
+}
+
+module.exports = createExtensionRegistry
+
+/** End of nested source. */
+------
+
+End of listing.
+----
+
+<<<
+
+image::tall.svg[pdfwidth=36mm]
+
+// Below top, fits, listing, anchor, nested
+[#below-listing-with-anchor-and-nested]
+----
+Listing, below top, fits, with an anchor and nested block.
+
+This is a delimited listing block.
+     This is content.
+
+     This is content.
+            This is content.
+
+[source,javascript]
+------
+/** This is a delimited source block nested in a listing block. */
+
+const IncludeProcessor = require('./include/include-processor')
+
+function createExtensionRegistry (Asciidoctor, callbacks) {
+const registry = Asciidoctor.Extensions.create()
+registry.includeProcessor(IncludeProcessor.$new(callbacks.onInclude))
+return registry
+}
+
+module.exports = createExtensionRegistry
+
+/** End of nested source. */
+------
+
+End of listing.
+----
+
+<<<
+
+image::tall.svg[pdfwidth=20mm]
+
+// Below top, fits, listing, anchor, title, nested
+.Title of delimited listing block
+[#below-listing-with-anchor-and-title-and-nested]
+----
+Listing, below top, fits, with an anchor, title, and nested block.
+
+This is a delimited listing block.
+     This is content.
+
+     This is content.
+            This is content.
+
+[source,javascript]
+------
+/** This is a delimited source block nested in a listing block. */
+
+const IncludeProcessor = require('./include/include-processor')
+
+function createExtensionRegistry (Asciidoctor, callbacks) {
+const registry = Asciidoctor.Extensions.create()
+registry.includeProcessor(IncludeProcessor.$new(callbacks.onInclude))
+return registry
+}
+
+module.exports = createExtensionRegistry
+
+/** End of nested source. Parent listing ends directly following closing delimiter.*/
+------
+----
+
+<<<
+
+image::tall.svg[pdfwidth=20mm]
+
+// Below top, listing, title, nested
+.Title of delimited listing block
+----
+Listing, below top, fits, with a title and nested block.
+
+This is a delimited listing block.
+     This is content.
+
+     This is content.
+            This is content.
+
+[source,javascript]
+------
+/** This is a delimited source block nested in a listing block. */
+
+const IncludeProcessor = require('./include/include-processor')
+
+function createExtensionRegistry (Asciidoctor, callbacks) {
+const registry = Asciidoctor.Extensions.create()
+registry.includeProcessor(IncludeProcessor.$new(callbacks.onInclude))
+return registry
+}
+
+module.exports = createExtensionRegistry
+
+/** End of nested source. Parent listing ends directly following closing delimiter.*/
+------
+----
+
+<<<
+
+=== Source Blocks, Below Top, Fits
+
+// Below top, source, bare
+[source,html]
+----
+<!-- Source, below top, fits.-->
+
+<article>
+  <div>
+    <main>
+
+      <!-- This is awesome! -->
+
+    </main>
+  </div>
+</article>
+
+<!-- End of nested source block. -->
+----
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, source, anchor
+[source#below-source-with-anchor,html]
+----
+<!-- Source, below top, fits, with anchor. -->
+
+<article>
+  <div>
+    <main>
+
+      <!-- This is awesome! -->
+
+    </main>
+  </div>
+</article>
+
+<!-- End of nested source block. -->
+----
+
+<<<
+
+image::tall.svg[pdfwidth=30mm]
+
+// Below top, source, anchor, title
+.Title of delimited source block
+[source#below-source-with-anchor-and-title,javascript]
+----
+/** Source, below top, fits, with anchor and title. */
+
+const IncludeProcessor = require('./include/include-processor')
+
+/** This is content.
+* This is content.
+*/
+
+function createExtensionRegistry (Asciidoctor, callbacks) {
+  const registry = Asciidoctor.Extensions.create()
+  registry.includeProcessor(IncludeProcessor.$new(callbacks.onInclude))
+  return registry
+}
+
+/** This is content.
+* This is content.
+*/
+
+module.exports = createExtensionRegistry
+
+/** End of source. */
+----
+
+<<<
+
+image::tall.svg[pdfwidth=25mm]
+
+// Below top, source, anchor, title, callouts
+.Title of delimited source block with callouts
+[source#below-source-with-anchor-and-title-and-callouts,javascript]
+----
+/** Source, below top, fits, with and anchor, title, and callouts. */
+
+const IncludeProcessor = require('./include/include-processor')
+
+/** This is content.
+* This is content.
+*/
+
+function createExtensionRegistry (Asciidoctor, callbacks) { <1>
+  const registry = Asciidoctor.Extensions.create()
+  registry.includeProcessor(IncludeProcessor.$new(callbacks.onInclude))
+  return registry <2>
+}
+
+/** This is content.
+* This is content.
+*/
+
+module.exports = createExtensionRegistry <3>
+
+/** End of source. */
+----
+<1> Source callout 1 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of source callout 1.
+<2> Source callout 2 content. End of source callout 2.
+<3> Source callout 3 content for the big disco WIN! Who loves disco? We love disco! Who loves disco? We love disco! Who loves disco? We love disco! Who loves disco? We love disco! Who loves disco? We love disco! *Who loves disco? We love disco!* Who loves disco? We love disco! Who loves disco? We love disco! End of source callout 3.
+
+<<<
+
+image::tall.svg[pdfwidth=10mm]
+
+// Below top, source, title
+.Title of delimited source block
+[source,html]
+----
+<!-- Source, below top, fits, with title. -->
+
+<article>
+  <div>
+    <main>
+
+      <!-- This is awesome! -->
+
+    </main>
+  </div>
+</article>
+
+<!-- End of source. -->
+----
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, source, bare, nested
+[source,asciidoc]
+----
+Source, below top, fits, with nested blocks.
+
+This is a delimited source block. More content. This is content. This is content. This is content.
+
+[IMPORTANT]
+====
+Paragraph 1 of a masquerading admonition block nested in a source block. This happens when I document AsciiDoc with AsciiDoc.
+
+[quote]
+____
+This is a quote block.
+
+Oh, my, goodness! _Is this really a thing?_
+
+This is really a thing, my friend. End of nested quote.
+____
+
+Paragraph 2 of a masquerading admonition block. End of masquerading admonition. Source block ends directly after admonition block.
+====
+----
+
+<<<
+
+image::tall.svg[pdfwidth=15mm]
+
+// Below top, source, anchor, nested
+[source#below-source-with-anchor-and-nested,asciidoc]
+----
+Source, below top, fits, with an anchor and nested blocks.
+
+This is a delimited source block. More content. This is content. This is content. This is content.
+
+[IMPORTANT]
+====
+Paragraph 1 of a masquerading admonition block nested in a source block. This happens when I document AsciiDoc with AsciiDoc.
+
+[quote]
+____
+This is a quote block.
+
+Oh, my, goodness! _Is this really a thing?_
+
+This is really a thing, my friend. End of nested quote.
+____
+
+Paragraph 2 of a masquerading admonition block. End of masquerading admonition. Source block ends directly after admonition block.
+====
+----
+
+<<<
+
+image::tall.svg[pdfwidth=25mm]
+
+// Below top, source, anchor, title, nested
+.Title of delimited source block with nested blocks
+[source#below-source-with-anchor-and-title-and-nested,asciidoc]
+----
+Source, below top, fits, with an anchor, title, and nested blocks.
+
+This is a delimited source block. More content. This is content. This is content. This is content.
+
+[IMPORTANT]
+====
+Paragraph 1 of a masquerading admonition block nested in a source block. This happens when I document AsciiDoc with AsciiDoc.
+
+[quote]
+____
+This is a quote block.
+
+Oh, my, goodness! _Is this really a thing?_
+
+This is really a thing, my friend. End of nested quote.
+____
+
+Paragraph 2 of a masquerading admonition block. End of masquerading admonition.
+====
+
+End of source.
+----
+
+<<<
+
+image::tall.svg[pdfwidth=20mm]
+
+// Below top, source, anchor, title, callouts, nested
+.Title of delimited source block with nested blocks
+[source#below-source-with-anchor-and-title-and-callouts-and-nested,asciidoc]
+----
+Source, below top, fits, with an anchor, title, callouts, and nested blocks.
+
+[IMPORTANT]
+====
+Paragraph 1 of a masquerading admonition block nested in a source block. This happens when I document AsciiDoc with AsciiDoc. <1>
+
+[quote]
+____
+This is a quote block.
+
+Oh, my, goodness! _Is this really a thing?_
+
+This is really a thing, my friend. <2>
+End of nested quote.
+____
+
+Paragraph 2 of a masquerading admonition block. End of masquerading admonition. Source block ends directly after admonition block.
+====
+----
+<1> Source callout 1 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of source callout 1.
+<2> Source callout 2 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of source callout 2.
+
+<<<
+
+image::tall.svg[pdfwidth=35mm]
+
+// Below top, source, title, nested
+.Title of delimited source block with nested blocks
+[source,asciidoc]
+----
+Source, below top, fits, with a title and nested blocks.
+
+This is a delimited source block. More content. This is content. This is content. This is content.
+
+[IMPORTANT]
+====
+Paragraph 1 of a masquerading admonition block nested in a source block. This happens when I document AsciiDoc with AsciiDoc.
+
+[quote]
+____
+This is a quote block.
+
+Oh, my, goodness! _Is this really a thing?_
+
+This is really a thing, my friend. End of nested quote.
+____
+
+Paragraph 2 of a masquerading admonition block. End of masquerading admonition.
+====
+
+End of source.
+----
+
+<<<
+
+=== Literal Blocks, Below Top, Fits
+
+// Below top, literal, bare
+....
+Literal, below top, fits.
+
+A delimited literal block.
+This is content.
+
+                                                         Content that's taking a trip around, and around, and around, and around, and around, and around, and around, and around, and around, and around the proverbial block.
+
+End of literal.
+....
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, literal, anchor
+[#below-literal-with-anchor]
+....
+Literal, below top, fits, with anchor.
+
+A delimited literal block.
+This is content.
+
+End of literal.
+....
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, literal, anchor, title
+.Title of a delimited literal block
+[#below-literal-with-anchor-and-title]
+....
+Literal, below top, fits, with anchor and title.
+
+A delimited literal block.
+
+                                      This is content hanging around the middle.
+
+End of literal.
+....
+
+<<<
+
+image::tall.svg[pdfwidth=15mm]
+
+// Below top, literal, anchor, title, callouts
+.Title of a delimited literal block with callouts
+[#below-literal-with-anchor-and-title-and-callouts]
+....
+Literal, below top, fits, with an anchor, title, and callouts. <1>
+This is content.
+
+                                      Content that's taking a trip around, and around, and around, and around, and around, and around, and around, and around, and around, and around the proverbial block.
+
+                        One more time for good measure. <2>
+
+End of literal. <3>
+....
+<1> Literal callout 1 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of literal callout 1.
+<2> Literal callout 2 content. Callout content. Callout content. Callout content. Callout content. What is a _good measure_, anyway? End of literal callout 2.
+<3> Literal callout 3 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of literal callout 3.
+
+<<<
+
+image::tall.svg[pdfwidth=15mm]
+
+// Below top, literal, anchor, long title
+.Title of delimited literal block. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. This title is very long. End of title.
+[#below-literal-with-anchor-and-long-title]
+....
+Literal, below top, fits, with an anchor and long title.
+This is content.
+
+One more time for good measure.
+
+                One more time for good measure.
+
+                                One more time for good measure.
+
+Okay, that was actually three times.
+
+End of literal.
+....
+
+<<<
+
+image::tall.svg[pdfwidth=23mm]
+
+// Below top, literal, title
+.Title of a delimited literal block
+....
+Literal, below top, fits, with a title.
+
+This is content.
+
+                                                         Content that's taking a trip around, and around, and around, and around, and around, and around, and around, and around, and around, and around the proverbial block.
+
+End of literal.
+....
+
+<<<
+
+image::tall.svg[pdfwidth=13mm]
+
+// Below top, literal, bare, nested
+....
+Literal, below top, fits, with nested blocks.
+
+This is content.
+
+                                                         Content that's taking a trip around, and around, and around, and around, and around, and around, and around, and around, and around, and around the proverbial block.
+
+----
+This is a delimited listing block in a literal block.
+It's getting weird in here.
+
+****
+This is a delimited sidebar block nested in a listing block that's nested in a literal block.
+
+Now it's just awkward.
+
+End of nested sidebar.
+****
+
+End of listing.
+----
+
+End of literal.
+....
+
+<<<
+
+image::tall.svg[pdfwidth=13mm]
+
+// Below top, literal, anchor, nested
+[#below-literal-with-anchor-with-nested]
+....
+Literal, below top, fits, with an anchor and nested blocks.
+
+This is content.
+
+                                                         Content that's taking a trip around, and around, and around, and around, and around, and around, and around, and around, and around, and around the proverbial block.
+
+----
+This is a delimited listing block in a literal block.
+It's getting weird in here.
+
+****
+This is a delimited sidebar block nested in a listing block that's nested in a literal block.
+
+Now it's just awkward.
+
+End of nested sidebar.
+****
+
+End of listing.
+----
+
+End of literal.
+....
+
+<<<
+
+image::tall.svg[pdfwidth=13mm]
+
+// Below top, literal, anchor, title, nested
+.Title of delimited literal block with nested blocks
+[#below-literal-with-anchor-and-title-with-nested]
+....
+Literal, below top, fits, with an anchor, title, and nested blocks.
+
+This is content.
+
+                                                         Content that's taking a trip around, and around, and around, and around, and around, and around, and around, and around, and around, and around the proverbial block.
+
+----
+This is a delimited listing block in a literal block.
+It's getting weird in here.
+
+****
+This is a delimited sidebar block nested in a listing block that's nested in a literal block.
+
+Now it's just awkward.
+
+End of nested sidebar.
+****
+
+End of listing.
+----
+
+End of literal.
+....
+
+<<<
+
+image::tall.svg[pdfwidth=13mm]
+
+// Below top, literal, anchor, title, callouts, nested
+.Title of delimited literal block with callouts and nested blocks
+[#below-literal-with-anchor-and-title-and-callouts-with-nested]
+....
+Literal, below top, fits, with an anchor, title, callouts, and nested blocks.
+
+This is content.
+
+                                                         Content that's taking a trip around, and around, and around, and around, and around, and around, and around, and around, and around, and around the proverbial block. <1>
+
+----
+This is a delimited listing block in a literal block.
+It's getting weird in here.
+
+****
+This is a delimited sidebar block nested in a listing block that's nested in a literal block.
+
+Now it's just awkward. <2>
+
+End of nested sidebar.
+****
+
+End of listing.
+----
+
+End of literal.
+....
+<1> Literal callout 1 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of literal callout 1.
+<2> Literal callout 2 content. Callout content. Callout content. Callout content. Callout content. End of literal callout 2.
+
+<<<
+
+image::tall.svg[pdfwidth=25mm]
+
+// Below top, literal, title, nested
+.Title of delimited literal block with nested blocks
+....
+Literal, below top, fits, with a title and nested blocks.
+
+This is content.
+
+                                                         Content that's taking a trip around, and around, and around, and around, and around, and around, and around, and around, and around, and around the proverbial block.
+
+----
+This is a delimited listing block in a literal block.
+It's getting weird in here.
+
+****
+This is a delimited sidebar block nested in a listing block that's nested in a literal block.
+
+Now it's just awkward.
+
+End of nested sidebar.
+****
+
+End of listing. End of literal directly after listing.
+----
+....
+
+<<<
+
+=== Open Blocks, Below Top, Fits
+
+// Below top, open, bare
+--
+Open, below top, fits.
+
+This is a delimited open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is a delimited open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+End of open.
+--
+
+<<<
+
+image::tall.svg[pdfwidth=13mm]
+
+// Below top, open, anchor
+[#below-open-with-anchor]
+--
+`Open, below top, fits, with an anchor.`
+
+This is a delimited open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is a delimited open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+End of open.
+--
+
+<<<
+
+image::tall.svg[pdfwidth=22mm]
+
+// Below top, open, anchor, title
+.Title of delimited open block
+[#below-open-with-anchor-and-title]
+--
+_Open, below top, fits, with an anchor and title._
+
+This is a delimited open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is a delimited open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. Check <<below-open-with-anchor-and-title>>.
+
+End of open.
+--
+
+<<<
+
+image::tall.svg[pdfwidth=18mm]
+
+// Below top, open, title
+.Title of delimited open block
+--
+*Open, below top, fits, with a title.*
+
+This is a delimited open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is a delimited open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+End of open.
+--
+
+<<<
+
+image::tall.svg[pdfwidth=3mm]
+
+// Below top, open, nested
+--
+*Open, below top, fits, with nested blocks.*
+
+Paragraph 1 in a delimited open block with nested blocks. And an ordered list.
+
+. List item
+.. List item
+... List item
+.... List item with a lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content.
+. List item
+.. List item
+... Last list item
+
+[#below-example-with-anchor-nested-in-open]
+====
+Paragraph 1 in a delimited example block nested in an open block with a nested quote block and an admonition.
+
+[quote,Who Said This?,When and where did they say it?]
+____
+This is a nested quote block with metadata.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+Are we there yet? End of nested quote.
+____
+
+Paragraph 2 in a delimited example block nested in an open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+TIP: The Sun rotates in the opposite direction to Earth, from west to east.
+This may or may not affect the kitchen sink and the infinite loop every other odd week. End of nested admonition.
+
+Paragraph 3 in a delimited example block nested in an open block. This is content. End of nested example.
+====
+
+Paragraph 2 in a delimited open block. <<below-example-with-anchor-nested-in-open,Check nested example block anchor>>. End of open.
+--
+
+<<<
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, open, anchor, nested
+[#below-open-with-anchor-with-nested]
+--
+#Open, below top, fits, with an anchor, nested blocks, and list.# Paragraph 1 in a delimited open block.
+
+. List item
+.. List item
+... List item
+.... List item
+. List item
+.. List item
+... Last list item
+
+Paragraph 2 in a delimited open block.
+
+====
+Paragraph 1 in a delimited example block nested in an open block with a nested quote block and an admonition.
+
+[quote#below-quote-with-anchor-nested-in-example-in-open]
+____
+This is a nested quote block.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+Are we there yet? End of nested quote.
+____
+
+Paragraph 2 in a delimited example block nested in an open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+TIP: The Sun rotates in the opposite direction to Earth, from west to east.
+This may or may not affect the kitchen sink and the infinite loop every other odd week. End of nested admonition.
+
+Paragraph 3 in a delimited example block nested in an open block. This is content. <<below-quote-with-anchor-nested-in-example-in-open,Check nested quote block anchor>>. <<below-open-with-anchor-with-nested,Check parent open block anchor>>. End of nested example. End of open block directly following end of nested example block.
+====
+--
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, open, anchor, title, nested
+.Title of delimited open block with nested blocks and description list
+[#below-open-with-anchor-and-title-with-nested]
+--
+`Open, below top, fits, with an anchor, title, nested blocks, and description list.` This is a delimited open block.
+
+term 1:: Description of term 1. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of term 1 description.
+
+term 2:: Description of term 2. End of term 2 description.
+
+.Title of delimited example block nested in an open block
+====
+
+TIP: The Sun rotates in the opposite direction to Earth, from west to east.
+This may or may not affect the kitchen sink and the infinite loop every other odd week. End of nested admonition.
+
+Paragraph 1 in a delimited example block nested in an open block with a nested quote block and an admonition.
+
+.Title of delimited quote block nested in example nested in open
+[quote#below-quote-with-anchor-nested-in-example-nested-in-open-with-anchor-and-title]
+____
+This is a nested quote block with an anchor and title.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+Are we there yet? End of nested quote.
+____
+
+Paragraph 2 in a delimited example block nested in an open block. This is content. End of nested example.
+====
+
+<<below-quote-with-anchor-nested-in-example-nested-in-open-with-anchor-and-title>>. <<below-open-with-anchor-and-title-with-nested,Check parent open block anchor>>. End of open.
+--
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, open, title, nested
+.Title of delimited open block with nested blocks
+--
+*Open, below top, fits, with an anchor, title, nested blocks, and list.*
+
+. List item
+.. List item
+... List item
+.... List item with a lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content.
+. List item
+.. List item
+... Last list item
+
+This is a delimited open block with a nested example block.
+
+====
+Paragraph 1 in a delimited example block nested in an open block with a nested quote block and an admonition. This is content. This is content. This is content. This is content. This is content.
+
+[quote]
+____
+This is a nested quote block.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+It makes a lot of content over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over.
+
+Are we there yet? End of nested quote.
+____
+
+TIP: The Sun rotates in the opposite direction to Earth, from west to east.
+This may or may not affect the kitchen sink and the infinite loop every other odd week. End of nested admonition.
+
+Paragraph 3 in a delimited example block nested in an open block.
+
+*End of nested example. End of open block directly after example closing delimiter.*
+====
+--
+
+<<<
+
+=== Quote Blocks, Below Top, Fits
+
+// Below top, quote, bare
+[quote]
+____
+*Quote, below top, fits.* This is a delimited quote block.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+Are we there yet? End of quote.
+____
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, quote, bare, metadata
+[quote,Who Said This?,When and where did they say it?]
+____
+*Quote, below top, fits, with metadata.* This is a delimited quote block with metadata.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+Are we there yet? End of quote.
+____
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, quote, anchor
+[quote#below-quote-with-anchor]
+____
+`Quote, below top, fits, with an anchor.` This is a delimited quote block.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+Are we there yet? End of quote.
+____
+
+<<<
+
+image::tall.svg[pdfwidth=50mm]
+
+// Below top, quote, anchor, metadata
+[quote#below-quote-with-anchor-and-metadata,Who Said This?,When and where did they say it?]
+____
+#Quote, below top, fits, with an anchor and metadata.# This is a delimited quote block.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+Are we there yet? <<below-quote-with-anchor,Check previous quote block anchor>>. End of quote.
+____
+
+<<<
+
+image::tall.svg[pdfwidth=17mm]
+
+// Below top, quote, anchor, title
+.Title of delimited quote block
+[quote#below-quote-with-anchor-and-title]
+____
+`Quote, below top, fits, with an anchor and title.` This is a delimited quote block.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+Are we there yet? End of quote.
+____
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, quote, anchor, title, metadata
+.Title of delimited quote block with metadata
+[quote#below-quote-with-anchor-and-title-and-metadata,Who Said This?,When and where did they say it?]
+____
+*Quote, below top, fits, with an anchor, title, and metadata.* This is a delimited quote block with metadata.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+Are we there yet? End of quote.
+____
+
+<<<
+
+image::tall.svg[pdfwidth=35mm]
+
+// Below top, quote, anchor, title, wrapping metadata
+.Title of delimited quote block with wrapping metadata
+[quote#below-quote-with-anchor-and-title-and-wrapping-metadata,"Who Said This? No one knows for sure. (Are you sure? Really, I think I'm sure. You think?) But we think their name begins with a backwards Z.","When and where did they say it? They said it a very, very, very, very, very, very long time ago in a jungle with a lot of birds and ants on a cool spring day in the not southern hemisphere of a little pink planet."]
+____
+`Quote, below top, fits, with an anchor, title, and wrapping metadata.` This is a delimited quote block with wrapping metadata.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+It makes a lot of content over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over.
+
+Are we there yet? End of quote.
+____
+
+<<<
+
+image::tall.svg[pdfwidth=23mm]
+
+// Below top, quote, title
+.Title of delimited quote block
+____
+*Quote, below top, fits, with a title.* This is a delimited quote block.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+Are we there yet? End of quote.
+____
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, quote, title, metadata
+.Title of delimited quote block with metadata
+[quote,Who Said This?,When and where did they say it?]
+____
+#Quote, below top, fits, with a title and metadata.# This is a delimited quote block with metadata.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+Are we there yet? End of quote.
+____
+
+<<<
+
+=== Sidebar Blocks, Below Top, Fits
+
+// Below top, sidebar, bare
+****
+#Sidebar, below top, fits.# Paragraph 1 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 2 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. _End of sidebar._
+****
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, sidebar, anchor
+[#below-sidebar-with-anchor]
+****
+*Sidebar, below top, fits, with an anchor.* Paragraph 1 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 2 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 3 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. _End of sidebar._
+****
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, sidebar, anchor, title
+.Title of a delimited sidebar block
+[#below-sidebar-with-anchor-and-title]
+****
+`Sidebar, below top, fits, with an anchor and title.` Paragraph 1 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 2 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 3 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. <<below-sidebar-with-anchor-and-title>>. _End of sidebar._
+****
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, sidebar, title
+.Title of a delimited sidebar block
+****
+_Sidebar, below top, fits, with a title._ Paragraph 1 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 2 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 3 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. _End of sidebar_.
+****
+
+<<<
+
+image::tall.svg[pdfwidth=12mm]
+
+// Below top, sidebar, bare, nested
+****
+Sidebar, below top, fits, with nested blocks.
+
+Paragraph in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+[sidebar]
+*This is a sidebar paragraph nested in a delimited sidebar block*.
+_SCREAM!_ This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of nested sidebar paragraph.
+
+Paragraph in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+[verse]
+____
+This is the mysterious delimited verse block.
+
+           It's nested in a delimited sidebar block.
+
+                                              It fades into the
+                                              fog.
+
+_End of nested verse._
+____
+
+Paragraph in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+End of sidebar.
+****
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, sidebar, anchor, nested
+[#below-sidebar-with-anchor-and-nested]
+****
+Sidebar, below top, fits, with an anchor and nested blocks.
+
+[source,html]
+      <p>This is a source paragraph nested in a delimited sidebar block.</p>
+    </main>
+  </div>
+</article>
+
+Paragraph in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content.
+
+[IMPORTANT#below-masqued-with-anchor-and-nested-in-sidebar]
+====
+Paragraph 1 in a *masquerading admonition block with an anchor and nested in a delimited sidebar block*.
+
+* List item in nested masquerading admonition block.
+** List item. This is content.
+*** List item. This is content. This is content. This is content. This is content. This is content. This is content.
+**** List item. This is content. This is content. This is content. This is content. This is content. This is content.
++
+======
+Paragraph 1 in a delimited example block attached to the previous list item with a list continuation. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 2 in a delimited example block. This is content. This is content. This is content. End of nested delimited example block.
+======
+***** List item. This is content. This is content. This is content. This is content. This is content. This is content. End of list.
+
+Paragraph 2 in a masquerading admonition block. This is content. This is content. This is content. This is content. This is content. This is content. End of nested masquerading admonition block.
+====
+
+Paragraph in a delimited sidebar block. <<below-sidebar-with-anchor-and-nested,Check parent sidebar anchor>>. This is content. <<below-masqued-with-anchor-and-nested-in-sidebar,Check nested admonition block anchor>>. This is content. This is content. This is content. This is content. This is content. This is content. _End of sidebar._
+****
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, sidebar, anchor, title, nested
+.Title of sidebar block with nested blocks and description list
+[#below-sidebar-with-anchor-and-title-and-nested]
+****
+Sidebar, below top, fits, with an anchor, title, description list, and nested blocks.
+
+====
+This is a delimited example block nested in a sidebar.
+
+TIP: *This is an admonition nested in an example block that's nested in a sidebar block*. The Sun rotates in the opposite direction to Earth, from west to east.
+This may or may not affect the kitchen sink and the infinite loop every other odd week. End of nested admonition.
+
+End of nested example.
+====
+
+term 1:: Description of term 1. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of term 1 description.
+
+term 2::
++
+--
+WARNING: The description of term 2 starts with this admonition. The entire description of term 2 is attached to the term using an open block. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. End of admonition.
+
+Description of term 2, paragraph 1, that's attached to the term using an open block.
+End of term 2 description.
+--
+
+Paragraph 3 in a delimited sidebar block.
+End of sidebar.
+****
+
+<<<
+
+image::tall.svg[pdfwidth=18mm]
+
+// Below top, sidebar, title, nested
+.Title of delimited sidebar block with nested blocks
+****
+Sidebar, below top, fits, with a title and nested blocks.
+
+Paragraph in a delimited sidebar block.
+
+.Title of nested source block
+[source#below-source-with-anchor-and-title-nested-in-sidebar,html]
+----
+<!-- Source with an anchor and title nested in a sidebar. -->
+
+<article>
+  <div>
+    <main>
+
+      <!-- This is awesome! -->
+
+    </main>
+  </div>
+</article>
+
+<!-- End of source. -->
+----
+
+TIP: *This is a TIP admonition nested in a sidebar block*. The Sun rotates in the opposite direction to Earth, from west to east. This may or may not affect the kitchen sink and the infinite loop every other odd week. End of admonition.
+
+Paragraph in a delimited sidebar block.
+
+IMPORTANT: This is another admonition. End of admonition.
+
+End of sidebar.
+****
+
+<<<
+
+image::tall.svg[pdfwidth=40mm]
+
+// Below top, sidebar, anchor, long title
+.Title of delimited sidebar block. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. End of long sidebar title.
+[#below-sidebar-with-anchor-and-long-title]
+****
+Sidebar, below top, fits, with an anchor and a long title. Paragraph in a delimited sidebar block. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. End of sidebar.
+****
+
+<<<
+
+=== Verse Blocks, Below Top, Fits
+
+// Below top, verse, bare
+[verse]
+____
+Verse, below top, fits.
+
+This is the mysterious delimited verse block.
+
+                                              It fades into the
+                                              fog.
+
+ONLY TO APPEAR AGAIN!
+
+                         To remind you.
+
+                                   That there is
+          always time
+
+                                                              for a poem.
+
+And disco.
+
+_End of verse._
+____
+
+<<<
+
+image::tall.svg[pdfwidth=4mm]
+
+// Below top, verse, bare, metadata
+[verse,Who wrote this?,Where and when did they write this?]
+____
+Verse, below top, fits, with metadata.
+
+This is the mysterious delimited verse block.
+
+                                              It fades into the
+                                              fog.
+
+ONLY TO APPEAR AGAIN!
+
+                         To remind you.
+
+                                   That there is
+          always time
+
+                                                              for a poem.
+
+And disco.
+
+_End of verse._
+____
+
+<<<
+
+image::tall.svg[pdfwidth=15mm]
+
+// Below top, verse, anchor
+[verse#below-verse-with-anchor]
+____
+Verse, below top, fits, with an anchor.
+
+This is the mysterious delimited verse block.
+
+                                              It fades into the
+                                              fog.
+
+ONLY TO APPEAR AGAIN!
+
+                         To remind you.
+
+                                   That there is
+          always time
+
+                                                              for a poem.
+
+And disco.
+
+_End of verse._
+____
+
+<<<
+
+image::tall.svg[pdfwidth=10mm]
+
+// Below top, verse, anchor, metadata
+[verse#below-verse-with-anchor-and-metadata,Who wrote this?,Where and when did they write this?]
+____
+Verse, below top, fits, with an anchor and metadata.
+
+This is the mysterious delimited verse block.
+
+                                              It fades into the
+                                              fog.
+
+ONLY TO APPEAR AGAIN!
+
+                         To remind you.
+
+                                   That there is
+          always time
+
+                                                              for a poem.
+
+And disco.
+
+_End of verse._
+____
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, verse, anchor, title
+.Title of delimited verse block
+[verse#below-verse-with-anchor-and-title]
+____
+Verse, below top, fits, with an anchor and title.
+
+This is the mysterious delimited verse block.
+
+                                              It fades into the
+                                              fog.
+
+ONLY TO APPEAR AGAIN!
+
+                         To remind you.
+
+                                   That there is
+          always time
+
+                                                              for a poem.
+
+And disco.
+
+_End of verse._
+____
+
+<<<
+
+image::tall.svg[pdfwidth=13mm]
+
+// Below top, verse, anchor, title, metadata
+.Title of delimited verse block
+[verse#below-verse-with-anchor-and-title-and-metadata,Who wrote this?,Where and when did they write this?]
+____
+Verse, below top, fits, with an anchor, title, and metadata.
+
+This is the mysterious delimited verse block.
+
+                                              It fades into the
+                                              fog.
+
+ONLY TO APPEAR AGAIN!
+
+                         To remind you.
+
+                                   That there is
+          always time
+
+                                                              for a poem.
+
+And disco.
+
+_End of verse._
+____
+
+<<<
+
+image::tall.svg[pdfwidth=10mm]
+
+// Below top, verse, anchor, title, wrapping metadata
+.Title of delimited verse block with wrapping metadata
+[verse#below-verse-with-anchor-and-title-and-wrapping-metadata,"Who Said This? No one knows for sure. (Are you sure? Really, I think I'm sure. You think?) But we think their name begins with a backwards Z.","When and where did they say it? They said it a very, very, very, very, very, very long time ago in a jungle with a lot of birds and ants on a cool spring day in the not southern hemisphere of a little pink planet."]
+____
+Verse, below top, fits, with an anchor, title, and wrapping metadata.
+
+This is the mysterious delimited verse block.
+
+                                              It fades into the
+                                              fog.
+
+ONLY TO APPEAR AGAIN!
+
+                         To remind you.
+
+                                   That there is
+          always time
+
+                                                              for a poem.
+
+And disco.
+
+_End of verse._
+____
+
+<<<
+
+image::tall.svg[pdfwidth=6mm]
+
+// Below top, verse, title
+.Title of delimited verse block
+[verse]
+____
+Verse, below top, fits, with a title.
+
+This is the mysterious delimited verse block.
+
+                                                                                                                    It fades into the
+                                              fog.
+
+ONLY TO APPEAR AGAIN!
+
+                         To remind you.
+
+                                   That there is
+          always time
+
+                                                              for a poem.
+
+And disco.
+
+_End of verse._
+____
+
+<<<
+
+image::tall.svg[pdfwidth=8mm]
+
+// Below top, verse, title, metadata
+.Title of delimited verse block
+[verse,Who wrote this?,Where and when did they write this?]
+____
+Verse, below top, fits, with a title and metadata.
+
+This is the mysterious delimited verse block.
+
+                                                                                                                    It fades into the
+                                              fog.
+
+ONLY TO APPEAR AGAIN!
+
+                         To remind you.
+
+                                   That there is
+          always time
+
+                                                              for a poem.
+
+And disco.
+
+_End of verse._
+____
+
+<<<
+
+=== Table Blocks, Below Top, Fits
+
+// Below top, table, bare
+|===
+|Column 1, header row |Column 2, header row
+
+|_Table, below top, fits._ Cell in column 1, row 2.
+|Cell in column 2, row 2
+
+|Cell in column 1, row 3
+|Cell in column 2, row 3
+
+|Cell in column 1, row 4
+|Cell in column 2, row 4
+
+|Cell in column 1, row 5
+|Cell in column 2, row 5. End of table.
+|===
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, table, anchor
+[#below-table-with-anchor]
+|===
+|Column 1, header row |Column 2, header row
+
+|*Table, below top, fits, with an anchor.* Cell in column 1, row 2.
+|Cell in column 2, row 2
+
+|Cell in column 1, row 3
+|Cell in column 2, row 3
+
+|Cell in column 1, row 4
+|Cell in column 2, row 4
+
+|Cell in column 1, row 5
+|Cell in column 2, row 5. End of table.
+|===
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, table, anchor, title
+.Title of table block
+[#below-table-with-anchor-and-title]
+|===
+|Column 1, header row |Column 2, header row
+
+|`Table, below top, fits, with an anchor and title.` Cell in column 1, row 2.
+|Cell in column 2, row 2
+
+|Cell in column 1, row 3
+|Cell in column 2, row 3
+
+|Cell in column 1, row 4
+|Cell in column 2, row 4
+
+|Cell in column 1, row 5
+|<<below-table-with-anchor,Check anchor of previous table>>. Cell in column 2, row 5. End of table.
+|===
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, table, title
+.Title of table block
+|===
+|Column 1, header row |Column 2, header row
+
+|#Table, below top, fits, with a title.# Cell in column 1, row 2.
+|Cell in column 2, row 2
+
+|Cell in column 1, row 3
+|Cell in column 2, row 3
+
+|Cell in column 1, row 4
+|Cell in column 2, row 4
+
+|Cell in column 1, row 5
+|<<below-table-with-anchor-and-title,Check anchor of previous table>>. Cell in column 2, row 5. End of table.
+|===
+
+<<<
+
+image::tall.svg[pdfwidth=2mm]
+
+// Below top, table, bare, nested
+|===
+|Column Name |Column Name
+
+|Table, below top, fits, with blocks in cells.
+a|Check out this example.
+
+====
+Example block nested in a table cell. This is content. This is content. This is content. This is content. This is content. This is content. This is title content. This is content.
+
+Paragraph in example block. This is content. This is content. This is content. This is content. End of example block.
+====
+
+^|This content is horizontally centered because the cell specifier includes the `+^+` operator.
+|There isn't a horizontal alignment operator on this cell specifier, so the cell falls back to the default horizontal alignment.
+Content is aligned to the left side of the cell by default.
+
+2+^a|This cell spans two columns, and its content is horizontally centered.
+
+TIP: I'm in a table cell that spans two columns! End of admonition.
+
+.2+.>a|This cell spans two rows, and its content is aligned to the bottom because the cell specifier includes the `.>` operator.
+
+____
+This is a delimited quote block nested in a table cell.
+
+This is content. This is content. This is content. This is content. This is content. End of quote.
+____
+|*This is bold content. This is bold content. This bold content.*
+
+This is content. This is content. This is content. This is content. This is content.
+
+|End of table.
+|===
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, table, anchor, nested
+[#below-table-with-anchor-and-nested]
+|===
+|Column Name |Column Name
+
+|Table, below top, fits, with an anchor and blocks in cells.
+a|Check out this example.
+
+====
+Example block nested in a table cell. This is content. This is content. This is content. This is content. This is content. This is content. This is title content. This is content.
+
+Paragraph in example block. This is content. This is content. This is content. This is content. End of example block.
+====
+
+^|This content is horizontally centered because the cell specifier includes the `+^+` operator.
+|There isn't a horizontal alignment operator on this cell specifier, so the cell falls back to the default horizontal alignment.
+Content is aligned to the left side of the cell by default.
+
+2+^a|This cell spans two columns, and its content is horizontally centered.
+
+TIP: I'm in a table cell that spans two columns! End of admonition.
+
+.2+.>a|This cell spans two rows, and its content is aligned to the bottom because the cell specifier includes the `.>` operator.
+
+____
+This is a delimited quote block nested in a table cell.
+
+This is content. This is content. This is content. This is content. This is content. End of quote.
+____
+|*This is bold content. This is bold content. This bold content.*
+
+This is content. This is content. This is content. This is content. This is content.
+
+|End of table.
+|===
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, table, anchor, title, nested
+.Title of table block with nested blocks
+[#below-table-with-anchor-and-title-and-nested]
+|===
+|Column Name |Column Name
+
+|Table, below top, fits, with an anchor, title, and blocks in cells.
+a|Check out this source code.
+
+[source,html]
+----
+<!-- Delimited source block nested in table cell. -->
+
+<article>
+  <div>
+    <main>
+
+      <!-- This is awesome! -->
+
+    </main>
+  </div>
+</article>
+
+<!-- End of source. -->
+----
+
+This is content. This is content. This is content.
+
+^|This content is horizontally centered because the cell specifier includes the `+^+` operator.
+|There isn't a horizontal alignment operator on this cell specifier, so the cell falls back to the default horizontal alignment.
+Content is aligned to the left side of the cell by default.
+
+2+^a|This cell spans two columns, and its content is horizontally centered.
+
+TIP: I'm in a table cell that spans two columns! End of admonition.
+
+.2+.>a|This cell spans two rows, and its content is aligned to the bottom because the cell specifier includes the `.>` operator.
+
+____
+This is a delimited quote block nested in a table cell.
+
+This is content. This is content. This is content. This is content. This is content. End of quote.
+____
+|*This is bold content. This is bold content. This bold content.*
+
+This is content. This is content. This is content. This is content. This is content.
+
+|End of table.
+|===
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+// Below top, table, title, nested
+.Title of table block with nested blocks
+|===
+|Column Name |Column Name
+
+|Table, below top, fits, with a title and blocks in cells.
+a|
+[source,html]
+----
+<!-- Delimited source block nested in table cell. -->
+
+  </div>
+</article>
+
+<!-- End of source. -->
+----
+
+This is content. This is content. This is content.
+
+2+^a|This cell spans two columns (`2+`). Its content is horizontally centered (`^`).
+
+.Title of delimited sidebar
+****
+This is a delimited sidebar block that spans two columns!
+
+Paragraph in sidebar block. This is content. This is content. This is content. This is content. This is content.
+
+[IMPORTANT]
+====
+This is a masquerading admonition block nested in a sidebar nested in a table cell that spans two columns.
+
+This is content. This is content. This is content. This is content. This is content. End of masquerading admonition. End of sidebar directly following admonition closing delimiter.
+====
+****
+
+.2+.>a|This cell spans two rows, and its content is aligned to the bottom because the cell specifier includes the `.>` operator.
+
+[quote,Who said this?,Where and when did they say it?]
+____
+This is a delimited quote block nested in a table cell.
+
+This is content. This is content. This is content. End of quote.
+____
+|*This is bold content. This is bold content. This bold content.*
+
+This is content. This is content. This is content. This is content. This is content.
+
+|End of table.
+|===
+
+<<<
+
+=== Block Images, Below Top, Fits
+
+#Block image, below top, fits. pdfwidth = 23mm, align right.#
+
+// Below top, image, bare
+image::red-blue-squares.svg[pdfwidth=23mm,align=right]
+
+#Block image, below top, fits, with an anchor. pdfwidth = 50mm, align center.#
+
+// Below top, image, anchor
+[#below-image-with-anchor]
+image::red-blue-squares.svg[pdfwidth=50mm,align=center]
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+#Block image, below top, fits, with an anchor and title. pdfwidth = 70mm.# <<below-image-with-anchor,Check anchor of previous image (block image with anchor)>>.
+
+// Below top, image, anchor, title
+.This is a block image with an anchor and a title
+[#below-image-with-anchor-and-title]
+image::red-blue-squares.svg[pdfwidth=70mm]
+
+<<<
+
+image::tall.svg[pdfwidth=5mm]
+
+Block image, below top, fits, with a title. pdfwidth = 20mm, align center. Check anchor of "<<below-image-with-anchor-and-title>>".
+
+// Below top, image, title
+.This is a block image with a title
+image::red-blue-squares.svg[pdfwidth=20mm,align=center]
+
+#Block image, below top, fits, with a long title. pdfwidth = 15mm, align right.#
+
+// Below top, image, long title
+.This is a block image with a very long title. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. *This is bold content. This is bold content. This is bold content. This is bold content.* This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of title.
+image::red-blue-squares.svg[pdfwidth=15mm,align=right]

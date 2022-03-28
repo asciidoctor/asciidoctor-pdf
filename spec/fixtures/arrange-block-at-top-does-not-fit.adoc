@@ -1,0 +1,1060 @@
+= Arrange Block Test Cases
+
+== At Top, Taller Than Page (AKA No Fit)
+
+Each block is at the top of a page, but each block is larger than the page, therefore the parent block always break.
+
+=== Admonitions, At Top, Taller Than Page, See Next Page
+
+<<<
+
+// At top, no fit, admonition, anchor, title
+.Pay attention to me right NOW!!!
+[#tallest-important-with-anchor-and-title]
+IMPORTANT: *Admonition, at top, no fit, with anchor and title.* This is fabulously, fantastically, and fiercely important! This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of admonition.
+
+=== Masquerading Admonition Blocks, At Top, Taller Than Page, See Next Page
+
+<<<
+
+// At top, no fit, masquerading admonition, anchor, title
+.This is fabulously, fantastically, and fiercely important!
+[WARNING#tallest-masqued-with-anchor-and-title]
+====
+*Masquerading admonition, at top, no fit, with anchor and title.* Paragraph in a masquerading admonition. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph in a masquerading admonition. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph in a masquerading admonition. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph in a masquerading admonition. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph in a masquerading admonition. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph in a masquerading admonition. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph in a masquerading admonition. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of masquerading admonition.
+====
+
+<<<
+
+// At top, no fit, masquerading admonition, anchor, title, nested
+.Title of masquerading admonition block with nested blocks. This is title content. *This title content is bold on purpose! This title content is bold on purpose! This title content is bold on purpose! This title content is bold on purpose! This title content is bold on purpose! This title content is bold on purpose!* End of long title.
+[NOTE#tallest-masqued-with-anchor-and-title-and-nested]
+====
+*Masquerading admonition, at top, no fit, with anchor, long title, and nested blocks.* Paragraph in a masquerading admonition. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph in a masquerading admonition. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+======
+Paragraph in a delimited example block nested in a masquerading admonition block. image:red-blue-squares.svg[pdfwidth=3mm] This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+[source,html]
+----
+<!-- This is a delimited source block. -->
+
+<article>
+  <div>
+    <main>
+
+      <!-- This is awesome! -->
+
+    </main>
+  </div>
+</article>
+
+<!-- End of nested source block. -->
+----
+
+Paragraph in a delimited example block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of nested example block.
+======
+
+.Title of table block with nested blocks
+|===
+|Column Name |Column Name
+
+|Table, below top, fits, with a title and blocks in cells.
+a|
+image::red-blue-squares.svg[pdfwidth=15mm]
+
+This is content. This is content. This is content.
+
+2+^a|This cell spans two columns (`2+`). Its content is horizontally centered (`^`).
+
+.Title of delimited sidebar
+****
+This is a delimited sidebar block that spans two columns!
+
+Paragraph in sidebar block. This is content. This is content. This is content. This is content. This is content.
+
+IMPORTANT: This is an admonition nested in a sidebar nested in a table cell that spans two columns. End of admonition.
+
+This is content. This is content. This is content. This is content. This is content. End of masquerading admonition. End of sidebar.
+****
+
+|*This is bold content. This is bold content. This bold content.*
+This is content. This is content. This is content. This is content. This is content.
+|End of table.
+|===
+
+Paragraph in a masquerading admonition block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of masquerading admonition.
+====
+
+=== Example Blocks, At Top, No Fit, See Next Page
+
+<<<
+
+// At top, no fit, example, anchor, title
+.Title of delimited example block
+[#tallest-example-with-anchor-and-title-and-lists]
+====
+Paragraph in a delimited example block. #Example, at top, no fit, with an anchor and a title.# This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+* List item
+** List item
+*** List item
+**** List item
+*** List item
+**** List item
+*** List item
+**** List item
+*** List item
+**** List item
+*** List item
+**** List item
+*** List item
+**** List item
+***** List item
++
+image::red-blue-squares.svg[pdfwidth=15mm]
+* List item
+* List item
+* List item
+* List item
+* Last list item of list 1
+
+Paragraph in a delimited example block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+.Title of list 2
+. List item
+.. List item
+... List item
+.. List item
+... List item
+... List item
+.... List item
+.... List item
+..... Last list item of list 2
+
+Paragraph in a delimited example block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of example.
+====
+
+<<<
+
+// At top, no fit, example, anchor, title, nested
+.Title of delimited example block with nested blocks
+[#example-tallest-with-anchor-and-title-and-nested]
+====
+_Example, at top, no fit, with anchor, title, and nested blocks._ Paragraph in a delimited example block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+.Title of delimited sidebar block nested in an example block
+****
+Paragraph 1 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+.Title of delimited source block with callouts
+[source,javascript]
+----
+/** This is a delimited source block with a title, syntax highlighting, and callouts that's nested in a sidebar that's nested in an example. */
+
+function createExtensionRegistry (Asciidoctor, callbacks) { <1>
+  const registry = Asciidoctor.Extensions.create()
+  registry.includeProcessor(IncludeProcessor.$new(callbacks.onInclude))
+  return registry <2>
+}
+
+module.exports = createExtensionRegistry <3>
+
+/** End of source. */
+----
+<1> Source callout 1 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of source callout 1.
+<2> Source callout 2 content. End of source callout 2.
+<3> Source callout 3 content for the big disco WIN! Who loves disco? We love disco! *Who loves disco? We love disco!*  End of source callout 3.
+
+.Title of delimited literal block with callouts
+....
+This is a delimited literal block with a title and callouts that's nested in a sidebar that's nested in an example.
+
+This is content. <1>
+     This is content. <2>
+                                                                End of nested literal.
+....
+<1> Literal callout 1 content. End of literal callout 1.
+<2> Literal callout 2 content. Callout 2 content. Callout 2 content. End of literal callout 2.
+
+Paragraph in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+======
+Paragraph in a nested delimited example block.
+
+Paragraph in a nested delimited example block. This is content. This is content. End of nested example.
+======
+
+Paragraph in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of nested sidebar.
+****
+
+Paragraph 2 in a delimited example block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. End of example.
+====
+
+=== Listing, At Top, No Fit, See Next Page
+
+<<<
+
+// At top, no fit, listing, anchor, title
+.Title of delimited listing block
+[#tallest-listing-with-anchor-and-title]
+----
+Listing, at top, no fit, with an anchor and title.
+
+This is a delimited listing block.
+
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+This is a delimited listing block.
+
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+This is a delimited listing block.
+
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+This is a delimited listing block.
+
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+This is a delimited listing block.
+
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+This is a delimited listing block.
+
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+End of listing.
+----
+
+<<<
+
+// At top, no fit, listing, anchor, title, callouts
+.Title of delimited listing block with callouts
+[#tallest-listing-with-anchor-and-title-and-callouts]
+----
+Listing, at top, no fit, with an anchor, title, and callouts.
+
+This is a delimited listing block.
+
+     This is content. <1>
+
+     This is content.
+            This is content.
+
+            This is content.
+
+This is a delimited listing block. <2>
+
+     This is content. <3>
+
+     This is content.
+            This is content.
+
+            This is content.
+
+This is a delimited listing block.
+
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+This is a delimited listing block.
+
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+This is a delimited listing block.
+
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+This is a delimited listing block.
+
+     This is content.
+
+     This is content.
+            This is content.
+
+            This is content.
+
+End of listing. <4>
+----
+<1> Callout 1 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of callout 1.
+<2> Callout 2 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of callout 2.
+<3> Callout 3 content for the big disco WIN! Who loves disco? We love disco! Who loves disco? We love disco! Who loves disco? We love disco! Who loves disco? We love disco! Who loves disco? We love disco! *Who loves disco? We love disco!* Who loves disco? We love disco! Who loves disco? We love disco! End of callout 3.
+<4> Callout 4 content. End of callout 4.
+
+=== Source, At Top, No Fit, See Next Page
+
+<<<
+
+.Title of delimited source block with an anchor and title
+[source#tallest-source-with-anchor-and-title-and-nested,html]
+----
+<!-- Source, at top, no fit, with an anchor and title. This is a delimited source block with an anchor, title, and syntax highlighting. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Stuff</title>
+<link rel="stylesheet" href="./assets/subfont/fonts-bdb05d6309.css">
+<link rel="stylesheet" href="./assets/css/main.css">
+
+<link rel="canonical" href="https://example.org/">
+<meta property="og:url" content="https://example.org/">
+<meta name="description" content="So much stuff!">
+<meta property="og:description" content="So much stuff!">
+<meta property="og:site_name" content="example.org">
+<meta property="og:type" content="article">
+<meta name="author" content="Me">
+<meta name="og:article:author" content="Me">
+<meta property="og:title" content="Stuff">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://example.org/assets/img/stuff.png">
+<meta property="og:image:height" content="1250">
+<meta property="og:image:width" content="2500">
+
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/stuff-logo-apple-touch-180.png">
+<link rel="icon" type="image/png" sizes="196x196" href="/assets/img/stuff-logo-196.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/img/stuff-logo-192.png" />
+<link rel="icon" type="image/png" sizes="128x128" href="/assets/img/stuff-logo-128.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/img/stuff-logo-96.png" />
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/img/stuff-logo-64.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/stuff-logo-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/stuff-logo-16.png" />
+<link rel="icon" type="image/svg+xml" href="/assets/img/stuff-logo.svg">
+<link rel="icon" type="image/png" href="/assets/img/stuff-logo-48.png">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/assets/img/stuff-logo-mask.svg" color="#1f8197">
+<meta name="msapplication-TileColor" content="#1f8197">
+<meta name="theme-color" content="#1f8197">
+</head>
+
+<article>
+  <div>
+    <main>
+
+      <!-- This is awesome! -->
+      <!-- This is comment content. -->
+      <!-- This is comment content. -->
+      <!-- This is comment content. -->
+      <!-- This is comment content. -->
+      <!-- This is comment content. -->
+
+      <div>
+        <address>
+
+          <!-- This is comment content. -->
+
+        </address>
+      </div>
+      <div>
+        <section>
+
+          <!-- This is comment content. -->
+          <!-- This is comment content. -->
+          <!-- This is comment content. -->
+          <!-- This is comment content. -->
+          <!-- This is comment content. -->
+          <!-- This is comment content. -->
+          <!-- This is comment content. -->
+
+        </section>
+      </div>
+    </main>
+  </div>
+</article>
+
+<!-- End of source. -->
+----
+
+<<<
+
+.Title of delimited source block with callouts
+[source#tallest-source-with-anchor-and-title-and-callouts,javascript]
+----
+/** This is a delimited source block with an anchor, title, syntax highlighting, and callouts. */
+
+(function () {
+  function init$5() {
+    const e = document.querySelector('.header > nav > .navbar-mobile'),
+    t = e.querySelector(':scope > .close'),
+    n = e.querySelector(':scope > .open'),
+    r = document.querySelector('.header > nav > .menu');
+    t.addEventListener('click', (() =>{
+      r.classList.remove('is-active'),
+      e.classList.remove('navbar-open')
+    })),
+    n.addEventListener('click', (() =>{
+      r.classList.add('is-active'),
+      e.classList.add('navbar-open')
+    }))
+  }
+  function init$4() {
+    const e = window.location.hash;
+    function t(e) {
+      const t = this.tab,
+      r = this.pane,
+      i = this.id,
+      a = this.tabset;
+      if (i && a) {
+        const e = a.querySelector('.select > select');
+        e && (e.value = i)
+      }
+      n(':scope > .tabs li', this.tabset).forEach((function (e) {
+        e === t ? e.classList.add('is-active') : e.classList.remove('is-active') <1>
+      })),
+      n(':scope > .content > .tab-pane', this.tabset).forEach((function (e) {
+        e === r ? e.classList.add('is-active') : e.classList.remove('is-active')
+      })),
+      e.preventDefault()
+    }
+    function n(e, t) {
+      return Array.prototype.slice.call((t || document).querySelectorAll(e))
+    }
+    function r(e, t) {
+      return n('.tab-pane', t).find((function (t) {
+        return t.getAttribute('aria-labelledby') === e
+      }))
+    }
+    n('.tabset').forEach((function (i) {
+      let a;
+      const o = i.querySelector('.tabs');
+      if (o) {
+        let s;
+        n('li', o).forEach((function (n, o) {
+          const l = (n.querySelector('a[id]') || n).id;
+          if (!l) return;
+          const c = r(l, i);
+          o || (s = {
+            tab: n,
+            pane: c
+          }),
+          !a && e === '#' + l && (a = !0) ? (n.classList.add('is-active'), c && c.classList.add('is-active')) : o || (n.classList.remove('is-active'), c && c.classList.remove('is-active')), <2>
+          n.addEventListener('click', t.bind({ <3>
+            tabset: i,
+            tab: n,
+            pane: c,
+            id: l
+          }))
+        })),
+        !a && s && (s.tab.classList.add('is-active'), s.pane && s.pane.classList.add('is-active'))
+      }
+
+/** This is comment content.
+* This is comment content.
+* This is comment content.
+* This is comment content.
+* This is comment content.
+*/
+
+/** End of source. */
+----
+<1> Source callout 1 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of source callout 1.
+<2> Source callout 2 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of source callout 2.
+<3> Source callout 3 content for the big disco WIN! Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Who loves disco? We love disco! *Who loves disco? We love disco!* End of source callout 3.
+
+=== Literal, At Top, No Fit, See Next Page
+
+<<<
+
+// At top, no fit, literal, anchor, title
+.Title of delimited literal block
+[#tallest-literal-with-anchor-and-title]
+....
+Literal, at top, no fit, with an anchor and title.
+
+This is content.
+
+                                                         Content that's taking a trip around, and around, and around, and around, and around, and around, and around, and around, and around, and around the proverbial block.
+
+WARN - ctionSystem.impl.ActionUpdater - 447 ms to grab EDT for ToggleSoftWrapsAction#update (org.stuff.something.actions.stuff.ToggleSoftWrapsAction)
+
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+
+HAMMER TIME!
+
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+
+HAMMER TIME!
+
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+
+HAMMER TIME!
+
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+
+End of literal.
+....
+
+<<<
+
+// At top, no fit, literal, anchor, title, callouts, nested
+.Title of delimited literal block with callouts and nested blocks
+[#tallest-literal-with-anchor-and-title-and-callouts-with-nested]
+....
+Literal, at top, no fit, with an anchor, title, callouts, and nested blocks.
+
+This is content.
+
+                                                         Content that's taking a trip around, and around, and around, and around, and around, and around, and around, and around, and around, and around the proverbial block. <1>
+
+WARN: Do not use URL connection as JarURLConnection <2>
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+WARN: Do not use URL connection as JarURLConnection
+
+----
+This is a delimited listing block in a literal block.
+It's getting weird in here.
+
+****
+This is a delimited sidebar block nested in a listing block that's nested in a literal block.
+
+Now it's just awkward. <3>
+
+End of nested sidebar.
+****
+
+End of listing.
+----
+
+End of literal.
+....
+<1> Literal callout 1 content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. Callout content. End of literal callout 1.
+<2> Literal callout 2 content. Callout content. Callout content. Callout content. Callout content. End of literal callout 2.
+<3> Literal callout 3 content. Callout content. Callout content. Callout content. Callout content. End of literal callout 3.
+
+=== Open, At Top, No Fit, See Next Page
+
+<<<
+
+// At top, no fit, open, anchor, title, nested
+.Title of delimited open block
+[#tallest-open-with-anchor-and-title-and-nested]
+--
+*Open, at top, no fit, with an anchor, title, and nested blocks.*
+
+Paragraph in a delimited open block with nested blocks. And an ordered list.
+
+. List item
+.. List item
+... List item
+.... List item with a lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content.
+. List item
+.. List item
+... Last list item
+
+.Title of delimited example block nested in open block
+[#example-with-anchor-and-title-nested-in-tallest-open]
+====
+Paragraph in a delimited example block nested in an open block with a nested quote block and an admonition.
+
+____
+This is a nested quote block.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+It makes a lot of content over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over.
+
+Are we there yet? End of nested quote.
+____
+
+Paragraph in a delimited example block nested in an open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+image::red-blue-squares.svg[pdfwidth=10mm,align=center]
+
+TIP: The Sun rotates in the opposite direction to Earth, from west to east. This may or may not affect the kitchen sink and the infinite loop every other odd week. End of nested admonition.
+
+Paragraph in a delimited example block nested in an open block. This is content. End of nested example.
+====
+
+Paragraph in a delimited open block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. Check anchor of <<example-with-anchor-and-title-nested-in-tallest-open>>. Check anchor of <<tallest-open-with-anchor-and-title-and-nested>>. End of open.
+--
+
+=== Quote Blocks, At Top, No Fit, See Next Page
+
+<<<
+
+// At top, no fit, quote, bare
+[quote]
+____
+*Quote, at top, no fit.*
+
+image::red-blue-squares.svg[pdfwidth=6,align=center]
+
+This is a delimited quote block.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Are we there yet? End of quote.
+____
+
+<<<
+
+// At top, no fit, quote, anchor, title, wrapping metadata
+.Title of delimited quote block with wrapping metadata
+[quote#tallest-quote-with-anchor-and-title-and-wrapping-metadata,"Who Said This? No one knows for sure. (Are you sure? Really, I think I'm sure. You think?) But we think their name begins with a backwards Z.","When and where did they say it? They said it a very, very, very, very, very, very long time ago in a jungle with a lot of birds and ants on a cool spring day in the not southern hemisphere of a little pink planet. Or was it orange?"]
+____
+Quote, at top, no fit, with an anchor, title, and wrapping metadata.
+
+This is a delimited quote block with wrapping metadata.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+It makes a lot of content over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over.
+
+Paragraph in a delimited quote block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph in a delimited quote block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph in a delimited quote block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+`Have you seen my fish?`
+
+Paragraph in a delimited quote block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Are we there yet? End of quote.
+____
+
+=== Sidebar Blocks, At Top, No Fit, See Next Page
+
+<<<
+
+// At top, no fit, sidebar, anchor, title
+.Title of a delimited sidebar block. This is title content. This is title content. This is title content. End of title.
+[#tallest-sidebar-with-anchor-and-title]
+****
+`Sidebar, at top, no fit, with an anchor and title.` Paragraph 1 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+image:red-blue-squares.svg[pdfwidth=4] Paragraph 2 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 3 in a delimited sidebar block. This is content. This is content. This is content.
+
+image:red-blue-squares.svg[pdfwidth=4] Paragraph 4 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph 5 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+image:red-blue-squares.svg[pdfwidth=4] Paragraph 6 in a delimited sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. Check anchor of "`<<tallest-sidebar-with-anchor-and-title>>`"
+
+_End of sidebar._
+****
+
+<<<
+
+// At top, no fit, sidebar, anchor, title, nested
+.Title of delimited sidebar block with nested blocks
+[#tallest-sidebar-with-anchor-and-title-and-nested]
+****
+Sidebar, at top, no fit, with an anchor, title, nested blocks and description list.
+
+Paragraph in a delimited sidebar block.
+
+.Title of nested delimited example block
+[#example-with-anchor-and-title-nested-in-tallest-sidebar]
+====
+*This is a delimited example block nested in a sidebar*. It has an anchor, is nested in a delimited sidebar block, and has a nested delimited quote block and an admonition.
+
+.Title of nested delimited quote block
+[quote#quote-with-anchor-and-title-nested-in-example-nested-in-tallest-sidebar]
+____
+This is a delimited quote block.
+
+Hello! How are you today? Do you know what a kitchen sink and an infinite loop make when baked at 350 degrees?
+
+It makes a lot of content over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over and over.
+
+Are we there yet?
+End of nested quote.
+____
+
+TIP: `This is an admonition nested in an example block that's nested in a sidebar block.` The Sun rotates in the opposite direction to Earth, from west to east. This may or may not affect the kitchen sink and the infinite loop every other odd week. End of nested admonition.
+
+`End of nested example.`
+====
+
+Paragraph in a delimited sidebar block. This is content. This is content. This is content. This is content.
+
+term 1:: Description of term 1. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. The following admonition is attached using a list continuation.
++
+IMPORTANT: This is an admonition attached to the description of term 1 using a list continuation. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. End of admonition.
++
+This content is attached to the description of term 1 using a list continuation. This is content. This is content. End of term 1 description.
+
+term 2::
++
+--
+WARNING: The description of term 2 starts with this admonition. The entire description of term 2 is attached to the term using an open block. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. Admonition content. End of admonition.
+
+Description of term 2, paragraph 1, that's attached to the term using an open block.
+
+* <<example-with-anchor-and-title-nested-in-tallest-sidebar>>
+* <<quote-with-anchor-and-title-nested-in-example-nested-in-tallest-sidebar>>
+* <<tallest-sidebar-with-anchor-and-title-and-nested>>
+
+image::red-blue-squares.svg[pdfwidth=10]
+
+Description of term 2, paragraph 2. End of term 2 description and enclosing open block.
+--
+
+Paragraph in a delimited sidebar block. End of sidebar.
+****
+
+=== Tables, At Top, No Fit, See Next Page
+
+<<<
+
+// At top, no fit, table, anchor, title
+.Title of table block
+[#tallest-table-with-anchor-and-title]
+|===
+|Column 1, header row |Column 2, header row |Column 3, header row |Column 4, header row
+
+|`Table, at top, no fit, with an anchor and title.` Cell in column 1, row 2.
+|Cell in column 2, row 2
+|Cell in column 3, row 2
+|Cell in column 4, row 2
+
+|Cell in column 1, row 3
+|Cell in column 2, row 3.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+|Cell in column 3, row 3
+|Cell in column 4, row 3
+
+|Cell in column 1, row 4.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+|Cell in column 2, row 4
+|Cell in column 3, row 4. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+|Cell in column 4, row 4
+
+|Cell in column 1, row 5. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+|Cell in column 2, row 5
+|Cell in column 3, row 5
+|<<tallest-table-with-anchor-and-title,Check anchor of this table>>. Cell in column 4, row 5.
+
+|Cell in column 1, row 6
+|Cell in column 2, row 6
+|Cell in column 3, row 6
+|Cell in column 4, row 6
+
+|Cell in column 1, row 7
+|Cell in column 2, row 7
+|Cell in column 3, row 7
+|Cell in column 4, row 7
+
+|Cell in column 1, row 8
+|Cell in column 2, row 8
+|Cell in column 3, row 8
+|Cell in column 4, row 8
+
+|Cell in column 1, row 9
+|Cell in column 2, row 9
+|Cell in column 3, row 9
+|Cell in column 4, row 9
+
+|Cell in column 1, row 10
+|Cell in column 2, row 10
+|Cell in column 3, row 10
+|Cell in column 4, row 10. *End of table.*
+|===
+
+<<<
+
+// At top, no fit, table, anchor, title, nested
+.Title of table block with nested blocks
+[#tallest-table-with-anchor-and-title-and-nested]
+|===
+|Column Name |Column Name |Column Name
+
+|Table, at top, no fit, with a title, anchor, and blocks in cells.
+a|Check out this source code.
+
+[source,html]
+----
+<!-- Delimited source block nested in table cell. -->
+
+<article>
+  <div>
+    <main>
+
+      <!-- This is awesome! -->
+
+    </main>
+  </div>
+</article>
+
+<!-- End of source. -->
+----
+
+This is content. This is content. This is content.
+
+a|
+.Title of image in a table cell
+image::red-blue-squares.svg[pdfwidth=10]
+
+^|This content is horizontally centered because the cell specifier includes the `+^+` operator.
+|There isn't a horizontal alignment operator on this cell specifier, so the cell falls back to the default horizontal alignment.
+Content is aligned to the left side of the cell by default.
+|This is content. This is content. This is content. This is content. This is content.
+
+3+^a|This cell spans three columns, and its content is horizontally centered.
+
+.Title of delimited sidebar
+****
+This is a delimited sidebar block that spans three columns! This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+Paragraph in sidebar block. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content. This is content.
+
+[IMPORTANT]
+====
+This is a masquerading admonition block nested in a sidebar nested in a table cell that spans three columns.
+
+This is content. This is content. This is content. This is content. This is content. End of masquerading admonition. End of sidebar directly following admonition closing delimiter.
+====
+****
+
+.2+.>a|This cell spans two rows, and its content is aligned to the bottom because the cell specifier includes the `.>` operator.
+
+[quote,Who said this?,Where and when did they say it?]
+____
+This is a delimited quote block nested in a table cell.
+
+This is content. This is content. This is content. This is content. This is content. End of quote.
+____
+|*This is bold content. This is bold content. This bold content.*
+
+This is content. This is content. This is content. This is content. This is content.
+a|
+. List item
+.. List item
+... List item
+.... List item with a lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content. A lot of content.
+. List item
+.. List item
+... Last list item
+
+|_Have you seen my duck?_
+|End of table.
+|===
+
+=== Block Images, At Top, No Fit, See Next Page
+
+<<<
+
+// At top, no fit, image, bare
+image::tall.svg[pdfwidth=120mm]
+
+*Block image, at top, no fit. pdfwidth = 120mm.*
+
+<<<
+
+// At top, no fit, image, anchor
+[#tallest-image-with-anchor]
+image::tall.svg[pdfwidth=120mm,align=center]
+
+*Block image, at top, no fit, with an anchor. pdfwidth = 120mm, centered.*
+
+<<<
+
+// At top, no fit, image, anchor, title
+.This is a block image with an anchor and a title
+[#tallest-image-with-anchor-and-title]
+image::tall.svg[pdfwidth=120mm,align=right]
+
+*Block image, at top, no fit, with an anchor and title. pdfwidth = 120mm, aligned right.* <<tallest-image-with-anchor,Check anchor of previous image (block image with anchor)>>.
+
+<<<
+
+// At top, no fit, image, title
+.This is a block image with a title. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. This is title content. End of title.
+image::tall.svg[pdfwidth=120mm]
+
+Block image, at top, no fit, with a title. pdfwidth = 120mm. Check anchor of "<<tallest-image-with-anchor-and-title>>".
+
+<<<
+
+// At top, no fit, image, bare, nested
+====
+image::tall.svg[pdfwidth=120mm]
+====
+
+*Block image, at top, no fit, nested in example block. pdfwidth = 120mm.*
+
+<<<
+
+// At top, no fit, image, anchor, title, nested
+****
+.Title of a block image nested in a sidebar
+[#tallest-image-with-anchor-and-title-nested-in-sidebar]
+image::tall.svg[pdfwidth=120mm]
+****
+
+*Block image, at top, no fit, with anchor and title, nested in sidebar block. pdfwidth = 120mm.*
+
+<<<
+
+// At top, no fit, image, anchor, title, nested
+[cols="2"]
+|===
+a|.Title of a block image nested in a table cell
+[#tallest-image-with-anchor-and-title-nested-in-table]
+image::tall.svg[pdfwidth=120mm]
+|Content in table cell
+|===
+
+*Block image, at top, no fit, with anchor and title, nested in table cell. pdfwidth = 120mm.*
