@@ -301,8 +301,6 @@ module TareFirstPageContentStreamNoop
 end
 
 RSpec.configure do |config|
-  config.filter_run_excluding breakable: true unless ENV['CI']
-
   config.before :suite do
     FileUtils.rm_r output_dir, force: true, secure: true
     FileUtils.mkdir output_dir

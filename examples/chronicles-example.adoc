@@ -71,7 +71,7 @@ Here's some &#x20ac;.
 Crystalline XML tags relentlessly bombarded the theater.
 
 .XML tags
-[source,xml]
+[,xml]
 ----
 <author id="1">
   <personname>
@@ -267,7 +267,7 @@ Install Prawn:
 Then create your first PDF document in Ruby!
 
 .Generates a basic PDF document using Prawn
-[source,ruby]
+[,ruby]
 ----
 require 'prawn' # <1>
 
@@ -281,7 +281,7 @@ end
 
 How about some source code that styles code? So meta!
 
-[source,css]
+[,css]
 ----
 code {
   padding: 2px 4px;
@@ -297,7 +297,7 @@ code {
 Where could we go without some Java(TM)?
 Naturally, some autosizing is necessary.
 
-[source%autofit%unbreakable,java]
+[%autofit,java]
 ----
 package org.javaee7.cdi.events;
 
@@ -422,7 +422,7 @@ point.
 Back to the previous example, suppose that we have both a field and a method with the same name, as in:
 
 .Java class with a field and method that share the same name
-[source,java]
+[,java]
 ----
 public class Foo {
   public String bar;
@@ -437,7 +437,7 @@ public class Foo {
 Hence, the following Golo code will resolve the `bar()` method, not the `bar` field:
 
 .Golo picks the method over the field with the same name
-[source,golo]
+[,golo]
 ----
 let foo = Foo()
 
