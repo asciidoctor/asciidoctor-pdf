@@ -2320,6 +2320,8 @@ module Asciidoctor
         end
         layout_table_caption node, alignment, table_width, caption_max_width, caption_side if node.title? && caption_side == :bottom
         theme_margin :block, :bottom
+      rescue ::Prawn::Errors::CannotFit
+        log :error, (message_with_context 'cannot fit contents of table cell into specified column width', source_location: node.source_location)
       end
 
       def convert_thematic_break _node

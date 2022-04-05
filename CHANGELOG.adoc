@@ -67,6 +67,7 @@ Enhancements::
 * introduce layout_general_heading to allow extended converter to access node (#1904)
 * use Document#authors to retrieve authors instead of extracting the information from the indexed document attributes
 * add support for character references that contain both uppercase and lowercase hexadecimal characters (#1990) (*@etiwnad*)
+* log error and skip table instead of raising error if cell content cannot fit into column width of table (#2009)
 
 Bug Fixes::
 
