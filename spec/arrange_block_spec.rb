@@ -311,7 +311,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect gs).to have_background color: 'FFFFCC', top_left: [50.0, 708.018], bottom_right: [562.0, 279.318]
       end
 
-      it 'should advance nested unbreakable block shorter than page to next page to avoid breaking', breakable: true do
+      it 'should advance nested unbreakable block shorter than page to next page to avoid breaking' do
         before_block_content = ['before block'] * 20 * %(\n\n)
         nested_block_content = ['nested block content'] * 5 * %(\n\n)
         pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
@@ -341,7 +341,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect p2_gs[2]).to have_background color: 'EEEEEE', top_left: [62.0, 742.0], bottom_right: [550.0, 591.1]
       end
 
-      it 'should advance block with only nested unbreakable block shorter than page to next page to avoid breaking', breakable: true do
+      it 'should advance block with only nested unbreakable block shorter than page to next page to avoid breaking' do
         before_block_content = ['before block'] * 20 * %(\n\n)
         nested_block_content = ['nested block content'] * 5 * %(\n\n)
         pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
@@ -391,7 +391,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect p2_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 409.39]
       end
 
-      it 'should restart dry run on new page if first page is empty', breakable: true do
+      it 'should restart dry run on new page if first page is empty' do
         calls = []
         extensions = proc do
           block :spy do
@@ -429,7 +429,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect (calls.join ?\n).scan '`dry_run\'').to have_size 2
       end
 
-      it 'should restart dry run at current position once content exceeds height of first page', breakable: true do
+      it 'should restart dry run at current position once content exceeds height of first page' do
         block_content = ['block content'] * 35 * %(\n\n)
         calls = []
         extensions = proc do
@@ -473,7 +473,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect (pdf.find_unique_text 'nested block content')[:page_number]).to be 2
       end
 
-      it 'should not restart dry run at top of page once content exceeds height of first page', breakable: true do
+      it 'should not restart dry run at top of page once content exceeds height of first page' do
         block_content = ['block content'] * 35 * %(\n\n)
         calls = []
         extensions = proc do
@@ -515,7 +515,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect (pdf.find_unique_text 'nested block content')[:page_number]).to be 2
       end
 
-      it 'should restart dry run at current position if unbreakable block exceeds height of first page inside nested block', breakable: true do
+      it 'should restart dry run at current position if unbreakable block exceeds height of first page inside nested block' do
         block_content = ['block content'] * 35 * %(\n\n)
         calls = []
         extensions = proc do
@@ -560,7 +560,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect (pdf.find_unique_text 'deeply nested block content')[:page_number]).to be 2
       end
 
-      it 'should restart dry run at current position if breakable content exceeds height of first page inside nested block', breakable: true do
+      it 'should restart dry run at current position if breakable content exceeds height of first page inside nested block' do
         block_content = ['block content'] * 30 * %(\n\n)
         calls = []
         extensions = proc do
@@ -719,7 +719,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     end
   end
 
-  describe 'breakable block', breakable: true do
+  describe 'breakable block' do
     describe 'at top' do
       it 'should keep block on current page if it fits' do
         pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
@@ -1328,7 +1328,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     end
   end
 
-  describe 'table cell', breakable: true do
+  describe 'table cell' do
     describe 'at top' do
       it 'should keep block on current page if it fits' do
         pdf_theme[:example_border_width] = 0.5
@@ -1758,7 +1758,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
   end
 
   # NOTE: generate reference files using `asciidoctor-pdf -a source-highlighter=rouge -a nofooter` then optimize
-  describe 'acceptance', breakable: true, visual: true, if: ENV['CI'] && ENV['COVERAGE'] do
+  describe 'acceptance', visual: true, if: ENV['COVERAGE'] do
     it 'at top, fits' do
       to_file = to_pdf_file (Pathname.new (fixture_file 'arrange-block-at-top-fits.adoc')),
         'arrange-block-at-top-fits.pdf', attribute_overrides: { 'source-highlighter' => 'rouge' }

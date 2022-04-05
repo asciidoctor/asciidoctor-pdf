@@ -900,8 +900,7 @@ module Asciidoctor
       # start_new_page. Using start_new_page can mangle the calculation of content block's extent.
       #
       def arrange_block node, &block
-        #keep_together = (node.option? 'unbreakable') && !at_page_top?
-        keep_together = ENV['CI'] ? (node.option? 'unbreakable') && !at_page_top? : !at_page_top?
+        keep_together = (node.option? 'unbreakable') && !at_page_top?
         doc = node.document
         block_for_scratch = proc do
           push_scratch doc
