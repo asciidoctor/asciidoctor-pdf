@@ -636,25 +636,23 @@ module Asciidoctor
           # HACK: cheat a bit to hide this section from TOC; TOC should filter these sections
           sect.context = :open
           return convert_abstract sect
-        elsif (index_section = sectname == 'index')
-          if @index.empty?
-            sect.parent.blocks.delete sect
-            return
-          end
+        elsif (index_section = sectname == 'index') && @index.empty?
+          sect.parent.blocks.delete sect
+          return
         end
 
-        chapterlike = nil
         title = sect.numbered_title formal: true
         sep = (sect.attr 'separator') || (sect.document.attr 'title-separator') || ''
         if !sep.empty? && title.include?(sep = %(#{sep} ))
           title, _, subtitle = title.rpartition sep
           title = %(#{title}\n<em class="subtitle">#{subtitle}</em>)
         end
+        chapterlike = !(part = sectname == 'part') && (sectname == 'chapter' || (sect.document.doctype == 'book' && sect.level == 1))
         theme_font :heading, level: (hlevel = sect.level + 1) do
           align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
-          if sectname == 'part'
+          if part
             start_new_part sect unless @theme.heading_part_break_before == 'auto'
-          elsif (chapterlike = sectname == 'chapter' || (sect.document.doctype == 'book' && sect.level == 1))
+          elsif chapterlike
             if @theme.heading_chapter_break_before == 'auto'
               start_new_chapter sect if @theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0]
             else
@@ -676,7 +674,7 @@ module Asciidoctor
           # NOTE: section must have pdf-anchor in order to be listed in the TOC
           sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_pgnum}-#{y.ceil}))
           add_dest_for_block sect, id: sect_anchor, y: (at_page_top? ? page_height : nil)
-          if sectname == 'part'
+          if part
             layout_part_title sect, title, align: align, level: hlevel
           elsif chapterlike
             layout_chapter_title sect, title, align: align, level: hlevel unless sect.special && (sect.option? 'untitled')
