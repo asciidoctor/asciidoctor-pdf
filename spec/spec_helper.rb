@@ -691,9 +691,7 @@ RSpec::Matchers.define :have_message do |expected|
     result = false
     if (message = logger.messages[expected[:index] || 0])
       if message[:severity] == expected[:severity]
-        if Hash === (message_text = message[:message])
-          message_text = message_text[:text]
-        end
+        message_text = Hash === (message_data = message[:message]) ? message_data[:text] : message_data
         if Regexp === (expected_message = expected[:message])
           result = true if expected_message.match? message_text
         elsif expected_message.start_with? '~'
@@ -701,6 +699,7 @@ RSpec::Matchers.define :have_message do |expected|
         elsif message_text === expected_message
           result = true
         end
+        result = false if (lineno = expected[:lineno]) && !(Hash === message_data && lineno == message_data[:source_location].lineno)
       end
       actual = message
     end

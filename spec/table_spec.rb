@@ -584,15 +584,42 @@ describe 'Asciidoctor::PDF::Converter - Table' do
   end
 
   context 'Dimensions' do
-    it 'should throw exception if no width is assigned to column' do
+    it 'should log error if no width is assigned to column' do
       (expect do
-        to_pdf <<~'EOS'
+        pdf = to_pdf <<~'EOS', analyze: true
+        before table
+
         [cols=",50%,50%"]
         |===
         | Column A | Column B | Column C
         |===
+
+        after table
         EOS
-      end).to raise_exception Prawn::Errors::CannotFit
+        text = pdf.text
+        (expect text).to have_size 2
+        (expect text[0][:string]).to eql 'before table'
+        (expect text[1][:string]).to eql 'after table'
+      end).to log_message severity: :ERROR, message: 'cannot fit contents of table cell into specified column width'
+    end
+
+    it 'should report file and line number in cannot fit error if sourcemap is enabled' do
+      (expect do
+        pdf = to_pdf <<~'EOS', sourcemap: true, analyze: true
+        before table
+
+        [cols="2m,49,49"]
+        |===
+        | monospace | Column B | Column C
+        |===
+
+        after table
+        EOS
+        text = pdf.text
+        (expect text).to have_size 2
+        (expect text[0][:string]).to eql 'before table'
+        (expect text[1][:string]).to eql 'after table'
+      end).to log_message severity: :ERROR, message: 'cannot fit contents of table cell into specified column width', lineno: 4
     end
 
     it 'should not fail to fit text in cell' do
