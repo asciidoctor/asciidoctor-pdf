@@ -643,7 +643,7 @@ module Asciidoctor
 
         title = sect.numbered_title formal: true
         sep = (sect.attr 'separator') || (sect.document.attr 'title-separator') || ''
-        if !sep.empty? && title.include?(sep = %(#{sep} ))
+        if !sep.empty? && (title.include? (sep = %(#{sep} )))
           title, _, subtitle = title.rpartition sep
           title = %(#{title}\n<em class="subtitle">#{subtitle}</em>)
         end
