@@ -1954,6 +1954,22 @@ module Asciidoctor
       end
 
       def convert_table node
+        if !at_page_top? && ((unbreakable = node.option? 'unbreakable') || ((node.option? 'breakable') && (node.id || node.title?)))
+          (table_container = Block.new (table_dup = node.dup), :open) << table_dup
+          if unbreakable
+            table_dup.remove_attr 'unbreakable-option'
+            table_container.set_attr 'unbreakable-option'
+          else
+            table_dup.remove_attr 'breakable-option'
+          end
+          table_container.id, table_dup.id = table_dup.id, nil
+          if table_dup.title?
+            table_container.title = ''
+            table_container.instance_variable_set :@converted_title, table_dup.captioned_title
+            table_dup.title = nil
+          end
+          return convert_open table_container
+        end
         add_dest_for_block node if node.id
         # TODO: we could skip a lot of the logic below when num_rows == 0
         num_rows = node.attr 'rowcount'
