@@ -1,0 +1,39 @@
+= Thematic Break Keys
+
+The keys in this category control the style of thematic breaks (aka horizontal rules).
+
+.thematic-break keys
+[#key-prefix-thematic-break,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|border-color
+|xref:color.adoc[Color] +
+(default: #eeeeee)
+|thematic-break:
+border-color: #eeeeee
+
+|border-style
+|solid {vbar} double {vbar} dashed {vbar} dotted +
+(default: solid)
+|thematic-break:
+border-style: dashed
+
+|border-width
+|xref:measurement-units.adoc[Measurement] +
+(default: 0.5)
+|thematic-break:
+border-width: 0.5
+
+|margin-top
+|xref:measurement-units.adoc[Measurement] +
+(default: 0)
+|thematic-break:
+margin-top: 6
+
+|margin-bottom
+|xref:measurement-units.adoc[Measurement] +
+(default: $vertical-spacing)
+|thematic-break:
+margin-bottom: 18
+|===

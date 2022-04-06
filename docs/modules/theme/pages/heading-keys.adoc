@@ -1,0 +1,190 @@
+= Heading Keys
+
+The keys in this category control the style of most headings, including part titles, chapter titles, sections titles, the table of contents title, and discrete headings.
+The <<key-prefix-heading-level,heading-h1 key>> controls the font properties of the document title (aka doctitle) when the doctype is article and the title page is not enabled (i.e., the title-page document attribute is not set).
+
+.heading keys
+[#key-prefix-heading,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|align
+|xref:text.adoc#align[Text alignment] +
+(default: $base-align)
+|heading:
+align: center
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|heading:
+font-color: #222222
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|heading:
+font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|heading:
+font-kerning: none
+
+// NOTE: heading-font-size is overridden by h<n>-font-size in base theme
+//|font-size
+//|xref:language.adoc#values[Number] +
+//(default: $base-font-size)
+//|heading:
+//  font-size: 18
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: bold)
+|heading:
+font-style: bold
+
+|text-decoration
+|xref:text.adoc#decoration[Text decoration] +
+(default: none)
+|heading:
+text-decoration: underline
+
+|text-decoration-color
+|xref:color.adoc[Color] +
+(default: $heading-font-color)
+|heading:
+text-decoration-color: #cccccc
+
+|text-decoration-width
+|xref:language.adoc#values[Number] +
+(default: $base-text-decoration-width)
+|heading:
+text-decoration-width: 0.5
+
+|text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|heading:
+text-transform: capitalize
+
+|line-height
+|xref:language.adoc#values[Number] +
+(default: 1.15)
+|heading:
+line-height: 1.2
+
+|margin-top
+|xref:measurement-units.adoc[Measurement] +
+(default: 4)
+|heading:
+margin-top: $vertical-spacing * 0.2
+
+|margin-page-top
+|xref:measurement-units.adoc[Measurement] +
+(default: 0)
+|heading:
+margin-page-top: $vertical-spacing
+
+|margin-bottom
+|xref:measurement-units.adoc[Measurement] +
+(default: 12)
+|heading:
+margin-bottom: 9.6
+
+|min-height-after
+|xref:measurement-units.adoc[Measurement] +
+(default: $base-font-size * $base-line-height * 1.5)
+|heading:
+min-height-after: 0.5in
+
+|chapter-break-before
+|always {vbar} auto +
+(default: always)
+|heading:
+chapter:
+break-before: auto
+
+|part-break-before
+|always {vbar} auto +
+(default: always)
+|heading:
+part:
+break-before: auto
+
+|part-break-after
+|always {vbar} auto +
+(default: auto)
+|heading:
+part:
+break-after: always
+
+3+|[#key-prefix-heading-level]*Key Prefix:* <<key-prefix-heading-level,heading-h<n>{zwsp}>>^[1]^
+
+|align
+|xref:text.adoc#align[Text alignment] +
+(default: $heading-align)
+|heading:
+h2-align: center
+
+|font-color
+|xref:color.adoc[Color] +
+(default: $heading-font-color)
+|heading:
+h2-font-color: [0, 99%, 100%, 0]
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: $heading-font-family)
+|heading:
+h4-font-family: Roboto
+
+|font-kerning
+|normal {vbar} none +
+(default: $heading-font-kerning)
+|heading:
+h3-font-kerning: none
+
+|font-size^[2]^
+|xref:language.adoc#values[Number] +
+(default: <1>=24; <2>=18; <3>=16; <4>=14; <5>=12; <6>=10)
+|heading:
+h6-font-size: $base-font-size * 1.7
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: $heading-font-style)
+|heading:
+h3-font-style: bold_italic
+
+|text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: $heading-text-transform)
+|heading:
+h3-text-transform: uppercase
+
+|margin-top
+|xref:measurement-units.adoc[Measurement] +
+(default: $heading-margin-top)
+|heading:
+h2-margin-top: $vertical-spacing * 0.5
+
+|margin-page-top
+|xref:measurement-units.adoc[Measurement] +
+(default: $heading-margin-page-top)
+|heading:
+h2-margin-page-top: $vertical-spacing
+
+|margin-bottom
+|xref:measurement-units.adoc[Measurement] +
+(default: $heading-margin-bottom)
+|heading:
+h2-margin-bottom: 10
+|===
+
+1. `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
+h1 is used for part titles (book doctype) or the doctitle (article doctype when the title-page document attribute is not set).
+h2 is used for chapter titles (book doctype only).
+2. A font size is assigned to each heading level by the base theme.
+If you want the font size of a specific level to be inherited, you must assign the value `null` (or `~` for short).

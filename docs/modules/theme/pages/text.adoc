@@ -1,0 +1,51 @@
+= Text Alignment and Styles
+
+[#align]
+== Alignment
+
+The `align` subkey is used to align text and images within the parent container.
+Text can be aligned as follows:
+
+* `left`
+* `center`
+* `right`
+* `justify` (stretched to each edge)
+
+[#decoration]
+== Decoration
+
+The following decorations can be applied to text:
+
+* `none` (no decoration)
+* `underline`
+* `line-through`
+
+[#font-style]
+== Font style
+
+In most cases, wherever you can specify a custom font family, you can also specify a font style.
+These two settings are combined to locate the font to use.
+
+The following font styles are recognized:
+
+* `normal` (no style)
+* `italic`
+* `bold`
+* `bold_italic`
+
+[#transform]
+== Transform
+
+Many places where font properties can be specified, a case transformation can be applied to the text.
+The following transforms are recognized:
+
+* `uppercase`
+* `lowercase`
+* `capitalize` (each word, like CSS)
+* `none` (clears an inherited value)
+
+[CAUTION#transform-unicode-letters]
+====
+Ruby 2.5 and greater has built-in support for transforming the case of any letter defined by Unicode.
+You no longer need the `activesupport` or `unicode` gem to transform characters beyond the Basic Latin character set (e.g., accented characters).
+====

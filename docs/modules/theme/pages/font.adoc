@@ -1,0 +1,96 @@
+= Fonts
+
+You can select from <<built-in,built-in fonts>>, <<bundled,fonts bundled with Asciidoctor PDF>> or xref:custom-font.adoc[custom fonts] loaded from TrueType (TTF) or OpenType (OTF) font files.
+If you want to use custom fonts, you must first declare them in your theme file.
+
+IMPORTANT: Asciidoctor has no challenge working with Unicode.
+In fact, it prefers Unicode and considers the entire range.
+However, once you convert to PDF, you have to meet the font requirements of PDF in order to preserve Unicode characters.
+That means you need to provide a font (at least a fallback font) that contains glyphs for all the characters you want to use.
+If you don't, you may notice that characters are missing (usually replaced with a box).
+There's nothing Asciidoctor can do to convince PDF to work with extended characters without the right fonts in play.
+To see which characters are missing from the font, enable verbose mode (`-v`) when running Asciidoctor PDF.
+
+[#built-in]
+== Built-In (AFM) fonts
+
+The names of the built-in fonts (for general-purpose text) are as follows:
+
+[width=33.33%]
+|===
+|Font Name |Font Family
+
+|Helvetica
+|sans-serif
+
+|Times-Roman
+|serif
+
+|Courier
+|monospace
+|===
+
+Using a built-in font requires no additional files.
+You can use the key anywhere a `font-family` property is accepted in the theme file.
+For example:
+
+[source,yaml]
+----
+base:
+  font-family: Times-Roman
+----
+
+However, when you use a built-in font, the characters you can use in your document are limited to the characters in the WINANSI (http://en.wikipedia.org/wiki/Windows-1252[Windows-1252^]) code set.
+WINANSI includes most of the characters needed for writing in Western languages (English, French, Spanish, etc).
+For anything outside of that, PDF is BYOF (Bring Your Own Font).
+
+Even though the built-in fonts require the content to be encoded in WINANSI, _you still type your AsciiDoc document in UTF-8_.
+Asciidoctor PDF encodes the content into WINANSI when building the PDF.
+
+WARNING: Built-in (AFM) fonts do not use the xref:fallback-font.adoc[fallback fonts].
+In order for the fallback font to kick in, you must use a TrueType font anywhere you want the fallback font to be used (e.g., the base font family, the code font family, etc).
+
+.WINANSI Encoding Behavior
+****
+When using the built-in PDF (AFM) fonts on a block of content in your AsciiDoc document, any character that cannot be encoded to WINANSI is replaced with a logic "`not`" glyph (`&#172;`) and you'll see the following warning in your console:
+
+ The following text could not be fully converted to the Windows-1252 character set:
+ | <string with unknown glyph>
+
+This behavior differs from the default behavior in Prawn, which is to simply crash.
+
+You'll often see this warning if you're using callouts in your document and you haven't specified a TrueType font in your theme.
+To prevent this warning, you need to specify a TrueType font.
+
+When using a TrueType font, you will get no warning for a missing glyph.
+That's a consequence of how Prawn works and is outside of Asciidoctor PDF's control.
+However, you'll likely see it substituted with a box (guaranteed if you're using one of the bundled fonts).
+
+For more information about how Prawn handles character encodings for built-in fonts, see https://github.com/prawnpdf/prawn/blob/master/CHANGELOG.md#vastly-improved-handling-of-encodings-for-pdf-built-in-afm-fonts[this note in the Prawn CHANGELOG^].
+****
+
+[#bundled]
+== Bundled fonts
+
+Asciidoctor PDF bundles several fonts that are used by the default theme.
+You can also use these fonts in your custom theme by simply declaring them.
+These fonts provide more characters than the built-in PDF fonts, but still only a subset of UTF-8 (to reduce the size of the gem).
+
+The family name of the fonts bundled with Asciidoctor PDF are as follows:
+
+http://www.google.com/get/noto/#/family/noto-serif[Noto Serif]::
+A serif font that can be styled as normal, italic, bold or bold_italic.
+
+http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1mn[M+ 1mn]::
+A monospaced font that maps different thicknesses to the styles normal, italic, bold, and bold_italic.
+Also provides the circled numbers used in callouts.
+
+http://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1p[M+ 1p Fallback]::
+A sans-serif font that provides a very complete set of Unicode glyphs.
+Cannot be styled as italic, bold or bold_italic.
+Used as the fallback font in the `default-with-fallback-font` theme.
+
+TIP: The default themes refer to the bundled fonts using the `GEM_FONTS_DIR` prefix.
+That means you can extend a default theme and not have to worry about how the bundled fonts get resolved.
+If you redeclare the bundled fonts in your custom theme, be sure to prefix the path with the `GEM_FONTS_DIR` token.
+An alternative approach is to include `GEM_FONT_DIR` in the value of the `pdf-fontsdir` attribute separated by the location of your custom fonts using a comma (e.g., `path/to/your/fonts,GEM_FONTS_DIR`) or a semi-colon (e.g., `path/to/your/fonts;GEM_FONTS_DIR`).

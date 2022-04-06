@@ -1,0 +1,47 @@
+= Page Numbers
+
+The converter automatically keeps track of page numbers.
+These page numbers are available as metadata and determine folio placement (recto/verso pages).
+
+== Default page number assignment
+
+By default, the converter assigns the page number 1 to the first body page of the document.
+It then increments the page number for each page thereafter.
+All front matter pages that precede the first body page in the book doctype (or when the `title-page` attribute is set) (e.g., cover page, title page, and toc pages) are numbered using roman numerals (e.g., i, ii, iii, etc).
+Since these computed page numbers can differ from the physical page numbers, we refer to them as [.term]_virtual page numbers_.
+
+By default, the folio placement is derived from the virtual page number.
+Odd page numbers (e.g., 1, 3, 5, ...) designate recto pages and even page numbers (e.g., 2, 4, 6, ...) designate verso pages.
+
+== Customize the page numbering
+
+It's possible to influence the virtual page numbering using a combination of the theme and document attributes.
+One such customization is to control where the transition from roman numerals to integers occurs.
+
+The theme can specify the page where the integer (1-based) page numbering should begin using the `page-numbering-start-at` key.
+For instance, the theme can specify `page-numbering-start-at: title`, which will make the integer page numbering start at the title page when enabled (i.e., the title page will be assigned the virtual page number 1).
+Alternately, the theme can specify an offset from the first body page where the page numbering should begin (all doctypes).
+For instance, `page-numbering-start-at: 2` tells the converter to assign the virtual page number 1 to the second page of the body.
+Any page that precedes that page will be numbered using roman numerals.
+
+Changing the page on which the integer page numbering begins can alter the folio placement.
+To correct for this, or to change the folio placement in general, you can use the `pdf-folio-placement` document attribute.
+For instance, to base the folio placement on physical page numbers, set the value of this attribute to `physical` (e.g., `pdf-folio-placement=physical`).
+To invert the recto and verso pages, add the `-inverted` qualifier to the value (e.g., `pdf-folio-placement=physical-inverted`).
+
+The default theme shows the virtual page number in the footer of all body pages.
+If you're starting with a blank theme, you can add the page number by using the `\{page-number}` attribute reference in the `content` key of the running content (header or footer).
+For example:
+
+[source,yaml]
+----
+footer:
+  recto:
+    right:
+      content: '\{page-number}'
+----
+
+If you want the running content to also appear on front matter pages, you can use the theme to change the page on which the running content starts with the `running-content-start-at` key.
+For instance, to start the running content on the title page, assuming the title page is enabled, set `running-content-start-at: title` in your theme file.
+
+Aside from the configurability mentioned, the page numbering logic is computed automatically.

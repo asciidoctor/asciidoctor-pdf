@@ -1,0 +1,230 @@
+= List Keys
+
+[#description-list]
+== description-list
+
+The keys in this category control the arrangement and style of definition list items (terms and descriptions).
+
+.description-list keys
+[#key-prefix-description-list,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|term-font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|description-list:
+term-font-color: #AA0000
+
+|term-font-family
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|description-list:
+term-font-family: Noto Serif
+
+|term-font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|description-list:
+term-font-kerning: none
+
+|term-font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|description-list:
+term-font-size: 12
+
+|term-font-style
+|xref:text.adoc#font-style[Font style] +
+(default: bold)
+|description-list:
+term-font-style: italic
+
+|term-text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: none)
+|description-list:
+term-text-transform: none
+
+|term-line-height
+|xref:language.adoc#values[Number] +
+(default: $base-line-height)
+|description-list:
+term-line-height: 1.2
+
+|term-spacing
+|xref:measurement-units.adoc[Measurement] +
+(default: 4)
+|description-list:
+term-spacing: 5
+
+|description-indent
+|xref:language.adoc#values[Number] +
+(default: 30)
+|description-list:
+description-indent: 15
+|===
+
+[TIP]
+====
+Asciidoctor PDF supports unordered and ordered description lists.
+These are defined as a description list, but get displayed as an unordered or ordered description list with the term as a subject.
+Only one term is supported.
+The subject is shown using the term font style (bold by default).
+
+By default, the subject is arranged as a run-in followed by a subject stop (`:` by default).
+
+[source,asciidoc]
+----
+[unordered]
+alpha:: partially complete and unstable
+beta:: feature complete and undergoing testing
+----
+
+The subject stop can be customized using the `subject-stop` attribute.
+
+[source,asciidoc]
+----
+[unordered,subject-stop=)]
+alpha:: partially complete and unstable
+beta:: feature complete and undergoing testing
+----
+
+If the `stack` role is present, the subject is stacked above the description.
+In this case, the subject stop is only used if specified explicitly.
+
+[source,asciidoc]
+----
+[unordered.stack]
+alpha:: partially complete and unstable
+beta:: feature complete and undergoing testing
+----
+====
+
+[#outline-list]
+== outline-list
+
+The keys in this category control the arrangement and style of outline list items.
+
+.outline-list keys
+[#key-prefix-outline-list,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|indent
+|xref:measurement-units.adoc[Measurement] +
+(default: 30)
+|outline-list:
+indent: 40
+
+|item-spacing
+|xref:measurement-units.adoc[Measurement] +
+(default: 6)
+|outline-list:
+item-spacing: 4
+
+|marker-font-color^[1]^
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|outline-list:
+marker-font-color: #3c763d
+
+|text-align^[2]^
+|xref:text.adoc#align[Text alignment] +
+(default: $base-align)
+|outline-list:
+text-align: left
+|===
+
+1. Controls the color of the bullet glyph that marks items in unordered lists and the number for items in ordered lists.
+2. Controls the alignment of the list text only, not nested content (blocks or lists).
+
+[#ulist-marker]
+== ulist-marker
+
+The keys in this category control the arrangement and style of unordered list items.
+
+.ulist-marker keys
+[#key-prefix-ulist-marker,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|ulist:
+marker:
+font-family: Noto Serif
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|ulist:
+marker:
+font-size: 9
+
+|font-color
+|xref:color.adoc[Color] +
+(default: $outline-list-marker-font-color)
+|ulist:
+marker:
+font-color: #cccccc
+
+|line-height
+|xref:language.adoc#values[Number] +
+(default: $base-line-height)
+|ulist:
+marker:
+line-height: 1.5
+|===
+
+[#ulist-marker-type]
+=== ulist-marker-<type>
+
+The keys in this category control the arrangement and style of unordered list marker's type.
+Type is one of `disc`, `square`, `circle`, `checked`, `unchecked`.
+
+.ulist-marker-<type> keys
+[#key-prefix-ulist-marker-type,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|content
+|xref:quoted-string.adoc[Quoted string]
+|ulist:
+marker:
+disc:
+content: "\uf140"
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|ulist:
+marker:
+disc:
+font-family: fas
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|ulist:
+marker:
+disc:
+font-size: 9
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|ulist:
+marker:
+disc:
+font-color: #ff0000
+
+|line-height
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|ulist:
+marker:
+disc:
+line-height: 2
+|===

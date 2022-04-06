@@ -1,0 +1,29 @@
+= Passthrough Content
+
+== Skipping passthrough content
+
+Asciidoctor PDF does not support arbitrary passthrough content.
+While the basebackend for the PDF converter is html, it only recognizes a limited subset of inline HTML elements that can be mapped to PDF (e.g., a, strong, em, code, etc.).
+Therefore, if your content contains passthrough blocks or inlines, you most likely have to use a conditional preprocessor to skip them (and make other arrangements).
+
+Here's an example of how to skip a passthrough block when converting to PDF:
+
+[source,asciidoc]
+----
+\ifndef::backend-pdf[]
+<script>
+//...
+</script>
+\endif::[]
+----
+
+Here's an example of how to only enable a passthrough block when converting to HTML5:
+
+[source,asciidoc]
+----
+\ifdef::backend-html5[]
+<script>
+//...
+</script>
+\endif::[]
+----

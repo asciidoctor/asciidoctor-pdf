@@ -1,0 +1,23 @@
+= Autowidth Tables
+
+Asciidoctor PDF supports autowidth tables.
+However, the behavior differs from HTML when the content forces the table to the page boundary.
+The behavior, which is handled by the prawn-table library, is explained in this section.
+
+If the natural width of all columns (based on the width of the cell content) is less than the width of the page, it behaves as you'd expect.
+Each column is assigned the width it needs to prevent the content from wrapping.
+
+However, when the natural width of all columns exceeds the width of the page, the behavior may not be what you expect.
+What prawn-table does is compute how to arrange the table on an infinite canvas, where each column can have a width no greater than the width of the page.
+Then, it reduces the width of the table by reducing the width of each column proportionally.
+As a result, columns which reported the width necessary to render without wrapping now no longer do.
+
+The reason this compression is not performed like in HTML is because prawn-table has no awareness of words.
+Thus, it doesn't know how to redistribute with width intelligently.
+
+To protected against truncation or insufficient width errors, prawn-table wraps text by character.
+That's why the last character in the cell can end up getting wrapped.
+(There's a small amount of tolerance built in to prawn-table to address some edge cases, but it's not sufficient to handle all of them).
+
+For the reason just explained, you should be extremely careful with relying on autowidth tables in Asciidoctor PDF, especially when the natural content of the cells forces the table to page boundary.
+Let experience be your guide.

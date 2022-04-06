@@ -1,0 +1,74 @@
+= Keyboard Macro Keys
+
+The keys in this category apply to a key reference (generated from the inline kbd macro).
+
+.key keys
+[#key-prefix-key,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|background-color
+|xref:color.adoc[Color] +
+(default: _not set_)
+|key:
+background-color: #fafafa
+
+|border-color^[1]^
+|xref:color.adoc[Color] +
+(default: _not set_)
+|key:
+border-color: #cccccc
+
+|border-offset^[2]^
+|xref:language.adoc#values[Number] +
+(default: 0)
+|key:
+border-offset: 1.5
+
+|border-radius
+|xref:language.adoc#values[Number] +
+(default: 0)
+|key:
+border-radius: 2
+
+|border-width
+|xref:language.adoc#values[Number] +
+(default: $base-border-width)
+|key:
+border-width: 0.375
+
+|separator^[3]^
+|xref:quoted-string.adoc[Quoted string] +
+(default: "+")
+|key:
+separator: "\u2009+\u2009"
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|key:
+font-color: #000
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: Courier)
+|key:
+font-family: $base-font-family
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|key:
+font-size: 10.5
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: italic)
+|key:
+font-style: normal
+|===
+
+1. The border is only used if a border color is specified and the border width is not explicitly set to 0.
+2. The border offset is the amount that the background and border swells around the text.
+It does not affect the distance between the formatted phrase and the phrases that surround it.
+3. The separator is only used for multi-key sequences.

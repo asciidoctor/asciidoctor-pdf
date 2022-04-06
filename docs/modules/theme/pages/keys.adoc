@@ -1,0 +1,20 @@
+= Theme Keys Reference
+
+== Category keys
+
+The following pages list the keys and acceptable values or value types that are available when creating a custom theme.
+The keys are organized by category key.
+Each category represents a common prefix under which the keys are typically nested.
+
+TIP: Keys can be nested wherever an underscore (`_`) or hyphen (`-`) appears in the name.
+This nested structure is for organizational purposes only.
+All keys are flatted when the theme is loaded (e.g., `align` nested under `base` becomes `base-align`).
+
+The converter uses the values of these keys to control how most elements are arranged and styled in the PDF.
+The default values listed in this section get inherited from the {url-repo-root}/data/themes/base-theme.yml[base theme^].
+
+IMPORTANT: The {url-repo-root}/data/themes/default-theme.yml[default theme^] has a different set of values which are not shown in this guide.
+
+When creating a theme that extends the base theme, all keys are optional.
+Required keys are provided by the base theme.
+Therefore, you only have to declare keys that you want to override.

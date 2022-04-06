@@ -1,0 +1,36 @@
+= Prose Keys
+
+The keys in the `prose` category control the spacing below paragraphs, lists, and index categories.
+The bottom margin is only added if the block is followed by an adjacent block within the same enclosure (e.g., a sidebar, a table cell, or the area outside a block).
+
+.prose keys
+[#key-prefix-prose,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+//|margin-top
+//|xref:measurement-units.adoc[Measurement] +
+//(default: 0)
+//|prose:
+//margin-top: 0
+
+|margin-bottom
+|xref:measurement-units.adoc[Measurement] +
+(default: 12)
+|prose:
+margin-bottom: $vertical-spacing
+
+|margin-inner^[1]^
+|xref:measurement-units.adoc[Measurement] +
+(default: $prose-margin-bottom)
+|prose:
+margin-inner: 0
+
+|text-indent
+|xref:measurement-units.adoc[Measurement] +
+(default: _not set_)
+|prose:
+text-indent: 18
+|===
+1. Controls the margin between adjacent paragraphs.
+Useful when using indented paragraphs.

@@ -1,0 +1,196 @@
+= Code and Callout Number Keys
+:source-language: yaml
+
+[#code]
+== code
+
+The keys in the `code` category are used to control the style of literal, listing, and source blocks.
+
+.code keys
+[#key-prefix-code,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|background-color
+|xref:color.adoc[Color] +
+(default: _not set_)
+|code:
+background-color: #f5f5f5
+
+|border-color
+|xref:color.adoc[Color] +
+(default: #eeeeee)
+|code:
+border-color: #cccccc
+
+|border-radius
+|xref:language.adoc#values[Number] +
+(default: _not set_)
+|code:
+border-radius: 4
+
+|border-width
+|xref:language.adoc#values[Number] +
+(default: 0.5)
+|code:
+border-width: 0.75
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|code:
+font-color: #333333
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: Courier)
+|code:
+font-family: M+ 1mn
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: 10.8)
+|code:
+font-size: 11
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|code:
+font-style: italic
+
+|line-height
+|xref:language.adoc#values[Number] +
+(default: 1.2)
+|code:
+line-height: 1.25
+
+|line-gap^[1]^
+|xref:language.adoc#values[Number] +
+(default: 0)
+|code:
+line-gap: 3.8
+
+|padding
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: 9)
+|code:
+padding: 11
+|===
+1. The line-gap property is used to tune the height of the background color applied to a span of block text highlighted using Rouge.
+
+[#code-callout-list]
+=== code-callout-list
+
+The key in the `code-callout-list` category is used to control the top margin of the callout list.
+To style the callout numbers inside verbatim blocks and in callout lists, see the keys in the <<conum,conum category>>.
+
+.code-callout-list key
+[#key-prefix-code-callout-list,cols="2,4,6a"]
+|===
+|Key |Value Type |Example
+|`margin-top`
+|xref:measurement-units.adoc[Measurement] +
+(default: `-$block-margin-bottom`)
+|[source]
+code:
+  callout-list:
+    margin-top: 0
+|===
+
+=== code-highlight
+
+The `code-highlight` keys only apply when using Rouge as the source highlighter.
+Otherwise, the styles are controlled by the source highlighter theme.
+
+.code-highlight keys
+[#key-prefix-code-highlight,cols="2,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`background-color`
+|xref:color.adoc[Color] +
+(default: `'#FFFFCC'`)
+|[source]
+code:
+  highlight-background-color: '#ffff00'
+|===
+
+[#code-linenum]
+=== code-linenum
+
+The `code-linenum` keys only apply when using Pygments as the source highlighter.
+Otherwise, the styles are controlled by the source highlighter theme.
+
+.code-linenum keys
+[#key-prefix-code-linenum,cols="2,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: `'#999999'`)
+|[source]
+code:
+  linenum-font-color: '#ccc'
+|===
+
+[#conum]
+== conum
+
+The keys in the `conum` category are used to control the style of callout numbers inside verbatim blocks and in callout lists (colists).
+To control the top margin of the callout lists, see the <<code-callout-list,code-callout-list category>>.
+
+.conum keys
+[#key-prefix-conum,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|conum:
+font-color: #b12146
+
+|font-family^[1,2]^
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|conum:
+font-family: M+ 1mn
+
+|font-kerning^[2]^
+|normal {vbar} none +
+(default: _inherit_)
+|conum:
+font-kerning: none
+
+|font-size^[2]^
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|conum:
+font-size: $base-font-size
+
+|font-style^[2]^
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|conum:
+font-style: normal
+
+|line-height^[2]^
+|xref:language.adoc#values[Number] +
+(default: 1.15)
+|conum:
+line-height: 4 / 3
+
+|glyphs^[3]^
+|circled {vbar} filled {vbar} Unicode String ranges +
+(default: circled)
+|conum:
+glyphs: \u0031-\u0039
+|===
+1. Currently, the font must contain the circle numbers starting at glyph U+2460.
+2. font-family, font-kerning, font-size, font-style, and line-height are only used for markers in a colist.
+These properties are inherited for conums inside a verbatim block.
+3. The font must provide the required glyphs.
+The glyphs can be specified as a comma-separated list of ranges, where the range values are Unicode numbers (e.g., \u2460).
+Unicode escape sequences are recognized even if the value is not enclosed in double quotes.

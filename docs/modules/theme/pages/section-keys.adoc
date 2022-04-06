@@ -1,0 +1,21 @@
+= Section Keys
+:source-language: yaml
+
+The keys in this category control the style of a section body.
+
+.section keys
+[#key-prefix-section,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|indent
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[left,right\]] +
+(default: 0)
+|[source]
+section:
+  indent: [0.5in, 0]
+|===
+
+The `indent` keys applies to the section body only, excluding section titles and discrete headings.
+A single value gets applied to both the left and right side (e.g., `0.5in`).
+A two-value array configures the left and right side independently (e.g., `[0.5in, 0]`).

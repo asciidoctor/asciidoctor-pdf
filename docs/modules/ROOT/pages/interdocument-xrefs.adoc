@@ -1,0 +1,124 @@
+= Interdocument Xrefs
+
+An xref to another AsciiDoc document (i.e., an interdocument xref) will either become a link to the PDF file generated from that source document or an internal link to an anchor within the current document.
+Which one it becomes depends on whether the target has been included into the current document.
+This page describes these two scenarios.
+
+== Referencing another document
+
+If the target PDF is generated from an AsciiDoc file, you can make a reference to that PDF using the xref macro.
+
+Let's assume the current document is [.path]_a.adoc_ and the PDF you want to reference is generated from [.path]_b.adoc_.
+Here's how you can make a reference from the PDF generated from [.path]_a.adoc_ to the PDF generated from [.path]_b.adoc_.
+
+[source,asciidoc]
+----
+A link to xref:b.adoc[b].
+----
+
+This xref macro is translated to a link that refers to [.path]_b.pdf_.
+
+If there's an anchor you want to target in [.path]_b.pdf_, for example _chapter-b_, you can describe it using a URL fragment just like you would with any URL.
+
+[source,asciidoc]
+----
+A link to xref:b.adoc#chapter-b[b].
+----
+
+WARNING: Linking to a named anchor isn't supported by all PDF viewers.
+Some viewers (like Firefox) only support relative links when the PDF is accessed through a web server.
+To verify it's working, test the PDF in Firefox and served through a local web server.
+
+PDF supports a variety of PDF link open parameters you can control using the URL fragment.
+For example, you can configure the PDF to open on a specific page using the special fragment `page=<N>`, where `<N>` is the 1-based page number.
+
+[source,asciidoc]
+----
+A link to page 2 of xref:b.adoc#page=2[b].
+----
+
+You can find a list of all the special fragment parameters in the https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/pdf_open_parameters.pdf#G4.1500549[PDF Open Parameters^] reference.
+
+== Converting interdocument xrefs to internal xrefs
+
+If you're using this converter to generate a single PDF file from multiple source documents (combined using the include directive), references between those included documents must become internal references.
+Interdocument cross references (i.e., xrefs) will only successfully make that transition if you structure your document in accordance with the rules.
+
+Those rules are as follows:
+
+. The path segment of the interdocument xref must match the project-relative path of the included document
+. The reference must include the ID of the target element
+
+For instance, if your primary document contains the following include:
+
+[source,asciidoc]
+----
+\include::chapters/chapter-1.adoc[]
+----
+
+Then an interdocument xref to an anchor in that chapter must be expressed as:
+
+[source,asciidoc]
+----
+<<chapters/chapter-1.adoc#_anchor_name,Destination in Chapter 1>>
+----
+
+This rule holds regardless of which document the xref is located in.
+
+To resolve the interdocument xref, the converter first checks if the target matches the `docname` attribute.
+It then looks to see if the target matches one of the included files.
+(In both cases, it ignores the file extension).
+If Asciidoctor cannot resolve the target of an interdocument xref, it simply makes a link (like the HTML converter).
+
+Let's consider a complete example.
+Assume you are converting the following book document at the root of the project:
+
+[source,asciidoc]
+----
+= Book Title
+:doctype: book
+
+\include::chapters/chapter-1.adoc[]
+
+\include::chapters/chapter-2.adoc[]
+----
+
+Where the contents of chapter 1 is as follows:
+
+[source,asciidoc]
+----
+== Chapter 1
+
+We cover a little bit here.
+The rest you can find in <<chapters/chapter-2.adoc#_chapter_2,Chapter 2>>.
+----
+
+And the contents of chapter 2 is as follows:
+
+[source,asciidoc]
+----
+== Chapter 2
+
+Prepare to be educated.
+This chapter has it all!
+
+To begin, jump to <<chapters/chapter-2/first-steps.adoc#_first_steps,first steps>>.
+
+<<<
+
+\include::chapter-2/first-steps.adoc[]
+----
+
+And, finally, the contents of the nested include is as follows:
+
+[source,asciidoc]
+----
+=== First Steps
+
+Let's start small.
+----
+
+You'll find when you run this example that all the interdocument xrefs become internal references in the PDF.
+
+The reason both the path and anchor are required (even when linking to the top of a chapter) is so the interdocument xref works independent of the converter.
+In other words, it encodes the complete information about the reference so the converter can sort out where the target is in all circumstances.

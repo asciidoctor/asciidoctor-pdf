@@ -1,0 +1,89 @@
+= Source Highlighting Themes
+
+You can apply a bundled source highlighter theme to your source blocks or define and apply your own.
+
+== Using a bundled highlighting theme
+
+Rouge bundles several themes you can use to colorize your source blocks.
+To use one of these themes, first set the value of the `source-highlighter` document attribute to `rouge`.
+Then, specify the desired theme using the `rouge-style` document attribute.
+
+The following example demonstrates how to apply the monokai theme from Rouge to source blocks.
+
+[source,asciidoc]
+----
+:source-highlighter: rouge
+:rouge-style: monokai
+----
+
+You can generate a list of all available themes by running the following command:
+
+ $ ruby -e 'require :rouge.to_s; puts Rouge::Theme.registry.keys.sort.join ?\n'
+
+You can also find the list of themes in the Rouge source repository at https://github.com/rouge-ruby/rouge/tree/master/lib/rouge/themes.
+
+If the bundled themes don't suit your needs, you can define one of your own.
+
+== Define a custom highlighting theme
+
+A custom theme for Rouge is defined using a Ruby class.
+Start by creating a Ruby source file to define your theme.
+Name the file according to the name of your theme and put the file in a folder of your choice (e.g., [.path]_rouge_themes/custom.rb_).
+The name of the Ruby class doesn't matter, though it's customary to name it according to the name of the theme as well.
+
+.rouge_themes/custom.rb
+[source,ruby]
+----
+require 'rouge' unless defined? ::Rouge.version
+
+module Rouge; module Themes
+  class Custom < CSSTheme
+    name 'custom'
+
+    style Comment,           fg: '#008800', italic: true
+    style Error,             fg: '#a61717', bg: '#e3d2d2'
+    style Str,               fg: '#0000ff'
+    style Str::Char,         fg: '#800080'
+    style Num,               fg: '#0000ff'
+    style Keyword,           fg: '#000080', bold: true
+    style Operator::Word,    bold: true
+    style Name::Tag,         fg: '#000080', bold: true
+    style Name::Attribute,   fg: '#ff0000'
+    style Generic::Deleted,  fg: '#000000', bg: '#ffdddd', inline_block: true, extend: true
+    style Generic::Inserted, fg: '#000000', bg: '#ddffdd', inline_block: true, extend: true
+    style Text, {}
+  end
+end; end
+----
+
+Each style declaration accepts the following properties:
+
+* `fg` - sets the foreground (text) color
+* `bg` - sets the background color
+* `bold` - change the font weight to bold
+* `italic` - change the font style to italic
+* `underline` - add an underline to the text
+* `inline_block` - fill the background color to the height of the line (Asciidoctor PDF only)
+* `extend` - extend the background color to the end of the line for a line-oriented match (Asciidoctor PDF only)
+
+Colors are defined using hexadecimal format (e.g., #ff0000 for red).
+
+Use the `Text` token to set the background color of the source block and the default text color.
+
+The complete list of tokens can be found in the https://github.com/jneen/rouge/blob/master/lib/rouge/token.rb[token.rb] file from Rouge.
+Refer to the https://github.com/jneen/rouge/tree/master/lib/rouge/themes[bundled themes] to find more examples.
+
+Once you've defined your theme, you need to enable it use it using the `rouge-style` document attribute, which you specify in the document header or via the Asciidoctor CLI or API.
+
+[source,asciidoc]
+----
+:source-highlighter: rouge
+:rouge-style: custom
+----
+
+Finally, you need to activate your theme by requiring the theme file when you invoke Asciidoctor.
+
+ $ asciidoctor -r ./rouge_themes/custom.rb sample.adoc
+
+You should now see that the source code is highlighted to your liking.
+For more information about source highlighting with Rouge, refer to the https://rouge.jneen.net/[Rouge project page].

@@ -1,0 +1,10 @@
+= Verbatim Blocks
+
+Verbatim blocks are listing, literal, and source blocks.
+
+== Verbatim blocks and performance
+
+Verbatim blocks are rendered with a shaded background.
+In order to calculate the dimensions of the shaded region, Asciidoctor PDF has to "`dry run`" the block to determine how many pages it consumes.
+While this strategy has a low impact when processing shorter blocks, it can drastically deteriorate performance when processing a block that spans dozens of pages.
+As a general rule of thumb, you should avoid creating verbatim blocks which span more than a handful of pages.

@@ -1,0 +1,58 @@
+= Measurement Units
+
+The default unit of measure for a PDF canvas is points (pt).
+However, humans like to think in units such as inches (in), centimeters (cm), or millimeters (mm).
+You can let the theme do this conversion for you automatically by adding a unit notation next to any number.
+
+== Default unit
+
+Several of the keys require a value in points (pt), the unit of measure for the PDF canvas.
+A point is defined as 1/72 of an inch.
+If you specify a number without any units, the units defaults to pt.
+
+== Supported units
+
+The following units are supported:
+
+|===
+|Unit |Suffix |Notes
+
+|Centimeter
+|cm
+|
+
+|Inches
+|in
+|
+
+|Millimeter
+|mm
+|
+
+|Percentage
+|%, vw, or vh
+|A percentage with the % unit is calculated relative to the width or height of the content area.
+Viewport-relative percentages (vw or vh units) are calculated as a percentage of the page width or height, respectively.
+Currently, percentage units can only be used for placing elements on the title page or for setting the width of a block image.
+
+|Points
+|pt
+|Default unit of measure when no unit is specified.
+|===
+
+== Specify a measurement unit
+
+Here's an example of how you can use inches to define the page margins:
+
+[source,yaml]
+----
+page:
+  margin: [0.75in, 1in, 0.75in, 1in]
+----
+
+The order of elements in a measurement array is the same as it is in CSS:
+
+. top
+. right
+. bottom
+. left

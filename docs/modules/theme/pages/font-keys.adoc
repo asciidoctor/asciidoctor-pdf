@@ -1,0 +1,82 @@
+= Font Keys
+
+== Font
+
+The font key is where you declare custom fonts (`catalog` key) and configure the fallback fonts (`fallbacks` key).
+
+The data format of the `catalog` key is a map.
+Each key is the name of the font that you can use to refer to the font elsewhere in the theme.
+The value is either a font path (which is used for all font styles) or another map that specifies a font path to each of the four font styles.
+You can also configure the `catalog` to merge entries from an inherited font catalog.
+See <<extend-catalog>>.
+
+The data format of the `fallbacks` key is an array.
+The values of the array are the font names declared in the `catalog` (or a name inherited from another theme).
+These fallbacks are used, in the order listed, when a glyph cannot be found in the primary font for a given element.
+
+[cols="1,2,5l"]
+|===
+|Key |Value Type |Example
+
+|catalog
+|Map
+|font:
+catalog:
+Noto Serif:
+normal: GEM_FONTS_DIR/notoserif-regular-subset.ttf
+bold: GEM_FONTS_DIR/notoserif-bold-subset.ttf
+italic: GEM_FONTS_DIR/notoserif-italic-subset.ttf
+bold_italic: GEM_FONTS_DIR/notoserif-bold_italic-subset.ttf
+
+|fallbacks
+|Array
+|font:
+fallbacks:
+- M+ 1p Fallback
+- Noto Emoji
+|===
+
+[#extend-catalog]
+== Extending the font catalog
+
+If you define a xref:custom-font.adoc[custom font] in the font catalog in a theme that extends from `default`, and you want to continue to use the bundled fonts in your theme, you either have to redeclare the bundled fonts:
+
+.Redeclaring the bundle fonts in a custom theme
+[source,yaml]
+----
+extends: default
+font:
+  catalog:
+    Noto Serif:
+      normal: GEM_FONTS_DIR/notoserif-regular-subset.ttf
+      bold: GEM_FONTS_DIR/notoserif-bold-subset.ttf
+      italic: GEM_FONTS_DIR/notoserif-italic-subset.ttf
+      bold_italic: GEM_FONTS_DIR/notoserif-bold_italic-subset.ttf
+    M+ 1mn:
+      normal: GEM_FONTS_DIR/mplus1mn-regular-subset.ttf
+      bold: GEM_FONTS_DIR/mplus1mn-bold-subset.ttf
+      italic: GEM_FONTS_DIR/mplus1mn-italic-subset.ttf
+      bold_italic: GEM_FONTS_DIR/mplus1mn-bold_italic-subset.ttf
+    Your Font:
+      normal: /path/to/your/font.ttf
+heading:
+  font-family: Your Font
+----
+
+or you need to set `merge: true` above your font definitions:
+
+.Merging with the inherited font catalog
+[source,yaml]
+----
+extends: default
+font:
+  catalog:
+    merge: true
+    Your Font:
+      normal: /path/to/your/font.ttf
+heading:
+  font-family: Your Font
+----
+
+If you're referring to a bundled font, you'll need to prefix the path with `GEM_FONTS_DIR` (or add it to the value of the `pdf-fontsdir` attribute) so the converter can find and register it.
+You can find the bundle font definitions in default theme.

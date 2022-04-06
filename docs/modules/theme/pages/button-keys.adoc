@@ -1,0 +1,74 @@
+= Button Macro Keys
+
+The keys in the `button` category apply to a button reference generated from the inline button macro.
+
+.button keys
+[#key-prefix-button,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|background-color
+|xref:color.adoc[Color] +
+(default: _not set_)
+|button:
+background-color: #0000ff
+
+|border-color^[1]^
+|xref:color.adoc[Color] +
+(default: _not set_)
+|button:
+border-color: #cccccc
+
+|border-offset^[2]^
+|xref:language.adoc#values[Number] +
+(default: 0)
+|button:
+border-offset: 1.5
+
+|border-radius
+|xref:language.adoc#values[Number] +
+(default: 0)
+|button:
+border-radius: 2
+
+|border-width
+|xref:language.adoc#values[Number] +
+(default: $base-border-width)
+|button:
+border-width: 0.5
+
+|content^[3]^
+|xref:quoted-string.adoc[Quoted string] +
+(default: "%s")
+|button:
+content: "[\u2009%s\u2009]"
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|button:
+font-color: #ffffff
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: Courier)
+|button:
+font-family: M+ 1mn
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|button:
+font-size: 12
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: bold)
+|button:
+font-style: normal
+|===
+
+1. The border is only used if a border color is specified and the border width is not explicitly set to 0.
+2. The border offset is the amount that the background and border swells around the text.
+It does not affect the distance between the formatted phrase and the phrases that surround it.
+3. The character sequence `%s` in the content key gets replaced with the button label.

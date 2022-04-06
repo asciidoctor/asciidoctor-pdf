@@ -1,0 +1,27 @@
+= Syntax Highlighting
+
+[#install]
+== Install a syntax highlighter
+
+To syntax highlight source listings, you need to install Rouge, Pygments, or CodeRay.
+Choose one (or more) of the following:
+
+.Rouge (preferred, minimum version: 2.0.0)
+ $ gem install rouge
+
+.Pygments
+ $ gem install pygments.rb
+
+.CodeRay
+ $ gem install coderay
+
+[#activate]
+== Activate syntax highlighting
+
+Once you've installed a syntax highlighter, you need to activate it for a given document by setting the `source-highlighter` attribute in the document header and assigning it the keyword value of the applicable library.
+
+[source,asciidoc]
+----
+= Document Title
+:source-highlighter: rouge
+----
