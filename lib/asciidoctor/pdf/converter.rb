@@ -651,15 +651,18 @@ module Asciidoctor
         theme_font :heading, level: (hlevel = sect.level + 1) do
           align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
           if part
-            start_new_part sect unless @theme.heading_part_break_before == 'auto'
+            unless @theme.heading_part_break_before == 'auto'
+              start_new = true
+              start_new_part sect
+            end
           elsif chapterlike
-            if @theme.heading_chapter_break_before == 'auto'
-              start_new_chapter sect if @theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0]
-            else
+            if @theme.heading_chapter_break_before != 'auto' ||
+                (@theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0])
+              start_new = true
               start_new_chapter sect
             end
           end
-          unless at_page_top?
+          unless start_new || at_page_top?
             # FIXME: this height doesn't account for impact of text transform or inline formatting
             heading_height =
               (height_of_typeset_text title, line_height: (@theme[%(heading_h#{hlevel}_line_height)] || @theme.heading_line_height)) +
