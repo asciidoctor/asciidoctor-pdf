@@ -2535,4 +2535,99 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect big_cell_text[:y]).to be > bottom_cell_text[:y]
     end
   end
+
+  context 'Arrange block' do
+    it 'should advance table to next page to avoid it from breaking if %unbreakable option is set on table' do
+      pdf = to_pdf <<~EOS, analyze: true
+      image::tall.svg[pdfwidth=75mm]
+
+      [%unbreakable]
+      |===
+      | Column A | Column B
+
+      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+      |===
+      EOS
+
+      column_a_text = pdf.find_text 'Column A'
+      (expect column_a_text).to have_size 1
+      (expect column_a_text[0][:page_number]).to be 2
+      cell_a1_text = pdf.find_unique_text 'A1'
+      (expect cell_a1_text[:page_number]).to be 2
+    end
+
+    it 'should advance table with ID to next page to avoid it from breaking if %unbreakable option is set on table' do
+      pdf = to_pdf <<~EOS
+      image::tall.svg[pdfwidth=75mm]
+
+      [#t1%unbreakable]
+      |===
+      | Column A | Column B
+
+      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+      |===
+      EOS
+
+      (expect (table_dest = get_dest pdf, 't1')).not_to be_nil
+      (expect table_dest[:page_number]).to be 2
+    end
+
+    it 'should advance table with caption to next page to avoid it from breaking if %unbreakable option is set on table' do
+      pdf = to_pdf <<~EOS, analyze: true
+      image::tall.svg[pdfwidth=75mm]
+
+      .Title
+      [%unbreakable]
+      |===
+      | Column A | Column B
+
+      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+      |===
+      EOS
+
+      title_text = pdf.find_unique_text 'Table 1. Title'
+      (expect title_text[:page_number]).to be 2
+      column_a_text = pdf.find_text 'Column A'
+      (expect column_a_text).to have_size 1
+      (expect column_a_text[0][:page_number]).to be 2
+      cell_a1_text = pdf.find_unique_text 'A1'
+      (expect cell_a1_text[:page_number]).to be 2
+    end
+
+    it 'should keep caption with table if %breakable option is set on table' do
+      pdf = to_pdf <<~EOS, analyze: true
+      image::tall.svg[pdfwidth=80mm]
+
+      .Title that goes on #{['and on'] * 50 * ' '}
+      [%breakable]
+      |===
+      | Column A | Column B
+
+      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+      |===
+      EOS
+
+      title_text = pdf.find_unique_text %r/^Table 1\. /
+      (expect title_text[:page_number]).to be 2
+      column_a_text = pdf.find_text 'Column A'
+      (expect column_a_text).to have_size 1
+      (expect column_a_text[0][:page_number]).to be 2
+    end
+
+    it 'should keep ID with table if %breakable option is set on table' do
+      pdf = to_pdf <<~EOS, debug: true
+      image::tall.svg[pdfwidth=85mm]
+
+      [#t1%breakable]
+      |===
+      | Column A | Column B
+
+      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+      |===
+      EOS
+
+      table_dest = get_dest pdf, 't1'
+      (expect table_dest[:page_number]).to be 2
+    end
+  end
 end
