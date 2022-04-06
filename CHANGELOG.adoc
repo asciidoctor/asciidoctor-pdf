@@ -99,6 +99,7 @@ Bug Fixes::
 * sanitize values of PDF info values (#1594)
 * configure headings to inherit font styles from theme (#1604)
 * use conum font family defined in theme for conum in verbatim block (#1611)
+* apply font color and text transform from theme to terms in horizontal dlist (#1994)
 * prevent content of AsciiDoc table cell from overrunning content on subsequent pages (#1623)
 * account for top/bottom padding when computing height of AsciiDoc table cell
 * log error message if table cell is truncated (#1626)

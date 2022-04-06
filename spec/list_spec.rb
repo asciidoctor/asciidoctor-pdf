@@ -978,6 +978,23 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect foo_text[:y]).to eql bar_text[:y]
       end
 
+      # NOTE: font_size is not supported since it can impact the layout
+      it '.only should allow theme to control font properties of term' do
+        pdf_theme = {
+          description_list_term_font_style: 'italic',
+          description_list_term_font_color: 'AA0000',
+          description_list_term_text_transform: 'uppercase',
+        }
+        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        [horizontal]
+        term:: desc
+        EOS
+
+        term_text = pdf.find_unique_text 'TERM'
+        (expect term_text[:font_name]).to eql 'NotoSerif-Italic'
+        (expect term_text[:font_color]).to eql 'AA0000'
+      end
+
       it 'should allow theme to control line height of term' do
         input = <<~'EOS'
         [horizontal]
