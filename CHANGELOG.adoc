@@ -9,9 +9,9 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/main[co
 
 Enhancements::
 
-* make delimited blocks breakable by default; require the %unbreakable option on the block to retain the previous "`keep together`" behavior (#2004)
-* allow page numbering and running content to start after first page of a document without a title page by assigning an integer to the respective start_at theme key (#1644)
-* allow page numbering and running content to start after toc (wherever it is placed) by assigning the keyword "after-toc" to the respective start_at theme key (#1763)
+* make delimited blocks breakable by default; require the `unbreakable` option on the block to retain the previous "`keep together`" behavior (#2004, #578, #509, #240)
+* allow page numbering and running content to start after first page of a document without a title page by assigning an integer to the respective `start_at` theme key (#1644)
+* allow page numbering and running content to start after toc (wherever it is placed) by assigning the keyword `after-toc` to the respective `start_at` theme key (#1763)
 * allow theme to configure page numbering to start at cover (#1727)
 * allow theme to define the front and back cover images (#1584)
 * allow the front and back cover images to be defined using a data URI (#1584)
@@ -20,18 +20,18 @@ Enhancements::
 * allow theme to control font color of first line of abstract
 * allow theme to control background color and border offset (only for background) for links (#1705)
 * don't render index section if index is empty (i.e., there are no index entries)
-* allow title of special section to be hidden by setting "untitled" option on section
+* allow title of special section to be hidden by setting `untitled` option on section
 * stabilize font paths in built-in themes by prefixing paths with GEM_FONTS_DIR (#1568)
-* assign page-layout attribute in running content so it can be used select background per layout (#1570)
+* assign `page-layout` attribute in running content so it can be used to select a background per layout (#1570)
 * reset numbering of footnotes in each chapter; add chapter xreftext to label of footnote reference that refers to previous chapter (#1639)
 * add support for assigning the same font file to all font variants (i.e., styles) using the wildcard key (`*`) (#1588)
 * allow caption max-width to be set to percentage of content by passing argument to fit-content function (#1494)
 * allow theme to control text alignment of caption independent of box alignment (#1493)
-* set chapter-numeral attribute in running content on pages in chapter if sectnums attribute is set (#1373)
-* set part-numeral attribute in running content on pages in part if partnums attribute is set (#1373)
+* set `chapter-numeral` attribute in running content on pages in chapter if `sectnums` attribute is set (#1373)
+* set `part-numeral` attribute in running content on pages in part if `partnums` attribute is set (#1373)
 * add support for normal_italic font style (to reset font style to normal, then apply italic) (#1603)
 * honor text alignment roles (e.g., `text-center`) on block image (#1609)
-* disable running header and/or footer on toc pages if noheader and/or nofooter option is set on toc macro (#1378)
+* disable running header and/or footer on toc pages if `noheader` and/or `nofooter` option is set on toc macro (#1378)
 * add support for preamble toc placement
 * only insert macro toc at location of first toc macro
 * ignore requested pages not found in imported PDF (#1616)
@@ -44,28 +44,28 @@ Enhancements::
 * allow theme to configure number of index columns using `index_columns` key (#1663)
 * configure AsciiDoc table cell to inherit font properties from table and scale font size of nested blocks (#926)
 * scale font size of literal table cell (#1696)
-* add support for id attribute on link macro
-* add support for link attribute on icon macro (#1915)
+* add support for `id` attribute on link macro
+* add support for `link` attribute on icon macro (#1915)
 * allow theme to configure width of block border on ends separate from sides (#1693)
 * add additional glyphs to built-in fonts (heavy checkmark to fallback font; both checkmarks to monospaced font; numero sign to prose and fallback fonts) (#1625)
 * allow theme to specify text decoration style, color, and width for captions (globally)
 * allow admonition icon image to be remote (if allow-uri-read is set) or data URI (#1711)
 * allow theme to configure font color of unresolved footnote using unresolved role
 * show textual label on admonition if icon image fails to embed (#1741)
-* allow theme to disable title page by assigning false to title_page category key (#1754)
+* allow theme to disable title page by assigning false to `title_page` category key (#1754)
 * allow Rouge theme to be specified as theme class or instance (API only)
 * allow theme to control font size of dot leader in TOC
 * allow section to override outlinelevels for self and children using outlinelevels attribute on section
-* use value of author attribute for PDF info and pdfmark if locked by the API (#1778)
-* only extend theme in extends hierarchy once unless modified with !important (#1800)
+* use value of `author` attribute for PDF info and pdfmark if locked by the API (#1778)
+* only extend theme in extends hierarchy once unless modified with `!important` (#1800)
 * add print-optimized themes (default-for-print and default-for-print-with-fallback-font) (#1699)
 * add support for power operator in theme (with same precedence as multiply and divide) (#1813)
 * include floor and ceil match characters in fallback font (#1832) (*@oddhack*)
 * allow horizontal and vertical lines of table grid to be styled independently (#1875) (*@hextremist*)
 * allow theme to define the characters for typographical quotation marks (#1880) (*@klonfish*)
 * allow theme to control top margin of callout lists that immediately follow a code (i.e., listing, literal, or source) block (#1895)
-* introduce layout_general_heading to allow extended converter to access node (#1904)
-* use Document#authors to retrieve authors instead of extracting the information from the indexed document attributes
+* introduce `layout_general_heading` to allow extended converter to access node (#1904)
+* use `Document#authors` to retrieve authors instead of extracting the information from the indexed document attributes
 * add support for character references that contain both uppercase and lowercase hexadecimal characters (#1990) (*@etiwnad*)
 * log error and skip table instead of raising error if cell content cannot fit into column width of table (#2009)
 * extract `arrange_section` method to compute whether section title should be advanced to next page (#2023)
@@ -96,7 +96,7 @@ Bug Fixes::
 * only suggest installing prawn-gmagick gem if not loaded (#1578)
 * applying double border style to thematic break should honor border width
 * warn once instead of crashing if page background image cannot be embedded (#1780)
-* warn once instead of crashing if cache-uri is set but library is not available
+* warn once instead of crashing if `cache-uri` is set but library is not available
 * sanitize values of PDF info values (#1594)
 * configure headings to inherit font styles from theme (#1604)
 * use conum font family defined in theme for conum in verbatim block (#1611)
@@ -122,11 +122,11 @@ Bug Fixes::
 * correctly process a sequence of two or more callouts separated by spaces in a source block (#1898)
 * allow callouts sub to be disabled on source blocks (#1704)
 * show missing footnote reference in superscript
-* fix crash when icons=font and admonition_label_min_width is set in theme
+* fix crash when `icons=font` and `admonition_label_min_width` is set in theme
 * use oembed API over HTTPS to get thumbnail for Vimeo video
-* show link to Vimeo video if allow-uri-read attribute is not set
+* show link to Vimeo video if `allow-uri-read` attribute is not set
 * don't apply syntax highlighting if Rouge lexer fails to highlight source; show plain source instead
-* don't apply syntax highlighting to source block if specialchars sub is disabled
+* don't apply syntax highlighting to source block if `specialchars` sub is disabled
 * apply border bottom to correct table row when frame and grid are disabled (#1873)
 * allow caption max width to be set by theme to fixed value
 * fix crash when footnote is defined in section title with auto-generated ID
@@ -142,7 +142,7 @@ Bug Fixes::
 * compute font size for superscript and subscript correctly when parent element uses em and % units (#1745)
 * respect hyphenation exceptions when word is adjacent to non-word character (#1715)
 * fix crash when TOC is enabled and index is empty
-* align TOC section properly when index exceeds one page and section_indent is positive (#1735)
+* align TOC section properly when index exceeds one page and `section_indent` is positive (#1735)
 * fix left margin drift when indentation is active across a page break (#1735, #1949)
 * render image at end of section title in corresponding toc entry (#1752)
 * allow inline image to be enclosed in link macro (alt text was breaking parsing)
@@ -158,7 +158,7 @@ Bug Fixes::
 * show sensible error message if background image cannot be loaded (e.g., data is corrupt)
 * honor alignment role when aligning alt text for missing block image
 * don't crash when rendering alt text for block image if value of align attribute is invalid (#1781)
-* correctly scale down SVG that only marginally exceeds bounds of page when fit=scale-down
+* correctly scale down SVG that only marginally exceeds bounds of page when `fit=scale-down`
 * prevent font scale from compounding for nested blocks in AsciiDoc table cell (#2007)
 * don't suppress actual error message when theme cannot be loaded; may contain information about theme being extended
 * force inline image to fit within table cell when width is larger than available space (#1798)
@@ -168,24 +168,24 @@ Bug Fixes::
 * prevent PDF from being used as logo image on title page (since it cannot work properly anyway)
 * don't crash when generating TOC if section title is empty
 * escape closing square bracket around alt text of missing image so it doesn't get matched as part of a link macro
-* use value of author attribute in PDF info and pdfmark if authors attribute is not set (#1922)
-* honor pdf-folio-placement setting even when media=prepress (#1917)
-* honor pre-wrap role on phrase (#1927)
+* use value of `author` attribute in PDF info and pdfmark if `authors` attribute is not set (#1922)
+* honor `pdf-folio-placement` setting even when `media=prepress` (#1917)
+* honor `pre-wrap` role on phrase (#1927)
 * verify alignment of list marker in AsciiDoc table cell (#1965)
-* don't crash if valud of width attribute on image has invalid format (#1970)
+* don't crash if value of `width` attribute on image has invalid format (#1970)
 * don't render borders and backgrounds in scratch document
 
 Compliance::
 
 * drop support for Ruby < 2.5 (which includes JRuby 9.1) (#1681)
-* use YAML.safe_load from Ruby stdlib instead of safe_yaml gem
+* use `YAML.safe_load` from Ruby stdlib instead of `safe_yaml gem`
 * drop deprecated Pdf module alias in API (leaving only PDF)
 * remove deprecated "ascii" fonts; only bundle the more complete "subset" fonts
 * remove support for `<color>` tag in passthrough content; use `<font color="...">` instead (may affect themes)
 * remove asciidoctor-pdf/converter and asciidoctor-pdf/version shim scripts; use asciidoctor/pdf/converter and asciidoctor/pdf/version instead
 * rename Optimizer#generate_file method to Optimizer#optimize_file
-* drop support for deprecated pdf-style and pdf-stylesdir attributes (#1827)
-* drop use of the undocumented vertical_spacing key from the built-in themes
+* drop support for deprecated `pdf-style` and `pdf-stylesdir` attributes (#1827)
+* drop use of the undocumented `vertical_spacing` key from the built-in themes
 * remove unneeded _mb functions (e.g., `uppercase_mb`); multibyte support for upcase, downcase, and capitalize is now provided by corelib
 
 Build / Infrastructure::
@@ -675,7 +675,7 @@ Bug Fixes::
 * avoid call to super in prepended module to fix Ruby 1.9.3
 * look for correct file to require in bin script
 * upgrade prawn-icon from 1.3.0 to 1.4.0
-* upgrade rouge to 2.2.1 
+* upgrade rouge to 2.2.1
 * add concurrent-ruby to runtime dependencies for compatibility w/ Asciidoctor 1.5.8
 
 == 1.5.0.alpha.16 (2017-07-30) - @mojavelinux
