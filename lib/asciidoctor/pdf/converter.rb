@@ -647,42 +647,36 @@ module Asciidoctor
           title, _, subtitle = title.rpartition sep
           title = %(#{title}\n<em class="subtitle">#{subtitle}</em>)
         end
+        hlevel = sect.level + 1
+        align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
         chapterlike = !(part = sectname == 'part') && (sectname == 'chapter' || (sect.document.doctype == 'book' && sect.level == 1))
-        theme_font :heading, level: (hlevel = sect.level + 1) do
-          align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
-          if part
-            unless @theme.heading_part_break_before == 'auto'
-              start_new = true
-              start_new_part sect
-            end
-          elsif chapterlike
-            if @theme.heading_chapter_break_before != 'auto' ||
-                (@theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0])
-              start_new = true
-              start_new_chapter sect
-            end
+        hopts = { align: align, level: hlevel, outdent: !(part || chapterlike) }
+        if part
+          unless @theme.heading_part_break_before == 'auto'
+            start_new = true
+            theme_font(:heading, level: hlevel) { start_new_part sect }
           end
-          unless start_new || at_page_top?
-            # FIXME: this height doesn't account for impact of text transform or inline formatting
-            heading_height =
-              (height_of_typeset_text title, line_height: (@theme[%(heading_h#{hlevel}_line_height)] || @theme.heading_line_height)) +
-              (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
-              (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom)
-            heading_height += @theme.heading_min_height_after if sect.blocks? && @theme.heading_min_height_after
-            start_new_page unless cursor > heading_height
+        elsif chapterlike
+          if @theme.heading_chapter_break_before != 'auto' ||
+              (@theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0])
+            start_new = true
+            theme_font(:heading, level: hlevel) { start_new_chapter sect }
           end
-          # QUESTION: should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
-          sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
-          # QUESTION: should we just assign the section this generated id?
-          # NOTE: section must have pdf-anchor in order to be listed in the TOC
-          sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_pgnum}-#{y.ceil}))
-          add_dest_for_block sect, id: sect_anchor, y: (at_page_top? ? page_height : nil)
+        end
+        arrange_section sect, title, hopts unless start_new || at_page_top?
+        # QUESTION: should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
+        sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
+        # QUESTION: should we just assign the section this generated id?
+        # NOTE: section must have pdf-anchor in order to be listed in the TOC
+        sect.set_attr 'pdf-anchor', (sect_anchor = derive_anchor_from_id sect.id, %(#{start_pgnum}-#{y.ceil}))
+        add_dest_for_block sect, id: sect_anchor, y: (at_page_top? ? page_height : nil)
+        theme_font :heading, level: hlevel do
           if part
-            layout_part_title sect, title, align: align, level: hlevel
+            layout_part_title sect, title, hopts
           elsif chapterlike
-            layout_chapter_title sect, title, align: align, level: hlevel unless sect.special && (sect.option? 'untitled')
+            layout_chapter_title sect, title, hopts unless sect.special && (sect.option? 'untitled')
           else
-            layout_general_heading sect, title, align: align, level: hlevel, outdent: true
+            layout_general_heading sect, title, hopts
           end
         end
 
@@ -2865,6 +2859,19 @@ module Asciidoctor
       end
 
       alias start_new_part start_new_chapter
+
+      def arrange_section sect, title, opts
+        theme_font :heading, level: (hlevel = opts[:level]) do
+          # FIXME: this height doesn't account for impact of text transform or inline formatting
+          heading_height =
+            (height_of_typeset_text title, line_height: (@theme[%(heading_h#{hlevel}_line_height)] || @theme.heading_line_height)) +
+            (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
+            (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom)
+          heading_height += @theme.heading_min_height_after if sect.blocks? && @theme.heading_min_height_after
+          start_new_page unless cursor > heading_height
+          nil
+        end
+      end
 
       def layout_chapter_title node, title, opts = {}
         layout_general_heading node, title, (opts.merge outdent: true)

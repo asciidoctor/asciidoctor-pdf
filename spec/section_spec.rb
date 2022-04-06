@@ -867,6 +867,46 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect content_text[:page_number]).to be 2
   end
 
+  it 'should allow arrange_section to be reimplemented to keep section with content that follows' do
+    backend = nil
+    create_class (Asciidoctor::Converter.for 'pdf') do
+      register_for (backend = %(pdf#{object_id}).to_sym)
+      def arrange_section sect, title, opts
+        orphaned = nil
+        dry_run single_page: true do
+          start_page = page
+          theme_font(:heading, level: opts[:level]) { layout_general_heading sect, title, opts }
+          next if page != start_page
+          page.tare_content_stream
+          orphaned = stop_if_first_page_empty { traverse sect }
+        end
+        start_new_page if orphaned
+      end
+    end
+
+    pdf = to_pdf <<~EOS, backend: backend, analyze: true
+    == Section A
+
+    image::tall.svg[pdfwidth=70mm]
+
+    == Section B
+
+    [%unbreakable]
+    --
+    keep
+
+    this
+
+    together
+    --
+    EOS
+
+    section_b_text = pdf.find_unique_text 'Section B'
+    (expect section_b_text[:page_number]).to be 2
+    content_text = pdf.find_unique_text 'keep'
+    (expect content_text[:page_number]).to be 2
+  end
+
   it 'should not add break before chapter if heading-chapter-break-before key in theme is auto' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_chapter_break_before: 'auto' }, analyze: true
     = Document Title
