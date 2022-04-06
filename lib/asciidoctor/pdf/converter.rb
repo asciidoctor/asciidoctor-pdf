@@ -1179,9 +1179,11 @@ module Asciidoctor
           markers.pop
         when 'horizontal'
           table_data = []
-          term_padding = desc_padding = term_line_metrics = term_inline_format = term_kerning = nil
+          term_padding = term_font_color = term_transform = desc_padding = term_line_metrics = term_inline_format = term_kerning = nil
           max_term_width = 0
           theme_font :description_list_term do
+            term_font_color = @font_color
+            term_transform = @text_transform
             term_inline_format = (term_font_styles = font_styles).empty? ? true : [inherited: { styles: term_font_styles }]
             term_line_metrics = calc_line_metrics @theme.description_list_term_line_height || @theme.base_line_height
             term_padding = [term_line_metrics.padding_top, 10, @theme.prose_margin_bottom * 0.5 + term_line_metrics.padding_bottom, 10]
@@ -1190,11 +1192,12 @@ module Asciidoctor
           end
           node.items.each do |terms, desc|
             term_text = terms.map(&:text).join ?\n
+            term_text = transform_text term_text, term_transform if term_transform
             if (term_width = width_of term_text, inline_format: term_inline_format, kerning: term_kerning) > max_term_width
               max_term_width = term_width
             end
             row_data = [{
-              text_color: @font_color,
+              text_color: term_font_color,
               kerning: term_kerning,
               content: term_text,
               inline_format: term_inline_format,
