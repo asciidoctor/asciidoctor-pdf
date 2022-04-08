@@ -979,7 +979,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       end
 
       # NOTE: font_size is not supported since it can impact the layout
-      it '.only should allow theme to control font properties of term' do
+      it 'should allow theme to control font properties of term' do
         pdf_theme = {
           description_list_term_font_style: 'italic',
           description_list_term_font_color: 'AA0000',
