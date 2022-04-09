@@ -1235,11 +1235,11 @@ module Asciidoctor
           layout_caption node, category: :description_list, labeled: false if node.title?
 
           term_line_height = @theme.description_list_term_line_height || @theme.base_line_height
-          line_metrics = theme_font(:description_list_term) { calc_line_metrics term_line_height }
           term_spacing = @theme.description_list_term_spacing
+          term_height = theme_font(:description_list_term) { height_of_typeset_text 'A' }
+          prose_height = height_of_typeset_text 'A'
           node.items.each do |terms, desc|
-            # NOTE: don't orphan the terms (keep together terms and at least one line of content)
-            allocate_space_for_list_item line_metrics, (terms.size + 1), (term_spacing + 0.05)
+            advance_page if !at_page_top? && cursor < (nlines = terms.size + (desc && desc.text? ? 1 : 0)) * term_height + (nlines - 1) * term_spacing + (desc && !desc.text? && desc.blocks? ? term_spacing + prose_height : 0)
             theme_font :description_list_term do
               if (term_font_styles = font_styles).empty?
                 term_font_styles = nil
@@ -1482,8 +1482,8 @@ module Asciidoctor
         end
       end
 
-      def allocate_space_for_list_item line_metrics, number = 1, additional_gap = 0
-        advance_page if !at_page_top? && cursor < (line_metrics.height + line_metrics.leading + line_metrics.padding_top + additional_gap) * number
+      def allocate_space_for_list_item line_metrics
+        advance_page if !at_page_top? && cursor < line_metrics.height + line_metrics.leading + line_metrics.padding_top
       end
 
       def convert_image node, opts = {}
