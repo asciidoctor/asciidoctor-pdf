@@ -1236,21 +1236,32 @@ module Asciidoctor
 
           term_line_height = @theme.description_list_term_line_height || @theme.base_line_height
           line_metrics = theme_font(:description_list_term) { calc_line_metrics term_line_height }
+          term_spacing = @theme.description_list_term_spacing
           node.items.each do |terms, desc|
             # NOTE: don't orphan the terms (keep together terms and at least one line of content)
-            allocate_space_for_list_item line_metrics, (terms.size + 1), (@theme.description_list_term_spacing + 0.05)
+            allocate_space_for_list_item line_metrics, (terms.size + 1), (term_spacing + 0.05)
             theme_font :description_list_term do
               if (term_font_styles = font_styles).empty?
                 term_font_styles = nil
               end
-              terms.each do |term|
+              terms.each_with_index do |term, idx|
                 # QUESTION: should we pass down styles in other calls to layout_prose
-                layout_prose term.text, margin_top: 0, margin_bottom: @theme.description_list_term_spacing, align: :left, line_height: term_line_height, normalize_line_height: true, styles: term_font_styles
+                layout_prose term.text, margin_top: (idx > 0 ? term_spacing : 0), margin_bottom: 0, align: :left, line_height: term_line_height, normalize_line_height: true, styles: term_font_styles
               end
             end
             indent @theme.description_list_description_indent do
-              traverse_list_item desc, :dlist_desc, normalize_line_height: true
+              margin_bottom term_spacing
+              traverse_list_item desc, :dlist_desc, normalize_line_height: true, margin_bottom: (node.items[-1][1] == desc && !desc.blocks? ? 0 : nil)
             end if desc
+          end
+          if node.nested? && node.parent.parent.outline?
+            if node.parent.parent.items[-1].blocks[-1] == node
+              margin_bottom @theme.prose_margin_bottom - @theme.outline_list_item_spacing
+            else
+              margin_bottom @theme.prose_margin_bottom
+            end
+          else
+            margin_bottom @theme.prose_margin_bottom
           end
         end
       end
