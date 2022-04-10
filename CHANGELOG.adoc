@@ -78,6 +78,7 @@ Bug Fixes::
 * stop and restart conversion in scratch document once the code determines the block does not fit in the available space (#2003)
 * do not crash if item in horizontal description list has no desc
 * do not crash if item in unordered description list has no desc and do not append subject stop to term
+* ensure that `Time.parse` is loaded
 * resolve images in theme correctly when theme is loaded from classloader (JRuby only) (#1829)
 * log warning rather than crash if front cover image cannot be embedded (such as a broken SVG)
 * do not insert blank line in index when term is forced to break (#1665)

@@ -12,6 +12,7 @@ begin
 rescue LoadError # rubocop:disable Lint/SuppressedException
 end unless defined? GMagick::Image
 autoload :Set, 'set'
+require 'time' unless defined? Time.parse
 require_relative 'pdf/measurements'
 require_relative 'pdf/sanitizer'
 require_relative 'pdf/text_transformer'
