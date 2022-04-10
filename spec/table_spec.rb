@@ -2615,7 +2615,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should keep ID with table if %breakable option is set on table' do
-      pdf = to_pdf <<~EOS, debug: true
+      pdf = to_pdf <<~EOS
       image::tall.svg[pdfwidth=85mm]
 
       [#t1%breakable]
