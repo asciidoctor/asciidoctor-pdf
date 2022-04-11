@@ -146,6 +146,53 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     (expect to_file).to visually_match 'verse-border-and-background-color.pdf'
   end
 
+  it 'should apply correct padding around content' do
+    input = <<~'EOS'
+    [verse]
+    ____
+    first
+
+    last
+    ____
+    EOS
+
+    pdf = to_pdf input, analyze: true
+    lines = (to_pdf input, analyze: :line).lines
+    (expect lines).to have_size 1
+    top = lines[0][:from][:y]
+    bottom = lines[0][:to][:y]
+    left = lines[0][:from][:x]
+    text_top = (pdf.find_unique_text 'first').yield_self {|it| it[:y] + it[:font_size] }
+    text_bottom = (pdf.find_unique_text 'last')[:y]
+    text_left = (pdf.find_unique_text 'first')[:x]
+    (expect (top - text_top).to_f).to be < 2
+    (expect (text_bottom - bottom).to_f).to (be_within 1).of 8.0
+    (expect (text_left - left).to_f).to eql 12.0
+  end
+
+  it 'should apply correct padding around content when using base theme' do
+    input = <<~'EOS'
+    ____
+    first
+
+    last
+    ____
+    EOS
+
+    pdf = to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: true, debug: true
+    lines = (to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: :line).lines
+    (expect lines).to have_size 1
+    top = lines[0][:from][:y]
+    bottom = lines[0][:to][:y]
+    left = lines[0][:from][:x]
+    text_top = (pdf.find_unique_text 'first').yield_self {|it| it[:y] + it[:font_size] }
+    text_bottom = (pdf.find_unique_text 'last')[:y]
+    text_left = (pdf.find_unique_text 'first')[:x]
+    (expect (top - text_top).to_f).to (be_within 2).of 8.0
+    (expect (text_bottom - bottom).to_f).to (be_within 2).of 8.0
+    (expect (text_left - left).to_f).to eql 12.0
+  end
+
   it 'should split border when block is split across pages', visual: true do
     pdf_theme = {
       verse_border_left_width: 0,
