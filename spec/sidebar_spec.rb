@@ -66,6 +66,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     text_bottom = (pdf.find_unique_text 'last')[:y]
     text_left = (pdf.find_unique_text 'first')[:x]
     (expect (top - text_top).to_f).to (be_within 1.5).of 12.0
+    (expect (text_bottom - bottom).to_f).to (be_within 1).of 15.0 # extra padding is descender
     (expect (text_left - left).to_f).to eql 15.0
   end
 
@@ -88,6 +89,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     text_bottom = (pdf.find_unique_text 'last')[:y]
     text_left = (pdf.find_unique_text 'first')[:x]
     (expect (top - text_top).to_f).to (be_within 1).of 12.0
+    (expect (text_bottom - bottom).to_f).to (be_within 1).of 15.0 # extra padding is descender
     (expect (text_left - left).to_f).to eql 12.0
   end
 
