@@ -45,6 +45,52 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     (expect to_file).to visually_match 'sidebar-border-style-dotted.pdf'
   end
 
+  it 'should add correct padding around content when using default theme' do
+    input = <<~'EOS'
+    ****
+    first
+
+    last
+    ****
+    EOS
+
+    pdf = to_pdf input, analyze: true
+    lines = (to_pdf input, analyze: :line).lines
+
+    (expect lines).to have_size 4
+    (expect lines.map {|it| it[:color] }.uniq).to eql ['E1E1E1']
+    (expect lines.map {|it| it[:width] }.uniq).to eql [0.5]
+    top, bottom = lines.map {|it| [it[:from][:y], it[:to][:y]] }.flatten.yield_self {|it| [it.max, it.min] }
+    left = lines.map {|it| [it[:from][:x], it[:to][:x]] }.flatten.min
+    text_top = (pdf.find_unique_text 'first').yield_self {|it| it[:y] + it[:font_size] }
+    text_bottom = (pdf.find_unique_text 'last')[:y]
+    text_left = (pdf.find_unique_text 'first')[:x]
+    (expect (top - text_top).to_f).to (be_within 1.5).of 12.0
+    (expect (text_left - left).to_f).to eql 15.0
+  end
+
+  it 'should add equal padding around content when using base theme' do
+    pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'base' }, analyze: true
+    ****
+    first
+
+    last
+    ****
+    EOS
+
+    boundaries = (pdf.extract_graphic_states pdf.pages[0][:raw_content])[0]
+      .select {|l| l.end_with? 'l' }
+      .map {|l| l.split.yield_self {|it| { x: it[0].to_f, y: it[1].to_f } } }
+    (expect boundaries).to have_size 4
+    top, bottom = boundaries.map {|it| it[:y] }.yield_self {|it| [it.max, it.min] }
+    left = boundaries.map {|it| it[:x] }.min
+    text_top = (pdf.find_unique_text 'first').yield_self {|it| it[:y] + it[:font_size] }
+    text_bottom = (pdf.find_unique_text 'last')[:y]
+    text_left = (pdf.find_unique_text 'first')[:x]
+    (expect (top - text_top).to_f).to (be_within 1).of 12.0
+    (expect (text_left - left).to_f).to eql 12.0
+  end
+
   it 'should use block title as heading of sidebar block' do
     input = <<~'EOS'
     .Sidebar Title
