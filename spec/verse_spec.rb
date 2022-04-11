@@ -172,6 +172,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
 
   it 'should apply correct padding around content when using base theme' do
     input = <<~'EOS'
+    [verse]
     ____
     first
 
