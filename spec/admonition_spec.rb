@@ -993,6 +993,60 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-background-color.pdf'
     end
 
+    it 'should apply correct padding around content' do
+      pdf_theme = { admonition_background_color: 'EEEEEE' }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      :icons: font
+
+      [NOTE]
+      ====
+      first
+
+      last
+      ====
+      EOS
+
+      boundaries = (pdf.extract_graphic_states pdf.pages[0][:raw_content])[0]
+        .select {|l| l.end_with? 'l' }
+        .map {|l| l.split.yield_self {|it| { x: it[0].to_f, y: it[1].to_f } } }
+      (expect boundaries).to have_size 4
+      top, bottom = boundaries.map {|it| it[:y] }.yield_self {|it| [it.max, it.min] }
+      left = boundaries.map {|it| it[:x] }.min
+      text_top = (pdf.find_unique_text 'first').yield_self {|it| it[:y] + it[:font_size] }
+      text_bottom = (pdf.find_unique_text 'last')[:y]
+      text_left = (pdf.find_unique_text 'first')[:x]
+      (expect (top - text_top).to_f).to (be_within 2).of 4.0
+      (expect (text_bottom - bottom).to_f).to (be_within 2).of 8.0 # extra padding is descender
+      (expect (text_left - left).to_f).to eql 72.0
+    end
+
+    it 'should apply correct padding around content when using base theme' do
+      pdf_theme = { extends: 'base', admonition_background_color: 'EEEEEE' }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      :icons: font
+
+      [NOTE]
+      ====
+      first
+
+      last
+      ====
+      EOS
+
+      boundaries = (pdf.extract_graphic_states pdf.pages[0][:raw_content])[0]
+        .select {|l| l.end_with? 'l' }
+        .map {|l| l.split.yield_self {|it| { x: it[0].to_f, y: it[1].to_f } } }
+      (expect boundaries).to have_size 4
+      top, bottom = boundaries.map {|it| it[:y] }.yield_self {|it| [it.max, it.min] }
+      left = boundaries.map {|it| it[:x] }.min
+      text_top = (pdf.find_unique_text 'first').yield_self {|it| it[:y] + it[:font_size] }
+      text_bottom = (pdf.find_unique_text 'last')[:y]
+      text_left = (pdf.find_unique_text 'first')[:x]
+      (expect (top - text_top).to_f).to (be_within 1).of 4.0
+      (expect (text_bottom - bottom).to_f).to (be_within 1).of 8.0 # extra padding is descender
+      (expect (text_left - left).to_f).to eql 72.0
+    end
+
     it 'should allow theme to disable column rule by setting color to nil' do
       pdf_theme = { admonition_column_rule_color: nil }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
