@@ -165,6 +165,13 @@ Then, install the gem from RubyGems.org using the following command:
 
  $ gem install asciidoctor-pdf
 
+If you're using Ruby 3.1 or better, you must also install the matrix gem until Prawn 2.5.0 or better is released.
+
+ $ gem install matrix
+
+The matrix gem used to be bundled in the Ruby distribution, but was split out starting in Ruby 3.1.
+This requirement will be lifted once Prawn declares it as a runtime dependency.
+
 ==== Installation Troubleshooting
 
 If you get a permission error while installing the gem, such as the one below, it's likely you're attempting to install the gem directly into your system.
