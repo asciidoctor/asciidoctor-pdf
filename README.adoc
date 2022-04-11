@@ -110,7 +110,7 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 * Must use development version of prawn for error to include font name when requested font style is missing
 * Must use Ruby >= 2.4 for natural cross references to work with non-ASCII titles
 * AsciiDoc table cell leaves padding below last block (due to lack of margin collapsing)
-* Prawn does not support double-wide box drawing glyphs correctly, so box drawings aren't aligned properly in verbatim blocks (see https://github.com/prawnpdf/prawn/issues/1002[prawn#1002]
+* Prawn does not support double-wide box drawing glyphs correctly, so box drawings aren't aligned properly in verbatim blocks (see https://github.com/prawnpdf/prawn/issues/1002[prawn#1002])
 * Orphan / widow support is limited; a page break can occur between a section title and its section content, a table caption and the caption, etc.; use a manual page break to avoid
 * If a no-break hyphen is surrounded by formatted text on both sides (or is formatted individually), it will not prevent a line break
 * Images cannot float
