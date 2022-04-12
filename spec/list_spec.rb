@@ -44,6 +44,24 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect (pdf.find_unique_text 'level one')[:x]).to eql (pdf.find_unique_text 'back to level one')[:x]
     end
 
+    it 'should use list item spacing between lineal lists' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      * yak
+      * foo
+       ** bar
+      * yin
+       ** yang
+      EOS
+
+      item_texts = pdf.find_text %r/^\p{Alpha}/
+      (expect item_texts).to have_size 5
+      item_spacings = []
+      0.upto item_texts.length - 2 do |idx|
+        item_spacings << ((item_texts[idx][:y] - item_texts[idx + 1][:y]).round 2)
+      end
+      (expect item_spacings.uniq).to eql [21.78]
+    end
+
     it 'should disable indent for list if outline_list_indent is 0' do
       pdf = to_pdf <<~'EOS', pdf_theme: { outline_list_indent: 0 }, analyze: true
       before
