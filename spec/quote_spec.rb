@@ -210,7 +210,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     ____
     EOS
 
-    pdf = to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: true, debug: true
+    pdf = to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: true
     lines = (to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: :line).lines
     (expect lines).to have_size 1
     top = lines[0][:from][:y]

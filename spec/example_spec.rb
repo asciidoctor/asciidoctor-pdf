@@ -196,7 +196,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     ====
     EOS
 
-    pdf = to_pdf input, analyze: true, debug: true
+    pdf = to_pdf input, analyze: true
     lines = (to_pdf input, analyze: :line).lines
 
     (expect lines).to have_size 4
