@@ -144,7 +144,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect text[-1][:y]).to be < 60
   end
 
-  it 'should place footnotes at end of page if start on following page' do
+  it 'should place footnotes at bottom of page if start on following page' do
     pdf = with_content_spacer 10, 700 do |spacer_path|
       to_pdf <<~EOS, pdf_theme: { page_margin: 50 }, analyze: true
       image::#{spacer_path}[]
@@ -163,6 +163,45 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     last_page_texts = pdf.find_text page_number: 2
     footnotes_height = (last_page_texts[0][:y] + last_page_texts[0][:font_size]) - last_page_texts[-1][:y]
     (expect first_footnote[:y]).to be < (footnotes_height + 50)
+  end
+
+  it 'should put footnotes beyond margin below last block of content' do
+    pdf_theme = { sidebar_background_color: 'transparent' }
+    input = <<~'EOS'
+    About this thing.footnote:[More about this thing.]
+
+    image::tall.svg[pdfwidth=76.98mm]
+
+    ****
+    sidebar
+    ****
+    EOS
+
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
+    (expect pdf.pages).to have_size 1
+    footnote_text = pdf.find_unique_text %r/More about /
+    footnote_text_top = footnote_text[:y] + footnote_text[:font_size]
+    content_bottom_y = horizontal_lines[-1][:from][:y]
+    (expect content_bottom_y - footnote_text_top).to be > 12.0
+    (expect content_bottom_y - footnote_text_top).to be < 14.0
+  end
+
+  it 'should not allow footnotes to collapse margin below last block of content' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    About this thing.footnote:[More about this thing.]
+
+    image::tall.svg[pdfwidth=80mm]
+
+    Some other content.
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    main_text = pdf.find_unique_text %r/^About /
+    footnote_text = pdf.find_unique_text %r/More about /
+    (expect main_text[:page_number]).to eql 1
+    (expect footnote_text[:page_number]).to eql 2
   end
 
   it 'should not move footnotes down if height exceeds height of page' do
