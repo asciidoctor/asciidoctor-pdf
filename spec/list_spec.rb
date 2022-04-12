@@ -1161,6 +1161,85 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
         (expect to_file).to visually_match 'list-horizontal-dlist.pdf'
       end
+
+      it 'should correctly compute height of attached delimited block inside dlist at page top' do
+        pdf_theme = { sidebar_background_color: 'transparent' }
+        input = <<~'EOS'
+        [horizontal]
+        first term::
+        +
+        ****
+        sidebar inside list
+        ****
+
+        ****
+        sidebar outside list
+        ****
+        EOS
+
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+        horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+          .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
+        (expect horizontal_lines).to have_size 4
+        inside_sidebar_height = horizontal_lines[0][:from][:y] - horizontal_lines[1][:from][:y]
+        outside_sidebar_height = horizontal_lines[2][:from][:y] - horizontal_lines[3][:from][:y]
+        (expect (inside_sidebar_height.round 2)).to eql (outside_sidebar_height.round 2)
+      end
+
+      it 'should correctly compute height of attached delimited block inside dlist below page top' do
+        pdf_theme = { sidebar_background_color: 'transparent' }
+        input = <<~'EOS'
+        ****
+        sidebar outside list
+        ****
+
+        [horizontal]
+        first term::
+        +
+        ****
+        sidebar inside list
+        ****
+        EOS
+
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+        horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+          .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
+        (expect horizontal_lines).to have_size 4
+        outside_sidebar_height = horizontal_lines[0][:from][:y] - horizontal_lines[1][:from][:y]
+        inside_sidebar_height = horizontal_lines[2][:from][:y] - horizontal_lines[3][:from][:y]
+        (expect (inside_sidebar_height.round 2)).to eql (outside_sidebar_height.round 2)
+      end
+
+      it 'should leave correct spacing after last attached block' do
+        pdf_theme = { sidebar_background_color: 'transparent' }
+        input = <<~'EOS'
+        [horizontal]
+        first term::
+        +
+        ****
+        sidebar for first term
+        ****
+
+        second term::
+        +
+        ****
+        sidebar for second term
+        ****
+
+        ****
+        sidebar outside list
+        ****
+        EOS
+
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true, debug: true
+        horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+          .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
+        (expect horizontal_lines).to have_size 6
+        item_spacing = horizontal_lines[1][:from][:y] - horizontal_lines[2][:from][:y]
+        (expect item_spacing.to_f).to eql 18.0 # FIXME: this should only be 6.0
+        spacing_below_list = horizontal_lines[3][:from][:y] - horizontal_lines[4][:from][:y]
+        (expect spacing_below_list.to_f).to eql 24.0 # FIXME: this should only be 12.0
+      end
     end
 
     context 'Unordered' do
