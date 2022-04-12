@@ -1177,7 +1177,6 @@ describe 'Asciidoctor::PDF::Converter - List' do
         ****
         EOS
 
-        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
           .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
         (expect horizontal_lines).to have_size 4
@@ -1201,7 +1200,6 @@ describe 'Asciidoctor::PDF::Converter - List' do
         ****
         EOS
 
-        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
           .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
         (expect horizontal_lines).to have_size 4
@@ -1231,14 +1229,13 @@ describe 'Asciidoctor::PDF::Converter - List' do
         ****
         EOS
 
-        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true, debug: true
         horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
           .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
         (expect horizontal_lines).to have_size 6
         item_spacing = horizontal_lines[1][:from][:y] - horizontal_lines[2][:from][:y]
-        (expect item_spacing.to_f).to eql 18.0 # FIXME: this should only be 6.0
         spacing_below_list = horizontal_lines[3][:from][:y] - horizontal_lines[4][:from][:y]
-        (expect spacing_below_list.to_f).to eql 24.0 # FIXME: this should only be 12.0
+        (expect item_spacing.to_f).to eql 18.0 # FIXME: ideally, this should be 12.0
+        (expect spacing_below_list.to_f).to eql 24.0 # FIXME: ideally, this should be 12.0
       end
     end
 
