@@ -156,7 +156,7 @@ abstract:
 admonition:
   column_rule_color: $base_border_color
   column_rule_width: $base_border_width
-  padding: [0, $horizontal_rhythm, 0, $horizontal_rhythm]
+  padding: [$vertical_rhythm / 3.0, $horizontal_rhythm, $vertical_rhythm / 3.0, $horizontal_rhythm]
   #icon:
   #  tip:
   #    name: far-lightbulb
@@ -170,8 +170,7 @@ blockquote:
   border_color: $base_border_color
   border_width: 0
   border_left_width: 5
-  # FIXME disable negative padding bottom once margin collapsing is implemented
-  padding: [0, $horizontal_rhythm, $block_margin_bottom * -0.75, $horizontal_rhythm + $blockquote_border_left_width / 2]
+  padding: [0, $horizontal_rhythm, $block_margin_bottom * 0.25, $horizontal_rhythm + $blockquote_border_left_width / 2]
   cite:
     font_size: $base_font_size_small
     font_color: $role_subtitle_font_color
@@ -210,8 +209,7 @@ example:
   border_radius: $base_border_radius
   border_width: 0.75
   background_color: $page_background_color
-  # FIXME reenable padding bottom once margin collapsing is implemented
-  padding: [$vertical_rhythm, $horizontal_rhythm, 0, $horizontal_rhythm]
+  padding: [$vertical_rhythm, $horizontal_rhythm, $vertical_rhythm, $horizontal_rhythm]
 image:
   align: left
 prose:
@@ -221,8 +219,7 @@ sidebar:
   border_color: E1E1E1
   border_radius: $base_border_radius
   border_width: $base_border_width
-  # FIXME reenable padding bottom once margin collapsing is implemented
-  padding: [$vertical_rhythm, $vertical_rhythm * 1.25, 0, $vertical_rhythm * 1.25]
+  padding: [$vertical_rhythm, $vertical_rhythm * 1.25, $vertical_rhythm, $vertical_rhythm * 1.25]
   title:
     align: center
     font_color: $heading_font_color

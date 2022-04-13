@@ -30,7 +30,8 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     (expect (pdf.find_unique_text 'before block')[:page_number]).to be 1
     (expect (pdf.find_unique_text 'after block')[:page_number]).to be 1
     gs = (pdf.extract_graphic_states pages[0][:raw_content])[0]
-    (expect gs).to have_background color: 'FFFFCC', top_left: [50.0, 714.22], bottom_right: [562.0, 702.22]
+    # NOTE: height is equivalent to top + bottom padding
+    (expect gs).to have_background color: 'FFFFCC', top_left: [50.0, 714.22], bottom_right: [562.0, 690.22]
   end
 
   it 'should not draw backgrounds and borders in scratch document' do
@@ -98,6 +99,48 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     scratch_pdf_output = scratch_pdf.render
     scratch_pdf = (EnhancedPDFTextInspector.analyze scratch_pdf_output)
     (expect scratch_pdf.pages[0][:raw_content]).to include %(/DeviceRGB cs\n0.8 0.8 0.8 scn\n0.0 0.0 612.0 792.0 re)
+  end
+
+  it 'should not add bottom margin to last block or styled paragraph in enclosure that supports blocks' do
+    pdf_theme = {
+      sidebar_background_color: 'transparent',
+      admonition_border_color: 'EEEEEE',
+      admonition_border_width: 0.5,
+      admonition_padding: 12,
+      blockquote_border_width: 0.5,
+      blockquote_border_left_width: 0,
+      blockquote_font_size: 10.5,
+      blockquote_padding: 12,
+      code_padding: 12,
+    }
+    %w(==== **** ____ ---- .... [NOTE]==== example sidebar quote NOTE).each do |style|
+      block_lines = []
+      if style.start_with? '['
+        delim = (style.split ']', 2)[1]
+        block_lines << %([#{style.slice 1, (style.index ']') - 1}])
+        block_lines << delim
+        block_lines << 'content'
+        block_lines << delim
+      elsif /\p{Alpha}/ =~ style.chr
+        block_lines << %([#{style}])
+        block_lines << 'content'
+      else
+        block_lines << style
+        block_lines << 'content'
+        block_lines << style
+      end
+      input = <<~EOS
+      ******
+      #{block_lines * ?\n}
+      ******
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+        .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
+      (expect horizontal_lines[-2][:from][:y] - horizontal_lines[-1][:from][:y]).to eql 12.0
+      (expect (pdf.find_unique_text 'content')[:y] - horizontal_lines[-2][:from][:y]).to (be_within 1).of 15.0
+    end
   end
 
   describe 'unbreakable block' do
@@ -1549,7 +1592,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         last_content_bottom_y = last_content[:y]
         (expect border_bottom_y).to be < last_content_bottom_y
         padding_below = last_content_bottom_y - border_bottom_y
-        (expect padding_below).to ((be_within 2).of 10)
+        (expect padding_below).to be < 2
         (expect (pdf.find_text 'block content')[0][:font_size]).to eql 5.25
         (expect (pdf.find_text 'table cell')[0][:font_size]).to eql 5.25
       end
@@ -1585,7 +1628,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect (pdf.find_unique_text 'after table')[:page_number]).to be 2
         (expect (pdf.find_text 'block content')[0][:page_number]).to be 2
         (expect (pdf.find_unique_text 'block content end')[:page_number]).to be 2
-        table_edges_expected = { x: [36.0, 576.0], y: [756.0, 278.0] }
+        table_edges_expected = { x: [36.0, 576.0], y: [756.0, 290.0] }
         block_edges_expected = { x: [41.0, 571.0], y: [751.0, 294.52] }
         table_border_lines = lines.select {|it| it[:color] == 'DDDDDD' }
         (expect table_border_lines.map {|it| it[:page_number] }.uniq).to eql [2]
@@ -1638,7 +1681,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect (pdf.find_unique_text 'before block')[:page_number]).to be 2
         (expect (pdf.find_text 'block content')[0][:page_number]).to be 2
         (expect (pdf.find_unique_text 'block content end')[:page_number]).to be 2
-        table_edges_expected = { x: [36.0, 576.0], y: [756.0, 250.0] }
+        table_edges_expected = { x: [36.0, 576.0], y: [756.0, 262.0] }
         block_edges_expected = { x: [41.0, 571.0], y: [723.22, 266.74] }
         table_border_lines = lines.select {|it| it[:color] == 'DDDDDD' }
         (expect table_border_lines.map {|it| it[:page_number] }.uniq).to eql [2]

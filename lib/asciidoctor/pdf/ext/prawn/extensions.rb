@@ -555,13 +555,7 @@ module Asciidoctor
             bounds.add_left_padding p_left
             bounds.add_right_padding p_right
             yield
-            # NOTE: support negative bottom padding to shave bottom margin of last child
-            # NOTE: this doesn't work well at a page boundary since not all of the bottom margin may have been applied
-            if p_bottom < 0
-              p_bottom < cursor - reference_bounds.top ? (move_cursor_to reference_bounds.top) : (move_down p_bottom)
-            else
-              p_bottom < cursor ? (move_down p_bottom) : reference_bounds.move_past_bottom
-            end
+            cursor > p_bottom ? (move_down p_bottom) : reference_bounds.move_past_bottom unless at_page_top?
           ensure
             bounds.subtract_left_padding p_left
             bounds.subtract_right_padding p_right

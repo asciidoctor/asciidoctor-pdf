@@ -2352,8 +2352,8 @@ The position of the background image can be controlled using the `position` attr
 [#keys-prose]
 === Prose
 
-The keys in this category control the spacing around paragraphs (paragraph blocks, paragraph content of a block, and other prose content).
-Typically, all the margin is placed on the bottom.
+The keys in this category control the spacing below paragraphs, lists, and index categories.
+The bottom margin is only added if the block is followed by an adjacent block within the same enclosure (e.g., a sidebar, a table cell, or the area outside of any blocks).
 
 [cols="3,4,5l"]
 |===
@@ -2361,11 +2361,11 @@ Typically, all the margin is placed on the bottom.
 
 3+|[#key-prefix-prose]*Key Prefix:* <<key-prefix-prose,prose>>
 
-|margin-top
-|<<measurement-units,Measurement>> +
-(default: 0)
-|prose:
-  margin-top: 0
+//|margin-top
+//|<<measurement-units,Measurement>> +
+//(default: 0)
+//|prose:
+//  margin-top: 0
 
 |margin-bottom
 |<<measurement-units,Measurement>> +
@@ -2392,7 +2392,9 @@ Useful when using indented paragraphs.
 [#keys-block]
 === Block
 
-The keys in this category control the spacing around block elements when a more specific setting is not designated.
+The keys in this category control the spacing below block elements when a more specific setting is not designated.
+See the second table in this section for a list of blocks to which these keys apply.
+The bottom margin is only added if the block is followed by an adjacent block within the same enclosure (e.g., a sidebar, a table cell, or the area outside of any blocks).
 
 [cols="3,4,5l"]
 |===
@@ -2405,11 +2407,11 @@ The keys in this category control the spacing around block elements when a more 
 //|block:
 //  padding: [12, 15, 12, 15]
 
-|margin-top
-|<<measurement-units,Measurement>> +
-(default: 0)
-|block:
-  margin-top: 6
+//|margin-top
+//|<<measurement-units,Measurement>> +
+//(default: 0)
+//|block:
+//  margin-top: 6
 
 |margin-bottom
 |<<measurement-units,Measurement>> +

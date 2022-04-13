@@ -80,6 +80,45 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect quote_text[:y]).to be > lines[0][:to][:y]
   end
 
+  it 'should only apply bottom margin once when quote block is nested inside abstract block followed by more preamble' do
+    pdf_theme = {
+      base_line_height: 1,
+      abstract_line_height: 1,
+      abstract_font_size: 10.5,
+      blockquote_padding: 0,
+      blockquote_border_left_width: 0,
+      blockquote_font_size: 10.5,
+      heading_h2_font_size: 10.5,
+      heading_margin_top: 0,
+      heading_margin_bottom: 12,
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    = Document Title
+
+    [abstract]
+    --
+    ____
+    This quote is the abstract.
+    ____
+    --
+
+    This is more preamble.
+
+    == Section Title
+
+    Now we are getting to the main event.
+    EOS
+
+    texts = pdf.text
+    margins = []
+    (1.upto texts.size - 2).each do |idx|
+      margins << ((texts[idx][:y] - (texts[idx + 1].yield_self {|it| it[:y] + it[:font_size] })).round 2)
+    end
+    (expect margins).to have_size 3
+    (expect margins.uniq).to have_size 1
+    (expect margins[0]).to (be_within 1).of 16.0
+  end
+
   it 'should decorate first line of abstract when abstract has multiple lines' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Document Title
@@ -371,5 +410,39 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     p2_l2_text = (pdf.find_text 'paragraph 2, line 2')[0]
 
     (expect p2_l1_text[:y] - p2_l2_text[:y]).to eql p1_l1_text[:y] - p1_l2_text[:y]
+  end
+
+  it 'should apply margin below abstract when followed by other blocks in preamble' do
+    pdf_theme = {
+      base_line_height: 1,
+      abstract_line_height: 1,
+      abstract_font_size: 10.5,
+      heading_h2_font_size: 10.5,
+      heading_margin_top: 0,
+      heading_margin_bottom: 12,
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    = Document Title
+
+    [abstract]
+    --
+    This is the abstract.
+    --
+
+    This is more preamble.
+
+    == Section Title
+
+    Now we are getting to the main event.
+    EOS
+
+    texts = pdf.text
+    margins = []
+    (1.upto texts.size - 2).each do |idx|
+      margins << ((texts[idx][:y] - (texts[idx + 1].yield_self {|it| it[:y] + it[:font_size] })).round 2)
+    end
+    (expect margins).to have_size 3
+    (expect margins.uniq).to have_size 1
+    (expect margins[0]).to (be_within 1).of 16.0
   end
 end

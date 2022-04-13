@@ -165,7 +165,7 @@ module Asciidoctor
           node.content
         elsif node.content_model != :compound && (string = node.content)
           # TODO: this content could be cached on repeat invocations!
-          layout_prose string, (opts.merge hyphenate: true)
+          layout_prose string, (opts.merge hyphenate: true, margin_bottom: 0)
         end
       ensure
         node.document.instance_variable_set :@converter, prev_converter if prev_converter
@@ -708,6 +708,7 @@ module Asciidoctor
       # QUESTION: if a footnote ref appears in a separate chapter, should the footnote def be duplicated?
       def layout_footnotes node
         return if (fns = (doc = node.document).footnotes - @rendered_footnotes).empty?
+        theme_margin :block, :bottom if node.context == :document || node == node.document.blocks[-1]
         theme_margin :footnotes, :top
         with_dry_run do |extent|
           if (single_page_height = extent&.single_page_height) && (delta = cursor - single_page_height - 0.0001) > 0
@@ -766,11 +767,14 @@ module Asciidoctor
               prose_opts[:first_line_options] = first_line_options if first_line_options
               # FIXME: make this cleaner!!
               if node.blocks?
-                node.blocks.each do |child|
+                last_block = (blocks = node.blocks)[-1]
+                blocks.each do |child|
                   if child.context == :paragraph
                     child.document.playback_attributes child.attributes
+                    prose_opts[:margin_bottom] = 0 if child == last_block
                     layout_prose child.content, ((align = resolve_alignment_from_role child.roles) ? (prose_opts.merge align: align) : prose_opts.dup)
                     prose_opts.delete :first_line_options
+                    prose_opts.delete :margin_bottom
                   else
                     # FIXME: this could do strange things if the wrong kind of content shows up
                     child.convert
@@ -780,13 +784,13 @@ module Asciidoctor
                 if (align = resolve_alignment_from_role node.roles)
                   prose_opts[:align] = align
                 end
-                layout_prose string, prose_opts
+                layout_prose string, (prose_opts.merge margin_bottom: 0)
               end
             end
           end
-          # QUESTION: should we be adding margin below the abstract??
-          #theme_margin :block, :bottom
         end
+        # NOTE: next enclosed block here is confined to preamble
+        theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
       def convert_preamble node
@@ -795,6 +799,7 @@ module Asciidoctor
           first_block.add_role 'lead'
         end
         traverse node
+        theme_margin :block, :bottom, (next_enclosed_block node)
         convert_toc node, placement: 'preamble'
       end
 
@@ -822,16 +827,15 @@ module Asciidoctor
           layout_prose node.content, prose_opts
         end
 
-        if (margin_inner_val = @theme.prose_margin_inner) &&
-            (next_block = (siblings = node.parent.blocks)[(siblings.index node) + 1]) && next_block.context == :paragraph
+        block_next = next_enclosed_block node
+        if (margin_inner_val = @theme.prose_margin_inner) && block_next&.context == :paragraph
           margin_bottom margin_inner_val
         else
-          margin_bottom @theme.prose_margin_bottom
+          theme_margin :prose, :bottom, block_next
         end
       end
 
       def convert_admonition node
-        theme_margin :block, :top
         type = node.attr 'name'
         label_align = @theme.admonition_label_align&.to_sym || :center
         # TODO: allow vertical_align to be a number
@@ -872,10 +876,6 @@ module Asciidoctor
         unless ::Array === (lpad = @theme.admonition_label_padding || cpad)
           lpad = ::Array.new 4, lpad
         end
-        # FIXME: this shift stuff is a real hack until we have proper margin collapsing
-        shift_base = @theme.prose_margin_bottom
-        shift_top = shift_base / 3.0
-        shift_bottom = (shift_base * 2) / 3.0
         arrange_block node do |extent|
           add_dest_for_block node if node.id
           theme_fill_and_stroke_block :admonition, extent if extent
@@ -992,22 +992,18 @@ module Asciidoctor
               end
             end
             pad_box [cpad[0], 0, cpad[2], label_width + lpad[1] + cpad[3]] do
-              move_down shift_top
               layout_caption node, category: :admonition, labeled: false if node.title?
               theme_font :admonition do
                 traverse node
               end
-              # FIXME: HACK compensate for margin bottom of admonition content
-              move_up shift_bottom unless at_page_top?
             end
           end
         end
-        theme_margin :block, :bottom
+        theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
       def convert_example node
         return convert_open node if node.option? 'collapsible'
-        theme_margin :block, :top
         arrange_block node do |extent|
           add_dest_for_block node if node.id # Q: do we want to put anchor above top margin instead?
           tare_first_page_content_stream do
@@ -1019,7 +1015,7 @@ module Asciidoctor
             end
           end
         end
-        theme_margin :block, :bottom
+        theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
       def convert_open node
@@ -1042,7 +1038,6 @@ module Asciidoctor
       end
 
       def convert_quote_or_verse node
-        theme_margin :block, :top
         category = node.context == :quote ? :blockquote : :verse
         # NOTE: b_width and b_left_width are mutually exclusive
         if (b_left_width = @theme[%(#{category}_border_left_width)]) && b_left_width > 0
@@ -1074,10 +1069,11 @@ module Asciidoctor
                 traverse node
               else # verse
                 content = guard_indentation node.content
-                layout_prose content, normalize: false, align: :left, hyphenate: true
+                layout_prose content, normalize: false, align: :left, hyphenate: true, margin_bottom: 0
               end
             end
             if node.attr? 'attribution'
+              margin_bottom @theme.block_margin_bottom
               theme_font %(#{category}_cite) do
                 # NOTE: temporary workaround to allow bare & to be used without having to wrap value in single quotes
                 attribution = node.attr 'attribution'
@@ -1087,50 +1083,49 @@ module Asciidoctor
                   citetitle = escape_amp citetitle if citetitle.include? '&'
                   attribution_parts << citetitle
                 end
-                layout_prose %(#{EmDash} #{attribution_parts.join ', '}), align: :left, normalize: false
+                layout_prose %(#{EmDash} #{attribution_parts.join ', '}), align: :left, normalize: false, margin_bottom: 0
               end
             end
           end
         end
-        theme_margin :block, :bottom
+        theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
       alias convert_quote convert_quote_or_verse
       alias convert_verse convert_quote_or_verse
 
       def convert_sidebar node
-        theme_margin :block, :top
         arrange_block node do |extent|
           add_dest_for_block node if node.id
           theme_fill_and_stroke_block :sidebar, extent if extent
           pad_box @theme.sidebar_padding do
             theme_font :sidebar_title do
               # QUESTION: should we allow margins of sidebar title to be customized?
-              layout_prose node.title, align: (@theme.sidebar_title_align || @theme.heading_align || @base_align).to_sym, margin_top: 0, margin_bottom: @theme.heading_margin_bottom, line_height: @theme.heading_line_height
+              layout_prose node.title, align: (@theme.sidebar_title_align || @theme.heading_align || @base_align).to_sym, margin_bottom: @theme.heading_margin_bottom, line_height: @theme.heading_line_height
             end if node.title?
             theme_font :sidebar do
               traverse node
             end
           end
         end
-        theme_margin :block, :bottom
+        theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
       def convert_colist node
-        move_down @theme.code_callout_list_margin_top if !at_page_top? && ([:listing, :literal].include? node.parent.blocks[(node.parent.blocks.index node) - 1].context)
+        margin_top @theme.code_callout_list_margin_top if !at_page_top? && ([:listing, :literal].include? node.parent.blocks[(node.parent.blocks.index node) - 1].context)
         add_dest_for_block node if node.id
         @list_numerals << 1
         line_metrics = theme_font(:conum) { calc_line_metrics @theme.base_line_height }
+        last_item = node.items[-1]
         node.items.each do |item|
           allocate_space_for_list_item line_metrics
-          convert_colist_item item
+          convert_colist_item item, margin_bottom: (item == last_item ? 0 : @theme.outline_list_item_spacing), normalize_line_height: true
         end
         @list_numerals.pop
-        # correct bottom margin of last item
-        margin_bottom @theme.prose_margin_bottom - @theme.outline_list_item_spacing
+        theme_margin :prose, :bottom, (next_enclosed_block node)
       end
 
-      def convert_colist_item node
+      def convert_colist_item node, opts
         marker_width = nil
         @list_numerals << (index = @list_numerals.pop).next
         theme_font :conum do
@@ -1145,7 +1140,7 @@ module Asciidoctor
         end
 
         indent marker_width do
-          traverse_list_item node, :colist, margin_bottom: @theme.outline_list_item_spacing, normalize_line_height: true
+          traverse_list_item node, :colist, opts
         end
       end
 
@@ -1179,18 +1174,21 @@ module Asciidoctor
           markers.pop
         when 'horizontal'
           table_data = []
-          term_padding = term_font_color = term_transform = desc_padding = term_line_metrics = term_inline_format = term_kerning = nil
+          term_padding = term_padding_no_blocks = term_font_color = term_transform = desc_padding = term_line_metrics = term_inline_format = term_kerning = nil
           max_term_width = 0
           theme_font :description_list_term do
             term_font_color = @font_color
             term_transform = @text_transform
             term_inline_format = (term_font_styles = font_styles).empty? ? true : [inherited: { styles: term_font_styles }]
             term_line_metrics = calc_line_metrics @theme.description_list_term_line_height || @theme.base_line_height
-            term_padding = [term_line_metrics.padding_top, 10, @theme.prose_margin_bottom * 0.5 + term_line_metrics.padding_bottom, 10]
-            desc_padding = [0, 10, @theme.prose_margin_bottom * 0.5, 10]
+            term_padding_no_blocks = [term_line_metrics.padding_top, 10, term_line_metrics.padding_bottom, 10]
+            (term_padding = term_padding_no_blocks.dup)[2] += @theme.prose_margin_bottom * 0.5
+            desc_padding = [0, 10, 0, 10]
             term_kerning = default_kerning?
           end
-          node.items.each do |terms, desc|
+          actual_node, node = node, node.dup
+          (node.instance_variable_set :@blocks, node.items.map(&:dup)).each do |item|
+            terms, desc = item
             term_text = terms.map(&:text).join ?\n
             term_text = transform_text term_text, term_transform if term_transform
             if (term_width = width_of term_text, inline_format: term_inline_format, kerning: term_kerning) > max_term_width
@@ -1201,19 +1199,17 @@ module Asciidoctor
               kerning: term_kerning,
               content: term_text,
               inline_format: term_inline_format,
-              padding: term_padding,
+              padding: desc&.blocks? ? term_padding : term_padding_no_blocks,
               leading: term_line_metrics.leading,
               # FIXME: prawn-table doesn't have support for final_gap option
               #final_gap: term_line_metrics.final_gap,
               valign: :top,
             }]
             if desc
-              desc_container = Block.new desc, :open
+              desc_container = Block.new node, :open
               desc_container << (Block.new desc_container, :paragraph, source: (desc.instance_variable_get :@text), subs: :default) if desc.text?
-              desc.blocks.each {|b| desc_container << b } if desc.blocks?
-              row_data << {
-                content: (::Prawn::Table::Cell::AsciiDoc.new self, content: desc_container, text_color: @font_color, padding: desc_padding, valign: :top),
-              }
+              desc.blocks.each {|b| desc_container << b.dup } if desc.blocks?
+              row_data << { content: (::Prawn::Table::Cell::AsciiDoc.new self, content: (item[1] = desc_container), text_color: @font_color, padding: desc_padding, valign: :top) }
             else
               row_data << {}
             end
@@ -1224,7 +1220,7 @@ module Asciidoctor
           table table_data, position: :left, cell_style: { border_width: 0 }, column_widths: [term_column_width] do
             @pdf.layout_table_caption node if node.title?
           end
-          margin_bottom @theme.prose_margin_bottom * 0.5
+          theme_margin :prose, :bottom, (next_enclosed_block actual_node) #unless actual_node.nested?
         when 'qanda'
           @list_numerals << '1'
           convert_list node
@@ -1250,19 +1246,12 @@ module Asciidoctor
               end
             end
             indent @theme.description_list_description_indent do
+              #margin_bottom (desc.simple? ? @theme.outline_list_item_spacing : term_spacing)
               margin_bottom term_spacing
-              traverse_list_item desc, :dlist_desc, normalize_line_height: true, margin_bottom: (node.items[-1][1] == desc && !desc.blocks? ? 0 : nil)
+              traverse_list_item desc, :dlist_desc, normalize_line_height: true, margin_bottom: ((next_enclosed_block desc, descend: true) ? nil : 0)
             end if desc
           end
-          if node.nested? && node.parent.parent.outline?
-            if node.parent.parent.items[-1].blocks[-1] == node
-              margin_bottom @theme.prose_margin_bottom - @theme.outline_list_item_spacing
-            else
-              margin_bottom @theme.prose_margin_bottom
-            end
-          else
-            margin_bottom @theme.prose_margin_bottom
-          end
+          theme_margin :prose, :bottom, (next_enclosed_block node) unless node.nested?
         end
       end
 
@@ -1373,13 +1362,7 @@ module Asciidoctor
             convert_list_item item, node, opts
           end
         end
-        # NOTE: children will provide the necessary bottom margin if last item is complex.
-        # However, don't leave gap at the bottom if list is nested in an outline list
-        #unless complex || (node.nested? && node.parent.parent.outline?)
-        unless node.nested? && node.parent.parent.outline?
-          # correct bottom margin of last item
-          margin_bottom @theme.prose_margin_bottom - @theme.outline_list_item_spacing
-        end
+        theme_margin :prose, :bottom, (next_enclosed_block node) unless node.nested?
       end
 
       def convert_list_item node, list, opts = {}
@@ -1392,11 +1375,11 @@ module Asciidoctor
         case (list_type = list.context)
         when :dlist
           # NOTE: list.style is always 'qanda'
-          complex = node[1]&.compound?
+          junction = node[1]
           @list_numerals << (index = @list_numerals.pop).next
           marker = %(#{index}.)
         when :olist
-          complex = node.compound?
+          junction = node
           if (index = @list_numerals.pop)
             if index == ''
               marker = ''
@@ -1407,7 +1390,7 @@ module Asciidoctor
             end
           end
         else # :ulist
-          complex = node.compound?
+          junction = node
           if (marker_type = @list_bullets[-1])
             if marker_type == :checkbox
               # QUESTION: should we remove marker indent if not a checkbox?
@@ -1457,17 +1440,21 @@ module Asciidoctor
           end
         end
 
-        if complex
-          traverse_list_item node, list_type, (opts.merge normalize_line_height: true)
-        else
-          traverse_list_item node, list_type, (opts.merge margin_bottom: @theme.outline_list_item_spacing, normalize_line_height: true)
+        opts = opts.merge margin_bottom: 0, normalize_line_height: true
+        if junction
+          if junction.compound?
+            opts.delete :margin_bottom
+          elsif next_enclosed_block junction, descend: true
+            opts[:margin_bottom] = @theme.outline_list_item_spacing
+          end
         end
+        traverse_list_item node, list_type, opts
       end
 
       def traverse_list_item node, list_type, opts = {}
         if list_type == :dlist # qanda
           terms, desc = node
-          terms.each {|term| layout_prose %(<em>#{term.text}</em>), (opts.merge margin_top: 0, margin_bottom: @theme.description_list_term_spacing) }
+          terms.each {|term| layout_prose %(<em>#{term.text}</em>), (opts.merge margin_bottom: @theme.description_list_term_spacing) }
           if desc
             layout_prose desc.text, (opts.merge hyphenate: true) if desc.text?
             traverse desc
@@ -1527,8 +1514,6 @@ module Asciidoctor
           end
         end
 
-        top_margin = (pinned = opts[:pinned]) ? 0 : (theme_margin :block, :top)
-
         return on_image_error :missing, node, target, opts unless image_path
 
         alignment = (alignment = node.attr 'align') ?
@@ -1543,6 +1528,7 @@ module Asciidoctor
         caption_h = node.title? ? (layout_caption node, category: :image, side: :bottom, block_align: alignment, block_width: width, max_width: @theme.image_caption_max_width, dry_run: true, force_top_margin: true) : 0
 
         align_to_page = node.option? 'align-to-page'
+        pinned = opts[:pinned]
 
         begin
           rendered_w = nil
@@ -1572,13 +1558,12 @@ module Asciidoctor
                 unless pinned || at_page_top?
                   advance_page
                   available_h = cursor - caption_h
-                  top_margin = 0
                 end
                 rendered_w = (svg_obj.resize height: (rendered_h = available_h)).output_width if rendered_h > available_h
               end
               image_y = y
               image_cursor = cursor
-              add_dest_for_block node, y: image_y + top_margin if node.id
+              add_dest_for_block node, y: image_y if node.id
               # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
               # breakage occurs when running content (stamps) are added to page
               update_colors if graphic_state.color_space.empty?
@@ -1604,13 +1589,12 @@ module Asciidoctor
                 unless pinned || at_page_top?
                   advance_page
                   available_h = cursor - caption_h
-                  top_margin = 0
                 end
                 rendered_w, rendered_h = image_info.calc_image_dimensions height: available_h if rendered_h > available_h
               end
               image_y = y
               image_cursor = cursor
-              add_dest_for_block node, y: image_y + top_margin if node.id
+              add_dest_for_block node, y: image_y if node.id
               # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
               # breakage occurs when running content (stamps) are added to page
               update_colors if graphic_state.color_space.empty?
@@ -1625,7 +1609,7 @@ module Asciidoctor
             end
           end
           layout_caption node, category: :image, side: :bottom, block_align: alignment, block_width: rendered_w, max_width: @theme.image_caption_max_width if node.title?
-          theme_margin :block, :bottom unless pinned
+          theme_margin :block, :bottom, (next_enclosed_block node) unless pinned
         rescue => e
           raise if ::StopIteration === e
           on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{e.message}#{::Prawn::Errors::UnsupportedImageType === e && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}))
@@ -1667,18 +1651,17 @@ module Asciidoctor
           layout_prose alt_text_template % alt_text_vars, align: alignment, margin: 0, normalize: false, single_line: true
         end
         layout_caption node, category: :image, side: :bottom if node.title?
-        theme_margin :block, :bottom unless opts[:pinned]
+        theme_margin :block, :bottom, (next_enclosed_block node) unless opts[:pinned]
         nil
       end
 
       def convert_audio node
         add_dest_for_block node if node.id
-        theme_margin :block, :top
         audio_path = node.media_uri node.attr 'target'
         play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
         layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0, single_line: true
         layout_caption node, labeled: false, side: :bottom if node.title?
-        theme_margin :block, :bottom
+        theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
       def convert_video node
@@ -1703,11 +1686,10 @@ module Asciidoctor
 
         if poster.nil_or_empty?
           add_dest_for_block node if node.id
-          theme_margin :block, :top
           play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
           layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{video_path}">#{video_path}</a> <em>(#{type})</em>), normalize: false, margin: 0, single_line: true
           layout_caption node, labeled: false, side: :bottom if node.title?
-          theme_margin :block, :bottom
+          theme_margin :block, :bottom, (next_enclosed_block node)
         else
           original_attributes = node.attributes.dup
           begin
@@ -1847,8 +1829,6 @@ module Asciidoctor
           adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ? (compute_autofit_font_size source_chunks, :code) : nil
         end
 
-        theme_margin :block, :top
-
         arrange_block node do |extent|
           add_dest_for_block node if node.id
           tare_first_page_content_stream do
@@ -1866,7 +1846,7 @@ module Asciidoctor
           end
         end
 
-        theme_margin :block, :bottom
+        theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
       alias convert_listing convert_listing_or_literal
@@ -2264,8 +2244,6 @@ module Asciidoctor
           table_settings[:row_colors] = [body_bg_color]
         end
 
-        theme_margin :block, :top
-
         left_padding = right_padding = nil
         table table_data, table_settings do
           # NOTE: call width to capture resolved table width
@@ -2344,15 +2322,15 @@ module Asciidoctor
           bounds.subtract_right_padding right_padding if right_padding
         end
         layout_table_caption node, alignment, table_width, caption_max_width, caption_side if node.title? && caption_side == :bottom
-        theme_margin :block, :bottom
+        theme_margin :block, :bottom, (next_enclosed_block node)
       rescue ::Prawn::Errors::CannotFit
         log :error, (message_with_context 'cannot fit contents of table cell into specified column width', source_location: node.source_location)
       end
 
-      def convert_thematic_break _node
+      def convert_thematic_break node
         theme_margin :thematic_break, :top
         stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width, line_style: (@theme.thematic_break_border_style&.to_sym || :solid)
-        theme_margin :thematic_break, :bottom
+        theme_margin :thematic_break, ((block_next = next_enclosed_block node) ? :bottom : :top), block_next || true
       end
 
       def convert_toc node, opts = {}
@@ -2410,10 +2388,10 @@ module Asciidoctor
             layout_prose category.name,
               align: :left,
               inline_format: false,
-              margin_top: 0,
               margin_bottom: @theme.description_list_term_spacing,
               style: @theme.description_list_term_font_style.to_sym
             category.terms.each {|term| convert_index_list_item term }
+            # NOTE: see previous note for why we can't use margin_bottom method
             if @theme.prose_margin_bottom > y - reference_bounds.absolute_bottom
               bounds.move_past_bottom
             else
@@ -2949,7 +2927,7 @@ module Asciidoctor
 
       # NOTE: inline_format is true by default
       def layout_prose string, opts = {}
-        top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || @theme.prose_margin_top
+        top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || 0
         bot_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom
         if (transform = resolve_text_transform opts)
           string = transform_text string, transform
@@ -3090,7 +3068,7 @@ module Asciidoctor
         toc_start_page = page_number
         extent = dry_run onto: self do
           layout_toc doc, toc_num_levels, toc_start_page, toc_start_cursor
-          move_down @theme.block_margin_bottom unless use_title_page
+          margin_bottom @theme.block_margin_bottom unless use_title_page
         end
         # NOTE: reserve pages for the toc; leaves cursor on page after last page in toc
         if use_title_page
@@ -3908,8 +3886,13 @@ module Asciidoctor
 
       # Lookup margin for theme element and side, then delegate to margin method.
       # If margin value is not found, assume 0.
-      def theme_margin category, side
-        margin (@theme[%(#{category}_margin_#{side})] || 0), side
+      def theme_margin category, side, node = true
+        if node
+          category = :block if node != true && node.context == :section
+          margin (@theme[%(#{category}_margin_#{side})] || 0), side
+        else
+          0
+        end
       end
 
       def theme_font category, opts = {}
@@ -4512,6 +4495,25 @@ module Asciidoctor
           end
         end
         value
+      end
+
+      def next_enclosed_block block, descend: false
+        return if (context = block.context) == :document
+        parent_context = (parent = block.parent).context
+        if (list_item = context == :list_item)
+          return block.blocks[0] if descend && block.blocks?
+          siblings = parent.items
+        else
+          siblings = parent.blocks
+        end
+        siblings = siblings.flatten if parent_context == :dlist
+        if block != siblings[-1]
+          (self_idx = siblings.index block) && siblings[self_idx + 1]
+        elsif parent_context == :list_item || (parent_context == :open && parent.style != 'abstract') || parent_context == :section
+          next_enclosed_block parent
+        elsif list_item && (grandparent = parent.parent).context == :list_item
+          next_enclosed_block grandparent
+        end
       end
 
       private

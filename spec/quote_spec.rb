@@ -230,7 +230,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       blockquote_border_width: 0.5,
       blockquote_border_color: 'CCCCCC',
       blockquote_background_color: 'EEEEEE',
-      blockquote_padding: [6, 10, 0, 10],
+      blockquote_padding: [6, 10, 12, 10],
     }
     to_file = to_pdf_file <<~EOS, 'quote-page-split.pdf', pdf_theme: pdf_theme
     ____
@@ -264,7 +264,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
   it 'should keep caption with block and draw border across extent if only caption fits on current page' do
     block_content = ['text of quote'] * 15 * %(\n\n)
-    pdf_theme = { prose_margin_bottom: 12, blockquote_padding: [0, 0, -12, 15] }
+    pdf_theme = { prose_margin_bottom: 12, blockquote_padding: [0, 0, 0, 15] }
     with_content_spacer 10, 690 do |spacer_path|
       input = <<~EOS
       before
