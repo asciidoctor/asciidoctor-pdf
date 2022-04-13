@@ -430,6 +430,60 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_heading_text[:page_number]).to be 3
     end
 
+    it 'should add top margin specified by theme to toc contents when toc has a title' do
+      input = <<~'EOS'
+      = Document Title
+      :toc:
+
+      == Section A
+
+      === Subsection
+
+      == Section B
+      EOS
+
+      toc_top_without_margin_top = ((to_pdf input, analyze: true).find_text 'Section A')[0][:y]
+      toc_top_with_margin_top = ((to_pdf input, pdf_theme: { toc_margin_top: 50 }, analyze: true).find_text 'Section A')[0][:y]
+      (expect toc_top_without_margin_top - toc_top_with_margin_top).to eql 50.0
+    end
+
+    it 'should add top margin specified by theme to toc contents when toc has no title and not at page top' do
+      input = <<~'EOS'
+      = Document Title
+      :toc:
+      :!toc-title:
+
+      == Section A
+
+      === Subsection
+
+      == Section B
+      EOS
+
+      toc_top_without_margin_top = ((to_pdf input, analyze: true).find_text 'Section A')[0][:y]
+      toc_top_with_margin_top = ((to_pdf input, pdf_theme: { toc_margin_top: 50 }, analyze: true).find_text 'Section A')[0][:y]
+      (expect toc_top_without_margin_top - toc_top_with_margin_top).to eql 50.0
+    end
+
+    it 'should not add top margin specified by theme to toc contents when toc contents is at top of page' do
+      input = <<~'EOS'
+      = Document Title
+      :doctype: book
+      :toc:
+      :!toc-title:
+
+      == Section A
+
+      === Subsection
+
+      == Section B
+      EOS
+
+      toc_top_without_margin_top = ((to_pdf input, analyze: true).find_text 'Section A')[0][:y]
+      toc_top_with_margin_top = ((to_pdf input, pdf_theme: { toc_margin_top: 50 }, analyze: true).find_text 'Section A')[0][:y]
+      (expect toc_top_without_margin_top).to eql toc_top_with_margin_top
+    end
+
     it 'should start preamble toc on recto page for prepress book' do
       pdf = to_pdf <<~'EOS', analyze: true
       = Document Title
