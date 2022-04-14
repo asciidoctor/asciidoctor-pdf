@@ -96,6 +96,8 @@ describe 'Asciidoctor::PDF::Converter - Open' do
       [%unbreakable]
       --
       content
+
+      more content
       --
       EOS
     end
