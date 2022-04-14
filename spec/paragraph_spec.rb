@@ -154,4 +154,30 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
 
     (expect adjusted_spacing).to be > default_spacing
   end
+
+  it 'should apply font properties defined by role to paragraph' do
+    pdf_theme = {
+      role_custom_font_size: 14,
+      role_custom_font_color: 'FF0000',
+      role_custom_align: :center,
+      role_custom_font_style: 'bold',
+      role_custom_text_transform: 'lowercase',
+    }
+
+    input = <<~EOS
+    reference
+
+    [.custom]
+    This is a special paragraph.
+    EOS
+
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    left_margin = pdf.text[0][:x]
+    text_with_role = pdf.text[1]
+    (expect text_with_role[:font_size]).to eql pdf_theme[:role_custom_font_size]
+    (expect text_with_role[:font_color]).to eql pdf_theme[:role_custom_font_color]
+    (expect text_with_role[:font_name]).to eql 'NotoSerif-Bold'
+    (expect text_with_role[:x]).to be > left_margin
+    (expect text_with_role[:string]).to eql 'this is a special paragraph.'
+  end
 end
