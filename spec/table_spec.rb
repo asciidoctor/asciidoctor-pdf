@@ -1672,6 +1672,23 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect after_block_text[:y]).to be < border_bottom_y
     end
 
+    it 'should not add margin below last block of content in AsciiDoc table cell' do
+      input = <<~'EOS'
+      [frame=ends,grid=none]
+      |===
+      a|
+      ****
+      sidebar
+      ****
+      |===
+      EOS
+
+      horizontal_lines = (to_pdf input, analyze: :line).lines
+        .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
+      (expect horizontal_lines[0][:from][:y] - horizontal_lines[1][:from][:y]).to eql 3.0
+      (expect horizontal_lines[-2][:from][:y] - horizontal_lines[-1][:from][:y]).to eql 3.0
+    end
+
     it 'should honor vertical alignment on cell' do
       pdf = to_pdf <<~'EOS', analyze: true
       [cols=3*]
@@ -2020,8 +2037,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       pdf = to_pdf <<~EOS, analyze: true
       == Section Title
 
-      [%hardbreaks]
-      #{(['filler'] * 20).join ?\n}
+      image::tall.svg[pdfwidth=38mm]
 
       [cols=2*]
       |===

@@ -51,6 +51,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect dest[:y]).to eql 805.89
   end
 
+  # NOTE: for now, the margin top setting is ignored, so the test will pass with any value
   it 'should place anchor below top margin of block' do
     input = <<~'EOS'
     paragraph
@@ -80,10 +81,8 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     ----
     EOS
 
-    pdf_theme = { block_margin_top: 10 }
-
-    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
-    pdf = to_pdf input, pdf_theme: pdf_theme
+    lines = (to_pdf input, analyze: :line).lines
+    pdf = to_pdf input
     (expect (dest = get_dest pdf, 'listing-1')).not_to be_nil
     (expect dest[:page_number]).to be 2
     (expect dest[:y]).to eql lines[0][:from][:y]

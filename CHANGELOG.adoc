@@ -12,6 +12,8 @@ Enhancements::
 * make delimited blocks breakable by default; require the `unbreakable` option on the block to retain the previous "`keep together`" behavior (#2004, #578, #509, #240)
 * add support for the %unbreakable option on a table to keep it from being split across pages (#2022, #871, #819, #331)
 * add support for the %breakable option on a table (special case) to keep the caption and ID with the start of the table (#2022, #993)
+* implement smart block bottom margins to prevent extra space below blocks, particularly nested blocks (#1515, #1513, #1845)
+* drop support for `top-margin` key on block and prose categories in theme; space between delimited blocks and lists now controlled using bottom margins only (#1515)
 * allow page numbering and running content to start after first page of a document without a title page by assigning an integer to the respective `start_at` theme key (#1644)
 * allow page numbering and running content to start after toc (wherever it is placed) by assigning the keyword `after-toc` to the respective `start_at` theme key (#1763)
 * allow theme to configure page numbering to start at cover (#1727)

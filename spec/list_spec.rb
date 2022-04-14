@@ -970,7 +970,60 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect to_file).to visually_match 'list-complex-dlist.pdf'
     end
 
-    it 'should support item with no desc' do
+    it 'should put margin below description when item has an attached block' do
+      pdf_theme = { base_line_height: 1, sidebar_background_color: 'transparent' }
+      input = <<~'EOS'
+      term:: desc
+      +
+      ****
+      sidebar
+      ****
+
+      ****
+      after
+      ****
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+        .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
+      desc_text = pdf.find_unique_text 'desc'
+      (expect desc_text[:y] - horizontal_lines[0][:from][:y]).to (be_within 1).of 15.0
+      (expect horizontal_lines[1][:from][:y] - horizontal_lines[2][:from][:y]).to eql 12.0
+    end
+
+    it 'should use narrow spacing around lineal list' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { extends: 'base', base_line_height: 1 }, analyze: true
+      yin::
+      * foobar
+      yang::
+      EOS
+
+      spacing_above = (pdf.find_unique_text %r/^yin/)[:y] - (pdf.find_unique_text 'foobar').yield_self {|it| it[:y] + it[:font_size] }
+      spacing_below = (pdf.find_unique_text 'foobar')[:y] - (pdf.find_unique_text 'yang').yield_self {|it| it[:y] + it[:font_size] }
+      (expect spacing_above).to (be_within 1).of 6.0 # 3.0 + font metrics
+      (expect spacing_below).to (be_within 1).of 8.0 # 6.0 + font metrics
+    end
+
+    it 'should put margin below description when item has a single nested list' do
+      input = <<~'EOS'
+      term:: desc
+      * nested item
+
+      after
+      EOS
+
+      pdf = to_pdf input, pdf_theme: { base_line_height: 1 }, analyze: true
+      desc_text = pdf.find_unique_text 'desc'
+      nested_item_text = pdf.find_unique_text 'nested item'
+      after_text = pdf.find_unique_text 'after'
+      above_list_item = (desc_text[:y] - nested_item_text[:y]).round 2
+      below_list_item = (nested_item_text[:y] - after_text[:y]).round 2
+      (expect above_list_item).to eql below_list_item
+      (expect desc_text[:y] - (nested_item_text[:y] + nested_item_text[:font_size])).to (be_within 1).of 15.0
+    end
+
+    it 'should support last item with no description' do
       pdf = to_pdf <<~'EOS', analyze: true
       yin:: yang
       foo::
@@ -983,7 +1036,47 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect foo_text[:x]).to eql yin_text[:x]
     end
 
+    it 'should apply correct margin to last item with no description' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=2*a]
+      |===
+      |
+      term::
+
+      []
+      after
+
+      |
+      term:: desc
+      |===
+      EOS
+
+      after_text = pdf.find_unique_text 'after'
+      desc_text = pdf.find_unique_text 'desc'
+      (expect desc_text[:y]).to be > after_text[:y]
+      delta = desc_text[:y] - after_text[:y]
+      (expect delta).to eql 9.0 # bottom margin - term spacing
+    end
+
     context 'Horizontal' do
+      it 'should not modify original document model during conversion' do
+        doc = Asciidoctor.load <<~'EOS', backend: 'pdf'
+        [horizontal]
+        foo:: bar
+        EOS
+
+        original_dlist = doc.blocks[0]
+        original_term, original_desc = (original_item = (original_items = original_dlist.items)[0])
+        doc.convert
+        dlist = doc.blocks[0]
+        term, desc = (item = (items = dlist.items)[0])
+        (expect dlist).to be == original_dlist
+        (expect term).to be == original_term
+        (expect items).to be == original_items
+        (expect item).to be == original_item
+        (expect desc).to be == original_desc
+      end
+
       it 'should arrange horizontal list in two columns' do
         pdf = to_pdf <<~'EOS', analyze: true
         [horizontal]
@@ -1252,8 +1345,85 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect horizontal_lines).to have_size 6
         item_spacing = horizontal_lines[1][:from][:y] - horizontal_lines[2][:from][:y]
         spacing_below_list = horizontal_lines[3][:from][:y] - horizontal_lines[4][:from][:y]
-        (expect item_spacing.to_f).to eql 18.0 # FIXME: ideally, this should be 12.0
-        (expect spacing_below_list.to_f).to eql 24.0 # FIXME: ideally, this should be 12.0
+        (expect item_spacing.round 2).to eql 12.0
+        (expect spacing_below_list.round 2).to eql 12.0
+      end
+
+      it 'should convert horizontal dlist inside AsciiDoc table cell and not add bottom margin' do
+        pdf_theme = { sidebar_background_color: 'transparent' }
+        input = <<~'EOS'
+        [frame=ends,grid=none]
+        |===
+        a|
+        [horizontal]
+        term:: desc
+        +
+        ****
+        sidebar for term
+        ****
+        |===
+        EOS
+
+        horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+          .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
+        (expect horizontal_lines).to have_size 4
+        cell_bottom_padding = horizontal_lines[2][:from][:y] - horizontal_lines[3][:from][:y]
+        (expect cell_bottom_padding.round 2).to eql 3.0
+      end
+
+      it 'should apply correct margin to last item with no description' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [cols=2*a]
+        |===
+        |
+        term::
+
+        []
+        after regular
+
+        |
+        [horizontal]
+        term::
+
+        []
+        after horizontal
+        |===
+        EOS
+
+        term_texts = pdf.find_text 'term'
+        (expect term_texts).to have_size 2
+        (expect term_texts[0][:y]).to eql term_texts[1][:y]
+        after_regular = pdf.find_unique_text 'after regular'
+        after_horizontal = pdf.find_unique_text 'after horizontal'
+        (expect after_horizontal[:y]).to eql after_regular[:y]
+      end
+
+      it 'should use prose margin around dlist nested in regular list' do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [cols=2*a]
+        |===
+        |
+        * list item
+        +
+        [horizontal]
+        term:: desc
+
+        * second list item
+
+        |
+        list item
+
+        *term* desc
+
+        second list item
+        |===
+        EOS
+
+        ['list item', 'term', 'second list item'].each do |string|
+          texts = pdf.find_text string
+          (expect texts).to have_size 2
+          (expect texts[0][:y].round 2).to eql (texts[1][:y].round 2)
+        end
       end
     end
 

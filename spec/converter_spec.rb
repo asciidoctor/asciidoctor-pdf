@@ -429,6 +429,589 @@ describe Asciidoctor::PDF::Converter do
     end
   end
 
+  describe '#next_enclosed_block' do
+    let(:doc) { Asciidoctor.load input_source, backend: 'pdf' }
+    let(:converter) { doc.converter }
+    let(:result) { converter.next_enclosed_block start }
+
+    context 'of document' do
+      let(:input_source) { 'paragraph' }
+      let(:start) { doc }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of last block in document' do
+      let(:input_source) { 'paragraph' }
+      let(:start) { doc.blocks[0] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of block followed by block' do
+      let :input_source do
+        <<~'EOS'
+        first paragraph
+
+        second paragraph
+        EOS
+      end
+
+      let(:start) { doc.blocks[0] }
+
+      it('should be next block') { (expect result).to eql doc.blocks[1] }
+    end
+
+    context 'of last block in open block followed by block' do
+      let :input_source do
+        <<~'EOS'
+        first paragraph
+
+        --
+        second paragraph
+        --
+
+        third paragraph
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[1] }
+
+      it('should be next block adjacent to open block') { (expect result).to eql doc.blocks[2] }
+    end
+
+    context 'of last block before parent section' do
+      let :input_source do
+        <<~'EOS'
+        == First Section
+
+        paragraph
+
+        == Second Section
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[0] }
+
+      it('should be next section') { (expect result).to eql doc.sections[1] }
+    end
+
+    context 'of last block before subsection' do
+      let :input_source do
+        <<~'EOS'
+        == Section
+
+        paragraph
+
+        === Subsection
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[0] }
+
+      it('should be next section') { (expect result).to eql (doc.find_by context: :section)[-1] }
+    end
+
+    context 'of last block before grandparent section' do
+      let :input_source do
+        <<~'EOS'
+        == First Section
+
+        paragraph
+
+        === Subsection
+
+        paragraph
+
+        == Last Section
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[-1] }
+
+      it('should be next section') { (expect result).to eql (doc.find_by context: :section)[-1] }
+    end
+
+    context 'of preamble' do
+      let :input_source do
+        <<~'EOS'
+        = Document Title
+
+        preamble
+
+        == First Section
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :preamble)[0] }
+
+      it('should be first section') { (expect result).to eql doc.sections[0] }
+    end
+
+    context 'of abstract' do
+      let :input_source do
+        <<~'EOS'
+        = Document Title
+
+        [abstract]
+        --
+        abstract
+        --
+
+        == First Section
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :open, style: 'abstract')[0] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of abstract followed by more preamble' do
+      let :input_source do
+        <<~'EOS'
+        = Document Title
+
+        [abstract]
+        --
+        abstract
+        --
+
+        more preamble
+
+        == First Section
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :open, style: 'abstract')[0] }
+
+      it('should be next block in preamble') { (expect result).to eql (doc.find_by context: :paragraph)[1] }
+    end
+
+    context 'of last block in abstract' do
+      let :input_source do
+        <<~'EOS'
+        = Document Title
+
+        [abstract]
+        --
+        abstract
+        --
+
+        == First Section
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[0] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of last block inside abstract followed by more preamble' do
+      let :input_source do
+        <<~'EOS'
+        = Document Title
+
+        [abstract]
+        --
+        abstract
+        --
+
+        more preamble
+
+        == First Section
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[0] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of last block inside delimited block' do
+      let :input_source do
+        <<~'EOS'
+        ****
+        inside paragraph
+        ****
+
+        outside paragraph
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[0] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of list followed by block' do
+      let :input_source do
+        <<~'EOS'
+        * list item
+
+        paragraph
+        EOS
+      end
+
+      let(:start) { doc.blocks[0] }
+
+      it('should be next block adjacent to list') { (expect result).to eql doc.blocks[1] }
+    end
+
+    context 'of first list item in list' do
+      let :input_source do
+        <<~'EOS'
+        * yin
+        * yang
+        EOS
+      end
+
+      let(:start) { doc.blocks[0].items[0] }
+
+      it('should be next list item') { (expect result).to eql doc.blocks[0].items[1] }
+    end
+
+    context 'of last list item in list' do
+      let :input_source do
+        <<~'EOS'
+        * yin
+        * yang
+
+        paragraph
+        EOS
+      end
+
+      let(:start) { doc.blocks[0].items[-1] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of last attached block in first item in list' do
+      let :input_source do
+        <<~'EOS'
+        * moon
+        +
+        stars
+        * sun
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[0] }
+
+      it('should be next list item') { (expect result).to eql doc.blocks[0].items[-1] }
+    end
+
+    context 'of last attached block in last item in list' do
+      let :input_source do
+        <<~'EOS'
+        * sun
+        * moon
+        +
+        stars
+
+        paragraph
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[0] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of last block in open block attached to first item in list' do
+      let :input_source do
+        <<~'EOS'
+        * moon
+        +
+        --
+        light side
+
+        dark side
+        --
+        * sun
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[1] }
+
+      it('should be next list item') { (expect result).to eql doc.blocks[0].items[-1] }
+    end
+
+    context 'of last item in nested list of first item in list' do
+      let :input_source do
+        <<~'EOS'
+        * sun
+         ** star
+        * moon
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :list_item)[1] }
+
+      it('should be next top-level list item') { (expect result).to eql doc.blocks[0].items[-1] }
+    end
+
+    context 'of last item in nested list of last item in list' do
+      let :input_source do
+        <<~'EOS'
+        * moon
+        * sun
+         ** star
+
+        paragraph
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :list_item)[2] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of last item in deeply nested list of first item in list' do
+      let :input_source do
+        <<~'EOS'
+        * foo
+         ** bar
+          *** baz
+        * moon
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :list_item)[2] }
+
+      it('should be next top-level list item') { (expect result).to eql doc.blocks[0].items[-1] }
+    end
+
+    context 'of term of first item in dlist' do
+      let :input_source do
+        <<~'EOS'
+        foo:: bar
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :list_item)[0] }
+
+      it('should be desc of current item') { (expect result).to eql (doc.find_by context: :list_item)[1] }
+    end
+
+    context 'of desc text of first item in dlist' do
+      let :input_source do
+        <<~'EOS'
+        foo:: bar
+        yin:: yang
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :list_item)[1] }
+
+      it('should be term of next item') { (expect result).to eql (doc.find_by context: :list_item)[2] }
+    end
+
+    context 'of desc text of last item in dlist' do
+      let :input_source do
+        <<~'EOS'
+        foo:: bar
+        yin:: yang
+
+        paragraph
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :list_item)[3] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of attached block in last item in dlist' do
+      let :input_source do
+        <<~'EOS'
+        foo:: bar
+        sun:: moon
+        +
+        stars
+
+        paragraph
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[0] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of missing block' do
+      let :input_source do
+        <<~'EOS'
+        foo:: bar
+        yin:: yang
+        EOS
+      end
+
+      let :start do
+        list_items = (doc.find_by context: :list_item)
+        list_items[0].parent.items[0].replace [[list_items[0].dup], list_items[1].dup]
+        list_items[1]
+      end
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of preamble followed by section' do
+      let :input_source do
+        <<~'EOS'
+        = Document Title
+
+        [abstract]
+        --
+        A glimpse at what is to come.
+        --
+
+        == Intro
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :open)[0].parent }
+
+      it('should be next section') { (expect result).to eql doc.sections[-1] }
+    end
+
+    context 'of paragraph in abstract followed by section' do
+      let :input_source do
+        <<~'EOS'
+        = Document Title
+
+        [abstract]
+        --
+        A glimpse at what is to come.
+        --
+
+        == Intro
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :paragraph)[0] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of quote block in abstract followed by section' do
+      let :input_source do
+        <<~'EOS'
+        = Document Title
+
+        [abstract]
+        --
+        ____
+        A glimpse at what is to come.
+        ____
+        --
+
+        == Intro
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :quote)[0] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of last block in AsciiDoc table cell' do
+      let :input_source do
+        <<~'EOS'
+        [cols=2*]
+        |===
+        a|
+        foo
+
+        bar
+
+        ____
+        quote
+        ____
+
+        | another cell
+        |===
+
+        after
+        EOS
+      end
+
+      let(:start) { (doc.find_by context: :quote, traverse_documents: true)[0] }
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+
+    context 'of last block in description of first item in horizontal dlist' do
+      example_group = self
+
+      let :input_source do
+        <<~'EOS'
+        .Title
+        [horizontal]
+        term:: desc
+        +
+        [quote]
+        capture:quote[]
+
+        another term::
+        EOS
+      end
+
+      let :doc do
+        Asciidoctor.load input_source, backend: 'pdf', extensions: (proc do
+          inline_macro :capture do
+            process do |parent, target|
+              example_group.let(:captured_block) { parent }
+              create_inline parent, :quoted, target
+            end
+          end
+        end)
+      end
+
+      let :start do
+        doc.convert
+        captured_block
+      end
+
+      it('should be next term') { (expect result).to eql (doc.find_by context: :list_item)[-1] }
+    end
+
+    context 'of last block in description of last item in horizontal dlist' do
+      example_group = self
+
+      let :input_source do
+        <<~'EOS'
+        .Title
+        [horizontal]
+        term:: desc
+        +
+        [quote]
+        capture:quote[]
+
+        after
+        EOS
+      end
+
+      let :doc do
+        Asciidoctor.load input_source, backend: 'pdf', extensions: (proc do
+          inline_macro :capture do
+            process do |parent, target|
+              example_group.let(:captured_block) { parent }
+              create_inline parent, :quoted, target
+            end
+          end
+        end)
+      end
+
+      let :start do
+        doc.convert
+        captured_block
+      end
+
+      it('should be nil') { (expect result).to be_nil }
+    end
+  end
+
   describe 'extend' do
     it 'should use specified extended converter' do
       backend = nil

@@ -13,6 +13,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     (expect images[0].data).to eql image_data
   end
 
+  # NOTE: for now, the margin top setting is ignored, which this test asserts
   it 'should place anchor above top margin of block image' do
     input = <<~'EOS'
     paragraph
@@ -26,7 +27,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
     pdf = to_pdf input, pdf_theme: pdf_theme
     (expect (image_dest = get_dest pdf, 'tux')).not_to be_nil
-    (expect image_dest[:y]).to eql images[0][:y] + 10
+    #(expect image_dest[:y]).to eql images[0][:y] + 10
+    (expect image_dest[:y]).to eql images[0][:y]
   end
 
   it 'should place anchor at top of block image if advanced to next page' do
@@ -37,10 +39,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     image::tall-diagram.png[Tall Diagram]
     EOS
 
-    pdf_theme = { block_margin_top: 10 }
-
-    images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
-    pdf = to_pdf input, pdf_theme: pdf_theme
+    images = (to_pdf input, analyze: :image).images
+    pdf = to_pdf input
     (expect (image_dest = get_dest pdf, 'tall-diagram')).not_to be_nil
     (expect image_dest[:page_number]).to be 2
     (expect image_dest[:y]).to eql images[0][:y]

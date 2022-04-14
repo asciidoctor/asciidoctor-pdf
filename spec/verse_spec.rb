@@ -200,7 +200,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
       verse_border_width: 0.5,
       verse_border_color: 'CCCCCC',
       verse_background_color: 'EEEEEE',
-      verse_padding: [6, 10, 0, 10],
+      verse_padding: [6, 10, 12, 10],
     }
     to_file = to_pdf_file <<~EOS, 'verse-page-split.pdf', pdf_theme: pdf_theme
     [verse]

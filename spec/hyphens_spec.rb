@@ -173,12 +173,16 @@ describe 'Asciidoctor::PDF::Converter - Hyphens', if: (gem_available? 'text-hyph
   end
 
   it 'should apply hyphenation when line is advanced to next page' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { prose_margin_top: 700 }, analyze: true
-    = Document Title
-    :hyphens:
+    pdf = with_content_spacer 10, 690 do |spacer_path|
+      to_pdf <<~EOS, analyze: true
+      = Document Title
+      :hyphens:
 
-    foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar paragraph
-    EOS
+      image::#{spacer_path}[]
+
+      foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar paragraph
+      EOS
+    end
 
     lines = pdf.lines pdf.find_text page_number: 2
     (expect lines).to have_size 2
