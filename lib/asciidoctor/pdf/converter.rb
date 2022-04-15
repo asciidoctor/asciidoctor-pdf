@@ -1133,9 +1133,7 @@ module Asciidoctor
           marker_width = rendered_width_of_string %(#{marker = conum_glyph index}x)
           float do
             bounding_box [0, cursor], width: marker_width do
-              theme_font :conum do
-                layout_prose marker, align: :center, line_height: @theme.conum_line_height, inline_format: false, margin: 0
-              end
+              layout_prose marker, align: :center, line_height: @theme.conum_line_height, inline_format: false, margin: 0
             end
           end
         end
