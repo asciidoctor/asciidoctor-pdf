@@ -2589,8 +2589,9 @@ module Asciidoctor
               else
                 width = (intrinsic_image_dimensions image_path, image_format)[:width]
               end
+              class_attr = (role = node.role) ? %( class="#{role}") : ''
               fit_attr = (fit = node.attr 'fit') ? %( fit="#{fit}") : ''
-              img = %(<img src="#{image_path}" format="#{image_format}" alt="#{encode_quotes node.attr 'alt'}" width="#{width}"#{fit_attr}>)
+              img = %(<img src="#{image_path}" format="#{image_format}" alt="#{encode_quotes node.attr 'alt'}" width="#{width}"#{class_attr}#{fit_attr}>)
             else
               log :warn, %(image to embed not found or not readable: #{image_path})
               img = %([#{node.attr 'alt'}&#93;)

@@ -177,9 +177,22 @@ module Asciidoctor
                     # a zero-width space in the text will cause the image to be duplicated
                     # NOTE: add enclosing square brackets here to avoid errors in parsing
                     text: %([#{attributes[:alt].delete ZeroWidthSpace}]),
-                    callback: [InlineImageRenderer],
                     object_id: node.object_id, # used to deduplicate if fragment gets split up
                   }
+                  if inherited && (callback = inherited[:callback]) && (callback.include? TextBackgroundAndBorderRenderer)
+                    # NOTE: if we keep InlineTextAligner, it needs to skip draw_text! for image fragment
+                    fragment[:callback] = [TextBackgroundAndBorderRenderer, InlineImageRenderer]
+                    fragment.update inherited.slice :border_color, :border_offset, :border_radius, :border_width, :background_color
+                  else
+                    fragment[:callback] = [InlineImageRenderer]
+                  end
+                  attributes[:class].split.each do |class_name|
+                    next unless @theme_settings.key? class_name
+                    update_fragment fragment, @theme_settings[class_name]
+                    if fragment[:background_color] || (fragment[:border_color] && fragment[:border_width])
+                      fragment[:callback] = [TextBackgroundAndBorderRenderer] | fragment[:callback]
+                    end
+                  end if attributes.key? :class
                   if inherited && (link = inherited[:link])
                     fragment[:link] = link
                   end
