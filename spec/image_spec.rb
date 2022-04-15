@@ -2079,6 +2079,39 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pdf.lines.select {|it| it[:color] == 'DEDEDE' }).to be_empty
     end
 
+    it 'should draw border around inline image if border width and border color are set in the theme', visual: true do
+      pdf_theme = {
+        role_enclose_border_width: 0.5,
+        role_enclose_border_offset: 1,
+        role_enclose_border_color: '0000FF',
+        role_enclose_border_radius: 2,
+      }
+
+      %w([.enclose]#image:tux.png[tux,fit=line]# image:tux.png[tux,fit=line,role=enclose]).each do |image|
+        to_file = to_pdf_file <<~EOS, 'image-inline-border.pdf', pdf_theme: pdf_theme
+        before #{image} after
+        EOS
+
+        (expect to_file).to visually_match 'image-inline-border.pdf'
+      end
+    end
+
+    it 'should draw background under inline image if background color is set in the theme', visual: true do
+      pdf_theme = {
+        role_enclose_background_color: 'CCCCCC',
+        role_enclose_border_offset: 1,
+        role_enclose_border_radius: 2,
+      }
+
+      %w([.enclose]#image:tux.png[tux,fit=line]# image:tux.png[tux,fit=line,role=enclose]).each do |image|
+        to_file = to_pdf_file <<~EOS, 'image-inline-background.pdf', pdf_theme: pdf_theme
+        before #{image} after
+        EOS
+
+        (expect to_file).to visually_match 'image-inline-background.pdf'
+      end
+    end
+
     it 'should ignore :fit option for SVG image if :width is set' do
       doc = Prawn::Document.new do
         text 'start'

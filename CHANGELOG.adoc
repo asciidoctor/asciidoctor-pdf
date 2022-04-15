@@ -35,6 +35,7 @@ Enhancements::
 * set `part-numeral` attribute in running content on pages in part if `partnums` attribute is set (#1373)
 * add support for normal_italic font style (to reset font style to normal, then apply italic) (#1603)
 * honor text alignment roles (e.g., `text-center`) on block image (#1609)
+* honor role and inherited role on inline image (#1939, #1376)
 * disable running header and/or footer on toc pages if `noheader` and/or `nofooter` option is set on toc macro (#1378)
 * add support for preamble toc placement
 * only insert macro toc at location of first toc macro
