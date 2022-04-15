@@ -823,7 +823,7 @@ module Asciidoctor
           layout_prose node.content, prose_opts
         else
           prose_opts[:line_height] = @theme.lead_line_height if roles.include? 'lead'
-          theme_fonts (roles.map {|role| role == 'lead' ? :lead : %(role_#{role}).to_sym }) do
+          theme_font_cascade (roles.map {|role| role == 'lead' ? :lead : %(role_#{role}).to_sym }) do
             layout_prose node.content, prose_opts
           end
         end
@@ -3934,13 +3934,13 @@ module Asciidoctor
         result
       end
 
-      def theme_fonts categories, &block
+      def theme_font_cascade categories, &block
         category = (categories = categories.dup).shift
         if categories.empty?
           theme_font category, &block
         else
           theme_font category do
-            theme_fonts categories, &block
+            theme_font_cascade categories, &block
           end
         end
       end
