@@ -149,7 +149,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     reference_texts = (to_pdf input, analyze: true).text
     default_spacing = reference_texts[0][:y] - reference_texts[1][:y]
 
-    texts = (to_pdf input, pdf_theme: { lead_line_height: 2 }, analyze: true).text
+    texts = (to_pdf input, pdf_theme: { role_lead_line_height: 2 }, analyze: true).text
     adjusted_spacing = texts[0][:y] - texts[1][:y]
 
     (expect adjusted_spacing).to be > default_spacing

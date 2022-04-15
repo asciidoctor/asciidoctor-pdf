@@ -239,8 +239,8 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
   context 'theming' do
     it 'should allow theme to customize style of lead paragraph' do
       pdf_theme = {
-        lead_font_size: 14,
-        lead_font_color: '000000',
+        role_lead_font_size: 14,
+        role_lead_font_color: '000000',
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       = Document Title
