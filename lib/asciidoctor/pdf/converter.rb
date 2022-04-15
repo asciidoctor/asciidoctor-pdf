@@ -806,12 +806,9 @@ module Asciidoctor
       def convert_paragraph node
         add_dest_for_block node if node.id
         prose_opts = { margin_bottom: 0, hyphenate: true }
-        if (lead = (roles = node.roles).include? 'lead')
-          prose_opts[:line_height] = @theme.lead_line_height
-        end
-
-        if (align = resolve_alignment_from_role roles)
+        if (align = resolve_alignment_from_role (roles = node.roles), use_theme: true)
           prose_opts[:align] = align
+          roles -= TextAlignmentRoles
         end
 
         if (text_indent = @theme.prose_text_indent) > 0
@@ -822,12 +819,13 @@ module Asciidoctor
         # and advance to the next page if so (similar to logic for section titles)
         layout_caption node, labeled: false if node.title?
 
-        if lead
-          theme_font :lead do
+        if roles.empty?
+          layout_prose node.content, prose_opts
+        else
+          prose_opts[:line_height] = @theme.lead_line_height if roles.include? 'lead'
+          theme_fonts (roles.map {|role| role == 'lead' ? :lead : %(role_#{role}).to_sym }) do
             layout_prose node.content, prose_opts
           end
-        else
-          layout_prose node.content, prose_opts
         end
 
         block_next = next_enclosed_block node
@@ -3935,6 +3933,17 @@ module Asciidoctor
         result
       end
 
+      def theme_fonts categories, &block
+        category = (categories = categories.dup).shift
+        if categories.empty?
+          theme_font category, &block
+        else
+          theme_font category do
+            theme_fonts categories, &block
+          end
+        end
+      end
+
       # Calculate the font size (down to the minimum font size) that would allow
       # all the specified fragments to fit in the available width without wrapping lines.
       #
@@ -4185,9 +4194,16 @@ module Asciidoctor
         end
       end
 
-      def resolve_alignment_from_role roles
+      def resolve_alignment_from_role roles, use_theme: false
         if (align_role = roles.reverse.find {|r| TextAlignmentRoles.include? r })
           (align_role.slice 5, align_role.length).to_sym
+        elsif use_theme
+          roles.reverse.each do |role|
+            if (align = @theme[%(role_#{role}_align)])
+              return align.to_sym
+            end
+          end
+          nil
         end
       end
 

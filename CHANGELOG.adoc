@@ -23,6 +23,7 @@ Enhancements::
 * allow theme to control border style of delimited blocks (example, sidebar, code, admonition, verse, quote) (#1586)
 * allow theme to control font color of first line of abstract
 * allow theme to control background color and border offset (only for background) for links (#1705)
+* support custom role on paragraph to allow theme to control font properties (#483)
 * don't render index section if index is empty (i.e., there are no index entries)
 * allow title of special section to be hidden by setting `untitled` option on section
 * stabilize font paths in built-in themes by prefixing paths with GEM_FONTS_DIR (#1568)
