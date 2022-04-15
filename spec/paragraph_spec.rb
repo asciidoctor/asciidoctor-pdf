@@ -117,4 +117,41 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect title_text[:x]).to be > center_x
     (expect paragraph_text[:x]).to be > center_x
   end
+
+  it 'should apply the lead style to a paragraph with the lead role' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+
+    preamble content
+
+    [.lead]
+    more preamble content
+
+    == First Section
+
+    section content
+    EOS
+
+    preamble_text = pdf.find_text 'preamble content'
+    (expect preamble_text).to have_size 1
+    (expect preamble_text[0][:font_size]).to be 13
+    more_preamble_text = pdf.find_text 'more preamble content'
+    (expect more_preamble_text).to have_size 1
+    (expect more_preamble_text[0][:font_size]).to be 13
+  end
+
+  it 'should allow the theme to control the line height of a lead paragraph' do
+    input = <<~EOS
+    [.lead]
+    #{lorem_ipsum '2-sentences-1-paragraph'}
+    EOS
+
+    reference_texts = (to_pdf input, analyze: true).text
+    default_spacing = reference_texts[0][:y] - reference_texts[1][:y]
+
+    texts = (to_pdf input, pdf_theme: { lead_line_height: 2 }, analyze: true).text
+    adjusted_spacing = texts[0][:y] - texts[1][:y]
+
+    (expect adjusted_spacing).to be > default_spacing
+  end
 end

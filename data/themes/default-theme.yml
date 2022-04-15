@@ -141,11 +141,10 @@ caption:
   margin_outside: 0
 lead:
   font_size: $base_font_size_large
-  line_height: 1.4
 abstract:
   font_color: 5C6266
   font_size: $lead_font_size
-  line_height: $lead_line_height
+  line_height: 1.4
   font_style: italic
   first_line_font_style: bold
   title:

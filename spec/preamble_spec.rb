@@ -263,27 +263,5 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       (expect more_preamble_text[0][:font_size]).to eql 10.5
       (expect more_preamble_text[0][:font_color]).to eql '333333'
     end
-
-    it 'should apply the lead style to a paragraph with the lead role' do
-      pdf = to_pdf <<~'EOS', analyze: true
-      = Document Title
-
-      preamble content
-
-      [.lead]
-      more preamble content
-
-      == First Section
-
-      section content
-      EOS
-
-      preamble_text = pdf.find_text 'preamble content'
-      (expect preamble_text).to have_size 1
-      (expect preamble_text[0][:font_size]).to be 13
-      more_preamble_text = pdf.find_text 'more preamble content'
-      (expect more_preamble_text).to have_size 1
-      (expect more_preamble_text[0][:font_size]).to be 13
-    end
   end
 end

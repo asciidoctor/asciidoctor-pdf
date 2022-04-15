@@ -806,7 +806,10 @@ module Asciidoctor
       def convert_paragraph node
         add_dest_for_block node if node.id
         prose_opts = { margin_bottom: 0, hyphenate: true }
-        lead = (roles = node.roles).include? 'lead'
+        if (lead = (roles = node.roles).include? 'lead')
+          prose_opts[:line_height] = @theme.lead_line_height
+        end
+
         if (align = resolve_alignment_from_role roles)
           prose_opts[:align] = align
         end
