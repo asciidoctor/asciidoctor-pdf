@@ -863,12 +863,10 @@ module Asciidoctor
         end
         unless icons
           label_text = sanitize node.caption
-          theme_font :admonition_label do
-            theme_font %(admonition_label_#{type}) do
-              label_text = transform_text label_text, @text_transform if @text_transform
-              label_width = rendered_width_of_string label_text
-              label_width = label_min_width if label_min_width && label_min_width > label_width
-            end
+          theme_font_cascade [:admonition_label, %(admonition_label_#{type})] do
+            label_text = transform_text label_text, @text_transform if @text_transform
+            label_width = rendered_width_of_string label_text
+            label_width = label_min_width if label_min_width && label_min_width > label_width
           end
         end
         unless ::Array === (cpad = @theme.admonition_padding || 0)
@@ -953,13 +951,11 @@ module Asciidoctor
                     end
                     unless icons
                       label_text = sanitize node.caption
-                      theme_font :admonition_label do
-                        theme_font %(admonition_label_#{type}) do
-                          label_text = transform_text label_text, @text_transform if @text_transform
-                          # NOTE: make sure the textual label fits in space already reserved
-                          if (actual_label_width = rendered_width_of_string label_text) > label_width
-                            adjusted_font_size = font_size * label_width / actual_label_width
-                          end
+                      theme_font_cascade [:admonition_label, %(admonition_label_#{type})] do
+                        label_text = transform_text label_text, @text_transform if @text_transform
+                        # NOTE: make sure the textual label fits in space already reserved
+                        if (actual_label_width = rendered_width_of_string label_text) > label_width
+                          adjusted_font_size = font_size * label_width / actual_label_width
                         end
                       end
                       redo
@@ -967,26 +963,24 @@ module Asciidoctor
                   else
                     # NOTE: the label must fit in the alotted space or it shows up on another page!
                     # QUESTION: anyway to prevent text overflow in the case it doesn't fit?
-                    theme_font :admonition_label do
-                      theme_font %(admonition_label_#{type}) do
-                        font_size adjusted_font_size if adjusted_font_size
-                        # NOTE: Prawn's vertical center is not reliable, so calculate it manually
-                        if label_valign == :center
-                          label_valign = :top
-                          if (vcenter_pos = (label_height - (height_of_typeset_text label_text, line_height: 1)) * 0.5) > 0
-                            move_down vcenter_pos
-                          end
+                    theme_font_cascade [:admonition_label, %(admonition_label_#{type})] do
+                      font_size adjusted_font_size if adjusted_font_size
+                      # NOTE: Prawn's vertical center is not reliable, so calculate it manually
+                      if label_valign == :center
+                        label_valign = :top
+                        if (vcenter_pos = (label_height - (height_of_typeset_text label_text, line_height: 1)) * 0.5) > 0
+                          move_down vcenter_pos
                         end
-                        @text_transform = nil # already applied to label
-                        layout_prose label_text,
-                          align: label_align,
-                          valign: label_valign,
-                          line_height: 1,
-                          margin: 0,
-                          inline_format: false, # already replaced character references
-                          overflow: :shrink_to_fit,
-                          disable_wrap_by_char: true
                       end
+                      @text_transform = nil # already applied to label
+                      layout_prose label_text,
+                        align: label_align,
+                        valign: label_valign,
+                        line_height: 1,
+                        margin: 0,
+                        inline_format: false, # already replaced character references
+                        overflow: :shrink_to_fit,
+                        disable_wrap_by_char: true
                     end
                   end
                 end
@@ -2055,18 +2049,16 @@ module Asciidoctor
                 cell_data[:font_style] = :bold
               when :header
                 unless base_header_cell_data
-                  theme_font :table_head do
-                    theme_font :table_header_cell do
-                      header_cell_font_info = font_info
-                      base_header_cell_data = {
-                        text_color: @font_color,
-                        font: header_cell_font_info[:family],
-                        size: header_cell_font_info[:size],
-                        font_style: header_cell_font_info[:style],
-                        text_transform: @text_transform,
-                      }
-                      header_cell_line_metrics = calc_line_metrics theme.base_line_height
-                    end
+                  theme_font_cascade [:table_head, :table_header_cell] do
+                    header_cell_font_info = font_info
+                    base_header_cell_data = {
+                      text_color: @font_color,
+                      font: header_cell_font_info[:family],
+                      size: header_cell_font_info[:size],
+                      font_style: header_cell_font_info[:style],
+                      text_transform: @text_transform,
+                    }
+                    header_cell_line_metrics = calc_line_metrics theme.base_line_height
                   end
                   if (val = resolve_theme_color :table_header_cell_background_color, head_bg_color)
                     base_header_cell_data[:background_color] = val
@@ -3032,28 +3024,26 @@ module Asciidoctor
             end
           end
         end
-        theme_font :caption do
-          theme_font category_caption do
-            caption_margin_outside = @theme[%(#{category_caption}_margin_outside)] || @theme.caption_margin_outside
-            caption_margin_inside = @theme[%(#{category_caption}_margin_inside)] || @theme.caption_margin_inside
-            if ((opts.delete :side) || :top) == :top
-              margin = { top: caption_margin_outside, bottom: caption_margin_inside }
-            else
-              margin = { top: caption_margin_inside, bottom: caption_margin_outside }
-            end
-            unless (inherited = apply_text_decoration [], :caption).empty?
-              opts = opts.merge inherited
-            end
-            indent(*indent_by) do
-              layout_prose string, ({
-                margin_top: margin[:top],
-                margin_bottom: margin[:bottom],
-                align: text_align,
-                normalize: false,
-                normalize_line_height: true,
-                hyphenate: true,
-              }.merge opts)
-            end
+        theme_font_cascade [:caption, category_caption] do
+          caption_margin_outside = @theme[%(#{category_caption}_margin_outside)] || @theme.caption_margin_outside
+          caption_margin_inside = @theme[%(#{category_caption}_margin_inside)] || @theme.caption_margin_inside
+          if ((opts.delete :side) || :top) == :top
+            margin = { top: caption_margin_outside, bottom: caption_margin_inside }
+          else
+            margin = { top: caption_margin_inside, bottom: caption_margin_outside }
+          end
+          unless (inherited = apply_text_decoration [], :caption).empty?
+            opts = opts.merge inherited
+          end
+          indent(*indent_by) do
+            layout_prose string, ({
+              margin_top: margin[:top],
+              margin_bottom: margin[:bottom],
+              align: text_align,
+              normalize: false,
+              normalize_line_height: true,
+              hyphenate: true,
+            }.merge opts)
           end
         end
         nil
@@ -3086,11 +3076,9 @@ module Asciidoctor
         start_page_number = page_number
         move_cursor_to start_cursor
         unless (toc_title = doc.attr 'toc-title').nil_or_empty?
-          theme_font :heading, level: 2 do
-            theme_font :toc_title do
-              toc_title_align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
-              layout_general_heading doc, toc_title, align: toc_title_align, level: 2, outdent: true, role: :toctitle
-            end
+          theme_font_cascade [[:heading, level: 2], :toc_title] do
+            toc_title_align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
+            layout_general_heading doc, toc_title, align: toc_title_align, level: 2, outdent: true, role: :toctitle
           end
         end
         # QUESTION: should we skip this whole method if num_levels < 0?
@@ -3933,11 +3921,15 @@ module Asciidoctor
       end
 
       def theme_font_cascade categories, &block
-        category = (categories = categories.dup).shift
-        if categories.empty?
-          theme_font category, &block
+        if ::Array === (category = (categories = categories.dup).shift)
+          category, opts = category
         else
-          theme_font category do
+          opts = {}
+        end
+        if categories.empty?
+          theme_font category, opts, &block
+        else
+          theme_font category, opts do
             theme_font_cascade categories, &block
           end
         end
