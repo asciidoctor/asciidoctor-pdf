@@ -822,8 +822,8 @@ module Asciidoctor
         if roles.empty?
           layout_prose node.content, prose_opts
         else
-          prose_opts[:line_height] = @theme.lead_line_height if roles.include? 'lead'
-          theme_font_cascade (roles.map {|role| role == 'lead' ? :lead : %(role_#{role}).to_sym }) do
+          prose_opts[:line_height] = @theme.role_lead_line_height if roles.include? 'lead'
+          theme_font_cascade (roles.map {|role| %(role_#{role}).to_sym }) do
             layout_prose node.content, prose_opts
           end
         end

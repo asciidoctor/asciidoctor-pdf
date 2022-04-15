@@ -53,6 +53,8 @@ base:
   border_radius: 4
   border_width: 0.5
 role:
+  lead:
+    font_size: $base_font_size_large
   line-through:
     text_decoration: line-through
   underline:
@@ -139,11 +141,9 @@ caption:
   # FIXME perhaps set line_height instead of / in addition to margins?
   margin_inside: $vertical_rhythm / 3
   margin_outside: 0
-lead:
-  font_size: $base_font_size_large
 abstract:
   font_color: 5C6266
-  font_size: $lead_font_size
+  font_size: $role_lead_font_size
   line_height: 1.4
   font_style: italic
   first_line_font_style: bold

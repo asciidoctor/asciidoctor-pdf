@@ -1184,6 +1184,7 @@ This role can be used as follows:
 ----
 
 The converter provides several predefined roles, which can can all be redefined.
+The `lead` defines the font properties for a lead paragraph, whether the role is assign implicitly or explicitly.
 The `big` and `small` roles map the font size to the $base-font-size-large and $base-font-size-small values, respectively.
 The `underline` and `line-through` roles add the underline and strikethrough decorations, respectively.
 The `subtitle` role is used to configure the font properties of the subtitle of a section title.
@@ -3710,60 +3711,6 @@ The keys in this category control the SVG integration.
 |===
 
 1. The fallback font family is only used when the font family in the SVG does not map to a known font name from the font catalog.
-
-[#keys-lead]
-=== Lead
-
-The keys in this category control the styling of lead paragraphs.
-
-[cols="3,4,5l"]
-|===
-|Key |Value Type |Example
-
-3+|[#key-prefix-lead]*Key Prefix:* <<key-prefix-lead,lead>>
-
-|font-color
-|<<colors,Color>> +
-(default: _inherit_)
-|lead:
-  font-color: #262626
-
-|font-family
-|<<fonts,Font family name>> +
-(default: _inherit_)
-|lead:
-  font-family: M+ 1p
-
-|font-kerning
-|normal {vbar} none +
-(default: _inherit_)
-|lead:
-  font-kerning: none
-
-|font-size
-|<<values,Number>> +
-(default: 13.5)
-|lead:
-  font-size: 13
-
-|font-style
-|<<font-styles,Font style>> +
-(default: _inherit_)
-|lead:
-  font-style: bold
-
-|text-transform
-|<<text-transforms,Text transform>> +
-(default: _inherit_)
-|lead:
-  text-transform: uppercase
-
-|line-height
-|<<values,Number>> +
-(default: 1.4)
-|lead:
-  line-height: 1.4
-|===
 
 [#keys-abstract]
 === Abstract
