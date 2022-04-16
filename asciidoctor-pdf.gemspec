@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage = 'https://asciidoctor.org/docs/asciidoctor-pdf'
   s.license = 'MIT'
   # NOTE required ruby version is informational only; it's not enforced since it can't be overridden and can cause builds to break
-  #s.required_ruby_version = '>= 2.5.0'
+  #s.required_ruby_version = '>= 2.7.0'
   s.metadata = {
     'bug_tracker_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/issues',
     'changelog_uri' => 'https://github.com/asciidoctor/asciidoctor-pdf/blob/main/CHANGELOG.adoc',

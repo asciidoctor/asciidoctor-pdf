@@ -41,7 +41,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        ruby: [jruby-9.3, jruby-9.2, '2.5', '2.7', '3.0', '3.1']
+        ruby: [jruby-9.3, jruby-9.2, '2.7', '3.0', '3.1']
         rouge-version: [~]
         upstream: [~]
         exclude:
@@ -56,10 +56,10 @@ jobs:
           ruby: '3.1'
         # NOTE: enable once Asciidoctor 2.1.0 is released
         #- os: ubuntu-latest
-        #  ruby: '2.5'
+        #  ruby: '2.7'
         #  asciidoctor-version: '~> 2.0.0'
         - os: ubuntu-latest
-          ruby: '2.5'
+          ruby: '2.7'
           rouge-version: '~> 2.0.0'
         - os: ubuntu-latest
           ruby: '3.0'
