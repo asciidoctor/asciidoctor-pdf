@@ -36,6 +36,7 @@ The following image types (and corresponding file extensions) are supported:
 
 CAUTION: The GIF (.gif), TIFF (.tiff), BMP (.bmp), and interlaced PNG formats are not supported unless you install prawn-gmagick.
 See <<other-image-formats>> for details.
+//TODO confirm all these formats are unsupported both in the theme and content as we use the same admonition in both locations
 
 In order to embed an image into a PDF, Asciidoctor PDF must understand how to read it.
 To perform this work, Asciidoctor delegates to the underlying libraries.
@@ -47,6 +48,7 @@ Without any additional libraries, those are the only supported image file format
 === Supporting additional image file formats
 
 If you need support for additional image formats, such as GIF, TIFF, BMP, or interlaced PNG--and you don't want to convert those images to a supported format--you must install the {url-prawn-gmagick}[prawn-gmagick^] (>= 0.0.9) Ruby gem.
+//TODO the gmagick version should not be mentioned here, instead it should be specified in the optional prerequisites (or whatever we decide to call it) table
 prawn-gmagick is an extension for Prawn based on {url-graphicsmagick}[GraphicsMagick^] that adds support for all the image formats recognized by that library.
 prawn-gmagick has the added benefit of significantly reducing the time it takes to generate a PDF containing a lot of images.
 

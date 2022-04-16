@@ -9,6 +9,8 @@ Choose one (or more) of the following:
 .Rouge (preferred, minimum version: 2.0.0)
  $ gem install rouge
 
+//TODO Remove the version of Rouge from the content above. The minimum version should be listed in the supported platforms table instead.
+
 .Pygments
  $ gem install pygments.rb
 

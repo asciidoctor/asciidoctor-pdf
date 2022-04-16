@@ -32,6 +32,14 @@ For a more thorough optimization, you can use the <<rghost,integrated optimizer>
 Asciidoctor PDF also provides a flag (and bin script) that uses GhostScript (via rghost) to optimize and compress the generated PDF with minimal impact on its quality.
 You must have Ghostscript (command: `gs`) and the `rghost` gem installed to use it.
 
+=== Install rghost
+
+To install the rghost gem, open a terminal and type the following command.
+
+ $ gem install rghost
+
+=== Convert and optimize
+
 Here's an example usage that converts your document and optimizes it:
 
  $ asciidoctor-pdf -a optimize filename.adoc
@@ -86,9 +94,13 @@ Another option to optimize the PDF is {url-hexapdf}[hexapdf^] (gem: hexapdf, com
 Before introducing it, though, it's important to point out that its license is AGPL.
 If that's okay with you, read on to learn how to use it.
 
+=== Install hexapdf
+
 First, install the hexapdf gem using the following command:
 
  $ gem install hexapdf
+
+=== Compress a PDF
 
 You can then use it to optimize your PDF as follows:
 

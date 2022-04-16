@@ -16,6 +16,7 @@ If you don't already have an AsciiDoc document, you can download and use the xre
 ....
 include::attachment$basic-example.adoc[]
 ....
+//TODO update link to https in example doc
 
 It's time to convert the AsciiDoc document directly to PDF.
 

@@ -13,8 +13,11 @@ To check if you have Ruby available, use the `ruby` command to query the version
 
  $ ruby -e 'puts RUBY_VERSION'
 
+//TODO This Ruby version command (line above) is different than the Ruby version command in Core. Which one do we prefer?
 Make sure this command reports a Ruby version that's at least 2.5.
 If so, you may proceed.
+
+//TODO What about installing Asciidoctor Core? What about the Prawn extensions (table? svg? etc.)?
 
 === Windows system encoding
 
@@ -31,19 +34,19 @@ Once you make this change, all your Unicode headaches will be behind you.
 
 == Optional prerequisites
 
-If you want to xref:optimize-pdf.adoc[optimize your PDF] using rghost or hexapdf, you'll need to install the rghost gem:
+PDF optimization::
+If you want to optimize your PDF, you'll need rghost or hexapdf.
+See xref:optimize-pdf.adoc[] for installation and usage instructions.
 
- $ gem install rghost
-
-or the hexapdf gem:
-
- $ gem install hexapdf
+Source highlighting::
+You'll need to xref:syntax-highlighting.adoc[install a syntax highlighter] to use source highlighting.
 
 Similarly, if you want to use the hyphen option you will need to install the `text-hyphen` gem:
 
  $ gem install text-hyphen
 
-You'll also need to xref:syntax-highlighting.adoc[install a syntax highlighter] to use source highlighting.
+//TODO what is text hyphen and where should its content be located?
+//NOTE I'd prefer not to have the optional prerequisite install instructions here as the install process and possible troubleshooting of the required prereqs and Asciidoctor PDF is already a lot.
 
 == Install Asciidoctor PDF
 
@@ -74,6 +77,7 @@ All files are managed in user space (aka your home or user directory).
 If something gets messed up, you can simply remove the [.path]_$HOME/.rvm_ folder and start over.
 
 To learn how to install RVM, follow the https://asciidoctor.org/docs/install-asciidoctor-macos/#rvm-procedure-recommended[RVM installation procedure^] covered in the Asciidoctor documentation.
+//TODO determine best RVM instructions, if we still recommend, and put them in their proper home for xrefing to.
 Once you have installed RVM and used it to install Ruby, make sure to activate the Ruby managed by RVM using `rvm use default` or a specific Ruby version like `rvm use 2.7`.
 (You'll need to do this each time you open a new terminal).
 
