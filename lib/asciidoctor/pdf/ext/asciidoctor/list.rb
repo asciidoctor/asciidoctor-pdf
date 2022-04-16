@@ -9,19 +9,19 @@ class Asciidoctor::List
     Asciidoctor::ListItem === @parent
   end unless method_defined? :nested?
 
-  # Get the level of this list within the broader outline list (unordered or ordered) structure.
+  # Get the nesting level of this list within the broader list (unordered or ordered) structure.
   #
-  # This method differs from the level property in that it considers all outline list ancestors.
+  # This method differs from the level property in that it considers only list ancestors.
   # It's important for selecting the marker for an unordered list.
   #
-  # Return the 1-based level of this list within the outline list structure.
-  def outline_level
+  # Return the 1-based level of this list within the list structure.
+  def list_level
     l = 1
     ancestor = self
     # FIXME: does not cross out of AsciiDoc table cell
     while (ancestor = ancestor.parent)
-      l += 1 if Asciidoctor::List === ancestor && ancestor.outline?
+      l += 1 if Asciidoctor::List === ancestor && (ancestor.context == :ulist || ancestor.context == :olist)
     end
     l
-  end unless method_defined? :outline_level
+  end unless method_defined? :list_level
 end

@@ -127,6 +127,10 @@ module Asciidoctor
 
       def process_entry key, val, data, normalize_key = false
         key = key.tr '-', '_' if normalize_key && (key.include? '-')
+        if key == 'outline_list'
+          logger.warn 'the outline-list theme category is deprecated; use the list category instead'
+          key = 'list'
+        end
         if key == 'font'
           val.each do |subkey, subval|
             process_entry %(#{key}_#{subkey}), subval, data if subkey == 'catalog' || subkey == 'fallbacks'
@@ -192,27 +196,20 @@ module Asciidoctor
       def expand_vars expr, vars
         return expr unless (idx = expr.index '$')
         if idx == 0 && expr =~ LoneVariableRx
-          if (key = $1).include? '-'
-            key = key.tr '-', '_'
-          end
-          if vars.respond_to? key
-            vars[key]
-          else
-            logger.warn %(unknown variable reference in PDF theme: $#{$1})
-            expr
-          end
+          resolve_var vars, expr, $1
         else
-          expr.gsub VariableRx do
-            if (key = $1).include? '-'
-              key = key.tr '-', '_'
-            end
-            if vars.respond_to? key
-              vars[key]
-            else
-              logger.warn %(unknown variable reference in PDF theme: $#{$1})
-              $&
-            end
-          end
+          expr.gsub(VariableRx) { resolve_var vars, $&, $1 }
+        end
+      end
+
+      def resolve_var vars, ref, var
+        var = var.tr '-', '_' if var.include? '-'
+        if (vars.respond_to? var) ||
+            ((var.start_with? 'outline_list_') && (vars.respond_to? (var = var.slice 8, var.length)))
+          vars[var]
+        else
+          logger.warn %(unknown variable reference in PDF theme: #{ref})
+          ref
         end
       end
 

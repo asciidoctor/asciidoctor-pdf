@@ -230,15 +230,15 @@ thematic_break:
   border_width: $base_border_width
   margin_top: $vertical_rhythm * 0.5
   margin_bottom: $vertical_rhythm * 1.5
+list:
+  indent: $horizontal_rhythm * 1.5
+  #marker_font_color: 404040
+  # NOTE list_item_spacing only applies to list items that do not have complex content
+  item_spacing: $vertical_rhythm / 2
 description_list:
   term_font_style: bold
   term_spacing: $vertical_rhythm / 4
   description_indent: $horizontal_rhythm * 1.25
-outline_list:
-  indent: $horizontal_rhythm * 1.5
-  #marker_font_color: 404040
-  # NOTE outline_list_item_spacing applies to list items that do not have complex content
-  item_spacing: $vertical_rhythm / 2
 table:
   background_color: $page_background_color
   border_color: DDDDDD
@@ -260,7 +260,7 @@ toc:
     #levels: 2 3
 footnotes:
   font_size: round($base_font_size * 0.75)
-  item_spacing: $outline_list_item_spacing / 2
+  item_spacing: $list_item_spacing / 2
 header:
   font_size: $base_font_size_small
   line_height: 1

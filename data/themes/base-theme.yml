@@ -53,8 +53,8 @@ title_page_title_top: 40%
 title_page_title_font_size: 18
 title_page_subtitle_font_size: 14
 title_page_authors_margin_top: 12
-outline_list_indent: 30
-outline_list_item_spacing: 6
+list_indent: 30
+list_item_spacing: 6
 description_list_description_indent: 30
 description_list_term_font_style: bold
 description_list_term_spacing: 4
