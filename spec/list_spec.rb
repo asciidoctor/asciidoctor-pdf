@@ -1840,6 +1840,26 @@ describe 'Asciidoctor::PDF::Converter - List' do
       end
     end
 
+    it 'should allow conum font size and line height in colist to be customized by theme' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { conum_font_size: 8, conum_line_height: 1.8 }, analyze: true
+      ....
+      line one <1>
+      line two
+      line three <2>
+      ....
+      <1> First line
+      <2> Last line
+      EOS
+
+      one_text = pdf.find_text ?\u2460
+      (expect one_text).to have_size 2
+      (expect one_text[0][:font_size]).to eql 11
+      (expect one_text[0][:y]).to eql (pdf.find_unique_text %r/^line one/)[:y]
+      (expect one_text[1][:font_size]).to eql 8
+      (expect one_text[1][:y]).to be > (pdf.find_unique_text %r/First line/)[:y]
+      (expect one_text[1][:y]).to (be_within 1.5).of (pdf.find_unique_text %r/First line/)[:y]
+    end
+
     it 'should support filled conum glyphs if specified in theme' do
       pdf = to_pdf <<~'EOS', pdf_theme: { conum_glyphs: 'filled' }, analyze: true
       ....
