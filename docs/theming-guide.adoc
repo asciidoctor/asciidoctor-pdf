@@ -4278,6 +4278,13 @@ The keys in this category control the arrangement and style of tables and table 
   head:
     font-style: normal
 
+|line-height
+|<<values,Number>> +
+(default: _inherit_)
+|table:
+  head:
+    line-height: 1.15
+
 |text-transform
 |<<text-transforms,Text transform>> +
 (default: _inherit_)
@@ -4339,6 +4346,13 @@ The keys in this category control the arrangement and style of tables and table 
     font-style: italic
 
 3+|[#key-prefix-table-cell]*Key Prefix:* <<key-prefix-table-cell,table-cell>>
+
+|line-height
+|<<values,Number>> +
+(default: _inherit_)
+|table:
+  cell:
+    line-height: 1.5
 
 |padding
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +

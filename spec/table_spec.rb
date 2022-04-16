@@ -1230,6 +1230,21 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect z_text[:x]).to be > midpoint
     end
 
+    it 'should apply line height specified for cell' do
+      input = <<~'EOS'
+      [width=50%]
+      |===
+      | A long table cell that wraps | Another table cell
+      |===
+      EOS
+
+      reference_pdf = to_pdf input, analyze: true
+      reference_spacing = (reference_pdf.find_unique_text %r/^A long/)[:y] - (reference_pdf.find_unique_text 'wraps')[:y]
+      pdf = to_pdf input, pdf_theme: { table_cell_line_height: 1.5 }, analyze: true
+      actual_spacing = (pdf.find_unique_text %r/^A long/)[:y] - (pdf.find_unique_text 'wraps')[:y]
+      (expect actual_spacing).to be > reference_spacing
+    end
+
     it 'should truncate cell that exceeds the height of a single page' do
       (expect do
         blank_line = %(\n\n)
@@ -1301,9 +1316,24 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect literal_text[:font_color]).to eql 'B12146'
       (expect literal_text[:font_size]).to eql 10.25
     end
+
+    it 'should ignore line-height on literal category when computing line metrics' do
+      input = <<~'EOS'
+      [cols=2*m,width=50%]
+      |===
+      | A long table cell that wraps | Another table cell
+      |===
+      EOS
+
+      reference_pdf = to_pdf input, analyze: true
+      reference_spacing = (reference_pdf.find_unique_text %r/^A long/)[:y] - (reference_pdf.find_unique_text 'wraps')[:y]
+      pdf = to_pdf input, pdf_theme: { literal_line_height: 1.5 }, analyze: true
+      actual_spacing = (pdf.find_unique_text %r/^A long/)[:y] - (pdf.find_unique_text 'wraps')[:y]
+      (expect actual_spacing).to eql reference_spacing
+    end
   end
 
-  context 'Header table cell' do
+  context 'Head and header table cell' do
     it 'should style a header table cell like a cell in the head row by default' do
       pdf = to_pdf <<~'EOS', analyze: true
       [%autowidth,cols="1h,3"]
@@ -1365,6 +1395,42 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       samsung_text = (pdf.find_text 'Samsung')[0]
       (expect samsung_text[:font_color]).to eql '333333'
       (expect samsung_text[:font_name]).to eql 'NotoSerif'
+    end
+
+    it 'should apply line height specified for head to cell in table head' do
+      input = <<~'EOS'
+      [width=50%]
+      |===
+      | Column header that wraps | Another column header
+
+      | cell
+      | cell
+      |===
+      EOS
+
+      reference_pdf = to_pdf input, analyze: true
+      reference_spacing = (reference_pdf.find_unique_text %r/^Column/)[:y] - (reference_pdf.find_unique_text 'wraps')[:y]
+      pdf = to_pdf input, pdf_theme: { table_head_line_height: 1.5 }, analyze: true
+      actual_spacing = (pdf.find_unique_text %r/^Column/)[:y] - (pdf.find_unique_text 'wraps')[:y]
+      (expect actual_spacing).to be > reference_spacing
+    end
+
+    it 'should inherit line height specified on cell' do
+      input = <<~'EOS'
+      [width=50%]
+      |===
+      | Column header that wraps | Another column header
+
+      | cell
+      | cell
+      |===
+      EOS
+
+      reference_pdf = to_pdf input, analyze: true
+      reference_spacing = (reference_pdf.find_unique_text %r/^Column/)[:y] - (reference_pdf.find_unique_text 'wraps')[:y]
+      pdf = to_pdf input, pdf_theme: { table_cell_line_height: 1.5 }, analyze: true
+      actual_spacing = (pdf.find_unique_text %r/^Column/)[:y] - (pdf.find_unique_text 'wraps')[:y]
+      (expect actual_spacing).to be > reference_spacing
     end
 
     it 'should not set background color on header cell if theme sets background color of table to nil', visual: true do

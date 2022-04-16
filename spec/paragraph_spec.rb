@@ -180,4 +180,19 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect text_with_role[:x]).to be > left_margin
     (expect text_with_role[:string]).to eql 'this is a special paragraph.'
   end
+
+  it 'should allow the theme to control the line height of a paragraph with a custom role' do
+    input = <<~EOS
+    [.spaced-out]
+    #{lorem_ipsum '2-sentences-1-paragraph'}
+    EOS
+
+    reference_texts = (to_pdf input, analyze: true).text
+    default_spacing = reference_texts[0][:y] - reference_texts[1][:y]
+
+    texts = (to_pdf input, pdf_theme: { 'role_spaced-out_line_height': 2 }, analyze: true).text
+    adjusted_spacing = texts[0][:y] - texts[1][:y]
+
+    (expect adjusted_spacing).to be > default_spacing
+  end
 end

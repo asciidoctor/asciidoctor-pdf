@@ -393,6 +393,7 @@ module Asciidoctor
         @font_color = theme.base_font_color
         @text_decoration_width = theme.base_text_decoration_width
         @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
+        @base_line_height = theme.base_line_height
         @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
         if (hyphen_lang = doc.attr 'hyphens') &&
             ((defined? ::Text::Hyphen::VERSION) || !(Helpers.require_library 'text/hyphen', 'text-hyphen', :warn).nil?)
@@ -750,10 +751,10 @@ module Asciidoctor
         outdent_section do
           pad_box @theme.abstract_padding do
             theme_font :abstract_title do
-              layout_prose node.title, align: (@theme.abstract_title_align || @base_align).to_sym, margin_top: @theme.heading_margin_top, margin_bottom: @theme.heading_margin_bottom, line_height: @theme.heading_line_height
+              layout_prose node.title, align: (@theme.abstract_title_align || @base_align).to_sym, margin_top: @theme.heading_margin_top, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
             end if node.title?
             theme_font :abstract do
-              prose_opts = { line_height: @theme.abstract_line_height, align: (@theme.abstract_align || @base_align).to_sym, hyphenate: true }
+              prose_opts = { align: (@theme.abstract_align || @base_align).to_sym, hyphenate: true }
               if (text_indent = @theme.prose_text_indent) > 0
                 prose_opts[:indent_paragraphs] = text_indent
               end
@@ -822,7 +823,6 @@ module Asciidoctor
         if roles.empty?
           layout_prose node.content, prose_opts
         else
-          prose_opts[:line_height] = @theme.role_lead_line_height if roles.include? 'lead'
           theme_font_cascade (roles.map {|role| %(role_#{role}).to_sym }) do
             layout_prose node.content, prose_opts
           end
@@ -1096,7 +1096,7 @@ module Asciidoctor
           pad_box @theme.sidebar_padding do
             theme_font :sidebar_title do
               # QUESTION: should we allow margins of sidebar title to be customized?
-              layout_prose node.title, align: (@theme.sidebar_title_align || @theme.heading_align || @base_align).to_sym, margin_bottom: @theme.heading_margin_bottom, line_height: @theme.heading_line_height
+              layout_prose node.title, align: (@theme.sidebar_title_align || @theme.heading_align || @base_align).to_sym, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
             end if node.title?
             theme_font :sidebar do
               traverse node
@@ -1110,7 +1110,7 @@ module Asciidoctor
         margin_top @theme.code_callout_list_margin_top if !at_page_top? && ([:listing, :literal].include? node.parent.blocks[(node.parent.blocks.index node) - 1].context)
         add_dest_for_block node if node.id
         @list_numerals << 1
-        line_metrics = theme_font(:conum) { calc_line_metrics @theme.base_line_height }
+        line_metrics = theme_font(:conum) { calc_line_metrics @base_line_height }
         last_item = node.items[-1]
         node.items.each do |item|
           allocate_space_for_list_item line_metrics
@@ -1127,7 +1127,7 @@ module Asciidoctor
           marker_width = rendered_width_of_string %(#{marker = conum_glyph index}x)
           float do
             bounding_box [0, cursor], width: marker_width do
-              layout_prose marker, align: :center, line_height: @theme.conum_line_height, inline_format: false, margin: 0
+              layout_prose marker, align: :center, inline_format: false, margin: 0
             end
           end
         end
@@ -1173,7 +1173,7 @@ module Asciidoctor
             term_font_color = @font_color
             term_transform = @text_transform
             term_inline_format = (term_font_styles = font_styles).empty? ? true : [inherited: { styles: term_font_styles }]
-            term_line_metrics = calc_line_metrics @theme.description_list_term_line_height || @theme.base_line_height
+            term_line_metrics = calc_line_metrics @base_line_height
             term_padding_no_blocks = [term_line_metrics.padding_top, 10, term_line_metrics.padding_bottom, 10]
             (term_padding = term_padding_no_blocks.dup)[2] += @theme.prose_margin_bottom * 0.5
             desc_padding = [0, 10, 0, 10]
@@ -1223,7 +1223,6 @@ module Asciidoctor
           # and advance to the next page if so (similar to logic for section titles)
           layout_caption node, category: :description_list, labeled: false if node.title?
 
-          term_line_height = @theme.description_list_term_line_height || @theme.base_line_height
           term_spacing = @theme.description_list_term_spacing
           term_height = theme_font(:description_list_term) { height_of_typeset_text 'A' }
           prose_height = height_of_typeset_text 'A'
@@ -1235,7 +1234,7 @@ module Asciidoctor
               end
               terms.each_with_index do |term, idx|
                 # QUESTION: should we pass down styles in other calls to layout_prose
-                layout_prose term.text, margin_top: (idx > 0 ? term_spacing : 0), margin_bottom: 0, align: :left, line_height: term_line_height, normalize_line_height: true, styles: term_font_styles
+                layout_prose term.text, margin_top: (idx > 0 ? term_spacing : 0), margin_bottom: 0, align: :left, normalize_line_height: true, styles: term_font_styles
               end
             end
             indent @theme.description_list_description_indent do
@@ -1334,7 +1333,7 @@ module Asciidoctor
           opts[:align] = align
         end
 
-        line_metrics = calc_line_metrics @theme.base_line_height
+        line_metrics = calc_line_metrics @base_line_height
         #complex = false
         # ...or if we want to give all items in the list the same treatment
         #complex = node.items.find(&:compound?) ? true : false
@@ -1364,7 +1363,7 @@ module Asciidoctor
         marker_style[:font_color] = @theme.list_marker_font_color || @font_color
         marker_style[:font_family] = font_family
         marker_style[:font_size] = font_size
-        marker_style[:line_height] = @theme.base_line_height
+        marker_style[:line_height] = @base_line_height
         case (list_type = list.context)
         when :dlist
           # NOTE: list.style is always 'qanda'
@@ -1830,7 +1829,7 @@ module Asciidoctor
           pad_box @theme.code_padding do
             theme_font :code do
               ::Prawn::Text::Formatted::Box.extensions << wrap_ext if wrap_ext
-              typeset_formatted_text source_chunks, (calc_line_metrics @theme.code_line_height || @theme.base_line_height),
+              typeset_formatted_text source_chunks, (calc_line_metrics @base_line_height),
                 color: (font_color_override || @theme.code_font_color || @font_color),
                 size: adjusted_font_size
             ensure
@@ -1993,7 +1992,7 @@ module Asciidoctor
           theme_font :table_head do
             table_header_size = head_rows.size
             head_font_info = font_info
-            head_line_metrics = calc_line_metrics theme.base_line_height
+            head_line_metrics = calc_line_metrics theme.table_head_line_height || theme.table_cell_line_height || @base_line_height
             head_cell_padding = expand_padding_value theme.table_head_cell_padding || theme.table_cell_padding
             head_cell_padding[0] += head_line_metrics.padding_top
             head_cell_padding[2] += head_line_metrics.padding_bottom
@@ -2032,7 +2031,7 @@ module Asciidoctor
             kerning: default_kerning?,
             text_color: @font_color,
           }
-          body_cell_line_metrics = calc_line_metrics theme.base_line_height
+          body_cell_line_metrics = calc_line_metrics (theme.table_cell_line_height || @base_line_height)
           body_cell_padding = expand_padding_value theme.table_cell_padding
           (body_rows + node.rows[:foot]).each do |row|
             table_data << (row.map do |cell|
@@ -2058,7 +2057,7 @@ module Asciidoctor
                       font_style: header_cell_font_info[:style],
                       text_transform: @text_transform,
                     }
-                    header_cell_line_metrics = calc_line_metrics theme.base_line_height
+                    header_cell_line_metrics = calc_line_metrics @base_line_height
                   end
                   if (val = resolve_theme_color :table_header_cell_background_color, head_bg_color)
                     base_header_cell_data[:background_color] = val
@@ -2069,12 +2068,13 @@ module Asciidoctor
                 cell_line_metrics = header_cell_line_metrics
               when :monospaced
                 cell_data.delete :font_style
+                cell_line_height = @base_line_height
                 theme_font :literal do
                   mono_cell_font_info = font_info
                   cell_data[:font] = mono_cell_font_info[:family]
                   cell_data[:size] = mono_cell_font_info[:size]
                   cell_data[:text_color] = @font_color
-                  cell_line_metrics = calc_line_metrics theme.base_line_height
+                  cell_line_metrics = calc_line_metrics cell_line_height
                 end
               when :literal
                 # NOTE: we want the raw AsciiDoc in this case
@@ -2087,7 +2087,7 @@ module Asciidoctor
                   cell_data[:font] = literal_cell_font_info[:family]
                   cell_data[:size] = literal_cell_font_info[:size] * (cell_data[:size].to_f / @root_font_size)
                   cell_data[:text_color] = @font_color
-                  cell_line_metrics = calc_line_metrics theme.base_line_height
+                  cell_line_metrics = calc_line_metrics @base_line_height
                 end
               when :asciidoc
                 cell_data.delete :kerning
@@ -2751,7 +2751,7 @@ module Asciidoctor
             move_down @theme.title_page_title_margin_top || 0
             indent (@theme.title_page_title_margin_left || 0), (@theme.title_page_title_margin_right || 0) do
               theme_font :title_page_title do
-                layout_prose doctitle.main, align: title_align, margin: 0, line_height: @theme.title_page_title_line_height
+                layout_prose doctitle.main, align: title_align, margin: 0
               end
             end
             move_down @theme.title_page_title_margin_bottom || 0
@@ -2760,7 +2760,7 @@ module Asciidoctor
             move_down @theme.title_page_subtitle_margin_top || 0
             indent (@theme.title_page_subtitle_margin_left || 0), (@theme.title_page_subtitle_margin_right || 0) do
               theme_font :title_page_subtitle do
-                layout_prose subtitle, align: title_align, margin: 0, line_height: @theme.title_page_subtitle_line_height
+                layout_prose subtitle, align: title_align, margin: 0
               end
             end
             move_down @theme.title_page_subtitle_margin_bottom || 0
@@ -2864,7 +2864,7 @@ module Asciidoctor
         theme_font :heading, level: (hlevel = opts[:level]) do
           # FIXME: this height doesn't account for impact of text transform or inline formatting
           heading_height =
-            (height_of_typeset_text title, line_height: (@theme[%(heading_h#{hlevel}_line_height)] || @theme.heading_line_height)) +
+            (height_of_typeset_text title) +
             (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
             (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom)
           heading_height += @theme.heading_min_height_after if sect.blocks? && @theme.heading_min_height_after
@@ -2908,7 +2908,7 @@ module Asciidoctor
           else
             inline_format_opts = [{ inherited: inherited }]
           end
-          typeset_text string, calc_line_metrics((opts.delete :line_height) || (hlevel ? @theme[%(heading_h#{hlevel}_line_height)] : nil) || @theme.heading_line_height || @theme.base_line_height), {
+          typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
             color: @font_color,
             inline_format: inline_format_opts,
             align: @base_align.to_sym,
@@ -2939,7 +2939,7 @@ module Asciidoctor
             text_decoration_width: (opts.delete :text_decoration_width),
           }.compact
         end
-        typeset_text string, calc_line_metrics((opts.delete :line_height) || @theme.base_line_height), {
+        typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
           color: @font_color,
           inline_format: [inline_format_opts],
           align: @base_align.to_sym,
@@ -3127,7 +3127,7 @@ module Asciidoctor
             if scratch?
               indent 0, pgnum_label_placeholder_width do
                 # NOTE: must wrap title in empty anchor element in case links are styled with different font family / size
-                layout_prose sect_title, anchor: true, line_height: @theme.toc_line_height, normalize: false, hanging_indent: hanging_indent, normalize_line_height: true, margin: 0
+                layout_prose sect_title, anchor: true, normalize: false, hanging_indent: hanging_indent, normalize_line_height: true, margin: 0
               end
             else
               physical_pgnum = sect.attr 'pdf-page-start'
@@ -3139,7 +3139,7 @@ module Asciidoctor
               sect_title_inherited = (apply_text_decoration ::Set.new, :toc, sect.level.next).merge anchor: (sect_anchor = sect.attr 'pdf-anchor'), color: @font_color
               # NOTE: use text formatter to add anchor overlay to avoid using inline format with synthetic anchor tag
               sect_title_fragments = text_formatter.format sect_title, inherited: sect_title_inherited
-              line_metrics = calc_line_metrics @theme.toc_line_height
+              line_metrics = calc_line_metrics @base_line_height
               indent 0, pgnum_label_placeholder_width do
                 (sect_title_fragments[-1][:callback] ||= []) << (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
                 typeset_formatted_text sect_title_fragments, line_metrics, hanging_indent: hanging_indent, normalize_line_height: true
@@ -3455,7 +3455,7 @@ module Asciidoctor
             valign = :center
           end
           trim_styles = {
-            line_metrics: (trim_line_metrics = calc_line_metrics @theme[%(#{periphery}_line_height)] || @theme.base_line_height),
+            line_metrics: (trim_line_metrics = calc_line_metrics @theme[%(#{periphery}_line_height)] || @base_line_height),
             # NOTE: we've already verified this property is set
             height: (trim_height = @theme[%(#{periphery}_height)]),
             bg_color: (resolve_theme_color %(#{periphery}_background_color).to_sym),
@@ -3892,6 +3892,7 @@ module Asciidoctor
           style = @theme[%(#{hlevel_category}_font_style)] || @theme[%(#{category}_font_style)]
           color = @theme[%(#{hlevel_category}_font_color)] || @theme[%(#{category}_font_color)]
           kerning = resolve_font_kerning @theme[%(#{hlevel_category}_font_kerning)] || @theme[%(#{category}_font_kerning)]
+          line_height = @theme[%(#{hlevel_category}_line_height)] || @theme[%(#{category}_line_height)]
           # NOTE: global text_transform is not currently supported
           transform = @theme[%(#{hlevel_category}_text_transform)] || @theme[%(#{category}_text_transform)]
         else
@@ -3901,12 +3902,14 @@ module Asciidoctor
           style = @theme[%(#{category}_font_style)] || inherited_font[:style]
           color = @theme[%(#{category}_font_color)]
           kerning = resolve_font_kerning @theme[%(#{category}_font_kerning)]
+          line_height = @theme[%(#{category}_line_height)]
           # NOTE: global text_transform is not currently supported
           transform = @theme[%(#{category}_text_transform)]
         end
 
         prev_color, @font_color = @font_color, color if color
         prev_kerning, self.default_kerning = default_kerning?, kerning unless kerning.nil?
+        prev_line_height, @base_line_height = @base_line_height, line_height if line_height
         prev_transform, @text_transform = @text_transform, (transform == 'none' ? nil : transform) if transform
 
         result = nil
@@ -3915,6 +3918,7 @@ module Asciidoctor
         ensure
           @font_color = prev_color if color
           default_kerning prev_kerning unless kerning.nil?
+          @base_line_height = prev_line_height if line_height
           @text_transform = prev_transform if transform
         end
         result
@@ -4053,7 +4057,7 @@ module Asciidoctor
       end
 
       def height_of_typeset_text string, opts = {}
-        line_metrics = (calc_line_metrics opts[:line_height] || @theme.base_line_height)
+        line_metrics = (calc_line_metrics opts[:line_height] || @base_line_height)
         (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + (opts[:single_line] ? 0 : line_metrics.padding_bottom)
       end
 
