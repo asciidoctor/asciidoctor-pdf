@@ -461,8 +461,8 @@ module Asciidoctor
         theme.prose_text_indent ||= 0
         theme.prose_margin_bottom ||= 0
         theme.block_margin_bottom ||= 0
-        theme.outline_list_indent ||= 0
-        theme.outline_list_item_spacing ||= 0
+        theme.list_indent ||= 0
+        theme.list_item_spacing ||= 0
         theme.description_list_term_spacing ||= 0
         theme.description_list_description_indent ||= 0
         theme.image_border_width ||= 0
@@ -1114,7 +1114,7 @@ module Asciidoctor
         last_item = node.items[-1]
         node.items.each do |item|
           allocate_space_for_list_item line_metrics
-          convert_colist_item item, margin_bottom: (item == last_item ? 0 : @theme.outline_list_item_spacing), normalize_line_height: true
+          convert_colist_item item, margin_bottom: (item == last_item ? 0 : @theme.list_item_spacing), normalize_line_height: true
         end
         @list_numerals.pop
         theme_margin :prose, :bottom, (next_enclosed_block node)
@@ -1239,7 +1239,7 @@ module Asciidoctor
               end
             end
             indent @theme.description_list_description_indent do
-              #margin_bottom (desc.simple? ? @theme.outline_list_item_spacing : term_spacing)
+              #margin_bottom (desc.simple? ? @theme.list_item_spacing : term_spacing)
               margin_bottom term_spacing
               traverse_list_item desc, :dlist_desc, normalize_line_height: true, margin_bottom: ((next_enclosed_block desc, descend: true) ? nil : 0)
             end if desc
@@ -1304,7 +1304,7 @@ module Asciidoctor
               end
             end
           else
-            case node.outline_level
+            case node.list_level
             when 1
               bullet_type = :disc
             when 2
@@ -1322,14 +1322,14 @@ module Asciidoctor
       def convert_list node
         # TODO: check if we're within one line of the bottom of the page
         # and advance to the next page if so (similar to logic for section titles)
-        layout_caption node, category: :outline_list, labeled: false if node.title?
+        layout_caption node, category: :list, labeled: false if node.title?
 
         opts = {}
         if (align = resolve_alignment_from_role node.roles)
           opts[:align] = align
         elsif node.style == 'bibliography'
           opts[:align] = :left
-        elsif (align = @theme.outline_list_text_align&.to_sym) # rubocop:disable Lint/DuplicateBranch
+        elsif (align = @theme.list_text_align&.to_sym) # rubocop:disable Lint/DuplicateBranch
           # NOTE: theme setting only affects alignment of list text (not nested blocks)
           opts[:align] = align
         end
@@ -1342,12 +1342,12 @@ module Asciidoctor
           if node.style == 'unstyled'
             # unstyled takes away all indentation
             list_indent = 0
-          elsif (list_indent = @theme.outline_list_indent) > 0
+          elsif (list_indent = @theme.list_indent) > 0
             # no-bullet aligns text with left-hand side of bullet position (as though there's no bullet)
             list_indent = [list_indent - (rendered_width_of_string %(#{node.context == :ulist ? ?\u2022 : '1.'}x)), 0].max
           end
         else
-          list_indent = @theme.outline_list_indent
+          list_indent = @theme.list_indent
         end
         indent list_indent do
           node.items.each do |item|
@@ -1361,7 +1361,7 @@ module Asciidoctor
       def convert_list_item node, list, opts = {}
         # TODO: move this to a draw_bullet (or draw_marker) method
         marker_style = {}
-        marker_style[:font_color] = @theme.outline_list_marker_font_color || @font_color
+        marker_style[:font_color] = @theme.list_marker_font_color || @font_color
         marker_style[:font_family] = font_family
         marker_style[:font_size] = font_size
         marker_style[:line_height] = @theme.base_line_height
@@ -1438,7 +1438,7 @@ module Asciidoctor
           if junction.compound?
             opts.delete :margin_bottom
           elsif next_enclosed_block junction, descend: true
-            opts[:margin_bottom] = @theme.outline_list_item_spacing
+            opts[:margin_bottom] = @theme.list_item_spacing
           end
         end
         traverse_list_item node, list_type, opts

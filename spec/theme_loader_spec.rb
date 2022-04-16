@@ -155,6 +155,24 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.footer_recto_right_content).to eql '2 * 2'
     end
 
+    it 'should remap outline-list category to list category and warn' do
+      (expect do
+        theme_data = YAML.safe_load <<~'EOS'
+        outline-list:
+          item-spacing: 6
+        footnotes:
+          margin-top: $outline-list-item-spacing
+          item-spacing: $outline_list_item_spacing / 2
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme).to be_an OpenStruct
+        (expect theme.outline_list_item_spacing).to be_nil
+        (expect theme.list_item_spacing).to eql 6
+        (expect theme.footnotes_margin_top).to eql 6
+        (expect theme.footnotes_item_spacing).to eql 3
+      end).to log_message severity: :WARN, message: 'the outline-list theme category is deprecated; use the list category instead'
+    end
+
     it 'should expand variables in value of keys that end in _content' do
       theme_data = YAML.safe_load <<~'EOS'
       page:

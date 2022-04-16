@@ -62,8 +62,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect item_spacings.uniq).to eql [21.78]
     end
 
-    it 'should disable indent for list if outline_list_indent is 0' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { outline_list_indent: 0 }, analyze: true
+    it 'should disable indent for list if list_indent is 0' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { list_indent: 0 }, analyze: true
       before
 
       * a
@@ -137,8 +137,8 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect indents[0]).to be > left_margin
     end
 
-    it 'should disable indent for no-bullet list if outline_list_indent is 0' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { outline_list_indent: 0 }, analyze: true
+    it 'should disable indent for no-bullet list if list_indent is 0' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { list_indent: 0 }, analyze: true
       before
 
       [no-bullet]
@@ -181,7 +181,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
     it 'should not indent list with no marker if list indent is not set or set to 0 in theme' do
       [nil, 0].each do |indent|
-        pdf = to_pdf <<~'EOS', pdf_theme: { outline_list_indent: indent }, analyze: true
+        pdf = to_pdf <<~'EOS', pdf_theme: { list_indent: indent }, analyze: true
         before
 
         [no-bullet]
@@ -228,7 +228,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     it 'should allow theme to change marker color for any list' do
-      pdf_theme = { outline_list_marker_font_color: '00FF00' }
+      pdf_theme = { list_marker_font_color: '00FF00' }
 
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       * all
@@ -454,7 +454,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     it 'should allow text alignment to be set using theme', visual: true do
-      to_file = to_pdf_file <<~EOS, 'list-text-left-role.pdf', pdf_theme: { outline_list_text_align: 'left' }
+      to_file = to_pdf_file <<~EOS, 'list-text-left-role.pdf', pdf_theme: { list_text_align: 'left' }
       * #{lorem_ipsum '2-sentences-1-paragraph'}
       EOS
       (expect to_file).to visually_match 'list-text-left.pdf'
@@ -1720,7 +1720,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect first_to_second_spacing).to eql second_to_third_spacing
     end
 
-    it 'should only separate colist and listing or literal block by outline_list_item_spacing value' do
+    it 'should only separate colist and listing or literal block by list_item_spacing value' do
       %w(---- ....).each do |block_delim|
         input = <<~EOS
         #{block_delim}
