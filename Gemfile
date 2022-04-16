@@ -8,7 +8,6 @@ gemspec
 gem 'asciidoctor', ENV['ASCIIDOCTOR_VERSION'], require: false if ENV.key? 'ASCIIDOCTOR_VERSION'
 gem 'asciidoctor-diagram', ENV['ASCIIDOCTOR_DIAGRAM_VERSION'], require: false if ENV.key? 'ASCIIDOCTOR_DIAGRAM_VERSION'
 gem 'coderay', '~> 1.1.0', require: false
-gem 'matrix' if (Gem::Version.new RUBY_VERSION) >= (Gem::Version.new '3.1.0')
 gem 'open-uri-cached', '~> 1.0.0', require: false
 gem 'pdf-reader', '2.8.0', require: false
 gem 'prawn-gmagick', ENV['PRAWN_GMAGICK_VERSION'], require: false if ENV.key? 'PRAWN_GMAGICK_VERSION'
