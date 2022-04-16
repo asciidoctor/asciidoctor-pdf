@@ -2,7 +2,7 @@ require:
 - rubocop-rspec
 - rubocop-rake
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.7
 Gemspec/DateAssignment:
   Enabled: true
 Layout/ArgumentAlignment:
@@ -383,7 +383,7 @@ Style/SafeNavigation:
 Style/SingleArgumentDig:
   Enabled: true
 Style/SlicingWithRange:
-  Enabled: true
+  Enabled: false
 Style/SoleNestedConditional:
   Enabled: true
 Style/SpecialGlobalVars:
