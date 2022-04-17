@@ -1771,6 +1771,38 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect gap).to be < 14
     end
 
+    it 'should allow theme to control font properties and item spacing of callout list' do
+      pdf_theme = {
+        callout_list_font_size: 9,
+        callout_list_font_color: '555555',
+        callout_list_item_spacing: 3,
+        conum_font_size: nil,
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      ----
+      site:
+        url: https://docs.example.org # <1>
+        robots: allow # <2>
+      ----
+      <1> The base URL where the site is published.
+      <2> Allow search engines to crawl the site.
+      EOS
+
+      conum_1_text = pdf.find_text ?\u2460
+      (expect conum_1_text).to have_size 2
+      (expect conum_1_text[0][:font_size]).to eql 11
+      (expect conum_1_text[1][:font_size]).to eql 9
+      (expect conum_1_text[1][:font_color]).to eql 'B12146'
+      colist_1_text = pdf.find_unique_text %r/^The base URL/
+      (expect colist_1_text[:font_size]).to eql 9
+      (expect colist_1_text[:font_color]).to eql '555555'
+      colist_2_text = pdf.find_unique_text %r/^Allow search engines/
+      (expect colist_2_text[:font_size]).to eql 9
+      (expect colist_2_text[:font_color]).to eql '555555'
+      (expect colist_1_text[:y] - colist_2_text[:y]).to (be_within 1).of 16
+    end
+
     it 'should not move cursor if callout list appears at top of page' do
       pdf = to_pdf <<~EOS, analyze: true
       key-value pair

@@ -4084,6 +4084,83 @@ The keys in this category control the arrangement and style of unordered list it
 
 1. <type> is one of disc, square, circle, checked, unchecked
 
+[#keys-callout-list]
+=== Callout List
+
+The keys in this category control the arrangement and style of callout lists (i.e., colists).
+
+NOTE: The <<keys-callout-numbers>> category controls the appearance of the list markers (i.e., conums) in a callout list.
+If you change the font-size setting on the callout list, then you likely need to change the font-size setting on the conum category as well.
+
+[cols="3,4,5a"]
+|===
+|Key |Value Type |Example
+
+3+|[#key-prefix-callout-list]*Key Prefix:* <<key-prefix-callout-list,callout-list>>
+
+|item-spacing
+|<<measurement-units,Measurement>> +
+(default: $list-item-spacing)
+|[source,yaml]
+callout-list:
+  item-spacing: 3
+
+|font-color
+|<<colors,Color>> +
+(default: _inherit_)
+|[source,yaml]
+callout-list:
+  font-color: #555555
+
+|font-family
+|<<fonts,Font family name>> +
+(default: _inherit_)
+|[source,yaml]
+callout-list:
+  font-family: M+ 1p
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|[source,yaml]
+callout-list:
+  font-kerning: none
+
+|font-size
+|<<values,Number>> +
+(default: _inherit_)
+|[source,yaml]
+callout-list:
+  font-size: 9
+
+|font-style
+|<<font-styles,Font style>> +
+(default: _inherit_)
+|[source,yaml]
+callout-list:
+  font-style: italic
+
+|text-transform
+|<<text-transforms,Text transform>> +
+(default: _inherit_)
+|[source,yaml]
+callout-list:
+  text-transform: lowercase
+
+|line-height
+|<<values,Number>> +
+(default: _inherit_)
+|[source,yaml]
+callout-list:
+  line-height: 1
+
+|text-align
+|<<text-alignments,Text alignment>> +
+(default: $list-text-align)
+|callout-list:
+  text-align: left
+|===
+
 [#keys-table]
 === Table
 
