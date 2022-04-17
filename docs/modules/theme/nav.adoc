@@ -38,6 +38,7 @@
 ** xref:block-image-keys.adoc[]
 ** xref:svg-keys.adoc[]
 ** xref:list-keys.adoc[]
+** xref:description-list-keys.adoc[]
 ** xref:block-and-caption-keys.adoc[]
 ** xref:code-and-callout-keys.adoc[]
 ** xref:admonition-keys.adoc[]
