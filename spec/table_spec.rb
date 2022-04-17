@@ -1548,6 +1548,28 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect (pdf.find_text 'normal cell')[0][:font_size].to_f).to eql 8.0
       (expect (pdf.find_text 'literal cell')[0][:font_size].to_f).to eql 8.0
     end
+
+    it 'should scale font size of code span relative to current font size' do
+      pdf_theme = {
+        caption_font_size: 8,
+        table_font_size: 8,
+        literal_font_size: '0.9em',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      .`code` in caption
+      |===
+      |`code` in normal cell
+      a|`code` in AsciiDoc cell
+      |===
+      EOS
+
+      code_texts = pdf.find_text 'code'
+      (expect code_texts).to have_size 3
+      (expect code_texts.map {|it| it[:font_size] }.uniq).to eql [7.2]
+      regular_texts = pdf.find_text %r/cell|caption/
+      (expect regular_texts).to have_size 3
+      (expect regular_texts.map {|it| it[:font_size].to_f }.uniq).to eql [8.0]
+    end
   end
 
   context 'Verse table cell' do
