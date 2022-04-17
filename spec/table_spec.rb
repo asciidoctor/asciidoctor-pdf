@@ -1605,6 +1605,20 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect nested_cell1[:x]).to be < nested_cell2[:x]
     end
 
+    it 'should restore counter after computing height of table cell in scratch document' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=2*]
+      |===
+      a|{counter:req}
+      |First requirement.
+      a|{counter:req}
+      |Second requirement.
+      |===
+      EOS
+
+      (expect pdf.lines).to eql ['1 First requirement.', '2 Second requirement.']
+    end
+
     it 'should align bullet for list item to left cell boundary' do
       pdf = to_pdf <<~'EOS', analyze: true
       * yin
