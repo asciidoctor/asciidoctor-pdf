@@ -2418,7 +2418,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
   end
 
   context 'Table alignment' do
-    it 'should allow theme to customize default alignment of table ' do
+    it 'should allow theme to customize default alignment of table' do
       pdf = to_pdf <<~'EOS', pdf_theme: { table_align: 'right' }, analyze: true
       [cols=3*,width=50%]
       |===
