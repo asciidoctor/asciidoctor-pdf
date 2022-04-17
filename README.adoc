@@ -51,7 +51,7 @@ Its aim is to take the pain out of creating PDF documents from AsciiDoc.
 NOTE: You're viewing the documentation for the (unreleased) {release-line} release line.
 If you're looking for the documentation for another release line, please refer to one of the following branches: +
 {url-project-repo}/tree/v1.5.x#readme[1.5.x]
-&#8259;
+-
 {url-project-repo}/tree/v1.6.x#readme[1.6.x]
 
 toc::[]
