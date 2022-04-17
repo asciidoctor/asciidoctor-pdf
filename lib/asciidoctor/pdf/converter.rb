@@ -1336,7 +1336,7 @@ module Asciidoctor
         line_metrics = calc_line_metrics @base_line_height
         #complex = false
         # ...or if we want to give all items in the list the same treatment
-        #complex = node.items.find(&:compound?) ? true : false
+        #complex = node.items.any(&:compound?)
         if (node.context == :ulist && !@list_bullets[-1]) || (node.context == :olist && !@list_numerals[-1])
           if node.style == 'unstyled'
             # unstyled takes away all indentation
@@ -3715,12 +3715,9 @@ module Asciidoctor
         end
         font_catalog.each do |key, styles|
           styles = styles.each_with_object({}) do |(style, path), accum|
-            found = dirs.find do |dir|
+            found = dirs.any? do |dir|
               resolved_font_path = font_path path, dir
-              if ::File.readable? resolved_font_path
-                accum[style.to_sym] = resolved_font_path
-                true
-              end
+              accum[style.to_sym] = resolved_font_path if ::File.readable? resolved_font_path
             end
             raise ::Errno::ENOENT, ((File.absolute_path? path) ? %(#{path} not found) : %(#{path} not found in #{fonts_dir.gsub ValueSeparatorRx, ' or '})) unless found
           end

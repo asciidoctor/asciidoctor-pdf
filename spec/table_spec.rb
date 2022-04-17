@@ -1596,7 +1596,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      (expect pdf.lines.find {|l| l.include? '!' }).to be_nil
+      (expect pdf.lines.any? {|l| l.include? '!' }).to be false
       (expect pdf.lines).to have_size 2
       (expect pdf.lines[1]).to eql 'Nested table cell 1 Nested table cell 2'
       nested_cell1 = (pdf.find_text 'Nested table cell 1')[0]

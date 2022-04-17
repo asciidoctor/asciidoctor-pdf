@@ -307,7 +307,7 @@ RSpec.configure do |config|
   end
 
   config.after :suite do
-    FileUtils.rm_r output_dir, force: true, secure: true unless (ENV.key? 'DEBUG') || config.reporter.failed_examples.find {|it| it.metadata[:visual] }
+    FileUtils.rm_r output_dir, force: true, secure: true unless (ENV.key? 'DEBUG') || config.reporter.failed_examples.any? {|it| it.metadata[:visual] }
   end
 
   def bin_script name, opts = {}
@@ -547,8 +547,7 @@ RSpec.configure do |config|
 
   def get_page_number pdf, page
     page = pdf.objects[page] if PDF::Reader::Reference === page
-    found = pdf.pages.find {|candidate| candidate.page_object == page }
-    found ? found.number : nil
+    pdf.pages.find {|candidate| candidate.page_object == page }&.number
   end
 
   def lorem_ipsum id
