@@ -222,6 +222,39 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect text[:y]).to eql reference_text[:y]
   end
 
+  it 'should not increment counter in admonition content more times than expected' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    == Initial value
+
+    Current number is {counter:my-count:0}.
+
+    == One is expected
+
+    Current number is {counter:my-count}.
+
+    == Two is expected
+
+    Current number is {counter:my-count}.
+
+    == Three is expected
+
+    NOTE: Current number is {counter:my-count}.
+
+    == Four is expected
+
+    [%unbreakable]
+    CAUTION: Current number is {counter:my-count}.
+
+    == Five is expected
+
+    Current number is {counter:my-count}.
+    EOS
+
+    expected = (0.upto 5).map {|it| %(Current number is #{it}.) }
+    number_texts = pdf.find_text %r/^Current number is/
+    (expect number_texts.map {|it| it[:string] }).to eql expected
+  end
+
   context 'Text' do
     it 'should show admonition label in bold by default' do
       pdf = to_pdf <<~'EOS', analyze: true
