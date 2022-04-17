@@ -2406,6 +2406,12 @@ The bottom margin is only added if the block is followed by an adjacent block wi
 
 3+|[#key-prefix-block]*Key Prefix:* <<key-prefix-block,block>>
 
+|anchor-top
+|<<measurement-units,Measurement>> +
+(default: 0)
+|block:
+  anchor-top: -12
+
 //|padding
 //|<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>>
 //|block:

@@ -17,8 +17,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect admon_page_numbers).to eql [2]
   end
 
-  # NOTE: for now, the margin top setting is ignored, so the test will pass with any value
-  it 'should place anchor below top margin of block' do
+  it 'should place anchor directly at top of block' do
     input = <<~EOS
     paragraph
 
@@ -28,11 +27,28 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     ====
     EOS
 
-    pdf_theme = { block_margin_top: 10 }
+    lines = (to_pdf input, analyze: :line).lines
+    pdf = to_pdf input
+    (expect (dest = get_dest pdf, 'admon-1')).not_to be_nil
+    (expect dest[:y]).to eql lines[0][:from][:y]
+  end
+
+  it 'should offset anchor from top of block by amount of block_anchor_top' do
+    pdf_theme = { block_anchor_top: -12 }
+
+    input = <<~EOS
+    paragraph
+
+    [NOTE#admon-1]
+    ====
+    filler
+    ====
+    EOS
+
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     pdf = to_pdf input, pdf_theme: pdf_theme
     (expect (dest = get_dest pdf, 'admon-1')).not_to be_nil
-    (expect dest[:y]).to eql lines[0][:from][:y]
+    (expect dest[:y]).to eql (lines[0][:from][:y] + -pdf_theme[:block_anchor_top])
   end
 
   it 'should keep anchor with block if block is advanced to next page' do
