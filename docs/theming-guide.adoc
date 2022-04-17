@@ -1716,7 +1716,7 @@ The border only works properly if the literal phrase does not have nested format
 Otherwise, the border will be inherited, producing a less than desirable result.
 2. The border offset is the amount that the background and border swells around the text.
 It does not affect the distance between the formatted phrase and the phrases that surround it.
-3. If you set the font-size property on a code span, you're strongly encouraged to specify it as a relative font size using `em` units (e.g., `0.9em`).
+3. You're strongly encouraged to set the value of the font-size property to a relative font size using the `em` units (e.g., `0.9em`).
 A code span with a fixed font size will not be scaled when the font size of the parent element (e.g., table, caption, etc) is specified.
 However, by using a relative value, the font size will be computed relative to the size of the text that surrounds it, giving you effectively the same result.
 
