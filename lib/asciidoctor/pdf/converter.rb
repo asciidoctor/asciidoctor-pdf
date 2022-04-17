@@ -221,7 +221,7 @@ module Asciidoctor
             @toc_extent = nil
           end
 
-          start_new_page if @ppbook && verso_page?
+          start_new_page if @ppbook && verso_page? && !(((next_block = doc.blocks[0])&.context == :preamble ? next_block.blocks[0] : next_block)&.option? 'nonfacing')
 
           if use_title_page
             zero_page_offset = has_front_cover ? 1 : 0

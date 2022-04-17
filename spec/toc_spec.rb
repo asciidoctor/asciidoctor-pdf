@@ -530,7 +530,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_heading_text[:page_number]).to be 5
     end
 
-    it 'should not advance macro toc to recto page for prepress book when nonfacing option is specified on macro' do
+    it 'should not advance toc to recto page for prepress book when nonfacing option is specified on macro' do
       pdf = to_pdf <<~EOS, analyze: true
       = Document Title
       :doctype: book
@@ -551,6 +551,30 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages).to have_size 5
       toc_heading_text = pdf.find_unique_text 'Table of Contents'
       (expect toc_heading_text[:page_number]).to be 4
+    end
+
+    it 'should not advance toc in preamble to recto page for prepress book when nonfacing option is specified on macro' do
+      pdf = to_pdf <<~EOS, analyze: true
+      = Document Title
+      :doctype: book
+      :media: prepress
+      :toc: macro
+
+      [%nonfacing]
+      toc::[]
+
+      == First Chapter
+
+      Début.
+
+      == Last Chapter
+
+      Fin.
+      EOS
+
+      (expect pdf.pages).to have_size 5
+      toc_heading_text = pdf.find_unique_text 'Table of Contents'
+      (expect toc_heading_text[:page_number]).to be 2
     end
 
     it 'should disable running content periphery on toc page if noheader or nofooter option is set on macro' do
