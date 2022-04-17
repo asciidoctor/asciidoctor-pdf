@@ -111,7 +111,7 @@ describe 'Asciidoctor::PDF::Converter - media' do
       (expect chapter_title_texts[1][:page_number]).to be 3
     end
 
-    it 'should not insert blank page before chapter if chapter has nonfacing option' do
+    it 'should not insert blank page before chapter that follows preamble if chapter has nonfacing option' do
       pdf = to_pdf <<~'EOS', analyze: true
       = Document Title
       :doctype: book
@@ -125,6 +125,20 @@ describe 'Asciidoctor::PDF::Converter - media' do
 
       chapter_text = (pdf.find_text 'Chapter')[0]
       (expect chapter_text[:page_number]).to be 4
+    end
+
+    it 'should not insert blank page before chapter that follows document title if chapter has nonfacing option' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+      :media: prepress
+
+      [%nonfacing]
+      == Chapter
+      EOS
+
+      chapter_text = (pdf.find_text 'Chapter')[0]
+      (expect chapter_text[:page_number]).to be 2
     end
   end
 end
