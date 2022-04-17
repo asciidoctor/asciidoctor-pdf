@@ -187,6 +187,7 @@ Bug Fixes::
 * don't crash if value of `width` attribute on image has invalid format (#1970)
 * don't render borders and backgrounds in scratch document
 * don't insert blank page after document title if first block (chapter or toc macro) has nonfacing option (#1988)
+* coerce negated variable reference to number if value of variable is numeric
 
 Compliance::
 
