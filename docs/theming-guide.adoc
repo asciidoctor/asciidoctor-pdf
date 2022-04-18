@@ -99,13 +99,11 @@ base:
   font-size: 12
   line-height-length: 17
   line-height: $base-line-height-length / $base-font-size
-vertical-spacing: $base-line-height-length
 heading:
   font-color: #262626
   font-size: 17
   font-style: bold
   line-height: 1.2
-  margin-bottom: $vertical-spacing
 link:
   font-color: #002FA7
 list:
@@ -241,7 +239,7 @@ The following keys are inherited:
 * font-style
 * text-transform
 * line-height (currently some exceptions)
-* margin-bottom (if not specified, defaults to $vertical-spacing)
+* margin-bottom
 
 .Heading Inheritance
 ****
@@ -1543,21 +1541,6 @@ It's used as an intermediate property for computing the `base-line-height` from 
 For instance, if you set `base-line-height-length`, you can use `$base-line-height-length / $base-font-size` to set the value of `base-line-height`.
 You don't have to go about it this way in your own theme.
 
-[#keys-vertical-spacing]
-=== Vertical Spacing
-
-The keys in this category control the general spacing between elements where a more specific setting is not designated.
-
-[cols="3,4,5l"]
-|===
-|Key |Value Type |Example
-
-|vertical-spacing
-|<<values,Number>> +
-(default: 12)
-|vertical-spacing: 10
-|===
-
 [#keys-quotes]
 === Quotes
 
@@ -1803,19 +1786,19 @@ The <<key-prefix-heading-level,heading-h1 key>> controls the font properties of 
 |<<measurement-units,Measurement>> +
 (default: 4)
 |heading:
-  margin-top: $vertical-spacing * 0.2
+  margin-top: 6
 
 |margin-page-top
 |<<measurement-units,Measurement>> +
 (default: 0)
 |heading:
-  margin-page-top: $vertical-spacing
+  margin-page-top: 12
 
 |margin-bottom
 |<<measurement-units,Measurement>> +
 (default: 12)
 |heading:
-  margin-bottom: 9.6
+  margin-bottom: 6
 
 |min-height-after
 |<<measurement-units,Measurement>> +
@@ -1892,13 +1875,13 @@ The <<key-prefix-heading-level,heading-h1 key>> controls the font properties of 
 |<<measurement-units,Measurement>> +
 (default: $heading-margin-top)
 |heading:
-  h2-margin-top: $vertical-spacing * 0.5
+  h2-margin-top: 6
 
 |margin-page-top
 |<<measurement-units,Measurement>> +
 (default: $heading-margin-page-top)
 |heading:
-  h2-margin-page-top: $vertical-spacing
+  h2-margin-page-top: 12
 
 |margin-bottom
 |<<measurement-units,Measurement>> +
@@ -2375,7 +2358,7 @@ The bottom margin is only added if the block is followed by an adjacent block wi
 |<<measurement-units,Measurement>> +
 (default: 12)
 |prose:
-  margin-bottom: $vertical-spacing
+  margin-bottom: 6
 
 |margin-inner^[1]^
 |<<measurement-units,Measurement>> +
@@ -3867,7 +3850,7 @@ The keys in this category control the style of thematic breaks (aka horizontal r
 
 |margin-bottom
 |<<measurement-units,Measurement>> +
-(default: $vertical-spacing)
+(default: 12)
 |thematic-break:
   margin-bottom: 18
 |===
