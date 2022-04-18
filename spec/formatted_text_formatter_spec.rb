@@ -418,31 +418,31 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect pdf.lines).to eql ['Click [Save] to save your work.']
     end
 
-    it 'should add background and border to key as defined in theme', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'text-formatter-key.pdf', attribute_overrides: { 'experimental' => '' }
+    it 'should add background and border to kbd as defined in theme', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'text-formatter-kbd.pdf', attribute_overrides: { 'experimental' => '' }
       Press kbd:[q] to exit.
 
       Press kbd:[Ctrl,c] to kill the process.
       EOS
-      (expect to_file).to visually_match 'text-formatter-key.pdf'
+      (expect to_file).to visually_match 'text-formatter-kbd.pdf'
     end
 
-    it 'should use base border color if theme does not define border color for key', visual: true do
+    it 'should use base border color if theme does not define border color for kbd', visual: true do
       pdf_theme = {
         base_border_color: 'CCCCCC',
-        key_border_color: nil,
+        kbd_border_color: nil,
       }
 
-      to_file = to_pdf_file <<~'EOS', 'text-formatter-key.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
+      to_file = to_pdf_file <<~'EOS', 'text-formatter-kbd.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
       Press kbd:[q] to exit.
 
       Press kbd:[Ctrl,c] to kill the process.
       EOS
-      (expect to_file).to visually_match 'text-formatter-key.pdf'
+      (expect to_file).to visually_match 'text-formatter-kbd.pdf'
     end
 
-    it 'should use + as key separator if not specified in theme' do
-      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: { key_separator: nil }, attribute_overrides: { 'experimental' => '' }
+    it 'should use + as kbd separator if not specified in theme' do
+      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: { kbd_separator: nil }, attribute_overrides: { 'experimental' => '' }
       Press kbd:[Ctrl,c] to kill the process.
       EOS
       (expect pdf.lines).to eql ['Press Ctrl + c to kill the process.']

@@ -55,18 +55,18 @@ module Asciidoctor
                 align: mono_border_offset && :center,
                 callback: mono_bg_or_border && [TextBackgroundAndBorderRenderer],
               }.compact,
-              key: {
-                color: theme.key_font_color,
-                font: theme.key_font_family || theme.literal_font_family,
-                size: theme.key_font_size,
-                styles: (to_styles theme.key_font_style),
-                background_color: (key_bg_color = theme.key_background_color),
-                border_width: (key_border_width = theme.key_border_width),
-                border_color: key_border_width && (theme.key_border_color || theme.base_border_color),
-                border_offset: (key_border_offset = (key_bg_or_border = key_bg_color || key_border_width) && theme.key_border_offset),
-                border_radius: key_bg_or_border && theme.key_border_radius,
-                align: key_border_offset && :center,
-                callback: key_bg_or_border && [TextBackgroundAndBorderRenderer],
+              kbd: {
+                color: theme.kbd_font_color,
+                font: theme.kbd_font_family || theme.literal_font_family,
+                size: theme.kbd_font_size,
+                styles: (to_styles theme.kbd_font_style),
+                background_color: (kbd_bg_color = theme.kbd_background_color),
+                border_width: (kbd_border_width = theme.kbd_border_width),
+                border_color: kbd_border_width && (theme.kbd_border_color || theme.base_border_color),
+                border_offset: (kbd_border_offset = (kbd_bg_or_border = kbd_bg_color || kbd_border_width) && theme.kbd_border_offset),
+                border_radius: kbd_bg_or_border && theme.kbd_border_radius,
+                align: kbd_border_offset && :center,
+                callback: kbd_bg_or_border && [TextBackgroundAndBorderRenderer],
               }.compact,
               link: {
                 color: theme.link_font_color,
@@ -132,7 +132,7 @@ module Asciidoctor
             @theme_settings = {
               button: { font: 'Courier', styles: [:bold].to_set },
               code: { font: 'Courier' },
-              key: { font: 'Courier', styles: [:italic].to_set },
+              kbd: { font: 'Courier', styles: [:italic].to_set },
               link: { color: '0000FF' },
               mark: { background_color: 'FFFF00', callback: [TextBackgroundAndBorderRenderer] },
               menu: { styles: [:bold].to_set },
@@ -248,7 +248,7 @@ module Asciidoctor
             styles << :bold
           when :em
             styles << :italic
-          when :button, :code, :key, :mark, :menu
+          when :button, :code, :kbd, :mark, :menu
             update_fragment fragment, @theme_settings[tag_name]
           when :font
             if (value = attrs[:name])

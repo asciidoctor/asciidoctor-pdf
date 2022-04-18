@@ -473,7 +473,7 @@ module Asciidoctor
         theme.role_unresolved_font_color ||= 'FF0000'
         theme.index_columns ||= 2
         theme.footnotes_item_spacing ||= 0
-        theme.key_separator ||= '+'
+        theme.kbd_separator ||= '+'
         theme.title_page_authors_delimiter ||= ', '
         theme.title_page_revision_delimiter ||= ', '
         theme.toc_indent ||= 0
@@ -2627,9 +2627,9 @@ module Asciidoctor
 
       def convert_inline_kbd node
         if (keys = node.attr 'keys').size == 1
-          %(<key>#{keys[0]}</key>)
+          %(<kbd>#{keys[0]}</kbd>)
         else
-          keys.map {|key| %(<key>#{key}</key>) }.join (load_theme node.document).key_separator
+          keys.map {|key| %(<kbd>#{key}</kbd>) }.join (load_theme node.document).kbd_separator
         end
       end
 

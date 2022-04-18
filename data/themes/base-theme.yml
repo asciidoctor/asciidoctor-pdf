@@ -28,8 +28,8 @@ role_subtitle_font_size: 0.8em
 button_content: '[%s]'
 button_font_family: Courier
 button_font_style: bold
-key_font_family: Courier
-key_font_style: italic
+kbd_font_family: Courier
+kbd_font_style: italic
 mark_background_color: 'FFFF00'
 mark_border_offset: 1
 menu_font_style: bold
