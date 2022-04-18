@@ -906,6 +906,12 @@ module Asciidoctor
         scratch? ? block_for_scratch.call : (yield extent)
       end
 
+      # This method installs an on_page_create_callback that stops processing if the first page is
+      # exceeded while yielding to the specified block. If the content fits on a single page, the
+      # processing is not stopped. The purpose of this method is to determine if the content fits on
+      # a single page.
+      #
+      # Returns a Boolean indicating whether the content fits on a single page.
       def perform_on_single_page
         saved_callback, state.on_page_create_callback = state.on_page_create_callback, InhibitNewPageProc
         yield
@@ -916,6 +922,12 @@ module Asciidoctor
         state.on_page_create_callback = saved_callback
       end
 
+      # This method installs an on_page_create_callback that stops processing if a new page is
+      # created without writing content to the first page while yielding to the specified block. If
+      # any content is written to the first page, processing is not stopped. The purpose of this
+      # method is to check whether any content fits on the remaining space on the current page.
+      #
+      # Returns a Boolean indicating whether any content is written on the first page.
       def stop_if_first_page_empty
         delegate = state.on_page_create_callback
         state.on_page_create_callback = DetectEmptyFirstPageProc.curry[delegate].extend DetectEmptyFirstPage
@@ -944,17 +956,18 @@ module Asciidoctor
         end
       end
 
-      # Yields to the specified block in a scratch document up to three times to acertain the extent
-      # of the content.
+      # Yields to the specified block within the context of a scratch document up to three times to
+      # acertain the extent of the content block.
       #
       # The purpose of this method is two-fold. First, it works out the position where the rendered
       # content should start in the calling document. Then, it precomputes the extent of the content
       # starting from that position.
       #
-      # The method communicates the extent of the content (the range from the start page and cursor
-      # to the end page and cursor) as a ScratchExtent instance. The ScratchExtent always starts the
-      # page range at 1. When the ScratchExtent is positioned onto the primary document using
-      # ScratchExtent#position_onto, that's when the cursor may be advanced to the next page.
+      # This method returns the content's extent (the range from the start page and cursor to the
+      # end page and cursor) as a ScratchExtent object or, if the onto keyword parameter is
+      # specified, an Extent object. A ScratchExtent always starts the page range at 1. When the
+      # ScratchExtent is positioned onto the primary document using ScratchExtent#position_onto,
+      # that's when the cursor may be advanced to the next page.
       #
       # This method performs all work in a scratch document (or documents). It begins by starting a
       # new page in the scratch document, first creating the scratch document if necessary. It then
@@ -965,11 +978,12 @@ module Asciidoctor
       # keep_together keyword parameter. If the value is true (or the parent document is inhibiting
       # page creation), it starts from the top of the page, yields to the block, and tries to fit
       # the content on the current page. If the content fits, it computes and returns the
-      # ScratchExtent. If the content does not fit, it first checks if this scenario should stop the
-      # operation. If the parent document is inhibiting page creation, it bubbles the error. If the
-      # single_page keyword argument is :enforce, it raises a CannotFit error. If the single_page
-      # keyword argument is true, it returns a ScratchExtent that represents a full page. If none of
-      # those conditions are met, it restarts with the keep_together parameter unset.
+      # ScratchExtent (or Extent). If the content does not fit, it first checks if this scenario
+      # should stop the operation. If the parent document is inhibiting page creation, it bubbles
+      # the error. If the single_page keyword argument is :enforce, it raises a CannotFit error. If
+      # the single_page keyword argument is true, it returns a ScratchExtent (or Extent) that
+      # represents a full page. If none of those conditions are met, it restarts with the
+      # keep_together parameter unset.
       #
       # If the keep_together parameter is not true, the method tries to render the content in the
       # scratch document from the location of the cursor in the main document. If the cursor is at
@@ -982,6 +996,18 @@ module Asciidoctor
       #
       # Note that if the block has content that itself requires a dry run, that nested dry run will
       # be performed in a separate scratch document.
+      #
+      # opts - A Hash of options that configure the dry run computation:
+      #        :keep_together - A Boolean indicating whether an attempt should be made to keep the
+      #        content on the same page (optional, default: false).
+      #        :single_page - A Boolean indicating whether the operation should stop if the content
+      #        exceeds the height of a single page.
+      #        :onto - The document onto which to position the scratch extent. If this option is
+      #        set, the method returns an Extent instead of a ScratchExtent (optional, default: nil)
+      #        :pages_advanced - The number of pages the content has been advanced during this
+      #        operation (internal only) (optional, default: 0)
+      #
+      # Returns an Extent or ScratchExtent object that describes the bounds of the content block.
       def dry_run keep_together: nil, pages_advanced: 0, single_page: nil, onto: nil, &block
         (scratch_pdf = scratch).start_new_page
         scratch_bounds = scratch_pdf.bounds
