@@ -454,7 +454,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     it 'should allow text alignment to be set using theme', visual: true do
-      to_file = to_pdf_file <<~EOS, 'list-text-left-role.pdf', pdf_theme: { list_text_align: 'left' }
+      to_file = to_pdf_file <<~EOS, 'list-text-left-theme.pdf', pdf_theme: { list_text_align: 'left' }
       * #{lorem_ipsum '2-sentences-1-paragraph'}
       EOS
       (expect to_file).to visually_match 'list-text-left.pdf'
@@ -1982,6 +1982,27 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect marker_text[:page_number]).to be 2
       item_text = pdf.find_unique_text 'description'
       (expect item_text[:page_number]).to be 2
+    end
+
+    it 'should allow text alignment to be set using role', visual: true do
+      to_file = to_pdf_file <<~EOS, 'colist-text-align-left-role.pdf'
+      ----
+      data <1>
+      ----
+      [.text-left]
+      <1> #{lorem_ipsum '2-sentences-1-paragraph'}
+      EOS
+      (expect to_file).to visually_match 'colist-text-align-left.pdf'
+    end
+
+    it 'should allow text alignment to be set using theme', visual: true do
+      to_file = to_pdf_file <<~EOS, 'colist-text-align-left-theme.pdf', pdf_theme: { list_text_align: 'left' }
+      ----
+      data <1>
+      ----
+      <1> #{lorem_ipsum '2-sentences-1-paragraph'}
+      EOS
+      (expect to_file).to visually_match 'colist-text-align-left.pdf'
     end
   end
 
