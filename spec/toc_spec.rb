@@ -702,6 +702,21 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect page_3_lines[0]).to match %r/we are ?(\. )+ ?\u00a038$/
     end
 
+    it 'should not crash if theme does not specify toc_indent' do
+      (expect do
+        pdf = to_pdf <<~'EOS', attributes: { 'pdf-theme' => (fixture_file 'custom-theme.yml') }, analyze: true
+        = Document Title
+        :toc:
+
+        == Section
+        EOS
+
+        toc_text = pdf.find_unique_text %r/Table of Contents/
+        (expect toc_text).not_to be_nil
+        (expect toc_text[:font_name]).to eql 'Times-Roman'
+      end).to not_raise_exception
+    end
+
     it 'should allow hanging indent to be applied to lines that wrap' do
       pdf = to_pdf <<~'EOS', doctype: :book, pdf_theme: { toc_hanging_indent: 36 }, analyze: true
       = Document Title

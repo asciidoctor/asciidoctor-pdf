@@ -475,6 +475,7 @@ module Asciidoctor
         theme.key_separator ||= '+'
         theme.title_page_authors_delimiter ||= ', '
         theme.title_page_revision_delimiter ||= ', '
+        theme.toc_indent ||= 0
         theme.toc_hanging_indent ||= 0
         if ::Array === (quotes = theme.quotes)
           TypographicQuotes.each_with_index {|char, idx| quotes[idx] ||= char }
