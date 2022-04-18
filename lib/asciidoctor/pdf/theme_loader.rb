@@ -13,6 +13,7 @@ module Asciidoctor
       ThemesDir = ::File.join DataDir, 'themes'
       FontsDir = ::File.join DataDir, 'fonts'
       BaseThemePath = ::File.join ThemesDir, 'base-theme.yml'
+      BundledThemeNames = (::Dir.children ThemesDir).map {|it| it.slice 0, it.length - 10 }
 
       VariableRx = /\$([a-z0-9_-]+)/
       LoneVariableRx = /^\$([a-z0-9_-]+)$/
@@ -104,8 +105,7 @@ module Asciidoctor
             if extend_path == 'base'
               theme_data = ::OpenStruct.new theme_data.to_h.merge load_base_theme.to_h if (loaded.add? 'base') || force
               next
-            elsif extend_path == 'default' || extend_path == 'default-with-fallback-font' ||
-                extend_path == 'default-for-print' || extend_path == 'default-for-print-with-fallback-font'
+            elsif BundledThemeNames.include? extend_path
               extend_path, extend_theme_dir = resolve_theme_file extend_path, ThemesDir
             elsif extend_path.start_with? './'
               extend_path, extend_theme_dir = resolve_theme_file extend_path, (::File.dirname filename)
