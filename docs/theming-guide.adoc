@@ -3477,7 +3477,8 @@ The keys in this category control the arrangement and style of admonition blocks
 |<<measurement-units,Measurement>> {vbar} <<measurement-units,Measurement[top,right,bottom,left]>> +
 (default: $admonition-padding)
 |admonition:
-  padding: [0, 12, 0, 12]
+  label:
+    padding: [0, 12, 0, 12]
 
 |vertical-align
 |top {vbar} middle {vbar} bottom +
