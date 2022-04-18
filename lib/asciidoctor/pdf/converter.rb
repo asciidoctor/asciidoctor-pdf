@@ -1110,17 +1110,19 @@ module Asciidoctor
         margin_top @theme.code_callout_list_margin_top if !at_page_top? && ([:listing, :literal].include? node.parent.blocks[(node.parent.blocks.index node) - 1].context)
         add_dest_for_block node if node.id
         @list_numerals << 1
-        line_metrics = theme_font(:conum) { calc_line_metrics @base_line_height }
         last_item = node.items[-1]
         item_spacing = @theme.callout_list_item_spacing || @theme.list_item_spacing
         item_opts = { margin_bottom: item_spacing, normalize_line_height: true }
         if (item_align = (resolve_alignment_from_role node.roles) || @theme.list_text_align&.to_sym)
           item_opts[:align] = item_align
         end
-        node.items.each do |item|
-          allocate_space_for_list_item line_metrics
-          item_opts[:margin_bottom] = 0 if item == last_item
-          convert_colist_item item, item_opts
+        theme_font :callout_list do
+          line_metrics = theme_font(:conum) { calc_line_metrics @base_line_height }
+          node.items.each do |item|
+            allocate_space_for_list_item line_metrics
+            item_opts[:margin_bottom] = 0 if item == last_item
+            convert_colist_item item, item_opts
+          end
         end
         @list_numerals.pop
         theme_margin :prose, :bottom, (next_enclosed_block node)
