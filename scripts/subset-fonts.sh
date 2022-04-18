@@ -5,7 +5,7 @@
 # This script will use that image to execute the subset-fonts.pe script with fontforge in a container.
 # By default, this script will use podman to run the subset script in a container.
 # Prefix the script with CONTAINERIZER=docker to use docker instead.
-# Additionall, you may prefix the script with IMAGE=<name-of-image> to use a different image.
+# Additionally, you may prefix the script with IMAGE=<name-of-image> to use a different image.
 
 # NOTE only update when fonts are being changed
 export SOURCE_DATE_EPOCH=$(date -d 2020-06-10T00:00:00 +%s)
