@@ -194,11 +194,12 @@ module Asciidoctor
       # NOTE: we assume expr is a String
       def expand_vars expr, vars
         return expr unless (idx = expr.index '$')
-        if idx == 0 && expr =~ LoneVariableRx
-          resolve_var vars, expr, $1
-        else
-          expr.gsub(VariableRx) { resolve_var vars, $&, $1 }
+        if idx == 0
+          return resolve_var vars, expr, $1 if expr =~ LoneVariableRx
+        elsif idx == 1 && expr.chr == '-' && (negated_expr = expr.slice 1, expr.length) =~ LoneVariableRx
+          return Numeric === (val = resolve_var vars, negated_expr, $1) ? -val : '-' + val
         end
+        expr.gsub(VariableRx) { resolve_var vars, $&, $1 }
       end
 
       def resolve_var vars, ref, var

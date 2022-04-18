@@ -1120,6 +1120,17 @@ describe Asciidoctor::PDF::ThemeLoader do
       end).to log_message severity: :WARN, message: %(unknown variable reference in PDF theme: $brand-red)
     end
 
+    it 'should warn if negated variable reference cannot be resolved' do
+      (expect do
+        theme_data = YAML.safe_load <<~'EOS'
+        block:
+          margin-bottom: -$vertical-rhythm
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme.block_margin_bottom).to eql '-$vertical-rhythm'
+      end).to log_message severity: :WARN, message: %(unknown variable reference in PDF theme: $vertical-rhythm)
+    end
+
     it 'should interpolate variables in value' do
       theme_data = YAML.safe_load <<~'EOS'
       brand:
@@ -1167,6 +1178,17 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_font_size_min).to eql 7.5
       (expect theme.base_border_radius).to eql 9
       (expect theme.blockquote_padding).to eql [0, 10, -9, 14.5]
+    end
+
+    it 'should coerce value to numeric if negated variable is a number' do
+      theme_data = YAML.safe_load <<~'EOS'
+      vertical-rhythm: 12
+      block:
+        anchor-top: -$vertical-rhythm
+      EOS
+      theme = subject.new.load theme_data
+      expected = -12
+      (expect theme.block_anchor_top).to eql expected
     end
 
     it 'should allow numeric value with units to be negative' do
