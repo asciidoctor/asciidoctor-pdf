@@ -35,6 +35,10 @@ if [ ! -d noto-$NOTO_VERSION ]; then
   curl -LOs https://github.com/googlefonts/noto-fonts/raw/$NOTO_VERSION/hinted/NotoSerif-Bold.ttf
   curl -LOs https://github.com/googlefonts/noto-fonts/raw/$NOTO_VERSION/hinted/NotoSerif-Italic.ttf
   curl -LOs https://github.com/googlefonts/noto-fonts/raw/$NOTO_VERSION/hinted/NotoSerif-BoldItalic.ttf
+  curl -LOs https://github.com/googlefonts/noto-fonts/raw/$NOTO_VERSION/hinted/NotoSans-Regular.ttf
+  curl -LOs https://github.com/googlefonts/noto-fonts/raw/$NOTO_VERSION/hinted/NotoSans-Bold.ttf
+  curl -LOs https://github.com/googlefonts/noto-fonts/raw/$NOTO_VERSION/hinted/NotoSans-Italic.ttf
+  curl -LOs https://github.com/googlefonts/noto-fonts/raw/$NOTO_VERSION/hinted/NotoSans-BoldItalic.ttf
   cd ..
 fi
 

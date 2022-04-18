@@ -32,6 +32,7 @@ Enhancements::
 * assign `page-layout` attribute in running content so it can be used to select a background per layout (#1570)
 * reset numbering of footnotes in each chapter; add chapter xreftext to label of footnote reference that refers to previous chapter (#1639)
 * add support for assigning the same font file to all font variants (i.e., styles) using the wildcard key (`*`) (#1588)
+* bundle Noto Sans in addition to Noto Serif and add built-in theme sans-with-fallback-font (#2010)
 * allow caption max-width to be set to percentage of content by passing argument to fit-content function (#1494)
 * allow theme to control text alignment of caption independent of box alignment (#1493)
 * set `chapter-numeral` attribute in running content on pages in chapter if `sectnums` attribute is set (#1373)

@@ -27,9 +27,10 @@ M+ OUTLINE FONTS (M+ TESTFLIGHT 063a)::
 
   - http://mplus-fonts.osdn.jp/about-en.html
 
-Noto Serif Font (86b2e553c3e3e4d6614dadd1fa0a7a6dafd74552)::
+Noto Serif and Noto Sans Fonts (86b2e553c3e3e4d6614dadd1fa0a7a6dafd74552)::
   Noto is font family developed by the Google Internationalization Team that aims to support all the world's languages.
   The Noto Serif font is used for headings and body copy and is bundled in the PDF file.
+  The Noto Sans font is provided as an alternative for headings and body copy and is bundled in the PDF file.
   The Noto fonts are licensed under the Apache 2.0 License.
   You may obtain a copy of the license at:
 
