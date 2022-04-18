@@ -1561,7 +1561,7 @@ module Asciidoctor
               end
               image_y = y
               image_cursor = cursor
-              add_dest_for_block node, y: image_y if node.id
+              add_dest_for_block node if node.id
               # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
               # breakage occurs when running content (stamps) are added to page
               update_colors if graphic_state.color_space.empty?
@@ -1592,7 +1592,7 @@ module Asciidoctor
               end
               image_y = y
               image_cursor = cursor
-              add_dest_for_block node, y: image_y if node.id
+              add_dest_for_block node if node.id
               # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
               # breakage occurs when running content (stamps) are added to page
               update_colors if graphic_state.color_space.empty?
@@ -4174,7 +4174,10 @@ module Asciidoctor
           dest_x = bounds.absolute_left.truncate 4
           # QUESTION: when content is aligned to left margin, should we keep precise x value or just use 0?
           dest_x = 0 if dest_x <= page_margin_left
-          dest_y = y || @y
+          unless (dest_y = y)
+            dest_y = @y
+            dest_y += [page_height - dest_y, -@theme.block_anchor_top.to_f].min
+          end
           # TODO: find a way to store only the ref of the destination; look it up when we need it
           node.set_attr 'pdf-destination', (node_dest = (dest_xyz dest_x, dest_y))
           add_dest id, node_dest
