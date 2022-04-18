@@ -460,6 +460,7 @@ module Asciidoctor
         theme.heading_margin_top ||= 0
         theme.heading_margin_bottom ||= 0
         theme.prose_text_indent ||= 0
+        theme.prose_inner_text_indent ||= 0
         theme.prose_margin_bottom ||= 0
         theme.block_margin_bottom ||= 0
         theme.list_indent ||= 0
@@ -813,7 +814,9 @@ module Asciidoctor
           roles -= TextAlignmentRoles
         end
 
-        if (text_indent = @theme.prose_text_indent) > 0
+        if (text_indent = @theme.prose_text_indent) > 0 ||
+            ((text_indent = @theme.prose_inner_text_indent) > 0 &&
+            (self_idx = (siblings = node.parent.blocks).index node) > 0 && siblings[self_idx - 1].context == :paragraph)
           prose_opts[:indent_paragraphs] = text_indent
         end
 

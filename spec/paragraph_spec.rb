@@ -81,6 +81,32 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect (pdf.text[3][:y] - list_item_text[:y]).round 2).to eql 27.78
   end
 
+  it 'should indent first line of inner paragraphs if prose_inner_text_indent key is set in theme' do
+    left_margin = (to_pdf 'text', analyze: true).text[0][:x]
+    pdf_theme = {
+      prose_inner_text_indent: 10.5,
+      prose_margin_inner: 0,
+    }
+    pdf = to_pdf <<~EOS, analyze: true, pdf_theme: pdf_theme
+    #{lorem_ipsum '2-sentences-1-paragraph'}
+
+    #{lorem_ipsum '2-sentences-1-paragraph'}
+
+    > blockquote
+
+    #{lorem_ipsum '2-sentences-1-paragraph'}
+
+    #{lorem_ipsum '2-sentences-1-paragraph'}
+    EOS
+
+    lorem_texts = pdf.find_text %r/^Lorem/
+    (expect lorem_texts).to have_size 4
+    (expect lorem_texts[0][:x]).to eql left_margin
+    (expect lorem_texts[1][:x]).to be > left_margin
+    (expect lorem_texts[2][:x]).to eql left_margin
+    (expect lorem_texts[3][:x]).to be > left_margin
+  end
+
   it 'should allow text alignment to be controlled using text-align document attribute' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Document Title
