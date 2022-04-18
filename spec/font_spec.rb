@@ -89,6 +89,18 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-emoji.pdf'
     end
 
+    it 'should use sans base font when using sans theme with fallback font', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'font-sans-emoji.pdf', attribute_overrides: { 'pdf-theme' => 'sans-with-fallback-font' }
+      == Lessons
+
+      Don't 😢 over spilled 🍺.
+
+      Asciidoctor is 👍.
+      EOS
+
+      (expect to_file).to visually_match 'font-sans-emoji.pdf'
+    end
+
     it 'should log warning once per character not found in any font when fallback font is used and verbose mode is enabled' do
       (expect do
         input_lines = [%(Bitcoin (\u20bf) is a cryptocurrency.), %(The currency is represented using the symbol \u20bf.)]

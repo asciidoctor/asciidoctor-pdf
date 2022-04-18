@@ -38,7 +38,7 @@
 # NOTE best choice for Prawn & web is 0x00 + 0x800 + 0x08
 
 genflags = 0x90 + 0x08
-copy_fonts = ["NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-BoldItalic.ttf", "mplus-1p-regular.ttf"]
+copy_fonts = ["NotoSerif-Regular.ttf", "NotoSerif-Bold.ttf", "NotoSerif-Italic.ttf", "NotoSerif-BoldItalic.ttf", "NotoSans-Regular.ttf", "NotoSans-Bold.ttf", "NotoSans-Italic.ttf", "NotoSans-BoldItalic.ttf", "mplus-1p-regular.ttf"]
 copy_scripts = ["subset"]
 emoji_fonts = ["NotoEmoji.ttf"]
 emoji_scripts = ["subset"]
@@ -85,7 +85,7 @@ while (fi < num_copy_fonts)
     new_filepath = output_dir + "/" + new_filename
     if (is_noto)
       Print("Stealing glyphs from other fonts...")
-      if (new_basename == "notoserif-regular")
+      if (new_basename == "notoserif-regular" || new_basename == "notosans-regular")
         Print("Stealing ballot boxes from FontAwesome...")
         # Grab ballot boxes from FontAwesome
         Open(fa_src_filepath)
@@ -171,7 +171,7 @@ while (fi < num_copy_fonts)
     if (is_noto)
       # Single arrows (present in Noto Serif, but misaligned) and double arrows (imported from M+ 1p)
       SelectMoreSingletons(0u2190,0u2192,0u21d0,0u21d2)
-      if (new_basename == "notoserif-regular")
+      if (new_basename == "notoserif-regular" || new_basename == "notosans-regular")
         # Ballot boxes (imported from FontAwesome)
         SelectMore(0u2610,0u2611)
       endif
