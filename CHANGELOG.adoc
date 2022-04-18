@@ -81,6 +81,7 @@ Enhancements::
 * log error and skip table instead of raising error if cell content cannot fit into column width of table (#2009)
 * extract `arrange_section` method to compute whether section title should be advanced to next page (#2023)
 * introduce `callout-list` category in theme to control font properties and item spacing of callout lists (#1722)
+* only indent inner paragraphs (paragraphs that follow an adjacent paragraph) if `prose-inner-text-indent` key is set in theme (#2034)
 
 Bug Fixes::
 
