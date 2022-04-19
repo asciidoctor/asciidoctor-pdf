@@ -81,7 +81,7 @@ literal:
 button:
   content: "[\u2009%s\u2009]"
   font_style: bold
-key:
+kbd:
   background_color: F5F5F5
   border_color: CCCCCC
   border_offset: 2

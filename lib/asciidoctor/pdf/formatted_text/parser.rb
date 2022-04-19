@@ -422,11 +422,11 @@ module Markup
                   r7 = SyntaxNode.new(input, (index-1)...index) if r7 == true
                   r0 = r7
                 else
-                  if (match_len = has_terminal?('key', false, index))
+                  if (match_len = has_terminal?('kbd', false, index))
                     r8 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                     @index += match_len
                   else
-                    terminal_parse_failure('\'key\'')
+                    terminal_parse_failure('\'kbd\'')
                     r8 = nil
                   end
                   if r8

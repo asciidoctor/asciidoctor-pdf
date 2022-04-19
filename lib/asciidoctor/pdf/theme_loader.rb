@@ -14,6 +14,7 @@ module Asciidoctor
       FontsDir = ::File.join DataDir, 'fonts'
       BaseThemePath = ::File.join ThemesDir, 'base-theme.yml'
       BundledThemeNames = (::Dir.children ThemesDir).map {|it| it.slice 0, it.length - 10 }
+      DeprecatedCategoryKeys = { 'key' => 'kbd', 'outline_list' => 'list' }
 
       VariableRx = /\$([a-z0-9_-]+)/
       LoneVariableRx = /^\$([a-z0-9_-]+)$/
@@ -126,10 +127,6 @@ module Asciidoctor
 
       def process_entry key, val, data, normalize_key = false
         key = key.tr '-', '_' if normalize_key && (key.include? '-')
-        if key == 'outline_list'
-          logger.warn 'the outline-list theme category is deprecated; use the list category instead'
-          key = 'list'
-        end
         if key == 'font'
           val.each do |subkey, subval|
             process_entry %(#{key}_#{subkey}), subval, data if subkey == 'catalog' || subkey == 'fallbacks'
@@ -162,6 +159,10 @@ module Asciidoctor
             [key2.to_sym, (key2.end_with? '_color') ? (to_color evaluate val2, data) : (evaluate val2, data)]
           end.to_h if val
         elsif ::Hash === val
+          if (rekey = DeprecatedCategoryKeys[key])
+            logger.warn %(the #{key.tr '_', '-'} theme category is deprecated; use the #{rekey.tr '_', '-'} category instead)
+            key = rekey
+          end
           val.each do |subkey, subval|
             process_entry %(#{key}_#{key == 'role' || !(subkey.include? '-') ? subkey : (subkey.tr '-', '_')}), subval, data
           end
@@ -205,7 +206,7 @@ module Asciidoctor
       def resolve_var vars, ref, var
         var = var.tr '-', '_' if var.include? '-'
         if (vars.respond_to? var) ||
-            ((var.start_with? 'outline_list_') && (vars.respond_to? (var = var.slice 8, var.length)))
+            DeprecatedCategoryKeys.any? {|old, new| (var.start_with? old + '_') && (vars.respond_to? (replace = new + (var.slice old.length, var.length))) && (var = replace) }
           vars[var]
         else
           logger.warn %(unknown variable reference in PDF theme: #{ref})

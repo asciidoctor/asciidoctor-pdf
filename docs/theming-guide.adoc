@@ -2771,82 +2771,83 @@ The keys in this category apply to a button reference (generated from the inline
 It does not affect the distance between the formatted phrase and the phrases that surround it.
 3. The character sequence `%s` in the content key gets replaced with the button label.
 
-[#keys-key]
-=== Key
+[#keys-kbd]
+=== Kbd (Keyboard Input)
 
-The keys in this category apply to a key reference (generated from the inline kbd macro).
+The keys in this category apply to a kbd reference (generated from the inline kbd macro).
+The kbd reference is a span of text denoting textual user input from a keyboard, voice input, or other text entry device. 
 
 [cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
-3+|[#key-prefix-key]*Key Prefix:* <<key-prefix-key,key>>
+3+|[#key-prefix-kbd]*Key Prefix:* <<key-prefix-kbd,kbd>>
 
 |background-color
 |<<colors,Color>> +
 (default: _not set_)
-|key:
+|kbd:
   background-color: #fafafa
 
 |border-color^[1]^
 |<<colors,Color>> +
 (default: _not set_)
-|key:
+|kbd:
   border-color: #cccccc
 
 |border-offset^[2]^
 |<<values,Number>> +
 (default: 0)
-|key:
+|kbd:
   border-offset: 1.5
 
 |border-radius
 |<<values,Number>> +
 (default: 0)
-|key:
+|kbd:
   border-radius: 2
 
 |border-width
 |<<values,Number>> +
 (default: $base-border-width)
-|key:
+|kbd:
   border-width: 0.375
 
 |separator^[3]^
 |<<quoted-string,Quoted string>> +
 (default: "+")
-|key:
+|kbd:
   separator: "\u2009+\u2009"
 
 |font-color
 |<<colors,Color>> +
 (default: _inherit_)
-|key:
+|kbd:
   font-color: #000
 
 |font-family
 |<<fonts,Font family name>> +
 (default: Courier)
-|key:
+|kbd:
   font-family: $base-font-family
 
 |font-size
 |<<values,Number>> +
 (default: _inherit_)
-|key:
+|kbd:
   font-size: 10.5
 
 |font-style
 |<<font-styles,Font style>> +
 (default: italic)
-|key:
+|kbd:
   font-style: normal
 |===
 
 1. The border is only used if a border color is specified and the border width is not explicitly set to 0.
 2. The border offset is the amount that the background and border swells around the text.
 It does not affect the distance between the formatted phrase and the phrases that surround it.
-3. The separator is only used for multi-key sequences.
+3. The separator is only used for multi-key input sequences.
 
 [#keys-menu]
 === Menu

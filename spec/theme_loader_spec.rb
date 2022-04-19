@@ -173,6 +173,22 @@ describe Asciidoctor::PDF::ThemeLoader do
       end).to log_message severity: :WARN, message: 'the outline-list theme category is deprecated; use the list category instead'
     end
 
+    it 'should remap key category to kbd category and warn' do
+      (expect do
+        theme_data = YAML.safe_load <<~'EOS'
+        key:
+          border-color: CCCCCC
+          background-color: EFEFEF
+          font-color: $key-border-color
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme).to be_an OpenStruct
+        (expect theme.key_border_color).to be_nil
+        (expect theme.kbd_border_color).to eql 'CCCCCC'
+        (expect theme.kbd_font_color).to eql 'CCCCCC'
+      end).to log_message severity: :WARN, message: 'the key theme category is deprecated; use the kbd category instead'
+    end
+
     it 'should expand variables in value of keys that end in _content' do
       theme_data = YAML.safe_load <<~'EOS'
       page:
