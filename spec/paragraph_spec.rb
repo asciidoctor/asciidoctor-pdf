@@ -81,10 +81,10 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect (pdf.text[3][:y] - list_item_text[:y]).round 2).to eql 27.78
   end
 
-  it 'should indent first line of inner paragraphs if prose_inner_text_indent key is set in theme' do
+  it 'should indent first line of inner paragraphs if prose_text_indent_inner key is set in theme' do
     left_margin = (to_pdf 'text', analyze: true).text[0][:x]
     pdf_theme = {
-      prose_inner_text_indent: 10.5,
+      prose_text_indent_inner: 10.5,
       prose_margin_inner: 0,
     }
     pdf = to_pdf <<~EOS, analyze: true, pdf_theme: pdf_theme
