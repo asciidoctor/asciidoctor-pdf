@@ -487,6 +487,55 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       (expect to_file).to visually_match 'page-prepress-margins-body-only.pdf'
     end
+
+    it 'should invert recto/verso margins when pdf-folio-placement is inverted' do
+      pdf_theme = {
+        page_margin_inner: 72,
+        page_margin_outer: 54,
+        footer_recto_right_content: nil,
+        footer_recto_left_content: 'page {page-number}',
+        footer_verso_right_content: nil,
+        footer_verso_left_content: 'p{page-number}',
+        footer_padding: [6, 0, 0, 0],
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      = Book Title
+      :media: prepress
+      :doctype: book
+      :pdf-folio-placement: physical-inverted
+
+      == First Chapter
+
+      content
+
+      <<<
+
+      more content
+
+      == Last Chapter
+
+      content
+      EOS
+
+      first_chapter_text = pdf.find_unique_text 'First Chapter'
+      (expect first_chapter_text[:page_number]).to eql 3
+      (expect first_chapter_text[:x]).to eql 54.0
+      pgnum_1_text = pdf.find_unique_text 'p1'
+      (expect pgnum_1_text[:x]).to eql 54.0
+      (expect pgnum_1_text[:page_number]).to eql 3
+      more_content_text = pdf.find_unique_text 'more content'
+      (expect more_content_text[:x]).to eql 72.0
+      (expect more_content_text[:page_number]).to eql 4
+      pgnum_2_text = pdf.find_unique_text 'page 2'
+      (expect pgnum_2_text[:x]).to eql 72.0
+      (expect pgnum_2_text[:page_number]).to eql 4
+      last_chapter_text = pdf.find_unique_text 'Last Chapter'
+      (expect last_chapter_text[:x]).to eql 54.0
+      (expect last_chapter_text[:page_number]).to eql 5
+      pgnum_3_text = pdf.find_unique_text 'p3'
+      (expect pgnum_3_text[:x]).to eql 54.0
+      (expect pgnum_3_text[:page_number]).to eql 5
+    end
   end
 
   context 'Background' do
