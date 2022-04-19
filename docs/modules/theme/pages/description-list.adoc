@@ -17,7 +17,7 @@ The keys in this category control the arrangement and style of definition list i
 term-font-color: #AA0000
 
 |term-font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |description-list:
 term-font-family: Noto Serif

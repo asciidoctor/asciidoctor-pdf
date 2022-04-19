@@ -34,7 +34,7 @@ column-rule-width: 0.5
 font-color: #999999
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |admonition:
 font-family: Noto Sans
@@ -94,7 +94,7 @@ label:
 font-color: #262626
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |admonition:
 label:
@@ -168,7 +168,7 @@ caution:
 font-color: #262626
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |admonition:
 label:

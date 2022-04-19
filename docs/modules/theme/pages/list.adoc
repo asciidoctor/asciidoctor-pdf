@@ -55,7 +55,7 @@ The keys in the `ulist-marker` category control the arrangement and style of the
 |Key |Value Type |Example
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |[source]
 ulist:
@@ -107,7 +107,7 @@ ulist:
       content: "\uf140"
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |[source]
 ulist:

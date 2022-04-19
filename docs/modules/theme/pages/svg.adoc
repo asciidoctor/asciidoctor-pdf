@@ -10,7 +10,7 @@ The key in the `svg` category controls the SVG fallback font.
 |Key |Value Type |Example
 
 |`fallback_font_family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: `$base-font-family`)
 |[source]
 svg:

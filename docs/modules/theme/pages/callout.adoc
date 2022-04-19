@@ -20,7 +20,7 @@ To control the top margin of callout lists that directly follow xref:code.adoc[c
 font-color: #b12146
 
 |font-family^[1,2]^
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |conum:
 font-family: M+ 1mn

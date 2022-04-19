@@ -92,7 +92,7 @@ title:
 font-color: #333333
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: $base-font-family)
 |abstract:
 title:

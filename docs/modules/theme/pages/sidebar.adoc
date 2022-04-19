@@ -41,7 +41,7 @@ border-width: 0.5
 font-color: #262626
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |sidebar:
 font-family: M+ 1p
@@ -101,7 +101,7 @@ title:
 font-color: #333333
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |sidebar:
 title:

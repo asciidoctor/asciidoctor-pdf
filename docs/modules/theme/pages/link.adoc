@@ -27,7 +27,7 @@ border-offset: 2
 font-color: #428bca
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |link:
 font-family: Roboto

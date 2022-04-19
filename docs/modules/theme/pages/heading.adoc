@@ -22,7 +22,7 @@ align: center
 font-color: #222222
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |heading:
 font-family: Noto Serif
@@ -136,7 +136,7 @@ h2-align: center
 h2-font-color: [0, 99%, 100%, 0]
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: $heading-font-family)
 |heading:
 h4-font-family: Roboto

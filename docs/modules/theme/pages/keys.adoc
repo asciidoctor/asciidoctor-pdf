@@ -1,4 +1,5 @@
-= Theme Keys Reference
+= Category Keys Reference
+//Theme Keys Reference
 
 == Category keys
 

@@ -74,7 +74,7 @@ The result becomes indistinguishable from other PDF objects.
 What that means for text is that any font family used for text in the SVG _must_ be registered in the Asciidoctor PDF theme file (and thus with Prawn).
 Otherwise, Prawn will fall back to using the closest matching built-in (afm) font from PDF (e.g., sans-serif becomes Helvetica).
 Recall that afm fonts only support basic Latin.
-As we like to say, PDF is xref:theme:font.adoc#built-in[bring your own font].
+As we like to say, PDF is xref:theme:font-support.adoc#built-in[bring your own font].
 
 If you're using Asciidoctor Diagram to generate SVGs to embed in the PDF, you likely need to specify the default font the diagramming tool uses.
 Let's assume you are making a plantuml diagram.

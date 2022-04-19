@@ -75,7 +75,7 @@ table:
   font-color: '#333333'
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |[source]
 table:
@@ -173,7 +173,7 @@ table:
     font-color: '#333333'
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: `$table-font-family`)
 |[source]
 table:
@@ -277,7 +277,7 @@ table:
     font-color: '#333333'
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: `$table-font-family`)
 |[source]
 table:
@@ -368,7 +368,7 @@ table:
     font-color: '#1a1a1a'
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: `$table-head-font-family`)
 |[source]
 table:

@@ -68,7 +68,7 @@ red:
 font-color: #ff0000
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: Courier)
 |role:
 label:

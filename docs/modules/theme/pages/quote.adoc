@@ -40,7 +40,7 @@ border-color: #dddddd
 font-color: #333333
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |blockquote:
 font-family: Noto Serif
@@ -102,7 +102,7 @@ cite:
 font-color: #999999
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |blockquote:
 cite:

@@ -14,7 +14,7 @@ The keys in the `toc` category control the arrangement and style of the table of
 font-color: #333333
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |toc:
 font-family: Noto Serif
@@ -95,7 +95,7 @@ margin-top: 0
 h3-font-color: #999999
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |toc:
 h2-font-family: Noto Serif
@@ -141,7 +141,7 @@ title:
 font-color: #aa0000
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: $heading-h2-font-family)
 |toc:
 title:

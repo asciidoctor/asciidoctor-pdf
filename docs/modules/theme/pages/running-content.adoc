@@ -125,7 +125,7 @@ header:
 ----
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |
 [,yaml]
@@ -446,7 +446,7 @@ footer:
 ----
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |
 [,yaml]

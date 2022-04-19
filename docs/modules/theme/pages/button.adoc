@@ -51,7 +51,7 @@ content: "[\u2009%s\u2009]"
 font-color: #ffffff
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: Courier)
 |button:
 font-family: M+ 1mn

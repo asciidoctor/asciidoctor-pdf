@@ -22,7 +22,7 @@ caret-content: ' > '
 font-color: #AA0000
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |menu:
 font-family: M+ 1mn

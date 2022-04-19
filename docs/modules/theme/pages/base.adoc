@@ -42,7 +42,7 @@ border-width: 0.5
 font-color: #333333
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: Helvetica)
 |base:
 font-family: Noto Serif

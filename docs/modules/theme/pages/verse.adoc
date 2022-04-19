@@ -41,7 +41,7 @@ border-color: #dddddd
 font-color: #333333
 
 |font-family^[2]^
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |verse:
 font-family: M+ 1mn
@@ -105,7 +105,7 @@ cite:
 font-color: #999999
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |verse:
 cite:

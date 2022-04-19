@@ -38,7 +38,7 @@ border-width: 0.75
 font-color: #262626
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |example:
 font-family: M+ 1p

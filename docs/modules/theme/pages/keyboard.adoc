@@ -51,7 +51,7 @@ separator: "\u2009+\u2009"
 font-color: #000
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: Courier)
 |kbd:
 font-family: $base-font-family

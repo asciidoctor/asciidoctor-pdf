@@ -1,13 +1,12 @@
-= Code Category Keys
-:navtitle: Code
+= Code Block Category Keys
+:navtitle: Code Block
 :source-language: yaml
 
 [#code]
 == code
 
-The keys in the `code` category control the arrangement and style of literal, listing, and source blocks.
+The keys in the `code` category control the arrangement and style of literal, listing, and source blocks as well as literal table cells.
 
-.code keys
 [#key-prefix-code,cols="3,4,5l"]
 |===
 |Key |Value Type |Example
@@ -43,7 +42,7 @@ border-width: 0.75
 font-color: #333333
 
 |font-family
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: Courier)
 |code:
 font-family: M+ 1mn

@@ -52,7 +52,7 @@ title-page:
   font-color: '#333333'
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |[source]
 title-page:
@@ -163,7 +163,7 @@ title-page:
     font-color: '#999999'
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |[source]
 title-page:
@@ -263,7 +263,7 @@ title-page:
     font-color: '#181818'
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |[source]
 title-page:
@@ -375,7 +375,7 @@ title-page:
     font-color: '#181818'
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |[source]
 title-page:
@@ -466,7 +466,7 @@ title-page:
     font-color: '#181818'
 
 |`font-family`
-|xref:font.adoc[Font family name] +
+|xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |[source]
 title-page:
