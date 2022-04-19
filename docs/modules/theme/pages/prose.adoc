@@ -8,19 +8,13 @@ The bottom margin is only added if the block is followed by an adjacent block wi
 |===
 |Key |Value Type |Example
 
-|inner-text-indent^[1]^
-|xref:measurement-units.adoc[Measurement] +
-(default: _not set_)
-|prose:
-inner-text-indent: 18
-
 |margin-bottom
 |xref:measurement-units.adoc[Measurement] +
 (default: 12)
 |prose:
 margin-bottom: $vertical-spacing
 
-|margin-inner^[2]^
+|margin-inner^[1]^
 |xref:measurement-units.adoc[Measurement] +
 (default: $prose-margin-bottom)
 |prose:
@@ -31,8 +25,15 @@ margin-inner: 0
 (default: _not set_)
 |prose:
 text-indent: 18
+
+|text-indent-inner^[2]^
+|xref:measurement-units.adoc[Measurement] +
+(default: _not set_)
+|prose:
+text-indent-inner: 18
 |===
-1. Only applied to inner paragraphs.
-Inner paragraphs are paragraphs that follow an adjacent paragraph.
-2. Controls the margin between adjacent paragraphs.
+1. Controls the margin between adjacent paragraphs.
 Useful when using indented paragraphs.
+2. Only applied to inner paragraphs.
+Inner paragraphs are paragraphs that follow an adjacent paragraph.
+
