@@ -354,8 +354,19 @@ module Asciidoctor
         #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
         ((::Prawn::Document.instance_method :initialize).bind self).call pdf_opts
         renderer.min_version (@pdf_version = PDFVersions[doc.attr 'pdf-version'])
+        @media = doc.attr 'media', 'screen'
         @page_margin_by_side = { recto: (page_margin_recto = page_margin), verso: (page_margin_verso = page_margin), cover: page_margin }
-        if (@media = doc.attr 'media', 'screen') == 'prepress'
+        case doc.attr 'pdf-folio-placement', (@media == 'prepress' ? 'physical' : 'virtual')
+        when 'physical'
+          @folio_placement = { basis: :physical }
+        when 'physical-inverted'
+          @folio_placement = { basis: :physical, inverted: true }
+        when 'virtual-inverted'
+          @folio_placement = { basis: :virtual, inverted: true }
+        else
+          @folio_placement = { basis: :virtual }
+        end
+        if @media == 'prepress'
           @ppbook = doc.doctype == 'book'
           if (page_margin_outer = theme.page_margin_outer)
             page_margin_recto[1] = page_margin_verso[3] = page_margin_outer
@@ -605,15 +616,15 @@ module Asciidoctor
       # NOTE: init_page is called within a float context; this will suppress prawn-svg messing with the cursor
       # NOTE: init_page is not called for imported pages, front and back cover pages, and other image pages
       def init_page *_args
-        # NOTE: we assume in prepress that physical page number reflects page side
-        if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_number == 1 ? :cover : page_side]) != page_margin
+        next_page_side = page_side nil, @folio_placement[:inverted]
+        if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_number == 1 ? :cover : next_page_side]) != page_margin
           set_page_margin next_page_margin
         end
         unless @page_bg_color == 'FFFFFF'
           tare = true
           fill_absolute_bounds @page_bg_color
         end
-        if (bg_image_path, bg_image_opts = @page_bg_image[page_side])
+        if (bg_image_path, bg_image_opts = @page_bg_image[next_page_side])
           tare = true
           begin
             if bg_image_opts[:format] == 'pdf'
@@ -624,9 +635,9 @@ module Asciidoctor
               canvas { image bg_image_path, ({ position: :center, vposition: :center }.merge bg_image_opts) }
             end
           rescue
-            facing_page_side = (PageSides - [page_side])[0]
-            @page_bg_image[facing_page_side] = nil if @page_bg_image[facing_page_side] == @page_bg_image[page_side]
-            @page_bg_image[page_side] = nil
+            facing_page_side = (PageSides - [next_page_side])[0]
+            @page_bg_image[facing_page_side] = nil if @page_bg_image[facing_page_side] == @page_bg_image[next_page_side]
+            @page_bg_image[next_page_side] = nil
             log :warn, %(could not embed page background image: #{bg_image_path}; #{$!.message})
           end
         end
@@ -2696,7 +2707,7 @@ module Asciidoctor
           start_new_page
         end
 
-        side = recycle ? page_side : (page_side page_number + 1)
+        side = page_side (recycle ? nil : page_number + 1), @folio_placement[:inverted]
         prev_bg_image = @page_bg_image[side]
         prev_bg_color = @page_bg_color
         if (bg_image = resolve_background_image doc, @theme, 'title-page-background-image')
@@ -3313,16 +3324,6 @@ module Asciidoctor
         doc.set_attr 'page-count', (num_pages - skip_pagenums)
 
         pagenums_enabled = doc.attr? 'pagenums'
-        case doc.attr 'pdf-folio-placement', (@media == 'prepress' ? 'physical' : 'virtual')
-        when 'physical'
-          folio_basis, invert_folio = :physical, false
-        when 'physical-inverted'
-          folio_basis, invert_folio = :physical, true
-        when 'virtual-inverted'
-          folio_basis, invert_folio = :virtual, true
-        else
-          folio_basis, invert_folio = :virtual, false
-        end
         periphery_layout_cache = {}
         # NOTE: this block is invoked during PDF generation, after #write -> #render_file and thus after #convert_document
         repeat (content_start_page..num_pages), dynamic: true do
@@ -3331,7 +3332,7 @@ module Asciidoctor
           next if page.imported_page? || (disable_on_pages.include? pgnum)
           virtual_pgnum = pgnum - skip_pagenums
           pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new pgnum, :lower) : virtual_pgnum).to_s
-          side = page_side((folio_basis == :physical ? pgnum : virtual_pgnum), invert_folio)
+          side = page_side((@folio_placement[:basis] == :physical ? pgnum : virtual_pgnum), @folio_placement[:inverted])
           doc.set_attr 'page-layout', page.layout.to_s
 
           # NOTE: running content is cached per page layout
