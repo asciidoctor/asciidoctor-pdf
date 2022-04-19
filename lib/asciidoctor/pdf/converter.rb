@@ -354,15 +354,14 @@ module Asciidoctor
         #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
         ((::Prawn::Document.instance_method :initialize).bind self).call pdf_opts
         renderer.min_version (@pdf_version = PDFVersions[doc.attr 'pdf-version'])
-        @page_margin_by_side = { recto: page_margin, verso: page_margin, cover: page_margin }
+        @page_margin_by_side = { recto: (page_margin_recto = page_margin), verso: (page_margin_verso = page_margin), cover: page_margin }
         if (@media = doc.attr 'media', 'screen') == 'prepress'
           @ppbook = doc.doctype == 'book'
-          page_margin_recto = @page_margin_by_side[:recto]
           if (page_margin_outer = theme.page_margin_outer)
-            page_margin_recto[1] = @page_margin_by_side[:verso][3] = page_margin_outer
+            page_margin_recto[1] = page_margin_verso[3] = page_margin_outer
           end
           if (page_margin_inner = theme.page_margin_inner)
-            page_margin_recto[3] = @page_margin_by_side[:verso][1] = page_margin_inner
+            page_margin_recto[3] = page_margin_verso[1] = page_margin_inner
           end
           # NOTE: prepare scratch document to use page margin from recto side (which has same width as verso side)
           set_page_margin page_margin_recto unless page_margin_recto == page_margin
