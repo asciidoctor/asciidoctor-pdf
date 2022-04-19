@@ -9,7 +9,7 @@ page:
     color: '#fefefe'
 link:
   font_color: $brand_primary
-literal:
+codespan:
   font_color: "#a00"
 footer:
   background_color: null

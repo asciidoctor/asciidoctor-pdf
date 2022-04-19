@@ -82,8 +82,6 @@ Enhancements::
 * extract `arrange_section` method to compute whether section title should be advanced to next page (#2023)
 * introduce `callout-list` category in theme to control font properties and item spacing of callout lists (#1722)
 * only indent inner paragraphs (paragraphs that follow an adjacent paragraph) if `prose-inner-text-indent` key is set in theme (#2034)
-* rename `blockquote` category key in theme to `quote` and map old `blockquote-` prefix to `quote-` with warning for backwards compatibility (#2054)
-* rename `key` category key in theme to `kbd` and map old `key-` prefix to `kbd-` with warning for backwards compatibility (#2052)
 
 Bug Fixes::
 
@@ -207,8 +205,11 @@ Compliance::
 * remove asciidoctor-pdf/converter and asciidoctor-pdf/version shim scripts; use asciidoctor/pdf/converter and asciidoctor/pdf/version instead
 * rename Optimizer#generate_file method to Optimizer#optimize_file
 * drop support for deprecated `pdf-style` and `pdf-stylesdir` attributes (#1827)
-* drop use of the undocumented `vertical_spacing` key from the built-in themes
+* drop use of the undocumented `vertical-spacing` key from the built-in themes
 * rename the `outline-list` category in the theme to `list` and map the `outline-list-` keys to `list-` with warning if found (#1894)
+* rename the `literal` category in the theme to `codespan` and map the `literal-` keys to `codespan-` with warning if found (#1796)
+* rename the `blockquote` category key in the theme to `quote` and map the `blockquote-` prefix to `quote-` with warning if found (#2054)
+* rename the `key` category key in theme to `kbd` and map the `key-` prefix to `kbd-` with warning if found (#2052)
 * remove unneeded _mb functions (e.g., `uppercase_mb`); multibyte support for upcase, downcase, and capitalize is now provided by corelib
 
 Build / Infrastructure::

@@ -73,7 +73,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should only register callback to apply background color once when background color specified on both element and role' do
-      pdf_theme = build_pdf_theme literal_background_color: 'CCCCCC', role_hl_background_color: 'FFFF00'
+      pdf_theme = build_pdf_theme codespan_background_color: 'CCCCCC', role_hl_background_color: 'FFFF00'
       input = %(<code class="hl">code</span>)
       output = (subject.class.new theme: pdf_theme).format input
       (expect output).to have_size 1
@@ -283,21 +283,21 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should compute font size for superscript phrase correctly when parent element uses em units' do
-      pdf = to_pdf '`x^2^` represents exponential growth', pdf_theme: { base_font_size: 14, literal_font_size: '0.8em' }, analyze: true
+      pdf = to_pdf '`x^2^` represents exponential growth', pdf_theme: { base_font_size: 14, codespan_font_size: '0.8em' }, analyze: true
       expected_font_size = 14 * 0.8 * 0.583
       superscript_text = pdf.find_unique_text '2'
       (expect superscript_text[:font_size]).to eql expected_font_size
     end
 
     it 'should compute font size for superscript phrase correctly when parent element uses % units' do
-      pdf = to_pdf '`x^2^` represents exponential growth', pdf_theme: { base_font_size: 14, literal_font_size: '90%' }, analyze: true
+      pdf = to_pdf '`x^2^` represents exponential growth', pdf_theme: { base_font_size: 14, codespan_font_size: '90%' }, analyze: true
       expected_font_size = 14 * 0.9 * 0.583
       superscript_text = pdf.find_unique_text '2'
       (expect superscript_text[:font_size]).to eql expected_font_size
     end
 
     it 'should compute font size for superscript phrase correctly when parent element uses no units' do
-      pdf = to_pdf '`x^2^` represents exponential growth', pdf_theme: { base_font_size: 14, literal_font_size: '12' }, analyze: true
+      pdf = to_pdf '`x^2^` represents exponential growth', pdf_theme: { base_font_size: 14, codespan_font_size: '12' }, analyze: true
       expected_font_size = (12 * 0.583).round 4
       superscript_text = pdf.find_unique_text '2'
       (expect superscript_text[:font_size]).to eql expected_font_size
@@ -312,21 +312,21 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should compute font size for subscript phrase correctly when parent element uses em units' do
-      pdf = to_pdf 'The formula `O~2~` is oxygen', pdf_theme: { base_font_size: 14, literal_font_size: '0.8em' }, analyze: true
+      pdf = to_pdf 'The formula `O~2~` is oxygen', pdf_theme: { base_font_size: 14, codespan_font_size: '0.8em' }, analyze: true
       expected_font_size = 14 * 0.8 * 0.583
       subscript_text = pdf.find_unique_text '2'
       (expect subscript_text[:font_size]).to eql expected_font_size
     end
 
     it 'should compute font size for subscript phrase correctly when parent element uses % units' do
-      pdf = to_pdf 'The formula `O~2~` is oxygen', pdf_theme: { base_font_size: 14, literal_font_size: '90%' }, analyze: true
+      pdf = to_pdf 'The formula `O~2~` is oxygen', pdf_theme: { base_font_size: 14, codespan_font_size: '90%' }, analyze: true
       expected_font_size = 14 * 0.9 * 0.583
       subscript_text = pdf.find_unique_text '2'
       (expect subscript_text[:font_size]).to eql expected_font_size
     end
 
     it 'should compute font size for subscript phrase correctly when parent element uses no units' do
-      pdf = to_pdf 'The formula `O~2~` is oxygen', pdf_theme: { base_font_size: 14, literal_font_size: '12' }, analyze: true
+      pdf = to_pdf 'The formula `O~2~` is oxygen', pdf_theme: { base_font_size: 14, codespan_font_size: '12' }, analyze: true
       expected_font_size = (12 * 0.583).round 4
       subscript_text = pdf.find_unique_text '2'
       (expect subscript_text[:font_size]).to eql expected_font_size
@@ -334,10 +334,10 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
 
     it 'should add background and border to code as defined in theme', visual: true do
       theme_overrides = {
-        literal_background_color: 'f5f5f5',
-        literal_border_color: 'dddddd',
-        literal_border_width: 0.25,
-        literal_border_offset: 2.5,
+        codespan_background_color: 'f5f5f5',
+        codespan_border_color: 'dddddd',
+        codespan_border_width: 0.25,
+        codespan_border_offset: 2.5,
       }
       to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: theme_overrides
       (expect to_file).to visually_match 'text-formatter-code.pdf'
@@ -346,9 +346,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     it 'should use base border color if theme does not define border color for code', visual: true do
       theme_overrides = {
         base_border_color: 'dddddd',
-        literal_background_color: 'f5f5f5',
-        literal_border_width: 0.25,
-        literal_border_offset: 2.5,
+        codespan_background_color: 'f5f5f5',
+        codespan_border_width: 0.25,
+        codespan_border_offset: 2.5,
       }
       to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: theme_overrides
       (expect to_file).to visually_match 'text-formatter-code.pdf'
@@ -356,12 +356,12 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
 
     it 'should add border to phrase even when no background color is set', visual: true do
       theme_overrides = {
-        literal_font_color: '444444',
-        literal_font_size: '0.75em',
-        literal_border_color: 'E83E8C',
-        literal_border_width: 0.25,
-        literal_border_offset: 2.5,
-        literal_border_radius: 3,
+        codespan_font_color: '444444',
+        codespan_font_size: '0.75em',
+        codespan_border_color: 'E83E8C',
+        codespan_border_width: 0.25,
+        codespan_border_offset: 2.5,
+        codespan_border_radius: 3,
       }
       to_file = to_pdf_file 'Type `bundle install` to install dependencies', 'text-formatter-border-only.pdf', pdf_theme: theme_overrides
       (expect to_file).to visually_match 'text-formatter-border-only.pdf'
@@ -879,7 +879,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     it 'should allow custom role to specify relative font size' do
       pdf_theme = {
         heading_h2_font_size: 24,
-        literal_font_size: '0.75em',
+        codespan_font_size: '0.75em',
         role_mono_font_size: '0.875em',
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true

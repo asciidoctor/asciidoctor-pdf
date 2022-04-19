@@ -34,7 +34,7 @@ mark_background_color: 'FFFF00'
 mark_border_offset: 1
 menu_font_style: bold
 link_font_color: '0000EE'
-literal_font_family: Courier
+codespan_font_family: Courier
 heading_font_style: bold
 heading_h1_font_size: 24
 heading_h2_font_size: 18

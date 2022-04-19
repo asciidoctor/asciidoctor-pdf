@@ -207,6 +207,22 @@ describe Asciidoctor::PDF::ThemeLoader do
       end).to log_message severity: :WARN, message: 'the key theme category is deprecated; use the kbd category instead'
     end
 
+    it 'should remap literal category to codespan category and warn' do
+      (expect do
+        theme_data = YAML.safe_load <<~'EOS'
+        literal:
+          font-family: M+ 1mn
+        verse:
+          font-family: $literal-font-family
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme).to be_an OpenStruct
+        (expect theme.literal_font_family).to be_nil
+        (expect theme.codespan_font_family).to eql 'M+ 1mn'
+        (expect theme.verse_font_family).to eql 'M+ 1mn'
+      end).to log_message severity: :WARN, message: 'the literal theme category is deprecated; use the codespan category instead'
+    end
+
     it 'should expand variables in value of keys that end in _content' do
       theme_data = YAML.safe_load <<~'EOS'
       page:
@@ -634,7 +650,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme).not_to be_nil
       (expect theme).to be_an OpenStruct
       (expect theme.base_font_family).to eql 'Helvetica'
-      (expect theme.literal_font_family).to eql 'Courier'
+      (expect theme.codespan_font_family).to eql 'Courier'
       (expect theme).to eql subject.load_base_theme
     end
 
@@ -800,15 +816,15 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.to_h.keys).to have_size 6
     end
 
-    it 'should link code and conum font family to literal font family by default' do
+    it 'should link code and conum font family to codespan font family by default' do
       with_pdf_theme_file <<~'EOS' do |theme_path|
       extends: ~
-      literal:
+      codespan:
         font-family: M+ 1mn
       EOS
         theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
         (expect theme.__dir__).to eql (File.dirname theme_path)
-        (expect theme.literal_font_family).to eql 'M+ 1mn'
+        (expect theme.codespan_font_family).to eql 'M+ 1mn'
         (expect theme.code_font_family).to eql 'M+ 1mn'
         (expect theme.conum_font_family).to eql 'M+ 1mn'
       end
@@ -932,7 +948,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         font-color: [0, 0, 0, 0.92]
       link:
         font-color: [67.33%, 31.19%, 0, 20.78%]
-      literal:
+      codespan:
         font-color: [0%, 0%, 0%, 0.87]
       table:
         grid-color: [0, 0, 0, 27]
@@ -946,8 +962,8 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.heading_font_color).to be_a subject::CMYKColorValue
       (expect theme.link_font_color).to eql [67.33, 31.19, 0, 20.78]
       (expect theme.link_font_color).to be_a subject::CMYKColorValue
-      (expect theme.literal_font_color).to eql [0, 0, 0, 87]
-      (expect theme.literal_font_color).to be_a subject::CMYKColorValue
+      (expect theme.codespan_font_color).to eql [0, 0, 0, 87]
+      (expect theme.codespan_font_color).to be_a subject::CMYKColorValue
       (expect theme.table_grid_color).to eql [0, 0, 0, 27]
       (expect theme.table_grid_color).to be_a subject::CMYKColorValue
     end
@@ -962,7 +978,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         font-color: 333333
       link:
         font-color: 428bca
-      literal:
+      codespan:
         font-color: 222
       EOS
       theme = subject.new.load theme_data
@@ -975,8 +991,8 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.heading_font_color).to be_a subject::HexColorValue
       (expect theme.link_font_color).to eql '428BCA'
       (expect theme.link_font_color).to be_a subject::HexColorValue
-      (expect theme.literal_font_color).to eql '222222'
-      (expect theme.literal_font_color).to be_a subject::HexColorValue
+      (expect theme.codespan_font_color).to eql '222222'
+      (expect theme.codespan_font_color).to be_a subject::HexColorValue
     end
 
     it 'should coerce rgb color values to hex and wrap in color type if key ends with _color' do
@@ -989,7 +1005,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         font-color: [51, 51, 51]
       link:
         font-color: [66, 139, 202]
-      literal:
+      codespan:
         font-color: ['34', '34', '34']
       table:
         grid-color: [187, 187, 187]
@@ -1003,8 +1019,8 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.heading_font_color).to be_a subject::HexColorValue
       (expect theme.link_font_color).to eql '428BCA'
       (expect theme.link_font_color).to be_a subject::HexColorValue
-      (expect theme.literal_font_color).to eql '222222'
-      (expect theme.literal_font_color).to be_a subject::HexColorValue
+      (expect theme.codespan_font_color).to eql '222222'
+      (expect theme.codespan_font_color).to be_a subject::HexColorValue
       (expect theme.table_grid_color).to eql 'BBBBBB'
       (expect theme.table_grid_color).to be_a subject::HexColorValue
     end
@@ -1061,7 +1077,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_border_color).to eql 'DDDDDD'
       (expect theme.page_background_color).to eql 'FEFEFE'
       (expect theme.link_font_color).to eql '428BCA'
-      (expect theme.literal_font_color).to eql 'AA0000'
+      (expect theme.codespan_font_color).to eql 'AA0000'
       (expect theme.footer_font_color).to eql '000099'
       (expect theme.footer_background_color).to be_nil
     end
