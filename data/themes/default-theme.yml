@@ -195,8 +195,6 @@ code:
   border_color: CCCCCC
   border_radius: $base_border_radius
   border_width: 0.75
-  callout_list:
-    margin_top: -$block_margin_bottom / 2
 conum:
   font_family: $codespan_font_family
   font_color: $codespan_font_color
@@ -239,6 +237,8 @@ description_list:
   term_font_style: bold
   term_spacing: $vertical_rhythm / 4
   description_indent: $horizontal_rhythm * 1.25
+callout_list:
+  margin_top_after_code: -$block_margin_bottom / 2
 table:
   background_color: $page_background_color
   border_color: DDDDDD
