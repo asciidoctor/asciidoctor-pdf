@@ -14,7 +14,7 @@ module Asciidoctor
       FontsDir = ::File.join DataDir, 'fonts'
       BaseThemePath = ::File.join ThemesDir, 'base-theme.yml'
       BundledThemeNames = (::Dir.children ThemesDir).map {|it| it.slice 0, it.length - 10 }
-      DeprecatedCategoryKeys = { 'key' => 'kbd', 'outline_list' => 'list' }
+      DeprecatedCategoryKeys = { 'blockquote' => 'quote', 'key' => 'kbd', 'outline_list' => 'list' }
 
       VariableRx = /\$([a-z0-9_-]+)/
       LoneVariableRx = /^\$([a-z0-9_-]+)$/

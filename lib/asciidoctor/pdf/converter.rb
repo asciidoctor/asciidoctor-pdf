@@ -1037,7 +1037,7 @@ module Asciidoctor
       end
 
       def convert_quote_or_verse node
-        category = node.context == :quote ? :blockquote : :verse
+        category = node.context == :quote ? :quote : :verse
         # NOTE: b_width and b_left_width are mutually exclusive
         if (b_left_width = @theme[%(#{category}_border_left_width)]) && b_left_width > 0
           b_color = @theme[%(#{category}_border_color)]
@@ -1064,9 +1064,9 @@ module Asciidoctor
           end
           pad_box @theme[%(#{category}_padding)] do
             theme_font category do
-              if category == :blockquote
+              if category == :quote
                 traverse node
-              else # verse
+              else # :verse
                 content = guard_indentation node.content
                 layout_prose content, normalize: false, align: :left, hyphenate: true, margin_bottom: 0
               end
@@ -4395,7 +4395,7 @@ module Asciidoctor
             when 'fill'
               image_opts[:width] = container_width
               image_opts[:height] = container_height
-            else # when 'contain'
+            else # 'contain'
               image_opts[:fit] = container_size
             end
           elsif (image_width = resolve_explicit_width image_attrs, bounds_width: container_size[0])
@@ -4553,7 +4553,7 @@ module Asciidoctor
           image_x = bounds.left_side + (bounds.width - image_width) * 0.5
         when :right
           image_x = bounds.right_side - image_width
-        else # :left or not set
+        else # :left, nil
           image_x = bounds.left_side
         end
 

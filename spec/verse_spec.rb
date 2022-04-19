@@ -134,7 +134,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
       verse_border_width: 0.5,
       verse_border_color: 'aa0000',
       verse_background_color: 'dddddd'
-    pdf_theme.blockquote_padding = pdf_theme.sidebar_padding
+    pdf_theme.quote_padding = pdf_theme.sidebar_padding
     to_file = to_pdf_file <<~'EOS', 'verse-border-and-background-color.pdf', pdf_theme: pdf_theme
     [verse,Paul McCartney]
     ____
