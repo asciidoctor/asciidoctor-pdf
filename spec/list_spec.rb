@@ -1757,7 +1757,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
       <2> Last line
       EOS
 
-      pdf_theme = { code_callout_list_margin_top: 0 }
+      pdf_theme = { callout_list_margin_top_after_code: 0 }
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
       bottom_line_y = pdf.lines[2][:from][:y]

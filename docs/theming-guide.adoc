@@ -2618,13 +2618,6 @@ The keys in this category are used to control the style of literal, listing, and
 (default: #999999)
 |code:
   linenum-font-color: #ccc
-
-|callout-list-margin-top
-|<<measurement-units,Measurement>> +
-(default: -$block-margin-bottom)
-|code:
-  callout-list:
-    margin-top: 0
 |===
 
 1. The line-gap property is used to tune the height of the background color applied to a span of block text highlighted using Rouge.
@@ -4174,6 +4167,12 @@ callout-list:
 (default: $list-text-align)
 |callout-list:
   text-align: left
+
+|margin-top-after-code
+|<<measurement-units,Measurement>> +
+(default: -$block-margin-bottom)
+|callout-list:
+  margin-top-after-code: 0
 |===
 
 [#keys-table]

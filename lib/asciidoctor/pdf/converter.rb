@@ -469,7 +469,7 @@ module Asciidoctor
         theme.description_list_description_indent ||= 0
         theme.image_border_width ||= 0
         theme.code_linenum_font_color ||= '999999'
-        theme.code_callout_list_margin_top ||= 0
+        theme.callout_list_margin_top_after_code ||= 0
         theme.role_unresolved_font_color ||= 'FF0000'
         theme.index_columns ||= 2
         theme.footnotes_item_spacing ||= 0
@@ -1111,7 +1111,7 @@ module Asciidoctor
       end
 
       def convert_colist node
-        margin_top @theme.code_callout_list_margin_top if !at_page_top? && ([:listing, :literal].include? node.parent.blocks[(node.parent.blocks.index node) - 1].context)
+        margin_top @theme.callout_list_margin_top_after_code if !at_page_top? && ([:listing, :literal].include? node.parent.blocks[(node.parent.blocks.index node) - 1].context)
         add_dest_for_block node if node.id
         @list_numerals << 1
         last_item = node.items[-1]
