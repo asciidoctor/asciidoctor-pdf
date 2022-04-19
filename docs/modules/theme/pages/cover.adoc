@@ -1,0 +1,28 @@
+= Cover Category Keys
+:navtitle: Cover
+
+The keys in the `cover` category control the front and back cover images.
+Currently, the only supported feature is setting an image for each cover face.
+`<face>` is either `front` or `back`.
+
+[#key-prefix-cover,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`<face>-image`
+|path, image macro +
+(default: _not set_)
+|
+[,yaml]
+----
+cover:
+  front:
+    image: image:cover.pdf[page=2]
+----
+|===
+
+When assigning a value to `image` using the image macro, the target of the macro can be an image file or a PDF file.
+A relative path of the target file is resolved relative to the value of the `pdf-themesdir` attribute.
+An image file is handled just like a background image.
+If a PDF file is specified, the first page is used unless another page is specified by the `page` attribute.
+The page from the PDF file will be imported as is.

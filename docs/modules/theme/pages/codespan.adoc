@@ -1,0 +1,69 @@
+= Codespan Category Keys
+:navtitle: Codespan
+
+The keys in the `codespan` category are used for inline code text in prose and table cells.
+
+[#key-prefix-codespan,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|background-color
+|xref:color.adoc[Color] +
+(default: _not set_)
+|literal:
+background-color: #f5f5f5
+
+|border-color^[1]^
+|xref:color.adoc[Color] +
+(default: _not set_)
+|literal:
+border-color: #cccccc
+
+|border-offset^[2]^
+|xref:language.adoc#values[Number] +
+(default: 0)
+|literal:
+border-offset: 2
+
+|border-radius
+|xref:language.adoc#values[Number] +
+(default: _not set_)
+|literal:
+border-radius: 3
+
+|border-width
+|xref:language.adoc#values[Number] +
+(default: $base-border-width)
+|literal:
+border-width: 0.5
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|literal:
+font-color: #b12146
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: Courier)
+|literal:
+font-family: M+ 1mn
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|literal:
+font-size: 12
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|literal:
+font-style: bold
+|===
+
+1. The border is only used if a border color is specified and the border width is not explicitly set to 0.
+The border only works properly if the literal phrase does not have nested formatting.
+Otherwise, the border will be inherited, producing a less than desirable result.
+2. The border offset is the amount that the background and border swells around the text.
+It does not affect the distance between the formatted phrase and the phrases that surround it.

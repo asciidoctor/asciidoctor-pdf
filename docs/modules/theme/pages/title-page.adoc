@@ -1,0 +1,523 @@
+= Title Page Category Keys
+:navtitle: Title Page
+:source-language: yaml
+
+The keys in the `title-page` category control the style of the title page as well as the arrangement and style of the elements on it.
+
+IMPORTANT: The title page is only enabled by default for the book doctype (e.g., `:doctype: book`).
+If you want to enable the title page when using a different doctype (such as the article doctype), you must define the `title-page` attribute in the document header (i.e., `:title-page:`).
+
+NOTE: Subtitle partitioning of the doctitle is only enabled when the title page is also enabled.
+
+TIP: For documents that declare the book doctype, the title page can be omitted by setting the `notitle` attribute in the AsciiDoc document header (i.e., `:notitle:`) or by setting the value of the `title_page` category key in the theme to `false`.
+(It's counterpart, `:!showtitle:`, does not work with this converter).
+For all other doctypes, the title page is not added by default.
+In that case, setting the `:notitle:` attribute only removes the document title from the first page of content.
+
+[#title-page]
+== title-page
+
+The category key `title-page` accepts the keys listed in the following table.
+
+[#key-prefix-title-page,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`align`
+|xref:text.adoc#align[Text alignment] +
+(default: `center`)
+|[source]
+title-page:
+  align: right
+
+|`background-color`^[1]^
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+title-page:
+  background-color: '#eaeaea'
+
+|`background-image`^[2]^
+|image macro^[3]^ +
+(default: _not set_)
+|[source]
+title-page:
+  background-image: image:title.png[]
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+title-page:
+  font-color: '#333333'
+
+|`font-family`
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+title-page:
+  font-family: Noto Serif
+
+|`font-kerning`
+|`normal` {vbar} `none` +
+(default: _inherit_)
+|[source]
+title-page:
+  font-kerning: none
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+title-page:
+  font-size: 13
+
+|`font-style`
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|[source]
+title-page:
+  font-style: bold
+
+|`text-transform`
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|[source]
+title-page:
+  text-transform: uppercase
+
+|`line-height`
+|xref:language.adoc#values[Number] +
+(default: `1.15`)
+|[source]
+title-page:
+  line-height: 1
+|===
+1. To disable the background color for the title page, set the value to white (i.e., `FFFFFF`).
+The color keyword `transparent` is not recognized in this context.
+2. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+The size of the background image can be controlled using any of the sizing attributes on the image macro (i.e., `fit`, `pdfwidth`, `scaledwidth`, or `width`) when `fit=none`.
+The position of the background image can be controlled using the `position` attribute.
+
+[#title-page-logo]
+== title-page-logo
+
+The `title-page` category key accepts the sub-category key `logo`.
+The sub-category key `logo` accepts the keys listed in the following table.
+
+[#key-prefix-title-page-logo,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`align`
+|xref:image.adoc#align[Image alignment] +
+(default: _inherit_)
+|[source]
+title-page:
+  logo:
+    align: right
+
+|`image`
+|image macro^[1]^ +
+(default: _not set_)
+|[source]
+title-page:
+  logo:
+    image: image:logo.png[pdfwidth=25%]
+
+|`top`
+|xref:measurement-units.adoc[Measurement] +
+(default: `10%`) +
+The `%` unit is relative to content height; `vh` unit is relative to page height.
+|[source]
+title-page:
+  logo:
+    top: 25%
+|===
+1. Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
+
+[#title-page-title]
+== title-page-title
+
+The `title-page` category key accepts the sub-category key `title`.
+The sub-category key `title` accepts the keys listed in the following table.
+
+[#key-prefix-title-page-title,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`display`
+|`none` +
+(default: _not set_)
+|[source]
+title-page:
+  title:
+    display: none
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+title-page:
+  title:
+    font-color: '#999999'
+
+|`font-family`
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+title-page:
+  title:
+    font-family: Noto Serif
+
+|`font-kerning`
+|`normal` {vbar} `none` +
+(default: _inherit_)
+|[source]
+title-page:
+  title:
+    font-kerning: none
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: `18`)
+|[source]
+title-page:
+  title:
+    font-size: $heading-h1-font-size
+
+|`font-style`
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|[source]
+title-page:
+  title:
+    font-style: bold
+
+|`text-transform`
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|[source]
+title-page:
+  title:
+    text-transform: uppercase
+
+|`line-height`
+|xref:language.adoc#values[Number] +
+(default: `$heading-line-height`)
+|[source]
+title-page:
+  title:
+    line-height: 0.9
+
+|`top`
+|xref:measurement-units.adoc[Measurement] +
+(default: `40%`) +
+The `%` unit is relative to content height; `vh` unit is relative to page height.
+|[source]
+title-page:
+  title:
+    top: 55%
+
+|`margin-top`
+|xref:measurement-units.adoc[Measurement] +
+(default: `0`)
+|[source]
+title-page:
+  title:
+    margin-top: 13.125
+
+|`margin-bottom`
+|xref:measurement-units.adoc[Measurement] +
+(default: `0`)
+|[source]
+title-page:
+  title:
+    margin-bottom: 5
+|===
+
+[#title-page-subtitle]
+== title-page-subtitle
+
+The `title-page` category key accepts the sub-category key `subtitle`.
+The sub-category key `subtitle` accepts the keys listed in the following table.
+
+[#key-prefix-title-page-subtitle,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`display`
+|`none` +
+(default: _not set_)
+|[source]
+title-page:
+  subtitle:
+    display: none
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+title-page:
+  subtitle:
+    font-color: '#181818'
+
+|`font-family`
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+title-page:
+  subtitle:
+    font-family: Noto Serif
+
+|`font-kerning`
+|`normal` {vbar} `none` +
+(default: _inherit_)
+|[source]
+title-page:
+  subtitle:
+    font-kerning: none
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: `14`)
+|[source]
+title-page:
+  subtitle:
+    font-size: $heading-h3-font-size
+
+|`font-style`
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|[source]
+title-page:
+  subtitle:
+    font-style: bold_italic
+
+|`text-transform`
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|[source]
+title-page:
+  subtitle:
+    text-transform: uppercase
+
+|`line-height`
+|xref:language.adoc#values[Number] +
+(default: `$heading-line-height`)
+|[source]
+title-page:
+  subtitle:
+    line-height: 1
+
+|`margin-top`
+|xref:measurement-units.adoc[Measurement] +
+(default: `0`)
+|[source]
+title-page:
+  subtitle:
+    margin-top: 13.125
+
+|`margin-bottom`
+|xref:measurement-units.adoc[Measurement] +
+(default: `0`)
+|[source]
+title-page:
+  subtitle:
+    margin-bottom: 5
+|===
+
+[#title-page-authors]
+== title-page-authors
+
+The `title-page` category key accepts the sub-category key `authors`.
+The sub-category key `authors` accepts the keys listed in the following table.
+
+[#key-prefix-authors,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+a|`content`
+
+`content` accepts the optional keys: `name_only`, `with_email`, `with_url`
+|xref:quoted-string.adoc[Quoted AsciiDoc string] +
+(default: `"\{author}"`)
+|[source]
+title-page:
+  authors:
+    content:
+      name_only: "{author}"
+      with_email: "{author} <{email}>"
+      with_url: "{url}[{author}]"
+
+|`display`
+|`none` +
+(default: _not set_)
+|[source]
+title-page:
+  authors:
+    display: none
+
+|`delimiter`
+|xref:quoted-string.adoc[Quoted string] +
+(default: `', '`)
+|[source]
+title-page:
+  authors:
+    delimiter: '; '
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+title-page:
+  authors:
+    font-color: '#181818'
+
+|`font-family`
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+title-page:
+  authors:
+    font-family: Noto Serif
+
+|`font-kerning`
+|`normal` {vbar} `none` +
+(default: _inherit_)
+|[source]
+title-page:
+  authors:
+    font-kerning: none
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+title-page:
+  authors:
+    font-size: 13
+
+|`font-style`
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|[source]
+title-page:
+  authors:
+    font-style: bold_italic
+
+|`text-transform`
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|[source]
+title-page:
+  authors:
+    text-transform: uppercase
+
+|`margin-top`
+|xref:measurement-units.adoc[Measurement] +
+(default: `12`)
+|[source]
+title-page:
+  authors:
+    margin-top: 13.125
+
+|`margin-bottom`
+|xref:measurement-units.adoc[Measurement] +
+(default: `0`)
+|[source]
+title-page:
+  authors:
+    margin-bottom: 5
+|===
+
+[#title-page-revision]
+== title-page-revision
+
+The `title-page` category key accepts the sub-category key `revision`.
+The sub-category key `revision` accepts the keys listed in the following table.
+
+[#key-prefix-revision,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`display`
+|`none` +
+(default: _not set_)
+|[source]
+title-page:
+  revision:
+    display: none
+
+|`delimiter`
+|xref:quoted-string.adoc[Quoted string] +
+(default: `', '`)
+|[source]
+title-page:
+  revision:
+    delimiter: ': '
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+title-page:
+  revision:
+    font-color: '#181818'
+
+|`font-family`
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+title-page:
+  revision:
+    font-family: Noto Serif
+
+|`font-kerning`
+|`normal` {vbar} `none` +
+(default: _inherit_)
+|[source]
+title-page:
+  revision:
+    font-kerning: none
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+title-page:
+  revision:
+    font-size: $base-font-size-small
+
+|`font-style`
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|[source]
+title-page:
+  revision:
+    font-style: bold
+
+|`text-transform`
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|[source]
+title-page:
+  revision:
+    text-transform: uppercase
+
+|`margin-top`
+|xref:measurement-units.adoc[Measurement] +
+(default: `0`)
+|[source]
+title-page:
+  revision:
+    margin-top: 13.125
+
+|`margin-bottom`
+|xref:measurement-units.adoc[Measurement] +
+(default: `0`)
+|[source]
+title-page:
+  revision:
+    margin-bottom: 5
+|===

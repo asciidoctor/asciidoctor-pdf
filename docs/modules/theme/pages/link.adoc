@@ -1,0 +1,64 @@
+= Link Category Keys
+:navtitle: Link
+
+The keys in this category are used to style hyperlink text.
+
+.link keys
+[#key-prefix-link,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|background-color
+|xref:color.adoc[Color] +
+(default: _not set_)
+|link:
+background-color: #efefef
+
+|border-offset
+|xref:language.adoc#values[Number] +
+(default: 0)
+|link:
+border-offset: 2
+
+|font-color
+|xref:color.adoc[Color] +
+(default: #0000ee)
+|link:
+font-color: #428bca
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|link:
+font-family: Roboto
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|link:
+font-size: 9
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|link:
+font-style: italic
+
+|text-decoration
+|xref:text.adoc#decoration[Text decoration] +
+(default: none)
+|link:
+text-decoration: underline
+
+|text-decoration-color
+|xref:color.adoc[Color] +
+(default: $link-font-color)
+|link:
+text-decoration-color: #0000ff
+
+|text-decoration-width
+|xref:language.adoc#values[Number] +
+(default: $base-text-decoration-width)
+|link:
+text-decoration-width: 0.5
+|===

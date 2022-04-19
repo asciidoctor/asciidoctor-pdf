@@ -1,0 +1,111 @@
+= Page Category Keys
+:navtitle: Page
+
+The keys in this category control the size, margins, and background of each page (i.e., canvas).
+We recommended that you define this category before all other categories.
+
+NOTE: The background of the title page can be styled independently of other pages.
+See xref:title-page.adoc[] for details.
+
+.page keys
+[#key-prefix-page,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|background-color^[1]^
+|xref:color.adoc[Color] +
+(default: #ffffff)
+|page:
+background-color: #fefefe
+
+|background-image^[2]^
+|image macro^[3]^ +
+(default: _not set_)
+|page:
+background-image: image:page-bg.png[]
+
+|background-image-(recto{vbar}verso)^[2]^
+|image macro^[3]^ +
+(default: _not set_)
+|page:
+background-image:
+recto: image:page-bg-recto.png[]
+verso: image:page-bg-verso.png[]
+
+|foreground-image^[2]^
+|image macro^[3]^ +
+(default: _not set_)
+|page
+foreground-image: image:watermark.svg[]
+
+|initial-zoom
+|Fit {vbar} FitH {vbar} FitV +
+(default: FitH)
+|page:
+initial-zoom: Fit
+
+|layout
+|portrait {vbar} landscape +
+(default: portrait)
+|page:
+layout: landscape
+
+|margin
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]]+
+(default: 36)
+|page:
+margin: [0.5in, 0.67in, 1in, 0.67in]
+
+|margin-inner^[4]^
+|xref:measurement-units.adoc[Measurement] +
+(default: 48)
+|page:
+margin-inner: 0.75in
+
+|margin-outer^[4]^
+|xref:measurement-units.adoc[Measurement] +
+(default: 24)
+|page:
+margin-outer: 0.59in
+
+|mode
+|outline {vbar} none {vbar} thumbs {vbar} fullscreen {vbar} fullscreen outline {vbar} fullscreen none {vbar} fullscreen thumbs +
+(default: outline)
+|page:
+mode: fullscreen none
+
+|size
+|https://github.com/prawnpdf/pdf-core/blob/0.6.0/lib/pdf/core/page_geometry.rb#L16-L68[Named size^] {vbar} xref:measurement-units.adoc[Measurement[width,height\]] +
+(default: A4)
+|page:
+size: Letter
+
+3+|[#key-prefix-page-numbering]*Key Prefix:* <<key-prefix-page-numbering,numbering>>
+
+|start-at^[5]^
+|cover {vbar} title {vbar} toc {vbar} after-toc {vbar} body {vbar} Integer +
+(default: body)
+|page:
+numbering:
+start-at: toc
+|===
+
+1. To disable the background color for the page, set the value to white (i.e., `FFFFFF`).
+The color keyword `transparent` is not recognized in this context.
+2. By default, page background and foreground images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+The size of the image can be controlled using any of the sizing attributes on the image macro (i.e., `fit`, `pdfwidth`, `scaledwidth`, or `width`) when `fit=none`.
+The position of the image can be controlled using the `position` attribute.
+If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background image is specified, it will be used only for that side (not available for the foreground image).
+If you define the keys using the flattened structure (e.g., `page-background-image-recto`), you can also set the default page background image (`page-background-image`), which will then be used as a fallback if a background image isn't specified for a given side.
+To disable the image, use the value `none`.
+3. Target may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
+4. The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the margin-inner and margin-outer values.
+These margins and used when the value `prepress` is assigned to the `media` document attribute.
+If no cover is specified, the recto margin is not applied to the title page.
+To apply the recto margin to the title page, but not include a cover, assign the value `~` to the `front-cover-image` and `back-cover-image` attributes.
+5. The `cover` value is only recognized if the document has a front cover page (i.e., `front-cover-image`).
+The `title`, `toc`, and `after-toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set)
+The `toc` value only applies if the toc is in the default location (before the first page of the body).
+If value is `toc`, and the toc macro is used to position the toc, the start-at behavior is the same as if the toc is not enabled.
+If value is an integer, page numbering will start at the specified page of the body (i.e., 1 is first page, 2 is second page, etc.)
+If value is `after-toc`, the page numbering will start after the toc, no matter where it's placed in the document.

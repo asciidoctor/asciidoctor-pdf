@@ -1,0 +1,81 @@
+= Callout List and Number Category Keys
+:navtitle: Callout List and Number
+:source-language: yaml
+
+[#conum]
+== conum
+
+The keys in the `conum` category are used to control the style of callout numbers inside verbatim blocks and in callout lists (colists).
+To control the top margin of callout lists that directly follow xref:code.adoc[code blocks], see the <<code-callout-list,code-callout-list category>>.
+
+.conum keys
+[#key-prefix-conum,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|conum:
+font-color: #b12146
+
+|font-family^[1,2]^
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|conum:
+font-family: M+ 1mn
+
+|font-kerning^[2]^
+|normal {vbar} none +
+(default: _inherit_)
+|conum:
+font-kerning: none
+
+|font-size^[2]^
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|conum:
+font-size: $base-font-size
+
+|font-style^[2]^
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|conum:
+font-style: normal
+
+|line-height^[2]^
+|xref:language.adoc#values[Number] +
+(default: 1.15)
+|conum:
+line-height: 4 / 3
+
+|glyphs^[3]^
+|circled {vbar} filled {vbar} Unicode String ranges +
+(default: circled)
+|conum:
+glyphs: \u0031-\u0039
+|===
+1. Currently, the font must contain the circle numbers starting at glyph U+2460.
+2. font-family, font-kerning, font-size, font-style, and line-height are only used for markers in a colist.
+These properties are inherited for conums inside a verbatim block.
+3. The font must provide the required glyphs.
+The glyphs can be specified as a comma-separated list of ranges, where the range values are Unicode numbers (e.g., \u2460).
+Unicode escape sequences are recognized even if the value is not enclosed in double quotes.
+
+[#code-callout-list]
+== code-callout-list
+
+The key in the `code-callout-list` category is used to control the top margin of the callout list.
+To style the callout numbers inside verbatim blocks and in callout lists, see the keys in the <<conum,conum category>>.
+
+[#key-prefix-code-callout-list,cols="2,4,6a"]
+|===
+|Key |Value Type |Example
+|`margin-top`
+|xref:measurement-units.adoc[Measurement] +
+(default: `-$block-margin-bottom`)
+|[source]
+code:
+  callout-list:
+    margin-top: 0
+|===

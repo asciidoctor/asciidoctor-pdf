@@ -21,4 +21,4 @@ menu-caret-content: " <font size=\"1.15em\"><color rgb=\"#b12146\">\u203a</color
 
 NOTE: The string must be double quoted in order to use a Unicode escape code like `\u203a`.
 
-Additionally, normal substitutions are applied to the value of content keys for xref:running-content-keys.adoc[running content], so you can use most AsciiDoc inline formatting (e.g., `+*strong*+` or `+{attribute-name}+`) in the values of those keys.
+Additionally, normal substitutions are applied to the value of content keys for xref:running-content.adoc[running content], so you can use most AsciiDoc inline formatting (e.g., `+*strong*+` or `+{attribute-name}+`) in the values of those keys.

@@ -1,0 +1,137 @@
+= Sidebar Category Keys
+:navtitle: Sidebar
+
+[#sidebar]
+== sidebar
+
+The keys in the `sidebar` category control the arrangement and style of sidebar blocks.
+
+[#key-prefix-sidebar,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|background-color
+|xref:color.adoc[Color] +
+(default: #eeeeee)
+|sidebar:
+background-color: #eeeeee
+
+|border-color
+|xref:color.adoc[Color] +
+(default: _not set_)
+|sidebar:
+border-color: #ffffff
+
+|border-radius
+|xref:language.adoc#values[Number] +
+(default: _not set_)
+|sidebar:
+border-radius: 4
+
+|border-width
+|xref:language.adoc#values[Number] +
+(default: _not set_)
+|sidebar:
+border-width: 0.5
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|sidebar:
+font-color: #262626
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|sidebar:
+font-family: M+ 1p
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|sidebar:
+font-kerning: none
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|sidebar:
+font-size: 13
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|sidebar:
+font-style: italic
+
+|text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|sidebar:
+text-transform: uppercase
+
+|padding
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: [12, 12, 0, 12])
+|sidebar:
+padding: [12, 15, 0, 15]
+|===
+
+== sidebar-title
+
+The keys in the `sidebar-title` category control the arrangement and style of sidebar block titles.
+
+
+[#key-prefix-sidebar-title,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|align
+|xref:text.adoc#align[Text alignment] +
+(default: center)
+|sidebar:
+title:
+align: center
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|sidebar:
+title:
+font-color: #333333
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|sidebar:
+title:
+font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|sidebar:
+title:
+font-kerning: none
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|sidebar:
+title:
+font-size: 13
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: bold)
+|sidebar:
+title:
+font-style: bold
+
+|text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|sidebar:
+title:
+text-transform: uppercase
+|===

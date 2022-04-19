@@ -1,0 +1,144 @@
+= List Category Keys
+:navtitle: List
+:source-language: yaml
+
+[#list]
+== list
+
+The keys in the `list` category control the arrangement and style of ordered and unordered lists.
+
+.list keys
+[#key-prefix-list,cols="3,3,6a"]
+|===
+|Key |Value Type |Example
+
+|`indent`
+|xref:measurement-units.adoc[Measurement] +
+(default: `30`)
+|[source]
+list:
+  indent: 40
+
+|`item-spacing`
+|xref:measurement-units.adoc[Measurement] +
+(default: `6`)
+|[source]
+list:
+  item-spacing: 4
+
+|`marker-font-color`
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+list:
+  marker-font-color: '#3c763d'
+
+|`text-align`
+|xref:text.adoc#align[Text alignment] +
+(default: `$base-align`)
+|[source]
+list:
+  text-align: left
+|===
+
+The `marker-font-color` key controls the color of the bullet glyph that marks items in unordered lists and the color of the number or letter marker for items in ordered lists.
+The `text-align` key controls the alignment of the list text only, not nested content, such as nested blocks and lists.
+
+[#ulist-marker]
+== ulist-marker
+
+The keys in the `ulist-marker` category control the arrangement and style of the unordered list markers.
+
+.ulist-marker keys
+[#key-prefix-ulist-marker,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`font-family`
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+ulist:
+  marker:
+    font-family: Noto Serif
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+ulist:
+  marker:
+    font-size: 9
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: `$list-marker-font-color`)
+|[source]
+ulist:
+  marker:
+    font-color: '#cccccc'
+
+|`line-height`
+|xref:language.adoc#values[Number] +
+(default: `$base-line-height`)
+|[source]
+ulist:
+  marker:
+    line-height: 1.5
+|===
+
+[#ulist-marker-type]
+=== ulist-marker-<type>
+
+The keys in the `ulist-marker-<type>` category control the arrangement and style of a type of unordered list marker.
+Type can be `disc`, `square`, `circle`, `checked`, or `unchecked`.
+
+.ulist-marker-<type> keys
+[#key-prefix-ulist-marker-type,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`content`
+|xref:quoted-string.adoc[Quoted string]
+|[source]
+ulist:
+  marker:
+    disc:
+      content: "\uf140"
+
+|`font-family`
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+ulist:
+  marker:
+    disc:
+      font-family: fas
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+ulist:
+  marker:
+    disc:
+      font-size: 9
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+ulist:
+  marker:
+    disc:
+      font-color: '#ff0000'
+
+|`line-height`
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+ulist:
+  marker:
+    disc:
+      line-height: 2
+|===

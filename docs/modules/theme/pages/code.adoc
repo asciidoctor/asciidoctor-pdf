@@ -1,0 +1,117 @@
+= Code Category Keys
+:navtitle: Code
+:source-language: yaml
+
+[#code]
+== code
+
+The keys in the `code` category control the arrangement and style of literal, listing, and source blocks.
+
+.code keys
+[#key-prefix-code,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|background-color
+|xref:color.adoc[Color] +
+(default: _not set_)
+|code:
+background-color: #f5f5f5
+
+|border-color
+|xref:color.adoc[Color] +
+(default: #eeeeee)
+|code:
+border-color: #cccccc
+
+|border-radius
+|xref:language.adoc#values[Number] +
+(default: _not set_)
+|code:
+border-radius: 4
+
+|border-width
+|xref:language.adoc#values[Number] +
+(default: 0.5)
+|code:
+border-width: 0.75
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|code:
+font-color: #333333
+
+|font-family
+|xref:font.adoc[Font family name] +
+(default: Courier)
+|code:
+font-family: M+ 1mn
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: 10.8)
+|code:
+font-size: 11
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|code:
+font-style: italic
+
+|line-height
+|xref:language.adoc#values[Number] +
+(default: 1.2)
+|code:
+line-height: 1.25
+
+|line-gap^[1]^
+|xref:language.adoc#values[Number] +
+(default: 0)
+|code:
+line-gap: 3.8
+
+|padding
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: 9)
+|code:
+padding: 11
+|===
+1. The line-gap property is used to tune the height of the background color applied to a span of block text highlighted using Rouge.
+
+== code-highlight
+
+The key in the `code-highlight` category only applies when you use Rouge as the source highlighter.
+Otherwise, the background color is controlled by the source highlighter theme.
+
+[#key-prefix-code-highlight,cols="2,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`background-color`
+|xref:color.adoc[Color] +
+(default: `'#FFFFCC'`)
+|[source]
+code:
+  highlight-background-color: '#ffff00'
+|===
+
+[#code-linenum]
+== code-linenum
+
+The key in the `code-linenum` category only applies when you use Pygments as the source highlighter.
+Otherwise, the font color of line numbers are controlled by the source highlighter theme.
+
+[#key-prefix-code-linenum,cols="2,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: `'#999999'`)
+|[source]
+code:
+  linenum-font-color: '#ccc'
+|===
+

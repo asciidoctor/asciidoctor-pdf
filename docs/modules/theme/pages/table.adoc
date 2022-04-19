@@ -1,0 +1,401 @@
+= Table Category Keys
+:navtitle: Table
+:source-language: yaml
+
+== table
+
+The keys in the `table` category control the arrangement and style of tables and their cells.
+
+[#key-prefix-table,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`background-color`
+|xref:color.adoc[Color] +
+(default: `transparent`)
+|[source]
+table:
+  background-color: '#ffffff'
+
+|`border-color`
+|xref:color.adoc[Color] +
+(default: `'#000000'`)
+|[source]
+table:
+  border-color: '#dddddd'
+
+|`border-style`
+|`solid` {vbar} `dashed` {vbar} `dotted` +
+(default: `solid`)
+|[source]
+table:
+  border-style: solid
+
+|`border-width`
+|xref:language.adoc#values[Number] +
+(default: `0.5`)
+|[source]
+table:
+  border-width: 0.5
+
+|`caption-align`
+|xref:text.adoc#align[Text alignment] {vbar} inherit +
+(default: `$caption-align`)
+|[source]
+table:
+  caption-align: inherit
+
+|`caption-text-align`
+|xref:text.adoc#align[Text alignment] {vbar} inherit +
+(default: `$table-caption-align`)
+|[source]
+table:
+  caption:
+    text-align: left
+
+|`caption-side`
+|`top` {vbar} `bottom` +
+(default: `top`)
+|[source]
+table:
+  caption-side: bottom
+
+|`caption-max-width`
+|`fit-content` {vbar} `fit-content`(percentage) {vbar} `none` {vbar} xref:measurement-units.adoc[Measurement] +
+(default: `fit-content`)
+|[source]
+table:
+  caption-max-width: none
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+table:
+  font-color: '#333333'
+
+|`font-family`
+|xref:font.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+table:
+  font-family: Helvetica
+
+|`font-kerning`
+|`normal` {vbar} `none` +
+(default: _inherit_)
+|[source]
+table:
+  font-kerning: none
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+table:
+  font-size: 9.5
+
+|`font-style`
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|[source]
+table:
+  font-style: italic
+
+|`grid-color`
+|xref:color.adoc[Color] {vbar} xref:color.adoc[Color[x,y\]] +
+(default: `$table-border-color`)
+|[source]
+table:
+  grid-color: '#eeeeee'
+
+|`grid-style`
+|`solid` {vbar} `dashed` {vbar} `dotted` {vbar} Style[x,y] +
+(default: `solid`)
+|[source]
+table:
+  grid-style: dashed
+
+|`grid-width`
+|xref:language.adoc#values[Number] {vbar} xref:language.adoc#values[Number[x,y\]] +
+(default: `$table-border-width`)
+|[source]
+table:
+  grid-width: 0.5
+|===
+
+== table-head
+
+The keys in the `table-head` category control the arrangement and style of the table header.
+
+[#key-prefix-table-head,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`background-color`
+|xref:color.adoc[Color] +
+(default: `$table-background-color`)
+|[source]
+table:
+  head:
+    background-color: '#f0f0f0'
+
+|`border-bottom-color`
+|xref:color.adoc[Color] +
+(default: `$table-border-color`)
+|[source]
+table:
+  head:
+    border-bottom-color: '#dddddd'
+
+|`border-bottom-style`
+|`solid` {vbar} `dashed` {vbar} `dotted` +
+(default: `solid`)
+|[source]
+table:
+  head:
+    border-bottom-style: dashed
+
+|`border-bottom-width`
+|xref:language.adoc#values[Number] +
+(default: `1.25`)
+|[source]
+table:
+  head:
+    border-bottom-width: 1
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: `$table-font-color`)
+|[source]
+table:
+  head:
+    font-color: '#333333'
+
+|`font-family`
+|xref:font.adoc[Font family name] +
+(default: `$table-font-family`)
+|[source]
+table:
+  head:
+    font-family: Noto Serif
+
+|`font-kerning`
+|`normal` {vbar} `none` +
+(default: _inherit_)
+|[source]
+table:
+  head:
+    font-kerning: none
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: `$table-font-size`)
+|[source]
+table:
+  head:
+    font-size: 10
+
+|`font-style`
+|xref:text.adoc#font-style[Font style] +
+(default: `bold`)
+|[source]
+table:
+  head:
+    font-style: normal
+
+|`line-height`
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+table:
+  head:
+    line-height: 1.15
+
+|`text-transform`
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|[source]
+table:
+  head:
+    text-transform: uppercase
+|===
+
+== table-body
+
+The keys in the `table-body` category control the background of the table body.
+
+[#key-prefix-table-body,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`background-color`
+|xref:color.adoc[Color] +
+(default: `$table-background-color`)
+|[source]
+table:
+  body:
+    background-color: '#fdfdfd'
+
+|`stripe-background-color`
+|xref:color.adoc[Color] +
+(default: `'#eeeeee'`)
+|[source]
+table:
+  body:
+    stripe-background-color: '#efefef'
+|===
+
+The `stripe-background-color` key only controls the color that is used for stripes.
+The appearance of stripes is controlled using the `stripes` table attribute, the `table-stripes` document attribute (since Asciidoctor 2), or the `stripes` document attribute (prior to Asciidoctor 2).
+Permitted attribute values are `even`, `odd`, `all`, and `none`.
+Prior to Asciidoctor 2, even rows are shaded by default (e.g., `stripes=even`).
+Since Asciidoctor 2, table stripes are not enabled by default (e.g., `stripes=none`).
+
+== table-foot
+
+The keys in the `table-foot` category control the arrangement and style of the table footer.
+
+[#key-prefix-table-foot,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`background-color`
+|xref:color.adoc[Color] +
+(default: `$table-background-color`)
+|[source]
+table:
+  foot:
+    background-color: '#f0f0f0'
+
+|font-color
+|xref:color.adoc[Color] +
+(default: `$table-font-color`)
+|[source]
+table:
+  foot:
+    font-color: '#333333'
+
+|`font-family`
+|xref:font.adoc[Font family name] +
+(default: `$table-font-family`)
+|[source]
+table:
+  foot:
+    font-family: Noto Serif
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: `$table-font-size`)
+|[source]
+table:
+  foot:
+    font-size: 10
+
+|`font-style`
+|xref:text.adoc#font-style[Font style] +
+(default: `normal`)
+|[source]
+table:
+  foot:
+    font-style: italic
+|===
+
+== table-cell
+
+The keys in the `table-cell` category control the arrangement and style of table cells.
+
+[#key-prefix-table-cell,cols="2,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`line-height`
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+table:
+  cell:
+    line-height: 1.5
+
+|`padding`
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: `2`)
+|[source]
+table:
+  cell:
+    padding: 3
+|===
+
+== table-asciidoc-cell
+
+The key in the `table-asciidoc-cell` category controls the style of AsciiDoc table cells.
+
+[#key-prefix-table-asciidoc-cell,cols="2,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`style`
+|inherit {vbar} `initial`
+(default: inherit)
+|[source]
+table:
+  asciidoc-cell:
+    style: initial
+|===
+
+== table-header-cell
+
+The keys in the `table-header-cell` category control the style and arrangement of header cells.
+
+[#key-prefix-table-header-cell,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`background-color`
+|xref:color.adoc[Color] +
+(default: `$table-head-background-color`)
+|[source]
+table:
+  header-cell:
+    background-color: '#f0f0f0'
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: `$table-head-font-color`)
+|[source]
+table:
+  header-cell:
+    font-color: '#1a1a1a'
+
+|`font-family`
+|xref:font.adoc[Font family name] +
+(default: `$table-head-font-family`)
+|[source]
+table:
+  header-cell:
+    font-family: Noto Sans
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: `$table-head-font-size`)
+|[source]
+table:
+  header-cell:
+    font-size: 12
+
+|`font-style`
+|xref:text.adoc#font-style[Font style] +
+(default: `$table-head-font-style`)
+|[source]
+table:
+  header-cell:
+    font-style: italic
+
+|`text-transform`
+|xref:text.adoc#transform[Text transform] +
+(default: `$table-head-text-transform`)
+|[source]
+table:
+  header-cell:
+    text-transform: uppercase
+|===
