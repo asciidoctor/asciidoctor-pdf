@@ -1299,8 +1299,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
   end
 
   context 'Monospaced table cell' do
-    it 'should apply literal style to text in a monospaced table cell' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { literal_font_size: 10.25 }, analyze: true
+    it 'should apply codespan style to text in a monospaced table cell' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { codespan_font_size: 10.25 }, analyze: true
       [cols="1m,1",width=50%]
       |===
       m|site.title
@@ -1311,13 +1311,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       EOS
 
-      literal_text = (pdf.find_text 'site.title')[0]
-      (expect literal_text[:font_name]).to eql 'mplus1mn-regular'
-      (expect literal_text[:font_color]).to eql 'B12146'
-      (expect literal_text[:font_size]).to eql 10.25
+      monospaced_text = (pdf.find_text 'site.title')[0]
+      (expect monospaced_text[:font_name]).to eql 'mplus1mn-regular'
+      (expect monospaced_text[:font_color]).to eql 'B12146'
+      (expect monospaced_text[:font_size]).to eql 10.25
     end
 
-    it 'should ignore line-height on literal category when computing line metrics' do
+    it 'should ignore line-height on codespan category when computing line metrics' do
       input = <<~'EOS'
       [cols=2*m,width=50%]
       |===
@@ -1327,7 +1327,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       reference_pdf = to_pdf input, analyze: true
       reference_spacing = (reference_pdf.find_unique_text %r/^A long/)[:y] - (reference_pdf.find_unique_text 'wraps')[:y]
-      pdf = to_pdf input, pdf_theme: { literal_line_height: 1.5 }, analyze: true
+      pdf = to_pdf input, pdf_theme: { codespan_line_height: 1.5 }, analyze: true
       actual_spacing = (pdf.find_unique_text %r/^A long/)[:y] - (pdf.find_unique_text 'wraps')[:y]
       (expect actual_spacing).to eql reference_spacing
     end
@@ -1553,7 +1553,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       pdf_theme = {
         caption_font_size: 8,
         table_font_size: 8,
-        literal_font_size: '0.9em',
+        codespan_font_size: '0.9em',
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       .`code` in caption

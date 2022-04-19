@@ -140,7 +140,7 @@ If you don't want to extend any theme, including the base theme, omit the `exten
 If the same theme appears multiple times in the theme hierarchy, it will only be loaded once by default.
 You can force the theme to be loaded, even if it has already been loaded, by adding the `!important` keyword at the end of the value offset by a space.
 
-WARNING: If you start a new theme from scratch, we strongly recommend defining TrueType fonts and specifying them in the `base` and `literal` categories.
+WARNING: If you start a new theme from scratch, we strongly recommend defining TrueType fonts and specifying them in the `base` and `codespan` categories.
 Otherwise, Asciidoctor PDF will use built-in AFM fonts, which can result in missing functionality and warnings.
 
 [TIP]
@@ -1628,8 +1628,8 @@ The keys in this category are used to style hyperlink text.
   text-decoration-width: 0.5
 |===
 
-[#keys-literal]
-=== (Inline) Literal
+[#keys-codespan]
+=== Codespan
 
 The keys in this category are used for inline monospaced text in prose and table cells.
 
@@ -1637,65 +1637,65 @@ The keys in this category are used for inline monospaced text in prose and table
 |===
 |Key |Value Type |Example
 
-3+|[#key-prefix-literal]*Key Prefix:* <<key-prefix-literal,literal>>
+3+|[#key-prefix-codespan]*Key Prefix:* <<key-prefix-codespan,codespan>>
 
 |background-color
 |<<colors,Color>> +
 (default: _not set_)
-|literal:
+|codespan:
   background-color: #f5f5f5
 
 |border-color^[1]^
 |<<colors,Color>> +
 (default: _not set_)
-|literal:
+|codespan:
   border-color: #cccccc
 
 |border-offset^[2]^
 |<<values,Number>> +
 (default: 0)
-|literal:
+|codespan:
   border-offset: 2
 
 |border-radius
 |<<values,Number>> +
 (default: _not set_)
-|literal:
+|codespan:
   border-radius: 3
 
 |border-width
 |<<values,Number>> +
 (default: $base-border-width)
-|literal:
+|codespan:
   border-width: 0.5
 
 |font-color
 |<<colors,Color>> +
 (default: _inherit_)
-|literal:
+|codespan:
   font-color: #b12146
 
 |font-family
 |<<fonts,Font family name>> +
 (default: Courier)
-|literal:
+|codespan:
   font-family: M+ 1mn
 
 |font-size^[3]^
 |<<values,Number>> +
 (default: _inherit_)
-|literal:
+|codespan:
   font-size: 1.15em
 
 |font-style
 |<<font-styles,Font style>> +
 (default: _inherit_)
-|literal:
+|codespan:
   font-style: bold
 |===
 
 1. The border is only used if a border color is specified and the border width is not explicitly set to 0.
-The border only works properly if the literal phrase does not have nested formatting.
+The border only works properly if the code phrase does not have nested formatting.
 Otherwise, the border will be inherited, producing a less than desirable result.
 2. The border offset is the amount that the background and border swells around the text.
 It does not affect the distance between the formatted phrase and the phrases that surround it.
@@ -2527,9 +2527,9 @@ In addition to the generic caption category, each of these keys (except for text
 The value `inherit` resolves to the alignment of the block image.
 
 [#keys-code]
-=== Code
+=== Code Block
 
-The keys in this category are used to control the style of literal, listing, and source blocks.
+The keys in this category are used to control the style of literal, listing, and source blocks and literal table cells.
 
 [cols="3,4,5l"]
 |===

@@ -74,8 +74,8 @@ vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
 link:
   font_color: 428BCA
-# literal is currently used for inline monospaced in prose and table cells
-literal:
+# codespan is currently used for monospaced phrases and table cells
+codespan:
   font_color: B12146
   font_family: M+ 1mn
 button:
@@ -87,7 +87,7 @@ kbd:
   border_offset: 2
   border_radius: 2
   border_width: 0.5
-  font_family: $literal_font_family
+  font_family: $codespan_font_family
   separator: "\u202f+\u202f"
 mark:
   background_color: FFFF00
@@ -182,10 +182,10 @@ verse:
   cite:
     font_size: $quote_cite_font_size
     font_color: $quote_cite_font_color
-# code is used for source blocks (perhaps change to source or listing?)
+# code is used for literal, listing, and source blocks and literal table cells
 code:
   font_color: $base_font_color
-  font_family: $literal_font_family
+  font_family: $codespan_font_family
   font_size: ceil($base_font_size)
   padding: $code_font_size
   line_height: 1.25
@@ -198,8 +198,8 @@ code:
   callout_list:
     margin_top: -$block_margin_bottom / 2
 conum:
-  font_family: $literal_font_family
-  font_color: $literal_font_color
+  font_family: $codespan_font_family
+  font_color: $codespan_font_color
   font_size: $base_font_size
   line_height: 4 / 3
   glyphs: circled

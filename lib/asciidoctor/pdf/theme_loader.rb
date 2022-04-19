@@ -14,7 +14,7 @@ module Asciidoctor
       FontsDir = ::File.join DataDir, 'fonts'
       BaseThemePath = ::File.join ThemesDir, 'base-theme.yml'
       BundledThemeNames = (::Dir.children ThemesDir).map {|it| it.slice 0, it.length - 10 }
-      DeprecatedCategoryKeys = { 'blockquote' => 'quote', 'key' => 'kbd', 'outline_list' => 'list' }
+      DeprecatedCategoryKeys = { 'blockquote' => 'quote', 'key' => 'kbd', 'literal' => 'codespan', 'outline_list' => 'list' }
 
       VariableRx = /\$([a-z0-9_-]+)/
       LoneVariableRx = /^\$([a-z0-9_-]+)$/
@@ -80,8 +80,8 @@ module Asciidoctor
             theme_data.base_align ||= 'left'
             theme_data.base_line_height ||= 1
             theme_data.base_font_color ||= '000000'
-            theme_data.code_font_family ||= (theme_data.literal_font_family || 'Courier')
-            theme_data.conum_font_family ||= (theme_data.literal_font_family || 'Courier')
+            theme_data.code_font_family ||= (theme_data.codespan_font_family || 'Courier')
+            theme_data.conum_font_family ||= (theme_data.codespan_font_family || 'Courier')
             if (heading_font_family = theme_data.heading_font_family)
               theme_data.abstract_title_font_family ||= heading_font_family
               theme_data.sidebar_title_font_family ||= heading_font_family

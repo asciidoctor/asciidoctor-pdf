@@ -2081,7 +2081,7 @@ module Asciidoctor
               when :monospaced
                 cell_data.delete :font_style
                 cell_line_height = @base_line_height
-                theme_font :literal do
+                theme_font :codespan do
                   mono_cell_font_info = font_info
                   cell_data[:font] = mono_cell_font_info[:family]
                   cell_data[:size] = mono_cell_font_info[:size]
@@ -2093,7 +2093,7 @@ module Asciidoctor
                 cell_data[:content] = guard_indentation cell.instance_variable_get :@text
                 # NOTE: the absence of the inline_format option implies it's disabled
                 cell_data.delete :font_style
-                # QUESTION: should we use literal_font_*, code_font_*, or introduce another category?
+                # QUESTION: should we introduce a dedicated category?
                 theme_font :code do
                   literal_cell_font_info = font_info
                   cell_data[:font] = literal_cell_font_info[:family]
