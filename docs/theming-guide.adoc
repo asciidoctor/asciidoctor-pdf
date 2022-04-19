@@ -2372,11 +2372,11 @@ The bottom margin is only added if the block is followed by an adjacent block wi
 |prose:
   text-indent: 18
 
-|inner-text-indent^[2]^
+|text-indent-inner^[2]^
 |<<measurement-units,Measurement>> +
 (default: _not set_)
 |prose:
-  inner-text-indent: 18
+  text-indent-inner: 18
 |===
 
 1. Controls the margin between adjacent paragraphs.
