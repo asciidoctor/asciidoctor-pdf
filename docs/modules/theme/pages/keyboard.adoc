@@ -1,74 +1,75 @@
 = Keyboard Macro Category Keys
 :navtitle: Keyboard
 
-The keys in this category apply to a key reference (generated from the inline kbd macro).
+The keys in the `kbd` category apply to a kbd reference generated from the inline kbd macro.
+The kbd reference is a span of text denoting textual user input from a keyboard, voice input, or other text entry device.
 
-[#key-prefix-key,cols="3,4,5l"]
+[#key-prefix-kbd,cols="3,4,5l"]
 |===
 |Key |Value Type |Example
 
 |background-color
 |xref:color.adoc[Color] +
 (default: _not set_)
-|key:
+|kbd:
 background-color: #fafafa
 
 |border-color^[1]^
 |xref:color.adoc[Color] +
 (default: _not set_)
-|key:
+|kbd:
 border-color: #cccccc
 
 |border-offset^[2]^
 |xref:language.adoc#values[Number] +
 (default: 0)
-|key:
+|kbd:
 border-offset: 1.5
 
 |border-radius
 |xref:language.adoc#values[Number] +
 (default: 0)
-|key:
+|kbd:
 border-radius: 2
 
 |border-width
 |xref:language.adoc#values[Number] +
 (default: $base-border-width)
-|key:
+|kbd:
 border-width: 0.375
 
 |separator^[3]^
 |xref:quoted-string.adoc[Quoted string] +
 (default: "+")
-|key:
+|kbd:
 separator: "\u2009+\u2009"
 
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
-|key:
+|kbd:
 font-color: #000
 
 |font-family
 |xref:font.adoc[Font family name] +
 (default: Courier)
-|key:
+|kbd:
 font-family: $base-font-family
 
 |font-size
 |xref:language.adoc#values[Number] +
 (default: _inherit_)
-|key:
+|kbd:
 font-size: 10.5
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
 (default: italic)
-|key:
+|kbd:
 font-style: normal
 |===
 
 1. The border is only used if a border color is specified and the border width is not explicitly set to 0.
 2. The border offset is the amount that the background and border swells around the text.
 It does not affect the distance between the formatted phrase and the phrases that surround it.
-3. The separator is only used for multi-key sequences.
+3. The separator is only used for multi-key input sequences.
