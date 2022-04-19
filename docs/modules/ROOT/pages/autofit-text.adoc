@@ -1,0 +1,45 @@
+= Autofit Text
+
+Verbatim blocks often have long lines that don't fit within the fixed width of the PDF canvas.
+And unlike on the web, the PDF reader cannot scroll horizontally to reveal the overflow text.
+Therefore, the long lines are forced to wrap.
+Wrapped lines can make the verbatim blocks hard to read or even cause confusion.
+
+To help address this problem, Asciidoctor PDF provides the `autofit` option on all verbatim--literal, listing and source--blocks to attempt to fit the text within the available width.
+
+[#autofit]
+== autofit option
+
+When the `autofit` option is enabled, Asciidoctor PDF will decrease the font size as much as it can until the longest line fits without wrapping.
+
+CAUTION: The converter won't shrink the font size beyond the value of the `base_font_size_min` key specified in the PDF theme.
+If that threshold is reached, lines may still wrap.
+To allow `autofit` to handle all cases, set `base_font_size_min` to `0` in your theme.
+
+Here's an example of the `autofit` option enabled on a source block:
+
+[source,asciidoc]
+....
+[source%autofit,java]
+----
+@SessionScoped
+public class WidgetRepository {
+    @GET
+    @Produces("application/json")
+    public List<String> listAll(@QueryParam("start") Integer start, @QueryParam("max") Integer max) {
+        ...
+    }
+}
+----
+....
+
+[#autofit-attribute]
+== autofit-option attribute
+
+To enable the `autofit` option globally, set the `autofit-option` document attribute in the document header or before the relevant blocks in your content.
+
+[source,asciidoc]
+----
+= Document Title
+:autofit-option:
+----

@@ -1,0 +1,119 @@
+= Base Category Keys
+:navtitle: Base
+
+The keys in the `base` category provide generic theme settings and are often referenced throughout the theme file as variables.
+We recommended that you define this category after the xref:page.adoc[page category] and before all other categories.
+
+NOTE: While it's common to define additional keys in this category (e.g., `base-border-radius`) to keep your theme DRY, we recommend using xref:variables.adoc#custom[custom variables] instead.
+
+.base keys
+[#key-prefix-base,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|align
+|xref:text.adoc#align[Text alignment] +
+(default: left)
+|base:
+align: justify
+
+|border-color
+|xref:color.adoc[Color] +
+(default: #eeeeee)
+|base:
+border-color: #eeeeee
+
+// border-radius is variable, not an official key
+//|border-radius
+//|xref:language.adoc#values[Number]
+//|base:
+//  border-radius: 4
+
+|border-width
+|xref:language.adoc#values[Number] +
+(default: 0.5)
+|base:
+border-width: 0.5
+
+|font-color
+|xref:color.adoc[Color] +
+(default: #000000)
+|base:
+font-color: #333333
+
+|font-family
+|xref:font-support.adoc[Font family name] +
+(default: Helvetica)
+|base:
+font-family: Noto Serif
+
+|font-kerning
+|normal {vbar} none +
+(default: normal)
+|base:
+font-kerning: none
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: 12)
+|base:
+font-size: 10.5
+
+// font-size-large is a variable, not an official key
+//|font-size-large
+//|xref:language.adoc#values[Number]
+//|base:
+//  font-size-large: 13
+
+|font-size-min
+|xref:language.adoc#values[Number] +
+(default: 6)
+|base:
+font-size-min: $base-font-size * 0.75
+
+// font-size-small is a variable, not an official key
+//|font-size-small
+//|xref:language.adoc#values[Number]
+//|base:
+//  font-size-small: 9
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: normal)
+|base:
+font-style: normal
+
+|text-transform^[1]^
+|none +
+(default: none)
+|base:
+text-transform: none
+
+|line-height-length^[2]^
+|xref:language.adoc#values[Number] +
+(default: _not set_)
+|base:
+line-height-length: 12
+
+|line-height^[2]^
+|xref:language.adoc#values[Number] +
+(default: 1.15)
+|base:
+line-height: >
+$base-line-height-length /
+$base-font-size
+
+|text-decoration-width
+|xref:language.adoc#values[Number] +
+(default: 1)
+|base:
+text-decoration-width: 0.5
+|===
+
+1. The `text-transform` key cannot be set globally.
+Therefore, this key should not be used.
+The value of `none` is implicit and is documented here for completeness.
+2. `line-height-length` is a utility property that's internal to the theme.
+It's used as an intermediate property for computing the `base-line-height` from the base font size and the desired line height size.
+For instance, if you set `base-line-height-length`, you can use `$base-line-height-length / $base-font-size` to set the value of `base-line-height`.
+You don't have to go about it this way in your own theme.

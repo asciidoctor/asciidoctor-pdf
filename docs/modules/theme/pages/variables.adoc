@@ -1,0 +1,83 @@
+= Variables
+:conum-guard-yaml: #
+
+To save you from having to type the same value in your theme over and over, or to allow you to base one value on another, the theme language supports variables.
+
+[#define]
+== Define a variable
+
+Variables consist of the key name preceded by a dollar sign (`$`) (e.g., `$base-font-size`).
+Any qualified key that has already been defined can be referenced in the value of another key.
+In order words, as soon as the key is assigned, it's available to be used as a variable.
+
+IMPORTANT: Variables are defined from top to bottom (i.e., in document order).
+Therefore, a variable must be defined before it is referenced.
+In other words, the path the variable refers to must be *above* the usage of that variable.
+
+For example, once the following line is processed,
+
+[source,yaml]
+----
+base:
+  font-color: '#333333'
+----
+
+the variable `$base-font-color` will be available for use in subsequent lines and will resolve to `#333333`.
+
+Let's say you want to make the font color of the sidebar title the same as the heading font color.
+Just assign the value `$heading-font-color` to the `$sidebar-title-font-color`.
+
+[source,yaml]
+----
+heading:
+  font-color: '#191919'
+sidebar:
+  title:
+    font-color: $heading-font-color
+----
+
+== Use a variable in a math expression
+
+You can also use variables in math expressions to use one value to build another.
+This is commonly done to set font sizes proportionally.
+It also makes it easy to test different values very quickly.
+
+[source,yaml]
+----
+base:
+  font-size: 12
+  font-size-large: $base-font-size * 1.25
+  font-size-small: $base-font-size * 0.85
+----
+
+We'll cover more about math expressions later.
+
+[#custom]
+== Custom variables
+
+You can define arbitrary key names to make custom variables.
+This is one way to group reusable values at the top of your theme file.
+If you are going to do this, it's recommended that you organize the keys under a custom namespace, such as `brand`.
+
+For instance, here's how you can define your brand colors:
+
+[source,yaml,subs=attributes+]
+----
+brand:
+  primary-color: '#E0162B' {conum-guard-yaml} <1>
+  secondary-color: '#FFFFFF' {conum-guard-yaml} <2>
+  alert-color: '0052A5' {conum-guard-yaml} <3>
+----
+<1> To align with CSS, you may add `+#+` in front of the hex color value to coerce it to a string.
+A YAML preprocessor is used to ensure the value is not treated as a comment as would normally be the case in YAML.
+<2> You may put quotes around the CSS-style hex value to make it friendly to a YAML editor or validation tool.
+<3> The leading `+#+` on a hex value is entirely optional.
+However, we recommend that you always use either a leading `+#+` or surrounding quotes (or both) to prevent YAML from mangling the value (for example, 000000 would become 0, so use '000000' or #000000 instead).
+
+You can now use these custom variables later in the theme file:
+
+[source,yaml]
+----
+base:
+  font-color: $brand-primary-color
+----

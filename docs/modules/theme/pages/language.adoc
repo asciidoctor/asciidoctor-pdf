@@ -1,0 +1,130 @@
+= Keys, Properties and Values
+
+The Asciidoctor PDF theme language is described using the http://en.wikipedia.org/wiki/YAML[YAML^] data format.
+YAML is a human-friendly data format that resembles CSS.
+*Note, however, that the theming system isn't actually CSS.*
+
+A theme is stored in a dedicated theme file and described as YAML key-value pairs that can be nested and stored in a dedicated theme file.
+The theme language adds some extra features to YAML, such as variables, basic math, measurements, and color values.
+
+[#key-names]
+== Key names
+//Keys as selectors and properties
+
+The theming language's built-in key names are assembled from selectors and properties.
+Selectors are the component you want to style.
+The properties are the style elements of that component that can be styled.
+All selector names are implicit (e.g., `heading`), so you customize the theme primarily by manipulating pre-defined property values (e.g., `font-size`).
+
+[#css-properties]
+=== CSS Properties
+
+The theme language in Asciidoctor PDF supports a limited subset of the properties from CSS.
+Some of these properties have different names from those found in CSS.
+
+* An underscore (`_`) may be used in place of a hyphen (`-`) in all property names (so you may use `font_family` or `font-family`).
+* An underscore (`_`) may be used in place of a hyphen (`-`) in all variable names (so you may use `$base_font_family` or `$base-font-family`).
+* Instead of separate properties for font weight and font style, the theme language combines these settings in the `font-style` property (allowed values: `normal`, `bold`, `italic`, and `bold_italic`).
+* The `align` property in the theme language is roughly equivalent to the `text-align` property in CSS.
+* The `font-color` property in the theme language is equivalent to the `color` property in CSS.
+
+[#values]
+== Key values
+
+The value of a key may be one of the following types:
+
+* String
+** Font family name (e.g., Roboto)
+** Font style (normal, bold, italic, bold_italic)
+** Alignment (left, center, right, justify)
+** Color as hex string (e.g., 'ff0000', #ff0000, or '#ff0000')
+** Image path
+** Enumerated type (where specified)
+** Text content (where specified)
+* Null (clears any previously assigned value)
+** _empty_ (i.e., no value specified)
+** null
+** ~
+* Number (integer or float) with optional units (default unit is points)
+* Array
+** Color as RGB array (e.g., [51, 51, 51])
+** Color CMYK array (e.g., [50, 100, 0, 0])
+** Margin (e.g., [1in, 1in, 1in, 1in])
+** Padding (e.g., [1in, 1in, 1in, 1in])
+* Variable reference (e.g., $base_font_color or $base-font-color)
+* Math expression
+
+Keys almost always require a value of a specific type.
+The reference page for each xref:keys.adoc[key category] specifies the acceptable values or value types per key.
+
+== Key nesting
+
+Keys may be nested to an arbitrary depth to eliminate redundant prefixes.
+Once the theme is loaded, all keys are flattened into a single map of qualified keys.
+Nesting is simply a shorthand way of organizing the keys.
+In the end, a theme is just a map of key/value pairs.
+
+Nested keys are adjoined to their parent key with an underscore (`_`) or hyphen (`-`).
+This means the selector part (e.g., `link`) is combined with the property name (e.g., `font-color`) into a single, qualified key (e.g., `link_font_color` or `link-font-color`).
+
+For example, let's assume we want to set the base (i.e., global) font size and color.
+These keys may be written longhand:
+
+[source,yaml]
+----
+base-font-color: '#333333'
+base-font-family: Times-Roman
+base-font-size: 12
+----
+
+Or, to avoid having to type the prefix `base-` multiple times, the keys may be written as a hierarchy:
+
+[source,yaml]
+----
+base:
+  font-color: '#333333'
+  font-family: Times-Roman
+  font-size: 12
+----
+
+Or even:
+
+[source,yaml]
+----
+base:
+  font:
+    color: '#333333'
+    family: Times-Roman
+    size: 12
+----
+
+Each level of nesting must be indented by two spaces from the indentation of the parent level.
+Also note the presence of the colon (`:`) after each key name.
+
+== Inheritance
+
+Like CSS, inheritance is a principle feature in the Asciidoctor PDF theme language.
+For many of the properties, if a key is not specified, the key inherits the value applied to the parent content in the content hierarchy.
+This behavior saves you from having to specify properties unless you want to override the inherited value.
+
+The following keys are inherited:
+
+* `font-family`
+* `font-color`
+* `font-size`
+* `font-style`
+* `text-transform`
+* `line-height` (some exceptions)
+* `margin-bottom` (if not specified, defaults to `$vertical-spacing`)
+
+=== Heading inheritance
+
+Headings inherit starting from a specific heading level (e.g., `heading-h2-font-size`), then to the heading category (e.g., `heading-font-size`), then directly to the base value (e.g., `base-font-size`).
+Any setting from an enclosing context, such as a sidebar, is skipped.
+
+
+
+
+
+
+

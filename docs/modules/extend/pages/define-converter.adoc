@@ -1,0 +1,91 @@
+= Create an Extended Converter
+:url-infoq-template: https://github.com/mraible/infoq-mini-book/blob/main/src/main/ruby/asciidoctor-pdf-extensions.rb
+
+== Define an extended converter
+
+Starting with Asciidoctor 2, defining an extending converter and registering it in place of the original is straightforward.
+
+.custom-pdf-converter.rb
+[source,ruby]
+----
+class CustomPDFConverter < (Asciidoctor::Converter.for 'pdf')
+  register_for 'pdf'
+
+  # overrides go here
+end
+----
+
+As it stands, the converter doesn't do anything differently than the primary converter because we haven't yet overridden any of its methods.
+
+== Override a method
+
+Let's start by overriding the thematic break--the horizontal rule--to make it render like a ribbon.
+
+[source,ruby]
+----
+  def convert_thematic_break node
+    theme_margin :thematic_break, :top
+    stroke_horizontal_rule 'FF0000', line_width: 0.5, line_style: :solid
+    move_down 1
+    stroke_horizontal_rule 'FF0000', line_width: 1, line_style: :solid
+    move_down 1
+    stroke_horizontal_rule 'FF0000', line_width: 0.5, line_style: :solid
+    theme_margin :thematic_break, :bottom
+  end
+----
+
+This converter will replace the thematic break with a red ribbon.
+
+Another way to override the converter is to modify the node, then delegate back to the primary converter.
+
+== Modify a node
+
+Let's put a page break before all paragraphs unless the cursor is at the top of the page.
+We'll call `super` to let the primary converter handle the work of rendering the paragraph.
+
+[source,ruby]
+----
+  def convert_paragraph node
+    bounds.move_past_bottom unless at_page_top?
+    super
+  end
+----
+
+Now let's look at how to modify an inline element.
+Let's say we want to override the kbd element.
+
+[source,ruby]
+----
+  def convert_inline_kbd node
+    %(<strong><color rgb="AA0000">#{(node.attr 'keys').join ' + '}</color></strong>)
+  end
+----
+
+Refer to the primary converter to discover the pseudo-HTML you can use for inline elements.
+
+== Customize a page using an extended converter
+
+So far we've just been biting around the edges.
+A more realistic use case is to customize the part title page in a multi-part book.
+Since this is a specialized section element, there's a dedicated method named `layout_part_title` that you'll need to override.
+
+Let's customize the part title page by making the background orange, making the font white, centering the title on the page, and disabling the running content.
+(You don't need to start a new page before and after the part title since that's already done for you).
+
+[source,ruby]
+----
+  def layout_part_title node, title, opts = {}
+    fill_absolute_bounds 'E64C3D'
+    move_down 20
+    typeset_text title, (calc_line_metrics 1.5), color: 'FFFFFF', inline_format: true, align: :center, size: 42
+    page.instance_variable_set :@imported_page, true
+  end
+----
+
+The method `typeset_text` and `calc_line_metrics` are provided by Asciidoctor PDF to make writing text easier.
+If you wanted, you could just use the low-level `text` method provided by Prawn.
+
+To find all the available methods to override, consult the {url-api-docs}[API docs^].
+For deeper examples of how to override the behavior of the converter, refer to the extended converter in the {url-infoq-template}[InfoQ Mini-Book template^].
+
+Now that you've seen some examples of how to extend the converter, let's look at how to use it.

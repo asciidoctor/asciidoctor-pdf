@@ -1,0 +1,10 @@
+= Use an Extended Converter
+
+== Require the extended converter
+
+To use this converter, require it by passing the path to the `-r` flag when calling the `asciidoctor-pdf` command:
+
+ $ asciidoctor-pdf -r ./custom-pdf-converter.rb document.adoc
+
+That's all there is too it.
+Now you're hacking the typesetting!

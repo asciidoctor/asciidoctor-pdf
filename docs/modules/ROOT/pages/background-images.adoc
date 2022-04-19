@@ -1,0 +1,75 @@
+= Background Images
+
+[#fit]
+== fit attribute
+
+Cover and background images can be sized relative to the page using the `fit` attribute on the image macro.
+The `fit` attribute works similarly to the `object-fit` property in CSS.
+Its value must be specified as a single keyword, chosen from the table below.
+The starting size of the image is determined by the explicit width, if specified, or the implicit width.
+The height is always derived from the width while respecting the implicit aspect ratio of the image.
+The available space for a background image (i.e., the canvas) is the page.
+If the `fit` attribute is not specified, it defaults to `contain` (i.e., the image is automatically scaled to fit the bounds of the page).
+
+.Values accepted by the fit attribute
+[cols="1s,3"]
+|===
+| Value | Purpose
+
+| contain
+| The image is scaled up or down while retaining its aspect ratio to fit within the available space. (default)
+
+| cover
+| The image is scaled up or down while retaining its aspect ratio so the image completely covers the available space, even if it means the image must be clipped in one direction.
+
+| scale-down
+| The image is scaled down while retaining its aspect ratio to fit within the available space.
+If the image already fits, it is not scaled.
+
+| fill
+| The image is scaled to fit the available space even if it means modifying the aspect ratio of the image.
+Does not apply to SVG images.
+
+| none
+| The image is not scaled.
+|===
+
+The `fit` attribute is often combined with the `position` attribute, covered next, to control the placement of the image on the canvas.
+
+[#position]
+== position attribute
+
+In addition to scaling, background images for cover pages, content pages, and the title page support positioning using the `position` attribute.
+The `position` attribute accepts a syntax similar to the `background-position` property in CSS, except only the keyword positions are supported.
+The position consists of two values, the vertical position and the horizontal position (e.g., `top center`).
+If only one value is specified (e.g., `top`), the other value is assumed to be `center`.
+If the `position` attribute is not specified, the value is assumed to be `center center` (i.e., the image is centered on the page).
+
+The following table provides a list of the vertical and horizontal positioning keywords that are supported.
+You can use any combination of these keywords to position the image.
+
+|===
+| Vertical Positions | Horizontal Positions
+
+| top +
+center +
+bottom
+
+| left +
+center +
+right
+|===
+
+Here's an example of how to place a background image at the top center of every page:
+
+----
+:page-background-image: image:bg.png[fit=none,pdfwidth=50%,position=top]
+----
+
+Here's how to move it to the bottom right:
+
+----
+:page-background-image: image:bg.png[fit=none,pdfwidth=50%,position=bottom right]
+----
+
+If an image dimension matches the height or width of the page, the positioning keyword for that axis has no effect.

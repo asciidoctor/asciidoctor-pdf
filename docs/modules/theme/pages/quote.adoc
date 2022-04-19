@@ -1,0 +1,150 @@
+= Quote Category Keys
+:navtitle: Quote
+:source-language: yaml
+
+== quote
+
+The keys in the `quote` category control the arrangement and style of quote blocks.
+
+If `border-left-width` is non-zero, the border is only applied to the left side.
+Otherwise, if `border-width` is non-zero, the border is drawn around the whole block.
+
+[#key-prefix-quote,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`background-color`
+|xref:color.adoc[Color] +
+(default: _not set_)
+|[source]
+quote:
+  background-color: '#dddddd'
+
+|`border-color`
+|xref:color.adoc[Color] +
+(default: `'#eeeeee'`)
+|[source]
+quote:
+  border-color: '#dddddd'
+
+|`border-left-width`
+|xref:language.adoc#values[Number] +
+(default: `4`)
+|[source]
+quote:
+  border-left-width: 5
+
+|`border-width`
+|xref:language.adoc#values[Number] +
+(default: `0`)
+|[source]
+quote:
+  border-width: 0.5
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+quote:
+  font-color: '#333333'
+
+|`font-family`
+|xref:font-support.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+quote:
+  font-family: Noto Serif
+
+|`font-kerning`
+|`normal` {vbar} `none` +
+(default: _inherit_)
+|[source]
+quote:
+  font-kerning: none
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+quote:
+  font-size: 13
+
+|`font-style`
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|[source]
+quote:
+  font-style: bold
+
+|`padding`
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: `[6, 12, -6, 14]`)
+|[source]
+quote:
+  padding: [5, 10, -5, 12]
+
+|`text-transform`
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|[source]
+quote:
+  text-transform: uppercase
+|===
+
+== quote-cite
+
+The keys in the `quote-cite` category control the arrangement and style of the citation in quote blocks.
+
+[#key-prefix-quote-cite,cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|`font-size`
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+quote:
+  cite:
+    font-size: 9
+
+|`font-color`
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+quote:
+  cite:
+    font-color: '#999999'
+
+|`font-family`
+|xref:font-support.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+quote:
+  cite:
+    font-family: Noto Serif
+
+|`font-kerning`
+|`normal` {vbar} `none` +
+(default: _inherit_)
+|[source]
+quote:
+  cite:
+    font-kerning: none
+
+|`font-style`
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|[source]
+quote:
+  cite:
+    font-style: bold
+
+|`text-transform`
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|[source]
+quote:
+  cite:
+    text-transform: uppercase
+|===
+

@@ -1,0 +1,67 @@
+= Index Catalog
+
+Asciidoctor PDF supports generating an index catalog that itemizes all index terms defined in the document, allowing the reader to navigate the document by keyword.
+
+== Add index section
+
+To generate an index, add a level-1 section annotated with the `index` style near the end of your document.
+The converter will automatically populate the catalog with the list of index terms in the document, organized by first letter.
+
+[source,asciidoc]
+----
+[index]
+= Index
+----
+
+You can use any text you want for the title of this section.
+The only restriction is that no index terms may be defined below this section.
+
+NOTE: Although the catalog is generated automatically, you have to mark the index terms manually.
+However, you could use an extension, such as a TreeProcessor, to automatically mark index terms.
+
+== How index terms are grouped and sorted
+
+By default, the converter groups index terms by the first letter of the primary term (e.g., A), which we call the category.
+These categories are displayed in alphabetically order in the index.
+Within the category, the converter sorts the terms alphabetically.
+
+The exception to this rule is if the primary term does not start with a letter.
+In this case, the converter group the term (along with its secondary and tertiary terms) in a special category named @.
+The @ category is displayed before all other categories in the index.
+
+== Customize the grouping and sorting rules
+
+If you want to modify the default index grouping and sorting behavior, you must extend the index catalog and apply your own rules.
+
+For example, let's say that all your functions begin with the prefix `fn`, but you want to group and sort them by the function name that follows.
+Here's rudimentary code you can use to do that:
+
+.index-customizer.rb
+[source,ruby]
+----
+require 'asciidoctor-pdf'
+
+module Asciidoctor::PDF
+  IndexCatalog.prepend (::Module.new do
+    def store_primary_term name, dest = nil
+      store_dest dest if dest
+      category = (name.delete_prefix 'fn').upcase.chr
+      (init_category category).store_term name, dest
+    end
+  end)
+
+  IndexTermGroup.prepend (::Module.new do
+    def <=> other
+      this = @name.delete_prefix 'fn'
+      that = other.name.delete_prefix 'fn'
+      (val = this.casecmp that) == 0 ? this <=> that : val
+    end
+  end)
+end
+----
+
+You load this code when calling Asciidoctor PDF as follows:
+
+ $ asciidoctor-pdf -r ./index-customizer.rb doc.adoc
+
+Now the index terms will be grouped and sorted according to your custom rules.

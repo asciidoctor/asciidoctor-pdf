@@ -1,0 +1,251 @@
+= Admonition Category Keys
+:navtitle: Admonition
+
+== admonition
+
+The keys in the `admonition` category control the arrangement and style of admonition blocks and the icon used for each admonition type.
+
+[#key-prefix-admonition,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|column-rule-color
+|xref:color.adoc[Color] +
+(default: #eeeeee)
+|admonition:
+column-rule-color: #aa0000
+
+|column-rule-style
+|solid {vbar} double {vbar} dashed {vbar} dotted +
+(default: solid)
+|admonition:
+column-rule-style: double
+
+|column-rule-width
+|xref:language.adoc#values[Number] +
+(default: 0.5)
+|admonition:
+column-rule-width: 0.5
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|admonition:
+font-color: #999999
+
+|font-family
+|xref:font-support.adoc[Font family name] +
+(default: _inherit_)
+|admonition:
+font-family: Noto Sans
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|admonition:
+font-kerning: none
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|admonition:
+font-size: $base-font-size-large
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|admonition:
+font-style: italic
+
+|text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|admonition:
+text-transform: none
+
+|padding
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: [0, 12, 0, 12])
+|admonition:
+padding: [0, 12, 0, 12]
+|===
+
+== admonition-label
+
+The keys in the `admonition-label` category control the arrangement and style of the text-based labels on admonition blocks.
+Top and bottom padding values are ignored on the `admonition-label-padding` key.
+
+[#key-prefix-admonition-label,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|align
+|xref:text.adoc#align[Text alignment] +
+(default: center)
+|admonition:
+label:
+align: center
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|admonition:
+label:
+font-color: #262626
+
+|font-family
+|xref:font-support.adoc[Font family name] +
+(default: _inherit_)
+|admonition:
+label:
+font-family: M+ 1p
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|admonition:
+label:
+font-kerning: none
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|admonition:
+label:
+font-size: 12
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: bold)
+|admonition:
+label:
+font-style: bold_italic
+
+|min-width
+|xref:measurement-units.adoc[Measurement] +
+(default: _not set_)
+|admonition:
+label:
+min-width: 48
+
+|padding
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: $admonition-padding)
+|admonition:
+label:
+padding: [0, 12, 0, 12]
+
+|text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: uppercase)
+|admonition:
+label:
+text-transform: lowercase
+
+|vertical-align
+|top {vbar} middle {vbar} bottom +
+(default: middle)
+|admonition:
+label:
+vertical-align: top
+|===
+
+=== admonition-label-<name>
+
+The keys in the `admonition-label-<name>` category control the arrangement and style of the text-based label that matches a built-in admonition name.
+`<name>` can be `note`, `tip`, `warning`, `important`, or `caution`.
+
+[#key-prefix-admonition-label-name,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|admonition:
+label:
+caution:
+font-color: #262626
+
+|font-family
+|xref:font-support.adoc[Font family name] +
+(default: _inherit_)
+|admonition:
+label:
+important:
+font-family: M+ 1p
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|admonition:
+label:
+warning:
+font-kerning: none
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|admonition:
+label:
+tip:
+font-size: 12
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: bold)
+|admonition:
+label:
+tip:
+font-style: bold_italic
+
+|text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: uppercase)
+|admonition:
+label:
+note:
+text-transform: lowercase
+|===
+
+== admonition-icon-<name>
+
+The keys in the `admonition-icon-<name>` category control the arrangement and style of the specified icon associated with a built-in admonition name.
+`<name>` can be `note`, `tip`, `warning`, `important`, or `caution`.
+All icon types must be grouped under a single `icons` category.
+In other words, _do not_ declare the `icons` category multiple times.
+The keys in the `admonition-icon` category can't be flattened (e.g., `tip-name: far-lightbulb` is not valid syntax).
+
+The `<icon set>-<icon name>` value is required when assigning an icon to a built-in admonition.
+See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository^] for a list of valid icon names.
+The prefix (e.g., `fas-`) of the value determines which font set to use.
+If the prefix is not specified, `fa-` is assumed.
+
+[#key-prefix-admonition-icon,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|name
+|<icon set>-<icon name> +
+(default: _not set_)
+|admonition:
+icon:
+tip:
+name: fas-fire
+
+|stroke-color
+|xref:color.adoc[Color] +
+(default: caution=#bf3400; important=#bf0000; note=#19407c; tip=#111111; warning=#bf6900)
+|admonition:
+icon:
+important:
+stroke-color: ff0000
+
+|size
+|xref:language.adoc#values[Number] +
+(default: 24)
+|admonition:
+icon:
+note:
+size: 24
+|===

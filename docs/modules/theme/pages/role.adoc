@@ -1,0 +1,145 @@
+= Role Category Keys
+:navtitle: Role
+
+== role
+
+The keys in the `role` category define custom roles for formatting.
+The name of the role is the first subkey level.
+The role name may contain a hyphen, but *a role name cannot contain an underscore*.
+The keys under the role are the theming properties.
+
+IMPORTANT: Custom roles only apply to inline phrases and paragraphs.
+
+The converter provides several predefined roles, which can all be redefined.
+
+* The `lead` defines the font properties for a lead paragraph, whether the role is assign implicitly or explicitly.
+* The `big` and `small` roles map the font size to the `$base-font-size-large` and `$base-font-size-small` values, respectively.
+* The `underline` and `line-through` roles add the underline and strikethrough decorations, respectively.
+* The `subtitle` role is used to configure the font properties of the subtitle of a section title.
+* The `unresolved` role is applied to the text of an unresolved reference (currently footnotes only).
+* The color roles (e.g., `blue`), which you may be familiar with from the HTML converter, are not mapped by default.
+You'll need to define these color roles in your theme if you'd like to make use of them when converting to PDF.
+
+.role-<name> keys
+[#key-prefix-role,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|background-color
+|xref:color.adoc[Color] +
+(default: _not set_)
+|role:
+highlight:
+background-color: #ffff00
+
+|border-color
+|xref:color.adoc[Color] +
+(default: _not set_)
+|role:
+found:
+border-color: #cccccc
+
+|border-offset
+|xref:language.adoc#values[Number] +
+(default: 0)
+|role:
+found:
+border-offset: 2
+
+|border-radius
+|xref:language.adoc#values[Number] +
+(default: _not set_)
+|role:
+found:
+border-radius: 3
+
+|border-width
+|xref:language.adoc#values[Number] +
+(default: _not set_)
+|role:
+found:
+border-width: 0.5
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|role:
+red:
+font-color: #ff0000
+
+|font-family
+|xref:font-support.adoc[Font family name] +
+(default: Courier)
+|role:
+label:
+font-family: M+ 1mn
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|role:
+large:
+font-size: 12
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|role:
+heavy:
+font-style: bold
+
+|text-decoration
+|xref:text.adoc#decoration[Text decoration] +
+(default: none)
+|role:
+deleted:
+text-decoration: line-through
+
+|text-decoration-color
+|xref:color.adoc[Color] +
+(default: $role-<name>-font-color)
+|role:
+deleted:
+text-decoration-color: #ff0000
+
+|text-decoration-width
+|xref:language.adoc#values[Number] +
+(default: $base-text-decoration-width)
+|role:
+underline:
+text-decoration-width: 0.5
+|===
+
+== Define and use a role
+
+Here's an example of a role for making text red:
+
+[source,yaml]
+----
+role:
+  red:
+    font-color: '#ff0000'
+----
+
+This role can be used as follows:
+
+[source,asciidoc]
+----
+Error text is shown in [.red]#red#.
+----
+
+You can also use a role to unset a font color (to make it inherit):
+
+[source,yaml]
+----
+role:
+  heading-code:
+    font-color: ~
+----
+
+This role can be used as follows:
+
+[source,asciidoc]
+----
+== [.heading-code]`SELECT` clause
+----

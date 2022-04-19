@@ -1,0 +1,15 @@
+= Title Page
+
+The Asciidoctor PDF converter introduces a dedicated title page at the start of the document.
+The title page contains the doctitle, author, date, and revision info.
+If a front cover image is specified, the title page comes after the front cover.
+The title page can be styled using the theme and reserved page attributes.
+
+== Enable the title page
+
+The title page is enabled if one of these conditions is met:
+
+* The document has the `book` doctype.
+* The `title-page` attribute is set (with an empty value) in the document header.
+
+When the title page is enabled, the table of contents also gets its own page (or pages, if necessary).

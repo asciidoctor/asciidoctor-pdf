@@ -1,0 +1,50 @@
+= Create a CJK Theme
+
+You also have to option of creating your own theme gem that uses fonts of your choice.
+For example, if you want to use the `asciidoctor-pdf-cjk-kai_gen_gothic` gem to fetch fonts, but then use them in your own theme, here's how you'd do it.
+
+. Install the `asciidoctor-pdf-cjk-kai_gen_gothic` gem:
+
+ $ gem install asciidoctor-pdf-cjk-kai_gen_gothic
+
+. Download / install the fonts:
+
+ $ asciidoctor-pdf-cjk-kai_gen_gothic-install
+
+. Create a theme file named [.path]_cjk-theme.yml_ that extends the default theme to override the fonts:
++
+[source,yml]
+----
+extends: default
+font:
+  catalog:
+    merge: true
+    KaiGen Gothic CN:
+      normal: KaiGenGothicCN-Regular.ttf
+      bold: KaiGenGothicCN-Bold.ttf
+      italic: KaiGenGothicCN-Regular-Italic.ttf
+      bold_italic: KaiGenGothicCN-Bold-Italic.ttf
+  fallbacks:
+  - KaiGen Gothic CN
+base:
+  font-family: KaiGen Gothic CN
+heading:
+  font-family: $base-font-family
+abstract:
+  title:
+    font-family: $heading-font-family
+sidebar:
+  title:
+    font-family: $heading-font-family
+----
+
+. Load your theme when running Asciidoctor PDF:
+
+ $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=./cjk-theme.yml -a pdf-fontsdir=GEM_FONTS_DIR,`ruby -r asciidoctor-pdf-cjk-kai_gen_gothic -e "print File.expand_path '../fonts', (Gem.datadir 'asciidoctor-pdf-cjk-kai_gen_gothic')"` document.adoc
+
+The `-a pdf-fontsdir` option is important to tell Asciidoctor PDF where to find your custom fonts.
+//TODO This sentence and related example above need to be evaluated to remove PDF 1.5 references.
+(Note that the inclusion of GEM_FONTS_DIR in the value is only required when using Asciidoctor PDF 1.5).
+
+Rather than using the installer from the `asciidoctor-pdf-cjk-kai_gen_gothic` gem, you can download fonts whatever way you choose.
+When using your own fonts, be sure to consult the xref:prepare-custom-font.adoc[] to find recommended modifications.

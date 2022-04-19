@@ -1,0 +1,41 @@
+= Menu Macro Category Keys
+:navtitle: Menu
+
+The keys in this category apply to the menu label (generated from the inline menu macro).
+Keep in mind that the styles for the caret can be controlled independently using the `<font>` tag.
+
+.menu keys
+[#key-prefix-menu,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|caret-content
+|xref:quoted-string.adoc[Quoted string] +
+(default: " \u203a ")
+|menu:
+caret-content: ' > '
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|menu:
+font-color: #AA0000
+
+|font-family
+|xref:font-support.adoc[Font family name] +
+(default: _inherit_)
+|menu:
+font-family: M+ 1mn
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|menu:
+font-size: 8
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: bold)
+|menu:
+font-style: bold_italic
+|===

@@ -1,0 +1,31 @@
+= Asciidoctor PDF Theming
+:navtitle: Theming
+
+Asciidoctor PDF comes with a built-in theming system and a default theme.
+The theming system is used to control the layout and styling of a PDF file generated from AsciiDoc by Asciidoctor PDF.
+You can use the default theme for your PDFs as it is, extend the default theme to change or add styles, or create and apply a custom theme.
+
+== Theme configuration and language
+
+The Asciidoctor PDF theming system is driven by a YAML configuration file.
+The Asciidoctor PDF theme language is described using https://en.wikipedia.org/wiki/YAML[YAML] and incorporates many _concepts_ from CSS and SASS, such as selectors, properties, and inheritance.
+Therefore, if you have a background in web design, the terminology should be immediately familiar to you.
+*Note, however, that the theming system isn't actually CSS.*
+
+== Theme capabilities
+
+The theme can generally influence PDF settings, page numbering, font properties, background and borders, character selections, spacings, and running content.
+It has limited influence over the layout of elements on the page.
+If your theming requirements demand more than what this theming system can accommodate, you can xref:extend:index.adoc[extend the converter] to gain more control over the layout and style.
+
+//This document describes how the theming system works, how to define a custom theme in YAML, and how to activate the theme when running Asciidoctor PDF.
+//To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theming Guide>>.
+You can use the built-in theme files, which you can find in the [.path]_data/themes_ directory, as examples.
+
+If you've enabled a source highlighter, you can control the style (aka theme) it applies to source blocks using the `coderay-style`, `pygments-style`, and `rouge-style` attributes, respectively.
+For example, to configure Rouge to use the built-in monokai theme, run Asciidoctor PDF as follows:
+
+ $ asciidoctor-pdf -a rouge-style=monokai basic-example.adoc
+
+It's possible to develop your own theme for Rouge.
+Refer to xref:source-highlighting-theme.adoc[] for details.

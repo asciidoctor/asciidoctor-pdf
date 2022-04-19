@@ -1,0 +1,70 @@
+= Math Operations
+
+The theme language supports basic math operations to support calculated values.
+
+== Operators
+
+The following table lists the supported operations and the corresponding operator for each.
+
+[width=25%]
+|===
+|Operation |Operator
+
+|multiply
+|*
+
+|divide
+|/
+
+|add
+|+
+
+|subtract
+|-
+|===
+
+Like programming languages, the multiply and divide operators take precedence over the add and subtract operators.
+
+== Expressions
+
+Here's an example of a math expression with fixed values.
+
+[source,yaml]
+----
+conum:
+  line-height: 4 / 3
+----
+
+IMPORTANT: Operators must always be surrounded by a space on either side (e.g., 2 + 2, not 2+2).
+
+Variables may be used in place of numbers anywhere in the expression:
+
+[source,yaml]
+----
+base:
+  font-size: 12
+  font-size-large: $base-font-size * 1.25
+----
+
+Values used in a math expression are automatically coerced to a float value before the operation.
+If the result of the expression is an integer, the value is coerced to an integer afterwards.
+
+IMPORTANT: Numeric values less than 1 must have a 0 before the decimal point (e.g., 0.85).
+
+== Functions
+
+The theme language also supports several functions for rounding the result of a math expression.
+The following functions may be used if they surround the whole value or expression for a key.
+
+round(...):: Rounds the number to the nearest half integer.
+floor(...):: Rounds the number up to the next integer.
+ceil(...):: Rounds the number down the previous integer.
+
+You might use these functions in font size calculations so that you get more exact values.
+
+[source,yaml]
+----
+base:
+  font-size: 12.5
+  font-size-large: ceil($base-font-size * 1.25)
+----

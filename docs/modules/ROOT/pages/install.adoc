@@ -1,0 +1,93 @@
+= Install Asciidoctor PDF
+//:navtitle: Get Started
+:url-rvm: https://rvm.io
+
+[#prerequisites]
+== Required prerequisites
+
+=== Ruby
+
+All that's needed is Ruby 2.5 or greater (or JRuby 9.2 or greater) and a few Ruby gems (including at least Asciidoctor 2.0.0), which we explain how to install in the next section.
+
+To check if you have Ruby available, use the `ruby` command to query the version installed:
+
+ $ ruby -e 'puts RUBY_VERSION'
+
+//TODO This Ruby version command (line above) is different than the Ruby version command in Core. Which one do we prefer?
+Make sure this command reports a Ruby version that's at least 2.5.
+If so, you may proceed.
+
+//TODO What about installing Asciidoctor Core? What about the Prawn extensions (table? svg? etc.)?
+
+=== Windows system encoding
+
+Asciidoctor assumes you're using UTF-8 encoding.
+To minimize encoding problems, make sure the default encoding of your system is set to UTF-8.
+
+If you're using a non-English Windows environment, the default encoding of your system may not be UTF-8.
+As a result, you may get an `Encoding::UndefinedConversionError` or other encoding issues when invoking Asciidoctor.
+To solve these problems, we recommend at least changing the active code page in your console to UTF-8.
+
+ chcp 65001
+
+Once you make this change, all your Unicode headaches will be behind you.
+
+== Optional prerequisites
+
+PDF optimization::
+If you want to optimize your PDF, you'll need rghost or hexapdf.
+See xref:optimize-pdf.adoc[] for installation and usage instructions.
+
+Source highlighting::
+You'll need to xref:syntax-highlighting.adoc[install a syntax highlighter] to use source highlighting.
+
+Similarly, if you want to use the hyphen option you will need to install the `text-hyphen` gem:
+
+ $ gem install text-hyphen
+
+//TODO what is text hyphen and where should its content be located?
+//NOTE I'd prefer not to have the optional prerequisite install instructions here as the install process and possible troubleshooting of the required prereqs and Asciidoctor PDF is already a lot.
+
+== Install Asciidoctor PDF
+
+You can get Asciidoctor PDF by installing the published gem.
+To install Asciidoctor PDF, first make sure you have satisfied the <<prerequisites>>.
+Then, install the gem from RubyGems.org using the following command:
+
+ $ gem install asciidoctor-pdf
+
+=== Install a development version
+
+You can also {url-project-repo}/blob/main/CONTRIBUTING-CODE.adoc[run the code from source^] if you want to use a development version or participate in development.
+
+== Installation troubleshooting
+
+If you get a permission error while installing the gem, such as the one below, it's likely you're attempting to install the gem directly into your system.
+Installing gems for tech writing directly into your system is not recommended.
+
+.Permission error when attempting to install as a system gem
+....
+ERROR:  While executing gem ... (Gem::FilePermissionError)
+    You don't have write permissions for the /Library/Ruby/Gems/2.x.x directory.
+....
+
+A better practice (and one that will ensure your sanity) is to ignore any version of Ruby installed on your system and use {url-rvm}[RVM^] to manage the Ruby installation instead.
+The benefit of this approach is that a) Ruby is guaranteed to be set up correctly, b) installing gems will in no way interfere with the operation of your system, and c) any bin scripts provided by the installed gems will be available on your PATH.
+All files are managed in user space (aka your home or user directory).
+If something gets messed up, you can simply remove the [.path]_$HOME/.rvm_ folder and start over.
+
+To learn how to install RVM, follow the https://asciidoctor.org/docs/install-asciidoctor-macos/#rvm-procedure-recommended[RVM installation procedure^] covered in the Asciidoctor documentation.
+//TODO determine best RVM instructions, if we still recommend, and put them in their proper home for xrefing to.
+Once you have installed RVM and used it to install Ruby, make sure to activate the Ruby managed by RVM using `rvm use default` or a specific Ruby version like `rvm use 2.7`.
+(You'll need to do this each time you open a new terminal).
+
+After installing the gem, you can see where it was installed using the following command:
+
+ $ gem which asciidoctor-pdf
+
+To see where the bin script is located, use this command:
+
+ $ command -v asciidoctor-pdf
+
+Both paths should be underneath the [.path]_$HOME/.rvm_ directory.
+If not, check your RVM setup.

@@ -1,0 +1,65 @@
+= Images
+
+[#formats]
+== Supported image formats
+
+The following image types (and corresponding file extensions) are supported:
+
+* PNG (.png)
+* JPEG (.jpg)
+* SVG (.svg)
+
+CAUTION: CAUTION: The GIF (.gif), TIFF (.tiff), BMP (.bmp), and interlaced PNG formats are not supported unless you install prawn-gmagick.
+See xref:ROOT:image-paths-and-formats.adoc#other-image-formats[Supporting additional image file formats] for details.
+
+[#specify]
+== Specify an image in a theme
+
+An image is specified either as a bare image path or as an inline image macro as found in the AsciiDoc syntax.
+Images in the theme file are currently resolved relative to the value of the `pdf-themesdir` attribute.
+(If `pdf-theme` is a path that ends in `.yml`, and `pdf-themesdir` is not set, then the images are resolved relative to the directory of the path specified by `pdf-theme`).
+If you want to use an image in your theme that's relative to the document you're converting, you can prefix the target with the `\{docdir}` attribute reference.
+
+Here's how an image is specified in the theme file as a bare image path:
+
+[source,yaml]
+----
+title-page:
+  background-image: title-cover.png
+----
+
+Here's how the image is specified using the inline image macro:
+
+[source,yaml]
+----
+title-page:
+  background-image: image:title-cover.png[]
+----
+
+In either case, the image is resolved relative to the value of the `pdf-themesdir` attribute.
+If you want to reference an image relative to the document you're converting, then prefix the target with the `\{docdir}` attribute reference.
+
+[source,yaml]
+----
+title-page:
+  background-image: image:{docdir}/images/title-cover.png[]
+----
+
+[#align]
+== Width, fit, and alignment
+
+Like in the AsciiDoc syntax, wrapping the value in the image macro allows you to specify other settings, such as `pdfwidth`, `fit`, and `align`.
+For example:
+
+[source,yaml]
+----
+title-page:
+  logo-image: image:logo.png[pdfwidth=2.5in,align=center]
+----
+
+The `align` key is used to align images within the parent container.
+Images can be aligned as follows:
+
+* `left`
+* `center`
+* `right`

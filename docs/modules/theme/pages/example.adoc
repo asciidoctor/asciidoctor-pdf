@@ -1,0 +1,75 @@
+= Example Category Keys
+:navtitle: Example
+
+The keys in the `example` category control the arrangement and style of example blocks.
+
+[#key-prefix-example,cols="3,4,5l"]
+|===
+|Key |Value Type |Example
+
+|background-color
+|xref:color.adoc[Color] +
+(default: #ffffff)
+|example:
+background-color: #fffef7
+
+|border-color
+|xref:color.adoc[Color] +
+(default: #eeeeee)
+|example:
+border-color: #eeeeee
+
+|border-radius
+|xref:language.adoc#values[Number] +
+(default: _not set_)
+|example:
+border-radius: 4
+
+|border-width
+|xref:language.adoc#values[Number] +
+(default: 0.5)
+|example:
+border-width: 0.75
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|example:
+font-color: #262626
+
+|font-family
+|xref:font-support.adoc[Font family name] +
+(default: _inherit_)
+|example:
+font-family: M+ 1p
+
+|font-kerning
+|normal {vbar} none +
+(default: _inherit_)
+|example:
+font-kerning: none
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|example:
+font-size: 13
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|example:
+font-style: italic
+
+|text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|example:
+text-transform: uppercase
+
+|padding
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: [12, 12, 0, 12])
+|example:
+padding: [15, 15, 0, 15]
+|===
