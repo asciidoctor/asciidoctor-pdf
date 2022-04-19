@@ -168,9 +168,27 @@ describe Asciidoctor::PDF::ThemeLoader do
         (expect theme).to be_an OpenStruct
         (expect theme.outline_list_item_spacing).to be_nil
         (expect theme.list_item_spacing).to eql 6
-        (expect theme.footnotes_margin_top).to eql 6
+        (expect theme.footnotes_margin_top).to eql theme.list_item_spacing
         (expect theme.footnotes_item_spacing).to eql 3
       end).to log_message severity: :WARN, message: 'the outline-list theme category is deprecated; use the list category instead'
+    end
+
+    it 'should remap blockquote category to quote category and warn' do
+      (expect do
+        theme_data = YAML.safe_load <<~'EOS'
+        blockquote:
+          font-color: 4A4A4A
+          border-color: $blockquote-font-color
+        verse:
+          font-color: $blockquote-font-color
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme).to be_an OpenStruct
+        (expect theme.blockquote_font_color).to be_nil
+        (expect theme.quote_font_color).to eql '4A4A4A'
+        (expect theme.quote_border_color).to eql theme.quote_font_color
+        (expect theme.verse_font_color).to eql theme.quote_font_color
+      end).to log_message severity: :WARN, message: 'the blockquote theme category is deprecated; use the quote category instead'
     end
 
     it 'should remap key category to kbd category and warn' do
@@ -185,7 +203,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         (expect theme).to be_an OpenStruct
         (expect theme.key_border_color).to be_nil
         (expect theme.kbd_border_color).to eql 'CCCCCC'
-        (expect theme.kbd_font_color).to eql 'CCCCCC'
+        (expect theme.kbd_font_color).to eql theme.kbd_border_color
       end).to log_message severity: :WARN, message: 'the key theme category is deprecated; use the kbd category instead'
     end
 
@@ -1184,16 +1202,16 @@ describe Asciidoctor::PDF::ThemeLoader do
         font_size_large: $base_font_size * 1.25
         font_size_min: $base_font_size * 3 / 4
         border_radius: 3 ^ 2
-      blockquote:
+      quote:
         border_width: 5
-        padding:  [0, $base_line_height_length - 2, $base_line_height_length * -0.75, $base_line_height_length + $blockquote_border_width / 2]
+        padding:  [0, $base_line_height_length - 2, $base_line_height_length * -0.75, $base_line_height_length + $quote_border_width / 2]
       EOS
       theme = subject.new.load theme_data
       (expect theme.base_line_height).to eql 1.2
       (expect theme.base_font_size_large).to eql 12.5
       (expect theme.base_font_size_min).to eql 7.5
       (expect theme.base_border_radius).to eql 9
-      (expect theme.blockquote_padding).to eql [0, 10, -9, 14.5]
+      (expect theme.quote_padding).to eql [0, 10, -9, 14.5]
     end
 
     it 'should coerce value to numeric if negated variable is a number' do

@@ -107,10 +107,10 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       admonition_border_color: 'EEEEEE',
       admonition_border_width: 0.5,
       admonition_padding: 12,
-      blockquote_border_width: 0.5,
-      blockquote_border_left_width: 0,
-      blockquote_font_size: 10.5,
-      blockquote_padding: 12,
+      quote_border_width: 0.5,
+      quote_border_left_width: 0,
+      quote_font_size: 10.5,
+      quote_padding: 12,
       code_padding: 12,
     }
     %w(==== **** ____ ---- .... [NOTE]==== example sidebar quote NOTE).each do |style|

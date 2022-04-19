@@ -92,7 +92,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
 
     #{lorem_ipsum '2-sentences-1-paragraph'}
 
-    > blockquote
+    > quote
 
     #{lorem_ipsum '2-sentences-1-paragraph'}
 

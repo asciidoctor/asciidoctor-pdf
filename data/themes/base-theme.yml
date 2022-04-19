@@ -73,9 +73,9 @@ admonition_column_rule_width: 0.5
 admonition_padding: [4, 12, 4, 12]
 admonition_label_font_style: bold
 admonition_label_text_transform: uppercase
-blockquote_border_color: 'EEEEEE'
-blockquote_border_left_width: 4
-blockquote_padding: [6, 12, 6, 14]
+quote_border_color: 'EEEEEE'
+quote_border_left_width: 4
+quote_padding: [6, 12, 6, 14]
 verse_border_color: 'EEEEEE'
 verse_border_left_width: 4
 verse_padding: [6, 12, 6, 14]

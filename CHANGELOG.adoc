@@ -82,6 +82,7 @@ Enhancements::
 * extract `arrange_section` method to compute whether section title should be advanced to next page (#2023)
 * introduce `callout-list` category in theme to control font properties and item spacing of callout lists (#1722)
 * only indent inner paragraphs (paragraphs that follow an adjacent paragraph) if `prose-inner-text-indent` key is set in theme (#2034)
+* rename `blockquote` category key in theme to `quote` and map old `blockquote-` prefix to `quote-` with warning for backwards compatibility (#2054)
 * rename `key` category key in theme to `kbd` and map old `key-` prefix to `kbd-` with warning for backwards compatibility (#2052)
 
 Bug Fixes::

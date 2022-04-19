@@ -102,7 +102,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
   end
 
   it 'should not draw left border if border_left_width is 0' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { blockquote_border_left_width: 0 }, analyze: :line
+    pdf = to_pdf <<~'EOS', pdf_theme: { quote_border_left_width: 0 }, analyze: :line
     ____
     Let it be.
     ____
@@ -112,7 +112,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
   end
 
   it 'should not draw left border if border_left_width is nil' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { blockquote_border_left_width: nil, blockquote_border_width: nil }, analyze: :line
+    pdf = to_pdf <<~'EOS', pdf_theme: { quote_border_left_width: nil, quote_border_width: nil }, analyze: :line
     ____
     Let it be.
     ____
@@ -147,8 +147,8 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
   it 'should apply specified background color', visual: true do
     pdf_theme = {
-      blockquote_background_color: 'dddddd',
-      blockquote_border_color: 'aa0000',
+      quote_background_color: 'dddddd',
+      quote_border_color: 'aa0000',
     }
     to_file = to_pdf_file <<~'EOS', 'quote-background-color.pdf', pdf_theme: pdf_theme
     ____
@@ -162,11 +162,11 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
   it 'should apply specified border and background color', visual: true do
     pdf_theme = build_pdf_theme \
-      blockquote_border_left_width: 0,
-      blockquote_border_width: 0.5,
-      blockquote_border_color: 'aa0000',
-      blockquote_background_color: 'dddddd'
-    pdf_theme.blockquote_padding = pdf_theme.sidebar_padding
+      quote_border_left_width: 0,
+      quote_border_width: 0.5,
+      quote_border_color: 'aa0000',
+      quote_background_color: 'dddddd'
+    pdf_theme.quote_padding = pdf_theme.sidebar_padding
     to_file = to_pdf_file <<~'EOS', 'quote-border-and-background-color.pdf', pdf_theme: pdf_theme
     [,Paul McCartney]
     ____
@@ -226,11 +226,11 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
   it 'should split border when block is split across pages', visual: true do
     pdf_theme = {
-      blockquote_border_left_width: 0,
-      blockquote_border_width: 0.5,
-      blockquote_border_color: 'CCCCCC',
-      blockquote_background_color: 'EEEEEE',
-      blockquote_padding: [6, 10, 12, 10],
+      quote_border_left_width: 0,
+      quote_border_width: 0.5,
+      quote_border_color: 'CCCCCC',
+      quote_background_color: 'EEEEEE',
+      quote_padding: [6, 10, 12, 10],
     }
     to_file = to_pdf_file <<~EOS, 'quote-page-split.pdf', pdf_theme: pdf_theme
     ____
@@ -264,7 +264,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
   it 'should keep caption with block and draw border across extent if only caption fits on current page' do
     block_content = ['text of quote'] * 15 * %(\n\n)
-    pdf_theme = { prose_margin_bottom: 12, blockquote_padding: [0, 0, 0, 15] }
+    pdf_theme = { prose_margin_bottom: 12, quote_padding: [0, 0, 0, 15] }
     with_content_spacer 10, 690 do |spacer_path|
       input = <<~EOS
       before
