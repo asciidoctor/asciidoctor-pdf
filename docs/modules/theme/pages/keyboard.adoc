@@ -1,75 +1,100 @@
 = Keyboard Macro Category Keys
 :navtitle: Keyboard
+:source-language: yaml
 
-The keys in the `kbd` category apply to a kbd reference generated from the inline kbd macro.
+[#kbd]
+== kbd
+
+The keys in the `kbd` category apply to a kbd reference generated from the inline keyboard macro.
 The kbd reference is a span of text denoting textual user input from a keyboard, voice input, or other text entry device.
 
-[#key-prefix-kbd,cols="3,4,5l"]
+[cols="3,4,5a"]
 |===
 |Key |Value Type |Example
 
 |background-color
 |xref:color.adoc[Color] +
 (default: _not set_)
-|kbd:
-background-color: #fafafa
+|[source]
+kbd:
+  background-color: '#fafafa'
 
-|border-color^[1]^
+|<<border-color,border-color>>
 |xref:color.adoc[Color] +
 (default: _not set_)
-|kbd:
-border-color: #cccccc
+|[source]
+kbd:
+  border-color: '#cccccc'
 
-|border-offset^[2]^
+|<<offset,border-offset>>
 |xref:language.adoc#values[Number] +
-(default: 0)
-|kbd:
-border-offset: 1.5
+(default: `0`)
+|[source]
+kbd:
+  border-offset: 1.5
 
-|border-radius
+|<<border-color,border-radius>>
 |xref:language.adoc#values[Number] +
-(default: 0)
-|kbd:
-border-radius: 2
+(default: `0`)
+|[source]
+kbd:
+  border-radius: 2
 
-|border-width
+|<<border-color,border-width>>
 |xref:language.adoc#values[Number] +
-(default: $base-border-width)
-|kbd:
-border-width: 0.375
-
-|separator^[3]^
-|xref:quoted-string.adoc[Quoted string] +
-(default: "+")
-|kbd:
-separator: "\u2009+\u2009"
+(default: `$base-border-width`)
+|[source]
+kbd:
+  border-width: 0.375
 
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
-|kbd:
-font-color: #000
+|[source]
+kbd:
+  font-color: '#000'
 
 |font-family
 |xref:font-support.adoc[Font family name] +
-(default: Courier)
-|kbd:
-font-family: $base-font-family
+(default: `Courier`)
+|[source]
+kbd:
+  font-family: $base-font-family
 
 |font-size
 |xref:language.adoc#values[Number] +
 (default: _inherit_)
-|kbd:
-font-size: 10.5
+|[source]
+kbd:
+  font-size: 10.5
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
-(default: italic)
-|kbd:
-font-style: normal
+(default: `italic`)
+|[source]
+kbd:
+  font-style: normal
+
+|<<separator,separator>>
+|xref:quoted-string.adoc[Quoted string] +
+(default: `"+"`)
+|[source]
+kbd:
+  separator: "\u2009+\u2009"
 |===
 
-1. The border is only used if a border color is specified and the border width is not explicitly set to 0.
-2. The border offset is the amount that the background and border swells around the text.
-It does not affect the distance between the formatted phrase and the phrases that surround it.
-3. The separator is only used for multi-key input sequences.
+[#border-color]
+== border-color
+
+A border is only applied to a kbd reference if the `border-color` key is specified and the `border-width` key isn't explicitly set to zero.
+
+[#offset]
+== border-offset
+
+The border offset is the amount that the background and border swells around the keyboard sequence text.
+The value assigned to `border-offset` doesn't affect the distance between the formatted keyboard sequence and the phrases that surround it.
+
+[#separator]
+== separator
+
+The value of the `separator` key is only used for multi-key input sequences.

@@ -4,12 +4,11 @@
 
 The key in the `svg` category controls the SVG fallback font.
 
-.svg keys
-[#key-prefix-svg,cols="3,4,6a"]
+[cols="4,4,6a"]
 |===
 |Key |Value Type |Example
 
-|`fallback_font_family`
+|fallback_font_family
 |xref:font-support.adoc[Font family name] +
 (default: `$base-font-family`)
 |[source]

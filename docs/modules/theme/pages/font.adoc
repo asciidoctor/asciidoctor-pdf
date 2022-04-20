@@ -1,5 +1,6 @@
 = Font Category Keys
 :navtitle: Font
+:source-language: yaml
 
 == font
 
@@ -15,26 +16,28 @@ The data format of the `fallbacks` key is an array.
 The values of the array are the font names declared in the `catalog` (or a name inherited from another theme).
 These fallbacks are used, in the order listed, when a glyph cannot be found in the primary font for a given element.
 
-[cols="1,2,5l"]
+[cols="3,3,6a"]
 |===
 |Key |Value Type |Example
 
 |catalog
 |Map
-|font:
-catalog:
-Noto Serif:
-normal: GEM_FONTS_DIR/notoserif-regular-subset.ttf
-bold: GEM_FONTS_DIR/notoserif-bold-subset.ttf
-italic: GEM_FONTS_DIR/notoserif-italic-subset.ttf
-bold_italic: GEM_FONTS_DIR/notoserif-bold_italic-subset.ttf
+|[source]
+font:
+  catalog:
+    Noto Serif:
+      normal: GEM_FONTS_DIR/notoserif-regular-subset.ttf
+      bold: GEM_FONTS_DIR/notoserif-bold-subset.ttf
+      italic: GEM_FONTS_DIR/notoserif-italic-subset.ttf
+      bold_italic: GEM_FONTS_DIR/notoserif-bold_italic-subset.ttf
 
 |fallbacks
 |Array
-|font:
-fallbacks:
-- M+ 1p Fallback
-- Noto Emoji
+|[source]
+font:
+  fallbacks:
+  - M+ 1p Fallback
+  - Noto Emoji
 |===
 
 [#extend-catalog]

@@ -1,47 +1,54 @@
 = Footnotes Category Keys
 :navtitle: Footnotes
+:source-language: yaml
 
-The keys in this category control the style of the footnotes list at the end of the chapter (book) or document (otherwise).
-If the `footnotes-title` attribute is specified, it is styled as a block caption.
-The styling of the links is controlled by the global link styles.
+The keys in the `footnotes` category control the style of the footnotes list at the end of a chapter (book doctype) or document (other doctypes).
+If the `footnotes-title` attribute is specified in a document, it's styled as a xref:caption.adoc[block caption].
+The styling of the links is controlled by the xref:link.adoc[global link styles].
 
-[#key-prefix-footnotes,cols="3,4,5l"]
+[cols="3,4,5a"]
 |===
 |Key |Value Type |Example
 
 |font-color
 |xref:color.adoc[Color] +
-(default: $base-font-color)
-|footnotes:
-font-color: #cccccc
+(default: `$base-font-color`)
+|[source]
+footnotes:
+  font-color: '#cccccc'
 
 |font-size
 |xref:language.adoc#values[Number] +
-(default: 9)
-|footnotes:
-font-size: 8
+(default: `9`)
+|[source]
+footnotes:
+  font-size: 8
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
-(default: $base-font-style)
-|footnotes:
-font-style: italic
+(default: `$base-font-style`)
+|[source]
+footnotes:
+  font-style: italic
 
 |item-spacing
 |xref:measurement-units.adoc[Measurement] +
-(default: 3)
-|footnotes:
-item-spacing: 5
+(default: `3`)
+|[source]
+footnotes:
+  item-spacing: 5
 
 |margin-top
 |xref:measurement-units.adoc[Measurement] +
-(default: 0)
-|footnotes:
-margin-top: 10
+(default: `0`)
+|[source]
+footnotes:
+  margin-top: 10
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
 (default: _inherit_)
-|footnotes:
-text-transform: lowercase
+|[source]
+footnotes:
+  text-transform: lowercase
 |===

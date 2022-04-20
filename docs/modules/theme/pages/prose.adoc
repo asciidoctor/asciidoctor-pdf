@@ -1,39 +1,55 @@
 = Prose Category Keys
 :navtitle: Prose
+:source-language: yaml
+
+[#prose]
+== prose
 
 The keys in the `prose` category control the spacing below paragraphs, lists, and index categories.
 The bottom margin is only added if the block is followed by an adjacent block within the same enclosure (e.g., a sidebar, a table cell, or the area outside a block).
 
-[#key-prefix-prose,cols="3,4,5l"]
+[cols="3,4,5a"]
 |===
 |Key |Value Type |Example
 
 |margin-bottom
 |xref:measurement-units.adoc[Measurement] +
-(default: 12)
-|prose:
-margin-bottom: $vertical-spacing
+(default: `12`)
+|[source]
+prose:
+  margin-bottom: 6
 
-|margin-inner^[1]^
+|<<margin-inner,margin-inner>>
 |xref:measurement-units.adoc[Measurement] +
-(default: $prose-margin-bottom)
-|prose:
-margin-inner: 0
+(default: `$prose-margin-bottom`)
+|[source]
+prose:
+  margin-inner: 0
 
 |text-indent
 |xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
-|prose:
-text-indent: 18
+|[source]
+prose:
+  text-indent: 18
 
-|text-indent-inner^[2]^
+|<<text-indent-inner,text-indent-inner>>
 |xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
-|prose:
-text-indent-inner: 18
+|[source]
+prose:
+  text-indent-inner: 18
 |===
-1. Controls the margin between adjacent paragraphs.
-Useful when using indented paragraphs.
-2. Only applied to inner paragraphs.
+
+[#margin-inner]
+== margin-inner
+
+The `margin-inner` key controls the margin between adjacent paragraphs.
+It's useful when using indented paragraphs.
+
+[#text-indent-inner]
+== text-indent-inner
+
+The `text-indent-inner` key is only applied to inner paragraphs.
 Inner paragraphs are paragraphs that follow an adjacent paragraph.
 

@@ -5,79 +5,79 @@
 [#callout-list]
 == callout-list
 
-The keys in the `callout-list` category control the arrangement and style of callout lists.
+The keys in the `callout-list` category control the arrangement and style of callout lists and callout list item content.
+These keys don't affect the callout list markers.
+The appearance of the markers is controlled independently by the keys in <<conum,conum category>>.
+Also see <<inherit>> for more information.
 
-NOTE: The <<conum,conum category>> controls the appearance of the list markers (i.e., the callout numbers) in a callout list.
-If you change the `font-size` setting on the callout list, then you likely need to change the `font-size` setting on the `conum` category as well.
-
-[#key-prefix-callout-list,cols="3,4,5a"]
+[cols="3,4,5a"]
 |===
 |Key |Value Type |Example
 
-|`font-color`
+|<<inherit,font-color>>
 |xref:color.adoc[Color] +
 (default: _inherit_)
 |[source]
 callout-list:
   font-color: '#555555'
 
-|`font-family`
+|<<inherit,font-family>>
 |xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |[source]
 callout-list:
   font-family: M+ 1p
 
-|`font-kerning`
+|<<inherit,font-kerning>>
 |`normal` {vbar} `none` +
 (default: _inherit_)
 |[source]
 callout-list:
   font-kerning: none
 
-|`font-size`
+|<<inherit,font-size>>
 |xref:language.adoc#values[Number] +
 (default: _inherit_)
 |[source]
 callout-list:
   font-size: 9
 
-|`font-style`
+|<<inherit,font-style>>
 |xref:text.adoc#font-style[Font style] +
 (default: _inherit_)
 |[source]
 callout-list:
   font-style: italic
 
-|`item-spacing`
+|item-spacing
 |xref:measurement-units.adoc[Measurement] +
 (default: `$list-item-spacing`)
 |[source]
 callout-list:
   item-spacing: 3
 
-|`line-height`
+|<<inherit,line-height>>
 |xref:language.adoc#values[Number] +
 (default: _inherit_)
 |[source]
 callout-list:
   line-height: 1
 
-|`margin-top-after-code`
+|margin-top-after-code
 |xref:measurement-units.adoc[Measurement] +
 (default: `-$block-margin-bottom`)
 |[source]
 callout-list:
   margin-top-after-code: 0
 
-|`text-align`
+|text-align
 |xref:text.adoc#align[Text alignment] +
 (default: `$list-text-align`)
 |[source]
 callout-list:
   text-align: left
 
-|`text-transform`
+|text-transform
 |xref:text.adoc#transform[Text transform] +
 (default: _inherit_)
 |[source]
@@ -89,56 +89,77 @@ callout-list:
 == conum
 
 The keys in the `conum` category control the style of callout numbers inside verbatim blocks and in callout lists.
+These keys don't affect the callout list item content.
+The appearance of the callout list and the content of the list items is controlled independently by the keys in <<callout-list,callout-list category>>.
+Also see <<inherit>> for more information.
 
-[#key-prefix-conum,cols="3,4,5l"]
+[cols="2,5,5a"]
 |===
 |Key |Value Type |Example
 
-|font-color
+|<<inherit,font-color>>
 |xref:color.adoc[Color] +
 (default: _inherit_)
-|conum:
-font-color: #b12146
+|[source]
+conum:
+  font-color: #b12146
 
-|font-family^[1,2]^
+|<<glyphs,font-family>>
 |xref:font-support.adoc[Font family name] +
 (default: _inherit_)
-|conum:
-font-family: M+ 1mn
+|[source]
+conum:
+  font-family: M+ 1mn
 
-|font-kerning^[2]^
-|normal {vbar} none +
+|<<inherit,font-kerning>>
+|`normal` {vbar} `none` +
 (default: _inherit_)
-|conum:
-font-kerning: none
+|[source]
+conum:
+  font-kerning: none
 
-|font-size^[2]^
+|<<inherit,font-size>>
 |xref:language.adoc#values[Number] +
 (default: _inherit_)
-|conum:
-font-size: $base-font-size
+|[source]
+conum:
+  font-size: $base-font-size
 
-|font-style^[2]^
+|<<inherit,font-style>>
 |xref:text.adoc#font-style[Font style] +
 (default: _inherit_)
-|conum:
-font-style: normal
+|[source]
+conum:
+  font-style: normal
 
-|line-height^[2]^
+|<<glyphs,glyphs>>
+|`circled` {vbar} `filled` {vbar} Unicode String ranges +
+(default: `circled`)
+|[source]
+conum:
+  glyphs: \u0031-\u0039
+
+|<<inherit,line-height>>
 |xref:language.adoc#values[Number] +
-(default: 1.15)
-|conum:
-line-height: 4 / 3
-
-|glyphs^[3]^
-|circled {vbar} filled {vbar} Unicode String ranges +
-(default: circled)
-|conum:
-glyphs: \u0031-\u0039
+(default: `1.15`)
+|[source]
+conum:
+  line-height: 4 / 3
 |===
-1. Currently, the font must contain the circle numbers starting at glyph U+2460.
-2. font-family, font-kerning, font-size, font-style, and line-height are only used for markers in a colist.
-These properties are inherited for conums inside a verbatim block.
-3. The font must provide the required glyphs.
+
+[#glyphs]
+=== font-family and glyphs
+
+When a font is assigned to the `conum-font-family` key, it must contain the circle numbers starting at glyph U+2460, otherwise you must also assign a range of Unicode numbers to the `conum-glyphs` key.
 The glyphs can be specified as a comma-separated list of ranges, where the range values are Unicode numbers (e.g., \u2460).
 Unicode escape sequences are recognized even if the value is not enclosed in double quotes.
+
+[#inherit]
+== font-* and line-height inheritance
+
+When the `font-color`, `font-family`, `font-kerning`, `font-size`, `font-style`, and `line-height` keys are set on the `callout-list` category they apply solely to the callout list item content, not the callout list markers.
+The inverse is also true.
+When these properties are set under the `conum` category, they only affect the callout list markers.
+This means that if you change the value of a font or line height key on the `callout-list` or `conum` category, then you likely need to change the value of the same key on the other category as well.
+
+
