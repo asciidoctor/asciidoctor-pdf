@@ -1,122 +1,176 @@
 = Block Image Category Keys
 :navtitle: Block Image
+:source-language: yaml
 
-The keys in this category control the arrangement of block images.
+[#image]
+== image
 
-.image keys
-[#key-prefix-image,cols="3,4,5l"]
+The keys in the `image` category control the arrangement and style of block images.
+
+[cols="3,4,6a"]
 |===
 |Key |Value Type |Example
 
 |align
 |xref:image.adoc#align[Image alignment] +
-(default: left)
-|image:
-align: left
+(default: `left`)
+|[source]
+image:
+  align: right
 
-|width^[1]^
-|xref:measurement-units.adoc[Measurement] +
-(default: _not set_)
-|image:
-width: 100%
-
-|border-color^[2]^
+|<<border-color,border-color>>
 |xref:color.adoc[Color] +
 (default: _not set_)
-|image:
-border-color: #cccccc
+|[source]
+image:
+  border-color: '#cccccc'
+
+|<<fit,border-fit>>
+|`content` {vbar} `auto` +
+(default: `content`)
+|[source]
+image:
+  border-fit: auto
 
 |border-radius
 |xref:language.adoc#values[Number] +
 (default: _not set_)
-|image:
-border-radius: 2
+|[source]
+image:
+  border-radius: 2
 
-|border-width^[2]^
+|border-width
 |xref:language.adoc#values[Number] +
 (default: _not set_)
-|image:
-border-width: 0.5
+|[source]
+image:
+  border-width: 0.5
 
-|border-fit^[3]^
-|content {vbar} auto
-(default: content)
-|image:
-border-fit: auto
+|<<width,width>>
+|xref:measurement-units.adoc[Measurement] +
+(default: _not set_)
+|[source]
+image:
+  width: 100%
+|===
 
-3+|[#key-prefix-image-alt]*Key Prefix:* <<key-prefix-image-alt,image-alt>>
+[#border-color]
+=== border-color
 
-|content^[4]^
+A border is applied to a block image if `border-color` is specified, `border-width` is specified, the value of `border-width` is greater than zero, and the `noborder` role isn't present.
+The border is drawn above the image on the inside of the box reserved for the image.
+
+[#fit]
+=== border-fit
+
+When the value `auto` is assigned to the `border-fit` key the border will expand to fit the width of the container (i.e., full width) instead of the image.
+
+[#width]
+=== width
+
+The `width` key only applies to block images that don't have either a `pdfwidth` or `scaledwidth` attribute on the image macro.
+If `width` is specified, its value takes precedence over the value of the `width` attribute on the image macro, but not over the value of the `pdfwidth` or `scaledwidth` attributes.
+The `width` key accepts the same values as the `pdfwidth` attribute.
+
+[#alt]
+== image-alt
+
+The keys in the `image-alt` category control the arrangement and style of the alt text of block images.
+
+[cols="2,5,6a"]
+|===
+|Key |Value Type |Example
+
+|<<content,content>>
 |xref:quoted-string.adoc[Quoted string] +
 (default: "%\{link}[%\{alt}]%{/link} {vbar} %\{target}")
-|image:
-alt:
-content: "%{alt} (%{target})"
+|[source]
+image:
+  alt:
+    content: "%{alt} (%{target})"
 
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
-|image:
-alt:
-font-color: #ff000
+|[source]
+image:
+  alt:
+    font-color: '#ff000'
 
 |font-family
 |xref:font-support.adoc[Font family name] +
 (default: _inherit_)
-|image
-alt:
-font-family: Courier
+|[source]
+image:
+  alt:
+    font-family: Courier
 
 |font-kerning
-|normal {vbar} none +
+|`normal` {vbar} `none` +
 (default: _inherit_)
-|image:
-alt:
-font-kerning: none
+|[source]
+image:
+  alt:
+    font-kerning: none
 
 |font-size
 |xref:language.adoc#values[Number] +
 (default: _inherit_)
-|image:
-alt:
-font-size: 9
+|[source]
+image:
+  alt:
+    font-size: 9
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
-(default: normal)
-|image:
-alt:
-font-style: italic
+(default: `normal`)
+|[source]
+image:
+  alt:
+    font-style: italic
+|===
 
-3+|[#key-prefix-image-caption]*Key Prefix:* <<key-prefix-image-caption,image-caption>>
+[#content]
+=== content
+
+The `content` key accepts the placeholders `%\{alt}`, `%\{target}`, `%\{link}`, and `%{/link}`.
+These placeholders insert the alt text, image target, and link open and close tags into the content template.
+
+[#caption]
+== image-caption
+
+The keys in the `image-caption` category control the arrangement and style of the captions for block images.
+
+[cols="3,6,6a"]
+|===
+|Key |Value Type |Example
 
 |caption-align
 |xref:text.adoc#align[Text alignment] {vbar} inherit +
-(default: $caption-align)
-|image:
-caption:
-align: inherit
+(default: `$caption-align`)
+|[source]
+image:
+  caption:
+    align: inherit
+
+|<<max-width,caption-max-width>>
+|`fit-content` {vbar} `fit-content`(percentage) {vbar} `none` {vbar} xref:measurement-units.adoc[Measurement] +
+(default: `none`)
+|[source]
+image:
+  caption:
+    max-width: fit-content
 
 |caption-text-align
 |xref:text.adoc#align[Text alignment] {vbar} inherit +
-(default: $image-caption-align)
-|image:
-caption:
-text-align: left
-
-|caption-max-width^[5]^
-|fit-content {vbar} fit-content(percentage) {vbar} none {vbar} xref:measurement-units.adoc[Measurement] +
-(default: none)
-|image:
-caption:
-max-width: fit-content
+(default: `$image-caption-align`)
+|[source]
+image:
+  caption:
+    text-align: left
 |===
 
-1. Only applies to block images that don't have either a `pdfwidth` or `scaledwidth` attribute on the image macro.
-If specified, this value takes precedence over the value of the `width` attribute on the image macro, but not over the value of the `pdfwidth` or `scaledwidth` attributes.
-This key accepts the same values as the `pdfwidth` attribute.
-2. The border is only used if a border color is specified, the border width is specified, the border width is greater than 0, and the `noborder` role is not present.
-The border is drawn above the image on the inside of the box reserved for the image.
-3. The value `auto` means the border should expand to fit the width of the container (i.e., full width) instead of the image.
-4. Use the placeholders `%\{alt}`, `%\{target}`, `%\{link}`, and `%{/link}` to insert the alt text, image target, and link open/close tags into the content template.
-5. In order for the image to be sized correctly when max-width is fit-content, a width should always be specified on the image.
+[#max-width]
+=== max-width
+
+For an image to be sized correctly when `max-width` is assigned the value `fit-content`, a width should always be specified on the image.

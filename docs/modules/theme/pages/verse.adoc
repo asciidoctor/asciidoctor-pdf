@@ -1,134 +1,160 @@
 = Verse Category Keys
 :navtitle: Verse
+:source-language: yaml
 
 [#verse]
 == verse
 
 The keys in the `verse` category control the arrangement and style of verse blocks.
 
-[#key-prefix-verse,cols="3,4,5l"]
+[cols="3,4,5a"]
 |===
 |Key |Value Type |Example
 
 |background-color
 |xref:color.adoc[Color] +
 (default: _not set_)
-|verse:
-background-color: #dddddd
+|[source]
+verse:
+  background-color: '#dddddd'
 
-|border-width^[1]^
-|xref:language.adoc#values[Number] +
-(default: 0)
-|verse:
-border-width: 0.5
-
-|border-left-width^[1]^
-|xref:language.adoc#values[Number] +
-(default: 4)
-|verse:
-border-left-width: 5
-
-|border-color^[1]^
+|border-color
 |xref:color.adoc[Color] +
-(default: #eeeeee)
-|verse:
-border-color: #dddddd
+(default: `'#eeeeee'`)
+|[source]
+verse:
+  border-color: '#dddddd'
+
+|<<border-width,border-left-width>>
+|xref:language.adoc#values[Number] +
+(default: `4`)
+|[source]
+verse:
+  border-left-width: 5
+
+|<<border-width,border-width>>
+|xref:language.adoc#values[Number] +
+(default: `0`)
+|[source]
+verse:
+  border-width: 0.5
 
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
-|verse:
-font-color: #333333
+|[source]
+verse:
+  font-color: '#333333'
 
-|font-family^[2]^
+|<<font-family,font-family>>
 |xref:font-support.adoc[Font family name] +
 (default: _inherit_)
-|verse:
-font-family: M+ 1mn
+|[source]
+verse:
+  font-family: M+ 1mn
 
 |font-kerning
 |normal {vbar} none +
 (default: _inherit_)
-|verse:
-font-kerning: none
+|[source]
+verse:
+  font-kerning: none
 
 |font-size
 |xref:language.adoc#values[Number] +
 (default: _inherit_)
-|verse:
-font-size: 10
+|[source]
+verse:
+  font-size: 10
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
 (default: _inherit_)
-|verse:
-font-style: bold
+|[source]
+verse:
+  font-style: bold
+
+|padding
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: `[6, 12, -6, 14]`)
+|[source]
+verse:
+  padding: [5, 10, -5, 12]
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
 (default: _inherit_)
-|verse:
-text-transform: uppercase
-
-|padding
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
-(default: [6, 12, -6, 14])
-|verse:
-padding: [5, 10, -5, 12]
+|[source]
+verse:
+  text-transform: uppercase
 |===
-1. If `border-left-width` is non-zero, the border is only applied to the left side.
+
+[#border-width]
+=== border-width and border-left-width
+
+If `border-left-width` is non-zero, the border is only applied to the left side.
 Otherwise, if `border-width` is non-zero, the border is drawn around the whole block.
-2. The verse block does not use a fixed-width font by default, which can affect the layout if the content relies on columns.
+
+[#font-family]
+=== font-family
+
+The verse block doesn't use a fixed-width font by default, which can affect the layout if the content relies on columns.
 You can change verse blocks to use a fixed-width font (not necessarily a monospaced font) using this setting.
 
+[#cite]
 == verse-cite
 
 The keys in the `verse-cite` category control the arrangement and style of the citation in verse blocks.
 
-.verse-cite keys
-[#key-prefix-verse-cite,cols="3,4,5l"]
+[cols="3,4,5a"]
 |===
 |Key |Value Type |Example
-
-|font-size
-|xref:language.adoc#values[Number] +
-(default: _inherit_)
-|verse:
-cite:
-font-size: 9
 
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
-|verse:
-cite:
-font-color: #999999
+|[source]
+verse:
+  cite:
+    font-color: '#999999'
 
 |font-family
 |xref:font-support.adoc[Font family name] +
 (default: _inherit_)
-|verse:
-cite:
-font-family: Noto Serif
+|[source]
+verse:
+  cite:
+    font-family: Noto Serif
 
 |font-kerning
 |normal {vbar} none +
 (default: _inherit_)
-|verse:
-cite:
-font-kerning: none
+|[source]
+verse:
+  cite:
+    font-kerning: none
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+verse:
+  cite:
+    font-size: 9
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
 (default: _inherit_)
-|verse:
-cite:
-font-style: italic
+|[source]
+verse:
+  cite:
+    font-style: italic
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
 (default: _inherit_)
-|verse:
-cite:
-text-transform: uppercase
+|[source]
+verse:
+  cite:
+    text-transform: uppercase
 |===

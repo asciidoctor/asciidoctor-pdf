@@ -5,18 +5,18 @@
 The keys in the `block` category control the anchor position and spacing below block elements when a more specific setting isn't designated.
 The bottom margin is only added if the block is followed by an adjacent block within the same enclosure (e.g., a sidebar, a table cell, or the area outside any blocks).
 
-[#key-prefix-block,cols="3,4,6a"]
+[cols="3,4,6a"]
 |===
 |Key |Value Type |Example
 
-|`anchor-top`
+|anchor-top
 |xref:measurement-units.adoc[Measurement] +
 (default: `0`)
 |[source]
 block:
   anchor-top: -12
 
-|`margin-bottom`
+|margin-bottom
 |xref:measurement-units.adoc[Measurement] +
 (default: `12`)
 |[source]

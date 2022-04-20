@@ -1,86 +1,98 @@
 = Caption Category Keys
 :navtitle: Caption
+:source-language: yaml
 
 The keys in the `caption` category control the arrangement and style of block captions.
-In addition to the generic caption category, each of these keys (except for text decoration) can be set on the caption key nested inside the following block categories: `blockquote`, `code` (applies to literal, listing, and source blocks), `example`, `footnotes`, `image`, `table`, and `verse`.
+In addition to the generic caption category, each of these keys (except for `text-decoration`) can be set on the caption key nested inside the following block categories: `quote`, `code` (applies to literal, listing, and source blocks), `example`, `footnotes`, `image`, `table`, and `verse`.
 
 When nested inside the `image` key (i.e., `image-caption-align`), the value `inherit` is also accepted.
 The value `inherit` resolves to the alignment of the block image.
 
-.caption keys
-[#key-prefix-caption,cols="3,4,5l"]
+[cols="3,4,5a"]
 |===
 |Key |Value Type |Example
 
 |align
 |xref:text.adoc#align[Text alignment] +
-(default: left)
-|caption:
-align: left
+(default: `left`)
+|[source]
+caption:
+  align: right
 
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
-|caption:
-font-color: #333333
+|[source]
+caption:
+  font-color: '#333333'
 
 |font-family
 |xref:font-support.adoc[Font family name] +
 (default: _inherit_)
-|caption:
-font-family: M+ 1mn
+|[source]
+caption:
+  font-family: M+ 1mn
 
 |font-kerning
 |normal {vbar} none +
 (default: _inherit_)
-|caption:
-font-kerning: none
+|[source]
+caption:
+  font-kerning: none
 
 |font-size
 |xref:language.adoc#values[Number] +
 (default: _inherit_)
-|caption:
-font-size: 11
+|[source]
+caption:
+  font-size: 11
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
-(default: italic)
-|caption:
-font-style: italic
+(default: `italic`)
+|[source]
+caption:
+  font-style: italic
 
 |text-decoration
 |xref:text.adoc#decoration[Text decoration] +
-(default: none)
-|caption:
-text-decoration: line-through
+(default: `none`)
+|[source]
+caption:
+  text-decoration: line-through
 
 |text-decoration-color
 |xref:color.adoc[Color] +
-(default: $caption-font-color)
-|caption:
-text-decoration-color: #ff0000
+(default: `$caption-font-color`)
+|[source]
+caption:
+  text-decoration-color: '#ff0000'
 
 |text-decoration-width
 |xref:language.adoc#values[Number] +
-(default: $base-text-decoration-width)
-|caption:
-text-decoration-width: 0.5
+(default: `$base-text-decoration-width`)
+|[source]
+caption:
+  text-decoration-width: 0.5
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
 (default: _inherit_)
-|caption:
-text-transform: uppercase
+|[source]
+caption:
+  text-transform: uppercase
 
 |margin-inside
 |xref:measurement-units.adoc[Measurement] +
-(default: 4)
-|caption:
-margin-inside: 3
+(default: `4`)
+|[source]
+caption:
+  margin-inside: 3
 
 |margin-outside
 |xref:measurement-units.adoc[Measurement] +
-(default: 0)
-|caption:
-margin-outside: 0
+(default: `0`)
+|[source]
+caption:
+  margin-outside: 0
 |===

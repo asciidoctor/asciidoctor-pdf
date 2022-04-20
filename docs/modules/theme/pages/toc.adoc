@@ -1,212 +1,279 @@
 = Table of Contents Category Keys
 :navtitle: TOC
+:source-language: yaml
+
+[#toc]
+== toc
 
 The keys in the `toc` category control the arrangement and style of the table of contents.
 
-[#key-prefix-toc,cols="3,4,5l"]
+[cols="3,4,5a"]
 |===
 |Key |Value Type |Example
 
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
-|toc:
-font-color: #333333
+|[source]
+toc:
+  font-color: '#333333'
 
 |font-family
 |xref:font-support.adoc[Font family name] +
 (default: _inherit_)
-|toc:
-font-family: Noto Serif
+|[source]
+toc:
+  font-family: Noto Serif
 
 |font-kerning
-|normal {vbar} none +
+|`normal` {vbar} `none` +
 (default: _inherit_)
-|toc:
-font-kerning: none
+|[source]
+toc:
+  font-kerning: none
 
 |font-size
 |xref:language.adoc#values[Number] +
 (default: _inherit_)
-|toc:
-font-size: 9
+|[source]
+toc:
+  font-size: 9
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
-// QUESTION why is the default not inherited?
-(default: normal)
-|toc:
-font-style: bold
-
-|text-decoration
-|xref:text.adoc#decoration[Text decoration] +
-(default: none)
-|toc:
-text-decoration: underline
-
-|text-decoration-color
-|xref:color.adoc[Color] +
-(default: $toc-font-color)
-|toc
-text-decoration-color: #cccccc
-
-|text-decoration-width
-|xref:language.adoc#values[Number] +
-(default: $base-text-decoration-width)
-|toc:
-text-decoration-width: 0.5
-
-|text-transform
-|xref:text.adoc#transform[Text transform] +
-(default: _inherit_)
-|toc:
-text-transform: uppercase
-
-|line-height
-|xref:language.adoc#values[Number] +
-(default: 1.4)
-|toc:
-line-height: 1.5
-
-|indent
-|xref:measurement-units.adoc[Measurement] +
-(default: 15)
-|toc:
-indent: 20
+//TODO Why is the default not inherited?
+(default: `normal`)
+|[source]
+toc:
+  font-style: bold
 
 |hanging-indent
 |xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
-|toc:
-hanging-indent: 0.5in
+|[source]
+toc:
+  hanging-indent: 0.5in
+
+|indent
+|xref:measurement-units.adoc[Measurement] +
+(default: `15`)
+|[source]
+toc:
+  indent: 20
+
+|line-height
+|xref:language.adoc#values[Number] +
+(default: `1.4`)
+|[source]
+toc:
+  line-height: 1.5
 
 |margin-top
 |xref:measurement-units.adoc[Measurement] +
-(default: 0)
-|toc:
-margin-top: 0
+(default: `0`)
+|[source]
+toc:
+  margin-top: 0
 
-3+|[#key-prefix-toc-level]*Key Prefix:* <<key-prefix-toc-level,toc-h<n>{zwsp}>>^[1]^
+|text-decoration
+|xref:text.adoc#decoration[Text decoration] +
+(default: `none`)
+|[source]
+toc:
+  text-decoration: underline
 
-|font-color
+|text-decoration-color
 |xref:color.adoc[Color] +
-(default: _inherit_)
-|toc:
-h3-font-color: #999999
+(default: `$toc-font-color`)
+|[source]
+toc:
+  text-decoration-color: '#cccccc'
 
-|font-family
-|xref:font-support.adoc[Font family name] +
-(default: _inherit_)
-|toc:
-h2-font-family: Noto Serif
-
-|font-kerning
-|normal {vbar} none +
-(default: _inherit_)
-|toc:
-h3-font-kerning: none
-
-|font-size
+|text-decoration-width
 |xref:language.adoc#values[Number] +
-(default: _inherit_)
-|toc:
-h3-font-size: 9
-
-|font-style
-|xref:text.adoc#font-style[Font style] +
-(default: _inherit_)
-|toc:
-h2-font-style: italic
+(default: `$base-text-decoration-width`)
+|[source]
+toc:
+  text-decoration-width: 0.5
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
 (default: _inherit_)
-|toc:
-h3-text-transform: uppercase
+|[source]
+toc:
+  text-transform: uppercase
+|===
 
-3+|[#key-prefix-toc-title]*Key Prefix:* <<key-prefix-toc-title,toc-title>>
+[#levels]
+== toc-h<n>
+
+The keys in the `toc-h<n>` category control the arrangement and style of each heading level displayed in the table of contents.
+`<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
+
+[cols="3,4,5a"]
+|===
+|Key |Value Type |Example
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+toc:
+  h3-font-color: '#999999'
+
+|font-family
+|xref:font-support.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+toc:
+  h2-font-family: Noto Serif
+
+|font-kerning
+|`normal` {vbar} `none` +
+(default: _inherit_)
+|[source]
+toc:
+  h3-font-kerning: none
+
+|font-size
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+toc:
+  h3-font-size: 9
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|[source]
+toc:
+  h2-font-style: italic
+
+|text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|[source]
+toc:
+  h3-text-transform: uppercase
+|===
+
+[#title]
+== toc-title
+
+The keys in the `toc-title` category control the arrangement and style of the title of the table of contents.
+
+[cols="3,4,5a"]
+|===
+|Key |Value Type |Example
 
 |align
 |xref:text.adoc#align[Text alignment] +
-(default: $heading-h2-align)
-|toc:
-title:
-align: right
+(default: `$heading-h2-align`)
+|[source]
+toc:
+  title:
+    align: right
 
 |font-color
 |xref:color.adoc[Color] +
-(default: $heading-h2-font-color)
-|toc:
-title:
-font-color: #aa0000
+(default: `$heading-h2-font-color`)
+|[source]
+toc:
+  title:
+    font-color: '#aa0000'
 
 |font-family
 |xref:font-support.adoc[Font family name] +
-(default: $heading-h2-font-family)
-|toc:
-title:
-font-family: Noto Serif
+(default: `$heading-h2-font-family`)
+|[source]
+toc:
+  title:
+    font-family: Noto Serif
 
 |font-kerning
-|normal {vbar} none +
+|`normal` {vbar} `none` +
 (default: _inherit_)
-|toc:
-title:
-font-kerning: none
+|[source]
+toc:
+  title:
+    font-kerning: none
 
 |font-size
 |xref:language.adoc#values[Number] +
-(default: $heading-h2-font-size)
-|toc:
-title:
-font-size: 18
+(default: `$heading-h2-font-size`)
+|[source]
+toc:
+  title:
+    font-size: 18
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
-(default: $heading-h2-font-style)
-|toc:
-title:
-font-style: bold_italic
+(default: `$heading-h2-font-style`)
+|[source]
+toc:
+  title:
+    font-style: bold_italic
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
-(default: $heading-h2-text-transform)
-|sidebar:
-title:
-text-transform: uppercase
+(default: `$heading-h2-text-transform`)
+|[source]
+toc:
+  title:
+    text-transform: uppercase
+|===
 
-3+|[#key-prefix-toc-dot-leader]*Key Prefix:* <<key-prefix-toc-dot-leader,toc-dot-leader>>
+[#dot]
+== toc-dot-leader
+
+The keys in the `toc-dot-leader` category control the arrangement and style of the dot leader in the table of contents.
+
+[cols="3,4,5a"]
+|===
+|Key |Value Type |Example
 
 |content
 |xref:quoted-string.adoc[Quoted string] +
-(default: '. ')
-|toc:
-dot-leader:
-content: ". "
+(default: `'. '`)
+|[source]
+toc:
+  dot-leader:
+    content: ". "
 
-|font-color^[2]^
+|font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
-|toc:
-dot-leader:
-font-color: #999999
+|[source]
+toc:
+  dot-leader:
+    font-color: '#999999'
 
-|font-style^[2]^
+|<<font-style,font-style>>
 |xref:text.adoc#font-style[Font style] +
-(default: normal)
-|toc:
-dot-leader:
-font-style: bold
+(default: `normal`)
+|[source]
+toc:
+  dot-leader:
+    font-style: bold
 
-|levels^[3]^
-|all {vbar} none {vbar} Integers (space-separated) +
-(default: all)
-|toc:
-dot-leader:
-levels: 2 3
+|<<dot-levels,levels>>
+|`all` {vbar} `none` {vbar} Integers (space-separated) +
+(default: `all`)
+|[source]
+toc:
+  dot-leader:
+    levels: 2 3
 |===
-1. `<n>` is a number ranging from 1 to 6, representing each of the six heading levels.
-2. The dot leader inherits all font properties except `font-style` from the root `toc` category.
-3. 0-based levels (e.g., part = 0, chapter = 1).
+
+[#font-style]
+=== font-style
+
+The dot leader inherits all font properties except `font-style` from the parent `toc` category.
+
+[#dot-levels]
+=== levels
+
+The integers assigned to the `levels` key are based on the AsciiDoc section levels.
+That is part = 0, chapter = 1, etc.
 Dot leaders are only shown for the specified levels.
-If value is not specified, dot leaders are shown for all levels.
+If a value isn't specified, dot leaders are shown for all levels.

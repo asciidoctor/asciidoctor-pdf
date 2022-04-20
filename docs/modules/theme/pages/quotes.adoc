@@ -4,11 +4,11 @@
 
 The `quotes` category key defines the characters to use for typographic quotation marks (i.e., quotes).
 
-[#key-prefix-quotes,cols="3,4,6a"]
+[cols="2,6,4a"]
 |===
 |Key |Value Type |Example
 
-|`quotes`
+|quotes
 |xref:quoted-string.adoc[Quoted string[double-open, double-close, single-open, single-close\]] +
 (default: `['\&#8220;', '\&#8221;', '\&#8216;', '\&#8217;']`)
 |[source]

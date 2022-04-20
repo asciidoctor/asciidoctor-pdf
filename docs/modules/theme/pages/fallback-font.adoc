@@ -47,7 +47,7 @@ DroidSansFallback:
 The benefit of this syntax is that it allows you to use a separate font file for just one of the variants (e.g., bold).
 
 Next, add the key name to the `fallbacks` key under the `font-catalog` key.
-The `fallbacks` key accepts an array of values, meaning you can specify more than one fallback font.
+The xref:font.adoc[fallbacks key] accepts an array of values, meaning you can specify more than one fallback font.
 However, we recommend using a single fallback font, if possible, as shown here:
 
 [source,yaml]

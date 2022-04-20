@@ -1,39 +1,45 @@
 = Thematic Break Category Keys
 :navtitle: Thematic Break
+:source-language: yaml
 
-The keys in this category control the style of thematic breaks (aka horizontal rules).
+The keys in the `thematic-break` category control the style of thematic breaks, which are also known as horizontal rules.
 
-[#key-prefix-thematic-break,cols="3,4,5l"]
+[cols="3,4,5a"]
 |===
 |Key |Value Type |Example
 
 |border-color
 |xref:color.adoc[Color] +
-(default: #eeeeee)
-|thematic-break:
-border-color: #eeeeee
+(default: `'#eeeeee'`)
+|[source]
+thematic-break:
+  border-color: '#eeeeee'
 
 |border-style
-|solid {vbar} double {vbar} dashed {vbar} dotted +
-(default: solid)
-|thematic-break:
-border-style: dashed
+|`solid` {vbar} `double` {vbar} `dashed` {vbar} `dotted` +
+(default: `solid`)
+|[source]
+thematic-break:
+  border-style: dashed
 
 |border-width
 |xref:measurement-units.adoc[Measurement] +
-(default: 0.5)
-|thematic-break:
-border-width: 0.5
-
-|margin-top
-|xref:measurement-units.adoc[Measurement] +
-(default: 0)
-|thematic-break:
-margin-top: 6
+(default: `0.5`)
+|[source]
+thematic-break:
+  border-width: 0.5
 
 |margin-bottom
 |xref:measurement-units.adoc[Measurement] +
-(default: $vertical-spacing)
-|thematic-break:
-margin-bottom: 18
+(default: `12`)
+|[source]
+thematic-break:
+  margin-bottom: 18
+
+|margin-top
+|xref:measurement-units.adoc[Measurement] +
+(default: `0`)
+|[source]
+thematic-break:
+  margin-top: 6
 |===

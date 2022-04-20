@@ -3,7 +3,7 @@
 [#align]
 == Alignment
 
-The `align` subkey is used to align text and images within the parent container.
+The `align` key is used to align text within the parent container.
 Text can be aligned as follows:
 
 * `left`
@@ -46,6 +46,6 @@ The following transforms are recognized:
 
 [CAUTION#transform-unicode-letters]
 ====
-Ruby 2.5 and greater has built-in support for transforming the case of any letter defined by Unicode.
+Ruby 2.7 and greater has built-in support for transforming the case of any letter defined by Unicode.
 You no longer need the `activesupport` or `unicode` gem to transform characters beyond the Basic Latin character set (e.g., accented characters).
 ====
