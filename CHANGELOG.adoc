@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.0.alpha.1 (2022-04-20) - @mojavelinux
 
 Enhancements::
 
