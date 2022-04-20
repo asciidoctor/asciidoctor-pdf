@@ -195,6 +195,7 @@ Bug Fixes::
 * don't insert blank page after document title if first block (chapter or toc macro) has nonfacing option (#1988)
 * coerce negated variable reference to number if value of variable is numeric
 * prepress page margins should honor value of `pdf-folio-placement` (#1918)
+* ensure callout number in callout list stays with primary text when item is advanced to next page (#1967)
 
 Compliance::
 
