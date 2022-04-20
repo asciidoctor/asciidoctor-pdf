@@ -12,6 +12,11 @@ jobs:
   build:
     needs: activate
     runs-on: ubuntu-latest
+    env:
+      ASCIIDOCTOR_DIAGRAM_VERSION: '~> 2.2'
+      PRAWN_GMAGICK_VERSION: '0.0.9'
+      PYGMENTS_VERSION: '~> 2.0'
+      RGHOST_VERSION: '0.9.7'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -19,6 +24,10 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.1'
+    - name: Install Linux packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install ghostscript poppler-utils libgraphicsmagick1-dev
     - name: Configure Bundler
       run: |
         bundle config --local path .bundle/gems
