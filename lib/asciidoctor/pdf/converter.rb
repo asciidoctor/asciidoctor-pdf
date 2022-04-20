@@ -164,8 +164,11 @@ module Asciidoctor
         if node.blocks?
           node.content
         elsif node.content_model != :compound && (string = node.content)
-          # TODO: this content could be cached on repeat invocations!
-          layout_prose string, (opts.merge hyphenate: true, margin_bottom: 0)
+          prose_opts = opts.merge hyphenate: true, margin_bottom: 0
+          if (bottom_gutter = @bottom_gutters[-1][node])
+            prose_opts[:bottom_gutter] = bottom_gutter
+          end
+          layout_prose string, prose_opts
         end
       ensure
         node.document.instance_variable_set :@converter, prev_converter if prev_converter
@@ -415,6 +418,7 @@ module Asciidoctor
         @text_transform = nil
         @list_numerals = []
         @list_bullets = []
+        @bottom_gutters = [{}]
         @rendered_footnotes = []
         @conum_glyphs = ConumSets[@theme.conum_glyphs || 'circled'] || (@theme.conum_glyphs.split ',').map do |r|
           from, to = r.lstrip.split '-', 2
@@ -835,6 +839,10 @@ module Asciidoctor
         # and advance to the next page if so (similar to logic for section titles)
         layout_caption node, labeled: false if node.title?
 
+        if (bottom_gutter = @bottom_gutters[-1][node])
+          prose_opts[:bottom_gutter] = bottom_gutter
+        end
+
         if roles.empty?
           layout_prose node.content, prose_opts
         else
@@ -1001,7 +1009,7 @@ module Asciidoctor
                 end
               end
             end
-            pad_box [cpad[0], 0, cpad[2], label_width + lpad[1] + cpad[3]] do
+            pad_box [cpad[0], 0, cpad[2], label_width + lpad[1] + cpad[3]], node do
               layout_caption node, category: :admonition, labeled: false if node.title?
               theme_font :admonition do
                 traverse node
@@ -1019,7 +1027,7 @@ module Asciidoctor
           tare_first_page_content_stream do
             theme_fill_and_stroke_block :example, extent, caption_node: node
           end
-          pad_box @theme.example_padding do
+          pad_box @theme.example_padding, node do
             theme_font :example do
               traverse node
             end
@@ -1080,13 +1088,18 @@ module Asciidoctor
               end
             end
           end
-          pad_box @theme[%(#{category}_padding)] do
+          pad_box @theme[%(#{category}_padding)], (attribution ? nil : node) do
             theme_font category do
               if category == :quote
                 traverse node
               else # :verse
                 content = guard_indentation node.content
-                layout_prose content, normalize: false, align: :left, hyphenate: true, margin_bottom: 0
+                layout_prose content,
+                  normalize: false,
+                  align: :left,
+                  hyphenate: true,
+                  margin_bottom: 0,
+                  bottom_gutter: (attribution ? nil : @bottom_gutters[-1][node])
               end
             end
             if attribution
@@ -1108,7 +1121,7 @@ module Asciidoctor
         arrange_block node do |extent|
           add_dest_for_block node if node.id
           theme_fill_and_stroke_block :sidebar, extent if extent
-          pad_box @theme.sidebar_padding do
+          pad_box @theme.sidebar_padding, node do
             theme_font :sidebar_title do
               # QUESTION: should we allow margins of sidebar title to be customized?
               layout_prose node.title, align: (@theme.sidebar_title_align || @theme.heading_align || @base_align).to_sym, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
@@ -1850,11 +1863,12 @@ module Asciidoctor
           tare_first_page_content_stream do
             theme_fill_and_stroke_block :code, extent, background_color: bg_color_override, caption_node: node
           end
-          pad_box @theme.code_padding do
+          pad_box @theme.code_padding, node do
             theme_font :code do
               typeset_formatted_text source_chunks, (calc_line_metrics @base_line_height),
                 color: (font_color_override || @theme.code_font_color || @font_color),
                 size: adjusted_font_size,
+                bottom_gutter: @bottom_gutters[-1][node],
                 extensions: extensions.empty? ? nil : extensions
             end
           end

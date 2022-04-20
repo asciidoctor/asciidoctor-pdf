@@ -545,18 +545,24 @@ module Asciidoctor
       #    text 'An indented paragraph inside a box with equal padding on all sides.'
       #  end
       #
-      def pad_box padding
+      def pad_box padding, node = nil
         if padding
           # TODO: implement shorthand combinations like in CSS
           p_top, p_right, p_bottom, p_left = ::Array === padding ? padding : (::Array.new 4, padding)
+          # logic is intentionally inlined
           begin
-            # logic is intentionally inlined
+            if node && ((last_block = node).content_model != :compound || (last_block = node.blocks[-1])&.context == :paragraph)
+              @bottom_gutters << { last_block => p_bottom }
+            else
+              @bottom_gutters << {}
+            end
             move_down p_top
             bounds.add_left_padding p_left
             bounds.add_right_padding p_right
             yield
             cursor > p_bottom ? (move_down p_bottom) : reference_bounds.move_past_bottom unless at_page_top?
           ensure
+            @bottom_gutters.pop
             bounds.subtract_left_padding p_left
             bounds.subtract_right_padding p_right
           end

@@ -86,6 +86,51 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     (expect to_file).to visually_match 'example-page-split.pdf'
   end
 
+  it 'should not collapse bottom padding if block ends near bottom of page' do
+    pdf_theme = {
+      example_padding: 12,
+      example_background_color: 'EEEEEE',
+      example_border_width: 0,
+      example_border_radius: 0,
+    }
+    pdf = with_content_spacer 10, 690 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      image::#{spacer_path}[]
+
+      ====
+      content +
+      that wraps
+      ====
+      EOS
+    end
+
+    pages = pdf.pages
+    (expect pages).to have_size 1
+    gs = pdf.extract_graphic_states pages[0][:raw_content]
+    (expect gs[1]).to have_background color: 'EEEEEE', top_left: [48.24, 103.89], bottom_right: [48.24, 48.33]
+    last_text_y = pdf.text[-1][:y]
+    (expect last_text_y - pdf_theme[:example_padding]).to be > 48.24
+
+    pdf = with_content_spacer 10, 692 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      image::#{spacer_path}[]
+
+      ====
+      content +
+      that wraps
+      ====
+      EOS
+    end
+
+    pages = pdf.pages
+    (expect pages).to have_size 2
+    gs = pdf.extract_graphic_states pages[0][:raw_content]
+    (expect gs[1]).to have_background color: 'EEEEEE', top_left: [48.24, 101.89], bottom_right: [48.24, 48.24]
+    (expect pdf.text[0][:page_number]).to eql 1
+    (expect pdf.text[1][:page_number]).to eql 2
+    (expect pdf.text[0][:y] - pdf_theme[:example_padding]).to be > 48.24
+  end
+
   it 'should draw border around whole block when block contains nested unbreakable block', visual: true do
     to_file = to_pdf_file <<~EOS, 'example-with-nested-block-page-split.pdf'
     .Title

@@ -120,6 +120,52 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect to_file).to visually_match 'admonition-page-split.pdf'
   end
 
+  it 'should not collapse bottom padding if block ends near bottom of page' do
+    pdf_theme = {
+      admonition_padding: 12,
+      admonition_background_color: 'EEEEEE',
+      admonition_column_rule_width: 0,
+    }
+    pdf = with_content_spacer 10, 690 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      image::#{spacer_path}[]
+
+      [NOTE]
+      ====
+      content +
+      that wraps
+      ====
+      EOS
+    end
+
+    pages = pdf.pages
+    (expect pages).to have_size 1
+    gs = pdf.extract_graphic_states pages[0][:raw_content]
+    (expect gs[1]).to have_background color: 'EEEEEE', top_left: [48.24, 103.89], bottom_right: [48.24, 48.33]
+    last_text_y = pdf.text[-1][:y]
+    (expect last_text_y - pdf_theme[:admonition_padding]).to be > 48.24
+
+    pdf = with_content_spacer 10, 692 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      image::#{spacer_path}[]
+
+      [NOTE]
+      ====
+      content +
+      that wraps
+      ====
+      EOS
+    end
+
+    pages = pdf.pages
+    (expect pages).to have_size 2
+    gs = pdf.extract_graphic_states pages[0][:raw_content]
+    (expect gs[1]).to have_background color: 'EEEEEE', top_left: [48.24, 101.89], bottom_right: [48.24, 48.24]
+    (expect pdf.text[1][:page_number]).to eql 1
+    (expect pdf.text[2][:page_number]).to eql 2
+    (expect pdf.text[1][:y] - pdf_theme[:admonition_padding]).to be > 48.24
+  end
+
   it 'should allow theme to configure properties of caption' do
     pdf_theme = {
       admonition_caption_font_color: '00AA00',
