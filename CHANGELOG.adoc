@@ -10,28 +10,29 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/main[co
 Enhancements::
 
 * make delimited blocks breakable by default; require the `unbreakable` option on the block to retain the previous "`keep together`" behavior (#2004, #578, #509, #240)
-* add support for the %unbreakable option on a table to keep it from being split across pages (#2022, #871, #819, #331)
+* add support for the %unbreakable option on a table to prevent it from being split across pages (#2022, #871, #819, #331)
 * add support for the %breakable option on a table (special case) to keep the caption and ID with the start of the table (#2022, #993)
-* implement smart block bottom margins to prevent extra space below blocks, particularly nested blocks (#1515, #1513, #1845)
+* implement smart bottom margins on blocks to prevent extra space below blocks, particularly nested blocks (#1515, #1513, #1845)
 * drop support for `top-margin` key on block and prose categories in theme; space between delimited blocks and lists now controlled using bottom margins only (#1515)
 * allow location of anchor for block to be positioned relative to content using `block-anchor-top` key in theme (#2013)
 * allow page numbering and running content to start after first page of a document without a title page by assigning an integer to the respective `start_at` theme key (#1644)
-* allow page numbering and running content to start after toc (wherever it is placed) by assigning the keyword `after-toc` to the respective `start_at` theme key (#1763)
+* allow page numbering and running content to start after toc (wherever it's placed) by assigning the keyword `after-toc` to the respective `start_at` theme key (#1763)
 * allow theme to configure page numbering to start at cover (#1727)
-* allow theme to define the front and back cover images (#1584)
-* allow the front and back cover images to be defined using a data URI (#1584)
+* allow the front and back cover images to be defined in the theme (#1584)
+* allow the front and back cover images to be specified as a data URI (#1584)
 * allow theme to control margin and content margin of running content per periphery (header or footer) and per side (recto or verso) (#994)
 * allow theme to control border style of delimited blocks (example, sidebar, code, admonition, verse, quote) (#1586)
-* allow theme to control font color of first line of abstract
-* allow theme to control background color and border offset (only for background) for links (#1705)
+* allow theme to control font color of first line of abstract using `abstract-first-line-font-color` key
+* allow theme to control background color and border offset (only for background) of links (#1705)
 * support custom role on paragraph to allow theme to control font properties (#483)
 * change lead category in theme to built-in role named lead (#2031)
-* allow theme to control line height for blocks using line-height property where font properties are accepted (#2032)
+* allow theme to control line height of blocks using line-height property where font properties are accepted (#2032)
 * don't render index section if index is empty (i.e., there are no index entries)
 * allow title of special section to be hidden by setting `untitled` option on section
 * stabilize font paths in built-in themes by prefixing paths with GEM_FONTS_DIR (#1568)
 * assign `page-layout` attribute in running content so it can be used to select a background per layout (#1570)
-* reset numbering of footnotes in each chapter; add chapter xreftext to label of footnote reference that refers to previous chapter (#1639)
+* reset numbering of footnotes in each chapter (#1639)
+* add chapter xreftext to label of footnote reference that refers to previous chapter (#1639)
 * add support for assigning the same font file to all font variants (i.e., styles) using the wildcard key (`*`) (#1588)
 * bundle Noto Sans in addition to Noto Serif and add built-in theme sans-with-fallback-font (#2010)
 * allow caption max-width to be set to percentage of content by passing argument to fit-content function (#1494)
@@ -46,7 +47,7 @@ Enhancements::
 * add support for preamble toc placement
 * only insert macro toc at location of first toc macro
 * ignore requested pages not found in imported PDF (#1616)
-* disable document outline if outline document attribute is unset (#1619)
+* disable document outline if `outline` document attribute is unset (#1619)
 * keep temporary artifacts (for debugging) if KEEP_ARTIFACTS env var is set
 * define a dest name "toc" at the top of the default toc location
 * normalize space characters in authors content and drop lines with unresolved attribute references (#1642)
@@ -66,7 +67,7 @@ Enhancements::
 * allow theme to disable title page by assigning false to `title_page` category key (#1754)
 * allow Rouge theme to be specified as theme class or instance (API only)
 * allow theme to control font size of dot leader in TOC
-* allow section to override outlinelevels for self and children using outlinelevels attribute on section
+* allow section to override outlinelevels for self and children using `outlinelevels` attribute on section
 * use value of `author` attribute for PDF info and pdfmark if locked by the API (#1778)
 * only extend theme in extends hierarchy once unless modified with `!important` (#1800)
 * add print-optimized themes (default-for-print and default-for-print-with-fallback-font) (#1699)
@@ -82,11 +83,11 @@ Enhancements::
 * extract `arrange_section` method to compute whether section title should be advanced to next page (#2023)
 * introduce `callout-list` category in theme to control font properties and item spacing of callout lists (#1722)
 * only indent inner paragraphs (paragraphs that follow an adjacent paragraph) if `prose-text-indent-inner` key is set in theme (#2034)
+* stop and restart conversion in scratch document once the code determines the block does not fit in the available space (#2003)
 
 Bug Fixes::
 
 * reimplement arrange block logic by using scratch document to compute extent for content block in primary document instead of height (#2003, #2016, #789)
-* stop and restart conversion in scratch document once the code determines the block does not fit in the available space (#2003)
 * correctly compute height of delimited block attached to description of item in horizontal dlist (follow-up to #2003)
 * do not crash if item in horizontal description list has no desc
 * do not crash if item in unordered description list has no desc and do not append subject stop to term
@@ -95,7 +96,7 @@ Bug Fixes::
 * log warning rather than crash if front cover image cannot be embedded (such as a broken SVG)
 * do not insert blank line in index when term is forced to break (#1665)
 * honor prepress page margins on subsequent pages in index (#1929)
-* use more robust strategy for line height normalization that accounts for line contains only monospaced text (#1650)
+* use more robust strategy for line height normalization that accounts for case when line contains only monospaced text (#1650)
 * add support for line-height property on lead role as documented
 * prevent generator from allocating space for placeholder null char (used for anchors) if font is missing glyph (#1672)
 * ensure background and admonition icon image files are closed after being read (#1566)
@@ -131,7 +132,7 @@ Bug Fixes::
 * escape bare ampersand in attribution and citetitle of quote or verse block (#1662)
 * fix numeric assertions in test suite (#1542)
 * prevent converter for list item from inserting new page to position marker when next page is already instantiated (#2001)
-* keep block anchor with source/listing/literal block when block is moved to next page (#1897)
+* keep block anchor with code block when block is moved to next page (#1897)
 * keep block anchor with admonition block when block is moved to next page
 * remove poorly-defined (and undocumented) border bottom property for caption
 * fix crash when theme specifies CMYK value for table border color (#1700)
@@ -170,8 +171,8 @@ Bug Fixes::
 * fix crash when Text token is not defined in custom Rouge theme
 * fix crash when Pygments style is not recognized; fall back to pastie style
 * avoid loss of precision in CMYK color value for conum or footnote font
-* use value of untitled-label as fallback value for doctitle in running content (#1772)
-* use value of untitled-label as fallback value for Title field in pdfmark (follow-up to #1772)
+* use value of `untitled-label` attribute as fallback value for doctitle in running content (#1772)
+* use value of `untitled-label` attribute as fallback value for Title field in pdfmark (follow-up to #1772)
 * show sensible error message if background image cannot be loaded (e.g., data is corrupt)
 * honor alignment role when aligning alt text for missing block image
 * don't crash when rendering alt text for block image if value of align attribute is invalid (#1781)
@@ -220,7 +221,7 @@ Build / Infrastructure::
 * add Ruby 3.1 to CI matrix; use as primary Ruby
 * test against Asciidoctor upstream (#1821)
 * skip tests for unreadable files when euid is 0
-* use prawn-table release and drop recommendation to use the development version
+* use prawn-table release and drop recommendation to use the development version (converter now patches prawn-table)
 
 == 1.6.2 (2021-12-31) - @mojavelinux
 
