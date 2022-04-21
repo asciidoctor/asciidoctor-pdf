@@ -432,7 +432,7 @@ Style/SelectByRegexp:
 Style/SingleArgumentDig:
   Enabled: true
 Style/SlicingWithRange:
-  Enabled: false
+  Enabled: false # reason: not supported in JRuby < 9.3
 Style/SoleNestedConditional:
   Enabled: true
 Style/SpecialGlobalVars:
