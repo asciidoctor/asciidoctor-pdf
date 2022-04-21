@@ -3,16 +3,12 @@
 Asciidoctor PDF is a native PDF converter for AsciiDoc.
 It bypasses the requirement to generate an intermediary format such as DocBook, Apache FO, or LaTeX.
 Instead, you can use Asciidoctor PDF to convert your documents directly from AsciiDoc to PDF.
-Its aim is to take the pain out of creating PDF documents from AsciiDoc.
+The aim of this library is to take the pain out of creating PDF documents from AsciiDoc.
 
-[NOTE]
-====
-You're viewing the documentation for Asciidoctor PDF {page-component-display-version}.
-If you're looking for the documentation for a previous release line, refer to one of the following repository branches:
-
-* {url-project-repo}/tree/v1.6.x#readme[Asciidoctor PDF 1.6.x^]
-* {url-project-repo}/tree/v1.5.x#readme[Asciidoctor PDF 1.5.x^]
-====
+NOTE: You're viewing the documentation for Asciidoctor PDF {page-component-display-version}.
+If you're looking for the documentation for Asciidoctor PDF 1.6, refer to the {url-project-repo}/tree/v1.6.x#readme[README] in the v1.6.x branch.
+Asciidoctor PDF 1.6 is no longer being developed and will reach EOL later this year.
+You are encouraged to migrate to Asciidoctor PDF 2 as soon as possible.
 
 == Overview
 
@@ -24,4 +20,3 @@ However, there are xref:features.adoc#limitations[certain limits] imposed by the
 
 Asciidoctor PDF uses the Prawn gem and Prawn's extensions, such as prawn-svg and prawn-table, to generate a PDF document.
 {url-prawn}[Prawn^] is a general purpose PDF generator for Ruby that features high-level APIs for common needs like setting up the page and inserting images and low-level APIs for positioning and rendering text and graphics.
-
