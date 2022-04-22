@@ -9,7 +9,7 @@ Doc Writer <doc@example.com>
 // Uncomment next line to set page size (default is A4)
 //:pdf-page-size: Letter
 
-An example of a basic http://asciidoc.org[AsciiDoc] document prepared by {author}.
+An example of a basic https://asciidoc.org[AsciiDoc] document prepared by {author}.
 
 == Introduction
 
