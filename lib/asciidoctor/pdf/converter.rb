@@ -2159,7 +2159,7 @@ module Asciidoctor
           end
         end
 
-        # NOTE: Prawn aborts if table data is empty, so ensure there's at least one row
+        # NOTE: Prawn crashes if table data is empty, so ensure there's at least one row
         if table_data.empty?
           log(:warn) { message_with_context 'no rows found in table', source_location: node.source_location }
           table_data << ::Array.new([node.columns.size, 1].max) { { content: '' } }
