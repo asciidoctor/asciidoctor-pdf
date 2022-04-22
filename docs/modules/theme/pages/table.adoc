@@ -16,24 +16,24 @@ The keys in the `table` category control the arrangement and style of tables and
 (default: `transparent`)
 |[source]
 table:
-  background-color: '#ffffff'
+  background-color: #ffffff
 
 |border-color
-|xref:color.adoc[Color] +
-(default: `'#000000'`)
+|xref:color.adoc[Color] {vbar} xref:color.adoc[Color[top,right,bottom,left\]]
+(default: `'000000'`)
 |[source]
 table:
-  border-color: '#dddddd'
+  border-color: #dddddd
 
 |border-style
-|`solid` {vbar} `dashed` {vbar} `dotted` +
+|`solid` {vbar} `dashed` {vbar} `dotted` {vbar} Style[top,right,bottom,left] +
 (default: `solid`)
 |[source]
 table:
   border-style: solid
 
 |border-width
-|xref:language.adoc#values[Number] +
+|xref:language.adoc#values[Number] {vbar} xref:language.adoc#values[Number[top,right,bottom,left\]] +
 (default: `0.5`)
 |[source]
 table:
@@ -104,25 +104,25 @@ table:
   font-style: italic
 
 |grid-color
-|xref:color.adoc[Color] {vbar} xref:color.adoc[Color[x,y\]] +
+|xref:color.adoc[Color] {vbar} xref:color.adoc[Color[rows,cols\]] +
 (default: `$table-border-color`)
 |[source]
 table:
-  grid-color: '#eeeeee'
+  grid-color: #eeeeee
 
 |grid-style
-|`solid` {vbar} `dashed` {vbar} `dotted` {vbar} Style[x,y] +
-(default: `solid`)
+|`solid` {vbar} `dashed` {vbar} `dotted` {vbar} Style[rows,cols] +
+(default: `$table-border-style`)
 |[source]
 table:
   grid-style: dashed
 
 |grid-width
-|xref:language.adoc#values[Number] {vbar} xref:language.adoc#values[Number[x,y\]] +
-(default: `$table-border-width`)
+|xref:language.adoc#values[Number] {vbar} xref:language.adoc#values[Number[rows,cols\]] +
+(default: `0.5`)
 |[source]
 table:
-  grid-width: 0.5
+  grid-width: 1
 |===
 
 [#head]

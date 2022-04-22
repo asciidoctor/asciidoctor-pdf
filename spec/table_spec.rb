@@ -338,6 +338,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       theme_overrides = {
         table_border_color: cmyk_color,
         table_head_border_bottom_color: cmyk_color,
+        table_grid_color: cmyk_color,
       }
 
       pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: theme_overrides
@@ -406,7 +407,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       end
     end
 
-    it 'should base base border color if table border and grid colors are not set' do
+    it 'should uses base border color if table border and grid colors are not set' do
       pdf_theme = {
         base_border_color: '0000FF',
         table_border_color: nil,
@@ -432,11 +433,11 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       end
     end
 
-    it 'should use grid color as fallback for table border color' do
+    it 'should not use grid color as fallback for table border color' do
       pdf_theme = {
         table_border_color: nil,
         table_grid_color: '3D3D3D',
-        table_grid_width: 0.5,
+        table_grid_width: 0,
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
       |===
@@ -447,7 +448,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       line_colors = pdf.lines.map {|l| l[:color] }.uniq
       (expect line_colors).not_to be_empty
-      (expect line_colors).to eql %w(3D3D3D)
+      (expect line_colors).to eql %w(EEEEEE)
     end
 
     it 'should not use grid color as fallback for table border color if value is a directional array' do
@@ -455,7 +456,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         base_border_color: 'DDDDDD',
         table_border_color: nil,
         table_grid_color: %w(3D3D3D D3D3D3),
-        table_grid_width: 0.5,
+        table_grid_width: 0,
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
       [grid=none]
@@ -580,6 +581,126 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       (expect to_file).to visually_match 'table-grid-axes.pdf'
+    end
+
+    it 'should be able to style all sides of the table border independency', visual: true do
+      pdf_theme = {
+        table_border_color: %w(000000 FF0000 00FF00 0000FF),
+        table_border_width: [0.5, 1, 3, 1],
+        table_border_style: [:solid, :dashed, :solid, :dotted],
+      }
+      to_file = to_pdf_file <<~'EOS', 'table-border-per-side.pdf', pdf_theme: pdf_theme
+      [grid=none]
+      |===
+      | A | B
+      | C | D
+      |===
+      EOS
+
+      (expect to_file).to visually_match 'table-border-per-side.pdf'
+    end
+
+    it 'should be able to use two value shorthand for all border properties (ends and sides)' do
+      pdf_theme = {
+        table_border_color: %w(000000 0000FF),
+        table_border_width: [0.5, 1],
+        table_border_style: [:solid, :dashed],
+      }
+      lines = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line).lines
+      [grid=none]
+      |===
+      | cell
+      |===
+      EOS
+
+      (expect lines).to have_size 4
+      solid_lines = lines.select {|it| it[:style] == :solid && it[:color] == '000000' && it[:width] == 0.5 }
+      dashed_lines = lines.select {|it| it[:style] == :dashed && it[:color] == '0000FF' && it[:width] == 1 }
+      (expect solid_lines).to have_size 2
+      (expect dashed_lines).to have_size 2
+      (expect solid_lines[0][:from][:y]).to eql solid_lines[0][:to][:y]
+      (expect solid_lines[1][:from][:y]).to eql solid_lines[1][:to][:y]
+      (expect dashed_lines[0][:from][:x]).to eql dashed_lines[0][:to][:x]
+      (expect dashed_lines[1][:from][:x]).to eql dashed_lines[1][:to][:x]
+    end
+
+    it 'should be able to use three value shorthand for all border properties' do
+      pdf_theme = {
+        table_border_color: %w(000000 0000FF FF0000),
+        table_border_width: [0.5, 1, 2],
+        table_border_style: [:solid, :dashed, :dotted],
+      }
+      lines = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line).lines
+      [grid=none]
+      |===
+      | cell
+      |===
+      EOS
+
+      (expect lines).to have_size 4
+      top_line = lines.find {|it| it[:style] == :solid && it[:color] == '000000' && it[:width] == 0.5 }
+      side_lines = lines.select {|it| it[:style] == :dashed && it[:color] == '0000FF' && it[:width] == 1 }
+      bottom_line = lines.find {|it| it[:style] == :dotted && it[:color] == 'FF0000' && it[:width] == 2 }
+      (expect top_line).not_to be_nil
+      (expect side_lines).to have_size 2
+      (expect bottom_line).not_to be_nil
+      (expect top_line[:from][:y]).to eql top_line[:to][:y]
+      (expect side_lines[0][:from][:x]).to eql side_lines[0][:to][:x]
+      (expect side_lines[1][:from][:x]).to eql side_lines[1][:to][:x]
+      (expect bottom_line[:from][:y]).to eql bottom_line[:to][:y]
+    end
+
+    it 'should default to top border style and color for grid rows and left border style for grid cols', visual: true do
+      pdf_theme = {
+        table_border_color: %w(000000 FF0000 00FF00 0000FF),
+        table_border_width: 1,
+        table_grid_width: 0.5,
+        table_border_style: [:solid, :dotted, :solid, :dashed],
+      }
+      to_file = to_pdf_file <<~'EOS', 'table-grid-fallbacks.pdf', pdf_theme: pdf_theme
+      |===
+      | A | B
+      | C | D
+      |===
+      EOS
+
+      (expect to_file).to visually_match 'table-grid-fallbacks.pdf'
+    end
+
+    it 'should not crash if the border color, width, or style of one of the sides is nil' do
+      pdf_theme = {
+        base_border_color: nil,
+        table_border_color: ['000000', '000000', nil, '000000'],
+        table_border_width: [nil, 0.5, 0.5, 0.5],
+        table_border_style: [:solid, nil, :solid, nil],
+      }
+      (expect do
+        to_pdf <<~'EOS', pdf_theme: pdf_theme
+        |===
+        | A | B
+        | C | D
+        |===
+        EOS
+      end).to not_raise_exception
+    end
+
+    it 'should not crash if the grid color, width, or style of one of the axes is nil' do
+      (expect do
+        %w(color width style).each do |prop|
+          pdf_theme = {
+            base_border_color: nil,
+            table_grid_color: ['000000', (prop == 'color' ? nil : '000000')],
+            table_grid_width: [0.5, (prop == 'width' ? nil : 0.5)],
+            table_grid_style: [:solid, (prop == 'style' ? nil : :solid)],
+          }
+          to_pdf <<~'EOS', pdf_theme: pdf_theme
+          |===
+          | A | B
+          | C | D
+          |===
+          EOS
+        end
+      end).to not_raise_exception
     end
   end
 
