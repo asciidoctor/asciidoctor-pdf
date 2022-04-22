@@ -1,50 +1,96 @@
 = Create a CJK Theme
 
-You also have to option of creating your own theme gem that uses fonts of your choice.
-For example, if you want to use the `asciidoctor-pdf-cjk-kai_gen_gothic` gem to fetch fonts, but then use them in your own theme, here's how you'd do it.
+If you're writing in a CJK language such as Simplified Chinese, you'll likely need to bring your own font by providing a custom theme.
+That's because it's not possible for Asciidoctor PDF to bundle the necessary fonts since they are too large.
+Fortunately, creating a theme to override the fonts requires very few steps, so you should be up and running with your own font in no time.
 
-. Install the `asciidoctor-pdf-cjk-kai_gen_gothic` gem:
+== Obtain the TTF fonts
 
- $ gem install asciidoctor-pdf-cjk-kai_gen_gothic
+The first step in creating a CJK theme is to obtain the fonts.
+It's important that the fonts are TTF since that's the only font format Asciidoctor PDF (via ttfunk) supports reliably.
 
-. Download / install the fonts:
+Unfortunately, good quality TTF fonts for CJK languages are hard to come by.
+We recommend starting with the https://github.com/googlefonts/noto-cjk/tree/main/Sans#ttf[Noto Sans Variable Fonts for CJK] provided by the noto-cjk project (Noto Sans and Noto Sans Mono).
+Just make sure you download the TTF variant.
 
- $ asciidoctor-pdf-cjk-kai_gen_gothic-install
+Once you have downloaded the fonts, place the files into the directory where you are going to create your theme.
+For the purpose of this guide, we'll assume you are working with the following font files:
 
-. Create a theme file named [.path]_cjk-theme.yml_ that extends the default theme to override the fonts:
-+
-[source,yml]
+* https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/TTF/NotoSansCJKsc-VF.ttf[NotoSansCJKsc-VF.ttf]
+* https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/TTF/NotoSansCJKsc-VF.ttf[NotoSansMonoCJKsc-VF.ttf]
+
+If you'd like to use different fonts, refer to the https://en.wikipedia.org/wiki/List_of_CJK_fonts[list of notable CJK fonts on Wikipedia].
+With that information, you can search for the TTF font on any font service.
+You can also find the Kai Gen Gothic fonts for CJK languages in TTF format on the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic/releases[releases page] for the now deprecated asciidoctor-pdf-cjk-kai_gen_gothic project.
+
+== Create the theme file
+
+Now that you've obtained the TTF font files, you can create a new theme to use them.
+
+Create a theme file named [.path]_cjk-theme.yml_ where you can override the fonts:
+
+[,yaml]
 ----
 extends: default
 font:
   catalog:
     merge: true
-    KaiGen Gothic CN:
-      normal: KaiGenGothicCN-Regular.ttf
-      bold: KaiGenGothicCN-Bold.ttf
-      italic: KaiGenGothicCN-Regular-Italic.ttf
-      bold_italic: KaiGenGothicCN-Bold-Italic.ttf
+    Noto Sans CN: NotoSansCJKsc-VF.ttf
+    Noto Sans Mono CN: NotoSansMonoCJKsc-VF.ttf
   fallbacks:
-  - KaiGen Gothic CN
+  - Noto Serif
 base:
-  font-family: KaiGen Gothic CN
-heading:
-  font-family: $base-font-family
-abstract:
-  title:
-    font-family: $heading-font-family
-sidebar:
-  title:
-    font-family: $heading-font-family
+  align: left
+  font-family: Noto Sans CN
+codespan:
+  font-family: Noto Sans Mono CN
+kbd:
+  font-family: $codespan-font-family
+code:
+  font-family: $codespan-font-family
 ----
 
-. Load your theme when running Asciidoctor PDF:
+This theme does several things:
 
- $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=./cjk-theme.yml -a pdf-fontsdir=GEM_FONTS_DIR,`ruby -r asciidoctor-pdf-cjk-kai_gen_gothic -e "print File.expand_path '../fonts', (Gem.datadir 'asciidoctor-pdf-cjk-kai_gen_gothic')"` document.adoc
+. Registers the Noto Sans CN and Noto Sans Mono CN fonts in the font catalog provided by the default theme
+. Sets the built-in Noto Serif font as the fallback font in cases when a glyph is not provided by the CJK font
+. Configures Noto Sans CN as the base font, which is used for all variable-width text in the document
+. Sets the default text alignment to left since text justification isn't well-suited for CJK languages
+. Configures Noto Sans Mono CN as the monospaced font, which is used for all monospaced text in the document
 
-The `-a pdf-fontsdir` option is important to tell Asciidoctor PDF where to find your custom fonts.
-//TODO This sentence and related example above need to be evaluated to remove PDF 1.5 references.
-(Note that the inclusion of GEM_FONTS_DIR in the value is only required when using Asciidoctor PDF 1.5).
+If you're using different fonts for normal, bold, italic, and bold italic, you'll need to configure them using separate keys.
+Refer to xref:font.adoc#extend-catalog[Extending the font catalog] for details.
 
-Rather than using the installer from the `asciidoctor-pdf-cjk-kai_gen_gothic` gem, you can download fonts whatever way you choose.
-When using your own fonts, be sure to consult the xref:prepare-custom-font.adoc[] to find recommended modifications.
+TIP: When using your own fonts, be sure to consult the xref:prepare-custom-font.adoc[] to find recommended modifications.
+
+You may also want to darken the font color since the Noto Sans SC font has a thin weight.
+
+[,yaml]
+----
+...
+base:
+  align: left
+  font-color: #000000
+  font-family: Noto Sans CN
+heading:
+  font-color: #000000
+...
+----
+
+You may need to adjust the font color on other keys as well.
+
+== Load your theme
+
+Now that you've created the theme, you can put it to use.
+Since the theme provides custom fonts, you'll need to specify both the location of the theme file and the location of the fonts when calling Asciidoctor PDF.
+
+Let's assume that your theme is located in the [.path]_themes_ directory relative to your document.
+Here's how you specify the path to the theme and the fonts it uses:
+
+ $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=./themes/cjk-theme.yml -a pdf-fontsdir=./themes document.adoc
+
+The `-a pdf-fontsdir` option is important because it tells Asciidoctor PDF where to look for the fonts specified in the theme.
+Alternately, the theme could specify the location of these fonts using an absolute path.
+The `scripts` option enables CJK support within Asciidoctor, which allows lines to break anywhere instead of at word boundaries.
+
+If you've followed the instructions correctly, you should see that there are few (if any) missing glyphs in your PDF document.

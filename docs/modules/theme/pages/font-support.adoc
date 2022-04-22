@@ -5,7 +5,7 @@
 :url-w1252: https://en.wikipedia.org/wiki/Windows-1252
 :url-prawn-afm: https://github.com/prawnpdf/prawn/blob/master/CHANGELOG.md#vastly-improved-handling-of-encodings-for-pdf-built-in-afm-fonts
 
-You can select from <<built-in,built-in fonts>>, <<bundled,fonts bundled with Asciidoctor PDF>> or xref:custom-font.adoc[custom fonts] loaded from TrueType (TTF) or OpenType (OTF) font files.
+You can select from <<built-in,built-in fonts>>, <<bundled,fonts bundled with Asciidoctor PDF>>, or xref:custom-font.adoc[custom fonts] loaded from TrueType (TTF) or OpenType (OTF) font files.
 If you want to use custom fonts, you must first declare them in your theme file.
 
 IMPORTANT: Asciidoctor has no challenge working with Unicode.
@@ -99,3 +99,27 @@ TIP: The default themes refer to the bundled fonts using the `GEM_FONTS_DIR` pre
 That means you can extend a default theme and not have to worry about how the bundled fonts get resolved.
 If you redeclare the bundled fonts in your custom theme, be sure to prefix the path with the `GEM_FONTS_DIR` token.
 An alternative approach is to include `GEM_FONT_DIR` in the value of the `pdf-fontsdir` attribute separated by the location of your custom fonts using a comma (e.g., `path/to/your/fonts,GEM_FONTS_DIR`) or a semicolon (e.g., `path/to/your/fonts;GEM_FONTS_DIR`).
+
+== Support for non-Latin languages
+
+Asciidoctor PDF can process the full range of characters in the UTF-8 character set.
+That means you can write your document in any language, save the file with UTF-8 encoding (_that's important!_), and expect Asciidoctor PDF to convert the text properly.
+But you still need a font that provides the glyphs for those characters.
+
+When converting a document with Asciidoctor PDF, you may notice that some glyphs for certain languages, such as Simplified Chinese, are missing from the PDF.
+PDF is a "`bring your own font`" kind of system.
+In other words, the font you provide must provide glyphs for all the characters used.
+There's no single font that supports all the world's languages (though some, like Noto Sans and Noto Serif, certainly come close).
+Even if there were such a font, bundling that font with the main gem would make it *enormous*.
+It would also severely limit the style choices in the default theme, which caters to Latin-based languages.
+
+If you're writing in a CJK language, such as Japanese, Asciidoctor PDF provides a built-in theme named `default-with-fallback-font` that provides a broad range of characters in the CJK charsets.
+You can start with that theme to see how far it gets you:
+
+ $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=default-with-fallback-font document.adoc
+
+Notice the `-a scripts=cjk` option.
+That's important.
+It tells the converter to insert break opportunities between CJK characters so that lines wrap properly when mixing English and a CJK language like Japanese.
+
+If the built-in theme with the fallback font doesn't go far enough, you'll need create a xref:cjk.adoc[custom CJK theme].
