@@ -2165,39 +2165,30 @@ module Asciidoctor
           table_data << ::Array.new([node.columns.size, 1].max) { { content: '' } }
         end
 
-        border_width = {}
-        table_border_color = theme.table_border_color || ((Array theme.table_grid_color).size == 2 ? nil : theme.table_grid_color) || theme.base_border_color
-        table_border_style = theme.table_border_style&.to_sym || :solid
-        table_border_width = theme.table_border_width
-        if table_header_size
-          head_border_bottom_color = theme.table_head_border_bottom_color || table_border_color
-          head_border_bottom_style = (theme.table_head_border_bottom_style || table_border_style).to_sym
-          head_border_bottom_width = theme.table_head_border_bottom_width || table_border_width
-        end
-        [:top, :bottom, :left, :right].each {|edge| border_width[edge] = table_border_width }
+        rect_side_names = [:top, :right, :bottom, :left]
+        grid_axis_names = [:rows, :cols]
+        border_color = (rect_side_names.zip expand_rect_values theme.table_border_color, (theme.base_border_color || 'transparent')).to_h
+        border_style = (rect_side_names.zip (expand_rect_values theme.table_border_style, :solid).map(&:to_sym)).to_h
+        border_width = (rect_side_names.zip expand_rect_values theme.table_border_width, 0).to_h
+        grid_color = (grid_axis_names.zip expand_grid_values (theme.table_grid_color || [border_color[:top], border_color[:left]]), 'transparent').to_h
+        grid_style = (grid_axis_names.zip (expand_grid_values (theme.table_grid_style || [border_style[:top], border_style[:left]]), :solid).map(&:to_sym)).to_h
+        grid_width = (grid_axis_names.zip expand_grid_values theme.table_grid_width, 0).to_h
 
-        table_grid_color = theme.table_grid_color || table_border_color
-        if ::Array === (table_grid_style = theme.table_grid_style || table_border_style)
-          table_grid_style = table_grid_style.map(&:to_sym)
-        else
-          table_grid_style = [table_grid_style.to_sym]
-        end
-        if ::Array === (table_grid_width = theme.table_grid_width || theme.table_border_width)
-          border_width[:rows] = table_grid_width[0]
-          border_width[:cols] = table_grid_width[1]
-        else
-          [:cols, :rows].each {|edge| border_width[edge] = table_grid_width }
+        if table_header_size
+          head_border_bottom_color = theme.table_head_border_bottom_color || grid_color[:rows]
+          head_border_bottom_style = theme.table_head_border_bottom_style&.to_sym || grid_style[:rows]
+          head_border_bottom_width = theme.table_head_border_bottom_width || grid_width[:rows]
         end
 
         case (grid = node.attr 'grid', 'all', 'table-grid')
         when 'all'
           # keep inner borders
         when 'cols'
-          border_width[:rows] = 0
+          grid_width[:rows] = 0
         when 'rows'
-          border_width[:cols] = 0
+          grid_width[:cols] = 0
         else # none
-          border_width[:rows] = border_width[:cols] = 0
+          grid_width[:rows] = grid_width[:cols] = 0
         end
 
         case (frame = node.attr 'frame', 'all', 'table-frame')
@@ -2234,13 +2225,8 @@ module Asciidoctor
           header: table_header_size,
           # NOTE: position is handled by this method
           position: :left,
-          cell_style: {
-            # NOTE: the border color and style of the outer frame is set later
-            border_color: table_grid_color,
-            border_lines: table_grid_style,
-            # NOTE: the border width is set later
-            border_width: 0,
-          },
+          # NOTE: the border color, style, and width of the outer frame is set in the table callback block
+          cell_style: { border_color: grid_color.values, border_lines: grid_style.values, border_width: grid_width.values },
           width: table_width,
           column_widths: column_widths,
         }
@@ -2282,7 +2268,7 @@ module Asciidoctor
             end if table_header_size
           else
             # apply the grid setting first across all cells
-            cells.border_width = [border_width[:rows], border_width[:cols], border_width[:rows], border_width[:cols]]
+            cells.border_width = [grid_width[:rows], grid_width[:cols], grid_width[:rows], grid_width[:cols]]
 
             if table_header_size
               (rows table_header_size - 1).tap do |r|
@@ -2299,19 +2285,19 @@ module Asciidoctor
 
             # top edge of table
             (rows 0).tap do |r|
-              r.border_top_color, r.border_top_line, r.border_top_width = table_border_color, table_border_style, border_width[:top]
+              r.border_top_color, r.border_top_line, r.border_top_width = border_color[:top], border_style[:top], border_width[:top]
             end
             # right edge of table
             (columns num_cols - 1).tap do |r|
-              r.border_right_color, r.border_right_line, r.border_right_width = table_border_color, table_border_style, border_width[:right]
+              r.border_right_color, r.border_right_line, r.border_right_width = border_color[:right], border_style[:right], border_width[:right]
             end
             # bottom edge of table
             (rows num_rows - 1).tap do |r|
-              r.border_bottom_color, r.border_bottom_line, r.border_bottom_width = table_border_color, table_border_style, border_width[:bottom]
+              r.border_bottom_color, r.border_bottom_line, r.border_bottom_width = border_color[:bottom], border_style[:bottom], border_width[:bottom]
             end
             # left edge of table
             (columns 0).tap do |r|
-              r.border_left_color, r.border_left_line, r.border_left_width = table_border_color, table_border_style, border_width[:left]
+              r.border_left_color, r.border_left_line, r.border_left_width = border_color[:left], border_style[:left], border_width[:left]
             end
           end
 

@@ -243,6 +243,7 @@ table:
   background_color: $page_background_color
   border_color: DDDDDD
   border_width: $base_border_width
+  grid_width: $base_border_width
   cell_padding: 3
   head:
     font_style: bold

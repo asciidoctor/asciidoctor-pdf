@@ -101,6 +101,7 @@ sidebar_title_font_style: bold
 table_border_color: '000000'
 table_border_style: solid
 table_border_width: 0.5
+table_grid_width: 0.5
 table_cell_padding: 2
 table_head_font_style: bold
 table_head_border_bottom_width: 1.25

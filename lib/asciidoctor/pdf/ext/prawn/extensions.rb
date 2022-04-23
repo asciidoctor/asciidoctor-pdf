@@ -594,6 +594,50 @@ module Asciidoctor
 
       alias expand_margin_value expand_padding_value
 
+      def expand_grid_values shorthand, default = nil
+        if ::Array === shorthand
+          case shorthand.size
+          when 1
+            [(value0 = shorthand[0] || default), value0]
+          when 2
+            shorthand.map {|it| it || default }
+          when 4
+            if Asciidoctor::PDF::ThemeLoader::CMYKColorValue === shorthand
+              [shorthand, shorthand]
+            else
+              (shorthand.slice 0, 2).map {|it| it || default }
+            end
+          else
+            (shorthand.slice 0, 2).map {|it| it || default }
+          end
+        else
+          [(value0 = shorthand || default), value0]
+        end
+      end
+
+      def expand_rect_values shorthand, default = nil
+        if ::Array === shorthand
+          case shorthand.size
+          when 1
+            [(value0 = shorthand[0] || default), value0, value0, value0]
+          when 2
+            [(value0 = shorthand[0] || default), (value1 = shorthand[1] || default), value0, value1]
+          when 3
+            [shorthand[0] || default, (value1 = shorthand[1] || default), shorthand[2] || default, value1]
+          when 4
+            if Asciidoctor::PDF::ThemeLoader::CMYKColorValue === shorthand
+              [shorthand, shorthand, shorthand, shorthand]
+            else
+              shorthand.map {|it| it || default }
+            end
+          else
+            (shorthand.slice 0, 4).map {|it| it || default }
+          end
+        else
+          [(value0 = shorthand || default), value0, value0, value0]
+        end
+      end
+
       # Stretch the current bounds to the left and right edges of the current page
       # while yielding the specified block if the verdict argument is true.
       # Otherwise, simply yield the specified block.
