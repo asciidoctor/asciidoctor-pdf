@@ -4,15 +4,16 @@ Asciidoctor PDF supports generating an index catalog that itemizes all index ter
 
 == Add index section
 
-To generate an index, add a level-1 section annotated with the `index` style near the end of your document.
+To generate an index, add an empty level-0 or level-1 section annotated with the `index` style near the end of your document.
 The converter will automatically populate the catalog with the list of index terms in the document, organized by first letter.
 
 [source,asciidoc]
 ----
 [index]
-= Index
+== Index
 ----
 
+Select the level appropriate for the doctype you are using (level-0 for book, level-1 for article, etc).
 You can use any text you want for the title of this section.
 The only restriction is that no index terms may be defined below this section.
 
