@@ -2,7 +2,7 @@
 
 The theme language supports color values in three formats:
 
-Hex:: A string of 3 or 6 characters with an optional leading `#`, optional surrounding quotes, or both.
+[[hex]]Hex:: A string of 3 or 6 characters with an optional leading `#`, optional surrounding quotes, or both.
 RGB:: An array of numeric values ranging from 0 to 255.
 CMYK:: An array of numeric values ranging from 0 to 1 or from 0% to 100%.
 Transparent:: The special value `transparent` indicates that a color should not be used.

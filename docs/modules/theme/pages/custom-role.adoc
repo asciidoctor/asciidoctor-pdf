@@ -1,0 +1,75 @@
+= Custom Roles
+:description: Define custom roles in the PDF theme configuration file to apply special formatting to paragraphs and inline phrases.
+
+Use the keys in the `role` category to define custom roles or redefine the built-in roles.
+Custom roles only apply to paragraphs and inline phrases.
+
+== Define a custom role
+
+Custom roles are defined under the `role` category key.
+The name of a custom role may contain a hyphen, but *a role name cannot contain an underscore*.
+
+[,yaml]
+----
+role: <.>
+  rolename: <.>
+    font-color: #ff7f50 <.>
+    font-style: bold
+    text-decoration: underline
+  another-role: <.>
+    border-width: 0.5
+----
+<.> Custom roles are defined under the `role` category key.
+<.> Create a name for your custom role.
+<.> Enter a formatting key and its value on a new line under the name of the role.
+Each key that you want applied to a role should be entered on a new line.
+<.> You can define more than one custom role under the `role` category key.
+Role names can contain hyphens, but not underscores.
+
+The formatting keys that a custom role can accept are listed in xref:role.adoc[].
+Let's look at some custom role definition and usage examples in the next section.
+
+== Custom role examples
+
+In the following example, a custom role named `red` is defined.
+The keys `background-color` and `font-color` are set and each key is assigned a color value using the xref:color.adoc#hex[hex format].
+
+[,yaml]
+----
+role:
+  red:
+    background-color: #333333
+    font-color: #ff0000
+----
+
+You can also use a custom role to unset the default styling of a paragraph or inline phrase and make it inherit the styling of its parent element.
+In the example below, a custom role named `heading-code` is defined and the `font-color` key is unset by assigning a tilde (`~`) as its value.
+
+[,yaml]
+----
+role:
+  heading-code:
+    font-color: ~
+----
+
+In the next example, the `red` and `heading-code` custom roles are assigned to text in a document.
+
+[,asciidoc]
+----
+= Document Title
+
+== Section title
+
+[.red] <.>
+Error text is shown in red.
+
+=== [.heading-code]`SELECT` clause <.>
+
+A paragraph.
+----
+<.> The `red` custom role is assigned to a paragraph.
+<.> The `heading-code` custom role is assigned to an inline phrase marked up with the codespan syntax.
+The code phrase will inherit the font color of the section heading, because the `heading-code` role unsets the font color that would usually be applied to a code phrase.
+However, the phrase `Select` will inherit all the other code phrase styles.
+
+See xref:role.adoc[] for the list of keys a custom role can accept.
