@@ -214,6 +214,14 @@ table:
   head:
     line-height: 1.15
 
+|cell-padding
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: `$table-cell-padding`)
+|[source]
+table:
+  head:
+    cell-padding: [4, 2]
+
 |text-transform
 |xref:text.adoc#transform[Text transform] +
 (default: _inherit_)
