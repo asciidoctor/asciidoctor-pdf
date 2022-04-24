@@ -1,14 +1,13 @@
 = Custom Roles
-:description: Define custom roles in the PDF theme configuration file to apply special formatting to inline phrases and paragraphs.
+:description: Define custom roles in the PDF theme configuration file to apply special formatting to paragraphs and inline phrases.
 
 Use the keys in the `role` category to define custom roles or redefine the built-in roles.
-
-IMPORTANT: Custom roles only apply to inline phrases and paragraphs.
+Custom roles only apply to paragraphs and inline phrases.
 
 == Define a custom role
 
 Custom roles are defined under the `role` category key.
-The name of a custom role may contain a hyphen, but *a role name can't contain an underscore*.
+The name of a custom role may contain a hyphen, but *a role name cannot contain an underscore*.
 
 [,yaml]
 ----
@@ -43,7 +42,7 @@ role:
     font-color: #ff0000
 ----
 
-You can also use a custom role to unset the default styling of an inline phrase or paragraph and make it inherit the styling of its parent element.
+You can also use a custom role to unset the default styling of a paragraph or inline phrase and make it inherit the styling of its parent element.
 In the example below, a custom role named `heading-code` is defined and the `font-color` key is unset by assigning a tilde (`~`) as its value.
 
 [,yaml]

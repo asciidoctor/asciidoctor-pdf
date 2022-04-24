@@ -1,11 +1,11 @@
 = Roles
-:description: Assign built-in and custom roles to inline phrases and paragraphs.
+:description: Assign built-in and custom roles to paragraphs and inline phrases.
 
-You can apply the built-in roles Asciidoctor PDF provides as well as custom roles you define in your theme to inline phrases and paragraphs.
+You can apply the built-in roles Asciidoctor PDF provides as well as custom roles you define in your theme to paragraphs and inline phrases.
 
 == Use a built-in role
 
-The following built-in roles can be assigned to inline phrases and paragraphs:
+The following built-in roles can be assigned to paragraphs and inline phrases:
 
 include::theme:page$role.adoc[tag=user-formatting]
 
@@ -25,8 +25,16 @@ NOTE: Before you can use a custom role in your document, you need to define it i
 See xref:theme:custom-role.adoc[] and xref:theme:role.adoc[] to learn how to create a custom role.
 
 Let's assume you've defined a custom role named `labeled` in your theme.
-Now, you can use it in your documents.
-In the following example, the custom role is assigned to a paragraph and an inline phrase.
+
+[,yaml]
+----
+role:
+  labeled:
+    font-color: #0000FF
+----
+
+Now, you can use this role in your documents.
+In the following example, the custom role is assigned to the second paragraph and an inline phrase in the last paragraph.
 
 [,asciidoc]
 ----
@@ -41,4 +49,4 @@ Another paragraph.
 The text [.labeled]#label me# is formatted using the styles of the custom role.
 ----
 
-IMPORTANT: Custom roles only apply to inline phrases and paragraphs.
+Custom roles only apply to paragraphs and inline phrases.

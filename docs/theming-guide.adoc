@@ -1147,7 +1147,7 @@ The name of the role is the first subkey level.
 The role name may contain a hyphen, but *a role name cannot contain an underscore*.
 The keys under the role are the theming properties.
 
-IMPORTANT: Custom roles only apply to inline phrases and paragraphs.
+IMPORTANT: Custom roles only apply to paragraphs and inline phrases.
 
 Here's an example of a role for making text red:
 
