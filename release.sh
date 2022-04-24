@@ -33,9 +33,9 @@ chmod 600 $HOME/.gem/credentials
   git commit -a -m "release $RELEASE_VERSION [no ci]"
   git tag -m "version $RELEASE_VERSION" v$RELEASE_VERSION
   RUBYOPT='-r ./gem-version-patch.rb' gem build $GEMSPEC
-  echo git push origin $(git describe --tags --exact-match)
-  echo gem push $RELEASE_NAME-$RELEASE_VERSION.gem
-  echo git push origin $RELEASE_BRANCH
+  git push origin $(git describe --tags --exact-match)
+  gem push $RELEASE_NAME-$RELEASE_VERSION.gem
+  git push origin $RELEASE_BRANCH
 )
 
 exit_code=$?
