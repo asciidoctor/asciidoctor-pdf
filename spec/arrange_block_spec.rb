@@ -143,6 +143,35 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     end
   end
 
+  it 'should compute extent of block correctly when indent is applied to section body' do
+    pdf_theme[:section_indent] = 36
+    pdf = with_content_spacer 10, 650 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      == Section Title
+
+      image::#{spacer_path}[]
+
+      ****
+      This is a sidebar block.
+
+      It has a shaded background and a subtle border, which are added by the default theme.
+
+      It contains this very long sentence, which causes the block to become split across two pages.
+      ****
+      EOS
+    end
+
+    pages = pdf.pages
+    (expect pages).to have_size 2
+    last_text = pdf.text[-1]
+    (expect last_text[:page_number]).to eql 2
+    (expect last_text[:string]).to eql 'two pages.'
+    gs_p2 = (pdf.extract_graphic_states pages[1][:raw_content])[0]
+    (expect gs_p2).to have_background color: 'EEEEEE', top_left: [86.0, 742.0], bottom_right: [526.0, 615.1]
+    bottom_padding = last_text[:y] - 615.1
+    (expect bottom_padding).to (be_within 1).of 15.0
+  end
+
   describe 'unbreakable block' do
     # NOTE: only add tests that verify at top ignores unbreakable option; otherwise, put test in breakable at top
     describe 'at top' do
