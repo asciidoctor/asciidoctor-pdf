@@ -12,6 +12,7 @@
 *** xref:prepare-custom-font.adoc[]
 *** xref:fallback-font.adoc[]
 *** xref:cjk.adoc[]
+** xref:custom-role.adoc[]
 ** xref:extend-theme.adoc[]
 ** xref:apply-theme.adoc[]
 ** xref:asciidoc-attributes.adoc[]

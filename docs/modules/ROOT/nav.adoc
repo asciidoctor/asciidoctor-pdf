@@ -9,6 +9,7 @@
 * xref:inline-images.adoc[]
 * xref:import-pdf-pages.adoc[]
 * xref:interdocument-xrefs.adoc[]
+* xref:roles.adoc[]
 * xref:verbatim-blocks.adoc[]
 ** xref:syntax-highlighting.adoc[]
 ** xref:autofit-text.adoc[]
