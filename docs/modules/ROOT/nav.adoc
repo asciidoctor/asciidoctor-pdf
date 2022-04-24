@@ -1,7 +1,6 @@
 * xref:features.adoc[]
 * xref:install.adoc[]
 * xref:convert-to-pdf.adoc[]
-* xref:fonts.adoc[]
 * xref:font-based-icons.adoc[]
 * xref:image-paths-and-formats.adoc[]
 * xref:image-scaling.adoc[]
