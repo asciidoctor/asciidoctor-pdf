@@ -1055,6 +1055,13 @@ module Asciidoctor
           b_left_width = nil
           b_width = nil if (b_width = @theme[%(#{category}_border_width)]) == 0
         end
+        if (attribution = (node.attr? 'attribution') && (node.attr 'attribution'))
+          # NOTE: temporary workaround to allow bare & to be used without having to wrap value in single quotes
+          attribution = escape_amp attribution if attribution.include? '&'
+          if (citetitle = node.attr 'citetitle') && (citetitle.include? '&')
+            citetitle = escape_amp citetitle
+          end
+        end
         arrange_block node do |extent|
           add_dest_for_block node if node.id
           tare_first_page_content_stream do
@@ -1081,17 +1088,10 @@ module Asciidoctor
                 layout_prose content, normalize: false, align: :left, hyphenate: true, margin_bottom: 0
               end
             end
-            if node.attr? 'attribution'
+            if attribution
               margin_bottom @theme.block_margin_bottom
               theme_font %(#{category}_cite) do
-                # NOTE: temporary workaround to allow bare & to be used without having to wrap value in single quotes
-                attribution = node.attr 'attribution'
-                attribution = escape_amp attribution if attribution.include? '&'
-                attribution_parts = [attribution]
-                if (citetitle = node.attr 'citetitle')
-                  citetitle = escape_amp citetitle if citetitle.include? '&'
-                  attribution_parts << citetitle
-                end
+                attribution_parts = citetitle ? [attribution, citetitle] : [attribution]
                 layout_prose %(#{EmDash} #{attribution_parts.join ', '}), align: :left, normalize: false, margin_bottom: 0
               end
             end
