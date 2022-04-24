@@ -1717,7 +1717,8 @@ module Asciidoctor
 
       # QUESTION: can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
       def convert_listing_or_literal node
-        wrap_ext = source_chunks = bg_color_override = font_color_override = adjusted_font_size = nil
+        extensions = []
+        source_chunks = bg_color_override = font_color_override = adjusted_font_size = nil
         theme_font :code do
           # HACK: disable built-in syntax highlighter; must be done before calling node.content!
           if node.style == 'source' && (highlighter = (syntax_hl = node.document.syntax_highlighter)&.highlight? && syntax_hl.name)
@@ -1797,7 +1798,7 @@ module Asciidoctor
               if (node.option? 'linenums') || (node.attr? 'linenums')
                 linenums = (node.attr 'start', 1).to_i
                 postprocess = true
-                wrap_ext = FormattedText::SourceWrap
+                extensions << FormattedText::SourceWrap
               elsif conum_mapping || highlight_lines
                 postprocess = true
               end
@@ -1814,7 +1815,7 @@ module Asciidoctor
             else
               if (node.option? 'linenums') || (node.attr? 'linenums')
                 formatter_opts = { line_numbers: true, start_line: (node.attr 'start', 1).to_i }
-                wrap_ext = FormattedText::SourceWrap
+                extensions << FormattedText::SourceWrap
               else
                 formatter_opts = {}
               end
@@ -1850,12 +1851,10 @@ module Asciidoctor
           end
           pad_box @theme.code_padding do
             theme_font :code do
-              ::Prawn::Text::Formatted::Box.extensions << wrap_ext if wrap_ext
               typeset_formatted_text source_chunks, (calc_line_metrics @base_line_height),
                 color: (font_color_override || @theme.code_font_color || @font_color),
-                size: adjusted_font_size
-            ensure
-              ::Prawn::Text::Formatted::Box.extensions.pop if wrap_ext
+                size: adjusted_font_size,
+                extensions: extensions.empty? ? nil : extensions
             end
           end
         end
