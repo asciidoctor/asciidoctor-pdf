@@ -2,24 +2,31 @@
 //:navtitle: Get Started
 :url-rvm: https://rvm.io
 
+On this page, you'll learn how to install Asciidoctor PDF.
+The page documents the prerequisites you'll need, the command you'll use to install Asciidoctor PDF, and a catalog of optional dependencies you can install to unlock additional features.
+You can also find some troubleshooting advice if the installation goes wrong.
+
 [#prerequisites]
-== Required prerequisites
+== Prerequisites
 
 === Ruby
 
-All that's needed is Ruby 2.5 or greater (or JRuby 9.2 or greater) and a few Ruby gems (including at least Asciidoctor 2.0.0), which we explain how to install in the next section.
+Asciidoctor PDF is a Ruby application.
+Therefore, to use it, you'll need a Ruby runtime.
 
-To check if you have Ruby available, use the `ruby` command to query the version installed:
+The supported Ruby runtimes are Ruby 2.7 or greater and JRuby 9.2 or greater.
+However, we always recommend using the most recent release of Ruby or JRuby.
+All required libraries (i.e., gems) will be installed automatically when you install Asciidoctor PDF, which will be covered in the <<Install Asciidoctor PDF,next section>>.
 
- $ ruby -e 'puts RUBY_VERSION'
+To check if you have Ruby available, run the `ruby` command to print the installed version:
 
-//TODO This Ruby version command (line above) is different than the Ruby version command in Core. Which one do we prefer?
-Make sure this command reports a Ruby version that's at least 2.5.
-If so, you may proceed.
+ $ ruby -v
 
-//TODO What about installing Asciidoctor Core? What about the Prawn extensions (table? svg? etc.)?
+Make sure this command reports a Ruby version that starts with 2.7 (or a JRuby version that starts with 9.2).
+If so, you're ready to proceed.
+If not, head over to https://rvm.io[rvm.io^] to get RVM and use it to install Ruby.
 
-=== Windows system encoding
+=== System encoding
 
 Asciidoctor assumes you're using UTF-8 encoding.
 To minimize encoding problems, make sure the default encoding of your system is set to UTF-8.
@@ -32,29 +39,16 @@ To solve these problems, we recommend at least changing the active code page in 
 
 Once you make this change, all your Unicode headaches will be behind you.
 
-== Optional prerequisites
-
-PDF optimization::
-If you want to optimize your PDF, you'll need rghost or hexapdf.
-See xref:optimize-pdf.adoc[] for installation and usage instructions.
-
-Source highlighting::
-You'll need to xref:syntax-highlighting.adoc[install a syntax highlighter] to use source highlighting.
-
-Similarly, if you want to use the hyphen option you will need to install the `text-hyphen` gem:
-
- $ gem install text-hyphen
-
-//TODO what is text hyphen and where should its content be located?
-//NOTE I'd prefer not to have the optional prerequisite install instructions here as the install process and possible troubleshooting of the required prereqs and Asciidoctor PDF is already a lot.
-
 == Install Asciidoctor PDF
 
-You can get Asciidoctor PDF by installing the published gem.
-To install Asciidoctor PDF, first make sure you have satisfied the <<prerequisites>>.
-Then, install the gem from RubyGems.org using the following command:
+You can install Asciidoctor PDF using the `gem install` command.
+We'll use this command to install the Asciidoctor PDF gem named *asciidoctor-pdf* that's published on RubyGems.org.
+Pass the name of the gem to the `gem install` command as follows:
 
  $ gem install asciidoctor-pdf
+
+Installing Asciidoctor PDF will install a number of other gems mentioned in these docs, including asciidoctor, prawn, prawn-svg, prawn-table, prawn-icon, and ttfunk.
+For the most part, the versions of these dependencies are locked to the version of Asciidoctor PDF.
 
 === Install a development version
 
@@ -78,10 +72,20 @@ If something gets messed up, you can simply remove the [.path]_$HOME/.rvm_ folde
 
 To learn how to install RVM, follow the https://asciidoctor.org/docs/install-asciidoctor-macos/#rvm-procedure-recommended[RVM installation procedure^] covered in the Asciidoctor documentation.
 //TODO determine best RVM instructions, if we still recommend, and put them in their proper home for xrefing to.
-Once you have installed RVM and used it to install Ruby, make sure to activate the Ruby managed by RVM using `rvm use default` or a specific Ruby version like `rvm use 2.7`.
-(You'll need to do this each time you open a new terminal).
+Once you have installed RVM, install a version of Ruby:
 
-After installing the gem, you can see where it was installed using the following command:
+ rvm install 3.1
+
+Then switch to that version and set it as the default:
+
+ rvm use 3.1 --default
+
+You only need to install the version of Ruby once.
+Each time you open a new terminal, be sure to select the default Ruby.
+
+ rvm use default
+
+After installing the asciidoctor-pdf gem, you can see where it was installed using the following command:
 
  $ gem which asciidoctor-pdf
 
@@ -91,3 +95,68 @@ To see where the bin script is located, use this command:
 
 Both paths should be underneath the [.path]_$HOME/.rvm_ directory.
 If not, check your RVM setup.
+
+== Optional dependencies
+
+There are several optional features of this converter that require additional gems to be installed.
+Those features are as follows.
+
+Source highlighting::
+You'll need to xref:syntax-highlighting.adoc[install a syntax highlighter] to use source highlighting (build-time only).
+
+PDF optimization::
+If you want to optimize your PDF, you'll need rghost or hexapdf.
+See xref:optimize-pdf.adoc[] for installation and usage instructions.
+
+Automatic hyphenation::
+To turn on automatic hyphenation using the `hyphens` attribute, you'll need to install the `text-hyphen` gem:
+
+ $ gem install text-hyphen
+
+Accelerated image decoding::
+Ruby is not particularly fast at decoding images, and the image formats it supports is limited.
+To help, you can install prawn-gmagick, which delegates the work of decoding images to GraphicsMagick.
+Refer to xref:image-paths-and-formats.adoc[Supporting additional image file formats] for instructions about how to enable this integration.
+
+The following table lists the optional dependencies of Asciidoctor PDF, including Asciidoctor extensions which are tested with this converter.
+The name of the dependency and its gem name is listed along with the minimum supported version and what feature or features it enables when installed (and, if necessary, required).
+
+[cols=3;3;4]
+|===
+| Name / Gem | Minimum Version | Feature(s)
+
+| *Asciidoctor Mathematical* +
+_asciidoctor-mathematical_
+| 0.3.5
+| STEM support (must be required using `-r asciidoctor-mathematical`)
+
+| *Asciidoctor Diagram* +
+_asciidoctor-diagram_
+| 2.2.0
+| Diagram blocks (must be required using `-r asciidoctor-diagram`)
+
+| *Rouge* +
+_rouge_
+| 2.0.0
+| Syntax highlighting
+
+| *Pygments (Ruby)* +
+_pygments.rb_
+| 2.0.0
+| Syntax highlighting
+
+| *Prawn Gmagick* +
+_prawn-gmagick_
+| 0.0.9
+| Accelerates image embedding using GraphicsMagick
+
+| *RGhost* +
+_rghost_
+| 0.9.7
+| PDF optimization using Ghostscript (requires `optimize` attribute to be set)
+
+| *Text Hyphen* +
+_text-hyphen_
+| 1.4.1
+| Automatic hyphenation (requires `hyphens` attribute to be set)
+|===

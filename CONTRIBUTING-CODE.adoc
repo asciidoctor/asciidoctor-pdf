@@ -79,7 +79,7 @@ We'll leverage the project configuration to install the necessary dependencies.
 
 We recommend using {url-rvm}[RVM] to manage the installation of Ruby you'll use to build and develop the project.
 
- $ rvm use 2.6
+ $ rvm use 3.1
 
 The dependencies needed to use {project-name} are defined in the [.path]_Gemfile_ at the root of the project.
 We can use Bundler to install the dependencies for us.

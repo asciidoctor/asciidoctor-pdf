@@ -43,9 +43,3 @@ The following transforms are recognized:
 * `lowercase`
 * `capitalize` (each word, like CSS)
 * `none` (clears an inherited value)
-
-[CAUTION#transform-unicode-letters]
-====
-Ruby 2.7 and greater has built-in support for transforming the case of any letter defined by Unicode.
-You no longer need the `activesupport` or `unicode` gem to transform characters beyond the Basic Latin character set (e.g., accented characters).
-====
