@@ -2870,16 +2870,37 @@ module Asciidoctor
 
       def arrange_section sect, title, opts
         return if opts[:hidden]
-        theme_font :heading, level: (hlevel = opts[:level]) do
-          # FIXME: this height doesn't account for impact of text transform or inline formatting
-          heading_height =
-            (height_of_typeset_text title) +
-            (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
-            (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom)
-          heading_height += @theme.heading_min_height_after if sect.blocks? && @theme.heading_min_height_after
-          start_new_page unless cursor > heading_height
-          nil
+        if sect.option? 'breakable'
+          orphaned = nil
+          dry_run single_page: true do
+            start_page = page
+            theme_font :heading, level: opts[:level] do
+              if opts[:part]
+                layout_part_title sect, title, opts
+              elsif opts[:chapterlike]
+                layout_chapter_title sect, title, opts
+              else
+                layout_general_heading sect, title, opts
+              end
+            end
+            if page == start_page
+              page.tare_content_stream
+              orphaned = stop_if_first_page_empty { traverse sect }
+            end
+          end
+          start_new_page if orphaned
+        else
+          theme_font :heading, level: (hlevel = opts[:level]) do
+            # FIXME: this height doesn't account for impact of text transform or inline formatting
+            heading_height =
+              (height_of_typeset_text title) +
+              (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
+              (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom)
+            heading_height += @theme.heading_min_height_after if sect.blocks? && @theme.heading_min_height_after
+            start_new_page unless cursor > heading_height
+          end
         end
+        nil
       end
 
       def layout_chapter_title node, title, opts = {}

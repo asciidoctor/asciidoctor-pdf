@@ -872,15 +872,26 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     create_class (Asciidoctor::Converter.for 'pdf') do
       register_for (backend = %(pdf#{object_id}).to_sym)
       def arrange_section sect, title, opts
+        return if opts[:hidden]
         orphaned = nil
         dry_run single_page: true do
           start_page = page
-          theme_font(:heading, level: opts[:level]) { layout_general_heading sect, title, opts }
-          next if page != start_page
-          page.tare_content_stream
-          orphaned = stop_if_first_page_empty { traverse sect }
+          theme_font :heading, level: opts[:level] do
+            if opts[:part]
+              layout_part_title sect, title, opts
+            elsif opts[:chapterlike]
+              layout_chapter_title sect, title, opts
+            else
+              layout_general_heading sect, title, opts
+            end
+          end
+          if page == start_page
+            page.tare_content_stream
+            orphaned = stop_if_first_page_empty { traverse sect }
+          end
         end
         start_new_page if orphaned
+        nil
       end
     end
 
@@ -889,6 +900,31 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     image::tall.svg[pdfwidth=70mm]
 
+    == Section B
+
+    [%unbreakable]
+    --
+    keep
+
+    this
+
+    together
+    --
+    EOS
+
+    section_b_text = pdf.find_unique_text 'Section B'
+    (expect section_b_text[:page_number]).to be 2
+    content_text = pdf.find_unique_text 'keep'
+    (expect content_text[:page_number]).to be 2
+  end
+
+  it 'should keep section with first block of content if breakable option is set on section' do
+    pdf = to_pdf <<~EOS, analyze: true
+    == Section A
+
+    image::tall.svg[pdfwidth=70mm]
+
+    [%breakable]
     == Section B
 
     [%unbreakable]
