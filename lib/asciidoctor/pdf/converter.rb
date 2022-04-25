@@ -3065,6 +3065,11 @@ module Asciidoctor
           unless (inherited = apply_text_decoration [], :caption).empty?
             opts = opts.merge inherited
           end
+          unless scratch? || !(bg_color = @theme[%(#{category_caption}_background_color)] || @theme.caption_background_color)
+            caption_height = height_of_typeset_text string
+            fill_at = [0, cursor + (margin[:top] || 0)]
+            float { bounding_box(fill_at, width: container_width, height: caption_height) { fill_bounds bg_color } }
+          end
           indent(*indent_by) do
             layout_prose string, ({
               margin_top: margin[:top],

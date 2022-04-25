@@ -390,6 +390,28 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
   end
 
+  it 'should allow theme to set background color on caption' do
+    pdf_theme = {
+      code_caption_font_color: 'ffffff',
+      code_caption_font_style: 'bold',
+      code_caption_background_color: 'AA0000',
+      code_background_color: 'transparent',
+      code_border_radius: 0,
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true, debug: true
+    .Caption with background color
+    ----
+    content
+    ----
+    EOS
+
+    title_text = (pdf.find_text 'Caption with background color')[0]
+    (expect title_text[:font_color]).to eql 'FFFFFF'
+    (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
+    (expect pdf.pages[0][:raw_content]).to include %(/DeviceRGB cs\n0.66667 0.0 0.0 scn\n48.24 790.899 498.8 14.991 re)
+  end
+
   it 'should apply inline formatting if quotes subs is enabled' do
     pdf = to_pdf <<~'EOS', analyze: true
     [subs=+quotes]
