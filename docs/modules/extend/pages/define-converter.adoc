@@ -88,4 +88,37 @@ If you wanted, you could just use the low-level `text` method provided by Prawn.
 To find all the available methods to override, consult the {url-api-docs}[API docs^].
 For deeper examples of how to override the behavior of the converter, refer to the extended converter in the {url-infoq-template}[InfoQ Mini-Book template^].
 
+== Keep section title with content
+
+If the section title is followed by content that doesn't fit on the current page, the converter will leave the section title behind, making it an orphan.
+You can fix this behavior by overridding the `arrange_section` method in a custom converter.
+
+The default implementation of `arrange_section` only checks whether at least one line of content fits below the section title on the current page.
+A custom converter can take this opportunity to use `dry_run` to make an attempt to write content in the remaining space on the page.
+If no content is written, it can advance to the next page before the section title is written.
+
+[,ruby]
+----
+def arrange_section sect, title, opts = {}
+  return if @y >= (@margin_box.absolute_top / 3) # <1>
+  orphaned = nil
+  dry_run single_page: true do # <2>
+    start_page = page
+    theme_font :heading, level: opts[:level] do
+      layout_general_heading sect, title, opts # <3>
+    end
+    if page == start_page
+      page.tare_content_stream
+      orphaned = stop_if_first_page_empty { traverse sect } # <4>
+    end
+  end
+  start_new_page if orphaned # <5>
+end
+----
+<.> An optional optimization to skip this logic if the cursor is above the bottom third of the page.
+<.> Initiate a dry run up to the end of the current page.
+<.> Render the section title as normal.
+<.> Proceed with converting content until the end of the page is reached. Returns true if content is written, false otherwise.
+<.> Start new page before rendering section title if orphaned.
+
 Now that you've seen some examples of how to extend the converter, let's look at how to use it.
