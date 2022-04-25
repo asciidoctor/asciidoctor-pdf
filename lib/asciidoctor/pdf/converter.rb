@@ -2869,6 +2869,7 @@ module Asciidoctor
       alias start_new_part start_new_chapter
 
       def arrange_section sect, title, opts
+        return if opts[:hidden]
         theme_font :heading, level: (hlevel = opts[:level]) do
           # FIXME: this height doesn't account for impact of text transform or inline formatting
           heading_height =
