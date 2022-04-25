@@ -663,13 +663,14 @@ module Asciidoctor
         hlevel = sect.level + 1
         align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
         chapterlike = !(part = sectname == 'part') && (sectname == 'chapter' || (sect.document.doctype == 'book' && sect.level == 1))
-        hopts = { align: align, level: hlevel, outdent: !(part || chapterlike) }
+        hopts = { align: align, level: hlevel, part: part, chapterlike: chapterlike, outdent: !(part || chapterlike) }
         if part
           unless @theme.heading_part_break_before == 'auto'
             start_new = true
             theme_font(:heading, level: hlevel) { start_new_part sect }
           end
         elsif chapterlike
+          hopts[:hidden] = hidden = true if sect.special && (sect.option? 'untitled')
           if @theme.heading_chapter_break_before != 'auto' ||
               (@theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0])
             start_new = true
@@ -687,7 +688,7 @@ module Asciidoctor
           if part
             layout_part_title sect, title, hopts
           elsif chapterlike
-            layout_chapter_title sect, title, hopts unless sect.special && (sect.option? 'untitled')
+            layout_chapter_title sect, title, hopts unless hidden
           else
             layout_general_heading sect, title, hopts
           end
