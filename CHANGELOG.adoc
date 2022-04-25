@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/main[co
 Enhancements::
 
 * allow theme to control the border on all sides of tables independently (#902)
+* pass `part`, `chapterlike`, and `hidden` options to `arrange_section` method
 
 == 2.0.0.alpha.1 (2022-04-20) - @mojavelinux
 
