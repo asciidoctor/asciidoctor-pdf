@@ -100,11 +100,16 @@ If no content is written, it can advance to the next page before the section tit
 [,ruby]
 ----
 def arrange_section sect, title, opts = {}
-  return if @y >= (@margin_box.absolute_top / 3) # <1>
+  return if opts[:hidden] || @y >= (@margin_box.absolute_top / 3) # <1>
   orphaned = nil
   dry_run single_page: true do # <2>
     start_page = page
     theme_font :heading, level: opts[:level] do
+    if opts[:part]
+      layout_part_title sect, title, opts # <3>
+    elsif opts[:chapterlike]
+      layout_chapter_title sect, title, opts # <3>
+    else
       layout_general_heading sect, title, opts # <3>
     end
     if page == start_page
@@ -113,12 +118,13 @@ def arrange_section sect, title, opts = {}
     end
   end
   start_new_page if orphaned # <5>
+  nil
 end
 ----
-<.> An optional optimization to skip this logic if the cursor is above the bottom third of the page.
-<.> Initiate a dry run up to the end of the current page.
-<.> Render the section title as normal.
-<.> Proceed with converting content until the end of the page is reached. Returns true if content is written, false otherwise.
-<.> Start new page before rendering section title if orphaned.
+<1> An optional optimization to skip this logic if the cursor is above the bottom third of the page.
+<2> Initiate a dry run up to the end of the current page.
+<3> Render the section title as normal.
+<4> Proceed with converting content until the end of the page is reached. Returns true if content is written, false otherwise.
+<5> Start new page before rendering section title if orphaned.
 
 Now that you've seen some examples of how to extend the converter, let's look at how to use it.
