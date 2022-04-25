@@ -65,6 +65,16 @@ describe 'asciidoctor-pdf' do
     end
   end
 
+  context 'nogmagick' do
+    it 'should unregister Gmagick handler for PNG images if asciidoctor/pdf/nogmagick is required', cli: true do
+      out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, '-r', 'asciidoctor/pdf/nogmagick', (fixture_file 'interlaced-png.adoc'), use_bundler: true
+      (expect out).to be_empty
+      (expect err).not_to be_empty
+      (expect err).to include 'PNG uses unsupported interlace method'
+      (expect res.exitstatus).to be 0
+    end
+  end
+
   context 'pdfmark' do
     it 'should generate pdfmark file if pdfmark attribute is set', cli: true do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, '-a', 'pdfmark', (fixture_file 'book.adoc')
