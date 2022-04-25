@@ -3009,9 +3009,13 @@ module Asciidoctor
         else
           string = subject.to_s
         end
-        category_caption = (category = opts[:category]) ? %(#{category}_caption) : 'caption'
-        container_width = bounds.width
         block_align = opts.delete :block_align
+        block_width = opts.delete :block_width
+        category_caption = (category = opts[:category]) ? %(#{category}_caption) : 'caption'
+        caption_margin_outside = @theme[%(#{category_caption}_margin_outside)] || @theme.caption_margin_outside
+        caption_margin_inside = @theme[%(#{category_caption}_margin_inside)] || @theme.caption_margin_inside
+        container_width = bounds.width
+        indent_by = [0, 0]
         if (align = @theme[%(#{category_caption}_align)] || @theme.caption_align)
           align = align == 'inherit' ? (block_align || @base_align.to_sym) : align.to_sym
         else
@@ -3022,8 +3026,6 @@ module Asciidoctor
         else
           text_align = align
         end
-        indent_by = [0, 0]
-        block_width = opts.delete :block_width
         if (max_width = opts.delete :max_width) && max_width != 'none'
           if ::String === max_width
             if max_width.start_with? 'fit-content'
@@ -3055,8 +3057,6 @@ module Asciidoctor
           end
         end
         theme_font_cascade [:caption, category_caption] do
-          caption_margin_outside = @theme[%(#{category_caption}_margin_outside)] || @theme.caption_margin_outside
-          caption_margin_inside = @theme[%(#{category_caption}_margin_inside)] || @theme.caption_margin_inside
           if ((opts.delete :side) || :top) == :top
             margin = { top: caption_margin_outside, bottom: caption_margin_inside }
           else
