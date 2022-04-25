@@ -1083,6 +1083,28 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-alt.pdf'
     end
 
+    it 'should swap recto and verso background images when pdf-folio-placement is inverted', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
+      = Document Title
+      :doctype: book
+      :page-background-image-recto: image:verso-bg.png[]
+      :page-background-image-verso: image:recto-bg.png[]
+      :pdf-folio-placement: physical-inverted
+
+      content
+
+      <<<
+
+      more content
+
+      <<<
+
+      the end
+      EOS
+
+      (expect to_file).to visually_match 'page-background-image-alt.pdf'
+    end
+
     it 'should alternate page background in landscape if both verso and recto background images are specified', visual: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-alt-landscape.pdf'
       = Document Title
