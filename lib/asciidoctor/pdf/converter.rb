@@ -688,11 +688,11 @@ module Asciidoctor
           if part
             layout_part_title sect, title, hopts
           elsif chapterlike
-            layout_chapter_title sect, title, hopts unless hidden
+            layout_chapter_title sect, title, hopts
           else
             layout_general_heading sect, title, hopts
           end
-        end
+        end unless hidden
 
         if index_section
           outdent_section { convert_index_section sect }
