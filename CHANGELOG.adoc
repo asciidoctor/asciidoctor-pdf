@@ -13,6 +13,7 @@ Enhancements::
 * keep section title with first block of content is `breakable` option is set on section (#2075, #38)
 * pass `part`, `chapterlike`, and `hidden` options to `arrange_section` method
 * add support for `background-color` property on caption (#1995)
+* add support for image-based icons, resolved from `iconsdir` and having the `icontype` file extension (#1770)
 
 Bug Fixes::
 

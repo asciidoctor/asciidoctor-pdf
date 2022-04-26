@@ -2513,14 +2513,14 @@ module Asciidoctor
       end
 
       def convert_inline_icon node
-        if node.document.attr? 'icons', 'font'
+        if (icons = (doc = node.document).attr 'icons') == 'font'
           if (icon_name = node.target).include? '@'
             icon_name, icon_set = icon_name.split '@', 2
             explicit_icon_set = true
           elsif (icon_set = node.attr 'set')
             explicit_icon_set = true
           else
-            icon_set = node.document.attr 'icon-set', 'fa'
+            icon_set = doc.attr 'icon-set', 'fa'
           end
           if icon_set == 'fa' || !(IconSets.include? icon_set)
             icon_set = 'fa'
@@ -2565,6 +2565,14 @@ module Asciidoctor
           else
             log :warn, %(#{icon_name} is not a valid icon name in the #{icon_set} icon set)
             %([#{node.attr 'alt'}&#93;)
+          end
+        elsif icons
+          image_path = ::File.absolute_path %(#{icon_name = node.target}.#{image_format = doc.attr 'icontype', 'png'}), (doc.attr 'iconsdir')
+          if ::File.readable? image_path
+            %(<img src="#{image_path}" format="#{image_format}" alt="#{node.attr 'alt'}" fit="line">)
+          else
+            log :warn, %(image icon for '#{icon_name}' not found or not readable: #{image_path})
+            %([#{icon_name}&#93;)
           end
         else
           %([#{node.attr 'alt'}&#93;)

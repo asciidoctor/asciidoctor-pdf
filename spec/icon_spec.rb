@@ -8,6 +8,43 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     (expect pdf.lines).to eql ['I [heart] AsciiDoc.']
   end
 
+  it 'should read icon from image file when icons mode is image' do
+    (expect do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      :icons:
+      :iconsdir: {imagesdir}
+
+      Look for files with the icon:logo[] icon.
+      EOS
+
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:width]).to eql 14.28
+      (expect images[0][:x]).to be > 48.24
+    end).to not_log_message
+  end
+
+  it 'should log warning if image file for icon not readable' do
+    input = <<~'EOS'
+    :icons:
+    :icontype: svg
+
+    I looked for icon:not-found[], but it was no where to be seen.
+    EOS
+    (expect do
+      pdf = to_pdf input, analyze: :image
+      images = pdf.images
+      (expect images).to be_empty
+    end).to log_message severity: :WARN, message: %(~image icon for 'not-found' not found or not readable: #{fixture_file 'icons/not-found.svg'})
+
+    (expect do
+      pdf = to_pdf input, analyze: true
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      (expect lines[0]).to eql 'I looked for [not-found], but it was no where to be seen.'
+    end).to log_message
+  end
+
   it 'should use icon name from specified icon set' do
     pdf = to_pdf <<~'EOS', analyze: true
     :icons: font
