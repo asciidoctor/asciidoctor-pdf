@@ -156,7 +156,7 @@ module Asciidoctor
                 if (pcdata = node[:pcdata]).empty?
                   # QUESTION: should this be handled by the formatter after the transform is complete?
                   if previous_fragment_is_text && ((previous_fragment_text = fragments[-1][:text]).end_with? ' ')
-                    fragments[-1][:text] = previous_fragment_text.chomp ' '
+                    fragments[-1][:text] = previous_fragment_text.chop
                   end
                 else
                   tag_name = node[:name]
