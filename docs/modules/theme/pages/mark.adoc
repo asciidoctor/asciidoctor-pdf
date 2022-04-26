@@ -8,26 +8,12 @@ The keys in the `mark` category apply to an inline mark phrase.
 |===
 |Key |Value Type |Example
 
-|font-color
-|xref:color.adoc[Color] +
-(default: _inherit_)
-|[source]
-mark:
-  font-color: '#333333'
-
-|font-style
-|xref:text.adoc#font-style[Font style] +
-(default: _inherit_)
-|[source]
-mark:
-  font-style: bold
-
 |background-color
 |xref:color.adoc[Color] +
-(default: `'#ff0000'`)
+(default: `'FFFF00'`)
 |[source]
 mark:
-  background-color: '#fcf8e3'
+  background-color: #fcf8e3
 
 |border-offset
 |xref:language.adoc#values[Number] +
@@ -35,4 +21,18 @@ mark:
 |[source]
 mark:
   border-offset: 2
+
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+mark:
+  font-color: #333333
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|[source]
+mark:
+  font-style: bold
 |===

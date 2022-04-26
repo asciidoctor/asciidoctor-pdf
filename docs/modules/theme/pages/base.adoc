@@ -14,13 +14,6 @@ TIP: While it's common to define additional keys in this category (e.g., `base-b
 |===
 |Key |Value Type |Example
 
-|text-align
-|xref:text.adoc#text-align[Text alignment] +
-(default: `left`)
-|[source]
-base:
-  text-align: justify
-
 |border-color
 |xref:color.adoc[Color] +
 (default: `'EEEEEE'`)
@@ -93,6 +86,27 @@ base:
 base:
   line-height-length: 12
 
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
+(default: `left`)
+|[source]
+base:
+  text-align: center
+
+|text-decoration
+|xref:text.adoc#decoration[Text decoration] +
+(default: `none`)
+|[source]
+base:
+  text-decoration: underline
+
+|text-decoration-color
+|xref:color.adoc[Color] +
+(default: `$base-font-color`)
+|[source]
+base:
+  text-decoration-color: #0000ff
+
 |text-decoration-width
 |xref:measurement-units.adoc[Measurement] +
 (default: `1`)
@@ -101,11 +115,8 @@ base:
   text-decoration-width: 0.5
 
 |<<transform,text-transform>>
-|`none` +
-(default: `none`)
-|[source]
-base:
-  text-transform: none
+|Implicitly set to `none` on `base`.
+|_Can't be set on base_.
 |===
 
 [#height]
@@ -120,6 +131,6 @@ You don't have to go about it this way in your own theme.
 == text-transform
 
 The `text-transform` key can't be set globally.
-Therefore, this key shouldn't be used.
+Therefore, this key shouldn't be used on the `base` category.
 The value of `none` is implicit and is only documented in the table above for completeness.
 

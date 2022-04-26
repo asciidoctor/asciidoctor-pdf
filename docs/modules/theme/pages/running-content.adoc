@@ -158,7 +158,7 @@ header:
 
 |margin
 |xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom(n/a),left\]] +
-(default: [`0`, `inherit`])
+(default: `[0, inherit]`)
 |[source]
 header:
   margin: 0
@@ -307,7 +307,6 @@ footer:
 footer:
   column-rule-style: dashed
 
-// TODO Since column-rule-style follows the pattern of border-style, does that mean column-rule-width follows the pattern of border-width?
 |column-rule-width
 |xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
@@ -324,7 +323,7 @@ footer:
 
 |content-margin
 |xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
-(default: [`0`, `inherit`])
+(default: `[0, inherit]`)
 |[source]
 footer:
   content-margin: 0
@@ -445,7 +444,7 @@ footer:
 
 |<<side,<side>-margin>>
 |xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top (n/a),right,bottom,left\]] +
-(default: [`0`, `inherit`])
+(default: `[0, inherit]`)
 |[source]
 footer:
   verso:

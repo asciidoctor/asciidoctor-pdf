@@ -11,19 +11,12 @@ The keys in the `heading` category control the style of most headings, including
 |===
 |Key |Value Type |Example
 
-|text-align
-|xref:text.adoc#text-align[Text alignment] +
-(default: `$base-text-align`)
-|[source]
-heading:
-  text-align: center
-
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
 |[source]
 heading:
-  font-color: '#222222'
+  font-color: #222222
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -33,7 +26,7 @@ heading:
   font-family: Noto Serif
 
 |font-kerning
-|normal {vbar} none +
+|`normal` {vbar} `none` +
 (default: _inherit_)
 |[source]
 heading:
@@ -76,10 +69,17 @@ heading:
 
 |min-height-after
 |xref:measurement-units.adoc[Measurement] +
-(default: `$base-font-size * $base-line-height * 1.5`)
+(default: `20`)
 |[source]
 heading:
   min-height-after: 0.5in
+
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
+(default: `$base-text-align`)
+|[source]
+heading:
+  text-align: center
 
 |text-decoration
 |xref:text.adoc#decoration[Text decoration] +
@@ -93,7 +93,7 @@ heading:
 (default: `$heading-font-color`)
 |[source]
 heading:
-  text-decoration-color: '#cccccc'
+  text-decoration-color: #cccccc
 
 |text-decoration-width
 |xref:language.adoc#values[Number] +
@@ -123,13 +123,6 @@ the properties of chapter titles.
 |===
 |Key |Value Type |Example
 
-|text-align
-|xref:text.adoc#text-align[Text alignment] +
-(default: `$heading-text-align`)
-|[source]
-heading:
-  h2-text-align: center
-
 |font-color
 |xref:color.adoc[Color] +
 (default: `$heading-font-color`)
@@ -153,7 +146,7 @@ heading:
 
 |<<font-size,font-size>>
 |xref:language.adoc#values[Number] +
-(default: <1>=`24`; <2>=`18`; <3>=`16`; <4>=`14`; <5>=`12`; <6>=`10`)
+(default: h1=`24`; h2=`18`; h3=`16`; h4=`14`; <h5=`12`; h6=`10`)
 |[source]
 heading:
   h6-font-size: $base-font-size * 1.7
@@ -185,6 +178,34 @@ heading:
 |[source]
 heading:
   h2-margin-top: 6
+
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
+(default: `$heading-text-align`)
+|[source]
+heading:
+  h2-text-align: center
+
+|text-decoration
+|xref:text.adoc#decoration[Text decoration] +
+(default: `$heading-text-decoration`)
+|[source]
+heading:
+  h4-text-decoration: underline
+
+|text-decoration-color
+|xref:color.adoc[Color] +
+(default: `$heading-text-decoration-color`)
+|[source]
+heading:
+  h4-text-decoration-color: #4c516d
+
+|text-decoration-width
+|xref:language.adoc#values[Number] +
+(default: `$heading-text-decoration-width`)
+|[source]
+heading:
+  h4-text-decoration-width: 0.2
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +

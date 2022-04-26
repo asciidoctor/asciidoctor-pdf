@@ -17,10 +17,10 @@ See xref:title-page.adoc[] for details.
 
 |<<background-color,background-color>>
 |xref:color.adoc[Color] +
-(default: `'#ffffff'`)
+(default: `'FFFFFF'`)
 |[source]
 page:
-  background-color: '#fefefe'
+  background-color: #fefefe
 
 |<<images,background-image>>
 |image macro +
@@ -53,14 +53,14 @@ page:
   initial-zoom: Fit
 
 |layout
-|`portrait` {vbar} `landscape` +
+|`landscape` {vbar} `portrait` +
 (default: `portrait`)
 |[source]
 page:
   layout: landscape
 
 |margin
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]]+
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
 (default: `36`)
 |[source]
 page:
@@ -98,7 +98,7 @@ page:
 [#background-color]
 === Disable background-color
 
-To disable the background color for the page, set the value of `background-color` to white (i.e., `FFFFFF`).
+To disable the background color for the page, set the value of `background-color` to white (i.e., `#FFFFFF`).
 The color keyword `transparent` is not recognized in this context.
 
 [#images]

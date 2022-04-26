@@ -18,7 +18,7 @@ To allow `autofit` to handle all cases, set `base_font_size_min` to `0` in your 
 
 Here's an example of the `autofit` option enabled on a source block:
 
-[source,asciidoc]
+[,asciidoc]
 ....
 [source%autofit,java]
 ----
@@ -38,7 +38,7 @@ public class WidgetRepository {
 
 To enable the `autofit` option globally, set the `autofit-option` document attribute in the document header or before the relevant blocks in your content.
 
-[source,asciidoc]
+[,asciidoc]
 ----
 = Document Title
 :autofit-option:

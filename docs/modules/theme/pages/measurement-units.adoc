@@ -44,7 +44,7 @@ Currently, percentage units can only be used for placing elements on the title p
 
 Here's an example of how you can use inches to define the page margins:
 
-[source,yaml]
+[,yaml]
 ----
 page:
   margin: [0.75in, 1in, 0.75in, 1in]

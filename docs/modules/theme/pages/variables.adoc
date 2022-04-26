@@ -16,10 +16,10 @@ In other words, the path the variable refers to must be *above* the usage of tha
 
 For example, once the following line is processed,
 
-[source,yaml]
+[,yaml]
 ----
 base:
-  font-color: '#333333'
+  font-color: #333333
 ----
 
 the variable `$base-font-color` will be available for use in subsequent lines and will resolve to `#333333`.
@@ -27,10 +27,10 @@ the variable `$base-font-color` will be available for use in subsequent lines an
 Let's say you want to make the font color of the sidebar title the same as the heading font color.
 Just assign the value `$heading-font-color` to the `$sidebar-title-font-color`.
 
-[source,yaml]
+[,yaml]
 ----
 heading:
-  font-color: '#191919'
+  font-color: #191919
 sidebar:
   title:
     font-color: $heading-font-color
@@ -42,7 +42,7 @@ You can also use variables in math expressions to use one value to build another
 This is commonly done to set font sizes proportionally.
 It also makes it easy to test different values very quickly.
 
-[source,yaml]
+[,yaml]
 ----
 base:
   font-size: 12
@@ -61,22 +61,22 @@ If you are going to do this, it's recommended that you organize the keys under a
 
 For instance, here's how you can define your brand colors:
 
-[source,yaml,subs=attributes+]
+[,yaml,subs=attributes+]
 ----
 brand:
-  primary-color: '#E0162B' {conum-guard-yaml} <1>
+  primary-color: #E0162B {conum-guard-yaml} <1>
   secondary-color: '#FFFFFF' {conum-guard-yaml} <2>
   alert-color: '0052A5' {conum-guard-yaml} <3>
 ----
 <1> To align with CSS, you may add `+#+` in front of the hex color value to coerce it to a string.
 A YAML preprocessor is used to ensure the value is not treated as a comment as would normally be the case in YAML.
-<2> You may put quotes around the CSS-style hex value to make it friendly to a YAML editor or validation tool.
+<2> You may put single quotes around the CSS-style hex value to make it friendly to a YAML editor or validation tool.
 <3> The leading `+#+` on a hex value is entirely optional.
 However, we recommend that you always use either a leading `+#+` or surrounding quotes (or both) to prevent YAML from mangling the value (for example, 000000 would become 0, so use '000000' or #000000 instead).
 
 You can now use these custom variables later in the theme file:
 
-[source,yaml]
+[,yaml]
 ----
 base:
   font-color: $brand-primary-color

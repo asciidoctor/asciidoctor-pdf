@@ -1,4 +1,5 @@
 = Customize the Theme
+:description: Customize a PDF theme by extending a built-in theme.
 
 [#extend-default]
 == Extend the default theme
@@ -6,11 +7,11 @@
 A theme can extend another theme using the `extends` key.
 For example:
 
-[source,yaml]
+[,yaml]
 ----
 extends: default
 base:
-  font-color: '#ff0000'
+  font-color: #ff0000
 ----
 
 The `extends` key accepts either a single value or an array of values.
@@ -21,7 +22,7 @@ If the filename begins with `./`, it's resolved as a theme file relative to the 
 Otherwise, the filename is resolved as a theme file in the normal way (relative to the value of the `pdf-themesdir` attribute).
 
 Currently, the theme starts out empty.
-Then, the files referenced by the extends key are loaded in order.
+Then, the files referenced by the `extends` key are loaded in order.
 Finally, the keys in the current file are loaded.
 Each time a theme is loaded, the keys are overlaid onto the keys from the previous theme.
 
@@ -30,7 +31,7 @@ Each time a theme is loaded, the keys are overlaid onto the keys from the previo
 Here's an example of a basic theme file that extends the base theme:
 
 .basic-theme.yml
-[source,yaml]
+[,yaml]
 ----
 extends: base
 page:
@@ -38,21 +39,25 @@ page:
   margin: [0.75in, 1in, 0.75in, 1in]
   size: Letter
 base:
-  font-color: '#333333'
+  font-color: #333333
   font-family: Times-Roman
   font-size: 12
   line-height-length: 17
   line-height: $base-line-height-length / $base-font-size
-vertical-spacing: $base-line-height-length
+role:
+  removed:
+    font-style: italic
+    text-decoration: line-through
+    text-decoration-color: #ff0000
 heading:
-  font-color: '#262626'
+  font-color: #262626
   font-size: 17
   font-style: bold
   line-height: 1.2
-  margin-bottom: $vertical-spacing
+  margin-bottom: 10
 link:
-  font-color: '#002FA7'
-outline-list:
+  font-color: #002FA7
+list:
   indent: $base-font-size * 1.5
 footer:
   height: $base-line-height-length * 2.5
@@ -72,16 +77,17 @@ The converter uses the information from the theme map to help construct the PDF.
 
 Instead of designing a theme from scratch, you can extend the default theme using the `extends` key as follows:
 
-[source,yaml]
+[,yaml]
 ----
 extends: default
 base:
-  font-color: '#ff0000'
+  font-color: #ff0000
 ----
 
-You can also point the extends key at another custom theme to extend from it.
+You can also point the `extends` key at another custom theme to extend from it.
 If you don't want to extend any theme, including the base theme, omit the `extends` key or assign the value `~` to the `extends` key (i.e., `extends: ~`).
 
+[#load-theme-more-than-once]
 If the same theme appears multiple times in the theme hierarchy, it will only be loaded once by default.
 You can force the theme to be loaded, even if it has already been loaded, by adding the `!important` keyword at the end of the value offset by a space.
 

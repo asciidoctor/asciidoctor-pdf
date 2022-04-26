@@ -19,7 +19,7 @@ Also see <<inherit>> for more information.
 (default: _inherit_)
 |[source]
 callout-list:
-  font-color: '#555555'
+  font-color: #555555
 
 |<<inherit,font-family>>
 |xref:font-support.adoc[Font family name] +
@@ -65,7 +65,7 @@ callout-list:
 
 |margin-top-after-code
 |xref:measurement-units.adoc[Measurement] +
-(default: `-$block-margin-bottom`)
+(default: `-6`)
 |[source]
 callout-list:
   margin-top-after-code: 0

@@ -23,7 +23,7 @@ description-list:
 (default: _inherit_)
 |[source]
 description-list:
-  term-font-color: '#AA0000'
+  term-font-color: #AA0000
 
 |term-font-family
 |xref:font-support.adoc[Font family name] +
@@ -33,7 +33,7 @@ description-list:
   term-font-family: Noto Serif
 
 |term-font-kerning
-|normal {vbar} none +
+|`normal` {vbar} `none` +
 (default: _inherit_)
 |[source]
 description-list:

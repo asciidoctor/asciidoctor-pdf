@@ -16,7 +16,7 @@ The keys in the `toc` category control the arrangement and style of the table of
 (default: _inherit_)
 |[source]
 toc:
-  font-color: '#333333'
+  font-color: #333333
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -87,7 +87,7 @@ toc:
 (default: `$toc-font-color`)
 |[source]
 toc:
-  text-decoration-color: '#cccccc'
+  text-decoration-color: #cccccc
 
 |text-decoration-width
 |xref:language.adoc#values[Number] +
@@ -119,7 +119,7 @@ The keys in the `toc-h<n>` category control the arrangement and style of each he
 (default: _inherit_)
 |[source]
 toc:
-  h3-font-color: '#999999'
+  h3-font-color: #999999
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -166,21 +166,13 @@ The keys in the `toc-title` category control the arrangement and style of the ti
 |===
 |Key |Value Type |Example
 
-|text-align
-|xref:text.adoc#text-align[Text alignment] +
-(default: `$heading-h2-text-align`)
-|[source]
-toc:
-  title:
-    text-align: right
-
 |font-color
 |xref:color.adoc[Color] +
 (default: `$heading-h2-font-color`)
 |[source]
 toc:
   title:
-    font-color: '#aa0000'
+    font-color: #aa0000
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -214,6 +206,14 @@ toc:
   title:
     font-style: bold_italic
 
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
+(default: `$heading-h2-text-align`)
+|[source]
+toc:
+  title:
+    text-align: right
+
 |text-transform
 |xref:text.adoc#transform[Text transform] +
 (default: `$heading-h2-text-transform`)
@@ -246,7 +246,7 @@ toc:
 |[source]
 toc:
   dot-leader:
-    font-color: '#999999'
+    font-color: #999999
 
 |<<font-style,font-style>>
 |xref:text.adoc#font-style[Font style] +

@@ -15,7 +15,7 @@ The styling of the links is controlled by the xref:link.adoc[global link styles]
 (default: `$base-font-color`)
 |[source]
 footnotes:
-  font-color: '#cccccc'
+  font-color: #cccccc
 
 |font-size
 |xref:language.adoc#values[Number] +
@@ -43,7 +43,7 @@ footnotes:
 (default: `0`)
 |[source]
 footnotes:
-  margin-top: 10
+  margin-top: 2
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +

@@ -13,7 +13,7 @@ The value `inherit` resolves to the alignment of the block image.
 |Key |Value Type |Example
 
 |align
-|xref:blocks.adoc#align[Alignment] +
+|xref:blocks.adoc#align[Block alignment] +
 (default: `left`)
 |[source]
 caption:
@@ -24,14 +24,14 @@ caption:
 (default: _not set_)
 |[source]
 caption:
-  background-color: '#DDDDDD'
+  background-color: #DDDDDD
 
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
 |[source]
 caption:
-  font-color: '#333333'
+  font-color: #333333
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -41,7 +41,7 @@ caption:
   font-family: M+ 1mn
 
 |font-kerning
-|normal {vbar} none +
+|`normal` {vbar} `none` +
 (default: _inherit_)
 |[source]
 caption:
@@ -61,8 +61,22 @@ caption:
 caption:
   font-style: italic
 
+|margin-inside
+|xref:measurement-units.adoc[Measurement] +
+(default: `4`)
+|[source]
+caption:
+  margin-inside: 3
+
+|margin-outside
+|xref:measurement-units.adoc[Measurement] +
+(default: `0`)
+|[source]
+caption:
+  margin-outside: 0
+
 |text-align
-|xref:text.adoc#text-align[Text Alignment] +
+|xref:text.adoc#text-align[Text alignment] +
 (default: `$<category>-caption-align` or `$caption-align`)
 |[source]
 caption:
@@ -80,7 +94,7 @@ caption:
 (default: `$caption-font-color`)
 |[source]
 caption:
-  text-decoration-color: '#ff0000'
+  text-decoration-color: #ff0000
 
 |text-decoration-width
 |xref:language.adoc#values[Number] +
@@ -95,18 +109,4 @@ caption:
 |[source]
 caption:
   text-transform: uppercase
-
-|margin-inside
-|xref:measurement-units.adoc[Measurement] +
-(default: `4`)
-|[source]
-caption:
-  margin-inside: 3
-
-|margin-outside
-|xref:measurement-units.adoc[Measurement] +
-(default: `0`)
-|[source]
-caption:
-  margin-outside: 0
 |===

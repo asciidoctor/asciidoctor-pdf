@@ -40,7 +40,7 @@ code:
   border-radius: 4
 
 |border-style
-|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid`  {vbar} +
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
 (default: `solid`)
 |[source]
 verse:
@@ -141,7 +141,7 @@ verse:
     font-family: Noto Serif
 
 |font-kerning
-|normal {vbar} none +
+|`normal` {vbar} `none` +
 (default: _inherit_)
 |[source]
 verse:

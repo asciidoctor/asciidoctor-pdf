@@ -16,14 +16,14 @@ Please use one of the other three FontAwesome icon sets.
 
 You can enable font-based icons by setting the following attribute in the header of your document:
 
-[source,asciidoc]
+[,asciidoc]
 ----
 :icons: font
 ----
 
 If you want to override the font set globally, also set the `icon-set` attribute:
 
-[source,asciidoc]
+[,asciidoc]
 ----
 :icons: font
 :icon-set: pf
@@ -40,28 +40,28 @@ To find a complete list of available icons, consult the https://github.com/jesse
 
 Here's an example that shows how to use the Amazon icon from the payment font (pf) icon set in a sentence (assuming the `icon-set` is set to `pf):
 
-[source,asciidoc]
+[,asciidoc]
 ----
 Available now at icon:amazon[].
 ----
 
 You can use the `set` attribute on the icon macro to override the icon set for a given icon.
 
-[source,asciidoc]
+[,asciidoc]
 ----
 Available now at icon:amazon[set=pf].
 ----
 
 You can also specify the font set using the following shorthand.
 
-[source,asciidoc]
+[,asciidoc]
 ----
 Available now at icon:amazon@pf[].
 ----
 
 In addition to the sizes supported in the HTML backend (lg, 1x, 2x, etc.), you can enter any relative value in the size attribute (e.g., 1.5em, 150%, etc.).
 
-[source,asciidoc]
+[,asciidoc]
 ----
 icon:android[size=40em]
 ----

@@ -8,7 +8,7 @@ Therefore, if your content contains passthrough blocks or inlines, you most like
 
 Here's an example of how to skip a passthrough block when converting to PDF:
 
-[source,asciidoc]
+[,asciidoc]
 ----
 \ifndef::backend-pdf[]
 <script>
@@ -19,7 +19,7 @@ Here's an example of how to skip a passthrough block when converting to PDF:
 
 Here's an example of how to only enable a passthrough block when converting to HTML5:
 
-[source,asciidoc]
+[,asciidoc]
 ----
 \ifdef::backend-html5[]
 <script>

@@ -38,10 +38,10 @@ The following are all equivalent values for the color red:
 
 Here's how a hex color value appears in the theme file:
 
-[source,yaml]
+[,yaml]
 ----
 base:
-  font-color: '#ff0000'
+  font-color: #ff0000
 ----
 
 == RGB
@@ -57,7 +57,7 @@ Here's how to specify the color red in RGB:
 
 Here's how a RGB color value appears in the theme file:
 
-[source,yaml]
+[,yaml]
 ----
 base:
   font-color: [255, 0, 0]
@@ -78,7 +78,7 @@ Here's how to specify the color red in CMYK:
 
 Here's how a CMYK color value appears in the theme file:
 
-[source,yaml]
+[,yaml]
 ----
 base:
   font-color: [0, 0.99, 1, 0]
@@ -88,7 +88,7 @@ base:
 
 It's possible to specify no color by assigning the special value `transparent`, as shown here:
 
-[source,yaml]
+[,yaml]
 ----
 table:
   background-color: transparent

@@ -105,14 +105,6 @@ The keys in the `sidebar-title` category control the arrangement and style of si
 |===
 |Key |Value Type |Example
 
-|text-align
-|xref:text.adoc#text-align[Text alignment] +
-(default: `center`)
-|[source]
-sidebar:
-  title:
-    text-align: left
-
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
@@ -152,6 +144,14 @@ sidebar:
 sidebar:
   title:
     font-style: bold_italic
+
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
+(default: `center`)
+|[source]
+sidebar:
+  title:
+    text-align: left
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +

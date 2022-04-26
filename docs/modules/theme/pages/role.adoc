@@ -42,7 +42,7 @@ role:
     border-offset: 2
 
 |border-radius
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
 |[source]
 role:
@@ -50,7 +50,7 @@ role:
     border-radius: 3
 
 |border-width
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
 |[source]
 role:
@@ -67,7 +67,7 @@ role:
 
 |font-family
 |xref:font-support.adoc[Font family name] +
-(default: `Courier`)
+(default: _inherit_)
 |[source]
 role:
   label:
@@ -88,6 +88,14 @@ role:
 role:
   heavy:
     font-style: bold
+
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
+(default: _inherit_)
+|[source]
+role:
+  declare:
+    text-align: center
 
 |text-decoration
 |xref:text.adoc#decoration[Text decoration] +

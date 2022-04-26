@@ -1,7 +1,7 @@
 = Block Styles
 
 [#align]
-== Alignment
+== Block alignment
 
 The `align` key is used to align a block element horizontally within its parent container.
 This key is used for non-text elements, such as an image, table, or caption with a narrower width than the content area.
@@ -9,9 +9,9 @@ It's roughly akin to the function of the `align-self` property of a flexbox elem
 
 The element can be aligned using the following keywords:
 
-* `left`
-* `center`
-* `right`
+`center`:: The block is centered horizontally within the parent container.
+`left`:: The block is aligned to the left side of the parent container.
+`right`:: The block is aligned to the right side of the parent container.
 
 The `align` key is distinct from the similarly-named `text-align` key.
-The latter key aligns text within the container (i.e., the text box) using text alignment rules.
+The xref:text.adoc#text-align[text-align key] aligns text within the text box using text alignment rules.

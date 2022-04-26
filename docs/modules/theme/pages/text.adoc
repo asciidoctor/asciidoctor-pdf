@@ -8,43 +8,51 @@ It has the same function as the `text-align` property in CSS.
 
 The text can be aligned using the following keywords:
 
-* `left`
-* `center`
-* `right`
-* `justify` (flush to each edge of the text box, if possible)
+`center`:: Text is centered within the text box.
+`justify`:: Text is spaced out to align evenly with both sides of the text box.
+`left`:: Text is aligned to the left side of the text box.
+`right`:: Text is aligned to the right side of the text box.
 
 The `text-align` key is distinct from the similarly-named `align` key.
-The latter key aligns a block element horizontally within its container.
+The xref:blocks.adoc#align[align key] aligns a block element horizontally within its container.
 
 [#decoration]
 == Decoration
 
-The following decorations can be applied to text:
+The `text-decoration` key specifies the type of decoration, such as an underline, that is applied to the text.
+It accepts the following keywords:
 
-* `none` (no decoration)
-* `underline`
-* `line-through`
+`line-through`:: A line is drawn across the text.
+This is commonly referred to as a strikethrough.
+`none`:: Clears an inherited value and no decoration is applied to the text.
+`underline`:: A line is drawn beneath the text.
+
+When a key category allows the `text-decoration` key to be set, you can usually specify a `text-decoration-color` and `text-decoration-width`, too.
 
 [#font-style]
 == Font style
 
-In most cases, wherever you can specify a custom font family, you can also specify a font style.
-These two settings are combined to locate the font to use.
+The `font-style` key specifies the font variant in a font family that the text should use.
+The key accepts the following keywords:
 
-The following font styles are recognized:
+`bold`:: Text is styled using the bold variant of a font family.
+`bold_italic`:: Text is styled using the bold italic variant of a font family
+`italic`:: Text is styled using the italic variant of a font family.
+`normal`:: Text is styled using the normal font variant in a font family.
+`normal_italic`:: The style of the text is reset to normal, and then the text is styled using the italic variant of a font family.
 
-* `normal` (no style)
-* `italic`
-* `bold`
-* `bold_italic`
+Usually, you can specify a font style wherever you can set a font family (`font-family`).
+The converter uses the values of both keys in combination to locate the correct font within a font stack.
 
 [#transform]
 == Transform
 
-Many places where font properties can be specified, a case transformation can be applied to the text.
-The following transforms are recognized:
+The `text-transform` key changes the case of the text.
+It accepts the following keywords:
 
-* `uppercase`
-* `lowercase`
-* `capitalize` (each word, like CSS)
-* `none` (clears an inherited value)
+`capitalize`:: Transforms the first letter of each word to a capital letter.
+`none`:: Clears an inherited value and no case transformation is applied to the text.
+`lowercase`:: Transforms all the text to lower case letters.
+`uppercase`:: Transforms all the text to capital letters.
+
+The `text-transform` key can’t be set on the xref:base.adoc[base category].
