@@ -21,7 +21,7 @@ caption:
 
 |background-color
 |xref:color.adoc[Color] +
-(default: _none_)
+(default: _not set_)
 |[source]
 caption:
   background-color: '#DDDDDD'
