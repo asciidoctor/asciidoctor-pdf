@@ -651,7 +651,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         EOS
 
         (expect to_file).to visually_match 'image-svg-with-missing-image.pdf'
-      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-remote-image.svg'}; Error retrieving URL https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@v1.5.0.rc.2/spec/fixtures/logo.png)
+      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-remote-image.svg'}; Error retrieving URL https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@v1.6.2/spec/fixtures/logo.png)
     end
 
     it 'should embed remote image if allow allow-uri-read attribute is set', visual: true, network: true do
@@ -1382,7 +1382,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should read remote image over HTTPS if allow-uri-read is set', network: true do
-      pdf = to_pdf 'image::https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@v1.5.0.rc.2/spec/fixtures/logo.png[Remote Image]', attribute_overrides: { 'allow-uri-read' => '' }
+      pdf = to_pdf 'image::https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@v1.6.2/spec/fixtures/logo.png[Remote Image]', attribute_overrides: { 'allow-uri-read' => '' }
       images = get_images pdf, 1
       (expect images).to have_size 1
       (expect (pdf.page 1).text).to be_empty
