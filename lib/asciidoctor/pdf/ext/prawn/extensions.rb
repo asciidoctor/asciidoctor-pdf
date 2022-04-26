@@ -910,7 +910,6 @@ module Asciidoctor
       def scratch?
         @label == :scratch
       end
-      alias is_scratch? scratch?
 
       def with_dry_run &block
         yield dry_run(&block).position_onto self, cursor
