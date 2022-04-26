@@ -2610,15 +2610,16 @@ module Asciidoctor
       end
 
       def convert_inline_indexterm node
+        visible = node.type == :visible
         if scratch?
-          node.type == :visible ? node.text : ''
+          visible ? node.text : ''
         else
           # NOTE: initialize index in case converter is called before PDF is initialized
           @index ||= IndexCatalog.new
           # NOTE: page number (:page key) is added by InlineDestinationMarker
           dest = { anchor: (anchor_name = @index.next_anchor_name) }
           anchor = %(<a id="#{anchor_name}" type="indexterm">#{DummyText}</a>)
-          if node.type == :visible
+          if visible
             visible_term = node.text
             @index.store_primary_term (sanitize visible_term), dest
             %(#{anchor}#{visible_term})
