@@ -17,14 +17,14 @@ The kbd reference is a span of text denoting textual user input from a keyboard,
 (default: _not set_)
 |[source]
 kbd:
-  background-color: '#fafafa'
+  background-color: #fafafa
 
 |<<border-color,border-color>>
 |xref:color.adoc[Color] +
 (default: _not set_)
 |[source]
 kbd:
-  border-color: '#cccccc'
+  border-color: #cccccc
 
 |<<offset,border-offset>>
 |xref:language.adoc#values[Number] +
@@ -34,14 +34,14 @@ kbd:
   border-offset: 1.5
 
 |<<border-color,border-radius>>
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] +
 (default: `0`)
 |[source]
 kbd:
   border-radius: 2
 
 |<<border-color,border-width>>
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] +
 (default: `$base-border-width`)
 |[source]
 kbd:
@@ -52,7 +52,7 @@ kbd:
 (default: _inherit_)
 |[source]
 kbd:
-  font-color: '#000'
+  font-color: #000
 
 |font-family
 |xref:font-support.adoc[Font family name] +

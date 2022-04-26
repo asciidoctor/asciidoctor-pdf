@@ -16,24 +16,38 @@ The keys in the `verse` category control the arrangement and style of verse bloc
 (default: _not set_)
 |[source]
 verse:
-  background-color: '#dddddd'
+  background-color: #757575
 
 |border-color
 |xref:color.adoc[Color] +
-(default: `'#eeeeee'`)
+(default: `'EEEEEE'`)
 |[source]
 verse:
-  border-color: '#dddddd'
+  border-color: #e6e8fa
 
 |<<border-width,border-left-width>>
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] +
 (default: `4`)
 |[source]
 verse:
   border-left-width: 5
 
+|border-radius
+|xref:measurement-units.adoc[Measurement] +
+(default: _not set_)
+|[source]
+code:
+  border-radius: 4
+
+|border-style
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid`  {vbar} +
+(default: `solid`)
+|[source]
+verse:
+  border-style: dashed
+
 |<<border-width,border-width>>
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[ends,sides\]] +
 (default: `0`)
 |[source]
 verse:
@@ -44,7 +58,7 @@ verse:
 (default: _inherit_)
 |[source]
 verse:
-  font-color: '#333333'
+  font-color: #333333
 
 |<<font-family,font-family>>
 |xref:font-support.adoc[Font family name] +
@@ -76,10 +90,10 @@ verse:
 
 |padding
 |xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
-(default: `[6, 12, -6, 14]`)
+(default: `[6, 12, 6, 14]`)
 |[source]
 verse:
-  padding: [5, 10, -5, 12]
+  padding: 5
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
@@ -116,7 +130,7 @@ The keys in the `verse-cite` category control the arrangement and style of the c
 |[source]
 verse:
   cite:
-    font-color: '#999999'
+    font-color: #999999
 
 |font-family
 |xref:font-support.adoc[Font family name] +

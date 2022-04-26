@@ -10,13 +10,13 @@ The keys in the `thematic-break` category control the style of thematic breaks, 
 
 |border-color
 |xref:color.adoc[Color] +
-(default: `'#eeeeee'`)
+(default: `'EEEEEE'`)
 |[source]
 thematic-break:
-  border-color: '#eeeeee'
+  border-color: #e6e8fa
 
 |border-style
-|`solid` {vbar} `double` {vbar} `dashed` {vbar} `dotted` +
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
 (default: `solid`)
 |[source]
 thematic-break:
@@ -27,7 +27,7 @@ thematic-break:
 (default: `0.5`)
 |[source]
 thematic-break:
-  border-width: 0.5
+  border-width: 0.8
 
 |margin-bottom
 |xref:measurement-units.adoc[Measurement] +

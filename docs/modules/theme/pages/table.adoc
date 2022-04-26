@@ -14,6 +14,7 @@ The keys in the `table` category control the arrangement and style of tables and
 |background-color
 |xref:color.adoc[Color] +
 (default: `transparent`)
+//TODO Where is the transparent value for the table background set in the base theme?
 |[source]
 table:
   background-color: #ffffff
@@ -26,14 +27,14 @@ table:
   border-color: #dddddd
 
 |border-style
-|`solid` {vbar} `dashed` {vbar} `dotted` {vbar} Style[top,right,bottom,left] +
+|`dashed` {vbar} `dotted` {vbar} `solid` {vbar} Style[top,right,bottom,left] +
 (default: `solid`)
 |[source]
 table:
-  border-style: solid
+  border-style: [solid, ~, solid, dotted]
 
 |border-width
-|xref:language.adoc#values[Number] {vbar} xref:language.adoc#values[Number[top,right,bottom,left\]] +
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
 (default: `0.5`)
 |[source]
 table:
@@ -73,7 +74,7 @@ table:
 (default: _inherit_)
 |[source]
 table:
-  font-color: '#333333'
+  font-color: #333333
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -118,7 +119,7 @@ table:
   grid-style: dashed
 
 |grid-width
-|xref:language.adoc#values[Number] {vbar} xref:language.adoc#values[Number[rows,cols\]] +
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[rows,cols\]] +
 (default: `0.5`)
 |[source]
 table:
@@ -140,7 +141,7 @@ The keys in the `table-head` category control the arrangement and style of the t
 |[source]
 table:
   head:
-    background-color: '#f0f0f0'
+    background-color: #f0f0f0
 
 |border-bottom-color
 |xref:color.adoc[Color] +
@@ -148,10 +149,10 @@ table:
 |[source]
 table:
   head:
-    border-bottom-color: '#dddddd'
+    border-bottom-color: #dddddd
 
 |border-bottom-style
-|`solid` {vbar} `dashed` {vbar} `dotted` +
+|`dashed` {vbar} `dotted` {vbar} `solid` +
 (default: `solid`)
 |[source]
 table:
@@ -159,7 +160,7 @@ table:
     border-bottom-style: dashed
 
 |border-bottom-width
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] +
 (default: `1.25`)
 |[source]
 table:
@@ -172,7 +173,7 @@ table:
 |[source]
 table:
   head:
-    font-color: '#333333'
+    font-color: #333333
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -246,15 +247,15 @@ The keys in the `table-body` category control the background of the table body.
 |[source]
 table:
   body:
-    background-color: '#fdfdfd'
+    background-color: #fdfdfd
 
 |<<stripes,stripe-background-color>>
 |xref:color.adoc[Color] +
-(default: `'#eeeeee'`)
+(default: `'EEEEEE'`)
 |[source]
 table:
   body:
-    stripe-background-color: '#efefef'
+    stripe-background-color: #efefef
 |===
 
 [#stripes]
@@ -281,7 +282,7 @@ The keys in the `table-foot` category control the arrangement and style of the t
 |[source]
 table:
   foot:
-    background-color: '#f0f0f0'
+    background-color: #f0f0f0
 
 |font-color
 |xref:color.adoc[Color] +
@@ -289,7 +290,7 @@ table:
 |[source]
 table:
   foot:
-    font-color: '#333333'
+    font-color: #333333
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -375,7 +376,7 @@ The keys in the `table-header-cell` category control the style and arrangement o
 |[source]
 table:
   header-cell:
-    background-color: '#f0f0f0'
+    background-color: #f0f0f0
 
 |font-color
 |xref:color.adoc[Color] +
@@ -383,7 +384,7 @@ table:
 |[source]
 table:
   header-cell:
-    font-color: '#1a1a1a'
+    font-color: #1a1a1a
 
 |font-family
 |xref:font-support.adoc[Font family name] +

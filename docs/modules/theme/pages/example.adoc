@@ -10,27 +10,34 @@ The keys in the `example` category control the arrangement and style of example 
 
 |background-color
 |xref:color.adoc[Color] +
-(default: `'#ffffff'`)
+(default: `'FFFFFF'`)
 |[source]
 example:
-  background-color: '#fffef7'
+  background-color: #fffef7
 
 |border-color
 |xref:color.adoc[Color] +
-(default: `'#eeeeee'`)
+(default: `'EEEEEE'`)
 |[source]
 example:
-  border-color: '#eeeeee'
+  border-color: #191970
 
 |border-radius
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
 |[source]
 example:
   border-radius: 4
 
+|border-style
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
+(default: `solid`)
+|[source]
+example:
+  border-style: dashed
+
 |border-width
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[ends,sides\]] +
 (default: `0.5`)
 |[source]
 example:
@@ -41,7 +48,7 @@ example:
 (default: _inherit_)
 |[source]
 example:
-  font-color: '#262626'
+  font-color: #262626
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -73,10 +80,10 @@ example:
 
 |padding
 |xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
-(default: `[12, 12, 0, 12]`)
+(default: `12`)
 |[source]
 example:
-  padding: [15, 15, 0, 15]
+  padding: [5, 10, 5, 10]
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +

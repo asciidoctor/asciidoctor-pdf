@@ -28,7 +28,7 @@ IMPORTANT: If you don't specify a `height` for either the `header` or `footer` k
 (default: _not set_)
 |[source]
 header:
-  background-color: '#eeeeee'
+  background-color: #eeeeee
 
 |background-image
 |image macro +
@@ -42,17 +42,17 @@ header:
 (default: _not set_)
 |[source]
 header:
-border-color: '#dddddd'
+  border-color: #dddddd
 
 |border-style
-|`solid` {vbar} `double` {vbar} `dashed` {vbar} `dotted` +
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
 (default: `solid`)
 |[source]
 header:
   border-style: dashed
 
 |border-width
-|xref:measurement-units.adoc[Measurement] +
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[ends,sides\]] +
 (default: `$base-border-width`)
 |[source]
 header:
@@ -63,7 +63,7 @@ header:
 (default: _not set_)
 |[source]
 header:
-  column-rule-color: '#CCCCCC'
+  column-rule-color: #CCCCCC
 
 |column-rule-spacing
 |xref:measurement-units.adoc[Measurement] +
@@ -73,7 +73,7 @@ header:
   column-rule-spacing: 5
 
 |column-rule-style
-|`solid` {vbar} `double` {vbar} `dashed` {vbar} `dotted` +
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
 (default: `solid`)
 |[source]
 header:
@@ -95,7 +95,7 @@ header:
 
 |content-margin
 |xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
-(default: [`0`, `inherit`])
+(default: `[0, inherit]`)
 |[source]
 header:
   content-margin: 0
@@ -105,7 +105,7 @@ header:
 (default: _inherit_)
 |[source]
 header:
-  font-color: '#333333'
+  font-color: #333333
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -157,7 +157,7 @@ header:
   line-height: 1.2
 
 |margin
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom (n/a),left\]] +
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom(n/a),left\]] +
 (default: [`0`, `inherit`])
 |[source]
 header:
@@ -215,7 +215,7 @@ header:
     content-margin: [0, 0, 0, inherit]
 
 |<<side,<side>-margin>>
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom (n/a),left\]] +
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom(n/a),left\]] +
 (default: _inherit_)
 |[source]
 header:
@@ -232,7 +232,7 @@ header:
 
 |<<position,<side>-<position>-content>>
 |xref:quoted-string.adoc[Quoted string] +
-(default: '\{page-number}')
+(default: `'\{page-number}'`)
 |[source]
 header:
   recto:
@@ -256,7 +256,7 @@ IMPORTANT: If you don't specify a `height` for either the `header` or `footer` k
 (default: _not set_)
 |[source]
 footer:
-  background-color: '#eeeeee'
+  background-color: #eeeeee
 
 |background-image
 |image macro +
@@ -270,17 +270,17 @@ footer:
 (default: _not set_)
 |[source]
 footer:
-  border-color: '#dddddd'
+  border-color: #dddddd
 
 |border-style
-|`solid` {vbar} `double` {vbar} `dashed` {vbar} `dotted` +
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
 (default: `solid`)
 |[source]
 footer:
   border-style: dashed
 
 |border-width
-|xref:measurement-units.adoc[Measurement] +
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[ends,sides\]] +
 (default: `$base-border-width`)
 |[source]
 footer:
@@ -291,7 +291,7 @@ footer:
 (default: _not set_)
 |[source]
 footer:
-  column-rule-color: '#CCCCCC'
+  column-rule-color: #CCCCCC
 
 |column-rule-spacing
 |xref:measurement-units.adoc[Measurement] +
@@ -301,12 +301,13 @@ footer:
   column-rule-spacing: 5
 
 |column-rule-style
-|`solid` {vbar} `double` {vbar} `dashed` {vbar} `dotted` +
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
 (default: `solid`)
 |[source]
 footer:
   column-rule-style: dashed
 
+// TODO Since column-rule-style follows the pattern of border-style, does that mean column-rule-width follows the pattern of border-width?
 |column-rule-width
 |xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
@@ -333,7 +334,7 @@ footer:
 (default: _inherit_)
 |[source]
 footer:
-  font-color: '#333333'
+  font-color: #333333
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -385,8 +386,8 @@ footer:
   line-height: 1.2
 
 |margin
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top (n/a),right,bottom,left\]] +
-(default: [`0`, `inherit`])
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top(n/a),right,bottom,left\]] +
+(default: `[0, inherit]`)
 |[source]
 footer:
   margin: 0
