@@ -23,7 +23,7 @@ image:
 (default: _not set_)
 |[source]
 image:
-  border-color: '#cccccc'
+  border-color: #cccccc
 
 |<<fit,border-fit>>
 |`content` {vbar} `auto` +
@@ -33,14 +33,21 @@ image:
   border-fit: auto
 
 |border-radius
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
 |[source]
 image:
   border-radius: 2
 
+|border-style
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid`
+(default: `solid`)
+|[source]
+image:
+  border-style: dashed
+
 |border-width
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[ends,sides\]] +
 (default: _not set_)
 |[source]
 image:
@@ -95,7 +102,7 @@ image:
 |[source]
 image:
   alt:
-    font-color: '#ff000'
+    font-color: #ff0000
 
 |font-family
 |xref:font-support.adoc[Font family name] +

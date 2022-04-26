@@ -16,14 +16,14 @@ The keys in the `codespan` category are used for inline monospace text in prose 
 (default: _not set_)
 |[source]
 codespan:
-  background-color: '#f5f5f5'
+  background-color: #f5f5f5
 
 |<<border-color,border-color>>
 |xref:color.adoc[Color] +
 (default: _not set_)
 |[source]
 codespan:
-  border-color: '#cccccc'
+  border-color: #cccccc
 
 |<<border-offset,border-offset>>
 |xref:language.adoc#values[Number] +
@@ -33,14 +33,14 @@ codespan:
   border-offset: 2
 
 |border-radius
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
 |[source]
 codespan:
   border-radius: 3
 
 |border-width
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] +
 (default: `$base-border-width`)
 |[source]
 codespan:
@@ -51,7 +51,7 @@ codespan:
 (default: _inherit_)
 |[source]
 codespan:
-  font-color: '#b12146'
+  font-color: #b12146
 
 |font-family
 |xref:font-support.adoc[Font family name] +

@@ -48,8 +48,9 @@ The value of a key may be one of the following types:
 * Number (integer or float) with optional units (default unit is points)
 * Array
 ** Color as RGB array (e.g., [51, 51, 51])
-** Color CMYK array (e.g., [50, 100, 0, 0])
-** Margin (e.g., [1in, 1in, 1in, 1in])
+** Color as CMYK array (e.g., [50, 100, 0, 0])
+** Border width as ends and sides array (e.g., [10, 5])
+** Margin as top, right, bottom, and left array (e.g., [1in, 1in, 1in, 1in])
 ** Padding (e.g., [1in, 1in, 1in, 1in])
 * Variable reference (e.g., $base_font_color or $base-font-color)
 * Math expression
@@ -72,7 +73,7 @@ These keys may be written longhand:
 
 [source,yaml]
 ----
-base-font-color: '#333333'
+base-font-color: #333333
 base-font-family: Times-Roman
 base-font-size: 12
 ----
@@ -82,7 +83,7 @@ Or, to avoid having to type the prefix `base-` multiple times, the keys may be w
 [source,yaml]
 ----
 base:
-  font-color: '#333333'
+  font-color: #333333
   font-family: Times-Roman
   font-size: 12
 ----
@@ -93,7 +94,7 @@ Or even:
 ----
 base:
   font:
-    color: '#333333'
+    color: #333333
     family: Times-Roman
     size: 12
 ----

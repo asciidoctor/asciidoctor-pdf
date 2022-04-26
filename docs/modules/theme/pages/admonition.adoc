@@ -11,22 +11,59 @@ The keys in the `admonition` category control the arrangement and style of admon
 |===
 |Key |Value Type |Example
 
-|column-rule-color
+|background-color
 |xref:color.adoc[Color] +
-(default: `'#eeeeee'`)
+(default: _not set_)
+|[source]
+admontition:
+  background-color: #757575
+
+|border-color
+|xref:color.adoc[Color] +
+(default: _not set_)
 |[source]
 admonition:
-  column-rule-color: '#aa0000'
+  border-color: #e6e8fa
+
+|border-radius
+|xref:measurement-units.adoc[Measurement] +
+(default: _not set_)
+|[source]
+admonition:
+  border-radius: 4
+
+|border-style
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid`  {vbar} +
+(default: `solid`)
+|[source]
+admonition:
+  border-style: dashed
+
+|border-width
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[ends,sides\]] +
+(default: _not set_)
+|[source]
+verse:
+  border-width: 0.5
+
+// TODO What about admonition_rule_color which is used on line 106 in the admonition_spec.rb?
+
+|column-rule-color
+|xref:color.adoc[Color] +
+(default: `'EEEEEE'`)
+|[source]
+admonition:
+  column-rule-color: #aa0000
 
 |column-rule-style
-|`solid` {vbar} `double` {vbar} `dashed` {vbar} `dotted` +
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid`  {vbar} +
 (default: `solid`)
 |[source]
 admonition:
   column-rule-style: double
 
 |column-rule-width
-|xref:language.adoc#values[Number] +
+|xref:measurement-units.adoc[Measurement] +
 (default: `0.5`)
 |[source]
 admonition:
@@ -37,7 +74,7 @@ admonition:
 (default: _inherit_)
 |[source]
 admonition:
-  font-color: '#999999'
+  font-color: #999999
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -69,7 +106,7 @@ admonition:
 
 |padding
 |xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
-(default: `[0, 12, 0, 12]`)
+(default: `[4, 12, 4, 12]`)
 |[source]
 admonition:
   padding: [0, 14, 0, 14]
@@ -105,7 +142,7 @@ admonition:
 |[source]
 admonition:
   label:
-    font-color: '#262626'
+    font-color: #262626
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -148,7 +185,7 @@ admonition:
     min-width: 48
 
 |<<padding,padding>>
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top(n/a),right,bottom(n/a),left\]] +
 (default: `$admonition-padding`)
 |[source]
 admonition:
@@ -194,7 +231,7 @@ The keys in the `admonition-label-<name>` category control the arrangement and s
 admonition:
   label:
     caution:
-      font-color: '#262626'
+      font-color: #262626
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -275,12 +312,12 @@ admonition:
 
 |stroke-color
 |xref:color.adoc[Color] +
-(default: caution=`'#bf3400'`; important=`'#bf0000'`; note=`'#19407c'`; tip=`'#111111'`; warning=`'#bf6900'`)
+(default: caution=`#bf3400`; important=`#bf0000`; note=`#19407c`; tip=`#111111`; warning=`#bf6900`)
 |[source]
 admonition:
   icon:
     important:
-      stroke-color: '#ff0000'
+      stroke-color: #ff0000
 |===
 
 [#name]
