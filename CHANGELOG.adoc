@@ -14,6 +14,10 @@ Enhancements::
 * pass `part`, `chapterlike`, and `hidden` options to `arrange_section` method
 * add support for `background-color` property on caption (#1995)
 
+Bug Fixes::
+
+* keep closing quote with trailing ellipsis in text enclosed in typographic quotes (#321)
+
 == 2.0.0.alpha.1 (2022-04-20) - @mojavelinux
 
 Enhancements::

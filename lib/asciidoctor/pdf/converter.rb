@@ -2657,8 +2657,10 @@ module Asciidoctor
           open, close, is_tag = ['<sub>', '</sub>', true]
         when :double
           open, close, is_tag = [theme.quotes[0], theme.quotes[1], false]
+          quotes = true
         when :single
           open, close, is_tag = [theme.quotes[2], theme.quotes[3], false]
+          quotes = true
         when :mark
           open, close, is_tag = ['<mark>', '</mark>', true]
         else
@@ -2666,6 +2668,11 @@ module Asciidoctor
         end
 
         inner_text = node.text
+
+        if quotes && (len = inner_text.length) > 3 &&
+            (inner_text.end_with? '...') && !((inner_text_trunc = inner_text.slice 0, len - 3).end_with? ?\\)
+          inner_text = inner_text_trunc + '&#8230;'
+        end
 
         if (roles = node.role)
           roles.split.each do |role|
