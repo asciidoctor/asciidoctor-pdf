@@ -14,6 +14,7 @@ Enhancements::
 * pass `part`, `chapterlike`, and `hidden` options to `arrange_section` method
 * add support for `background-color` property on caption (#1995)
 * add support for image-based icons, resolved from `iconsdir` and having the `icontype` file extension (#1770)
+* add `asciidoctor/pdf/nogmagick` script to prevent Gmagick from handling PNG images (#1687)
 
 Bug Fixes::
 
