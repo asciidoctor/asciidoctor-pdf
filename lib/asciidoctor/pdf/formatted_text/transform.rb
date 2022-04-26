@@ -162,8 +162,13 @@ module Asciidoctor
                   tag_name = node[:name]
                   attributes = node[:attributes]
                   parent = clone_fragment inherited
+                  fragment = build_fragment parent, tag_name, attributes
+                  if tag_name == :a && fragment[:type] == :indexterm && !attributes[:visible] &&
+                      previous_fragment_is_text && ((previous_fragment_text = fragments[-1][:text]).end_with? ' ')
+                    fragments[-1][:text] = previous_fragment_text.chop
+                  end
                   # NOTE: decorate child fragments with inherited properties from this element
-                  apply pcdata, fragments, (build_fragment parent, tag_name, attributes)
+                  apply pcdata, fragments, fragment
                   previous_fragment_is_text = false
                 end
               # case 2: void element
