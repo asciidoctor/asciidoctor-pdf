@@ -994,16 +994,17 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should not allow remote image in SVG to be read if allow-uri-read attribute is not set', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-with-remote-image-disabled.pdf'
-      :page-background-image: image:svg-with-remote-image.svg[fit=none,position=top]
+      (expect do
+        to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-with-remote-image-disabled.pdf'
+        :page-background-image: image:svg-with-remote-image.svg[fit=none,position=top]
 
-      Asciidoctor
-      EOS
+        Asciidoctor
+        EOS
 
-      (expect to_file).to visually_match 'page-background-image-svg-with-image-disabled.pdf'
+        (expect to_file).to visually_match 'page-background-image-svg-with-image-disabled.pdf'
+      end).to log_message severity: :WARN, message: '~No handler available for this URL scheme'
     end
 
-    # NOTE: this is a negative test that should be reversed once support is added
     it 'should not warn if background SVG has warnings', visual: true do
       (expect do
         to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-faulty.pdf'
@@ -1013,7 +1014,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         This page has a background image that is rather loud.
         EOS
         (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
-      end).to not_log_message
+      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'faulty.svg'}; Unknown tag 'foobar')
     end
 
     it 'should read local image relative to SVG', visual: true do

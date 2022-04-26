@@ -13,14 +13,18 @@ module Asciidoctor
             #opts[:cache_images] = cache_uri if !(opts.key? :cache_images) && (respond_to? :cache_uri)
             #opts[:fallback_font_name] = fallback_svg_font_name if !(opts.key? :fallback_font_name) && (respond_to? :fallback_svg_font_name)
             if (fit = opts.delete :fit) && !(opts[:width] || opts[:height])
-              svg (::File.read file, mode: 'r:UTF-8'), opts do |svg_doc|
+              image_info = svg (::File.read file, mode: 'r:UTF-8'), opts do |svg_doc|
                 # NOTE: fit to specified width, then reduce size if height exceeds bounds
                 svg_doc.calculate_sizing requested_width: fit[0] if svg_doc.sizing.output_width != fit[0]
                 svg_doc.calculate_sizing requested_height: fit[1] if svg_doc.sizing.output_height > fit[1]
               end
             else
-              svg (::File.read file, mode: 'r:UTF-8'), opts
+              image_info = svg (::File.read file, mode: 'r:UTF-8'), opts
             end
+            if ::Asciidoctor::Logging === self && !scratch? && !(warnings = image_info[:warnings]).empty?
+              warnings.each {|warning| log :warn, %(problem encountered in image: #{file}; #{warning}) }
+            end
+            image_info
           else
             ::File.open(file, 'rb') {|fd| super fd, opts }
           end
