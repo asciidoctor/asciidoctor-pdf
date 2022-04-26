@@ -19,6 +19,13 @@ The value `inherit` resolves to the alignment of the block image.
 caption:
   align: right
 
+|background-color
+|xref:color.adoc[Color] +
+(default: _none_)
+|[source]
+caption:
+  background-color: '#DDDDDD'
+
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
