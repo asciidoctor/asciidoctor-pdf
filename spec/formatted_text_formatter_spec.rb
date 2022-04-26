@@ -1115,5 +1115,23 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect (pdf.find_text %(\u00abDouble Quoted\u00bb))).to have_size 2
       (expect (pdf.find_text %(\u2039Single Quoted\u203a))).to have_size 2
     end
+
+    it 'should keep closing double quote attached to trailing ellipsis' do
+      pdf = to_pdf <<~EOS, analyze: true
+      #{(['filler'] * 15).join ' '} ||||| "`and then...`"
+      EOS
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[1]).to start_with 'then'
+    end
+
+    it 'should keep closing single quote attached to trailing ellipsis' do
+      pdf = to_pdf <<~EOS, analyze: true
+      #{(['filler'] * 15).join ' '} .|||||. '`and then...`'
+      EOS
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[1]).to start_with 'then'
+    end
   end
 end

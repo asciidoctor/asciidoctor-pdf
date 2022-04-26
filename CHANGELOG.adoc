@@ -13,6 +13,10 @@ Enhancements::
 * keep section title with first block of content is `breakable` option is set on section (#2075, #38)
 * pass `part`, `chapterlike`, and `hidden` options to `arrange_section` method
 
+Bug Fixes::
+
+* keep closing quote with trailing ellipsis in text enclosed in typographic quotes (#321)
+
 == 2.0.0.alpha.1 (2022-04-20) - @mojavelinux
 
 Enhancements::
