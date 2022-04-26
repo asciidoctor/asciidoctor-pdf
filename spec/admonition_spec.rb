@@ -911,6 +911,53 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end).to log_message severity: :WARN, message: '~admonition icon not found or not readable'
     end
 
+    it 'should use icon image specified in theme if icon attribute is not set on block', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'admonition-icon-image.pdf', attribute_overrides: { 'pdf-theme' => (fixture_file 'admonition-image-theme.yml') }, analyze: true
+      :icons:
+
+      [NOTE]
+      ====
+      You can use a custom PDF theme to customize the icon image for a specific admonition type.
+      ====
+      EOS
+
+      (expect to_file).to visually_match 'admonition-icon-image.pdf'
+    end
+
+    it 'should substitute attribute references in icon image value in theme', visual: true do
+      pdf_theme = { admonition_icon_note: { image: '{docdir}/tux-note.svg' } }
+      to_file = to_pdf_file <<~'EOS', 'admonition-icon-image-with-attribute-ref.pdf', attribute_overrides: { 'docdir' => fixtures_dir }, pdf_theme: pdf_theme, analyze: true
+      :icons:
+
+      [NOTE]
+      ====
+      You can use a custom PDF theme to customize the icon image for a specific admonition type.
+      ====
+      EOS
+
+      (expect to_file).to visually_match 'admonition-icon-image.pdf'
+    end
+
+    it 'should warn and fall back to admonition label if icon image specified in theme cannot be resolved' do
+      pdf_theme = {
+        __dir__: fixtures_dir,
+        admonition_icon_note: { image: 'does-not-exist.png' },
+      }
+      (expect do
+        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+        :icons:
+
+        [NOTE]
+        ====
+        If the icon image cannot be found, the converter will fall back to using the label text in the place of the icon.
+        ====
+        EOS
+
+        (expect get_images pdf).to be_empty
+        (expect pdf.pages[0].text).to include 'NOTE'
+      end).to log_message severity: :WARN, message: '~admonition icon not found or not readable'
+    end
+
     it 'should allow theme to specify icon for custom admonition type' do
       require 'asciidoctor/extensions'
 

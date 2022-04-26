@@ -867,13 +867,16 @@ module Asciidoctor
           label_min_width = label_min_width.to_f
         end
         if (doc = node.document).attr? 'icons'
-          if (doc.attr 'icons') == 'font' && !(node.attr? 'icon')
+          if !(has_icon = node.attr? 'icon') && (doc.attr 'icons') == 'font'
             icons = 'font'
             label_text = type.to_sym
             icon_data = admonition_icon_data label_text
             icon_size = icon_data[:size] || 24
             label_width = label_min_width || (icon_size * 1.5)
-          elsif (icon_path = resolve_icon_image_path node, type) && (::File.readable? icon_path)
+          elsif (icon_path = has_icon || !(icon_path = (@theme[%(admonition_icon_#{type})] || {})[:image]) ?
+              (resolve_icon_image_path node, type) :
+              (ThemeLoader.resolve_theme_asset (apply_subs_discretely doc, icon_path, subs: [:attributes]), @themesdir)) &&
+              (::File.readable? icon_path)
             icons = true
             # TODO: introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
             label_width = label_min_width || 36.0
