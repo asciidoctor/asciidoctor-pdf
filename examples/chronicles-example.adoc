@@ -34,6 +34,7 @@ endif::[]
 == It's a City Under Siege
 
 This journey begins one late Monday afternoon at {uri-devoxx}[((Devoxx))].
+(((Conference,Devoxx)))
 Our team needs coffee, _desperately_, but none of us dare open the theater doors...
 
 During the {uri-devoxx-top-talks}[opening university session], a script-happy warlock inadvertently released a legion of Wolpertingers!

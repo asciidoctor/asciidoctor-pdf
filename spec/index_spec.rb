@@ -12,6 +12,18 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect pdf.lines).to eql ['You can add a visible index entry to your document by enclosing it in double round brackets.']
   end
 
+  it 'should collapse space in front of hidden index terms' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    before
+    (((yin)))
+    (((yang)))
+    (((foobar)))
+    after
+    EOS
+
+    (expect pdf.lines).to eql ['before after']
+  end
+
   it 'should not add index section if there are no index entries' do
     pdf = to_pdf <<~'EOS', analyze: true
     == About

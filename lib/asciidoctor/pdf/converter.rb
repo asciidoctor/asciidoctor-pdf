@@ -2618,7 +2618,7 @@ module Asciidoctor
           @index ||= IndexCatalog.new
           # NOTE: page number (:page key) is added by InlineDestinationMarker
           dest = { anchor: (anchor_name = @index.next_anchor_name) }
-          anchor = %(<a id="#{anchor_name}" type="indexterm">#{DummyText}</a>)
+          anchor = %(<a id="#{anchor_name}" type="indexterm"#{visible ? ' visible="true"' : ''}>#{DummyText}</a>)
           if visible
             visible_term = node.text
             @index.store_primary_term (sanitize visible_term), dest
