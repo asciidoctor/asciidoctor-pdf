@@ -713,12 +713,12 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect appendix_text[:page_number]).to be 4
   end
 
-  it 'should not output section title for special section marked with untitled option' do
+  it 'should not output section title for special section marked with notitle option' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_h2_font_color: 'AA0000' }, analyze: true
     = Document Title
     :doctype: book
 
-    [colophon%untitled]
+    [colophon%notitle]
     = Hide Me
 
     Colophon with no title.
@@ -748,7 +748,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect appendix_text[:page_number]).to be 5
   end
 
-  it 'should not leave behind dest for empty section marked with untitled option' do
+  it 'should not leave behind dest for empty section marked with notitle option' do
     pdf = to_pdf <<~'EOS'
     = Document Title
     :doctype: book
@@ -757,7 +757,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     Musings.
 
-    [colophon%untitled]
+    [colophon%notitle]
     == Hidden
     EOS
 

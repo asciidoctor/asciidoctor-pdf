@@ -15,6 +15,7 @@ Enhancements::
 * add support for `background-color` property on caption (#1995)
 * add support for image-based icons, resolved from `iconsdir` and having the `icontype` file extension (#1770)
 * add `asciidoctor/pdf/nogmagick` script to prevent Gmagick from handling PNG images (#1687)
+* change name of `untitled` option on special section to `notitle`
 
 Bug Fixes::
 

@@ -674,7 +674,7 @@ module Asciidoctor
             theme_font(:heading, level: hlevel) { start_new_part sect }
           end
         elsif chapterlike
-          hopts[:hidden] = hidden = true if sect.special && (sect.option? 'untitled')
+          hopts[:hidden] = hidden = true if sect.special && (sect.option? 'notitle')
           if @theme.heading_chapter_break_before != 'auto' ||
               (@theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0])
             start_new = true
