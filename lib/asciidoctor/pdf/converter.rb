@@ -1519,7 +1519,6 @@ module Asciidoctor
                 end
               end
               # NOTE: import_page automatically advances to next page afterwards
-              # QUESTION: should we add destination to top of imported page?
               if (pgnums = node.attr 'pages')
                 (resolve_pagenums pgnums).each_with_index do |pgnum, idx|
                   if idx == 0
