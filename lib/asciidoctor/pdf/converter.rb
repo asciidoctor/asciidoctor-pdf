@@ -672,13 +672,13 @@ module Asciidoctor
         if part
           unless @theme.heading_part_break_before == 'auto'
             start_new = true
-            theme_font(:heading, level: hlevel) { start_new_part sect }
+            start_new_part sect
           end
         elsif chapterlike
           if @theme.heading_chapter_break_before != 'auto' ||
               (@theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0])
             start_new = true
-            theme_font(:heading, level: hlevel) { start_new_chapter sect }
+            start_new_chapter sect
           end
         end
         arrange_section sect, title, hopts unless hidden || start_new || at_page_top?

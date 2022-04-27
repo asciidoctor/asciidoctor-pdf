@@ -25,6 +25,7 @@ Bug Fixes::
 * collapse space in front of hidden index term (#2061)
 * delete dests on page before deleting it (keeps generated PDF clean of obsolete destinations)
 * don't call `arrange_section` if section title is hidden
+* remove `theme_font` enclosure around call to `start_new_chapter` and `start_new_part`
 
 == 2.0.0.alpha.1 (2022-04-20) - @mojavelinux
 
