@@ -399,7 +399,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_radius: 0,
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true, debug: true
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
     .Caption with background color
     ----
     content
