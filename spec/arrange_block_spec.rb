@@ -1829,7 +1829,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     end
   end
 
-  # NOTE: generate reference files using `asciidoctor-pdf -a source-highlighter=rouge -a nofooter` then optimize
+  # NOTE: generate reference files using ./scripts/generate-arrange-block-reference-files.sh
   describe 'acceptance', visual: true, if: ENV['COVERAGE'] do
     it 'at top, fits' do
       to_file = to_pdf_file (Pathname.new (fixture_file 'arrange-block-at-top-fits.adoc')),
