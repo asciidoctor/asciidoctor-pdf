@@ -367,6 +367,30 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     File.unlink dest_file
   end
 
+  it 'should set the base font for a book when front cover image is a PDF and title page is off' do
+    pdf = to_pdf <<~EOS, analyze: true
+    = Document Title
+    :front-cover-image: #{fixture_file 'blue-letter.pdf', relative: true}
+    :doctype: book
+    :notitle:
+
+    content
+    EOS
+
+    (expect (pdf.find_unique_text 'content')[:font_name]).to eql 'NotoSerif'
+  end
+
+  it 'should set the base font for an article when front cover image is a PDF and title page is off' do
+    pdf = to_pdf <<~EOS, analyze: true
+    = Document Title
+    :front-cover-image: #{fixture_file 'blue-letter.pdf', relative: true}
+
+    content
+    EOS
+
+    (expect (pdf.find_unique_text 'content')[:font_name]).to eql 'NotoSerif'
+  end
+
   it 'should not allow page size of PDF cover page to affect page size of document' do
     input = <<~EOS
     = Document Title
