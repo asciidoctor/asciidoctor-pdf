@@ -133,6 +133,51 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect to_file).to visually_match 'listing-page-split.pdf'
   end
 
+  it 'should not collapse bottom padding if block ends near bottom of page' do
+    pdf_theme = {
+      code_padding: 11,
+      code_background_color: 'EEEEEE',
+      code_border_width: 0,
+      code_border_radius: 0,
+    }
+    pdf = with_content_spacer 10, 695 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      image::#{spacer_path}[]
+
+      ----
+      $ gem install asciidoctor-pdf
+      $ asciidoctor-pdf doc.adoc
+      ----
+      EOS
+    end
+
+    pages = pdf.pages
+    (expect pages).to have_size 1
+    gs = pdf.extract_graphic_states pages[0][:raw_content]
+    (expect gs[1]).to have_background color: 'EEEEEE', top_left: [48.24, 98.89], bottom_right: [48.24, 48.24]
+    last_text_y = pdf.text[-1][:y]
+    (expect last_text_y - pdf_theme[:code_padding]).to be > 48.24
+
+    pdf = with_content_spacer 10, 696 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      image::#{spacer_path}[]
+
+      ----
+      $ gem install asciidoctor-pdf
+      $ asciidoctor-pdf doc.adoc
+      ----
+      EOS
+    end
+
+    pages = pdf.pages
+    (expect pages).to have_size 2
+    gs = pdf.extract_graphic_states pages[0][:raw_content]
+    (expect gs[1]).to have_background color: 'EEEEEE', top_left: [48.24, 97.89], bottom_right: [48.24, 48.24]
+    (expect pdf.text[0][:page_number]).to eql 1
+    (expect pdf.text[1][:page_number]).to eql 2
+    (expect pdf.text[0][:y] - pdf_theme[:code_padding]).to be > 48.24
+  end
+
   it 'should resize font to prevent wrapping if autofit option is set' do
     pdf = to_pdf <<~'EOS', analyze: true
     [%autofit]

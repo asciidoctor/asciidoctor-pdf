@@ -7,6 +7,10 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
     super
     formatted_text[0][:normalize_line_height] = true if options[:normalize_line_height] && !formatted_text.empty?
     options[:extensions]&.each {|extension| extend extension }
+    if (bottom_gutter = options[:bottom_gutter]) && bottom_gutter > 0
+      @bottom_gutter = bottom_gutter
+      extend Prawn::Text::Formatted::ProtectBottomGutter
+    end
   end
 
   def draw_fragment_overlay_styles fragment
