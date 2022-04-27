@@ -192,17 +192,14 @@ module Asciidoctor
         # NOTE: a new page will already be started (page_number = 2) if the front cover image is a PDF
         layout_cover_page doc, :front
         has_front_cover = page_number > marked_page_number
-
-        if (title_page_on = doc.doctype == 'book' || (doc.attr? 'title-page'))
-          layout_title_page doc
-          has_title_page = page_number == (has_front_cover ? 2 : 1)
-        end
+        has_title_page = layout_title_page doc if (title_page_on = doc.doctype == 'book' || (doc.attr? 'title-page'))
 
         @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress' && page_number == 0
 
         start_new_page unless page&.empty? # rubocop:disable Lint/SafeNavigationWithEmpty
 
-        # NOTE: font must be set before content is written to the main or scratch document
+        # NOTE: the base font must be set before any content is written to the main or scratch document
+        # this method is called inside layout_title_page if the title page is active
         font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style unless has_title_page
 
         unless title_page_on
@@ -2712,6 +2709,7 @@ module Asciidoctor
         node.id ? %(<a id="#{node.id}">#{DummyText}</a>#{quoted_text}) : quoted_text
       end
 
+      # Returns a Boolean indicating whether the title page was created
       def layout_title_page doc
         return unless doc.header? && !doc.notitle && @theme.title_page != false
 
@@ -2843,6 +2841,7 @@ module Asciidoctor
         end
 
         layout_prose DummyText, margin: 0, line_height: 1, normalize: false if page.empty?
+        true
       end
 
       def layout_cover_page doc, face

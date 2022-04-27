@@ -20,6 +20,7 @@ Enhancements::
 
 Bug Fixes::
 
+* set the base font of the front cover image is a PDF and the title page is not active (#2092)
 * pass through warnings in background SVG to logger (#1940)
 * keep closing quote with trailing ellipsis in text enclosed in typographic quotes (#321)
 * collapse space in front of hidden index term (#2061)
