@@ -713,6 +713,30 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect appendix_text[:page_number]).to be 4
   end
 
+  it 'should not output section title for section marked with notitle option' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+    :doctype: book
+
+    == Intro
+
+    Let's get started.
+
+    [%notitle]
+    == Middle
+
+    The bulk of the content.
+
+    == Conclusion
+
+    Wrapping it up.
+    EOS
+
+    middle_chapter_text = pdf.find_text page_number: 3
+    (expect middle_chapter_text).to have_size 1
+    (expect middle_chapter_text[0][:string]).to eql 'The bulk of the content.'
+  end
+
   it 'should not output section title for special section marked with notitle option' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_h2_font_color: 'AA0000' }, analyze: true
     = Document Title

@@ -667,7 +667,7 @@ module Asciidoctor
         hlevel = sect.level + 1
         align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
         chapterlike = !(part = sectname == 'part') && (sectname == 'chapter' || (sect.document.doctype == 'book' && sect.level == 1))
-        hidden = true if sect.special && (sect.option? 'notitle')
+        hidden = sect.option? 'notitle'
         hopts = { align: align, level: hlevel, part: part, chapterlike: chapterlike, outdent: !(part || chapterlike) }
         if part
           unless @theme.heading_part_break_before == 'auto'
