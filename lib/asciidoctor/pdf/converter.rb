@@ -667,6 +667,7 @@ module Asciidoctor
         hlevel = sect.level + 1
         align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
         chapterlike = !(part = sectname == 'part') && (sectname == 'chapter' || (sect.document.doctype == 'book' && sect.level == 1))
+        hidden = true if sect.special && (sect.option? 'notitle')
         hopts = { align: align, level: hlevel, part: part, chapterlike: chapterlike, outdent: !(part || chapterlike) }
         if part
           unless @theme.heading_part_break_before == 'auto'
@@ -674,14 +675,13 @@ module Asciidoctor
             theme_font(:heading, level: hlevel) { start_new_part sect }
           end
         elsif chapterlike
-          hopts[:hidden] = hidden = true if sect.special && (sect.option? 'notitle')
           if @theme.heading_chapter_break_before != 'auto' ||
               (@theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0])
             start_new = true
             theme_font(:heading, level: hlevel) { start_new_chapter sect }
           end
         end
-        arrange_section sect, title, hopts unless start_new || at_page_top?
+        arrange_section sect, title, hopts unless hidden || start_new || at_page_top?
         # QUESTION: should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
         sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
         # QUESTION: should we just assign the section this generated id?
@@ -2898,7 +2898,6 @@ module Asciidoctor
       alias start_new_part start_new_chapter
 
       def arrange_section sect, title, opts
-        return if opts[:hidden]
         if sect.option? 'breakable'
           orphaned = nil
           dry_run single_page: true do
