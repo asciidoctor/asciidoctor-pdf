@@ -17,6 +17,7 @@ Enhancements::
 * add `asciidoctor/pdf/nogmagick` script to prevent Gmagick from handling PNG images (#1687)
 * change name of `untitled` option on special section to `notitle`
 * allow the title of any section to be hidden using the `notitle` option
+* allow imported PDF page to be referenced in TOC by enclosing in parent section with `notitle` option (#1213)
 
 Bug Fixes::
 

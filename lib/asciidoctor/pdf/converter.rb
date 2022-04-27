@@ -1509,23 +1509,33 @@ module Asciidoctor
         elsif (image_path = resolve_image_path node, target, image_format, (opts.fetch :relative_to_imagesdir, true))
           if image_format == 'pdf'
             if ::File.readable? image_path
-              if (id = node.id)
+              if (replace = page.empty?) && (parent = node.parent).id && (parent.attr? 'pdf-page-start', page_number)
+                replace_parent = parent
+              end
+              if (id = node.id) || replace_parent
                 add_dest_block = proc do
-                  node.set_attr 'pdf-destination', (node_dest = dest_top)
-                  add_dest id, node_dest
+                  node_dest = dest_top
+                  if id
+                    node.set_attr 'pdf-destination', node_dest
+                    add_dest id, node_dest
+                  end
+                  if replace_parent
+                    replace_parent.set_attr 'pdf-anchor', node_dest
+                    add_dest replace_parent.id, node_dest
+                  end
                 end
               end
               # NOTE: import_page automatically advances to next page afterwards
               if (pgnums = node.attr 'pages')
                 (resolve_pagenums pgnums).each_with_index do |pgnum, idx|
                   if idx == 0
-                    import_page image_path, page: pgnum, replace: page.empty?, &add_dest_block
+                    import_page image_path, page: pgnum, replace: replace, &add_dest_block
                   else
                     import_page image_path, page: pgnum, replace: true
                   end
                 end
               else
-                import_page image_path, page: [(node.attr 'page', nil, 1).to_i, 1].max, replace: page.empty?, &add_dest_block
+                import_page image_path, page: [(node.attr 'page', nil, 1).to_i, 1].max, replace: replace, &add_dest_block
               end
               return
             else
