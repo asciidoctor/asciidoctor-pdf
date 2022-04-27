@@ -21,6 +21,7 @@ Bug Fixes::
 * pass through warnings in background SVG to logger (#1940)
 * keep closing quote with trailing ellipsis in text enclosed in typographic quotes (#321)
 * collapse space in front of hidden index term (#2061)
+* delete dests on page before deleting it (keeps generated PDF clean of obsolete destinations)
 
 == 2.0.0.alpha.1 (2022-04-20) - @mojavelinux
 

@@ -748,6 +748,25 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect appendix_text[:page_number]).to be 5
   end
 
+  it 'should not leave behind dest for empty section marked with untitled option' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :doctype: book
+
+    == Chapter
+
+    Musings.
+
+    [colophon%untitled]
+    == Hidden
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    all_text = pdf.pages.map(&:text).join ?\n
+    (expect all_text).not_to include 'Hide Me'
+    (expect get_names pdf).not_to have_key '_hidden'
+  end
+
   it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is not set' do
     input = <<~'EOS'
     = Book Title
