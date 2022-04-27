@@ -819,7 +819,10 @@ module Asciidoctor
         pdf_store = state.store
         content_id = page.content.identifier
         page_ref = page.dictionary
-        dests.data.children.delete_if {|entry| entry.value.data[0] == page_ref }
+        (prune_dests = proc do |node|
+          node.children.delete_if {|it| ::PDF::Core::NameTree::Node === it ? prune_dests[it] : it.value.data[0] == page_ref }
+          false
+        end)[dests.data]
         # NOTE: cannot delete objects and IDs, otherwise references get corrupted; so just reset the value
         (pdf_store.instance_variable_get :@objects)[content_id] = ::PDF::Core::Reference.new content_id, {}
         pdf_store.pages.data[:Kids].pop
