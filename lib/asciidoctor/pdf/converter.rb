@@ -193,7 +193,7 @@ module Asciidoctor
         layout_cover_page doc, :front
         has_front_cover = page_number > marked_page_number
 
-        if (use_title_page = doc.doctype == 'book' || (doc.attr? 'title-page'))
+        if (title_page_on = doc.doctype == 'book' || (doc.attr? 'title-page'))
           layout_title_page doc
           has_title_page = page_number == (has_front_cover ? 2 : 1)
         end
@@ -205,7 +205,7 @@ module Asciidoctor
         # NOTE: font must be set before content is written to the main or scratch document
         font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style unless has_title_page
 
-        unless use_title_page
+        unless title_page_on
           body_start_page_number = page_number
           theme_font :heading, level: 1 do
             layout_general_heading doc, doc.doctitle, align: (@theme.heading_h1_align&.to_sym || :center), level: 1, role: :doctitle
@@ -219,14 +219,14 @@ module Asciidoctor
           if (insert_toc = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && doc.sections?)
             start_new_page if @ppbook && verso_page?
             add_dest_for_block doc, id: 'toc', y: (at_page_top? ? page_height : nil)
-            allocate_toc doc, toc_num_levels, cursor, use_title_page
+            allocate_toc doc, toc_num_levels, cursor, title_page_on
           else
             @toc_extent = nil
           end
 
           start_new_page if @ppbook && verso_page? && !(((next_block = doc.blocks[0])&.context == :preamble ? next_block.blocks[0] : next_block)&.option? 'nonfacing')
 
-          if use_title_page
+          if title_page_on
             zero_page_offset = has_front_cover ? 1 : 0
             first_page_offset = has_title_page ? zero_page_offset.next : zero_page_offset
             body_offset = (body_start_page_number = page_number) - 1
@@ -307,7 +307,7 @@ module Asciidoctor
           outdent_section { layout_footnotes doc }
 
           if @toc_extent
-            if use_title_page && !insert_toc
+            if title_page_on && !insert_toc
               num_front_matter_pages[0] = @toc_extent.to.page if @theme.running_content_start_at == 'after-toc'
               num_front_matter_pages[1] = @toc_extent.to.page if @theme.page_numbering_start_at == 'after-toc'
             end
@@ -2355,8 +2355,8 @@ module Asciidoctor
             start_new_page if @ppbook && verso_page? && !(is_macro && (node.option? 'nonfacing'))
           end
           add_dest_for_block node, id: (node.id || 'toc') if is_macro
-          allocate_toc doc, (doc.attr 'toclevels', 2).to_i, cursor, (use_title_page = is_book || (doc.attr? 'title-page'))
-          @index.start_page_number = @toc_extent.to.page + 1 if use_title_page && @theme.page_numbering_start_at == 'after-toc'
+          allocate_toc doc, (doc.attr 'toclevels', 2).to_i, cursor, (title_page_on = is_book || (doc.attr? 'title-page'))
+          @index.start_page_number = @toc_extent.to.page + 1 if title_page_on && @theme.page_numbering_start_at == 'after-toc'
           if is_macro
             @disable_running_content[:header] += @toc_extent.page_range if node.option? 'noheader'
             @disable_running_content[:footer] += @toc_extent.page_range if node.option? 'nofooter'
@@ -3117,14 +3117,14 @@ module Asciidoctor
         layout_caption node, category: :table, side: side, block_align: table_alignment, block_width: table_width, max_width: max_width
       end
 
-      def allocate_toc doc, toc_num_levels, toc_start_cursor, use_title_page
+      def allocate_toc doc, toc_num_levels, toc_start_cursor, title_page_on
         toc_start_page = page_number
         extent = dry_run onto: self do
           layout_toc doc, toc_num_levels, toc_start_page, toc_start_cursor
-          margin_bottom @theme.block_margin_bottom unless use_title_page
+          margin_bottom @theme.block_margin_bottom unless title_page_on
         end
         # NOTE: reserve pages for the toc; leaves cursor on page after last page in toc
-        if use_title_page
+        if title_page_on
           extent.each_page { start_new_page }
         else
           extent.each_page {|first_page| start_new_page unless first_page }
