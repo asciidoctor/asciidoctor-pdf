@@ -144,6 +144,19 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect paragraph_text[:x]).to be > center_x
   end
 
+  it 'should use value of align on caption to align text if caption_text_align key not specified' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { caption_align: 'right' }, analyze: true
+    .Title
+    Text
+    EOS
+
+    center_x = (pdf.page 1)[:size][1] * 0.5
+    title_text = pdf.find_unique_text 'Title'
+    paragraph_text = pdf.find_unique_text 'Text'
+    (expect title_text[:x]).to be > center_x
+    (expect paragraph_text[:x]).to eql 48.24
+  end
+
   it 'should apply the lead style to a paragraph with the lead role' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Document Title
