@@ -1244,8 +1244,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       blue_page_object = (pdf.page 3).page_object
       annotations = get_annotations pdf, 2
       (expect annotations).to have_size 2
-      (expect pdf.objects[annotations[0][:Dest][0]]).to eql blue_page_object
-      (expect pdf.objects[annotations[1][:Dest][0]]).to eql blue_page_object
+      (expect annotations[0][:Dest]).to eql 'blue'
+      (expect annotations[1][:Dest]).to eql 'blue'
       (expect toc_page.text).to include 'Blue Page'
       (expect get_names pdf).to have_key 'blue'
       sect_dest = get_dest pdf, 'blue'

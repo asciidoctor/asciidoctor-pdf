@@ -1512,7 +1512,7 @@ module Asciidoctor
         elsif (image_path = resolve_image_path node, target, image_format, (opts.fetch :relative_to_imagesdir, true))
           if image_format == 'pdf'
             if ::File.readable? image_path
-              if (replace = page.empty?) && (parent = node.parent).id && (parent.attr? 'pdf-page-start', page_number)
+              if (replace = page.empty?) && ((parent = node.parent).attr? 'pdf-page-start', page_number) && (parent.attr? 'pdf-anchor')
                 replace_parent = parent
               end
               if (id = node.id) || replace_parent
@@ -1523,8 +1523,8 @@ module Asciidoctor
                     add_dest id, node_dest
                   end
                   if replace_parent
-                    replace_parent.set_attr 'pdf-anchor', node_dest
-                    add_dest replace_parent.id, node_dest
+                    replace_parent.set_attr 'pdf-destination', node_dest
+                    add_dest (replace_parent.attr 'pdf-anchor'), node_dest
                   end
                 end
               end
