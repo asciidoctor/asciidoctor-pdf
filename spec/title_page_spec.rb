@@ -274,7 +274,23 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect to_file).to visually_match 'title-page-logo-align-left.pdf'
     end
 
-    it 'should inherit align attribute if value on macro is invalid', visual: true do
+    it 'should inherit align value from title page if align not specified on logo in theme' do
+      pdf_theme = {
+        title_page_logo_align: nil,
+        title_page_align: 'center',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[]
+      EOS
+
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:x]).to be > 48.24
+    end
+
+    it 'should inherit align attribute if value on macro is invalid' do
       pdf_theme = {
         title_page_logo_align: nil,
         title_page_align: 'left',
