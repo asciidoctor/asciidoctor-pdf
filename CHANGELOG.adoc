@@ -12,6 +12,7 @@ Enhancements::
 * allow border width of block to be specified per edge using 4-value array (#2102)
 * allow padding on block to be specified using 2-value array for ends and sides or 3-value array with implied left side value (#2104)
 * allow margins in running content to be specified using 2-value array for ends and sides or 3-value array with implied left side value (#2104)
+* allow theme to set border and padding on headings per level (#434)
 
 Bug Fixes::
 

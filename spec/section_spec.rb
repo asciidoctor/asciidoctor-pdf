@@ -223,6 +223,92 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect drill_title_text[:y] - drill_section_text[:y]).to eql (down_title_text[:y] - down_section_text[:y] + down_title_text[:font_size] * 0.5)
   end
 
+  it 'should allow theme to add borders to specific heading levels' do
+    pdf_theme = {
+      heading_h2_border_width: [2, 0],
+      heading_h2_border_color: 'AA0000',
+      heading_h3_border_width: [0, 0, 1, 0],
+      heading_h3_border_style: 'dashed',
+      heading_h3_border_color: 'DDDDDD',
+    }
+
+    input = <<~'EOS'
+    = Document Title
+
+    == Section Level 1
+
+    content
+
+    === Section Level 2
+
+    content
+    EOS
+
+    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+
+    (expect lines).to have_size 3
+    (expect lines[0][:color]).to eql 'AA0000'
+    (expect lines[0][:width]).to eql 2
+    (expect lines[0][:style]).to eql :solid
+    (expect lines[1][:color]).to eql 'AA0000'
+    (expect lines[1][:width]).to eql 2
+    (expect lines[1][:style]).to eql :solid
+    (expect lines[2][:color]).to eql 'DDDDDD'
+    (expect lines[2][:width]).to eql 1
+    (expect lines[2][:style]).to eql :dashed
+    lines.each do |line|
+      (expect line[:from][:y]).to eql line[:to][:y]
+    end
+    (expect lines[0][:from][:y]).to be > (pdf.find_unique_text 'Section Level 1')[:y]
+    (expect lines[1][:from][:y]).to be < (pdf.find_unique_text 'Section Level 1')[:y]
+    (expect lines[2][:from][:y]).to be < (pdf.find_unique_text 'Section Level 2')[:y]
+  end
+
+  it 'should insert padding around heading with border' do
+    pdf_theme = {
+      heading_h2_border_width: [0, 0, 1, 0],
+      heading_h2_border_color: 'EEEEEE',
+    }
+
+    input = <<~'EOS'
+    == Section Title
+
+    content
+    EOS
+
+    pdf_a_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+    pdf_b_lines = (to_pdf input, pdf_theme: (pdf_theme.merge heading_h2_padding: [0, 0, 5, 10]), analyze: :line).lines
+    pdf_b_text = (to_pdf input, pdf_theme: (pdf_theme.merge heading_h2_padding: [0, 0, 5, 10]), analyze: true).text
+
+    (expect pdf_a_lines).to have_size 1
+    (expect pdf_b_lines).to have_size 1
+    (expect pdf_b_lines[0][:from][:y]).to eql (pdf_a_lines[0][:from][:y] - 5)
+    (expect pdf_b_text[0][:x]).to eql 58.24
+  end
+
+  it 'should insert top padding value between text and top border' do
+    pdf_theme = {
+      heading_h2_border_width: [1, 0, 0, 0],
+      heading_h2_border_color: 'EEEEEE',
+    }
+    input = <<~'EOS'
+    == Section Title
+
+    content
+    EOS
+
+    pdf_a_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+    pdf_a = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    pdf_b_lines = (to_pdf input, pdf_theme: (pdf_theme.merge heading_h2_padding: [10, 0, 0]), analyze: :line).lines
+    pdf_b = to_pdf input, pdf_theme: (pdf_theme.merge heading_h2_padding: [10, 0, 0]), analyze: true
+
+    (expect pdf_a_lines).to have_size 1
+    (expect pdf_b_lines).to have_size 1
+    (expect pdf_b_lines[0][:from][:y]).to eql pdf_a_lines[0][:from][:y]
+    (expect pdf_b.text[0][:y]).to eql (pdf_a.text[0][:y] - 10)
+  end
+
   it 'should not partition section title by default' do
     pdf = to_pdf <<~'EOS', analyze: true
     == Title: Subtitle

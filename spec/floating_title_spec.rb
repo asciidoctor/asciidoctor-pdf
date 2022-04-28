@@ -118,4 +118,54 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
 
     (expect right_x).to be > left_x
   end
+
+  it 'should allow theme to add borders and padding to specific heading levels' do
+    pdf_theme = {
+      heading_line_height: 1,
+      heading_font_family: 'Times-Roman',
+      heading_h2_border_width: [2, 0],
+      heading_h2_border_color: 'AA0000',
+      heading_h2_padding: [10, 0],
+      heading_h3_border_width: [0, 0, 1, 0],
+      heading_h3_border_style: 'dashed',
+      heading_h3_border_color: 'DDDDDD',
+      heading_h3_padding: [0, 0, 5],
+    }
+
+    input = <<~'EOS'
+    [discrete]
+    == Heading Level 1
+
+    content
+
+    [discrete]
+    === Heading Level 2
+
+    content
+    EOS
+
+    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true, debug: true
+
+    (expect lines).to have_size 3
+    (expect lines[0][:color]).to eql 'AA0000'
+    (expect lines[0][:width]).to eql 2
+    (expect lines[0][:style]).to eql :solid
+    (expect lines[1][:color]).to eql 'AA0000'
+    (expect lines[1][:width]).to eql 2
+    (expect lines[1][:style]).to eql :solid
+    (expect lines[2][:color]).to eql 'DDDDDD'
+    (expect lines[2][:width]).to eql 1
+    (expect lines[2][:style]).to eql :dashed
+    lines.each do |line|
+      (expect line[:from][:y]).to eql line[:to][:y]
+    end
+    heading_level_1_text = pdf.find_unique_text 'Heading Level 1'
+    heading_level_2_text = pdf.find_unique_text 'Heading Level 2'
+    (expect lines[0][:from][:y]).to be > heading_level_1_text[:y]
+    (expect lines[1][:from][:y]).to be < heading_level_1_text[:y]
+    (expect lines[2][:from][:y]).to be < heading_level_2_text[:y]
+    (expect heading_level_1_text[:y] - lines[1][:from][:y]).to be > 10
+    (expect heading_level_2_text[:y] - lines[2][:from][:y]).to be > 5
+  end
 end
