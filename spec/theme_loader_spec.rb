@@ -155,6 +155,37 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.footer_recto_right_content).to eql '2 * 2'
     end
 
+    it 'should remap align keys to text-align keys' do
+      (expect do
+        theme_data = YAML.safe_load <<~'EOS'
+        base:
+          align: center
+        heading:
+          align: left
+          h2:
+            align: right
+        sidebar:
+          title:
+            align: $heading-align
+        caption:
+          align: $base-align
+          text-align: $heading-align
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme).to be_an OpenStruct
+        (expect theme.base_align).to be_nil
+        (expect theme.base_text_align).to eql 'center'
+        (expect theme.heading_align).to be_nil
+        (expect theme.heading_text_align).to eql 'left'
+        (expect theme.heading_h2_align).to be_nil
+        (expect theme.heading_h2_text_align).to eql 'right'
+        (expect theme.sidebar_title_align).to be_nil
+        (expect theme.sidebar_title_text_align).to eql 'left'
+        (expect theme.caption_align).to eql 'center'
+        (expect theme.caption_text_align).to eql 'left'
+      end).to not_log_message
+    end
+
     it 'should remap outline-list category to list category and warn' do
       (expect do
         theme_data = YAML.safe_load <<~'EOS'
@@ -431,10 +462,10 @@ describe Asciidoctor::PDF::ThemeLoader do
           - #{File.basename custom_theme_path}
           - ./#{File.basename red_theme_path}
           base:
-            align: justify
+            text-align: justify
           EOS
             theme = subject.load_file theme_path, nil, (File.dirname theme_path)
-            (expect theme.base_align).to eql 'justify'
+            (expect theme.base_text_align).to eql 'justify'
             (expect theme.base_font_family).to eql 'Times-Roman'
             (expect theme.base_font_color).to eql 'FF0000'
           end
@@ -447,10 +478,10 @@ describe Asciidoctor::PDF::ThemeLoader do
       extends:
       - #{fixture_file 'custom-theme.yml'}
       base:
-        align: justify
+        text-align: justify
       EOS
         theme = subject.load_file theme_path
-        (expect theme.base_align).to eql 'justify'
+        (expect theme.base_text_align).to eql 'justify'
         (expect theme.base_font_family).to eql 'Times-Roman'
       end
     end
@@ -767,11 +798,11 @@ describe Asciidoctor::PDF::ThemeLoader do
           - ./#{File.basename custom_theme_path}
           - ./#{File.basename red_theme_path}
           base:
-            align: justify
+            text-align: justify
           EOS
             theme = subject.load_theme theme_path, fixtures_dir
             (expect theme.__dir__).to eql fixtures_dir
-            (expect theme.base_align).to eql 'justify'
+            (expect theme.base_text_align).to eql 'justify'
             (expect theme.base_font_family).to eql 'Times-Roman'
             (expect theme.base_font_color).to eql 'FF0000'
           end
@@ -793,11 +824,11 @@ describe Asciidoctor::PDF::ThemeLoader do
           - #{File.basename custom_theme_path}
           - #{File.basename red_theme_path}
           base:
-            align: justify
+            text-align: justify
           EOS
             theme = subject.load_theme theme_path
             (expect theme.__dir__).to eql File.dirname theme_path
-            (expect theme.base_align).to eql 'justify'
+            (expect theme.base_text_align).to eql 'justify'
             (expect theme.base_font_family).to eql 'Times-Roman'
             (expect theme.base_font_color).to eql 'FF0000'
           end
@@ -808,7 +839,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     it 'should ensure required keys are set in non-built-in theme' do
       theme = subject.load_theme 'bare-theme.yml', fixtures_dir
       (expect theme.__dir__).to eql fixtures_dir
-      (expect theme.base_align).to eql 'left'
+      (expect theme.base_text_align).to eql 'left'
       (expect theme.base_line_height).to be 1
       (expect theme.base_font_color).to eql '000000'
       (expect theme.code_font_family).to eql 'Courier'
@@ -851,7 +882,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         font-color: 222222
       EOS
         theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
-        (expect theme.base_align).to eql 'justify'
+        (expect theme.base_text_align).to eql 'justify'
         (expect theme.code_font_family).to eql 'M+ 1mn'
         (expect theme.conum_font_family).to eql 'M+ 1mn'
       end

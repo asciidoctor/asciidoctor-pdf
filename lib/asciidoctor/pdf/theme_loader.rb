@@ -15,6 +15,9 @@ module Asciidoctor
       BaseThemePath = ::File.join ThemesDir, 'base-theme.yml'
       BundledThemeNames = (::Dir.children ThemesDir).map {|it| it.slice 0, it.length - 10 }
       DeprecatedCategoryKeys = { 'blockquote' => 'quote', 'key' => 'kbd', 'literal' => 'codespan', 'outline_list' => 'list' }
+      AmbiguousAlignKeys = %w(base heading heading_h1 heading_h2 heading_h3 heading_h4 heading_h5 heading_h6 title_page abstract abstract_title admonition_label sidebar_title toc_title).each_with_object({}) do |prefix, accum|
+        accum[%(#{prefix}_align)] = %(#{prefix}_text_align)
+      end
 
       VariableRx = /\$([a-z0-9_-]+)/
       LoneVariableRx = /^\$([a-z0-9_-]+)$/
@@ -22,6 +25,7 @@ module Asciidoctor
       MultiplyDivideOpRx = %r((-?\d+(?:\.\d+)?) +([*/^]) +(-?\d+(?:\.\d+)?))
       AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+\-]) +(-?\d+(?:\.\d+)?)/
       PrecisionFuncRx = /^(round|floor|ceil)\(/
+      RoleAlignKeyRx = /(?:_text)?_align$/
 
       module ColorValue; end
 
@@ -77,7 +81,7 @@ module Asciidoctor
         else
           theme_data = load_file theme_path, nil, theme_dir
           unless (::File.dirname theme_path) == ThemesDir
-            theme_data.base_align ||= 'left'
+            theme_data.base_text_align ||= 'left'
             theme_data.base_line_height ||= 1
             theme_data.base_font_color ||= '000000'
             theme_data.code_font_family ||= (theme_data.codespan_font_family || 'Courier')
@@ -166,6 +170,9 @@ module Asciidoctor
           val.each do |subkey, subval|
             process_entry %(#{key}_#{key == 'role' || !(subkey.include? '-') ? subkey : (subkey.tr '-', '_')}), subval, data
           end
+        elsif (rekey = AmbiguousAlignKeys[key]) ||
+            ((key.start_with? 'role_') && (key.end_with? '_align') && (rekey = key.sub RoleAlignKeyRx, '_text_align'))
+          data[rekey] = evaluate val, data
         # QUESTION: do we really need to evaluate_math in this case?
         elsif key.end_with? '_color'
           if key == 'table_border_color'
@@ -208,7 +215,8 @@ module Asciidoctor
       def resolve_var vars, ref, var
         var = var.tr '-', '_' if var.include? '-'
         if (vars.respond_to? var) ||
-            DeprecatedCategoryKeys.any? {|old, new| (var.start_with? old + '_') && (vars.respond_to? (replace = new + (var.slice old.length, var.length))) && (var = replace) }
+            DeprecatedCategoryKeys.any? {|old, new| (var.start_with? old + '_') && (vars.respond_to? (replace = new + (var.slice old.length, var.length))) && (var = replace) } ||
+            ((replace = AmbiguousAlignKeys[var]) && (vars.respond_to? replace) && (var = replace))
           vars[var]
         else
           logger.warn %(unknown variable reference in PDF theme: #{ref})

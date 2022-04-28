@@ -277,7 +277,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     it 'should inherit align value from title page if align not specified on logo in theme' do
       pdf_theme = {
         title_page_logo_align: nil,
-        title_page_align: 'center',
+        title_page_text_align: 'center',
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
       = Document Title
@@ -293,7 +293,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     it 'should inherit align attribute if value on macro is invalid' do
       pdf_theme = {
         title_page_logo_align: nil,
-        title_page_align: 'left',
+        title_page_text_align: 'left',
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
       = Document Title
@@ -956,7 +956,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       body
       EOS
 
-      theme_overrides = { title_page_align: 'left' }
+      theme_overrides = { title_page_text_align: 'left' }
 
       pdf = to_pdf input, doctype: :book, pdf_theme: theme_overrides, analyze: true
 

@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/main[co
 
 Enhancements::
 
+* separate `align` and `text-align` keys in theme schema; remap old keys for backwards compatibility (#2095)
 * allow theme to control the border on all sides of tables independently (#902)
 * keep section title with first block of content is `breakable` option is set on section (#2075, #38)
 * pass `part`, `chapterlike`, and `hidden` options to `arrange_section` method

@@ -15,7 +15,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should outdent abstract title and body' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36, abstract_title_align: :left }, analyze: true
+    pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36, abstract_title_text_align: :left }, analyze: true
     = Document Title
     :doctype: book
 
@@ -230,7 +230,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should allow theme to set text alignment of abstract' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_align: 'center' }, analyze: true
+    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_text_align: 'center' }, analyze: true
     = Document Title
 
     [abstract]
@@ -245,7 +245,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should allow theme to set text alignment of abstract title' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_title_align: 'center' }, analyze: true
+    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_title_text_align: 'center' }, analyze: true
     = Document Title
     :doctype: book
 
@@ -264,7 +264,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should use base align to align abstract title if theme does not specify alignment' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { base_align: 'center', abstract_title_align: nil }, analyze: true
+    pdf = to_pdf <<~'EOS', pdf_theme: { base_text_align: 'center', abstract_title_text_align: nil }, analyze: true
     = Document Title
     :doctype: book
 
