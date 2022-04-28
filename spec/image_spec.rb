@@ -1241,7 +1241,6 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       EOS
 
       toc_page = pdf.page 2
-      blue_page_object = (pdf.page 3).page_object
       annotations = get_annotations pdf, 2
       (expect annotations).to have_size 2
       (expect annotations[0][:Dest]).to eql 'blue'
