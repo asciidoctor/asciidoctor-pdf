@@ -1202,6 +1202,56 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect annotations[0][:Dest]).to eql 'red'
       (expect (pdf.page 1).text).to include 'Red Page'
     end
+
+    it 'should restore anchor of hidden section title on imported page' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :notitle:
+      :doctype: book
+
+      go to <<blue>>
+
+      [#blue%notitle]
+      == Blue Page
+
+      image::blue-letter.pdf[]
+      EOS
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      (expect annotations[0][:Dest]).to eql 'blue'
+      (expect (pdf.page 1).text).to include 'Blue Page'
+      (expect (pdf.page 2).text).not_to include 'Blue Page'
+      (expect get_names pdf).to have_key 'blue'
+      sect_dest = get_dest pdf, 'blue'
+      (expect sect_dest).not_to be_nil
+      (expect sect_dest[:page_number]).to eql 2
+    end
+
+    it 'should allow imported page to be referenced from TOC by way of notitle section' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :doctype: book
+      :toc:
+
+      [#blue%notitle]
+      == Blue Page
+
+      image::blue-letter.pdf[]
+      EOS
+
+      toc_page = pdf.page 2
+      blue_page_object = (pdf.page 3).page_object
+      annotations = get_annotations pdf, 2
+      (expect annotations).to have_size 2
+      (expect pdf.objects[annotations[0][:Dest][0]]).to eql blue_page_object
+      (expect pdf.objects[annotations[1][:Dest][0]]).to eql blue_page_object
+      (expect toc_page.text).to include 'Blue Page'
+      (expect get_names pdf).to have_key 'blue'
+      sect_dest = get_dest pdf, 'blue'
+      (expect sect_dest).not_to be_nil
+      (expect sect_dest[:page_number]).to eql 3
+    end
   end
 
   context 'Data URI' do
