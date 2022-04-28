@@ -881,7 +881,7 @@ module Asciidoctor
             # TODO: introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
             label_width = label_min_width || 36.0
           else
-            log :warn, %(admonition icon image not found or not readable: #{icon_path || (resolve_icon_image_path node, type, false)})
+            log :warn, %(admonition icon image#{has_icon ? '' : ' for ' + type.upcase} not found or not readable: #{icon_path || (resolve_icon_image_path node, type, false)})
           end
         end
         unless icons

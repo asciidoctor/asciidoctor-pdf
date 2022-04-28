@@ -578,6 +578,19 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-svg-icon.pdf'
     end
 
+    it 'should warn if SVG icon specified by icon attribute is missing' do
+      (expect do
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }
+        :icons: font
+
+        [TIP,icon=missing]
+        Use the icon attribute to customize the image for an admonition block.
+        EOS
+        (expect get_images pdf, 1).to be_empty
+        (expect (pdf.page 1).text).to include 'TIP'
+      end).to log_message severity: :WARN, message: %(admonition icon image not found or not readable: #{fixture_file 'missing.png'})
+    end
+
     it 'should warn if SVG icon specified by icon attribute has errors' do
       (expect do
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: :rect
@@ -631,7 +644,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         label_text = pdf.find_unique_text 'WARNING'
         (expect label_text).not_to be_nil
         (expect label_text[:font_name]).to include 'Bold'
-      end).to log_message severity: :WARN, message: %(admonition icon image not found or not readable: #{fixture_file 'warning.svg'})
+      end).to log_message severity: :WARN, message: %(admonition icon image for WARNING not found or not readable: #{fixture_file 'warning.svg'})
     end
 
     it 'should warn and fall back to admonition label if SVG icon specified by icon attribute cannot be embedded' do
@@ -682,7 +695,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         label_text = pdf.find_unique_text 'WARNING'
         (expect label_text).not_to be_nil
         (expect label_text[:font_name]).to include 'Bold'
-      end).to log_message severity: :WARN, message: %(admonition icon image not found or not readable: #{fixture_file 'warning.png'})
+      end).to log_message severity: :WARN, message: %(admonition icon image for WARNING not found or not readable: #{fixture_file 'warning.png'})
     end
 
     # NOTE: this test also verifies the text transform is not applied if disabled by the theme
@@ -814,7 +827,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
           (expect pdf.lines).to eql ['TIP Use the icon attribute to customize the image for an admonition block.']
         end).to log_messages [
           { severity: :WARN, message: %(cannot embed remote image: #{base_url}/tip.png (allow-uri-read attribute not enabled)) },
-          { severity: :WARN, message: %(admonition icon image not found or not readable: #{base_url}/tip.png) },
+          { severity: :WARN, message: %(admonition icon image for TIP not found or not readable: #{base_url}/tip.png) },
         ]
       end
     end
@@ -837,7 +850,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
           (expect pdf.lines).to eql ['TIP Use the icon attribute to customize the image for an admonition block.']
         end).to log_messages [
           { severity: :WARN, message: %(could not retrieve remote image: #{base_url}/tip.png; 404 Not Found) },
-          { severity: :WARN, message: %(admonition icon image not found or not readable: #{base_url}/tip.png) },
+          { severity: :WARN, message: %(admonition icon image for TIP not found or not readable: #{base_url}/tip.png) },
         ]
       end
     end
@@ -908,7 +921,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         note_text = pdf.find_unique_text 'NOTE'
         (expect note_text).not_to be_nil
         (expect note_text[:font_name]).to include 'Bold'
-      end).to log_message severity: :WARN, message: '~admonition icon image not found or not readable'
+      end).to log_message severity: :WARN, message: '~admonition icon image for NOTE not found or not readable'
     end
 
     it 'should use icon image specified in theme if icon attribute is not set on block', visual: true do
@@ -955,7 +968,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
         (expect get_images pdf).to be_empty
         (expect pdf.pages[0].text).to include 'NOTE'
-      end).to log_message severity: :WARN, message: '~admonition icon image not found or not readable'
+      end).to log_message severity: :WARN, message: '~admonition icon image for NOTE not found or not readable'
     end
 
     it 'should allow theme to specify icon for custom admonition type' do

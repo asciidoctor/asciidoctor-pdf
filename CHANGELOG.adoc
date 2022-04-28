@@ -22,6 +22,7 @@ Enhancements::
 Improvements::
 
 * change "icon" to "icon image" in warning about missing admonition icon image
+* report admonition type in warning about missing implicit admonition icon image
 
 Bug Fixes::
 
