@@ -1,15 +1,20 @@
-= Text Alignment and Styles
+= Text Styles
 
-[#align]
-== Alignment
+[#text-align]
+== Text alignment
 
-The `align` key is used to align text within the parent container.
-Text can be aligned as follows:
+The `text-align` key is used to align text horizontally within the text box.
+It has the same function as the `text-align` property in CSS.
+
+The text can be aligned using the following keywords:
 
 * `left`
 * `center`
 * `right`
-* `justify` (stretched to each edge)
+* `justify` (flush to each edge of the text box, if possible)
+
+The `text-align` key is distinct from the similarly-named `align` key.
+The latter key aligns a block element horizontally within its container.
 
 [#decoration]
 == Decoration

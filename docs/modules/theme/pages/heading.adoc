@@ -11,12 +11,12 @@ The keys in the `heading` category control the style of most headings, including
 |===
 |Key |Value Type |Example
 
-|align
-|xref:text.adoc#align[Text alignment] +
-(default: `$base-align`)
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
+(default: `$base-text-align`)
 |[source]
 heading:
-  align: center
+  text-align: center
 
 |font-color
 |xref:color.adoc[Color] +
@@ -123,12 +123,12 @@ the properties of chapter titles.
 |===
 |Key |Value Type |Example
 
-|align
-|xref:text.adoc#align[Text alignment] +
-(default: `$heading-align`)
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
+(default: `$heading-text-align`)
 |[source]
 heading:
-  h2-align: center
+  h2-text-align: center
 
 |font-color
 |xref:color.adoc[Color] +

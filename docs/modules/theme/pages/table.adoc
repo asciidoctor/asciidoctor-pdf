@@ -41,14 +41,14 @@ table:
   border-width: 0.5
 
 |caption-align
-|xref:text.adoc#align[Text alignment] {vbar} inherit +
+|xref:block.adoc#align[Alignment] {vbar} inherit +
 (default: `$caption-align`)
 |[source]
 table:
   caption-align: inherit
 
 |caption-text-align
-|xref:text.adoc#align[Text alignment] {vbar} inherit +
+|xref:text.adoc#text-align[Text alignment] {vbar} inherit +
 (default: `$table-caption-align`)
 |[source]
 table:

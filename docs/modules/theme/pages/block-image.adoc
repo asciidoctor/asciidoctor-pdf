@@ -153,7 +153,7 @@ The keys in the `image-caption` category control the arrangement and style of th
 |Key |Value Type |Example
 
 |caption-align
-|xref:text.adoc#align[Text alignment] {vbar} inherit +
+|xref:block.adoc#align[Alignment] {vbar} inherit +
 (default: `$caption-align`)
 |[source]
 image:
@@ -169,7 +169,7 @@ image:
     max-width: fit-content
 
 |caption-text-align
-|xref:text.adoc#align[Text alignment] {vbar} inherit +
+|xref:text.adoc#text-align[Text alignment] {vbar} inherit +
 (default: `$image-caption-align`)
 |[source]
 image:

@@ -166,13 +166,13 @@ The keys in the `toc-title` category control the arrangement and style of the ti
 |===
 |Key |Value Type |Example
 
-|align
-|xref:text.adoc#align[Text alignment] +
-(default: `$heading-h2-align`)
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
+(default: `$heading-h2-text-align`)
 |[source]
 toc:
   title:
-    align: right
+    text-align: right
 
 |font-color
 |xref:color.adoc[Color] +

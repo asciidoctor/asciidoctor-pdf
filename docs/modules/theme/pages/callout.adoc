@@ -71,7 +71,7 @@ callout-list:
   margin-top-after-code: 0
 
 |text-align
-|xref:text.adoc#align[Text alignment] +
+|xref:text.adoc#text-align[Text alignment] +
 (default: `$list-text-align`)
 |[source]
 callout-list:

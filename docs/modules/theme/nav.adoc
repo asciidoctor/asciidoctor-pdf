@@ -1,6 +1,7 @@
 * xref:index.adoc[]
 ** xref:language.adoc[]
 *** xref:measurement-units.adoc[]
+*** xref:blocks.adoc[]
 *** xref:text.adoc[]
 *** xref:image.adoc[]
 *** xref:color.adoc[]

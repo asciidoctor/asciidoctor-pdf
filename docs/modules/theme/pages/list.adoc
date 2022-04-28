@@ -33,8 +33,8 @@ list:
   marker-font-color: '#3c763d'
 
 |text-align
-|xref:text.adoc#align[Text alignment] +
-(default: `$base-align`)
+|xref:text.adoc#text-align[Text alignment] +
+(default: `$base-text-align`)
 |[source]
 list:
   text-align: left
