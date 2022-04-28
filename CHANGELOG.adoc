@@ -18,6 +18,8 @@ Enhancements::
 * change name of `untitled` option on special section to `notitle`
 * allow the title of any section to be hidden using the `notitle` option
 * allow imported PDF page to be referenced in TOC by enclosing in parent section with `notitle` option (#1213)
+* allow entry for preface to be added to TOC without adding title to body using the `notitle` option on the preface section (#1786)
+* automatically promote the `notitle` option from the first block in the premable to preface section; restore lead role on opening paragraph (#1786)
 
 Improvements::
 
