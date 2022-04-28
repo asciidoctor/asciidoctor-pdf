@@ -111,11 +111,11 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     (expect title_text[:x]).to be > 100
     (expect title_text[:y]).to be < sidebar_border_top
 
-    pdf = to_pdf input, pdf_theme: { sidebar_title_align: nil, heading_align: 'center' }, analyze: true
+    pdf = to_pdf input, pdf_theme: { sidebar_title_text_align: nil, heading_text_align: 'center' }, analyze: true
     title_text = pdf.find_unique_text 'Sidebar Title'
     (expect title_text[:x]).to be > 100
 
-    pdf = to_pdf input, pdf_theme: { sidebar_title_align: nil, heading_align: nil }, analyze: true
+    pdf = to_pdf input, pdf_theme: { sidebar_title_text_align: nil, heading_text_align: nil }, analyze: true
     title_text = pdf.find_unique_text 'Sidebar Title'
     (expect title_text[:x]).to be < 100
   end

@@ -13,7 +13,7 @@ The value `inherit` resolves to the alignment of the block image.
 |Key |Value Type |Example
 
 |align
-|xref:text.adoc#align[Text alignment] +
+|xref:blocks.adoc#align[Alignment] +
 (default: `left`)
 |[source]
 caption:
@@ -60,6 +60,13 @@ caption:
 |[source]
 caption:
   font-style: italic
+
+|text-align
+|xref:text.adoc#text-align[Text Alignment] +
+(default: `$<category>-caption-align` or `$caption-align`)
+|[source]
+caption:
+  text-align: right
 
 |text-decoration
 |xref:text.adoc#decoration[Text decoration] +

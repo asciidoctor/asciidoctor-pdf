@@ -40,7 +40,7 @@ font:
   fallbacks:
   - Noto Serif
 base:
-  align: left
+  text-align: left
   font-family: Noto Sans CN
 codespan:
   font-family: Noto Sans Mono CN
@@ -69,7 +69,7 @@ You may also want to darken the font color since the Noto Sans SC font has a thi
 ----
 ...
 base:
-  align: left
+  text-align: left
   font-color: #000000
   font-family: Noto Sans CN
 heading:

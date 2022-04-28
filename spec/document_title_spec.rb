@@ -65,8 +65,8 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
       (expect doctitle_text[:y]).to be > body_text[:y]
     end
 
-    it 'should align document title according to value of heading_h1_align theme key' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_align: 'left' }, analyze: true
+    it 'should align document title according to value of heading_h1_text_align theme key' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_text_align: 'left' }, analyze: true
       = Document Title
 
       body

@@ -89,13 +89,13 @@ The keys in the `abstract-title` category control the style and alignment of the
 |===
 |Key |Value Type |Example
 
-|align
-|xref:text.adoc#align[Text alignment] +
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
 (default: `center`)
 |[source]
 abstract:
   title:
-    align: center
+    text-align: center
 
 |font-color
 |xref:color.adoc[Color] +

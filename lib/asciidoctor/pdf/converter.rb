@@ -205,7 +205,7 @@ module Asciidoctor
         unless title_page_on
           body_start_page_number = page_number
           theme_font :heading, level: 1 do
-            layout_general_heading doc, doc.doctitle, align: (@theme.heading_h1_align&.to_sym || :center), level: 1, role: :doctitle
+            layout_general_heading doc, doc.doctitle, align: (@theme.heading_h1_text_align&.to_sym || :center), level: 1, role: :doctitle
           end if doc.header? && !doc.notitle
         end
 
@@ -402,7 +402,7 @@ module Asciidoctor
         @font_scale = 1
         @font_color = theme.base_font_color
         @text_decoration_width = theme.base_text_decoration_width
-        @base_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_align
+        @base_text_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_text_align
         @base_line_height = theme.base_line_height
         @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
         if (hyphen_lang = doc.attr 'hyphens') &&
@@ -662,7 +662,7 @@ module Asciidoctor
           title = %(#{title}\n<em class="subtitle">#{subtitle}</em>)
         end
         hlevel = sect.level + 1
-        align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
+        align = (@theme[%(heading_h#{hlevel}_text_align)] || @theme.heading_text_align || @base_text_align).to_sym
         chapterlike = !(part = sectname == 'part') && (sectname == 'chapter' || (sect.document.doctype == 'book' && sect.level == 1))
         hidden = sect.option? 'notitle'
         hopts = { align: align, level: hlevel, part: part, chapterlike: chapterlike, outdent: !(part || chapterlike) }
@@ -752,7 +752,7 @@ module Asciidoctor
         add_dest_for_block node if node.id
         hlevel = node.level.next
         unless (align = resolve_alignment_from_role node.roles)
-          align = (@theme[%(heading_h#{hlevel}_align)] || @theme.heading_align || @base_align).to_sym
+          align = (@theme[%(heading_h#{hlevel}_text_align)] || @theme.heading_text_align || @base_text_align).to_sym
         end
         # QUESTION: should we decouple styles from section titles?
         theme_font :heading, level: hlevel do
@@ -765,10 +765,10 @@ module Asciidoctor
         outdent_section do
           pad_box @theme.abstract_padding do
             theme_font :abstract_title do
-              layout_prose node.title, align: (@theme.abstract_title_align || @base_align).to_sym, margin_top: @theme.heading_margin_top, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
+              layout_prose node.title, align: (@theme.abstract_title_text_align || @base_text_align).to_sym, margin_top: @theme.heading_margin_top, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
             end if node.title?
             theme_font :abstract do
-              prose_opts = { align: (@theme.abstract_align || @base_align).to_sym, hyphenate: true }
+              prose_opts = { align: (@theme.abstract_text_align || @base_text_align).to_sym, hyphenate: true }
               if (text_indent = @theme.prose_text_indent) > 0
                 prose_opts[:indent_paragraphs] = text_indent
               end
@@ -858,7 +858,7 @@ module Asciidoctor
 
       def convert_admonition node
         type = node.attr 'name'
-        label_align = @theme.admonition_label_align&.to_sym || :center
+        label_align = @theme.admonition_label_text_align&.to_sym || :center
         # TODO: allow vertical_align to be a number
         if (label_valign = @theme.admonition_label_vertical_align&.to_sym || :middle) == :middle
           label_valign = :center
@@ -1124,7 +1124,7 @@ module Asciidoctor
           pad_box @theme.sidebar_padding, node do
             theme_font :sidebar_title do
               # QUESTION: should we allow margins of sidebar title to be customized?
-              layout_prose node.title, align: (@theme.sidebar_title_align || @theme.heading_align || @base_align).to_sym, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
+              layout_prose node.title, align: (@theme.sidebar_title_text_align || @theme.heading_text_align || @base_text_align).to_sym, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
             end if node.title?
             theme_font :sidebar do
               traverse node
@@ -1555,7 +1555,7 @@ module Asciidoctor
 
         alignment = (alignment = node.attr 'align') ?
           ((BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left) :
-          (resolve_alignment_from_role node.roles) || (@theme.image_align&.to_sym || :left)
+          (resolve_alignment_from_role node.roles) || @theme.image_align&.to_sym || :left
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
         width = resolve_explicit_width node.attributes, bounds_width: (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
         # TODO: add `to_pt page_width` method to ViewportWidth type
@@ -2750,7 +2750,7 @@ module Asciidoctor
         font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
 
         # QUESTION: allow alignment per element on title page?
-        title_align = (@theme.title_page_align || @base_align).to_sym
+        title_align = (@theme.title_page_text_align || @base_text_align).to_sym
 
         if @theme.title_page_logo_display != 'none' && (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
           if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
@@ -2981,7 +2981,7 @@ module Asciidoctor
           typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
             color: @font_color,
             inline_format: inline_format_opts,
-            align: @base_align.to_sym,
+            align: @base_text_align.to_sym,
           }.merge(opts)
           margin_bottom bot_margin
         end
@@ -3012,7 +3012,7 @@ module Asciidoctor
         typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
           color: @font_color,
           inline_format: [inline_format_opts],
-          align: @base_align.to_sym,
+          align: @base_text_align.to_sym,
         }.merge(opts)
         margin_bottom bot_margin
       end
@@ -3057,9 +3057,9 @@ module Asciidoctor
         container_width = bounds.width
         indent_by = [0, 0]
         if (align = @theme[%(#{category_caption}_align)] || @theme.caption_align)
-          align = align == 'inherit' ? (block_align || @base_align.to_sym) : align.to_sym
+          align = align == 'inherit' ? (block_align || @base_text_align.to_sym) : align.to_sym
         else
-          align = @base_align.to_sym
+          align = @base_text_align.to_sym
         end
         if (text_align = @theme[%(#{category_caption}_text_align)] || @theme.caption_text_align)
           text_align = text_align == 'inherit' ? align : text_align.to_sym
@@ -3152,7 +3152,7 @@ module Asciidoctor
         move_cursor_to start_cursor
         unless (toc_title = doc.attr 'toc-title').nil_or_empty?
           theme_font_cascade [[:heading, level: 2], :toc_title] do
-            toc_title_align = (@theme.toc_title_align || @theme.heading_h2_align || @theme.heading_align || @base_align).to_sym
+            toc_title_align = (@theme.toc_title_text_align || @theme.heading_h2_text_align || @theme.heading_text_align || @base_text_align).to_sym
             layout_general_heading doc, toc_title, align: toc_title_align, level: 2, outdent: true, role: :toctitle
           end
         end
@@ -4259,7 +4259,7 @@ module Asciidoctor
           (align_role.slice 5, align_role.length).to_sym
         elsif use_theme
           roles.reverse.each do |role|
-            if (align = @theme[%(role_#{role}_align)])
+            if (align = @theme[%(role_#{role}_text_align)])
               return align.to_sym
             end
           end

@@ -105,13 +105,13 @@ The keys in the `sidebar-title` category control the arrangement and style of si
 |===
 |Key |Value Type |Example
 
-|align
-|xref:text.adoc#align[Text alignment] +
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
 (default: `center`)
 |[source]
 sidebar:
   title:
-    align: left
+    text-align: left
 
 |font-color
 |xref:color.adoc[Color] +

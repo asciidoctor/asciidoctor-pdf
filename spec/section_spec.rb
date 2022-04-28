@@ -145,7 +145,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should allow theme to align all section titles' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_align: 'center' }, analyze: true
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_align: 'center' }, analyze: true
     == Drill
 
     content
@@ -171,7 +171,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should allow theme to align section title for specific level' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_align: 'center' }, analyze: true
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_text_align: 'center' }, analyze: true
     = Document Title
     :notitle:
     :doctype: book

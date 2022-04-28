@@ -22,7 +22,7 @@ page:
   margin_outer: 0.59in
   size: A4
 base:
-  align: justify
+  text_align: justify
   # color as hex string (leading # is optional)
   font_color: 333333
   # color as RGB array
@@ -96,7 +96,7 @@ menu:
   caret_content: " <font size=\"1.15em\" color=\"#B12146\">\u203a</font> "
   font_style: bold
 heading:
-  align: left
+  text_align: left
   font_color: $base_font_color
   font_style: bold
   # h1 is used for part titles (book doctype) or the doctitle (article doctype)
@@ -114,7 +114,7 @@ heading:
   margin_bottom: $vertical_rhythm * 0.9
   min_height_after: $base_line_height_length * 1.5
 title_page:
-  align: right
+  text_align: right
   logo:
     top: 10%
   title:
@@ -148,7 +148,7 @@ abstract:
   font_style: italic
   first_line_font_style: bold
   title:
-    align: center
+    text_align: center
     font_color: $heading_font_color
     font_size: $heading_h4_font_size
     font_style: $heading_font_style
@@ -218,7 +218,7 @@ sidebar:
   border_width: $base_border_width
   padding: [$vertical_rhythm, $vertical_rhythm * 1.25, $vertical_rhythm, $vertical_rhythm * 1.25]
   title:
-    align: center
+    text_align: center
     font_color: $heading_font_color
     font_size: $heading_h4_font_size
     font_style: $heading_font_style

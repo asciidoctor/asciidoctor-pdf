@@ -131,8 +131,8 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect disclaimer_text[:font_name]).to eql 'NotoSerif-Italic'
   end
 
-  it 'should use base align if caption align is set to inherit' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { base_align: 'right', caption_align: 'inherit' }, analyze: true
+  it 'should use base text align if caption align is set to inherit' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { base_text_align: 'right', caption_align: 'inherit' }, analyze: true
     .Title
     Text
     EOS
@@ -198,7 +198,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     pdf_theme = {
       role_custom_font_size: 14,
       role_custom_font_color: 'FF0000',
-      role_custom_align: :center,
+      role_custom_text_align: :center,
       role_custom_font_style: 'bold',
       role_custom_text_transform: 'lowercase',
     }

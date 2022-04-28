@@ -338,7 +338,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     it 'should allow the theme to specify a minimum width for the text-based label' do
       pdf_theme = {
         admonition_label_min_width: '75',
-        admonition_label_align: 'right',
+        admonition_label_text_align: 'right',
       }
 
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
@@ -436,7 +436,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     it 'should allow the theme to specify a minimum width for the font-based icon label' do
       pdf_theme = {
         admonition_label_min_width: '75',
-        admonition_label_align: 'right',
+        admonition_label_text_align: 'right',
       }
 
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true

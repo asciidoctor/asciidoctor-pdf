@@ -14,12 +14,12 @@ TIP: While it's common to define additional keys in this category (e.g., `base-b
 |===
 |Key |Value Type |Example
 
-|align
-|xref:text.adoc#align[Text alignment] +
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
 (default: `left`)
 |[source]
 base:
-  align: justify
+  text-align: justify
 
 |border-color
 |xref:color.adoc[Color] +

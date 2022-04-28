@@ -19,12 +19,12 @@ In that case, setting the `:notitle:` attribute only removes the document title 
 |===
 |Key |Value Type |Example
 
-|align
-|xref:text.adoc#align[Text alignment] +
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
 (default: `center`)
 |[source]
 title-page:
-  align: right
+  text-align: right
 
 |<<background-color,background-color>>
 |xref:color.adoc[Color] +
@@ -116,7 +116,7 @@ The keys in the `title-page-logo` category control the arrangement of a logo on 
 
 |align
 |xref:image.adoc#align[Image alignment] +
-(default: _inherit_)
+(default: `$title-page-text-align`)
 |[source]
 title-page:
   logo:
