@@ -6,6 +6,7 @@ team must conquer and vanquish on their journey to discovering the true power of
 Open Source.
 :organization: Company Name
 :doctype: book
+:preface-title: Preface
 // Settings:
 :experimental:
 :reproducible:
@@ -28,8 +29,11 @@ endif::[]
 :uri-stbernardusabt12: http://www.sintbernardus.be/stbernardusabt12.php?l=en
 :uri-wolpertinger: http://en.wikipedia.org/wiki/Wolpertinger
 
+[%notitle]
+--
 [abstract]
 {description}
+--
 
 == It's a City Under Siege
 

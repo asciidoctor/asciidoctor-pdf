@@ -860,6 +860,33 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect text[2][:font_size]).to eql 10.5
   end
 
+  it 'should only show preface title in TOC if notitle option is set on first child block of anonymous preface' do
+    input = <<~'EOS'
+    = Book Title
+    :doctype: book
+    :preface-title: Preface
+    :toc:
+
+    [%notitle]
+    anonymous preface
+
+    == First Chapter
+
+    chapter content
+    EOS
+
+    pdf = to_pdf input
+    (expect (preface_dest = get_dest pdf, '_preface')).not_to be_nil
+    _, page_height = get_page_size pdf, preface_dest[:page_number]
+    (expect preface_dest[:y]).to eql page_height
+
+    pdf = to_pdf input, analyze: true
+    (expect pdf.find_unique_text 'Preface', page_number: 2).not_to be_nil
+    (expect pdf.find_unique_text 'Preface', page_number: 3).to be_nil
+    # NOTE: lead role on first paragraph is retained
+    (expect (pdf.find_unique_text 'anonymous preface', page_number: 3)[:font_size]).to eql 13
+  end
+
   it 'should not force title of empty section to next page if it fits on page' do
     pdf = to_pdf <<~EOS, analyze: true
     == Section A
