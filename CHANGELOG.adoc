@@ -19,6 +19,10 @@ Enhancements::
 * allow the title of any section to be hidden using the `notitle` option
 * allow imported PDF page to be referenced in TOC by enclosing in parent section with `notitle` option (#1213)
 
+Improvements::
+
+* change "icon" to "icon image" in warning about missing admonition icon image
+
 Bug Fixes::
 
 * set the base font of the front cover image is a PDF and the title page is not active (#2092)

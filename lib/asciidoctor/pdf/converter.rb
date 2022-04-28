@@ -881,7 +881,7 @@ module Asciidoctor
             # TODO: introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
             label_width = label_min_width || 36.0
           else
-            log :warn, %(admonition icon not found or not readable: #{icon_path || (resolve_icon_image_path node, type, false)})
+            log :warn, %(admonition icon image not found or not readable: #{icon_path || (resolve_icon_image_path node, type, false)})
           end
         end
         unless icons
@@ -954,7 +954,7 @@ module Asciidoctor
                           log :warn, %(problem encountered in image: #{icon_path}; #{icon_warning})
                         end unless scratch?
                       rescue
-                        log :warn, %(could not embed admonition icon: #{icon_path}; #{$!.message})
+                        log :warn, %(could not embed admonition icon image: #{icon_path}; #{$!.message})
                         icons = nil
                       end
                     else
@@ -968,7 +968,7 @@ module Asciidoctor
                         end
                         embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
                       rescue
-                        log :warn, %(could not embed admonition icon: #{icon_path}; #{$!.message})
+                        log :warn, %(could not embed admonition icon image: #{icon_path}; #{$!.message})
                         icons = nil
                       end
                     end
