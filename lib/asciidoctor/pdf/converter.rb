@@ -168,7 +168,7 @@ module Asciidoctor
           if (bottom_gutter = @bottom_gutters[-1][node])
             prose_opts[:bottom_gutter] = bottom_gutter
           end
-          layout_prose string, prose_opts
+          inscribe_prose string, prose_opts
         end
       ensure
         node.document.instance_variable_set :@converter, prev_converter if prev_converter
@@ -190,22 +190,22 @@ module Asciidoctor
 
         marked_page_number = page_number
         # NOTE: a new page will already be started (page_number = 2) if the front cover image is a PDF
-        layout_cover_page doc, :front
+        inscribe_cover_page doc, :front
         has_front_cover = page_number > marked_page_number
-        has_title_page = layout_title_page doc if (title_page_on = doc.doctype == 'book' || (doc.attr? 'title-page'))
+        has_title_page = inscribe_title_page doc if (title_page_on = doc.doctype == 'book' || (doc.attr? 'title-page'))
 
         @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress' && page_number == 0
 
         start_new_page unless page&.empty? # rubocop:disable Lint/SafeNavigationWithEmpty
 
         # NOTE: the base font must be set before any content is written to the main or scratch document
-        # this method is called inside layout_title_page if the title page is active
+        # this method is called inside inscribe_title_page if the title page is active
         font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style unless has_title_page
 
         unless title_page_on
           body_start_page_number = page_number
           theme_font :heading, level: 1 do
-            layout_general_heading doc, doc.doctitle, align: (@theme.heading_h1_text_align&.to_sym || :center), level: 1, role: :doctitle
+            inscribe_general_heading doc, doc.doctitle, align: (@theme.heading_h1_text_align&.to_sym || :center), level: 1, role: :doctitle
           end if doc.header? && !doc.notitle
         end
 
@@ -301,14 +301,14 @@ module Asciidoctor
           traverse doc
 
           # NOTE: for a book, these are leftover footnotes; for an article this is everything
-          outdent_section { layout_footnotes doc }
+          outdent_section { inscribe_footnotes doc }
 
           if @toc_extent
             if title_page_on && !insert_toc
               num_front_matter_pages[0] = @toc_extent.to.page if @theme.running_content_start_at == 'after-toc'
               num_front_matter_pages[1] = @toc_extent.to.page if @theme.page_numbering_start_at == 'after-toc'
             end
-            toc_page_nums = layout_toc doc, toc_num_levels, @toc_extent.from.page, @toc_extent.from.cursor, num_front_matter_pages[1]
+            toc_page_nums = inscribe_toc doc, toc_num_levels, @toc_extent.from.page, @toc_extent.from.cursor, num_front_matter_pages[1]
           else
             toc_page_nums = []
           end
@@ -319,8 +319,8 @@ module Asciidoctor
         end
 
         unless page_count < body_start_page_number
-          layout_running_content :header, doc, num_front_matter_pages, body_start_page_number unless doc.noheader || @theme.header_height.to_f == 0 # rubocop:disable Lint/FloatComparison
-          layout_running_content :footer, doc, num_front_matter_pages, body_start_page_number unless doc.nofooter || @theme.footer_height.to_f == 0 # rubocop:disable Lint/FloatComparison
+          inscribe_running_content :header, doc, num_front_matter_pages, body_start_page_number unless doc.noheader || @theme.header_height.to_f == 0 # rubocop:disable Lint/FloatComparison
+          inscribe_running_content :footer, doc, num_front_matter_pages, body_start_page_number unless doc.nofooter || @theme.footer_height.to_f == 0 # rubocop:disable Lint/FloatComparison
         end
 
         add_outline doc, (doc.attr 'outlinelevels', toc_num_levels), toc_page_nums, num_front_matter_pages[1], has_front_cover
@@ -337,7 +337,7 @@ module Asciidoctor
         catalog.data[:ViewerPreferences] = { DisplayDocTitle: true }
 
         stamp_foreground_image doc, has_front_cover
-        layout_cover_page doc, :back
+        inscribe_cover_page doc, :back
         add_dest_for_top doc
         nil
       end
@@ -687,11 +687,11 @@ module Asciidoctor
         add_dest_for_block sect, id: sect_anchor, y: (at_page_top? ? page_height : nil)
         theme_font :heading, level: hlevel do
           if part
-            layout_part_title sect, title, hopts
+            inscribe_part_title sect, title, hopts
           elsif chapterlike
-            layout_chapter_title sect, title, hopts
+            inscribe_chapter_title sect, title, hopts
           else
-            layout_general_heading sect, title, hopts
+            inscribe_general_heading sect, title, hopts
           end
         end unless hidden
 
@@ -700,7 +700,7 @@ module Asciidoctor
         else
           traverse sect
         end
-        outdent_section { layout_footnotes sect } if chapterlike
+        outdent_section { inscribe_footnotes sect } if chapterlike
         sect.set_attr 'pdf-page-end', page_number
       end
 
@@ -721,7 +721,7 @@ module Asciidoctor
       end
 
       # QUESTION: if a footnote ref appears in a separate chapter, should the footnote def be duplicated?
-      def layout_footnotes node
+      def inscribe_footnotes node
         return if (fns = (doc = node.document).footnotes - @rendered_footnotes).empty?
         theme_margin :block, :bottom if node.context == :document || node == node.document.blocks[-1]
         theme_margin :footnotes, :top
@@ -730,7 +730,7 @@ module Asciidoctor
             move_down delta
           end
           theme_font :footnotes do
-            (title = doc.attr 'footnotes-title') && (layout_caption title, category: :footnotes)
+            (title = doc.attr 'footnotes-title') && (inscribe_caption title, category: :footnotes)
             item_spacing = @theme.footnotes_item_spacing
             index_offset = @rendered_footnotes.length
             sect_xreftext = node.context == :section && (node.xreftext node.document.attr 'xrefstyle')
@@ -740,7 +740,7 @@ module Asciidoctor
                 fn.singleton_class.send :attr_accessor, :label unless fn.respond_to? :label=
                 fn.label = %(#{label} - #{sect_xreftext})
               end
-              layout_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{label}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
+              inscribe_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{label}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
             end
             @rendered_footnotes += fns if extent
           end
@@ -756,7 +756,7 @@ module Asciidoctor
         end
         # QUESTION: should we decouple styles from section titles?
         theme_font :heading, level: hlevel do
-          layout_general_heading node, node.title, align: align, level: hlevel, outdent: (node.parent.context == :section)
+          inscribe_general_heading node, node.title, align: align, level: hlevel, outdent: (node.parent.context == :section)
         end
       end
 
@@ -765,7 +765,7 @@ module Asciidoctor
         outdent_section do
           pad_box @theme.abstract_padding do
             theme_font :abstract_title do
-              layout_prose node.title, align: (@theme.abstract_title_text_align || @base_text_align).to_sym, margin_top: @theme.heading_margin_top, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
+              inscribe_prose node.title, align: (@theme.abstract_title_text_align || @base_text_align).to_sym, margin_top: @theme.heading_margin_top, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
             end if node.title?
             theme_font :abstract do
               prose_opts = { align: (@theme.abstract_text_align || @base_text_align).to_sym, hyphenate: true }
@@ -787,7 +787,7 @@ module Asciidoctor
                   if child.context == :paragraph
                     child.document.playback_attributes child.attributes
                     prose_opts[:margin_bottom] = 0 if child == last_block
-                    layout_prose child.content, ((align = resolve_alignment_from_role child.roles) ? (prose_opts.merge align: align) : prose_opts.dup)
+                    inscribe_prose child.content, ((align = resolve_alignment_from_role child.roles) ? (prose_opts.merge align: align) : prose_opts.dup)
                     prose_opts.delete :first_line_options
                     prose_opts.delete :margin_bottom
                   else
@@ -799,7 +799,7 @@ module Asciidoctor
                 if (align = resolve_alignment_from_role node.roles)
                   prose_opts[:align] = align
                 end
-                layout_prose string, (prose_opts.merge margin_bottom: 0)
+                inscribe_prose string, (prose_opts.merge margin_bottom: 0)
               end
             end
           end
@@ -834,17 +834,17 @@ module Asciidoctor
 
         # TODO: check if we're within one line of the bottom of the page
         # and advance to the next page if so (similar to logic for section titles)
-        layout_caption node, labeled: false if node.title?
+        inscribe_caption node, labeled: false if node.title?
 
         if (bottom_gutter = @bottom_gutters[-1][node])
           prose_opts[:bottom_gutter] = bottom_gutter
         end
 
         if roles.empty?
-          layout_prose node.content, prose_opts
+          inscribe_prose node.content, prose_opts
         else
           theme_font_cascade (roles.map {|role| %(role_#{role}).to_sym }) do
-            layout_prose node.content, prose_opts
+            inscribe_prose node.content, prose_opts
           end
         end
 
@@ -996,7 +996,7 @@ module Asciidoctor
                         end
                       end
                       @text_transform = nil # already applied to label
-                      layout_prose label_text,
+                      inscribe_prose label_text,
                         align: label_align,
                         valign: label_valign,
                         line_height: 1,
@@ -1010,7 +1010,7 @@ module Asciidoctor
               end
             end
             pad_box [cpad[0], 0, cpad[2], label_width + lpad[1] + cpad[3]], node do
-              layout_caption node, category: :admonition, labeled: false if node.title?
+              inscribe_caption node, category: :admonition, labeled: false if node.title?
               theme_font :admonition do
                 traverse node
               end
@@ -1044,13 +1044,13 @@ module Asciidoctor
           arrange_block node do
             add_dest_for_block node if id
             tare_first_page_content_stream do
-              node.context == :example ? (layout_caption %(\u25bc #{node.title})) : (layout_caption node, labeled: false)
+              node.context == :example ? (inscribe_caption %(\u25bc #{node.title})) : (inscribe_caption node, labeled: false)
             end if has_title
             traverse node
           end
         else
           add_dest_for_block node if id
-          node.context == :example ? (layout_caption %(\u25bc #{node.title})) : (layout_caption node, labeled: false) if has_title
+          node.context == :example ? (inscribe_caption %(\u25bc #{node.title})) : (inscribe_caption node, labeled: false) if has_title
           traverse node
         end
       end
@@ -1094,7 +1094,7 @@ module Asciidoctor
                 traverse node
               else # :verse
                 content = guard_indentation node.content
-                layout_prose content,
+                inscribe_prose content,
                   normalize: false,
                   align: :left,
                   hyphenate: true,
@@ -1106,7 +1106,7 @@ module Asciidoctor
               margin_bottom @theme.block_margin_bottom
               theme_font %(#{category}_cite) do
                 attribution_parts = citetitle ? [attribution, citetitle] : [attribution]
-                layout_prose %(#{EmDash} #{attribution_parts.join ', '}), align: :left, normalize: false, margin_bottom: 0
+                inscribe_prose %(#{EmDash} #{attribution_parts.join ', '}), align: :left, normalize: false, margin_bottom: 0
               end
             end
           end
@@ -1124,7 +1124,7 @@ module Asciidoctor
           pad_box @theme.sidebar_padding, node do
             theme_font :sidebar_title do
               # QUESTION: should we allow margins of sidebar title to be customized?
-              layout_prose node.title, align: (@theme.sidebar_title_text_align || @theme.heading_text_align || @base_text_align).to_sym, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
+              inscribe_prose node.title, align: (@theme.sidebar_title_text_align || @theme.heading_text_align || @base_text_align).to_sym, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
             end if node.title?
             theme_font :sidebar do
               traverse node
@@ -1163,7 +1163,7 @@ module Asciidoctor
           marker_width = rendered_width_of_string %(#{marker = conum_glyph index}x)
           float do
             bounding_box [0, cursor], width: marker_width do
-              layout_prose marker, align: :center, inline_format: false, margin: 0
+              inscribe_prose marker, align: :center, inline_format: false, margin: 0
             end
           end
         end
@@ -1247,7 +1247,7 @@ module Asciidoctor
           max_term_width += (term_padding[1] + term_padding[3])
           term_column_width = [max_term_width, bounds.width * 0.5].min
           table table_data, position: :left, cell_style: { border_width: 0 }, column_widths: [term_column_width] do
-            @pdf.layout_table_caption node if node.title?
+            @pdf.inscribe_table_caption node if node.title?
           end
           theme_margin :prose, :bottom, (next_enclosed_block actual_node) #unless actual_node.nested?
         when 'qanda'
@@ -1257,7 +1257,7 @@ module Asciidoctor
         else
           # TODO: check if we're within one line of the bottom of the page
           # and advance to the next page if so (similar to logic for section titles)
-          layout_caption node, category: :description_list, labeled: false if node.title?
+          inscribe_caption node, category: :description_list, labeled: false if node.title?
 
           term_spacing = @theme.description_list_term_spacing
           term_height = theme_font(:description_list_term) { height_of_typeset_text 'A' }
@@ -1269,8 +1269,8 @@ module Asciidoctor
                 term_font_styles = nil
               end
               terms.each_with_index do |term, idx|
-                # QUESTION: should we pass down styles in other calls to layout_prose
-                layout_prose term.text, margin_top: (idx > 0 ? term_spacing : 0), margin_bottom: 0, align: :left, normalize_line_height: true, styles: term_font_styles
+                # QUESTION: should we pass down styles in other calls to inscribe_prose
+                inscribe_prose term.text, margin_top: (idx > 0 ? term_spacing : 0), margin_bottom: 0, align: :left, normalize_line_height: true, styles: term_font_styles
               end
             end
             indent @theme.description_list_description_indent do
@@ -1357,7 +1357,7 @@ module Asciidoctor
       def convert_list node
         # TODO: check if we're within one line of the bottom of the page
         # and advance to the next page if so (similar to logic for section titles)
-        layout_caption node, category: :list, labeled: false if node.title?
+        inscribe_caption node, category: :list, labeled: false if node.title?
 
         opts = {}
         if (align = resolve_alignment_from_role node.roles)
@@ -1454,7 +1454,7 @@ module Asciidoctor
             float do
               advance_page if @media == 'prepress' && cursor < marker_height
               flow_bounding_box position: start_position, width: marker_width do
-                layout_prose marker,
+                inscribe_prose marker,
                   align: :right,
                   character_spacing: -0.5,
                   color: marker_style[:font_color],
@@ -1482,16 +1482,16 @@ module Asciidoctor
       def traverse_list_item node, list_type, opts = {}
         if list_type == :dlist # qanda
           terms, desc = node
-          terms.each {|term| layout_prose %(<em>#{term.text}</em>), (opts.merge margin_bottom: @theme.description_list_term_spacing) }
+          terms.each {|term| inscribe_prose %(<em>#{term.text}</em>), (opts.merge margin_bottom: @theme.description_list_term_spacing) }
           if desc
-            layout_prose desc.text, (opts.merge hyphenate: true) if desc.text?
+            inscribe_prose desc.text, (opts.merge hyphenate: true) if desc.text?
             traverse desc
           end
         else
           if (primary_text = node.text).nil_or_empty?
-            layout_prose DummyText, opts unless node.blocks?
+            inscribe_prose DummyText, opts unless node.blocks?
           else
-            layout_prose primary_text, (opts.merge hyphenate: true)
+            inscribe_prose primary_text, (opts.merge hyphenate: true)
           end
           traverse node
         end
@@ -1562,7 +1562,7 @@ module Asciidoctor
         width = (width.to_f / 100) * page_width if ViewportWidth === width
 
         # NOTE: if width is not set explicitly and max-width is fit-content, caption height may not be accurate
-        caption_h = node.title? ? (layout_caption node, category: :image, side: :bottom, block_align: alignment, block_width: width, max_width: @theme.image_caption_max_width, dry_run: true, force_top_margin: true) : 0
+        caption_h = node.title? ? (inscribe_caption node, category: :image, side: :bottom, block_align: alignment, block_width: width, max_width: @theme.image_caption_max_width, dry_run: true, force_top_margin: true) : 0
 
         align_to_page = node.option? 'align-to-page'
         pinned = opts[:pinned]
@@ -1645,7 +1645,7 @@ module Asciidoctor
               move_down rendered_h if y == image_y
             end
           end
-          layout_caption node, category: :image, side: :bottom, block_align: alignment, block_width: rendered_w, max_width: @theme.image_caption_max_width if node.title?
+          inscribe_caption node, category: :image, side: :bottom, block_align: alignment, block_width: rendered_w, max_width: @theme.image_caption_max_width if node.title?
           theme_margin :block, :bottom, (next_enclosed_block node) unless pinned
         rescue => e
           raise if ::StopIteration === e
@@ -1685,9 +1685,9 @@ module Asciidoctor
           alignment = (alignment = node.attr 'align') ?
             ((BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left) :
             (resolve_alignment_from_role node.roles) || (@theme.image_align&.to_sym || :left)
-          layout_prose alt_text_template % alt_text_vars, align: alignment, margin: 0, normalize: false, single_line: true
+          inscribe_prose alt_text_template % alt_text_vars, align: alignment, margin: 0, normalize: false, single_line: true
         end
-        layout_caption node, category: :image, side: :bottom if node.title?
+        inscribe_caption node, category: :image, side: :bottom if node.title?
         theme_margin :block, :bottom, (next_enclosed_block node) unless opts[:pinned]
         nil
       end
@@ -1696,8 +1696,8 @@ module Asciidoctor
         add_dest_for_block node if node.id
         audio_path = node.media_uri node.attr 'target'
         play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
-        layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0, single_line: true
-        layout_caption node, labeled: false, side: :bottom if node.title?
+        inscribe_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0, single_line: true
+        inscribe_caption node, labeled: false, side: :bottom if node.title?
         theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
@@ -1724,8 +1724,8 @@ module Asciidoctor
         if poster.nil_or_empty?
           add_dest_for_block node if node.id
           play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
-          layout_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{video_path}">#{video_path}</a> <em>(#{type})</em>), normalize: false, margin: 0, single_line: true
-          layout_caption node, labeled: false, side: :bottom if node.title?
+          inscribe_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{video_path}">#{video_path}</a> <em>(#{type})</em>), normalize: false, margin: 0, single_line: true
+          inscribe_caption node, labeled: false, side: :bottom if node.title?
           theme_margin :block, :bottom, (next_enclosed_block node)
         else
           original_attributes = node.attributes.dup
@@ -2270,7 +2270,7 @@ module Asciidoctor
         table table_data, table_settings do
           # NOTE: call width to capture resolved table width
           table_width = width
-          @pdf.layout_table_caption node, alignment, table_width, caption_max_width if node.title? && caption_side == :top
+          @pdf.inscribe_table_caption node, alignment, table_width, caption_max_width if node.title? && caption_side == :top
           # NOTE: align using padding instead of bounding_box as prawn-table does
           # using a bounding_box across pages mangles the margin box of subsequent pages
           if alignment != :left && table_width != (this_bounds = @pdf.bounds).width
@@ -2343,7 +2343,7 @@ module Asciidoctor
           bounds.subtract_left_padding left_padding
           bounds.subtract_right_padding right_padding if right_padding
         end
-        layout_table_caption node, alignment, table_width, caption_max_width, caption_side if node.title? && caption_side == :bottom
+        inscribe_table_caption node, alignment, table_width, caption_max_width, caption_side if node.title? && caption_side == :bottom
         theme_margin :block, :bottom, (next_enclosed_block node)
       rescue ::Prawn::Errors::CannotFit
         log :error, (message_with_context 'cannot fit contents of table cell into specified column width', source_location: node.source_location)
@@ -2407,7 +2407,7 @@ module Asciidoctor
           @index.categories.each do |category|
             # NOTE: cursor method always returns 0 inside column_box; breaks reference_bounds.move_past_bottom
             bounds.move_past_bottom if space_needed_for_category > y - reference_bounds.absolute_bottom
-            layout_prose category.name,
+            inscribe_prose category.name,
               align: :left,
               inline_format: false,
               margin_bottom: @theme.description_list_term_spacing,
@@ -2435,7 +2435,7 @@ module Asciidoctor
           text = %(#{text}, #{pagenums.join ', '})
         end
         subterm_indent = @theme.description_list_description_indent
-        layout_prose text, align: :left, margin: 0, hanging_indent: subterm_indent * 2
+        inscribe_prose text, align: :left, margin: 0, hanging_indent: subterm_indent * 2
         indent subterm_indent do
           term.subterms.each do |subterm|
             convert_index_list_item subterm
@@ -2723,7 +2723,7 @@ module Asciidoctor
       end
 
       # Returns a Boolean indicating whether the title page was created
-      def layout_title_page doc
+      def inscribe_title_page doc
         return unless doc.header? && !doc.notitle && @theme.title_page != false
 
         # NOTE: a new page may have already been started at this point, so decide what to do with it
@@ -2799,7 +2799,7 @@ module Asciidoctor
             move_down @theme.title_page_title_margin_top || 0
             indent (@theme.title_page_title_margin_left || 0), (@theme.title_page_title_margin_right || 0) do
               theme_font :title_page_title do
-                layout_prose doctitle.main, align: title_align, margin: 0
+                inscribe_prose doctitle.main, align: title_align, margin: 0
               end
             end
             move_down @theme.title_page_title_margin_bottom || 0
@@ -2808,7 +2808,7 @@ module Asciidoctor
             move_down @theme.title_page_subtitle_margin_top || 0
             indent (@theme.title_page_subtitle_margin_left || 0), (@theme.title_page_subtitle_margin_right || 0) do
               theme_font :title_page_subtitle do
-                layout_prose subtitle, align: title_align, margin: 0
+                inscribe_prose subtitle, align: title_align, margin: 0
               end
             end
             move_down @theme.title_page_subtitle_margin_bottom || 0
@@ -2833,7 +2833,7 @@ module Asciidoctor
                 end
               end.join @theme.title_page_authors_delimiter
               theme_font :title_page_authors do
-                layout_prose authors, align: title_align, margin: 0, normalize: true
+                inscribe_prose authors, align: title_align, margin: 0, normalize: true
               end
             end
             move_down @theme.title_page_authors_margin_bottom || 0
@@ -2846,18 +2846,18 @@ module Asciidoctor
             end
             indent (@theme.title_page_revision_margin_left || 0), (@theme.title_page_revision_margin_right || 0) do
               theme_font :title_page_revision do
-                layout_prose revision_text, align: title_align, margin: 0, normalize: false
+                inscribe_prose revision_text, align: title_align, margin: 0, normalize: false
               end
             end
             move_down @theme.title_page_revision_margin_bottom || 0
           end
         end
 
-        layout_prose DummyText, margin: 0, line_height: 1, normalize: false if page.empty?
+        inscribe_prose DummyText, margin: 0, line_height: 1, normalize: false if page.empty?
         true
       end
 
-      def layout_cover_page doc, face
+      def inscribe_cover_page doc, face
         image_path, image_opts = resolve_background_image doc, @theme, %(#{face}-cover-image), theme_key: %(cover_#{face}_image).to_sym, symbolic_paths: ['', '~']
         if image_path
           if image_path.empty?
@@ -2903,7 +2903,7 @@ module Asciidoctor
 
       def start_new_chapter chapter
         start_new_page unless at_page_top?
-        # TODO: must call update_colors before advancing to next page if start_new_page is called in layout_chapter_title
+        # TODO: must call update_colors before advancing to next page if start_new_page is called in inscribe_chapter_title
         start_new_page if @ppbook && verso_page? && !(chapter.option? 'nonfacing')
       end
 
@@ -2916,11 +2916,11 @@ module Asciidoctor
             start_page = page
             theme_font :heading, level: opts[:level] do
               if opts[:part]
-                layout_part_title sect, title, opts
+                inscribe_part_title sect, title, opts
               elsif opts[:chapterlike]
-                layout_chapter_title sect, title, opts
+                inscribe_chapter_title sect, title, opts
               else
-                layout_general_heading sect, title, opts
+                inscribe_general_heading sect, title, opts
               end
             end
             if page == start_page
@@ -2943,18 +2943,18 @@ module Asciidoctor
         nil
       end
 
-      def layout_chapter_title node, title, opts = {}
-        layout_general_heading node, title, (opts.merge outdent: true)
+      def inscribe_chapter_title node, title, opts = {}
+        inscribe_general_heading node, title, (opts.merge outdent: true)
       end
 
-      alias layout_part_title layout_chapter_title
+      alias inscribe_part_title inscribe_chapter_title
 
-      def layout_general_heading _node, title, opts = {}
-        layout_heading title, opts
+      def inscribe_general_heading _node, title, opts = {}
+        inscribe_heading title, opts
       end
 
-      # NOTE: layout_heading doesn't set the theme font because it's used for various types of headings
-      def layout_heading string, opts = {}
+      # NOTE: inscribe_heading doesn't set the theme font because it's used for various types of headings
+      def inscribe_heading string, opts = {}
         hlevel = opts[:level]
         unless (top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top))
           if at_page_top?
@@ -2988,7 +2988,7 @@ module Asciidoctor
       end
 
       # NOTE: inline_format is true by default
-      def layout_prose string, opts = {}
+      def inscribe_prose string, opts = {}
         top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || 0
         bot_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom
         if (transform = resolve_text_transform opts)
@@ -3035,13 +3035,13 @@ module Asciidoctor
       # The subject argument can either be a String or an AbstractNode. If
       # subject is an AbstractNode, only call this method if the node has a
       # title (i.e., subject.title? returns true).
-      def layout_caption subject, opts = {}
+      def inscribe_caption subject, opts = {}
         if opts.delete :dry_run
           force_top_margin = !at_page_top? if (force_top_margin = opts.delete :force_top_margin).nil?
           return (dry_run keep_together: true, single_page: :enforce do
             # TODO: encapsulate this logic to force top margin to be applied
             margin_box.instance_variable_set :@y, margin_box.absolute_top + 0.0001 if force_top_margin
-            layout_caption subject, opts
+            inscribe_caption subject, opts
           end).single_page_height
         end
         if ::Asciidoctor::AbstractBlock === subject
@@ -3111,7 +3111,7 @@ module Asciidoctor
             float { bounding_box(fill_at, width: container_width, height: caption_height) { fill_bounds bg_color } }
           end
           indent(*indent_by) do
-            layout_prose string, ({
+            inscribe_prose string, ({
               margin_top: margin[:top],
               margin_bottom: margin[:bottom],
               align: text_align,
@@ -3125,14 +3125,14 @@ module Asciidoctor
       end
 
       # Render the caption for a table and return the height of the rendered content
-      def layout_table_caption node, table_alignment = :left, table_width = nil, max_width = nil, side = :top
-        layout_caption node, category: :table, side: side, block_align: table_alignment, block_width: table_width, max_width: max_width
+      def inscribe_table_caption node, table_alignment = :left, table_width = nil, max_width = nil, side = :top
+        inscribe_caption node, category: :table, side: side, block_align: table_alignment, block_width: table_width, max_width: max_width
       end
 
       def allocate_toc doc, toc_num_levels, toc_start_cursor, title_page_on
         toc_start_page = page_number
         extent = dry_run onto: self do
-          layout_toc doc, toc_num_levels, toc_start_page, toc_start_cursor
+          inscribe_toc doc, toc_num_levels, toc_start_page, toc_start_cursor
           margin_bottom @theme.block_margin_bottom unless title_page_on
         end
         # NOTE: reserve pages for the toc; leaves cursor on page after last page in toc
@@ -3146,14 +3146,14 @@ module Asciidoctor
       end
 
       # NOTE: num_front_matter_pages not used during a dry run
-      def layout_toc doc, num_levels, toc_page_number, start_cursor, num_front_matter_pages = 0
+      def inscribe_toc doc, num_levels, toc_page_number, start_cursor, num_front_matter_pages = 0
         go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
         start_page_number = page_number
         move_cursor_to start_cursor
         unless (toc_title = doc.attr 'toc-title').nil_or_empty?
           theme_font_cascade [[:heading, level: 2], :toc_title] do
             toc_title_align = (@theme.toc_title_text_align || @theme.heading_h2_text_align || @theme.heading_text_align || @base_text_align).to_sym
-            layout_general_heading doc, toc_title, align: toc_title_align, level: 2, outdent: true, role: :toctitle
+            inscribe_general_heading doc, toc_title, align: toc_title_align, level: 2, outdent: true, role: :toctitle
           end
         end
         # QUESTION: should we skip this whole method if num_levels < 0?
@@ -3178,7 +3178,7 @@ module Asciidoctor
             }
           end
           theme_margin :toc, :top
-          layout_toc_level doc.sections, num_levels, dot_leader, num_front_matter_pages
+          inscribe_toc_level doc.sections, num_levels, dot_leader, num_front_matter_pages
         end
         # NOTE: range must be calculated relative to toc_page_number; absolute page number in scratch document is arbitrary
         toc_page_numbers = (toc_page_number..(toc_page_number + (page_number - start_page_number)))
@@ -3186,7 +3186,7 @@ module Asciidoctor
         toc_page_numbers
       end
 
-      def layout_toc_level sections, num_levels, dot_leader, num_front_matter_pages
+      def inscribe_toc_level sections, num_levels, dot_leader, num_front_matter_pages
         # NOTE: font options aren't always reliable, so store size separately
         toc_font_info = theme_font :toc do
           { font: font, size: @font_size }
@@ -3202,7 +3202,7 @@ module Asciidoctor
             if scratch?
               indent 0, pgnum_label_placeholder_width do
                 # NOTE: must wrap title in empty anchor element in case links are styled with different font family / size
-                layout_prose sect_title, anchor: true, normalize: false, hanging_indent: hanging_indent, normalize_line_height: true, margin: 0
+                inscribe_prose sect_title, anchor: true, normalize: false, hanging_indent: hanging_indent, normalize_line_height: true, margin: 0
               end
             else
               physical_pgnum = sect.attr 'pdf-page-start'
@@ -3247,7 +3247,7 @@ module Asciidoctor
             end
           end
           indent @theme.toc_indent do
-            layout_toc_level sect.sections, num_levels_for_sect, dot_leader, num_front_matter_pages
+            inscribe_toc_level sect.sections, num_levels_for_sect, dot_leader, num_front_matter_pages
           end if num_levels_for_sect > sect.level
         end
       end
@@ -3275,8 +3275,8 @@ module Asciidoctor
         icon_data
       end
 
-      # TODO: delegate to layout_page_header and layout_page_footer per page
-      def layout_running_content periphery, doc, skip = [1, 1], body_start_page_number = 1
+      # TODO: delegate to inscribe_page_header and inscribe_page_footer per page
+      def inscribe_running_content periphery, doc, skip = [1, 1], body_start_page_number = 1
         skip_pages, skip_pagenums = skip
         # NOTE: find and advance to first non-imported content page to use as model page
         return unless (content_start_page = state.pages[skip_pages..-1].index {|it| !it.imported_page? })
@@ -3843,7 +3843,7 @@ module Asciidoctor
       def theme_fill_and_stroke_block category, extent, opts = {}
         node_with_caption = nil unless (node_with_caption = opts[:caption_node])&.title?
         unless extent
-          layout_caption node_with_caption, category: category if node_with_caption
+          inscribe_caption node_with_caption, category: category if node_with_caption
           return
         end
         if (b_width = (opts.key? :border_width) ? opts[:border_width] : @theme[%(#{category}_border_width)])
@@ -3857,7 +3857,7 @@ module Asciidoctor
           bg_color = nil
         end
         unless b_width || bg_color
-          layout_caption node_with_caption, category: category if node_with_caption
+          inscribe_caption node_with_caption, category: category if node_with_caption
           return
         end
         if (b_color = @theme[%(#{category}_border_color)]) == 'transparent'
@@ -3875,7 +3875,7 @@ module Asciidoctor
         else # let page background cut into block background; guarantees b_width is set
           b_shift, b_gap_color = (b_width ||= 0.5) * 0.5, @page_bg_color
         end
-        layout_caption node_with_caption, category: category if node_with_caption
+        inscribe_caption node_with_caption, category: category if node_with_caption
         extent.from.page += 1 unless extent.from.page == page_number # sanity check
         float do
           extent.each_page do |first_page, last_page|
@@ -4592,6 +4592,27 @@ module Asciidoctor
           next_enclosed_block parent
         elsif list_item && (grandparent = parent.parent).context == :list_item
           next_enclosed_block grandparent
+        end
+      end
+
+      # Deprecated method names
+      alias layout_footnotes inscribe_footnotes
+      alias layout_title_page inscribe_title_page
+      alias layout_cover_page inscribe_cover_page
+      alias layout_chapter_title inscribe_chapter_title
+      alias layout_part_title inscribe_part_title
+      alias layout_general_heading inscribe_general_heading
+      alias layout_heading inscribe_heading
+      alias layout_prose inscribe_prose
+      alias layout_caption inscribe_caption
+      alias layout_table_caption inscribe_table_caption
+      alias layout_toc inscribe_toc
+      alias layout_toc_level inscribe_toc_level
+      alias layout_running_content inscribe_running_content
+
+      def self.method_added method
+        if (method_name = method.to_s).start_with? 'layout_'
+          alias_method %(inscribe_#{method_name.slice 7, method_name.length}).to_sym, method
         end
       end
 

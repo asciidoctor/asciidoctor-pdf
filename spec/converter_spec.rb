@@ -1169,8 +1169,12 @@ describe Asciidoctor::PDF::Converter do
       create_class (Asciidoctor::Converter.for 'pdf') do
         register_for (backend = %(pdf#{object_id}).to_sym)
         def layout_general_heading node, title, opts = {}
-          title = title.send (node.attr :transform).to_sym
-          layout_heading title, opts
+          layout_heading title, (opts.merge transform: (node.attr :transform).to_sym)
+        end
+
+        def layout_heading title, opts
+          title = title.send opts.delete :transform
+          super
         end
       end
 
@@ -1181,6 +1185,28 @@ describe Asciidoctor::PDF::Converter do
 
       heading_text = pdf.find_unique_text 'SECTION TITLE'
       (expect heading_text).not_to be_nil
+    end
+
+    it 'should allow custom converter to override inscribe_general_heading for section title' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def inscribe_general_heading sect, title, opts = {}
+          if (image_path = sect.attr 'image')
+            image_attrs = { 'target' => image_path, 'pdfwidth' => '1in' }
+            image_block = ::Asciidoctor::Block.new sect.document, :image, content_model: :empty, attributes: image_attrs
+            convert_image image_block, relative_to_imagesdir: true, pinned: true
+          end
+          super
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: backend, analyze: :image
+      [image=tux.png]
+      == Section Title
+      EOS
+
+      (expect pdf.images).to have_size 1
     end
   end
 end
