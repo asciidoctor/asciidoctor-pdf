@@ -12,7 +12,7 @@ Enhancements::
 * separate `align` and `text-align` keys in theme schema; remap old keys for backwards compatibility (#2095)
 * allow theme to control the border on all sides of tables independently (#902)
 * keep section title with first block of content is `breakable` option is set on section (#2075, #38)
-* pass `part`, `chapterlike`, and `hidden` options to `arrange_section` method
+* pass the `part` and `chapterlike` options to the `arrange_section` method for convenience
 * add support for `background-color` property on caption (#1995)
 * add support for image-based icons, resolved from `iconsdir` and having the `icontype` file extension (#1770)
 * add `asciidoctor/pdf/nogmagick` script to prevent Gmagick from handling PNG images (#1687)
