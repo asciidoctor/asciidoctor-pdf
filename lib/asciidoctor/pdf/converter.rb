@@ -4616,10 +4616,18 @@ module Asciidoctor
       alias layout_toc_level inscribe_toc_level
       alias layout_running_content inscribe_running_content
 
+      # intercepts "class CustomPDFConverter < (Asciidoctor::Converter.for 'pdf')"
       def self.method_added method
         if (method_name = method.to_s).start_with? 'layout_'
           alias_method %(inscribe_#{method_name.slice 7, method_name.length}).to_sym, method
         end
+      end
+
+      # intercepts "(Asciidoctor::Converter.for 'pdf').prepend CustomConverterExtensions"
+      def self.prepend *mods
+        super
+        mods.each {|mod| (mod.instance_methods false).each {|method| method_added method } }
+        self
       end
 
       private

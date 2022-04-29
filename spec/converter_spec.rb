@@ -1208,5 +1208,23 @@ describe Asciidoctor::PDF::Converter do
 
       (expect pdf.images).to have_size 1
     end
+
+    it 'should remap layout_ methods added by prepended module' do
+      backend = nil
+      converter_class = create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+      end
+      converter_class.prepend (Module.new do
+        def layout_prose string, opts = {}
+          opts[:color] = 'FF0000'
+          super
+        end
+      end)
+
+      pdf = to_pdf 'color me red', backend: backend, analyze: true
+      text = pdf.text
+      (expect text).to have_size 1
+      (expect text[0][:font_color]).to eql 'FF0000'
+    end
   end
 end

@@ -9,7 +9,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/main[co
 
 Bug Fixes::
 
-* should allow `inscribe_toc` method in extended converter to insert page above TOC page
+* allow `inscribe_toc` method in extended converter to insert page above TOC page
+* remap `layout_` methods contributed to converter by prepended module
 
 == 2.0.0.alpha.2 (2022-04-29) - @mojavelinux
 
