@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.0.alpha.2 (2022-04-29) - @mojavelinux
 
 Enhancements::
 
@@ -37,6 +37,10 @@ Bug Fixes::
 * don't call `arrange_section` if section title is hidden
 * remove `theme_font` enclosure around call to `start_new_chapter` and `start_new_part`
 * change `layout_` method prefix to `inscribe_` in converter (#2099)
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.0.alpha.2[git tag] | {url-repo}/compare/v2.0.0.alpha.1\...v2.0.0.alpha.2[full diff]
 
 == 2.0.0.alpha.1 (2022-04-20) - @mojavelinux
 
