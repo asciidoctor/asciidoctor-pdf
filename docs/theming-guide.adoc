@@ -5910,14 +5910,14 @@ Refer to the primary converter to discover the pseudo-HTML you can use for inlin
 
 So far we've just been biting around the edges.
 A more realistic use case is to customize the part title page in a multi-part book.
-Since this is a specialized section element, there's a dedicated method named `layout_part_title` that you'll need to override.
+Since this is a specialized section element, there's a dedicated method named `inscribe_part_title` that you'll need to override.
 
 Let's customize the part title page by making the background orange, making the font white, centering the title on the page, and disabling the running content.
 (You don't need to start a new page before and after the part title since that's already done for you).
 
 [source,ruby]
 ----
-  def layout_part_title node, title, opts = {}
+  def inscribe_part_title node, title, opts = {}
     fill_absolute_bounds 'E64C3D'
     move_down 20
     typeset_text title, (calc_line_metrics 1.5), color: 'FFFFFF', inline_format: true, align: :center, size: 42
