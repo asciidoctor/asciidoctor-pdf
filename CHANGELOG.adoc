@@ -11,6 +11,7 @@ Bug Fixes::
 
 * allow `inscribe_toc` method in extended converter to insert page above TOC page
 * remap `layout_` methods contributed to converter by prepended module
+* neutralize padding hacks in themes designed before the converter had smart margins
 
 == 2.0.0.alpha.2 (2022-04-29) - @mojavelinux
 
