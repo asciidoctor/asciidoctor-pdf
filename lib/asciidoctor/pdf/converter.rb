@@ -3131,9 +3131,15 @@ module Asciidoctor
 
       def allocate_toc doc, toc_num_levels, toc_start_cursor, title_page_on
         toc_start_page = page_number
+        to_page = nil
         extent = dry_run onto: self do
-          inscribe_toc doc, toc_num_levels, toc_start_page, toc_start_cursor
+          to_page = (inscribe_toc doc, toc_num_levels, toc_start_page, toc_start_cursor).end
           margin_bottom @theme.block_margin_bottom unless title_page_on
+        end
+        # NOTE: patch for custom converters that allocate extra TOC pages without actually creating them
+        if to_page > extent.to.page
+          extent.to.page = to_page
+          extent.to.cursor = bounds.height
         end
         # NOTE: reserve pages for the toc; leaves cursor on page after last page in toc
         if title_page_on

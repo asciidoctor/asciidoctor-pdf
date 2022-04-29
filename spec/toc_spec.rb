@@ -1397,4 +1397,42 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect images[0][:data]).to eql images[1][:data]
     (expect images[0][:width]).to eql images[1][:width]
   end
+
+  it 'should allow extnded converter to insert extra page before toc' do
+    backend = nil
+    create_class (Asciidoctor::Converter.for 'pdf') do
+      register_for (backend = %(pdf#{object_id}).to_sym)
+      def inscribe_toc doc, num_levels, toc_page_number, start_cursor, num_front_matter_pages = 0
+        go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
+        unless scratch?
+          theme_font :heading, level: 2 do
+            inscribe_heading 'Extra', level: 2
+          end
+          go_to_page page_number + 1
+        end
+        offset = 1
+        toc_page_numbers = super doc, num_levels, (toc_page_number + offset), start_cursor, num_front_matter_pages
+        scratch? ? ((toc_page_numbers.begin - offset)..toc_page_numbers.end) : toc_page_numbers
+      end
+    end
+
+    input = <<~'EOS'
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == Chapter A
+
+    == Chapter B
+    EOS
+
+    pdf = to_pdf input, backend: backend, analyze: true
+    (expect pdf.pages).to have_size 5
+    [['Extra', 2], ['Table of Contents', 3], ['Chapter A', 4]].each do |title, pnum|
+      title_text = (pdf.find_text title)[-1]
+      (expect title_text[:page_number]).to eql pnum
+    end
+    (expect (pdf.find_text 'Chapter A')[0][:page_number]).to eql 3
+    (expect (pdf.find_text 'Chapter B')[0][:page_number]).to eql 3
+  end
 end

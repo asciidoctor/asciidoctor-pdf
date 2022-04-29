@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/main[commit history] on GitHub.
 
+== Unreleased
+
+Bug Fixes::
+
+* should allow `inscribe_toc` method in extended converter to insert page above TOC page
+
 == 2.0.0.alpha.2 (2022-04-29) - @mojavelinux
 
 Enhancements::
