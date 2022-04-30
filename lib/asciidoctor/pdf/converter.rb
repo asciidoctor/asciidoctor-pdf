@@ -2024,6 +2024,7 @@ module Asciidoctor
 
         base_header_cell_data = nil
         header_cell_line_metrics = nil
+        body_cell_padding = expand_padding_value theme.table_cell_padding
 
         table_data = []
         theme_font :table do
@@ -2038,7 +2039,7 @@ module Asciidoctor
             table_header_size = head_rows.size
             head_font_info = font_info
             head_line_metrics = calc_line_metrics theme.table_head_line_height || theme.table_cell_line_height || @base_line_height
-            head_cell_padding = expand_padding_value theme.table_head_cell_padding || theme.table_cell_padding
+            head_cell_padding = ((head_cell_padding = theme.table_head_cell_padding) ? (expand_padding_value head_cell_padding) : body_cell_padding).dup
             head_cell_padding[0] += head_line_metrics.padding_top
             head_cell_padding[2] += head_line_metrics.padding_bottom
             # QUESTION: why doesn't text transform inherit from table?
@@ -2077,7 +2078,6 @@ module Asciidoctor
             text_color: @font_color,
           }
           body_cell_line_metrics = calc_line_metrics (theme.table_cell_line_height || @base_line_height)
-          body_cell_padding = expand_padding_value theme.table_cell_padding
           (body_rows + node.rows[:foot]).each do |row|
             table_data << (row.map do |cell|
               cell_data = base_cell_data.merge \
@@ -2144,7 +2144,7 @@ module Asciidoctor
                 end
                 # NOTE: line metrics get applied when AsciiDoc content is converted
                 cell_line_metrics = nil
-                asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self, (cell_data.merge content: cell.inner_document, padding: body_cell_padding.dup)
+                asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self, (cell_data.merge content: cell.inner_document, padding: body_cell_padding)
                 cell_data = { content: asciidoc_cell }
               end
               if cell_line_metrics

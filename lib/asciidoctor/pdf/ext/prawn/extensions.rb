@@ -576,26 +576,25 @@ module Asciidoctor
       end
 
       def expand_padding_value shorthand
-        unless (padding = (@side_area_shorthand_cache ||= {})[shorthand])
-          if ::Array === shorthand
-            case shorthand.size
+        (@edge_shorthand_cache ||= ::Hash.new do |store, key|
+          if ::Array === key
+            case key.size
             when 1
-              padding = [shorthand[0], shorthand[0], shorthand[0], shorthand[0]]
+              value = [(value0 = key[0] || 0), value0, value0, value0]
             when 2
-              padding = [shorthand[0], shorthand[1], shorthand[0], shorthand[1]]
+              value = [(value0 = key[0] || 0), (value1 = key[1] || 0), value0, value1]
             when 3
-              padding = [shorthand[0], shorthand[1], shorthand[2], shorthand[1]]
+              value = [key[0] || 0, (value1 = key[1] || 0), key[2] || 0, value1]
             when 4
-              padding = shorthand
+              value = key.map {|it| it || 0 }
             else
-              padding = shorthand.slice 0, 4
+              value = (key.slice 0, 4).map {|it| it || 0 }
             end
           else
-            padding = ::Array.new 4, (shorthand || 0)
+            value = [(value0 = key || 0), value0, value0, value0]
           end
-          @side_area_shorthand_cache[shorthand] = padding
-        end
-        padding.dup
+          store[key] = value
+        end)[shorthand]
       end
 
       alias expand_margin_value expand_padding_value
