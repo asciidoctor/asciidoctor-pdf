@@ -1507,6 +1507,21 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-border-defaults.pdf'
     end
 
+    it 'should not fail if base border width is not set when using original theme' do
+      pdf_theme = {
+        extends: 'base',
+        base_border_width: nil,
+        footer_height: 25,
+        footer_border_color: 'CCCCCC',
+        footer_columns: '<50% =0% <50%',
+        footer_recto_left_content: '{page-number}',
+        footer_recto_right_content: '{page-number}',
+      }
+
+      lines = (to_pdf 'content', enable_footer: true, pdf_theme: pdf_theme, analyze: :line).lines
+      (expect lines).to be_empty
+    end
+
     it 'should not draw background color across whole periphery region', visual: true do
       pdf_theme = build_pdf_theme \
         header_background_color: '009246',

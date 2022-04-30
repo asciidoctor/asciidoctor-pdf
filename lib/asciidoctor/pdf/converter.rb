@@ -461,7 +461,7 @@ module Asciidoctor
       end
 
       def prepare_theme theme
-        theme.base_border_width || 0
+        theme.base_border_width ||= 0
         theme.base_font_color ||= '000000'
         theme.base_font_size ||= 12
         theme.base_font_style = theme.base_font_style&.to_sym || :normal
@@ -901,7 +901,7 @@ module Asciidoctor
             if extent
               label_height = extent.single_page_height || cursor
               if (rule_color = @theme.admonition_column_rule_color) &&
-                  (rule_width = @theme.admonition_column_rule_width || @theme.base_border_width) && rule_width > 0
+                  (rule_width = @theme.admonition_column_rule_width || @theme.base_border_width) > 0
                 rule_style = @theme.admonition_column_rule_style&.to_sym || :solid
                 float do
                   extent.each_page do |first_page, last_page|

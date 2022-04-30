@@ -1095,6 +1095,20 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect column_rule[:style]).to eql :solid
     end
 
+    it 'should not fail if base border width is not set when using original theme' do
+      pdf_theme = {
+        extends: 'base',
+        base_border_width: nil,
+        admonition_column_rule_width: nil,
+        admonition_column_rule_color: '222222',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      TIP: You can use the theme to customize the color and width of the column rule.
+      EOS
+
+      (expect pdf.lines).to be_empty
+    end
+
     it 'should allow theme to specify double style for column rule' do
       pdf_theme = {
         admonition_column_rule_color: '222222',
