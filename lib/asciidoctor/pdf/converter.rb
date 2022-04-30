@@ -892,12 +892,8 @@ module Asciidoctor
             label_width = label_min_width if label_min_width && label_min_width > label_width
           end
         end
-        unless ::Array === (cpad = @theme.admonition_padding || 0)
-          cpad = ::Array.new 4, cpad
-        end
-        unless ::Array === (lpad = @theme.admonition_label_padding || cpad)
-          lpad = ::Array.new 4, lpad
-        end
+        cpad = expand_padding_value @theme.admonition_padding
+        lpad = (lpad = @theme.admonition_label_padding) ? (expand_padding_value lpad) : cpad
         arrange_block node do |extent|
           add_dest_for_block node if node.id
           theme_fill_and_stroke_block :admonition, extent if extent
@@ -4018,9 +4014,7 @@ module Asciidoctor
         # NOTE: it also removes zero-width spaces
         arranger.finalize_line
         actual_width = width_of_fragments arranger.fragments
-        unless ::Array === (padding = @theme[%(#{category}_padding)])
-          padding = ::Array.new 4, padding
-        end
+        padding = expand_padding_value @theme[%(#{category}_padding)]
         if actual_width > (available_width = bounds.width - padding[3].to_f - padding[1].to_f)
           adjusted_font_size = ((available_width * font_size).to_f / actual_width).truncate 4
           if (min = @theme[%(#{category}_font_size_min)] || @theme.base_font_size_min) && adjusted_font_size < min

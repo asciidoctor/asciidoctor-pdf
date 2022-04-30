@@ -247,6 +247,24 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect (content_text[:x] - ref_content_text[:x]).round 4).to eql 30.0
   end
 
+  it 'should allow padding to be specified for label and content using array value' do
+    input = <<~'EOS'
+    [IMPORTANT]
+    Make sure the device is powered off before servicing it.
+    EOS
+
+    pdf = to_pdf input, pdf_theme: { admonition_padding: 0, admonition_label_padding: 0 }, analyze: true
+    ref_label_text = pdf.find_unique_text 'IMPORTANT'
+    ref_content_text = pdf.find_unique_text 'Make sure the device is powered off before servicing it.'
+
+    pdf = to_pdf input, pdf_theme: { admonition_padding: [nil, 10], admonition_label_padding: [nil, 10] }, analyze: true
+    label_text = pdf.find_unique_text 'IMPORTANT'
+    content_text = pdf.find_unique_text 'Make sure the device is powered off before servicing it.'
+
+    (expect (label_text[:x] - ref_label_text[:x]).round 4).to eql 10.0
+    (expect (content_text[:x] - ref_content_text[:x]).round 4).to eql 30.0
+  end
+
   it 'should not move cursor below block if block ends at top of page' do
     pdf = to_pdf <<~'EOS', analyze: true
     top of page

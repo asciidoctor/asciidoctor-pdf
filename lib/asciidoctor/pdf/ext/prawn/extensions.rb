@@ -538,17 +538,20 @@ module Asciidoctor
       # Example:
       #
       #  pad_box 20 do
-      #    text 'A paragraph inside a blox with even padding on all sides.'
+      #    text 'A paragraph inside a blox with even padding from all edges.'
       #  end
       #
-      #  pad_box [10, 10, 10, 20] do
-      #    text 'An indented paragraph inside a box with equal padding on all sides.'
+      #  pad_box [10, 5] do
+      #    text 'A paragraph inside a box with different padding from ends and sides.'
+      #  end
+      #
+      #  pad_box [5, 10, 15, 20] do
+      #    text 'A paragraph inside a box with different padding from each edge.'
       #  end
       #
       def pad_box padding, node = nil
         if padding
-          # TODO: implement shorthand combinations like in CSS
-          p_top, p_right, p_bottom, p_left = ::Array === padding ? padding : (::Array.new 4, padding)
+          p_top, p_right, p_bottom, p_left = expand_padding_value padding
           # logic is intentionally inlined
           begin
             if node && ((last_block = node).content_model != :compound || (last_block = node.blocks[-1])&.context == :paragraph)
