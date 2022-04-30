@@ -702,6 +702,7 @@ module Asciidoctor
       def fill_and_stroke_bounds f_color = fill_color, s_color = stroke_color, options = {}
         no_fill = !f_color || f_color == 'transparent'
         if ::Array === (s_width = options[:line_width] || 0)
+          s_width = [s_width[0], s_width[1], s_width[0], s_width[1]] if s_width.size == 2
           s_width_max = (s_width = s_width.map {|it| it || 0 }).max
           radius = 0
         else
@@ -720,16 +721,19 @@ module Asciidoctor
 
           # stroke
           if s_width_max
-            s_width_end, s_width_side = s_width
-            if s_width_end > 0
-              projection_side = s_width_side * 0.5
-              stroke_horizontal_rule s_color, line_width: s_width_end, line_style: options[:line_style], left_projection: projection_side, right_projection: projection_side
-              stroke_horizontal_rule s_color, line_width: s_width_end, line_style: options[:line_style], at: bounds.height, left_projection: projection_side, right_projection: projection_side
+            s_width_top, s_width_right, s_width_bottom, s_width_left = s_width
+            projection_top, projection_right, projection_bottom, projection_left = s_width.map {|it| it * 0.5 }
+            if s_width_top > 0
+              stroke_horizontal_rule s_color, line_width: s_width_top, line_style: options[:line_style], left_projection: projection_left, right_projection: projection_right
             end
-            if s_width_side > 0
-              projection_end = s_width_end * 0.5
-              stroke_vertical_rule s_color, line_width: s_width_side, line_style: options[:line_style], top_projection: projection_end, bottom_projection: projection_end
-              stroke_vertical_rule s_color, line_width: s_width_side, line_style: options[:line_style], at: bounds.width, top_projection: projection_end, bottom_projection: projection_end
+            if s_width_right > 0
+              stroke_vertical_rule s_color, line_width: s_width_right, line_style: options[:line_style], at: bounds.width, top_projection: projection_top, bottom_projection: projection_bottom
+            end
+            if s_width_bottom > 0
+              stroke_horizontal_rule s_color, line_width: s_width_bottom, line_style: options[:line_style], at: bounds.height, left_projection: projection_left, right_projection: projection_right
+            end
+            if s_width_left > 0
+              stroke_vertical_rule s_color, line_width: s_width_left, line_style: options[:line_style], top_projection: projection_top, bottom_projection: projection_bottom
             end
           else
             stroke_color s_color
