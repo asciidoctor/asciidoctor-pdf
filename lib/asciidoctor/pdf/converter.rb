@@ -3126,10 +3126,10 @@ module Asciidoctor
       end
 
       def allocate_toc doc, toc_num_levels, toc_start_cursor, title_page_on
-        toc_start_page = page_number
+        toc_start_page_number = page_number
         to_page = nil
         extent = dry_run onto: self do
-          to_page = (inscribe_toc doc, toc_num_levels, toc_start_page, toc_start_cursor).end
+          to_page = (inscribe_toc doc, toc_num_levels, toc_start_page_number, toc_start_cursor).end
           margin_bottom @theme.block_margin_bottom unless title_page_on
         end
         # NOTE: patch for custom converters that allocate extra TOC pages without actually creating them
@@ -3281,11 +3281,11 @@ module Asciidoctor
       def inscribe_running_content periphery, doc, skip = [1, 1], body_start_page_number = 1
         skip_pages, skip_pagenums = skip
         # NOTE: find and advance to first non-imported content page to use as model page
-        return unless (content_start_page = state.pages[skip_pages..-1].index {|it| !it.imported_page? })
-        content_start_page += (skip_pages + 1)
+        return unless (content_start_page_number = state.pages[skip_pages..-1].index {|it| !it.imported_page? })
+        content_start_page_number += (skip_pages + 1)
         num_pages = page_count
         prev_page_number = page_number
-        go_to_page content_start_page
+        go_to_page content_start_page_number
 
         # FIXME: probably need to treat doctypes differently
         is_book = doc.doctype == 'book'
@@ -3381,7 +3381,7 @@ module Asciidoctor
         pagenums_enabled = doc.attr? 'pagenums'
         periphery_layout_cache = {}
         # NOTE: this block is invoked during PDF generation, after #write -> #render_file and thus after #convert_document
-        repeat (content_start_page..num_pages), dynamic: true do
+        repeat (content_start_page_number..num_pages), dynamic: true do
           pgnum = page_number
           # NOTE: don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
           next if page.imported_page? || (disable_on_pages.include? pgnum)
