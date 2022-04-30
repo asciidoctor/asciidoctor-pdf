@@ -168,8 +168,8 @@ quote:
   font_size: $base_font_size_large
   border_color: $base_border_color
   border_width: 0
-  border_left_width: 5
-  padding: [0, $horizontal_rhythm, $block_margin_bottom * 0.25, $horizontal_rhythm + $quote_border_left_width / 2]
+  border_left_width: $horizontal_rhythm / 3
+  padding: [$vertical_rhythm / 4, $horizontal_rhythm, $vertical_rhythm / 4, $horizontal_rhythm + $quote_border_left_width / 2]
   cite:
     font_size: $base_font_size_small
     font_color: $role_subtitle_font_color

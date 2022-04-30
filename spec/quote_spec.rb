@@ -122,23 +122,19 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
   end
 
   it 'should not draw left border on next page if block falls at bottom of page' do
-    pdf_theme = {
-      thematic_break_border_color: 'DDDDDD',
-      thematic_break_margin_bottom: 669.75,
-    }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
-    filler
+    pdf = with_content_spacer 10, 689.5 do |spacer_path|
+      to_pdf <<~EOS, analyze: :line, debug: true
+      image::#{spacer_path}[]
 
-    ---
+      ____
+      Let it be.
 
-    ____
-    Let it be.
+      Let it be.
+      ____
 
-    Let it be.
-    ____
-
-    Words of wisdom were spoken.
-    EOS
+      Words of wisdom were spoken.
+      EOS
+    end
 
     quote_borders = pdf.lines.select {|it| it[:color] == 'EEEEEE' }
     (expect quote_borders).to have_size 1
@@ -196,7 +192,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     text_top = (pdf.find_unique_text 'first').yield_self {|it| it[:y] + it[:font_size] }
     text_bottom = (pdf.find_unique_text 'last')[:y]
     text_left = (pdf.find_unique_text 'first')[:x]
-    (expect (top - text_top).to_f).to be < 2
+    (expect (top - text_top).to_f).to be < 5
     (expect (text_bottom - bottom).to_f).to (be_within 1).of 8.0
     (expect (text_left - left).to_f).to eql 12.0
   end
@@ -219,8 +215,8 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     text_top = (pdf.find_unique_text 'first').yield_self {|it| it[:y] + it[:font_size] }
     text_bottom = (pdf.find_unique_text 'last')[:y]
     text_left = (pdf.find_unique_text 'first')[:x]
-    (expect (top - text_top).to_f).to (be_within 2).of 8.0
-    (expect (text_bottom - bottom).to_f).to (be_within 2).of 8.0
+    (expect (top - text_top).to_f).to (be_within 1).of 3.0
+    (expect (text_bottom - bottom).to_f).to (be_within 1).of 6.0
     (expect (text_left - left).to_f).to eql 12.0
   end
 
