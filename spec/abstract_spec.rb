@@ -263,7 +263,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect abstract_title_text[:x]).to be > abstract_text[:x]
   end
 
-  it 'should use base align to align abstract title if theme does not specify alignment' do
+  it 'should use base text align to align abstract title if theme does not specify alignment' do
     pdf = to_pdf <<~'EOS', pdf_theme: { base_text_align: 'center', abstract_title_text_align: nil }, analyze: true
     = Document Title
     :doctype: book

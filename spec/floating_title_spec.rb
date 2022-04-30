@@ -36,7 +36,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     (expect discrete_heading_text[:x]).to be > main_text[:x]
   end
 
-  it 'should use base align to align floating title if theme does not specify alignemnt' do
+  it 'should use base text align to align floating title if theme does not specify alignemnt' do
     pdf_theme = {
       base_text_align: 'center',
       heading_h2_text_align: nil,
