@@ -564,6 +564,27 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect lines[2][:width]).to eql 1
   end
 
+  it 'should allow max width of border with different ends and sides to be less than 1' do
+    pdf_theme = {
+      code_border_color: 'AA0000',
+      code_border_width: [0.5, 0],
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    ----
+    foo
+    bar
+    baz
+    ----
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 2
+    (expect lines[0][:from][:y]).to eql lines[0][:to][:y]
+    (expect lines[0][:width]).to eql 0.5
+    (expect lines[1][:from][:y]).to eql lines[1][:to][:y]
+    (expect lines[1][:width]).to eql 0.5
+  end
+
   it 'should use dashed border to indicate where block is split across a page boundary when border is only on ends', visual: true do
     pdf_theme = {
       code_border_color: 'AA0000',
