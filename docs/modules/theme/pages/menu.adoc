@@ -22,7 +22,7 @@ menu:
 (default: _inherit_)
 |[source]
 menu:
-  font-color: '#AA0000'
+  font-color: #AA0000
 
 |font-family
 |xref:font-support.adoc[Font family name] +

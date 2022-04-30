@@ -39,7 +39,7 @@ Using a built-in font requires no additional files.
 You can use the key anywhere a `font-family` property is accepted in the theme file.
 For example:
 
-[source,yaml]
+[,yaml]
 ----
 base:
   font-family: Times-Roman

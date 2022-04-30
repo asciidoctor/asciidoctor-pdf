@@ -12,7 +12,7 @@ The keys in the `image` category control the arrangement and style of block imag
 |Key |Value Type |Example
 
 |align
-|xref:image.adoc#align[Image alignment] +
+|xref:blocks.adoc#align[Block alignment] +
 (default: `left`)
 |[source]
 image:
@@ -40,7 +40,7 @@ image:
   border-radius: 2
 
 |border-style
-|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid`
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
 (default: `solid`)
 |[source]
 image:
@@ -153,7 +153,7 @@ The keys in the `image-caption` category control the arrangement and style of th
 |Key |Value Type |Example
 
 |caption-align
-|xref:block.adoc#align[Alignment] {vbar} inherit +
+|xref:block.adoc#align[Block alignment] {vbar} inherit +
 (default: `$caption-align`)
 |[source]
 image:

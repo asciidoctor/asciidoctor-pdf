@@ -27,7 +27,7 @@ button:
 
 |<<border-offset,border-offset>>
 |xref:language.adoc#values[Number] +
-(default: 0)
+(default: `0`)
 |[source]
 button:
   border-offset: 1.5

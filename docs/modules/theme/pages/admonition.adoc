@@ -33,7 +33,7 @@ admonition:
   border-radius: 4
 
 |border-style
-|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid`  {vbar} +
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
 (default: `solid`)
 |[source]
 admonition:
@@ -56,7 +56,7 @@ admonition:
   column-rule-color: #aa0000
 
 |column-rule-style
-|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid`  {vbar} +
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
 (default: `solid`)
 |[source]
 admonition:
@@ -128,14 +128,6 @@ The keys in the `admonition-label` category control the arrangement and style of
 |===
 |Key |Value Type |Example
 
-|text-align
-|xref:text.adoc#text-align[Text alignment] +
-(default: `center`)
-|[source]
-admonition:
-  label:
-    text-align: left
-
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
@@ -191,6 +183,14 @@ admonition:
 admonition:
   label:
     padding: [0, 12, 0, 12]
+
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
+(default: `center`)
+|[source]
+admonition:
+  label:
+    text-align: left
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +

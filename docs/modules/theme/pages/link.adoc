@@ -13,7 +13,7 @@ The keys in the `link` category style hyperlink text.
 (default: _not set_)
 |[source]
 link:
-  background-color: '#efefef'
+  background-color: #efefef
 
 |border-offset
 |xref:language.adoc#values[Number] +
@@ -24,10 +24,10 @@ link:
 
 |font-color
 |xref:color.adoc[Color] +
-(default: `'#0000ee'`)
+(default: `'0000EE'`)
 |[source]
 link:
-  font-color: '#428bca'
+  font-color: #428bca
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -62,11 +62,11 @@ link:
 (default: `$link-font-color`)
 |[source]
 link:
-  text-decoration-color: '#0000ff'
+  text-decoration-color: #0000ff
 
 |text-decoration-width
 |xref:language.adoc#values[Number] +
-(default: `$base-text-decoration-width`)
+(default: _inherit_)
 |[source]
 link:
   text-decoration-width: 0.5

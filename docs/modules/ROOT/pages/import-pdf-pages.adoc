@@ -5,11 +5,12 @@ In addition to using a PDF page for the front or back cover, you can also insert
 This technique is useful for adding pages that have complex layouts and graphics prepared in a specialized design program, which would otherwise not be achievable using this converter.
 One such example is an insert such as an advertisement or visual interlude.
 
-== Import a page from a PDF file
+[#page]
+== Import a page
 
 To import the first page from a PDF file, use the block image macro with the PDF filename as the image target.
 
-[source,asciidoc]
+[,asciidoc]
 ----
 image::custom-page.pdf[]
 ----
@@ -20,19 +21,20 @@ Therefore, there's no need to put a manual page break (i.e., `<<<`) around the i
 By default, this macro will import the first page of the PDF.
 To import a different page, specify it as a 1-based index using the `page` attribute.
 
-[source,asciidoc]
+[,asciidoc]
 ----
 image::custom-pages.pdf[page=2]
 ----
 
-== Import multiple pages from a PDF file
+[#multiple-pages]
+== Import multiple pages
 
 You can import multiple pages either using multiple image macros or using the `pages` attribute.
 The `pages` attribute accepts individual page numbers or page number ranges (two page numbers separated by `..`).
 The values can be separated either by commas or semicolons.
 (The syntax is similar to the syntax uses for the `lines` attribute of the AsciiDoc include directive).
 
-[source,asciidoc]
+[,asciidoc]
 ----
 image::custom-pages.pdf[pages=3;1..2]
 ----

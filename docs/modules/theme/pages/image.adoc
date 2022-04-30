@@ -57,9 +57,5 @@ title-page:
   logo-image: image:logo.png[pdfwidth=2.5in,align=center]
 ----
 
-The `align` key is used to align images within the parent container.
-Images can be aligned as follows:
-
-* `left`
-* `center`
-* `right`
+The `align` setting is used to align block images within the parent container.
+See xref:blocks.adoc[] for accepted alignment keywords.

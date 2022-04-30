@@ -16,7 +16,7 @@ The keys in the `abstract` category control the arrangement and style of the abs
 (default: `$base-font-color`)
 |[source]
 abstract:
-  font-color: '#5c6266'
+  font-color: #5c6266
 
 |font-size
 |xref:language.adoc#values[Number] +
@@ -46,9 +46,30 @@ abstract:
 abstract:
   padding: [0, 12, 0, 12]
 
+|text-decoration
+|xref:text.adoc#decoration[Text decoration] +
+(default: `none`)
+|[source]
+abstract:
+  text-decoration: underline
+
+|text-decoration-color
+|xref:color.adoc[Color] +
+(default: `$abstract-font-color`)
+|[source]
+abstract:
+  text-decoration-color: #0000ff
+
+|text-decoration-width
+|xref:measurement-units.adoc[Measurement] +
+(default: `$base-text-decoration-width`)
+|[source]
+abstract:
+  text-decoration-width: 0.5
+
 |text-transform
 |xref:text.adoc#transform[Text transform] +
-(default: `$base-text-transform`)
+(default: _inherit_)
 |[source]
 abstract:
   text-transform: uppercase
@@ -69,7 +90,7 @@ The keys in the `abstract-first-line` category control the style of the first li
 |[source]
 abstract:
   first-line:
-    font-color: '#AA0000'
+    font-color: #AA0000
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
@@ -89,21 +110,13 @@ The keys in the `abstract-title` category control the style and alignment of the
 |===
 |Key |Value Type |Example
 
-|text-align
-|xref:text.adoc#text-align[Text alignment] +
-(default: `center`)
-|[source]
-abstract:
-  title:
-    text-align: center
-
 |font-color
 |xref:color.adoc[Color] +
 (default: `$base-font-color`)
 |[source]
 abstract:
   title:
-    font-color: '#333333'
+    font-color: #333333
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -135,13 +148,45 @@ abstract:
 |[source]
 abstract:
   title:
-    font-style: bold
+    font-style: normal_italic
 
-|text-transform
-|xref:text.adoc#transform[Text transform] +
-(default: `$base-text-transform`)
+|text-align
+|xref:text.adoc#text-align[Text alignment] +
+(default: `center`)
 |[source]
 abstract:
   title:
-    text-transform: uppercase
+    text-align: center
+
+|text-decoration
+|xref:text.adoc#decoration[Text decoration] +
+(default: `none`)
+|[source]
+abstract:
+  title:
+    text-decoration: underline
+
+|text-decoration-color
+|xref:color.adoc[Color] +
+(default: `$abstract-title-font-color`)
+|[source]
+abstract:
+  title:
+    text-decoration-color: #0000ff
+
+|text-decoration-width
+|xref:measurement-units.adoc[Measurement] +
+(default: `$base-text-decoration-width`)
+|[source]
+abstract:
+  title:
+    text-decoration-width: 0.5
+
+|text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|[source]
+abstract:
+  title:
+    text-transform: captitalize
 |===

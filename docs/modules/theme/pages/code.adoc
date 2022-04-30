@@ -33,7 +33,7 @@ code:
   border-radius: 4
 
 |border-style
-|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid`
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
 (default: `solid`)
 |[source]
 code:

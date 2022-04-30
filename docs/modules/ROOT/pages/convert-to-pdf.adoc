@@ -12,11 +12,10 @@ Let's grab an AsciiDoc document to distill and start putting Asciidoctor PDF to 
 If you don't already have an AsciiDoc document, you can download and use the xref:attachment$basic-example.adoc[Basic Example AsciiDoc file].
 
 .basic-example.adoc
-[source,asciidoc]
+[,asciidoc]
 ....
 include::attachment$basic-example.adoc[]
 ....
-//TODO update link to https in example doc
 
 It's time to convert the AsciiDoc document directly to PDF.
 

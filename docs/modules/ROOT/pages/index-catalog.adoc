@@ -7,7 +7,7 @@ Asciidoctor PDF supports generating an index catalog that itemizes all index ter
 To generate an index, add an empty level-0 or level-1 section annotated with the `index` style near the end of your document.
 The converter will automatically populate the catalog with the list of index terms in the document, organized by first letter.
 
-[source,asciidoc]
+[,asciidoc]
 ----
 [index]
 == Index
@@ -38,7 +38,7 @@ For example, let's say that all your functions begin with the prefix `fn`, but y
 Here's rudimentary code you can use to do that:
 
 .index-customizer.rb
-[source,ruby]
+[,ruby]
 ----
 require 'asciidoctor-pdf'
 

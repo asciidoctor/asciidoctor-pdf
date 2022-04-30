@@ -37,7 +37,7 @@ Once Asciidoctor Mathematical is installed, you can enable it when invoking Asci
 
 If you're invoking Asciidoctor PDF via the API, you need to require the Asciidoctor Mathematical gem before invoking Asciidoctor PDF.
 
-[source,ruby]
+[,ruby]
 ----
 require 'asciidoctor-mathematical'
 require 'asciidoctor-pdf'

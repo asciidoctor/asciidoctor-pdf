@@ -9,7 +9,7 @@ Each category represents a common prefix under which the keys are typically nest
 
 TIP: Keys can be nested wherever an underscore (`_`) or hyphen (`-`) appears in the name.
 This nested structure is for organizational purposes only.
-All keys are flatted when the theme is loaded (e.g., `align` nested under `base` becomes `base-align`).
+All keys are flatted when the theme is loaded (e.g., `text-align` nested under `base` becomes `base-text-align`).
 
 The converter uses the values of these keys to control how most elements are arranged and styled in the PDF.
 The default values listed in this section get inherited from the {url-repo-root}/data/themes/base-theme.yml[base theme^].

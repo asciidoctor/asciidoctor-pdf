@@ -30,14 +30,14 @@ list:
 (default: _inherit_)
 |[source]
 list:
-  marker-font-color: '#3c763d'
+  marker-font-color: #3c763d
 
 |text-align
 |xref:text.adoc#text-align[Text alignment] +
 (default: `$base-text-align`)
 |[source]
 list:
-  text-align: left
+  text-align: right
 |===
 
 The `marker-font-color` key controls the color of the bullet glyph that marks items in unordered lists and the color of the number or letter marker for items in ordered lists.
@@ -74,7 +74,7 @@ ulist:
 |[source]
 ulist:
   marker:
-    font-color: '#cccccc'
+    font-color: #cccccc
 
 |line-height
 |xref:language.adoc#values[Number] +
@@ -128,7 +128,7 @@ ulist:
 ulist:
   marker:
     disc:
-      font-color: '#ff0000'
+      font-color: #ff0000
 
 |line-height
 |xref:language.adoc#values[Number] +

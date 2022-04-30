@@ -14,7 +14,7 @@ If you need to add an underline or strikethrough decoration to the text, you can
 
 Here's an example of using formatting in the content of the menu caret:
 
-[source,yaml]
+[,yaml]
 ----
 menu-caret-content: " <font size=\"1.15em\"><color rgb=\"#b12146\">\u203a</color></font> "
 ----

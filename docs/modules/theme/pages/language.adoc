@@ -24,8 +24,12 @@ Some of these properties have different names from those found in CSS.
 
 * An underscore (`_`) may be used in place of a hyphen (`-`) in all property names (so you may use `font_family` or `font-family`).
 * An underscore (`_`) may be used in place of a hyphen (`-`) in all variable names (so you may use `$base_font_family` or `$base-font-family`).
-* Instead of separate properties for font weight and font style, the theme language combines these settings in the `font-style` property (allowed values: `normal`, `bold`, `italic`, and `bold_italic`).
-* The `align` property in the theme language is roughly equivalent to the `text-align` property in CSS.
+* Instead of separate properties for font weight and font style, the theme language combines these settings in the `font-style` key.
+See the xref:text.adoc#font-style[Font style section] for allowed values.
+* The `align` key in the theme language is roughly equivalent to the `align-self` flexbox property in CSS.
+See xref:blocks.adoc#align[Alignment for blocks] for more information.
+* The `text-align` key in the theme language has the same function as the `text-align` property in CSS.
+See xref:text.adoc#text-align[Text alignment] for more information.
 * The `font-color` property in the theme language is equivalent to the `color` property in CSS.
 
 [#values]
@@ -34,9 +38,9 @@ Some of these properties have different names from those found in CSS.
 The value of a key may be one of the following types:
 
 * String
-** Font family name (e.g., Roboto)
-** Font style (normal, bold, italic, bold_italic)
-** Alignment (left, center, right, justify)
+** Font family name
+** Font style
+** Alignment
 ** Color as hex string (e.g., 'ff0000', #ff0000, or '#ff0000')
 ** Image path
 ** Enumerated type (where specified)
@@ -71,7 +75,7 @@ This means the selector part (e.g., `link`) is combined with the property name (
 For example, let's assume we want to set the base (i.e., global) font size and color.
 These keys may be written longhand:
 
-[source,yaml]
+[,yaml]
 ----
 base-font-color: #333333
 base-font-family: Times-Roman
@@ -80,7 +84,7 @@ base-font-size: 12
 
 Or, to avoid having to type the prefix `base-` multiple times, the keys may be written as a hierarchy:
 
-[source,yaml]
+[,yaml]
 ----
 base:
   font-color: #333333
@@ -90,7 +94,7 @@ base:
 
 Or even:
 
-[source,yaml]
+[,yaml]
 ----
 base:
   font:
