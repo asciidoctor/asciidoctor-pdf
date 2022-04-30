@@ -3507,7 +3507,7 @@ module Asciidoctor
           trim_content_margin_recto = @theme[%(#{periphery}_recto_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
           trim_content_margin_recto = (expand_margin_value trim_content_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] - trim_margin_recto[i] : v.to_f }
           if (trim_padding_recto = @theme[%(#{periphery}_recto_padding)] || @theme[%(#{periphery}_padding)])
-            trim_padding_recto = (expand_margin_value trim_padding_recto).map.with_index {|v, i| v + trim_content_margin_recto[i] }
+            trim_padding_recto = (expand_padding_value trim_padding_recto).map.with_index {|v, i| v + trim_content_margin_recto[i] }
           else
             trim_padding_recto = trim_content_margin_recto
           end
@@ -3517,7 +3517,7 @@ module Asciidoctor
           trim_content_margin_verso = @theme[%(#{periphery}_verso_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
           trim_content_margin_verso = (expand_margin_value trim_content_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] - trim_margin_verso[i] : v.to_f }
           if (trim_padding_verso = @theme[%(#{periphery}_verso_padding)] || @theme[%(#{periphery}_padding)])
-            trim_padding_verso = (expand_margin_value trim_padding_verso).map.with_index {|v, i| v + trim_content_margin_verso[i] }
+            trim_padding_verso = (expand_padding_value trim_padding_verso).map.with_index {|v, i| v + trim_content_margin_verso[i] }
           else
             trim_padding_verso = trim_content_margin_verso
           end
