@@ -123,6 +123,27 @@ the properties of chapter titles.
 |===
 |Key |Value Type |Example
 
+|border-color
+|xref:color.adoc[Color] +
+(default: _not set_)
+|[source]
+heading:
+  h2-border-color: #AA0000
+
+|border-style
+|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
+(default: `solid`)
+|[source]
+heading:
+  h2-border-style: dashed
+
+|border-width
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: _not set_)
+|[source]
+heading:
+  h2-border-width: [0, 0, 1, 0]
+
 |font-color
 |xref:color.adoc[Color] +
 (default: `$heading-font-color`)
@@ -179,6 +200,13 @@ heading:
 heading:
   h2-margin-top: 6
 
+|padding
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: _not set_)
+|[source]
+heading:
+  h2-padding: [0 0, 6]
+
 |text-align
 |xref:text.adoc#text-align[Text alignment] +
 (default: `$heading-text-align`)
@@ -214,6 +242,9 @@ heading:
 heading:
   h3-text-transform: uppercase
 |===
+
+The `padding` key is only intended to be used to offset the border by a fixed amount.
+If you want to put spacing around the top and bottom edges of the heading container, you should use the `margin-*` keys instead.
 
 [#font-size]
 === h<n>-font-size

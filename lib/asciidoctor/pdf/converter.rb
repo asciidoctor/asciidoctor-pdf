@@ -2927,13 +2927,16 @@ module Asciidoctor
           start_new_page if orphaned
         else
           theme_font :heading, level: (hlevel = opts[:level]) do
-            # FIXME: this height doesn't account for impact of text transform or inline formatting
-            heading_height =
-              (height_of_typeset_text title) +
-              (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
-              (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom)
-            heading_height += @theme.heading_min_height_after if sect.blocks? && @theme.heading_min_height_after
-            start_new_page unless cursor > heading_height
+            h_padding_t, h_padding_r, h_padding_b, h_padding_l = expand_padding_value @theme[%(heading_h#{hlevel}_padding)]
+            h_fits = indent h_padding_l, h_padding_r do
+              # FIXME: this height doesn't account for impact of text transform or inline formatting
+              heading_h = (height_of_typeset_text title) +
+                (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
+                (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom) + h_padding_t + h_padding_b
+              heading_h += @theme.heading_min_height_after if @theme.heading_min_height_after && sect.blocks?
+              cursor >= heading_h
+            end
+            start_new_page unless h_fits
           end
         end
         nil
@@ -2968,17 +2971,28 @@ module Asciidoctor
         end
         outdent_section opts.delete :outdent do
           margin_top top_margin
-          # QUESTION: should we move inherited styles to typeset_text?
-          if (inherited = apply_text_decoration font_styles, :heading, hlevel).empty?
-            inline_format_opts = true
-          else
-            inline_format_opts = [{ inherited: inherited }]
+          start_cursor = cursor
+          start_page_number = page_number
+          pad_box @theme[%(heading_h#{hlevel}_padding)] do
+            # QUESTION: should we move inherited styles to typeset_text?
+            if (inherited = apply_text_decoration font_styles, :heading, hlevel).empty?
+              inline_format_opts = true
+            else
+              inline_format_opts = [{ inherited: inherited }]
+            end
+            typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
+              color: @font_color,
+              inline_format: inline_format_opts,
+              align: @base_text_align.to_sym,
+            }.merge(opts)
           end
-          typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
-            color: @font_color,
-            inline_format: inline_format_opts,
-            align: @base_text_align.to_sym,
-          }.merge(opts)
+          if @theme[%(heading_h#{hlevel}_border_width)] && @theme[%(heading_h#{hlevel}_border_color)] && page_number == start_page_number
+            float do
+              bounding_box [bounds.left, start_cursor], width: bounds.width, height: start_cursor - cursor do
+                theme_fill_and_stroke_bounds %(heading_h#{hlevel})
+              end
+            end
+          end
           margin_bottom bot_margin
         end
       end
