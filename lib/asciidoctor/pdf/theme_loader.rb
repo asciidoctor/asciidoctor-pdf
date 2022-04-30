@@ -18,6 +18,7 @@ module Asciidoctor
       AmbiguousAlignKeys = %w(base heading heading_h1 heading_h2 heading_h3 heading_h4 heading_h5 heading_h6 title_page abstract abstract_title admonition_label sidebar_title toc_title).each_with_object({}) do |prefix, accum|
         accum[%(#{prefix}_align)] = %(#{prefix}_text_align)
       end
+      PaddingBottomHackKeys = %w(example_padding quote_padding sidebar_padding verse_padding)
 
       VariableRx = /\$([a-z0-9_-]+)/
       LoneVariableRx = /^\$([a-z0-9_-]+)$/
@@ -173,6 +174,11 @@ module Asciidoctor
         elsif (rekey = AmbiguousAlignKeys[key]) ||
             ((key.start_with? 'role_') && (key.end_with? '_align') && (rekey = key.sub RoleAlignKeyRx, '_text_align'))
           data[rekey] = evaluate val, data
+        elsif PaddingBottomHackKeys.include? key
+          val = evaluate val, data
+          # normalize padding hacks for themes designed before the converter had smart margins
+          val[2] = val[0] if ::Array === val && val[0].to_f >= 0 && val[2].to_f <= 0
+          data[key] = val
         # QUESTION: do we really need to evaluate_math in this case?
         elsif key.end_with? '_color'
           if key == 'table_border_color'

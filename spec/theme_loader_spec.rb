@@ -254,6 +254,35 @@ describe Asciidoctor::PDF::ThemeLoader do
       end).to log_message severity: :WARN, message: 'the literal theme category is deprecated; use the codespan category instead'
     end
 
+    it 'should neutralize bottom padding hack on example, quote, sidebar, and verse categories' do
+      theme_data = YAML.safe_load <<~'EOS'
+      example:
+        padding: [12, 12, 0, 12]
+      quote:
+        padding: [0, 12, -9, 14]
+      sidebar:
+        padding: [12, 12, 0, 12]
+      verse:
+        padding: [6, 12, -6, 14]
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme).to be_an OpenStruct
+      (expect theme.example_padding).to eql [12, 12, 12, 12]
+      (expect theme.quote_padding).to eql [0, 12, 0, 14]
+      (expect theme.sidebar_padding).to eql [12, 12, 12, 12]
+      (expect theme.verse_padding).to eql [6, 12, 6, 14]
+    end
+
+    it 'should not neutralize bottom padding hack if top padding is negative' do
+      theme_data = YAML.safe_load <<~'EOS'
+      quote:
+        padding: [-3, 12, -3, 14]
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme).to be_an OpenStruct
+      (expect theme.quote_padding).to eql [-3, 12, -3, 14]
+    end
+
     it 'should expand variables in value of keys that end in _content' do
       theme_data = YAML.safe_load <<~'EOS'
       page:
@@ -1251,14 +1280,14 @@ describe Asciidoctor::PDF::ThemeLoader do
         border_radius: 3 ^ 2
       quote:
         border_width: 5
-        padding:  [0, $base_line_height_length - 2, $base_line_height_length * -0.75, $base_line_height_length + $quote_border_width / 2]
+        padding: [-0.001, $base_line_height_length - 2, $base_line_height_length * -0.75, $base_line_height_length + $quote_border_width / 2]
       EOS
       theme = subject.new.load theme_data
       (expect theme.base_line_height).to eql 1.2
       (expect theme.base_font_size_large).to eql 12.5
       (expect theme.base_font_size_min).to eql 7.5
       (expect theme.base_border_radius).to eql 9
-      (expect theme.quote_padding).to eql [0, 10, -9, 14.5]
+      (expect theme.quote_padding).to eql [-0.001, 10, -9, 14.5]
     end
 
     it 'should coerce value to numeric if negated variable is a number' do
