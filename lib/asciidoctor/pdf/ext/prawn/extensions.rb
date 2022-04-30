@@ -719,12 +719,14 @@ module Asciidoctor
           if s_width_max
             s_width_end, s_width_side = s_width
             if s_width_end > 0
-              stroke_horizontal_rule s_color, line_width: s_width_end, line_style: options[:line_style]
-              stroke_horizontal_rule s_color, line_width: s_width_end, line_style: options[:line_style], at: bounds.height
+              projection_side = s_width_side * 0.5
+              stroke_horizontal_rule s_color, line_width: s_width_end, line_style: options[:line_style], left_projection: projection_side, right_projection: projection_side
+              stroke_horizontal_rule s_color, line_width: s_width_end, line_style: options[:line_style], at: bounds.height, left_projection: projection_side, right_projection: projection_side
             end
             if s_width_side > 0
-              stroke_vertical_rule s_color, line_width: s_width_side, line_style: options[:line_style]
-              stroke_vertical_rule s_color, line_width: s_width_side, line_style: options[:line_style], at: bounds.width
+              projection_end = s_width_end * 0.5
+              stroke_vertical_rule s_color, line_width: s_width_side, line_style: options[:line_style], top_projection: projection_end, bottom_projection: projection_end
+              stroke_vertical_rule s_color, line_width: s_width_side, line_style: options[:line_style], at: bounds.width, top_projection: projection_end, bottom_projection: projection_end
             end
           else
             stroke_color s_color
@@ -759,8 +761,8 @@ module Asciidoctor
         rule_y = cursor - (options[:at] || 0)
         rule_style = options[:line_style]
         rule_width = options[:line_width] || 0.5
-        rule_x_start = bounds.left
-        rule_x_end = bounds.right
+        rule_x_start = bounds.left - (options[:left_projection] || 0)
+        rule_x_end = bounds.right - (options[:right_projection] || 0)
         save_graphics_state do
           stroke_color rule_color
           case rule_style
@@ -790,8 +792,8 @@ module Asciidoctor
       #
       def stroke_vertical_rule rule_color = stroke_color, options = {}
         rule_x = options[:at] || 0
-        rule_y_from = bounds.top
-        rule_y_to = bounds.bottom
+        rule_y_from = bounds.top + (options[:top_projection] || 0)
+        rule_y_to = bounds.bottom - (options[:bottom_projection] || 0)
         rule_style = options[:line_style]
         rule_width = options[:line_width] || 0.5
         save_graphics_state do

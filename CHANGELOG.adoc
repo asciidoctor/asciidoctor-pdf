@@ -13,6 +13,7 @@ Bug Fixes::
 * remap `layout_` methods contributed to converter by prepended module
 * neutralize padding hacks in themes designed before the converter had smart margins
 * allow smallest ends or sides border width on block to be less than 1
+* cap border corners on block when width is defined using array (uniform or otherwise) (#2103)
 
 == 2.0.0.alpha.2 (2022-04-29) - @mojavelinux
 

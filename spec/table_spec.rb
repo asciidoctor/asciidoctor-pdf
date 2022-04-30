@@ -724,6 +724,25 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         end
       end).to not_raise_exception
     end
+
+    it 'should cap the border corners when border width is specified as ends and sides', visual: true do
+      pdf_theme = {
+        table_border_width: [4, 6],
+        table_border_color: 'DDDDDD',
+        table_padding: 3,
+      }
+
+      input = <<~'EOS'
+      |===
+      a|first
+
+      last
+      |===
+      EOS
+
+      to_file = to_pdf_file input, 'table-border-end-caps.pdf', pdf_theme: pdf_theme
+      (expect to_file).to visually_match 'table-border-end-caps.pdf'
+    end
   end
 
   context 'Dimensions' do

@@ -232,6 +232,49 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     (expect inner_lines).to have_size 4
   end
 
+  it 'should cap the border corners when border width is specified as ends and sides', visual: true do
+    pdf_theme = {
+      example_border_width: [4, 6],
+      example_border_color: 'DDDDDD',
+      example_padding: 3,
+    }
+
+    input = <<~'EOS'
+    ====
+    first
+
+    last
+    ====
+    EOS
+
+    to_file = to_pdf_file input, 'example-uneven-border-end-caps.pdf', pdf_theme: pdf_theme
+    (expect to_file).to visually_match 'example-uneven-border-end-caps.pdf'
+  end
+
+  it 'should cap the border corners when border width is specified as single value', visual: true do
+    pdf_theme = {
+      example_border_width: 4,
+      example_border_color: 'DDDDDD',
+      example_border_radius: 0,
+      example_padding: 3,
+    }
+
+    input = <<~'EOS'
+    ====
+    first
+
+    last
+    ====
+    EOS
+
+    # NOTE: visually, these two reference files are identical, but the image comparator doesn't think so
+    to_file = to_pdf_file input, 'example-singular-border-end-caps.pdf', pdf_theme: pdf_theme
+    (expect to_file).to visually_match 'example-singular-border-end-caps.pdf'
+
+    to_file = to_pdf_file input, 'example-uniform-array-border-end-caps.pdf', pdf_theme: (pdf_theme.merge example_border_width: [4, 4])
+    (expect to_file).to visually_match 'example-uniform-array-border-end-caps.pdf'
+  end
+
   it 'should add correct padding around content when using default theme' do
     input = <<~'EOS'
     ====
