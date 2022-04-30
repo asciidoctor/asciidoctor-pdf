@@ -261,7 +261,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect code_text[:font_color]).to eql 'AA0000'
   end
 
-  it 'should allow theme to set different padding per side when autofit is enabled' do
+  it 'should allow theme to set different padding per edge when autofit is enabled' do
     pdf_theme = {
       code_border_radius: 0,
       code_padding: [5, 10, 15, 20],
@@ -600,7 +600,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect to_file).to visually_match 'listing-page-split-border-ends.pdf'
   end
 
-  it 'should allow theme to set different padding per side' do
+  it 'should allow theme to set different padding per edge' do
     pdf_theme = {
       code_border_radius: 0,
       code_padding: [5, 10, 15, 20],
@@ -622,6 +622,53 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect text[0][:x]).to eql (left + 20.0).round 2
     (expect text[0][:y] + text[0][:font_size]).to be_within(1).of(top - 5)
     (expect text[1][:y]).to be_within(5).of(bottom + 15)
+  end
+
+  it 'should allow theme to set different padding for ends and sides' do
+    pdf_theme = {
+      code_border_radius: 0,
+      code_padding: [10, 5],
+      code_background_color: nil,
+    }
+
+    input = <<~EOS
+    ----
+    source code here
+    ----
+    EOS
+
+    text = (to_pdf input, pdf_theme: pdf_theme, analyze: true).text
+    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+
+    left = lines[0][:from][:x]
+    top = lines[0][:to][:y]
+    bottom = lines[1][:to][:y]
+    (expect text[0][:x]).to eql (left + 5.0).round 2
+    (expect text[0][:y] + text[0][:font_size]).to be_within(1).of(top - 10)
+    (expect text[0][:y]).to be_within(3).of(bottom + 10)
+  end
+
+  it 'should allow theme to set 3-value padding that contains a nil value' do
+    pdf_theme = {
+      code_border_radius: 0,
+      code_padding: [10, nil, 5],
+      code_background_color: nil,
+      code_border_width: [1, 0],
+    }
+
+    input = <<~EOS
+    ----
+    source code here
+    ----
+    EOS
+
+    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+    text = (to_pdf input, pdf_theme: pdf_theme, analyze: true).text
+
+    (expect lines).to have_size 2
+    (expect text).to have_size 1
+    (expect lines[0][:from][:x]).to eql 48.24
+    (expect text[0][:x]).to eql 48.24
   end
 
   it 'should not substitute conums if callouts sub is absent' do
