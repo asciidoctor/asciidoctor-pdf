@@ -2954,18 +2954,20 @@ module Asciidoctor
 
       # NOTE: inscribe_heading doesn't set the theme font because it's used for various types of headings
       def inscribe_heading string, opts = {}
-        hlevel = opts[:level]
+        if (h_level = opts[:level])
+          h_category = %(heading_h#{h_level})
+        end
         unless (top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top))
           if at_page_top?
-            if hlevel && (top_margin = @theme[%(heading_h#{hlevel}_margin_page_top)] || @theme.heading_margin_page_top) > 0
+            if h_category && (top_margin = @theme[%(#{h_category}_margin_page_top)] || @theme.heading_margin_page_top) > 0
               move_down top_margin
             end
             top_margin = 0
           else
-            top_margin = (hlevel ? @theme[%(heading_h#{hlevel}_margin_top)] : nil) || @theme.heading_margin_top
+            top_margin = (h_category ? @theme[%(#{h_category}_margin_top)] : nil) || @theme.heading_margin_top
           end
         end
-        bot_margin = margin || (opts.delete :margin_bottom) || (hlevel ? @theme[%(heading_h#{hlevel}_margin_bottom)] : nil) || @theme.heading_margin_bottom
+        bot_margin = margin || (opts.delete :margin_bottom) || (h_category ? @theme[%(#{h_category}_margin_bottom)] : nil) || @theme.heading_margin_bottom
         if (transform = resolve_text_transform opts)
           string = transform_text string, transform
         end
@@ -2973,9 +2975,9 @@ module Asciidoctor
           margin_top top_margin
           start_cursor = cursor
           start_page_number = page_number
-          pad_box @theme[%(heading_h#{hlevel}_padding)] do
+          pad_box h_category ? @theme[%(#{h_category}_padding)] : nil do
             # QUESTION: should we move inherited styles to typeset_text?
-            if (inherited = apply_text_decoration font_styles, :heading, hlevel).empty?
+            if (inherited = apply_text_decoration font_styles, :heading, h_level).empty?
               inline_format_opts = true
             else
               inline_format_opts = [{ inherited: inherited }]
@@ -2986,10 +2988,11 @@ module Asciidoctor
               align: @base_text_align.to_sym,
             }.merge(opts)
           end
-          if @theme[%(heading_h#{hlevel}_border_width)] && @theme[%(heading_h#{hlevel}_border_color)] && page_number == start_page_number
+          if h_category && @theme[%(#{h_category}_border_width)] &&
+              @theme[%(#{h_category}_border_color)] && page_number == start_page_number
             float do
               bounding_box [bounds.left, start_cursor], width: bounds.width, height: start_cursor - cursor do
-                theme_fill_and_stroke_bounds %(heading_h#{hlevel})
+                theme_fill_and_stroke_bounds h_category
               end
             end
           end
