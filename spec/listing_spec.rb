@@ -560,8 +560,27 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect lines).to have_size 4
     (expect lines[0][:from][:y]).to eql lines[0][:to][:y]
     (expect lines[0][:width]).to eql 2
-    (expect lines[2][:from][:x]).to eql lines[2][:to][:x]
-    (expect lines[2][:width]).to eql 1
+    (expect lines[1][:from][:x]).to eql lines[1][:to][:x]
+    (expect lines[1][:width]).to eql 1
+  end
+
+  it 'should allow width of border to be only set on one end' do
+    pdf_theme = {
+      code_border_color: 'AA0000',
+      code_border_width: [1, 0, 0, 0],
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    ----
+    foo
+    bar
+    baz
+    ----
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 1
+    (expect lines[0][:from][:y]).to eql lines[0][:to][:y]
+    (expect lines[0][:width]).to eql 1
   end
 
   it 'should allow max width of border with different ends and sides to be less than 1' do
