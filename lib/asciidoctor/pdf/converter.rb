@@ -181,7 +181,7 @@ module Asciidoctor
       def convert_document doc
         doc.promote_preface_block
         init_pdf doc
-        # set default value for outline, pagenums, and show-link-uri if not otherwise set
+        # set default value for outline and pagenums attributes if not otherwise set
         doc.attributes['outline'] = '' unless (doc.attribute_locked? 'outline') || ((doc.instance_variable_get :@attributes_modified).include? 'outline')
         doc.attributes['pagenums'] = '' unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
         #assign_missing_section_ids doc
