@@ -3167,6 +3167,10 @@ module Asciidoctor
         @toc_extent = extent
       end
 
+      def get_entries_for_toc node
+        node.sections
+      end
+
       # NOTE: num_front_matter_pages not used during a dry run
       def ink_toc doc, num_levels, toc_page_number, start_cursor, num_front_matter_pages = 0
         go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
@@ -3200,7 +3204,7 @@ module Asciidoctor
             }
           end
           theme_margin :toc, :top
-          ink_toc_level doc.sections, num_levels, dot_leader, num_front_matter_pages
+          ink_toc_level (get_entries_for_toc doc), num_levels, dot_leader, num_front_matter_pages
         end
         # NOTE: range must be calculated relative to toc_page_number; absolute page number in scratch document is arbitrary
         toc_page_numbers = (toc_page_number..(toc_page_number + (page_number - start_page_number)))
@@ -3279,7 +3283,7 @@ module Asciidoctor
             end
           end
           indent @theme.toc_indent do
-            ink_toc_level entry.sections, num_levels_for_entry, dot_leader, num_front_matter_pages
+            ink_toc_level (get_entries_for_toc entry), num_levels_for_entry, dot_leader, num_front_matter_pages
           end if num_levels_for_entry >= entry_level
         end
       end
