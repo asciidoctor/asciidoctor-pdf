@@ -132,6 +132,7 @@ role:
 
 To learn more about defining a custom role, see xref:custom-role.adoc[].
 
+[#built-in]
 == Built-in roles
 
 Asciidoctor PDF provides several predefined roles.

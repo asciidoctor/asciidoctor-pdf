@@ -1,0 +1,101 @@
+= What's New in Asciidoctor PDF
+:navtitle: What's New
+//{page-component-version}
+:doctype: book
+//:page-toclevels: 0
+:leveloffset: 1
+:url-milestone-2-0-0: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.0+is%3Aclosed
+
+= Asciidoctor PDF {page-component-version}
+
+_**Release date:** 2022.04.28 | *Issue label:* {url-milestone-2-0-0}[{page-component-display-version}^]_
+
+[#roles]
+== Paragraph roles and text indent
+
+In Asciidoctor PDF {page-component-version}, you can define custom roles in your theme and apply them to paragraphs in your document.
+See xref:theme:custom-role.adoc[] to learn how to create a custom role and xref:roles.adoc#custom[Use a custom role] for how to assign a custom role to a paragraph.
+
+Due to the ability to assign roles to paragraphs, the `lead` category keys have been removed.
+Now the lead paragraph styles are applied using the built-in role named `lead`.
+See xref:theme:role.adoc#built-in[Built-in roles] for details.
+
+To control the indent of inner paragraphs, you can set the new `prose-text-indent-inner` key in your theme.
+See xref:theme:prose.adoc[] for details.
+
+== Blocks and block captions
+
+Blocks and block captions gained a lot of new features in Asciidoctor {page-component-version}.
+Here are just a few of the highlights:
+
+Smart bottom margins::
+Blocks now have smarter bottom margins that prevent extra space from being added below them, particularly when blocks are nested.
+Border styles::
+The border style of delimited blocks, admonitions, block images, and thematic breaks can be changed with the `border-style` key.
+Styles include dashed, dotted, double, and solid.
+Border widths::
+The border width of delimited blocks, admonitions, and block images can be customized per edge with the `border-width` key.
+Line height::
+Wherever font properties are accepted in the theme, you can now control the line height of blocks using the `line-height` key.
+Anchor positioning::
+Allow location of anchor for block to be positioned relative to content using the `block-anchor-top` key.
+First line of abstract::
+Allow theme to control font color of first line of abstract using `abstract-first-line-font-color` key.
+Caption text-align::
+The text alignment of a caption can now be controlled independent of the block alignment.
+Global caption text decoration::
+Allow theme to specify text decoration style, color, and width for captions.
+Caption max-width::
+Allow caption `max-width` to be set to percentage of content by passing argument to `fit-content` function.
+
+.*Notable fixes for blocks*
+* Syntax highlighting isn't applied to a source block if the `specialchars` substitution is disabled.
+* Borders, shading, and padding isn't applied to collapsible blocks.
+* The `callouts` substitution can be disabled on source blocks.
+
+== Callout lists and numbers
+
+The theming language now has a xref:theme:callout.adoc[callout-list category].
+The new theme keys let you customize the font properties, text alignment, and item spacing of callout lists.
+The `callout-list` category includes the `margin-top-after-code` key that can control the top margin of callout lists that immediately follow a code block.
+
+.*Notable fixes for callouts*
+* Callout numbers in a callout list stay with primary text when an item is advanced to next page.
+* A sequence of two or more callouts separated by spaces in a verbatim block are processed correctly.
+* The font family assigned to `conums` in the theme is applied to the callout numbers displayed in verbatim blocks.
+
+== Fonts
+
+normal_italic:: The new `normal_italic` value for the `font-style` key resets the font style to normal, then applies the italic variant of a font family.
+See xref:theme:text.adoc#font-style[Font style].
+
+== Deprecated
+
+The following features are deprecated with the release of Asciidoctor PDF 2.0.0 and will be removed in the next major release.
+
+* The `blockquote` category prefix is deprecated in the theme; use the `quote` prefix instead.
+See xref:theme:quote.adoc[].
+* The `key` category prefix is deprecated in the theme; use the `kbd` prefix instead.
+See xref:theme:keyboard.adoc[].
+* The `literal` category prefix is deprecated in the theme; use the `codespan` prefix instead.
+See xref:theme:codespan.adoc[].
+* The `outline-list` category prefix is deprecated in the theme; use the `list` prefix instead.
+See xref:theme:list.adoc[].
+* The `Optimizer#generate_file` method is deprecated; use `Optimizer#optimize_file` instead.
+
+== Removed
+
+The following dependencies and deprecated features have been removed with the release of Asciidoctor PDF 2.0.0.
+
+* Support for Ruby < 2.7 and JRuby < 9.2 has been removed.
+* The deprecated Pdf module alias in the API has been removed, leaving only PDF.
+* The deprecated "`ascii`" fonts have been removed; only the more complete "subset" fonts are now bundled.
+* Support for the deprecated `pdf-style` and `pdf-stylesdir` attributes has been removed.
+* The undocumented `vertical-spacing` key has been removed from the built-in themes.
+* The `top-margin` key on block and prose categories in theme has been removed; space between delimited blocks and lists is now controlled using bottom margins only.
+* The `lead` category keys in theme have been removed; use the built-in role named `lead` instead.
+* `safe_yaml gem` has been removed; use `YAML.safe_load` from the Ruby stdlib instead.
+* Support for the `<color>` tag in passthrough content has been removed; use `<font color="...">` instead (may affect themes).
+* The [.path]_asciidoctor-pdf/converter_ and [.path]_asciidoctor-pdf/version_ shim scripts have been removed; use [.path]_asciidoctor/pdf/converter_ and [.path]_asciidoctor/pdf/version_ instead.
+* The unneeded `_mb` functions (e.g., `uppercase_mb`) have been removed; multibyte support for `upcase`, `downcase`, and `capitalize` is now provided by corelib.
+

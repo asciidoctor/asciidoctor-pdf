@@ -3,6 +3,7 @@
 
 You can apply the built-in roles Asciidoctor PDF provides as well as custom roles you define in your theme to paragraphs and inline phrases.
 
+[#built-in]
 == Use a built-in role
 
 The following built-in roles can be assigned to paragraphs and inline phrases:
@@ -19,6 +20,7 @@ The sign spelled out [.big]#WELCOME# in glowing neon lights.
 When text is enclosed in a pair of single or double hash symbols (`#`) and has at least one role, the role(s) will be applied to that text without adding any other implicit formatting.
 That is, the text won't be highlighted.
 
+[#custom]
 == Use a custom role
 
 NOTE: Before you can use a custom role in your document, you need to define it in your theme.
