@@ -269,6 +269,20 @@ module Asciidoctor
         dest_xyz 0, page_height, nil, (page_num ? state.pages[page_num - 1] : page)
       end
 
+      # Gets the destination registered for the specified name. The return value
+      # matches that which was passed to the add_dest method.
+      #
+      def get_dest name, node = dests.data
+        node.children.each do |child|
+          if ::PDF::Core::NameTree::Value === child
+            return child.value.data if child.name == name
+          elsif (found = get_dest name, child)
+            return found
+          end
+        end
+        nil
+      end
+
       # Fonts
 
       # Registers a new custom font described in the data parameter

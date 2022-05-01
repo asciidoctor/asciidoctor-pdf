@@ -3208,38 +3208,48 @@ module Asciidoctor
         toc_page_numbers
       end
 
-      def ink_toc_level sections, num_levels, dot_leader, num_front_matter_pages
+      def ink_toc_level entries, num_levels, dot_leader, num_front_matter_pages
         # NOTE: font options aren't always reliable, so store size separately
         toc_font_info = theme_font :toc do
           { font: font, size: @font_size }
         end
         hanging_indent = @theme.toc_hanging_indent
-        sections.each do |sect|
-          next if (num_levels_for_sect = (sect.attr 'toclevels', num_levels).to_i) < sect.level
-          theme_font :toc, level: (sect.level + 1) do
-            sect_title = @text_transform ? (transform_text sect.numbered_title, @text_transform) : sect.numbered_title
-            next if sect_title.empty?
+        entries.each do |entry|
+          next if (num_levels_for_entry = (entry.attr 'toclevels', num_levels).to_i) < (entry_level = entry.level + 1).pred
+          theme_font :toc, level: entry_level do
+            next unless (entry_anchor = (entry.attr 'pdf-anchor') || entry.id)
+            entry_title = entry.context == :section ? entry.numbered_title : (entry.title? ? entry.title : (entry.xreftext 'basic'))
+            next if entry_title.empty?
+            entry_title = transform_text entry_title, @text_transform if @text_transform
             pgnum_label_placeholder_width = rendered_width_of_string '0' * @toc_max_pagenum_digits
-            # NOTE: only write section title (excluding dots and page number) if this is a dry run
+            # NOTE: only write title (excluding dots and page number) if this is a dry run
             if scratch?
               indent 0, pgnum_label_placeholder_width do
                 # NOTE: must wrap title in empty anchor element in case links are styled with different font family / size
-                ink_prose sect_title, anchor: true, normalize: false, hanging_indent: hanging_indent, normalize_line_height: true, margin: 0
+                ink_prose entry_title, anchor: true, normalize: false, hanging_indent: hanging_indent, normalize_line_height: true, margin: 0
               end
             else
-              physical_pgnum = sect.attr 'pdf-page-start'
-              virtual_pgnum = physical_pgnum - num_front_matter_pages
-              pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new physical_pgnum, :lower) : virtual_pgnum).to_s
+              if !(physical_pgnum = entry.attr 'pdf-page-start') &&
+                  (target_page_ref = (get_dest entry_anchor)&.first) &&
+                  (target_page_idx = state.pages.index {|candidate| candidate.dictionary == target_page_ref })
+                physical_pgnum = target_page_idx + 1
+              end
+              if physical_pgnum
+                virtual_pgnum = physical_pgnum - num_front_matter_pages
+                pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new physical_pgnum, :lower) : virtual_pgnum).to_s
+              else
+                pgnum_label = '?'
+              end
               start_page_number = page_number
               start_cursor = cursor
               start_dots = nil
-              sect_title_inherited = (apply_text_decoration ::Set.new, :toc, sect.level.next).merge anchor: (sect_anchor = sect.attr 'pdf-anchor'), color: @font_color
+              entry_title_inherited = (apply_text_decoration ::Set.new, :toc, entry_level).merge anchor: entry_anchor, color: @font_color
               # NOTE: use text formatter to add anchor overlay to avoid using inline format with synthetic anchor tag
-              sect_title_fragments = text_formatter.format sect_title, inherited: sect_title_inherited
+              entry_title_fragments = text_formatter.format entry_title, inherited: entry_title_inherited
               line_metrics = calc_line_metrics @base_line_height
               indent 0, pgnum_label_placeholder_width do
-                (sect_title_fragments[-1][:callback] ||= []) << (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
-                typeset_formatted_text sect_title_fragments, line_metrics, hanging_indent: hanging_indent, normalize_line_height: true
+                (entry_title_fragments[-1][:callback] ||= []) << (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
+                typeset_formatted_text entry_title_fragments, line_metrics, hanging_indent: hanging_indent, normalize_line_height: true
                 start_dots = last_fragment_pos.right + hanging_indent
                 last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
                 start_cursor = last_fragment_cursor if last_fragment_pos.page_number > start_page_number || (start_cursor - last_fragment_cursor) > line_metrics.height
@@ -3247,7 +3257,7 @@ module Asciidoctor
               end_cursor = cursor
               move_cursor_to start_cursor
               # NOTE: we're guaranteed to be on the same page as the final line of the entry
-              if dot_leader[:width] > 0 && (dot_leader[:levels].include? sect.level)
+              if dot_leader[:width] > 0 && (dot_leader[:levels].include? entry_level.pred)
                 pgnum_label_width = rendered_width_of_string pgnum_label
                 pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
                 save_font do
@@ -3259,18 +3269,18 @@ module Asciidoctor
                   typeset_formatted_text [
                     { text: dot_leader[:text] * num_dots, color: dot_leader[:font_color] },
                     dot_leader[:spacer],
-                    ({ text: pgnum_label, anchor: sect_anchor }.merge pgnum_label_font_settings),
+                    ({ text: pgnum_label, anchor: entry_anchor }.merge pgnum_label_font_settings),
                   ], line_metrics, align: :right
                 end
               else
-                typeset_formatted_text [{ text: pgnum_label, color: @font_color, anchor: sect_anchor }], line_metrics, align: :right
+                typeset_formatted_text [{ text: pgnum_label, color: @font_color, anchor: entry_anchor }], line_metrics, align: :right
               end
               move_cursor_to end_cursor
             end
           end
           indent @theme.toc_indent do
-            ink_toc_level sect.sections, num_levels_for_sect, dot_leader, num_front_matter_pages
-          end if num_levels_for_sect > sect.level
+            ink_toc_level entry.sections, num_levels_for_entry, dot_leader, num_front_matter_pages
+          end if num_levels_for_entry >= entry_level
         end
       end
 
