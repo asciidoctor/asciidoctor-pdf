@@ -1,0 +1,181 @@
+= Add Running Content
+:conum-guard-yaml: #
+
+You can customize the arrangement and style of the running header and footer content by extending the built-in themes and using the `header`, `footer`, and `running-content` category keys.
+
+== Activate the running content
+
+The running content won't be activated unless:
+
+. the periphery (header or footer) is configured, and
+. the `height` key for the periphery is assigned a value.
+
+By default, the built-in themes insert a footer with the page number on the right side of recto pages and the left side of verso pages if you don't specify any running content.
+By extending the base or default themes, you can add content to and customize the layout of the header and footer, or disable the running content.
+Using the `running-content` key, you can also specify on which page the header and footer start.
+
+CAUTION: If the height of the running content periphery is taller than the page margin, the running content will cover the main content.
+To avoid this problem, reduce the height of the running content periphery or make the page margin on that side larger.
+
+See xref:running-content.adoc[] for the complete list of keys you can use to customize your running content.
+
+[#page-number]
+== Modify page number position
+
+To replace the alternating page numbers with a centered page number, you can restrict the footer to a single column and specify the content for the center position.
+
+[,yaml]
+----
+extends: default
+footer:
+  columns: =100%
+  recto:
+    center:
+      content: '{page-number}'
+  verso:
+    center:
+      content: '{page-number}'
+----
+
+If the recto and verso keys have the same content, you can reduce the amount of configuring using a YAML reference.
+
+[,yaml]
+----
+extends: default
+footer:
+  columns: =100%
+  recto: &shared_footer
+    center:
+      content: '{page-number}'
+  verso: *shared_footer
+----
+
+The `&shared_footer` assigns an ID to the YAML subtree under the `recto` key and the `*shared_footer` outputs a copy of it under the `verso` key.
+This technique can be used throughout the theme file as it's a core feature of YAML.
+
+To learn more about the default page numbering and how to customize the numbering, see xref:page-numbers.adoc[].
+
+[#attribute-references]
+== Attribute references
+
+You can use any attribute defined in your AsciiDoc document (such as `doctitle`) in the content of the running header and footer.
+In addition, the following attributes are also available when defining the content keys in the footer:
+
+* `page-count`
+* `page-number` (only set if the `pagenums` attribute is set on the document, which it is by default)
+* `page-layout`
+* `document-title`
+* `document-subtitle`
+* `part-title`
+* `chapter-title`
+* `section-title`
+* `section-or-chapter-title`
+
+If you reference an attribute which is not defined, all the text on that same line in the running content will be dropped.
+This feature allows you to have alternate lines that are selected when all the attribute references are satisfied.
+One case where this is useful is when referencing the `page-number` attribute.
+If you unset the `pagenums` attribute on the document, any line in the running content that makes reference to `\{page-number}` will be dropped.
+
+You can also use built-in AsciiDoc text replacements like `+(C)+`, numeric character references like `+&#169;+`, hexadecimal character references like `+&#x20ac;+`, and inline formatting (e.g., bold, italic, monospace).
+
+Here's an example that shows how attributes and replacements can be used in the running footer:
+
+[,yaml]
+----
+header:
+  height: 0.75in
+  line-height: 1
+  recto:
+    center:
+      content: '(C) ACME -- v{revnumber}, {docdate}'
+  verso:
+    center:
+      content: $header-recto-center-content
+footer:
+  background-image: image:running-content-bg-{page-layout}.svg[]
+  height: 0.75in
+  line-height: 1
+  recto:
+    right:
+      content: '{section-or-chapter-title} | *{page-number}*'
+  verso:
+    left:
+      content: '*{page-number}* | {chapter-title}'
+----
+
+== Multi-line values
+
+You can split the content value across multiple lines using YAML's multiline string syntax.
+In this case, the single quotes around the string are not necessary.
+To force a hard line break in the output, add `{sp}+` to the end of the line in normal AsciiDoc fashion.
+
+[,yaml]
+----
+footer:
+  height: 0.75in
+  line-height: 1.2
+  recto:
+    right:
+      content: |
+        Section Title - Page Number +
+        {section-or-chapter-title} - *{page-number}*
+  verso:
+    left:
+      content: |
+        Page Number - Chapter Title +
+        *{page-number}* - {chapter-title}
+----
+
+TIP: You can use most AsciiDoc inline formatting in the values of these keys.
+For instance, to make the text bold, surround it in asterisks (as shown above).
+One exception to this rule are inline images, which are described in the next section.
+
+== Add an image
+
+You can add an image to the running header or footer using the AsciiDoc inline image syntax.
+The image target is resolved relative to the value of the `pdf-themesdir` attribute.
+If the image macro is the whole value for a column position, you can use the `position` and `fit` attributes to align and scale it relative to the column box.
+Otherwise, the image is treated like a normal inline image, for which you can only adjust the width.
+
+Here's an example of how to use an image in the running header (which also applies for the footer).
+
+[,yaml,subs=attributes+]
+----
+header:
+  height: 0.75in
+  image-vertical-align: 2 {conum-guard-yaml} <1>
+  recto:
+    center:
+      content: image:footer-logo.png[pdfwidth=15pt]
+  verso:
+    center:
+      content: $header-recto-center-content
+----
+<1> You can use the `image-vertical-align` key to slightly nudge the image up or down.
+
+CAUTION: The image must fit in the allotted space for the running header or footer.
+Otherwise, you'll run into layout issues or the image may not display.
+You can adjust the width of the image to a fixed value using the `pdfwidth` attribute.
+Alternatively, you can use the `fit` attribute to set the size of the image dynamically based on the available space.
+Set the `fit` attribute to `scale-down` (e.g., `fit=scale-down`) to reduce the image size to fit in the available space or `contain` (i.e., `fit=contain`) to scale the image (up or down) to fit the available space.
+You should not rely on the `width` attribute to set the image width when converting to PDF.
+
+[#disable]
+== Disable the header or footer
+
+If you define running header and footer content in your theme (including the height), you can still disable this content per document by setting the `noheader` and `nofooter` attributes in the AsciiDoc document header, respectively.
+
+If you extend either the base or default theme, and don't specify content for the footer, the current page number will be added to the right side on recto pages and the left side on verso pages.
+To disable this behavior, you can use the following snippet:
+
+[,yaml]
+----
+extends: default
+footer:
+  recto:
+    right:
+      content: ~
+  verso:
+    left:
+      content: ~
+----
