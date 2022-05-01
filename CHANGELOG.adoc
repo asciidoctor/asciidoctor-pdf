@@ -14,6 +14,11 @@ Enhancements::
 * allow margins in running content to be specified using 2-value array for ends and sides or 3-value array with implied left side value (#2104)
 * allow theme to set border and padding on headings per level (#434)
 
+Improvements::
+
+* reduce top and bottom padding on quote and verse blocks in base theme
+* use uniform top and bottom padding on quote blocks in default theme
+
 Bug Fixes::
 
 * allow `inscribe_toc` method in extended converter to insert page above TOC page

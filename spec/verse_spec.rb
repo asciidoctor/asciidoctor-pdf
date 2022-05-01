@@ -165,7 +165,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     text_top = (pdf.find_unique_text 'first').yield_self {|it| it[:y] + it[:font_size] }
     text_bottom = (pdf.find_unique_text 'last')[:y]
     text_left = (pdf.find_unique_text 'first')[:x]
-    (expect (top - text_top).to_f).to be < 2
+    (expect (top - text_top).to_f).to be < 5
     (expect (text_bottom - bottom).to_f).to (be_within 1).of 8.0
     (expect (text_left - left).to_f).to eql 12.0
   end
@@ -189,8 +189,8 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     text_top = (pdf.find_unique_text 'first').yield_self {|it| it[:y] + it[:font_size] }
     text_bottom = (pdf.find_unique_text 'last')[:y]
     text_left = (pdf.find_unique_text 'first')[:x]
-    (expect (top - text_top).to_f).to (be_within 2).of 8.0
-    (expect (text_bottom - bottom).to_f).to (be_within 2).of 8.0
+    (expect (top - text_top).to_f).to (be_within 1).of 3.0
+    (expect (text_bottom - bottom).to_f).to (be_within 1).of 6.0
     (expect (text_left - left).to_f).to eql 12.0
   end
 

@@ -90,10 +90,10 @@ quote:
 
 |padding
 |xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
-(default: `[6, 12, 6, 14]`)
+(default: `[3, 12, 3, 14]`)
 |[source]
 quote:
-  padding: [5, 10, 5, 10]
+  padding: [3, 0, 3, 20]
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
