@@ -1435,4 +1435,55 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect (pdf.find_text 'Chapter A')[0][:page_number]).to eql 3
     (expect (pdf.find_text 'Chapter B')[0][:page_number]).to eql 3
   end
+
+  it 'should allow extnded converter to insert extra entries into TOC' do
+    backend = nil
+    create_class (Asciidoctor::Converter.for 'pdf') do
+      register_for (backend = %(pdf#{object_id}).to_sym)
+      def get_entries_for_toc node
+        return super if node.context == :document
+        node.blocks.select(&:id)
+      end
+    end
+
+    input = <<~'EOS'
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == Chapter A
+
+    .Check for Ruby
+    [#check-for-ruby]
+    ****
+    Run `ruby -v` to check if you have Ruby installed.
+    ****
+
+    <<<
+
+    === Section
+
+    == Chapter B
+
+    [#screenshot,reftext=Screenshot]
+    image::tux.png[]
+
+    === Another Section
+    EOS
+
+    pdf = to_pdf input, backend: backend, analyze: true
+    (expect pdf.pages).to have_size 5
+    toc_text = (pdf.find_text page_number: 2).reject {|it| it[:string] == 'Table of Contents' }
+    toc_lines = pdf.lines toc_text
+    [['Chapter A', 1], ['Check for Ruby', 1], ['Section', 2], ['Chapter B', 3], ['Screenshot', 3], ['Another Section', 3]].each_with_index do |(title, pnum), idx|
+      line = toc_lines[idx]
+      (expect line).to start_with title
+      (expect line).to end_with pnum.to_s
+    end
+
+    pdf = to_pdf input, backend: backend
+    annots = get_annotations pdf, 2
+    (expect annots.select {|it| it[:Dest] == 'check-for-ruby' }).to have_size 2
+    (expect annots.select {|it| it[:Dest] == 'screenshot' }).to have_size 2
+  end
 end
