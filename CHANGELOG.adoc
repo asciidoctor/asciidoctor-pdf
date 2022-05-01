@@ -18,16 +18,17 @@ Improvements::
 
 * reduce top and bottom padding on quote and verse blocks in base theme
 * use uniform top and bottom padding on quote blocks in default theme
+* change `inscribe_` method prefix in converter to `ink_`
 
 Bug Fixes::
 
-* allow `inscribe_toc` method in extended converter to insert page above TOC page
+* allow `ink_toc` method in extended converter to insert page above TOC page
 * remap `layout_` methods contributed to converter by prepended module
 * neutralize padding hacks in themes designed before the converter had smart margins
 * allow smallest ends or sides border width on block to be less than 1
 * cap border corners on block when width is defined using array (uniform or otherwise) (#2103)
 * fix crash in certain circumstances when theme does not define value for `base-border-width` key
-* use sensible fallbacks for table border color and width (retains backwards compatibility)
+* use sensible fallbacks for table border and grid color and width (retains backwards compatibility)
 
 == 2.0.0.alpha.2 (2022-04-29) - @mojavelinux
 
@@ -60,7 +61,7 @@ Bug Fixes::
 * delete dests on page before deleting it (keeps generated PDF clean of obsolete destinations)
 * don't call `arrange_section` if section title is hidden
 * remove `theme_font` enclosure around call to `start_new_chapter` and `start_new_part`
-* change `layout_` method prefix to `inscribe_` in converter (#2099)
+* change `layout_` method prefix in converter to `inscribe_` (#2099)
 
 === Details
 

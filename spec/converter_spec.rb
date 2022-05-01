@@ -1187,11 +1187,11 @@ describe Asciidoctor::PDF::Converter do
       (expect heading_text).not_to be_nil
     end
 
-    it 'should allow custom converter to override inscribe_general_heading for section title' do
+    it 'should allow custom converter to override ink_general_heading for section title' do
       backend = nil
       create_class (Asciidoctor::Converter.for 'pdf') do
         register_for (backend = %(pdf#{object_id}).to_sym)
-        def inscribe_general_heading sect, title, opts = {}
+        def ink_general_heading sect, title, opts = {}
           if (image_path = sect.attr 'image')
             image_attrs = { 'target' => image_path, 'pdfwidth' => '1in' }
             image_block = ::Asciidoctor::Block.new sect.document, :image, content_model: :empty, attributes: image_attrs
