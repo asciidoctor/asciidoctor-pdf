@@ -8,12 +8,12 @@
 
 = Asciidoctor PDF {page-component-version}
 
-_**Release date:** 2022.04.28 | *Issue label:* {url-milestone-2-0-0}[{page-component-display-version}^]_
+_**Release date:** 2022.05.01 | *Issue label:* {url-milestone-2-0-0}[{page-component-display-version}^]_
 
 [#roles]
 == Paragraph roles and text indent
 
-In Asciidoctor PDF {page-component-version}, you can define custom roles in your theme and apply them to paragraphs in your document.
+In Asciidoctor PDF 2.0, you can define custom roles in your theme and apply them to paragraphs in your document.
 See xref:theme:custom-role.adoc[] to learn how to create a custom role and xref:roles.adoc#custom[Use a custom role] for how to assign a custom role to a paragraph.
 
 Due to the ability to assign roles to paragraphs, the `lead` category keys have been removed.
@@ -25,16 +25,16 @@ See xref:theme:prose.adoc[] for details.
 
 == Blocks and block captions
 
-Blocks and block captions gained a lot of new features in Asciidoctor {page-component-version}.
+Blocks and block captions gained a lot of new features in Asciidoctor PDF 2.0.
 Here are just a few of the highlights:
 
 Smart bottom margins::
 Blocks now have smarter bottom margins that prevent extra space from being added below them, particularly when blocks are nested.
-Border styles::
-The border style of delimited blocks, admonitions, block images, and thematic breaks can be changed with the `border-style` key.
+xref:theme:blocks.adoc#border-width[Border width]::
+The border width of delimited blocks, admonitions, tables, and block images can be customized per edge with the `border-width` key.
+xref:theme:blocks.adoc#border-style[Border style]::
+The border style of delimited blocks, admonitions, tables, and block images can be changed with the `border-style` key.
 Styles include dashed, dotted, double, and solid.
-Border widths::
-The border width of delimited blocks, admonitions, and block images can be customized per edge with the `border-width` key.
 Line height::
 Wherever font properties are accepted in the theme, you can now control the line height of blocks using the `line-height` key.
 Anchor positioning::
@@ -50,7 +50,7 @@ Allow caption `max-width` to be set to percentage of content by passing argument
 
 .*Notable fixes for blocks*
 * Syntax highlighting isn't applied to a source block if the `specialchars` substitution is disabled.
-* Borders, shading, and padding isn't applied to collapsible blocks.
+* Borders, shading, and padding aren't applied to collapsible blocks.
 * The `callouts` substitution can be disabled on source blocks.
 
 == Callout lists and numbers

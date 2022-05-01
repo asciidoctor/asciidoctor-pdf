@@ -19,35 +19,35 @@ quote:
   background-color: #757575
 
 |border-color
-|xref:color.adoc[Color] +
+|xref:blocks.adoc#border-color[Color] +
 (default: `'EEEEEE'`)
 |[source]
 quote:
   border-color: #e6e8fa
 
 |<<border-width,border-left-width>>
-|xref:measurement-units.adoc[Measurement] +
+|xref:blocks.adoc#border-width[Measurement] +
 (default: `4`)
 |[source]
 quote:
   border-left-width: 5
 
 |border-radius
-|xref:measurement-units.adoc[Measurement] +
+|xref:blocks.adoc#radius[Measurement] +
 (default: _not set_)
 |[source]
 code:
   border-radius: 4
 
 |border-style
-|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
+|xref:blocks.adoc#border-style[Border style] +
 (default: `solid`)
 |[source]
 quote:
   border-style: dotted
 
 |<<border-width,border-width>>
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[ends,sides\]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
 (default: `0`)
 |[source]
 quote:

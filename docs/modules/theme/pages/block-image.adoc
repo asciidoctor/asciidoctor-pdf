@@ -19,7 +19,7 @@ image:
   align: right
 
 |<<border-color,border-color>>
-|xref:color.adoc[Color] +
+|xref:blocks.adoc#border-color[Color] +
 (default: _not set_)
 |[source]
 image:
@@ -33,21 +33,21 @@ image:
   border-fit: auto
 
 |border-radius
-|xref:measurement-units.adoc[Measurement] +
+|xref:blocks.adoc#radius[Measurement] +
 (default: _not set_)
 |[source]
 image:
   border-radius: 2
 
 |border-style
-|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
+|xref:blocks.adoc#border-style[Border style] +
 (default: `solid`)
 |[source]
 image:
   border-style: dashed
 
 |border-width
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[ends,sides\]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
 (default: _not set_)
 |[source]
 image:

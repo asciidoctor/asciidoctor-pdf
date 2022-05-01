@@ -38,21 +38,21 @@ header:
   background-image: image:running-content.svg[fit=contain]
 
 |border-color
-|xref:color.adoc[Color] +
+|xref:blocks.adoc#border-color[Color] +
 (default: _not set_)
 |[source]
 header:
   border-color: #dddddd
 
 |border-style
-|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
+|xref:blocks.adoc#border-style[Border style] +
 (default: `solid`)
 |[source]
 header:
   border-style: dashed
 
 |border-width
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[ends,sides\]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
 (default: `$base-border-width`)
 |[source]
 header:
@@ -266,21 +266,21 @@ footer:
   background-image: image:running-content.svg[fit=contain]
 
 |border-color
-|xref:color.adoc[Color] +
+|xref:blocks.adoc#border-color[Color] +
 (default: _not set_)
 |[source]
 footer:
   border-color: #dddddd
 
 |border-style
-|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
+|xref:blocks.adoc#border-style[Border style] +
 (default: `solid`)
 |[source]
 footer:
   border-style: dashed
 
 |border-width
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[ends,sides\]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
 (default: `$base-border-width`)
 |[source]
 footer:

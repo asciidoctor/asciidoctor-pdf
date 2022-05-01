@@ -19,28 +19,28 @@ code:
   background-color: #f5f5f5
 
 |border-color
-|xref:color.adoc[Color] +
+|xref:blocks.adoc#border-color[Color] +
 (default: `'EEEEEE'`)
 |[source]
 code:
   border-color: #cccccc
 
 |border-radius
-|xref:measurement-units.adoc[Measurement] +
+|xref:blocks.adoc#radius[Measurement] +
 (default: _not set_)
 |[source]
 code:
   border-radius: 4
 
 |border-style
-|`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
+|xref:blocks.adoc#border-style[Border style] +
 (default: `solid`)
 |[source]
 code:
   border-style: dashed
 
 |border-width
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[ends,sides\]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
 (default: `0.5`)
 |[source]
 code:
