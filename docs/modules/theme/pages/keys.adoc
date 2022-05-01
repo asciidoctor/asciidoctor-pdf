@@ -1,11 +1,10 @@
-= Category Keys Reference
-//Theme Keys Reference
+= Theme Keys Reference
 
 == Category keys
 
 The following pages list the keys and acceptable values or value types that are available when creating a custom theme.
 The keys are organized by category key.
-Each category represents a common prefix under which the keys are typically nested.
+Each category represents a common prefix under which the (property) keys are typically nested.
 
 TIP: Keys can be nested wherever an underscore (`_`) or hyphen (`-`) appears in the name.
 This nested structure is for organizational purposes only.
