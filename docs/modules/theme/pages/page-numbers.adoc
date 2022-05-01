@@ -43,5 +43,6 @@ footer:
 
 If you want the running content to also appear on front matter pages, you can use the theme to change the page on which the running content starts with the `running-content-start-at` key.
 For instance, to start the running content on the title page, assuming the title page is enabled, set `running-content-start-at: title` in your theme file.
+To learn more about customizing the running content, see xref:add-running-content.adoc[].
 
 Aside from the configurability mentioned, the page numbering logic is computed automatically.

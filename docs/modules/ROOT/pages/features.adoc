@@ -17,9 +17,9 @@
 * Syntax highlighting with Rouge (preferred), Pygments, or CodeRay
 * Front and back cover pages
 * Page background color or page background image with configurable scaling
-* Page numbering
+* xref:theme:page-numbers.adoc[Page numbering]
 * Double-sided (aka prepress) printing mode (i.e., margins alternate on recto and verso pages)
-* Customizable running content (header and footer)
+* xref:theme:add-running-content.adoc[Customizable header and footer running content]
 * Section body indent
 * Unbreakable blocks
 * Orphaned section titles avoided (basic support)
