@@ -119,7 +119,7 @@ table:
 
 |grid-width
 |xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[rows,cols\]] +
-(default: `0.5`)
+(default: `$table-border-width`)
 |[source]
 table:
   grid-width: 1

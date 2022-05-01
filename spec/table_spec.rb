@@ -173,7 +173,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect lines[3][:width]).to eql 0.5
     end
 
-    it 'should apply table border width to bottom border of table head row if override not specified' do
+    it 'should apply 2.5 * grid row width to bottom border of table head row if override not specified' do
       pdf = to_pdf <<~'EOS', pdf_theme: { table_head_border_bottom_width: nil }, analyze: :line
       [frame=none,grid=rows]
       |===
@@ -189,8 +189,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       lines = pdf.lines.uniq
       (expect lines).to have_size 4
-      (expect lines[0][:width]).to eql 0.5
-      (expect lines[1][:width]).to eql 0.5
+      (expect lines[0][:width]).to eql 1.25
+      (expect lines[1][:width]).to eql 1.25
       (expect lines[0][:from][:y]).to eql lines[0][:to][:y]
       (expect lines[1][:from][:y]).to eql lines[1][:to][:y]
       (expect lines[0][:from][:y]).to eql lines[1][:from][:y]
@@ -723,6 +723,45 @@ describe 'Asciidoctor::PDF::Converter - Table' do
           EOS
         end
       end).to not_raise_exception
+    end
+
+    it 'should use table border width and color for grid if grid width and color are not specified' do
+      pdf_theme = {
+        table_border_color: 'DDDDDD',
+        table_border_width: 1,
+        table_grid_width: nil,
+        table_grid_color: nil,
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line, debug: true
+      |===
+      | A | B
+      | C | D
+      |===
+      EOS
+      lines = pdf.lines
+      (expect lines).to have_size 16
+      (expect lines.map {|it| it[:color] }.uniq).to eql %w(DDDDDD)
+      (expect lines.map {|it| it[:width] }.uniq).to eql [1]
+    end
+
+    it 'should use default table border width and color for grid if table and grid width and color are not specified' do
+      pdf_theme = {
+        base_border_color: nil,
+        table_border_color: nil,
+        table_border_width: nil,
+        table_grid_width: nil,
+        table_grid_color: nil,
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line, debug: true
+      |===
+      | A | B
+      | C | D
+      |===
+      EOS
+      lines = pdf.lines
+      (expect lines).to have_size 16
+      (expect lines.map {|it| it[:color] }.uniq).to eql %w(000000)
+      (expect lines.map {|it| it[:width] }.uniq).to eql [0.5]
     end
 
     it 'should cap the border corners when border width is specified as ends and sides', visual: true do
