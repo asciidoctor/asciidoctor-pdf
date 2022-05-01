@@ -420,7 +420,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
   end
 
   context 'Doctitle' do
-    it 'should include doctitle in outline for book if notitle attribute is set' do
+    it 'should include doctitle in outline for book even if notitle attribute is set' do
       pdf = to_pdf <<~'EOS'
       = Book Title
       :doctype: book
@@ -442,7 +442,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline[0][:dest][:label]).to eql outline[1][:dest][:label]
     end
 
-    it 'should include doctitle in outline for article if title-page attribute is set' do
+    it 'should include doctitle in outline for article when title-page attribute is set' do
       pdf = to_pdf <<~'EOS'
       = Article Title
       :title-page:
@@ -487,7 +487,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline[1][:dest][:label]).to eql '1'
     end
 
-    it 'should include doctitle in outline for article if notitle attribute is set' do
+    it 'should include doctitle in outline for article even if notitle attribute is set' do
       pdf = to_pdf <<~'EOS'
       = Article Title
       :notitle:
@@ -508,6 +508,45 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline[1][:dest][:label]).to eql '1'
       (expect outline[0][:dest][:pagenum]).to eql outline[1][:dest][:pagenum]
       (expect outline[0][:dest][:label]).to eql outline[1][:dest][:label]
+    end
+
+    it 'should not include doctitle in outline if outline-title is unset' do
+      pdf = to_pdf <<~'EOS'
+      = Article Title
+      :outline-title!:
+
+      == Foo
+
+      == Bar
+      EOS
+
+      (expect pdf.pages).to have_size 1
+      outline = extract_outline pdf
+      (expect outline).to have_size 2
+      (expect outline[0][:title]).to eql 'Foo'
+      (expect outline[0][:dest][:pagenum]).to be 1
+      (expect outline[0][:dest][:label]).to eql '1'
+    end
+
+    it 'should allow title for document in outline to be customized using outline-title attribute' do
+      pdf = to_pdf <<~'EOS'
+      = Article Title
+      :outline-title: Outline
+
+      == Foo
+
+      == Bar
+      EOS
+
+      (expect pdf.pages).to have_size 1
+      outline = extract_outline pdf
+      (expect outline).to have_size 3
+      (expect outline[0][:title]).to eql 'Outline'
+      (expect outline[0][:dest][:pagenum]).to be 1
+      (expect outline[0][:dest][:label]).to eql '1'
+      (expect outline[1][:title]).to eql 'Foo'
+      (expect outline[1][:dest][:pagenum]).to be 1
+      (expect outline[1][:dest][:label]).to eql '1'
     end
 
     it 'should link doctitle dest to second page of article with front cover' do
@@ -578,7 +617,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline[0][:children]).to be_empty
     end
 
-    it 'should set not set doctitle in outline if document has no doctitle, has sections, and untitled-label attribute is unset' do
+    it 'should not put doctitle in outline if document has no doctitle, has sections, and untitled-label attribute is unset' do
       pdf = to_pdf <<~'EOS'
       :untitled-label!:
 
@@ -677,6 +716,20 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline).to have_size 2
       (expect outline[0][:title]).to eql %(ACME\u2122 Catalog <\u2116 1>)
       (expect outline[1][:title]).to eql %(Paper Clips \u20ac 4)
+    end
+
+    it 'should sanitize value of custom outline title' do
+      pdf = to_pdf <<~'EOS'
+      = Article Title
+      :outline-title: Outline <&#8470;&nbsp;1>
+
+      == Section
+      EOS
+
+      (expect pdf.pages).to have_size 1
+      outline = extract_outline pdf
+      (expect outline).to have_size 2
+      (expect outline[0][:title]).to eql %(Outline <\u2116 1>)
     end
   end
 end

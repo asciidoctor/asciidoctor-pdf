@@ -181,8 +181,9 @@ module Asciidoctor
       def convert_document doc
         doc.promote_preface_block
         init_pdf doc
-        # set default value for outline and pagenums attributes if not otherwise set
+        # set default value for outline, outline-title, and pagenums attributes if not otherwise set
         doc.attributes['outline'] = '' unless (doc.attribute_locked? 'outline') || ((doc.instance_variable_get :@attributes_modified).include? 'outline')
+        doc.attributes['outline-title'] = '' unless (doc.attribute_locked? 'outline-title') || ((doc.instance_variable_get :@attributes_modified).include? 'outline-title')
         doc.attributes['pagenums'] = '' unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
         #assign_missing_section_ids doc
 
@@ -3718,8 +3719,9 @@ module Asciidoctor
         outline.define do
           initial_pagenum = has_front_cover ? 2 : 1
           # FIXME: use sanitize: :plain_text on Document#doctitle once available
-          if document.page_count >= initial_pagenum && (doctitle = document.resolve_doctitle doc)
-            page title: (document.sanitize doctitle), destination: (document.dest_top initial_pagenum)
+          if document.page_count >= initial_pagenum && (outline_title = doc.attr 'outline-title') &&
+              (outline_title.empty? ? (outline_title = document.resolve_doctitle doc) : outline_title)
+            page title: (document.sanitize outline_title), destination: (document.dest_top initial_pagenum)
           end
           # QUESTION: is there any way to get add_outline_level to invoke in the context of the outline?
           document.add_outline_level self, doc.sections, num_levels, expand_levels
