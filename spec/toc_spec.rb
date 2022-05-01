@@ -1402,11 +1402,11 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     backend = nil
     create_class (Asciidoctor::Converter.for 'pdf') do
       register_for (backend = %(pdf#{object_id}).to_sym)
-      def inscribe_toc doc, num_levels, toc_page_number, start_cursor, num_front_matter_pages = 0
+      def ink_toc doc, num_levels, toc_page_number, start_cursor, num_front_matter_pages = 0
         go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
         unless scratch?
           theme_font :heading, level: 2 do
-            inscribe_heading 'Extra', level: 2
+            ink_heading 'Extra', level: 2
           end
           go_to_page page_number + 1
         end
