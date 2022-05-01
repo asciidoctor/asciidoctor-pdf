@@ -19,21 +19,21 @@ table:
   background-color: #ffffff
 
 |border-color
-|xref:color.adoc[Color] {vbar} xref:color.adoc[Color[top,right,bottom,left\]]
+|xref:blocks.adoc#border-color[Color] {vbar} xref:blocks.adoc#border-color[Color[ \]] +
 (default: `'000000'`)
 |[source]
 table:
   border-color: #dddddd
 
 |border-style
-|`dashed` {vbar} `dotted` {vbar} `solid` {vbar} Style[top,right,bottom,left] +
+|xref:blocks.adoc#border-style[Border style] {vbar} xref:blocks.adoc#border-style[Border style[ \]] +
 (default: `solid`)
 |[source]
 table:
   border-style: [solid, ~, solid, dotted]
 
 |border-width
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
 (default: `0.5`)
 |[source]
 table:
@@ -143,7 +143,7 @@ table:
     background-color: #f0f0f0
 
 |border-bottom-color
-|xref:color.adoc[Color] +
+|xref:blocks.adoc#border-color[Color] +
 (default: `$table-border-color`)
 |[source]
 table:
@@ -151,7 +151,7 @@ table:
     border-bottom-color: #dddddd
 
 |border-bottom-style
-|`dashed` {vbar} `dotted` {vbar} `solid` +
+|xref:blocks.adoc#border-style[Border style] +
 (default: `solid`)
 |[source]
 table:
@@ -159,7 +159,7 @@ table:
     border-bottom-style: dashed
 
 |border-bottom-width
-|xref:measurement-units.adoc[Measurement] +
+|xref:blocks.adoc#border-width[Measurement] +
 (default: `1.25`)
 |[source]
 table:
