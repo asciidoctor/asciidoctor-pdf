@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/main[commit history] on GitHub.
 
+== Unreleased
+
+Enhancements::
+
+* allow entry for document in outline to be controlled using `outline-title` attribute (#1789)
+
 == 2.0.0.alpha.3 (2022-05-01) - @mojavelinux
 
 Enhancements::

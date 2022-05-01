@@ -9,7 +9,7 @@ If an attribute matches a key in the theme file, the attribute takes precedence.
 
 [cols="2,3,^1,6a"]
 |===
-|Attribute |Value Type | Header Only |Example
+|Attribute |Value Type |Header Only |Example
 
 |`autofit-option`
 |flag (default: _not set_)
@@ -46,6 +46,11 @@ If an attribute matches a key in the theme file, the attribute takes precedence.
 |`screen` {vbar} `ebook` {vbar} `printer` {vbar} `prepress` {vbar} `default` (default: `default`)
 |Yes
 |`:optimize: prepress`
+
+|`outline-title`
+|flag {vbar} String (default: _set_)
+|Yes
+|`:outline-title: Outline`
 
 |`outlinelevels`^[12]^
 |Integer {vbar} Integer:Integer (default: same as _toclevels_)
