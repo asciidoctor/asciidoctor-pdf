@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.0.alpha.3 (2022-05-01) - @mojavelinux
 
 Enhancements::
 
@@ -29,6 +29,10 @@ Bug Fixes::
 * cap border corners on block when width is defined using array (uniform or otherwise) (#2103)
 * fix crash in certain circumstances when theme does not define value for `base-border-width` key
 * use sensible fallbacks for table border and grid color and width (retains backwards compatibility)
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.0.alpha.3[git tag] | {url-repo}/compare/v2.0.0.alpha.2\...v2.0.0.alpha.3[full diff]
 
 == 2.0.0.alpha.2 (2022-04-29) - @mojavelinux
 
