@@ -27,6 +27,7 @@ Bug Fixes::
 * allow smallest ends or sides border width on block to be less than 1
 * cap border corners on block when width is defined using array (uniform or otherwise) (#2103)
 * fix crash in certain circumstances when theme does not define value for `base-border-width` key
+* use sensible fallbacks for table border color and width (retains backwards compatibility)
 
 == 2.0.0.alpha.2 (2022-04-29) - @mojavelinux
 

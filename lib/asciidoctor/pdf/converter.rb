@@ -461,6 +461,7 @@ module Asciidoctor
       end
 
       def prepare_theme theme
+        theme.base_border_color ||= '000000'
         theme.base_border_width ||= 0
         theme.base_font_color ||= '000000'
         theme.base_font_size ||= 12
@@ -478,6 +479,7 @@ module Asciidoctor
         theme.list_item_spacing ||= 0
         theme.description_list_term_spacing ||= 0
         theme.description_list_description_indent ||= 0
+        theme.table_border_width ||= 0.5
         theme.image_border_width ||= 0
         theme.code_linenum_font_color ||= '999999'
         theme.callout_list_margin_top_after_code ||= 0
@@ -2186,17 +2188,17 @@ module Asciidoctor
 
         rect_side_names = [:top, :right, :bottom, :left]
         grid_axis_names = [:rows, :cols]
-        border_color = (rect_side_names.zip expand_rect_values theme.table_border_color, (theme.base_border_color || 'transparent')).to_h
+        border_color = (rect_side_names.zip expand_rect_values theme.table_border_color, theme.base_border_color).to_h
         border_style = (rect_side_names.zip (expand_rect_values theme.table_border_style, :solid).map(&:to_sym)).to_h
-        border_width = (rect_side_names.zip expand_rect_values theme.table_border_width, 0).to_h
-        grid_color = (grid_axis_names.zip expand_grid_values (theme.table_grid_color || [border_color[:top], border_color[:left]]), 'transparent').to_h
+        border_width = (rect_side_names.zip expand_rect_values theme.table_border_width, theme.base_border_width).to_h
+        grid_color = (grid_axis_names.zip expand_grid_values (theme.table_grid_color || [border_color[:top], border_color[:left]]), theme.base_border_color).to_h
         grid_style = (grid_axis_names.zip (expand_grid_values (theme.table_grid_style || [border_style[:top], border_style[:left]]), :solid).map(&:to_sym)).to_h
-        grid_width = (grid_axis_names.zip expand_grid_values theme.table_grid_width, 0).to_h
+        grid_width = (grid_axis_names.zip expand_grid_values (theme.table_grid_width || [border_width[:top], border_width[:left]]), theme.base_border_width).to_h
 
         if table_header_size
           head_border_bottom_color = theme.table_head_border_bottom_color || grid_color[:rows]
           head_border_bottom_style = theme.table_head_border_bottom_style&.to_sym || grid_style[:rows]
-          head_border_bottom_width = theme.table_head_border_bottom_width || grid_width[:rows]
+          head_border_bottom_width = theme.table_head_border_bottom_width || (grid_width[:rows] * 2.5)
         end
 
         case (grid = node.attr 'grid', 'all', 'table-grid')
