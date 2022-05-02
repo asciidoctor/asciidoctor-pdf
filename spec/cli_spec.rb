@@ -88,7 +88,7 @@ describe 'asciidoctor-pdf' do
       (expect err).to be_empty
       (expect res.exitstatus).to be 0
     end
-  end
+  end if defined? GMagick::Image
 
   context 'pdfmark' do
     it 'should generate pdfmark file if pdfmark attribute is set', cli: true do
