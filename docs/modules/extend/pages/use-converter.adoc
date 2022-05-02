@@ -1,4 +1,5 @@
-= Use an Extended Converter
+= Use the Extended Converter
+:navtitle: Use the Converter
 
 == Require the extended converter
 
@@ -6,6 +7,10 @@ To use this converter, require it by passing the path to the `-r` flag when call
 
  $ asciidoctor-pdf -r ./extended-pdf-converter.rb doc.adoc
 
+The converter will self-register with the `pdf` backend and thus get used as the Asciidoctor PDF converter.
+
 That's all there is too it!
+
+== Go further
 
 To get deeper into the world of extended converters, explore the xref:use-cases.adoc[use cases].

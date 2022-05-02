@@ -1,6 +1,7 @@
 = Create an Extended Converter
+:navtitle: Create a Converter
 
-== Define an extended converter
+== Register an extended converter
 
 Asciidoctor provides a mechanism for looking up a registered converter so it can be extended (i.e., used as a base class), then another mechanism for registering the extended converter in its place.
 Let's see how that looks.
@@ -23,4 +24,6 @@ Let's start by overriding the thematic break (i.e., horizontal rule) to make it 
 include::example$pdf-converter-custom-thematic-break.rb[tag=convert_thematic_break]
 ----
 
-Now that you've made a change to the converter, let's xref:require-converter.adoc[learn how to apply it].
+To find all the available methods to override, see the {url-api-docs}[API docs^].
+
+Now that you've made a change to the converter, let's xref:use-converter.adoc[learn how to activate it].
