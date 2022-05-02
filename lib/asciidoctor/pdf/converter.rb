@@ -1560,8 +1560,10 @@ module Asciidoctor
         # TODO: add `to_pt page_width` method to ViewportWidth type
         width = (width.to_f / 100) * page_width if ViewportWidth === width
 
+        caption_side = @theme.image_caption_end&.to_sym || :bottom
+        caption_max_width = @theme.image_caption_max_width
         # NOTE: if width is not set explicitly and max-width is fit-content, caption height may not be accurate
-        caption_h = node.title? ? (ink_caption node, category: :image, side: :bottom, block_align: alignment, block_width: width, max_width: @theme.image_caption_max_width, dry_run: true, force_top_margin: true) : 0
+        caption_h = node.title? ? (ink_caption node, category: :image, side: caption_side, block_align: alignment, block_width: width, max_width: caption_max_width, dry_run: true, force_top_margin: caption_side == :bottom) : 0
 
         align_to_page = node.option? 'align-to-page'
         pinned = opts[:pinned]
@@ -1597,14 +1599,14 @@ module Asciidoctor
                 end
                 rendered_w = (svg_obj.resize height: (rendered_h = available_h)).output_width if rendered_h > available_h
               end
-              image_y = y
-              image_cursor = cursor
               add_dest_for_block node if node.id
               # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
               # breakage occurs when running content (stamps) are added to page
               update_colors if graphic_state.color_space.empty?
-              # NOTE: cursor advances automatically
-              svg_obj.draw
+              ink_caption node, category: :image, side: :top, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_side == :top && node.title?
+              image_y = y
+              image_cursor = cursor
+              svg_obj.draw # NOTE: cursor advances automatically
               svg_obj.document.warnings.each do |img_warning|
                 log :warn, %(problem encountered in image: #{image_path}; #{img_warning})
               end unless scratch?
@@ -1628,12 +1630,13 @@ module Asciidoctor
                 end
                 rendered_w, rendered_h = image_info.calc_image_dimensions height: available_h if rendered_h > available_h
               end
-              image_y = y
-              image_cursor = cursor
               add_dest_for_block node if node.id
               # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
               # breakage occurs when running content (stamps) are added to page
               update_colors if graphic_state.color_space.empty?
+              ink_caption node, category: :image, side: :top, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_side == :top && node.title?
+              image_y = y
+              image_cursor = cursor
               # NOTE: specify both width and height to avoid recalculation
               embed_image image_obj, image_info, width: rendered_w, height: rendered_h, position: alignment
               draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? && (node.has_role? 'noborder')
@@ -1644,7 +1647,7 @@ module Asciidoctor
               move_down rendered_h if y == image_y
             end
           end
-          ink_caption node, category: :image, side: :bottom, block_align: alignment, block_width: rendered_w, max_width: @theme.image_caption_max_width if node.title?
+          ink_caption node, category: :image, side: :bottom, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_side == :bottom && node.title?
           theme_margin :block, :bottom, (next_enclosed_block node) unless pinned
         rescue => e
           raise if ::StopIteration === e

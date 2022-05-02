@@ -11,6 +11,7 @@ Enhancements::
 
 * allow entry for document in outline to be controlled using `outline-title` attribute (#1789)
 * add `asciidoctor/pdf/nopngmagick` script to unregister Gmagick handler for PNG images only (#1687)
+* allow theme to configure which end the caption is placed for a block image (#2115)
 
 Bug Fixes::
 
