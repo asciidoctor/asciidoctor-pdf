@@ -396,7 +396,9 @@ RSpec.configure do |config|
 
   def to_pdf input, opts = {}
     analyze = opts.delete :analyze
-    debug = opts.delete :debug
+    if (debug = opts.delete :debug) && ENV['CI']
+      raise ArgumentError, 'debug flag not permitted in CI'
+    end
     enable_footer = opts.delete :enable_footer
     safe_mode = opts.fetch :safe, :safe
     opts[:attributes] = { 'imagesdir' => fixtures_dir } unless opts.key? :attributes
