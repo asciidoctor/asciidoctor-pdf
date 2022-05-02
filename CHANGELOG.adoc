@@ -14,6 +14,7 @@ Enhancements::
 
 Bug Fixes::
 
+* allow border width of block image to be specified as an array (1, 2, or 4 values) (#2119)
 * rename `delete_page` extension method to `delete_current_page` to avoid conflict with incompatible method on `Prawn::Document`
 
 == 2.0.0.alpha.3 (2022-05-01) - @mojavelinux
