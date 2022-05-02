@@ -145,7 +145,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     EOS
 
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
-    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true, debug: true
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
 
     (expect lines).to have_size 3
     (expect lines[0][:color]).to eql 'AA0000'

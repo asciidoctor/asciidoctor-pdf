@@ -732,7 +732,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_width: nil,
         table_grid_color: nil,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line, debug: true
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
       |===
       | A | B
       | C | D
@@ -752,7 +752,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_width: nil,
         table_grid_color: nil,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line, debug: true
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
       |===
       | A | B
       | C | D

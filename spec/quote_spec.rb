@@ -123,7 +123,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
   it 'should not draw left border on next page if block falls at bottom of page' do
     pdf = with_content_spacer 10, 689.5 do |spacer_path|
-      to_pdf <<~EOS, analyze: :line, debug: true
+      to_pdf <<~EOS, analyze: :line
       image::#{spacer_path}[]
 
       ____
