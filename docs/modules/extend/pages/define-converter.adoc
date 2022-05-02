@@ -1,130 +1,26 @@
 = Create an Extended Converter
-:url-infoq-template: https://github.com/mraible/infoq-mini-book/blob/main/src/main/ruby/asciidoctor-pdf-extensions.rb
 
 == Define an extended converter
 
-Starting with Asciidoctor 2, defining an extending converter and registering it in place of the original is straightforward.
+Asciidoctor provides a mechanism for looking up a registered converter so it can be extended (i.e., used as a base class), then another mechanism for registering the extended converter in its place.
+Let's see how that looks.
 
-.custom-pdf-converter.rb
-[source,ruby]
+.extended-pdf-converter.rb
+[,ruby]
 ----
-class CustomPDFConverter < (Asciidoctor::Converter.for 'pdf')
-  register_for 'pdf'
-
-  # overrides go here
-end
+include::example$extended-pdf-converter.rb[]
 ----
 
-As it stands, the converter doesn't do anything differently than the primary converter because we haven't yet overridden any of its methods.
+When this script is required by Asciidoctor, it will replace the primary converter with the extended one automatically.
+As it stands, this converter doesn't do anything different than the primary converter because we haven't yet overridden any of its methods.
 
 == Override a method
 
-Let's start by overriding the thematic break--the horizontal rule--to make it render like a ribbon.
-
-[source,ruby]
-----
-  def convert_thematic_break node
-    theme_margin :thematic_break, :top
-    stroke_horizontal_rule 'FF0000', line_width: 0.5, line_style: :solid
-    move_down 1
-    stroke_horizontal_rule 'FF0000', line_width: 1, line_style: :solid
-    move_down 1
-    stroke_horizontal_rule 'FF0000', line_width: 0.5, line_style: :solid
-    theme_margin :thematic_break, :bottom
-  end
-----
-
-This converter will replace the thematic break with a red ribbon.
-
-Another way to override the converter is to modify the node, then delegate back to the primary converter.
-
-== Modify a node
-
-Let's put a page break before all paragraphs unless the cursor is at the top of the page.
-We'll call `super` to let the primary converter handle the work of rendering the paragraph.
-
-[source,ruby]
-----
-  def convert_paragraph node
-    bounds.move_past_bottom unless at_page_top?
-    super
-  end
-----
-
-Now let's look at how to modify an inline element.
-Let's say we want to override the kbd element.
-
-[source,ruby]
-----
-  def convert_inline_kbd node
-    %(<strong><color rgb="AA0000">#{(node.attr 'keys').join ' + '}</color></strong>)
-  end
-----
-
-Refer to the primary converter to discover the pseudo-HTML you can use for inline elements.
-
-== Customize a page using an extended converter
-
-So far we've just been biting around the edges.
-A more realistic use case is to customize the part title page in a multi-part book.
-Since this is a specialized section element, there's a dedicated method named `ink_part_title` that you'll need to override.
-
-Let's customize the part title page by making the background orange, making the font white, centering the title on the page, and disabling the running content.
-(You don't need to start a new page before and after the part title since that's already done for you).
-
-[source,ruby]
-----
-  def ink_part_title node, title, opts = {}
-    fill_absolute_bounds 'E64C3D'
-    move_down 20
-    typeset_text title, (calc_line_metrics 1.5), color: 'FFFFFF', inline_format: true, align: :center, size: 42
-    page.instance_variable_set :@imported_page, true
-  end
-----
-
-The method `typeset_text` and `calc_line_metrics` are provided by Asciidoctor PDF to make writing text easier.
-If you wanted, you could just use the low-level `text` method provided by Prawn.
-
-To find all the available methods to override, consult the {url-api-docs}[API docs^].
-For deeper examples of how to override the behavior of the converter, refer to the extended converter in the {url-infoq-template}[InfoQ Mini-Book template^].
-
-== Keep section title with content
-
-If the section title is followed by content that doesn't fit on the current page, the converter will leave the section title behind, making it an orphan.
-You can fix this behavior by overridding the `arrange_section` method in a custom converter.
-
-The default implementation of `arrange_section` only checks whether at least one line of content fits below the section title on the current page.
-A custom converter can take this opportunity to use `dry_run` to make an attempt to write content in the remaining space on the page.
-If no content is written, it can advance to the next page before the section title is written.
+Let's start by overriding the thematic break (i.e., horizontal rule) to make it render like a red ribbon.
 
 [,ruby]
 ----
-def arrange_section sect, title, opts = {}
-  return if @y >= (@margin_box.absolute_top / 3) # <1>
-  orphaned = nil
-  dry_run single_page: true do # <2>
-    start_page = page
-    theme_font :heading, level: opts[:level] do
-    if opts[:part]
-      ink_part_title sect, title, opts # <3>
-    elsif opts[:chapterlike]
-      ink_chapter_title sect, title, opts # <3>
-    else
-      ink_general_heading sect, title, opts # <3>
-    end
-    if page == start_page
-      page.tare_content_stream
-      orphaned = stop_if_first_page_empty { traverse sect } # <4>
-    end
-  end
-  start_new_page if orphaned # <5>
-  nil
-end
+include::example$pdf-converter-custom-thematic-break.rb[tag=convert_thematic_break]
 ----
-<1> An optional optimization to skip this logic if the cursor is above the bottom third of the page.
-<2> Initiate a dry run up to the end of the current page.
-<3> Render the section title as normal.
-<4> Proceed with converting content until the end of the page is reached. Returns true if content is written, false otherwise.
-<5> Start new page before rendering section title if orphaned.
 
-Now that you've seen some examples of how to extend the converter, let's look at how to use it.
+Now that you've made a change to the converter, let's xref:require-converter.adoc[learn how to apply it].

@@ -2,3 +2,4 @@
 ** xref:converter-class-and-methods.adoc[]
 ** xref:define-converter.adoc[]
 ** xref:require-converter.adoc[]
+** xref:use-cases.adoc[]

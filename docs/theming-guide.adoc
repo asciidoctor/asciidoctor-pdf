@@ -5921,7 +5921,7 @@ def ink_part_title node, title, opts = {}
   fill_absolute_bounds 'E64C3D'
   move_down 20
   typeset_text title, (calc_line_metrics 1.5), color: 'FFFFFF', inline_format: true, align: :center, size: 42
-  page.instance_variable_set :@imported_page, true
+  page.imported
 end
 ----
 
