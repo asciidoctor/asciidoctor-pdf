@@ -1042,7 +1042,7 @@ describe Asciidoctor::PDF::Converter do
       (expect link_annotation[:Dest]).to eql 'next-section'
     end
 
-    it 'should allow custom converter to invoke layout_heading without any opts' do
+    it 'should allow extended converter to invoke layout_heading without any opts' do
       backend = nil
       create_class (Asciidoctor::Converter.for 'pdf') do
         register_for (backend = %(pdf#{object_id}).to_sym)
@@ -1225,6 +1225,32 @@ describe Asciidoctor::PDF::Converter do
       text = pdf.text
       (expect text).to have_size 1
       (expect text[0][:font_color]).to eql 'FF0000'
+    end
+
+    it 'should allow extended converter to flag page as imported to suppress running content' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+
+        def ink_part_title sect, title, opts
+          super
+          page.imported
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: backend, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+
+      = Part Title
+
+      == Chapter
+      EOS
+
+      page_2_text = pdf.find_text page_number: 2
+      (expect page_2_text).to have_size 1
+      (expect page_2_text[0][:string]).to eql 'Part Title'
+      (expect (pdf.find_text page_number: 3).last[:string]).to eql '2'
     end
   end
 end

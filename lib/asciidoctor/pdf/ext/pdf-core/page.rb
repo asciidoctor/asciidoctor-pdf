@@ -14,6 +14,14 @@ class PDF::Core::Page
     content.stream.filtered_stream == (@tare_content_stream ||= InitialPageContent) && document.page_number > 0
   end
 
+  # Flags this page as imported.
+  #
+  def imported
+    @imported_page = true
+  end
+
+  alias imported_page imported
+
   # Reset the content of the page.
   # Note that this method may leave behind an orphaned background image.
   def reset_content
