@@ -737,12 +737,12 @@ Once this gem is installed, Asciidoctor automatically loads it, then delegates t
 In addition to support for additional image file formats, this gem also speeds up image processing considerably.
 We highly recommend using this gem if you're able to install it.
 
-The one downside is that GraphicsMagick can mangle certain PNG images.
-If you want prawn-gmagick to handle all image formats except for PNG, you can unregister this handler by passing `asciidoctor/pdf/nogmagick` when calling Asciidoctor PDF.
+The one downside of delegating to GraphicsMagick is that it can mangle certain PNG images.
+If this happens, you can temporary tell Asciidoctor PDF not to use it by passing `asciidoctor/pdf/nogmagick` when calling Asciidoctor PDF.
 
  $ asciidoctor-pdf -r asciidoctor/pdf/nogmagick doc.adoc
 
-You'll still get the support for additional image formats that Prawn cannot handle.
+Unfortunately, this means you no longer get support for additional image formats that Prawn cannot handle.
 
 == Importing PDF Pages
 
