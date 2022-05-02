@@ -2423,8 +2423,8 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect caption_text[:y]).to be > (pdf.find_text 'Col A')[0][:y]
     end
 
-    it 'should add title as caption below table if table_caption_side key in theme is bottom' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_caption_side: 'bottom' }, analyze: true
+    it 'should add title as caption below table if table_caption_end key in theme is bottom' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_caption_end: 'bottom' }, analyze: true
       .Table description
       |===
       | Col A | Col B

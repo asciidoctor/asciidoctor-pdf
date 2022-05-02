@@ -186,6 +186,24 @@ describe Asciidoctor::PDF::ThemeLoader do
       end).to not_log_message
     end
 
+    it 'should remap table-caption-side key to table-caption-end' do
+      (expect do
+        theme_data = YAML.safe_load <<~'EOS'
+        table:
+          caption:
+            side: bottom
+        image:
+          caption:
+            end: $table-caption-side
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme).to be_an OpenStruct
+        (expect theme.table_caption_side).to be_nil
+        (expect theme.table_caption_end).to eql 'bottom'
+        (expect theme.image_caption_end).to eql 'bottom'
+      end).to not_log_message
+    end
+
     it 'should remap outline-list category to list category and warn' do
       (expect do
         theme_data = YAML.safe_load <<~'EOS'

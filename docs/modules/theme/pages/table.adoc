@@ -54,12 +54,13 @@ table:
   caption:
     text-align: left
 
-|caption-side
+|caption-end
 |`top` {vbar} `bottom` +
 (default: `top`)
 |[source]
 table:
-  caption-side: bottom
+  caption:
+    end: bottom
 
 |caption-max-width
 |`fit-content` {vbar} `fit-content`(percentage) {vbar} `none` {vbar} xref:measurement-units.adoc[Measurement] +
