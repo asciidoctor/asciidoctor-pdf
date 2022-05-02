@@ -99,7 +99,7 @@ module Prawn
           apply_font_properties { pdf.traverse content }
           if (extra_pages = pdf.page_number - start_page) > 0
             logger.error %(the table cell on page #{start_page} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page) unless extra_pages == 1 && pdf.page.empty?
-            extra_pages.times { pdf.delete_page }
+            extra_pages.times { pdf.delete_current_page }
           end
           nil
         end

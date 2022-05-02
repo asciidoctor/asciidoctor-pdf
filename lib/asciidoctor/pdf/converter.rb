@@ -316,7 +316,7 @@ module Asciidoctor
 
           # NOTE: delete orphaned page (a page was created but there was no additional content)
           # QUESTION: should we delete page if document is empty? (leaving no pages?)
-          delete_page if page_count > 1 && page.empty?
+          delete_current_page if page_count > 1 && page.empty?
         end
 
         unless page_count < body_start_page_number
@@ -2386,7 +2386,7 @@ module Asciidoctor
 
         if at_page_top?
           if page_layout && page_layout != page.layout && page.empty?
-            delete_page
+            delete_current_page
             advance_page layout: page_layout
           end
         elsif page_layout

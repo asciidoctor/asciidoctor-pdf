@@ -12,6 +12,10 @@ Enhancements::
 * allow entry for document in outline to be controlled using `outline-title` attribute (#1789)
 * add `asciidoctor/pdf/nopngmagick` script to unregister Gmagick handler for PNG images only (#1687)
 
+Bug Fixes::
+
+* rename `delete_page` extension method to `delete_current_page` to avoid conflict with incompatible method on `Prawn::Document`
+
 == 2.0.0.alpha.3 (2022-05-01) - @mojavelinux
 
 Enhancements::

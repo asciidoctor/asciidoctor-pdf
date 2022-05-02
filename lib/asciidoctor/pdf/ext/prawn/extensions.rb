@@ -103,7 +103,7 @@ module Asciidoctor
       NewPageRequiredError = ::Class.new ::StopIteration
 
       InhibitNewPageProc = proc do |pdf|
-        pdf.delete_page
+        pdf.delete_current_page
         raise NewPageRequiredError
       end
 
@@ -111,7 +111,7 @@ module Asciidoctor
 
       DetectEmptyFirstPageProc = proc do |delegate, pdf|
         if pdf.state.pages[pdf.page_number - 2].empty?
-          pdf.delete_page
+          pdf.delete_current_page
           raise NewPageRequiredError
         end
         delegate.call pdf if (pdf.state.on_page_create_callback = delegate)
@@ -823,7 +823,7 @@ module Asciidoctor
 
       # Deletes the current page and move the cursor
       # to the previous page.
-      def delete_page
+      def delete_current_page
         pg = page_number
         pdf_store = state.store
         content_id = page.content.identifier
@@ -857,7 +857,7 @@ module Asciidoctor
         prev_page_size = page.size
         state.compress = false if state.compress # can't use compression if using template
         prev_text_rendering_mode = (defined? @text_rendering_mode) ? @text_rendering_mode : nil
-        delete_page if options[:replace]
+        delete_current_page if options[:replace]
         # NOTE: use functionality provided by prawn-templates
         start_new_page_discretely template: file, template_page: options[:page]
         # prawn-templates sets text_rendering_mode to :unknown, which breaks running content; revert
@@ -869,11 +869,11 @@ module Asciidoctor
           # way atm to prevent the size & layout of the imported page from affecting subsequent pages
           advance_page size: prev_page_size, layout: prev_page_layout if options.fetch :advance, true
         elsif options.fetch :advance_if_missing, true
-          delete_page
+          delete_current_page
           # NOTE: see previous comment
           advance_page size: prev_page_size, layout: prev_page_layout
         else
-          delete_page
+          delete_current_page
         end
         nil
       end
