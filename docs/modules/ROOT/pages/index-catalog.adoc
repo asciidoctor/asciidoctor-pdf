@@ -40,8 +40,6 @@ Here's rudimentary code you can use to do that:
 .index-customizer.rb
 [,ruby]
 ----
-require 'asciidoctor-pdf'
-
 module Asciidoctor::PDF
   IndexCatalog.prepend (::Module.new do
     def store_primary_term name, dest = nil
