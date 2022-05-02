@@ -721,15 +721,28 @@ Without any additional libraries, those are the only supported image file format
 
 If you need support for additional image formats, such as GIF, TIFF, or interlaced PNG--and you don't want to convert those images to a supported format--you must install the {url-prawn-gmagick}[prawn-gmagick] (>= 0.0.9) Ruby gem.
 prawn-gmagick is an extension for Prawn based on {url-graphicsmagick}[GraphicsMagick] that adds support for all the image formats recognized by that library.
-prawn-gmagick has the added benefit of significantly reducing the time it takes to generate a PDF containing a lot of images.
+
+prawn-gmagick has the additional benefit of *significantly* reducing the processing time, power, and memory necessary to generate a PDF that contains a lot of images, PNGs in particular.
+For large books, you might see the conversion time drop by as much as half.
+Decoding PNG images requires a lot of mathematical computation, a task Ruby is not particularly efficient at performing.
+That's why adding the prawn-gmagick gem to the converter makes such a substantial difference.
 
 The prawn-gmagick gem uses native extensions to compile against GraphicsMagick.
 This system prerequisite limits installation to Linux and OSX.
 Please refer to the {url-prawn-gmagick}[README for prawn-gmagick] to learn how to install it.
 
+ $ gem install prawn-gmagick
+
 Once this gem is installed, Asciidoctor automatically loads it, then delegates to it to handle all image embedding.
 In addition to support for additional image file formats, this gem also speeds up image processing considerably.
 We highly recommend using this gem if you're able to install it.
+
+The one downside is that GraphicsMagick can mangle certain PNG images.
+If you want prawn-gmagick to handle all image formats except for PNG, you can unregister this handler by passing `asciidoctor/pdf/nogmagick` when calling Asciidoctor PDF.
+
+ $ asciidoctor-pdf -r asciidoctor/pdf/nogmagick doc.adoc
+
+You'll still get the support for additional image formats that Prawn cannot handle.
 
 == Importing PDF Pages
 
