@@ -1,7 +1,8 @@
 = Extended Converter Use Cases
+:navtitle: Customization Use Cases
 
 This page presents common use cases that can be accomplished by extending and customizing the converter.
-In xref:define-converter.adoc[], we were just biting around the edges of what you can do with an extended converter.
+In xref:create-converter.adoc[], we were just biting around the edges of what you can do with an extended converter.
 This page gets into more realistic use cases.
 Each section introduces a different use case and presents the code for an extended converter you can use as a starting point.
 
