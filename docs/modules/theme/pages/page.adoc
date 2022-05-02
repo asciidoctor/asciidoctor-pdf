@@ -125,27 +125,19 @@ See xref:cover.adoc[] for information about the `cover` category keys.
 [#numbering]
 == page-numbering
 
+The key in the `page-numbering` category controls where the integer (1-based) page numbering begins.
+
 [cols="3,4,5a"]
 |===
 |Key |Value Type |Example
 
-|<<start-at,start-at>>
-|`cover` {vbar} `title` {vbar} `toc` {vbar} `after-toc` {vbar} `body` {vbar} Integer +
+|start-at
+|xref:page-numbers.adoc#start-at[Start page] {vbar} Integer +
 (default: `body`)
 |[source]
 page:
   numbering:
-    start-at: toc
+    start-at: cover
 |===
 
-[#start-at]
-=== start-at
-
-The `cover` value is only recognized if the document has a front cover page (i.e., `front-cover-image`).
-See xref:cover.adoc[] for information about the `cover` category keys.
-
-The `title`, `toc`, and `after-toc` values are only recognized if the title page is enabled (i.e., doctype is book or `title-page` attribute is set).
-The `toc` value only applies if the toc is in the default location (before the first page of the body).
-If value is `toc`, and the toc macro is used to position the toc, the `start-at` behavior is the same as if the toc is not enabled.
-If value is an integer, page numbering will start at the specified page of the body (i.e., 1 is first page, 2 is second page, etc.).
-If value is `after-toc`, the page numbering will start after the toc, no matter where it's placed in the document.
+See xref:page-numbers.adoc#start-at[Starting integer page numbering] for more information about the `start-at` key, its values, and their requirements.
