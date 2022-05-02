@@ -12,12 +12,42 @@ The running content won't be activated unless:
 
 By default, the built-in themes insert a footer with the page number on the right side of recto pages and the left side of verso pages if you don't specify any running content.
 By extending the base or default themes, you can add content to and customize the layout of the header and footer, or disable the running content.
-Using the `running-content` key, you can also specify on which page the header and footer start.
+Using the `running-content` key, you can also <<start-at,specify on which page the header and footer start>>.
 
 CAUTION: If the height of the running content periphery is taller than the page margin, the running content will cover the main content.
 To avoid this problem, reduce the height of the running content periphery or make the page margin on that side larger.
 
 See xref:running-content.adoc[] for the complete list of keys you can use to customize your running content.
+
+[#start-at]
+== Start page
+
+By default, the running content starts on the first page of the document body.
+You can specify on what page the running content starts using the `start-at` key.
+The `start-at` key is set on the `running-content` key in your theme.
+
+[,yaml]
+----
+running-content:
+  start-at: toc
+----
+
+The `start-at` key accepts the following keywords or an integer:
+
+after-toc:: The running content starts after the TOC, no matter where the TOC is placed in the document.
+The `after-toc` value is only recognized if the title page is implicitly or explicitly enabled.
+body:: This is the default value.
+The running content starts on the first page of the document body, which is typically the first page after the TOC if the TOC is in its default location.
+title:: The running content starts on the title page.
+The `title` value is only recognized if the title page is implicitly or explicitly enabled.
+toc:: The running content starts on the first page of the TOC.
+The `toc` value only applies if the TOC is in the default location (before the first page of the body).
+If the value is `toc`, and the toc macro is used to position the TOC, the `start-at` behavior is the same as if the TOC is not enabled.
+The `toc` value is only recognized if the title page is implicitly or explicitly enabled.
+[[page]]Integer:: The running content starts on the page that matches the number assigned to `start-at` (i.e., 1 is the first body page, 2 is the second body page).
+When an integer is assigned to `start-at`, the title page doesn't need to be enabled.
+
+TIP: To disable the running content on TOC pages inserted by the toc macro, set the `noheader` or `nofooter` options on the macro (e.g., `toc::[opts=nofooter]`).
 
 [#page-number]
 == Modify page number position
@@ -162,9 +192,6 @@ You should not rely on the `width` attribute to set the image width when convert
 
 [#disable]
 == Disable the header or footer
-
-If you define running header and footer content in your theme (including the height), you can still disable this content per document by setting the `noheader` and `nofooter` attributes in the AsciiDoc document header, respectively.
-
 If you extend either the base or default theme, and don't specify content for the footer, the current page number will be added to the right side on recto pages and the left side on verso pages.
 To disable this behavior, you can use the following snippet:
 
@@ -179,3 +206,5 @@ footer:
     left:
       content: ~
 ----
+
+If you define running header and footer content in your theme (including the height), you can still disable this content per document by setting the `noheader` and `nofooter` attributes in the AsciiDoc document header, respectively.

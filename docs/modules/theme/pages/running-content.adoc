@@ -512,16 +512,11 @@ The key in the `running-content` category controls on what page the running cont
 |Key |Value Type |Example
 
 |start-at
-|`title` {vbar} `toc` {vbar} `after-toc` {vbar} `body` {vbar} Integer +
+|xref:add-running-content.adoc#start-at[Start page] {vbar} xref:add-running-content.adoc#page[Integer] +
 (default: `body`)
 |[source]
 running-content:
   start-at: toc
 |===
 
-* The `title`, `toc`, and `after-toc` values are only recognized if the title page is enabled (i.e., doctype is `book` or the `title-page` document attribute is set).
-* The `toc` value only applies if the TOC is in the default location (before the first page of the body).
-If the value is `toc`, and the toc macro is used to position the Table of Contents, the `start-at` behavior is the same as if the TOC is not enabled.
-* If the value is `after-toc`, the running content will start after the TOC, no matter where it's placed in the document.
-To disable the running content on TOC pages inserted by the toc macro, set the `noheader` or `nofooter` options on the macro (e.g., `toc::[opts=nofooter]`).
-* If the value of `start-at` is an integer, the running content will start at the specified page of the body (i.e., 1 is the first page, 2 is the second page).
+See xref:add-running-content.adoc#start-at[Start page] for more information about the `start-at` key, its values, and their requirements.
