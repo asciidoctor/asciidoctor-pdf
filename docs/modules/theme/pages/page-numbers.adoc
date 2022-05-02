@@ -1,38 +1,108 @@
-= Page Numbers
+= Configure the Page Numbers
+:description: The page numbering, number position and styling, and where page numbers are displayed can be configured using theme keys and AsciiDoc document attributes.
 
-The converter automatically keeps track of page numbers.
-These page numbers are available as metadata and determine folio placement (recto/verso pages).
+Asciidoctor PDF automatically keeps track of page numbers.
+These page numbers are available as metadata and determine the folio placement of each page.
 
-== Default page number assignment
+[#default]
+== Default numbering and folio placement
 
+// tag::default[]
 By default, the converter assigns the page number 1 to the first body page of the document.
 It then increments the page number for each page thereafter.
-All front matter pages that precede the first body page in the book doctype (or when the `title-page` attribute is set) (e.g., cover page, title page, and toc pages) are numbered using roman numerals (e.g., i, ii, iii, etc).
-Since these computed page numbers can differ from the physical page numbers, we refer to them as [.term]_virtual page numbers_.
+All front matter pages, including the cover page, title page, and TOC pages, that precede the first body page when the doctype is `book` or when the `title-page` attribute is set are numbered using roman numerals (e.g., i, ii, iii).
+These computed page numbers can differ from the physical page numbers, therefore, we refer to them as [.term]*virtual page numbers*.
+The default theme shows the virtual page number in the footer of all body pages.
 
-By default, the folio placement is derived from the virtual page number.
-Odd page numbers (e.g., 1, 3, 5, ...) designate recto pages and even page numbers (e.g., 2, 4, 6, ...) designate verso pages.
+The [.term]*folio placement* -- whether the page is recto or verso -- is derived from the virtual page number.
+When using the built-in themes with the default page numbering and running content settings, odd page numbers (e.g., 1, 3, 5) designate recto pages and even page numbers (e.g., 2, 4, 6) designate verso pages.
+The page number is displayed in the right corner of the footer on recto pages and in the left corner of the footer on verso pages.
+// end::default[]
 
-== Customize the page numbering
+You can change where the <<start-at,virtual page numbering starts>>, how the <<style,numbers are styled and positioned>>, what page the <<display,numbers start being displayed on>>, and adjust the folio placement using a combination of theme keys and AsciiDoc document attributes.
 
-It's possible to influence the virtual page numbering using a combination of the theme and document attributes.
-One such customization is to control where the transition from roman numerals to integers occurs.
+[#start-at]
+== Starting integer page numbering
 
-The theme can specify the page where the integer (1-based) page numbering should begin using the `page-numbering-start-at` key.
-For instance, the theme can specify `page-numbering-start-at: title`, which will make the integer page numbering start at the title page when enabled (i.e., the title page will be assigned the virtual page number 1).
-Alternately, the theme can specify an offset from the first body page where the page numbering should begin (all doctypes).
-For instance, `page-numbering-start-at: 2` tells the converter to assign the virtual page number 1 to the second page of the body.
+The theme can specify the page where the integer (1-based) page numbering should begin using the `start-at` key.
+The `start-at` key is set on the `page-numbering` category in the theme.
+
+[,yaml]
+----
+page:
+  numbering:
+    start-at: toc
+----
+
+The `start-at` key accepts the following keywords or an integer:
+
+after-toc:: The integer page numbering starts after the TOC, no matter where the TOC is placed in the document.
+The `after-toc` value is only recognized if the title page is implicitly or explicitly enabled.
+body:: This is the default value.
+The integer page numbering starts on the first page of the document body, which is typically the first page after the TOC if the TOC is in its default location.
+cover:: The integer page numbering starts on the front cover page of the document.
+The `cover` value is only recognized if the document has a front cover page (i.e., `front-cover-image`).
+title:: The integer page numbering starts on the title page.
+The `title` value is only recognized if the title page is implicitly or explicitly enabled.
+toc:: The integer page numbering starts on the first page of the TOC.
+The `toc` value only applies if the TOC is in the default location (before the first page of the body).
+If the value is `toc`, and the toc macro is used to position the TOC, the `start-at` behavior is the same as if the TOC is not enabled.
+The `toc` value is only recognized if the title page is implicitly or explicitly enabled.
+Integer:: The page numbering starts at the specified page of the body (i.e., 1 is the first body page, 2 is the second body page).
+An integer value is recognized by all doctypes and the title page doesn't need to be enabled.
+
+Let's start the integer page number on the title page of a document.
+This requires that a title page be created when the PDF is generated, therefore, make sure you've set the `doctype` to `book` or set the `title-page` document attribute.
+Then, under the `page-numbering` category in your theme, set `start-at` and assign it the value `title`.
+
+.Start page numbering on title page
+[,yaml]
+----
+page:
+  numbering:
+    start-at: title
+----
+
+The title page will be assigned the virtual page number 1 and the page number will increment for each page thereafter.
+Alternately, the theme can specify an offset from the first body page where the page numbering should begin when an integer is assigned to `start-at`.
+
+.Offset page numbering from first body page
+[,yaml]
+----
+page:
+  numbering:
+    start-at: 3
+----
+
+In the example above, `page-numbering-start-at: 3` tells the converter to assign the virtual page number 1 to the third page of the body.
 Any page that precedes that page will be numbered using roman numerals.
 
 Changing the page on which the integer page numbering begins can alter the folio placement.
 To correct for this, or to change the folio placement in general, you can use the `pdf-folio-placement` document attribute.
+
+// TODO Move the following paragraph to ROOT?
 For instance, to base the folio placement on physical page numbers, set the value of this attribute to `physical` (e.g., `pdf-folio-placement=physical`).
 To invert the recto and verso pages, add the `-inverted` qualifier to the value (e.g., `pdf-folio-placement=physical-inverted`).
 
-The default theme shows the virtual page number in the footer of all body pages.
-If you're starting with a blank theme, you can add the page number by using the `\{page-number}` attribute reference in the `content` key of the running content (header or footer).
-For example:
+[#style]
+== Styling the page numbers
 
+The built-in themes show the virtual page number in the footer of all body pages.
+Assuming the default page numbering and running content settings are in use, the page number if placed near the right corner of the footer of recto body pages and near the left corner of the footer of verso body pages.
+You can change where the page numbers are positioned in the running content and how they're styled by configuring the `header` and `footer` category keys.
+See xref:add-running-content.adoc#page-number[Modify page number position] for an example of how you can replace the alternating page numbers with a centered page number.
+
+[#display]
+== Displaying the page numbers
+
+To adjust on what page the page numbers begin to be displayed on, you need change the page on which the running content starts.
+This is controlled by the xref:add-running-content.adoc#start-at[running-content-start-at key].
+For example, to start the running content on the title page, assuming the title page is enabled, set `running-content-start-at: title` in your theme file.
+To learn more about customizing the running content, see xref:add-running-content.adoc[].
+
+If you're not extending one of the built-in themes and starting with a blank theme, you can add the page number to the running content by using the `\{page-number}` attribute reference in the `content` key.
+
+.Add page number to footer in blank theme
 [source,yaml]
 ----
 footer:
@@ -40,9 +110,3 @@ footer:
     right:
       content: '\{page-number}'
 ----
-
-If you want the running content to also appear on front matter pages, you can use the theme to change the page on which the running content starts with the `running-content-start-at` key.
-For instance, to start the running content on the title page, assuming the title page is enabled, set `running-content-start-at: title` in your theme file.
-To learn more about customizing the running content, see xref:add-running-content.adoc[].
-
-Aside from the configurability mentioned, the page numbering logic is computed automatically.

@@ -19,5 +19,5 @@
 * xref:title-page.adoc[]
 * xref:toc.adoc[]
 * xref:index-catalog.adoc[]
-* xref:page-range.adoc[]
+* xref:page-numbers.adoc[]
 * xref:optimize-pdf.adoc[]
