@@ -64,6 +64,11 @@ The `callout-list` category includes the `margin-top-after-code` key that can co
 * A sequence of two or more callouts separated by spaces in a verbatim block are processed correctly.
 * The font family assigned to `conums` in the theme is applied to the callout numbers displayed in verbatim blocks.
 
+== Running content and page numbering
+
+xref:theme:add-running-content.adoc#start-at[Running content start page]:: Specify the exact page on which the running content starts by assigning an integer to the `start-at` theme key on the `running-content` category.
+Running content can also start after the TOC, wherever the TOC is placed, by assigning the keyword `after-toc` to the `start-at` key.
+
 == Fonts
 
 normal_italic:: The new `normal_italic` value for the `font-style` key resets the font style to normal, then applies the italic variant of a font family.
