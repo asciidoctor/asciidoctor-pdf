@@ -12,6 +12,7 @@ Enhancements::
 * allow entry for document in outline to be controlled using `outline-title` attribute (#1789)
 * allow extended converter to insert or filter toc entries by overriding `get_entries_for_toc` method (#2097)
 * add `asciidoctor/pdf/nopngmagick` script to unregister Gmagick handler for PNG images only (#1687)
+* allow theme to configure which end the caption is placed for a block image (#2115)
 
 Bug Fixes::
 

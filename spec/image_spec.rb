@@ -1864,6 +1864,27 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect caption_text[:y]).to be < image_bottom
     end
 
+    it 'should render caption above an image with a title when image_caption_end is top' do
+      pdf_theme = { image_caption_end: 'top' }
+      input = <<~'EOS'
+      .Tux, the Linux mascot
+      image::tux.png[tux]
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :image
+      images = pdf.images
+      (expect images).to have_size 1
+      image_top = images[0][:y]
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      text = pdf.text
+      (expect text).to have_size 1
+      caption_text = text[0]
+      (expect caption_text[:string]).to eql 'Figure 1. Tux, the Linux mascot'
+      (expect caption_text[:font_name]).to eql 'NotoSerif-Italic'
+      (expect caption_text[:y]).to be > image_top
+    end
+
     it 'should show caption for missing image' do
       (expect do
         pdf = to_pdf <<~'EOS', analyze: true
@@ -1876,6 +1897,21 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should keep caption on same page as image when image exceeds height of page' do
       pdf = to_pdf <<~'EOS'
+      before image
+
+      .Image caption
+      image::tall-diagram.png[Tall diagram]
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      (expect get_images pdf, 2).to have_size 1
+      (expect pdf.pages[1].text).to eql 'Figure 1. Image caption'
+    end
+
+    it 'should keep caption on same page as image when image exceeds height of page and image_caption_end is top' do
+      pdf_theme = { image_caption_end: 'top' }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
       before image
 
       .Image caption

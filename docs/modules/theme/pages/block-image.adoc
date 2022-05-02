@@ -168,6 +168,14 @@ image:
   caption:
     max-width: fit-content
 
+|caption-end
+|`top` {vbar} `bottom` +
+(default: `bottom`)
+|[source]
+image:
+  caption:
+    end: top
+
 |caption-text-align
 |xref:text.adoc#text-align[Text alignment] {vbar} inherit +
 (default: `$image-caption-align`)
