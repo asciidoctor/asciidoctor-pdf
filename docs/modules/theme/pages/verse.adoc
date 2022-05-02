@@ -47,7 +47,7 @@ verse:
   border-style: dashed
 
 |<<border-width,border-width>>
-|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[\]] +
 (default: `0`)
 |[source]
 verse:

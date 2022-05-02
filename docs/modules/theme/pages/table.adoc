@@ -19,21 +19,21 @@ table:
   background-color: #ffffff
 
 |border-color
-|xref:blocks.adoc#border-color[Color] {vbar} xref:blocks.adoc#border-color[Color[ \]] +
+|xref:blocks.adoc#border-color[Color] {vbar} xref:blocks.adoc#border-color[Color[\]] +
 (default: `'000000'`)
 |[source]
 table:
   border-color: #dddddd
 
 |border-style
-|xref:blocks.adoc#border-style[Border style] {vbar} xref:blocks.adoc#border-style[Border style[ \]] +
+|xref:blocks.adoc#border-style[Border style] {vbar} xref:blocks.adoc#border-style[Border style[\]] +
 (default: `solid`)
 |[source]
 table:
   border-style: [solid, ~, solid, dotted]
 
 |border-width
-|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[\]] +
 (default: `0.5`)
 |[source]
 table:

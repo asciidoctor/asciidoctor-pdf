@@ -45,7 +45,7 @@ header:
   border-style: dashed
 
 |border-width
-|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[\]] +
 (default: `$base-border-width`)
 |[source]
 header:
@@ -273,7 +273,7 @@ footer:
   border-style: dashed
 
 |border-width
-|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[\]] +
 (default: `$base-border-width`)
 |[source]
 footer:
