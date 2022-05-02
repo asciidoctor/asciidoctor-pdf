@@ -2140,6 +2140,36 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pdf.lines.select {|it| it[:color] == 'DEDEDE' }).to be_empty
     end
 
+    it 'should allow border on block image to be specified per edge' do
+      pdf_theme = {
+        image_border_width: [1, 2, 3, 4],
+        image_border_color: 'DEDEDE',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      image::square.png[]
+      EOS
+      lines = pdf.lines
+      (expect lines).to have_size 4
+      (expect lines.map {|it| it[:width] }.sort).to eql [1, 2, 3, 4]
+      (expect lines.map {|it| it[:color] }.uniq).to eql %w(DEDEDE)
+    end
+
+    it 'should allow border on block image to be specified on ends and sides' do
+      pdf_theme = {
+        image_border_width: [4, 1],
+        image_border_color: 'DEDEDE',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      image::square.png[]
+      EOS
+      lines = pdf.lines
+      (expect lines).to have_size 4
+      (expect lines.map {|it| it[:width] }.sort).to eql [1, 1, 4, 4]
+      (expect lines.select {|it| it[:width] == 4 && it[:from][:y] == it[:to][:y] }).to have_size 2
+      (expect lines.select {|it| it[:width] == 1 && it[:from][:x] == it[:to][:x] }).to have_size 2
+      (expect lines.map {|it| it[:color] }.uniq).to eql %w(DEDEDE)
+    end
+
     it 'should draw border around inline image if border width and border color are set in the theme', visual: true do
       pdf_theme = {
         role_enclose_border_width: 0.5,

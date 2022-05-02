@@ -1653,7 +1653,7 @@ module Asciidoctor
       end
 
       def draw_image_border top, w, h, alignment
-        if @theme.image_border_width > 0 && @theme.image_border_color
+        if (Array @theme.image_border_width).any? {|it| it&.> 0 } && @theme.image_border_color
           if (@theme.image_border_fit || 'content') == 'auto'
             bb_width = bounds.width
           elsif alignment == :center
