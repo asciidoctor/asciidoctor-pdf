@@ -1,0 +1,1 @@
+image::waterfall.bmp[pdfwidth=100%]

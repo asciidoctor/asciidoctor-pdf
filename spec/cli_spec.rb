@@ -66,11 +66,26 @@ describe 'asciidoctor-pdf' do
   end
 
   context 'nogmagick' do
-    it 'should unregister Gmagick handler for PNG images if asciidoctor/pdf/nogmagick is required', cli: true do
+    it 'should unregister Gmagick handler if asciidoctor/pdf/nogmagick is required', cli: true do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, '-r', 'asciidoctor/pdf/nogmagick', (fixture_file 'interlaced-png.adoc'), use_bundler: true
       (expect out).to be_empty
       (expect err).not_to be_empty
       (expect err).to include 'PNG uses unsupported interlace method'
+      (expect res.exitstatus).to be 0
+    end
+
+    it 'should unregister Gmagick handler for PNG images if asciidoctor/pdf/nopngmagick is required', cli: true do
+      out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, '-r', 'asciidoctor/pdf/nopngmagick', (fixture_file 'interlaced-png.adoc'), use_bundler: true
+      (expect out).to be_empty
+      (expect err).not_to be_empty
+      (expect err).to include 'PNG uses unsupported interlace method'
+      (expect res.exitstatus).to be 0
+    end
+
+    it 'should unregister Gmagick handler only for PNG images if asciidoctor/pdf/nopngmagick is required', cli: true do
+      out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, '-r', 'asciidoctor/pdf/nopngmagick', (fixture_file 'bmp.adoc'), use_bundler: true
+      (expect out).to be_empty
+      (expect err).to be_empty
       (expect res.exitstatus).to be 0
     end
   end
