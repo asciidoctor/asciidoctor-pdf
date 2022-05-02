@@ -1,0 +1,165 @@
+= Extended Converter Use Cases
+
+This page presents common use cases that can be accomplished by extending and customizing the converter.
+In xref:define-converter.adoc[], we were just biting around the edges of what you can do with an extended converter.
+This page gets into more realistic use cases.
+Each section introduces a different use case and presents the code for an extended converter you can use as a starting point.
+
+== Custom thematic break
+
+One of the simplest ways to extend the converter is to make a thematic break.
+For this case, we'll override the convert handler method for a thematic break, which is `convert_thematic_break`.
+The thematic break only consists of line graphics, no text.
+That means we can make use of graphics fill and stroke methods provided by Asciidoctor PDF or Prawn.
+
+.Extended converter with custom thematic break
+[,ruby]
+----
+include::example$pdf-converter-custom-thematic-break.rb[tags=**]
+----
+
+== Custom part title
+
+A common need is to add extra styling to the title page for a part in a multi-part book.
+Since this is a specialized section element, there's a dedicated method named `ink_part_title` that you can override.
+The converter already allocates a dedicated page for the part title (so there's no need to worry about doing that).
+The extended converter can override the method that inks the part title to add extra decoration or content to that page.
+
+Let's customize the part title page by making the background orange, making the font white, aligning the title to the right, adding a line below it, and switching off the running content.
+
+.Extended converter with custom part title
+[,ruby]
+----
+include::example$pdf-converter-custom-part-title.rb[]
+----
+
+The method `ink_prose` is provided by Asciidoctor PDF to make writing text to the page easier.
+If you wanted, you could just use the low-level `text` method provided by Prawn.
+
+To find all the available methods to override, consult the {url-api-docs}[API docs^].
+
+== Custom chapter title
+
+A similar need is to add extra styling to the title of a chapter, or to place it on a page by itself.
+The extended converter can override the method that inks the chapter title to add extra decoration or content to that page, then insert a page break afterwards.
+
+.Extended converter with custom chapter title
+[,ruby]
+----
+include::example$pdf-converter-custom-chapter-title.rb[]
+----
+
+== Chapter image
+
+As another way to customize the chapter title, you may want to add an image above the chapter title if specified.
+Once again, the extended converter can override the method that inks the chapter title and use it as an opportunity to insert an image.
+
+.Extended converter with chapter image
+[,ruby]
+----
+include::example$pdf-converter-chapter-image.rb[]
+----
+
+The path to the image is controlled using the `image` block attribute on the chapter.
+
+[,asciidoc]
+----
+[image=gears.png]
+== Chapter Title
+----
+
+== Per chapter TOC
+
+In addition to (or instead of) a TOC for the whole book, you may want to insert a TOC per chapter immediately following the chapter title.
+Inserting a TOC into the PDF is a two-step process.
+First, you need to allocate the space for the chapter TOC using the `allocate_toc` method.
+Then, you need to come back and ink the TOC after the chapter has been rendered using the `ink_toc` method.
+
+.Extended converter with TOC per chapter
+[,ruby]
+----
+include::example$pdf-converter-chapter-toc.rb[]
+----
+
+The chapter TOC can is activated by setting the `chapter-toc` attribute and the depth of the TOC is controlled using the `chapter-toclevels` attribute.
+For example:
+
+[,asciidoc]
+----
+= Book Title
+:chapter-toc:
+:chapter-toclevels: 2
+----
+
+== Paragraph numbering
+
+To help with content auditing or coorelation, you may want to add a number in front of each paragraph.
+You can do this first by assigning a number to each paragraph in the document in the `init_pdf` method.
+Then, you can add this number in the left margin at the start of each paragraph by overriding the `convert_paragraph` method.
+
+.Extended converter with paragraph numbering
+[,ruby]
+----
+include::example$pdf-converter-numbered-paragraphs.rb[]
+----
+
+== Avoid break after section title
+
+This functionality is already provided by the converter if you set the `breakable` option on section title.
+The code is presented here to explain how it works and if you want to make this behavior automatic.
+
+If the section title is followed by content that doesn't fit on the current page, and the `breakable` option is not set on the section title, the converter will leave the section title behind, making it an orphan.
+You can fix this behavior by overridding the `arrange_section` method in an extended converter.
+
+This extended converter takes this opportunity to use `dry_run` to make an attempt to write content in the remaining space on the page.
+If no content is written, it advances to the next page before the section title is written.
+
+.Extended converter that avoids a page break after a section title
+[,ruby]
+----
+include::example$pdf-converter-avoid-break-after-section-title.rb[]
+----
+<.> An optional optimization to skip this logic if the cursor is above the bottom third of the page.
+<.> Initiate a dry run up to the end of the current page.
+<.> Render the section title as normal.
+<.> Proceed with converting content until the end of the page is reached. Returns true if content is written, false otherwise.
+<.> Start new page before rendering section title if orphaned.
+
+== Additional TOC entries
+
+By default, the table of contents (TOC) only includes section references.
+If you want to include additional entries in the TOC, or to filter the sections that are included, you can extend the converter and override the `get_entries_for_toc` method.
+This method is invoked for each parent entry in the TOC, starting from the document.
+
+.Extended converter that adds additional entries to the TOC
+[,ruby]
+----
+include::example$pdf-converter-additional-toc-entries.rb[]
+----
+
+The depth of the TOC is automatically controlled by the `toclevels` attributes.
+Once this limit is reached, the converter will not call `get_entries_for_toc` for that parent (as none of its children will be included in the TOC).
+
+== Indent block image
+
+If you want all (or some) block images to be indented by an amount specified in the theme, you can override the convert handler method for block images, `convert_image`, and call super within an indented context.
+
+.Extended converter that indents block images
+[,ruby]
+----
+include::example$pdf-converter-image-indent.rb[]
+----
+
+The `indent` DSL method adds padding to either side of the content area, delegates to the specified code block, then shaves it back off.
+
+This converter works when a custom theme defines the `image-indent` key, as follow:
+
+[,yaml]
+----
+image:
+  indent: [0.5in, 0]
+----
+
+== Resources
+
+To find even more examples of how to override the behavior of the converter, refer to the extended converter in the {url-infoq-template}[InfoQ Mini-Book template^].

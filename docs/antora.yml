@@ -16,6 +16,7 @@ asciidoc:
     url-prawn-gmagick: https://github.com/packetmonkey/prawn-gmagick
     url-prawn-svg: https://github.com/mogest/prawn-svg
     url-graphicsmagick: https://www.graphicsmagick.org
+    url-infoq-template: https://github.com/mraible/infoq-mini-book/blob/main/src/main/ruby/asciidoctor-pdf-extensions.rb
 nav:
   - modules/ROOT/nav.adoc
   - modules/theme/nav.adoc
