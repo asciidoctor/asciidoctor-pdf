@@ -10,13 +10,6 @@ If you don't do this step, the platform may reject your upload or fail to displa
 (For KDP, `-a optimize` works best.
 For GitLab repository preview, either `-a optimize` or `hexapdf optimize` will do the trick.)
 
-== Shaded blocks and performance
-
-Certain blocks are rendered with a shaded background, such as verbatim (listing, literal, and source), sidebar, and example blocks.
-In order to calculate the dimensions of the shaded region, Asciidoctor PDF has to "`dry run`" the block to determine how many pages it consumes.
-While this strategy has a low impact when processing shorter blocks, it can drastically deteriorate performance when processing a block that spans dozens of pages.
-As a general rule of thumb, you should avoid using shaded blocks which span more than a handful of pages.
-
 == Enable stream compression
 
 A simple way to reduce the size of the PDF file is to enable stream compression (using the FlateDecode method).
