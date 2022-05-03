@@ -1265,7 +1265,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         even more content
         EOS
         (expect pdf.images).to be_empty
-      end).to log_messages [{ severity: :WARN, message: '~image file is an unrecognised format' }]
+      end).to log_message severity: :WARN, message: '~image file is an unrecognised format'
     end
 
     it 'should still render different facing background image when background image cannot be loaded' do
@@ -1287,7 +1287,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         EOS
         (expect pdf.images).to have_size 1
         (expect pdf.images[0][:page_number]).to be 2
-      end).to log_messages [{ severity: :WARN, message: '~image file is an unrecognised format' }]
+      end).to log_message severity: :WARN, message: '~image file is an unrecognised format'
     end
 
     it 'should support PDF as background image', visual: true do
@@ -1322,7 +1322,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         even more content
         EOS
         (expect pdf.images).to be_empty
-      end).to log_messages [{ severity: :WARN, message: '~page background image not found or readable' }]
+      end).to log_message severity: :WARN, message: '~page background image not found or readable'
     end
   end
 

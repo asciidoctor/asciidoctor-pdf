@@ -739,10 +739,9 @@ RSpec::Matchers.define :log_message do |expected|
   supports_block_expectations
 end
 
-RSpec::Matchers.define :log_messages do |*expecteds, **opts|
-  expecteds.empty? ? (expecteds, opts = [opts], {}) : (expecteds = expecteds.flatten)
+RSpec::Matchers.define :log_messages do |expecteds|
   match notify_expectation_failures: true do |actual|
-    with_memory_logger opts[:using_log_level] do |logger|
+    with_memory_logger do |logger|
       actual.call
       expecteds.each_with_index do |it, idx|
         (expect logger).to have_message (it.merge index: idx)
