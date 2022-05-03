@@ -40,9 +40,10 @@ module Asciidoctor
       attr_reader :quality
       attr_reader :compatibility_level
 
-      def initialize quality = 'default', compatibility_level = '1.4'
+      def initialize quality = 'default', compatibility_level = '1.4', compliance = 'PDF'
         @quality = QUALITY_NAMES[quality]
         @compatibility_level = compatibility_level
+        @compliance = compliance
         if (gs_path = ::ENV['GS'])
           ::RGhost::Config::GS[:path] = gs_path
         end
@@ -57,10 +58,16 @@ module Asciidoctor
           else
             inputs = target
           end
-          (::RGhost::Convert.new inputs).to :pdf,
-            filename: filename_tmp.to_s,
-            quality: @quality,
-            d: { Printed: false, CannotEmbedFontPolicy: '/Warning', CompatibilityLevel: @compatibility_level }
+          d = { Printed: false, CannotEmbedFontPolicy: '/Warning', CompatibilityLevel: @compatibility_level }
+          case @compliance
+          when 'PDF/A', 'PDF/A-1', 'PDF/A-2', 'PDF/A-3'
+            d[:PDFA] = ((@compliance.split '-', 2)[1] || 1).to_i
+            d[:ShowAnnots] = false
+          when 'PDF/X', 'PDF/X-1', 'PDF/X-3'
+            d[:PDFX] = true
+            d[:ShowAnnots] = false
+          end
+          (::RGhost::Convert.new inputs).to :pdf, filename: filename_tmp.to_s, quality: @quality, d: d
           filename_o.binwrite filename_tmp.binread
         end
         nil

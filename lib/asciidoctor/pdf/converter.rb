@@ -3801,7 +3801,14 @@ module Asciidoctor
           pdf_doc.render_file target
           # QUESTION: restore attributes first?
           @pdfmark&.generate_file target
-          (Optimizer.new @optimize, pdf_doc.min_version).optimize_file target if @optimize
+          if (quality = @optimize)
+            if quality.include? ','
+              quality, compliance = quality.split ',', 2
+            elsif quality.include? '/'
+              quality, compliance = nil, quality
+            end
+            (Optimizer.new quality, pdf_doc.min_version, compliance).optimize_file target
+          end
           to_file = true
         end
         if !ENV['KEEP_ARTIFACTS']

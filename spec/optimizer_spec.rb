@@ -86,6 +86,26 @@ describe 'Asciidoctor::PDF::Optimizer', if: (gem_available? 'rghost'), &(proc do
     end).to not_raise_exception
   end
 
+  it 'should generate PDF that conforms to specified PDF/A compliance' do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    to_file = to_pdf_file input_file, 'optimizer-screen-pdf-a.pdf', attribute_overrides: { 'optimize' => 'PDF/A' }
+    pdf = PDF::Reader.new to_file
+    (expect pdf.pdf_version).to eql 1.4
+    (expect pdf.pages).to have_size 1
+    # Non-printing annotations (i.e., hyperlinks) are not permitted in PDF/A
+    (expect get_annotations pdf, 1).to be_empty
+  end
+
+  it 'should generate PDF that conforms to specified PDF/A compliance when quality is specified' do
+    input_file = Pathname.new example_file 'basic-example.adoc'
+    to_file = to_pdf_file input_file, 'optimizer-print-pdf-a.pdf', attribute_overrides: { 'optimize' => 'print,PDF/A' }
+    pdf = PDF::Reader.new to_file
+    (expect pdf.pdf_version).to eql 1.4
+    (expect pdf.pages).to have_size 1
+    # Non-printing annotations (i.e., hyperlinks) are not permitted in PDF/A
+    (expect get_annotations pdf, 1).to be_empty
+  end
+
   it 'should install bin script named asciidoctor-pdf-optimize' do
     bin_script = (Pathname.new Gem.bindir) / 'asciidoctor-pdf-optimize'
     bin_script = Pathname.new Gem.bin_path 'asciidoctor-pdf', 'asciidoctor-pdf-optimize' unless bin_script.exist?
