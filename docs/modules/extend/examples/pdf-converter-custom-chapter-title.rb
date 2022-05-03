@@ -5,7 +5,7 @@ class PDFConverterCustomChapterTitle < (Asciidoctor::Converter.for 'pdf')
     move_down cursor * 0.25
     ink_heading title, (opts.merge align: :center, text_transform: :uppercase)
     stroke_horizontal_rule 'DDDDDD', line_width: 2
-    move_down @theme.block_margin_bottom
+    move_down theme.block_margin_bottom
     theme_font :base do
       layout_prose 'Custom text here, maybe a chapter preamble.'
     end

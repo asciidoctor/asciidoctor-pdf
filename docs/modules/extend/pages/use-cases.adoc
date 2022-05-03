@@ -6,6 +6,10 @@ In xref:create-converter.adoc[], we were just biting around the edges of what yo
 This page gets into more realistic use cases.
 Each section introduces a different use case and presents the code for an extended converter you can use as a starting point.
 
+TIP: The extended converter can access predefined or custom theme keys via the `theme` accessor.
+The segments in a key are always separated by an underscore character (e.g., `theme.title_page_font_color`).
+Consulting the value of theme keys allows the extra behavior provided by the extended converter to be styled using the theme.
+
 == Custom thematic break
 
 One of the simplest ways to extend the converter is to make a thematic break.
