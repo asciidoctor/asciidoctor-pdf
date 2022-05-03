@@ -352,6 +352,14 @@ RSpec.configure do |config|
     end
   end
 
+  def docs_dir
+    File.join __dir__, '..', 'docs'
+  end
+
+  def doc_file path
+    File.absolute_path path, docs_dir
+  end
+
   def examples_dir
     File.join __dir__, '..', 'examples'
   end

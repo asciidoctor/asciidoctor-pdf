@@ -16,11 +16,9 @@ class PDFConverterChapterTOC < (Asciidoctor::Converter.for 'pdf')
   def ink_chapter_title sect, title, opts
     super
     if ((doc = sect.document).attr? 'chapter-toc') && (levels = (doc.attr 'chapter-toclevels', 1).to_i + 1) > 1
-      old_toc_extent = @toc_extent
       theme_font :base do
         sect.set_attr 'pdf-toc-extent', (allocate_toc sect, levels, cursor, false)
       end
-      @toc_extent = old_toc_extent
     end
   end
 end
