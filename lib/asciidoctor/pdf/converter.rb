@@ -139,6 +139,7 @@ module Asciidoctor
           # NOTE: enabling data-uri forces Asciidoctor Diagram to produce absolute image paths
           doc.attributes['data-uri'] = (doc.instance_variable_get :@attribute_overrides)['data-uri'] = ''
         end
+        @label = :primary
         @initial_instance_variables = [:@initial_instance_variables] + instance_variables
       end
 
