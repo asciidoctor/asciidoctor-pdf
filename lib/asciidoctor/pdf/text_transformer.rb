@@ -15,7 +15,7 @@ module Asciidoctor
       # NOTE: use more widely-supported ǫ instead of ꞯ as replacement for Q
       # NOTE: use more widely-supported s (lowercase latin "s") instead of ꜱ as replacement for S
       # NOTE: in small caps, x (lowercase latin "x") remains unchanged
-      SmallCapsChars = 'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴoᴘǫʀsᴛᴜᴠᴡxʏᴢ'
+      SmallCapsChars = 'ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴoᴘǫʀsᴛᴜᴠᴡxʏᴢ'
 
       def capitalize_words_pcdata string
         if XMLMarkupRx.match? string
