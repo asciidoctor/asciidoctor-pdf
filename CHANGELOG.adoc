@@ -14,6 +14,7 @@ Enhancements::
 * add `asciidoctor/pdf/nopngmagick` script to unregister Gmagick handler for PNG images only (#1687)
 * allow theme to configure which end the caption is placed for a block image (#2115)
 * add `Page#imported` method to mark page as imported (which suppresses running contennt)
+* add support for `smallcaps` text transform by replacing lowercase letters with small capital variants (#1192)
 
 Bug Fixes::
 
