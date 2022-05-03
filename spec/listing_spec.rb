@@ -21,7 +21,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should wrap text consistently regardless of whether the characters contain diacritics' do
-    pdf = to_pdf <<~'EOS', analyze: true, debug: true
+    pdf = to_pdf <<~'EOS', analyze: true
     :pdf-page-size: A5
 
     ....
