@@ -11,9 +11,9 @@ module Asciidoctor
       Hyphen = '-'
       SoftHyphen = ?\u00ad
       LowerAlphaChars = 'a-z'
-      # NOTE: using more widely-supported ғ instead of ꜰ as replacement for F
-      # NOTE: using more widely-supported ǫ instead of ꞯ as replacement for Q
-      # NOTE: using more widely-supported s (lowercase latin "s") instead of ꜱ as replacement for S
+      # NOTE: use more widely-supported ғ instead of ꜰ as replacement for F
+      # NOTE: use more widely-supported ǫ instead of ꞯ as replacement for Q
+      # NOTE: use more widely-supported s (lowercase latin "s") instead of ꜱ as replacement for S
       # NOTE: in small caps, x (lowercase latin "x") remains unchanged
       SmallCapsChars = 'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴoᴘǫʀsᴛᴜᴠᴡxʏᴢ'
 
