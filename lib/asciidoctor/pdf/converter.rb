@@ -218,7 +218,7 @@ module Asciidoctor
           if (insert_toc = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && doc.sections?)
             start_new_page if @ppbook && verso_page?
             add_dest_for_block doc, id: 'toc', y: (at_page_top? ? page_height : nil)
-            allocate_toc doc, toc_num_levels, cursor, title_page_on
+            @toc_extent = allocate_toc doc, toc_num_levels, cursor, title_page_on
           else
             @toc_extent = nil
           end
@@ -305,12 +305,12 @@ module Asciidoctor
           # NOTE: for a book, these are leftover footnotes; for an article this is everything
           outdent_section { ink_footnotes doc }
 
-          if @toc_extent
+          if (toc_extent = @toc_extent)
             if title_page_on && !insert_toc
-              num_front_matter_pages[0] = @toc_extent.to.page if @theme.running_content_start_at == 'after-toc'
-              num_front_matter_pages[1] = @toc_extent.to.page if @theme.page_numbering_start_at == 'after-toc'
+              num_front_matter_pages[0] = toc_extent.to.page if @theme.running_content_start_at == 'after-toc'
+              num_front_matter_pages[1] = toc_extent.to.page if @theme.page_numbering_start_at == 'after-toc'
             end
-            toc_page_nums = ink_toc doc, toc_num_levels, @toc_extent.from.page, @toc_extent.from.cursor, num_front_matter_pages[1]
+            toc_page_nums = ink_toc doc, toc_num_levels, toc_extent.from.page, toc_extent.from.cursor, num_front_matter_pages[1]
           else
             toc_page_nums = []
           end
@@ -2359,7 +2359,7 @@ module Asciidoctor
       end
 
       def convert_toc node, opts = {}
-        # NOTE: only allow document to have a single toc
+        # NOTE: only allow document to have a single managed toc
         return if @toc_extent
         is_macro = (placement = opts[:placement] || 'macro') == 'macro'
         if ((doc = node.document).attr? 'toc-placement', placement) && (doc.attr? 'toc') && doc.sections?
@@ -2368,11 +2368,11 @@ module Asciidoctor
             start_new_page if @ppbook && verso_page? && !(is_macro && (node.option? 'nonfacing'))
           end
           add_dest_for_block node, id: (node.id || 'toc') if is_macro
-          allocate_toc doc, (doc.attr 'toclevels', 2).to_i, cursor, (title_page_on = is_book || (doc.attr? 'title-page'))
-          @index.start_page_number = @toc_extent.to.page + 1 if title_page_on && @theme.page_numbering_start_at == 'after-toc'
+          toc_extent = @toc_extent = allocate_toc doc, (doc.attr 'toclevels', 2).to_i, cursor, (title_page_on = is_book || (doc.attr? 'title-page'))
+          @index.start_page_number = toc_extent.to.page + 1 if title_page_on && @theme.page_numbering_start_at == 'after-toc'
           if is_macro
-            @disable_running_content[:header] += @toc_extent.page_range if node.option? 'noheader'
-            @disable_running_content[:footer] += @toc_extent.page_range if node.option? 'nofooter'
+            @disable_running_content[:header] += toc_extent.page_range if node.option? 'noheader'
+            @disable_running_content[:footer] += toc_extent.page_range if node.option? 'nofooter'
           end
         end
         nil
@@ -3168,7 +3168,7 @@ module Asciidoctor
           extent.each_page {|first_page| start_new_page unless first_page }
           move_cursor_to extent.to.cursor
         end
-        @toc_extent = extent
+        extent
       end
 
       def get_entries_for_toc node

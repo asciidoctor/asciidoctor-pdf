@@ -1398,7 +1398,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect images[0][:width]).to eql images[1][:width]
   end
 
-  it 'should allow extnded converter to insert extra page before toc' do
+  it 'should allow extended converter to insert extra page before toc' do
     backend = nil
     create_class (Asciidoctor::Converter.for 'pdf') do
       register_for (backend = %(pdf#{object_id}).to_sym)
@@ -1436,7 +1436,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect (pdf.find_text 'Chapter B')[0][:page_number]).to eql 3
   end
 
-  it 'should allow extnded converter to insert extra entries into TOC' do
+  it 'should allow extended converter to insert extra entries into TOC' do
     backend = nil
     create_class (Asciidoctor::Converter.for 'pdf') do
       register_for (backend = %(pdf#{object_id}).to_sym)
@@ -1485,5 +1485,62 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     annots = get_annotations pdf, 2
     (expect annots.select {|it| it[:Dest] == 'check-for-ruby' }).to have_size 2
     (expect annots.select {|it| it[:Dest] == 'screenshot' }).to have_size 2
+  end
+
+  it 'should allow extended converter to insert chapter per TOC' do
+    source_file = doc_file 'modules/extend/examples/pdf-converter-chapter-toc.rb'
+    source_lines = (File.readlines source_file).select {|l| l == ?\n || (l.start_with? ' ') }
+    ext_class = create_class Asciidoctor::Converter.for 'pdf'
+    backend = %(pdf#{ext_class.object_id})
+    source_lines[0] = %(register_for '#{backend}')
+    ext_class.class_eval source_lines.join, source_file
+    pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+    = Document Title
+    :doctype: book
+    :toc:
+    :toclevels: 1
+    :chapter-toc:
+    :chapter-toclevels: 2
+
+    == Chapter Title
+
+    === First Section
+
+    ==== Subsection
+
+    <<<
+
+    === Last Section
+
+    == Another Chapter
+    EOS
+
+    toc_text = pdf.find_text page_number: 2
+    toc_lines = toc_text
+      .sort_by {|it| -it[:y] }
+      .group_by {|it| it[:y] }
+      .map {|_, it| it.sort_by {|fragment| fragment[:order] }.map {|fragment| fragment[:string] }.join }
+    (expect toc_lines).to have_size 3
+    (expect toc_lines[0]).to eql 'Table of Contents'
+    (expect toc_lines[1]).to start_with 'Chapter Title'
+    (expect toc_lines[1]).to end_with '1'
+    (expect toc_lines[2]).to start_with 'Another Chapter'
+    (expect toc_lines[2]).to end_with '3'
+
+    ch1_text = pdf.find_text page_number: 3
+    ch1_lines = ch1_text
+      .sort_by {|it| -it[:y] }
+      .group_by {|it| it[:y] }
+      .map {|_, it| it.sort_by {|fragment| fragment[:order] }.map {|fragment| fragment[:string] }.join }
+    (expect ch1_lines).to have_size 6
+    (expect ch1_lines[0]).to eql 'Chapter Title'
+    (expect ch1_lines[1]).to start_with 'First Section'
+    (expect ch1_lines[1]).to end_with '1'
+    (expect ch1_lines[2]).to start_with 'Subsection'
+    (expect ch1_lines[2]).to end_with '1'
+    (expect ch1_lines[3]).to start_with 'Last Section'
+    (expect ch1_lines[3]).to end_with '2'
+    (expect ch1_lines[4]).to eql 'First Section'
+    (expect ch1_lines[5]).to eql 'Subsection'
   end
 end
