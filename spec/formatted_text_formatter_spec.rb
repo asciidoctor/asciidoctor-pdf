@@ -542,12 +542,13 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         ['uppercase', 'here we go again', 'HERE WE GO AGAIN'],
         ['lowercase', 'Here We Go Again', 'here we go again'],
         ['capitalize', 'Here we go again', 'Here We Go Again'],
+        ['smallcaps', 'Here We Go Again', 'Hᴇʀᴇ Wᴇ Go Aɢᴀɪɴ'],
       ].each do |(transform, before, after)|
         pdf = to_pdf %(== #{before}), pdf_theme: { heading_text_transform: transform }, analyze: true
         lines = pdf.lines
         (expect lines).to have_size 1
         (expect lines[0]).to eql after
-        formatted_word = (pdf.find_text %r/again/i)[0]
+        formatted_word = (pdf.find_text %r/again|aɢᴀɪɴ/i)[0]
         (expect formatted_word[:font_name]).to eql 'NotoSerif-Bold'
       end
     end
@@ -557,12 +558,13 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         ['uppercase', 'here we go *again*', 'HERE WE GO AGAIN'],
         ['lowercase', 'Here We Go *Again*', 'here we go again'],
         ['capitalize', 'Here we go *again*', 'Here We Go Again'],
+        ['smallcaps', 'Here we go *again*', 'Hᴇʀᴇ ᴡᴇ ɢo ᴀɢᴀɪɴ'],
       ].each do |(transform, before, after)|
         pdf = to_pdf %(== #{before}), pdf_theme: { heading_text_transform: transform }, analyze: true
         lines = pdf.lines
         (expect lines).to have_size 1
         (expect lines[0]).to eql after
-        formatted_word = (pdf.find_text %r/again/i)[0]
+        formatted_word = (pdf.find_text %r/again|ᴀɢᴀɪɴ/i)[0]
         (expect formatted_word[:font_name]).to eql 'NotoSerif-Bold'
       end
     end

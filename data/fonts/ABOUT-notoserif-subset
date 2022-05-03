@@ -17,6 +17,7 @@ The following changes were made using fontforge to produce the notoserif-*-subse
  ** General Punctuation (U+2000–U203a)
  ** Geometric Shapes (U+25a0–U25ff)
  ** Assorted Symbols (U+20ac, U+2122, U+21d0, U+21d2, U+2190, U+2192)
+ ** Latin Small Capital Letters (U+1D00, U+0299, U+1D04, U+1D05, U+1D07, U+A730 (missing), U+0262, U+029C, U+026A, U+1D0A, U+1D0B, U+029F, U+1D0D, U+0274, U+1D0F, U+1D18, U+A7AF (missing), U+0280, U+A731 (missing), U+1D1B, U+1D1C, U+1D20, U+1D21, U+028F, U+1D22, U+01EB)
  ** .notdef glyph
 * Imported ballot boxes from Font Awesome (U+2610, U+2611) (Noto Serif Regular only)
 * Added line feed character (U+000a)

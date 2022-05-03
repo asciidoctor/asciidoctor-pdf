@@ -54,5 +54,6 @@ It accepts the following keywords:
 `none`:: Clears an inherited value and no case transformation is applied to the text.
 `lowercase`:: Transforms all the text to lower case letters.
 `uppercase`:: Transforms all the text to capital letters.
+`smallcaps`:: Replaces lowercase Latin letters with their small capital variant.
 
 The `text-transform` key can’t be set on the xref:base.adoc[base category].

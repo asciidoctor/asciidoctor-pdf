@@ -509,6 +509,8 @@ module Asciidoctor
           lowercase_pcdata text
         when :capitalize, 'capitalize'
           capitalize_words_pcdata text
+        when :smallcaps, 'smallcaps'
+          smallcaps_pcdata text
         else
           text
         end
