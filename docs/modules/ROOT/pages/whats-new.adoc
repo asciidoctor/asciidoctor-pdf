@@ -8,7 +8,7 @@
 
 = Asciidoctor PDF {page-component-version}
 
-_**Release date:** 2022.05.01 | *Issue label:* {url-milestone-2-0-0}[{page-component-display-version}^]_
+_**Release date:** 2022.05.03 | *Issue label:* {url-milestone-2-0-0}[{page-component-display-version}^]_
 
 [#roles]
 == Paragraph roles and text indent
@@ -31,9 +31,9 @@ Here are just a few of the highlights:
 Smart bottom margins::
 Blocks now have smarter bottom margins that prevent extra space from being added below them, particularly when blocks are nested.
 xref:theme:blocks.adoc#border-width[Border width]::
-The border width of delimited blocks, admonitions, tables, and block images can be customized per edge with the `border-width` key.
+The border width of delimited blocks, admonitions, and block images can be customized per edge with the `border-width` key.
 xref:theme:blocks.adoc#border-style[Border style]::
-The border style of delimited blocks, admonitions, tables, and block images can be changed with the `border-style` key.
+The border style of delimited blocks, admonitions, and block images can be changed with the `border-style` key.
 Styles include dashed, dotted, double, and solid.
 Line height::
 Wherever font properties are accepted in the theme, you can now control the line height of blocks using the `line-height` key.
@@ -52,6 +52,17 @@ Allow caption `max-width` to be set to percentage of content by passing argument
 * Syntax highlighting isn't applied to a source block if the `specialchars` substitution is disabled.
 * Borders, shading, and padding aren't applied to collapsible blocks.
 * The `callouts` substitution can be disabled on source blocks.
+
+== Tables
+
+Border widths and styles::
+The table border width can be customized per edge with the xref:theme:blocks.adoc#border-width[border-width key].
+The border line style can be xref:theme:tables.adoc#border-style[specified per edge by assigning an array of styles] to the `border-style` key.
+
+Grid widths and styles::
+The width of table grid lines can be specified for rows and columns with the xref:theme:tables.adoc#grid-width[grid-width key].
+The style of the grid lines can be specified for rows and columns with the xref:theme:tables.adoc#grid-style[grid-style key].
+//allow horizontal and vertical lines of table grid to be styled independently (#1875) (*@hextremist*)
 
 == Callout lists and numbers
 

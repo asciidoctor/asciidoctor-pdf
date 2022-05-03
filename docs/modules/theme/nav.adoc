@@ -2,6 +2,7 @@
 ** xref:language.adoc[]
 *** xref:measurement-units.adoc[]
 *** xref:blocks.adoc[]
+*** xref:tables.adoc[]
 *** xref:text.adoc[]
 *** xref:image.adoc[]
 *** xref:color.adoc[]

@@ -1,0 +1,160 @@
+= Table Styles
+:description: The theming language provides numerous keys for styling the borders, grids, and backgrounds of tables.
+
+[#width-and-radius]
+== Border width and radius
+
+The `border-width` key on the `table` category xref:blocks.adoc#border-width[accepts the same values] as the `border-width` key on most blocks.
+The `border-radius` key does not apply to the `table` category.
+
+The <<head-bottom-border,head-border-bottom-width key>>, which can be used to specify the width of the bottom border on the table header row separately from the other table borders, only accepts a single measurement value.
+
+[#border-color]
+== Border color
+
+The `border-color` key specifies the color of table borders.
+In addition to the xref:blocks.adoc#border-color[single color and transparent keyword] accepted by most blocks, the `border-color` key on the `table` category also accepts an array of colors.
+
+When a 2-value array is assigned to `border-color`, the first color value is applied to the top and bottom borders, and the second color value is applied to the left and right side borders.
+
+.Two-value array assigned to border-color
+[,yaml]
+----
+table:
+  border-color: [#000000, #DCDCDC]
+----
+
+When a 4-value array is assigned to `border-color`, the first color value is applied to the top border, the second to the right side border, the third to the bottom border, and the fourth to the left side border.
+
+.Four-value array assigned to border-color
+[,yaml]
+----
+table:
+  border-color: [#000000, #004953, #560319, #1A1110]
+----
+
+The value assigned to `border-color` is ignored if `border-width` isn't set or is set to `0`.
+
+[#border-style]
+== Border style
+
+The `border-style` key specifies the line style used when drawing borders on tables.
+In addition to the xref:blocks.adoc#border-style[dashed, dotted, and solid styles] accepted by most blocks, the `border-style` key on the `table` category also accepts an array of styles.
+
+When a 2-value array is assigned to `border-style`, the first value is applied to the top and bottom borders, and the second value is applied to the left and right side borders.
+
+.Two-value array assigned to border-style
+[,yaml]
+----
+table:
+  border-style: [solid, dashed]
+----
+
+When a 4-value array is assigned to `border-style`, the first value is applied to the top border, the second to the right side border, the third to the bottom border, and the fourth to the left side border.
+
+.Four-value array assigned to border-style
+[,yaml]
+----
+table:
+  border-style: [dotted, dashed, solid, dashed]
+----
+
+The value assigned to a `border-style` key is ignored if `border-width` isn't set or `border-width` is set to `0`.
+
+TIP: The `double` value can't be applied to table borders.
+
+[#head-bottom-border]
+== Header row bottom border keys
+
+The bottom border of the table header row can be styled separately using the `head-border-bottom-width`, `head-border-bottom-style`, and `head-border-bottom-color` keys.
+Each key accepts a single value.
+
+[,yaml]
+----
+table:
+  head:
+    border-bottom-width: 2
+    border-bottom-style: dotted
+    border-bottom-color: #20B2AA
+----
+
+See xref:table.adoc#head[the table-head category] for a list of all keys that can be applied to the table header row.
+
+[#grid-width]
+== Grid width
+
+The `grid-width` key specifies the width of the grid lines applied to the rows and columns of tables.
+The key accepts a single measurement value or a 2-value array of measurements.
+When a single value is assigned to `grid-width`, that value is applied to the row and column gird lines.
+
+.Single value assigned to grid-width
+[,yaml]
+----
+table:
+  grid-width: 1
+----
+
+When a 2-value array is assigned to `grid-width`, the first value is applied to the row grid lines, and the second value is applied to the column grid lines.
+
+.Two-value array assigned to grid-width
+[,yaml]
+----
+table:
+  grid-width: [0.5, 1]
+----
+
+If you don't want grid lines to be applied to tables, assign a tilde (`~`) to the `grid-width` key.
+
+.Unset grid-width
+[,yaml]
+----
+table:
+  grid-width: ~
+----
+
+[#grid-color]
+== Grid color
+
+The `grid-color` key specifies the color of the grid lines.
+It accepts the following types of values:
+
+Hex, RGB, or CMYK color:: A single color specified using the hex, RGB, or CMYK format.
+See xref:color.adoc[] to learn how to assign a value using these formats in the theming language.
+transparent:: A special keyword that indicates a color should not be used when drawing the grid.
+Array of colors:: A 2-value array that specifies a color for row grid lines and column grid lines.
+
+.Two-value array assigned to grid-color
+[,yaml]
+----
+table:
+  grid-color: [#575757, #DCDCDC]
+----
+
+The value assigned to `grid-color` is ignored if `grid-width` isn't set or is set to `0`.
+
+[#grid-style]
+== Grid style
+
+The `grid-style` key specifies the line style used when drawing a table grid.
+It accepts the following values:
+
+dashed:: The grid lines are drawn as a series of short line segments.
+dotted:: The grid lines are drawn as a series of rounded dots.
+solid:: The grid lines are drawn as single lines.
+Array of styles:: A 2-value array that specifies a style for row grid lines and column grid lines.
+
+The value assigned to a `grid-style` key is ignored if `grid-width` isn't set or is set to `0`.
+
+[#stripes]
+== Stripe color
+
+The `stripe-background-color` key controls the color that is used for stripes in the body of a table.
+The key accepts a single color specified using the xref:color.adoc[hex, RGB, or CMYK format].
+
+The appearance of stripes is controlled using the `stripes` table attribute or the `table-stripes` document attribute.
+Permitted attribute values are `even`, `odd`, `all`, and `none`.
+Table stripes are not enabled by default (e.g., `stripes=none`).
+
+See xref:table.adoc#body[the table-body category] for a list of all theme keys that can be applied to the table body.
+
+
