@@ -1,4 +1,5 @@
 = Table Category Keys
+:description: Reference list of the available table category keys and their value types.
 :navtitle: Table
 :source-language: yaml
 
@@ -16,24 +17,24 @@ The keys in the `table` category control the arrangement and style of tables and
 (default: `transparent`)
 |[source]
 table:
-  background-color: #ffffff
+  background-color: #FFFFFF
 
 |border-color
-|xref:blocks.adoc#border-color[Color] {vbar} xref:blocks.adoc#border-color[Color[\]] +
+|xref:tables.adoc#border-color[Color] {vbar} xref:tables.adoc#border-color[Color[\]] +
 (default: `'000000'`)
 |[source]
 table:
-  border-color: #dddddd
+  border-color: #DDDDDD
 
 |border-style
-|xref:blocks.adoc#border-style[Border style] {vbar} xref:blocks.adoc#border-style[Border style[\]] +
+|xref:tables.adoc#border-style[Border style] {vbar} xref:tables.adoc#border-style[Border style[ \]] +
 (default: `solid`)
 |[source]
 table:
   border-style: [solid, ~, solid, dotted]
 
 |border-width
-|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[\]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
 (default: `0.5`)
 |[source]
 table:
@@ -105,21 +106,21 @@ table:
   font-style: italic
 
 |grid-color
-|xref:color.adoc[Color] {vbar} xref:color.adoc[Color[rows,cols\]] +
+|xref:tables.adoc#grid-color[Color] {vbar} xref:tables.adoc#grid-color[Color[ \]] +
 (default: `$table-border-color`)
 |[source]
 table:
-  grid-color: #eeeeee
+  grid-color: #EEEEEE
 
 |grid-style
-|`solid` {vbar} `dashed` {vbar} `dotted` {vbar} Style[rows,cols] +
+|xref:tables.adoc#grid-style[Grid style]` {vbar} xref:tables.adoc#grid-style[Grid style[ \]] +
 (default: `$table-border-style`)
 |[source]
 table:
   grid-style: dashed
 
 |grid-width
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[rows,cols\]] +
+|xref:tables.adoc#grid-width[Measurement] {vbar} xref:tables.adoc#grid-width[Measurement[ \]] +
 (default: `$table-border-width`)
 |[source]
 table:
@@ -130,7 +131,8 @@ table:
 == table-head
 
 The keys in the `table-head` category control the arrangement and style of the table header.
-
+See <<header>> for the theme keys that apply to individual header cells
+.
 [cols="3,4,6a"]
 |===
 |Key |Value Type |Example
@@ -141,17 +143,17 @@ The keys in the `table-head` category control the arrangement and style of the t
 |[source]
 table:
   head:
-    background-color: #f0f0f0
+    background-color: #F0F0F0
 
-|border-bottom-color
+|xref:tables.adoc#head-bottom-border[border-bottom-color]
 |xref:blocks.adoc#border-color[Color] +
 (default: `$table-border-color`)
 |[source]
 table:
   head:
-    border-bottom-color: #dddddd
+    border-bottom-color: #DDDDDD
 
-|border-bottom-style
+|xref:tables.adoc#head-bottom-border[border-bottom-style]
 |xref:blocks.adoc#border-style[Border style] +
 (default: `solid`)
 |[source]
@@ -159,7 +161,7 @@ table:
   head:
     border-bottom-style: dashed
 
-|border-bottom-width
+|xref:tables.adoc#head-bottom-border[border-bottom-width]
 |xref:blocks.adoc#border-width[Measurement] +
 (default: `1.25`)
 |[source]
@@ -247,25 +249,16 @@ The keys in the `table-body` category control the background of the table body.
 |[source]
 table:
   body:
-    background-color: #fdfdfd
+    background-color: #FDFDFD
 
-|<<stripes,stripe-background-color>>
-|xref:color.adoc[Color] +
+|xref:tables.adoc#stripes[stripe-background-color]
+|xref:tables.adoc#stripes[Color] +
 (default: `'EEEEEE'`)
 |[source]
 table:
   body:
-    stripe-background-color: #efefef
+    stripe-background-color: #EFEFEF
 |===
-
-[#stripes]
-=== stripe-background-color
-
-The `stripe-background-color` key only controls the color that is used for stripes.
-The appearance of stripes is controlled using the `stripes` table attribute, the `table-stripes` document attribute (since Asciidoctor 2), or the `stripes` document attribute (prior to Asciidoctor 2).
-Permitted attribute values are `even`, `odd`, `all`, and `none`.
-Prior to Asciidoctor 2, even rows are shaded by default (e.g., `stripes=even`).
-Since Asciidoctor 2, table stripes are not enabled by default (e.g., `stripes=none`).
 
 [#foot]
 == table-foot
@@ -282,7 +275,7 @@ The keys in the `table-foot` category control the arrangement and style of the t
 |[source]
 table:
   foot:
-    background-color: #f0f0f0
+    background-color: #F0F0F0
 
 |font-color
 |xref:color.adoc[Color] +
@@ -365,6 +358,7 @@ table:
 == table-header-cell
 
 The keys in the `table-header-cell` category control the style and arrangement of header cells.
+See <<head>> for the theme keys that apply to the table header row.
 
 [cols="3,4,6a"]
 |===
@@ -376,7 +370,7 @@ The keys in the `table-header-cell` category control the style and arrangement o
 |[source]
 table:
   header-cell:
-    background-color: #f0f0f0
+    background-color: #F0F0F0
 
 |font-color
 |xref:color.adoc[Color] +
@@ -384,7 +378,7 @@ table:
 |[source]
 table:
   header-cell:
-    font-color: #1a1a1a
+    font-color: #1A1A1A
 
 |font-family
 |xref:font-support.adoc[Font family name] +

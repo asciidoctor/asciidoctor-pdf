@@ -1,4 +1,5 @@
 = Block Styles
+:description: The theming language provides numerous keys for arranging blocks and styling their borders.
 
 The block styles can be applied to most blocks, including section headings, delimited blocks, admonitions, tables, captions, and block images.
 
@@ -61,6 +62,20 @@ sidebar:
   border-width: ~
 ----
 
+[#border-color]
+== Border color
+
+The `border-color` key specifies the color of a border.
+It accepts the following types of values:
+
+Hex, RGB, or CMYK color:: A single color specified using the hex, RGB, or CMYK format.
+See xref:color.adoc[] to learn how to assign a value using these formats in the theming language.
+transparent:: A special keyword that indicates a color should not be used when drawing the border.
+Array of colors:: *Only applies to the `table` category*.
+An array that specifies xref:tables.adoc#border-color[a color per edge on tables].
+
+The value assigned to `border-color` is ignored if `border-width` isn't implicitly or explicitly set or is set to `0` on the category.
+
 [#radius]
 == Border radius
 
@@ -89,20 +104,8 @@ double:: The border is drawn as two parallel, straight, solid lines.
 The `double` value can't be applied to table borders.
 solid:: The border is drawn as a straight, single line.
 Array of styles:: *Only applies to the `table` category*.
-A 2-value or 4-value array that specifies a style per edge.
+An array that specifies xref:tables.adoc#border-style[a style per edge on tables].
 
 The value assigned to a `border-style` key is ignored on a block category if `border-width` isn't implicitly or explicitly set or `border-width` is set to `0` on the category.
 
-[#border-color]
-== Border color
 
-The `border-color` key specifies the color of a border.
-It accepts the following types of values:
-
-Hex, RGB, or CMYK color:: A single color specified using the hex, RGB, or CMYK format.
-See xref:color.adoc[] to learn how to assign a value using these formats in the theming language.
-transparent:: A special keyword that indicates a color should not be used when drawing the border.
-Array of colors:: *Only applies to the `table` category*.
-A 2-value or 4-value array that specifies a color per edge.
-
-The value assigned to `border-color` is ignored if `border-width` isn't implicitly or explicitly set or is set to `0` on the category.
