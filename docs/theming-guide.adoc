@@ -4223,11 +4223,12 @@ The keys in this category control the arrangement and style of tables and table 
   caption:
     text-align: left
 
-|caption-side
+|caption-end
 |top {vbar} bottom +
 (default: top)
 |table:
-  caption-side: bottom
+  caption:
+    end: bottom
 
 |caption-max-width
 |fit-content {vbar} fit-content(percentage) {vbar} none {vbar} <<measurement-units,Measurement>> +

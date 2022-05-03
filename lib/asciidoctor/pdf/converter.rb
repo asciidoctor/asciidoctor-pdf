@@ -1560,10 +1560,10 @@ module Asciidoctor
         # TODO: add `to_pt page_width` method to ViewportWidth type
         width = (width.to_f / 100) * page_width if ViewportWidth === width
 
-        caption_side = @theme.image_caption_end&.to_sym || :bottom
+        caption_end = @theme.image_caption_end&.to_sym || :bottom
         caption_max_width = @theme.image_caption_max_width
         # NOTE: if width is not set explicitly and max-width is fit-content, caption height may not be accurate
-        caption_h = node.title? ? (ink_caption node, category: :image, side: caption_side, block_align: alignment, block_width: width, max_width: caption_max_width, dry_run: true, force_top_margin: caption_side == :bottom) : 0
+        caption_h = node.title? ? (ink_caption node, category: :image, end: caption_end, block_align: alignment, block_width: width, max_width: caption_max_width, dry_run: true, force_top_margin: caption_end == :bottom) : 0
 
         align_to_page = node.option? 'align-to-page'
         pinned = opts[:pinned]
@@ -1603,7 +1603,7 @@ module Asciidoctor
               # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
               # breakage occurs when running content (stamps) are added to page
               update_colors if graphic_state.color_space.empty?
-              ink_caption node, category: :image, side: :top, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_side == :top && node.title?
+              ink_caption node, category: :image, end: :top, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_end == :top && node.title?
               image_y = y
               image_cursor = cursor
               svg_obj.draw # NOTE: cursor advances automatically
@@ -1634,7 +1634,7 @@ module Asciidoctor
               # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
               # breakage occurs when running content (stamps) are added to page
               update_colors if graphic_state.color_space.empty?
-              ink_caption node, category: :image, side: :top, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_side == :top && node.title?
+              ink_caption node, category: :image, end: :top, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_end == :top && node.title?
               image_y = y
               image_cursor = cursor
               # NOTE: specify both width and height to avoid recalculation
@@ -1647,7 +1647,7 @@ module Asciidoctor
               move_down rendered_h if y == image_y
             end
           end
-          ink_caption node, category: :image, side: :bottom, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_side == :bottom && node.title?
+          ink_caption node, category: :image, end: :bottom, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_end == :bottom && node.title?
           theme_margin :block, :bottom, (next_enclosed_block node) unless pinned
         rescue => e
           raise if ::StopIteration === e
@@ -1689,7 +1689,7 @@ module Asciidoctor
             (resolve_alignment_from_role node.roles) || (@theme.image_align&.to_sym || :left)
           ink_prose alt_text_template % alt_text_vars, align: alignment, margin: 0, normalize: false, single_line: true
         end
-        ink_caption node, category: :image, side: :bottom if node.title?
+        ink_caption node, category: :image, end: :bottom if node.title?
         theme_margin :block, :bottom, (next_enclosed_block node) unless opts[:pinned]
         nil
       end
@@ -1699,7 +1699,7 @@ module Asciidoctor
         audio_path = node.media_uri node.attr 'target'
         play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
         ink_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0, single_line: true
-        ink_caption node, labeled: false, side: :bottom if node.title?
+        ink_caption node, labeled: false, end: :bottom if node.title?
         theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
@@ -1727,7 +1727,7 @@ module Asciidoctor
           add_dest_for_block node if node.id
           play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
           ink_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{video_path}">#{video_path}</a> <em>(#{type})</em>), normalize: false, margin: 0, single_line: true
-          ink_caption node, labeled: false, side: :bottom if node.title?
+          ink_caption node, labeled: false, end: :bottom if node.title?
           theme_margin :block, :bottom, (next_enclosed_block node)
         else
           original_attributes = node.attributes.dup
@@ -2243,7 +2243,7 @@ module Asciidoctor
           alignment = theme.table_align&.to_sym || :left
         end
 
-        caption_side = theme.table_caption_side&.to_sym || :top
+        caption_end = theme.table_caption_end&.to_sym || :top
         caption_max_width = theme.table_caption_max_width || 'fit-content'
 
         table_settings = {
@@ -2272,7 +2272,7 @@ module Asciidoctor
         table table_data, table_settings do
           # NOTE: call width to capture resolved table width
           table_width = width
-          @pdf.ink_table_caption node, alignment, table_width, caption_max_width if node.title? && caption_side == :top
+          @pdf.ink_table_caption node, alignment, table_width, caption_max_width if node.title? && caption_end == :top
           # NOTE: align using padding instead of bounding_box as prawn-table does
           # using a bounding_box across pages mangles the margin box of subsequent pages
           if alignment != :left && table_width != (this_bounds = @pdf.bounds).width
@@ -2345,7 +2345,7 @@ module Asciidoctor
           bounds.subtract_left_padding left_padding
           bounds.subtract_right_padding right_padding if right_padding
         end
-        ink_table_caption node, alignment, table_width, caption_max_width, caption_side if node.title? && caption_side == :bottom
+        ink_table_caption node, alignment, table_width, caption_max_width, caption_end if node.title? && caption_end == :bottom
         theme_margin :block, :bottom, (next_enclosed_block node)
       rescue ::Prawn::Errors::CannotFit
         log :error, (message_with_context 'cannot fit contents of table cell into specified column width', source_location: node.source_location)
@@ -3116,7 +3116,7 @@ module Asciidoctor
           end
         end
         theme_font_cascade [:caption, category_caption] do
-          if ((opts.delete :side) || :top) == :top
+          if ((opts.delete :end) || (opts.delete :side) || :top) == :top
             margin = { top: caption_margin_outside, bottom: caption_margin_inside }
           else
             margin = { top: caption_margin_inside, bottom: caption_margin_outside }
@@ -3144,8 +3144,8 @@ module Asciidoctor
       end
 
       # Render the caption for a table and return the height of the rendered content
-      def ink_table_caption node, table_alignment = :left, table_width = nil, max_width = nil, side = :top
-        ink_caption node, category: :table, side: side, block_align: table_alignment, block_width: table_width, max_width: max_width
+      def ink_table_caption node, table_alignment = :left, table_width = nil, max_width = nil, end_ = :top
+        ink_caption node, category: :table, end: end_, block_align: table_alignment, block_width: table_width, max_width: max_width
       end
 
       def allocate_toc doc, toc_num_levels, toc_start_cursor, title_page_on

@@ -15,7 +15,7 @@ module Asciidoctor
       BaseThemePath = ::File.join ThemesDir, 'base-theme.yml'
       BundledThemeNames = (::Dir.children ThemesDir).map {|it| it.slice 0, it.length - 10 }
       DeprecatedCategoryKeys = { 'blockquote' => 'quote', 'key' => 'kbd', 'literal' => 'codespan', 'outline_list' => 'list' }
-      AmbiguousAlignKeys = %w(base heading heading_h1 heading_h2 heading_h3 heading_h4 heading_h5 heading_h6 title_page abstract abstract_title admonition_label sidebar_title toc_title).each_with_object({}) do |prefix, accum|
+      DeprecatedKeys = %w(base heading heading_h1 heading_h2 heading_h3 heading_h4 heading_h5 heading_h6 title_page abstract abstract_title admonition_label sidebar_title toc_title).each_with_object({ 'table_caption_side' => 'table_caption_end' }) do |prefix, accum|
         accum[%(#{prefix}_align)] = %(#{prefix}_text_align)
       end
       PaddingBottomHackKeys = %w(example_padding quote_padding sidebar_padding verse_padding)
@@ -171,7 +171,7 @@ module Asciidoctor
           val.each do |subkey, subval|
             process_entry %(#{key}_#{key == 'role' || !(subkey.include? '-') ? subkey : (subkey.tr '-', '_')}), subval, data
           end
-        elsif (rekey = AmbiguousAlignKeys[key]) ||
+        elsif (rekey = DeprecatedKeys[key]) ||
             ((key.start_with? 'role_') && (key.end_with? '_align') && (rekey = key.sub RoleAlignKeyRx, '_text_align'))
           data[rekey] = evaluate val, data
         elsif PaddingBottomHackKeys.include? key
@@ -222,7 +222,7 @@ module Asciidoctor
         var = var.tr '-', '_' if var.include? '-'
         if (vars.respond_to? var) ||
             DeprecatedCategoryKeys.any? {|old, new| (var.start_with? old + '_') && (vars.respond_to? (replace = new + (var.slice old.length, var.length))) && (var = replace) } ||
-            ((replace = AmbiguousAlignKeys[var]) && (vars.respond_to? replace) && (var = replace))
+            ((replace = DeprecatedKeys[var]) && (vars.respond_to? replace) && (var = replace))
           vars[var]
         else
           logger.warn %(unknown variable reference in PDF theme: #{ref})
