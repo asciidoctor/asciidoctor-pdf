@@ -20,6 +20,22 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect lines[1][:from][:y] - lines[1][:to][:y]).to be <= 1
   end
 
+  it 'should wrap text consistently regardless of whether the characters contain diacritics' do
+    pdf = to_pdf <<~'EOS', analyze: true, debug: true
+    :pdf-page-size: A5
+
+    ....
+    aàbècìdòeùf gáhéiíjókúlým nâoêpîqôrûs tñuõvãw xäyëzïaöbücÿd
+    aabbccddeef gghhiijjkkllm nnooppqqrrs ttuuvvw xxyyzzaabbccd
+    ....
+    EOS
+
+    text = pdf.text
+    (expect text).to have_size 4
+    (expect text[1][:string]).to start_with 'x'
+    (expect text[3][:string]).to start_with 'x'
+  end
+
   it 'should move unbreakable block shorter than page to next page to avoid splitting it' do
     pdf = to_pdf <<~EOS, analyze: true
     #{(['paragraph'] * 20).join (?\n * 2)}
