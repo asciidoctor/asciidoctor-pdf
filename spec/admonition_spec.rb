@@ -1077,22 +1077,18 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end
     end
 
-    it 'should assign default width to column rule if key is not specified' do
+    it 'should not assign default width to column rule if key is not specified' do
       pdf_theme = {
         admonition_column_rule_color: '222222',
         admonition_column_rule_width: nil,
+        base_border_width: nil,
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
       TIP: You can use the theme to customize the color and width of the column rule.
       EOS
 
       lines = pdf.lines
-      (expect lines).to have_size 1
-      column_rule = lines[0]
-      (expect column_rule[:from][:x]).to eql column_rule[:to][:x]
-      (expect column_rule[:color]).to eql '222222'
-      (expect column_rule[:width]).to eql 0.5
-      (expect column_rule[:style]).to eql :solid
+      (expect lines).to be_empty
     end
 
     it 'should not fail if base border width is not set when using original theme' do
@@ -1134,7 +1130,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect column_rule2[:from][:x] - column_rule1[:from][:x]).to eql 2.0
     end
 
-    it 'should use base border width for column rule if column rule width is nil' do
+    it 'should not use base border width for column rule if column rule width is nil' do
       pdf_theme = {
         base_border_width: 2,
         admonition_column_rule_color: '222222',
@@ -1145,11 +1141,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       EOS
 
       lines = pdf.lines
-      (expect lines).to have_size 1
-      column_rule = lines[0]
-      (expect column_rule[:from][:x]).to eql column_rule[:to][:x]
-      (expect column_rule[:color]).to eql '222222'
-      (expect column_rule[:width]).to eql 2
+      (expect lines).to be_empty
     end
 
     it 'should allow theme to add border', visual: true do
@@ -1233,8 +1225,8 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect (text_left - left).to_f).to eql 72.0
     end
 
-    it 'should allow theme to disable column rule by setting color to nil' do
-      pdf_theme = { admonition_column_rule_color: nil }
+    it 'should allow theme to disable column rule by setting width to 0' do
+      pdf_theme = { admonition_column_rule_width: 0 }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
       TIP: You can use the theme to add a background color.
       EOS
