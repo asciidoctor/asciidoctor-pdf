@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.0.beta.1 (2022-05-04) - @mojavelinux
 
 Enhancements::
 
@@ -27,6 +27,10 @@ Bug Fixes::
 * remap `table-caption-side` theme key to `table-caption-end` (#2125)
 * add missing glyph for `ÿ` in built-in fonts
 * remove use of deprecated keys in chronicles-dark-theme.yml
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.0.beta.1[git tag] | {url-repo}/compare/v2.0.0.alpha.3\...v2.0.0.beta.1[full diff]
 
 == 2.0.0.alpha.3 (2022-05-01) - @mojavelinux
 
