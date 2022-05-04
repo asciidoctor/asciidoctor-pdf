@@ -13,7 +13,7 @@
 ** xref:blocks.adoc[]
 ** xref:tables.adoc[]
 ** xref:text.adoc[]
-** xref:image.adoc[]
+** xref:images.adoc[]
 ** xref:extend-theme.adoc[]
 ** xref:custom-role.adoc[]
 ** xref:add-running-content.adoc[]

@@ -1,7 +1,9 @@
 = Images
 
+== Background images
+
 [#formats]
-== Supported image formats
+=== Supported image formats
 
 The following image types (and corresponding file extensions) are supported:
 
@@ -13,7 +15,7 @@ CAUTION: CAUTION: The GIF (.gif), TIFF (.tiff), BMP (.bmp), and interlaced PNG f
 See xref:ROOT:image-paths-and-formats.adoc#other-image-formats[Supporting additional image file formats] for details.
 
 [#specify]
-== Specify an image in a theme
+=== Specify an image in a theme
 
 An image is specified either as a bare image path or as an inline image macro as found in the AsciiDoc syntax.
 Images in the theme file are currently resolved relative to the value of the `pdf-themesdir` attribute.
@@ -46,7 +48,7 @@ title-page:
 ----
 
 [#align]
-== Width, fit, and alignment
+=== Width, fit, and alignment
 
 Like in the AsciiDoc syntax, wrapping the value in the image macro allows you to specify other settings, such as `pdfwidth`, `fit`, and `align`.
 For example:
@@ -59,3 +61,38 @@ title-page:
 
 The `align` setting is used to align block images within the parent container.
 See xref:blocks.adoc[] for accepted alignment keywords.
+
+== Block images
+
+You can customize how the block images, alt text, and image captions are arranged and styled using the xref:block-image.adoc[] and the xref:caption.adoc[].
+The following sections provide information about a few of the theme keys and values that are unique to block images.
+
+[#end]
+=== Caption end
+
+The `caption-end` key specifies whether the image caption is located on top or below the image.
+The key accepts the following keywords:
+
+bottom:: The caption block is placed below the image.
+top:: The caption block is place above the image.
+
+[,yaml]
+----
+image:
+  caption:
+    end: bottom
+----
+
+[#caption-text-align]
+=== Caption text alignment
+
+The `caption-text-align` key accepts the keyword `inherit` in addition to the xref:text.adoc#text-align[usual text alignment values] when it is set on the `image` category.
+
+[,yaml]
+----
+image:
+  caption:
+    text-align: inherit
+----
+
+The value `inherit` resolves to the block alignment (`image-align`) assigned to the `image` category.

@@ -148,6 +148,7 @@ These placeholders insert the alt text, image target, and link open and close ta
 == image-caption
 
 The keys in the `image-caption` category control the arrangement and style of the captions for block images.
+Most of the keys listed on xref:caption.adoc[] can also be nested under the `image-caption` category to further customize the image captions.
 
 [cols="3,6,6a"]
 |===
@@ -162,7 +163,7 @@ image:
     align: inherit
 
 |caption-end
-|`bottom` {vbar} `top` +
+|xref:images.adoc#end[bottom] {vbar} xref:images.adoc#end[top] +
 (default: `bottom`)
 |[source]
 image:
@@ -178,7 +179,7 @@ image:
     max-width: fit-content
 
 |caption-text-align
-|xref:text.adoc#text-align[Text alignment] {vbar} xref:text.adoc#caption-text-align[inherit] +
+|xref:text.adoc#text-align[Text alignment] {vbar} xref:images.adoc#caption-text-align[inherit] +
 (default: `$image-caption-align`)
 |[source]
 image:

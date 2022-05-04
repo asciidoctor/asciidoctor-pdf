@@ -394,7 +394,7 @@ table:
 == table-caption
 
 The keys in the `table-caption` category control the style and arrangement of the table captions.
-The keys listed on xref:caption.adoc[] can also be nested under the `table` category to further customize the table captions.
+The keys listed on xref:caption.adoc[] can also be nested under the `table-caption` category to further customize the table captions.
 
 [cols="3,4,6a"]
 |===
