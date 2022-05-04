@@ -90,6 +90,48 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end
     end
 
+    it 'should add running footer by default when using base theme' do
+      input = <<~'EOS'
+      = Document Title
+      :doctype: book
+
+      first page
+
+      <<<
+
+      second page
+
+      <<<
+
+      third page
+      EOS
+
+      pdf = to_pdf input, pdf_theme: { extends: 'base' }, enable_footer: true, analyze: true
+      expected_page_numbers = %w(1 2 3)
+      expected_x_positions = [553.72, 36.0]
+
+      (expect pdf.pages).to have_size 4
+      page_number_texts = pdf.find_text %r/^\d+$/
+      (expect page_number_texts).to have_size expected_page_numbers.size
+      page_number_texts.each_with_index do |page_number_text, idx|
+        (expect page_number_text[:page_number]).to eql idx + 2
+        (expect page_number_text[:x]).to eql expected_x_positions[idx.even? ? 0 : 1]
+        (expect page_number_text[:y]).to eql 14.606
+        (expect page_number_text[:font_size]).to be 10
+      end
+
+      pdf_raw = to_pdf input, pdf_theme: { extends: 'base' }, enable_footer: true
+      p2_resources = (pdf_raw.page 2).page_object[:Resources]
+      (expect p2_resources).to have_key :XObject
+      p2_xobject = p2_resources[:XObject]
+      (expect p2_xobject).to have_key :Stamp1
+      stamp_data = pdf_raw.objects[p2_xobject[:Stamp1]].data
+      stamp_gs = (pdf.extract_graphic_states stamp_data)[0]
+      ['0.0 0.0 0.0 SCN', '0.5 w', '36.0 30.0 m', '559.28 30.0 l'].each do |expected_line|
+        (expect stamp_gs).to include expected_line
+      end
+    end
+
     it 'should use single column that spans width of page if columns value is empty' do
       pdf_theme = {
         footer_columns: '',

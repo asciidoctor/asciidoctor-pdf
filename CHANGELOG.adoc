@@ -17,6 +17,7 @@ Enhancements::
 * add support for `smallcaps` text transform by replacing lowercase letters with small capital variants (#1192)
 * use `base-border-color` as default border color; control appearance of border using `border-width` value alone (#2134)
 * remove border colors in base theme so all border colors can be controlled using `base-border-color` when extending theme
+* enable running footer when using base theme
 
 Bug Fixes::
 
