@@ -228,8 +228,12 @@ RSpec/Rails/AvoidSetupHook:
   Enabled: false
 RSpec/SubjectDeclaration:
   Enabled: true
+RSpec/VerifiedDoubleReference:
+  Enabled: true
 RSpec/VoidExpect:
   Enabled: false
+Security/CompoundHash:
+  Enabled: true
 Security/IoMethods:
   Enabled: true
 Security/Open:
@@ -296,6 +300,8 @@ Style/ExplicitBlockArgument:
   Enabled: false # reason: yield is fine
 Style/ExponentialNotation:
   Enabled: true
+Style/FetchEnvVar:
+  Enabled: false # reason: just no
 Style/FileRead:
   Enabled: true
 Style/FileWrite:
@@ -378,6 +384,8 @@ Style/NumericLiterals:
   Enabled: false # reason: makes large numbers unreadable and harder to copy
 Style/NumericPredicate:
   EnforcedStyle: comparison
+Style/ObjectThen:
+  Enabled: false # reason: not yet available in minimum JRuby version
 Style/OpenStructUse:
   Enabled: false # reason: the theming system relies on OpenStruct
 Style/OptionalBooleanParameter:
