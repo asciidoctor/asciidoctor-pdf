@@ -482,6 +482,7 @@ module Asciidoctor
         theme.description_list_term_spacing ||= 0
         theme.description_list_description_indent ||= 0
         theme.table_border_width ||= 0.5
+        theme.thematic_break_border_color ||= '000000'
         theme.image_border_width ||= 0
         theme.code_linenum_font_color ||= '999999'
         theme.callout_list_margin_top_after_code ||= 0
@@ -2414,7 +2415,7 @@ module Asciidoctor
               align: :left,
               inline_format: false,
               margin_bottom: @theme.description_list_term_spacing,
-              style: @theme.description_list_term_font_style.to_sym
+              style: (@theme.description_list_term_font_style || 'bold').to_sym
             category.terms.each {|term| convert_index_list_item term }
             # NOTE: see previous note for why we can't use margin_bottom method
             if @theme.prose_margin_bottom > y - reference_bounds.absolute_bottom

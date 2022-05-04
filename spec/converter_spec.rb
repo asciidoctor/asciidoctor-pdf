@@ -341,6 +341,13 @@ describe Asciidoctor::PDF::Converter do
         (expect (pdf.find_text 'one')[0]).not_to be_nil
       end
 
+      it 'should not crash if theme does not specify any keys when converting chronicles example' do
+        input_path = Pathname.new example_file 'chronicles-example.adoc'
+        pdf = to_pdf input_path, attribute_overrides: { 'imagesdir' => '@', 'pdf-theme' => (fixture_file 'bare-theme.yml') }
+        (expect pdf.pages).to have_size 14
+        (expect (pdf.page 1).text).to include 'Documentation Chronicles'
+      end
+
       it 'should convert background position to options' do
         converter = Asciidoctor::Converter.create 'pdf'
         {
