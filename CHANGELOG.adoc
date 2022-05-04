@@ -22,6 +22,7 @@ Bug Fixes::
 * rename `delete_page` extension method to `delete_current_page` to avoid conflict with incompatible method on `Prawn::Document`
 * remap `table-caption-side` theme key to `table-caption-end` (#2125)
 * add missing glyph for `ÿ` in built-in fonts
+* remove use of deprecated keys in chronicles-dark-theme.yml
 
 == 2.0.0.alpha.3 (2022-05-01) - @mojavelinux
 

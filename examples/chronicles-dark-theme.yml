@@ -7,16 +7,16 @@ base:
   border-color: 111111
 link:
   font-color: BD7435
-literal:
+codespan:
   font-color: 4EDEB9
 mark:
   background-color: 0000FF
-key:
+kbd:
   background-color: 0A0A0A
   border-color: 333333
 heading:
   font-color: $base-font-color
-title_page:
+title-page:
   title:
     font-color: 666666
   authors:
@@ -34,20 +34,20 @@ admonition:
       stroke-color: EEEEEE
     warning:
       stroke-color: 4096FF
-blockquote:
+quote:
   border-color: $base-border-color
   cite:
     font-color: 666666
 verse:
-  border-color: $blockquote-border-color
+  border-color: $quote-border-color
   cite:
-    font-color: $blockquote-cite-font-color
+    font-color: $quote-cite-font-color
 code:
   font-color: $base-font-color
   background-color: 0A0A0A
   border-color: 333333
 conum:
-  font-color: $literal-font-color
+  font-color: $codespan-font-color
 example:
   background-color: $page-background-color
   border-color: $base-border-color
