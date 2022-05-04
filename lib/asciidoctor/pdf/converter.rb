@@ -2415,7 +2415,7 @@ module Asciidoctor
               align: :left,
               inline_format: false,
               margin_bottom: @theme.description_list_term_spacing,
-              style: (@theme.description_list_term_font_style || 'bold').to_sym
+              style: @theme.description_list_term_font_style&.to_sym
             category.terms.each {|term| convert_index_list_item term }
             # NOTE: see previous note for why we can't use margin_bottom method
             if @theme.prose_margin_bottom > y - reference_bounds.absolute_bottom
