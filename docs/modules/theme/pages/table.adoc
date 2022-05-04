@@ -20,7 +20,7 @@ table:
   background-color: #FFFFFF
 
 |border-color
-|xref:tables.adoc#border-color[Color] {vbar} xref:tables.adoc#border-color[Color[\]] +
+|xref:tables.adoc#border-color[Color] {vbar} xref:tables.adoc#border-color[Color[ \]] +
 (default: `'000000'`)
 |[source]
 table:
@@ -113,7 +113,7 @@ table:
   grid-color: #EEEEEE
 
 |grid-style
-|xref:tables.adoc#grid-style[Grid style]` {vbar} xref:tables.adoc#grid-style[Grid style[ \]] +
+|xref:tables.adoc#grid-style[Grid style] {vbar} xref:tables.adoc#grid-style[Grid style[ \]] +
 (default: `$table-border-style`)
 |[source]
 table:

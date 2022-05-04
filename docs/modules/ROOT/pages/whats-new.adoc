@@ -23,6 +23,31 @@ See xref:theme:role.adoc#built-in[Built-in roles] for details.
 To control the indent of inner paragraphs, you can set the new `prose-text-indent-inner` key in your theme.
 See xref:theme:prose.adoc[] for details.
 
+[#breakable]
+== Breakable by default
+
+In Asciidoctor PDF 2.0, the following blocks are breakable with automatic anchor and caption orphan prevention by default:
+
+* Admonitions
+* Block images
+* Code blocks (literal, listing, and source)
+* Examples
+* Open blocks
+* Quote blocks
+* Sidebars
+* Table of Contents
+* Verses
+
+Tables and section headings are only breakable by default.
+That means table captions may be orphaned if a table breaks across pages, and a section heading and its first content block aren't kept together automatically.
+However, orphan prevention can be applied to individual section headings and tables using the xref:breakable-and-unbreakable.adoc#breakable[breakable option].
+
+[#unbreakable]
+== Unbreakable option
+
+The `unbreakable` option can be applied to delimited blocks, admonitions, and tables.
+When the xref:breakable-and-unbreakable.adoc#unbreakable[unbreakable option] is applied to a block, the converter will advance the block and its caption and anchor to the next page if it detects that the block would break across pages.
+
 == Blocks and block captions
 
 Blocks and block captions gained a lot of new features in Asciidoctor PDF 2.0.
@@ -30,10 +55,10 @@ Here are just a few of the highlights:
 
 Smart bottom margins::
 Blocks now have smarter bottom margins that prevent extra space from being added below them, particularly when blocks are nested.
-xref:theme:blocks.adoc#border-width[Border width]::
-The border width of delimited blocks, admonitions, and block images can be customized per edge with the `border-width` key.
-xref:theme:blocks.adoc#border-style[Border style]::
-The border style of delimited blocks, admonitions, and block images can be changed with the `border-style` key.
+Border width::
+The border width of delimited blocks, admonitions, and block images can be customized per edge with the xref:theme:blocks.adoc#border-width[border-width key].
+Border style::
+The border style of delimited blocks, admonitions, and block images can be changed with the xref:theme:blocks.adoc#border-style[border-style key].
 Styles include dashed, dotted, double, and solid.
 Line height::
 Wherever font properties are accepted in the theme, you can now control the line height of blocks using the `line-height` key.
@@ -58,11 +83,21 @@ Allow caption `max-width` to be set to percentage of content by passing argument
 Border widths and styles::
 The table border width can be customized per edge with the xref:theme:blocks.adoc#border-width[border-width key].
 The border line style can be xref:theme:tables.adoc#border-style[specified per edge by assigning an array of styles] to the `border-style` key.
+Styles include dashed, dotted, and solid.
 
 Grid widths and styles::
 The width of table grid lines can be specified for rows and columns with the xref:theme:tables.adoc#grid-width[grid-width key].
 The style of the grid lines can be specified for rows and columns with the xref:theme:tables.adoc#grid-style[grid-style key].
+Styles include dashed, dotted, and solid.
 //allow horizontal and vertical lines of table grid to be styled independently (#1875) (*@hextremist*)
+
+.*Notable fixes for tables*
+* An error message is logged if table cell is truncated.
+* Instead of raising an error, log error and skip table if cell content can't fit into column width of table.
+* The content of AsciiDoc table cell is prevented from overrunning content on subsequent pages.
+* The top and bottom padding is taken into account when computing height of AsciiDoc table cell.
+* Vertical center alignment is correctly applied to regular table cells.
+* The border bottom is correctly applied to a table row when frame and grid are disabled.
 
 == Callout lists and numbers
 

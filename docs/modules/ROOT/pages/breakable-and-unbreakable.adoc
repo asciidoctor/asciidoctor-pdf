@@ -1,0 +1,96 @@
+= Breakable and Unbreakable Options
+:description: By default, most blocks are breakable with built-in anchor and caption orphan prevention. The unbreakable option prevents a block from breaking.
+
+[#default]
+== Default breakable behavior
+
+The following blocks are breakable with built-in anchor and caption orphan prevention by default:
+
+* Admonitions
+* Block images
+* Code blocks (literal, listing, and source)
+* Examples
+* Open blocks
+* Quote blocks
+* Sidebars
+* Table of Contents
+* Verses
+
+[.term]*Breakable with built-in anchor and caption orphan prevention* means that a block can break across pages but the converter will automatically move the block to the next page, when necessary, to ensure a block's anchor and caption are kept together with the block.
+
+Tables and section headings are only breakable by default.
+That means table captions may be orphaned if a table breaks across pages, and a section heading and its first content block aren't kept together automatically.
+However, orphan prevention can be applied to individual section headings and tables using the `breakable` option.
+
+[#breakable]
+== Breakable option
+
+Orphan prevention isn't applied to tables and section headings by default.
+The `breakable` option can be applied to a table to ensure that a table's anchor and caption are kept together with the table if it breaks across pages.
+
+[,asciidoc]
+----
+.Optional table caption
+[#optional-id%breakable] <.>
+|===
+|Content |Content
+
+|Content |Content
+|===
+----
+<.> Assign the `breakable` option to a table, using the shorthand percent symbol (`%`) for the `option` attribute name, to indicate that the table's caption and anchor should be kept with the table.
+
+The `breakable` option can also be applied to a section title to keep the title and its anchor with the first block of content in the section.
+
+[,asciidoc]
+----
+[%breakable]
+=== Title of a section
+
+First block of content in the section.
+----
+
+Don't assign the `breakable` option any other block types because <<default,caption and anchor orphan prevention is automatically applied to them by default>>.
+
+[#unbreakable]
+== Unbreakable option
+
+When the `unbreakable` option is applied to a block, the converter will advance the block and its caption and anchor to the next page if it detects that the block would break across pages.
+
+[,asciidoc]
+----
+.Optional title of block
+[%unbreakable] <.>
+====
+Content in an example block.
+
+More content in an example block.
+====
+----
+<.> Assign the `unbreakable` option to a block, using the shorthand percent symbol (`%`) for the `option` attribute name, to prevent the block from breaking across pages.
+
+The `unbreakable` option can be assigned to individual blocks of the following types:
+
+* Admonitions
+* Block images
+* Code blocks (literal, listing, and source)
+* Examples
+* Open blocks
+* Quote blocks
+* Sidebars
+* Tables
+* Verses
+
+If a block is larger than a single page, it will break across pages even if it's assigned the `unbreakable` option.
+
+[#dry-run-performance]
+.Why can't I assign unbreakable globally? Why don't section headings and tables have built-in orphan prevention?
+****
+The logic in the converter that calculates the extent of a block, which includes its anchor, title, borders, background, and all applicable margins and paddings, uses multiple passes -- what we call "`dry runs`" -- to get an accurate measure of where the block begins and ends, and therefore, whether it breaks across pages.
+When the converter determines that a block's caption and anchor would be orphaned or that a block breaks when it's marked as unbreakable, it has to advance to the next page and potentially repeat the extent calculation depending on the block's context.
+Background shading and borders--styles that are applied to code blocks, examples, and sidebars by default, that are often applied to tables, and that can be applied to other block types and section headings--add significant complexity, and therefore processing time, to the dry runs required to calculate each block's extent.
+
+We decided it was best for people to opt-in to the converter behavior required for `unbreakable` and table and section heading orphan prevention (`breakable`) on an individual block basis due to the performance costs.
+****
+
+
