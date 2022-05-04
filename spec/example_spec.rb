@@ -313,7 +313,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     lines = (to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: :line).lines
 
     (expect lines).to have_size 4
-    (expect lines.map {|it| it[:color] }.uniq).to eql ['EEEEEE']
+    (expect lines.map {|it| it[:color] }.uniq).to eql %w(000000)
     (expect lines.map {|it| it[:width] }.uniq).to eql [0.5]
     top, bottom = lines.map {|it| [it[:from][:y], it[:to][:y]] }.flatten.yield_self {|it| [it.max, it.min] }
     left = lines.map {|it| [it[:from][:x], it[:to][:x]] }.flatten.min

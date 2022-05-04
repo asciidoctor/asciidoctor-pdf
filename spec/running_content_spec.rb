@@ -1494,12 +1494,12 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect to_file).to visually_match 'running-content-border-style.pdf'
     end
 
-    it 'should use base border width and solid style if border width and style are not specified', visual: true do
+    it 'should use base border color and solid style if border width and style are not specified', visual: true do
       pdf_theme = {
-        base_border_width: 1,
-        footer_border_width: nil,
+        base_border_color: '000000',
+        footer_border_color: nil,
+        footer_border_width: 1,
         footer_border_style: nil,
-        footer_border_color: '000000',
       }
 
       to_file = to_pdf_file 'content', 'running-content-border-defaults.pdf', enable_footer: true, pdf_theme: pdf_theme

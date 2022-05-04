@@ -13,8 +13,7 @@ base_font_size: 12
 base_font_size_min: 6
 base_font_style: normal
 base_line_height: 1.15
-base_border_color: 'EEEEEE'
-base_border_width: 0.5
+base_border_color: '000000'
 role_lead_font_size: 13.5
 role_line-through_text_decoration: line-through
 role_underline_text_decoration: underline
@@ -65,43 +64,37 @@ abstract_line_height: 1.4
 abstract_padding: 0
 abstract_title_align: center
 abstract_title_font_style: bold
-admonition_column_rule_color: 'EEEEEE'
 admonition_column_rule_width: 0.5
 admonition_padding: [4, 12, 4, 12]
 admonition_label_font_style: bold
 admonition_label_text_transform: uppercase
-quote_border_color: 'EEEEEE'
 quote_border_left_width: 4
 quote_padding: [3, 12, 3, 14]
-verse_border_color: 'EEEEEE'
 verse_border_left_width: 4
 verse_padding: [3, 12, 3, 14]
 code_font_family: Courier
 code_font_size: 10.8
 code_line_height: 1.2
 code_padding: 9
-code_border_color: 'EEEEEE'
 code_border_width: 0.5
 conum_line_height: 1.15
 conum_glyphs: circled
 example_background_color: 'FFFFFF'
-example_border_color: 'EEEEEE'
 example_border_width: 0.5
 example_padding: 12
 image_align: left
 prose_margin_bottom: 12
 sidebar_background_color: 'EEEEEE'
+sidebar_border_width: 0.5
 sidebar_padding: 12
 sidebar_title_align: center
 sidebar_title_font_style: bold
-table_border_color: '000000'
 table_border_style: solid
 table_border_width: 0.5
 table_cell_padding: 2
 table_head_font_style: bold
 table_head_border_bottom_width: 1.25
 table_body_stripe_background_color: 'EEEEEE'
-thematic_break_border_color: 'EEEEEE'
 thematic_break_border_style: solid
 thematic_break_border_width: 0.5
 thematic_break_margin_bottom: 12

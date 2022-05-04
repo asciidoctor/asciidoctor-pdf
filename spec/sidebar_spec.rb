@@ -82,7 +82,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     boundaries = (pdf.extract_graphic_states pdf.pages[0][:raw_content])[0]
       .select {|l| l.end_with? 'l' }
       .map {|l| l.split.yield_self {|it| { x: it[0].to_f, y: it[1].to_f } } }
-    (expect boundaries).to have_size 4
+    (expect boundaries).to have_size 8 # border and background
     top, bottom = boundaries.map {|it| it[:y] }.yield_self {|it| [it.max, it.min] }
     left = boundaries.map {|it| it[:x] }.min
     text_top = (pdf.find_unique_text 'first').yield_self {|it| it[:y] + it[:font_size] }

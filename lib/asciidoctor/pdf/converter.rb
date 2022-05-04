@@ -463,8 +463,6 @@ module Asciidoctor
       end
 
       def prepare_theme theme
-        theme.base_border_color ||= '000000'
-        theme.base_border_width ||= 0
         theme.base_font_color ||= '000000'
         theme.base_font_size ||= 12
         theme.base_font_style = theme.base_font_style&.to_sym || :normal
@@ -481,8 +479,9 @@ module Asciidoctor
         theme.list_item_spacing ||= 0
         theme.description_list_term_spacing ||= 0
         theme.description_list_description_indent ||= 0
+        theme.table_border_color ||= (theme.base_border_color || '000000')
         theme.table_border_width ||= 0.5
-        theme.thematic_break_border_color ||= '000000'
+        theme.thematic_break_border_color ||= (theme.base_border_color || '000000')
         theme.image_border_width ||= 0
         theme.code_linenum_font_color ||= '999999'
         theme.callout_list_margin_top_after_code ||= 0
@@ -905,8 +904,8 @@ module Asciidoctor
           pad_box [0, cpad[1], 0, lpad[3]] do
             if extent
               label_height = extent.single_page_height || cursor
-              if (rule_color = @theme.admonition_column_rule_color) &&
-                  (rule_width = @theme.admonition_column_rule_width || @theme.base_border_width) > 0
+              if (rule_width = @theme.admonition_column_rule_width || 0) > 0 &&
+                  (rule_color = @theme.admonition_column_rule_color || @theme.base_border_color)
                 rule_style = @theme.admonition_column_rule_style&.to_sym || :solid
                 float do
                   extent.each_page do |first_page, last_page|
@@ -1060,7 +1059,7 @@ module Asciidoctor
         category = node.context == :quote ? :quote : :verse
         # NOTE: b_width and b_left_width are mutually exclusive
         if (b_left_width = @theme[%(#{category}_border_left_width)]) && b_left_width > 0
-          b_color = @theme[%(#{category}_border_color)]
+          b_color = @theme[%(#{category}_border_color)] || @theme.base_border_color
         else
           b_left_width = nil
           b_width = nil if (b_width = @theme[%(#{category}_border_width)]) == 0
@@ -1658,7 +1657,7 @@ module Asciidoctor
       end
 
       def draw_image_border top, w, h, alignment
-        if (Array @theme.image_border_width).any? {|it| it&.> 0 } && @theme.image_border_color
+        if (Array @theme.image_border_width).any? {|it| it&.> 0 } && (@theme.image_border_color || @theme.base_border_color)
           if (@theme.image_border_fit || 'content') == 'auto'
             bb_width = bounds.width
           elsif alignment == :center
@@ -2194,12 +2193,12 @@ module Asciidoctor
 
         rect_side_names = [:top, :right, :bottom, :left]
         grid_axis_names = [:rows, :cols]
-        border_color = (rect_side_names.zip expand_rect_values theme.table_border_color, theme.base_border_color).to_h
+        border_color = (rect_side_names.zip expand_rect_values theme.table_border_color, 'transparent').to_h
         border_style = (rect_side_names.zip (expand_rect_values theme.table_border_style, :solid).map(&:to_sym)).to_h
-        border_width = (rect_side_names.zip expand_rect_values theme.table_border_width, theme.base_border_width).to_h
-        grid_color = (grid_axis_names.zip expand_grid_values (theme.table_grid_color || [border_color[:top], border_color[:left]]), theme.base_border_color).to_h
+        border_width = (rect_side_names.zip expand_rect_values theme.table_border_width, 0).to_h
+        grid_color = (grid_axis_names.zip expand_grid_values (theme.table_grid_color || [border_color[:top], border_color[:left]]), 'transparent').to_h
         grid_style = (grid_axis_names.zip (expand_grid_values (theme.table_grid_style || [border_style[:top], border_style[:left]]), :solid).map(&:to_sym)).to_h
-        grid_width = (grid_axis_names.zip expand_grid_values (theme.table_grid_width || [border_width[:top], border_width[:left]]), theme.base_border_width).to_h
+        grid_width = (grid_axis_names.zip expand_grid_values (theme.table_grid_width || [border_width[:top], border_width[:left]]), 0).to_h
 
         if table_header_size
           head_border_bottom_color = theme.table_head_border_bottom_color || grid_color[:rows]
@@ -2355,7 +2354,9 @@ module Asciidoctor
 
       def convert_thematic_break node
         theme_margin :thematic_break, :top
-        stroke_horizontal_rule @theme.thematic_break_border_color, line_width: @theme.thematic_break_border_width, line_style: (@theme.thematic_break_border_style&.to_sym || :solid)
+        stroke_horizontal_rule @theme.thematic_break_border_color,
+          line_width: @theme.thematic_break_border_width,
+          line_style: (@theme.thematic_break_border_style&.to_sym || :solid)
         theme_margin :thematic_break, ((block_next = next_enclosed_block node) ? :bottom : :top), block_next || true
       end
 
@@ -2997,7 +2998,7 @@ module Asciidoctor
             }.merge(opts)
           end
           if h_category && @theme[%(#{h_category}_border_width)] &&
-              @theme[%(#{h_category}_border_color)] && page_number == start_page_number
+              (@theme[%(#{h_category}_border_color)] || @theme.base_border_color) && page_number == start_page_number
             float do
               bounding_box [bounds.left, start_cursor], width: bounds.width, height: start_cursor - cursor do
                 theme_fill_and_stroke_bounds h_category
@@ -3457,7 +3458,7 @@ module Asciidoctor
           theme_font periphery do
             canvas do
               bounding_box [trim_styles[:content_left][side], trim_styles[:top][side]], width: trim_styles[:content_width][side], height: trim_styles[:height] do
-                if (trim_column_rule_width = trim_styles[:column_rule_width]) > 0
+                if trim_styles[:column_rule_color] && (trim_column_rule_width = trim_styles[:column_rule_width]) > 0
                   trim_column_rule_spacing = trim_styles[:column_rule_spacing]
                 else
                   trim_column_rule_width = nil
@@ -3565,12 +3566,12 @@ module Asciidoctor
             # NOTE: we've already verified this property is set
             height: (trim_height = @theme[%(#{periphery}_height)]),
             bg_color: (resolve_theme_color %(#{periphery}_background_color).to_sym),
-            border_color: (trim_border_color = resolve_theme_color %(#{periphery}_border_color).to_sym),
+            border_width: (trim_border_width = @theme[%(#{periphery}_border_width)] || 0),
+            border_color: trim_border_width > 0 ? (resolve_theme_color %(#{periphery}_border_color).to_sym, @theme.base_border_color) : nil,
             border_style: (@theme[%(#{periphery}_border_style)]&.to_sym || :solid),
-            border_width: (trim_border_width = trim_border_color ? @theme[%(#{periphery}_border_width)] || @theme.base_border_width : 0),
-            column_rule_color: (trim_column_rule_color = resolve_theme_color %(#{periphery}_column_rule_color).to_sym),
+            column_rule_width: (trim_column_rule_width = @theme[%(#{periphery}_column_rule_width)] || 0),
+            column_rule_color: trim_column_rule_width > 0 ? (resolve_theme_color %(#{periphery}_column_rule_color).to_sym) : nil,
             column_rule_style: (@theme[%(#{periphery}_column_rule_style)]&.to_sym || :solid),
-            column_rule_width: (trim_column_rule_color ? @theme[%(#{periphery}_column_rule_width)] || 0 : 0),
             column_rule_spacing: (@theme[%(#{periphery}_column_rule_spacing)] || 0),
             valign: valign_offset ? [valign, valign_offset] : valign,
             img_valign: @theme[%(#{periphery}_image_vertical_align)],
@@ -3861,7 +3862,7 @@ module Asciidoctor
       end
 
       def resolve_text_transform key, use_fallback = true
-        if (transform = ::Hash === key ? (key.delete :text_transform) : @theme[key.to_s])
+        if (transform = ::Hash === key ? (key.delete :text_transform) : @theme[key])
           transform == 'none' ? nil : transform
         elsif use_fallback
           @text_transform
@@ -3870,9 +3871,9 @@ module Asciidoctor
 
       # QUESTION: should we pass a category as an argument?
       # QUESTION: should we make this a method on the theme ostruct? (e.g., @theme.resolve_color key, fallback)
-      def resolve_theme_color key, fallback_color = nil
-        if (color = @theme[key.to_s]) && color != 'transparent'
-          color
+      def resolve_theme_color key, fallback_color = nil, transparent_color = fallback_color
+        if (color = @theme[key])
+          color == 'transparent' ? transparent_color : color
         else
           fallback_color
         end
@@ -3883,7 +3884,7 @@ module Asciidoctor
       end
 
       def theme_fill_and_stroke_bounds category, opts = {}
-        fill_and_stroke_bounds opts[:background_color], @theme[%(#{category}_border_color)],
+        fill_and_stroke_bounds opts[:background_color], @theme[%(#{category}_border_color)] || @theme.base_border_color,
           line_width: @theme[%(#{category}_border_width)],
           line_style: (@theme[%(#{category}_border_style)]&.to_sym || :solid),
           radius: @theme[%(#{category}_border_radius)]
@@ -3909,11 +3910,9 @@ module Asciidoctor
           ink_caption node_with_caption, category: category if node_with_caption
           return
         end
-        if (b_color = @theme[%(#{category}_border_color)]) == 'transparent'
-          b_color = @page_bg_color
-        end
+        b_color = resolve_theme_color %(#{category}_border_color).to_sym, @theme.base_border_color, @page_bg_color
         b_radius ||= (@theme[%(#{category}_border_radius)] || 0) + (b_width || 0)
-        if b_width && b_color
+        if b_width
           if b_color == @page_bg_color # let page background cut into block background
             b_gap_color, b_shift = @page_bg_color, (b_width * 0.5)
           elsif (b_gap_color = bg_color) && b_gap_color != b_color

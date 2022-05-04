@@ -348,6 +348,22 @@ describe Asciidoctor::PDF::Converter do
         (expect (pdf.page 1).text).to include 'Documentation Chronicles'
       end
 
+      it 'should allow all border colors to be set using base-border-color when extending base theme' do
+        [
+          %(****\ncontent\n****),
+          %(====\ncontent\n====),
+          %([cols=2*]\n|===\n|a|b\n|c|d\n|===),
+          %(____\ncontent\n____),
+          %([verse]\n____\ncontent\n____),
+          %(----\ncontent\n----),
+          '---',
+          'NOTE: content',
+        ].each do |input|
+          pdf = to_pdf input, pdf_theme: { extends: 'base', base_border_color: '0000EE' }, analyze: :line
+          (expect pdf.lines.map {|it| it[:color] }.uniq).to eql %w(0000EE)
+        end
+      end
+
       it 'should convert background position to options' do
         converter = Asciidoctor::Converter.create 'pdf'
         {

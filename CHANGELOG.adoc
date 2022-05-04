@@ -15,6 +15,8 @@ Enhancements::
 * allow theme to configure which end the caption is placed for a block image (#2115)
 * add `Page#imported` method to mark page as imported (which suppresses running contennt)
 * add support for `smallcaps` text transform by replacing lowercase letters with small capital variants (#1192)
+* use `base-border-color` as default border color; control appearance of border using `border-width` value alone (#2134)
+* remove border colors in base theme so all border colors can be controlled using `base-border-color` when extending theme
 
 Bug Fixes::
 
