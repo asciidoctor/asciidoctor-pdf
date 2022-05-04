@@ -1,19 +1,15 @@
-# NOTE file is read "as is"; variables are not parsed; key layout must be flat
+# NOTE: file is read "as is"; variables are not parsed; key layout must be flat
 page_background_color: 'FFFFFF'
 page_layout: portrait
 page_initial_zoom: FitH
-# 36 is equivalent to 0.5in
-page_margin: 36
+page_margin: 36 # 36 is 0.5in
 page_margin_inner: 48
 page_margin_outer: 24
 page_size: A4
 base_text_align: left
-#base_font_color: '333333'
 base_font_color: '000000'
-#base_font_family: Times-Roman
 base_font_family: Helvetica
 base_font_size: 12
-# QUESTION should we rename to min_font_size?
 base_font_size_min: 6
 base_font_style: normal
 base_line_height: 1.15
