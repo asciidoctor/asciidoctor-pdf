@@ -32,6 +32,11 @@ If an attribute matches a key in the theme file, the attribute takes precedence.
 |No
 |`:icons: font`
 
+|`index-pagenum-sequence-style`
+|`term` {vbar} `page` {vbar} `range` (default: `term`)
+|No
+|`:index-pagenum-sequence-style: page`
+
 |`media`
 |`screen` {vbar} `print` {vbar} `prepress`
 |Yes

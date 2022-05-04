@@ -2402,8 +2402,9 @@ module Asciidoctor
         end
       end
 
-      def convert_index_section _node
+      def convert_index_section node
         space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
+        pagenum_sequence_style = node.document.attr 'index-pagenum-sequence-style'
         column_box [0, cursor], columns: @theme.index_columns, width: bounds.width, reflow_margins: true do
           def @bounding_box.move_past_bottom *args # rubocop:disable Lint/NestedMethodDefinition
             super(*args)
@@ -2417,7 +2418,7 @@ module Asciidoctor
               inline_format: false,
               margin_bottom: @theme.description_list_term_spacing,
               style: @theme.description_list_term_font_style&.to_sym
-            category.terms.each {|term| convert_index_list_item term }
+            category.terms.each {|term| convert_index_list_item term, pagenum_sequence_style }
             # NOTE: see previous note for why we can't use margin_bottom method
             if @theme.prose_margin_bottom > y - reference_bounds.absolute_bottom
               bounds.move_past_bottom
@@ -2429,13 +2430,24 @@ module Asciidoctor
         nil
       end
 
-      def convert_index_list_item term
+      def convert_index_list_item term, pagenum_sequence_style = nil
         text = escape_xml term.name
         unless term.container?
           if @media == 'screen'
-            pagenums = term.dests.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
+            case pagenum_sequence_style
+            when 'page'
+              pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
+            when 'range'
+              first_anchor_per_page = term.dests.each_with_object({}) {|dest, accum| accum[dest[:page]] ||= dest[:anchor] }
+              pagenums = (consolidate_ranges first_anchor_per_page.keys).map do |range|
+                anchor = first_anchor_per_page[(range.include? '-') ? (range.partition '-')[0] : range]
+                %(<a anchor="#{anchor}">#{range}</a>)
+              end
+            else # term
+              pagenums = term.dests.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
+            end
           else
-            pagenums = consolidate_ranges term.dests.uniq {|dest| dest[:page] }.map {|dest| dest[:page] } # rubocop:disable Lint/AmbiguousBlockAssociation
+            pagenums = consolidate_ranges term.dests.map {|dest| dest[:page] }.uniq
           end
           text = %(#{text}, #{pagenums.join ', '})
         end
@@ -2443,7 +2455,7 @@ module Asciidoctor
         ink_prose text, align: :left, margin: 0, hanging_indent: subterm_indent * 2
         indent subterm_indent do
           term.subterms.each do |subterm|
-            convert_index_list_item subterm
+            convert_index_list_item subterm, pagenum_sequence_style
           end
         end unless term.leaf?
       end

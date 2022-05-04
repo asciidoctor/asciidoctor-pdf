@@ -456,6 +456,36 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect monkey_term.dests.map {|it| it[:page] }).to eql %w(x xi c 1)
   end
 
+  it 'should not combine deduplicate page numbers if same index entry occurs on the same page when media is screen' do
+    input = <<~'EOS'
+    = Document Title
+
+    == First Chapter
+
+    ((coming soon))
+
+    == Second Chapter
+
+    ((coming soon))
+
+    ((coming soon)), no really
+
+    == Third Chapter
+
+    ((coming soon)) means ((coming soon))
+
+    [index]
+    == Index
+    EOS
+
+    pdf = to_pdf input, doctype: :book, analyze: true
+    (expect (pdf.lines pdf.find_text page_number: 5).join ?\n).to include 'coming soon, 1, 2, 2, 3, 3'
+    pdf = to_pdf input, doctype: :book
+    annots = get_annotations pdf, 5
+    (expect annots).to have_size 5
+    (expect annots.uniq {|it| it[:Dest] }).to have_size 5
+  end
+
   it 'should not combine range if same index entry occurs on sequential pages when media is screen' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
@@ -477,6 +507,80 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
 
     (expect (pdf.lines pdf.find_text page_number: 5).join ?\n).to include 'coming soon, 1, 2, 3'
+  end
+
+  it 'should remove duplicate sequential pages and link to first occurrence when index-pagenum-sequence-style is page' do
+    input = <<~'EOS'
+    = Document Title
+    :doctype: book
+    :index-pagenum-sequence-style: page
+
+    == First Chapter
+
+    ((coming soon)) ((almost here))
+
+    ((coming soon)), really
+
+    == Second Chapter
+
+    ((coming soon)) ((in draft))
+
+    I promise, ((coming soon))
+
+    == Third Chapter
+
+    ((coming soon)) ((almost here))
+
+    [index]
+    == Index
+    EOS
+
+    pdf = to_pdf input, analyze: true
+    index_lines = pdf.lines pdf.find_text page_number: 5
+    (expect index_lines).to include 'coming soon, 1, 2, 3'
+    (expect index_lines).to include 'in draft, 2'
+    (expect index_lines).to include 'almost here, 1, 3'
+    pdf = to_pdf input
+    annots = get_annotations pdf, 5
+    (expect annots).to have_size 6
+    [[2, 2], [3, 3], [4, 4]].each do |idx, expected_pagenum|
+      dest = get_dest pdf, annots[idx][:Dest]
+      (expect dest[:page_number]).to eql expected_pagenum
+    end
+  end
+
+  it 'should combine range if same index entry occurs on sequential pages when index-pagenum-sequence-style is range' do
+    input = <<~'EOS'
+    = Document Title
+    :doctype: book
+    :index-pagenum-sequence-style: range
+
+    == First Chapter
+
+    ((coming soon)) ((almost here))
+
+    == Second Chapter
+
+    ((coming soon)) ((in draft))
+
+    == Third Chapter
+
+    ((coming soon)) ((almost here))
+
+    [index]
+    == Index
+    EOS
+
+    pdf = to_pdf input, analyze: true
+    index_lines = pdf.lines pdf.find_text page_number: 5
+    (expect index_lines).to include 'coming soon, 1-3'
+    (expect index_lines).to include 'in draft, 2'
+    (expect index_lines).to include 'almost here, 1, 3'
+    pdf = to_pdf input
+    annots = get_annotations pdf, 5
+    (expect annots).to have_size 4
+    coming_soon_dest = get_dest pdf, annots[2][:Dest]
+    (expect coming_soon_dest[:page_number]).to eql 2
   end
 
   it 'should combine range if same index entry occurs on sequential pages when media is not screen' do

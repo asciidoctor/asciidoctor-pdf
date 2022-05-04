@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/main[co
 
 Enhancements::
 
+* introduce `index-pagenum-sequence-style` document attribute to control style of sequential page numbers in index when media=screen (#1656)
 * allow entry for document in outline to be controlled using `outline-title` attribute (#1789)
 * allow extended converter to insert or filter toc entries by overriding `get_entries_for_toc` method (#2097)
 * add `asciidoctor/pdf/nopngmagick` script to unregister Gmagick handler for PNG images only (#1687)
