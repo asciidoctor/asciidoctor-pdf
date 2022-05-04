@@ -67,9 +67,11 @@ Allow location of anchor for block to be positioned relative to content using th
 First line of abstract::
 Allow theme to control font color of first line of abstract using `abstract-first-line-font-color` key.
 Caption text-align::
-The text alignment of a caption can now be controlled independent of the block alignment.
+The text alignment of captions can now be controlled independent of the block alignment using the `caption-text-align` theme key.
+See xref:theme:caption.adoc[] for more information.
 Global caption text decoration::
-Allow theme to specify text decoration style, color, and width for captions.
+The text decoration style, color, and width can be applied to captions globally with the `caption-text-decoration-style`, `caption-text-decoration-color`, and `caption-text-decoration-width` theme keys.
+See xref:theme:caption.adoc[] for more information.
 Caption max-width::
 Allow caption `max-width` to be set to percentage of content by passing argument to `fit-content` function.
 

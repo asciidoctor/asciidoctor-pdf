@@ -1,5 +1,5 @@
 = Table Styles
-:description: The theming language provides numerous keys for styling the borders, grids, and backgrounds of tables.
+:description: The theming language provides numerous keys for styling the borders, captions, grids, and backgrounds of tables.
 
 [#width-and-radius]
 == Border width and radius
@@ -157,4 +157,46 @@ Table stripes are not enabled by default (e.g., `stripes=none`).
 
 See xref:table.adoc#body[the table-body category] for a list of all theme keys that can be applied to the table body.
 
+[#caption-align]
+== Caption alignment
 
+In addition to the `center`, `left`, and `right` block alignment keywords, the `caption-align` key accepts the value `inherit`.
+
+[,yaml]
+----
+table:
+  caption:
+    align: inherit
+----
+
+The value `inherit` resolves to the block alignment (`table-align`) assigned to the `table` category.
+
+[#caption-text-align]
+== Caption text alignment
+
+The `caption-text-align` key accepts the keyword `inherit` in addition to the xref:text.adoc#text-align[usual text alignment values] when it is set on the `table` category.
+
+[,yaml]
+----
+table:
+  caption:
+    text-align: inherit
+----
+
+The value `inherit` resolves to the block alignment (`table-align`) assigned to the `table` category.
+
+[#end]
+== Caption end
+
+The `caption-end` key specifies whether the table caption is located on top or below the table.
+The key accepts the following keywords:
+
+bottom:: The caption block is placed below the bottom of the table.
+top:: The caption block is place above the top of the table.
+
+[,yaml]
+----
+table:
+  caption:
+    end: bottom
+----
