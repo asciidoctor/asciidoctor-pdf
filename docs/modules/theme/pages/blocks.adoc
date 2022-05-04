@@ -19,6 +19,20 @@ right:: The block is aligned to the right side of the parent container.
 The `align` key is distinct from the similarly-named `text-align` key.
 The xref:text.adoc#text-align[text-align key] aligns text within the text box using text alignment rules.
 
+[#caption-align]
+=== Caption alignment
+
+In addition to the alignment keywords listed in the <<align>> section, the `caption-align` key accepts the keyword `inherit` when it is set on the `image` or `table` category.
+
+[,yaml]
+----
+image:
+  caption:
+    align: inherit
+----
+
+The value `inherit` resolves to the alignment of the block image or table.
+
 [#border-width]
 == Border width
 
@@ -107,5 +121,3 @@ Array of styles:: *Only applies to the `table` category*.
 An array that specifies xref:tables.adoc#border-style[a style per edge on tables].
 
 The value assigned to a `border-style` key is ignored on a block category if `border-width` isn't implicitly or explicitly set or `border-width` is set to `0` on the category.
-
-

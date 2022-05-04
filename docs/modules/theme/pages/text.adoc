@@ -16,6 +16,20 @@ The text can be aligned using the following keywords:
 The `text-align` key is distinct from the similarly-named `align` key.
 The xref:blocks.adoc#align[align key] aligns a block element horizontally within its container.
 
+[#caption-text-align]
+=== Caption text alignment
+
+In addition to the alignment keywords listed in the <<text-align>> section, the `caption-text-align` key accepts the keyword `inherit` when it is set on the `image` or `table` category.
+
+[,yaml]
+----
+image:
+  caption:
+    text-align: inherit
+----
+
+The value `inherit` resolves to the alignment of the block image or table.
+
 [#decoration]
 == Decoration
 

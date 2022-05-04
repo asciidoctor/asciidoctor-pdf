@@ -8,7 +8,7 @@
 
 = Asciidoctor PDF {page-component-version}
 
-_**Release date:** 2022.05.03 | *Issue label:* {url-milestone-2-0-0}[{page-component-display-version}^]_
+_**Release date:** 2022.05.04 | *Issue label:* {url-milestone-2-0-0}[{page-component-display-version}^]_
 
 [#roles]
 == Paragraph roles and text indent
@@ -63,15 +63,16 @@ Styles include dashed, dotted, double, and solid.
 Line height::
 Wherever font properties are accepted in the theme, you can now control the line height of blocks using the `line-height` key.
 Anchor positioning::
-Allow location of anchor for block to be positioned relative to content using the `block-anchor-top` key.
-First line of abstract::
-Allow theme to control font color of first line of abstract using `abstract-first-line-font-color` key.
-Caption text-align::
-The text alignment of a caption can now be controlled independent of the block alignment.
+The anchor location for blocks can be positioned relative to the content using the `block-anchor-top` theme key.
+Caption background color:: You can now specify a background color for captions globally using the `caption-background-color` theme key or per block category (`<category>-caption-background-color`).
+See xref:theme:caption.adoc[] for more information.
+Caption text alignment::
+The text alignment of captions can now be controlled independent of the block alignment using the global xref:theme:caption.adoc[caption-text-align theme key] or per block category with `<category>-caption-text-align`.
+The xref:theme:text.adoc#caption-text-align[image-caption-text-align] and xref:theme:tables.adoc#caption-text-align[table-caption-text-align] theme keys accept the value `inherit` in addition to the standard text alignment values.
+The value `inherit` resolves to the alignment of the block image or table.
 Global caption text decoration::
-Allow theme to specify text decoration style, color, and width for captions.
-Caption max-width::
-Allow caption `max-width` to be set to percentage of content by passing argument to `fit-content` function.
+The text decoration style, color, and width can be applied to captions globally with the `caption-text-decoration-style`, `caption-text-decoration-color`, and `caption-text-decoration-width` theme keys.
+See xref:theme:caption.adoc[] for more information.
 
 .*Notable fixes for blocks*
 * Syntax highlighting isn't applied to a source block if the `specialchars` substitution is disabled.
@@ -82,7 +83,7 @@ Allow caption `max-width` to be set to percentage of content by passing argument
 
 Border widths and styles::
 The table border width can be customized per edge with the xref:theme:blocks.adoc#border-width[border-width key].
-The border line style can be xref:theme:tables.adoc#border-style[specified per edge by assigning an array of styles] to the `border-style` key.
+The line style for table borders can be xref:theme:tables.adoc#border-style[specified per edge by assigning an array of styles] to the `border-style` key.
 Styles include dashed, dotted, and solid.
 
 Grid widths and styles::
@@ -90,6 +91,11 @@ The width of table grid lines can be specified for rows and columns with the xre
 The style of the grid lines can be specified for rows and columns with the xref:theme:tables.adoc#grid-style[grid-style key].
 Styles include dashed, dotted, and solid.
 //allow horizontal and vertical lines of table grid to be styled independently (#1875) (*@hextremist*)
+
+Maximum caption width::
+The maximum caption width for tables can be set to a percentage of the content by passing an argument to the `fit-content` function.
+
+Caption end:: The `table-caption-side` theme key has been xref:theme:tables.adoc#end[renamed to table-caption-end].
 
 .*Notable fixes for tables*
 * An error message is logged if table cell is truncated.
@@ -110,6 +116,16 @@ The `callout-list` category includes the `margin-top-after-code` key that can co
 * A sequence of two or more callouts separated by spaces in a verbatim block are processed correctly.
 * The font family assigned to `conums` in the theme is applied to the callout numbers displayed in verbatim blocks.
 
+== Images
+
+Caption end:: You can now configure whether the caption for a block image is placed above or below the image using the `caption-end` theme key.
+See xref:theme:block-image.adoc#caption[Block Image Category Keys] for the list of available `image-caption` theme keys and their value types.
+
+== Special sections
+
+First line of abstract::
+The theme can now control the font color of the first line of the abstract using the `abstract-first-line-font-color` key.
+
 == Running content and page numbering
 
 xref:theme:add-running-content.adoc#start-at[Select the page where running content starts]:: Specify the page on which the running content starts being displayed by assigning an integer to the `start-at` theme key on the `running-content` category.
@@ -122,8 +138,7 @@ Alternatively, the theme can specify an offset from the first body page where th
 
 == Fonts
 
-normal_italic:: The new `normal_italic` value for the `font-style` key resets the font style to normal, then applies the italic variant of a font family.
-See xref:theme:text.adoc#font-style[Font style].
+normal_italic:: The xref:theme:text.adoc#font-style[new normal_italic value] for the `font-style` key resets the font style to normal, then applies the italic variant of a font family.
 
 == Deprecated
 

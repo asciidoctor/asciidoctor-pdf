@@ -12,6 +12,13 @@ The keys in the `table` category control the arrangement and style of tables and
 |===
 |Key |Value Type |Example
 
+|align
+|xref:blocks.adoc#align[Block alignment] +
+(default: `left`)
+|[source]
+table:
+  align: right
+
 |background-color
 |xref:color.adoc[Color] +
 (default: `transparent`)
@@ -39,36 +46,6 @@ table:
 |[source]
 table:
   border-width: 0.5
-
-|caption-align
-|xref:blocks.adoc#align[Block alignment] {vbar} inherit +
-(default: `$caption-align`)
-|[source]
-table:
-  caption-align: inherit
-
-|caption-text-align
-|xref:text.adoc#text-align[Text alignment] {vbar} inherit +
-(default: `$table-caption-align`)
-|[source]
-table:
-  caption:
-    text-align: left
-
-|caption-end
-|`top` {vbar} `bottom` +
-(default: `top`)
-|[source]
-table:
-  caption:
-    end: bottom
-
-|caption-max-width
-|`fit-content` {vbar} `fit-content`(percentage) {vbar} `none` {vbar} xref:measurement-units.adoc[Measurement] +
-(default: `fit-content`)
-|[source]
-table:
-  caption-max-width: none
 
 |font-color
 |xref:color.adoc[Color] +
@@ -411,4 +388,47 @@ table:
 table:
   header-cell:
     text-transform: uppercase
+|===
+
+[#caption]
+== table-caption
+
+The keys in the `table-caption` category control the style and arrangement of the table captions.
+The keys listed on xref:caption.adoc[] can also be nested under the `table-caption` category to further customize the table captions.
+
+[cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|caption-align
+|xref:blocks.adoc#align[Block alignment] {vbar} xref:tables.adoc#caption-align[inherit] +
+(default: `$caption-align`)
+|[source]
+table:
+  caption:
+    align: center
+
+|caption-end
+|xref:tables.adoc#end[bottom] {vbar} xref:tables.adoc#end[top] +
+(default: `top`)
+|[source]
+table:
+  caption:
+    end: bottom
+
+|caption-max-width
+|`fit-content` {vbar} `fit-content`(percentage) {vbar} `none` {vbar} xref:measurement-units.adoc[Measurement] +
+(default: `fit-content`)
+|[source]
+table:
+  caption:
+    max-width: none
+
+|caption-text-align
+|xref:text.adoc#text-align[Text alignment] {vbar} xref:tables.adoc#caption-text-align[inherit] +
+(default: `$table-caption-align`)
+|[source]
+table:
+  caption:
+    text-align: left
 |===

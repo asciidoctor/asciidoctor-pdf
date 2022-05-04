@@ -1,4 +1,5 @@
 = Block Image Category Keys
+:description: Reference list of the available block image category keys and their value types.
 :navtitle: Block Image
 :source-language: yaml
 
@@ -23,7 +24,7 @@ image:
 (default: _not set_)
 |[source]
 image:
-  border-color: #cccccc
+  border-color: #CCCCCC
 
 |<<fit,border-fit>>
 |`content` {vbar} `auto` +
@@ -102,7 +103,7 @@ image:
 |[source]
 image:
   alt:
-    font-color: #ff0000
+    font-color: #FF0000
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -147,18 +148,27 @@ These placeholders insert the alt text, image target, and link open and close ta
 == image-caption
 
 The keys in the `image-caption` category control the arrangement and style of the captions for block images.
+Most of the keys listed on xref:caption.adoc[] can also be nested under the `image-caption` category to further customize the image captions.
 
 [cols="3,6,6a"]
 |===
 |Key |Value Type |Example
 
 |caption-align
-|xref:block.adoc#align[Block alignment] {vbar} inherit +
+|xref:blocks.adoc#align[Block alignment] {vbar} xref:blocks.adoc#caption-align[inherit] +
 (default: `$caption-align`)
 |[source]
 image:
   caption:
     align: inherit
+
+|caption-end
+|xref:images.adoc#end[bottom] {vbar} xref:images.adoc#end[top] +
+(default: `bottom`)
+|[source]
+image:
+  caption:
+    end: top
 
 |<<max-width,caption-max-width>>
 |`fit-content` {vbar} `fit-content`(percentage) {vbar} `none` {vbar} xref:measurement-units.adoc[Measurement] +
@@ -168,21 +178,13 @@ image:
   caption:
     max-width: fit-content
 
-|caption-end
-|`top` {vbar} `bottom` +
-(default: `bottom`)
-|[source]
-image:
-  caption:
-    end: top
-
 |caption-text-align
-|xref:text.adoc#text-align[Text alignment] {vbar} inherit +
+|xref:text.adoc#text-align[Text alignment] {vbar} xref:images.adoc#caption-text-align[inherit] +
 (default: `$image-caption-align`)
 |[source]
 image:
   caption:
-    text-align: left
+    text-align: center
 |===
 
 [#max-width]
