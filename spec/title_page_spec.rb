@@ -449,7 +449,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       end
 
       (expect images_by_page[1][0].data).not_to eql images_by_page[2][0].data
-      (expect images_by_page[2..-1].map {|it| it[0].data }.uniq).to have_size 1
+      (expect images_by_page[2..-1].uniq {|it| it[0].data }).to have_size 1
     end
 
     it 'should not create extra blank page when document has cover page and raster page background image' do
@@ -1046,7 +1046,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         (expect images).to have_size expected_num_images
       end
 
-      (expect images_by_page[2..-1].map {|it| it[0].data }.uniq).to have_size 1
+      (expect images_by_page[2..-1].uniq {|it| it[0].data }).to have_size 1
     end
 
     it 'should use title page background specified in theme resolved relative to theme dir' do

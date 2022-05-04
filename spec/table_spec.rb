@@ -2527,7 +2527,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       caption_texts = pdf.find_text 'A rather long description for this table'
       (expect caption_texts).to have_size 3
-      (expect caption_texts.map {|it| it[:x] }.uniq).to have_size 1
+      (expect caption_texts.uniq {|it| it[:x] }).to have_size 1
     end
 
     it 'should set caption to percentage of table width as specified by argument to fit-content function' do
@@ -2574,7 +2574,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       caption_texts = pdf.find_text font_name: 'NotoSerif-Italic'
       (expect caption_texts).to have_size 3
-      (expect caption_texts.map {|it| it[:x] }.uniq).to have_size 1
+      (expect caption_texts.uniq {|it| it[:x] }).to have_size 1
     end
 
     it 'should allow theme to constrain caption to fixed width' do
