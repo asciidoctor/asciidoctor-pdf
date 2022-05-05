@@ -4,6 +4,9 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
   include Asciidoctor::Logging
 
   def initialize formatted_text, options = {}
+    if (color = options[:color]) && !formatted_text.empty?
+      formatted_text = formatted_text.map {|fragment| fragment[:color] ? fragment : (fragment.merge color: color) }
+    end
     super
     formatted_text[0][:normalize_line_height] = true if options[:normalize_line_height] && !formatted_text.empty?
     options[:extensions]&.each {|extension| extend extension }

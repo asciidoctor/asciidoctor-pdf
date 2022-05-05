@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/main[co
 Bug Fixes::
 
 * allow theme to set font style of first line of abstract to `normal_italic` (#2138)
+* add support for `:color` option to `Prawn::Text::Formatted::Box` directly and remove workarounds
 
 == 2.0.0.beta.1 (2022-05-04) - @mojavelinux
 

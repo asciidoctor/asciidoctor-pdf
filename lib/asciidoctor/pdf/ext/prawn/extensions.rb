@@ -410,20 +410,11 @@ module Asciidoctor
       def parse_text string, options = {}
         return [] if string.nil?
 
-        options = options.dup
-        if (format_option = options.delete :inline_format)
+        if (format_option = options[:inline_format])
           format_option = [] unless ::Array === format_option
-          fragments = text_formatter.format string, *format_option
+          text_formatter.format string, *format_option
         else
-          fragments = [text: string]
-        end
-
-        if (color = options.delete :color)
-          fragments.map do |fragment|
-            fragment[:color] ? fragment : (fragment.merge color: color)
-          end
-        else
-          fragments
+          [text: string]
         end
       end
 
@@ -453,7 +444,9 @@ module Asciidoctor
       # renderered. It's necessary to use low-level APIs in this method so we only style the first line and not the
       # remaining lines (which is the default behavior in Prawn).
       def text_with_formatted_first_line string, first_line_options, options
-        color = options.delete :color
+        if (first_line_font_color = first_line_options.delete :color)
+          other_lines_font_color, options[:color] = options[:color], first_line_font_color
+        end
         fragments = parse_text string, options
         # NOTE: the low-level APIs we're using don't recognize the :styles option, so we must resolve
         # NOTE: disabled until we have a need for it
@@ -463,12 +456,10 @@ module Asciidoctor
         if (first_line_styles = first_line_options.delete :styles)
           first_line_options[:style] = resolve_font_style first_line_styles
         end
-        first_line_color = (first_line_options.delete :color) || color
         options = options.merge document: self
         # QUESTION: should we merge more carefully here? (hand-select keys?)
         first_line_options = (options.merge first_line_options).merge single_line: true, first_line: true
         box = ::Prawn::Text::Formatted::Box.new fragments, first_line_options
-        # NOTE: get remaining_fragments before we add color to fragments on first line
         if (text_indent = options.delete :indent_paragraphs)
           remaining_fragments = indent text_indent do
             box.render dry_run: true
@@ -476,8 +467,6 @@ module Asciidoctor
         else
           remaining_fragments = box.render dry_run: true
         end
-        # NOTE: color must be applied per-fragment
-        fragments.each {|fragment| fragment[:color] ||= first_line_color }
         if text_indent
           indent text_indent do
             fill_formatted_text_box fragments, first_line_options
@@ -486,8 +475,7 @@ module Asciidoctor
           fill_formatted_text_box fragments, first_line_options
         end
         unless remaining_fragments.empty?
-          # NOTE: color must be applied per-fragment
-          remaining_fragments.each {|fragment| fragment[:color] ||= color }
+          options[:color] = other_lines_font_color if first_line_font_color
           remaining_fragments = fill_formatted_text_box remaining_fragments, options
           draw_remaining_formatted_text_on_new_pages remaining_fragments, options
         end
