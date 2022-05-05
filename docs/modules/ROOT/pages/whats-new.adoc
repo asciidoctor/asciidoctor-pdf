@@ -47,6 +47,14 @@ However, you can turn on orphan prevention for tables and sections by adding the
 The `unbreakable` option can be applied to all delimited blocks (including admonitions and tables), but not sections.
 When the xref:breakable-and-unbreakable.adoc#unbreakable[unbreakable option] is applied to a block, the converter will advance the block and its caption and anchor to the next page if it detects that the block would break across pages and it can fit on a single page.
 
+== Notitle option
+
+The `untitled` option has been renamed to `notitle`.
+With the name change, it's also gained new capabilities.
+The `notitle` option hides a section title in the body of a document, but displays the title in the TOC and allows the anchor resulting from that title to still be referencable.
+It can also be used to add an entry to the TOC for a preamble, anonymous preface, and imported PDF pages.
+See xref:notitle.adoc[] for examples and more details.
+
 == Blocks and block captions
 
 Blocks and block captions gained a lot of new features in Asciidoctor PDF 2.0.
@@ -125,11 +133,6 @@ The `callout-list` category includes the `margin-top-after-code` key that can co
 Caption end:: You can now configure whether the caption for a block image is placed above or below the image using the `caption-end` theme key.
 See xref:theme:block-image.adoc#caption[Block Image Category Keys] for the list of available `image-caption` theme keys and their value types.
 
-== Special sections
-
-First line of abstract::
-The theme can now control the font color of the first line of the abstract using the `abstract-first-line-font-color` key.
-
 == Running content and page numbering
 
 xref:theme:add-running-content.adoc#start-at[Select the page where running content starts]:: Specify the page on which the running content starts being displayed by assigning an integer to the `start-at` theme key on the `running-content` category.
@@ -163,6 +166,7 @@ See xref:theme:list.adoc[].
 The following dependencies and deprecated features have been removed with the release of Asciidoctor PDF 2.0.0.
 
 * Support for Ruby < 2.7 and JRuby < 9.2 has been removed.
+* The `untitled` option has been removed; use the `notitle` option instead.
 * Support for the deprecated `pdf-style` and `pdf-stylesdir` attributes has been removed.
 * The deprecated Pdf module alias in the API has been removed in favor of PDF.
 * The deprecated "`ascii`" fonts have been removed; only the more complete "subset" fonts are now bundled with the gem.
