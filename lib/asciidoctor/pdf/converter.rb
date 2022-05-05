@@ -778,7 +778,14 @@ module Asciidoctor
               end
               # FIXME: allow theme to control more first line options
               if (line1_font_style = @theme.abstract_first_line_font_style&.to_sym) && line1_font_style != font_style
-                first_line_options = { styles: line1_font_style == :normal ? [] : [font_style, line1_font_style] }
+                case line1_font_style
+                when :normal
+                  first_line_options = { styles: [] }
+                when :normal_italic
+                  first_line_options = { styles: [:italic] }
+                else
+                  first_line_options = { styles: [font_style, line1_font_style] }
+                end
               end
               if (line1_font_color = @theme.abstract_first_line_font_color)
                 (first_line_options ||= {})[:color] = line1_font_color

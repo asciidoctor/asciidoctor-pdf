@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/main[commit history] on GitHub.
 
+== Unreleased
+
+Bug Fixes::
+
+* allow theme to set font style of first line of abstract to `normal_italic` (#2138)
+
 == 2.0.0.beta.1 (2022-05-04) - @mojavelinux
 
 Enhancements::
