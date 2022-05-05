@@ -9,7 +9,7 @@ role:
     background-color: BCD637
     border-offset: 1.5
 header:
-  font_color: 999999
+  font-color: 999999
   height: 0.5in
   recto:
     columns: "<40% =20% >40%"
