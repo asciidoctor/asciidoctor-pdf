@@ -142,6 +142,26 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect abstract_text_line2[0][:font_name]).not_to include 'BoldItalic'
   end
 
+  it 'should apply text transform to first line of abstract and shrink it to fit' do
+    pdf_theme = {
+      abstract_font_color: 'AA0000',
+      abstract_first_line_text_transform: 'uppercase',
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    = Document Title
+
+    [abstract]
+    This is the [.underline]#abstract#.
+    This abstract contains enough content that it wraps to a second line.
+
+    This is the main content.
+    EOS
+
+    first_line_text, second_line_text = pdf.lines pdf.find_text font_color: 'AA0000'
+    (expect first_line_text).to eql 'THIS IS THE ABSTRACT. THIS ABSTRACT CONTAINS ENOUGH CONTENT THAT IT WRAPS TO'
+    (expect second_line_text).to eql 'a second line.'
+  end
+
   it 'should use base font color if font color is not defined for abstract in theme' do
     pdf = to_pdf <<~'EOS', pdf_theme: { abstract_font_color: nil, base_font_color: '0000EE' }, analyze: true
     = Document Title
