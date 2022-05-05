@@ -1,0 +1,104 @@
+= Notitle Option
+:description: The notitle option hides a section title in the document body. It can also add a preamble, preface, or imported PDF entry to the TOC.
+
+The `notitle` option hides a section title in the body of a document, but displays the title in the TOC and allows the anchor resulting from that title to still be referencable.
+It can also be used to add a TOC entry for a preamble, anonymous preface, and imported PDF pages.
+
+== Hide a section title
+
+You can hide a section title in the body of a document using the `notitle` option.
+
+[,asciidoc]
+----
+[%notitle] <.>
+== Reference Text Only
+
+Content of section.
+----
+<.> Assign the `notitle` option to the section using the shorthand percent symbol (`%`) for the `option` attribute name.
+
+The section is still referenceable and its title still shows up in the TOC.
+The title is just hidden in the document (and does not take up space).
+
+[#preface]
+== Add a TOC entry for a preamble or anonymous preface
+
+If a document has a preamble or an anonymous preface (i.e., `preface-title` is not set), there's no reference to this content in the TOC.
+For documents that depend heavily on the TOC or outline for navigation, this can cause the content to be overlooked.
+To alleviate this problem, you can use the `notitle` option to add a TOC entry for a preface or preamble.
+
+When `notitle` is set on the preface section, the title of the preface isn't shown in the body of the document, but the title is shown in the TOC and references the preface section.
+
+.Set `notitle` on the preface section
+[,asciidoc]
+----
+= Document Title
+:doctype: book <.>
+:toc:
+
+[%notitle] <.>
+== Preface
+
+This is the preface.
+
+== Chapter A
+
+== Chapter B
+----
+<.> The doctype must be `book`.
+<.> Assign the `notitle` option to the preface section.
+
+In the above example, the preface section title, "`Preface`", will be displayed in the TOC, but not in the body of the document.
+Alternatively, you can assign `notitle` to the first content block of the preamble, and assign a title to the `preface-title` document attribute.
+
+.Set `notitle` on first content block of preamble
+[,asciidoc]
+----
+= Document Title
+:doctype: book <.>
+:preface-title: Preface <.>
+:toc:
+
+[%notitle] <.>
+This is the first block of the preamble.
+
+== Chapter A
+
+== Chapter B
+----
+<.> The doctype must be `book`.
+<.> Set the `preface-title` document attribute and assign it the title you want displayed in the TOC.
+<.> Assign the `notitle` option to the first content block of the preamble.
+
+In the above example, the value assigned to `preface-title`, "`Preface`", will be displayed in the TOC and will reference the start of the preamble.
+
+[#imported]
+== Add a TOC entry for an imported PDF
+
+You can insert an entry for an imported PDF page anywhere in the TOC hierarchy by entering a section title prior to the import location and assigning the `notitle` option to the section.
+
+[,asciidoc]
+----
+[%notitle]
+== Reference Card
+
+image::reference-card.pdf[]
+----
+
+The section title, "`Reference Card`", in the above example won't be shown in the body of the document, but it will be displayed in the TOC and reference the first page of the imported PDF.
+If the doctype isn't `book` and the hidden section title isn't a part (`=`) or chapter (`==`), you may want to add a manual page break above it to ensure the anchor points to the imported page.
+
+[,asciidoc]
+----
+<<< <.>
+
+[%notitle]
+=== Reference Card
+
+image::reference-card.pdf[]
+----
+<.> Insert a page break (`<<<`) to make sure the anchor for the hidden section is kept together with the imported PDF page if the doctype isn't `book` or the section isn't a part or chapter.
+
+
+
+

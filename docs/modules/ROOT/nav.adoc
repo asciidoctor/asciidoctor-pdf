@@ -16,6 +16,7 @@
 * xref:stem.adoc[]
 * xref:passthrough-content.adoc[]
 * xref:autowidth-tables.adoc[]
+* xref:notitle.adoc[]
 * xref:title-page.adoc[]
 * xref:toc.adoc[]
 * xref:index-catalog.adoc[]
