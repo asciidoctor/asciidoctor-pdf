@@ -449,13 +449,14 @@ module Asciidoctor
         end
         fragments = parse_text string, options
         # NOTE: the low-level APIs we're using don't recognize the :styles option, so we must resolve
-        # NOTE: disabled until we have a need for it
+        # NOTE: disabled until we have a need for it; currently handled in convert_abstract
         #if (styles = options.delete :styles)
         #  options[:style] = resolve_font_style styles
         #end
         if (first_line_styles = first_line_options.delete :styles)
           first_line_options[:style] = resolve_font_style first_line_styles
         end
+        first_line_text_transform = first_line_options.delete :text_transform
         options = options.merge document: self
         # QUESTION: should we merge more carefully here? (hand-select keys?)
         first_line_options = (options.merge first_line_options).merge single_line: true, first_line: true
@@ -466,6 +467,24 @@ module Asciidoctor
           end
         else
           remaining_fragments = box.render dry_run: true
+        end
+        if first_line_text_transform
+          # NOTE: applying text transform here could alter the wrapping, so we need to isolate first line and shrink to fit
+          first_line_options[:overflow] = :shrink_to_fit
+          first_line_text = (box.instance_variable_get :@printed_lines)[0]
+          unless first_line_text == fragments[0][:text]
+            original_fragments, fragments = fragments, []
+            original_fragments.reduce '' do |traced, fragment|
+              fragments << fragment
+              # NOTE: we could just do a length comparison here
+              if (traced += fragment[:text]).start_with? first_line_text
+                fragment[:text] = fragment[:text][0...-(traced.length - first_line_text.length)]
+                break
+              end
+              traced
+            end
+          end
+          fragments.each {|fragment| fragment[:text] = transform_text fragment[:text], first_line_text_transform }
         end
         if text_indent
           indent text_indent do

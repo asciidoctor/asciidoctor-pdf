@@ -790,6 +790,9 @@ module Asciidoctor
               if (line1_font_color = @theme.abstract_first_line_font_color)
                 (first_line_options ||= {})[:color] = line1_font_color
               end
+              if (line1_text_transform = @theme.abstract_first_line_text_transform)
+                (first_line_options ||= {})[:text_transform] = line1_text_transform
+              end
               prose_opts[:first_line_options] = first_line_options if first_line_options
               # FIXME: make this cleaner!!
               if node.blocks?

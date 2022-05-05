@@ -99,6 +99,13 @@ abstract:
 abstract:
   first-line:
     font-style: bold
+
+|text-transform
+|xref:text.adoc#transform[Text transform] +
+(default: _inherit_)
+|[source]
+abstract:
+  text-transform: smallcaps
 |===
 
 [#title]

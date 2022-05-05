@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/main[co
 
 == Unreleased
 
+Enhancements::
+
+* add support for `text-transform` property on first line of abstract in theme (#2141)
+
 Bug Fixes::
 
 * allow theme to set font style of first line of abstract to `normal_italic` (#2138)
