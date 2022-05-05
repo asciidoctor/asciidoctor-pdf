@@ -143,7 +143,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should use base font color if font color is not defined for abstract in theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_font_color: nil }, analyze: true
+    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_font_color: nil, base_font_color: '0000EE' }, analyze: true
     = Document Title
 
     [abstract]
