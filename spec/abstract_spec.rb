@@ -142,24 +142,35 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect abstract_text_line2[0][:font_name]).not_to include 'BoldItalic'
   end
 
-  it 'should apply text transform to first line of abstract and shrink it to fit' do
+  it 'should apply text transform to first line of abstract and shrink it to fit', visual: true do
     pdf_theme = {
       abstract_font_color: 'AA0000',
       abstract_first_line_text_transform: 'uppercase',
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    input = <<~'EOS'
     = Document Title
 
     [abstract]
     This is the [.underline]#abstract#.
     This abstract contains enough content that it wraps to a second line.
+    The text in the first line has been transformed to into uppercase for extra emphasis.
 
     This is the main content.
     EOS
 
-    first_line_text, second_line_text = pdf.lines pdf.find_text font_color: 'AA0000'
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    first_line_text, second_line_text, third_line_text = pdf.lines pdf.find_text font_color: 'AA0000'
     (expect first_line_text).to eql 'THIS IS THE ABSTRACT. THIS ABSTRACT CONTAINS ENOUGH CONTENT THAT IT WRAPS TO'
-    (expect second_line_text).to eql 'a second line.'
+    (expect second_line_text).to start_with 'a second line.'
+    (expect third_line_text).to start_with 'extra emphasis'
+    start_texts = (pdf.find_text font_color: 'AA0000').uniq {|it| it[:y] }
+    first_line_gap = start_texts[0][:y] - start_texts[1][:y]
+    second_line_gap = start_texts[1][:y] - start_texts[2][:y]
+    # NOTE: the transform throws off the gap slightly; something to investigate
+    (expect first_line_gap).to (be_within 1).of second_line_gap
+
+    to_file = to_pdf_file input, 'abstract-first-line-text-transform.pdf', pdf_theme: pdf_theme
+    (expect to_file).to visually_match 'abstract-first-line-text-transform.pdf'
   end
 
   it 'should use base font color if font color is not defined for abstract in theme' do

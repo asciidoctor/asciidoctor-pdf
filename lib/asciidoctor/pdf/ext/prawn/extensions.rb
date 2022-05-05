@@ -426,7 +426,8 @@ module Asciidoctor
         @no_text_printed = box.nothing_printed?
         @all_text_printed = box.everything_printed?
 
-        if ((defined? @final_gap) && @final_gap) || (options[:first_line] && !(@no_text_printed || @all_text_printed))
+        if ((defined? @final_gap) && @final_gap) ||
+            (options[:first_line] && (options[:final_gap] || !(@no_text_printed || @all_text_printed)))
           self.y -= box.height + box.line_gap + box.leading
         else
           self.y -= box.height
@@ -470,7 +471,6 @@ module Asciidoctor
         end
         if first_line_text_transform
           # NOTE: applying text transform here could alter the wrapping, so we need to isolate first line and shrink to fit
-          first_line_options[:overflow] = :shrink_to_fit
           first_line_text = (box.instance_variable_get :@printed_lines)[0]
           unless first_line_text == fragments[0][:text]
             original_fragments, fragments = fragments, []
@@ -485,6 +485,8 @@ module Asciidoctor
             end
           end
           fragments.each {|fragment| fragment[:text] = transform_text fragment[:text], first_line_text_transform }
+          first_line_options[:overflow] = :shrink_to_fit
+          first_line_options[:final_gap] = first_line_options[:force_justify] = true unless remaining_fragments.empty?
         end
         if text_indent
           indent text_indent do
