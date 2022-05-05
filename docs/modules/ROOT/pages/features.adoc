@@ -11,7 +11,7 @@
 * Front and back cover pages
 * Title page
 * Document metadata (title, authors, subject, keywords, etc.)
-* PDF document outline
+* xref:pdf-outline.adoc[PDF document outline]
 * xref:toc.adoc[Table of contents with page numbers]
 * Configurable page size (e.g., A4, Letter, Legal, etc.) and layout (portrait or landscape)
 * Internal cross reference links
