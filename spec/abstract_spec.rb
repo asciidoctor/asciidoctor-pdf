@@ -241,6 +241,27 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect second_line_text[:font_name]).to eql 'NotoSerif'
   end
 
+  it 'should style first line in abstract if theme sets font style to normal_italic and abstract font style to bold' do
+    pdf_theme = { abstract_font_style: 'bold', abstract_first_line_font_style: 'normal_italic' }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    = Document Title
+
+    [abstract]
+    First line in abstract. +
+    Second line in abstract.
+
+    == Section
+
+    content
+    EOS
+
+    abstract_texts = pdf.find_text %r/line in abstract/
+    (expect abstract_texts).to have_size 2
+    first_line_text, second_line_text = abstract_texts
+    (expect first_line_text[:font_name]).to eql 'NotoSerif-Italic'
+    (expect second_line_text[:font_name]).to eql 'NotoSerif-Bold'
+  end
+
   it 'should allow theme to set text alignment of abstract' do
     pdf = to_pdf <<~'EOS', pdf_theme: { abstract_text_align: 'center' }, analyze: true
     = Document Title
