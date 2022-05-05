@@ -13,20 +13,19 @@ _**Release date:** 2022.05.04 | *Issue label:* {url-milestone-2-0-0}[{page-compo
 [#roles]
 == Paragraph roles and text indent
 
-In Asciidoctor PDF 2.0, you can define custom roles in your theme and apply them to paragraphs in your document.
+In Asciidoctor PDF 2.0, you can define custom roles in your theme and apply them to specific paragraphs in your document.
 See xref:theme:custom-role.adoc[] to learn how to create a custom role and xref:roles.adoc#custom[Use a custom role] for how to assign a custom role to a paragraph.
 
-Due to the ability to assign roles to paragraphs, the `lead` category keys have been removed.
-Now the lead paragraph styles are applied using the built-in role named `lead`.
+In light of roles now being supported on paragraphs, the `lead` category in the theme has been dropped and replaced by a built-in role named `lead`.
 See xref:theme:role.adoc#built-in[Built-in roles] for details.
 
-To control the indent of inner paragraphs, you can set the new `prose-text-indent-inner` key in your theme.
+To control the indent of inner paragraphs (instead of all paragraphs), you can set the new `prose-text-indent-inner` key in your theme.
 See xref:theme:prose.adoc[] for details.
 
 [#breakable]
 == Breakable by default
 
-In Asciidoctor PDF 2.0, the following blocks are breakable with automatic anchor and caption orphan prevention by default:
+In Asciidoctor PDF 2.0, the following blocks are breakable by default, which includes automatic anchor and caption orphan prevention:
 
 * Admonitions
 * Block images
@@ -35,18 +34,18 @@ In Asciidoctor PDF 2.0, the following blocks are breakable with automatic anchor
 * Open blocks
 * Quote blocks
 * Sidebars
-* Table of Contents
 * Verses
 
-Tables and section headings are only breakable by default.
-That means table captions may be orphaned if a table breaks across pages, and a section heading and its first content block aren't kept together automatically.
-However, orphan prevention can be applied to individual section headings and tables using the xref:breakable-and-unbreakable.adoc#breakable[breakable option].
+Tables and sections are breakable by default, but do not provide automatic anchor and caption orphan prevention.
+For tables, that means the anchor and caption can be left on the current page if the table is advanced to the next page.
+For sections, that means the section's title may be left on the current page if the first content block doesn't fit.
+However, you can turn on orphan prevention for tables and sections by adding the (seemingly redundant) xref:breakable-and-unbreakable.adoc#breakable[breakable option] as a hint.
 
 [#unbreakable]
 == Unbreakable option
 
-The `unbreakable` option can be applied to delimited blocks, admonitions, and tables.
-When the xref:breakable-and-unbreakable.adoc#unbreakable[unbreakable option] is applied to a block, the converter will advance the block and its caption and anchor to the next page if it detects that the block would break across pages.
+The `unbreakable` option can be applied to all delimited blocks (including admonitions and tables), but not sections.
+When the xref:breakable-and-unbreakable.adoc#unbreakable[unbreakable option] is applied to a block, the converter will advance the block and its caption and anchor to the next page if it detects that the block would break across pages and it can fit on a single page.
 
 == Blocks and block captions
 
@@ -54,18 +53,16 @@ Blocks and block captions gained a lot of new features in Asciidoctor PDF 2.0.
 Here are just a few of the highlights:
 
 Smart bottom margins::
-Blocks now have smarter bottom margins that prevent extra space from being added below them, particularly when blocks are nested.
+Blocks now have smarter bottom margins that prevent extra space from being added below them, particularly when blocks are nested or used inside an AsciiDoc table cell.
 Border width::
 The border width of delimited blocks, admonitions, and block images can be customized per edge with the xref:theme:blocks.adoc#border-width[border-width key].
 Border style::
 The border style of delimited blocks, admonitions, and block images can be changed with the xref:theme:blocks.adoc#border-style[border-style key].
-Styles include dashed, dotted, double, and solid.
+Border styles include dashed, dotted, double, and solid.
 Line height::
 Wherever font properties are accepted in the theme, you can now control the line height of blocks using the `line-height` key.
 Anchor positioning::
 The anchor location for blocks can be positioned relative to the content using the `block-anchor-top` theme key.
-Caption background color:: You can now specify a background color for captions globally using the `caption-background-color` theme key or per block category (`<category>-caption-background-color`).
-See xref:theme:caption.adoc[] for more information.
 Caption text alignment::
 The text alignment of captions can now be controlled independent of the block alignment using the global xref:theme:caption.adoc[caption-text-align theme key] or per block category with `<category>-caption-text-align`.
 The xref:theme:text.adoc#caption-text-align[image-caption-text-align] and xref:theme:tables.adoc#caption-text-align[table-caption-text-align] theme keys accept the value `inherit` in addition to the standard text alignment values.
@@ -73,23 +70,30 @@ The value `inherit` resolves to the alignment of the block image or table.
 Global caption text decoration::
 The text decoration style, color, and width can be applied to captions globally with the `caption-text-decoration-style`, `caption-text-decoration-color`, and `caption-text-decoration-width` theme keys.
 See xref:theme:caption.adoc[] for more information.
+Caption background color::
+You can now specify a background color for captions globally using the `caption-background-color` theme key or per block category (`<category>-caption-background-color`).
+See xref:theme:caption.adoc[] for more information.
+Caption max-width::
+A caption's `max-width` value can be set to a percentage of the content by passing the percentage as an argument to `fit-content` function.
+First line of abstract::
+The theme can control the font color of first line of abstract using `abstract-first-line-font-color` key.
 
 .*Notable fixes for blocks*
 * Syntax highlighting isn't applied to a source block if the `specialchars` substitution is disabled.
 * Borders, shading, and padding aren't applied to collapsible blocks.
-* The `callouts` substitution can be disabled on source blocks.
+* The `callouts` substitution can be removed on code blocks.
 
 == Tables
 
 Border widths and styles::
 The table border width can be customized per edge with the xref:theme:blocks.adoc#border-width[border-width key].
-The line style for table borders can be xref:theme:tables.adoc#border-style[specified per edge by assigning an array of styles] to the `border-style` key.
-Styles include dashed, dotted, and solid.
+The border style can be xref:theme:tables.adoc#border-style[specified per edge by assigning an array of styles] to the `border-style` key.
+Border styles include dashed, dotted, and solid.
 
 Grid widths and styles::
 The width of table grid lines can be specified for rows and columns with the xref:theme:tables.adoc#grid-width[grid-width key].
 The style of the grid lines can be specified for rows and columns with the xref:theme:tables.adoc#grid-style[grid-style key].
-Styles include dashed, dotted, and solid.
+Grid styles include dashed, dotted, and solid.
 //allow horizontal and vertical lines of table grid to be styled independently (#1875) (*@hextremist*)
 
 Maximum caption width::
@@ -98,12 +102,12 @@ The maximum caption width for tables can be set to a percentage of the content b
 Caption end:: The `table-caption-side` theme key has been xref:theme:tables.adoc#end[renamed to table-caption-end].
 
 .*Notable fixes for tables*
-* An error message is logged if table cell is truncated.
-* Instead of raising an error, log error and skip table if cell content can't fit into column width of table.
-* The content of AsciiDoc table cell is prevented from overrunning content on subsequent pages.
-* The top and bottom padding is taken into account when computing height of AsciiDoc table cell.
+* An error message is logged if a table cell is truncated.
+* Instead of raising an error, the converter logs an error and skips the table if the content cannot fit within the designated width of a cell.
+* The content of an AsciiDoc table cell is prevented from overrunning the footer or subsequent pages.
+* The top and bottom padding is taken into account when computing the height of AsciiDoc table cell.
 * Vertical center alignment is correctly applied to regular table cells.
-* The border bottom is correctly applied to a table row when frame and grid are disabled.
+* The border bottom is correctly applied to a table row when frame and grid are none.
 
 == Callout lists and numbers
 
@@ -112,9 +116,9 @@ The new theme keys let you customize the font properties, text alignment, and it
 The `callout-list` category includes the `margin-top-after-code` key that can control the top margin of callout lists that immediately follow a code block.
 
 .*Notable fixes for callouts*
-* Callout numbers in a callout list stay with primary text when an item is advanced to next page.
-* A sequence of two or more callouts separated by spaces in a verbatim block are processed correctly.
-* The font family assigned to `conums` in the theme is applied to the callout numbers displayed in verbatim blocks.
+* Callout numbers in a callout list stay with primary text when an item is advanced to the next page.
+* A sequence of two or more callouts separated by spaces in a code block are processed correctly.
+* The font family assigned to `conums` in the theme is applied to the callout numbers displayed in code blocks.
 
 == Images
 
@@ -159,14 +163,13 @@ See xref:theme:list.adoc[].
 The following dependencies and deprecated features have been removed with the release of Asciidoctor PDF 2.0.0.
 
 * Support for Ruby < 2.7 and JRuby < 9.2 has been removed.
-* The deprecated Pdf module alias in the API has been removed, leaving only PDF.
-* The deprecated "`ascii`" fonts have been removed; only the more complete "subset" fonts are now bundled.
 * Support for the deprecated `pdf-style` and `pdf-stylesdir` attributes has been removed.
-* The undocumented `vertical-spacing` key has been removed from the built-in themes.
+* The deprecated Pdf module alias in the API has been removed in favor of PDF.
+* The deprecated "`ascii`" fonts have been removed; only the more complete "subset" fonts are now bundled with the gem.
+* The previously undocumented `vertical-spacing` key has been removed from the built-in themes.
 * The `top-margin` key on block and prose categories in theme has been removed; space between delimited blocks and lists is now controlled using bottom margins only.
-* The `lead` category keys in theme have been removed; use the built-in role named `lead` instead.
-* `safe_yaml gem` has been removed; use `YAML.safe_load` from the Ruby stdlib instead.
+* The `lead` category keys in theme have been replaced with the built-in role named `lead`.
+* `safe_yaml gem` has been removed; `YAML.safe_load` from the Ruby stdlib is used instead.
 * Support for the `<color>` tag in passthrough content has been removed; use `<font color="...">` instead (may affect themes).
 * The [.path]_asciidoctor-pdf/converter_ and [.path]_asciidoctor-pdf/version_ shim scripts have been removed; use [.path]_asciidoctor/pdf/converter_ and [.path]_asciidoctor/pdf/version_ instead.
 * The unneeded `_mb` functions (e.g., `uppercase_mb`) have been removed; multibyte support for `upcase`, `downcase`, and `capitalize` is now provided by corelib.
-

@@ -1,10 +1,13 @@
-= Breakable and Unbreakable Options
-:description: By default, most blocks are breakable with built-in anchor and caption orphan prevention. The unbreakable option prevents a block from breaking.
+= Breakable and Unbreakable Blocks
+:description: By default, most blocks are breakable with built-in anchor and caption orphan prevention. The unbreakable option prevents a block from breaking across pages.
+
+Asciidoctor PDF gives the author some control over where content blocks are placed using the `unbreakable` and `breakable` options, and tries to provide sensible defaults when these options are not used.
 
 [#default]
-== Default breakable behavior
+== Breakable by default
 
-The following blocks are breakable with built-in anchor and caption orphan prevention by default:
+The following blocks are breakable by default.
+This breakable behavior includes automatic anchor and caption orphan prevention.
 
 * Admonitions
 * Block images
@@ -13,24 +16,24 @@ The following blocks are breakable with built-in anchor and caption orphan preve
 * Open blocks
 * Quote blocks
 * Sidebars
-* Table of Contents
 * Verses
 
-[.term]*Breakable with built-in anchor and caption orphan prevention* means that a block can break across pages but the converter will automatically move the block to the next page, when necessary, to ensure a block's anchor and caption are kept together with the block.
+[.term]*Breakable with built-in anchor and caption orphan prevention* means that a block can break across pages, but the converter will automatically move the block to the next page, when necessary, to ensure a block's anchor and caption are kept with the block.
 
-Tables and section headings are only breakable by default.
-That means table captions may be orphaned if a table breaks across pages, and a section heading and its first content block aren't kept together automatically.
-However, orphan prevention can be applied to individual section headings and tables using the `breakable` option.
+Tables and sections are breakable by default, but do not provide automatic anchor and caption orphan prevention.
+For tables, that means the anchor and caption can be left on the current page if the table is advanced to the next page.
+For sections, that means the section's title may be left on the current page if the first content block doesn't fit.
+However, you can turn on orphan prevention for tables and sections by adding the (seemingly redundant) `breakable` option as a hint.
 
 [#breakable]
 == Breakable option
 
-Orphan prevention isn't applied to tables and section headings by default.
-The `breakable` option can be applied to a table to ensure that a table's anchor and caption are kept together with the table if it breaks across pages.
+Orphan prevention isn't applied to tables and sections by default.
+The `breakable` option can be applied to a table to ensure the anchor and caption are kept with the table if it gets advanced to the next page.
 
 [,asciidoc]
 ----
-.Optional table caption
+.Optional table title
 [#optional-id%breakable] <.>
 |===
 |Content |Content
@@ -40,7 +43,7 @@ The `breakable` option can be applied to a table to ensure that a table's anchor
 ----
 <.> Assign the `breakable` option to a table, using the shorthand percent symbol (`%`) for the `option` attribute name, to indicate that the table's caption and anchor should be kept with the table.
 
-The `breakable` option can also be applied to a section title to keep the title and its anchor with the first block of content in the section.
+The `breakable` option can be applied to a section to ensure the title is kept with the first block of content if the first block gets advanced to the next page.
 
 [,asciidoc]
 ----
@@ -50,12 +53,12 @@ The `breakable` option can also be applied to a section title to keep the title 
 First block of content in the section.
 ----
 
-Don't assign the `breakable` option any other block types because <<default,caption and anchor orphan prevention is automatically applied to them by default>>.
+You don't need to assign the `breakable` option any other block types because <<default,it is enabled by default>>.
 
 [#unbreakable]
 == Unbreakable option
 
-When the `unbreakable` option is applied to a block, the converter will advance the block and its caption and anchor to the next page if it detects that the block would break across pages.
+When the `unbreakable` option is applied to a block, the converter will advance the block and its caption and anchor to the next page if it detects that the block would break across pages and it can fit on a single page.
 
 [,asciidoc]
 ----
@@ -81,16 +84,35 @@ The `unbreakable` option can be assigned to individual blocks of the following t
 * Tables
 * Verses
 
-If a block is larger than a single page, it will break across pages even if it's assigned the `unbreakable` option.
+If a block with the `unbreakable` option is taller than a single page, it will not be advanced and, instead, break across pages.
+In this case, the automatic orphan protection is still applied.
+
+The converter does not honor the `unbreakable` option on all content blocks in AsciiDoc, such as lists and paragraphs.
+In these cases, the author can elect to wrap the content in an open block with the `unbreakable` option.
+
+[,asciidoc]
+----
+[%unbreakable]
+--
+If this paragraph does not fit in the remaining space on this page,
+and it is short enough to fit on a page by itself,
+the converter will advance it to the next page so it does not break.
+--
+----
+
+Internally, the open block enclosure is exactly how `unbreakable` is supported on tables.
 
 [#dry-run-performance]
-.Why can't I assign unbreakable globally? Why don't section headings and tables have built-in orphan prevention?
+.Why can't I assign unbreakable globally? Why don't sections and tables have orphan prevention by default?
 ****
-The logic in the converter that calculates the extent of a block, which includes its anchor, title, borders, background, and all applicable margins and paddings, uses multiple passes -- what we call "`dry runs`" -- to get an accurate measure of where the block begins and ends, and therefore, whether it breaks across pages.
-When the converter determines that a block's caption and anchor would be orphaned or that a block breaks when it's marked as unbreakable, it has to advance to the next page and potentially repeat the extent calculation depending on the block's context.
-Background shading and borders--styles that are applied to code blocks, examples, and sidebars by default, that are often applied to tables, and that can be applied to other block types and section headings--add significant complexity, and therefore processing time, to the dry runs required to calculate each block's extent.
+The logic in the converter that calculates the extent of a block, which includes its title, main content, and padding, uses multiple passes, called "`dry runs`", to get an accurate measurement of where a block begins, ends, and whether it breaks across pages.
+When the converter determines that a block's caption and anchor would be orphaned, or that a block breaks when it's marked as unbreakable, it has to advance to the next page and convert it again in order to redo the extent calculation.
+This logic is vital for decorating the block with a border and background because the extent must be pixel accurate.
+All these dry runs add additional processing time and effort to the conversion.
 
-We decided it was best for people to opt-in to the converter behavior required for `unbreakable` and table and section heading orphan prevention (`breakable`) on an individual block basis due to the performance costs.
+Making all blocks unbreakable by default adds a lot of extra steps (not to mention leaving behind a lot of gaps in the document).
+Orphan prevents adds almost as many since its a similar process.
+Doing that by default for tables and sections would be too complex and costly.
+To recoup some of the processing time, we decided to make some trade-offs.
+Therefore, blocks are breakable by default and authors must opt-in to get orphan prevention for tables and sections.
 ****
-
-
