@@ -21,4 +21,5 @@
 * xref:toc.adoc[]
 * xref:index-catalog.adoc[]
 * xref:page-numbers.adoc[]
+* xref:asciidoc-attributes.adoc[]
 * xref:optimize-pdf.adoc[]
