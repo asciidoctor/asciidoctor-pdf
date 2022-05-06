@@ -755,7 +755,7 @@ module Asciidoctor
       def convert_floating_title node
         add_dest_for_block node if node.id
         hlevel = node.level.next
-        unless (align = resolve_alignment_from_role node.roles)
+        unless (align = resolve_text_align_from_role node.roles)
           align = (@theme[%(heading_h#{hlevel}_text_align)] || @theme.heading_text_align || @base_text_align).to_sym
         end
         # QUESTION: should we decouple styles from section titles?
@@ -801,7 +801,7 @@ module Asciidoctor
                   if child.context == :paragraph
                     child.document.playback_attributes child.attributes
                     prose_opts[:margin_bottom] = 0 if child == last_block
-                    ink_prose child.content, ((align = resolve_alignment_from_role child.roles) ? (prose_opts.merge align: align) : prose_opts.dup)
+                    ink_prose child.content, ((align = resolve_text_align_from_role child.roles) ? (prose_opts.merge align: align) : prose_opts.dup)
                     prose_opts.delete :first_line_options
                     prose_opts.delete :margin_bottom
                   else
@@ -810,7 +810,7 @@ module Asciidoctor
                   end
                 end
               elsif node.content_model != :compound && (string = node.content)
-                if (align = resolve_alignment_from_role node.roles)
+                if (align = resolve_text_align_from_role node.roles)
                   prose_opts[:align] = align
                 end
                 ink_prose string, (prose_opts.merge margin_bottom: 0)
@@ -835,9 +835,8 @@ module Asciidoctor
       def convert_paragraph node
         add_dest_for_block node if node.id
         prose_opts = { margin_bottom: 0, hyphenate: true }
-        if (align = resolve_alignment_from_role (roles = node.roles), use_theme: true)
+        if (align = resolve_text_align_from_role (roles = node.roles), query_theme: true, remove_predefined: true)
           prose_opts[:align] = align
-          roles -= TextAlignmentRoles
         end
 
         if (text_indent = @theme.prose_text_indent) > 0 ||
@@ -1151,7 +1150,7 @@ module Asciidoctor
         last_item = node.items[-1]
         item_spacing = @theme.callout_list_item_spacing || @theme.list_item_spacing
         item_opts = { margin_bottom: item_spacing, normalize_line_height: true }
-        if (item_align = (resolve_alignment_from_role node.roles) || @theme.list_text_align&.to_sym)
+        if (item_align = (resolve_text_align_from_role node.roles) || @theme.list_text_align&.to_sym)
           item_opts[:align] = item_align
         end
         theme_font :callout_list do
@@ -1370,7 +1369,7 @@ module Asciidoctor
         ink_caption node, category: :list, labeled: false if node.title?
 
         opts = {}
-        if (align = resolve_alignment_from_role node.roles)
+        if (align = resolve_text_align_from_role node.roles)
           opts[:align] = align
         elsif node.style == 'bibliography'
           opts[:align] = :left
@@ -1565,7 +1564,7 @@ module Asciidoctor
 
         alignment = (alignment = node.attr 'align') ?
           ((BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left) :
-          (resolve_alignment_from_role node.roles) || @theme.image_align&.to_sym || :left
+          (resolve_text_align_from_role node.roles) || @theme.image_align&.to_sym || :left
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
         width = resolve_explicit_width node.attributes, bounds_width: (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
         # TODO: add `to_pt page_width` method to ViewportWidth type
@@ -1697,7 +1696,7 @@ module Asciidoctor
         theme_font :image_alt do
           alignment = (alignment = node.attr 'align') ?
             ((BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left) :
-            (resolve_alignment_from_role node.roles) || (@theme.image_align&.to_sym || :left)
+            (resolve_text_align_from_role node.roles) || (@theme.image_align&.to_sym || :left)
           ink_prose alt_text_template % alt_text_vars, align: alignment, margin: 0, normalize: false, single_line: true
         end
         ink_caption node, category: :image, end: :bottom if node.title?
@@ -4323,10 +4322,11 @@ module Asciidoctor
         end
       end
 
-      def resolve_alignment_from_role roles, use_theme: false
+      def resolve_text_align_from_role roles, query_theme: false, remove_predefined: false
         if (align_role = roles.reverse.find {|r| TextAlignmentRoles.include? r })
+          roles.replace roles - TextAlignmentRoles if remove_predefined
           (align_role.slice 5, align_role.length).to_sym
-        elsif use_theme
+        elsif query_theme
           roles.reverse.each do |role|
             if (align = @theme[%(role_#{role}_text_align)])
               return align.to_sym
@@ -4335,6 +4335,9 @@ module Asciidoctor
           nil
         end
       end
+
+      # Deprecated
+      alias resolve_alignment_from_role resolve_text_align_from_role
 
       # QUESTION: is this method still necessary?
       def resolve_imagesdir doc
