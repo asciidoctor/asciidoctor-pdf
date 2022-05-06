@@ -19,6 +19,7 @@
 * xref:notitle.adoc[]
 * xref:title-page.adoc[]
 * xref:toc.adoc[]
+* xref:pdf-outline.adoc[]
 * xref:index-catalog.adoc[]
 * xref:page-numbers.adoc[]
 * xref:asciidoc-attributes.adoc[]

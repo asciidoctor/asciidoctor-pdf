@@ -1,11 +1,12 @@
-= Theme-Related AsciiDoc Attributes
+= AsciiDoc Attributes for PDF
+//Theme-Related AsciiDoc Attributes
 
-There are various settings in the theme you control using document attributes.
+There are AsciiDoc document attributes you can set in your document to control the PDF media, mode, and outline, as well as theme-related attributes for the covers, title page, and background images, and more.
 
 == AsciiDoc document attributes
 
 If an attribute is marked as "Header Only", it only takes effect if defined in the AsciiDoc document header or via the API.
-If an attribute matches a key in the theme file, the attribute takes precedence.
+If an attribute matches a key in the theme file, the document attribute takes precedence.
 
 [cols="2,3,^1,6a"]
 |===
@@ -27,7 +28,7 @@ If an attribute matches a key in the theme file, the attribute takes precedence.
 |Yes
 |`:hyphens: de`
 
-|`icons`^[13]^
+|`icons`^[12]^
 |`font` {vbar} image (default: _not set_)
 |No
 |`:icons: font`
@@ -52,12 +53,17 @@ If an attribute matches a key in the theme file, the attribute takes precedence.
 |Yes
 |`:optimize: prepress`
 
-|`outline-title`
+|xref:pdf-outline.adoc[outline]
+|flag (default: _set_)
+|Yes
+|`:outline:`
+
+|xref:pdf-outline.adoc#title[outline-title]
 |flag {vbar} String (default: _set_)
 |Yes
 |`:outline-title: Outline`
 
-|`outlinelevels`^[12]^
+|xref:pdf-outline.adoc#levels[outlinelevels]
 |Integer {vbar} Integer:Integer (default: same as _toclevels_)
 |Yes
 |`:outlinelevels: 2`
@@ -172,9 +178,7 @@ For more fine-grained control, you should customize using the theme.
 10. The title page is only enabled by default for the book doctype.
 To force the title page to be used for other doctypes, set the `title-page` attribute in the document header.
 11. If the TOC overlaps the first page of content, increase this number.
-12. The second number in the value of `outlinelevels` is the number of levels of the outline to expand (e.g., `3:1`).
-If the second number is not present, all levels are expanded.
-13. By default, admonitions have a text-based label that matches the admonition type.
+12. By default, admonitions have a text-based label that matches the admonition type.
 To use icons instead, set the `icons` attribute to `font`.
 This setting allows the theme to control the icon used for each type (see the xref:theme:admonition.adoc#icon-name[admonition-icon key]).
 It also enables the `icon` macro (covered in the README).

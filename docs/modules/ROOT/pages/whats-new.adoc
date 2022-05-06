@@ -133,6 +133,11 @@ The `callout-list` category includes the `margin-top-after-code` key that can co
 Caption end:: You can now configure whether the caption for a block image is placed above or below the image using the `caption-end` theme key.
 See xref:theme:block-image.adoc#caption[Block Image Category Keys] for the list of available `image-caption` theme keys and their value types.
 
+== PDF outline
+
+PDF outline title and levels:: You can now deactivate the PDF outline by unsetting the `outline` document attribute (`:!outline:`) as well as customize its title with `outline-title` and the section level depth and expansion with `outlinelevels`.
+See xref:pdf-outline.adoc[] for details.
+
 == Running content and page numbering
 
 xref:theme:add-running-content.adoc#start-at[Select the page where running content starts]:: Specify the page on which the running content starts being displayed by assigning an integer to the `start-at` theme key on the `running-content` category.
