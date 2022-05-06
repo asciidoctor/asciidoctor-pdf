@@ -1,6 +1,8 @@
 = Asciidoctor PDF Documentation
+:navtitle: Introduction
+:description: The documentation for Asciidoctor PDF, a converter for Asciidoctor that converts AsciiDoc directly to PDF using the Prawn PDF generation library.
 
-Asciidoctor PDF is a native PDF converter for AsciiDoc.
+Asciidoctor PDF is a native PDF converter for AsciiDoc that plugs into the `pdf` backend.
 It bypasses the requirement to generate an intermediary format such as DocBook, Apache FO, or LaTeX.
 Instead, you can use Asciidoctor PDF to convert your documents directly from AsciiDoc to PDF.
 The aim of this library is to take the pain out of creating PDF documents from AsciiDoc.
