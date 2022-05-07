@@ -7,12 +7,13 @@ class PDFConverterAvoidBreakAfterSectionTitle < (Asciidoctor::Converter.for 'pdf
     dry_run single_page: true do # <2>
       start_page = page
       theme_font :heading, level: opts[:level] do
-      if opts[:part]
-        inscribe_part_title sect, title, opts # <3>
-      elsif opts[:chapterlike]
-        inscribe_chapter_title sect, title, opts # <3>
-      else
-        inscribe_general_heading sect, title, opts # <3>
+        if opts[:part]
+          inscribe_part_title sect, title, opts # <3>
+        elsif opts[:chapterlike]
+          inscribe_chapter_title sect, title, opts # <3>
+        else
+          inscribe_general_heading sect, title, opts # <3>
+        end
       end
       if page == start_page
         page.tare_content_stream
