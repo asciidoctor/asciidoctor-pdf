@@ -1492,7 +1492,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     source_lines = (File.readlines source_file).select {|l| l == ?\n || (l.start_with? ' ') }
     ext_class = create_class Asciidoctor::Converter.for 'pdf'
     backend = %(pdf#{ext_class.object_id})
-    source_lines[0] = %(register_for '#{backend}')
+    source_lines[0] = %(  register_for '#{backend}'\n)
     ext_class.class_eval source_lines.join, source_file
     pdf = to_pdf <<~'EOS', backend: backend, analyze: true
     = Document Title
