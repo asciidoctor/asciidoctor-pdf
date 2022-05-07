@@ -445,10 +445,11 @@ RSpec.configure do |config|
       pdf_theme_extends = (pdf_theme = pdf_theme.dup).delete :extends if pdf_theme.key? :extends
       opts[:pdf_theme] = build_pdf_theme pdf_theme, pdf_theme_extends
     end
+    opts = opts.merge backend: 'pdf' unless opts.key? :backend
     if Pathname === input
-      Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)
+      Asciidoctor.convert_file input, (opts.merge safe: :safe)
     else
-      Asciidoctor.convert input, (opts.merge backend: 'pdf', safe: :safe, standalone: true)
+      Asciidoctor.convert input, (opts.merge safe: :safe, standalone: true)
     end
     to_file
   end
