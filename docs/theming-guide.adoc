@@ -2768,7 +2768,7 @@ It does not affect the distance between the formatted phrase and the phrases tha
 === Kbd (Keyboard Input)
 
 The keys in this category apply to a kbd reference (generated from the inline kbd macro).
-The kbd reference is a span of text denoting textual user input from a keyboard, voice input, or other text entry device. 
+The kbd reference is a span of text denoting textual user input from a keyboard, voice input, or other text entry device.
 
 [cols="3,4,5l"]
 |===
