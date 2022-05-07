@@ -416,7 +416,8 @@ RSpec.configure do |config|
     end
     opts = opts.merge backend: 'pdf' unless opts.key? :backend
     if Hash === (pdf_theme = opts[:pdf_theme])
-      opts[:pdf_theme] = build_pdf_theme pdf_theme, (pdf_theme.delete :extends)
+      pdf_theme_extends = (pdf_theme = pdf_theme.dup).delete :extends if pdf_theme.key? :extends
+      opts[:pdf_theme] = build_pdf_theme pdf_theme, pdf_theme_extends
     end
     if Pathname === input
       opts[:to_dir] = output_dir unless opts.key? :to_dir
@@ -441,7 +442,8 @@ RSpec.configure do |config|
       (opts[:attributes] ||= {}).update attribute_overrides
     end
     if Hash === (pdf_theme = opts[:pdf_theme])
-      opts[:pdf_theme] = build_pdf_theme pdf_theme, (pdf_theme.delete :extends)
+      pdf_theme_extends = (pdf_theme = pdf_theme.dup).delete :extends if pdf_theme.key? :extends
+      opts[:pdf_theme] = build_pdf_theme pdf_theme, pdf_theme_extends
     end
     if Pathname === input
       Asciidoctor.convert_file input, (opts.merge backend: 'pdf', safe: :safe)
