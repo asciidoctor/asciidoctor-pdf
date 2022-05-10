@@ -16,6 +16,8 @@ Bug Fixes::
 
 * allow theme to set font style of first line of abstract to `normal_italic` (#2138)
 * add support for `:color` option to `Prawn::Text::Formatted::Box` directly and remove workarounds
+* preserve columns on subsequent pages in the index section (#2149)
+* fix return value of `cursor` method inside block for column box
 
 == 2.0.0.beta.1 (2022-05-04) - @mojavelinux
 

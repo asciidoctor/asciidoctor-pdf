@@ -787,7 +787,6 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
     ((melody)) and ((harmony))
 
-
     [index]
     == Index
     EOS
@@ -798,6 +797,49 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect s_category_text).not_to be_nil
     (expect d_category_text[:x]).to eql 72.0
     (expect s_category_text[:x]).to eql 36.0
+  end
+
+  it 'should preserve column count on subsequent pages' do
+    pdf_theme = {
+      page_margin: 36,
+      page_margin_inner: 54,
+      page_margin_outer: 18,
+    }
+    pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+    = Document Title
+    :doctype: book
+    :notitle:
+    :media: prepress
+    :pdf-page-size: A5
+
+    == Chapter
+
+    #{('a'..'z').map {|l| [l, l * 2, l * 3, l * 4] }.flatten.map {|it| '((' + it + '))' }.join ' '}
+
+    [index]
+    == Index
+    EOS
+
+    (expect pdf.pages).to have_size 5
+    midpoint_recto = 54 + (pdf.pages[0][:size][0] - 72) * 0.5
+    midpoint_verso = 18 + (pdf.pages[0][:size][0] - 72) * 0.5
+
+    a_category_text = pdf.find_unique_text 'A', page_number: 3
+    f_category_text = pdf.find_unique_text 'F', page_number: 3
+    k_category_text = pdf.find_unique_text 'K', page_number: 4
+    q_category_text = pdf.find_unique_text 'Q', page_number: 4
+    z_category_text = pdf.find_unique_text 'Z', page_number: 5
+    (expect a_category_text).not_to be_nil
+    (expect a_category_text[:x]).to eql 54.0
+    (expect f_category_text).not_to be_nil
+    (expect f_category_text[:x]).to be > midpoint_recto
+    (expect k_category_text).not_to be_nil
+    (expect k_category_text[:x]).to eql 18.0
+    (expect q_category_text).not_to be_nil
+    (expect q_category_text[:x]).to be > midpoint_verso
+    (expect q_category_text[:x]).to be < midpoint_recto
+    (expect z_category_text).not_to be_nil
+    (expect z_category_text[:x]).to eql 54.0
   end
 
   it 'should indent TOC title properly when index exceeds a page and section indent is positive' do
