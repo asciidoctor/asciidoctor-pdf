@@ -11,6 +11,8 @@ Enhancements::
 
 * add support for `text-transform` property on first line of abstract in theme (#2141)
 * rename `resolve_alignment_from_role` to `resolve_text_align_from_role` to reflect proper terminology and purpose; alias old method name
+* add support for orphan avoidance to discrete headings to match behavior of section titles (using call to `arrange_heading`) (#2151)
+* rename `arrange_section` to `arrange_heading` to reflect proper terminology and purpose
 
 Bug Fixes::
 
