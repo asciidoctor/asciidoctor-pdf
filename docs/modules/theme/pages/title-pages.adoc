@@ -1,0 +1,72 @@
+= Title Page
+:description: The title page layout, background, logo image, and document title, authors, and revision information can be styled from the theme.
+
+The layout, background, and styling of the title page and the title, author, and revision information displayed on it is controlled from the theme using the keys in the `title-page` category.
+
+IMPORTANT: The title page is only enabled by default for the book document type (e.g., `:doctype: book`).
+To enable the title page when using a different doctype, such as the default `article` doctype, you must define the xref:ROOT:title-page.adoc[title-page attribute in the document header].
+
+For the list of all available `title-page` theme keys, see xref:title-page.adoc[].
+
+[#deactivate]
+== Deactivate
+
+The title page can be deactivated from the theme by assigning `false` to the `title-page` category key.
+
+[,yaml]
+----
+title-page: false
+----
+
+You can also xref:ROOT:title-page.adoc#notitle-attribute[deactivate the title page from the document header] using the `notitle` attribute.
+
+[#background-color]
+== Background color
+
+A background color can be applied to the title page with the `background-color` key.
+The key accepts the xref:color.adoc[hex, RGB, and CMYK formats].
+
+[,yaml]
+----
+title-page:
+  background-color: #EAEAEA
+----
+
+To disable the background color for the title page, set the value to white (`#FFFFFF`).
+The color keyword `transparent` isn't recognized in this context.
+
+[,yaml]
+----
+title-page:
+  background-color: #FFFFFF
+----
+
+[#background-image]
+== Background image
+
+You can apply a background image to the title page using the `background-image` key.
+
+[,yaml]
+----
+title-page:
+  background-image: image:title.png[]
+----
+
+For accepted values and attributes, see xref:images.adoc#background[Background images].
+
+[#logo-image]
+== Logo image
+
+The target of the image macro assigned to the `image` key may be a data URI, absolute path, or a path relative to the value of the `pdf-themesdir` attribute.
+Like in the AsciiDoc syntax, wrapping the `image` value in the image macro allows you to specify other settings, including `pdfwidth` and `align`.
+For example:
+
+[,yaml]
+----
+title-page:
+  logo:
+    image: image:logo.png[pdfwidth=2.5in,align=center]
+----
+
+The `align` setting is used to align block images within the parent container.
+See xref:blocks.adoc[] for accepted alignment keywords.

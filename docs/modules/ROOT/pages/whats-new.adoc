@@ -138,6 +138,12 @@ See xref:theme:block-image.adoc#caption[Block Image Category Keys] for the list 
 PDF outline title and levels:: You can now deactivate the PDF outline by unsetting the `outline` document attribute (`:!outline:`) as well as customize its title with `outline-title` and the section level depth and expansion with `outlinelevels`.
 See xref:pdf-outline.adoc[] for details.
 
+== Covers and title page
+
+Front and back cover images:: The front and back cover images can now be xref:theme:covers.adoc[defined in the theme] and the target can be a data URI.
+
+Deactivate title page:: The xref:theme:title-pages.adoc#deactivate[title page can now be deactivated from the theme] by assigning `false` to the `title-page` category key.
+
 == Running content and page numbering
 
 xref:theme:add-running-content.adoc#start-at[Select the page where running content starts]:: Specify the page on which the running content starts being displayed by assigning an integer to the `start-at` theme key on the `running-content` category.

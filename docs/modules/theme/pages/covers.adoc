@@ -1,0 +1,26 @@
+= Covers
+
+== Front and back covers
+
+You can specify an image or import a PDF page for the front cover and back cover of a document directly in your theme.
+The front cover image is assigned using the `front-image` key, and the back cover image using the `back-image` key.
+Both keys are set on the xref:cover.adoc[cover category] and accept either a bare absolute or relative path or a target wrapped in an inline image macro as a value.
+By default, a target file is resolved relative to the value of the `pdf-themesdir` attribute.
+
+[,yaml]
+----
+cover:
+  front:
+    image: image:cover.pdf[page=2]
+  back:
+    image: image:splash.png[fit=fill]
+----
+
+When the value is wrapped in an inline image macro, the target can be the absolute path or relative path to an image file or PDF file.
+See xref:images.adoc#specify[Specify a background image in the theme] for configuring a path that's not relative to `pdf-themesdir`.
+The target can also be a data URI.
+A cover image is handled like a xref:images.adoc#background[background image], and the xref:images.adoc#attributes[fit, width, and position attributes] can be specified.
+
+If a PDF file is assigned to the image macro, the first page of the file is used unless another page is specified by the `page` attribute.
+The PDF page will be imported as is.
+

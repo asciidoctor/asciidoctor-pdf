@@ -11,11 +11,14 @@
 *** xref:fallback-font.adoc[]
 *** xref:cjk.adoc[]
 ** xref:blocks.adoc[]
+** xref:block-images.adoc[]
 ** xref:tables.adoc[]
 ** xref:text.adoc[]
 ** xref:images.adoc[]
 ** xref:extend-theme.adoc[]
 ** xref:custom-role.adoc[]
+** xref:covers.adoc[]
+** xref:title-pages.adoc[]
 ** xref:add-running-content.adoc[]
 ** xref:page-numbers.adoc[]
 ** xref:print-and-prepress.adoc[]
@@ -59,15 +62,3 @@
 ** xref:title-page.adoc[]
 ** xref:toc.adoc[]
 ** xref:verse.adoc[]
-
-
-
-
-
-
-
-
-
-
-
-

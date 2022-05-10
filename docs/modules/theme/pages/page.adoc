@@ -1,15 +1,16 @@
 = Page Category Keys
+:description: Reference list of the available page category keys and their value types.
 :navtitle: Page
 :source-language: yaml
 
 [#page]
 == page
 
-The keys in the `page` category control the size, margins, and background of each page (i.e., canvas).
+The keys in the `page` category control the size, margins, and background of the pages in a document (i.e., canvas).
 We recommended that you define this category before all other categories.
 
 NOTE: The background of the title page can be styled independently of other pages.
-See xref:title-page.adoc[] for details.
+See xref:title-pages.adoc[] and xref:title-page.adoc[] for details.
 
 [cols="3,4,5a"]
 |===
@@ -20,17 +21,17 @@ See xref:title-page.adoc[] for details.
 (default: `'FFFFFF'`)
 |[source]
 page:
-  background-color: #fefefe
+  background-color: #FEFEFE
 
-|<<images,background-image>>
-|image macro +
+|xref:images.adoc#background[background-image]
+|xref:images.adoc#specify[image macro] {vbar} xref:images.adoc#specify[path] +
 (default: _not set_)
 |[source]
 page:
   background-image: image:page-bg.png[]
 
-|<<images,background-image-(recto{vbar}verso)>>
-|image macro +
+|xref:images.adoc#recto-and-verso[background-image-(recto{vbar}verso)]
+|xref:images.adoc#specify[image macro] {vbar} xref:images.adoc#specify[path] +
 (default: _not set_)
 |[source]
 page:
@@ -38,8 +39,8 @@ page:
     recto: image:page-bg-recto.png[]
     verso: image:page-bg-verso.png[]
 
-|<<images,foreground-image>>
-|image macro +
+|xref:images.adoc#foreground[foreground-image]
+|xref:images.adoc#specify[image macro] {vbar} xref:images.adoc#specify[path] +
 (default: _not set_)
 |[source]
 page:
@@ -100,18 +101,6 @@ page:
 
 To disable the background color for the page, set the value of `background-color` to white (i.e., `#FFFFFF`).
 The color keyword `transparent` is not recognized in this context.
-
-[#images]
-=== Background and foreground images
-
-By default, page background and foreground images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
-The size of the image can be controlled using any of the sizing attributes on the image macro (i.e., `fit`, `pdfwidth`, `scaledwidth`, or `width`) when `fit=none`.
-The position of the image can be controlled using the `position` attribute.
-If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background image is specified, it will be used only for that side (not available for the foreground image).
-If you define the keys using the flattened structure (e.g., `page-background-image-recto`), you can also set the default page background image (`page-background-image`), which will then be used as a fallback if a background image isn't specified for a given side.
-To disable the image, use the value `none`.
-
-The target of the image macro assigned to the background or foreground image keys may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
 
 [#margins]
 === Inner and outer margins

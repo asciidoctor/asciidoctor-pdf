@@ -1,33 +1,27 @@
 = Title Page Category Keys
+:description: Reference list of the available title page category keys and their value types.
 :navtitle: Title Page
 :source-language: yaml
 
 [#title-page]
 == title-page
 
-The keys in the `title-page` category control the style of the title page and the arrangement and style of the elements on it.
-
-IMPORTANT: The title page is only enabled by default for the book doctype (e.g., `:doctype: book`).
-If you want to enable the title page when using a different doctype (such as the article doctype), you must define the `title-page` attribute in the document header (i.e., `:title-page:`).
-
-TIP: For documents that declare the book doctype, the title page can be omitted by setting the `notitle` attribute in the AsciiDoc document header (i.e., `:notitle:`) or by setting the value of the `title_page` category key in the theme to `false`.
-(It's counterpart, `:!showtitle:`, does not work with Asciidoctor PDF).
-For all other doctypes, the title page is not added by default.
-In that case, setting the `:notitle:` attribute only removes the document title from the first page of content.
+The keys in the `title-page` category control the title page and the arrangement and style of the elements on it.
+See xref:title-pages.adoc[] for examples and more information.
 
 [cols="3,4,6a"]
 |===
 |Key |Value Type |Example
 
-|<<background-color,background-color>>
+|xref:title-pages.adoc#background-color[background-color]
 |xref:color.adoc[Color] +
 (default: _inherit_)
 |[source]
 title-page:
-  background-color: #eaeaea
+  background-color: #EAEAEA
 
-|<<background-image,background-image>>
-|image macro +
+|xref:title-pages.adoc#background-image[background-image]
+|xref:images.adoc#specify[image macro] {vbar} xref:images.adoc#specify[path] +
 (default: _not set_)
 |[source]
 title-page:
@@ -88,22 +82,13 @@ title-page:
 |[source]
 title-page:
   text-transform: uppercase
+
+|title-page
+|flag +
+(default: _set when doctype is book_)
+|[source]
+title-page: false
 |===
-
-[#background-color]
-=== background-color
-
-To disable the background color for the title page, set the value of the `background-color` key to white (i.e., `FFFFFF`).
-The color keyword `transparent` is not recognized in this context.
-
-[#background-image]
-=== background-image
-
-By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
-The size of the background image can be controlled using any of the sizing attributes on the image macro (i.e., `fit`, `pdfwidth`, `scaledwidth`, or `width`) when `fit=none`.
-The position of the background image can be controlled using the `position` attribute.
-
-The target of the image macro assigned as a value to the `background-image` key may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
 
 [#logo]
 == title-page-logo
@@ -122,8 +107,8 @@ title-page:
   logo:
     align: right
 
-|<<image,image>>
-|image macro +
+|xref:title-pages.adoc#logo-image[image]
+|image macro {vbar} path +
 (default: _not set_)
 |[source]
 title-page:
@@ -143,11 +128,6 @@ title-page:
 === top
 
 The `%` unit is relative to content height; `vh` unit is relative to page height.
-
-[#image]
-=== image
-
-The target of the image macro assigned as a value to the `image` key may be an absolute path or a path relative to the value of the `pdf-themesdir` attribute.
 
 [#title]
 == title-page-title
