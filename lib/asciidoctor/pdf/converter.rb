@@ -2415,25 +2415,15 @@ module Asciidoctor
         space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
         pagenum_sequence_style = node.document.attr 'index-pagenum-sequence-style'
         column_box [0, cursor], columns: @theme.index_columns, width: bounds.width, reflow_margins: true do
-          def @bounding_box.move_past_bottom *args # rubocop:disable Lint/NestedMethodDefinition
-            super(*args)
-            @document.bounds = @parent = @document.margin_box if @current_column == 0 && @reflow_margins
-          end
           @index.categories.each do |category|
-            # NOTE: cursor method always returns 0 inside column_box; breaks reference_bounds.move_past_bottom
-            bounds.move_past_bottom if space_needed_for_category > y - reference_bounds.absolute_bottom
+            bounds.move_past_bottom if space_needed_for_category > cursor
             ink_prose category.name,
               align: :left,
               inline_format: false,
               margin_bottom: @theme.description_list_term_spacing,
               style: @theme.description_list_term_font_style&.to_sym
             category.terms.each {|term| convert_index_list_item term, pagenum_sequence_style }
-            # NOTE: see previous note for why we can't use margin_bottom method
-            if @theme.prose_margin_bottom > y - reference_bounds.absolute_bottom
-              bounds.move_past_bottom
-            else
-              move_down @theme.prose_margin_bottom
-            end
+            @theme.prose_margin_bottom > cursor ? bounds.move_past_bottom : (move_down @theme.prose_margin_bottom)
           end
         end
         nil
