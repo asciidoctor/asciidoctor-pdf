@@ -1,98 +1,121 @@
-= Images
+= Theme Images
+:description: Some category keys allow background, foreground, logo, and category-specific images to be specified directly in the theme.
 
-== Background images
+Some category keys allow background, foreground, and other category-specific images to be specified directly in the theme.
 
 [#formats]
-=== Supported image formats
+== Supported image formats
 
-The following image types (and corresponding file extensions) are supported:
+The theme supports the following image formats:
 
 * PNG (.png)
 * JPEG (.jpg)
 * SVG (.svg)
 
+When specified, the filename of the image must use the file extension that matches its format.
+
 CAUTION: CAUTION: The GIF (.gif), TIFF (.tiff), BMP (.bmp), and interlaced PNG formats are not supported unless you install prawn-gmagick.
 See xref:ROOT:image-paths-and-formats.adoc#other-image-formats[Supporting additional image file formats] for details.
 
+[#background]
+== Background images
+
+Several key categories, such as `page`, `title-page`, and the running content `header` and `footer`, allow a background image to be specified directly by the theme with the `background-image` key.
+xref:covers.adoc[Front and back cover images] are handled like background images, too.
+
 [#specify]
-=== Specify an image in a theme
+=== Specify a background image in the theme
 
-An image is specified either as a bare image path or as an inline image macro as found in the AsciiDoc syntax.
-Images in the theme file are currently resolved relative to the value of the `pdf-themesdir` attribute.
-(If `pdf-theme` is a path that ends in `.yml`, and `pdf-themesdir` is not set, then the images are resolved relative to the directory of the path specified by `pdf-theme`).
-If you want to use an image in your theme that's relative to the document you're converting, you can prefix the target with the `\{docdir}` attribute reference.
+In the theme, a background image is specified as a bare image path or as an AsciiDoc inline image macro.
+Here's how a background image is specified in the theme file as a bare path:
 
-Here's how an image is specified in the theme file as a bare image path:
-
-[source,yaml]
+[,yaml]
 ----
 title-page:
   background-image: title-cover.png
 ----
 
-Here's how the image is specified using the inline image macro:
+By default, the bare path is resolved relative to the value of the `pdf-themesdir` attribute.
+The path can also be an absolute path.
 
-[source,yaml]
+Here's how the background image is specified using the inline image macro:
+
+[,yaml]
 ----
 title-page:
   background-image: image:title-cover.png[]
 ----
 
-In either case, the image is resolved relative to the value of the `pdf-themesdir` attribute.
+The target of the inline image macro can be a path relative to the `pdf-themesdir` attribute (default), an absolute path, or a data URI.
+If `pdf-theme` is a path that ends in `.yml`, and `pdf-themesdir` is not set, then the images are resolved relative to the directory of the path specified by `pdf-theme`.
 If you want to reference an image relative to the document you're converting, then prefix the target with the `\{docdir}` attribute reference.
 
-[source,yaml]
+[,yaml]
 ----
 title-page:
   background-image: image:{docdir}/images/title-cover.png[]
 ----
 
-[#align]
-=== Width, fit, and alignment
+[#attributes]
+=== Fit, width, and position
 
-Like in the AsciiDoc syntax, wrapping the value in the image macro allows you to specify other settings, such as `pdfwidth`, `fit`, and `align`.
-For example:
+By default, background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+Wrapping the value in the image macro allows you to customize an image's size and position.
+The size of the image assigned with an image macro can be controlled using the sizing attributes, `fit`, `pdfwidth`, `scaledwidth`, or `width`, when `fit=none`.
+The position of the image can be controlled using the `position` attribute.
 
-[source,yaml]
+[,yaml]
+----
+page:
+  background-image: image:page-bg.png[fit=none,position=top center]
+----
+
+See xref:ROOT:background-images.adoc[] for the available `fit` and `position` values.
+See xref:ROOT:image-scaling.adoc[] to learn about the sizing attributes the image macro accepts.
+
+[#recto-and-verso]
+=== Recto and verso
+
+The `page` category allows a background image to be set for recto pages (right-hand, odd-numbered pages) and verso pages (left-hand, even-numbered pages).
+The recto background image is specified using `page-background-image-recto` and the verso background image using `page-background-image-verso`.
+
+[,yaml]
+----
+page:
+  background-image:
+    recto: image:page-bg-recto.png[]
+    verso: image:page-bg-verso.png[]
+----
+
+If you define the keys using the flattened structure (e.g., `page-background-image-recto`), you can also set the default page background image (`page-background-image`), which will be used as a fallback if a background image isn't specified for a given side.
+
+[,yaml]
+----
+page-background-image: image:page-bg.png[]
+page-background-image-verso: image:verso-bg.png[]
+----
+
+=== Deactivate a background image
+
+To deactivate an inherited background image, assign the value `none` to `background-image`.
+
+[,yaml]
 ----
 title-page:
-  logo-image: image:logo.png[pdfwidth=2.5in,align=center]
+  background-image: none
 ----
 
-The `align` setting is used to align block images within the parent container.
-See xref:blocks.adoc[] for accepted alignment keywords.
+[#foreground]
+== Foreground images
 
-== Block images
-
-You can customize how the block images, alt text, and image captions are arranged and styled using the xref:block-image.adoc[] and the xref:caption.adoc[].
-The following sections provide information about a few of the theme keys and values that are unique to block images.
-
-[#end]
-=== Caption end
-
-The `caption-end` key specifies whether the image caption is located on top or below the image.
-The key accepts the following keywords:
-
-bottom:: The caption block is placed below the image.
-top:: The caption block is place above the image.
+In addition to the `background-image` key, the `page` category has a `foreground-image` key.
+The `page-foreground-image` key accepts the same types of values and image macro attributes as `background-image`.
 
 [,yaml]
 ----
-image:
-  caption:
-    end: bottom
+page:
+  foreground-image: image:watermark.svg[]
 ----
 
-[#caption-text-align]
-=== Caption text alignment
-
-The `caption-text-align` key accepts the keyword `inherit` in addition to the xref:text.adoc#text-align[usual text alignment values] when it is set on the `image` category.
-
-[,yaml]
-----
-image:
-  caption:
-    text-align: inherit
-----
-
-The value `inherit` resolves to the block alignment (`image-align`) assigned to the `image` category.
+By default, a foreground image is automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+A foreground image can't be assigned only to recto pages or verso pages.

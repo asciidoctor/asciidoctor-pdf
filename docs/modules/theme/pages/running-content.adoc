@@ -24,7 +24,7 @@ header:
   background-color: #eeeeee
 
 |background-image
-|image macro +
+|xref:images.adoc#specify[image macro] {vbar} xref:images.adoc#specify[path] +
 (default: _not set_)
 |[source]
 header:
@@ -252,7 +252,7 @@ footer:
   background-color: #eeeeee
 
 |background-image
-|image macro +
+|xref:images.adoc#specify[image macro] {vbar} xref:images.adoc#specify[path] +
 (default: _not set_)
 |[source]
 footer:

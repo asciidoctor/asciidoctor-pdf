@@ -5,7 +5,8 @@ The title page contains the doctitle, author, date, and revision info.
 If a front cover image is specified, the title page comes after the front cover.
 The title page can be styled using the theme and reserved page attributes.
 
-== Enable the title page
+[#activate]
+== Activate the title page
 
 The title page is enabled if one of these conditions is met:
 
@@ -13,3 +14,20 @@ The title page is enabled if one of these conditions is met:
 * The `title-page` attribute is set (with an empty value) in the document header.
 
 When the title page is enabled, the table of contents also gets its own page (or pages, if necessary).
+
+[#notitle-attribute]
+== Deactivate with notitle attribute
+
+For documents that declare the `book` doctype, the title page can be omitted by setting the `notitle` attribute in the AsciiDoc document header.
+(Its counterpart, `:!showtitle:`, does not work with Asciidoctor PDF.)
+
+[,asciidoc]
+----
+= Document Title
+:doctype: book
+:notitle:
+----
+
+The title page can also be xref:theme:title-pages.adoc#deactivate[deactivated from the theme] by setting the value of the `title-page` category key to `false`.
+For all other doctypes, the title page is not added by default.
+In that case, setting the `:notitle:` attribute only removes the document title from the first page of content.

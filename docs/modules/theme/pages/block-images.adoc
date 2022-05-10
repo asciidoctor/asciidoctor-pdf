@@ -1,0 +1,37 @@
+= Block Image Styles
+:description: In addition to the general block and caption keys, the theming language provides keys for arranging and styling block images, alt text, and image captions.
+
+You can customize how the block images, alt text, and image captions are arranged and styled using the xref:block-image.adoc[] and the xref:caption.adoc[].
+In general, the xref:blocks.adoc[] and xref:caption.adoc[] apply to block images and their captions.
+You can further customize how the block images, alt text, and image captions are arranged and styled using the xref:block-image.adoc[].
+The following sections provide additional information about the keys that are unique to the block images.
+
+[#end]
+== Caption end
+
+The `caption-end` key specifies whether the image caption is located on top or below the image.
+The key accepts the following keywords:
+
+bottom:: The caption block is placed below the image.
+top:: The caption block is place above the image.
+
+[,yaml]
+----
+image:
+  caption:
+    end: bottom
+----
+
+[#caption-text-align]
+== Caption text alignment
+
+The `caption-text-align` key accepts the keyword `inherit` in addition to the xref:text.adoc#text-align[usual text alignment values] when it is set on the `image` category.
+
+[,yaml]
+----
+image:
+  caption:
+    text-align: inherit
+----
+
+The value `inherit` resolves to the block alignment (`image-align`) assigned to the `image` category.

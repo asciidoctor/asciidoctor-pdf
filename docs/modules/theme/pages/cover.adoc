@@ -1,26 +1,28 @@
 = Cover Category Keys
+:description: Reference list of the available front and back cover theme keys and their value types.
 :navtitle: Cover
 :source-language: yaml
 
 The keys in the `cover` category control the front and back cover images.
-Currently, the only supported feature is setting an image for each cover face.
-`<face>` is either `front` or `back`.
+See xref:covers.adoc[] for examples and more information.
 
 [cols="3,4,6a"]
 |===
 |Key |Value Type |Example
 
-|<face>-image
-|path, image macro +
+|back-image
+|xref:covers.adoc[image macro] {vbar} xref:covers.adoc[path] +
+(default: _not set_)
+|[source]
+cover:
+  back:
+    image: image:solid-cover.pdf[]
+
+|front-image
+|xref:covers.adoc[image macro] {vbar} xref:covers.adoc[path] +
 (default: _not set_)
 |[source]
 cover:
   front:
     image: image:cover.pdf[page=2]
 |===
-
-When assigning a value to `image` using the image macro, the target of the macro can be an image file or a PDF file.
-A relative path of the target file is resolved relative to the value of the `pdf-themesdir` attribute.
-An image file is handled just like a background image.
-If a PDF file is specified, the first page is used unless another page is specified by the `page` attribute.
-The page from the PDF file will be imported as is.
