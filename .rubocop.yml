@@ -192,7 +192,7 @@ Naming/VariableNumber:
 RSpec/BeEq:
   Enabled: true
 RSpec/BeEql:
-  Enabled: false # NOTE can lead to cryptic error messages
+  Enabled: false # NOTE can lead to cryptic error messages when comparing integers
 RSpec/BeNil:
   Enabled: true
 RSpec/BeforeAfterAll:
