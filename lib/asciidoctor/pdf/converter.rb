@@ -3119,11 +3119,22 @@ module Asciidoctor
         if (max_width = opts.delete :max_width) && max_width != 'none'
           if ::String === max_width
             if max_width.start_with? 'fit-content'
-              if max_width.end_with? 't', '()'
-                max_width = block_width || container_width
-              else
-                max_width = (block_width || container_width) * (max_width.slice 12, max_width.length - 1).to_f / 100.0
+              block_width ||= container_width
+              unless max_width.end_with? 't', '()'
+                max_width = block_width * (max_width.slice 12, max_width.length - 1).to_f / 100.0
+                if (caption_width_delta = block_width - max_width) > 0
+                  case align
+                  when :right
+                    indent_by[0] += caption_width_delta
+                  when :center
+                    indent_by[0] += caption_width_delta * 0.5
+                    indent_by[1] += caption_width_delta * 0.5
+                  else # :left, nil
+                    indent_by[1] += caption_width_delta
+                  end
+                end
               end
+              max_width = block_width
             elsif max_width.end_with? '%'
               max_width = [max_width.to_f / 100 * bounds.width, bounds.width].min
               block_align = align
@@ -3138,11 +3149,12 @@ module Asciidoctor
           if (remainder = container_width - max_width) > 0
             case block_align
             when :right
-              indent_by = [remainder, 0]
+              indent_by[0] += remainder
             when :center
-              indent_by = [(side_margin = remainder * 0.5), side_margin]
+              indent_by[0] += remainder * 0.5
+              indent_by[1] += remainder * 0.5
             else # :left, nil
-              indent_by = [0, remainder]
+              indent_by[1] += remainder
             end
           end
         end
