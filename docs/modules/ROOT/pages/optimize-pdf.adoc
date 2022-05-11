@@ -1,4 +1,4 @@
-= Optimize a PDF
+= Optimize the PDF
 :url-hexapdf: https://hexapdf.gettalong.org/
 
 By default, Asciidoctor PDF does not optimize the PDF it generates or compress its streams.
