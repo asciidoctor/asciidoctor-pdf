@@ -13,13 +13,14 @@ Enhancements::
 * rename `resolve_alignment_from_role` to `resolve_text_align_from_role` to reflect proper terminology and purpose; alias old method name
 * add support for orphan avoidance to discrete headings to match behavior of section titles (using call to `arrange_heading`) (#2151)
 * rename `arrange_section` to `arrange_heading` to reflect proper terminology and purpose
+* add `index-column-gap` key to theme to control size of gap between columns
 
 Bug Fixes::
 
 * allow theme to set font style of first line of abstract to `normal_italic` (#2138)
 * add support for `:color` option to `Prawn::Text::Formatted::Box` directly and remove workarounds
 * preserve columns on subsequent pages in the index section (#2149)
-* fix return value of `cursor` method inside block for column box
+* fix return value of `cursor` method inside block for column box in index section
 
 == 2.0.0.beta.1 (2022-05-04) - @mojavelinux
 

@@ -262,6 +262,8 @@ toc:
 footnotes:
   font_size: round($base_font_size * 0.75)
   item_spacing: $list_item_spacing / 2
+index:
+  column_gap: $vertical_rhythm
 header:
   font_size: $base_font_size_small
   line_height: 1

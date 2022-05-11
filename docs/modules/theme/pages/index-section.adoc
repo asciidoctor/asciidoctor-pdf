@@ -8,6 +8,13 @@ The key in the `index` category controls the number of columns in the autogenera
 |===
 |Key |Value Type |Example
 
+|column_gap
+|xref:measurement-units.adoc[Measurement] +
+(default: `$base-font-size`)
+|[source]
+index:
+  column_gap: 12
+
 |columns
 |Integer +
 (default: `2`)

@@ -486,8 +486,9 @@ module Asciidoctor
         theme.code_linenum_font_color ||= '999999'
         theme.callout_list_margin_top_after_code ||= 0
         theme.role_unresolved_font_color ||= 'FF0000'
-        theme.index_columns ||= 2
         theme.footnotes_item_spacing ||= 0
+        theme.index_columns ||= 2
+        theme.index_column_gap ||= theme.base_font_size
         theme.kbd_separator ||= '+'
         theme.title_page_authors_delimiter ||= ', '
         theme.title_page_revision_delimiter ||= ', '
@@ -2417,7 +2418,7 @@ module Asciidoctor
       def convert_index_section node
         space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
         pagenum_sequence_style = node.document.attr 'index-pagenum-sequence-style'
-        column_box [0, cursor], columns: @theme.index_columns, width: bounds.width, reflow_margins: true do
+        column_box [0, cursor], columns: @theme.index_columns, width: bounds.width, reflow_margins: true, spacer: @theme.index_column_gap do
           @index.categories.each do |category|
             bounds.move_past_bottom if space_needed_for_category > cursor
             ink_prose category.name,
