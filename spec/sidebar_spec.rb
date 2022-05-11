@@ -157,6 +157,37 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     (expect sidebar_text[:page_number]).to be 2
   end
 
+  it 'should keep title with content when block is advanced to next page' do
+    pdf_theme = {
+      sidebar_border_radius: 0,
+      sidebar_border_width: 0,
+      sidebar_background_color: 'DFDFDF',
+    }
+    pdf = with_content_spacer 10, 680 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      image::#{spacer_path}[]
+
+      .Sidebar Title
+      ****
+
+      First block of content.
+      ****
+      EOS
+    end
+
+    pages = pdf.pages
+    (expect pages).to have_size 2
+    title_text = pdf.find_unique_text 'Sidebar Title'
+    content_text = pdf.find_unique_text 'First block of content.'
+    (expect title_text[:page_number]).to be 2
+    (expect content_text[:page_number]).to be 2
+    (pdf.extract_graphic_states pages[0][:raw_content]).each do |p1_gs|
+      (expect p1_gs).not_to include '0.87451 0.87451 0.87451 scn'
+    end
+    p2_gs = (pdf.extract_graphic_states pages[1][:raw_content])[0]
+    (expect p2_gs).to have_background color: 'DFDFDF', top_left: [48.24, 805.89], bottom_right: [547.04, 737.63]
+  end
+
   it 'should split block if it cannot fit on one page' do
     pdf = to_pdf <<~EOS, analyze: true
     .Sidebar Title
