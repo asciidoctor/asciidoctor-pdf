@@ -1578,6 +1578,7 @@ module Asciidoctor
 
         caption_end = @theme.image_caption_end&.to_sym || :bottom
         caption_max_width = @theme.image_caption_max_width
+        caption_max_width = 'fit-content' if (node.attr? 'float') && !(caption_max_width&.start_with? 'fit-content')
         # NOTE: if width is not set explicitly and max-width is fit-content, caption height may not be accurate
         caption_h = node.title? ? (ink_caption node, category: :image, end: caption_end, block_align: alignment, block_width: width, max_width: caption_max_width, dry_run: true, force_top_margin: caption_end == :bottom) : 0
 

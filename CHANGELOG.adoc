@@ -14,6 +14,7 @@ Enhancements::
 * add support for orphan avoidance to discrete headings to match behavior of section titles (using call to `arrange_heading`) (#2151)
 * rename `arrange_section` to `arrange_heading` to reflect proper terminology and purpose
 * add `index-column-gap` key to theme to control size of gap between columns
+* coerce `image-caption-max-width` to `fit-content` if `float` attribute is set on block image (#2150)
 
 Bug Fixes::
 
