@@ -38,4 +38,4 @@ When the script completes, you should see the file [.path]_basic-example.pdf_ in
 Open the [.path]_basic-example.pdf_ file with a PDF viewer to see the result.
 
 .Example PDF document rendered in a PDF viewer
-image::example-pdf-screenshot.png[Screenshot of PDF document,width=850,467,scaledwidth=100%]
+image::example-pdf-screenshot.png[Screenshot of PDF document,850,pdfwidth=100%]
