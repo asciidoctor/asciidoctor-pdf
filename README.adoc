@@ -49,7 +49,7 @@ It bypasses the requirement to generate an intermediary format such as DocBook, 
 Instead, you can use this extension to convert your documents directly from AsciiDoc to PDF.
 Its aim is to take the pain out of creating PDF documents from AsciiDoc.
 
-NOTE: You're viewing the documentation for the (unreleased) {release-line} release line.
+NOTE: The documentation for Asciidoctor PDF {release-line} is now available at https://docs.asciidoctor.org/pdf-converter/latest/.
 If you're looking for the documentation for another release line, please refer to one of the following branches: +
 {url-project-repo}/tree/v1.5.x#readme[1.5.x]
 -
@@ -75,7 +75,7 @@ But don't miss the <<Highlights>> to get a preview of what's possible.
 == Highlights
 
 * Direct AsciiDoc to PDF conversion
-* <<docs/theming-guide.adoc#,Configuration-driven theme (style and layout)>>
+* Configuration-driven theme (style and layout)
 * Custom fonts (TTF or OTF)
 * Full SVG support (thanks to https://github.com/mogest/prawn-svg[prawn-svg])
 * PDF document outline (i.e., bookmarks)
@@ -319,7 +319,7 @@ The pain of the DocBook toolchain should be melting away about now.
 == Themes
 
 The layout and styling of the PDF is driven by a YAML configuration file.
-To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theming Guide>>.
+To learn how the theming system works and how to create and apply custom themes, refer to the https://docs.asciidoctor.org/pdf-converter/latest/theme/[Asciidoctor PDF theming documentation].
 You can use the built-in theme files, which you can find in the [.path]_data/themes_ directory, as examples.
 
 If you've enabled a source highlighter, you can control the style (aka theme) it applies to source blocks using the `coderay-style`, `pygments-style`, and `rouge-style` attributes, respectively.
@@ -328,7 +328,7 @@ For example, to configure Rouge to use the built-in monokai theme, run Asciidoct
  $ asciidoctor-pdf -a rouge-style=monokai basic-example.adoc
 
 It's possible to develop your own theme for Rouge.
-Refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theming Guide>> for details.
+Refer to the https://docs.asciidoctor.org/pdf-converter/latest/theme/[Asciidoctor PDF theming documentation] for details.
 
 == Support for Non-Latin Languages
 
@@ -343,80 +343,6 @@ There's no one font that supports all the world's languages (though some, like N
 Even if there were such a font, bundling that font with the main gem would make it enormous.
 It would also severely limit the style choices in the default theme, which targets Latin-based languages.
 Therefore, we're taking the strategy of creating separate dedicated theme gems that target each language family, such as CJK.
-Read on to find out how to use these themes.
-
-Asciidoctor PDF provides a built-in theme that provides a broad range of characters in the CJK charsets, so you can start with that theme:
-
- $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=default-with-fallback-font document.adoc
-
-Notice the `-a scripts=cjk` option.
-That's important.
-It tells the converter to insert break opportunities between CJK characters so that the line wraps properly when mixing English and a CJK language like Japanese.
-
-If the built-in theme with the fallback font doesn't go far enough, you'll need to use a theme that is optimized for CJK text.
-You can get such a theme by installing the `asciidoctor-pdf-cjk-kai_gen_gothic` gem.
-The https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project provides themes optimized for CJK languages based on the kai_gen_gothic font.
-See the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic[asciidoctor-pdf-cjk-kai_gen_gothic] project README for detailed setup instructions.
-
-WARNING: The theme provided by the `asciidoctor-pdf-cjk-kai_gen_gothic` gem is no longer compatiable with the stable release of Asciidoctor PDF.
-However, you can still use it to create a <<Create a Custom CJK Theme,custom CJK theme>>.
-
-Once you have that gem installed (and the fonts), you need to tell Asciidoctor PDF to use one of the themes.
-If you're converting a document that is primarily written in Japanese, you'd run Asciidoctor PDF as follows:
-
- asciidoctor-pdf -r asciidoctor-pdf-cjk-kai_gen_gothic -a pdf-theme=KaiGenGothicJP document.adoc
-
-If that command fails, you may have better luck creating your own CJK theme.
-
-=== Create a Custom CJK Theme
-
-You also have to option of creating your own theme gem that uses fonts of your choice.
-For example, if you want to use the `asciidoctor-pdf-cjk-kai_gen_gothic` gem to fetch fonts, but then use them in your own theme, here's how you'd do it.
-
-. Install the `asciidoctor-pdf-cjk-kai_gen_gothic` gem:
-
- $ gem install asciidoctor-pdf-cjk-kai_gen_gothic
-
-. Download / install the fonts:
-
- $ asciidoctor-pdf-cjk-kai_gen_gothic-install
-
-. Create a theme file named [.path]_cjk-theme.yml_ that extends the default theme to override the fonts:
-+
-[source,yml]
-----
-extends: default
-font:
-  catalog:
-    merge: true
-    KaiGen Gothic CN:
-      normal: KaiGenGothicCN-Regular.ttf
-      bold: KaiGenGothicCN-Bold.ttf
-      italic: KaiGenGothicCN-Regular-Italic.ttf
-      bold_italic: KaiGenGothicCN-Bold-Italic.ttf
-  fallbacks:
-  - KaiGen Gothic CN
-base:
-  font-family: KaiGen Gothic CN
-heading:
-  font-family: $base-font-family
-abstract:
-  title:
-    font-family: $heading-font-family
-sidebar:
-  title:
-    font-family: $heading-font-family
-----
-
-. Load your theme when running Asciidoctor PDF:
-
- $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=./cjk-theme.yml -a pdf-fontsdir=GEM_FONTS_DIR,`ruby -r asciidoctor-pdf-cjk-kai_gen_gothic -e "print File.expand_path '../fonts', (Gem.datadir 'asciidoctor-pdf-cjk-kai_gen_gothic')"` document.adoc
-
-The `-a pdf-fontsdir` option is important to tell Asciidoctor PDF where to find your custom fonts.
-(Note that the inclusion of GEM_FONTS_DIR in the value is only required when using Asciidoctor PDF 1.5).
-
-Rather than using the installer from the `asciidoctor-pdf-cjk-kai_gen_gothic` gem, you can download fonts whatever way you choose.
-When using your own fonts, be sure to consult the <<docs/theming-guide.adoc#preparing-a-custom-font,Preparing a Custom Font>> section of the theming guide to find recommended modifications.
 
 == Font-Based Icons
 
@@ -671,45 +597,6 @@ Here's how to move it to the bottom right:
 ----
 
 If an image dimension matches the height or width of the page, the positioning keyword for that axis has no effect.
-
-== Fonts in SVG Images
-
-Asciidoctor PDF uses {url-prawn-svg}[prawn-svg] to embed SVGs in the PDF document, including SVGs generated by Asciidoctor Diagram.
-
-Actually, it's not accurate to say that prawn-svg embeds the SVG.
-Rather, prawn-svg is an SVG _renderer_.
-prawn-svg translates an SVG into native PDF text and graphic objects.
-You can think of the SVG as a sequence of drawing commands.
-The result becomes indistinguishable from other PDF objects.
-
-What that means for text is that any font family used for text in the SVG _must_ be registered in the Asciidoctor PDF theme file (and thus with Prawn).
-Otherwise, Prawn will fallback to using the closest matching built-in (afm) font from PDF (e.g., sans-serif becomes Helvetica).
-Recall that afm fonts only support basic Latin.
-As we like to say, PDF is <<docs/theming-guide.adoc#built-in-afm-fonts,bring your own font>>.
-
-If you're using Asciidoctor Diagram to generate SVGs to embed in the PDF, you likely need to specify the default font the diagramming tool uses.
-Let's assume you are making a plantuml diagram.
-
-To set the font used in the diagram, first create a file named [.path]_plantuml.cfg_ and populate it with the following content:
-
-----
-skinparam defaultFontName Noto Serif
-----
-
-TIP: You can choose any font name that is registered in your Asciidoctor PDF theme file.
-When using the default theme, your options are "Noto Serif", "M+ 1mn", and "M+ 1p Fallback".
-
-Next, pass that path to the `plantumlconfig` attribute in your AsciiDoc document (or set the attribute via the CLI or API):
-
-----
-:plantumlconfig: plantuml.cfg
-----
-
-Clear the cache of your diagrams and run Asciidoctor PDF with Asciidoctor Diagram enabled.
-The diagrams will be generated using Noto Serif as the default font, and Asciidoctor PDF will know what to do.
-
-The bottom line is this:
-If you're using fonts in your SVG, and you want those fonts to be preserved, those fonts must be defined in the Asciidoctor PDF theme file.
 
 == Supporting Additional Image File Formats
 
