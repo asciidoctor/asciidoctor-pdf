@@ -408,9 +408,10 @@ module Asciidoctor
         @base_text_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_text_align
         @base_line_height = theme.base_line_height
         @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
-        if (hyphen_lang = doc.attr 'hyphens') &&
+        if (hyphen_lang = (doc.attr 'hyphens') ||
+            (((doc.attribute_locked? 'hyphens') || ((doc.instance_variable_get :@attributes_modified).include? 'hyphens')) ? nil : @theme.base_hyphens)) &&
             ((defined? ::Text::Hyphen::VERSION) || !(Helpers.require_library 'text/hyphen', 'text-hyphen', :warn).nil?)
-          hyphen_lang = doc.attr 'lang' if hyphen_lang.empty?
+          hyphen_lang = doc.attr 'lang' if !(::String === hyphen_lang) || hyphen_lang.empty?
           hyphen_lang = 'en_us' if hyphen_lang.nil_or_empty? || hyphen_lang == 'en'
           hyphen_lang = (hyphen_lang.tr '-', '_').downcase
           @hyphenator = ::Text::Hyphen.new language: hyphen_lang

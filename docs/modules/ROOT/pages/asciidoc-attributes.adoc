@@ -168,6 +168,8 @@ Instead of disabling page numbers, you can use the `noheader` and `nofooter` att
 6. Enables generation of the https://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark^] file, which contains metadata that can be fed to Ghostscript when optimizing the PDF file.
 If you're using Ghostscript >= 8.54, this feature is not needed.
 7. Activates hyphenation for the language code specified (defaults to en_us).
+If the `hyphens` attribute is set in the document, it overrides the `base-hyphens` key set in the theme.
+In other case, if the value is empty, then the value of the `lang` document attribute is used for the hyphenation language.
 8. Activates line break rules for CJK languages (specifically Chinese and Japanese).
 Chinese and Japanese are written without spaces (and may not use spaces when mixing with English words either).
 This setting allows a line break to be placed between any two CJK characters to accommodate wrapping.
