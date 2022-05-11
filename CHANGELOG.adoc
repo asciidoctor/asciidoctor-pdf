@@ -21,6 +21,7 @@ Bug Fixes::
 * add support for `:color` option to `Prawn::Text::Formatted::Box` directly and remove workarounds
 * preserve columns on subsequent pages in the index section (#2149)
 * fix return value of `cursor` method inside block for column box in index section
+* correctly detect preceding code block when determining whether to collapse top margin of colist
 
 == 2.0.0.beta.1 (2022-05-04) - @mojavelinux
 

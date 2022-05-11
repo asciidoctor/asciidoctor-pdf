@@ -1148,7 +1148,9 @@ module Asciidoctor
       end
 
       def convert_colist node
-        margin_top @theme.callout_list_margin_top_after_code if !at_page_top? && ([:listing, :literal].include? node.parent.blocks[(node.parent.blocks.index node) - 1].context)
+        unless at_page_top? || (self_idx = (siblings = node.parent.blocks).index node) == 0 || !([:listing, :literal].include? siblings[self_idx - 1].context)
+          margin_top @theme.callout_list_margin_top_after_code
+        end
         add_dest_for_block node if node.id
         @list_numerals << 1
         last_item = node.items[-1]

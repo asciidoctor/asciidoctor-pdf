@@ -1771,6 +1771,49 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect gap).to be < 14
     end
 
+    it 'should not apply top margin if callout list does not follow literal or listing block' do
+      pdf_theme = {
+        sidebar_border_radius: 0,
+        sidebar_border_width: 1,
+        sidebar_border_color: '0000EE',
+        sidebar_background_color: 'transparent',
+      }
+
+      ref_input = <<~'EOS'
+      ****
+      . describe first line
+      ****
+      EOS
+
+      ref_top_line_y = (to_pdf ref_input, pdf_theme: pdf_theme, analyze: :line).lines.map {|it| it[:from][:y] }.max
+      ref_text_top = (to_pdf ref_input, pdf_theme: pdf_theme, analyze: true).text[0].yield_self {|it| it[:y] + it[:font_size] }
+      expected_top_padding = ref_top_line_y - ref_text_top
+
+      input = <<~'EOS'
+      ----
+      line 1 <1>
+      line 2 <2>
+      ----
+
+      ****
+      <1> describe first line
+      <2> describe second line
+
+      ----
+      code
+      ----
+      ****
+      EOS
+
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      sidebar_lines = lines.select {|it| it[:color] == '0000EE' && it[:width] == 1 }
+      top_line_y = sidebar_lines.map {|it| it[:from][:y] }.max
+      text_top = (pdf.find_text %r/describe /)[0].yield_self {|it| it[:y] + it[:font_size] }
+      top_padding = top_line_y - text_top
+      (expect top_padding).to eql expected_top_padding
+    end
+
     it 'should allow theme to control font properties and item spacing of callout list' do
       pdf_theme = {
         callout_list_font_size: 9,
