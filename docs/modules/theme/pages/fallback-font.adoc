@@ -5,7 +5,7 @@ If a TrueType font is missing a character needed to render the document, such as
 You only need to specify a single fallback font, typically one that provides a full set of symbols.
 If the character isn't found in the fallback font, it will mostly likely be replaced by a box (i.e., the notdef glyph), which is guaranteed if you're using the bundled fallback font.
 
-IMPORTANT: When defining the fallback font, you *must specify all four variants* (normal, bold, italic, bold_italic), even if you use the same font file for each.
+IMPORTANT: When defining the fallback font, you *must specify all four variants* (`normal`, `bold`, `italic`, `bold_italic`), even if you use the same font file for each.
 
 IMPORTANT: The fallback font only gets used when the primary font is a TrueType or OpenType font (i.e., TTF, DFont, TTC, OTF).
 Any glyph missing from an AFM font is simply replaced with the "`not`" glyph (`&#172;`).
@@ -15,11 +15,11 @@ However, the built-in `default-with-fallback-font` theme does.
 In fact, it provides two.
 One for general writing in non-Latin languages (M+ 1p) and another for emoji (Noto Emoji).
 Using the fallback font slows down PDF generation slightly because it has to analyze every single character.
-It's use is not recommended for large documents.
+Its use is not recommended for large documents.
 Instead, it's best to select primary fonts that have all the characters you need.
 
 Like with other custom fonts, you first need to declare the fallback font.
-Let's choose https://github.com/android/platform_frameworks_base/blob/master/data/fonts/DroidSansFallback.ttf[Droid Sans Fallback].
+Let's choose https://github.com/android/platform_frameworks_base/blob/master/data/fonts/DroidSansFallback.ttf[Droid Sans Fallback^].
 You can map all the styles to a single font file (since bold and italic don't usually make sense for symbols).
 
 [source,yaml]
