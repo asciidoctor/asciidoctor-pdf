@@ -1023,35 +1023,13 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect content_text[:page_number]).to be 2
   end
 
-  it 'should allow arrange_heading to be reimplemented to always keep section with content that follows' do
-    backend = nil
-    create_class (Asciidoctor::Converter.for 'pdf') do
-      register_for (backend = %(pdf#{object_id}).to_sym)
-      def arrange_heading node, title, opts
-        orphaned = nil
-        dry_run single_page: true do
-          start_page = page
-          theme_font :heading, level: opts[:level] do
-            if opts[:part]
-              layout_part_title node, title, opts
-            elsif opts[:chapterlike]
-              layout_chapter_title node, title, opts
-            else
-              layout_general_heading node, title, opts
-            end
-          end
-          if page == start_page
-            page.tare_content_stream
-            orphaned = stop_if_first_page_empty do
-              node.context == :section ? (traverse node) : (convert (siblings = node.parent.blocks)[(siblings.index node) + 1])
-            end
-          end
-        end
-        start_new_page if orphaned
-        nil
-      end
-    end
-
+  it 'should allow arrange_heading to be reimplemented to always keep section title with content that follows it' do
+    source_file = doc_file 'modules/extend/examples/pdf-converter-avoid-break-after-heading.rb'
+    source_lines = (File.readlines source_file).select {|l| l == ?\n || (l.start_with? ' ') }
+    ext_class = create_class Asciidoctor::Converter.for 'pdf'
+    backend = %(pdf#{ext_class.object_id})
+    source_lines[0] = %(  register_for '#{backend}'\n)
+    ext_class.class_eval source_lines.join, source_file
     pdf = to_pdf <<~EOS, backend: backend, analyze: true
     == Section A
 

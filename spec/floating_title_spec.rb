@@ -95,6 +95,41 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     (expect (get_dest pdf, 'buddy')[:page_number]).to eql 2
   end
 
+  it 'should allow arrange_heading to be reimplemented to always keep heading with content that follows it' do
+    source_file = doc_file 'modules/extend/examples/pdf-converter-avoid-break-after-heading.rb'
+    source_lines = (File.readlines source_file).select {|l| l == ?\n || (l.start_with? ' ') }
+    ext_class = create_class Asciidoctor::Converter.for 'pdf'
+    backend = %(pdf#{ext_class.object_id})
+    source_lines[0] = %(  register_for '#{backend}'\n)
+    ext_class.class_eval source_lines.join, source_file
+    pdf = to_pdf <<~EOS, backend: backend, analyze: true
+    [discrete]
+    == Heading A
+
+    [discrete]
+    == Heading B
+
+    image::tall.svg[pdfwidth=65mm]
+
+    [discrete]
+    == Heading C
+
+    [%unbreakable]
+    --
+    keep
+
+    this
+
+    together
+    --
+    EOS
+
+    heading_c_text = pdf.find_unique_text 'Heading C'
+    (expect heading_c_text[:page_number]).to be 2
+    content_text = pdf.find_unique_text 'keep'
+    (expect content_text[:page_number]).to be 2
+  end
+
   it 'should not force discrete heading to next page if min_height_after value is not set' do
     pdf = with_content_spacer 10, 690 do |spacer_path|
       to_pdf <<~EOS, pdf_theme: { heading_min_height_after: nil }

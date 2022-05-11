@@ -108,27 +108,27 @@ Then, you can add this number in the left margin at the start of each paragraph 
 include::example$pdf-converter-numbered-paragraphs.rb[]
 ----
 
-== Avoid break after section title
+== Avoid break after heading
 
-This functionality is already provided by the converter if you set the `breakable` option on section title.
-The code is presented here to explain how it works and if you want to make this behavior automatic.
+This functionality is already provided by the converter if you set the `breakable` option on section title or discrete heading.
+The code is presented here both to explain how it works and to use to make this behavior automatic.
 
-If the section title is followed by content that doesn't fit on the current page, and the `breakable` option is not set on the section title, the converter will leave the section title behind, making it an orphan.
-You can fix this behavior by overridding the `arrange_section` method in an extended converter.
+If an in-flow heading is followed by content that doesn't fit on the current page, and the `breakable` option is not set on the heading, the converter will orphan the heading on the current page.
+You can fix this behavior by overridding the `arrange_heading` method in an extended converter.
 
-This extended converter takes this opportunity to use `dry_run` to make an attempt to write content in the remaining space on the page.
-If no content is written, it advances to the next page before the section title is written.
+This extended converter takes this opportunity to use `dry_run` to make an attempt to write content in the remaining space on the page after the heading.
+If no content is written, it advances to the next page before inking the heading (and its corresponding anchor).
 
-.Extended converter that avoids a page break after a section title
+.Extended converter that avoids a page break after a heading
 [,ruby]
 ----
-include::example$pdf-converter-avoid-break-after-section-title.rb[]
+include::example$pdf-converter-avoid-break-after-heading.rb[]
 ----
 <.> An optional optimization to skip this logic if the cursor is above the bottom third of the page.
 <.> Initiate a dry run up to the end of the current page.
-<.> Render the section title as normal.
+<.> Render the heading as normal.
 <.> Proceed with converting content until the end of the page is reached. Returns true if content is written, false otherwise.
-<.> Start new page before rendering section title if orphaned.
+<.> Start new page before rendering heading if orphaned.
 
 == Additional TOC entries
 
