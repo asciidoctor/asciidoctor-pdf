@@ -55,6 +55,107 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     (expect discrete_heading_text[:x]).to be > main_text[:x]
   end
 
+  it 'should force discrete heading to next page if space below is less than min_height_after value' do
+    pdf = with_content_spacer 10, 690 do |spacer_path|
+      to_pdf <<~EOS
+      image::#{spacer_path}[]
+
+      [discrete#buddy]
+      == Discrete Heading
+
+      Don't abandon me!
+      EOS
+    end
+
+    (expect pdf.pages).to have_size 2
+    p2_text = (pdf.page 2).text
+    (expect p2_text).to include 'Discrete Heading'
+    (expect get_names pdf).to have_key 'buddy'
+    (expect (get_dest pdf, 'buddy')[:page_number]).to eql 2
+  end
+
+  it 'should force discrete heading with breakable option to next page if no content is inked below it' do
+    pdf = with_content_spacer 10, 675 do |spacer_path|
+      to_pdf <<~EOS
+      image::#{spacer_path}[]
+
+      [discrete#buddy%breakable]
+      == Discrete Heading
+
+      ----
+      Do it like this.
+      ----
+      EOS
+    end
+
+    (expect pdf.pages).to have_size 2
+    p2_text = (pdf.page 2).text
+    (expect p2_text).to include 'Discrete Heading'
+    (expect get_names pdf).to have_key 'buddy'
+    (expect (get_dest pdf, 'buddy')[:page_number]).to eql 2
+  end
+
+  it 'should not force discrete heading to next page if min_height_after value is not set' do
+    pdf = with_content_spacer 10, 690 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: nil }
+      image::#{spacer_path}[]
+
+      [discrete#buddy]
+      == Discrete Heading
+
+      Don't abandon me!
+      EOS
+    end
+
+    (expect pdf.pages).to have_size 2
+    p1_text = (pdf.page 1).text
+    (expect p1_text).to include 'Discrete Heading'
+    p2_text = (pdf.page 2).text
+    (expect p2_text).to include 'abandon'
+    (expect get_names pdf).to have_key 'buddy'
+    (expect (get_dest pdf, 'buddy')[:page_number]).to eql 1
+  end
+
+  it 'should not force discrete heading without breakable option to next page if no content is inked below it' do
+    pdf = with_content_spacer 10, 675 do |spacer_path|
+      to_pdf <<~EOS
+      image::#{spacer_path}[]
+
+      [discrete#buddy]
+      == Discrete Heading
+
+      ----
+      Do it like this.
+      ----
+      EOS
+    end
+
+    (expect pdf.pages).to have_size 2
+    p1_text = (pdf.page 1).text
+    (expect p1_text).to include 'Discrete Heading'
+    p2_text = (pdf.page 2).text
+    (expect p2_text).to include 'like this'
+    (expect get_names pdf).to have_key 'buddy'
+    (expect (get_dest pdf, 'buddy')[:page_number]).to eql 1
+  end
+
+  it 'should not force discrete heading to next page if it has no next sibling' do
+    pdf = with_content_spacer 10, 690 do |spacer_path|
+      to_pdf <<~EOS
+      image::#{spacer_path}[]
+
+      [discrete#buddy]
+      == Discrete Heading
+      EOS
+    end
+
+    (expect pdf.pages).to have_size 1
+    p1_text = (pdf.page 1).text
+    (expect p1_text).to include 'Discrete Heading'
+    (expect get_names pdf).to have_key 'buddy'
+    (expect (get_dest pdf, 'buddy')[:page_number]).to eql 1
+  end
+
   it 'should outdent discrete heading' do
     pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
     = Document Title

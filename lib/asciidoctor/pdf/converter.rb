@@ -665,24 +665,24 @@ module Asciidoctor
           title, _, subtitle = title.rpartition sep
           title = %(#{title}\n<em class="subtitle">#{subtitle}</em>)
         end
-        hlevel = sect.level + 1
+        hlevel = sect.level.next
         align = (@theme[%(heading_h#{hlevel}_text_align)] || @theme.heading_text_align || @base_text_align).to_sym
         chapterlike = !(part = sectname == 'part') && (sectname == 'chapter' || (sect.document.doctype == 'book' && sect.level == 1))
         hidden = sect.option? 'notitle'
         hopts = { align: align, level: hlevel, part: part, chapterlike: chapterlike, outdent: !(part || chapterlike) }
         if part
           unless @theme.heading_part_break_before == 'auto'
-            start_new = true
+            started_new = true
             start_new_part sect
           end
         elsif chapterlike
           if @theme.heading_chapter_break_before != 'auto' ||
               (@theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0])
-            start_new = true
+            started_new = true
             start_new_chapter sect
           end
         end
-        arrange_section sect, title, hopts unless hidden || start_new || at_page_top?
+        arrange_heading sect, title, hopts unless hidden || started_new || at_page_top? || !sect.blocks?
         # QUESTION: should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
         sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
         # QUESTION: should we just assign the section this generated id?
@@ -753,14 +753,17 @@ module Asciidoctor
       end
 
       def convert_floating_title node
-        add_dest_for_block node if node.id
+        title = node.title
         hlevel = node.level.next
         unless (align = resolve_text_align_from_role node.roles)
           align = (@theme[%(heading_h#{hlevel}_text_align)] || @theme.heading_text_align || @base_text_align).to_sym
         end
+        hopts = { align: align, level: hlevel, outdent: (parent = node.parent).context == :section }
+        arrange_heading node, title, hopts unless at_page_top? || node == parent.blocks[-1]
+        add_dest_for_block node if node.id
         # QUESTION: should we decouple styles from section titles?
         theme_font :heading, level: hlevel do
-          ink_general_heading node, node.title, align: align, level: hlevel, outdent: (node.parent.context == :section)
+          ink_general_heading node, title, hopts
         end
       end
 
@@ -2925,23 +2928,31 @@ module Asciidoctor
 
       alias start_new_part start_new_chapter
 
-      def arrange_section sect, title, opts
-        if sect.option? 'breakable'
+      # Position the cursor for where to ink the specified section title or discrete heading node.
+      #
+      # This method computes whether there is enough room on the page to prevent the specified node
+      # from being orphaned. If there is not enough room, the method will advance the cursor to
+      # the next page. This method is not called if the cursor is already at the top of the page or
+      # whether this node has no node that follows it in document order.
+      def arrange_heading node, title, opts
+        if node.option? 'breakable'
           orphaned = nil
           dry_run single_page: true do
             start_page = page
             theme_font :heading, level: opts[:level] do
               if opts[:part]
-                ink_part_title sect, title, opts
+                ink_part_title node, title, opts
               elsif opts[:chapterlike]
-                ink_chapter_title sect, title, opts
+                ink_chapter_title node, title, opts
               else
-                ink_general_heading sect, title, opts
+                ink_general_heading node, title, opts
               end
             end
             if page == start_page
               page.tare_content_stream
-              orphaned = stop_if_first_page_empty { traverse sect }
+              orphaned = stop_if_first_page_empty do
+                node.context == :section ? (traverse node) : (convert (siblings = node.parent.blocks)[(siblings.index node) + 1])
+              end
             end
           end
           start_new_page if orphaned
@@ -2953,7 +2964,10 @@ module Asciidoctor
               heading_h = (height_of_typeset_text title) +
                 (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
                 (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom) + h_padding_t + h_padding_b
-              heading_h += @theme.heading_min_height_after if @theme.heading_min_height_after && sect.blocks?
+              if (min_height_after = @theme.heading_min_height_after) &&
+                  (node.context == :section ? node.blocks? : node != node.parent.blocks[-1])
+                heading_h += min_height_after
+              end
               cursor >= heading_h
             end
             start_new_page unless h_fits
