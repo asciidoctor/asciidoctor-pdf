@@ -1135,9 +1135,11 @@ module Asciidoctor
           add_dest_for_block node if node.id
           theme_fill_and_stroke_block :sidebar, extent if extent
           pad_box @theme.sidebar_padding, node do
-            theme_font :sidebar_title do
-              # QUESTION: should we allow margins of sidebar title to be customized?
-              ink_prose node.title, align: (@theme.sidebar_title_text_align || @theme.heading_text_align || @base_text_align).to_sym, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
+            tare_first_page_content_stream do
+              theme_font :sidebar_title do
+                # QUESTION: should we allow margins of sidebar title to be customized?
+                ink_prose node.title, align: (@theme.sidebar_title_text_align || @theme.heading_text_align || @base_text_align).to_sym, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
+              end
             end if node.title?
             theme_font :sidebar do
               traverse node
