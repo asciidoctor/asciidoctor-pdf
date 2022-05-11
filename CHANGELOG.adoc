@@ -1,9 +1,9 @@
 = {project-name} Changelog
 :project-name: Asciidoctor PDF
-:uri-repo: https://github.com/asciidoctor/asciidoctor-pdf
+:url-repo: https://github.com/asciidoctor/asciidoctor-pdf
 
 This document provides a high-level view of the changes to the {project-name} by release.
-For a detailed view of what has changed, refer to the {uri-repo}/commits/main[commit history] on GitHub.
+For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
 == Unreleased
 
@@ -836,8 +836,8 @@ Bug Fixes::
 * document in README how to install Asciidoctor PDF on Ruby 2.0.0
 * enable Travis CI; configure CI-based deployment to RubyGems.org
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.16[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.16[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.16[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.16[git tag]
 
 == 1.5.0.alpha.15 (2017-03-27) - @mojavelinux
 
@@ -871,8 +871,8 @@ Bug Fixes::
 * document that background images are scaled to fit bounds of page
 * add note in theming guide about using double quoted strings
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.15[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.15[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.15[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.15[git tag]
 
 == 1.5.0.alpha.14 (2017-02-05) - @mojavelinux
 
@@ -995,8 +995,8 @@ Bug Fixes::
 * update instructions and Gemfile config to use with Ruby 1.9.3
 * configure build as the default rake task
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.14[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.14[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.14[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.14[git tag]
 
 == 1.5.0.alpha.13 (2016-09-19) - @mojavelinux
 
@@ -1062,8 +1062,8 @@ Bug Fixes::
 * Configure README for better preview on GitHub
 * Update chronicles example to modern AsciiDoc syntax; update content
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.13[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.13[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.13[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.13[git tag]
 
 == 1.5.0.alpha.12 (2016-08-05) - @mojavelinux
 
@@ -1099,8 +1099,8 @@ Bug Fixes::
 * Add hints to theming guide about how to apply styles when using Maven or Gradle (@fwilhe)
 * Fix gemspec to collect files when project is not a git repository or git is not available
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.12[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.12[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.12[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.12[git tag]
 
 == 1.5.0.alpha.11 (2016-01-05) - @mojavelinux
 
@@ -1123,8 +1123,8 @@ Bug Fixes::
 * Document that page background colors & images do not currently work in AsciidoctorJ PDF
 * Use failproof relative require logic in bin script
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.11[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.11[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.11[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.11[git tag]
 
 == 1.5.0.alpha.10 (2015-11-01) - @mojavelinux
 
@@ -1141,8 +1141,8 @@ Bug Fixes::
 * Document theme key that sets sidebar padding (#344)
 * Handle case when CodeRay passes nil text to text_token
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.10[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.10[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.10[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.10[git tag]
 
 == 1.5.0.alpha.9 (2015-08-02) - @mojavelinux
 
@@ -1177,8 +1177,8 @@ Bug Fixes::
 * Upgrade thread_safe gem
 * Prevent crash if doc has no sections (@abatalev)
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.9[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.9[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.9[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.9[git tag]
 
 == 1.5.0.alpha.8 (2015-06-23) - @mojavelinux
 
@@ -1215,8 +1215,8 @@ Bug Fixes::
 * Update theming guide
 * Fix cross references in README
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.8[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.8[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.8[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.8[git tag]
 
 == 1.5.0.alpha.7 (2015-05-31) - @mojavelinux
 
@@ -1269,8 +1269,8 @@ Bug Fixes::
 * Use SafeYAML to load theme files
 * Handle transparent value for table background colors
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.7[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.7[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.7[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.7[git tag]
 
 == 1.5.0.alpha.6 (2014-11-28) - @mojavelinux
 
@@ -1279,8 +1279,8 @@ Bug Fixes::
 * Add example for specifying theme file (Leif Gruenwoldt) (#61)
 * Add thread_safe gem to remove warning when registering converter
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.6[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.6[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.6[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.6[git tag]
 
 == 1.5.0.alpha.5 (2014-09-15) - @mojavelinux
 
@@ -1290,35 +1290,35 @@ Bug Fixes::
 * Don't activate implicit header include processor by default (#48, #25)
 * Draw box around listings and literal blocks than span more than one page (#11)
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.5[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.5[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.5[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.5[git tag]
 
 == 1.5.0.alpha.4 (2014-09-09) - @mojavelinux
 
 * Fix yield statement so Asciidoctor PDF can be used with JRuby
 * Document that the coderay gem must be installed to run the examples (#42)
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.4[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.4[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.4[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.4[git tag]
 
 == 1.5.0.alpha.3 (2014-09-08) - @mojavelinux
 
 * Remove unnecessary dependencies (tilt, slim, thread_safe)
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.3[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.3[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.3[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.3[git tag]
 
 == 1.5.0.alpha.2 (2014-09-05) - @mojavelinux
 
 * Add magic encoding header to source file so Asciidoctor PDF can be used with Ruby 1.9.3 (#33, #36)
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.2[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.2[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.2[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.2[git tag]
 
 == 1.5.0.alpha.1 (2014-09-04) - @mojavelinux
 
 * Rewrite as proper Asciidoctor converter (#29)
 * Initial pre-release
 
-{uri-repo}/issues?q=milestone%3Av1.5.0.alpha.1[issues resolved] |
-{uri-repo}/releases/tag/v1.5.0.alpha.1[git tag]
+{url-repo}/issues?q=milestone%3Av1.5.0.alpha.1[issues resolved] |
+{url-repo}/releases/tag/v1.5.0.alpha.1[git tag]
