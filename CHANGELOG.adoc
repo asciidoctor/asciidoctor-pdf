@@ -17,6 +17,7 @@ Enhancements::
 
 Bug Fixes::
 
+* honor `caption-align` when element align is not `left` and `caption-max-width` is % of element width (e.g., `fit-content(50%)`) (#2156)
 * allow theme to set font style of first line of abstract to `normal_italic` (#2138)
 * add support for `:color` option to `Prawn::Text::Formatted::Box` directly and remove workarounds
 * preserve columns on subsequent pages in the index section (#2149)

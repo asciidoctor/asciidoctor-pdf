@@ -2059,6 +2059,39 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect caption_text_l1[:x]).to eql tux_image[:x]
       (expect caption_text_l2[:x]).to eql caption_text_l1[:x]
     end
+
+    it 'should align caption within width of image if alignment is fixed and max-width is percentage of image width' do
+      pdf_theme = {
+        image_caption_align: 'left',
+        image_caption_max_width: 'fit-content(50%)',
+      }
+
+      input = <<~'EOS'
+      .This is a picture of our beloved Tux.
+      image::tux.png[align=right]
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :image
+
+      images = pdf.images
+      (expect images).to have_size 1
+      tux_image = images[0]
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+
+      caption_texts = pdf.text
+      (expect caption_texts).to have_size 3
+      caption_text_l1, caption_text_l2, caption_text_l3 = caption_texts
+      (expect caption_text_l1[:y]).to be > caption_text_l2[:y]
+      (expect caption_text_l2[:y]).to be > caption_text_l3[:y]
+      (expect caption_text_l1[:string]).to start_with 'Figure 1.'
+      (expect caption_text_l1[:width]).to be < tux_image[:width] * 0.5
+      (expect caption_text_l2[:width]).to be < tux_image[:width] * 0.5
+      (expect caption_text_l3[:width]).to be < tux_image[:width] * 0.5
+      (expect caption_text_l1[:x]).to eql tux_image[:x]
+      (expect caption_text_l2[:x]).to eql caption_text_l1[:x]
+      (expect caption_text_l3[:x]).to eql caption_text_l2[:x]
+    end
   end
 
   context 'Border' do
