@@ -163,7 +163,7 @@ image:
     align: inherit
 
 |caption-end
-|<<end,bottom>> {vbar} <<end,top>> +
+|<<caption-end,bottom>> {vbar} <<caption-end,top>> +
 (default: `bottom`)
 |[source]
 image:
