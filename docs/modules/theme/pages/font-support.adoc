@@ -1,7 +1,9 @@
 = Fonts
-:url-noto-serif: https://www.google.com/get/noto/#/family/noto-serif
+:url-noto-serif: https://fonts.google.com/noto/specimen/Noto+Serif
 :url-mplus-onemn: https://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1mn
 :url-mplus-onep: https://mplus-fonts.osdn.jp/mplus-outline-fonts/design/index-en.html#mplus_1p
+:url-noto-sans: https://fonts.google.com/noto/specimen/Noto+Sans
+:url-noto-emoji: https://fonts.google.com/noto/specimen/Noto+Emoji/about
 :url-w1252: https://en.wikipedia.org/wiki/Windows-1252
 :url-prawn-afm: https://github.com/prawnpdf/prawn/blob/master/CHANGELOG.md#vastly-improved-handling-of-encodings-for-pdf-built-in-afm-fonts
 
@@ -77,23 +79,28 @@ For more information about how Prawn handles character encodings for built-in fo
 [#bundled]
 == Bundled fonts
 
-Asciidoctor PDF bundles several fonts that are used by the default theme.
-You can also use these fonts in your custom theme by simply declaring them.
+Asciidoctor PDF bundles several fonts that are used by the default theme or a fallback font theme that extends the default theme.
+You can also declare these fonts in your custom theme.
 These fonts provide more characters than the built-in PDF fonts, but still only a subset of UTF-8 (to reduce the size of the gem).
 
 The family name of the fonts bundled with Asciidoctor PDF are as follows:
 
-{url-noto-serif}[Noto Serif^]::
-A serif font that can be styled as normal, italic, bold or bold_italic.
-
 {url-mplus-onemn}[M+ 1mn^]::
-A monospaced font that maps different thicknesses to the styles normal, italic, bold, and bold_italic.
-Also provides the circled numbers used in callouts.
+A monospaced font that maps different thicknesses to the styles `normal`, `italic`, `bold`, and `bold_italic`.
+M+ 1mn also provides the circled numbers used for callouts and callout lists.
 
-{url-mplus-onep}[M+ 1p Fallback^]::
+{url-noto-serif}[Noto Serif^]::
+A serif font that can be styled as `normal`, `italic`, `bold`, or `bold_italic`.
+
+{url-mplus-onep}[M+ 1p^]::
 A sans-serif font that provides a very complete set of Unicode glyphs.
-Cannot be styled as italic, bold or bold_italic.
-Used as the fallback font in the `default-with-fallback-font` theme.
+M+ 1p can only be styled as `normal`.
+This font is used as the fallback font in the `default-with-fallback-font` theme.
+
+{url-noto-emoji}[Noto Emoji^]:: A font of emojis used as a fallback font in the `default-with-fallback-font` theme.
+
+{url-noto-sans}[Noto Sans^]:: A sans font that is used as the fallback font in the `sans-with-fallback-font` theme.
+It can be styled as `normal`, `italic`, `bold`, or `bold_italic`.
 
 TIP: The default themes refer to the bundled fonts using the `GEM_FONTS_DIR` prefix.
 That means you can extend a default theme and not have to worry about how the bundled fonts get resolved.

@@ -25,11 +25,11 @@ These fallbacks are used, in the order listed, when a glyph cannot be found in t
 |[source]
 font:
   catalog:
-    Noto Serif:
-      normal: GEM_FONTS_DIR/notoserif-regular-subset.ttf
-      bold: GEM_FONTS_DIR/notoserif-bold-subset.ttf
-      italic: GEM_FONTS_DIR/notoserif-italic-subset.ttf
-      bold_italic: GEM_FONTS_DIR/notoserif-bold_italic-subset.ttf
+    Noto Sans:
+      normal: GEM_FONTS_DIR/notosans-regular-subset.ttf
+      bold: GEM_FONTS_DIR/notosans-bold-subset.ttf
+      italic: GEM_FONTS_DIR/notosans-italic-subset.ttf
+      bold_italic: GEM_FONTS_DIR/notosans-bold_italic-subset.ttf
 
 |fallbacks
 |Array
