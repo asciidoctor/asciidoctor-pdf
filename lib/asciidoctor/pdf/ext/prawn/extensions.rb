@@ -1027,7 +1027,15 @@ module Asciidoctor
         state.on_page_create_callback = delegate
       end
 
-      # NOTE: only used in dry_run since that's when DetectEmptyFirstPage is active
+      # This method delegates to the provided block, then tares (i.e., resets) the content stream of
+      # the initial page.
+      #
+      # The purpose of this method is to ink content while making it appear as though the page is
+      # empty. This technique allows the caller to detect whether any subsequent content was written
+      # to the page following the content inked by the block. It's often used to keep the title of a
+      # content block with the block's first child.
+      #
+      # NOTE: this method should only used inside dry_run since that's when DetectEmptyFirstPage is active
       def tare_first_page_content_stream
         return yield unless DetectEmptyFirstPage === (delegate = state.on_page_create_callback)
         on_page_create_called = nil
