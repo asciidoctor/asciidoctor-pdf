@@ -163,14 +163,14 @@ image:
     align: inherit
 
 |caption-end
-|xref:images.adoc#end[bottom] {vbar} xref:images.adoc#end[top] +
+|<<end,bottom>> {vbar} <<end,top>> +
 (default: `bottom`)
 |[source]
 image:
   caption:
     end: top
 
-|<<max-width,caption-max-width>>
+|<<caption-max-width,caption-max-width>>
 |`fit-content` {vbar} `fit-content`(percentage) {vbar} `none` {vbar} xref:measurement-units.adoc[Measurement] +
 (default: `none`)
 |[source]
@@ -179,7 +179,7 @@ image:
     max-width: fit-content
 
 |caption-text-align
-|xref:text.adoc#text-align[Text alignment] {vbar} xref:images.adoc#caption-text-align[inherit] +
+|xref:text.adoc#text-align[Text alignment] {vbar} <<caption-text-align,inherit>> +
 (default: `$image-caption-align`)
 |[source]
 image:
@@ -187,7 +187,29 @@ image:
     text-align: center
 |===
 
-[#max-width]
-=== max-width
+[#caption-end]
+== Caption end
+
+The `caption-end` key specifies whether the image caption is located on top or below the image.
+The key accepts the following keywords:
+
+bottom:: The caption block is placed below the bottom of the image.
+top:: The caption block is place above the top of the image.
+
+[,yaml]
+----
+image:
+  caption:
+    end: top
+----
+
+[#caption-text-align]
+=== Caption text align
+
+Controls the alignment of the caption text within the bounds of the caption.
+If the value is `inherit`, it will inherit the alignment of the image itself.
+
+[#caption-max-width]
+=== Caption max width
 
 For an image to be sized correctly when `max-width` is assigned the value `fit-content`, a width should always be specified on the image.
