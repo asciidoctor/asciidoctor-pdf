@@ -21,6 +21,97 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
     end
   end
 
+  it 'should apply padding to thematic break' do
+    pdf_theme = {
+      sidebar_border_radius: 0,
+      sidebar_border_width: 0.5,
+      sidebar_border_color: '0000EE',
+      sidebar_background_color: 'transparent',
+      thematic_break_border_color: '00EE00',
+    }
+    input = <<~'EOS'
+    ****
+    before
+    ****
+
+    '''
+
+    ****
+    after
+    ****
+    EOS
+    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+    sidebar_h_lines = lines.select {|it| it[:from][:y] == it[:to][:y] && it[:color] == '0000EE' }.sort_by {|it| -it[:from][:y] }
+    break_line = lines.find {|it| it[:color] == '00EE00' }
+    (expect sidebar_h_lines[1][:from][:y] - break_line[:from][:y]).to eql 18.0
+    (expect break_line[:from][:y] - sidebar_h_lines[2][:from][:y]).to eql 18.0
+  end
+
+  it 'should apply bottom block margin to thematic break with padding 0 when at top of page' do
+    pdf_theme = {
+      sidebar_border_radius: 0,
+      sidebar_border_width: 0.5,
+      sidebar_border_color: '0000EE',
+      sidebar_background_color: 'transparent',
+      thematic_break_border_color: '00EE00',
+      thematic_break_padding: 0,
+      block_margin_bottom: 10,
+    }
+    input = <<~'EOS'
+    '''
+
+    ****
+    after
+    ****
+    EOS
+    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+    sidebar_h_lines = lines.select {|it| it[:from][:y] == it[:to][:y] && it[:color] == '0000EE' }.sort_by {|it| -it[:from][:y] }
+    break_line = lines.find {|it| it[:color] == '00EE00' }
+    (expect break_line[:from][:y] - sidebar_h_lines[0][:from][:y]).to eql 10.0
+  end
+
+  it 'should use margin_top value as fallback value if padding is not set for backwards compatibility' do
+    pdf_theme = {
+      sidebar_border_radius: 0,
+      sidebar_border_width: 0.5,
+      sidebar_border_color: '0000EE',
+      sidebar_background_color: 'transparent',
+      thematic_break_border_color: '00EE00',
+      thematic_break_margin_top: 3,
+      thematic_break_padding: nil,
+    }
+    input = <<~'EOS'
+    ****
+    before
+    ****
+
+    '''
+
+    ****
+    after
+    ****
+    EOS
+    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+    sidebar_h_lines = lines.select {|it| it[:from][:y] == it[:to][:y] && it[:color] == '0000EE' }.sort_by {|it| -it[:from][:y] }
+    break_line = lines.find {|it| it[:color] == '00EE00' }
+    (expect sidebar_h_lines[1][:from][:y] - break_line[:from][:y]).to eql 15.0
+    (expect break_line[:from][:y] - sidebar_h_lines[2][:from][:y]).to eql 15.0
+  end
+
+  it 'should apply side padding to thematic break' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { thematic_break_padding: [0, 36] }, analyze: :line
+    before
+
+    ---
+
+    after
+    EOS
+
+    break_line = pdf.lines[0]
+    (expect break_line[:from][:x]).to eql 84.24
+    (expect break_line[:to][:x]).to eql 511.04
+  end
+
   it 'should draw a horizonal rule at the location of a thematic break' do
     pdf = to_pdf <<~'EOS', analyze: :line
     before

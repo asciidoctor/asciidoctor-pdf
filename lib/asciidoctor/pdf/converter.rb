@@ -2371,11 +2371,12 @@ module Asciidoctor
       end
 
       def convert_thematic_break node
-        theme_margin :thematic_break, :top
-        stroke_horizontal_rule @theme.thematic_break_border_color,
-          line_width: @theme.thematic_break_border_width,
-          line_style: (@theme.thematic_break_border_style&.to_sym || :solid)
-        theme_margin :thematic_break, ((block_next = next_enclosed_block node) ? :bottom : :top), block_next || true
+        pad_box @theme.thematic_break_padding || [@theme.thematic_break_margin_top, 0] do
+          stroke_horizontal_rule @theme.thematic_break_border_color,
+            line_width: @theme.thematic_break_border_width,
+            line_style: (@theme.thematic_break_border_style&.to_sym || :solid)
+        end
+        conceal_page_top { theme_margin :block, :bottom, (next_enclosed_block node) }
       end
 
       def convert_toc node, opts = {}

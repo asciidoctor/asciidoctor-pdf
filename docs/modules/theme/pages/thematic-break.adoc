@@ -29,17 +29,10 @@ thematic-break:
 thematic-break:
   border-width: 0.8
 
-|margin-bottom
-|xref:measurement-units.adoc[Measurement] +
-(default: `12`)
-|[source]
-thematic-break:
-  margin-bottom: 18
-
-|margin-top
-|xref:measurement-units.adoc[Measurement] +
+|padding
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
 (default: `0`)
 |[source]
-thematic-break:
-  margin-top: 6
+sidebar:
+  padding: [3, 12]
 |===
