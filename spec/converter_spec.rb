@@ -1275,5 +1275,47 @@ describe Asciidoctor::PDF::Converter do
       (expect page_2_text[0][:string]).to eql 'Part Title'
       (expect (pdf.find_text page_number: 3).last[:string]).to eql '2'
     end
+
+    it 'should allow extended converter to override convert_listing_or_literal to handle calls to convert_listing and convert_literal' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+
+        def convert_listing_or_literal node
+          node.lines[0] = node.lines[0].sub 'Ruby', 'World'
+          super
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      [,ruby]
+      ----
+      puts "Hello, Ruby!"
+      ----
+      EOS
+
+      (expect pdf.text[0][:string]).to eql 'puts "Hello, World!"'
+    end
+
+    it 'should allow extended converter to override convert_code to handle calls to convert_listing and convert_literal' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+
+        def convert_code node
+          node.lines[0] = node.lines[0].sub 'Ruby', 'World'
+          super
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      [,ruby]
+      ----
+      puts "Hello, Ruby!"
+      ----
+      EOS
+
+      (expect pdf.text[0][:string]).to eql 'puts "Hello, World!"'
+    end
   end
 end

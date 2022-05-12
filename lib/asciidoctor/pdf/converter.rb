@@ -1760,7 +1760,7 @@ module Asciidoctor
       end
 
       # QUESTION: can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
-      def convert_listing_or_literal node
+      def convert_code node
         extensions = []
         source_chunks = bg_color_override = font_color_override = adjusted_font_size = nil
         theme_font :code do
@@ -1907,17 +1907,18 @@ module Asciidoctor
         theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
-      alias convert_listing convert_listing_or_literal
-      alias convert_literal convert_listing_or_literal
+      alias convert_listing convert_code
+      alias convert_literal convert_code
+      alias convert_listing_or_literal convert_code
 
       def convert_pass node
         node = node.dup
         (subs = node.subs.dup).unshift :specialcharacters
         node.instance_variable_set :@subs, subs.uniq
-        convert_listing_or_literal node
+        convert_code node
       end
 
-      alias convert_stem convert_listing_or_literal
+      alias convert_stem convert_code
 
       # Extract callout marks from string, indexed by 0-based line number
       # Return an Array with the processed string as the first argument
@@ -4707,9 +4708,12 @@ module Asciidoctor
       alias layout_running_content ink_running_content
 
       # intercepts "class CustomPDFConverter < (Asciidoctor::Converter.for 'pdf')"
-      def self.method_added method
-        if (method_name = method.to_s).start_with? 'layout_'
-          alias_method %(ink_#{method_name.slice 7, method_name.length}).to_sym, method
+      def self.method_added method_sym
+        if (method_name = method_sym.to_s).start_with? 'layout_'
+          alias_method %(ink_#{method_name.slice 7, method_name.length}).to_sym, method_sym
+        elsif method_name == 'convert_listing_or_literal' || method_name == 'convert_code'
+          alias_method :convert_listing, method_sym
+          alias_method :convert_literal, method_sym
         end
       end
 

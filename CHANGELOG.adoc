@@ -19,6 +19,7 @@ Enhancements::
 Improvements::
 
 * configure spacing around thematic break using `thematic-break-padding` key instead of margin top and bottom (#2164)
+* rename `convert_listing_or_literal` to `convert_code` and alias old name
 
 Bug Fixes::
 
@@ -30,6 +31,7 @@ Bug Fixes::
 * fix return value of `cursor` method inside block for column box in index section
 * correctly detect preceding code block when determining whether to collapse top margin of colist
 * apply bottom margin to thematic break that falls at top of page (#2164)
+* allow extended converter to override `convert_code` method to handle `convert_listing` and `convert_literal` calls
 
 == 2.0.0.beta.1 (2022-05-04) - @mojavelinux
 
