@@ -429,11 +429,15 @@ module Asciidoctor
 
       # NOTE: override built-in fill_formatted_text_box to insert leading before second line when :first_line is true
       def fill_formatted_text_box text, options
+        if (initial_gap = options[:initial_gap]) && (first_text = text[0]) && first_text[:from_page] != page_number
+          self.y -= initial_gap
+        end
         merge_text_box_positioning_options options
         box = ::Prawn::Text::Formatted::Box.new text, options
         remaining_text = box.render
         @no_text_printed = box.nothing_printed?
         @all_text_printed = box.everything_printed?
+        remaining_text[0][:from_page] = page_number unless remaining_text.empty?
 
         if @final_gap || (options[:first_line] && !(@no_text_printed || @all_text_printed))
           self.y -= box.height + box.line_gap + box.leading
@@ -454,7 +458,7 @@ module Asciidoctor
       # remaining lines (which is the default behavior in Prawn).
       def text_with_formatted_first_line string, first_line_options, options
         if (first_line_font_color = first_line_options.delete :color)
-          other_lines_font_color, options[:color] = options[:color], first_line_font_color
+          remaining_lines_font_color, options[:color] = options[:color], first_line_font_color
         end
         fragments = parse_text string, options
         # NOTE: the low-level APIs we're using don't recognize the :styles option, so we must resolve
@@ -473,14 +477,13 @@ module Asciidoctor
         first_line_options = (options.merge first_line_options).merge single_line: true, first_line: true
         box = ::Prawn::Text::Formatted::Box.new fragments, first_line_options
         if text_indent
-          remaining_fragments = indent text_indent do
-            box.render dry_run: true
-          end
+          remaining_fragments = indent(text_indent) { box.render dry_run: true }
         else
           remaining_fragments = box.render dry_run: true
         end
+        remaining_fragments.empty? ? (remaining_fragments = nil) : (remaining_fragments[0][:from_page] = page_number)
         if first_line_text_transform
-          # NOTE: applying text transform here could alter the wrapping, so we need to isolate first line and shrink to fit
+          # NOTE: applying text transform here could alter the wrapping, so isolate first line and shrink it to fit
           first_line_text = (box.instance_variable_get :@printed_lines)[0]
           unless first_line_text == fragments[0][:text]
             original_fragments, fragments = fragments, []
@@ -496,18 +499,16 @@ module Asciidoctor
           end
           fragments.each {|fragment| fragment[:text] = transform_text fragment[:text], first_line_text_transform }
           first_line_options[:overflow] = :shrink_to_fit
-          @final_gap = first_line_options[:force_justify] = true unless remaining_fragments.empty?
+          @final_gap = first_line_options[:force_justify] = true if remaining_fragments
         end
         if text_indent
-          indent text_indent do
-            fill_formatted_text_box fragments, first_line_options
-          end
+          indent(text_indent) { fill_formatted_text_box fragments, first_line_options }
         else
           fill_formatted_text_box fragments, first_line_options
         end
-        unless remaining_fragments.empty?
+        if remaining_fragments
+          options[:color] = remaining_lines_font_color if first_line_font_color
           @final_gap = final_gap if first_line_text_transform
-          options[:color] = other_lines_font_color if first_line_font_color
           remaining_fragments = fill_formatted_text_box remaining_fragments, options
           draw_remaining_formatted_text_on_new_pages remaining_fragments, options
         end

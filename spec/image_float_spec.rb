@@ -127,13 +127,15 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should fit multiple paragraphs within float box' do
+    ref_input = lorem_ipsum '2-sentences-2-paragraphs'
+
     input = <<~EOS
     image::rect.png[pdfwidth=3in,float=left]
 
-    #{lorem_ipsum '2-sentences-2-paragraphs'}
+    #{ref_input}
     EOS
 
-    pdf = to_pdf input, pdf_theme: (pdf_theme.merge section_indent: [228, 0]), analyze: true
+    pdf = to_pdf ref_input, pdf_theme: (pdf_theme.merge section_indent: [228, 0]), analyze: true
     fragments = pdf.text
     expected_text_top = fragments[0][:y]
     p2_start_idx = fragments.index {|it| it[:string].start_with? 'Magna' }
@@ -676,8 +678,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
       p2_fragments.each do |fragment|
         (expect fragment[:x]).to eql page_margin
       end
-      # FIXME: off by line_metrics.padding_top, which doesn't get applied at page transition
-      (expect p2_fragments[0][:y] - 0.75).to eql (pdf.find_text page_number: 3)[0][:y]
+      (expect p2_fragments[0][:y]).to eql (pdf.find_text page_number: 3)[0][:y]
     end
   end
 
@@ -707,8 +708,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
       p2_fragments.each do |fragment|
         (expect fragment[:x]).to eql page_margin
       end
-      # FIXME: off by line_metrics.padding_top, which doesn't get applied at page transition
-      (expect p2_fragments[0][:y] - 0.75).to eql (pdf.find_text page_number: 3)[0][:y]
+      (expect p2_fragments[0][:y]).to eql (pdf.find_text page_number: 3)[0][:y]
     end
   end
 

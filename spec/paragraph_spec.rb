@@ -17,6 +17,39 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     (expect text).to include 'man, Sitting'
   end
 
+  it 'should allow paragraph to flow over page boundary with correct top placement' do
+    pdf_theme = {
+      role_outline_border_width: 0.5,
+      role_outline_border_color: '0000EE',
+    }
+    with_content_spacer 50, 675 do |spacer_path|
+      input = <<~EOS
+      [.outline]#top#
+
+      image::#{spacer_path}[]
+
+      #{(lorem_ipsum '2-sentences-1-paragraph').sub 'non', '[.outline]#non#'}
+      #{(['fillmefillme'] * 380).join ' '} [.outline]#fin#
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      (expect pdf.pages).to have_size 3
+      (expect (pdf.find_unique_text 'top')[:page_number]).to eql 1
+      (expect (pdf.find_unique_text 'non')[:page_number]).to eql 2
+      (expect (pdf.find_unique_text 'fin')[:page_number]).to eql 3
+      outlines = (to_pdf input, pdf_theme: pdf_theme, analyze: :rect).rectangles.reject {|it| it[:width] == 50.0 }
+      (expect outlines).to have_size 3
+      reference_outline, subject1_outline, subject2_outline = outlines
+      expected_top = pdf.pages[0][:size][1] - 36 - 0.75
+      initial_top = reference_outline.yield_self {|it| it[:point][1] + it[:height] }
+      (expect initial_top).to eql expected_top
+      top_after_first_page_break = subject1_outline.yield_self {|it| it[:point][1] + it[:height] }
+      (expect top_after_first_page_break).to eql initial_top
+      top_after_second_page_break = subject2_outline.yield_self {|it| it[:point][1] + it[:height] }
+      (expect top_after_second_page_break).to eql initial_top
+    end
+  end
+
   it 'should indent first line of paragraph if prose_text_indent key is set in theme' do
     pdf = to_pdf (lorem_ipsum '2-paragraphs'), pdf_theme: { prose_text_indent: 18 }, analyze: true
 

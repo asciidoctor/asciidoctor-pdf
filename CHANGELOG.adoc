@@ -11,6 +11,10 @@ Enhancements::
 
 * allow hyphenation to be turned on and configured using the `base-hyphens` key in the theme (#2161)
 
+Bug Fixes::
+
+* apply top line height padding to first line of text when text runs to top of next page (#2173)
+
 == 2.0.0.beta.2 (2022-05-14) - @mojavelinux
 
 Enhancements::

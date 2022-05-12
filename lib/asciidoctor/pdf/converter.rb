@@ -3086,7 +3086,7 @@ module Asciidoctor
         end
       end
 
-      # private
+      # @private
       def ink_paragraph_in_float_box node, float_box, prose_opts, role_keys, block_next, insert_margin_bottom
         @float_box = para_font_descender = para_font_size = end_cursor = nil
         if role_keys
@@ -3105,7 +3105,7 @@ module Asciidoctor
         start_page_number = float_box[:page]
         start_cursor = cursor
         block_bottom = (float_box_bottom = float_box[:bottom]) + float_box[:gap][1]
-        # use :at to incorporate padding top from line metrics
+        # use :at to incorporate padding top from line metrics since text_box method does not apply it
         # use :final_gap to incorporate padding bottom from line metrics
         # use :draw_text_callback to track end cursor (requires applying :final_gap to result manually)
         prose_opts.update \
@@ -4287,7 +4287,7 @@ module Asciidoctor
         opts = { leading: line_metrics.leading, final_gap: line_metrics.final_gap }.merge opts
         string = string.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
         return text_box string, opts if opts[:height]
-        move_down line_metrics.padding_top
+        opts[:initial_gap] = line_metrics.padding_top
         if (hanging_indent = (opts.delete :hanging_indent) || 0) > 0
           indent hanging_indent do
             text string, (opts.merge indent_paragraphs: -hanging_indent)
@@ -4303,8 +4303,7 @@ module Asciidoctor
 
       # QUESTION: combine with typeset_text?
       def typeset_formatted_text fragments, line_metrics, opts = {}
-        move_down line_metrics.padding_top
-        opts = { leading: line_metrics.leading, final_gap: line_metrics.final_gap }.merge opts
+        opts = { leading: line_metrics.leading, initial_gap: line_metrics.padding_top, final_gap: line_metrics.final_gap }.merge opts
         if (hanging_indent = (opts.delete :hanging_indent) || 0) > 0
           indent hanging_indent do
             formatted_text fragments, (opts.merge indent_paragraphs: -hanging_indent)
