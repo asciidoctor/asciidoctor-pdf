@@ -75,7 +75,7 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
     end
   end
 
-  # Override method to force text justification when :single_line option is used
+  # Override method to force text justification when :force_justify option is set (typically for rendering a single line)
   def word_spacing_for_this_line
     if @align == :justify && (@options[:force_justify] || (@line_wrap.space_count > 0 && !@line_wrap.paragraph_finished?))
       (available_width - @line_wrap.width) / @line_wrap.space_count
