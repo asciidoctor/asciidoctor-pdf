@@ -1912,10 +1912,9 @@ module Asciidoctor
       alias convert_listing_or_literal convert_code
 
       def convert_pass node
-        node = node.dup
-        (subs = node.subs.dup).unshift :specialcharacters
-        node.instance_variable_set :@subs, subs.uniq
+        node.instance_variable_set :@subs, ([:specialcharacters] + (prev_subs = node.subs)).uniq
         convert_code node
+        node.instance_variable_set :@subs, prev_subs
       end
 
       alias convert_stem convert_code

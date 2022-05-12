@@ -32,6 +32,7 @@ Bug Fixes::
 * correctly detect preceding code block when determining whether to collapse top margin of colist
 * apply bottom margin to thematic break that falls at top of page (#2164)
 * allow extended converter to override `convert_code` method to handle `convert_listing` and `convert_literal` calls
+* restore margin below pass block
 
 == 2.0.0.beta.1 (2022-05-04) - @mojavelinux
 
