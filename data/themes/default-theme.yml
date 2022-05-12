@@ -226,8 +226,7 @@ thematic_break:
   border_color: $base_border_color
   border_style: solid
   border_width: $base_border_width
-  margin_top: $vertical_rhythm * 0.5
-  margin_bottom: $vertical_rhythm * 1.5
+  padding: [$vertical_rhythm * 0.5, 0]
 list:
   indent: $horizontal_rhythm * 1.5
   #marker_font_color: 404040

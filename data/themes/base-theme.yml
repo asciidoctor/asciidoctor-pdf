@@ -96,7 +96,7 @@ table_head_border_bottom_width: 1.25
 table_body_stripe_background_color: 'EEEEEE'
 thematic_break_border_style: solid
 thematic_break_border_width: 0.5
-thematic_break_margin_bottom: 12
+thematic_break_padding: 0
 toc_indent: 15
 toc_line_height: 1.4
 footnotes_font_size: 9
