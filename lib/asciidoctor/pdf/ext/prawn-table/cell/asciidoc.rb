@@ -41,17 +41,10 @@ module Prawn
             extent = @pdf.dry_run keep_together: true, single_page: true do
               push_scratch parent_doc
               doc.catalog[:footnotes] = parent_doc.catalog[:footnotes]
-              if padding_y > 0
-                move_down padding_y
-              #elsif at_page_top?
-              else
-                # TODO: encapsulate this logic to force top margin to be applied
-                margin_box.instance_variable_set :@y, margin_box.absolute_top + 0.0001
-              end
               # NOTE: we should be able to use cell.max_width, but returns 0 in some conditions (like when colspan > 1)
               indent cell.padding_left, bounds.width - cell.width + cell.padding_right do
-                # TODO: truncate margin bottom of last block
-                traverse cell.content
+                move_down padding_y if padding_y > 0
+                conceal_page_top { traverse cell.content }
               end
               pop_scratch parent_doc
               doc.catalog[:footnotes] = parent_doc.catalog[:footnotes]

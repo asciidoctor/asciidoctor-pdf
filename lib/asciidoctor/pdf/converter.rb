@@ -3090,11 +3090,12 @@ module Asciidoctor
       # title (i.e., subject.title? returns true).
       def ink_caption subject, opts = {}
         if opts.delete :dry_run
-          force_top_margin = !at_page_top? if (force_top_margin = opts.delete :force_top_margin).nil?
           return (dry_run keep_together: true, single_page: :enforce do
-            # TODO: encapsulate this logic to force top margin to be applied
-            margin_box.instance_variable_set :@y, margin_box.absolute_top + 0.0001 if force_top_margin
-            ink_caption subject, opts
+            if opts.delete :force_top_margin
+              conceal_page_top { ink_caption subject, opts }
+            else
+              ink_caption subject, opts
+            end
           end).single_page_height
         end
         if ::Asciidoctor::AbstractBlock === subject
