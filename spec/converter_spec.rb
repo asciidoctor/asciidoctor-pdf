@@ -256,7 +256,9 @@ describe Asciidoctor::PDF::Converter do
         = Document Title
         :pdf-theme: default-for-print
 
-        black text
+        black `text`
+
+        > loud quote
         EOS
 
         (expect pdf.find_text font_color: '000000').to have_size pdf.text.size
