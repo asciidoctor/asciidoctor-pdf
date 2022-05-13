@@ -74,6 +74,8 @@ jobs:
       ASCIIDOCTOR_DIAGRAM_VERSION: '~> 2.2'
       PYGMENTS_VERSION: '~> 2.0'
       RGHOST_VERSION: '0.9.7'
+      # work around `Permission denied - NUL' error when installing/using the bundler gem on JRuby for Windows
+      JRUBY_OPTS: '-J-Djdk.io.File.enableADS=true'
     steps:
     - name: Checkout
       uses: actions/checkout@v2
