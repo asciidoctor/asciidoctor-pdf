@@ -160,7 +160,7 @@ See xref:table.adoc#body[the table-body category] for a list of all theme keys t
 [#caption-align]
 == Caption alignment
 
-In addition to the `center`, `left`, and `right` block alignment keywords, the `caption-align` key accepts the value `inherit`.
+In addition to the xref:blocks.adoc#align[center, left, and right block alignment keywords], the `caption-align` key accepts the value `inherit` when set on the `table` category.
 
 [,yaml]
 ----
@@ -169,12 +169,15 @@ table:
     align: inherit
 ----
 
-The value `inherit` resolves to the block alignment (`table-align`) assigned to the `table` category.
+When the value is `inherit`, the `table-caption-align` key will inherit the alignment assigned to the table itself (`table-align`).
+The `caption-align` key is distinct from the similarly-named `caption-text-align` key.
+The <<caption-text-align,caption-text-align key>> aligns text within the text box of the caption block using text alignment rules.
 
 [#caption-text-align]
 == Caption text alignment
 
-The `caption-text-align` key accepts the keyword `inherit` in addition to the xref:text.adoc#text-align[usual text alignment values] when it is set on the `table` category.
+The `caption-text-align` key controls the alignment of the caption text within the bounds of the table caption.
+The key accepts the keyword `inherit` as well as the xref:text.adoc#text-align[usual text alignment values] when set on the `table` category.
 
 [,yaml]
 ----
@@ -183,7 +186,10 @@ table:
     text-align: inherit
 ----
 
-The value `inherit` resolves to the block alignment (`table-align`) assigned to the `table` category.
+The value `inherit` resolves to the alignment assigned to the table itself (`table-align`).
+
+The `caption-text-align` key is distinct from the similarly-named `caption-align` key.
+The <<caption-align,caption-align key>> aligns a caption block horizontally within its container.
 
 [#end]
 == Caption end

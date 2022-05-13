@@ -1,4 +1,5 @@
 = Callout List and Number Category Keys
+:description: Reference list of the available callout list and callout number (conum) category keys and their value types.
 :navtitle: Callout List and Number
 :source-language: yaml
 
@@ -102,7 +103,7 @@ Also see <<inherit>> for more information.
 (default: _inherit_)
 |[source]
 conum:
-  font-color: #b12146
+  font-color: #B12146
 
 |<<glyphs,font-family>>
 |xref:font-support.adoc[Font family name] +
@@ -112,7 +113,7 @@ conum:
   font-family: M+ 1mn
 
 |<<inherit,font-kerning>>
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 conum:

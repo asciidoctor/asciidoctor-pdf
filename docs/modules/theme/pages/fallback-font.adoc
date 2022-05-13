@@ -22,7 +22,7 @@ Like with other custom fonts, you first need to declare the fallback font.
 Let's choose https://github.com/android/platform_frameworks_base/blob/master/data/fonts/DroidSansFallback.ttf[Droid Sans Fallback^].
 You can map all the styles to a single font file (since bold and italic don't usually make sense for symbols).
 
-[source,yaml]
+[,yaml]
 ----
 font:
   catalog:
@@ -38,7 +38,7 @@ Notice that we only declare the fallback font file once using a literal value.
 This ensures the font is defined for all four variants so it will be used regardless of which font style is active when it's called on.
 This assignment is equivalent to the following:
 
-[source,yaml]
+[,yaml]
 ----
 DroidSansFallback:
   '*': droid-sans-fallback.ttf
@@ -50,7 +50,7 @@ Next, add the key name to the `fallbacks` key under the `font-catalog` key.
 The xref:font.adoc[fallbacks key] accepts an array of values, meaning you can specify more than one fallback font.
 However, we recommend using a single fallback font, if possible, as shown here:
 
-[source,yaml]
+[,yaml]
 ----
 font:
   catalog:
@@ -68,7 +68,7 @@ TIP: If you are using more than one fallback font, add additional lines to the `
 
 Of course, make sure you've configured your theme to use your custom font:
 
-[source,yaml]
+[,yaml]
 ----
 base:
   font-family: Roboto
@@ -81,7 +81,7 @@ You don't need to reference the fallback font anywhere else in your theme file.
 
 Here's another example that shows how to use an alternative emoji font (Symbola):
 
-[source,yaml]
+[,yaml]
 ----
 extends: default-with-fallback-font
 font:

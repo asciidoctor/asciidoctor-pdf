@@ -1,10 +1,11 @@
 = Font Category Keys
+:description: Reference list of the available font category keys and their value types.
 :navtitle: Font
 :source-language: yaml
 
 == font
 
-The font key is where you declare custom fonts (`catalog` key) and configure the fallback fonts (`fallbacks` key).
+The `font` category key is where you declare custom fonts (`catalog` key) and configure the fallback fonts (`fallbacks` key).
 
 The data format of the `catalog` key is a map.
 Each key is the name of the font that you can use to refer to the font elsewhere in the theme.
@@ -46,7 +47,7 @@ font:
 If you define a xref:custom-font.adoc[custom font] in the font catalog in a theme that extends from `default`, and you want to continue to use the bundled fonts in your theme, you either have to redeclare the bundled fonts:
 
 .Redeclaring the bundle fonts in a custom theme
-[source,yaml]
+[,yaml]
 ----
 extends: default
 font:
@@ -70,7 +71,7 @@ heading:
 or you need to set `merge: true` above your font definitions:
 
 .Merging with the inherited font catalog
-[source,yaml]
+[,yaml]
 ----
 extends: default
 font:

@@ -1,6 +1,7 @@
 = Math Operations
+:description: The theming language supports basic math operations and rounding functions to calculate key values.
 
-The theme language supports basic math operations to support calculated values.
+The theme language supports basic math operations to calculate key values.
 
 == Operators
 
@@ -29,7 +30,7 @@ Like programming languages, the multiply and divide operators take precedence ov
 
 Here's an example of a math expression with fixed values.
 
-[source,yaml]
+[,yaml]
 ----
 conum:
   line-height: 4 / 3
@@ -39,7 +40,7 @@ IMPORTANT: Operators must always be surrounded by a space on either side (e.g., 
 
 Variables may be used in place of numbers anywhere in the expression:
 
-[source,yaml]
+[,yaml]
 ----
 base:
   font-size: 12
@@ -62,7 +63,7 @@ ceil(...):: Rounds the number down the previous integer.
 
 You might use these functions in font size calculations so that you get more exact values.
 
-[source,yaml]
+[,yaml]
 ----
 base:
   font-size: 12.5

@@ -1,12 +1,13 @@
 = Caption Category Keys
+:description: Reference list of the available global caption category keys and their value types.
 :navtitle: Caption
 :source-language: yaml
 
 The keys in the `caption` category control the arrangement and style of block captions globally.
-In addition to this global `caption` category, each of these keys, except for the `text-decoration` keys, can be set on the caption key nested inside the following block categories: `quote`, `code`, `example`, `footnotes`, `image`, `table`, and `verse`.
+In addition to this global `caption` category, each of the keys listed below, except for the `text-decoration` keys, can be set on the caption key nested inside the following block categories: `code`, `example`, `footnotes`, `image`, `quote`, `table`, and `verse`.
 
-The `caption-align` and `caption-text-align` keys, when nested on the `image` or `table` category, also accept the value `inherit`.
-See xref:blocks.adoc#caption-align[Caption alignment] and xref:text.adoc#caption-text-align[Caption text alignment] for more information.
+TIP: The `caption-align` and `caption-text-align` keys, when nested on the `image` or `table` category, also accept the value `inherit`.
+See xref:block-images.adoc[] and xref:tables.adoc[] for more information about setting `inherit` on their captions.
 
 [cols="3,4,5a"]
 |===
@@ -41,7 +42,7 @@ caption:
   font-family: M+ 1mn
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 caption:

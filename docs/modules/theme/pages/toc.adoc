@@ -1,4 +1,5 @@
 = Table of Contents Category Keys
+:description: Reference list of the available TOC category keys and their value types.
 :navtitle: TOC
 :source-language: yaml
 
@@ -26,7 +27,7 @@ toc:
   font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 toc:
@@ -87,7 +88,7 @@ toc:
 (default: `$toc-font-color`)
 |[source]
 toc:
-  text-decoration-color: #cccccc
+  text-decoration-color: #CCCCCC
 
 |text-decoration-width
 |xref:language.adoc#values[Number] +
@@ -129,7 +130,7 @@ toc:
   h2-font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 toc:
@@ -154,7 +155,7 @@ toc:
 (default: _inherit_)
 |[source]
 toc:
-  h3-text-transform: uppercase
+  h3-text-transform: none
 |===
 
 [#title]
@@ -172,7 +173,7 @@ The keys in the `toc-title` category control the arrangement and style of the ti
 |[source]
 toc:
   title:
-    font-color: #aa0000
+    font-color: #AA0000
 
 |font-family
 |xref:font-support.adoc[Font family name] +
@@ -183,7 +184,7 @@ toc:
     font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 toc:

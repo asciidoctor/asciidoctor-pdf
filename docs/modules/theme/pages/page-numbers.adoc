@@ -103,7 +103,7 @@ To learn more about customizing the running content, see xref:add-running-conten
 If you're not extending one of the built-in themes and starting with a blank theme, you can add the page number to the running content by using the `\{page-number}` attribute reference in the `content` key.
 
 .Add page number to footer in blank theme
-[source,yaml]
+[,yaml]
 ----
 footer:
   recto:

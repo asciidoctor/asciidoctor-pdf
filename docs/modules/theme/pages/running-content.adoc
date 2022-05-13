@@ -1,4 +1,5 @@
 = Running Content Category Keys
+:description: Reference list of the available running content, header, and footer category keys and their value types.
 :navtitle: Running Content
 :source-language: yaml
 :conum-guard-yaml: #
@@ -21,7 +22,7 @@ IMPORTANT: If you don't specify a `height` for the header, it effectively disabl
 (default: _not set_)
 |[source]
 header:
-  background-color: #eeeeee
+  background-color: #EEEEEE
 
 |background-image
 |xref:images.adoc#specify[image macro] {vbar} xref:images.adoc#specify[path] +
@@ -35,7 +36,7 @@ header:
 (default: _not set_)
 |[source]
 header:
-  border-color: #dddddd
+  border-color: #DDDDDD
 
 |border-style
 |xref:blocks.adoc#border-style[Border style] +
@@ -108,7 +109,7 @@ header:
   font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 header:
@@ -136,7 +137,7 @@ header:
   height: 0.75in
 
 |image-vertical-align
-|`top` {vbar} `middle` {vbar} `bottom` {vbar} xref:measurement-units.adoc[Measurement] +
+|`bottom` {vbar} `middle` {vbar} `top` {vbar} xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
 |[source]
 header:
@@ -249,7 +250,7 @@ IMPORTANT: If you don't specify a `height` for the footer, it effectively disabl
 (default: _not set_)
 |[source]
 footer:
-  background-color: #eeeeee
+  background-color: #EEEEEE
 
 |background-image
 |xref:images.adoc#specify[image macro] {vbar} xref:images.adoc#specify[path] +
@@ -263,7 +264,7 @@ footer:
 (default: _not set_)
 |[source]
 footer:
-  border-color: #dddddd
+  border-color: #DDDDDD
 
 |border-style
 |xref:blocks.adoc#border-style[Border style] +
@@ -336,7 +337,7 @@ footer:
   font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 footer:
@@ -364,7 +365,7 @@ footer:
   height: 0.75in
 
 |image-vertical-align
-|`top` {vbar} `middle` {vbar} `bottom` {vbar} xref:measurement-units.adoc[Measurement] +
+|`bottom` {vbar} `middle` {vbar} `top` {vbar} xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
 |[source]
 footer:

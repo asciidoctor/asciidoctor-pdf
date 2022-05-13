@@ -1,4 +1,5 @@
 = Mark Category Keys
+:description: Reference list of the available inline mark phrase category keys and their value types.
 :navtitle: Mark
 :source-language: yaml
 
@@ -13,7 +14,7 @@ The keys in the `mark` category apply to an inline mark phrase.
 (default: `'FFFF00'`)
 |[source]
 mark:
-  background-color: #fcf8e3
+  background-color: #FCF8E3
 
 |border-offset
 |xref:language.adoc#values[Number] +

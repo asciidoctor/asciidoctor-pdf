@@ -1,4 +1,5 @@
 = Base Category Keys
+:description: Reference list of the available base category keys and their value types. The base category provides generic theme settings.
 :source-language: yaml
 :navtitle: Base
 
@@ -19,7 +20,7 @@ TIP: While it's common to define additional keys in this category (e.g., `base-b
 (default: `'EEEEEE'`)
 |[source]
 base:
-  border-color: #f0fff0
+  border-color: #F0FFF0
 
 |border-width
 |xref:measurement-units.adoc[Measurement] +
@@ -43,7 +44,7 @@ base:
   font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: `normal`)
 |[source]
 base:
@@ -105,7 +106,7 @@ base:
 (default: `$base-font-color`)
 |[source]
 base:
-  text-decoration-color: #0000ff
+  text-decoration-color: #0000FF
 
 |text-decoration-width
 |xref:measurement-units.adoc[Measurement] +

@@ -42,7 +42,7 @@ title-page:
   font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 title-page:
@@ -163,7 +163,7 @@ title-page:
     font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 title-page:
@@ -216,7 +216,7 @@ title-page:
 |[source]
 title-page:
   title:
-    text-transform: uppercase
+    text-transform: smallcaps
 
 |<<top,top>>
 |xref:measurement-units.adoc[Measurement] +
@@ -262,7 +262,7 @@ title-page:
     font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 title-page:
@@ -371,7 +371,7 @@ title-page:
     font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 title-page:
@@ -466,7 +466,7 @@ title-page:
     font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 title-page:
@@ -511,5 +511,5 @@ title-page:
 |[source]
 title-page:
   revision:
-    text-transform: uppercase
+    text-transform: none
 |===

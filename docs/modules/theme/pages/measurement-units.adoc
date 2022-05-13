@@ -1,15 +1,17 @@
 = Measurement Units
 
 The default unit of measure for a PDF canvas is points (pt).
-However, humans like to think in units such as inches (in), centimeters (cm), or millimeters (mm).
-You can let the theme do this conversion for you automatically by adding a unit notation next to any number.
+However, you may prefer think of measurements in terms of inches (in), centimeters (cm), or millimeters (mm).
+The theme can convert from any of the supported measurement units to points when you specify a unit notation directly after a number.
 
+[#default]
 == Default unit
 
-Several of the keys require a value in points (pt), the unit of measure for the PDF canvas.
+Many of the theme keys, such as `border-width`, `padding`, etc., require their values be a measurement.
+If you specify a number without any units, the units defaults to points (pt), the unit of measure for the PDF canvas.
 A point is defined as 1/72 of an inch.
-If you specify a number without any units, the units defaults to pt.
 
+[#supported]
 == Supported units
 
 The following units are supported:
@@ -40,6 +42,7 @@ Currently, percentage units can only be used for placing elements on the title p
 |Default unit of measure when no unit is specified.
 |===
 
+[#specify]
 == Specify a measurement unit
 
 Here's an example of how you can use inches to define the page margins:

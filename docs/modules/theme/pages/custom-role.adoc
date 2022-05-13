@@ -13,7 +13,7 @@ The name of a custom role may contain a hyphen, but *a role name cannot contain 
 ----
 role: <.>
   rolename: <.>
-    font-color: #ff7f50 <.>
+    font-color: #FF7F50 <.>
     font-style: bold
     text-decoration: underline
   another-role: <.>
@@ -39,7 +39,7 @@ The keys `background-color` and `font-color` are set and each key is assigned a 
 role:
   red:
     background-color: #333333
-    font-color: #ff0000
+    font-color: #FF0000
 ----
 
 You can also use a custom role to unset the default styling of a paragraph or inline phrase and make it inherit the styling of its parent element.

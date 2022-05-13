@@ -1,4 +1,5 @@
 = Quote Category Keys
+:description: Reference list of the available quote block category keys and their value types.
 :navtitle: Quote
 :source-language: yaml
 
@@ -23,7 +24,7 @@ quote:
 (default: `'EEEEEE'`)
 |[source]
 quote:
-  border-color: #e6e8fa
+  border-color: #E6E8fA
 
 |<<border-width,border-left-width>>
 |xref:blocks.adoc#border-width[Measurement] +
@@ -68,7 +69,7 @@ quote:
   font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 quote:
@@ -89,7 +90,7 @@ quote:
   font-style: bold
 
 |padding
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+|xref:blocks.adoc#padding[Measurement] {vbar} xref:blocks.adoc#padding[Measurement[\]] +
 (default: `[3, 12, 3, 14]`)
 |[source]
 quote:
@@ -143,7 +144,7 @@ quote:
     font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 quote:
@@ -164,6 +165,6 @@ quote:
 |[source]
 quote:
   cite:
-    text-transform: uppercase
+    text-transform: smallcaps
 |===
 

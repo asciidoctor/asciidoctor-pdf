@@ -1,34 +1,23 @@
 = Text Styles
+:description: The theming language provides keys for aligning, decorating, styling, and transforming text.
 
 [#text-align]
 == Text alignment
 
 The `text-align` key is used to align text horizontally within the text box.
 It has the same function as the `text-align` property in CSS.
-
 The text can be aligned using the following keywords:
 
-`center`:: Text is centered within the text box.
-`justify`:: Text is spaced out to align evenly with both sides of the text box.
-`left`:: Text is aligned to the left side of the text box.
-`right`:: Text is aligned to the right side of the text box.
+center:: Text is centered within the text box.
+justify:: Text is spaced out to align evenly with both sides of the text box.
+left:: Text is aligned to the left side of the text box.
+right:: Text is aligned to the right side of the text box.
+inherit:: *Only applies to the caption text of block images (`image-caption`) and tables (`table-caption`).*
+The value `inherit` resolves to the alignment of the block.
+Further information about using `inherit` on image caption text and table caption text can be found on xref xref:block-images.adoc#caption-text-align[Block Image Styles] and xref:tables.adoc#caption-text-align[Table Styles], respectively.
 
 The `text-align` key is distinct from the similarly-named `align` key.
 The xref:blocks.adoc#align[align key] aligns a block element horizontally within its container.
-
-[#caption-text-align]
-=== Caption text alignment
-
-In addition to the alignment keywords listed in the <<text-align>> section, the `caption-text-align` key accepts the keyword `inherit` when it is set on the `image` or `table` category.
-
-[,yaml]
-----
-image:
-  caption:
-    text-align: inherit
-----
-
-The value `inherit` resolves to the alignment of the block image or table.
 
 [#decoration]
 == Decoration
@@ -36,10 +25,10 @@ The value `inherit` resolves to the alignment of the block image or table.
 The `text-decoration` key specifies the type of decoration, such as an underline, that is applied to the text.
 It accepts the following keywords:
 
-`line-through`:: A line is drawn across the text.
+line-through:: A line is drawn across the text.
 This is commonly referred to as a strikethrough.
-`none`:: Clears an inherited value and no decoration is applied to the text.
-`underline`:: A line is drawn beneath the text.
+none:: Clears an inherited value and no decoration is applied to the text.
+underline:: A line is drawn beneath the text.
 
 When a key category allows the `text-decoration` key to be set, you can usually specify a `text-decoration-color` and `text-decoration-width`, too.
 
@@ -49,11 +38,11 @@ When a key category allows the `text-decoration` key to be set, you can usually 
 The `font-style` key specifies the font variant in a font family that the text should use.
 The key accepts the following keywords:
 
-`bold`:: Text is styled using the bold variant of a font family.
-`bold_italic`:: Text is styled using the bold italic variant of a font family
-`italic`:: Text is styled using the italic variant of a font family.
-`normal`:: Text is styled using the normal font variant in a font family.
-`normal_italic`:: The style of the text is reset to normal, and then the text is styled using the italic variant of a font family.
+bold:: Text is styled using the bold variant of a font family.
+bold_italic:: Text is styled using the bold italic variant of a font family
+italic:: Text is styled using the italic variant of a font family.
+normal:: Text is styled using the normal font variant in a font family.
+normal_italic:: The style of the text is reset to normal, and then the text is styled using the italic variant of a font family.
 
 Usually, you can specify a font style wherever you can set a font family (`font-family`).
 The converter uses the values of both keys in combination to locate the correct font within a font stack.
@@ -64,10 +53,10 @@ The converter uses the values of both keys in combination to locate the correct 
 The `text-transform` key changes the case of the text.
 It accepts the following keywords:
 
-`capitalize`:: Transforms the first letter of each word to a capital letter.
-`none`:: Clears an inherited value and no case transformation is applied to the text.
-`lowercase`:: Transforms all the text to lower case letters.
-`uppercase`:: Transforms all the text to capital letters.
-`smallcaps`:: Replaces lowercase Latin letters with their small capital variant.
+capitalize:: Transforms the first letter of each word to a capital letter.
+lowercase:: Transforms all the text to lower case letters.
+none:: Clears an inherited value and no case transformation is applied to the text.
+smallcaps:: Replaces lowercase Latin letters with their small capital variant.
+uppercase:: Transforms all the text to capital letters.
 
 The `text-transform` key can’t be set on the xref:base.adoc[base category].

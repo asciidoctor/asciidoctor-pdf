@@ -1,9 +1,26 @@
 = Block Category Keys
+:description: Reference list of the available global block category keys and their value types.
 :navtitle: Block
 :source-language: yaml
 
 The keys in the `block` category control the anchor position and spacing below block elements when a more specific setting isn't designated.
-The bottom margin is only added if the block is followed by an adjacent block within the same enclosure (e.g., a sidebar, a table cell, or the area outside any blocks).
+Block styles are applied to the following block types:
+
+[cols="2*a",width=75%,grid=none,frame=none]
+|===
+|
+* admonition
+* block image
+* code (listing, literal, source)
+* example
+|
+* quote
+* sidebar
+* table
+* verse
+|===
+
+The bottom margin (`margin-bottom`) is only added if the block is followed by an adjacent block within the same enclosure (e.g., a sidebar, a table cell, or the area outside any blocks).
 
 [cols="3,4,6a"]
 |===
@@ -22,22 +39,4 @@ block:
 |[source]
 block:
   margin-bottom: 6
-|===
-
-Block styles are applied to the following block types:
-
-[cols="3*a",grid=none,frame=none]
-|===
-|
-* admonition
-* example
-* quote
-|
-* verse
-* sidebar
-* image
-|
-* listing
-* literal
-* table
 |===

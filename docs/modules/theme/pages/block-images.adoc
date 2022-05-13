@@ -1,10 +1,25 @@
 = Block Image Styles
 :description: In addition to the general block and caption keys, the theming language provides keys for arranging and styling block images, alt text, and image captions.
 
-You can customize how the block images, alt text, and image captions are arranged and styled using the xref:block-image.adoc[] and the xref:caption.adoc[].
-In general, the xref:blocks.adoc[] and xref:caption.adoc[] apply to block images and their captions.
-You can further customize how the block images, alt text, and image captions are arranged and styled using the xref:block-image.adoc[].
-The following sections provide additional information about the keys that are unique to the block images.
+In general, the xref:blocks.adoc[] apply to block images and their captions.
+You can further customize how the block images, alt text, and captions are arranged and styled using the xref:block-image.adoc[].
+The following sections provide information and examples about the keys and values that are unique to the block images.
+
+[#caption-align]
+== Caption alignment
+
+In addition to the xref:blocks.adoc#align[standard block alignment keywords (center, left, and right)], the `caption-align` key accepts the keyword `inherit` when it is set on the `image` category.
+
+[,yaml]
+----
+image:
+  caption:
+    align: inherit
+----
+
+When the value is `inherit`, the key will inherit the alignment assigned to the image itself (`image-align`).
+The `caption-align` key is distinct from the similarly-named `caption-text-align` key.
+The <<caption-text-align,caption-text-align key>> aligns text within the text box of the caption block using text alignment rules.
 
 [#end]
 == Caption end
@@ -25,7 +40,8 @@ image:
 [#caption-text-align]
 == Caption text alignment
 
-The `caption-text-align` key accepts the keyword `inherit` in addition to the xref:text.adoc#text-align[usual text alignment values] when it is set on the `image` category.
+The `caption-text-align` key controls the alignment of the caption text within the bounds of the caption.
+The key accepts the keyword `inherit` in addition to the xref:text.adoc#text-align[usual text alignment values] when it is set on the `image` category.
 
 [,yaml]
 ----
@@ -34,4 +50,7 @@ image:
     text-align: inherit
 ----
 
-The value `inherit` resolves to the block alignment (`image-align`) assigned to the `image` category.
+When the value is `inherit`, the key will inherit the alignment assigned to the image itself (`image-align`).
+
+The `caption-text-align` key is distinct from the similarly-named `caption-align` key.
+The <<caption-align,caption-align key>> aligns a caption block horizontally within its container.

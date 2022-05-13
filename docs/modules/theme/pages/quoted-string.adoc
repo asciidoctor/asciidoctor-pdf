@@ -1,10 +1,11 @@
 = Quoted String
+:url-yaml-strings: https://symfony.com/doc/current/components/yaml/yaml_format.html#strings
 
 Some keys accept a quoted string as text content.
 The final segment of these keys is always named `content`.
 
 A content key accepts a string value.
-It's usually best to quote the string or use the http://symfony.com/doc/current/components/yaml/yaml_format.html#strings[YAML multi-line string syntax].
+It's usually best to quote the string or use the {url-yaml-strings}[YAML multi-line string syntax^].
 
 Text content may be formatted using a subset of inline HTML.
 You can use the well-known elements such as `<strong>`, `<em>`, `<code>`, `<a>`, `<sub>`, `<sup>`, `<del>`, and `<span>`.

@@ -1,4 +1,5 @@
 = Keyboard Macro Category Keys
+:description: Reference list of the available keyboard UI macro (kbd) category keys and their value types.
 :navtitle: Keyboard
 :source-language: yaml
 
@@ -17,14 +18,14 @@ The kbd reference is a span of text denoting textual user input from a keyboard,
 (default: _not set_)
 |[source]
 kbd:
-  background-color: #fafafa
+  background-color: #FAFAFA
 
 |<<border-color,border-color>>
 |xref:color.adoc[Color] +
 (default: _not set_)
 |[source]
 kbd:
-  border-color: #cccccc
+  border-color: #CCCCCC
 
 |<<offset,border-offset>>
 |xref:language.adoc#values[Number] +

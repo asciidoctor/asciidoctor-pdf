@@ -11,7 +11,7 @@ For example:
 ----
 extends: default
 base:
-  font-color: #ff0000
+  font-color: #FF0000
 ----
 
 The `extends` key accepts either a single value or an array of values.
@@ -48,7 +48,7 @@ role:
   removed:
     font-style: italic
     text-decoration: line-through
-    text-decoration-color: #ff0000
+    text-decoration-color: #FF0000
 heading:
   font-color: #262626
   font-size: 17
@@ -81,7 +81,7 @@ Instead of designing a theme from scratch, you can extend the default theme usin
 ----
 extends: default
 base:
-  font-color: #ff0000
+  font-color: #FF0000
 ----
 
 You can also point the `extends` key at another custom theme to extend from it.

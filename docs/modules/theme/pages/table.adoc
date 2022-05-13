@@ -27,21 +27,21 @@ table:
   background-color: #FFFFFF
 
 |border-color
-|xref:tables.adoc#border-color[Color] {vbar} xref:tables.adoc#border-color[Color[ \]] +
+|xref:tables.adoc#border-color[Color] {vbar} xref:tables.adoc#border-color[Color[\]] +
 (default: `'000000'`)
 |[source]
 table:
   border-color: #DDDDDD
 
 |border-style
-|xref:tables.adoc#border-style[Border style] {vbar} xref:tables.adoc#border-style[Border style[ \]] +
+|xref:tables.adoc#border-style[Border style] {vbar} xref:tables.adoc#border-style[Border style[\]] +
 (default: `solid`)
 |[source]
 table:
   border-style: [solid, ~, solid, dotted]
 
 |border-width
-|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[ \]] +
+|xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[\]] +
 (default: `0.5`)
 |[source]
 table:
@@ -62,7 +62,7 @@ table:
   font-family: Helvetica
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 table:
@@ -83,21 +83,21 @@ table:
   font-style: italic
 
 |grid-color
-|xref:tables.adoc#grid-color[Color] {vbar} xref:tables.adoc#grid-color[Color[ \]] +
+|xref:tables.adoc#grid-color[Color] {vbar} xref:tables.adoc#grid-color[Color[\]] +
 (default: `$table-border-color`)
 |[source]
 table:
   grid-color: #EEEEEE
 
 |grid-style
-|xref:tables.adoc#grid-style[Grid style] {vbar} xref:tables.adoc#grid-style[Grid style[ \]] +
+|xref:tables.adoc#grid-style[Grid style] {vbar} xref:tables.adoc#grid-style[Grid style[\]] +
 (default: `$table-border-style`)
 |[source]
 table:
   grid-style: dashed
 
 |grid-width
-|xref:tables.adoc#grid-width[Measurement] {vbar} xref:tables.adoc#grid-width[Measurement[ \]] +
+|xref:tables.adoc#grid-width[Measurement] {vbar} xref:tables.adoc#grid-width[Measurement[\]] +
 (default: `$table-border-width`)
 |[source]
 table:
@@ -147,7 +147,7 @@ table:
     border-bottom-width: 1
 
 |cell-padding
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+|xref:blocks.adoc#padding[Measurement] {vbar} xref:blocks.adoc#padding[Measurement[\]] +
 (default: `$table-cell-padding`)
 |[source]
 table:
@@ -171,7 +171,7 @@ table:
     font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 table:
@@ -305,7 +305,7 @@ table:
     line-height: 1.5
 
 |padding
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+|xref:blocks.adoc#padding[Measurement] {vbar} xref:blocks.adoc#padding[Measurement[\]] +
 (default: `2`)
 |[source]
 table:
@@ -400,16 +400,16 @@ The keys listed on xref:caption.adoc[] can also be nested under the `table-capti
 |===
 |Key |Value Type |Example
 
-|caption-align
-|xref:blocks.adoc#align[Block alignment] {vbar} xref:tables.adoc#caption-align[inherit] +
+|xref:tables.adoc#caption-align[caption-align]
+|xref:tables.adoc#caption-align[Block alignment] {vbar} xref:tables.adoc#caption-align[inherit] +
 (default: `$caption-align`)
 |[source]
 table:
   caption:
     align: center
 
-|caption-end
-|xref:tables.adoc#end[bottom] {vbar} xref:tables.adoc#end[top] +
+|xref:tables.adoc#end[caption-end]
+|xref:tables.adoc#end[End placement] +
 (default: `top`)
 |[source]
 table:
@@ -424,11 +424,13 @@ table:
   caption:
     max-width: none
 
-|caption-text-align
-|xref:text.adoc#text-align[Text alignment] {vbar} xref:tables.adoc#caption-text-align[inherit] +
+|xref:tables.adoc#caption-text-align[caption-text-align]
+|xref:tables.adoc#caption-text-align[Text alignment] {vbar} xref:tables.adoc#caption-text-align[inherit] +
 (default: `$table-caption-align`)
 |[source]
 table:
   caption:
-    text-align: left
+    text-align: center
 |===
+
+For more information about styling tables using the theming language, see xref:tables.adoc[].

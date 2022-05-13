@@ -14,7 +14,7 @@ Before using the font, you may want to check that the font is valid.
 To do so, create the following script, which will verify that the font is free from errors.
 
 .validate-font.rb
-[source,ruby]
+[,ruby]
 ----
 require 'ttfunk'
 require 'ttfunk/subset_collection'
@@ -38,7 +38,7 @@ Resaving the font in FontForge will usually resolve any errors in the font.
 == Modifying the font
 
 To ready your font for use with Asciidoctor PDF, you'll need to modify it using a font program.
-We recommend using {url-fontforge}[FontForge].
+We recommend using {url-fontforge}[FontForge^].
 But don't let this scare you off.
 FontForge essentially works like a vector-drawing tool, in which each character is a separate canvas.
 You can find a crash course in how to use the program on the FontForge project site.

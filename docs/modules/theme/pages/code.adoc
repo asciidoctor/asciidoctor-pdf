@@ -1,4 +1,5 @@
 = Code Block Category Keys
+:description: Reference list of the available code block (listing, literal, and source) category keys and their value types.
 :navtitle: Code Block
 :source-language: yaml
 
@@ -16,14 +17,14 @@ The keys in the `code` category control the arrangement and style of literal, li
 (default: _not set_)
 |[source]
 code:
-  background-color: #f5f5f5
+  background-color: #F5F5F5
 
 |border-color
 |xref:blocks.adoc#border-color[Color] +
 (default: `'EEEEEE'`)
 |[source]
 code:
-  border-color: #cccccc
+  border-color: #CCCCCC
 
 |border-radius
 |xref:blocks.adoc#radius[Measurement] +
@@ -89,11 +90,11 @@ code:
   line-height: 1.25
 
 |padding
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+|xref:blocks.adoc#padding[Measurement] {vbar} xref:blocks.adoc#padding[Measurement[\]] +
 (default: `9`)
 |[source]
 code:
-  padding: 11
+  padding: 12mm
 |===
 
 [#line-gap]
@@ -116,7 +117,7 @@ Otherwise, the background color is controlled by the source highlighter theme.
 (default: `#FFFFCC`)
 |[source]
 code:
-  highlight-background-color: #ffff00
+  highlight-background-color: #FFFF00
 |===
 
 [#linenum]
@@ -134,6 +135,6 @@ Otherwise, the font color of line numbers are controlled by the source highlight
 (default: `#999999`)
 |[source]
 code:
-  linenum-font-color: #ccc
+  linenum-font-color: #CCCCCC
 |===
 

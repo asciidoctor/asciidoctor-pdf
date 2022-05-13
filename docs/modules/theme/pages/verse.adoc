@@ -1,4 +1,5 @@
 = Verse Category Keys
+:description: Reference list of the available verse block category keys and their value types.
 :navtitle: Verse
 :source-language: yaml
 
@@ -23,7 +24,7 @@ verse:
 (default: `'EEEEEE'`)
 |[source]
 verse:
-  border-color: #e6e8fa
+  border-color: #E6E8FA
 
 |<<border-width,border-left-width>>
 |xref:blocks.adoc#border-width[Measurement] +
@@ -68,7 +69,7 @@ verse:
   font-family: M+ 1mn
 
 |font-kerning
-|normal {vbar} none +
+|none {vbar} normal +
 (default: _inherit_)
 |[source]
 verse:
@@ -89,18 +90,18 @@ verse:
   font-style: bold
 
 |padding
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+|xref:blocks.adoc#padding[Measurement] {vbar} xref:blocks.adoc#padding[Measurement[\]] +
 (default: `[3, 12, 3, 14]`)
 |[source]
 verse:
-  padding: [3, 0, 3, 20]
+  padding: 3
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
 (default: _inherit_)
 |[source]
 verse:
-  text-transform: uppercase
+  text-transform: lowercase
 |===
 
 [#border-width]
@@ -141,7 +142,7 @@ verse:
     font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 verse:

@@ -1,8 +1,9 @@
 = Footnotes Category Keys
+:description: Reference list of the available footnotes category keys and their value types.
 :navtitle: Footnotes
 :source-language: yaml
 
-The keys in the `footnotes` category control the style of the footnotes list at the end of a chapter (book doctype) or document (other doctypes).
+The keys in the `footnotes` category control the style of the footnotes list at the end of a chapter (`book` doctype) or document (other doctypes).
 If the `footnotes-title` attribute is specified in a document, it's styled as a xref:caption.adoc[block caption].
 The styling of the links is controlled by the xref:link.adoc[global link styles].
 
@@ -15,7 +16,7 @@ The styling of the links is controlled by the xref:link.adoc[global link styles]
 (default: `$base-font-color`)
 |[source]
 footnotes:
-  font-color: #cccccc
+  font-color: #CCCCCC
 
 |font-size
 |xref:language.adoc#values[Number] +

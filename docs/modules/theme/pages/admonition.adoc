@@ -1,4 +1,5 @@
 = Admonition Category Keys
+:description: Reference list of the available admonition category keys and their value types.
 :navtitle: Admonition
 :source-language: yaml
 
@@ -23,7 +24,7 @@ admontition:
 (default: _not set_)
 |[source]
 admonition:
-  border-color: #e6e8fa
+  border-color: #E6E8FA
 
 |border-radius
 |xref:blocks.adoc#radius[Measurement] +
@@ -53,7 +54,7 @@ verse:
 (default: `'EEEEEE'`)
 |[source]
 admonition:
-  column-rule-color: #aa0000
+  column-rule-color: #AA0000
 
 |column-rule-style
 |`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +
@@ -84,7 +85,7 @@ admonition:
   font-family: Noto Sans
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 admonition:
@@ -105,11 +106,11 @@ admonition:
   font-style: italic
 
 |padding
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+|xref:blocks.adoc#padding[Measurement] {vbar} xref:blocks.adoc#padding[Measurement[\]] +
 (default: `[4, 12, 4, 12]`)
 |[source]
 admonition:
-  padding: [0, 14, 0, 14]
+  padding: 1cm
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
@@ -145,7 +146,7 @@ admonition:
     font-family: M+ 1p
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 admonition:
@@ -201,7 +202,7 @@ admonition:
     text-transform: lowercase
 
 |vertical-align
-|`top` {vbar} `middle` {vbar} `bottom` +
+|`bottom` {vbar} `middle` {vbar} `top` +
 (default: `middle`)
 |[source]
 admonition:
@@ -243,7 +244,7 @@ admonition:
       font-family: M+ 1p
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 admonition:
@@ -312,12 +313,12 @@ admonition:
 
 |stroke-color
 |xref:color.adoc[Color] +
-(default: caution=`#bf3400`; important=`#bf0000`; note=`#19407c`; tip=`#111111`; warning=`#bf6900`)
+(default: caution=`#BF3400`; important=`#BF0000`; note=`#19407C`; tip=`#111111`; warning=`#BF6900`)
 |[source]
 admonition:
   icon:
     important:
-      stroke-color: #ff0000
+      stroke-color: #FF0000
 |===
 
 [#name]

@@ -1,8 +1,13 @@
 = Section Category Key
+:description: Reference list of the available section category key and its value types.
 :navtitle: Section
 :source-language: yaml
 
 The key in the `section` category controls the indent of a section body.
+
+The `indent` keys applies to the section body only, excluding section titles and discrete headings.
+A single value gets applied to both the left and right side (e.g., `0.5in`).
+A two-value array configures the left and right side independently (e.g., `[0.5in, 0]`).
 
 [cols="3,6,4a"]
 |===
@@ -15,7 +20,3 @@ The key in the `section` category controls the indent of a section body.
 section:
   indent: [0.5in, 0]
 |===
-
-The `indent` keys applies to the section body only, excluding section titles and discrete headings.
-A single value gets applied to both the left and right side (e.g., `0.5in`).
-A two-value array configures the left and right side independently (e.g., `[0.5in, 0]`).

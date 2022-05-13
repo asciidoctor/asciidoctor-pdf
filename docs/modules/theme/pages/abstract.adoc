@@ -1,4 +1,5 @@
 = Abstract Category Keys
+:description: Reference list of the available abstract category keys and their value types.
 :navtitle: Abstract
 :source-language: yaml
 
@@ -16,7 +17,7 @@ The keys in the `abstract` category control the arrangement and style of the abs
 (default: `$base-font-color`)
 |[source]
 abstract:
-  font-color: #5c6266
+  font-color: #5C6266
 
 |font-size
 |xref:language.adoc#values[Number] +
@@ -40,7 +41,7 @@ abstract:
   line-height: 1.2
 
 |padding
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+|xref:blocks.adoc#padding[Measurement] {vbar} xref:blocks.adoc#padding[Measurement[\]] +
 (default: `0`)
 |[source]
 abstract:
@@ -58,7 +59,7 @@ abstract:
 (default: `$abstract-font-color`)
 |[source]
 abstract:
-  text-decoration-color: #0000ff
+  text-decoration-color: #0000FF
 
 |text-decoration-width
 |xref:measurement-units.adoc[Measurement] +
@@ -72,7 +73,7 @@ abstract:
 (default: _inherit_)
 |[source]
 abstract:
-  text-transform: uppercase
+  text-transform: none
 |===
 
 [#first-line]
@@ -134,7 +135,7 @@ abstract:
     font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 abstract:
@@ -179,7 +180,7 @@ abstract:
 |[source]
 abstract:
   title:
-    text-decoration-color: #0000ff
+    text-decoration-color: #0000FF
 
 |text-decoration-width
 |xref:measurement-units.adoc[Measurement] +
