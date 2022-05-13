@@ -11,7 +11,7 @@ IMPORTANT: The fallback font only gets used when the primary font is a TrueType 
 Any glyph missing from an AFM font is simply replaced with the "`not`" glyph (`&#172;`).
 
 CAUTION: The `default` theme does not use a fallback font.
-However, the built-in `default-with-fallback-font` theme does.
+However, the built-in `default-with-font-fallbacks` theme does.
 In fact, it provides two.
 One for general writing in non-Latin languages (M+ 1p) and another for emoji (Noto Emoji).
 Using the fallback font slows down PDF generation slightly because it has to analyze every single character.
@@ -83,7 +83,7 @@ Here's another example that shows how to use an alternative emoji font (Symbola)
 
 [,yaml]
 ----
-extends: default-with-fallback-font
+extends: default-with-font-fallbacks
 font:
   catalog:
     merge: true

@@ -250,7 +250,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
 
     it 'should reserve enough space for marker that is not found in any font' do
       pdf_theme = {
-        extends: 'default-with-fallback-font',
+        extends: 'default-with-font-fallbacks',
         ulist_marker_disc_content: ?\u2055,
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
@@ -486,7 +486,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     it 'should use glyph from fallback font if not present in main font', visual: true do
-      pdf_theme = build_pdf_theme({ ulist_marker_checked_content: ?\u303c }, 'default-with-fallback-font')
+      pdf_theme = build_pdf_theme({ ulist_marker_checked_content: ?\u303c }, 'default-with-font-fallbacks')
 
       to_file = to_pdf_file <<~'EOS', 'list-checked-glyph-fallback.pdf', pdf_theme: pdf_theme
       * [x] done
