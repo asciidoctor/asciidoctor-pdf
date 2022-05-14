@@ -1912,9 +1912,10 @@ module Asciidoctor
       alias convert_listing_or_literal convert_code
 
       def convert_pass node
-        node.instance_variable_set :@subs, ([:specialcharacters] + (prev_subs = node.subs)).uniq
-        convert_code node
-        node.instance_variable_set :@subs, prev_subs
+        theme_font :code do
+          typeset_formatted_text [text: (guard_indentation node.content), color: @theme.base_font_color], (calc_line_metrics @base_line_height)
+        end
+        theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
       def convert_stem node

@@ -21,6 +21,7 @@ Improvements::
 * configure spacing around thematic break using `thematic-break-padding` key instead of margin top and bottom (#2164)
 * rename `convert_listing_or_literal` to `convert_code` and alias old name
 * reify convert handler for STEM blocks (`convert_stem`)
+* reify convert handler for pass blocks (`convert_pass`) and remove block decoration
 
 Bug Fixes::
 
