@@ -1,4 +1,5 @@
 = Sidebar Category Keys
+:description: Reference list of the available sidebar category keys and their value types.
 :navtitle: Sidebar
 :source-language: yaml
 
@@ -23,7 +24,7 @@ sidebar:
 (default: _not set_)
 |[source]
 sidebar:
-  border-color: #ffffff
+  border-color: #FFFFFF
 
 |border-radius
 |xref:blocks.adoc#radius[Measurement] +
@@ -61,7 +62,7 @@ sidebar:
   font-family: M+ 1p
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 sidebar:
@@ -82,18 +83,18 @@ sidebar:
   font-style: italic
 
 |padding
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+|xref:blocks.adoc#padding[Measurement] {vbar} xref:blocks.adoc#padding[Measurement[\]] +
 (default: `12`)
 |[source]
 sidebar:
-  padding: [12, 15, 0, 15]
+  padding: [12, 15]
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
 (default: _inherit_)
 |[source]
 sidebar:
-  text-transform: uppercase
+  text-transform: none
 |===
 
 [#title]
@@ -122,7 +123,7 @@ sidebar:
     font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 sidebar:
@@ -159,5 +160,5 @@ sidebar:
 |[source]
 sidebar:
   title:
-    text-transform: capitalize
+    text-transform: smallcaps
 |===

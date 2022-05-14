@@ -1,4 +1,5 @@
 = Thematic Break Category Keys
+:description: Reference list of the available thematic break category keys and their value types.
 :navtitle: Thematic Break
 :source-language: yaml
 
@@ -13,7 +14,7 @@ The keys in the `thematic-break` category control the style of thematic breaks, 
 (default: `'EEEEEE'`)
 |[source]
 thematic-break:
-  border-color: #e6e8fa
+  border-color: #E6E8FA
 
 |border-style
 |`dashed` {vbar} `dotted` {vbar} `double` {vbar} `solid` +

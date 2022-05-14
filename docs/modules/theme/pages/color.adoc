@@ -1,4 +1,5 @@
 = Colors
+:description: The theming language supports color values in hex, RGB, and CMYK formats.
 
 The theme language supports color values in three formats:
 

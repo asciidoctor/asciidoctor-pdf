@@ -1,19 +1,19 @@
 = SVG Category Key
+:description: Reference list of the available svg category key and its value type.
 :navtitle: SVG
 :source-language: yaml
 
 The key in the `svg` category controls the SVG fallback font.
+The fallback font family is only used when the font family in the SVG does not map to a known font name from the font catalog.
 
 [cols="4,4,6a"]
 |===
 |Key |Value Type |Example
 
-|fallback_font_family
+|fallback-font-family
 |xref:font-support.adoc[Font family name] +
 (default: `$base-font-family`)
 |[source]
 svg:
-  fallback_font_family: Times-Roman
+  fallback-font-family: Times-Roman
 |===
-
-The fallback font family is only used when the font family in the SVG does not map to a known font name from the font catalog.

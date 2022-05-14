@@ -1,4 +1,5 @@
 = Button Macro Category Keys
+:description: Reference list of the available button UI macro category keys and their value types.
 :navtitle: Button
 :source-language: yaml
 
@@ -16,14 +17,14 @@ The keys in the `button` category apply to a button reference generated from the
 (default: _not set_)
 |[source]
 button:
-  background-color: #0000ff
+  background-color: #0000FF
 
 |<<border-color,border-color>>
 |xref:color.adoc[Color] +
 (default: _not set_)
 |[source]
 button:
-  border-color: #cccccc
+  border-color: #CCCCCC
 
 |<<border-offset,border-offset>>
 |xref:language.adoc#values[Number] +
@@ -58,7 +59,7 @@ button:
 (default: _inherit_)
 |[source]
 button:
-  font-color: #ffffff
+  font-color: #FFFFFF
 
 |font-family
 |xref:font-support.adoc[Font family name] +

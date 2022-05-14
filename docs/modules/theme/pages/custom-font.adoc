@@ -43,7 +43,7 @@ Rename the files as follows:
 Next, declare the font under the `font-catalog` key at the top of your theme file.
 Assign each font a unique key (e.g., `Roboto`) and specify the path to each of the four font styles under that key.
 
-[source,yaml,subs=attributes+]
+[,yaml,subs=attributes+]
 ----
 font:
   catalog:
@@ -61,7 +61,7 @@ If you're missing the font file for one of the variants, configure it to use the
 
 If your font only has a single variant, assign the font path to the font key directly.
 
-[source,yaml,subs=attributes+]
+[,yaml,subs=attributes+]
 ----
 font:
   catalog:
@@ -78,7 +78,7 @@ You can also use the `GEM_FONTS_DIR` keyword to refer to the location of the bun
 You can add any number of fonts to the catalog.
 Each font must be assigned a unique key, as shown here:
 
-[source,yaml,subs=attributes+]
+[,yaml,subs=attributes+]
 ----
 font:
   catalog:
@@ -99,7 +99,7 @@ font:
 You can use the key that you assign to the font in the font catalog anywhere the `font-family` property is accepted in the theme file.
 For example, to use the Roboto font for all headings (section titles and discrete headings), use:
 
-[source,yaml]
+[,yaml]
 ----
 heading:
   font-family: Roboto

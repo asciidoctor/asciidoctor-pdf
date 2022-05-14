@@ -1,4 +1,5 @@
 = Variables
+:description: The theming language supports variables.
 :conum-guard-yaml: #
 
 To save you from having to type the same value in your theme over and over, or to allow you to base one value on another, the theme language supports variables.

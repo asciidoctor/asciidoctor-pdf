@@ -1,4 +1,5 @@
 = List Category Keys
+:description: Reference list of the available list category keys and their value types. The list category controls the styles of ordered and unordered lists.
 :navtitle: List
 :source-language: yaml
 
@@ -6,6 +7,9 @@
 == list
 
 The keys in the `list` category control the arrangement and style of ordered and unordered lists.
+
+The `marker-font-color` key controls the color of the bullet glyph that marks items in unordered lists and the color of the number or letter marker for items in ordered lists.
+The `text-align` key controls the alignment of the list text only, not nested content, such as nested blocks and lists.
 
 [cols="3,3,6a"]
 |===
@@ -30,7 +34,7 @@ list:
 (default: _inherit_)
 |[source]
 list:
-  marker-font-color: #3c763d
+  marker-font-color: #3C763D
 
 |text-align
 |xref:text.adoc#text-align[Text alignment] +
@@ -39,9 +43,6 @@ list:
 list:
   text-align: right
 |===
-
-The `marker-font-color` key controls the color of the bullet glyph that marks items in unordered lists and the color of the number or letter marker for items in ordered lists.
-The `text-align` key controls the alignment of the list text only, not nested content, such as nested blocks and lists.
 
 [#ulist-marker]
 == ulist-marker
@@ -74,7 +75,7 @@ ulist:
 |[source]
 ulist:
   marker:
-    font-color: #cccccc
+    font-color: #CCCCCC
 
 |line-height
 |xref:language.adoc#values[Number] +
@@ -128,7 +129,7 @@ ulist:
 ulist:
   marker:
     disc:
-      font-color: #ff0000
+      font-color: #FF0000
 
 |line-height
 |xref:language.adoc#values[Number] +

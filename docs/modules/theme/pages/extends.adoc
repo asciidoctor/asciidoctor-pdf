@@ -1,4 +1,5 @@
 = Extends Category Key
+:description: Reference list of the extends category key and its value types.
 :navtitle: Extends
 :source-language: yaml
 

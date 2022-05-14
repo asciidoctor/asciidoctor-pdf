@@ -16,12 +16,12 @@ Just make sure you download the TTF variant.
 Once you have downloaded the fonts, place the files into the directory where you are going to create your theme.
 For the purpose of this guide, we'll assume you are working with the following font files:
 
-* https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/TTF/NotoSansCJKsc-VF.ttf[NotoSansCJKsc-VF.ttf]
-* https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/TTF/NotoSansCJKsc-VF.ttf[NotoSansMonoCJKsc-VF.ttf]
+* https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/TTF/NotoSansCJKsc-VF.ttf[NotoSansCJKsc-VF.ttf^]
+* https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/TTF/NotoSansCJKsc-VF.ttf[NotoSansMonoCJKsc-VF.ttf^]
 
-If you'd like to use different fonts, refer to the https://en.wikipedia.org/wiki/List_of_CJK_fonts[list of notable CJK fonts on Wikipedia].
+If you'd like to use different fonts, refer to the https://en.wikipedia.org/wiki/List_of_CJK_fonts[list of notable CJK fonts on Wikipedia^].
 With that information, you can search for the TTF font on any font service.
-You can also find the Kai Gen Gothic fonts for CJK languages in TTF format on the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic/releases[releases page] for the now deprecated asciidoctor-pdf-cjk-kai_gen_gothic project.
+You can also find the Kai Gen Gothic fonts for CJK languages in TTF format on the https://github.com/chloerei/asciidoctor-pdf-cjk-kai_gen_gothic/releases[releases page^] for the now deprecated asciidoctor-pdf-cjk-kai_gen_gothic project.
 
 == Create the theme file
 
@@ -67,14 +67,12 @@ You may also want to darken the font color since the Noto Sans SC font has a thi
 
 [,yaml]
 ----
-...
 base:
   text-align: left
   font-color: #000000
   font-family: Noto Sans CN
 heading:
   font-color: #000000
-...
 ----
 
 You may need to adjust the font color on other keys as well.

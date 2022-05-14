@@ -1,4 +1,7 @@
 = Source Highlighting Themes
+:url-jneen-rouge: https://github.com/jneen/rouge
+:url-ruby-rouge-themes: https://github.com/rouge-ruby/rouge/tree/master/lib/rouge/themes
+:url-rouge-project: https://rouge.jneen.net/
 
 You can apply a bundled source highlighter theme to your source blocks or define and apply your own.
 
@@ -10,8 +13,9 @@ Then, specify the desired theme using the `rouge-style` document attribute.
 
 The following example demonstrates how to apply the monokai theme from Rouge to source blocks.
 
-[source,asciidoc]
+[,asciidoc]
 ----
+= Document Title
 :source-highlighter: rouge
 :rouge-style: monokai
 ----
@@ -20,7 +24,7 @@ You can generate a list of all available themes by running the following command
 
  $ ruby -e 'require :rouge.to_s; puts Rouge::Theme.registry.keys.sort.join ?\n'
 
-You can also find the list of themes in the Rouge source repository at https://github.com/rouge-ruby/rouge/tree/master/lib/rouge/themes.
+You can also find the {url-ruby-rouge-themes}[list of themes in the Rouge source repository].
 
 If the bundled themes don't suit your needs, you can define one of your own.
 
@@ -32,7 +36,7 @@ Name the file according to the name of your theme and put the file in a folder o
 The name of the Ruby class doesn't matter, though it's customary to name it according to the name of the theme as well.
 
 .rouge_themes/custom.rb
-[source,ruby]
+[,ruby]
 ----
 require 'rouge' unless defined? ::Rouge.version
 
@@ -70,13 +74,14 @@ Colors are defined using hexadecimal format (e.g., #ff0000 for red).
 
 Use the `Text` token to set the background color of the source block and the default text color.
 
-The complete list of tokens can be found in the https://github.com/jneen/rouge/blob/master/lib/rouge/token.rb[token.rb] file from Rouge.
-Refer to the https://github.com/jneen/rouge/tree/master/lib/rouge/themes[bundled themes] to find more examples.
+The complete list of tokens can be found in the {url-jneen-rouge}/blob/master/lib/rouge/token.rb[token.rb file^] from Rouge.
+Refer to the {url-jneen-rouge}/tree/master/lib/rouge/themes[bundled themes^] to find more examples.
 
 Once you've defined your theme, you need to enable it use it using the `rouge-style` document attribute, which you specify in the document header or via the Asciidoctor CLI or API.
 
-[source,asciidoc]
+[,asciidoc]
 ----
+= Document Title
 :source-highlighter: rouge
 :rouge-style: custom
 ----
@@ -86,4 +91,4 @@ Finally, you need to activate your theme by requiring the theme file when you in
  $ asciidoctor -r ./rouge_themes/custom.rb sample.adoc
 
 You should now see that the source code is highlighted to your liking.
-For more information about source highlighting with Rouge, refer to the https://rouge.jneen.net/[Rouge project page].
+For more information about source highlighting with Rouge, refer to the {url-rouge-project}[Rouge project page^].

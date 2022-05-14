@@ -154,16 +154,16 @@ Most of the keys listed on xref:caption.adoc[] can also be nested under the `ima
 |===
 |Key |Value Type |Example
 
-|caption-align
-|xref:blocks.adoc#align[Block alignment] {vbar} xref:blocks.adoc#caption-align[inherit] +
+|xref:block-images.adoc#caption-align[caption-align]
+|xref:block-images.adoc#caption-align[Block alignment] {vbar} xref:block-images.adoc#caption-align[inherit] +
 (default: `$caption-align`)
 |[source]
 image:
   caption:
     align: inherit
 
-|caption-end
-|<<caption-end,bottom>> {vbar} <<caption-end,top>> +
+|xref:block-images.adoc#end[caption-end]
+|xref:block-images.adoc#end[End placement] +
 (default: `bottom`)
 |[source]
 image:
@@ -178,8 +178,8 @@ image:
   caption:
     max-width: fit-content
 
-|caption-text-align
-|xref:text.adoc#text-align[Text alignment] {vbar} <<caption-text-align,inherit>> +
+|xref:block-images.adoc#caption-text-align[caption-text-align]
+|xref:block-images.adoc#caption-text-align[Text alignment] {vbar} xref:block-images.adoc#caption-text-align[inherit] +
 (default: `$image-caption-align`)
 |[source]
 image:
@@ -187,27 +187,9 @@ image:
     text-align: center
 |===
 
-[#caption-end]
-== Caption end
+// DANGER! Do not describe or add extra information about the block image caption keys here! Such information, examples, etc., belongs on the block-images.adoc page. The caption max width section below will be moved there once there's time to document it.
 
-The `caption-end` key specifies whether the image caption is located on top or below the image.
-The key accepts the following keywords:
-
-bottom:: The caption block is placed below the bottom of the image.
-top:: The caption block is place above the top of the image.
-
-[,yaml]
-----
-image:
-  caption:
-    end: top
-----
-
-[#caption-text-align]
-=== Caption text align
-
-Controls the alignment of the caption text within the bounds of the caption.
-If the value is `inherit`, it will inherit the alignment of the image itself.
+// Seriously. I've got velociraptors and green slime.
 
 [#caption-max-width]
 === Caption max width

@@ -1,4 +1,5 @@
 = Heading Category Keys
+:description: Reference list of the available heading category keys and their value types.
 :navtitle: Heading
 :source-language: yaml
 
@@ -26,7 +27,7 @@ heading:
   font-family: Noto Serif
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
 heading:
@@ -93,7 +94,7 @@ heading:
 (default: `$heading-font-color`)
 |[source]
 heading:
-  text-decoration-color: #cccccc
+  text-decoration-color: #CCCCCC
 
 |text-decoration-width
 |xref:language.adoc#values[Number] +
@@ -159,7 +160,7 @@ heading:
   h4-font-family: Roboto
 
 |font-kerning
-|`normal` {vbar} `none` +
+|`none` {vbar} `normal` +
 (default: `$heading-font-kerning`)
 |[source]
 heading:
@@ -200,12 +201,12 @@ heading:
 heading:
   h2-margin-top: 6
 
-|padding
-|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+|<<padding,padding>>
+|xref:blocks.adoc#padding[Measurement] {vbar} xref:blocks.adoc#padding[Measurement[\]] +
 (default: _not set_)
 |[source]
 heading:
-  h2-padding: [0 0, 6]
+  h2-padding: [0, 2, 0, 6]
 
 |text-align
 |xref:text.adoc#text-align[Text alignment] +
@@ -242,6 +243,9 @@ heading:
 heading:
   h3-text-transform: uppercase
 |===
+
+[#padding]
+=== padding
 
 The `padding` key is only intended to be used to offset the border by a fixed amount.
 If you want to put spacing around the top and bottom edges of the heading container, you should use the `margin-*` keys instead.
@@ -281,14 +285,6 @@ The doctype must be `book` for the `heading-part` keys to take effect.
 |===
 |Key |Value Type |Example
 
-|part-break-before
-|`always` {vbar} `auto` +
-(default: `always`)
-|[source]
-heading:
-  part:
-    break-before: auto
-
 |`part-break-after`
 |`always` {vbar} `auto` +
 (default: `auto`)
@@ -296,4 +292,12 @@ heading:
 heading:
   part:
     break-after: always
+
+|part-break-before
+|`always` {vbar} `auto` +
+(default: `always`)
+|[source]
+heading:
+  part:
+    break-before: auto
 |===

@@ -15,23 +15,12 @@ The block can be aligned using the following keywords:
 center:: The block is centered horizontally within the parent container.
 left:: The block is aligned to the left side of the parent container.
 right:: The block is aligned to the right side of the parent container.
+inherit:: *Only applies to the captions of block images (`image-caption`) and tables (`table-caption`).*
+The value `inherit` resolves to the alignment of the block image or table.
+Further information about using `inherit` on image captions and table captions, can be found on xref xref:block-images.adoc#caption-align[Block Image Styles] and xref:tables.adoc#caption-align[Table Styles], respectively.
 
 The `align` key is distinct from the similarly-named `text-align` key.
 The xref:text.adoc#text-align[text-align key] aligns text within the text box using text alignment rules.
-
-[#caption-align]
-=== Caption alignment
-
-In addition to the alignment keywords listed in the <<align>> section, the `caption-align` key accepts the keyword `inherit` when it is set on the `image` or `table` category.
-
-[,yaml]
-----
-image:
-  caption:
-    align: inherit
-----
-
-The value `inherit` resolves to the alignment of the block image or table.
 
 [#border-width]
 == Border width
@@ -83,12 +72,12 @@ The `border-color` key specifies the color of a border.
 It accepts the following types of values:
 
 Hex, RGB, or CMYK color:: A single color specified using the hex, RGB, or CMYK format.
-See xref:color.adoc[] to learn how to assign a value using these formats in the theming language.
+See xref:color.adoc[] to learn how to assign these formats in the theming language.
 transparent:: A special keyword that indicates a color should not be used when drawing the border.
 Array of colors:: *Only applies to the `table` category*.
 An array that specifies xref:tables.adoc#border-color[a color per edge on tables].
 
-The value assigned to `border-color` is ignored if `border-width` isn't implicitly or explicitly set or is set to `0` on the category.
+The `border-color` key value is ignored if `border-width` isn't set or is set to `0` on the category.
 
 [#radius]
 == Border radius
@@ -103,7 +92,7 @@ sidebar:
   border-radius: 2
 ----
 
-The value assigned to the `border-radius` key is ignored if `border-width` is assigned an array of values.
+The `border-radius` key value is ignored if `border-width` is assigned an array of values.
 The `border-radius` key can't be set on the `table` category.
 
 [#border-style]
@@ -120,4 +109,49 @@ solid:: The border is drawn as a straight, single line.
 Array of styles:: *Only applies to the `table` category*.
 An array that specifies xref:tables.adoc#border-style[a style per edge on tables].
 
-The value assigned to a `border-style` key is ignored on a block category if `border-width` isn't implicitly or explicitly set or `border-width` is set to `0` on the category.
+The `border-style` key value is ignored on a block category if `border-width` isn't set or `border-width` is set to `0` on the category.
+
+[#padding]
+== Padding
+
+Several of the block categories, such as `admonition`, `sidebar`, `verse`, etc., allow their padding to be customized.
+The `padding` key specifies the amount of space between a block's content and its border.
+The key accepts a single measurement value or an array of measurements.
+When a single value is assigned to `padding`, the same amount of padding is applied to all four sides.
+
+.Single value assigned to padding
+[,yaml]
+----
+quote:
+  padding: 1.2mm <1>
+----
+<1> You don't need to enclose a single value in a set of square brackets.
+
+When a 2-value array is assigned to `padding`, the first value is applied to the top and bottom padding, and the second value is applied to the left and right side padding.
+
+.Two-value array assigned to padding
+[,yaml]
+----
+sidebar:
+  padding: [0.5, 2]
+----
+
+When a 4-value array is assigned to `padding`, the first value is applied to the top, the second to the right side, the third to the bottom, and the fourth to the left side padding.
+
+.Four-value array assigned to padding
+[,yaml]
+----
+code:
+  padding: [0.75in, 0, 2in, 0.5in]
+----
+
+The `padding` key also accepts a 3-value array, where the first value is applied to the top, the second to the right and left side, and the third to the bottom.
+
+////
+[#margin]
+== Margins
+
+The `margin` key specifies the amount of space around the outermost edges of a block.
+The key accepts a single measurement value or an array of measurements.
+When a single value is assigned to `margin`, the same amount of margin is applied to all four sides.
+////

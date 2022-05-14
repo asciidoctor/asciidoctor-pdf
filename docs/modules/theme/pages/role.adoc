@@ -31,7 +31,7 @@ role:
 |[source]
 role:
   found:
-    border-color: #cccccc
+    border-color: #CCCCCC
 
 |border-offset
 |xref:language.adoc#values[Number] +
@@ -63,7 +63,7 @@ role:
 |[source]
 role:
   red:
-    font-color: #ff0000
+    font-color: #FF0000
 
 |font-family
 |xref:font-support.adoc[Font family name] +

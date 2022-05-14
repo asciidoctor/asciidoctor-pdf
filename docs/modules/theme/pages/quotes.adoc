@@ -1,4 +1,5 @@
 = Quotes Category Keys
+:description: Reference list of the available quotes category key and its value type. The quotes key defines the typographic quotation mark characters.
 :navtitle: Quotes
 :source-language: yaml
 
