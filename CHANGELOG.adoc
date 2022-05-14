@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.0.beta.2 (2022-05-14) - @mojavelinux
 
 Enhancements::
 
@@ -46,6 +46,10 @@ Bug Fixes::
 * allow extended converter to override `convert_code` method to handle `convert_listing` and `convert_literal` calls
 * restore margin below pass block
 * remove use of deprecated theme keys in default-for-print theme
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.0.beta.2[git tag] | {url-repo}/compare/v2.0.0.beta.1\...v2.0.0.beta.2[full diff]
 
 == 2.0.0.beta.1 (2022-05-04) - @mojavelinux
 
