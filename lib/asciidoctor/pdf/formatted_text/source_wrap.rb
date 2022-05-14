@@ -24,14 +24,19 @@ module Asciidoctor
               @arranger.unconsumed.unshift highlight_line if highlight_line
               @arranger.unconsumed.unshift linenum_spacer.dup
             end
-            @line_wrap.wrap_line document: @document, kerning: @kerning, width: available_width, arranger: @arranger, disable_wrap_by_char: @disable_wrap_by_char
+            @line_wrap.wrap_line \
+              document: @document,
+              kerning: @kerning,
+              width: @width,
+              arranger: @arranger,
+              disable_wrap_by_char: @disable_wrap_by_char
             if enough_height_for_this_line?
               move_baseline_down
               print_line
+              stop = @arranger.finished?
             else
               stop = true
             end
-            stop ||= @arranger.finished?
           end
           @text = @printed_lines.join ?\n
           @everything_printed = @arranger.finished?
