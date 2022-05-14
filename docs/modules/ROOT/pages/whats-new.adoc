@@ -81,7 +81,7 @@ Anchor positioning::
 The anchor location for blocks can be positioned relative to the content using the `block-anchor-top` theme key.
 Caption text alignment::
 The text alignment of captions can now be controlled independent of the block alignment using the global xref:theme:caption.adoc[caption-text-align theme key] or per block category with `<category>-caption-text-align`.
-The xref:theme:text.adoc#caption-text-align[image-caption-text-align] and xref:theme:tables.adoc#caption-text-align[table-caption-text-align] theme keys accept the value `inherit` in addition to the standard text alignment values.
+The xref:theme:block-images.adoc#caption-text-align[image-caption-text-align] and xref:theme:tables.adoc#caption-text-align[table-caption-text-align] theme keys accept the value `inherit` in addition to the standard text alignment values.
 The value `inherit` resolves to the alignment of the block image or table.
 Global caption text decoration::
 The text decoration style, color, and width can be applied to captions globally with the `caption-text-decoration-style`, `caption-text-decoration-color`, and `caption-text-decoration-width` theme keys.
