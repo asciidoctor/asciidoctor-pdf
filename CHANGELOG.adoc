@@ -9,12 +9,19 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Enhancements::
 
+* add support for float attribute on image; wrap ensuing paragraphs around image with `float` attribute (#353)
+* add `supports_float_wrapping?` method for extended converter to override to enlist other blocks in float wrapping; add example to docs (#353)
+* add `image-float-gap` key to theme to control space around image float (#353)
 * add support for `text-transform` property on first line of abstract in theme (#2141)
 * rename `resolve_alignment_from_role` to `resolve_text_align_from_role` to reflect proper terminology and purpose; alias old method name
 * add support for orphan avoidance to discrete headings to match behavior of section titles (using call to `arrange_heading`) (#2151)
 * rename `arrange_section` to `arrange_heading` to reflect proper terminology and purpose
 * add `index-column-gap` key to theme to control size of gap between columns
 * coerce `image-caption-max-width` to `fit-content` if `float` attribute is set on block image (#2150)
+* add support for text box with fixed height via `:height` option to `typeset_text` helper
+* configure `typeset_text` and `ink_prose` to return remaining fragments when `:height` option is specified
+* add support for `:indent_paragraphs` option to formatted text box (#353)
+* if `float` attribute is set on block image, set max width on caption to `fit-content` if max width not already set to a `fit-content` value
 
 Improvements::
 

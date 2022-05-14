@@ -165,6 +165,31 @@ image:
   indent: [0.5in, 0]
 ----
 
+== Wrap code blocks around an image float
+
+Asciidoctor PDF provides basic support for image floats.
+It will wrap paragraph text on the opposing side of the float.
+However, if it encounters a non-paragraph, the converter will clear the float and continue positioning content below the image.
+
+As a companion to this basics support, the converter provides a framework for broadening support for float wrapping.
+We can take advantage of this framework in an extended converter.
+By extending the converter and overriding the `supports_float_wrapping?` as well as the handler for the block you want to enlist (e.g., `convert_code`), you can arrange additional content into the empty space adjacent to the floated image.
+In the following example, code (listing and literal) blocks are included in the float wrapping.
+
+.Extended converter that additionally wraps code blocks around an image float
+[,ruby]
+----
+include::example$pdf-converter-code-float-wrapping.rb[]
+----
+
+You can configure the gap next to and below the image using the `image-float-gap` key in the theme.
+
+[,yaml]
+----
+image:
+  float-gap: [12, 6]
+----
+
 == Resources
 
 To find even more examples of how to override the behavior of the converter, refer to the extended converter in the {url-infoq-template}[InfoQ Mini-Book template^].
