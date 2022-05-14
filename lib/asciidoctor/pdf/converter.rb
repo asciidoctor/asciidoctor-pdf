@@ -52,6 +52,7 @@ module Asciidoctor
       TextAlignmentRoles = %w(text-justify text-left text-center text-right)
       TextDecorationStyleTable = { 'underline' => :underline, 'line-through' => :strikethrough }
       FontKerningTable = { 'normal' => true, 'none' => false }
+      BlockFloatNames = %w(left right)
       BlockAlignmentNames = %w(left center right)
       (AlignmentTable = { '<' => :left, '=' => :center, '>' => :right }).default = :left
       ColumnPositions = [:left, :center, :right]
@@ -838,38 +839,39 @@ module Asciidoctor
 
       def convert_paragraph node
         add_dest_for_block node if node.id
+
         prose_opts = { margin_bottom: 0, hyphenate: true }
         if (align = resolve_text_align_from_role (roles = node.roles), query_theme: true, remove_predefined: true)
           prose_opts[:align] = align
         end
-
+        role_keys = roles.map {|role| %(role_#{role}).to_sym } unless roles.empty?
         if (text_indent = @theme.prose_text_indent) > 0 ||
             ((text_indent = @theme.prose_text_indent_inner) > 0 &&
             (self_idx = (siblings = node.parent.blocks).index node) > 0 && siblings[self_idx - 1].context == :paragraph)
           prose_opts[:indent_paragraphs] = text_indent
         end
-
-        # TODO: check if we're within one line of the bottom of the page
-        # and advance to the next page if so (similar to logic for section titles)
-        ink_caption node, labeled: false if node.title?
-
         if (bottom_gutter = @bottom_gutters[-1][node])
           prose_opts[:bottom_gutter] = bottom_gutter
         end
 
-        if roles.empty?
-          ink_prose node.content, prose_opts
-        else
-          theme_font_cascade (roles.map {|role| %(role_#{role}).to_sym }) do
-            ink_prose node.content, prose_opts
+        block_next = next_enclosed_block node
+
+        insert_margin_bottom = proc do
+          if (margin_inner_val = @theme.prose_margin_inner) && block_next&.context == :paragraph
+            margin_bottom margin_inner_val
+          else
+            theme_margin :prose, :bottom, block_next
           end
         end
 
-        block_next = next_enclosed_block node
-        if (margin_inner_val = @theme.prose_margin_inner) && block_next&.context == :paragraph
-          margin_bottom margin_inner_val
+        if (float_box = (@float_box ||= nil))
+          ink_paragraph_in_float_box node, float_box, prose_opts, role_keys, block_next, insert_margin_bottom
         else
-          theme_margin :prose, :bottom, block_next
+          # TODO: check if we're within one line of the bottom of the page
+          # and advance to the next page if so (similar to logic for section titles)
+          ink_caption node, labeled: false if node.title?
+          role_keys ? theme_font_cascade(role_keys) { ink_prose node.content, prose_opts } : (ink_prose node.content, prose_opts)
+          insert_margin_bottom.call
         end
       end
 
@@ -1570,9 +1572,13 @@ module Asciidoctor
 
         return on_image_error :missing, node, target, opts unless image_path
 
-        alignment = (alignment = node.attr 'align') ?
-          ((BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left) :
-          (resolve_text_align_from_role node.roles) || @theme.image_align&.to_sym || :left
+        if (float_to = node.attr 'float') && ((BlockFloatNames.include? float_to) ? float_to : (float_to = nil))
+          alignment = float_to.to_sym
+        elsif (alignment = node.attr 'align')
+          alignment = (BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left
+        else
+          alignment = (resolve_text_align_from_role node.roles) || @theme.image_align&.to_sym || :left
+        end
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
         width = resolve_explicit_width node.attributes, bounds_width: (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
         # TODO: add `to_pt page_width` method to ViewportWidth type
@@ -1580,7 +1586,7 @@ module Asciidoctor
 
         caption_end = @theme.image_caption_end&.to_sym || :bottom
         caption_max_width = @theme.image_caption_max_width
-        caption_max_width = 'fit-content' if (node.attr? 'float') && !(caption_max_width&.start_with? 'fit-content')
+        caption_max_width = 'fit-content' if float_to && !(caption_max_width&.start_with? 'fit-content')
         # NOTE: if width is not set explicitly and max-width is fit-content, caption height may not be accurate
         caption_h = node.title? ? (ink_caption node, category: :image, end: caption_end, block_align: alignment, block_width: width, max_width: caption_max_width, dry_run: true, force_top_margin: caption_end == :bottom) : 0
 
@@ -1588,7 +1594,7 @@ module Asciidoctor
         pinned = opts[:pinned]
 
         begin
-          rendered_w = nil
+          rendered_h = rendered_w = nil
           span_page_width_if align_to_page do
             if image_format == 'svg'
               if ::Base64 === image_path
@@ -1667,11 +1673,35 @@ module Asciidoctor
             end
           end
           ink_caption node, category: :image, end: :bottom, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_end == :bottom && node.title?
-          theme_margin :block, :bottom, (next_enclosed_block node) unless pinned
+          if !pinned && (block_next = next_enclosed_block node)
+            if float_to && (supports_float_wrapping? block_next) && rendered_w < bounds.width
+              init_float_box node, rendered_w, rendered_h + caption_h, float_to
+            else
+              theme_margin :block, :bottom, block_next
+            end
+          end
         rescue => e
           raise if ::StopIteration === e
           on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{e.message}#{::Prawn::Errors::UnsupportedImageType === e && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}))
         end
+      end
+
+      def supports_float_wrapping? node
+        node.context == :paragraph
+      end
+
+      def init_float_box _node, block_width, block_height, float_to
+        gap = ::Array === (gap = @theme.image_float_gap) ? gap.dup : [gap, gap]
+        float_w = block_width + (gap[0] ||= 12)
+        float_h = block_height + (gap[1] ||= 6)
+        box_l = bounds.left + (float_to == 'right' ? 0 : float_w)
+        box_t = cursor + block_height
+        box_w = bounds.width - float_w
+        box_r = box_l + box_w
+        box_h = [box_t, float_h].min
+        box_b = box_t - box_h
+        move_cursor_to box_t
+        @float_box = { page: page_number, top: box_t, right: box_r, bottom: box_b, left: box_l, width: box_w, height: box_h, gap: gap }
       end
 
       def draw_image_border top, w, h, alignment
@@ -3055,6 +3085,64 @@ module Asciidoctor
         end
       end
 
+      # private
+      def ink_paragraph_in_float_box node, float_box, prose_opts, role_keys, block_next, insert_margin_bottom
+        @float_box = para_font_descender = para_font_size = end_cursor = nil
+        if role_keys
+          line_metrics = theme_font_cascade role_keys do
+            para_font_descender = font.descender
+            para_font_size = font_size
+            calc_line_metrics @base_line_height
+          end
+        else
+          para_font_descender = font.descender
+          para_font_size = font_size
+          line_metrics = calc_line_metrics @base_line_height
+        end
+        # allocate the space of at least one empty line below block
+        line_height_length = line_metrics.height + line_metrics.leading + line_metrics.padding_top
+        start_page_number = float_box[:page]
+        start_cursor = cursor
+        block_bottom = (float_box_bottom = float_box[:bottom]) + float_box[:gap][1]
+        # use :at to incorporate padding top from line metrics
+        # use :final_gap to incorporate padding bottom from line metrics
+        # use :draw_text_callback to track end cursor (requires applying :final_gap to result manually)
+        prose_opts.update \
+          at: [float_box[:left], start_cursor - line_metrics.padding_top],
+          width: float_box[:width],
+          height: [cursor, float_box[:height] - (float_box[:top] - start_cursor) + line_height_length].min,
+          final_gap: para_font_descender + line_metrics.padding_bottom,
+          draw_text_callback: (proc do |text, opts|
+            draw_text! text, opts
+            end_cursor = opts[:at][1] # does not include :final_gap value
+          end)
+        overflow_text = role_keys ?
+          theme_font_cascade(role_keys) { ink_prose node.content, prose_opts } :
+          (ink_prose node.content, prose_opts)
+        move_cursor_to end_cursor -= prose_opts[:final_gap] if end_cursor # ink_prose with :height does not move cursor
+        if overflow_text.empty?
+          if block_next && (supports_float_wrapping? block_next)
+            insert_margin_bottom.call
+            @float_box = float_box if page_number == start_page_number && cursor > start_cursor - prose_opts[:height]
+          elsif end_cursor > block_bottom
+            move_cursor_to block_bottom
+            theme_margin :block, :bottom, block_next
+          else
+            insert_margin_bottom.call
+          end
+        else
+          overflow_prose_opts = { align: prose_opts[:align] || @base_text_align.to_sym }
+          unless end_cursor
+            overflow_prose_opts[:indent_paragraphs] = prose_opts[:indent_paragraphs]
+            move_cursor_to float_box_bottom if start_cursor > float_box_bottom
+          end
+          role_keys ?
+            theme_font_cascade(role_keys) { typeset_formatted_text overflow_text, line_metrics, overflow_prose_opts } :
+            (typeset_formatted_text overflow_text, line_metrics, overflow_prose_opts)
+          insert_margin_bottom.call
+        end
+      end
+
       # NOTE: inline_format is true by default
       def ink_prose string, opts = {}
         top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || 0
@@ -3077,12 +3165,13 @@ module Asciidoctor
             text_decoration_width: (opts.delete :text_decoration_width),
           }.compact
         end
-        typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
+        result = typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
           color: @font_color,
           inline_format: [inline_format_opts],
           align: @base_text_align.to_sym,
         }.merge(opts)
         margin_bottom bot_margin
+        result
       end
 
       def generate_manname_section node
@@ -4194,9 +4283,10 @@ module Asciidoctor
 
       # TODO: document me, esp the first line formatting functionality
       def typeset_text string, line_metrics, opts = {}
-        move_down line_metrics.padding_top
         opts = { leading: line_metrics.leading, final_gap: line_metrics.final_gap }.merge opts
         string = string.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
+        return text_box string, opts if opts[:height]
+        move_down line_metrics.padding_top
         if (hanging_indent = (opts.delete :hanging_indent) || 0) > 0
           indent hanging_indent do
             text string, (opts.merge indent_paragraphs: -hanging_indent)

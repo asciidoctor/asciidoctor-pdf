@@ -47,8 +47,7 @@ To leave now would mean *code dismemberment and certain death*.
 Behold -> the horror!
 
 .Wolpertinger, stuffed
-[.left.thumb]
-image::wolpertinger.jpg[Wolpertinger,pdfwidth=50%,link={uri-wolpertinger}]
+image::wolpertinger.jpg[Wolpertinger,pdfwidth=50%,link={uri-wolpertinger},float=left,role=thumb]
 
 (((Wolpertinger)))
 (((Ravenous Beast,Wolpertinger)))

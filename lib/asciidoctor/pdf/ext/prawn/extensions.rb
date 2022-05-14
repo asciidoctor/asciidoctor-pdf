@@ -468,10 +468,11 @@ module Asciidoctor
         end
         first_line_text_transform = first_line_options.delete :text_transform
         options = options.merge document: self
+        text_indent = options.delete :indent_paragraphs
         # QUESTION: should we merge more carefully here? (hand-select keys?)
         first_line_options = (options.merge first_line_options).merge single_line: true, first_line: true
         box = ::Prawn::Text::Formatted::Box.new fragments, first_line_options
-        if (text_indent = options.delete :indent_paragraphs)
+        if text_indent
           remaining_fragments = indent text_indent do
             box.render dry_run: true
           end

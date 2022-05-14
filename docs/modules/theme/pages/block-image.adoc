@@ -54,6 +54,13 @@ image:
 image:
   border-width: 0.5
 
+|float-gap
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[side,bottom\]] +
+(default: `[12, 6]`)
+|[source]
+image:
+  float-gap: 12
+
 |<<width,width>>
 |xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
