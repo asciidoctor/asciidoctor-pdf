@@ -111,7 +111,7 @@ This logic is vital for decorating the block with a border and background becaus
 All these dry runs add additional processing time and effort to the conversion.
 
 Making all blocks unbreakable by default adds a lot of extra steps (not to mention leaving behind a lot of gaps in the document).
-Orphan prevents adds almost as many since its a similar process.
+Orphan prevents adds almost as many since it's a similar process.
 Doing that by default for tables and sections would be too complex and costly.
 To recoup some of the processing time, we decided to make some trade-offs.
 Therefore, blocks are breakable by default and authors must opt-in to get orphan prevention for tables and sections.

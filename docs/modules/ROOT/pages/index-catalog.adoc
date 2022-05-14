@@ -23,7 +23,7 @@ However, you could use an extension, such as a TreeProcessor, to automatically m
 == How index terms are grouped and sorted
 
 By default, the converter groups index terms by the first letter of the primary term (e.g., A), which we call the category.
-These categories are displayed in alphabetically order in the index.
+These categories are displayed in alphabetical order in the index.
 Within the category, the converter sorts the terms alphabetically.
 
 The exception to this rule is if the primary term does not start with a letter.

@@ -18,7 +18,7 @@ If you use images in your theme, image paths are resolved relative to this direc
 If `pdf-theme` ends with `.yml`, and `pdf-themesdir` is not specified, then `pdf-themesdir` defaults to the directory of the path specified by `pdf-theme`.
 
 pdf-fontsdir:: The directory or directories where the fonts used by your theme, if any, are located.
-Multiple entries must be separated by either a comma or a semi-colon.
+Multiple entries must be separated by either a comma or a semicolon.
 To reference a file inside a JAR file on the classpath, prefix with the path with `uri:classloader:` (AsciidoctorJ only).
 _Specifying an absolute path is recommended._
 
@@ -54,7 +54,7 @@ However, in this case, image paths in your theme won't be resolved properly.
 
 Paths are resolved relative to the current directory.
 However, in the future, this may change so that paths are resolved relative to the base directory (typically the document's directory).
-Therefore, it's recommend that you specify absolute paths for now to future-proof your configuration.
+Therefore, it's recommended that you specify absolute paths for now to future-proof your configuration.
 
  $ asciidoctor-pdf -a pdf-themesdir=/path/to/resources/themes -a pdf-theme=basic -a pdf-fontsdir=/path/to/resources/fonts
 

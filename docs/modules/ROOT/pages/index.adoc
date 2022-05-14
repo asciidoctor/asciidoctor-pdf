@@ -15,7 +15,7 @@ You are encouraged to migrate to Asciidoctor PDF 2 as soon as possible.
 == Overview
 
 Asciidoctor PDF converts an AsciiDoc document directly to a PDF document.
-The style and layout of the PDF is controlled by a dedicated theme file.
+The style and layout of the PDF are controlled by a dedicated theme file.
 To the degree possible, Asciidoctor PDF supports all the features of AsciiDoc that are supported by Asciidoctor.
 It also provides xref:features.adoc[additional PDF-specific features].
 However, there are xref:features.adoc#limitations[certain limits] imposed by the PDF format and the underlying PDF library this extension uses.

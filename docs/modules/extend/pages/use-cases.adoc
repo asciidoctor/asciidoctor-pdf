@@ -114,7 +114,7 @@ This functionality is already provided by the converter if you set the `breakabl
 The code is presented here both to explain how it works and to use to make this behavior automatic.
 
 If an in-flow heading is followed by content that doesn't fit on the current page, and the `breakable` option is not set on the heading, the converter will orphan the heading on the current page.
-You can fix this behavior by overridding the `arrange_heading` method in an extended converter.
+You can fix this behavior by overriding the `arrange_heading` method in an extended converter.
 
 This extended converter takes this opportunity to use `dry_run` to make an attempt to write content in the remaining space on the page after the heading.
 If no content is written, it advances to the next page before inking the heading (and its corresponding anchor).
@@ -157,7 +157,7 @@ include::example$pdf-converter-image-indent.rb[]
 
 The `indent` DSL method adds padding to either side of the content area, delegates to the specified code block, then shaves it back off.
 
-This converter works when a custom theme defines the `image-indent` key, as follow:
+This converter works when a custom theme defines the `image-indent` key, as follows:
 
 [,yaml]
 ----

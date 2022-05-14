@@ -15,7 +15,7 @@ As a result, columns which reported the width necessary to render without wrappi
 The reason this compression is not performed like in HTML is because prawn-table has no awareness of words.
 Thus, it doesn't know how to redistribute with width intelligently.
 
-To protected against truncation or insufficient width errors, prawn-table wraps text by character.
+To protect against truncation or insufficient width errors, prawn-table wraps text by character.
 That's why the last character in the cell can end up getting wrapped.
 (There's a small amount of tolerance built in to prawn-table to address some edge cases, but it's not sufficient to handle all of them).
 

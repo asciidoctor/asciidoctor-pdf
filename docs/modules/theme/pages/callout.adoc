@@ -91,7 +91,7 @@ callout-list:
 
 The keys in the `conum` category control the style of callout numbers inside verbatim blocks and in callout lists.
 These keys don't affect the callout list item content.
-The appearance of the callout list and the content of the list items is controlled independently by the keys in <<callout-list,callout-list category>>.
+The appearance of the callout list and the content of the list items are controlled independently by the keys in <<callout-list,callout-list category>>.
 Also see <<inherit>> for more information.
 
 [cols="2,5,5a"]

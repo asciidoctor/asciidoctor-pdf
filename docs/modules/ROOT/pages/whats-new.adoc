@@ -126,7 +126,7 @@ The `table-caption-side` theme key has been xref:theme:tables.adoc#end[renamed t
 * The font size of a literal table cells and nested blocks in AsciiDoc table cells is now scaled.
 * AsciiDoc table cells inherit the font properties from the table.
 * The content of an AsciiDoc table cell is prevented from overrunning the footer or subsequent pages.
-* The top and bottom padding is taken into account when computing the height of AsciiDoc table cell.
+* The top and bottom padding is taken into account when computing the height of an AsciiDoc table cell.
 * An error message is logged if a table cell is truncated.
 * Instead of raising an error, the converter logs an error and skips the table if the content cannot fit within the designated width of a cell.
 
@@ -246,7 +246,7 @@ Integer page numbering can start at the front cover by assigning the keyword `co
 Or, you can have the page numbering start after the TOC, wherever the TOC is placed, by assigning `after-toc` to the `start-at` key.
 Alternatively, the theme can specify an offset from the first body page where the page numbering should begin when an integer is assigned to `start-at`.
 
-Margin and content margin:: The margin and content margin of the running content per per periphery (header or footer) and per side (recto or verso) can now be configured from the theme.
+Margin and content margin:: The margin and content margin of the running content per periphery (header or footer) and per side (recto or verso) can now be configured from the theme.
 The margins in running content can be specified using a 2-value array for ends and sides or 3-value array with implied left side value.
 
 Part and chapter numbers:: If the `partnums` attribute is set, the `part-numeral` attribute is automatically set in the running content.

@@ -83,7 +83,7 @@ Asciidoctor PDF bundles several fonts that are used by the default theme or a fa
 You can also declare these fonts in your custom theme.
 These fonts provide more characters than the built-in PDF fonts, but still only a subset of UTF-8 (to reduce the size of the gem).
 
-The family name of the fonts bundled with Asciidoctor PDF are as follows:
+The family names of the fonts bundled with Asciidoctor PDF are as follows:
 
 {url-mplus-onemn}[M+ 1mn^]::
 A monospaced font that maps different thicknesses to the styles `normal`, `italic`, `bold`, and `bold_italic`.
@@ -129,4 +129,4 @@ Notice the `-a scripts=cjk` option.
 That's important.
 It tells the converter to insert break opportunities between CJK characters so that lines wrap properly when mixing English and a CJK language like Japanese.
 
-If the built-in theme with the fallback font doesn't go far enough, you'll need create a xref:cjk.adoc[custom CJK theme].
+If the built-in theme with the fallback font doesn't go far enough, you'll need to create a xref:cjk.adoc[custom CJK theme].

@@ -124,7 +124,7 @@ code:
 == code-linenum
 
 The key in the `code-linenum` category only applies when you use Pygments as the source highlighter.
-Otherwise, the font color of line numbers are controlled by the source highlighter theme.
+Otherwise, the font color of line numbers is controlled by the source highlighter theme.
 
 [cols="2,4,6a"]
 |===

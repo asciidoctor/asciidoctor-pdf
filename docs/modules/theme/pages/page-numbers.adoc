@@ -95,7 +95,7 @@ See xref:add-running-content.adoc#page-number[Modify page number position] for a
 [#display]
 == Displaying the page numbers
 
-To adjust on what page the page numbers begin to be displayed on, you need change the page on which the running content starts.
+To adjust on what page the page numbers begin to be displayed on, you need to change the page on which the running content starts.
 This is controlled by the xref:add-running-content.adoc#start-at[running-content-start-at key].
 For example, to start the running content on the title page, assuming the title page is enabled, set `running-content-start-at: title` in your theme file.
 To learn more about customizing the running content, see xref:add-running-content.adoc[].

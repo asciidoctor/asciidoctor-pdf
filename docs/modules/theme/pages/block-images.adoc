@@ -3,7 +3,7 @@
 
 In general, the xref:blocks.adoc[] apply to block images and their captions.
 You can further customize how the block images, alt text, and captions are arranged and styled using the xref:block-image.adoc[].
-The following sections provide information and examples about the keys and values that are unique to the block images.
+The following sections provide information and examples of the keys and values that are unique to the block images.
 
 [#caption-align]
 == Caption alignment

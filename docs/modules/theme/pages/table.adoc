@@ -108,8 +108,8 @@ table:
 == table-head
 
 The keys in the `table-head` category control the arrangement and style of the table header.
-See <<header>> for the theme keys that apply to individual header cells
-.
+See <<header>> for the theme keys that apply to individual header cells.
+
 [cols="3,4,6a"]
 |===
 |Key |Value Type |Example

@@ -662,7 +662,7 @@ image::custom-pages.pdf[page=2]
 
 You can import multiple pages either using multiple image macros or using the `pages` attribute.
 The `pages` attribute accepts individual page numbers or page number ranges (two page numbers separated by `..`).
-The values can be separated either by commas or semi-colons.
+The values can be separated either by commas or semicolons.
 (The syntax is similar to the syntax uses for the `lines` attribute of the AsciiDoc include directive).
 
 [source,asciidoc]
