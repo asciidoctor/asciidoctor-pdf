@@ -30,16 +30,4 @@ describe 'Asciidoctor::PDF::Converter - Pass' do
     margin_bottom = pass_text[:y] - (para_text[:y] + para_text[:font_size])
     (expect margin_bottom).to be > 12
   end
-
-  it 'should render stem as code block if stem extension not present' do
-    pdf = to_pdf <<~'EOS', analyze: true
-    [stem]
-    ++++
-    sig = enc(H(D), s)
-    ++++
-    EOS
-
-    equation_text = (pdf.find_text 'sig = enc(H(D), s)')[0]
-    (expect equation_text[:font_name]).to eql 'mplus1mn-regular'
-  end
 end
