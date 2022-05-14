@@ -1544,7 +1544,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should only render inline image once if alt text is chunked to apply a fallback font' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir, 'pdf-theme' => 'default-with-fallback-font' }, analyze: :image
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir, 'pdf-theme' => 'default-with-font-fallbacks' }, analyze: :image
       How many wolpertingers do you see? +
       image:wolpertinger.jpg[チのデータレプリケーションです。]
       EOS

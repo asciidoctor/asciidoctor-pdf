@@ -10,6 +10,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-i18n-default.pdf'
     end
 
+    # intentionally use the deprecated alias for this test
     it 'should apply fallback font when using default theme with fallback font', visual: true do
       input_file = Pathname.new fixture_file 'i18n-font-test.adoc'
       (expect do
@@ -26,24 +27,24 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
     it 'should include expected glyphs in bundled default font with fallback font', visual: true do
       input_file = Pathname.new fixture_file 'glyph-font-test.adoc'
-      to_file = to_pdf_file input_file, 'font-glyph-default-with-fallback.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      to_file = to_pdf_file input_file, 'font-glyph-default-with-fallback.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }
       (expect to_file).to visually_match 'font-glyph-default-with-fallback.pdf'
     end
 
     it 'should include expected glyphs in fallback font', visual: true do
       input_file = Pathname.new fixture_file 'glyph-font-test.adoc'
-      to_file = to_pdf_file input_file, 'font-glyph-fallback-only.pdf', pdf_theme: { extends: 'default-with-fallback-font', base_font_family: 'M+ 1p Fallback' }, attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      to_file = to_pdf_file input_file, 'font-glyph-fallback-only.pdf', pdf_theme: { extends: 'default-with-font-fallbacks', base_font_family: 'M+ 1p Fallback' }, attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }
       (expect to_file).to visually_match 'font-glyph-fallback-only.pdf'
     end
 
     it 'should use notdef from original font of glyph not found in any fallback font', visual: true do
       input = ?\u0278 * 10
-      to_file = to_pdf_file input, 'font-notdef-glyph.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      to_file = to_pdf_file input, 'font-notdef-glyph.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }
       (expect to_file).to visually_match 'font-notdef-glyph.pdf'
     end
 
     it 'should use glyph from fallback font if not present in primary font', visual: true do
-      to_file = to_pdf_file '*を*', 'font-fallback-font.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      to_file = to_pdf_file '*を*', 'font-fallback-font.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }
       (expect to_file).to visually_match 'font-fallback-font.pdf'
     end
 
@@ -80,7 +81,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     end
 
     it 'should render emoji when using default theme with fallback font', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'font-emoji.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }
+      to_file = to_pdf_file <<~'EOS', 'font-emoji.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }
       Don't 😢 over spilled 🍺.
 
       Asciidoctor is 👍.
@@ -90,7 +91,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     end
 
     it 'should use sans base font when using sans theme with fallback font', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'font-sans-emoji.pdf', attribute_overrides: { 'pdf-theme' => 'sans-with-fallback-font' }
+      to_file = to_pdf_file <<~'EOS', 'font-sans-emoji.pdf', attribute_overrides: { 'pdf-theme' => 'default-sans-with-font-fallbacks' }
       == Lessons
 
       Don't 😢 over spilled 🍺.
@@ -105,7 +106,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect do
         input_lines = [%(Bitcoin (\u20bf) is a cryptocurrency.), %(The currency is represented using the symbol \u20bf.)]
         input = input_lines.join %(\n\n)
-        pdf = to_pdf input, attribute_overrides: { 'pdf-theme' => 'default-with-fallback-font' }, analyze: true
+        pdf = to_pdf input, attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }, analyze: true
         (expect pdf.lines).to eql input_lines
       end).to log_message severity: :WARN, message: %(Could not locate the character `\u20bf' (\\u20bf) in the following fonts: Noto Serif, M+ 1p Fallback, Noto Emoji), using_log_level: :INFO
     end
@@ -309,7 +310,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     it 'should break line on any CJK character if value of scripts attribute is cjk' do
       pdf = to_pdf <<~'EOS', analyze: true
       :scripts: cjk
-      :pdf-theme: default-with-fallback-font
+      :pdf-theme: default-with-font-fallbacks
 
       AsciiDoc 是一个人类可读的文件格式，语义上等同于 DocBook 的 XML，但使用纯文本标记了约定。可以使用任何文本编辑器创建文件把 AsciiDoc 和阅读“原样”，或呈现为HTML 或由 DocBook 的工具链支持的任何其他格式，如 PDF，TeX 的，Unix 的手册页，电子书，幻灯片演示等。
 
@@ -324,6 +325,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect lines[4]).to start_with 'して'
     end
 
+    # intentionally use the deprecated alias for this test
     it 'should not break line immediately before an ideographic full stop' do
       pdf = to_pdf <<~'EOS', analyze: true
       :scripts: cjk

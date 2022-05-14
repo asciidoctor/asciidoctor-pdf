@@ -95,11 +95,11 @@ A serif font that can be styled as `normal`, `italic`, `bold`, or `bold_italic`.
 {url-mplus-onep}[M+ 1p^]::
 A sans-serif font that provides a very complete set of Unicode glyphs.
 M+ 1p can only be styled as `normal`.
-This font is used as the fallback font in the `default-with-fallback-font` theme.
+This font is used as the fallback font in the `default-with-font-fallbacks` theme.
 
-{url-noto-emoji}[Noto Emoji^]:: A font of emojis used as a fallback font in the `default-with-fallback-font` theme.
+{url-noto-emoji}[Noto Emoji^]:: A font of emojis used as a fallback font in the `default-with-font-fallbacks` theme.
 
-{url-noto-sans}[Noto Sans^]:: A sans font that is used as the fallback font in the `sans-with-fallback-font` theme.
+{url-noto-sans}[Noto Sans^]:: A sans font that is used as the fallback font in the `default-sans-with-font-fallbacks` theme.
 It can be styled as `normal`, `italic`, `bold`, or `bold_italic`.
 
 TIP: The default themes refer to the bundled fonts using the `GEM_FONTS_DIR` prefix.
@@ -120,10 +120,10 @@ There's no single font that supports all the world's languages (though some, lik
 Even if there were such a font, bundling that font with the main gem would make it *enormous*.
 It would also severely limit the style choices in the default theme, which caters to Latin-based languages.
 
-If you're writing in a CJK language, such as Japanese, Asciidoctor PDF provides a built-in theme named `default-with-fallback-font` that provides a broad range of characters in the CJK charsets.
+If you're writing in a CJK language, such as Japanese, Asciidoctor PDF provides a built-in theme named `default-with-font-fallbacks` that provides a broad range of characters in the CJK charsets.
 You can start with that theme to see how far it gets you:
 
- $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=default-with-fallback-font document.adoc
+ $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=default-with-font-fallbacks document.adoc
 
 Notice the `-a scripts=cjk` option.
 That's important.

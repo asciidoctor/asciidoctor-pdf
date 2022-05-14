@@ -1,4 +1,4 @@
-extends: default-with-fallback-font
+extends: default
 font:
   catalog:
     merge: true

@@ -22,9 +22,12 @@ Enhancements::
 * configure `typeset_text` and `ink_prose` to return remaining fragments when `:height` option is specified
 * add support for `:indent_paragraphs` option to formatted text box (#353)
 * if `float` attribute is set on block image, set max width on caption to `fit-content` if max width not already set to a `fit-content` value
+* add built-in default-sans theme
 
 Improvements::
 
+* rename theme suffix with-fallback-font to with-font-fallbacks
+* rename sans-with-fallback-font theme to default-sans-with-font-fallbacks
 * configure spacing around thematic break using `thematic-break-padding` key instead of margin top and bottom (#2164)
 * rename `convert_listing_or_literal` to `convert_code` and alias old name
 * reify convert handler for STEM blocks (`convert_stem`)

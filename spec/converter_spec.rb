@@ -264,6 +264,19 @@ describe Asciidoctor::PDF::Converter do
         (expect pdf.find_text font_color: '000000').to have_size pdf.text.size
       end
 
+      it 'should set font family to Noto Sans when default-sans themme is specified' do
+        pdf = to_pdf <<~EOS, analyze: true
+        = Document Title
+        :pdf-theme: default-sans
+
+        We don't like those _pesky_ serifs in these here parts.
+        EOS
+
+        text = pdf.text
+        sans_text = text.select {|it| it[:font_name].start_with? 'NotoSans' }
+        (expect sans_text).to have_size text.size
+      end
+
       it 'should use theme passed in through :pdf_theme option' do
         theme = Asciidoctor::PDF::ThemeLoader.load_theme 'custom', fixtures_dir
         theme.base_font_size = 14

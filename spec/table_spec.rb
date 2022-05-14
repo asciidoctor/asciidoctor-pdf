@@ -2779,7 +2779,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     it 'should break line on any CJK character if value of scripts attribute is cjk' do
       pdf = to_pdf <<~'EOS', analyze: true
       :scripts: cjk
-      :pdf-theme: default-with-fallback-font
+      :pdf-theme: default-with-font-fallbacks
 
       |===
       | AsciiDoc 是一个人类可读的文件格式，语义上等同于 DocBook 的 XML，但使用纯文本标记了约定。可以使用任何文本编辑器创建文件把 AsciiDoc 和阅读“原样”，或呈现为HTML 或由 DocBook 的工具链支持的任何其他格式，如 PDF，TeX 的，Unix 的手册页，电子书，幻灯片演示等。
