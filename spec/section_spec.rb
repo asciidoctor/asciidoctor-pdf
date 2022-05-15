@@ -823,13 +823,39 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect middle_chapter_text[0][:string]).to eql 'The bulk of the content.'
   end
 
+  it 'should add entry to toc for section with notitle option' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == Intro
+
+    Let's get started.
+
+    [%notitle]
+    == Middle
+
+    The bulk of the content.
+
+    == Conclusion
+
+    Wrapping it up.
+    EOS
+
+    toc_lines = pdf.lines pdf.find_text page_number: 2
+    middle_entry = toc_lines.find {|it| it.start_with? 'Middle' }
+    (expect middle_entry).not_to be_nil
+    (expect middle_entry).to end_with '2'
+  end
+
   it 'should not output section title for special section marked with notitle option' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_h2_font_color: 'AA0000' }, analyze: true
     = Document Title
     :doctype: book
 
     [colophon%notitle]
-    = Hide Me
+    = Hidden
 
     Colophon with no title.
 
@@ -873,8 +899,27 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     (expect pdf.pages).to have_size 2
     all_text = pdf.pages.map(&:text).join ?\n
-    (expect all_text).not_to include 'Hide Me'
+    (expect all_text).not_to include 'Hidden'
     (expect get_names pdf).not_to have_key '_hidden'
+  end
+
+  it 'should not add entry to toc for section marked with notitle option when no content follows it' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :doctype: book
+    :toc:
+
+    == Chapter
+
+    Musings.
+
+    [colophon%notitle]
+    == Hidden
+    EOS
+
+    (expect pdf.pages).to have_size 3
+    all_text = pdf.pages.map(&:text).join ?\n
+    (expect all_text).not_to include 'Hidden'
   end
 
   it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is not set' do

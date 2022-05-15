@@ -645,7 +645,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
 
   context 'notitle section' do
     it 'should add entry for visible section with notitle option' do
-      pdf = to_pdf <<~'EOS', debug: true
+      pdf = to_pdf <<~'EOS'
       = Document Title
 
       == Section Present
@@ -664,7 +664,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     end
 
     it 'should not add entry for section with no blocks' do
-      pdf = to_pdf <<~'EOS', debug: true
+      pdf = to_pdf <<~'EOS'
       = Document Title
 
       == Section Present
@@ -680,7 +680,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     end
 
     it 'should not add entry for section on page which has been deleted' do
-      pdf = to_pdf <<~'EOS', debug: true
+      pdf = to_pdf <<~'EOS'
       = Document Title
 
       == Section Present
