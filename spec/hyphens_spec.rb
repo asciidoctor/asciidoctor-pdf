@@ -19,6 +19,31 @@ describe 'Asciidoctor::PDF::Converter - Hyphens', if: (gem_available? 'text-hyph
     (expect defined? Text::Hyphen).to be_truthy
   end
 
+  it 'should hyphenate text in paragraph if base-hyphens key in theme is set to truthy value' do
+    [true, ''].each do |base_hyphens|
+      pdf = to_pdf <<~'EOS', pdf_theme: { base_hyphens: base_hyphens }, analyze: true
+      This story chronicles the inexplicable hazards and vicious beasts a team must conquer and vanquish.
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[0]).to end_with ?\u00ad
+      (expect lines[0].count ?\u00ad).to be 1
+    end
+  end
+
+  it 'should not hyphenate text in paragraph if base-hyphens key in theme is set but hyphens attribute is unset' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { base_hyphens: '' }, analyze: true
+    :!hyphens:
+
+    This story chronicles the inexplicable hazards and vicious beasts a team must conquer and vanquish.
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 2
+    (expect lines.join ?\n).not_to include ?\u00ad
+  end
+
   it 'should hyphenate text split across multiple lines' do
     pdf = to_pdf <<~'EOS', analyze: true
     :hyphens:

@@ -71,6 +71,13 @@ base:
 base:
   font-style: bold
 
+|hyphens
+|Boolean {vbar} Language code +
+(default: _not set_)
+|[source]
+base:
+  hyphens: true
+
 |<<height,line-height>>
 |xref:language.adoc#values[Number] +
 (default: `1.15`)
