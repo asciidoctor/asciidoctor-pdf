@@ -214,7 +214,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         p1_gs = (pdf.extract_graphic_states pages[0][:raw_content])[0]
         (expect p1_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 50.0]
         p2_gs = (pdf.extract_graphic_states pages[1][:raw_content])[0]
-        (expect p2_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 437.17]
+        (expect p2_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 436.42]
       end
 
       it 'should split block with nested block taller than page across pages, starting from page top' do
@@ -460,7 +460,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         p1_gs = (pdf.extract_graphic_states pages[0][:raw_content])[0]
         (expect p1_gs).to have_background color: 'FFFFCC', top_left: [50.0, 714.22], bottom_right: [562.0, 50.0]
         p2_gs = (pdf.extract_graphic_states pages[1][:raw_content])[0]
-        (expect p2_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 409.39]
+        (expect p2_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 408.64]
       end
 
       it 'should restart dry run on new page if first page is empty' do
@@ -731,7 +731,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         p2_gs = (pdf.extract_graphic_states pages[1][:raw_content])[0]
         (expect p2_gs).to have_background color: 'EEEEEE', top_left: [50.0, 742.0], bottom_right: [562.0, 50.0]
         p3_gs = (pdf.extract_graphic_states pages[2][:raw_content])[0]
-        (expect p3_gs).to have_background color: 'EEEEEE', top_left: [50.0, 742.0], bottom_right: [562.0, 687.19]
+        (expect p3_gs).to have_background color: 'EEEEEE', top_left: [50.0, 742.0], bottom_right: [562.0, 686.44]
       end
 
       it 'should preserve indentation across pages in scratch document' do
@@ -830,7 +830,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         p1_gs = (pdf.extract_graphic_states pages[0][:raw_content])[0]
         (expect p1_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 50.0]
         p2_gs = (pdf.extract_graphic_states pages[1][:raw_content])[0]
-        (expect p2_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 437.17]
+        (expect p2_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 436.42]
       end
 
       it 'should split block with nested block taller than page across pages, starting from page top' do
@@ -1146,7 +1146,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         p2_gs = (pdf.extract_graphic_states pages[1][:raw_content])[0]
         (expect p2_gs).to have_background color: 'EEEEEE', top_left: [50.0, 742.0], bottom_right: [562.0, 50.0]
         p3_gs = (pdf.extract_graphic_states pages[2][:raw_content])[0]
-        (expect p3_gs).to have_background color: 'EEEEEE', top_left: [50.0, 742.0], bottom_right: [562.0, 548.29]
+        (expect p3_gs).to have_background color: 'EEEEEE', top_left: [50.0, 742.0], bottom_right: [562.0, 547.54]
       end
 
       it 'should split block shorter than page across pages, starting from current position if it does not fit on current page' do
@@ -1168,7 +1168,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         p1_gs = (pdf.extract_graphic_states pages[0][:raw_content])[0]
         (expect p1_gs).to have_background color: 'FFFFCC', top_left: [50.0, 325.3], bottom_right: [562.0, 50.0]
         p2_gs = (pdf.extract_graphic_states pages[1][:raw_content])[0]
-        (expect p2_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 576.07]
+        (expect p2_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 575.32]
       end
 
       it 'should split block taller than page across pages, starting from current position' do
@@ -1394,7 +1394,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       p1_gs = (pdf.extract_graphic_states pages[0][:raw_content])[0]
       (expect p1_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 50.0]
       p2_gs = (pdf.extract_graphic_states pages[1][:raw_content])[0]
-      (expect p2_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 437.17]
+      (expect p2_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 436.42]
       p3_gs = (pdf.extract_graphic_states pages[2][:raw_content])[0]
       (expect p3_gs).to have_background color: 'FFFFCC', top_left: [50.0, 742.0], bottom_right: [562.0, 313.3]
     end
