@@ -406,6 +406,20 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
     (expect text[:font_color]).to eql 'AA0000'
   end
 
+  it 'should apply text formatting to wrapped text' do
+    input = <<~EOS
+    image::rect.png[pdfwidth=3in,float=left]
+
+    #{((lorem_ipsum '4-sentences-1-paragraph').sub 'Lorem', '*Lorem*').sub 'tempor', '_tempor_'}
+    EOS
+
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    bold_text = pdf.find_text font_name: 'NotoSerif-Bold'
+    (expect bold_text).to have_size 1
+    italic_text = pdf.find_text font_name: 'NotoSerif-Italic'
+    (expect italic_text).to have_size 1
+  end
+
   # TODO: could check that gap to next paragraph is correct
   it 'should honor role that changes font size, font family, and line height on paragraph in float box' do
     pdf_theme[:extends] = 'default-with-fallback-font'
