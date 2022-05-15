@@ -435,8 +435,7 @@ module Asciidoctor
         @no_text_printed = box.nothing_printed?
         @all_text_printed = box.everything_printed?
 
-        if ((defined? @final_gap) && @final_gap) ||
-            (options[:first_line] && (options[:final_gap] || !(@no_text_printed || @all_text_printed)))
+        if @final_gap || (options[:first_line] && !(@no_text_printed || @all_text_printed))
           self.y -= box.height + box.line_gap + box.leading
         else
           self.y -= box.height
@@ -468,6 +467,7 @@ module Asciidoctor
         end
         first_line_text_transform = first_line_options.delete :text_transform
         options = options.merge document: self
+        @final_gap = final_gap = options.delete :final_gap
         text_indent = options.delete :indent_paragraphs
         # QUESTION: should we merge more carefully here? (hand-select keys?)
         first_line_options = (options.merge first_line_options).merge single_line: true, first_line: true
@@ -496,7 +496,7 @@ module Asciidoctor
           end
           fragments.each {|fragment| fragment[:text] = transform_text fragment[:text], first_line_text_transform }
           first_line_options[:overflow] = :shrink_to_fit
-          first_line_options[:final_gap] = first_line_options[:force_justify] = true unless remaining_fragments.empty?
+          @final_gap = first_line_options[:force_justify] = true unless remaining_fragments.empty?
         end
         if text_indent
           indent text_indent do
@@ -506,6 +506,7 @@ module Asciidoctor
           fill_formatted_text_box fragments, first_line_options
         end
         unless remaining_fragments.empty?
+          @final_gap = final_gap if first_line_text_transform
           options[:color] = other_lines_font_color if first_line_font_color
           remaining_fragments = fill_formatted_text_box remaining_fragments, options
           draw_remaining_formatted_text_on_new_pages remaining_fragments, options
