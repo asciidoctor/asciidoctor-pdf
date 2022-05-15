@@ -1,0 +1,32 @@
+extends: default
+
+font:
+  catalog:
+    merge: true
+    Cabin:
+      normal: Cabin-Regular-TTF.ttf
+      bold: Cabin-Bold-TTF.ttf
+      italic: Cabin-Italic-TTF.ttf
+      bold_italic: Cabin-BoldItalic-TTF.ttf
+    Crimson:
+      normal: Crimson-Roman.ttf
+      bold: Crimson-Bold.ttf
+      italic: Crimson-Italic.ttf
+      bold_italic: Crimson-BoldItalic.ttf
+    Free Serif:
+      normal: FreeSerif.ttf
+      italic: FreeSerif.ttf
+      bold: FreeSerif.ttf
+      bold_italic: FreeSerif.ttf
+  fallbacks: [Free Serif, Noto Serif]
+
+base:
+  font-family: Crimson
+  font_size: 11
+
+heading:
+  font-family: Cabin
+
+admonition:
+  font-family: Cabin
+  font_size: 11
