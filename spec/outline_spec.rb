@@ -643,6 +643,61 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     end
   end
 
+  context 'notitle section' do
+    it 'should add entry for visible section with notitle option' do
+      pdf = to_pdf <<~'EOS', debug: true
+      = Document Title
+
+      == Section Present
+
+      content
+
+      [%notitle]
+      == Title for Outline
+
+      content
+      EOS
+
+      outline = extract_outline pdf
+      (expect outline[-1][:title]).to eql 'Title for Outline'
+      (expect (pdf.page 1).text).not_to include 'Title for Outline'
+    end
+
+    it 'should not add entry for section with no blocks' do
+      pdf = to_pdf <<~'EOS', debug: true
+      = Document Title
+
+      == Section Present
+
+      content
+
+      [%notitle]
+      == Section Not Present
+      EOS
+
+      outline = extract_outline pdf
+      (expect outline[-1][:title]).to eql 'Section Present'
+    end
+
+    it 'should not add entry for section on page which has been deleted' do
+      pdf = to_pdf <<~'EOS', debug: true
+      = Document Title
+
+      == Section Present
+
+      content
+
+      <<<
+
+      [%notitle]
+      == Section Not Present
+      EOS
+
+      outline = extract_outline pdf
+      (expect outline[-1][:title]).to eql 'Section Present'
+    end
+  end
+
   context 'Labels' do
     it 'should label front matter pages using roman numerals' do
       pdf = to_pdf <<~'EOS'
