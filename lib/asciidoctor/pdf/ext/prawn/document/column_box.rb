@@ -6,11 +6,15 @@ Prawn::Document::ColumnBox.prepend (Module.new do
   end
 
   def move_past_bottom
-    initial_page = @document.page
-    super
-    if (page = @document.page) != initial_page && page.margins != initial_page.margins
-      @document.bounds = self.class.new @document, @parent, (margin_box = @document.margin_box).absolute_top_left,
+    (doc = @document).y = @y
+    return if (@current_column = (@current_column + 1) % @columns) > 0
+    @y = (par = @parent).absolute_top if @reflow_margins
+    initial_margins = doc.page.margins
+    par.move_past_bottom
+    if doc.page.margins != initial_margins
+      doc.bounds = self.class.new doc, par, (margin_box = doc.margin_box).absolute_top_left,
         columns: @columns, reflow_margins: true, spacer: @spacer, width: margin_box.width
     end
+    nil
   end
 end)
