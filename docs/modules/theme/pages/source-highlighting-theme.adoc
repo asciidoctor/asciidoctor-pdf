@@ -77,7 +77,7 @@ Use the `Text` token to set the background color of the source block and the def
 The complete list of tokens can be found in the {url-jneen-rouge}/blob/master/lib/rouge/token.rb[token.rb file^] from Rouge.
 Refer to the {url-jneen-rouge}/tree/master/lib/rouge/themes[bundled themes^] to find more examples.
 
-Once you've defined your theme, you need to enable it use it using the `rouge-style` document attribute, which you specify in the document header or via the Asciidoctor CLI or API.
+Once you've defined your theme, you need to enable it to use it using the `rouge-style` document attribute, which you specify in the document header or via the Asciidoctor CLI or API.
 
 [,asciidoc]
 ----

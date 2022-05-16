@@ -56,7 +56,7 @@ Here's how to specify the color red in RGB:
 
 * [255, 0, 0]
 
-Here's how a RGB color value appears in the theme file:
+Here's how an RGB color value appears in the theme file:
 
 [,yaml]
 ----

@@ -114,12 +114,12 @@ To turn on automatic hyphenation using the `hyphens` attribute, you'll need to i
  $ gem install text-hyphen
 
 Accelerated image decoding::
-Ruby is not particularly fast at decoding images, and the image formats it supports is limited.
+Ruby is not particularly fast at decoding images, and the image formats it supports are limited.
 To help, you can install prawn-gmagick, which delegates the work of decoding images to GraphicsMagick.
 Refer to xref:image-paths-and-formats.adoc[Supporting additional image file formats] for instructions about how to enable this integration.
 
 The following table lists the optional dependencies of Asciidoctor PDF, including Asciidoctor extensions which are tested with this converter.
-The name of the dependency and its gem name is listed along with the minimum supported version and what feature or features it enables when installed (and, if necessary, required).
+The name of the dependency and its gem name are listed along with the minimum supported version and what feature or features it enables when installed (and, if necessary, required).
 
 [cols=3;3;4]
 |===

@@ -93,7 +93,7 @@ We cover a little bit here.
 The rest you can find in <<chapters/chapter-2.adoc#_chapter_2,Chapter 2>>.
 ----
 
-And the contents of chapter 2 is as follows:
+And the contents of chapter 2 are as follows:
 
 [,asciidoc]
 ----
@@ -109,7 +109,7 @@ To begin, jump to <<chapters/chapter-2/first-steps.adoc#_first_steps,first steps
 \include::chapter-2/first-steps.adoc[]
 ----
 
-And, finally, the contents of the nested include is as follows:
+And, finally, the contents of the nested include are as follows:
 
 [,asciidoc]
 ----

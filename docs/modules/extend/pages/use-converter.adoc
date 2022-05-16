@@ -9,7 +9,7 @@ To use this converter, require it by passing the path to the `-r` flag when call
 
 The converter will self-register with the `pdf` backend and thus get used as the Asciidoctor PDF converter.
 
-That's all there is too it!
+That's all there is to it!
 
 == Go further
 

@@ -39,7 +39,7 @@
 * Table cells that exceed the height of a single page are truncated with a warning (see https://github.com/prawnpdf/prawn-table/issues/41[prawn-table#41^]).
 * A column can't be assigned a `width` of `0%` or a `width` less than the width of a single character.
 The converter will skip the table and emit a warning if such a case occurs.
-* A column can't be set to `autowidth` if the width of all the other columns in the table meet or exceed 100%.
+* A column can't be set to `autowidth` if the width of all the other columns in the table meets or exceeds 100%.
 The converter will skip the table and emit a warning if such a case occurs.
 * An inline image in a table cell will shrink to fit (rather than force the column wider) if the width of the image exceeds the width of the column; you can increase the width of the column using `cols` or convert the cell to an AsciiDoc table cell and, preferably, use a block image (see {url-project-issues}/830[#830^]).
 * An inline image with a percentage `width` value in an `autowidth` table cell is resized relative to its intrinsic width.
