@@ -1050,6 +1050,41 @@ describe Asciidoctor::PDF::Converter do
     end
   end
 
+  describe 'Bounding Box' do
+    it 'should use correct left value when creating bounding box', visual: true do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def traverse node
+          return super unless node.context == :document
+          column_box [0, cursor], columns: 2, width: bounds.width, reflow_margins: true, spacer: 12 do
+            bounds.move_past_bottom
+            super
+          end
+        end
+      end
+
+      pdf_theme = { caption_background_color: 'EEEEEE' }
+      input = <<~'EOS'
+      = Article Title
+
+      * list item
+
+      NOTE: admonition
+
+      > quote
+
+      .Block title
+      ----
+      code block <1>
+      ----
+      <1> Callout description
+      EOS
+
+      (expect to_pdf_file input, 'bounding-box-left.pdf', backend: backend, pdf_theme: pdf_theme).to visually_match 'bounding-box-left.pdf'
+    end
+  end
+
   describe 'extend' do
     it 'should use specified extended converter' do
       backend = nil

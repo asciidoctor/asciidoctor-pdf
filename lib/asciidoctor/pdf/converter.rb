@@ -893,7 +893,7 @@ module Asciidoctor
                     advance_page unless first_page
                     rule_segment_height = start_cursor = cursor
                     rule_segment_height -= last_page.cursor if last_page
-                    bounding_box [0, start_cursor], width: label_width + lpad[1], height: rule_segment_height do
+                    bounding_box [bounds.left, start_cursor], width: label_width + lpad[1], height: rule_segment_height do
                       stroke_vertical_rule rule_color, at: bounds.right, line_style: rule_style, line_width: rule_width
                     end
                   end
@@ -901,7 +901,7 @@ module Asciidoctor
               end
               float do
                 adjusted_font_size = nil
-                bounding_box [0, cursor], width: label_width, height: label_height do
+                bounding_box [bounds.left, cursor], width: label_width, height: label_height do
                   if icons == 'font'
                     # FIXME: we assume icon is square
                     icon_size = fit_icon_to_bounds icon_size
@@ -1215,7 +1215,7 @@ module Asciidoctor
                 advance_page unless first_page
                 b_height = start_cursor = cursor
                 b_height -= last_page.cursor if last_page
-                bounding_box [0, start_cursor], width: bounds.width, height: b_height do
+                bounding_box [bounds.left, start_cursor], width: bounds.width, height: b_height do
                   stroke_vertical_rule b_color, line_width: b_left_width, at: b_left_width * 0.5
                 end
               end
@@ -1299,7 +1299,7 @@ module Asciidoctor
         theme_font :conum do
           marker_width = rendered_width_of_string %(#{marker = conum_glyph index}x)
           float do
-            bounding_box [0, cursor], width: marker_width do
+            bounding_box [bounds.left, cursor], width: marker_width do
               ink_prose marker, align: :center, inline_format: false, margin: 0
             end
           end
@@ -1587,7 +1587,7 @@ module Asciidoctor
               character_spacing_correction = 0.5 if (rendered_width_of_char 'x', character_spacing: -0.5) == marker_gap
             end
             marker_height = height_of_typeset_text marker, line_height: marker_style[:line_height], single_line: true
-            start_position = -marker_width + -marker_gap + character_spacing_correction
+            start_position = bounds.left - marker_width - marker_gap + character_spacing_correction
             float do
               advance_page if @media == 'prepress' && cursor < marker_height
               flow_bounding_box position: start_position, width: marker_width do
@@ -3000,7 +3000,7 @@ module Asciidoctor
           end
           unless scratch? || !(bg_color = @theme[%(#{category_caption}_background_color)] || @theme.caption_background_color)
             caption_height = height_of_typeset_text string
-            fill_at = [0, cursor + (margin[:top] || 0)]
+            fill_at = [bounds.left, cursor + (margin[:top] || 0)]
             float { bounding_box(fill_at, width: container_width, height: caption_height) { fill_bounds bg_color } }
           end
           indent(*indent_by) do
@@ -4260,7 +4260,7 @@ module Asciidoctor
             advance_page unless first_page
             chunk_height = start_cursor = cursor
             chunk_height -= last_page.cursor if last_page
-            bounding_box [0, start_cursor], width: bounds.width, height: chunk_height do
+            bounding_box [bounds.left, start_cursor], width: bounds.width, height: chunk_height do
               theme_fill_and_stroke_bounds category, background_color: bg_color
               unless first_page
                 indent b_radius, b_radius do

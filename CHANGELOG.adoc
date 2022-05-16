@@ -21,6 +21,7 @@ Bug Fixes::
 * don't add entry to outline for notitle section if no content follows it
 * don't add entry to TOC for notitle section if no content follows it
 * look for block align roles on image instead of text align roles (#2176)
+* use correct left value when creating bounding box
 
 == 2.0.0.beta.2 (2022-05-14) - @mojavelinux
 
