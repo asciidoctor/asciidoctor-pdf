@@ -3848,13 +3848,12 @@ module Asciidoctor
       def margin amount, _side
         if (amount || 0) == 0 || at_page_top?
           0
-        # NOTE: use low-level cursor calculation to workaround cursor bug in column_box context
-        elsif y - reference_bounds.absolute_bottom > amount
+        elsif cursor > amount
           move_down amount
           amount
         else
-          # set cursor at top of next page
-          reference_bounds.move_past_bottom
+          # move cursor to top of next page
+          bounds.move_past_bottom
           0
         end
       end

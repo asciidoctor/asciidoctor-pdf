@@ -601,7 +601,7 @@ module Asciidoctor
             bounds.add_right_padding p_right
             yield
           ensure
-            cursor > p_bottom ? (move_down p_bottom) : reference_bounds.move_past_bottom unless at_page_top?
+            cursor > p_bottom ? (move_down p_bottom) : bounds.move_past_bottom unless at_page_top?
             @bottom_gutters.pop
             bounds.subtract_left_padding p_left
             bounds.subtract_right_padding p_right
