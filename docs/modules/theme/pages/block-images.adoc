@@ -21,6 +21,21 @@ When the value is `inherit`, the key will inherit the alignment assigned to the 
 The `caption-align` key is distinct from the similarly-named `caption-text-align` key.
 The <<caption-text-align,caption-text-align key>> aligns text within the text box of the caption block using text alignment rules.
 
+[#fallback]
+== Fallback image width
+
+To scale all block images that don't define either a `pdfwidth` or `scaledwidth` attribute on an image macro in your document, assign a value to the `image-width` key in your theme file.
+
+[,yaml]
+----
+image:
+  width: 100%
+----
+
+The `image-width` key accepts the same values as the `pdfwidth` attribute.
+Thus, you can think of it as the fallback value for the `pdfwidth` attribute.
+If specified, the `image-width` value takes precedence over the `width` attribute on an image macro.
+
 [#end]
 == Caption end
 

@@ -8,8 +8,10 @@ These page numbers are available as metadata and determine the folio placement o
 == Default numbering and folio placement
 
 // tag::default[]
-By default, the converter assigns the page number 1 to the first body page of the document.
-It then increments the page number for each page thereafter.
+The `pagenums` document attribute is set by default when Asciidoctor PDF runs.
+In turn, `pagenums` implicitly sets the `page-number` attribute.
+
+The converter assigns the page number 1 to the first body page of the document and then increments the page number for each page thereafter.
 All front matter pages, including the cover page, title page, and TOC pages, that precede the first body page when the doctype is `book` or when the `title-page` attribute is set are numbered using roman numerals (e.g., i, ii, iii).
 These computed page numbers can differ from the physical page numbers, therefore, we refer to them as [.term]*virtual page numbers*.
 The default theme shows the virtual page number in the footer of all body pages.

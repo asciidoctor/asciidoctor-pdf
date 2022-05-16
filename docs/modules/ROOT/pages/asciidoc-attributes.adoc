@@ -23,13 +23,13 @@ If an attribute matches a key in the theme file, the document attribute takes pr
 |Yes
 |`:front-cover-image: \image:front-cover.pdf[]`
 
-|`hyphens`^[7]^
+|`hyphens`^[5]^
 |language code {vbar} _blank_ to default to en_us (default: _not set_)
 |Yes
 |`:hyphens: de`
 
-|`icons`^[12]^
-|`font` {vbar} image (default: _not set_)
+|xref:icons.adoc[icons]
+|`font` {vbar} `image` (default: _not set_)
 |No
 |`:icons: font`
 
@@ -68,12 +68,12 @@ If an attribute matches a key in the theme file, the document attribute takes pr
 |Yes
 |`:outlinelevels: 2`
 
-|`page-background-image`^[4]^
+|xref:background-images.adoc[page-background-image]
 |path^[2]^ {vbar} image macro^[3]^
 |Yes
 |`:page-background-image: \image:bg.jpg[]`
 
-|`page-background-image-`(`recto`{vbar}`verso`)^[4]^
+|xref:background-images.adoc[page-background-image-(recto {vbar} verso)]
 |path^[2]^ {vbar} image macro^[3]^
 |Yes
 |`:page-background-image-recto: \image:bg-recto.jpg[]`
@@ -83,7 +83,7 @@ If an attribute matches a key in the theme file, the document attribute takes pr
 |Yes
 |`:page-foreground-image: \image:watermark.svg[]`
 
-|`pagenums`^[5]^
+|xref:page-numbers.adoc[pagenums]
 |flag (default: _set_)
 |Yes
 |`:pagenums:`
@@ -118,71 +118,55 @@ If an attribute matches a key in the theme file, the document attribute takes pr
 |Yes
 |`:pdf-version: 1.7`
 
-|`pdfmark`^[6]^
+|`pdfmark`^[4]^
 |flag (default: _not set_)
 |Yes
 |`:pdfmark:`
 
-|`scripts`^[8]^
+|`scripts`^[6]^
 |`cjk` (default: _not set_)
 |Yes
 |`:scripts: cjk`
 
-|`text-align`^[9]^
+|`text-align`^[7]^
 |xref:theme:text.adoc#text-align[Text alignment]
 |Yes
 |`:text-align: left`
 
-|`title-logo-image`
+|xref:title-page.adoc#logo[title-logo-image]
 |path^[2]^ {vbar} image macro^[3]^
 |Yes
 |`:title-logo-image: \image:logo.png[top=25%, align=center, pdfwidth=0.5in]`
 
-|`title-page`^[10]^
+|xref:title-page.adoc[title-page]
 |flag (default: _not set_)
 |Yes
 |`:title-page:`
 
-|`title-page-background-image`
+|xref:title-page.adoc#background[title-page-background-image]
 |path^[2]^ {vbar} image macro^[3]^
 |Yes
 |`:title-page-background-image: \image:title-bg.jpg[]`
 
-|`toc-max-pagenum-digits`^[11]^
+|`toc-max-pagenum-digits`^[8]^
 |Integer (default: `3`)
 |Yes
 |`:toc-max-pagenum-digits: 4`
 |===
 
 1. `<face>` can be `front` or `back`.
-2. A bare path is resolved relative to base_dir, which defaults to the document directory.
+2. A bare path is resolved relative to `base_dir`, which defaults to the document directory.
 3. The target of the image macro is resolved relative to `imagesdir` since it's defined in the AsciiDoc document (unlike in the theme, where it is resolved relative to the value of `pdf-themesdir`).
-4. By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
-The size of the background image can be controlled using any of the sizing attributes on the image macro (i.e., fit, pdfwidth, scaledwidth, or width) when `fit=none`.
-The position of the background image can be controlled using the `position` attribute.
-If the recto (right-hand, odd-numbered pages) or verso (left-hand, even-numbered pages) background is specified, it will be used only for that side.
-If a background image isn't specified for a side, the converter will use the default page background image (`page-background-image`), if specified.
-To disable the background image for a side, use the value `none`.
-5. Controls whether the implicit `page-number` attribute is to the running header and footer content specified in the theme file.
-Instead of disabling page numbers, you can use the `noheader` and `nofooter` attributes to disable the running header and footer, respectively.
-6. Enables generation of the https://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark^] file, which contains metadata that can be fed to Ghostscript when optimizing the PDF file.
+4. Enables generation of the https://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark^] file, which contains metadata that can be fed to Ghostscript when optimizing the PDF file.
 If you're using Ghostscript >= 8.54, this feature is not needed.
-7. Activates hyphenation for the language code specified (defaults to en_us).
+5. Activates hyphenation for the language code specified (defaults to en_us).
 If the `hyphens` attribute is set in the document, it overrides the `base-hyphens` key set in the theme.
 In other case, if the value is empty, then the value of the `lang` document attribute is used for the hyphenation language.
-8. Activates line break rules for CJK languages (specifically Chinese and Japanese).
+6. Activates line break rules for CJK languages (specifically Chinese and Japanese).
 Chinese and Japanese are written without spaces (and may not use spaces when mixing with English words either).
 This setting allows a line break to be placed between any two CJK characters to accommodate wrapping.
 These languages also use different punctuation for pause, full stop, and dash, which are taken into account when breaking lines.
-9. _(Experimental)_ The `text-align` document attribute is intended as a simple way to toggle text justification.
+7. _(Experimental)_ The `text-align` document attribute is intended as a simple way to toggle text justification.
 The value of this attribute overrides the `base-text-align` key set by the theme.
 For more fine-grained control, you should customize using the theme.
-10. The title page is only enabled by default for the book doctype.
-To force the title page to be used for other doctypes, set the `title-page` attribute in the document header.
-11. If the TOC overlaps the first page of content, increase this number.
-12. By default, admonitions have a text-based label that matches the admonition type.
-To use icons instead, set the `icons` attribute to `font`.
-This setting allows the theme to control the icon used for each type (see the xref:theme:admonition.adoc#icon-name[admonition-icon key]).
-It also enables the `icon` macro (covered in the README).
-To use local image files, set the `icons` attribute to `image`.
-Note that if the value of the `icons` attribute is `image`, the `icon` macro will produce text-based output.
+8. If the TOC overlaps the first page of content, increase this number.
