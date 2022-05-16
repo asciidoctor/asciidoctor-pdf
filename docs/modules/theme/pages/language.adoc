@@ -126,10 +126,3 @@ The following keys are inherited:
 
 Headings inherit starting from a specific heading level (e.g., `heading-h2-font-size`), then to the heading category (e.g., `heading-font-size`), then directly to the base value (e.g., `base-font-size`).
 Any setting from an enclosing context, such as a sidebar, is skipped.
-
-
-
-
-
-
-

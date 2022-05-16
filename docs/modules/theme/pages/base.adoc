@@ -7,6 +7,7 @@
 == base
 
 The keys in the `base` category provide generic theme settings and are often referenced throughout the theme file as variables.
+You can think of this category as roughly analogous to the `body` selector in CSS.
 We recommended that you define this category after the xref:page.adoc[page category] and before all other categories.
 
 TIP: While it's common to define additional keys in this category (e.g., `base-border-radius`) to keep your theme DRY, we recommend using xref:variables.adoc#custom[custom variables] instead.
