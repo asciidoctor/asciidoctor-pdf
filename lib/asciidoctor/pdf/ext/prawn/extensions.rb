@@ -591,7 +591,7 @@ module Asciidoctor
           p_top, p_right, p_bottom, p_left = expand_padding_value padding
           # logic is intentionally inlined
           begin
-            if node && ((last_block = node).content_model != :compound || (last_block = node.blocks[-1])&.context == :paragraph)
+            if node && ((last_block = node).content_model != :compound || (last_block = node.last_child)&.context == :paragraph)
               @bottom_gutters << { last_block => p_bottom }
             else
               @bottom_gutters << {}

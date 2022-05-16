@@ -200,7 +200,7 @@ module Asciidoctor
             @toc_extent = nil
           end
 
-          start_new_page if @ppbook && verso_page? && !(((next_block = doc.blocks[0])&.context == :preamble ? next_block.blocks[0] : next_block)&.option? 'nonfacing')
+          start_new_page if @ppbook && verso_page? && !(((next_block = doc.first_child)&.context == :preamble ? next_block.first_child : next_block)&.option? 'nonfacing')
 
           if title_page_on
             zero_page_offset = has_front_cover ? 1 : 0
@@ -619,7 +619,7 @@ module Asciidoctor
           sect.context = :open
           return convert_abstract sect
         elsif (index_section = sectname == 'index') && @index.empty?
-          sect.parent.blocks.delete sect
+          sect.remove
           return
         end
 
@@ -646,7 +646,7 @@ module Asciidoctor
             start_new_chapter sect
           end
         end
-        arrange_heading sect, title, hopts unless hidden || started_new || at_page_top? || !sect.blocks?
+        arrange_heading sect, title, hopts unless hidden || started_new || at_page_top? || sect.empty?
         # QUESTION: should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
         sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
         # QUESTION: should we just assign the section this generated id?
@@ -678,8 +678,8 @@ module Asciidoctor
         unless (align = resolve_text_align_from_role node.roles)
           align = (@theme[%(heading_h#{hlevel}_text_align)] || @theme.heading_text_align || @base_text_align).to_sym
         end
-        hopts = { align: align, level: hlevel, outdent: (parent = node.parent).context == :section }
-        arrange_heading node, title, hopts unless at_page_top? || node == parent.blocks[-1]
+        hopts = { align: align, level: hlevel, outdent: node.parent.context == :section }
+        arrange_heading node, title, hopts unless at_page_top? || node.last_child?
         add_dest_for_block node if node.id
         # QUESTION: should we decouple styles from section titles?
         theme_font :heading, level: hlevel do
@@ -737,7 +737,7 @@ module Asciidoctor
 
       def convert_preamble node
         # FIXME: core should not be promoting paragraph to preamble if there are no sections
-        if node.blocks? && (first_block = node.blocks[0]).context == :paragraph && node.document.sections? && !first_block.role?
+        if (first_block = node.first_child)&.context == :paragraph && node.document.sections? && !first_block.role?
           first_block.role = 'lead'
         end
         traverse node
@@ -777,8 +777,8 @@ module Asciidoctor
               prose_opts[:first_line_options] = first_line_options if first_line_options
               # FIXME: make this cleaner!!
               if node.blocks?
-                last_block = (blocks = node.blocks)[-1]
-                blocks.each do |child|
+                last_block = node.last_child
+                node.blocks.each do |child|
                   if child.context == :paragraph
                     child.document.playback_attributes child.attributes
                     prose_opts[:margin_bottom] = 0 if child == last_block
@@ -812,8 +812,7 @@ module Asciidoctor
         end
         role_keys = roles.map {|role| %(role_#{role}).to_sym } unless roles.empty?
         if (text_indent = @theme.prose_text_indent) > 0 ||
-            ((text_indent = @theme.prose_text_indent_inner) > 0 &&
-            (self_idx = (siblings = node.parent.blocks).index node) > 0 && siblings[self_idx - 1].context == :paragraph)
+            ((text_indent = @theme.prose_text_indent_inner) > 0 && node.previous_sibling&.context == :paragraph)
           prose_opts[:indent_paragraphs] = text_indent
         end
         if (bottom_gutter = @bottom_gutters[-1][node])
@@ -1270,7 +1269,7 @@ module Asciidoctor
       end
 
       def convert_colist node
-        unless at_page_top? || (self_idx = (siblings = node.parent.blocks).index node) == 0 || !([:listing, :literal].include? siblings[self_idx - 1].context)
+        if !at_page_top? && ((prev_context = node.previous_sibling&.context) == :listing || prev_context == :literal)
           margin_top @theme.callout_list_margin_top_after_code
         end
         add_dest_for_block node if node.id
@@ -2651,7 +2650,7 @@ module Asciidoctor
           document.add_outline_level self, doc.sections, num_levels, expand_levels
         end if doc.attr? 'outline'
 
-        toc_section.parent.blocks.delete toc_section if toc_section
+        toc_section&.remove
 
         catalog.data[:PageLabels] = state.store.ref Nums: pagenum_labels.flatten
         primary_page_mode, secondary_page_mode = PageModes[(doc.attr 'pdf-page-mode') || @theme.page_mode]
@@ -2663,7 +2662,7 @@ module Asciidoctor
       def add_outline_level outline, sections, num_levels, expand_levels
         sections.each do |sect|
           next if (num_levels_for_sect = (sect.attr 'outlinelevels', num_levels).to_i) < (level = sect.level) ||
-            ((sect.option? 'notitle') && sect == sect.document.blocks[-1] && !sect.blocks?)
+            ((sect.option? 'notitle') && sect == sect.document.last_child && sect.empty?)
           sect_title = sanitize sect.numbered_title formal: true
           sect_destination = sect.attr 'pdf-destination'
           if level < num_levels_for_sect && sect.sections?
@@ -2720,9 +2719,7 @@ module Asciidoctor
             end
             if page == start_page
               page.tare_content_stream
-              orphaned = stop_if_first_page_empty do
-                node.context == :section ? (traverse node) : (convert (siblings = node.parent.blocks)[(siblings.index node) + 1])
-              end
+              orphaned = stop_if_first_page_empty { node.context == :section ? (traverse node) : (convert node.next_sibling) }
             end
           end
           advance_page if orphaned
@@ -2734,8 +2731,7 @@ module Asciidoctor
               heading_h = (height_of_typeset_text title) +
                 (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
                 (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom) + h_padding_t + h_padding_b
-              if (min_height_after = @theme.heading_min_height_after) &&
-                  (node.context == :section ? node.blocks? : node != node.parent.blocks[-1])
+              if (min_height_after = @theme.heading_min_height_after) && (node.context == :section ? node.blocks? : !node.last_child?)
                 heading_h += min_height_after
               end
               cursor >= heading_h
@@ -3058,7 +3054,7 @@ module Asciidoctor
       # QUESTION: if a footnote ref appears in a separate chapter, should the footnote def be duplicated?
       def ink_footnotes node
         return if (fns = (doc = node.document).footnotes - @rendered_footnotes).empty?
-        theme_margin :block, :bottom if node.context == :document || node == node.document.blocks[-1]
+        theme_margin :block, :bottom if node.context == :document || node == node.document.last_child
         theme_margin :footnotes, :top
         with_dry_run do |extent|
           if (single_page_height = extent&.single_page_height) && (delta = cursor - single_page_height - 0.0001) > 0
@@ -3769,7 +3765,7 @@ module Asciidoctor
         entries.each do |entry|
           next if (num_levels_for_entry = (entry.attr 'toclevels', num_levels).to_i) < (entry_level = entry.level + 1).pred ||
             !(entry_anchor = (entry.attr 'pdf-anchor') || entry.id) ||
-            ((entry.option? 'notitle') && entry == entry.document.blocks[-1] && !entry.blocks?)
+            ((entry.option? 'notitle') && entry == entry.document.last_child && entry.empty?)
           theme_font :toc, level: entry_level do
             entry_title = entry.context == :section ? entry.numbered_title : (entry.title? ? entry.title : (entry.xreftext 'basic'))
             next if entry_title.empty?
@@ -3876,7 +3872,7 @@ module Asciidoctor
         return if (context = block.context) == :document
         parent_context = (parent = block.parent).context
         if (list_item = context == :list_item)
-          return block.blocks[0] if descend && block.blocks?
+          return block.first_child if descend && block.blocks?
           siblings = parent.items
         else
           siblings = parent.blocks
