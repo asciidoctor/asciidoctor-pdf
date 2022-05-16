@@ -411,7 +411,7 @@ module Asciidoctor
         if (@optimize = doc.attr 'optimize')
           @optimize = nil unless (defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil? # rubocop:disable Style/SoleNestedConditional
         end
-        allocate_prototype
+        allocate_scratch_prototype
         self
       end
 
@@ -4950,7 +4950,7 @@ module Asciidoctor
         result
       end
 
-      def create_prototype
+      def create_scratch_prototype
         @label = :scratch
         @save_state = nil
         @scratch_depth = 0
@@ -4967,7 +4967,7 @@ module Asciidoctor
       end
 
       def init_scratch originator
-        @prototype = originator.instance_variable_get :@prototype
+        @scratch_prototype = originator.instance_variable_get :@scratch_prototype
         @tmp_files = originator.instance_variable_get :@tmp_files
         text_formatter.scratch = true
         self
@@ -4992,7 +4992,7 @@ module Asciidoctor
 
       def clear_scratch
         @scratch_depth = 0
-        @save_state = @prototype = @scratch = nil
+        @save_state = @scratch_prototype = @scratch = nil
       end
     end
   end

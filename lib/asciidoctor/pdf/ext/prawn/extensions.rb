@@ -954,14 +954,14 @@ module Asciidoctor
         perform_discretely { start_new_page options }
       end
 
-      # Grouping
+      # Scratch
 
-      def allocate_prototype
-        @prototype = create_prototype { ::Marshal.load ::Marshal.dump self }
+      def allocate_scratch_prototype
+        @scratch_prototype = create_scratch_prototype { ::Marshal.load ::Marshal.dump self }
       end
 
       def scratch
-        @scratch ||= ((Marshal.load Marshal.dump @prototype).send :init_scratch, self)
+        @scratch ||= ((Marshal.load Marshal.dump @scratch_prototype).send :init_scratch, self)
       end
 
       def scratch?
