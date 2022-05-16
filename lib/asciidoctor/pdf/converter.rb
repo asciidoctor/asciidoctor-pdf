@@ -156,48 +156,6 @@ module Asciidoctor
         ::Asciidoctor::Inline === node ? result : self
       end
 
-      def traverse node, opts = {}
-        # NOTE: need to reconfigure document to use scratch converter in scratch document
-        if self == (prev_converter = node.document.converter)
-          prev_converter = nil
-        else
-          node.document.instance_variable_set :@converter, self
-        end
-        if node.blocks?
-          node.content
-        elsif node.content_model != :compound && (string = node.content)
-          prose_opts = opts.merge hyphenate: true, margin_bottom: 0
-          if (bottom_gutter = @bottom_gutters[-1][node])
-            prose_opts[:bottom_gutter] = bottom_gutter
-          end
-          ink_prose string, prose_opts
-        end
-      ensure
-        node.document.instance_variable_set :@converter, prev_converter if prev_converter
-      end
-
-      def traverse_list_item node, list_type, opts = {}
-        if list_type == :dlist # qanda
-          terms, desc = node
-          terms.each {|term| ink_prose %(<em>#{term.text}</em>), (opts.merge margin_bottom: @theme.description_list_term_spacing) }
-          if desc
-            ink_prose desc.text, (opts.merge hyphenate: true) if desc.text?
-            traverse desc
-          end
-        else
-          if (primary_text = node.text).nil_or_empty?
-            ink_prose DummyText, opts unless node.blocks?
-          else
-            ink_prose primary_text, (opts.merge hyphenate: true)
-          end
-          traverse node
-        end
-      end
-
-      def log severity, message = nil, &block
-        logger.send severity, message, &block unless scratch?
-      end
-
       def convert_document doc
         doc.promote_preface_block
         init_pdf doc
@@ -457,71 +415,6 @@ module Asciidoctor
         self
       end
 
-      def load_theme doc
-        @theme ||= begin # rubocop:disable Naming/MemoizedInstanceVariableName
-          if (theme = doc.options[:pdf_theme])
-            theme = theme.dup
-            @themesdir = ::File.expand_path theme.__dir__ || (doc.attr 'pdf-themesdir') || ::Dir.pwd
-          elsif (theme_name = doc.attr 'pdf-theme')
-            theme = ThemeLoader.load_theme theme_name, (user_themesdir = doc.attr 'pdf-themesdir')
-            @themesdir = theme.__dir__
-          else
-            @themesdir = (theme = ThemeLoader.load_theme).__dir__
-          end
-          prepare_theme theme
-        rescue
-          if user_themesdir
-            message = %(could not locate or load the pdf theme `#{theme_name}' in #{user_themesdir})
-          else
-            message = %(could not locate or load the built-in pdf theme `#{theme_name}')
-          end
-          message += %( because of #{$!.class} #{$!.message})
-          log :error, (message.sub %r/$/, '; reverting to default theme')
-          @themesdir = (theme = ThemeLoader.load_theme).__dir__
-          prepare_theme theme
-        end
-      end
-
-      def prepare_theme theme
-        theme.base_font_color ||= '000000'
-        theme.base_font_size ||= 12
-        theme.base_font_style = theme.base_font_style&.to_sym || :normal
-        theme.page_numbering_start_at ||= 'body'
-        theme.running_content_start_at ||= 'body'
-        theme.heading_margin_page_top ||= 0
-        theme.heading_margin_top ||= 0
-        theme.heading_margin_bottom ||= 0
-        theme.prose_text_indent ||= 0
-        theme.prose_text_indent_inner ||= 0
-        theme.prose_margin_bottom ||= 0
-        theme.block_margin_bottom ||= 0
-        theme.list_indent ||= 0
-        theme.list_item_spacing ||= 0
-        theme.description_list_term_spacing ||= 0
-        theme.description_list_description_indent ||= 0
-        theme.table_border_color ||= (theme.base_border_color || '000000')
-        theme.table_border_width ||= 0.5
-        theme.thematic_break_border_color ||= (theme.base_border_color || '000000')
-        theme.image_border_width ||= 0
-        theme.code_linenum_font_color ||= '999999'
-        theme.callout_list_margin_top_after_code ||= 0
-        theme.role_unresolved_font_color ||= 'FF0000'
-        theme.footnotes_item_spacing ||= 0
-        theme.index_columns ||= 2
-        theme.index_column_gap ||= theme.base_font_size
-        theme.kbd_separator ||= '+'
-        theme.title_page_authors_delimiter ||= ', '
-        theme.title_page_revision_delimiter ||= ', '
-        theme.toc_indent ||= 0
-        theme.toc_hanging_indent ||= 0
-        if ::Array === (quotes = theme.quotes)
-          TypographicQuotes.each_with_index {|char, idx| quotes[idx] ||= char }
-        else
-          theme.quotes = TypographicQuotes
-        end
-        theme
-      end
-
       def build_pdf_options doc, theme
         case (page_margin = (doc.attr 'pdf-page-margin') || theme.page_margin)
         when ::Array
@@ -639,6 +532,87 @@ module Asciidoctor
         info
       end
 
+      def load_theme doc
+        @theme ||= begin # rubocop:disable Naming/MemoizedInstanceVariableName
+          if (theme = doc.options[:pdf_theme])
+            theme = theme.dup
+            @themesdir = ::File.expand_path theme.__dir__ || (doc.attr 'pdf-themesdir') || ::Dir.pwd
+          elsif (theme_name = doc.attr 'pdf-theme')
+            theme = ThemeLoader.load_theme theme_name, (user_themesdir = doc.attr 'pdf-themesdir')
+            @themesdir = theme.__dir__
+          else
+            @themesdir = (theme = ThemeLoader.load_theme).__dir__
+          end
+          prepare_theme theme
+        rescue
+          if user_themesdir
+            message = %(could not locate or load the pdf theme `#{theme_name}' in #{user_themesdir})
+          else
+            message = %(could not locate or load the built-in pdf theme `#{theme_name}')
+          end
+          message += %( because of #{$!.class} #{$!.message})
+          log :error, (message.sub %r/$/, '; reverting to default theme')
+          @themesdir = (theme = ThemeLoader.load_theme).__dir__
+          prepare_theme theme
+        end
+      end
+
+      def prepare_theme theme
+        theme.base_font_color ||= '000000'
+        theme.base_font_size ||= 12
+        theme.base_font_style = theme.base_font_style&.to_sym || :normal
+        theme.page_numbering_start_at ||= 'body'
+        theme.running_content_start_at ||= 'body'
+        theme.heading_margin_page_top ||= 0
+        theme.heading_margin_top ||= 0
+        theme.heading_margin_bottom ||= 0
+        theme.prose_text_indent ||= 0
+        theme.prose_text_indent_inner ||= 0
+        theme.prose_margin_bottom ||= 0
+        theme.block_margin_bottom ||= 0
+        theme.list_indent ||= 0
+        theme.list_item_spacing ||= 0
+        theme.description_list_term_spacing ||= 0
+        theme.description_list_description_indent ||= 0
+        theme.table_border_color ||= (theme.base_border_color || '000000')
+        theme.table_border_width ||= 0.5
+        theme.thematic_break_border_color ||= (theme.base_border_color || '000000')
+        theme.image_border_width ||= 0
+        theme.code_linenum_font_color ||= '999999'
+        theme.callout_list_margin_top_after_code ||= 0
+        theme.role_unresolved_font_color ||= 'FF0000'
+        theme.footnotes_item_spacing ||= 0
+        theme.index_columns ||= 2
+        theme.index_column_gap ||= theme.base_font_size
+        theme.kbd_separator ||= '+'
+        theme.title_page_authors_delimiter ||= ', '
+        theme.title_page_revision_delimiter ||= ', '
+        theme.toc_indent ||= 0
+        theme.toc_hanging_indent ||= 0
+        if ::Array === (quotes = theme.quotes)
+          TypographicQuotes.each_with_index {|char, idx| quotes[idx] ||= char }
+        else
+          theme.quotes = TypographicQuotes
+        end
+        theme
+      end
+
+      def indent_section
+        if (values = @section_indent)
+          indent(values[0], values[1]) { yield }
+        else
+          yield
+        end
+      end
+
+      def outdent_section enabled = true
+        if enabled && (values = @section_indent)
+          indent(-values[0], -values[1]) { yield }
+        else
+          yield
+        end
+      end
+
       def convert_section sect, _opts = {}
         if (sectname = sect.sectname) == 'abstract'
           # HACK: cheat a bit to hide this section from TOC; TOC should filter these sections
@@ -698,50 +672,6 @@ module Asciidoctor
         sect.set_attr 'pdf-page-end', page_number
       end
 
-      def indent_section
-        if (values = @section_indent)
-          indent(values[0], values[1]) { yield }
-        else
-          yield
-        end
-      end
-
-      def outdent_section enabled = true
-        if enabled && (values = @section_indent)
-          indent(-values[0], -values[1]) { yield }
-        else
-          yield
-        end
-      end
-
-      # QUESTION: if a footnote ref appears in a separate chapter, should the footnote def be duplicated?
-      def ink_footnotes node
-        return if (fns = (doc = node.document).footnotes - @rendered_footnotes).empty?
-        theme_margin :block, :bottom if node.context == :document || node == node.document.blocks[-1]
-        theme_margin :footnotes, :top
-        with_dry_run do |extent|
-          if (single_page_height = extent&.single_page_height) && (delta = cursor - single_page_height - 0.0001) > 0
-            move_down delta
-          end
-          theme_font :footnotes do
-            (title = doc.attr 'footnotes-title') && (ink_caption title, category: :footnotes)
-            item_spacing = @theme.footnotes_item_spacing
-            index_offset = @rendered_footnotes.length
-            sect_xreftext = node.context == :section && (node.xreftext node.document.attr 'xrefstyle')
-            fns.each do |fn|
-              label = (index = fn.index) - index_offset
-              if sect_xreftext
-                fn.singleton_class.send :attr_accessor, :label unless fn.respond_to? :label=
-                fn.label = %(#{label} - #{sect_xreftext})
-              end
-              ink_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{label}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
-            end
-            @rendered_footnotes += fns if extent
-          end
-        end
-        nil
-      end
-
       def convert_floating_title node
         title = node.title
         hlevel = node.level.next
@@ -755,6 +685,64 @@ module Asciidoctor
         theme_font :heading, level: hlevel do
           ink_general_heading node, title, hopts
         end
+      end
+
+      def convert_index_section node
+        space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
+        pagenum_sequence_style = node.document.attr 'index-pagenum-sequence-style'
+        column_box [0, cursor], columns: @theme.index_columns, width: bounds.width, reflow_margins: true, spacer: @theme.index_column_gap do
+          @index.categories.each do |category|
+            bounds.move_past_bottom if space_needed_for_category > cursor
+            ink_prose category.name,
+              align: :left,
+              inline_format: false,
+              margin_bottom: @theme.description_list_term_spacing,
+              style: @theme.description_list_term_font_style&.to_sym
+            category.terms.each {|term| convert_index_list_item term, pagenum_sequence_style }
+            @theme.prose_margin_bottom > cursor ? bounds.move_past_bottom : (move_down @theme.prose_margin_bottom)
+          end
+        end
+        nil
+      end
+
+      def convert_index_list_item term, pagenum_sequence_style = nil
+        text = escape_xml term.name
+        unless term.container?
+          if @media == 'screen'
+            case pagenum_sequence_style
+            when 'page'
+              pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
+            when 'range'
+              first_anchor_per_page = term.dests.each_with_object({}) {|dest, accum| accum[dest[:page]] ||= dest[:anchor] }
+              pagenums = (consolidate_ranges first_anchor_per_page.keys).map do |range|
+                anchor = first_anchor_per_page[(range.include? '-') ? (range.partition '-')[0] : range]
+                %(<a anchor="#{anchor}">#{range}</a>)
+              end
+            else # term
+              pagenums = term.dests.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
+            end
+          else
+            pagenums = consolidate_ranges term.dests.map {|dest| dest[:page] }.uniq
+          end
+          text = %(#{text}, #{pagenums.join ', '})
+        end
+        subterm_indent = @theme.description_list_description_indent
+        ink_prose text, align: :left, margin: 0, hanging_indent: subterm_indent * 2
+        indent subterm_indent do
+          term.subterms.each do |subterm|
+            convert_index_list_item subterm, pagenum_sequence_style
+          end
+        end unless term.leaf?
+      end
+
+      def convert_preamble node
+        # FIXME: core should not be promoting paragraph to preamble if there are no sections
+        if node.blocks? && (first_block = node.blocks[0]).context == :paragraph && node.document.sections? && !first_block.role?
+          first_block.role = 'lead'
+        end
+        traverse node
+        theme_margin :block, :bottom, (next_enclosed_block node)
+        convert_toc node, placement: 'preamble'
       end
 
       def convert_abstract node
@@ -813,16 +801,6 @@ module Asciidoctor
         end
         # NOTE: next enclosed block here is confined to preamble
         theme_margin :block, :bottom, (next_enclosed_block node)
-      end
-
-      def convert_preamble node
-        # FIXME: core should not be promoting paragraph to preamble if there are no sections
-        if node.blocks? && (first_block = node.blocks[0]).context == :paragraph && node.document.sections? && !first_block.role?
-          first_block.role = 'lead'
-        end
-        traverse node
-        theme_margin :block, :bottom, (next_enclosed_block node)
-        convert_toc node, placement: 'preamble'
       end
 
       def convert_paragraph node
@@ -1022,6 +1000,158 @@ module Asciidoctor
         end
         theme_margin :block, :bottom, (next_enclosed_block node)
       end
+
+      # QUESTION: can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
+      def convert_code node
+        extensions = []
+        source_chunks = bg_color_override = font_color_override = adjusted_font_size = nil
+        theme_font :code do
+          # HACK: disable built-in syntax highlighter; must be done before calling node.content!
+          if node.style == 'source' && (highlighter = (syntax_hl = node.document.syntax_highlighter)&.highlight? && syntax_hl.name)
+            case highlighter
+            when 'coderay'
+              Helpers.require_library CodeRayRequirePath, 'coderay' unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
+            when 'pygments'
+              Helpers.require_library PygmentsRequirePath, 'pygments.rb' unless defined? ::Pygments::Ext::BlockStyles
+            when 'rouge'
+              Helpers.require_library RougeRequirePath, 'rouge' unless defined? ::Rouge::Formatters::Prawn
+            else
+              highlighter = nil
+            end
+            prev_subs = (subs = node.subs).dup
+            callouts_enabled = subs.include? :callouts
+            highlight_idx = subs.index :highlight
+            # NOTE: scratch? here only applies if listing block is nested inside another block
+            if !highlighter || scratch?
+              highlighter = nil
+              if highlight_idx
+                # switch the :highlight sub back to :specialcharacters
+                subs[highlight_idx] = :specialcharacters
+              else
+                prev_subs = nil
+              end
+              source_string = guard_indentation node.content
+            elsif highlight_idx
+              # NOTE: the source highlighter logic below handles the highlight and callouts subs
+              subs.replace subs - [:highlight, :callouts]
+              # NOTE: indentation guards will be added by the source highlighter logic
+              source_string = expand_tabs node.content
+            else
+              highlighter = prev_subs = nil
+              source_string = guard_indentation node.content
+            end
+          else
+            highlighter = nil
+            source_string = guard_indentation node.content
+          end
+
+          case highlighter
+          when 'coderay'
+            source_string, conum_mapping = extract_conums source_string if callouts_enabled
+            srclang = node.attr 'language', 'text'
+            begin
+              ::CodeRay::Scanners[(srclang = (srclang.start_with? 'html+') ? (srclang.slice 5, srclang.length).to_sym : srclang.to_sym)]
+            rescue ::ArgumentError
+              srclang = :text
+            end
+            fragments = (::CodeRay.scan source_string, srclang).to_prawn
+            source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
+          when 'pygments'
+            unless (style = (node.document.attr 'pygments-style')) && (::Pygments::Ext::BlockStyles.available? style)
+              style = 'pastie'
+            end
+            # QUESTION: allow border color to be set by theme for highlighted block?
+            pg_block_styles = ::Pygments::Ext::BlockStyles.for style
+            bg_color_override = pg_block_styles[:background_color]
+            font_color_override = pg_block_styles[:font_color]
+            if source_string.empty?
+              source_chunks = []
+            else
+              lexer = (::Pygments::Lexer.find_by_alias node.attr 'language', 'text') || (::Pygments::Lexer.find_by_mimetype 'text/plain')
+              lexer_opts = { nowrap: true, noclasses: true, stripnl: false, style: style }
+              lexer_opts[:startinline] = !(node.option? 'mixed') if lexer.name == 'PHP'
+              source_string, conum_mapping = extract_conums source_string if callouts_enabled
+              # NOTE: highlight can return nil if something goes wrong; fallback to encoded source string if this happens
+              result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
+              if node.attr? 'highlight'
+                if (highlight_lines = node.resolve_lines_to_highlight source_string, (node.attr 'highlight')).empty?
+                  highlight_lines = nil
+                else
+                  pg_highlight_bg_color = pg_block_styles[:highlight_background_color]
+                  highlight_lines = highlight_lines.map {|linenum| [linenum, pg_highlight_bg_color] }.to_h
+                end
+              end
+              if (node.option? 'linenums') || (node.attr? 'linenums')
+                linenums = (node.attr 'start', 1).to_i
+                postprocess = true
+                extensions << FormattedText::SourceWrap
+              elsif conum_mapping || highlight_lines
+                postprocess = true
+              end
+              fragments = text_formatter.format result
+              fragments = restore_conums fragments, conum_mapping, linenums, highlight_lines if postprocess
+              source_chunks = guard_indentation_in_fragments fragments
+            end
+          when 'rouge'
+            formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap, highlight_background_color: @theme.code_highlight_background_color)
+            # QUESTION: allow border color to be set by theme for highlighted block?
+            bg_color_override = formatter.background_color
+            if source_string.empty?
+              source_chunks = []
+            else
+              if (node.option? 'linenums') || (node.attr? 'linenums')
+                formatter_opts = { line_numbers: true, start_line: (node.attr 'start', 1).to_i }
+                extensions << FormattedText::SourceWrap
+              else
+                formatter_opts = {}
+              end
+              if (srclang = node.attr 'language')
+                if srclang.include? '?'
+                  if (lexer = ::Rouge::Lexer.find_fancy srclang) && lexer.tag == 'php' && !(node.option? 'mixed') && !((lexer_opts = lexer.options).key? 'start_inline')
+                    lexer = lexer.class.new lexer_opts.merge 'start_inline' => true
+                  end
+                elsif (lexer = ::Rouge::Lexer.find srclang)
+                  lexer = lexer.new start_inline: true if lexer.tag == 'php' && !(node.option? 'mixed')
+                end
+              end
+              lexer ||= ::Rouge::Lexers::PlainText
+              source_string, conum_mapping = extract_conums source_string if callouts_enabled
+              if (node.attr? 'highlight') && !(hl_lines = (node.resolve_lines_to_highlight source_string, (node.attr 'highlight'))).empty?
+                formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
+              end
+              fragments = formatter.format (lexer.lex source_string), formatter_opts rescue [text: source_string]
+              source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
+            end
+          else
+            # NOTE: only format if we detect a need (callouts or inline formatting)
+            source_chunks = (XMLMarkupRx.match? source_string) ? (text_formatter.format source_string) : [text: source_string]
+          end
+          node.subs.replace prev_subs if prev_subs
+          adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ? (compute_autofit_font_size source_chunks, :code) : nil
+        end
+
+        arrange_block node do |extent|
+          add_dest_for_block node if node.id
+          tare_first_page_content_stream do
+            theme_fill_and_stroke_block :code, extent, background_color: bg_color_override, caption_node: node
+          end
+          pad_box @theme.code_padding, node do
+            theme_font :code do
+              typeset_formatted_text source_chunks, (calc_line_metrics @base_line_height),
+                color: (font_color_override || @theme.code_font_color || @font_color),
+                size: adjusted_font_size,
+                bottom_gutter: @bottom_gutters[-1][node],
+                extensions: extensions.empty? ? nil : extensions
+            end
+          end
+        end
+
+        theme_margin :block, :bottom, (next_enclosed_block node)
+      end
+
+      alias convert_listing convert_code
+      alias convert_literal convert_code
+      alias convert_listing_or_literal convert_code
 
       def convert_example node
         return convert_open node if node.option? 'collapsible'
@@ -1652,10 +1782,6 @@ module Asciidoctor
         end
       end
 
-      def supports_float_wrapping? node
-        node.context == :paragraph
-      end
-
       def convert_audio node
         add_dest_for_block node if node.id
         audio_path = node.media_uri node.attr 'target'
@@ -1702,157 +1828,27 @@ module Asciidoctor
         end
       end
 
-      # QUESTION: can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
-      def convert_code node
-        extensions = []
-        source_chunks = bg_color_override = font_color_override = adjusted_font_size = nil
-        theme_font :code do
-          # HACK: disable built-in syntax highlighter; must be done before calling node.content!
-          if node.style == 'source' && (highlighter = (syntax_hl = node.document.syntax_highlighter)&.highlight? && syntax_hl.name)
-            case highlighter
-            when 'coderay'
-              Helpers.require_library CodeRayRequirePath, 'coderay' unless defined? ::Asciidoctor::Prawn::CodeRayEncoder
-            when 'pygments'
-              Helpers.require_library PygmentsRequirePath, 'pygments.rb' unless defined? ::Pygments::Ext::BlockStyles
-            when 'rouge'
-              Helpers.require_library RougeRequirePath, 'rouge' unless defined? ::Rouge::Formatters::Prawn
-            else
-              highlighter = nil
-            end
-            prev_subs = (subs = node.subs).dup
-            callouts_enabled = subs.include? :callouts
-            highlight_idx = subs.index :highlight
-            # NOTE: scratch? here only applies if listing block is nested inside another block
-            if !highlighter || scratch?
-              highlighter = nil
-              if highlight_idx
-                # switch the :highlight sub back to :specialcharacters
-                subs[highlight_idx] = :specialcharacters
-              else
-                prev_subs = nil
-              end
-              source_string = guard_indentation node.content
-            elsif highlight_idx
-              # NOTE: the source highlighter logic below handles the highlight and callouts subs
-              subs.replace subs - [:highlight, :callouts]
-              # NOTE: indentation guards will be added by the source highlighter logic
-              source_string = expand_tabs node.content
-            else
-              highlighter = prev_subs = nil
-              source_string = guard_indentation node.content
-            end
-          else
-            highlighter = nil
-            source_string = guard_indentation node.content
+      # NOTE: to insert sequential page breaks, you must put {nbsp} between page breaks
+      def convert_page_break node
+        if (page_layout = node.attr 'page-layout').nil_or_empty?
+          unless node.role? && (page_layout = (node.roles.map(&:to_sym) & PageLayouts)[-1])
+            page_layout = nil
           end
-
-          case highlighter
-          when 'coderay'
-            source_string, conum_mapping = extract_conums source_string if callouts_enabled
-            srclang = node.attr 'language', 'text'
-            begin
-              ::CodeRay::Scanners[(srclang = (srclang.start_with? 'html+') ? (srclang.slice 5, srclang.length).to_sym : srclang.to_sym)]
-            rescue ::ArgumentError
-              srclang = :text
-            end
-            fragments = (::CodeRay.scan source_string, srclang).to_prawn
-            source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
-          when 'pygments'
-            unless (style = (node.document.attr 'pygments-style')) && (::Pygments::Ext::BlockStyles.available? style)
-              style = 'pastie'
-            end
-            # QUESTION: allow border color to be set by theme for highlighted block?
-            pg_block_styles = ::Pygments::Ext::BlockStyles.for style
-            bg_color_override = pg_block_styles[:background_color]
-            font_color_override = pg_block_styles[:font_color]
-            if source_string.empty?
-              source_chunks = []
-            else
-              lexer = (::Pygments::Lexer.find_by_alias node.attr 'language', 'text') || (::Pygments::Lexer.find_by_mimetype 'text/plain')
-              lexer_opts = { nowrap: true, noclasses: true, stripnl: false, style: style }
-              lexer_opts[:startinline] = !(node.option? 'mixed') if lexer.name == 'PHP'
-              source_string, conum_mapping = extract_conums source_string if callouts_enabled
-              # NOTE: highlight can return nil if something goes wrong; fallback to encoded source string if this happens
-              result = (lexer.highlight source_string, options: lexer_opts) || (node.apply_subs source_string, [:specialcharacters])
-              if node.attr? 'highlight'
-                if (highlight_lines = node.resolve_lines_to_highlight source_string, (node.attr 'highlight')).empty?
-                  highlight_lines = nil
-                else
-                  pg_highlight_bg_color = pg_block_styles[:highlight_background_color]
-                  highlight_lines = highlight_lines.map {|linenum| [linenum, pg_highlight_bg_color] }.to_h
-                end
-              end
-              if (node.option? 'linenums') || (node.attr? 'linenums')
-                linenums = (node.attr 'start', 1).to_i
-                postprocess = true
-                extensions << FormattedText::SourceWrap
-              elsif conum_mapping || highlight_lines
-                postprocess = true
-              end
-              fragments = text_formatter.format result
-              fragments = restore_conums fragments, conum_mapping, linenums, highlight_lines if postprocess
-              source_chunks = guard_indentation_in_fragments fragments
-            end
-          when 'rouge'
-            formatter = (@rouge_formatter ||= ::Rouge::Formatters::Prawn.new theme: (node.document.attr 'rouge-style'), line_gap: @theme.code_line_gap, highlight_background_color: @theme.code_highlight_background_color)
-            # QUESTION: allow border color to be set by theme for highlighted block?
-            bg_color_override = formatter.background_color
-            if source_string.empty?
-              source_chunks = []
-            else
-              if (node.option? 'linenums') || (node.attr? 'linenums')
-                formatter_opts = { line_numbers: true, start_line: (node.attr 'start', 1).to_i }
-                extensions << FormattedText::SourceWrap
-              else
-                formatter_opts = {}
-              end
-              if (srclang = node.attr 'language')
-                if srclang.include? '?'
-                  if (lexer = ::Rouge::Lexer.find_fancy srclang) && lexer.tag == 'php' && !(node.option? 'mixed') && !((lexer_opts = lexer.options).key? 'start_inline')
-                    lexer = lexer.class.new lexer_opts.merge 'start_inline' => true
-                  end
-                elsif (lexer = ::Rouge::Lexer.find srclang)
-                  lexer = lexer.new start_inline: true if lexer.tag == 'php' && !(node.option? 'mixed')
-                end
-              end
-              lexer ||= ::Rouge::Lexers::PlainText
-              source_string, conum_mapping = extract_conums source_string if callouts_enabled
-              if (node.attr? 'highlight') && !(hl_lines = (node.resolve_lines_to_highlight source_string, (node.attr 'highlight'))).empty?
-                formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
-              end
-              fragments = formatter.format (lexer.lex source_string), formatter_opts rescue [text: source_string]
-              source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
-            end
-          else
-            # NOTE: only format if we detect a need (callouts or inline formatting)
-            source_chunks = (XMLMarkupRx.match? source_string) ? (text_formatter.format source_string) : [text: source_string]
-          end
-          node.subs.replace prev_subs if prev_subs
-          adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ? (compute_autofit_font_size source_chunks, :code) : nil
+        elsif !(PageLayouts.include? (page_layout = page_layout.to_sym))
+          page_layout = nil
         end
 
-        arrange_block node do |extent|
-          add_dest_for_block node if node.id
-          tare_first_page_content_stream do
-            theme_fill_and_stroke_block :code, extent, background_color: bg_color_override, caption_node: node
+        if at_page_top?
+          if page_layout && page_layout != page.layout && page.empty?
+            delete_current_page
+            advance_page layout: page_layout
           end
-          pad_box @theme.code_padding, node do
-            theme_font :code do
-              typeset_formatted_text source_chunks, (calc_line_metrics @base_line_height),
-                color: (font_color_override || @theme.code_font_color || @font_color),
-                size: adjusted_font_size,
-                bottom_gutter: @bottom_gutters[-1][node],
-                extensions: extensions.empty? ? nil : extensions
-            end
-          end
+        elsif page_layout
+          advance_page layout: page_layout
+        else
+          advance_page
         end
-
-        theme_margin :block, :bottom, (next_enclosed_block node)
       end
-
-      alias convert_listing convert_code
-      alias convert_literal convert_code
-      alias convert_listing_or_literal convert_code
 
       def convert_pass node
         theme_font :code do
@@ -1874,88 +1870,6 @@ module Asciidoctor
           end
         end
         theme_margin :block, :bottom, (next_enclosed_block node)
-      end
-
-      # Extract callout marks from string, indexed by 0-based line number
-      # Return an Array with the processed string as the first argument
-      # and the mapping of lines to conums as the second.
-      def extract_conums string
-        conum_mapping = {}
-        auto_num = 0
-        string = (string.split LF).map.with_index do |line, line_num|
-          # FIXME: we get extra spaces before numbers if more than one on a line
-          if line.include? '<'
-            line = line.gsub CalloutExtractRx do
-              # honor the escape
-              if $1 == ?\\
-                $&.sub $1, ''
-              else
-                (conum_mapping[line_num] ||= []) << ($3 == '.' ? (auto_num += 1) : $3.to_i)
-                ''
-              end
-            end
-            # NOTE: use first position to store space that precedes conums
-            if (conum_mapping.key? line_num) && (line.end_with? ' ')
-              trimmed_line = line.rstrip
-              conum_mapping[line_num].unshift line.slice trimmed_line.length, line.length
-              line = trimmed_line
-            end
-          end
-          line
-        end.join LF
-        conum_mapping = nil if conum_mapping.empty?
-        [string, conum_mapping]
-      end
-
-      # Restore the conums into the Array of formatted text fragments
-      #--
-      # QUESTION: can this be done more efficiently?
-      # QUESTION: can we reuse arrange_fragments_by_line?
-      def restore_conums fragments, conum_mapping, linenums = nil, highlight_lines = nil
-        lines = []
-        line_num = 0
-        # reorganize the fragments into an array of lines
-        fragments.each do |fragment|
-          line = (lines[line_num] ||= [])
-          if (text = fragment[:text]) == LF
-            lines[line_num += 1] ||= []
-          elsif text.include? LF
-            (text.split LF, -1).each_with_index do |line_in_fragment, idx|
-              line = (lines[line_num += 1] ||= []) unless idx == 0
-              line << (fragment.merge text: line_in_fragment) unless line_in_fragment.empty?
-            end
-          else
-            line << fragment
-          end
-        end
-        conum_font_color = @theme.conum_font_color
-        if (conum_font_name = @theme.conum_font_family) == font_name
-          conum_font_name = nil
-        end
-        last_line_num = lines.size - 1
-        if linenums
-          pad_size = (last_line_num + 1).to_s.length
-          linenum_color = @theme.code_linenum_font_color
-        end
-        # append conums to appropriate lines, then flatten to an array of fragments
-        lines.flat_map.with_index do |line, cur_line_num|
-          last_line = cur_line_num == last_line_num
-          visible_line_num = cur_line_num + (linenums || 1)
-          if highlight_lines && (highlight_bg_color = highlight_lines[visible_line_num])
-            line.unshift text: DummyText, background_color: highlight_bg_color, highlight: true, inline_block: true, extend: true, width: 0, callback: [FormattedText::TextBackgroundAndBorderRenderer]
-          end
-          line.unshift text: %(#{visible_line_num.to_s.rjust pad_size} ), linenum: visible_line_num, color: linenum_color if linenums
-          if conum_mapping && (conums = conum_mapping.delete cur_line_num)
-            line << { text: conums.shift } if ::String === conums[0]
-            conum_text = conums.map {|num| conum_glyph num }.join ' '
-            conum_fragment = { text: conum_text }
-            conum_fragment[:color] = conum_font_color if conum_font_color
-            conum_fragment[:font] = conum_font_name if conum_font_name
-            line << conum_fragment
-          end
-          line << { text: LF } unless last_line
-          line
-        end
       end
 
       def convert_table node
@@ -2352,74 +2266,42 @@ module Asciidoctor
         nil
       end
 
-      # NOTE: to insert sequential page breaks, you must put {nbsp} between page breaks
-      def convert_page_break node
-        if (page_layout = node.attr 'page-layout').nil_or_empty?
-          unless node.role? && (page_layout = (node.roles.map(&:to_sym) & PageLayouts)[-1])
-            page_layout = nil
-          end
-        elsif !(PageLayouts.include? (page_layout = page_layout.to_sym))
-          page_layout = nil
-        end
-
-        if at_page_top?
-          if page_layout && page_layout != page.layout && page.empty?
-            delete_current_page
-            advance_page layout: page_layout
-          end
-        elsif page_layout
-          advance_page layout: page_layout
+      def traverse node, opts = {}
+        # NOTE: need to reconfigure document to use scratch converter in scratch document
+        if self == (prev_converter = node.document.converter)
+          prev_converter = nil
         else
-          advance_page
+          node.document.instance_variable_set :@converter, self
         end
-      end
-
-      def convert_index_section node
-        space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
-        pagenum_sequence_style = node.document.attr 'index-pagenum-sequence-style'
-        column_box [0, cursor], columns: @theme.index_columns, width: bounds.width, reflow_margins: true, spacer: @theme.index_column_gap do
-          @index.categories.each do |category|
-            bounds.move_past_bottom if space_needed_for_category > cursor
-            ink_prose category.name,
-              align: :left,
-              inline_format: false,
-              margin_bottom: @theme.description_list_term_spacing,
-              style: @theme.description_list_term_font_style&.to_sym
-            category.terms.each {|term| convert_index_list_item term, pagenum_sequence_style }
-            @theme.prose_margin_bottom > cursor ? bounds.move_past_bottom : (move_down @theme.prose_margin_bottom)
+        if node.blocks?
+          node.content
+        elsif node.content_model != :compound && (string = node.content)
+          prose_opts = opts.merge hyphenate: true, margin_bottom: 0
+          if (bottom_gutter = @bottom_gutters[-1][node])
+            prose_opts[:bottom_gutter] = bottom_gutter
           end
+          ink_prose string, prose_opts
         end
-        nil
+      ensure
+        node.document.instance_variable_set :@converter, prev_converter if prev_converter
       end
 
-      def convert_index_list_item term, pagenum_sequence_style = nil
-        text = escape_xml term.name
-        unless term.container?
-          if @media == 'screen'
-            case pagenum_sequence_style
-            when 'page'
-              pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
-            when 'range'
-              first_anchor_per_page = term.dests.each_with_object({}) {|dest, accum| accum[dest[:page]] ||= dest[:anchor] }
-              pagenums = (consolidate_ranges first_anchor_per_page.keys).map do |range|
-                anchor = first_anchor_per_page[(range.include? '-') ? (range.partition '-')[0] : range]
-                %(<a anchor="#{anchor}">#{range}</a>)
-              end
-            else # term
-              pagenums = term.dests.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
-            end
+      def traverse_list_item node, list_type, opts = {}
+        if list_type == :dlist # qanda
+          terms, desc = node
+          terms.each {|term| ink_prose %(<em>#{term.text}</em>), (opts.merge margin_bottom: @theme.description_list_term_spacing) }
+          if desc
+            ink_prose desc.text, (opts.merge hyphenate: true) if desc.text?
+            traverse desc
+          end
+        else
+          if (primary_text = node.text).nil_or_empty?
+            ink_prose DummyText, opts unless node.blocks?
           else
-            pagenums = consolidate_ranges term.dests.map {|dest| dest[:page] }.uniq
+            ink_prose primary_text, (opts.merge hyphenate: true)
           end
-          text = %(#{text}, #{pagenums.join ', '})
+          traverse node
         end
-        subterm_indent = @theme.description_list_description_indent
-        ink_prose text, align: :left, margin: 0, hanging_indent: subterm_indent * 2
-        indent subterm_indent do
-          term.subterms.each do |subterm|
-            convert_index_list_item subterm, pagenum_sequence_style
-          end
-        end unless term.leaf?
       end
 
       def convert_inline_anchor node
@@ -2701,192 +2583,117 @@ module Asciidoctor
         node.id ? %(<a id="#{node.id}">#{DummyText}</a>#{quoted_text}) : quoted_text
       end
 
-      # Returns a Boolean indicating whether the title page was created
-      def ink_title_page doc
-        return unless doc.header? && !doc.notitle && @theme.title_page != false
+      # If an id is provided or the node passed as the first argument has an id,
+      # add a named destination to the document equivalent to the node id at the
+      # current y position. If the node does not have an id and an id is not
+      # specified, do nothing.
+      #
+      # If the node is a section, and the current y position is the top of the
+      # page, set the y position equal to the page height to improve the navigation
+      # experience. If the current x position is at or inside the left margin, set
+      # the x position equal to 0 (left edge of page) to improve the navigation
+      # experience.
+      def add_dest_for_block node, id: nil, y: nil
+        if !scratch? && (id ||= node.id)
+          dest_x = bounds.absolute_left.truncate 4
+          # QUESTION: when content is aligned to left margin, should we keep precise x value or just use 0?
+          dest_x = 0 if dest_x <= page_margin_left
+          unless (dest_y = y)
+            dest_y = @y
+            dest_y += [page_height - dest_y, -@theme.block_anchor_top.to_f].min
+          end
+          # TODO: find a way to store only the ref of the destination; look it up when we need it
+          node.set_attr 'pdf-destination', (node_dest = (dest_xyz dest_x, dest_y))
+          add_dest id, node_dest
+        end
+        nil
+      end
 
-        # NOTE: a new page may have already been started at this point, so decide what to do with it
-        if page.empty?
-          page.reset_content if (recycle = @ppbook ? recto_page? : true)
-        elsif @ppbook && page_number > 0 && recto_page?
-          start_new_page
+      def add_outline doc, num_levels, toc_page_nums, num_front_matter_pages, has_front_cover
+        if ::String === num_levels
+          if num_levels.include? ':'
+            num_levels, expand_levels = num_levels.split ':', 2
+            num_levels = num_levels.empty? ? (doc.attr 'toclevels', 2).to_i : num_levels.to_i
+            expand_levels = expand_levels.to_i
+          else
+            num_levels = expand_levels = num_levels.to_i
+          end
+        else
+          expand_levels = num_levels
+        end
+        front_matter_counter = RomanNumeral.new 0, :lower
+        pagenum_labels = {}
+
+        num_front_matter_pages.times do |n|
+          pagenum_labels[n] = { P: (::PDF::Core::LiteralString.new front_matter_counter.next!.to_s) }
         end
 
-        side = page_side (recycle ? nil : page_number + 1), @folio_placement[:inverted]
-        prev_bg_image = @page_bg_image[side]
-        prev_bg_color = @page_bg_color
-        if (bg_image = resolve_background_image doc, @theme, 'title-page-background-image')
-          @page_bg_image[side] = bg_image[0] && bg_image
+        # add labels for each content page, which is required for reader's page navigator to work correctly
+        (num_front_matter_pages..(page_count - 1)).each_with_index do |n, i|
+          pagenum_labels[n] = { P: (::PDF::Core::LiteralString.new (i + 1).to_s) }
         end
-        if (bg_color = resolve_theme_color :title_page_background_color)
-          @page_bg_color = bg_color
+
+        unless toc_page_nums.none? || (toc_title = doc.attr 'toc-title').nil_or_empty?
+          toc_section = insert_toc_section doc, toc_title, toc_page_nums
         end
-        recycle ? float { init_page self } : start_new_page
-        @page_bg_image[side] = prev_bg_image if bg_image
-        @page_bg_color = prev_bg_color if bg_color
 
-        # NOTE: this is the first page created, so we must set the base font
-        font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
+        outline.define do
+          initial_pagenum = has_front_cover ? 2 : 1
+          # FIXME: use sanitize: :plain_text on Document#doctitle once available
+          if document.page_count >= initial_pagenum && (outline_title = doc.attr 'outline-title') &&
+              (outline_title.empty? ? (outline_title = document.resolve_doctitle doc) : outline_title)
+            page title: (document.sanitize outline_title), destination: (document.dest_top initial_pagenum)
+          end
+          # QUESTION: is there any way to get add_outline_level to invoke in the context of the outline?
+          document.add_outline_level self, doc.sections, num_levels, expand_levels
+        end if doc.attr? 'outline'
 
-        # QUESTION: allow alignment per element on title page?
-        title_align = (@theme.title_page_text_align || @base_text_align).to_sym
+        toc_section.parent.blocks.delete toc_section if toc_section
 
-        if @theme.title_page_logo_display != 'none' && (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
-          if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
-            logo_image_attrs = (AttributeList.new $2).parse %w(alt width height)
-            if logo_image_from_theme
-              relative_to_imagesdir = false
-              logo_image_path = apply_subs_discretely doc, $1, subs: [:attributes]
-              logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
-            else
-              relative_to_imagesdir = true
-              logo_image_path = $1
+        catalog.data[:PageLabels] = state.store.ref Nums: pagenum_labels.flatten
+        primary_page_mode, secondary_page_mode = PageModes[(doc.attr 'pdf-page-mode') || @theme.page_mode]
+        catalog.data[:PageMode] = primary_page_mode
+        catalog.data[:NonFullScreenPageMode] = secondary_page_mode if secondary_page_mode
+        nil
+      end
+
+      def add_outline_level outline, sections, num_levels, expand_levels
+        sections.each do |sect|
+          next if (num_levels_for_sect = (sect.attr 'outlinelevels', num_levels).to_i) < (level = sect.level) ||
+            ((sect.option? 'notitle') && sect == sect.document.blocks[-1] && !sect.blocks?)
+          sect_title = sanitize sect.numbered_title formal: true
+          sect_destination = sect.attr 'pdf-destination'
+          if level < num_levels_for_sect && sect.sections?
+            outline.section sect_title, destination: sect_destination, closed: expand_levels < 1 do
+              add_outline_level outline, sect.sections, num_levels_for_sect, (expand_levels - 1)
             end
           else
-            logo_image_attrs = {}
-            relative_to_imagesdir = false
-            if logo_image_from_theme
-              logo_image_path = apply_subs_discretely doc, logo_image_path, subs: [:attributes]
-              logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
-            end
+            outline.page title: sect_title, destination: sect_destination
           end
-          if (::Asciidoctor::Image.target_and_format logo_image_path)[1] == 'pdf'
-            log :error, %(PDF format not supported for title page logo image: #{logo_image_path})
+        end
+      end
+
+      def apply_subs_discretely doc, value, opts = {}
+        if (imagesdir = opts[:imagesdir])
+          imagesdir_to_restore = doc.attr 'imagesdir'
+          doc.set_attr 'imagesdir', imagesdir
+        end
+        # FIXME: get sub_attributes to handle drop-line w/o a warning
+        doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
+        value = value.gsub '\{', '\\\\\\{' if (escaped_attr_ref = value.include? '\{')
+        value = (subs = opts[:subs]) ? (doc.apply_subs value, subs) : (doc.apply_subs value)
+        value = (value.split LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
+        value = value.gsub '\{', '{' if escaped_attr_ref
+        doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
+        if imagesdir
+          if imagesdir_to_restore
+            doc.set_attr 'imagesdir', imagesdir_to_restore
           else
-            logo_image_attrs['target'] = logo_image_path
-            # NOTE: at the very least, title_align will be a valid alignment value
-            logo_image_attrs['align'] = [(logo_image_attrs.delete 'align'), @theme.title_page_logo_align, title_align.to_s].find {|val| (BlockAlignmentNames.include? val) }
-            if (logo_image_top = logo_image_attrs['top'] || @theme.title_page_logo_top)
-              initial_y, @y = @y, (resolve_top logo_image_top)
-            end
-            # NOTE: pinned option keeps image on same page
-            indent (@theme.title_page_logo_margin_left || 0), (@theme.title_page_logo_margin_right || 0) do
-              # FIXME: add API to Asciidoctor for creating blocks outside of extensions
-              convert_image (::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs), relative_to_imagesdir: relative_to_imagesdir, pinned: true
-            end
-            @y = initial_y if initial_y
+            doc.remove_attr 'imagesdir'
           end
         end
-
-        # TODO: prevent content from spilling to next page
-        theme_font :title_page do
-          if (title_top = @theme.title_page_title_top)
-            @y = resolve_top title_top
-          end
-          unless @theme.title_page_title_display == 'none'
-            doctitle = doc.doctitle partition: true
-            move_down @theme.title_page_title_margin_top || 0
-            indent (@theme.title_page_title_margin_left || 0), (@theme.title_page_title_margin_right || 0) do
-              theme_font :title_page_title do
-                ink_prose doctitle.main, align: title_align, margin: 0
-              end
-            end
-            move_down @theme.title_page_title_margin_bottom || 0
-          end
-          if @theme.title_page_subtitle_display != 'none' && (subtitle = (doctitle || (doc.doctitle partition: true)).subtitle)
-            move_down @theme.title_page_subtitle_margin_top || 0
-            indent (@theme.title_page_subtitle_margin_left || 0), (@theme.title_page_subtitle_margin_right || 0) do
-              theme_font :title_page_subtitle do
-                ink_prose subtitle, align: title_align, margin: 0
-              end
-            end
-            move_down @theme.title_page_subtitle_margin_bottom || 0
-          end
-          if @theme.title_page_authors_display != 'none' && (doc.attr? 'authors')
-            move_down @theme.title_page_authors_margin_top || 0
-            indent (@theme.title_page_authors_margin_left || 0), (@theme.title_page_authors_margin_right || 0) do
-              generic_authors_content = @theme.title_page_authors_content
-              authors_content = {
-                name_only: @theme.title_page_authors_content_name_only || generic_authors_content,
-                with_email: @theme.title_page_authors_content_with_email || generic_authors_content,
-                with_url: @theme.title_page_authors_content_with_url || generic_authors_content,
-              }
-              authors = doc.authors.map.with_index do |author, idx|
-                with_author doc, author, idx == 0 do
-                  author_content_key = (url = doc.attr 'url') ? ((url.start_with? 'mailto:') ? :with_email : :with_url) : :name_only
-                  if (author_content = authors_content[author_content_key])
-                    apply_subs_discretely doc, author_content, drop_lines_with_unresolved_attributes: true, imagesdir: @themesdir
-                  else
-                    doc.attr 'author'
-                  end
-                end
-              end.join @theme.title_page_authors_delimiter
-              theme_font :title_page_authors do
-                ink_prose authors, align: title_align, margin: 0, normalize: true
-              end
-            end
-            move_down @theme.title_page_authors_margin_bottom || 0
-          end
-          unless @theme.title_page_revision_display == 'none' || (revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact).empty?
-            move_down @theme.title_page_revision_margin_top || 0
-            revision_text = revision_info.join @theme.title_page_revision_delimiter
-            if (revremark = doc.attr 'revremark')
-              revision_text = %(#{revision_text}: #{revremark})
-            end
-            indent (@theme.title_page_revision_margin_left || 0), (@theme.title_page_revision_margin_right || 0) do
-              theme_font :title_page_revision do
-                ink_prose revision_text, align: title_align, margin: 0, normalize: false
-              end
-            end
-            move_down @theme.title_page_revision_margin_bottom || 0
-          end
-        end
-
-        ink_prose DummyText, margin: 0, line_height: 1, normalize: false if page.empty?
-        true
+        value
       end
-
-      def ink_cover_page doc, face
-        image_path, image_opts = resolve_background_image doc, @theme, %(#{face}-cover-image), theme_key: %(cover_#{face}_image).to_sym, symbolic_paths: ['', '~']
-        if image_path
-          if image_path.empty?
-            go_to_page page_count if face == :back
-            start_new_page_discretely
-            # NOTE: open graphics state to prevent page from being reused
-            open_graphics_state if face == :front
-            return
-          elsif image_path == '~'
-            @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress'
-            return
-          end
-
-          go_to_page page_count if face == :back
-          if image_opts[:format] == 'pdf'
-            import_page image_path, (image_opts.merge advance: face != :back, advance_if_missing: false)
-          else
-            begin
-              image_page image_path, image_opts
-            rescue
-              log :warn, %(could not embed #{face} cover image: #{image_path}; #{$!.message})
-            end
-          end
-        end
-      end
-
-      def stamp_foreground_image doc, has_front_cover
-        pages = state.pages
-        if (first_page = (has_front_cover ? (pages.slice 1, pages.size) : pages).find {|it| !it.imported_page? }) &&
-            (first_page_num = (pages.index first_page) + 1) &&
-            (fg_image = resolve_background_image doc, @theme, 'page-foreground-image') && fg_image[0]
-          go_to_page first_page_num
-          create_stamp 'foreground-image' do
-            canvas { image fg_image[0], ({ position: :center, vposition: :center }.merge fg_image[1]) }
-          end
-          stamp 'foreground-image'
-          (first_page_num.next..page_count).each do |num|
-            go_to_page num
-            stamp 'foreground-image' unless page.imported_page?
-          end
-        end
-      end
-
-      def start_new_chapter chapter
-        start_new_page unless at_page_top?
-        # TODO: must call update_colors before advancing to next page if start_new_page is called in ink_chapter_title
-        start_new_page if @ppbook && verso_page? && !(chapter.option? 'nonfacing')
-      end
-
-      alias start_new_part start_new_chapter
 
       # Position the cursor for where to ink the specified section title or discrete heading node.
       #
@@ -2936,93 +2743,168 @@ module Asciidoctor
         nil
       end
 
-      def ink_chapter_title node, title, opts = {}
-        ink_general_heading node, title, (opts.merge outdent: true)
-      end
-
-      alias ink_part_title ink_chapter_title
-
-      def ink_general_heading _node, title, opts = {}
-        ink_heading title, opts
-      end
-
-      # NOTE: ink_heading doesn't set the theme font because it's used for various types of headings
-      def ink_heading string, opts = {}
-        if (h_level = opts[:level])
-          h_category = %(heading_h#{h_level})
-        end
-        unless (top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top))
-          if at_page_top?
-            if h_category && (top_margin = @theme[%(#{h_category}_margin_page_top)] || @theme.heading_margin_page_top) > 0
-              move_down top_margin
-            end
-            top_margin = 0
-          else
-            top_margin = (h_category ? @theme[%(#{h_category}_margin_top)] : nil) || @theme.heading_margin_top
-          end
-        end
-        bot_margin = margin || (opts.delete :margin_bottom) || (h_category ? @theme[%(#{h_category}_margin_bottom)] : nil) || @theme.heading_margin_bottom
-        if (transform = resolve_text_transform opts)
-          string = transform_text string, transform
-        end
-        outdent_section opts.delete :outdent do
-          margin_top top_margin
-          start_cursor = cursor
-          start_page_number = page_number
-          pad_box h_category ? @theme[%(#{h_category}_padding)] : nil do
-            # QUESTION: should we move inherited styles to typeset_text?
-            if (inherited = apply_text_decoration font_styles, :heading, h_level).empty?
-              inline_format_opts = true
+      # NOTE: only used when tabsize attribute is not specified
+      # tabs must always be replaced with spaces in order for the indentation guards to work
+      def expand_tabs string
+        if string.nil_or_empty?
+          ''
+        elsif string.include? TAB
+          full_tab_space = ' ' * (tab_size = 4)
+          (string.split LF, -1).map do |line|
+            if line.empty? || !(tab_idx = line.index TAB)
+              line
             else
-              inline_format_opts = [{ inherited: inherited }]
+              if tab_idx == 0
+                leading_tabs = 0
+                line.each_byte do |b|
+                  break unless b == 9
+                  leading_tabs += 1
+                end
+                line = %(#{full_tab_space * leading_tabs}#{rest = line.slice leading_tabs, line.length})
+                next line unless rest.include? TAB
+              end
+              # keeps track of how many spaces were added to adjust offset in match data
+              spaces_added = 0
+              idx = 0
+              result = ''
+              line.each_char do |c|
+                if c == TAB
+                  # calculate how many spaces this tab represents, then replace tab with spaces
+                  if (offset = idx + spaces_added) % tab_size == 0
+                    spaces_added += (tab_size - 1)
+                    result += full_tab_space
+                  else
+                    unless (spaces = tab_size - offset % tab_size) == 1
+                      spaces_added += (spaces - 1)
+                    end
+                    result += (' ' * spaces)
+                  end
+                else
+                  result += c
+                end
+                idx += 1
+              end
+              result
             end
-            typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
-              color: @font_color,
-              inline_format: inline_format_opts,
-              align: @base_text_align.to_sym,
-            }.merge(opts)
-          end
-          if h_category && @theme[%(#{h_category}_border_width)] &&
-              (@theme[%(#{h_category}_border_color)] || @theme.base_border_color) && page_number == start_page_number
-            float do
-              bounding_box [bounds.left, start_cursor], width: bounds.width, height: start_cursor - cursor do
-                theme_fill_and_stroke_bounds h_category
+          end.join LF
+        else
+          string
+        end
+      end
+
+      # Extract callout marks from string, indexed by 0-based line number
+      # Return an Array with the processed string as the first argument
+      # and the mapping of lines to conums as the second.
+      def extract_conums string
+        conum_mapping = {}
+        auto_num = 0
+        string = (string.split LF).map.with_index do |line, line_num|
+          # FIXME: we get extra spaces before numbers if more than one on a line
+          if line.include? '<'
+            line = line.gsub CalloutExtractRx do
+              # honor the escape
+              if $1 == ?\\
+                $&.sub $1, ''
+              else
+                (conum_mapping[line_num] ||= []) << ($3 == '.' ? (auto_num += 1) : $3.to_i)
+                ''
               end
             end
+            # NOTE: use first position to store space that precedes conums
+            if (conum_mapping.key? line_num) && (line.end_with? ' ')
+              trimmed_line = line.rstrip
+              conum_mapping[line_num].unshift line.slice trimmed_line.length, line.length
+              line = trimmed_line
+            end
           end
-          margin_bottom bot_margin
+          line
+        end.join LF
+        conum_mapping = nil if conum_mapping.empty?
+        [string, conum_mapping]
+      end
+
+      # Restore the conums into the Array of formatted text fragments
+      #--
+      # QUESTION: can this be done more efficiently?
+      # QUESTION: can we reuse arrange_fragments_by_line?
+      def restore_conums fragments, conum_mapping, linenums = nil, highlight_lines = nil
+        lines = []
+        line_num = 0
+        # reorganize the fragments into an array of lines
+        fragments.each do |fragment|
+          line = (lines[line_num] ||= [])
+          if (text = fragment[:text]) == LF
+            lines[line_num += 1] ||= []
+          elsif text.include? LF
+            (text.split LF, -1).each_with_index do |line_in_fragment, idx|
+              line = (lines[line_num += 1] ||= []) unless idx == 0
+              line << (fragment.merge text: line_in_fragment) unless line_in_fragment.empty?
+            end
+          else
+            line << fragment
+          end
+        end
+        conum_font_color = @theme.conum_font_color
+        if (conum_font_name = @theme.conum_font_family) == font_name
+          conum_font_name = nil
+        end
+        last_line_num = lines.size - 1
+        if linenums
+          pad_size = (last_line_num + 1).to_s.length
+          linenum_color = @theme.code_linenum_font_color
+        end
+        # append conums to appropriate lines, then flatten to an array of fragments
+        lines.flat_map.with_index do |line, cur_line_num|
+          last_line = cur_line_num == last_line_num
+          visible_line_num = cur_line_num + (linenums || 1)
+          if highlight_lines && (highlight_bg_color = highlight_lines[visible_line_num])
+            line.unshift text: DummyText, background_color: highlight_bg_color, highlight: true, inline_block: true, extend: true, width: 0, callback: [FormattedText::TextBackgroundAndBorderRenderer]
+          end
+          line.unshift text: %(#{visible_line_num.to_s.rjust pad_size} ), linenum: visible_line_num, color: linenum_color if linenums
+          if conum_mapping && (conums = conum_mapping.delete cur_line_num)
+            line << { text: conums.shift } if ::String === conums[0]
+            conum_text = conums.map {|num| conum_glyph num }.join ' '
+            conum_fragment = { text: conum_text }
+            conum_fragment[:color] = conum_font_color if conum_font_color
+            conum_fragment[:font] = conum_font_name if conum_font_name
+            line << conum_fragment
+          end
+          line << { text: LF } unless last_line
+          line
         end
       end
 
-      # NOTE: inline_format is true by default
-      def ink_prose string, opts = {}
-        top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || 0
-        bot_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom
-        if (transform = resolve_text_transform opts)
-          string = transform_text string, transform
+      def fallback_svg_font_name
+        @theme.svg_fallback_font_family || @theme.svg_font_family || @theme.base_font_family
+      end
+
+      # Add an indentation guard at the start of indented lines.
+      # Expand tabs to spaces if tabs are present
+      def guard_indentation string
+        unless (string = expand_tabs string).empty?
+          string[0] = GuardedIndent if string.start_with? ' '
+          string.gsub! InnerIndent, GuardedInnerIndent if string.include? InnerIndent
         end
-        string = hyphenate_text string, @hyphenator if (opts.delete :hyphenate) && (defined? @hyphenator)
-        # NOTE: used by extensions; ensures linked text gets formatted using the link styles
-        if (anchor = opts.delete :anchor)
-          string = anchor == true ? %(<a>#{string}</a>) : %(<a anchor="#{anchor}">#{string}</a>)
+        string
+      end
+
+      def guard_indentation_in_fragments fragments
+        start_of_line = true
+        fragments.each do |fragment|
+          next if (text = fragment[:text]).empty?
+          if start_of_line && (text.start_with? ' ')
+            fragment[:text] = GuardedIndent + (((text = text.slice 1, text.length).include? InnerIndent) ? (text.gsub InnerIndent, GuardedInnerIndent) : text)
+          elsif text.include? InnerIndent
+            fragment[:text] = text.gsub InnerIndent, GuardedInnerIndent
+          end
+          start_of_line = text.end_with? LF
         end
-        margin_top top_margin
-        # NOTE: normalize makes endlines soft (replaces "\n" with ' ')
-        inline_format_opts = { normalize: (opts.delete :normalize) != false }
-        if (styles = opts.delete :styles)
-          inline_format_opts[:inherited] = {
-            styles: styles,
-            text_decoration_color: (opts.delete :text_decoration_color),
-            text_decoration_width: (opts.delete :text_decoration_width),
-          }.compact
-        end
-        result = typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
-          color: @font_color,
-          inline_format: [inline_format_opts],
-          align: @base_text_align.to_sym,
-        }.merge(opts)
-        margin_bottom bot_margin
-        result
+        fragments
+      end
+
+      def height_of_typeset_text string, opts = {}
+        line_metrics = (calc_line_metrics opts[:line_height] || @base_line_height)
+        (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + (opts[:single_line] ? 0 : line_metrics.padding_bottom)
       end
 
       # Render the caption in the current document. If the dry_run option is true, return the height.
@@ -3137,147 +3019,320 @@ module Asciidoctor
         ink_caption node, category: :table, end: end_, block_align: table_alignment, block_width: table_width, max_width: max_width
       end
 
-      def allocate_toc doc, toc_num_levels, toc_start_cursor, title_page_on
-        toc_start_page_number = page_number
-        to_page = nil
-        extent = dry_run onto: self do
-          to_page = (ink_toc doc, toc_num_levels, toc_start_page_number, toc_start_cursor).end
-          margin_bottom @theme.block_margin_bottom unless title_page_on
-        end
-        # NOTE: patch for custom converters that allocate extra TOC pages without actually creating them
-        if to_page > extent.to.page
-          extent.to.page = to_page
-          extent.to.cursor = bounds.height
-        end
-        # NOTE: reserve pages for the toc; leaves cursor on page after last page in toc
-        if title_page_on
-          extent.each_page { start_new_page }
-        else
-          extent.each_page {|first_page| start_new_page unless first_page }
-          move_cursor_to extent.to.cursor
-        end
-        extent
+      def ink_chapter_title node, title, opts = {}
+        ink_general_heading node, title, (opts.merge outdent: true)
       end
 
-      def get_entries_for_toc node
-        node.sections
-      end
+      alias ink_part_title ink_chapter_title
 
-      # NOTE: num_front_matter_pages not used during a dry run
-      def ink_toc doc, num_levels, toc_page_number, start_cursor, num_front_matter_pages = 0
-        go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
-        start_page_number = page_number
-        move_cursor_to start_cursor
-        unless (toc_title = doc.attr 'toc-title').nil_or_empty?
-          theme_font_cascade [[:heading, level: 2], :toc_title] do
-            toc_title_align = (@theme.toc_title_text_align || @theme.heading_h2_text_align || @theme.heading_text_align || @base_text_align).to_sym
-            ink_general_heading doc, toc_title, align: toc_title_align, level: 2, outdent: true, role: :toctitle
+      def ink_cover_page doc, face
+        image_path, image_opts = resolve_background_image doc, @theme, %(#{face}-cover-image), theme_key: %(cover_#{face}_image).to_sym, symbolic_paths: ['', '~']
+        if image_path
+          if image_path.empty?
+            go_to_page page_count if face == :back
+            start_new_page_discretely
+            # NOTE: open graphics state to prevent page from being reused
+            open_graphics_state if face == :front
+            return
+          elsif image_path == '~'
+            @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress'
+            return
           end
-        end
-        # QUESTION: should we skip this whole method if num_levels < 0?
-        unless num_levels < 0
-          dot_leader = theme_font :toc do
-            # TODO: we could simplify by using nested theme_font :toc_dot_leader
-            if (dot_leader_font_style = @theme.toc_dot_leader_font_style&.to_sym || :normal) != font_style
-              font_style dot_leader_font_style
+
+          go_to_page page_count if face == :back
+          if image_opts[:format] == 'pdf'
+            import_page image_path, (image_opts.merge advance: face != :back, advance_if_missing: false)
+          else
+            begin
+              image_page image_path, image_opts
+            rescue
+              log :warn, %(could not embed #{face} cover image: #{image_path}; #{$!.message})
             end
-            font_size @theme.toc_dot_leader_font_size
-            {
-              font_color: @theme.toc_dot_leader_font_color || @font_color,
-              font_style: dot_leader_font_style,
-              font_size: font_size,
-              levels: ((dot_leader_l = @theme.toc_dot_leader_levels) == 'none' ? ::Set.new :
-                  (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (0..num_levels).to_set)),
-              text: (dot_leader_text = @theme.toc_dot_leader_content || DotLeaderTextDefault),
-              width: dot_leader_text.empty? ? 0 : (rendered_width_of_string dot_leader_text),
-              # TODO: spacer gives a little bit of room between dots and page number
-              spacer: { text: NoBreakSpace, size: (spacer_font_size = @font_size * 0.25) },
-              spacer_width: (rendered_width_of_char NoBreakSpace, size: spacer_font_size),
-            }
           end
-          theme_margin :toc, :top
-          ink_toc_level (get_entries_for_toc doc), num_levels, dot_leader, num_front_matter_pages
         end
-        # NOTE: range must be calculated relative to toc_page_number; absolute page number in scratch document is arbitrary
-        toc_page_numbers = (toc_page_number..(toc_page_number + (page_number - start_page_number)))
-        go_to_page page_count unless scratch?
-        toc_page_numbers
       end
 
-      def ink_toc_level entries, num_levels, dot_leader, num_front_matter_pages
-        # NOTE: font options aren't always reliable, so store size separately
-        toc_font_info = theme_font :toc do
-          { font: font, size: @font_size }
+      # QUESTION: if a footnote ref appears in a separate chapter, should the footnote def be duplicated?
+      def ink_footnotes node
+        return if (fns = (doc = node.document).footnotes - @rendered_footnotes).empty?
+        theme_margin :block, :bottom if node.context == :document || node == node.document.blocks[-1]
+        theme_margin :footnotes, :top
+        with_dry_run do |extent|
+          if (single_page_height = extent&.single_page_height) && (delta = cursor - single_page_height - 0.0001) > 0
+            move_down delta
+          end
+          theme_font :footnotes do
+            (title = doc.attr 'footnotes-title') && (ink_caption title, category: :footnotes)
+            item_spacing = @theme.footnotes_item_spacing
+            index_offset = @rendered_footnotes.length
+            sect_xreftext = node.context == :section && (node.xreftext node.document.attr 'xrefstyle')
+            fns.each do |fn|
+              label = (index = fn.index) - index_offset
+              if sect_xreftext
+                fn.singleton_class.send :attr_accessor, :label unless fn.respond_to? :label=
+                fn.label = %(#{label} - #{sect_xreftext})
+              end
+              ink_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{label}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
+            end
+            @rendered_footnotes += fns if extent
+          end
         end
-        hanging_indent = @theme.toc_hanging_indent
-        entries.each do |entry|
-          next if (num_levels_for_entry = (entry.attr 'toclevels', num_levels).to_i) < (entry_level = entry.level + 1).pred ||
-            !(entry_anchor = (entry.attr 'pdf-anchor') || entry.id) ||
-            ((entry.option? 'notitle') && entry == entry.document.blocks[-1] && !entry.blocks?)
-          theme_font :toc, level: entry_level do
-            entry_title = entry.context == :section ? entry.numbered_title : (entry.title? ? entry.title : (entry.xreftext 'basic'))
-            next if entry_title.empty?
-            entry_title = transform_text entry_title, @text_transform if @text_transform
-            pgnum_label_placeholder_width = rendered_width_of_string '0' * @toc_max_pagenum_digits
-            # NOTE: only write title (excluding dots and page number) if this is a dry run
-            if scratch?
-              indent 0, pgnum_label_placeholder_width do
-                # NOTE: must wrap title in empty anchor element in case links are styled with different font family / size
-                ink_prose entry_title, anchor: true, normalize: false, hanging_indent: hanging_indent, normalize_line_height: true, margin: 0
-              end
+        nil
+      end
+
+      def ink_general_heading _node, title, opts = {}
+        ink_heading title, opts
+      end
+
+      # NOTE: ink_heading doesn't set the theme font because it's used for various types of headings
+      def ink_heading string, opts = {}
+        if (h_level = opts[:level])
+          h_category = %(heading_h#{h_level})
+        end
+        unless (top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top))
+          if at_page_top?
+            if h_category && (top_margin = @theme[%(#{h_category}_margin_page_top)] || @theme.heading_margin_page_top) > 0
+              move_down top_margin
+            end
+            top_margin = 0
+          else
+            top_margin = (h_category ? @theme[%(#{h_category}_margin_top)] : nil) || @theme.heading_margin_top
+          end
+        end
+        bot_margin = margin || (opts.delete :margin_bottom) || (h_category ? @theme[%(#{h_category}_margin_bottom)] : nil) || @theme.heading_margin_bottom
+        if (transform = resolve_text_transform opts)
+          string = transform_text string, transform
+        end
+        outdent_section opts.delete :outdent do
+          margin_top top_margin
+          start_cursor = cursor
+          start_page_number = page_number
+          pad_box h_category ? @theme[%(#{h_category}_padding)] : nil do
+            # QUESTION: should we move inherited styles to typeset_text?
+            if (inherited = apply_text_decoration font_styles, :heading, h_level).empty?
+              inline_format_opts = true
             else
-              if !(physical_pgnum = entry.attr 'pdf-page-start') &&
-                  (target_page_ref = (get_dest entry_anchor)&.first) &&
-                  (target_page_idx = state.pages.index {|candidate| candidate.dictionary == target_page_ref })
-                physical_pgnum = target_page_idx + 1
+              inline_format_opts = [{ inherited: inherited }]
+            end
+            typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
+              color: @font_color,
+              inline_format: inline_format_opts,
+              align: @base_text_align.to_sym,
+            }.merge(opts)
+          end
+          if h_category && @theme[%(#{h_category}_border_width)] &&
+              (@theme[%(#{h_category}_border_color)] || @theme.base_border_color) && page_number == start_page_number
+            float do
+              bounding_box [bounds.left, start_cursor], width: bounds.width, height: start_cursor - cursor do
+                theme_fill_and_stroke_bounds h_category
               end
-              if physical_pgnum
-                virtual_pgnum = physical_pgnum - num_front_matter_pages
-                pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new physical_pgnum, :lower) : virtual_pgnum).to_s
-              else
-                pgnum_label = '?'
+            end
+          end
+          margin_bottom bot_margin
+        end
+      end
+
+      # NOTE: inline_format is true by default
+      def ink_prose string, opts = {}
+        top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || 0
+        bot_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom
+        if (transform = resolve_text_transform opts)
+          string = transform_text string, transform
+        end
+        string = hyphenate_text string, @hyphenator if (opts.delete :hyphenate) && (defined? @hyphenator)
+        # NOTE: used by extensions; ensures linked text gets formatted using the link styles
+        if (anchor = opts.delete :anchor)
+          string = anchor == true ? %(<a>#{string}</a>) : %(<a anchor="#{anchor}">#{string}</a>)
+        end
+        margin_top top_margin
+        # NOTE: normalize makes endlines soft (replaces "\n" with ' ')
+        inline_format_opts = { normalize: (opts.delete :normalize) != false }
+        if (styles = opts.delete :styles)
+          inline_format_opts[:inherited] = {
+            styles: styles,
+            text_decoration_color: (opts.delete :text_decoration_color),
+            text_decoration_width: (opts.delete :text_decoration_width),
+          }.compact
+        end
+        result = typeset_text string, (calc_line_metrics (opts.delete :line_height) || @base_line_height), {
+          color: @font_color,
+          inline_format: [inline_format_opts],
+          align: @base_text_align.to_sym,
+        }.merge(opts)
+        margin_bottom bot_margin
+        result
+      end
+
+      def allocate_running_content_layout doc, page, periphery, cache
+        cache[layout = page.layout] ||= begin
+          page_margin_recto = @page_margin_by_side[:recto]
+          trim_margin_recto = @theme[%(#{periphery}_recto_margin)] || @theme[%(#{periphery}_margin)] || [0, 'inherit', 0, 'inherit']
+          trim_margin_recto = (expand_margin_value trim_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] : v.to_f }
+          trim_content_margin_recto = @theme[%(#{periphery}_recto_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
+          trim_content_margin_recto = (expand_margin_value trim_content_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] - trim_margin_recto[i] : v.to_f }
+          if (trim_padding_recto = @theme[%(#{periphery}_recto_padding)] || @theme[%(#{periphery}_padding)])
+            trim_padding_recto = (expand_padding_value trim_padding_recto).map.with_index {|v, i| v + trim_content_margin_recto[i] }
+          else
+            trim_padding_recto = trim_content_margin_recto
+          end
+          page_margin_verso = @page_margin_by_side[:verso]
+          trim_margin_verso = @theme[%(#{periphery}_verso_margin)] || @theme[%(#{periphery}_margin)] || [0, 'inherit', 0, 'inherit']
+          trim_margin_verso = (expand_margin_value trim_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] : v.to_f }
+          trim_content_margin_verso = @theme[%(#{periphery}_verso_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
+          trim_content_margin_verso = (expand_margin_value trim_content_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] - trim_margin_verso[i] : v.to_f }
+          if (trim_padding_verso = @theme[%(#{periphery}_verso_padding)] || @theme[%(#{periphery}_padding)])
+            trim_padding_verso = (expand_padding_value trim_padding_verso).map.with_index {|v, i| v + trim_content_margin_verso[i] }
+          else
+            trim_padding_verso = trim_content_margin_verso
+          end
+          valign, valign_offset = @theme[%(#{periphery}_vertical_align)]
+          if (valign = valign&.to_sym || :middle) == :middle
+            valign = :center
+          end
+          trim_styles = {
+            line_metrics: (trim_line_metrics = calc_line_metrics @theme[%(#{periphery}_line_height)] || @base_line_height),
+            # NOTE: we've already verified this property is set
+            height: (trim_height = @theme[%(#{periphery}_height)]),
+            bg_color: (resolve_theme_color %(#{periphery}_background_color).to_sym),
+            border_width: (trim_border_width = @theme[%(#{periphery}_border_width)] || 0),
+            border_color: trim_border_width > 0 ? (resolve_theme_color %(#{periphery}_border_color).to_sym, @theme.base_border_color) : nil,
+            border_style: (@theme[%(#{periphery}_border_style)]&.to_sym || :solid),
+            column_rule_width: (trim_column_rule_width = @theme[%(#{periphery}_column_rule_width)] || 0),
+            column_rule_color: trim_column_rule_width > 0 ? (resolve_theme_color %(#{periphery}_column_rule_color).to_sym) : nil,
+            column_rule_style: (@theme[%(#{periphery}_column_rule_style)]&.to_sym || :solid),
+            column_rule_spacing: (@theme[%(#{periphery}_column_rule_spacing)] || 0),
+            valign: valign_offset ? [valign, valign_offset] : valign,
+            img_valign: @theme[%(#{periphery}_image_vertical_align)],
+            top: {
+              recto: periphery == :header ? page_height - trim_margin_recto[0] : trim_height + trim_margin_recto[2],
+              verso: periphery == :header ? page_height - trim_margin_verso[0] : trim_height + trim_margin_verso[2],
+            },
+            left: {
+              recto: (trim_left_recto = trim_margin_recto[3]),
+              verso: (trim_left_verso = trim_margin_verso[3]),
+            },
+            width: {
+              recto: (trim_width_recto = page_width - trim_left_recto - trim_margin_recto[1]),
+              verso: (trim_width_verso = page_width - trim_left_verso - trim_margin_verso[1]),
+            },
+            padding: {
+              recto: trim_padding_recto,
+              verso: trim_padding_verso,
+            },
+            content_left: {
+              recto: trim_left_recto + trim_padding_recto[3],
+              verso: trim_left_verso + trim_padding_verso[3],
+            },
+            content_width: (trim_content_width = {
+              recto: trim_width_recto - trim_padding_recto[1] - trim_padding_recto[3],
+              verso: trim_width_verso - trim_padding_verso[1] - trim_padding_verso[3],
+            }),
+            content_height: (trim_content_height = {
+              recto: trim_height - trim_padding_recto[0] - trim_padding_recto[2] - (trim_border_width * 0.5),
+              verso: trim_height - trim_padding_verso[0] - trim_padding_verso[2] - (trim_border_width * 0.5),
+            }),
+            prose_content_height: {
+              recto: trim_content_height[:recto] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom,
+              verso: trim_content_height[:verso] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom,
+            },
+            # NOTE: content offset adjusts y position to account for border
+            content_offset: (periphery == :footer ? trim_border_width * 0.5 : 0),
+          }
+          case trim_styles[:img_valign]
+          when nil
+            trim_styles[:img_valign] = valign
+          when 'middle'
+            trim_styles[:img_valign] = :center
+          when 'top', 'center', 'bottom'
+            trim_styles[:img_valign] = trim_styles[:img_valign].to_sym
+          end
+
+          if (trim_bg_image_recto = resolve_background_image doc, @theme, %(#{periphery}_background_image).to_sym, container_size: [trim_width_recto, trim_height])&.first
+            trim_bg_image = { recto: trim_bg_image_recto }
+            if trim_width_recto == trim_width_verso
+              trim_bg_image[:verso] = trim_bg_image_recto
+            else
+              trim_bg_image[:verso] = resolve_background_image doc, @theme, %(#{periphery}_background_image).to_sym, container_size: [trim_width_verso, trim_height]
+            end
+          end
+
+          colspec_dict = PageSides.each_with_object({}) do |side, acc|
+            side_trim_content_width = trim_content_width[side]
+            if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)] || @theme[%(#{periphery}_columns)])
+              case (colspecs = (custom_colspecs.to_s.tr ',', ' ').split).size
+              when 0, 1
+                colspecs = { left: '0', center: colspecs[0] || '100', right: '0' }
+              when 2
+                colspecs = { left: colspecs[0], center: '0', right: colspecs[1] }
+              else # 3
+                colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
               end
-              start_page_number = page_number
-              start_cursor = cursor
-              start_dots = nil
-              entry_title_inherited = (apply_text_decoration ::Set.new, :toc, entry_level).merge anchor: entry_anchor, color: @font_color
-              # NOTE: use text formatter to add anchor overlay to avoid using inline format with synthetic anchor tag
-              entry_title_fragments = text_formatter.format entry_title, inherited: entry_title_inherited
-              line_metrics = calc_line_metrics @base_line_height
-              indent 0, pgnum_label_placeholder_width do
-                (entry_title_fragments[-1][:callback] ||= []) << (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
-                typeset_formatted_text entry_title_fragments, line_metrics, hanging_indent: hanging_indent, normalize_line_height: true
-                start_dots = last_fragment_pos.right + hanging_indent
-                last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
-                start_cursor = last_fragment_cursor if last_fragment_pos.page_number > start_page_number || (start_cursor - last_fragment_cursor) > line_metrics.height
-              end
-              end_cursor = cursor
-              move_cursor_to start_cursor
-              # NOTE: we're guaranteed to be on the same page as the final line of the entry
-              if dot_leader[:width] > 0 && (dot_leader[:levels].include? entry_level.pred)
-                pgnum_label_width = rendered_width_of_string pgnum_label
-                pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
-                save_font do
-                  # NOTE: the same font is used for dot leaders throughout toc
-                  set_font toc_font_info[:font], dot_leader[:font_size]
-                  font_style dot_leader[:font_style]
-                  num_dots = [((bounds.width - start_dots - dot_leader[:spacer_width] - pgnum_label_width) / dot_leader[:width]).floor, 0].max
-                  # FIXME: dots don't line up in columns if width of page numbers differ
-                  typeset_formatted_text [
-                    { text: dot_leader[:text] * num_dots, color: dot_leader[:font_color] },
-                    dot_leader[:spacer],
-                    ({ text: pgnum_label, anchor: entry_anchor }.merge pgnum_label_font_settings),
-                  ], line_metrics, align: :right
+              tot_width = 0
+              side_colspecs = colspecs.map do |col, spec|
+                if (alignment_char = spec.chr).to_i.to_s == alignment_char
+                  alignment = :left
+                  rel_width = spec.to_f
+                else
+                  alignment = AlignmentTable[alignment_char]
+                  rel_width = (spec.slice 1, spec.length).to_f
+                end
+                tot_width += rel_width
+                [col, align: alignment, width: rel_width, x: 0]
+              end.to_h
+              # QUESTION: should we allow the columns to overlap (capping width at 100%)?
+              side_colspecs.each {|_, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
+              side_colspecs[:right][:x] = (side_colspecs[:center][:x] = side_colspecs[:left][:width]) + side_colspecs[:center][:width]
+              acc[side] = side_colspecs
+            else
+              acc[side] = {
+                left: { align: :left, width: side_trim_content_width, x: 0 },
+                center: { align: :center, width: side_trim_content_width, x: 0 },
+                right: { align: :right, width: side_trim_content_width, x: 0 },
+              }
+            end
+          end
+
+          content_dict = PageSides.each_with_object({}) do |side, acc|
+            side_content = {}
+            ColumnPositions.each do |position|
+              next if (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
+              val = val.to_s unless ::String === val
+              if (val.include? ':') && val =~ ImageAttributeValueRx
+                attrlist = $2
+                image_attrs = (AttributeList.new attrlist).parse %w(alt width)
+                image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
+                if (image_path = resolve_image_path doc, image_path, image_format, @themesdir) && (::File.readable? image_path)
+                  image_opts = resolve_image_options image_path, image_format, image_attrs, container_size: [colspec_dict[side][position][:width], trim_content_height[side]]
+                  side_content[position] = [image_path, image_opts, image_attrs['link']]
+                else
+                  # NOTE: allows inline image handler to report invalid reference and replace with alt text
+                  side_content[position] = %(image:#{image_path}[#{attrlist}])
                 end
               else
-                typeset_formatted_text [{ text: pgnum_label, color: @font_color, anchor: entry_anchor }], line_metrics, align: :right
+                side_content[position] = val
               end
-              move_cursor_to end_cursor
+            end
+
+            acc[side] = side_content
+          end
+
+          if (trim_bg_color = trim_styles[:bg_color]) || trim_bg_image || trim_border_width > 0
+            stamp_names = { recto: %(#{layout}_#{periphery}_recto), verso: %(#{layout}_#{periphery}_verso) }
+            PageSides.each do |side|
+              create_stamp stamp_names[side] do
+                canvas do
+                  bounding_box [trim_styles[:left][side], trim_styles[:top][side]], width: trim_styles[:width][side], height: trim_height do
+                    fill_bounds trim_bg_color if trim_bg_color
+                    # NOTE: must draw line before image or SVG will cause border to disappear
+                    stroke_horizontal_rule trim_styles[:border_color], line_width: trim_border_width, line_style: trim_styles[:border_style], at: (periphery == :header ? bounds.height : 0) if trim_border_width > 0
+                    image trim_bg_image[side][0], ({ position: :center, vposition: :center }.merge trim_bg_image[side][1]) if trim_bg_image
+                  end
+                end
+              end
             end
           end
-          indent @theme.toc_indent do
-            ink_toc_level (get_entries_for_toc entry), num_levels_for_entry, dot_leader, num_front_matter_pages
-          end if num_levels_for_entry >= entry_level
+
+          [trim_styles, colspec_dict, content_dict, stamp_names]
         end
       end
 
@@ -3500,390 +3555,288 @@ module Asciidoctor
         nil
       end
 
-      def allocate_running_content_layout doc, page, periphery, cache
-        cache[layout = page.layout] ||= begin
-          page_margin_recto = @page_margin_by_side[:recto]
-          trim_margin_recto = @theme[%(#{periphery}_recto_margin)] || @theme[%(#{periphery}_margin)] || [0, 'inherit', 0, 'inherit']
-          trim_margin_recto = (expand_margin_value trim_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] : v.to_f }
-          trim_content_margin_recto = @theme[%(#{periphery}_recto_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
-          trim_content_margin_recto = (expand_margin_value trim_content_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] - trim_margin_recto[i] : v.to_f }
-          if (trim_padding_recto = @theme[%(#{periphery}_recto_padding)] || @theme[%(#{periphery}_padding)])
-            trim_padding_recto = (expand_padding_value trim_padding_recto).map.with_index {|v, i| v + trim_content_margin_recto[i] }
-          else
-            trim_padding_recto = trim_content_margin_recto
-          end
-          page_margin_verso = @page_margin_by_side[:verso]
-          trim_margin_verso = @theme[%(#{periphery}_verso_margin)] || @theme[%(#{periphery}_margin)] || [0, 'inherit', 0, 'inherit']
-          trim_margin_verso = (expand_margin_value trim_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] : v.to_f }
-          trim_content_margin_verso = @theme[%(#{periphery}_verso_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
-          trim_content_margin_verso = (expand_margin_value trim_content_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] - trim_margin_verso[i] : v.to_f }
-          if (trim_padding_verso = @theme[%(#{periphery}_verso_padding)] || @theme[%(#{periphery}_padding)])
-            trim_padding_verso = (expand_padding_value trim_padding_verso).map.with_index {|v, i| v + trim_content_margin_verso[i] }
-          else
-            trim_padding_verso = trim_content_margin_verso
-          end
-          valign, valign_offset = @theme[%(#{periphery}_vertical_align)]
-          if (valign = valign&.to_sym || :middle) == :middle
-            valign = :center
-          end
-          trim_styles = {
-            line_metrics: (trim_line_metrics = calc_line_metrics @theme[%(#{periphery}_line_height)] || @base_line_height),
-            # NOTE: we've already verified this property is set
-            height: (trim_height = @theme[%(#{periphery}_height)]),
-            bg_color: (resolve_theme_color %(#{periphery}_background_color).to_sym),
-            border_width: (trim_border_width = @theme[%(#{periphery}_border_width)] || 0),
-            border_color: trim_border_width > 0 ? (resolve_theme_color %(#{periphery}_border_color).to_sym, @theme.base_border_color) : nil,
-            border_style: (@theme[%(#{periphery}_border_style)]&.to_sym || :solid),
-            column_rule_width: (trim_column_rule_width = @theme[%(#{periphery}_column_rule_width)] || 0),
-            column_rule_color: trim_column_rule_width > 0 ? (resolve_theme_color %(#{periphery}_column_rule_color).to_sym) : nil,
-            column_rule_style: (@theme[%(#{periphery}_column_rule_style)]&.to_sym || :solid),
-            column_rule_spacing: (@theme[%(#{periphery}_column_rule_spacing)] || 0),
-            valign: valign_offset ? [valign, valign_offset] : valign,
-            img_valign: @theme[%(#{periphery}_image_vertical_align)],
-            top: {
-              recto: periphery == :header ? page_height - trim_margin_recto[0] : trim_height + trim_margin_recto[2],
-              verso: periphery == :header ? page_height - trim_margin_verso[0] : trim_height + trim_margin_verso[2],
-            },
-            left: {
-              recto: (trim_left_recto = trim_margin_recto[3]),
-              verso: (trim_left_verso = trim_margin_verso[3]),
-            },
-            width: {
-              recto: (trim_width_recto = page_width - trim_left_recto - trim_margin_recto[1]),
-              verso: (trim_width_verso = page_width - trim_left_verso - trim_margin_verso[1]),
-            },
-            padding: {
-              recto: trim_padding_recto,
-              verso: trim_padding_verso,
-            },
-            content_left: {
-              recto: trim_left_recto + trim_padding_recto[3],
-              verso: trim_left_verso + trim_padding_verso[3],
-            },
-            content_width: (trim_content_width = {
-              recto: trim_width_recto - trim_padding_recto[1] - trim_padding_recto[3],
-              verso: trim_width_verso - trim_padding_verso[1] - trim_padding_verso[3],
-            }),
-            content_height: (trim_content_height = {
-              recto: trim_height - trim_padding_recto[0] - trim_padding_recto[2] - (trim_border_width * 0.5),
-              verso: trim_height - trim_padding_verso[0] - trim_padding_verso[2] - (trim_border_width * 0.5),
-            }),
-            prose_content_height: {
-              recto: trim_content_height[:recto] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom,
-              verso: trim_content_height[:verso] - trim_line_metrics.padding_top - trim_line_metrics.padding_bottom,
-            },
-            # NOTE: content offset adjusts y position to account for border
-            content_offset: (periphery == :footer ? trim_border_width * 0.5 : 0),
-          }
-          case trim_styles[:img_valign]
-          when nil
-            trim_styles[:img_valign] = valign
-          when 'middle'
-            trim_styles[:img_valign] = :center
-          when 'top', 'center', 'bottom'
-            trim_styles[:img_valign] = trim_styles[:img_valign].to_sym
-          end
+      # Returns a Boolean indicating whether the title page was created
+      def ink_title_page doc
+        return unless doc.header? && !doc.notitle && @theme.title_page != false
 
-          if (trim_bg_image_recto = resolve_background_image doc, @theme, %(#{periphery}_background_image).to_sym, container_size: [trim_width_recto, trim_height])&.first
-            trim_bg_image = { recto: trim_bg_image_recto }
-            if trim_width_recto == trim_width_verso
-              trim_bg_image[:verso] = trim_bg_image_recto
+        # NOTE: a new page may have already been started at this point, so decide what to do with it
+        if page.empty?
+          page.reset_content if (recycle = @ppbook ? recto_page? : true)
+        elsif @ppbook && page_number > 0 && recto_page?
+          start_new_page
+        end
+
+        side = page_side (recycle ? nil : page_number + 1), @folio_placement[:inverted]
+        prev_bg_image = @page_bg_image[side]
+        prev_bg_color = @page_bg_color
+        if (bg_image = resolve_background_image doc, @theme, 'title-page-background-image')
+          @page_bg_image[side] = bg_image[0] && bg_image
+        end
+        if (bg_color = resolve_theme_color :title_page_background_color)
+          @page_bg_color = bg_color
+        end
+        recycle ? float { init_page self } : start_new_page
+        @page_bg_image[side] = prev_bg_image if bg_image
+        @page_bg_color = prev_bg_color if bg_color
+
+        # NOTE: this is the first page created, so we must set the base font
+        font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
+
+        # QUESTION: allow alignment per element on title page?
+        title_align = (@theme.title_page_text_align || @base_text_align).to_sym
+
+        if @theme.title_page_logo_display != 'none' && (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
+          if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
+            logo_image_attrs = (AttributeList.new $2).parse %w(alt width height)
+            if logo_image_from_theme
+              relative_to_imagesdir = false
+              logo_image_path = apply_subs_discretely doc, $1, subs: [:attributes]
+              logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
             else
-              trim_bg_image[:verso] = resolve_background_image doc, @theme, %(#{periphery}_background_image).to_sym, container_size: [trim_width_verso, trim_height]
+              relative_to_imagesdir = true
+              logo_image_path = $1
+            end
+          else
+            logo_image_attrs = {}
+            relative_to_imagesdir = false
+            if logo_image_from_theme
+              logo_image_path = apply_subs_discretely doc, logo_image_path, subs: [:attributes]
+              logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
             end
           end
+          if (::Asciidoctor::Image.target_and_format logo_image_path)[1] == 'pdf'
+            log :error, %(PDF format not supported for title page logo image: #{logo_image_path})
+          else
+            logo_image_attrs['target'] = logo_image_path
+            # NOTE: at the very least, title_align will be a valid alignment value
+            logo_image_attrs['align'] = [(logo_image_attrs.delete 'align'), @theme.title_page_logo_align, title_align.to_s].find {|val| (BlockAlignmentNames.include? val) }
+            if (logo_image_top = logo_image_attrs['top'] || @theme.title_page_logo_top)
+              initial_y, @y = @y, (resolve_top logo_image_top)
+            end
+            # NOTE: pinned option keeps image on same page
+            indent (@theme.title_page_logo_margin_left || 0), (@theme.title_page_logo_margin_right || 0) do
+              # FIXME: add API to Asciidoctor for creating blocks outside of extensions
+              convert_image (::Asciidoctor::Block.new doc, :image, content_model: :empty, attributes: logo_image_attrs), relative_to_imagesdir: relative_to_imagesdir, pinned: true
+            end
+            @y = initial_y if initial_y
+          end
+        end
 
-          colspec_dict = PageSides.each_with_object({}) do |side, acc|
-            side_trim_content_width = trim_content_width[side]
-            if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)] || @theme[%(#{periphery}_columns)])
-              case (colspecs = (custom_colspecs.to_s.tr ',', ' ').split).size
-              when 0, 1
-                colspecs = { left: '0', center: colspecs[0] || '100', right: '0' }
-              when 2
-                colspecs = { left: colspecs[0], center: '0', right: colspecs[1] }
-              else # 3
-                colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
+        # TODO: prevent content from spilling to next page
+        theme_font :title_page do
+          if (title_top = @theme.title_page_title_top)
+            @y = resolve_top title_top
+          end
+          unless @theme.title_page_title_display == 'none'
+            doctitle = doc.doctitle partition: true
+            move_down @theme.title_page_title_margin_top || 0
+            indent (@theme.title_page_title_margin_left || 0), (@theme.title_page_title_margin_right || 0) do
+              theme_font :title_page_title do
+                ink_prose doctitle.main, align: title_align, margin: 0
               end
-              tot_width = 0
-              side_colspecs = colspecs.map do |col, spec|
-                if (alignment_char = spec.chr).to_i.to_s == alignment_char
-                  alignment = :left
-                  rel_width = spec.to_f
-                else
-                  alignment = AlignmentTable[alignment_char]
-                  rel_width = (spec.slice 1, spec.length).to_f
-                end
-                tot_width += rel_width
-                [col, align: alignment, width: rel_width, x: 0]
-              end.to_h
-              # QUESTION: should we allow the columns to overlap (capping width at 100%)?
-              side_colspecs.each {|_, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
-              side_colspecs[:right][:x] = (side_colspecs[:center][:x] = side_colspecs[:left][:width]) + side_colspecs[:center][:width]
-              acc[side] = side_colspecs
-            else
-              acc[side] = {
-                left: { align: :left, width: side_trim_content_width, x: 0 },
-                center: { align: :center, width: side_trim_content_width, x: 0 },
-                right: { align: :right, width: side_trim_content_width, x: 0 },
+            end
+            move_down @theme.title_page_title_margin_bottom || 0
+          end
+          if @theme.title_page_subtitle_display != 'none' && (subtitle = (doctitle || (doc.doctitle partition: true)).subtitle)
+            move_down @theme.title_page_subtitle_margin_top || 0
+            indent (@theme.title_page_subtitle_margin_left || 0), (@theme.title_page_subtitle_margin_right || 0) do
+              theme_font :title_page_subtitle do
+                ink_prose subtitle, align: title_align, margin: 0
+              end
+            end
+            move_down @theme.title_page_subtitle_margin_bottom || 0
+          end
+          if @theme.title_page_authors_display != 'none' && (doc.attr? 'authors')
+            move_down @theme.title_page_authors_margin_top || 0
+            indent (@theme.title_page_authors_margin_left || 0), (@theme.title_page_authors_margin_right || 0) do
+              generic_authors_content = @theme.title_page_authors_content
+              authors_content = {
+                name_only: @theme.title_page_authors_content_name_only || generic_authors_content,
+                with_email: @theme.title_page_authors_content_with_email || generic_authors_content,
+                with_url: @theme.title_page_authors_content_with_url || generic_authors_content,
               }
-            end
-          end
-
-          content_dict = PageSides.each_with_object({}) do |side, acc|
-            side_content = {}
-            ColumnPositions.each do |position|
-              next if (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
-              val = val.to_s unless ::String === val
-              if (val.include? ':') && val =~ ImageAttributeValueRx
-                attrlist = $2
-                image_attrs = (AttributeList.new attrlist).parse %w(alt width)
-                image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
-                if (image_path = resolve_image_path doc, image_path, image_format, @themesdir) && (::File.readable? image_path)
-                  image_opts = resolve_image_options image_path, image_format, image_attrs, container_size: [colspec_dict[side][position][:width], trim_content_height[side]]
-                  side_content[position] = [image_path, image_opts, image_attrs['link']]
-                else
-                  # NOTE: allows inline image handler to report invalid reference and replace with alt text
-                  side_content[position] = %(image:#{image_path}[#{attrlist}])
-                end
-              else
-                side_content[position] = val
-              end
-            end
-
-            acc[side] = side_content
-          end
-
-          if (trim_bg_color = trim_styles[:bg_color]) || trim_bg_image || trim_border_width > 0
-            stamp_names = { recto: %(#{layout}_#{periphery}_recto), verso: %(#{layout}_#{periphery}_verso) }
-            PageSides.each do |side|
-              create_stamp stamp_names[side] do
-                canvas do
-                  bounding_box [trim_styles[:left][side], trim_styles[:top][side]], width: trim_styles[:width][side], height: trim_height do
-                    fill_bounds trim_bg_color if trim_bg_color
-                    # NOTE: must draw line before image or SVG will cause border to disappear
-                    stroke_horizontal_rule trim_styles[:border_color], line_width: trim_border_width, line_style: trim_styles[:border_style], at: (periphery == :header ? bounds.height : 0) if trim_border_width > 0
-                    image trim_bg_image[side][0], ({ position: :center, vposition: :center }.merge trim_bg_image[side][1]) if trim_bg_image
+              authors = doc.authors.map.with_index do |author, idx|
+                with_author doc, author, idx == 0 do
+                  author_content_key = (url = doc.attr 'url') ? ((url.start_with? 'mailto:') ? :with_email : :with_url) : :name_only
+                  if (author_content = authors_content[author_content_key])
+                    apply_subs_discretely doc, author_content, drop_lines_with_unresolved_attributes: true, imagesdir: @themesdir
+                  else
+                    doc.attr 'author'
                   end
                 end
+              end.join @theme.title_page_authors_delimiter
+              theme_font :title_page_authors do
+                ink_prose authors, align: title_align, margin: 0, normalize: true
               end
             end
+            move_down @theme.title_page_authors_margin_bottom || 0
           end
-
-          [trim_styles, colspec_dict, content_dict, stamp_names]
+          unless @theme.title_page_revision_display == 'none' || (revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact).empty?
+            move_down @theme.title_page_revision_margin_top || 0
+            revision_text = revision_info.join @theme.title_page_revision_delimiter
+            if (revremark = doc.attr 'revremark')
+              revision_text = %(#{revision_text}: #{revremark})
+            end
+            indent (@theme.title_page_revision_margin_left || 0), (@theme.title_page_revision_margin_right || 0) do
+              theme_font :title_page_revision do
+                ink_prose revision_text, align: title_align, margin: 0, normalize: false
+              end
+            end
+            move_down @theme.title_page_revision_margin_bottom || 0
+          end
         end
+
+        ink_prose DummyText, margin: 0, line_height: 1, normalize: false if page.empty?
+        true
       end
 
-      def add_outline doc, num_levels, toc_page_nums, num_front_matter_pages, has_front_cover
-        if ::String === num_levels
-          if num_levels.include? ':'
-            num_levels, expand_levels = num_levels.split ':', 2
-            num_levels = num_levels.empty? ? (doc.attr 'toclevels', 2).to_i : num_levels.to_i
-            expand_levels = expand_levels.to_i
-          else
-            num_levels = expand_levels = num_levels.to_i
-          end
+      def allocate_toc doc, toc_num_levels, toc_start_cursor, title_page_on
+        toc_start_page_number = page_number
+        to_page = nil
+        extent = dry_run onto: self do
+          to_page = (ink_toc doc, toc_num_levels, toc_start_page_number, toc_start_cursor).end
+          margin_bottom @theme.block_margin_bottom unless title_page_on
+        end
+        # NOTE: patch for custom converters that allocate extra TOC pages without actually creating them
+        if to_page > extent.to.page
+          extent.to.page = to_page
+          extent.to.cursor = bounds.height
+        end
+        # NOTE: reserve pages for the toc; leaves cursor on page after last page in toc
+        if title_page_on
+          extent.each_page { start_new_page }
         else
-          expand_levels = num_levels
+          extent.each_page {|first_page| start_new_page unless first_page }
+          move_cursor_to extent.to.cursor
         end
-        front_matter_counter = RomanNumeral.new 0, :lower
-        pagenum_labels = {}
-
-        num_front_matter_pages.times do |n|
-          pagenum_labels[n] = { P: (::PDF::Core::LiteralString.new front_matter_counter.next!.to_s) }
-        end
-
-        # add labels for each content page, which is required for reader's page navigator to work correctly
-        (num_front_matter_pages..(page_count - 1)).each_with_index do |n, i|
-          pagenum_labels[n] = { P: (::PDF::Core::LiteralString.new (i + 1).to_s) }
-        end
-
-        unless toc_page_nums.none? || (toc_title = doc.attr 'toc-title').nil_or_empty?
-          toc_section = insert_toc_section doc, toc_title, toc_page_nums
-        end
-
-        outline.define do
-          initial_pagenum = has_front_cover ? 2 : 1
-          # FIXME: use sanitize: :plain_text on Document#doctitle once available
-          if document.page_count >= initial_pagenum && (outline_title = doc.attr 'outline-title') &&
-              (outline_title.empty? ? (outline_title = document.resolve_doctitle doc) : outline_title)
-            page title: (document.sanitize outline_title), destination: (document.dest_top initial_pagenum)
-          end
-          # QUESTION: is there any way to get add_outline_level to invoke in the context of the outline?
-          document.add_outline_level self, doc.sections, num_levels, expand_levels
-        end if doc.attr? 'outline'
-
-        toc_section.parent.blocks.delete toc_section if toc_section
-
-        catalog.data[:PageLabels] = state.store.ref Nums: pagenum_labels.flatten
-        primary_page_mode, secondary_page_mode = PageModes[(doc.attr 'pdf-page-mode') || @theme.page_mode]
-        catalog.data[:PageMode] = primary_page_mode
-        catalog.data[:NonFullScreenPageMode] = secondary_page_mode if secondary_page_mode
-        nil
+        extent
       end
 
-      def add_outline_level outline, sections, num_levels, expand_levels
-        sections.each do |sect|
-          next if (num_levels_for_sect = (sect.attr 'outlinelevels', num_levels).to_i) < (level = sect.level) ||
-            ((sect.option? 'notitle') && sect == sect.document.blocks[-1] && !sect.blocks?)
-          sect_title = sanitize sect.numbered_title formal: true
-          sect_destination = sect.attr 'pdf-destination'
-          if level < num_levels_for_sect && sect.sections?
-            outline.section sect_title, destination: sect_destination, closed: expand_levels < 1 do
-              add_outline_level outline, sect.sections, num_levels_for_sect, (expand_levels - 1)
+      def get_entries_for_toc node
+        node.sections
+      end
+
+      # NOTE: num_front_matter_pages not used during a dry run
+      def ink_toc doc, num_levels, toc_page_number, start_cursor, num_front_matter_pages = 0
+        go_to_page toc_page_number unless (page_number == toc_page_number) || scratch?
+        start_page_number = page_number
+        move_cursor_to start_cursor
+        unless (toc_title = doc.attr 'toc-title').nil_or_empty?
+          theme_font_cascade [[:heading, level: 2], :toc_title] do
+            toc_title_align = (@theme.toc_title_text_align || @theme.heading_h2_text_align || @theme.heading_text_align || @base_text_align).to_sym
+            ink_general_heading doc, toc_title, align: toc_title_align, level: 2, outdent: true, role: :toctitle
+          end
+        end
+        # QUESTION: should we skip this whole method if num_levels < 0?
+        unless num_levels < 0
+          dot_leader = theme_font :toc do
+            # TODO: we could simplify by using nested theme_font :toc_dot_leader
+            if (dot_leader_font_style = @theme.toc_dot_leader_font_style&.to_sym || :normal) != font_style
+              font_style dot_leader_font_style
             end
-          else
-            outline.page title: sect_title, destination: sect_destination
+            font_size @theme.toc_dot_leader_font_size
+            {
+              font_color: @theme.toc_dot_leader_font_color || @font_color,
+              font_style: dot_leader_font_style,
+              font_size: font_size,
+              levels: ((dot_leader_l = @theme.toc_dot_leader_levels) == 'none' ? ::Set.new :
+                  (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (0..num_levels).to_set)),
+              text: (dot_leader_text = @theme.toc_dot_leader_content || DotLeaderTextDefault),
+              width: dot_leader_text.empty? ? 0 : (rendered_width_of_string dot_leader_text),
+              # TODO: spacer gives a little bit of room between dots and page number
+              spacer: { text: NoBreakSpace, size: (spacer_font_size = @font_size * 0.25) },
+              spacer_width: (rendered_width_of_char NoBreakSpace, size: spacer_font_size),
+            }
           end
+          theme_margin :toc, :top
+          ink_toc_level (get_entries_for_toc doc), num_levels, dot_leader, num_front_matter_pages
         end
+        # NOTE: range must be calculated relative to toc_page_number; absolute page number in scratch document is arbitrary
+        toc_page_numbers = (toc_page_number..(toc_page_number + (page_number - start_page_number)))
+        go_to_page page_count unless scratch?
+        toc_page_numbers
       end
 
-      def apply_subs_discretely doc, value, opts = {}
-        if (imagesdir = opts[:imagesdir])
-          imagesdir_to_restore = doc.attr 'imagesdir'
-          doc.set_attr 'imagesdir', imagesdir
+      def ink_toc_level entries, num_levels, dot_leader, num_front_matter_pages
+        # NOTE: font options aren't always reliable, so store size separately
+        toc_font_info = theme_font :toc do
+          { font: font, size: @font_size }
         end
-        # FIXME: get sub_attributes to handle drop-line w/o a warning
-        doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
-        value = value.gsub '\{', '\\\\\\{' if (escaped_attr_ref = value.include? '\{')
-        value = (subs = opts[:subs]) ? (doc.apply_subs value, subs) : (doc.apply_subs value)
-        value = (value.split LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
-        value = value.gsub '\{', '{' if escaped_attr_ref
-        doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
-        if imagesdir
-          if imagesdir_to_restore
-            doc.set_attr 'imagesdir', imagesdir_to_restore
-          else
-            doc.remove_attr 'imagesdir'
-          end
-        end
-        value
-      end
-
-      def write pdf_doc, target
-        if target.respond_to? :write
-          target = ::QuantifiableStdout.new $stdout if target == $stdout
-          pdf_doc.render target
-        else
-          pdf_doc.render_file target
-          # QUESTION: restore attributes first?
-          @pdfmark&.generate_file target
-          if (quality = @optimize)
-            if quality.include? ','
-              quality, compliance = quality.split ',', 2
-            elsif quality.include? '/'
-              quality, compliance = nil, quality
-            end
-            (Optimizer.new quality, pdf_doc.min_version, compliance).optimize_file target
-          end
-          to_file = true
-        end
-        if !ENV['KEEP_ARTIFACTS']
-          remove_tmp_files
-        elsif to_file
-          scratch_target = (target.slice 0, target.length - (target_ext = ::File.extname target).length) + '-scratch' + target_ext
-          scratch.render_file scratch_target
-        end
-        clear_scratch
-        nil
-      end
-
-      def register_fonts font_catalog, fonts_dir
-        return unless font_catalog
-        dirs = (fonts_dir.split ValueSeparatorRx, -1).map do |dir|
-          dir == 'GEM_FONTS_DIR' || dir.empty? ? ThemeLoader::FontsDir : dir
-        end
-        font_catalog.each do |key, styles|
-          styles = styles.each_with_object({}) do |(style, path), accum|
-            found = dirs.any? do |dir|
-              resolved_font_path = font_path path, dir
-              accum[style.to_sym] = resolved_font_path if ::File.readable? resolved_font_path
-            end
-            raise ::Errno::ENOENT, ((File.absolute_path? path) ? %(#{path} not found) : %(#{path} not found in #{fonts_dir.gsub ValueSeparatorRx, ' or '})) unless found
-          end
-          register_font key => styles
-        end
-      end
-
-      def theme_fill_and_stroke_bounds category, opts = {}
-        fill_and_stroke_bounds opts[:background_color], @theme[%(#{category}_border_color)] || @theme.base_border_color,
-          line_width: @theme[%(#{category}_border_width)],
-          line_style: (@theme[%(#{category}_border_style)]&.to_sym || :solid),
-          radius: @theme[%(#{category}_border_radius)]
-      end
-
-      def theme_fill_and_stroke_block category, extent, opts = {}
-        node_with_caption = nil unless (node_with_caption = opts[:caption_node])&.title?
-        unless extent
-          ink_caption node_with_caption, category: category if node_with_caption
-          return
-        end
-        if (b_width = (opts.key? :border_width) ? opts[:border_width] : @theme[%(#{category}_border_width)])
-          if ::Array === b_width
-            b_width = b_width[0]
-            b_radius = 0
-          end
-          b_width = nil unless b_width.to_f > 0
-        end
-        if (bg_color = opts[:background_color] || @theme[%(#{category}_background_color)]) == 'transparent'
-          bg_color = nil
-        end
-        unless b_width || bg_color
-          ink_caption node_with_caption, category: category if node_with_caption
-          return
-        end
-        b_color = resolve_theme_color %(#{category}_border_color).to_sym, @theme.base_border_color, @page_bg_color
-        b_radius ||= (@theme[%(#{category}_border_radius)] || 0) + (b_width || 0)
-        if b_width
-          if b_color == @page_bg_color # let page background cut into block background
-            b_gap_color, b_shift = @page_bg_color, (b_width * 0.5)
-          elsif (b_gap_color = bg_color) && b_gap_color != b_color
-            b_shift = 0
-          else # let page background cut into border
-            b_gap_color, b_shift = @page_bg_color, 0
-          end
-        else # let page background cut into block background; guarantees b_width is set
-          b_shift, b_gap_color = (b_width ||= 0.5) * 0.5, @page_bg_color
-        end
-        ink_caption node_with_caption, category: category if node_with_caption
-        extent.from.page += 1 unless extent.from.page == page_number # sanity check
-        float do
-          extent.each_page do |first_page, last_page|
-            advance_page unless first_page
-            chunk_height = start_cursor = cursor
-            chunk_height -= last_page.cursor if last_page
-            bounding_box [0, start_cursor], width: bounds.width, height: chunk_height do
-              theme_fill_and_stroke_bounds category, background_color: bg_color
-              unless first_page
-                indent b_radius, b_radius do
-                  # dashed line indicates continuation from previous page; swell line slightly to cover background
-                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed, at: b_shift
-                end
+        hanging_indent = @theme.toc_hanging_indent
+        entries.each do |entry|
+          next if (num_levels_for_entry = (entry.attr 'toclevels', num_levels).to_i) < (entry_level = entry.level + 1).pred ||
+            !(entry_anchor = (entry.attr 'pdf-anchor') || entry.id) ||
+            ((entry.option? 'notitle') && entry == entry.document.blocks[-1] && !entry.blocks?)
+          theme_font :toc, level: entry_level do
+            entry_title = entry.context == :section ? entry.numbered_title : (entry.title? ? entry.title : (entry.xreftext 'basic'))
+            next if entry_title.empty?
+            entry_title = transform_text entry_title, @text_transform if @text_transform
+            pgnum_label_placeholder_width = rendered_width_of_string '0' * @toc_max_pagenum_digits
+            # NOTE: only write title (excluding dots and page number) if this is a dry run
+            if scratch?
+              indent 0, pgnum_label_placeholder_width do
+                # NOTE: must wrap title in empty anchor element in case links are styled with different font family / size
+                ink_prose entry_title, anchor: true, normalize: false, hanging_indent: hanging_indent, normalize_line_height: true, margin: 0
               end
-              unless last_page
-                move_down chunk_height
-                indent b_radius, b_radius do
-                  # dashed line indicates continuation from previous page; swell line slightly to cover background
-                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed, at: -b_shift
-                end
+            else
+              if !(physical_pgnum = entry.attr 'pdf-page-start') &&
+                  (target_page_ref = (get_dest entry_anchor)&.first) &&
+                  (target_page_idx = state.pages.index {|candidate| candidate.dictionary == target_page_ref })
+                physical_pgnum = target_page_idx + 1
               end
+              if physical_pgnum
+                virtual_pgnum = physical_pgnum - num_front_matter_pages
+                pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new physical_pgnum, :lower) : virtual_pgnum).to_s
+              else
+                pgnum_label = '?'
+              end
+              start_page_number = page_number
+              start_cursor = cursor
+              start_dots = nil
+              entry_title_inherited = (apply_text_decoration ::Set.new, :toc, entry_level).merge anchor: entry_anchor, color: @font_color
+              # NOTE: use text formatter to add anchor overlay to avoid using inline format with synthetic anchor tag
+              entry_title_fragments = text_formatter.format entry_title, inherited: entry_title_inherited
+              line_metrics = calc_line_metrics @base_line_height
+              indent 0, pgnum_label_placeholder_width do
+                (entry_title_fragments[-1][:callback] ||= []) << (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
+                typeset_formatted_text entry_title_fragments, line_metrics, hanging_indent: hanging_indent, normalize_line_height: true
+                start_dots = last_fragment_pos.right + hanging_indent
+                last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
+                start_cursor = last_fragment_cursor if last_fragment_pos.page_number > start_page_number || (start_cursor - last_fragment_cursor) > line_metrics.height
+              end
+              end_cursor = cursor
+              move_cursor_to start_cursor
+              # NOTE: we're guaranteed to be on the same page as the final line of the entry
+              if dot_leader[:width] > 0 && (dot_leader[:levels].include? entry_level.pred)
+                pgnum_label_width = rendered_width_of_string pgnum_label
+                pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
+                save_font do
+                  # NOTE: the same font is used for dot leaders throughout toc
+                  set_font toc_font_info[:font], dot_leader[:font_size]
+                  font_style dot_leader[:font_style]
+                  num_dots = [((bounds.width - start_dots - dot_leader[:spacer_width] - pgnum_label_width) / dot_leader[:width]).floor, 0].max
+                  # FIXME: dots don't line up in columns if width of page numbers differ
+                  typeset_formatted_text [
+                    { text: dot_leader[:text] * num_dots, color: dot_leader[:font_color] },
+                    dot_leader[:spacer],
+                    ({ text: pgnum_label, anchor: entry_anchor }.merge pgnum_label_font_settings),
+                  ], line_metrics, align: :right
+                end
+              else
+                typeset_formatted_text [{ text: pgnum_label, color: @font_color, anchor: entry_anchor }], line_metrics, align: :right
+              end
+              move_cursor_to end_cursor
             end
           end
+          indent @theme.toc_indent do
+            ink_toc_level (get_entries_for_toc entry), num_levels_for_entry, dot_leader, num_front_matter_pages
+          end if num_levels_for_entry >= entry_level
         end
-        nil
       end
 
-      # Insert a top margin equal to amount if cursor is not at the top of the
-      # page. Start a new page instead if amount is greater than the remaining
-      # space on the page.
-      def margin_top amount
-        margin amount, :top
-      end
-
-      # Insert a bottom margin equal to amount unless cursor is at the top of the
-      # page (not likely). Start a new page instead if amount is greater than the
-      # remaining space on the page.
-      def margin_bottom amount
-        margin amount, :bottom
+      # Sends the specified message to the log unless this method is called from the scratch document
+      def log severity, message = nil, &block
+        logger.send severity, message, &block unless scratch?
       end
 
       # Insert a margin at the specified side if the cursor is not at the top of
@@ -3903,83 +3856,53 @@ module Asciidoctor
         end
       end
 
-      # Lookup margin for theme element and side, then delegate to margin method.
-      # If margin value is not found, assume 0.
-      def theme_margin category, side, node = true
-        if node
-          category = :block if node != true && node.context == :section
-          margin (@theme[%(#{category}_margin_#{side})] || 0), side
+      # Insert a bottom margin equal to amount unless cursor is at the top of the
+      # page (not likely). Start a new page instead if amount is greater than the
+      # remaining space on the page.
+      def margin_bottom amount
+        margin amount, :bottom
+      end
+
+      # Insert a top margin equal to amount if cursor is not at the top of the
+      # page. Start a new page instead if amount is greater than the remaining
+      # space on the page.
+      def margin_top amount
+        margin amount, :top
+      end
+
+      def next_enclosed_block block, descend: false
+        return if (context = block.context) == :document
+        parent_context = (parent = block.parent).context
+        if (list_item = context == :list_item)
+          return block.blocks[0] if descend && block.blocks?
+          siblings = parent.items
         else
-          0
+          siblings = parent.blocks
+        end
+        siblings = siblings.flatten if parent_context == :dlist
+        if block != siblings[-1]
+          (self_idx = siblings.index block) && siblings[self_idx + 1]
+        elsif parent_context == :list_item || (parent_context == :open && parent.style != 'abstract') || parent_context == :section
+          next_enclosed_block parent
+        elsif list_item && (grandparent = parent.parent).context == :list_item
+          next_enclosed_block grandparent
         end
       end
 
-      def theme_font category, opts = {}
-        # TODO: inheriting from generic category should be an option
-        if opts.key? :level
-          hlevel_category = %(#{category}_h#{opts[:level]})
-          family = @theme[%(#{hlevel_category}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family || font_family
-          size = (@theme[%(#{hlevel_category}_font_size)] || @theme[%(#{category}_font_size)] || @root_font_size) * @font_scale
-          style = @theme[%(#{hlevel_category}_font_style)] || @theme[%(#{category}_font_style)]
-          color = @theme[%(#{hlevel_category}_font_color)] || @theme[%(#{category}_font_color)]
-          kerning = resolve_font_kerning @theme[%(#{hlevel_category}_font_kerning)] || @theme[%(#{category}_font_kerning)]
-          line_height = @theme[%(#{hlevel_category}_line_height)] || @theme[%(#{category}_line_height)]
-          # NOTE: global text_transform is not currently supported
-          transform = @theme[%(#{hlevel_category}_text_transform)] || @theme[%(#{category}_text_transform)]
-        else
-          inherited_font = font_info
-          family = @theme[%(#{category}_font_family)] || inherited_font[:family]
-          size = (size = @theme[%(#{category}_font_size)]) ? size * @font_scale : inherited_font[:size]
-          style = @theme[%(#{category}_font_style)] || inherited_font[:style]
-          color = @theme[%(#{category}_font_color)]
-          kerning = resolve_font_kerning @theme[%(#{category}_font_kerning)]
-          line_height = @theme[%(#{category}_line_height)]
-          # NOTE: global text_transform is not currently supported
-          transform = @theme[%(#{category}_text_transform)]
+      def register_fonts font_catalog, fonts_dir
+        return unless font_catalog
+        dirs = (fonts_dir.split ValueSeparatorRx, -1).map do |dir|
+          dir == 'GEM_FONTS_DIR' || dir.empty? ? ThemeLoader::FontsDir : dir
         end
-
-        prev_color, @font_color = @font_color, color if color
-        prev_kerning, self.default_kerning = default_kerning?, kerning unless kerning.nil?
-        prev_line_height, @base_line_height = @base_line_height, line_height if line_height
-        prev_transform, @text_transform = @text_transform, (transform == 'none' ? nil : transform) if transform
-
-        result = nil
-        font family, size: size, style: style&.to_sym do
-          result = yield
-        ensure
-          @font_color = prev_color if color
-          default_kerning prev_kerning unless kerning.nil?
-          @base_line_height = prev_line_height if line_height
-          @text_transform = prev_transform if transform
-        end
-        result
-      end
-
-      def theme_font_cascade categories, &block
-        if ::Array === (category = (categories = categories.dup).shift)
-          category, opts = category
-        else
-          opts = {}
-        end
-        if categories.empty?
-          theme_font category, opts, &block
-        else
-          theme_font category, opts do
-            theme_font_cascade categories, &block
+        font_catalog.each do |key, styles|
+          styles = styles.each_with_object({}) do |(style, path), accum|
+            found = dirs.any? do |dir|
+              resolved_font_path = font_path path, dir
+              accum[style.to_sym] = resolved_font_path if ::File.readable? resolved_font_path
+            end
+            raise ::Errno::ENOENT, ((File.absolute_path? path) ? %(#{path} not found) : %(#{path} not found in #{fonts_dir.gsub ValueSeparatorRx, ' or '})) unless found
           end
-        end
-      end
-
-      # Compute the rendered width of a string, taking fallback fonts into account
-      def rendered_width_of_string str, opts = {}
-        opts = opts.merge kerning: default_kerning?
-        if str.length == 1
-          rendered_width_of_char str, opts
-        elsif (chars = str.each_char).all? {|char| font.glyph_present? char }
-          width_of_string str, opts
-        else
-          char_widths = chars.map {|char| rendered_width_of_char char, opts }
-          char_widths.sum + (char_widths.length * character_spacing)
+          register_font key => styles
         end
       end
 
@@ -3995,230 +3918,16 @@ module Asciidoctor
         width_of_string char, opts
       end
 
-      # TODO: document me, esp the first line formatting functionality
-      def typeset_text string, line_metrics, opts = {}
-        opts = { leading: line_metrics.leading, final_gap: line_metrics.final_gap }.merge opts
-        string = string.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
-        return text_box string, opts if opts[:height]
-        opts[:initial_gap] = line_metrics.padding_top
-        if (hanging_indent = (opts.delete :hanging_indent) || 0) > 0
-          indent hanging_indent do
-            text string, (opts.merge indent_paragraphs: -hanging_indent)
-          end
-        elsif (first_line_opts = opts.delete :first_line_options)
-          # TODO: good candidate for Prawn enhancement!
-          text_with_formatted_first_line string, first_line_opts, opts
+      # Compute the rendered width of a string, taking fallback fonts into account
+      def rendered_width_of_string str, opts = {}
+        opts = opts.merge kerning: default_kerning?
+        if str.length == 1
+          rendered_width_of_char str, opts
+        elsif (chars = str.each_char).all? {|char| font.glyph_present? char }
+          width_of_string str, opts
         else
-          text string, opts
-        end
-        move_down line_metrics.padding_bottom
-      end
-
-      # QUESTION: combine with typeset_text?
-      def typeset_formatted_text fragments, line_metrics, opts = {}
-        opts = { leading: line_metrics.leading, initial_gap: line_metrics.padding_top, final_gap: line_metrics.final_gap }.merge opts
-        if (hanging_indent = (opts.delete :hanging_indent) || 0) > 0
-          indent hanging_indent do
-            formatted_text fragments, (opts.merge indent_paragraphs: -hanging_indent)
-          end
-        else
-          formatted_text fragments, opts
-        end
-        move_down line_metrics.padding_bottom
-      end
-
-      def height_of_typeset_text string, opts = {}
-        line_metrics = (calc_line_metrics opts[:line_height] || @base_line_height)
-        (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + (opts[:single_line] ? 0 : line_metrics.padding_bottom)
-      end
-
-      # NOTE: only used when tabsize attribute is not specified
-      # tabs must always be replaced with spaces in order for the indentation guards to work
-      def expand_tabs string
-        if string.nil_or_empty?
-          ''
-        elsif string.include? TAB
-          full_tab_space = ' ' * (tab_size = 4)
-          (string.split LF, -1).map do |line|
-            if line.empty? || !(tab_idx = line.index TAB)
-              line
-            else
-              if tab_idx == 0
-                leading_tabs = 0
-                line.each_byte do |b|
-                  break unless b == 9
-                  leading_tabs += 1
-                end
-                line = %(#{full_tab_space * leading_tabs}#{rest = line.slice leading_tabs, line.length})
-                next line unless rest.include? TAB
-              end
-              # keeps track of how many spaces were added to adjust offset in match data
-              spaces_added = 0
-              idx = 0
-              result = ''
-              line.each_char do |c|
-                if c == TAB
-                  # calculate how many spaces this tab represents, then replace tab with spaces
-                  if (offset = idx + spaces_added) % tab_size == 0
-                    spaces_added += (tab_size - 1)
-                    result += full_tab_space
-                  else
-                    unless (spaces = tab_size - offset % tab_size) == 1
-                      spaces_added += (spaces - 1)
-                    end
-                    result += (' ' * spaces)
-                  end
-                else
-                  result += c
-                end
-                idx += 1
-              end
-              result
-            end
-          end.join LF
-        else
-          string
-        end
-      end
-
-      def fallback_svg_font_name
-        @theme.svg_fallback_font_family || @theme.svg_font_family || @theme.base_font_family
-      end
-
-      # Add an indentation guard at the start of indented lines.
-      # Expand tabs to spaces if tabs are present
-      def guard_indentation string
-        unless (string = expand_tabs string).empty?
-          string[0] = GuardedIndent if string.start_with? ' '
-          string.gsub! InnerIndent, GuardedInnerIndent if string.include? InnerIndent
-        end
-        string
-      end
-
-      def guard_indentation_in_fragments fragments
-        start_of_line = true
-        fragments.each do |fragment|
-          next if (text = fragment[:text]).empty?
-          if start_of_line && (text.start_with? ' ')
-            fragment[:text] = GuardedIndent + (((text = text.slice 1, text.length).include? InnerIndent) ? (text.gsub InnerIndent, GuardedInnerIndent) : text)
-          elsif text.include? InnerIndent
-            fragment[:text] = text.gsub InnerIndent, GuardedInnerIndent
-          end
-          start_of_line = text.end_with? LF
-        end
-        fragments
-      end
-
-      # If an id is provided or the node passed as the first argument has an id,
-      # add a named destination to the document equivalent to the node id at the
-      # current y position. If the node does not have an id and an id is not
-      # specified, do nothing.
-      #
-      # If the node is a section, and the current y position is the top of the
-      # page, set the y position equal to the page height to improve the navigation
-      # experience. If the current x position is at or inside the left margin, set
-      # the x position equal to 0 (left edge of page) to improve the navigation
-      # experience.
-      def add_dest_for_block node, id: nil, y: nil
-        if !scratch? && (id ||= node.id)
-          dest_x = bounds.absolute_left.truncate 4
-          # QUESTION: when content is aligned to left margin, should we keep precise x value or just use 0?
-          dest_x = 0 if dest_x <= page_margin_left
-          unless (dest_y = y)
-            dest_y = @y
-            dest_y += [page_height - dest_y, -@theme.block_anchor_top.to_f].min
-          end
-          # TODO: find a way to store only the ref of the destination; look it up when we need it
-          node.set_attr 'pdf-destination', (node_dest = (dest_xyz dest_x, dest_y))
-          add_dest id, node_dest
-        end
-        nil
-      end
-
-      def resolve_doctitle doc, partition = nil
-        if doc.header?
-          doc.doctitle partition: partition
-        elsif partition
-          ::Asciidoctor::Document::Title.new (doc.attr 'untitled-label'), separator: (doc.attr 'title-separator')
-        else
-          doc.attr 'untitled-label'
-        end
-      end
-
-      def resolve_text_align_from_role roles, query_theme: false, remove_predefined: false
-        if (align_role = roles.reverse.find {|r| TextAlignmentRoles.include? r })
-          roles.replace roles - TextAlignmentRoles if remove_predefined
-          (align_role.slice 5, align_role.length).to_sym
-        elsif query_theme
-          roles.reverse.each do |role|
-            if (align = @theme[%(role_#{role}_text_align)])
-              return align.to_sym
-            end
-          end
-          nil
-        end
-      end
-
-      # Deprecated
-      alias resolve_alignment_from_role resolve_text_align_from_role
-
-      # Resolve the system path of the specified image path.
-      #
-      # Resolve and normalize the absolute system path of the specified image,
-      # taking into account the imagesdir attribute. If an image path is not
-      # specified, the path is read from the target attribute of the specified
-      # document node.
-      #
-      # If the target is a URI and the allow-uri-read attribute is set on the
-      # document, read the file contents to a temporary file and return the path to
-      # the temporary file. If the target is a URI and the allow-uri-read attribute
-      # is not set, or the URI cannot be read, this method returns a nil value.
-      #
-      # When a temporary file is used, the file is stored in @tmp_files to be cleaned up after conversion.
-      def resolve_image_path node, image_path, image_format, relative_to = true
-        doc = node.document
-        if relative_to == true
-          imagesdir = nil if (imagesdir = doc.attr 'imagesdir').nil_or_empty? || imagesdir == '.' || imagesdir == './'
-        else
-          imagesdir = relative_to
-        end
-        # NOTE: base64 logic currently used for inline images
-        if ::Base64 === image_path
-          return @tmp_files[image_path] if @tmp_files.key? image_path
-          tmp_image = ::Tempfile.create %W(image- .#{image_format})
-          tmp_image.binmode unless image_format == 'svg'
-          tmp_image.write ::Base64.decode64 image_path
-          tmp_image.close
-          @tmp_files[image_path] = tmp_image.path
-        # NOTE: this will catch a classloader resource path on JRuby (e.g., uri:classloader:/path/to/image)
-        elsif ::File.absolute_path? image_path
-          ::File.absolute_path image_path
-        elsif !(is_uri = node.is_uri? image_path) && imagesdir && (::File.absolute_path? imagesdir)
-          ::File.absolute_path image_path, imagesdir
-        # handle case when image is a URI
-        elsif is_uri || (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
-          if !allow_uri_read
-            log :warn, %(cannot embed remote image: #{image_path} (allow-uri-read attribute not enabled))
-            return
-          elsif @tmp_files.key? image_path
-            return @tmp_files[image_path]
-          end
-          tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
-          tmp_image.binmode if (binary = image_format != 'svg')
-          begin
-            load_open_uri.open_uri(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
-            tmp_image.close
-            @tmp_files[image_path] = tmp_image.path
-          rescue
-            @tmp_files[image_path] = nil
-            log :warn, %(could not retrieve remote image: #{image_path}; #{$!.message})
-            tmp_image.close
-            unlink_tmp_file tmp_image.path
-            nil
-          end
-        # handle case when image is a local file
-        else
-          node.normalize_system_path image_path, imagesdir, nil, target_name: 'image'
+          char_widths = chars.map {|char| rendered_width_of_char char, opts }
+          char_widths.sum + (char_widths.length * character_spacing)
         end
       end
 
@@ -4269,6 +3978,66 @@ module Asciidoctor
           else
             [image_path, (resolve_image_options image_path, image_format, image_attrs, (({ background: true, container_size: [page_width, page_height] }.merge opts)))]
           end
+        end
+      end
+
+      def resolve_doctitle doc, partition = nil
+        if doc.header?
+          doc.doctitle partition: partition
+        elsif partition
+          ::Asciidoctor::Document::Title.new (doc.attr 'untitled-label'), separator: (doc.attr 'title-separator')
+        else
+          doc.attr 'untitled-label'
+        end
+      end
+
+      # Resolves the explicit width, if specified, as a PDF pt value.
+      #
+      # Resolves the explicit width, first considering the pdfwidth attribute, then the scaledwidth
+      # attribute, then the theme default (if enabled by the :use_fallback option), and finally the
+      # width attribute. If the specified value is in pixels, the value is scaled by 75% to perform
+      # approximate CSS px to PDF pt conversion. If the value is a percentage, and the
+      # bounds_width option is given, the percentage of the bounds_width value is returned.
+      # Otherwise, the percentage width is returned.
+      #--
+      # QUESTION: should we enforce positive result?
+      def resolve_explicit_width attrs, opts = {}
+        bounds_width = opts[:bounds_width]
+        # QUESTION: should we restrict width to bounds_width for pdfwidth?
+        if attrs.key? 'pdfwidth'
+          if (width = attrs['pdfwidth']).end_with? '%'
+            bounds_width ? (width.to_f / 100) * bounds_width : width
+          elsif opts[:support_vw] && (width.end_with? 'vw')
+            (width.chomp 'vw').extend ViewportWidth
+          else
+            str_to_pt width
+          end
+        elsif attrs.key? 'scaledwidth'
+          # NOTE: the parser automatically appends % if value is unitless
+          if (width = attrs['scaledwidth']).end_with? '%'
+            bounds_width ? (width.to_f / 100) * bounds_width : width
+          else
+            str_to_pt width
+          end
+        elsif opts[:use_fallback] && (width = @theme.image_width)
+          if ::Numeric === width
+            width
+          elsif (width = width.to_s).end_with? '%'
+            bounds_width ? (width.to_f / 100) * bounds_width : bounds_width
+          elsif opts[:support_vw] && (width.end_with? 'vw')
+            (width.chomp 'vw').extend ViewportWidth
+          else
+            str_to_pt width
+          end
+        elsif attrs.key? 'width'
+          if (width = attrs['width']).end_with? '%'
+            width = (width.to_f / 100) * bounds_width if bounds_width
+          elsif DigitsRx.match? width
+            width = to_pt width.to_f, :px
+          else
+            return
+          end
+          bounds_width && opts[:constrain_to_bounds] ? [bounds_width, width].min : width
         end
       end
 
@@ -4342,73 +4111,305 @@ module Asciidoctor
         image_opts
       end
 
-      # Resolves the explicit width, if specified, as a PDF pt value.
+      # Resolve the system path of the specified image path.
       #
-      # Resolves the explicit width, first considering the pdfwidth attribute, then the scaledwidth
-      # attribute, then the theme default (if enabled by the :use_fallback option), and finally the
-      # width attribute. If the specified value is in pixels, the value is scaled by 75% to perform
-      # approximate CSS px to PDF pt conversion. If the value is a percentage, and the
-      # bounds_width option is given, the percentage of the bounds_width value is returned.
-      # Otherwise, the percentage width is returned.
-      #--
-      # QUESTION: should we enforce positive result?
-      def resolve_explicit_width attrs, opts = {}
-        bounds_width = opts[:bounds_width]
-        # QUESTION: should we restrict width to bounds_width for pdfwidth?
-        if attrs.key? 'pdfwidth'
-          if (width = attrs['pdfwidth']).end_with? '%'
-            bounds_width ? (width.to_f / 100) * bounds_width : width
-          elsif opts[:support_vw] && (width.end_with? 'vw')
-            (width.chomp 'vw').extend ViewportWidth
-          else
-            str_to_pt width
-          end
-        elsif attrs.key? 'scaledwidth'
-          # NOTE: the parser automatically appends % if value is unitless
-          if (width = attrs['scaledwidth']).end_with? '%'
-            bounds_width ? (width.to_f / 100) * bounds_width : width
-          else
-            str_to_pt width
-          end
-        elsif opts[:use_fallback] && (width = @theme.image_width)
-          if ::Numeric === width
-            width
-          elsif (width = width.to_s).end_with? '%'
-            bounds_width ? (width.to_f / 100) * bounds_width : bounds_width
-          elsif opts[:support_vw] && (width.end_with? 'vw')
-            (width.chomp 'vw').extend ViewportWidth
-          else
-            str_to_pt width
-          end
-        elsif attrs.key? 'width'
-          if (width = attrs['width']).end_with? '%'
-            width = (width.to_f / 100) * bounds_width if bounds_width
-          elsif DigitsRx.match? width
-            width = to_pt width.to_f, :px
-          else
+      # Resolve and normalize the absolute system path of the specified image,
+      # taking into account the imagesdir attribute. If an image path is not
+      # specified, the path is read from the target attribute of the specified
+      # document node.
+      #
+      # If the target is a URI and the allow-uri-read attribute is set on the
+      # document, read the file contents to a temporary file and return the path to
+      # the temporary file. If the target is a URI and the allow-uri-read attribute
+      # is not set, or the URI cannot be read, this method returns a nil value.
+      #
+      # When a temporary file is used, the file is stored in @tmp_files to be cleaned up after conversion.
+      def resolve_image_path node, image_path, image_format, relative_to = true
+        doc = node.document
+        if relative_to == true
+          imagesdir = nil if (imagesdir = doc.attr 'imagesdir').nil_or_empty? || imagesdir == '.' || imagesdir == './'
+        else
+          imagesdir = relative_to
+        end
+        # NOTE: base64 logic currently used for inline images
+        if ::Base64 === image_path
+          return @tmp_files[image_path] if @tmp_files.key? image_path
+          tmp_image = ::Tempfile.create %W(image- .#{image_format})
+          tmp_image.binmode unless image_format == 'svg'
+          tmp_image.write ::Base64.decode64 image_path
+          tmp_image.close
+          @tmp_files[image_path] = tmp_image.path
+        # NOTE: this will catch a classloader resource path on JRuby (e.g., uri:classloader:/path/to/image)
+        elsif ::File.absolute_path? image_path
+          ::File.absolute_path image_path
+        elsif !(is_uri = node.is_uri? image_path) && imagesdir && (::File.absolute_path? imagesdir)
+          ::File.absolute_path image_path, imagesdir
+        # handle case when image is a URI
+        elsif is_uri || (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
+          if !allow_uri_read
+            log :warn, %(cannot embed remote image: #{image_path} (allow-uri-read attribute not enabled))
             return
+          elsif @tmp_files.key? image_path
+            return @tmp_files[image_path]
           end
-          bounds_width && opts[:constrain_to_bounds] ? [bounds_width, width].min : width
+          tmp_image = ::Tempfile.create ['image-', image_format && %(.#{image_format})]
+          tmp_image.binmode if (binary = image_format != 'svg')
+          begin
+            load_open_uri.open_uri(image_path, (binary ? 'rb' : 'r')) {|fd| tmp_image.write fd.read }
+            tmp_image.close
+            @tmp_files[image_path] = tmp_image.path
+          rescue
+            @tmp_files[image_path] = nil
+            log :warn, %(could not retrieve remote image: #{image_path}; #{$!.message})
+            tmp_image.close
+            unlink_tmp_file tmp_image.path
+            nil
+          end
+        # handle case when image is a local file
+        else
+          node.normalize_system_path image_path, imagesdir, nil, target_name: 'image'
         end
       end
 
-      def next_enclosed_block block, descend: false
-        return if (context = block.context) == :document
-        parent_context = (parent = block.parent).context
-        if (list_item = context == :list_item)
-          return block.blocks[0] if descend && block.blocks?
-          siblings = parent.items
+      def resolve_text_align_from_role roles, query_theme: false, remove_predefined: false
+        if (align_role = roles.reverse.find {|r| TextAlignmentRoles.include? r })
+          roles.replace roles - TextAlignmentRoles if remove_predefined
+          (align_role.slice 5, align_role.length).to_sym
+        elsif query_theme
+          roles.reverse.each do |role|
+            if (align = @theme[%(role_#{role}_text_align)])
+              return align.to_sym
+            end
+          end
+          nil
+        end
+      end
+
+      # Deprecated
+      alias resolve_alignment_from_role resolve_text_align_from_role
+
+      def stamp_foreground_image doc, has_front_cover
+        pages = state.pages
+        if (first_page = (has_front_cover ? (pages.slice 1, pages.size) : pages).find {|it| !it.imported_page? }) &&
+            (first_page_num = (pages.index first_page) + 1) &&
+            (fg_image = resolve_background_image doc, @theme, 'page-foreground-image') && fg_image[0]
+          go_to_page first_page_num
+          create_stamp 'foreground-image' do
+            canvas { image fg_image[0], ({ position: :center, vposition: :center }.merge fg_image[1]) }
+          end
+          stamp 'foreground-image'
+          (first_page_num.next..page_count).each do |num|
+            go_to_page num
+            stamp 'foreground-image' unless page.imported_page?
+          end
+        end
+      end
+
+      def start_new_chapter chapter
+        start_new_page unless at_page_top?
+        # TODO: must call update_colors before advancing to next page if start_new_page is called in ink_chapter_title
+        start_new_page if @ppbook && verso_page? && !(chapter.option? 'nonfacing')
+      end
+
+      alias start_new_part start_new_chapter
+
+      def supports_float_wrapping? node
+        node.context == :paragraph
+      end
+
+      def theme_fill_and_stroke_block category, extent, opts = {}
+        node_with_caption = nil unless (node_with_caption = opts[:caption_node])&.title?
+        unless extent
+          ink_caption node_with_caption, category: category if node_with_caption
+          return
+        end
+        if (b_width = (opts.key? :border_width) ? opts[:border_width] : @theme[%(#{category}_border_width)])
+          if ::Array === b_width
+            b_width = b_width[0]
+            b_radius = 0
+          end
+          b_width = nil unless b_width.to_f > 0
+        end
+        if (bg_color = opts[:background_color] || @theme[%(#{category}_background_color)]) == 'transparent'
+          bg_color = nil
+        end
+        unless b_width || bg_color
+          ink_caption node_with_caption, category: category if node_with_caption
+          return
+        end
+        b_color = resolve_theme_color %(#{category}_border_color).to_sym, @theme.base_border_color, @page_bg_color
+        b_radius ||= (@theme[%(#{category}_border_radius)] || 0) + (b_width || 0)
+        if b_width
+          if b_color == @page_bg_color # let page background cut into block background
+            b_gap_color, b_shift = @page_bg_color, (b_width * 0.5)
+          elsif (b_gap_color = bg_color) && b_gap_color != b_color
+            b_shift = 0
+          else # let page background cut into border
+            b_gap_color, b_shift = @page_bg_color, 0
+          end
+        else # let page background cut into block background; guarantees b_width is set
+          b_shift, b_gap_color = (b_width ||= 0.5) * 0.5, @page_bg_color
+        end
+        ink_caption node_with_caption, category: category if node_with_caption
+        extent.from.page += 1 unless extent.from.page == page_number # sanity check
+        float do
+          extent.each_page do |first_page, last_page|
+            advance_page unless first_page
+            chunk_height = start_cursor = cursor
+            chunk_height -= last_page.cursor if last_page
+            bounding_box [0, start_cursor], width: bounds.width, height: chunk_height do
+              theme_fill_and_stroke_bounds category, background_color: bg_color
+              unless first_page
+                indent b_radius, b_radius do
+                  # dashed line indicates continuation from previous page; swell line slightly to cover background
+                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed, at: b_shift
+                end
+              end
+              unless last_page
+                move_down chunk_height
+                indent b_radius, b_radius do
+                  # dashed line indicates continuation from previous page; swell line slightly to cover background
+                  stroke_horizontal_rule b_gap_color, line_width: b_width * 1.2, line_style: :dashed, at: -b_shift
+                end
+              end
+            end
+          end
+        end
+        nil
+      end
+
+      def theme_fill_and_stroke_bounds category, opts = {}
+        fill_and_stroke_bounds opts[:background_color], @theme[%(#{category}_border_color)] || @theme.base_border_color,
+          line_width: @theme[%(#{category}_border_width)],
+          line_style: (@theme[%(#{category}_border_style)]&.to_sym || :solid),
+          radius: @theme[%(#{category}_border_radius)]
+      end
+
+      def theme_font category, opts = {}
+        # TODO: inheriting from generic category should be an option
+        if opts.key? :level
+          hlevel_category = %(#{category}_h#{opts[:level]})
+          family = @theme[%(#{hlevel_category}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family || font_family
+          size = (@theme[%(#{hlevel_category}_font_size)] || @theme[%(#{category}_font_size)] || @root_font_size) * @font_scale
+          style = @theme[%(#{hlevel_category}_font_style)] || @theme[%(#{category}_font_style)]
+          color = @theme[%(#{hlevel_category}_font_color)] || @theme[%(#{category}_font_color)]
+          kerning = resolve_font_kerning @theme[%(#{hlevel_category}_font_kerning)] || @theme[%(#{category}_font_kerning)]
+          line_height = @theme[%(#{hlevel_category}_line_height)] || @theme[%(#{category}_line_height)]
+          # NOTE: global text_transform is not currently supported
+          transform = @theme[%(#{hlevel_category}_text_transform)] || @theme[%(#{category}_text_transform)]
         else
-          siblings = parent.blocks
+          inherited_font = font_info
+          family = @theme[%(#{category}_font_family)] || inherited_font[:family]
+          size = (size = @theme[%(#{category}_font_size)]) ? size * @font_scale : inherited_font[:size]
+          style = @theme[%(#{category}_font_style)] || inherited_font[:style]
+          color = @theme[%(#{category}_font_color)]
+          kerning = resolve_font_kerning @theme[%(#{category}_font_kerning)]
+          line_height = @theme[%(#{category}_line_height)]
+          # NOTE: global text_transform is not currently supported
+          transform = @theme[%(#{category}_text_transform)]
         end
-        siblings = siblings.flatten if parent_context == :dlist
-        if block != siblings[-1]
-          (self_idx = siblings.index block) && siblings[self_idx + 1]
-        elsif parent_context == :list_item || (parent_context == :open && parent.style != 'abstract') || parent_context == :section
-          next_enclosed_block parent
-        elsif list_item && (grandparent = parent.parent).context == :list_item
-          next_enclosed_block grandparent
+
+        prev_color, @font_color = @font_color, color if color
+        prev_kerning, self.default_kerning = default_kerning?, kerning unless kerning.nil?
+        prev_line_height, @base_line_height = @base_line_height, line_height if line_height
+        prev_transform, @text_transform = @text_transform, (transform == 'none' ? nil : transform) if transform
+
+        result = nil
+        font family, size: size, style: style&.to_sym do
+          result = yield
+        ensure
+          @font_color = prev_color if color
+          default_kerning prev_kerning unless kerning.nil?
+          @base_line_height = prev_line_height if line_height
+          @text_transform = prev_transform if transform
         end
+        result
+      end
+
+      def theme_font_cascade categories, &block
+        if ::Array === (category = (categories = categories.dup).shift)
+          category, opts = category
+        else
+          opts = {}
+        end
+        if categories.empty?
+          theme_font category, opts, &block
+        else
+          theme_font category, opts do
+            theme_font_cascade categories, &block
+          end
+        end
+      end
+
+      # Lookup margin for theme element and side, then delegate to margin method.
+      # If margin value is not found, assume 0.
+      def theme_margin category, side, node = true
+        if node
+          category = :block if node != true && node.context == :section
+          margin (@theme[%(#{category}_margin_#{side})] || 0), side
+        else
+          0
+        end
+      end
+
+      # TODO: document me, esp the first line formatting functionality
+      def typeset_text string, line_metrics, opts = {}
+        opts = { leading: line_metrics.leading, final_gap: line_metrics.final_gap }.merge opts
+        string = string.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
+        return text_box string, opts if opts[:height]
+        opts[:initial_gap] = line_metrics.padding_top
+        if (hanging_indent = (opts.delete :hanging_indent) || 0) > 0
+          indent hanging_indent do
+            text string, (opts.merge indent_paragraphs: -hanging_indent)
+          end
+        elsif (first_line_opts = opts.delete :first_line_options)
+          # TODO: good candidate for Prawn enhancement!
+          text_with_formatted_first_line string, first_line_opts, opts
+        else
+          text string, opts
+        end
+        move_down line_metrics.padding_bottom
+      end
+
+      # QUESTION: combine with typeset_text?
+      def typeset_formatted_text fragments, line_metrics, opts = {}
+        opts = { leading: line_metrics.leading, initial_gap: line_metrics.padding_top, final_gap: line_metrics.final_gap }.merge opts
+        if (hanging_indent = (opts.delete :hanging_indent) || 0) > 0
+          indent hanging_indent do
+            formatted_text fragments, (opts.merge indent_paragraphs: -hanging_indent)
+          end
+        else
+          formatted_text fragments, opts
+        end
+        move_down line_metrics.padding_bottom
+      end
+
+      def write pdf_doc, target
+        if target.respond_to? :write
+          target = ::QuantifiableStdout.new $stdout if target == $stdout
+          pdf_doc.render target
+        else
+          pdf_doc.render_file target
+          # QUESTION: restore attributes first?
+          @pdfmark&.generate_file target
+          if (quality = @optimize)
+            if quality.include? ','
+              quality, compliance = quality.split ',', 2
+            elsif quality.include? '/'
+              quality, compliance = nil, quality
+            end
+            (Optimizer.new quality, pdf_doc.min_version, compliance).optimize_file target
+          end
+          to_file = true
+        end
+        if !ENV['KEEP_ARTIFACTS']
+          remove_tmp_files
+        elsif to_file
+          scratch_target = (target.slice 0, target.length - (target_ext = ::File.extname target).length) + '-scratch' + target_ext
+          scratch.render_file scratch_target
+        end
+        clear_scratch
+        nil
       end
 
       # Deprecated method names
