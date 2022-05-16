@@ -6,7 +6,7 @@ You can customize the outline title and the depth of section levels that are dis
 The outline can also be deactivated with the `outline` attribute.
 
 [#title]
-== outline-title
+== outline-title attribute
 
 By default, the document title is displayed as the title of the PDF outline.
 You can customize the outline title using the `outline-title` document attribute.
@@ -21,7 +21,7 @@ You can customize the outline title using the `outline-title` document attribute
 The PDF outline resulting from the example above will be titled "`The Chronicles`".
 
 [#levels]
-== outlinelevels
+== outlinelevels attribute
 
 You can adjust the depth of section levels that are displayed in the PDF outline independent of the TOC level depth with the `outlinelevels` document attribute.
 By default, `outlinelevels` is set to the same value as `toclevels` and all the included levels are fully expanded.
@@ -49,6 +49,30 @@ The first number represents  the section level depth included in the outline; th
 :outlinelevels: 3:1 <.>
 ----
 <.> Directly after the first integer, enter a colon (`:`), and then a second integer.
+
+You can also override the `outlinelevels` document attribute for a specific section and its children by setting `outlinelevels` on the section's parent.
+
+[,asciidoc]
+----
+= Document Title
+:outlinelevels: 1 <.>
+
+== Section title
+
+Content.
+
+[outlinelevels=2] <.>
+== Section title
+
+Content.
+
+=== Section title <.>
+----
+<.> The `outlinelevels` document attribute is set to `1`.
+The resulting PDF outline will list the part titles (if present and the doctype is `book`) and level 1 (`==`) section titles.
+<.> Set `outlinelevels` on the parent section title that will already be listed in the PDF outline due to the global `outlinelevels` value.
+Assign the `outlinelevels` on the section title the numeric value of the next section level you want to be inserted into the PDF outline.
+<.> This section title (and any of its children) will be listed in the PDF outline because `[outlinelevels=2]` was assigned to its parent section title.
 
 [#deactivate]
 == Deactivate the outline
