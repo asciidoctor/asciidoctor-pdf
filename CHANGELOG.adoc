@@ -14,6 +14,8 @@ Enhancements::
 Improvements::
 
 * reclassify and mark which methods in the converter are private
+* organize methods in converter
+* add DOM traversal methods to simplify the logic in the converter
 
 Bug Fixes::
 
