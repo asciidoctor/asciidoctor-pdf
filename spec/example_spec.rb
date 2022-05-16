@@ -182,6 +182,21 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
   end
 
+  it 'should allow theme to place caption below block' do
+    pdf_theme = { example_caption_end: 'bottom' }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    .Look out below!
+    ====
+    content
+    ====
+    EOS
+
+    content_text = pdf.find_unique_text 'content'
+    title_text = pdf.find_unique_text 'Example 1. Look out below!'
+    (expect title_text[:y]).to be < content_text[:y]
+  end
+
   it 'should apply text decoration to caption' do
     pdf_theme = {
       caption_text_decoration: 'underline',

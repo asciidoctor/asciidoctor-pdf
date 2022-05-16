@@ -467,10 +467,25 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     ----
     EOS
 
-    title_text = (pdf.find_text 'Caption with background color')[0]
+    title_text = pdf.find_unique_text 'Caption with background color'
     (expect title_text[:font_color]).to eql 'FFFFFF'
     (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
     (expect pdf.pages[0][:raw_content]).to include %(/DeviceRGB cs\n0.66667 0.0 0.0 scn\n48.24 790.899 498.8 14.991 re)
+  end
+
+  it 'should allow theme to place caption below block' do
+    pdf_theme = { code_caption_end: 'bottom' }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    .Look out below!
+    ----
+    code
+    ----
+    EOS
+
+    content_text = pdf.find_unique_text 'code'
+    title_text = pdf.find_unique_text 'Look out below!'
+    (expect title_text[:y]).to be < content_text[:y]
   end
 
   it 'should apply inline formatting if quotes subs is enabled' do
