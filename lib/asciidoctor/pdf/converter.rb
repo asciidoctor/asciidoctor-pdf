@@ -1619,6 +1619,16 @@ module Asciidoctor
       def convert_image node, opts = {}
         target, image_format = (node.extend ::Asciidoctor::Image).target_and_format
 
+        unless image_format == 'pdf'
+          if (float_to = node.attr 'float') && ((BlockFloatNames.include? float_to) ? float_to : (float_to = nil))
+            alignment = float_to.to_sym
+          elsif (alignment = node.attr 'align')
+            alignment = (BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left
+          elsif !(alignment = node.roles.reverse.find {|r| BlockAlignmentNames.include? r }&.to_sym)
+            alignment = @theme.image_align&.to_sym || :left
+          end
+        end
+
         if image_format == 'gif' && !(defined? ::GMagick::Image)
           log :warn, %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.)
           image_path = nil
@@ -1666,15 +1676,8 @@ module Asciidoctor
           end
         end
 
-        return on_image_error :missing, node, target, opts unless image_path
+        return on_image_error :missing, node, target, (opts.merge align: alignment) unless image_path
 
-        if (float_to = node.attr 'float') && ((BlockFloatNames.include? float_to) ? float_to : (float_to = nil))
-          alignment = float_to.to_sym
-        elsif (alignment = node.attr 'align')
-          alignment = (BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left
-        else
-          alignment = (resolve_text_align_from_role node.roles) || @theme.image_align&.to_sym || :left
-        end
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
         width = resolve_explicit_width node.attributes, bounds_width: (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
         # TODO: add `to_pt page_width` method to ViewportWidth type
@@ -1778,7 +1781,7 @@ module Asciidoctor
           end
         rescue => e
           raise if ::StopIteration === e
-          on_image_error :exception, node, target, (opts.merge message: %(could not embed image: #{image_path}; #{e.message}#{::Prawn::Errors::UnsupportedImageType === e && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}))
+          on_image_error :exception, node, target, (opts.merge align: alignment, message: %(could not embed image: #{image_path}; #{e.message}#{::Prawn::Errors::UnsupportedImageType === e && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}))
         end
       end
 
@@ -4801,10 +4804,7 @@ module Asciidoctor
           alt_text_vars[:'/link'] = ''
         end
         theme_font :image_alt do
-          alignment = (alignment = node.attr 'align') ?
-            ((BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left) :
-            (resolve_text_align_from_role node.roles) || (@theme.image_align&.to_sym || :left)
-          ink_prose alt_text_template % alt_text_vars, align: alignment, margin: 0, normalize: false, single_line: true
+          ink_prose alt_text_template % alt_text_vars, align: opts[:align], margin: 0, normalize: false, single_line: true
         end
         ink_caption node, category: :image, end: :bottom if node.title?
         theme_margin :block, :bottom, (next_enclosed_block node) unless opts[:pinned]
