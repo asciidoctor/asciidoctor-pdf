@@ -1155,7 +1155,7 @@ module Asciidoctor
       def convert_example node
         return convert_open node if node.option? 'collapsible'
         arrange_block node do |extent|
-          add_dest_for_block node if node.id # Q: do we want to put anchor above top margin instead?
+          add_dest_for_block node if node.id
           tare_first_page_content_stream do
             theme_fill_and_stroke_block :example, extent, caption_node: node
           end
