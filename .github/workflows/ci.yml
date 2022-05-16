@@ -9,13 +9,9 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 permissions: read-all
-
 jobs:
   activate:
-    permissions:
-      contents: none
     if: |
       (github.event_name == 'schedule' && github.repository_owner == 'asciidoctor') ||
       (github.event_name == 'push') ||

@@ -1,8 +1,6 @@
 name: Upstream Dispatch
 on: repository_dispatch
-
 permissions: read-all
-
 jobs:
   build:
     name: ${{ github.event.client_payload.message }}
