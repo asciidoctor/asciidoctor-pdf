@@ -2725,7 +2725,7 @@ module Asciidoctor
               end
             end
           end
-          start_new_page if orphaned
+          advance_page if orphaned
         else
           theme_font :heading, level: (hlevel = opts[:level]) do
             h_padding_t, h_padding_r, h_padding_b, h_padding_l = expand_padding_value @theme[%(heading_h#{hlevel}_padding)]
@@ -2740,7 +2740,7 @@ module Asciidoctor
               end
               cursor >= heading_h
             end
-            start_new_page unless h_fits
+            advance_page unless h_fits
           end
         end
         nil

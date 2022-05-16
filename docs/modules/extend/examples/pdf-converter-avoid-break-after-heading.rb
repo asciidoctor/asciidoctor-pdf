@@ -26,7 +26,7 @@ class PDFConverterAvoidBreakAfterSectionTitle < (Asciidoctor::Converter.for 'pdf
         end
       end
     end
-    start_new_page if orphaned # <5>
+    advance_page if orphaned # <5>
     nil
   end
 end
