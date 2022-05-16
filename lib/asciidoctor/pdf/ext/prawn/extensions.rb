@@ -945,7 +945,7 @@ module Asciidoctor
       # if the current page is the last page of the document. Otherwise, it simply
       # advances to the next existing page.
       def advance_page options = {}
-        last_page? ? (start_new_page options) : (go_to_page page_number + 1)
+        options.size > 0 && last_page? ? (start_new_page options) : bounds.move_past_bottom
       end
 
       # Start a new page without triggering the on_page_create callback
