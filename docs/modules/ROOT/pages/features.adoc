@@ -16,7 +16,7 @@
 * Configurable page size (e.g., A4, Letter, Legal, etc.) and layout (portrait or landscape)
 * Internal cross reference links
 * Syntax highlighting with Rouge (preferred), Pygments, or CodeRay
-* Page background color or page background image with configurable scaling
+* Page background color or xref:background-images.adoc[page background image] with configurable scaling
 * xref:page-numbers.adoc[Page numbering]
 * Double-sided (aka prepress) printing mode (i.e., margins alternate on recto and verso pages)
 * xref:theme:add-running-content.adoc[Customizable header and footer running content]
@@ -25,7 +25,7 @@
 * Orphaned section titles avoided (basic support)
 * Autofit verbatim blocks (as permitted by `base_font_size_min` setting)
 * Table border settings
-* Font-based icons
+* xref:icons.adoc[Font-based and image icons]
 * Auto-generated index
 * Automatic hyphenation (when enabled)
 * Permissive line breaking for CJK languages

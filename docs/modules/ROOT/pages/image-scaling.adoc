@@ -1,10 +1,13 @@
 = Image Scaling
+:description: An image can be scaled using one of the width attributes, such as pdfwidth, scaledwidth, image-width, or width.
 
 PDF is a fixed-width canvas, therefore you almost always need to specify a width to get the image to fit properly on the page.
 
+[#width-attributes]
 == Image width attributes
 
-There are five ways to specify the width of an image, listed in the following table in order of precedence.
+There are several attributes available for specifying the width of an image.
+These attributes are listed in the following table in order of precedence.
 
 [cols="1s,3"]
 |===
@@ -12,52 +15,37 @@ There are five ways to specify the width of an image, listed in the following ta
 
 |<<pdfwidth,pdfwidth>>
 |The display width of the image as an absolute size (e.g., 2in), percentage of the content area width (e.g., 75%), or percentage of the page width (e.g., 100vw).
-If a unit of measurement is not specified (or not recognized), pt (points) is assumed.
+If a unit of measurement is not specified (or not recognized), points (`pt`) is assumed.
 _Intended to be used for the PDF converter only._
 
 |scaledwidth
 |The display width of the image as an absolute size (e.g., 2in) or percentage of the content area width (e.g., 75%).
-If a unit of measurement is not specified, % (percentage) is assumed.
-If a unit of measurement is recognized, pt (points) is assumed.
+If a unit of measurement is not specified, percentage (`%`) is assumed.
+If a unit of measurement is recognized, points (`pt`) is assumed.
 _Intended to be used for print output such as PDF._
 
-|image_width key from theme
-|Accepts the same values as pdfwidth.
-_Only applies to block images._
+|<<image-width,image-width key from theme>>
+|Accepts the same values as `pdfwidth`.
+_Only applies to block images and xref:theme:block-images.adoc#fallback[is set in the theme], not the content._
 
 |width
 |The unitless display width of the image (assumed to be pixels), typically matching the intrinsic width of the image.
-If the value ends in % (not recommended), it's assumed to be the percentage of the available content area width.
+If the value ends in `%` (not recommended), it's assumed to be the percentage of the available content area width.
 If the width exceeds the content area width, the image is scaled down to the content area width.
 
 |_unspecified_
 |If you don't specify one of the aforementioned width settings, the intrinsic width of the image is used (the px value is multiplied by 75% to convert to pt, assuming canvas is 96 dpi) unless the width exceeds the content area width, in which case the image is scaled down to the content area width.
 |===
 
-The image is always sized according to the explicit or intrinsic width, then its height is scaled proportionally.
-The height of the image is ignored by the PDF converter unless the height of the image exceeds the content height of the page.
-In this case, the image is scaled down to fit on a single page.
-
-If you want a block image to align to the boundaries of the page (not the content margin), specify the `align-to-page` option (e.g., `opts="align-to-page"`).
-This is most useful when using vw units because you can make the image cover the entire width of the page.
-
-Images in running content and page background images also support the `fit` attribute (when specified using the image macro).
+TIP: Images in running content and page background images also support the `fit` attribute when specified using the image macro.
 See xref:background-images.adoc[] for details.
 
-[#default-width]
-== Default image width
+[#default]
+== Default sizing
 
-To scale all block images that don't define either a `pdfwidth` or `scaledwidth` attribute on the image macro, assign a value to the image-width key in your theme file.
-
-[source,yaml]
-----
-image:
-  width: 100%
-----
-
-The image-width key accepts the same values as the `pdfwidth` attribute.
-Thus, you can think of it as the fallback value for the `pdfwidth` attribute.
-If specified, this value takes precedence over the `width` attribute on the image macro.
+An image is always sized according to the explicit or intrinsic width, then its height is scaled proportionally.
+The height of the image is ignored by the PDF converter unless the height of the image exceeds the content height of the page.
+In this case, the image is scaled down to fit on a single page.
 
 [#pdfwidth]
 == pdfwidth attribute
@@ -79,3 +67,17 @@ The `pdfwidth` attribute supports the following units:
 * % (percentage of content area width)
 
 In all cases, the width is converted to pt.
+
+[#image-width]
+== Fallback width for block images
+
+To scale all block images that don't define either a `pdfwidth` or `scaledwidth` attribute on an image macro in your document, assign a value to the `image-width` key in your theme file.
+If specified, the `image-width` value takes precedence over the `width` attribute on an image macro.
+See xref:theme:block-images.adoc[] to learn how to set the `image-width` key in the theme.
+
+== Align block image to page boundaries
+
+If you want a block image to align to the boundaries of the page (not the content margin), specify the `align-to-page` option (e.g., `opts="align-to-page"`).
+This is most useful when using vw units because you can make the image cover the entire width of the page.
+
+

@@ -1,8 +1,10 @@
 = Image Paths and Formats
+:description: Asciidoctor PDF can process most image formats, though some may require an extra library. Image paths can be relative to the imagesdir or absolute.
 
 Images are resolved at the time the converter runs.
 That means they need to be located where the converter can find them and be in a format it can read.
 
+[#imagesdir]
 == imagesdir attribute
 
 Relative image paths in a document are resolved relative to the value of the `imagesdir` attribute.
@@ -46,7 +48,7 @@ Without any additional libraries, those are the only image file formats supporte
 [#other-image-formats]
 === Support for additional image file formats
 
-If you need support for additional image formats, such as GIF, TIFF, WebP, or interlaced PNG--and you don't want to convert those images to a supported format like JPG--you must install the {url-prawn-gmagick}[prawn-gmagick^] (>= 0.0.9) Ruby gem.
+If you need support for additional image formats, such as GIF, TIFF, WebP, or interlaced PNG--and you don't want to convert those images to a supported format like JPG--you must install the {url-prawn-gmagick}[prawn-gmagick^] Ruby gem.
 prawn-gmagick is an extension for Prawn that delegates image decoding to {url-graphicsmagick}[GraphicsMagick^] to add support for all image formats recognized by that library.
 
 prawn-gmagick has the additional benefit of *significantly* reducing the processing time, power, and memory necessary to generate a PDF that contains a lot of PNG images.
