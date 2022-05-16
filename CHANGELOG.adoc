@@ -20,6 +20,7 @@ Bug Fixes::
 * apply top line height padding to first line of text when text runs to top of next page (#2173)
 * don't add entry to outline for notitle section if no content follows it
 * don't add entry to TOC for notitle section if no content follows it
+* look for block align roles on image instead of text align roles (#2176)
 
 == 2.0.0.beta.2 (2022-05-14) - @mojavelinux
 

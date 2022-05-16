@@ -85,8 +85,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should align alt text using alignment specified on image' do
       [
         ['', image_align: nil],
-        [',align=center', {}],
-        [',role=text-center', {}],
+        ['align=center', {}],
+        ['role=center', {}],
         ['', image_align: 'center'],
       ].each do |attrlist, pdf_theme|
         (expect do
@@ -172,9 +172,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect images[0][:x]).to eql 48.24
     end
 
-    it 'should align block image as indicated by text alignment role on macro', visual: true do
+    it 'should align block image as indicated by block alignment role on macro', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-align-right-attribute.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
-      [.text-right]
+      [.right]
       image::wolpertinger.jpg[]
       EOS
 
