@@ -397,7 +397,7 @@ describe Asciidoctor::PDF::Converter do
           'bogus' => nil,
           'bogus bogus' => nil,
         }.each do |value, expected|
-          (expect converter.resolve_background_position value, nil).to eql expected
+          (expect converter.send :resolve_background_position, value, nil).to eql expected
         end
       end
 

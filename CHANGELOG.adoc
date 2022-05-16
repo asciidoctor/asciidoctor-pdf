@@ -11,6 +11,10 @@ Enhancements::
 
 * allow hyphenation to be turned on and configured using the `base-hyphens` key in the theme (#2161)
 
+Improvements::
+
+* reclassify and mark which methods in the converter are private
+
 Bug Fixes::
 
 * apply top line height padding to first line of text when text runs to top of next page (#2173)
