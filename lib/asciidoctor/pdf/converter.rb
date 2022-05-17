@@ -124,6 +124,7 @@ module Asciidoctor
       DropAnchorRx = %r(<(?:a\b[^>]*|/a)>)
       SourceHighlighters = %w(coderay pygments rouge).to_set
       ViewportWidth = ::Module.new
+      ImageWidth = ::Module.new
       (TitleStyles = {
         'toc' => [:numbered_title],
         'basic' => [:title],
@@ -1719,9 +1720,14 @@ module Asciidoctor
         return on_image_error :missing, node, target, (opts.merge align: alignment) unless image_path
 
         # TODO: support cover (aka canvas) image layout using "canvas" (or "cover") role
-        width = resolve_explicit_width node.attributes, bounds_width: (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true
-        # TODO: add `to_pt page_width` method to ViewportWidth type
-        width = (width.to_f / 100) * page_width if ViewportWidth === width
+        case (width = resolve_explicit_width node.attributes, bounds_width: (available_w = bounds.width), support_vw: true, use_fallback: true, constrain_to_bounds: true)
+        when ViewportWidth
+          # TODO: add `to_pt page_width` method to ViewportWidth type
+          width = page_width * (width.to_f / 100)
+        when ImageWidth
+          scale = width.to_f / 100
+          width = nil
+        end
 
         caption_end = @theme.image_caption_end&.to_sym || :bottom
         caption_max_width = @theme.image_caption_max_width
@@ -1751,7 +1757,9 @@ module Asciidoctor
                 enable_file_requests_with_root: file_request_root,
                 cache_images: cache_uri
               rendered_w = (svg_size = svg_obj.document.sizing).output_width
-              if !width && (svg_obj.document.root.attributes.key? 'width') && rendered_w > available_w
+              if scale
+                svg_size = svg_obj.resize width: (rendered_w = [available_w, rendered_w * scale].min)
+              elsif !width && (svg_obj.document.root.attributes.key? 'width') && rendered_w > available_w
                 # NOTE: restrict width to available width (prawn-svg already coerces to pixels)
                 svg_size = svg_obj.resize width: (rendered_w = available_w)
               end
@@ -1784,8 +1792,10 @@ module Asciidoctor
               image_obj, image_info = ::Base64 === image_path ?
                   ::StringIO.open((::Base64.decode64 image_path), 'rb') {|fd| build_image_object fd } :
                   ::File.open(image_path, 'rb') {|fd| build_image_object fd }
+              actual_w = to_pt image_info.width, :px
+              width = actual_w * scale if scale
               # NOTE: if width is not specified, scale native width & height from px to pt and restrict width to available width
-              rendered_w, rendered_h = image_info.calc_image_dimensions width: (width || [available_w, (to_pt image_info.width, :px)].min)
+              rendered_w, rendered_h = image_info.calc_image_dimensions width: (width || [available_w, actual_w].min)
               # NOTE: shrink image so it fits within available space; group image & caption
               if rendered_h > (available_h = cursor - caption_h)
                 unless pinned || at_page_top?
@@ -2518,12 +2528,18 @@ module Asciidoctor
               class_attr = (role = node.role) ? %( class="#{role}") : ''
               fit_attr = (fit = node.attr 'fit') ? %( fit="#{fit}") : ''
               if (width = resolve_explicit_width node.attributes)
-                if node.parent.context == :table_cell && ::String === width && (width.end_with? '%')
-                  width += (intrinsic_image_dimensions image_path, image_format)[:width].to_s
+                if ImageWidth === width
+                  if state # check that converter is initialized
+                    width = (intrinsic_image_width image_path, image_format) * (width.to_f / 100)
+                  else
+                    width = %(auto*#{width})
+                  end
+                elsif node.parent.context == :table_cell && ::String === width && (width.end_with? '%')
+                  width += (intrinsic_image_width image_path, image_format).to_s
                 end
                 width_attr = %( width="#{width}")
               elsif state # check that converter is initialized
-                width_attr = %( width="#{(intrinsic_image_dimensions image_path, image_format)[:width]}")
+                width_attr = %( width="#{intrinsic_image_width image_path, image_format}")
               else
                 width_attr = ' width="auto"' # defer operation until arranger runs
               end
@@ -3874,6 +3890,10 @@ module Asciidoctor
         { width: 0, height: 0 }
       end
 
+      def intrinsic_image_width path, format
+        (intrinsic_image_dimensions path, format)[:width]
+      end
+
       # Sends the specified message to the log unless this method is called from the scratch document
       def log severity, message = nil, &block
         logger.send severity, message, &block unless scratch?
@@ -4045,11 +4065,15 @@ module Asciidoctor
         if attrs.key? 'pdfwidth'
           if (width = attrs['pdfwidth']).end_with? '%'
             bounds_width ? (width.to_f / 100) * bounds_width : width
+          elsif width.end_with? 'iw'
+            (width.chomp 'iw').extend ImageWidth
           elsif opts[:support_vw] && (width.end_with? 'vw')
             (width.chomp 'vw').extend ViewportWidth
           else
             str_to_pt width
           end
+        elsif attrs.key? 'scale'
+          attrs['scale'].dup.extend ImageWidth
         elsif attrs.key? 'scaledwidth'
           # NOTE: the parser automatically appends % if value is unitless
           if (width = attrs['scaledwidth']).end_with? '%'

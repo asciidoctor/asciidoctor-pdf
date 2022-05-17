@@ -14,9 +14,12 @@ These attributes are listed in the following table in order of precedence.
 |Attribute{nbsp}Name | Description
 
 |<<pdfwidth,pdfwidth>>
-|The display width of the image as an absolute size (e.g., 2in), percentage of the content area width (e.g., 75%), or percentage of the page width (e.g., 100vw).
+|The display width of the image as an absolute size (e.g., 2in), percentage of the content area width (e.g., 75%), percentage of the intrinsic width of the image (e.g., 50iw), or percentage of the page width (e.g., 100vw).
 If a unit of measurement is not specified (or not recognized), points (`pt`) is assumed.
 _Intended to be used for the PDF converter only._
+
+|scale
+|A percentage of the intrinsic width of the image.
 
 |scaledwidth
 |The display width of the image as an absolute size (e.g., 2in) or percentage of the content area width (e.g., 75%).
@@ -63,10 +66,11 @@ The `pdfwidth` attribute supports the following units:
 * mm
 * px
 * pc
+* iw (percentage of intrinsic width of image)
 * vw (percentage of page width)
 * % (percentage of content area width)
 
-In all cases, the width is converted to pt.
+In all cases, the width is converted to pt internally.
 
 [#image-width]
 == Fallback width for block images

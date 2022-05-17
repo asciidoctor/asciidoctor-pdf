@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Enhancements::
 
 * add `save_theme` helper to work with a copy of the theme within a scope (#2196)
+* add support for `scale` attribute or `iw` unit on `pdfwidth` attribute on image macros (#1933)
 
 == 2.0.7 (2022-06-03) - @mojavelinux
 

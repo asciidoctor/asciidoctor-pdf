@@ -51,6 +51,9 @@ module Asciidoctor::PDF::FormattedText
         image_format = fragment[:image_format]
         if (image_w = fragment[:image_width] || '100%') == 'auto'
           image_w = nil # use intrinsic width
+        elsif image_w.start_with? 'auto*'
+          image_scale = (image_w.slice 5, image_w.length).to_f
+          image_w = nil # use intrinsic width
         elsif (pctidx = image_w.index '%') && pctidx + 1 < image_w.length
           # NOTE: intrinsic width is stored behind % symbol
           pct = (image_w.slice 0, pctidx).to_f / 100
@@ -79,6 +82,7 @@ module Asciidoctor::PDF::FormattedText
             image_w = svg_size.output_width
           else
             fragment[:image_width] = (image_w = svg_size.output_width).to_s
+            image_w *= image_scale if image_scale
             image_w = available_w if image_w > available_w
           end
           fragment[:image_obj] = svg_obj
@@ -88,6 +92,7 @@ module Asciidoctor::PDF::FormattedText
           image_obj, image_info = ::File.open(image_path, 'rb') {|fd| doc.build_image_object fd }
           unless image_w
             fragment[:image_width] = (image_w = to_pt image_info.width, :px).to_s
+            image_w *= image_scale if image_scale
             image_w = available_w if image_w > available_w
           end
           if (image_h = image_w * (image_info.height.fdiv image_info.width)) > max_image_h
