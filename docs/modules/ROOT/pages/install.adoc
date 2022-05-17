@@ -1,5 +1,4 @@
 = Install Asciidoctor PDF
-//:navtitle: Get Started
 :url-rvm: https://rvm.io
 
 On this page, you'll learn how to install Asciidoctor PDF.
@@ -8,8 +7,6 @@ You can also find some troubleshooting advice if the installation goes wrong.
 
 [#prerequisites]
 == Prerequisites
-
-=== Ruby
 
 Asciidoctor PDF is a Ruby application.
 Therefore, to use it, you'll need a Ruby runtime.
@@ -24,7 +21,7 @@ To check if you have Ruby available, run the `ruby` command to print the install
 
 Make sure this command reports a Ruby version that starts with 2.7 (or a JRuby version that starts with 9.2).
 If so, you're ready to proceed.
-If not, head over to https://rvm.io[rvm.io^] to get RVM and use it to install Ruby.
+If not, head over to {url-rvm}[rvm.io^] to get RVM and use it to install Ruby.
 
 === System encoding
 
@@ -50,10 +47,16 @@ Pass the name of the gem to the `gem install` command as follows:
 Installing Asciidoctor PDF will install a number of other gems mentioned in these docs, including asciidoctor, prawn, prawn-svg, prawn-table, prawn-icon, and ttfunk.
 For the most part, the versions of these dependencies are locked to the version of Asciidoctor PDF.
 
-=== Install a development version
+[#prerelease]
+=== Install a prerelease or development version
+
+To install the latest prerelease of the *asciidoctor-pdf* gem from RubyGems.org (if a prerelease is available), use the following command:
+
+ $ gem install asciidoctor-pdf --pre
 
 You can also {url-project-repo}/blob/main/CONTRIBUTING-CODE.adoc[run the code from source^] if you want to use a development version or participate in development.
 
+[#troubleshooting]
 == Installation troubleshooting
 
 If you get a permission error while installing the gem, such as the one below, it's likely you're attempting to install the gem directly into your system.
@@ -96,6 +99,7 @@ To see where the bin script is located, use this command:
 Both paths should be underneath the [.path]_$HOME/.rvm_ directory.
 If not, check your RVM setup.
 
+[#optional-dependencies]
 == Optional dependencies
 
 There are several optional features of this converter that require additional gems to be installed.
@@ -116,12 +120,13 @@ To turn on automatic hyphenation using the `hyphens` attribute, you'll need to i
 Accelerated image decoding::
 Ruby is not particularly fast at decoding images, and the image formats it supports are limited.
 To help, you can install prawn-gmagick, which delegates the work of decoding images to GraphicsMagick.
-Refer to xref:image-paths-and-formats.adoc[Supporting additional image file formats] for instructions about how to enable this integration.
+Refer to xref:image-paths-and-formats.adoc#other-image-formats[Supporting additional image file formats] for instructions about how to enable this integration.
 
 The following table lists the optional dependencies of Asciidoctor PDF, including Asciidoctor extensions which are tested with this converter.
 The name of the dependency and its gem name are listed along with the minimum supported version and what feature or features it enables when installed (and, if necessary, required).
 
-[cols=3;3;4]
+.Minimum supported version of optional dependencies
+[#table-minimum-version,cols=3;3;4]
 |===
 | Name / Gem | Minimum Version | Feature(s)
 
