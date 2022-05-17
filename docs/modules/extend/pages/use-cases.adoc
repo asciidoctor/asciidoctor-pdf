@@ -216,6 +216,28 @@ image:
   float-gap: [12, 6]
 ----
 
+== Access page number from inline macro
+
+Although not an extended converter, this use case uses information from the converter in much the same way.
+In this case, we're interested in retrieving the page number and inserting it into the content.
+
+Let's create an inline macro named `pagenum` that inserts the current page number into the document when the macro is converted.
+
+[,ruby]
+----
+include::example$inline-pagenum-macro.rb[]
+----
+
+Here's how this macro would be used.
+
+[,asciidoc]
+----
+= Document Title
+:doctype: book
+
+You're looking at page number pagenum:[].
+----
+
 == Resources
 
 To find even more examples of how to override the behavior of the converter, refer to the extended converter in the {url-infoq-template}[InfoQ Mini-Book template^].
