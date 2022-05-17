@@ -1183,7 +1183,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_revision_display: 'none',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, debug: true
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
       = Document Title: Subtitle
       :doctype: book
       :title-page-background-image: image:cover.jpg[]
