@@ -372,8 +372,8 @@ RSpec.configure do |config|
     File.join __dir__, 'fixtures'
   end
 
-  def fixture_file path, opts = {}
-    if opts[:relative]
+  def fixture_file path, relative: false
+    if relative
       (((Pathname.new fixtures_dir) / path).relative_path_from Pathname.new Dir.pwd).to_s
     else
       File.join fixtures_dir, path
