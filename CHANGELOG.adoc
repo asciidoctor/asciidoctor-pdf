@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.0.rc.1 (2022-05-17) - @mojavelinux
 
 Enhancements::
 
@@ -30,6 +30,10 @@ Bug Fixes::
 * look for block align roles on image instead of text align roles (#2176)
 * use correct left value when creating bounding box
 * don't apply border on block images to logo image on title page
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.0.rc.1[git tag] | {url-repo}/compare/v2.0.0.beta.2\...v2.0.0.rc.1[full diff]
 
 == 2.0.0.beta.2 (2022-05-14) - @mojavelinux
 
