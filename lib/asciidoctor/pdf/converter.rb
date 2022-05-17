@@ -196,7 +196,7 @@ module Asciidoctor
         indent_section do
           toc_num_levels = (doc.attr 'toclevels', 2).to_i
           if (insert_toc = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && doc.sections?)
-            start_new_page if @ppbook && verso_page?
+            start_toc_page doc, toc_placement if title_page_on
             add_dest_for_block doc, id: 'toc', y: (at_page_top? ? page_height : nil)
             @toc_extent = allocate_toc doc, toc_num_levels, cursor, title_page_on
           else
@@ -2256,10 +2256,7 @@ module Asciidoctor
         return if @toc_extent
         is_macro = (placement = opts[:placement] || 'macro') == 'macro'
         if ((doc = node.document).attr? 'toc-placement', placement) && (doc.attr? 'toc') && doc.sections?
-          if (is_book = doc.doctype == 'book')
-            start_new_page unless at_page_top?
-            start_new_page if @ppbook && verso_page? && !(is_macro && (node.option? 'nonfacing'))
-          end
+          start_toc_page node, placement if (is_book = doc.doctype == 'book')
           add_dest_for_block node, id: (node.id || 'toc') if is_macro
           toc_extent = @toc_extent = allocate_toc doc, (doc.attr 'toclevels', 2).to_i, cursor, (title_page_on = is_book || (doc.attr? 'title-page'))
           @index.start_page_number = toc_extent.to.page + 1 if title_page_on && @theme.page_numbering_start_at == 'after-toc'
@@ -4208,6 +4205,11 @@ module Asciidoctor
         @page_bg_image[side] = prev_bg_image if bg_image
         @page_bg_color = prev_bg_color if bg_color
         true
+      end
+
+      def start_toc_page node, placement
+        start_new_page unless at_page_top?
+        start_new_page if @ppbook && verso_page? && !(placement == 'macro' && (node.option? 'nonfacing'))
       end
 
       def supports_float_wrapping? node
