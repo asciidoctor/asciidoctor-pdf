@@ -25,18 +25,14 @@ endif::[]
 // Variables:
 :release-line: 2.0.x
 :release-version: 2.0.0.beta.2
-// URIs:
-:url-asciidoctor: http://asciidoctor.org
-:url-gem: http://rubygems.org/gems/asciidoctor-pdf
+// URLs:
+:url-gem: https://rubygems.org/gems/asciidoctor-pdf
 :url-project: https://github.com/asciidoctor/asciidoctor-pdf
 :url-project-repo: {url-project}
 :url-project-issues: {url-project-repo}/issues
-:url-prawn: http://prawnpdf.org
-:url-prawn-gmagick: https://github.com/packetmonkey/prawn-gmagick
-:url-prawn-svg: https://github.com/mogest/prawn-svg
-:url-asciidoctor-mathematical: https://github.com/asciidoctor/asciidoctor-mathematical
-:url-rvm: http://rvm.io
-:url-graphicsmagick: http://www.graphicsmagick.org
+:url-project-docs: https://docs.asciidoctor.org/pdf-converter/latest
+:url-prawn: https://prawnpdf.org
+:url-rvm: https://rvm.io
 
 ifdef::status[]
 image:https://img.shields.io/badge/zulip-join_chat-brightgreen.svg[project chat,link=https://asciidoctor.zulipchat.com/]
@@ -44,133 +40,62 @@ image:{url-project-repo}/workflows/CI/badge.svg[Build Status (GitHub Actions),li
 image:https://img.shields.io/gem/v/asciidoctor-pdf.svg[Latest Release, link={url-gem}]
 endif::[]
 
-Asciidoctor PDF is a native PDF converter for AsciiDoc.
+Asciidoctor PDF is a native PDF converter for AsciiDoc that plugs into the `pdf` backend.
 It bypasses the requirement to generate an intermediary format such as DocBook, Apache FO, or LaTeX.
-Instead, you can use this extension to convert your documents directly from AsciiDoc to PDF.
-Its aim is to take the pain out of creating PDF documents from AsciiDoc.
+Instead, you can use Asciidoctor PDF to convert your documents directly from AsciiDoc to PDF.
+The aim of this library is to take the pain out of creating PDF documents from AsciiDoc.
 
-NOTE: The documentation for Asciidoctor PDF {release-line} is now available at https://docs.asciidoctor.org/pdf-converter/latest/.
-If you're looking for the documentation for another release line, please refer to one of the following branches: +
-{url-project-repo}/tree/v1.5.x#readme[1.5.x]
--
-{url-project-repo}/tree/v1.6.x#readme[1.6.x]
+[NOTE]
+====
+The documentation for Asciidoctor PDF {release-line} is now available at {url-project-docs}/.
+
+If you're looking for the documentation for Asciidoctor PDF 1.6, refer to the {url-project-repo}/tree/v1.6.x#readme[README] in the v1.6.x branch.
+Asciidoctor PDF 1.6 is no longer being developed and will reach EOL later this year.
+You are encouraged to migrate to Asciidoctor PDF 2 as soon as possible.
+====
 
 toc::[]
 
 == Overview
 
-{project-name} is an Asciidoctor extension that converts an AsciiDoc document directly to a PDF document.
-The style and layout of the PDF is controlled by a dedicated theme file.
-To the degree possible, this converter supports all the features of AsciiDoc that are supported by the built-in converters.
-However, there are <<known-limitations,certain limits>> imposed by the PDF format and the PDF library this extension uses.
+Asciidoctor PDF converts an AsciiDoc document directly to a PDF document.
+The style and layout of the PDF are controlled by a dedicated theme file.
+To the degree possible, Asciidoctor PDF supports all the features of AsciiDoc that are supported by Asciidoctor.
+It also provides {url-project-docs}/features/[PDF-specific features].
+However, there are {url-project-docs}/features/#limitations[certain limits] imposed by the PDF format and the PDF library this extension uses.
 
-Under the covers, {project-name} uses the Prawn gem and its extensions (e.g., prawn-svg and prawn-table) to generate the PDF document.
+Asciidoctor PDF uses the Prawn gem and Prawn's extensions, such as prawn-svg and prawn-table, to generate a PDF document.
 {url-prawn}[Prawn] is a general purpose PDF generator for Ruby that features high-level APIs for common needs like setting up the page and inserting images and low-level APIs for positioning and rendering text and graphics.
 
-Prawn takes the pain out of creating (basic) PDF documents.
-Likewise, {project-name} takes the pain out of creating PDF documents _directly from AsciiDoc_.
-Skip ahead to <<getting-started,Getting started>> to start putting {project-name} use.
-But don't miss the <<Highlights>> to get a preview of what's possible.
-
-== Highlights
-
-* Direct AsciiDoc to PDF conversion
-* Configuration-driven theme (style and layout)
-* Custom fonts (TTF or OTF)
-* Full SVG support (thanks to https://github.com/mogest/prawn-svg[prawn-svg])
-* PDF document outline (i.e., bookmarks)
-* Title page
-* Table of contents page(s)
-* Document metadata (title, authors, subject, keywords, etc.)
-* Configurable page size (e.g., A4, Letter, Legal, etc)
-* Internal cross reference links
-* Syntax highlighting with Rouge (preferred), Pygments, or CodeRay
-* Cover pages
-* Page background color or page background image with named scaling
-* Page numbering
-* Double-sided (aka prepress) printing mode (i.e., margins alternate on recto and verso pages)
-* Customizable running content (header and footer)
-* “Keep together” blocks (i.e., page breaks avoided in certain block content):
-** Explicitly delimited blocks other than open blocks
-** Open blocks with the "unbreakable" option `[%unbreakable]`
-* Orphaned section titles avoided
-* Autofit verbatim blocks (as permitted by base_font_size_min setting)
-* Table border settings honored
-* Font-based icons
-* Auto-generated index
-* Automatic hyphenation (when enabled)
-* Permissive line breaking for CJK languages
-* Compression / optimization of output file
-
-== Known Limitations
-
-* Footnotes are always displayed as endnotes (at the end of chapter for books; at the end of document for all other doctypes).
-*Footnotes cannot be displayed at the bottom of the page because the PDF generator does not support content reflows* (see {url-project-issues}/85#issuecomment-577412975[#85] for reasoning).
-* Table cells that exceed the height of a single page will be truncated (see https://github.com/prawnpdf/prawn-table/issues/41[prawn-table#41]).
-* Columns cannot be assigned a 0% width (or a width less than the width of a single character); in the same vein, a column cannot be set to autowidth if width of all other columns meets or exceeds 100%; the result is that the converter with throw a Prawn::Errors::CannotFit error.
-* An inline image in a table cell will not force the column wider if the width of the image exceeds the width of the column; either reduce the image width using `pdfwidth`, increase the width of the column using `cols`, or convert the cell to an AsciiDoc table cell and, preferably, use a block image (see {url-project-issues}/830).
-* Must use development version of prawn for error to include font name when requested font style is missing.
-* AsciiDoc table cell leaves padding below last block (due to lack of margin collapsing).
-* Prawn does not support double-wide box drawing glyphs correctly, so box drawings aren't aligned properly in verbatim blocks (see https://github.com/prawnpdf/prawn/issues/1002[prawn#1002]).
-* Orphan / widow support is limited; a page break can occur between a section title and its section content, a table caption and the caption, etc.; use a manual page break to avoid.
-* If a no-break hyphen is surrounded by formatted text on both sides (or is formatted individually), it will not prevent a line break.
-* Images cannot float.
-* You cannot use inline HTML (like a link or emphasized text) in a source block that also uses syntax highlighting.
-These two technologies just don't combine in the PDF generation process due to how the syntax highlighters work.
-* Verse blocks do not use a fixed-width font by default, but you can control this setting using the theme.
-* An inline image with a percentage width value in an autowidth table cell is resized relative to its intrinsic width.
-The space reserved for the image matches its intrinsic width.
-This matches the behavior of HTML.
+TIP: For the latest Asciidoctor PDF features and fixes, see {url-project-docs}/whats-new/[What's New in Asciidoctor PDF].
 
 == Prerequisites
 
-All that's needed is Ruby 2.5 or better (or JRuby 9.2 or better) and a few Ruby gems (including at least Asciidoctor 2.0.0), which we explain how to install in the next section.
+Asciidoctor PDF is a Ruby application.
+Therefore, to use it, you'll need a Ruby runtime.
 
-To check if you have Ruby available, use the `ruby` command to query the version installed:
+The supported Ruby runtimes are Ruby 2.7 or greater and JRuby 9.2 or greater.
+However, we always recommend using the most recent release of Ruby or JRuby.
+All required libraries (i.e., gems) will be installed automatically when you install Asciidoctor PDF, which will be covered in the <<Install Asciidoctor PDF,next section>>.
 
- $ ruby -e 'puts RUBY_VERSION'
+To check if you have Ruby available, run the `ruby` command to print the installed version:
 
-Make sure this command reports a Ruby version that's at least 2.5.
-If so, you may proceed.
+ $ ruby -v
 
-If you want to <<Enable Stream Compression,optimize the pdf>> using rghost or hexapdf, you'll need to install the rghost gem:
+Make sure this command reports a Ruby version that starts with 2.7 (or a JRuby version that starts with 9.2).
+If so, you're ready to proceed.
+If not, head over to {url-rvm}[rvm.io^] to get RVM and use it to install Ruby.
 
- $ gem install rghost
+== Install Asciidoctor PDF
 
-or the hexapdf gem:
+You can install Asciidoctor PDF using the `gem install` command.
+We'll use this command to install the Asciidoctor PDF gem named *asciidoctor-pdf* that's published on RubyGems.org.
+Pass the name of the gem to the `gem install` command as follows:
 
- $ gem install hexapdf
+ $ gem install asciidoctor-pdf
 
-Similarly, if you want to use the hyphen option you will need to install the `text-hyphen` gem:
-
- $ gem install text-hyphen
-
-You'll also need to <<Install a Syntax Highlighter (optional),install a syntax highlighter>> to use source highlighting.
-
-=== System Encoding
-
-Asciidoctor assumes you're using UTF-8 encoding.
-To minimize encoding problems, make sure the default encoding of your system is set to UTF-8.
-
-If you're using a non-English Windows environment, the default encoding of your system may not be UTF-8.
-As a result, you may get an `Encoding::UndefinedConversionError` or other encoding issues when invoking Asciidoctor.
-To solve these problems, we recommend at least changing the active code page in your console to UTF-8.
-
- chcp 65001
-
-Once you make this change, all your Unicode headaches will be behind you.
-
-== Getting Started
-
-You can get {project-name} by <<install-the-published-gem,installing the published gem>>.
-ifndef::env-site[You can also <<development,run the code from source>> if you want to use a development version or participate in development.]
-
-=== Install the Published Gem
-
-To install {project-name}, first make sure you have satisfied the <<Prerequisites,prerequisites>>.
-Then, install the gem from RubyGems.org using the following command:
-
- $ gem install asciidoctor-pdf --pre
+Installing Asciidoctor PDF will install a number of other gems mentioned in these docs, including asciidoctor, prawn, prawn-svg, prawn-table, prawn-icon, and ttfunk.
+For the most part, the versions of these dependencies are locked to the version of Asciidoctor PDF.
 
 If you're using Ruby 3.1 or better, you must also install the matrix gem until Prawn 2.5.0 or better is released.
 
@@ -179,90 +104,42 @@ If you're using Ruby 3.1 or better, you must also install the matrix gem until P
 The matrix gem used to be bundled in the Ruby distribution, but was split out starting in Ruby 3.1.
 This requirement will be lifted once Prawn declares it as a runtime dependency.
 
-==== Installation Troubleshooting
+For further installation information, see {url-project-docs}/install/[the installation documentation].
+For troubleshooting help, see {url-project-docs}/install/#installation-troubleshooting[Installation troubleshooting].
 
-If you get a permission error while installing the gem, such as the one below, it's likely you're attempting to install the gem directly into your system.
-Installing gems for tech writing directly into your system is not recommended.
+=== Install a prerelease or development version
 
-.Permission error when attempting to install as a system gem
-....
-ERROR:  While executing gem ... (Gem::FilePermissionError)
-    You don't have write permissions for the /Library/Ruby/Gems/2.x.x directory.
-....
+To install the latest prerelease of the *asciidoctor-pdf* gem from RubyGems.org (if a prerelease is available), use the following command:
 
-A better practice (and one that will ensure your sanity) is to ignore any version of Ruby installed on your system and use {url-rvm}[RVM] to manage the Ruby installation instead.
-The benefit of this approach is that a) Ruby is guaranteed to be set up correctly, b) installing gems will in no way interfere with the operation of your system, and c) any bin scripts provided by the installed gems will be available on your PATH.
-All files are managed in user space (aka your home or user directory).
-If something gets messed up, you can simply remove the [.path]_$HOME/.rvm_ folder and start over.
+ $ gem install asciidoctor-pdf --pre
 
-To learn how to install RVM, follow the https://asciidoctor.org/docs/install-asciidoctor-macos/#rvm-procedure-recommended[RVM installation procedure] covered in the Asciidoctor documentation.
-Once you have installed RVM and used it to install Ruby, make sure to activate the Ruby managed by RVM using `rvm use default` or a specific Ruby version like `rvm use 2.7`.
-(You'll need to do this each time you open a new terminal).
+You can also {url-project-repo}/blob/main/CONTRIBUTING-CODE.adoc[run the code from source] if you want to use a development version or participate in development.
 
-After installing the gem, you can see where it was installed using the following command:
+== Optional dependencies
 
- $ gem which asciidoctor-pdf
+There are several optional features of this converter that require additional gems to be installed.
+Those features are as follows.
 
-To see where the bin script is located, use this command:
+Source highlighting::
+You'll need to {url-project-repo}/syntax-highlighting/[install a syntax highlighter] to use source highlighting (build-time only).
 
- $ command -v asciidoctor-pdf
+PDF optimization::
+If you want to optimize your PDF, you'll need rghost or hexapdf.
+See {url-project-repo}/optimize-pdf/[Optimize the PDF] for installation and usage instructions.
 
-Both paths should be underneath the [.path]_$HOME/.rvm_ directory.
-If not, check your RVM setup.
+Automatic hyphenation::
+To turn on automatic hyphenation using the `hyphens` attribute, you'll need to install the `text-hyphen` gem:
 
-==== Install a Syntax Highlighter (optional)
+ $ gem install text-hyphen
 
-If you want to syntax highlight source listings, you'll also want to install Rouge, Pygments, or CodeRay.
-Choose one (or more) of the following:
+Accelerated image decoding::
+Ruby is not particularly fast at decoding images, and the image formats it supports are limited.
+To help, you can install prawn-gmagick, which delegates the work of decoding images to GraphicsMagick.
+Refer to {url-project-repo}/image-paths-and-formats/#other-image-formats[Supporting additional image file formats] for instructions about how to enable this integration.
 
-.Rouge (preferred, minimum version: 2.0.0)
- $ gem install rouge
+Check the {url-project-docs}/install/#table-minimum-version[minimum supported version table] to make sure you're using a supported version of the dependency.
 
-.Pygments
- $ gem install pygments.rb
-
-.CodeRay
- $ gem install coderay
-
-You then activate syntax highlighting for a given document by adding the `source-highlighter` attribute to the document header (Rouge shown):
-
-[source,asciidoc]
-----
-:source-highlighter: rouge
-----
-
-[#use-dev-versions]
-==== Upgrade prawn
-
-{project-name} uses Prawn to handle the PDF generation.
-At times, there may be development features or fixes you need in Prawn or one of its extensions that's still unreleased.
-No problem.
-You can gain access to these features by installing the unreleased gems directly from GitHub.
-
-To get started, first create a [.path]_Gemfile_ in the root of your project.
-In that file, declare the gem source, the {project-handle} gem, and the prawn gem (plus any other development gems you want to use).
-
-.Gemfile
-[source,ruby]
-----
-source 'https://rubygems.org'
-
-gem 'asciidoctor-pdf'
-gem 'prawn', github: 'prawnpdf/prawn', branch: 'HEAD'
-----
-
-You can then install the gems into your project using the `bundle` command:
-
- $ bundle config set --local path .bundle/gems && bundle
-
-Since you're using Bundler to manage the gems, you'll need to prefix all commands with `bundle exec`.
-For example:
-
- $ bundle exec asciidoctor-pdf -v
-
-Thus, to any command present in the following sections, be sure to include this prefix.
-
-=== Run the Application
+== Run the Application
 
 Assuming all the required gems install properly, verify you can run the `asciidoctor-pdf` script:
 
@@ -272,9 +149,7 @@ If you see the version of {project-name} printed, you're ready to use {project-n
 
 Let's grab an AsciiDoc document to distill and start putting {project-name} to use.
 
-=== An Example AsciiDoc Document
-
-If you don't already have an AsciiDoc document, you can use the <<examples/basic-example.adoc#,basic-example.adoc>> file found in the examples directory of this project.
+If you don't already have an AsciiDoc document, you can use the <<examples/basic-example.adoc#,basic-example.adoc>> file found in the _examples_ directory of this project.
 
 ifeval::[{safe-mode-level} >= 20]
 See <<examples/basic-example.adoc#,basic-example.adoc>>.
@@ -310,917 +185,12 @@ Open the [.path]_basic-example.pdf_ file with a PDF viewer to see the result.
 .Example PDF document rendered in a PDF viewer
 image::examples/example-pdf-screenshot.png[Screenshot of PDF document,width=850,467,scaledwidth=100%]
 
-ifndef::env-site[]
-You're also encouraged to try converting this <<README.adoc#,README>> as well as the documents in the examples directory to see more of what {project-name} can do.
-endif::[]
-
-The pain of the DocBook toolchain should be melting away about now.
+For more information about how to use Asciidoctor PDF and PDF-specific AsciiDoc syntax, see the {url-project-docs}/[Asciidoctor PDF documentation].
 
 == Themes
 
 The layout and styling of the PDF is driven by a YAML configuration file.
-To learn how the theming system works and how to create and apply custom themes, refer to the https://docs.asciidoctor.org/pdf-converter/latest/theme/[Asciidoctor PDF theming documentation].
-You can use the built-in theme files, which you can find in the [.path]_data/themes_ directory, as examples.
-
-If you've enabled a source highlighter, you can control the style (aka theme) it applies to source blocks using the `coderay-style`, `pygments-style`, and `rouge-style` attributes, respectively.
-For example, to configure Rouge to use the built-in monokai theme, run Asciidoctor PDF as follows:
-
- $ asciidoctor-pdf -a rouge-style=monokai basic-example.adoc
-
-It's possible to develop your own theme for Rouge.
-Refer to the https://docs.asciidoctor.org/pdf-converter/latest/theme/[Asciidoctor PDF theming documentation] for details.
-
-== Support for Non-Latin Languages
-
-Asciidoctor can process the full range of characters in the UTF-8 character set.
-That means you can write your document in any language, save the file with UTF-8 encoding (_that's important!_), and expect Asciidoctor to convert the text properly.
-But you still need a font that provides the glyphs for those characters.
-
-When converting a document with Asciidoctor PDF, you may notice that some glyphs for certain languages, such as Chinese, are missing from the PDF.
-PDF is a "`bring your own font`" kind of system.
-In other words, the font you provide must provide glyphs for all the characters used.
-There's no one font that supports all the world's languages (though some, like Noto Serif, certainly come close).
-Even if there were such a font, bundling that font with the main gem would make it enormous.
-It would also severely limit the style choices in the default theme, which targets Latin-based languages.
-Therefore, we're taking the strategy of creating separate dedicated theme gems that target each language family, such as CJK.
-
-== Font-Based Icons
-
-You can use icons in your PDF document using any of the following icon sets:
-
-* *fa* - https://fontawesome.com/v4.7.0/icons (default)
-* *fas* - https://fontawesome.com/icons?d=gallery&s=solid[Font Awesome - Solid^]
-* *fab* - https://fontawesome.com/icons?d=gallery&s=brands[Font Awesome - Brands^]
-* *far* - https://fontawesome.com/icons?d=gallery&s=regular[Font Awesome - Regular^]
-* *fi* - http://zurb.com/playground/foundation-icon-fonts-3[Foundation Icons^]
-* *pf* - https://paymentfont.com/[Payment font^]
-
-The fa icon set is deprecated.
-Please use one of the other three FontAwesome icon sets.
-
-You can enable font-based icons by setting the following attribute in the header of your document:
-
-[source,asciidoc]
-----
-:icons: font
-----
-
-If you want to override the font set globally, also set the `icon-set` attribute:
-
-[source,asciidoc]
-----
-:icons: font
-:icon-set: pf
-----
-
-Here's an example that shows how to use the Amazon icon from the payment font (pf) icon set in a sentence (assuming the `icon-set` is set to `pf):
-
-[source,asciidoc]
-----
-Available now at icon:amazon[].
-----
-
-You can use the `set` attribute on the icon macro to override the icon set for a given icon.
-
-[source,asciidoc]
-----
-Available now at icon:amazon[set=pf].
-----
-
-You can also specify the font set using the following shorthand.
-
-[source,asciidoc]
-----
-Available now at icon:amazon@pf[].
-----
-
-In addition to the sizes supported in the HTML backend (lg, 1x, 2x, etc), you can enter any relative value in the size attribute (e.g., 1.5em, 150%, etc).
-
-[source,asciidoc]
-----
-icon:android[size=40em]
-----
-
-You can enable use of fonts during PDF generation (instead of in the document header) by passing the `icons` attribute to the `asciidoctor-pdf` command.
-
- $ asciidoctor-pdf -a icons=font -a icon-set=pf sample.adoc
-
-Icon-based fonts are handled by the `prawn-icon` gem.
-To find a complete list of available icons, consult the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon] repository.
-
-== Image Paths
-
-Images are resolved at the time the converter runs.
-That means they need to be located where the converter can find them.
-
-Relative images paths in the document are resolved relative to the value of the `imagesdir` attribute.
-This is effectively the same as how the built-in HTML converter works when the `data-uri` attribute is set.
-The `imagesdir` is blank by default, which means relative images paths are resolved relative to the input document.
-Relative images paths in the theme are resolved relative to the value of the `pdf-themesdir` attribute (which defaults to the directory of the theme file).
-The `imagesdir` attribute is not used when resolving an image path in the theme file.
-Absolute image paths are used as is.
-
-If the image is an SVG, and the SVG includes a nested raster image (PNG or JPG) with a relative path, that path is resolved relative to the directory that contains the SVG.
-
-The converter will refuse to embed an image if the target is a URI (including image references in an SVG) unless the `allow-uri-read` attribute is enabled via the CLI or API.
-
-If you use a linked image in an SVG, the width and height of that image must be specified.
-Otherwise, the SVG library will fail to process it.
-
-=== Asciidoctor Diagram Integration
-
-Asciidoctor PDF provides seamless integration with Asciidoctor Diagram by setting the `data-uri` attribute by default.
-When the `data-uri` attribute is set, Asciidoctor Diagram returns the absolute path to the generated image, which Asciidoctor PDF can then locate.
-(This makes sense since technically, Asciidoctor Diagram must embed the image in the document, similar in spirit to the `data-uri` feature for HTML).
-This means the input directory and the output directory (and thus the imagesoutdir) can differ and Asciidoctor PDF will still be able to locate the generated image.
-
-== Image Scaling
-
-Since PDF is a fixed-width canvas, you almost always need to specify a width to get the image to fit properly on the page.
-There are five ways to specify the width of an image, listed here in order of precedence:
-
-[cols="1s,3"]
-|===
-|Attribute{nbsp}Name | Description
-
-|pdfwidth
-|The display width of the image as an absolute size (e.g., 2in), percentage of the content area width (e.g., 75%), or percentage of the page width (e.g., 100vw).
-If a unit of measurement is not specified (or not recognized), pt (points) is assumed.
-_Intended to be used for the PDF converter only._
-
-|scaledwidth
-|The display width of the image as an absolute size (e.g., 2in) or percentage of the content area width (e.g., 75%).
-If a unit of measurement is not specified, % (percentage) is assumed.
-If a unit of measurement is recognized, pt (points) is assumed.
-_Intended to be used for print output such as PDF._
-
-|image_width key from theme
-|Accepts the same values as pdfwidth.
-_Only applies to block images._
-
-|width
-|The unitless display width of the image (assumed to be pixels), typically matching the intrinsic width of the image.
-If the value ends in % (not recommended), it's assumed to be the percentage of the available content area width.
-If the width exceeds the content area width, the image is scaled down to the content area width.
-
-|_unspecified_
-|If you don't specify one of the aforementioned width settings, the intrinsic width of the image is used (the px value is multiplied by 75% to convert to pt, assuming canvas is 96 dpi) unless the width exceeds the content area width, in which case the image is scaled down to the content area width.
-|===
-
-The image is always sized according to the explicit or intrinsic width, then its height is scaled proportionally.
-The height of the image is ignored by the PDF converter unless the height of the image exceeds the content height of the page.
-In this case, the image is scaled down to fit on a single page.
-
-If you want a block image to align to the boundaries of the page (not the content margin), specify the `align-to-page` option (e.g., `opts="align-to-page"`).
-This is most useful when using vw units because you can make the image cover the entire width of the page.
-
-Images in running content and page background images also support the `fit` attribute (when specified using the image macro).
-See <<Background Image Sizing>> for details.
-
-=== Using the pdfwidth Attribute
-
-The pdfwidth attribute is the recommended way to set the image size for the PDF output.
-This attribute is provided for two reasons.
-First, the fixed-width canvas often calls for a width that is distinct from other output formats, such as HTML.
-Second, this attribute allows the width to be expressed using a variety of units.
-
-The pdfwidth attribute supports the following units:
-
-* pt (default)
-* in
-* cm
-* mm
-* px
-* pc
-* vw (percentage of page width)
-* % (percentage of content area width)
-
-In all cases, the width is converted to pt.
-
-=== Specifying a Default Width
-
-To scale all block images that don't define either a `pdfwidth` or `scaledwidth` attribute on the image macro, assign a value to the image-width key in your theme file.
-
-[source,yaml]
-----
-image:
-  width: 100%
-----
-
-The image-width key accepts the same values as the `pdfwidth` attribute.
-Thus, you can think of it as the fallback value for the `pdfwidth` attribute.
-If specified, this value takes precedence over the `width` attribute on the image macro.
-
-=== Inline Image Sizing
-
-Inline images can be sized in much the same way as block images (using the pdfwidth, scaledwidth or width attributes), with the following exceptions:
-
-* The viewport width unit (i.e., vw) is not recognized in this context.
-* The image will be scaled down, if necessary, to fit the width and height of the content area.
-* Inline images do not currently support a default width controlled from the theme.
-
-To confine the inline image to the height of the line while preserving the aspect ratio, use the attribute `fit=line`.
-
-If the resolved height of the image is less than or equal to 1.5 times the line height, the image won't disrupt the line height and is centered vertically in the line.
-This is done to maximize the use of available space.
-Once the resolved height exceeds this amount, the height of the line is increased (by increasing the font size of the invisible placeholder text) to accommodate the image.
-In this case, the surrounding text will be aligned to the bottom of the image.
-If the image height exceeds the height of the page, the image will be scaled down to fit on a single page (this may cause the image to advance to the subsequent page).
-
-=== Background Image Sizing
-
-In addition to the width-related attributes previously covered, cover and background images can be sized relative to the page using the `fit` attribute of the image macro.
-The `fit` attribute works similarly to the `object-fit` property in CSS.
-Its value must be specified as a single keyword, chosen from the table below.
-The starting size of the image is determined by the explicit width, if specified, or the implicit width.
-The height is always derived from the width while respecting the implicit aspect ratio of the image.
-The available space for a background image (i.e., the canvas) is the page.
-If the `fit` attribute is not specified, it defaults to `contain` (i.e., the image is automatically scaled to fit the bounds of the page).
-
-[cols="1s,3"]
-|===
-| Value | Purpose
-
-| contain
-| The image is scaled up or down while retaining its aspect ratio to fit within the available space. (default)
-
-| cover
-| The image is scaled up or down while retaining its aspect ratio so the image completely covers the available space, even if it means the image must be clipped in one direction.
-
-| scale-down
-| The image is scaled down while retaining its aspect ratio to fit within the available space.
-If the image already fits, it is not scaled.
-
-| fill
-| The image is scaled to fit the available space even if it means modifying the aspect ratio of the image.
-Does not apply to SVG images.
-
-| none
-| The image is not scaled.
-|===
-
-The `fit` attribute is often combined with the `position` attribute, covered next, to control the placement of the image on the canvas.
-
-== Background Image Positioning
-
-In addition to scaling, background images for cover pages, content pages, and the title page support positioning via the `position` attribute.
-The `position` attribute accepts a syntax similar to the `background-position` property in CSS, except only the keyword positions are supported.
-The position consists of two values, the vertical position and the horizontal position (e.g., `top center`).
-If only one value is specified (e.g., `top`), the other value is assumed to be `center`.
-If the `position` attribute is not specified, the value is assumed to be `center center` (i.e., the image is centered on the page).
-
-The following table provides a list of the vertical and horizontal positioning keywords that are supported.
-You can use any combination of these keywords to position the image.
-
-|===
-| Vertical Positions | Horizontal Positions
-
-| top +
-center +
-bottom
-
-| left +
-center +
-right
-|===
-
-Here's an example of how to place a background image at the top center of every page:
-
-----
-:page-background-image: image:bg.png[fit=none,pdfwidth=50%,position=top]
-----
-
-Here's how to move it to the bottom right:
-
-----
-:page-background-image: image:bg.png[fit=none,pdfwidth=50%,position=bottom right]
-----
-
-If an image dimension matches the height or width of the page, the positioning keyword for that axis has no effect.
-
-== Supporting Additional Image File Formats
-
-In order to embed an image into a PDF, Asciidoctor PDF must understand how to decode it.
-To perform this work, Asciidoctor delegates to the underlying libraries.
-{url-prawn}[Prawn] provides support for decoding JPG and PNG images.
-{url-prawn-svg}[prawn-svg] brings support for translating SVG images to PDF commands.
-Without any additional libraries, those are the only image file formats supported by Asciidoctor PDF.
-
-If you need support for additional image formats, such as GIF, TIFF, WebP, or interlaced PNG--and you don't want to convert those images to a supported format like JPG--you must install the {url-prawn-gmagick}[prawn-gmagick] (>= 0.0.9) Ruby gem.
-prawn-gmagick is an extension for Prawn that delegates image decoding to {url-graphicsmagick}[GraphicsMagick] to add support for all image formats recognized by that library.
-
-prawn-gmagick has the additional benefit of *significantly* reducing the processing time, power, and memory necessary to generate a PDF that contains a lot of PNG images.
-For large books (such as Pro Git), you might see the conversion time drop by as much as half.
-Decoding PNG images requires a lot of mathematical computation, a task Ruby is not particularly efficient at performing.
-That's why adding the prawn-gmagick gem to the converter makes such a substantial difference.
-
-As an alternative to using prawn-gmagick, you could optimize the images you pass into Asciidoctor PDF, either by scaling them down or converting them to an uncompressed format like JPG.
-
-The prawn-gmagick gem uses native extensions to compile against GraphicsMagick.
-This system prerequisite limits installation to C Ruby running on Linux and macOS.
-Please refer to the {url-prawn-gmagick}[README for prawn-gmagick] to learn how to install it.
-
- $ gem install prawn-gmagick
-
-When this gem is installed, Asciidoctor automatically detects and loads it, then delegates all image decoding to GraphicsMagick by way of the bridge it provides.
-We highly recommend using this gem with Asciidoctor PDF if you're able to install it.
-
-The one downside of delegating to GraphicsMagick is that it can mangle certain PNG images.
-If this happens, you can instruct Asciidoctor PDF to not delegate to GraphicsMagick to load PNG images by requiring `asciidoctor/pdf/nopngmagick` when calling Asciidoctor PDF, as follows:
-
- $ asciidoctor-pdf -r asciidoctor/pdf/nopngmagick doc.adoc
-
-You can also tell Asciidoctor PDF not to use prawn-gmagick at all by requiring `asciidoctor/pdf/nogmagick` when calling Asciidoctor PDF, as follows:
-
- $ asciidoctor-pdf -r asciidoctor/pdf/nogmagick doc.adoc
-
-Granted, bypassing prawn-gmagick means you no longer get support for additional image formats that Prawn cannot handle or the PNG acceleration.
-
-== Importing PDF Pages
-
-In addition to using a PDF page for the front or back cover, you can also insert a PDF page at an arbitrary location.
-This technique is useful to include pages that have complex layouts and graphics prepared in a specialized design program (such as Inkscape), which would otherwise not be achievable using this converter.
-One such example is an insert such as an advertisement or visual interlude.
-
-To import the first page from a PDF file, use the block image macro with the PDF filename as the image target.
-
-[source,asciidoc]
-----
-image::custom-page.pdf[]
-----
-
-The converter will insert the page from the PDF as a dedicated page that matches the size and layout of the page being imported (no matter where the block image occurs).
-Therefore, there's no need to put a manual page break (i.e., `<<<`) around the image macro.
-
-By default, this macro will import the first page of the PDF.
-To import a different page, specify it as a 1-based index using the `page` attribute.
-
-[source,asciidoc]
-----
-image::custom-pages.pdf[page=2]
-----
-
-You can import multiple pages either using multiple image macros or using the `pages` attribute.
-The `pages` attribute accepts individual page numbers or page number ranges (two page numbers separated by `..`).
-The values can be separated either by commas or semicolons.
-(The syntax is similar to the syntax uses for the `lines` attribute of the AsciiDoc include directive).
-
-[source,asciidoc]
-----
-image::custom-pages.pdf[pages=3;1..2]
-----
-
-Pages are imported in the order listed.
-
-To see a practical example of how to use this feature, refer to the blog post https://fromplantoprototype.com/blog/2019/08/07/importing-pdf-pages-in-asciidoctor-pdf/[Importing PDF Pages in asciidoctor-pdf].
-
-CAUTION: An image macro used to imports PDF pages should never be nested inside a delimited block or table cell.
-It should be a direct descendant of the document or a section.
-That's because what it imports are entire pages.
-If it's used inside a delimited block or table cell, the behavior is unspecified.
-
-== Interdocument Xrefs
-
-An xref to another AsciiDoc document (i.e., an interdocument xref) will either become a link to the PDF file generated from that source document or an internal link to an anchor within the current document.
-Which one it becomes depends on whether the target has been included into the current document.
-These section describes these two scenarios.
-
-=== Referencing Another Document
-
-If the target PDF is generated from an AsciiDoc file, you can make a reference to that PDF using the xref macro.
-
-Let's assume the current document is [.path]_a.adoc_ and the PDF you want to reference is generated from [.path]_b.adoc_.
-Here's how you can make a reference from the PDF generated from [.path]_a.adoc_ to the PDF generated from [.path]_b.adoc_.
-
-[source,asciidoc]
-----
-A link to xref:b.adoc[b].
-----
-
-This xref macro is translated to a link that refers to [.path]_b.pdf_.
-
-If there's an anchor you want to target in [.path]_b.pdf_, for example _chapter-b_, you can describe it using a URL fragment just like you would with any URL.
-
-[source,asciidoc]
-----
-A link to xref:b.adoc#chapter-b[b].
-----
-
-WARNING: Linking to a named anchor isn't supported by all PDF viewers.
-Some viewers (like Firefox) only support relative links when the PDF is accessed through a web server.
-To verify it's working, test the PDF in Firefox and served through a local web server.
-
-PDF supports a variety of PDF link open parameters you can control using the URL fragment.
-For example, you can configure the PDF to open on a specific page using the special fragment `page=<N>`, where `<N>` is the 1-based page number.
-
-[source,asciidoc]
-----
-A link to page 2 of xref:b.adoc#page=2[b].
-----
-
-You can find a list of all the special fragment parameters in the https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/pdf_open_parameters.pdf#G4.1500549[PDF Open Parameters^] reference.
-
-=== Converting Interdocument Xrefs to Internal Xrefs
-
-If you're using this converter to generate a single PDF file from multiple source documents (combined using the include directive), references between those included documents must become internal references.
-Interdocument cross references (i.e., xrefs) will only successfully make that transition if you structure your document in accordance with the rules.
-
-Those rules are as follows:
-
-. The path segment of the interdocument xref must match the project-relative path of the included document
-. The reference must include the ID of the target element
-
-For instance, if your primary document contains the following include:
-
-[source,asciidoc]
-----
-\include::chapters/chapter-1.adoc[]
-----
-
-Then an interdocument xref to an anchor in that chapter must be expressed as:
-
-[source,asciidoc]
-----
-<<chapters/chapter-1.adoc#_anchor_name,Destination in Chapter 1>>
-----
-
-This rule holds regardless of which document the xref is located in.
-
-To resolve the interdocument xref, the converter first checks if the target matches the `docname` attribute.
-It then looks to see if the target matches one of the included files.
-(In both cases, it ignores the file extension).
-If Asciidoctor cannot resolve the target of an interdocument xref, it simply makes a link (like the HTML converter).
-
-Let's consider a complete example.
-Assume you are converting the following book document at the root of the project:
-
-[source,asciidoc]
-----
-= Book Title
-:doctype: book
-
-\include::chapters/chapter-1.adoc[]
-
-\include::chapters/chapter-2.adoc[]
-----
-
-Where the contents of chapter 1 is as follows:
-
-[source,asciidoc]
-----
-== Chapter 1
-
-We cover a little bit here.
-The rest you can find in <<chapters/chapter-2.adoc#_chapter_2,Chapter 2>>.
-----
-
-And the contents of chapter 2 is as follows:
-
-[source,asciidoc]
-----
-== Chapter 2
-
-Prepare to be educated.
-This chapter has it all!
-
-To begin, jump to <<chapters/chapter-2/first-steps.adoc#_first_steps,first steps>>.
-
-<<<
-
-\include::chapter-2/first-steps.adoc[]
-----
-
-And, finally, the contents of the nested include is as follows:
-
-[source,asciidoc]
-----
-=== First Steps
-
-Let's start small.
-----
-
-You'll find when you run this example that all the interdocument xrefs become internal references in the PDF.
-
-The reason both the path and anchor are required (even when linking to the top of a chapter) is so the interdocument xref works independent of the converter.
-In other words, it encodes the complete information about the reference so the converter can sort out where the target is in all circumstances.
-
-== STEM Support
-
-Unlike the built-in HTML converter, Asciidoctor PDF does not provide native support for STEM blocks and inline macros (i.e., asciimath and latexmath).
-That's because Asciidoctor core doesn't process the STEM content itself.
-It simply passes it through to the converter.
-When converting to HTML, Asciidoctor relies on the JavaScript-based MathJax library to parse and render the STEM expressions in the browser when the page is loaded.
-The HTML converter wraps the expressions in special markup so MathJax can find and process them.
-
-In order to insert a rendered expression into the PDF, the toolchain must parse the expressions and convert them to a format the PDF writer (Prawn) can understand.
-That typically means converting to an image.
-
-One solution that provides this capability is an extension named Asciidoctor Mathematical, which we'll cover in the next section.
-
-////
-Another solution, which is still under development, uses Mathoid to convert STEM equations to images.
-Mathoid is a library that invokes MathJax using a headless browser, so it supports both asciimath and latexmath equations.
-That prototype can be found in the https://github.com/asciidoctor/asciidoctor-extensions-lab#extension-catalog[Asciidoctor extensions lab].
-////
-
-=== Asciidoctor Mathematical
-
-{url-asciidoctor-mathematical}[Asciidoctor Mathematical] is an extension for Asciidoctor that provides alternate processing of STEM blocks and inline macros.
-After the document has been parsed, the extension locates each asciimath, latexmath, and stem block and inline macro, converts the expression to an image, and replaces the expression with an image.
-It uses Mathematical to render the LaTeX notation as an image.
-If the expression is AsciiMath, it first uses AsciiMath gem to convert to LaTeX.
-Conversion then proceeds as normal.
-
-Asciidoctor Mathematical is a Ruby gem that uses native extensions.
-It has a few system prerequisites which limit installation to Linux and macOS.
-Please refer to the {url-asciidoctor-mathematical}#installation[installation section] in the Asciidoctor Mathematical README to learn how to install it.
-
-Once Asciidoctor Mathematical is installed, you can enable it when invoking Asciidoctor PDF using the `-r` flag:
-
- $ asciidoctor-pdf -r asciidoctor-mathematical sample.adoc
-
-If you're invoking Asciidoctor via the API, you need to require the gem before invoking Asciidoctor:
-
-[source,ruby]
-----
-require 'asciidoctor-mathematical'
-require 'asciidoctor-pdf'
-
-Asciidoctor.convert_file 'sample.adoc', backend: 'pdf', safe: :safe
-----
-
-To get the best quality output and maximize speed of conversion, we recommend configuring Asciidoctor Mathematical to convert equations to SVG.
-You control this setting using the `mathematical-format` AsciiDoc attribute:
-
- $ asciidoctor-pdf -r asciidoctor-mathematical -a mathematical-format=svg sample.adoc
-
-Refer to the {url-asciidoctor-mathematical}#readme[README] for Asciidoctor Mathematical to learn about additional settings and options.
-
-== Skipping Passthrough Content
-
-Asciidoctor PDF does not support arbitrary passthrough content.
-While the basebackend for the PDF converter is html, it only recognizes a limited subset of inline HTML elements that can be mapped to PDF (e.g., a, strong, em, code, ).
-Therefore, if your content contains passthrough blocks or inlines, you most likely have to use a conditional preprocessor to skip them (and make other arrangements).
-
-Here's an example of how to skip a passthrough block when converting to PDF:
-
-[source,asciidoc]
-----
-\ifndef::backend-pdf[]
-<script>
-//...
-</script>
-\endif::[]
-----
-
-Here's an example of how to only enable a passthrough block when converting to HTML5:
-
-[source,asciidoc]
-----
-\ifdef::backend-html5[]
-<script>
-//...
-</script>
-\endif::[]
-----
-
-== Shaded Blocks and Performance
-
-Certain blocks are rendered with a shaded background, such as verbatim (listing, literal, and source), sidebar, and example blocks.
-In order to calculate the dimensions of the shaded region, Asciidoctor PDF has to "`dry run`" the block to determine how many pages it consumes.
-While this strategy has a low impact when processing shorter blocks, it can drastically deteriorate performance when processing a block that spans dozens of pages.
-As a general rule of thumb, you should avoid using shaded blocks which span more than a handful of pages.
-
-== Autofitting Text
-
-Verbatim blocks often have long lines that don't fit within the fixed width of the PDF canvas.
-And unlike on the web, the PDF reader cannot scroll horizontally to reveal the overflow text.
-Therefore, the long lines are forced to wrap.
-Wrapped lines can make the verbatim blocks hard to read or even cause confusion.
-
-To help address this problem, Asciidoctor PDF provides the `autofit` option on all verbatim (i.e., literal, listing and source) blocks to attempt to fit the text within the available width.
-When the `autofit` option is enabled, Asciidoctor PDF will decrease the font size (as much as it can) until the longest line fits without wrapping.
-
-CAUTION: The converter will not shrink the font size beyond the value of the `base_font_size_min` key specified in the PDF theme.
-If that threshold is reached, lines may still wrap.
-To allow `autofit` to handle all cases, set `base_font_size_min` to `0` in your theme.
-
-Here's an example of the autofit option enabled on a source block:
-
-[source,asciidoc]
-....
-[source%autofit,java]
-----
-@SessionScoped
-public class WidgetRepository {
-    @GET
-    @Produces("application/json")
-    public List<String> listAll(@QueryParam("start") Integer start, @QueryParam("max") Integer max) {
-        ...
-    }
-}
-----
-....
-
-If you want to enable the autofit option globally, set the `autofit-option` document attribute in the document header (or somewhere before the relevant blocks):
-
-[source,asciidoc]
-----
-:autofit-option:
-----
-
-== Autowidth Tables
-
-Asciidoctor PDF does support autowidth tables.
-However, the behavior differs from HTML when the content forces the table to the page boundary.
-The behavior, which is handled by the prawn-table library, is explained in this section.
-
-If the natural width of all columns (based on the width of the cell content) is less than the width of the page, it behaves as you'd expect.
-Each column is assigned the width it needs to prevent the content from wrapping.
-
-However, when the natural width of all columns exceeds the width of the page, the behavior may not be what you expect.
-What prawn-table does is compute how to arrange the table on an infinite canvas, where each column can have a width no greater than the width of the page.
-Then, it reduces the width of the table by reducing the width of each column proportionally.
-As a result, columns which reported the width necessary to render without wrapping now no longer do.
-
-The reason this compression is not performed like in HTML is because prawn-table has no awareness of words.
-Thus, it doesn't know how to redistribute with width intelligently.
-
-To protected against truncation or insufficient width errors, prawn-table wraps text by character.
-That's why the last character in the cell can end up getting wrapped.
-(There's a small amount of tolerance built in to prawn-table to address some edge cases, but it's not sufficient to handle all of them).
-
-For the reason just explained, you should be extremely careful with relying on autowidth tables in Asciidoctor PDF, especially when the natural content of the cells forces the table to page boundary.
-Let experience be your guide.
-
-== Printing Page Ranges
-
-The print dialog doesn't understand the page numbers labels (which appear in the running content).
-Instead, it only considers physical pages.
-Therefore, to print a range of pages as they are labeled in the document, you need to add the number of front matter pages (i.e., the non-numbered pages) to the page number range in the print dialog.
-
-For example, if you only want to print the first 5 pages labeled with a page number (e.g., 1-5), and there are 2 pages before the page labeled as page 1, you need to add 2 to both numbers in the range, giving you a physical page range of 3-7.
-That's the range you need to enter into the print dialog.
-
-== Title Page
-
-Unlike other converters, the PDF converter introduces a dedicated title page at the start of the document.
-The title page contains the doctitle, author, date, and revision info.
-If a front cover image is specified, the title page comes after the front cover.
-The title page can be styled using the theme and/or reserved page attributes.
-
-The title page is enabled if either of these conditions are met:
-
-* The document has the `book` doctype.
-* The `title-page` attribute is set (with an empty value) in the document header.
-
-When the title page is enabled, the table of contents (aka TOC) also gets is own page (or pages, if necessary).
-
-== Table of Contents
-
-The table of contents (TOC) is not included by default.
-The TOC is only included if the `toc` attribute is set on the document.
-The value of this attribute determines the placement.
-If a value is not specified, the placement defaults to `auto`, which is directly after the document title.
-
-For documents that have the book doctype, the TOC is inserted using discrete pages between the title page and the first page of content.
-For all other doctypes (unless the `title-page` attribute is set), the TOC is inserted in the flow of text.
-If a placement is not specifie, that location is between the document title and the first block of content.
-
-While the table of contents is not included by default, the PDF outline is always included.
-The `toclevels` attribute controls the depth of both the TOC and the PDF outline (regardless of whether the TOC is enabled).
-The depth of the outline can be controlled independently using the `outlinelevels` attribute.
-Both attributes can also be set on individual sections to override the depth for a given section and its children.
-
-NOTE: If a document that has the book doctype includes a preface, an entry for the preface is only included in the TOC if the `preface-title` is assigned a value (e.g., `preface-title=Preface`).
-This value is used as the heading of the preface and as the text of the entry in the TOC.
-
-== Index Catalog
-
-Asciidoctor PDF supports generating an index catalog that itemizes all index terms defined in the document, allowing the reader to navigate the document by keyword.
-
-To get Asciidoctor PDF to generate an index, add a level-1 section annotated with the `index` style near the end of your document.
-The converter will automatically populate the catalog with the list of index terms in the document, organized by first letter.
-
-[source,asciidoc]
-----
-[index]
-= Index
-----
-
-You can use any text you want for the title of this section.
-The only restriction is that no index terms may be defined below this section.
-
-NOTE: Although the catalog is generated automatically, you have to mark the index terms manually.
-However, you could use an extension, such as a TreeProcessor, to automatically mark index terms.
-
-=== How Index Terms are Grouped and Sorted
-
-By default, the converter groups index terms by the first letter of the primary term (e.g., A), which we call the category.
-These categories are displayed in alphabetically order in the index.
-Within the category, the converter sorts the terms alphabetically.
-
-The exception to this rule is if the primary term does not start with a letter.
-In this case, the converter group the term (along with its secondary and tertiary terms) in a special category named @.
-The @ category is displayed before all other categories in the index.
-
-If you want to modify this behavior, you must extend the index catalog and apply your own grouping and sorting rules.
-
-For example, let's say that all your functions begin with the prefix `fn`, but you want to group and sort them by the function name that follows.
-Here's rudimentary code you can use to do that:
-
-.index-customizer.rb
-[source,ruby]
-----
-require 'asciidoctor-pdf'
-
-module Asciidoctor::PDF
-  IndexCatalog.prepend (::Module.new do
-    def store_primary_term name, dest = nil
-      store_dest dest if dest
-      category = (name.delete_prefix 'fn').upcase.chr
-      (init_category category).store_term name, dest
-    end
-  end)
-
-  IndexTermGroup.prepend (::Module.new do
-    def <=> other
-      this = @name.delete_prefix 'fn'
-      that = other.name.delete_prefix 'fn'
-      (val = this.casecmp that) == 0 ? this <=> that : val
-    end
-  end)
-end
-----
-
-You load this code when calling Asciidoctor PDF as follows:
-
- $ asciidoctor-pdf -r ./index-customizer.rb doc.adoc
-
-Now the index terms will be grouped and sorted according to your custom rules.
-
-== Optimizing the Generated PDF
-
-By default, Asciidoctor PDF does not optimize the PDF it generates or compress its streams.
-This section covers several approaches you can take to optimize your PDF.
-
-IMPORTANT: If you're creating a PDF for Amazon's Kindle Direct Publishing (KDP), GitLab repository preview, or other online publishers, you'll likely need to optimize the file before uploading.
-In their words, you must tidy up the reference tree and https://kdp.amazon.com/en_US/help/topic/G201953020#check[flatten all transparencies^] (mostly likely referring to images).
-If you don't do this step, the platform may reject your upload or fail to display it properly.
-(For KDP, `-a optimize` works best.
-For GitLab repository preview, either `-a optimize` or `hexapdf optimize` will do the trick.)
-
-=== Enable Stream Compression
-
-The simplest way to reduce the size of the PDF file is to enable stream compression (using the FlateDecode method).
-You can enable this feature by setting the `compress` attribute on the document:
-
- $ asciidoctor-pdf -a compress document.adoc
-
-For a more thorough optimization, you can use the integrated optimizer or hexapdf.
-Read on to learn how.
-
-=== rghost
-
-{project-name} also provides a flag (and bin script) that uses GhostScript (via rghost) to optimize and compress the generated PDF (with minimal impact on quality).
-You must have Ghostscript (command: `gs`) and the `rghost` gem installed to use it.
-
-Here's an example usage that converts your document and optimizes it:
-
- $ asciidoctor-pdf -a optimize basic-example.adoc
-
-The command will generate an optimized PDF 1.4 file.
-In addition to optimizing the PDF file, it also converts it from plain PDF to a PDF/X-1a.
-
-If this command fails because the `gs` command cannot be found, you'll need to set it using the `GS` environment variable.
-On Windows, this step is almost always required since the Ghostscript installer does not install the `gs` command into a standard location.
-Here's an example that shows how you can override the `gs` command path:
-
- $ GS=/path/to/gs asciidoctor-pdf -a optimize basic-example.adoc
-
-You'll need to use the technique for assigning an environment variable that's relevant for your system.
-
-The one limitation of generating a PDF/X-1a file is that it does not allow non-ASCII characters in the document metadata fields (i.e., title, author, subject, etc).
-To workaround this limitation, you can force Ghostscript to generate a PDF 1.3 file using the `pdf-version` attribute:
-
- $ asciidoctor-pdf -a optimize -a pdf-version=1.3 basic-example.adoc
-
-CAUTION: Downgrading the PDF version may break the PDF if it contains an image that uses color blending or transparency.
-Specifically, the text on the page can become rasterized, which causes links to stop working and prevents text from being selected.
-If you're in this situation, it might be best to try <<hexapdf>> instead.
-
-If you're looking for a smaller file size, you can try reducing the quality of the output file by passing a quality keyword to the `optimize` attribute (e.g., `--optimize=screen`).
-The `optimize` attribute accepts the following keywords: `default` (default, same if value is empty), `screen`, `ebook`, `printer`, and `prepress`.
-Refer to the https://www.ghostscript.com/doc/current/VectorDevices.htm#PSPDF_IN[Ghostscript documentation^] to learn what settings these presets affect.
-
-If you've already generated the PDF, and want to optimize it directly, you can use the bin script:
-
- $ asciidoctor-pdf-optimize basic-example.pdf
-
-The command will overwrite the PDF file with an optimized version.
-You can also try reducing the quality of the output file using the `--quality` flag (e.g., `--quality screen`).
-The `--quality` flag accepts the following keywords: `default` (default), `screen`, `ebook`, `printer`, and `prepress`.
-
-In both cases, if a file is found with the extension `.pdfmark` and the same rootname as the input file, it will be used to add metadata to the generated PDF document.
-This file is necessary when using versions of Ghostscript < 8.54, which did not automatically preserve this metadata.
-You can instruct the converter to automatically generate a pdfmark file by setting the `pdfmark` attribute (i.e., `-a pdfmark`)
-When using a more recent version of Ghostscript, you do not need to generate a `.pdfmark` file for this purpose.
-
-IMPORTANT: The `asciidoctor-pdf-optimize` is not guaranteed to reduce the size of the PDF file.
-It may actually make the PDF larger.
-You should probably only consider using it if the file size of the original PDF is several megabytes.
-
-If you have difficulty getting the `rghost` gem installed, or you aren't getting the results you expect, you can try the optimizer provided by hexapdf instead.
-
-=== hexapdf
-
-Another option to optimize the PDF is https://hexapdf.gettalong.org/[hexapdf] (gem: hexapdf, command: hexapdf).
-Before introducing it, though, it's important to point out that its license is AGPL.
-If that's okay with you, read on to learn how to use it.
-
-First, install the hexapdf gem using the following command:
-
- $ gem install hexapdf
-
-You can then use it to optimize your PDF as follows:
-
- $ hexapdf optimize --compress-pages --force basic-example.pdf basic-example.pdf
-
-This command does not manipulate the images in any way.
-It merely compresses the objects in the PDF and prunes any unreachable references.
-But given how much waste Prawn leaves behind, this turns out to reduce the file size substantially.
-
-You can hook this command directly into the converter by providing your own implementation of the `Optimizer` class.
-Start by creating a Ruby file named [.path]_optimizer-hexapdf.rb_, then populate it with the following code:
-
-.optimizer-hexapdf.rb
-[source,ruby]
-----
-require 'hexapdf/cli'
-
-class Asciidoctor::PDF::Optimizer
-  def initialize(*)
-    app = HexaPDF::CLI::Application.new
-    app.instance_variable_set :@force, true
-    @optimize = app.main_command.commands['optimize']
-  end
-
-  def optimize_file path
-    options = @optimize.instance_variable_get :@out_options
-    options.compress_pages = true
-    #options.object_streams = :preserve
-    #options.xref_streams = :preserve
-    #options.streams = :preserve # or :uncompress
-    @optimize.execute path, path
-    nil
-  rescue
-    # retry without page compression, which can sometimes fail
-    options.compress_pages = false
-    @optimize.execute path, path
-    nil
-  end
-end
-----
-
-To activate your custom optimizer, load this file when invoking the `asciidoctor-pdf` using the `-r` flag and set the `optimize` attribute as well using the `-a` flag.
-
- $ asciidoctor-pdf -r ./optimizer-hexapdf.rb -a optimize basic-example.adoc
-
-Now you can convert and optimize all in one go.
-
-To see more options that `hexapdf optimize` offers, run:
-
- $ hexapdf help optimize
-
-For example, to make the source of the PDF a bit more readable (though less optimized), set the stream-related options to `preserve` (e.g.,, `--streams preserve` from the CLI or `options.streams = :preserve` from the API).
-You can also disable page compressioin (e.g., `--no-compress-pages` from the CLI or `options.compress_pages = false` from the API).
-
-hexapdf also allows you to add password protection to your PDF, if that's something you're interested in doing.
-
-=== Rasterizing the PDF
-
-Instead of optimizing the objects in the vector PDF, you may want to rasterize the PDF instead.
-Rasterizing the PDF prevents any of the text or other objects from being selected, similar to a scanned document.
-
-Asciidoctor PDF doesn't provide built-in support for rasterizing the generated PDF.
-However, you can use Ghostscript to flatten all the text in the PDF, thus preventing it from being selected.
-
- $ gs -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -dNoOutputFonts -r300 -o output.pdf input.pdf
-
-You can adjust the value of the `-r` option (the density) to get a higher or lower quality result.
-
-Alternately, you can use the `convert` command from ImageMagick to convert each page in the PDF to an image.
-
- $ convert -density 300 -quality 100 input.pdf output.pdf
-
-Yet another option is to combine Ghostscript and ImageMagick to produce a PDF with pages converted to images.
-
- $ gs -dBATCH -dNOPAUSE -sDEVICE=png16m -o /tmp/tmp-%02d.png -r300 input.pdf
-   convert /tmp/tmp-*.png output.pdf
-   rm -f /tmp/tmp-*.png
-
-Using Ghostscript to handle the rasterization produces a much smaller output file.
-The drawback of using Ghostscript in this way is that it has to use intermediate files.
+To learn how the theming system works and how to create and apply custom themes, refer to the {url-project-docs}/theme/[Asciidoctor PDF theming documentation].
 
 ifndef::env-site[]
 == Contributing
