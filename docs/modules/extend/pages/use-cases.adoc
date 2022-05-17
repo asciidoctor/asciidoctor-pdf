@@ -134,6 +134,24 @@ Then, you can add this number in the left margin at the start of each paragraph 
 include::example$pdf-converter-numbered-paragraphs.rb[]
 ----
 
+== Change bars
+
+If you have a preprocessor that adds change metadata to the content, you can use an extended converter to draw change bars to add a visual indicator in the rendered output.
+
+.Extended converter with change bars
+[,ruby]
+----
+include::example$pdf-converter-change-bars.rb[]
+----
+
+This converter will look for paragraphs like this one:
+
+[,asciidoc]
+----
+[.changed]
+This line has been changed.
+----
+
 == Avoid break after heading
 
 This functionality is already provided by the converter if you set the `breakable` option on section title or discrete heading.
