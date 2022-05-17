@@ -171,6 +171,17 @@ include::example$pdf-converter-additional-toc-entries.rb[]
 The depth of the TOC is automatically controlled by the `toclevels` attributes.
 Once this limit is reached, the converter will not call `get_entries_for_toc` for that parent (as none of its children will be included in the TOC).
 
+== Narrow TOC
+
+Let's say you want to make the content on the TOC page(s) really narrow.
+You can do so by overridding the `ink_toc` method and squeezing the margins by applying extra indentation.
+
+.Extended converter with narrow TOC
+[,ruby]
+----
+include::example$pdf-converter-narrow-toc.rb[]
+----
+
 == Indent block image
 
 If you want all (or some) block images to be indented by an amount specified in the theme, you can override the convert handler method for block images, `convert_image`, and call super within an indented context.
