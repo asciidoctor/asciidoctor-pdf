@@ -122,6 +122,24 @@ For example:
 :chapter-toclevels: 2
 ----
 
+== License page
+
+Let's so you want to insert a license page into your documents, but you don't want to have to put a block macro for it in the document source.
+You can use an extended converter to add new pages to the body of the document.
+
+Let's consider the case of reading the license text from a file and inserting it into the first page of the body.
+
+.Extended converter with license page
+[,ruby]
+----
+include::example$pdf-converter-license-page.rb[]
+----
+
+The method `start_new_page` will create a new page in the document.
+The `ink_prose` method provides a `normalize` option.
+When this option is false, it will preserve the newlines in the content, which is what we want in the case of license text.
+You may want to take this a bit further and allow the location of the license file to be configurable.
+
 == Paragraph numbering
 
 To help with content auditing or coorelation, you may want to add a number in front of each paragraph.
