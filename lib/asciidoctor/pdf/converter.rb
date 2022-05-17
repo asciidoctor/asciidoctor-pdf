@@ -1238,7 +1238,7 @@ module Asciidoctor
               end
             end
             if attribution
-              margin_bottom @theme.block_margin_bottom
+              theme_margin :block, :bottom
               theme_font %(#{category}_cite) do
                 attribution_parts = citetitle ? [attribution, citetitle] : [attribution]
                 ink_prose %(#{EmDash} #{attribution_parts.join ', '}), align: :left, normalize: false, margin_bottom: 0
@@ -3668,7 +3668,7 @@ module Asciidoctor
         to_page = nil
         extent = dry_run onto: self do
           to_page = (ink_toc doc, toc_num_levels, toc_start_page_number, toc_start_cursor).end
-          margin_bottom @theme.block_margin_bottom unless title_page_on
+          theme_margin :block, :bottom unless title_page_on
         end
         # NOTE: patch for custom converters that allocate extra TOC pages without actually creating them
         if to_page > extent.to.page
