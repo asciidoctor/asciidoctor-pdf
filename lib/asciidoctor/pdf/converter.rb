@@ -381,7 +381,7 @@ module Asciidoctor
         @font_scale = 1
         @font_color = theme.base_font_color
         @text_decoration_width = theme.base_text_decoration_width
-        @base_text_align = (align = doc.attr 'text-align') && (TextAlignmentNames.include? align) ? align : theme.base_text_align
+        @base_text_align = (text_align = doc.attr 'text-align') && (TextAlignmentNames.include? text_align) ? text_align : theme.base_text_align
         @base_line_height = theme.base_line_height
         @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
         if (hyphen_lang = (doc.attr 'hyphens') ||
@@ -630,10 +630,10 @@ module Asciidoctor
           title = %(#{title}\n<em class="subtitle">#{subtitle}</em>)
         end
         hlevel = sect.level.next
-        align = (@theme[%(heading_h#{hlevel}_text_align)] || @theme.heading_text_align || @base_text_align).to_sym
+        text_align = (@theme[%(heading_h#{hlevel}_text_align)] || @theme.heading_text_align || @base_text_align).to_sym
         chapterlike = !(part = sectname == 'part') && (sectname == 'chapter' || (sect.document.doctype == 'book' && sect.level == 1))
         hidden = sect.option? 'notitle'
-        hopts = { align: align, level: hlevel, part: part, chapterlike: chapterlike, outdent: !(part || chapterlike) }
+        hopts = { align: text_align, level: hlevel, part: part, chapterlike: chapterlike, outdent: !(part || chapterlike) }
         if part
           unless @theme.heading_part_break_before == 'auto'
             started_new = true
@@ -675,10 +675,10 @@ module Asciidoctor
       def convert_floating_title node
         title = node.title
         hlevel = node.level.next
-        unless (align = resolve_text_align_from_role node.roles)
-          align = (@theme[%(heading_h#{hlevel}_text_align)] || @theme.heading_text_align || @base_text_align).to_sym
+        unless (text_align = resolve_text_align_from_role node.roles)
+          text_align = (@theme[%(heading_h#{hlevel}_text_align)] || @theme.heading_text_align || @base_text_align).to_sym
         end
-        hopts = { align: align, level: hlevel, outdent: node.parent.context == :section }
+        hopts = { align: text_align, level: hlevel, outdent: node.parent.context == :section }
         arrange_heading node, title, hopts unless at_page_top? || node.last_child?
         add_dest_for_block node if node.id
         # QUESTION: should we decouple styles from section titles?
@@ -782,7 +782,7 @@ module Asciidoctor
                   if child.context == :paragraph
                     child.document.playback_attributes child.attributes
                     prose_opts[:margin_bottom] = 0 if child == last_block
-                    ink_prose child.content, ((align = resolve_text_align_from_role child.roles) ? (prose_opts.merge align: align) : prose_opts.dup)
+                    ink_prose child.content, ((text_align = resolve_text_align_from_role child.roles) ? (prose_opts.merge align: text_align) : prose_opts.dup)
                     prose_opts.delete :first_line_options
                     prose_opts.delete :margin_bottom
                   else
@@ -791,8 +791,8 @@ module Asciidoctor
                   end
                 end
               elsif node.content_model != :compound && (string = node.content)
-                if (align = resolve_text_align_from_role node.roles)
-                  prose_opts[:align] = align
+                if (text_align = resolve_text_align_from_role node.roles)
+                  prose_opts[:align] = text_align
                 end
                 ink_prose string, (prose_opts.merge margin_bottom: 0)
               end
@@ -807,8 +807,8 @@ module Asciidoctor
         add_dest_for_block node if node.id
 
         prose_opts = { margin_bottom: 0, hyphenate: true }
-        if (align = resolve_text_align_from_role (roles = node.roles), query_theme: true, remove_predefined: true)
-          prose_opts[:align] = align
+        if (text_align = resolve_text_align_from_role (roles = node.roles), query_theme: true, remove_predefined: true)
+          prose_opts[:align] = text_align
         end
         role_keys = roles.map {|role| %(role_#{role}).to_sym } unless roles.empty?
         if (text_indent = @theme.prose_text_indent) > 0 ||
@@ -842,7 +842,7 @@ module Asciidoctor
 
       def convert_admonition node
         type = node.attr 'name'
-        label_align = @theme.admonition_label_text_align&.to_sym || :center
+        label_text_align = @theme.admonition_label_text_align&.to_sym || :center
         # TODO: allow vertical_align to be a number
         if (label_valign = @theme.admonition_label_vertical_align&.to_sym || :middle) == :middle
           label_valign = :center
@@ -913,14 +913,14 @@ module Asciidoctor
                     end
                     icon icon_data[:name],
                       valign: label_valign,
-                      align: label_align,
+                      align: label_text_align,
                       color: (icon_data[:stroke_color] || font_color),
                       size: icon_size
                   elsif icons
                     if (::Asciidoctor::Image.format icon_path) == 'svg'
                       begin
                         svg_obj = ::Prawn::SVG::Interface.new (::File.read icon_path, mode: 'r:UTF-8'), self,
-                          position: label_align,
+                          position: label_text_align,
                           vposition: label_valign,
                           width: label_width,
                           height: label_height,
@@ -946,7 +946,7 @@ module Asciidoctor
                         if (icon_height = icon_width * (1 / icon_aspect_ratio)) > label_height
                           icon_width *= label_height / icon_height
                         end
-                        embed_image image_obj, image_info, width: icon_width, position: label_align, vposition: label_valign
+                        embed_image image_obj, image_info, width: icon_width, position: label_text_align, vposition: label_valign
                       rescue
                         log :warn, %(could not embed admonition icon image: #{icon_path}; #{$!.message})
                         icons = nil
@@ -977,7 +977,7 @@ module Asciidoctor
                       end
                       @text_transform = nil # already applied to label
                       ink_prose label_text,
-                        align: label_align,
+                        align: label_text_align,
                         valign: label_valign,
                         line_height: 1,
                         margin: 0,
@@ -1277,8 +1277,8 @@ module Asciidoctor
         last_item = node.items[-1]
         item_spacing = @theme.callout_list_item_spacing || @theme.list_item_spacing
         item_opts = { margin_bottom: item_spacing, normalize_line_height: true }
-        if (item_align = (resolve_text_align_from_role node.roles) || @theme.list_text_align&.to_sym)
-          item_opts[:align] = item_align
+        if (item_text_align = (resolve_text_align_from_role node.roles) || @theme.list_text_align&.to_sym)
+          item_opts[:align] = item_text_align
         end
         theme_font :callout_list do
           line_metrics = theme_font(:conum) { calc_line_metrics @base_line_height }
@@ -1496,13 +1496,13 @@ module Asciidoctor
         ink_caption node, category: :list, labeled: false if node.title?
 
         opts = {}
-        if (align = resolve_text_align_from_role node.roles)
-          opts[:align] = align
+        if (text_align = resolve_text_align_from_role node.roles)
+          opts[:align] = text_align
         elsif node.style == 'bibliography'
           opts[:align] = :left
-        elsif (align = @theme.list_text_align&.to_sym) # rubocop:disable Lint/DuplicateBranch
+        elsif (text_align = @theme.list_text_align&.to_sym) # rubocop:disable Lint/DuplicateBranch
           # NOTE: theme setting only affects alignment of list text (not nested blocks)
-          opts[:align] = align
+          opts[:align] = text_align
         end
 
         line_metrics = calc_line_metrics @base_line_height
@@ -3582,7 +3582,7 @@ module Asciidoctor
         font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
 
         # QUESTION: allow alignment per element on title page?
-        title_align = (@theme.title_page_text_align || @base_text_align).to_sym
+        title_text_align = (@theme.title_page_text_align || @base_text_align).to_sym
 
         if @theme.title_page_logo_display != 'none' && (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
           if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
@@ -3607,8 +3607,8 @@ module Asciidoctor
             log :error, %(PDF format not supported for title page logo image: #{logo_image_path})
           else
             logo_image_attrs['target'] = logo_image_path
-            # NOTE: at the very least, title_align will be a valid alignment value
-            logo_image_attrs['align'] = [(logo_image_attrs.delete 'align'), @theme.title_page_logo_align, title_align.to_s].find {|val| (BlockAlignmentNames.include? val) }
+            # NOTE: at the very least, title_text_align will be a valid alignment value
+            logo_image_attrs['align'] = [(logo_image_attrs.delete 'align'), @theme.title_page_logo_align, title_text_align.to_s].find {|val| (BlockAlignmentNames.include? val) }
             if (logo_image_top = logo_image_attrs['top'] || @theme.title_page_logo_top)
               initial_y, @y = @y, (resolve_top logo_image_top)
             end
@@ -3631,7 +3631,7 @@ module Asciidoctor
             move_down @theme.title_page_title_margin_top || 0
             indent (@theme.title_page_title_margin_left || 0), (@theme.title_page_title_margin_right || 0) do
               theme_font :title_page_title do
-                ink_prose doctitle.main, align: title_align, margin: 0
+                ink_prose doctitle.main, align: title_text_align, margin: 0
               end
             end
             move_down @theme.title_page_title_margin_bottom || 0
@@ -3640,7 +3640,7 @@ module Asciidoctor
             move_down @theme.title_page_subtitle_margin_top || 0
             indent (@theme.title_page_subtitle_margin_left || 0), (@theme.title_page_subtitle_margin_right || 0) do
               theme_font :title_page_subtitle do
-                ink_prose subtitle, align: title_align, margin: 0
+                ink_prose subtitle, align: title_text_align, margin: 0
               end
             end
             move_down @theme.title_page_subtitle_margin_bottom || 0
@@ -3665,7 +3665,7 @@ module Asciidoctor
                 end
               end.join @theme.title_page_authors_delimiter
               theme_font :title_page_authors do
-                ink_prose authors, align: title_align, margin: 0, normalize: true
+                ink_prose authors, align: title_text_align, margin: 0, normalize: true
               end
             end
             move_down @theme.title_page_authors_margin_bottom || 0
@@ -3678,7 +3678,7 @@ module Asciidoctor
             end
             indent (@theme.title_page_revision_margin_left || 0), (@theme.title_page_revision_margin_right || 0) do
               theme_font :title_page_revision do
-                ink_prose revision_text, align: title_align, margin: 0, normalize: false
+                ink_prose revision_text, align: title_text_align, margin: 0, normalize: false
               end
             end
             move_down @theme.title_page_revision_margin_bottom || 0
@@ -3722,8 +3722,8 @@ module Asciidoctor
         move_cursor_to start_cursor
         unless (toc_title = doc.attr 'toc-title').nil_or_empty?
           theme_font_cascade [[:heading, level: 2], :toc_title] do
-            toc_title_align = (@theme.toc_title_text_align || @theme.heading_h2_text_align || @theme.heading_text_align || @base_text_align).to_sym
-            ink_general_heading doc, toc_title, align: toc_title_align, level: 2, outdent: true, role: :toctitle
+            toc_title_text_align = (@theme.toc_title_text_align || @theme.heading_h2_text_align || @theme.heading_text_align || @base_text_align).to_sym
+            ink_general_heading doc, toc_title, align: toc_title_text_align, level: 2, outdent: true, role: :toctitle
           end
         end
         # QUESTION: should we skip this whole method if num_levels < 0?
@@ -4175,8 +4175,8 @@ module Asciidoctor
           (align_role.slice 5, align_role.length).to_sym
         elsif query_theme
           roles.reverse.each do |role|
-            if (align = @theme[%(role_#{role}_text_align)])
-              return align.to_sym
+            if (text_align = @theme[%(role_#{role}_text_align)])
+              return text_align.to_sym
             end
           end
           nil
