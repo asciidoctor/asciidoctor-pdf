@@ -1133,10 +1133,11 @@ module Asciidoctor
           adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ? (compute_autofit_font_size source_chunks, :code) : nil
         end
 
+        caption_below = @theme.code_caption_end&.to_sym == :bottom
         arrange_block node do |extent|
           add_dest_for_block node if node.id
           tare_first_page_content_stream do
-            theme_fill_and_stroke_block :code, extent, background_color: bg_color_override, caption_node: node
+            theme_fill_and_stroke_block :code, extent, background_color: bg_color_override, caption_node: caption_below ? nil : node
           end
           pad_box @theme.code_padding, node do
             theme_font :code do
@@ -1148,7 +1149,8 @@ module Asciidoctor
             end
           end
         end
-
+        # TODO: add protection against the bottom caption being widowed
+        ink_caption node, category: :code, end: :bottom if caption_below
         theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
@@ -1158,10 +1160,11 @@ module Asciidoctor
 
       def convert_example node
         return convert_open node if node.option? 'collapsible'
+        caption_bottom = @theme.example_caption_end&.to_sym == :bottom
         arrange_block node do |extent|
           add_dest_for_block node if node.id
           tare_first_page_content_stream do
-            theme_fill_and_stroke_block :example, extent, caption_node: node
+            theme_fill_and_stroke_block :example, extent, caption_node: caption_bottom ? nil : node
           end
           pad_box @theme.example_padding, node do
             theme_font :example do
@@ -1169,6 +1172,8 @@ module Asciidoctor
             end
           end
         end
+        # TODO: add protection against the bottom caption being widowed
+        ink_caption node, category: :example, end: :bottom if caption_bottom
         theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
