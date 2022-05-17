@@ -1736,7 +1736,7 @@ module Asciidoctor
               svg_obj.document.warnings.each do |img_warning|
                 log :warn, %(problem encountered in image: #{image_path}; #{img_warning})
               end unless scratch?
-              draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? && (node.has_role? 'noborder')
+              draw_image_border image_cursor, rendered_w, rendered_h, alignment unless pinned || (node.role? && (node.has_role? 'noborder'))
               if (link = node.attr 'link')
                 add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
               end
@@ -1765,7 +1765,7 @@ module Asciidoctor
               image_cursor = cursor
               # NOTE: specify both width and height to avoid recalculation
               embed_image image_obj, image_info, width: rendered_w, height: rendered_h, position: alignment
-              draw_image_border image_cursor, rendered_w, rendered_h, alignment unless node.role? && (node.has_role? 'noborder')
+              draw_image_border image_cursor, rendered_w, rendered_h, alignment unless pinned || (node.role? && (node.has_role? 'noborder'))
               if (link = node.attr 'link')
                 add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
               end

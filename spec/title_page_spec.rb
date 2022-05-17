@@ -184,6 +184,33 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images[0].hash[:Height]).to be 240
     end
 
+    it 'should not add border to raster logo image if border is specified for image block in theme' do
+      pdf_theme = { image_border_width: 1, image_border_color: '000000' }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[]
+
+      content
+      EOS
+
+      (expect pdf.lines).to be_empty
+    end
+
+    it 'should not add border to SVG logo image if border is specified for image block in theme' do
+      pdf_theme = { image_border_width: 1, image_border_color: '0000EE' }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:square.svg[]
+
+      content
+      EOS
+
+      image_border_lines = pdf.lines.select {|it| it[:color] == '0000EE' }
+      (expect image_border_lines).to be_empty
+    end
+
     it 'should add remote logo specified by title-logo-image document attribute to title page' do
       with_local_webserver do |base_url|
         [%(#{base_url}/tux.png), %(image:#{base_url}/tux.png[])].each do |image_url|
