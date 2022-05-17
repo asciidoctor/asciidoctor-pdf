@@ -1147,7 +1147,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect title_page_lines).to eql %w(Subtitle)
     end
 
-    it 'should not remove title page if all elements are disabled' do
+    it 'should advanced past title page if all elements are disabled' do
       pdf_theme = {
         title_page_title_display: 'none',
         title_page_subtitle_display: 'none',
@@ -1166,6 +1166,32 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       EOS
 
       (expect pdf.pages).to have_size 2
+      title_page_text = (pdf.page 1).text
+      (expect title_page_text).to be_empty
+
+      image_data = File.binread fixture_file 'cover.jpg'
+      title_page_images = get_images pdf, 1
+      (expect title_page_images).to have_size 1
+      (expect title_page_images[0].data).to eql image_data
+    end
+
+    it 'should not remove title page if all elements are disabled' do
+      pdf_theme = {
+        title_page_title_display: 'none',
+        title_page_subtitle_display: 'none',
+        title_page_authors_display: 'none',
+        title_page_revision_display: 'none',
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, debug: true
+      = Document Title: Subtitle
+      :doctype: book
+      :title-page-background-image: image:cover.jpg[]
+      Author Name
+      v1.0, 2020-01-01
+      EOS
+
+      (expect pdf.pages).to have_size 1
       title_page_text = (pdf.page 1).text
       (expect title_page_text).to be_empty
 

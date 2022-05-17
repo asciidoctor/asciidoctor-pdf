@@ -175,7 +175,7 @@ module Asciidoctor
           # NOTE: the base font must be set before any content is written to the main or scratch document
           font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
           ink_title_page doc
-          start_new_page unless page.empty?
+          start_new_page
         else
           @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress' && page_number == 0
           start_new_page unless page&.empty? # rubocop:disable Lint/SafeNavigationWithEmpty
@@ -3661,9 +3661,6 @@ module Asciidoctor
             move_down @theme.title_page_revision_margin_bottom || 0
           end
         end
-
-        ink_prose DummyText, margin: 0, line_height: 1, normalize: false if page.empty?
-        true
       end
 
       def allocate_toc doc, toc_num_levels, toc_start_cursor, title_page_on
