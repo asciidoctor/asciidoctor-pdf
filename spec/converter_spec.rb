@@ -251,6 +251,19 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
+      it 'should resolve pdf-themesdir relative to the current working directory' do
+        input_file = Pathname.new fixture_file 'hello-with-custom-theme.adoc'
+        relative_themesdir = fixture_file '.', relative: true
+        pdf = to_pdf input_file, analyze: true, attribute_overrides: { 'pdf-themesdir' => relative_themesdir }
+        (expect pdf.find_text font_name: 'Times-Roman').to have_size pdf.text.size
+      end
+
+      it 'should replace {docdir} token in value of pdf-themesdir' do
+        input_file = Pathname.new fixture_file 'hello-with-custom-theme.adoc'
+        pdf = to_pdf input_file, analyze: true, attribute_overrides: { 'pdf-themesdir' => '{docdir}' }
+        (expect pdf.find_text font_name: 'Times-Roman').to have_size pdf.text.size
+      end
+
       it 'should set text color to black when default-for-print theme is specified' do
         pdf = to_pdf <<~EOS, analyze: true
         = Document Title
