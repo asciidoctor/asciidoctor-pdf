@@ -98,7 +98,3 @@ If the doctype isn't `book` and the hidden section title isn't a part (`=`) or c
 image::reference-card.pdf[]
 ----
 <.> Insert a page break (`<<<`) to make sure the anchor for the hidden section is kept together with the imported PDF page if the doctype isn't `book` or the section isn't a part or chapter.
-
-
-
-
