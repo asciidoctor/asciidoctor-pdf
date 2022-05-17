@@ -23,6 +23,28 @@ That means we can make use of graphics fill and stroke methods provided by Ascii
 include::example$pdf-converter-custom-thematic-break.rb[tags=**]
 ----
 
+== Custom title page
+
+Every title page is as unique as the work itself.
+That's why Asciidoctor PDF gives you the ability to customize the title page by overriding the `ink_title_page` method in an extended converter.
+The `ink_title_page` method is called after the title page has been created and the background applied, so it can focus on writing content.
+In this method, you can choose to honor the `title-page` settings from the theme, or go your own way.
+The one rule is that this method must not start a new page.
+
+Let's create a custom title page that shows the document title and subtitle between two lines in the top half and a logo in the bottom half.
+
+.Extended converter with custom title page
+[,ruby]
+----
+include::example$pdf-converter-custom-title-page.rb[]
+----
+
+The methods `move_cursor_to` and `move_cursor` advance the cursor on the page where the next content will be written.
+The method `theme_font` applies the font from the specified category in the theme (with hyphens in the category name replaced by underscores).
+The method `stroke_horizontal_rule` draws a horizontal line using the specified color and line width.
+The method `ink_prose` is provided by Asciidoctor PDF to make writing text to the page easier.
+Finally, the method `convert` will convert and render the Asciidoctor node that is passed to it, in this case a block image.
+
 == Custom part title
 
 A common need is to add extra styling to the title page for a part in a multi-part book.
