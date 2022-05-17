@@ -266,7 +266,7 @@ The doctype must be `book` for the `heading-chapter` key to take effect.
 |===
 |Key |Value Type |Example
 
-|chapter-break-before
+|break-before
 |`always` {vbar} `auto` +
 (default: `always`)
 |[source]
@@ -285,7 +285,7 @@ The doctype must be `book` for the `heading-part` keys to take effect.
 |===
 |Key |Value Type |Example
 
-|`part-break-after`
+|break-after
 |`always` {vbar} `auto` +
 (default: `auto`)
 |[source]
@@ -293,7 +293,7 @@ heading:
   part:
     break-after: always
 
-|part-break-before
+|break-before
 |`always` {vbar} `auto` +
 (default: `always`)
 |[source]

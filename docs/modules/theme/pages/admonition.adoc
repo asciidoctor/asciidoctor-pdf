@@ -44,7 +44,7 @@ admonition:
 |xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[\]] +
 (default: _not set_)
 |[source]
-verse:
+admonition:
   border-width: 0.5
 
 // TODO What about admonition_rule_color which is used on line 106 in the admonition_spec.rb?

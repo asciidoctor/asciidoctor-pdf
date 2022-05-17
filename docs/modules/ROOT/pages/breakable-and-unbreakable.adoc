@@ -1,5 +1,5 @@
 = Breakable and Unbreakable Blocks
-:description: By default, most blocks are breakable with built-in anchor and caption orphan prevention. The unbreakable option prevents a block from breaking across pages.
+:description: By default, most blocks are breakable with anchor and caption orphan prevention. The unbreakable option prevents a block from breaking across pages.
 
 Asciidoctor PDF gives the author some control over where content blocks are placed using the `unbreakable` and `breakable` options, and tries to provide sensible defaults when these options are not used.
 
