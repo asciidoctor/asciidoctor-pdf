@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Enhancements::
 
 * allow hyphenation to be turned on and configured using the `base-hyphens` key in the theme (#2161)
+* split out `start_title_page` method from `ink_title_page` to make customization of the title page simpler using an extended converter
 
 Improvements::
 

@@ -171,15 +171,18 @@ module Asciidoctor
         # NOTE: a new page will already be started (page_number = 2) if the front cover image is a PDF
         ink_cover_page doc, :front
         has_front_cover = page_number > marked_page_number
-        has_title_page = ink_title_page doc if (title_page_on = doc.doctype == 'book' || (doc.attr? 'title-page'))
-
-        @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress' && page_number == 0
-
-        start_new_page unless page&.empty? # rubocop:disable Lint/SafeNavigationWithEmpty
-
-        # NOTE: the base font must be set before any content is written to the main or scratch document
-        # this method is called inside ink_title_page if the title page is active
-        font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style unless has_title_page
+        if (has_title_page = (title_page_on = doc.doctype == 'book' || (doc.attr? 'title-page')) && (start_title_page doc))
+          # NOTE: the base font must be set before any content is written to the main or scratch document
+          font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
+          ink_title_page doc
+          start_new_page unless page.empty?
+        else
+          @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress' && page_number == 0
+          start_new_page unless page&.empty? # rubocop:disable Lint/SafeNavigationWithEmpty
+          # NOTE: the base font must be set before any content is written to the main or scratch document
+          # this method is called inside ink_title_page if the title page is active
+          font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
+        end
 
         unless title_page_on
           body_start_page_number = page_number
@@ -3554,33 +3557,7 @@ module Asciidoctor
         nil
       end
 
-      # Returns a Boolean indicating whether the title page was created
       def ink_title_page doc
-        return unless doc.header? && !doc.notitle && @theme.title_page != false
-
-        # NOTE: a new page may have already been started at this point, so decide what to do with it
-        if page.empty?
-          page.reset_content if (recycle = @ppbook ? recto_page? : true)
-        elsif @ppbook && page_number > 0 && recto_page?
-          start_new_page
-        end
-
-        side = page_side (recycle ? nil : page_number + 1), @folio_placement[:inverted]
-        prev_bg_image = @page_bg_image[side]
-        prev_bg_color = @page_bg_color
-        if (bg_image = resolve_background_image doc, @theme, 'title-page-background-image')
-          @page_bg_image[side] = bg_image[0] && bg_image
-        end
-        if (bg_color = resolve_theme_color :title_page_background_color)
-          @page_bg_color = bg_color
-        end
-        recycle ? float { init_page self } : start_new_page
-        @page_bg_image[side] = prev_bg_image if bg_image
-        @page_bg_color = prev_bg_color if bg_color
-
-        # NOTE: this is the first page created, so we must set the base font
-        font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
-
         # QUESTION: allow alignment per element on title page?
         title_text_align = (@theme.title_page_text_align || @base_text_align).to_sym
 
@@ -4210,6 +4187,31 @@ module Asciidoctor
       end
 
       alias start_new_part start_new_chapter
+
+      # Returns a Boolean indicating whether the title page was created
+      def start_title_page doc
+        return unless doc.header? && !doc.notitle && @theme.title_page != false
+
+        # NOTE: a new page may have already been started at this point, so decide what to do with it
+        if page.empty?
+          page.reset_content if (recycle = @ppbook ? recto_page? : true)
+        elsif @ppbook && page_number > 0 && recto_page?
+          start_new_page
+        end
+        side = page_side (recycle ? nil : page_number + 1), @folio_placement[:inverted]
+        prev_bg_image = @page_bg_image[side]
+        prev_bg_color = @page_bg_color
+        if (bg_image = resolve_background_image doc, @theme, 'title-page-background-image')
+          @page_bg_image[side] = bg_image[0] && bg_image
+        end
+        if (bg_color = resolve_theme_color :title_page_background_color)
+          @page_bg_color = bg_color
+        end
+        recycle ? float { init_page self } : start_new_page
+        @page_bg_image[side] = prev_bg_image if bg_image
+        @page_bg_color = prev_bg_color if bg_color
+        true
+      end
 
       def supports_float_wrapping? node
         node.context == :paragraph
