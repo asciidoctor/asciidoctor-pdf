@@ -12,6 +12,8 @@ If the name ends with `.yml`, it's assumed to be the complete name of a file and
 Otherwise, `-theme.yml` is appended to the name to make the file name (i.e., `<name>-theme.yml`) and is resolved relative to `pdf-themesdir`, if specified, otherwise the built-in themes dir.
 
 pdf-themesdir:: The directory where the theme file is located.
+If the path is relative, the value is resolved starting from the current working directory.
+You can use the `+{docdir}+` token as the first path segment to create an absolute path starting from the directory of the document.
 _Specifying an absolute path is recommended._
 +
 If you use images in your theme, image paths are resolved relative to this directory.
@@ -20,6 +22,8 @@ If `pdf-theme` ends with `.yml`, and `pdf-themesdir` is not specified, then `pdf
 pdf-fontsdir:: The directory or directories where the fonts used by your theme, if any, are located.
 Multiple entries must be separated by either a comma or a semicolon.
 To reference a file inside a JAR file on the classpath, prefix with the path with `uri:classloader:` (AsciidoctorJ only).
+If the path is relative, the value is resolved starting from the current working directory.
+You can use the `+{docdir}+` token as the first path segment to create an absolute path starting from the directory of the document.
 _Specifying an absolute path is recommended._
 
 == Load a theme

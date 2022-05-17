@@ -362,7 +362,7 @@ module Asciidoctor
           @ppbook = nil
         end
         # QUESTION: should ThemeLoader handle registering fonts instead?
-        register_fonts theme.font_catalog, (doc.attr 'pdf-fontsdir', 'GEM_FONTS_DIR')
+        register_fonts theme.font_catalog, ((doc.attr 'pdf-fontsdir')&.sub '{docdir}', (doc.attr 'docdir')) || 'GEM_FONTS_DIR'
         default_kerning theme.base_font_kerning != 'none'
         @fallback_fonts = Array theme.font_fallbacks
         @allow_uri_read = doc.attr? 'allow-uri-read'
@@ -539,9 +539,10 @@ module Asciidoctor
         @theme ||= begin # rubocop:disable Naming/MemoizedInstanceVariableName
           if (theme = doc.options[:pdf_theme])
             theme = theme.dup
-            @themesdir = ::File.expand_path theme.__dir__ || (doc.attr 'pdf-themesdir') || ::Dir.pwd
+            @themesdir = ::File.expand_path theme.__dir__ ||
+              (user_themesdir = ((doc.attr 'pdf-themesdir')&.sub '{docdir}', (doc.attr 'docdir')) || ::Dir.pwd)
           elsif (theme_name = doc.attr 'pdf-theme')
-            theme = ThemeLoader.load_theme theme_name, (user_themesdir = doc.attr 'pdf-themesdir')
+            theme = ThemeLoader.load_theme theme_name, (user_themesdir = (doc.attr 'pdf-themesdir')&.sub '{docdir}', (doc.attr 'docdir'))
             @themesdir = theme.__dir__
           else
             @themesdir = (theme = ThemeLoader.load_theme).__dir__
