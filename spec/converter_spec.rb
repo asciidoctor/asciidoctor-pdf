@@ -1282,6 +1282,36 @@ describe Asciidoctor::PDF::Converter do
       (expect pdf.images).to have_size 1
     end
 
+    it 'should allow custom converter to override ink_general_heading for article doctitle' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def ink_general_heading _sect, title, opts = {}
+          return super unless opts[:role] == :doctitle
+          theme_font :heading_doctitle do
+            ink_prose title, align: :center, margin: 0
+          end
+          theme_margin :heading_doctitle, :bottom
+        end
+      end
+
+      pdf_theme = { heading_doctitle_font_color: '0000EE', heading_doctitle_margin_bottom: 24 }
+      pdf = to_pdf <<~'EOS', backend: backend, pdf_theme: pdf_theme, analyze: true
+      = Article Title
+
+      First paragraph of body.
+      First paragraph of body.
+      First paragraph of body.
+      First paragraph of body.
+      EOS
+
+      (expect pdf.pages).to have_size 1
+      title_text = pdf.find_unique_text 'Article Title'
+      (expect title_text[:font_color]).to eql '0000EE'
+      para_text = pdf.text[1]
+      (expect title_text[:y] - (para_text[:y] + para_text[:font_size])).to be > 24
+    end
+
     it 'should remap layout_ methods added by prepended module' do
       backend = nil
       converter_class = create_class (Asciidoctor::Converter.for 'pdf') do
