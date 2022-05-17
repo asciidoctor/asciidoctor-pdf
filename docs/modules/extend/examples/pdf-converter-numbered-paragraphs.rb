@@ -3,7 +3,7 @@ class PDFConverterNumberedParagraphs < (Asciidoctor::Converter.for 'pdf')
 
   def init_pdf doc
     doc
-      .find_by(context: :paragraph) {|candidate| candidate.parent.context == :section }
+      .find_by(context: :paragraph) {|candidate| [:document, :section].include? candidate.parent.context }
       .each_with_index {|paragraph, idx| paragraph.set_attr 'number', idx + 1 }
     super
   end
