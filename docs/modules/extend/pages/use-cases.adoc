@@ -63,6 +63,8 @@ include::example$pdf-converter-custom-part-title.rb[]
 The method `ink_prose` is provided by Asciidoctor PDF to make writing text to the page easier.
 If you wanted, you could just use the low-level `text` method provided by Prawn.
 
+TIP: It's also possible to override the `start_new_part` method if all you want to do is called `page.imported` to turn off the running content.
+
 To find all the available methods to override, consult the {url-api-docs}[API docs^].
 
 == Custom chapter title
@@ -75,6 +77,8 @@ The extended converter can override the method that inks the chapter title to ad
 ----
 include::example$pdf-converter-custom-chapter-title.rb[]
 ----
+
+TIP: It's also possible to override the `start_new_chapter` method if all you want to do is called `page.imported` to turn off the running content.
 
 == Chapter image
 
