@@ -1,21 +1,21 @@
 extends: default
 role:
   love:
-    font-color: E0245E
+    font-color: #E0245E
   wild:
-    font-color: 222222
+    font-color: #222222
     text-transform: uppercase
     font-style: italic
-    background-color: BCD637
+    background-color: #BCD637
     border-offset: 1.5
 abstract:
   first-line:
     text-transform: smallcaps
 header:
-  font-color: 999999
+  font-color: #999999
   height: 0.5in
   recto:
-    columns: "<40% =20% >40%"
+    columns: '<40% =20% >40%'
     right:
       content: '_{organization}_'
     center:
