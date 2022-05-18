@@ -4256,7 +4256,7 @@ module Asciidoctor
           b_shift, b_gap_color = (b_width ||= 0.5) * 0.5, @page_bg_color
         end
         ink_caption node_with_caption, category: category if node_with_caption
-        extent.from.page += 1 unless extent.from.page == page_number # sanity check
+        extent.from.page += 1 unless extent.from.page == page_number || ColumnBox === bounds # sanity check
         float do
           extent.each_page do |first_page, last_page|
             advance_page unless first_page

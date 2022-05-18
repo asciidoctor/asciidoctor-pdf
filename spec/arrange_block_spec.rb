@@ -1829,6 +1829,65 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     end
   end
 
+  describe 'column box' do
+    it 'should compute extent for block based on correct width' do
+      pdf_theme[:code_border_radius] = 0
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def traverse node
+          return super unless node.context == :document
+          column_box [0, cursor], columns: 2, width: bounds.width, reflow_margins: true, spacer: 12 do
+            super
+          end
+        end
+      end
+      input = <<~'EOS'
+      ....
+      $ gem install asciidoctor-pdf asciidoctor-mathematical
+      $ asciidoctor-pdf -r asciidoctor-mathematical -a mathematical-format=svg sample.adoc
+      ....
+      EOS
+      lines = (to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: :line).lines
+      pdf = to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: true
+      last_line_y = lines.select {|it| it[:from][:y] == it[:to][:y] }.map {|it| it[:from][:y] }.min
+      last_text = pdf.text[-1]
+      (expect last_text[:y]).to be > last_line_y
+    end
+
+    it 'should fill extent when block is advanced to next column' do
+      source_file = doc_file 'modules/extend/examples/pdf-converter-columns.rb'
+      source_lines = (File.readlines source_file).select {|l| l == ?\n || (l.start_with? ' ') }
+      ext_class = create_class Asciidoctor::Converter.for 'pdf'
+      backend = %(pdf#{ext_class.object_id})
+      source_lines[0] = %(  register_for '#{backend}'\n)
+      ext_class.class_eval source_lines.join, source_file
+
+      pdf_theme.update \
+        base_columns: 2,
+        base_column_gap: 12,
+        code_border_radius: 0,
+        code_border_width: 0,
+        code_background_color: 'EFEFEF'
+
+      pdf = with_content_spacer 10, 675 do |spacer_path|
+        input = <<~EOS
+        image::#{spacer_path}[]
+
+        ....
+        $ gem install asciidoctor-pdf asciidoctor-mathematical
+        $ asciidoctor-pdf -r asciidoctor-mathematical -a mathematical-format=svg sample.adoc
+        ....
+        EOS
+        pdf = to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: true
+        pages = pdf.pages
+        (expect pages).to have_size 1
+        gs = (pdf.extract_graphic_states pages[0][:raw_content])[1]
+        (expect gs).to have_background color: 'EFEFEF', top_left: [312.0, 742.0], bottom_right: [562.0, 646.3]
+      end
+    end
+  end
+
   # NOTE: generate reference files using ./scripts/generate-arrange-block-reference-files.sh
   describe 'acceptance', visual: true, if: ENV['COVERAGE'] do
     it 'at top, fits' do
