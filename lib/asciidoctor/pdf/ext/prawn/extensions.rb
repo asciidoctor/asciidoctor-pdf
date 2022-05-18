@@ -13,6 +13,8 @@ module Asciidoctor
       include ::Asciidoctor::PDF::Sanitizer
       include ::Asciidoctor::PDF::TextTransformer
 
+      ColumnBox = ::Prawn::Document::ColumnBox
+
       FontAwesomeIconSets = %w(fab far fas)
       IconSets = %w(fab far fas fi pf).to_set
       IconSetPrefixes = IconSets.map {|it| it + '-' }
@@ -542,6 +544,18 @@ module Asciidoctor
       end
 
       # Cursor
+
+      # Override the built-in float method to add support for restoring the current column of a ColumnBox
+      #
+      def float
+        original_page_number = page_number
+        original_y = y
+        original_column = bounds.instance_variable_get :@current_column if ColumnBox === bounds
+        yield
+        go_to_page original_page_number unless page_number == original_page_number
+        self.y = original_y
+        bounds.instance_variable_set :@current_column, original_column if original_column
+      end
 
       # Short-circuits the call to the built-in move_up operation
       # when n is 0.
@@ -1122,6 +1136,10 @@ module Asciidoctor
         scratch_pdf.bounds = bounds.dup.tap do |bounds_copy|
           bounds_copy.instance_variable_set :@document, scratch_pdf
           bounds_copy.instance_variable_set :@parent, saved_bounds
+          if ColumnBox === bounds_copy
+            bounds_copy.instance_variable_set :@width, bounds_copy.bare_column_width
+            bounds_copy.instance_variable_set :@current_column, (bounds_copy.instance_variable_set :@columns, 1) - 1
+          end
         end
         scratch_pdf.move_cursor_to cursor unless (scratch_start_at_top = keep_together || pages_advanced > 0 || at_page_top?)
         scratch_start_cursor = scratch_pdf.cursor

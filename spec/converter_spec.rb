@@ -478,6 +478,28 @@ describe Asciidoctor::PDF::Converter do
       result = converter.parse_text %(foo\n<strong>bar</strong>), inline_format: [normalize: true]
       (expect result).to eql [{ text: 'foo ' }, { text: 'bar', styles: [:bold].to_set }]
     end
+
+    it 'should restore current column after float yields to current block' do
+      doc = Asciidoctor.load 'text', backend: :pdf
+      converter = doc.converter
+      actual_column = nil
+      last_visited_column = nil
+      converter.instance_exec do
+        init_pdf doc
+        start_new_page
+        column_box [bounds.left, cursor], width: bounds.width, columns: 2 do
+          float do
+            ink_prose 'before'
+            bounds.move_past_bottom
+            ink_prose 'after'
+            last_visited_column = bounds.instance_variable_get :@current_column
+          end
+          actual_column = bounds.instance_variable_get :@current_column
+        end
+      end
+      (expect actual_column).to eql 0
+      (expect last_visited_column).to eql 1
+    end
   end
 
   describe '#next_enclosed_block' do

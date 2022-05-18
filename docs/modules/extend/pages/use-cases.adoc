@@ -234,6 +234,7 @@ This converter works when a custom theme defines the `image-indent` key, as foll
 
 [,yaml]
 ----
+extends: default
 image:
   indent: [0.5in, 0]
 ----
@@ -259,8 +260,40 @@ You can configure the gap next to and below the image using the `image-float-gap
 
 [,yaml]
 ----
+extends: default
 image:
   float-gap: [12, 6]
+----
+
+== Multiple columns
+
+Asciidoctor PDF does not yet provide multi-column support, where the body of the article is arranged into multiple columns.
+However, the converter does provide the foundation for supporting a multi-column layout.
+We can tap into that foundation using an extended converter.
+
+The trick is to intercept the `traverse` method and enclose the call in a column box using the `column_box` method.
+The `traverse` method is called to render the body, accepting the document as the sole argument.
+Since this method is also called for other blocks, we'll need to filter out those calls by looking for the `:document` context.
+
+.Extended converter that arranges the body into columns
+[,ruby]
+----
+include::example$pdf-converter-columns.rb[]
+----
+
+WARNING: You may encounter some quirks when using this extended converter.
+It's not yet a perfect solution.
+For example, it does not handle the index section correctly.
+You may have to play around with the code to get the desired result.
+
+You can configure the number of columns and the gap between the columns in the theme file as follows:
+
+[,yaml]
+----
+extends: default
+base:
+  columns: 2
+  column-gap: 12
 ----
 
 == Access page number from inline macro
