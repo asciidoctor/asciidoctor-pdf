@@ -101,6 +101,7 @@ Enhancements::
 * use `base-border-color` as default border color; control appearance of border using `border-width` value alone (#2134)
 * remove border colors in base theme so all border colors can be controlled using `base-border-color` when extending theme
 * enable running footer when using base theme
+* allow built-in optimizer to set PDF compliance flag (PDF/A and PDF/X) using value of `optimize` attribute (#125)
 
 Bug Fixes::
 

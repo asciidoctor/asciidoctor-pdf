@@ -22,7 +22,7 @@ For a more thorough optimization, you can use the <<rghost,integrated optimizer>
 [#rghost]
 == rghost
 
-Asciidoctor PDF also provides a flag (and bin script) that uses GhostScript (via rghost) to optimize and compress the generated PDF with minimal impact on its quality.
+Asciidoctor PDF also provides a flag (and bin script) that uses Ghostscript (via rghost) to optimize and compress the generated PDF with minimal impact on its quality.
 You must have Ghostscript (command: `gs`) and the `rghost` gem installed to use it.
 
 === Install rghost
@@ -37,8 +37,7 @@ Here's an example usage that converts your document and optimizes it:
 
  $ asciidoctor-pdf -a optimize filename.adoc
 
-The command will generate an optimized PDF 1.4 file.
-In addition to optimizing the PDF file, it also converts it from plain PDF to a PDF/X-1a.
+The command will generate an optimized PDF file that is compliant with the PDF 1.4 specification.
 
 If this command fails because the `gs` command cannot be found, you'll need to set it using the `GS` environment variable.
 On Windows, this step is almost always required since the Ghostscript installer does not install the `gs` command into a standard location.
@@ -48,7 +47,14 @@ Here's an example that shows how you can override the `gs` command path:
 
 You'll need to use the technique for assigning an environment variable that's relevant for your system.
 
-The one limitation of generating a PDF/X-1a file is that it does not allow non-ASCII characters in the document metadata fields (i.e., title, author, subject, etc.).
+In addition to optimizing the PDF file, you can also configure the optimizer to convert the document from standard PDF to PDF/A or PDF/X.
+To do so, you can pass one of the following compliance keywords in the value of the optimize attribute: `PDF/A`, `PDF/A-1`, `PDF/A-2`, `PDF/A-3`, `PDF/X`, `PDF/X-1`, or `PDF/X-3`.
+
+ $ asciidoctor-pdf -a optimize=PDF/A filename.adoc
+
+WARNING: Ghostscript currently ignores the PDF/X keywords since Prawn does not properly configure the TrimBox to fit inside the BleedBox.
+
+The one limitation of generating an optimized file is that it does not allow non-ASCII characters in the document metadata fields (i.e., title, author, subject, etc.).
 To work around this limitation, you can force Ghostscript to generate a PDF 1.3 file using the `pdf-version` attribute:
 
  $ asciidoctor-pdf -a optimize -a pdf-version=1.3 filename.adoc
@@ -60,6 +66,12 @@ If you're in this situation, it might be best to try <<hexapdf>> instead.
 If you're looking for a smaller file size, you can try reducing the quality of the output file by passing a quality keyword to the `optimize` attribute (e.g., `--optimize=screen`).
 The `optimize` attribute accepts the following keywords: `default` (default, same if value is empty), `screen`, `ebook`, `printer`, and `prepress`.
 Refer to the https://www.ghostscript.com/doc/current/VectorDevices.htm#PSPDF_IN[Ghostscript documentation^] to learn what settings these presets affect.
+
+ $ asciidoctor-pdf -a optimize=prepress filename.adoc
+
+To combine the quality and compliance, you separate the keywords using a comma, with the quality keyword first:
+
+ $ asciidoctor-pdf -a optimize=prepress,PDF/A filename.adoc
 
 If you've already generated the PDF, and want to optimize it directly, you can use the bin script:
 
