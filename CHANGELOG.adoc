@@ -5,12 +5,16 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.0 (2022-05-18) - @mojavelinux
 
 Improvements::
 
 * use more stable approach to recreating current bounds in scratch document
 * add foundation to support multi-column layout for the body of an article (using an extended converter only)
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.0[git tag] | {url-repo}/compare/v2.0.0.rc.1\...v2.0.0[full diff]
 
 == 2.0.0.rc.1 (2022-05-17) - @mojavelinux
 

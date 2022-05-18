@@ -1,7 +1,7 @@
 name: pdf-converter
 title: Asciidoctor PDF
 version: '2.0'
-prerelease: '.0.rc.1'
+prerelease: false
 asciidoc:
   attributes:
     xrefstyle: short@

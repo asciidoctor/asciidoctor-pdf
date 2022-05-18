@@ -2,6 +2,6 @@
 
 module Asciidoctor
   module PDF
-    VERSION = '2.0.0.rc.1'
+    VERSION = '2.0.0'
   end
 end
