@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
+== Unreleased
+
+Improvements::
+
+* use more stable approach to recreating current bounds in scratch document
+
 == 2.0.0.rc.1 (2022-05-17) - @mojavelinux
 
 Enhancements::

@@ -1118,10 +1118,10 @@ module Asciidoctor
       # Returns an Extent or ScratchExtent object that describes the bounds of the content block.
       def dry_run keep_together: nil, pages_advanced: 0, single_page: nil, onto: nil, &block
         (scratch_pdf = scratch).start_new_page
-        scratch_bounds = scratch_pdf.bounds
-        restore_bounds = [:@total_left_padding, :@total_right_padding, :@width, :@x].each_with_object({}) do |name, accum|
-          accum[name] = scratch_bounds.instance_variable_get name
-          scratch_bounds.instance_variable_set name, (bounds.instance_variable_get name)
+        saved_bounds = scratch_pdf.bounds
+        scratch_pdf.bounds = bounds.dup.tap do |bounds_copy|
+          bounds_copy.instance_variable_set :@document, scratch_pdf
+          bounds_copy.instance_variable_set :@parent, saved_bounds
         end
         scratch_pdf.move_cursor_to cursor unless (scratch_start_at_top = keep_together || pages_advanced > 0 || at_page_top?)
         scratch_start_cursor = scratch_pdf.cursor
@@ -1163,7 +1163,7 @@ module Asciidoctor
         extent = ScratchExtent.new scratch_start_page, scratch_start_cursor, scratch_end_page, scratch_end_cursor
         onto ? extent.position_onto(*onto) : extent
       ensure
-        restore_bounds.each {|name, val| scratch_bounds.instance_variable_set name, val }
+        scratch_pdf.bounds = saved_bounds
       end
     end
   end
