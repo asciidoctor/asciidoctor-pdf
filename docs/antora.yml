@@ -18,6 +18,6 @@ asciidoc:
     url-graphicsmagick: https://www.graphicsmagick.org
     url-infoq-template: https://github.com/mraible/infoq-mini-book/blob/main/src/main/ruby/asciidoctor-pdf-extensions.rb
 nav:
-  - modules/ROOT/nav.adoc
-  - modules/theme/nav.adoc
-  - modules/extend/nav.adoc
+- modules/ROOT/nav.adoc
+- modules/theme/nav.adoc
+- modules/extend/nav.adoc

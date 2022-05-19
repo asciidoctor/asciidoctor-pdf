@@ -10,7 +10,7 @@
 // Turn part title on when patch release items are added to page.
 //= Asciidoctor PDF {page-component-version}
 
-_**Release date:** 2022.05.04 | *Issue label:* {url-milestone-2-0-0}[{page-component-display-version}^]_
+_**Release date:** 2022.05.18 | *Issue label:* {url-milestone-2-0-0}[{page-component-version}.0^]_
 
 Asciidoctor PDF {page-component-version} introduces a host of new features and enhancements--like unbreakable blocks, theme keys for callout lists, automatic orphan prevention for block captions, and improved block margin logic--just to name a few!
 Some of these features, improvements, and bug fixes are highlighted in the following sections.
