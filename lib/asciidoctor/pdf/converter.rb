@@ -814,7 +814,7 @@ module Asciidoctor
         if (text_align = resolve_text_align_from_role (roles = node.roles), query_theme: true, remove_predefined: true)
           prose_opts[:align] = text_align
         end
-        role_keys = roles.map {|role| %(role_#{role}).to_sym } unless roles.empty?
+        role_keys = roles.map {|role| %(role_#{role}) } unless roles.empty?
         if (text_indent = @theme.prose_text_indent) > 0 ||
             ((text_indent = @theme.prose_text_indent_inner) > 0 && node.previous_sibling&.context == :paragraph)
           prose_opts[:indent_paragraphs] = text_indent
