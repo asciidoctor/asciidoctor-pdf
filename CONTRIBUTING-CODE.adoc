@@ -248,6 +248,10 @@ The coding style is enforced by https://rubocop.org/[RuboCop].
 The rules are defined in [.path]_.rubocop.yml_.
 These rules extend from the default rule set to match the style of the project.
 
+In additional to those rules, the following rules are enforced manually:
+
+* use tap/each instead of each_with_object to build a new Hash from an enumerable object
+
 === Generate Code Coverage Report
 
 To generate a code coverage report when running tests using simplecov, set the `COVERAGE` environment variable as follows when running the tests:
