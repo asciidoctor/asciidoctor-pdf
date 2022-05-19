@@ -717,7 +717,7 @@ module Asciidoctor
             when 'page'
               pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
             when 'range'
-              first_anchor_per_page = term.dests.each_with_object({}) {|dest, accum| accum[dest[:page]] ||= dest[:anchor] }
+              first_anchor_per_page = {}.tap {|accum| term.dests.each {|dest| accum[dest[:page]] ||= dest[:anchor] } }
               pagenums = (consolidate_ranges first_anchor_per_page.keys).map do |range|
                 anchor = first_anchor_per_page[(range.include? '-') ? (range.partition '-')[0] : range]
                 %(<a anchor="#{anchor}">#{range}</a>)
@@ -1081,7 +1081,7 @@ module Asciidoctor
                   highlight_lines = nil
                 else
                   pg_highlight_bg_color = pg_block_styles[:highlight_background_color]
-                  highlight_lines = highlight_lines.map {|linenum| [linenum, pg_highlight_bg_color] }.to_h
+                  highlight_lines = {}.tap {|accum| highlight_lines.each {|linenum| accum[linenum] = pg_highlight_bg_color } }
                 end
               end
               if (node.option? 'linenums') || (node.attr? 'linenums')
@@ -1120,7 +1120,7 @@ module Asciidoctor
               lexer ||= ::Rouge::Lexers::PlainText
               source_string, conum_mapping = extract_conums source_string if callouts_enabled
               if (node.attr? 'highlight') && !(hl_lines = (node.resolve_lines_to_highlight source_string, (node.attr 'highlight'))).empty?
-                formatter_opts[:highlight_lines] = hl_lines.map {|linenum| [linenum, true] }.to_h
+                formatter_opts[:highlight_lines] = {}.tap {|accum| hl_lines.each {|linenum| accum[linenum] = true } }
               end
               fragments = formatter.format (lexer.lex source_string), formatter_opts rescue [text: source_string]
               source_chunks = conum_mapping ? (restore_conums fragments, conum_mapping) : fragments
@@ -3261,64 +3261,70 @@ module Asciidoctor
             end
           end
 
-          colspec_dict = PageSides.each_with_object({}) do |side, acc|
-            side_trim_content_width = trim_content_width[side]
-            if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)] || @theme[%(#{periphery}_columns)])
-              case (colspecs = (custom_colspecs.to_s.tr ',', ' ').split).size
-              when 0, 1
-                colspecs = { left: '0', center: colspecs[0] || '100', right: '0' }
-              when 2
-                colspecs = { left: colspecs[0], center: '0', right: colspecs[1] }
-              else # 3
-                colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
-              end
-              tot_width = 0
-              side_colspecs = colspecs.map do |col, spec|
-                if (alignment_char = spec.chr).to_i.to_s == alignment_char
-                  alignment = :left
-                  rel_width = spec.to_f
-                else
-                  alignment = AlignmentTable[alignment_char]
-                  rel_width = (spec.slice 1, spec.length).to_f
+          colspec_dict = {}.tap do |acc|
+            PageSides.each do |side|
+              side_trim_content_width = trim_content_width[side]
+              if (custom_colspecs = @theme[%(#{periphery}_#{side}_columns)] || @theme[%(#{periphery}_columns)])
+                case (colspecs = (custom_colspecs.to_s.tr ',', ' ').split).size
+                when 0, 1
+                  colspecs = { left: '0', center: colspecs[0] || '100', right: '0' }
+                when 2
+                  colspecs = { left: colspecs[0], center: '0', right: colspecs[1] }
+                else # 3
+                  colspecs = { left: colspecs[0], center: colspecs[1], right: colspecs[2] }
                 end
-                tot_width += rel_width
-                [col, align: alignment, width: rel_width, x: 0]
-              end.to_h
-              # QUESTION: should we allow the columns to overlap (capping width at 100%)?
-              side_colspecs.each {|_, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
-              side_colspecs[:right][:x] = (side_colspecs[:center][:x] = side_colspecs[:left][:width]) + side_colspecs[:center][:width]
-              acc[side] = side_colspecs
-            else
-              acc[side] = {
-                left: { align: :left, width: side_trim_content_width, x: 0 },
-                center: { align: :center, width: side_trim_content_width, x: 0 },
-                right: { align: :right, width: side_trim_content_width, x: 0 },
-              }
+                tot_width = 0
+                side_colspecs = {}.tap do |accum|
+                  colspecs.each do |col, spec|
+                    if (alignment_char = spec.chr).to_i.to_s == alignment_char
+                      alignment = :left
+                      rel_width = spec.to_f
+                    else
+                      alignment = AlignmentTable[alignment_char]
+                      rel_width = (spec.slice 1, spec.length).to_f
+                    end
+                    tot_width += rel_width
+                    accum[col] = { align: alignment, width: rel_width, x: 0 }
+                  end
+                end
+                # QUESTION: should we allow the columns to overlap (capping width at 100%)?
+                side_colspecs.each {|_, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
+                side_colspecs[:right][:x] = (side_colspecs[:center][:x] = side_colspecs[:left][:width]) + side_colspecs[:center][:width]
+                acc[side] = side_colspecs
+              else
+                acc[side] = {
+                  left: { align: :left, width: side_trim_content_width, x: 0 },
+                  center: { align: :center, width: side_trim_content_width, x: 0 },
+                  right: { align: :right, width: side_trim_content_width, x: 0 },
+                }
+              end
             end
           end
 
-          content_dict = PageSides.each_with_object({}) do |side, acc|
-            side_content = {}
-            ColumnPositions.each do |position|
-              next if (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
-              val = val.to_s unless ::String === val
-              if (val.include? ':') && val =~ ImageAttributeValueRx
-                attrlist = $2
-                image_attrs = (AttributeList.new attrlist).parse %w(alt width)
-                image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
-                if (image_path = resolve_image_path doc, image_path, image_format, @themesdir) && (::File.readable? image_path)
-                  image_opts = resolve_image_options image_path, image_format, image_attrs, container_size: [colspec_dict[side][position][:width], trim_content_height[side]]
-                  side_content[position] = [image_path, image_opts, image_attrs['link']]
+          content_dict = {}.tap do |acc|
+            PageSides.each do |side|
+              side_content = {}
+              ColumnPositions.each do |position|
+                next if (val = @theme[%(#{periphery}_#{side}_#{position}_content)]).nil_or_empty?
+                val = val.to_s unless ::String === val
+                if (val.include? ':') && val =~ ImageAttributeValueRx
+                  attrlist = $2
+                  image_attrs = (AttributeList.new attrlist).parse %w(alt width)
+                  image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
+                  if (image_path = resolve_image_path doc, image_path, image_format, @themesdir) && (::File.readable? image_path)
+                    image_opts = resolve_image_options image_path, image_format, image_attrs, container_size: [colspec_dict[side][position][:width], trim_content_height[side]]
+                    side_content[position] = [image_path, image_opts, image_attrs['link']]
+                  else
+                    # NOTE: allows inline image handler to report invalid reference and replace with alt text
+                    side_content[position] = %(image:#{image_path}[#{attrlist}])
+                  end
                 else
-                  # NOTE: allows inline image handler to report invalid reference and replace with alt text
-                  side_content[position] = %(image:#{image_path}[#{attrlist}])
+                  side_content[position] = val
                 end
-              else
-                side_content[position] = val
               end
-            end
 
-            acc[side] = side_content
+              acc[side] = side_content
+            end
           end
 
           if (trim_bg_color = trim_styles[:bg_color]) || trim_bg_image || trim_border_width > 0
@@ -3866,18 +3872,17 @@ module Asciidoctor
 
       def register_fonts font_catalog, fonts_dir
         return unless font_catalog
-        dirs = (fonts_dir.split ValueSeparatorRx, -1).map do |dir|
-          dir == 'GEM_FONTS_DIR' || dir.empty? ? ThemeLoader::FontsDir : dir
-        end
+        dirs = (fonts_dir.split ValueSeparatorRx, -1).map {|dir| dir == 'GEM_FONTS_DIR' || dir.empty? ? ThemeLoader::FontsDir : dir }
         font_catalog.each do |key, styles|
-          styles = styles.each_with_object({}) do |(style, path), accum|
-            found = dirs.any? do |dir|
-              resolved_font_path = font_path path, dir
-              accum[style.to_sym] = resolved_font_path if ::File.readable? resolved_font_path
+          register_font key => ({}.tap do |accum|
+            styles.each do |style, path|
+              found = dirs.any? do |dir|
+                resolved_font_path = font_path path, dir
+                accum[style.to_sym] = resolved_font_path if ::File.readable? resolved_font_path
+              end
+              raise ::Errno::ENOENT, ((File.absolute_path? path) ? %(#{path} not found) : %(#{path} not found in #{fonts_dir.gsub ValueSeparatorRx, ' or '})) unless found
             end
-            raise ::Errno::ENOENT, ((File.absolute_path? path) ? %(#{path} not found) : %(#{path} not found in #{fonts_dir.gsub ValueSeparatorRx, ' or '})) unless found
-          end
-          register_font key => styles
+          end)
         end
       end
 
@@ -4578,14 +4583,16 @@ module Asciidoctor
       def consolidate_ranges nums
         if nums.size > 1
           prev = nil
-          nums.each_with_object [] do |num, accum|
+          accum = []
+          nums.each do |num|
             if prev && (prev.to_i + 1) == num.to_i
               accum[-1][1] = num
             else
               accum << [num]
             end
             prev = num
-          end.map {|range| range.join '-' }
+          end
+          accum.map {|range| range.join '-' }
         else
           nums
         end
@@ -4930,14 +4937,16 @@ module Asciidoctor
           result = yield
         else
           email = nil
-          original_attrs = AuthorAttributeNames.each_with_object({}) do |(prop_name, attr_name), accum|
-            accum[attr_name] = doc.attr attr_name
-            if (val = author[prop_name])
-              doc.set_attr attr_name, val
-              # NOTE: email attribute could be a url
-              email = val if prop_name == :email
-            else
-              doc.remove_attr attr_name
+          original_attrs = {}.tap do |accum|
+            AuthorAttributeNames.each do |prop_name, attr_name|
+              accum[attr_name] = doc.attr attr_name
+              if (val = author[prop_name])
+                doc.set_attr attr_name, val
+                # NOTE: email attribute could be a url
+                email = val if prop_name == :email
+              else
+                doc.remove_attr attr_name
+              end
             end
           end
           doc.set_attr 'url', ((email.include? '@') ? %(mailto:#{email}) : email) if email

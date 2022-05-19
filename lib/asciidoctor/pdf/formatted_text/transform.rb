@@ -95,22 +95,24 @@ module Asciidoctor
                 styles: (to_styles theme.menu_font_style),
               }.compact,
             }
-            revise_roles = [].to_set
-            theme.each_pair.each_with_object @theme_settings do |(key, val), accum|
-              next unless (key = key.to_s).start_with? 'role_'
-              role, key = (key.slice 5, key.length).split '_', 2
-              if (prop = ThemeKeyToFragmentProperty[key])
-                (accum[role] ||= {})[prop] = val
-              #elsif key == 'font_kerning'
-              #  unless (resolved_val = val == 'none' ? false : (val == 'normal' ? true : nil)).nil?
-              #    (accum[role] ||= {})[:kerning] = resolved_val
-              #  end
-              elsif key == 'font_style' || key == 'text_decoration'
-                revise_roles << role
+            @theme_settings.tap do |accum|
+              revise_roles = [].to_set
+              theme.each_pair do |key, val|
+                next unless (key = key.to_s).start_with? 'role_'
+                role, key = (key.slice 5, key.length).split '_', 2
+                if (prop = ThemeKeyToFragmentProperty[key])
+                  (accum[role] ||= {})[prop] = val
+                #elsif key == 'font_kerning'
+                #  unless (resolved_val = val == 'none' ? false : (val == 'normal' ? true : nil)).nil?
+                #    (accum[role] ||= {})[:kerning] = resolved_val
+                #  end
+                elsif key == 'font_style' || key == 'text_decoration'
+                  revise_roles << role
+                end
               end
-            end
-            revise_roles.each_with_object @theme_settings do |role, accum|
-              (accum[role] ||= {})[:styles] = to_styles theme[%(role_#{role}_font_style)], theme[%(role_#{role}_text_decoration)]
+              revise_roles.each do |role|
+                (accum[role] ||= {})[:styles] = to_styles theme[%(role_#{role}_font_style)], theme[%(role_#{role}_text_decoration)]
+              end
             end
             @theme_settings['line-through'] = { styles: [:strikethrough].to_set } unless @theme_settings.key? 'line-through'
             @theme_settings['underline'] = { styles: [:underline].to_set } unless @theme_settings.key? 'underline'
@@ -276,8 +278,10 @@ module Asciidoctor
               when '#' # hex string (e.g., #FF0000)
                 fragment[:color] = value.length == 7 ? (value.slice 1, 6) : (value.slice 1, 3).each_char.map {|c| c * 2 }.join if HexColorRx.match? value
               when '[' # CMYK array (e.g., [50, 100, 0, 0])
-                fragment[:color] = ((((value.slice 1, value.length).chomp ']').split ', ', 4).each_with_object ::Array.new 4, 0).with_index do |(it, accum), idx|
-                  accum[idx] = (ival = it.to_i) == (fval = it.to_f) ? ival : fval
+                fragment[:color] = [0, 0, 0, 0].tap do |accum|
+                  (((value.slice 1, value.length).chomp ']').split ', ', 4).each_with_index do |it, idx|
+                    accum[idx] = (ival = it.to_i) == (fval = it.to_f) ? ival : fval
+                  end
                 end
               else # assume a 6-character hex color (internal only)
                 fragment[:color] = value

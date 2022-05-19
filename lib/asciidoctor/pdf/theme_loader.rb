@@ -15,9 +15,7 @@ module Asciidoctor
       BaseThemePath = ::File.join ThemesDir, 'base-theme.yml'
       BundledThemeNames = (::Dir.children ThemesDir).map {|it| it.slice 0, it.length - 10 }
       DeprecatedCategoryKeys = { 'blockquote' => 'quote', 'key' => 'kbd', 'literal' => 'codespan', 'outline_list' => 'list' }
-      DeprecatedKeys = %w(base heading heading_h1 heading_h2 heading_h3 heading_h4 heading_h5 heading_h6 title_page abstract abstract_title admonition_label sidebar_title toc_title).each_with_object({ 'table_caption_side' => 'table_caption_end' }) do |prefix, accum|
-        accum[%(#{prefix}_align)] = %(#{prefix}_text_align)
-      end
+      DeprecatedKeys = { 'table_caption_side' => 'table_caption_end' }.tap {|accum| %w(base heading heading_h1 heading_h2 heading_h3 heading_h4 heading_h5 heading_h6 title_page abstract abstract_title admonition_label sidebar_title toc_title).each {|prefix| accum[%(#{prefix}_align)] = %(#{prefix}_text_align) } }
       PaddingBottomHackKeys = %w(example_padding quote_padding sidebar_padding verse_padding)
 
       VariableRx = /\$([a-z0-9_-]+)/
@@ -159,10 +157,12 @@ module Asciidoctor
         elsif key == 'font_fallbacks'
           data[key] = ::Array === val ? val.map {|name| expand_vars name.to_s, data } : []
         elsif key.start_with? 'admonition_icon_'
-          data[key] = val.map do |(key2, val2)|
-            key2 = key2.tr '-', '_' if key2.include? '-'
-            [key2.to_sym, (key2.end_with? '_color') ? (to_color evaluate val2, data) : (evaluate val2, data)]
-          end.to_h if val
+          data[key] = {}.tap do |accum|
+            val.each do |key2, val2|
+              key2 = key2.tr '-', '_' if key2.include? '-'
+              accum[key2.to_sym] = (key2.end_with? '_color') ? (to_color evaluate val2, data) : (evaluate val2, data)
+            end
+          end if val
         elsif ::Hash === val
           if (rekey = DeprecatedCategoryKeys[key])
             logger.warn %(the #{key.tr '_', '-'} theme category is deprecated; use the #{rekey.tr '_', '-'} category instead)
