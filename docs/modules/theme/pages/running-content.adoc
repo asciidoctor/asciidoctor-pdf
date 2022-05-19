@@ -472,10 +472,7 @@ To make the background color and border span the width of the page, set the marg
 
 The `columns` key can also be defined one level up (on `header` or `footer`), in which case the setting will be inherited.
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
-The column rules are only added if the `columns` key is specified.
-
-TIP: Although not listed in the table above, you can control the font settings (`font-family`, `font-size`, `font-color`, `font-style`, `text-transform`) that get applied to the running content in each column position for each page side (e.g., `header-<side>-<position>-font-color`).
-For example, you can set the font color used for the right-hand column on recto pages by setting `header-recto-right-font-color: 6CC644`.
+The column rules between columns are only added if the `columns` key is specified.
 
 [#height]
 == height
@@ -502,6 +499,18 @@ The `<side>` in the `<side>-columns`, `<side>-margin`, `<side>-content-margin`, 
 == <position>
 
 The `<position>` in the `<side>-<position>-content` key is specified as `left`, `center` or `right`.
+
+Although not listed in the tables above, you can control the font settings (`font-family`, `font-size`, `font-color`, `font-style`, `text-transform`) for each column position per page side (e.g., `header-<side>-<position>-font-color`).
+For example, you can set the font color used for the right-hand column on recto pages as follows:
+
+[,yaml]
+----
+header:
+  recto:
+    right:
+      font-color: #6CC644
+      content: content with font color
+----
 
 [#running-content]
 == running-content
