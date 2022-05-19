@@ -241,7 +241,7 @@ toc:
   dot-leader:
     content: ". "
 
-|font-color
+|<<font-properties,font-color>>
 |xref:color.adoc[Color] +
 (default: _inherit_)
 |[source]
@@ -249,7 +249,15 @@ toc:
   dot-leader:
     font-color: #999999
 
-|<<font-style,font-style>>
+|<<font-properties,font-size>>
+|xref:language.adoc#values[Number] +
+(default: _inherit_)
+|[source]
+toc:
+  dot-leader:
+    font-size: 10
+
+|<<font-properties,font-style>>
 |xref:text.adoc#font-style[Font style] +
 (default: `normal`)
 |[source]
@@ -266,10 +274,13 @@ toc:
     levels: 2 3
 |===
 
-[#font-style]
-=== font-style
+[#font-properties]
+=== font-*
 
 The dot leader inherits all font properties except `font-style` from the parent `toc` category.
+
+The purpose of the `font-size` key is to slightly increase the size of the dot leader symbol.
+If the value is too large, it can impact the line height and thus throw off the alignment of the title and the page number.
 
 [#dot-levels]
 === levels
