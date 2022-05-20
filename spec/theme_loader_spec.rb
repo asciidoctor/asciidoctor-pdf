@@ -1235,6 +1235,20 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.heading_font_color).to eql theme.base_font_color
     end
 
+    it 'should resolve variable reference to previously defined color' do
+      theme_data = YAML.safe_load <<~'EOS'
+      brand:
+        blue-color: '0000FF'
+      base:
+        font_color: $brand-blue-color
+      heading:
+        font_color: $base-font-color
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.base_font_color).to eql '0000FF'
+      (expect theme.heading_font_color).to eql theme.base_font_color
+    end
+
     it 'should warn if variable reference cannot be resolved' do
       (expect do
         theme_data = YAML.safe_load <<~'EOS'
