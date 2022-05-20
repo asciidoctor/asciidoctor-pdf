@@ -38,7 +38,7 @@ module Asciidoctor::PDF::FormattedText
       return if (raw_image_fragments = fragments.select {|f| (f.key? :image_path) && !(f.key? :image_obj) }).empty?
       scratch = doc.scratch?
       available_w = available_width
-      available_h = doc.page.empty? ? doc.cursor : doc.bounds.height
+      available_h = doc.bounds.height
       last_fragment = {}
       raw_image_fragments.each do |fragment|
         if fragment[:object_id] == last_fragment[:object_id]
@@ -96,6 +96,10 @@ module Asciidoctor::PDF::FormattedText
           if (f_height = image_h) > (line_font = doc.font).height * 1.5
             # align with descender (equivalent to vertical-align: bottom in CSS)
             fragment[:ascender] = f_height - (fragment[:descender] = line_font.descender)
+            if f_height == available_h
+              fragment[:ascender] -= (doc.calc_line_metrics (doc.instance_variable_get :@base_line_height), line_font, doc.font_size).padding_top
+              fragment[:full_height] = true
+            end
             doc.font_size (fragment[:size] = f_height * (doc.font_size / line_font.height))
             # align with baseline (roughly equivalent to vertical-align: baseline in CSS)
             #fragment[:ascender] = f_height

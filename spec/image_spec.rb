@@ -507,7 +507,23 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       pdf = to_pdf input, analyze: :line
       image_h = pdf.lines[1][:to][:y] - pdf.lines[1][:from][:y]
-      (expect image_h).to be_within(1).of(350)
+      (expect image_h).to eql 350.0
+    end
+
+    it 'should scale down inline SVG to fit height of next page' do
+      input = <<~'EOS'
+      :pdf-page-size: 200x350
+      :pdf-page-margin: 0
+
+      before
+
+      image:tall.svg[]
+      EOS
+
+      pdf = to_pdf input, analyze: :line
+      (expect pdf.lines.map {|it| it[:page_number] }.uniq).to eql [2]
+      image_h = pdf.lines[1][:to][:y] - pdf.lines[1][:from][:y]
+      (expect image_h).to eql 350.0
     end
 
     it 'should display text inside link' do
@@ -1613,6 +1629,34 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       line1_spacing = (text[0][:y] - text[1][:y]).round 2
       line2_spacing = (text[1][:y] - text[2][:y]).round 2
       (expect line1_spacing).to eql line2_spacing
+    end
+
+    it 'should scale image down to fit available height on next page', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-inline-pushed-scale-down-height.pdf'
+      :pdf-page-size: A6
+      :pdf-page-layout: landscape
+
+      before
+
+      image:cover.jpg[]
+      EOS
+
+      to_file = to_pdf_file %(image::#{to_file}[page=2]), 'image-inline-pushed-scale-down-height-2.pdf'
+
+      (expect to_file).to visually_match 'image-inline-scale-down-height.pdf'
+    end
+
+    it 'should scale image down to fit available height inside delimited block', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-inline-in-block-scale-down-height.pdf'
+      :pdf-page-size: A6
+      :pdf-page-layout: landscape
+
+      ****
+      image:cover.jpg[]
+      ****
+      EOS
+
+      (expect to_file).to visually_match 'image-inline-in-block-scale-down-height.pdf'
     end
 
     it 'should not scale image if pdfwidth matches intrinsic width' do
