@@ -431,15 +431,19 @@ module Asciidoctor
 
       # NOTE: override built-in fill_formatted_text_box to insert leading before second line when :first_line is true
       def fill_formatted_text_box text, options
-        if (initial_gap = options[:initial_gap]) && (first_text = text[0]) && first_text[:from_page] != page_number
+        if (initial_gap = options[:initial_gap]) && !text.empty? && text[0][:from_page] != page_number
           self.y -= initial_gap
         end
         merge_text_box_positioning_options options
         box = ::Prawn::Text::Formatted::Box.new text, options
-        remaining_text = box.render
+        remaining_fragments = box.render
         @no_text_printed = box.nothing_printed?
         @all_text_printed = box.everything_printed?
-        remaining_text[0][:from_page] = page_number unless remaining_text.empty?
+        unless remaining_fragments.empty? || (remaining_fragments[0][:from_page] ||= page_number) == page_number
+          log :error, %(cannot fit formatted text on page: #{remaining_fragments.map {|it| it[:image_path] || it[:text] }.join})
+          page.tare_content_stream
+          remaining_fragments = {}
+        end
 
         if @final_gap || (options[:first_line] && !(@no_text_printed || @all_text_printed))
           self.y -= box.height + box.line_gap + box.leading
@@ -447,7 +451,7 @@ module Asciidoctor
           self.y -= box.height
         end
 
-        remaining_text
+        remaining_fragments
       end
 
       # NOTE: override built-in draw_indented_formatted_line to set first_line flag
@@ -483,7 +487,13 @@ module Asciidoctor
         else
           remaining_fragments = box.render dry_run: true
         end
-        remaining_fragments.empty? ? (remaining_fragments = nil) : (remaining_fragments[0][:from_page] = page_number)
+        if remaining_fragments.empty?
+          remaining_fragments = nil
+        elsif (remaining_fragments[0][:from_page] ||= page_number) != page_number
+          log :error, %(cannot fit formatted text on page: #{remaining_fragments.map {|it| it[:image_path] || it[:text] }.join})
+          page.tare_content_stream
+          remaining_fragments = nil
+        end
         if first_line_text_transform
           # NOTE: applying text transform here could alter the wrapping, so isolate first line and shrink it to fit
           first_line_text = (box.instance_variable_get :@printed_lines)[0]

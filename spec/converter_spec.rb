@@ -500,6 +500,23 @@ describe Asciidoctor::PDF::Converter do
       (expect actual_column).to eql 0
       (expect last_visited_column).to eql 1
     end
+
+    it 'should short-circuit formatted_text and log error if text cannot not fit on new page' do
+      doc = Asciidoctor.load 'text', backend: :pdf
+      last_page = last_page_number = nil
+      (expect do
+        doc.converter.instance_exec do
+          init_pdf doc
+          start_new_page
+          ink_prose 'before'
+          formatted_text [{ text: 'x', ascender: bounds.height, descender: font.descender }]
+          last_page = page
+          last_page_number = page_number
+        end
+      end).to log_message severity: :ERROR, message: 'cannot fit formatted text on page: x'
+      (expect last_page).to be_empty
+      (expect last_page_number).to eql 2
+    end
   end
 
   describe '#next_enclosed_block' do
