@@ -610,6 +610,13 @@ module Asciidoctor
         theme
       end
 
+      def save_theme
+        @theme = (original_theme = theme).dup
+        yield
+      ensure
+        @theme = original_theme
+      end
+
       def indent_section
         if (values = @section_indent)
           indent(values[0], values[1]) { yield }

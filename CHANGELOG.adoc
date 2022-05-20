@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
+== Unreleased
+
+Enhancements::
+
+* add `save_theme` helper to work with a copy of the theme within a scope (#2196)
+
 == 2.0.7 (2022-06-03) - @mojavelinux
 
 Improvements::
