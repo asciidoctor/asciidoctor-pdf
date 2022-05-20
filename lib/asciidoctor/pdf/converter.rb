@@ -1396,7 +1396,7 @@ module Asciidoctor
           end
           theme_margin :prose, :bottom, (next_enclosed_block actual_node) #unless actual_node.nested?
         when 'qanda'
-          @list_numerals << '1'
+          @list_numerals << 1
           convert_list node
           @list_numerals.pop
         else
