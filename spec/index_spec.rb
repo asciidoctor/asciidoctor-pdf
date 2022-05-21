@@ -15,13 +15,15 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   it 'should collapse space in front of hidden index terms' do
     pdf = to_pdf <<~'EOS', analyze: true
     before
+    (((zen)))
     (((yin)))
     (((yang)))
-    (((foobar)))
     after
+
+    foo (((bar))) baz
     EOS
 
-    (expect pdf.lines).to eql ['before after']
+    (expect pdf.lines).to eql ['before after', 'foo baz']
   end
 
   it 'should not add index section if there are no index entries' do
