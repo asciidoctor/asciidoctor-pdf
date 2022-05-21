@@ -930,6 +930,57 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       lines = (to_pdf input, pdf_theme: { code_border_radius: 0, code_border_width: [1, 0] }, analyze: :line).lines
       (expect (lines[0][:from][:y] - lines[1][:from][:y]).abs).to (be_within 2).of 50
     end
+
+    it 'should break and wrap numbered line if indented text does not fit on a single line' do
+      input = <<~EOS
+      :source-highlighter: rouge
+
+      [%linenums,text]
+      ----
+      before
+      #{' ' * 2}y#{'o' * 100}
+      after
+      ----
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      (expect pdf.pages).to have_size 1
+      text_lines = pdf.lines pdf.text
+      # FIXME: we lose the indentation on the second line, but that's true of plain listing blocks too
+      expected_lines = <<~EOS.chomp.split ?\n
+      1 before
+      2
+      \u00a0 yooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+      \u00a0 ooooooooooooooooo
+      3 after
+      EOS
+      (expect text_lines).to eql expected_lines
+    end
+
+    it 'should break and wrap numbered line if text wraps but still does not fit on a single line' do
+      input = <<~EOS
+      :source-highlighter: rouge
+
+      [%linenums,text]
+      ----
+      one
+      two and then s#{'o' * 100}me
+      three
+      ----
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      (expect pdf.pages).to have_size 1
+      text_lines = pdf.lines pdf.text
+      expected_lines = <<~EOS.chomp.split ?\n
+      1 one
+      2 two and then
+      \u00a0 sooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+      \u00a0 ooooooooooooooooome
+      3 three
+      EOS
+      (expect text_lines).to eql expected_lines
+    end
   end
 
   context 'CodeRay' do

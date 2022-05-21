@@ -17,7 +17,7 @@ module Asciidoctor
           until stop
             if (first_fragment = unconsumed[0])[:linenum]
               linenum_text = first_fragment[:text]
-              linenum_spacer ||= { text: (NoBreakSpace.encode linenum_text.encoding) + (' ' * (linenum_text.length - 1)) }
+              linenum_spacer ||= { text: (NoBreakSpace.encode linenum_text.encoding) + (' ' * (linenum_text.length - 1)), linenum: :spacer }
               highlight_line = (second_fragment = unconsumed[1])[:highlight] ? second_fragment.dup : nil
             else # wrapped line
               first_fragment[:text] = first_fragment[:text].lstrip
