@@ -24,6 +24,9 @@ Let's start by overriding the thematic break (i.e., horizontal rule) to make it 
 include::example$pdf-converter-custom-thematic-break.rb[tag=convert_thematic_break]
 ----
 
+The return value of a convert handler for a block node is ignored.
+The return value of a convert handler for an inline node must be a string, which may contain the HTML-like markup that this convert supports.
+
 To find all the available methods to override, see the {url-api-docs}[API docs^].
 
 Now that you've made a change to the converter, let's xref:use-converter.adoc[learn how to activate it].

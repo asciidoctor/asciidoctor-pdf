@@ -152,7 +152,7 @@ module Asciidoctor
           # TODO: delegate to convert_method_missing
           log :warn, %(missing convert handler for #{name} node in #{@backend} backend)
         end
-        # NOTE: inline nodes generate pseudo-HTML strings; the remainder write directly to PDF object
+        # NOTE: inline node handlers generate HTML-like strings; all other handlers write directly to the PDF object
         ::Asciidoctor::Inline === node ? result : self
       end
 
