@@ -221,7 +221,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     (expect pdf.find_text %r/^ooo/).to have_size 3
-    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line, debug: true).lines.sort_by {|it| -it[:from][:y] }
+    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.sort_by {|it| -it[:from][:y] }
     (expect lines).to have_size 4
     (expect lines[0][:color]).to eql '0000EE'
     (expect lines[1][:color]).to eql 'CCCCCC'
