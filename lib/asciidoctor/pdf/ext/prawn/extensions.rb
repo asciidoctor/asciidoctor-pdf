@@ -4,7 +4,7 @@ Prawn::Font::AFM.instance_variable_set :@hide_m17n_warning, true
 
 require 'prawn/icon'
 
-Prawn::Icon::Compatibility.send :prepend, (::Module.new { def warning *_args; end })
+Prawn::Icon::Compatibility.prepend (::Module.new { def warning *_args; end })
 
 module Asciidoctor
   module Prawn
