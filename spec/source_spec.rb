@@ -905,6 +905,31 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect (pdf.find_unique_text %r/^\s*70\s*$/)[:page_number]).to be 2
       (expect formatted_text_box_extensions_count).to be 0
     end
+
+    it 'should break and wrap numbered line if text does not fit on a single line' do
+      input = <<~EOS
+      :source-highlighter: rouge
+
+      [%linenums,text]
+      ----
+      y#{'o' * 100}
+      ----
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      (expect pdf.pages).to have_size 1
+      linenum_text = pdf.find_unique_text '1 '
+      (expect linenum_text).not_to be_nil
+      first_line_text = pdf.find_unique_text %r/^yo/
+      wrapped_text = pdf.find_unique_text %r/^ooo/
+      (expect linenum_text[:x]).to be < first_line_text[:x]
+      (expect linenum_text[:y]).to eql first_line_text[:y]
+      (expect linenum_text[:x]).to be < wrapped_text[:x]
+      (expect wrapped_text[:x]).to eql first_line_text[:x]
+      (expect linenum_text[:y]).to be > wrapped_text[:y]
+      lines = (to_pdf input, pdf_theme: { code_border_radius: 0, code_border_width: [1, 0] }, analyze: :line).lines
+      (expect (lines[0][:from][:y] - lines[1][:from][:y]).abs).to (be_within 2).of 50
+    end
   end
 
   context 'CodeRay' do

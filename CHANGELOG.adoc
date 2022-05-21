@@ -11,6 +11,7 @@ Bug Fixes::
 
 * scale inline image to fit within available height of page, accounting for the top padding of the line and the bottom gutter (#2193)
 * short-circuit formatted_text routine and log error if fragments in first line cannot fit on a new page
+* break and wrap long contiguous text in source block when linenums are enabled (#2198)
 
 == 2.0.0 (2022-05-18) - @mojavelinux
 

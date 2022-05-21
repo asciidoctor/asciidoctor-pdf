@@ -11,6 +11,7 @@ module Asciidoctor
         def wrap array
           return super unless array[0][:linenum] # sanity check
           initialize_wrap array
+          @line_wrap.extend SourceLineWrap
           highlight_line = stop = nil
           unconsumed = @arranger.unconsumed
           until stop
@@ -18,8 +19,7 @@ module Asciidoctor
               linenum_text = first_fragment[:text]
               linenum_spacer ||= { text: (NoBreakSpace.encode linenum_text.encoding) + (' ' * (linenum_text.length - 1)) }
               highlight_line = (second_fragment = unconsumed[1])[:highlight] ? second_fragment.dup : nil
-            else
-              # NOTE: a wrapped line
+            else # wrapped line
               first_fragment[:text] = first_fragment[:text].lstrip
               @arranger.unconsumed.unshift highlight_line if highlight_line
               @arranger.unconsumed.unshift linenum_spacer.dup
@@ -41,6 +41,12 @@ module Asciidoctor
           @text = @printed_lines.join ?\n
           @everything_printed = @arranger.finished?
           @arranger.unconsumed
+        end
+      end
+
+      module SourceLineWrap
+        def update_line_status_based_on_last_output
+          @arranger.current_format_state[:linenum] ? nil : super
         end
       end
     end
