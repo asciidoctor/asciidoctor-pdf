@@ -194,6 +194,42 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect pdf.text[0][:y] - pdf_theme[:code_padding]).to be > 48.24
   end
 
+  it 'should break line if wider than content area of block and still compute height correctly' do
+    pdf_theme = {
+      code_border_radius: 0,
+      code_border_color: 'CCCCCC',
+      code_border_width: [1, 0],
+      code_background_color: 'transparent',
+      sidebar_border_radius: 0,
+      sidebar_border_width: [1, 0],
+      sidebar_border_color: '0000EE',
+      sidebar_background_color: 'transparent',
+    }
+    input = <<~EOS
+    ****
+    before
+
+    ----
+    one
+    tw#{'o' * 250}
+    three
+    ----
+
+    after
+    ****
+    EOS
+
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    (expect pdf.find_text %r/^ooo/).to have_size 3
+    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line, debug: true).lines.sort_by {|it| -it[:from][:y] }
+    (expect lines).to have_size 4
+    (expect lines[0][:color]).to eql '0000EE'
+    (expect lines[1][:color]).to eql 'CCCCCC'
+    (expect lines[2][:color]).to eql 'CCCCCC'
+    (expect lines[3][:color]).to eql '0000EE'
+    (expect (lines[0][:from][:y] - lines[1][:from][:y]).round 5).to eql ((lines[2][:from][:y] - lines[3][:from][:y]).round 5)
+  end
+
   it 'should resize font to prevent wrapping if autofit option is set' do
     pdf = to_pdf <<~'EOS', analyze: true
     [%autofit]
