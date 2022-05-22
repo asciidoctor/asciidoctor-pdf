@@ -2167,6 +2167,7 @@ module Asciidoctor
 
         left_padding = right_padding = nil
         table table_data, table_settings do
+          @column_widths = column_widths unless column_widths.empty?
           # NOTE: call width to capture resolved table width
           table_width = width
           @pdf.ink_table_caption node, alignment, table_width, caption_max_width if node.title? && caption_end == :top
