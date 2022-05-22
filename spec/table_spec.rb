@@ -2834,6 +2834,67 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.find_text 'cell').to have_size 2
     end
 
+    it 'should not allow colspan to cause table to exceed width of bounds' do
+      pdf_theme = { page_margin: 36 }
+      input = <<~'EOS'
+      [cols="1,1,1,2",grid=none,frame=sides]
+      |===
+      |a 3+|b
+      2+|c |d >|z
+      |===
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      page_width = pdf.pages[0][:size][0]
+      right_margin_x = page_width - 36
+      right_border_x = lines.max_by {|l| l[:from][:x] }[:from][:x]
+      z_text = pdf.find_unique_text 'z'
+      (expect right_border_x).to eql right_margin_x
+      (expect z_text[:x]).to be < right_margin_x
+    end
+
+    it 'should not allow colspan to cause stretch table with autowidth columns to exceed width of bounds' do
+      pdf_theme = { page_margin: 36 }
+      input = <<~'EOS'
+      [.stretch%autowidth,grid=none,frame=sides]
+      |===
+      |a 3+|b
+      2+|c |dddddddddddddddddddddddddddddddddddddddddddddddddd >|z
+      |===
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      page_width = pdf.pages[0][:size][0]
+      right_margin_x = page_width - 36
+      right_border_x = lines.max_by {|l| l[:from][:x] }[:from][:x]
+      z_text = pdf.find_unique_text 'z'
+      (expect right_border_x).to eql right_margin_x
+      (expect z_text[:x]).to be < right_margin_x
+    end
+
+    it 'should not allow colspan to cause table to exceed width of bounds when also using rowspan' do
+      pdf_theme = { page_margin: 36 }
+      input = <<~'EOS'
+      [cols="1,1,1,1,1,4",grid=none,frame=sides]
+      |===
+      .3+|a 5.+|bcd
+      .2+|e |f |g |h >|z
+      |one |more |time |fin
+      |===
+      EOS
+
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      page_width = pdf.pages[0][:size][0]
+      right_margin_x = page_width - 36
+      right_border_x = lines.max_by {|l| l[:from][:x] }[:from][:x]
+      z_text = pdf.find_unique_text 'z'
+      (expect right_border_x).to eql right_margin_x
+      (expect z_text[:x]).to be < right_margin_x
+    end
+
     it 'should honor rowspan on cell in body row' do
       pdf = to_pdf <<~'EOS', analyze: true
       [cols=2*^.^]
