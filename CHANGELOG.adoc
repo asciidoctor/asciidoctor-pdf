@@ -5,12 +5,16 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.2 (2022-05-22) - @mojavelinux
 
 Bug Fixes::
 
 * use specified column widths to avoid bugs in column width calculation when using colspans (#1368)
 * advance table to next page if rowspan in first row does not fit in space remaining on current page (#403)
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.2[git tag] | {url-repo}/compare/v2.0.1\...v2.0.2[full diff]
 
 == 2.0.1 (2022-05-21) - @mojavelinux
 
