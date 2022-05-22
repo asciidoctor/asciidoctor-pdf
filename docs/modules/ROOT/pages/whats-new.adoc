@@ -2,15 +2,27 @@
 :description: The new features and fixes available in Asciidoctor PDF {page-component-version}.
 :navtitle: What's New
 :doctype: book
-// Turn on toclevels and leveloffset when parts are needed (patch releases)
-//:page-toclevels: 0
-//:leveloffset: 1
+:leveloffset: 1
+:page-toclevels: 2
 :url-milestone-2-0-0: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.0+is%3Aclosed
+:url-milestone-2-0-1: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.1
 
-// Turn part title on when patch release items are added to page.
-//= Asciidoctor PDF {page-component-version}
+This page presents the changes made in each of the patch releases in the Asciidoctor PDF {page-component-version} release line.
+The releases are ordered from newest to oldest.
 
-_**Release date:** 2022.05.18 | *Release notes:* {url-project-repo}/releases/tag/v2.0.0[2.0.0] | *Issue label:* {url-milestone-2-0-0}[{page-component-version}.0^]_
+= Asciidoctor PDF 2.0.1
+
+_**Release date:** 2022.05.21 | *Release notes:* {url-project-repo}/releases/tag/v2.0.1[v2.0.1] | *Issue label:* {url-milestone-2-0-1}[2.0.1^]_
+
+== Bug Fixes
+
+* Scale inline image to fit within available height of page, accounting for the top padding of the line height and the bottom gutter (#2193)
+* Short-circuit formatted text routine and log error if fragments in first line cannot fit on an empty page (#2193)
+* Break and wrap long contiguous text in source block when linenums is enabled (#2198)
+
+= Asciidoctor PDF 2.0.0
+
+_**Release date:** 2022.05.18 | *Release notes:* {url-project-repo}/releases/tag/v2.0.0[v2.0.0] | *Issue label:* {url-milestone-2-0-0}[{page-component-version}.0^]_
 
 Asciidoctor PDF {page-component-version} introduces a host of new features and enhancements--like unbreakable blocks, theme keys for callout lists, automatic orphan prevention for block captions, and improved block margin logic--just to name a few!
 Some of these features, improvements, and bug fixes are highlighted in the following sections.
