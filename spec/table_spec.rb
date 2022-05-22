@@ -2914,6 +2914,27 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect big_cell_text[:y]).to be < top_cell_text[:y]
       (expect big_cell_text[:y]).to be > bottom_cell_text[:y]
     end
+
+    it 'should advance table to next page if rowspan in first row does not fit on current page' do
+      input = <<~EOS
+      #{(['filler'] * 5).join %(\n\n)}
+
+      [cols=2*]
+      |===
+      .30+|Group A |Member 1
+      #{29.times.map {|idx| '|Member ' + idx.next.to_s }.join ?\n}
+
+      .30+|Group B |Member 1
+      #{29.times.map {|idx| '|Member ' + idx.next.to_s }.join ?\n}
+      |===
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      (expect pdf.pages).to have_size 3
+      (expect (pdf.find_text 'filler').map {|it| it[:page_number] }.uniq).to eql [1]
+      (expect (pdf.find_unique_text 'Group A')[:page_number]).to eql 2
+      (expect (pdf.find_unique_text 'Group B')[:page_number]).to eql 3
+    end
   end
 
   context 'Arrange block' do
