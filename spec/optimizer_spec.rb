@@ -86,13 +86,27 @@ describe 'Asciidoctor::PDF::Optimizer', if: (gem_available? 'rghost'), &(proc do
     end).to not_raise_exception
   end
 
-  it 'should generate PDF that conforms to specified PDF/A compliance' do
+  it 'should generate PDF that conforms to specified compliance' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-screen-pdf-a.pdf', attribute_overrides: { 'optimize' => 'PDF/A' }
     pdf = PDF::Reader.new to_file
     (expect pdf.pdf_version).to eql 1.4
     (expect pdf.pages).to have_size 1
     # Non-printing annotations (i.e., hyperlinks) are not permitted in PDF/A
+    (expect get_annotations pdf, 1).to be_empty
+  end
+
+  # NOTE: I can't figure out a way to capture the stderr in this case without using the CLI
+  it 'should not fail to produce PDF/X compliant document if specified', cli: true do
+    out, err, res = run_command asciidoctor_pdf_bin, '-a', 'optimize=PDF/X', '-o', (to_file = output_file 'optimizer-screen-pdf-x.pdf'), (example_file 'basic-example.adoc')
+    (expect res.exitstatus).to be 0
+    (expect out).to be_empty
+    (expect err).not_to include 'TrimBox does not fit inside BleedBox'
+    (expect err).to be_empty
+    pdf = PDF::Reader.new to_file
+    (expect pdf.pdf_version).to eql 1.3
+    (expect pdf.pages).to have_size 1
+    # Non-printing annotations (i.e., hyperlinks) are not permitted in PDF/X
     (expect get_annotations pdf, 1).to be_empty
   end
 
