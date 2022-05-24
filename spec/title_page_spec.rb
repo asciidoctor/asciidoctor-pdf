@@ -1227,5 +1227,33 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect title_page_images).to have_size 1
       (expect title_page_images[0].data).to eql image_data
     end
+
+    it 'should restrain content of title page to a single page' do
+      pdf_theme = {
+        title_page_title_top: '50%',
+        title_page_title_font_size: 92,
+        title_page_authors_margin_top: 36,
+        title_page_authors_font_size: 64,
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      Author Name
+      v1.0
+      :doctype: book
+
+      == First Chapter
+
+      content
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      author_text = pdf.find_unique_text 'Author Name'
+      (expect author_text[:page_number]).to eql 1
+      revision_text = pdf.find_unique_text 'Version 1.0'
+      (expect revision_text).to be_nil
+      chapter_title_text = pdf.find_unique_text 'First Chapter'
+      (expect chapter_title_text[:page_number]).to eql 2
+    end
   end
 end

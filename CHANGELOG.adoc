@@ -11,6 +11,10 @@ Improvements::
 
 * compute the optimize settings in init_pdf and store as Hash instead of after writing the PDF file
 
+Bug Fixes::
+
+* prevent content on title page from exceeding the bounds of a single page; restriction applies to `ink_title_page`
+
 == 2.0.2 (2022-05-22) - @mojavelinux
 
 Bug Fixes::

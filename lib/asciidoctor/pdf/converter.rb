@@ -174,7 +174,7 @@ module Asciidoctor
         if (has_title_page = (title_page_on = doc.doctype == 'book' || (doc.attr? 'title-page')) && (start_title_page doc))
           # NOTE: the base font must be set before any content is written to the main or scratch document
           font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
-          ink_title_page doc
+          perform_on_single_page { ink_title_page doc }
           start_new_page
         else
           @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress' && page_number == 0
