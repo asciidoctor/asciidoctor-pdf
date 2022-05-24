@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
+== Unreleased
+
+Improvements::
+
+* compute the optimize settings in init_pdf and store as Hash instead of after writing the PDF file
+
 == 2.0.2 (2022-05-22) - @mojavelinux
 
 Bug Fixes::

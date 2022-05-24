@@ -411,8 +411,15 @@ module Asciidoctor
         # NOTE: we have to init Pdfmark class here while we have reference to the doc
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
         # NOTE: defer instantiating optimizer until we know min pdf version
-        if (@optimize = doc.attr 'optimize')
-          @optimize = nil unless (defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil? # rubocop:disable Style/SoleNestedConditional
+        if (optimize = doc.attr 'optimize') &&
+            ((defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?)
+          if optimize.include? ','
+            @optimize = ([:quality, :compliance].zip (optimize.split ',', 2)).to_h
+          elsif optimize.include? '/'
+            @optimize = { compliance: optimize }
+          else
+            @optimize = { quality: optimize }
+          end
         end
         allocate_scratch_prototype
         self
@@ -4403,13 +4410,8 @@ module Asciidoctor
           pdf_doc.render_file target
           # QUESTION: restore attributes first?
           @pdfmark&.generate_file target
-          if (quality = @optimize)
-            if quality.include? ','
-              quality, compliance = quality.split ',', 2
-            elsif quality.include? '/'
-              quality, compliance = nil, quality
-            end
-            (Optimizer.new quality, pdf_doc.min_version, compliance).optimize_file target
+          if (optimize = @optimize)
+            (Optimizer.new optimize[:quality], pdf_doc.min_version, optimize[:compliance]).optimize_file target
           end
           to_file = true
         end
