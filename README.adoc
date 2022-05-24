@@ -97,14 +97,7 @@ Pass the name of the gem to the `gem install` command as follows:
 Installing Asciidoctor PDF will install a number of other gems mentioned in these docs, including asciidoctor, prawn, prawn-svg, prawn-table, prawn-icon, and ttfunk.
 For the most part, the versions of these dependencies are locked to the version of Asciidoctor PDF.
 
-If you're using Ruby 3.1 or better, you must also install the matrix gem until Prawn 2.5.0 or better is released.
-
- $ gem install matrix
-
-The matrix gem used to be bundled in the Ruby distribution, but was split out starting in Ruby 3.1.
-This requirement will be lifted once Prawn declares it as a runtime dependency.
-
-For further installation information, see {url-project-docs}/install/[the installation documentation].
+For further installation information about installing Asciidoctor PDF, see {url-project-docs}/install/[the installation documentation].
 For troubleshooting help, see {url-project-docs}/install/#installation-troubleshooting[Installation troubleshooting].
 
 === Install a prerelease or development version
