@@ -3,6 +3,11 @@
 
 Asciidoctor PDF gives the author some control over where content blocks are placed using the `unbreakable` and `breakable` options, and tries to provide sensible defaults when these options are not used.
 
+If you want a block to be truly unbreakable, you add the `unbreakable` option.
+If you want to prevent the orphaning of the anchor and title of a table or section, then you add the `breakable` option.
+Otherwise, you don't need to specify either of these options.
+This page goes into detail about what functionality these options enable.
+
 [#default]
 == Breakable by default
 
@@ -18,10 +23,10 @@ This breakable behavior includes automatic anchor and caption orphan prevention.
 * Sidebars
 * Verses
 
-[.term]*Breakable with built-in anchor and caption orphan prevention* means that a block can break across pages, but the converter will automatically move the block to the next page, when necessary, to ensure a block's anchor and caption are kept with the block.
+[.term]*Breakable with built-in anchor and caption orphan prevention* means that a block can break across pages, but the converter will automatically push the block to the next page, when necessary, to ensure a block's anchor and caption are kept with the block.
 
 Tables and sections are breakable by default, but do not provide automatic anchor and caption orphan prevention.
-For tables, that means the anchor and caption can be left on the current page if the table is advanced to the next page.
+For tables, that means the anchor and caption could be left on the current page if the table gets pushed to the next page.
 For sections, that means the section's title may be left on the current page if the first content block doesn't fit.
 However, you can turn on orphan prevention for tables and sections by adding the (seemingly redundant) `breakable` option as a hint.
 
@@ -29,7 +34,7 @@ However, you can turn on orphan prevention for tables and sections by adding the
 == Breakable option
 
 Orphan prevention isn't applied to tables and sections by default.
-The `breakable` option can be applied to a table to ensure the anchor and caption are kept with the table if it gets advanced to the next page.
+The `breakable` option (which is merely intended as an author hint) can be applied to a table to ensure the anchor and caption are kept with the table if it gets advanced to the next page.
 
 [,asciidoc]
 ----
@@ -43,7 +48,7 @@ The `breakable` option can be applied to a table to ensure the anchor and captio
 ----
 <.> Assign the `breakable` option to a table, using the shorthand percent symbol (`%`) for the `option` attribute name, to indicate that the table's caption and anchor should be kept with the table.
 
-The `breakable` option can be applied to a section to ensure the title is kept with the first block of content if the first block gets advanced to the next page.
+The `breakable` option (which is merely indented as an author hint) can be applied to a section to ensure the title is kept with the first block of content if the first block gets advanced to the next page.
 
 [,asciidoc]
 ----
@@ -53,12 +58,29 @@ The `breakable` option can be applied to a section to ensure the title is kept w
 First block of content in the section.
 ----
 
-You don't need to assign the `breakable` option any other block types because <<default,it is enabled by default>>.
+You don't need to assign the `breakable` option any other block types because <<default,it is enabled by default>> and those other blocks already provide automatic anchor and caption orphan prevention.
+
+.Why do I need to specify breakable if it's the default?
+****
+One of the challenges of AsciiDoc is that it's a mature language, and that means we have to be careful when introducing functionality not to break existing documents and toolchains.
+Overloading the meaning of the `breakable` option is one such case.
+
+Given that all blocks are breakable by default, there's no point in ever specifying the `breakable` option on the block for the purpose of making it breakable.
+And since it's redundant, that provided an opportunity to use it as an author hint to mean something more without having to change the language.
+
+When you add the `breakable` option to a block explicitly, the converter knows you placed it there.
+That provides an opportunity to enable functionality that isn't enabled by default.
+That extra behavior, in this case, is to keep the anchor and title with the first row of a table and the first block of a section.
+
+The reason the `breakable` option has to be specified explicitly on tables and sections is because this computation comes at a slight cost in terms of performance and side effects.
+It's minor, but it's there.
+No other blocks require this.
+****
 
 [#unbreakable]
 == Unbreakable option
 
-When the `unbreakable` option is applied to a block, the converter will advance the block and its caption and anchor to the next page if it detects that the block would break across pages and it can fit on a single page.
+When the `unbreakable` option is applied to a block, the converter will advance the block and its caption and anchor to the next page if it detects that the block is going to break across pages and it can fit on a single page.
 
 [,asciidoc]
 ----
