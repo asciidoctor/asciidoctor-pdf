@@ -1212,10 +1212,10 @@ module Asciidoctor
           b_left_width = nil
           b_width = nil if (b_width = @theme[%(#{category}_border_width)]) == 0
         end
-        if (attribution = (node.attr? 'attribution') && (node.attr 'attribution'))
+        if (attribution = node.attr 'attribution')
           # NOTE: temporary workaround to allow bare & to be used without having to wrap value in single quotes
           attribution = escape_amp attribution if attribution.include? '&'
-          if (citetitle = node.attr 'citetitle') && (citetitle.include? '&')
+          if (citetitle = node.attr 'citetitle')&.include? '&'
             citetitle = escape_amp citetitle
           end
         end
