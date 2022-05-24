@@ -52,10 +52,8 @@ To do so, you can pass one of the following compliance keywords in the value of 
 
  $ asciidoctor-pdf -a optimize=PDF/A filename.adoc
 
-WARNING: Ghostscript currently ignores the PDF/X keywords since Prawn does not properly configure the TrimBox to fit inside the BleedBox.
-
 The one limitation of generating an optimized file is that it does not allow non-ASCII characters in the document metadata fields (i.e., title, author, subject, etc.).
-To work around this limitation, you can force Ghostscript to generate a PDF 1.3 file using the `pdf-version` attribute:
+To work around this limitation, you can force Ghostscript to generate a PDF 1.3 file using the `pdf-version` attribute (or you can generate a PDF/X document):
 
  $ asciidoctor-pdf -a optimize -a pdf-version=1.3 filename.adoc
 

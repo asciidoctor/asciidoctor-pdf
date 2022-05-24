@@ -321,6 +321,7 @@ module Asciidoctor
         stamp_foreground_image doc, has_front_cover
         ink_cover_page doc, :back
         add_dest_for_top doc
+        state.pages.each {|it| fit_trim_box it } if (@optimize&.[] :compliance)&.start_with? 'PDF/X'
         nil
       end
 
@@ -413,13 +414,12 @@ module Asciidoctor
         # NOTE: defer instantiating optimizer until we know min pdf version
         if (optimize = doc.attr 'optimize') &&
             ((defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?)
-          if optimize.include? ','
-            @optimize = ([:quality, :compliance].zip (optimize.split ',', 2)).to_h
-          elsif optimize.include? '/'
-            @optimize = { compliance: optimize }
-          else
-            @optimize = { quality: optimize }
-          end
+          @optimize = (optimize.include? ',') ?
+            ([:quality, :compliance].zip (optimize.split ',', 2)).to_h :
+            ((optimize.include? '/') ? { compliance: optimize } : { quality: optimize })
+          fit_trim_box if @optimize[:compliance]&.start_with? 'PDF/X'
+        else
+          @optimize = nil
         end
         allocate_scratch_prototype
         self
@@ -4636,6 +4636,15 @@ module Asciidoctor
       # properly if they are larger than the current bounds.height.
       def fit_icon_to_bounds preferred_size
         (max_height = bounds.height) < preferred_size ? max_height : preferred_size
+      end
+
+      def fit_trim_box page_ = page
+        page_.dictionary.data[:TrimBox].tap do |trim_box|
+          trim_box[0] += 1e-4
+          trim_box[1] += 1e-4
+          trim_box[2] -= 1e-4
+          trim_box[3] -= 1e-4
+        end
       end
 
       def font_path font_file, fonts_dir
