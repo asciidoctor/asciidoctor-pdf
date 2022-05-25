@@ -15,7 +15,7 @@ Bug Fixes::
 
 * adjust TrimBox to fit inside of BleedBox when using optimizer and compliance is PDF/X (#2203)
 * set height of resized image to available height to avoid float precision error when scaling down image to fit page (#2205)
-* prevent content on title page from exceeding the bounds of a single page; restriction applies to `ink_title_page`
+* prevent content on title page from overrunning the bounds of a single page and warn; restriction applies to `ink_title_page`
 
 == 2.0.2 (2022-05-22) - @mojavelinux
 
