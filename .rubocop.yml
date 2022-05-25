@@ -197,6 +197,8 @@ RSpec/BeNil:
   Enabled: true
 RSpec/BeforeAfterAll:
   Enabled: true
+RSpec/ChangeByZero:
+  Enabled: true
 RSpec/ContextWording:
   Enabled: false
 RSpec/DescribeClass:
@@ -295,6 +297,8 @@ Style/DoubleNegation:
 Style/EmptyLiteral:
   Enabled: true
 Style/EndlessMethod:
+  Enabled: true
+Style/EnvHome:
   Enabled: true
 Style/ExplicitBlockArgument:
   Enabled: false # reason: yield is fine
