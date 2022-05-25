@@ -3615,7 +3615,6 @@ module Asciidoctor
           end
         end
 
-        # TODO: prevent content from spilling to next page
         theme_font :title_page do
           if (title_top = @theme.title_page_title_top)
             @y = resolve_top title_top
