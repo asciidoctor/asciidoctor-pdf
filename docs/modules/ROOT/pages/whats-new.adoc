@@ -6,9 +6,34 @@
 :page-toclevels: 2
 :url-milestone-2-0-0: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.0+is%3Aclosed
 :url-milestone-2-0-1: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.1
+:url-milestone-2-0-2: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.2
+:url-milestone-2-0-3: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.3
 
 This page presents the changes made in each of the patch releases in the Asciidoctor PDF {page-component-version} release line.
 The releases are ordered from newest to oldest.
+
+= Asciidoctor PDF 2.0.3
+
+_**Release date:** 2022.05.25 | *Release notes:* {url-project-repo}/releases/tag/v2.0.3[v2.0.3] | *Issue label:* {url-milestone-2-0-3}[2.0.3^]_
+
+== Improvements
+
+* Compute the optimize settings in `init_pdf` and store as a Hash instead of after writing the PDF file.
+
+== Bug Fixes
+
+* Adjust TrimBox to fit inside of BleedBox when using optimizer and compliance is PDF/X.
+* Set height of resized image to available height to avoid float precision error when scaling down image to fit page.
+* Prevent content on title page from overrunning the bounds of a single page and warn; restriction applies to `ink_title_page`.
+
+= Asciidoctor PDF 2.0.2
+
+_**Release date:** 2022.05.22 | *Release notes:* {url-project-repo}/releases/tag/v2.0.2[v2.0.2] | *Issue label:* {url-milestone-2-0-2}[2.0.2^]_
+
+== Bug Fixes
+
+* Use specified column widths to avoid bugs in column width calculation when using colspans.
+* Advance table to next page if rowspan in first row doesn't fit in space remaining on current page.
 
 = Asciidoctor PDF 2.0.1
 
@@ -16,9 +41,9 @@ _**Release date:** 2022.05.21 | *Release notes:* {url-project-repo}/releases/tag
 
 == Bug Fixes
 
-* Scale inline image to fit within available height of page, accounting for the top padding of the line height and the bottom gutter (#2193)
-* Short-circuit formatted text routine and log error if fragments in first line cannot fit on an empty page (#2193)
-* Break and wrap long contiguous text in source block when linenums is enabled (#2198)
+* Scale inline image to fit within available height of page, accounting for the top padding of the line height and the bottom gutter.
+* Short-circuit formatted text routine and log error if fragments in first line can't fit on an empty page.
+* Break and wrap long contiguous text in source block when linenums is enabled.
 
 = Asciidoctor PDF 2.0.0
 
@@ -290,7 +315,6 @@ Default theme changes:: The top and bottom padding on quote blocks is now unifor
 The following dependencies and scripts were added to Asciidoctor PDF {page-component-version}.
 
 * The `asciidoctor/pdf/nogmagick` script was added to unregister the Gmagick handler for PNG images.
-* The matrix gem is now a dependency when using Ruby 3.1.
 
 == Deprecated
 
