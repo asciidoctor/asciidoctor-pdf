@@ -5,11 +5,15 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.4 (2022-05-25) - @mojavelinux
 
 Bug Fixes::
 
 * fix calculation of TOC extent when TOC entry has children but no ID (#2208)
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.4[git tag] | {url-repo}/compare/v2.0.3\...v2.0.4[full diff]
 
 == 2.0.3 (2022-05-25) - @mojavelinux
 
