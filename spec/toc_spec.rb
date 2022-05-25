@@ -221,6 +221,30 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[3][:strings]).to include 'Chapter 1'
     end
 
+    it 'should render descendants of section without ID when computing extent of TOC' do
+      input = <<~EOS
+      = Document Title
+      :doctype: book
+      :pdf-page-size: A5
+      :toc:
+
+      the preface
+
+      :!sectids:
+      == Chapter 1
+      :sectids:
+
+      #{5.times.map {|idx| %(=== Section #{idx + 1}) }.join ?\n}
+
+      #{21.times.map {|idx| %(== Chapter #{idx + 2}) }.join ?\n}
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      preface_text = pdf.find_unique_text 'the preface'
+      last_toc_entry_text = (pdf.find_text 'Chapter 22')[0]
+      (expect preface_text[:page_number]).to be > last_toc_entry_text[:page_number]
+    end
+
     it 'should insert toc after preamble if toc attribute is preamble' do
       pdf = to_pdf <<~'EOS', analyze: true
       = Document Title

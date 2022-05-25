@@ -3756,9 +3756,9 @@ module Asciidoctor
         hanging_indent = @theme.toc_hanging_indent
         entries.each do |entry|
           next if (num_levels_for_entry = (entry.attr 'toclevels', num_levels).to_i) < (entry_level = entry.level + 1).pred ||
-            !(entry_anchor = (entry.attr 'pdf-anchor') || entry.id) ||
             ((entry.option? 'notitle') && entry == entry.document.last_child && entry.empty?)
           theme_font :toc, level: entry_level do
+            next unless (entry_anchor = (entry.attr 'pdf-anchor') || entry.id)
             entry_title = entry.context == :section ? entry.numbered_title : (entry.title? ? entry.title : (entry.xreftext 'basic'))
             next if entry_title.empty?
             entry_title = transform_text entry_title, @text_transform if @text_transform
