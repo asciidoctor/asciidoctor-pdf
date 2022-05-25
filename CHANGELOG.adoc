@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.3 (2022-05-25) - @mojavelinux
 
 Improvements::
 
@@ -16,6 +16,10 @@ Bug Fixes::
 * adjust TrimBox to fit inside of BleedBox when using optimizer and compliance is PDF/X (#2203)
 * set height of resized image to available height to avoid float precision error when scaling down image to fit page (#2205)
 * prevent content on title page from overrunning the bounds of a single page and warn; restriction applies to `ink_title_page`
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.3[git tag] | {url-repo}/compare/v2.0.2\...v2.0.3[full diff]
 
 == 2.0.2 (2022-05-22) - @mojavelinux
 
