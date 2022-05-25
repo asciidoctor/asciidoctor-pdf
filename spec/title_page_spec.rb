@@ -1228,7 +1228,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect title_page_images[0].data).to eql image_data
     end
 
-    it '.only should truncate contents of title page so it does not exceed the height of a single page' do
+    it 'should truncate contents of title page so it does not exceed the height of a single page' do
       pdf_theme = {
         title_page_title_top: '50%',
         title_page_title_font_size: 92,
