@@ -115,7 +115,7 @@ title-page:
   logo:
     image: image:logo.png[pdfwidth=25%]
 
-|<<top,top>>
+|<<logo-top,top>>
 |xref:measurement-units.adoc[Measurement] +
 (default: `10%`) +
 |[source]
@@ -124,10 +124,12 @@ title-page:
     top: 25%
 |===
 
-[#top]
+[#logo-top]
 === top
 
-The `%` unit is relative to content height; `vh` unit is relative to page height.
+The absolute top position of the logo.
+The `%` unit is a percentage of the content height, starting from the top of the content area.
+The `vh` unit is a percentage of the page height, starting from the top of the page.
 
 [#title]
 == title-page-title
@@ -218,7 +220,7 @@ title-page:
   title:
     text-transform: smallcaps
 
-|<<top,top>>
+|<<title-top,top>>
 |xref:measurement-units.adoc[Measurement] +
 (default: `40%`)
 |[source]
@@ -226,6 +228,13 @@ title-page:
   title:
     top: 55%
 |===
+
+[#title-top]
+=== top
+
+The absolute top position of the logo.
+The `%` unit is a percentage of the content height, starting from the top of the content area.
+The `vh` unit is a percentage of the page height, starting from the top of the page.
 
 [#subtitle]
 == title-page-subtitle
