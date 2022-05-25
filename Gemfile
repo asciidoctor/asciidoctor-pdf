@@ -21,9 +21,15 @@ group :docs do
 end
 
 group :lint do
-  gem 'rubocop', '~> 1.29.0', require: false
-  gem 'rubocop-rake', '~> 0.6.0', require: false
-  gem 'rubocop-rspec', '~> 2.11.0', require: false
+  if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.6.0')
+    gem 'rubocop', '~> 1.28.0', require: false
+    gem 'rubocop-rake', '~> 0.6.0', require: false
+    gem 'rubocop-rspec', '~> 2.10.0', require: false
+  else
+    gem 'rubocop', '~> 1.29.0', require: false
+    gem 'rubocop-rake', '~> 0.6.0', require: false
+    gem 'rubocop-rspec', '~> 2.11.0', require: false
+  end
 end
 
 group :coverage do
