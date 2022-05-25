@@ -316,6 +316,26 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-png-scale-to-fit.pdf'
     end
 
+    # NOTE: if not implemented properly, this case is subject to a floating point calculation error
+    it 'should set height of scaled down image to exactly height of available space' do
+      input = <<~'EOS'
+      :pdf-page-size: Letter
+      :pdf-page-margin: 0.67in
+
+      before
+
+      image::tall-irregular.jpg[pdfwidth=100%]
+      EOS
+
+      pdf = to_pdf input
+      (expect pdf.pages).to have_size 2
+      (expect get_images pdf, 1).to be_empty
+      (expect get_images pdf, 2).to have_size 1
+
+      images = (to_pdf input, analyze: :image).images
+      (expect images[0][:height]).to eql 695.52
+    end
+
     it 'should use the numeric width defined in the theme if an explicit width is not specified', visual: true do
       [72, '72', '1in', '6pc'].each do |image_width|
         to_file = to_pdf_file <<~'EOS', 'image-numeric-fallback-width.pdf', pdf_theme: { image_width: image_width }

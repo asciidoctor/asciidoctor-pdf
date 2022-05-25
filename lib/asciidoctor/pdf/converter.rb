@@ -1767,7 +1767,7 @@ module Asciidoctor
                   advance_page
                   available_h = cursor - caption_h
                 end
-                rendered_w, rendered_h = image_info.calc_image_dimensions height: available_h if rendered_h > available_h
+                rendered_w = (image_info.calc_image_dimensions height: (rendered_h = available_h))[0] if rendered_h > available_h
               end
               add_dest_for_block node if node.id
               # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
