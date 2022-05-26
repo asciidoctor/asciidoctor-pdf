@@ -24,7 +24,7 @@ quote:
 (default: `'EEEEEE'`)
 |[source]
 quote:
-  border-color: #E6E8fA
+  border-color: #E6E8FA
 
 |<<border-width,border-left-width>>
 |xref:blocks.adoc#border-width[Measurement] +

@@ -227,7 +227,7 @@ heading:
 (default: `$heading-text-decoration-color`)
 |[source]
 heading:
-  h4-text-decoration-color: #4c516d
+  h4-text-decoration-color: #4C516D
 
 |text-decoration-width
 |xref:language.adoc#values[Number] +

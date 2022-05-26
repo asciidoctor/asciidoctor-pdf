@@ -42,7 +42,7 @@ Here's how a hex color value appears in the theme file:
 [,yaml]
 ----
 base:
-  font-color: #ff0000
+  font-color: #FF0000
 ----
 
 == RGB

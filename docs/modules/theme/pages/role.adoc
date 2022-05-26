@@ -111,7 +111,7 @@ role:
 |[source]
 role:
   deleted:
-    text-decoration-color: #ff0000
+    text-decoration-color: #FF0000
 
 |text-decoration-width
 |xref:language.adoc#values[Number] +
