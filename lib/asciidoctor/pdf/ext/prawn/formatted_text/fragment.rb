@@ -5,8 +5,12 @@ Prawn::Text::Formatted::Fragment.prepend (Module.new do
 
   # Prevent fragment from being written by discarding the text, optionally forcing the width to 0
   def conceal force_width_to_zero = false
-    @text = ''
-    @width = 0 if force_width_to_zero
+    if force_width_to_zero
+      @width = 0
+      @text = ''
+    else
+      @text = ' ' * space_count # preserve space_count so width is still computed correctly
+    end
   end
 
   # Don't strip soft hyphens when repacking unretrieved fragments

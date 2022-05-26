@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Bug Fixes::
 
 * do not filter TOC entries without an ID when computing the TOC extent (#2210)
+* fix width of multi-word phrase with background and border offset (#2059)
 
 == 2.0.4 (2022-05-25) - @mojavelinux
 

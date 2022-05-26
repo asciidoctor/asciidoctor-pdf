@@ -596,6 +596,15 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       end
     end
 
+    it 'should preserve word spacing in multi-word phrase that has a border offset', visual: true do
+      pdf_theme = { role_wild_background_color: 'CCCCCC', role_wild_border_offset: 1.5 }
+      to_file = to_pdf_file <<~EOS, 'text-formatter-marked-phrase-word-spacing.pdf', pdf_theme: pdf_theme
+      To tame the [.wild]#extremely wild and dangerous wolpertingers#, we needed to build a *charm*.
+      But ultimate victory could only be won if we divined the true name of the warlock.
+      EOS
+      (expect to_file).to visually_match 'text-formatter-marked-phrase-word-spacing.pdf'
+    end
+
     it 'should not warn if text contains invalid markup in scratch document' do
       # NOTE: this assertion will fail if the message is logged multiple times
       (expect do
