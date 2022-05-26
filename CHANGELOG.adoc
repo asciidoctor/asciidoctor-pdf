@@ -5,12 +5,16 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.5 (2022-05-26) - @mojavelinux
 
 Bug Fixes::
 
 * do not filter TOC entries without an ID when computing the TOC extent (#2210)
 * fix width of multi-word phrase with background and border offset (#2059)
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.5[git tag] | {url-repo}/compare/v2.0.4\...v2.0.5[full diff]
 
 == 2.0.4 (2022-05-25) - @mojavelinux
 
