@@ -3758,7 +3758,6 @@ module Asciidoctor
           next if (num_levels_for_entry = (entry.attr 'toclevels', num_levels).to_i) < (entry_level = entry.level + 1).pred ||
             ((entry.option? 'notitle') && entry == entry.document.last_child && entry.empty?)
           theme_font :toc, level: entry_level do
-            next unless (entry_anchor = (entry.attr 'pdf-anchor') || entry.id)
             entry_title = entry.context == :section ? entry.numbered_title : (entry.title? ? entry.title : (entry.xreftext 'basic'))
             next if entry_title.empty?
             entry_title = transform_text entry_title, @text_transform if @text_transform
@@ -3770,6 +3769,7 @@ module Asciidoctor
                 ink_prose entry_title, anchor: true, normalize: false, hanging_indent: hanging_indent, normalize_line_height: true, margin: 0
               end
             else
+              entry_anchor = (entry.attr 'pdf-anchor') || entry.id
               if !(physical_pgnum = entry.attr 'pdf-page-start') &&
                   (target_page_ref = (get_dest entry_anchor)&.first) &&
                   (target_page_idx = state.pages.index {|candidate| candidate.dictionary == target_page_ref })
