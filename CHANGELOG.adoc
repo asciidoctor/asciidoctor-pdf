@@ -5,6 +5,12 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
+== Unreleased
+
+Bug Fixes::
+
+* do not filter TOC entries without an ID when computing the TOC extent (#2210)
+
 == 2.0.4 (2022-05-25) - @mojavelinux
 
 Bug Fixes::
