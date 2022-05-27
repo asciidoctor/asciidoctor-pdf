@@ -36,8 +36,7 @@ module Asciidoctor::PDF::FormattedText
         end
         pdf.fill_color prev_fill_color
       end
-      if (border_width = data[:border_width])
-        border_color = data[:border_color]
+      if (border_width = data[:border_width]) && (border_color = data[:border_color])
         prev_stroke_color = pdf.stroke_color
         prev_line_width = pdf.line_width
         pdf.stroke_color border_color

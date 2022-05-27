@@ -1034,6 +1034,16 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-inline-role-border.pdf'
     end
 
+    it 'should not crash if role defines background color and border width, but not border color' do
+      pdf_theme = {
+        role_shade_background_color: 'CCCCCC',
+        role_shade_border_width: 1,
+      }
+      input = '1 [.shade]#cup# of beans'
+      rects = (to_pdf input, pdf_theme: pdf_theme, analyze: :rect).rectangles
+      (expect rects).to have_size 1
+    end
+
     it 'should support role that sets font color in section title and toc' do
       pdf_theme = {
         role_red_font_color: 'FF0000',
