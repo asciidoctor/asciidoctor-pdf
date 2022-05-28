@@ -12,9 +12,7 @@ Gmagick.prepend (Module.new do
     if bits != 8 && (GMagick::Image.format image_blob) == 'PNG'
       (io = StringIO.new image_blob).read 8
       chunk_size = io.read 4
-      if (io.read 4) == 'IHDR'
-        self.bits = ((io.read chunk_size.unpack1 'N').unpack 'NNCCCCC')[2]
-      end
+      self.bits = ((io.read chunk_size.unpack1 'N').unpack 'NNC')[-1] if (io.read 4) == 'IHDR'
     end
   end
 end) if defined? GMagick::Image
