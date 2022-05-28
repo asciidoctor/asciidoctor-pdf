@@ -6,9 +6,6 @@ require_relative 'pdfmark'
 require_relative 'roman_numeral'
 require_relative 'section_info_by_page'
 
-autoload :StringIO, 'stringio'
-autoload :Tempfile, 'tempfile'
-
 module Asciidoctor
   module PDF
     class Converter < ::Prawn::Document
