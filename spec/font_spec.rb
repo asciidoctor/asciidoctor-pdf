@@ -244,6 +244,34 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       }
       expect { to_pdf 'content', pdf_theme: pdf_theme, 'pdf-fontsdir' => 'there' }.to raise_exception Errno::ENOENT, /#{Regexp.escape font_path} not found$/
     end
+
+    it 'should throw error that reports font name and style when font is not registered' do
+      (expect do
+        to_pdf <<~'EOS', pdf_theme: { base_font_family: 'Lato' }
+        == Section Title
+
+        paragraph
+        EOS
+      end).to raise_exception Prawn::Errors::UnknownFont, 'Lato (normal) is not a known font.'
+    end
+
+    it 'should throw error that reports font name and style when style is not found for registered font' do
+      pdf_theme = {
+        font_catalog: {
+          'Quicksand' => {
+            'normal' => (fixture_file 'Quicksand-Regular.otf'),
+          },
+        },
+        base_font_family: 'Quicksand',
+      }
+      (expect do
+        to_pdf <<~'EOS', pdf_theme: pdf_theme
+        == Section Title
+
+        paragraph
+        EOS
+      end).to raise_exception Prawn::Errors::UnknownFont, 'Quicksand (bold) is not a known font.'
+    end
   end
 
   context 'Kerning' do
