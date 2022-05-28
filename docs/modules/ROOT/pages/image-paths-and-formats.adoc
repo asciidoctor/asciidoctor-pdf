@@ -69,7 +69,7 @@ We highly recommend using this gem with Asciidoctor PDF if you're able to instal
 
 ==== Unregister prawn-gmagick
 
-One downside of delegating to GraphicsMagick is that it can misinterpret certain PNG images.
+In rare cases, GraphicsMagick (the backend library for prawn-gmagick) can misread the bit depth of certain PNG images.
 If this happens, you can instruct Asciidoctor PDF to not delegate to GraphicsMagick.
 
 You can configure Asciidoctor PDF to not delegate to GraphicsMagick when loading PNG images by requiring `asciidoctor/pdf/nopngmagick` when calling Asciidoctor PDF, as follows:

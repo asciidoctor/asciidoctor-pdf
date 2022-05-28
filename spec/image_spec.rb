@@ -930,6 +930,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
     end
 
+    # NOTE: gmagick reads `Depth: 8/2-bit` as 2 instead of 8
+    it 'should reread bit depth if gmagick fails to read bit depth correctly', visual: true, if: (defined? GMagick::Image) do
+      to_file = to_pdf_file <<~'EOS', 'image-png-depth.pdf'
+      image::square.png[pdfwidth=25%]
+      EOS
+
+      (expect to_file).to visually_match 'image-png-depth.pdf'
+    end
+
     it 'should set graphic state for running content when image occupies whole page' do
       pdf_theme = {
         footer_recto_right_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
