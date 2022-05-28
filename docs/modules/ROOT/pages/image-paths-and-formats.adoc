@@ -48,8 +48,8 @@ Without any additional libraries, those are the only image file formats supporte
 [#other-image-formats]
 === Support for additional image file formats
 
-If you need support for additional image formats, such as GIF, TIFF, WebP, or interlaced PNG--and you don't want to convert those images to a supported format like JPG--you must install the {url-prawn-gmagick}[prawn-gmagick^] Ruby gem.
-prawn-gmagick is an extension for Prawn that delegates image decoding to {url-graphicsmagick}[GraphicsMagick^] to add support for all image formats recognized by that library.
+If you need support for additional image formats, such as GIF, TIFF, WebP, or _interlaced_ PNG--and you don't want to convert those images to a supported format like JPG--you must install the {url-prawn-gmagick}[prawn-gmagick^] Ruby gem.
+prawn-gmagick is an extension for Prawn (Linux and macOS only) that delegates image decoding to {url-graphicsmagick}[GraphicsMagick^] to add support for all image formats recognized by that library.
 
 prawn-gmagick has the additional benefit of *significantly* reducing the processing time, power, and memory necessary to generate a PDF that contains a lot of PNG images.
 For large books (such as Pro Git), you might see the conversion time drop by as much as half.
