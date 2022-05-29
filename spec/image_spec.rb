@@ -422,6 +422,30 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:y]).to eql 276.036
     end
 
+    it 'should compute width correctly when SVG defines width in px units', visual: true do
+      [true, false].each do |from_theme|
+        to_file = with_content_spacer 200, 200, 'px' do |spacer_path|
+          pdf_theme = {}
+          pdf_theme[:image_width] = '200px' if from_theme
+          to_pdf_file <<~EOS, %(image-svg-px-width-from-#{from_theme ? 'theme' : 'file'}.svg), pdf_theme: pdf_theme
+
+          image::#{spacer_path}[]
+
+          image::#{spacer_path}[pdfwidth=200px]
+          EOS
+        end
+
+        (expect to_file).to visually_match 'image-svg-px-width.pdf'
+      end
+    end
+
+    it 'should treat value with px units at pt in SVG data', visual: true do
+      to_file = to_pdf_file <<~'EOS', 'image-svg-px-data.pdf'
+      image::red-blue-squares.svg[pdfwidth=25%]
+      EOS
+      (expect to_file).to visually_match 'image-svg-px-data.pdf'
+    end
+
     it 'should not allow inline image to affect the cursor position of the following paragraph' do
       pdf = to_pdf <<~'EOS', analyze: true
       before

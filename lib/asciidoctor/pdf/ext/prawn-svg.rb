@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'prawn-svg'
+require_relative 'prawn-svg/calculators/document_sizing'
 require_relative 'prawn-svg/loaders/data'
 require_relative 'prawn-svg/loaders/web'
 require_relative 'prawn-svg/url_loader'
