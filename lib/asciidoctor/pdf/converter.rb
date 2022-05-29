@@ -2998,7 +2998,7 @@ module Asciidoctor
             end
           end
         end
-        theme_font_cascade [:caption, category_caption] do
+        theme_font_cascade ['caption', category_caption] do
           if ((opts.delete :end) || (opts.delete :side) || :top) == :top
             margin = { top: caption_margin_outside, bottom: caption_margin_inside }
           else
@@ -4343,7 +4343,7 @@ module Asciidoctor
       end
 
       def theme_font_cascade categories, &block
-        if ::Array === (category = (categories = categories.dup).shift)
+        if ::Array === (category = (categories = categories.uniq).shift)
           category, opts = category
         else
           opts = {}
