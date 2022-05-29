@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Bug Fixes::
 
+* indent content of collapsible block and apply bottom margin to match style of HTML output (#2219)
 * patch prawn-gmagick to reread bit depth of a PNG image if it extracts the wrong value (#2216)
 * interpret width of SVG correctly when width is defined in file using px units (#2215)
 * don't crash if inline role defines border width but not border color

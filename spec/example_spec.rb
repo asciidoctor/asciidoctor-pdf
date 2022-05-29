@@ -340,21 +340,84 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     (expect (text_left - left).to_f).to eql 12.0
   end
 
-  it 'should use informal title and no border or shading if collapsible option is set' do
+  it 'should use informal title, indented content, no border or shading, and bottom margin if collapsible option is set' do
     input = <<~'EOS'
     .Reveal Answer
     [%collapsible]
     ====
     This is a PDF, so the answer is always visible.
     ====
+
+    Paragraph following collapsible block.
     EOS
 
     pdf = to_pdf input, analyze: true
     lines = pdf.lines
-    (expect lines).to eql [%(\u25bc Reveal Answer), 'This is a PDF, so the answer is always visible.']
-    (expect pdf.text[0][:x]).to eql pdf.text[1][:x]
+    expected_lines = [
+      %(\u25bc Reveal Answer),
+      'This is a PDF, so the answer is always visible.',
+      'Paragraph following collapsible block.',
+    ]
+    (expect lines).to eql expected_lines
+    (expect pdf.text[0][:x]).to eql pdf.text[2][:x]
+    (expect pdf.text[1][:x]).to be > pdf.text[2][:x]
+    (expect pdf.text[1][:y] - (pdf.text[2][:y] + pdf.text[2][:font_size])).to be > 12
 
     pdf = to_pdf input, analyze: :line
     (expect pdf.lines).to be_empty
+  end
+
+  # see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary#default_label_text
+  it 'should use fallback title for collapsible block if no title is specified' do
+    input = <<~'EOS'
+    [%collapsible]
+    ====
+    These are the details.
+    ====
+    EOS
+
+    pdf = to_pdf input, analyze: true
+    (expect pdf.text[0][:string]).to eql %(\u25bc Details)
+  end
+
+  it 'should align left margin of content of collapsible block with start of title text' do
+    input = <<~'EOS'
+    .*Spoiler*
+    [%collapsible]
+    ====
+    Now you can't unsee it.
+    Muahahahaha.
+    ====
+    EOS
+
+    pdf = to_pdf input, analyze: true
+    (expect pdf.text[0][:x]).to eql 48.24
+    (expect pdf.text[1][:x]).to be > 48.24
+    (expect pdf.text[2][:x]).to be > 48.24
+    (expect pdf.text[1][:x]).to eql pdf.text[2][:x]
+  end
+
+  it 'should insert block margin between bottom of content and next block' do
+    pdf_theme = {
+      code_background_color: 'transparent',
+      code_border_radius: 0,
+      code_border_width: [1, 0],
+    }
+    input = <<~'EOS'
+    [%collapsible]
+    ====
+    ----
+    inside
+    ----
+    ====
+
+    ----
+    below
+    ----
+    EOS
+
+    lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.sort_by {|it| -it[:from][:y] }
+    (expect lines).to have_size 4
+    (expect lines[1][:from][:y] - lines[2][:from][:y]).to eql 12.0
   end
 end
