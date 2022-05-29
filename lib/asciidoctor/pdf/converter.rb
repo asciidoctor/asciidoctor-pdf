@@ -1164,8 +1164,26 @@ module Asciidoctor
       alias convert_literal convert_code
       alias convert_listing_or_literal convert_code
 
+      def convert_collapsible node
+        id = node.id
+        title = (collapsible_marker = %(\u25bc )) + (node.title? ? node.title : 'Details')
+        indent_by = theme_font(:caption) { rendered_width_of_string collapsible_marker }
+        if !at_page_top? && (id || (node.option? 'unbreakable'))
+          arrange_block node do
+            add_dest_for_block node if id
+            tare_first_page_content_stream { ink_caption title }
+            indent(indent_by) { traverse node }
+          end
+        else
+          add_dest_for_block node if id
+          tare_first_page_content_stream { ink_caption title }
+          indent(indent_by) { traverse node }
+        end
+        theme_margin :block, :bottom, (next_enclosed_block node)
+      end
+
       def convert_example node
-        return convert_open node if node.option? 'collapsible'
+        return convert_collapsible node if node.option? 'collapsible'
         caption_bottom = @theme.example_caption_end&.to_sym == :bottom
         arrange_block node do |extent|
           add_dest_for_block node if node.id
@@ -1190,14 +1208,12 @@ module Asciidoctor
         if !at_page_top? && (has_title || id || (node.option? 'unbreakable'))
           arrange_block node do
             add_dest_for_block node if id
-            tare_first_page_content_stream do
-              node.context == :example ? (ink_caption %(\u25bc #{node.title})) : (ink_caption node, labeled: false)
-            end if has_title
+            tare_first_page_content_stream { ink_caption node, labeled: false } if has_title
             traverse node
           end
         else
           add_dest_for_block node if id
-          node.context == :example ? (ink_caption %(\u25bc #{node.title})) : (ink_caption node, labeled: false) if has_title
+          ink_caption node, labeled: false if has_title
           traverse node
         end
       end
