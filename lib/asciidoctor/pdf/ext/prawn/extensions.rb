@@ -257,10 +257,10 @@ module Asciidoctor
       # Prevents at_page_top? from returning true while yielding to the specified block.
       #
       def conceal_page_top
-        margin_box.instance_variable_set :@y, (old_top = margin_box.absolute_top) + 0.0001
+        @margin_box.instance_variable_set :@y, (old_top = @margin_box.absolute_top) + 0.0001
         yield
       ensure
-        margin_box.instance_variable_set :@y, old_top
+        @margin_box.instance_variable_set :@y, old_top
       end
 
       # Returns whether the current page is the last page in the document.
