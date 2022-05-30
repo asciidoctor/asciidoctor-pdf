@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.6 (2022-05-30) - @mojavelinux
 
 Bug Fixes::
 
@@ -13,6 +13,10 @@ Bug Fixes::
 * patch prawn-gmagick to reread bit depth of a PNG image if it extracts the wrong value (#2216)
 * interpret width of SVG correctly when width is defined in file using px units (#2215)
 * don't crash if inline role defines border width but not border color
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.6[git tag] | {url-repo}/compare/v2.0.5\...v2.0.6[full diff]
 
 == 2.0.5 (2022-05-26) - @mojavelinux
 
