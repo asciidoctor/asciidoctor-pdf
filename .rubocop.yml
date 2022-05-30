@@ -5,6 +5,8 @@ AllCops:
   TargetRubyVersion: 2.7
 Gemspec/DateAssignment:
   Enabled: true
+Gemspec/DeprecatedAttributeAssignment:
+  Enabled: true
 Gemspec/RequireMFA:
   Enabled: false
 Layout/ArgumentAlignment:
@@ -350,6 +352,8 @@ Style/InPatternThen:
 Style/InfiniteLoop:
   Enabled: false # reason: loop is measurably slower than while true
 Style/KeywordParametersOrder:
+  Enabled: true
+Style/MapCompactWithConditionalBlock:
   Enabled: true
 Style/MapToHash:
   Enabled: false # reason: not supported in JRuby < 9.3
