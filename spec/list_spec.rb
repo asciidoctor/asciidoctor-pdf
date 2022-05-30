@@ -2112,5 +2112,32 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect lines).to include 'The recommended reading includes [1].'
       (expect lines).to include '▪ [1] Bar, Foo. All The Things. 2010.'
     end
+
+    it 'should create bidirectional links between first bibref reference and entry' do
+      pdf = to_pdf <<~'EOS'
+      The recommended reading includes <<bar>>.
+
+      Did you read <<bar>>?
+
+      <<<
+
+      [bibliography]
+      == Bibliography
+
+      * [[[bar]]] Bar, Foo. All The Things. 2010.
+      * [[[baz]]] Baz. The Rest of the Story. 2020.
+      EOS
+
+      forward_refs = get_annotations pdf, 1
+      (expect forward_refs).to have_size 2
+      (expect forward_refs.map {|it| it[:Dest] }.uniq).to eql %w(bar)
+      ids = (get_names pdf).keys
+      (expect ids).to include '_bibref_ref_bar'
+      (expect ids).to include 'bar'
+      (expect ids).to include 'baz'
+      back_refs = get_annotations pdf, 2
+      (expect back_refs).to have_size 1
+      (expect back_refs[0][:Dest]).to eql '_bibref_ref_bar'
+    end
   end
 end

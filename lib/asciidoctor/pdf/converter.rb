@@ -404,6 +404,7 @@ module Asciidoctor
         @list_bullets = []
         @bottom_gutters = [{}]
         @rendered_footnotes = []
+        @bibref_refs = ::Set.new
         @conum_glyphs = ConumSets[@theme.conum_glyphs || 'circled'] || (@theme.conum_glyphs.split ',').map do |r|
           from, to = r.lstrip.split '-', 2
           to ? ((get_char from)..(get_char to)).to_a : [(get_char from)]
@@ -2393,9 +2394,12 @@ module Asciidoctor
               if (text = ref.xreftext node.attr 'xrefstyle', nil, true)&.include? '<a'
                 text = text.gsub DropAnchorRx, ''
               end
+              if ref.inline? && ref.type == :bibref && !scratch? && (@bibref_refs.add? refid)
+                anchor = %(<a id="_bibref_ref_#{refid}">#{DummyText}</a>)
+              end
               @resolving_xref = nil
             end
-            %(<a anchor="#{derive_anchor_from_id refid}">#{text || "[#{refid}]"}</a>).gsub ']', '&#93;'
+            %(#{anchor || ''}<a anchor="#{derive_anchor_from_id refid}">#{text || "[#{refid}]"}</a>).gsub ']', '&#93;'
           else
             %(<a anchor="#{doc.attr 'pdf-anchor'}">#{node.text || '[^top&#93;'}</a>)
           end
@@ -2403,10 +2407,12 @@ module Asciidoctor
           # NOTE: destination is created inside callback registered by FormattedTextTransform#build_fragment
           %(<a id="#{node.id}">#{DummyText}</a>)
         when :bibref
-          # NOTE: destination is created inside callback registered by FormattedTextTransform#build_fragment
+          id = node.id
           # NOTE: technically node.text should be node.reftext, but subs have already been applied to text
-          reftext = (reftext = node.reftext) ? %([#{reftext}]) : %([#{node.id}])
-          %(<a id="#{node.id}">#{DummyText}</a>#{reftext})
+          reftext = (reftext = node.reftext) ? %([#{reftext}]) : %([#{id}])
+          reftext = %(<a anchor="_bibref_ref_#{id}">#{reftext}</a>) if @bibref_refs.include? id
+          # NOTE: destination is created inside callback registered by FormattedTextTransform#build_fragment
+          %(<a id="#{id}">#{DummyText}</a>#{reftext})
         else
           log :warn, %(unknown anchor type: #{node.type.inspect})
           nil
