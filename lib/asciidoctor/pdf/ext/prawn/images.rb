@@ -53,6 +53,10 @@ module Asciidoctor
         # NOTE: image cannot be read, so it won't be used anyway
         { width: 0, height: 0 }
       end
+
+      def recommend_prawn_gmagick? err, image_format
+        ::Prawn::Errors::UnsupportedImageType === err && !(defined? ::GMagick::Image) && ((err.message.include? 'PNG') || (%w(jpg png).none? image_format))
+      end
     end
 
     ::Prawn::Document.extensions << Images
