@@ -5,6 +5,10 @@ on:
       release-version:
         description: Enter version to release (e.g., 2.0.1).
         required: false
+      release-beer:
+        default: TBD
+        description: Enter beer to mark the occasion.
+        required: false
 jobs:
   activate:
     runs-on: ubuntu-latest
@@ -45,6 +49,7 @@ jobs:
     - name: Setup release environment
       run: |
         echo RELEASE_VERSION=${{ github.event.inputs.release-version }} >> $GITHUB_ENV
+        echo RELEASE_BEER=${{ github.event.inputs.release-beer }} >> $GITHUB_ENV
         echo RELEASE_RUBYGEMS_API_KEY=${{ secrets[format('RUBYGEMS_API_KEY_{0}', github.actor)] }} >> $GITHUB_ENV
     - name: Build, tag, and publish gem
       run: ./release.sh

@@ -1,0 +1,59 @@
+# frozen_string_literal: true
+
+require 'time'
+
+old_tz, ENV['TZ'] = ENV['TZ'], 'US/Mountain'
+release_date = Time.now.strftime '%Y-%m-%d'
+ENV['TZ'] = old_tz
+
+spec = Gem::Specification.load Dir['*.gemspec'].first
+gem_name = spec.name
+gem_version = spec.version
+gem_dist_url = %(https://rubygems.org/gems/#{gem_name})
+release_actor = ENV['GITHUB_ACTOR'] || 'mojavelinux'
+release_beer = ENV['RELEASE_BEER'] || 'TBD'
+release_tag = %(v#{gem_version})
+previous_tag = (`git tag -l --sort -taggerdate`.each_line chomp: true)
+  .drop_while {|it| it != release_tag }
+  .reject {|it| it == release_tag }
+  .find {|it| (Gem::Version.new it.slice 1, it.length) < gem_version }
+issues_url = spec.metadata['bug_tracker_uri']
+repo_url = spec.metadata['source_code_uri']
+changelog = (File.readlines 'CHANGELOG.adoc', chomp: true, mode: 'r:UTF-8').reduce nil do |accum, line|
+  if line == '=== Details'
+    accum.pop
+    break accum.join ?\n
+  elsif accum
+    line = %(### #{line.slice 0, line.length - 2}) if line.end_with? '::'
+    accum << line unless accum.empty? && line.empty?
+  elsif line.start_with? %(== #{gem_version} )
+    accum = []
+  end
+  accum
+end
+
+notes = <<~EOS
+Write summary...
+
+## Distribution
+
+- [RubyGem (#{gem_name})](#{gem_dist_url})
+
+## Changelog
+
+#{changelog}
+
+## Release meta
+
+Released on: #{release_date}
+Released by: @#{release_actor}
+Release beer: #{release_beer}
+
+Logs: [resolved issues](#{issues_url}?q=is%3Aissue+label%3A#{release_tag}+is%3Aclosed) | [full diff](#{repo_url}/compare/#{previous_tag}...#{release_tag})
+
+## Credits
+
+A very special thanks to all the **awesome** [supporters of the Asciidoctor OpenCollective campaign](https://opencollective.com/asciidoctor), who provide critical funding for the ongoing development of this project.
+EOS
+
+File.write 'release-notes.md', notes, mode: 'w:UTF-8'
