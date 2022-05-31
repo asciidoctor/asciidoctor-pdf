@@ -917,6 +917,24 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect pdf.images[0][:width]).to eql reference_width
     end
 
+    it 'should fail to embed incomplete PNG with warning' do
+      Tempfile.create %w(incomplete- .png), output_dir do |tmp_file|
+        tmp_file.binmode
+        tmp_file.write [137, 80, 78, 71, 10].pack 'C*' # make a PNG with incomplete data
+        tmp_file.close
+        image_path = tmp_file.path
+        { '::' => %([Incomplete PNG] | #{image_path}), ':' => '[Incomplete PNG]' }.each do |macro_delim, alt_text|
+          (expect do
+            input = <<~EOS
+            image#{macro_delim}#{image_path}[Incomplete PNG]
+            EOS
+            pdf = to_pdf input, analyze: true
+            (expect pdf.lines).to eql [alt_text]
+          end).to log_message severity: :WARN, message: %(could not embed image: #{image_path}; image file is an unrecognised format)
+        end
+      end
+    end
+
     it 'should fail to embed interlaced PNG image with warning', unless: (defined? GMagick::Image) do
       { '::' => '[Interlaced PNG] | interlaced.png', ':' => '[Interlaced PNG]' }.each do |macro_delim, alt_text|
         (expect do
@@ -928,7 +946,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
           EOS
           pdf = to_pdf input, analyze: true
           (expect pdf.lines).to eql [alt_text]
-        end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'interlaced.png'}; PNG uses unsupported interlace method; install prawn-gmagick gem to add support)
+        end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'interlaced.png'}; PNG uses unsupported interlace method; install prawn-gmagick gem to add support for PNG image format)
       end
     end
 
@@ -1051,7 +1069,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         (expect do
           pdf = to_pdf 'image:waterfall.bmp[waterfall,16] is not agile.', analyze: true
           (expect pdf.lines).to eql ['[waterfall] is not agile.']
-        end).to log_message severity: :WARN, message: '~image file is an unrecognised format; install prawn-gmagick gem to add support'
+        end).to log_message severity: :WARN, message: '~image file is an unrecognised format; install prawn-gmagick gem to add support for BMP image format'
       ensure
         GMagick.const_set :Image, old_gmagick_image
         Gmagick.singleton_class.remove_method :can_render?

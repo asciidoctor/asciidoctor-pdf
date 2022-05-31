@@ -1811,7 +1811,7 @@ module Asciidoctor
           end
         rescue => e
           raise if ::StopIteration === e
-          on_image_error :exception, node, target, (opts.merge align: alignment, message: %(could not embed image: #{image_path}; #{e.message}#{::Prawn::Errors::UnsupportedImageType === e && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}))
+          on_image_error :exception, node, target, (opts.merge align: alignment, message: %(could not embed image: #{image_path}; #{e.message}#{(recommend_prawn_gmagick? e, image_format) ? %(; install prawn-gmagick gem to add support for #{image_format&.upcase || 'unknown'} image format) : ''}))
         end
       end
 

@@ -62,7 +62,7 @@ module Asciidoctor::PDF::FormattedText
         max_image_h = fragment[:image_fit] == 'line' ? [available_h, doc.font.height].min : available_h
 
         # TODO: make helper method to calculate width and height of image
-        if fragment[:image_format] == 'svg'
+        if (image_format = fragment[:image_format]) == 'svg'
           svg_obj = ::Prawn::SVG::Interface.new ::File.read(image_path, mode: 'r:UTF-8'), doc,
             at: doc.bounds.top_left,
             width: image_w,
@@ -117,7 +117,7 @@ module Asciidoctor::PDF::FormattedText
         fragment[:image_width] = fragment[:width] = image_w
         fragment[:image_height] = image_h
       rescue
-        logger.warn %(could not embed image: #{image_path}; #{$!.message}#{::Prawn::Errors::UnsupportedImageType === $! && !(defined? ::GMagick::Image) ? '; install prawn-gmagick gem to add support' : ''}) unless scratch
+        logger.warn %(could not embed image: #{image_path}; #{$!.message}#{(doc.recommend_prawn_gmagick? $!, image_format) ? %(; install prawn-gmagick gem to add support for #{image_format&.upcase || 'unknown'} image format) : ''}) unless scratch
         drop = true # delegate to cleanup logic in ensure block
       ensure
         # NOTE: skip rendering image in scratch document or if image can't be loaded

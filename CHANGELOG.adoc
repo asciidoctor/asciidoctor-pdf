@@ -5,6 +5,13 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
+== Unreleased
+
+Improvements::
+
+* don't recommend prawn-gmagick if PNG or JPG is corrupt or incomplete
+* add helper method to determine when to recommend the prawn-gmagick gem
+
 == 2.0.6 (2022-05-30) - @mojavelinux
 
 Bug Fixes::
