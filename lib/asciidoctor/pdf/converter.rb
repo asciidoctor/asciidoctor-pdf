@@ -150,7 +150,7 @@ module Asciidoctor
           log :warn, %(missing convert handler for #{name} node in #{@backend} backend)
         end
         # NOTE: inline node handlers generate HTML-like strings; all other handlers write directly to the PDF object
-        ::Asciidoctor::Inline === node ? result : self
+        node.inline? ? result : self
       end
 
       def convert_document doc
