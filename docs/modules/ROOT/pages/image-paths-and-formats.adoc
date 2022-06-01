@@ -53,7 +53,7 @@ prawn-gmagick is an extension for Prawn (Linux and macOS only) that delegates im
 
 prawn-gmagick has the additional benefit of *significantly* reducing the processing time, power, and memory necessary to generate a PDF that contains a lot of PNG images.
 For large books (such as Pro Git), you might see the conversion time drop by as much as half.
-Decoding PNG images requires a lot of mathematical computation, a task Ruby is not particularly efficient at performing.
+Uncompressing PNG image data (specifically zlib inflating) requires a lot of mathematical computation, a task Ruby is not particularly efficient at performing.
 That's why adding the prawn-gmagick gem to the converter makes such a substantial difference.
 
 As an alternative to using prawn-gmagick, you could optimize the images you pass into Asciidoctor PDF, either by scaling them down or converting them to an uncompressed format like JPG.
