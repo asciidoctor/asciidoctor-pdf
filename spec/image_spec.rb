@@ -675,7 +675,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect do
         pdf = to_pdf 'image::svg-with-gif-image.svg[]', analyze: :image
         (expect pdf.images).to be_empty
-      end).to log_message severity: :WARN, message: %(problem encountered in image: #{fixture_file 'svg-with-gif-image.svg'}; image supplied to image tag is an unrecognised format)
+      end).to log_message severity: :WARN, message: %(problem encountered in image: #{fixture_file 'svg-with-gif-image.svg'}; Unsupported image type supplied to image tag)
     end
 
     it 'should embed image from data-uri in inline image', visual: true do
@@ -840,23 +840,23 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
     end
 
-    it '.only should not embed local SVG in inline image', visual: true do
+    it 'should not embed local SVG in inline image', visual: true do
       (expect do
         to_file = to_pdf_file <<~'EOS', 'image-inline-svg-with-local-svg.pdf'
         image:svg-with-local-svg.svg[pdfwidth=1.27cm] lacks the red square.
         EOS
         (expect to_file).to visually_match 'image-inline-svg-with-local-svg.pdf'
-      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-local-svg.svg'}; image supplied to image tag is an unrecognised format)
+      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-local-svg.svg'}; Unsupported image type supplied to image tag)
     end
 
-    it '.only should not embed local SVG in block image', visual: true do
+    it 'should not embed local SVG in block image', visual: true do
       (expect do
         to_file = to_pdf_file <<~'EOS', 'image-block-svg-with-local-svg.pdf'
         .Lacks the red square
         image::svg-with-local-svg.svg[pdfwidth=5in]
         EOS
         (expect to_file).to visually_match 'image-block-svg-with-local-svg.pdf'
-      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-local-svg.svg'}; image supplied to image tag is an unrecognised format)
+      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-local-svg.svg'}; Unsupported image type supplied to image tag)
     end
   end
 

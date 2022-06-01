@@ -2,9 +2,14 @@
 
 Prawn::SVG::Elements::Image.prepend (Module.new do
   def image_dimensions data
-    image = (Prawn.image_handler.find data).new data
+    unless (handler = find_image_handler data)
+      raise ::Prawn::SVG::Elements::Base::SkipElementError, 'Unsupported image type supplied to image tag'
+    end
+    image = handler.new data
     [image.width.to_f, image.height.to_f]
-  rescue
-    raise ::Prawn::SVG::Elements::Base::SkipElementError, 'image supplied to image tag is an unrecognised format'
+  end
+
+  def find_image_handler data
+    Prawn.image_handler.find data rescue nil
   end
 end)
