@@ -47,6 +47,8 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         ruby: [jruby-9.3, '2.7', '3.1']
         rouge-version: [~]
+        asciidoctor-diagram-version: ['~> 2.2']
+        asciidoctor-kroki-version: [~]
         upstream: [~]
         exclude:
         # remove 3.1 on ubuntu-latest to mark as primary
@@ -66,6 +68,10 @@ jobs:
         - os: ubuntu-latest
           ruby: '2.7'
           rouge-version: '~> 2.0.0'
+        - os: windows-latest
+          ruby: '3.1'
+          asciidoctor-diagram-version: ~
+          asciidoctor-kroki-version: '0.5.0'
         - os: ubuntu-latest
           ruby: '3.1'
           upstream: upstream
@@ -74,7 +80,6 @@ jobs:
           primary: primary
     runs-on: ${{ matrix.os }}
     env:
-      ASCIIDOCTOR_DIAGRAM_VERSION: '~> 2.2'
       PYGMENTS_VERSION: '~> 2.0'
       RGHOST_VERSION: '0.9.7'
       # work around `Permission denied - NUL' error when installing/using the bundler gem on JRuby for Windows
@@ -124,6 +129,14 @@ jobs:
     - name: Set Rouge version
       if: matrix.rouge-version
       run: echo 'ROUGE_VERSION=${{ matrix.rouge-version }}' >> $GITHUB_ENV
+    - name: Set Asciidoctor Diagram version
+      if: matrix.asciidoctor-diagram-version
+      run: |
+        echo 'ASCIIDOCTOR_DIAGRAM_VERSION=${{ matrix.asciidoctor-diagram-version }}' >> $GITHUB_ENV
+    - name: Set Asciidoctor Kroki version
+      if: matrix.asciidoctor-kroki-version
+      run: |
+        echo 'ASCIIDOCTOR_KROKI_VERSION=${{ matrix.asciidoctor-kroki-version }}' >> $GITHUB_ENV
     - name: Install dependencies
       run: bundle --jobs 3 --retry 3
     - name: Switch to upstream dependencies
