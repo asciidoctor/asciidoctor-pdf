@@ -68,7 +68,7 @@ module Asciidoctor::PDF::FormattedText
             width: image_w,
             fallback_font_name: doc.fallback_svg_font_name,
             enable_web_requests: doc.allow_uri_read ? (doc.method :load_open_uri).to_proc : false,
-            enable_file_requests_with_root: (::File.dirname image_path),
+            enable_file_requests_with_root: { root: (::File.dirname image_path), jail: doc.jail_dir },
             cache_images: doc.cache_uri
           svg_size = svg_obj.document.sizing
           # NOTE: the best we can do is make the image fit within full height of bounds

@@ -664,6 +664,29 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
     end
 
+    it 'should allow image path to reference file in ancestor directory inside base dir' do
+      expected_image_data = File.binread example_file 'sample-logo.jpg'
+      Tempfile.create %w(svg-with-image- .svg), output_dir do |tmp_file|
+        tmp_file.write <<~'EOS'
+        <svg version="1.1" viewBox="0 0 331 369" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <image x="0" y="0" width="331" height="369" xlink:href="../../examples/sample-logo.jpg"/>
+        </svg>
+        EOS
+        tmp_file.close
+        image_path = tmp_file.path
+
+        ['::', ':'].each do |macro_delim|
+          pdf = to_pdf <<~EOS, base_dir: (File.dirname __dir__)
+          image#{macro_delim}#{image_path}[SVG with ancestor relative image,pdfwidth=25%]
+          EOS
+
+          images = get_images pdf, 1
+          (expect images).to have_size 1
+          (expect images[0].data).to eql expected_image_data
+        end
+      end
+    end
+
     it 'should embed GIF image if prawn-gmagick is available', if: (defined? GMagick::Image) do
       pdf = to_pdf 'image::svg-with-gif-image.svg[]', analyze: :image
       (expect pdf.images).to have_size 1
