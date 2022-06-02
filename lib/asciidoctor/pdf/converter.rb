@@ -939,7 +939,7 @@ module Asciidoctor
                           height: label_height,
                           fallback_font_name: fallback_svg_font_name,
                           enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
-                          enable_file_requests_with_root: { root: (::File.dirname icon_path), jail: @jail_dir },
+                          enable_file_requests_with_root: { base: (::File.dirname icon_path), root: @jail_dir },
                           cache_images: cache_uri
                         svg_obj.resize height: label_height if svg_obj.document.sizing.output_height > label_height
                         svg_obj.draw
@@ -1734,7 +1734,7 @@ module Asciidoctor
                 file_request_root = false
               else
                 svg_data = ::File.read image_path, mode: 'r:UTF-8'
-                file_request_root = { root: (::File.dirname image_path), jail: @jail_dir }
+                file_request_root = { base: (::File.dirname image_path), root: @jail_dir }
               end
               svg_obj = ::Prawn::SVG::Interface.new svg_data, self,
                 position: alignment,
@@ -4049,7 +4049,7 @@ module Asciidoctor
       def resolve_image_options image_path, image_format, image_attrs, opts = {}
         if image_format == 'svg'
           image_opts = {
-            enable_file_requests_with_root: { root: (::File.dirname image_path), jail: @jail_dir },
+            enable_file_requests_with_root: { base: (::File.dirname image_path), root: @jail_dir },
             enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
             cache_images: cache_uri,
             fallback_font_name: fallback_svg_font_name,

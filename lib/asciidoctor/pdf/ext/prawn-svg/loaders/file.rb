@@ -5,8 +5,8 @@ Prawn::SVG::Loaders::File.prepend (Module.new do
 
   def initialize root_path
     if Hash === root_path
-      @jail_path = root_path[:jail]
-      root_path = root_path[:root]
+      @jail_path = root_path[:root]
+      root_path = root_path[:base]
       super
     else
       super
