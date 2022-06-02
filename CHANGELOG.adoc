@@ -15,6 +15,7 @@ Improvements::
 Bug Fixes::
 
 * use prawn-gmagick, if available, to read raster image referenced by SVG (#2223)
+* allow image path in SVG to refer to any location within Asciidoctor jail (no restriction if safe mode is unsafe) (#1941)
 
 == 2.0.6 (2022-05-30) - @mojavelinux
 
