@@ -56,3 +56,4 @@ This matches the behavior of HTML.
 * You cannot use inline HTML (like a link or emphasized text) in a source block that also uses syntax highlighting.
 These two technologies don't mix in the PDF generation process due to how the syntax highlighters work.
 * Verse blocks do not use a fixed-width font by default, but you can control this setting xref:theme:verse.adoc[using the theme].
+* Cannot use remote inline image in the doctitle or a section title with an automatic ID
