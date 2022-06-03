@@ -33,27 +33,6 @@ module Asciidoctor
         end
       end
 
-      # Retrieve the intrinsic image dimensions for the specified path in pt.
-      #
-      # Returns a Hash containing :width and :height keys that map to the image's
-      # intrinsic width and height values (in pt).
-      def intrinsic_image_dimensions path, format
-        if format == 'svg'
-          # NOTE: prawn-svg computes intrinsic width and height in pt
-          img_obj = ::Prawn::SVG::Interface.new (::File.read path, mode: 'r:UTF-8'), self, {}
-          img_size = img_obj.document.sizing
-          { width: img_size.output_width, height: img_size.output_height }
-        else
-          # NOTE: build_image_object caches image data previously loaded
-          # NOTE: build_image_object computes intrinsic width and height in px
-          _, img_size = ::File.open(path, 'rb') {|fd| build_image_object fd }
-          { width: (to_pt img_size.width, :px), height: (to_pt img_size.height, :px) }
-        end
-      rescue
-        # NOTE: image cannot be read, so it won't be used anyway
-        { width: 0, height: 0 }
-      end
-
       def recommend_prawn_gmagick? err, image_format
         ::Prawn::Errors::UnsupportedImageType === err && !(defined? ::GMagick::Image) && ((err.message.include? 'PNG') || (%w(jpg png).none? image_format))
       end

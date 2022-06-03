@@ -338,11 +338,11 @@ module Asciidoctor
         #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
         ((::Prawn::Document.instance_method :initialize).bind self).call pdf_opts
         renderer.min_version (@pdf_version = PDFVersions[doc.attr 'pdf-version'])
-        @tmp_files = {}
+        @tmp_files ||= {}
         @allow_uri_read = doc.attr? 'allow-uri-read'
         @cache_uri = doc.attr? 'cache-uri'
         @jail_dir = doc.safe < ::Asciidoctor::SafeMode::SAFE ? nil : doc.base_dir
-        @media = doc.attr 'media', 'screen'
+        @media ||= doc.attr 'media', 'screen'
         @page_margin_by_side = { recto: (page_margin_recto = page_margin), verso: (page_margin_verso = page_margin), cover: page_margin }
         case doc.attr 'pdf-folio-placement', (@media == 'prepress' ? 'physical' : 'virtual')
         when 'physical'
@@ -2508,14 +2508,19 @@ module Asciidoctor
           # NOTE: an image with a data URI is handled using a temporary file
           elsif (image_path = resolve_image_path node, target, image_format)
             if ::File.readable? image_path
-              if (width = resolve_explicit_width node.attributes)
-                width += (intrinsic_image_dimensions image_path, image_format)[:width].to_s if node.parent.context == :table_cell && ::String === width && (width.end_with? '%')
-              else
-                width = (intrinsic_image_dimensions image_path, image_format)[:width]
-              end
               class_attr = (role = node.role) ? %( class="#{role}") : ''
               fit_attr = (fit = node.attr 'fit') ? %( fit="#{fit}") : ''
-              img = %(<img src="#{image_path}" format="#{image_format}" alt="#{encode_quotes node.attr 'alt'}" width="#{width}"#{class_attr}#{fit_attr}>)
+              if (width = resolve_explicit_width node.attributes)
+                if node.parent.context == :table_cell && ::String === width && (width.end_with? '%')
+                  width += (intrinsic_image_dimensions image_path, image_format)[:width].to_s
+                end
+                width_attr = %( width="#{width}")
+              elsif state # check that converter is initialized
+                width_attr = %( width="#{(intrinsic_image_dimensions image_path, image_format)[:width]}")
+              else
+                width_attr = ' width="auto"' # defer operation until arranger runs
+              end
+              img = %(<img src="#{image_path}" format="#{image_format}" alt="#{encode_quotes node.attr 'alt'}"#{width_attr}#{class_attr}#{fit_attr}>)
             else
               log :warn, %(image to embed not found or not readable: #{image_path})
               img = %([#{node.attr 'alt'}&#93;)
@@ -3841,6 +3846,27 @@ module Asciidoctor
         end
       end
 
+      # Retrieve the intrinsic image dimensions for the specified path in pt.
+      #
+      # Returns a Hash containing :width and :height keys that map to the image's
+      # intrinsic width and height values (in pt).
+      def intrinsic_image_dimensions path, format
+        if format == 'svg'
+          # NOTE: prawn-svg automatically converts intrinsic width and height to pt
+          img_obj = ::Prawn::SVG::Interface.new (::File.read path, mode: 'r:UTF-8'), self, {}
+          img_size = img_obj.document.sizing
+          { width: img_size.output_width, height: img_size.output_height }
+        else
+          # NOTE: build_image_object caches image data previously loaded
+          # NOTE: build_image_object computes intrinsic width and height in px
+          _, img_size = ::File.open(path, 'rb') {|fd| build_image_object fd }
+          { width: (to_pt img_size.width, :px), height: (to_pt img_size.height, :px) }
+        end
+      rescue
+        # NOTE: image can't be read, so it won't be used anyway
+        { width: 0, height: 0 }
+      end
+
       # Sends the specified message to the log unless this method is called from the scratch document
       def log severity, message = nil, &block
         logger.send severity, message, &block unless scratch?
@@ -4136,6 +4162,7 @@ module Asciidoctor
         else
           imagesdir = relative_to
         end
+        @tmp_files ||= {}
         # NOTE: base64 logic currently used for inline images
         if ::Base64 === image_path
           return @tmp_files[image_path] if @tmp_files.key? image_path
