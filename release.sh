@@ -37,7 +37,7 @@ chmod 600 $HOME/.gem/credentials
   gem push $RELEASE_NAME-$RELEASE_VERSION.gem
   git push origin $RELEASE_BRANCH
   ruby tasks/release-notes.rb
-  gh release create v$RELEASE_VERSION -F release-notes.md -d
+  gh release create v$RELEASE_VERSION -t v$RELEASE_VERSION -F release-notes.md -d
 )
 
 exit_code=$?
