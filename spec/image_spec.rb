@@ -13,6 +13,61 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     (expect images[0].data).to eql image_data
   end
 
+  it 'should not crash if doctitle contains inline raster image with no explicit width' do
+    expected_image_data = File.binread fixture_file 'tux.jpg'
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_font_size: 42 }, analyze: :image
+    = Document Title image:tux.jpg[]
+
+    content
+    EOS
+    images = pdf.images
+    (expect images).to have_size 1
+    (expect images[0][:data]).to eql expected_image_data
+    (expect images[0][:width]).to eql 153.0
+    (expect images[0][:height]).to eql 180.0
+  end
+
+  it 'should not crash if doctitle contains inline image with data URI target' do
+    image_data = File.binread fixture_file 'square.jpg'
+    encoded_image_data = Base64.strict_encode64 image_data
+    pdf = to_pdf <<~EOS, analyze: :image
+    = Document Title image:data:image/jpg;base64,#{encoded_image_data}[]
+
+    content
+    EOS
+    images = pdf.images
+    (expect images).to have_size 1
+    (expect images[0][:data]).to eql image_data
+    (expect images[0][:width]).to eql 3.75
+    (expect images[0][:height]).to eql 3.75
+  end
+
+  it 'should not crash if doctitle contains inline SVG image with no explicit width' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_font_size: 42 }, analyze: :rect
+    = Document Title image:square.svg[]
+
+    content
+    EOS
+    (expect pdf.rectangles).to have_size 1
+    rect = pdf.rectangles[0]
+    (expect rect[:width]).to eql 200.0
+    (expect rect[:height]).to eql 200.0
+  end
+
+  it 'should not crash if section title contains inline image with no explicit width' do
+    expected_image_data = File.binread fixture_file 'tux.jpg'
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h2_font_size: 36 }, analyze: :image
+    == Section Title image:tux.jpg[]
+
+    content
+    EOS
+    images = pdf.images
+    (expect images).to have_size 1
+    (expect images[0][:data]).to eql expected_image_data
+    (expect images[0][:width]).to eql 153.0
+    (expect images[0][:height]).to eql 180.0
+  end
+
   it 'should place anchor directly at top of block image' do
     input = <<~'EOS'
     paragraph
