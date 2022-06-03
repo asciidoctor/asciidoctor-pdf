@@ -48,6 +48,7 @@ jobs:
       run: bundle exec rake lint
     - name: Setup release environment
       run: |
+        echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
         echo RELEASE_VERSION=${{ github.event.inputs.release-version }} >> $GITHUB_ENV
         echo RELEASE_BEER=${{ github.event.inputs.release-beer }} >> $GITHUB_ENV
         echo RELEASE_RUBYGEMS_API_KEY=${{ secrets[format('RUBYGEMS_API_KEY_{0}', github.actor)] }} >> $GITHUB_ENV
