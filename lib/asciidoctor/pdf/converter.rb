@@ -338,6 +338,10 @@ module Asciidoctor
         #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
         ((::Prawn::Document.instance_method :initialize).bind self).call pdf_opts
         renderer.min_version (@pdf_version = PDFVersions[doc.attr 'pdf-version'])
+        @tmp_files = {}
+        @allow_uri_read = doc.attr? 'allow-uri-read'
+        @cache_uri = doc.attr? 'cache-uri'
+        @jail_dir = doc.safe < ::Asciidoctor::SafeMode::SAFE ? nil : doc.base_dir
         @media = doc.attr 'media', 'screen'
         @page_margin_by_side = { recto: (page_margin_recto = page_margin), verso: (page_margin_verso = page_margin), cover: page_margin }
         case doc.attr 'pdf-folio-placement', (@media == 'prepress' ? 'physical' : 'virtual')
@@ -363,14 +367,6 @@ module Asciidoctor
         else
           @ppbook = nil
         end
-        # QUESTION: should ThemeLoader handle registering fonts instead?
-        register_fonts theme.font_catalog, ((doc.attr 'pdf-fontsdir')&.sub '{docdir}', (doc.attr 'docdir')) || 'GEM_FONTS_DIR'
-        default_kerning theme.base_font_kerning != 'none'
-        @fallback_fonts = Array theme.font_fallbacks
-        @allow_uri_read = doc.attr? 'allow-uri-read'
-        @cache_uri = doc.attr? 'cache-uri'
-        @jail_dir = doc.safe < ::Asciidoctor::SafeMode::SAFE ? nil : doc.base_dir
-        @tmp_files = {}
         if (bg_image = resolve_background_image doc, theme, 'page-background-image')&.first
           @page_bg_image = { verso: bg_image, recto: bg_image }
         else
@@ -383,6 +379,10 @@ module Asciidoctor
           @page_bg_image[:recto] = bg_image[0] && bg_image
         end
         @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
+        # QUESTION: should ThemeLoader handle registering fonts instead?
+        register_fonts theme.font_catalog, ((doc.attr 'pdf-fontsdir')&.sub '{docdir}', (doc.attr 'docdir')) || 'GEM_FONTS_DIR'
+        default_kerning theme.base_font_kerning != 'none'
+        @fallback_fonts = Array theme.font_fallbacks
         @root_font_size = theme.base_font_size
         @font_scale = 1
         @font_color = theme.base_font_color
