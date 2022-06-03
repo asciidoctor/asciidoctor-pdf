@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.7 (2022-06-03) - @mojavelinux
 
 Improvements::
 
@@ -17,6 +17,10 @@ Bug Fixes::
 * fix crash when doctitle or section title with automatic ID contains inline image without explicit width (#2228)
 * use prawn-gmagick, if available, to read raster image referenced by SVG (#2223)
 * allow image path in SVG to refer to any location within Asciidoctor jail (no restriction if safe mode is unsafe) (#1941)
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.7[git tag] | {url-repo}/compare/v2.0.6\...v2.0.7[full diff]
 
 == 2.0.6 (2022-05-30) - @mojavelinux
 
