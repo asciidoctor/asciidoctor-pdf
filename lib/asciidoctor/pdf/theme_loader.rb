@@ -69,7 +69,7 @@ module Asciidoctor
       # NOTE: base theme is loaded "as is" (no post-processing)
       def self.load_base_theme
         ::File.open BaseThemePath, mode: 'r:UTF-8' do |io|
-          (::OpenStruct.new ::YAML.safe_load io, aliases: true, filename: BaseThemePath).tap {|theme| theme.__dir__ = ThemesDir }
+          (::OpenStruct.new ::YAML.safe_load io, filename: BaseThemePath).tap {|theme| theme.__dir__ = ThemesDir }
         end
       end
 
