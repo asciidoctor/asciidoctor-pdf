@@ -3,7 +3,7 @@
 require 'time'
 
 release_version = ENV['RELEASE_VERSION']
-prerelease = (release_version.count '[a-z]') > 0 ? %(.#{(release_version.split '.', 3)[-1]}) : nil
+prerelease = (release_version.count '[a-z]') > 0 ? %(-#{(release_version.split '.', 3)[-1]}) : nil
 release_date = Time.now.strftime '%Y-%m-%d'
 release_user = ENV['RELEASE_USER']
 
