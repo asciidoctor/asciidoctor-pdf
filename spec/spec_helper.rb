@@ -296,10 +296,13 @@ RSpec.configure do |config|
   config.before :suite do
     FileUtils.rm_r output_dir, force: true, secure: true
     FileUtils.mkdir output_dir
+    FileUtils.rm_r tmp_dir, force: true, secure: true
+    FileUtils.mkdir tmp_dir
   end
 
   config.after :suite do
     FileUtils.rm_r output_dir, force: true, secure: true unless (ENV.key? 'DEBUG') || config.reporter.failed_examples.any? {|it| it.metadata[:visual] }
+    FileUtils.rm_r tmp_dir, force: true, secure: true
   end
 
   def bin_script name, opts = {}
@@ -380,6 +383,10 @@ RSpec.configure do |config|
     File.join output_dir, path
   end
 
+  def tmp_dir
+    File.join __dir__, 'tmp'
+  end
+
   def create_class super_class, &block
     klass = Class.new super_class, &block
     Object.const_set %(AnonymousClass#{klass.object_id}).to_sym, klass
@@ -450,8 +457,9 @@ RSpec.configure do |config|
     (Asciidoctor::PDF::ThemeLoader.load_theme extends).tap {|theme| overrides.each {|k, v| theme[k] = v } }
   end
 
-  def with_tmp_file ext, contents = nil
-    Tempfile.create %W(asciidoctor-pdf- #{ext}), encoding: 'UTF-8', newline: :universal do |tmp_file|
+  def with_tmp_file basename, contents: nil, tmpdir: tmp_dir
+    basename = ['tmp-', basename] unless Array === basename
+    Tempfile.create basename, tmpdir, encoding: 'UTF-8', newline: :universal do |tmp_file|
       if contents
         tmp_file.write contents
         tmp_file.close
@@ -468,13 +476,13 @@ RSpec.configure do |config|
     </g>
     </svg>
     EOS
-    with_tmp_file '.svg', contents do |spacer_file|
+    with_tmp_file '.svg', contents: contents do |spacer_file|
       yield spacer_file.path
     end
   end
 
   def with_pdf_theme_file data
-    with_tmp_file '-theme.yml', data do |theme_file|
+    with_tmp_file '-theme.yml', contents: data do |theme_file|
       yield theme_file.path
     end
   end

@@ -785,15 +785,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should allow image path to reference file in ancestor directory inside base dir' do
       expected_image_data = File.binread example_file 'sample-logo.jpg'
-      Tempfile.create %w(svg-with-image- .svg), output_dir do |tmp_file|
-        tmp_file.write <<~'EOS'
-        <svg version="1.1" viewBox="0 0 331 369" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-        <image x="0" y="0" width="331" height="369" xlink:href="../../examples/sample-logo.jpg"/>
-        </svg>
-        EOS
-        tmp_file.close
+      svg_data = <<~'EOS'
+      <svg version="1.1" viewBox="0 0 331 369" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <image x="0" y="0" width="331" height="369" xlink:href="../../examples/sample-logo.jpg"/>
+      </svg>
+      EOS
+      with_tmp_file '.svg', contents: svg_data do |tmp_file|
         image_path = tmp_file.path
-
         ['::', ':'].each do |macro_delim|
           pdf = to_pdf <<~EOS, base_dir: (File.dirname __dir__)
           image#{macro_delim}#{image_path}[SVG with ancestor relative image,pdfwidth=25%]
@@ -1074,7 +1072,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should fail to embed incomplete PNG with warning' do
-      Tempfile.create %w(incomplete- .png), output_dir do |tmp_file|
+      with_tmp_file '.png', tmpdir: output_dir do |tmp_file|
         tmp_file.binmode
         tmp_file.write [137, 80, 78, 71, 10].pack 'C*' # make a PNG with incomplete data
         tmp_file.close
