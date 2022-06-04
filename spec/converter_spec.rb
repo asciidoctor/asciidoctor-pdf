@@ -1449,5 +1449,47 @@ describe Asciidoctor::PDF::Converter do
 
       (expect pdf.text[0][:string]).to eql 'puts "Hello, World!"'
     end
+
+    it 'should allow extended converter to temporarily override theme using save_theme' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+
+        def convert_table node
+          if node.role?
+            save_theme do
+              theme.table_border_color = theme.table_grid_color = '0000EE'
+              super
+            end
+          else
+            super
+          end
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: backend, analyze: :line
+      [.custom,cols=2*]
+      |===
+      |a |b
+      |c |d
+      |===
+
+      <<<
+
+      [cols=2*]
+      |===
+      |a |b
+      |c |d
+      |===
+      EOS
+
+      lines = pdf.lines
+      custom_lines = lines.select {|it| it[:color] == '0000EE' }
+      default_lines = lines.reject {|it| it[:color] == '0000EE' }
+      (expect custom_lines).to have_size 16
+      (expect custom_lines[0][:page_number]).to eql 1
+      (expect default_lines).to have_size 16
+      (expect default_lines[0][:page_number]).to eql 2
+    end
   end
 end

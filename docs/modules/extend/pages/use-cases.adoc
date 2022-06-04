@@ -299,6 +299,33 @@ base:
   column-gap: 12
 ----
 
+== Theme table using custom role
+
+Currently, the converter only supports custom roles on paragraphs and phrases.
+You can use an extended converter to add support for a custom role on other blocks, such as tables.
+
+.Extended converter that supports a role on a table
+[,ruby]
+----
+include::example$pdf-converter-table-role.rb[]
+----
+
+This converter allows you to specify any theme key that is supported by tables for a table with the specified role.
+The role must be defined under a special role name `<table>` (to avoid clashing with other role names).
+Here's an example of a custom table role named `thick` that increases the width of the table border and grid lines.
+
+[,yaml]
+----
+extends: default
+role:
+  <table>:
+    thick:
+      border-width: 2
+      grid-width: 2
+----
+
+You can apply this role to a table by adding `.thick` to the first positional attribute in the block attribute line above the table.
+
 == Access page number from inline macro
 
 Although not an extended converter, this use case uses information from the converter in much the same way.
