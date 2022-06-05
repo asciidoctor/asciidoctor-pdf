@@ -27,6 +27,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     (expect images[0][:height]).to eql 180.0
   end
 
+  it 'should not crash if doctitle contains inline raster image with only scale' do
+    expected_image_data = File.binread fixture_file 'tux.jpg'
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_font_size: 42 }, analyze: :image
+    = Document Title image:tux.jpg[scale=.5]
+
+    content
+    EOS
+    images = pdf.images
+    (expect images).to have_size 1
+    (expect images[0][:data]).to eql expected_image_data
+    (expect images[0][:width]).to eql 76.5
+    (expect images[0][:height]).to eql 90.0
+  end
+
   it 'should not crash if doctitle contains inline image with data URI target' do
     image_data = File.binread fixture_file 'square.jpg'
     encoded_image_data = Base64.strict_encode64 image_data
@@ -270,6 +284,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect result).to be_a Asciidoctor::PDF::Converter::ViewportWidth
     end
 
+    it 'should resolve pdfwidth in iw' do
+      attrs = { 'pdfwidth' => '50iw' }
+      result = subject.resolve_explicit_width attrs
+      (expect result.to_f).to eql 50.0
+      (expect result).to be_a Asciidoctor::PDF::Converter::ImageWidth
+    end
+
     it 'should ignore vw unit if not supported' do
       attrs = { 'pdfwidth' => '50vw' }
       result = subject.resolve_explicit_width attrs, bounds_width: 1000
@@ -284,6 +305,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       result = subject.resolve_explicit_width attrs, bounds_width: 1000, use_fallback: true
       (expect result.to_f).to eql 50.0
       (expect result).not_to be_a Asciidoctor::PDF::Converter::ViewportWidth
+    end
+
+    it 'should resolve scale attribute to value with ImageWidth module' do
+      attrs = { 'scale' => '25' }
+      result = subject.resolve_explicit_width attrs
+      (expect result.to_f).to eql 25.0
+      (expect result).to be_a Asciidoctor::PDF::Converter::ImageWidth
     end
 
     it 'should resolve scaledwidth in % to pt' do
@@ -335,6 +363,28 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-pdfwidth-percentage.pdf'
     end
 
+    it 'should scale raster image as percentage of intrinsic size', visual: true do
+      ['scale=75', 'pdfwidth=75iw'].each do |width_attr|
+        pdf = to_pdf <<~EOS, attribute_overrides: { 'imagesdir' => examples_dir }, analyze: :image
+        image::wolpertinger.jpg[,144,#{width_attr}]
+        EOS
+
+        image = pdf.images[0]
+        (expect image[:intrinsic_width].to_f).to eql 220.0
+        (expect image[:width].to_f).to eql 123.75
+      end
+    end
+
+    it 'should scale SVG image as percentage of intrinsic size', visual: true do
+      ['scale=50', 'pdfwidth=50iw'].each do |width_attr|
+        to_file = to_pdf_file <<~EOS, %(image-svg-#{width_attr.sub '=', '-'}.pdf)
+        image::square.svg[#{width_attr}]
+        EOS
+
+        (expect to_file).to visually_match 'image-svg-scale.pdf'
+      end
+    end
+
     it 'should scale image to width of page when pdfwidth=100vw and align-to-page option is set', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-full-width.pdf'
       image::square.png[pdfwidth=100vw,opts=align-to-page]
@@ -350,6 +400,20 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect pdf.images).to have_size 1
       (expect pdf.images[0][:width]).to eql 12.0
+    end
+
+    it 'should scale inline image as percentage of intrinsic size' do
+      ['scale=400', 'pdfwidth=400iw'].each do |width_attr|
+        pdf = to_pdf <<~EOS, analyze: :image
+        image:square.jpg[#{width_attr}]
+        EOS
+
+        image = pdf.images[0]
+        (expect image[:intrinsic_width].to_f).to eql 5.0
+        (expect image[:intrinsic_height].to_f).to eql 5.0
+        (expect image[:width]).to eql 15.0
+        (expect image[:height]).to eql 15.0
+      end
     end
 
     it 'should interpret vw units as pt if align-to-page opts is not set' do
