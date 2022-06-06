@@ -1147,6 +1147,11 @@ module Asciidoctor
           bounds_copy.instance_variable_set :@document, scratch_pdf
           bounds_copy.instance_variable_set :@parent, saved_bounds
           if ColumnBox === bounds_copy
+            if bounds_copy.parent.absolute_top > bounds_copy.absolute_top &&
+                (remaining_columns = (bounds_copy.instance_variable_get :@columns) - 1 - (bounds_copy.instance_variable_get :@current_column)) > 0
+              # defer reflow margins until all columns on current page have been exhausted
+              bounds_copy.instance_variable_set :@reflow_margins, (scratch_pdf.page_number + remaining_columns + 1)
+            end
             bounds_copy.instance_variable_set :@width, bounds_copy.bare_column_width
             bounds_copy.instance_variable_set :@current_column, (bounds_copy.instance_variable_set :@columns, 1) - 1
           end
