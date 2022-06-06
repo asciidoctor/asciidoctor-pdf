@@ -13,6 +13,10 @@ Enhancements::
 * add support for `scale` attribute or `iw` unit on `pdfwidth` attribute on image macros (#1933)
 * add backlink from bibref on bibliography entry to first reference to that entry in the document (#1737)
 
+Bug Fixes::
+
+* fix crash in `ColumnBox#move_past_bottom` when `:reflow_margins` option is not set
+
 == 2.0.7 (2022-06-03) - @mojavelinux
 
 Improvements::
