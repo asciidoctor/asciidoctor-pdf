@@ -60,7 +60,7 @@ Asciidoctor PDF converts an AsciiDoc document directly to a PDF document.
 The style and layout of the PDF are controlled by a dedicated theme file.
 To the degree possible, Asciidoctor PDF supports all the features of AsciiDoc that are supported by Asciidoctor.
 It also provides {url-project-docs}/features/[PDF-specific features].
-However, there are {url-project-docs}/features/#limitations[certain limits] imposed by the PDF format and the PDF library this extension uses.
+However, there are {url-project-docs}/features/#limitations[certain limitations] imposed by the PDF format and the PDF library this extension uses.
 
 Asciidoctor PDF uses the Prawn gem and Prawn's extensions, such as prawn-svg and prawn-table, to generate a PDF document.
 {url-prawn}[Prawn] is a general purpose PDF generator for Ruby that features high-level APIs for common needs like setting up the page and inserting images and low-level APIs for positioning and rendering text and graphics.
