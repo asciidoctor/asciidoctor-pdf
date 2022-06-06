@@ -162,7 +162,6 @@ module Asciidoctor
         doc.attributes['outline'] = '' unless (doc.attribute_locked? 'outline') || ((doc.instance_variable_get :@attributes_modified).include? 'outline')
         doc.attributes['outline-title'] = '' unless (doc.attribute_locked? 'outline-title') || ((doc.instance_variable_get :@attributes_modified).include? 'outline-title')
         doc.attributes['pagenums'] = '' unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
-        #assign_missing_section_ids doc
 
         on_page_create(&(method :init_page))
 
