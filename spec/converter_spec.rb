@@ -1135,6 +1135,37 @@ describe Asciidoctor::PDF::Converter do
 
       (expect to_pdf_file input, 'bounding-box-left.pdf', backend: backend, pdf_theme: pdf_theme).to visually_match 'bounding-box-left.pdf'
     end
+
+    it 'should not reflow margins on column box if reflow_margins option is not set' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def traverse node
+          return super unless node.context == :document
+          column_box [0, cursor], columns: 2, width: bounds.width, spacer: 12 do
+            super
+          end
+        end
+      end
+
+      input = <<~'EOS'
+      = Article Title
+
+      column 1, page 1
+
+      <<<
+
+      column 2, page 1
+
+      <<<
+
+      column 1, page 2
+      EOS
+
+      pdf = to_pdf input, backend: backend, analyze: true
+      (expect (pdf.find_unique_text 'column 1, page 2')[:page_number]).to eql 2
+      (expect (pdf.find_unique_text 'column 1, page 2')[:y]).to eql (pdf.find_unique_text 'column 1, page 1')[:y]
+    end
   end
 
   describe 'extend' do

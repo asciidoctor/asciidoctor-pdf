@@ -8,7 +8,8 @@ Prawn::Document::ColumnBox.prepend (Module.new do
   def move_past_bottom
     (doc = @document).y = @y
     return if (@current_column = (@current_column + 1) % @columns) > 0
-    @y = (par = @parent).absolute_top if @reflow_margins
+    par = @parent
+    @y = par.absolute_top if @reflow_margins
     initial_margins = doc.page.margins
     par.move_past_bottom
     if doc.page.margins != initial_margins
