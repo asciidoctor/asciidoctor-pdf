@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Bug Fixes::
 
+* correctly compute value of to cursor on extent when column box starts below top of page (#2230)
 * fix crash in `ColumnBox#move_past_bottom` when `:reflow_margins` option is not set
 
 == 2.0.7 (2022-06-03) - @mojavelinux

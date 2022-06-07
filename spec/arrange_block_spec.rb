@@ -1886,6 +1886,43 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect gs).to have_background color: 'EFEFEF', top_left: [312.0, 742.0], bottom_right: [562.0, 646.3]
       end
     end
+
+    it 'should correctly compute to cursor value on extent when column_box starts below top of page' do
+      source_file = doc_file 'modules/extend/examples/pdf-converter-columns.rb'
+      source_lines = (File.readlines source_file).select {|l| l == ?\n || (l.start_with? ' ') }
+      ext_class = create_class Asciidoctor::Converter.for 'pdf'
+      backend = %(pdf#{ext_class.object_id})
+      source_lines[0] = %(  register_for '#{backend}'\n)
+      ext_class.class_eval source_lines.join, source_file
+
+      pdf_theme.update base_columns: 2, base_column_gap: 12, admonition_column_rule_color: '0000FF'
+
+      pdf = with_content_spacer 10, 400 do |spacer_path|
+        input = <<~EOS
+        = Document Title
+        :toc:
+
+        image::#{spacer_path}[]
+
+        == Section Title
+
+        [NOTE]
+        ====
+        #{lorem_ipsum '4-sentences-2-paragraphs'}
+        ====
+        EOS
+
+        pdf = to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: true
+        pages = pdf.pages
+        (expect pages).to have_size 1
+        lines = (to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: :line).lines
+        column_rules = lines.select {|it| it[:color] == '0000FF' }
+        (expect column_rules).to have_size 2
+        (expect column_rules[0][:from][:x]).to be < column_rules[1][:from][:x]
+        expected_y = (lines - column_rules).max_by {|it| it[:from][:y] }[:from][:y]
+        (expect column_rules[1][:from][:y]).to eql expected_y
+      end
+    end
   end
 
   # NOTE: generate reference files using ./scripts/generate-arrange-block-reference-files.sh
