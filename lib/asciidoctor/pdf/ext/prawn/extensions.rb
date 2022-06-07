@@ -251,16 +251,17 @@ module Asciidoctor
       # Returns whether the cursor is at the top of the page (i.e., margin box).
       #
       def at_page_top?
-        @y == @margin_box.absolute_top
+        @y == (ColumnBox === bounds ? bounds : @margin_box).absolute_top
       end
 
       # Prevents at_page_top? from returning true while yielding to the specified block.
       #
       def conceal_page_top
-        @margin_box.instance_variable_set :@y, (old_top = @margin_box.absolute_top) + 0.0001
+        old_top = (outer_bounds = ColumnBox === bounds ? bounds : @margin_box).absolute_top
+        outer_bounds.instance_variable_set :@y, old_top + 0.0001
         yield
       ensure
-        @margin_box.instance_variable_set :@y, old_top
+        outer_bounds.instance_variable_set :@y, old_top
       end
 
       # Returns whether the current page is the last page in the document.
