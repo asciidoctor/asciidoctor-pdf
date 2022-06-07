@@ -632,7 +632,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-scale-to-fit-page.pdf'
     end
 
-    it 'should not advance SVG to fit when inside column box that starts below top of page' do
+    it 'should not advance SVG at top of column box to fit if column box starts below top of page' do
       backend = nil
       create_class (Asciidoctor::Converter.for 'pdf') do
         register_for (backend = %(pdf#{object_id}).to_sym)
@@ -657,8 +657,41 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect gs_p1).to have_size 1
       (expect gs_p1[0]).to include '48.24 158.37 200.0 600.0 re'
       second_column_text = pdf.find_unique_text 'paragraph in second column'
-      (expect second_column_text[:x]).to be > 48.24
+      (expect second_column_text[:x]).to eql 302.89
       (expect second_column_text[:y] + second_column_text[:font_size]).to (be_within 2).of 758.37
+    end
+
+    it 'should advance SVG below top of column box to next column to fit' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def traverse node
+          return super unless node.context == :document
+          column_box [0, cursor], columns: 2, width: bounds.width, reflow_margins: true do
+            super
+          end
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      = Document Title
+
+      before
+
+      image::tall.svg[pdfwidth=90mm]
+
+      paragraph on next page
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      before_text = pdf.find_unique_text 'before'
+      (expect before_text[:x]).to eql 48.24
+      gs_p1 = (pdf.extract_graphic_states pdf.pages[0][:raw_content])
+      (expect gs_p1).to have_size 1
+      (expect gs_p1[0]).to include '302.89 158.37 200.0 600.0 re'
+      second_column_text = pdf.find_unique_text 'paragraph on next page'
+      (expect second_column_text[:page_number]).to eql 2
+      (expect second_column_text[:x]).to eql 48.24
     end
 
     it 'should scale down SVG to fit bounds if width is set in SVG but not on image macro', visual: true do

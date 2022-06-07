@@ -17,6 +17,7 @@ Bug Fixes::
 
 * correctly compute value of to cursor on extent when column box starts below top of page (#2230)
 * fix crash in `ColumnBox#move_past_bottom` when `:reflow_margins` option is not set
+* fix x position of SVG when advanced to next column of column box
 * `at_page_top?` should consider top of column box to be top of page
 * prevent SVG image taller than column from being advanced to next column
 
