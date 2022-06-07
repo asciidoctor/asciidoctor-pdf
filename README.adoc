@@ -180,7 +180,7 @@ Asciidoctor creates the output file in the same directory as the input file by d
 Open the [.path]_basic-example.pdf_ file with a PDF viewer to see the result.
 
 .Example PDF document rendered in a PDF viewer
-image::docs/modules/ROOT/images/basic-example-pdf-screenshot.png[Screenshot of PDF document,960,540,pdfwidth=100%]
+image::docs/modules/ROOT/images/basic-example-pdf-screenshot.png[Screenshot of PDF document,960,pdfwidth=100%]
 
 For more information about how to use Asciidoctor PDF and PDF-specific AsciiDoc syntax, see the {url-project-docs}/[Asciidoctor PDF documentation].
 
