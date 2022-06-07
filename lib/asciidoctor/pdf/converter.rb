@@ -1751,6 +1751,7 @@ module Asciidoctor
               if (rendered_h = svg_size.output_height) > (available_h = cursor - caption_h)
                 unless pinned || at_page_top?
                   advance_page
+                  (svg_obj.options[:at] = svg_obj.position)[0] += bounds.left if ColumnBox === bounds
                   available_h = cursor - caption_h
                 end
                 rendered_w = (svg_obj.resize height: (rendered_h = available_h)).output_width if rendered_h > available_h
