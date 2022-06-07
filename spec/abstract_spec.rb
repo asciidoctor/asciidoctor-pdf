@@ -173,6 +173,35 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect to_file).to visually_match 'abstract-first-line-text-transform.pdf'
   end
 
+  it 'should not crash when applying text transform to first line of abstract inside column box' do
+    backend = nil
+    create_class (Asciidoctor::Converter.for 'pdf') do
+      register_for (backend = %(pdf#{object_id}).to_sym)
+      def traverse node
+        return super unless node.context == :document
+        column_box [0, cursor], columns: 2, width: bounds.width, reflow_margins: true, spacer: 12 do
+          super
+        end
+      end
+    end
+
+    pdf_theme = { abstract_font_color: '0000FF', abstract_first_line_text_transform: 'uppercase' }
+
+    input = <<~'EOS'
+    = Document Title
+
+    [abstract]
+    This *_story_* chronicles the inexplicable hazards and vicious beasts a team must conquer and vanquish on their journey to discovering the true power of Open Source.
+
+    == Section Title
+    EOS
+
+    pdf = to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: true
+    lines = pdf.lines (pdf.text.select {|it| it[:font_color] == '0000FF' })
+    (expect lines[0]).to eql 'THIS STORY CHRONICLES THE'
+    (expect lines[1]).to eql 'inexplicable hazards and vicious beasts'
+  end
+
   it 'should use base font color if font color is not defined for abstract in theme' do
     pdf = to_pdf <<~'EOS', pdf_theme: { abstract_font_color: nil, base_font_color: '0000EE' }, analyze: true
     = Document Title

@@ -18,6 +18,11 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
     @force_justify = options[:force_justify]
   end
 
+  def default_height
+    return @document.cursor if Prawn::Document::ColumnBox === (frame = @document.bounds) && frame.stretchy?
+    super
+  end
+
   def draw_fragment_overlay_styles fragment
     if (underline = (styles = fragment.styles).include? :underline) || (styles.include? :strikethrough)
       (doc = fragment.document).save_graphics_state do
