@@ -870,4 +870,67 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     chapter_a_toc_text = pdf.find_unique_text 'Chapter A', page_number: 2
     (expect chapter_a_toc_text[:x]).to eql 98.24
   end
+
+  it 'should not push following section to new page if index section does not extend to bottom of page' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+
+    == Chapter About Cats
+
+    We know that ((cats)) control the internet.
+    But they sort of run nature too.
+    (((cats,big cats,lion)))
+    After all, the ((king of the jungle)) is the lion, which is a big cat.
+
+    == Chapter About Dogs
+
+    Cats may rule, well, everything.
+    But ((dogs)) are a human's best friend.
+
+    [index]
+    == Index
+
+    == Section After Index
+    EOS
+
+    (expect pdf.pages).to have_size 1
+    category_k_text = pdf.find_unique_text 'K'
+    (expect category_k_text[:page_number]).to eql 1
+    section_after_index_text = pdf.find_unique_text 'Section After Index'
+    (expect section_after_index_text[:page_number]).to eql 1
+    (expect section_after_index_text[:y]).to be < category_k_text[:y]
+  end
+
+  it 'should not push following section to new page if index section does not extend to bottom of second page' do
+    pdf = to_pdf <<~EOS, analyze: true, debug: true
+    = Document Title
+
+    #{('a'..'z').map {|it| %(((#{it}-term))) }.join}
+
+    == Chapter About Cats
+
+    We know that ((cats)) control the internet.
+    But they sort of run nature too.
+    (((cats,big cats,lion)))
+    After all, the ((king of the jungle)) is the lion, which is a big cat.
+
+    == Chapter About Dogs
+
+    Cats may rule, well, everything.
+    But ((dogs)) are a human's best friend.
+
+    [index]
+    == Index
+
+    == Section After Index
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    category_z_text = pdf.find_unique_text 'Z'
+    (expect category_z_text[:page_number]).to eql 2
+    (expect category_z_text[:x]).to eql 48.24
+    section_after_index_text = pdf.find_unique_text 'Section After Index'
+    (expect section_after_index_text[:page_number]).to eql 2
+    (expect section_after_index_text[:y]).to be < category_z_text[:y]
+  end
 end

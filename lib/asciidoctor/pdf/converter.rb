@@ -702,6 +702,7 @@ module Asciidoctor
       def convert_index_section node
         space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
         pagenum_sequence_style = node.document.attr 'index-pagenum-sequence-style'
+        end_cursor = nil
         column_box [0, cursor], columns: @theme.index_columns, width: bounds.width, reflow_margins: true, spacer: @theme.index_column_gap do
           @index.categories.each do |category|
             bounds.move_past_bottom if space_needed_for_category > cursor
@@ -713,7 +714,10 @@ module Asciidoctor
             category.terms.each {|term| convert_index_list_item term, pagenum_sequence_style }
             @theme.prose_margin_bottom > cursor ? bounds.move_past_bottom : (move_down @theme.prose_margin_bottom)
           end
+          end_cursor = cursor if (bounds.instance_variable_get :@current_column) == 0
         end
+        # Q: could we move this logic into column_box?
+        move_cursor_to end_cursor if end_cursor
         nil
       end
 
