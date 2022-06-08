@@ -902,7 +902,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   end
 
   it 'should not push following section to new page if index section does not extend to bottom of second page' do
-    pdf = to_pdf <<~EOS, analyze: true, debug: true
+    pdf = to_pdf <<~EOS, analyze: true
     = Document Title
 
     #{('a'..'z').map {|it| %(((#{it}-term))) }.join}
