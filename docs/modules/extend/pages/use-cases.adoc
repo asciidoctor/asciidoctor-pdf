@@ -270,34 +270,24 @@ image:
 
 == Multiple columns
 
-Asciidoctor PDF does not yet provide multi-column support, where the body of the article is arranged into multiple columns.
-However, the converter does provide the foundation for supporting a multi-column layout.
-We can tap into that foundation using an extended converter.
+Starting with Asciidoctor PDF 2.1, this converter provides built-in support for multiple columns.
+This feature is available when the doctype is article or manpage, but not book.
+The columns get applied to the body of the document, which excludes the document title and TOC, if present.
 
-The trick is to intercept the `traverse` method and enclose the call in a column box using the `column_box` method.
-The `traverse` method is called to render the body, accepting the document as the sole argument.
-Since this method is also called for other blocks, we'll need to filter out those calls by looking for the `:document` context.
+The Asciidoctor PDF converter also provides the framework for making multi-column layouts in an extended converter.
+This framework is accessible via the helper method `column_box`.
+To make a muti-column layout, you put statements that ink content inside a code block and pass it to the `column_box` method as follows:
 
-.Extended converter that arranges the body into columns
 [,ruby]
 ----
-include::example$pdf-converter-columns.rb[]
+column_box [bounds.left, cursor], columns: 2, width: bounds.width, reflow_margins: true do
+  ink_prose 'left column'
+  bounds.move_past_bottom
+  ink_prose 'right column'
+end
 ----
 
-WARNING: You may encounter some quirks when using this extended converter.
-It's not yet a perfect solution.
-For example, it does not handle the index section correctly.
-You may have to play around with the code to get the desired result.
-
-You can configure the number of columns and the gap between the columns in the theme file as follows:
-
-[,yaml]
-----
-extends: default
-base:
-  columns: 2
-  column-gap: 12
-----
+If you want a multi-column layout for a specific chapter or section, you can override the `traverse` method, look for the section you want to arrange, and wrap the call to `super` in a `column_box` enclosure.
 
 == Theme table using custom role
 

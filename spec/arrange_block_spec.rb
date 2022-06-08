@@ -1856,16 +1856,9 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     end
 
     it 'should fill extent when block is advanced to next column' do
-      source_file = doc_file 'modules/extend/examples/pdf-converter-columns.rb'
-      source_lines = (File.readlines source_file).select {|l| l == ?\n || (l.start_with? ' ') }
-      ext_class = create_class Asciidoctor::Converter.for 'pdf'
-      backend = %(pdf#{ext_class.object_id})
-      source_lines[0] = %(  register_for '#{backend}'\n)
-      ext_class.class_eval source_lines.join, source_file
-
       pdf_theme.update \
-        base_columns: 2,
-        base_column_gap: 12,
+        page_columns: 2,
+        page_column_gap: 12,
         code_border_radius: 0,
         code_border_width: 0,
         code_background_color: 'EFEFEF'
@@ -1879,7 +1872,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         $ asciidoctor-pdf -r asciidoctor-mathematical -a mathematical-format=svg sample.adoc
         ....
         EOS
-        pdf = to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         pages = pdf.pages
         (expect pages).to have_size 1
         gs = (pdf.extract_graphic_states pages[0][:raw_content])[1]
@@ -1888,14 +1881,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     end
 
     it 'should correctly compute to cursor value on extent when column_box starts below top of page' do
-      source_file = doc_file 'modules/extend/examples/pdf-converter-columns.rb'
-      source_lines = (File.readlines source_file).select {|l| l == ?\n || (l.start_with? ' ') }
-      ext_class = create_class Asciidoctor::Converter.for 'pdf'
-      backend = %(pdf#{ext_class.object_id})
-      source_lines[0] = %(  register_for '#{backend}'\n)
-      ext_class.class_eval source_lines.join, source_file
-
-      pdf_theme.update base_columns: 2, base_column_gap: 12, admonition_column_rule_color: '0000FF'
+      pdf_theme.update page_columns: 2, page_column_gap: 12, admonition_column_rule_color: '0000FF'
 
       pdf = with_content_spacer 10, 400 do |spacer_path|
         input = <<~EOS
@@ -1912,10 +1898,10 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
         EOS
 
-        pdf = to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         pages = pdf.pages
         (expect pages).to have_size 1
-        lines = (to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: :line).lines
+        lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
         column_rules = lines.select {|it| it[:color] == '0000FF' }
         (expect column_rules).to have_size 2
         (expect column_rules[0][:from][:x]).to be < column_rules[1][:from][:x]

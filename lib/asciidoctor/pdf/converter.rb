@@ -171,7 +171,8 @@ module Asciidoctor
         # NOTE: a new page will already be started (page_number = 2) if the front cover image is a PDF
         ink_cover_page doc, :front
         has_front_cover = page_number > marked_page_number
-        if (has_title_page = (title_page_on = doc.doctype == 'book' || (doc.attr? 'title-page')) && (start_title_page doc))
+        doctype = doc.doctype
+        if (has_title_page = (title_page_on = doctype == 'book' || (doc.attr? 'title-page')) && (start_title_page doc))
           # NOTE: the base font must be set before any content is written to the main or scratch document
           font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
           if perform_on_single_page { ink_title_page doc }
@@ -280,12 +281,19 @@ module Asciidoctor
           doc.set_attr 'pdf-anchor', (derive_anchor_from_id doc.id, 'top')
           doc.set_attr 'pdf-page-start', page_number
 
-          convert_section generate_manname_section doc if doc.doctype == 'manpage' && (doc.attr? 'manpurpose')
-
-          traverse doc
-
-          # NOTE: for a book, these are leftover footnotes; for an article this is everything
-          outdent_section { ink_footnotes doc }
+          if doctype == 'book' || (columns = @theme.page_columns || 1) < 2
+            convert_section generate_manname_section doc if doctype == 'manpage' && (doc.attr? 'manpurpose')
+            traverse doc
+            # NOTE: for a book, these are leftover footnotes; for an article this is everything
+            outdent_section { ink_footnotes doc }
+          else
+            column_box [bounds.left, cursor], columns: columns, width: bounds.width, reflow_margins: true, spacer: @theme.page_column_gap do
+              convert_section generate_manname_section doc if doctype == 'manpage' && (doc.attr? 'manpurpose')
+              traverse doc
+              # NOTE: for a book, these are leftover footnotes; for an article this is everything
+              outdent_section { ink_footnotes doc }
+            end
+          end
 
           if (toc_extent = @toc_extent)
             if title_page_on && !insert_toc
@@ -710,28 +718,35 @@ module Asciidoctor
       end
 
       def convert_index_section node
-        space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
-        pagenum_sequence_style = node.document.attr 'index-pagenum-sequence-style'
-        end_cursor = nil
-        column_box [0, cursor], columns: @theme.index_columns, width: bounds.width, reflow_margins: true, spacer: @theme.index_column_gap do
-          @index.categories.each do |category|
-            bounds.move_past_bottom if space_needed_for_category > cursor
-            ink_prose category.name,
-              align: :left,
-              inline_format: false,
-              margin_bottom: @theme.description_list_term_spacing,
-              style: @theme.description_list_term_font_style&.to_sym
-            category.terms.each {|term| convert_index_list_item term, pagenum_sequence_style }
-            @theme.prose_margin_bottom > cursor ? bounds.move_past_bottom : (move_down @theme.prose_margin_bottom)
+        if ColumnBox === bounds || (columns = @theme.index_columns || 1) < 2
+          convert_index_categories @index.categories, (node.document.attr 'index-pagenum-sequence-style')
+        else
+          end_cursor = nil
+          column_box [bounds.left, cursor], columns: columns, width: bounds.width, reflow_margins: true, spacer: @theme.index_column_gap do
+            convert_index_categories @index.categories, (node.document.attr 'index-pagenum-sequence-style')
+            end_cursor = cursor if bounds.current_column == 0
           end
-          end_cursor = cursor if bounds.current_column == 0
+          # Q: could we move this logic into column_box?
+          move_cursor_to end_cursor if end_cursor
         end
-        # Q: could we move this logic into column_box?
-        move_cursor_to end_cursor if end_cursor
         nil
       end
 
-      def convert_index_list_item term, pagenum_sequence_style = nil
+      def convert_index_categories categories, pagenum_sequence_style = nil
+        space_needed_for_category = @theme.description_list_term_spacing + (2 * (height_of_typeset_text 'A'))
+        categories.each do |category|
+          bounds.move_past_bottom if space_needed_for_category > cursor
+          ink_prose category.name,
+            align: :left,
+            inline_format: false,
+            margin_bottom: @theme.description_list_term_spacing,
+            style: @theme.description_list_term_font_style&.to_sym
+          category.terms.each {|term| convert_index_term term, pagenum_sequence_style }
+          @theme.prose_margin_bottom > cursor ? bounds.move_past_bottom : (move_down @theme.prose_margin_bottom)
+        end
+      end
+
+      def convert_index_term term, pagenum_sequence_style = nil
         term_fragments = term.name.fragments
         unless term.container?
           pagenum_fragment = (parse_text %(<a>#{DummyText}</a>), inline_format: true)[0]
@@ -770,7 +785,7 @@ module Asciidoctor
         typeset_formatted_text term_fragments, (calc_line_metrics @base_line_height), align: :left, color: @font_color, hanging_indent: subterm_indent * 2
         indent subterm_indent do
           term.subterms.each do |subterm|
-            convert_index_list_item subterm, pagenum_sequence_style
+            convert_index_term subterm, pagenum_sequence_style
           end
         end unless term.leaf?
       end

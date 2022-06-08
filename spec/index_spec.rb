@@ -818,6 +818,27 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect category_l_text[:x]).to be > category_a_text[:x]
   end
 
+  it 'should ignore index columns if columns are set on page' do
+    pdf = to_pdf <<~EOS, pdf_theme: { page_columns: 2, index_columns: 3 }, analyze: true
+    = Document Title
+    :notitle:
+
+    #{('a'..'z').map {|it| %(((#{it}-keyword))((#{it}-term))) }.join}
+
+    [index]
+    == Index
+    EOS
+
+    midpoint = (get_page_size pdf)[0] * 0.5
+    category_g_text = (pdf.find_text 'A')[0]
+    category_s_text = (pdf.find_text 'L')[0]
+    category_t_text = (pdf.find_text 'W')[0]
+    (expect category_g_text[:page_number]).to be 1
+    (expect category_g_text[:x]).to eql 48.24
+    (expect category_s_text[:x]).to be > midpoint
+    (expect category_t_text[:x]).to eql 48.24
+  end
+
   it 'should not allocate space for anchor if font is missing glyph for null character' do
     pdf_theme = {
       extends: 'default',
