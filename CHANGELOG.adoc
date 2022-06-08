@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
+Improvements::
+
+* encapsulate logic to adjust column box inside float and dry run
+
 Bug Fixes::
 
 * correctly compute value of to cursor on extent when column box starts below top of page (#2230)
