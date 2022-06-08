@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.0.8 (2022-06-08) - @mojavelinux
 
 Improvements::
 
@@ -20,6 +20,10 @@ Bug Fixes::
 * `at_page_top?` should consider top of column box to be top of page
 * prevent SVG image taller than column from being advanced to next column
 * don't push section that follows index section in article to new page if last page of index does not extend to bottom of page
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.8[git tag] | {url-repo}/compare/v2.0.7\...v2.0.8[full diff]
 
 == 2.0.7 (2022-06-03) - @mojavelinux
 
