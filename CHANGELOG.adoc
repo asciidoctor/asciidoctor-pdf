@@ -13,6 +13,8 @@ Enhancements::
 * add support for `scale` attribute or `iw` unit on `pdfwidth` attribute on image macros (#1933)
 * add backlink from bibref on bibliography entry to first reference to that entry in the document (#1737)
 
+== 2.0.8 (2022-06-08) - @mojavelinux
+
 Improvements::
 
 * encapsulate logic to adjust column box inside float and dry run
@@ -26,6 +28,10 @@ Bug Fixes::
 * `at_page_top?` should consider top of column box to be top of page
 * prevent SVG image taller than column from being advanced to next column
 * don't push section that follows index section in article to new page if last page of index does not extend to bottom of page
+
+=== Details
+
+{url-repo}/releases/tag/v2.0.8[git tag] | {url-repo}/compare/v2.0.7\...v2.0.8[full diff]
 
 == 2.0.7 (2022-06-03) - @mojavelinux
 
