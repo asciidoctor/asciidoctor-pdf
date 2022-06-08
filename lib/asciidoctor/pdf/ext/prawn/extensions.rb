@@ -722,6 +722,12 @@ module Asciidoctor
         end
       end
 
+      # Wraps the column_box method and automatically sets the height unless the :height option is specified.
+      def column_box point, options, &block
+        options[:height] = cursor unless options.key? :height
+        super
+      end
+
       # A flowing version of bounding_box. If the content runs to another page, the cursor starts at
       # the top of the page instead of from the original cursor position. Similar to span, except
       # the :position option is limited to a numeric value and additional options are passed through
