@@ -25,7 +25,6 @@ Bug Fixes::
 * fix x position of SVG when advanced to next column of column box
 * `at_page_top?` should consider top of column box to be top of page
 * prevent SVG image taller than column from being advanced to next column
-* fix computation of default height for formatted box inside column box
 * don't push section that follows index section in article to new page if last page of index does not extend to bottom of page
 
 == 2.0.7 (2022-06-03) - @mojavelinux
