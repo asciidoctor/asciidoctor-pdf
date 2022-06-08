@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-Prawn::Document.prepend (Module.new do
-  # Wraps the column_box method and automatically sets the height unless the :height option is specified.
-  def column_box point, options, &block
-    options[:height] = cursor unless options.key? :height
-    super
-  end
-end)
-
 Prawn::Document::ColumnBox.prepend (Module.new do
   attr_accessor :current_column
 
