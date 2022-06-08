@@ -723,7 +723,7 @@ module Asciidoctor
             category.terms.each {|term| convert_index_list_item term, pagenum_sequence_style }
             @theme.prose_margin_bottom > cursor ? bounds.move_past_bottom : (move_down @theme.prose_margin_bottom)
           end
-          end_cursor = cursor if (bounds.instance_variable_get :@current_column) == 0
+          end_cursor = cursor if bounds.current_column == 0
         end
         # Q: could we move this logic into column_box?
         move_cursor_to end_cursor if end_cursor

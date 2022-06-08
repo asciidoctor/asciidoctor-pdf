@@ -561,11 +561,11 @@ module Asciidoctor
       def float
         original_page_number = page_number
         original_y = y
-        original_column = bounds.instance_variable_get :@current_column if ColumnBox === bounds
+        original_column = bounds.current_column if ColumnBox === bounds
         yield
         go_to_page original_page_number unless page_number == original_page_number
         self.y = original_y
-        bounds.instance_variable_set :@current_column, original_column if original_column
+        bounds.current_column = original_column if original_column
       end
 
       # Short-circuits the call to the built-in move_up operation
@@ -1147,15 +1147,7 @@ module Asciidoctor
         scratch_pdf.bounds = bounds.dup.tap do |bounds_copy|
           bounds_copy.instance_variable_set :@document, scratch_pdf
           bounds_copy.instance_variable_set :@parent, saved_bounds
-          if ColumnBox === bounds_copy
-            if bounds_copy.parent.absolute_top > bounds_copy.absolute_top &&
-                (remaining_columns = (bounds_copy.instance_variable_get :@columns) - 1 - (bounds_copy.instance_variable_get :@current_column)) > 0
-              # defer reflow margins until all columns on current page have been exhausted
-              bounds_copy.instance_variable_set :@reflow_margins, (scratch_pdf.page_number + remaining_columns + 1)
-            end
-            bounds_copy.instance_variable_set :@width, bounds_copy.bare_column_width
-            bounds_copy.instance_variable_set :@current_column, (bounds_copy.instance_variable_set :@columns, 1) - 1
-          end
+          bounds_copy.single_file if ColumnBox === bounds_copy
         end
         scratch_pdf.move_cursor_to cursor unless (scratch_start_at_top = keep_together || pages_advanced > 0 || at_page_top?)
         scratch_start_cursor = scratch_pdf.cursor

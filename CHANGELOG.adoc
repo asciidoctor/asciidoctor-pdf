@@ -13,6 +13,10 @@ Enhancements::
 * add support for `scale` attribute or `iw` unit on `pdfwidth` attribute on image macros (#1933)
 * add backlink from bibref on bibliography entry to first reference to that entry in the document (#1737)
 
+Improvements::
+
+* encapsulate logic to adjust column box inside float and dry run
+
 Bug Fixes::
 
 * correctly compute value of to cursor on extent when column box starts below top of page (#2230)
