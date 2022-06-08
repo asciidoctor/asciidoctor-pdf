@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Improvements::
 
 * encapsulate logic to adjust column box inside float and dry run
+* automatically set height on column box if not specified; update value automatically when reflowing margins
 
 Bug Fixes::
 
