@@ -24,7 +24,7 @@ Prawn::Document::ColumnBox.prepend (Module.new do
   # Rearranges the column box into a single column, where the original columns are in a single file. Used
   # for the purpose of computing the extent of content in a scratch document.
   def single_file
-    if @parent.absolute_top > @y && @columns > @current_column + 1
+    if @reflow_margins && @parent.absolute_top > @y && @columns > @current_column + 1
       # defer reflow margins until all columns on current page have been exhausted
       @reflow_margins = @document.page_number + (@columns - @current_column)
     end
