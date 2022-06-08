@@ -1,17 +1,24 @@
 # frozen_string_literal: true
 
+Prawn::Document.prepend (Module.new do
+  # Wraps the column_box method and automatically sets the height unless the :height option is specified.
+  def column_box point, options, &block
+    options[:height] = cursor unless options.key? :height
+    super
+  end
+end)
+
 Prawn::Document::ColumnBox.prepend (Module.new do
   attr_accessor :current_column
-
-  def absolute_bottom
-    stretchy? ? @parent.absolute_bottom : super
-  end
 
   def move_past_bottom
     (doc = @document).y = @y
     return if (@current_column = (@current_column + 1) % @columns) > 0
     par = @parent
-    @y = par.absolute_top if (reset_y = @reflow_margins) && (reset_y == true || reset_y > doc.page_number)
+    if (reset_y = @reflow_margins) && (reset_y == true || reset_y > doc.page_number)
+      @y = par.absolute_top
+      @height = par.height unless stretchy?
+    end
     initial_margins = doc.page.margins
     par.move_past_bottom
     if doc.page.margins != initial_margins

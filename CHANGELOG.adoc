@@ -16,6 +16,7 @@ Enhancements::
 Improvements::
 
 * encapsulate logic to adjust column box inside float and dry run
+* automatically set height on column box if not specified; update value automatically when reflowing margins
 
 Bug Fixes::
 
