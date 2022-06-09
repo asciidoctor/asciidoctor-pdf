@@ -2607,8 +2607,6 @@ module Asciidoctor
       end
 
       def convert_inline_quoted node
-        theme = load_theme node.document
-
         case node.type
         when :emphasis
           open, close, is_tag = ['<em>', '</em>', true]
@@ -2621,25 +2619,26 @@ module Asciidoctor
         when :subscript
           open, close, is_tag = ['<sub>', '</sub>', true]
         when :double
-          open, close, is_tag = [theme.quotes[0], theme.quotes[1], false]
+          open, close = (load_theme node.document).quotes.slice 0, 2
           quotes = true
         when :single
-          open, close, is_tag = [theme.quotes[2], theme.quotes[3], false]
+          open, close = (load_theme node.document).quotes.slice 2, 2
           quotes = true
         when :mark
           open, close, is_tag = ['<mark>', '</mark>', true]
         else
-          open, close, is_tag = [nil, nil, false]
+          open = close = ''
         end
 
         inner_text = node.text
 
-        if quotes && (len = inner_text.length) > 3 &&
-            (inner_text.end_with? '...') && !((inner_text_trunc = inner_text.slice 0, len - 3).end_with? ?\\)
+        if quotes && (len = inner_text.length) > 3 && (inner_text.end_with? '...') &&
+            !((inner_text_trunc = inner_text.slice 0, len - 3).end_with? ?\\)
           inner_text = inner_text_trunc + '&#8230;'
         end
 
         if (roles = node.role)
+          theme = load_theme node.document
           roles.split.each do |role|
             if (text_transform = theme[%(role_#{role}_text_transform)])
               inner_text = transform_text inner_text, text_transform
