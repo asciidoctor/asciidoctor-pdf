@@ -72,6 +72,8 @@ The `pdfwidth` attribute supports the following units:
 
 In all cases, the width is converted to pt internally.
 
+NOTE: See this https://groups.google.com/forum/#!msg/prawn-ruby/MbMsCx862iY/6ImCsvLGfVcJ[discussion about image quality in PDFs^] for more information.
+
 [#image-width]
 == Fallback width for block images
 

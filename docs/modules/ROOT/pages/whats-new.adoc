@@ -8,13 +8,79 @@
 :url-milestone-2-0-1: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.1
 :url-milestone-2-0-2: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.2
 :url-milestone-2-0-3: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.3
+:url-milestone-2-0-4: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.4
+:url-milestone-2-0-5: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.5
+:url-milestone-2-0-6: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.6
+:url-milestone-2-0-7: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.7
+:url-milestone-2-0-8: {url-project-issues}?q=is%3Aissue+milestone%3Av2.0.x+is%3Aclosed+label%3Av2.0.8
 
 This page presents the changes made in each of the patch releases in the Asciidoctor PDF {page-component-version} release line.
 The releases are ordered from newest to oldest.
 
+= Asciidoctor PDF 2.0.8
+
+_**Release date:** 2022.06.08 | *Release notes:* {url-project-repo}/releases/tag/v2.0.8[v2.0.8^] | *Issue label:* {url-milestone-2-0-8}[2.0.8^]_
+
+== Improvements
+
+* Encapsulate logic to adjust column box inside float and dry run.
+* Automatically set height on column box if not specified; update value automatically when reflowing margins.
+
+== Bug Fixes
+
+* Correctly compute value of to cursor on extent when column box starts below top of page.
+* Fix crash in `ColumnBox#move_past_bottom` when `:reflow_margins` option is not set.
+* Fix x position of SVG when advanced to next column of column box.
+* `at_page_top?` should consider top of column box to be top of page.
+* Prevent SVG image taller than column from being advanced to next column.
+* Don't push section that follows index section in article to new page if last page of index doesn't extend to bottom of page.
+
+= Asciidoctor PDF 2.0.7
+
+_**Release date:** 2022.06.03 | *Release notes:* {url-project-repo}/releases/tag/v2.0.7[v2.0.7^] | *Issue label:* {url-milestone-2-0-7}[2.0.7^]_
+
+== Improvements
+
+* Don't recommend prawn-gmagick if PNG or JPG is corrupt or incomplete.
+* Add helper method to determine when to recommend the prawn-gmagick gem.
+
+== Bug Fixes
+
+* Fix crash when doctitle or section title with automatic ID contains inline image without an explicit width.
+* Use prawn-gmagick, if available, to read raster image referenced by SVG.
+* Allow image path in SVG to refer to any location within Asciidoctor jail (no restriction if safe mode is unsafe).
+
+= Asciidoctor PDF 2.0.6
+
+_**Release date:** 2022.05.30 | *Release notes:* {url-project-repo}/releases/tag/v2.0.6[v2.0.6^] | *Issue label:* {url-milestone-2-0-6}[2.0.6^]_
+
+== Bug Fixes
+
+* Indent content of collapsible block and apply bottom margin to match style of HTML output.
+* Patch prawn-gmagick to reread bit depth of a PNG image if it extracts the wrong value.
+* Interpret width of SVG correctly when width is defined in file using px units.
+* Don't crash if inline role defines border width but not border color.
+
+= Asciidoctor PDF 2.0.5
+
+_**Release date:** 2022.05.26 | *Release notes:* {url-project-repo}/releases/tag/v2.0.5[v2.0.5^] | *Issue label:* {url-milestone-2-0-5}[2.0.5^]_
+
+== Bug Fixes
+
+* Don't filter TOC entries without an ID when computing the TOC extent.
+* Fix width of multi-word phrase with background and border offset.
+
+= Asciidoctor PDF 2.0.4
+
+_**Release date:** 2022.05.25 | *Release notes:* {url-project-repo}/releases/tag/v2.0.4[v2.0.4^] | *Issue label:* {url-milestone-2-0-4}[2.0.4^]_
+
+== Bug Fixes
+
+* Fix calculation of TOC extent when TOC entry has children but no ID.
+
 = Asciidoctor PDF 2.0.3
 
-_**Release date:** 2022.05.25 | *Release notes:* {url-project-repo}/releases/tag/v2.0.3[v2.0.3] | *Issue label:* {url-milestone-2-0-3}[2.0.3^]_
+_**Release date:** 2022.05.25 | *Release notes:* {url-project-repo}/releases/tag/v2.0.3[v2.0.3^] | *Issue label:* {url-milestone-2-0-3}[2.0.3^]_
 
 == Improvements
 
@@ -28,7 +94,7 @@ _**Release date:** 2022.05.25 | *Release notes:* {url-project-repo}/releases/tag
 
 = Asciidoctor PDF 2.0.2
 
-_**Release date:** 2022.05.22 | *Release notes:* {url-project-repo}/releases/tag/v2.0.2[v2.0.2] | *Issue label:* {url-milestone-2-0-2}[2.0.2^]_
+_**Release date:** 2022.05.22 | *Release notes:* {url-project-repo}/releases/tag/v2.0.2[v2.0.2^] | *Issue label:* {url-milestone-2-0-2}[2.0.2^]_
 
 == Bug Fixes
 
@@ -37,7 +103,7 @@ _**Release date:** 2022.05.22 | *Release notes:* {url-project-repo}/releases/tag
 
 = Asciidoctor PDF 2.0.1
 
-_**Release date:** 2022.05.21 | *Release notes:* {url-project-repo}/releases/tag/v2.0.1[v2.0.1] | *Issue label:* {url-milestone-2-0-1}[2.0.1^]_
+_**Release date:** 2022.05.21 | *Release notes:* {url-project-repo}/releases/tag/v2.0.1[v2.0.1^] | *Issue label:* {url-milestone-2-0-1}[2.0.1^]_
 
 == Bug Fixes
 
@@ -47,12 +113,12 @@ _**Release date:** 2022.05.21 | *Release notes:* {url-project-repo}/releases/tag
 
 = Asciidoctor PDF 2.0.0
 
-_**Release date:** 2022.05.18 | *Release notes:* {url-project-repo}/releases/tag/v2.0.0[v2.0.0] | *Issue label:* {url-milestone-2-0-0}[{page-component-version}.0^]_
+_**Release date:** 2022.05.18 | *Release notes:* {url-project-repo}/releases/tag/v2.0.0[v2.0.0^] | *Issue label:* {url-milestone-2-0-0}[{page-component-version}.0^]_
 
 Asciidoctor PDF {page-component-version} introduces a host of new features and enhancements--like unbreakable blocks, theme keys for callout lists, automatic orphan prevention for block captions, and improved block margin logic--just to name a few!
 Some of these features, improvements, and bug fixes are highlighted in the following sections.
-For a summary of the release, see the {url-project-repo}/releases/tag/v2.0.0[release notes].
-For a complete list of all changes, see the {url-project-repo}/blob/main/CHANGELOG.adoc[CHANGELOG].
+For a summary of the release, see the {url-project-repo}/releases/tag/v2.0.0[release notes^].
+For a complete list of all changes, see the {url-project-repo}/blob/main/CHANGELOG.adoc[CHANGELOG^].
 
 [#roles]
 == Paragraph roles and indent
