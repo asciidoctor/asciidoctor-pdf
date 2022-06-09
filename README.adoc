@@ -47,7 +47,7 @@ The aim of this library is to take the pain out of creating PDF documents from A
 
 [NOTE]
 ====
-The documentation for Asciidoctor PDF {release-line} is now available at {url-project-docs}/.
+The documentation for the latest, stable release of Asciidoctor PDF is available at {url-project-docs}/.
 
 If you're looking for the documentation for Asciidoctor PDF 1.6, refer to the {url-project-repo}/tree/v1.6.x#readme[README] in the v1.6.x branch.
 Asciidoctor PDF 1.6 is no longer being developed and will reach EOL later this year.
@@ -114,11 +114,11 @@ There are several optional features of this converter that require additional ge
 Those features are as follows.
 
 Source highlighting::
-You'll need to {url-project-repo}/syntax-highlighting/[install a syntax highlighter] to use source highlighting (build-time only).
+You'll need to {url-project-docs}/syntax-highlighting/[install a syntax highlighter] to use source highlighting (build-time only).
 
 PDF optimization::
 If you want to optimize your PDF, you'll need rghost or hexapdf.
-See {url-project-repo}/optimize-pdf/[Optimize the PDF] for installation and usage instructions.
+See {url-project-docs}/optimize-pdf/[Optimize the PDF] for installation and usage instructions.
 
 Automatic hyphenation::
 To turn on automatic hyphenation using the `hyphens` attribute, you'll need to install the `text-hyphen` gem:
@@ -128,7 +128,7 @@ To turn on automatic hyphenation using the `hyphens` attribute, you'll need to i
 Accelerated image decoding::
 Ruby is not particularly fast at decoding images, and the image formats it supports are limited.
 To help, you can install prawn-gmagick, which delegates the work of decoding images to GraphicsMagick.
-Refer to {url-project-repo}/image-paths-and-formats/#other-image-formats[Supporting additional image file formats] for instructions about how to enable this integration.
+Refer to {url-project-docs}/image-paths-and-formats/#other-image-formats[Supporting additional image file formats] for instructions about how to enable this integration.
 
 Check the {url-project-docs}/install/#table-minimum-version[minimum supported version table] to make sure you're using a supported version of the dependency.
 
@@ -196,11 +196,6 @@ ifndef::env-site[]
 
 See the <<CONTRIBUTING.adoc#,contributing guide>>.
 To help develop {project-name}, or to simply use the development version, refer to the <<CONTRIBUTING-CODE.adoc#,developing and contributing code guide>>.
-
-[[resources,Links]]
-== Resources
-
-* https://groups.google.com/forum/#!msg/prawn-ruby/MbMsCx862iY/6ImCsvLGfVcJ[Discussion about image quality in PDFs]
 
 == Authors
 
