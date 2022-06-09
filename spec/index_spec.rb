@@ -26,6 +26,29 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect pdf.lines).to eql ['before after', 'foo baz']
   end
 
+  it 'should normalize space in term in body and index section' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    ((foo
+    {empty}
+    bar))(((yin
+    &#10;
+    yang)))
+
+    <<<
+
+    [index]
+    == Index
+    EOS
+
+    p1_text = pdf.find_text page_number: 1
+    body_lines = pdf.lines p1_text
+    (expect body_lines).to eql ['foo bar']
+    p2_text = pdf.find_text page_number: 2
+    index_lines = pdf.lines p2_text
+    (expect index_lines).to include 'foo bar, 1'
+    (expect index_lines).to include 'yin yang, 1'
+  end
+
   it 'should not add index section if there are no index entries' do
     pdf = to_pdf <<~'EOS', analyze: true
     == About
