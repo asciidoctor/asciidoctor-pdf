@@ -16,6 +16,7 @@ Enhancements::
 * add `save_theme` helper to work with a copy of the theme within a scope (#2196)
 * add support for `scale` attribute or `iw` unit on `pdfwidth` attribute on image macros (#1933)
 * add backlink from bibref on bibliography entry to first reference to that entry in the document (#1737)
+* don't insert page break between part and first chapter if `heading-part-break-after` key in theme is `avoid` (#1795)
 
 == 2.0.8 (2022-06-08) - @mojavelinux
 

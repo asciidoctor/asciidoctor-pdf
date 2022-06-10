@@ -1185,6 +1185,24 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect part2_text[:page_number]).to be 4
   end
 
+  it 'should not add page break after part if heading-part-break-after key in theme is avoid' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { heading_part_break_after: 'avoid' }, analyze: true
+    = Document Title
+    :doctype: book
+
+    = Part I
+
+    == Chapter in Part I
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    part1_text = (pdf.find_text 'Part I')[0]
+    chapter1_text = (pdf.find_text 'Chapter in Part I')[0]
+    (expect part1_text[:page_number]).to be 2
+    (expect chapter1_text[:page_number]).to be 2
+    (expect part1_text[:y] - chapter1_text[:y]).to be < 50
+  end
+
   it 'should support abstract defined as special section' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Document Title
