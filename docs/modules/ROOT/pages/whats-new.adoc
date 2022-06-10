@@ -11,42 +11,23 @@ The releases are ordered from newest to oldest.
 
 = Asciidoctor PDF {page-component-version}.0
 
-_**Release date:** 2022.month.day | *Release notes:* {url-project-repo}/releases/tag/v2.1.0[v{page-component-version}.0^] | *Issue label:* {url-milestone-2-1-0}[{page-component-version}.0^]_
+_**Release date:** 2022.06.10 | *Release notes:* {url-project-repo}/releases/tag/v2.1.0[v{page-component-version}.0^] | *Issue label:* {url-milestone-2-1-0}[{page-component-version}.0^]_
 
-Asciidoctor PDF {page-component-version} introduces new features and enhancements--like #new feature examples# --just to name a few!
-Some of these features, improvements, and bug fixes are highlighted in the following sections.
-For a summary of the release, see the {url-project-repo}/releases/tag/v2.1.0[release notes^].
-For a complete list of all changes, see the {url-project-repo}/blob/main/CHANGELOG.adoc[CHANGELOG^].
+Asciidoctor PDF {page-component-version} introduces several enhancements.
+For a complete list of changes, see the {url-project-repo}/blob/main/CHANGELOG.adoc[CHANGELOG^].
 
-////
-== Deprecated
+== Page columns
 
-The following features are deprecated with the release of Asciidoctor PDF {page-component-version} and will be removed in the next major release.
+The body of an article or manpage document can now be arranged into columns when the `page-columns` key is set in the theme.
+The width of the gap between the columns can be adjusted with the `page-column-gap` key.
+See xref:theme:page.adoc#columns[Columns] for more information.
 
-* The `blockquote` category prefix is deprecated in the theme; use the `quote` prefix instead.
-See xref:theme:quote.adoc[].
-* The `key` category prefix is deprecated in the theme; use the `kbd` prefix instead.
-See xref:theme:keyboard.adoc[].
-* The `literal` category prefix is deprecated in the theme; use the `codespan` prefix instead.
-See xref:theme:codespan.adoc[].
-* The `outline-list` category prefix is deprecated in the theme; use the `list` prefix instead.
-See xref:theme:list.adoc[].
-* The `Optimizer#generate_file` method is deprecated; use `Optimizer#optimize_file` instead.
+== Other enhancements
 
-== Removed
+* When `avoid` is assigned to the xref:theme:heading.adoc#part[heading-part-break-after key] in theme, a page break isn't inserted between a part and its first chapter.
+* Support for the xref:image-scaling.adoc#width-attributes[scale attribute] was added to image macros.
+* Support for the `iw` unit value was added to the xref:image-scaling.adoc#pdfwidth[pdfwidth attribute] on image macros.
+* A backlink is created from a bibref on a bibliography entry to the first reference to that entry in the document.
+* The text formatting on index term in the index section is preserved.
 
-The following dependencies and deprecated features have been removed with the release of Asciidoctor PDF {page-component-version}.
-
-* Support for Ruby < 2.7 and JRuby < 9.2 has been removed.
-* The `untitled` option has been removed; use the `notitle` option instead.
-* Support for the deprecated `pdf-style` and `pdf-stylesdir` attributes has been removed.
-* The deprecated Pdf module alias in the API has been removed in favor of PDF.
-* The deprecated "`ascii`" fonts have been removed; only the more complete "subset" fonts are now bundled with the gem.
-* The previously undocumented `vertical-spacing` key has been removed from the built-in themes.
-* The `top-margin` key on block and prose categories in theme has been removed; space between delimited blocks and lists is now controlled using bottom margins only.
-* The `lead` category keys in theme have been replaced with the built-in role named `lead`.
-* `safe_yaml gem` has been removed; `YAML.safe_load` from the Ruby stdlib is used instead.
-* Support for the `<color>` tag in passthrough content has been removed; use `<font color="...">` instead (may affect themes).
-* The [.path]_asciidoctor-pdf/converter_ and [.path]_asciidoctor-pdf/version_ shim scripts have been removed; use [.path]_asciidoctor/pdf/converter_ and [.path]_asciidoctor/pdf/version_ instead.
-* The unneeded `_mb` functions (e.g., `uppercase_mb`) have been removed; multibyte support for `upcase`, `downcase`, and `capitalize` is now provided by corelib.
-////
+NOTE: Go to xref:2.0@whats-new.adoc[What's New in Asciidoctor PDF 2.0] to learn about all the new features, improvements, and fixes introduced in 2.0.
