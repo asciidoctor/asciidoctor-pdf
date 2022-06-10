@@ -39,20 +39,20 @@ page:
     recto: image:page-bg-recto.png[]
     verso: image:page-bg-verso.png[]
 
-|columns
+|<<columns,columns>>
 |Integer +
 (default: _not set_)
 |[source]
 page:
   columns: 2
 
-|column_gap
+|column-gap
 |xref:measurement-units.adoc[Measurement] +
 (default: _$base-font-size_)
 |[source]
 page:
   columns: 2
-  columns_gap: 12
+  columns-gap: 12
 
 |xref:images.adoc#foreground[foreground-image]
 |xref:images.adoc#specify[image macro] {vbar} xref:images.adoc#specify[path] +
