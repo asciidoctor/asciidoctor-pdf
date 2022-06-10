@@ -39,6 +39,21 @@ page:
     recto: image:page-bg-recto.png[]
     verso: image:page-bg-verso.png[]
 
+|columns
+|Integer +
+(default: _not set_)
+|[source]
+page:
+  columns: 2
+
+|column_gap
+|xref:measurement-units.adoc[Measurement] +
+(default: _$base-font-size_)
+|[source]
+page:
+  columns: 2
+  columns_gap: 12
+
 |xref:images.adoc#foreground[foreground-image]
 |xref:images.adoc#specify[image macro] {vbar} xref:images.adoc#specify[path] +
 (default: _not set_)
@@ -110,6 +125,14 @@ These margins and used when the value `prepress` is assigned to the `media` docu
 If no cover is specified, the recto margin is not applied to the title page.
 To apply the recto margin to the title page, but not include a cover, assign the value `~` to the `front-cover-image` and `back-cover-image` attributes.
 See xref:cover.adoc[] for information about the `cover` category keys.
+
+[#columns]
+=== Columns
+
+The columns are only applied to the body of a document with the article or manpage doctype.
+The body of the document begins after the document title and TOC, if present.
+
+If the columns are set on the index section using the `index-columns` key, they will be ignored when `page-columns` is set.
 
 [#numbering]
 == page-numbering

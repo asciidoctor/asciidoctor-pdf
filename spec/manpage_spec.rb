@@ -93,4 +93,31 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
     (expect name_title_text[:font_size]).to be 22
     (expect pdf.lines).to include 'cmd - does stuff'
   end
+
+  it 'should arrange body of manpage into columns if specified in theme' do
+    pdf = to_pdf <<~'EOS', doctype: :manpage, pdf_theme: { page_columns: 2 }, analyze: true
+    = cmd(1)
+
+    == Name
+
+    cmd - does stuff
+
+    == Synopsis
+
+    *cmd* [_OPTION_]... _FILE_...
+
+    <<<
+
+    == Options
+
+    *-v*:: Prints the version.
+    EOS
+
+    midpoint = (get_page_size pdf)[0] * 0.5
+    name_text = pdf.find_unique_text 'Name'
+    options_text = pdf.find_unique_text 'Options'
+    (expect name_text[:x]).to eql 48.24
+    (expect options_text[:x]).to be > midpoint
+    (expect name_text[:y]).to eql options_text[:y]
+  end
 end

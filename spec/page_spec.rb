@@ -538,6 +538,177 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
   end
 
+  context 'Columns' do
+    it 'should ignore columns for book doctype' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      = Document Title
+      :doctype: book
+      :notitle:
+
+      [.text-right]
+      first page
+
+      <<<
+
+      second page
+      EOS
+
+      midpoint = (get_page_size pdf)[0] * 0.5
+      (expect pdf.pages).to have_size 2
+      (expect (pdf.find_unique_text 'first page')[:page_number]).to eql 1
+      (expect (pdf.find_unique_text 'first page')[:x]).to be > midpoint
+      (expect (pdf.find_unique_text 'second page')[:page_number]).to eql 2
+    end
+
+    it 'should ignore columns if less than 2' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 1 }, analyze: true
+      = Document Title
+      :notitle:
+
+      first page
+
+      <<<
+
+      second page
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      (expect (pdf.find_unique_text 'first page')[:page_number]).to eql 1
+      (expect (pdf.find_unique_text 'second page')[:page_number]).to eql 2
+    end
+
+    it 'should arrange article body into columns' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      first column
+
+      <<<
+
+      second column
+
+      <<<
+
+      [.text-right]
+      first column again
+      EOS
+
+      midpoint = (get_page_size pdf)[0] * 0.5
+      (expect pdf.pages).to have_size 2
+      (expect (pdf.find_unique_text 'first column')[:page_number]).to eql 1
+      (expect (pdf.find_unique_text 'second column')[:page_number]).to eql 1
+      (expect (pdf.find_unique_text 'second column')[:x]).to be > midpoint
+      (expect (pdf.find_unique_text 'first column again')[:page_number]).to eql 2
+      (expect (pdf.find_unique_text 'first column again')[:x]).to be < midpoint
+    end
+
+    it 'should put footnotes at bottom of last column with content' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      first columnfootnote:[This page has two columns.]
+
+      <<<
+
+      second column
+      EOS
+
+      midpoint = (get_page_size pdf)[0] * 0.5
+      (expect pdf.pages).to have_size 1
+      (expect (pdf.find_unique_text 'second column')[:x]).to be > midpoint
+      right_column_text = pdf.text.select {|it| it[:x] > midpoint }
+      right_column_lines = pdf.lines right_column_text
+      (expect right_column_lines).to have_size 2
+      (expect right_column_lines[-1]).to eql '[1] This page has two columns.'
+    end
+
+    it 'should place document title outside of column box' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      = Article Title Goes Here
+
+      first column
+
+      <<<
+
+      second column
+      EOS
+
+      midpoint = (get_page_size pdf)[0] * 0.5
+      (expect pdf.pages).to have_size 1
+      title_text = pdf.find_unique_text 'Article Title Goes Here'
+      (expect title_text[:x]).to be < midpoint
+      (expect title_text[:x] + title_text[:width]).to be > midpoint
+      (expect (pdf.find_unique_text 'second column')[:x]).to be > midpoint
+    end
+
+    it 'should place TOC outside of column box' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      = Article Title Goes Here
+      :toc:
+
+      == First Column
+
+      <<<
+
+      == Second Column
+      EOS
+
+      midpoint = (get_page_size pdf)[0] * 0.5
+      (expect pdf.pages).to have_size 1
+      first_column_text = (pdf.find_text 'First Column').sort_by {|it| -it[:y] }
+      second_column_text = (pdf.find_text 'Second Column').sort_by {|it| -it[:y] }
+      (expect first_column_text[0][:x]).to eql 48.24
+      (expect first_column_text[1][:x]).to eql 48.24
+      (expect second_column_text[0][:x]).to eql 48.24
+      (expect second_column_text[1][:x]).to be > midpoint
+      dots_text = pdf.text.select {|it| it[:string].include? '.' }
+      dots_text.each do |it|
+        (expect it[:x]).to be < midpoint
+        (expect it[:x] + it[:width]).to be > midpoint
+      end
+    end
+
+    it 'should allow theme to control number of columns' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 4 }, analyze: true
+      one
+
+      <<<
+
+      two
+
+      <<<
+
+      three
+
+      <<<<
+
+      four
+      EOS
+
+      midpoint = (get_page_size pdf)[0] * 0.5
+      (expect pdf.pages).to have_size 1
+      one_text = pdf.find_unique_text 'one'
+      two_text = pdf.find_unique_text 'two'
+      three_text = pdf.find_unique_text 'three'
+      four_text = pdf.find_unique_text 'four'
+      (expect two_text[:x]).to be > one_text[:x]
+      (expect two_text[:x]).to be < midpoint
+      (expect four_text[:x]).to be > three_text[:x]
+      (expect three_text[:x]).to be > midpoint
+    end
+
+    it 'should allow theme to control column gap' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: :image
+      image::square.png[pdfwidth=100%]
+
+      <<<
+
+      image::square.png[pdfwidth=100%]
+      EOS
+
+      images = pdf.images
+      (expect images).to have_size 2
+      column_gap = (images[1][:x] - (images[0][:x] + images[0][:width])).to_f
+      (expect column_gap).to eql 12.0
+    end
+  end
+
   context 'Background' do
     it 'should set page background to white if value is not defined or transparent', visual: true do
       [nil, 'transparent'].each do |bg_color|
