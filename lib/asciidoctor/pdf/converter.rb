@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'formatted_string'
 require_relative 'formatted_text'
 require_relative 'index_catalog'
 require_relative 'pdfmark'
@@ -731,28 +732,42 @@ module Asciidoctor
       end
 
       def convert_index_list_item term, pagenum_sequence_style = nil
-        text = escape_xml term.name
+        term_fragments = term.name.fragments
         unless term.container?
+          pagenum_fragment = (parse_text %(<a>#{DummyText}</a>), inline_format: true)[0]
           if @media == 'screen'
             case pagenum_sequence_style
             when 'page'
-              pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
+              pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| pagenum_fragment.merge anchor: dest[:anchor], text: dest[:page] }
             when 'range'
               first_anchor_per_page = {}.tap {|accum| term.dests.each {|dest| accum[dest[:page]] ||= dest[:anchor] } }
               pagenums = (consolidate_ranges first_anchor_per_page.keys).map do |range|
                 anchor = first_anchor_per_page[(range.include? '-') ? (range.partition '-')[0] : range]
-                %(<a anchor="#{anchor}">#{range}</a>)
+                pagenum_fragment.merge text: range, anchor: anchor
               end
             else # term
-              pagenums = term.dests.map {|dest| %(<a anchor="#{dest[:anchor]}">#{dest[:page]}</a>) }
+              pagenums = term.dests.map {|dest| pagenum_fragment.merge text: dest[:page], anchor: dest[:anchor] }
             end
           else
             pagenums = consolidate_ranges term.dests.map {|dest| dest[:page] }.uniq
           end
-          text = %(#{text}, #{pagenums.join ', '})
+          pagenums.each do |pagenum|
+            # NOTE: addresses a very minor kerning issue for text adjacent to the comma
+            if (prev_fragment = term_fragments[-1]).size == 1
+              if ::String === pagenum
+                term_fragments[-1] = prev_fragment.merge text: %(#{prev_fragment[:text]}, #{pagenum})
+                next
+              else
+                term_fragments[-1] = prev_fragment.merge text: %(#{prev_fragment[:text]}, )
+              end
+            else
+              term_fragments << ({ text: ', ' })
+            end
+            term_fragments << (::String === pagenum ? { text: pagenum } : pagenum)
+          end
         end
         subterm_indent = @theme.description_list_description_indent
-        ink_prose text, align: :left, margin: 0, hanging_indent: subterm_indent * 2
+        typeset_formatted_text term_fragments, (calc_line_metrics @base_line_height), align: :left, color: @font_color, hanging_indent: subterm_indent * 2
         indent subterm_indent do
           term.subterms.each do |subterm|
             convert_index_list_item subterm, pagenum_sequence_style
@@ -2570,17 +2585,20 @@ module Asciidoctor
         if scratch?
           visible ? node.text : ''
         else
-          # NOTE: initialize index in case converter is called before PDF is initialized
-          @index ||= IndexCatalog.new
+          unless defined? @index
+            # NOTE: initialize index and text formatter in case converter is called before PDF is initialized
+            @index = IndexCatalog.new
+            @text_formatter = FormattedText::Formatter.new theme: (load_theme node.document)
+          end
           # NOTE: page number (:page key) is added by InlineDestinationMarker
           dest = { anchor: (anchor_name = @index.next_anchor_name) }
           anchor = %(<a id="#{anchor_name}" type="indexterm"#{visible ? ' visible="true"' : ''}>#{DummyText}</a>)
           if visible
             visible_term = node.text
-            @index.store_primary_term (sanitize visible_term), dest
+            @index.store_primary_term (FormattedString.new parse_text visible_term, inline_format: [normalize: true]), dest
             %(#{anchor}#{visible_term})
           else
-            @index.store_term (node.attr 'terms').map {|term| sanitize term }, dest
+            @index.store_term (node.attr 'terms').map {|term| FormattedString.new parse_text term, inline_format: [normalize: true] }, dest
             anchor
           end
         end
