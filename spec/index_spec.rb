@@ -31,7 +31,8 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     ((foo
     {empty}
     bar))(((yin
-    &#10;
+    {empty}
+    {empty}
     yang)))
 
     <<<
@@ -145,6 +146,51 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     index_lines = pdf.lines pdf.find_text page_number: 3
     (expect index_lines).to include 'Custom Pipelines, 1'
     (expect index_lines).to include 'custom behavior, 1'
+  end
+
+  it 'should preserve text formatting in display of index term' do
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+    = Document Title
+
+    == Content
+
+    Use the ((`return`)) keyword(((_keyword_))) to force a method to return early.
+
+    There are cats, and then there are ((*big* cats)).
+
+    A ((mouse _gesture_)) is a movement the software recognizes and interprets as a command.
+
+    [index]
+    = Index
+    EOS
+
+    (expect pdf.pages).to have_size 3
+    return_entry_text = pdf.find_unique_text 'return', page_number: 3
+    (expect return_entry_text[:font_name]).to eql 'mplus1mn-regular'
+    keyword_entry_text = pdf.find_unique_text 'keyword', page_number: 3
+    (expect keyword_entry_text[:font_name]).to eql 'NotoSerif-Italic'
+    big_text = pdf.find_unique_text 'big', page_number: 3
+    (expect big_text[:font_name]).to eql 'NotoSerif-Bold'
+    gesture_text = pdf.find_unique_text 'gesture', page_number: 3
+    (expect gesture_text[:font_name]).to eql 'NotoSerif-Italic'
+  end
+
+  it 'should not group term with and without formatting' do
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+    The ((`proc`)) keyword in Ruby defines a ((proc)), which is a block of code.
+
+    [index]
+    = Index
+    EOS
+
+    (expect pdf.pages).to have_size 2
+    proc_text = (pdf.find_text %r/^proc/, page_number: 2).sort_by {|it| it[:string].length }
+    (expect proc_text).to have_size 2
+    (expect proc_text[0][:string]).to eql 'proc'
+    (expect proc_text[0][:font_name]).to eql 'mplus1mn-regular'
+    (expect proc_text[1][:font_name]).not_to eql 'mplus1mn-regular'
+    index_lines = pdf.lines pdf.find_text page_number: 2
+    (expect index_lines).to eql ['Index', 'P', 'proc, 1', 'proc, 1']
   end
 
   it 'should not add index entries inside delimited block to index twice' do
