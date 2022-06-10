@@ -8,6 +8,6 @@ class FormattedString < String
   end
 
   def eql? other
-    super && (FormattedString === other ? @fragments == other.fragments : true)
+    super && (FormattedString === other ? (@fragments ||= nil) == other.fragments : true)
   end
 end
