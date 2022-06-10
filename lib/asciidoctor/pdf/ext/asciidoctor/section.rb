@@ -30,4 +30,8 @@ class Asciidoctor::Section
     end
     opts[:formal] ? @cached_formal_numbered_title : @cached_numbered_title
   end unless method_defined? :numbered_title
+
+  def first_section_of_part?
+    (par = @parent).context == :section && par.sectname == 'part' && self == par.blocks.find {|it| it.context == :section }
+  end unless method_defined? :first_section_of_part?
 end

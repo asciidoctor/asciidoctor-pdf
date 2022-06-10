@@ -586,6 +586,8 @@ module Asciidoctor
         theme.base_font_style = theme.base_font_style&.to_sym || :normal
         theme.page_numbering_start_at ||= 'body'
         theme.running_content_start_at ||= 'body'
+        theme.heading_chapter_break_before ||= 'always'
+        theme.heading_part_break_before ||= 'always'
         theme.heading_margin_page_top ||= 0
         theme.heading_margin_top ||= 0
         theme.heading_margin_bottom ||= 0
@@ -665,13 +667,14 @@ module Asciidoctor
         hidden = sect.option? 'notitle'
         hopts = { align: text_align, level: hlevel, part: part, chapterlike: chapterlike, outdent: !(part || chapterlike) }
         if part
-          unless @theme.heading_part_break_before == 'auto'
+          if @theme.heading_part_break_before == 'always'
             started_new = true
             start_new_part sect
           end
         elsif chapterlike
-          if @theme.heading_chapter_break_before != 'auto' ||
-              (@theme.heading_part_break_after == 'always' && sect == sect.parent.sections[0])
+          if (@theme.heading_chapter_break_before == 'always' &&
+              !(@theme.heading_part_break_after == 'avoid' && sect.first_section_of_part?)) ||
+              (@theme.heading_part_break_after == 'always' && sect.first_section_of_part?)
             started_new = true
             start_new_chapter sect
           end

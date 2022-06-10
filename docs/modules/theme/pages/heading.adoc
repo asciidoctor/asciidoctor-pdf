@@ -286,7 +286,7 @@ The doctype must be `book` for the `heading-part` keys to take effect.
 |Key |Value Type |Example
 
 |break-after
-|`always` {vbar} `auto` +
+|`always` {vbar} `avoid` {vbar} `auto` +
 (default: `auto`)
 |[source]
 heading:
