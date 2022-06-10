@@ -28,6 +28,6 @@ See xref:theme:page.adoc#columns[Columns] for more information.
 * Support for the xref:image-scaling.adoc#width-attributes[scale attribute] was added to image macros.
 * Support for the `iw` unit value was added to the xref:image-scaling.adoc#pdfwidth[pdfwidth attribute] on image macros.
 * A backlink is created from a bibref on a bibliography entry to the first reference to that entry in the document.
-* The text formatting on index term in the index section is preserved.
+* The text formatting on index terms is preserved when displayed in the index section.
 
-NOTE: Go to xref:2.0@whats-new.adoc[What's New in Asciidoctor PDF 2.0] to learn about all the new features, improvements, and fixes introduced in 2.0.
+NOTE: Refer to xref:2.0@whats-new.adoc[What's New in Asciidoctor PDF 2.0] to learn about all the new features, improvements, and fixes introduced in 2.0.
