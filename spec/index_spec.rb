@@ -387,6 +387,30 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
   end
 
+  it 'should handle XML special chars in index term' do
+    pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+    Put styles in the ((<head>)) tag.
+
+    <<<
+
+    XML special chars(((XML special chars,<)))(((XML special chars,>)))(((XML special chars,&)))
+
+    [index]
+    == Index
+    EOS
+
+    (expect (pdf.lines pdf.find_text page_number: 3).join ?\n).to eql <<~'EOS'.chomp
+    Index
+    @
+    <head>, 1
+    X
+    XML special chars
+    &, 2
+    <, 2
+    >, 2
+    EOS
+  end
+
   it 'should not put letters outside of ASCII charset in symbol category' do
     pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
     = Document Title
