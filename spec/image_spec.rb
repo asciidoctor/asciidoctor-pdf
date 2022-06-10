@@ -945,7 +945,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         EOS
         (expect get_images pdf, 1).to be_empty
         (expect (pdf.page 1).text).to include 'See the logo in'
-      end).to log_message severity: :WARN, message: %(problem encountered in image: #{fixture_file 'svg-with-missing-remote-image.svg'}; Error retrieving URL https://example.org/no-such-image.png: 404 Not Found)
+      end).to log_message severity: :WARN, message: %(problem encountered in image: #{fixture_file 'svg-with-missing-remote-image.svg'}; Error retrieving URL https://github.com/no-such-image.png: 404 Not Found)
     end
 
     it 'should warn if remote image is not a valid URL and allow-uri-read attribute is set', network: true do
