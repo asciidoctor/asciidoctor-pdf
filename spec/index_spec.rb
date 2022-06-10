@@ -658,6 +658,19 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect index_lines).to include 'almost here, 1, 3'
   end
 
+  it 'should not enclose page number in link or apply link styles if media is not screen' do
+    pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'media' => 'print' }, analyze: true
+    ((index term))
+
+    [index]
+    == Index
+    EOS
+
+    index_term_text = pdf.find_unique_text %r/^index term/, page_number: 2
+    (expect index_term_text[:string]).to eql 'index term, 1'
+    (expect index_term_text[:font_color]).to eql '333333'
+  end
+
   it 'should sort page ranges using first page in sequence when media=print' do
     indexterm_pagenums = [1, 10, 11, 13, 15, 16, 100, 150]
     pagebreak = %(\n\n<<<\n\n)
