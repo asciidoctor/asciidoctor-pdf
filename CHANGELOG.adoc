@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.1.0 (2022-06-11) - @mojavelinux
 
 Enhancements::
 
@@ -18,6 +18,10 @@ Enhancements::
 * add backlink from bibref on bibliography entry to first reference to that entry in the document (#1737)
 * preserve text formatting on index term in index section (#897)
 * don't insert page break between part and first chapter if `heading-part-break-after` key in theme is `avoid` (#1795)
+
+=== Details
+
+{url-repo}/releases/tag/v2.1.0[git tag] | {url-repo}/compare/v2.0.8\...v2.1.0[full diff]
 
 == 2.0.8 (2022-06-08) - @mojavelinux
 
