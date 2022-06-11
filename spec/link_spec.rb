@@ -130,7 +130,7 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       (expect pdf.lines).to eql ['Asciidoctor [https://asciidoctor.org] is a text processor.']
     end
 
-    it 'should not reveal URL of link when show-link-uri is unset in document even media is print or prepress' do
+    it 'should not reveal URL of link when show-link-uri is unset in document even when media is print or prepress' do
       %w(print prepress).each do |media|
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => media }, analyze: true
         :!show-link-uri:
