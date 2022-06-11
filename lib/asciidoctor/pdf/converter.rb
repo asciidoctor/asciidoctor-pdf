@@ -1787,7 +1787,6 @@ module Asciidoctor
                 file_request_root = { base: (::File.dirname image_path), root: @jail_dir }
               end
               svg_obj = ::Prawn::SVG::Interface.new svg_data, self,
-                position: alignment,
                 width: width,
                 fallback_font_name: fallback_svg_font_name,
                 enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
@@ -1804,7 +1803,6 @@ module Asciidoctor
               if (rendered_h = svg_size.output_height) > (available_h = cursor - caption_h)
                 unless pinned || at_page_top?
                   advance_page
-                  (svg_obj.options[:at] = svg_obj.position)[0] += bounds.left if ColumnBox === bounds
                   available_h = cursor - caption_h
                 end
                 rendered_w = (svg_obj.resize height: (rendered_h = available_h)).output_width if rendered_h > available_h
@@ -1815,7 +1813,16 @@ module Asciidoctor
               update_colors if graphic_state.color_space.empty?
               ink_caption node, category: :image, end: :top, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_end == :top && node.title?
               image_y = y
-              image_cursor = cursor
+              # NOTE: prawn-svg does not compute :at for alignment correctly in column box, so resort to our own logic
+              case alignment
+              when :center
+                left = bounds.left + (available_w - rendered_w) * 0.5
+              when :right
+                left = bounds.left + available_w - rendered_w
+              else
+                left = bounds.left
+              end
+              svg_obj.options[:at] = [left, (image_cursor = cursor)]
               svg_obj.draw # NOTE: cursor advances automatically
               svg_obj.document.warnings.each do |img_warning|
                 log :warn, %(problem encountered in image: #{image_path}; #{img_warning})
