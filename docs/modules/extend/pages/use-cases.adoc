@@ -1,5 +1,5 @@
 = Extended Converter Use Cases
-:navtitle: Customization Use Cases
+:navtitle: Use Cases
 
 This page presents common use cases that can be accomplished by extending and customizing the converter.
 In xref:create-converter.adoc[], we were just biting around the edges of what you can do with an extended converter.
@@ -241,6 +241,33 @@ extends: default
 image:
   indent: [0.5in, 0]
 ----
+
+== Language label on code block
+
+The built-in HTML converter inserts a source language label in the upper right corner of the code block, which appears on hover.
+You can use an extended converter to imprint a fixed label in the PDF output.
+
+To add this label, you'll need to override the `arrange_block` method of the converter.
+This method arranges content blocks that have a border and/or background or support unbreakable, such as code blocks.
+The override needs to filter the arguments for a node that has the `source` style and `language` attribute.
+If the method detects that combination, it must decorate the callback passed via the `&block` argument to inject the extra logic.
+Otherwise, the method should delegate directly to `super`.
+
+When a code block is detected, the decorator should first call the block argument using `instance_exec`.
+Then, it should look to see if the extent is set and that this is not a dry run.
+The extent provides information about where the background and border of the code block started.
+The extended converter should move to that page and cursor, reapply the code block padding, and ink the label using the code font settings.
+
+.Extended converter that imprints a source langauge label on code blocks
+[,ruby]
+----
+include::example$pdf-converter-source-language-label.rb[]
+----
+
+The way this extended converter is written, the label is inked on top of the inked code block.
+You are free to customize where the label is placed.
+The float method allows you to move the cursor around in absolute space without impacting the flow of the content.
+The extent gives you the information about the boundaries of the code block.
 
 == Wrap code blocks around an image float
 
