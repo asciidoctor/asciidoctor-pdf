@@ -295,30 +295,9 @@ image:
   float-gap: [12, 6]
 ----
 
-== Multiple columns
-
-Starting with Asciidoctor PDF 2.1, this converter provides built-in support for multiple columns.
-This feature is available when the doctype is article or manpage, but not book.
-The columns get applied to the body of the document, which excludes the document title and TOC, if present.
-
-The Asciidoctor PDF converter also provides the framework for making multi-column layouts in an extended converter.
-This framework is accessible via the helper method `column_box`.
-To make a muti-column layout, you put statements that ink content inside a code block and pass it to the `column_box` method as follows:
-
-[,ruby]
-----
-column_box [bounds.left, cursor], columns: 2, width: bounds.width, reflow_margins: true do
-  ink_prose 'left column'
-  bounds.move_past_bottom
-  ink_prose 'right column'
-end
-----
-
-If you want a multi-column layout for a specific chapter or section, you can override the `traverse` method, look for the section you want to arrange, and wrap the call to `super` in a `column_box` enclosure.
-
 == Theme table using custom role
 
-Currently, the converter only supports custom roles on paragraphs and phrases.
+The converter only supports custom roles on paragraphs and phrases.
 You can use an extended converter to add support for a custom role on other blocks, such as tables.
 
 .Extended converter that supports a role on a table
@@ -342,6 +321,52 @@ role:
 ----
 
 You can apply this role to a table by adding `.thick` to the first positional attribute in the block attribute line above the table.
+
+== Theme admonition per type
+
+Similarly to the custom table role, we can use an extended converter to add support for theme keys per admonition type.
+
+.Extended converter that supports theme keys per admonition type
+[,ruby]
+----
+include::example$pdf-converter-admonition-theme-per-type.rb[]
+----
+
+This converter temporarily promotes keys under the `admonition-<type>` theme category to the `admonition` theme category, overriding any existing keys.
+The placeholder `<type>` represents the admonition type; caution, important, note, tip, or warning.
+
+Here's an example that shows how you'd use the theme to apply a border to the important admonition type when using this extended converter:
+
+[,yml]
+----
+admonition:
+  important:
+    border-color: #BF0000
+    border-width: 1
+    column-rule-width: 0
+    padding: 12
+----
+
+== Multiple columns
+
+Starting with Asciidoctor PDF 2.1, this converter provides built-in support for multiple columns.
+This feature is available when the doctype is article or manpage, but not book.
+The columns get applied to the body of the document, which excludes the document title and TOC, if present.
+
+The Asciidoctor PDF converter also provides the framework for making multi-column layouts in an extended converter.
+This framework is accessible via the helper method `column_box`.
+To make a muti-column layout, you put statements that ink content inside a code block and pass it to the `column_box` method as follows:
+
+[,ruby]
+----
+column_box [bounds.left, cursor], columns: 2, width: bounds.width, reflow_margins: true do
+  ink_prose 'left column'
+  bounds.move_past_bottom
+  ink_prose 'right column'
+end
+----
+
+If you want a multi-column layout for a specific chapter or section, you can override the `traverse` method, look for the section you want to arrange, and wrap the call to `super` in a `column_box` enclosure.
 
 == Access page number from inline macro
 
