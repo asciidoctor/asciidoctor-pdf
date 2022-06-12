@@ -632,6 +632,54 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-scale-to-fit-page.pdf'
     end
 
+    it 'should place SVG in correct column when page colums are enabled' do
+      pdf_theme = {
+        page_columns: 2,
+        page_column_gap: 12,
+        thematic_break_border_color: '0000FF',
+        thematic_break_border_width: 1,
+      }
+      input = <<~'EOS'
+      left column
+
+      <<<
+
+      ---
+
+      image::tall.svg[pdfwidth=50%]
+      EOS
+
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      thematic_break_line = lines.find {|it| it[:color] == '0000FF' && it[:width] == 1 }
+      column_left = thematic_break_line[:from][:x]
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      gs_p1 = (pdf.extract_graphic_states pdf.pages[0][:raw_content])
+      (expect gs_p1).to have_size 2
+      (expect gs_p1[1]).to include %(#{column_left} 181.89 200.0 600.0 re)
+    end
+
+    it 'should center SVG in right column when page colums are enabled', visual: true do
+      pdf_theme = {
+        page_columns: 2,
+        page_column_gap: 12,
+        thematic_break_border_color: '0000FF',
+        thematic_break_border_width: 1,
+      }
+      input = <<~'EOS'
+      left column
+
+      <<<
+
+      ---
+
+      image::tall.svg[pdfwidth=50%,align=center]
+      EOS
+
+      to_file = to_pdf_file input, 'image-svg-in-column-align-center.pdf', pdf_theme: pdf_theme
+
+      (expect to_file).to visually_match 'image-svg-in-column-align-center.pdf'
+    end
+
     it 'should not advance SVG at top of column box to fit if column box starts below top of page' do
       backend = nil
       create_class (Asciidoctor::Converter.for 'pdf') do
