@@ -596,6 +596,35 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-svg-icon.pdf'
     end
 
+    it 'should position SVG icon specified by icon attribute in correct column when icons attribute is set' do
+      pdf_theme = {
+        page_columns: 2,
+        page_column_gap: 12,
+        admonition_padding: 0,
+        admonition_column_rule_width: 0,
+        admonition_label_min_width: 24,
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      :icons: svg
+      :iconsdir:
+
+      left column
+
+      <<<
+
+      right column
+
+      [icon=square]
+      TIP: Use the icon attribute to customize the image for an admonition block.
+      EOS
+
+      expected_icon_x = (pdf.find_unique_text 'right column')[:x]
+      expected_content_x = expected_icon_x + 24
+      gs = pdf.extract_graphic_states pdf.pages[0][:raw_content]
+      (expect gs[0]).to include %(#{expected_icon_x} 574.33 200.0 200.0 re)
+      (expect (pdf.find_unique_text %r/Use /)[:x]).to eql expected_content_x
+    end
+
     it 'should warn if SVG icon specified by icon attribute is missing' do
       (expect do
         pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }
