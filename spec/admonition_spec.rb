@@ -606,7 +606,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       :icons: svg
-      :iconsdir:
+      :iconsdir: {imagesdir}
 
       left column
 
