@@ -1108,7 +1108,10 @@ module Asciidoctor
             srclang = node.attr 'language', 'text'
             begin
               ::CodeRay::Scanners[(srclang = (srclang.start_with? 'html+') ? (srclang.slice 5, srclang.length).to_sym : srclang.to_sym)]
-            rescue ::ArgumentError
+            rescue
+              until ::LoadError === (cause ||= $!) || ::ArgumentError === cause
+                raise $! unless (cause = cause.cause)
+              end
               srclang = :text
             end
             fragments = (::CodeRay.scan source_string, srclang).to_prawn

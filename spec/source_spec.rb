@@ -1000,6 +1000,23 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect hello_text[:font_name]).to eql 'mplus1mn-regular'
     end
 
+    it 'should fallback to text language if language is not recognized' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        :source-highlighter: coderay
+
+        [,scala]
+        ----
+        val l = List(1,2,3,4)
+        l.foreach {i => println(i)}
+        ----
+        EOS
+
+        expected_color = '333333'
+        (expect pdf.text.map {|it| it[:font_color] }.uniq).to eql [expected_color]
+      end).not_to raise_exception
+    end
+
     it 'should not crash if token text is nil' do
       (expect do
         pdf = to_pdf <<~'EOS', analyze: true
