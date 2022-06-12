@@ -10,7 +10,7 @@ gem 'asciidoctor-diagram', ENV['ASCIIDOCTOR_DIAGRAM_VERSION'], require: false if
 gem 'asciidoctor-kroki', ENV['ASCIIDOCTOR_KROKI_VERSION'], require: false if ENV.key? 'ASCIIDOCTOR_KROKI_VERSION'
 gem 'coderay', '~> 1.1.0', require: false
 gem 'open-uri-cached', '~> 1.0.0', require: false
-gem 'prawn-gmagick', ENV['PRAWN_GMAGICK_VERSION'], require: false if ENV.key? 'PRAWN_GMAGICK_VERSION'
+gem 'prawn-gmagick', ENV['PRAWN_GMAGICK_VERSION'], require: false if (ENV.key? 'PRAWN_GMAGICK_VERSION') && RUBY_ENGINE == 'ruby'
 gem 'pygments.rb', ENV['PYGMENTS_VERSION'], require: false if ENV.key? 'PYGMENTS_VERSION'
 gem 'rghost', ENV['RGHOST_VERSION'], require: false if ENV.key? 'RGHOST_VERSION'
 # Asciidoctor PDF supports Rouge >= 2 (verified in CI build using 2.0.0)
