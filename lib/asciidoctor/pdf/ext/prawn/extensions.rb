@@ -972,11 +972,11 @@ module Asciidoctor
         state.on_page_create_callback = saved_callback
       end
 
-      # This method is a smarter version of start_new_page. It calls start_new_page
-      # if the current page is the last page of the document. Otherwise, it simply
-      # advances to the next existing page.
+      # This method is a smarter version of start_new_page. It only calls start_new_page options are
+      # specified and the current page is the last page in the document. Otherwise, it advances the
+      # cursor to the next page (or column) using Bounds#move_past_bottom.
       def advance_page options = {}
-        !options.empty? && last_page? ? (start_new_page options) : bounds.move_past_bottom
+        options.empty? || !last_page? ? bounds.move_past_bottom : (start_new_page options)
       end
 
       # Start a new page without triggering the on_page_create callback
@@ -1136,15 +1136,15 @@ module Asciidoctor
       # Note that if the block has content that itself requires a dry run, that nested dry run will
       # be performed in a separate scratch document.
       #
-      # opts - A Hash of options that configure the dry run computation:
-      #        :keep_together - A Boolean indicating whether an attempt should be made to keep the
-      #        content on the same page (optional, default: false).
-      #        :single_page - A Boolean indicating whether the operation should stop if the content
-      #        exceeds the height of a single page.
-      #        :onto - The document onto which to position the scratch extent. If this option is
-      #        set, the method returns an Extent instead of a ScratchExtent (optional, default: nil)
-      #        :pages_advanced - The number of pages the content has been advanced during this
-      #        operation (internal only) (optional, default: 0)
+      # options - A Hash of options that configure the dry run computation:
+      #           :keep_together - A Boolean indicating whether an attempt should be made to keep
+      #           the content on the same page (optional, default: false).
+      #           :single_page - A Boolean indicating whether the operation should stop if the
+      #           content exceeds the height of a single page.
+      #           :onto - The document onto which to position the scratch extent. If this option is
+      #           set, the method returns an Extent instance (optional, default: false)
+      #           :pages_advanced - The number of pages the content has been advanced during this
+      #           operation (internal only) (optional, default: 0)
       #
       # Returns an Extent or ScratchExtent object that describes the bounds of the content block.
       def dry_run keep_together: nil, pages_advanced: 0, single_page: nil, onto: nil, &block
