@@ -8,7 +8,6 @@ class PDFConverterTableRole < (Asciidoctor::Converter.for 'pdf')
         save_theme do
           role_entries.each do |name, val|
             theme[%(table_#{name.to_s.delete_prefix key_prefix})] = val
-            theme.delete_field name
           end
           super
         end

@@ -295,18 +295,18 @@ image:
   float-gap: [12, 6]
 ----
 
-== Theme table using custom role
+== Theme table using roles
 
 The converter only supports custom roles on paragraphs and phrases.
-You can use an extended converter to add support for a custom role on other blocks, such as tables.
+You can use an extended converter to add this capability to tables.
 
-.Extended converter that supports a role on a table
+.Extended converter that supports a custom role on a table
 [,ruby]
 ----
 include::example$pdf-converter-table-role.rb[]
 ----
 
-This converter allows you to specify any theme key that is supported by tables for a table with the specified role.
+This extended converter allows you to specify any theme key on the custom role that's supported for tables.
 The role must be defined under a special role name `<table>` (to avoid clashing with other role names).
 Here's an example of a custom table role named `thick` that increases the width of the table border and grid lines.
 
@@ -320,7 +320,12 @@ role:
       grid-width: 2
 ----
 
-You can apply this role to a table by adding `.thick` to the first positional attribute in the block attribute line above the table.
+You apply this role to a table by prepending `.thick` to the first positional attribute in the block attribute line above the table.
+
+As written, the extended converter only supports the first role on the table.
+It could be enhanced to support an arbitrary number of roles, with each successive role cascading (like CSS).
+
+TIP: You can use the technique shown in this extended converter to add role-based theming to any other block type recognized by the theme (e.g., code, sidebar, etc).
 
 == Theme admonition per type
 
