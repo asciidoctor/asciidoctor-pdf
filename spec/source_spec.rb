@@ -1851,4 +1851,65 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect none_text[:font_color]).to eql 'AA6600'
     end
   end
+
+  context 'Label' do
+    it 'should add label to code block if language is specified' do
+      source_file = doc_file 'modules/extend/examples/pdf-converter-source-language-label.rb'
+      source_lines = (File.readlines source_file).select {|l| l == ?\n || (l.start_with? ' ') }
+      ext_class = create_class Asciidoctor::Converter.for 'pdf'
+      backend = %(pdf#{ext_class.object_id})
+      source_lines[0] = %(  register_for '#{backend}'\n)
+      ext_class.class_eval source_lines.join, source_file
+      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      :source-highlighter: rouge
+
+      [,ruby]
+      ----
+      lines = (File.readlines ARGV[0]).each_with_object [] do |ln, acc|
+        acc << ln unless (ln = ln.rstrip).empty? || (ln.start_with? '#')
+      end
+      puts lines * ?\n
+      ----
+      EOS
+
+      midpoint = pdf.pages[0][:size][0] * 0.5
+      reference_text = (pdf.find_text 'lines')[0]
+      label_text = pdf.find_unique_text 'RUBY'
+      (expect label_text).not_to be_nil
+      (expect label_text[:y]).to eql reference_text[:y]
+      (expect label_text[:x]).to be > midpoint
+      (expect label_text[:font_size]).to eql reference_text[:font_size]
+    end
+
+    it 'should add label to code block in second column if language is specified' do
+      source_file = doc_file 'modules/extend/examples/pdf-converter-source-language-label.rb'
+      source_lines = (File.readlines source_file).select {|l| l == ?\n || (l.start_with? ' ') }
+      ext_class = create_class Asciidoctor::Converter.for 'pdf'
+      backend = %(pdf#{ext_class.object_id})
+      source_lines[0] = %(  register_for '#{backend}'\n)
+      ext_class.class_eval source_lines.join, source_file
+      pdf_theme = { page_columns: 2, page_column_gap: 12 }
+      pdf = to_pdf <<~'EOS', backend: backend, pdf_theme: pdf_theme, analyze: true
+      :source-highlighter: rouge
+
+      image::tall-spacer.png[pdfwidth=5]
+
+      [%unbreakable,ruby]
+      ----
+      require 'asciidoctor-pdf'
+
+      Asciidoctor.convert_file 'README.adoc',
+        backend: 'pdf', safe: :safe
+      ----
+      EOS
+
+      midpoint = pdf.pages[0][:size][0] * 0.5
+      reference_text = (pdf.find_text 'require')[0]
+      label_text = pdf.find_unique_text 'RUBY'
+      (expect label_text).not_to be_nil
+      (expect label_text[:y]).to eql reference_text[:y]
+      (expect label_text[:x]).to be > midpoint
+      (expect label_text[:font_size]).to eql reference_text[:font_size]
+    end
+  end
 end

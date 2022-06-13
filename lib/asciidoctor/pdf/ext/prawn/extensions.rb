@@ -34,13 +34,14 @@ module Asciidoctor
       # - :final_gap determines whether a gap is added below the last line
       LineMetrics = ::Struct.new :height, :leading, :padding_top, :padding_bottom, :final_gap
 
-      Position = ::Struct.new :page, :cursor
+      Position = ::Struct.new :page, :column, :cursor
 
       Extent = ::Struct.new :current, :from, :to do
-        def initialize current_page, current_cursor, start_page, start_cursor, end_page, end_cursor
-          self.from = self.current = Position.new current_page, current_cursor
-          self.from = Position.new start_page, start_cursor unless start_page == current_page && start_cursor == current_cursor
-          self.to = Position.new end_page, end_cursor
+        def initialize current_page, current_column, current_cursor, from_page, from_column, from_cursor, to_page, to_cursor
+          self.current = Position.new current_page, current_column, current_cursor
+          self.from = Position.new from_page, from_column, from_cursor
+          self.from = current if from == current
+          self.to = Position.new to_page, nil, to_cursor
         end
 
         def each_page
@@ -64,23 +65,23 @@ module Asciidoctor
 
       ScratchExtent = ::Struct.new :from, :to do
         def initialize start_page, start_cursor, end_page, end_cursor
-          self.from = Position.new start_page, start_cursor
-          self.to = Position.new end_page, end_cursor
+          self.from = Position.new start_page, 0, start_cursor
+          self.to = Position.new end_page, 0, end_cursor
         end
 
         def position_onto pdf, keep_together = nil
           current_page = pdf.page_number
+          current_column = ColumnBox === pdf.bounds ? (column_box = pdf.bounds).current_column : 0
           current_cursor = pdf.cursor
-          from_page = current_page + (advance_by = from.page - 1)
-          to_page = current_page + (to.page - 1)
-          if advance_by > 0
+          if (advance_by = from.page - 1) > 0
             advance_by.times { pdf.advance_page }
           elsif keep_together && single_page? && !(try_to_fit_on_previous current_cursor)
             pdf.advance_page
-            from_page += 1
-            to_page += 1
           end
-          Extent.new current_page, current_cursor, from_page, from.cursor, to_page, to.cursor
+          from_page = pdf.page_number
+          from_column = column_box&.current_column || 0
+          to_page = from_page + (to.page - from.page)
+          Extent.new current_page, current_column, current_cursor, from_page, from_column, from.cursor, to_page, to.cursor
         end
 
         def single_page?

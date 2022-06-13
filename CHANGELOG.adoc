@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
+Improvements::
+
+* store zero-based column on Extent for extensions to use to position cursor at start of extent
+
 Bug Fixes::
 
 * place block image in SVG format in correct column when align is left and page columns are enabled (#2241)
