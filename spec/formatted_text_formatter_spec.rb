@@ -1029,8 +1029,10 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         role_box_border_color: '333333',
         role_box_border_width: 0.5,
       }
-      rects = (to_pdf '[.box]#text in a box# needs more work', pdf_theme: pdf_theme, analyze: :rect).rectangles
+      rects = (to_pdf '[.box]#text in a box# needs more work', pdf_theme: pdf_theme, analyze: :rect).rects
       (expect rects).to have_size 1
+      (expect rects[0][:stroke_color]).to eql '333333'
+      (expect rects[0][:stroke_width]).to eql 0.5
     end
 
     it 'should allow theme to set only border for custom role', visual: true do
