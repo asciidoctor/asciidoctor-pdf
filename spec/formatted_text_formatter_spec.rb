@@ -1035,6 +1035,16 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect rects[0][:stroke_width]).to eql 0.5
     end
 
+    it 'should use base border color for inline role if border width is set and border color is not set' do
+      pdf_theme = {
+        base_border_color: '0000FF',
+        role_box_border_width: 0.5,
+      }
+      rects = (to_pdf '[.box]#text in a box# needs more work', pdf_theme: pdf_theme, analyze: :rect, debug: true).rects
+      (expect rects).to have_size 1
+      (expect rects[0][:stroke_color]).to eql '0000FF'
+    end
+
     it 'should allow theme to set only border for custom role', visual: true do
       pdf_theme = {
         role_cmd_font_family: 'Courier',
@@ -1048,12 +1058,14 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
 
     it 'should not crash if role defines background color and border width, but not border color' do
       pdf_theme = {
+        base_border_color: nil,
         role_shade_background_color: 'CCCCCC',
         role_shade_border_width: 1,
       }
       input = '1 [.shade]#cup# of beans'
-      rects = (to_pdf input, pdf_theme: pdf_theme, analyze: :rect).rectangles
+      rects = (to_pdf input, pdf_theme: pdf_theme, analyze: :rect, debug: true).rectangles
       (expect rects).to have_size 1
+      (expect rects[0][:fill_color]).to eql 'CCCCCC'
     end
 
     it 'should support role that sets font color in section title and toc' do

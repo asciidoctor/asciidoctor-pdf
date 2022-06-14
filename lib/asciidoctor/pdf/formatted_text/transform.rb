@@ -102,6 +102,9 @@ module Asciidoctor
                 role, key = (key.slice 5, key.length).split '_', 2
                 if (prop = ThemeKeyToFragmentProperty[key])
                   (accum[role] ||= {})[prop] = val
+                  if key == 'border_width' && val && !(theme[%(role_#{role}_border_color)])
+                    accum[role][:border_color] = theme.base_border_color
+                  end
                 #elsif key == 'font_kerning'
                 #  unless (resolved_val = val == 'none' ? false : (val == 'normal' ? true : nil)).nil?
                 #    (accum[role] ||= {})[:kerning] = resolved_val
