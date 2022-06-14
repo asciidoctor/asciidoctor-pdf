@@ -265,9 +265,9 @@ include::example$pdf-converter-source-language-label.rb[]
 ----
 
 The way this extended converter is written, the label is inked on top of the inked code block.
-You are free to customize where the label is placed.
+You're free to customize where the label is placed.
 The float method allows you to move the cursor around in absolute space without impacting the flow of the content.
-The extent gives you the information about the boundaries of the code block.
+The extent gives you the information about the location of the code block.
 
 == Wrap code blocks around an image float
 
