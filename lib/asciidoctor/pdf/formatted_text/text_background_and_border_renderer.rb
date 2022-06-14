@@ -25,11 +25,11 @@ module Asciidoctor::PDF::FormattedText
         width = fragment.width
         height = fragment.height
       end
-      border_radius = data[:border_radius]
+      border_radius = data[:border_radius] || 0
       if (background_color = data[:background_color])
         prev_fill_color = pdf.fill_color
         pdf.fill_color background_color
-        if border_radius
+        if border_radius > 0
           pdf.fill_rounded_rectangle at, width, height, border_radius
         else
           pdf.fill_rectangle at, width, height
@@ -41,7 +41,7 @@ module Asciidoctor::PDF::FormattedText
         prev_line_width = pdf.line_width
         pdf.stroke_color border_color
         pdf.line_width border_width
-        border_radius ? (pdf.stroke_rounded_rectangle at, width, height, border_radius) : (pdf.stroke_rectangle at, width, height)
+        border_radius > 0 ? (pdf.stroke_rounded_rectangle at, width, height, border_radius) : (pdf.stroke_rectangle at, width, height)
         pdf.stroke_color prev_stroke_color
         pdf.line_width prev_line_width
       end

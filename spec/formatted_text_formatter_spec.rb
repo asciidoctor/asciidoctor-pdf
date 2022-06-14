@@ -1023,6 +1023,16 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-inline-role-bg.pdf'
     end
 
+    it 'should draw standard rectangle around text if border radius of custom role is 0' do
+      pdf_theme = {
+        role_box_border_radius: 0,
+        role_box_border_color: '333333',
+        role_box_border_width: 0.5,
+      }
+      rects = (to_pdf '[.box]#text in a box# needs more work', pdf_theme: pdf_theme, analyze: :rect).rectangles
+      (expect rects).to have_size 1
+    end
+
     it 'should allow theme to set only border for custom role', visual: true do
       pdf_theme = {
         role_cmd_font_family: 'Courier',
