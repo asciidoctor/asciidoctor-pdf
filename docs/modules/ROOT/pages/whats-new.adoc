@@ -5,9 +5,25 @@
 :leveloffset: 1
 :page-toclevels: 2
 :url-milestone-2-1-0: {url-project-issues}?q=is%3Aissue+milestone%3Av2.1.0+is%3Aclosed
+:url-milestone-2-1-1: {url-project-issues}?q=is%3Aissue+milestone%3Av2.1.1+is%3Aclosed
 
 This page presents the changes made in each of the patch releases in the Asciidoctor PDF {page-component-version} release line.
 The releases are ordered from newest to oldest.
+
+= Asciidoctor PDF {page-component-version}.1
+
+_**Release date:** 2022.06.14 | *Release notes:* {url-project-repo}/releases/tag/v2.1.1[v{page-component-version}.1^] | *Issue label:* {url-milestone-2-1-1}[{page-component-version}.1^]_
+
+== Improvements
+
+* Store zero-based column on `Extent` for extensions to use to position cursor at start of extent.
+
+== Bug fixes
+
+* Place block image in SVG format in correct column when `align` is `left` and page columns are enabled.
+* Accurately trap LoadError from CodeRay if source language is not recognized on code block.
+* Only draw rounded rectangle around phrase if `border-radius` is > 0.
+* Use `base-border-color` value if border width is set on role for inline phrase but not border color.
 
 = Asciidoctor PDF {page-component-version}.0
 

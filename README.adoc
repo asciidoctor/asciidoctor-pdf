@@ -46,7 +46,7 @@ The aim of this library is to take the pain out of creating PDF documents from A
 
 [NOTE]
 ====
-The documentation for the latest, stable release of Asciidoctor PDF 2.0.x is available at {url-project-docs}/.
+The documentation for the latest, stable release of Asciidoctor PDF is available at {url-project-docs}/.
 
 If you're looking for the documentation for Asciidoctor PDF 1.6, refer to the {url-project-repo}/tree/v1.6.x#readme[README] in the v1.6.x branch.
 Asciidoctor PDF 1.6 is no longer being developed and will reach EOL later this year.
