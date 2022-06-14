@@ -1040,7 +1040,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         base_border_color: '0000FF',
         role_box_border_width: 0.5,
       }
-      rects = (to_pdf '[.box]#text in a box# needs more work', pdf_theme: pdf_theme, analyze: :rect, debug: true).rects
+      rects = (to_pdf '[.box]#text in a box# needs more work', pdf_theme: pdf_theme, analyze: :rect).rects
       (expect rects).to have_size 1
       (expect rects[0][:stroke_color]).to eql '0000FF'
     end
@@ -1063,7 +1063,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         role_shade_border_width: 1,
       }
       input = '1 [.shade]#cup# of beans'
-      rects = (to_pdf input, pdf_theme: pdf_theme, analyze: :rect, debug: true).rectangles
+      rects = (to_pdf input, pdf_theme: pdf_theme, analyze: :rect).rects
       (expect rects).to have_size 1
       (expect rects[0][:fill_color]).to eql 'CCCCCC'
     end
