@@ -199,7 +199,7 @@ module Asciidoctor
         indent_section do
           toc_num_levels = (doc.attr 'toclevels', 2).to_i
           if (insert_toc = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && doc.sections?)
-            start_toc_page doc, toc_placement if title_page_on
+            start_new_page if @ppbook && verso_page?
             add_dest_for_block doc, id: 'toc', y: (at_page_top? ? page_height : nil)
             @toc_extent = allocate_toc doc, toc_num_levels, cursor, title_page_on
           else
