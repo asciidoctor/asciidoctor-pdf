@@ -96,7 +96,7 @@ module Asciidoctor
               }.compact,
             }
             @theme_settings.tap do |accum|
-              revise_roles = [].to_set
+              roles_with_styles = [].to_set
               theme.each_pair do |key, val|
                 next unless (key = key.to_s).start_with? 'role_'
                 role, key = (key.slice 5, key.length).split '_', 2
@@ -110,10 +110,10 @@ module Asciidoctor
                 #    (accum[role] ||= {})[:kerning] = resolved_val
                 #  end
                 elsif key == 'font_style' || key == 'text_decoration'
-                  revise_roles << role
+                  roles_with_styles << role
                 end
               end
-              revise_roles.each do |role|
+              roles_with_styles.each do |role|
                 (accum[role] ||= {})[:styles] = to_styles theme[%(role_#{role}_font_style)], theme[%(role_#{role}_text_decoration)]
               end
             end
