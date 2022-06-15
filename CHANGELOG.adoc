@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Bug Fixes::
 
 * use correct logic to insert page before TOC with automatic placement when doctype=book and media=prepress
+* use `get_entries_for_toc` to determine if the TOC is non-empty rather than `Document#sections?`
 
 == 2.1.1 (2022-06-15) - @mojavelinux
 

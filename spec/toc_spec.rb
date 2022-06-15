@@ -371,6 +371,32 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect (p1_text[:y] - p2_text[:y]).round 2).to eql ((p2_text[:y] - p3_text[:y]).round 2)
     end
 
+    it 'should not insert toc at default location if converter overrides get_entries_for_toc and value is empty' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def get_entries_for_toc _node
+          []
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      = Document Title
+      :toc:
+
+      == Beginning
+
+      content
+
+      == End
+
+      content
+      EOS
+
+      (expect (pdf.find_unique_text 'Table of Contents')).to be_nil
+      (expect (pdf.find_text 'Beginning')).to have_size 1
+    end
+
     it 'should not insert toc at location of toc macro if document has no sections' do
       pdf = to_pdf <<~'EOS', analyze: true
       :toc: macro
@@ -389,6 +415,34 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       p2_text = pdf.find_unique_text 'No sections here either.'
       p3_text = pdf.find_unique_text 'Fin.'
       (expect (p1_text[:y] - p2_text[:y]).round 2).to eql ((p2_text[:y] - p3_text[:y]).round 2)
+    end
+
+    it 'should not insert toc at location of toc macro if converter overrides get_entries_for_toc and value is empty' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def get_entries_for_toc _node
+          []
+        end
+      end
+
+      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      = Document Title
+      :toc: macro
+
+      == Beginning
+
+      content
+
+      toc::[]
+
+      == End
+
+      content
+      EOS
+
+      (expect (pdf.find_unique_text 'Table of Contents')).to be_nil
+      (expect (pdf.find_text 'Beginning')).to have_size 1
     end
 
     it 'should only insert macro toc at location of first toc macro' do
