@@ -465,7 +465,7 @@ footer:
 [#background-color]
 == background-color
 
-To make the background color and border span the width of the page, set the margin to `0` and adjust the `content-margin` accordingly.
+To make the background color, background image, and border span the width of the page, set the margin to `0` and adjust the `content-margin` accordingly (typically `[0, inherit]`, which is the default).
 
 [#columns]
 == columns
