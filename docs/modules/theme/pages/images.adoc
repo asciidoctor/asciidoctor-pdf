@@ -56,6 +56,19 @@ title-page:
   background-image: image:{docdir}/images/title-cover.png[]
 ----
 
+=== Per page layout
+
+When defining the background image for running content, you can configure the image to be selected per page layout by including the `+{page-layout}+` attribute reference in the image path.
+
+[,yaml]
+----
+footer:
+  background-image: image:footer-bg-{page-layout}.png[]
+----
+
+The image is resolved once per page layout that's encountered in the document.
+Using this technique requires that the page layout value be included in the path of the image (e.g., footer-bg-landscape.png).
+
 [#attributes]
 === Fit, width, and position
 
