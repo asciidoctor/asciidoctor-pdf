@@ -2802,13 +2802,7 @@ module Asciidoctor
         value = (value.split LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
         value = value.gsub '\{', '{' if escaped_attr_ref
         doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
-        if imagesdir
-          if imagesdir_to_restore
-            doc.set_attr 'imagesdir', imagesdir_to_restore
-          else
-            doc.remove_attr 'imagesdir'
-          end
-        end
+        imagesdir_to_restore ? (doc.set_attr 'imagesdir', imagesdir_to_restore) : (doc.remove_attr 'imagesdir') if imagesdir
         value
       end
 
