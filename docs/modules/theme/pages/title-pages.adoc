@@ -32,7 +32,7 @@ title-page:
   background-color: #EAEAEA
 ----
 
-To disable the background color for the title page, set the value to white (`#FFFFFF`).
+To turn off the background color for the title page, set the value to white (`#FFFFFF`).
 The color keyword `transparent` isn't recognized in this context.
 
 [,yaml]

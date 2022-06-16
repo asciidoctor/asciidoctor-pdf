@@ -114,7 +114,7 @@ page:
 [#background-color]
 === Disable background-color
 
-To disable the background color for the page, set the value of `background-color` to white (i.e., `#FFFFFF`).
+To turn off the background color for the page, set the value of the `background-color` key to white (i.e., `#FFFFFF`).
 The color keyword `transparent` is not recognized in this context.
 
 [#margins]

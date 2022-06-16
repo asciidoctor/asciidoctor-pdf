@@ -47,7 +47,7 @@ The `toc` value is only recognized if the title page is implicitly or explicitly
 [[page]]Integer:: The running content starts on the page that matches the number assigned to `start-at` (i.e., 1 is the first body page, 2 is the second body page).
 When an integer is assigned to `start-at`, the title page doesn't need to be enabled.
 
-TIP: To disable the running content on TOC pages inserted by the toc macro, set the `noheader` or `nofooter` options on the macro (e.g., `toc::[opts=nofooter]`).
+TIP: To turn off the running content on TOC pages inserted by the toc macro, set the `noheader` or `nofooter` options on the macro (e.g., `toc::[opts=nofooter]`).
 
 [#page-number]
 == Modify page number position
@@ -196,8 +196,9 @@ You should not rely on the `width` attribute to set the image width when convert
 
 [#disable]
 == Disable the header or footer
+
 If you extend either the base or default theme, and don't specify content for the footer, the current page number will be added to the right side on recto pages and the left side on verso pages.
-To disable this behavior, you can use the following snippet:
+To turn off the default content, use the following snippet:
 
 [,yaml]
 ----
