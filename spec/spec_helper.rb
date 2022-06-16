@@ -295,11 +295,16 @@ class RectInspector < PDF::Inspector
     @next_rectangle = nil
     @rectangles = []
     @fill_color = @stroke_color = @line_width = nil
+    @page_number = 0
+  end
+
+  def page= page
+    @page_number = page.number
   end
 
   # re
   def append_rectangle x, y, width, height
-    @next_rectangle = { point: [x, y], width: width, height: height }
+    @next_rectangle = { point: [x, y], width: width, height: height, page_number: @page_number }
   end
 
   # f

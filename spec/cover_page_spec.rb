@@ -402,7 +402,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     pdf = to_pdf input, analyze: :rect
     rects = pdf.rectangles
     (expect rects).to have_size 1
-    (expect rects[0]).to eql point: [0.0, 0.0], width: 612.0, height: 792.0, fill_color: '0000FF'
+    (expect rects[0]).to eql point: [0.0, 0.0], width: 612.0, height: 792.0, fill_color: '0000FF', page_number: 1
 
     pdf = to_pdf input, analyze: true
     (expect pdf.pages).to have_size 2
