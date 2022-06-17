@@ -974,6 +974,37 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect image[:page_number]).to be 2
         (expect image[:y]).to eql 742.0
       end
+
+      it 'should split block across pages that starts at top of rotated page' do
+        pdf_theme.update \
+          code_border_width: [1, 0],
+          code_border_color: '0000FF',
+          code_border_radius: 0,
+          code_background_color: 'transparent'
+        block_content = ['block content with very long lines that do not wrap because the page layout is rotated to landscape'] * 20 * %(\n\n)
+        input = <<~EOS
+        first page
+
+        [page-layout=landscape]
+        <<<
+
+        ....
+        #{block_content}
+        ....
+        EOS
+
+        block_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.select {|it| it[:color] == '0000FF' }
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+        (expect pdf.pages).to have_size 3
+        block_text = pdf.find_text %r/very long lines/
+        (expect block_lines[0][:from][:y]).to eql (pdf.pages[1][:size][1] - 50).to_f
+        (expect block_lines[0][:page_number]).to eql 2
+        (expect block_lines[0][:from][:y]).to be > block_text[0][:y]
+        (expect (block_lines[0][:from][:y] - (block_text[0][:y] + block_text[0][:font_size]))).to be < 12
+        (expect block_lines[-1][:page_number]).to eql 3
+        (expect block_lines[-1][:from][:y]).to be < block_text[-1][:y]
+        (expect block_text[-1][:y] - block_lines[-1][:from][:y]).to be < 14
+      end
     end
 
     describe 'below top' do
@@ -1363,6 +1394,78 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         block_title = pdf.find_unique_text %r/^Example 1\. /
         (expect block_title[:page_number]).to be 1
         (expect (pdf.find_unique_text 'content')[:page_number]).to be 2
+      end
+
+      it 'should split block across pages that starts partway down rotated page' do
+        pdf_theme.update \
+          code_border_width: [1, 0],
+          code_border_color: '0000FF',
+          code_border_radius: 0,
+          code_background_color: 'transparent'
+        before_block_content = ['before block'] * 15 * %(\n\n)
+        block_content = ['block content with very long lines that do not wrap because the page layout is rotated to landscape'] * 15 * %(\n\n)
+        input = <<~EOS
+        first page
+
+        [page-layout=landscape]
+        <<<
+
+        #{before_block_content}
+
+        ....
+        #{block_content}
+        ....
+        EOS
+
+        block_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.select {|it| it[:color] == '0000FF' }
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+        (expect pdf.pages).to have_size 3
+        block_text = pdf.find_text %r/very long lines/
+        (expect block_lines[0][:page_number]).to eql 2
+        (expect block_lines[0][:from][:y]).to be > block_text[0][:y]
+        (expect (block_lines[0][:from][:y] - (block_text[0][:y] + block_text[0][:font_size]))).to be < 12
+        (expect block_lines[-1][:page_number]).to eql 3
+        (expect block_lines[-1][:from][:y]).to be < block_text[-1][:y]
+        (expect block_text[-1][:y] - block_lines[-1][:from][:y]).to be < 14
+      end
+
+      it 'should restore page layout in scratch document after it has been toggled in main document' do
+        pdf_theme.update \
+          code_border_width: [1, 0],
+          code_border_color: '0000FF',
+          code_border_radius: 0,
+          code_background_color: 'transparent'
+        before_block_content = ['before block'] * 15 * %(\n\n)
+        block_content = ['block content with very long lines that wrap because the page layout is not rotated to landscape'] * 15 * %(\n\n)
+        input = <<~EOS
+        first page
+
+        [page-layout=landscape]
+        <<<
+
+        rotated page
+
+        [page-layout=portrait]
+        <<<
+
+        #{before_block_content}
+
+        ....
+        #{block_content}
+        ....
+        EOS
+
+        block_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.select {|it| it[:color] == '0000FF' }
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+        (expect pdf.pages).to have_size 4
+        block_text = pdf.find_text %r/very long lines/
+        (expect block_lines[0][:page_number]).to eql 3
+        (expect block_lines[0][:from][:y]).to be > block_text[0][:y]
+        (expect (block_lines[0][:from][:y] - (block_text[0][:y] + block_text[0][:font_size]))).to be < 12
+        block_text = pdf.find_text %r/landscape/
+        (expect block_lines[-1][:page_number]).to eql 4
+        (expect block_lines[-1][:from][:y]).to be < block_text[-1][:y]
+        (expect block_text[-1][:y] - block_lines[-1][:from][:y]).to be < 14
       end
     end
   end
