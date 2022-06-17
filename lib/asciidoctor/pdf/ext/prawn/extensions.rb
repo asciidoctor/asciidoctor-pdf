@@ -1149,7 +1149,7 @@ module Asciidoctor
       #
       # Returns an Extent or ScratchExtent object that describes the bounds of the content block.
       def dry_run keep_together: nil, pages_advanced: 0, single_page: nil, onto: nil, &block
-        (scratch_pdf = scratch).start_new_page
+        (scratch_pdf = scratch).start_new_page layout: page.layout
         saved_bounds = scratch_pdf.bounds
         scratch_pdf.bounds = bounds.dup.tap do |bounds_copy|
           bounds_copy.instance_variable_set :@document, scratch_pdf
