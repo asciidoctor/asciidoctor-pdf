@@ -581,6 +581,7 @@ module Asciidoctor
       end
 
       def prepare_theme theme
+        theme.base_border_color = nil if theme.base_border_color == 'transparent'
         theme.base_font_color ||= '000000'
         theme.base_font_size ||= 12
         theme.base_font_style = theme.base_font_style&.to_sym || :normal
@@ -943,7 +944,7 @@ module Asciidoctor
             if extent
               label_height = extent.single_page_height || cursor
               if (rule_width = @theme.admonition_column_rule_width || 0) > 0 &&
-                  (rule_color = @theme.admonition_column_rule_color || @theme.base_border_color)
+                  (rule_color = resolve_theme_color :admonition_column_rule_color, @theme.base_border_color, nil)
                 rule_style = @theme.admonition_column_rule_style&.to_sym || :solid
                 float do
                   extent.each_page do |first_page, last_page|
@@ -1273,7 +1274,7 @@ module Asciidoctor
         category = node.context == :quote ? :quote : :verse
         # NOTE: b_width and b_left_width are mutually exclusive
         if (b_left_width = @theme[%(#{category}_border_left_width)]) && b_left_width > 0
-          b_color = @theme[%(#{category}_border_color)] || @theme.base_border_color
+          b_left_width = nil unless (b_color = resolve_theme_color %(#{category}_border_color), @theme.base_border_color, nil)
         else
           b_left_width = nil
           b_width = nil if (b_width = @theme[%(#{category}_border_width)]) == 0
@@ -2341,9 +2342,11 @@ module Asciidoctor
 
       def convert_thematic_break node
         pad_box @theme.thematic_break_padding || [@theme.thematic_break_margin_top, 0] do
-          stroke_horizontal_rule @theme.thematic_break_border_color,
-            line_width: @theme.thematic_break_border_width,
-            line_style: (@theme.thematic_break_border_style&.to_sym || :solid)
+          if (b_color = resolve_theme_color :thematic_break_border_color)
+            stroke_horizontal_rule b_color,
+              line_width: @theme.thematic_break_border_width,
+              line_style: (@theme.thematic_break_border_style&.to_sym || :solid)
+          end
         end
         conceal_page_top { theme_margin :block, :bottom, (next_enclosed_block node) }
       end
@@ -5031,10 +5034,8 @@ module Asciidoctor
       # QUESTION: should we pass a category as an argument?
       # QUESTION: should we make this a method on the theme ostruct? (e.g., @theme.resolve_color key, fallback)
       def resolve_theme_color key, fallback_color = nil, transparent_color = fallback_color
-        if (color = @theme[key])
+        if (color = @theme[key] || fallback_color)
           color == 'transparent' ? transparent_color : color
-        else
-          fallback_color
         end
       end
 

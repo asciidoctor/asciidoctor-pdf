@@ -1106,6 +1106,26 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end
     end
 
+    it 'should not draw column rule if value is transparent' do
+      pdf_theme = { admonition_column_rule_color: 'transparent' }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      TIP: You can use the theme to customize the color and width of the column rule.
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to be_empty
+    end
+
+    it 'should not draw column rule if value is nil and base border color is transparent' do
+      pdf_theme = { base_border_color: 'transparent', admonition_column_rule_color: nil }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      TIP: You can use the theme to customize the color and width of the column rule.
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to be_empty
+    end
+
     it 'should not assign default width to column rule if key is not specified' do
       pdf_theme = {
         admonition_column_rule_color: '222222',

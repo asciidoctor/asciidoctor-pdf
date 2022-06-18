@@ -90,6 +90,34 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     (expect pdf.lines).to be_empty
   end
 
+  it 'should not draw left border if color is transparent' do
+    lines = (to_pdf <<~'EOS', pdf_theme: { verse_border_color: 'transparent' }, analyze: :line).lines
+    [verse]
+    ____
+    here
+    we
+    go
+    ____
+    EOS
+
+    (expect lines).to be_empty
+  end
+
+  it 'should not draw left border if color is nil and base border color is nil' do
+    lines = (to_pdf <<~'EOS', pdf_theme: { base_border_color: nil, verse_border_color: nil }, analyze: :line).lines
+    before
+
+    [verse]
+    ____
+    here
+    we
+    go
+    ____
+    EOS
+
+    (expect lines).to be_empty
+  end
+
   it 'should be able to modify styles using verse category in theme' do
     pdf_theme = {
       verse_font_size: 10.5,

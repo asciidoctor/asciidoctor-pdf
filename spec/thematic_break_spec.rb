@@ -193,4 +193,56 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
 
     (expect to_file).to visually_match 'thematic-break-line-style-double.pdf'
   end
+
+  it 'should use base border color if border color for thematic break is nil' do
+    pdf_theme = {
+      base_border_color: '0000FF',
+      thematic_break_border_color: nil,
+    }
+
+    lines = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line).lines
+    before
+
+    ---
+
+    after
+    EOS
+
+    (expect lines).to have_size 1
+    (expect lines[0][:color]).to eql '0000FF'
+  end
+
+  it 'should set border color to black if border color for thematic break and base border color are nil' do
+    pdf_theme = {
+      base_border_color: nil,
+      thematic_break_border_color: nil,
+    }
+
+    lines = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line).lines
+    before
+
+    ---
+
+    after
+    EOS
+
+    (expect lines).to have_size 1
+    (expect lines[0][:color]).to eql '000000'
+  end
+
+  it 'should not draw thematic break if border color is transparent' do
+    pdf_theme = {
+      thematic_break_border_color: 'transparent',
+    }
+
+    lines = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line).lines
+    before
+
+    ---
+
+    after
+    EOS
+
+    (expect lines).to be_empty
+  end
 end

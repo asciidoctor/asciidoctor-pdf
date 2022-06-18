@@ -121,6 +121,28 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     (expect pdf.lines).to be_empty
   end
 
+  it 'should not draw left border if color is transparent' do
+    lines = (to_pdf <<~'EOS', pdf_theme: { quote_border_color: 'transparent' }, analyze: :line).lines
+    ____
+    Let it be.
+    ____
+    EOS
+
+    (expect lines).to be_empty
+  end
+
+  it 'should not draw left border if color is nil and base border color is nil' do
+    lines = (to_pdf <<~'EOS', pdf_theme: { base_border_color: nil, quote_border_color: nil }, analyze: :line).lines
+    before
+
+    ____
+    Let it be.
+    ____
+    EOS
+
+    (expect lines).to be_empty
+  end
+
   it 'should not draw left border on next page if block falls at bottom of page' do
     pdf = with_content_spacer 10, 689.5 do |spacer_path|
       to_pdf <<~EOS, analyze: :line
