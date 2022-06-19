@@ -4820,7 +4820,7 @@ module Asciidoctor
       end
 
       # NOTE: init_page is called within a float context; this will suppress prawn-svg messing with the cursor
-      # NOTE: init_page is not called for imported pages, front and back cover pages, and other image pages
+      # NOTE: init_page is not called for imported pages, cover pages, image pages, and pages in the scratch document
       def init_page *_args
         next_page_side = page_side nil, @folio_placement[:inverted]
         if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_number == 1 ? :cover : next_page_side]) != page_margin
