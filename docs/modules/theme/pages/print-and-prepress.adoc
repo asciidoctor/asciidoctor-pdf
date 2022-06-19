@@ -44,10 +44,10 @@ recto page margin:: [0.5in, *0.59in*, 0.67in, *0.75in*]
 verso page margin:: [0.5in, *0.75in*, 0.67in, *0.59in*]
 
 The page margins alternate between recto and verso.
-The first page in the document (after the cover) is a recto page.
+The first page in the document (after the front cover) is a recto page.
 
-If no cover is specified, the recto margin is not applied to the title page.
-To apply the recto margin to the title page, but not include a cover, assign the value `~` to the `front-cover-image` and `back-cover-image` attributes.
+The recto margin is applied to the title page if a front cover is specified.
+To apply the recto margin to the title page without specifying a front cover, assign the value `~` to the `front-cover-image`.
 
 === Automatic facing pages
 
