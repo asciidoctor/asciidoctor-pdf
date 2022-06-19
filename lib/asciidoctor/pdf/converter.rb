@@ -371,8 +371,6 @@ module Asciidoctor
           if (page_margin_inner = theme.page_margin_inner)
             page_margin_recto[3] = page_margin_verso[1] = page_margin_inner
           end
-          # NOTE: prepare scratch document to use page margin from recto side (which has same width as verso side)
-          set_page_margin page_margin_recto unless page_margin_recto == page_margin
         else
           @ppbook = nil
         end
@@ -5115,6 +5113,10 @@ module Asciidoctor
       end
 
       def init_scratch originator
+        if @media == 'prepress' && page_margin != (page_margin_recto = @page_margin_by_side[:recto])
+          # NOTE: prepare scratch document to use page margin from recto side (which has same width as verso side)
+          set_page_margin page_margin_recto
+        end
         @scratch_prototype = originator.instance_variable_get :@scratch_prototype
         @tmp_files = originator.instance_variable_get :@tmp_files
         text_formatter.scratch = true
