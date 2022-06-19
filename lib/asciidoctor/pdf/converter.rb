@@ -4825,11 +4825,10 @@ module Asciidoctor
           set_page_margin next_page_margin
         end
         unless @page_bg_color == 'FFFFFF'
-          tare = true
           fill_absolute_bounds @page_bg_color
+          tare = true
         end
         if (bg_image_path, bg_image_opts = @page_bg_image[next_page_side])
-          tare = true
           begin
             if bg_image_opts[:format] == 'pdf'
               # NOTE: pages that use PDF for the background do not support a background color or running content
@@ -4838,6 +4837,7 @@ module Asciidoctor
             else
               canvas { image bg_image_path, ({ position: :center, vposition: :center }.merge bg_image_opts) }
             end
+            tare = true
           rescue
             facing_page_side = (PageSides - [next_page_side])[0]
             @page_bg_image[facing_page_side] = nil if @page_bg_image[facing_page_side] == @page_bg_image[next_page_side]
