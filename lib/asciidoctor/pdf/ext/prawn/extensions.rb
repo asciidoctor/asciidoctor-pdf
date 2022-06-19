@@ -1112,7 +1112,8 @@ module Asciidoctor
       # This method performs all work in a scratch document (or documents). It begins by starting a
       # new page in the scratch document, first creating the scratch document if necessary. It then
       # applies all the settings from the main document to the scratch document that impact
-      # rendering. This includes the bounds, the cursor position, and the font settings.
+      # rendering. This includes the bounds, the cursor position, and the font settings. This method
+      # assumes that the content area remains constant when content flows from one page to the next.
       #
       # From this point, the number of attempts the method makes is determined by the value of the
       # keep_together keyword parameter. If the value is true (or the parent document is inhibiting
