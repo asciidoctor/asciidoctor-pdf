@@ -121,10 +121,14 @@ The color keyword `transparent` is not recognized in this context.
 === Inner and outer margins
 
 The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the `margin-inner` and `margin-outer` values.
-These margins and used when the value `prepress` is assigned to the `media` document attribute.
-If no cover is specified, the recto margin is not applied to the title page.
-To apply the recto margin to the title page, but not include a cover, assign the value `~` to the `front-cover-image` and `back-cover-image` attributes.
+These margins are only used when the value `prepress` is assigned to the `media` document attribute.
+
+The recto margin is applied to the title page if a front cover is specified.
+To apply the recto margin to the title page without specifying a front cover, assign the value `~` to the `front-cover-image`.
 See xref:cover.adoc[] for information about the `cover` category keys.
+
+TIP: Setting `front-cover-image` to `~` makes the converter acts as though a front cover is present without reserving a page for it.
+It essentially informs the converter that the front cover will be inserted by a separate process.
 
 [#columns]
 === Columns

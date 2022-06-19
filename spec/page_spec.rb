@@ -364,7 +364,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       = Book Title
       :media: prepress
       :doctype: book
-      // NOTE: setting front-cover-image to ~ informs converter cover page will be added later
+      // NOTE: setting front-cover-image to ~ informs converter cover page will be inserted by separate process
       :front-cover-image: ~
 
       == First Chapter
@@ -437,7 +437,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-prepress-normal-margins.pdf'
     end
 
-    it 'should not apply recto margins to title page of prepress document by default if first page', visual: true do
+    it 'should not apply recto margins to title page of prepress document if no cover is specifed', visual: true do
       pdf_theme = {
         page_margin_inner: 72,
         page_margin_outer: 54,
