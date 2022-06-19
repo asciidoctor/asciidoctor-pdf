@@ -1,12 +1,12 @@
 name: pdf-converter
 title: Asciidoctor PDF
-version: '2.1'
-prerelease: false
+version: '2.2'
+prerelease: '.0-alpha.0'
 asciidoc:
   attributes:
     xrefstyle: short@
     table-caption: false
-    release-line: '2.1.x'
+    release-line: '2.2.x'
     url-gem: https://rubygems.org/gems/asciidoctor-pdf
     url-project-repo: https://github.com/asciidoctor/asciidoctor-pdf
     url-repo-root: https://github.com/asciidoctor/asciidoctor-pdf/tree/main
