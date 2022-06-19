@@ -1,10 +1,10 @@
 = Autowidth Tables
 
 Asciidoctor PDF supports autowidth tables.
-However, the behavior differs from HTML when the content forces the table to the page boundary.
-The behavior, which is handled by the prawn-table library, is explained in this section.
+However, the behavior differs from HTML when the content forces the width of the table to the page boundary.
+The behavior in this scenario, handled by the prawn-table library, is explained in this section.
 
-If the natural width of all columns (based on the width of the cell content) is less than the width of the page, it behaves as you'd expect.
+If the natural width of all columns (based on the width of the cell content) is less than the width of the page, the converter behaves as you'd expect.
 Each column is assigned the width it needs to prevent the content from wrapping.
 
 However, when the natural width of all columns exceeds the width of the page, the behavior may not be what you expect.
@@ -19,5 +19,11 @@ To protect against truncation or insufficient width errors, prawn-table wraps te
 That's why the last character in the cell can end up getting wrapped.
 (There's a small amount of tolerance built in to prawn-table to address some edge cases, but it's not sufficient to handle all of them).
 
-For the reason just explained, you should be extremely careful with relying on autowidth tables in Asciidoctor PDF, especially when the natural content of the cells forces the table to page boundary.
+The wrap by character also comes into play when a column has a fixed width.
+If the width of a single word exceeds the width of the column, prawn-table has no choice but to break the word.
+If there's no break opportunity in the word, it will do so at the last possible opportunity.
+Again, that's why the last letter in the word can end up getting wrapped.
+You can avoid this arbitrary break either by enabling hyphens on the document or by introducing either a shy (\&#173;) or nbsp (\{nbsp}) somewhere in the word (e.g., `+sub&#173;processor+`)
+
+For the reasons just explained, you should be extremely careful with relying on autowidth tables and fixed width columns in Asciidoctor PDF, especially when the natural content of the cells forces the table to the page boundary.
 Let experience be your guide.
