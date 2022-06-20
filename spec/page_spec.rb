@@ -359,6 +359,89 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 36.0, 793.926]
     end
 
+    it 'should allow margins of rotated page to be configured independently using theme' do
+      pdf_theme = {
+        page_margin: [18, 36, 36, 36],
+        page_margin_rotated: [18, 18, 36, 18],
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      first page
+
+      [page-layout=landscape]
+      <<<
+
+      rotated page
+
+      [page-layout=portrait]
+      <<<
+
+      last page
+      EOS
+
+      (expect pdf.pages).to have_size 3
+      first_page_text = pdf.find_unique_text 'first page'
+      (expect first_page_text[:x]).to eql 36.0
+      rotated_page_text = pdf.find_unique_text 'rotated page'
+      (expect rotated_page_text[:x]).to eql 18.0
+      last_page_text = pdf.find_unique_text 'last page'
+      (expect last_page_text[:x]).to eql 36.0
+    end
+
+    it 'should allow margins of rotated page to be configured independently using AsciiDoc attribute' do
+      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      :pdf-page-layout: landscape
+      :pdf-page-margin: [18, 18, 36, 18]
+      // NOTE: verify margin is expanded
+      :pdf-page-margin-rotated: [36, 36]
+
+      first page
+
+      [page-layout=portrait]
+      <<<
+
+      rotated page
+
+      [page-layout=landscape]
+      <<<
+
+      last page
+      EOS
+
+      (expect pdf.pages).to have_size 3
+      first_page_text = pdf.find_unique_text 'first page'
+      (expect first_page_text[:x]).to eql 18.0
+      rotated_page_text = pdf.find_unique_text 'rotated page'
+      (expect rotated_page_text[:x]).to eql 36.0
+      last_page_text = pdf.find_unique_text 'last page'
+      (expect last_page_text[:x]).to eql 18.0
+    end
+
+    it 'should use same margin for all pages if rotated page margin is not specified' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :pdf-page-margin: [18, 36, 36, 36]
+
+      first page
+
+      [page-layout=landscape]
+      <<<
+
+      rotated page
+
+      [page-layout=portrait]
+      <<<
+
+      last page
+      EOS
+
+      (expect pdf.pages).to have_size 3
+      first_page_text = pdf.find_unique_text 'first page'
+      (expect first_page_text[:x]).to eql 36.0
+      rotated_page_text = pdf.find_unique_text 'rotated page'
+      (expect rotated_page_text[:x]).to eql 36.0
+      last_page_text = pdf.find_unique_text 'last page'
+      (expect last_page_text[:x]).to eql 36.0
+    end
+
     it 'should use recto/verso margins when media=prepress', visual: true do
       to_file = to_pdf_file <<~'EOS', 'page-prepress-margins.pdf', enable_footer: true
       = Book Title

@@ -1005,6 +1005,42 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect block_lines[-1][:from][:y]).to be < block_text[-1][:y]
         (expect block_text[-1][:y] - block_lines[-1][:from][:y]).to be < 14
       end
+
+      it 'should split block across pages that starts at top of rotated page with different margin' do
+        pdf_theme.update \
+          code_border_width: [1, 0],
+          code_border_color: '0000FF',
+          code_border_radius: 0,
+          code_background_color: 'transparent',
+          page_margin_rotated: 10
+        block_content = ['block content with very long lines that do not wrap because the page layout is rotated to landscape'] * 20 * %(\n\n)
+        input = <<~EOS
+        first page
+
+        [page-layout=landscape]
+        <<<
+
+        ....
+        #{block_content}
+        ....
+        EOS
+
+        block_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.select {|it| it[:color] == '0000FF' }
+        top_line = block_lines[0]
+        bottom_line = block_lines[-1]
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+        (expect pdf.pages).to have_size 3
+        block_text = pdf.find_text %r/very long lines/
+        (expect top_line[:page_number]).to eql 2
+        (expect top_line[:from][:x]).to eql 10.0
+        (expect top_line[:to][:x]).to eql (pdf.pages[1][:size][0] - 10).to_f
+        (expect top_line[:from][:y]).to eql (pdf.pages[1][:size][1] - 10).to_f
+        (expect top_line[:from][:y]).to be > block_text[0][:y]
+        (expect (top_line[:from][:y] - (block_text[0][:y] + block_text[0][:font_size]))).to be < 12
+        (expect bottom_line[:page_number]).to eql 3
+        (expect bottom_line[:from][:y]).to be < block_text[-1][:y]
+        (expect block_text[-1][:y] - bottom_line[:from][:y]).to be < 14
+      end
     end
 
     describe 'below top' do
