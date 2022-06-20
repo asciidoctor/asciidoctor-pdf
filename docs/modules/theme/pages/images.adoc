@@ -58,7 +58,7 @@ title-page:
 
 === Per page layout
 
-When defining the background image for running content, you can configure the image to be selected per page layout by including the `+{page-layout}+` attribute reference in the image path.
+You can configure any background image to be selected per page layout by including the `+{page-layout}+` attribute reference in the image path.
 
 [,yaml]
 ----

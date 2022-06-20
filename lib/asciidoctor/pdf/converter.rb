@@ -165,7 +165,7 @@ module Asciidoctor
         doc.attributes['outline-title'] = '' unless (doc.attribute_locked? 'outline-title') || ((doc.instance_variable_get :@attributes_modified).include? 'outline-title')
         doc.attributes['pagenums'] = '' unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
 
-        on_page_create(&(method :init_page))
+        on_page_create(&(method :init_page).curry[doc])
 
         marked_page_number = page_number
         # NOTE: a new page will already be started (page_number = 2) if the front cover image is a PDF
@@ -374,17 +374,7 @@ module Asciidoctor
         else
           @ppbook = nil
         end
-        if (bg_image = resolve_background_image doc, theme, 'page-background-image')&.first
-          @page_bg_image = { verso: bg_image, recto: bg_image }
-        else
-          @page_bg_image = { verso: nil, recto: nil }
-        end
-        if (bg_image = resolve_background_image doc, theme, 'page-background-image-verso')
-          @page_bg_image[:verso] = bg_image[0] && bg_image
-        end
-        if (bg_image = resolve_background_image doc, theme, 'page-background-image-recto')
-          @page_bg_image[:recto] = bg_image[0] && bg_image
-        end
+        @page_bg_image = {}
         @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
         # QUESTION: should ThemeLoader handle registering fonts instead?
         register_fonts theme.font_catalog, ((doc.attr 'pdf-fontsdir')&.sub '{docdir}', (doc.attr 'docdir')) || 'GEM_FONTS_DIR'
@@ -2796,6 +2786,10 @@ module Asciidoctor
           imagesdir_to_restore = doc.attr 'imagesdir'
           doc.set_attr 'imagesdir', imagesdir
         end
+        if (page_layout = opts[:page_layout])
+          page_layout_to_restore = doc.attr 'page-layout'
+          doc.set_attr 'page-layout', page.layout.to_s
+        end
         # FIXME: get sub_attributes to handle drop-line w/o a warning
         doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
         value = value.gsub '\{', '\\\\\\{' if (escaped_attr_ref = value.include? '\{')
@@ -2803,6 +2797,7 @@ module Asciidoctor
         value = (value.split LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
         value = value.gsub '\{', '{' if escaped_attr_ref
         doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
+        page_layout_to_restore ? (doc.set_attr 'page-layout', page_layout_to_restore) : (doc.remove_attr 'page-layout') if page_layout
         imagesdir_to_restore ? (doc.set_attr 'imagesdir', imagesdir_to_restore) : (doc.remove_attr 'imagesdir') if imagesdir
         value
       end
@@ -4062,10 +4057,11 @@ module Asciidoctor
             image_path = $1
             image_relative_to = true
           end
-
           if from_theme
             image_relative_to = @themesdir
-            image_path = apply_subs_discretely doc, image_path, subs: [:attributes]
+            image_path = apply_subs_discretely doc, image_path, subs: [:attributes], page_layout: page.layout.to_s
+          elsif image_path.include? '{page-layout}'
+            image_path = image_path.sub '{page-layout}', page.layout.to_s
           end
           image_path, image_format = ::Asciidoctor::Image.target_and_format image_path, image_attrs
           image_path = resolve_image_path doc, image_path, image_format, image_relative_to
@@ -4334,15 +4330,15 @@ module Asciidoctor
         end
         if (bg_image = resolve_background_image doc, @theme, 'title-page-background-image')
           side = page_side (recycle ? nil : page_number + 1), @folio_placement[:inverted]
-          prev_bg_image = @page_bg_image[side]
-          @page_bg_image[side] = bg_image[0] && bg_image
+          prev_bg_image = get_page_bg_image doc, @theme, (layout = page.layout), side
+          @page_bg_image[layout][side] = bg_image[0] && bg_image
         end
         if (bg_color = resolve_theme_color :title_page_background_color)
           prev_bg_color = @page_bg_color
           @page_bg_color = bg_color
         end
-        recycle ? float { init_page self } : start_new_page
-        @page_bg_image[side] = prev_bg_image if bg_image
+        recycle ? float { init_page doc, self } : start_new_page
+        @page_bg_image[layout][side] = prev_bg_image if bg_image
         @page_bg_color = prev_bg_color if bg_color
         true
       end
@@ -4790,6 +4786,23 @@ module Asciidoctor
         (code.start_with? '\u') ? ([((code.slice 2, code.length).to_i 16)].pack 'U1') : code
       end
 
+      def get_page_bg_image doc, theme_, layout, side
+        (@page_bg_image[layout] ||= begin
+          if (bg_image = resolve_background_image doc, theme_, 'page-background-image')&.first
+            val = { verso: bg_image, recto: bg_image }
+          else
+            val = { verso: nil, recto: nil }
+          end
+          if (bg_image = resolve_background_image doc, theme_, 'page-background-image-verso')
+            val[:verso] = bg_image[0] && bg_image
+          end
+          if (bg_image = resolve_background_image doc, theme_, 'page-background-image-recto')
+            val[:recto] = bg_image[0] && bg_image
+          end
+          val
+        end)[side]
+      end
+
       def get_icon_image_path node, type, resolve = true
         doc = node.document
         doc.remove_attr 'data-uri' if (data_uri_enabled = doc.attr? 'data-uri')
@@ -4813,9 +4826,8 @@ module Asciidoctor
         @float_box = { page: page_number, top: box_t, right: box_r, bottom: box_b, left: box_l, width: box_w, height: box_h, gap: gap }
       end
 
-      # NOTE: init_page is called within a float context; this will suppress prawn-svg messing with the cursor
       # NOTE: init_page is not called for imported pages, cover pages, image pages, and pages in the scratch document
-      def init_page *_args
+      def init_page doc, _self
         next_page_side = page_side nil, @folio_placement[:inverted]
         if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_number == 1 ? :cover : next_page_side]) != page_margin
           set_page_margin next_page_margin
@@ -4824,7 +4836,7 @@ module Asciidoctor
           fill_absolute_bounds @page_bg_color
           tare = true
         end
-        if (bg_image_path, bg_image_opts = @page_bg_image[next_page_side])
+        if (bg_image_path, bg_image_opts = get_page_bg_image doc, @theme, (layout = page.layout), next_page_side)
           begin
             if bg_image_opts[:format] == 'pdf'
               # NOTE: pages that use PDF for the background do not support a background color or running content
@@ -4836,7 +4848,7 @@ module Asciidoctor
             tare = true
           rescue
             facing_page_side = PageSides[(PageSides.index next_page_side) - 1]
-            bg_image_by_side = @page_bg_image
+            bg_image_by_side = @page_bg_image[layout]
             bg_image_by_side[facing_page_side] = nil if bg_image_by_side[facing_page_side] == bg_image_by_side[next_page_side]
             bg_image_by_side[next_page_side] = nil
             log :warn, %(could not embed page background image: #{bg_image_path}; #{$!.message})
@@ -5097,14 +5109,11 @@ module Asciidoctor
         @label = :scratch
         @save_state = nil
         @scratch_depth = 0
-        # NOTE: don't need background image in scratch document; can cause marshal error anyway
-        saved_page_bg_image, @page_bg_image = @page_bg_image, { verso: nil, recto: nil }
         # NOTE: pdfmark has a reference to the Asciidoctor::Document, which we don't want to serialize
         saved_pdfmark, @pdfmark = @pdfmark, nil
         # IMPORTANT: don't set font before using marshal as it causes serialization to fail
         result = yield
         @pdfmark = saved_pdfmark
-        @page_bg_image = saved_page_bg_image
         @label = :primary
         result
       end
