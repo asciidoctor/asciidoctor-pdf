@@ -1368,6 +1368,38 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       end
     end
 
+    it 'should allow page background image in theme to be specified per layout using page-layout attribute reference in path' do
+      pdf_theme = { __dir__: fixtures_dir, page_background_image: 'image:square-{page-layout}.svg[fit=fill]' }
+      rects = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :rect).rects
+      portrait page
+
+      [page-layout=landscape]
+      <<<
+
+      landscape page
+      EOS
+      (expect rects).to have_size 2
+      (expect rects[0][:fill_color]).to eql 'FF0000'
+      (expect rects[0][:point][0]).to eql 0.0
+      (expect rects[1][:point][0]).to be > 0
+    end
+
+    it 'should allow page background image in doc to be specified per layout using page-layout attribute reference in path' do
+      rects = (to_pdf <<~'EOS', analyze: :rect).rects
+      :page-background-image: image:square-\{page-layout}.svg[fit=fill]
+      portrait page
+
+      [page-layout=landscape]
+      <<<
+
+      landscape page
+      EOS
+      (expect rects).to have_size 2
+      (expect rects[0][:fill_color]).to eql 'FF0000'
+      (expect rects[0][:point][0]).to eql 0.0
+      (expect rects[1][:point][0]).to be > 0
+    end
+
     it 'should use the specified image format', visual: true do
       source_file = (dest_file = fixture_file 'square') + '.svg'
       FileUtils.cp source_file, dest_file

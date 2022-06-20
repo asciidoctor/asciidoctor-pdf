@@ -132,3 +132,17 @@ If a background image is assigned to the recto pages (right-hand, odd-numbered p
 
 If a background image isn't specified for a side, the converter will use the default page background image (`page-background-image`), if specified.
 To turn off the background image for a side, assign the value `none`.
+
+== Per page layout
+
+You can configure any background image to be selected per page layout by including the _escaped_ `+{page-layout}+` attribute reference in the image path.
+The reference has to be escaped so it's not expanded until the converter resolves the image for a given page layout.
+
+[,asciidoc]
+----
+= Document Title
+:page-background-image: image:bg-\{page-layout}.png[]
+----
+
+The image is resolved the first time a given page layout is used in the document.
+Using this technique requires that the page layout value be included in the filename of the image (e.g., footer-bg-landscape.png).
