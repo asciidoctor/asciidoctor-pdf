@@ -4059,18 +4059,14 @@ module Asciidoctor
             return []
           elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
             image_attrs = (AttributeList.new $2).parse %w(alt width)
-            if from_theme
-              image_path = apply_subs_discretely doc, $1, subs: [:attributes]
-              image_relative_to = @themesdir
-            else
-              image_path = $1
-              image_relative_to = true
-            end
-          elsif from_theme
-            image_path = apply_subs_discretely doc, image_path, subs: [:attributes]
-            image_relative_to = @themesdir
+            image_path = $1
+            image_relative_to = true
           end
 
+          if from_theme
+            image_relative_to = @themesdir
+            image_path = apply_subs_discretely doc, image_path, subs: [:attributes]
+          end
           image_path, image_format = ::Asciidoctor::Image.target_and_format image_path, image_attrs
           image_path = resolve_image_path doc, image_path, image_format, image_relative_to
 
