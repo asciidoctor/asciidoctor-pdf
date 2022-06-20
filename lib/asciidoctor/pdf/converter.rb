@@ -4835,9 +4835,10 @@ module Asciidoctor
             end
             tare = true
           rescue
-            facing_page_side = (PageSides - [next_page_side])[0]
-            @page_bg_image[facing_page_side] = nil if @page_bg_image[facing_page_side] == @page_bg_image[next_page_side]
-            @page_bg_image[next_page_side] = nil
+            facing_page_side = PageSides[(PageSides.index next_page_side) - 1]
+            bg_image_by_side = @page_bg_image
+            bg_image_by_side[facing_page_side] = nil if bg_image_by_side[facing_page_side] == bg_image_by_side[next_page_side]
+            bg_image_by_side[next_page_side] = nil
             log :warn, %(could not embed page background image: #{bg_image_path}; #{$!.message})
           end
         end
