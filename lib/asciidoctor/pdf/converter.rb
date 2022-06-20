@@ -4332,13 +4332,13 @@ module Asciidoctor
         elsif @ppbook && page_number > 0 && recto_page?
           start_new_page
         end
-        side = page_side (recycle ? nil : page_number + 1), @folio_placement[:inverted]
-        prev_bg_image = @page_bg_image[side]
-        prev_bg_color = @page_bg_color
         if (bg_image = resolve_background_image doc, @theme, 'title-page-background-image')
+          side = page_side (recycle ? nil : page_number + 1), @folio_placement[:inverted]
+          prev_bg_image = @page_bg_image[side]
           @page_bg_image[side] = bg_image[0] && bg_image
         end
         if (bg_color = resolve_theme_color :title_page_background_color)
+          prev_bg_color = @page_bg_color
           @page_bg_color = bg_color
         end
         recycle ? float { init_page self } : start_new_page
