@@ -2,10 +2,29 @@
 
 == Front and back covers
 
-You can specify an image or import a PDF page for the front cover and back cover of a document directly in your theme.
+You can specify an image or a PDF page to use as either cover of the document directly in your theme.
 The front cover image is assigned using the `front-image` key, and the back cover image using the `back-image` key.
-Both keys are set on the xref:cover.adoc[cover category] and accept either a bare absolute or relative path or a target wrapped in an inline image macro as a value.
-By default, a target file is resolved relative to the value of the `pdf-themesdir` attribute.
+Both keys are set on the xref:cover.adoc[cover category].
+
+These keys accept the following values:
+
+* a nil value (i.e., `~`)
+* an empty string (i.e., `''`)
+* the string literal `'~'` (front cover only)
+* a bare absolute or relative path
+* an absolute path, relative path, or data URI as the target of an inline image macro
+
+A nil value turns off the cover page for that face.
+An empty string indicates that you want to insert a blank page.
+The string literal `'~'` (not `~`) indicates you want the converter to behave as though a front cover is present, but no page is added.
+This hint is only relevant for the front cover of a prepress book (i.e., doctype=book and media=prepress).
+
+An absolute path is always used as is.
+A relative path is resolved from the value of the `pdf-themesdir` attribute, which defaults to the directory of the theme file.
+
+TIP: See xref:images.adoc#specify[Specify a background image in the theme] for learn how to configure a path that's not relative to the value of `pdf-themesdir`.
+
+Specifying the path as the target of an inline image macro allows you to specify parameters for that image, as shown here:
 
 [,yaml]
 ----
@@ -16,11 +35,7 @@ cover:
     image: image:splash.png[fit=fill]
 ----
 
-When the value is wrapped in an inline image macro, the target can be the absolute path or relative path to an image file or PDF file.
-See xref:images.adoc#specify[Specify a background image in the theme] for configuring a path that's not relative to `pdf-themesdir`.
-The target can also be a data URI.
-A cover image is handled like a xref:images.adoc#background[background image], and the xref:images.adoc#attributes[fit, width, and position attributes] can be specified.
+A cover image is handled like a xref:images.adoc#background[background image], so the xref:images.adoc#attributes[fit, width, and position attributes] can be specified.
 
-If a PDF file is assigned to the image macro, the first page of the file is used unless another page is specified by the `page` attribute.
-The PDF page will be imported as is.
-
+If the path points to a PDF file, the first page of the file is used unless another page is specified by the `page` attribute.
+That PDF page will be imported as is.
