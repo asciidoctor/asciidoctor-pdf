@@ -92,7 +92,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should apply recto margin to title page of prepress book when value of front-cover-image attribute is ~' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { title_page_text_align: 'left' }, analyze: true, debug: true
+    pdf = to_pdf <<~'EOS', pdf_theme: { title_page_text_align: 'left' }, analyze: true
     = Document Title
     :doctype: book
     :media: prepress
@@ -122,7 +122,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
       title_page_text_align: 'left',
       cover_front_image: '~',
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true, debug: true
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
     = Document Title
     :doctype: book
     :media: prepress
