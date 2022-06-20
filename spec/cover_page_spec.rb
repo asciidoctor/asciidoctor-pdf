@@ -91,6 +91,51 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     (expect pdf.lines pdf.find_text page_number: 1).to eql ['Document Title']
   end
 
+  it 'should apply recto margin to title page of prepress book when value of front-cover-image attribute is ~' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { title_page_text_align: 'left' }, analyze: true, debug: true
+    = Document Title
+    :doctype: book
+    :media: prepress
+    :front-cover-image: ~
+
+    first page
+
+    <<<
+
+    second page
+    EOS
+
+    (expect pdf.pages).to have_size 4
+    doctitle_text = pdf.find_unique_text 'Document Title'
+    (expect doctitle_text[:page_number]).to eql 1
+    (expect doctitle_text[:x]).to eql 54.0
+    first_page_text = pdf.find_unique_text 'first page'
+    (expect first_page_text[:page_number]).to eql 3
+    (expect first_page_text[:x]).to eql 54.0
+    second_page_text = pdf.find_unique_text 'second page'
+    (expect second_page_text[:page_number]).to eql 4
+    (expect second_page_text[:x]).to eql 42.48
+  end
+
+  it 'should apply recto margin to title page of prepress book when value of front-cover-image theme key is ~' do
+    pdf_theme = {
+      title_page_text_align: 'left',
+      cover_front_image: '~',
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true, debug: true
+    = Document Title
+    :doctype: book
+    :media: prepress
+
+    content
+    EOS
+
+    (expect pdf.pages).to have_size 3
+    doctitle_text = pdf.find_unique_text 'Document Title'
+    (expect doctitle_text[:page_number]).to eql 1
+    (expect doctitle_text[:x]).to eql 54.0
+  end
+
   it 'should add front cover page if cover_front_image theme key is set' do
     pdf_theme = { cover_front_image: (fixture_file 'cover.jpg') }
     pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
