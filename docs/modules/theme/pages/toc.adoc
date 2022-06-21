@@ -12,6 +12,13 @@ The keys in the `toc` category control the arrangement and style of the table of
 |===
 |Key |Value Type |Example
 
+|break-after
+|`auto` +
+(default: _not set_)
+|[source]
+toc:
+  break-after: auto
+
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)

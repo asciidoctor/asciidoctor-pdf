@@ -1161,6 +1161,27 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[2][:strings]).to include 'Introduction'
     end
 
+    it 'should not force page break after toc when title-page attribute is set and toc-break-after is auto' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { toc_break_after: 'auto' }, analyze: true
+      = Document Title
+      :title-page:
+      :toc:
+
+      == Introduction
+
+      == Main
+
+      == Conclusion
+      EOS
+      (expect pdf.pages).to have_size 2
+      (expect pdf.find_unique_text 'Document Title', page_number: 1).not_to be_nil
+      (expect pdf.find_unique_text 'Table of Contents', page_number: 2).not_to be_nil
+      (expect pdf.find_unique_text 'Introduction', page_number: 2, font_name: 'NotoSerif-Bold').not_to be_nil
+      (expect pdf.find_unique_text 'Conclusion', page_number: 2, font_name: 'NotoSerif-Bold').not_to be_nil
+      (expect (pdf.find_unique_text 'Introduction', page_number: 2, font_name: 'NotoSerif-Bold')[:y]).to be <
+        (pdf.find_unique_text 'Conclusion', page_number: 2, font_name: 'NotoSerif')[:y]
+    end
+
     it 'should insert toc at location of toc macro if toc attribute is macro' do
       lorem = ['lorem ipsum'] * 10 * %(\n\n)
       input = <<~EOS

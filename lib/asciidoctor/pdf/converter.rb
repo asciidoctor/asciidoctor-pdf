@@ -201,7 +201,7 @@ module Asciidoctor
           if (insert_toc = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && !(get_entries_for_toc doc).empty?)
             start_new_page if @ppbook && verso_page?
             add_dest_for_block doc, id: 'toc', y: (at_page_top? ? page_height : nil)
-            @toc_extent = allocate_toc doc, toc_num_levels, cursor, title_page_on
+            @toc_extent = allocate_toc doc, toc_num_levels, cursor, (title_page_on && theme.toc_break_after != 'auto')
           else
             @toc_extent = nil
           end
@@ -3749,12 +3749,12 @@ module Asciidoctor
         end
       end
 
-      def allocate_toc doc, toc_num_levels, toc_start_cursor, title_page_on
+      def allocate_toc doc, toc_num_levels, toc_start_cursor, break_after_toc
         toc_start_page_number = page_number
         to_page = nil
         extent = dry_run onto: self do
           to_page = (ink_toc doc, toc_num_levels, toc_start_page_number, toc_start_cursor).end
-          theme_margin :block, :bottom unless title_page_on
+          theme_margin :block, :bottom unless break_after_toc
         end
         # NOTE: patch for custom converters that allocate extra TOC pages without actually creating them
         if to_page > extent.to.page
@@ -3762,7 +3762,7 @@ module Asciidoctor
           extent.to.cursor = bounds.height
         end
         # NOTE: reserve pages for the toc; leaves cursor on page after last page in toc
-        if title_page_on
+        if break_after_toc
           extent.each_page { start_new_page }
         else
           extent.each_page {|first_page| start_new_page unless first_page }
