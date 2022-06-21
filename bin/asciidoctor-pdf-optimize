@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-optimizer = File.absolute_path '../lib/asciidoctor/pdf/optimizer.rb', __dir__
-if File.exist? optimizer
+if File.file? (optimizer = File.join (File.dirname __dir__), 'lib/asciidoctor/pdf/optimizer.rb')
   require optimizer
 else
   require 'asciidoctor/pdf/optimizer'

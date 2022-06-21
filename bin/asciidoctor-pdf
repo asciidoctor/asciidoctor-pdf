@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-if File.file?(asciidoctor_pdf = (File.expand_path '../../lib/asciidoctor/pdf.rb', __FILE__))
+if File.file? (asciidoctor_pdf = File.join (File.dirname __dir__), 'lib/asciidoctor/pdf.rb')
   require asciidoctor_pdf
 else
   require 'asciidoctor/pdf'
