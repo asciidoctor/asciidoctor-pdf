@@ -98,6 +98,11 @@ If an attribute matches a key in the theme file, the document attribute takes pr
 |Yes
 |`:pdf-page-margin: [1in, 0.5in]`
 
+|`pdf-page-margin-rotated`
+|xref:theme:measurement-units.adoc[Measurement] {vbar} xref:theme:measurement-units.adoc[Measurement[top,right,bottom,left\]]
+|Yes
+|`:pdf-page-margin: [0.5in, 0.25in]`
+
 |`pdf-page-mode`
 |`outline` {vbar} `none` {vbar} `thumbs` {vbar} `fullscreen` {vbar} `fullscreen outline` {vbar} `fullscreen none` {vbar} `fullscreen thumbs` (default: `outline`)
 |Yes

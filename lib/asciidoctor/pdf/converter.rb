@@ -180,7 +180,7 @@ module Asciidoctor
           end
           start_new_page
         else
-          @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress' && page_number == 0
+          @page_margin[:cover] = @page_margin[page.layout][:recto] if @media == 'prepress' && page_number == 0
           start_new_page unless page&.empty? # rubocop:disable Lint/SafeNavigationWithEmpty
           # NOTE: the base font must be set before any content is written to the main or scratch document
           # this method is called inside ink_title_page if the title page is active
@@ -352,7 +352,6 @@ module Asciidoctor
         @cache_uri = doc.attr? 'cache-uri'
         @jail_dir = doc.safe < ::Asciidoctor::SafeMode::SAFE ? nil : doc.base_dir
         @media ||= doc.attr 'media', 'screen'
-        @page_margin_by_side = { recto: (page_margin_recto = page_margin), verso: (page_margin_verso = page_margin), cover: page_margin }
         case doc.attr 'pdf-folio-placement', (@media == 'prepress' ? 'physical' : 'virtual')
         when 'physical'
           @folio_placement = { basis: :physical }
@@ -362,6 +361,13 @@ module Asciidoctor
           @folio_placement = { basis: :virtual, inverted: true }
         else
           @folio_placement = { basis: :virtual }
+        end
+        @page_margin = { cover: page_margin }
+        @page_margin[:portrait] = @page_margin[:landscape] = { recto: (page_margin_recto = page_margin), verso: (page_margin_verso = page_margin) }
+        if (rotated_page_margin = resolve_page_margin (doc.attr 'pdf-page-margin-rotated') || theme.page_margin_rotated)
+          rotated_page_margin = expand_margin_value rotated_page_margin
+          @edge_shorthand_cache = nil
+          @page_margin[PageLayouts[(PageLayouts.index page.layout) - 1]] = { recto: rotated_page_margin, verso: rotated_page_margin.dup }
         end
         if @media == 'prepress'
           @ppbook = doc.doctype == 'book'
@@ -426,34 +432,7 @@ module Asciidoctor
       end
 
       def build_pdf_options doc, theme
-        case (page_margin = (doc.attr 'pdf-page-margin') || theme.page_margin)
-        when ::Array
-          if page_margin.empty?
-            page_margin = nil
-          else
-            page_margin = page_margin.slice 0, 4 if page_margin.length > 4
-            page_margin = page_margin.map {|v| ::Numeric === v ? v : (str_to_pt v.to_s) }
-          end
-        when ::Numeric
-          page_margin = [page_margin]
-        when ::String
-          if page_margin.empty?
-            page_margin = nil
-          elsif (page_margin.start_with? '[') && (page_margin.end_with? ']')
-            if (page_margin = (page_margin.slice 1, page_margin.length - 2).rstrip).empty?
-              page_margin = nil
-            else
-              if (page_margin = page_margin.split ',', -1).length > 4
-                page_margin = page_margin.slice 0, 4
-              end
-              page_margin = page_margin.map {|v| str_to_pt v.rstrip }
-            end
-          else
-            page_margin = [(str_to_pt page_margin)]
-          end
-        else
-          page_margin = nil
-        end
+        page_margin = resolve_page_margin (doc.attr 'pdf-page-margin') || theme.page_margin
 
         if (doc.attr? 'pdf-page-size') && PageSizeRx =~ (doc.attr 'pdf-page-size')
           # e.g, [8.5in, 11in]
@@ -1931,10 +1910,10 @@ module Asciidoctor
         if at_page_top?
           if page_layout && page_layout != page.layout && page.empty?
             delete_current_page
-            advance_page layout: page_layout
+            advance_page layout: page_layout, margin: @page_margin[page_layout][page_side nil, @folio_placement[:inverted]]
           end
         elsif page_layout
-          advance_page layout: page_layout
+          advance_page layout: page_layout, margin: @page_margin[page_layout][page_side nil, @folio_placement[:inverted]]
         else
           advance_page
         end
@@ -3139,7 +3118,7 @@ module Asciidoctor
             open_graphics_state if face == :front
             return
           elsif image_path == '~'
-            @page_margin_by_side[:cover] = @page_margin_by_side[:recto] if @media == 'prepress'
+            @page_margin[:cover] = @page_margin[page.layout][:recto] if @media == 'prepress'
             return
           end
 
@@ -3269,7 +3248,7 @@ module Asciidoctor
 
       def allocate_running_content_layout doc, page, periphery, cache
         cache[layout = page.layout] ||= begin
-          page_margin_recto = @page_margin_by_side[:recto]
+          page_margin_recto = @page_margin[layout][:recto]
           trim_margin_recto = @theme[%(#{periphery}_recto_margin)] || @theme[%(#{periphery}_margin)] || [0, 'inherit', 0, 'inherit']
           trim_margin_recto = (expand_margin_value trim_margin_recto).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_recto[i] : v.to_f }
           trim_content_margin_recto = @theme[%(#{periphery}_recto_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
@@ -3279,7 +3258,7 @@ module Asciidoctor
           else
             trim_padding_recto = trim_content_margin_recto
           end
-          page_margin_verso = @page_margin_by_side[:verso]
+          page_margin_verso = @page_margin[layout][:verso]
           trim_margin_verso = @theme[%(#{periphery}_verso_margin)] || @theme[%(#{periphery}_margin)] || [0, 'inherit', 0, 'inherit']
           trim_margin_verso = (expand_margin_value trim_margin_verso).map.with_index {|v, i| i.odd? && v == 'inherit' ? page_margin_verso[i] : v.to_f }
           trim_content_margin_verso = @theme[%(#{periphery}_verso_content_margin)] || @theme[%(#{periphery}_content_margin)] || [0, 'inherit', 0, 'inherit']
@@ -4276,6 +4255,27 @@ module Asciidoctor
         end
       end
 
+      def resolve_page_margin value
+        return if value.nil_or_empty?
+        case value
+        when ::Array
+          value = value.slice 0, 4 if value.length > 4
+          value.map {|v| ::Numeric === v ? v : (str_to_pt v.to_s) }
+        when ::Numeric
+          [value]
+        when ::String
+          if (value.start_with? '[') && (value.end_with? ']')
+            return if (value = (value.slice 1, value.length - 2).rstrip).empty?
+            if (value = value.split ',', -1).length > 4
+              value = value.slice 0, 4
+            end
+            value.map {|v| str_to_pt v.rstrip }
+          else
+            [(str_to_pt value)]
+          end
+        end
+      end
+
       def resolve_text_align_from_role roles, query_theme: false, remove_predefined: false
         if (align_role = roles.reverse.find {|r| TextAlignmentRoles.include? r })
           roles.replace roles - TextAlignmentRoles if remove_predefined
@@ -4829,7 +4829,7 @@ module Asciidoctor
       # NOTE: init_page is not called for imported pages, cover pages, image pages, and pages in the scratch document
       def init_page doc, _self
         next_page_side = page_side nil, @folio_placement[:inverted]
-        if @media == 'prepress' && (next_page_margin = @page_margin_by_side[page_number == 1 ? :cover : next_page_side]) != page_margin
+        if @media == 'prepress' && (next_page_margin = page_number == 1 ? @page_margin[:cover] : @page_margin[page.layout][next_page_side]) != page_margin
           set_page_margin next_page_margin
         end
         unless @page_bg_color == 'FFFFFF'
@@ -5119,7 +5119,7 @@ module Asciidoctor
       end
 
       def init_scratch originator
-        if @media == 'prepress' && page_margin != (page_margin_recto = @page_margin_by_side[:recto])
+        if @media == 'prepress' && page_margin != (page_margin_recto = @page_margin[page.layout][:recto])
           # NOTE: prepare scratch document to use page margin from recto side (which has same width as verso side)
           set_page_margin page_margin_recto
         end

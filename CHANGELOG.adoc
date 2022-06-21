@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Enhancements::
 
 * allow page background image to be specified per layout using `+{page-layout}+` attribute reference in path (#1739)
+* allow page margin for rotated page to be configured independently using `page-margin-rotated` theme key or `pdf-page-margin-rotated` document attribute (#1719)
 
 Bug Fixes::
 

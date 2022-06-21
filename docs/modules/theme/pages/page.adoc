@@ -82,14 +82,21 @@ page:
 page:
   margin: [0.5in, 0.67in, 1in, 0.67in]
 
-|<<margins,margin-inner>>
+|<<rotated-margin,margin-rotated>>
+|xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
+(default: `$page-margin`)
+|[source]
+page:
+  margin-rotated: [0.5in, 0.5in, 1in, 0.5in]
+
+|<<prepress-margins,margin-inner>>
 |xref:measurement-units.adoc[Measurement] +
 (default: `48`)
 |[source]
 page:
   margin-inner: 0.75in
 
-|<<margins,margin-outer>>
+|<<prepress-margins,margin-outer>>
 |xref:measurement-units.adoc[Measurement] +
 (default: `24`)
 |[source]
@@ -117,7 +124,17 @@ page:
 To turn off the background color for the page, set the value of the `background-color` key to white (i.e., `#FFFFFF`).
 The color keyword `transparent` is not recognized in this context.
 
-[#margins]
+[#rotated-margin]
+=== Rotated margin
+
+The rotated margin is applied to the opposing page layout when a page is rotated.
+If the initial page layout is portrait, then the rotated margin applies to landscape pages, and vice versa.
+The `margin` key applies to the initial page layout.
+
+The rotated margin does not honor <<prepress-margins>>.
+Rather, it's the same margin regardless of whether the page side is recto or verso..
+
+[#prepress-margins]
 === Inner and outer margins
 
 The margins for `recto` (right-hand, odd-numbered) and `verso` (left-hand, even-numbered) pages are calculated automatically from the `margin-inner` and `margin-outer` values.
