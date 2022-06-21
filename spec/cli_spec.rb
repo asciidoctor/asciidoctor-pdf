@@ -37,6 +37,42 @@ describe 'asciidoctor-pdf' do
     end
   end
 
+  context 'Theme' do
+    it 'should use theme specified by pdf-theme attribute', cli: true do
+      out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, '-a', %(pdf-theme=#{fixture_file 'custom-theme.yml'}), (fixture_file 'hello.adoc')
+      (expect res.exitstatus).to be 0
+      (expect out).to be_empty
+      (expect err).to be_empty
+      to_file = Pathname.new output_file 'hello.pdf'
+      (expect to_file).to exist
+      pdf = EnhancedPDFTextInspector.analyze to_file
+      hello_text = pdf.find_unique_text 'hello'
+      (expect hello_text[:font_name]).to eql 'Times-Roman'
+    end
+
+    it 'should use theme specified by --theme option', cli: true do
+      [true, false].each do |adjoin_value|
+        args = ['-D', output_dir]
+        if adjoin_value
+          args << %(--theme=#{fixture_file 'custom-theme.yml'})
+        else
+          args << '--theme'
+          args << (fixture_file 'custom-theme.yml')
+        end
+        args << (fixture_file 'hello.adoc')
+        out, err, res = run_command asciidoctor_pdf_bin, *args
+        (expect res.exitstatus).to be 0
+        (expect out).to be_empty
+        (expect err).to be_empty
+        to_file = Pathname.new output_file 'hello.pdf'
+        (expect to_file).to exist
+        pdf = EnhancedPDFTextInspector.analyze to_file
+        hello_text = pdf.find_unique_text 'hello'
+        (expect hello_text[:font_name]).to eql 'Times-Roman'
+      end
+    end
+  end
+
   context 'Examples' do
     it 'should convert the basic example', cli: true, visual: true do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (example_file 'basic-example.adoc')
