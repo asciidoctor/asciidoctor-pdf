@@ -1523,7 +1523,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should restore rotated margin after imported page' do
-      pdf = to_pdf <<~'EOS', analyze: true, debug: true
+      pdf = to_pdf <<~'EOS', analyze: true
       :pdf-page-margin-rotated: 0
 
       portrait
