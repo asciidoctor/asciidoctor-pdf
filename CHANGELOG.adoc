@@ -11,6 +11,7 @@ Bug Fixes::
 
 * interpret `start-at` theme keys with value `1` correctly (as `1` instead of `2`) (#2255)
 * fix crash when border color is transparent (thematic_break_border_color, admonition_column_rule, quote_border_color, verse_border_color)
+* verify page margin is restored after imported page
 
 == 2.1.2 (2022-06-17) - @mojavelinux
 
