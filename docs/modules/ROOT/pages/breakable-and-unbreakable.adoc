@@ -1,18 +1,18 @@
 = Breakable and Unbreakable Blocks
-:description: By default, most blocks are breakable with anchor and caption orphan prevention. The unbreakable option prevents a block from breaking across pages.
+:description: By default, most blocks are breakable with anchor and title orphan prevention. The unbreakable option prevents a block from breaking across pages.
 
 Asciidoctor PDF gives the author some control over where content blocks are placed using the `unbreakable` and `breakable` options, and tries to provide sensible defaults when these options are not used.
 
-If you want a block to be truly unbreakable, you add the `unbreakable` option.
+If you want a non-section block to be truly unbreakable, you add the `unbreakable` option.
 If you want to prevent the orphaning of the anchor and title of a table or section, then you add the `breakable` option.
-Otherwise, you don't need to specify either of these options.
+Otherwise, you don't need to specify either of these options as the default should suffice.
 This page goes into detail about what functionality these options enable.
 
 [#default]
 == Breakable by default
 
 The following blocks are breakable by default.
-This breakable behavior includes automatic anchor and caption orphan prevention.
+This breakable behavior includes automatic anchor and title (i.e., caption) orphan prevention.
 
 * Admonitions
 * Block images
@@ -23,18 +23,23 @@ This breakable behavior includes automatic anchor and caption orphan prevention.
 * Sidebars
 * Verses
 
-[.term]*Breakable with built-in anchor and caption orphan prevention* means that a block can break across pages, but the converter will automatically push the block to the next page, when necessary, to ensure a block's anchor and caption are kept with the block.
+[.term]*Breakable with built-in anchor and title orphan prevention* means that a block can break across pages, but the converter will automatically push the block to the next page, when necessary, to ensure a block's anchor and title are kept with the block.
 
-Tables and sections are breakable by default, but do not provide automatic anchor and caption orphan prevention.
-For tables, that means the anchor and caption could be left on the current page if the table gets pushed to the next page.
-For sections, that means the section's title may be left on the current page if the first content block doesn't fit.
+Tables and sections are breakable by default, but _do not_ provide automatic anchor and title orphan prevention.
+For tables, that means the anchor and title could be left on the current page if the table gets pushed to the next page.
+For sections, that means the section title may be left on the current page if the first content block doesn't fit below it.
 However, you can turn on orphan prevention for tables and sections by adding the (seemingly redundant) `breakable` option as a hint.
 
 [#breakable]
 == Breakable option
 
 Orphan prevention isn't applied to tables and sections by default.
-The `breakable` option (which is merely intended as an author hint) can be applied to a table to ensure the anchor and caption are kept with the table if it gets advanced to the next page.
+This behavior can be enabled by adding the `breakable` option.
+Since these blocks are already breakable by default, this option is merely a publisher's hint to inform the converter to add orphan prevention.
+
+=== Table
+
+The `breakable` option can be applied to a table to ensure the anchor and title are kept with the table if the table gets advanced to the next page.
 
 [,asciidoc]
 ----
@@ -46,9 +51,11 @@ The `breakable` option (which is merely intended as an author hint) can be appli
 |Content |Content
 |===
 ----
-<.> Assign the `breakable` option to a table, using the shorthand percent symbol (`%`) for the `option` attribute name, to indicate that the table's caption and anchor should be kept with the table.
+<.> Assign the `breakable` option to a table, using the shorthand percent symbol (`%`) for the `option` attribute name, to indicate that the table's title and anchor should be kept with the table.
 
-The `breakable` option (which is merely indented as an author hint) can be applied to a section to ensure the title is kept with the first block of content if the first block gets advanced to the next page.
+=== Section
+
+The `breakable` option can be applied to a section to ensure the section title is kept with the first block of content if the first block gets pushed to the following page.
 
 [,asciidoc]
 ----
@@ -58,12 +65,20 @@ The `breakable` option (which is merely indented as an author hint) can be appli
 First block of content in the section.
 ----
 
-You don't need to assign the `breakable` option any other block types because <<default,it is enabled by default>> and those other blocks already provide automatic anchor and caption orphan prevention.
+What the `breakable` option on a section does is prevent the converter from orphaning the section title and anchor.
+The section title won't be the last text on the page.
+In other words, the option prevents a page break immediately following the section title.
+Instead, the page break will come _before_ the section title.
+It does not attempt to keep the whole section on the same page.
+
+=== Other blocks
+
+You don't need to assign the `breakable` option any other block types because <<default,breakable is enabled by default>> and those other blocks already provide automatic orphan prevention.
 
 .Why do I need to specify breakable if it's the default?
 ****
 One of the challenges of AsciiDoc is that it's a mature language, and that means we have to be careful when introducing functionality not to break existing documents and toolchains.
-Overloading the meaning of the `breakable` option is one such case.
+Repurposing the use of the `breakable` option is one way to ensure that.
 
 Given that all blocks are breakable by default, there's no point in ever specifying the `breakable` option on the block for the purpose of making it breakable.
 And since it's redundant, that provided an opportunity to use it as an author hint to mean something more without having to change the language.
@@ -80,7 +95,7 @@ No other blocks require this.
 [#unbreakable]
 == Unbreakable option
 
-When the `unbreakable` option is applied to a block, the converter will advance the block and its caption and anchor to the next page if it detects that the block is going to break across pages and it can fit on a single page.
+When the `unbreakable` option is applied to a block, the converter will advance the block and its title and anchor to the next page if it detects that the block is going to break across pages and it can fit on a single page.
 
 [,asciidoc]
 ----
@@ -128,7 +143,7 @@ Internally, the open block enclosure is exactly how `unbreakable` is supported o
 .Why can't I assign unbreakable globally? Why don't sections and tables have orphan prevention by default?
 ****
 The logic in the converter that calculates the extent of a block, which includes its title, main content, and padding, uses multiple passes, called "`dry runs`", to get an accurate measurement of where a block begins, ends, and whether it breaks across pages.
-When the converter determines that a block's caption and anchor would be orphaned, or that a block breaks when it's marked as unbreakable, it has to advance to the next page and convert it again in order to redo the extent calculation.
+When the converter determines that a block's title and anchor would be orphaned, or that a block breaks when it's marked as unbreakable, it has to advance to the next page and convert it again in order to redo the extent calculation.
 This logic is vital for decorating the block with a border and background because the extent must be pixel accurate.
 All these dry runs add additional processing time and effort to the conversion.
 
