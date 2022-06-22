@@ -1522,6 +1522,27 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect outline.find {|it| it[:title] == 'After' }[:dest][:label]).to eql '2'
     end
 
+    it 'should restore rotated margin after imported page' do
+      pdf = to_pdf <<~'EOS', analyze: true, debug: true
+      :pdf-page-margin-rotated: 0
+
+      portrait
+
+      [page-layout=landscape]
+      <<<
+
+      landscape
+
+      image::blue-letter.pdf[]
+
+      landscape again
+      EOS
+
+      (expect pdf.pages).to have_size 4
+      (expect (pdf.find_unique_text 'landscape')[:x]).to eql 0.0
+      (expect (pdf.find_unique_text 'landscape again')[:x]).to eql 0.0
+    end
+
     it 'should add destination to top of imported page if ID is specified' do
       pdf = to_pdf <<~'EOS'
       go to <<red>>
