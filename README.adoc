@@ -22,8 +22,6 @@ endif::[]
 // Aliases:
 :project-name: Asciidoctor PDF
 :project-handle: asciidoctor-pdf
-// Variables:
-:release-line: 2.1.x
 // URLs:
 :url-gem: https://rubygems.org/gems/asciidoctor-pdf
 :url-project: https://github.com/asciidoctor/asciidoctor-pdf
