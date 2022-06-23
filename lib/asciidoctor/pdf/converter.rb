@@ -213,7 +213,7 @@ module Asciidoctor
             first_page_offset = has_title_page ? zero_page_offset.next : zero_page_offset
             body_offset = (body_start_page_number = page_number) - 1
             if ::Integer === (running_content_start_at = @theme.running_content_start_at)
-              running_content_body_offset = body_offset + [running_content_start_at.pred, 1].max
+              running_content_body_offset = body_offset + [running_content_start_at.pred, 0].max
               running_content_start_at = 'body'
             else
               running_content_body_offset = body_offset
@@ -227,7 +227,7 @@ module Asciidoctor
               end
             end
             if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at)
-              page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 1].max
+              page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 0].max
               page_numbering_start_at = 'body'
             else
               page_numbering_body_offset = body_offset
@@ -263,12 +263,12 @@ module Asciidoctor
           else
             body_offset = body_start_page_number - 1
             if ::Integer === (running_content_start_at = @theme.running_content_start_at)
-              running_content_body_offset = body_offset + [running_content_start_at.pred, 1].max
+              running_content_body_offset = body_offset + [running_content_start_at.pred, 0].max
             else
               running_content_body_offset = body_offset
             end
             if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at)
-              page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 1].max
+              page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 0].max
             elsif page_numbering_start_at == 'cover' && has_front_cover
               page_numbering_body_offset = 0
             else
