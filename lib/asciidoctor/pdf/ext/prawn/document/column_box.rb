@@ -6,18 +6,21 @@ Prawn::Document::ColumnBox.prepend (Module.new do
   def move_past_bottom
     (doc = @document).y = @y
     return if (@current_column = (@current_column + 1) % @columns) > 0
-    par = @parent
-    if (reset_y = @reflow_margins) && (reset_y == true || reset_y > doc.page_number)
-      @y = par.absolute_top
-      @height = par.height unless stretchy?
-    end
+    parent_ = @parent
+    reset_top parent_ if (reflow_at = @reflow_margins) && (reflow_at == true || reflow_at > doc.page_number)
     initial_margins = doc.page.margins
-    par.move_past_bottom
+    parent_.move_past_bottom
     if doc.page.margins != initial_margins
-      doc.bounds = self.class.new doc, par, [(margin_box = doc.margin_box).absolute_left, @y],
+      doc.bounds = self.class.new doc, parent_, [(margin_box = doc.margin_box).absolute_left, @y],
         columns: @columns, reflow_margins: @reflow_margins, spacer: @spacer, width: margin_box.width, height: @height
     end
     nil
+  end
+
+  def reset_top parent_ = @parent
+    @current_column = 0
+    @height = parent_.height unless stretchy?
+    @y = parent_.absolute_top
   end
 
   # Rearranges the column box into a single column, where the original columns are in a single file. Used
