@@ -32,7 +32,7 @@ changelog = (File.readlines 'CHANGELOG.adoc', chomp: true, mode: 'r:UTF-8').redu
   accum
 end
 
-notes = <<~EOS
+notes = <<~EOS.chomp
 Write summary...
 
 ## Distribution
