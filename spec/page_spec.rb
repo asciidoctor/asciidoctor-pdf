@@ -790,6 +790,107 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       column_gap = (images[1][:x] - (images[0][:x] + images[0][:width])).to_f
       (expect column_gap).to eql 12.0
     end
+
+    it 'should restore columns following imported page' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: true
+      = Document Title
+
+      left column
+
+      image::blue-letter.pdf[]
+
+      left column
+
+      <<<
+
+      right column
+      EOS
+
+      midpoint = pdf.pages[0][:size][0] * 0.5
+      (expect pdf.pages).to have_size 3
+      left_column_text = pdf.find_text 'left column'
+      right_column_text = pdf.find_unique_text 'right column'
+      (expect left_column_text).to have_size 2
+      initial_left_column_y = left_column_text[0][:y]
+      (expect left_column_text[0][:page_number]).to eql 1
+      (expect left_column_text[0][:x]).to eql 48.24
+      (expect left_column_text[1][:page_number]).to eql 3
+      (expect left_column_text[1][:x]).to eql 48.24
+      (expect left_column_text[1][:y]).to be > initial_left_column_y
+      (expect right_column_text[:page_number]).to eql 3
+      (expect right_column_text[:x]).to be > midpoint
+      (expect left_column_text[1][:y]).to eql right_column_text[:y]
+    end
+
+    it 'should reset column index following imported page' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: true
+      = Document Title
+
+      left column
+
+      <<<
+
+      right column
+
+      image::blue-letter.pdf[]
+
+      left column
+
+      <<<
+
+      right column
+      EOS
+
+      midpoint = pdf.pages[0][:size][0] * 0.5
+      (expect pdf.pages).to have_size 3
+      left_column_text = pdf.find_text 'left column'
+      right_column_text = pdf.find_text 'right column'
+      (expect left_column_text).to have_size 2
+      (expect right_column_text).to have_size 2
+      (expect left_column_text[0][:page_number]).to eql 1
+      (expect left_column_text[0][:x]).to eql 48.24
+      (expect right_column_text[0][:page_number]).to eql 1
+      (expect right_column_text[0][:x]).to be > midpoint
+      (expect left_column_text[1][:page_number]).to eql 3
+      (expect left_column_text[1][:x]).to eql 48.24
+      (expect right_column_text[1][:page_number]).to eql 3
+      (expect right_column_text[1][:x]).to be > midpoint
+    end
+
+    it 'should restore column layout following missing imported page' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: true
+      = Document Title
+
+      left column
+
+      <<<
+
+      right column
+
+      image::blue-letter.pdf[page=10]
+
+      left column
+
+      <<<
+
+      right column
+      EOS
+
+      midpoint = pdf.pages[0][:size][0] * 0.5
+      (expect pdf.pages).to have_size 2
+      left_column_text = pdf.find_text 'left column'
+      right_column_text = pdf.find_text 'right column'
+      (expect left_column_text).to have_size 2
+      (expect right_column_text).to have_size 2
+      (expect left_column_text[0][:page_number]).to eql 1
+      (expect left_column_text[0][:x]).to eql 48.24
+      (expect right_column_text[0][:page_number]).to eql 1
+      (expect right_column_text[0][:x]).to be > midpoint
+      (expect left_column_text[1][:page_number]).to eql 2
+      (expect left_column_text[1][:x]).to eql 48.24
+      (expect right_column_text[1][:page_number]).to eql 2
+      (expect right_column_text[1][:x]).to be > midpoint
+    end
   end
 
   context 'Background' do

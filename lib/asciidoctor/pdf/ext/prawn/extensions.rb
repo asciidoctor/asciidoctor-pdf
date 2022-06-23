@@ -925,6 +925,7 @@ module Asciidoctor
         prev_page_layout = page.layout
         prev_page_size = page.size
         prev_page_margin = page_margin
+        prev_bounds = bounds
         state.compress = false if state.compress # can't use compression if using template
         prev_text_rendering_mode = (defined? @text_rendering_mode) ? @text_rendering_mode : nil
         delete_current_page if options[:replace]
@@ -937,11 +938,15 @@ module Asciidoctor
           # NOTE: set page size & layout explicitly in case imported page differs
           # I'm not sure it's right to start a new page here, but unfortunately there's no other
           # way atm to prevent the size & layout of the imported page from affecting subsequent pages
-          advance_page layout: prev_page_layout, margin: prev_page_margin, size: prev_page_size if options.fetch :advance, true
+          if options.fetch :advance, true
+            advance_page layout: prev_page_layout, margin: prev_page_margin, size: prev_page_size
+            (@bounding_box = prev_bounds).reset_top if ColumnBox === prev_bounds
+          end
         elsif options.fetch :advance_if_missing, true
           delete_current_page
           # NOTE: see previous comment
           advance_page layout: prev_page_layout, margin: prev_page_margin, size: prev_page_size
+          @y = (@bounding_box = prev_bounds).reset_top if ColumnBox === prev_bounds
         else
           delete_current_page
         end
