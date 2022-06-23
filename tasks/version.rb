@@ -16,9 +16,7 @@ version_contents = (File.readlines version_file, mode: 'r:UTF-8').map do |l|
   (l.include? 'VERSION') ? (l.sub %r/'[^']+'/, %('#{release_version}')) : l
 end
 
-readme_contents = (File.readlines readme_file, mode: 'r:UTF-8').map do |l|
-  (l.start_with? ':release-version:') ? %(:release-version: #{release_version}\n) : l
-end
+readme_contents = File.readlines readme_file, mode: 'r:UTF-8'
 if readme_contents[2].start_with? 'v'
   readme_contents[2] = %(v#{release_version}, #{release_date}\n)
 else
@@ -49,7 +47,13 @@ else
 end
 
 antora_contents = (File.readlines antora_file, mode: 'r:UTF-8').map do |l|
-  (l.start_with? 'prerelease:') ? %(prerelease: #{prerelease ? ?' + prerelease + ?' : 'false'}\n) : l
+  if l.start_with? 'prerelease: '
+    %(prerelease: #{prerelease ? 'true' : 'false'}\n)
+  elsif l.start_with? 'version: '
+    %(version: '#{release_version}'\n)
+  else
+    l
+  end
 end
 
 File.write version_file, version_contents.join, mode: 'w:UTF-8'
