@@ -811,6 +811,57 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect pgnum_labels.slice 0, 5).to eql [nil, 'ii', 'iii', '1', '2']
     end
 
+    it 'should start page numbering and running content at first page of article body if start-at value is body or 1' do
+      [1, 'body'].each do |start_at|
+        pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: start_at, running_content_start_at: start_at }, analyze: true
+        = Article Title
+
+        page one
+
+        <<<
+
+        page two
+
+        <<<
+
+        page three
+        EOS
+
+        (expect pdf.pages).to have_size 3
+        pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+          accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+        end
+        (expect pgnum_labels).to eql %w(1 2 3)
+      end
+    end
+
+    it 'should start page numbering and running content at first page of book body if start-at value is body or 1' do
+      [1, 'body'].each do |start_at|
+        pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: start_at, running_content_start_at: start_at }, analyze: true
+        = Book Title
+        :doctype: book
+
+        == Dedication
+
+        To the only person who gets me.
+
+        == Acknowledgements
+
+        Thanks all to all who made this possible!
+
+        == Chapter One
+
+        content
+        EOS
+
+        (expect pdf.pages).to have_size 4
+        pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+          accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+        end
+        (expect pgnum_labels).to eql [nil, '1', '2', '3']
+      end
+    end
+
     it 'should start page numbering and running content at specified page of body' do
       pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 3, running_content_start_at: 3 }, analyze: true
       = Book Title
