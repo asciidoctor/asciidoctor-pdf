@@ -22,6 +22,16 @@ describe 'Asciidoctor::PDF::Converter - Video' do
       (expect pdf.lines).to eql [%(\uf04b\u00a0#{fixture_file 'asciidoctor.mp4'} (video))]
     end
 
+    it 'should wrap text for video if it exceeds width of content area' do
+      pdf = to_pdf <<~'EOS', analyze: true, attribute_overrides: { 'imagesdir' => '' }
+      video::a-video-with-an-excessively-long-and-descriptive-name-as-they-often-are-that-causes-the-text-to-wrap.mp4[]
+      EOS
+
+      (expect pdf.pages).to have_size 1
+      lines = pdf.lines pdf.find_text page_number: 1
+      (expect lines).to eql [%(\u25ba\u00a0a-video-with-an-excessively-long-and-descriptive-name-as-they-often-are-that-causes-the-text-to-), 'wrap.mp4 (video)']
+    end
+
     it 'should show caption for video with no poster if title is specified' do
       pdf = to_pdf <<~'EOS', analyze: true
       :icons: font
