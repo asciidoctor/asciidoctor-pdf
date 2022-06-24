@@ -103,7 +103,7 @@ class EnhancedPDFTextInspector < PDF::Inspector
     prev = nil
     text.each_with_object [] do |it, accum|
       #if prev && (prev[:y] == it[:y] || (prev[:y] - it[:y]).abs < [it[:font_size], prev[:font_size]].min * 0.5)
-      if prev && (prev[:y] == it[:y] || (prev[:y] - it[:y]).abs < 6)
+      if prev && prev[:page_number] == it[:page_number] && (prev[:y] == it[:y] || (prev[:y] - it[:y]).abs < 6)
         if it[:x] - prev[:x] > prev[:width] + 0.5
           accum << %(#{accum.pop.rstrip} #{it[:string].lstrip})
         else
