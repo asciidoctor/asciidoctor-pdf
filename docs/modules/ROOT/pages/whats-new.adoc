@@ -410,6 +410,6 @@ The following dependencies and deprecated features have been removed with the re
 * The `top-margin` key on block and prose categories in theme has been removed; space between delimited blocks and lists is now controlled using bottom margins only.
 * The `lead` category keys in theme have been replaced with the built-in role named `lead`.
 * `safe_yaml gem` has been removed; `YAML.safe_load` from the Ruby stdlib is used instead.
-* Support for the `<color>` tag in passthrough content has been removed; use `<font color="...">` instead (may affect themes).
+* Support for the `<color>` tag in passthrough and theme content has been removed; use `<font color="...">` instead; may affect themes that use pseudo-HTML in the value of the `content` key.
 * The [.path]_asciidoctor-pdf/converter_ and [.path]_asciidoctor-pdf/version_ shim scripts have been removed; use [.path]_asciidoctor/pdf/converter_ and [.path]_asciidoctor/pdf/version_ instead.
 * The unneeded `_mb` functions (e.g., `uppercase_mb`) have been removed; multibyte support for `upcase`, `downcase`, and `capitalize` is now provided by corelib.
