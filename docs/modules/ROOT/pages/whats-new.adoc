@@ -401,6 +401,7 @@ See xref:theme:list.adoc[].
 The following dependencies and deprecated features have been removed with the release of Asciidoctor PDF {page-component-version}.
 
 * Support for Ruby < 2.7 and JRuby < 9.2 has been removed.
+* The deprecated `chapter-label` attribute has been replaced by the `chapter-signifier` attribute.
 * The `untitled` option has been removed; use the `notitle` option instead.
 * Support for the deprecated `pdf-style` and `pdf-stylesdir` attributes has been removed.
 * The deprecated Pdf module alias in the API has been removed in favor of PDF.
