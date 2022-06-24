@@ -1192,7 +1192,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
             input = <<~EOS
             image#{macro_delim}#{image_path}[Incomplete PNG]
             EOS
-            pdf = to_pdf input, analyze: true
+            pdf = to_pdf input, pdf_theme: { page_layout: 'landscape' }, analyze: true
             (expect pdf.lines).to eql [alt_text]
           end).to log_message severity: :WARN, message: %(could not embed image: #{image_path}; image file is an unrecognised format)
         end
