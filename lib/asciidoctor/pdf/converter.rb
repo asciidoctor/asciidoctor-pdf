@@ -114,6 +114,7 @@ module Asciidoctor
       UriBreakCharsRx = %r((?:/|\?|&amp;|#)(?!$))
       UriBreakCharRepl = %(\\&#{ZeroWidthSpace})
       UriSchemeBoundaryRx = %r((?<=://))
+      UrlSniffRx = %r(^\p{Alpha}[\p{Alnum}+.-]*://)
       LineScanRx = /\n|.+/
       BlankLineRx = /\n{2,}/
       CjkLineBreakRx = /(?=[\u3000\u30a0-\u30ff\u3040-\u309f\p{Han}\uff00-\uffef])/
@@ -4256,10 +4257,10 @@ module Asciidoctor
         # NOTE: this will catch a classloader resource path on JRuby (e.g., uri:classloader:/path/to/image)
         elsif ::File.absolute_path? image_path
           ::File.absolute_path image_path
-        elsif !(is_uri = node.is_uri? image_path) && imagesdir && (::File.absolute_path? imagesdir)
+        elsif !(is_url = url? image_path) && imagesdir && (::File.absolute_path? imagesdir)
           ::File.absolute_path image_path, imagesdir
         # handle case when image is a URI
-        elsif is_uri || (imagesdir && (node.is_uri? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
+        elsif is_url || (imagesdir && (url? imagesdir) && (image_path = node.normalize_web_path image_path, imagesdir, false))
           if !allow_uri_read
             log :warn, %(cannot embed remote image: #{image_path} (allow-uri-read attribute not enabled))
             return
@@ -5045,6 +5046,10 @@ module Asciidoctor
       rescue
         log :warn, %(could not delete temporary file: #{path}; #{$!.message})
         false
+      end
+
+      def url? str
+        (str.include? ':/') && (UrlSniffRx.match? str)
       end
 
       # Calculate the width that is needed to print all the

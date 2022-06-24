@@ -1035,6 +1035,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: %(problem encountered in image: #{fixture_file 'svg-with-non-url-image.svg'}; Error retrieving URL s3://foobar/tux.png: No handler available for this URL scheme)
     end
 
+    it 'should not mistake image target containing colon as URL' do
+      (expect do
+        pdf = to_pdf 'image::module:path.jpg[Missing Image]', analyze: true
+        (expect pdf.lines).to eql ['[Missing Image] | module:path.jpg']
+      end).to log_message severity: :WARN, message: %(~image to embed not found or not readable: #{fixture_file 'module:path.jpg'})
+    end
+
     it 'should ignore inline option for SVG on image macro' do
       pdf = to_pdf <<~'EOS', analyze: :rect
       image::square.svg[pdfwidth=200pt,opts=inline]

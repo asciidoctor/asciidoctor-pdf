@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Bug Fixes::
 
 * allow alt text for block image, video, and audio to wrap to next line on same page (#2258)
+* make URL check more strict so image target containing a colon is not mistaken as a URL
 
 == 2.1.3 (2022-06-23) - @mojavelinux
 
