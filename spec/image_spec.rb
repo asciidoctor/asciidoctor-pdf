@@ -143,6 +143,35 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
+    it 'should wrap alt text of block image if it exceeds width of content area' do
+      (expect do
+        pdf = to_pdf 'image::missing-image-with-very-long-filename.png[This image is missing and therefore will be replaced with alt text]', analyze: true
+        (expect pdf.pages).to have_size 1
+        lines = pdf.lines pdf.find_text page_number: 1
+        (expect lines).to eql ['[This image is missing and therefore will be replaced with alt text] | missing-image-with-very-long-', 'filename.png']
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+    end
+
+    it 'should wrap alt text of block image if it exceeds width of table cell' do
+      (expect do
+        pdf = to_pdf <<~'EOS', analyze: true
+        [cols="1,3"]
+        |===
+        a|
+        image::missing-image-with-very-long-filename.png[This image is missing and therefore will be replaced with alt text]
+        e|Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+        s|second
+        s|row
+        |===
+        EOS
+        (expect pdf.pages).to have_size 1
+        alt_text_lines = pdf.lines pdf.text.select {|it| it[:x] == 51.24 && it[:font_name] != 'NotoSerif-Bold' }
+        (expect alt_text_lines).to eql ['[This image is missing', 'and therefore will be', 'replaced with alt text] |', 'missing-image-with-', 'very-long-filename.png']
+        (expect pdf.find_text font_name: 'NotoSerif-Bold', page_number: 1).to have_size 2
+      end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
+    end
+
     it 'should be able to customize formatting of alt text using theme' do
       pdf_theme = { image_alt_content: '%{alt} (%{target})' } # rubocop:disable Style/FormatStringToken
       (expect do

@@ -1886,7 +1886,7 @@ module Asciidoctor
         add_dest_for_block node if node.id
         audio_path = node.media_uri node.attr 'target'
         play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
-        ink_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0, single_line: true
+        ink_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0
         ink_caption node, labeled: false, end: :bottom if node.title?
         theme_margin :block, :bottom, (next_enclosed_block node)
       end
@@ -1914,7 +1914,7 @@ module Asciidoctor
         if poster.nil_or_empty?
           add_dest_for_block node if node.id
           play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
-          ink_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{video_path}">#{video_path}</a> <em>(#{type})</em>), normalize: false, margin: 0, single_line: true
+          ink_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{video_path}">#{video_path}</a> <em>(#{type})</em>), normalize: false, margin: 0
           ink_caption node, labeled: false, end: :bottom if node.title?
           theme_margin :block, :bottom, (next_enclosed_block node)
         else
@@ -3241,7 +3241,8 @@ module Asciidoctor
         end
       end
 
-      # NOTE: inline_format is true by default
+      # NOTE: inline_format option is true by default
+      # NOTE: single_line option is not compatible with this method
       def ink_prose string, opts = {}
         top_margin = (margin = (opts.delete :margin)) || (opts.delete :margin_top) || 0
         bot_margin = margin || (opts.delete :margin_bottom) || @theme.prose_margin_bottom
@@ -4496,6 +4497,7 @@ module Asciidoctor
       end
 
       # TODO: document me, esp the first line formatting functionality
+      # NOTE: single_line option should only be used if height option is specified
       def typeset_text string, line_metrics, opts = {}
         opts = { leading: line_metrics.leading, final_gap: line_metrics.final_gap }.merge opts
         string = string.gsub CjkLineBreakRx, ZeroWidthSpace if @cjk_line_breaks
@@ -4950,7 +4952,7 @@ module Asciidoctor
           alt_text_vars[:'/link'] = ''
         end
         theme_font :image_alt do
-          ink_prose alt_text_template % alt_text_vars, align: opts[:align], margin: 0, normalize: false, single_line: true
+          ink_prose alt_text_template % alt_text_vars, align: opts[:align], margin: 0, normalize: false
         end
         ink_caption node, category: :image, end: :bottom if node.title?
         theme_margin :block, :bottom, (next_enclosed_block node) unless opts[:pinned]
