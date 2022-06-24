@@ -891,6 +891,44 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect right_column_text[1][:page_number]).to eql 2
       (expect right_column_text[1][:x]).to be > midpoint
     end
+
+    # NOTE: assert current behavior
+    it 'should stop column layout at page layout change' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      left column
+
+      <<<
+
+      right column
+
+      [page-layout=landscape]
+      <<<
+
+      landscape
+
+      <<<
+
+      landscape
+
+      [page-layout=portrait]
+      <<<
+
+      portrait
+
+      <<<
+
+      portrait
+      EOS
+
+      (expect pdf.pages).to have_size 5
+      (expect (pdf.find_unique_text 'right column')[:x]).to be > 48.24
+      p2_size = pdf.pages[1][:size]
+      (expect p2_size[0]).to be > p2_size[1]
+      (expect (pdf.find_text 'landscape').map {|it| it[:x] }.uniq).to eql [48.24]
+      p4_size = pdf.pages[3][:size]
+      (expect p4_size[0]).to be < p4_size[1]
+      (expect (pdf.find_text 'portrait').map {|it| it[:x] }.uniq).to eql [48.24]
+    end
   end
 
   context 'Background' do
