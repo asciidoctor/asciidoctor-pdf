@@ -38,8 +38,10 @@ chmod 600 $HOME/.gem/credentials
   git push origin $RELEASE_BRANCH
   ruby tasks/release-notes.rb
   gh release create v$RELEASE_VERSION -t v$RELEASE_VERSION -F release-notes.md -d
+  ruby tasks/postversion.rb
+  git commit -a -m 'prepare branch for development [no ci]'
+  git push origin $RELEASE_BRANCH
 )
-
 exit_code=$?
 
 # nuke gem credentials
