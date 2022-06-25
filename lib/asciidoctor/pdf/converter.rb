@@ -2054,7 +2054,8 @@ module Asciidoctor
                   content: cell_text,
                   colspan: cell.colspan || 1,
                   align: (cell.attr 'halign').to_sym,
-                  valign: (val = cell.attr 'valign') == 'middle' ? :center : val.to_sym
+                  valign: (val = cell.attr 'valign') == 'middle' ? :center : val.to_sym,
+                  source_location: cell.source_location
               end)
             end
           end unless head_rows.empty?
@@ -2073,7 +2074,8 @@ module Asciidoctor
                 colspan: cell.colspan || 1,
                 rowspan: cell.rowspan || 1,
                 align: (cell.attr 'halign').to_sym,
-                valign: (val = cell.attr 'valign') == 'middle' ? :center : val.to_sym
+                valign: (val = cell.attr 'valign') == 'middle' ? :center : val.to_sym,
+                source_location: cell.source_location
               cell_line_metrics = body_cell_line_metrics
               case cell.style
               when :emphasis
@@ -2134,7 +2136,7 @@ module Asciidoctor
                 # NOTE: line metrics get applied when AsciiDoc content is converted
                 cell_line_metrics = nil
                 asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self, (cell_data.merge content: cell.inner_document, padding: body_cell_padding)
-                cell_data = { content: asciidoc_cell }
+                cell_data = { content: asciidoc_cell, source_location: cell.source_location }
               end
               if cell_line_metrics
                 cell_padding = body_cell_padding.dup
