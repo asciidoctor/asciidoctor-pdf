@@ -3,7 +3,7 @@
 module Asciidoctor
   module PDF
     class IndexCatalog
-      include ::Asciidoctor::PDF::TextTransformer
+      include TextTransformer
 
       LeadingAlphaRx = /^\p{Alpha}/
 
