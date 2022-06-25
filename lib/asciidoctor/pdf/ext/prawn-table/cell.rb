@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 Prawn::Table::Cell.prepend (Module.new do
+  attr_writer :source_location
+
   def border_color= color
     color = [color, color] if Asciidoctor::PDF::ThemeLoader::CMYKColorValue === color
     super

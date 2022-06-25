@@ -1474,6 +1474,28 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         (expect after_text[:page_number]).to be 3
       end).to log_message severity: :ERROR, message: 'the table cell on page 2 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page'
     end
+
+    it 'should report file and line number in truncated cell error if sourcemap is enabled' do
+      (expect do
+        blank_line = %(\n\n)
+
+        pdf = to_pdf <<~EOS, sourcemap: true, attribute_overrides: { 'docfile' => 'test.adoc' }, analyze: true
+        |===
+        |first cell
+        |second cell
+
+        #{(['filler'] * 25).join blank_line}
+        |last cell
+        |===
+        EOS
+
+        (expect pdf.pages.size).to eql 3
+        (expect (pdf.find_unique_text 'first cell')[:page_number]).to eql 1
+        (expect (pdf.find_unique_text 'second cell')[:page_number]).to eql 2
+        (expect (pdf.find_text 'filler').map {|it| it[:page_number] }.uniq).to eql [2]
+        (expect (pdf.find_unique_text 'last cell')[:page_number]).to eql 3
+      end).to log_message severity: :ERROR, message: 'the table cell on page 2 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page', file: 'test.adoc', lineno: 3
+    end
   end
 
   context 'Strong table cell' do
@@ -2255,6 +2277,30 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         after_text = (pdf.find_text 'after')[0]
         (expect after_text[:page_number]).to be 3
       end).to log_message severity: :ERROR, message: 'the table cell on page 2 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page'
+    end
+
+    it 'should report file and line number in truncated cell error if sourcemap is enabled' do
+      (expect do
+        blank_line = %(\n\n)
+
+        pdf = to_pdf <<~EOS, sourcemap: true, attribute_overrides: { 'docfile' => 'test.adoc' }, analyze: true
+        before table
+
+        |===
+        |first cell
+        a|
+        before list
+
+        #{(['* list item'] * 50).join blank_line}
+        |last cell
+        |===
+        EOS
+
+        (expect pdf.pages).to have_size 3
+        (expect (pdf.find_unique_text 'before list')[:page_number]).to eql 2
+        (expect (pdf.find_text 'list item').map {|it| it[:page_number] }.uniq).to eql [2]
+        (expect (pdf.find_unique_text 'last cell')[:page_number]).to eql 3
+      end).to log_message severity: :ERROR, message: 'the table cell on page 2 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page', file: 'test.adoc', lineno: 5
     end
 
     it 'should not warn if cell exceeds page height in scratch document' do

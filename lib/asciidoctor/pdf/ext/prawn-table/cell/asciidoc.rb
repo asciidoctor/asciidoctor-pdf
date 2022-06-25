@@ -91,7 +91,9 @@ module Prawn
           # TODO: apply horizontal alignment; currently it is necessary to specify alignment on content blocks
           apply_font_properties { pdf.traverse content }
           if (extra_pages = pdf.page_number - start_page) > 0
-            logger.error %(the table cell on page #{start_page} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page) unless extra_pages == 1 && pdf.page.empty?
+            unless extra_pages == 1 && pdf.page.empty?
+              logger.error message_with_context %(the table cell on page #{start_page} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page), source_location: @source_location
+            end
             extra_pages.times { pdf.delete_current_page }
           end
           nil
