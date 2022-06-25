@@ -4,6 +4,8 @@ module Asciidoctor
   module PDF
     module FormattedText
       class Transform
+        include TextTransformer
+
         LF = ?\n
         ZeroWidthSpace = ?\u200b
         CharEntityTable = { amp: '&', apos: ?', gt: '>', lt: '<', nbsp: ?\u00a0, quot: '"' }
@@ -21,8 +23,8 @@ module Asciidoctor
           'font_size' => :size,
           'text_decoration_color' => :text_decoration_color,
           'text_decoration_width' => :text_decoration_width,
+          'text_transform' => :text_transform,
         }
-        #DummyText = ?\u0000
 
         def initialize options = {}
           @merge_adjacent_text_nodes = options[:merge_adjacent_text_nodes]
@@ -172,6 +174,11 @@ module Asciidoctor
                       previous_fragment_is_text && ((previous_fragment_text = fragments[-1][:text]).end_with? ' ')
                     fragments[-1][:text] = previous_fragment_text.chop
                   end
+                  if (text_transform = fragment.delete :text_transform)
+                    text = (text_chunks = extract_text pcdata).join
+                    text_io = StringIO.new transform_text text, text_transform
+                    restore_text pcdata, text_chunks.each_with_object([]) {|chunk, accum| accum << (text_io.read chunk.length) }
+                  end
                   # NOTE: decorate child fragments with inherited properties from this element
                   apply pcdata, fragments, fragment
                   previous_fragment_is_text = false
@@ -251,6 +258,8 @@ module Asciidoctor
           fragments
         end
 
+        private
+
         def build_fragment fragment, tag_name, attrs
           styles = (fragment[:styles] ||= ::Set.new)
           case tag_name
@@ -324,7 +333,6 @@ module Asciidoctor
             # NOTE: spaces in style value are superfluous for our purpose; split drops record after trailing ;
             attrs[:style].tr(' ', '').split(';').each do |style|
               pname, pvalue = style.split ':', 2
-              # TODO: text-transform
               case pname
               when 'color' # color needed to support syntax highlighters
                 fragment[:color] = pvalue.length == 7 ? (pvalue.slice 1, 6) : (pvalue.slice 1, 3).each_char.map {|c| c * 2 }.join if (pvalue.start_with? '#') && (HexColorRx.match? pvalue)
@@ -406,6 +414,29 @@ module Asciidoctor
             #  oval | nval
             else
               nval
+            end
+          end
+        end
+
+        def extract_text pcdata
+          pcdata.reduce [] do |accum, it|
+            case it[:type]
+            when :text
+              accum << it[:value]
+            when :element
+              accum += (extract_text it[:pcdata]) if it.key? :pcdata
+            end
+            accum
+          end
+        end
+
+        def restore_text pcdata, text_chunks
+          pcdata.each do |it|
+            case it[:type]
+            when :text
+              it[:value] = text_chunks.shift
+            when :element
+              restore_text it[:pcdata], text_chunks if it.key? :pcdata
             end
           end
         end
