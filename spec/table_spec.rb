@@ -806,7 +806,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should report file and line number in cannot fit error if sourcemap is enabled' do
       (expect do
-        pdf = to_pdf <<~'EOS', sourcemap: true, analyze: true
+        pdf = to_pdf <<~'EOS', sourcemap: true, attribute_overrides: { 'docfile' => 'test.adoc' }, analyze: true
         before table
 
         [cols="2m,49,49"]
@@ -820,7 +820,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         (expect text).to have_size 2
         (expect text[0][:string]).to eql 'before table'
         (expect text[1][:string]).to eql 'after table'
-      end).to log_message severity: :ERROR, message: 'cannot fit contents of table cell into specified column width', lineno: 4
+      end).to log_message severity: :ERROR, message: 'cannot fit contents of table cell into specified column width', file: 'test.adoc', lineno: 4
     end
 
     it 'should not fail to fit text in cell' do
