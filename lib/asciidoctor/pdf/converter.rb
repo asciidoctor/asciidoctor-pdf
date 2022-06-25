@@ -2655,13 +2655,7 @@ module Asciidoctor
         end
 
         if (roles = node.role)
-          theme = load_theme node.document
-          roles.split.each do |role|
-            if (text_transform = theme[%(role_#{role}_text_transform)])
-              inner_text = transform_text inner_text, text_transform
-            end
-            inner_text = inner_text.gsub DoubleSpaceRx, ' ' + ZeroWidthSpace if role == 'pre-wrap' && (inner_text.include? DoubleSpace)
-          end
+          inner_text = inner_text.gsub DoubleSpaceRx, ' ' + ZeroWidthSpace if (node.has_role? 'pre-wrap') && (inner_text.include? DoubleSpace)
           quoted_text = is_tag ? %(#{open.chop} class="#{roles}">#{inner_text}#{close}) : %(<span class="#{roles}">#{open}#{inner_text}#{close}</span>)
         else
           quoted_text = %(#{open}#{inner_text}#{close})
