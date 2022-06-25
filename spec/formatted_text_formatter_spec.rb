@@ -887,6 +887,36 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect shout_text[:string]).to eql 'SHOUT'
     end
 
+    it 'should apply text transform to value of attribute reference' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { role_upper_text_transform: 'uppercase' }, analyze: true
+      :brandname: acme
+
+      [.upper]#{brandname}#
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      (expect lines[0]).to eql 'ACME'
+    end
+
+    it 'should apply text transform to enclosed formatted text' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { role_upper_text_transform: 'uppercase' }, analyze: true
+      [.upper]#_please_ transform *bob &amp; carl* +
+      to `uppercase`#
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines).to eql ['PLEASE TRANSFORM BOB & CARL', 'TO UPPERCASE']
+      text = pdf.text
+      (expect text).to have_size 5
+      (expect text[0][:font_name]).to eql 'NotoSerif-Italic'
+      (expect text[1][:font_name]).to eql 'NotoSerif'
+      (expect text[2][:font_name]).to eql 'NotoSerif-Bold'
+      (expect text[3][:font_name]).to eql 'NotoSerif'
+      (expect text[4][:font_name]).to eql 'mplus1mn-regular'
+    end
+
     it 'should allow custom role to specify relative font size' do
       pdf_theme = {
         heading_h2_font_size: 24,

@@ -528,29 +528,6 @@ module Asciidoctor
         end
       end
 
-      # Apply the text transform to the specified text.
-      #
-      # Supported transform values are "uppercase", "lowercase", or "none" (passed
-      # as either a String or a Symbol). When the uppercase transform is applied to
-      # the text, it correctly uppercases visible text while leaving markup and
-      # named character entities unchanged. The none transform returns the text
-      # unmodified.
-      #
-      def transform_text text, transform
-        case transform
-        when :uppercase, 'uppercase'
-          uppercase_pcdata text
-        when :lowercase, 'lowercase'
-          lowercase_pcdata text
-        when :capitalize, 'capitalize'
-          capitalize_words_pcdata text
-        when :smallcaps, 'smallcaps'
-          smallcaps_pcdata text
-        else
-          text
-        end
-      end
-
       def hyphenate_text text, hyphenator
         hyphenate_words_pcdata text, hyphenator
       end
