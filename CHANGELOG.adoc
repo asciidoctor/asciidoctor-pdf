@@ -13,6 +13,8 @@ Enhancements::
 * allow page margin for rotated page to be configured independently using `page-margin-rotated` theme key or `pdf-page-margin-rotated` document attribute (#1719)
 * don't force page break after TOC with automatic placement in article if `title-page` attribute is set and value of `toc-break-after` theme key is `auto` (#1768)
 
+== 2.1.4 (2022-06-26) - @mojavelinux
+
 Improvements::
 
 * include source location in warning message for truncated table cell if sourcemap is enabled (#2261)
