@@ -10,6 +10,7 @@ There are three AsciiDoc attributes that tell Asciidoctor PDF how to locate and 
 pdf-theme:: The name of the YAML theme file to load.
 If the name ends with `.yml`, it's assumed to be the complete name of a file and is resolved relative to `pdf-themesdir`, if specified, otherwise the current directory.
 Otherwise, `-theme.yml` is appended to the name to make the file name (i.e., `<name>-theme.yml`) and is resolved relative to `pdf-themesdir`, if specified, otherwise the built-in themes dir.
+Can be specified using the `--theme` CLI option.
 
 pdf-themesdir:: The directory where the theme file is located.
 If the path is relative, the value is resolved starting from the current working directory.
@@ -31,7 +32,7 @@ _Specifying an absolute path is recommended._
 Let's assume that you've put your theme files inside a directory named `resources` with the following layout:
 
 ....
-document.adoc
+doc.adoc
 resources/
   themes/
     basic-theme.yml
@@ -42,25 +43,30 @@ resources/
     roboto-bold_italic.ttf
 ....
 
-Here's how you'd load your theme when calling Asciidoctor PDF:
+Here's the formal way of loading your theme when calling Asciidoctor PDF:
 
- $ asciidoctor-pdf -a pdf-themesdir=resources/themes -a pdf-theme=basic -a pdf-fontsdir=resources/fonts
+ $ asciidoctor-pdf -a pdf-theme=basic -a pdf-themesdir=resources/themes -a pdf-fontsdir=resources/fonts doc.adoc
 
-If all goes well, Asciidoctor PDF should run without an error or warning.
+You can shorten `-a pdf-theme=` to `--theme`:
 
-NOTE: You only need to specify the `pdf-fontsdir` if you're using custom fonts in your theme.
+ $ asciidoctor-pdf --theme basic -a pdf-themesdir=resources/themes -a pdf-fontsdir=resources/fonts doc.adoc
 
-You can skip setting the `pdf-themesdir` attribute and just pass the absolute path of your theme file to the `pdf-theme` attribute.
+If all goes well, Asciidoctor PDF will convert your document without any errors or warnings.
 
- $ asciidoctor-pdf -a pdf-theme=resources/themes/basic-theme.yml -a pdf-fontsdir=resources/fonts
+TIP: You only need to specify the `pdf-fontsdir` if you're using custom fonts in your theme.
 
-However, in this case, image paths in your theme won't be resolved properly.
+You can skip setting the `pdf-themesdir` attribute by passing the relative path of your theme file to the `theme` option:
 
-Paths are resolved relative to the current directory.
-However, in the future, this may change so that paths are resolved relative to the base directory (typically the document's directory).
-Therefore, it's recommended that you specify absolute paths for now to future-proof your configuration.
+ $ asciidoctor-pdf --theme resources/themes/basic-theme.yml -a pdf-fontsdir=resources/fonts doc.adoc
 
- $ asciidoctor-pdf -a pdf-themesdir=/path/to/resources/themes -a pdf-theme=basic -a pdf-fontsdir=/path/to/resources/fonts
+However, when theme assets are specified using relative paths, image paths in your theme may not resolve properly.
+Paths in the theme file are resolved relative to the current directory.
+In the future, this may change so that paths are resolved relative to the base directory (typically the document's directory).
+For now, it's recommended that you specify absolute paths to future-proof your configuration.
+
+ $ asciidoctor-pdf --theme /path/to/resources/themes/basic-theme.yml -a pdf-fontsdir=/path/to/resources/fonts doc.adoc
+
+Alternately, you can prefix image paths in the theme using the `+{docdir}+` attribute reference.
 
 == Using Maven and Gradle
 

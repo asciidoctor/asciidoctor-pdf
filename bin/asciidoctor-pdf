@@ -16,8 +16,20 @@ options = (Asciidoctor::Cli::Options.new backend: 'pdf', header_footer: true).ex
   end
 end)
 
+argv = ARGV
+if (theme_idx = argv.index {|it| it == '--theme' || (it.start_with? '--theme=') })
+  if (theme_arg = argv[theme_idx]).length > 7
+    argv = argv.dup
+    argv[theme_idx..theme_idx] = ['-a', %(pdf#{theme_arg.slice 1, theme_arg.length})]
+  elsif (val = argv[theme_idx + 1]) && !(val.start_with? '-')
+    argv = argv.dup
+    argv[theme_idx] = '-a'
+    argv[theme_idx + 1] = %(pdf-theme=#{val})
+  end
+end
+
 # FIXME: This is a really bizarre API. Please make me simpler.
-case (result = options.parse! ARGV)
+case (result = options.parse! argv)
 when Integer
   exit result
 else
