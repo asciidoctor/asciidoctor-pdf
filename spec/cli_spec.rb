@@ -17,6 +17,22 @@ describe 'asciidoctor-pdf' do
       (expect res.exitstatus).to be 0
       (expect out).to include %(Asciidoctor PDF #{Asciidoctor::PDF::VERSION} using Asciidoctor #{Asciidoctor::VERSION})
     end
+
+    it 'should enable sourcemap if --sourcemap option is specified', cli: true do
+      with_tmp_file '.adoc', tmpdir: output_dir do |tmp_file|
+        tmp_file.write <<~'EOS'
+        before
+
+        ****
+        content
+        EOS
+        tmp_file.close
+        out, err, res = run_command asciidoctor_pdf_bin, '--sourcemap', tmp_file.path
+        (expect res.exitstatus).to be 0
+        (expect out).to be_empty
+        (expect err.chomp).to eql %(asciidoctor: WARNING: #{File.basename tmp_file.path}: line 3: unterminated sidebar block)
+      end
+    end
   end
 
   context 'Require', if: (defined? Bundler) do

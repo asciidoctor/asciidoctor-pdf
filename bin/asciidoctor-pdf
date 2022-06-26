@@ -16,20 +16,28 @@ options = (Asciidoctor::Cli::Options.new backend: 'pdf', header_footer: true).ex
   end
 end)
 
-argv = ARGV
-if (theme_idx = argv.index {|it| it == '--theme' || (it.start_with? '--theme=') })
-  if (theme_arg = argv[theme_idx]).length > 7
-    argv = argv.dup
-    argv[theme_idx..theme_idx] = ['-a', %(pdf#{theme_arg.slice 1, theme_arg.length})]
-  elsif (val = argv[theme_idx + 1]) && !(val.start_with? '-')
-    argv = argv.dup
-    argv[theme_idx] = '-a'
-    argv[theme_idx + 1] = %(pdf-theme=#{val})
+args = ARGV.dup
+
+if (theme_idx = args.index {|it| it == '--theme' || (it.start_with? '--theme=') })
+  if (theme_arg = args[theme_idx]).length > 7
+    args[theme_idx..theme_idx] = ['-a', %(pdf#{theme_arg.slice 1, theme_arg.length})]
+  elsif (val = args[theme_idx + 1]) && !(val.start_with? '-')
+    args[theme_idx] = '-a'
+    args[theme_idx + 1] = %(pdf-theme=#{val})
+  end
+end
+
+if (Gem::Version.new Asciidoctor::VERSION) < (Gem::Version.new '2.1.0') && (args.include? '--sourcemap')
+  args.delete '--sourcemap'
+  Asciidoctor::Extensions.register do
+    preprocessor do
+      process {|doc| (doc.sourcemap = true) && nil }
+    end
   end
 end
 
 # FIXME: This is a really bizarre API. Please make me simpler.
-case (result = options.parse! argv)
+case (result = options.parse! args)
 when Integer
   exit result
 else
