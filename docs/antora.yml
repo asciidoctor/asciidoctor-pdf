@@ -1,6 +1,6 @@
 name: pdf-converter
 title: Asciidoctor PDF
-version: '2.1.4'
+version: '2.1'
 prerelease: false
 asciidoc:
   attributes:
