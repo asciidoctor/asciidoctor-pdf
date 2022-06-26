@@ -8,7 +8,7 @@ else
 end
 require 'asciidoctor/cli'
 
-# FIXME provide an API in Asciidoctor for sub-projects to prepend version information
+# FIXME: provide an API in Asciidoctor for sub-projects to prepend version information
 options = (Asciidoctor::Cli::Options.new backend: 'pdf', header_footer: true).extend (Module.new do
   def print_version os = $stdout
     os.write %(Asciidoctor PDF #{Asciidoctor::PDF::VERSION} using )
@@ -16,7 +16,7 @@ options = (Asciidoctor::Cli::Options.new backend: 'pdf', header_footer: true).ex
   end
 end)
 
-# FIXME This is a really bizarre API. Please make me simpler.
+# FIXME: This is a really bizarre API. Please make me simpler.
 case (result = options.parse! ARGV)
 when Integer
   exit result
