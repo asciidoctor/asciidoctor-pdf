@@ -207,14 +207,19 @@ module Asciidoctor
             @toc_extent = nil
           end
 
-          start_new_page if @ppbook && verso_page? && !(((next_block = doc.first_child)&.context == :preamble ? next_block.first_child : next_block)&.option? 'nonfacing')
+          if @ppbook && verso_page? && !(((next_block = doc.first_child)&.context == :preamble ? next_block.first_child : next_block)&.option? 'nonfacing')
+            min_start_at = 0
+            start_new_page
+          else
+            min_start_at = 1
+          end
 
           if title_page_on
             zero_page_offset = has_front_cover ? 1 : 0
             first_page_offset = has_title_page ? zero_page_offset.next : zero_page_offset
             body_offset = (body_start_page_number = page_number) - 1
             if ::Integer === (running_content_start_at = @theme.running_content_start_at)
-              running_content_body_offset = body_offset + [running_content_start_at.pred, 0].max
+              running_content_body_offset = body_offset + [running_content_start_at.pred, min_start_at.pred].max
               running_content_start_at = 'body'
             else
               running_content_body_offset = body_offset
@@ -228,7 +233,7 @@ module Asciidoctor
               end
             end
             if ::Integer === (page_numbering_start_at = @theme.page_numbering_start_at)
-              page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, 0].max
+              page_numbering_body_offset = body_offset + [page_numbering_start_at.pred, min_start_at.pred].max
               page_numbering_start_at = 'body'
             else
               page_numbering_body_offset = body_offset
