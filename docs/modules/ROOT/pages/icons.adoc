@@ -16,7 +16,7 @@ While the icon macro is enabled when the value is `image`, it will only produce 
 
 Alternatively, you can enable the use of fonts during PDF generation by passing the `icons` attribute to the `asciidoctor-pdf` command instead setting it in the document header.
 
- $ asciidoctor-pdf -a icons=font -a icon-set=pf sample.adoc
+ $ asciidoctor-pdf -a icons=font -a icon-set=fas sample.adoc
 
 By setting `icons`, the xref:theme:admonition.adoc#icon-name[theme can control the icon used for each type of admonition].
 
@@ -35,20 +35,23 @@ If you want to override the font set globally, also set the `icon-set` attribute
 [,asciidoc]
 ----
 :icons: font
-:icon-set: pf
+:icon-set: fas
 ----
 
 You can use font-based icons from any of the following icon sets in your PDF document:
 
-* *fa* - https://fontawesome.com/v4.7.0/icons (default)
+* *fa* - https://fontawesome.com/v4.7.0/icons (default, deprecated)
 * *fas* - https://fontawesome.com/icons?d=gallery&s=solid[Font Awesome - Solid^]
 * *fab* - https://fontawesome.com/icons?d=gallery&s=brands[Font Awesome - Brands^]
 * *far* - https://fontawesome.com/icons?d=gallery&s=regular[Font Awesome - Regular^]
 * *fi* - http://zurb.com/playground/foundation-icon-fonts-3[Foundation Icons^]
-* *pf* - https://paymentfont.com/[Payment font^]
+* *pf* - Payment font (deprecated)
 
-The fa icon set is deprecated.
-Please use one of the other three FontAwesome icon sets.
+Use of the fa icon set is deprecated.
+Please use one of the styled FontAwesome icon sets.
+
+The pf icon set is no longer maintained.
+Prefer the brand icons either from fab or fi instead.
 
 Icon-based fonts are handled by the `prawn-icon` gem.
 To find a complete list of available icons, consult the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon^] repository.
@@ -56,32 +59,41 @@ To find a complete list of available icons, consult the https://github.com/jesse
 [#icon-macro]
 == Insert an icon
 
-Here's an example that shows how to use the Amazon icon from the payment font (pf) icon set in a sentence (assuming the `icon-set` is set to `pf):
+Here's an example that shows how to use the Android icon from the Foundation Icons (fi) icon set in a sentence (assuming the `icon-set` is set to `fi`):
 
 [,asciidoc]
 ----
-Available now at icon:amazon[].
+:icons: font
+:icon-set: fi
+
+Available for icon:social-android[].
 ----
 
 You can use the `set` attribute on the icon macro to override the icon set for a given icon.
 
 [,asciidoc]
 ----
-Available now at icon:amazon[set=pf].
+:icons: font
+
+Available for icon:social-android[set=fi].
 ----
 
 You can also specify the font set using the following shorthand.
 
 [,asciidoc]
 ----
-Available now at icon:amazon@pf[].
+:icons: font
+
+Available for icon:social-android@fi[].
 ----
+
+It's a good practice to always specify the icon set in some way.
 
 In addition to the sizes supported in the HTML backend (lg, 1x, 2x, etc.), you can enter any relative value in the size attribute (e.g., 1.5em, 150%, etc.).
 
 [,asciidoc]
 ----
-icon:android[size=40em]
+:icons: font
+
+icon:android[set=fab,size=40em]
 ----
-
-
