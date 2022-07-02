@@ -3082,7 +3082,8 @@ module Asciidoctor
           end
           unless scratch? || !(bg_color = @theme[%(#{category_caption}_background_color)] || @theme.caption_background_color)
             caption_height = height_of_typeset_text string
-            fill_at = [bounds.left, cursor + (margin[:top] || 0)]
+            fill_at = [bounds.left, cursor]
+            fill_at[1] -= (margin[:top] || 0) unless at_page_top?
             float { bounding_box(fill_at, width: container_width, height: caption_height) { fill_bounds bg_color } }
           end
           indent(*indent_by) do
