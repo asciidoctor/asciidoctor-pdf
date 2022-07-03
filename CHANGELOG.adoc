@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Bug Fixes::
+
+* fix position of background color on caption with outside margin (#2271)
 
 == 2.1.4 (2022-06-26) - @mojavelinux
 
