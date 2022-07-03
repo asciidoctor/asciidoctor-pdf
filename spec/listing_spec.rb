@@ -492,6 +492,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_caption_font_color: 'ffffff',
       code_caption_font_style: 'bold',
       code_caption_background_color: 'AA0000',
+      code_caption_margin_outside: 10,
       code_background_color: 'transparent',
       code_border_radius: 0,
     }
@@ -507,6 +508,37 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect title_text[:font_color]).to eql 'FFFFFF'
     (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
     (expect pdf.pages[0][:raw_content]).to include %(/DeviceRGB cs\n0.66667 0.0 0.0 scn\n48.24 790.899 498.8 14.991 re)
+    (expect title_text[:y]).to be > 790.899
+    (expect title_text[:y]).to (be_within 5).of 790.899
+    (expect title_text[:font_size].round).to eql 10
+  end
+
+  it 'should allow theme to set background color on caption with outside margin that follows other text' do
+    pdf_theme = {
+      code_caption_font_color: 'ffffff',
+      code_caption_font_style: 'bold',
+      code_caption_background_color: 'AA0000',
+      code_caption_margin_outside: 10,
+      code_background_color: 'transparent',
+      code_border_radius: 0,
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    before
+
+    .Caption with background color
+    ----
+    content
+    ----
+    EOS
+
+    title_text = pdf.find_unique_text 'Caption with background color'
+    (expect title_text[:font_color]).to eql 'FFFFFF'
+    (expect title_text[:font_name]).to eql 'NotoSerif-Bold'
+    (expect pdf.pages[0][:raw_content]).to include %(\n0.66667 0.0 0.0 scn\n48.24 753.119 498.8 14.991 re)
+    (expect title_text[:y]).to be > 753.119
+    (expect title_text[:y]).to (be_within 5).of 753.119
+    (expect title_text[:font_size].round).to eql 10
   end
 
   it 'should allow theme to place caption below block' do
