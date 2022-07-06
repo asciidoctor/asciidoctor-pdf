@@ -4,7 +4,7 @@ class PDFConverterTableRole < (Asciidoctor::Converter.for 'pdf')
   def convert_table node
     if node.role?
       key_prefix = %(role_<table>_#{node.roles[0]}_)
-      unless (role_entries = theme.each_pair.select {|name, val| name.start_with? key_prefix }).empty?
+      unless (role_entries = theme.each_pair.select {|name, val| name.to_s.start_with? key_prefix }).empty?
         save_theme do
           role_entries.each do |name, val|
             theme[%(table_#{name.to_s.delete_prefix key_prefix})] = val

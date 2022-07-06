@@ -4,7 +4,7 @@ class PDFConverterAdmonitionThemePerType < (Asciidoctor::Converter.for 'pdf')
   def convert_admonition node
     type = node.attr 'name'
     key_prefix = %(admonition_#{type}_)
-    entries = theme.each_pair.select {|name, val| name.start_with? key_prefix }
+    entries = theme.each_pair.select {|name, val| name.to_s.start_with? key_prefix }
     return super entries.empty?
     save_theme do
       entries.each do |name, val|
