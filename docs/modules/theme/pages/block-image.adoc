@@ -177,7 +177,7 @@ image:
   caption:
     end: top
 
-|<<caption-max-width,caption-max-width>>
+|xref:block-images.adoc#caption-max-width[caption-max-width]
 |`fit-content` {vbar} `fit-content`(percentage) {vbar} `none` {vbar} xref:measurement-units.adoc[Measurement] +
 (default: `none`)
 |[source]
@@ -197,8 +197,3 @@ image:
 // DANGER! Do not describe or add extra information about the block image caption keys here! Such information, examples, etc., belongs on the block-images.adoc page. The caption max width section below will be moved there once there's time to document it.
 
 // Seriously. I've got velociraptors and green slime.
-
-[#caption-max-width]
-=== Caption max width
-
-For an image to be sized correctly when `max-width` is assigned the value `fit-content`, a width should always be specified on the image.

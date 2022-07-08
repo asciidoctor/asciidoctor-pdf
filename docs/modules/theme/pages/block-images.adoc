@@ -69,3 +69,11 @@ When the value is `inherit`, the key will inherit the alignment assigned to the 
 
 The `caption-text-align` key is distinct from the similarly-named `caption-align` key.
 The <<caption-align,caption-align key>> aligns a caption block horizontally within its container.
+
+[#caption-max-width]
+=== Caption max width
+
+In order for an image to be sized and positioned correctly when `max-width` is `fit-content`, a width should always be specified on the image.
+This is especially true for "`keep together`" logic to work correctly.
+The arranger cannot know the height of the image plus caption unless it knows how much space the caption will need, and that can't be known when `max-width` is `fit-content` until the width of the image is known.
+Thus, we recommend that you always specify the width of an image, preferably using the `pdfwidth` attribute.
