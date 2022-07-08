@@ -752,9 +752,11 @@ end
 
 RSpec::Matchers.define :have_message do |expected|
   actual = nil
-  match do |logger|
+  match notify_expectation_failures: true do |logger|
     result = false
-    if (message = logger.messages[expected[:index] || 0])
+    messages = logger.messages
+    expected_index = expected[:index] || 0
+    if (message = messages[expected_index])
       if message[:severity] == expected[:severity]
         message_text = Hash === (message_data = message[:message]) ? message_data[:text] : message_data
         if Regexp === (expected_message = expected[:message])
@@ -769,6 +771,7 @@ RSpec::Matchers.define :have_message do |expected|
       end
       actual = message
     end
+    (expect messages).to have_size expected_index + 1 if result && expected[:last]
     result
   end
 
