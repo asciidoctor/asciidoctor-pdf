@@ -7,6 +7,7 @@ module Prawn
         include ::Asciidoctor::Logging
 
         attr_accessor :align
+        attr_accessor :root_font_size
         attr_accessor :valign
 
         def initialize pdf, opts = {}
@@ -109,7 +110,7 @@ module Prawn
           prev_font_color, pdf.font_color = pdf.font_color, font_color if font_color
           font_family ||= font_info[:family]
           if font_size
-            prev_font_scale, pdf.font_scale = pdf.font_scale, (font_size.to_f / @pdf.root_font_size)
+            prev_font_scale, pdf.font_scale = pdf.font_scale, (font_size.to_f / @root_font_size)
           else
             font_size = font_info[:size]
           end
