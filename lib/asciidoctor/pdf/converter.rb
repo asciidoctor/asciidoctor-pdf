@@ -27,8 +27,6 @@ module Asciidoctor
 
       attr_accessor :font_scale
 
-      attr_reader :root_font_size
-
       attr_reader :index
 
       attr_reader :theme
@@ -2135,7 +2133,7 @@ module Asciidoctor
                 end
                 # NOTE: line metrics get applied when AsciiDoc content is converted
                 cell_line_metrics = nil
-                asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self, (cell_data.merge content: cell.inner_document, padding: body_cell_padding)
+                asciidoc_cell = ::Prawn::Table::Cell::AsciiDoc.new self, (cell_data.merge content: cell.inner_document, padding: body_cell_padding, root_font_size: @root_font_size)
                 cell_data = { content: asciidoc_cell, source_location: cell.source_location }
               end
               if cell_line_metrics
