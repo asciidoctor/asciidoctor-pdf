@@ -1994,6 +1994,7 @@ module Asciidoctor
         num_cols = node.columns.size
         table_header_size = false
         theme = @theme
+        prev_font_scale, @font_scale = @font_scale, 1 if node.document.nested?
 
         tbl_bg_color = resolve_theme_color :table_background_color
         # QUESTION: should we fallback to page background color? (which is never transparent)
@@ -2337,6 +2338,8 @@ module Asciidoctor
         theme_margin :block, :bottom, (next_enclosed_block node)
       rescue ::Prawn::Errors::CannotFit
         log :error, (message_with_context 'cannot fit contents of table cell into specified column width', source_location: node.source_location)
+      ensure
+        @font_scale = prev_font_scale if prev_font_scale
       end
 
       def convert_thematic_break node

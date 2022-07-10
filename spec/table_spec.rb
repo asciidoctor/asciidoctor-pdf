@@ -1850,6 +1850,41 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect nested_cell1[:x]).to be < nested_cell2[:x]
     end
 
+    it 'should not compound font scale in nested document' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_font_size: 21 }, analyze: true
+      |===
+      |foo
+      a|
+      bar
+      !===
+      !yin !yang
+      !===
+      baz
+      |===
+      EOS
+
+      (expect pdf.text.map {|it| it[:font_size] }.uniq).to eql [21]
+    end
+
+    it 'should apply uniform font scale to table and nested table' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_font_size: 8.4 }, analyze: true
+      ****
+      before
+      |===
+      |foo
+      a|
+      bar
+      !===
+      !yin !yang
+      !===
+      baz
+      |===
+      ****
+      EOS
+
+      (expect pdf.text.map {|it| it[:font_size] }.uniq).to eql [8.4]
+    end
+
     it 'should restore counter after computing height of table cell in scratch document' do
       pdf = to_pdf <<~'EOS', analyze: true
       [cols=2*]
@@ -2107,6 +2142,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should scale font size of nested blocks proportionally' do
       pdf_theme = {
+        code_font_size: 14,
         table_font_size: 8.5,
         table_font_family: 'Helvetica',
       }
@@ -2121,15 +2157,25 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       ....
       literal block inside table
       ....
+
+      !===
+      a!
+      ....
+      literal block inside nested table
+      ....
+      !===
       |===
       EOS
 
       outside_text = (pdf.find_text 'literal block outside table')[0]
       (expect outside_text[:font_name]).to eql 'mplus1mn-regular'
-      (expect outside_text[:font_size]).to eql 11
+      (expect outside_text[:font_size]).to eql 14
       inside_text = (pdf.find_text 'literal block inside table')[0]
       (expect inside_text[:font_name]).to eql 'mplus1mn-regular'
-      (expect inside_text[:font_size]).to be < 9
+      (expect inside_text[:font_size]).to (be_within 0.001).of 11.333
+      nested_text = (pdf.find_text 'literal block inside nested table')[0]
+      (expect nested_text[:font_name]).to eql 'mplus1mn-regular'
+      (expect nested_text[:font_size]).to (be_within 0.001).of 11.333
     end
 
     it 'should scale font size of nested blocks consistently, even if table is nested inside a block' do
