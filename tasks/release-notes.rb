@@ -13,7 +13,8 @@ gem_dist_url = %(https://rubygems.org/gems/#{gem_name})
 release_actor = ENV['GITHUB_ACTOR'] || 'mojavelinux'
 release_beer = ENV['RELEASE_BEER'] || 'TBD'
 release_tag = %(v#{gem_version})
-previous_tag = (`git tag -l --sort -taggerdate`.each_line chomp: true)
+previous_tag = (`git -c versionsort.suffix=. -c versionsort.suffix=- ls-remote --tags --refs --sort -v:refname origin`.each_line chomp: true)
+  .map {|it| (it.rpartition '/')[-1] }
   .drop_while {|it| it != release_tag }
   .reject {|it| it == release_tag }
   .find {|it| (Gem::Version.new it.slice 1, it.length) < gem_version }
