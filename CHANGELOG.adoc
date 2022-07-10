@@ -16,11 +16,6 @@ Enhancements::
 * add `--theme` option to CLI as shorthand for `-a pdf-theme` (#2250)
 * add `--sourcemap` option to CLI to enable `:sourcemap` option on processor (#2265)
 
-Bug Fixes::
-
-* fix position of background color on caption with outside margin (#2271)
-* don't allow font scale to compound when entering nested table (#2276)
-
 == 2.1.4 (2022-06-26) - @mojavelinux
 
 Improvements::
