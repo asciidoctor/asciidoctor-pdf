@@ -1436,7 +1436,8 @@ module Asciidoctor
           end
           max_term_width += (term_padding[1] + term_padding[3])
           term_column_width = [max_term_width, bounds.width * 0.5].min
-          table table_data, position: :left, cell_style: { border_width: 0 }, column_widths: [term_column_width] do
+          table table_data, position: :left, column_widths: [term_column_width] do
+            cells.style border_width: 0
             @pdf.ink_table_caption node if node.title?
           end
           theme_margin :prose, :bottom, (next_enclosed_block actual_node) #unless actual_node.nested?
@@ -2213,10 +2214,10 @@ module Asciidoctor
           # NOTE: position is handled by this method
           position: :left,
           # NOTE: the border color, style, and width of the outer frame is set in the table callback block
-          cell_style: { border_color: grid_color.values, border_lines: grid_style.values, border_width: grid_width.values },
           width: table_width,
           column_widths: column_widths,
         }
+        cell_style = { border_color: grid_color.values, border_lines: grid_style.values, border_width: grid_width.values }
 
         # QUESTION: should we support nth; should we support sequence of roles?
         case node.attr 'stripes', nil, 'table-stripes'
@@ -2232,6 +2233,8 @@ module Asciidoctor
 
         left_padding = right_padding = nil
         table table_data, table_settings do
+          # NOTE: cell_style must be applied manually to be compatible with both prawn-table 0.2.2 and prawn-table 0.2.3
+          cells.style cell_style
           @column_widths = column_widths unless column_widths.empty?
           # NOTE: call width to capture resolved table width
           table_width = width
