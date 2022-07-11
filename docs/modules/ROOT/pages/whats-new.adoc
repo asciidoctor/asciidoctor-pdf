@@ -378,7 +378,10 @@ Default theme changes:: The top and bottom padding on quote blocks is now unifor
 
 == Dependencies and scripts
 
-The following dependencies and scripts were added to Asciidoctor PDF {page-component-version}.
+It's no longer necessary to use an unreleased version of the *prawn-table* gem with Asciidoctor PDF.
+If you are using an unreleased version, please remove that dependency from your [.path]_Gemfile_ and allow Asciidoctor PDF to handle the dependency on the prawn-table gem.
+
+The following scripts were added to Asciidoctor PDF {page-component-version}.
 
 * The `asciidoctor/pdf/nogmagick` script was added to unregister the Gmagick handler for PNG images.
 
