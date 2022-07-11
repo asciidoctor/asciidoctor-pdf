@@ -1761,7 +1761,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should be able to reference page layout in background image path', visual: true do
-      pdf_theme = { footer_background_image: 'image:{imagesdir}/square-{page-layout}.svg[]' }
+      pdf_theme = { __dir__: fixtures_dir, footer_background_image: 'image:square-{page-layout}.svg[]' }
 
       to_file = to_pdf_file <<~'EOS', 'running-content-background-image-per-layout.pdf', pdf_theme: pdf_theme, enable_footer: true
       page 1

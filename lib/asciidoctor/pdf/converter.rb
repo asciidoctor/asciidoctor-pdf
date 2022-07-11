@@ -889,7 +889,7 @@ module Asciidoctor
             label_width = label_min_width || (icon_size * 1.5)
           elsif (icon_path = has_icon || !(icon_path = (@theme[%(admonition_icon_#{type})] || {})[:image]) ?
               (get_icon_image_path node, type) :
-              (ThemeLoader.resolve_theme_asset (apply_subs_discretely doc, icon_path, subs: [:attributes]), @themesdir)) &&
+              (ThemeLoader.resolve_theme_asset (apply_subs_discretely doc, icon_path, subs: [:attributes], imagesdir: @themesdir), @themesdir)) &&
               (::File.readable? icon_path)
             icons = true
             # TODO: introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
@@ -3661,7 +3661,7 @@ module Asciidoctor
             logo_image_attrs = (AttributeList.new $2).parse %w(alt width height)
             if logo_image_from_theme
               relative_to_imagesdir = false
-              logo_image_path = apply_subs_discretely doc, $1, subs: [:attributes]
+              logo_image_path = apply_subs_discretely doc, $1, subs: [:attributes], imagesdir: @themesdir
               logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
             else
               relative_to_imagesdir = true
@@ -3671,7 +3671,7 @@ module Asciidoctor
             logo_image_attrs = {}
             relative_to_imagesdir = false
             if logo_image_from_theme
-              logo_image_path = apply_subs_discretely doc, logo_image_path, subs: [:attributes]
+              logo_image_path = apply_subs_discretely doc, logo_image_path, subs: [:attributes], imagesdir: @themesdir
               logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
             end
           end
@@ -4045,8 +4045,7 @@ module Asciidoctor
             image_relative_to = true
           end
           if from_theme
-            image_relative_to = @themesdir
-            image_path = apply_subs_discretely doc, image_path, subs: [:attributes], page_layout: page.layout.to_s
+            image_path = apply_subs_discretely doc, image_path, subs: [:attributes], imagesdir: (image_relative_to = @themesdir), page_layout: page.layout.to_s
           elsif image_path.include? '{page-layout}'
             image_path = image_path.sub '{page-layout}', page.layout.to_s
           end
