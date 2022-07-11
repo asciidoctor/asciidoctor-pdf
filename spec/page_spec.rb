@@ -1096,12 +1096,22 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-color-and-image.pdf'
     end
 
-    it 'should resolve attribute reference in image path in theme', visual: true do
+    it 'should resolve docdir attribute reference in image path in theme', visual: true do
       pdf_theme = {
         page_background_color: 'F9F9F9',
         page_background_image: 'image:{docdir}/tux.png[fit=none,pdfwidth=50%]',
       }
       to_file = to_pdf_file '{blank}', 'page-background-color-and-image-relative-to-docdir.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }
+
+      (expect to_file).to visually_match 'page-background-color-and-image.pdf'
+    end
+
+    it 'should resolve docimagesdir attribute reference in image path in theme', visual: true do
+      pdf_theme = {
+        page_background_color: 'F9F9F9',
+        page_background_image: 'image:{docimagesdir}/tux.png[fit=none,pdfwidth=50%]',
+      }
+      to_file = to_pdf_file '{blank}', 'page-background-color-and-image-relative-to-docdir.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir, 'imagesdir' => 'images' }
 
       (expect to_file).to visually_match 'page-background-color-and-image.pdf'
     end
