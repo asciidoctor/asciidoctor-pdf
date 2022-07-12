@@ -376,6 +376,24 @@ describe Asciidoctor::PDF::Converter do
         (expect (pdf.page 1).text).to include 'Documentation Chronicles'
       end
 
+      it 'should not warn when using dark theme to convert chronicles example' do
+        input_path = Pathname.new example_file 'chronicles-example.adoc'
+        pdf = to_pdf input_path, attribute_overrides: { 'imagesdir' => '@', 'pdf-theme' => 'chronicles-dark' }, analyze: true
+        (expect pdf.pages).to have_size 17
+        gs_p1 = pdf.pages[0][:raw_content]
+        (expect gs_p1).to start_with %(q\n/DeviceRGB cs\n0.0 0.0 0.0 scn\n0.0 0.0 595.28 841.89 re\n)
+        doctitle = pdf.find_text page_number: 1, string: 'Documentation Chronicles'
+        (expect doctitle).to have_size 1
+        (expect doctitle[0][:font_color]).to eql '666666'
+        p4_text = pdf.find_text page_number: 4
+        heading_text = p4_text[0]
+        paragraph_text = p4_text[1]
+        link_text = p4_text[2]
+        (expect heading_text[:font_color]).to eql 'CCCCCC'
+        (expect paragraph_text[:font_color]).to eql 'CCCCCC'
+        (expect link_text[:font_color]).to eql 'BD7435'
+      end
+
       it 'should allow all border colors to be set using base-border-color when extending base theme' do
         [
           %(****\ncontent\n****),
