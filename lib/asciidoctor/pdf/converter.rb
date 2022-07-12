@@ -2770,6 +2770,7 @@ module Asciidoctor
         if (imagesdir = opts[:imagesdir])
           imagesdir_to_restore = doc.attr 'imagesdir'
           doc.set_attr 'imagesdir', imagesdir
+          remove_docimagesdir = doc.set_attr 'docimagesdir', (::File.absolute_path imagesdir_to_restore.to_s, (doc.attr 'docdir', '')), false
         end
         if (page_layout = opts[:page_layout])
           page_layout_to_restore = doc.attr 'page-layout'
@@ -2783,7 +2784,10 @@ module Asciidoctor
         value = value.gsub '\{', '{' if escaped_attr_ref
         doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
         page_layout_to_restore ? (doc.set_attr 'page-layout', page_layout_to_restore) : (doc.remove_attr 'page-layout') if page_layout
-        imagesdir_to_restore ? (doc.set_attr 'imagesdir', imagesdir_to_restore) : (doc.remove_attr 'imagesdir') if imagesdir
+        if imagesdir
+          imagesdir_to_restore ? (doc.set_attr 'imagesdir', imagesdir_to_restore) : (doc.remove_attr 'imagesdir')
+          doc.remove_attr 'docimagesdir' if remove_docimagesdir
+        end
         value
       end
 

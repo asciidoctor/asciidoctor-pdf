@@ -48,12 +48,12 @@ title-page:
 
 The target of the inline image macro can be a path relative to the `pdf-themesdir` attribute (default), an absolute path, or a data URI.
 If `pdf-theme` is a path that ends in `.yml`, and `pdf-themesdir` is not set, then the images are resolved relative to the directory of the path specified by `pdf-theme`.
-If you want to reference an image relative to the document you're converting, then prefix the target with the `\{docdir}` attribute reference.
+If you want to reference an image relative to the document you're converting, then prefix the target with the `\{docdir}` or `\{docimagesdir}` attribute references, which both resolve to an absolute path.
 
 [,yaml]
 ----
 title-page:
-  background-image: image:{docdir}/images/title-cover.png[]
+  background-image: image:{docimagesdir}/title-cover.png[]
 ----
 
 === Per page layout

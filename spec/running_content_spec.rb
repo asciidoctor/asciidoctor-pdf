@@ -3193,6 +3193,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       doc = to_pdf 'body', pdf_theme: pdf_theme, enable_footer: true, to_file: (pdf_io = StringIO.new), attributes: {}, analyze: :document
       (expect doc.attr? 'imagesdir').to be_falsy
+      (expect doc.attr? 'docimagesdir').to be_falsy
       pdf = PDF::Reader.new pdf_io
       (expect (pdf.page 1).text).to include fixtures_dir
     end
