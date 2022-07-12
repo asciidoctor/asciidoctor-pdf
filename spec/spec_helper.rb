@@ -481,7 +481,7 @@ RSpec.configure do |config|
     else
       Asciidoctor.convert input, (opts.merge safe: safe_mode, to_file: (pdf_io = StringIO.new), standalone: true)
     end
-    File.write (File.join Dir.tmpdir, 'debug.pdf'), pdf_io.string if debug
+    File.write (File.join Dir.tmpdir, 'debug.pdf'), (Pathname === pdf_io ? pdf_io.read : pdf_io.string) if debug
     analyze ? (PDF_INSPECTOR_CLASS[analyze].analyze pdf_io) : (PDF::Reader.new pdf_io)
   end
 
