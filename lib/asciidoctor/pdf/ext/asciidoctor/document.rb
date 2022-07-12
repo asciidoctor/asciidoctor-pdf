@@ -23,4 +23,9 @@ class Asciidoctor::Document
     end
     nil
   end
+
+  # Internal: Returns whether the specified attribute has never been set and is not locked.
+  def attr_unspecified? name
+    !((attribute_locked? name) || (@attributes_modified.include? name))
+  end
 end

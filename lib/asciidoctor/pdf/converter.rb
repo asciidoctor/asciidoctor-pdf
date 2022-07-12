@@ -160,9 +160,9 @@ module Asciidoctor
         doc.promote_preface_block
         init_pdf doc
         # set default value for outline, outline-title, and pagenums attributes if not otherwise set
-        doc.attributes['outline'] = '' unless (doc.attribute_locked? 'outline') || ((doc.instance_variable_get :@attributes_modified).include? 'outline')
-        doc.attributes['outline-title'] = '' unless (doc.attribute_locked? 'outline-title') || ((doc.instance_variable_get :@attributes_modified).include? 'outline-title')
-        doc.attributes['pagenums'] = '' unless (doc.attribute_locked? 'pagenums') || ((doc.instance_variable_get :@attributes_modified).include? 'pagenums')
+        doc.attributes['outline'] = '' if doc.attr_unspecified? 'outline'
+        doc.attributes['outline-title'] = '' if doc.attr_unspecified? 'outline-title'
+        doc.attributes['pagenums'] = '' if doc.attr_unspecified? 'pagenums'
 
         on_page_create(&(method :init_page).curry[doc])
 
@@ -397,8 +397,7 @@ module Asciidoctor
         @base_text_align = (text_align = doc.attr 'text-align') && (TextAlignmentNames.include? text_align) ? text_align : theme.base_text_align
         @base_line_height = theme.base_line_height
         @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
-        if (hyphen_lang = (doc.attr 'hyphens') ||
-            (((doc.attribute_locked? 'hyphens') || ((doc.instance_variable_get :@attributes_modified).include? 'hyphens')) ? nil : @theme.base_hyphens)) &&
+        if (hyphen_lang = (doc.attr 'hyphens') || ((doc.attr_unspecified? 'hyphens') ? @theme.base_hyphens : nil)) &&
             ((defined? ::Text::Hyphen::VERSION) || !(Helpers.require_library 'text/hyphen', 'text-hyphen', :warn).nil?)
           hyphen_lang = doc.attr 'lang' if !(::String === hyphen_lang) || hyphen_lang.empty?
           hyphen_lang = 'en_us' if hyphen_lang.nil_or_empty? || hyphen_lang == 'en'
@@ -2406,7 +2405,7 @@ module Asciidoctor
             # QUESTION: should we insert breakable chars into URI when building fragment instead?
             %(#{anchor}<a href="#{target}"#{attrs.join}>#{breakable_uri text}</a>)
           # NOTE: @media may not be initialized if method is called before convert phase
-          elsif (doc.attr? 'show-link-uri') || !(@media == 'screen' || (doc.attribute_locked? 'show-link-uri') || ((doc.instance_variable_get :@attributes_modified).include? 'show-link-uri'))
+          elsif (doc.attr? 'show-link-uri') || (@media != 'screen' && (doc.attr_unspecified? 'show-link-uri'))
             # QUESTION: should we insert breakable chars into URI when building fragment instead?
             # TODO: allow style of printed link to be controlled by theme
             %(#{anchor}<a href="#{target}"#{attrs.join}>#{text}</a> [<font size="0.85em">#{breakable_uri bare_target}</font>&#93;)

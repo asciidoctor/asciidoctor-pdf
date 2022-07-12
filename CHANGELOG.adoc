@@ -17,6 +17,10 @@ Enhancements::
 * add `--theme` option to CLI as shorthand for `-a pdf-theme` (#2250)
 * add `--sourcemap` option to CLI to enable `:sourcemap` option on processor (#2265)
 
+Improvements::
+
+* add internal `Document#attr_unspecified?` method to simplify check for an attribute which as not be set or unset
+
 Bug Fixes::
 
 * always set `imagesdir` attribute to value of `themesdir` when resolving images from theme
