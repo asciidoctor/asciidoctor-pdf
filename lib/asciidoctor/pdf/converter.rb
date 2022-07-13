@@ -2104,10 +2104,15 @@ module Asciidoctor
               when :monospaced
                 cell_data.delete :font_style
                 cell_line_height = @base_line_height
+                current_font_size = @font_size
                 theme_font :codespan do
                   mono_cell_font_info = font_info
                   cell_data[:font] = mono_cell_font_info[:family]
-                  cell_data[:size] = mono_cell_font_info[:size]
+                  if ::String === @font_size || @font_size < 1
+                    @font_size = current_font_size
+                    font_size mono_cell_font_info[:size]
+                  end
+                  cell_data[:size] = @font_size
                   cell_data[:text_color] = @font_color
                   cell_line_metrics = calc_line_metrics cell_line_height
                 end
