@@ -3,8 +3,6 @@ require:
 - rubocop-rspec
 AllCops:
   TargetRubyVersion: 2.7
-Gemspec/DateAssignment:
-  Enabled: true
 Gemspec/DeprecatedAttributeAssignment:
   Enabled: true
 Gemspec/RequireMFA:
@@ -31,6 +29,10 @@ Layout/IndentationWidth:
   Enabled: true
 Layout/LeadingCommentSpace:
   Enabled: false # reason: this is just nitpicky
+Layout/LineContinuationLeadingSpace:
+  Enabled: true
+Layout/LineContinuationSpacing:
+  Enabled: true
 Layout/LineEndStringConcatenationIndentation:
   Enabled: true
 Layout/LineLength:
@@ -67,6 +69,8 @@ Lint/BinaryOperatorWithIdenticalOperands:
 Lint/ConstantDefinitionInBlock:
   Enabled: true
   Exclude: [ spec/*.rb ]
+Lint/ConstantOverwrittenInRescue:
+  Enabled: true
 Lint/DeprecatedConstants:
   Enabled: true
 Lint/DeprecatedOpenSSLConstant:
@@ -108,6 +112,8 @@ Lint/MixedRegexpCaptureTypes:
   Enabled: true
 Lint/NoReturnInBeginEndBlocks:
   Enabled: true
+Lint/NonAtomicFileOperation:
+  Enabled: false
 Lint/NumberedParameterAssignment:
   Enabled: true
 Lint/OrAssignmentToConstant:
@@ -199,6 +205,8 @@ RSpec/BeNil:
   Enabled: true
 RSpec/BeforeAfterAll:
   Enabled: true
+RSpec/Capybara/SpecificMatcher:
+  Enabled: false
 RSpec/ChangeByZero:
   Enabled: true
 RSpec/ContextWording:
@@ -229,6 +237,8 @@ RSpec/NamedSubject:
 RSpec/Pending:
   Enabled: true
 RSpec/Rails/AvoidSetupHook:
+  Enabled: false
+RSpec/Rails/HaveHttpStatus:
   Enabled: false
 RSpec/SubjectDeclaration:
   Enabled: true
