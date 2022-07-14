@@ -32,7 +32,8 @@ Every title page is as unique as the work itself.
 That's why Asciidoctor PDF gives you the ability to customize the title page by overriding the `ink_title_page` method in an extended converter.
 The `ink_title_page` method is called after the title page has been created and the background applied, so it can focus on writing content.
 In this method, you can choose to honor the `title-page` settings from the theme, or go your own way.
-The one rule is that this method must not start a new page.
+The one rule is that the `ink_title_page` method *must not* start a new page.
+If it tries to start a new page, that request will be ignored and a warning will be generated.
 
 Let's create a custom title page that shows the document title and subtitle between two lines in the top half and a logo in the bottom half.
 
