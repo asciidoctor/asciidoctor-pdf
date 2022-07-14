@@ -70,7 +70,7 @@ This option can also be added to a discrete heading to ensure the heading is kep
 
 [,asciidoc]
 ----
-[%breakable]
+[discrete%breakable]
 === Discrete heading
 
 Next block of content.
@@ -80,6 +80,16 @@ What the `breakable` option on a section or discrete heading does is prevent the
 In other words, the option prevents a page break immediately following the title, so the title won't be the last text on the page.
 Instead, the page break will come _before_ the title.
 This option does not make the converter attempt to keep an entire section on the same page.
+
+If you want to enable this feature for all sections and discrete headings, you can set the `heading-min-height-after` theme key to `auto` instead.
+
+[,yaml]
+----
+heading:
+  min-height-after: auto
+----
+
+Keep in mind that this does add extra processing to the conversion, which may impact conversion time.
 
 === Other blocks
 
