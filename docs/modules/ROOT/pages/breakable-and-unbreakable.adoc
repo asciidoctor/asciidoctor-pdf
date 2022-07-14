@@ -4,8 +4,8 @@
 Asciidoctor PDF gives the author some control over where content blocks are placed using the `unbreakable` and `breakable` options, and tries to provide sensible defaults when these options are not used.
 
 If you want a non-section block to be truly unbreakable, you add the `unbreakable` option.
-If you want to prevent the orphaning of the anchor and title of a table or section, then you add the `breakable` option.
-Otherwise, you don't need to specify either of these options as the default should suffice.
+If you want to prevent the orphaning of the anchor and title of a table, section, or discrete heading, then you add the `breakable` option.
+Otherwise, you don't need to specify either of these options as the default behavior should suffice.
 This page goes into detail about what functionality these options enable.
 
 [#default]
@@ -25,15 +25,16 @@ This breakable behavior includes automatic anchor and title (i.e., caption) orph
 
 [.term]*Breakable with built-in anchor and title orphan prevention* means that a block can break across pages, but the converter will automatically push the block to the next page, when necessary, to ensure a block's anchor and title are kept with the block.
 
-Tables and sections are breakable by default, but _do not_ provide automatic anchor and title orphan prevention.
+Tables, sections, and discrete headings are breakable by default, but _do not_ provide automatic anchor and title orphan prevention.
 For tables, that means the anchor and title could be left on the current page if the table gets pushed to the next page.
-For sections, that means the section title may be left on the current page if the first content block doesn't fit below it.
-However, you can turn on orphan prevention for tables and sections by adding the (seemingly redundant) `breakable` option as a hint.
+For sections, that means the section title may be left on the current page if the first block doesn't fit below it.
+For discrete headings, that means the heading may be left on the current page if the next adjacent block doesn't fit below it.
+However, you can turn on orphan prevention for tables, sections, and discrete headings by adding the (seemingly redundant) `breakable` option as a hint.
 
 [#breakable]
 == Breakable option
 
-Orphan prevention isn't applied to tables and sections by default.
+Orphan prevention isn't applied to tables, sections, and discrete headings by default.
 This behavior can be enabled by adding the `breakable` option.
 Since these blocks are already breakable by default, this option is merely a publisher's hint to inform the converter to add orphan prevention.
 
@@ -53,9 +54,9 @@ The `breakable` option can be applied to a table to ensure the anchor and title 
 ----
 <.> Assign the `breakable` option to a table, using the shorthand percent symbol (`%`) for the `option` attribute name, to indicate that the table's title and anchor should be kept with the table.
 
-=== Section
+=== Section or Discrete Heading
 
-The `breakable` option can be applied to a section to ensure the section title is kept with the first block of content if the first block gets pushed to the following page.
+The `breakable` option can be applied to a section to ensure the section title is kept with the first child block if that block gets advanced to the following page.
 
 [,asciidoc]
 ----
@@ -65,11 +66,20 @@ The `breakable` option can be applied to a section to ensure the section title i
 First block of content in the section.
 ----
 
-What the `breakable` option on a section does is prevent the converter from orphaning the section title and anchor.
-The section title won't be the last text on the page.
-In other words, the option prevents a page break immediately following the section title.
-Instead, the page break will come _before_ the section title.
-It does not attempt to keep the whole section on the same page.
+This option can also be added to a discrete heading to ensure the heading is kept with the next adjacent block if that block gets advanced to the next page.
+
+[,asciidoc]
+----
+[%breakable]
+=== Discrete heading
+
+Next block of content.
+----
+
+What the `breakable` option on a section or discrete heading does is prevent the converter from orphaning the title and its anchor.
+In other words, the option prevents a page break immediately following the title, so the title won't be the last text on the page.
+Instead, the page break will come _before_ the title.
+This option does not make the converter attempt to keep an entire section on the same page.
 
 === Other blocks
 
@@ -85,9 +95,9 @@ And since it's redundant, that provided an opportunity to use it as an author hi
 
 When you add the `breakable` option to a block explicitly, the converter knows you placed it there.
 That provides an opportunity to enable functionality that isn't enabled by default.
-That extra behavior, in this case, is to keep the anchor and title with the first row of a table and the first block of a section.
+That extra behavior, in this case, is to keep the anchor and title with the first row of a table, the first block of a section, and the next adjacent block of a discrete heading.
 
-The reason the `breakable` option has to be specified explicitly on tables and sections is because this computation comes at a slight cost in terms of performance and side effects.
+The reason the `breakable` option has to be specified explicitly on tables, sections, and discrete headings is because this computation comes at a slight cost in terms of performance and side effects.
 It's minor, but it's there.
 No other blocks require this.
 ****
@@ -140,7 +150,7 @@ the converter will advance it to the next page so it does not break.
 Internally, the open block enclosure is exactly how `unbreakable` is supported on tables.
 
 [#dry-run-performance]
-.Why can't I assign unbreakable globally? Why don't sections and tables have orphan prevention by default?
+.Why can't I assign unbreakable globally? Why don't tables, sections, and discrete headings have orphan prevention by default?
 ****
 The logic in the converter that calculates the extent of a block, which includes its title, main content, and padding, uses multiple passes, called "`dry runs`", to get an accurate measurement of where a block begins, ends, and whether it breaks across pages.
 When the converter determines that a block's title and anchor would be orphaned, or that a block breaks when it's marked as unbreakable, it has to advance to the next page and convert it again in order to redo the extent calculation.
@@ -149,7 +159,7 @@ All these dry runs add additional processing time and effort to the conversion.
 
 Making all blocks unbreakable by default adds a lot of extra steps (not to mention leaving behind a lot of gaps in the document).
 Orphan prevents adds almost as many since it's a similar process.
-Doing that by default for tables and sections would be too complex and costly.
+Doing that by default for tables, sections, and discrete headings would be too complex and costly.
 To recoup some of the processing time, we decided to make some trade-offs.
-Therefore, blocks are breakable by default and authors must opt-in to get orphan prevention for tables and sections.
+Therefore, blocks are breakable by default and authors must opt-in to get orphan prevention for tables, sections, and discrete headings.
 ****
