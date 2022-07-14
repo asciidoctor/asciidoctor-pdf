@@ -379,6 +379,11 @@ module Asciidoctor
         end
       end
 
+      def set_font font, size = nil
+        @font = font
+        font_size size if size
+      end
+
       def resolve_font_style styles
         if styles.include? :bold
           (styles.include? :italic) ? :bold_italic : :bold

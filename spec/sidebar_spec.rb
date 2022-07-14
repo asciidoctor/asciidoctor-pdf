@@ -323,4 +323,44 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
 
     (expect to_file).to visually_match 'sidebar-page-split-transparent-border.pdf'
   end
+
+  it 'should allow font size of sidebar to be specified using absolute units' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_font_size: 9 }, analyze: true
+    ****
+    sidebar
+    ****
+    EOS
+
+    sidebar_text = pdf.find_unique_text 'sidebar'
+    (expect sidebar_text[:font_size]).to eql 9
+  end
+
+  it 'should allow font size of sidebar to be specified using relative units' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_size: 12, sidebar_font_size: '0.75em' }, analyze: true
+    ****
+    sidebar
+    ****
+    EOS
+
+    sidebar_text = pdf.find_unique_text 'sidebar'
+    (expect sidebar_text[:font_size]).to eql 9
+  end
+
+  it 'should allow font size of code block in sidebar to be specified using relative units' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_font_size: 12, code_font_size: '0.75em' }, analyze: true
+    ****
+    sidebar
+
+    ----
+    code block
+    ----
+    ****
+    EOS
+
+    sidebar_text = pdf.find_unique_text 'sidebar'
+    (expect sidebar_text[:font_size]).to eql 12
+
+    code_block_text = pdf.find_unique_text 'code block'
+    (expect code_block_text[:font_size]).to eql 9
+  end
 end

@@ -1573,6 +1573,24 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect monospaced_text[:font_size]).to eql 10.25
     end
 
+    it 'should apply codespan style with relative font size to text in a monospaced table cell' do
+      ['0.8em', 0.8].each do |font_size|
+        pdf = to_pdf <<~'EOS', pdf_theme: { codespan_font_size: font_size }, analyze: true
+        [cols=2*,width=50%]
+        |===
+        m|site.url
+        |The URL of the site.
+        |===
+        EOS
+
+        monospaced_text = pdf.find_unique_text 'site.url'
+        reference_text = pdf.find_unique_text 'The URL of the site.'
+        (expect monospaced_text[:font_name]).to eql 'mplus1mn-regular'
+        (expect monospaced_text[:font_color]).to eql 'B12146'
+        (expect monospaced_text[:font_size]).to eql reference_text[:font_size] * 0.8
+      end
+    end
+
     it 'should ignore line-height on codespan category when computing line metrics' do
       input = <<~'EOS'
       [cols=2*m,width=50%]
@@ -2209,6 +2227,25 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       nested_text = (pdf.find_text 'literal block inside nested table')[0]
       (expect nested_text[:font_name]).to eql 'mplus1mn-regular'
       (expect nested_text[:font_size]).to (be_within 0.001).of 11.333
+    end
+
+    it 'should apply relative font size to nested blocks' do
+      pdf_theme = {
+        base_font_size: 12,
+        table_font_size: 9,
+        sidebar_font_size: '0.9em',
+      }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      |===
+      a|
+      ****
+      sidebar
+      ****
+      |===
+      EOS
+
+      sidebar_text = pdf.find_unique_text 'sidebar'
+      (expect sidebar_text[:font_size]).to eql 8.1
     end
 
     it 'should scale font size of nested blocks consistently, even if table is nested inside a block' do

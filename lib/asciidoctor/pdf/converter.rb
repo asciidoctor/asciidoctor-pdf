@@ -4435,7 +4435,12 @@ module Asciidoctor
         if opts.key? :level
           hlevel_category = %(#{category}_h#{opts[:level]})
           family = @theme[%(#{hlevel_category}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family || font_family
-          size = (@theme[%(#{hlevel_category}_font_size)] || @theme[%(#{category}_font_size)] || @root_font_size) * @font_scale
+          if (size = @theme[%(#{hlevel_category}_font_size)] || @theme[%(#{category}_font_size)])
+            scale = @font_scale unless ::String === size || size < 1
+          else
+            scale = @font_scale
+            size = @root_font_size
+          end
           style = @theme[%(#{hlevel_category}_font_style)] || @theme[%(#{category}_font_style)]
           color = @theme[%(#{hlevel_category}_font_color)] || @theme[%(#{category}_font_color)]
           kerning = resolve_font_kerning @theme[%(#{hlevel_category}_font_kerning)] || @theme[%(#{category}_font_kerning)]
@@ -4445,7 +4450,11 @@ module Asciidoctor
         else
           inherited_font = font_info
           family = @theme[%(#{category}_font_family)] || inherited_font[:family]
-          size = (size = @theme[%(#{category}_font_size)]) ? size * @font_scale : inherited_font[:size]
+          if (size = @theme[%(#{category}_font_size)])
+            scale = @font_scale unless ::String === size || size < 1
+          else
+            size = inherited_font[:size]
+          end
           style = @theme[%(#{category}_font_style)] || inherited_font[:style]
           color = @theme[%(#{category}_font_color)]
           kerning = resolve_font_kerning @theme[%(#{category}_font_kerning)]
@@ -4461,6 +4470,7 @@ module Asciidoctor
 
         result = nil
         font family, size: size, style: style&.to_sym do
+          @font_size *= scale if scale
           result = yield
         ensure
           @font_color = prev_color if color
