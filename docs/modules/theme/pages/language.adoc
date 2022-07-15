@@ -49,7 +49,7 @@ The value of a key may be one of the following types:
 ** _empty_ (i.e., no value specified)
 ** null
 ** ~
-* Number (integer or float) with optional units (default unit is points)
+* Number (integer or float) with optional fixed units (default unit is points)
 * Array
 ** Color as RGB array (e.g., [51, 51, 51])
 ** Color as CMYK array (e.g., [50, 100, 0, 0])

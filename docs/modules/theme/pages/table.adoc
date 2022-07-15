@@ -69,7 +69,7 @@ table:
   font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 table:
@@ -179,7 +179,7 @@ table:
     font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: `$table-font-size`)
 |[source]
 table:
@@ -271,7 +271,7 @@ table:
     font-family: Noto Serif
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: `$table-font-size`)
 |[source]
 table:
@@ -366,7 +366,7 @@ table:
     font-family: Noto Sans
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[font-size] +
 (default: `$table-head-font-size`)
 |[source]
 table:

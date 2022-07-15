@@ -92,7 +92,7 @@ admonition:
   font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 admonition:
@@ -154,7 +154,7 @@ admonition:
     font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 admonition:
@@ -253,7 +253,7 @@ admonition:
       font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 admonition:

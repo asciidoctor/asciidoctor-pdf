@@ -76,7 +76,7 @@ quote:
   font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 quote:
@@ -120,7 +120,7 @@ The keys in the `quote-cite` category control the arrangement and style of the c
 |Key |Value Type |Example
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 quote:

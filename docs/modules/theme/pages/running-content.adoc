@@ -116,7 +116,7 @@ header:
   font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 header:
@@ -344,7 +344,7 @@ footer:
   font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 footer:

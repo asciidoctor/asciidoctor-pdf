@@ -41,7 +41,7 @@ toc:
   font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 toc:
@@ -144,7 +144,7 @@ toc:
   h3-font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 toc:
@@ -199,7 +199,7 @@ toc:
     font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: `$heading-h2-font-size`)
 |[source]
 toc:
@@ -257,7 +257,7 @@ toc:
     font-color: #999999
 
 |<<font-properties,font-size>>
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 toc:

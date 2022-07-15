@@ -49,7 +49,7 @@ title-page:
   font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 title-page:
@@ -173,7 +173,7 @@ title-page:
     font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: `18`)
 |[source]
 title-page:
@@ -279,7 +279,7 @@ title-page:
     font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: `14`)
 |[source]
 title-page:
@@ -388,7 +388,7 @@ title-page:
     font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 title-page:
@@ -483,7 +483,7 @@ title-page:
     font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 title-page:

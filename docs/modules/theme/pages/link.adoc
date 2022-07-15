@@ -38,7 +38,7 @@ link:
   font-family: Roboto
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 link:

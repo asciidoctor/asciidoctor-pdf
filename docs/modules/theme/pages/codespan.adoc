@@ -61,8 +61,8 @@ codespan:
 codespan:
   font-family: M+ 1mn
 
-|<<font-size,font-size>>
-|xref:language.adoc#values[Number] +
+|font-size
+|<<font-size,Font size>> +
 (default: _inherit_)
 |[source]
 codespan:
@@ -95,3 +95,4 @@ It does not affect the distance between the formatted phrase and the phrases tha
 You're strongly encouraged to set the value of the `font-size` key to a relative font size using the `em` units (e.g., `0.9em`).
 A code phrase with a fixed font size will not be scaled when the font size of the parent element (e.g., table, caption, etc.) is specified.
 However, by using a relative value, the font size will be computed relative to the size of the text that surrounds it, giving you effectively the same result.
+See xref:text.adoc#font-size[Font size] for more information about relative font sizes.

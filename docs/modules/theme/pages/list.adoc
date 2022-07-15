@@ -62,7 +62,7 @@ ulist:
     font-family: Noto Serif
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 ulist:
@@ -114,7 +114,7 @@ ulist:
       font-family: fas
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 ulist:

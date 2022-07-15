@@ -37,7 +37,7 @@ callout-list:
   font-kerning: none
 
 |<<inherit,font-size>>
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 callout-list:
@@ -120,7 +120,7 @@ conum:
   font-kerning: none
 
 |<<inherit,font-size>>
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 conum:

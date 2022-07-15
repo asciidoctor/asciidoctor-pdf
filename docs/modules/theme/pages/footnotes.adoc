@@ -19,7 +19,7 @@ footnotes:
   font-color: #CCCCCC
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: `9`)
 |[source]
 footnotes:

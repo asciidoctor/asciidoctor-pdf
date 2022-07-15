@@ -32,6 +32,34 @@ underline:: A line is drawn beneath the text.
 
 When a key category allows the `text-decoration` key to be set, you can usually specify a `text-decoration-color` and `text-decoration-width`, too.
 
+[#font-size]
+== Font size
+
+The `font-size` key specifies the size of the font.
+The font size may be specified either as a fixed value (e.g., `12`) or a relative value (e.g., `0.8em`).
+Font sizes are most often specified as a fixed value, though there are important cases when a relative value is more suitable.
+The font size always resolves to a point value when text is written to the PDF.
+
+If the font size is specified as a number, or a number with a fixed unit of measurement (e.g., `px`), that value is converted to points.
+The conversion to points is done when the theme is loaded.
+The `font-size` key on the `base` category, as well as min, large, and small font size keys, must always be specified as a fixed value.
+
+The only time this value is not used as specified is when the element is inside a table.
+If the font size on the table or AsciiDoc table cell differs from the base font size, all nested content is scaled by that ratio.
+
+If the font size has relative units, `em`, `%`, or `rem`, then the value will be computed at the point of use.
+
+* If the value has the unit `em`, then that value will be multiplied by the current font size.
+* If the value has the unit `%`, then that value will be divided by 100, then multiplied by the current font size.
+* If the value has the unit `rem`, then that value will be multiplied by the base font size.
+
+For example, if the font size is `0.75em` and the current font size is `12`, then the font size will be `9`.
+
+Relative font sizes are best suited for inline elements, such as a codespan.
+Only use a relative font size when the font size should always be scaled relative to either the parent element (`em` or `%`) or base font size (`rem`).
+
+Note that fonts often contain built-in line height, so the size of the font may appear to take up more room than the number of points specified.
+
 [#font-style]
 == Font style
 

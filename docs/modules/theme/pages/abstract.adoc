@@ -20,7 +20,7 @@ abstract:
   font-color: #5C6266
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: `13.5`)
 |[source]
 abstract:
@@ -143,7 +143,7 @@ abstract:
     font-kerning: none
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: `$base-font-size`)
 |[source]
 abstract:

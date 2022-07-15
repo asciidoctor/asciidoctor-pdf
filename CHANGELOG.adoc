@@ -16,7 +16,7 @@ Enhancements::
 * don't force page break after TOC with automatic placement in article if `title-page` attribute is set and value of `toc-break-after` theme key is `auto` (#1768)
 * add `--theme` option to CLI as shorthand for `-a pdf-theme` (#2250)
 * add `--sourcemap` option to CLI to enable `:sourcemap` option on processor (#2265)
-* broaden support for relative font sizes in theme to more than just inline elements
+* broaden support for relative font sizes in theme to more than just inline elements; document support for relative font sizes
 
 Improvements::
 

@@ -69,7 +69,7 @@ button:
   font-family: M+ 1mn
 
 |font-size
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
 button:
