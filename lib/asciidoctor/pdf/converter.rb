@@ -4436,7 +4436,7 @@ module Asciidoctor
           hlevel_category = %(#{category}_h#{opts[:level]})
           family = @theme[%(#{hlevel_category}_font_family)] || @theme[%(#{category}_font_family)] || @theme.base_font_family || font_family
           if (size = @theme[%(#{hlevel_category}_font_size)] || @theme[%(#{category}_font_size)])
-            scale = @font_scale unless ::String === size || size < 1
+            scale = @font_scale unless ::String === size
           else
             scale = @font_scale
             size = @root_font_size
@@ -4451,7 +4451,7 @@ module Asciidoctor
           inherited_font = font_info
           family = @theme[%(#{category}_font_family)] || inherited_font[:family]
           if (size = @theme[%(#{category}_font_size)])
-            scale = @font_scale unless ::String === size || size < 1
+            scale = @font_scale unless ::String === size
           else
             size = inherited_font[:size]
           end

@@ -439,7 +439,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect linked_text[:font_size].to_f).to eql 7.5
     end
 
-    it 'should imply em units if font size is less than 1' do
+    it 'should use font size as is if value is less than 1' do
       pdf_theme = {
         base_font_size: 12,
         sidebar_font_size: 10,
@@ -453,7 +453,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       normal_text = pdf.find_unique_text 'Check out '
       (expect normal_text[:font_size].to_f).to eql 10.0
       linked_text = pdf.find_unique_text 'Asciidoctor'
-      (expect linked_text[:font_size].to_f).to eql 7.5
+      (expect linked_text[:font_size].to_f).to eql 0.75
     end
 
     it 'should resolve font size of inline element specified in rem units' do

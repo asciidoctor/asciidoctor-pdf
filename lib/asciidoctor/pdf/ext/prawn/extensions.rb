@@ -371,9 +371,6 @@ module Asciidoctor
           else
             super points.to_f
           end
-        # NOTE: assume em value (since a font size of 1 is extremely unlikely)
-        elsif points <= 1
-          super @font_size * points
         else
           super points
         end

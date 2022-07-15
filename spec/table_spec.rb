@@ -1574,21 +1574,19 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should apply codespan style with relative font size to text in a monospaced table cell' do
-      ['0.8em', 0.8].each do |font_size|
-        pdf = to_pdf <<~'EOS', pdf_theme: { codespan_font_size: font_size }, analyze: true
-        [cols=2*,width=50%]
-        |===
-        m|site.url
-        |The URL of the site.
-        |===
-        EOS
+      pdf = to_pdf <<~'EOS', pdf_theme: { codespan_font_size: '0.8em' }, analyze: true
+      [cols=2*,width=50%]
+      |===
+      m|site.url
+      |The URL of the site.
+      |===
+      EOS
 
-        monospaced_text = pdf.find_unique_text 'site.url'
-        reference_text = pdf.find_unique_text 'The URL of the site.'
-        (expect monospaced_text[:font_name]).to eql 'mplus1mn-regular'
-        (expect monospaced_text[:font_color]).to eql 'B12146'
-        (expect monospaced_text[:font_size]).to eql reference_text[:font_size] * 0.8
-      end
+      monospaced_text = pdf.find_unique_text 'site.url'
+      reference_text = pdf.find_unique_text 'The URL of the site.'
+      (expect monospaced_text[:font_name]).to eql 'mplus1mn-regular'
+      (expect monospaced_text[:font_color]).to eql 'B12146'
+      (expect monospaced_text[:font_size]).to eql reference_text[:font_size] * 0.8
     end
 
     it 'should ignore line-height on codespan category when computing line metrics' do

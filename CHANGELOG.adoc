@@ -29,6 +29,7 @@ Bug Fixes::
 Compliance::
 
 * configure table borders in way that is compatible with prawn-table > 0.2.2
+* don't coerce font size < 1 to relative font size; relative font size should be specified in units
 
 == 2.1.5 (2022-07-10) - @mojavelinux
 
