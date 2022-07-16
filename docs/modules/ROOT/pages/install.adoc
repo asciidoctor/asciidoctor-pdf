@@ -38,14 +38,26 @@ Once you make this change, all your Unicode headaches will be behind you.
 
 == Install Asciidoctor PDF
 
-You can install Asciidoctor PDF using the `gem install` command.
-We'll use this command to install the Asciidoctor PDF gem named *asciidoctor-pdf* that's published on RubyGems.org.
-Pass the name of the gem to the `gem install` command as follows:
+Asciidoctor PDF (gem: *asciidoctor-pdf*, command: `asciidoctor-pdf`) is published as a RubyGem to the rubygems.org software registry.
+You install Asciidoctor PDF from that registry using the RubyGem management tools provided by Ruby (`bundle` or `gem`).
+Alternately, you can {url-project-repo}/blob/main/CONTRIBUTING-CODE.adocl[build and install Asciidoctor PDF from source^].
 
- $ gem install asciidoctor-pdf
+Refer to the table below for instructions on how to install Asciidoctor PDF.
+If you use Bundler to manage your gems in a [.path]_Gemfile_, add the entry listed in the *Bundler* column.
+Otherwise, run the command in the *gem command* column.
 
-Installing Asciidoctor PDF will install a number of other gems mentioned in these docs, including asciidoctor, prawn, prawn-svg, prawn-table, prawn-icon, and ttfunk.
-For the most part, the versions of these dependencies are locked to the version of Asciidoctor PDF.
+[%autowidth,cols=1h;1h;1l;1l]
+|===
+|Library |gem name |Bundler |gem command
+
+|Asciidoctor PDF
+|asciidoctor-pdf
+|gem 'asciidoctor-pdf'
+|gem install asciidoctor-pdf
+|===
+
+Installing Asciidoctor PDF will automatically install a number of additional gems mentioned in these docs, including asciidoctor, prawn, prawn-svg, prawn-table, prawn-icon, and ttfunk.
+The versions of these required dependencies are locked to the version of Asciidoctor PDF.
 
 [#prerelease]
 === Install a prerelease or development version
@@ -128,7 +140,7 @@ The name of the dependency and its gem name are listed along with the minimum su
 .Minimum supported version of optional dependencies
 [#table-minimum-version,cols=3;3;4]
 |===
-| Name / Gem | Minimum Version | Feature(s)
+| Library / gem name | Minimum Version | Feature(s)
 
 | *Asciidoctor Mathematical* +
 _asciidoctor-mathematical_
@@ -148,6 +160,11 @@ _rouge_
 | *Pygments (Ruby)* +
 _pygments.rb_
 | 2.0.0
+| Syntax highlighting
+
+| *CodeRay* +
+_coderay_
+| 1.1.0
 | Syntax highlighting
 
 | *Prawn Gmagick* +

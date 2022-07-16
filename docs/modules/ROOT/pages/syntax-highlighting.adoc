@@ -3,24 +3,36 @@
 [#install]
 == Install a syntax highlighter
 
-To add source highlighting to source blocks, you must have a suitable syntax highlighter installed.
+To add source highlighting to source blocks, you must have a suitable syntax highlighter available.
 Asciidoctor PDF performs source highlighting during conversion, which means you must use a build-time syntax highlighter.
 
 The build-time syntax highlighters that Asciidoctor PDF supports out of the box are Rouge, Pygments, and CodeRay.
 Rouge is the preferred syntax highlighter.
+The use of CodeRay is no longer recommended.
 
-To install Rouge, Pygments, or CodeRay, run the corresponding gem command shown below.
+Refer to the table below for instructions on how to install one of these build-time syntax highlighters.
+If you use Bundler to manage your gems in a [.path]_Gemfile_, add the entry listed in the *Bundler* column.
+Otherwise, run the command in the *gem command* column.
 
-.Rouge
- $ gem install rouge
+[%autowidth,cols=1h;1h;1l;1l]
+|===
+|Library |gem name |Bundler |gem command
 
-.Pygments
- $ gem install pygments.rb
+|Rouge
+|rouge
+|gem 'rouge'
+|gem install rouge
 
-.CodeRay
- $ gem install coderay
+|Pygments
+|pygments.rb
+|gem 'pygments.rb'
+|gem install pygments.rb
 
-Alternately, you can declare the gem in your [.path]_Gemfile_ to manage it using Bundler.
+|CodeRay
+|coderay
+|gem 'coderay'
+|gem install coderay
+|===
 
 [#activate]
 == Activate syntax highlighting
