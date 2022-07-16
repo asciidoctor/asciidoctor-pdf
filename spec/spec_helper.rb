@@ -12,7 +12,6 @@ end
 
 require 'asciidoctor/pdf'
 require 'base64'
-require 'chunky_png'
 require 'fileutils' unless defined? FileUtils
 require 'open3' unless defined? Open3
 require 'pathname' unless defined? Pathname
@@ -368,35 +367,5 @@ RSpec.configure do |config|
 
   def resolve_localhost
     Socket.ip_address_list.find(&:ipv4?).ip_address
-  end
-
-  def compute_image_differences reference, actual, difference = nil
-    diff = []
-    if reference
-      reference_image = ChunkyPNG::Image.from_file reference
-      if actual
-        actual_image = ChunkyPNG::Image.from_file actual
-      else
-        actual_image = ChunkyPNG::Image.new reference_image.width, reference_image.height
-      end
-    else
-      actual_image = ChunkyPNG::Image.from_file actual
-      reference_image = ChunkyPNG::Image.new actual_image.width, actual_image.height
-    end
-
-    actual_image.height.times do |y|
-      actual_image.row(y).each_with_index do |pixel, x|
-        diff << [x, y] unless pixel == reference_image[x, y]
-      end
-    end
-
-    if !diff.empty? && difference
-      x = diff.map {|xy| xy[0] }
-      y = diff.map {|xy| xy[1] }
-      actual_image.rect x.min, y.min, x.max, y.max, (ChunkyPNG::Color.rgb 0, 255, 0)
-      actual_image.save difference
-    end
-
-    diff.length
   end
 end
